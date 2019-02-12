@@ -115,7 +115,7 @@ references:
 
   npm-install: &npm-install
     name: Install npm dependencies
-    command: npx lerna bootstrap
+    command: npm ci
 
   save-npm-cache: &save-npm-cache
     name: "Save node_modules cache"
@@ -478,21 +478,18 @@ jobs:
   test-e2e-canary:
       <<: *defaults
       working_directory: ~/wp-calypso/test/e2e
+      parameters:
+        test-flags:
+          type: string
+          default: "-C"
       steps:
         - prepare
         - run: *set-e2e-variables
         - run: npm run decryptconfig
         - run:
-            name: Run IE11 Canary Tests
-            command: ./run.sh -z
-        - run:
-            name: Run Safari Canary Tests
-            command: ./run.sh -y
-        - run:
-            name: Run Woo Canary Tests
-            command: ./run.sh -W
+            name: Run Canary Tests
+            command: ./run.sh << parameters.test-flags >>
         - store-artifacts-and-test-results
-
 
 workflows:
   version: 2
@@ -527,19 +524,24 @@ workflows:
           filters:
             branches:
               ignore: master
-      - test-e2e:
-          requires:
-            - prime-calypso-live
-          filters:
-            branches:
-              ignore: master
       - test-e2e-canary:
           requires:
             - prime-calypso-live
-          filters:
-            branches:
-              ignore: master
-
+      - test-e2e-canary:
+          name: test-e2e-canary-ie
+          requires:
+            - prime-calypso-live
+          test-flags: "-z"
+      - test-e2e-canary:
+          name: test-e2e-canary-safari
+          requires:
+            - prime-calypso-live
+          test-flags: "-y"
+      - test-e2e-canary:
+          name: test-e2e-canary-woo
+          requires:
+            - prime-calypso-live
+          test-flags: "-W"
 
   calypso-nightly:
     jobs:

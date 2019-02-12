@@ -8,8 +8,10 @@ import { Path, SVG } from '@wordpress/components';
  * Internal dependencies
  */
 import edit from './edit';
-import './editor.scss';
+
+// Ordering is important! Editor overrides style!
 import './style.scss';
+import './editor.scss';
 
 export const name = 'gif';
 export const title = __( 'GIF' );

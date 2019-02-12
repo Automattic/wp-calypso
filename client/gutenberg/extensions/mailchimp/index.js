@@ -20,28 +20,24 @@ export const icon = (
 );
 
 export const settings = {
-	title: __( 'MailChimp' ),
+	title: __( 'Mailchimp' ),
 	icon,
 	description: __( 'A form enabling readers to join a Mailchimp list.' ),
 	category: 'jetpack',
 	keywords: [ __( 'email' ), __( 'mailchimp' ), __( 'newsletter' ) ],
 	attributes: {
-		title: {
-			type: 'string',
-			default: __( 'Join my email list' ),
-		},
 		emailPlaceholder: {
 			type: 'string',
 			default: __( 'Enter your email' ),
 		},
 		submitLabel: {
 			type: 'string',
-			default: __( 'Join My Email List' ),
+			default: __( 'Join my email list' ),
 		},
 		consentText: {
 			type: 'string',
 			default: __(
-				'By clicking submit, you agree to share your email address with the site owner and MailChimp to receive marketing, updates, and other emails from the site owner. Use the unsubscribe link in those emails to opt out at any time.'
+				'By clicking submit, you agree to share your email address with the site owner and Mailchimp to receive marketing, updates, and other emails from the site owner. Use the unsubscribe link in those emails to opt out at any time.'
 			),
 		},
 		processingLabel: {
@@ -50,12 +46,12 @@ export const settings = {
 		},
 		successLabel: {
 			type: 'string',
-			default: __( "Success! You've been added to the list." ),
+			default: __( "Success! You're on the list." ),
 		},
 		errorLabel: {
 			type: 'string',
 			default: __(
-				'Oh no! Unfortunately there was an error. Please try reloading this page and adding your email once more.'
+				"Whoops! There was an error and we couldn't process your subscription. Please reload the page and try again."
 			),
 		},
 	},

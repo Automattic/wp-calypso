@@ -34,6 +34,11 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import ReaderSidebarPromo from './promo';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ReaderSidebar extends React.Component {
 	state = {};
 

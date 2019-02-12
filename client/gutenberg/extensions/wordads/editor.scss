@@ -1,0 +1,25 @@
+.aligncenter .wp-block-jetpack-wordads {
+justify-content:center;
+}
+.jetpack-wordads__header,
+.jetpack-wordads__footer {
+	font-size: 10px;
+	font-family: sans-serif;
+}
+.jetpack-wordads__header {
+	text-align: left;
+}
+.jetpack-wordads__footer {
+	text-transform: uppercase;
+	text-align: right;
+}
+
+.jetpack-wordads__ad {
+	display: flex;
+	overflow: hidden;
+	flex-direction: column;
+
+	.components-placeholder {
+		flex-grow: 2;
+	}
+}

@@ -41,6 +41,11 @@ import { resemblesUrl, withoutHttp, addSchemeIfMissing, addQueryArgs } from 'lib
 import { recordTrack, recordAction } from 'reader/stats';
 import { SORT_BY_RELEVANCE } from 'state/reader/feed-searches/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const PAGE_SIZE = 4;
 let recommendationsSeed = random( 0, 10000 );
 

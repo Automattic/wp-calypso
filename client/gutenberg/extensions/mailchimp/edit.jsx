@@ -105,10 +105,17 @@ class MailchimpSubscribeEdit extends Component {
 		this.clearAudition();
 	};
 
-	updateSubmitLabel = submitLabel => {
-		const { setAttributes } = this.props;
-		setAttributes( { submitLabel } );
-		this.clearAudition();
+	labelForAuditionType = audition => {
+		const { attributes } = this.props;
+		const { processingLabel, successLabel, errorLabel } = attributes;
+		if ( audition === NOTIFICATION_PROCESSING ) {
+			return processingLabel;
+		} else if ( audition === NOTIFICATION_SUCCESS ) {
+			return successLabel;
+		} else if ( audition === NOTIFICATION_ERROR ) {
+			return errorLabel;
+		}
+		return null;
 	};
 
 	render = () => {
@@ -116,14 +123,13 @@ class MailchimpSubscribeEdit extends Component {
 		const { audition, connected, connectURL } = this.state;
 		const {
 			emailPlaceholder,
-			title,
 			submitLabel,
 			consentText,
 			processingLabel,
 			successLabel,
 			errorLabel,
 		} = attributes;
-		const classPrefix = 'wp-block-jetpack-mailchimp-';
+		const classPrefix = 'wp-block-jetpack-mailchimp_';
 		const waiting = (
 			<Placeholder icon={ icon } notices={ notices }>
 				<Spinner />
@@ -133,10 +139,10 @@ class MailchimpSubscribeEdit extends Component {
 			<Placeholder icon={ icon } label={ __( 'Mailchimp' ) } notices={ notices }>
 				<div className="components-placeholder__instructions">
 					{ __(
-						'You need to connect your MailChimp account and choose a list in order to start collecting Email subscribers.'
+						'You need to connect your Mailchimp account and choose a list in order to start collecting Email subscribers.'
 					) }
 					<br />
-					<ExternalLink href={ connectURL }>{ __( 'Set up MailChimp form' ) }</ExternalLink>
+					<ExternalLink href={ connectURL }>{ __( 'Set up Mailchimp form' ) }</ExternalLink>
 					<br />
 					<br />
 					<Button isDefault onClick={ this.apiCall }>
@@ -152,11 +158,6 @@ class MailchimpSubscribeEdit extends Component {
 						label={ __( 'Email Placeholder' ) }
 						value={ emailPlaceholder }
 						onChange={ this.updateEmailPlaceholder }
-					/>
-					<TextControl
-						label={ __( 'Submit button label' ) }
-						value={ submitLabel }
-						onChange={ this.updateSubmitLabel }
 					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Notifications' ) }>
@@ -183,19 +184,19 @@ class MailchimpSubscribeEdit extends Component {
 		);
 		const blockContent = (
 			<div className={ className }>
-				<RichText
-					tagName="h3"
-					placeholder={ __( 'Write title' ) }
-					value={ title }
-					onChange={ value => setAttributes( { title: value } ) }
-					inlineToolbar
-				/>
 				{ ! audition && (
 					<form ref={ this.formRef }>
-						<TextControl placeholder={ emailPlaceholder } onChange={ () => false } />
-						<Button isPrimary>{ submitLabel }</Button>
+						<TextControl placeholder={ emailPlaceholder } onChange={ () => false } type="email" />
+						<div className="wp-block-jetpack-mailchimp_button">
+							<RichText
+								formattingControls={ [] }
+								placeholder={ __( 'Add button text…' ) }
+								value={ submitLabel }
+								onChange={ value => setAttributes( { submitLabel: value } ) }
+							/>
+						</div>
 						<RichText
-							tagName="figcaption"
+							tagName="small"
 							placeholder={ __( 'Write consent text' ) }
 							value={ consentText }
 							onChange={ value => setAttributes( { consentText: value } ) }
@@ -203,23 +204,9 @@ class MailchimpSubscribeEdit extends Component {
 						/>
 					</form>
 				) }
-				{ audition === NOTIFICATION_PROCESSING && (
-					<div
-						className={ `${ classPrefix }notification ${ classPrefix }${ NOTIFICATION_PROCESSING }` }
-					>
-						{ processingLabel }
-					</div>
-				) }
-				{ audition === NOTIFICATION_SUCCESS && (
-					<div
-						className={ `${ classPrefix }notification ${ classPrefix }${ NOTIFICATION_SUCCESS }` }
-					>
-						{ successLabel }
-					</div>
-				) }
-				{ audition === NOTIFICATION_ERROR && (
-					<div className={ `${ classPrefix }notification ${ classPrefix }${ NOTIFICATION_ERROR }` }>
-						{ errorLabel }
+				{ audition && (
+					<div className={ `${ classPrefix }notification ${ classPrefix }${ audition }` }>
+						{ this.labelForAuditionType( audition ) }
 					</div>
 				) }
 			</div>

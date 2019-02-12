@@ -14,6 +14,7 @@ import debugFactory from 'debug';
  */
 import Emitter from 'lib/mixins/emitter';
 import { preprocessCartForServer } from 'lib/cart-values';
+import { injectCartWithPlaceholderTaxValues } from 'lib/tax'; // #tax-on-checkout-placeholder
 
 /**
  * Internal dependencies
@@ -21,19 +22,14 @@ import { preprocessCartForServer } from 'lib/cart-values';
 const debug = debugFactory( 'calypso:cart-data:cart-synchronizer' );
 
 function preprocessCartFromServer( cart ) {
-	// #tax-on-checkout-placeholder
-	const taxOnCheckoutPlaceholder = {
-		sub_total: cart.total_cost,
-		sub_total_display: cart.total_cost_display,
-		total_tax: cart.total_cost,
-		total_tax_display: cart.total_cost_display,
-	};
-
-	// #tax-on-checkout-placeholder
-	return assign( {}, taxOnCheckoutPlaceholder, cart, {
-		client_metadata: createClientMetadata(),
-		products: castProductIDsToNumbers( cart.products ),
-	} );
+	return assign(
+		{},
+		injectCartWithPlaceholderTaxValues( cart ), // #tax-on-checkout-placeholder (to remove: drop function call, keep `cart`)
+		{
+			client_metadata: createClientMetadata(),
+			products: castProductIDsToNumbers( cart.products ),
+		}
+	);
 }
 
 // Add a server response date so we can distinguish between carts with the

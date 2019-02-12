@@ -4,7 +4,7 @@
  * External dependencies
  */
 import url from 'url';
-import { extend, isArray, invert } from 'lodash';
+import { extend, get, isArray, invert } from 'lodash';
 import update from 'immutability-helper';
 import i18n from 'i18n-calypso';
 import config from 'config';
@@ -16,9 +16,7 @@ import cartItems from './cart-items';
 import productsValues from 'lib/products-values';
 
 // #tax-on-checout-placeholder
-import { reduxGetState } from 'lib/redux-bridge';
-import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
-import getPaymentPostalCode from 'state/selectors/get-payment-postal-code';
+import { injectTaxStateWithPlaceholderValues } from 'lib/tax';
 
 const PAYMENT_METHODS = {
 	alipay: 'WPCOM_Billing_Stripe_Source_Alipay',
@@ -61,31 +59,13 @@ function preprocessCartForServer( {
 	);
 	const urlCoupon = needsUrlCoupon ? url.parse( document.URL, true ).query.coupon : '';
 
-	// #tax-on-checout-placeholder
-	const reduxState = reduxGetState();
-	const placeholderTax =
-		tax ||
-		( reduxState
-			? {
-					location: {
-						country_code: getPaymentCountryCode( reduxState ),
-						postal_code: getPaymentPostalCode( reduxState ),
-					},
-			  }
-			: {
-					location: {
-						country_code: 'US',
-						postal_code: '90210',
-					},
-			  } );
-
 	return Object.assign(
 		{
 			coupon,
 			is_coupon_applied,
 			is_coupon_removed,
 			currency,
-			tax: placeholderTax,
+			tax: injectTaxStateWithPlaceholderValues( tax ), // #tax-on-checkout-placeholder
 			temporary,
 			extra,
 			products: products.map(
@@ -366,6 +346,15 @@ export function hasPendingPayment( cart ) {
 	}
 
 	return false;
+}
+
+export function shouldShowTax( cart ) {
+	// #tax-on-checkout-placeholder
+	if ( ! config.isEnabled( 'show-tax' ) ) {
+		return false;
+	}
+
+	return get( cart, [ 'tax', 'display_taxes' ], false );
 }
 
 export {

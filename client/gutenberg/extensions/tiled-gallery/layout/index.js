@@ -18,6 +18,10 @@ import { PHOTON_MAX_RESIZE } from '../constants';
 
 export default class Layout extends Component {
 	photonize( { height, width, url } ) {
+		if ( ! url ) {
+			return;
+		}
+
 		// Do not Photonize images that are still uploading or from localhost
 		if ( isBlobURL( url ) || /^https?:\/\/localhost/.test( url ) ) {
 			return url;

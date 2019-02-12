@@ -53,7 +53,6 @@
 		"manage/edit-user": true,
 		"manage/import-in-sidebar": true,
 		"manage/import/medium": true,
-		"manage/option_sync_non_public_post_stati": false,
 		"manage/pages": true,
 		"manage/plan-features": false,
 		"manage/plugins": true,
@@ -140,6 +139,5 @@
 	"google_adwords_conversion_id": 1067250390,
 	"google_adwords_conversion_id_jetpack": 937115306,
 	"google_adwords_signup_conversion_id": 1067250390,
-	"google_adwords_signup_conversion_id_jetpack": 937115306,
 	"hotjar_enabled": true
 }

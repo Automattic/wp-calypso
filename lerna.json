@@ -1,5 +1,5 @@
 {
-	"packages": [ "packages/*", ".", "test/e2e/" ],
+	"packages": [ "packages/*" ],
 	"version": "independent",
 	"ignoreChanges": [
 		"**/*.md",

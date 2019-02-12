@@ -21,7 +21,6 @@
 	"google_adwords_conversion_id": false,
 	"google_adwords_conversion_id_jetpack": false,
 	"google_adwords_signup_conversion_id": false,
-	"google_adwords_signup_conversion_id_jetpack": false,
 	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
