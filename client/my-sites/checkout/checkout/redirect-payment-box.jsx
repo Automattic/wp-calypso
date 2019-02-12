@@ -6,6 +6,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { snakeCase, map, zipObject, isEmpty, mapValues, overSome, some } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -310,6 +311,13 @@ export class RedirectPaymentBox extends PureComponent {
 								{ this.renderButtonText() }
 							</button>
 							<SubscriptionText cart={ this.props.cart } />
+						</div>
+
+						<div className="checkout__secure-payment">
+							<div className="checkout__secure-payment-content">
+								<Gridicon icon="lock" />
+								{ translate( 'Secure Payment' ) }
+							</div>
 						</div>
 
 						{ showPaymentChatButton && (
