@@ -302,7 +302,7 @@ export class RedirectPaymentBox extends PureComponent {
 					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
-						<div className="checkout__payment-box-payment-buttons">
+						<div className="checkout__payment-box-buttons">
 							<span className="checkout__pay-button">
 								<button
 									type="submit"

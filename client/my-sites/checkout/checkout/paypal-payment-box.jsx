@@ -176,7 +176,7 @@ export class PaypalPaymentBox extends React.Component {
 							<span className="checkout__pay-button">
 								<button
 									type="submit"
-									className="button is-primary button-pay checkout__button"
+									className="checkout__pay-button-button button is-primary"
 									disabled={ this.state.formDisabled }
 								>
 									{ this.renderButtonText() }

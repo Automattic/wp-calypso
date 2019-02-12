@@ -171,8 +171,8 @@
 		}
 	}
 
-	button[type='submit'].button-pay,
-	button[type='submit'].checkout__button-pay {
+	button[type='submit'].checkout__pay-button-button,
+	button[type='submit'].button-pay {
 		@include breakpoint( '<660px' ) {
 			width: 100%;
 
