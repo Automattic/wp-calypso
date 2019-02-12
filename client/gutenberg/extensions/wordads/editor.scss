@@ -1,10 +1,10 @@
 .wp-block-jetpack-wordads {
-	background: #FFF;
+	background: $white;
 }
 
 .wp-block-jetpack-wordads.aligncenter {
 	.jetpack-wordads__ad {
-			margin: 0 auto;
+		margin: 0 auto;
 	}
 }
 
@@ -32,7 +32,7 @@
 	}
 }
 .jetpack-wordads-leaderboard .components-placeholder {
-	min-height:90px;
+	min-height: 90px;
 }
 .jetpack-wordads-mobile_leaderboard .components-placeholder {
 	min-height: 72px;
