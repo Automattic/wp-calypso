@@ -157,53 +157,6 @@ export const settings = {
 					return createBlock( `jetpack/${ name }` );
 				},
 			},
-			{
-				type: 'shortcode',
-				tag: 'gallery',
-				attributes: {
-					// @TODO: other params: https://en.support.wordpress.com/gallery/#gallery-shortcode
-					images: {
-						type: 'array',
-						shortcode: ( { named: { ids } } ) => {
-							if ( ! ids ) {
-								return [];
-							}
-
-							return ids.split( ',' ).map( id => ( {
-								id: parseInt( id, 10 ),
-							} ) );
-						},
-					},
-					columns: {
-						type: 'number',
-						shortcode: ( { named: { columns = 3 } } ) => {
-							if ( ! columns ) {
-								return;
-							}
-
-							const result = parseInt( columns, 10 );
-							if ( result ) {
-								return result;
-							}
-						},
-					},
-					linkTo: {
-						type: 'string',
-						shortcode: ( { named: { link = 'attachment' } } ) => {
-							return link === 'file' ? 'media' : link;
-						},
-					},
-					layout: {
-						type: 'string',
-						shortcode: ( { named: { type = LAYOUT_DEFAULT } } ) => {
-							// @TODO: if `type=slideshow`, return a slideshow block
-							return LAYOUT_STYLES.map( style => style.name ).includes( type )
-								? type
-								: LAYOUT_DEFAULT;
-						},
-					},
-				},
-			},
 		],
 		to: [
 			{
