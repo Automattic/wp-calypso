@@ -29,6 +29,7 @@ import {
 	isJetpackBusiness,
 	isJetpackPremium,
 	isVipPlan,
+	isEcommerce,
 } from 'lib/products-values';
 import { isJetpackSite } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
@@ -44,7 +45,13 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
-const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness, isVipPlan );
+const hasBusinessPlan = overSome(
+	isBusiness,
+	isEcommerce,
+	isEnterprise,
+	isJetpackBusiness,
+	isVipPlan,
+);
 
 export class GoogleAnalyticsForm extends Component {
 	state = {
