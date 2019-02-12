@@ -1,0 +1,34 @@
+.ecommerce-manage-nudge__body {
+	padding: 11px 24px;
+	display: flex;
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
+.ecommerce-manage-nudge__close-icon {
+	position: absolute;
+	top: 14px;
+	right: 18px;
+	color: $gray;
+	cursor: pointer;
+	z-index: z-index( 'root', '.ecommerce-manage-nudge__close-icon' );
+}
+
+.ecommerce-manage-nudge__image {
+	width: 80px;
+	height: 80px;
+}
+
+.ecommerce-manage-nudge__info {
+	margin-left: 16px;
+	margin-top: 8px;
+}
+
+
+.ecommerce-manage-nudge__title {
+	font-size: 21px;
+	font-weight: 400;
+	margin: 0 0 5px;
+}
