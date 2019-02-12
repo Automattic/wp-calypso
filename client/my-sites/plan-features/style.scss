@@ -822,3 +822,27 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		display: inline;
 	}
 }
+
+.plan-features__pricing {
+	.is-no-tabs & {
+		border-top: solid 1px lighten( $gray, 27% );
+
+		h4 {
+			color: #1a1a1a;
+			float: left;
+			font-size: 48px;
+			padding: 0 12px;
+		}
+
+		sup {
+			color: #1a1a1a;
+			font-size: 26px;
+		}
+
+		span span {
+			color: #50575d;
+			font-size: 13px;
+			line-height: 13px;
+		}
+	}
+}

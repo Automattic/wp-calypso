@@ -68,7 +68,7 @@ import {
 
 export class PlanFeatures extends Component {
 	render() {
-		const { isInSignup, planProperties } = this.props;
+		const { isInSignup, planProperties, plansWithScroll } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -80,11 +80,33 @@ export class PlanFeatures extends Component {
 		const mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
 		let planDescriptions;
 		let bottomButtons = null;
+		let tableBody = null;
 
 		if ( ! isInSignup ) {
 			planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
 
 			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
+		}
+
+		if ( plansWithScroll ) {
+			tableBody = (
+				<tbody>
+					<tr>{ this.renderPlanHeaders() }</tr>
+					<tr>{ this.renderTopButtons() }</tr>
+					{ planDescriptions }
+					{ this.renderPlanFeatureRows() }
+				</tbody>
+			);
+		} else {
+			tableBody = (
+				<tbody>
+					<tr>{ this.renderPlanHeaders() }</tr>
+					{ planDescriptions }
+					<tr>{ this.renderTopButtons() }</tr>
+					{ this.renderPlanFeatureRows() }
+					{ bottomButtons }
+				</tbody>
+			);
 		}
 
 		return (
@@ -94,15 +116,7 @@ export class PlanFeatures extends Component {
 					{ this.renderNotice() }
 					<div className="plan-features__content">
 						{ mobileView }
-						<table className={ tableClasses }>
-							<tbody>
-								<tr>{ this.renderPlanHeaders() }</tr>
-								{ planDescriptions }
-								<tr>{ this.renderTopButtons() }</tr>
-								{ this.renderPlanFeatureRows() }
-								{ bottomButtons }
-							</tbody>
-						</table>
+						<table className={ tableClasses }>{ tableBody }</table>
 					</div>
 				</div>
 			</div>
@@ -353,10 +367,9 @@ export class PlanFeatures extends Component {
 				hideMonthly,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
-			const classes = classNames(
-				'plan-features__table-item',
-				plansWithScroll ? 'has-border-bottom' : 'has-border-top'
-			);
+			const classes = classNames( 'plan-features__table-item', {
+				'has-border-top': plansWithScroll,
+			} );
 			let audience = planConstantObj.getAudience();
 			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
