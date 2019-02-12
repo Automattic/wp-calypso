@@ -24,7 +24,7 @@ function PlaceholderPostEdit( props ) {
 			id={ props.id }
 			aria-labelledby={ props.id + '-heading' }
 		>
-			<strong id={ props.id + '-heading' } class="jp-related-posts-i2__post-link">
+			<strong id={ props.id + '-heading' } className="jp-related-posts-i2__post-link">
 				{ __( 'Preview: Not enough related posts found' ) }
 			</strong>
 			{ props.displayThumbnails && (
