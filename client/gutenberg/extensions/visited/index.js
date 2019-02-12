@@ -22,7 +22,7 @@ export const settings = {
 	},
 	category: 'jetpack',
 	description: __( 'Control block visibility based on how often a visitor has viewed the page.' ),
-	icon: 'universal-access-alt',
+	icon: 'history',
 	keywords: [
 		_x( 'traffic', 'block search term' ),
 		_x( 'visitors', 'block search term' ),
