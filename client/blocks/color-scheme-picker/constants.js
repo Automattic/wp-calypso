@@ -25,13 +25,6 @@ export default function( translate ) {
 				cssClass: 'is-classic-blue',
 			},
 		},
-		{
-			label: translate( 'Nightfall' ),
-			value: 'nightfall',
-			thumbnail: {
-				cssClass: 'is-nightfall',
-			},
-		},
 		config.isEnabled( 'me/account/color-schemes/laser-black' ) && {
 			label: translate( 'Laser Black' ),
 			value: 'laser-black',
