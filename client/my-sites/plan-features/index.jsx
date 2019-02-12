@@ -558,11 +558,13 @@ export class PlanFeatures extends Component {
 		const description = feature.getDescription
 			? feature.getDescription( abtest, this.props.domainName )
 			: null;
+		const { plansWithScroll } = this.props;
 		return (
 			<PlanFeaturesItem
 				key={ index }
 				description={ description }
 				hideInfoPopover={ feature.hideInfoPopover }
+				hideGridicon={ plansWithScroll }
 			>
 				<span className="plan-features__item-info">
 					<span className="plan-features__item-title">{ feature.getTitle() }</span>
