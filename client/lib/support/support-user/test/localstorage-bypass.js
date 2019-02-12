@@ -70,6 +70,11 @@ describe( 'localstorage-bypass', () => {
 			expect( _setItem ).to.have.been.calledWith( 'key', 'value' );
 		} );
 
+		test( 'when there is no original setItem, sets an item in the memory store for an allowed key', () => {
+			setItem( db, [ 'key' ], undefined )( 'key', 'value' );
+			expect( db.key ).to.equal( 'value' );
+		} );
+
 		test( 'overrides an existing value', () => {
 			db.existing = 'abc';
 			setItem( db, [], _setItem )( 'existing', 'def' );
@@ -92,6 +97,10 @@ describe( 'localstorage-bypass', () => {
 			expect( _getItem ).to.have.been.calledWith( 'first' );
 		} );
 
+		test( 'when there is no original getItem, gets an item from the memory store for an allowed key', () => {
+			expect( getItem( db, [], undefined )( 'first' ) ).to.equal( 'abc' );
+		} );
+
 		test( "returns null for a key that doesn't exist", () => {
 			expect( getItem( db, [], _getItem )( 'missing' ) ).to.be.null;
 		} );
@@ -112,6 +121,11 @@ describe( 'localstorage-bypass', () => {
 			removeItem( db, [ 'first' ], _removeItem )( 'first' );
 			expect( db.first ).to.equal( 'abc' );
 			expect( _removeItem ).to.have.been.calledWith( 'first' );
+		} );
+
+		test( 'when there is no original removeItem, removes an item from the memory store for an allowed key', () => {
+			removeItem( db, [], undefined )( 'first' );
+			expect( db.first ).to.be.undefined;
 		} );
 
 		test( "has no effect when a key doesn't already exist", () => {

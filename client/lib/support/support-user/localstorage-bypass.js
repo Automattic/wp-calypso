@@ -28,7 +28,7 @@ export const key = memoryStore => {
 
 export const setItem = ( memoryStore, allowedKeys, original ) => {
 	return ( _key, value ) => {
-		if ( allowedKeys.indexOf( _key ) > -1 ) {
+		if ( original && allowedKeys.indexOf( _key ) > -1 ) {
 			original( _key, value );
 			return;
 		}
@@ -40,7 +40,7 @@ export const setItem = ( memoryStore, allowedKeys, original ) => {
 
 export const getItem = ( memoryStore, allowedKeys, original ) => {
 	return _key => {
-		if ( allowedKeys.indexOf( _key ) > -1 ) {
+		if ( original && allowedKeys.indexOf( _key ) > -1 ) {
 			return original( _key );
 		}
 
@@ -51,7 +51,7 @@ export const getItem = ( memoryStore, allowedKeys, original ) => {
 
 export const removeItem = ( memoryStore, allowedKeys, original ) => {
 	return _key => {
-		if ( allowedKeys.indexOf( _key ) > -1 ) {
+		if ( original && allowedKeys.indexOf( _key ) > -1 ) {
 			original( _key );
 			return;
 		}
@@ -73,35 +73,50 @@ export const clear = memoryStore => {
 
 /**
  * Overrides localStorage, using an in-memory store instead of the real localStorage.
- * This avoids conflicts caused by shared localStorage across multiple support user sessions.
- * @param  {string[]} allowedKeys An array of localStorage keys that are proxied to the real localStorage
+ *
+ * This function replaces localStorage with an in-memory store and is useful in the following cases:
+ * 1. Avoiding conflicts caused by shared localStorage across multiple support user sessions.
+ * 2. Providing a working localStorage implementation for older Safari versions that throw errors in Private mode.
+ *
+ * @param {object}   [args]            An arguments object
+ * @param {object}   [args.root]       Allow alternate "window" object to support tests in non-browser environments
+ * @param {string[]} [arg.allowedKeys] An array of localStorage keys that are proxied to the real localStorage
  */
-export default function( allowedKeys ) {
-	if ( window && window.localStorage && window.Storage && window.Storage.prototype ) {
-		debug( 'Bypassing localStorage' );
-		const memoryStore = {};
-		const _setItem = window.Storage.prototype.setItem.bind( window.localStorage );
-		const _getItem = window.Storage.prototype.getItem.bind( window.localStorage );
-		const _removeItem = window.Storage.prototype.removeItem.bind( window.localStorage );
+export default function( {
+	root = typeof window === 'undefined' ? undefined : window,
+	allowedKeys = [],
+} = {} ) {
+	debug( 'Bypassing localStorage' );
 
-		const localStorageOverride = {
-			setItem: setItem( memoryStore, allowedKeys, _setItem ),
-			getItem: getItem( memoryStore, allowedKeys, _getItem ),
-			removeItem: removeItem( memoryStore, allowedKeys, _removeItem ),
-			key: key( memoryStore ),
-			clear: clear( memoryStore ),
-			get length() {
-				return length( memoryStore );
-			},
-		};
+	let _setItem;
+	let _getItem;
+	let _removeItem;
 
-		// Redefine `window.localStorage` instead of assigning to localStorage methods
-		// like `getItem` and `setItem` because it is not effective in Firefox.
-		// https://github.com/whatwg/html/issues/183#issuecomment-142944605
-		Object.defineProperty( window, 'localStorage', {
-			value: localStorageOverride,
-			enumerable: true,
-			configurable: true,
-		} );
+	if ( root && root.localStorage && root.Storage && root.Storage.prototype ) {
+		_setItem = root.Storage.prototype.setItem.bind( root.localStorage );
+		_getItem = root.Storage.prototype.getItem.bind( root.localStorage );
+		_removeItem = root.Storage.prototype.removeItem.bind( root.localStorage );
 	}
+
+	const memoryStore = {};
+	const getMemoryStoreLength = length( memoryStore );
+	const localStorageOverride = {
+		setItem: setItem( memoryStore, allowedKeys, _setItem ),
+		getItem: getItem( memoryStore, allowedKeys, _getItem ),
+		removeItem: removeItem( memoryStore, allowedKeys, _removeItem ),
+		key: key( memoryStore ),
+		clear: clear( memoryStore ),
+		get length() {
+			return getMemoryStoreLength();
+		},
+	};
+
+	// Redefine `window.localStorage` instead of assigning to localStorage methods
+	// like `getItem` and `setItem` because it is not effective in Firefox.
+	// https://github.com/whatwg/html/issues/183#issuecomment-142944605
+	Object.defineProperty( root, 'localStorage', {
+		value: localStorageOverride,
+		enumerable: true,
+		configurable: true,
+	} );
 }
