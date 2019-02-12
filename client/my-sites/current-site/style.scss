@@ -47,14 +47,14 @@
 	.site,
 	.all-sites {
 		background: var( --sidebar-secondary-background );
-		border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+		border-bottom: 1px solid var( --sidebar-border-color );
 	}
 }
 
 .current-site__switch-sites {
 	display: block;
 	background: var( --sidebar-background );
-	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+	border-bottom: 1px solid var( --sidebar-border-color );
 
 	.button.is-borderless {
 		display: block;
@@ -76,7 +76,7 @@
 	}
 
 	&:hover {
-		background-color: lighten( $sidebar-bg-color, 3% );
+		background-color: var( --sidebar-background );
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
