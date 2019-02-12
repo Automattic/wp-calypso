@@ -67,6 +67,12 @@
 		margin: 0 auto;
 		max-width: 600px;
 		text-align: initial;
+
+		.site-topic__content {
+			.form-fieldset {
+				position: relative;
+			}
+		}
 	}
 }
 
