@@ -8,24 +8,18 @@ import { merge } from 'lodash';
  */
 import './style.scss';
 
-const SIXTEEN_BY_NINE = 16 / 9;
-
-export default async function createSwiper( container = '.swiper-container', params = {} ) {
-	const autoSize = function() {
-		const img = this.el.querySelector( '.swiper-slide[data-swiper-slide-index="0"] img' );
-		if ( ! img ) {
-			return;
-		}
-		const aspectRatio = img.clientWidth / img.clientHeight;
-		const sanityAspectRatio = Math.max( Math.min( aspectRatio, SIXTEEN_BY_NINE ), 1 );
-		const sanityHeight = typeof window !== 'undefined' ? window.innerHeight * 0.8 : 600;
-		const swiperHeight = Math.min( this.width / sanityAspectRatio, sanityHeight );
-		this.el.style.height = `calc( ${ Math.floor( swiperHeight ) }px + 4em )`;
-	};
-	const init = function() {
-		this.$el[ 0 ].classList.add( 'wp-swiper-initialized' );
-		autoSize.call( this );
-	};
+export default async function createSwiper(
+	container = '.swiper-container',
+	params = {},
+	callbacks = {}
+) {
+	const on = {};
+	for ( const id in callbacks ) {
+		const callback = callbacks[ id ];
+		on[ id ] = function() {
+			callback( this );
+		};
+	}
 	const defaultParams = {
 		effect: 'slide',
 		grabCursor: true,
@@ -45,11 +39,7 @@ export default async function createSwiper( container = '.swiper-container', par
 		setWrapperSize: true,
 		touchStartPreventDefault: false,
 		/* We probably won't end up needing both init and imagesReady. Just casting a wide net for now. */
-		on: {
-			init,
-			imagesReady: autoSize,
-			resize: autoSize,
-		},
+		on,
 	};
 	const [ { default: Swiper } ] = await Promise.all( [
 		import( /* webpackChunkName: "swiper" */ 'swiper' ),
