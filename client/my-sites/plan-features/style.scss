@@ -539,6 +539,13 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( '<660px' ) {
 		padding: 20px 20px 0;
 	}
+
+	.is-no-tabs & {
+		font-size: 13px;
+		color: #3d4145;
+		line-height: 22px;
+		padding: 16px 16px 0;
+	}
 }
 
 .plan-features__targeted-description-heading {
