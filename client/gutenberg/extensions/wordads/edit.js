@@ -16,11 +16,16 @@ import './editor.scss';
 
 class WordAdsEdit extends Component {
 	render() {
-		const { attributes, className, isSelected, setAttributes } = this.props;
+		const { attributes, isSelected, setAttributes } = this.props;
 		const { align, format: selectedFormat } = attributes;
-		const classes = classNames( className, `align${ align }`, 'jetpack-wordads-' + selectedFormat, {
-			'is-selected': isSelected,
-		} );
+		const classes = classNames(
+			'wp-block-jetpack-wordads',
+			`align${ align }`,
+			'jetpack-wordads-' + selectedFormat,
+			{
+				'is-selected': isSelected,
+			}
+		);
 		const selectedFormatObject = AD_FORMATS.filter( format => format.tag === selectedFormat )[ 0 ];
 		const formatSelector = (
 			<SelectControl
