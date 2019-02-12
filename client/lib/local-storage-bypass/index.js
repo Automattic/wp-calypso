@@ -112,6 +112,8 @@ export default function( {
 		// Try redefining `window.localStorage` instead of assigning to localStorage methods
 		// like `getItem` and `setItem` because it is not effective in Firefox.
 		// https://github.com/whatwg/html/issues/183#issuecomment-142944605
+		//
+		// NOTE: Based on testing, Safari versions 5-9 throw an error when attempting to redefine localStorage.
 		Object.defineProperty( root, 'localStorage', {
 			value: localStorageOverride,
 			enumerable: true,
