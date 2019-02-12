@@ -29,7 +29,7 @@ export const settings = {
 		_x( 'visibility', 'block search term' ),
 	],
 	supports: { html: false },
-	title: __( 'Previously Visited' ),
+	title: __( 'Repeat Visitor' ),
 	edit,
 	save,
 };
