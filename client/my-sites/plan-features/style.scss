@@ -567,6 +567,16 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( '<1040px' ) {
 		margin: 0 12px;
 	}
+
+	.is-no-tabs & {
+		align-items: center;
+		color: #1a1a1a;
+		font-family: Helvetica;
+		font-size: 12px;
+		height: 48px;
+		margin: 0;
+		padding: 0 8px 0 16px;
+	}
 }
 
 .plan-features__item-title {
