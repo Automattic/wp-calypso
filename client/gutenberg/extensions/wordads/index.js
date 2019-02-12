@@ -48,12 +48,14 @@ export const settings = {
 	keywords: [ __( 'ads' ), 'WordAds', __( 'Advertisement' ) ],
 
 	supports: {
-		html: false,
 		align: true,
+		className: false,
+		customClassName: false,
+		html: false,
+		reusable: false,
 	},
 
 	edit,
 
-	/* @TODO save */
 	save: () => null,
 };
