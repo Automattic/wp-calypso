@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { merge } from 'lodash';
+import { mapValues, merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,13 +13,6 @@ export default async function createSwiper(
 	params = {},
 	callbacks = {}
 ) {
-	const on = {};
-	for ( const id in callbacks ) {
-		const callback = callbacks[ id ];
-		on[ id ] = function() {
-			callback( this );
-		};
-	}
 	const defaultParams = {
 		effect: 'slide',
 		grabCursor: true,
@@ -38,8 +31,13 @@ export default async function createSwiper(
 		releaseFormElements: false,
 		setWrapperSize: true,
 		touchStartPreventDefault: false,
-		/* We probably won't end up needing both init and imagesReady. Just casting a wide net for now. */
-		on,
+		on: mapValues(
+			callbacks,
+			callback =>
+				function() {
+					callback( this );
+				}
+		),
 	};
 	const [ { default: Swiper } ] = await Promise.all( [
 		import( /* webpackChunkName: "swiper" */ 'swiper' ),
