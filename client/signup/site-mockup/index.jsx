@@ -2,28 +2,46 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import Gridicon from 'gridicons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { debounce, each, isEmpty } from 'lodash';
+import { debounce, each, find, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import SiteMockup from './site-mockup';
+import SignupSitePreview from 'components/signup-site-preview';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteVerticalPreview } from 'state/signup/steps/site-vertical/selectors';
+import {
+	getSiteVerticalPreview,
+	getSiteVerticalSlug,
+} from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { loadFont, getCSS } from 'lib/signup/font-loader';
-import Gridicon from 'gridicons';
+import { getSiteStyleOptions, getThemeCssUri } from 'lib/signup/site-styles';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+function SiteMockupHelpTip() {
+	return (
+		<div className="site-mockup__help-tip">
+			<p>
+				{ translate(
+					'Scroll down to see your website. Once you complete setup you’ll be able to customize it further.'
+				) }
+			</p>
+			<Gridicon icon="chevron-down" />
+		</div>
+	);
+}
 
 class SiteMockups extends Component {
 	static propTypes = {
@@ -31,7 +49,9 @@ class SiteMockups extends Component {
 		phone: PropTypes.string,
 		siteStyle: PropTypes.string,
 		siteType: PropTypes.string,
+		stepName: PropTypes.string,
 		title: PropTypes.string,
+		vertical: PropTypes.string,
 		verticalPreviewContent: PropTypes.string,
 	};
 
@@ -40,14 +60,11 @@ class SiteMockups extends Component {
 		phone: '',
 		siteStyle: '',
 		siteType: '',
+		stepName: '',
 		title: '',
+		vertical: '',
 		verticalPreviewContent: '',
 	};
-
-	constructor( props ) {
-		super( props );
-		this.state = this.getNewFontLoaderState( props );
-	}
 
 	shouldComponentUpdate( nextProps ) {
 		// Debouncing updates to the preview content
@@ -59,29 +76,8 @@ class SiteMockups extends Component {
 
 		return true;
 	}
+
 	updateDebounced = debounce( this.forceUpdate, 777, { leading: false } );
-
-	getNewFontLoaderState( props ) {
-		const state = {
-			fontLoaded: false,
-			fontError: false,
-		};
-
-		this.fontLoader = loadFont( props.siteStyle, props.siteType );
-		this.fontLoader.then( () => this.setState( { fontLoaded: true } ) );
-		this.fontLoader.catch( () => this.setState( { fontError: true } ) );
-		return state;
-	}
-
-	resetFontLoaderState( props ) {
-		this.setState( this.getNewFontLoaderState( props ) );
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteStyle !== this.props.siteStyle ) {
-			this.resetFontLoaderState( this.props );
-		}
-	}
 
 	/**
 	 * Returns an interpolated site preview content block with template markers
@@ -114,17 +110,11 @@ class SiteMockups extends Component {
 			return translate( 'You’ll be able to customize this to your needs.' );
 		}
 
-		return (
-			<>
-				{ hasAddress && (
-					<span className="site-mockup__address">{ this.formatAddress( address ) }</span>
-				) }
-				{ hasAddress && hasPhone && (
-					<span className="site-mockup__tagline-separator"> &middot; </span>
-				) }
-				{ hasPhone && <span className="site-mockup__phone">{ phone }</span> }
-			</>
-		);
+		return [
+			hasAddress ? this.formatAddress( address ) : '',
+			hasAddress && hasPhone ? ' &middot; ' : '',
+			hasPhone ? phone : '',
+		].join( '' );
 	}
 
 	/**
@@ -137,53 +127,80 @@ class SiteMockups extends Component {
 		return parts.slice( 0, 2 ).join( ', ' );
 	}
 
+	handleClick = size =>
+		this.props.handleClick( this.props.verticalSlug, this.props.siteStyle, size );
+
 	render() {
-		const { siteStyle, siteType, title, verticalPreviewContent } = this.props;
-		const siteMockupClasses = classNames( {
-			'site-mockup__wrap': true,
+		const { fontUrl, shouldShowHelpTip, title, themeSlug, verticalPreviewContent } = this.props;
+
+		const siteMockupClasses = classNames( 'site-mockup__wrap', {
 			'is-empty': isEmpty( verticalPreviewContent ),
-			'is-font-loading': ! this.state.fontLoaded,
-			'is-font-error': ! this.state.fontError,
 		} );
+		const langSlug = getLocaleSlug();
+		const language = getLanguage( langSlug );
+		const isRtl = language && language.rtl;
 		const otherProps = {
-			title,
-			tagline: this.getTagline(),
-			content: this.getContent( verticalPreviewContent ),
-			siteType,
-			siteStyle,
+			fontUrl,
+			cssUrl: getThemeCssUri( themeSlug, isRtl ),
+			content: {
+				title,
+				tagline: this.getTagline(),
+				body: this.getContent( verticalPreviewContent ),
+			},
+			langSlug,
+			isRtl,
 		};
-		const fontStyle = getCSS( `.site-mockup__content`, siteStyle, siteType );
 
 		return (
 			<div className={ siteMockupClasses }>
-				{ ! this.state.fontError && <style>{ fontStyle }</style> }
-
-				<div className="site-mockup__help-tip">
-					<p>
-						{ translate(
-							'Scroll down to see your website. Once you complete setup you’ll be able to customize it further.'
-						) }
-					</p>
-					<Gridicon icon="chevron-down" />
-				</div>
-
+				{ shouldShowHelpTip && <SiteMockupHelpTip /> }
 				<div className="site-mockup__devices">
-					<SiteMockup size="desktop" { ...otherProps } />
-					<SiteMockup size="mobile" { ...otherProps } />
+					<SignupSitePreview
+						defaultViewportDevice="desktop"
+						{ ...otherProps }
+						onPreviewClick={ this.handleClick }
+					/>
+					<SignupSitePreview
+						defaultViewportDevice="phone"
+						{ ...otherProps }
+						onPreviewClick={ this.handleClick }
+					/>
 				</div>
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const siteInformation = getSiteInformation( state );
-	return {
-		title: siteInformation.title || translate( 'Your New Website' ),
-		address: siteInformation.address,
-		phone: siteInformation.phone,
-		siteStyle: getSiteStyle( state ),
-		siteType: getSiteType( state ),
-		verticalPreviewContent: getSiteVerticalPreview( state ),
-	};
-} )( SiteMockups );
+export default connect(
+	( state, ownProps ) => {
+		const siteInformation = getSiteInformation( state );
+		const siteStyle = getSiteStyle( state );
+		const siteType = getSiteType( state );
+		const styleOptions = getSiteStyleOptions( siteType );
+		const style = find( styleOptions, { id: siteStyle || 'professional' } );
+		return {
+			title: siteInformation.title || translate( 'Your New Website' ),
+			address: siteInformation.address,
+			phone: siteInformation.phone,
+			siteStyle,
+			siteType,
+			verticalPreviewContent: getSiteVerticalPreview( state ),
+			verticalSlug: getSiteVerticalSlug( state ),
+			shouldShowHelpTip:
+				'site-topic-with-preview' === ownProps.stepName ||
+				'site-information-title-with-preview' === ownProps.stepName,
+			themeSlug: style.theme,
+			fontUrl: style.fontUrl,
+		};
+	},
+	dispatch => ( {
+		handleClick: ( verticalSlug, siteStyle, size ) =>
+			dispatch(
+				recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
+					size,
+					vertical_slug: verticalSlug,
+					site_style: siteStyle || 'default',
+				} )
+			),
+	} )
+)( SiteMockups );

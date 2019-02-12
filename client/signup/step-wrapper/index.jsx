@@ -131,7 +131,9 @@ class StepWrapper extends Component {
 						{ ! hideSkip && this.renderSkip() }
 					</div>
 				</div>
+{/*
 				{ showSiteMockups && <SiteMockups /> }
+*/}
 			</>
 		);
 	}

@@ -14,13 +14,10 @@ export const siteStyleOptions = {
 			description: i18n.translate( 'Simple, yet sophisticated, with subtle, elegant typography.', {
 				comment: 'A description of a WordPress theme style.',
 			} ),
-			id: 'default',
+			id: 'professional',
 			label: 'Professional',
 			theme: 'pub/professional-business',
-			font: {
-				name: 'Crimson Text',
-				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
-			},
+			fontUrl: 'https://fonts.googleapis.com/css?family=Crimson+Text:400,700',
 			buttonSvg: (
 				<svg xmlns="http://www.w3.org/2000/svg" width="130" height="32">
 					<g fill="none" fillRule="evenodd">
@@ -39,11 +36,8 @@ export const siteStyleOptions = {
 			} ),
 			id: 'modern',
 			label: 'Modern',
-			theme: 'pub/professional-business', // this will be 'pub/modern-business'
-			font: {
-				name: 'IBM Plex Sans',
-				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
-			},
+			theme: 'pub/modern-business',
+			fontUrl: 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,700',
 			buttonSvg: (
 				<svg width="62" height="32" xmlns="http://www.w3.org/2000/svg">
 					<g fill="none" fillRule="evenodd">
@@ -62,11 +56,8 @@ export const siteStyleOptions = {
 			} ),
 			id: 'sophisticated',
 			label: 'Sophisticated',
-			theme: 'pub/professional-business', // this will be 'pub/sophisticated-business'
-			font: {
-				name: 'Poppins',
-				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
-			},
+			theme: 'pub/sophisticated-business',
+			fontUrl: 'https://fonts.googleapis.com/css?family=Poppins:400,700',
 			buttonSvg: (
 				<svg width="93" height="32" xmlns="http://www.w3.org/2000/svg">
 					<g fill="#FFF" fillRule="evenodd">
@@ -86,11 +77,8 @@ export const siteStyleOptions = {
 			} ),
 			id: 'calm',
 			label: 'Calm',
-			theme: 'pub/professional-business', // this will be 'pub/friendly-business'
-			font: {
-				name: 'Rubik',
-				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
-			},
+			theme: 'pub/calm-business',
+			fontUrl: 'https://fonts.googleapis.com/css?family=Rubik:400,700',
 			buttonSvg: (
 				<svg width="80" height="32" xmlns="http://www.w3.org/2000/svg">
 					<g transform="translate(1 8)" fill="none" fillRule="evenodd">
@@ -107,5 +95,21 @@ export const siteStyleOptions = {
 	],
 };
 
+/**
+ * Returns a theme base CSS URI.
+ *
+ * @param  {String}  themeSlug A theme slug, e.g., `pub/business`
+ * @param  {Boolean} isRtl     If the current locale is a right-to-left language
+ * @return {String}            The theme CSS URI.
+ */
+export const getThemeCssUri = ( themeSlug, isRtl ) =>
+	`https://s0.wp.com/wp-content/themes/${ themeSlug }/style${ isRtl ? '-rtl' : '' }.css`;
+
+/**
+ * Returns a style definition object
+ *
+ * @param  {String} siteType A site type/segement as selected in the onboarding flow
+ * @return {Object}          The site style definition object.
+ */
 export const getSiteStyleOptions = siteType =>
 	get( siteStyleOptions, siteType, siteStyleOptions.business );

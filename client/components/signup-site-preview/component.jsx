@@ -8,98 +8,180 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { localize, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import RootChild from 'components/root-child';
+import { getIframeSource, getIframePageContent } from 'components/signup-site-preview/utils';
 
-function getIframeContent( content ) {
-	return `<body class="home page-template-default page logged-in">
-			<div id="page" class="site">
-				<header id="masthead" class="site-header">
-					<div class="site-branding-container">
-						<div class="site-branding">
-							<p class="site-title"><a href="#" rel="home">${ content.siteTitle }</a></p>
-							<p class="site-description"><a href="#" rel="home">${ content.siteDescription }</a></p>
-							<nav id="site-navigation" class="main-navigation" aria-label="Top Menu"></nav>
-						</div>
-					</div>
-				</header>
-				<div id="content" class="site-content">
-					<section id="primary" class="content-area">
-						<main id="main" class="site-main">
-							<article class="page type-page status-publish hentry entry">
-								<div class="entry-content">${ content.entryContent }</div>
-							</article>
-						</main>
-					</section>
-				</div>
-			</div>
-		</body>`;
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+function MockupChromeMobile() {
+	return (
+		<div className="signup-site-preview__chrome-mobile">
+			<span className="signup-site-preview__chrome-label">
+				{ translate( 'Phone', {
+					comment: 'Label for a phone-sized preview of a website',
+				} ) }
+			</span>
+		</div>
+	);
+}
+
+function MockupChromeDesktop() {
+	return (
+		<div className="signup-site-preview__chrome-desktop">
+			<svg width="38" height="10">
+				<g>
+					<rect width="10" height="10" rx="5" />
+					<rect x="14" width="10" height="10" rx="5" />
+					<rect x="28" width="10" height="10" rx="5" />
+				</g>
+			</svg>
+			<span className="signup-site-preview__chrome-label">{ translate( 'Website Preview' ) }</span>
+		</div>
+	);
 }
 
 export class SignupSitePreview extends Component {
 	static propTypes = {
 		// The viewport device to show initially
 		defaultViewportDevice: PropTypes.oneOf( [ 'desktop', 'phone' ] ),
-		// External CSS to load
-		cssUrl: PropTypes.string.isRequired,
+		isRtl: PropTypes.bool,
+		langSlug: PropTypes.string,
+		cssUrl: PropTypes.string,
+		fontUrl: PropTypes.string,
 		// Iframe body content
-		content: PropTypes.string,
+		content: PropTypes.object,
+		onPreviewClick: PropTypes.func,
 	};
 
 	static defaultProps = {
 		defaultViewportDevice: 'desktop',
-		content: '',
+		isRtl: false,
+		langSlug: 'en',
+		content: {},
+		onPreviewClick: () => {},
 	};
 
-	/*
-		embed CSS
-		default body HTML
-
-	*/
 	constructor( props ) {
 		super( props );
 		this.iframe = React.createRef();
 	}
-	setIframeContent( content ) {
-		if ( ! this.iframe ) {
-			return;
-		}
-		this.iframe.contentDocument.open();
-		this.iframe.contentDocument.write( content );
-		this.iframe.contentDocument.close();
+
+	componentDidMount() {
+		this.setIframeSource();
 	}
 
-	setLoaded = () => {};
+	shouldComponentUpdate( nextProps ) {
+		if (
+			this.props.cssUrl !== nextProps.cssUrl ||
+			this.props.fontUrl !== nextProps.fontUrl ||
+			this.props.langSlug !== nextProps.langSlug
+		) {
+			this.setIframeSource();
+			return false;
+		}
+
+		if ( this.props.content.title !== nextProps.content.title ) {
+			this.setIframeContent( '.site-builder__title', nextProps.content.title );
+			return false;
+		}
+
+		if ( this.props.content.tagline !== nextProps.content.tagline ) {
+			this.setIframeContent( '.site-builder__description', nextProps.content.tagline );
+			return false;
+		}
+
+		if ( this.props.content.body !== nextProps.content.body ) {
+			this.setIframePageContent( nextProps.content );
+			return false;
+		}
+
+		return false;
+	}
+
+	setIframePageContent( content ) {
+		if ( ! this.iframe.current ) {
+			return;
+		}
+		const element = this.iframe.current.contentWindow.document.querySelector( '.entry' );
+
+		if ( element ) {
+			element.innerHTML = getIframePageContent( content );
+		}
+	}
+
+	setIframeContent( selector, content ) {
+		if ( ! this.iframe.current ) {
+			return;
+		}
+		const element = this.iframe.current.contentWindow.document.querySelector( selector );
+
+		if ( element ) {
+			element.innerHTML = content;
+		}
+	}
+
+	setOnPreviewClick = () => {
+		if ( ! this.iframe.current ) {
+			return;
+		}
+
+		this.iframe.current.contentWindow.document.querySelector( '.home' ).onclick = () =>
+			this.props.onPreviewClick( this.props.defaultViewportDevice );
+	};
+
+	setIframeIsLoading = () => {
+		if ( ! this.iframe.current ) {
+			return;
+		}
+
+		this.iframe.current.contentWindow.document
+			.querySelector( '.home' )
+			.classList.remove( 'is-loading' );
+	};
+
+	setLoaded = () => {
+		this.setOnPreviewClick();
+		this.setIframeIsLoading();
+	};
+
+	setIframeSource = () => {
+		if ( ! this.iframe.current ) {
+			return;
+		}
+		const { cssUrl, fontUrl, content, isRtl, langSlug } = this.props;
+
+		// For memory management: https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
+		URL.revokeObjectURL( this.iframe.current.src );
+
+		this.iframe.current.src = getIframeSource( content, cssUrl, fontUrl, isRtl, langSlug );
+	};
 
 	render() {
-		const { isDesktop, isPhone, content } = this.props;
-		const className = classNames( this.props.className, 'signup-site-preview', {
+		const { content, isDesktop, isPhone } = this.props;
+		const className = classNames( this.props.className, 'signup-site-preview__wrapper', {
 			'is-desktop': isDesktop,
 			'is-phone': isPhone,
 		} );
 
 		return (
-			<RootChild>
-				<div className={ className }>
-					{ /*
-
-							site mockup wrapper
-							dynamic iframe with dynamic content
-
-						*/ }
+			<div className={ className }>
+				<div className="signup-site-preview__iframe-wrapper">
+					{ isPhone ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
 					<iframe
 						ref={ this.iframe }
 						className="signup-site-preview__iframe"
-						src="about:blank"
+						title={ `${ content.title } – ${ content.tagline }` }
 						onLoad={ this.setLoaded }
-						title={ `${ content.siteTitle } – ${ content.siteDescription }` }
 					/>
 				</div>
-			</RootChild>
+			</div>
 		);
 	}
 }

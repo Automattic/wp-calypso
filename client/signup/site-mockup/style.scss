@@ -23,8 +23,8 @@
 			flex-grow: 1;
 		}
 
-		.site-mockup__viewport.is-mobile {
-			min-width: 280px;
+		.site-mockup__viewport.is-phone {
+			min-width: 300px;
 
 			.site-mockup__body {
 				height: 440px;
@@ -37,7 +37,7 @@
 	@include breakpoint( '660px-960px' ) {
 		position: relative;
 
-		.site-mockup__viewport.is-mobile {
+		.site-mockup__viewport.is-phone {
 			position: absolute;
 			top: 48px;
 			right: 8px;
@@ -61,7 +61,7 @@
 			display: none;
 		}
 
-		.site-mockup__viewport.is-mobile {
+		.site-mockup__viewport.is-phone {
 			width: 100%;
 			max-width: 480px;
 			border-radius: 12px 12px 0 0;
@@ -90,15 +90,6 @@
 		opacity: 0;
 		transform: translateY( 80px );
 	}
-
-	// Hide the tip on all steps.
-	display: none;
-
-	// Display the tip only on these steps.
-	.is-site-topic-with-preview &,
-	.is-site-information-title-with-preview & {
-		display: block;
-	}
 }
 
 // The mockups themselves, both mobile
@@ -122,7 +113,7 @@
 		height: 100%;
 	}
 
-	&.is-mobile {
+	&.is-phone {
 		border-radius: 12px;
 		width: 280px;
 		transition-delay: 80ms;

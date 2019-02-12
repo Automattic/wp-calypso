@@ -20,7 +20,6 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import { preLoadAllFonts } from 'lib/signup/font-loader';
 import { setSiteStyle } from 'state/signup/steps/site-style/actions';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
@@ -47,7 +46,6 @@ export class SiteStyleStep extends Component {
 	};
 
 	componentDidMount() {
-		preLoadAllFonts();
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
 		} );
