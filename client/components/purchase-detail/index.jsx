@@ -103,10 +103,10 @@ export default class PurchaseDetail extends PureComponent {
 			'is-placeholder': this.props.isPlaceholder,
 		} );
 
-		let requiredClass = 'purchase-detail__required-notice';
-		if ( abtest( 'gSuitePostCheckoutNotice' ) === 'enhanced' ) {
-			requiredClass = 'purchase-detail__required-error';
-		}
+		const requiredClass =
+			'enhanced' === abtest( 'gSuitePostCheckoutNotice' )
+				? 'purchase-detail__required-error'
+				: 'purchase-detail__required-notice';
 
 		return (
 			<div className={ classes } id={ id }>

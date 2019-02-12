@@ -147,7 +147,7 @@ export default {
 		defaultVariation: 'originalFlavor',
 	},
 	gSuitePostCheckoutNotice: {
-		datestamp: '20190208',
+		datestamp: '20190211',
 		variations: {
 			original: 50,
 			enhanced: 50,
