@@ -447,6 +447,7 @@ export class PlanFeatures extends Component {
 				: planConstantObj.getDescription( abtest );
 			const classes = classNames( 'plan-features__table-item', {
 				'is-placeholder': isPlaceholder,
+				'has-border-bottom': plansWithScroll,
 			} );
 
 			return (
@@ -467,6 +468,7 @@ export class PlanFeatures extends Component {
 			isLandingPage,
 			isLaunchPage,
 			planProperties,
+			plansWithScroll,
 			selectedPlan,
 			selectedSiteSlug,
 			translate,
@@ -486,7 +488,7 @@ export class PlanFeatures extends Component {
 
 			const classes = classNames(
 				'plan-features__table-item',
-				'has-border-bottom',
+				{ 'has-border-bottom': ! plansWithScroll },
 				'is-top-buttons'
 			);
 
