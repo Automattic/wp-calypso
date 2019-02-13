@@ -16,6 +16,7 @@ export default function GalleryImageSave( props ) {
 		link,
 		linkTo,
 		origUrl,
+		srcset,
 		url,
 		width,
 	} = props;
@@ -45,6 +46,7 @@ export default function GalleryImageSave( props ) {
 			data-url={ origUrl }
 			data-width={ width }
 			src={ url }
+			srcset={ srcset }
 		/>
 	);
 
