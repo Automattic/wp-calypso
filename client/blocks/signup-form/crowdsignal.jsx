@@ -4,14 +4,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
-import SocialLogo from 'social-logos';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import BackButton from 'components/back-button';
 import Button from 'components/button';
 import FormButton from 'components/forms/form-button';
 import LoggedOutForm from 'components/logged-out-form';
