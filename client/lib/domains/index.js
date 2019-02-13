@@ -283,7 +283,7 @@ function getDomainPrice( slug, productsList, currencyCode ) {
 }
 
 function getDomainSalePrice( slug, productsList, currencyCode ) {
-	const saleDiscount = get( productsList, [ slug, 'sale_discount' ], null );
+	const saleDiscount = get( productsList, [ slug, 'sale_coupon', 'discount' ], null );
 	if ( saleDiscount ) {
 		let salePrice = get( productsList, [ slug, 'cost' ], 0 );
 		salePrice += get( productsList, [ 'domain_map', 'cost' ], 0 );
