@@ -22,7 +22,7 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 				<li className="masterbar__oauth-client-current">
 					{ oauth2Client.icon && (
 						<div className="masterbar__oauth-client-logo">
-							<img src={ oauth2Client.icon } />
+							<img src={ oauth2Client.icon } alt={ oauth2Client.title } />
 						</div>
 					) }
 				</li>
@@ -54,7 +54,7 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 
 const OauthClientMasterbar = ( { oauth2Client } ) => {
 	if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-		return <CrowdsignalOauthMasterbar />;
+		return <CrowdsignalOauthMasterbar oauth2Client={ oauth2Client } />;
 	}
 
 	return <DefaultOauthClientMasterbar oauth2Client={ oauth2Client } />;
