@@ -15,16 +15,13 @@ const preProcessXGettextJSMatch = require( './preprocess-xgettextjs-match.js' );
 const formatters = require( './formatters' );
 
 module.exports = function i18nCalypso( config ) {
-	let data, matches, parserKeywords, formatter;
-
 	const keywords = config.keywords || [ 'translate' ];
-	formatter = ( config.format || 'pot' ).toLowerCase();
 
 	if ( ! config.data && ! config.inputPaths ) {
 		throw new Error( 'Must provide input `data` or `inputPaths`' );
 	}
 
-	parserKeywords = config.parserKeywords || {};
+	let parserKeywords = config.parserKeywords || {};
 
 	if ( keywords ) {
 		parserKeywords = keywords.reduce( function( output, currentKeyword ) {
@@ -62,10 +59,11 @@ module.exports = function i18nCalypso( config ) {
 		} );
 	}
 
+	let matches;
 	if ( config.data ) {
 		// If data is provided, feed it directly to the parser and call the file <unknown>
 		matches = [
-			parser.getMatches( data ).map( function( match ) {
+			parser.getMatches( config.data ).map( function( match ) {
 				match.location = '<unknown>:' + match.line;
 				return match;
 			} ),
@@ -99,6 +97,8 @@ module.exports = function i18nCalypso( config ) {
 			);
 		} );
 	}
+
+	let formatter = ( config.format || 'pot' ).toLowerCase();
 
 	if ( 'string' === typeof formatter ) {
 		formatter = formatters[ formatter ];

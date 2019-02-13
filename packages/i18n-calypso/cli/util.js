@@ -15,5 +15,5 @@ function concatAllFiles( inputFiles ) {
 }
 
 module.exports = {
-	concatAllFiles: concatAllFiles,
+	concatAllFiles,
 };

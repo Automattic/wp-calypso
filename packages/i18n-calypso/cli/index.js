@@ -66,8 +66,8 @@ const linesFile = program.linesFilter;
 const extras = Array.isArray( program.extra )
 	? program.extra
 	: program.extra
-		? [ program.extra ]
-		: null;
+	? [ program.extra ]
+	: null;
 const inputFiles = program.inputFile.length ? program.inputFile : program.args;
 
 if ( inputFiles.length === 0 ) {

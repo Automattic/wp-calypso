@@ -49,8 +49,8 @@ module.exports = function pot( matches, options ) {
 
 	matches = matches
 		.map( function( match ) {
-			const matchId = uniqueMatchId( match ),
-				firstMatch = uniqueMatchesMap[ matchId ];
+			const matchId = uniqueMatchId( match );
+			const firstMatch = uniqueMatchesMap[ matchId ];
 
 			if ( ! firstMatch ) {
 				match.lines = {};

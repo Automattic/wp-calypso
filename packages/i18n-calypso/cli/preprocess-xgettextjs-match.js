@@ -14,14 +14,13 @@
  */
 module.exports = function preProcessXGettextJSMatch( match ) {
 	const finalProps = { line: match.line };
-	let options;
-	let keyName;
 
 	if ( ! match.arguments.length ) {
 		return;
 	}
 
 	const args = match.arguments;
+	let options;
 
 	[ 'single', 'plural', 'options' ].slice( 0, args.length ).forEach( function( field, i ) {
 		if ( 'StringLiteral' === args[ i ].type ) {
@@ -41,7 +40,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 			// key might be an  Identifier (name), or a StringLiteral (value)
 			const key = property.key.name || property.key.value;
 			if ( 'StringLiteral' === property.value.type ) {
-				keyName = key === 'original' ? 'single' : key;
+				const keyName = key === 'original' ? 'single' : key;
 				finalProps[ keyName ] =
 					'comment' === key ? property.value.value : makeDoubleQuoted( property.value.extra.raw );
 			} else if ( 'ObjectExpression' === property.value.type && 'original' === key ) {
@@ -82,11 +81,11 @@ module.exports = function preProcessXGettextJSMatch( match ) {
  * @return {string}          - the concatenated string
  */
 function concatenateBinaryExpression( ASTNode ) {
-	let result;
 	if ( ASTNode.operator !== '+' ) {
 		return false;
 	}
-	result =
+
+	let result =
 		'StringLiteral' === ASTNode.left.type
 			? ASTNode.left.value
 			: concatenateBinaryExpression( ASTNode.left );
