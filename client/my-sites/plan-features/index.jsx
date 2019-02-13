@@ -8,7 +8,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, map, noop, reduce } from 'lodash';
+import { compact, get, last, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -160,6 +160,12 @@ export class PlanFeatures extends Component {
 		return true;
 	}
 
+	higherPlanAvailable() {
+		const currentPlan = get( this.props, 'sitePlan.product_slug', '' );
+		const highestPlan = last( this.props.planProperties );
+		return currentPlan !== highestPlan.planName && highestPlan.availableForPurchase;
+	}
+
 	renderCreditNotice() {
 		const {
 			canPurchase,
@@ -175,7 +181,8 @@ export class PlanFeatures extends Component {
 			! canPurchase ||
 			! bannerContainer ||
 			! showPlanCreditsApplied ||
-			! planCredits
+			! planCredits ||
+			! this.higherPlanAvailable()
 		) {
 			return null;
 		}
@@ -633,6 +640,7 @@ PlanFeatures.propTypes = {
 	selectedPlan: PropTypes.string,
 	selectedSiteSlug: PropTypes.string,
 	siteId: PropTypes.number,
+	sitePlan: PropTypes.object,
 };
 
 PlanFeatures.defaultProps = {
@@ -830,6 +838,7 @@ export default connect(
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
+			sitePlan,
 			siteType,
 			planCredits,
 			hasPlaceholders: hasPlaceholders( planProperties ),
