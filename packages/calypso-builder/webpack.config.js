@@ -116,19 +116,19 @@ function createProgressHandler() {
  * module resolution speeds up builds significantly.
  * @returns {Object} a mapping of extension name to path
  */
-function getAliasesForExtensions() {
-	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
-	const extensionsNames = fs
-		.readdirSync( extensionsDirectory )
-		.filter( filename => filename.indexOf( '.' ) === -1 ); // heuristic for finding directories
+// function getAliasesForExtensions() {
+// 	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
+// 	const extensionsNames = fs
+// 		.readdirSync( extensionsDirectory )
+// 		.filter( filename => filename.indexOf( '.' ) === -1 ); // heuristic for finding directories
 
-	const aliasesMap = {};
-	extensionsNames.forEach(
-		extensionName =>
-			( aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName ) )
-	);
-	return aliasesMap;
-}
+// 	const aliasesMap = {};
+// 	extensionsNames.forEach(
+// 		extensionName =>
+// 			( aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName ) )
+// 	);
+// 	return aliasesMap;
+// }
 
 /**
  * Converts @wordpress require into window reference
@@ -320,8 +320,8 @@ function getWebpackConfig( {
 					debug: path.resolve( __dirname, 'node_modules/debug' ),
 					store: 'store/dist/store.modern',
 					gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
-				},
-				getAliasesForExtensions()
+				}
+				// getAliasesForExtensions()
 			),
 		},
 		node: false,
