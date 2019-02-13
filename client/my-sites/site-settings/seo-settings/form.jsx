@@ -24,7 +24,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSeoTitleFormatsForSite, isJetpackSite, isRequestingSite } from 'state/sites/selectors';
+import { getSeoTitleFormatsForSite, isJetpackSite } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
@@ -80,7 +80,7 @@ export class SeoForm extends React.Component {
 	static displayName = 'SiteSettingsFormSEO';
 
 	state = {
-		...stateForSite( this.props.site ),
+		...stateForSite( this.props.selectedSite ),
 		seoTitleFormats: this.props.storedTitleFormats,
 		// dirtyFields is used to prevent prop updates
 		// from overwriting local stateful edits that
@@ -95,7 +95,7 @@ export class SeoForm extends React.Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { selectedSite: prevSite, isFetchingSite, translate } = this.props;
+		const { selectedSite: prevSite, translate } = this.props;
 		const { selectedSite: nextSite } = nextProps;
 		const { dirtyFields } = this.state;
 
@@ -127,20 +127,18 @@ export class SeoForm extends React.Component {
 		}
 
 		let nextState = {
-			...stateForSite( nextProps.site ),
+			...stateForSite( nextProps.selectedSite ),
 			seoTitleFormats: nextProps.storedTitleFormats,
 		};
 
-		if ( ! isFetchingSite ) {
-			const nextDirtyFields = new Set( dirtyFields );
-			nextDirtyFields.delete( 'seoTitleFormats' );
+		const nextDirtyFields = new Set( dirtyFields );
+		nextDirtyFields.delete( 'seoTitleFormats' );
 
-			nextState = {
-				...nextState,
-				seoTitleFormats: nextProps.storedTitleFormats,
-				dirtyFields: nextDirtyFields,
-			};
-		}
+		nextState = {
+			...nextState,
+			seoTitleFormats: nextProps.storedTitleFormats,
+			dirtyFields: nextDirtyFields,
+		};
 
 		if ( dirtyFields.has( 'seoTitleFormats' ) ) {
 			nextState = omit( nextState, [ 'seoTitleFormats' ] );
@@ -238,16 +236,14 @@ export class SeoForm extends React.Component {
 	};
 
 	refreshCustomTitles = () => {
-		const { refreshSiteData, selectedSite } = this.props;
+		const { refreshSiteData, selectedSite, siteId } = this.props;
 
-		if ( selectedSite && selectedSite.ID ) {
-			this.setState(
-				{
-					invalidatedSiteObject: selectedSite,
-				},
-				() => refreshSiteData( selectedSite.ID )
-			);
-		}
+		this.setState(
+			{
+				invalidatedSiteObject: selectedSite,
+			},
+			() => refreshSiteData( siteId )
+		);
 	};
 
 	showPreview = () => {
@@ -265,14 +261,13 @@ export class SeoForm extends React.Component {
 			siteIsJetpack,
 			showAdvancedSeo,
 			showWebsiteMeta,
-			site,
-			isFetchingSite,
+			selectedSite,
 			isSeoToolsActive,
 			isSitePrivate,
 			isSiteHidden,
 			translate,
 		} = this.props;
-		const { slug = '', URL: siteUrl = '' } = site;
+		const { slug = '', URL: siteUrl = '' } = selectedSite;
 
 		const {
 			isSubmittingForm,
@@ -301,7 +296,7 @@ export class SeoForm extends React.Component {
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
-				{ ( isSitePrivate || isSiteHidden ) && hasSupportingPlan( site.plan ) && (
+				{ ( isSitePrivate || isSiteHidden ) && hasSupportingPlan( selectedSite.plan ) && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -335,15 +330,14 @@ export class SeoForm extends React.Component {
 
 				{ ! this.props.hasSeoPreviewFeature &&
 					! this.props.hasAdvancedSEOFeature &&
-					site &&
-					site.plan && (
+					selectedSite.plan && (
 						<Banner
 							description={ translate(
 								'Get tools to optimize your site for improved performance in search engine results.'
 							) }
 							event={ 'calypso_seo_settings_upgrade_nudge' }
 							feature={ siteIsJetpack ? FEATURE_SEO_PREVIEW_TOOLS : FEATURE_ADVANCED_SEO }
-							plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
+							plan={ findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
 								type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
 								...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 							} ) }
@@ -376,7 +370,7 @@ export class SeoForm extends React.Component {
 							</Card>
 							<Card>
 								<MetaTitleEditor
-									disabled={ isFetchingSite || isSeoDisabled }
+									disabled={ isSeoDisabled }
 									onChange={ this.updateTitleFormats }
 									titleFormats={ this.state.seoTitleFormats }
 								/>
@@ -450,10 +444,10 @@ export class SeoForm extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	const { site } = ownProps;
+const mapStateToProps = state => {
+	const selectedSite = getSelectedSite( state );
 	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
-	const isAdvancedSeoEligible = site && site.plan && hasSupportingPlan( site.plan );
+	const isAdvancedSeoEligible = selectedSite.plan && hasSupportingPlan( selectedSite.plan );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 
@@ -466,11 +460,10 @@ const mapStateToProps = ( state, ownProps ) => {
 		conflictedSeoPlugin,
 		siteId,
 		siteIsJetpack,
-		selectedSite: getSelectedSite( state ),
+		selectedSite,
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
-		showAdvancedSeo: site && isAdvancedSeoEligible,
-		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
-		isFetchingSite: isRequestingSite( state, siteId ),
+		showAdvancedSeo: isAdvancedSeoEligible,
+		showWebsiteMeta: !! get( selectedSite, 'options.advanced_seo_front_page_description', '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
