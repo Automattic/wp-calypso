@@ -6,7 +6,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { map, pickBy, endsWith } from 'lodash';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -22,7 +21,7 @@ import {
 	getDisabledDataSources,
 	mediaCalypsoToGutenberg,
 } from './hooks/components/media-upload/utils';
-import { replaceHistory, setRoute } from 'state/ui/actions';
+import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 
@@ -106,7 +105,7 @@ class CalypsoifyIframe extends Component {
 		}
 
 		if ( 'postTrashed' === action ) {
-			page.back( this.props.postTypeTrashUrl );
+			this.props.navigate( this.props.postTypeTrashUrl );
 		}
 	};
 
@@ -181,6 +180,7 @@ const mapStateToProps = ( state, { postId, postType } ) => {
 const mapDispatchToProps = {
 	replaceHistory,
 	setRoute,
+	navigate,
 };
 
 export default connect(
