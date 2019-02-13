@@ -111,9 +111,18 @@ export default connect( ( state, ownProps ) => {
 	const designType = getSiteOption( state, siteId, 'design_type' );
 	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
 	const isSection = isSiteSection( state );
-	const taskStatuses = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
+	const siteChecklist = getSiteChecklist( state, siteId );
+	const siteSegment = get( siteChecklist, 'segment' );
+	const siteVerticals = get( siteChecklist, 'vertical' );
+	const taskStatuses = get( siteChecklist, 'tasks' );
 	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
-	const taskList = getTaskList( taskStatuses, designType, isSiteUnlaunched );
+	const taskList = getTaskList( {
+		taskStatuses,
+		designType,
+		isSiteUnlaunched,
+		siteSegment,
+		siteVerticals,
+	} );
 
 	const { viewMode, storedTask } = ownProps;
 

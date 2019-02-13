@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import ChecklistPromptTask from './task';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import { getChecklistPromptTaskId } from 'state/inline-help/selectors';
 
 /**
  * Stylesheet dependencies
@@ -31,31 +32,29 @@ export class ChecklistPrompt extends Component {
 	};
 
 	render() {
-		const { translate, taskList, children } = this.props;
-
+		const { translate, taskList, children, promptTaskId } = this.props;
 		const childrenArray = Children.toArray( children );
-
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 		const isFinished = ! firstIncomplete;
+		const promptTask = promptTaskId && taskList.get( promptTaskId );
+		const theTaskId = promptTask ? promptTask.id : firstIncomplete.id;
 
 		return (
 			<div className="checklist-prompt">
 				{ isFinished ? (
-					<>
-						<ChecklistPromptTask
-							description={ translate(
-								'We did it! You have completed {{a}}all the tasks{{/a}} on our checklist.',
-								{
-									components: {
-										a: <a href={ `/checklist/${ this.props.siteSlug }` } />,
-									},
-								}
-							) }
-							title={ translate( 'Your site is ready to share' ) }
-						/>
-					</>
+					<ChecklistPromptTask
+						description={ translate(
+							'We did it! You have completed {{a}}all the tasks{{/a}} on your checklist.',
+							{
+								components: {
+									a: <a href={ `/checklist/${ this.props.siteSlug }` } />,
+								},
+							}
+						) }
+						title={ translate( 'Your site is ready to share' ) }
+					/>
 				) : (
-					childrenArray.find( child => child.props.id === firstIncomplete.id )
+					childrenArray.find( child => child.props.id === theTaskId )
 				) }
 			</div>
 		);
@@ -67,6 +66,7 @@ const mapStateToProps = state => {
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		promptTaskId: getChecklistPromptTaskId( state ),
 	};
 };
 

@@ -23,8 +23,16 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
-import { showInlineHelpPopover, hideInlineHelpPopover } from 'state/inline-help/actions';
-import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import {
+	showInlineHelpPopover,
+	hideInlineHelpPopover,
+	hideChecklistPrompt,
+} from 'state/inline-help/actions';
+import {
+	isInlineHelpPopoverVisible,
+	getChecklistPromptTaskId,
+	isInlineHelpChecklistPromptVisible,
+} from 'state/inline-help/selectors';
 
 /**
  * Module variables
@@ -62,6 +70,10 @@ class InlineHelp extends Component {
 	componentDidMount() {
 		if ( globalKeyboardShortcuts ) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
+		}
+
+		if ( this.props.isChecklistPromptVisible && this.props.checklistPromptTaskId ) {
+			this.props.showInlineHelpPopover();
 		}
 	}
 
@@ -105,6 +117,7 @@ class InlineHelp extends Component {
 		debug( 'hiding inline help.' );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_close' );
 		this.props.hideInlineHelpPopover();
+		this.props.hideChecklistPrompt();
 	};
 
 	handleHelpButtonClicked = () => {
@@ -190,6 +203,8 @@ const mapStateToProps = state => {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
+		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
+		checklistPromptTaskId: getChecklistPromptTaskId( state ),
 	};
 };
 
@@ -197,6 +212,7 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	showInlineHelpPopover,
 	hideInlineHelpPopover,
+	hideChecklistPrompt,
 };
 
 export default connect(
