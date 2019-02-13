@@ -84,7 +84,6 @@ export class PlansFeaturesMain extends Component {
 			<div
 				className={ classNames(
 					'plans-features-main__group',
-					{ 'is-no-tabs': plansWithScroll },
 					'is-' + ( displayJetpackPlans ? 'jetpack' : 'wpcom' ),
 					{
 						[ `is-customer-${ customerType }` ]: ! displayJetpackPlans,
@@ -276,7 +275,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { displayJetpackPlans, isInSignup, siteId } = this.props;
+		const { displayJetpackPlans, isInSignup, plansWithScroll, siteId } = this.props;
 		let faqs = null;
 
 		if ( ! isInSignup ) {
@@ -284,7 +283,7 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		return (
-			<div className="plans-features-main">
+			<div className={ classNames( 'plans-features-main', { 'is-no-tabs': plansWithScroll } ) }>
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 				{ this.renderToggle() }
