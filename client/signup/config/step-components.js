@@ -88,9 +88,8 @@ export default {
 	'blog-themes': ThemeSelectionComponent,
 	'themes-site-selected': ThemeSelectionComponent,
 	user: UserSignupComponent,
-	'oauth2-name': UserSignupComponent,
 	'oauth2-user': UserSignupComponent,
-	'oauth2-user-crowdsignal': UserSignupComponent,
+	'oauth2-name': UserSignupComponent,
 	displayname: UserSignupComponent,
 	'reader-landing': ReaderLandingStepComponent,
 	// Steps with preview
