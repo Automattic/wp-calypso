@@ -24,7 +24,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSeoTitleFormatsForSite, isJetpackSite } from 'state/sites/selectors';
+import { getSeoTitleFormatsForSite, isJetpackSite, isRequestingSite } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
@@ -95,7 +95,7 @@ export class SeoForm extends React.Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { selectedSite: prevSite, translate } = this.props;
+		const { selectedSite: prevSite, isFetchingSite, translate } = this.props;
 		const { selectedSite: nextSite } = nextProps;
 		const { dirtyFields } = this.state;
 
@@ -131,14 +131,16 @@ export class SeoForm extends React.Component {
 			seoTitleFormats: nextProps.storedTitleFormats,
 		};
 
-		const nextDirtyFields = new Set( dirtyFields );
-		nextDirtyFields.delete( 'seoTitleFormats' );
+		if ( ! isFetchingSite ) {
+			const nextDirtyFields = new Set( dirtyFields );
+			nextDirtyFields.delete( 'seoTitleFormats' );
 
-		nextState = {
-			...nextState,
-			seoTitleFormats: nextProps.storedTitleFormats,
-			dirtyFields: nextDirtyFields,
-		};
+			nextState = {
+				...nextState,
+				seoTitleFormats: nextProps.storedTitleFormats,
+				dirtyFields: nextDirtyFields,
+			};
+		}
 
 		if ( dirtyFields.has( 'seoTitleFormats' ) ) {
 			nextState = omit( nextState, [ 'seoTitleFormats' ] );
@@ -257,6 +259,7 @@ export class SeoForm extends React.Component {
 	render() {
 		const {
 			conflictedSeoPlugin,
+			isFetchingSite,
 			siteId,
 			siteIsJetpack,
 			showAdvancedSeo,
@@ -370,7 +373,7 @@ export class SeoForm extends React.Component {
 							</Card>
 							<Card>
 								<MetaTitleEditor
-									disabled={ isSeoDisabled }
+									disabled={ isFetchingSite || isSeoDisabled }
 									onChange={ this.updateTitleFormats }
 									titleFormats={ this.state.seoTitleFormats }
 								/>
@@ -458,6 +461,7 @@ const mapStateToProps = state => {
 
 	return {
 		conflictedSeoPlugin,
+		isFetchingSite: isRequestingSite( state, siteId ),
 		siteId,
 		siteIsJetpack,
 		selectedSite,
