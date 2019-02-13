@@ -54,33 +54,33 @@ export default class VisitedEdit extends Component {
 	render() {
 		return (
 			<Fragment>
-				{ this.renderInspectorControls() }
-
 				<div className={ this.props.className }>
 					<div className="wp-block-jetpack-visited-inner-block">
-						<Notice status="info" isDismissible={ false }>
-							{ interpolateComponents( {
-								mixedString: __(
-									'This block will only appear to people who have previously visited this page {{select /}} {{input/}} times.'
-								),
-								components: {
-									input: (
-										<TextControl
-											onChange={ this.setThreshold }
-											type="number"
-											min="1"
-											defaultValue={ this.props.attributes.threshold }
-										/>
+						{ this.props.isSelected && (
+							<Notice status="info" isDismissible={ false }>
+								{ interpolateComponents( {
+									mixedString: __(
+										'This block will only appear to people who have previously visited this page {{select /}} {{input/}} times.'
 									),
-									select: (
-										<select>
-											<option value={ this.props.attributes.criteria }>at least</option>
-											<option value={ this.props.attributes.criteria }>less than</option>
-										</select>
-									),
-								},
-							} ) }
-						</Notice>
+									components: {
+										input: (
+											<TextControl
+												onChange={ this.setThreshold }
+												type="number"
+												min="1"
+												defaultValue={ this.props.attributes.threshold }
+											/>
+										),
+										select: (
+											<select>
+												<option value={ this.props.attributes.criteria }>at least</option>
+												<option value={ this.props.attributes.criteria }>less than</option>
+											</select>
+										),
+									},
+								} ) }
+							</Notice>
+						) }
 						<InnerBlocks />
 					</div>
 				</div>
