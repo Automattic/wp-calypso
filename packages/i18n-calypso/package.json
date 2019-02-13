@@ -1,6 +1,6 @@
 {
-  "name": "not-i18n-calypso-itreallyis",
-  "version": "3.0.0",
+  "name": "i18n-calypso",
+  "version": "4.0.0",
   "description": "i18n JavaScript library on top of Jed originally used in Calypso",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
