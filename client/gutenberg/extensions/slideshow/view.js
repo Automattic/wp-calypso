@@ -7,6 +7,7 @@ import { forEach } from 'lodash';
  * Internal dependencies
  */
 import createSwiper from './create-swiper';
+import ResizeObserver from 'resize-observer-polyfill';
 import swiperResize from './swiper-resize';
 
 typeof window !== 'undefined' &&
@@ -31,8 +32,12 @@ typeof window !== 'undefined' &&
 				{
 					init: swiperResize,
 					imagesReady: swiperResize,
-					resize: swiperResize,
 				}
-			);
+			).then( swiper => {
+				new ResizeObserver( () => {
+					swiperResize( swiper );
+					swiper.update();
+				} ).observe( swiper.el );
+			} );
 		} );
 	} );

@@ -8,6 +8,7 @@ import { isEqual } from 'lodash';
  * Internal dependencies
  */
 import createSwiper from './create-swiper';
+import ResizeObserver from 'resize-observer-polyfill';
 import swiperResize from './swiper-resize';
 
 class Slideshow extends Component {
@@ -25,7 +26,13 @@ class Slideshow extends Component {
 	}
 
 	componentDidMount() {
-		this.buildSwiper().then( swiper => ( this.swiperInstance = swiper ) );
+		this.buildSwiper().then( swiper => {
+			this.swiperInstance = swiper;
+			new ResizeObserver( () => {
+				swiperResize( swiper );
+				swiper.update();
+			} ).observe( swiper.el );
+		} );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -124,7 +131,6 @@ class Slideshow extends Component {
 			{
 				init: swiperResize,
 				imagesReady: swiperResize,
-				resize: swiperResize,
 			}
 		);
 }
