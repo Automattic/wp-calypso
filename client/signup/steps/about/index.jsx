@@ -32,7 +32,10 @@ import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { getSiteVerticalId } from 'state/signup/steps/site-vertical/selectors';
+import {
+	getSiteVerticalId,
+	getSiteVerticalParentId,
+} from 'state/signup/steps/site-vertical/selectors';
 import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 
@@ -62,8 +65,10 @@ class AboutStep extends Component {
 		const hasPrepopulatedVertical =
 			isValidLandingPageVertical( props.siteTopic ) &&
 			props.queryObject.vertical === props.siteTopic;
+
 		this.state = {
 			verticalId: props.verticalId,
+			verticalParentId: props.verticalParentId,
 			siteTopicValue: props.siteTopic,
 			userExperience: props.userExperience,
 			showStore: false,
@@ -107,15 +112,17 @@ class AboutStep extends Component {
 	setPressableStore = ref => ( this.pressableStore = ref );
 
 	onSiteTopicChange = ( { parent, verticalId, verticalName, verticalSlug } ) => {
+		const verticalParentId = parent || verticalId;
 		this.setState( {
 			verticalId: verticalId,
 			siteTopicValue: verticalName,
 			siteTopicSlug: verticalSlug,
+			verticalParentId,
 		} );
 
 		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', {
 			vertical_name: verticalName,
-			parent_id: parent || verticalId,
+			parent_id: verticalParentId,
 		} );
 		this.formStateController.handleFieldChange( {
 			name: 'siteTopic',
@@ -229,6 +236,7 @@ class AboutStep extends Component {
 			name: this.state.siteTopicValue,
 			slug: this.state.siteTopicSlug,
 			isUserInput: ! this.state.verticalId,
+			parentId: this.state.verticalParentId,
 		} );
 
 		//Site Goals
@@ -604,6 +612,7 @@ export default connect(
 		siteType: getSiteType( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		verticalId: getSiteVerticalId( state ),
+		verticalParentId: getSiteVerticalParentId( state ),
 		shouldHideSiteGoals:
 			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
 		shouldHideSiteTitle:
