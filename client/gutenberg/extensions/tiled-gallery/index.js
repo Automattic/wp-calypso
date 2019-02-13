@@ -11,12 +11,33 @@ import { Path, SVG } from '@wordpress/components';
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import edit from './edit';
 import save from './save';
-import { DEFAULT_LAYOUT, LAYOUT_STYLES } from './constants';
+import {
+	LAYOUT_CIRCLE,
+	LAYOUT_COLUMN,
+	LAYOUT_DEFAULT,
+	LAYOUT_SQUARE,
+	LAYOUT_STYLES,
+} from './constants';
 
 /**
  * Style dependencies
  */
 import './editor.scss';
+
+// Style names are translated. Avoid introducing an i18n dependency elsewhere (view)
+// by only including the labels here, the only place they're needed.
+//
+// Map style names to labels and merge them together.
+const styleNames = {
+	[ LAYOUT_DEFAULT ]: _x( 'Tiled mosaic', 'Tiled gallery layout' ),
+	[ LAYOUT_CIRCLE ]: _x( 'Circles', 'Tiled gallery layout' ),
+	[ LAYOUT_COLUMN ]: _x( 'Tiled columns', 'Tiled gallery layout' ),
+	[ LAYOUT_SQUARE ]: _x( 'Square tiles', 'Tiled gallery layout' ),
+};
+const layoutStylesWithLabels = LAYOUT_STYLES.map( style => ( {
+	...style,
+	label: styleNames[ style.name ],
+} ) );
 
 const blockAttributes = {
 	// Set default align
@@ -26,7 +47,7 @@ const blockAttributes = {
 	},
 	// Set default className (used with block styles)
 	className: {
-		default: `is-style-${ DEFAULT_LAYOUT }`,
+		default: `is-style-${ LAYOUT_DEFAULT }`,
 		type: 'string',
 	},
 	columns: {
@@ -109,7 +130,7 @@ export const settings = {
 		_x( 'photos', 'block search term' ),
 		_x( 'masonry', 'block search term' ),
 	],
-	styles: LAYOUT_STYLES,
+	styles: layoutStylesWithLabels,
 	supports: {
 		align: [ 'center', 'wide', 'full' ],
 		customClassName: false,
@@ -174,11 +195,11 @@ export const settings = {
 					},
 					layout: {
 						type: 'string',
-						shortcode: ( { named: { type = DEFAULT_LAYOUT } } ) => {
+						shortcode: ( { named: { type = LAYOUT_DEFAULT } } ) => {
 							// @TODO: if `type=slideshow`, return a slideshow block
 							return LAYOUT_STYLES.map( style => style.name ).includes( type )
 								? type
-								: DEFAULT_LAYOUT;
+								: LAYOUT_DEFAULT;
 						},
 					},
 				},
