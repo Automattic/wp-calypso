@@ -1,8 +1,6 @@
-/** @format */
 /**
  * External dependencies
  */
-
 import { createSlotFill } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';

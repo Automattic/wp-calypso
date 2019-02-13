@@ -1,15 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { Component } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-
 import './style.scss';
 
 export class MapMarker extends Component {

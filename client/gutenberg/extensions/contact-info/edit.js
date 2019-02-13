@@ -1,10 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { InnerBlocks } from '@wordpress/editor';
 import classnames from 'classnames';
+
 /**
  * Internal dependencies
  */
