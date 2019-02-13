@@ -8,6 +8,7 @@ import { Component } from '@wordpress/element';
  */
 import HoursRow from './hours-row';
 import apiFetch from '@wordpress/api-fetch/build/index';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const defaultLocalization = {
 	days: {
@@ -25,6 +26,7 @@ const defaultLocalization = {
 class HoursList extends Component {
 	state = {
 		localization: defaultLocalization,
+		hasFetched: false,
 	};
 
 	componentDidMount() {
@@ -35,28 +37,32 @@ class HoursList extends Component {
 		this.setState( { data: defaultLocalization }, () => {
 			apiFetch( { path: '/wpcom/v2/business-hours/localized-week' } ).then(
 				data => {
-					this.setState( { localization: data } );
+					this.setState( { localization: data, hasFetched: true } );
 				},
 				() => {
-					this.setState( { localization: defaultLocalization } );
+					this.setState( { localization: defaultLocalization, hasFetched: true } );
 				}
 			);
 		} );
 	}
 
 	render() {
-		const { className, attributes } = this.props;
+		const { className, attributes, edit } = this.props;
 		const { hours } = attributes;
-		const { localization } = this.state;
+		const { localization, hasFetched } = this.state;
 		const { startOfWeek } = localization;
 		return (
 			<dl className={ className }>
-				{ Object.keys( hours )
-					.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
-					.slice( startOfWeek )
-					.map( dayOfTheWeek => {
-						return <HoursRow day={ dayOfTheWeek } data={ localization } { ...this.props } />;
-					} ) }
+				{ hasFetched || ! edit ? (
+					Object.keys( hours )
+						.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
+						.slice( startOfWeek )
+						.map( dayOfTheWeek => {
+							return <HoursRow day={ dayOfTheWeek } data={ localization } { ...this.props } />;
+						} )
+				) : (
+					<p>{ __( 'Loading business hours' ) }</p>
+				) }
 			</dl>
 		);
 	}
