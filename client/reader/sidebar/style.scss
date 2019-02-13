@@ -64,7 +64,7 @@
 		}
 
 		.sidebar__heading {
-			color: var( --color-sidebar-text );
+			color: var( --sidebar-text-color );
 			cursor: pointer;
 			font-weight: normal;
 			margin: 0;
@@ -80,8 +80,8 @@
 			}
 
 			.count {
-				color: var( --color-sidebar-text );
-				border-color: var( --color-sidebar-text );
+				color: var( --sidebar-text-color );
+				border-color: var( --sidebar-text-color );
 				font-size: 13px;
 				padding: 2px 7px 2px 6px;
 				margin-left: 8px;
