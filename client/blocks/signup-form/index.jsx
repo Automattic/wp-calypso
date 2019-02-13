@@ -729,6 +729,7 @@ class SignupForm extends Component {
 				<CrowdsignalSignupForm
 					disabled={ this.props.disabled }
 					formFields={ this.formFields() }
+					handleSubmit={ this.handleSubmit }
 					loginLink={ logInUrl }
 					oauth2Client={ this.props.oauth2Client }
 					recordBackLinkClick={ this.recordBackLinkClick }
