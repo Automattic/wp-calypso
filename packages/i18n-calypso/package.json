@@ -19,16 +19,15 @@
   "homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/i18n-calypso#readme",
   "dependencies": {
     "commander": "^2.9.0",
-    "create-react-class": "^15.6.2",
     "debug": "^3.2.6",
-    "globby": "^8.0.1",
+    "globby": "^9.0.0",
     "hash.js": "^1.1.5",
     "interpolate-components": "1.1.1",
     "jed": "1.1.1",
-    "jstimezonedetect": "1.0.5",
+    "lodash": "^4.7.11",
     "lru": "^3.1.0",
     "moment-timezone": "^0.5.16",
-    "react": "0.14.8 || ^15.5.0 || ^16.0.0",
+    "react": "^16.6.3",
     "xgettext-js": "^2.0.0"
   },
   "devDependencies": {
