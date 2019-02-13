@@ -33,6 +33,7 @@ import {
 	isRemovable,
 	isRefundable,
 	maybeWithinRefundPeriod,
+	purchaseType,
 } from 'lib/purchases';
 import { isDataLoading } from '../utils';
 import { isDomainRegistration, isGoogleApps, isJetpackPlan, isPlan } from 'lib/products-values';
@@ -406,7 +407,7 @@ class RemovePurchase extends Component {
 				<p>
 					{ translate( 'Are you sure you want to remove %(productName)s from {{siteName/}}?', {
 						args: { productName },
-						components: { siteName: <em>{ purchase.domain }</em> },
+						components: { siteName: <em>{ purchaseType( purchase ) }</em> },
 					} ) }{' '}
 					{ isGoogleApps( purchase )
 						? translate(
