@@ -4,5 +4,10 @@
 	.components-notice__content {
 		margin: 0.5em 0;
 		font-size: 0.8em;
+
+		.components-base-control {
+			display: inline-block;
+			max-width: 8em;
+		}
 	}
 }
