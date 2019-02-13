@@ -3,7 +3,6 @@
 	position: relative;
 	.wp-block-jetpack-slideshow_container {
 		width: 100%;
-		height: 400px; // This is a default, which will be replaced programmatically
 		overflow: hidden;
 		opacity: 0;
 
@@ -16,7 +15,7 @@
 		align-items: center;
 		background: rgba( 0, 0, 0, 0.1 );
 		display: flex;
-		height: calc( 100% - 4em );
+		height: 100%;
 		justify-content: center;
 		margin: 0;
 		position: relative;
@@ -45,7 +44,7 @@
 		box-sizing: content-box;
 		padding: 12px 10px;
 		border-radius: 2px;
-		margin-top: calc( -2em - 32px );
+		margin-top: -20px;
 		transition: background-color 200ms;
 	}
 
@@ -65,8 +64,8 @@
 	}
 
 	.wp-block-jetpack-slideshow_pagination.swiper-pagination-bullets {
-		bottom: 0;
-		line-height: 4em;
+		position: relative;
+		padding-top: 1em;
 
 		.swiper-pagination-bullet {
 			background: transparent;
