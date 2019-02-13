@@ -1110,18 +1110,6 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
 };
 
 /**
- * Returns true if the site supports managing Jetpack settings remotely.
- * False otherwise.
- *
- * @param {Object} state  Global state tree
- * @param {Object} siteId Site ID
- * @return {?Boolean}     Whether site supports managing Jetpack settings remotely.
- */
-export const siteSupportsJetpackSettingsUi = ( state, siteId ) => {
-	return isJetpackMinimumVersion( state, siteId, '4.5.0' );
-};
-
-/**
  * Returns true if the site is created less than 30 mins ago.
  * False otherwise.
  *
