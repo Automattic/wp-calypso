@@ -273,13 +273,13 @@ class AddEmailAddressesCard extends React.Component {
 		page( '/checkout/' + this.props.selectedSite.slug );
 	}
 
-	handleCancel( event ) {
+	handleCancel = event => {
 		event.preventDefault();
 
 		this.props.cancelClick( this.props.selectedDomainName );
 
 		page( domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
-	}
+	};
 }
 
 const cancelClick = domainName =>
