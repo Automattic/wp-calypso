@@ -30,31 +30,14 @@ class Slideshow extends Component {
 	componentDidMount() {
 		this.buildSwiper().then( swiper => {
 			this.swiperInstance = swiper;
-			this.resizeObserver = new ResizeObserver( () => {
-				this.clearPendingRequestAnimationFrame();
-				this.pendingRequestAnimationFrame = requestAnimationFrame( () => {
-					swiperResize( swiper );
-					swiper.update();
-				} );
-			} );
-			this.resizeObserver.observe( swiper.el );
+			this.initializeResizeObserver( swiper );
 		} );
 	}
 
 	componentWillUnmount() {
-		if ( this.resizeObserver ) {
-			this.resizeObserver.disconnect();
-			this.resizeObserver = null;
-		}
+		this.clearResizeObserver();
 		this.clearPendingRequestAnimationFrame();
 	}
-
-	clearPendingRequestAnimationFrame = () => {
-		if ( this.pendingRequestAnimationFrame ) {
-			cancelAnimationFrame( this.pendingRequestAnimationFrame );
-			this.pendingRequestAnimationFrame = null;
-		}
-	};
 
 	componentDidUpdate( prevProps ) {
 		const { align, autoplay, delay, effect, images } = this.props;
@@ -71,9 +54,38 @@ class Slideshow extends Component {
 		) {
 			const { activeIndex } = this.swiperInstance;
 			this.swiperInstance && this.swiperInstance.destroy( true, true );
-			this.buildSwiper( activeIndex ).then( swiper => ( this.swiperInstance = swiper ) );
+			this.buildSwiper( activeIndex ).then( swiper => {
+				this.swiperInstance = swiper;
+				this.initializeResizeObserver( swiper );
+			} );
 		}
 	}
+
+	initializeResizeObserver = swiper => {
+		this.clearResizeObserver();
+		this.resizeObserver = new ResizeObserver( () => {
+			this.clearPendingRequestAnimationFrame();
+			this.pendingRequestAnimationFrame = requestAnimationFrame( () => {
+				swiperResize( swiper );
+				swiper.update();
+			} );
+		} );
+		this.resizeObserver.observe( swiper.el );
+	};
+
+	clearPendingRequestAnimationFrame = () => {
+		if ( this.pendingRequestAnimationFrame ) {
+			cancelAnimationFrame( this.pendingRequestAnimationFrame );
+			this.pendingRequestAnimationFrame = null;
+		}
+	};
+
+	clearResizeObserver = () => {
+		if ( this.resizeObserver ) {
+			this.resizeObserver.disconnect();
+			this.resizeObserver = null;
+		}
+	};
 
 	render() {
 		const { autoplay, className, delay, effect, images } = this.props;
