@@ -34,6 +34,13 @@
 		right: 3px;
 		width: auto;
 	}
+
+	.site-information__skip-button {
+		left: calc( 100% );
+		width: 80px;
+		color: var( --color-white );
+		text-decoration: underline;
+	}
 }
 
 .site-information__wrapper.is-single-fieldset {

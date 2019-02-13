@@ -72,6 +72,16 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	skipBusinessInformation: {
+		datestamp: '20190130',
+		variations: {
+			keep: 50,
+			skip: 50,
+		},
+		defaultVariation: 'keep',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
 	showConciergeSessionUpsell: {
 		datestamp: '20181214',
 		variations: {

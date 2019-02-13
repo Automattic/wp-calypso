@@ -85,6 +85,17 @@ export class SiteInformation extends Component {
 		this.props.submitStep( this.props.siteInformation );
 	};
 
+	handleSkip = event => {
+		event.preventDefault();
+
+		const emptySiteInformation = {};
+		each( this.props.informationFields, key => {
+			emptySiteInformation[ key ] = '';
+		} );
+
+		this.props.submitStep( emptySiteInformation );
+	};
+
 	getFieldTexts( informationType ) {
 		const { translate, siteType } = this.props;
 		switch ( informationType ) {
@@ -115,11 +126,20 @@ export class SiteInformation extends Component {
 		}
 	}
 
-	renderSubmitButton = () => (
-		<Button primary type="submit" onClick={ this.handleSubmit }>
-			{ this.props.translate( 'Continue' ) }
-		</Button>
-	);
+	renderSubmitButton = () => {
+		const { translate } = this.props;
+
+		return (
+			<>
+				<Button primary type="submit" onClick={ this.handleSubmit }>
+					{ translate( 'Continue' ) }
+				</Button>
+				<Button className="site-information__skip-button" borderless onClick={ this.handleSkip }>
+					{ translate( 'Skip this' ) }
+				</Button>
+			</>
+		);
+	};
 
 	renderContent() {
 		const { hasMultipleFieldSets, formFields } = this.props;
