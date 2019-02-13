@@ -31,7 +31,6 @@ import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
 import QueryMediaStorage from 'components/data/query-media-storage';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import PlanStorageBar from 'blocks/plan-storage/bar';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
@@ -49,7 +48,6 @@ class MediaSettingsPerformance extends Component {
 		isVideoPressAvailable: PropTypes.bool,
 		mediaStorageLimit: PropTypes.number,
 		mediaStorageUsed: PropTypes.number,
-		selectedSiteId: PropTypes.number,
 		sitePlanSlug: PropTypes.string,
 		siteSlug: PropTypes.string,
 	};
@@ -148,16 +146,11 @@ class MediaSettingsPerformance extends Component {
 	}
 
 	render() {
-		const { isVideoPressAvailable, selectedSiteId } = this.props;
+		const { isVideoPressAvailable } = this.props;
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
-				{ isVideoPressAvailable && (
-					<Card>
-						<QueryJetpackConnection siteId={ selectedSiteId } />
-						{ this.renderVideoSettings() }
-					</Card>
-				) }
+				{ isVideoPressAvailable && <Card>{ this.renderVideoSettings() }</Card> }
 				{ this.renderVideoUpgradeNudge() }
 			</div>
 		);
@@ -177,7 +170,6 @@ export default connect( state => {
 		isVideoPressAvailable,
 		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
 		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
-		selectedSiteId,
 		sitePlanSlug,
 		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};
