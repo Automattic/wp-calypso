@@ -128,7 +128,7 @@
     "html-webpack-plugin": "3.2.0",
     "i18n-calypso": "3.0.0",
     "ignore-loader": "0.1.2",
-    "immutability-helper": "2.8.1",
+    "immutability-helper": "2.9.1",
     "immutable": "3.8.2",
     "imports-loader": "0.8.0",
     "inherits": "2.0.3",
