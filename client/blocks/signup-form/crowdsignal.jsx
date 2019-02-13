@@ -54,7 +54,7 @@ class CrowdsignalSignupForm extends Component {
 		const { translate } = this.props;
 		const link = (
 			<a
-				href="https://crowdsignal.com/2012/11/12/polldaddy-using-wordpress-com-logins/"
+				href="https://en.support.wordpress.com/wpcc-faq/"
 				target="_blank"
 				rel="noopener noreferrer"
 			/>
