@@ -111,11 +111,13 @@ export class ConciergeSessionNudge extends React.Component {
 	}
 
 	header() {
-		const { translate } = this.props;
+		const { translate, receiptId } = this.props;
 		return (
 			<header className="concierge-session-nudge__header">
 				<h2 className="concierge-session-nudge__title">
-					{ translate( 'Congratulations, your site is being upgraded.' ) }
+					{ receiptId
+						? translate( 'Congratulations, your site is being upgraded.' )
+						: translate( 'Want some help?' ) }
 				</h2>
 			</header>
 		);
