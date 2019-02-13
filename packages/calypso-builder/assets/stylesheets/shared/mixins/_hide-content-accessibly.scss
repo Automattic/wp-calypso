@@ -1,0 +1,13 @@
+
+// ==========================================================================
+// Hide content accessibly mixin
+// Hides content in a way that makes it still accessible to screen readers
+// ==========================================================================
+
+@mixin hide-content-accessibly {
+	clip: rect( 1px, 1px, 1px, 1px );
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	width: 1px;
+}
