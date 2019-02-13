@@ -78,12 +78,7 @@ function SiteMockupOutlines() {
 }
 
 export class SiteMockup extends PureComponent {
-	handleClick = () =>
-		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
-			size: this.props.size,
-			vertical_slug: this.props.verticalSlug,
-			site_style: this.props.siteStyle,
-		} );
+	handleClick = () => this.props.handleClick( this.props.verticalSlug );
 
 	render() {
 		const { size, content, siteType, siteStyle, title, tagline } = this.props;
@@ -112,5 +107,14 @@ export class SiteMockup extends PureComponent {
 
 export default connect(
 	state => ( { verticalSlug: getSiteVerticalSlug( state ) } ),
-	{ recordTracksEvent }
+	( dispatch, ownProps ) => ( {
+		handleClick: verticalSlug =>
+			dispatch(
+				recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
+					size: ownProps.size,
+					vertical_slug: verticalSlug,
+					site_style: ownProps.siteStyle,
+				} )
+			),
+	} )
 )( SiteMockup );
