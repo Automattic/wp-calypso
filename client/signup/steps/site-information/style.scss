@@ -30,7 +30,7 @@
 
 	.button {
 		position: absolute;
-		bottom: 3px;
+		top: 29px;
 		right: 3px;
 		width: auto;
 	}
@@ -43,6 +43,13 @@
 
 		&:hover {
 			color: var( --color-white );
+		}
+
+		@include breakpoint( '<660px' ) {
+			position: relative;
+			margin: 0 auto;
+			left: 0;
+			top: 0;
 		}
 	}
 }
