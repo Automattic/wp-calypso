@@ -1,9 +1,8 @@
-
 // @TODO: Replace with Gutenberg variables
-$dark-gray-500: #555d66;
+$light-gray-300: #edeff0;
 
 .jetpack-seo-message-box {
-	background-color: #edeff0;
+	background-color: $light-gray-300;
 	border-radius: 4px;
 }
 
