@@ -6,6 +6,7 @@ import { memoize } from 'lodash';
 import { Notice, PanelBody, RadioControl, TextControl } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
 import { InnerBlocks, InspectorControls } from '@wordpress/editor';
+import { withSelect } from '@wordpress/data';
 import interpolateComponents from 'interpolate-components';
 
 /**
@@ -20,7 +21,7 @@ const getRadioOptions = memoize( threshold => [
 	{ label: sprintf( __( 'Show before %d views', threshold ) ), value: CRITERIA_BEFORE },
 ] );
 
-export default class VisitedEdit extends Component {
+class VisitedEdit extends Component {
 	setCriteria = criteria => this.props.setAttributes( { criteria } );
 	setThreshold = threshold => {
 		threshold.length &&
@@ -88,3 +89,10 @@ export default class VisitedEdit extends Component {
 		);
 	}
 }
+
+export default withSelect( ( select, ownProps ) => {
+	const { isBlockSelected, hasSelectedInnerBlock } = select( 'core/editor' );
+	return {
+		isSelected: isBlockSelected( ownProps.clientId ) || hasSelectedInnerBlock( ownProps.clientId ),
+	};
+} )( VisitedEdit );
