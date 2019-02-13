@@ -168,9 +168,9 @@ export class PlanFeaturesHeader extends Component {
 
 		if ( isInSignup || plansWithScroll ) {
 			return (
-				<span>
+				<div className={ 'plan-features__header-billing-info' }>
 					<span>{ billingTimeFrame }</span>
-				</span>
+				</div>
 			);
 		}
 
