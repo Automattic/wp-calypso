@@ -13,6 +13,7 @@ import swiperResize from './swiper-resize';
 
 class Slideshow extends Component {
 	pendingRequestAnimationFrame = null;
+	resizeObserver = null;
 	static defaultProps = {
 		effect: 'slide',
 	};
@@ -29,17 +30,22 @@ class Slideshow extends Component {
 	componentDidMount() {
 		this.buildSwiper().then( swiper => {
 			this.swiperInstance = swiper;
-			new ResizeObserver( () => {
+			this.resizeObserver = new ResizeObserver( () => {
 				this.clearPendingRequestAnimationFrame();
 				this.pendingRequestAnimationFrame = requestAnimationFrame( () => {
 					swiperResize( swiper );
 					swiper.update();
 				} );
-			} ).observe( swiper.el );
+			} );
+			this.resizeObserver.observe( swiper.el );
 		} );
 	}
 
 	componentWillUnmount() {
+		if ( this.resizeObserver ) {
+			this.resizeObserver.disconnect();
+			this.resizeObserver = null;
+		}
 		this.clearPendingRequestAnimationFrame();
 	}
 
