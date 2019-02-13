@@ -1,7 +1,6 @@
 const SIXTEEN_BY_NINE = 16 / 9;
 const MAX_HEIGHT_PERCENT_OF_WINDOW_HEIGHT = 0.8;
 const SANITY_MAX_HEIGHT = 600;
-const PAGINATION_HEIGHT = '4em';
 
 export default function swiperResize( swiper ) {
 	const img = swiper.el.querySelector( '.swiper-slide[data-swiper-slide-index="0"] img' );
@@ -15,6 +14,11 @@ export default function swiperResize( swiper ) {
 			? window.innerHeight * MAX_HEIGHT_PERCENT_OF_WINDOW_HEIGHT
 			: SANITY_MAX_HEIGHT;
 	const swiperHeight = Math.min( swiper.width / sanityAspectRatio, sanityHeight );
-	swiper.el.style.height = `calc( ${ Math.floor( swiperHeight ) }px + ${ PAGINATION_HEIGHT } )`;
+	const wrapperHeight = `${ Math.floor( swiperHeight ) }px`;
+	const buttonTop = `${ Math.floor( swiperHeight / 2 ) }px`;
+
 	swiper.el.classList.add( 'wp-swiper-initialized' );
+	swiper.wrapperEl.style.height = wrapperHeight;
+	swiper.el.querySelector( '.wp-block-jetpack-slideshow_button-prev' ).style.top = buttonTop;
+	swiper.el.querySelector( '.wp-block-jetpack-slideshow_button-next' ).style.top = buttonTop;
 }
