@@ -73,6 +73,10 @@ $tiled-gallery-max-column-count: 20;
 		margin-top: $tiled-gallery-gutter;
 	}
 
+	> img {
+		background-color: lighten( $gray, 30% );
+	}
+
 	> a,
 	> a > img,
 	> img {
