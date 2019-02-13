@@ -322,7 +322,7 @@ export class SharingService extends Component {
 			 * so it behaves differently.
 			 */
 			if (
-				this.isMailchimpService() &&
+				get( nextProps, 'service.type' ) !== 'publicize' &&
 				this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts )
 			) {
 				const account = find( nextProps.availableExternalAccounts, { isConnected: false } );
