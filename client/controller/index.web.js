@@ -98,6 +98,7 @@ export function redirectLoggedOut( context, next ) {
 
 		// force full page reload to avoid SSR hydration issues.
 		window.location = login( loginParameters );
+		return;
 	}
 	next();
 }
