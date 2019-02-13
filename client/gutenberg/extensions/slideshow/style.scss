@@ -1,6 +1,6 @@
 .wp-block-jetpack-slideshow {
-	position: relative;
 
+	position: relative;
 	.wp-block-jetpack-slideshow_container {
 		width: 100%;
 		height: 400px; // This is a default, which will be replaced programmatically
@@ -21,6 +21,10 @@
 		margin: 0;
 		position: relative;
 		width: 100%;
+	}
+
+	.swiper-container-fade .wp-block-jetpack-slideshow_slide {
+		background: $gray-light;
 	}
 
 	.wp-block-jetpack-slideshow_image {
