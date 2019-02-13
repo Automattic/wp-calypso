@@ -12,7 +12,7 @@ const { execSync } = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
-const AssetsWriter = require( './server/bundler/assets-writer' );
+// const AssetsWriter = require( './server/bundler/assets-writer' );
 const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
@@ -24,15 +24,15 @@ const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' 
 /**
  * Internal dependencies
  */
-const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
-const config = require( './server/config' );
+// const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
+// const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
 
 /**
  * Internal variables
  */
-const calypsoEnv = config( 'env_id' );
-const bundleEnv = config( 'env' );
+const calypsoEnv = 'development'; // config( 'env_id' );
+const bundleEnv = 'development'; // config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
 const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
@@ -40,7 +40,7 @@ const shouldMinify =
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
-const codeSplit = config.isEnabled( 'code-splitting' );
+const codeSplit = true; // config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 
 /**
@@ -234,7 +234,7 @@ function getWebpackConfig( {
 								configFile: path.resolve( __dirname, 'babel.config.js' ),
 								babelrc: false,
 								cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
-								cacheIdentifier,
+								// cacheIdentifier,
 							},
 						},
 					],
@@ -329,7 +329,7 @@ function getWebpackConfig( {
 			! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 			new webpack.DefinePlugin( {
 				'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
-				PROJECT_NAME: JSON.stringify( config( 'project' ) ),
+				PROJECT_NAME: JSON.stringify( 'wordpress-com' ),
 				global: 'window',
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
@@ -342,10 +342,10 @@ function getWebpackConfig( {
 			new WebpackRTLPlugin( {
 				minify: ! isDevelopment,
 			} ),
-			new AssetsWriter( {
-				filename: 'assets.json',
-				path: path.join( __dirname, 'server', 'bundler' ),
-			} ),
+			// new AssetsWriter( {
+			// 	filename: 'assets.json',
+			// 	path: path.join( __dirname, 'server', 'bundler' ),
+			// } ),
 			new DuplicatePackageCheckerPlugin(),
 			shouldCheckForCycles &&
 				new CircularDependencyPlugin( {
@@ -396,11 +396,11 @@ function getWebpackConfig( {
 		webpackConfig.entry.build.unshift( 'webpack-hot-middleware/client' );
 	}
 
-	if ( ! config.isEnabled( 'desktop' ) ) {
-		webpackConfig.plugins.push(
-			new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
-		);
-	}
+	// if ( ! config.isEnabled( 'desktop' ) ) {
+	// 	webpackConfig.plugins.push(
+	// 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
+	// 	);
+	// }
 
 	return webpackConfig;
 }
