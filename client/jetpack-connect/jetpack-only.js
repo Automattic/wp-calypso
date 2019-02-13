@@ -1,6 +1,6 @@
 /**
  * High order component that helps us allow only Jetpack sites.
- * - Redirects to `/plans/:site` if the current site is not a Jetpack site.
+ * - Redirects to `/plans/my-plan/:site` if the current site is not a Jetpack site.
  * - Redirects to `/jetpack/connect` if the current site is invalid or not set.
  * - Will not render the wrapped component if the site is not a valid Jetpack site.
  */
@@ -28,8 +28,8 @@ const jetpackOnly = WrappedComponent => {
 			const { notJetpack, siteId, siteSlug } = this.props;
 
 			if ( notJetpack ) {
-				// Redirect to /plans/:site if this is not a Jetpack site
-				page.redirect( `/plans/${ siteSlug }` );
+				// Redirect to My Plan page if this is not a Jetpack site
+				page.redirect( `/plans/my-plan/${ siteSlug }` );
 			} else if ( ! siteId ) {
 				// Redirect to /jetpack/connect if this is not a valid connected site
 				page.redirect( `/jetpack/connect` );
