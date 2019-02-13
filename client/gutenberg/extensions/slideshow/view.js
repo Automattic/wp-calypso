@@ -16,6 +16,7 @@ typeof window !== 'undefined' &&
 		forEach( slideshowBlocks, slideshowBlock => {
 			const { autoplay, delay, effect } = slideshowBlock.dataset;
 			const slideshowContainer = slideshowBlock.getElementsByClassName( 'swiper-container' )[ 0 ];
+			let pendingRequestAnimationFrame = null;
 			createSwiper(
 				slideshowContainer,
 				{
@@ -35,8 +36,14 @@ typeof window !== 'undefined' &&
 				}
 			).then( swiper => {
 				new ResizeObserver( () => {
-					swiperResize( swiper );
-					swiper.update();
+					if ( pendingRequestAnimationFrame ) {
+						cancelAnimationFrame( pendingRequestAnimationFrame );
+						pendingRequestAnimationFrame = null;
+					}
+					pendingRequestAnimationFrame = requestAnimationFrame( () => {
+						swiperResize( swiper );
+						swiper.update();
+					} );
 				} ).observe( swiper.el );
 			} );
 		} );
