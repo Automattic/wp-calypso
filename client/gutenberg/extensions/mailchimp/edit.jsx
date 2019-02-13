@@ -190,6 +190,7 @@ class MailchimpSubscribeEdit extends Component {
 							disabled
 							placeholder={ emailPlaceholder }
 							onChange={ () => false }
+							title={ __( 'You can edit the email placeholder in the sidebar.' ) }
 							type="email"
 						/>
 						<div className="wp-block-jetpack-mailchimp_button">
