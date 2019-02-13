@@ -147,10 +147,7 @@ $plan-features-sidebar-width: 272px;
 		background: #f6f6f6;
 	}
 
-}
-
-.is-no-tabs {
-	.plan-features__table-item {
+	.is-no-tabs & {
 		border-right: 0;
 		&:nth-child( 5 ) {
 			border-right: solid 1px lighten( $gray, 27% );
