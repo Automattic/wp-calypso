@@ -2,12 +2,14 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
+import { Placeholder } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch/build/index';
 
 /**
  * Internal dependencies
  */
 import HoursRow from './hours-row';
-import apiFetch from '@wordpress/api-fetch/build/index';
+import { icon } from 'gutenberg/extensions/business-hours';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const defaultLocalization = {
@@ -61,7 +63,7 @@ class HoursList extends Component {
 							return <HoursRow day={ dayOfTheWeek } data={ localization } { ...this.props } />;
 						} )
 				) : (
-					<p>{ __( 'Loading business hours' ) }</p>
+					<Placeholder icon={ icon } label={ __( 'Loading business hours' ) } />
 				) }
 			</dl>
 		);
