@@ -1,5 +1,3 @@
-/** @format */
-/* eslint-disable */
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { connect } from 'react-redux';
 import Card from 'components/card';
 import Button from 'components/button';
 import { recordTracksEvent } from 'state/analytics/actions';
-/* eslint-enable */
+
 class ReaderLandingStepContent extends PureComponent {
 	handleButtonClick = () => {
 		this.props.recordTracksEvent( 'calypso_signup_reader_landing_cta' );
