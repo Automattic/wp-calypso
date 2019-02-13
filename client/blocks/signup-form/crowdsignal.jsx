@@ -26,21 +26,18 @@ import './crowdsignal.scss';
 class CrowdsignalSignupForm extends Component {
 
 	static propTypes = {
-		// formFields: PropTypes.,
 		disabled: PropTypes.bool,
 		handleSocialResponse: PropTypes.func,
 		handleSubmit: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
 		loginLink: PropTypes.string,
 		oauth2Client: PropTypes.object,
-		// socialService: PropTypes.,
-		// socialServiceResponse: PropTypes.
 		recordBackLinkClick: PropTypes.func,
 		submitting: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 	};
 
-	defaultProps = {
+	static defaultProps = {
 		disabled: false,
 		submitting: false,
 	};

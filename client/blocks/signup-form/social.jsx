@@ -27,7 +27,7 @@ class SocialSignupForm extends Component {
 		socialServiceResponse: PropTypes.object,
 	};
 
-	defaultProps = {
+	static defaultProps = {
 		compact: false,
 	};
 
