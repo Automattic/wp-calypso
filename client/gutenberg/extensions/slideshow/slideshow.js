@@ -3,12 +3,12 @@
  */
 import { Component, createRef } from '@wordpress/element';
 import { isEqual } from 'lodash';
+import ResizeObserver from 'resize-observer-polyfill';
 
 /**
  * Internal dependencies
  */
 import createSwiper from './create-swiper';
-import ResizeObserver from 'resize-observer-polyfill';
 import swiperResize from './swiper-resize';
 
 class Slideshow extends Component {
