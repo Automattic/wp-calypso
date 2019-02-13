@@ -4,8 +4,20 @@
 		padding-top: 19px; // popular banner height adjustment
 	}
 
+	@include breakpoint( '660px-1280px' ) {
+		width: 130%;
+		margin-left: -15%;
+	}
+
 	+ .faq {
 		margin-top: 20px;
+	}
+}
+
+.plans-features-main {
+	@include breakpoint( '660px-1280px' ) {
+		width: 100%;
+		overflow: hidden;
 	}
 }
 
