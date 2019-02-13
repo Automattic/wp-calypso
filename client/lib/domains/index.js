@@ -283,15 +283,24 @@ function getDomainPrice( slug, productsList, currencyCode ) {
 }
 
 function getDomainSalePrice( slug, productsList, currencyCode ) {
-	const saleDiscount = get( productsList, [ slug, 'sale_coupon', 'discount' ], null );
-	if ( saleDiscount ) {
-		let salePrice = get( productsList, [ slug, 'cost' ], 0 );
-		salePrice += get( productsList, [ 'domain_map', 'cost' ], 0 );
-		salePrice *= ( 100 - saleDiscount ) / 100;
-		return formatCurrency( salePrice, currencyCode );
+	// TODO: Need to check sale_coupon expires date to make sure it's still valid.
+	const saleCoupon = get( productsList, [ slug, 'sale_coupon' ], null );
+
+	if ( ! saleCoupon ) {
+		return null;
 	}
 
-	return null;
+	const { purchase_type, discount } = saleCoupon;
+
+	// Only return the sale price here if the coupon is for new purchases.
+	if ( purchase_type && 1 !== purchase_type ) {
+		return null;
+	}
+
+	let salePrice = get( productsList, [ slug, 'cost' ], 0 );
+	salePrice += get( productsList, [ 'domain_map', 'cost' ], 0 );
+	salePrice *= ( 100 - discount ) / 100;
+	return formatCurrency( salePrice, currencyCode );
 }
 
 function getAvailableTlds( query = {} ) {
