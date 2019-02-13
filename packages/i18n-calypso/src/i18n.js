@@ -16,9 +16,13 @@ import { EventEmitter } from 'events';
 import numberFormat from './number-format';
 
 /**
- * Constants
+ * Module variables
  */
 const debug = debugFactory( 'i18n-calypso' );
+
+/**
+ * Constants
+ */
 const decimal_point_translation_key = 'number_format_decimals';
 const thousands_sep_translation_key = 'number_format_thousands_sep';
 
@@ -53,8 +57,6 @@ function simpleArguments( args ) {
  */
 function normalizeTranslateArguments( args ) {
 	const original = args[ 0 ];
-	let options = {};
-	let i;
 
 	// warn about older deprecated syntax
 	if (
@@ -77,7 +79,8 @@ function normalizeTranslateArguments( args ) {
 
 	// options could be in position 0, 1, or 2
 	// sending options as the first object is deprecated and will raise a warning
-	for ( i = 0; i < args.length; i++ ) {
+	let options = {};
+	for ( let i = 0; i < args.length; i++ ) {
 		if ( typeof args[ i ] === 'object' ) {
 			options = args[ i ];
 		}
@@ -147,10 +150,8 @@ function getTranslationFromJed( jed, options ) {
 }
 
 function getTranslation( i18n, options ) {
-	let i, lookup;
-
-	for ( i = translationLookup.length - 1; i >= 0; i-- ) {
-		lookup = translationLookup[ i ]( Object.assign( {}, options ) );
+	for ( let i = translationLookup.length - 1; i >= 0; i-- ) {
+		const lookup = translationLookup[ i ]( Object.assign( {}, options ) );
 		// Only get the translation from jed if it exists.
 		if ( i18n.state.locale[ lookup.original ] ) {
 			return getTranslationFromJed( i18n.state.jed, lookup );
@@ -204,11 +205,10 @@ I18N.prototype.emit = function( ...args ) {
  * @param  {Int|object} options  Number of decimal places or options object (optional)
  * @return {string}         Formatted number as string
  */
-I18N.prototype.numberFormat = function( number ) {
-	const options = arguments[ 1 ] || {},
-		decimals = typeof options === 'number' ? options : options.decimals || 0,
-		decPoint = options.decPoint || this.state.numberFormatSettings.decimal_point || '.',
-		thousandsSep = options.thousandsSep || this.state.numberFormatSettings.thousands_sep || ',';
+I18N.prototype.numberFormat = function( number, options = {} ) {
+	const decimals = typeof options === 'number' ? options : options.decimals || 0;
+	const decPoint = options.decPoint || this.state.numberFormatSettings.decimal_point || '.';
+	const thousandsSep = options.thousandsSep || this.state.numberFormatSettings.thousands_sep || ',';
 
 	return numberFormat( number, decimals, decPoint, thousandsSep );
 };
@@ -220,13 +220,10 @@ I18N.prototype.configure = function( options ) {
 
 I18N.prototype.setLocale = function( localeData ) {
 	if ( localeData && localeData[ '' ] && localeData[ '' ][ 'key-hash' ] ) {
-		let hashLength;
-		let minHashLength;
-		let maxHashLength;
 		const keyHash = localeData[ '' ][ 'key-hash' ];
 
-		const transform = function( string, innerHashLength ) {
-			const lookupPrefix = innerHashLength === false ? '' : String( innerHashLength );
+		const transform = function( string, hashLength ) {
+			const lookupPrefix = hashLength === false ? '' : String( hashLength );
 			if ( typeof hashCache[ lookupPrefix + string ] !== 'undefined' ) {
 				return hashCache[ lookupPrefix + string ];
 			}
@@ -234,23 +231,23 @@ I18N.prototype.setLocale = function( localeData ) {
 				.update( string )
 				.digest( 'hex' );
 
-			if ( innerHashLength ) {
-				return ( hashCache[ lookupPrefix + string ] = hash.substr( 0, innerHashLength ) );
+			if ( hashLength ) {
+				return ( hashCache[ lookupPrefix + string ] = hash.substr( 0, hashLength ) );
 			}
 
 			return ( hashCache[ lookupPrefix + string ] = hash );
 		};
 
-		const generateLookup = function( innerHashLength ) {
+		const generateLookup = function( hashLength ) {
 			return function( options ) {
 				if ( options.context ) {
 					options.original = transform(
 						options.context + String.fromCharCode( 4 ) + options.original,
-						innerHashLength
+						hashLength
 					);
 					delete options.context;
 				} else {
-					options.original = transform( options.original, innerHashLength );
+					options.original = transform( options.original, hashLength );
 				}
 
 				return options;
@@ -263,13 +260,13 @@ I18N.prototype.setLocale = function( localeData ) {
 			} else {
 				const variableHashLengthPos = keyHash.substr( 5 ).indexOf( '-' );
 				if ( variableHashLengthPos < 0 ) {
-					hashLength = Number( keyHash.substr( 5 ) );
+					const hashLength = Number( keyHash.substr( 5 ) );
 					translationLookup.push( generateLookup( hashLength ) );
 				} else {
-					minHashLength = Number( keyHash.substr( 5, variableHashLengthPos ) );
-					maxHashLength = Number( keyHash.substr( 6 + variableHashLengthPos ) );
+					const minHashLength = Number( keyHash.substr( 5, variableHashLengthPos ) );
+					const maxHashLength = Number( keyHash.substr( 6 + variableHashLengthPos ) );
 
-					for ( hashLength = minHashLength; hashLength <= maxHashLength; hashLength++ ) {
+					for ( let hashLength = minHashLength; hashLength <= maxHashLength; hashLength++ ) {
 						translationLookup.push( generateLookup( hashLength ) );
 					}
 				}
@@ -373,11 +370,10 @@ I18N.prototype.hasTranslation = function() {
  * @return {string|React-components} translated text or an object containing React children that can be inserted into a parent component
  */
 I18N.prototype.translate = function() {
-	let translation, sprintfArgs, errorMethod, optionsString, cacheable;
-
 	const options = normalizeTranslateArguments( arguments );
 
-	cacheable = ! options.components;
+	let optionsString;
+	let cacheable = ! options.components;
 	if ( cacheable ) {
 		// Safe JSON stringification here to catch Circular JSON error
 		// caused by passing a React component into args where only scalars are allowed
@@ -388,7 +384,7 @@ I18N.prototype.translate = function() {
 		}
 
 		if ( optionsString ) {
-			translation = this.state.translations.get( optionsString );
+			const translation = this.state.translations.get( optionsString );
 			// Return the cached translation.
 			if ( translation ) {
 				return translation;
@@ -396,7 +392,7 @@ I18N.prototype.translate = function() {
 		}
 	}
 
-	translation = getTranslation( this, options );
+	let translation = getTranslation( this, options );
 	if ( ! translation ) {
 		// This purposefully calls jed for a case where there is no translation,
 		// so that jed gives us the expected object with English text.
@@ -405,7 +401,7 @@ I18N.prototype.translate = function() {
 
 	// handle any string substitution
 	if ( options.args ) {
-		sprintfArgs = Array.isArray( options.args ) ? options.args.slice( 0 ) : [ options.args ];
+		const sprintfArgs = Array.isArray( options.args ) ? options.args.slice( 0 ) : [ options.args ];
 		sprintfArgs.unshift( translation );
 		try {
 			translation = Jed.sprintf.apply( Jed, sprintfArgs );
@@ -413,7 +409,7 @@ I18N.prototype.translate = function() {
 			if ( ! window || ! window.console ) {
 				return;
 			}
-			errorMethod = this.throwErrors ? 'error' : 'warn';
+			const errorMethod = this.throwErrors ? 'error' : 'warn';
 			if ( typeof error !== 'string' ) {
 				window.console[ errorMethod ]( error );
 			} else {
@@ -467,4 +463,4 @@ I18N.prototype.registerTranslateHook = function( callback ) {
 	this.translateHooks.push( callback );
 };
 
-module.exports = I18N;
+export default I18N;
