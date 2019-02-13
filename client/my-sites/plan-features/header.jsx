@@ -89,7 +89,7 @@ export class PlanFeaturesHeader extends Component {
 				{ planLevelsMatch( selectedPlan, planType ) && (
 					<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
 				) }
-				{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular1' ) }</PlanPill> }
+				{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
 				{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
 				{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
 				{ this.isPlanCurrent() && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
