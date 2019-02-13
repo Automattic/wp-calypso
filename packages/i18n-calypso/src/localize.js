@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React from 'react';
-import createClass from 'create-react-class';
 
 /**
  * Localize a React component
@@ -26,34 +25,27 @@ export default function( i18n ) {
 	return function( ComposedComponent ) {
 		const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
 
-		const component = createClass( {
-			displayName: 'Localized(' + componentName + ')',
+		return class extends React.Component {
+			static displayName = 'Localized(' + componentName + ')';
+
+			boundForceUpdate = this.forceUpdate.bind( this );
 
 			componentDidMount() {
-				this.boundForceUpdate = this.forceUpdate.bind( this );
-				i18n.stateObserver.addListener( 'change', this.boundForceUpdate );
-			},
+				i18n.on( 'change', this.boundForceUpdate );
+			}
 
 			componentWillUnmount() {
-				// in some cases, componentWillUnmount is called before componentDidMount
-				// Supposedly fixed in React 15.1.0: https://github.com/facebook/react/issues/2410
-				if ( this.boundForceUpdate ) {
-					i18n.stateObserver.removeListener( 'change', this.boundForceUpdate );
-				}
-			},
+				i18n.off( 'change', this.boundForceUpdate );
+			}
 
 			render() {
-				const props = Object.assign(
-					{
-						locale: i18n.getLocaleSlug(),
-					},
-					this.props,
-					i18nProps
-				);
+				const props = {
+					locale: i18n.getLocaleSlug(),
+					...this.props,
+					...i18nProps,
+				};
 				return <ComposedComponent { ...props } />;
-			},
-		} );
-		component._composedComponent = ComposedComponent;
-		return component;
+			}
+		};
 	};
 }
