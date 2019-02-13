@@ -17,6 +17,7 @@ import FormButton from 'components/forms/form-button';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import WordPressLogo from 'components/wordpress-logo';
 import SocialSignupForm from './social';
 
 /**
@@ -104,7 +105,7 @@ class CrowdsignalSignupForm extends Component {
 							</p>
 
 							<Button primary href={ this.props.loginLink } className="signup-form__crowdsignal-wpcom">
-								<Gridicon icon="my-sites" size={ 20 } />
+								<WordPressLogo size={ 20 } />
 								<span>{ translate( 'Sign up with WordPress.com' ) }</span>
 							</Button>
 							{ this.props.isSocialSignupEnabled && (
