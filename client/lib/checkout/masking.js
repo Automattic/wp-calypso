@@ -91,10 +91,28 @@ fieldMasks.cvv = {
 };
 
 // `document` is an EBANX field. Currently used for Brazilian CPF numbers
-// See isValidCPF() / ebanx.js
+// See isValidCPF()/isValidCNPJ() / ebanx.js
 fieldMasks.document = {
 	mask: function( previousValue, nextValue ) {
+		if ( nextValue.length > 14 ) {
+			// CNPJ
+			const digits = nextValue.replace( /[^0-9]/g, '' ),
+				string =
+					digits.slice( 0, 2 ) +
+					'.' +
+					digits.slice( 2, 5 ) +
+					'.' +
+					digits.slice( 5, 8 ) +
+					'/' +
+					digits.slice( 8, 12 ) +
+					'-' +
+					digits.slice( 12, 14 );
+
+			return string.replace( /^[\s\.\-]+|[\s\.\-]+$/g, '' );
+		}
+
 		const digits = nextValue.replace( /[^0-9]/g, '' ),
+			// CPF
 			string =
 				digits.slice( 0, 3 ) +
 				'.' +

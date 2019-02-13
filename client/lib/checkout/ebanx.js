@@ -5,7 +5,7 @@
  */
 import i18n from 'i18n-calypso';
 import { isUndefined, isEmpty, pick } from 'lodash';
-import { CPF } from 'cpf_cnpj';
+import { CPF, CNPJ } from 'cpf_cnpj';
 
 /**
  * Internal dependencies
@@ -45,9 +45,19 @@ export function shouldRenderAdditionalCountryFields( countryCode = '' ) {
  * @param {String} cpf - a Brazilian tax identification number
  * @returns {Boolean} Whether the cpf is valid or not
  */
-
 export function isValidCPF( cpf = '' ) {
 	return CPF.isValid( cpf );
+}
+
+/**
+ * CNPJ number (Cadastro Nacional da Pessoa Jurídica ) is the Brazilian tax identification number for companies.
+ * Total of 14 digits: 8 digits identify the company, a slash, 4 digit to identify the branch, followed by 2 verification numbers . E.g., 67.762.675/0001-49
+ *
+ * @param {String} cnpj - a Brazilian company tax identification number
+ * @returns {Boolean} Whether the cnpj is valid or not
+ */
+export function isValidCNPJ( cnpj = '' ) {
+	return CNPJ.isValid( cnpj );
 }
 
 /**
@@ -63,7 +73,7 @@ export function ebanxFieldRules( country ) {
 		{
 			document: {
 				description: i18n.translate( 'Taxpayer Identification Number' ),
-				rules: [ 'validCPF' ],
+				rules: [ 'validBrazilTaxId' ],
 			},
 
 			'street-number': {
