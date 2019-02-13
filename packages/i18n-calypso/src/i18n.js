@@ -186,6 +186,18 @@ function I18N() {
 I18N.throwErrors = false;
 I18N.prototype.moment = moment;
 
+I18N.prototype.on = function( ...args ) {
+	this.stateObserver.on( ...args );
+};
+
+I18N.prototype.off = function( ...args ) {
+	this.stateObserver.off( ...args );
+};
+
+I18N.prototype.emit = function( ...args ) {
+	this.stateObserver.emit( ...args );
+};
+
 /**
  * Formats numbers using locale settings and/or passed options
  * @param  {String|Number|Int}  number to format (required)
