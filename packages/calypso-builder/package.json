@@ -1,0 +1,35 @@
+{
+	"name": "@automattic/calypso-builder",
+	"version": "1.0.0-alpha.0",
+	"description": "Calypso builder",
+	"author": "Automattic",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"calypso",
+		"wordpress",
+		"webpack",
+		"config"
+	],
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/calypso-builder/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Automattic/wp-calypso.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"engines": {
+		"node": ">=8",
+		"npm": ">=6.0.0"
+	},
+	"main": "index.js",
+	"dependencies": {
+		"babel-loader": "^8.0.5",
+		"source-map-loader": "^0.2.4",
+		"webpack-bundle-analyzer": "^3.0.3",
+		"webpack-livereload-plugin": "^2.2.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}
