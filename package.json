@@ -203,7 +203,7 @@
     "uuid": "3.3.2",
     "valid-url": "1.0.9",
     "webpack": "4.28.1",
-    "webpack-bundle-analyzer": "3.0.3",
+    "webpack-bundle-analyzer": "3.0.4",
     "webpack-cli": "3.2.1",
     "webpack-dev-middleware": "3.5.1",
     "webpack-rtl-plugin": "1.8.0",
