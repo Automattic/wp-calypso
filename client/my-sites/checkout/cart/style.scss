@@ -1,5 +1,5 @@
 .cart__header {
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var( --color-border-subtle );
 
 	&.is-compact {
 		padding: 11px 15px;
@@ -17,7 +17,7 @@
 	.cart-item {
 		list-style: none;
 		display: block;
-		border-bottom: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var( --color-border-subtle );
 		padding-bottom: 15px;
 		margin-bottom: 15px;
 		position: relative;
@@ -108,26 +108,42 @@
 
 	.cart__total {
 		color: var( --color-text-subtle );
+		display: table;
 		font-size: 14px;
 
+		.cart__total-row.grand-total {
+			display: table-footer-group;
+		}
+
+		.cart__total-row {
+			display: table-row;
+		}
+
 		.cart__total-label {
-			display: inline-block;
-			width: 70%;
+			display: table-cell;
+			width: 100%;
 		}
 
 		.cart__total-amount {
-			display: inline-block;
+			display: table-cell;
 			text-align: right;
-			width: 30%;
+			width: auto;
 		}
 
-		.grand-total {
+		.cart__total-amount.last-cell {
+			padding-bottom: 5px;
+			border-bottom: 1px solid var( --color-border-subtle );
+		}
+
+		.cart__total-amount.grand-total {
 			font-weight: 600;
+			padding-top: 5px;
+			margin-top: 5px;
 		}
 	}
 
 	.cart__total-divider {
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		height: 0;
 		width: 30%;
 		margin-left: 70%;
@@ -149,7 +165,7 @@
 
 		form {
 			display: block;
-			border-top: 1px solid var( --color-neutral-0 );
+			border-top: 1px solid var( --color-border-subtle );
 			margin: 15px -15px 0 -15px;
 			padding: 15px 15px 0;
 
@@ -302,7 +318,7 @@ div.popover-cart__popover {
 	}
 
 	.cart__total {
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		font-size: 16px;
 		padding: 15px;
 	}
@@ -346,7 +362,7 @@ div.popover-cart__popover {
 	}
 
 	.cart__total {
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		font-size: 16px;
 		padding: 15px;
 	}
