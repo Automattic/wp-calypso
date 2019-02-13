@@ -1,7 +1,7 @@
 WpcomColophon (JSX)
 ====================
 
-This component is used to display a "In partnership with WordPress.com" colophon, usually on the footer of page.
+This component is used to display a "In partnership with WordPress.com" colophon, usually on the page footer.
 
 -------
 
