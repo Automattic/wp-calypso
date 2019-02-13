@@ -127,6 +127,7 @@ import VerticalMenu from 'components/vertical-menu/docs/example';
 import VerticalNav from 'components/vertical-nav/docs/example';
 import Wizard from 'components/wizard/docs/example';
 import WizardProgressBar from 'components/wizard-progress-bar/docs/example';
+import WpcomColophon from 'components/wpcom-colophon/docs/example';
 
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
@@ -283,6 +284,7 @@ class DesignAssets extends React.Component {
 					<Version readmeFilePath="version" />
 					<Wizard readmeFilePath="wizard" />
 					<WizardProgressBar readmeFilePath="wizard-progress-bar" />
+					<WpcomColophon readmeFilePath="wpcom-colophon" />
 				</Collection>
 			</Main>
 		);
