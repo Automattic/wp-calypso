@@ -158,11 +158,16 @@ form.sidebar__button {
 	margin-right: 8px;
 	line-height: 18px;
 	background-color: var( --color-surface );
-	color: var( --color-text-subtle );
+	color: var( --color-neutral-700 );
 	font-size: 12px;
 	font-weight: 600;
 	border-radius: 3px;
 	border: 1px solid var( --color-neutral-100 );
+
+	&:hover {
+		border-color: var( --color-neutral-200 );
+		color: var( --color-neutral-700 );
+	}
 
 	@include breakpoint( '<660px' ) {
 		font-size: 14px;
@@ -205,10 +210,11 @@ form.sidebar__button input {
 
 		.sidebar__button {
 			color: var( --color-neutral-700 );
-			border: 1px solid var( --color-neutral-600 );
+			border: 1px solid var( --color-neutral-100 );
 
 			&:hover {
-				color: var( --color-accent );
+				color: var( --color-neutral-700 );
+				border-color: var( --color-neutral-200 );
 			}
 		}
 
@@ -238,8 +244,13 @@ form.sidebar__button input {
 			}
 
 			&.sidebar__button {
-				background-color: lighten( $sidebar-bg-color, 10% );
-				color: var( --color-text );
+				background-color: $white;
+				color: var( --color-neutral-700 );
+
+				&:hover {
+					border-color: var( --color-neutral-200 );
+					color: var( --color-neutral-700 );
+				}
 			}
 		}
 
@@ -267,6 +278,11 @@ form.sidebar__button input {
 			&.sidebar__button {
 				background-color: var( --color-white );
 				color: var( --color-neutral-700 );
+
+				&:hover {
+					border-color: var( --color-neutral-200 );
+					color: var( --color-neutral-700 );
+				}
 			}
 		}
 
@@ -280,8 +296,8 @@ form.sidebar__button input {
 	a,
 	form {
 		&.sidebar__button:hover {
-			color: var( --color-accent );
-			border-color: var( --sidebar-menu-hover-color );
+			color: var( --color-neutral-700 );
+			border-color: var( --color-neutral-200 );
 		}
 	}
 
