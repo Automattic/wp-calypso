@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,11 +8,7 @@ import ReactDomServer from 'react-dom/server';
  * Internal dependencies
  */
 import data from './data';
-import i18n from '../src';
-
-const moment = i18n.moment;
-const numberFormat = i18n.numberFormat;
-const translate = i18n.translate;
+import i18n, { moment, numberFormat, translate } from '../src';
 
 /**
  * Pass in a react-generated html string to remove react-specific attributes
@@ -314,7 +309,7 @@ describe( 'I18n', function() {
 				},
 				'0f7d0d088b6ea936fb25b477722d734706fe8b40': [ 'implesa' ],
 			} );
-			expect( i18n.translate( 'simple' ) ).toBe( 'implesa' );
+			expect( translate( 'simple' ) ).toBe( 'implesa' );
 		} );
 
 		it( 'should find keys when looked up by single length hash', function() {
@@ -325,7 +320,7 @@ describe( 'I18n', function() {
 				},
 				'0': [ 'implesa' ],
 			} );
-			expect( i18n.translate( 'simple' ) ).toBe( 'implesa' );
+			expect( translate( 'simple' ) ).toBe( 'implesa' );
 		} );
 
 		it( 'should find keys when looked up by multi length hash', function() {
@@ -338,9 +333,9 @@ describe( 'I18n', function() {
 				'78': [ 'edra' ], // red has a sha1 of 78988010b890ce6f4d2136481f392787ec6d6106
 				'7d': [ 'reyga' ], // grey has a sha1 of 7d1f8f911da92c0ea535cad461fd773281a79638
 			} );
-			expect( i18n.translate( 'simple' ) ).toBe( 'implesa' );
-			expect( i18n.translate( 'red' ) ).toBe( 'edra' );
-			expect( i18n.translate( 'grey' ) ).toBe( 'reyga' );
+			expect( translate( 'simple' ) ).toBe( 'implesa' );
+			expect( translate( 'red' ) ).toBe( 'edra' );
+			expect( translate( 'grey' ) ).toBe( 'reyga' );
 		} );
 	} );
 } );
