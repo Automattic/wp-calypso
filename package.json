@@ -219,7 +219,7 @@
     "npm": "^6.1.0"
   },
   "scripts": {
-    "preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=true npm run -s build-client",
+    "preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=true NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",
     "analyze-bundles": "webpack-bundle-analyzer stats.json public -h 127.0.0.1 -p 9898 -s gzip",
     "analyze-css": "node bin/analyze-css.js",
     "autoprefixer": "postcss -u autoprefixer -r --no-map",
@@ -240,8 +240,8 @@
     "build-docker": "node bin/build-docker.js",
     "prebuild-server": "mkdirp build",
     "build-server": "cross-env-shell CALYPSO_SERVER=true NODE_PATH=$NODE_PATH:server:client:. webpack --display errors-only --config webpack.config.node.js",
-    "build-client": "cross-env-shell CALYPSO_CLIENT=true NODE_PATH=$NODE_PATH:server:client:. node --max_old_space_size=8192 ./node_modules/webpack/bin/webpack.js --display errors-only",
-    "build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || npm run build-client",
+    "build-client": "cross-env-shell CALYPSO_CLIENT=true NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS ./node_modules/webpack/bin/webpack.js --display errors-only",
+    "build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || cross-env-shell NODE_ARGS=--max_old_space_size=8192 npm run build-client",
     "build-client-if-desktop": "node -e \"process.env.CALYPSO_ENV === 'desktop' && process.exit(1)\" || npm run build-client",
     "build-packages": "node bin/build-packages.js",
     "sdk": "node bin/sdk-cli.js",
@@ -281,7 +281,7 @@
     "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date '**/*.js' '**/*.jsx' '!build/**' '!public/**' '!**/test/**' '!node_modules/**' '!**/node_modules/**'",
     "update-deps": "npx rimraf npm-shrinkwrap.json && npm run -s distclean && npm i && npm shrinkwrap && replace --silent 'http://' 'https://' . --recursive --include='npm-shrinkwrap.json,package-lock.json'",
     "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
-    "prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons npm run -s build-client",
+    "prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",
     "whybundled": "whybundled stats.json"
   },
   "devDependencies": {
