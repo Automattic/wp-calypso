@@ -12,6 +12,7 @@ import ResizeObserver from 'resize-observer-polyfill';
 import swiperResize from './swiper-resize';
 
 class Slideshow extends Component {
+	pendingRequestAnimationFrame = null;
 	static defaultProps = {
 		effect: 'slide',
 	};
@@ -29,11 +30,25 @@ class Slideshow extends Component {
 		this.buildSwiper().then( swiper => {
 			this.swiperInstance = swiper;
 			new ResizeObserver( () => {
-				swiperResize( swiper );
-				swiper.update();
+				this.clearPendingRequestAnimationFrame();
+				this.pendingRequestAnimationFrame = requestAnimationFrame( () => {
+					swiperResize( swiper );
+					swiper.update();
+				} );
 			} ).observe( swiper.el );
 		} );
 	}
+
+	componentWillUnmount() {
+		this.clearPendingRequestAnimationFrame();
+	}
+
+	clearPendingRequestAnimationFrame = () => {
+		if ( this.pendingRequestAnimationFrame ) {
+			cancelAnimationFrame( this.pendingRequestAnimationFrame );
+			this.pendingRequestAnimationFrame = null;
+		}
+	};
 
 	componentDidUpdate( prevProps ) {
 		const { align, autoplay, delay, effect, images } = this.props;
