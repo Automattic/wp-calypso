@@ -25,6 +25,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import InfoPopover from 'components/info-popover';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -134,9 +135,11 @@ export class SiteInformation extends Component {
 				<Button primary type="submit" onClick={ this.handleSubmit }>
 					{ translate( 'Continue' ) }
 				</Button>
-				<Button className="site-information__skip-button" borderless onClick={ this.handleSkip }>
-					{ translate( 'Skip this' ) }
-				</Button>
+				{ abtest( 'skipBusinessInformation' ) === 'show' && (
+					<Button className="site-information__skip-button" borderless onClick={ this.handleSkip }>
+						{ translate( 'Skip this' ) }
+					</Button>
+				) }
 			</>
 		);
 	};

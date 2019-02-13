@@ -75,10 +75,10 @@ export default {
 	skipBusinessInformation: {
 		datestamp: '20190130',
 		variations: {
-			keep: 50,
-			skip: 50,
+			hide: 50,
+			show: 50,
 		},
-		defaultVariation: 'keep',
+		defaultVariation: 'hide',
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},

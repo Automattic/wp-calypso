@@ -40,6 +40,10 @@
 		width: 80px;
 		color: var( --color-white );
 		text-decoration: underline;
+
+		&:hover {
+			color: var( --color-white );
+		}
 	}
 }
 
