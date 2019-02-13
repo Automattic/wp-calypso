@@ -1122,42 +1122,6 @@ export const siteSupportsJetpackSettingsUi = ( state, siteId ) => {
 };
 
 /**
- * Returns true if the version of Jetpack on the site supports Google Analytics IP Anonymization.
- * False otherwise.
- *
- * @param {Object} state  Global state tree
- * @param {Object} siteId Site ID
- * @return {?Boolean}     Whether site supports the setting.
- */
-export const siteSupportsGoogleAnalyticsIPAnonymization = ( state, siteId ) => {
-	return isJetpackMinimumVersion( state, siteId, '5.4-beta3' );
-};
-
-/**
- * Returns true if the version of Jetpack on the site supports Google Analytics Basic eCommerce Tracking.
- * False otherwise.
- *
- * @param {Object} state  Global state tree
- * @param {Object} siteId Site ID
- * @return {?Boolean}     Whether site supports the settings.
- */
-export const siteSupportsGoogleAnalyticsBasicEcommerceTracking = ( state, siteId ) => {
-	return isJetpackMinimumVersion( state, siteId, '5.4-beta3' );
-};
-
-/**
- * Returns true if the version of Jetpack on the site supports Google Analytics Enhanced eCommerce Tracking.
- * False otherwise.
- *
- * @param {Object} state  Global state tree
- * @param {Object} siteId Site ID
- * @return {?Boolean}     Whether site supports the settings.
- */
-export const siteSupportsGoogleAnalyticsEnhancedEcommerceTracking = ( state, siteId ) => {
-	return isJetpackMinimumVersion( state, siteId, '5.6-beta2' );
-};
-
-/**
  * Returns true if the site is created less than 30 mins ago.
  * False otherwise.
  *
