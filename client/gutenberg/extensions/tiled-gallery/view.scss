@@ -74,7 +74,7 @@ $tiled-gallery-max-column-count: 20;
 	}
 
 	> img {
-		background-color: lighten( $gray, 30% );
+		background-color: rgba( 0, 0, 0, 0.1 );
 	}
 
 	> a,
