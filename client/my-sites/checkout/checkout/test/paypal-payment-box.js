@@ -71,7 +71,7 @@ describe( 'PaypalPaymentBox', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		const wrapper = shallow( <PaypalPaymentBox { ...defaultProps } /> );
 		expect( wrapper.find( '.checkout__payment-box-sections' ) ).toHaveLength( 1 );
-		expect( wrapper.find( '.payment-box-actions' ) ).toHaveLength( 1 );
+		expect( wrapper.find( '.checkout__payment-box-actions' ) ).toHaveLength( 1 );
 		expect( wrapper.find( 'TermsOfService' ) ).toHaveLength( 1 );
 	} );
 
