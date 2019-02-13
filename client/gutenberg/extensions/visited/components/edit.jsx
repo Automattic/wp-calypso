@@ -57,6 +57,7 @@ class VisitedEdit extends Component {
 			<Fragment>
 				<div className={ this.props.className }>
 					<div className="wp-block-jetpack-visited-inner-block">
+						<InnerBlocks />
 						{ this.props.isSelected && (
 							<Notice status="info" isDismissible={ false }>
 								{ interpolateComponents( {
@@ -82,7 +83,6 @@ class VisitedEdit extends Component {
 								} ) }
 							</Notice>
 						) }
-						<InnerBlocks />
 					</div>
 				</div>
 			</Fragment>
