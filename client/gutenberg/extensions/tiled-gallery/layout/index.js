@@ -1,12 +1,8 @@
 /**
  * External dependencies
  */
-import photon from 'photon';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component } from '@wordpress/element';
-import { format as formatUrl, parse as parseUrl } from 'url';
-import { isBlobURL } from '@wordpress/blob';
-import { range } from 'lodash';
 import { sprintf } from '@wordpress/i18n';
 
 /**
@@ -16,7 +12,7 @@ import GalleryImageEdit from '../gallery-image/edit';
 import GalleryImageSave from '../gallery-image/save';
 import Mosaic from './mosaic';
 import Square from './square';
-import { PHOTON_MAX_RESIZE } from '../constants';
+import { isSquareishLayout, photonizedImgProps } from '../utils';
 
 export default class Layout extends Component {
 	// This is tricky:
@@ -40,6 +36,8 @@ export default class Layout extends Component {
 		const ariaLabel = sprintf( __( 'image %1$d of %2$d in gallery' ), i + 1, images.length );
 		const Image = isSave ? GalleryImageSave : GalleryImageEdit;
 
+		const { src, srcset } = photonizedImgProps( img, { layoutStyle } );
+
 		return (
 			<Image
 				alt={ img.alt }
@@ -48,16 +46,16 @@ export default class Layout extends Component {
 				// caption={ img.caption }
 				height={ img.height }
 				id={ img.id }
-				origUrl={ img.url }
 				isSelected={ selectedImage === i }
 				key={ i }
 				link={ img.link }
 				linkTo={ linkTo }
 				onRemove={ isSave ? undefined : onRemoveImage( i ) }
 				onSelect={ isSave ? undefined : onSelectImage( i ) }
+				origUrl={ img.url }
 				setAttributes={ isSave ? undefined : setImageAttributes( i ) }
-				url={ photonize( img, undefined, { layoutStyle } ) }
-				srcset={ buildSrcset( img, { layoutStyle } ) }
+				srcset={ srcset }
+				url={ src }
 				width={ img.width }
 			/>
 		);
@@ -83,137 +81,4 @@ export default class Layout extends Component {
 			</div>
 		);
 	}
-}
-
-function isSquareishLayout( layout ) {
-	return [ 'circle', 'square' ].includes( layout );
-}
-
-function isWpcomFilesUrl( url ) {
-	const { host } = parseUrl( url );
-	return /\.files\.wordpress\.com$/.test( host );
-}
-
-/**
- * Apply photon arguments to *.files.wordpress.com images
- *
- * This function largely duplicates the functionlity of the photon.js lib.
- * This is necessary because we want to serve images from *.files.wordpress.com so that private
- * WordPress.com sites can use this block which depends on a Photon-like image service.
- *
- * If we pass all images through Photon servers, some images are unreachable. *.files.wordpress.com
- * is already photon-like so we can pass it the same parameters for image resizing.
- *
- * @param  {string} url  Image url
- * @param  {Object} opts Options to pass to photon
- *
- * @return {string}      Url string with options applied
- */
-function photonWpcomImage( url, opts = {} ) {
-	// Adhere to the same options API as the photon.js lib
-	const photonLibMappings = {
-		width: 'w',
-		height: 'h',
-		letterboxing: 'lb',
-		removeLetterboxing: 'ulb',
-	};
-
-	// Discard some param parts
-	const { auth, hash, port, query, search, ...urlParts } = parseUrl( url );
-
-	// Build query
-	// This reduction intentionally mutates the query as it is built internally.
-	urlParts.query = Object.keys( opts ).reduce(
-		( q, key ) =>
-			Object.assign( q, {
-				[ photonLibMappings.hasOwnProperty( key ) ? photonLibMappings[ key ] : key ]: opts[ key ],
-			} ),
-		{}
-	);
-
-	return formatUrl( urlParts );
-}
-
-/**
- * @param {Object} img        Image
- * @param {number} img.height Image height
- * @param {number} img.width  Image width
- * @param {url}    img.url    Image url
- *
- * @param {Object} _             Layout props
- * @param {string} _.layoutStyle Layout style: `rectangular`, `circle`, etc.
- *
- * @return {string} Photon URL
- */
-function buildSrcset( img, { layoutStyle } ) {
-	const { url, width } = img;
-
-	if ( ! img.height || ! url || ! width ) {
-		return;
-	}
-
-	// Do not Photonize images that are still uploading or from localhost
-	if ( isBlobURL( url ) || /^https?:\/\/localhost/.test( url ) ) {
-		return null;
-	}
-
-	const minWidth = Math.min( 600, width );
-	const maxWidth = Math.min( PHOTON_MAX_RESIZE, width );
-	const step = 300;
-
-	// This may be buggy for wide images in square layouts.
-	// It may produce the same src for multiple sizes
-	const srcset = range( minWidth, maxWidth, step )
-		.map( w => {
-			const photonized = photonize( img, { w }, { layoutStyle } );
-			return photonized ? `${ photonized } ${ w }w` : '';
-		} )
-		.filter( Boolean )
-		.join( ',' );
-
-	return srcset;
-}
-
-const defaultPhotonArgs = {
-	strip: 'all',
-};
-
-/**
- * @param {Object} img        Image
- * @param {number} img.height Image height
- * @param {number} img.width  Image width
- * @param {url}    img.url    Image url
- *
- * @param {Object} photonArgs Photon arguments. @see photon.js lib
- *
- * @param {Object} _             Layout props
- * @param {string} _.layoutStyle Layout style: `rectangular`, `circle`, etc.
- *
- * @return {string} Photon URL
- */
-function photonize( { height, width, url }, photonArgs = {}, { layoutStyle } = {} ) {
-	if ( ! height || ! url || ! width ) {
-		return;
-	}
-
-	// Do not Photonize images that are still uploading or from localhost
-	if ( isBlobURL( url ) || /^https?:\/\/localhost/.test( url ) ) {
-		return url;
-	}
-
-	// Drop query args, photon URLs can't handle them
-	// This should be the "raw" url, we'll add dimensions later
-	const cleanUrl = url.split( '?', 1 )[ 0 ];
-
-	const photonImplementation = isWpcomFilesUrl( url ) ? photonWpcomImage : photon;
-
-	if ( isSquareishLayout( layoutStyle ) && width && height ) {
-		const size = Math.min( PHOTON_MAX_RESIZE, width, height );
-		return photonImplementation( cleanUrl, {
-			...defaultPhotonArgs,
-			...photonArgs,
-			resize: `${ size },${ size }`,
-		} );
-	}
-	return photonImplementation( cleanUrl, { ...defaultPhotonArgs, ...photonArgs } );
 }
