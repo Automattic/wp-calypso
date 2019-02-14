@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import {
@@ -38,8 +35,6 @@ const ALLOWED_MEDIA_TYPES = [ 'image' ];
 const effectOptions = [
 	{ label: _x( 'Slide', 'Slideshow transition effect' ), value: 'slide' },
 	{ label: _x( 'Fade', 'Slideshow transition effect' ), value: 'fade' },
-	{ label: _x( 'Cover Flow', 'Slideshow transition effect' ), value: 'coverflow' },
-	{ label: _x( 'Flip', 'Slideshow transition effect' ), value: 'flip' },
 ];
 
 export const pickRelevantMediaFiles = image =>

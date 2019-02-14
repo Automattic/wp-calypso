@@ -183,3 +183,11 @@
 	padding: 8px;
 	text-align: center;
 }
+
+.purchase-detail__required-error {
+	background-color: var( --color-error );
+	color: $white;
+	font-size: 14px;
+	padding: 8px;
+	text-align: center;
+}

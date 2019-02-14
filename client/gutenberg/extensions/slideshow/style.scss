@@ -1,30 +1,30 @@
-/** @format */
-
 .wp-block-jetpack-slideshow {
-	position: relative;
 
+	margin-bottom: 1.5em;
+	position: relative;
 	.wp-block-jetpack-slideshow_container {
 		width: 100%;
-		height: 400px; // This is a default, which will be replaced programmatically
 		overflow: hidden;
 		opacity: 0;
+
 		&.wp-swiper-initialized {
 			opacity: 1;
 		}
 	}
 
 	.wp-block-jetpack-slideshow_slide {
-		margin: 0;
-	}
-
-	.wp-block-jetpack-slideshow_image-container {
 		align-items: center;
-		background: #f0f0f0;
+		background: rgba( 0, 0, 0, 0.1 );
 		display: flex;
-		height: calc( 100% - 22px );
+		height: 100%;
 		justify-content: center;
+		margin: 0;
 		position: relative;
 		width: 100%;
+	}
+
+	.swiper-container-fade .wp-block-jetpack-slideshow_slide {
+		background: $gray-light;
 	}
 
 	.wp-block-jetpack-slideshow_image {
@@ -38,6 +38,7 @@
 
 	.wp-block-jetpack-slideshow_button-prev,
 	.wp-block-jetpack-slideshow_button-next {
+		background-color: rgba( 0, 0, 0, 0.3 );
 		width: 24px;
 		height: 40px;
 		background-size: 24px 40px;
@@ -49,15 +50,38 @@
 	}
 
 	.wp-block-jetpack-slideshow_caption {
+		background-color: rgba( 0, 0, 0, 0.3 );
+		box-sizing: border-box;
+		bottom: 0;
+		color: #fff;
 		cursor: text;
-		position: relative;
-		font-size: 14px;
-		line-height: 14px;
-		vertical-align: center;
-		margin: 0;
+		left: 0;
+		margin: 0 !important;
+		padding: 0.75em;
+		position: absolute;
+		right: 0;
+		z-index: 1;
 	}
 
-	.wp-block-jetpack-slideshow_pagination {
-		bottom: 32px !important;
+	.wp-block-jetpack-slideshow_pagination.swiper-pagination-bullets {
+		bottom: 0;
+		line-height: 24px;
+		padding: 10px 0 2px;
+		position: relative;
+
+		.swiper-pagination-bullet {
+			background: transparent;
+			border: 2px solid #000;
+			height: 16px;
+			vertical-align: top;
+			width: 16px;
+		}
+
+		.swiper-pagination-bullet-active {
+			background: #000;
+			border-color: #000;
+			opacity: 0.6;
+		}
 	}
+
 }

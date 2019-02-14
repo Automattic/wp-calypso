@@ -44,22 +44,20 @@ export default function( router ) {
 		);
 	}
 
-	if ( config.isEnabled( 'memberships' ) ) {
-		router(
-			paths.purchasesRoot + '/memberships',
-			sidebar,
-			membershipsController.myMemberships,
-			makeLayout,
-			clientRender
-		);
-		router(
-			paths.purchasesRoot + '/memberships/:subscriptionId',
-			sidebar,
-			membershipsController.subscription,
-			makeLayout,
-			clientRender
-		);
-	}
+	router(
+		paths.purchasesRoot + '/memberships',
+		sidebar,
+		membershipsController.myMemberships,
+		makeLayout,
+		clientRender
+	);
+	router(
+		paths.purchasesRoot + '/memberships/:subscriptionId',
+		sidebar,
+		membershipsController.subscription,
+		makeLayout,
+		clientRender
+	);
 
 	router(
 		paths.billingHistoryReceipt( ':receiptId' ),

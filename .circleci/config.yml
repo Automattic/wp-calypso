@@ -492,7 +492,7 @@ jobs:
         - run: npm run decryptconfig
         - run:
             name: Run Canary Tests
-            command: ./run.sh << parameters.test-flags >>
+            command: ./run.sh -R << parameters.test-flags >>
         - store-artifacts-and-test-results
 
 workflows:

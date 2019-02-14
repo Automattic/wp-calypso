@@ -15,7 +15,7 @@ import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
@@ -26,7 +26,6 @@ class SpeedUpSiteSettings extends Component {
 	static propTypes = {
 		isRequestingSettings: PropTypes.bool,
 		isSavingSettings: PropTypes.bool,
-		jetpackVersionSupportsLazyImages: PropTypes.bool,
 		submitForm: PropTypes.func.isRequired,
 		updateFields: PropTypes.func.isRequired,
 
@@ -34,7 +33,6 @@ class SpeedUpSiteSettings extends Component {
 		photonModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		siteAcceleratorStatus: PropTypes.bool,
-		siteAcceleratorSupported: PropTypes.bool,
 		siteSlug: PropTypes.string,
 	};
 
@@ -55,11 +53,10 @@ class SpeedUpSiteSettings extends Component {
 		const {
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackVersionSupportsLazyImages,
 			photonModuleUnavailable,
 			selectedSiteId,
-			siteAcceleratorSupported,
 			siteAcceleratorStatus,
+			siteIsJetpack,
 			translate,
 		} = this.props;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
@@ -84,9 +81,7 @@ class SpeedUpSiteSettings extends Component {
 						</p>
 						<CompactFormToggle
 							checked={ siteAcceleratorStatus }
-							disabled={
-								isRequestingOrSaving || photonModuleUnavailable || ! siteAcceleratorSupported
-							}
+							disabled={ isRequestingOrSaving || photonModuleUnavailable }
 							onChange={ this.handleCdnChange }
 						>
 							{ translate( 'Enable site accelerator' ) }
@@ -102,12 +97,12 @@ class SpeedUpSiteSettings extends Component {
 								siteId={ selectedSiteId }
 								moduleSlug="photon-cdn"
 								label={ translate( 'Speed up static file load times' ) }
-								disabled={ isRequestingOrSaving || ! siteAcceleratorSupported }
+								disabled={ isRequestingOrSaving }
 							/>
 						</div>
 					</FormFieldset>
 
-					{ jetpackVersionSupportsLazyImages && (
+					{ siteIsJetpack && (
 						<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
 							<SupportInfo
 								text={ translate(
@@ -137,7 +132,6 @@ class SpeedUpSiteSettings extends Component {
 export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-	const siteAcceleratorSupported = isJetpackMinimumVersion( state, selectedSiteId, '6.6-alpha' );
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 		state,
 		selectedSiteId,
@@ -153,7 +147,7 @@ export default connect( state => {
 		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		selectedSiteId,
 		siteAcceleratorStatus,
-		siteAcceleratorSupported,
+		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};
 } )( localize( SpeedUpSiteSettings ) );

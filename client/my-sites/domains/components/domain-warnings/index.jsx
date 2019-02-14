@@ -38,6 +38,11 @@ import {
 } from 'my-sites/domains/paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = _debug( 'calypso:domain-warnings' );
 
 const allAboutDomainsLink = (

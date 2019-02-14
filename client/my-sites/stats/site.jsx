@@ -31,7 +31,7 @@ import StickyPanel from 'components/sticky-panel';
 import JetpackColophon from 'components/jetpack-colophon';
 import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import { getSiteOption, isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
@@ -39,6 +39,7 @@ import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
 import UpworkStatsNudge from 'blocks/upwork-stats-nudge';
+import ECommerceManageNudge from 'blocks/ecommerce-manage-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
 import memoizeLast from 'lib/memoize-last';
 
@@ -127,10 +128,14 @@ class StatsSite extends Component {
 		}
 	};
 
-	displayBanner() {
-		const { isGoogleMyBusinessStatsNudgeVisible, siteId, slug } = this.props;
+	displayBanners() {
+		const { isGoogleMyBusinessStatsNudgeVisible, planSlug, siteId, slug } = this.props;
 		return (
 			<Fragment>
+				{ config.isEnabled( 'onboarding-checklist' ) && 'ecommerce-bundle' !== planSlug && (
+					<WpcomChecklist viewMode="banner" />
+				) }
+				{ 'ecommerce-bundle' === planSlug && <ECommerceManageNudge siteId={ siteId } /> }
 				{ config.isEnabled( 'google-my-business' ) &&
 					abtest( 'builderReferralStatsNudge' ) === 'googleMyBusinessBanner' &&
 					siteId && (
@@ -203,8 +208,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					{ config.isEnabled( 'onboarding-checklist' ) && <WpcomChecklist viewMode="banner" /> }
-					{ this.displayBanner() }
+					{ this.displayBanners() }
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }
@@ -315,6 +319,7 @@ export default connect(
 			),
 			siteId,
 			slug: getSelectedSiteSlug( state ),
+			planSlug: getSitePlanSlug( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent }

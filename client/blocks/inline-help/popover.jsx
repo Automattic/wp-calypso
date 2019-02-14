@@ -23,6 +23,7 @@ import {
 	selectResult,
 	resetInlineHelpContactForm,
 	hideOnboardingWelcomePrompt,
+	hideChecklistPrompt,
 } from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
@@ -133,6 +134,7 @@ class InlineHelpPopover extends Component {
 		if ( this.props.isOnboardingWelcomeVisible ) {
 			return this.openOnboardingWelcomeView();
 		}
+		this.props.hideChecklistPrompt();
 		this.setState( { showSecondaryView: false } );
 	};
 
@@ -383,6 +385,7 @@ function mapStateToProps( state ) {
 
 const mapDispatchToProps = {
 	hideOnboardingWelcomePrompt,
+	hideChecklistPrompt,
 	optOut,
 	optIn,
 	recordTracksEvent,

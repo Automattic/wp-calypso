@@ -19,7 +19,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	getPurchasesError,
 } from 'state/purchases/selectors';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import SeoForm from './form';
 
 export class SeoSettings extends Component {
@@ -30,13 +30,13 @@ export class SeoSettings extends Component {
 	}
 
 	render() {
-		const { site, siteId } = this.props;
+		const { siteId } = this.props;
 
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
-				{ site && <SeoForm site={ site } /> }
+				<SeoForm />
 			</div>
 		);
 	}
@@ -48,7 +48,6 @@ SeoSettings.propTypes = {
 	hasLoadedSitePurchasesFromServer: PropTypes.bool,
 	purchasesError: PropTypes.object,
 	sitePurchases: PropTypes.array,
-	site: PropTypes.object,
 	siteId: PropTypes.number,
 };
 
@@ -56,7 +55,6 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId,
-		site: getSelectedSite( state ),
 		hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 		purchasesError: getPurchasesError( state ),
 		sitePurchases: getSitePurchases( state, siteId ),

@@ -25,82 +25,65 @@ import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
 import JetpackAds from 'my-sites/site-settings/jetpack-ads';
 import RelatedPosts from 'my-sites/site-settings/related-posts';
 import Sitemaps from 'my-sites/site-settings/sitemaps';
-import Placeholder from 'my-sites/site-settings/placeholder';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const SiteSettingsTraffic = ( {
 	fields,
-	jetpackSettingsUiSupported,
 	handleAutosavingToggle,
 	handleSubmitForm,
+	isJetpack,
 	isRequestingSettings,
 	isSavingSettings,
 	setFieldValue,
-	site,
 	translate,
-} ) => {
-	if ( ! site ) {
-		return <Placeholder />;
-	}
+} ) => (
+	<Main className="settings-traffic site-settings">
+		<DocumentHead title={ translate( 'Site Settings' ) } />
+		<JetpackDevModeNotice />
+		<SidebarNavigation />
+		<SiteSettingsNavigation section="traffic" />
 
-	return (
-		<Main className="settings-traffic site-settings">
-			<DocumentHead title={ translate( 'Site Settings' ) } />
-			<JetpackDevModeNotice />
-			<SidebarNavigation />
-			<SiteSettingsNavigation site={ site } section="traffic" />
-
-			{ jetpackSettingsUiSupported && (
-				<JetpackAds
-					handleAutosavingToggle={ handleAutosavingToggle }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-				/>
-			) }
-			<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
-			<SeoSettingsMain />
-			<RelatedPosts
-				onSubmitForm={ handleSubmitForm }
+		{ isJetpack && (
+			<JetpackAds
 				handleAutosavingToggle={ handleAutosavingToggle }
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
-			{ jetpackSettingsUiSupported && (
-				<JetpackSiteStats
-					handleAutosavingToggle={ handleAutosavingToggle }
-					setFieldValue={ setFieldValue }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-				/>
-			) }
-			<AnalyticsSettings />
-			<Sitemaps
+		) }
+		<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
+		<SeoSettingsMain />
+		<RelatedPosts
+			onSubmitForm={ handleSubmitForm }
+			handleAutosavingToggle={ handleAutosavingToggle }
+			isSavingSettings={ isSavingSettings }
+			isRequestingSettings={ isRequestingSettings }
+			fields={ fields }
+		/>
+		{ isJetpack && (
+			<JetpackSiteStats
+				handleAutosavingToggle={ handleAutosavingToggle }
+				setFieldValue={ setFieldValue }
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
-			{ site && <SiteVerification /> }
-		</Main>
-	);
-};
+		) }
+		<AnalyticsSettings />
+		<Sitemaps
+			isSavingSettings={ isSavingSettings }
+			isRequestingSettings={ isRequestingSettings }
+			fields={ fields }
+		/>
+		<SiteVerification />
+	</Main>
+);
 
-const connectComponent = connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
-	const jetpackSettingsUiSupported = isJetpack && siteSupportsJetpackSettingsUi( state, siteId );
-
-	return {
-		site,
-		isJetpack,
-		jetpackSettingsUiSupported,
-	};
-} );
+const connectComponent = connect( state => ( {
+	isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+} ) );
 
 const getFormSettings = partialRight( pick, [
 	'stats',

@@ -1,5 +1,3 @@
-/** @format */
-
 export function mapboxMapFormatter( mapStyle, mapDetails ) {
 	const style_urls = {
 		default: {

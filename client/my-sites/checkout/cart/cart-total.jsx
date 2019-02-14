@@ -48,17 +48,22 @@ class CartTotal extends React.Component {
 		const showTax = cart.tax.display_taxes && config.isEnabled( 'show-tax' );
 		return (
 			<div className="cart__total">
+				<div className="cart__total-row grand-total">
+					<div className="cart__total-label grand-total">{ this.totalLabel() }</div>
+					<div className="cart__total-amount grand-total">{ cart.total_cost_display }</div>
+				</div>
 				{ showTax && (
 					<Fragment>
-						<span className="cart__total-label">Subtotal:</span>
-						<span className="cart__total-amount">{ cart.sub_total_display }</span>
-						<span className="cart__total-label">Tax:</span>
-						<span className="cart__total-amount">{ cart.total_tax_display }</span>
-						<div className="cart__total-divider" />
+						<div className="cart__total-row">
+							<div className="cart__total-label">Subtotal:</div>
+							<div className="cart__total-amount">{ cart.sub_total_display }</div>
+						</div>
+						<div className="cart__total-row">
+							<div className="cart__total-label">Tax:</div>
+							<div className="cart__total-amount last-cell">{ cart.total_tax_display }</div>
+						</div>
 					</Fragment>
 				) }
-				<span className="cart__total-label grand-total">{ this.totalLabel() }</span>
-				<span className="cart__total-amount grand-total">{ cart.total_cost_display }</span>
 			</div>
 		);
 	}

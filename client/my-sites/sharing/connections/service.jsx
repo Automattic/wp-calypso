@@ -307,7 +307,18 @@ export class SharingService extends Component {
 		if ( this.state.isAwaitingConnections ) {
 			this.setState( { isAwaitingConnections: false } );
 
-			if ( this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts ) ) {
+			/**
+			 * This immediately connects the account. We need a workaround for MailChimp since it is not a publicize service,
+			 * so it behaves differently.
+			 */
+			if (
+				this.isMailchimpService() &&
+				this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts )
+			) {
+				const account = find( nextProps.availableExternalAccounts, { isConnected: false } );
+				this.addConnection( nextProps.service, account.keyring_connection_ID );
+				this.setState( { isConnecting: false } );
+			} else if ( this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts ) ) {
 				this.setState( { isSelectingAccount: true } );
 			}
 		}

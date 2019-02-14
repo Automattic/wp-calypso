@@ -48,14 +48,13 @@ export const settings = {
 	keywords: [ __( 'ads' ), 'WordAds', __( 'Advertisement' ) ],
 
 	supports: {
-		align: true,
+		align: [ 'left', 'center', 'right' ],
+		alignWide: false,
 		className: false,
 		customClassName: false,
 		html: false,
 		reusable: false,
 	},
-
 	edit,
-
 	save: () => null,
 };

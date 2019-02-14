@@ -140,6 +140,7 @@ const reducers = {
 	jitm,
 	login,
 	media,
+	memberships,
 	mobileDownloadSMS,
 	notices,
 	notificationSettings,
@@ -183,10 +184,6 @@ const reducers = {
 	users,
 	wordads,
 };
-
-if ( config.isEnabled( 'memberships' ) ) {
-	reducers.memberships = memberships;
-}
 
 if ( config.isEnabled( 'mailchimp' ) ) {
 	reducers.mailchimp = mailchimp;

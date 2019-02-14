@@ -51,13 +51,9 @@ function processStep( state, { step } ) {
 	return updateStep( state, { ...step, status: 'processing' } );
 }
 
-function removeUnneededSteps( state, { flowName, inImprovedOnboardingTest } ) {
+function removeUnneededSteps( state, { flowName } ) {
 	let flowSteps = [];
 	const user = userFactory();
-
-	if ( inImprovedOnboardingTest && 'ecommerce' === flowName ) {
-		flowName = 'ecommerce-onboarding';
-	}
 
 	flowSteps = get( flows, `${ flowName }.steps`, [] );
 
