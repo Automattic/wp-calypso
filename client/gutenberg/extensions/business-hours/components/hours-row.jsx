@@ -3,7 +3,7 @@
  */
 import { isEmpty } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
-import { Button, TextControl, ToggleControl } from '@wordpress/components';
+import { Button, IconButton, TextControl, ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 
 /**
@@ -52,36 +52,51 @@ class HoursRow extends Component {
 						opening
 					) }
 					{ edit ? (
-						<TextControl
-							type="time"
-							label={ __( 'Closing' ) }
-							value={ closing }
-							onChange={ value => {
-								resetFocus && resetFocus();
-								setAttributes( {
-									hours: {
-										...hours,
-										[ day ]: hours[ day ].map( ( daysHours, daysIndex ) => {
-											if ( daysIndex === index ) {
-												return {
-													...daysHours,
-													closing: value,
-												};
-											}
-											return daysHours;
-										} ),
-									},
-								} );
-							} }
-						/>
+						<Fragment>
+							<TextControl
+								type="time"
+								label={ __( 'Closing' ) }
+								value={ closing }
+								onChange={ value => {
+									resetFocus && resetFocus();
+									setAttributes( {
+										hours: {
+											...hours,
+											[ day ]: hours[ day ].map( ( daysHours, daysIndex ) => {
+												if ( daysIndex === index ) {
+													return {
+														...daysHours,
+														closing: value,
+													};
+												}
+												return daysHours;
+											} ),
+										},
+									} );
+								} }
+							/>
+							{ hours[ day ].length > 1 && (
+								<IconButton
+									isSmall
+									isLink
+									icon="no-alt"
+									className="business-hours__remove"
+									onClick={ () => {
+										this.removeHours( day, index );
+									} }
+								/>
+							) }
+						</Fragment>
 					) : (
 						closing
 					) }
 				</dd>
 				<div className="business-hours__add">
-					<Button isSmall isLink onClick={ this.addHours } data-day={ day }>
-						{ __( 'Add Hours' ) }
-					</Button>
+					{ index === hours[ day ].length - 1 && (
+						<Button isSmall isLink onClick={ this.addHours } data-day={ day }>
+							{ __( 'Add Hours' ) }
+						</Button>
+					) }
 				</div>
 			</div>
 		);
@@ -127,6 +142,9 @@ class HoursRow extends Component {
 				[ day ]: todaysHours,
 			},
 		} );
+	};
+	removeHours = ( day, index ) => {
+		alert( day + ' ' + index );
 	};
 	isClosed() {
 		const { day, attributes } = this.props;

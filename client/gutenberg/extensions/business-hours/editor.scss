@@ -29,10 +29,12 @@
 		.business-hours__hours {
 			width: 49%;
 			margin: 0;
+			display: flex;
+			align-items: center;
 
 			.components-base-control {
 				display: inline-block;
-				max-width: 45%;
+				max-width: 40%;
 
 				.components-base-control__label {
 					display: inline-block;
@@ -46,6 +48,10 @@
 					font-size: smaller;
 					padding: 4px;
 				}
+			}
+
+			.business-hours__remove {
+				display: inline-block;
 			}
 		}
 
