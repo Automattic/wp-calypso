@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { mapValues, merge } from 'lodash';
 import '@babel/polyfill';
 
 /**
@@ -14,6 +13,12 @@ export default async function createSwiper(
 	params = {},
 	callbacks = {}
 ) {
+	const on = Object.entries( callbacks ).reduce( ( total, [ key, callback ] ) => {
+		total[ key ] = function() {
+			callback( this );
+		};
+		return total;
+	}, {} );
 	const defaultParams = {
 		effect: 'slide',
 		grabCursor: true,
@@ -32,17 +37,11 @@ export default async function createSwiper(
 		releaseFormElements: false,
 		setWrapperSize: true,
 		touchStartPreventDefault: false,
-		on: mapValues(
-			callbacks,
-			callback =>
-				function() {
-					callback( this );
-				}
-		),
+		on,
 	};
 	const [ { default: Swiper } ] = await Promise.all( [
 		import( /* webpackChunkName: "swiper" */ 'swiper' ),
 		import( /* webpackChunkName: "swiper" */ 'swiper/dist/css/swiper.css' ),
 	] );
-	return new Swiper( container, merge( {}, defaultParams, params ) );
+	return new Swiper( container, Object.assign( {}, defaultParams, params ) );
 }
