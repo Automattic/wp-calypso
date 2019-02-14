@@ -23,8 +23,10 @@ function setViewCount( value ) {
 }
 
 function incrementCookieValue() {
-	const visitedBlocks = Array.from( document.querySelectorAll( '.wp-block-jetpack-visited' ) );
-	if ( visitedBlocks.length === 0 ) {
+	const repeatVisitorBlocks = Array.from(
+		document.querySelectorAll( '.wp-block-jetpack-repeat-visitor' )
+	);
+	if ( repeatVisitorBlocks.length === 0 ) {
 		return;
 	}
 

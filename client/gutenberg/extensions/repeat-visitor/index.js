@@ -14,7 +14,7 @@ import save from './components/save';
 import { CRITERIA_AFTER, DEFAULT_THRESHOLD } from './constants';
 import './editor.scss';
 
-export const name = 'visited';
+export const name = 'repeat-visitor';
 export const settings = {
 	attributes: {
 		criteria: {

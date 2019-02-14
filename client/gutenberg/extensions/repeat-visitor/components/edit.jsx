@@ -20,7 +20,7 @@ const SELECT_OPTIONS = [
 	{ value: CRITERIA_BEFORE, label: __( 'less than' ) },
 ];
 
-class VisitedEdit extends Component {
+class RepeatVisitorEdit extends Component {
 	setCriteria = criteria => this.props.setAttributes( { criteria } );
 	setThreshold = threshold => {
 		threshold.length &&
@@ -33,7 +33,7 @@ class VisitedEdit extends Component {
 		return (
 			<Fragment>
 				<div className={ this.props.className }>
-					<div className="wp-block-jetpack-visited-inner-block">
+					<div className="wp-block-jetpack-repeat-visitor-inner-block">
 						{
 							<Notice status="info" isDismissible={ false }>
 								{ this.props.isSelected
@@ -83,4 +83,4 @@ export default withSelect( ( select, ownProps ) => {
 	return {
 		isSelected: isBlockSelected( ownProps.clientId ) || hasSelectedInnerBlock( ownProps.clientId ),
 	};
-} )( VisitedEdit );
+} )( RepeatVisitorEdit );
