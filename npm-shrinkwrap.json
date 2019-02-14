@@ -16779,6 +16779,7 @@
 							"resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz",
 							"integrity": "sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==",
 							"dev": true,
+							"optional": true,
 							"requires": {
 								"balanced-match": "^1.0.0",
 								"concat-map": "0.0.1"
@@ -16969,6 +16970,7 @@
 							"resolved": "https://registry.npmjs.org/minimatch/-/minimatch-3.0.4.tgz",
 							"integrity": "sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==",
 							"dev": true,
+							"optional": true,
 							"requires": {
 								"brace-expansion": "^1.1.7"
 							}
@@ -20280,9 +20282,9 @@
 			}
 		},
 		"webpack-dev-middleware": {
-			"version": "3.5.1",
-			"resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-3.5.1.tgz",
-			"integrity": "sha512-4dwCh/AyMOYAybggUr8fiCkRnjVDp+Cqlr9c+aaNB3GJYgRGYQWJ1YX/WAKUNA9dPNHZ6QSN2lYDKqjKSI8Vqw==",
+			"version": "3.5.2",
+			"resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-3.5.2.tgz",
+			"integrity": "sha512-nPmshdt1ckcwWjI0Ubrdp8KroeuprW6xFKYqk0u3MflNMBXvHPnMATsC7/L/enwav2zvLCfj/Usr47qnF3KQyA==",
 			"requires": {
 				"memory-fs": "~0.4.1",
 				"mime": "^2.3.1",
