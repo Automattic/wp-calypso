@@ -339,6 +339,26 @@ function getWebpackConfig( {
 				global: 'window',
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
+
+			// TEMP STUB
+			new webpack.NormalModuleReplacementPlugin(
+				/^components[\/\\]jetpack-logo$/,
+				'gridicons/dist/code'
+			),
+			new webpack.NormalModuleReplacementPlugin(
+				/^lib[\/\\]format-currency[\/\\]currencies$/,
+				'lodash/noop'
+			),
+			new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]route[\/\\]path$/, 'lodash/noop' ),
+			new webpack.NormalModuleReplacementPlugin(
+				/^lib[\/\\]simple-payments[\/\\]constants$/,
+				'lodash/noop'
+			),
+			new webpack.NormalModuleReplacementPlugin(
+				/^lib[\/\\]simple-payments[\/\\]utils$/,
+				'lodash/noop'
+			),
+
 			new webpack.IgnorePlugin( /^props$/ ),
 			isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 			new MiniCssExtractPluginWithRTL( {
