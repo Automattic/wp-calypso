@@ -117,7 +117,7 @@ class PublicizeConnection extends Component {
 		return (
 			<li>
 				{ this.maybeDisplayGooglePlusNotice( serviceName ) }
-				{ this.maybeDisplayLinkedInNotice( serviceName ) }
+				{ this.maybeDisplayLinkedInNotice() }
 				<div className="publicize-jetpack-connection-container">
 					<label htmlFor={ fieldId } className="jetpack-publicize-connection-label">
 						<PublicizeServiceIcon serviceName={ serviceName } />
