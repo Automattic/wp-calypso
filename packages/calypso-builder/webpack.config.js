@@ -267,6 +267,7 @@ function getWebpackConfig( {
 									ctx: {
 										preserveCssCustomProperties,
 									},
+									path: __dirname,
 								},
 							},
 						},
