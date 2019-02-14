@@ -87,7 +87,7 @@
     "create-react-class": "15.6.3",
     "creditcards": "3.0.1",
     "cross-env": "5.2.0",
-    "css-loader": "1.0.1",
+    "css-loader": "2.1.0",
     "d3-array": "2.0.3",
     "d3-axis": "1.0.12",
     "d3-scale": "2.1.2",
