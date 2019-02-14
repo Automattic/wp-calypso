@@ -56,8 +56,6 @@ export default class Layout extends Component {
 			<Image
 				alt={ img.alt }
 				aria-label={ ariaLabel }
-				// @TODO Caption has been commented out
-				// caption={ img.caption }
 				height={ img.height }
 				id={ img.id }
 				origUrl={ img.url }

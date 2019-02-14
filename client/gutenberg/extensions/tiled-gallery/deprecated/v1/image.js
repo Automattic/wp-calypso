@@ -3,9 +3,6 @@
  */
 import { isBlobURL } from '@wordpress/blob';
 
-/* @TODO Caption has been commented out */
-// import { RichText } from '@wordpress/editor';
-
 export default function GalleryImageSave( props ) {
 	const {
 		'aria-label': ariaLabel,
@@ -16,7 +13,6 @@ export default function GalleryImageSave( props ) {
 		link,
 		linkTo,
 		origUrl,
-		srcset,
 		url,
 		width,
 	} = props;
@@ -46,16 +42,10 @@ export default function GalleryImageSave( props ) {
 			data-url={ origUrl }
 			data-width={ width }
 			src={ url }
-			srcset={ srcset }
 		/>
 	);
 
 	return (
-		<figure className="tiled-gallery__item">
-			{ href ? <a href={ href }>{ img }</a> : img }
-			{ /* ! RichText.isEmpty( caption ) && (
-				<RichText.Content tagName="figcaption" value={ caption } />
-			) */ }
-		</figure>
+		<figure className="tiled-gallery__item">{ href ? <a href={ href }>{ img }</a> : img }</figure>
 	);
 }

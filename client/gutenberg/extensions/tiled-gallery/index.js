@@ -18,11 +18,12 @@ import {
 	LAYOUT_SQUARE,
 	LAYOUT_STYLES,
 } from './constants';
+import './editor.scss';
 
 /**
- * Style dependencies
+ * Deprecated versions for migrations
  */
-import './editor.scss';
+import * as deprecatedV1 from './deprecated/v1';
 
 // Style names are translated. Avoid introducing an i18n dependency elsewhere (view)
 // by only including the labels here, the only place they're needed.
@@ -181,4 +182,5 @@ export const settings = {
 	},
 	edit,
 	save,
+	deprecated: [ deprecatedV1 ],
 };
