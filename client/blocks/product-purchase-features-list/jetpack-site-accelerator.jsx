@@ -22,7 +22,7 @@ export default localize( ( { selectedSite, translate } ) => (
 					'static files from our global network of servers.'
 			) }
 			buttonText={ translate( 'View settings' ) }
-			href={ '/settings/writing/' + selectedSite.slug }
+			href={ '/settings/performance/' + selectedSite.slug }
 		/>
 	</div>
 ) );
