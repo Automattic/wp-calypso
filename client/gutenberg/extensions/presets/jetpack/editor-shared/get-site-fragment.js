@@ -28,5 +28,14 @@ export default function getSiteFragment() {
 		return siteFragment || null;
 	}
 
+	// Gutenberg in Jetpack adds a site fragment in the initial state
+	if (
+		window &&
+		window.Jetpack_Editor_Initial_State &&
+		window.Jetpack_Editor_Initial_State.siteFragment
+	) {
+		return window.Jetpack_Editor_Initial_State.siteFragment;
+	}
+
 	return null;
 }

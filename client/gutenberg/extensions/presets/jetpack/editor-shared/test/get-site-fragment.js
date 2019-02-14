@@ -49,4 +49,12 @@ describe( 'getSiteFragment()', () => {
 		window._currentSiteId = 12345678;
 		expect( getSiteFragment() ).toBe( 12345678 );
 	} );
+
+	test( 'should return site slug when editing a post in Gutenberg in WP-Admin', () => {
+		delete window._currentSiteId;
+		window.Jetpack_Editor_Initial_State = {
+			siteFragment: 'yourjetpack.blog',
+		};
+		expect( getSiteFragment() ).toBe( 'yourjetpack.blog' );
+	} );
 } );
