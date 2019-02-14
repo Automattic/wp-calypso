@@ -5376,9 +5376,9 @@
 			"integrity": "sha1-5+Ch+e9DtMi6klxcWpboBtFoc7s="
 		},
 		"cookie-parser": {
-			"version": "1.4.3",
-			"resolved": "https://registry.npmjs.org/cookie-parser/-/cookie-parser-1.4.3.tgz",
-			"integrity": "sha1-D+MfoZ0AC5X0qt8fU/3CuKIDuqU=",
+			"version": "1.4.4",
+			"resolved": "https://registry.npmjs.org/cookie-parser/-/cookie-parser-1.4.4.tgz",
+			"integrity": "sha512-lo13tqF3JEtFO7FyA49CqbhaFkskRJ0u/UAiINgrIXeRCY41c88/zxtrECl8AKH3B0hj9q10+h3Kt8I7KlW4tw==",
 			"requires": {
 				"cookie": "0.3.1",
 				"cookie-signature": "1.0.6"
