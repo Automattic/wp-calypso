@@ -4,11 +4,11 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { RichText } from '@wordpress/editor';
 
-const VideoPressSave = CoreVideoSave => ( { attributes } ) => {
-	const { caption, guid } = attributes;
+const VideoPressSave = CoreVideoSave => props => {
+	const { attributes: { caption, guid } = {} } = props;
 
 	if ( ! guid ) {
-		return <CoreVideoSave attributes={ attributes } />;
+		return <CoreVideoSave { ...props } />;
 	}
 
 	const url = `https://videopress.com/v/${ guid }`;
