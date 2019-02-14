@@ -5,7 +5,6 @@
 import { isEnabled } from 'config';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isJetpackSite } from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
 import isPluginActive from 'state/selectors/is-plugin-active';
@@ -16,7 +15,7 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	}
 
 	// We do want Calypsoify flows for Atomic sites
-	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+	if ( isJetpackSite( state, siteId ) ) {
 		const wpVersion = getWordPressVersion( state, siteId );
 
 		// But not if they activated Classic editor plugin (effectively opting out of Gutenberg)
@@ -40,7 +39,7 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	}
 
 	// Not ready yet.
-	if ( isJetpackSite( state, siteId ) || isVipSite( state, siteId ) ) {
+	if ( isVipSite( state, siteId ) ) {
 		return false;
 	}
 
