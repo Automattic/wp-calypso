@@ -4,6 +4,7 @@
   "description": "i18n JavaScript library on top of Jed originally used in Calypso",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Automattic/wp-calypso.git"
