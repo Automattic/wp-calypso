@@ -289,7 +289,14 @@ export class PlansFeaturesMain extends Component {
 				{ this.renderToggle() }
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
-				{ this.getPlanFeatures() }
+				{ plansWithScroll ? (
+					<div className="plans-features-main__scroll-container">
+						<div className="plans-features-main__left-overlay" />
+						<div className="plans-features-main__right-overlay" />
+						{ this.getPlanFeatures() }
+					</div>
+				) : null }
+				{ ! plansWithScroll ? this.getPlanFeatures() : null }
 				<CartData>
 					<PaymentMethods />
 				</CartData>

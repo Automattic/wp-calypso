@@ -4,20 +4,53 @@
 		padding-top: 19px; // popular banner height adjustment
 	}
 
-	@include breakpoint( '660px-1280px' ) {
-		width: 130%;
-		margin-left: -15%;
-	}
-
 	+ .faq {
 		margin-top: 20px;
 	}
 }
 
 .plans-features-main {
+	.plans-features-main__scroll-container {
+		@include breakpoint( '660px-1280px' ) {
+			width: 130%;
+			margin-left: -15%;
+		}
+
+		position: relative;
+	}
+
+	.plans-features-main__left-overlay,
+	.plans-features-main__right-overlay {
+		background: #f1f1f1;
+		display: none;
+		height: 100%;
+		opacity: 0.8;
+		top: 8px;
+		width: calc( 20% - 10px );
+		z-index: 1;
+	}
+
 	@include breakpoint( '660px-1280px' ) {
 		width: 100%;
 		overflow: hidden;
+
+		.plans-features-main__left-overlay {
+			position: absolute;
+			display: block;
+			left: 0px;
+		}
+
+		.plans-features-main__right-overlay {
+			position: absolute;
+			display: block;
+			right: 0px;
+		}
+	}
+	@include breakpoint( '660px-1040px' ) {
+		.plans-features-main__left-overlay,
+		.plans-features-main__right-overlay {
+			width: 20%;
+		}
 	}
 }
 
