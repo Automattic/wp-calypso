@@ -16,7 +16,7 @@ export function isSquareishLayout( layout ) {
 }
 
 /**
- * Build src and srcset properties which can be used on an <img />
+ * Build src and srcSet properties which can be used on an <img />
  *
  * @param {Object} img        Image
  * @param {number} img.height Image height
@@ -27,7 +27,7 @@ export function isSquareishLayout( layout ) {
  * @param {string} galleryAtts.layoutStyle Gallery layout. 'rectangular', 'circle', etc.
  * @param {number} galleryAtts.columns     Gallery columns. Not applicable for all layouts.
  *
- * @return {Object} Returns an object. If possible, the object will include `src` and `srcset`
+ * @return {Object} Returns an object. If possible, the object will include `src` and `srcSet`
  *                  properties {string} for use on an image.
  */
 export function photonizedImgProps( img, galleryAtts = {} ) {
@@ -66,17 +66,17 @@ export function photonizedImgProps( img, galleryAtts = {} ) {
 	}
 
 	/**
-	 * Build a sensible `srcset` that will let the browser get an optimized image based on
+	 * Build a sensible `srcSet` that will let the browser get an optimized image based on
 	 * viewport width
 	 */
 
 	const step = 300;
-	let srcset;
+	let srcSet;
 	if ( isSquareishLayout( layoutStyle ) ) {
 		const minWidth = Math.min( 600, width, height );
 		const maxWidth = Math.min( PHOTON_MAX_RESIZE, width, height );
 
-		srcset = range( minWidth, maxWidth, step )
+		srcSet = range( minWidth, maxWidth, step )
 			.map( srcsetWidth => {
 				const srcsetSrc = photonImplementation( url, {
 					resize: `${ srcsetWidth },${ srcsetWidth }`,
@@ -90,7 +90,7 @@ export function photonizedImgProps( img, galleryAtts = {} ) {
 		const minWidth = Math.min( 600, width );
 		const maxWidth = Math.min( PHOTON_MAX_RESIZE, width );
 
-		srcset = range( minWidth, maxWidth, step )
+		srcSet = range( minWidth, maxWidth, step )
 			.map( srcsetWidth => {
 				const srcsetSrc = photonImplementation( url, {
 					strip: 'all',
@@ -102,7 +102,7 @@ export function photonizedImgProps( img, galleryAtts = {} ) {
 			.join( ',' );
 	}
 
-	return Object.assign( { src }, srcset && { srcset } );
+	return Object.assign( { src }, srcSet && { srcSet } );
 }
 
 function isWpcomFilesUrl( url ) {
