@@ -103,6 +103,8 @@ export default class PurchaseDetail extends PureComponent {
 			'is-placeholder': this.props.isPlaceholder,
 		} );
 
+		// When removing the abtest, remove the associated mocks in tests
+		// See https://github.com/Automattic/wp-calypso/pull/30771
 		const requiredClass =
 			'enhanced' === abtest( 'gSuitePostCheckoutNotice' )
 				? 'purchase-detail__required-error'
