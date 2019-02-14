@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { forEach } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
 
 /**
@@ -13,7 +12,7 @@ import swiperResize from './swiper-resize';
 typeof window !== 'undefined' &&
 	window.addEventListener( 'load', function() {
 		const slideshowBlocks = document.getElementsByClassName( 'wp-block-jetpack-slideshow' );
-		forEach( slideshowBlocks, slideshowBlock => {
+		for ( const slideshowBlock of slideshowBlocks ) {
 			const { autoplay, delay, effect } = slideshowBlock.dataset;
 			const slideshowContainer = slideshowBlock.getElementsByClassName( 'swiper-container' )[ 0 ];
 			let pendingRequestAnimationFrame = null;
@@ -46,5 +45,5 @@ typeof window !== 'undefined' &&
 					} );
 				} ).observe( swiper.el );
 			} );
-		} );
+		}
 	} );
