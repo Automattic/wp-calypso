@@ -54,7 +54,7 @@ import PicasaMigration from './picasa-migration';
  * @param {object} connection Publicize connection.
  * @returns {boolean} True if connection is broken or requires reauthentication.
  */
-const isConnectionInvalidOrReauth = connection =>
+const isConnectionInvalidOrMustReauth = connection =>
 	[ 'must_reauth', 'invalid' ].includes( connection.status );
 
 export class SharingService extends Component {
@@ -363,7 +363,7 @@ export class SharingService extends Component {
 		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
 			// A problematic connection exists
 			status = 'reconnect';
-		} else if ( some( this.getConnections(), isConnectionInvalidOrReauth ) ) {
+		} else if ( some( this.getConnections(), isConnectionInvalidOrMustReauth ) ) {
 			// A valid connection is not available anymore, user must reconnect
 			status = 'must-disconnect';
 		} else {
