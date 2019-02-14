@@ -170,12 +170,12 @@ export class EditorSharingPublicizeConnection extends React.Component {
 	/**
 	 * If a connection needs reauthentication, display a warning linked to Sharing settings page so users can disconnect and reconnect.
 	 *
-	 * @returns {object} Warning about connection.
+	 * @returns {object|?null} Warning about connection.
 	 */
 	renderMustReauthConnection = () => {
 		const { connection, siteSlug } = this.props;
 		if ( ! connection || connection.status !== 'must_reauth' ) {
-			return;
+			return null;
 		}
 
 		return (
