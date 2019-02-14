@@ -17,61 +17,35 @@ const Address = ( {
 	attributes: { address, addressLine2, addressLine3, city, region, postal, country },
 } ) => (
 	<Fragment>
-		{ address && (
-			<div itemprop="streetAddress" class="jetpack-address__address jetpack-address__address1">
-				{ address }
-			</div>
-		) }
+		{ address && <div class="jetpack-address__address jetpack-address__address1">{ address }</div> }
 		{ addressLine2 && (
-			<div itemprop="streetAddress" class="jetpack-address__address jetpack-address__address2">
-				{ addressLine2 }
-			</div>
+			<div class="jetpack-address__address jetpack-address__address2">{ addressLine2 }</div>
 		) }
 		{ addressLine3 && (
-			<div itemprop="streetAddress" class="jetpack-address__address jetpack-address__address3">
-				{ addressLine3 }
-			</div>
+			<div class="jetpack-address__address jetpack-address__address3">{ addressLine3 }</div>
 		) }
-		{ city && ! ( region || postal ) && (
-			<div itemprop="addressLocality" class="jetpack-address__city">
-				{ city }
-			</div>
-		) }
+		{ city && ! ( region || postal ) && <div class="jetpack-address__city">{ city }</div> }
 		{ city && ( region || postal ) && (
 			<div>
 				{ [
-					<span itemprop="addressLocality" class="jetpack-address__city">
-						{ city }
-					</span>,
+					<span class="jetpack-address__city">{ city }</span>,
 					', ',
-					<span itemprop="addressRegion" class="jetpack-address__region">
-						{ region }
-					</span>,
+					<span class="jetpack-address__region">{ region }</span>,
 					' ',
-					<span itemprop="postalCode" class="jetpack-address__postal">
-						{ postal }
-					</span>,
+					<span class="jetpack-address__postal">{ postal }</span>,
 				] }
 			</div>
 		) }
 		{ ! city && ( region || postal ) && (
 			<div>
 				{ [
-					<span itemprop="addressRegion" class="jetpack-address__region">
-						{ region }
-					</span>,
+					<span class="jetpack-address__region">{ region }</span>,
 					' ',
-					<span itemprop="postalCode" class="jetpack-address__postal">
-						{ postal }
-					</span>,
+					<span class="jetpack-address__postal">{ postal }</span>,
 				] }
 			</div>
 		) }
-		{ country && (
-			<div itemprop="addressCountry" class="jetpack-address__country">
-				{ country }
-			</div>
-		) }
+		{ country && <div class="jetpack-address__country">{ country }</div> }
 	</Fragment>
 );
 
@@ -94,12 +68,7 @@ export const googleMapsUrl = ( {
 
 const save = props =>
 	hasAddress( props.attributes ) && (
-		<div
-			className={ props.className }
-			itemprop="address"
-			itemscope
-			itemtype="http://schema.org/PostalAddress"
-		>
+		<div className={ props.className }>
 			{ props.attributes.linkToGoogleMaps && (
 				<a
 					href={ googleMapsUrl( props ) }
