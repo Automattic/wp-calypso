@@ -2,10 +2,9 @@
 /**
  * External dependencies
  */
-import { memoize } from 'lodash';
 import { Notice, PanelBody, RadioControl, TextControl } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
-import { InnerBlocks, InspectorControls } from '@wordpress/editor';
+import { InnerBlocks } from '@wordpress/editor';
 import { withSelect } from '@wordpress/data';
 import interpolateComponents from 'interpolate-components';
 
@@ -16,11 +15,6 @@ import { sprintf } from '@wordpress/i18n';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { CRITERIA_AFTER, CRITERIA_BEFORE } from '../constants';
 
-const getRadioOptions = memoize( threshold => [
-	{ label: sprintf( __( 'Show after %d views', threshold ) ), value: CRITERIA_AFTER },
-	{ label: sprintf( __( 'Show before %d views', threshold ) ), value: CRITERIA_BEFORE },
-] );
-
 class VisitedEdit extends Component {
 	setCriteria = criteria => this.props.setAttributes( { criteria } );
 	setThreshold = threshold => {
@@ -29,28 +23,6 @@ class VisitedEdit extends Component {
 			+threshold > 0 &&
 			this.props.setAttributes( { threshold } );
 	};
-
-	renderInspectorControls() {
-		return (
-			<InspectorControls>
-				<PanelBody title={ __( 'Visibility settings' ) }>
-					<RadioControl
-						label={ __( 'Criteria' ) }
-						onChange={ this.setCriteria }
-						options={ getRadioOptions( this.props.attributes.threshold ) }
-						selected={ this.props.attributes.criteria }
-					/>
-					<TextControl
-						label={ __( 'Visit count threshold' ) }
-						onChange={ this.setThreshold }
-						type="number"
-						min="1"
-						defaultValue={ this.props.attributes.threshold }
-					/>
-				</PanelBody>
-			</InspectorControls>
-		);
-	}
 
 	render() {
 		return (
