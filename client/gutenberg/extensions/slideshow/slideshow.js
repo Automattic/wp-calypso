@@ -52,9 +52,9 @@ class Slideshow extends Component {
 			autoplay !== prevProps.autoplay ||
 			delay !== prevProps.delay
 		) {
-			const { activeIndex } = this.swiperInstance;
+			const { realIndex } = this.swiperInstance;
 			this.swiperInstance && this.swiperInstance.destroy( true, true );
-			this.buildSwiper( activeIndex ).then( swiper => {
+			this.buildSwiper( realIndex ).then( swiper => {
 				this.swiperInstance = swiper;
 				this.initializeResizeObserver( swiper );
 			} );
