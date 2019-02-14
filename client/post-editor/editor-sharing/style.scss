@@ -41,6 +41,10 @@ input[type='text'].editor-sharing__shortlink-field {
 	display: block;
 	font-size: 12px;
 	padding: 2px 0;
+
+	label input[disabled] + span {
+		opacity: 0.5;
+	}
 }
 
 .editor-sharing__broken-publicize-connection {

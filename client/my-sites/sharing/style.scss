@@ -62,6 +62,19 @@
 			margin-top: 12px;
 		}
 	}
+
+	.sharing-service__notice {
+		margin-left: 56px;
+		width: 100%;
+
+		@include breakpoint( '<800px' ) {
+			margin-left: 0;
+		}
+
+		@include breakpoint( '<660px' ) {
+			margin-left: 6px;
+		}
+	}
 }
 
 .sharing-settings {

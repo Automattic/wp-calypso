@@ -11,12 +11,14 @@
 import { Component } from '@wordpress/element';
 import { Disabled, FormToggle, Notice, ExternalLink } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import PublicizeServiceIcon from './service-icon';
+import getSiteFragment from 'gutenberg/extensions/presets/jetpack/editor-shared/get-site-fragment';
 
 class PublicizeConnection extends Component {
 	state = {
@@ -54,6 +56,34 @@ class PublicizeConnection extends Component {
 			</Notice>
 		);
 
+	/**
+	 * Displays a message when a connection requires reauthentication. We used this when migrating LinkedIn API usage from v1 to v2,
+	 * since the prevous OAuth1 tokens were incompatible with OAuth2.
+	 *
+	 * @returns {object|?null} Notice about reauthentication
+	 */
+	maybeDisplayLinkedInNotice = () =>
+		this.connectionNeedsReauth() && (
+			<Notice className="jetpack-publicize-notice" isDismissible={ false } status="error">
+				<p>
+					{ __(
+						'Your LinkedIn connection needs to be reauthenticated ' +
+							'to continue working – head to Sharing to take care of it.'
+					) }
+				</p>
+				<ExternalLink href={ `https://wordpress.com/sharing/${ getSiteFragment() }` }>
+					{ __( 'Go to Sharing settings' ) }
+				</ExternalLink>
+			</Notice>
+		);
+
+	/**
+	 * Check whether the connection needs to be reauthenticated.
+	 *
+	 * @returns {boolean} True if connection must be reauthenticated.
+	 */
+	connectionNeedsReauth = () => includes( this.props.mustReauthConnections, this.props.name );
+
 	onConnectionChange = () => {
 		const { id } = this.props;
 		this.props.toggleConnection( id );
@@ -79,12 +109,14 @@ class PublicizeConnection extends Component {
 			/>
 		);
 
-		if ( disabled || this.connectionIsFailing() ) {
+		if ( disabled || this.connectionIsFailing() || this.connectionNeedsReauth() ) {
 			toggle = <Disabled>{ toggle }</Disabled>;
 		}
 
 		return (
 			<li>
+				{ this.maybeDisplayGooglePlusNotice( serviceName ) }
+				{ this.maybeDisplayLinkedInNotice() }
 				<div className="publicize-jetpack-connection-container">
 					<label htmlFor={ fieldId } className="jetpack-publicize-connection-label">
 						<PublicizeServiceIcon serviceName={ serviceName } />
@@ -92,7 +124,6 @@ class PublicizeConnection extends Component {
 					</label>
 					{ toggle }
 				</div>
-				{ this.maybeDisplayGooglePlusNotice( serviceName ) }
 			</li>
 		);
 	}
@@ -100,4 +131,5 @@ class PublicizeConnection extends Component {
 
 export default withSelect( select => ( {
 	failedConnections: select( 'jetpack/publicize' ).getFailedConnections(),
+	mustReauthConnections: select( 'jetpack/publicize' ).getMustReauthConnections(),
 } ) )( PublicizeConnection );
