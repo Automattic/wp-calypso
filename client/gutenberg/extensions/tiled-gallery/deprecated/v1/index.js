@@ -74,7 +74,7 @@ export const attributes = {
 	},
 };
 
-export const supports = {
+export const support = {
 	align: [ 'center', 'wide', 'full' ],
 	customClassName: false,
 	html: false,
