@@ -13,7 +13,6 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
@@ -75,18 +74,14 @@ class GoogleAppsDialog extends React.Component {
 	}
 
 	renderView() {
-		let plan = 'gapps';
-		if ( abtest( 'gSuitePlan' ) === 'business' ) {
-			plan = 'gapps_unlimited';
-		}
-		const prices = this.getPrices( plan );
+		const prices = this.getPrices( 'gapps' );
 
 		return (
 			<form className="gsuite-dialog__form" onSubmit={ this.handleFormSubmit }>
 				<QueryProducts />
 				<CompactCard>{ this.header() }</CompactCard>
 				<CompactCard>
-					<GoogleAppsProductDetails domain={ this.props.domain } plan={ plan } { ...prices } />
+					<GoogleAppsProductDetails domain={ this.props.domain } plan={ 'gapps' } { ...prices } />
 					{ this.renderGoogleAppsUsers() }
 				</CompactCard>
 				<CompactCard>{ this.footer() }</CompactCard>
@@ -218,14 +213,9 @@ class GoogleAppsDialog extends React.Component {
 			};
 		} );
 
-		let plan = 'gapps';
-		if ( abtest( 'gSuitePlan' ) === 'business' ) {
-			plan = 'gapps_unlimited';
-		}
-
 		return cartItems.googleApps( {
 			domain: this.props.domain,
-			product_slug: plan,
+			product_slug: 'gapps',
 			users,
 		} );
 	}
