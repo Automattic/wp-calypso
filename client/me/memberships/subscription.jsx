@@ -64,7 +64,7 @@ class Subscription extends React.Component {
 				{ subscription && (
 					<div>
 						<Card className="memberships__subscription-meta">
-							<Site siteId={ subscription.site_id } href={ subscription.site_url } />
+							<Site siteId={ parseInt( subscription.site_id ) } href={ subscription.site_url } />
 							<div className="memberships__subscription-title">{ subscription.title }</div>
 							<Fragment>
 								<ul className="memberships__subscription-inner-meta">
