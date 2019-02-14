@@ -6,21 +6,23 @@
 	line-height: 1;
     display: flex;
     flex-direction: column;
+    text-align: right;
 
-	@include breakpoint( '>660px' ) {
-		align-items: flex-end;
-		flex: 0 2 360px;
-		font-size: 17px;
-		padding-right: 2em;
+    @include breakpoint('>660px') {
+        align-items: flex-end;
+        flex: 0 2 360px;
+        font-size: 17px;
+        padding-right: 2em;
 
-      .featured-domain-suggestions & {
-        align-items: flex-start;
-      }
+        .featured-domain-suggestions & {
+            align-items: flex-start;
+        }
     }
 
 	@include breakpoint( '<660px' ) {
 		display: inline-block;
 		font-size: 14px;
+        text-align: left;
 	}
 
 	.map-domain-step & {
@@ -57,12 +59,10 @@
     }
 
 	&.is-free-domain {
-		font-size: 13px;
 		line-height: 1.7;
 		margin-top: 2px;
 
 		small {
-			font-size: 100%;
 			opacity: 1;
 		}
 
