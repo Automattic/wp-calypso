@@ -8,6 +8,11 @@
 		.components-base-control {
 			display: inline-block;
 			max-width: 8em;
+			vertical-align: middle;
+
+			.components-base-control__field {
+				margin-bottom: 0;
+			}
 		}
 	}
 }
