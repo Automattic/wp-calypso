@@ -3,7 +3,7 @@
  */
 import { isEmpty } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
-import { TextControl, ToggleControl } from '@wordpress/components';
+import { Button, TextControl, ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 
 /**
@@ -40,6 +40,9 @@ class HoursRow extends Component {
 				},
 			} );
 		}
+	};
+	addHours = () => {
+		alert( 'add hours!' );
 	};
 	isClosed() {
 		const { day, attributes } = this.props;
@@ -125,6 +128,13 @@ class HoursRow extends Component {
 				<dd className={ classNames( day, { closed: this.isClosed() }, 'business-hours__hours' ) }>
 					{ this.isClosed() ? this.renderClosed() : this.renderOpened() }
 				</dd>
+				<div className="business-hours__add">
+					{ ! this.isClosed() && (
+						<Button isSmall isLink onClick={ this.addHours }>
+							{ __( 'Add Hours' ) }
+						</Button>
+					) }
+				</div>
 			</div>
 		);
 	}

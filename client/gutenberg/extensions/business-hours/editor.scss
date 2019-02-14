@@ -7,17 +7,27 @@
 		margin-bottom: 20px;
 
 		.business-hours__day {
-			width: 48%;
+			width: 34%;
 			display: flex;
 			align-items: baseline;
 
 			.business-hours__day-name {
 				width: 40%;
+				font-size: small;
+				font-weight: bold;
+			}
+
+			.components-form-toggle {
+				margin-right: 4px;
+			}
+
+			.components-toggle-control__label {
+				font-size: smaller;
 			}
 		}
 
 		.business-hours__hours {
-			width: 48%;
+			width: 49%;
 			margin: 0;
 
 			> .components-base-control {
@@ -27,12 +37,21 @@
 				.components-base-control__label {
 					display: inline-block;
 					margin-bottom: 0;
+					font-size: smaller;
 				}
 
 				.components-text-control__input {
 					width: 9em;
 					margin-left: 0.5em;
+					font-size: smaller;
 				}
+			}
+		}
+
+		.business-hours__add {
+			width: 15%;
+			button {
+				font-size: x-small;
 			}
 		}
 	}
@@ -49,6 +68,9 @@
 			}
 
 			.business-hours__hours {
+				width: 100%;
+			}
+			.business-hours__add {
 				width: 100%;
 			}
 		}
