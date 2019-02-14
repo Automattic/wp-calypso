@@ -32,9 +32,7 @@ const MembershipItem = ( { translate, subscription, moment } ) => (
 			<div className="memberships__service-description">
 				<div className="memberships__service-name">{ subscription.title }</div>
 				<div className="memberships__list-sub">
-					<a href={ subscription.site_url }>
-						{ translate( 'On %s »', { args: subscription.site_title } ) }
-					</a>
+					{ translate( 'On %s', { args: subscription.site_title } ) }
 				</div>
 			</div>
 			<div className="memberships__list-renewal-price">
@@ -60,7 +58,12 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => (
 		{ subscriptions &&
 			subscriptions.map(
 				subscription => (
-					<MembershipItem translate={ translate } subscription={ subscription } moment={ moment } />
+					<MembershipItem
+						key={ subscription.ID }
+						translate={ translate }
+						subscription={ subscription }
+						moment={ moment }
+					/>
 				),
 				this
 			) }
