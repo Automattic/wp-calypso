@@ -238,7 +238,7 @@ form.sidebar__button input {
 			}
 
 			&.sidebar__button {
-				background-color: var( --sidebar-border-color );
+				background-color: lighten( $sidebar-bg-color, 10% );
 				color: var( --color-text );
 			}
 		}
