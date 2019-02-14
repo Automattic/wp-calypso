@@ -15,7 +15,7 @@ const defaultOpen = '09:00';
 const defaultClose = '17:00';
 
 class HoursRow extends Component {
-	renderOpenRowOrRows = ( rowHours, index ) => {
+	renderOpenedRow = ( rowHours, index ) => {
 		const { day, attributes, setAttributes, resetFocus, edit = true } = this.props;
 		const { hours } = attributes;
 		const { opening, closing } = rowHours;
@@ -35,12 +35,15 @@ class HoursRow extends Component {
 								setAttributes( {
 									hours: {
 										...hours,
-										[ day ]: [
-											{
-												...rowHours,
-												opening: value,
-											},
-										],
+										[ day ]: hours[ day ].map( ( daysHours, daysIndex ) => {
+											if ( daysIndex === index ) {
+												return {
+													...daysHours,
+													opening: value,
+												};
+											}
+											return daysHours;
+										} ),
 									},
 								} );
 							} }
@@ -48,7 +51,6 @@ class HoursRow extends Component {
 					) : (
 						opening
 					) }
-					&nbsp;&mdash;&nbsp;
 					{ edit ? (
 						<TextControl
 							type="time"
@@ -59,12 +61,15 @@ class HoursRow extends Component {
 								setAttributes( {
 									hours: {
 										...hours,
-										[ day ]: [
-											{
-												...rowHours,
-												closing: value,
-											},
-										],
+										[ day ]: hours[ day ].map( ( daysHours, daysIndex ) => {
+											if ( daysIndex === index ) {
+												return {
+													...daysHours,
+													closing: value,
+												};
+											}
+											return daysHours;
+										} ),
 									},
 								} );
 							} }
@@ -74,7 +79,7 @@ class HoursRow extends Component {
 					) }
 				</dd>
 				<div className="business-hours__add">
-					<Button isSmall isLink onClick={ this.addHours }>
+					<Button isSmall isLink onClick={ this.addHours } data-day={ day }>
 						{ __( 'Add Hours' ) }
 					</Button>
 				</div>
@@ -107,8 +112,21 @@ class HoursRow extends Component {
 			} );
 		}
 	};
-	addHours = () => {
-		alert( 'add hours!' );
+	addHours = ( {
+		target: {
+			dataset: { day },
+		},
+	} ) => {
+		const { attributes, setAttributes } = this.props;
+		const { hours } = attributes;
+		const todaysHours = hours[ day ];
+		todaysHours.push( { opening: '', closing: '' } );
+		setAttributes( {
+			hours: {
+				...hours,
+				[ day ]: todaysHours,
+			},
+		} );
 	};
 	isClosed() {
 		const { day, attributes } = this.props;
@@ -146,7 +164,7 @@ class HoursRow extends Component {
 	render() {
 		const { day, attributes } = this.props;
 		const { hours } = attributes;
-		return this.isClosed() ? this.renderClosedRow() : hours[ day ].map( this.renderOpenRowOrRows );
+		return this.isClosed() ? this.renderClosedRow() : hours[ day ].map( this.renderOpenedRow );
 	}
 }
 

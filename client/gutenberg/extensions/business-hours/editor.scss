@@ -30,7 +30,7 @@
 			width: 49%;
 			margin: 0;
 
-			> .components-base-control {
+			.components-base-control {
 				display: inline-block;
 				max-width: 45%;
 
@@ -44,6 +44,7 @@
 					width: 9em;
 					margin-left: 0.5em;
 					font-size: smaller;
+					padding: 4px;
 				}
 			}
 		}
