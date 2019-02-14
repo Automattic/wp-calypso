@@ -36,7 +36,7 @@ export default class Layout extends Component {
 		const ariaLabel = sprintf( __( 'image %1$d of %2$d in gallery' ), i + 1, images.length );
 		const Image = isSave ? GalleryImageSave : GalleryImageEdit;
 
-		const { src, srcset } = photonizedImgProps( img, { layoutStyle } );
+		const { src, srcSet } = photonizedImgProps( img, { layoutStyle } );
 
 		return (
 			<Image
@@ -54,7 +54,7 @@ export default class Layout extends Component {
 				onSelect={ isSave ? undefined : onSelectImage( i ) }
 				origUrl={ img.url }
 				setAttributes={ isSave ? undefined : setImageAttributes( i ) }
-				srcset={ srcset }
+				srcSet={ srcSet }
 				url={ src }
 				width={ img.width }
 			/>
