@@ -64,13 +64,17 @@
 	}
 
 	.wp-block-jetpack-slideshow_pagination.swiper-pagination-bullets {
+		bottom: 0;
+		line-height: 24px;
+		margin-bottom: -8px;
+		padding-top: 10px;
 		position: relative;
-		padding-top: 1em;
 
 		.swiper-pagination-bullet {
 			background: transparent;
 			border: 2px solid #000;
 			height: 16px;
+			vertical-align: top;
 			width: 16px;
 		}
 
