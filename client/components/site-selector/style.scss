@@ -214,13 +214,13 @@
 }
 
 .site-selector__hidden-sites-message {
-	color: $gray;
+	color: var( --sidebar-text-color );
 	display: block;
 	font-size: 12px;
 	padding: 16px 16px 24px;
 
 	.site-selector__manage-hidden-sites {
-		color: $gray;
+		color: var( --sidebar-text-color );
 		text-decoration: underline;
 	}
 }
