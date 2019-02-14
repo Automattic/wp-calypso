@@ -43,6 +43,9 @@ const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = true; // config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 
+const rootDir = process.cwd();
+const appRootDir = path.join( rootDir, 'gutenberg-extensions' );
+
 /**
  * Plugin that generates the `public/custom-properties.css` file before compilation
  */
@@ -270,7 +273,7 @@ function getWebpackConfig( {
 						{
 							loader: 'sass-loader',
 							options: {
-								includePaths: [ path.join( __dirname, 'client' ) ],
+								includePaths: [ appRootDir ],
 								data: `@import '${ path.join(
 									__dirname,
 									'assets/stylesheets/shared/_utils.scss'
@@ -311,7 +314,7 @@ function getWebpackConfig( {
 		},
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx' ],
-			modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
+			modules: [ appRootDir, 'node_modules' ],
 			alias: Object.assign(
 				{
 					'gridicons/example': 'gridicons/dist/example',
