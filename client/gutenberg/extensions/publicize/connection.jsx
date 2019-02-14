@@ -11,6 +11,7 @@
 import { Component } from '@wordpress/element';
 import { Disabled, FormToggle, Notice, ExternalLink } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -81,8 +82,7 @@ class PublicizeConnection extends Component {
 	 *
 	 * @returns {boolean} True if connection must be reauthenticated.
 	 */
-	connectionNeedsReauth = () =>
-		this.props.mustReauthConnections.some( connection => connection === this.props.name );
+	connectionNeedsReauth = () => includes( this.props.mustReauthConnections, this.props.name );
 
 	onConnectionChange = () => {
 		const { id } = this.props;
