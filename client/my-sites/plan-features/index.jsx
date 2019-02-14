@@ -407,32 +407,37 @@ export class PlanFeatures extends Component {
 			}
 
 			return (
-				<td key={ planName } className={ classes }>
-					<PlanFeaturesHeader
-						audience={ audience }
-						availableForPurchase={ availableForPurchase }
-						basePlansPath={ basePlansPath }
-						billingTimeFrame={ billingTimeFrame }
-						current={ current }
-						currencyCode={ currencyCode }
-						discountPrice={ discountPrice }
-						hideMonthly={ hideMonthly }
-						isInSignup={ isInSignup }
-						isJetpack={ isJetpack }
-						isPlaceholder={ isPlaceholder }
-						newPlan={ newPlan }
-						bestValue={ bestValue }
-						planType={ planName }
-						plansWithScroll={ plansWithScroll }
-						popular={ popular }
-						rawPrice={ rawPrice }
-						relatedMonthlyPlan={ relatedMonthlyPlan }
-						selectedPlan={ selectedPlan }
-						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
-						title={ planConstantObj.getTitle() }
-						countryCode={ countryCode }
-					/>
-				</td>
+				<React.Fragment>
+					<td key={ planName } className={ classes }>
+						<PlanFeaturesHeader
+							audience={ audience }
+							availableForPurchase={ availableForPurchase }
+							basePlansPath={ basePlansPath }
+							billingTimeFrame={ billingTimeFrame }
+							current={ current }
+							currencyCode={ currencyCode }
+							discountPrice={ discountPrice }
+							hideMonthly={ hideMonthly }
+							isInSignup={ isInSignup }
+							isJetpack={ isJetpack }
+							isPlaceholder={ isPlaceholder }
+							newPlan={ newPlan }
+							bestValue={ bestValue }
+							planType={ planName }
+							plansWithScroll={ plansWithScroll }
+							popular={ popular }
+							rawPrice={ rawPrice }
+							relatedMonthlyPlan={ relatedMonthlyPlan }
+							selectedPlan={ selectedPlan }
+							showPlanCreditsApplied={
+								true === showPlanCreditsApplied && ! this.hasDiscountNotice()
+							}
+							title={ planConstantObj.getTitle() }
+							countryCode={ countryCode }
+						/>
+					</td>
+					<td className="plan-features__table-space" />
+				</React.Fragment>
 			);
 		} );
 	}
@@ -451,11 +456,14 @@ export class PlanFeatures extends Component {
 			} );
 
 			return (
-				<td key={ planName } className={ classes }>
-					{ isPlaceholder ? <SpinnerLine /> : null }
+				<React.Fragment>
+					<td key={ planName } className={ classes }>
+						{ isPlaceholder ? <SpinnerLine /> : null }
 
-					<p className="plan-features__description">{ description }</p>
-				</td>
+						<p className="plan-features__description">{ description }</p>
+					</td>
+					<td className="plan-features__table-space" />
+				</React.Fragment>
 			);
 		} );
 	}
@@ -504,6 +512,7 @@ export class PlanFeatures extends Component {
 			}
 
 			return (
+			<React.Fragment>
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
 						availableForPurchase={ availableForPurchase }
@@ -526,6 +535,8 @@ export class PlanFeatures extends Component {
 						selectedPlan={ selectedPlan }
 					/>
 				</td>
+				<td className="plan-features__table-space" />
+			</React.Fragment>
 			);
 		} );
 	}
@@ -590,15 +601,20 @@ export class PlanFeatures extends Component {
 					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
 			} );
 
-			return currentFeature ? (
-				<td key={ `${ planName }-${ key }` } className={ classes }>
-					{ this.renderFeatureItem( currentFeature ) }
-				</td>
-			) : (
-				<td
-					key={ `${ planName }-none` }
-					className="plan-features__table-item is-empty-feature-item"
-				/>
+			return (
+				<React.Fragment>
+					{ currentFeature ? (
+						<td key={ `${ planName }-${ key }` } className={ classes }>
+							{ this.renderFeatureItem( currentFeature ) }
+						</td>
+					) : (
+						<td
+							key={ `${ planName }-none` }
+							className="plan-features__table-item is-empty-feature-item"
+						/>
+					) }
+					<td className="plan-features__table-space" />
+				</React.Fragment>
 			);
 		} );
 	}

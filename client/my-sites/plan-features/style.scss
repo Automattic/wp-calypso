@@ -149,7 +149,7 @@ $plan-features-sidebar-width: 272px;
 
 	.is-no-tabs & {
 		border-right: 0;
-		&:nth-child( 5 ) {
+		&:nth-child( 9 ) {
 			border-right: solid 1px lighten( $gray, 27% );
 		}
 	}
@@ -874,6 +874,18 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 			color: #50575d;
 			font-size: 13px;
 			line-height: 13px;
+		}
+	}
+}
+.plan-features__table-space {
+	display: none;
+	@include breakpoint( '660px-1280px' ) {
+		.is-no-tabs & {
+			&:nth-child( 2 ), &:nth-child( 8 ) {
+				background-color: #f6f6f6;
+				display: table-cell;
+				width: 10px;
+			}
 		}
 	}
 }
