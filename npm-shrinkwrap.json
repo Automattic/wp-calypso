@@ -12787,13 +12787,31 @@
 			}
 		},
 		"moment-timezone-data-webpack-plugin": {
-			"version": "1.0.1",
-			"resolved": "https://registry.npmjs.org/moment-timezone-data-webpack-plugin/-/moment-timezone-data-webpack-plugin-1.0.1.tgz",
-			"integrity": "sha512-q12lT/DDFmSvl/7QseEd4Ii/54C9XY4PAzmdaP1HycCPfvV8kyH3ILf8OIu9eGeUUqyTY4169lwecfYv2o1IZw==",
+			"version": "1.0.2",
+			"resolved": "https://registry.npmjs.org/moment-timezone-data-webpack-plugin/-/moment-timezone-data-webpack-plugin-1.0.2.tgz",
+			"integrity": "sha512-gndMMIR6bPUMW2Eh0Usfh3/cXOuVpswj45YNYH+EZG+TC56qzGN746ofaIE7ltDM7vEcgeF5Sslo1p6rd/+Mow==",
 			"dev": true,
 			"requires": {
 				"find-cache-dir": "^2.0.0",
-				"make-dir": "^1.3.0"
+				"make-dir": "^2.0.0"
+			},
+			"dependencies": {
+				"make-dir": {
+					"version": "2.0.0",
+					"resolved": "https://registry.npmjs.org/make-dir/-/make-dir-2.0.0.tgz",
+					"integrity": "sha512-DCZvJtCxpfY3a0Onp57Jm0PY9ggZENfVtBMsPdXFZDrMSHU5kYCMJkJesLr0/UrFdJKuDUYoGxCpc93n4F3Z8g==",
+					"dev": true,
+					"requires": {
+						"pify": "^4.0.1",
+						"semver": "^5.6.0"
+					}
+				},
+				"pify": {
+					"version": "4.0.1",
+					"resolved": "https://registry.npmjs.org/pify/-/pify-4.0.1.tgz",
+					"integrity": "sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==",
+					"dev": true
+				}
 			}
 		},
 		"moo": {
