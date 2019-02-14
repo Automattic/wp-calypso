@@ -10,11 +10,12 @@ export function getFailedConnections( state ) {
 }
 
 /**
- * Returns Publicize connections that require reauthentication from users. For example, when LinkedIn switched its API from v1 to v2.
+ * Returns a list of Publicize connection service names that require reauthentication from users.
+ * iFor example, when LinkedIn switched its API from v1 to v2.
  *
  * @param {Object} state State object.
  *
- * @return {Array} List of connections.
+ * @return {Array} List of service names that need reauthentication.
  */
 export function getMustReauthConnections( state ) {
 	return state

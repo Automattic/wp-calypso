@@ -12,7 +12,6 @@
  */
 import { Component } from '@wordpress/element';
 import { Disabled, FormToggle, Notice, ExternalLink } from '@wordpress/components';
-import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 
 /**
@@ -22,17 +21,6 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import PublicizeServiceIcon from './service-icon';
 import getSiteFragment from 'gutenberg/extensions/presets/jetpack/editor-shared/get-site-fragment';
 
-/**
- * Return a link to the Sharing page, whether it's on Calypso or WP Admin.
- *
- * @returns {string} Link to Sharing page.
- */
-const getSharingLink = () =>
-	getSiteFragment()
-		? // If running in WP.com wp-admin or in Calypso, we redirect to Calypso sharing settings.
-		  `https://wordpress.com/sharing/${ getSiteFragment() }`
-		: // If running in WordPress.org wp-admin we redirect to Sharing settings in wp-admin.
-		  'options-general.php?page=sharing&publicize_popup=true';
 class PublicizeConnection extends Component {
 	state = {
 		showGooglePlusNotice: true,
@@ -73,7 +61,7 @@ class PublicizeConnection extends Component {
 	 * Displays a message when a connection requires reauthentication. We used this when migrating LinkedIn API usage from v1 to v2,
 	 * since the prevous OAuth1 tokens were incompatible with OAuth2.
 	 *
-	 * @returns {object|null} Notice about reauthentication
+	 * @returns {object|?null} Notice about reauthentication
 	 */
 	maybeDisplayLinkedInNotice = () =>
 		this.connectionNeedsReauth() && (
@@ -83,7 +71,9 @@ class PublicizeConnection extends Component {
 						'Your LinkedIn connection needs to be reauthenticated to continue working – head to Sharing to take care of it.'
 					) }
 				</p>
-				<ExternalLink href={ getSharingLink() }>{ __( 'Go to Sharing settings' ) }</ExternalLink>
+				<ExternalLink href={ `https://wordpress.com/sharing/${ getSiteFragment() }` }>
+					{ __( 'Go to Sharing settings' ) }
+				</ExternalLink>
 			</Notice>
 		);
 
@@ -140,11 +130,7 @@ class PublicizeConnection extends Component {
 	}
 }
 
-export default compose( [
-	withSelect( select => ( {
-		failedConnections: select( 'jetpack/publicize' ).getFailedConnections(),
-	} ) ),
-	withSelect( select => ( {
-		mustReauthConnections: select( 'jetpack/publicize' ).getMustReauthConnections(),
-	} ) ),
-] )( PublicizeConnection );
+export default withSelect( select => ( {
+	failedConnections: select( 'jetpack/publicize' ).getFailedConnections(),
+	mustReauthConnections: select( 'jetpack/publicize' ).getMustReauthConnections(),
+} ) )( PublicizeConnection );
