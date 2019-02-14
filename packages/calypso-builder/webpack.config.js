@@ -269,6 +269,8 @@ function getWebpackConfig( {
 									},
 									path: __dirname,
 								},
+								ident: 'postcss',
+								plugins: () => [ require( 'postcss-custom-properties' ) ],
 							},
 						},
 						{
