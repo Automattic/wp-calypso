@@ -74,7 +74,8 @@
 		"showConciergeSessionUpsellNonGSuite",
 		"builderReferralThemesBanner",
 		"gSuitePlan",
-		"domainSearchButtonStyles"
+		"domainSearchButtonStyles",
+		"twoYearPlanByDefault"
 	],
 	"overrideABTests": [
 		[ "businessPlanDescriptionAT_20170605", "original" ],
@@ -90,6 +91,7 @@
 		[ "showConciergeSessionUpsell_20181214", "skip" ],
 		[ "showConciergeSessionUpsellNonGSuite_20190104", "skip" ],
 		[ "gSuitePlan_20190117", "basic" ],
-		[ "improvedOnboarding_20190131", "main" ]
+		[ "improvedOnboarding_20190214", "main" ],
+		[ "twoYearPlanByDefault_20190207", "originalFlavor" ]
 	]
 }
