@@ -39,12 +39,19 @@ import analytics from 'lib/analytics';
 
 export class ConciergeSessionNudge extends React.Component {
 	static propTypes = {
-		receiptId: PropTypes.number.isRequired,
+		receiptId: PropTypes.number,
 		selectedSiteId: PropTypes.number.isRequired,
 	};
 
 	render() {
-		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, translate } = this.props;
+		const {
+			selectedSiteId,
+			isLoading,
+			hasProductsList,
+			hasSitePlans,
+			translate,
+			receiptId,
+		} = this.props;
 		const title = translate( 'Checkout ‹ Support Session', {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
@@ -61,9 +68,13 @@ export class ConciergeSessionNudge extends React.Component {
 					this.renderPlaceholders()
 				) : (
 					<>
-						<CompactCard className="concierge-session-nudge__card-header">
-							{ this.header() }
-						</CompactCard>
+						{ receiptId ? (
+							<CompactCard className="concierge-session-nudge__card-header">
+								{ this.header() }
+							</CompactCard>
+						) : (
+							''
+						) }
 						<CompactCard className="concierge-session-nudge__card-body">
 							{ this.body() }
 						</CompactCard>
@@ -77,15 +88,20 @@ export class ConciergeSessionNudge extends React.Component {
 	}
 
 	renderPlaceholders() {
+		const { receiptId } = this.props;
 		return (
 			<>
-				<CompactCard>
-					<div className="concierge-session-nudge__header">
-						<div className="concierge-session-nudge__placeholders">
-							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+				{ receiptId ? (
+					<CompactCard>
+						<div className="concierge-session-nudge__header">
+							<div className="concierge-session-nudge__placeholders">
+								<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							</div>
 						</div>
-					</div>
-				</CompactCard>
+					</CompactCard>
+				) : (
+					''
+				) }
 				<CompactCard>
 					<div className="concierge-session-nudge__placeholders">
 						<>
@@ -111,13 +127,11 @@ export class ConciergeSessionNudge extends React.Component {
 	}
 
 	header() {
-		const { translate, receiptId } = this.props;
+		const { translate } = this.props;
 		return (
 			<header className="concierge-session-nudge__header">
 				<h2 className="concierge-session-nudge__title">
-					{ receiptId
-						? translate( 'Congratulations, your site is being upgraded.' )
-						: translate( 'Want some help?' ) }
+					{ translate( 'Congratulations, your site is being upgraded.' ) }
 				</h2>
 			</header>
 		);
@@ -133,9 +147,7 @@ export class ConciergeSessionNudge extends React.Component {
 				<div className="concierge-session-nudge__column-pane">
 					<div className="concierge-session-nudge__column-content">
 						<h4 className="concierge-session-nudge__sub-header">
-							{ translate(
-								'Want to create a site that looks great, gets traffic, and makes money?'
-							) }
+							{ translate( 'Do you need some help building your site?' ) }
 						</h4>
 
 						<p>
