@@ -64,17 +64,15 @@
 	}
 
 	.sharing-service__notice {
-		clear: both;
-		font: italic 0.75rem/0.95rem sans-serif;
-		color: $muriel-red-400;
 		margin-left: 56px;
+		width: 100%;
 
 		@include breakpoint( '<800px' ) {
-			margin-left: 6px;
+			margin-left: 0;
 		}
 
 		@include breakpoint( '<660px' ) {
-			margin-left: 56px;
+			margin-left: 6px;
 		}
 	}
 }

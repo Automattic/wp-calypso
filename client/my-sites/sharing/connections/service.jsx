@@ -26,6 +26,7 @@ import {
 import { successNotice, errorNotice, warningNotice } from 'state/notices/actions';
 import Connection from './connection';
 import FoldableCard from 'components/foldable-card';
+import Notice from 'components/notice';
 import { getAvailableExternalAccounts } from 'state/sharing/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
@@ -443,15 +444,14 @@ export class SharingService extends Component {
 						numberOfConnections={ this.getConnections().length }
 					/>
 				</div>
-				{ 'linkedin' === this.props.service.ID &&
-					some( connections, { status: 'must_reauth' } ) && (
-						<div className="sharing-service__notice">
-							{ this.props.translate(
-								'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Publicize ' +
-									'by disconnecting and reconnecting your account.'
-							) }
-						</div>
-					) }
+				{ 'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } ) && (
+					<Notice isCompact status="is-error" className="sharing-service__notice">
+						{ this.props.translate(
+							'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Publicize ' +
+								'by disconnecting and reconnecting your account.'
+						) }
+					</Notice>
+				) }
 			</div>
 		);
 
