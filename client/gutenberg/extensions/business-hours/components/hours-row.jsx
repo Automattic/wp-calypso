@@ -15,6 +15,72 @@ const defaultOpen = '09:00';
 const defaultClose = '17:00';
 
 class HoursRow extends Component {
+	renderOpenRowOrRows = ( rowHours, index ) => {
+		const { day, attributes, setAttributes, resetFocus, edit = true } = this.props;
+		const { hours } = attributes;
+		const { opening, closing } = rowHours;
+		return (
+			<div className="business-hours__row">
+				<dt className={ classNames( day, 'business-hours__day' ) }>
+					{ index === 0 && this.renderDayColumn() }
+				</dt>
+				<dd className={ classNames( day, 'business-hours__hours' ) }>
+					{ edit ? (
+						<TextControl
+							type="time"
+							label={ __( 'Opening' ) }
+							value={ opening }
+							onChange={ value => {
+								resetFocus && resetFocus();
+								setAttributes( {
+									hours: {
+										...hours,
+										[ day ]: [
+											{
+												...rowHours,
+												opening: value,
+											},
+										],
+									},
+								} );
+							} }
+						/>
+					) : (
+						opening
+					) }
+					&nbsp;&mdash;&nbsp;
+					{ edit ? (
+						<TextControl
+							type="time"
+							label={ __( 'Closing' ) }
+							value={ closing }
+							onChange={ value => {
+								resetFocus && resetFocus();
+								setAttributes( {
+									hours: {
+										...hours,
+										[ day ]: [
+											{
+												...rowHours,
+												closing: value,
+											},
+										],
+									},
+								} );
+							} }
+						/>
+					) : (
+						closing
+					) }
+				</dd>
+				<div className="business-hours__add">
+					<Button isSmall isLink onClick={ this.addHours }>
+						{ __( 'Add Hours' ) }
+					</Button>
+				</div>
+			</div>
+		);
+	};
 	toggleClosed = nextValue => {
 		const { day, attributes, setAttributes } = this.props;
 		const { hours } = attributes;
@@ -49,94 +115,38 @@ class HoursRow extends Component {
 		const { hours } = attributes;
 		return isEmpty( hours[ day ][ 0 ] ) && isEmpty( hours[ day ][ 0 ] );
 	}
-	renderClosed() {
-		const { edit = true } = this.props;
-		return <Fragment>{ ! edit && __( 'CLOSED' ) }</Fragment>;
-	}
-	renderOpened() {
-		const { day, attributes, setAttributes, resetFocus, edit = true } = this.props;
-		const { hours } = attributes;
-		const todaysHours = isEmpty( hours[ day ][ 0 ] ) ? {} : hours[ day ][ 0 ];
-		const { opening, closing } = todaysHours;
+	renderDayColumn() {
+		const { day, edit = true, data } = this.props;
+		const { days } = data;
 		return (
 			<Fragment>
-				{ edit ? (
-					<TextControl
-						type="time"
-						label={ __( 'Opening' ) }
-						value={ opening }
-						onChange={ value => {
-							resetFocus && resetFocus();
-							setAttributes( {
-								hours: {
-									...hours,
-									[ day ]: [
-										{
-											...todaysHours,
-											opening: value,
-										},
-									],
-								},
-							} );
-						} }
+				<span className="business-hours__day-name">{ days[ day ] }</span>
+				{ edit && (
+					<ToggleControl
+						label={ this.isClosed() ? __( 'Closed' ) : __( 'Open' ) }
+						checked={ ! this.isClosed() }
+						onChange={ this.toggleClosed }
 					/>
-				) : (
-					opening
-				) }
-				&nbsp;&mdash;&nbsp;
-				{ edit ? (
-					<TextControl
-						type="time"
-						label={ __( 'Closing' ) }
-						value={ closing }
-						onChange={ value => {
-							resetFocus && resetFocus();
-							setAttributes( {
-								hours: {
-									...hours,
-									[ day ]: [
-										{
-											...todaysHours,
-											closing: value,
-										},
-									],
-								},
-							} );
-						} }
-					/>
-				) : (
-					closing
 				) }
 			</Fragment>
 		);
 	}
-	render() {
-		const { day, edit = true, data } = this.props;
-		const { days } = data;
+	renderClosedRow() {
+		const { day, edit = true } = this.props;
 		return (
 			<div className="business-hours__row">
-				<dt className={ classNames( day, 'business-hours__day' ) }>
-					<span className="business-hours__day-name">{ days[ day ] }</span>
-					{ edit && (
-						<ToggleControl
-							label={ this.isClosed() ? __( 'Closed' ) : __( 'Open' ) }
-							checked={ ! this.isClosed() }
-							onChange={ this.toggleClosed }
-						/>
-					) }
-				</dt>
-				<dd className={ classNames( day, { closed: this.isClosed() }, 'business-hours__hours' ) }>
-					{ this.isClosed() ? this.renderClosed() : this.renderOpened() }
+				<dt className={ classNames( day, 'business-hours__day' ) }>{ this.renderDayColumn() }</dt>
+				<dd className={ classNames( day, 'closed', 'business-hours__hours' ) }>
+					{ ! edit && __( 'CLOSED' ) }
 				</dd>
-				<div className="business-hours__add">
-					{ ! this.isClosed() && (
-						<Button isSmall isLink onClick={ this.addHours }>
-							{ __( 'Add Hours' ) }
-						</Button>
-					) }
-				</div>
+				<div className="business-hours__add">&nbsp;</div>
 			</div>
 		);
+	}
+	render() {
+		const { day, attributes } = this.props;
+		const { hours } = attributes;
+		return this.isClosed() ? this.renderClosedRow() : hours[ day ].map( this.renderOpenRowOrRows );
 	}
 }
 
