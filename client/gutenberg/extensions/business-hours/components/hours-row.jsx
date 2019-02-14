@@ -134,17 +134,25 @@ class HoursRow extends Component {
 	} ) => {
 		const { attributes, setAttributes } = this.props;
 		const { hours } = attributes;
-		const todaysHours = hours[ day ];
-		todaysHours.push( { opening: '', closing: '' } );
+		hours[ day ].push( { opening: '', closing: '' } );
 		setAttributes( {
 			hours: {
 				...hours,
-				[ day ]: todaysHours,
+				[ day ]: hours[ day ],
 			},
 		} );
 	};
 	removeHours = ( day, index ) => {
-		alert( day + ' ' + index );
+		const { attributes, setAttributes } = this.props;
+		const { hours } = attributes;
+		setAttributes( {
+			hours: {
+				...hours,
+				[ day ]: hours[ day ].filter( ( daysHours, hoursIndex ) => {
+					return hoursIndex !== index;
+				} ),
+			},
+		} );
 	};
 	isClosed() {
 		const { day, attributes } = this.props;
