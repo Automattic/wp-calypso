@@ -105,7 +105,7 @@ class SiteSettingsImport extends Component {
 		const { importers: imports } = this.state;
 
 		if ( isEmpty( imports ) && 'wix' === engine && site && site.ID ) {
-			this.onceAutoStartImport( site.ID, 'importer-type-site-importer' );
+			this.onceAutoStartImport( site.ID, 'importer-type-wix' );
 		}
 	}
 
