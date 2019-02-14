@@ -68,7 +68,8 @@ class PublicizeConnection extends Component {
 			<Notice className="jetpack-publicize-notice" isDismissible={ false } status="error">
 				<p>
 					{ __(
-						'Your LinkedIn connection needs to be reauthenticated to continue working – head to Sharing to take care of it.'
+						'Your LinkedIn connection needs to be reauthenticated ' +
+							'to continue working – head to Sharing to take care of it.'
 					) }
 				</p>
 				<ExternalLink href={ `https://wordpress.com/sharing/${ getSiteFragment() }` }>
