@@ -295,7 +295,8 @@ class ManageMenu extends PureComponent {
 	};
 
 	getCustomMenuItems() {
-		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
+		//reusable blocks are not shown in the sidebar on wp-admin either
+		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page', 'wp_block' ] );
 		return reduce(
 			customPostTypes,
 			( memo, postType, postTypeSlug ) => {
