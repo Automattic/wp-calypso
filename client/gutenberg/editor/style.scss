@@ -417,7 +417,7 @@ html.is-iframe {
 }
 
 .main.calypsoify.is-iframe {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	margin: 0;
 	padding: 0;
 	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );

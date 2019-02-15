@@ -348,7 +348,7 @@ $plan-features-sidebar-width: 272px;
 	width: 580px;
 
 	.segmented-control__item {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		min-width: 50%;
 
 		&:first-of-type {

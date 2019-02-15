@@ -7,7 +7,7 @@
 .site-style__form {
 	align-items: stretch;
 	height: 100%;
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	border-color: $gray-lighten-30;
 	border-radius: 5px;
 	@include breakpoint( '<660px' ) {
