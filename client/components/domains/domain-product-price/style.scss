@@ -10,7 +10,6 @@
 
     @include breakpoint('>660px') {
         align-items: flex-end;
-        //flex: 0 2 360px;
         font-size: 17px;
         padding-right: 2em;
 
@@ -72,7 +71,6 @@
 		}
 
 		@include breakpoint( '>660px' ) {
-			//font-size: 16px;
 			line-height: 1.5;
 			margin-top: 0;
 		}
