@@ -110,7 +110,7 @@
     "exports-loader": "0.7.0",
     "express": "4.16.4",
     "express-useragent": "1.0.12",
-    "file-loader": "2.0.0",
+    "file-loader": "3.0.1",
     "filesize": "3.6.1",
     "flag-icon-css": "3.2.1",
     "flux": "3.1.3",
