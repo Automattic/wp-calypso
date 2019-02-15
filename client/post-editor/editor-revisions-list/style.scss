@@ -256,7 +256,7 @@
 
 	.editor-revisions-list__revision.is-selected > &,
 	.editor-revisions-list__revision.is-selected > &:hover {
-		background: $gray-text-min;
+		background: var( --color-text-subtle );
 
 		// NOTE: force with a heavy specificity white text, see discussion on
 		// https://github.com/Automattic/wp-calypso/pull/13367#discussion_r114108253

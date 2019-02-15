@@ -73,7 +73,7 @@
 
 .notice__icon-wrapper {
 	position: relative;
-	background: $gray-text-min;
+	background: var( --color-text-subtle );
 	color: var( --color-white );
 	display: flex;
 	align-items: baseline;

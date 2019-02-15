@@ -217,7 +217,7 @@
 		white-space: nowrap;
 
 		.gridicon {
-			fill: $gray-text-min;
+			fill: var( --color-text-subtle );
 			margin-bottom: -4px;
 		}
 
