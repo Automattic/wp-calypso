@@ -59,6 +59,7 @@
 	.business-hours__remove {
 		width: 10%;
 		text-align: center;
+		margin-top: 16px;
 	}
 	.business-hours-row__add button {
 		text-decoration: none;
@@ -69,12 +70,12 @@
 	.business-hours__remove button {
 		display: inline;
 	}
-	.business-hours-row__add button:hover,
-	.business-hours__remove button:hover,
-	.business-hours-row__add button:focus,
-	.business-hours__remove button:focus,
-	.business-hours-row__add button:active,
-	.business-hours__remove button:active {
+	.business-hours-row__add .components-button.is-default:hover,
+	.business-hours__remove .components-button.is-default:hover,
+	.business-hours-row__add .components-button.is-default:focus,
+	.business-hours__remove .components-button.is-default:focus,
+	.business-hours-row__add .components-button.is-default:active,
+	.business-hours__remove .components-button.is-default:active {
 		background: none;
 		box-shadow: none;
 	}
