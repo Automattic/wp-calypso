@@ -164,14 +164,15 @@ const contextLinksForSection = {
 		{
 			link: 'http://en.support.wordpress.com/account-settings/',
 			post_id: 80368,
-			title: 'Account Settings',
+			title: 'Edit Your Account Settings',
 			description: 'You can review and edit basic account information in Account Settings. ',
 		},
 		{
 			link: 'http://en.support.wordpress.com/account-deactivation/',
 			post_id: 143899,
-			title: 'Account Deactivation',
-			description: 'Finished with your WordPress.com account? Would you like to shut it down?',
+			title: 'Close Your Account',
+			description:
+				'Learn how to permanently delete your WordPress.com account, and what it means for your website and data.',
 		},
 	],
 	security: [
