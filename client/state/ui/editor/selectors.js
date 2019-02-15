@@ -48,7 +48,7 @@ export function isEditorNewPost( state ) {
  */
 export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
 	const editorNewPostPath = getEditorUrl( state, siteId, null, type );
-	return `${ editorNewPostPath }?copy=${ postId }`;
+	return `${ editorNewPostPath }?jetpack-copy=${ postId }`;
 }
 
 /**
