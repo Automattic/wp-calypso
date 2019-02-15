@@ -5,25 +5,9 @@ import apiFetch from '@wordpress/api-fetch';
 import { isBlobURL } from '@wordpress/blob';
 import { compose, createHigherOrderComponent } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
-import {
-	BaseControl,
-	Button,
-	Disabled,
-	IconButton,
-	PanelBody,
-	SandBox,
-	SelectControl,
-	ToggleControl,
-	Toolbar,
-} from '@wordpress/components';
-import {
-	BlockControls,
-	InspectorControls,
-	MediaUpload,
-	MediaUploadCheck,
-	RichText,
-} from '@wordpress/editor';
-import { Component, Fragment, createRef } from '@wordpress/element';
+import { Disabled, IconButton, SandBox, Toolbar } from '@wordpress/components';
+import { BlockControls, RichText } from '@wordpress/editor';
+import { Component, createRef, Fragment } from '@wordpress/element';
 import classnames from 'classnames';
 import { get } from 'lodash';
 
@@ -138,7 +122,7 @@ const VideoPressEdit = CoreVideoEdit =>
 			}
 
 			const { html, scripts } = preview;
-			const { autoplay, caption, controls, loop, muted, poster, preload } = attributes;
+			const { caption } = attributes;
 
 			return (
 				<Fragment>
@@ -152,59 +136,6 @@ const VideoPressEdit = CoreVideoEdit =>
 							/>
 						</Toolbar>
 					</BlockControls>
-					<InspectorControls>
-						<PanelBody title={ __( 'Video Settings' ) }>
-							<ToggleControl
-								label={ __( 'Autoplay' ) }
-								onChange={ value => setAttributes( { autoplay: value } ) }
-								checked={ autoplay }
-							/>
-							<ToggleControl
-								label={ __( 'Loop' ) }
-								onChange={ value => setAttributes( { loop: value } ) }
-								checked={ loop }
-							/>
-							<ToggleControl
-								label={ __( 'Muted' ) }
-								onChange={ value => setAttributes( { muted: value } ) }
-								checked={ muted }
-							/>
-							<ToggleControl
-								label={ __( 'Playback Controls' ) }
-								onChange={ value => setAttributes( { controls: value } ) }
-								checked={ controls }
-							/>
-							<SelectControl
-								label={ __( 'Preload' ) }
-								value={ preload }
-								onChange={ value => setAttributes( { preload: value } ) }
-								options={ [
-									{ value: 'auto', label: __( 'Auto' ) },
-									{ value: 'metadata', label: __( 'Metadata' ) },
-									{ value: 'none', label: __( 'None' ) },
-								] }
-							/>
-							<MediaUploadCheck>
-								<BaseControl className="editor-video-poster-control" label={ __( 'Poster Image' ) }>
-									<MediaUpload
-										title={ __( 'Select Poster Image' ) }
-										onSelect={ image => setAttributes( { poster: image.url } ) }
-										allowedTypes={ [ 'image' ] }
-										render={ ( { open } ) => (
-											<Button isDefault onClick={ open } ref={ this.posterImageButton }>
-												{ ! poster ? __( 'Select Poster Image' ) : __( 'Replace image' ) }
-											</Button>
-										) }
-									/>
-									{ !! poster && (
-										<Button onClick={ this.onRemovePoster } isLink isDestructive>
-											{ __( 'Remove Poster Image' ) }
-										</Button>
-									) }
-								</BaseControl>
-							</MediaUploadCheck>
-						</PanelBody>
-					</InspectorControls>
 					<figure className={ classnames( className, 'wp-block-embed', 'is-type-video' ) }>
 						{ /*
 							Disable the video player so the user clicking on it won't play the
