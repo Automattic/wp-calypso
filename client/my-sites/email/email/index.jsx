@@ -23,11 +23,7 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import PlansNavigation from 'my-sites/plans/navigation';
 import EmptyContent from 'components/empty-content';
-import {
-	domainManagementEdit,
-	domainManagementList,
-	emailManagementForwarding,
-} from 'my-sites/domains/paths';
+import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
 import { emailManagementForwarding } from 'my-sites/email/paths';
 import {
 	getSelectedDomain,
@@ -118,10 +114,7 @@ class Email extends React.Component {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
 				secondaryAction: translate( 'Add Email Forwarding' ),
-				secondaryActionURL: emailManagementForwarding(
-					selectedSite.slug,
-					selectedDomainName
-				),
+				secondaryActionURL: emailManagementForwarding( selectedSite.slug, selectedDomainName ),
 			};
 		} else {
 			emptyContentProps = {

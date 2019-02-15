@@ -8,22 +8,21 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import domainManagementController from './domain-management/controller';
 import controller from './controller';
-import SiftScience from 'lib/siftscience';
-import config from 'config';
 import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
-	SiftScience.recordUser();
+function registerMultiPage( { paths: givenPaths, handlers } ) {
+	givenPaths.forEach( path => page( path, ...handlers ) );
+}
 
+export default function() {
 	page( paths.emailManagement(), siteSelection, sites, makeLayout, clientRender );
 
 	registerMultiPage( {
 		paths: [ paths.emailManagement( ':site', ':domain' ), paths.emailManagement( ':site' ) ],
 		handlers: [
-			...getCommonHandlers( { noSitePath: paths.emailManagement() } ),
+			[ siteSelection, navigation ],
 			controller.emailManagement,
 			makeLayout,
 			clientRender,
@@ -36,7 +35,7 @@ export default function() {
 			paths.emailManagementAddGSuiteUsers( ':site' ),
 		],
 		handlers: [
-			...getCommonHandlers(),
+			[ siteSelection, navigation ],
 			controller.emailManagementAddGSuiteUsers,
 			makeLayout,
 			clientRender,
@@ -45,7 +44,7 @@ export default function() {
 
 	page(
 		paths.emailManagementForwarding( ':site', ':domain' ),
-		...getCommonHandlers(),
+		[ siteSelection, navigation ],
 		controller.emailManagementForwarding,
 		makeLayout,
 		clientRender
