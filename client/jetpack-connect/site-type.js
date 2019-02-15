@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
+import WpcomColophon from 'components/wpcom-colophon';
 import jetpackOnly from './jetpack-only';
 import MainWrapper from './main-wrapper';
 import SiteTypeForm from 'signup/steps/site-type/form';
@@ -42,6 +43,8 @@ class JetpackSiteType extends Component {
 					<FormattedHeader headerText={ translate( 'What kind of site do you have?' ) } />
 
 					<SiteTypeForm submitForm={ this.handleSubmit } />
+
+					<WpcomColophon />
 				</div>
 			</MainWrapper>
 		);
