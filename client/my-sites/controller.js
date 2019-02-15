@@ -41,8 +41,6 @@ import {
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementEmail,
-	domainManagementEmailForwarding,
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementPrivacyProtection,
@@ -51,6 +49,7 @@ import {
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
 } from 'my-sites/domains/paths';
+import { emailManagement, emailManagementForwarding } from 'my-sites/email/paths';
 import SitesComponent from 'my-sites/sites';
 import { warningNotice } from 'state/notices/actions';
 import { makeLayout, render as clientRender } from 'controller';
@@ -156,7 +155,7 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	makeLayout( reactContext, noop );
 	clientRender( reactContext );
 }
-
+// TODO
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 	const allPaths = [
 		domainManagementAddGSuiteUsers,
@@ -164,8 +163,8 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 		domainManagementDns,
 		domainManagementEdit,
 		domainManagementEditContactInfo,
-		domainManagementEmail,
-		domainManagementEmailForwarding,
+		emailManagement,
+		emailManagementForwarding,
 		domainManagementList,
 		domainManagementNameServers,
 		domainManagementPrivacyProtection,

@@ -26,18 +26,6 @@ export function domainManagementEdit( siteName, domainName, slug ) {
 	return domainManagementRoot() + '/' + domainName + '/' + slug + '/' + siteName;
 }
 
-export function domainManagementAddGSuiteUsers( siteName, domainName ) {
-	let path;
-
-	if ( domainName ) {
-		path = domainManagementEdit( siteName, domainName, 'add-gsuite-users' );
-	} else {
-		path = domainManagementRoot() + '/add-gsuite-users/' + siteName;
-	}
-
-	return path;
-}
-
 export function domainManagementContactsPrivacy( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'contacts-privacy' );
 }
@@ -48,24 +36,6 @@ export function domainManagementEditContactInfo( siteName, domainName ) {
 
 export function domainManagementManageConsent( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'manage-consent' );
-}
-
-export function domainManagementEmail( siteName, domainName ) {
-	let path;
-
-	if ( domainName ) {
-		path = domainManagementEdit( siteName, domainName, 'email' );
-	} else if ( siteName ) {
-		path = domainManagementRoot() + '/email/' + siteName;
-	} else {
-		path = domainManagementRoot() + '/email';
-	}
-
-	return path;
-}
-
-export function domainManagementEmailForwarding( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'email-forwarding' );
 }
 
 export function domainManagementNameServers( siteName, domainName ) {

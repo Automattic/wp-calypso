@@ -17,12 +17,8 @@ import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import {
-	domainManagementDns,
-	domainManagementEmail,
-	domainManagementDomainConnectMapping,
-} from 'my-sites/domains/paths';
-
+import { domainManagementDns, domainManagementDomainConnectMapping } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 const MappedDomain = createReactClass( {
 	displayName: 'MappedDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
@@ -123,7 +119,7 @@ const MappedDomain = createReactClass( {
 	},
 
 	emailNavItem() {
-		const path = domainManagementEmail( this.props.selectedSite.slug, this.props.domain.name );
+		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
 	},

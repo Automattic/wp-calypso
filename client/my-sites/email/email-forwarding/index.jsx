@@ -16,7 +16,7 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import EmailForwardingList from './email-forwarding-list';
 import EmailForwardingAddNew from './email-forwarding-add-new';
 import EmailForwardingDetails from './email-forwarding-details';
-import { domainManagementEmail } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 
@@ -61,7 +61,7 @@ class EmailForwarding extends React.Component {
 	};
 
 	goToEditEmail = () => {
-		page( domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page( emailManagement( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 }
 

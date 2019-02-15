@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import { domainManagementEmailForwarding } from 'my-sites/domains/paths';
+import { emailManagementForwarding } from 'my-sites/email/paths';
 
 class DeleteEmailForwardsDialog extends React.Component {
 	static propTypes = {
@@ -72,10 +72,7 @@ class DeleteEmailForwardsDialog extends React.Component {
 	}
 
 	getEmailForwardingPath() {
-		return domainManagementEmailForwarding(
-			this.props.selectedSite.slug,
-			this.props.selectedDomainName
-		);
+		return emailManagementForwarding( this.props.selectedSite.slug, this.props.selectedDomainName );
 	}
 }
 

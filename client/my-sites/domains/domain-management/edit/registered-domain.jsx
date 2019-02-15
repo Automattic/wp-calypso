@@ -16,11 +16,11 @@ import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Header from './card/header';
 import {
 	domainManagementContactsPrivacy,
-	domainManagementEmail,
 	domainManagementNameServers,
 	domainManagementTransfer,
 	domainManagementTransferOut,
 } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
@@ -173,7 +173,7 @@ const RegisteredDomain = createReactClass( {
 	},
 
 	emailNavItem() {
-		const path = domainManagementEmail( this.props.selectedSite.slug, this.props.domain.name );
+		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
 	},

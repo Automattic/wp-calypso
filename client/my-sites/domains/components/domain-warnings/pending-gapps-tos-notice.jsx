@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { COMPLETING_GOOGLE_APPS_SIGNUP } from 'lib/url/support';
-import { domainManagementEmail } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import PendingGappsTosNoticeMultipleDomainListItem from './pending-gapps-tos-notice-multiple-domain-list-item';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getLoginUrlWithTOSRedirect } from 'lib/google-apps';
@@ -115,8 +115,8 @@ class PendingGappsTosNotice extends React.PureComponent {
 		const severity = this.getNoticeSeverity();
 		const href =
 			this.props.domains.length === 1
-				? domainManagementEmail( this.props.siteSlug, this.props.domains[ 0 ].name )
-				: domainManagementEmail( this.props.siteSlug );
+				? emailManagement( this.props.siteSlug, this.props.domains[ 0 ].name )
+				: emailManagement( this.props.siteSlug );
 
 		return (
 			<Notice

@@ -18,7 +18,7 @@ import Button from 'components/forms/form-button';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
+import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -36,7 +36,7 @@ class GSuitePurchaseCta extends React.Component {
 	};
 
 	goToAddGoogleApps = () => {
-		page( domainManagementAddGSuiteUsers( this.props.selectedSite.slug, this.props.domainName ) );
+		page( emailManagementAddGSuiteUsers( this.props.selectedSite.slug, this.props.domainName ) );
 	};
 
 	getStorageText() {
