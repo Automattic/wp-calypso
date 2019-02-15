@@ -109,7 +109,6 @@ class EditorMoreOptionsCopyPost extends Component {
 					</Button>
 				</EditorDrawerLabel>
 				<Dialog
-					autoFocus={ false }
 					isVisible={ showDialog }
 					buttons={ buttons }
 					onClose={ this.closeDialog }
