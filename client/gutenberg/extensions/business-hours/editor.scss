@@ -4,10 +4,13 @@
 	.business-hours__row {
 		display: flex;
 		align-items: center;
-		margin-bottom: 20px;
+
+		&.business-hours-row__add, &.business-hours-row__closed {
+			margin-bottom: 20px;
+		}
 
 		.business-hours__day {
-			width: 34%;
+			width: 44%;
 			display: flex;
 			align-items: baseline;
 
@@ -27,40 +30,53 @@
 		}
 
 		.business-hours__hours {
-			width: 49%;
+			width: 44%;
 			margin: 0;
 			display: flex;
 			align-items: center;
+			flex-wrap: wrap;
 
 			.components-base-control {
 				display: inline-block;
-				max-width: 40%;
+				width: 48%;
+
+				&.business-hours__open {
+					margin-right: 4%;
+				}
 
 				.components-base-control__label {
-					display: inline-block;
 					margin-bottom: 0;
 					font-size: smaller;
 				}
 
 				.components-text-control__input {
-					width: 9em;
-					margin-left: 0.5em;
 					font-size: smaller;
 					padding: 4px;
 				}
 			}
-
-			.business-hours__remove {
-				display: inline-block;
-			}
 		}
-
-		.business-hours__add {
-			width: 15%;
-			button {
-				font-size: x-small;
-			}
+	}
+	.business-hours__remove {
+		width: 10%;
+		text-align: center;
+	}
+	.business-hours-row__add button {
+		text-decoration: none;
+		svg {
+			pointer-events: none;
 		}
+	}
+	.business-hours__remove button {
+		display: inline;
+	}
+	.business-hours-row__add button:hover,
+	.business-hours__remove button:hover,
+	.business-hours-row__add button:focus,
+	.business-hours__remove button:focus,
+	.business-hours-row__add button:active,
+	.business-hours__remove button:active {
+		background: none;
+		box-shadow: none;
 	}
 }
 
@@ -68,17 +84,23 @@
 	.wp-block-jetpack-business-hours {
 
 		.business-hours__row {
-			display: block;
+			flex-wrap: wrap;
+
+			&.business-hours-row__add {
+				.business-hours__day, .business-hours__remove {
+					display: none;
+				}
+			}
 
 			.business-hours__day {
 				width: 100%;
 			}
 
 			.business-hours__hours {
-				width: 100%;
+				width: 78%;
 			}
-			.business-hours__add {
-				width: 100%;
+			.business-hours__remove {
+				width: 18%;
 			}
 		}
 	}

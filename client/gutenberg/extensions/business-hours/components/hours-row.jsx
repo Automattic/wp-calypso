@@ -3,7 +3,7 @@
  */
 import { isEmpty } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
-import { Button, IconButton, TextControl, ToggleControl } from '@wordpress/components';
+import { IconButton, TextControl, ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 
 /**
@@ -20,43 +20,45 @@ class HoursRow extends Component {
 		const { hours } = attributes;
 		const { opening, closing } = rowHours;
 		return (
-			<div className="business-hours__row">
-				<dt className={ classNames( day, 'business-hours__day' ) }>
-					{ index === 0 && this.renderDayColumn() }
-				</dt>
-				<dd className={ classNames( day, 'business-hours__hours' ) }>
-					{ edit ? (
-						<TextControl
-							type="time"
-							label={ __( 'Opening' ) }
-							value={ opening }
-							onChange={ value => {
-								resetFocus && resetFocus();
-								setAttributes( {
-									hours: {
-										...hours,
-										[ day ]: hours[ day ].map( ( daysHours, daysIndex ) => {
-											if ( daysIndex === index ) {
-												return {
-													...daysHours,
-													opening: value,
-												};
-											}
-											return daysHours;
-										} ),
-									},
-								} );
-							} }
-						/>
-					) : (
-						opening
-					) }
-					{ edit ? (
-						<Fragment>
+			<Fragment>
+				<div className="business-hours__row">
+					<dt className={ classNames( day, 'business-hours__day' ) }>
+						{ index === 0 && this.renderDayColumn() }
+					</dt>
+					<dd className={ classNames( day, 'business-hours__hours' ) }>
+						{ edit ? (
+							<TextControl
+								type="time"
+								label={ __( 'Opening' ) }
+								value={ opening }
+								className="business-hours__open"
+								onChange={ value => {
+									resetFocus && resetFocus();
+									setAttributes( {
+										hours: {
+											...hours,
+											[ day ]: hours[ day ].map( ( daysHours, daysIndex ) => {
+												if ( daysIndex === index ) {
+													return {
+														...daysHours,
+														opening: value,
+													};
+												}
+												return daysHours;
+											} ),
+										},
+									} );
+								} }
+							/>
+						) : (
+							opening
+						) }
+						{ edit ? (
 							<TextControl
 								type="time"
 								label={ __( 'Closing' ) }
 								value={ closing }
+								className="business-hours__close"
 								onChange={ value => {
 									resetFocus && resetFocus();
 									setAttributes( {
@@ -75,30 +77,42 @@ class HoursRow extends Component {
 									} );
 								} }
 							/>
-							{ hours[ day ].length > 1 && (
-								<IconButton
-									isSmall
-									isLink
-									icon="no-alt"
-									className="business-hours__remove"
-									onClick={ () => {
-										this.removeHours( day, index );
-									} }
-								/>
-							) }
-						</Fragment>
-					) : (
-						closing
-					) }
-				</dd>
-				<div className="business-hours__add">
-					{ index === hours[ day ].length - 1 && (
-						<Button isSmall isLink onClick={ this.addHours } data-day={ day }>
-							{ __( 'Add Hours' ) }
-						</Button>
-					) }
+						) : (
+							closing
+						) }
+					</dd>
+					<div className="business-hours__remove">
+						{ hours[ day ].length > 1 && (
+							<IconButton
+								isSmall
+								isLink
+								icon="trash"
+								onClick={ () => {
+									this.removeHours( day, index );
+								} }
+							/>
+						) }
+					</div>
 				</div>
-			</div>
+				{ index === hours[ day ].length - 1 && (
+					<div className="business-hours__row business-hours-row__add">
+						<dt className={ classNames( day, 'business-hours__day' ) }>&nbsp;</dt>
+						<dd className={ classNames( day, 'business-hours__hours' ) }>
+							<IconButton
+								isSmall
+								isLink
+								label={ __( 'Add Hours' ) }
+								icon="plus-alt"
+								onClick={ this.addHours }
+								data-day={ day }
+							>
+								{ __( 'Add Hours' ) }
+							</IconButton>
+						</dd>
+						<div className="business-hours__remove">&nbsp;</div>
+					</div>
+				) }
+			</Fragment>
 		);
 	};
 	toggleClosed = nextValue => {
@@ -178,12 +192,12 @@ class HoursRow extends Component {
 	renderClosedRow() {
 		const { day, edit = true } = this.props;
 		return (
-			<div className="business-hours__row">
+			<div className="business-hours__row business-hours-row__closed">
 				<dt className={ classNames( day, 'business-hours__day' ) }>{ this.renderDayColumn() }</dt>
 				<dd className={ classNames( day, 'closed', 'business-hours__hours' ) }>
 					{ ! edit && __( 'CLOSED' ) }
 				</dd>
-				<div className="business-hours__add">&nbsp;</div>
+				<div className="business-hours__remove">&nbsp;</div>
 			</div>
 		);
 	}
