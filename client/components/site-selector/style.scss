@@ -33,6 +33,10 @@
 	}
 }
 
+.layout__secondary .site-selector.is-large .site-selector__sites {
+	border-color: var( --sidebar-border-color );
+}
+
 // Styles for Site elements within the Selector
 .site-selector .site,
 .site-selector .all-sites {
@@ -161,6 +165,10 @@
 	padding-left: 10px;
 }
 
+.layout__secondary .site-selector__add-new-site {
+	border-color: var( --sidebar-border-color );
+}
+
 .site-selector__add-new-site .button {
 	box-sizing: border-box;
 	display: inline-block;
@@ -205,12 +213,20 @@
 	border-bottom: 1px solid var( --color-neutral-100 );
 }
 
+.layout__secondary .site-selector .all-sites {
+	border-color: var( --sidebar-border-color );
+}
+
 .site-selector__recent {
 	border-bottom: 1px solid var( --color-neutral-0 );
 
 	&:empty {
 		border-bottom-width: 0;
 	}
+}
+
+.layout__secondary .site-selector__recent {
+	border-color: var( --sidebar-border-color );
 }
 
 .site-selector__hidden-sites-message {

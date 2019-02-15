@@ -57,10 +57,10 @@
 
 		@include breakpoint( '<660px' ) {
 			background-color: var( --color-neutral-0 );
-			border-bottom: 1px solid lighten( $gray, 25 );
+			border-bottom: 1px solid var( --sidebar-border-color );
 
 			&:first-child {
-				border-top: 1px solid lighten( $gray, 25 );
+				border-top: 1px solid var( --sidebar-border-color );
 			}
 		}
 	}
@@ -301,13 +301,13 @@ form.sidebar__button input {
 }
 
 .sidebar .sidebar__separator {
-	border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
+	border-bottom: 1px solid var( --sidebar-border-color );
 }
 
 .sidebar .sidebar__footer {
 	align-items: center;
 	padding: 0;
-	border-top: 1px solid darken( $sidebar-bg-color, 10% );
+	border-top: 1px solid var( --sidebar-border-color );
 	margin: auto 0 0;
 	display: flex;
 	flex-direction: row;

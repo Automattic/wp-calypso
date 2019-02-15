@@ -173,7 +173,7 @@
 		margin-top: 0;
 
 		@include breakpoint( '<660px' ) {
-			border-top: 1px solid darken( $sidebar-bg-color, 10% );
+			border-top: 1px solid var( --sidebar-border-color );
 		}
 
 		@include breakpoint( '>660px' ) {
