@@ -67,6 +67,11 @@
 	}
 }
 
+.layout__secondary .all-sites .count {
+	color: var( --sidebar-text-color );
+	border-color: var( --sidebar-text-color );
+}
+
 // Highlight & hover effects
 .site-selector .site.is-highlighted,
 .site-selector .all-sites.is-highlighted,
@@ -183,6 +188,14 @@
 	}
 }
 
+.layout__secondary .site-selector__add-new-site .button {
+	color: var( --sidebar-heading-color );
+
+	&:hover {
+		color: var( --sidebar-text-color );
+	}
+}
+
 // Containers in the list of sites are larger
 .site-selector .site-action {
 	padding-top: 15px;
@@ -201,13 +214,13 @@
 }
 
 .site-selector__hidden-sites-message {
-	color: $gray;
+	color: var( --sidebar-text-color );
 	display: block;
 	font-size: 12px;
 	padding: 16px 16px 24px;
 
 	.site-selector__manage-hidden-sites {
-		color: $gray;
+		color: var( --sidebar-text-color );
 		text-decoration: underline;
 	}
 }
