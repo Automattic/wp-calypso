@@ -13,6 +13,7 @@ import FormattedHeader from 'components/formatted-header';
 import jetpackOnly from './jetpack-only';
 import MainWrapper from './main-wrapper';
 import SiteTopicForm from 'signup/steps/site-topic/form';
+import WpcomColophon from 'components/wpcom-colophon';
 import { loadTrackingTool } from 'state/analytics/actions';
 
 class JetpackSiteTopic extends Component {
@@ -33,6 +34,8 @@ class JetpackSiteTopic extends Component {
 					<FormattedHeader headerText={ translate( 'Tell us about your website' ) } />
 
 					<SiteTopicForm submitForm={ this.handleSubmit } />
+
+					<WpcomColophon />
 				</div>
 			</MainWrapper>
 		);
