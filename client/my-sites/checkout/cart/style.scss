@@ -192,7 +192,7 @@
 }
 
 .cart-empty {
-	background: $white;
+	background: var( --color-white );
 	padding: 30px;
 	text-align: center;
 	font-size: 14px;
@@ -334,7 +334,7 @@ div.popover-cart__popover {
 }
 
 .popover-cart__mobile-cart {
-	background-color: $white;
+	background-color: var( --color-white );
 	border: 1px solid var( --color-neutral-100 );
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	margin: -1px;
@@ -405,7 +405,7 @@ div.popover-cart__popover {
 }
 
 .secondary-cart {
-	background: $white;
+	background: var( --color-white );
 
 	@include breakpoint( '<660px' ) {
 		left: 0;

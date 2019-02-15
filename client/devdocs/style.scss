@@ -87,7 +87,7 @@ $devdocs-max-width: 720px;
 
 .design__instance-link {
 	display: inline-block;
-	background: $white;
+	background: var( --color-white );
 	text-decoration: underline;
 	border-radius: 3px;
 	padding: 3px 6px;
@@ -99,7 +99,7 @@ $devdocs-max-width: 720px;
 // The wrapper containing the actual examples
 .docs-example__wrapper {
 	box-sizing: border-box;
-	background: $white;
+	background: var( --color-white );
 	box-shadow: 0 1px 2px var( --color-neutral-0 );
 	border: 1px solid rgba( $gray-lighten-20, 0.65 );
 	margin: 0 auto 24px;
@@ -318,7 +318,7 @@ $devdocs-max-width: 720px;
 
 		.docs-selectors__result-arguments-name strong {
 			color: var( --color-neutral-700 );
-			background: $white;
+			background: var( --color-white );
 			border-radius: 3px;
 			display: inline-block;
 			padding: 2px 8px;
@@ -401,13 +401,13 @@ $devdocs-max-width: 720px;
 
 	pre {
 		padding: 8px;
-		background: $white;
-		background-color: $white;
+		background: var( --color-white );
+		background-color: var( --color-white );
 		color: $blue-dark;
 	}
 
 	code {
-		background-color: $white;
+		background-color: var( --color-white );
 		border-radius: 3px;
 		color: $blue-dark;
 		font-size: 15px;
@@ -425,7 +425,7 @@ $devdocs-max-width: 720px;
 	}
 
 	.label {
-		$invert: $white;
+		$invert: var( --color-white );
 		font-weight: bold;
 		font-size: 15px;
 		padding: 1px 5px 2px;

@@ -54,7 +54,7 @@
 }
 
 .tag-stream__header-image .gridicon.gridicons-tag {
-	fill: $white;
+	fill: var( --color-white );
 	position: relative;
 		right: 6px;
 		top: 3px;
@@ -62,7 +62,7 @@
 }
 
 .tag-stream__header-image-title {
-	color: $white;
+	color: var( --color-white );
 	font-size: 28px;
 	line-height: 1.3;
 	margin-top: 42px;
@@ -72,7 +72,7 @@
 }
 
 .tag-stream__header-image-byline {
-	color: $white;
+	color: var( --color-white );
 	font-size: 12px;
 	font-weight: 500;
 	padding-top: 24px;
@@ -88,12 +88,12 @@
 
 .tag-stream__header-image-byline-link,
 .tag-stream__header-image-byline-link:visited {
-	color: $white;
+	color: var( --color-white );
 	opacity: 0.9;
 }
 
 .tag-stream__header-image-byline-link:hover {
-	color: $white;
+	color: var( --color-white );
 }
 
 // Back button in Tag streams

@@ -83,7 +83,7 @@
 	&:focus {
 		.gridicon,
 		.social-logo {
-			fill: $white;
+			fill: var( --color-white );
 		}
 	}
 }

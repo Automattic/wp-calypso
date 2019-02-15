@@ -18,7 +18,7 @@
 		border: 1px solid darken( $blue-wordpress, 5 );
 
 		.gridicon {
-			fill: $white;
+			fill: var( --color-white );
 			margin: 2px;
 			top: 0;
 			height: 24px;
@@ -62,7 +62,7 @@
 	}
 
 	.gridicon {
-		fill: $white;
+		fill: var( --color-white );
 		margin: 0;
 		top: 0;
 		height: 36px;
@@ -410,10 +410,10 @@
 	&.is-selected {
 		background: var( --color-primary );
 		cursor: pointer;
-		color: $white;
+		color: var( --color-white );
 
 		a {
-			color: $white;
+			color: var( --color-white );
 			&:hover {
 				background: none;
 			}

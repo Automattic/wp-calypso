@@ -163,12 +163,12 @@
 	&:focus {
 		.reader-import-button__icon,
 		.reader-export-button__icon {
-			fill: $white;
+			fill: var( --color-white );
 		}
 
 		.reader-import-button__label,
 		.reader-export-button__label {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 }

@@ -57,7 +57,7 @@
 
 	.notice.is-compact {
 		margin: 0 0 0 8px;
-		color: $white;
+		color: var( --color-white );
 
 		&.is-success {
 			background: var( --color-success );

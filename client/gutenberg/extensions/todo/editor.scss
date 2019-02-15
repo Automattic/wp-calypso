@@ -67,7 +67,7 @@ $color-accent-green: #31843f;
 		}
 
 		.item-status .dashicon {
-			fill: $white;
+			fill: var( --color-white );
 			position: absolute;
 			top: -2px;
 			left: -2px;

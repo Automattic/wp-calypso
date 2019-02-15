@@ -383,7 +383,7 @@
 		height: 12px;
 		width: 12px;
 		display: inline-block;
-		fill: $white;
+		fill: var( --color-white );
 		background: $gray;
 		padding: 4px;
 		border-radius: 100%;

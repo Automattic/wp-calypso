@@ -48,17 +48,17 @@
 
 	.is-update & {
 		background: var( --color-warning );
-		color: $white;
+		color: var( --color-white );
 	}
 
 	.is-warning & {
 		background: var( --color-warning );
-		color: $white;
+		color: var( --color-white );
 	}
 
 	.is-error & {
 		background: var( --color-error );
-		color: $white;
+		color: var( --color-white );
 	}
 
 	.is-expanded & {
@@ -84,7 +84,7 @@
 
 // Displayed on top of a Site element once the user clicks on the button
 .site-indicator__message {
-	color: $white;
+	color: var( --color-white );
 	font-size: 12px;
 	line-height: 1.4;
 	padding: 5px 16px;
@@ -116,7 +116,7 @@
 	.site-indicator__action-button {
 		border-bottom: 1px solid rgba( 255, 255, 255, 0.6 );
 		border-radius: 0;
-		color: $white;
+		color: var( --color-white );
 		text-decoration: none;
 	}
 

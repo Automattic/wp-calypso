@@ -32,7 +32,7 @@
 		// .editor-rich-text figcaption:not( [data-is-placeholder-visible='true'] ) {
 		// 	position: relative;
 		// 	overflow: hidden;
-		// 	color: $white;
+		// 	color: var( --color-white );
 		// }
 
 		// &.is-selected .editor-rich-text {
@@ -101,10 +101,10 @@
 		top: 0;
 
 		.components-button {
-			color: $white;
+			color: var( --color-white );
 			&:hover,
 			&:focus {
-				color: $white;
+				color: var( --color-white );
 			}
 		}
 	}

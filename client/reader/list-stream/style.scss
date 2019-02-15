@@ -29,7 +29,7 @@
 	text-align: center;
 
 	.gridicon {
-		fill: $white;
+		fill: var( --color-white );
 		height: 24px;
 		position: relative;
 		top: 12px;

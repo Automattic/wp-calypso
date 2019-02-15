@@ -70,7 +70,7 @@
 	transform: translateY( -50% );
 	background-color: rgba( var( --color-neutral-700-rgb ), 0.85 );
 	border-radius: 24px;
-	color: $white;
+	color: var( --color-white );
 	cursor: pointer;
 
 	.gridicon {

@@ -33,7 +33,7 @@
 .image-editor__toolbar-button {
 	background: $transparent;
 	border: none;
-	color: $white;
+	color: var( --color-white );
 	margin: 0 10px;
 	cursor: pointer;
 	&.is-disabled {

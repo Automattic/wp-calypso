@@ -1,8 +1,8 @@
 
 $accordion-subtitle-height: 16px;
-$accordion-background-collapsed: $white; // same as body
+$accordion-background-collapsed: var( --color-white ); // same as body
 $accordion-background-hover: lighten( $gray, 35% );
-$accordion-background-expanded: $white;
+$accordion-background-expanded: var( --color-white );
 
 .accordion {
 	box-shadow: 0 -1px 0 lighten( $gray, 26% ), 0 1px 0 lighten( $gray, 26% );
@@ -166,7 +166,7 @@ $accordion-background-expanded: $white;
 		left: 4px;
 		width: 14px;
 		height: 14px;
-		background-color: $white;
+		background-color: var( --color-white );
 		border-radius: 50%;
 	}
 

@@ -85,7 +85,7 @@
 .happychat__notice {
 	padding: 12px;
 	border-top: 1px solid var( --color-neutral-100 );
-	color: $white;
+	color: var( --color-white );
 	background-color: lighten( $gray-dark, 20% );
 	margin: 0;
 }
@@ -209,7 +209,7 @@
 .happychat__composer {
 	display: flex;
 	flex: 0 0 auto;
-	background: $white;
+	background: var( --color-white );
 	border-top: 1px solid lighten( $gray, 25% );
 	position: relative;
 
@@ -264,7 +264,7 @@
 	padding: 8px 12px;
 	border-radius: 8px 8px 8px 0;
 	color: var( --color-neutral-700 );
-	background: $white;
+	background: var( --color-white );
 	position: relative;
 
 	overflow-wrap: break-word;

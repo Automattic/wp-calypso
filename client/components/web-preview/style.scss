@@ -64,7 +64,7 @@
 
 .web-preview__toolbar {
 	height: 46px;
-	background: $white;
+	background: var( --color-white );
 	border-bottom: 1px solid var( --color-neutral-100 );
 	border-radius: 4px 4px 0 0;
 	display: flex;

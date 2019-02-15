@@ -170,7 +170,7 @@
 	.sharing-service {
 		position: relative;
 		overflow: hidden;
-		background: $white;
+		background: var( --color-white );
 
 		&.not-connected .sharing-service-examples {
 			display: block;
@@ -193,7 +193,7 @@
 
 		.new-account {
 			padding-bottom: 0.48em;
-			background: $white;
+			background: var( --color-white );
 			#content & {
 				font-size: 0.9em;
 			}
@@ -518,7 +518,7 @@
 	padding: 10px 0 2px 8px;
 	border: 1px solid #ccc;
 	border-radius: 2px;
-	background-color: $white;
+	background-color: var( --color-white );
 	box-shadow: 0 5px 20px rgba( 0, 0, 0, 0.2 );
 }
 
@@ -537,7 +537,7 @@
 	width: 8px;
 	height: 8px;
 	transform: rotate( 45deg );
-	background-color: $white;
+	background-color: var( --color-white );
 	border-top: 1px solid #ccc;
 	border-left: 1px solid #ccc #{'/*rtl:ignore*/'};
 }
@@ -547,7 +547,7 @@
 	position: relative;
 	margin-bottom: 20px;
 	padding: 20px 24px;
-	background: $white;
+	background: var( --color-white );
 	box-shadow: 0 0 0 1px rgba( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
 }
 
@@ -659,7 +659,7 @@
 	border: 1px solid var( --color-neutral-100 );
 	border-radius: 4px;
 	box-shadow: 0 0 8px rgba( var( --color-neutral-700-rgb ), 0.04 );
-	background-color: $white;
+	background-color: var( --color-white );
 	color: var( --color-primary );
 
 	@include breakpoint( '<480px' ) {
@@ -688,7 +688,7 @@
 		width: 12px;
 		height: 12px;
 		border: 1px solid var( --color-neutral-100 );
-		background-color: $white;
+		background-color: var( --color-white );
 		transform: rotate( 45deg );
 	}
 
@@ -882,7 +882,7 @@
 
 .sharing-buttons-preview-button.style-icon .social-logo {
 	top: 0;
-	color: $white;
+	color: var( --color-white );
 }
 
 .sharing-buttons-preview-button.style-icon.share-email .social-logo,
@@ -931,7 +931,7 @@
 .sharing-buttons-preview__panel {
 	position: relative;
 	display: none;
-	background: $white;
+	background: var( --color-white );
 	border: 1px solid var( --color-neutral-100 );
 	border-radius: 4px;
 	box-shadow: 0 0 8px rgba( var( --color-neutral-700-rgb ), 0.04 );
@@ -942,7 +942,7 @@
 		border: 1px solid var( --color-neutral-100 );
 		border-right-width: 0 #{'/*rtl:ignore*/'};
 		border-bottom-width: 0;
-		background: $white;
+		background: var( --color-white );
 		display: block;
 		width: 12px;
 		height: 12px;

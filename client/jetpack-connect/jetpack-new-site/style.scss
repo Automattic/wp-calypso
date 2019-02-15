@@ -206,7 +206,7 @@
 		z-index: 2;
 		padding: 8px;
 		color: $gray;
-		background: $white;
+		background: var( --color-white );
 	}
 
 	@include breakpoint( '<660px' ) {

@@ -21,7 +21,7 @@
 		font-size: 14px;
 		line-height: 28px;
 		text-align: center;
-		color: $white;
+		color: var( --color-white );
 	}
 }
 
@@ -37,7 +37,7 @@
 		'.media-library__list-item',
 		'.media-library__list-item-selected-icon .gridicon'
 	);
-	fill: $white;
+	fill: var( --color-white );
 }
 
 .media-library.is-single .media-library__list-item.is-selected::after {

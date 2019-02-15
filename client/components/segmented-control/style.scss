@@ -7,7 +7,7 @@
 	display: flex;
 	margin: 0;
 	border-radius: 4px;
-	background-color: $white;
+	background-color: var( --color-white );
 	list-style: none;
 }
 
@@ -82,7 +82,7 @@
 			.segmented-control__link {
 				border-color: var( --color-primary );
 				background-color: var( --color-primary );
-				color: $white;
+				color: var( --color-white );
 
 				&:focus {
 					background-color: var( --color-primary-light );

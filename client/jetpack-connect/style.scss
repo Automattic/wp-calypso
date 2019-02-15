@@ -360,7 +360,7 @@
 	display: inline-block;
 	padding: 7px 14px;
 	line-height: 1;
-	color: $white;
+	color: var( --color-white );
 	background-color: #008ec2; // wp-admin button blue
 	border: 1px solid #006799;
 	border-radius: 3px;

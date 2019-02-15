@@ -100,7 +100,7 @@
 			border-top: 2px solid var( --color-neutral-100 );
 			border-right: 2px solid var( --color-neutral-100 );
 			transform: rotate( 45deg );
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 }
