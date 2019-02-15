@@ -52,7 +52,7 @@
 
 	&.is-checked,
 	&.is-checked:hover {
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 	}
 
 	&:hover {
