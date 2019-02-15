@@ -192,8 +192,8 @@ function getWebpackConfig( {
 			splitChunks: {
 				chunks: codeSplit ? 'all' : 'async',
 				name: isDevelopment || shouldEmitStats,
-				maxAsyncRequests: 20,
-				maxInitialRequests: 5,
+				maxAsyncRequests: 10,
+				maxInitialRequests: 4,
 			},
 			runtimeChunk: codeSplit ? { name: 'manifest' } : false,
 			moduleIds: 'named',
