@@ -170,7 +170,7 @@ const contextLinksForSection = {
 		{
 			link: 'http://en.support.wordpress.com/account-deactivation/',
 			post_id: 143899,
-			title: 'Close your account',
+			title: 'Close Your Account',
 			description:
 				'Learn how to permanently delete your WordPress.com account, and what it means for your website and data.',
 		},
