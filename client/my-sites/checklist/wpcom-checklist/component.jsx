@@ -616,7 +616,7 @@ class WpcomChecklistComponent extends PureComponent {
 			: {
 					onClick: () => {
 						this.trackTaskStart( task );
-						page( `/domains/manage/email/${ siteSlug }` );
+						page( `/email/${ siteSlug }` );
 					},
 					onDismiss: this.handleTaskDismiss( task.id ),
 			  };
@@ -653,7 +653,7 @@ class WpcomChecklistComponent extends PureComponent {
 							link: (
 								<a
 									onClick={ () => this.trackTaskStart( task, { clicked_element: 'hyperlink' } ) }
-									href={ `/domains/manage/email/${ siteSlug }` }
+									href={ `/email/${ siteSlug }` }
 								/>
 							),
 						},
@@ -662,7 +662,7 @@ class WpcomChecklistComponent extends PureComponent {
 				completedButtonText={ translate( 'Upgrade' ) }
 				onClick={ () => {
 					this.trackTaskStart( task, { clicked_element: 'button' } );
-					page( `/domains/manage/email/${ siteSlug }` );
+					page( `/email/${ siteSlug }` );
 				} }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 			/>

@@ -333,13 +333,13 @@ export class MySitesSidebar extends Component {
 
 	emails() {
 		const { path, translate, hasGSuite, isJetpack, isAtomicSite, siteSuffix } = this.props;
-		const emailLink = '/domains/manage/email' + siteSuffix;
+		const emailLink = '/email' + siteSuffix;
 
 		if ( isJetpack && ! isAtomicSite && hasGSuite ) {
 			return (
 				<SidebarItem
 					label={ translate( 'G Suite' ) }
-					selected={ itemLinkMatches( [ '/domains/manage/email/' ], path ) }
+					selected={ itemLinkMatches( [ '/email/' ], path ) }
 					link={ emailLink }
 					// onNavigate={ this.trackDomainsClick }
 					icon="mail"

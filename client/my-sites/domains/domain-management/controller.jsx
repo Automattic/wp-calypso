@@ -17,8 +17,6 @@ import {
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementEmail,
-	domainManagementEmailForwarding,
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementPrimaryDomain,
@@ -33,7 +31,6 @@ import {
 	domainManagementDomainConnectMapping,
 } from 'my-sites/domains/paths';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import GSuiteAddUsers from './gsuite/gsuite-add-users';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { decodeURIComponentIfValid } from 'lib/url';
 
@@ -146,41 +143,6 @@ export default {
 		next();
 	},
 
-	domainManagementEmail( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementEmail(
-					':site',
-					pageContext.params.domain ? ':domain' : undefined
-				) }
-				analyticsTitle="Domain Management > Email"
-				component={ DomainManagement.Email }
-				context={ pageContext }
-				needsCart
-				needsDomains
-				needsGoogleApps
-				needsPlans
-				needsProductsList
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
-	},
-
-	domainManagementEmailForwarding( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementEmailForwarding( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Email Forwarding"
-				component={ DomainManagement.EmailForwarding }
-				context={ pageContext }
-				needsEmailForwarding
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
-	},
-
 	domainManagementDns( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
@@ -237,11 +199,6 @@ export default {
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
-		next();
-	},
-
-	domainManagementAddGSuiteUsers( pageContext, next ) {
-		pageContext.primary = <GSuiteAddUsers selectedDomainName={ pageContext.params.domain } />;
 		next();
 	},
 

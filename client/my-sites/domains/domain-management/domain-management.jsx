@@ -8,8 +8,6 @@ import Dns from './dns';
 import DomainConnectMapping from './domain-connect-mapping';
 import Edit from './edit';
 import EditContactInfo from './edit-contact-info';
-import Email from './email';
-import EmailForwarding from './email-forwarding';
 import List from './list';
 import ManageConsent from './manage-consent';
 import NameServers from './name-servers';
@@ -29,8 +27,6 @@ export default {
 	Edit,
 	EditContactInfo,
 	ManageConsent,
-	Email,
-	EmailForwarding,
 	List,
 	NameServers,
 	PrimaryDomain,

@@ -26,8 +26,9 @@ import EmptyContent from 'components/empty-content';
 import {
 	domainManagementEdit,
 	domainManagementList,
-	domainManagementEmailForwarding,
+	emailManagementForwarding,
 } from 'my-sites/domains/paths';
+import { emailManagementForwarding } from 'my-sites/email/paths';
 import {
 	getSelectedDomain,
 	hasGoogleApps,
@@ -117,7 +118,7 @@ class Email extends React.Component {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
 				secondaryAction: translate( 'Add Email Forwarding' ),
-				secondaryActionURL: domainManagementEmailForwarding(
+				secondaryActionURL: emailManagementForwarding(
 					selectedSite.slug,
 					selectedDomainName
 				),
@@ -164,7 +165,7 @@ class Email extends React.Component {
 		const domain = getEligibleDomain( selectedDomainName, domains );
 		return (
 			<VerticalNav>
-				<VerticalNavItem path={ domainManagementEmailForwarding( selectedSite.slug, domain ) }>
+				<VerticalNavItem path={ emailManagementForwarding( selectedSite.slug, domain ) }>
 					{ translate( 'Email Forwarding' ) }
 				</VerticalNavItem>
 			</VerticalNav>
