@@ -5460,9 +5460,9 @@
 			}
 		},
 		"core-js": {
-			"version": "2.6.4",
-			"resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.4.tgz",
-			"integrity": "sha512-05qQ5hXShcqGkPZpXEFLIpxayZscVD2kuMBZewxiIPPEagukO4mqgPA9CWhUvFBJfy3ODdK2p9xyHh7FTU9/7A=="
+			"version": "2.6.5",
+			"resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.5.tgz",
+			"integrity": "sha512-klh/kDpwX8hryYL14M9w/xei6vrv6sE8gTHDG7/T/+SEovB/G4ejwcfE/CBzO6Edsu+OETZMZ3wcX/EjUkrl5A=="
 		},
 		"core-util-is": {
 			"version": "1.0.2",
@@ -17404,6 +17404,7 @@
 							"version": "1.1.11",
 							"bundled": true,
 							"dev": true,
+							"optional": true,
 							"requires": {
 								"balanced-match": "^1.0.0",
 								"concat-map": "0.0.1"
@@ -17572,6 +17573,7 @@
 							"version": "3.0.4",
 							"bundled": true,
 							"dev": true,
+							"optional": true,
 							"requires": {
 								"brace-expansion": "^1.1.7"
 							}
