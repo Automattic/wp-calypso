@@ -88,7 +88,7 @@
 		a,
 		a:hover {
 			pointer-events: none;
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 }
@@ -184,7 +184,7 @@
 
 	span {
 		background: var( --color-white );
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-size: 14px;
 		padding-left: 8px;
 		padding-right: 8px;

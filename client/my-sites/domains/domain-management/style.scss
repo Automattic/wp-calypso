@@ -221,7 +221,7 @@ input[type='radio'].domain-management-list-item__radio {
 			background-color: var( --color-neutral-0 );
 			border: 1px solid var( --color-neutral-0 );
 			border-bottom: 0;
-			color: $gray;
+			color: var( --color-neutral-light );
 			font-size: 11px;
 			font-weight: 600;
 			line-height: 1;
@@ -490,7 +490,7 @@ ul.email-forwarding__list {
 			}
 
 			em {
-				color: $gray;
+				color: var( --color-neutral-light );
 			}
 		}
 
@@ -503,7 +503,7 @@ ul.email-forwarding__list {
 
 .email-forwarding__limit {
 	font-size: 13px;
-	color: $gray;
+	color: var( --color-neutral-light );
 	line-height: 3em;
 	margin-bottom: 15px;
 }
@@ -555,7 +555,7 @@ ul.email-forwarding__list {
 
 	.privacy-protection-card__price-per-user {
 		display: inline-block;
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-size: 12px;
 
 		strong {
@@ -641,7 +641,7 @@ ul.email-forwarding__list {
 
 	p {
 		clear: left;
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-size: 12px;
 		margin: 0;
 
@@ -759,7 +759,7 @@ ul.domain-connect__dns-list,
 
 		span,
 		label {
-			background: $gray;
+			background: var( --color-neutral-light );
 			border-radius: 2px;
 			color: var( --color-white );
 			display: block;

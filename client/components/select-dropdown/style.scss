@@ -224,7 +224,7 @@ $compact-header-height: 35;
 
 	&.is-disabled {
 		background-color: var( --color-white );
-		color: $gray;
+		color: var( --color-neutral-light );
 		cursor: default;
 		opacity: 0.5;
 	}

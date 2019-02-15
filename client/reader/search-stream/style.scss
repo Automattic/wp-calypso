@@ -183,7 +183,7 @@
 
 // Post and Sites static headers
 .search-stream__headers {
-	color: $gray;
+	color: var( --color-neutral-light );
 	display: flex;
 	font-size: 14px;
 	font-weight: 600;

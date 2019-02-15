@@ -119,7 +119,7 @@
 		background-clip: padding-box;
 
 		&:hover {
-			background-color: $gray;
+			background-color: var( --color-neutral-light );
 		}
 
 	}

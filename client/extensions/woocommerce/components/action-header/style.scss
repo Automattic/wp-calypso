@@ -71,7 +71,7 @@
 
 		span + span::before {
 			content: ' / ';
-			color: $gray;
+			color: var( --color-neutral-light );
 			margin: 0 2px 0 4px;
 		}
 	}

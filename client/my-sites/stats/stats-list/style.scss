@@ -583,7 +583,7 @@ ul.module-content-list-legend {
 .module-content-list-legend .module-content-list-item .module-content-list-item-label {
 	@extend %placeholder;
 
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-weight: bold;
 
 	// Limit width when loading for placeholders to take less visual space
@@ -611,7 +611,7 @@ ul.module-content-list-legend {
 
 	.module-content-list-item-value,
 	.module-content-list-item-label {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -738,7 +738,7 @@ ul.module-content-list-legend {
 	}
 
 	> .module-content-list-item-wrapper .module-content-list-item-value {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	> .module-content-list-item-wrapper .module-content-list-item-right::before {

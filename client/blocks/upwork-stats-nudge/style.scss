@@ -70,7 +70,7 @@
 	position: absolute;
 	top: 14px;
 	right: 18px;
-	color: $gray;
+	color: var( --color-neutral-light );
 	cursor: pointer;
 	z-index: z-index( 'root', '.upwork-stats-nudge__close-icon' );
 }

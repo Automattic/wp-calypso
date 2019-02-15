@@ -10,7 +10,7 @@
 }
 
 .checklist-onboarding-welcome__task-estimate {
-	color: $gray;
+	color: var( --color-neutral-light );
 	.gridicon {
 		margin: 0 4px -2px 0;
 	}

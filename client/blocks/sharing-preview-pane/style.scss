@@ -41,7 +41,7 @@
 	width: 48px;
 	height: 49px;
 	cursor: pointer;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	&:hover {
 		color: var( --color-neutral-700 );

@@ -74,7 +74,7 @@
 		.cart__remove-item {
 			box-shadow: none;
 			cursor: pointer;
-			color: $gray;
+			color: var( --color-neutral-light );
 			border: 0;
 			background: transparent;
 			padding: 0;

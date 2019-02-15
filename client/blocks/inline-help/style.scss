@@ -435,7 +435,7 @@
 	padding: 16px 0 0;
 	margin: 0;
 	font-size: 14px;
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-style: italic;
 
 	@include breakpoint( '>660px' ) {

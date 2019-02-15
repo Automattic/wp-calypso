@@ -74,7 +74,7 @@
 	color: var( --color-neutral-200 );
 
 	&:hover {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 

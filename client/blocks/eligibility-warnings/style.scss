@@ -79,7 +79,7 @@
 
 .eligibility-warnings__action a {
 	.gridicons-help-outline {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 	&:hover .gridicons-help-outline {
 		color: var( --color-primary );

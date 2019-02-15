@@ -51,7 +51,7 @@
 }
 
 .jetpack-plugins-setup .plugin-item__finished {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 12px;
 	line-height: 1;
 	padding: 6px 0;

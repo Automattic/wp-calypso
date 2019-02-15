@@ -815,7 +815,7 @@
 }
 
 .checkout__privacy-protection-price-text {
-	color: $gray;
+	color: var( --color-neutral-light );
 	margin: 4px 0 0;
 	font-size: 15px;
 
@@ -832,7 +832,7 @@
 }
 
 .checkout__credit-card-payment-box-progress-bar {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 12px;
 	padding-bottom: 1em;
 	text-align: center;

@@ -27,7 +27,7 @@
 	cursor: pointer;
 
 	&:hover .phone-input__flag-selector-icon {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 

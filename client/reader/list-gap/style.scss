@@ -45,7 +45,7 @@
 
 .reader-list-gap__button {
 	border: none;
-	background: $gray;
+	background: var( --color-neutral-light );
 	color: var( --color-white );
 	position: relative;
 	z-index: z-index( 'root', '.reader-list-gap__button' );

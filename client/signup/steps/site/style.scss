@@ -3,7 +3,7 @@
 }
 
 .site__wordpress-domain-suffix {
-	color: $gray;
+	color: var( --color-neutral-light );
 	line-height: 40px;
 	margin-left: -122px;
 	pointer-events: none;

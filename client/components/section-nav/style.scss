@@ -88,7 +88,7 @@
 	small {
 		margin-left: 5px;
 		font-size: 11px;
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-weight: 600;
 		text-transform: uppercase;
 	}
@@ -170,7 +170,7 @@
 	margin-bottom: 8px;
 	padding: 0 15px;
 	font-size: 11px;
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-weight: 600;
 	text-transform: uppercase;
 	line-height: 12px;

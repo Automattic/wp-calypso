@@ -124,5 +124,5 @@
 .pagination__ellipsis,
 .pagination__ellipsis:hover {
 	@extend %mobile-interface-element;
-	color: $gray;
+	color: var( --color-neutral-light );
 }

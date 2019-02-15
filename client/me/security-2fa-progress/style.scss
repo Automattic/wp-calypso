@@ -62,11 +62,11 @@
 
 				.gridicon {
 					background: var( --color-neutral-100 );
-					color: $gray;
+					color: var( --color-neutral-light );
 				}
 
 				label {
-					color: $gray;
+					color: var( --color-neutral-light );
 				}
 			}
 

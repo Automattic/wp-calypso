@@ -4,7 +4,7 @@
 }
 
 .wplink__remove-link {
-	color: $gray;
+	color: var( --color-neutral-light );
 	cursor: pointer;
 	float: left;
 	margin-right: 24px;

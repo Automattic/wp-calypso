@@ -14,7 +14,7 @@
 		}
 
 		.title-format-editor__token {
-			background-color: $gray;
+			background-color: var( --color-neutral-light );
 		}
 	}
 }
@@ -83,7 +83,7 @@
 }
 
 .title-format-editor__preview {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-style: italic;
 	margin-top: 5px;
 	font-size: 13px;

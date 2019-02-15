@@ -36,7 +36,7 @@
 	border-top: 0;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 11px;
 	padding: 2px 9px 6px 11px;
 	position: relative;
@@ -103,7 +103,7 @@
 	}
 
 	.following-manage__subscriptions-sort .following-manage__sort-controls {
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-size: 12px;
 		font-weight: normal;
 		padding-top: 8px;

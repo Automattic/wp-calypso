@@ -1,7 +1,7 @@
 .post-edit-button {
 	align-items: center;
 	box-sizing: border-box;
-	color: $gray;
+	color: var( --color-neutral-light );
 	cursor: pointer;
 	display: inline-flex;
 	list-style-type: none;
@@ -22,12 +22,12 @@
 	}
 
 	.gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		top: -1px;
 	}
 
 	.post-edit-button__label {
-		color: $gray;
+		color: var( --color-neutral-light );
 
 		@include breakpoint( '<480px' ) {
 			display: none;

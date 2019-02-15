@@ -243,7 +243,7 @@
 	}
 
 	h2 {
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-size: 14px;
 		font-weight: 400;
 
@@ -324,7 +324,7 @@
 		line-height: 21px;
 
 		& > p:first-child {
-			color: $gray;
+			color: var( --color-neutral-light );
 			font-weight: 600;
 			margin: 0 0 14px;
 		}
@@ -440,7 +440,7 @@
 
 	small {
 		display: block;
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 

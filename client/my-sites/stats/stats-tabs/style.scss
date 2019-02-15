@@ -192,7 +192,7 @@
 		// Low state ('disabled')
 		.is-low,
 		&.is-low a .value {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 
 		// Individual tab loading state
@@ -205,7 +205,7 @@
 			color: var( --color-neutral-700 );
 
 			&.is-low {
-				color: $gray;
+				color: var( --color-neutral-light );
 			}
 		}
 
@@ -215,12 +215,12 @@
 			animation: loading-fade 1.6s ease-in-out infinite;
 			cursor: default;
 			font-size: 110%;
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 
 		&.is-loading.is-selected a .value,
 		&.is-loading.is-selected a:hover .value {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 

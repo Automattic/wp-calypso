@@ -5,7 +5,7 @@
 
 	// Error messages
 	&.is-error {
-		color: $gray;
+		color: var( --color-neutral-light );
 
 		.stats-module.is-showing-error & {
 			display: inline-block;

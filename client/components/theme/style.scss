@@ -93,7 +93,7 @@ $theme-info-height: 54px;
 .theme__upsell {
 	flex: 0 0 auto;
 	padding: 16px 10px 0 0;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .theme__upsell-icon svg {
@@ -233,7 +233,7 @@ $theme-info-height: 54px;
 
 	button {
 		cursor: pointer;
-		color: $gray;
+		color: var( --color-neutral-light );
 		padding: 15px 19px;
 		font-size: 20px;
 		font-weight: 600;

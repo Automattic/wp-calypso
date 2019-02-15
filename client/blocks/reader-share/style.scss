@@ -1,7 +1,7 @@
 .reader-share__button {
 	align-items: center;
 	box-sizing: border-box;
-	color: $gray;
+	color: var( --color-neutral-light );
 	display: inline-flex;
 	padding: 4px;
 	position: relative;
@@ -60,7 +60,7 @@
 		top: 8px;
 		left: 18px;
 		padding: 0;
-		fill: $gray;
+		fill: var( --color-neutral-light );
 
 		@include breakpoint( '>480px' ) {
 			left: 11px;

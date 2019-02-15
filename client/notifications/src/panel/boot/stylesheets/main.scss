@@ -50,7 +50,7 @@
 		padding: 0;
 
 		&[disabled] {
-			color: $gray;
+			color: var( --color-neutral-light );
 			cursor: default;
 		}
 	}
@@ -408,7 +408,7 @@
 			.wpnc__subject .wpnc__gridicon {
 				line-height: 1;
 				vertical-align: -3px;
-				color: $gray;
+				color: var( --color-neutral-light );
 				padding: 2px 5px 0 0;
 			}
 
@@ -613,7 +613,7 @@
 		}
 
 		.wpnc__summary {
-			color: $gray;
+			color: var( --color-neutral-light );
 
 			p {
 				@extend %ellipsy-box;
@@ -659,7 +659,7 @@
 
 	.time-notification {
 		float: right;
-		color: $gray;
+		color: var( --color-neutral-light );
 		margin-left: 0.25em;
 		line-height: 1em;
 		margin-top: 0.2em;
@@ -728,7 +728,7 @@
 		blockquote {
 			margin: 0 $wpnc__padding-medium $wpnc__padding-medium;
 			font-style: italic;
-			color: $gray;
+			color: var( --color-neutral-light );
 			background: transparent;
 		}
 	}

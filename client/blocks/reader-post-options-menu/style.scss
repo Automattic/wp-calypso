@@ -1,7 +1,7 @@
 .reader-post-options-menu,
 .reader-post-options-menu .ellipsis-menu {
 	.button.is-borderless {
-		color: $gray;
+		color: var( --color-neutral-light );
 
 		&:hover,
 		&:active {

@@ -75,7 +75,7 @@
 
 	.seo-preview-pane__description {
 		font-size: 12px;
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -106,7 +106,7 @@
 		}
 
 		.reader-post-card__timestamp-and-tag a {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 
 		.reader-post-actions__item {
@@ -117,7 +117,7 @@
 				pointer-events: none;
 
 				&:hover {
-					color: $gray;
+					color: var( --color-neutral-light );
 				}
 			}
 		}

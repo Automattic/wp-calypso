@@ -55,7 +55,7 @@
 
 .help-contact-confirmation__message {
 	font: 14px/21px $sans;
-	color: $gray;
+	color: var( --color-neutral-light );
 	max-width: 340px;
 	display: inline-block;
 	margin-bottom: 0;

@@ -3,7 +3,7 @@ $list-background: var( --color-white );
 $border-color: var( --color-neutral-100 );
 $light-border-color: var( --color-neutral-0 );
 $text-color: var( --color-neutral-700 );
-$name-color: $gray;
+$name-color: var( --color-neutral-light );
 $selected-color: var( --color-primary );
 $img-size: 24px;
 $img-border-radius: 50%;

@@ -404,7 +404,7 @@
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .sharing-connection__account-sitewide-connection {
@@ -593,7 +593,7 @@
 	margin: 5px 0;
 	font-size: 13px;
 	font-style: italic;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .sharing-buttons-preview {
@@ -783,7 +783,7 @@
 	font-weight: bold;
 	text-transform: uppercase;
 	text-align: center;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .sharing-buttons-preview.is-placeholder .sharing-buttons-preview__label,
@@ -993,7 +993,7 @@
 .sharing-buttons-preview__panel-instructions,
 .sharing-buttons-preview__panel-notice {
 	display: block;
-	color: $gray;
+	color: var( --color-neutral-light );
 	margin: 8px 0;
 }
 

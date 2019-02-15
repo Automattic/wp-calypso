@@ -63,7 +63,7 @@
 	width: 32px;
 
 	.gridicon {
-		background-color: $gray;
+		background-color: var( --color-neutral-light );
 		border-radius: 50%;
 		fill: var( --color-white );
 		padding: 4px;
@@ -98,7 +98,7 @@
 		display: inline;
 
 		.gridicon {
-			color: $gray;
+			color: var( --color-neutral-light );
 			margin-bottom: -4px;
 		}
 	}
@@ -109,7 +109,7 @@
 	}
 
 	.comment__author-url-separator {
-		color: $gray;
+		color: var( --color-neutral-light );
 		margin: 0 4px;
 	}
 }
@@ -418,7 +418,7 @@
 }
 
 .comment__reply-submit.button.is-compact.is-borderless {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-weight: 600;
 	padding: 4px;
 	position: absolute;

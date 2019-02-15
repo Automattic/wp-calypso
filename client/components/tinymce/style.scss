@@ -654,14 +654,14 @@ div.mce-path {
 #wp-fullscreen-buttons .mce-btn.mce-disabled:hover,
 .mce-toolbar .mce-btn-group .mce-btn.mce-disabled:focus,
 #wp-fullscreen-buttons .mce-btn.mce-disabled:focus {
-	color: $gray;
+	color: var( --color-neutral-light );
 	background: none;
 	border-color: var( --color-white );
 	text-shadow: none;
 	box-shadow: none;
 
 	i.mce-ico {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -763,7 +763,7 @@ div.mce-path {
 	right: 18px;
 	margin: 2px 0 0 -13px #{'/*rtl:ignore*/'};
 	border: none;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	// Displaying the icon by using an svg file is a temporary solution to remove Noticons.
 	&::before {

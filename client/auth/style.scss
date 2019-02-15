@@ -130,7 +130,7 @@
 		z-index: z-index( 'root', '.auth__input-wrapper .gridicon' );
 		left: 8px;
 		top: 7px;
-		fill: $gray;
+		fill: var( --color-neutral-light );
 	}
 }
 

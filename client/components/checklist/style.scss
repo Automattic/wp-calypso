@@ -56,7 +56,7 @@
 		cursor: pointer;
 
 		.gridicon {
-			fill: $gray;
+			fill: var( --color-neutral-light );
 			vertical-align: middle;
 			align-items: center;
 			transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;

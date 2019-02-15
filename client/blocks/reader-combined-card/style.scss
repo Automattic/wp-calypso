@@ -36,7 +36,7 @@
 }
 
 .reader-combined-card__header-post-count {
-	color: $gray;
+	color: var( --color-neutral-light );
 	margin-bottom: 0;
 	line-height: 1em;
 	margin-top: 4px;
@@ -173,7 +173,7 @@
 
 .reader-combined-card__post-author-and-time {
 	font-size: 13px;
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-family: $sans;
 	overflow: hidden;
 	max-height: 13px * 1.4 * 1;
@@ -194,13 +194,13 @@
 .reader-combined-card .reader-visit-link,
 .reader-combined-card .reader-author-link,
 .reader-combined-card__timestamp-link {
-	color: $gray;
+	color: var( --color-neutral-light );
 	cursor: pointer;
 
 	&:focus,
 	&:link,
 	&:visited {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	&:hover,

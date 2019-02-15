@@ -47,7 +47,7 @@
 }
 
 .image-editor__toolbar-button:hover {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .image-editor__canvas-container {

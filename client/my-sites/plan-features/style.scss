@@ -735,7 +735,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 		&.disabled,
 		&[disabled] {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 
