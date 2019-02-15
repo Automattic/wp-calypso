@@ -238,6 +238,16 @@ function getDomainPrice( slug, productsList, currencyCode ) {
 	return price;
 }
 
+function getDomainSalePrice( slug, productsList, currencyCode ) {
+	const saleCost = get( productsList, [ slug, 'sale_cost' ], null );
+
+	if ( ! saleCost ) {
+		return null;
+	}
+
+	return formatCurrency( saleCost, currencyCode );
+}
+
 function getAvailableTlds( query = {} ) {
 	return wpcom.undocumented().getAvailableTlds( query );
 }
@@ -296,6 +306,7 @@ export {
 	checkInboundTransferStatus,
 	getDomainPrice,
 	getDomainProductSlug,
+	getDomainSalePrice,
 	getDomainTypeText,
 	getFixedDomainSearch,
 	getMappedDomains,

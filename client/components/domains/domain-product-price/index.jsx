@@ -87,7 +87,27 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
+	renderSalePrice() {
+		const { price, salePrice, translate } = this.props;
+
+		return (
+			<div className={ classnames( 'domain-product-price', 'is-free-domain' ) }>
+				<div className="domain-product-price__free-text">{ salePrice }</div>
+				<div className="domain-product-price__price">
+					{ translate( 'Renews at: %(cost)s {{small}}/year{{/small}}', {
+						args: { cost: price },
+						components: { small: <small /> },
+					} ) }
+				</div>
+			</div>
+		);
+	}
+
 	renderPrice() {
+		if ( this.props.salePrice ) {
+			return this.renderSalePrice();
+		}
+
 		return (
 			<div className={ classnames( 'domain-product-price' ) }>
 				<span className="domain-product-price__price">

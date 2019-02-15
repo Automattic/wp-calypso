@@ -10,7 +10,7 @@
 
     @include breakpoint('>660px') {
         align-items: flex-end;
-        flex: 0 2 360px;
+        //flex: 0 2 360px;
         font-size: 17px;
         padding-right: 2em;
 
@@ -55,7 +55,7 @@
 	}
 
     .domain-product-price__price {
-      margin: auto 0;
+        margin: auto 0;
     }
 
 	&.is-free-domain {
@@ -67,11 +67,12 @@
 		}
 
 		.domain-product-price__price {
+            font-size: 80%;
 			opacity: 0.6;
 		}
 
 		@include breakpoint( '>660px' ) {
-			font-size: 16px;
+			//font-size: 16px;
 			line-height: 1.5;
 			margin-top: 0;
 		}

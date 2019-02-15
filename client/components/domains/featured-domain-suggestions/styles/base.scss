@@ -62,7 +62,11 @@
 		width: 100%;
 	}
 
-	.domain-registration-suggestion__title {
+    .domain-registration-suggestion__title-wrapper .domain-registration-suggestion__title {
+        width: auto;
+    }
+
+    .domain-registration-suggestion__title {
 		font-size: 1.6em;
 		font-weight: 600;
 		line-height: 1.2;
@@ -81,7 +85,6 @@
 
 		&.domain-product-price__is-with-plans-only,
 		&.is-free-domain {
-			font-size: 0.9em;
 			small {
 				font-size: 0.9em;
 			}
