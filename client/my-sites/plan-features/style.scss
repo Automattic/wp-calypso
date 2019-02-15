@@ -368,7 +368,7 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		&.is-selected + .segmented-control__item .segmented-control__link {
-			border-left-color: $gray-lighten-10;
+			border-left-color: var( --color-neutral-200 );
 
 			&:hover {
 				border-left-color: var( --color-neutral-700 );
