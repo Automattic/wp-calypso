@@ -16517,9 +16517,9 @@
 			"integrity": "sha1-l/cXtp1IeE9fUmpsWqj/3aBVpNE="
 		},
 		"resize-observer-polyfill": {
-			"version": "1.5.0",
-			"resolved": "https://registry.npmjs.org/resize-observer-polyfill/-/resize-observer-polyfill-1.5.0.tgz",
-			"integrity": "sha512-M2AelyJDVR/oLnToJLtuDJRBBWUGUvvGigj1411hXhAdyFWqMaqHp7TixW3FpiLuVaikIcR1QL+zqoJoZlOgpg=="
+			"version": "1.5.1",
+			"resolved": "https://registry.npmjs.org/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz",
+			"integrity": "sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg=="
 		},
 		"resolve": {
 			"version": "1.10.0",
