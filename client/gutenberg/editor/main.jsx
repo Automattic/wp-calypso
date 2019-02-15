@@ -178,7 +178,7 @@ const getInitialEdits = ( {
 		return null;
 	}
 
-	// Duplicate a Post ?copy=
+	// Duplicate a Post ?jetpack-copy=
 	if ( postCopy ) {
 		return {
 			title: postCopy.title.raw,

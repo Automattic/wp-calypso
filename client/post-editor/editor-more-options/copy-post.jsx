@@ -69,7 +69,7 @@ class EditorMoreOptionsCopyPost extends Component {
 		const { siteSlug, type } = this.props;
 		const { selectedPostId } = this.state;
 		if ( '' !== selectedPostId ) {
-			page.redirect( `/${ type }/${ siteSlug }?copy=${ selectedPostId }` );
+			page.redirect( `/${ type }/${ siteSlug }?jetpack-copy=${ selectedPostId }` );
 			this.closeDialog();
 		}
 	};

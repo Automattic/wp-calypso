@@ -187,7 +187,7 @@ export default {
 	post: function( context, next ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
-		const postToCopyId = context.query.copy;
+		const postToCopyId = context.query[ 'jetpack-copy' ];
 
 		recordPlaceholdersTiming();
 

@@ -150,7 +150,7 @@ export const post = ( context, next ) => {
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
-	const duplicatePostId = get( context, 'query.copy', null );
+	const duplicatePostId = get( context, 'query.jetpack-copy', null );
 
 	const makeEditor = import( /* webpackChunkName: "gutenberg-init" */ './init' ).then( module => {
 		const { initGutenberg } = module;
