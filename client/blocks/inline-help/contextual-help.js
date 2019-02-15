@@ -164,7 +164,7 @@ const contextLinksForSection = {
 		{
 			link: 'http://en.support.wordpress.com/account-settings/',
 			post_id: 80368,
-			title: 'Account Settings',
+			title: 'Edit Your Account Settings',
 			description: 'You can review and edit basic account information in Account Settings. ',
 		},
 		{
