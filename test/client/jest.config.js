@@ -17,7 +17,8 @@ module.exports = {
 	],
 	testMatch: [ '<rootDir>/client/**/test/*.js?(x)' ],
 	testURL: 'https://example.com',
-	setupTestFrameworkScriptFile: '<rootDir>/test/client/setup-test-framework.js',
+	setupFiles: [ 'regenerator-runtime/runtime' ], // some NPM-published packages depend on the global
+	setupFilesAfterEnv: [ '<rootDir>/test/client/setup-test-framework.js' ],
 	verbose: false,
 	globals: {
 		google: {},

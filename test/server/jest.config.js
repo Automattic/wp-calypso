@@ -19,6 +19,7 @@ module.exports = {
 	transformIgnorePatterns: [ 'node_modules[\\/\\\\](?!redux-form|draft-js)' ],
 	testMatch: [ '<rootDir>/server/**/test/*.js?(x)' ],
 	timers: 'fake',
-	setupTestFrameworkScriptFile: '<rootDir>/test/server/setup-test-framework.js',
+	setupFiles: [ 'regenerator-runtime/runtime' ], // some NPM-published packages depend on the global
+	setupFilesAfterEnv: [ '<rootDir>/test/server/setup-test-framework.js' ],
 	verbose: false,
 };
