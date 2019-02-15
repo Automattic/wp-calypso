@@ -197,7 +197,7 @@
 			.search__input {
 				font-size: 18px;
 				padding: 12px 0;
-				color: $gray-text;
+				color: var( --color-text );
 
 				@include breakpoint( '>660px' ) {
 					font-size: 15px;

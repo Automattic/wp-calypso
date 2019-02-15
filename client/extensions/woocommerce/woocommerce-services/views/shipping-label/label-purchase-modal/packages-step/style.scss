@@ -57,7 +57,7 @@
 	text-overflow: ellipsis;
 	margin-right: 2px;
 	text-align: left;
-	color: $gray-text;
+	color: var( --color-text );
 }
 
 .packages-step__list-package-count {
@@ -68,7 +68,7 @@
 	font-size: 11px;
 	font-weight: 600;
 	line-height: 14px;
-	color: $gray-text;
+	color: var( --color-text );
 	text-align: center;
 }
 

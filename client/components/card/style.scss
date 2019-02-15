@@ -85,7 +85,7 @@
 a.card:hover,
 .is-card-link.card:hover {
 	.card__link-indicator {
-		color: $gray-text;
+		color: var( --color-text );
 	}
 }
 

@@ -267,7 +267,7 @@
 }
 
 .editor-revisions-list__date {
-	color: $gray-text;
+	color: var( --color-text );
 	font-weight: 600;
 	display: block;
 	margin-bottom: 4px;

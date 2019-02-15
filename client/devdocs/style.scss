@@ -31,7 +31,7 @@ $devdocs-max-width: 720px;
 
 	.devdocs__result-snippet {
 		font-size: 15px;
-		color: $gray-text;
+		color: var( --color-text );
 		margin-top: 4px;
 
 		mark {
