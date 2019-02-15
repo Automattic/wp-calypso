@@ -98,14 +98,6 @@ export default {
 		},
 		defaultVariation: 'googleMyBusinessBanner',
 	},
-	privateByDefault: {
-		datestamp: '20181217',
-		variations: {
-			private: 0,
-			public: 100,
-		},
-		defaultVariation: 'public',
-	},
 	builderReferralThemesBanner: {
 		datestamp: '20181218',
 		variations: {
