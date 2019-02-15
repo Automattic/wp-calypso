@@ -14,7 +14,7 @@ export function renderPhone( inputText ) {
 			const just_number = number.replace( /\D/g, '' );
 
 			return (
-				<a itemprop="telephone" content={ just_number } href={ `tel:${ just_number }` } key={ i }>
+				<a href={ `tel:${ just_number }` } key={ i }>
 					{ number }
 				</a>
 			);
