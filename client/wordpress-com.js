@@ -246,6 +246,13 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'email',
+		paths: [ '/email' ],
+		module: 'my-sites/email',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'checkout',
 		paths: [ '/checkout' ],
 		module: 'my-sites/checkout',
