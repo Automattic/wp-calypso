@@ -21,12 +21,7 @@ export default function() {
 
 	registerMultiPage( {
 		paths: [ paths.emailManagement( ':site', ':domain' ), paths.emailManagement( ':site' ) ],
-		handlers: [
-			[ siteSelection, navigation ],
-			controller.emailManagement,
-			makeLayout,
-			clientRender,
-		],
+		handlers: [ siteSelection, navigation, controller.emailManagement, makeLayout, clientRender ],
 	} );
 
 	registerMultiPage( {
@@ -35,7 +30,8 @@ export default function() {
 			paths.emailManagementAddGSuiteUsers( ':site' ),
 		],
 		handlers: [
-			[ siteSelection, navigation ],
+			siteSelection,
+			navigation,
 			controller.emailManagementAddGSuiteUsers,
 			makeLayout,
 			clientRender,
@@ -44,7 +40,8 @@ export default function() {
 
 	page(
 		paths.emailManagementForwarding( ':site', ':domain' ),
-		[ siteSelection, navigation ],
+		siteSelection,
+		navigation,
 		controller.emailManagementForwarding,
 		makeLayout,
 		clientRender
