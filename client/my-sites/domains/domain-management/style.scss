@@ -23,13 +23,13 @@
 .domain-management-form-footer,
 .primary-domain__actions {
 	border-top: 1px solid var( --color-neutral-0 );
-	margin: 16px -16px -16px -16px;
+	margin: 16px -16px -16px;
 	padding: 16px;
 	display: flex;
 
 	@include breakpoint( '>480px' ) {
 		padding: 24px;
-		margin: 24px -24px -24px -24px;
+		margin: 24px -24px -24px;
 	}
 
 	@include breakpoint( '<480px' ) {
@@ -200,8 +200,19 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 }
 
-.contacts-privacy-card {
-	.settings-explanation {
+.contacts-privacy__info {
+	display: flex;
+	flex-direction: row;
+	margin-top: 18px;
+}
+
+.contacts-privacy__info-button {
+	min-width: 140px;
+	height: 50px;
+}
+
+.contacts-privacy__card {
+	.contacts-privacy__settings-explanation {
 		color: var( --color-text-subtle );
 		display: block;
 		font-size: 13px;

@@ -22,7 +22,6 @@ import {
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementPrimaryDomain,
-	domainManagementPrivacyProtection,
 	domainManagementRedirectSettings,
 	domainManagementTransfer,
 	domainManagementTransferIn,
@@ -219,21 +218,6 @@ export default {
 				context={ pageContext }
 				needsDomains
 				needsNameservers
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
-	},
-
-	domainManagementPrivacyProtection( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementPrivacyProtection( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts and Privacy > Privacy Protection"
-				component={ DomainManagement.PrivacyProtection }
-				context={ pageContext }
-				needsDomains
-				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);

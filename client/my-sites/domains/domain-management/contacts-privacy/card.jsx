@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,15 +13,20 @@ import { localize } from 'i18n-calypso';
  */
 import CompactCard from 'components/card/compact';
 import ContactDisplay from './contact-display';
+import Button from 'components/button';
 import Notice from 'components/notice';
-import {
-	domainManagementPrivacyProtection,
-	domainManagementTransferOut,
-} from 'my-sites/domains/paths';
+import { domainManagementTransferOut } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
 import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
+import {
+	fetchWhois,
+	disablePrivacyProtection,
+	enablePrivacyProtection,
+} from 'lib/upgrades/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
+import { fetchSiteDomains } from 'state/sites/domains/actions';
 
-class ContactsPrivacyCard extends React.PureComponent {
+class ContactsPrivacyCard extends React.Component {
 	static propTypes = {
 		contactInformation: PropTypes.object.isRequired,
 		privateDomain: PropTypes.bool.isRequired,
@@ -31,6 +36,10 @@ class ContactsPrivacyCard extends React.PureComponent {
 		currentUserCanManage: PropTypes.bool.isRequired,
 	};
 
+	state = {
+		submitting: false,
+	};
+
 	render() {
 		const { contactInformation, currentUserCanManage, translate } = this.props;
 
@@ -38,8 +47,8 @@ class ContactsPrivacyCard extends React.PureComponent {
 			<div>
 				<SectionHeader label={ translate( 'Domain Contacts' ) } />
 
-				<CompactCard className="contacts-privacy-card">
-					<p className="settings-explanation">
+				<CompactCard className="contacts-privacy__card">
+					<p className="contacts-privacy__settings-explanation">
 						{ translate(
 							'Domain owners are required to provide correct contact information. ' +
 								'{{a}}Learn more{{/a}} about private registration and GDPR protection.',
@@ -51,7 +60,7 @@ class ContactsPrivacyCard extends React.PureComponent {
 						) }
 					</p>
 
-					{ currentUserCanManage && this.getNotice() }
+					{ currentUserCanManage && this.getStatus() }
 
 					<ContactDisplay contactInformation={ contactInformation } />
 				</CompactCard>
@@ -59,7 +68,38 @@ class ContactsPrivacyCard extends React.PureComponent {
 		);
 	}
 
-	getNotice() {
+	togglePrivacy = () => {
+		const { privateDomain, selectedDomainName, selectedSite, translate } = this.props;
+
+		this.setState( { submitting: true } );
+
+		const callback = error => {
+			if ( error ) {
+				this.props.errorNotice( error.message );
+			} else {
+				this.props.fetchSiteDomains( selectedSite.ID );
+				fetchWhois( selectedDomainName );
+
+				const notice = privateDomain
+					? translate( 'Yay, privacy has been successfully disabled!' )
+					: translate( 'Yay, privacy has been successfully enabled!' );
+
+				this.props.successNotice( notice, {
+					duration: 5000,
+				} );
+			}
+
+			this.setState( { submitting: false } );
+		};
+
+		if ( privateDomain ) {
+			disablePrivacyProtection( selectedDomainName, callback );
+		} else {
+			enablePrivacyProtection( selectedDomainName, callback );
+		}
+	};
+
+	getStatus() {
 		const {
 			hasPrivacyProtection,
 			privacyAvailable,
@@ -68,26 +108,13 @@ class ContactsPrivacyCard extends React.PureComponent {
 			selectedDomainName,
 			translate,
 		} = this.props;
+		const { submitting } = this.state;
 
 		if ( ! privacyAvailable ) {
 			return false;
 		}
 
-		if ( hasPrivacyProtection && privateDomain ) {
-			return (
-				<Notice status="is-success" showDismiss={ false }>
-					{ translate(
-						'{{strong}}Privacy Protection{{/strong}} is turned on for this domain. ' +
-							'Your contact information is {{strong}}private{{/strong}}. ',
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
-					) }
-				</Notice>
-			);
-		} else if ( hasPrivacyProtection && ! privateDomain ) {
+		if ( hasPrivacyProtection && ! privateDomain ) {
 			return (
 				<Notice status="is-warning" showDismiss={ false }>
 					{ translate(
@@ -110,29 +137,49 @@ class ContactsPrivacyCard extends React.PureComponent {
 			);
 		}
 
+		let privacyText = translate(
+			'{{strong}}Privacy Protection{{/strong}} is turned {{strong}}off{{/strong}} for this domain. ' +
+				'Your contact information is {{strong}}public{{/strong}}.',
+			{
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
+
+		if ( privateDomain ) {
+			privacyText = translate(
+				'{{strong}}Privacy Protection{{/strong}} is turned {{strong}}on{{/strong}} for this domain. ' +
+					'Your contact information is {{strong}}private{{/strong}}. ',
+				{
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+		}
+
 		return (
-			<Notice status="is-warning" showDismiss={ false }>
-				{ translate(
-					'{{strong}}Privacy Protection{{/strong}} is turned off for this domain. ' +
-						'Your contact information is {{strong}}public{{/strong}}. ' +
-						'{{a}}Enable Privacy Protection{{/a}}',
-					{
-						components: {
-							strong: <strong />,
-							a: (
-								<a
-									href={ domainManagementPrivacyProtection(
-										selectedSite.slug,
-										selectedDomainName
-									) }
-								/>
-							),
-						},
-					}
-				) }
-			</Notice>
+			<div className="contacts-privacy__info">
+				<p>{ privacyText }</p>
+				<Button
+					className="contacts-privacy__info-button"
+					disabled={ submitting }
+					busy={ submitting }
+					onClick={ this.togglePrivacy }
+				>
+					{ privateDomain ? translate( 'Disable Privacy' ) : translate( 'Enable Privacy' ) }
+				</Button>
+			</div>
 		);
 	}
 }
 
-export default localize( ContactsPrivacyCard );
+export default connect(
+	null,
+	{
+		fetchSiteDomains,
+		errorNotice,
+		successNotice,
+	}
+)( localize( ContactsPrivacyCard ) );
