@@ -18,6 +18,11 @@ import JetpackPressableLogo from './pressable';
 import JetpackLiquidWebLogo from './liquidweb';
 import JetpackPartnerLogoGroup from './partner-logo-group';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class JetpackHeader extends PureComponent {
 	static displayName = 'JetpackHeader';
 
