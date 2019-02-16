@@ -14,7 +14,7 @@ import React, { Fragment } from 'react';
  */
 
 import AddEmailAddressesCard from './add-users';
-import { domainManagementAddGSuiteUsers, emailManagement } from 'my-sites/email/paths';
+import { emailManagementAddGSuiteUsers, emailManagement } from 'my-sites/email/paths';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { fetchBySiteId } from 'state/google-apps-users/actions';
@@ -83,7 +83,7 @@ class GSuiteAddUsers extends React.Component {
 	render() {
 		const { translate, selectedDomainName, selectedSite } = this.props;
 
-		const analyticsPath = domainManagementAddGSuiteUsers(
+		const analyticsPath = emailManagementAddGSuiteUsers(
 			':site',
 			selectedDomainName ? ':domain' : undefined
 		);

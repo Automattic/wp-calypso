@@ -36,7 +36,6 @@ import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
 import {
-	domainManagementAddGSuiteUsers,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
@@ -49,7 +48,11 @@ import {
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
 } from 'my-sites/domains/paths';
-import { emailManagement, emailManagementForwarding } from 'my-sites/email/paths';
+import {
+	emailManagement,
+	emailManagementForwarding,
+	emailManagementAddGSuiteUsers,
+} from 'my-sites/email/paths';
 import SitesComponent from 'my-sites/sites';
 import { warningNotice } from 'state/notices/actions';
 import { makeLayout, render as clientRender } from 'controller';
@@ -158,7 +161,7 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 // TODO
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 	const allPaths = [
-		domainManagementAddGSuiteUsers,
+		emailManagementAddGSuiteUsers,
 		domainManagementContactsPrivacy,
 		domainManagementDns,
 		domainManagementEdit,
