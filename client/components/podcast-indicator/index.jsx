@@ -14,6 +14,11 @@ import Gridicon from 'gridicons';
  */
 import Tooltip from 'components/tooltip';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PodcastIndicator extends React.Component {
 	static propTypes = {
 		size: PropTypes.number,
