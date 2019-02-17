@@ -6461,18 +6461,20 @@
 			}
 		},
 		"enzyme": {
-			"version": "3.8.0",
-			"resolved": "https://registry.npmjs.org/enzyme/-/enzyme-3.8.0.tgz",
-			"integrity": "sha512-bfsWo5nHyZm1O1vnIsbwdfhU989jk+squU9NKvB+Puwo5j6/Wg9pN5CO0YJelm98Dao3NPjkDZk+vvgwpMwYxw==",
+			"version": "3.9.0",
+			"resolved": "https://registry.npmjs.org/enzyme/-/enzyme-3.9.0.tgz",
+			"integrity": "sha512-JqxI2BRFHbmiP7/UFqvsjxTirWoM1HfeaJrmVSZ9a1EADKkZgdPcAuISPMpoUiHlac9J4dYt81MC5BBIrbJGMg==",
 			"dev": true,
 			"requires": {
 				"array.prototype.flat": "^1.2.1",
 				"cheerio": "^1.0.0-rc.2",
 				"function.prototype.name": "^1.1.0",
 				"has": "^1.0.3",
+				"html-element-map": "^1.0.0",
 				"is-boolean-object": "^1.0.0",
 				"is-callable": "^1.1.4",
 				"is-number-object": "^1.0.3",
+				"is-regex": "^1.0.4",
 				"is-string": "^1.0.4",
 				"is-subset": "^0.1.1",
 				"lodash.escape": "^4.0.1",
@@ -8652,6 +8654,23 @@
 			"version": "1.1.2",
 			"resolved": "https://registry.npmjs.org/html-comment-regex/-/html-comment-regex-1.1.2.tgz",
 			"integrity": "sha512-P+M65QY2JQ5Y0G9KKdlDpo0zK+/OHptU5AaBwUfAIDJZk1MYf32Frm84EcOytfJE0t5JvkAnKlmjsXDnWzCJmQ=="
+		},
+		"html-element-map": {
+			"version": "1.0.0",
+			"resolved": "https://registry.npmjs.org/html-element-map/-/html-element-map-1.0.0.tgz",
+			"integrity": "sha512-/SP6aOiM5Ai9zALvCxDubIeez0LvG3qP7R9GcRDnJEP/HBmv0A8A9K0o8+HFudcFt46+i921ANjzKsjPjb7Enw==",
+			"dev": true,
+			"requires": {
+				"array-filter": "^1.0.0"
+			},
+			"dependencies": {
+				"array-filter": {
+					"version": "1.0.0",
+					"resolved": "https://registry.npmjs.org/array-filter/-/array-filter-1.0.0.tgz",
+					"integrity": "sha1-uveeYubvTCpMC4MSMtr/7CUfnYM=",
+					"dev": true
+				}
+			}
 		},
 		"html-encoding-sniffer": {
 			"version": "1.0.2",
@@ -15570,7 +15589,6 @@
 							"version": "1.1.11",
 							"bundled": true,
 							"dev": true,
-							"optional": true,
 							"requires": {
 								"balanced-match": "^1.0.0",
 								"concat-map": "0.0.1"
@@ -15739,7 +15757,6 @@
 							"version": "3.0.4",
 							"bundled": true,
 							"dev": true,
-							"optional": true,
 							"requires": {
 								"brace-expansion": "^1.1.7"
 							}
