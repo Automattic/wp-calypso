@@ -17,6 +17,7 @@ import GlobalNotices from 'components/global-notices';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
+import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
@@ -57,6 +58,11 @@ const LayoutLoggedOut = ( {
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
 		classes.dops = true;
 		classes[ oauth2Client.name ] = true;
+
+		// Force masterbar for all Crowdsignal OAuth pages
+		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
+			classes[ 'has-no-masterbar' ] = false;
+		}
 
 		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 	} else {
