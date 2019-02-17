@@ -93,12 +93,14 @@ export class SiteInformation extends Component {
 					fieldLabel: translate( 'Address' ),
 					fieldDescription: translate( 'Where can people find your business?' ),
 					fieldPlaceholder: 'E.g., 60 29th St, San Francisco, CA 94110',
+					maxLength: 75,
 				};
 			case 'phone':
 				return {
 					fieldLabel: translate( 'Phone number' ),
 					fieldDescription: translate( 'How can people contact you?' ),
 					fieldPlaceholder: translate( 'E.g., (555) 555-5555' ),
+					maxLength: 50,
 				};
 			case 'title':
 				return {
@@ -108,6 +110,7 @@ export class SiteInformation extends Component {
 					fieldDescription: translate(
 						"We'll use this as your site title. Don't worry, you can change this later."
 					),
+					maxLength: 100,
 				};
 		}
 	}
@@ -149,6 +152,7 @@ export class SiteInformation extends Component {
 											placeholder={ fieldTexts.fieldPlaceholder }
 											onChange={ this.handleInputChange }
 											value={ this.state[ fieldName ] }
+											maxLength={ fieldTexts.maxLength }
 											autoFocus={ idx === 0 } // eslint-disable-line jsx-a11y/no-autofocus
 										/>
 										{ ! hasMultipleFieldSets && this.renderSubmitButton() }
