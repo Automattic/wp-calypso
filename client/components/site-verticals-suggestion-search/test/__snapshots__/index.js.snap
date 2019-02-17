@@ -5,7 +5,7 @@ exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
   autoFocus={false}
   id="siteTopic"
   onChange={[Function]}
-  placeholder="e.g. Fashion, travel, design, plumber"
+  placeholder="e.g. Fashion, travel, design, plumbing"
   sortResults={[Function]}
   suggestions={
     Array [
