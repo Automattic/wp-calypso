@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Fragment }, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -21,7 +21,7 @@ class ReaderLandingStepContent extends PureComponent {
 	render() {
 		const { translate } = this.props;
 		return (
-			<>			
+			<Fragment>			
 				<div className="reader-landing__button-wrapper">
 					<Button
 						primary={ true }
@@ -120,7 +120,7 @@ class ReaderLandingStepContent extends PureComponent {
 					</Button>
 				</div>
 			</Card>
-          </>
+          </Fragment>
 		);
 	}
 }
