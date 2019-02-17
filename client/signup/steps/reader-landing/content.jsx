@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment }, { PureComponent } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
