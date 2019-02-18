@@ -86,6 +86,8 @@ const addVideoPressSupport = ( settings, name ) => {
 			],
 		};
 	}
+
+	return settings;
 };
 
 addFilter( 'blocks.registerBlockType', 'gutenberg/extensions/videopress', addVideoPressSupport );
