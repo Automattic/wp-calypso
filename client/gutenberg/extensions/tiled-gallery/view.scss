@@ -65,9 +65,10 @@ $tiled-gallery-max-column-count: 20;
 
 .tiled-gallery__item {
 	justify-content: center;
-	position: relative;
 	margin: 0;
 	overflow: hidden;
+	padding: 0;
+	position: relative;
 
 	& + & {
 		margin-top: $tiled-gallery-gutter;
@@ -82,10 +83,12 @@ $tiled-gallery-max-column-count: 20;
 	> img {
 		display: block;
 		height: auto;
+		margin: 0;
 		max-width: 100%;
-		width: 100%;
 		object-fit: cover;
 		object-position: center;
+		padding: 0;
+		width: 100%;
 	}
 
 	/* @TODO Caption has been commented out */
