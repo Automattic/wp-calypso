@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,6 +16,11 @@ import analytics from 'lib/analytics';
 import Spinner from 'components/spinner';
 import { isMobile } from 'lib/viewport';
 import TranslatableString from 'components/translatable/proptype';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Internal variables
