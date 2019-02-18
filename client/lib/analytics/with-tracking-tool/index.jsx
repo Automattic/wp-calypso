@@ -12,7 +12,8 @@ import { loadTrackingTool } from 'state/analytics/actions';
 export default trackingTool => EnhancedComponent => {
 	class WithTrackingTool extends Component {
 		static displayName = `WithTrackingTool( ${ EnhancedComponent.displayName ||
-			EnhancedComponent.name } )`;
+			EnhancedComponent.name ||
+			'' } )`;
 
 		componentDidMount() {
 			this.props.loadTrackingTool( trackingTool );
