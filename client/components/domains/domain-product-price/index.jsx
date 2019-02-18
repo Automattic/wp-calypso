@@ -92,8 +92,8 @@ class DomainProductPrice extends React.Component {
 
 		return (
 			<div className={ classnames( 'domain-product-price', 'is-free-domain' ) }>
-				<div className="domain-product-price__free-text">{ salePrice }</div>
-				<div className="domain-product-price__price">
+				<div className="domain-product-price__sale-price">{ salePrice }</div>
+				<div className="domain-product-price__renewal-price">
 					{ translate( 'Renews at: %(cost)s {{small}}/year{{/small}}', {
 						args: { cost: price },
 						components: { small: <small /> },

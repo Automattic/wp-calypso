@@ -118,7 +118,8 @@
 	}
 }
 
-.domain-product-price__price {
+.domain-product-price__price,
+.domain-product-price__renewal-price {
 	font-size: 0.9em;
 
 	@include breakpoint( '>480px' ) {
