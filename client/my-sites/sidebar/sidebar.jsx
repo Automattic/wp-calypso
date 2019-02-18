@@ -54,7 +54,6 @@ import { transferStates } from 'state/automated-transfer/constants';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
-import { siteHasGSuite } from '../../state/g-suite/selectors';
 
 /**
  * Module variables
@@ -70,7 +69,6 @@ export class MySitesSidebar extends Component {
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
-		hasGSuite: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -330,34 +328,6 @@ export class MySitesSidebar extends Component {
 		this.trackMenuItemClick( 'domains' );
 		this.onNavigate();
 	};
-
-	emails() {
-		const { path, translate, hasGSuite, isJetpack, isAtomicSite, siteSuffix } = this.props;
-		const emailLink = '/email' + siteSuffix;
-
-		if ( isJetpack && ! isAtomicSite && hasGSuite ) {
-			return (
-				<SidebarItem
-					label={ translate( 'G Suite' ) }
-					selected={ itemLinkMatches( [ '/email/' ], path ) }
-					link={ emailLink }
-					// onNavigate={ this.trackDomainsClick }
-					icon="mail"
-					preloadSectionName="gsuite"
-					tipTarget="gsuite"
-				>
-					{ /* <SidebarButton
-						onClick={ this.trackSidebarButtonClick( 'add_domain' ) }
-						href={ addEmailLink }
-					>
-						{ translate( 'Add' ) }
-					</SidebarButton> */ }
-				</SidebarItem>
-			);
-		}
-
-		return null;
-	}
 
 	upgrades() {
 		const { path, translate, canUserManageOptions } = this.props;
@@ -750,7 +720,6 @@ export class MySitesSidebar extends Component {
 							{ this.users() }
 							{ this.plugins() }
 							{ this.upgrades() }
-							{ this.emails() }
 							{ this.siteSettings() }
 							{ this.wpAdmin() }
 						</ul>
@@ -804,7 +773,6 @@ function mapStateToProps( state ) {
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites: hasJetpackSites( state ),
-		hasGSuite: siteHasGSuite( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
