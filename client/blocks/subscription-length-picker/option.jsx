@@ -140,13 +140,13 @@ export class SubscriptionLengthOption extends React.Component {
 		const { term, translate } = this.props;
 		switch ( term ) {
 			case TERM_BIENNIALLY:
-				return translate( '%s year', '%s years', { count: 2, args: '2' } );
+				return translate( '%s year', '%s years', { count: 2, args: '2', context: 'subscription length' } );
 
 			case TERM_ANNUALLY:
-				return translate( '%s year', '%s years', { count: 1, args: '1' } );
+				return translate( '%s year', '%s years', { count: 1, args: '1', context: 'subscription length' } );
 
 			case TERM_MONTHLY:
-				return translate( '%s month', '%s months', { count: 1, args: '1' } );
+				return translate( '%s month', '%s months', { count: 1, args: '1', context: 'subscription length' } );
 		}
 	}
 
