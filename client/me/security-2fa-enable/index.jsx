@@ -26,6 +26,11 @@ import Notice from 'components/notice';
 import Security2faProgress from 'me/security-2fa-progress';
 import twoStepAuthorization from 'lib/two-step-authorization';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Security2faEnable extends React.Component {
 	static displayName = 'Security2faEnable';
 
