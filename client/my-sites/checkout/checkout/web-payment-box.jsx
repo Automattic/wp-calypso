@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { i18n, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import config from 'config';
 import Gridicon from 'gridicons';
 import debugFactory from 'debug';
@@ -93,14 +93,15 @@ export function detectWebPaymentMethod() {
  *                                        (expecting one of the
  *                                        `WEB_PAYMENT_*_METHOD`
  *                                        constant).
+ * @param {function} translate            Localization function to translate the label.
  * @returns {string|null}                 A user-friendly payment name
  *                                        or the given payment method
  *                                        if none matches.
  */
-export function getWebPaymentMethodName( webPaymentMethod ) {
+export function getWebPaymentMethodName( webPaymentMethod, translate ) {
 	switch ( webPaymentMethod ) {
 		case WEB_PAYMENT_BASIC_CARD_METHOD:
-			return i18n.translate( 'Browser wallet' );
+			return translate( 'Browser wallet' );
 
 		case WEB_PAYMENT_APPLE_PAY_METHOD:
 			return 'Apple Pay';
