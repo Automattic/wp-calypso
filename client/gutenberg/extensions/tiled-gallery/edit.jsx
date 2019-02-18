@@ -206,6 +206,7 @@ class TiledGalleryEdit extends Component {
 								name: __( 'images' ),
 							} }
 							onSelect={ this.onSelectImages }
+							value={ isEmpty ? undefined : { id: images.map( img => img.id ) } }
 							accept="image/*"
 							allowedTypes={ ALLOWED_MEDIA_TYPES }
 							multiple
