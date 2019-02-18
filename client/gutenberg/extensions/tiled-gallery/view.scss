@@ -1,4 +1,5 @@
 @import './variables.scss';
+@import './css-gram.scss';
 
 $tiled-gallery-max-column-count: 20;
 
@@ -69,6 +70,26 @@ $tiled-gallery-max-column-count: 20;
 	overflow: hidden;
 	padding: 0;
 	position: relative;
+
+	&.filter__black-and-white {
+		filter: grayscale( 100% );
+	}
+
+	&.filter__sepia {
+		filter: sepia( 100% );
+	}
+
+	&.filter__1977 {
+		@include _1977;
+	}
+
+	&.filter__clarendon {
+		@include clarendon;
+	}
+
+	&.filter__gingham {
+		@include gingham;
+	}
 
 	& + & {
 		margin-top: $tiled-gallery-gutter;
