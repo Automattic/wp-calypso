@@ -43,25 +43,25 @@
 	}
 
 	.domain-product-price__free-text,
-    .domain-product-price__sale-price {
+	.domain-product-price__sale-price {
 		color: var( --color-neutral-600 );
 		display: block;
 	}
 
 	&.no-price .domain-product-price__free-text,
-    &.no-price .domain-product-price__sale-price {
+	&.no-price .domain-product-price__sale-price {
 		@include breakpoint( '>660px' ) {
 			margin-left: 0;
 		}
 	}
 
     .domain-product-price__price,
-    .domain-product-price__renewal-price {
+	.domain-product-price__renewal-price {
         margin: auto 0;
     }
 
 	&.is-free-domain,
-    &.is-sale-domain {
+	&.is-sale-domain {
 		line-height: 1.7;
 		margin-top: 2px;
 
@@ -70,7 +70,7 @@
 		}
 
 		.domain-product-price__price,
-        .domain-product-price__renewal-price {
+		.domain-product-price__renewal-price {
             font-size: 80%;
 			opacity: 0.6;
 		}
