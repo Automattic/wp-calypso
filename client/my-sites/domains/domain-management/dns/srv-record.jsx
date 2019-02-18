@@ -20,16 +20,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
 class SrvRecord extends React.Component {
-	static initialFields = {
-		name: '',
-		service: '',
-		aux: 10,
-		weight: 10,
-		target: '',
-		port: '',
-		protocol: 'tcp',
-	};
-
 	static propTypes = {
 		fieldValues: PropTypes.object.isRequired,
 		onChange: PropTypes.func.isRequired,
