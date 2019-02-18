@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { filter, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 
 export function emailManagementAddGSuiteUsers( siteName, domainName ) {
 	let path;
@@ -21,7 +21,7 @@ export function emailManagement( siteName, domainName ) {
 	let path;
 
 	if ( domainName ) {
-		path = emailManagementEdit( siteName, domainName, 'email' );
+		path = emailManagementEdit( siteName, domainName, 'manage' );
 	} else if ( siteName ) {
 		path = '/email/' + siteName;
 	} else {
@@ -36,7 +36,7 @@ export function emailManagementForwarding( siteName, domainName ) {
 }
 
 export function emailManagementEdit( siteName, domainName, slug ) {
-	slug = slug || 'edit';
+	slug = slug || 'manage';
 
 	// Encodes only real domain names and not parameter placeholders
 	if ( ! startsWith( domainName, ':' ) ) {
