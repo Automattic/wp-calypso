@@ -30,12 +30,11 @@ class PodcastIndicator extends React.Component {
 		tooltipType: 'category',
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			tooltipVisible: false,
-		};
-	}
+	state = {
+		tooltipVisible: false,
+	};
+
+	tooltipContext = React.createRef();
 
 	showTooltip = () => {
 		this.setState( { tooltipVisible: true } );
@@ -43,10 +42,6 @@ class PodcastIndicator extends React.Component {
 
 	hideTooltip = () => {
 		this.setState( { tooltipVisible: false } );
-	};
-
-	setTooltipContext = tooltipContext => {
-		this.setState( { tooltipContext } );
 	};
 
 	render() {
@@ -71,14 +66,14 @@ class PodcastIndicator extends React.Component {
 				<Gridicon
 					icon="microphone"
 					size={ size }
-					ref={ this.setTooltipContext }
+					ref={ this.tooltipContext }
 					onMouseEnter={ this.showTooltip }
 					onMouseLeave={ this.hideTooltip }
 				/>
 				{ tooltipMessage && (
 					<Tooltip
 						className="podcast-indicator__tooltip"
-						context={ this.state.tooltipContext }
+						context={ this.tooltipContext.current }
 						isVisible={ this.state.tooltipVisible }
 						position="bottom left"
 					>
