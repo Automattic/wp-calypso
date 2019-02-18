@@ -2,11 +2,10 @@
 /**
  * External dependencies
  */
-import { Notice, TextControl, SelectControl } from '@wordpress/components';
+import { Notice, TextControl, RadioControl, Placeholder } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/editor';
 import { withSelect } from '@wordpress/data';
-import interpolateComponents from 'interpolate-components';
 
 /**
  * Internal dependencies
@@ -14,10 +13,11 @@ import interpolateComponents from 'interpolate-components';
 import { sprintf } from '@wordpress/i18n';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { CRITERIA_AFTER, CRITERIA_BEFORE } from '../constants';
+import { icon } from '../index';
 
-const SELECT_OPTIONS = [
-	{ value: CRITERIA_AFTER, label: __( 'at least' ) },
-	{ value: CRITERIA_BEFORE, label: __( 'less than' ) },
+const RADIO_OPTIONS = [
+	{ value: CRITERIA_AFTER, label: __( 'Show after threshold' ), noticeLabel: __( 'at least' ) },
+	{ value: CRITERIA_BEFORE, label: __( 'Show before threshold' ), noticeLabel: __( 'less than' ) },
 ];
 
 class RepeatVisitorEdit extends Component {
@@ -34,42 +34,39 @@ class RepeatVisitorEdit extends Component {
 			<Fragment>
 				<div className={ this.props.className }>
 					<div className="wp-block-jetpack-repeat-visitor-inner-block">
-						{
-							<Notice status="info" isDismissible={ false }>
-								{ this.props.isSelected
-									? interpolateComponents( {
-											mixedString: __(
-												'This block will only appear to people who have previously visited this page {{atLeastOrLessThanSelectBox/}} {{numberInputField/}} times.'
-											),
-											components: {
-												numberInputField: (
-													<TextControl
-														defaultValue={ this.props.attributes.threshold }
-														min="1"
-														onChange={ this.setThreshold }
-														type="number"
-													/>
-												),
-												atLeastOrLessThanSelectBox: (
-													<SelectControl
-														value={ this.props.attributes.criteria }
-														onChange={ this.setCriteria }
-														options={ SELECT_OPTIONS }
-													/>
-												),
-											},
-									  } )
-									: sprintf(
-											__(
-												'This block will only appear to people who have previously visited this page %s %d times.'
-											),
-											this.props.attributes.criteria === CRITERIA_AFTER
-												? SELECT_OPTIONS[ 0 ].label
-												: SELECT_OPTIONS[ 1 ].label,
-											this.props.attributes.threshold
-									  ) }
-							</Notice>
-						}
+						<Notice status="info" isDismissible={ false }>
+							{ sprintf(
+								__(
+									'This block will only appear to people who have previously visited this page %s %d times.'
+								),
+								this.props.attributes.criteria === CRITERIA_AFTER
+									? RADIO_OPTIONS[ 0 ].noticeLabel
+									: RADIO_OPTIONS[ 1 ].noticeLabel,
+								this.props.attributes.threshold
+							) }
+						</Notice>
+						{ this.props.isSelected && (
+							<Placeholder
+								icon={ icon }
+								label={ __( 'Repeat Visitor' ) }
+								className="wp-block-jetpack-repeat-visitor-placeholder"
+							>
+								<TextControl
+									label={ __( 'Visit count threshold' ) }
+									defaultValue={ this.props.attributes.threshold }
+									min="1"
+									onChange={ this.setThreshold }
+									type="number"
+								/>
+
+								<RadioControl
+									label={ __( 'Visibility' ) }
+									selected={ this.props.attributes.criteria }
+									options={ RADIO_OPTIONS }
+									onChange={ this.setCriteria }
+								/>
+							</Placeholder>
+						) }
 						<InnerBlocks />
 					</div>
 				</div>

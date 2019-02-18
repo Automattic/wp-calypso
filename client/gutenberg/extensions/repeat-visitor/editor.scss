@@ -1,5 +1,5 @@
 .wp-block-jetpack-repeat-visitor-inner-block .components-notice {
-	margin: 0;
+	margin: 0 0 1em;
 
 	.components-notice__content {
 		margin: 0.5em 0;
@@ -15,4 +15,8 @@
 			}
 		}
 	}
+}
+
+.wp-block-jetpack-repeat-visitor-placeholder {
+	min-height: inherit;
 }
