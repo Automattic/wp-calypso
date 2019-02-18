@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -14,13 +13,9 @@ import WpcomColophon from 'components/wpcom-colophon';
 import jetpackOnly from './jetpack-only';
 import MainWrapper from './main-wrapper';
 import SiteTypeForm from 'signup/steps/site-type/form';
-import { loadTrackingTool } from 'state/analytics/actions';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 
 class JetpackSiteType extends Component {
-	componentDidMount() {
-		this.props.loadTrackingTool( 'HotJar' );
-	}
-
 	handleSubmit() {
 		// @TODO: implement saving logic
 	}
@@ -51,15 +46,8 @@ class JetpackSiteType extends Component {
 	}
 }
 
-const connectComponent = connect(
-	null,
-	{
-		loadTrackingTool,
-	}
-);
-
 export default flowRight(
-	connectComponent,
 	jetpackOnly,
-	localize
+	localize,
+	withTrackingTool( 'HotJar' )
 )( JetpackSiteType );
