@@ -14,8 +14,8 @@ function test() {
 		original: {
 			single: 'My hat has four corners.',
 			plural: 'My hats have five corners.',
-			count: numHats
-		}
+			count: numHats,
+		},
 	} );
 
 	// Should be merged in POT with the pluralized form
@@ -30,7 +30,7 @@ corners.` );
 	// providing context
 	content = i18n.translate( {
 		original: 'post',
-		context: 'verb'
+		context: 'verb',
 	} );
 
 	// passing string as initial argument
@@ -39,7 +39,7 @@ corners.` );
 	// add a comment to the translator
 	content = i18n.translate( {
 		original: 'g:i:s a',
-		comment: 'draft saved date format, see http://php.net/date'
+		comment: 'draft saved date format, see http://php.net/date',
 	} );
 
 	// sprintf-style string substitution
@@ -52,9 +52,9 @@ corners.` );
 	content = i18n.translate( {
 		original: 'Your city is %(city)s and your zip is %(zip)s.',
 		args: {
-			city: city,
-			zip: zip
-		}
+			city,
+			zip,
+		},
 	} );
 
 	// test the new syntax for translating plurals
@@ -65,21 +65,23 @@ corners.` );
 	content = i18n.translate( 'single test2', 'plural test2', { count: varCount } );
 
 	// test the ability to break strings to multiple lines
+	// prettier-ignore
 	content = <div>{ i18n.translate(
 		"This is a multi-line translation with \"mixed quotes\" " +
 		'and mixed \'single quotes\''
 	) }</div>;
 
-	content = this.translate( 'The string key text',
-		{ 'context': 'context with a literal string key' } );
+	content = this.translate( 'The string key text', {
+		context: 'context with a literal string key',
+	} );
 
 	i18n.translate( 'My hat has three corners.', {
-		'comment': 'Second ocurrence'
+		comment: 'Second ocurrence',
 	} );
 
 	i18n.translate( 'My hat has one corner.', 'My hat has many corners.', {
 		context: 'context after new plural syntax',
-		count: 5
+		count: 5,
 	} );
 	i18n.translate( 'This is how the test performed\u2026' );
 
