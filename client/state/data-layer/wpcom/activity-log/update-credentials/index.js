@@ -61,9 +61,9 @@ export const request = action => {
 		notice,
 		http(
 			{
-				apiVersion: '1.1',
+				apiNamespace: 'wpcom/v2',
 				method: 'POST',
-				path: `/activity-log/${ action.siteId }/update-credentials`,
+				path: `/sites/${ action.siteId }/rewind/credentials/update`,
 				body: { credentials },
 			},
 			{ ...action, noticeId }
