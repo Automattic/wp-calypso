@@ -26,11 +26,6 @@ class ARecord extends React.Component {
 		show: PropTypes.bool.isRequired,
 	};
 
-	static initialFields = {
-		name: '',
-		data: '',
-	};
-
 	render() {
 		const { fieldValues, isValid, onChange, selectedDomainName, show, translate } = this.props;
 		const classes = classnames( { 'is-hidden': ! show } );
