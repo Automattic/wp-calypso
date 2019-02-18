@@ -1,5 +1,5 @@
 .wp-block-jetpack-repeat-visitor-inner-block .components-notice {
-	margin: 0 0 1em;
+	margin: 1em 0 0;
 
 	.components-notice__content {
 		margin: 0.5em 0;
@@ -19,4 +19,19 @@
 
 .wp-block-jetpack-repeat-visitor-placeholder {
 	min-height: inherit;
+}
+
+.wp-block-jetpack-repeat-visitor-threshold {
+	margin-right: 20px;
+
+	.components-text-control__input {
+		width: 5em;
+		text-align: center;
+	}
+}
+
+.wp-block-jetpack-repeat-visitor {
+	.components-radio-control__option {
+		text-align: left;
+	}
 }

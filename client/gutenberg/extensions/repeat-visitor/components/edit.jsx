@@ -34,17 +34,6 @@ class RepeatVisitorEdit extends Component {
 			<Fragment>
 				<div className={ this.props.className }>
 					<div className="wp-block-jetpack-repeat-visitor-inner-block">
-						<Notice status="info" isDismissible={ false }>
-							{ sprintf(
-								__(
-									'This block will only appear to people who have previously visited this page %s %d times.'
-								),
-								this.props.attributes.criteria === CRITERIA_AFTER
-									? RADIO_OPTIONS[ 0 ].noticeLabel
-									: RADIO_OPTIONS[ 1 ].noticeLabel,
-								this.props.attributes.threshold
-							) }
-						</Notice>
 						{ this.props.isSelected && (
 							<Placeholder
 								icon={ icon }
@@ -52,6 +41,7 @@ class RepeatVisitorEdit extends Component {
 								className="wp-block-jetpack-repeat-visitor-placeholder"
 							>
 								<TextControl
+									className="wp-block-jetpack-repeat-visitor-threshold"
 									label={ __( 'Visit count threshold' ) }
 									defaultValue={ this.props.attributes.threshold }
 									min="1"
@@ -67,6 +57,17 @@ class RepeatVisitorEdit extends Component {
 								/>
 							</Placeholder>
 						) }
+						<Notice status="info" isDismissible={ false }>
+							{ sprintf(
+								__(
+									'This block will only appear to people who have previously visited this page %s %d times.'
+								),
+								this.props.attributes.criteria === CRITERIA_AFTER
+									? RADIO_OPTIONS[ 0 ].noticeLabel
+									: RADIO_OPTIONS[ 1 ].noticeLabel,
+								this.props.attributes.threshold
+							) }
+						</Notice>
 						<InnerBlocks />
 					</div>
 				</div>
