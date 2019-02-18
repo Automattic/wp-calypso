@@ -19,6 +19,18 @@
 	padding-left: 4px;
 	padding-right: 4px;
 
+	// Hide the placeholder text when the gallery has images
+	&.has-images {
+		.tiled-gallery__media-placeholder {
+			min-height: 100px;
+		}
+
+		.components-placeholder__instructions,
+		.components-placeholder__label {
+			display: none;
+		}
+	}
+
 	.tiled-gallery__item {
 		// Hide the focus outline that otherwise briefly appears when selecting a block.
 		> img:focus {

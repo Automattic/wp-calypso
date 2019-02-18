@@ -1,18 +1,11 @@
 /**
  * External Dependencies
  */
+import classnames from 'classnames';
+import { BlockControls, InspectorControls, MediaPlaceholder, MediaUpload } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
 import { filter, get, pick } from 'lodash';
 import {
-	BlockControls,
-	InspectorControls,
-	MediaPlaceholder,
-	MediaUpload,
-	mediaUpload,
-} from '@wordpress/editor';
-import {
-	DropZone,
-	FormFileUpload,
 	IconButton,
 	PanelBody,
 	RangeControl,
@@ -89,20 +82,6 @@ class TiledGalleryEdit extends Component {
 		this.props.setAttributes( attributes );
 	}
 
-	addFiles = files => {
-		const currentImages = this.props.attributes.images || [];
-		const { noticeOperations } = this.props;
-		mediaUpload( {
-			allowedTypes: ALLOWED_MEDIA_TYPES,
-			filesList: files,
-			onFileChange: images => {
-				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
-				this.setAttributes( { images: currentImages.concat( imagesNormalized ) } );
-			},
-			onError: noticeOperations.createErrorNotice,
-		} );
-	};
-
 	onRemoveImage = index => () => {
 		const images = filter( this.props.attributes.images, ( img, i ) => index !== i );
 		const { columns } = this.props.attributes;
@@ -151,64 +130,37 @@ class TiledGalleryEdit extends Component {
 
 	setLinkTo = value => this.setAttributes( { linkTo: value } );
 
-	uploadFromFiles = event => this.addFiles( event.target.files );
-
 	render() {
 		const { selectedImage } = this.state;
 		const { attributes, isSelected, className, noticeOperations, noticeUI } = this.props;
 		const { align, columns = defaultColumnsNumber( attributes ), images, linkTo } = attributes;
 
-		const controls = (
-			<BlockControls>
-				{ !! images.length && (
-					<Toolbar>
-						<MediaUpload
-							onSelect={ this.onSelectImages }
-							allowedTypes={ ALLOWED_MEDIA_TYPES }
-							multiple
-							gallery
-							value={ images.map( img => img.id ) }
-							render={ ( { open } ) => (
-								<IconButton
-									className="components-toolbar__control"
-									label={ __( 'Edit Gallery' ) }
-									icon="edit"
-									onClick={ open }
-								/>
-							) }
-						/>
-					</Toolbar>
-				) }
-			</BlockControls>
-		);
-
-		if ( images.length === 0 ) {
-			return (
-				<Fragment>
-					{ controls }
-					<MediaPlaceholder
-						icon={ <div className="tiled-gallery__media-placeholder-icon">{ icon }</div> }
-						className={ className }
-						labels={ {
-							title: __( 'Tiled gallery' ),
-							name: __( 'images' ),
-						} }
-						onSelect={ this.onSelectImages }
-						accept="image/*"
-						allowedTypes={ ALLOWED_MEDIA_TYPES }
-						multiple
-						notices={ noticeUI }
-						onError={ noticeOperations.createErrorNotice }
-					/>
-				</Fragment>
-			);
-		}
-
+		const isEmpty = ! images.length;
 		const layoutStyle = getActiveStyleName( LAYOUT_STYLES, attributes.className );
 
 		return (
 			<Fragment>
-				{ controls }
+				<BlockControls>
+					{ ! isEmpty && (
+						<Toolbar>
+							<MediaUpload
+								onSelect={ this.onSelectImages }
+								allowedTypes={ ALLOWED_MEDIA_TYPES }
+								multiple
+								gallery
+								value={ images.map( img => img.id ) }
+								render={ ( { open } ) => (
+									<IconButton
+										className="components-toolbar__control"
+										label={ __( 'Edit Gallery' ) }
+										icon="edit"
+										onClick={ open }
+									/>
+								) }
+							/>
+						</Toolbar>
+					) }
+				</BlockControls>
 				<InspectorControls>
 					<PanelBody title={ __( 'Tiled gallery settings' ) }>
 						{ layoutSupportsColumns( layoutStyle ) && images.length > 1 && (
@@ -233,7 +185,9 @@ class TiledGalleryEdit extends Component {
 
 				<Layout
 					align={ align }
-					className={ className }
+					className={ classnames( className, {
+						'has-images': ! isEmpty,
+					} ) }
 					columns={ columns }
 					images={ images }
 					layoutStyle={ layoutStyle }
@@ -243,20 +197,21 @@ class TiledGalleryEdit extends Component {
 					selectedImage={ isSelected ? selectedImage : null }
 					setImageAttributes={ this.setImageAttributes }
 				>
-					<DropZone onFilesDrop={ this.addFiles } />;
-					{ isSelected && (
-						<div className="tiled-gallery__add-item">
-							<FormFileUpload
-								multiple
-								isLarge
-								className="tiled-gallery__add-item-button"
-								onChange={ this.uploadFromFiles }
-								accept="image/*"
-								icon="insert"
-							>
-								{ __( 'Upload an image' ) }
-							</FormFileUpload>
-						</div>
+					{ ( isSelected || isEmpty ) && (
+						<MediaPlaceholder
+							icon={ <div className="tiled-gallery__media-placeholder-icon">{ icon }</div> }
+							className="tiled-gallery__media-placeholder"
+							labels={ {
+								title: __( 'Tiled gallery' ),
+								name: __( 'images' ),
+							} }
+							onSelect={ this.onSelectImages }
+							accept="image/*"
+							allowedTypes={ ALLOWED_MEDIA_TYPES }
+							multiple
+							notices={ noticeUI }
+							onError={ noticeOperations.createErrorNotice }
+						/>
 					) }
 				</Layout>
 			</Fragment>
