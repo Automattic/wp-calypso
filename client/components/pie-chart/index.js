@@ -14,6 +14,11 @@ import { sortBy, sumBy } from 'lodash';
  */
 import DataType from './data-type';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SVG_SIZE = 300;
 const NUM_COLOR_SECTIONS = 3;
 
