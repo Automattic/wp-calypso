@@ -52,6 +52,9 @@ inherits( ValidationError, Error );
 function TransactionFlow( initialData, onStep ) {
 	this._initialData = initialData;
 	this._onStep = onStep;
+	this._useEbanxForCard = isEbanxCreditCardProcessingEnabledForCountry(
+		this._initialData.payment.newCardDetails.country
+	);
 
 	const paymentMethod = this._initialData.payment.paymentMethod;
 	const paymentHandler = this._paymentHandlers[ paymentMethod ];
@@ -126,7 +129,7 @@ TransactionFlow.prototype._paymentHandlers = {
 					cancelUrl,
 				};
 
-				if ( isEbanxCreditCardProcessingEnabledForCountry( country ) ) {
+				if ( this._useEbanxForCard ) {
 					const ebanxPaymentData = {
 						state: newCardDetails.state,
 						city: newCardDetails.city,
@@ -169,7 +172,8 @@ TransactionFlow.prototype._createCardToken = function( callback ) {
 
 			this._pushStep( { name: RECEIVED_PAYMENT_KEY_RESPONSE } );
 			callback( cardToken );
-		}.bind( this )
+		}.bind( this ),
+		this._useEbanxForCard
 	);
 };
 
@@ -181,8 +185,16 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 	};
 
 	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );
+	debug( 'Calling transactions endpoint' );
 	wpcom.transactions( 'POST', transaction, ( error, data ) => {
 		if ( error ) {
+			if ( transaction.payment.payment_method === 'WPCOM_Billing_Ebanx' ) {
+				debug( 'EBANX transaction failed, falling back to Paygate' );
+				analytics.mc.bumpStat( 'cc_charge_fallback', 'ebanx_to_paygate' );
+				this._useEbanxForCard = false;
+				const paymentHandler = this._paymentHandlers.WPCOM_Billing_MoneyPress_Paygate;
+				return paymentHandler.call( this );
+			}
 			return this._pushStep( {
 				name: RECEIVED_WPCOM_RESPONSE,
 				error,
@@ -332,14 +344,14 @@ function getEbanxParameters( cardDetails ) {
 	};
 }
 
-export function createCardToken( requestType, cardDetails, callback, forcedPaygate = false ) {
-	if ( ! forcedPaygate && isEbanxCreditCardProcessingEnabledForCountry( cardDetails.country ) ) {
+export function createCardToken( requestType, cardDetails, callback, useEbanx = false ) {
+	if ( useEbanx ) {
 		return createEbanxToken( requestType, cardDetails ).then(
 			result => callback( null, result ),
 			function( reason ) {
 				analytics.mc.bumpStat( 'cc_token_fallback', 'ebanx_to_paygate' );
 				debug( 'Error creating EBANX token, falling back to paygate', reason );
-				return createCardToken( requestType, cardDetails, callback, true );
+				return createCardToken( requestType, cardDetails, callback, false );
 			}
 		);
 	}
