@@ -158,8 +158,6 @@ class TiledGalleryEdit extends Component {
 		const { attributes, isSelected, className, noticeOperations, noticeUI } = this.props;
 		const { align, columns = defaultColumnsNumber( attributes ), images, linkTo } = attributes;
 
-		const dropZone = <DropZone onFilesDrop={ this.addFiles } />;
-
 		const controls = (
 			<BlockControls>
 				{ !! images.length && (
@@ -245,7 +243,7 @@ class TiledGalleryEdit extends Component {
 					selectedImage={ isSelected ? selectedImage : null }
 					setImageAttributes={ this.setImageAttributes }
 				>
-					{ dropZone }
+					<DropZone onFilesDrop={ this.addFiles } />;
 					{ isSelected && (
 						<div className="tiled-gallery__add-item">
 							<FormFileUpload
