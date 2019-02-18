@@ -16,8 +16,20 @@ import { CRITERIA_AFTER, CRITERIA_BEFORE } from '../constants';
 import { icon } from '../index';
 
 const RADIO_OPTIONS = [
-	{ value: CRITERIA_AFTER, label: __( 'Show after threshold' ), noticeLabel: __( 'at least' ) },
-	{ value: CRITERIA_BEFORE, label: __( 'Show before threshold' ), noticeLabel: __( 'less than' ) },
+	{
+		value: CRITERIA_AFTER,
+		label: __( 'Show after threshold' ),
+		noticeLabel: __(
+			'This block will only appear to people who have visited this page at least %d times.'
+		),
+	},
+	{
+		value: CRITERIA_BEFORE,
+		label: __( 'Show before threshold' ),
+		noticeLabel: __(
+			'This block will only appear to people who have visited this page less than %d times.'
+		),
+	},
 ];
 
 class RepeatVisitorEdit extends Component {
@@ -59,9 +71,6 @@ class RepeatVisitorEdit extends Component {
 						) }
 						<Notice status="info" isDismissible={ false }>
 							{ sprintf(
-								__(
-									'This block will only appear to people who have previously visited this page %s %d times.'
-								),
 								this.props.attributes.criteria === CRITERIA_AFTER
 									? RADIO_OPTIONS[ 0 ].noticeLabel
 									: RADIO_OPTIONS[ 1 ].noticeLabel,
