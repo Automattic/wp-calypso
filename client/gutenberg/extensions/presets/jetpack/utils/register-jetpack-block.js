@@ -6,7 +6,7 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import isJetpackExtensionAvailable from './is-jetpack-extension-available';
+import getJetpackExtensionAvailability from './get-jetpack-extension-availability';
 
 /**
  * Registers a gutenberg block if the availability requirements are met.
@@ -17,7 +17,7 @@ import isJetpackExtensionAvailable from './is-jetpack-extension-available';
  * @returns {object|false} Either false if the block is not available, or the results of `registerBlockType`
  */
 export default function registerJetpackBlock( name, settings, childBlocks = [] ) {
-	if ( ! isJetpackExtensionAvailable( name ) ) {
+	if ( ! getJetpackExtensionAvailability( name ).available ) {
 		// TODO: check 'unavailable_reason' and respond accordingly
 		return false;
 	}

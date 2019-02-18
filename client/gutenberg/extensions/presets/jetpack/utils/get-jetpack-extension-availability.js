@@ -14,13 +14,20 @@ import getJetpackData from './get-jetpack-data';
  *
  * Defaults to `false` for production blocks, and to `true` for beta blocks.
  * This is to make it easier for folks to write their first block without needing
- * to touch the server side,
+ * to touch the server side.
  *
  * @param {string} name The extension's name (without the `jetpack/` prefix)
- * @returns {bool}      Whether the extension is available or not
+ * @returns {object} Object indicating if the extension is available (property `available`) and the reason why it is
+ * unavailable (property `unavailable_reason`).
  */
-export default function isJetpackExtensionAvailable( name ) {
+export default function getJetpackExtensionAvailability( name ) {
 	const data = getJetpackData();
 	const defaultAvailability = includes( extensionSlugsJson.beta, name );
-	return get( data, [ 'available_blocks', name, 'available' ], defaultAvailability );
+	const available = get( data, [ 'available_blocks', name, 'available' ], defaultAvailability );
+	const unavailableReason = get( data, [ 'available_blocks', name, 'unavailable_reason' ], 'unknown' );
+
+	return {
+		available,
+		...( ! available && { unavailableReason } ),
+	};
 }

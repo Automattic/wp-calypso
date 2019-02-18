@@ -6,7 +6,7 @@ import { registerPlugin } from '@wordpress/plugins';
 /**
  * Internal dependencies
  */
-import isJetpackExtensionAvailable from './is-jetpack-extension-available';
+import getJetpackExtensionAvailability from './get-jetpack-extension-availability';
 
 /**
  * Registers a Gutenberg block if the availability requirements are met.
@@ -16,7 +16,7 @@ import isJetpackExtensionAvailable from './is-jetpack-extension-available';
  * @returns {object|false} Either false if the plugin is not available, or the results of `registerPlugin`
  */
 export default function registerJetpackPlugin( name, settings ) {
-	if ( ! isJetpackExtensionAvailable( name ) ) {
+	if ( ! getJetpackExtensionAvailability( name ).available ) {
 		// TODO: check 'unavailable_reason' and respond accordingly
 		return false;
 	}
