@@ -20,7 +20,7 @@ import config from 'config';
 import { preload } from 'sections-helper';
 import ResumeEditing from 'my-sites/resume-editing';
 import { getCurrentUserSiteCount, getCurrentUser } from 'state/current-user/selectors';
-import { isSupportUserSession } from 'lib/user/support-user-interop';
+import { isSupportSession } from 'state/support/selectors';
 import AsyncLoad from 'components/async-load';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
@@ -126,7 +126,7 @@ class MasterbarLoggedIn extends React.Component {
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
-				{ ( isSupportUserSession() || config.isEnabled( 'quick-language-switcher' ) ) && (
+				{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
 					<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
@@ -181,6 +181,7 @@ export default connect(
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			user: getCurrentUser( state ),
+			isSupportSession: isSupportSession( state ),
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent }

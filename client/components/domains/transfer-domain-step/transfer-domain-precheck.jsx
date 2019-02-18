@@ -26,7 +26,7 @@ import {
 } from 'lib/url/support';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
-import { isSupportUserSession } from 'lib/user/support-user-interop';
+import { isSupportSession as hasEnteredSupportSession } from 'state/support/selectors';
 
 class TransferDomainPrecheck extends React.Component {
 	static propTypes = {
@@ -331,17 +331,18 @@ class TransferDomainPrecheck extends React.Component {
 				<img
 					className="transfer-domain-step__illustration"
 					src={ '/calypso/images/illustrations/migrating-host-diy.svg' }
+					alt=""
 				/>
 			</Card>
 		);
 	}
 
 	render() {
-		const { authCodeValid, translate, unlocked } = this.props;
+		const { authCodeValid, translate, unlocked, isSupportSession } = this.props;
 		const { currentStep } = this.state;
 		// We disallow HEs to submit the transfer
 		const disableButton =
-			false === unlocked || ! authCodeValid || currentStep < 3 || isSupportUserSession();
+			false === unlocked || ! authCodeValid || currentStep < 3 || isSupportSession;
 
 		return (
 			<div className="transfer-domain-step__precheck">
@@ -372,7 +373,7 @@ class TransferDomainPrecheck extends React.Component {
 	}
 
 	supportUserNotice() {
-		if ( isSupportUserSession() ) {
+		if ( this.props.isSupportSession ) {
 			return (
 				<Notice
 					text={ this.props.translate(
@@ -414,7 +415,9 @@ const recordContinueButtonClick = ( domain_name, losing_registrar, losing_regist
 	} );
 
 export default connect(
-	null,
+	state => ( {
+		isSupportSession: hasEnteredSupportSession( state ),
+	} ),
 	{
 		recordNextStep,
 		recordUnlockedCheckButtonClick,

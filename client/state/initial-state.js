@@ -12,7 +12,7 @@ import { get, map, pick, throttle } from 'lodash';
  */
 import { APPLY_STORED_STATE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import localforage from 'lib/localforage';
-import { isSupportUserSession } from 'lib/user/support-user-interop';
+import { isSupportSession } from 'lib/user/support-user-interop';
 import config from 'config';
 import User from 'lib/user';
 
@@ -38,7 +38,7 @@ function deserialize( state, reducer ) {
 
 // get bootstrapped state from a server-side render
 function getInitialServerState( initialReducer ) {
-	if ( typeof window !== 'object' || ! window.initialReduxState || isSupportUserSession() ) {
+	if ( typeof window !== 'object' || ! window.initialReduxState || isSupportSession() ) {
 		return null;
 	}
 
@@ -47,7 +47,7 @@ function getInitialServerState( initialReducer ) {
 }
 
 function shouldPersist() {
-	return config.isEnabled( 'persist-redux' ) && ! isSupportUserSession();
+	return config.isEnabled( 'persist-redux' ) && ! isSupportSession();
 }
 
 /**
