@@ -51,7 +51,7 @@ class SiteTopicForm extends Component {
 	};
 
 	onSubmit = event => {
-		const { isUserInput, siteSlug, verticalId, verticalParentId } = this.props;
+		const { isUserInput, siteSlug, siteTopic, verticalId, verticalParentId } = this.props;
 
 		event.preventDefault();
 
@@ -61,7 +61,13 @@ class SiteTopicForm extends Component {
 			parent_id: verticalParentId || verticalId,
 		} );
 
-		this.props.submitForm( siteSlug );
+		this.props.submitForm( {
+			isUserInput,
+			name: siteTopic,
+			slug: siteSlug,
+			parentId: verticalParentId,
+			id: verticalId,
+		} );
 	};
 
 	render() {
