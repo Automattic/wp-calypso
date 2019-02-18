@@ -74,7 +74,6 @@ export class PlanFeaturesHeader extends Component {
 			audience,
 			translate,
 			countryCode,
-			isJetpack,
 		} = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
@@ -95,7 +94,7 @@ export class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
-					{ isJetpack && abtest( 'onlyJetpackMonthly', countryCode ) !== 'monthlyOnly'
+					{ abtest( 'onlyJetpackMonthly', countryCode ) !== 'monthlyOnly'
 						? this.getIntervalDiscount()
 						: null }
 				</div>
