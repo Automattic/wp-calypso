@@ -14,7 +14,6 @@ module.exports = {
 		'<rootDir>/client/**/integration/*.js',
 		'<rootDir>/server/**/integration/*.js',
 		'<rootDir>/test/test/helpers/**/integration/*.js',
-		'!**/.eslintrc.*',
 	],
 	verbose: false,
 };

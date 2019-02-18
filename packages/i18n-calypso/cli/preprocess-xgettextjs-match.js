@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Takes an xgettext-js match and processes it into a form more easily consumed
  * by server-side i18n functions.
@@ -13,24 +12,24 @@
  * @return {object} data object combining the strings and options passed into translate();
  */
 module.exports = function preProcessXGettextJSMatch( match ) {
-	const finalProps = { line: match.line };
+	var finalProps = { line: match.line },
+		options, i, keyName, args;
 
 	if ( ! match.arguments.length ) {
 		return;
 	}
 
-	const args = match.arguments;
-	let options;
+	args = match.arguments;
 
 	[ 'single', 'plural', 'options' ].slice( 0, args.length ).forEach( function( field, i ) {
-		if ( 'StringLiteral' === args[ i ].type ) {
-			finalProps[ field ] = makeDoubleQuoted( args[ i ].extra.raw );
-		} else if ( 'BinaryExpression' === args[ i ].type ) {
-			finalProps[ field ] = encapsulateString( concatenateBinaryExpression( args[ i ] ) );
-		} else if ( 'ObjectExpression' === args[ i ].type && 'undefined' === typeof options ) {
+		if ( 'StringLiteral' === args[i].type ) {
+			finalProps[field] = makeDoubleQuoted( args[i].extra.raw );
+		} else if ( 'BinaryExpression' === args[i].type ) {
+			finalProps[field] = encapsulateString( concatenateBinaryExpression( args[i] ) );
+		} else if ( 'ObjectExpression' === args[i].type && 'undefined' === typeof options ) {
 			options = args[ i ];
-		} else if ( 'TemplateLiteral' === args[ i ].type ) {
-			finalProps[ field ] = makeDoubleQuoted( '`' + args[ i ].quasis[ 0 ].value.raw + '`' );
+		} else if ( 'TemplateLiteral' === args[i].type ) {
+			finalProps[field] = makeDoubleQuoted( '`' + args[i].quasis[0].value.raw + '`' );
 		}
 	} );
 
@@ -38,19 +37,16 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 		// map options to finalProps object
 		options.properties.forEach( function( property ) {
 			// key might be an  Identifier (name), or a StringLiteral (value)
-			const key = property.key.name || property.key.value;
+			var key = property.key.name || property.key.value;
 			if ( 'StringLiteral' === property.value.type ) {
-				const keyName = key === 'original' ? 'single' : key;
-				finalProps[ keyName ] =
-					'comment' === key ? property.value.value : makeDoubleQuoted( property.value.extra.raw );
+				keyName = ( key === 'original' ) ? 'single' : key;
+				finalProps[ keyName ] = ( 'comment' === key ) ? property.value.value : makeDoubleQuoted( property.value.extra.raw );
 			} else if ( 'ObjectExpression' === property.value.type && 'original' === key ) {
 				// Get pluralization strings. This clause can be removed when all translations
 				// are updated to the new approach for plurals.
 				property.value.properties.forEach( function( innerProp ) {
 					if ( 'StringLiteral' === innerProp.value.type ) {
-						finalProps[ innerProp.key.name || innerProp.key.value ] = makeDoubleQuoted(
-							innerProp.value.extra.raw
-						);
+						finalProps[ innerProp.key.name || innerProp.key.value ] = makeDoubleQuoted( innerProp.value.extra.raw );
 					}
 				} );
 			}
@@ -81,18 +77,12 @@ module.exports = function preProcessXGettextJSMatch( match ) {
  * @return {string}          - the concatenated string
  */
 function concatenateBinaryExpression( ASTNode ) {
+	var result;
 	if ( ASTNode.operator !== '+' ) {
 		return false;
 	}
-
-	let result =
-		'StringLiteral' === ASTNode.left.type
-			? ASTNode.left.value
-			: concatenateBinaryExpression( ASTNode.left );
-	result +=
-		'StringLiteral' === ASTNode.right.type
-			? ASTNode.right.value
-			: concatenateBinaryExpression( ASTNode.right );
+	result = ( 'StringLiteral' === ASTNode.left.type ) ? ASTNode.left.value : concatenateBinaryExpression( ASTNode.left );
+	result += ( 'StringLiteral' === ASTNode.right.type ) ? ASTNode.right.value : concatenateBinaryExpression( ASTNode.right );
 
 	return result;
 }
@@ -115,30 +105,16 @@ function makeDoubleQuoted( literal ) {
 	}
 
 	// single-quoted string
-	if ( literal.charAt( 0 ) === "'" ) {
-		return (
-			'"' +
-			literal
-				.substring( 1, literal.length - 1 )
-				.replace( /\\'/g, "'" )
-				.replace( /(\\|")/g, '\\$1' ) +
-			'"'
-		);
+	if ( literal.charAt( 0 ) === '\'' ) {
+		return '"' + literal.substring( 1, literal.length - 1 ).replace( /\\'/g, '\'' ).replace( /(\\|")/g, '\\$1' ) + '"';
 	}
 
 	// ES6 string
 	if ( literal.charAt( 0 ) === '`' ) {
-		return (
-			'"' +
-			literal
-				.substring( 1, literal.length - 1 )
-				.replace( /`/g, '`' )
-				.replace( /(\\|")/g, '\\$1' ) +
-			'"'
-		);
+		return '"' + literal.substring( 1, literal.length - 1 ).replace( /`/g, '\`' ).replace( /(\\|")/g, '\\$1' ) + '"';
 	}
 
-	return '';
+	return "";
 }
 
 /**
