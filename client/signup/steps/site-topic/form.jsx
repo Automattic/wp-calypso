@@ -55,7 +55,7 @@ class SiteTopicForm extends Component {
 
 		event.preventDefault();
 
-		recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
+		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
 			value: siteSlug,
 			is_user_input_vertical: isUserInput,
 			parent_id: verticalParentId || verticalId,
