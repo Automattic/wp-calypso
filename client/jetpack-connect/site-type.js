@@ -9,11 +9,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
-import WpcomColophon from 'components/wpcom-colophon';
 import jetpackOnly from './jetpack-only';
 import MainWrapper from './main-wrapper';
 import SiteTypeForm from 'signup/steps/site-type/form';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import WpcomColophon from 'components/wpcom-colophon';
 
 class JetpackSiteType extends Component {
 	handleSubmit() {
