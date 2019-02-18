@@ -21,7 +21,7 @@ class ReaderLandingStepContent extends PureComponent {
 	render() {
 		const { translate } = this.props;
 		return (
-			<Fragment>			
+			<Fragment>
 				<div className="reader-landing__button-wrapper">
 					<Button
 						primary={ true }
