@@ -100,7 +100,6 @@
 		color: #fff;
 	}
 
-	.logged-out-form,
 	.login__form,
 	.magic-login__request-link {
 		border: 0;
@@ -134,18 +133,20 @@
 		display: block;
 	}
 
-	input[type='text'],
-	input[type='email'],
-	input[type='password'] {
-		background-color: #fff;
-		border: 1px solid #e6e6e6;
-		border-radius: 0;
-		box-sizing: border-box;
-		color: #384869;
-		font-size: 1rem;
-		line-height: 1.5;
-		padding: 10px 20px;
-		width: 100%;
+	.card:not(.logged-out-form) {
+		input[type='text'],
+		input[type='email'],
+		input[type='password'] {
+			background-color: #fff;
+			border: 1px solid #e6e6e6;
+			border-radius: 0;
+			box-sizing: border-box;
+			color: #384869;
+			font-size: 1rem;
+			line-height: 1.5;
+			padding: 10px 20px;
+			width: 100%;
+		}
 	}
 
 	.card {
@@ -153,15 +154,7 @@
 		margin: 0;
 	}
 
-	.signup-form__social {
-		border: 1px solid #e6e6e6;
-		border-left: 0;
-		border-right: 0;
-		box-shadow: none;
-		max-width: 100%;
-	}
-
-	.social-buttons__button {
+	.login__social .social-buttons__button {
 		background-color: #384869;
 		border: 0;
 		border-radius: 0;
@@ -187,22 +180,6 @@
 		text-align: center;
 	}
 
-	.logged-out-form__footer {
-		background: none;
-		border: 0;
-		text-align: center;
-	}
-
-	.logged-out-form__links {
-		padding: 20px 0 0;
-		text-align: center;
-	}
-
-	.logged-out-form__link-item {
-		border-bottom: 0;
-		padding: 10px 16px;
-	}
-
 	.wp-login__links {
 		padding: 20px 0;
 	}
@@ -224,7 +201,6 @@
 		text-align: center;
 	}
 
-	.step-wrapper,
 	.wp-login__main.main {
 		background: #fff;
 		border: 0;
@@ -239,18 +215,11 @@
 		}
 	}
 
-	.signup__step {
-		background: linear-gradient( to bottom, #f2f2f2, transparent );
-	}
-
 	&.is-section-signup::before,
 	&.is-section-signup .layout__primary::before {
 		display: none;
 	}
 
-	.step-header,
-	.logged-out-form,
-	.logged-out-form__links,
 	.login__form,
 	.wp-login__links,
 	.magic-login__request-link {
@@ -272,7 +241,6 @@
 		padding-bottom: 15px;
 	}
 
-	.formatted-header__title,
 	.login__form-header {
 		font-size: 1.5em;
 		margin-top: 1.2em;
@@ -299,19 +267,6 @@
 
 	.login__form-header-wrapper {
 		padding-top: 1.5em;
-	}
-
-	.formatted-header__subtitle {
-		padding: 0 20px;
-		font-size: 1.1em;
-
-		a {
-			display: inline-block;
-		}
-
-		@include breakpoint( '>480px' ) {
-			padding: 0 80px;
-		}
 	}
 
 	.login__form-social {
