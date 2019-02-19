@@ -158,7 +158,7 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	makeLayout( reactContext, noop );
 	clientRender( reactContext );
 }
-// TODO
+
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 	const allPaths = [
 		emailManagementAddGSuiteUsers,
