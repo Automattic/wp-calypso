@@ -57,6 +57,8 @@ class GSuiteAppsUsers extends Component {
 	renderDomain( domain, users ) {
 		return (
 			<div key={ `gsuite-user-${ domain }` } className="email-management__gsuite-users-card">
+				{' '}
+				{ /* eslint-disable-line wpcalypso/jsx-classname-namespace */ }
 				<SectionHeader label={ domain }>
 					{ this.canAddUsers( domain ) && (
 						<Button
@@ -70,7 +72,11 @@ class GSuiteAppsUsers extends Component {
 					) }
 				</SectionHeader>
 				<CompactCard className="email-management__gsuite-users-card-user-list">
+					{' '}
+					{ /* eslint-disable-line wpcalypso/jsx-classname-namespace */ }
 					<ul className="email-management__gsuite-users-card-user-list-inner">
+						{' '}
+						{ /* eslint-disable-line wpcalypso/jsx-classname-namespace */ }
 						{ users.map( ( user, index ) => this.renderUser( user, index ) ) }
 					</ul>
 				</CompactCard>

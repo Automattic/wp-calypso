@@ -20,6 +20,7 @@ import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import { domainManagementDns, domainManagementDomainConnectMapping } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
 
+// eslint-disable-next-line react/prefer-es6-class
 const MappedDomain = createReactClass( {
 	displayName: 'MappedDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
@@ -88,9 +89,9 @@ const MappedDomain = createReactClass( {
 		const { domain, selectedSite, translate } = this.props;
 
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="domain-details-card">
 				<Header { ...this.props } />
-
 				<Card>
 					<Property label={ translate( 'Type', { context: 'A type of domain.' } ) }>
 						{ translate( 'Mapped Domain' ) }

@@ -25,6 +25,7 @@ import notices from 'notices';
 import { addEmailForwarding } from 'lib/upgrades/actions';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 
+// eslint-disable-next-line react/prefer-es6-class
 const EmailForwardingAddNew = createReactClass( {
 	displayName: 'EmailForwardingAddNew',
 
@@ -42,6 +43,7 @@ const EmailForwardingAddNew = createReactClass( {
 		};
 	},
 
+	// eslint-disable-next-line react/no-deprecated
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
 			initialFields: this.getInitialState().fields,
@@ -195,6 +197,7 @@ const EmailForwardingAddNew = createReactClass( {
 			{ mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="form-content">
 				<FormFieldset>
 					<FormLabel>{ this.props.translate( 'Emails Sent To' ) }</FormLabel>
@@ -218,7 +221,6 @@ const EmailForwardingAddNew = createReactClass( {
 						/>
 					) }
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel>{ this.props.translate( 'Will Be Forwarded To' ) }</FormLabel>
 					<FormTextInput
@@ -249,13 +251,13 @@ const EmailForwardingAddNew = createReactClass( {
 	render() {
 		return (
 			<form className="email-forwarding__add-new">
+				{' '}
+				{ /* eslint-disable-line wpcalypso/jsx-classname-namespace */ }
 				<EmailForwardingLimit
 					selectedSite={ this.props.selectedSite }
 					emailForwarding={ this.props.emailForwarding }
 				/>
-
 				{ this.formFields() }
-
 				{ this.formFooter() }
 			</form>
 		);

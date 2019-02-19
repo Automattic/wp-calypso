@@ -33,19 +33,20 @@ class EmailForwarding extends React.Component {
 		}
 		return (
 			<Main className="email-forwarding">
+				{' '}
+				{ /* eslint-disable-line wpcalypso/jsx-classname-namespace */ }
 				<Header onClick={ this.goToEditEmail } selectedDomainName={ this.props.selectedDomainName }>
 					{ this.props.translate( 'Email Forwarding' ) }
 				</Header>
-
 				<SectionHeader label={ this.props.translate( 'Email Forwarding' ) } />
 				<Card className="email-forwarding__card">
+					{' '}
+					{ /* eslint-disable-line wpcalypso/jsx-classname-namespace */ }
 					<EmailForwardingDetails selectedDomainName={ this.props.selectedDomainName } />
-
 					<EmailForwardingList
 						selectedSite={ this.props.selectedSite }
 						emailForwarding={ this.props.emailForwarding }
 					/>
-
 					<EmailForwardingAddNew
 						emailForwarding={ this.props.emailForwarding }
 						selectedDomainName={ this.props.selectedDomainName }

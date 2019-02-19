@@ -35,7 +35,7 @@ class EmailForwardingList extends React.Component {
 			);
 		} );
 
-		return <ul className="email-forwarding__list">{ emailForwardingItems }</ul>;
+		return <ul className="email-forwarding__list">{ emailForwardingItems }</ul>; // eslint-disable-line wpcalypso/jsx-classname-namespace
 	}
 }
 

@@ -51,7 +51,7 @@ class DeleteEmailForwardsDialog extends React.Component {
 				isVisible={ visible }
 				buttons={ buttons }
 				onClose={ this.close }
-				className="cancel-purchase-button__warning-dialog"
+				className="cancel-purchase-button__warning-dialog" // eslint-disable-line wpcalypso/jsx-classname-namespace
 			>
 				<h1>{ translate( 'Are you sure?' ) }</h1>
 				<p>

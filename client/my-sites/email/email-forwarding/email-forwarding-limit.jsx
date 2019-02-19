@@ -23,6 +23,8 @@ class EmailForwardingLimit extends React.Component {
 
 		return (
 			<div className="email-forwarding__limit">
+				{' '}
+				{ /* eslint-disable-line wpcalypso/jsx-classname-namespace */ }
 				{ this.props.translate( 'You are using %(used)s out of %(available)s email forwards.', {
 					args: {
 						used,

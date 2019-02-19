@@ -27,6 +27,7 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
 
+// eslint-disable-next-line react/prefer-es6-class
 const RegisteredDomain = createReactClass( {
 	displayName: 'RegisteredDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
@@ -220,16 +221,16 @@ const RegisteredDomain = createReactClass( {
 		return (
 			<div>
 				{ this.domainWarnings() }
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="domain-details-card">
-					{ domain.isPendingIcannVerification && domain.currentUserCanManage && (
-						<IcannVerificationCard
-							selectedDomainName={ domain.name }
-							selectedSiteSlug={ this.props.selectedSite.slug }
-						/>
-					) }
-
+					{ domain.isPendingIcannVerification &&
+						domain.currentUserCanManage && (
+							<IcannVerificationCard
+								selectedDomainName={ domain.name }
+								selectedSiteSlug={ this.props.selectedSite.slug }
+							/>
+						) }
 					<Header { ...this.props } />
-
 					<Card>
 						<Property label={ translate( 'Type', { context: 'A type of domain.' } ) }>
 							{ translate( 'Registered Domain' ) }
