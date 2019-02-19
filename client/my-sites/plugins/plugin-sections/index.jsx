@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,6 +17,11 @@ import Card from 'components/card';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PluginSections extends React.Component {
 	static displayName = 'PluginSections';
