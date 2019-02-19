@@ -37,25 +37,61 @@ class DnsAddNew extends React.Component {
 		type: 'A',
 	};
 
-	recordTypes = [
-		[ ARecord, [ 'A', 'AAAA' ] ],
-		[ CnameRecord, [ 'CNAME' ] ],
-		[ MxRecord, [ 'MX' ] ],
-		[ TxtRecord, [ 'TXT' ] ],
-		[ SrvRecord, [ 'SRV' ] ],
+	dnsRecords = [
+		{
+			component: ARecord,
+			types: [ 'A', 'AAAA' ],
+			initialFields: {
+				name: '',
+				data: '',
+			},
+		},
+		{
+			component: CnameRecord,
+			types: [ 'CNAME' ],
+			initialFields: {
+				name: '',
+				data: '',
+			},
+		},
+		{
+			component: MxRecord,
+			types: [ 'MX' ],
+			initialFields: {
+				name: '',
+				data: '',
+				aux: 10,
+			},
+		},
+		{
+			component: TxtRecord,
+			types: [ 'TXT' ],
+			initialFields: {
+				name: '',
+				data: '',
+			},
+		},
+		{
+			component: SrvRecord,
+			types: [ 'SRV' ],
+			initialFields: {
+				name: '',
+				service: '',
+				aux: 10,
+				weight: 10,
+				target: '',
+				port: '',
+				protocol: 'tcp',
+			},
+		},
 	];
 
 	getFieldsForType( type ) {
-		/* eslint-disable no-unused-vars, no-shadow */
-		// _ is not used anywhere, it is only a positional arg to have more readable code
-		const [ Component, _ ] = find( this.recordTypes, ( [ _, types ] ) => {
-			/* eslint-enable no-unused-vars, no-shadow */
-			return includes( types, type );
+		const dnsRecord = find( this.dnsRecords, record => {
+			return includes( record.types, type );
 		} );
 
-		return assign( {}, Component.initialFields || Component._composedComponent.initialFields, {
-			type,
-		} );
+		return assign( {}, dnsRecord.initialFields, { type } );
 	}
 
 	componentWillMount() {
@@ -130,7 +166,9 @@ class DnsAddNew extends React.Component {
 	};
 
 	recordFields() {
-		return this.recordTypes.map( ( [ Component, showTypes ] ) => {
+		return this.dnsRecords.map( dnsRecord => {
+			const { component: Component, types: showTypes } = dnsRecord;
+
 			return (
 				<Component
 					key={ showTypes.join( ',' ) }
@@ -146,7 +184,7 @@ class DnsAddNew extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const dnsRecordTypes = flatMap( this.recordTypes, record => record[ 1 ] );
+		const dnsRecordTypes = flatMap( this.dnsRecords, dnsRecord => dnsRecord.types );
 		const options = dnsRecordTypes.map( type => <option key={ type }>{ type }</option> );
 		const isSubmitDisabled =
 			formState.isSubmitButtonDisabled( this.state.fields ) ||

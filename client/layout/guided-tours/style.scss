@@ -15,6 +15,15 @@
 	animation-name: guided-tours__step-fadein;
 	animation-timing-function: ease-in-out;
 
+	a {
+		color: var( --color-white );
+		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+
 	p {
 		color: var( --color-neutral-0 );
 		margin-bottom: 16px;

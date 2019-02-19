@@ -219,6 +219,8 @@ function getDefaultContext( request ) {
 	const cacheKey = getNormalizedPath( request.path, request.query );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
+	const isSupportSession = !! request.get( 'x-support-session' );
+	const isLoggedIn = isSupportSession || !! request.cookies.wordpress_logged_in;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -263,6 +265,8 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
+		isLoggedIn,
+		isSupportSession,
 	} );
 
 	context.app = {
@@ -337,7 +341,6 @@ function setUpLoggedInRoute( req, res, next ) {
 	const setupRequests = [ langPromise ];
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
 		redirectUrl = login( {
@@ -345,9 +348,7 @@ function setUpLoggedInRoute( req, res, next ) {
 			redirectTo: protocol + '://' + config( 'hostname' ) + req.originalUrl,
 		} );
 
-		// if we don't have a wordpress cookie, we know the user needs to
-		// authenticate
-		if ( ! req.cookies.wordpress_logged_in ) {
+		if ( ! req.context.isLoggedIn ) {
 			debug( 'User not logged in. Redirecting to %s', redirectUrl );
 			res.redirect( redirectUrl );
 			return;
@@ -359,7 +360,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		debug( 'Issuing API call to fetch user object' );
 
-		const userPromise = user( req.cookies.wordpress_logged_in, geoCountry )
+		const userPromise = user( req )
 			.then( data => {
 				const end = new Date().getTime() - start;
 
@@ -516,7 +517,7 @@ function setUpCSP( req, res, next ) {
 function setUpRoute( req, res, next ) {
 	req.context = getDefaultContext( req );
 	setUpCSP( req, res, () =>
-		req.cookies.wordpress_logged_in // a cookie probably indicates someone is logged-in
+		req.context.isLoggedIn
 			? setUpLoggedInRoute( req, res, next )
 			: setUpLoggedOutRoute( req, res, next )
 	);
@@ -633,7 +634,7 @@ module.exports = function() {
 
 	if ( process.env.NODE_ENV !== 'development' ) {
 		app.get( '/discover', function( req, res, next ) {
-			if ( ! req.cookies.wordpress_logged_in ) {
+			if ( ! req.context.isLoggedIn ) {
 				res.redirect( config( 'discover_logged_out_redirect_url' ) );
 			} else {
 				next();
@@ -642,7 +643,7 @@ module.exports = function() {
 
 		// redirect logged-out tag pages to en.wordpress.com
 		app.get( '/tag/:tag_slug', function( req, res, next ) {
-			if ( ! req.cookies.wordpress_logged_in ) {
+			if ( ! req.context.isLoggedIn ) {
 				res.redirect( 'https://en.wordpress.com/tag/' + encodeURIComponent( req.params.tag_slug ) );
 			} else {
 				next();
@@ -651,7 +652,7 @@ module.exports = function() {
 
 		// redirect logged-out searches to en.search.wordpress.com
 		app.get( '/read/search', function( req, res, next ) {
-			if ( ! req.cookies.wordpress_logged_in ) {
+			if ( ! req.context.isLoggedIn ) {
 				res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
 			} else {
 				next();
@@ -659,7 +660,7 @@ module.exports = function() {
 		} );
 
 		app.get( '/plans', function( req, res, next ) {
-			if ( ! req.cookies.wordpress_logged_in ) {
+			if ( ! req.context.isLoggedIn ) {
 				const queryFor = req.query && req.query.for;
 				if ( queryFor && 'jetpack' === queryFor ) {
 					res.redirect(
@@ -794,11 +795,10 @@ module.exports = function() {
 
 		// Maybe not logged in, note that you need docker to test this properly
 		const user = require( 'user-bootstrap' );
-		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
 
 		debug( 'Issuing API call to fetch user object' );
 
-		user( req.cookies.wordpress_logged_in, geoCountry )
+		user( req )
 			.then( data => {
 				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
 

@@ -15,7 +15,7 @@ import { useFakeTimers } from 'sinon';
 import { isEnabled } from 'config';
 import localforage from 'lib/localforage';
 import userFactory from 'lib/user';
-import { isSupportUserSession } from 'lib/user/support-user-interop';
+import { isSupportSession } from 'lib/user/support-user-interop';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
@@ -42,7 +42,7 @@ jest.mock( 'lib/user', () => () => ( {
 	} ),
 } ) );
 jest.mock( 'lib/user/support-user-interop', () => ( {
-	isSupportUserSession: jest.fn().mockReturnValue( false ),
+	isSupportSession: jest.fn().mockReturnValue( false ),
 } ) );
 
 describe( 'initial-state', () => {
@@ -117,7 +117,7 @@ describe( 'initial-state', () => {
 
 					beforeAll( async () => {
 						isEnabled.enablePersistRedux();
-						isSupportUserSession.mockReturnValue( true );
+						isSupportSession.mockReturnValue( true );
 						window.initialReduxState = { currentUser: { currencyCode: 'USD' } };
 						consoleErrorSpy = jest.spyOn( global.console, 'error' );
 						getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
@@ -126,7 +126,7 @@ describe( 'initial-state', () => {
 
 					afterAll( () => {
 						isEnabled.disablePersistRedux();
-						isSupportUserSession.mockReturnValue( false );
+						isSupportSession.mockReturnValue( false );
 						window.initialReduxState = null;
 						consoleErrorSpy.mockRestore();
 						getItemSpy.mockRestore();

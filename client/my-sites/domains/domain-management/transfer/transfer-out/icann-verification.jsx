@@ -52,7 +52,7 @@ class IcannVerification extends React.Component {
 					</Button>
 				</SectionHeader>
 
-				<Card className="transfer-card">
+				<Card className="transfer-out__card">
 					{ translate(
 						'You must verify your email address before you can transfer this domain. ' +
 							'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',

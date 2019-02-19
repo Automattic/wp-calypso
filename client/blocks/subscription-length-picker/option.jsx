@@ -122,10 +122,12 @@ export class SubscriptionLengthOption extends React.Component {
 							{ priceBeforeDiscount }
 						</div>
 					) }
-					<div className="subscription-length-picker__option-price">{ price }</div>
-					{ shouldShowTax && (
-						<sup className="subscription-length-picker__option-tax">{ taxDisplay }</sup>
-					) }
+					<div className="subscription-length-picker__option-price">
+						{ price }
+						{ shouldShowTax && (
+							<sup className="subscription-length-picker__option-tax">{ taxDisplay }</sup>
+						) }
+					</div>
 					{ hasDiscount && (
 						<div className="subscription-length-picker__option-credit-info">
 							{ translate( 'Credit applied' ) }

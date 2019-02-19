@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,11 @@ const debug = debugFactory( 'calypso:me:security:2fa-app-chooser-item' );
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class Security2faAppChooserItem extends React.Component {
 	static displayName = 'Security2faAppChooserItem';
