@@ -9,6 +9,11 @@ import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const PluginIcon = ( { className, image, isPlaceholder } ) => {
 	const classes = classNames(
 		{
