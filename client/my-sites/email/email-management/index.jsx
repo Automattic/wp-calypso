@@ -17,7 +17,7 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getEligibleDomain } from 'lib/domains/gsuite';
 import GSuitePurchaseCta from 'my-sites/email/gsuite/gsuite-purchase-cta';
-import GoogleAppsUsersCard from './google-apps-users-card';
+import GSuiteUsersCard from './gsuite-users-card';
 import Placeholder from './placeholder';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -48,7 +48,7 @@ class EmailManagement extends React.Component {
 
 	render() {
 		return (
-			<Main className="email" wideLayout={ isPlanFeaturesEnabled() }>
+			<Main className="email-management" wideLayout={ isPlanFeaturesEnabled() }>
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
 				{ this.headerOrPlansNavigation() }
@@ -87,9 +87,9 @@ class EmailManagement extends React.Component {
 			: this.props.domains;
 
 		if ( domainList.some( hasGoogleApps ) ) {
-			return this.googleAppsUsersCard();
+			return this.gsuiteUsersCard();
 		} else if ( hasGoogleAppsSupportedDomain( domainList ) ) {
-			return this.addGoogleAppsCard();
+			return this.addGSuiteAppsCard();
 		} else if ( isGsuiteRestricted() && this.props.selectedDomainName ) {
 			return this.addEmailForwardingCard();
 		}
@@ -135,11 +135,11 @@ class EmailManagement extends React.Component {
 		return <EmptyContent { ...emptyContentProps } />;
 	}
 
-	googleAppsUsersCard() {
-		return <GoogleAppsUsersCard { ...this.props } />;
+	gsuiteUsersCard() {
+		return <GSuiteUsersCard { ...this.props } />;
 	}
 
-	addGoogleAppsCard() {
+	addGSuiteAppsCard() {
 		const { products, selectedDomainName, selectedSite } = this.props;
 		return (
 			<Fragment>

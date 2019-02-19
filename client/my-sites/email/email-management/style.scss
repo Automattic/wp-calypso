@@ -1,6 +1,6 @@
 /** @format */
 
-.email {
+.email-management {
 	.is-placeholder {
 		.section-header__label {
 			@include placeholder();
@@ -10,25 +10,25 @@
 			}
 		}
 
-		.google-apps-user-item__email,
-		.google-apps-user-item__manage-link {
+		.gsuite-user-item__email,
+		.gsuite-user-item__manage-link {
 			@include placeholder();
 		}
 	}
 }
 
-.email__google-apps-users-card {
+.email-management__gsuite-users-card {
 	margin-bottom: 10px;
 }
 
-.email__google-apps-users-card-user-list {
+.email-management__gsuite-users-card-user-list {
 	&.card {
 		padding: 0;
 		@include clear-fix;
 	}
 }
 
-.email__google-apps-users-card-user-list-inner {
+.email-management__gsuite-users-card-user-list-inner {
 	list-style: none;
 	margin: 0;
 
@@ -51,11 +51,11 @@
 	}
 }
 
-.google-apps-user-item__email {
+.gsuite-user-item__email {
 	float: left;
 }
 
-.google-apps-user-item__manage-link {
+.gsuite-user-item__manage-link {
 	float: right;
 	font-size: 13px;
 }
@@ -75,10 +75,12 @@
 	}
 }
 
-.email {
+.email-management {
 	.empty-content__illustration {
 		width: 250px;
 		height: auto;
 		margin: 20px 0 40px;
 	}
 }
+
+

@@ -6,14 +6,14 @@
 
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
 
-class GoogleAppsUserItem extends React.Component {
+class GSuiteUserItem extends Component {
 	static propTypes = {
 		user: PropTypes.object.isRequired,
 		onClick: PropTypes.func,
@@ -31,11 +31,11 @@ class GoogleAppsUserItem extends React.Component {
 	render() {
 		return (
 			<li>
-				<span className="google-apps-user-item__email">{ this.props.user.email }</span>
+				<span className="gsuite-user-item__email">{ this.props.user.email }</span>
 
 				<ExternalLink
 					icon
-					className="google-apps-user-item__manage-link"
+					className="gsuite-user-item__manage-link"
 					href={ this.getLoginLink() }
 					onClick={ this.props.onClick }
 					target="_blank"
@@ -48,4 +48,4 @@ class GoogleAppsUserItem extends React.Component {
 	}
 }
 
-export default localize( GoogleAppsUserItem );
+export default localize( GSuiteUserItem );

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { find, get, groupBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -18,12 +18,12 @@ import CompactCard from 'components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
 import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
-import GoogleAppsUserItem from './google-apps-user-item';
+import GSuiteUserItem from './gsuite-user-item';
 import Notice from 'components/notice';
 import PendingGappsTosNotice from 'my-sites/domains/components/domain-warnings/pending-gapps-tos-notice';
 import SectionHeader from 'components/section-header';
 
-class GoogleAppsUsers extends React.Component {
+class GSuiteAppsUsers extends Component {
 	getDomainsAsList() {
 		return this.props.selectedDomainName ? [ getSelectedDomain( this.props ) ] : this.props.domains;
 	}
@@ -50,27 +50,27 @@ class GoogleAppsUsers extends React.Component {
 		};
 	}
 
-	goToAddGoogleApps = () => {
-		this.props.addGoogleAppsUserClick( this.props.selectedDomainName );
+	goToAddGSuite = () => {
+		this.props.addGSuiteUserClick( this.props.selectedDomainName );
 	};
 
 	renderDomain( domain, users ) {
 		return (
-			<div key={ `google-apps-user-${ domain }` } className="email__google-apps-users-card">
+			<div key={ `gsuite-user-${ domain }` } className="email-management__gsuite-users-card">
 				<SectionHeader label={ domain }>
 					{ this.canAddUsers( domain ) && (
 						<Button
 							primary
 							compact
 							href={ emailManagementAddGSuiteUsers( this.props.selectedSite.slug, domain ) }
-							onClick={ this.goToAddGoogleApps }
+							onClick={ this.goToAddGSuite }
 						>
 							{ this.props.translate( 'Add G Suite User' ) }
 						</Button>
 					) }
 				</SectionHeader>
-				<CompactCard className="email__google-apps-users-card-user-list">
-					<ul className="email__google-apps-users-card-user-list-inner">
+				<CompactCard className="email-management__gsuite-users-card-user-list">
+					<ul className="email-management__gsuite-users-card-user-list-inner">
 						{ users.map( ( user, index ) => this.renderUser( user, index ) ) }
 					</ul>
 				</CompactCard>
@@ -103,7 +103,7 @@ class GoogleAppsUsers extends React.Component {
 
 			return (
 				<Notice
-					key={ `google-apps-user-notice-${ user.domain }-${ index }` }
+					key={ `gsuite-user-notice-${ user.domain }-${ index }` }
 					showDismiss={ false }
 					status={ status }
 				>
@@ -113,8 +113,8 @@ class GoogleAppsUsers extends React.Component {
 		}
 
 		return (
-			<GoogleAppsUserItem
-				key={ `google-apps-user-${ user.domain }-${ index }` }
+			<GSuiteUserItem
+				key={ `gsuite-user-${ user.domain }-${ index }` }
 				user={ user }
 				onClick={ this.generateClickHandler( user ) }
 			/>
@@ -132,7 +132,7 @@ class GoogleAppsUsers extends React.Component {
 						key="pending-gapps-tos-notice"
 						siteSlug={ this.props.selectedSite.slug }
 						domains={ pendingDomains }
-						section="google-apps"
+						section="gsuite"
 					/>
 				) }
 
@@ -144,7 +144,7 @@ class GoogleAppsUsers extends React.Component {
 	}
 }
 
-const addGoogleAppsUserClick = domainName =>
+const addGSuiteUserClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -173,7 +173,7 @@ const manageClick = ( domainName, email ) =>
 		} )
 	);
 
-GoogleAppsUsers.propTypes = {
+GSuiteAppsUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
 	googleAppsUsers: PropTypes.array.isRequired,
 	selectedDomainName: PropTypes.string,
@@ -183,5 +183,5 @@ GoogleAppsUsers.propTypes = {
 
 export default connect(
 	null,
-	{ addGoogleAppsUserClick, manageClick }
-)( localize( GoogleAppsUsers ) );
+	{ addGSuiteUserClick, manageClick }
+)( localize( GSuiteAppsUsers ) );
