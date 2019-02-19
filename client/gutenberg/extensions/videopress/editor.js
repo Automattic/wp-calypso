@@ -74,9 +74,8 @@ const addVideoPressSupport = ( settings, name ) => {
 						// transformation prevails over the core video block default transformations.
 						priority: 9,
 						transform: ( files, onChange ) => {
-							const videoFiles = files.filter( file => file.type.indexOf( 'video/' ) === 0 );
 							const blocks = [];
-							videoFiles.forEach( file => {
+							files.forEach( file => {
 								const block = createBlock( 'core/video', {
 									src: createBlobURL( file ),
 								} );
