@@ -34,6 +34,7 @@ exports[`<SiteInformation /> should render 1`] = `
               <FormTextInput
                 autoFocus={true}
                 id="title"
+                maxLength={100}
                 name="title"
                 onChange={[Function]}
                 placeholder="E.g., Vail Renovations"
@@ -69,6 +70,7 @@ exports[`<SiteInformation /> should render 1`] = `
               <FormTextInput
                 autoFocus={false}
                 id="address"
+                maxLength={75}
                 name="address"
                 onChange={[Function]}
                 placeholder="E.g., 60 29th St, San Francisco, CA 94110"
@@ -104,6 +106,7 @@ exports[`<SiteInformation /> should render 1`] = `
               <FormTextInput
                 autoFocus={false}
                 id="phone"
+                maxLength={50}
                 name="phone"
                 onChange={[Function]}
                 placeholder="E.g., (555) 555-5555"

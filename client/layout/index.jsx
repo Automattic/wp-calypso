@@ -33,6 +33,7 @@ import {
 	isSectionLoading,
 } from 'state/ui/selectors';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
+import { isSupportSession } from 'state/support/selectors';
 import SitePreview from 'blocks/site-preview';
 import SupportArticleDialog from 'blocks/support-article-dialog';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -58,7 +59,7 @@ class Layout extends Component {
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
 		isLoading: PropTypes.bool,
-		isSupportUser: PropTypes.bool,
+		isSupportSession: PropTypes.bool,
 		isOffline: PropTypes.bool,
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
@@ -100,7 +101,7 @@ class Layout extends Component {
 				`is-group-${ this.props.sectionGroup }`,
 				`is-section-${ this.props.sectionName }`,
 				`focus-${ this.props.currentLayoutFocus }`,
-				{ 'is-support-user': this.props.isSupportUser },
+				{ 'is-support-session': this.props.isSupportSession },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'has-chat': this.props.chatIsOpen },
 				{ 'has-no-masterbar': this.props.masterbarIsHidden }
@@ -176,7 +177,7 @@ export default connect( state => {
 	return {
 		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === sectionName,
 		isLoading: isSectionLoading( state ),
-		isSupportUser: state.support.isSupportUser,
+		isSupportSession: isSupportSession( state ),
 		sectionGroup,
 		sectionName,
 		hasSidebar: hasSidebar( state ),

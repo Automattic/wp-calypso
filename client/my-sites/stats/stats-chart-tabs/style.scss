@@ -109,7 +109,7 @@ ul.module-tabs {
 			a:hover .value,
 			&.is-low a:hover,
 			&.is-low a:hover .value {
-				color: $link-highlight;
+				color: var( --color-link-dark );
 			}
 
 			a:hover {
@@ -124,7 +124,7 @@ ul.module-tabs {
 		.stats-module &.is-selected a:focus .value,
 		&.is-low a:focus,
 		&.is-low a:focus .value {
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 
 		a:focus {

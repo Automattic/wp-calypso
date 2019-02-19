@@ -380,7 +380,7 @@ a.comments__comment-username {
 	text-decoration: none;
 
 	&:hover {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 }
 

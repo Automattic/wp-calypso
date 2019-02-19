@@ -8,7 +8,7 @@
 
 .plugin-activate-toggle__link:hover,
 .plugin-activate-toggle__link:hover .plugin-activate-toggle__icon {
-	color: $link-highlight;
+	color: var( --color-link-dark );
 }
 
 .plugin-activate-toggle__disabled {

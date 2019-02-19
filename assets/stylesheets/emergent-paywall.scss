@@ -74,7 +74,7 @@ textarea {
 	a:hover,
 	a:focus,
 	a:active {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 
 	// Seen in the 2nd step, displays the payment method type

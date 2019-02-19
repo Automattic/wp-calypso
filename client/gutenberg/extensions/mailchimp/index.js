@@ -6,7 +6,7 @@ import { Path, SVG } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import edit from './edit';
 import './editor.scss';
 
@@ -24,7 +24,11 @@ export const settings = {
 	icon,
 	description: __( 'A form enabling readers to join a Mailchimp list.' ),
 	category: 'jetpack',
-	keywords: [ __( 'email' ), __( 'mailchimp' ), __( 'newsletter' ) ],
+	keywords: [
+		_x( 'email', 'block search term' ),
+		_x( 'subscription', 'block search term' ),
+		_x( 'newsletter', 'block search term' ),
+	],
 	attributes: {
 		emailPlaceholder: {
 			type: 'string',

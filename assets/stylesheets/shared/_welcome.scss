@@ -33,7 +33,7 @@
 		// Focus state
 		&:focus {
 			outline: none;
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 	}
 

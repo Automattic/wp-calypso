@@ -1,6 +1,19 @@
 @import './view.scss';
 @import './variables.scss';
 
+// inspired by from assets/shared/_animations loading-fade
+@keyframes tiled-gallery-img-placeholder {
+	0% {
+		background-color: lighten( $gray, 30% );
+	}
+	50% {
+		background-color: transparentize( lighten( $gray, 30% ), 0.5 );
+	}
+	100% {
+		background-color: lighten( $gray, 30% );
+	}
+}
+
 .wp-block-jetpack-tiled-gallery {
 	// Ensure that selected image outlines are visibile
 	padding-left: 4px;
@@ -10,6 +23,11 @@
 		// Hide the focus outline that otherwise briefly appears when selecting a block.
 		> img:focus {
 			outline: none;
+		}
+
+		> img {
+			// Inspired by Calypso's placeholder mixin
+			animation: tiled-gallery-img-placeholder 1.6s ease-in-out infinite;
 		}
 
 		&.is-selected {

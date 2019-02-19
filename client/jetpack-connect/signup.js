@@ -14,7 +14,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { flowRight, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -27,6 +27,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
 import SignupForm from 'blocks/signup-form';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { addQueryArgs } from 'lib/route';
 import { authQueryPropTypes } from './utils';
@@ -36,10 +37,7 @@ import {
 } from 'state/notices/actions';
 import { isEnabled } from 'config';
 import { login } from 'lib/paths';
-import {
-	loadTrackingTool,
-	recordTracksEvent as recordTracksEventAction,
-} from 'state/analytics/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import {
 	createAccount as createAccountAction,
 	createSocialAccount as createSocialAccountAction,
@@ -80,8 +78,6 @@ export class JetpackSignup extends Component {
 	}
 
 	componentDidMount() {
-		this.props.loadTrackingTool( 'HotJar' );
-
 		const { from, clientId } = this.props.authQuery;
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view', {
 			from,
@@ -240,14 +236,20 @@ export class JetpackSignup extends Component {
 		);
 	}
 }
-export default connect(
+
+const connectComponent = connect(
 	null,
 	{
 		createAccount: createAccountAction,
 		createSocialAccount: createSocialAccountAction,
 		errorNotice: errorNoticeAction,
-		loadTrackingTool,
 		recordTracksEvent: recordTracksEventAction,
 		warningNotice: warningNoticeAction,
 	}
-)( localize( JetpackSignup ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( JetpackSignup );

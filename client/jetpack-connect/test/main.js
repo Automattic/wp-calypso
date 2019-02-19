@@ -21,7 +21,6 @@ const REQUIRED_PROPS = {
 	getJetpackSiteByUrl: noop,
 	isRequestingSites: false,
 	jetpackConnectSite: undefined,
-	loadTrackingTool: noop,
 	recordTracksEvent: noop,
 	translate: identity,
 };

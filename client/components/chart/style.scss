@@ -274,7 +274,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 		&:focus,
 		&:hover {
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 	}
 

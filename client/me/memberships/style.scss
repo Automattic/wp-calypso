@@ -147,7 +147,7 @@
 	&:active,
 	&:focus,
 	&:hover {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 
 	.gridicon {

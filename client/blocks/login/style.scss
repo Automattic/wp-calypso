@@ -160,7 +160,7 @@
 	background: var( --color-white );
 
 	button {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 		cursor: pointer;
 
 		&:hover {

@@ -114,14 +114,6 @@ export default {
 		},
 		defaultVariation: 'keep',
 	},
-	gSuitePlan: {
-		datestamp: '20190117',
-		variations: {
-			basic: 90,
-			business: 10,
-		},
-		defaultVariation: 'basic',
-	},
 	domainSearchButtonStyles: {
 		datestamp: '20190119',
 		variations: {
@@ -145,5 +137,14 @@ export default {
 			enhanced: 50,
 		},
 		defaultVariation: 'original',
+	},
+	onlyJetpackMonthly: {
+		datestamp: '20190212',
+		variations: {
+			original: 50,
+			monthlyOnly: 50,
+		},
+		defaultVariation: 'original',
+		countryCodeTargets: [ 'ES', 'IT', 'PT', 'FR', 'NL', 'DE', 'BE', 'PL', 'SE' ],
 	},
 };

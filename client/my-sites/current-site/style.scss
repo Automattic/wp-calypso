@@ -80,10 +80,10 @@
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
-			color: var( --color-primary );
+			color: var( --sidebar-menu-hover-color );
 
 			.gridicon {
-				fill: var( --color-primary );
+				fill: var( --sidebar-menu-hover-color );
 			}
 		}
 	}

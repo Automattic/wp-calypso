@@ -8,7 +8,7 @@ import config from 'config';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import { flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 /**
  * External dependencies
@@ -28,6 +28,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
 import Spinner from 'components/spinner';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addCalypsoEnvQueryArg } from './utils';
 import { addQueryArgs } from 'lib/route';
 import {
@@ -38,7 +39,7 @@ import getJetpackRemoteInstallErrorCode from 'state/selectors/get-jetpack-remote
 import getJetpackRemoteInstallErrorMessage from 'state/selectors/get-jetpack-remote-install-error-message';
 import isJetpackRemoteInstallComplete from 'state/selectors/is-jetpack-remote-install-complete';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
-import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from './constants';
 import {
 	ACTIVATION_FAILURE,
@@ -91,10 +92,6 @@ export class OrgCredentialsForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_view', {
 			url: siteToConnect,
 		} );
-	}
-
-	componentDidMount() {
-		this.props.loadTrackingTool( 'HotJar' );
 	}
 
 	componentDidUpdate() {
@@ -372,7 +369,7 @@ export class OrgCredentialsForm extends Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const jetpackConnectSite = getConnectingSite( state );
 		const siteData = jetpackConnectSite.data || {};
@@ -388,7 +385,12 @@ export default connect(
 	{
 		jetpackRemoteInstall,
 		jetpackRemoteInstallUpdateError,
-		loadTrackingTool,
 		recordTracksEvent,
 	}
-)( localize( OrgCredentialsForm ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( OrgCredentialsForm );

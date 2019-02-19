@@ -18,7 +18,7 @@ $autobar-height: 20px;
 	-webkit-font-smoothing: subpixel-antialiased;
 	transition: transform 0.2s ease-out;
 
-	.is-support-user & {
+	.is-support-session & {
 		// DO NOT style these with theme colors. We want them to override whatever theme colors the user has picked.
 		background: $orange-jazzy;
 		border-bottom: 1px solid darken( $orange-jazzy, 4% );
@@ -120,7 +120,7 @@ $autobar-height: 20px;
 		background: var( --color-primary-dark );
 	}
 
-	.is-support-user &.is-active {
+	.is-support-session &.is-active {
 		background: darken( $orange-jazzy, 10% );
 	}
 
@@ -248,14 +248,14 @@ $autobar-height: 20px;
 		}
 	}
 
-	.is-support-user &,
-	.is-support-user &:focus,
-	.is-support-user &:hover,
-	.is-support-user &:visited {
+	.is-support-session &,
+	.is-support-session &:focus,
+	.is-support-session &:hover,
+	.is-support-session &:visited {
 		color: $orange-jazzy;
 	}
 
-	.is-support-user &.is-active {
+	.is-support-session &.is-active {
 		color: var( --color-white );
 	}
 

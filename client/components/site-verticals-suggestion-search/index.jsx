@@ -140,7 +140,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		return (
 			<SuggestionSearch
 				id="siteTopic"
-				placeholder={ placeholder || translate( 'e.g. Fashion, travel, design, plumber' ) }
+				placeholder={ placeholder || translate( 'e.g. Fashion, travel, design, plumbing' ) }
 				onChange={ this.onSiteTopicChange }
 				suggestions={ this.getSuggestions() }
 				value={ this.state.searchValue }

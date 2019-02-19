@@ -22,6 +22,11 @@ import FormVerificationCodeInput from 'components/forms/form-verification-code-i
 import Notice from 'components/notice';
 import twoStepAuthorization from 'lib/two-step-authorization';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Security2faBackupCodesPrompt extends React.Component {
 	static displayName = 'Security2faBackupCodesPrompt';
 

@@ -14,6 +14,17 @@ body.is-section-signup {
 	.masterbar {
 		display: none;
 	}
+
+	// Force the masterbar for Crowdsignal OAuth pages
+	.crowdsignal {
+		.masterbar__crowdsignal {
+			display: block;
+		}
+
+		.layout__content {
+			padding: 140px 0 0;
+		}
+	}
 }
 
 // Notice the :not(.dops) selector. I've added this to try and

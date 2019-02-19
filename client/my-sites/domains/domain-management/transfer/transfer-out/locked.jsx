@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -15,10 +14,7 @@ import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
 import { fetchWapiDomainInfo, requestTransferCode } from 'lib/upgrades/actions';
-import {
-	displayRequestTransferCodeResponseNotice,
-	renderGdprTransferWarningNotice,
-} from './shared';
+import { displayRequestTransferCodeResponseNotice } from './shared';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
 class Locked extends React.Component {
@@ -69,11 +65,9 @@ class Locked extends React.Component {
 
 		return (
 			<div>
-				{ renderGdprTransferWarningNotice() }
-
 				<SectionHeader label={ translate( 'Transfer Domain' ) } />
 
-				<Card className="transfer-card">
+				<Card className="transfer-out__card">
 					<p>
 						{ privateDomain
 							? translate(

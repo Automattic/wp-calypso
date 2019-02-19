@@ -98,6 +98,11 @@ $gutenberg-theme-toggle: #11a0d2;
 		.edit-post-layout__content {
 			// Overrides https://github.com/WordPress/gutenberg/blob/a2f81faa58afbbcb28d68ef879a5354c257b2d85/packages/edit-post/src/components/layout/style.scss#L88-L95
 			overscroll-behavior-y: auto;
+			//fixes a notice display issue in Safari
+			margin-left: 0;
+			@media ( min-width: 600px ) {
+				top: 56px;
+			}
 		}
 
 		.editor-post-publish-panel {

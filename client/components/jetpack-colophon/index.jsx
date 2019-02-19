@@ -11,6 +11,11 @@ import { localize } from 'i18n-calypso';
  */
 import JetpackLogo from 'components/jetpack-logo';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const JetpackColophon = ( { className, translate } ) => {
 	return (
 		<div className={ classNames( 'jetpack-colophon', className ) }>

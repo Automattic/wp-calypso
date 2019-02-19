@@ -21,10 +21,10 @@ const TransferLock = props => {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Transfer Domain' ) } />
-			<Card className="transfer-card">
+			<Card className="transfer-out__card">
 				{ translate(
 					'Due to recent contact information updates, ' +
-						'this domain has a transfer lock that expires at {{strong}}%(date)s.{{/strong}}. ' +
+						'this domain has a transfer lock that expires on {{strong}}%(date)s{{/strong}}. ' +
 						'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 					{
 						args: {

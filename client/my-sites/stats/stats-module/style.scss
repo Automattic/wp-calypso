@@ -228,13 +228,13 @@ ul.module-header-actions {
 		}
 
 		.module-header & .module-header-action-link:hover {
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 	}
 
 	// Focus state
 	.module-header & .module-header-action-link:focus {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 
 	// Info button

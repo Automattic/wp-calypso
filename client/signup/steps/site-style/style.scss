@@ -75,5 +75,5 @@
 }
 
 .accessible-focus .site-style__option-label input[type='radio']:focus + span {
-	outline: 1px solid $link-highlight;
+	outline: 1px solid var( --color-link-dark );
 }
