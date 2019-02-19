@@ -495,6 +495,10 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			path = '/domains/manage';
 		}
 
+		if ( path.match( /^\/email\// ) ) {
+			path = '/email';
+		}
+
 		if ( path.match( /^\/store\/stats\// ) ) {
 			const isStore = site.jetpack && site.options && site.options.woocommerce_is_active;
 			if ( ! isStore ) {

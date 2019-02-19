@@ -17,10 +17,6 @@ export function emailManagementAddGSuiteUsers( siteName, domainName ) {
 	return path;
 }
 
-export function email( siteName ) {
-	return '/email' + ( siteName ? '/' + siteName : '' );
-}
-
 export function emailManagement( siteName, domainName ) {
 	let path;
 
