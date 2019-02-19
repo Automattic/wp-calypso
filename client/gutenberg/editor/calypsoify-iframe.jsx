@@ -163,6 +163,7 @@ const mapStateToProps = ( state, { postId, postType } ) => {
 			action: postId && 'edit', // If postId is set, open edit view.
 			post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 			calypsoify: 1,
+			force_gutenberg: 1,
 			'frame-nonce': getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		} ),
 		getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' )
