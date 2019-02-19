@@ -19,6 +19,9 @@
 
 .wp-block-jetpack-repeat-visitor-placeholder {
 	min-height: inherit;
+	.components-placeholder__label svg {
+		margin-right: 0.5ch;
+	}
 }
 
 .wp-block-jetpack-repeat-visitor-threshold {
