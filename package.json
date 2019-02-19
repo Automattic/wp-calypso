@@ -146,7 +146,7 @@
     "lunr": "2.3.5",
     "mapbox-gl": "0.52.0",
     "markdown-it": "8.4.2",
-    "marked": "0.5.2",
+    "marked": "0.6.1",
     "mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
     "mkdirp": "0.5.1",
     "moment": "2.24.0",
