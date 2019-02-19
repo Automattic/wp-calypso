@@ -49,8 +49,6 @@ class EmailManagement extends React.Component {
 	render() {
 		return (
 			<Main className="email-management" wideLayout={ isPlanFeaturesEnabled() }>
-				{' '}
-				{ /* eslint-disable-line wpcalypso/jsx-classname-namespace */ }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
 				{ this.headerOrPlansNavigation() }

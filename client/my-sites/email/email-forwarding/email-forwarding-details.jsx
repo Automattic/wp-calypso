@@ -24,8 +24,6 @@ const EmailForwardingDetails = createReactClass( {
 	render: function() {
 		return (
 			<p className="email-forwarding__explanation">
-				{' '}
-				{ /* eslint-disable-line wpcalypso/jsx-classname-namespace */ }
 				{ this.props.translate(
 					'Email Forwarding lets you use your custom domain in your email address, so your email address can be just as memorable as your blog.'
 				) }{' '}
