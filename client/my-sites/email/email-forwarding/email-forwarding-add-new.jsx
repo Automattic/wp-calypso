@@ -250,8 +250,6 @@ const EmailForwardingAddNew = createReactClass( {
 	render() {
 		return (
 			<form className="email-forwarding__add-new">
-				{' '}
-				{ /* eslint-disable-line wpcalypso/jsx-classname-namespace */ }
 				<EmailForwardingLimit
 					selectedSite={ this.props.selectedSite }
 					emailForwarding={ this.props.emailForwarding }
