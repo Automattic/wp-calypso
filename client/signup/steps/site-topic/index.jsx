@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -29,7 +28,6 @@ class SiteTopicStep extends Component {
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		siteType: PropTypes.string,
-		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -95,12 +93,10 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	},
 } );
 
-export default localize(
-	connect(
-		state => ( {
-			siteType: getSiteType( state ),
-			isUserInput: getSiteVerticalIsUserInput( state ),
-		} ),
-		mapDispatchToProps
-	)( SiteTopicStep )
-);
+export default connect(
+	state => ( {
+		siteType: getSiteType( state ),
+		isUserInput: getSiteVerticalIsUserInput( state ),
+	} ),
+	mapDispatchToProps
+)( SiteTopicStep );
