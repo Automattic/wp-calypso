@@ -31,11 +31,11 @@ class GSuiteUserItem extends Component {
 	render() {
 		return (
 			<li>
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<span className="gsuite-user-item__email">{ this.props.user.email }</span>
+				<span className="email-management__gsuite-user-item-email">{ this.props.user.email }</span>
+
 				<ExternalLink
 					icon
-					className="gsuite-user-item__manage-link" // eslint-disable-line wpcalypso/jsx-classname-namespace
+					className="email-management__gsuite-user-item-manage-link"
 					href={ this.getLoginLink() }
 					onClick={ this.props.onClick }
 					target="_blank"

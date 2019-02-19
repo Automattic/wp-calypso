@@ -197,8 +197,7 @@ const EmailForwardingAddNew = createReactClass( {
 			{ mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
 		return (
-			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			<div className="form-content">
+			<div className="email-forwarding__form-content">
 				<FormFieldset>
 					<FormLabel>{ this.props.translate( 'Emails Sent To' ) }</FormLabel>
 					<FormTextInputWithAffixes
