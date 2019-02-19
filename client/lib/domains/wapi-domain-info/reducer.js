@@ -67,9 +67,8 @@ function reducer( state, payload ) {
 
 		case PRIVACY_PROTECTION_ENABLE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
-				data: Object.assign( {}, get( state, '[ action.domainName ].data', {} ), {
+				data: Object.assign( {}, get( state[ action.domainName ], 'data', {} ), {
 					pendingTransfer: false,
-					needsUpdate: true,
 				} ),
 			} );
 

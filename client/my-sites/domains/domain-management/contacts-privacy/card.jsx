@@ -14,15 +14,9 @@ import { localize } from 'i18n-calypso';
 import CompactCard from 'components/card/compact';
 import ContactDisplay from './contact-display';
 import Button from 'components/button';
-import Notice from 'components/notice';
-import { domainManagementTransferOut } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
 import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
-import {
-	fetchWhois,
-	disablePrivacyProtection,
-	enablePrivacyProtection,
-} from 'lib/upgrades/actions';
+import { disablePrivacyProtection, enablePrivacyProtection } from 'lib/upgrades/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 
@@ -78,7 +72,6 @@ class ContactsPrivacyCard extends React.Component {
 				this.props.errorNotice( error.message );
 			} else {
 				this.props.fetchSiteDomains( selectedSite.ID );
-				fetchWhois( selectedDomainName );
 
 				const notice = privateDomain
 					? translate( 'Yay, privacy has been successfully disabled!' )
@@ -100,41 +93,11 @@ class ContactsPrivacyCard extends React.Component {
 	};
 
 	getStatus() {
-		const {
-			hasPrivacyProtection,
-			privacyAvailable,
-			privateDomain,
-			selectedSite,
-			selectedDomainName,
-			translate,
-		} = this.props;
+		const { privacyAvailable, privateDomain, translate } = this.props;
 		const { submitting } = this.state;
 
 		if ( ! privacyAvailable ) {
 			return false;
-		}
-
-		if ( hasPrivacyProtection && ! privateDomain ) {
-			return (
-				<Notice status="is-warning" showDismiss={ false }>
-					{ translate(
-						'{{strong}}Privacy Protection{{/strong}} is temporarily ' +
-							'disabled for this domain while the domain is being transferred. ' +
-							'Your contact information is {{strong}}public{{/strong}}. ' +
-							'{{a}}Cancel Transfer and Enable Privacy Protection{{/a}}',
-						{
-							components: {
-								strong: <strong />,
-								a: (
-									<a
-										href={ domainManagementTransferOut( selectedSite.slug, selectedDomainName ) }
-									/>
-								),
-							},
-						}
-					) }
-				</Notice>
-			);
 		}
 
 		let privacyText = translate(
