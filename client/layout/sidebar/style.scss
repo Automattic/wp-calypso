@@ -56,8 +56,8 @@
 		display: flex;
 
 		@include breakpoint( '<660px' ) {
-			background-color: var( --color-neutral-0 );
 			border-bottom: 1px solid var( --sidebar-border-color );
+			background-color: var( --sidebar-background );
 
 			&:first-child {
 				border-top: 1px solid var( --sidebar-border-color );
@@ -82,7 +82,7 @@
 			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ), 50% );
 
 			@include breakpoint( '<660px' ) {
-				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
+				background: linear-gradient( to right, rgba( var( --sidebar-menu-a-first-child-after-background ), 0 ), rgba( var( --sidebar-menu-a-first-child-after-background ), 1 ) 50% );
 			}
 		}
 	}
@@ -219,7 +219,7 @@ form.sidebar__button input {
 
 		&.is-action-button-selected a {
 			&:first-child::after {
-				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
+				background: linear-gradient( to right, rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 0 ), rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 1 ) 50% );
 			}
 		}
 	}
@@ -254,14 +254,14 @@ form.sidebar__button input {
 	}
 
 	@include breakpoint( '<660px' ) {
-		background-color: var( --color-neutral-0 );
+		background-color: var( --sidebar-menu-hover-background );
 
 		a,
 		form {
-			color: var( --color-primary );
+			color: var( --sidebar-text-color );
 
 			&:first-child::after {
-				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
+				background: linear-gradient( to right, rgba( var( --sidebar-menu-hover-background-gradient ), 0 ), rgba( var( --sidebar-menu-hover-background-gradient ), 1 ) 50% );
 			}
 
 			&.sidebar__button {
@@ -271,7 +271,7 @@ form.sidebar__button input {
 		}
 
 		.gridicon {
-			fill: var( --color-primary );
+			fill: var( --sidebar-gridicon-fill );
 		}
 	}
 }
