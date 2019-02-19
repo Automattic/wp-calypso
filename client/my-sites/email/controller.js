@@ -11,7 +11,7 @@ import { get, includes, map } from 'lodash';
  * Internal Dependencies
  */
 import EmailManagement from './management';
-import EmailForwarding from './email-forwarding';
+import EmailForwarding from './forwarding';
 import DomainManagementData from 'components/data/domain-management';
 import { emailManagement, emailManagementForwarding } from './paths';
 import GSuiteAddUsers from 'my-sites/email/gsuite/gsuite-add-users';

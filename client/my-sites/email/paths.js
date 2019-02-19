@@ -27,7 +27,7 @@ export function emailManagement( siteName, domainName ) {
 	if ( domainName ) {
 		path = emailManagementEdit( siteName, domainName, 'manage' );
 	} else if ( siteName ) {
-		path = '/email/' + siteName + '/manage';
+		path = '/email/' + siteName;
 	} else {
 		path = '/email';
 	}
@@ -36,7 +36,7 @@ export function emailManagement( siteName, domainName ) {
 }
 
 export function emailManagementForwarding( siteName, domainName ) {
-	return emailManagementEdit( siteName, domainName, 'email-forwarding' );
+	return emailManagementEdit( siteName, domainName, 'forwarding' );
 }
 
 export function emailManagementEdit( siteName, domainName, slug ) {
