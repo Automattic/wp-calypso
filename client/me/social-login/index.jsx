@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
-import { get } from 'lodash';
+import { find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 const debug = debugFactory( 'calypso:me:security:social-login' );
 
@@ -175,10 +175,12 @@ class SocialLogin extends Component {
 export default connect(
 	state => {
 		const currentUser = getCurrentUser( state );
+		const connections = currentUser.social_login || [];
+		const googleConnection = find( connections, { service: 'google' } );
 
 		return {
-			socialConnectionEmail: get( currentUser, 'social_login.google.email', '' ),
-			isUserConnectedToGoogle: get( currentUser, 'social_login.google', false ),
+			socialConnectionEmail: get( googleConnection, 'service_user_email', '' ),
+			isUserConnectedToGoogle: get( googleConnection, 'service', '' ) === 'google',
 			isUpdatingSocialConnection: isRequesting( state ),
 			errorUpdatingSocialConnection: getRequestError( state ),
 		};
