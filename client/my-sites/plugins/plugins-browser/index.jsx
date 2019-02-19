@@ -50,6 +50,11 @@ import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 import { abtest } from 'lib/abtest';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const SHORT_LIST_LENGTH = 6;
