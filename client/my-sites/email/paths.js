@@ -17,13 +17,17 @@ export function emailManagementAddGSuiteUsers( siteName, domainName ) {
 	return path;
 }
 
+export function email( siteName ) {
+	return '/email' + ( siteName ? '/' + siteName : '' );
+}
+
 export function emailManagement( siteName, domainName ) {
 	let path;
 
 	if ( domainName ) {
 		path = emailManagementEdit( siteName, domainName, 'manage' );
 	} else if ( siteName ) {
-		path = '/email/' + siteName;
+		path = '/email/' + siteName + '/manage';
 	} else {
 		path = '/email';
 	}

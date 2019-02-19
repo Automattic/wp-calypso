@@ -10,7 +10,7 @@ import { get, includes, map } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Email from './email';
+import EmailManagement from './management';
 import EmailForwarding from './email-forwarding';
 import DomainManagementData from 'components/data/domain-management';
 import { emailManagement, emailManagementForwarding } from './paths';
@@ -47,7 +47,7 @@ export default {
 					pageContext.params.domain ? ':domain' : undefined
 				) }
 				analyticsTitle="Domain Management > Email"
-				component={ Email }
+				component={ EmailManagement }
 				context={ pageContext }
 				needsCart
 				needsDomains

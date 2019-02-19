@@ -34,7 +34,7 @@ import {
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import DocumentHead from 'components/data/document-head';
 
-class Email extends React.Component {
+class EmailManagement extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		googleAppsUsers: PropTypes.array.isRequired,
@@ -174,4 +174,4 @@ class Email extends React.Component {
 	};
 }
 
-export default localize( Email );
+export default localize( EmailManagement );
