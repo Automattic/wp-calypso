@@ -197,23 +197,20 @@ class TiledGalleryEdit extends Component {
 					selectedImage={ isSelected ? selectedImage : null }
 					setImageAttributes={ this.setImageAttributes }
 				>
-					{ ( isSelected || isEmpty ) && (
-						<MediaPlaceholder
-							icon={ <div className="tiled-gallery__media-placeholder-icon">{ icon }</div> }
-							className="tiled-gallery__media-placeholder"
-							labels={ {
-								title: __( 'Tiled gallery' ),
-								name: __( 'images' ),
-							} }
-							onSelect={ this.onSelectImages }
-							value={ isEmpty ? undefined : { id: images.map( img => img.id ) } }
-							accept="image/*"
-							allowedTypes={ ALLOWED_MEDIA_TYPES }
-							multiple
-							notices={ noticeUI }
-							onError={ noticeOperations.createErrorNotice }
-						/>
-					) }
+					<MediaPlaceholder
+						accept="image/*"
+						allowedTypes={ ALLOWED_MEDIA_TYPES }
+						className={ classnames( 'tiled-gallery__media-placeholder', {
+							'is-hidden': ! isSelected,
+						} ) }
+						icon={ <div className="tiled-gallery__media-placeholder-icon">{ icon }</div> }
+						labels={ { title: __( 'Tiled gallery' ) } }
+						multiple
+						notices={ noticeUI }
+						onError={ noticeOperations.createErrorNotice }
+						onSelect={ this.onSelectImages }
+						value={ isEmpty ? undefined : { id: images.map( img => img.id ) } }
+					/>
 				</Layout>
 			</Fragment>
 		);

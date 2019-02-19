@@ -19,6 +19,13 @@
 	padding-left: 4px;
 	padding-right: 4px;
 
+	// Allow the placeholder to be hidden
+	.tiled-gallery__media-placeholder {
+		margin-top: $tiled-gallery-gutter;
+		&.is-hidden {
+			display: none;
+		}
+	}
 	// Hide the placeholder text when the gallery has images
 	&.has-images {
 		.tiled-gallery__media-placeholder {
