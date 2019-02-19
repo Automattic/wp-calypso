@@ -1,6 +1,6 @@
 .memberships__subscription-meta {
 	padding: 0;
-	font-size:13px;
+	font-size: 13px;
 }
 
 .memberships__subscription-inner-meta {
@@ -96,9 +96,9 @@
 	display: block;
 	font-size: 18px;
 	line-height: 1.2em;
-	margin: 20px;
+	padding: 20px;
 	white-space: nowrap;
-	text-align:center;
+	text-align: center;
 }
 
 .memberships__subscription-remove {
@@ -110,7 +110,11 @@
 	&:active,
 	&:focus,
 	&:hover {
-		color: var( --color-link-dark );
+		color: var( --color-error-600 );
+	}
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 2px var( --color-error-light );
 	}
 
 	.gridicon {
