@@ -217,7 +217,7 @@ export class WebPaymentBox extends React.Component {
 	 */
 	getPaymentRequestForApplePay = () => {
 		const { cart, translate } = this.props;
-		const { currency } = cart;
+		const { currency, total_tax } = cart;
 
 		const supportedPaymentMethods = [
 			{
@@ -241,10 +241,10 @@ export class WebPaymentBox extends React.Component {
 			};
 		} );
 
-		if ( config.isEnabled( 'show-tax' ) && cart.total_tax ) {
+		if ( config.isEnabled( 'show-tax' ) && total_tax ) {
 			displayItems = concat( displayItems, {
 				label: 'Tax',
-				amount: { currency: currency, value: cart.total_tax },
+				amount: { currency: currency, value: total_tax },
 			} );
 		}
 
@@ -285,6 +285,7 @@ export class WebPaymentBox extends React.Component {
 	 */
 	getPaymentRequestForBasicCard = () => {
 		const { cart, translate } = this.props;
+		const { currency, total_tax } = cart;
 
 		const supportedPaymentMethods = [
 			{
@@ -294,7 +295,7 @@ export class WebPaymentBox extends React.Component {
 				},
 			},
 		];
-		const displayItems = cart.products.map( product => {
+		let displayItems = cart.products.map( product => {
 			return {
 				label: product.product_name,
 				amount: {
@@ -303,10 +304,10 @@ export class WebPaymentBox extends React.Component {
 				},
 			};
 		} );
-		if ( config.isEnabled( 'show-tax' && cart.total_tax ) ) {
+		if ( config.isEnabled( 'show-tax' && total_tax ) ) {
 			displayItems = concat( displayItems, {
 				label: 'Tax',
-				amount: { currency: products[ 0 ].currency, value: cart.total_tax },
+				amount: { currency, value: total_tax },
 			} );
 		}
 
