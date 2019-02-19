@@ -268,7 +268,8 @@ const EmailForwardingAddNew = createReactClass( {
 	},
 
 	onChange( event ) {
-		let { name, value } = event.target;
+		const { name } = event.target;
+		let { value } = event.target;
 
 		value = value.replace( /\s/g, '' );
 		if ( name === 'mailbox' ) {

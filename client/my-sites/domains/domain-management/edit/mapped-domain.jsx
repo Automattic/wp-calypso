@@ -19,6 +19,7 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import { domainManagementDns, domainManagementDomainConnectMapping } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
+
 const MappedDomain = createReactClass( {
 	displayName: 'MappedDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
