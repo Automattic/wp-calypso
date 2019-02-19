@@ -6,6 +6,7 @@ import { Notice, TextControl, RadioControl, Placeholder } from '@wordpress/compo
 import { Component } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/editor';
 import { withSelect } from '@wordpress/data';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -43,30 +44,33 @@ class RepeatVisitorEdit extends Component {
 
 	render() {
 		return (
-			<div className={ this.props.className }>
-				{ this.props.isSelected && (
-					<Placeholder
-						icon={ icon }
-						label={ __( 'Repeat Visitor' ) }
-						className="wp-block-jetpack-repeat-visitor-placeholder"
-					>
-						<TextControl
-							className="wp-block-jetpack-repeat-visitor-threshold"
-							label={ __( 'Visit count threshold' ) }
-							defaultValue={ this.props.attributes.threshold }
-							min="1"
-							onChange={ this.setThreshold }
-							type="number"
-						/>
+			<div
+				className={ classNames( this.props.className, {
+					'wp-block-jetpack-repeat-visitor--is-unselected': ! this.props.isSelected,
+				} ) }
+			>
+				<Placeholder
+					icon={ icon }
+					label={ __( 'Repeat Visitor' ) }
+					className="wp-block-jetpack-repeat-visitor-placeholder"
+				>
+					<TextControl
+						className="wp-block-jetpack-repeat-visitor-threshold"
+						label={ __( 'Visit count threshold' ) }
+						defaultValue={ this.props.attributes.threshold }
+						min="1"
+						onChange={ this.setThreshold }
+						type="number"
+					/>
 
-						<RadioControl
-							label={ __( 'Visibility' ) }
-							selected={ this.props.attributes.criteria }
-							options={ RADIO_OPTIONS }
-							onChange={ this.setCriteria }
-						/>
-					</Placeholder>
-				) }
+					<RadioControl
+						label={ __( 'Visibility' ) }
+						selected={ this.props.attributes.criteria }
+						options={ RADIO_OPTIONS }
+						onChange={ this.setCriteria }
+					/>
+				</Placeholder>
+
 				<Notice status="info" isDismissible={ false }>
 					{ sprintf(
 						this.props.attributes.criteria === CRITERIA_AFTER

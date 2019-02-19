@@ -17,8 +17,17 @@
 	}
 }
 
+.wp-block-jetpack-repeat-visitor--is-unselected .wp-block-jetpack-repeat-visitor-placeholder {
+	padding: 0;
+	transform: scaleY( 0 );
+	visibility: collapse;
+}
+
 .wp-block-jetpack-repeat-visitor-placeholder {
 	min-height: inherit;
+	transform: scaleY( 1 );
+	transition: all 0.1s linear;
+
 	.components-placeholder__label svg {
 		margin-right: 0.5ch;
 	}
