@@ -3,7 +3,7 @@
  */
 import { Component } from '@wordpress/element';
 import { Placeholder } from '@wordpress/components';
-import apiFetch from '@wordpress/api-fetch/build/index';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -59,8 +59,15 @@ class HoursList extends Component {
 					Object.keys( hours )
 						.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
 						.slice( startOfWeek )
-						.map( dayOfTheWeek => {
-							return <HoursRow day={ dayOfTheWeek } data={ localization } { ...this.props } />;
+						.map( ( dayOfTheWeek, index ) => {
+							return (
+								<HoursRow
+									key={ index }
+									day={ dayOfTheWeek }
+									data={ localization }
+									{ ...this.props }
+								/>
+							);
 						} )
 				) : (
 					<Placeholder icon={ icon } label={ __( 'Loading business hours' ) } />
