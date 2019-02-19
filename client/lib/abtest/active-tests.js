@@ -147,4 +147,12 @@ export default {
 		defaultVariation: 'original',
 		countryCodeTargets: [ 'ES', 'IT', 'PT', 'FR', 'NL', 'DE', 'BE', 'PL', 'SE' ],
 	},
+	pluginFeaturedTitle: {
+		datestamp: '20190220',
+		variations: {
+			featured: 70,
+			recommended: 30,
+		},
+		defaultVariation: 'featured',
+	},
 };

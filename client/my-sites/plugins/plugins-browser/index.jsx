@@ -166,9 +166,19 @@ export class PluginsBrowser extends Component {
 					context: 'Category description for the plugin browser.',
 				} );
 			case 'featured':
-				return this.props.translate( 'Featured', {
-					context: 'Category description for the plugin browser.',
-				} );
+				let featuredTitle = null;
+
+				if ( abtest( 'pluginFeaturedTitle' ) === 'featured' ) {
+					featuredTitle = this.props.translate( 'Featured', {
+						context: 'Category description for the plugin browser.',
+					} );
+				} else {
+					featuredTitle = this.props.translate( 'Recommended', {
+						context: 'Category description for the plugin browser.',
+					} );
+				}
+
+				return featuredTitle;
 		}
 	}
 
