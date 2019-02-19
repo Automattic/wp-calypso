@@ -191,6 +191,14 @@
 	}
 
 	.foldable-card__header {
+		.foldable-card__main {
+			flex-grow: 3;
+		}
+
+		.foldable-card__secondary {
+			flex-grow: 2;
+		}
+
 		.packages__group-header {
 			display: flex;
 			align-items: center;
