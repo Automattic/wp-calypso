@@ -44,40 +44,38 @@ class RepeatVisitorEdit extends Component {
 	render() {
 		return (
 			<div className={ this.props.className }>
-				<div className="wp-block-jetpack-repeat-visitor-inner-block">
-					{ this.props.isSelected && (
-						<Placeholder
-							icon={ icon }
-							label={ __( 'Repeat Visitor' ) }
-							className="wp-block-jetpack-repeat-visitor-placeholder"
-						>
-							<TextControl
-								className="wp-block-jetpack-repeat-visitor-threshold"
-								label={ __( 'Visit count threshold' ) }
-								defaultValue={ this.props.attributes.threshold }
-								min="1"
-								onChange={ this.setThreshold }
-								type="number"
-							/>
+				{ this.props.isSelected && (
+					<Placeholder
+						icon={ icon }
+						label={ __( 'Repeat Visitor' ) }
+						className="wp-block-jetpack-repeat-visitor-placeholder"
+					>
+						<TextControl
+							className="wp-block-jetpack-repeat-visitor-threshold"
+							label={ __( 'Visit count threshold' ) }
+							defaultValue={ this.props.attributes.threshold }
+							min="1"
+							onChange={ this.setThreshold }
+							type="number"
+						/>
 
-							<RadioControl
-								label={ __( 'Visibility' ) }
-								selected={ this.props.attributes.criteria }
-								options={ RADIO_OPTIONS }
-								onChange={ this.setCriteria }
-							/>
-						</Placeholder>
+						<RadioControl
+							label={ __( 'Visibility' ) }
+							selected={ this.props.attributes.criteria }
+							options={ RADIO_OPTIONS }
+							onChange={ this.setCriteria }
+						/>
+					</Placeholder>
+				) }
+				<Notice status="info" isDismissible={ false }>
+					{ sprintf(
+						this.props.attributes.criteria === CRITERIA_AFTER
+							? RADIO_OPTIONS[ 0 ].noticeLabel
+							: RADIO_OPTIONS[ 1 ].noticeLabel,
+						this.props.attributes.threshold
 					) }
-					<Notice status="info" isDismissible={ false }>
-						{ sprintf(
-							this.props.attributes.criteria === CRITERIA_AFTER
-								? RADIO_OPTIONS[ 0 ].noticeLabel
-								: RADIO_OPTIONS[ 1 ].noticeLabel,
-							this.props.attributes.threshold
-						) }
-					</Notice>
-					<InnerBlocks />
-				</div>
+				</Notice>
+				<InnerBlocks />
 			</div>
 		);
 	}
