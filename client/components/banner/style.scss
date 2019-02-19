@@ -34,15 +34,15 @@
 
 	&.is-jetpack-plan {
 		&.is-upgrade-personal {
-			@include banner-color( $muriel-yellow-500 );
+			@include banner-color( var( --color-jetpack-plan-personal ) );
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color( $muriel-green-500 );
+			@include banner-color( var( --color-jetpack-plan-premium ) );
 		}
 
 		&.is-upgrade-business {
-			@include banner-color( $alert-purple );
+			@include banner-color( var( --color-jetpack-plan-professional ) );
 		}
 	}
 
