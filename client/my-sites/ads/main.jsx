@@ -244,7 +244,7 @@ class AdsMain extends Component {
 		} else if (
 			! site.options.wordads &&
 			isWordadsInstantActivationEligible( site ) &&
-			! isBusiness( site.plan )
+			! ( isBusiness( site.plan ) && site.jetpack )
 		) {
 			component = this.renderInstantActivationToggle( component );
 		}
