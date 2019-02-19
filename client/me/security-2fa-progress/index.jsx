@@ -10,6 +10,11 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-progress' );
 import ProgressItem from './progress-item';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Security2faProgress extends React.Component {
 	static displayName = 'Security2faProgress';
 
