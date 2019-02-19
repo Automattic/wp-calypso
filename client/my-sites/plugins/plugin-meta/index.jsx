@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -47,6 +46,11 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
 import { abtest } from 'lib/abtest';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class PluginMeta extends Component {
 	static OUT_OF_DATE_YEARS = 2;
