@@ -281,6 +281,12 @@ export class LoginForm extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
+				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
+					<p className="login__form-subheader">
+						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
+					</p>
+				) }
+
 				{ this.renderPrivateSiteNotice() }
 
 				<Card className="login__form">

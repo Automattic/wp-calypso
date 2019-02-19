@@ -201,7 +201,14 @@ class Login extends Component {
 			}
 
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-				preHeader = <Gridicon icon="my-sites" size={ 72 } />;
+				headerText = translate( 'Howdy!{{br/}}Log in to %(clientTitle)s:', {
+					args: {
+						clientTitle: oauth2Client.title
+					},
+					components: {
+						br: <br />,
+					},
+				} );
 			}
 		} else if ( isJetpack ) {
 			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
