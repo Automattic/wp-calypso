@@ -6687,9 +6687,9 @@
 			}
 		},
 		"enzyme-to-json": {
-			"version": "3.3.4",
-			"resolved": "https://registry.npmjs.org/enzyme-to-json/-/enzyme-to-json-3.3.4.tgz",
-			"integrity": "sha1-Z8YEDpMRgvGDQYry659DIyWKp38=",
+			"version": "3.3.5",
+			"resolved": "https://registry.npmjs.org/enzyme-to-json/-/enzyme-to-json-3.3.5.tgz",
+			"integrity": "sha512-DmH1wJ68HyPqKSYXdQqB33ZotwfUhwQZW3IGXaNXgR69Iodaoj8TF/D9RjLdz4pEhGq2Tx2zwNUIjBuqoZeTgA==",
 			"dev": true,
 			"requires": {
 				"lodash": "^4.17.4"
