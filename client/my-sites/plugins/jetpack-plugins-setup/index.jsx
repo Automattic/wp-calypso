@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,6 +32,11 @@ import {
 	JETPACK_SUPPORT,
 } from 'lib/url/support';
 import { getSiteFileModDisableReason } from 'lib/site/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
