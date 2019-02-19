@@ -693,7 +693,7 @@
 }
 
 .credit-card-payment-box__switch-link {
-	color: $link-highlight;
+	color: var( --color-link-dark );
 	font-style: italic;
 	font-weight: 800;
 	line-height: 40px;

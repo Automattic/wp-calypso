@@ -165,7 +165,7 @@
 		> .module-content-list-item-toggle
 		> .module-content-list-item-wrapper:hover
 		.module-content-list-item-label::before {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 }
 
@@ -173,7 +173,7 @@
 	> .module-content-list-item-toggle
 	> .module-content-list-item-wrapper:focus
 	.module-content-list-item-label::before {
-	color: $link-highlight;
+	color: var( --color-link-dark );
 }
 
 // Module Content List Item Label
@@ -533,7 +533,7 @@ ul.module-content-list-item-action-submenu {
 	.module-content-list-item-action-wrapper.following:hover {
 		.module-content-list-item-action-label {
 			display: none;
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 
 		.module-content-list-item-action-label.unfollow {
@@ -699,12 +699,12 @@ ul.module-content-list-legend {
 
 	@include breakpoint( '>480px' ) {
 		.module-content-list-item-wrapper:hover .module-content-list-item-label {
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 	}
 
 	.module-content-list-item-wrapper:focus .module-content-list-item-label {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 }
 

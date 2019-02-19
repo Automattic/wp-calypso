@@ -46,7 +46,7 @@
 			&:hover {
 				border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
 				background: none; // Remove inherited background color
-				color: $link-highlight;
+				color: var( --color-link-dark );
 				box-shadow: none; // Remove inherited box shadow
 			}
 		}

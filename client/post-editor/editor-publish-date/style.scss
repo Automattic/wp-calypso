@@ -101,7 +101,7 @@
 	&:hover,
 	&:focus,
 	&:active {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 }
 

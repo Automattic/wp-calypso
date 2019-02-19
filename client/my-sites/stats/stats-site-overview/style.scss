@@ -9,7 +9,7 @@
 		@include breakpoint( '<480px' ) {
 
 			&:focus {
-				color: $link-highlight;
+				color: var( --color-link-dark );
 			}
 		}
 	}

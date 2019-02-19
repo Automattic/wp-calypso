@@ -1923,7 +1923,7 @@ div.wp-link-preview a {
 	&:hover,
 	&:focus,
 	&:active {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 }
 
