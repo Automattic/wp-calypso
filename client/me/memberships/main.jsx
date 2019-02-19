@@ -20,6 +20,11 @@ import formatCurrency from 'lib/format-currency';
 import SectionHeader from 'components/section-header';
 import CompactCard from 'components/card/compact';
 
+/**
+ * Style dependencies
+ */
+import './main.scss';
+
 const MembershipItem = ( { translate, subscription, moment } ) => (
 	<CompactCard key={ subscription.ID } href={ '/me/purchases/memberships/' + subscription.ID }>
 		<div className="memberships__list-subscription">

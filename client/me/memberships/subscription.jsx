@@ -25,11 +25,14 @@ import CompactCard from 'components/card/compact';
 import { requestSubscriptionStop } from 'state/memberships/subscriptions/actions';
 import Notice from 'components/notice';
 
+/**
+ * Style dependencies
+ */
+import './subscription.scss';
+
 class Subscription extends React.Component {
-	constructor() {
-		super();
-		this.stopSubscription = () => this.props.requestSubscriptionStop( this.props.subscription.ID );
-	}
+	stopSubscription = () => this.props.requestSubscriptionStop( this.props.subscription.ID );
+
 	render() {
 		const { translate, subscription, moment, stoppingStatus } = this.props;
 		return (
