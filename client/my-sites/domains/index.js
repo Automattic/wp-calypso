@@ -13,7 +13,6 @@ import domainManagementController from './domain-management/controller';
 import SiftScience from 'lib/siftscience';
 import config from 'config';
 import * as paths from './paths';
-import * as emailPaths from 'my-sites/email/paths';
 import { makeLayout, render as clientRender } from 'controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
@@ -45,8 +44,31 @@ export default function() {
 	page.redirect( '/domains/manage/edit', paths.domainManagementRoot() );
 	page.redirect( '/domains/manage/edit/:site', paths.domainManagementRoot() );
 
-	page.redirect( '/domains/manage/email', emailPaths.emailManagement() );
-	page.redirect( '/domains/manage/email/*', emailPaths.emailManagement() );
+	page(
+		paths.domainManagementEmail(),
+		domainManagementController.domainManagementRedirectEmailManagement
+	);
+
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementEmail( ':site', ':domain' ),
+			paths.domainManagementEmail( ':site' ),
+		],
+		handlers: [ domainManagementController.domainManagementRedirectEmailManagement ],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementAddGSuiteUsers( ':site', ':domain' ),
+			paths.domainManagementAddGSuiteUsers( ':site' ),
+		],
+		handlers: [ domainManagementController.domainManagementRedirectAddGSuiteUsers ],
+	} );
+
+	page(
+		paths.domainManagementEmailForwarding( ':site', ':domain' ),
+		domainManagementController.domainManagementRedirectEmailForwarding
+	);
 
 	page(
 		paths.domainManagementRedirectSettings( ':site', ':domain' ),

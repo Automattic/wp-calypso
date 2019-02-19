@@ -33,6 +33,7 @@ import {
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { decodeURIComponentIfValid } from 'lib/url';
+import * as emailPaths from 'my-sites/email/paths';
 
 export default {
 	domainManagementList( pageContext, next ) {
@@ -294,5 +295,23 @@ export default {
 			/>
 		);
 		next();
+	},
+
+	domainManagementRedirectEmailManagement( pageContext ) {
+		page.redirect(
+			emailPaths.emailManagement( pageContext.params.site, pageContext.params.domain )
+		);
+	},
+
+	domainManagementRedirectEmailForwarding( pageContext ) {
+		page.redirect(
+			emailPaths.emailManagementForwarding( pageContext.params.site, pageContext.params.domain )
+		);
+	},
+
+	domainManagementRedirectAddGSuiteUsers( pageContext ) {
+		page.redirect(
+			emailPaths.emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
+		);
 	},
 };
