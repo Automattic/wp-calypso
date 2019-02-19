@@ -1,20 +1,16 @@
 Publishing Packages with the Monorepo
 =====================================
 
-Caplyso is a monorepo. In addition to the Calypso application, it also hosts a number of independent modules that are published to NPM. 
+Caplyso is a monorepo. In addition to the Calypso application, it also hosts a number of independent modules that are published to NPM.
 
 ## Module Layout
 
 These modules live under the `packages` directory, one folder per module.
 
-Modules should follow a our convention for layout:
+Modules should follow our convention for layout:
 ```
 # your package.json
 package.json
-  # with these properties
-  main: dist/cjs/index.js
-  module: dist/esm/index.js
-  sideEffects: false
 
 # a readme for your module
 README.md
@@ -35,6 +31,47 @@ test/
   module-b.js
 ```
 
+Your package.json can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, and `sideEffects`.
+
+A sample `package.json`:
+
+```json
+{
+  "name": "@automattic/your-package",
+  "version": "1.0.0",
+  "description": "My new package",
+
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "sideEffects": false,
+
+  "keywords": [
+    "wordpress"
+  ],
+  "author": "Your Name <you@example.com> (https://yoursite.wordpress.com/)",
+  "contributors": [
+    
+  ],
+  "homepage": "https://github.com/Automattic/wp-calypso",
+  "license": "GPL-2.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Automattic/wp-calypso.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/Automattic/wp-calypso/issues"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}
+
+```
+
 Our package compiler will automatically compile code in `src` to `dist`, running `babel` over any source files it finds.
 
 ## Running Tests
@@ -44,14 +81,8 @@ To run all of the package tests:
 
 To run one package's tests:
 
-`npm run test-packages -- (package folder)`
+`npm run test-packages -- <package folder>`
 
 ## Publishing
 
-To publish everything currently out of date:
-
-`npx lerna publish from-package`
-
-TODO: To publish a canary release of a package:
-
-TODO: To publish one package
+We do not use the plain `lerna publish` flow. Instead, use `lerna publish from-package` to publish all packages currently out of date, or `npm publish` within a package to publish an individual package. The standard workflow is too limiting for our needs.
