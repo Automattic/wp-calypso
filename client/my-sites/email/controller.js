@@ -29,7 +29,7 @@ export default {
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ emailManagementForwarding( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Email Forwarding"
+				analyticsTitle="Email > Forwarding"
 				component={ EmailForwarding }
 				context={ pageContext }
 				needsEmailForwarding
@@ -46,7 +46,7 @@ export default {
 					':site',
 					pageContext.params.domain ? ':domain' : undefined
 				) }
-				analyticsTitle="Domain Management > Email"
+				analyticsTitle="Email > Management"
 				component={ EmailManagement }
 				context={ pageContext }
 				needsCart
