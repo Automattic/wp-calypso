@@ -155,8 +155,8 @@ describe( 'DateRange', () => {
 			const expectedStartDate = '2018-04-01';
 			const expectedEndDate = '2018-04-29';
 
-			const newStartDate = moment( expectedStartDate ).utcOffset( 0 );
-			const newEndDate = moment( expectedEndDate ).utcOffset( 0 );
+			const newStartDate = moment( expectedStartDate );
+			const newEndDate = moment( expectedEndDate );
 
 			// Select dates using API
 			// note: not usually recommended to access component API directly
