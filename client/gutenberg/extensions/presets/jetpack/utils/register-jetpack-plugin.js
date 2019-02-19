@@ -16,8 +16,16 @@ import getJetpackExtensionAvailability from './get-jetpack-extension-availabilit
  * @returns {object|false} Either false if the plugin is not available, or the results of `registerPlugin`
  */
 export default function registerJetpackPlugin( name, settings ) {
-	if ( ! getJetpackExtensionAvailability( name ).available ) {
-		// TODO: check 'unavailable_reason' and respond accordingly
+	const { available, unavailableReason } = getJetpackExtensionAvailability( name );
+	const unavailable = ! available;
+
+	if ( unavailable ) {
+		if ( 'production' !== process.env.NODE_ENV ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				`Plugin ${ name } couldn't be registered because it is unavailable (${ unavailableReason }).`
+			);
+		}
 		return false;
 	}
 
