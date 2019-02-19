@@ -23,6 +23,11 @@ import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import versionCompare from 'lib/version-compare';
 import analytics from 'lib/analytics';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PluginInformation extends React.Component {
 	static displayName = 'PluginInformation';
 
