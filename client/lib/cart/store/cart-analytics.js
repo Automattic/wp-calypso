@@ -11,7 +11,6 @@ import { differenceWith, get, isEqual, each, omit } from 'lodash';
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
-import { recordAddToCart } from 'lib/analytics/ad-tracking';
 
 export function recordEvents( previousCart, nextCart ) {
 	const previousItems = cartItems.getAll( previousCart ),
@@ -27,7 +26,7 @@ export function removeNestedProperties( cartItem ) {
 
 function recordAddEvent( cartItem ) {
 	analytics.tracks.recordEvent( 'calypso_cart_product_add', removeNestedProperties( cartItem ) );
-	recordAddToCart( cartItem );
+	analytics.recordAddToCart( { cartItem } );
 }
 
 function recordRemoveEvent( cartItem ) {

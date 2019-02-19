@@ -35,7 +35,7 @@
 
 			&.editor-gutenberg-opt-in-dialog__subhead {
 				font-size: 18px;
-				color: $gray-darken-20;
+				color: var( --color-neutral-500 );
 			}
 		}
 	}
@@ -45,12 +45,12 @@
 		border: none;
 		text-align: inherit;
 
-		&:before {
+		&::before {
 			display: none;
 		}
 
 		.button {
-			margin: 0 24px 8px 24px;
+			margin: 0 24px 8px;
 
 			@include breakpoint( '<660px' ) {
 				display: block;
@@ -86,7 +86,7 @@
 		bottom: 0;
 	}
 
-	&:after {
+	&::after {
 		content: '';
 		position: absolute;
 		right: 0;
@@ -113,6 +113,6 @@
 	color: $gray;
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }

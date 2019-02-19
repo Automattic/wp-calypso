@@ -1,0 +1,271 @@
+.date-range {
+	position: relative;
+	display: flex;
+	align-items: baseline;
+}
+
+.date-range__trigger-btn {
+	text-align: left; // required to avoid content "jumping" as date text changes
+
+	.toggle-visible & {
+		box-shadow: none;
+		background-color: var(--color-neutral-0);
+	}
+
+	.gridicons-chevron-down {
+		fill: var(--color-neutral-500);
+		margin: 0 0 0 5px;
+		flex-shrink: 0;
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+
+		.is-disabled & {
+			fill: var(--color-neutral-50);
+		}
+
+		.toggle-visible & {
+			transform: rotate( -180deg );
+		}
+	}
+}
+
+.date-range__trigger-btn-icon {
+	margin-right: 0.5em; // more consistent spacing between "compact" & "non-compact" states
+}
+
+.date-range__trigger-btn-text {
+	// required to avoid content "jumping" as date text changes see:
+	// https://github.com/Automattic/wp-calypso/pull/29938
+	// https://github.com/Automattic/wp-calypso/pull/29938#pullrequestreview-194065929
+	min-width: 15em; 
+    display: inline-block;
+}
+
+.date-range__popover-inner {
+	display: flex; // required for content ordering
+	flex-direction: column;
+	padding: 15px;
+	margin: 0 auto;
+	// max-width: 90%;
+
+	@include breakpoint( '<480px' ) {
+		max-width: 300px;
+	}
+}
+
+.date-range__controls {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+	}
+}
+
+.date-range__popover-header {
+	order: 2;
+
+	.button {
+		margin: 0 0.5em;
+	}
+}
+
+
+.date-range__info {
+	order: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.5em 0;
+
+	// ensures `em` element retains whitespace
+	// https://stackoverflow.com/questions/39325039/css-flex-box-last-space-removed
+	white-space: pre-wrap; 
+	
+	@include breakpoint( '<480px' ) {
+		margin-bottom: 0.5em;
+	}
+	
+	// Match "naked" button and text styles
+	// to avoid small jumps in UI on date select
+	&,
+	.button {
+		padding: 0;
+		font-size: 12px;
+    	font-weight: 500;
+    	line-height: 18px;
+	}
+
+	.button {
+		color: var(--color-link);
+		
+		&:hover,
+		&:focus {
+			color: var(--color-accent);
+		}
+	}
+
+	.gridicon {
+		margin-right: 0.5em;
+	}
+}
+
+.date-range__popover {
+	.DayPicker {
+		order: 3;
+		margin-top: 12px;
+		border-top: 1px solid var(--color-neutral-50);
+	}
+	
+	.DayPicker-wrapper,
+	.DayPicker-Months {
+		display: flex;
+	}
+
+	.DayPicker-Caption {
+		font-size: 12px;
+	}
+}
+
+.date-range__popover .date-picker--1up {
+	.DayPicker-wrapper,
+	.DayPicker-Months {
+		flex-direction: column;
+	}
+
+	.DayPicker-Month {
+		width: 100%;
+	}
+}
+
+.date-range__popover .date-picker--2up {
+
+	.DayPicker-wrapper,
+	.DayPicker-Months {
+		flex-direction: row;
+	}
+
+	.DayPicker-Month {
+		width: auto;
+		margin-right: 1em;
+
+		&:last-child {
+			margin-left: 1em;
+			margin-right: 0;
+		}
+	}
+}
+
+.date-range__date-inputs {
+	order: 2;
+}
+
+.date-range__date-inputs-inner {
+	display: flex;
+	text-align: left;
+	padding-top: 10px;
+}
+
+.date-range__date-inputs-legend {
+	@include hide-content-accessibly();
+}
+
+.date-range__date-input {
+	flex: 1;
+
+	.form-label {
+		font-size: 10px;
+		text-transform: uppercase;
+		margin-bottom: 0;
+	}
+
+	input {
+		font-size: 13px;
+		padding: 3px 10px;
+	}
+}
+
+
+
+.date-range__date-input--from {
+	margin-right: 1em;
+}
+
+.date-range__date-input--to {
+	margin-left: 1em;
+}
+
+
+
+
+.date-range__picker {
+	
+	.DayPicker-Day,
+	.DayPicker-Day:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
+	.DayPicker-Day--range:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside) {
+		height: auto;
+		line-height: initial;
+		padding: 0.25em; // fix and allow target area
+		width: 24px; // fix and allow target area
+		height: 24px; // fix and allow target area
+		
+		
+		.date-picker__day {			
+			&:hover,
+			&:focus {
+				color: var(--color-primary);				
+			}
+		}
+	}
+
+	.DayPicker-Day--range,
+	.DayPicker-Day--start,
+	.DayPicker-Day--end {
+		.date-picker__day {		
+			color: var(--color-white);
+		}
+	}
+
+	.DayPicker-Day--range:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
+		background-color: var( --color-primary-100 );
+	}
+
+	.DayPicker-Day--start:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
+		background-color: var( --color-primary );	
+	}
+
+	.DayPicker-Day--end:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
+		background-color: var( --color-primary );
+	}
+	
+
+	.DayPicker-Day--start,
+	.DayPicker-Day--end {
+		&:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside) {
+			border-radius: 200px;
+		}
+	}
+
+	&.date-picker--range-selected {
+		.DayPicker-Day--start:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
+			border-top-left-radius: 200px;
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+			border-bottom-left-radius: 200px;
+		}
+
+		.DayPicker-Day--end:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
+			border-top-right-radius: 200px;
+			border-bottom-right-radius: 200px;
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+		
+	}
+
+	.DayPicker-Day--start.DayPicker-Day--end {
+		border-radius: 200px !important;
+	}
+}
+

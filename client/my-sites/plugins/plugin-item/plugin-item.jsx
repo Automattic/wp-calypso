@@ -205,8 +205,7 @@ class PluginItem extends Component {
 		return (
 			<Notice
 				isCompact
-				icon="sync"
-				status="is-warning"
+				icon="sync"				
 				inline={ true }
 				text={ translate( 'Version %(newPluginVersion)s is available', {
 					args: { newPluginVersion: updated_versions[ 0 ] },

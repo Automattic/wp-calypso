@@ -11,7 +11,6 @@ import { flowRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import SupportInfo from 'components/support-info';
 import CommentDisplaySettings from './comment-display-settings';
@@ -24,10 +23,10 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import Subscriptions from './subscriptions';
 import wrapSettingsForm from './wrap-settings-form';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import JetpackModuleToggle from './jetpack-module-toggle';
@@ -84,8 +83,8 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	commentDisplaySettings() {
-		const { isJetpack, jetpackSettingsUISupported } = this.props;
-		if ( ! isJetpack || ! jetpackSettingsUISupported ) {
+		const { isJetpack } = this.props;
+		if ( ! isJetpack ) {
 			return null;
 		}
 
@@ -227,6 +226,7 @@ class SiteSettingsFormDiscussion extends Component {
 			onChangeField,
 			uniqueEventTracker,
 		} = this.props;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormTextInput
 				name="close_comments_days_old"
@@ -246,6 +246,7 @@ class SiteSettingsFormDiscussion extends Component {
 				onKeyPress={ uniqueEventTracker( 'Typed in Automatically Close Days Field' ) }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderInputThreadDepth() {
@@ -256,6 +257,7 @@ class SiteSettingsFormDiscussion extends Component {
 			isSavingSettings,
 			onChangeField,
 		} = this.props;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormSelect
 				className="is-compact"
@@ -272,6 +274,7 @@ class SiteSettingsFormDiscussion extends Component {
 				) ) }
 			</FormSelect>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderInputNumComments() {
@@ -283,6 +286,7 @@ class SiteSettingsFormDiscussion extends Component {
 			onChangeField,
 			uniqueEventTracker,
 		} = this.props;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormTextInput
 				name="comments_per_page"
@@ -298,6 +302,7 @@ class SiteSettingsFormDiscussion extends Component {
 				onKeyPress={ uniqueEventTracker( 'Typed in Comments Per Page Field' ) }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderInputDisplayDefault() {
@@ -309,6 +314,7 @@ class SiteSettingsFormDiscussion extends Component {
 			translate,
 			isSavingSettings,
 		} = this.props;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormSelect
 				className="is-compact"
@@ -323,6 +329,7 @@ class SiteSettingsFormDiscussion extends Component {
 				<option value="oldest">{ translate( 'first' ) }</option>
 			</FormSelect>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	emailMeSettings() {
@@ -550,6 +557,7 @@ class SiteSettingsFormDiscussion extends Component {
 			onChangeField,
 			uniqueEventTracker,
 		} = this.props;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormTextInput
 				name="comment_max_links"
@@ -564,24 +572,7 @@ class SiteSettingsFormDiscussion extends Component {
 				onKeyPress={ uniqueEventTracker( 'Typed in Comment Queue Link Count Field' ) }
 			/>
 		);
-	}
-
-	renderSectionHeader( title, showButton = true ) {
-		const { handleSubmitForm, isRequestingSettings, isSavingSettings, translate } = this.props;
-		return (
-			<SectionHeader label={ title }>
-				{ showButton && (
-					<Button
-						compact
-						primary
-						onClick={ handleSubmitForm }
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				) }
-			</SectionHeader>
-		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	render() {
@@ -593,17 +584,22 @@ class SiteSettingsFormDiscussion extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			isJetpack,
-			jetpackSettingsUISupported,
 			translate,
 		} = this.props;
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
-				{ this.renderSectionHeader( translate( 'Default Article Settings' ), false ) }
+				<SettingsSectionHeader title={ translate( 'Default Article Settings' ) } />
 				<Card className="site-settings__discussion-settings">
 					{ this.defaultArticleSettings() }
 				</Card>
 
-				{ this.renderSectionHeader( translate( 'Comments' ) ) }
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Comments' ) }
+				/>
 				<Card className="site-settings__discussion-settings">
 					{ this.commentDisplaySettings() }
 					{ this.otherCommentSettings() }
@@ -617,22 +613,21 @@ class SiteSettingsFormDiscussion extends Component {
 					{ this.commentBlacklistSettings() }
 				</Card>
 
-				{ isJetpack &&
-					jetpackSettingsUISupported && (
-						<div>
-							<QueryJetpackModules siteId={ siteId } />
+				{ isJetpack && (
+					<div>
+						<QueryJetpackModules siteId={ siteId } />
 
-							{ this.renderSectionHeader( translate( 'Subscriptions' ), false ) }
+						<SettingsSectionHeader title={ translate( 'Subscriptions' ) } />
 
-							<Subscriptions
-								onSubmitForm={ handleSubmitForm }
-								handleAutosavingToggle={ handleAutosavingToggle }
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								fields={ fields }
-							/>
-						</div>
-					) }
+						<Subscriptions
+							onSubmitForm={ handleSubmitForm }
+							handleAutosavingToggle={ handleAutosavingToggle }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+					</div>
+				) }
 			</form>
 		);
 	}
@@ -643,14 +638,12 @@ const connectComponent = connect( state => {
 	const siteSlug = getSelectedSiteSlug( state );
 
 	const isJetpack = isJetpackSite( state, siteId );
-	const jetpackSettingsUISupported = siteSupportsJetpackSettingsUi( state, siteId );
 	const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
 
 	return {
 		siteId,
 		siteSlug,
 		isJetpack,
-		jetpackSettingsUISupported,
 		isLikesModuleActive,
 	};
 } );

@@ -12,6 +12,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
@@ -29,7 +30,9 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 
 	return (
 		<div>
-			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+			{ googleAppsWasPurchased && abtest( 'gSuitePostCheckoutNotice' ) === 'original' && (
+				<GoogleAppsDetails isRequired />
+			) }
 
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
@@ -61,19 +64,18 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 				/>
 			) }
 
-			{ ! selectedFeature &&
-				isEnabled( 'manage/plugins/upload' ) && (
-					<PurchaseDetail
-						icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
-						title={ i18n.translate( 'Add a Plugin' ) }
-						description={ i18n.translate(
-							'Search and add plugins right from your dashboard, or upload a plugin ' +
-								'from your computer with a drag-and-drop interface.'
-						) }
-						buttonText={ i18n.translate( 'Upload a plugin now' ) }
-						href={ '/plugins/manage/' + selectedSite.slug }
-					/>
-				) }
+			{ ! selectedFeature && isEnabled( 'manage/plugins/upload' ) && (
+				<PurchaseDetail
+					icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
+					title={ i18n.translate( 'Add a Plugin' ) }
+					description={ i18n.translate(
+						'Search and add plugins right from your dashboard, or upload a plugin ' +
+							'from your computer with a drag-and-drop interface.'
+					) }
+					buttonText={ i18n.translate( 'Upload a plugin now' ) }
+					href={ '/plugins/manage/' + selectedSite.slug }
+				/>
+			) }
 
 			<PurchaseDetail
 				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-google-analytics.svg" /> }

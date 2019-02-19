@@ -101,6 +101,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<BusinessOnboarding
+					isWpcomPlan
 					onClick={ this.props.recordBusinessOnboardingClick }
 					link={ `/me/concierge/${ selectedSite.slug }/book` }
 				/>
@@ -218,6 +219,10 @@ export class ProductPurchaseFeaturesList extends Component {
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
+				/>
+				<BusinessOnboarding
+					onClick={ this.props.recordBusinessOnboardingClick }
+					link="https://calendly.com/jetpack/concierge"
 				/>
 				<MonetizeSite selectedSite={ selectedSite } />
 				<JetpackWordPressCom selectedSite={ selectedSite } />

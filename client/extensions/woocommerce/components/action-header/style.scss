@@ -8,19 +8,19 @@
 	flex-direction: row;
 	align-items: center;
 	box-sizing: border-box;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	background: $white;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	position: fixed;
 	z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
 	top: 47px;
-	left: 0px;
+	left: 0;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 8px 24px 8px 0;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding: 5px 16px;
 		padding-left: 0;
 		margin: 0;
@@ -44,7 +44,7 @@
 	display: flex;
 	justify-content: flex-start;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-left: -32px;
 	}
 
@@ -54,11 +54,11 @@
 
 	.action-header__site-title {
 		font-size: 10px;
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		margin: 2px 0 -3px;
 
 		a, a:hover {
-			color: $gray-darken-10;
+			color: var( --color-neutral-400 );
 		}
 	}
 
@@ -84,7 +84,7 @@
 	overflow: hidden;
 	text-align: right;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-right: 40px;
 	}
 
@@ -143,13 +143,13 @@
 
 	&.is-scary {
 		.gridicon {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 
 		&.is-selected,
 		&:hover,
 		&:focus {
-			background: $alert-red;
+			background: var( --color-error );
 			color: $white;
 
 			.gridicon {

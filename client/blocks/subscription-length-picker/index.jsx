@@ -21,10 +21,14 @@ import { PLANS_LIST } from 'lib/plans/constants';
 import QueryPlans from 'components/data/query-plans';
 import QueryProductsList from 'components/data/query-products-list';
 import SubscriptionLengthOption from './option';
-import getShouldShowTax from 'state/selectors/get-should-show-tax';
 import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
 import getPaymentPostalCode from 'state/selectors/get-payment-postal-code';
 import { requestTaxRate } from 'state/data-getters';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class SubscriptionLengthPicker extends React.Component {
 	static propTypes = {
@@ -41,10 +45,6 @@ export class SubscriptionLengthPicker extends React.Component {
 
 	static defaultProps = {
 		onChange: () => null,
-	};
-
-	state = {
-		checked: this.props.initialValue,
 	};
 
 	formatTax( taxRate, price, currencyCode ) {
@@ -102,7 +102,7 @@ export class SubscriptionLengthPicker extends React.Component {
 								<SubscriptionLengthOption
 									type={ hasDiscount ? 'upgrade' : 'new-sale' }
 									term={ plan.term }
-									checked={ planSlug === this.state.checked }
+									checked={ planSlug === this.props.initialValue }
 									price={ myFormatCurrency( priceFull, this.props.currencyCode ) }
 									priceBeforeDiscount={ myFormatCurrency(
 										priceFullBeforeDiscount,
@@ -113,7 +113,7 @@ export class SubscriptionLengthPicker extends React.Component {
 										100 * ( 1 - priceMonthly / this.getHighestMonthlyPrice() )
 									) }
 									value={ planSlug }
-									onCheck={ this.handleCheck }
+									onCheck={ this.props.onChange }
 									shouldShowTax={ shouldShowTax }
 									taxDisplay={ this.formatTax( taxRate, priceFull, this.props.currencyCode ) }
 								/>
@@ -130,13 +130,6 @@ export class SubscriptionLengthPicker extends React.Component {
 			...this.props.productsWithPrices.map( ( { priceMonthly } ) => Number( priceMonthly ) )
 		);
 	}
-
-	handleCheck = ( { value } ) => {
-		this.setState( {
-			checked: value,
-		} );
-		this.props.onChange( { value } );
-	};
 }
 
 export function myFormatCurrency( price, code, options = {} ) {
@@ -154,7 +147,6 @@ export const mapStateToProps = ( state, { plans } ) => {
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans ),
-		shouldShowTax: getShouldShowTax( state ),
 		taxRate: requestTaxRate( paymentCountryCode, paymentPostalCode ).data,
 	};
 };

@@ -1,0 +1,45 @@
+// A masterbar-like header just for
+// the signup flow.
+.signup-header {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	padding-top: 16px;
+	z-index: -1;
+	color: var( --color-white );
+
+	// Hide the signup header on oauth
+	// flows like Crowdsignal
+	.layout:not(.dops) {
+		display: none;
+		pointer-events: none;
+	}
+
+	.wordpress-logo {
+		height: 180px;
+		width: 180px;
+		fill: var( --color-white );
+		margin: 0 auto;
+		display: block;
+		transition: transform 0.8s cubic-bezier( 0.075, 0.82, 0.165, 1 );
+		transform: scale( 0.13333 );
+		transform-origin: 50% 0;
+
+		&.is-large {
+			transform: scale( 1 ) translateY( 80px );
+		}
+	}
+
+	.signup-header__left {
+		position: absolute;
+		top: 12px;
+		left: 16px;
+	}
+
+	.signup-header__right {
+		position: absolute;
+		top: 12px;
+		right: 16px;
+	}
+}

@@ -54,7 +54,7 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 				onKeyPress={ this.handleKeyPress }
 			>
 				<img src="/calypso/images/illustrations/gutenberg-mini.svg" alt="" />
-				<p>{ translate( 'Try our new editor and level up your layout.' ) }</p>
+				<p>{ translate( 'Try the new block editor and level up your layout.' ) }</p>
 				<Button tabIndex="-1">{ translate( 'Learn more' ) }</Button>
 			</div>
 		);

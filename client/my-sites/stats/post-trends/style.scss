@@ -3,13 +3,13 @@
 	user-select: none;
 	position: relative;
 	width: 100%;
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
 
 .post-trends__title {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	margin-left: 11px;
 	height: 40px;
 	font-weight: 600;
@@ -21,7 +21,7 @@
 	text-align: center;
 	font-size: 16px;
 	font-weight: 300;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	margin: 20px 0 30px;
 }
 
@@ -37,7 +37,7 @@
 .post-trends__wrapper {
 	position: relative;
 	height: 130px;
-	max-width: 660px;	// necessary for fluid width mode
+	max-width: 660px; // necessary for fluid width mode
 	margin: 0 auto;
 	overflow: hidden;
 }
@@ -45,14 +45,14 @@
 .post-trends__scroll-left,
 .post-trends__scroll-right {
 	position: absolute;
-		top: 0px;
+		top: 0;
 	width: 30px;
 	height: 130px;
-	background: linear-gradient(to right, $white , rgba( $white, .92 ), $transparent );
+	background: linear-gradient( to right, $white, rgba( $white, 0.92 ), $transparent );
 	text-align: left;
 	z-index: z-index( 'root', '.post-trends__scroll' );
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		.focus-sidebar & {
 			z-index: 0;
 		}
@@ -63,20 +63,20 @@
 		width: 30px;
 		height: 100px;
 		display: block;
-		background: url( '/calypso/images/stats/left-arrow.svg') no-repeat 4px 48px;
+		background: url( '/calypso/images/stats/left-arrow.svg' ) no-repeat 4px 48px;
 		background-size: 18px 18px;
-		opacity: .15;
+		opacity: 0.15;
 	}
 
 	.right-arrow {
-		background: url( '/calypso/images/stats/right-arrow.svg') no-repeat 4px 48px;
+		background: url( '/calypso/images/stats/right-arrow.svg' ) no-repeat 4px 48px;
 		background-size: 18px 18px;
 	}
 
 	&.is-active {
 		.right-arrow,
 		.left-arrow {
-			opacity: .8;
+			opacity: 0.8;
 		}
 	}
 
@@ -86,17 +86,17 @@
 }
 
 .post-trends__scroll-right {
-	background: linear-gradient(to left, $white , rgba( $white, .92 ), $transparent );
+	background: linear-gradient( to left, $white, rgba( $white, 0.92 ), $transparent );
 	text-align: right;
 }
 
 /*rtl:begin:ignore*/
 .post-trends__scroll-left {
-	left: 0px;
+	left: 0;
 }
 
 .post-trends__scroll-right {
-	right: 0px;
+	right: 0;
 }
 /*rtl:end:ignore*/
 
@@ -115,10 +115,10 @@
 .post-trends__label {
 	text-align: center;
 	font-size: 11px;
-	color: darken( $gray,10 );
+	color: var( --color-neutral-400 );
 	margin-top: 10px;
 	text-transform: uppercase;
-	letter-spacing: .1em;
+	letter-spacing: 0.1em;
 
 	.is-loading & {
 		display: none;
@@ -129,44 +129,44 @@
 	display: inline-block;
 	width: 7px;
 	height: 7px;
-	border: 1px solid $gray-light;
-	background-color: $gray-lighten-20;
+	border: 1px solid var( --color-white );
+	background-color: var( --color-neutral-50 );
 	margin: 0;
 }
 
 .post-trends__day,
 .post-trends__key-day {
 	&.is-outside-month {
-		background-color: $transparent;
-		border-color: $white;
+		background-color: transparent;
+		border-color: var( --color-white );
 	}
 
 	&.is-today {
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-50 );
 	}
 
 	&.is-after-today {
-		background-color: lighten( $gray, 25% );
+		background-color: var( --color-neutral-0 );
 	}
 
 	&.is-level-1 {
-		background-color: lighten( $blue-light, 5% );
+		background-color: var( --color-primary-100 );
 	}
 
 	&.is-level-2 {
-		background-color: lighten( $blue-medium, 5% );
+		background-color: var( --color-primary-light );
 	}
 
 	&.is-level-3 {
-		background-color: darken( $blue-medium, 10% );
+		background-color: var( --color-primary );
 	}
 
 	&.is-level-4 {
-		background-color: darken( $blue-medium, 30% );
+		background-color: var( --color-primary-dark );
 	}
 
 	&.is-hovered {
-		border-color: var( --color-accent );
+		border-color: var( --color-primary );
 	}
 
 	.is-loading & {
@@ -174,7 +174,7 @@
 	}
 }
 
-@include breakpoint( ">1040px" ) {
+@include breakpoint( '>1040px' ) {
 
 	.post-trends__scroll-left,
 	.post-trends__scroll-right {
@@ -187,7 +187,7 @@
 	padding-top: 10px;
 	float: right;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;
@@ -202,8 +202,8 @@
 
 .post-trends__key-label {
 	font-size: 11px;
-	color: $gray;
-	letter-spacing: .1em;
+	color: var( --color-neutral );
+	letter-spacing: 0.1em;
 	text-transform: uppercase;
 }
 

@@ -30,6 +30,11 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QueryUserSettings from 'components/data/query-user-settings';
 import getUserSetting from 'state/selectors/get-user-setting';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderSiteNotificationSettings extends Component {
 	static displayName = 'ReaderSiteNotificationSettings';
 	static propTypes = {
@@ -187,29 +192,28 @@ class ReaderSiteNotificationSettings extends Component {
 						) }
 					</div>
 
-					{ ! isEmailBlocked &&
-						sendNewPostsByEmail && (
-							<SegmentedControl>
-								<ControlItem
-									selected={ this.state.selected === 'instantly' }
-									onClick={ this.setSelected( 'instantly' ) }
-								>
-									{ translate( 'Instantly' ) }
-								</ControlItem>
-								<ControlItem
-									selected={ this.state.selected === 'daily' }
-									onClick={ this.setSelected( 'daily' ) }
-								>
-									{ translate( 'Daily' ) }
-								</ControlItem>
-								<ControlItem
-									selected={ this.state.selected === 'weekly' }
-									onClick={ this.setSelected( 'weekly' ) }
-								>
-									{ translate( 'Weekly' ) }
-								</ControlItem>
-							</SegmentedControl>
-						) }
+					{ ! isEmailBlocked && sendNewPostsByEmail && (
+						<SegmentedControl>
+							<ControlItem
+								selected={ this.state.selected === 'instantly' }
+								onClick={ this.setSelected( 'instantly' ) }
+							>
+								{ translate( 'Instantly' ) }
+							</ControlItem>
+							<ControlItem
+								selected={ this.state.selected === 'daily' }
+								onClick={ this.setSelected( 'daily' ) }
+							>
+								{ translate( 'Daily' ) }
+							</ControlItem>
+							<ControlItem
+								selected={ this.state.selected === 'weekly' }
+								onClick={ this.setSelected( 'weekly' ) }
+							>
+								{ translate( 'Weekly' ) }
+							</ControlItem>
+						</SegmentedControl>
+					) }
 					{ ! isEmailBlocked && (
 						<div className="reader-site-notification-settings__popout-toggle">
 							{ translate( 'Email me new comments' ) }

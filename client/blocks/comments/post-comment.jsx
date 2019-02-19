@@ -402,18 +402,17 @@ class PostComment extends React.PureComponent {
 						commentId,
 						className: 'comments__comment-username',
 					} ) }
-					{ this.props.showNestingReplyArrow &&
-						parentAuthorName && (
-							<span className="comments__comment-respondee">
-								<Gridicon icon="chevron-right" size={ 16 } />
-								{ this.renderAuthorTag( {
-									className: 'comments__comment-respondee-link',
-									authorName: parentAuthorName,
-									authorUrl: parentAuthorUrl,
-									commentId: parentCommentId,
-								} ) }
-							</span>
-						) }
+					{ this.props.showNestingReplyArrow && parentAuthorName && (
+						<span className="comments__comment-respondee">
+							<Gridicon icon="chevron-right" size={ 16 } />
+							{ this.renderAuthorTag( {
+								className: 'comments__comment-respondee-link',
+								authorName: parentAuthorName,
+								authorUrl: parentAuthorUrl,
+								commentId: parentCommentId,
+							} ) }
+						</span>
+					) }
 					<div className="comments__comment-timestamp">
 						<a
 							href={ comment.URL }

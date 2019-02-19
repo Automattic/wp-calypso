@@ -187,7 +187,7 @@ export default {
 	post: function( context, next ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
-		const postToCopyId = context.query.copy;
+		const postToCopyId = context.query[ 'jetpack-copy' ];
 
 		recordPlaceholdersTiming();
 
@@ -279,10 +279,6 @@ export default {
 	},
 
 	pressThis: function( context, next ) {
-		context.getSiteSelectionHeaderText = function() {
-			return i18n.translate( 'Select a site to start writing' );
-		};
-
 		if ( ! context.query.url ) {
 			// not pressThis, early return
 			return next();

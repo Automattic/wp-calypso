@@ -14,7 +14,7 @@ import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-
 import config from 'config';
 import { tracks } from 'lib/analytics';
 import { localize } from 'i18n-calypso';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SiteToolsLink from './link';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -107,7 +107,7 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<QueryRewindState siteId={ siteId } />
-				<SectionHeader label={ translate( 'Site Tools' ) } />
+				<SettingsSectionHeader title={ translate( 'Site Tools' ) } />
 				{ showChangeAddress && (
 					<SiteToolsLink
 						href={ changeAddressLink }
@@ -118,10 +118,9 @@ class SiteTools extends Component {
 				) }
 				<SiteToolsLink href={ importUrl } title={ importTitle } description={ importText } />
 				<SiteToolsLink href={ exportUrl } title={ exportTitle } description={ exportText } />
-				{ showClone &&
-					config.isEnabled( 'rewind/clone-site' ) && (
-						<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
-					) }
+				{ showClone && config.isEnabled( 'rewind/clone-site' ) && (
+					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
+				) }
 				{ showThemeSetup && (
 					<SiteToolsLink
 						href={ themeSetupLink }

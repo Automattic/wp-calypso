@@ -1,6 +1,6 @@
 
 .editor-page-parent .post-selector {
-	margin: 8px 0 0 0;
+	margin: 8px 0 0;
 }
 
 .editor-page-parent .post-selector__results {
@@ -22,7 +22,7 @@
 .editor-page-parent__top-level-label,
 .editor-page-parent__top-level-description,
 .editor-page-parent__parent-tree-selector .form-legend {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	font-size: 13px;
 }
 

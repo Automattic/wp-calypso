@@ -162,7 +162,7 @@ describe( 'RedirectPaymentBox', () => {
 			};
 			const wrapper = shallow( <RedirectPaymentBox { ...props } /> );
 			expect( wrapper.find( '[name="tef-bank"]' ) ).toHaveLength( 1 );
-			expect( wrapper.find( 'EbanxPaymentFields' ) ).toHaveLength( 1 );
+			expect( wrapper.find( 'CountrySpecificPaymentFields' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );

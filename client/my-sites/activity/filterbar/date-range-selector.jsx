@@ -254,14 +254,13 @@ export class DateRangeSelector extends Component {
 							translate( '{{icon/}} Please select the last day.', {
 								components: { icon: <Gridicon icon="info" /> },
 							} ) }
-						{ from &&
-							to && (
-								<Button borderless compact onClick={ this.handleResetSelection }>
-									{ translate( '{{icon/}} clear', {
-										components: { icon: <Gridicon icon="cross-small" /> },
-									} ) }
-								</Button>
-							) }
+						{ from && to && (
+							<Button borderless compact onClick={ this.handleResetSelection }>
+								{ translate( '{{icon/}} clear', {
+									components: { icon: <Gridicon icon="cross-small" /> },
+								} ) }
+							</Button>
+						) }
 					</div>
 					<Button
 						className="filterbar__date-range-apply"

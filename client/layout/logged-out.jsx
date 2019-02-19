@@ -17,8 +17,10 @@ import GlobalNotices from 'components/global-notices';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
+import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
+import BodySectionCssClass from './body-section-css-class';
 
 // Returns true if given section should display sidebar for logged out users.
 const hasSidebar = section => {
@@ -39,9 +41,12 @@ const LayoutLoggedOut = ( {
 	redirectUri,
 	useOAuth2Layout,
 } ) => {
+	const sectionGroup = get( section, 'group', null );
+	const sectionName = get( section, 'name', null );
+
 	const classes = {
-		[ 'is-group-' + section.group ]: !! get( section, 'group' ),
-		[ 'is-section-' + section.name ]: !! get( section, 'name' ),
+		[ 'is-group-' + sectionGroup ]: sectionGroup,
+		[ 'is-section-' + sectionName ]: sectionName,
 		'focus-content': true,
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
@@ -53,6 +58,11 @@ const LayoutLoggedOut = ( {
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
 		classes.dops = true;
 		classes[ oauth2Client.name ] = true;
+
+		// Force masterbar for all Crowdsignal OAuth pages
+		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
+			classes[ 'has-no-masterbar' ] = false;
+		}
 
 		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 	} else {
@@ -67,8 +77,8 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classNames( 'layout', classes ) }>
+			<BodySectionCssClass group={ sectionGroup } section={ sectionName } />
 			{ masterbar }
-
 			<div id="content" className="layout__content">
 				<GlobalNotices
 					id="notices"

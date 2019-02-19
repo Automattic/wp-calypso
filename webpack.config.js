@@ -8,6 +8,7 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
+const { execSync } = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
@@ -17,14 +18,16 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
-const os = require( 'os' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
+const FilterWarningsPlugin = require( 'webpack-filter-warnings-plugin' );
 
 /**
  * Internal dependencies
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
+const { workerCount } = require( './webpack.common' );
 
 /**
  * Internal variables
@@ -40,6 +43,19 @@ const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
+
+/**
+ * Plugin that generates the `public/custom-properties.css` file before compilation
+ */
+class BuildCustomPropertiesCssPlugin {
+	apply( compiler ) {
+		compiler.hooks.compile.tap( 'BuildCustomPropertiesCssPlugin', () =>
+			execSync( 'node ' + path.join( __dirname, 'bin', 'build-custom-properties-css.js' ), {
+				cwd: __dirname,
+			} )
+		);
+	}
+}
 
 /*
  * Create reporter for ProgressPlugin (used with EMIT_STATS)
@@ -88,22 +104,6 @@ function createProgressHandler() {
 		console.log( message ); // eslint-disable-line no-console
 	};
 }
-
-// Disable unsafe cssnano optimizations like renaming animations or rebasing z-indexes. These
-// optimizations don't work across independently minified stylesheets. As we minify each webpack
-// CSS chunk individually and then load multiple chunks into one document, the optimized names
-// conflict with each other, e.g., multiple animations named `a` or z-indexes starting from 1.
-// TODO: upgrade cssnano from v3 to v4. In v3, all optimizations, including unsafe ones, run by
-// default and need to be disabled explicitly as we do here. In v4, there is a new concept of
-// 'presets' and unsafe optimizations are opt-in rather than opt-out. The `default` preset enables
-// only the safe ones. https://cssnano.co/guides/optimisations
-const cssnanoOptions = {
-	autoprefixer: false,
-	discardUnused: false,
-	mergeIdents: false,
-	reduceIdents: false,
-	zindex: false,
-};
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -167,7 +167,11 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @return {object}                                  webpack config
  */
-function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false } = {} ) {
+function getWebpackConfig( {
+	cssFilename,
+	externalizeWordPressPackages = false,
+	preserveCssCustomProperties = true,
+} = {} ) {
 	cssFilename =
 		cssFilename ||
 		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
@@ -201,7 +205,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					cache: process.env.CIRCLECI
 						? `${ process.env.HOME }/terser-cache`
 						: 'docker' !== process.env.CONTAINER,
-					parallel: process.env.CIRCLECI ? 2 : true,
+					parallel: workerCount,
 					sourceMap: Boolean( process.env.SOURCEMAP ),
 					terserOptions: {
 						ecma: 5,
@@ -222,7 +226,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						{
 							loader: 'thread-loader',
 							options: {
-								workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ),
+								workers: workerCount,
 							},
 						},
 						{
@@ -232,27 +236,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 								babelrc: false,
 								cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 								cacheIdentifier,
-								overrides: [
-									{
-										test: './client/gutenberg/extensions',
-										plugins: [
-											[
-												'@wordpress/import-jsx-pragma',
-												{
-													scopeVariable: 'createElement',
-													source: '@wordpress/element',
-													isDefault: false,
-												},
-											],
-											[
-												'@babel/transform-react-jsx',
-												{
-													pragma: 'createElement',
-												},
-											],
-										],
-									},
-								],
 							},
 						},
 					],
@@ -269,11 +252,20 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					test: /\.(sc|sa|c)ss$/,
 					use: [
 						MiniCssExtractPluginWithRTL.loader,
-						'css-loader',
+						{
+							loader: 'css-loader',
+							options: {
+								importLoaders: 2,
+							},
+						},
 						{
 							loader: 'postcss-loader',
 							options: {
-								plugins: [ require( 'autoprefixer' ) ],
+								config: {
+									ctx: {
+										preserveCssCustomProperties,
+									},
+								},
 							},
 						},
 						{
@@ -349,7 +341,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				rtlEnabled: true,
 			} ),
 			new WebpackRTLPlugin( {
-				minify: isDevelopment ? false : cssnanoOptions,
+				minify: ! isDevelopment,
 			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',
@@ -373,9 +365,19 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						reasons: shouldEmitStatsWithReasons,
 						optimizationBailout: false,
 						chunkOrigins: false,
+						chunkGroups: true,
 					},
 				} ),
 			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
+			new BuildCustomPropertiesCssPlugin(),
+			new MomentTimezoneDataPlugin( {
+				startYear: 2000,
+			} ),
+			new FilterWarningsPlugin( {
+				// suppress conflicting order warnings from mini-css-extract-plugin.
+				// see https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
+				exclude: /mini-css-extract-plugin[^]*Conflicting order between:/,
+			} ),
 		] ),
 		externals: _.compact( [
 			externalizeWordPressPackages && wordpressExternals,

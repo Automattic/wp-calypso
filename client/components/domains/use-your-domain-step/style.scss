@@ -88,7 +88,20 @@
 .use-your-domain-step__footer {
 	margin-top: 1em;
 	text-align: center;
-	color: $gray-text;
+	color: var( --color-text );
+
+	body.is-section-signup & {
+		color: var( --color-white );
+
+		a {
+			color: var( --color-white );
+			text-decoration: underline;
+
+			&:hover {
+				color: var( --color-neutral-0 );
+			}
+		}
+	}
 }
 
 @include breakpoint( '<800px' ) {

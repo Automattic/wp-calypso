@@ -26,23 +26,23 @@
 	}
 
 	.button.is-primary {
-		background-color: $green-jetpack;
-		border-color: darken( $green-jetpack, 5% );
+		background-color: var( --color-jetpack );
+		border-color: var( --color-jetpack-dark );
 
 		&:hover,
 		&:focus {
-			border-color: darken( $green-jetpack, 30% );
+			background-color: var( --color-jetpack-400 );
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
+			box-shadow: 0 0 0 2px var( --color-jetpack-light );
 		}
 
 		&[disabled],
 		&:disabled {
-			background: tint( $green-jetpack, 50% );
-			border-color: tint( $green-jetpack, 35% );
-			color: $white;
+			background: var( --color-white );
+			border-color: var( --color-neutral-50);
+			color: var( --color-neutral-50 );
 		}
 	}
 }
@@ -100,7 +100,7 @@
 			position: absolute;
 			top: 8px;
 			left: 8px;
-			color: $gray-lighten-20;
+			color: var( --color-neutral-100 );
 		}
 
 		.form-text-input {
@@ -134,7 +134,7 @@
 
 	.gravatar {
 		display: block;
-		margin: 0 auto 8px auto;
+		margin: 0 auto 8px;
 	}
 
 	.button {
@@ -172,7 +172,7 @@
 	}
 
 	@include breakpoint( '>660px' ) {
-		margin: 0 8px 16px 8px;
+		margin: 0 8px 16px;
 	}
 
 	&.jetpack-connect__creds-form {
@@ -188,7 +188,7 @@
 .jetpack-connect__install-step-text {
 	color: $gray;
 	font-size: 12px;
-	margin: 8px 0 16px 0;
+	margin: 8px 0 16px;
 	flex-grow: 2;
 }
 
@@ -197,13 +197,13 @@
 	width: 100%;
 
 	&:hover > div {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
 	}
 }
 
 .example-components__browser-chrome {
 	padding: 8px;
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	border-radius: 8px 8px 0 0;
 }
 
@@ -215,7 +215,7 @@
 .example-components__browser-chrome-dot {
 	display: inline-block;
 	margin-right: 8px;
-	background-color: $gray-lighten-10;
+	background-color: var( --color-neutral-200 );
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
@@ -225,13 +225,13 @@
 	position: relative;
 	margin: 0;
 	line-height: 0;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
 }
 
 .example-components__install-plugin-header {
 	width: 100%;
 	padding-bottom: 12%;
-	background-color: $green-jetpack;
+	background-color: var( --color-jetpack );
 }
 
 .example-components__install-plugin-body {
@@ -254,7 +254,7 @@
 	font-size: 12px;
 	padding: 7px 14px;
 	line-height: 1;
-	color: $white;
+	color: var( --color-white );
 	background-color: #008ec2; // wp-admin button blue
 	border: 1px solid #006799;
 	border-radius: 3px;
@@ -297,8 +297,8 @@
 
 	.example-components__content-wp-admin-connect-banner {
 		margin: 10px;
-		padding: 10px 10px 12px 10px;
-		background-color: $white;
+		padding: 10px 10px 12px;
+		background-color: var( --color-white );
 	}
 
 	.example-components__content-wp-admin-connect-button {
@@ -306,7 +306,7 @@
 		font-size: 12px;
 		padding: 7px 14px;
 		line-height: 1;
-		color: $white;
+		color: var( --color-white );
 		border-radius: 3px;
 		background-color: #00be28;
 		border: 2px #00a523 solid;
@@ -317,7 +317,7 @@
 .example-components__connect-jetpack.is-legacy {
 	.example-components__content-wp-admin-connect-banner {
 		margin: 10px;
-		padding: 12px 10px 16px 10px;
+		padding: 12px 10px 16px;
 		text-align: right;
 		background-color: #81a844;
 		border-left: 0;
@@ -328,7 +328,7 @@
 		font-size: 12px;
 		line-height: 1;
 		padding: 11px 10px;
-		color: $white;
+		color: var( --color-white );
 		background-color: #518d2a;
 		border-color: #518d2a;
 		border-radius: 4px;
@@ -339,7 +339,7 @@
 .example-components__content-wp-admin-plugin-card {
 	margin: 10px;
 	padding: 12px 10px;
-	background-color: $white;
+	background-color: var( --color-white );
 }
 
 .example-components__content-wp-admin-plugin-name {
@@ -395,7 +395,7 @@
 }
 
 .jetpack-connect__sso-user-email {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	font-weight: 400;
 	text-align: center;
 }
@@ -422,7 +422,7 @@
 
 .jetpack-connect__tos-link {
 	font-size: 11px;
-	margin: 0 0 16px 0;
+	margin: 0 0 16px;
 	text-align: center;
 }
 
@@ -432,7 +432,7 @@
 
 .jetpack-connect__connect-button-card {
 	background: lighten( $gray, 34% );
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	box-shadow: none;
 	margin: 16px -16px -16px -16px;
 	padding: 16px;
@@ -521,14 +521,13 @@
 .jetpack-connect__happychat-button {
 	background: none;
 	border: none;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-weight: normal;
-	padding: 16px 24px;
-	text-align: left;
+	padding: 16px 24px;	
 	width: 100%;
 
 	&:hover {
-		color: $blue-medium;
+		color: var( --color-primary );
 	}
 }
 
@@ -582,7 +581,7 @@
 		min-height: 400px;
 	}
 
-	.plan-features--signup .plan-price.is-original:before {
+	.plan-features--signup .plan-price.is-original::before {
 		border-top: 0;
 	}
 
@@ -622,8 +621,8 @@
 	}
 
 	&.is-primary {
-		background-color: $green-jetpack;
-		border-color: darken( $green-jetpack, 5% );
+		background-color: var( --color-jetpack );
+		border-color: var( --color-jetpack-dark );
 	}
 }
 
@@ -654,7 +653,7 @@
 		z-index: z-index( 'root', '.jetpack-connect__password-form .gridicon' );
 		left: 8px;
 		top: 7px;
-		fill: $gray-lighten-20;
+		fill: var( --color-neutral-100 );
 	}
 }
 

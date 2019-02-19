@@ -31,7 +31,7 @@
 
 	&.disabled {
 		opacity: 0.5;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 	}
 }
 
@@ -53,7 +53,7 @@
 	top: 50%;
 	margin-top: -8px;
 
-	&:after { // Making tap area larger
+	&::after { // Making tap area larger
 		content: '';
 		position: absolute;
 		top: -20px;
@@ -82,7 +82,7 @@
 
 // Plugin title
 .plugin-item__title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	display: block;
 	font-size: 15px;
 	font-weight: 600;
@@ -203,5 +203,5 @@
 
 .plugin-item {
 	box-sizing: border-box;
-	border: 0 solid $gray-lighten-30;
+	border: 0 solid var( --color-neutral-0 );
 }

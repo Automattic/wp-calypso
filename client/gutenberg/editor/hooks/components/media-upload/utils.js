@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, head, reduce, split } from 'lodash';
+import { get, head, includes, isArray, reduce, split } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -46,4 +46,30 @@ export const mediaCalypsoToGutenberg = media => {
 		type: head( split( get( media, 'mime_type', '' ), '/' ) ),
 		width: get( media, 'width' ),
 	};
+};
+
+export const getDisabledDataSources = allowedTypes => {
+	// Additional data sources are enabled for all blocks supporting images.
+	// The File block supports images, but doesn't explicitly allow any media type:
+	// its `allowedTypes` prop can be either undefined or an empty array.
+	if (
+		! allowedTypes ||
+		( isArray( allowedTypes ) && ! allowedTypes.length ) ||
+		includes( allowedTypes, 'image' )
+	) {
+		return [];
+	}
+	return [ 'google_photos', 'pexels' ];
+};
+
+const enabledFiltersMap = {
+	image: 'images',
+	audio: 'audio',
+	video: 'videos',
+};
+
+export const getEnabledFilters = allowedTypes => {
+	return isArray( allowedTypes ) && allowedTypes.length
+		? allowedTypes.map( type => enabledFiltersMap[ type ] )
+		: undefined;
 };

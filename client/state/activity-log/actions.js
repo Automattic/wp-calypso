@@ -33,6 +33,7 @@ import 'state/data-layer/wpcom/activity-log/rewind/downloads';
 import 'state/data-layer/wpcom/activity-log/rewind/restore-status';
 import 'state/data-layer/wpcom/activity-log/rewind/to';
 import 'state/data-layer/wpcom/sites/rewind/downloads';
+import 'state/data-layer/wpcom/sites/rewind/restores';
 
 /**
  * Turn the 'rewind' feature on for a site.
@@ -123,13 +124,15 @@ export function rewindRequestDismiss( siteId ) {
  *
  * @param {String|number} siteId the site ID
  * @param {number} timestamp Unix timestamp to restore site to
+ * @param {object} args Additional request params, such as `types`
  * @return {Object} action object
  */
-export function rewindRestore( siteId, timestamp ) {
+export function rewindRestore( siteId, timestamp, args ) {
 	return {
 		type: REWIND_RESTORE,
 		siteId,
 		timestamp,
+		args,
 	};
 }
 
@@ -142,10 +145,11 @@ export function rewindClone( siteId, timestamp, payload ) {
 	};
 }
 
-export function dismissRewindRestoreProgress( siteId ) {
+export function dismissRewindRestoreProgress( siteId, restoreId ) {
 	return {
 		type: REWIND_RESTORE_DISMISS_PROGRESS,
 		siteId,
+		restoreId,
 	};
 }
 
@@ -200,13 +204,15 @@ export function rewindBackupDismiss( siteId ) {
  *
  * @param  {string|number} siteId   The site ID
  * @param  {number}        rewindId Id of activity up to the one the backup will be created.
+ * @param  {object}        args     Additional request params, such as `types`
  * @return {object}                 Action object
  */
-export function rewindBackup( siteId, rewindId ) {
+export function rewindBackup( siteId, rewindId, args ) {
 	return {
 		type: REWIND_BACKUP,
 		siteId,
 		rewindId,
+		args,
 	};
 }
 

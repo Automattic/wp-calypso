@@ -52,7 +52,7 @@
 	padding: 0 0 5px;
 
 	&:hover {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 
 	span {
@@ -61,7 +61,7 @@
 }
 
 .credentials-setup-flow__popover .popover__inner {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-size: 13px;
 	max-width: 220px;
 	padding: 16px;

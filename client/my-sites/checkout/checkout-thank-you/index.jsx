@@ -13,6 +13,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { themeActivated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
 import WordPressLogo from 'components/wordpress-logo';
@@ -71,7 +72,6 @@ import {
 	getFeatureByKey,
 	isJetpackBusinessPlan,
 	isWpComBusinessPlan,
-	isWpComEcommercePlan,
 	shouldFetchSitePlans,
 } from 'lib/plans';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
@@ -347,6 +347,7 @@ export class CheckoutThankYou extends React.Component {
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasDotcomPlanPurchased = false;
+		let wasEcommercePlanPurchased = false;
 		let delayedTransferPurchase = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
@@ -354,6 +355,7 @@ export class CheckoutThankYou extends React.Component {
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
+			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 		}
 
@@ -385,7 +387,7 @@ export class CheckoutThankYou extends React.Component {
 			);
 		}
 
-		if ( isWpComEcommercePlan( this.props.planSlug ) ) {
+		if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
 					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
@@ -518,7 +520,10 @@ export class CheckoutThankYou extends React.Component {
 					DomainRegistrationDetails,
 					...findPurchaseAndDomain( purchases, isDomainRegistration ),
 				];
-			} else if ( purchases.some( isGoogleApps ) ) {
+			} else if (
+				purchases.some( isGoogleApps ) &&
+				abtest( 'gSuitePostCheckoutNotice' ) === 'original'
+			) {
 				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
 			} else if ( purchases.some( isDomainMapping ) ) {
 				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
@@ -570,6 +575,9 @@ export class CheckoutThankYou extends React.Component {
 
 		return (
 			<div>
+				{ purchases.some( isGoogleApps ) && abtest( 'gSuitePostCheckoutNotice' ) === 'enhanced' && (
+					<GoogleAppsDetails isRequired />
+				) }
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
 					primaryPurchase={ primaryPurchase }

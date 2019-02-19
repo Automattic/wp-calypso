@@ -32,7 +32,7 @@ import {
 /**
  * Style dependencies
  */
-import "./style.scss";
+import './style.scss';
 
 class EditorGutenbergBlocksWarningDialog extends Component {
 	static propTypes = {

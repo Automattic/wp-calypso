@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -68,35 +66,33 @@ export class Map extends Component {
 				mapboxgl={ mapboxgl }
 				unsetActiveMarker={ () => this.setState( { activeMarker: null } ) }
 			>
-				{ activeMarker &&
-					admin && (
-						<Fragment>
-							<TextControl
-								label={ __( 'Marker Title' ) }
-								value={ title }
-								onChange={ value => updateActiveMarker( { title: value } ) }
-							/>
-							<TextareaControl
-								className="wp-block-jetpack-map__marker-caption"
-								label={ __( 'Marker Caption' ) }
-								value={ caption }
-								rows="2"
-								tag="textarea"
-								onChange={ value => updateActiveMarker( { caption: value } ) }
-							/>
-							<Button onClick={ deleteActiveMarker } className="wp-block-jetpack-map__delete-btn">
-								<Dashicon icon="trash" size="15" /> { __( 'Delete Marker' ) }
-							</Button>
-						</Fragment>
-					) }
+				{ activeMarker && admin && (
+					<Fragment>
+						<TextControl
+							label={ __( 'Marker Title' ) }
+							value={ title }
+							onChange={ value => updateActiveMarker( { title: value } ) }
+						/>
+						<TextareaControl
+							className="wp-block-jetpack-map__marker-caption"
+							label={ __( 'Marker Caption' ) }
+							value={ caption }
+							rows="2"
+							tag="textarea"
+							onChange={ value => updateActiveMarker( { caption: value } ) }
+						/>
+						<Button onClick={ deleteActiveMarker } className="wp-block-jetpack-map__delete-btn">
+							<Dashicon icon="trash" size="15" /> { __( 'Delete Marker' ) }
+						</Button>
+					</Fragment>
+				) }
 
-				{ activeMarker &&
-					! admin && (
-						<Fragment>
-							<h3>{ title }</h3>
-							<p>{ caption }</p>
-						</Fragment>
-					) }
+				{ activeMarker && ! admin && (
+					<Fragment>
+						<h3>{ title }</h3>
+						<p>{ caption }</p>
+					</Fragment>
+				) }
 			</InfoWindow>
 		);
 		return (

@@ -8,7 +8,7 @@
 }
 
 // Needs specificity
-.components-icon-button:not(:disabled):not([aria-disabled="true"]).editor-post-last-revision__title {
+.components-icon-button:not( :disabled ):not( [aria-disabled='true'] ).editor-post-last-revision__title {
 
 	&:hover,
 	&:active {

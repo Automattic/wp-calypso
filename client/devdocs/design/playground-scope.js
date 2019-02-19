@@ -30,6 +30,7 @@ export Count from 'components/count';
 export CountedTextarea from 'components/forms/counted-textarea';
 export CreditCard from 'components/credit-card';
 export DatePicker from 'components/date-picker';
+export DateRange from 'components/date-range';
 export DiffViewer from 'components/diff-viewer';
 export DropZones from 'components/drop-zone';
 export EllipsisMenu from 'components/ellipsis-menu';

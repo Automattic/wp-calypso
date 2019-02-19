@@ -18,7 +18,7 @@ import Card from 'components/card';
 import { localizeUrl } from 'lib/i18n-utils';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { decodeEntities, preventWidows } from 'lib/formatting';
-import { isCurrentUserMaybeInGdprZone } from 'lib/analytics/ad-tracking';
+import { isCurrentUserMaybeInGdprZone } from 'lib/analytics/utils';
 
 const SIX_MONTHS = 6 * 30 * 24 * 60 * 60;
 

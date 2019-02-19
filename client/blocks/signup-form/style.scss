@@ -1,15 +1,14 @@
-/*rtl:ignore*/
 .signup-form .signup-form__input {
 	margin-bottom: 20px;
 	transition: none;
 
 	&.is-error,
-	&[type="password"] {
+	&[type='password'] {
 		margin-bottom: 0;
 	}
 
-	&[name="username"] {
-		/*rtl:ignore*/
+	&[name='username'] {
+		/*!rtl:ignore*/
 		direction: ltr;
 	}
 }
@@ -20,11 +19,11 @@
 
 .signup-form__terms-of-service-link {
 	font-size: 11px;
-	margin: 0 0 20px 0;
+	margin: 0 0 20px;
 	text-align: center;
 
 	a {
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			white-space: pre;
 		}
 	}
@@ -32,7 +31,7 @@
 
 .signup-form__social {
 	p {
-		margin: 0 0 20px 0;
+		margin: 0 0 20px;
 		text-align: center;
 
 		&:last-child {
@@ -56,5 +55,5 @@
 .signup-form__notice.notice {
 	margin-left: auto;
 	margin-right: auto;
-	max-width: 400px;
+	max-width: 480px;
 }

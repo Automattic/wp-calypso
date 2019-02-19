@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -17,30 +17,25 @@ import CompactCard from 'components/card/compact';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
 import PublishConfirmation from './publish-confirmation';
-import {
-	isJetpackMinimumVersion,
-	isJetpackSite,
-	siteSupportsJetpackSettingsUi,
-} from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const Composing = ( {
 	eventTracker,
 	fields,
 	handleSelect,
 	handleToggle,
-	hasDateTimeFormats,
 	isRequestingSettings,
 	isSavingSettings,
-	jetpackSettingsUISupported,
 	onChangeField,
 	setFieldValue,
+	siteIsJetpack,
 	updateFields,
 } ) => {
-	const CardComponent = jetpackSettingsUISupported ? CompactCard : Card;
+	const CardComponent = siteIsJetpack ? CompactCard : Card;
 
 	return (
-		<div>
+		<Fragment>
 			<CardComponent className="composing__card site-settings">
 				<PublishConfirmation />
 				<DefaultPostFormat
@@ -52,7 +47,7 @@ const Composing = ( {
 				/>
 			</CardComponent>
 
-			{ jetpackSettingsUISupported && (
+			{ siteIsJetpack && (
 				<AfterTheDeadline
 					fields={ fields }
 					handleToggle={ handleToggle }
@@ -61,16 +56,15 @@ const Composing = ( {
 					setFieldValue={ setFieldValue }
 				/>
 			) }
-			{ hasDateTimeFormats && (
-				<DateTimeFormat
-					fields={ fields }
-					handleSelect={ handleSelect }
-					isRequestingSettings={ isRequestingSettings }
-					isSavingSettings={ isSavingSettings }
-					updateFields={ updateFields }
-				/>
-			) }
-		</div>
+
+			<DateTimeFormat
+				fields={ fields }
+				handleSelect={ handleSelect }
+				isRequestingSettings={ isRequestingSettings }
+				isSavingSettings={ isSavingSettings }
+				updateFields={ updateFields }
+			/>
+		</Fragment>
 	);
 };
 
@@ -92,12 +86,6 @@ Composing.propTypes = {
 	updateFields: PropTypes.func.isRequired,
 };
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const siteIsJetpack = isJetpackSite( state, siteId );
-
-	return {
-		hasDateTimeFormats: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.7' ),
-		jetpackSettingsUISupported: siteIsJetpack && siteSupportsJetpackSettingsUi( state, siteId ),
-	};
-} )( Composing );
+export default connect( state => ( {
+	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+} ) )( Composing );

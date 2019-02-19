@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import SupportInfo from 'components/support-info';
 import ExternalLink from 'components/external-link';
@@ -23,10 +22,10 @@ import FormFieldset from 'components/forms/form-fieldset';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
@@ -262,21 +261,14 @@ class SiteVerification extends Component {
 	};
 
 	render() {
-		const {
-			isVerificationToolsActive,
-			jetpackVersionSupportsSeo,
-			siteId,
-			siteIsJetpack,
-			translate,
-		} = this.props;
+		const { isVerificationToolsActive, siteId, siteIsJetpack, translate } = this.props;
 		const {
 			isSubmittingForm,
 			isFetchingSettings,
 			showPasteError = false,
 			invalidCodes = [],
 		} = this.state;
-		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
-		const isDisabled = isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
+		const isDisabled = isSubmittingForm || isFetchingSettings;
 		const isVerificationDisabled = isDisabled || isVerificationToolsActive === false;
 		const isSaveDisabled =
 			isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
@@ -294,17 +286,13 @@ class SiteVerification extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
-				<SectionHeader label={ translate( 'Site Verification Services' ) }>
-					<Button
-						compact
-						primary
-						onClick={ this.handleFormSubmit }
-						type="submit"
-						disabled={ isSaveDisabled || isVerificationDisabled }
-					>
-						{ isSubmittingForm ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
+				<SettingsSectionHeader
+					disabled={ isSaveDisabled || isVerificationDisabled }
+					isSaving={ isSubmittingForm }
+					onButtonClick={ this.handleFormSubmit }
+					showButton
+					title={ translate( 'Site Verification Services' ) }
+				/>
 				<Card>
 					{ siteIsJetpack && (
 						<FormFieldset>
@@ -449,7 +437,6 @@ export default connect(
 		return {
 			isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 			isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
-			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
 			saveError: getSiteSettingsSaveError( state, siteId ),
 			site,
 			siteId,

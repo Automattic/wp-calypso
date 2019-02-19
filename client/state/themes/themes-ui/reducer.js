@@ -4,7 +4,11 @@
  * Internal dependencies
  */
 
-import { THEME_BACK_PATH_SET, THEMES_BANNER_HIDE } from 'state/action-types';
+import {
+	THEME_BACK_PATH_SET,
+	THEMES_BANNER_HIDE,
+	THEMES_UPWORK_BANNER_HIDE,
+} from 'state/action-types';
 import { themesBannerVisibleSchema } from '../schema';
 import { combineReducers, withSchemaValidation } from 'state/utils';
 
@@ -25,9 +29,22 @@ export function themesBannerVisibleReducer( state = true, { type } ) {
 	return state;
 }
 
+// Themes banner visible state
+export function themesUpworkBannerVisibleReducer( state = true, { type } ) {
+	if ( THEMES_UPWORK_BANNER_HIDE === type ) {
+		return false;
+	}
+	return state;
+}
+
 export const themesBannerVisible = withSchemaValidation(
 	themesBannerVisibleSchema,
 	themesBannerVisibleReducer
 );
 
-export default combineReducers( { backPath, themesBannerVisible } );
+export const themesUpworkBannerVisible = withSchemaValidation(
+	themesBannerVisibleSchema,
+	themesUpworkBannerVisibleReducer
+);
+
+export default combineReducers( { backPath, themesBannerVisible, themesUpworkBannerVisible } );

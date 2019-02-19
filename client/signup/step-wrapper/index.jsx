@@ -13,6 +13,7 @@ import classNames from 'classnames';
  */
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
+import SiteMockups from 'signup/site-mockup';
 
 /**
  * Style dependencies
@@ -98,30 +99,40 @@ class StepWrapper extends Component {
 	}
 
 	render() {
-		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
+		const {
+			stepContent,
+			headerButton,
+			hideFormattedHeader,
+			hideBack,
+			hideSkip,
+			showSiteMockups,
+		} = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
 
 		return (
-			<div className={ classes }>
-				{ ! hideFormattedHeader && (
-					<FormattedHeader
-						id={ 'step-header' }
-						headerText={ this.headerText() }
-						subHeaderText={ this.subHeaderText() }
-					>
-						{ headerButton }
-					</FormattedHeader>
-				) }
+			<>
+				<div className={ classes }>
+					{ ! hideFormattedHeader && (
+						<FormattedHeader
+							id={ 'step-header' }
+							headerText={ this.headerText() }
+							subHeaderText={ this.subHeaderText() }
+						>
+							{ headerButton }
+						</FormattedHeader>
+					) }
 
-				<div className="step-wrapper__content">{ stepContent }</div>
+					<div className="step-wrapper__content">{ stepContent }</div>
 
-				<div className="step-wrapper__buttons">
-					{ ! hideBack && this.renderBack() }
-					{ ! hideSkip && this.renderSkip() }
+					<div className="step-wrapper__buttons">
+						{ ! hideBack && this.renderBack() }
+						{ ! hideSkip && this.renderSkip() }
+					</div>
 				</div>
-			</div>
+				{ showSiteMockups && <SiteMockups /> }
+			</>
 		);
 	}
 }

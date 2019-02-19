@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { Component } from '@wordpress/element';
 import { Button, ButtonGroup } from '@wordpress/components';
 import classnames from 'classnames';
@@ -11,7 +8,6 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-
 import './style.scss';
 
 export class MapThemePicker extends Component {

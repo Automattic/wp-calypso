@@ -8,6 +8,6 @@ import '@babel/polyfill';
  * Internal dependencies
  */
 
-import localStoragePolyfill from 'lib/local-storage';
+import localStoragePolyfill from 'lib/local-storage-polyfill';
 
 localStoragePolyfill();

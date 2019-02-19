@@ -30,6 +30,9 @@ import isRtlSelector from 'state/selectors/is-rtl';
 import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-registrations';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { getPageTemplates } from 'state/page-templates/selectors';
+import { MimeTypes } from 'lib/media/constants';
+import autoUpdateMedia from './utils/media-updater';
+import ConvertToBlocksDialog from './components/convert-to-blocks';
 
 /**
  * Style dependencies
@@ -52,16 +55,19 @@ class GutenbergEditor extends Component {
 		refreshRegistrations();
 
 		setDateGMTOffset( gmtOffset );
+
+		autoUpdateMedia( siteId );
 	}
 
 	componentDidUpdate( prevProp ) {
-		const { siteId, postId, postType } = this.props;
+		const { siteId, postId, postType, draftPostId } = this.props;
 		if (
 			prevProp.siteId !== siteId ||
 			prevProp.postId !== postId ||
-			prevProp.postType !== postType
+			prevProp.postType !== postType ||
+			prevProp.draftPostId !== draftPostId
 		) {
-			requestSitePost( siteId, postId, postType, 0 );
+			requestSitePost( siteId, postId || draftPostId, postType, 0 );
 		}
 	}
 
@@ -94,8 +100,20 @@ class GutenbergEditor extends Component {
 		}
 	};
 
+	getAllowedMimeTypes = () => {
+		const { allowedFileTypes } = this.props;
+		const allowedMimeTypes = {};
+		allowedFileTypes.forEach( fileType => {
+			const mimeType = get( MimeTypes, fileType );
+			if ( mimeType ) {
+				allowedMimeTypes[ fileType ] = mimeType;
+			}
+		} );
+		return allowedMimeTypes;
+	};
+
 	render() {
-		const { alignWide, postType, siteId, pageTemplates, post, overridePost, isRTL } = this.props;
+		const { alignWide, postType, siteId, pageTemplates, post, initialEdits, isRTL } = this.props;
 
 		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
 		const editorSettings = {
@@ -106,6 +124,7 @@ class GutenbergEditor extends Component {
 			bodyPlaceholder: translate( 'Write your story' ),
 			postLock: {},
 			isRTL,
+			allowedMimeTypes: this.getAllowedMimeTypes(),
 		};
 
 		return (
@@ -115,12 +134,13 @@ class GutenbergEditor extends Component {
 				<PageViewTracker { ...this.getAnalyticsPathAndTitle() } />
 				<EditorPostTypeUnsupported type={ postType } />
 				<EditorDocumentHead postType={ postType } />
+				<ConvertToBlocksDialog />
 				<Editor
 					settings={ editorSettings }
 					hasFixedToolbar={ true }
 					post={ post }
 					onError={ noop }
-					overridePost={ overridePost }
+					initialEdits={ initialEdits }
 				/>
 			</Fragment>
 		);
@@ -136,13 +156,72 @@ const getPost = ( siteId, postId, postType ) => {
 	return null;
 };
 
-const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isDemoContent } ) => {
+const getInitialEdits = ( {
+	isAutoDraft,
+	postCopy,
+	isDemoContent,
+	demoContent,
+	duplicatePostId,
+} ) => {
+	// has saved content
+	if ( ! isAutoDraft ) {
+		return null;
+	}
+
+	// demo content is loading:
+	if ( isDemoContent && ! demoContent ) {
+		return null;
+	}
+
+	// copy content is loading:
+	if ( duplicatePostId && ! postCopy ) {
+		return null;
+	}
+
+	// Duplicate a Post ?jetpack-copy=
+	if ( postCopy ) {
+		return {
+			title: postCopy.title.raw,
+			content: postCopy.content.raw,
+			excerpt: postCopy.excerpt.raw,
+			featured_media: postCopy.featured_media,
+			type: postCopy.type,
+			format: postCopy.format,
+			categories: postCopy.categories,
+			tags: postCopy.tags,
+		};
+	}
+
+	//Demo Content ?gutenberg-demo
+	if ( demoContent ) {
+		return {
+			title: demoContent.title.raw,
+			content: demoContent.content.raw,
+		};
+	}
+
+	// A new draft
+	return { title: '' };
+};
+
+const mapStateToProps = (
+	state,
+	{ siteId, postId, uniqueDraftKey, postType, isDemoContent, duplicatePostId }
+) => {
 	const draftPostId = get( getHttpData( uniqueDraftKey ), 'data.ID', null );
 	const post = getPost( siteId, postId || draftPostId, postType );
+	const postCopy = getPost( siteId, duplicatePostId, postType );
 	const demoContent = isDemoContent ? get( requestGutenbergDemoContent(), 'data' ) : null;
-	const isAutoDraft = 'auto-draft' === get( post, 'status', null );
+	// The post copy stored in httpData, will go stale after the block editor makes an update (save/publish)
+	// So also check if postId is passed because this means that this post has been saved by
+	// the user before.
+	//
+	// Provided that this doesn't cause a strange feedback loop, we may want to consider updating
+	// the cached post in httpData when the editor store updates.
+	const isAutoDraft = ! postId && 'auto-draft' === get( post, 'status', null );
 	const isRTL = isRtlSelector( state );
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
+	const allowedFileTypes = getSiteOption( state, siteId, 'allowed_file_types' );
 
 	/**
 	 * We don't expect any theme to have a specific Gutenberg support flag,
@@ -161,24 +240,23 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 		...mapValues( keyBy( getPageTemplates( state, siteId ), 'file' ), 'label' ),
 	};
 
-	let overridePost = null;
-	if ( !! demoContent ) {
-		overridePost = {
-			title: demoContent.title.raw,
-			content: demoContent.content,
-		};
-	} else if ( isAutoDraft ) {
-		overridePost = { title: '' };
-	}
+	const initialEdits = getInitialEdits( {
+		isAutoDraft,
+		duplicatePostId,
+		postCopy,
+		isDemoContent,
+		demoContent,
+	} );
 
 	return {
 		//no theme uses the wide-images flag. This is future proofing in case it get's implemented.
 		alignWide: alignWide || get( gutenbergThemeSupport, 'wide-images', false ),
 		pageTemplates,
 		post,
-		overridePost,
+		initialEdits,
 		isRTL,
 		gmtOffset,
+		allowedFileTypes,
 	};
 };
 

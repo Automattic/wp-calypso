@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, createRef } from '@wordpress/element';
 import { BaseControl, TextControl } from '@wordpress/components';
@@ -11,10 +8,9 @@ import { BaseControl, TextControl } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-
 import Lookup from '../lookup';
 
-const placeholderText = __( 'Add a marker...' );
+const placeholderText = __( 'Add a marker…' );
 
 export class LocationSearch extends Component {
 	constructor() {

@@ -1,12 +1,12 @@
 
 .diff-viewer__filename {
 	padding: 2px 4px;
-	background-color: $gray-lighten-20;
+	background-color: var( --color-neutral-100 );
 	font-weight: 500;
 }
 
 .diff-viewer__file {
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	display: flex;
 	font-family: $monospace;
 	flex-direction: row;
@@ -25,7 +25,7 @@
 	display: flex;
 	flex-direction: column;
 	text-align: right;
-	background-color: $gray-lighten-20;
+	background-color: var( --color-neutral-100 );
 	color: var( --color-text-subtle );
 }
 
@@ -42,11 +42,11 @@
 	}
 
 	& del {
-		background-color: lighten( $alert-red, 20% );
+		background-color: var( --color-error-200 );
 		text-decoration: none;
 	}
 
 	& ins {
-		background-color: lighten( $alert-green, 20% );
+		background-color: var( --color-success-200 );
 	}
 }

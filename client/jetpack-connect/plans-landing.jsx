@@ -6,6 +6,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -20,6 +21,7 @@ import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
 import PlansExtendedInfo from './plans-extended-info';
 import QueryPlans from 'components/data/query-plans';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
@@ -119,7 +121,7 @@ class PlansLanding extends Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	( state, { url } ) => {
 		const rawSite = url ? getJetpackSiteByUrl( state, url ) : null;
 		const site = rawSite ? getSite( state, rawSite.ID ) : null;
@@ -132,4 +134,10 @@ export default connect(
 	{
 		recordTracksEvent,
 	}
-)( localize( PlansLanding ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( PlansLanding );

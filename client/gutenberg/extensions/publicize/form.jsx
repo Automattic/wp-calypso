@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Higher Order Publicize sharing form composition.
  *

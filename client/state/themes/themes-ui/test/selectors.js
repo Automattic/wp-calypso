@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getBackPath, isThemesBannerVisible } from '../selectors';
+import { getBackPath, isThemesBannerVisible, isThemesUpworkBannerVisible } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getBackPath', () => {
@@ -74,6 +74,19 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( isThemesBannerVisible( state ) ).toBe( false );
+		} );
+	} );
+
+	describe( '#isThemesUpworkBannerVisible', () => {
+		test( 'Should return the showcase banner visible state', () => {
+			const state = {
+				themes: {
+					themesUI: {
+						themesUpworkBannerVisible: false,
+					},
+				},
+			};
+			expect( isThemesUpworkBannerVisible( state ) ).toBe( false );
 		} );
 	} );
 } );

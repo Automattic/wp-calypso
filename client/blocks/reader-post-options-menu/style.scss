@@ -1,12 +1,11 @@
 .reader-post-options-menu,
 .reader-post-options-menu .ellipsis-menu {
-
 	.button.is-borderless {
 		color: $gray;
 
 		&:hover,
 		&:active {
-			color: var( --color-accent );
+			color: var( --color-primary );
 		}
 
 		&:focus {
@@ -26,18 +25,17 @@
 
 .reader-post-options-menu__hr {
 	margin: 8px 0;
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 }
 
 .reader-post-options-menu__popover {
-
 	.popover__menu {
 		min-width: 212px;
 	}
 
 	.popover__menu .follow-button,
 	.popover__menu .conversation-follow-button {
-		color: var( --color-accent );
+		color: var( --color-primary );
 		padding: 9px 16px;
 
 		.gridicon {
@@ -52,7 +50,7 @@
 
 		&:hover,
 		&:focus {
-			background-color: var( --color-accent );
+			background-color: var( --color-primary );
 			color: white;
 
 			.gridicon {
@@ -67,8 +65,7 @@
 
 		.follow-button__label,
 		.conversation-follow-button__label {
-
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				display: inline-block;
 			}
 		}

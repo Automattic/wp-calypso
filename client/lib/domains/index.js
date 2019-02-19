@@ -62,19 +62,22 @@ function checkAuthCode( domainName, authCode, onComplete ) {
 
 function checkDomainAvailability( params, onComplete ) {
 	const { domainName, blogId } = params;
+	const isCartPreCheck = get( params, 'isCartPreCheck', false );
 	if ( ! domainName ) {
 		onComplete( null, { status: domainAvailability.EMPTY_QUERY } );
 		return;
 	}
 
-	wpcom.undocumented().isDomainAvailable( domainName, blogId, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
-			return;
-		}
+	wpcom
+		.undocumented()
+		.isDomainAvailable( domainName, blogId, isCartPreCheck, function( serverError, result ) {
+			if ( serverError ) {
+				onComplete( serverError.error );
+				return;
+			}
 
-		onComplete( null, result );
-	} );
+			onComplete( null, result );
+		} );
 }
 
 function checkInboundTransferStatus( domainName, onComplete ) {
@@ -84,22 +87,6 @@ function checkInboundTransferStatus( domainName, onComplete ) {
 	}
 
 	wpcom.undocumented().getInboundTransferStatus( domainName, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
-			return;
-		}
-
-		onComplete( null, result );
-	} );
-}
-
-function restartInboundTransfer( siteId, domainName, onComplete ) {
-	if ( ! domainName || ! siteId ) {
-		onComplete( null );
-		return;
-	}
-
-	wpcom.undocumented().restartInboundTransfer( siteId, domainName, function( serverError, result ) {
 		if ( serverError ) {
 			onComplete( serverError.error );
 			return;
@@ -177,9 +164,8 @@ function getFixedDomainSearch( domainName ) {
 	return domainName
 		.trim()
 		.toLowerCase()
-		.replace( /^(https?:\/\/)?(www\.)?/, '' )
-		.replace( /^https?/, '' )
-		.replace( /^www/, '' )
+		.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
+		.replace( /^www[0-9]?\./, '' )
 		.replace( /\/$/, '' )
 		.replace( /_/g, '-' );
 }
@@ -299,6 +285,53 @@ function getAvailableTlds( query = {} ) {
 	return wpcom.undocumented().getAvailableTlds( query );
 }
 
+function getDomainTypeText( domain = {} ) {
+	switch ( domain.type ) {
+		case domainTypes.MAPPED:
+			return 'Mapped Domain';
+
+		case domainTypes.REGISTERED:
+			return 'Registered Domain';
+
+		case domainTypes.SITE_REDIRECT:
+			return 'Site Redirect';
+
+		case domainTypes.WPCOM:
+			return 'Wpcom Domain';
+
+		case domainTypes.TRANSFER:
+			return 'Transfer';
+
+		default:
+			return '';
+	}
+}
+
+/*
+ * Given a search string, strip anything we don't want to query for domain suggestions
+ *
+ * @param {string} search Original search string
+ * @param {integer} minLength Minimum search string length
+ * @return {string} Cleaned search string
+ */
+function getDomainSuggestionSearch( search, minLength = 2 ) {
+	const cleanedSearch = getFixedDomainSearch( search );
+
+	// Ignore any searches that are too short
+	if ( cleanedSearch.length < minLength ) {
+		return '';
+	}
+
+	// Ignore any searches for generic URL prefixes
+	// getFixedDomainSearch will already have stripped http(s):// and www.
+	const ignoreList = [ 'www', 'http', 'https' ];
+	if ( includes( ignoreList, cleanedSearch ) ) {
+		return '';
+	}
+
+	return cleanedSearch;
+}
+
 export {
 	canAddGoogleApps,
 	canRedirect,
@@ -307,6 +340,7 @@ export {
 	checkInboundTransferStatus,
 	getDomainPrice,
 	getDomainProductSlug,
+	getDomainTypeText,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
 	getMappedDomains,
@@ -324,7 +358,7 @@ export {
 	isRegisteredDomain,
 	isSubdomain,
 	resendInboundTransferEmail,
-	restartInboundTransfer,
 	startInboundTransfer,
 	getAvailableTlds,
+	getDomainSuggestionSearch,
 };

@@ -8,7 +8,7 @@ import config from 'config';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import { flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 /**
  * External dependencies
@@ -28,6 +28,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
 import Spinner from 'components/spinner';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addCalypsoEnvQueryArg } from './utils';
 import { addQueryArgs } from 'lib/route';
 import {
@@ -343,12 +344,11 @@ export class OrgCredentialsForm extends Component {
 
 		return (
 			<MainWrapper>
-				{ ! this.isInvalidCreds() &&
-					installError && (
-						<div className="jetpack-connect__notice">
-							<JetpackRemoteInstallNotices noticeType={ this.getError( installError ) } />
-						</div>
-					) }
+				{ ! this.isInvalidCreds() && installError && (
+					<div className="jetpack-connect__notice">
+						<JetpackRemoteInstallNotices noticeType={ this.getError( installError ) } />
+					</div>
+				) }
 				{ ( this.isInvalidCreds() || ! installError ) && (
 					<div>
 						{ this.renderHeadersText() }
@@ -369,7 +369,7 @@ export class OrgCredentialsForm extends Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const jetpackConnectSite = getConnectingSite( state );
 		const siteData = jetpackConnectSite.data || {};
@@ -387,4 +387,10 @@ export default connect(
 		jetpackRemoteInstallUpdateError,
 		recordTracksEvent,
 	}
-)( localize( OrgCredentialsForm ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( OrgCredentialsForm );

@@ -11,6 +11,11 @@ import { noop, map, size, takeRight, filter, uniqBy } from 'lodash';
  */
 import Gravatar from 'components/gravatar';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class GravatarCaterpillar extends React.Component {
 	static propTypes = {
 		onClick: PropTypes.func,

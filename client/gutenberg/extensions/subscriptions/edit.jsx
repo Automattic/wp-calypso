@@ -1,15 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { Component } from '@wordpress/element';
-import { Button, TextControl, ToggleControl } from '@wordpress/components';
+import { TextControl, ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import SubmitButton from 'gutenberg/extensions/presets/jetpack/utils/submit-button';
 import apiFetch from '@wordpress/api-fetch';
 import { sprintf, _n } from '@wordpress/i18n';
 
@@ -42,9 +41,7 @@ class SubscriptionEdit extends Component {
 						disabled={ true }
 						onChange={ () => {} }
 					/>
-					<Button type="button" isDefault>
-						{ __( 'Subscribe' ) }
-					</Button>
+					<SubmitButton { ...this.props } />
 				</div>
 			);
 		}
@@ -53,9 +50,8 @@ class SubscriptionEdit extends Component {
 			<div className={ className } role="form">
 				{ showSubscribersTotal && <p role="heading">{ this.state.subscriberCountString }</p> }
 				<TextControl placeholder={ subscribePlaceholder } />
-				<Button type="button" isDefault>
-					{ __( 'Subscribe' ) }
-				</Button>
+
+				<SubmitButton { ...this.props } />
 			</div>
 		);
 	}
@@ -76,6 +72,10 @@ class SubscriptionEdit extends Component {
 				} );
 			}
 		} );
+	}
+
+	onChangeSubmit( submitButtonText ) {
+		this.props.setAttributes( { submitButtonText } );
 	}
 }
 

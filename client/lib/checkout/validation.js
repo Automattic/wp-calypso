@@ -6,7 +6,6 @@ import creditcards from 'creditcards';
 import { capitalize, compact, isArray, isEmpty, mergeWith, union } from 'lodash';
 import i18n from 'i18n-calypso';
 import { isValidPostalCode } from 'lib/postal-code';
-import phone from 'phone';
 
 /**
  * Internal dependencies
@@ -25,15 +24,15 @@ import {
 export function getCreditCardFieldRules() {
 	return {
 		name: {
-			description: i18n.translate( 'Name on Card', {
-				context: 'Upgrades: Card holder name label on credit card form',
+			description: i18n.translate( 'Cardholder Name', {
+				comment: 'Cardholder name label on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
 
 		number: {
 			description: i18n.translate( 'Card Number', {
-				context: 'Upgrades: Card number label on credit card form',
+				comment: 'Card number label on credit card form',
 			} ),
 			rules: [ 'validCreditCardNumber' ],
 		},
@@ -55,7 +54,7 @@ export function getCreditCardFieldRules() {
 
 		'postal-code': {
 			description: i18n.translate( 'Postal Code', {
-				context: 'Upgrades: Postal code on credit card form',
+				comment: 'Postal code on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
@@ -91,15 +90,15 @@ export function tefPaymentFieldRules() {
 export function tokenFieldRules() {
 	return {
 		name: {
-			description: i18n.translate( 'Name on Card', {
-				comment: 'Upgrades: Card holder name label on credit card form',
+			description: i18n.translate( 'Cardholder Name', {
+				comment: 'Cardholder name label on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
 
 		tokenized_payment_data: {
 			description: i18n.translate( 'Tokenized Payment Data', {
-				comment: 'Upgrades: Tokenized payment data from the token provider',
+				comment: 'Tokenized payment data from the token provider',
 			} ),
 			rules: [ 'required' ],
 		},
@@ -136,11 +135,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
  * @returns {object} The aggregated ruleset
  */
 export function mergeValidationRules( ...rulesets ) {
-	return mergeWith(
-		{},
-		...rulesets,
-		( objValue, srcValue ) =>
-			isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
+	return mergeWith( {}, ...rulesets, ( objValue, srcValue ) =>
+		isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
 	);
 }
 
@@ -228,19 +224,6 @@ validators.validPostalCodeUS = {
 		return i18n.translate( '%(description)s is invalid. Must be a 5 digit number', {
 			args: { description: description },
 		} );
-	},
-};
-
-validators.validPhone = {
-	isValid( phoneNumber, paymentDetails ) {
-		if ( ! phoneNumber ) {
-			return false;
-		}
-
-		return phone( phoneNumber, paymentDetails.country ).length > 0;
-	},
-	error: function() {
-		return i18n.translate( 'That phone number does not appear to be valid' );
 	},
 };
 
@@ -347,7 +330,7 @@ function getConditionalCreditCardRules( { country } ) {
 			return {
 				'postal-code': {
 					description: i18n.translate( 'Postal Code', {
-						context: 'Upgrades: Postal code on credit card form',
+						comment: 'Postal code on credit card form',
 					} ),
 					rules: [ 'required', 'validPostalCodeUS' ],
 				},

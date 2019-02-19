@@ -1,11 +1,10 @@
-
 // Activity Log
 
 .activity-log__wrapper {
 	position: relative;
 
-	&:before,
-	&:after {
+	&::before,
+	&::after {
 		content: '';
 		position: absolute;
 		left: 33px;
@@ -16,26 +15,26 @@
 		}
 	}
 
-	&:before {
+	&::before {
 		top: 0;
 		height: 100%;
 		z-index: -2;
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 	}
 
-	&:after {
+	&::after {
 		bottom: 0;
 		height: 16px;
 		z-index: -1;
-		background: blue;
-		background: linear-gradient( transparentize( $gray-light, 1 ), $gray-light );
+		background: var( --color-neutral-100 );
+		background: linear-gradient( var( --color-neutral-100 ), var( --color-surface-backdrop ) );
 	}
 }
 
 .activity-log__time-period {
 	margin: 8px 0;
 	padding: 6px 0 4px;
-	background: $gray-light;
+	background: var( --color-surface-backdrop );
 	font-weight: 500;
 
 	@include breakpoint( '<660px' ) {
@@ -47,7 +46,7 @@
 		height: 23px;
 		width: 100px;
 		margin: 3px 0;
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -64,7 +63,7 @@
 }
 
 .activity-log__empty-day {
-	background: $gray-light;
+	background: var( --color-surface-backdrop );
 	width: 100%;
 	padding: 0 16px 4px;
 	position: relative;
@@ -112,7 +111,7 @@
 .activity-log__threat-alert {
 	padding: 8px 0;
 	font-size: 13px;
-	box-shadow: 0 -1px 0 transparentize( $gray-lighten-20, 0.5 );
+	box-shadow: 0 -1px 0 rbga( var( --color-neutral-100 ), 0.5 );
 
 	@include breakpoint( '>480px' ) {
 		font-size: 14px;
@@ -161,7 +160,7 @@
 }
 
 .activity-log__threat-alert-header {
-	color: $gray;
+	color: var( --color-neutral-200 );
 	width: 100%;
 }
 
@@ -178,7 +177,7 @@
 .activity-log__threat-alert-title {
 	padding-right: 16px;
 	font-weight: 500;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	.activity-log__threat-alert-filename {
 		padding: 0 2px;
@@ -208,10 +207,10 @@
 .activity-log__threat-alert-time-since {
 	margin-left: 2px;
 	padding-left: 4px;
-	color: $gray;
+	color: var( --color-neutral-200 );
 	font-weight: 400;
 
-	&:before {
+	&::before {
 		// cdot three-per-em-space
 		content: '\00b7\2004';
 	}

@@ -36,13 +36,13 @@ class PrimaryHeader extends Component {
 				<Card>
 					<img
 						className="shared__info-illustration"
-						alt="concierge session signup form header"
+						alt="support session signup form header"
 						src={ '/calypso/images/illustrations/illustration-start.svg' }
 					/>
 					<FormattedHeader
-						headerText={ translate( 'WordPress.com Business Concierge Session' ) }
+						headerText={ translate( 'WordPress.com Support Scheduler' ) }
 						subHeaderText={ translate(
-							"In this 30-minute session we'll help you get started with your site."
+							'Use the tool below to book your in-depth support session.'
 						) }
 					/>
 					<ExternalLink

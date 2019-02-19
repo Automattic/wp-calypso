@@ -1,4 +1,3 @@
-
 // The Emergent Paywall loads in an iframe, so we can't adjust its internal styles
 // with the primary Calypso stylesheet. This file is bundled as a separate CSS file to be
 // linked from inside the iframe.
@@ -40,7 +39,7 @@
 }
 
 body {
-	color: $gray-dark;
+	color: var( --color-text );
 	-webkit-font-smoothing: subpixel-antialiased;
 }
 
@@ -75,7 +74,7 @@ textarea {
 	a:hover,
 	a:focus,
 	a:active {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 
 	// Seen in the 2nd step, displays the payment method type
@@ -135,7 +134,7 @@ textarea {
 
 			&:hover {
 				transition: all 150ms ease-in-out;
-				border-color: $gray-darken-20;
+				border-color: var( --color-neutral-500 );
 			}
 		}
 
@@ -264,7 +263,7 @@ textarea {
 				.form-control {
 					margin: 0;
 					padding: 7px 14px;
-					color: $gray-dark;
+					color: var( --color-text );
 					font-size: 16px;
 					line-height: 1.5;
 					border: 1px solid $gray-lighten-20;
@@ -302,7 +301,7 @@ textarea {
 
 				// Error label below each field
 				.text-danger {
-					color: $alert-red;
+					color: var( --color-error );
 					margin: 0;
 					padding: 4px 0;
 				}
@@ -346,7 +345,7 @@ textarea {
 			border-color: $gray-lighten-20;
 			border-style: solid;
 			border-width: 1px 1px 2px;
-			color: $gray-dark;
+			color: var( --color-text );
 			cursor: pointer;
 			display: inline-block;
 			margin: 0;
@@ -368,7 +367,7 @@ textarea {
 			}
 
 			&.btn-primary {
-				background: $blue-medium;
+				background: var( --color-primary );
 				border-color: darken( $blue-medium, 8% );
 				color: $white;
 
@@ -402,7 +401,7 @@ textarea {
 		font-size: 14px;
 		margin-right: 0;
 		border-radius: 8px;
-		background: $alert-yellow;
+		background: var( --color-warning );
 		border-color: transparent;
 		color: $white;
 		a {
@@ -478,7 +477,7 @@ div[ng-show='busyIndicator'] {
 
 .busy-indicator,
 .less-busy-indicator {
-	border-top-color: $blue-medium;
+	border-top-color: var( --color-primary );
 	width: 35px;
 	height: 35px;
 }
@@ -488,8 +487,8 @@ div[ng-show='busyIndicator'] {
 	content: '';
 	width: 100%;
 	height: 100%;
-	border-top-color: $blue-medium;
-	border-right-color: $blue-medium;
+	border-top-color: var( --color-primary );
+	border-right-color: var( --color-primary );
 	opacity: 0.4;
 }
 
@@ -698,7 +697,7 @@ body > .ui-select-bootstrap.open {
 
 /* Mark invalid Bootstrap */
 .ui-select-bootstrap.ng-dirty.ng-invalid > button.btn.ui-select-match {
-	border-color: $alert-red;
+	border-color: var( --color-error );
 }
 
 /* Handle up direction Bootstrap */

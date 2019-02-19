@@ -237,10 +237,6 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! isEnabled( 'manage/themes' ) ) {
-			return null;
-		}
-
 		if ( this.props.isJetpack && ! jetpackEnabled && site.options ) {
 			themesLink = site.options.admin_url + 'themes.php';
 		} else if ( this.props.siteId ) {

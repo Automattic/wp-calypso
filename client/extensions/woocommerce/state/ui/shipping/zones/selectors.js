@@ -140,8 +140,8 @@ const generateZoneNameFromLocations = locations => {
 		return translate( 'New shipping zone' );
 	}
 
-	const locationNames = locations.map(
-		( { name, postcodeFilter } ) => ( postcodeFilter ? `${ name } (${ postcodeFilter })` : name )
+	const locationNames = locations.map( ( { name, postcodeFilter } ) =>
+		postcodeFilter ? `${ name } (${ postcodeFilter })` : name
 	);
 
 	if ( locationNames.length > 10 ) {

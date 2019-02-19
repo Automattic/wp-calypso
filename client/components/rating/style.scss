@@ -9,7 +9,11 @@
 		top: 0;
 
 		.gridicon {
-			fill: var( --color-accent );
+			fill: var( --color-primary );
+		}
+
+		.is-empty {
+			fill: var( --color-neutral-100 );
 		}
 	}
 }

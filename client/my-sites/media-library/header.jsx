@@ -22,6 +22,7 @@ import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-action
 import Card from 'components/card';
 import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
+import ScreenReaderText from 'components/screen-reader-text';
 import StickyPanel from 'components/sticky-panel';
 
 class MediaLibraryHeader extends React.Component {
@@ -97,7 +98,7 @@ class MediaLibraryHeader extends React.Component {
 					className="button media-library__upload-more"
 					data-tip-target="media-library-upload-more"
 				>
-					<span className="screen-reader-text">{ this.props.translate( 'More Options' ) }</span>
+					<ScreenReaderText>{ this.props.translate( 'More Options' ) }</ScreenReaderText>
 					<Gridicon icon="chevron-down" size={ 20 } />
 					<PopoverMenu
 						context={ this.state.moreOptionsContext }

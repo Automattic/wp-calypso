@@ -27,7 +27,7 @@ class ConfirmationStep extends Component {
 				description={ translate(
 					'We will send you a calendar invitation and an email with information on how to prepare.'
 				) }
-				title={ translate( 'Your Concierge session has been rescheduled!' ) }
+				title={ translate( 'Your session has been rescheduled!' ) }
 			>
 				<Button
 					className="reschedule__schedule-button"

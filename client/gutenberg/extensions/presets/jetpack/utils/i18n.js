@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * This contains a set of wrappers for all the @wordpress/i18n localization functions.
  * Each of the wrappers has the same signature like the original corresponding function,

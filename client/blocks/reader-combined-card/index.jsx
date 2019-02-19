@@ -26,6 +26,11 @@ import { getPostsByKeys } from 'state/reader/posts/selectors';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import PostBlocked from 'blocks/reader-post-card/blocked';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderCombinedCardComponent extends React.Component {
 	static propTypes = {
 		posts: PropTypes.array.isRequired,
@@ -125,10 +130,9 @@ class ReaderCombinedCardComponent extends React.Component {
 							} ) }
 						</p>
 					</div>
-					{ this.props.showFollowButton &&
-						followUrl && (
-							<FollowButton siteUrl={ followUrl } followSource={ this.props.followSource } />
-						) }
+					{ this.props.showFollowButton && followUrl && (
+						<FollowButton siteUrl={ followUrl } followSource={ this.props.followSource } />
+					) }
 				</header>
 				<ul className="reader-combined-card__post-list">
 					{ posts.map( ( post, i ) => (

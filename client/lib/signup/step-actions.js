@@ -14,7 +14,7 @@ import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
 const user = userFactory();
-import { getSavedVariations, abtest } from 'lib/abtest';
+import { getABTestVariation, getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
@@ -24,10 +24,11 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
+import { getSiteVerticalId, getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
+import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { requestSites } from 'state/sites/actions';
 import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
@@ -35,6 +36,7 @@ import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import { normalizeImportUrl } from 'state/importer-nux/utils';
 import { promisify } from '../../utils';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -104,10 +106,10 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	}
 }
 
-// We are experimenting making site topic a separate step from the survey.
-// Once we've decided to fully move away from the survey form, we can just keep the site topic here.
+// We are experimenting making site topic (site vertical name) a separate step from the survey.
+// Once we've decided to fully move away from the survey form, we can just keep the site vertical name here.
 function getSiteVertical( state ) {
-	return ( getSignupStepsSiteTopic( state ) || getSurveyVertical( state ) ).trim();
+	return ( getSiteVerticalName( state ) || getSurveyVertical( state ) ).trim();
 }
 
 export function createSiteWithCart(
@@ -129,9 +131,11 @@ export function createSiteWithCart(
 
 	const designType = getDesignType( state ).trim();
 	const siteTitle = getSiteTitle( state ).trim();
+	const siteVerticalId = getSiteVerticalId( state );
 	const siteVertical = getSiteVertical( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
+	const siteStyle = getSiteStyle( state ).trim();
 	const siteInformation = getSiteInformation( state );
 
 	const newSiteParams = {
@@ -142,11 +146,13 @@ export function createSiteWithCart(
 			// step object itself depending on if the theme is provided in a
 			// query. See `getThemeSlug` in `DomainsStep`.
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
-			vertical: siteVertical || undefined,
 			siteGoals: siteGoals || undefined,
+			site_style: siteStyle || undefined,
 			site_information: siteInformation || undefined,
-			siteType: siteType || undefined,
+			site_segment: getSiteTypePropertyValue( 'slug', siteType, 'id' ) || undefined,
+			site_vertical: siteVerticalId || undefined,
 		},
+		public: -1,
 		validate: false,
 	};
 
@@ -156,11 +162,15 @@ export function createSiteWithCart(
 	if ( importingFromUrl ) {
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
-		newSiteParams.public = -1;
+	} else if (
+		flowName === 'onboarding' &&
+		'remove' === getABTestVariation( 'removeDomainsStepFromOnboarding' )
+	) {
+		newSiteParams.blog_name = get( user.get(), 'username', siteTitle ) || siteType || siteVertical;
+		newSiteParams.find_available_url = true;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
-		newSiteParams.public = abtest( 'privateByDefault' ) === 'private' ? -1 : 1;
 	}
 
 	wpcom.undocumented().sitesNew( newSiteParams, function( error, response ) {
@@ -336,7 +346,7 @@ export function getUsernameSuggestion( username, reduxState ) {
 	} );
 }
 
-export function addPlanToCart( callback, { siteId }, { cartItem } ) {
+export function addPlanToCart( callback, { siteSlug }, { cartItem } ) {
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
 		defer( callback );
@@ -346,7 +356,7 @@ export function addPlanToCart( callback, { siteId }, { cartItem } ) {
 
 	const newCartItems = [ cartItem ].filter( item => item );
 
-	SignupCart.addToCart( siteId, newCartItems, error => callback( error, { cartItem } ) );
+	SignupCart.addToCart( siteSlug, newCartItems, error => callback( error, { cartItem } ) );
 }
 
 export function createAccount(
@@ -419,8 +429,7 @@ export function createAccount(
 
 				if ( ! errors ) {
 					// Fire after a new user registers.
-					analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
-					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+					analytics.recordRegistration();
 				}
 
 				const username =

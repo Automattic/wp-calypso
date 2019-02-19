@@ -72,9 +72,16 @@ class StatsDownloadCsv extends Component {
 		const disabled = isLoading || ! data.length;
 
 		return (
-			<Button compact onClick={ this.downloadCsv } disabled={ disabled } borderless={ borderless }>
-				{ siteId &&
-					statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+			<Button
+				className="download-csv"
+				compact
+				onClick={ this.downloadCsv }
+				disabled={ disabled }
+				borderless={ borderless }
+			>
+				{ siteId && statType && (
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+				) }
 				<Gridicon icon="cloud-download" />{' '}
 				{ translate( 'Download data as CSV', {
 					context: 'Action shown in stats to download data as csv.',

@@ -10,14 +10,14 @@ import { pick } from 'lodash';
  * Internal dependencies
  */
 import { reducer } from '../reducer';
-import { DOMAIN_NAME, RECORD_A, RECORD_TXT } from './data';
+import { DOMAIN_NAME, RECORD_A, RECORD_NS, RECORD_TXT } from './data';
 import { DNS_DELETE_COMPLETED } from 'lib/upgrades/action-types';
 
 describe( 'reducer', () => {
 	test( 'should return the same state when no matching record passed in the delete action', () => {
 		const state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
-					records: [ RECORD_A ],
+					records: [ RECORD_A, RECORD_NS ],
 				},
 			} ),
 			payload = {
@@ -36,7 +36,7 @@ describe( 'reducer', () => {
 	test( 'should return state without record passed in the delete action', () => {
 		const state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
-					records: [ RECORD_A, RECORD_TXT ],
+					records: [ RECORD_A, RECORD_NS, RECORD_TXT ],
 				},
 			} ),
 			payload = {
@@ -49,14 +49,14 @@ describe( 'reducer', () => {
 
 		const result = reducer( state, payload );
 
-		expect( result ).to.be.eql( { [ DOMAIN_NAME ]: { records: [ RECORD_A ] } } );
+		expect( result ).to.be.eql( { [ DOMAIN_NAME ]: { records: [ RECORD_A, RECORD_NS ] } } );
 	} );
 
 	test( 'should return state without record (having no id) passed in the delete action', () => {
 		const RECORD_TXT_WITHOUT_ID = pick( RECORD_TXT, [ 'data', 'name', 'type' ] ),
 			state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
-					records: [ RECORD_A, RECORD_TXT_WITHOUT_ID ],
+					records: [ RECORD_A, RECORD_NS, RECORD_TXT_WITHOUT_ID ],
 				},
 			} ),
 			payload = {
@@ -69,6 +69,6 @@ describe( 'reducer', () => {
 
 		const result = reducer( state, payload );
 
-		expect( result ).to.be.eql( { [ DOMAIN_NAME ]: { records: [ RECORD_A ] } } );
+		expect( result ).to.be.eql( { [ DOMAIN_NAME ]: { records: [ RECORD_A, RECORD_NS ] } } );
 	} );
 } );

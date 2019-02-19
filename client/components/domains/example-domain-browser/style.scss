@@ -1,23 +1,16 @@
 .example-domain-browser {
 	pointer-events: none;
 
-	&::before,
-	&::after {
-		display: block;
-		content: '';
-		position: absolute;
-			right: 0;
-			bottom: 0;
-			left: 0;
+	svg {
+		position: relative;
+		top: 15px;
 	}
+}
 
-	&::before {
-		height: 30px;
-		background: linear-gradient( to bottom, rgba( $gray-light, 0 ) 0%, rgba( $gray-light, 1 ) 100% );
-	}
+.example-domain-browser__protocol {
+	fill: var( --color-text-subtle );
+}
 
-	&::after {
-		width: 80px;
-		background: linear-gradient( to right, rgba( $gray-light, 0 ) 0%, rgba( $gray-light, 1 ) 100% );
-	}
+.example-domain-browser__domain {
+	fill: var( --color-text );
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -64,6 +62,14 @@ export const settings = {
 		featuredMediaId: {
 			type: 'number',
 			default: 0,
+		},
+		featuredMediaUrl: {
+			type: 'string',
+			default: null,
+		},
+		featuredMediaTitle: {
+			type: 'string',
+			default: null,
 		},
 		multiple: {
 			type: 'boolean',

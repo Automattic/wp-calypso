@@ -1,3 +1,5 @@
+/** @format */
+
 // Block library
 @import '~@wordpress/block-library/build-style/style';
 
@@ -67,7 +69,7 @@ $gutenberg-theme-toggle: #11a0d2;
 	display: none;
 }
 
-.is-section-gutenberg-editor {
+.layout.is-section-gutenberg-editor {
 	box-sizing: border-box !important;
 
 	*,
@@ -96,6 +98,11 @@ $gutenberg-theme-toggle: #11a0d2;
 		.edit-post-layout__content {
 			// Overrides https://github.com/WordPress/gutenberg/blob/a2f81faa58afbbcb28d68ef879a5354c257b2d85/packages/edit-post/src/components/layout/style.scss#L88-L95
 			overscroll-behavior-y: auto;
+			//fixes a notice display issue in Safari
+			margin-left: 0;
+			@media ( min-width: 600px ) {
+				top: 56px;
+			}
 		}
 
 		.editor-post-publish-panel {
@@ -112,8 +119,8 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	.edit-post-visual-editor .editor-post-title__block > div {
-		margin-left: 0px;
-		margin-right: 0px;
+		margin-left: 0;
+		margin-right: 0;
 
 		@media ( min-width: 600px ) {
 			margin-left: -2px;
@@ -178,6 +185,11 @@ $gutenberg-theme-toggle: #11a0d2;
 		border-right: 1px solid lighten( $gray, 25% );
 		border-radius: 0;
 		padding: 10px;
+		.rtl & {
+			button {
+				transform: scaleX( -1 );
+			}
+		}
 	}
 
 	.edit-post-header-toolbar .site {
@@ -286,15 +298,17 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 }
 
-.is-section-gutenberg-editor,
+.layout.is-section-gutenberg-editor,
 .edit-post-options-modal {
 	// UNSET CALYPSO DEFAULT STYLES
+
 	input[type='text'],
 	input[type='search'] {
 		width: auto;
-	}
-	.components-text-control__input input[type='text'] {
-		width: 100%;
+
+		&.components-text-control__input {
+			width: 100%;
+		}
 	}
 
 	input[type='number'].components-range-control__number {
@@ -399,4 +413,38 @@ $gutenberg-theme-toggle: #11a0d2;
 
 .editor-post-publish-button[aria-disabled='true'] {
 	pointer-events: none;
+}
+
+// Calypsoify iframe
+
+html.is-iframe {
+	overflow: hidden;
+}
+
+.main.calypsoify.is-iframe {
+	background-color: $gray-light;
+	margin: 0;
+	padding: 0;
+	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );
+	-webkit-overflow-scrolling: touch;
+	min-height: 0;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+	width: auto;
+
+	iframe {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.main {
+	&.calypsoify {
+		max-width: 100%;
+	}
 }

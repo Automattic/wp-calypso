@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Publicize connections verification component.
  *
@@ -13,9 +11,10 @@
 /**
  * External dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
 import { Button, Notice } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
+import { compose } from '@wordpress/compose';
+import { withDispatch, withSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -23,52 +22,9 @@ import { Component, Fragment } from '@wordpress/element';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class PublicizeConnectionVerify extends Component {
-	state = {
-		failedConnections: [],
-		isLoading: false,
-	};
-
 	componentDidMount() {
-		this.connectionTestStart();
+		this.props.refreshConnections();
 	}
-
-	/**
-	 * Callback for connection test request
-	 *
-	 * Receives results of connection request and
-	 * updates component state to display potentially
-	 * failed connections.
-	 *
-	 * @param {object} response Response from '/publicize/connection-test-results' endpoint
-	 */
-	connectionTestComplete = response => {
-		const failedConnections = response.filter( connection => ! connection.test_success );
-
-		this.setState( {
-			failedConnections,
-			isLoading: false,
-		} );
-	};
-
-	/**
-	 * Callback for connection test request failure
-	 */
-	connectionTestRequestFailed = () => {
-		this.setState( {
-			isLoading: false,
-		} );
-	};
-
-	/**
-	 * Starts request to check connections
-	 *
-	 * Checks connections with using the '/publicize/connection-test-results' endpoint
-	 */
-	connectionTestStart = () => {
-		apiFetch( { path: '/wpcom/v2/publicize/connection-test-results' } )
-			.then( this.connectionTestComplete )
-			.catch( this.connectionTestRequestFailed );
-	};
 
 	/**
 	 * Opens up popup so user can refresh connection
@@ -87,13 +43,13 @@ class PublicizeConnectionVerify extends Component {
 		const popupTimer = window.setInterval( () => {
 			if ( false !== popupWin.closed ) {
 				window.clearInterval( popupTimer );
-				this.connectionTestStart();
+				this.props.refreshConnections();
 			}
 		}, 500 );
 	};
 
 	renderRefreshableConnections() {
-		const { failedConnections } = this.state;
+		const { failedConnections } = this.props;
 		const refreshableConnections = failedConnections.filter( connection => connection.can_refresh );
 
 		if ( refreshableConnections.length ) {
@@ -123,7 +79,7 @@ class PublicizeConnectionVerify extends Component {
 	}
 
 	renderNonRefreshableConnections() {
-		const { failedConnections } = this.state;
+		const { failedConnections } = this.props;
 		const nonRefreshableConnections = failedConnections.filter(
 			connection => ! connection.can_refresh
 		);
@@ -149,4 +105,11 @@ class PublicizeConnectionVerify extends Component {
 	}
 }
 
-export default PublicizeConnectionVerify;
+export default compose( [
+	withSelect( select => ( {
+		failedConnections: select( 'jetpack/publicize' ).getFailedConnections(),
+	} ) ),
+	withDispatch( dispatch => ( {
+		refreshConnections: dispatch( 'jetpack/publicize' ).refreshConnectionTestResults,
+	} ) ),
+] )( PublicizeConnectionVerify );

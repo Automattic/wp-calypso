@@ -26,6 +26,7 @@ import {
 import { successNotice, errorNotice, warningNotice } from 'state/notices/actions';
 import Connection from './connection';
 import FoldableCard from 'components/foldable-card';
+import Notice from 'components/notice';
 import { getAvailableExternalAccounts } from 'state/sharing/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
@@ -46,6 +47,16 @@ import ServiceTip from './service-tip';
 import requestExternalAccess from 'lib/sharing';
 import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
 import config from 'config';
+import PicasaMigration from './picasa-migration';
+
+/**
+ * Check if the connection is broken or requires reauth.
+ *
+ * @param {object} connection Publicize connection.
+ * @returns {boolean} True if connection is broken or requires reauthentication.
+ */
+const isConnectionInvalidOrMustReauth = connection =>
+	[ 'must_reauth', 'invalid' ].includes( connection.status );
 
 export class SharingService extends Component {
 	static propTypes = {
@@ -290,7 +301,7 @@ export class SharingService extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props.siteUserConnections, nextProps.siteUserConnections ) ) {
 			this.setState( {
 				isConnecting: false,
@@ -306,7 +317,18 @@ export class SharingService extends Component {
 		if ( this.state.isAwaitingConnections ) {
 			this.setState( { isAwaitingConnections: false } );
 
-			if ( this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts ) ) {
+			/**
+			 * This immediately connects the account. We need a workaround for MailChimp since it is not a publicize service,
+			 * so it behaves differently.
+			 */
+			if (
+				this.isMailchimpService() &&
+				this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts )
+			) {
+				const account = find( nextProps.availableExternalAccounts, { isConnected: false } );
+				this.addConnection( nextProps.service, account.keyring_connection_ID );
+				this.setState( { isConnecting: false } );
+			} else if ( this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts ) ) {
 				this.setState( { isSelectingAccount: true } );
 			}
 		}
@@ -342,7 +364,7 @@ export class SharingService extends Component {
 		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
 			// A problematic connection exists
 			status = 'reconnect';
-		} else if ( some( this.getConnections(), { status: 'invalid' } ) ) {
+		} else if ( some( this.getConnections(), isConnectionInvalidOrMustReauth ) ) {
 			// A valid connection is not available anymore, user must reconnect
 			status = 'must-disconnect';
 		} else {
@@ -406,12 +428,32 @@ export class SharingService extends Component {
 		);
 	}
 
+	shouldBeExpanded( status ) {
+		if ( this.isMailchimpService() && this.state.justConnected ) {
+			return true;
+		}
+
+		if ( this.isPicasaMigration( status ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	isMailchimpService = () => {
 		if ( ! config.isEnabled( 'mailchimp' ) ) {
 			return false;
 		}
 		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
+
+	isPicasaMigration( status ) {
+		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
+			return true;
+		}
+
+		return false;
+	}
 
 	render() {
 		const connections = this.getConnections();
@@ -434,6 +476,14 @@ export class SharingService extends Component {
 						numberOfConnections={ this.getConnections().length }
 					/>
 				</div>
+				{ 'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } ) && (
+					<Notice isCompact status="is-error" className="sharing-service__notice">
+						{ this.props.translate(
+							'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Publicize ' +
+								'by disconnecting and reconnecting your account.'
+						) }
+					</Notice>
+				) }
 			</div>
 		);
 
@@ -462,7 +512,7 @@ export class SharingService extends Component {
 					header={ header }
 					clickableHeader
 					//For Mailchimp we want to open settings, because in other services we have the popup.
-					expanded={ this.isMailchimpService() && this.state.justConnected }
+					expanded={ this.shouldBeExpanded( connectionStatus ) }
 					compact
 					summary={ action }
 					expandedSummary={ action }
@@ -473,6 +523,9 @@ export class SharingService extends Component {
 						} ) }
 					>
 						<ServiceExamples service={ this.props.service } />
+
+						{ this.isPicasaMigration( connectionStatus ) && <PicasaMigration /> }
+
 						{ ! this.isMailchimpService( connectionStatus ) && (
 							<ServiceConnectedAccounts
 								connect={ this.connectAnother }
@@ -488,16 +541,18 @@ export class SharingService extends Component {
 										onRefresh={ this.refresh }
 										onToggleSitewideConnection={ this.toggleSitewideConnection }
 										service={ this.props.service }
-										showDisconnect={ connections.length > 1 || 'broken' === connection.status }
+										showDisconnect={
+											connections.length > 1 ||
+											[ 'broken', 'must_reauth' ].includes( connection.status )
+										}
 									/>
 								) ) }
 							</ServiceConnectedAccounts>
 						) }
 						<ServiceTip service={ this.props.service } />
-						{ this.isMailchimpService( connectionStatus ) &&
-							connectionStatus === 'connected' && (
-								<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
-							) }
+						{ this.isMailchimpService( connectionStatus ) && connectionStatus === 'connected' && (
+							<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
+						) }
 					</div>
 				</FoldableCard>
 			</li>

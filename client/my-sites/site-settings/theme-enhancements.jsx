@@ -13,7 +13,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -22,9 +21,10 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getCustomizerUrl } from 'state/sites/selectors';
+import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SupportInfo from 'components/support-info';
 
 class ThemeEnhancements extends Component {
@@ -40,7 +40,6 @@ class ThemeEnhancements extends Component {
 		handleAutosavingRadio: PropTypes.func.isRequired,
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
-		jetpackSettingsUI: PropTypes.bool,
 		fields: PropTypes.object,
 	};
 
@@ -193,13 +192,15 @@ class ThemeEnhancements extends Component {
 	}
 
 	render() {
-		const { jetpackSettingsUI, translate } = this.props;
+		const { siteIsJetpack, translate } = this.props;
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Theme Enhancements' ) } />
+				<SettingsSectionHeader title={ translate( 'Theme Enhancements' ) } />
 
 				<Card className="theme-enhancements__card site-settings">
-					{ jetpackSettingsUI ? (
+					{ siteIsJetpack ? (
 						<div>
 							{ this.renderJetpackInfiniteScrollSettings() }
 							<hr />
@@ -211,6 +212,7 @@ class ThemeEnhancements extends Component {
 				</Card>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
@@ -220,6 +222,7 @@ export default connect( state => {
 	return {
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		selectedSiteId,
+		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
 		infiniteScrollModuleActive: !! isJetpackModuleActive(
 			state,
 			selectedSiteId,

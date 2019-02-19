@@ -20,6 +20,11 @@ import RescheduleSkeleton from './reschedule/skeleton';
 import i18n from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const book = ( context, next ) => {
 	context.primary = (
 		<ConciergeMain
@@ -63,10 +68,9 @@ const siteSelector = ( context, next ) => {
 	context.store.dispatch( recordTracksEvent( 'calypso_concierge_site_selection_step' ) );
 
 	context.getSiteSelectionHeaderText = () =>
-		i18n.translate(
-			'Please select a site for your {{strong}}Business Concierge Session{{/strong}}',
-			{ components: { strong: <strong /> } }
-		);
+		i18n.translate( 'Please select a site for your {{strong}}Support Session{{/strong}}', {
+			components: { strong: <strong /> },
+		} );
 	next();
 };
 

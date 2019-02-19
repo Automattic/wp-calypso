@@ -6,10 +6,10 @@
 	overflow: hidden;
 	margin-top: -16px;
 	margin-bottom: 16px;
-	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
-	background: rgba( lighten( $gray, 30 ), 0.3 );
+	box-shadow: inset 0 0 2px 2px rgba( var( --color-neutral-200-rgb ), 0.1 );
+	background: rgba( var( --color-neutral-0-rgb ), 0.3 );
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		left: -24px;
 		width: calc( 100% + 48px );
 		margin-top: -24px;
@@ -38,7 +38,7 @@
 }
 
 .plugin-meta__name {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 18px;
 	font-weight: 600;
 	line-height: 32px;
@@ -46,7 +46,7 @@
 	overflow: hidden;
 	position: relative;
 
-	&:after {
+	&::after {
 		@include long-content-fade( $size: 20% );
 	}
 
@@ -87,7 +87,7 @@
 }
 
 .plugin-meta__actions {
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	flex-grow: 1;
 	flex-shrink: 0;
 	margin-top: 16px;
@@ -149,7 +149,7 @@
 .plugin-meta__version-notice {
 	margin-top: -9px;
 
-	@include breakpoint ( ">480px" ) {
+	@include breakpoint ( '>480px' ) {
 		margin-top: -15px;
 	}
 }

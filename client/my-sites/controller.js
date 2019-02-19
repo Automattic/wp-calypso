@@ -36,7 +36,7 @@ import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
 import {
-	domainManagementAddGoogleApps,
+	domainManagementAddGSuiteUsers,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
@@ -78,8 +78,6 @@ const sitesPageTitleForAnalytics = 'Sites';
  * @returns { object } React element containing the site selector and sidebar
  */
 function createNavigation( context ) {
-	const { getState } = getStore( context );
-	const currentUser = getCurrentUser( getState() );
 	const siteFragment = getSiteFragment( context.pathname );
 	let basePath = context.pathname;
 
@@ -92,7 +90,6 @@ function createNavigation( context ) {
 			path={ context.path }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
-			user={ currentUser }
 		/>
 	);
 }
@@ -162,7 +159,7 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 	const allPaths = [
-		domainManagementAddGoogleApps,
+		domainManagementAddGSuiteUsers,
 		domainManagementContactsPrivacy,
 		domainManagementDns,
 		domainManagementEdit,

@@ -23,6 +23,11 @@ import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/ac
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import QueryReaderTag from 'components/data/query-reader-tag';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class TagStream extends React.Component {
 	static propTypes = {
 		encodedTagSlug: PropTypes.string,

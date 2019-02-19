@@ -14,13 +14,13 @@
 	font-size: 21px;
 	font-weight: 300;
 	line-height: 24px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	margin-bottom: 16px;
 }
 
 .site-settings__importer-section-description {
 	font-size: 14px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .importer__service-icon {
@@ -31,7 +31,7 @@
 	padding: 2px;
 	margin-right: 16px;
 
-	background-color: $gray-dark;
+	background-color: var( --color-neutral-700 );
 	fill: $white;
 	border-radius: 4px;
 
@@ -89,8 +89,8 @@
 	height: 150px;
 	margin-bottom: 24px;
 
-	border: 5px solid $gray-lighten-30;
-	fill: $gray-lighten-10;
+	border: 5px solid var( --color-neutral-0 );
+	fill: var( --color-neutral-200 );
 	font-size: 14px;
 	font-weight: 600;
 	color: $gray;
@@ -101,7 +101,7 @@
 	}
 
 	.accessible-focus &:focus {
-		border-color: $gray-lighten-10;
+		border-color: var( --color-neutral-200 );
 	}
 }
 
@@ -200,7 +200,7 @@
 	padding-top: 7px;
 	float: left;
 	display: inline-block;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	text-align: left;
 	font-size: 14px;
@@ -209,7 +209,7 @@
 
 .importer__mapping-relation {
 	float: left;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 }
 
 .site-importer__site-importer-pane {

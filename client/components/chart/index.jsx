@@ -31,6 +31,7 @@ class Chart extends React.Component {
 		width: 650,
 		yMax: 0,
 		isTooltipVisible: false,
+		hasResized: false,
 	};
 
 	static propTypes = {
@@ -65,7 +66,7 @@ class Chart extends React.Component {
 		}
 
 		if ( prevProps.data !== this.props.data ) {
-			this.updateData( this.props );
+			this.updateData( this.props.data );
 		}
 	}
 
@@ -73,7 +74,7 @@ class Chart extends React.Component {
 		window.removeEventListener( 'resize', this.resize );
 	}
 
-	resize = ( props = this.props ) => {
+	resize = () => {
 		if ( ! this.chart ) {
 			return;
 		}
@@ -84,10 +85,9 @@ class Chart extends React.Component {
 		const width = isTouch && clientWidth <= 0 ? 350 : clientWidth; // mobile safari bug with zero width
 		const maxBars = Math.floor( width / minWidth );
 
-		this.setState( { maxBars, width }, () =>
-			// this may get called either directly or as a resize event callback
-			this.updateData( props instanceof Event ? this.props : props )
-		);
+		const updatedData = this.calculateUpdatedData( this.props.data, maxBars );
+
+		this.setState( { maxBars, width, hasResized: true, ...updatedData } );
 	};
 
 	getYAxisMax = values => {
@@ -115,17 +115,19 @@ class Chart extends React.Component {
 
 	storeChart = ref => ( this.chart = ref );
 
-	updateData = ( { data } ) => {
-		const { maxBars } = this.state;
-
+	calculateUpdatedData = ( data, maxBars ) => {
 		const nextData = data.length <= maxBars ? data : data.slice( 0 - maxBars );
 		const nextVals = data.map( ( { value } ) => value );
 
-		this.setState( {
+		return {
 			data: nextData,
 			isEmptyChart: Boolean( nextVals.length && ! nextVals.some( a => a > 0 ) ),
 			yMax: this.getYAxisMax( nextVals ),
-		} );
+		};
+	};
+
+	updateData = data => {
+		this.setState( state => this.calculateUpdatedData( data, state.maxBars ) );
 	};
 
 	setTooltip = ( tooltipContext, tooltipPosition, tooltipData ) => {
@@ -147,7 +149,12 @@ class Chart extends React.Component {
 			tooltipContext,
 			tooltipPosition,
 			tooltipData,
+			hasResized,
 		} = this.state;
+
+		if ( ! hasResized ) {
+			return <div ref={ this.storeChart } className="chart" />;
+		}
 
 		return (
 			<div ref={ this.storeChart } className="chart">

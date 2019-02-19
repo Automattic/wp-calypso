@@ -40,6 +40,7 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { adjustMoment } from '../activity-log/utils';
 import { getSite } from 'state/sites/selectors';
+import { isDesktop, addIsDesktopListener, removeIsDesktopListener } from 'lib/viewport';
 
 class ActivityLogItem extends Component {
 	static propTypes = {
@@ -52,19 +53,66 @@ class ActivityLogItem extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	confirmBackup = () => this.props.confirmBackup( this.props.activity.rewindId );
+	state = {
+		restoreArgs: {
+			themes: true,
+			plugins: true,
+			uploads: true,
+			sqls: true,
+			roots: true,
+			contents: true,
+		},
+		downloadArgs: {
+			themes: true,
+			plugins: true,
+			uploads: true,
+			sqls: true,
+			roots: true,
+			contents: true,
+		},
+	};
+
+	confirmBackup = () =>
+		this.props.confirmBackup( this.props.activity.rewindId, this.state.downloadArgs );
 
 	confirmRewind = () =>
-		this.props.confirmRewind( this.props.activity.rewindId, this.props.activity.activityName );
+		this.props.confirmRewind(
+			this.props.activity.rewindId,
+			this.props.activity.activityName,
+			this.state.restoreArgs
+		);
+
+	restoreSettingsChange = ( { target: { name, checked } } ) =>
+		this.setState( {
+			restoreArgs: Object.assign( this.state.restoreArgs, { [ name ]: checked } ),
+		} );
+
+	downloadSettingsChange = ( { target: { name, checked } } ) =>
+		this.setState( {
+			downloadArgs: Object.assign( this.state.downloadArgs, { [ name ]: checked } ),
+		} );
+
+	sizeChanged = () => {
+		this.forceUpdate();
+	};
+
+	componentDidMount() {
+		addIsDesktopListener( this.sizeChanged );
+	}
+
+	componentWillUnmount() {
+		removeIsDesktopListener( this.sizeChanged );
+	}
 
 	renderHeader() {
 		const {
 			activity: { activityTitle, actorAvatarUrl, actorName, actorRole, actorType, activityMedia },
 		} = this.props;
+		const isDesktopSize = isDesktop();
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
-				{ activityMedia && (
+				{ activityMedia && isDesktopSize && (
 					<ActivityMedia
 						className={ classNames( {
 							'activity-log-item__activity-media': true,
@@ -86,7 +134,7 @@ class ActivityLogItem extends Component {
 					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
 				</div>
-				{ activityMedia && (
+				{ activityMedia && ! isDesktopSize && (
 					<ActivityMedia
 						className="activity-log-item__activity-media is-mobile"
 						icon={ false }
@@ -254,6 +302,7 @@ class ActivityLogItem extends Component {
 						}
 						onClose={ dismissRewind }
 						onConfirm={ this.confirmRewind }
+						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
 						title={ translate( 'Rewind Site' ) }
 					>
@@ -274,6 +323,7 @@ class ActivityLogItem extends Component {
 						confirmTitle={ translate( 'Create download' ) }
 						onClose={ dismissBackup }
 						onConfirm={ this.confirmBackup }
+						onSettingsChange={ this.downloadSettingsChange }
 						supportLink="https://jetpack.com/support/backups"
 						title={ translate( 'Create downloadable backup' ) }
 						type={ 'backup' }
@@ -356,16 +406,16 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 				rewindRequestDismiss( siteId )
 			)
 		),
-	confirmBackup: rewindId => (
+	confirmBackup: ( rewindId, downloadArgs ) => (
 		scrollTo( { x: 0, y: 0, duration: 250 } ),
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_backup_confirm', { action_id: rewindId } ),
-				rewindBackup( siteId, rewindId )
+				rewindBackup( siteId, rewindId, downloadArgs )
 			)
 		)
 	),
-	confirmRewind: ( rewindId, activityName ) => (
+	confirmRewind: ( rewindId, activityName, restoreArgs ) => (
 		scrollTo( { x: 0, y: 0, duration: 250 } ),
 		dispatch(
 			withAnalytics(
@@ -373,7 +423,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 					action_id: rewindId,
 					activity_name: activityName,
 				} ),
-				rewindRestore( siteId, rewindId )
+				rewindRestore( siteId, rewindId, restoreArgs )
 			)
 		)
 	),

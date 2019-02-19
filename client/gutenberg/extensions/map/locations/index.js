@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import {
 	Button,
 	Dashicon,
@@ -17,7 +14,6 @@ import { Component } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-
 import './style.scss';
 
 export class Locations extends Component {

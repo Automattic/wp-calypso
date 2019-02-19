@@ -22,8 +22,8 @@ export default localize( ( { selectedSite, translate } ) => {
 					'Replace the default WordPress search with better results ' +
 						'and filtering powered by Elasticsearch.'
 				) }
-				buttonText={ translate( 'Enable Search in Traffic Settings' ) }
-				href={ '/settings/traffic/' + selectedSite.slug }
+				buttonText={ translate( 'Enable a better search' ) }
+				href={ '/settings/performance/' + selectedSite.slug }
 			/>
 		</div>
 	);

@@ -12,7 +12,11 @@ import { get, find, isObject } from 'lodash';
 import { getSelectedSiteWithFallback } from '../sites/selectors';
 
 export function getPromotions( rootState, siteId = getSelectedSiteWithFallback( rootState ) ) {
-	const promotions = get( rootState, [ 'extensions', 'woocommerce', 'sites', siteId, 'promotions' ], {} );
+	const promotions = get(
+		rootState,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'promotions' ],
+		{}
+	);
 	return promotions.promotions;
 }
 
@@ -22,14 +26,10 @@ export function getPromotion(
 	siteId = getSelectedSiteWithFallback( rootState )
 ) {
 	const promotions = getPromotions( rootState, siteId );
-	return ( find( promotions, ( p ) => promotionId === p.id ) || null );
+	return find( promotions, p => promotionId === p.id ) || null;
 }
 
-export function getPromotionsPage(
-	promotions,
-	page,
-	perPage
-) {
+export function getPromotionsPage( promotions, page, perPage ) {
 	const offset = ( page - 1 ) * perPage;
 	return promotions ? promotions.slice( offset, offset + perPage ) : null;
 }
@@ -53,7 +53,11 @@ export function getCurrentlyEditingPromotionId(
 	rootState,
 	siteId = getSelectedSiteWithFallback( rootState )
 ) {
-	const edits = get( rootState, [ 'extensions', 'woocommerce', 'ui', 'promotions', 'edits', siteId ], {} );
+	const edits = get(
+		rootState,
+		[ 'extensions', 'woocommerce', 'ui', 'promotions', 'edits', siteId ],
+		{}
+	);
 	return edits.currentlyEditingId || null;
 }
 
@@ -62,12 +66,16 @@ export function getPromotionEdits(
 	promotionId,
 	siteId = getSelectedSiteWithFallback( rootState )
 ) {
-	const edits = get( rootState, [ 'extensions', 'woocommerce', 'ui', 'promotions', 'edits', siteId ], {} );
+	const edits = get(
+		rootState,
+		[ 'extensions', 'woocommerce', 'ui', 'promotions', 'edits', siteId ],
+		{}
+	);
 
 	if ( isObject( promotionId ) ) {
-		return find( edits.creates, ( p ) => promotionId === p.id ) || null;
+		return find( edits.creates, p => promotionId === p.id ) || null;
 	}
-	return find( edits.updates, ( p ) => promotionId === p.id ) || null;
+	return find( edits.updates, p => promotionId === p.id ) || null;
 }
 
 export function getPromotionWithLocalEdits(
@@ -95,4 +103,3 @@ export function getPromotionableProducts(
 	);
 	return promotions.products;
 }
-

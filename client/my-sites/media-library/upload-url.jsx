@@ -16,7 +16,13 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import FormTextInput from 'components/forms/form-text-input';
+import ScreenReaderText from 'components/screen-reader-text';
 import MediaActions from 'lib/media/actions';
+
+/**
+ * Style dependencies
+ */
+import './upload-url.scss';
 
 class MediaLibraryUploadUrl extends Component {
 	static propTypes = {
@@ -97,7 +103,7 @@ class MediaLibraryUploadUrl extends Component {
 					</button>
 
 					<button type="button" className="media-library__upload-url-cancel" onClick={ onClose }>
-						<span className="screen-reader-text">{ translate( 'Cancel' ) }</span>
+						<ScreenReaderText>{ translate( 'Cancel' ) }</ScreenReaderText>
 						<Gridicon icon="cross" />
 					</button>
 				</div>

@@ -33,6 +33,7 @@ import {
 	isSectionLoading,
 } from 'state/ui/selectors';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
+import { isSupportSession } from 'state/support/selectors';
 import SitePreview from 'blocks/site-preview';
 import SupportArticleDialog from 'blocks/support-article-dialog';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -47,6 +48,7 @@ import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import { isE2ETest } from 'lib/e2e';
+import BodySectionCssClass from './body-section-css-class';
 
 class Layout extends Component {
 	static displayName = 'Layout';
@@ -57,7 +59,7 @@ class Layout extends Component {
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
 		isLoading: PropTypes.bool,
-		isSupportUser: PropTypes.bool,
+		isSupportSession: PropTypes.bool,
 		isOffline: PropTypes.bool,
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
@@ -99,7 +101,7 @@ class Layout extends Component {
 				`is-group-${ this.props.sectionGroup }`,
 				`is-section-${ this.props.sectionName }`,
 				`focus-${ this.props.currentLayoutFocus }`,
-				{ 'is-support-user': this.props.isSupportUser },
+				{ 'is-support-session': this.props.isSupportSession },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'has-chat': this.props.chatIsOpen },
 				{ 'has-no-masterbar': this.props.masterbarIsHidden }
@@ -111,6 +113,7 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
+				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
@@ -149,8 +152,9 @@ class Layout extends Component {
 					<TranslatorLauncher />
 				) }
 				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
-				{ config.isEnabled( 'happychat' ) &&
-					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
+				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
+					<AsyncLoad require="components/happychat" />
+				) }
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
@@ -173,7 +177,7 @@ export default connect( state => {
 	return {
 		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === sectionName,
 		isLoading: isSectionLoading( state ),
-		isSupportUser: state.support.isSupportUser,
+		isSupportSession: isSupportSession( state ),
 		sectionGroup,
 		sectionName,
 		hasSidebar: hasSidebar( state ),

@@ -1,35 +1,119 @@
-// Adjust the layout for the signup header.
-.is-section-signup {
+body.is-section-signup {
+	// Use the primary color for our background. I wonder how we
+	// should deal with different color schemes?
+	background: var( --color-primary );
+
+
+	// Adjust the padding as we no longer
+	// show the masterbar.
 	.layout__content {
-		padding: 32px 0 0 0;
+		padding: 48px 0 0;
+	}
+
+	// Hide the masterbar for realz
+	.masterbar {
+		display: none;
+	}
+
+	// Force the masterbar for Crowdsignal OAuth pages
+	.crowdsignal {
+		.masterbar__crowdsignal {
+			display: block;
+		}
+
+		.layout__content {
+			padding: 140px 0 0;
+		}
+	}
+}
+
+// Notice the :not(.dops) selector. I've added this to try and
+// avoid stepping on the toes of our oauth users, like Crowdsignal.
+body.is-section-signup .layout:not(.dops) {
+
+	// Update the logo that appears when loading Calypso
+	// to match the homepage, using primary-dark with opacity.
+	.wpcom-site__logo {
+		fill: var( --color-primary-dark );
+		opacity: 0.3;
+	}
+
+	// If there's an error lets make it look a little better
+	// on the primary colored background.
+	.empty-content {
+		.empty-content__illustration {
+			background: var( --color-white );
+			padding-bottom: 16px;
+			margin-bottom: 24px;
+			border-radius: 6px;
+			box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2),
+						0 8px 10px 1px rgba( 0, 0, 0, 0.14),
+						0 3px 14px 2px rgba( 0, 0, 0, 0.12);
+		}
+
+		.empty-content__title {
+			color: var( --color-white );
+		}
+	}
+
+	// With the dark background, the border on cards looks a
+	// a little strange. Lets try a shadow instead. -shaun
+	.signup-form > .card,
+	.is-about .card,
+	.is-site-type .card,
+	.is-site-information .site-information__wrapper:not(.is-single-fieldset) .card {
+		box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2),
+					0 8px 10px 1px rgba( 0, 0, 0, 0.14),
+					0 3px 14px 2px rgba( 0, 0, 0, 0.12);
+
+		.dops & {
+			box-shadow: none;
+		}
 	}
 
 	//Masterbar is hidden but still has height
 	//which is how sticky panel offset is calculated.
 	//Setting height to zero removes the offset
 	//so the sticky panel sticks to the top.
-
-	&.has-no-masterbar .masterbar:not( .header__masterbar-mock ) {
+	&.has-no-masterbar .masterbar {
 		height: 0;
 	}
 
+	// This allows us to position the search suggestions
+	// relative to their fieldset.
 	.form-fieldset {
 		position: relative;
 	}
 
 	.suggestions__wrapper {
 		position: absolute;
-		top: 66px;
+		top: 42px;
 		left: 0;
 		right: 0;
 		max-height: 300px;
 		overflow: auto;
 		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.2 );
 	}
+
+	@include breakpoint( '<660px' ) {
+		button {
+			font-size: 16px;
+			padding-top: 12px;
+			padding-bottom: 14px;
+		}
+	}
+
+	// Back button
+	.navigation-link.button.back {
+		position: absolute;
+		top: 6px;
+		left: 11px;
+	}
 }
 
-// Most steps have a narrow width.
-.step-wrapper {
+// The container wrapped around every
+// step in signup
+body.is-section-signup .layout:not(.dops) .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
 
@@ -43,7 +127,7 @@
 	// border (which are really box-shadows) being
 	// cut off on the bottom. 4px to account for
 	// input:focus states. -shaun
-	padding: 1px 4px;
+	padding: 1px;
 
 	// Some steps (like plans) need a larger
 	// width column.
@@ -51,25 +135,35 @@
 		max-width: 1040px;
 	}
 
-	// pressable-nux has no title or subtitle so needs to not hide the (W) logo
+	// pressable-nux has no title or subtitle so
+	// needs to not hide the (W) logo
 	.is-pressable-nux & {
 		margin-top: 30px;
+	}
+
+	// On small screens remove the margin from the
+	// bottom of the cards.
+	@include breakpoint( '<660px' ) {
+		.card {
+			margin-bottom: 0;
+		}
 	}
 }
 
 // Signup headings
-.is-section-signup .formatted-header {
-	margin: 16px 0 24px 0;
+body.is-section-signup .layout:not(.dops) .formatted-header {
+	margin: 0 0 16px 0;
 
 	.formatted-header__title {
 		margin: 0;
-		font-weight: 700;
+		font-weight: 400;
+		color: var( --color-white );
 	}
 
 	.formatted-header__subtitle {
 		margin: 0;
 		font-size: 15px;
-		color: $gray-darken-20;
+		color: var( --color-white );
 	}
 }
 
@@ -78,49 +172,7 @@
 	text-align: center;
 }
 
-// Back button
-.navigation-link.button.back {
-	position: absolute;
-	top: 6px;
-	left: 16px;
-}
-
 .is-section-signup .layout__content,
 .is-section-signup .layout__primary {
-	padding-left: 0;
-	padding-right: 0;
 	overflow: visible;
-}
-
-// The Floating Squares
-// (Is that a band name?)
-.is-section-signup::before,
-.is-section-signup .layout__primary::before {
-	content: '';
-	background: $gray-lighten-30;
-	display: block;
-	position: fixed;
-	width: 250px;
-	height: 350px;
-	transform: rotate( -10deg );
-	left: -30px;
-	bottom: -30px;
-	z-index: z-index( '.is-section-signup', '.is-section-signup::before' );
-}
-
-.is-section-signup .layout__primary::before {
-	left: auto;
-	bottom: auto;
-	top: -30px;
-	right: -30px;
-	z-index: z-index( '.is-section-signup', '.layout__primary::before' );
-}
-
-// Segment (site-type) Step
-.is-section-signup .site-type__wrapper .card {
-	padding-top: 0px;
-}
-
-.is-section-signup .site-type__wrapper .site-type__option:first-child {
-	border-top: none;
 }

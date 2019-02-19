@@ -26,12 +26,12 @@ import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
 import OwnershipInformation from './ownership-information';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { changeOwner } from 'state/jetpack/connection/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
-import { isCurrentPlanPaid, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { transferPlanOwnership } from 'state/sites/plans/actions';
 
@@ -137,13 +137,9 @@ class SiteOwnership extends Component {
 	}
 
 	renderCurrentUserDropdown() {
-		const { currentUser, isConnectionTransferSupported, siteId } = this.props;
+		const { currentUser, siteId } = this.props;
 		if ( ! currentUser ) {
 			return;
-		}
-
-		if ( ! isConnectionTransferSupported ) {
-			return this.renderCurrentUser();
 		}
 
 		return (
@@ -264,7 +260,7 @@ class SiteOwnership extends Component {
 				{ siteIsJetpack && <QueryJetpackConnection siteId={ siteId } /> }
 				{ siteIsJetpack && <QueryJetpackUserConnection siteId={ siteId } /> }
 
-				<SectionHeader label={ translate( 'Site ownership' ) } />
+				<SettingsSectionHeader title={ translate( 'Site ownership' ) } />
 
 				{ siteIsConnected === null ? this.renderPlaceholder() : this.renderCardContent() }
 			</Fragment>
@@ -281,7 +277,6 @@ export default connect(
 		return {
 			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 			currentUser: getCurrentUser( state ),
-			isConnectionTransferSupported: isJetpackMinimumVersion( state, siteId, '6.3.3' ),
 			isCurrentPlanOwner,
 			isPaidPlan,
 			siteId,

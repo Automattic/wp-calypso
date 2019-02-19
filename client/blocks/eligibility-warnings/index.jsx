@@ -90,38 +90,34 @@ export const EligibilityWarnings = ( {
 				eventProperties={ { context } }
 			/>
 			{ businessUpsellBanner }
-			{ hasBusinessPlan &&
-				! isJetpack &&
-				includes( bannerHolds, 'NOT_USING_CUSTOM_DOMAIN' ) && (
-					// TODO: confirm the user has domain credit
-					<Banner
-						className="eligibility-warnings__banner"
-						description={
-							'plugins' === context
-								? translate( 'To install this plugin, add a free custom domain.' )
-								: translate( 'To upload themes, add a free custom domain.' )
-						}
-						href={ `/domains/manage/${ siteSlug }` }
-						icon="domains"
-						title={ translate( 'Custom domain required' ) }
-					/>
-				) }
+			{ hasBusinessPlan && ! isJetpack && includes( bannerHolds, 'NOT_USING_CUSTOM_DOMAIN' ) && (
+				// TODO: confirm the user has domain credit
+				<Banner
+					className="eligibility-warnings__banner"
+					description={
+						'plugins' === context
+							? translate( 'To install this plugin, add a free custom domain.' )
+							: translate( 'To upload themes, add a free custom domain.' )
+					}
+					href={ `/domains/manage/${ siteSlug }` }
+					icon="domains"
+					title={ translate( 'Custom domain required' ) }
+				/>
+			) }
 
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
 				<HoldList holds={ listHolds } isPlaceholder={ isPlaceholder } siteSlug={ siteSlug } />
 			) }
 			{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
 
-			{ isEligible &&
-				0 === listHolds.length &&
-				0 === warnings.length && (
-					<Card className="eligibility-warnings__no-conflicts">
-						<Gridicon icon="thumbs-up" size={ 24 } />
-						<span>
-							{ translate( 'This site is eligible to install plugins and upload themes.' ) }
-						</span>
-					</Card>
-				) }
+			{ isEligible && 0 === listHolds.length && 0 === warnings.length && (
+				<Card className="eligibility-warnings__no-conflicts">
+					<Gridicon icon="thumbs-up" size={ 24 } />
+					<span>
+						{ translate( 'This site is eligible to install plugins and upload themes.' ) }
+					</span>
+				</Card>
+			) }
 
 			<Card className="eligibility-warnings__confirm-box">
 				<div className="eligibility-warnings__confirm-text">

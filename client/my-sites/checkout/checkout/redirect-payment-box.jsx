@@ -25,10 +25,11 @@ import SubscriptionText from './subscription-text';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import notices from 'notices';
-import EbanxPaymentFields from 'my-sites/checkout/checkout/ebanx-payment-fields';
+import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
-import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
+import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
+import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 
 export class RedirectPaymentBox extends PureComponent {
 	static displayName = 'RedirectPaymentBox';
@@ -58,8 +59,8 @@ export class RedirectPaymentBox extends PureComponent {
 				paymentDetailsState = {
 					'tef-bank': '',
 					...zipObject(
-						PAYMENT_PROCESSOR_EBANX_COUNTRIES.BR.fields,
-						map( PAYMENT_PROCESSOR_EBANX_COUNTRIES.BR.fields, () => '' )
+						PAYMENT_PROCESSOR_COUNTRIES_FIELDS.BR.fields,
+						map( PAYMENT_PROCESSOR_COUNTRIES_FIELDS.BR.fields, () => '' )
 					),
 				};
 		}
@@ -260,7 +261,7 @@ export class RedirectPaymentBox extends PureComponent {
 							label: translate( 'Bank' ),
 							options: this.getBankOptions( 'brazil-tef' ),
 						} ) }
-						<EbanxPaymentFields
+						<CountrySpecificPaymentFields
 							countryCode="BR"
 							countriesList={ this.props.countriesList }
 							getErrorMessage={ this.getErrorMessage }
@@ -297,6 +298,7 @@ export class RedirectPaymentBox extends PureComponent {
 							this.props.cart
 						) }
 					/>
+					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
 						<div className="checkout__pay-button">

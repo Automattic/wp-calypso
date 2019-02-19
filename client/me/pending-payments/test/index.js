@@ -72,7 +72,7 @@ describe( 'PendingPayments', () => {
 
 	describe( 'Non empty list', () => {
 		const pendingPayments = [
-			{ siteId: '', productName: '', paymentType: '', totalCostDisplay: '' },
+			{ orderId: '', siteId: '', productName: '', paymentType: '', totalCostDisplay: '' },
 		];
 		const wrapper = shallow(
 			<PendingPayments
@@ -85,7 +85,7 @@ describe( 'PendingPayments', () => {
 		const rules = [
 			'Main.pending-payments Localized(MeSidebarNavigation)',
 			'Main.pending-payments PurchasesHeader[section="pending"]',
-			'Main.pending-payments Localized(PendingListItem)',
+			'Main.pending-payments Connect(Localized(PendingListItem))',
 		];
 
 		rules.forEach( rule => {

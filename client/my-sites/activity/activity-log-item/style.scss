@@ -6,7 +6,7 @@
 		margin-left: 8px;
 
 		.is-expanded & {
-			margin-left: 0px;
+			margin-left: 0;
 		}
 	}
 
@@ -63,14 +63,14 @@
 
 .activity-log-item__type {
 	align-self: flex-start;
-	background: $gray-light;
+	background: var( --color-surface-backdrop );
 	text-align: center;
 	margin: 1px 22px 0 10px;
 	padding: 4px 0 6px;
 	z-index: 1;
 
 	@include breakpoint( '<480px' ) {
-		margin: -2px 8px 0 0px;
+		margin: -2px 8px 0 0;
 	}
 
 	.is-loading & {
@@ -78,9 +78,9 @@
 	}
 
 	.activity-log-item__card.is-expanded & {
-		margin-left: 0px;
+		margin-left: 0;
 		margin-right: 16px;
-		background: $white;
+		background: var( --color-surface );
 	}
 }
 
@@ -97,8 +97,8 @@
 
 .activity-log-item__activity-icon {
 	// General notice
-	background: $gray;
-	color: $white;
+	background: var( --color-neutral-200 );
+	color: var( --color-white );
 	display: flex;
 	border-radius: 50%;
 	padding: 12px;
@@ -135,9 +135,9 @@
 	.is-loading & {
 		width: 48px;
 		height: 48px;
-		margin-top: 0px;
+		margin-top: 0;
 		padding: 0;
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 
 		@include breakpoint( '<480px' ) {
 			width: 32px;
@@ -207,7 +207,7 @@
 		width: 40px;
 		height: 40px;
 		margin-right: 16px;
-		fill: $gray-darken-10;
+		fill: var( --color-neutral-400 );
 
 		@include breakpoint( '<960px' ) {
 			width: 32px;
@@ -222,26 +222,26 @@
 	}
 
 	.social-logo {
-		fill: $white;
-		background: $color-wordpressOrg;
+		fill: var( --color-white );
+		background: var( --color-wordpress-org );
 		border-radius: 50%;
 	}
 
 	.jetpack-logo__icon-circle {
-		fill: $gray-darken-10;
+		fill: var( --color-neutral-400 );
 	}
 
 	.gridicon {
 		width: 24px;
 		height: 24px;
-		background: $gray;
-		color: $white;
+		background: var( --color-neutral-200 );
+		color: var( --color-white );
 		display: flex;
 		padding: 8px;
 		border-radius: 50%;
 		margin-right: 14px;
 		margin-top: 2px;
-		fill: $white;
+		fill: var( --color-white );
 
 		@include breakpoint( '<480px' ) {
 			padding: 7px;
@@ -338,7 +338,7 @@
 }
 
 .activity-log-item__help-action {
-	color: $gray;
+	color: var( --color-neutral-200 );
 	font-weight: 400;
 	font-size: 13px;
 	white-space: nowrap;
@@ -381,11 +381,11 @@
 
 .activity-log-item__activity-media {
 	margin-right: 16px;
-	color: $white;
+	color: var( --color-white );
 }
 
 .activity-log-item__activity-media .gridicon {
-	background-color: $gray-lighten-20;
+	background-color: var( --color-neutral-100 );
 }
 .activity-log-item__activity-media .is-thumbnail {
 	width: auto;
@@ -429,7 +429,7 @@
 	justify-content: space-between;
 	padding: 16px 0 0;
 	margin: 0;
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-surface-backdrop );
 
 	p {
 		margin-bottom: 0;

@@ -33,6 +33,7 @@ import {
 	isRemovable,
 	isRefundable,
 	maybeWithinRefundPeriod,
+	purchaseType,
 } from 'lib/purchases';
 import { isDataLoading } from '../utils';
 import { isDomainRegistration, isGoogleApps, isJetpackPlan, isPlan } from 'lib/products-values';
@@ -296,27 +297,26 @@ class RemovePurchase extends Component {
 						{ args: { domain: productName } }
 					) }
 				</p>
-				{ ! isRefundable( purchase ) &&
-					maybeWithinRefundPeriod( purchase ) && (
-						<p>
-							<strong>
-								{ translate(
-									"We're not able to refund this purchase automatically. " +
-										"If you're canceling within %(refundPeriodInDays)s days of " +
-										'purchase, {{contactLink}}contact us{{/contactLink}} to ' +
-										'request a refund.',
-									{
-										args: {
-											refundPeriodInDays: purchase.refundPeriodInDays,
-										},
-										components: {
-											contactLink: <a href={ CALYPSO_CONTACT } />,
-										},
-									}
-								) }
-							</strong>
-						</p>
-					) }
+				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase ) && (
+					<p>
+						<strong>
+							{ translate(
+								"We're not able to refund this purchase automatically. " +
+									"If you're canceling within %(refundPeriodInDays)s days of " +
+									'purchase, {{contactLink}}contact us{{/contactLink}} to ' +
+									'request a refund.',
+								{
+									args: {
+										refundPeriodInDays: purchase.refundPeriodInDays,
+									},
+									components: {
+										contactLink: <a href={ CALYPSO_CONTACT } />,
+									},
+								}
+							) }
+						</strong>
+					</p>
+				) }
 			</Dialog>
 		);
 	}
@@ -407,7 +407,7 @@ class RemovePurchase extends Component {
 				<p>
 					{ translate( 'Are you sure you want to remove %(productName)s from {{siteName/}}?', {
 						args: { productName },
-						components: { siteName: <em>{ purchase.domain }</em> },
+						components: { siteName: <em>{ purchaseType( purchase ) }</em> },
 					} ) }{' '}
 					{ isGoogleApps( purchase )
 						? translate(

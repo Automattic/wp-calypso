@@ -15,11 +15,11 @@ import { isEmpty, noop } from 'lodash';
  */
 import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
 import PaymentCountrySelect from 'components/payment-country-select';
-import EbanxPaymentFields from 'my-sites/checkout/checkout/ebanx-payment-fields';
+import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
 import { Input } from 'my-sites/domains/components/form';
 import InfoPopover from 'components/info-popover';
 import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
-import { shouldRenderAdditionalEbanxFields } from 'lib/checkout/ebanx';
+import { shouldRenderAdditionalCountryFields } from 'lib/checkout/ebanx';
 
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
@@ -123,37 +123,37 @@ export class CreditCardFormFields extends React.Component {
 		);
 	};
 
-	shouldRenderEbanxFields() {
+	shouldRenderCountrySpecificFields() {
 		// The add/update card endpoints do not process Ebanx payment details
 		// so we only show Ebanx fields at checkout,
 		// i.e., when there is a current transaction.
 		return (
 			this.props.isNewTransaction &&
-			shouldRenderAdditionalEbanxFields( this.getFieldValue( 'country' ) )
+			shouldRenderAdditionalCountryFields( this.getFieldValue( 'country' ) )
 		);
 	}
 
 	render() {
 		const { translate, countriesList, autoFocus } = this.props;
-		const ebanxDetailsRequired = this.shouldRenderEbanxFields();
+		const countryDetailsRequired = this.shouldRenderCountrySpecificFields();
 		const creditCardFormFieldsExtrasClassNames = classNames( {
 			'credit-card-form-fields__extras': true,
-			'ebanx-details-required': ebanxDetailsRequired,
+			'ebanx-details-required': countryDetailsRequired,
 		} );
 
 		return (
 			<div className="credit-card-form-fields">
 				{ this.createField( 'name', Input, {
 					autoFocus,
-					label: translate( 'Name on Card', {
-						context: 'Card holder name label on credit card form',
+					label: translate( 'Cardholder Name', {
+						comment: 'Cardholder name label on credit card form',
 					} ),
 				} ) }
 
 				{ this.createField( 'number', CreditCardNumberInput, {
 					inputMode: 'numeric',
 					label: translate( 'Card Number', {
-						context: 'Card number label on credit card form',
+						comment: 'Card number label on credit card form',
 					} ),
 				} ) }
 
@@ -168,7 +168,7 @@ export class CreditCardFormFields extends React.Component {
 					{ this.createField( 'cvv', Input, {
 						inputMode: 'numeric',
 						placeholder: translate( 'CVV', {
-							context: '3 digit security number on credit card form',
+							comment: '3 digit security number on credit card form',
 						} ),
 						label: translate( 'CVV {{infoPopover/}}', {
 							components: {
@@ -184,8 +184,8 @@ export class CreditCardFormFields extends React.Component {
 						onCountrySelected: this.updateFieldValues,
 					} ) }
 
-					{ ebanxDetailsRequired ? (
-						<EbanxPaymentFields
+					{ countryDetailsRequired ? (
+						<CountrySpecificPaymentFields
 							countryCode={ this.getFieldValue( 'country' ) }
 							countriesList={ countriesList }
 							getErrorMessage={ this.props.getErrorMessage }
@@ -195,7 +195,7 @@ export class CreditCardFormFields extends React.Component {
 					) : (
 						this.createField( 'postal-code', Input, {
 							label: translate( 'Postal Code', {
-								context: 'Postal code on credit card form',
+								comment: 'Postal code on credit card form',
 							} ),
 						} )
 					) }

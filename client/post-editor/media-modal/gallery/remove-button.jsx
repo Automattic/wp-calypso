@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import ScreenReaderText from 'components/screen-reader-text';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 
@@ -45,7 +46,7 @@ class RemoveButton extends PureComponent {
 				onMouseDown={ event => event.stopPropagation() }
 				className="editor-media-modal-gallery__remove"
 			>
-				<span className="screen-reader-text">{ translate( 'Remove' ) }</span>
+				<ScreenReaderText>{ translate( 'Remove' ) }</ScreenReaderText>
 				<Gridicon icon="cross" />
 			</button>
 		);

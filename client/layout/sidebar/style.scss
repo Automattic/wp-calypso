@@ -1,4 +1,3 @@
-
 .sidebar {
 	display: flex;
 	flex-direction: column;
@@ -57,11 +56,11 @@
 		display: flex;
 
 		@include breakpoint( '<660px' ) {
-			background-color: $gray-light;
-			border-bottom: 1px solid lighten( $gray, 25 );
+			border-bottom: 1px solid var( --sidebar-border-color );
+			background-color: var( --sidebar-background );
 
 			&:first-child {
-				border-top: 1px solid lighten( $gray, 25 );
+				border-top: 1px solid var( --sidebar-border-color );
 			}
 		}
 	}
@@ -71,7 +70,7 @@
 		width: 0;
 
 		// Fade overlay for longer labels
-		&:after {
+		&::after {
 			content: '';
 			text-align: right;
 			position: absolute;
@@ -83,7 +82,7 @@
 			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ), 50% );
 
 			@include breakpoint( '<660px' ) {
-				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
+				background: linear-gradient( to right, rgba( var( --sidebar-menu-a-first-child-after-background ), 0 ), rgba( var( --sidebar-menu-a-first-child-after-background ), 1 ) 50% );
 			}
 		}
 	}
@@ -93,7 +92,7 @@
 		line-height: 1;
 		position: relative;
 		padding: 11px 16px 11px 20px;
-		color: var( --color-text );
+		color: var( --sidebar-text-color );
 		box-sizing: border-box;
 		white-space: nowrap;
 		overflow: hidden;
@@ -104,17 +103,17 @@
 			outline: none;
 			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 
-			&:after {
+			&::after {
 				top: 2px;
 				right: 2px;
 				bottom: 2px;
 			}
 		}
 
-		-webkit-tap-highlight-color: rgba( $gray-dark, 0.2 );
+		-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
 
 		.sidebar__menu-link-secondary-text {
-			padding: 3px 8px 4px 8px;
+			padding: 3px 8px 4px;
 			margin-right: 8px;
 			align-self: center;
 			font-weight: 600;
@@ -154,7 +153,7 @@ form.sidebar__button {
 	align-self: center;
 	box-sizing: border-box;
 	overflow: hidden;
-	padding: 2px 8px 3px 8px;
+	padding: 2px 8px 3px;
 	height: 24px;
 	margin-right: 8px;
 	line-height: 18px;
@@ -163,7 +162,7 @@ form.sidebar__button {
 	font-size: 12px;
 	font-weight: 600;
 	border-radius: 3px;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 
 	@include breakpoint( '<660px' ) {
 		font-size: 14px;
@@ -173,7 +172,7 @@ form.sidebar__button {
 }
 
 // Expanding clickable area of mini buttons
-a.sidebar__button:after,
+a.sidebar__button::after,
 form.sidebar__button input {
 	content: '';
 	position: absolute;
@@ -196,7 +195,7 @@ form.sidebar__button input {
 				color: inherit;
 			}
 
-			&:first-child:after {
+			&:first-child::after {
 				background: overflow-gradient(
 					var( --sidebar-menu-selected-a-first-child-after-background ),
 					50%
@@ -205,8 +204,8 @@ form.sidebar__button input {
 		}
 
 		.sidebar__button {
-			color: $gray-dark;
-			border: 1px solid $gray-darken-30;
+			color: var( --color-neutral-700 );
+			border: 1px solid var( --color-neutral-600 );
 
 			&:hover {
 				color: var( --color-accent );
@@ -219,8 +218,8 @@ form.sidebar__button input {
 		}
 
 		&.is-action-button-selected a {
-			&:first-child:after {
-				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
+			&:first-child::after {
+				background: linear-gradient( to right, rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 0 ), rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 1 ) 50% );
 			}
 		}
 	}
@@ -228,12 +227,13 @@ form.sidebar__button input {
 
 // Menu Hover
 .notouch .sidebar__menu li:hover {
+
 	&:not( .selected ) {
 		background-color: var( --sidebar-menu-hover-background );
 
 		a,
 		form {
-			&:first-child:after {
+			&:first-child::after {
 				background: overflow-gradient( var( --sidebar-menu-hover-background-gradient ), 50% );
 			}
 
@@ -242,27 +242,36 @@ form.sidebar__button input {
 				color: var( --color-text );
 			}
 		}
+
+		& > a {
+			color: var( --sidebar-menu-hover-color );
+
+			& > .gridicon,
+			& > .jetpack-logo {
+				fill: var( --sidebar-menu-hover-color );
+			}
+		}
 	}
 
 	@include breakpoint( '<660px' ) {
-		background-color: $gray-light;
+		background-color: var( --sidebar-menu-hover-background );
 
 		a,
 		form {
-			color: var( --color-accent );
+			color: var( --sidebar-text-color );
 
-			&:first-child:after {
-				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
+			&:first-child::after {
+				background: linear-gradient( to right, rgba( var( --sidebar-menu-hover-background-gradient ), 0 ), rgba( var( --sidebar-menu-hover-background-gradient ), 1 ) 50% );
 			}
 
 			&.sidebar__button {
 				background-color: $white;
-				color: $gray-dark;
+				color: var( --color-neutral-700 );
 			}
 		}
 
 		.gridicon {
-			fill: var( --color-accent );
+			fill: var( --sidebar-gridicon-fill );
 		}
 	}
 }
@@ -271,12 +280,9 @@ form.sidebar__button input {
 	a,
 	form {
 		&.sidebar__button:hover {
-			color: var( --sidebar-menu-hover-color );
+			color: var( --color-accent );
+			border-color: var( --sidebar-menu-hover-color );
 		}
-	}
-
-	form.sidebar__button:hover {
-		border-color: darken( $sidebar-bg-color, 10% );
 	}
 
 	a:hover,
@@ -295,13 +301,13 @@ form.sidebar__button input {
 }
 
 .sidebar .sidebar__separator {
-	border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
+	border-bottom: 1px solid var( --sidebar-border-color );
 }
 
 .sidebar .sidebar__footer {
 	align-items: center;
 	padding: 0;
-	border-top: 1px solid darken( $sidebar-bg-color, 10% );
+	border-top: 1px solid var( --sidebar-border-color );
 	margin: auto 0 0;
 	display: flex;
 	flex-direction: row;
@@ -321,7 +327,7 @@ form.sidebar__button input {
 	margin-right: auto;
 
 	&.is-active {
-		background: var( --color-accent );
+		background: var( --color-primary );
 
 		.gridicon {
 			fill: $white;
@@ -329,7 +335,7 @@ form.sidebar__button input {
 	}
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	@include breakpoint( '<660px' ) {
@@ -380,7 +386,7 @@ form.sidebar__button input {
 		display: flex;
 		align-items: center;
 
-		&:after {
+		&::after {
 			top: 2px;
 			right: 2px;
 			bottom: 2px;
@@ -407,7 +413,7 @@ form.sidebar__button input {
 		}
 
 		a {
-			&:after {
+			&::after {
 				display: none;
 			}
 		}
@@ -425,6 +431,6 @@ form.sidebar__button input {
 	}
 
 	:hover + & .gridicon {
-		fill: var( --color-accent );
+		fill: var( --color-primary );
 	}
 }

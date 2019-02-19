@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Top-level Publicize plugin for Gutenberg editor.
  *
@@ -21,6 +19,7 @@ import { PostTypeSupportCheck } from '@wordpress/editor';
  * Internal dependencies
  */
 import './editor.scss';
+import './store';
 import JetpackPluginSidebar from 'gutenberg/extensions/presets/jetpack/editor-shared/jetpack-plugin-sidebar';
 import PublicizePanel from './panel';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';

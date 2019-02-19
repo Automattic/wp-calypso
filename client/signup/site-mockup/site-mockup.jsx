@@ -43,33 +43,15 @@ function MockupChromeDesktop() {
 	);
 }
 
-function SiteMockupContent( { data, title, tagline } ) {
+function SiteMockupContent( { content, title, tagline } ) {
 	/* eslint-disable react/no-danger */
 	return (
 		<>
-			<div className="site-mockup__title">{ title }</div>
-			<div className="site-mockup__tagline">{ tagline }</div>
-			<div
-				className="site-mockup__cover-image"
-				style={ { backgroundImage: `url("${ data.cover_image }")` } }
-			>
-				<span>{ data.cover_image_text }</span>
+			<div className="site-mockup__site-identity">
+				<div className="site-mockup__title">{ title }</div>
+				<div className="site-mockup__tagline">{ tagline }</div>
 			</div>
-			<div
-				className="site-mockup__entry-content"
-				dangerouslySetInnerHTML={ { __html: data.content } }
-			/>
-			<div className="site-mockup__hr" />
-			<div className="site-mockup__h2">Send Us a Message</div>
-			<div className="site-mockup__contact-form">
-				<div className="site-mockup__label">Name</div>
-				<div className="site-mockup__input" />
-				<div className="site-mockup__label">Email</div>
-				<div className="site-mockup__input" />
-				<div className="site-mockup__label">Your Message</div>
-				<div className="site-mockup__textarea" />
-				<div className="site-mockup__button">Send</div>
-			</div>
+			<div className="site-mockup__entry-content" dangerouslySetInnerHTML={ { __html: content } } />
 		</>
 	);
 	/* eslint-enable react/no-danger */
@@ -93,17 +75,20 @@ function SiteMockupOutlines() {
 	);
 }
 
-export default function SiteMockup( { size, data, title, tagline } ) {
-	const classes = classNames( 'site-mockup__viewport', `is-${ size }` );
+export default function SiteMockup( { size, content, siteType, siteStyle, title, tagline } ) {
+	const classes = classNames( 'site-mockup__viewport', `is-${ size }`, {
+		[ `is-${ siteType }` ]: !! siteType,
+		[ `is-${ siteStyle }` ]: !! siteStyle,
+	} );
 	return (
 		<div className={ classes }>
 			{ size === 'mobile' ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
 			<div className="site-mockup__body">
 				<div className="site-mockup__content">
-					{ isEmpty( data ) ? (
+					{ isEmpty( content ) ? (
 						<SiteMockupOutlines />
 					) : (
-						<SiteMockupContent { ...{ data, title, tagline } } />
+						<SiteMockupContent { ...{ content, title, tagline } } />
 					) }
 				</div>
 			</div>

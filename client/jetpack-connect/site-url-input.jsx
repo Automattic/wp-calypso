@@ -87,7 +87,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		return (
 			<p className="jetpack-connect__tos-link">
 				{ this.props.translate(
-					'By setting up Jetpack you agree to our fascinating {{tosLinkText}}Terms of Service{{/tosLinkText}} ' +
+					'By setting up Jetpack you agree to our {{tosLinkText}}Terms of Service{{/tosLinkText}} ' +
 						'and to sync {{syncLinkText}}certain data and settings{{/syncLinkText}} to WordPress.com',
 					{
 						components: {

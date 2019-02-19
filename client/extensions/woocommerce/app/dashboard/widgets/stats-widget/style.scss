@@ -22,7 +22,7 @@
 	}
 
 	.dashboard-widget__title {
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		white-space: nowrap;
 
 		p {
@@ -67,10 +67,10 @@
 
 	.table.is-compact-table .table-item {
 		font-size: 14px;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 	}
 
-	.table.is-compact-table .table-heading:nth-child(3), .table.is-compact-table .table-item:nth-child(3) {
+	.table.is-compact-table .table-heading:nth-child( 3 ), .table.is-compact-table .table-item:nth-child( 3 ) {
 		padding-left: 32px;
 
 		@include breakpoint( '<960px' ) {
@@ -82,7 +82,7 @@
 		max-width: 50%;
 		min-width: 50%;
 		box-sizing: border-box;
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		padding: 32px;
 		text-align: left;
 
@@ -128,7 +128,7 @@
 		}
 
 		.stats-widget__box-value {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 			font-size: rem( 20px );
 			font-weight: 400;
 		}
@@ -154,7 +154,7 @@
 	}
 
 	.stats-widget__box-contents:nth-child( odd ) {
-		border-right: 1px solid $gray-lighten-30;
+		border-right: 1px solid var( --color-neutral-0 );
 	}
 
 	.store-stats-module .card {
@@ -162,7 +162,7 @@
 		.table-row {
 			&:hover {
 				background: inherit;
-				.table-item__cell-title:after {
+				.table-item__cell-title::after {
 					background: none;
 				}
 			}

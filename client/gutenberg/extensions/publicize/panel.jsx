@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Publicize sharing panel component.
  *
@@ -7,13 +5,6 @@
  * services are connected or displays form if
  * services are connected.
  */
-
-// Since this is a Jetpack originated block in Calypso codebase,
-// we're relaxing some accessibility rules.
-/* eslint jsx-a11y/anchor-is-valid: 0 */
-/* eslint jsx-a11y/click-events-have-key-events: 0 */
-/* eslint jsx-a11y/no-static-element-interactions: 0 */
-/* eslint jsx-a11y/no-noninteractive-tabindex: 0 */
 
 /**
  * External dependencies
@@ -32,17 +23,19 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const PublicizePanel = ( { connections, refreshConnections } ) => (
 	<Fragment>
-		{ connections.some( connection => connection.enabled ) && <PublicizeConnectionVerify /> }
+		{ connections && connections.some( connection => connection.enabled ) && (
+			<PublicizeConnectionVerify />
+		) }
 		<div>{ __( "Connect and select the accounts where you'd like to share your post." ) }</div>
-		{ connections &&
-			connections.length > 0 && <PublicizeForm refreshCallback={ refreshConnections } /> }
-		{ connections &&
-			0 === connections.length && (
-				<PublicizeSettingsButton
-					className="jetpack-publicize-add-connection-wrapper"
-					refreshCallback={ refreshConnections }
-				/>
-			) }
+		{ connections && connections.length > 0 && (
+			<PublicizeForm refreshCallback={ refreshConnections } />
+		) }
+		{ connections && 0 === connections.length && (
+			<PublicizeSettingsButton
+				className="jetpack-publicize-add-connection-wrapper"
+				refreshCallback={ refreshConnections }
+			/>
+		) }
 	</Fragment>
 );
 

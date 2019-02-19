@@ -24,6 +24,11 @@ import getUserSetting from 'state/selectors/get-user-setting';
 import isFollowing from 'state/selectors/is-following';
 import QueryUserSettings from 'components/data/query-user-settings';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class FeedHeader extends Component {
 	static propTypes = {
 		site: PropTypes.object,
@@ -73,19 +78,16 @@ class FeedHeader extends Component {
 							</span>
 						) }
 						<div className="reader-feed-header__follow-and-settings">
-							{ feed &&
-								! feed.is_error && (
-									<div className="reader-feed-header__follow-button">
-										<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
-									</div>
-								) }
-							{ site &&
-								following &&
-								! isEmailBlocked && (
-									<div className="reader-feed-header__email-settings">
-										<ReaderSiteNotificationSettings siteId={ siteId } />
-									</div>
-								) }
+							{ feed && ! feed.is_error && (
+								<div className="reader-feed-header__follow-button">
+									<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
+								</div>
+							) }
+							{ site && following && ! isEmailBlocked && (
+								<div className="reader-feed-header__email-settings">
+									<ReaderSiteNotificationSettings siteId={ siteId } />
+								</div>
+							) }
 						</div>
 					</div>
 				</div>
@@ -106,16 +108,15 @@ class FeedHeader extends Component {
 					</div>
 					<div className="reader-feed-header__details">
 						<span className="reader-feed-header__description">{ description }</span>
-						{ ownerDisplayName &&
-							! isAuthorNameBlacklisted( ownerDisplayName ) && (
-								<span className="reader-feed-header__byline">
-									{ translate( 'by %(author)s', {
-										args: {
-											author: ownerDisplayName,
-										},
-									} ) }
-								</span>
-							) }
+						{ ownerDisplayName && ! isAuthorNameBlacklisted( ownerDisplayName ) && (
+							<span className="reader-feed-header__byline">
+								{ translate( 'by %(author)s', {
+									args: {
+										author: ownerDisplayName,
+									},
+								} ) }
+							</span>
+						) }
 					</div>
 				</Card>
 			</div>

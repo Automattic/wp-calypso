@@ -96,7 +96,9 @@ export function redirectLoggedOut( context, next ) {
 			loginParameters.locale = login_locale;
 		}
 
-		return page.redirect( login( loginParameters ) );
+		// force full page reload to avoid SSR hydration issues.
+		window.location = login( loginParameters );
+		return;
 	}
 	next();
 }

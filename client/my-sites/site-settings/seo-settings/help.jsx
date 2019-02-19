@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SupportInfo from 'components/support-info';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -33,7 +33,7 @@ const SeoSettingsHelpCard = ( {
 
 	return (
 		<div id="seo">
-			<SectionHeader label={ translate( 'Search engine optimization' ) } />
+			<SettingsSectionHeader title={ translate( 'Search engine optimization' ) } />
 			{ hasAdvancedSEOFeature && (
 				<Card className="seo-settings__help">
 					<p>

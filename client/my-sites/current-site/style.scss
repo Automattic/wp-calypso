@@ -16,7 +16,7 @@
 		}
 
 		.site__title {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 			line-height: 35px;
 		}
 
@@ -47,14 +47,14 @@
 	.site,
 	.all-sites {
 		background: var( --sidebar-secondary-background );
-		border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+		border-bottom: 1px solid var( --sidebar-border-color );
 	}
 }
 
 .current-site__switch-sites {
 	display: block;
 	background: var( --sidebar-background );
-	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+	border-bottom: 1px solid var( --sidebar-border-color );
 
 	.button.is-borderless {
 		display: block;
@@ -63,7 +63,7 @@
 		padding: 12px 8px 12px 44px;
 		position: relative;
 		font-weight: normal;
-		color: var( --color-text );
+		color: var( --color-sidebar-text );
 
 		.gridicon {
 			height: 24px;
@@ -76,14 +76,14 @@
 	}
 
 	&:hover {
-		background-color: lighten( $sidebar-bg-color, 3% );
+		background-color: var( --sidebar-background );
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
-			color: var( --color-accent );
+			color: var( --sidebar-menu-hover-color );
 
 			.gridicon {
-				fill: var( --color-accent );
+				fill: var( --sidebar-menu-hover-color );
 			}
 		}
 	}

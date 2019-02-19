@@ -1,6 +1,6 @@
 div.wpnc__note-actions {
   @extend %container;
-  color: $gray-dark;
+  color: var( --color-neutral-700 );
   line-height: 1em;
   text-align: center;
   padding-top: $wpnc__padding-large;

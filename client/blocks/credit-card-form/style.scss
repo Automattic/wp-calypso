@@ -6,7 +6,7 @@
 
 .credit-card-form__card-terms {
 	color: var( --color-text-subtle );
-	margin: 5px 0 0 0;
+	margin: 5px 0 0;
 	padding: 0;
 	text-align: center;
 
@@ -35,7 +35,7 @@
 
 .credit-card-form__footer {
 	align-items: center;
-	border-top-color: $gray-light;
+	border-top-color: var( --color-neutral-0 );
 	display: flex;
 	justify-content: space-between;
 
@@ -62,5 +62,5 @@
 
 .credit-card-form__heading {
 	font-size: 18px;
-	padding: 0 0 16px 0;
+	padding: 0 0 16px;
 }

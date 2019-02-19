@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Main from 'components/main';
 import Button from 'components/button';
 import ThemesSelection from './themes-selection';
@@ -39,6 +40,7 @@ import PhotoBlogBanner from './themes-banner/photo-blog';
 import SmallBusinessBanner from './themes-banner/small-business';
 import RandomThemesBanner from './themes-banner/random-themes-banner';
 import { getActiveTheme } from 'state/themes/selectors';
+import UpworkBanner from './themes-banner/upwork';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -152,7 +154,7 @@ class ThemeShowcase extends React.Component {
 	showUploadButton = () => {
 		const { isMultisite, isLoggedIn } = this.props;
 
-		return config.isEnabled( 'manage/themes/upload' ) && isLoggedIn && ! isMultisite;
+		return isLoggedIn && ! isMultisite;
 	};
 
 	render() {
@@ -219,6 +221,7 @@ class ThemeShowcase extends React.Component {
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<Main className="themes">
 				<DocumentHead title={ title } meta={ metas } link={ links } />
 				<PageViewTracker
@@ -234,7 +237,12 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					{ showBanners && <RandomThemesBanner banners={ themeBanners } /> }
+					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'original' && (
+						<RandomThemesBanner banners={ themeBanners } />
+					) }
+					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
+						<UpworkBanner />
+					) }
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }

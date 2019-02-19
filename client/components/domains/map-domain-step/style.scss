@@ -20,7 +20,7 @@
 	}
 
 	.domain-product-price__is-with-plans-only {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		line-height: 25px;
 	}
 
@@ -80,7 +80,7 @@ input.map-domain-step__external-domain {
 
 .map-domain-step__go {
 	flex-grow: 1;
-	margin: 10px 0 0 0;
+	margin: 10px 0 0;
 
 	@include breakpoint( '>660px' ) {
 		min-width: 80px;

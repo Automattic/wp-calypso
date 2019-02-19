@@ -99,7 +99,6 @@ const deleteTheme = {
 	action: confirmDelete,
 	hideForTheme: ( state, themeId, siteId, origin ) =>
 		! isJetpackSite( state, siteId ) ||
-		! config.isEnabled( 'manage/themes/upload' ) ||
 		origin === 'wpcom' ||
 		isThemeActive( state, themeId, siteId ),
 };

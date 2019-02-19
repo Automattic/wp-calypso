@@ -16,15 +16,15 @@
 		border-top: 1px;
 		border-right: 1px;
 		border-left: 1px;
-		border-color: $alert-red;
+		border-color: var( --color-error );
 		border-style: solid;
 
 		&:last-child {
-			border-bottom: 1px solid $alert-red;
+			border-bottom: 1px solid var( --color-error );
 		}
 
 		&.is-expanded {
-			border: 1px solid $alert-red;
+			border: 1px solid var( --color-error );
 		}
 	}
 }
@@ -36,7 +36,7 @@
 
 	@include breakpoint( '<480px' ) {
 		padding: 4px 0;
-		border-bottom: 1px solid $gray-light;
+		border-bottom: 1px solid var( --color-neutral-0 );
 
 		&:last-child {
 			border-bottom: 0;
@@ -46,7 +46,7 @@
 	&.shipping-services__entry-header-container {
 		display: inline-block;
 		box-sizing: border-box;
-		border-bottom: 1px solid lighten( $gray, 30% );
+		border-bottom: 1px solid var( --color-neutral-0 );
 		padding-bottom: 8px;
 		margin-bottom: 4px;
 
@@ -99,9 +99,9 @@
 		box-shadow: none;
 
 		&:disabled {
-			color: lighten( $gray, 10% );
-			background-color: $gray-light;
-			border-color: lighten( $gray, 30% );
+			color: var( --color-neutral-200 );
+			background-color: var( --color-neutral-0 );
+			border-color: var( --color-neutral-0 );
 		}
 	}
 
@@ -114,6 +114,6 @@
 }
 
 .shipping-services__delivery-estimate {
-	color: darken( $gray, 10% );
+	color: var( --color-neutral-400 );
 	margin-left: 3px;
 }

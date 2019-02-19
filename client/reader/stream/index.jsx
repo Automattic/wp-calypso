@@ -48,6 +48,11 @@ import { viewStream } from 'state/reader/watermarks/actions';
 import Interval, { EVERY_MINUTE } from 'lib/interval';
 import { PER_FETCH, INITIAL_FETCH } from 'state/data-layer/wpcom/read/streams';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 
@@ -422,12 +427,11 @@ class ReaderStream extends React.Component {
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
-				{ this.props.isMain &&
-					this.props.showMobileBackToSidebar && (
-						<MobileBackToSidebar>
-							<h1>{ this.props.translate( 'Streams' ) }</h1>
-						</MobileBackToSidebar>
-					) }
+				{ this.props.isMain && this.props.showMobileBackToSidebar && (
+					<MobileBackToSidebar>
+						<h1>{ this.props.translate( 'Streams' ) }</h1>
+					</MobileBackToSidebar>
+				) }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
 				{ this.props.children }

@@ -17,6 +17,8 @@ import TermsOfService from './terms-of-service';
 import CartToggle from './cart-toggle';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import { hasOnlyProductsOf } from 'lib/cart-values/cart-items';
+import { isBlogger } from 'lib/products-values';
+import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 
 class FreeCartPaymentBox extends React.Component {
 	static propTypes = {
@@ -54,6 +56,7 @@ class FreeCartPaymentBox extends React.Component {
 					</div>
 
 					<TermsOfService />
+					<DomainRegistrationRefundPolicy cart={ cart } />
 
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-actions">
@@ -88,9 +91,18 @@ class FreeCartPaymentBox extends React.Component {
 			return;
 		}
 
+		const isRestrictedToBlogDomains = isBlogger( this.props.selectedSite.plan );
+
 		return (
 			<span className="checkout__free-domain-credit-illustration">
-				<img src="/calypso/images/illustrations/custom-domain.svg" alt="" />
+				<img
+					src={
+						isRestrictedToBlogDomains
+							? '/calypso/images/illustrations/custom-domain-blogger.svg'
+							: '/calypso/images/upgrades/custom-domain.svg'
+					}
+					alt=""
+				/>
 			</span>
 		);
 	};

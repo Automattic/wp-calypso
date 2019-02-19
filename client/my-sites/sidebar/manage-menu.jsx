@@ -37,6 +37,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import { getEditorUrl as getEditorUrlStateSelector } from 'state/selectors/get-editor-url';
+import isVipSite from 'state/selectors/is-vip-site';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {
@@ -295,7 +296,9 @@ class ManageMenu extends PureComponent {
 	};
 
 	getCustomMenuItems() {
-		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
+		const { isVip } = this.props;
+		//reusable blocks are not shown in the sidebar on wp-admin either
+		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page', 'wp_block' ] );
 		return reduce(
 			customPostTypes,
 			( memo, postType, postTypeSlug ) => {
@@ -303,6 +306,32 @@ class ManageMenu extends PureComponent {
 				// value in case site on earlier version where property is omitted
 				if ( false === postType.show_ui ) {
 					return memo;
+				}
+
+				//Special handling for feedback (contact form entries), let's calypsoify except for VIP
+				//It doesn't make sense for the author to use the generic CPT handling in Calypso
+				if ( postTypeSlug === 'feedback' ) {
+					return memo.concat( {
+						name: postType.name,
+						label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
+						config: 'manage/custom-post-types',
+						//controls if we show the wp-admin link. It feels like this is coupling two different meanings (api_queryable)
+						queryable: false,
+
+						//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
+						//version isn't up-to-date), silently assume we don't have the capability to edit this CPT.
+						capability: get( postType.capabilities, 'edit_posts' ),
+
+						// Required to build the menu item class name. Must be discernible from other
+						// items' paths in the same section for item highlighting to work properly.
+						link: '/types/' + postType.name,
+						// don't calypsoify for VIP
+						wpAdminLink: isVip
+							? 'edit.php?post_type=feedback'
+							: 'edit.php?post_type=feedback&calypsoify=1',
+						showOnAllMySites: false,
+						forceButtonTargetInternal: true,
+					} );
 				}
 
 				const buttonLink =
@@ -366,6 +395,7 @@ export default connect(
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		site: getSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
+		isVip: isVipSite( state, siteId ),
 		calypsoifyGutenberg:
 			isCalypsoifyGutenbergEnabled( state, siteId ) &&
 			'gutenberg' === getSelectedEditor( state, siteId ),

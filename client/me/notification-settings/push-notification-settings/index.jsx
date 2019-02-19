@@ -18,6 +18,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 import Notice from 'components/notice';
+import ScreenReaderText from 'components/screen-reader-text';
 import {
 	getStatus,
 	isApiReady,
@@ -659,7 +660,7 @@ class PushNotificationSettings extends React.Component {
 					onClick={ this.props.toggleUnblockInstructions }
 				>
 					<Gridicon icon="cross" size={ 24 } />
-					<span className="screen-reader-text">{ this.props.translate( 'Dismiss' ) }</span>
+					<ScreenReaderText>{ this.props.translate( 'Dismiss' ) }</ScreenReaderText>
 				</span>
 			</Dialog>
 		);

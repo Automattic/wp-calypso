@@ -1,13 +1,12 @@
 /** @format */
 export default {
 	improvedOnboarding: {
-		datestamp: '20181023',
+		datestamp: '20190214',
 		variations: {
-			main: 90,
-			onboarding: 10,
+			main: 50,
+			onboarding: 50,
 		},
 		defaultVariation: 'main',
-		localeTargets: 'any',
 	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -73,29 +72,79 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	removeUsername: {
-		datestamp: '20181213',
+	showConciergeSessionUpsell: {
+		datestamp: '20181214',
 		variations: {
-			showUsername: 50,
-			hideUsername: 50,
+			skip: 100,
+			show: 0,
 		},
-		defaultVariation: 'showUsername',
-	},
-	jetpackFreePlanButtonPosition: {
-		datestamp: '20181212',
-		variations: {
-			locationTop: 50,
-			locationBottom: 50,
-		},
-		defaultVariation: 'locationBottom',
+		defaultVariation: 'skip',
 		allowExistingUsers: true,
 	},
-	privateByDefault: {
-		datestamp: '20181217',
+	showConciergeSessionUpsellNonGSuite: {
+		datestamp: '20190104',
 		variations: {
-			private: 10,
-			public: 90,
+			skip: 50,
+			show: 50,
 		},
-		defaultVariation: 'public',
+		defaultVariation: 'skip',
+		allowExistingUsers: true,
+	},
+	builderReferralStatsNudge: {
+		datestamp: '20181218',
+		variations: {
+			builderReferralBanner: 25,
+			googleMyBusinessBanner: 75,
+		},
+		defaultVariation: 'googleMyBusinessBanner',
+	},
+	builderReferralThemesBanner: {
+		datestamp: '20181218',
+		variations: {
+			builderReferralBanner: 25,
+			original: 75,
+		},
+		defaultVariation: 'original',
+	},
+	removeDomainsStepFromOnboarding: {
+		datestamp: '20181221',
+		variations: {
+			keep: 100,
+			remove: 0,
+		},
+		defaultVariation: 'keep',
+	},
+	domainSearchButtonStyles: {
+		datestamp: '20190119',
+		variations: {
+			allPrimary: 50,
+			onePrimary: 50,
+		},
+		defaultVariation: 'allPrimary',
+	},
+	twoYearPlanByDefault: {
+		datestamp: '20190207',
+		variations: {
+			originalFlavor: 50,
+			twoYearFlavor: 50,
+		},
+		defaultVariation: 'originalFlavor',
+	},
+	gSuitePostCheckoutNotice: {
+		datestamp: '20190211',
+		variations: {
+			original: 50,
+			enhanced: 50,
+		},
+		defaultVariation: 'original',
+	},
+	onlyJetpackMonthly: {
+		datestamp: '20190212',
+		variations: {
+			original: 50,
+			monthlyOnly: 50,
+		},
+		defaultVariation: 'original',
+		countryCodeTargets: [ 'ES', 'IT', 'PT', 'FR', 'NL', 'DE', 'BE', 'PL', 'SE' ],
 	},
 };

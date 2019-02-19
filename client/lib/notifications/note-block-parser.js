@@ -216,8 +216,8 @@ const joinResults = ( [ reduced, remainder ] ) =>
 	reduced.length // eslint-disable-line no-nested-ternary
 		? compact( reduced.concat( remainder ) )
 		: remainder.length
-			? [ remainder ]
-			: [];
+		? [ remainder ]
+		: [];
 
 /**
  * Parses a formatted text block into typed nodes

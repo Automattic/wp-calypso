@@ -2,14 +2,14 @@
 	.notice {
 		margin-bottom: 10px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin-bottom: 15px;
 		}
 	}
 }
 
 .cancel-privacy-protection__card {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	&.is-placeholder {
 		.cancel-privacy-protection__text span {

@@ -10,6 +10,11 @@ import classnames from 'classnames';
 import { assign, omit } from 'lodash';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ExternalLink extends Component {
 	static defaultProps = {
 		iconSize: 18,

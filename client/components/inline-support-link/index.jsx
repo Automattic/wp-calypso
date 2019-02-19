@@ -15,6 +15,11 @@ import Gridicon from 'gridicons';
 import ExternalLink from 'components/external-link';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class InlineSupportLink extends Component {
 	static propTypes = {
 		supportPostId: PropTypes.number,

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,6 +24,15 @@ export default function getSiteFragment() {
 	const siteFragment = getCalypsoSiteFragment( window.location.pathname );
 	if ( ! includes( [ 'post.php', 'post-new.php' ], siteFragment ) ) {
 		return siteFragment || null;
+	}
+
+	// Gutenberg in Jetpack adds a site fragment in the initial state
+	if (
+		window &&
+		window.Jetpack_Editor_Initial_State &&
+		window.Jetpack_Editor_Initial_State.siteFragment
+	) {
+		return window.Jetpack_Editor_Initial_State.siteFragment;
 	}
 
 	return null;

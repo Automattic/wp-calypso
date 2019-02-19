@@ -7,7 +7,6 @@
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
-import { recordAddToCart } from 'lib/analytics/ad-tracking';
 
 /**
  * Internal dependencies
@@ -16,10 +15,15 @@ import { recordEvents } from '../cart-analytics';
 
 jest.mock( 'lib/analytics', () => ( {
 	__esModule: true,
-	default: { tracks: { recordEvent: jest.fn() } },
+	default: {
+		tracks: {
+			recordEvent: jest.fn(),
+		},
+		recordAddToCart: jest.fn(),
+	},
 } ) );
 jest.mock( 'lib/cart-values', () => ( { cartItems: { getAll: jest.fn() } } ) );
-jest.mock( 'lib/analytics/ad-tracking', () => ( { recordAddToCart: jest.fn() } ) );
+// jest.mock( 'lib/analytics/ad-tracking', () => ( { recordAddToCart: jest.fn() } ) );
 
 const previousCart = {};
 const nextCart = {};
@@ -63,7 +67,7 @@ describe( 'recordEvents', () => {
 		recordEvents( previousCart, nextCart );
 
 		expect( analytics.tracks.recordEvent ).not.toHaveBeenCalled();
-		expect( recordAddToCart ).not.toHaveBeenCalled();
+		expect( analytics.recordAddToCart ).not.toHaveBeenCalled();
 	} );
 
 	it( 'records an add event when an item is added', () => {
@@ -76,8 +80,8 @@ describe( 'recordEvents', () => {
 			'calypso_cart_product_add',
 			domainRegNoExtra
 		);
-		expect( recordAddToCart ).toHaveBeenCalledTimes( 1 );
-		expect( recordAddToCart ).toHaveBeenCalledWith( domainReg );
+		expect( analytics.recordAddToCart ).toHaveBeenCalledTimes( 1 );
+		expect( analytics.recordAddToCart ).toHaveBeenCalledWith( { cartItem: domainReg } );
 	} );
 
 	it( 'records a remove event when an item is removed', () => {
@@ -90,7 +94,7 @@ describe( 'recordEvents', () => {
 			'calypso_cart_product_remove',
 			domainRegNoExtra
 		);
-		expect( recordAddToCart ).not.toHaveBeenCalled();
+		expect( analytics.recordAddToCart ).not.toHaveBeenCalled();
 	} );
 
 	it( 'records an add and a remove event when items are added and removed', () => {
@@ -107,8 +111,8 @@ describe( 'recordEvents', () => {
 			'calypso_cart_product_add',
 			privateRegNoExtra
 		);
-		expect( recordAddToCart ).toHaveBeenCalledTimes( 1 );
-		expect( recordAddToCart ).toHaveBeenCalledWith( privateReg );
+		expect( analytics.recordAddToCart ).toHaveBeenCalledTimes( 1 );
+		expect( analytics.recordAddToCart ).toHaveBeenCalledWith( { cartItem: privateReg } );
 	} );
 } );
 

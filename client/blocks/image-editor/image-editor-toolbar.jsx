@@ -149,17 +149,16 @@ export class ImageEditorToolbar extends Component {
 				context={ popoverContext }
 				className="image-editor__toolbar-popover popover is-dialog-visible"
 			>
-				{ items.map(
-					item =>
-						allowedAspectRatios.indexOf( item.action ) !== -1 ? (
-							<PopoverMenuItem
-								key={ 'image-editor-toolbar-aspect-' + item.action }
-								action={ item.action }
-							>
-								{ aspectRatio === item.action ? <Gridicon icon="checkmark" size={ 12 } /> : false }
-								{ item.label }
-							</PopoverMenuItem>
-						) : null
+				{ items.map( item =>
+					allowedAspectRatios.indexOf( item.action ) !== -1 ? (
+						<PopoverMenuItem
+							key={ 'image-editor-toolbar-aspect-' + item.action }
+							action={ item.action }
+						>
+							{ aspectRatio === item.action ? <Gridicon icon="checkmark" size={ 12 } /> : false }
+							{ item.label }
+						</PopoverMenuItem>
+					) : null
 				) }
 			</PopoverMenu>
 		);

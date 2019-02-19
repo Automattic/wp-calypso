@@ -5,6 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,6 +18,7 @@ import JetpackInstallStep from './install-step';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addCalypsoEnvQueryArg } from './utils';
 import { confirmJetpackInstallStatus } from 'state/jetpack-connect/actions';
 import { externalRedirect } from 'lib/route';
@@ -113,7 +115,7 @@ class InstallInstructions extends Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const remoteSite = getConnectingSite( state );
 		const remoteSiteData = remoteSite.data || {};
@@ -136,4 +138,10 @@ export default connect(
 		confirmJetpackInstallStatus,
 		recordTracksEvent,
 	}
-)( localize( InstallInstructions ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( InstallInstructions );

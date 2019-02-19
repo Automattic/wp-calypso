@@ -41,6 +41,11 @@ import StoreSidebar from './store-sidebar';
 import { tracksStore } from './lib/analytics';
 import { makeLayout, render as clientRender } from 'controller';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const getStorePages = () => {
 	const pages = [
 		{

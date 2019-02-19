@@ -13,8 +13,8 @@ import { noop } from 'lodash';
 import wpcom from 'lib/wp';
 import config from 'config';
 import localforage from 'lib/localforage';
-import { supportUserActivate } from 'state/support/actions';
-import localStorageBypass from 'lib/support/support-user/localstorage-bypass';
+import { supportSessionActivate } from 'state/support/actions';
+import localStorageBypass from 'lib/local-storage-bypass';
 
 /**
  * Connects the Redux store and the low-level support user functions
@@ -28,7 +28,7 @@ import localStorageBypass from 'lib/support/support-user/localstorage-bypass';
 const debug = debugModule( 'calypso:support-user' );
 const STORAGE_KEY = 'boot_support_user';
 
-export const isEnabled = () => config.isEnabled( 'support-user' );
+const isEnabled = () => config.isEnabled( 'support-user' );
 
 let _setReduxStore = noop;
 const reduxStoreReady = new Promise( resolve => {
@@ -38,7 +38,7 @@ const reduxStoreReady = new Promise( resolve => {
 
 	_setReduxStore = reduxStore => resolve( reduxStore );
 } );
-export const setReduxStore = _setReduxStore;
+export const setSupportSessionReduxStore = _setReduxStore;
 
 const getStorageItem = () => {
 	try {
@@ -63,6 +63,18 @@ const _isSupportUserSession = ( () => {
 } )();
 
 export const isSupportUserSession = () => _isSupportUserSession;
+
+// Detect the next-style support session
+export const isSupportNextSession = () => {
+	if ( ! isEnabled() ) {
+		return false;
+	}
+
+	return !! ( typeof window !== 'undefined' && window.isSupportSession );
+};
+
+// Detect a support session, no matter the implementation
+export const isSupportSession = () => isSupportUserSession() || isSupportNextSession();
 
 let onBeforeUnload;
 
@@ -100,7 +112,7 @@ const onTokenError = error => {
 /**
  * Inject the support user token into all following API calls
  */
-export const boot = () => {
+export const supportUserBoot = () => {
 	if ( ! isEnabled() ) {
 		return;
 	}
@@ -122,9 +134,22 @@ export const boot = () => {
 
 	wpcom.setSupportUserToken( user, token, onTokenError );
 
-	// boot() is called before the redux store is ready, so we need to
-	// wait for it to become available
-	reduxStoreReady.then( reduxStore => {
-		reduxStore.dispatch( supportUserActivate() );
-	} );
+	// the boot is performed before the Redux store is created, so we need to wait for a promise
+	reduxStoreReady.then( reduxStore => reduxStore.dispatch( supportSessionActivate() ) );
+};
+
+export const supportNextBoot = () => {
+	if ( ! isEnabled() ) {
+		return;
+	}
+
+	localforage.bypass();
+
+	// The following keys will not be bypassed as
+	// they are safe to share across user sessions.
+	const allowedKeys = [ 'debug' ];
+	localStorageBypass( allowedKeys );
+
+	// the boot is performed before the Redux store is created, so we need to wait for a promise
+	reduxStoreReady.then( reduxStore => reduxStore.dispatch( supportSessionActivate() ) );
 };

@@ -8,41 +8,41 @@
 		padding-right: 48px;
 	}
 
-	@include banner-color( $blue-wordpress );
+	@include banner-color( var( --color-primary ) );
 
 	&.is-wpcom-plan {
 		&.is-upgrade-blogger {
-			@include banner-color(darken($alert-green, 20%));
+			@include banner-color( var( --color-plan-blogger ) );
 		}
 
 		&.is-upgrade-personal {
-			@include banner-color($blue-wordpress);
+			@include banner-color( var( --color-plan-personal ) );
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color($alert-yellow);
+			@include banner-color( var( --color-plan-premium ) );
 		}
 
 		&.is-upgrade-business {
-			@include banner-color($orange-jazzy);
+			@include banner-color( var( --color-plan-business ) );
 		}
 
 		&.is-upgrade-ecommerce {
-			@include banner-color($alert-purple);
+			@include banner-color( var( --color-plan-ecommerce ) );
 		}
 	}
 
 	&.is-jetpack-plan {
 		&.is-upgrade-personal {
-			@include banner-color( $alert-yellow );
+			@include banner-color( var( --color-jetpack-plan-personal ) );
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color( $alert-green );
+			@include banner-color( var( --color-jetpack-plan-premium ) );
 		}
 
 		&.is-upgrade-business {
-			@include banner-color( $alert-purple );
+			@include banner-color( var( --color-jetpack-plan-professional ) );
 		}
 	}
 
@@ -55,9 +55,9 @@
 	&:hover {
 		transition: all 100ms ease-in-out;
 
-			&.is-card-link {
-				box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
-			}
+		&.is-card-link {
+			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-100 );
+		}
 		.card__link-indicator {
 			color: var( --color-primary-dark );
 		}
@@ -88,7 +88,7 @@
 
 	.banner__icon {
 		align-self: center;
-		color: $white;
+		color: var( --color-white );
 		display: flex;
 	}
 
@@ -143,7 +143,7 @@
 	.banner__title,
 	.banner__description,
 	.banner__list {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.banner__title {
@@ -163,7 +163,7 @@
 		li {
 			margin: 6px 0;
 			.gridicon {
-				color: $gray;
+				color: var( --color-neutral );
 				display: none;
 			}
 		}
@@ -183,7 +183,7 @@
 .banner__action {
 	align-self: center;
 	font-size: 12px;
-	margin: 8px 0 0 0;
+	margin: 8px 0 0;
 	text-align: left;
 	width: 100%;
 
@@ -197,7 +197,7 @@
 
 		.plan-price.is-discounted,
 		.plan-price.is-discounted .plan-price__currency-symbol {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 
 		.has-call-to-action & .plan-price {

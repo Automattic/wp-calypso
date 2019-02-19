@@ -3,7 +3,7 @@
 
 .editor-revisions-list {
 	position: relative;
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	flex-basis: 162px;
 	flex-grow: 0;
 	flex-shrink: 0;
@@ -233,7 +233,7 @@
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: 1px solid darken( $sidebar-bg-color, 5% );
 	border-radius: 0;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	cursor: pointer;
 	text-align: left;
 	padding: 8px 16px;

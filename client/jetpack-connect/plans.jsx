@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -37,6 +37,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -231,7 +232,7 @@ class Plans extends Component {
 
 export { Plans as PlansTestComponent };
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const user = getCurrentUser( state );
 		const selectedSite = getSelectedSite( state );
@@ -260,4 +261,10 @@ export default connect(
 		completeFlow,
 		recordTracksEvent,
 	}
-)( localize( Plans ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( Plans );

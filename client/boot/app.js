@@ -14,6 +14,7 @@ import page from 'page';
  */
 import { configureReduxStore, locales, setupMiddlewares, utils } from './common';
 import { createReduxStore } from 'state';
+import initialReducer from 'state/reducer';
 import { getInitialState, persistOnChange } from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
@@ -26,8 +27,8 @@ const boot = currentUser => {
 	const project = require( `./project/${ PROJECT_NAME }` );
 	utils();
 	invoke( project, 'utils' );
-	getInitialState().then( initialState => {
-		const reduxStore = createReduxStore( initialState );
+	getInitialState( initialReducer ).then( initialState => {
+		const reduxStore = createReduxStore( initialState, initialReducer );
 		persistOnChange( reduxStore );
 		locales( currentUser, reduxStore );
 		invoke( project, 'locales', currentUser, reduxStore );

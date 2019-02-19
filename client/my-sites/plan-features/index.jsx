@@ -8,7 +8,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, map, noop, reduce } from 'lodash';
+import { compact, get, last, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -38,6 +38,7 @@ import {
 	getMonthlyPlanByYearly,
 	getPlanPath,
 	isFreePlan,
+	getBiennialPlan,
 } from 'lib/plans';
 import {
 	getPlanDiscountedRawPrice,
@@ -51,6 +52,7 @@ import {
 	isCurrentSitePlan,
 	isJetpackSite,
 } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import {
 	isBestValue,
 	isMonthly,
@@ -158,6 +160,12 @@ export class PlanFeatures extends Component {
 		return true;
 	}
 
+	higherPlanAvailable() {
+		const currentPlan = get( this.props, 'sitePlan.product_slug', '' );
+		const highestPlan = last( this.props.planProperties );
+		return currentPlan !== highestPlan.planName && highestPlan.availableForPurchase;
+	}
+
 	renderCreditNotice() {
 		const {
 			canPurchase,
@@ -173,7 +181,8 @@ export class PlanFeatures extends Component {
 			! canPurchase ||
 			! bannerContainer ||
 			! showPlanCreditsApplied ||
-			! planCredits
+			! planCredits ||
+			! this.higherPlanAvailable()
 		) {
 			return null;
 		}
@@ -631,6 +640,7 @@ PlanFeatures.propTypes = {
 	selectedPlan: PropTypes.string,
 	selectedSiteSlug: PropTypes.string,
 	siteId: PropTypes.number,
+	sitePlan: PropTypes.object,
 };
 
 PlanFeatures.defaultProps = {
@@ -674,6 +684,18 @@ export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 const hasPlaceholders = planProperties =>
 	planProperties.filter( planProps => planProps.isPlaceholder ).length > 0;
 
+const maybeGetBiennialPlanSlugVersion = planSlug => {
+	// Test defaulting to the 2 year option for wpcom plans
+	if (
+		planMatches( planSlug, { group: GROUP_WPCOM } ) &&
+		'twoYearFlavor' === abtest( 'twoYearPlanByDefault' )
+	) {
+		planSlug = getBiennialPlan( planSlug ) || planSlug;
+	}
+
+	return planSlug;
+};
+
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
@@ -692,6 +714,7 @@ export default connect(
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
 		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
+		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -717,7 +740,10 @@ export default connect(
 				const newPlan = isNew( plan ) && ! isPaid;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
-				const showMonthlyPrice = ! relatedMonthlyPlan && showMonthly;
+
+				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
+				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
+
 				let planFeatures = getPlanFeaturesObject(
 					planConstantObj.getPlanCompareFeatures( abtest )
 				);
@@ -767,7 +793,9 @@ export default connect(
 					isPlaceholder,
 					onUpgradeClick: onUpgradeClick
 						? () => {
-								const planSlug = getPlanSlug( state, planProductId );
+								const planSlug = maybeGetBiennialPlanSlugVersion(
+									getPlanSlug( state, planProductId )
+								);
 
 								onUpgradeClick( getCartItemForPlan( planSlug ) );
 						  }
@@ -776,7 +804,9 @@ export default connect(
 									return;
 								}
 
-								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }` );
+								const planSlug = maybeGetBiennialPlanSlugVersion( plan );
+
+								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( planSlug ) || '' }` );
 						  },
 					planConstantObj,
 					planName: plan,
@@ -808,6 +838,7 @@ export default connect(
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
+			sitePlan,
 			siteType,
 			planCredits,
 			hasPlaceholders: hasPlaceholders( planProperties ),

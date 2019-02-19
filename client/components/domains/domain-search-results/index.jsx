@@ -52,6 +52,8 @@ class DomainSearchResults extends React.Component {
 		isSignupStep: PropTypes.bool,
 		railcarId: PropTypes.string,
 		fetchAlgo: PropTypes.string,
+		pendingCheckSuggestion: PropTypes.object,
+		unavailableDomains: PropTypes.array,
 	};
 
 	renderDomainAvailability() {
@@ -98,6 +100,7 @@ class DomainSearchResults extends React.Component {
 			) &&
 			get( this.props, 'products.domain_map', false )
 		) {
+			// eslint-disable-next-line jsx-a11y/anchor-is-valid
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
 			if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
@@ -159,6 +162,7 @@ class DomainSearchResults extends React.Component {
 								{ translate( '{{a}}Yes, I own this domain{{/a}}', {
 									components: {
 										a: (
+											// eslint-disable-next-line jsx-a11y/anchor-is-valid
 											<a
 												href="#"
 												onClick={ this.props.onClickUseYourDomain }
@@ -234,6 +238,8 @@ class DomainSearchResults extends React.Component {
 					railcarId={ this.props.railcarId }
 					secondarySuggestion={ first( bestAlternativeSuggestions ) }
 					selectedSite={ this.props.selectedSite }
+					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
+					unavailableDomains={ this.props.unavailableDomains }
 				/>
 			);
 
@@ -256,6 +262,8 @@ class DomainSearchResults extends React.Component {
 						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
 						onButtonClick={ this.props.onClickResult }
+						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
+						unavailableDomains={ this.props.unavailableDomains }
 					/>
 				);
 			} );

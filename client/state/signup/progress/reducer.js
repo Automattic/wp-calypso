@@ -55,10 +55,6 @@ function removeUnneededSteps( state, { flowName, inImprovedOnboardingTest } ) {
 	let flowSteps = [];
 	const user = userFactory();
 
-	if ( inImprovedOnboardingTest && 'ecommerce' === flowName ) {
-		flowName = 'ecommerce-onboarding';
-	}
-
 	flowSteps = get( flows, `${ flowName }.steps`, [] );
 
 	if ( user && user.get() ) {

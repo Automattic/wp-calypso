@@ -14,7 +14,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { flowRight, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -27,6 +27,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
 import SignupForm from 'blocks/signup-form';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { addQueryArgs } from 'lib/route';
 import { authQueryPropTypes } from './utils';
@@ -235,13 +236,20 @@ export class JetpackSignup extends Component {
 		);
 	}
 }
-export default connect(
+
+const connectComponent = connect(
 	null,
 	{
 		createAccount: createAccountAction,
 		createSocialAccount: createSocialAccountAction,
 		errorNotice: errorNoticeAction,
-		warningNotice: warningNoticeAction,
 		recordTracksEvent: recordTracksEventAction,
+		warningNotice: warningNoticeAction,
 	}
-)( localize( JetpackSignup ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( JetpackSignup );

@@ -33,7 +33,6 @@
 			background-color: var( --color-primary );
 		}
 	}
-
 }
 
 .activity-log-banner__icon {
@@ -43,9 +42,9 @@
 	margin-left: -5px;
 	margin-right: 16px;
 	border-radius: 50%;
-	color: $white;
+	color: var( --color-white );
 
-	background-color: $gray;
+	background-color: var( --color-neutral-300 );
 }
 
 .activity-log-banner__content {
@@ -62,7 +61,7 @@
 }
 
 .activity-log-banner__dismiss {
-	color: $gray;
+	color: var( --color-neutral-300 );
 	cursor: pointer;
 	margin-top: -8px;
 	margin-right: -8px;
@@ -73,13 +72,12 @@
 }
 
 .activity-log-banner__progress-bar--queued.is-pulsing .progress-bar__progress {
-	$bar-color: $gray;
 	background-image: linear-gradient(
 		-45deg,
-		$bar-color 28%,
-		lighten( $bar-color, 5% ) 28%,
-		lighten( $bar-color, 5% ) 72%,
-		$bar-color 72%
+		var( --color-neutral-300 ) 28%,
+		var( --color-neutral-200 ) 28%,
+		var( --color-neutral-200 ) 72%,
+		var( --color-neutral-300 ) 72%
 	);
 }
 
@@ -111,4 +109,39 @@
 
 .activity-log-banner__upgrade {
 	margin-top: 1px;
+
+	.button {
+		white-space: nowrap;
+	}
+}
+
+// Introduction banner
+.activity-log-banner__intro {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 44px;
+}
+
+.activity-log-banner__intro-image {
+	max-width: 220px;
+	margin: 8px 16px 0 -8px;
+
+	@include breakpoint( '<960px' ) {
+		max-width: 100px;
+	}
+
+	@include breakpoint( '<660px' ) {
+		max-width: 64px;
+	}
+
+	@include breakpoint( '<480px' ) {
+		display: none;
+	}
+}
+
+.activity-log-banner__intro-description {
+
+	p {
+		font-size: 14px;
+	}
 }

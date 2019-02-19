@@ -11,6 +11,11 @@ import React from 'react';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const ReaderExcerpt = ( { post, isDiscover } ) => {
 	let excerpt = post.better_excerpt || post.excerpt;
 

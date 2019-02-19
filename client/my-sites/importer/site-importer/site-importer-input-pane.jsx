@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import { noop, every, flow, has, defer, get, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
 import moment from 'moment';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -187,6 +188,17 @@ class SiteImporterInputPane extends React.Component {
 		event.key === 'Enter' && this.validateSite();
 	};
 
+	getApiParams = () => {
+		const params = {};
+		if ( this.state.selectedEndpoint ) {
+			params.force_endpoint = this.state.selectedEndpoint;
+		}
+		if ( has( this.props, 'importerData.engine' ) ) {
+			params.engine = this.props.importerData.engine;
+		}
+		return params;
+	};
+
 	validateSite = () => {
 		const siteURL = trim( this.state.siteURLInput );
 
@@ -229,14 +241,14 @@ class SiteImporterInputPane extends React.Component {
 
 		prefetchmShotsPreview( urlForImport );
 
-		const endpointParam =
-			this.state.selectedEndpoint && `&force_endpoint=${ this.state.selectedEndpoint }`;
+		const params = this.getApiParams();
+		params.site_url = urlForImport;
 
 		wpcom.wpcom.req
 			.get( {
-				path: `/sites/${
-					this.props.site.ID
-				}/site-importer/is-site-importable?site_url=${ urlForImport }${ endpointParam }`,
+				path: `/sites/${ this.props.site.ID }/site-importer/is-site-importable?${ stringify(
+					params
+				) }`,
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( resp => {
@@ -302,12 +314,11 @@ class SiteImporterInputPane extends React.Component {
 			site_engine: this.state.importData.engine,
 		} );
 
-		const endpointParam =
-			this.state.selectedEndpoint && `?force_endpoint=${ this.state.selectedEndpoint }`;
-
 		wpcom.wpcom.req
 			.post( {
-				path: `/sites/${ this.props.site.ID }/site-importer/import-site${ endpointParam }`,
+				path: `/sites/${ this.props.site.ID }/site-importer/import-site?${ stringify(
+					this.getApiParams()
+				) }`,
 				apiNamespace: 'wpcom/v2',
 				formData: [
 					[ 'import_status', JSON.stringify( toApi( this.props.importerStatus ) ) ],
@@ -374,6 +385,50 @@ class SiteImporterInputPane extends React.Component {
 		} );
 	};
 
+	renderUrlHint = () => {
+		switch ( this.props.importerData.engine ) {
+			case 'wix':
+				return (
+					<div>
+						<p>
+							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
+						</p>
+						<ul>
+							<li>
+								<span className="site-importer__site-importer-example-domain">example.com</span>
+								{ ' - ' }
+								{ this.props.translate( 'a paid custom domain' ) }
+							</li>
+							<li>
+								<span className="site-importer__site-importer-example-domain">
+									example-account.wixsite.com/my-site
+								</span>
+								{ ' - ' }
+								{ this.props.translate( 'a free domain that comes with every site' ) }
+							</li>
+						</ul>
+					</div>
+				);
+			case 'engine6':
+				return (
+					<div>
+						<p>
+							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
+						</p>
+						<ul>
+							{ /* TODO(marekhrabe): add free URL format before public launch */ }
+							<li>
+								<span className="site-importer__site-importer-example-domain">example.com</span>
+								{ ' - ' }
+								{ this.props.translate( 'a paid custom domain' ) }
+							</li>
+						</ul>
+					</div>
+				);
+		}
+		return null;
+	};
+
 	render() {
 		return (
 			<div className="site-importer__site-importer-pane">
@@ -433,25 +488,7 @@ class SiteImporterInputPane extends React.Component {
 						retryImport={ this.validateSite }
 					/>
 				) }
-				{ this.state.importStage === 'idle' && (
-					<div>
-						<p>
-							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
-						</p>
-						<ul>
-							<li>
-								<span className="site-importer__site-importer-example-domain">example.com</span> -{' '}
-								{ this.props.translate( 'a paid custom domain' ) }
-							</li>
-							<li>
-								<span className="site-importer__site-importer-example-domain">
-									example-account.wixsite.com/my-site
-								</span>{' '}
-								- { this.props.translate( 'a free domain that comes with every site' ) }
-							</li>
-						</ul>
-					</div>
-				) }
+				{ this.state.importStage === 'idle' && this.renderUrlHint() }
 			</div>
 		);
 	}

@@ -44,6 +44,7 @@ import {
 	isNoAds,
 	isPlan,
 	isBlogger,
+	isPersonal,
 	isPremium,
 	isPrivacyProtection,
 	isSiteRedirect,
@@ -51,6 +52,7 @@ import {
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
+	isConciergeSession,
 } from 'lib/products-values';
 import sortProducts from 'lib/products-values/sort';
 import { getTld } from 'lib/domains';
@@ -296,6 +298,16 @@ export function hasPlan( cart ) {
 }
 
 /**
+ * Determines whether there is a Jetpack plan in the shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one Jetpack plan, false otherwise
+ */
+export function hasJetpackPlan( cart ) {
+	return some( getAll( cart ), isJetpackPlan );
+}
+
+/**
  * Determines whether there is an ecommerce plan in the shopping cart.
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -319,6 +331,10 @@ export function hasOnlyBundledDomainProducts( cart ) {
 
 export function hasBloggerPlan( cart ) {
 	return some( getAll( cart ), isBlogger );
+}
+
+export function hasPersonalPlan( cart ) {
+	return some( getAll( cart ), isPersonal );
 }
 
 export function hasPremiumPlan( cart ) {
@@ -406,6 +422,12 @@ export function hasDomainMapping( cart ) {
 	return some( getAll( cart ), isDomainMapping );
 }
 
+export function hasDomainBeingUsedForPlan( cart ) {
+	return some( getDomainRegistrations( cart ), registration =>
+		isDomainBeingUsedForPlan( cart, registration.meta )
+	);
+}
+
 /**
  * Determines whether there is at least one renewal item in the specified shopping cart.
  *
@@ -444,6 +466,16 @@ export function getDomainTransfers( cart ) {
  */
 export function hasOnlyRenewalItems( cart ) {
 	return every( getAll( cart ), isRenewal );
+}
+
+/**
+ * Determines whether there is at least one concierge session item in the specified shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one concierge session item, false otherwise
+ */
+export function hasConciergeSession( cart ) {
+	return some( getAll( cart ), isConciergeSession );
 }
 
 /**
@@ -1058,15 +1090,22 @@ export function shouldBundleDomainWithPlan(
  *
  * @param {object} selectedSite Site
  * @param {object} cart Cart
+ * @param {string} domain Domain name
  * @return {boolean} See description
  */
-export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
+export function hasToUpgradeToPayForADomain( selectedSite, cart, domain ) {
+	if ( ! domain || ! getTld( domain ) ) {
+		return false;
+	}
+
 	const sitePlanSlug = ( ( selectedSite || {} ).plan || {} ).product_slug;
-	if ( sitePlanSlug && isWpComBloggerPlan( sitePlanSlug ) ) {
+	const isDotBlogDomain = 'blog'.startsWith( getTld( domain ) );
+
+	if ( sitePlanSlug && isWpComBloggerPlan( sitePlanSlug ) && ! isDotBlogDomain ) {
 		return true;
 	}
 
-	if ( hasBloggerPlan( cart ) ) {
+	if ( hasBloggerPlan( cart ) && ! isDotBlogDomain ) {
 		return true;
 	}
 
@@ -1094,6 +1133,8 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		if ( withPlansOnly ) {
 			return 'INCLUDED_IN_HIGHER_PLAN';
 		}
+
+		return 'PRICE';
 	}
 
 	if ( isDomainOnly ) {
@@ -1108,7 +1149,7 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'INCLUDED_IN_HIGHER_PLAN';
 	}
 
-	if ( hasToUpgradeToPayForADomain( selectedSite, cart ) ) {
+	if ( hasToUpgradeToPayForADomain( selectedSite, cart, suggestion.domain_name ) ) {
 		return 'UPGRADE_TO_HIGHER_PLAN_TO_BUY';
 	}
 
@@ -1166,6 +1207,7 @@ export default {
 	guidedTransferItem,
 	isDomainBeingUsedForPlan,
 	isNextDomainFree,
+	hasDomainBeingUsedForPlan,
 	hasDomainCredit,
 	hasDomainInCart,
 	hasDomainMapping,
@@ -1178,12 +1220,16 @@ export default {
 	hasOnlyProductsOf,
 	hasOnlyRenewalItems,
 	hasPlan,
+	hasJetpackPlan,
 	hasOnlyBundledDomainProducts,
+	hasBloggerPlan,
+	hasPersonalPlan,
 	hasPremiumPlan,
 	hasProduct,
 	hasRenewableSubscription,
 	hasRenewalItem,
 	hasTld,
+	hasConciergeSession,
 	noAdsItem,
 	planItem,
 	premiumPlan,

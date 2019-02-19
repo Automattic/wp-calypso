@@ -52,13 +52,11 @@ export class CurrentPlanHeader extends Component {
 									args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ),
 							  } ) }
 					</span>
-					{ currentPlan.userIsOwner &&
-						Boolean( currentPlan.id ) &&
-						siteSlug && (
-							<Button compact href={ managePurchase( siteSlug, currentPlan.id ) }>
-								{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
-							</Button>
-						) }
+					{ currentPlan.userIsOwner && Boolean( currentPlan.id ) && siteSlug && (
+						<Button compact href={ managePurchase( siteSlug, currentPlan.id ) }>
+							{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
+						</Button>
+					) }
 				</div>
 			</Card>
 		);
@@ -95,13 +93,11 @@ export class CurrentPlanHeader extends Component {
 						</div>
 					</div>
 					{ this.renderPurchaseInfo() }
-					{ currentPlan &&
-						isFreeJetpackPlan( currentPlan ) &&
-						siteSlug && (
-							<div className="current-plan__compare-plans">
-								<Button href={ `/plans/${ siteSlug }` }>{ translate( 'Compare Plans' ) }</Button>
-							</div>
-						) }
+					{ currentPlan && isFreeJetpackPlan( currentPlan ) && siteSlug && (
+						<div className="current-plan__compare-plans">
+							<Button href={ `/plans/${ siteSlug }` }>{ translate( 'Compare Plans' ) }</Button>
+						</div>
+					) }
 				</div>
 			</div>
 		);

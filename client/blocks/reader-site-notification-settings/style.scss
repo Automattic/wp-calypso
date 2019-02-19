@@ -9,19 +9,19 @@
 .reader-site-notification-settings__button-label {
 	font-size: 14px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
 
 .reader-site-notification-settings .gridicons-cog {
-	fill: $gray-lighten-10;
+	fill: var( --color-neutral-200 );
 	height: 18px;
 	position: relative;
 		top: 4px;
 		left: -4px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		left: -1px;
 	}
 }
@@ -36,9 +36,9 @@
 		background: $white;
 	}
 
-	.reader-site-notification-settings__popout-toggle:nth-child(2),
-	.reader-site-notification-settings__popout-toggle:nth-child(3),
-	.reader-site-notification-settings__popout-toggle:nth-child(4) {
+	.reader-site-notification-settings__popout-toggle:nth-child( 2 ),
+	.reader-site-notification-settings__popout-toggle:nth-child( 3 ),
+	.reader-site-notification-settings__popout-toggle:nth-child( 4 ) {
 		display: flex;
 		justify-content: space-between;
 	}
@@ -46,8 +46,8 @@
 
 .reader-site-notification-settings__popout-toggle,
 .reader-site-notification-settings__popout-instructions {
-	border-top: 1px solid $gray-lighten-20;
-	color: $gray-dark;
+	border-top: 1px solid var( --color-neutral-100 );
+	color:var( --color-neutral-700 );
 	font-size: 14px;
 	padding: 10px 0 10px 15px;
 	text-align: left;

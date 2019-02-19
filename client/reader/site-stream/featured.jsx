@@ -21,6 +21,11 @@ import getStream from 'state/selectors/get-reader-stream';
 import { requestPage } from 'state/reader/streams/actions';
 import { keyToString } from 'reader/post-key';
 
+/**
+ * Style dependencies
+ */
+import './featured.scss';
+
 function getPostUrl( post ) {
 	return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
 }

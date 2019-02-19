@@ -8,6 +8,7 @@ const webpack = require( 'webpack' );
 exports.config = ( { argv: { entryPoint, outputName, globalWp }, getBaseConfig } ) => {
 	const baseConfig = getBaseConfig( {
 		externalizeWordPressPackages: globalWp,
+		preserveCssCustomProperties: false,
 	} );
 
 	return {

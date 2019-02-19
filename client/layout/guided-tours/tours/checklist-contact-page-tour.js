@@ -5,7 +5,6 @@
  */
 
 import React, { Fragment } from 'react';
-import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -28,7 +27,7 @@ function isPostEditorSection( state ) {
 }
 
 export const ChecklistContactPageTour = makeTour(
-	<Tour name="checklistContactPage" version="20171205" path="/non-existent-route" when={ noop }>
+	<Tour name="checklistContactPage" version="20171205" path="/non-existent-route">
 		<Step
 			name="init"
 			placement="right"

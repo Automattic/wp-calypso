@@ -2,54 +2,63 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-import createReactClass from 'create-react-class';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-import { domainManagementPrimaryDomain } from 'my-sites/domains/paths';
 import Button from 'components/button';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { domainManagementPrimaryDomain } from 'my-sites/domains/paths';
+import { getDomainTypeText } from 'lib/domains';
 
-const PrimaryDomainButton = createReactClass( {
-	displayName: 'PrimaryDomainButton',
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
-
-	propTypes: {
-		domain: PropTypes.object.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-	},
-
-	handleClick() {
-		this.recordEvent( 'makePrimaryClick', this.props.domain );
-
+class PrimaryDomainButton extends React.Component {
+	handleClick = () => {
+		this.props.recordMakePrimaryClick( this.props.domain );
 		page( domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name ) );
-	},
+	};
 
 	render() {
-		const domain = this.props.domain;
-		let label;
+		const { domain, translate } = this.props;
 
 		if ( domain && ! domain.isPrimary ) {
-			label = this.props.translate( 'Make Primary' );
-
 			return (
-				<Button
-					compact
-					className="domain-details-card__make-primary-button"
-					onClick={ this.handleClick }
-				>
-					{ label }
+				<Button compact onClick={ this.handleClick }>
+					{ translate( 'Make Primary' ) }
 				</Button>
 			);
 		}
 
 		return null;
-	},
-} );
+	}
+}
 
-export default localize( PrimaryDomainButton );
+const recordMakePrimaryClick = domain =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			`Clicked "Make Primary" link on a ${ getDomainTypeText( domain ) } in Edit`,
+			'Domain Name',
+			domain.name
+		),
+		recordTracksEvent( 'calypso_domain_management_edit_make_primary_click', {
+			section: snakeCase( getDomainTypeText( domain ) ),
+		} )
+	);
+
+PrimaryDomainButton.propTypes = {
+	domain: PropTypes.object.isRequired,
+	recordMakePrimaryClick: PropTypes.func.isRequired,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+	translate: PropTypes.func.isRequired,
+};
+
+export default connect(
+	null,
+	{ recordMakePrimaryClick }
+)( localize( PrimaryDomainButton ) );

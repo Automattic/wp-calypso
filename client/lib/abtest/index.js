@@ -145,6 +145,10 @@ ABTest.prototype.init = function( name, geoLocation ) {
 };
 
 ABTest.prototype.getVariationAndSetAsNeeded = function() {
+	if ( 'test' === process.env.NODE_ENV ) {
+		return this.defaultVariation;
+	}
+
 	const savedVariation = this.getSavedVariation( this.experimentId );
 
 	if ( ! this.hasTestStartedYet() ) {

@@ -38,12 +38,10 @@ import './style.scss';
 import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
-import SignupHeader from 'signup/header';
-import SiteMockups from 'signup/site-mockup';
+import SignupHeader from 'signup/signup-header';
 
 // Libraries
 import analytics from 'lib/analytics';
-import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
 import SignupActions from 'lib/signup/actions';
@@ -61,7 +59,7 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
-import { submitSiteTopic } from 'state/signup/steps/site-topic/actions';
+import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -187,6 +185,10 @@ class Signup extends React.Component {
 		this.checkForCartItems( signupDependencies );
 	}
 
+	componentWillUnmount() {
+		this.signupFlowController.cleanup();
+	}
+
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		this.recordSignupStart();
@@ -194,17 +196,15 @@ class Signup extends React.Component {
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
 		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
-
 		return this.handleFlowComplete( dependencies, filteredDestination );
 	};
 
 	recordSignupStart() {
-		analytics.tracks.recordEvent( 'calypso_signup_start', {
+		analytics.recordSignupStart( {
 			flow: this.props.flowName,
 			ref: this.props.refParameter,
 		} );
 		this.recordReferralVisit();
-		recordSignupStart();
 	}
 
 	recordReferralVisit() {
@@ -266,7 +266,7 @@ class Signup extends React.Component {
 		const fulfilledSteps = [];
 
 		// `vertical` query parameter
-		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
+		if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
 			debug( 'From query string: vertical = %s', vertical );
 
 			const siteTopicStepName = 'site-topic';
@@ -280,7 +280,7 @@ class Signup extends React.Component {
 				surveyQuestion: vertical,
 			} );
 
-			this.props.submitSiteTopic( vertical );
+			this.props.submitSiteVertical( { name: vertical }, siteTopicStepName );
 
 			// Track our landing page verticals
 			if ( isValidLandingPageVertical( vertical ) ) {
@@ -297,7 +297,7 @@ class Signup extends React.Component {
 
 		//`site_type` query parameter
 		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
-		if ( 'undefined' !== typeof siteTypeValue ) {
+		if ( siteTypeValue ) {
 			debug( 'From query string: site_type = %s', siteType );
 			debug( 'Site type value = %s', siteTypeValue );
 
@@ -344,14 +344,13 @@ class Signup extends React.Component {
 		);
 		const isNewUserOnFreePlan = isNewUser && isNewSite && ! hasCartItems;
 
-		analytics.tracks.recordEvent( 'calypso_signup_complete', {
+		analytics.recordSignupComplete( {
+			isNewUser,
+			isNewSite,
+			hasCartItems,
+			isNewUserOnFreePlan,
 			flow: this.props.flowName,
-			is_new_user: isNewUser,
-			is_new_site: isNewSite,
-			has_cart_items: hasCartItems,
-			is_new_user_on_free_plan: isNewUserOnFreePlan,
 		} );
-		recordSignupCompletion( { isNewUser, isNewSite, hasCartItems, isNewUserOnFreePlan } );
 
 		if ( dependencies.cartItem || dependencies.domainItem ) {
 			this.handleLogin( dependencies, destination );
@@ -371,7 +370,9 @@ class Signup extends React.Component {
 
 		debug( `Logging you in to "${ destination }"` );
 
-		this.setState( { controllerHasReset: true } );
+		if ( ! this.state.controllerHasReset ) {
+			this.setState( { controllerHasReset: true } );
+		}
 
 		if ( userIsLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
@@ -397,11 +398,16 @@ class Signup extends React.Component {
 
 		if ( ! userIsLoggedIn && ! config.isEnabled( 'oauth' ) ) {
 			debug( `Handling regular login` );
-			this.setState( {
-				bearerToken: dependencies.bearer_token,
-				username: dependencies.username,
-				redirectTo: this.loginRedirectTo( destination ),
-			} );
+
+			const { bearer_token: bearerToken, username } = dependencies;
+
+			if ( this.state.bearerToken !== bearerToken && this.state.username !== username ) {
+				this.setState( {
+					bearerToken: dependencies.bearer_token,
+					username: dependencies.username,
+					redirectTo: this.loginRedirectTo( destination ),
+				} );
+			}
 		}
 	};
 
@@ -610,7 +616,6 @@ class Signup extends React.Component {
 					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 				/>
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
-				{ this.shouldShowSiteMockups() && <SiteMockups /> }
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }
@@ -620,14 +625,6 @@ class Signup extends React.Component {
 				) }
 			</div>
 		);
-	}
-
-	shouldShowSiteMockups() {
-		if ( this.props.flowName !== 'onboarding-dev' ) {
-			return false;
-		}
-		const stepsToShowOn = [ 'site-topic', 'about', 'site-information', 'domains' ];
-		return stepsToShowOn.indexOf( this.props.stepName ) >= 0;
 	}
 }
 
@@ -643,7 +640,7 @@ export default connect(
 	{
 		setSurvey,
 		submitSiteType,
-		submitSiteTopic,
+		submitSiteVertical,
 		loadTrackingTool,
 		trackAffiliateReferral: affiliateReferral,
 	},

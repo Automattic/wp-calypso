@@ -1,4 +1,3 @@
-/** @format */
 /* exported __webpack_public_path__ */
 /* global __webpack_public_path__ */
 

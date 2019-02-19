@@ -22,7 +22,7 @@
 	.simple-payments__field-has-error {
 		.components-text-control__input,
 		.components-textarea-control__input {
-			border-color: $alert-red;
+			border-color: var( --color-error );
 		}
 	}
 

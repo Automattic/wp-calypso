@@ -25,7 +25,7 @@
 @include breakpoint( '<660px' ) {
 	.is-group-editor.focus-sidebar::before,
 	.is-group-editor.focus-editor-confirmation-sidebar::before {
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 	}
 
 	.is-group-editor .sidebar {
@@ -75,7 +75,7 @@
 .post-editor__site {
 	display: flex;
 	margin-bottom: 16px;
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 
 	@include breakpoint( '>660px' ) {
 		display: none;
@@ -175,7 +175,7 @@
 	}
 
 	&:focus {
-		border-color: $gray-lighten-20;
+		border-color: var( --color-neutral-100 );
 		box-shadow: none;
 	}
 }
@@ -209,25 +209,25 @@
 
 	&:last-of-type {
 		.segmented-control__link {
-			border-right-color: $gray-lighten-20;
+			border-right-color: var( --color-neutral-100 );
 			border-bottom-right-radius: 0;
 		}
 	}
 
 	&.is-selected {
 		+ .segmented-control__item .segmented-control__link {
-			border-left-color: $gray-lighten-20;
+			border-left-color: var( --color-neutral-100 );
 		}
 	}
 }
 
 .post-editor__switch-mode .segmented-control__link {
-	background: $gray-light;
-	border-color: $gray-lighten-20;
+	background: var( --color-neutral-0 );
+	border-color: var( --color-neutral-100 );
 }
 
 .post-editor__switch-mode .segmented-control__item.is-selected .segmented-control__link {
-	border-color: $gray-lighten-20;
+	border-color: var( --color-neutral-100 );
 	border-bottom-color: $white;
 	background-color: $white;
 }
@@ -243,7 +243,7 @@
 }
 
 .post-editor .drafts__list + .list-end::after {
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 }
 
 .post-editor .draft {
@@ -252,10 +252,10 @@
 
 .post-editor__content-editor .editor-featured-image {
 	display: none;
-	border-bottom: 1px solid lighten( $gray, 20 );
-	border-top: 1px solid lighten( $gray, 20 );
-	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
-	background: rgba( lighten( $gray, 30 ), 0.3 );
+	border-bottom: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-100 );
+	box-shadow: inset 0 0 2px 2px rgba( var( --color-neutral-200-rgb ), 0.1 );
+	background: rgba( var( --color-neutral-0-rgb ), 0.3 );
 
 	overflow: hidden;
 

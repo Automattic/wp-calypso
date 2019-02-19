@@ -578,21 +578,39 @@ describe( 'getDomainPriceRule()', () => {
 } );
 
 describe( 'hasToUpgradeToPayForADomain()', () => {
-	test( 'should return true if current site is on a blogger plan', () => {
-		expect( hasToUpgradeToPayForADomain( { plan: { product_slug: PLAN_BLOGGER } }, {} ) ).toBe(
-			true
-		);
-	} );
-
-	test( 'should return true if blogger plan is in the cart', () => {
+	test( 'should return true if current site is on a blogger plan, and adding a non .blog domain', () => {
 		expect(
-			hasToUpgradeToPayForADomain( {}, { products: [ { product_slug: PLAN_BLOGGER } ] } )
+			hasToUpgradeToPayForADomain( { plan: { product_slug: PLAN_BLOGGER } }, {}, 'domain.com' )
 		).toBe( true );
 	} );
 
-	test( 'should return true if blogger plan 2y is in the cart', () => {
+	test( 'should return true if current site is on a blogger 2y plan, and adding a non .blog domain', () => {
 		expect(
-			hasToUpgradeToPayForADomain( {}, { products: [ { product_slug: PLAN_BLOGGER_2_YEARS } ] } )
+			hasToUpgradeToPayForADomain(
+				{ plan: { product_slug: PLAN_BLOGGER_2_YEARS } },
+				{},
+				'domain.com'
+			)
+		).toBe( true );
+	} );
+
+	test( 'should return true if blogger plan is in the cart, and adding a non .blog domain', () => {
+		expect(
+			hasToUpgradeToPayForADomain(
+				{},
+				{ products: [ { product_slug: PLAN_BLOGGER } ] },
+				'domain.com'
+			)
+		).toBe( true );
+	} );
+
+	test( 'should return true if blogger 2y plan is in the cart, and adding a non .blog domain', () => {
+		expect(
+			hasToUpgradeToPayForADomain(
+				{},
+				{ products: [ { product_slug: PLAN_BLOGGER_2_YEARS } ] },
+				'domain.com'
+			)
 		).toBe( true );
 	} );
 
@@ -600,7 +618,8 @@ describe( 'hasToUpgradeToPayForADomain()', () => {
 		expect(
 			hasToUpgradeToPayForADomain(
 				{ plan: { product_slug: PLAN_FREE } },
-				{ products: [ { product_slug: PLAN_PERSONAL } ] }
+				{ products: [ { product_slug: PLAN_PERSONAL } ] },
+				'domain.com'
 			)
 		).toBe( false );
 	} );

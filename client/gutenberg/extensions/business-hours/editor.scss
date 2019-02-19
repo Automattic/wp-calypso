@@ -1,0 +1,56 @@
+.wp-block-jetpack-business-hours {
+	overflow: hidden;
+
+	.business-hours__row {
+		display: flex;
+		align-items: center;
+		margin-bottom: 20px;
+
+		.business-hours__day {
+			width: 48%;
+			display: flex;
+			align-items: baseline;
+
+			.business-hours__day-name {
+				width: 40%;
+			}
+		}
+
+		.business-hours__hours {
+			width: 48%;
+			margin: 0;
+
+			> .components-base-control {
+				display: inline-block;
+				max-width: 45%;
+
+				.components-base-control__label {
+					display: inline-block;
+					margin-bottom: 0;
+				}
+
+				.components-text-control__input {
+					width: 9em;
+					margin-left: 0.5em;
+				}
+			}
+		}
+	}
+}
+
+@media screen and ( max-width: 600px ) {
+	.wp-block-jetpack-business-hours {
+
+		.business-hours__row {
+			display: block;
+
+			.business-hours__day {
+				width: 100%;
+			}
+
+			.business-hours__hours {
+				width: 100%;
+			}
+		}
+	}
+}

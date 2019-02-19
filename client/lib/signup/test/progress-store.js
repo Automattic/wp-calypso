@@ -19,6 +19,13 @@ import SignupActions from '../actions';
 import SignupProgressStore from '../progress-store';
 
 jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'lib/abtest', () => {
+	return {
+		abtest() {
+			return 'main';
+		},
+	};
+} );
 jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
 
@@ -81,6 +88,7 @@ describe( 'progress-store', () => {
 		expect( omit( first( SignupProgressStore.get() ), 'lastUpdated' ) ).toEqual( {
 			stepName: 'site-selection',
 			formData: { url: 'my-site.wordpress.com' },
+			lastKnownFlow: '',
 			status: 'completed',
 		} );
 	} );

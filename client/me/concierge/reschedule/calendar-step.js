@@ -21,6 +21,7 @@ import QueryConciergeAppointmentDetails from 'components/data/query-concierge-ap
 import getConciergeAppointmentDetails from 'state/selectors/get-concierge-appointment-details';
 import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
 import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
+import getConciergeAppointmentTimespan from 'state/selectors/get-concierge-appointment-timespan';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import {
 	rescheduleConciergeAppointment,
@@ -82,6 +83,7 @@ class CalendarStep extends Component {
 		const {
 			appointmentDetails,
 			appointmentId,
+			appointmentTimespan,
 			currentUserLocale,
 			signupForm,
 			site,
@@ -98,7 +100,7 @@ class CalendarStep extends Component {
 
 				<CompactCard>
 					{ translate(
-						'To reschedule your Concierge session, let us know your timezone and preferred day.'
+						'To reschedule your session, let us know your timezone and preferred day.'
 					) }
 				</CompactCard>
 
@@ -122,6 +124,7 @@ class CalendarStep extends Component {
 						<AvailableTimePicker
 							actionText={ translate( 'Reschedule to this date' ) }
 							availableTimes={ this.getFilteredTimeSlots() }
+							appointmentTimespan={ appointmentTimespan }
 							currentUserLocale={ currentUserLocale }
 							disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING || ! appointmentDetails }
 							onBack={ null }
@@ -139,6 +142,7 @@ class CalendarStep extends Component {
 export default connect(
 	( state, props ) => ( {
 		appointmentDetails: getConciergeAppointmentDetails( state, props.appointmentId ),
+		appointmentTimespan: getConciergeAppointmentTimespan( state ),
 		currentUserLocale: getCurrentUserLocale( state ),
 		signupForm: getConciergeSignupForm( state ),
 		scheduleId: getConciergeScheduleId( state ),

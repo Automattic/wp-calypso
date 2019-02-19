@@ -324,9 +324,9 @@ export class FullPostView extends React.Component {
 					<DocumentHead title={ `${ post.title } ‹ ${ siteName } ‹ Reader` } />
 				) }
 				{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
-				{ post &&
-					! post.is_external &&
-					post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
+				{ post && ! post.is_external && post.site_ID && (
+					<QueryReaderSite siteId={ +post.site_ID } />
+				) }
 				{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 				{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
 				<BackButton onClick={ this.handleBack } />
@@ -345,21 +345,20 @@ export class FullPostView extends React.Component {
 				<div className="reader-full-post__content">
 					<div className="reader-full-post__sidebar">
 						{ isLoading && <AuthorCompactProfile author={ null } /> }
-						{ ! isLoading &&
-							post.author && (
-								<AuthorCompactProfile
-									author={ post.author }
-									siteIcon={ get( site, 'icon.img' ) }
-									feedIcon={ get( feed, 'image' ) }
-									siteName={ siteName }
-									siteUrl={ post.site_URL }
-									feedUrl={ get( feed, 'feed_URL' ) }
-									followCount={ site && site.subscribers_count }
-									feedId={ +post.feed_ID }
-									siteId={ +post.site_ID }
-									post={ post }
-								/>
-							) }
+						{ ! isLoading && post.author && (
+							<AuthorCompactProfile
+								author={ post.author }
+								siteIcon={ get( site, 'icon.img' ) }
+								feedIcon={ get( feed, 'image' ) }
+								siteName={ siteName }
+								siteUrl={ post.site_URL }
+								feedUrl={ get( feed, 'feed_URL' ) }
+								followCount={ site && site.subscribers_count }
+								feedId={ +post.feed_ID }
+								siteId={ +post.site_ID }
+								post={ post }
+							/>
+						) }
 						<div className="reader-full-post__sidebar-comment-like">
 							{ shouldShowComments( post ) && (
 								<CommentButton
@@ -384,10 +383,9 @@ export class FullPostView extends React.Component {
 						<article className="reader-full-post__story">
 							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
-							{ post.featured_image &&
-								! isFeaturedImageInContent( post ) && (
-									<FeaturedImage src={ post.featured_image } />
-								) }
+							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
+								<FeaturedImage src={ post.featured_image } />
+							) }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ post.use_excerpt ? (
 								<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
@@ -402,10 +400,9 @@ export class FullPostView extends React.Component {
 								</EmbedContainer>
 							) }
 
-							{ post.use_excerpt &&
-								! isDiscoverPost( post ) && (
-									<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
-								) }
+							{ post.use_excerpt && ! isDiscoverPost( post ) && (
+								<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
+							) }
 							{ isDiscoverSitePick( post ) && <DiscoverSiteAttribution post={ post } /> }
 							{ isDailyPostChallengeOrPrompt( post ) && (
 								<DailyPostButton post={ post } site={ site } />

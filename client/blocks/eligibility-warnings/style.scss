@@ -10,15 +10,15 @@
 
 	.section-header__label-text,
 	.eligibility-warnings__message {
-		color: $gray-light;
-		background-color: $gray-light;
+		color: var( --color-neutral-0 );
+		background-color: var( --color-neutral-0 );
 	}
 	.eligibility-warnings__message {
 		height: 24px;
 	}
 
 	.eligibility-warnings__hold .gridicon {
-		color: $gray-light;
+		color: var( --color-neutral-0 );
 	}
 
 	.button,

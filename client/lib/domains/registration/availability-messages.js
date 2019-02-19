@@ -25,7 +25,7 @@ import {
 
 function getAvailabilityNotice( domain, error, errorData ) {
 	const tld = domain ? getTld( domain ) : null;
-	const { site, maintenanceEndTime } = errorData || {};
+	const { site, maintenanceEndTime, availabilityPreCheck } = errorData || {};
 
 	// The message is set only when there is a valid error
 	// and the conditions of the corresponding switch block are met.
@@ -184,8 +184,8 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			}
 
 			message = translate(
-				'Domain registration is unavailable at this time. Please select a free WordPress.com ' +
-					'domain or check back %(maintenanceEnd)s.',
+				'Domain registration is unavailable at this time. Please select a free subdomain ' +
+					'or check back %(maintenanceEnd)s.',
 				{
 					args: { maintenanceEnd },
 				}
@@ -305,6 +305,20 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			message = translate(
 				'Sorry, an error occurred when checking the availability of this domain. Please try again in a few minutes.'
 			);
+			break;
+
+		case domainAvailability.DOMAIN_SUGGESTIONS_THROTTLED:
+			message = translate(
+				'You have made too many domain suggestions requests in a short time. Please wait a few minutes and try again.'
+			);
+			break;
+
+		case domainAvailability.TRANSFERRABLE:
+			if ( availabilityPreCheck ) {
+				message = translate(
+					'Sorry, the domain name you selected is not available. Please choose another domain.'
+				);
+			}
 			break;
 
 		default:

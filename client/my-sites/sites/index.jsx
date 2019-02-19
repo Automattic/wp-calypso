@@ -78,6 +78,12 @@ export class Sites extends Component {
 				break;
 		}
 
+		// nicer wording for editor routes
+		const editorRouters = [ 'page', 'post', 'edit', 'block-editor' ];
+		if ( editorRouters.includes( path ) ) {
+			return i18n.translate( 'Select a site to start writing' );
+		}
+
 		return i18n.translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
 			args: {
 				path: path,

@@ -13,7 +13,13 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { cartItems, getEnabledPaymentMethods } from 'lib/cart-values';
+import {
+	cartItems,
+	getEnabledPaymentMethods,
+	hasPendingPayment,
+	shouldShowTax,
+} from 'lib/cart-values';
+import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
@@ -69,6 +75,8 @@ import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import config from 'config';
+import { abtest } from 'lib/abtest';
 
 export class Checkout extends React.Component {
 	static propTypes = {
@@ -327,6 +335,10 @@ export class Checkout extends React.Component {
 	}
 
 	getCheckoutCompleteRedirectPath = () => {
+		// TODO: Cleanup and simplify this function.
+		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
+		// Especially around the G Suite / Concierge / Checklist logic.
+
 		let renewalItem;
 		const {
 			cart,
@@ -370,19 +382,43 @@ export class Checkout extends React.Component {
 			const siteDesignType = get( selectedSite, 'options.design_type' );
 			const hasGoogleAppsInCart = cartItems.hasGoogleApps( cart );
 
+			// Handle the redirect path after a purchase of GSuite
 			// The onboarding checklist currently supports the blog type only.
 			if ( hasGoogleAppsInCart && domainReceiptId && 'store' !== siteDesignType ) {
 				analytics.tracks.recordEvent( 'calypso_checklist_assign', {
 					site: selectedSiteSlug,
 					plan: 'paid',
 				} );
-				return `/checklist/${ selectedSiteSlug }?d=gsuite`;
+
+				const destination = abtest( 'improvedOnboarding' ) === 'onboarding' ? 'view' : 'checklist';
+
+				return `/${ destination }/${ selectedSiteSlug }?d=gsuite`;
 			}
 
-			if ( ! hasGoogleAppsInCart && cartItems.hasDomainRegistration( cart ) ) {
+			// Maybe show either the G Suite or Concierge Session upsell pages
+			if (
+				! hasGoogleAppsInCart &&
+				! cartItems.hasConciergeSession( cart ) &&
+				cartItems.hasDomainRegistration( cart )
+			) {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
-
 				if ( domainsForGSuite.length ) {
+					if ( config.isEnabled( 'upsell/concierge-session' ) ) {
+						if (
+							! cartItems.hasJetpackPlan( cart ) &&
+							( cartItems.hasBloggerPlan( cart ) ||
+								cartItems.hasPersonalPlan( cart ) ||
+								cartItems.hasPremiumPlan( cart ) )
+						) {
+							// Assign a test group as late as possible
+							if ( 'show' === abtest( 'showConciergeSessionUpsell' ) ) {
+								// A user just purchased one of the qualifying plans and is in the "show" ab test variation
+								// Show them the concierge session upsell page
+								return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
+							}
+						}
+					}
+
 					return `/checkout/${ selectedSiteSlug }/with-gsuite/${
 						domainsForGSuite[ 0 ].meta
 					}/${ receiptId }`;
@@ -390,12 +426,29 @@ export class Checkout extends React.Component {
 			}
 		}
 
+		// Test showing the concierge session upsell page after the user purchases a qualifying plan
+		// This tests the flow that was not eligible for G Suite
+		// There's an additional test above that tests directly aginst the G Suite upsell
+		if (
+			config.isEnabled( 'upsell/concierge-session' ) &&
+			! cartItems.hasConciergeSession( cart ) &&
+			! cartItems.hasJetpackPlan( cart ) &&
+			( cartItems.hasBloggerPlan( cart ) ||
+				cartItems.hasPersonalPlan( cart ) ||
+				cartItems.hasPremiumPlan( cart ) )
+		) {
+			// Assign a test group as late as possible
+			if ( 'show' === abtest( 'showConciergeSessionUpsellNonGSuite' ) ) {
+				// A user just purchased one of the qualifying plans and is in the "show" ab test variation
+				// Show them the concierge session upsell page
+				return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
+			}
+		}
+
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
-			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-				site: selectedSiteSlug,
-				plan: 'paid',
-			} );
-			return `/checklist/${ selectedSiteSlug }`;
+			const destination = abtest( 'improvedOnboarding' ) === 'main' ? 'checklist' : 'view';
+
+			return `/${ destination }/${ selectedSiteSlug }`;
 		}
 
 		/**
@@ -531,7 +584,15 @@ export class Checkout extends React.Component {
 	content() {
 		const { selectedSite } = this.props;
 
-		if ( ! this.isLoading() && this.needsDomainDetails() ) {
+		if ( this.isLoading() ) {
+			return <SecurePaymentFormPlaceholder />;
+		}
+
+		if ( config.isEnabled( 'async-payments' ) && hasPendingPayment( this.props.cart ) ) {
+			return <PendingPaymentBlocker />;
+		}
+
+		if ( this.needsDomainDetails() ) {
 			return (
 				<DomainDetailsForm
 					cart={ this.props.cart }
@@ -539,8 +600,6 @@ export class Checkout extends React.Component {
 					userCountryCode={ this.props.userCountryCode }
 				/>
 			);
-		} else if ( this.isLoading() ) {
-			return <SecurePaymentFormPlaceholder />;
 		}
 
 		return (
@@ -574,6 +633,11 @@ export class Checkout extends React.Component {
 			return false;
 		}
 
+		// Don't render when we're renewing a plan. Stick with the current period.
+		if ( planInCart.product_slug === currentPlanSlug ) {
+			return false;
+		}
+
 		const availableTerms = findPlansKeys( {
 			group: chosenPlan.group,
 			type: chosenPlan.type,
@@ -589,6 +653,7 @@ export class Checkout extends React.Component {
 					plans={ availableTerms }
 					initialValue={ planInCart.product_slug }
 					onChange={ this.handleTermChange }
+					shouldShowTax={ shouldShowTax( this.props.cart ) }
 					key="picker"
 				/>
 				<hr className="checkout__subscription-length-picker-separator" key="separator" />

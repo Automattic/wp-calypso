@@ -69,15 +69,15 @@ class SharingServiceDescription extends Component {
 			mailchimp: function() {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate(
-						'Subscribe followers to your MailChimp list.',
-						'Subscribe followers to your MailChimp lists.',
+						'Allow users to sign up to your MailChimp mailing list.',
+						'Allow users to sign up to your MailChimp mailing lists.',
 						{
 							count: this.props.numberOfConnections,
 						}
 					);
 				}
 
-				return this.props.translate( 'Subscribe followers to your MailChimp list.' );
+				return this.props.translate( 'Allow users to sign up to your MailChimp mailing list.' );
 			},
 			linkedin: function() {
 				if ( this.props.numberOfConnections > 0 ) {
@@ -181,6 +181,13 @@ class SharingServiceDescription extends Component {
 					},
 				}
 			);
+		} else if (
+			'google_photos' === this.props.service.ID &&
+			'must-disconnect' === this.props.status
+		) {
+			description = this.props.translate(
+				'Please connect again to continue using Photos for Google.'
+			);
 		} else if ( 'reconnect' === this.props.status || 'must-disconnect' === this.props.status ) {
 			description = this.props.translate( 'There is an issue connecting to %(service)s.', {
 				args: { service: this.props.service.label },
@@ -190,6 +197,12 @@ class SharingServiceDescription extends Component {
 			description = this.props.descriptions[ this.props.service.ID ].call( this );
 		}
 
+		/**
+		 * TODO: Refactoring this line has to be tackled in a seperate diff.
+		 * Touching this changes services-group.jsx which changes service.jsx
+		 * Basically whole folder needs refactoring.
+		 */
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		return <p className="sharing-service__description">{ description }</p>;
 	}
 }

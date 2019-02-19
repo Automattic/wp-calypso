@@ -36,7 +36,7 @@ class Item extends PureComponent {
 			const key = text + i;
 			const lowercasePart = part.toLowerCase();
 			const spanClass = classNames( 'suggestions__label', {
-				'is-emphasized': lowercasePart === query,
+				'is-emphasized': lowercasePart === query.toLowerCase(),
 			} );
 
 			return (
@@ -64,13 +64,14 @@ class Item extends PureComponent {
 		const className = classNames( 'suggestions__item', { 'has-highlight': hasHighlight } );
 
 		return (
-			<span
+			<button
 				className={ className }
 				onMouseDown={ this.handleMouseDown }
+				onFocus={ this.handleMouseDown }
 				onMouseOver={ this.handleMouseOver }
 			>
 				{ this.createTextWithHighlight( label, query ) }
-			</span>
+			</button>
 		);
 	}
 }

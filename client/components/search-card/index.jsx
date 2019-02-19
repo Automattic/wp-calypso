@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,11 @@ import classnames from 'classnames';
  */
 import Card from 'components/card';
 import Search from 'components/search';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class SearchCard extends React.Component {
 	static propTypes = {

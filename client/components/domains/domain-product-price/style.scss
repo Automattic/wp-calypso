@@ -1,21 +1,28 @@
 
 .domain-product-price {
-	color: $gray-darken-30;
-	font-weight: 600;
+	color: var( --color-neutral-600 );
+	font-weight: 400;
+    font-size: 0.875em;
 	line-height: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: right;
 
-	@include breakpoint( '>660px' ) {
-		align-items: center;
-		display: flex;
-		flex: 0 2 360px;
-		font-size: 17px;
-		justify-content: flex-end;
-		padding-right: 2em;
-	}
+    @include breakpoint('>660px') {
+        align-items: flex-end;
+        flex: 0 2 360px;
+        font-size: 17px;
+        padding-right: 2em;
+
+        .featured-domain-suggestions & {
+            align-items: flex-start;
+        }
+    }
 
 	@include breakpoint( '<660px' ) {
 		display: inline-block;
 		font-size: 14px;
+        text-align: left;
 	}
 
 	.map-domain-step & {
@@ -25,12 +32,10 @@
 	}
 
 	small {
-		font-weight: 400;
 		opacity: 0.6;
 	}
 
 	&.domain-product-price__is-with-plans-only {
-		font-weight: 400;
 		font-size: 0.9em;
 	}
 
@@ -39,14 +44,8 @@
 	}
 
 	.domain-product-price__free-text {
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		display: block;
-		font-size: 14px;
-		font-weight: 400;
-
-		@include breakpoint( '>660px' ) {
-			margin-left: 14px;
-		}
 	}
 
 	&.no-price .domain-product-price__free-text {
@@ -55,19 +54,20 @@
 		}
 	}
 
+    .domain-product-price__price {
+      margin: auto 0;
+    }
+
 	&.is-free-domain {
-		font-size: 13px;
 		line-height: 1.7;
 		margin-top: 2px;
 
 		small {
-			font-size: 100%;
 			opacity: 1;
 		}
 
 		.domain-product-price__price {
 			opacity: 0.6;
-			text-decoration: line-through;
 		}
 
 		@include breakpoint( '>660px' ) {
@@ -84,7 +84,7 @@
 
 		@include breakpoint( '<660px' ) {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: $gray-lighten-30;
+			background-color: var( --color-neutral-0 );
 			color: transparent;
 		}
 	}

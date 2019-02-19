@@ -1,19 +1,19 @@
 .zoninator__zone-list-item {
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	white-space: nowrap;
 
 	.section-header__label-text {
 		width: 90px;
 
-		@include breakpoint( ">480px") {
+		@include breakpoint( '>480px') {
 			width: 235px;
 		}
 
-		@include breakpoint( ">660px") {
+		@include breakpoint( '>660px') {
 			width: 120px;
 		}
 
-		@include breakpoint( ">1040px") {
+		@include breakpoint( '>1040px') {
 			width: 440px;
 		}
 	}
@@ -28,8 +28,8 @@
 		height: 23px;
 		width: 60%;
 		margin: 3px 0;
-		background-color: $gray-lighten-30;
-		animation: loading-fade 1.6s ease-in-out infinite;		
+		background-color: var( --color-neutral-0 );
+		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
 

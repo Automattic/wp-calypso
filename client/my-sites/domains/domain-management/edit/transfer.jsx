@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -19,8 +18,6 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { transferStatus } from 'lib/domains/constants';
-import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED } from 'lib/url/support';
-import { restartInboundTransfer } from 'lib/domains';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import VerticalNav from 'components/vertical-nav';
@@ -32,18 +29,9 @@ import InboundTransferEmailVerificationCard from 'my-sites/domains/domain-manage
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 
 class Transfer extends React.PureComponent {
-	state = {
-		isSubmitting: false,
-	};
-
 	render() {
 		const { domain, selectedSite, translate } = this.props;
-		const { isSubmitting } = this.state;
-		let content = this.getDomainDetailsCard();
-
-		if ( domain.transferStatus === transferStatus.CANCELLED ) {
-			content = this.getCancelledContent();
-		}
+		const content = this.getDomainDetailsCard();
 
 		let transferNotice;
 		let cancelNavItem;
@@ -112,13 +100,8 @@ class Transfer extends React.PureComponent {
 						</p>
 					</div>
 					<div>
-						<Button
-							className="edit__transfer-button-fail"
-							onClick={ this.startTransfer }
-							busy={ isSubmitting }
-							disabled={ isSubmitting }
-						>
-							{ isSubmitting ? translate( 'Starting Transfer…' ) : translate( 'Start Transfer' ) }
+						<Button className="edit__transfer-button-fail" onClick={ this.startTransfer }>
+							{ translate( 'Start Transfer' ) }
 						</Button>
 					</div>
 				</Card>
@@ -160,84 +143,6 @@ class Transfer extends React.PureComponent {
 		const { domain, selectedSite } = this.props;
 		page( domainManagementTransferInPrecheck( selectedSite.slug, domain.name ) );
 	};
-
-	restartTransfer = () => {
-		const { domain, selectedSite, translate } = this.props;
-		this.toggleSubmittingState();
-
-		restartInboundTransfer( selectedSite.ID, domain.name, ( error, result ) => {
-			if ( result ) {
-				this.props.successNotice( translate( 'The transfer has been successfully restarted.' ), {
-					duration: 5000,
-				} );
-				this.props.fetchSiteDomains( selectedSite.ID );
-			} else {
-				this.props.errorNotice(
-					error.message || translate( 'We were unable to restart the transfer.' ),
-					{
-						duration: 5000,
-					}
-				);
-				this.toggleSubmittingState();
-			}
-		} );
-	};
-
-	toggleSubmittingState() {
-		this.setState( { isSubmitting: ! this.state.isSubmitting } );
-	}
-
-	getCancelledContent() {
-		const { domain, translate } = this.props;
-		const { isSubmitting } = this.state;
-
-		return (
-			<Card>
-				<div>
-					<h2 className="edit__transfer-text-fail">{ translate( 'Domain transfer failed' ) }</h2>
-					<p>
-						{ translate(
-							'We were unable to complete the transfer of {{strong}}%(domain)s{{/strong}}. It could be ' +
-								'a number of things that caused the transfer to fail like an invalid or missing authorization code, ' +
-								'the domain is still locked, or your current domain provider denied the transfer. ' +
-								'{{a}}Visit our support article{{/a}} for more detailed information about why it may have failed.',
-							{
-								components: {
-									strong: <strong />,
-									a: (
-										<a
-											href={ INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED }
-											rel="noopener noreferrer"
-											target="_blank"
-										/>
-									),
-								},
-								args: { domain: domain.name },
-							}
-						) }
-					</p>
-				</div>
-				<div>
-					<Button
-						className="edit__transfer-button-fail"
-						onClick={ this.restartTransfer }
-						busy={ isSubmitting }
-						disabled={ isSubmitting }
-					>
-						{ isSubmitting
-							? translate( 'Restarting Transfer…' )
-							: translate( 'Start Transfer Again' ) }
-					</Button>
-					<Button
-						className="edit__transfer-button-fail edit__transfer-button-fail-margin"
-						href={ CALYPSO_CONTACT }
-					>
-						{ this.props.translate( 'Contact Support' ) }
-					</Button>
-				</div>
-			</Card>
-		);
-	}
 
 	getDomainDetailsCard() {
 		const { domain, selectedSite, translate } = this.props;

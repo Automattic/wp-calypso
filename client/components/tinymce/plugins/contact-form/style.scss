@@ -1,15 +1,18 @@
 .editor-contact-form-modal {
 	padding: 0;
 
-		/* override color of the expanded icon on the foldable card */
-		.editor-contact-form-modal-fields .foldable-card.is-expanded .foldable-card__action.foldable-card__expand .gridicon {
-			fill: var( --color-accent );
-		}
+	/* override color of the expanded icon on the foldable card */
+	.editor-contact-form-modal-fields
+		.foldable-card.is-expanded
+		.foldable-card__action.foldable-card__expand
+		.gridicon {
+		fill: var( --color-accent );
+	}
 
-		/* removes the transform on the icon when opening the foldable card */
-		button.foldable-card__action.foldable-card__expand .gridicon.gridicons-pencil {
-			transform: none;
-		}
+	/* removes the transform on the icon when opening the foldable card */
+	button.foldable-card__action.foldable-card__expand .gridicon.gridicons-pencil {
+		transform: none;
+	}
 }
 
 .editor-contact-form-modal.dialog.card {
@@ -20,7 +23,7 @@
 	right: 0;
 	max-width: 100%;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		top: 5%;
 		bottom: 5%;
 		left: 50%;
@@ -31,14 +34,14 @@
 
 .editor-contact-form-modal .dialog__content {
 	position: static;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .editor-contact-form-modal .section-nav {
 	z-index: z-index( '.dialog__backdrop', '.editor-contact-form-modal .section-nav' );
 	padding: 0 16px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding: 0;
 	}
 }
@@ -95,12 +98,12 @@
 }
 
 .editor-contact-form-modal-field__remove {
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 	cursor: pointer;
 	transition: color 200ms;
 
 	&:hover {
-		color: $orange-fire;
+		color: var( --color-error );
 	}
 }
 
@@ -113,11 +116,12 @@
 	height: 100%;
 }
 
-.editor-contact-form-modal-field__edit-wrapper.foldable-card__expand .editor-contact-form-modal-field__edit {
+.editor-contact-form-modal-field__edit-wrapper.foldable-card__expand
+	.editor-contact-form-modal-field__edit {
 	width: 100%;
 	padding-bottom: 6px;
 
 	&.is-expanded {
-		transform: rotate(0);
+		transform: rotate( 0 );
 	}
 }

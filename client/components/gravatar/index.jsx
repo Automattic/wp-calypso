@@ -18,6 +18,11 @@ import classnames from 'classnames';
 import safeImageURL from 'lib/safe-image-url';
 import { getUserTempGravatar } from 'state/current-user/gravatar-status/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class Gravatar extends Component {
 	constructor() {
 		super( ...arguments );

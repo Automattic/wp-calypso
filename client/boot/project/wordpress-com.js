@@ -25,7 +25,7 @@ import { isLegacyRoute } from 'lib/route/legacy-routes';
 import superProps from 'lib/analytics/super-props';
 import emailVerification from 'components/email-verification';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
-import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
+import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import Logger from 'lib/catch-js-errors';
@@ -50,7 +50,7 @@ function renderLayout( reduxStore ) {
 export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing WordPress.com configure Redux store.' );
 
-	setSupportUserReduxStore( reduxStore );
+	setSupportSessionReduxStore( reduxStore );
 	setReduxBridgeReduxStore( reduxStore );
 
 	if ( currentUser.get() ) {

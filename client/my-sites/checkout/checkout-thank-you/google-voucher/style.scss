@@ -1,11 +1,11 @@
 .google-voucher__copy-code {
 	margin-top: 12px;
 	padding-bottom: 12px;
-	border-bottom: solid 1px $gray-light;
+	border-bottom: solid 1px var( --color-neutral-0 );
 }
 
 .google-voucher__help-link {
-	color: var( --color-accent );
+	color: var( --color-link );
 	text-decoration: underline;
 }
 .google-voucher__advice {
@@ -46,7 +46,7 @@
 	padding: 20px 24px 24px;
 	background-color: #fbfcfd;
 	height: 116px;
-	box-shadow: 0 1px 0 0 $gray-lighten-20,
+	box-shadow: 0 1px 0 0 var( --color-neutral-100 ),
 		0 1px 0 lighten( $gray, 40% );
 }
 
@@ -67,7 +67,7 @@
 }
 
 .google-voucher__dialog-footer {
-	box-shadow: 0 -1px 2px $gray-lighten-20;
+	box-shadow: 0 -1px 2px var( --color-neutral-100 );
 	margin-top: 15px;
 	text-align: right;
 	padding: 15px;
@@ -80,7 +80,7 @@
 
 li.google-voucher__terms-and-conditions {
 	line-height: 1.6em;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	margin-bottom: 15px;
 }
 

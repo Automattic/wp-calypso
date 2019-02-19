@@ -3,7 +3,7 @@
 		background-color: transparent;
 		border-color: transparent;
 		box-shadow: none;
-		padding: 24px 0px 0px;
+		padding: 24px 0 0;
 		margin-bottom: 4px;
 	}
 
@@ -11,7 +11,7 @@
 		background-image: none;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		.card {
 			padding-left: 15px;
 			padding-right: 15px;
@@ -22,7 +22,7 @@
 		.section-header__label-text,
 		.section-header__actions {
 			color: transparent;
-			background-color: $gray-lighten-30;
+			background-color: var( --color-neutral-0 );
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 	}
