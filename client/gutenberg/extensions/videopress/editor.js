@@ -5,6 +5,7 @@ import { createBlobURL } from '@wordpress/blob';
 import { createBlock } from '@wordpress/blocks';
 import { mediaUpload } from '@wordpress/editor';
 import { addFilter } from '@wordpress/hooks';
+import { every } from 'lodash';
 
 /**
  * Internal dependencies
@@ -68,25 +69,27 @@ const addVideoPressSupport = ( settings, name ) => {
 				from: [
 					{
 						type: 'files',
-						isMatch( files ) {
-							return files.length === 1 && files[ 0 ].type.indexOf( 'video/' ) === 0;
-						},
+						isMatch: files => every( files, file => file.type.indexOf( 'video/' ) === 0 ),
 						// We define a higher priority (lower number) than the default of 10. This ensures that this
 						// transformation prevails over the core video block default transformations.
 						priority: 9,
-						transform( files, onChange ) {
-							const file = files[ 0 ];
-							const block = createBlock( 'core/video', {
-								src: createBlobURL( file ),
+						transform: ( files, onChange ) => {
+							const videoFiles = files.filter( file => file.type.indexOf( 'video/' ) === 0 );
+							const blocks = [];
+							videoFiles.forEach( file => {
+								const block = createBlock( 'core/video', {
+									src: createBlobURL( file ),
+								} );
+								mediaUpload( {
+									filesList: [ file ],
+									onFileChange: ( [ { id, url } ] ) => {
+										onChange( block.clientId, { id, src: url } );
+									},
+									allowedTypes: [ 'video' ],
+								} );
+								blocks.push( block );
 							} );
-							mediaUpload( {
-								filesList: [ file ],
-								onFileChange: ( [ { id, url } ] ) => {
-									onChange( block.clientId, { id, src: url } );
-								},
-								allowedTypes: [ 'video' ],
-							} );
-							return block;
+							return blocks;
 						},
 					},
 				],
