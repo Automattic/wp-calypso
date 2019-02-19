@@ -1,6 +1,9 @@
 /**
  * External dependencies
  */
+import { createBlobURL } from '@wordpress/blob';
+import { createBlock } from '@wordpress/blocks';
+import { mediaUpload } from '@wordpress/editor';
 import { addFilter } from '@wordpress/hooks';
 
 /**
@@ -22,6 +25,7 @@ const addVideoPressSupport = ( settings, name ) => {
 	if ( available || [ 'missing_plan', 'missing_module' ].includes( unavailableReason ) ) {
 		return {
 			...settings,
+
 			attributes: {
 				autoplay: {
 					type: 'boolean',
@@ -58,8 +62,40 @@ const addVideoPressSupport = ( settings, name ) => {
 					type: 'string',
 				},
 			},
+
+			transforms: {
+				...settings.transforms,
+				from: [
+					{
+						type: 'files',
+						isMatch( files ) {
+							return files.length === 1 && files[ 0 ].type.indexOf( 'video/' ) === 0;
+						},
+						// We define a higher priority (lower number) than the default of 10. This ensures that this
+						// transformation prevails over the core video block default transformations.
+						priority: 9,
+						transform( files, onChange ) {
+							const file = files[ 0 ];
+							const block = createBlock( 'core/video', {
+								src: createBlobURL( file ),
+							} );
+							mediaUpload( {
+								filesList: [ file ],
+								onFileChange: ( [ { id, url } ] ) => {
+									onChange( block.clientId, { id, src: url } );
+								},
+								allowedTypes: [ 'video' ],
+							} );
+							return block;
+						},
+					},
+				],
+			},
+
 			edit: withVideoPressEdit( settings.edit ),
+
 			save: withVideoPressSave( settings.save ),
+
 			deprecated: [
 				{
 					attributes: settings.attributes,
