@@ -14,7 +14,7 @@ import Email from './email';
 import EmailForwarding from './email-forwarding';
 import DomainManagementData from 'components/data/domain-management';
 import { emailManagement, emailManagementForwarding } from './paths';
-import GSuiteAddUsers from 'my-sites/domains/domain-management/gsuite/gsuite-add-users';
+import GSuiteAddUsers from 'my-sites/email/gsuite/gsuite-add-users';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSites from 'state/selectors/get-sites';
 import { getCurrentUser } from 'state/current-user/selectors';
