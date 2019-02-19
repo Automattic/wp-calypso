@@ -51,7 +51,7 @@ function processStep( state, { step } ) {
 	return updateStep( state, { ...step, status: 'processing' } );
 }
 
-function removeUnneededSteps( state, { flowName, inImprovedOnboardingTest } ) {
+function removeUnneededSteps( state, { flowName } ) {
 	let flowSteps = [];
 	const user = userFactory();
 
