@@ -36,7 +36,7 @@
 	border-radius: 4px;
 
 	&.wordpress {
-		background-color: var( --color-primary );
+		background-color: var( --color-wpcom );
 	}
 
 	&.medium {
@@ -50,6 +50,7 @@
 	&.site-importer {
 		background-color: #faad4d;
 	}
+	
 	&.squarespace {
 		background-color: #222;
 	}
