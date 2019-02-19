@@ -108,7 +108,9 @@ class Slideshow extends Component {
 							<figure className="wp-block-jetpack-slideshow_slide swiper-slide" key={ id }>
 								<img
 									alt={ alt }
-									className="wp-block-jetpack-slideshow_image"
+									className={
+										`wp-block-jetpack-slideshow_image wp-image-${ id }` /* wp-image-${ id } makes WordPress add a srcset */
+									}
 									data-id={ id }
 									src={ url }
 								/>
