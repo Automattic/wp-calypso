@@ -38,7 +38,7 @@
 
 				.gridicon {
 					background: var( --color-primary );
-					color: $white;
+					color: var( --color-white );
 					border-color: var( --color-primary );
 				}
 
@@ -62,16 +62,16 @@
 
 				.gridicon {
 					background: var( --color-neutral-100 );
-					color: $gray;
+					color: var( --color-neutral-light );
 				}
 
 				label {
-					color: $gray;
+					color: var( --color-neutral-light );
 				}
 			}
 
 			.gridicon {
-				background: $white;
+				background: var( --color-white );
 				border: 1px var( --color-neutral-100 ) solid;
 				border-radius: 50%;
 				color: var( --color-neutral-100 );

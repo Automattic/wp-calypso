@@ -6,7 +6,7 @@
 }
 
 .current-plan__header-content {
-	background-color: $white;
+	background-color: var( --color-white );
 	padding: 32px;
 	width: 100%;
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),

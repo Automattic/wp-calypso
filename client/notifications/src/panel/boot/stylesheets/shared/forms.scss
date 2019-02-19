@@ -6,12 +6,12 @@
   font-size: 16px;
   line-height: 1.5;
   border: 1px solid var( --color-neutral-100 );
-  background-color: $white;
+  background-color: var( --color-white );
   transition: all 0.15s ease-in-out;
   box-sizing: border-box;
 
   &::placeholder {
-    color: $gray;
+    color: var( --color-neutral-light );
   }
 
   &:hover {
@@ -29,7 +29,7 @@
   }
 
   &:disabled {
-    background: $white;
+    background: var( --color-white );
     border-color: var( --color-neutral-0 );
     color: var( --color-neutral-0 );
 

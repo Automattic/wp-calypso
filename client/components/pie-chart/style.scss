@@ -32,7 +32,7 @@
 }
 
 .pie-chart__chart-drawing-empty {
-	fill: $gray;
+	fill: var( --color-neutral-light );
 }
 
 .pie-chart__legend {

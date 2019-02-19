@@ -52,7 +52,7 @@
 		border-radius: 5px;
 		border: 1px solid var( --color-neutral-600 );
 		background: var( --color-neutral-600 );
-		color: $white;
+		color: var( --color-white );
 
 		@include breakpoint( '>660px' ) {
 			margin-right: 0;
@@ -66,14 +66,14 @@
 		border-radius: 5px;
 		border: 1px solid var( --color-neutral-600 );
 		background: var( --color-neutral-600 );
-		color: $white;
+		color: var( --color-white );
 	}
 
 	.filterbar__selection-close {
 		margin: 8px 8px 8px 0;
 		padding: 8px 8px 8px 0;
 		background-color: var( --color-neutral-600 );
-		color: $white;
+		color: var( --color-white );
 		border-radius: 0;
 		border-top-right-radius: 5px;
 		border-bottom-right-radius: 5px;
@@ -86,7 +86,7 @@
 	}
 
 	.filterbar__selection-close:hover {
-		color: $white;
+		color: var( --color-white );
 		background-color: var( --color-neutral-600 );
 	}
 }
@@ -191,7 +191,7 @@
 	}
 
 	.DayPicker-Day.DayPicker-Day--today .date-picker__day {
-		color: $white;
+		color: var( --color-white );
 		position: relative;
 		display: block;
 		z-index: 0;
@@ -219,7 +219,7 @@
 	.DayPicker-Day.DayPicker-Day--selected .date-picker__day {
 		background-color: var( --color-primary-light );
 		border-radius: 0;
-		color: $white;
+		color: var( --color-white );
 		&:hover,
 		&:focus {
 			padding: 0 7px;
@@ -229,7 +229,7 @@
 	.DayPicker-Day.DayPicker-Day--start .date-picker__day,
 	.DayPicker-Day.DayPicker-Day--end .date-picker__day {
 		border-radius: 50%;
-		color: $white;
+		color: var( --color-white );
 		padding: 0;
 		position: relative;
 		display: block;
@@ -298,7 +298,7 @@
 		}
 
 		&.is-selected {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 }

@@ -30,7 +30,7 @@
 .keyed-suggestions__value {
 	display: flex;
 	padding: 10px;
-	background: $white;
+	background: var( --color-white );
 	border: 1px solid darken( $gray-light, 10% );
 	border-top: 0;
 	font-size: 15px;
@@ -38,10 +38,10 @@
 
 	&.has-highlight {
 		background-color: var( --color-primary );
-		color: $white;
+		color: var( --color-white );
 
 		.keyed-suggestions__value-description {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 }

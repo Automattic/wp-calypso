@@ -77,7 +77,7 @@
 	display: block;
 	font-size: 1em;
 	font-style: italic;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .security-account-recovery-contact__detail {
@@ -85,7 +85,7 @@
 }
 
 .security-account-recovery-contact__remove {
-	color: $gray;
+	color: var( --color-neutral-light );
 	float: left;
 	cursor: pointer;
 	padding: 9px 0;

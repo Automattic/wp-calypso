@@ -371,7 +371,7 @@
 .reader__x-post-to {
 	font-size: 13px;
 	font-family: $sans;
-	color: $gray;
+	color: var( --color-neutral-light );
 	position: relative;
 }
 
@@ -383,8 +383,8 @@
 		height: 12px;
 		width: 12px;
 		display: inline-block;
-		fill: $white;
-		background: $gray;
+		fill: var( --color-white );
+		background: var( --color-neutral-light );
 		padding: 4px;
 		border-radius: 100%;
 		position: absolute;

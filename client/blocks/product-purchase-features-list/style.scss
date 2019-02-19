@@ -22,7 +22,7 @@
 
 .product-purchase-features-list__item .purchase-detail,
 .product-purchase-features-list__item .happiness-support {
-	background-color: $white;
+	background-color: var( --color-white );
 	border-radius: 0;
 	margin: 0;
 }

@@ -1,6 +1,6 @@
 .plugins-browser-list {
 	margin-bottom: 16px;
-	background: $white;
+	background: var( --color-white );
 	box-shadow: 0 1px 2px var( --color-neutral-0 );
 
 	.feature-example & {

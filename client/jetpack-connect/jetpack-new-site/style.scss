@@ -22,7 +22,7 @@
 
 .jetpack-new-site__header-text {
 	font-size: 16px;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .jetpack-new-site__content {
@@ -205,8 +205,8 @@
 		position: relative;
 		z-index: 2;
 		padding: 8px;
-		color: $gray;
-		background: $white;
+		color: var( --color-neutral-light );
+		background: var( --color-white );
 	}
 
 	@include breakpoint( '<660px' ) {

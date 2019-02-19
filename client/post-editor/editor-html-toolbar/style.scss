@@ -167,7 +167,7 @@
 }
 
 .editor-html-toolbar__insert-content-dropdown {
-	background-color: $white;
+	background-color: var( --color-white );
 	border: 1px solid var( --color-neutral-100 );
 	border-radius: 0 0 4px 4px;
 	display: none;
@@ -187,7 +187,7 @@
 		padding: 9px 16px;
 
 		.gridicon {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 		span {
 			color: var( --color-text-subtle );

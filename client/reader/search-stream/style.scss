@@ -13,7 +13,7 @@
 }
 
 .is-reader-page .search-stream__fixed-area {
-	background-color: $white;
+	background-color: var( --color-white );
 	position: fixed;
 	top: 0;
 	margin-top: 47px; // masterbar is exactly 47px
@@ -183,7 +183,7 @@
 
 // Post and Sites static headers
 .search-stream__headers {
-	color: $gray;
+	color: var( --color-neutral-light );
 	display: flex;
 	font-size: 14px;
 	font-weight: 600;

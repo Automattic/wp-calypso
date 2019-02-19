@@ -5,7 +5,7 @@ ul.module-tabs {
 	@include clear-fix;
 	border-top: 1px solid var( --color-neutral-0 );
 	list-style: none;
-	background: $white;
+	background: var( --color-white );
 	margin: 0;
 
 	.module-tab {
@@ -51,7 +51,7 @@ ul.module-tabs {
 			@include clear-fix;
 			padding: 5px 0 10px;
 			display: block;
-			background: $white;
+			background: var( --color-white );
 
 			@include breakpoint( '<480px' ) {
 				line-height: 24px;
@@ -133,7 +133,7 @@ ul.module-tabs {
 
 		// Selected state
 		.stats-module &.is-selected a {
-			background: $white;
+			background: var( --color-white );
 			border-top: 1px solid $white;
 			margin-top: -1px;
 			cursor: default;
@@ -153,7 +153,7 @@ ul.module-tabs {
 		// Low state ('disabled')
 		.is-low,
 		&.is-low a .value {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 
 		// Individual tab loading state
@@ -166,7 +166,7 @@ ul.module-tabs {
 			color: var( --color-neutral-700 );
 
 			&.is-low {
-				color: $gray;
+				color: var( --color-neutral-light );
 			}
 		}
 
@@ -176,12 +176,12 @@ ul.module-tabs {
 			animation: loading-fade 1.6s ease-in-out infinite;
 			cursor: default;
 			font-size: 110%;
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 
 		&.is-loading.is-selected a .value,
 		&.is-loading.is-selected a:hover .value {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 

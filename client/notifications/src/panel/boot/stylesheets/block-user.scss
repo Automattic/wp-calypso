@@ -24,7 +24,7 @@ div.wpnc__user {
   }
 
   .follow-link .gridicon {
-    fill: $gray;
+    fill: var( --color-neutral-light );
     vertical-align: middle;
     margin-right: 0.2em;
   }

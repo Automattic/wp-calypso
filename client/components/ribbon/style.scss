@@ -11,7 +11,7 @@
 .ribbon .ribbon__title {
 	font-size: 10px;
 	font-weight: normal;
-	color: $white;
+	color: var( --color-white );
 	text-align: center;
 	line-height: 20px;
 	transform: rotate( 45deg );

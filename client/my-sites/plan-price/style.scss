@@ -17,7 +17,7 @@
 }
 
 .plan-price.is-original {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .plan-price.is-discounted {
@@ -53,7 +53,7 @@
 }
 
 .plan-price__currency-symbol {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .plan-price__integer {

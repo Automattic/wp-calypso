@@ -129,7 +129,7 @@
 
 	.search__open-icon,
 	.search__close-icon {
-		color: $gray;
+		color: var( --color-neutral-light );
 		width: 32px;
 		height: 18px;
 	}
@@ -151,7 +151,7 @@
 }
 
 .site-selector__no-results {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-style: italic;
 	padding: 10px 20px;
 }

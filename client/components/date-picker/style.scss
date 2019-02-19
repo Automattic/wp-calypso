@@ -228,7 +228,7 @@ $date-picker_nav_button_size: 20px;
 // `outside` day
 .DayPicker-Day--outside .date-picker__day {
 	font-weight: normal;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 // `disabled` day
@@ -254,12 +254,12 @@ $date-picker_nav_button_size: 20px;
 
 // `Sunday` day
 .DayPicker-Day--sunday .date-picker__day {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 // `event` day
 .DayPicker-Day--events:not( .DayPicker-Day--is-selected ) .date-picker__day {
-	border-color: $gray;
+	border-color: var( --color-neutral-light );
 }
 
 .DayPicker-Day--events.DayPicker-Day--disabled:not( .DayPicker-Day--is-selected )

@@ -88,7 +88,7 @@
 	small {
 		margin-left: 5px;
 		font-size: 11px;
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-weight: 600;
 		text-transform: uppercase;
 	}
@@ -170,7 +170,7 @@
 	margin-bottom: 8px;
 	padding: 0 15px;
 	font-size: 11px;
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-weight: 600;
 	text-transform: uppercase;
 	line-height: 12px;
@@ -274,13 +274,13 @@
 	}
 
 	.is-selected & {
-		color: $white;
+		color: var( --color-white );
 		background-color: var( --color-primary );
 
 		@include breakpoint( '<480px' ) {
 			.count {
-				color: $white;
-				border-color: $white;
+				color: var( --color-white );
+				border-color: var( --color-white );
 			}
 		}
 	}
@@ -309,7 +309,7 @@
 
 	.notouch .is-selected & {
 		&:hover {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 

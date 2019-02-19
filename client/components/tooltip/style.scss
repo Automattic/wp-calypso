@@ -122,7 +122,7 @@
 		border: 0;
 		box-shadow: none;
 		border-radius: 2px;
-		color: $white;
+		color: var( --color-white );
 		background: var( --color-neutral-600 );
 		font-size: 12px;
 		padding: 6px 10px;
@@ -163,5 +163,5 @@
 
 .tooltip__hr {
 	margin: 8px 0;
-	background: $gray;
+	background: var( --color-neutral-light );
 }

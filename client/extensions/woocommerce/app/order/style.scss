@@ -96,7 +96,7 @@
 
 	.order-created__label .gridicon,
 	.order-fulfillment__label .gridicon {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	.order-payment__label .gridicon {

@@ -29,7 +29,7 @@
 
 		button {
 			font-family: $sans;
-			color: $gray;
+			color: var( --color-neutral-light );
 			display: none;
 			position: absolute;
 			top: 26px;
@@ -75,7 +75,7 @@
 			color: var( --color-text-subtle );
 
 			.gridicon {
-				fill: $gray;
+				fill: var( --color-neutral-light );
 			}
 		}
 
@@ -96,7 +96,7 @@
 		}
 
 		.gridicon {
-			fill: $gray;
+			fill: var( --color-neutral-light );
 		}
 	}
 

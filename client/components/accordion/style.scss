@@ -166,7 +166,7 @@ $accordion-background-expanded: $white;
 		left: 4px;
 		width: 14px;
 		height: 14px;
-		background-color: $white;
+		background-color: var( --color-white );
 		border-radius: 50%;
 	}
 

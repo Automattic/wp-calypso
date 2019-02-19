@@ -31,12 +31,12 @@
 	&.is-neutral {
 		.delta__icon {
 			&.gridicon {
-				fill: $gray;
+				fill: var( --color-neutral-light );
 			}
 		}
 		.delta__labels {
 			.delta__value {
-				color: $gray;
+				color: var( --color-neutral-light );
 			}
 		}
 	}
@@ -62,7 +62,7 @@
 
 		.delta__suffix,
 		.delta__value {
-			color: $gray;
+			color: var( --color-neutral-light );
 			display: inline-block;
 			font-size: 13px;
 			font-weight: 300;

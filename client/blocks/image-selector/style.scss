@@ -127,7 +127,7 @@
 	bottom: 8px;
 	right: 8px;
 	padding: 0;
-	color: $white;
+	color: var( --color-white );
 	opacity: 0.9;
 	background: #cccccc;
 	border-radius: 50%;
@@ -165,7 +165,7 @@
 	color: var( --color-neutral-200 );
 
 	&:hover {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 

@@ -92,7 +92,7 @@
 }
 
 .gsuite-dialog__billing-period {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 12px;
 	line-height: 1.6;
 	text-transform: uppercase;
@@ -154,7 +154,7 @@
 
 	.gsuite-dialog__add-another-user-button {
 		border: 2px dashed var( --color-neutral-100 );
-		color: $gray;
+		color: var( --color-neutral-light );
 		cursor: pointer;
 		display: flex;
 		align-items: center;

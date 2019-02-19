@@ -32,7 +32,7 @@
 	margin-right: 16px;
 
 	background-color: var( --color-neutral-700 );
-	fill: $white;
+	fill: var( --color-white );
 	border-radius: 4px;
 
 	&.wordpress {
@@ -72,7 +72,7 @@
 .importer-header__service-title {
 	font-size: 21px;
 	font-weight: 300;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	@include breakpoint( '>480px' ) {
 		clear: none;
@@ -93,7 +93,7 @@
 	fill: var( --color-neutral-200 );
 	font-size: 14px;
 	font-weight: 600;
-	color: $gray;
+	color: var( --color-neutral-light );
 	text-align: center;
 
 	input {
@@ -143,7 +143,7 @@
 
 .importer__status-message {
 	font-style: italic;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .importer__mapping-pane {
@@ -156,7 +156,7 @@
 	padding-bottom: 8px;
 
 	font-size: 11px;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	@include clear-fix;
 }

@@ -3,7 +3,7 @@
 
 	.sidebar-banner__link {
 		background-color: var( --color-success );
-		color: $white;
+		color: var( --color-white );
 		display: flex;
 
 		@include breakpoint( '<660px' ) {

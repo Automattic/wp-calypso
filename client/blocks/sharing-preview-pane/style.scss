@@ -30,7 +30,7 @@
 
 .post-share__sharing-preview-modal-header {
 	height: 48px;
-	background: $white;
+	background: var( --color-white );
 	border-bottom: 1px solid var( --color-neutral-100 );
 	border-radius: 4px 4px 0 0;
 	display: flex;
@@ -41,7 +41,7 @@
 	width: 48px;
 	height: 49px;
 	cursor: pointer;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	&:hover {
 		color: var( --color-neutral-700 );
@@ -60,7 +60,7 @@
 }
 
 .sharing-preview-pane__sidebar {
-	background-color: $white;
+	background-color: var( --color-white );
 	display: flex;
 	flex: 0 0 auto;
 	flex-direction: column;

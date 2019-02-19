@@ -7,16 +7,16 @@
   width: 100%;
   z-index: 101;
   background-color: var( --color-error );
-  color: $white;
+  color: var( --color-white );
 
   a, a:visited {
-    color: $white;
+    color: var( --color-white );
     font-weight: 600;
     text-decoration: underline;
   }
 
   a:hover, a:focus, a:active {
-    color: $white;
+    color: var( --color-white );
   }
 
   span {

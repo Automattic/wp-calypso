@@ -33,7 +33,7 @@
 .image-editor__toolbar-button {
 	background: $transparent;
 	border: none;
-	color: $white;
+	color: var( --color-white );
 	margin: 0 10px;
 	cursor: pointer;
 	&.is-disabled {
@@ -47,7 +47,7 @@
 }
 
 .image-editor__toolbar-button:hover {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .image-editor__canvas-container {

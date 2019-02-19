@@ -88,7 +88,7 @@
 		a,
 		a:hover {
 			pointer-events: none;
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 }
@@ -157,7 +157,7 @@
 }
 
 .card.two-factor-authentication__form-action {
-	background: $white;
+	background: var( --color-white );
 
 	button {
 		color: var( --color-link-dark );
@@ -183,8 +183,8 @@
 	text-transform: uppercase;
 
 	span {
-		background: $white;
-		color: $gray;
+		background: var( --color-white );
+		color: var( --color-neutral-light );
 		font-size: 14px;
 		padding-left: 8px;
 		padding-right: 8px;

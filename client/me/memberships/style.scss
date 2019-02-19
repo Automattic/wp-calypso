@@ -10,7 +10,7 @@
 	}
 
 	small {
-		color: $gray;
+		color: var( --color-neutral-light );
 		display: block;
 		font-size: 12px;
 		font-style: italic;
@@ -20,7 +20,7 @@
 .memberships__list-sub {
 	font-size: 12px;
 	margin: 4px 0 0;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .memberships__list-date {

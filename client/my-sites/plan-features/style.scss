@@ -81,7 +81,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__mobile-plan {
 	font-size: 14px;
 	border: solid 1px lighten( $gray, 27% );
-	background-color: $white;
+	background-color: var( --color-white );
 	margin-bottom: 24px;
 }
 
@@ -112,13 +112,13 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__row {
-	background: $white;
+	background: var( --color-white );
 }
 
 .plan-features__table-item {
 	border-right: solid 1px lighten( $gray, 27% );
 	border-left: solid 1px lighten( $gray, 27% );
-	background-color: $white;
+	background-color: var( --color-white );
 	position: relative;
 
 	&.is-highlighted {
@@ -190,7 +190,7 @@ $plan-features-sidebar-width: 272px;
 	align-items: flex-start;
 	padding: 12px 24px 0 15px;
 	border-bottom: solid 2px var( --color-neutral-100 );
-	background-color: $white;
+	background-color: var( --color-white );
 
 	@include breakpoint( '<960px' ) {
 		padding: 12px 12px 0;
@@ -348,7 +348,7 @@ $plan-features-sidebar-width: 272px;
 	width: 580px;
 
 	.segmented-control__item {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		min-width: 50%;
 
 		&:first-of-type {
@@ -368,7 +368,7 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		&.is-selected + .segmented-control__item .segmented-control__link {
-			border-left-color: $gray-lighten-10;
+			border-left-color: var( --color-neutral-200 );
 
 			&:hover {
 				border-left-color: var( --color-neutral-700 );
@@ -465,7 +465,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: $plan-features-header-banner-height;
 	text-align: center;
 	text-transform: uppercase;
-	color: $white;
+	color: var( --color-white );
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -735,7 +735,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 		&.disabled,
 		&[disabled] {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 

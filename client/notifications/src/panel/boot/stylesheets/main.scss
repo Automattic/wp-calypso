@@ -3,7 +3,7 @@
 }
 
 .wpnc__main {
-	background-color: $white;
+	background-color: var( --color-white );
 
 	font: {
 		family: $sans;
@@ -18,7 +18,7 @@
 		background-color: var( --color-neutral-0 );
 	}
 	@media only screen and ( min-width: 409px ) and ( max-width: 430px ) {
-		background-color: $white;
+		background-color: var( --color-white );
 	}
 
 	// Text elements
@@ -50,7 +50,7 @@
 		padding: 0;
 
 		&[disabled] {
-			color: $gray;
+			color: var( --color-neutral-light );
 			cursor: default;
 		}
 	}
@@ -58,7 +58,7 @@
 	header {
 		border-bottom: 1px solid var( --color-neutral-0 );
 		box-sizing: border-box;
-		background-color: $white;
+		background-color: var( --color-white );
 		font-size: $wpnc__capital-font-size;
 		height: $wpnc__title-bar-height + 1px;
 		line-height: $wpnc__title-bar-height;
@@ -165,7 +165,7 @@
 
 	.wpnc__filter {
 		width: 100%;
-		background-color: $white;
+		background-color: var( --color-white );
 		color: var( --color-text-subtle );
 		border-bottom: 1px solid var( --color-neutral-0 );
 		border-left: 1px solid $white;
@@ -191,7 +191,7 @@
 	}
 
 	.wpnc__filter__segmented-control-item {
-		background: $white;
+		background: var( --color-white );
 		border: 1px solid $gray;
 		border-right: none;
 		font-size: 13px;
@@ -230,7 +230,7 @@
 		&.selected {
 			background: var( --color-primary );
 			border-color: var( --color-primary );
-			color: $white;
+			color: var( --color-white );
 
 			+ .segmented-control-item {
 				border-left-color: var(
@@ -242,7 +242,7 @@
 
 	.wpnc__list-view .wpnc__notes,
 	.error {
-		background-color: $white;
+		background-color: var( --color-white );
 	}
 
 	.wpnc__note {
@@ -365,7 +365,7 @@
 			bottom: -5px;
 			right: -8px;
 			background-color: lighten( $gray, 5% );
-			border-color: $white;
+			border-color: var( --color-white );
 		}
 
 		.wpnc__note .wpnc__note-icon img {
@@ -408,7 +408,7 @@
 			.wpnc__subject .wpnc__gridicon {
 				line-height: 1;
 				vertical-align: -3px;
-				color: $gray;
+				color: var( --color-neutral-light );
 				padding: 2px 5px 0 0;
 			}
 
@@ -466,7 +466,7 @@
 
 	.wpnc__undo-item {
 		background: var( --color-error );
-		color: $white;
+		color: var( --color-white );
 
 		p {
 			padding-top: 1em;
@@ -476,7 +476,7 @@
 		.wpnc__undo-link {
 			margin-left: 1em;
 			text-transform: uppercase;
-			color: $white;
+			color: var( --color-white );
 		}
 
 		.wpnc__undo-message {
@@ -485,7 +485,7 @@
 	}
 
 	.wpnc__close-link {
-		color: $white;
+		color: var( --color-white );
 		position: absolute;
 		right: 10px;
 		cursor: pointer;
@@ -602,7 +602,7 @@
 		}
 
 		.wpnc__note {
-			background-color: $white;
+			background-color: var( --color-white );
 			border: none;
 		}
 
@@ -613,7 +613,7 @@
 		}
 
 		.wpnc__summary {
-			color: $gray;
+			color: var( --color-neutral-light );
 
 			p {
 				@extend %ellipsy-box;
@@ -659,7 +659,7 @@
 
 	.time-notification {
 		float: right;
-		color: $gray;
+		color: var( --color-neutral-light );
 		margin-left: 0.25em;
 		line-height: 1em;
 		margin-top: 0.2em;
@@ -728,7 +728,7 @@
 		blockquote {
 			margin: 0 $wpnc__padding-medium $wpnc__padding-medium;
 			font-style: italic;
-			color: $gray;
+			color: var( --color-neutral-light );
 			background: transparent;
 		}
 	}

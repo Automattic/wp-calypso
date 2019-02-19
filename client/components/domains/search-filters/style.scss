@@ -163,7 +163,7 @@
 	}
 	.token-field__token-text,
 	.token-field__remove-token {
-		background: $white;
+		background: var( --color-white );
 		color: var( --color-neutral-500 );
 		border: 1px solid var( --color-neutral-100 );
 	}

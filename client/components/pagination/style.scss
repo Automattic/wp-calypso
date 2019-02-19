@@ -36,7 +36,7 @@
 		@extend %mobile-link-element;
 		display: block;
 		padding: 8px 12px;
-		background-color: $white;
+		background-color: var( --color-white );
 		border: solid 1px var( --color-neutral-100 );
 		border-right: none;
 		font-size: 14px;
@@ -109,11 +109,11 @@
 .pagination__list-item.is-selected .button {
 	border-color: var( --color-primary );
 	background-color: var( --color-primary );
-	color: $white;
+	color: var( --color-white );
 }
 
 .pagination__list-item.is-selected .button:hover {
-	color: $white;
+	color: var( --color-white );
 }
 
 .pagination__list-item.is-selected + .pagination__list-item .button {
@@ -124,5 +124,5 @@
 .pagination__ellipsis,
 .pagination__ellipsis:hover {
 	@extend %mobile-interface-element;
-	color: $gray;
+	color: var( --color-neutral-light );
 }

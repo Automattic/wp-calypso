@@ -169,7 +169,7 @@ $autobar-height: 20px;
 			height: 24px;
 			width: 24px;
 			margin-left: 5px;
-			fill: $white;
+			fill: var( --color-white );
 		}
 
 		.masterbar__wpcom-wordmark {
@@ -203,7 +203,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-new {
-	background: $white;
+	background: var( --color-white );
 	border-radius: 3px;
 	color: var( --color-primary );
 	height: 36px;
@@ -215,7 +215,7 @@ $autobar-height: 20px;
 	}
 
 	&.is-active {
-		color: $white;
+		color: var( --color-white );
 	}
 
 	&:hover {
@@ -227,7 +227,7 @@ $autobar-height: 20px;
 		outline: none;
 
 		.accessible-focus & {
-			background: $white;
+			background: var( --color-white );
 			color: var( --color-primary );
 			box-shadow: 0 0 0 2px var( --color-primary-light );
 			z-index: 1;
@@ -256,18 +256,18 @@ $autobar-height: 20px;
 	}
 
 	.is-support-session &.is-active {
-		color: $white;
+		color: var( --color-white );
 	}
 
 	// active state when editing
 	.is-group-editor & {
 		background: var( --masterbar-item-new-editor-background );
-		color: $white;
+		color: var( --color-white );
 	}
 
 	.is-group-editor &:visited,
 	.is-group-editor & .masterbar__item-content {
-		color: $white;
+		color: var( --color-white );
 	}
 
 	.is-group-editor &:hover {
@@ -303,7 +303,7 @@ $autobar-height: 20px;
 	}
 
 	.gridicon {
-		fill: $white;
+		fill: var( --color-white );
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -399,7 +399,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__toggle-drafts.button.is-borderless {
-	background: $white;
+	background: var( --color-white );
 	height: 36px;
 	margin: 5px 8px 5px -10px;
 	padding: 0 8px;

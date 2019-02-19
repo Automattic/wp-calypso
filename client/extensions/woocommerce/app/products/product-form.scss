@@ -5,7 +5,7 @@
 .products__form {
 	&.is-placeholder div {
 		@include placeholder();
-		background: $white;
+		background: var( --color-white );
 		width: 720px;
 		margin-bottom: 8px;
 
@@ -209,7 +209,7 @@
 		color: var( --color-neutral-200 );
 
 		&:hover {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 }
