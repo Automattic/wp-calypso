@@ -9,7 +9,7 @@ import { getPlugin, registerPlugin, unregisterPlugin } from '@wordpress/plugins'
  * Internal dependencies
  */
 import getJetpackData from './get-jetpack-data';
-import isJetpackExtensionAvailable from './is-jetpack-extension-available';
+import getJetpackExtensionAvailability from './get-jetpack-extension-availability';
 import { getExtensions } from '../editor';
 
 /**
@@ -31,7 +31,7 @@ export default async function refreshRegistrations() {
 
 	extensions.forEach( extension => {
 		const { childBlocks, name, settings } = extension;
-		const available = isJetpackExtensionAvailable( name );
+		const { available } = getJetpackExtensionAvailability( name );
 
 		if ( has( settings, [ 'render' ] ) ) {
 			// If the extension has a `render` method, it's not a block but a plugin
