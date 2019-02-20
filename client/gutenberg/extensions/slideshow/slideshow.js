@@ -126,11 +126,11 @@ class Slideshow extends Component {
 						className="wp-block-jetpack-slideshow_pagination swiper-pagination swiper-pagination-white"
 						ref={ this.paginationRef }
 					/>
-					<div
+					<button
 						className="wp-block-jetpack-slideshow_button-prev swiper-button-prev swiper-button-white"
 						ref={ this.btnPrevRef }
 					/>
-					<div
+					<button
 						className="wp-block-jetpack-slideshow_button-next swiper-button-next swiper-button-white"
 						ref={ this.btnNextRef }
 					/>
