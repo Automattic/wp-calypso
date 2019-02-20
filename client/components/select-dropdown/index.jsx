@@ -282,9 +282,9 @@ class SelectDropdown extends Component {
 			return;
 		}
 
-		this.setState( prevState => ( {
-			isOpen: ! prevState.isOpen,
-		} ) );
+		this.setState( {
+			isOpen: ! this.state.isOpen,
+		} );
 	}
 
 	openDropdown() {
