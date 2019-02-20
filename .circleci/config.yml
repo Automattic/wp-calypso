@@ -486,13 +486,16 @@ jobs:
         test-flags:
           type: string
           default: "-C"
+        test-target:
+          type: string
+          default: ""
       steps:
         - prepare
         - run: *set-e2e-variables
         - run: npm run decryptconfig
         - run:
             name: Run Canary Tests
-            command: ./run.sh -R << parameters.test-flags >>
+            command: env TARGET=<< parameters.test-target >> ./run.sh -R << parameters.test-flags >>
         - store-artifacts-and-test-results
 
 workflows:
@@ -536,6 +539,7 @@ workflows:
           requires:
             - prime-calypso-live
           test-flags: "-z"
+          test-target: "IE11"
       - test-e2e-canary:
           name: test-e2e-canary-safari
           requires:
@@ -546,6 +550,7 @@ workflows:
           requires:
             - prime-calypso-live
           test-flags: "-W"
+          test-target: "WOO"
 
   calypso-nightly:
     jobs:
