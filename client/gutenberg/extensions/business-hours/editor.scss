@@ -4,37 +4,80 @@
 	.business-hours__row {
 		display: flex;
 		align-items: center;
-		margin-bottom: 20px;
+
+		&.business-hours-row__add, &.business-hours-row__closed {
+			margin-bottom: 20px;
+		}
 
 		.business-hours__day {
-			width: 48%;
+			width: 44%;
 			display: flex;
 			align-items: baseline;
 
 			.business-hours__day-name {
 				width: 40%;
+				font-size: small;
+				font-weight: bold;
+			}
+
+			.components-form-toggle {
+				margin-right: 4px;
+			}
+
+			.components-toggle-control__label {
+				font-size: smaller;
 			}
 		}
 
 		.business-hours__hours {
-			width: 48%;
+			width: 44%;
 			margin: 0;
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
 
-			> .components-base-control {
+			.components-base-control {
 				display: inline-block;
-				max-width: 45%;
+				width: 48%;
+
+				&.business-hours__open {
+					margin-right: 4%;
+				}
 
 				.components-base-control__label {
-					display: inline-block;
 					margin-bottom: 0;
+					font-size: smaller;
 				}
 
 				.components-text-control__input {
-					width: 9em;
-					margin-left: 0.5em;
+					font-size: smaller;
+					padding: 4px;
 				}
 			}
 		}
+	}
+	.business-hours__remove {
+		width: 10%;
+		text-align: center;
+		margin-top: 16px;
+	}
+	.business-hours-row__add button {
+		text-decoration: none;
+		svg {
+			pointer-events: none;
+		}
+	}
+	.business-hours__remove button {
+		display: inline;
+	}
+	.business-hours-row__add .components-button.is-default:hover,
+	.business-hours__remove .components-button.is-default:hover,
+	.business-hours-row__add .components-button.is-default:focus,
+	.business-hours__remove .components-button.is-default:focus,
+	.business-hours-row__add .components-button.is-default:active,
+	.business-hours__remove .components-button.is-default:active {
+		background: none;
+		box-shadow: none;
 	}
 }
 
@@ -42,14 +85,23 @@
 	.wp-block-jetpack-business-hours {
 
 		.business-hours__row {
-			display: block;
+			flex-wrap: wrap;
+
+			&.business-hours-row__add {
+				.business-hours__day, .business-hours__remove {
+					display: none;
+				}
+			}
 
 			.business-hours__day {
 				width: 100%;
 			}
 
 			.business-hours__hours {
-				width: 100%;
+				width: 78%;
+			}
+			.business-hours__remove {
+				width: 18%;
 			}
 		}
 	}

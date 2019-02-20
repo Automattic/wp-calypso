@@ -2,23 +2,25 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
+import { Placeholder } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
 import HoursRow from './hours-row';
-import apiFetch from '@wordpress/api-fetch/build/index';
+import { icon } from 'gutenberg/extensions/business-hours';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const defaultLocalization = {
 	days: {
-		Sun: 'Sunday',
-		Mon: 'Monday',
-		Tue: 'Tuesday',
-		Wed: 'Wednesday',
-		Thu: 'Thursday',
-		Fri: 'Friday',
-		Sat: 'Saturday',
+		Sun: __( 'Sunday' ),
+		Mon: __( 'Monday' ),
+		Tue: __( 'Tuesday' ),
+		Wed: __( 'Wednesday' ),
+		Thu: __( 'Thursday' ),
+		Fri: __( 'Friday' ),
+		Sat: __( 'Saturday' ),
 	},
 	startOfWeek: 0,
 };
@@ -52,18 +54,25 @@ class HoursList extends Component {
 		const { localization, hasFetched } = this.state;
 		const { startOfWeek } = localization;
 		return (
-			<dl className={ className }>
+			<div className={ className }>
 				{ hasFetched || ! edit ? (
 					Object.keys( hours )
 						.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
 						.slice( startOfWeek )
-						.map( dayOfTheWeek => {
-							return <HoursRow day={ dayOfTheWeek } data={ localization } { ...this.props } />;
+						.map( ( dayOfTheWeek, index ) => {
+							return (
+								<HoursRow
+									key={ index }
+									day={ dayOfTheWeek }
+									data={ localization }
+									{ ...this.props }
+								/>
+							);
 						} )
 				) : (
-					<p>{ __( 'Loading business hours' ) }</p>
+					<Placeholder icon={ icon } label={ __( 'Loading business hours' ) } />
 				) }
-			</dl>
+			</div>
 		);
 	}
 }
