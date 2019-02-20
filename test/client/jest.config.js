@@ -11,7 +11,7 @@ module.exports = {
 	modulePaths: [ '<rootDir>/test/', '<rootDir>/client/', '<rootDir>/client/extensions/' ],
 	rootDir: './../../',
 	roots: [ '<rootDir>/client/' ],
-	testEnvironment: 'node',
+	testEnvironment: 'jsdom',
 	transformIgnorePatterns: [
 		'node_modules[\\/\\\\](?!flag-icon-css|redux-form|simple-html-tokenizer|draft-js)',
 	],
