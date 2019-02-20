@@ -12,6 +12,7 @@
 	"rebrand_cities_prefix": "rebrandcitiessite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
+		"async-payments": false,
 		"ad-tracking": true,
 		"always_use_logout_url": true,
 		"apple-pay": false,
