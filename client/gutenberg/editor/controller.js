@@ -74,7 +74,11 @@ export const loadTranslations = store => {
 
 	const query = domains.reduce( ( currentQuery, domain ) => {
 		const { name, url } = domain;
-		const languageFileUrl = `https://widgets.wp.com/languages/${ url }/${ localeSlug }.json?t=2`;
+		const cacheBuster =
+			window.languageRevisions && window.languageRevisions[ localeSlug ] !== undefined
+				? '&v=' + window.languageRevisions[ localeSlug ]
+				: '';
+		const languageFileUrl = `https://widgets.wp.com/languages/${ url }/${ localeSlug }.json?t=2${ cacheBuster }`;
 		return {
 			...currentQuery,
 			[ name ]: () => requestFromUrl( languageFileUrl ),
