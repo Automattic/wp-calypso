@@ -1,3 +1,6 @@
+// @TODO replace with Gutenberg colors
+$hover-color: #f8f9f9;
+
 .wp-block-jetpack-wordads {
 	background: var( --color-white );
 }
@@ -39,5 +42,17 @@
 }
 .jetpack-wordads-leaderboard.is-selected .components-placeholder,
 .jetpack-wordads-mobile_leaderboard.is-selected .components-placeholder {
-		flex-direction: row;
+	flex-direction: row;
+}
+.wp-block-jetpack-wordads__format-picker {
+	margin: 0;
+}
+
+.wp-block-jetpack-wordads__format-picker-format {
+	background: transparent;
+
+	&:hover,
+	&:focus {
+		background-color: $hover-color;
+	}
 }
