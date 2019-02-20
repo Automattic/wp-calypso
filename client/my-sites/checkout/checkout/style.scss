@@ -171,8 +171,8 @@
 		}
 	}
 
-	button[type='submit'].button-pay,
-	button[type='submit'].checkout__button-pay {
+	button[type='submit'].checkout__pay-button-button,
+	button[type='submit'].button-pay {
 		@include breakpoint( '<660px' ) {
 			width: 100%;
 
@@ -236,7 +236,7 @@
 	}
 
 	.checkout-terms,
-    .checkout__domain-refund-policy {
+	.checkout__domain-refund-policy {
 		color: var( --color-neutral-400 );
 		margin: 16px 0;
 		padding: 0;
@@ -735,12 +735,14 @@
 	}
 }
 
+.checkout__payment-box-buttons,
 .payment-box__payment-buttons {
 	@include breakpoint( '>660px' ) {
 		display: flex;
 		flex-wrap: wrap;
 	}
 
+	.checkout__pay-button,
 	.pay-button {
 		margin-right: 10px;
 
@@ -749,6 +751,7 @@
 		}
 	}
 
+	.checkout__pay-button-button,
 	.pay-button__button {
 		@include breakpoint( '<960px' ) {
 			width: 100%;
