@@ -106,19 +106,21 @@ class Slideshow extends Component {
 					<ul className="wp-block-jetpack-slideshow_swiper-wrappper swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
 							<li className="wp-block-jetpack-slideshow_slide swiper-slide" key={ id }>
-								<img
-									alt={ alt }
-									className={
-										`wp-block-jetpack-slideshow_image wp-image-${ id }` /* wp-image-${ id } makes WordPress add a srcset */
-									}
-									data-id={ id }
-									src={ url }
-								/>
-								{ caption && (
-									<span className="wp-block-jetpack-slideshow_caption gallery-caption">
-										{ caption }
-									</span>
-								) }
+								<figure>
+									<img
+										alt={ alt }
+										className={
+											`wp-block-jetpack-slideshow_image wp-image-${ id }` /* wp-image-${ id } makes WordPress add a srcset */
+										}
+										data-id={ id }
+										src={ url }
+									/>
+									{ caption && (
+										<figcaption className="wp-block-jetpack-slideshow_caption gallery-caption">
+											{ caption }
+										</figcaption>
+									) }
+								</figure>
 							</li>
 						) ) }
 					</ul>
