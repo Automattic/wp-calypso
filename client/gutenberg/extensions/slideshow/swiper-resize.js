@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import swiperApplyAria from './swiper-apply-aria';
+
 const SIXTEEN_BY_NINE = 16 / 9;
 const MAX_HEIGHT_PERCENT_OF_WINDOW_HEIGHT = 0.8;
 const SANITY_MAX_HEIGHT = 600;
@@ -21,4 +26,6 @@ export default function swiperResize( swiper ) {
 	swiper.wrapperEl.style.height = wrapperHeight;
 	swiper.el.querySelector( '.wp-block-jetpack-slideshow_button-prev' ).style.top = buttonTop;
 	swiper.el.querySelector( '.wp-block-jetpack-slideshow_button-next' ).style.top = buttonTop;
+
+	swiperApplyAria( swiper );
 }

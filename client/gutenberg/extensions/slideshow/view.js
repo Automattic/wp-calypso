@@ -9,6 +9,7 @@ import ResizeObserver from 'resize-observer-polyfill';
  */
 import createSwiper from './create-swiper';
 import swiperResize from './swiper-resize';
+import swiperApplyAria from './swiper-apply-aria';
 
 typeof window !== 'undefined' &&
 	window.addEventListener( 'load', function() {
@@ -33,6 +34,7 @@ typeof window !== 'undefined' &&
 				{
 					init: swiperResize,
 					imagesReady: swiperResize,
+					transitionEnd: swiperApplyAria,
 				}
 			).then( swiper => {
 				new ResizeObserver( () => {
