@@ -183,7 +183,7 @@ describe( 'index', () => {
 				textContent = domNode.textContent,
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( textContent ).to.contain( 'CNAME records should be configured' );
+			expect( textContent ).to.contain( 'DNS records should be configured' );
 			assert( links.some( link => link.href === MAP_SUBDOMAIN ) );
 		} );
 
@@ -212,9 +212,7 @@ describe( 'index', () => {
 				textContent = domNode.textContent,
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( textContent ).to.contain(
-				"Some of your domains' CNAME records should be configured"
-			);
+			expect( textContent ).to.contain( "Some of your domains' DNS records should be configured" );
 			assert( links.some( link => link.href === MAP_SUBDOMAIN ) );
 		} );
 
