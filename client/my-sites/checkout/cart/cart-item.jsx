@@ -22,6 +22,8 @@ import {
 	isPlan,
 	isBundled,
 	isDomainProduct,
+	isDomainTransferPrivacy,
+	isPrivacyProtection,
 } from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
@@ -126,18 +128,20 @@ export class CartItem extends React.Component {
 	getDomainPlanPrice( cartItem ) {
 		const { translate } = this.props;
 
-		if ( cartItem && cartItem.product_cost ) {
+		if ( isDomainTransferPrivacy( cartItem ) || isPrivacyProtection( cartItem ) ) {
+			return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
+		} else if ( cartItem && cartItem.product_cost ) {
 			return (
 				<span>
 					<span className="cart__free-with-plan">
 						{ cartItem.product_cost } { cartItem.currency }
 					</span>
-					<span className="cart__free-text">{ translate( 'Free with your plan' ) }</span>
+					<span className="cart__free-text">{ translate( 'First year free with your plan' ) }</span>
 				</span>
 			);
 		}
 
-		return <em>{ translate( 'Free with your plan' ) }</em>;
+		return <em>{ translate( 'First year free with your plan' ) }</em>;
 	}
 
 	getFreeTrialPrice() {

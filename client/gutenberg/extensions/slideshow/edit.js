@@ -54,15 +54,6 @@ class SlideshowEdit extends Component {
 			images: mapped,
 		} );
 	};
-	onSelectImage = index => {
-		return () => {
-			if ( this.state.selectedImage !== index ) {
-				this.setState( {
-					selectedImage: index,
-				} );
-			}
-		};
-	};
 	onRemoveImage = index => {
 		return () => {
 			const images = filter( this.props.attributes.images, ( img, i ) => index !== i );

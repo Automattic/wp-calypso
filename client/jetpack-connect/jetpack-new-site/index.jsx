@@ -4,6 +4,7 @@
 import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,10 +16,11 @@ import config from 'config';
 import JetpackLogo from 'components/jetpack-logo';
 import BackButton from 'components/back-button';
 import SiteUrlInput from '../site-url-input';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WordPressLogo from 'components/wordpress-logo';
 import { cleanUrl } from '../utils';
 import { persistSession } from '../persistence-utils';
-import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class JetpackNewSite extends Component {
 	constructor() {
@@ -33,7 +35,6 @@ class JetpackNewSite extends Component {
 	};
 
 	componentDidMount() {
-		this.props.loadTrackingTool( 'HotJar' );
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_view' );
 	}
 
@@ -151,10 +152,15 @@ class JetpackNewSite extends Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	null,
 	{
-		loadTrackingTool,
 		recordTracksEvent,
 	}
-)( localize( JetpackNewSite ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( JetpackNewSite );

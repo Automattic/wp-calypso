@@ -77,7 +77,7 @@
 	color: var( --color-neutral-200 );
 
 	.survey-step__vertical:hover & {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 

@@ -12,7 +12,7 @@
 	box-sizing: border-box;
 	animation: appear 0.3s ease-in-out;
 	background: var( --color-neutral-700 );
-	color: $white;
+	color: var( --color-white );
 	border-radius: 3px;
 	line-height: 1.5;
 
@@ -47,7 +47,7 @@
 	&.is-loading {
 		.notice__icon-wrapper::after {
 			content: '';
-			background-color: $white;
+			background-color: var( --color-white );
 			animation: notice-loading-pulse 0.8s ease-in-out infinite;
 			position: absolute;
 			top: 0;
@@ -73,8 +73,8 @@
 
 .notice__icon-wrapper {
 	position: relative;
-	background: $gray-text-min;
-	color: $white;
+	background: var( --color-text-subtle );
+	color: var( --color-white );
 	display: flex;
 	align-items: baseline;
 	width: 47px;
@@ -107,10 +107,10 @@
 	a:visited,
 	button.is-link {
 		text-decoration: underline;
-		color: $white;
+		color: var( --color-white );
 
 		&:hover {
-			color: $white;
+			color: var( --color-white );
 			text-decoration: none;
 		}
 	}
@@ -167,7 +167,7 @@
 
 		&:hover,
 		&:focus {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 }
@@ -204,7 +204,7 @@ a.notice__action {
 	}
 
 	&:hover {
-		color: $white;
+		color: var( --color-white );
 	}
 
 	.gridicon {

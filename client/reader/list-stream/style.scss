@@ -29,7 +29,7 @@
 	text-align: center;
 
 	.gridicon {
-		fill: $white;
+		fill: var( --color-white );
 		height: 24px;
 		position: relative;
 		top: 12px;
@@ -56,7 +56,7 @@
 
 .list-stream__header-description {
 	margin: 0;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .list-stream__header-title,
@@ -129,7 +129,7 @@
 	}
 
 	.list-stream__header-action-icon .gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		margin: auto;
 		position: relative;
 		bottom: 0;

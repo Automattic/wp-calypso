@@ -71,7 +71,7 @@
 }
 
 .plugin-meta__meta {
-	color: $gray;
+	color: var( --color-neutral-light );
 	white-space: pre;
 	text-overflow: ellipsis;
 	float: left;

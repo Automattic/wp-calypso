@@ -73,7 +73,7 @@ body .jetpack-simple-payments-wrapper .jetpack-simple-payments-details p {
 }
 
 input[type='number'].jetpack-simple-payments-items-number {
-	background: $white;
+	background: var( --color-white );
 	font-size: 16px;
 	line-height: 1;
 	max-width: 60px;

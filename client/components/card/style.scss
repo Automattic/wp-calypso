@@ -36,7 +36,7 @@
 			&:active,
 			&:focus,
 			&:hover {
-				color: $link-highlight;
+				color: var( --color-link-dark );
 			}
 		}
 	}
@@ -85,7 +85,7 @@
 a.card:hover,
 .is-card-link.card:hover {
 	.card__link-indicator {
-		color: $gray-text;
+		color: var( --color-text );
 	}
 }
 
@@ -94,6 +94,6 @@ a.card:focus,
 	outline: 0;
 
 	.card__link-indicator {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 }

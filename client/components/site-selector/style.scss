@@ -33,6 +33,10 @@
 	}
 }
 
+.layout__secondary .site-selector.is-large .site-selector__sites {
+	border-color: var( --sidebar-border-color );
+}
+
 // Styles for Site elements within the Selector
 .site-selector .site,
 .site-selector .all-sites {
@@ -67,6 +71,11 @@
 	}
 }
 
+.layout__secondary .all-sites .count {
+	color: var( --sidebar-text-color );
+	border-color: var( --sidebar-text-color );
+}
+
 // Highlight & hover effects
 .site-selector .site.is-highlighted,
 .site-selector .all-sites.is-highlighted,
@@ -99,12 +108,16 @@
 
 .site-selector .search {
 	margin: 8px;
-	width: auto;
 	height: 33px;
 	border: 1px solid var( --color-neutral-100 );
 	display: block;
 	opacity: 0;
 	position: absolute;
+
+	// ensure sufficient selector specificity for .search.is-open, too
+	&, &.is-open {
+		width: auto;
+	}
 
 	&.has-focus {
 		box-shadow: 0 0 0 2px var( --color-primary-100 );
@@ -120,7 +133,7 @@
 
 	.search__open-icon,
 	.search__close-icon {
-		color: $gray;
+		color: var( --color-neutral-light );
 		width: 32px;
 		height: 18px;
 	}
@@ -142,7 +155,7 @@
 }
 
 .site-selector__no-results {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-style: italic;
 	padding: 10px 20px;
 }
@@ -154,6 +167,10 @@
 	display: flex;
 	flex-direction: row;
 	padding-left: 10px;
+}
+
+.layout__secondary .site-selector__add-new-site {
+	border-color: var( --sidebar-border-color );
 }
 
 .site-selector__add-new-site .button {
@@ -183,6 +200,14 @@
 	}
 }
 
+.layout__secondary .site-selector__add-new-site .button {
+	color: var( --sidebar-heading-color );
+
+	&:hover {
+		color: var( --sidebar-text-color );
+	}
+}
+
 // Containers in the list of sites are larger
 .site-selector .site-action {
 	padding-top: 15px;
@@ -190,6 +215,10 @@
 
 .site-selector .all-sites {
 	border-bottom: 1px solid var( --color-neutral-100 );
+}
+
+.layout__secondary .site-selector .all-sites {
+	border-color: var( --sidebar-border-color );
 }
 
 .site-selector__recent {
@@ -200,14 +229,18 @@
 	}
 }
 
+.layout__secondary .site-selector__recent {
+	border-color: var( --sidebar-border-color );
+}
+
 .site-selector__hidden-sites-message {
-	color: $gray;
+	color: var( --sidebar-text-color );
 	display: block;
 	font-size: 12px;
 	padding: 16px 16px 24px;
 
 	.site-selector__manage-hidden-sites {
-		color: $gray;
+		color: var( --sidebar-text-color );
 		text-decoration: underline;
 	}
 }

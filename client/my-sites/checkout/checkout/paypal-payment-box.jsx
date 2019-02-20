@@ -134,8 +134,7 @@ export class PaypalPaymentBox extends React.Component {
 		const hasBusinessPlanInCart = some( this.props.cart.products, ( { product_slug } ) =>
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
-		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart,
-			paymentButtonClasses = 'payment-box__payment-buttons';
+		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
 			<React.Fragment>
@@ -172,13 +171,12 @@ export class PaypalPaymentBox extends React.Component {
 					/>
 					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
 
-					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-					<div className="payment-box-actions">
-						<div className={ paymentButtonClasses }>
+					<div className="checkout__payment-box-actions">
+						<div className="checkout__payment-box-buttons">
 							<span className="checkout__pay-button">
 								<button
 									type="submit"
-									className="button is-primary button-pay checkout__button"
+									className="checkout__pay-button-button button is-primary"
 									disabled={ this.state.formDisabled }
 								>
 									{ this.renderButtonText() }

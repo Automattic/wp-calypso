@@ -194,7 +194,7 @@
 	margin: 16px 0 0 -4px;
 	list-style: none;
 	font-size: 14px;
-	color: $gray;
+	color: var( --color-neutral-light );
 	display: flex;
 	align-items: center;
 
@@ -285,7 +285,7 @@
 	background: #222;
 	background: rgba( 0, 0, 0, 0.3 );
 	background: linear-gradient( to bottom, transparent, rgba( 0, 0, 0, 0.2 ) 73%, rgba( 0, 0, 0, 0.5 ) 100% );
-	color: $white;
+	color: var( --color-white );
 	font-family: $sans;
 	font-size: 14px;
 	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );

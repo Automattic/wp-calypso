@@ -14,7 +14,7 @@
 		}
 
 		.title-format-editor__token {
-			background-color: $gray;
+			background-color: var( --color-neutral-light );
 		}
 	}
 }
@@ -36,7 +36,7 @@
 
 .title-format-editor__button {
 	border-radius: 3px;
-	background-color: $white;
+	background-color: var( --color-white );
 	color: var( --color-neutral-600 );
 	border: 1px solid var( --color-neutral-100 );
 	padding: 3px 8px;
@@ -66,7 +66,7 @@
 .title-format-editor__token {
 	display: inline-block;
 	background-color: var( --color-neutral-500 );
-	color: $white;
+	color: var( --color-white );
 	border-radius: 4px;
 	cursor: pointer;
 	transition: all 0.3s ease;
@@ -83,7 +83,7 @@
 }
 
 .title-format-editor__preview {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-style: italic;
 	margin-top: 5px;
 	font-size: 13px;

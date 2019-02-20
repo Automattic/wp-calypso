@@ -130,7 +130,7 @@
 		z-index: z-index( 'root', '.auth__input-wrapper .gridicon' );
 		left: 8px;
 		top: 7px;
-		fill: $gray;
+		fill: var( --color-neutral-light );
 	}
 }
 
@@ -145,7 +145,7 @@
 
 // should be a new component
 .wordpress-logo {
-	fill: $white;
+	fill: var( --color-white );
 	margin: 0 auto 20px;
 }
 
@@ -154,7 +154,7 @@
 	position: absolute;
 	top: 16px;
 	right: 16px;
-	color: $white;
+	color: var( --color-white );
 }
 
 .auth__links {
@@ -166,7 +166,7 @@
 
 .auth__links a {
 	text-decoration: none;
-	color: $white;
+	color: var( --color-white );
 	margin: 0 16px;
 	padding: 10px 0;
 }
@@ -220,7 +220,7 @@
 	ol li::before {
 		margin-right: 2em;
 		content: counter( item );
-		background: $white;
+		background: var( --color-white );
 		border-radius: 100%;
 		color: var( --color-primary-dark );
 		width: 24px;
@@ -250,7 +250,7 @@
 		right: 10px;
 		top: 10px;
 		text-decoration: none;
-		color: $white;
+		color: var( --color-white );
 	}
 
 	.auth__self-hosted-instructions-close:hover {
@@ -260,7 +260,7 @@
 }
 
 .auth__welcome {
-	color: $white;
+	color: var( --color-white );
 }
 
 .auth__connect-intro {
@@ -272,7 +272,7 @@
 .auth__connect .button:visited {
 	background: #00a8db;
 	border: #00a8db;
-	color: $white;
+	color: var( --color-white );
 }
 
 .auth .pulsing-dot {

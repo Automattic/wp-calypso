@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,6 +20,11 @@ import Count from 'components/count';
 import Notice from 'components/notice';
 import PluginNotices from 'lib/plugins/notices';
 import { errorNotice } from 'state/notices/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i;
@@ -205,7 +208,7 @@ class PluginItem extends Component {
 		return (
 			<Notice
 				isCompact
-				icon="sync"				
+				icon="sync"
 				inline={ true }
 				text={ translate( 'Version %(newPluginVersion)s is available', {
 					args: { newPluginVersion: updated_versions[ 0 ] },

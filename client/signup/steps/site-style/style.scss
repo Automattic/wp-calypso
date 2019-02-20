@@ -7,8 +7,8 @@
 .site-style__form {
 	align-items: stretch;
 	height: 100%;
-	background-color: $gray-light;
-	border-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
+	border-color: var( --color-neutral-0 );
 	border-radius: 5px;
 	@include breakpoint( '<660px' ) {
 		padding: 0 10px;
@@ -52,11 +52,11 @@
 
 	&.is-checked,
 	&.is-checked:hover {
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 	}
 
 	&:hover {
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 	}
 
 	input[type='radio'] {
@@ -75,5 +75,5 @@
 }
 
 .accessible-focus .site-style__option-label input[type='radio']:focus + span {
-	outline: 1px solid $link-highlight;
+	outline: 1px solid var( --color-link-dark );
 }

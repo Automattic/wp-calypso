@@ -26,6 +26,7 @@ import {
 import { successNotice, errorNotice, warningNotice } from 'state/notices/actions';
 import Connection from './connection';
 import FoldableCard from 'components/foldable-card';
+import Notice from 'components/notice';
 import { getAvailableExternalAccounts } from 'state/sharing/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
@@ -47,6 +48,15 @@ import requestExternalAccess from 'lib/sharing';
 import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
 import config from 'config';
 import PicasaMigration from './picasa-migration';
+
+/**
+ * Check if the connection is broken or requires reauth.
+ *
+ * @param {object} connection Publicize connection.
+ * @returns {boolean} True if connection is broken or requires reauthentication.
+ */
+const isConnectionInvalidOrMustReauth = connection =>
+	[ 'must_reauth', 'invalid' ].includes( connection.status );
 
 export class SharingService extends Component {
 	static propTypes = {
@@ -354,7 +364,7 @@ export class SharingService extends Component {
 		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
 			// A problematic connection exists
 			status = 'reconnect';
-		} else if ( some( this.getConnections(), { status: 'invalid' } ) ) {
+		} else if ( some( this.getConnections(), isConnectionInvalidOrMustReauth ) ) {
 			// A valid connection is not available anymore, user must reconnect
 			status = 'must-disconnect';
 		} else {
@@ -466,6 +476,14 @@ export class SharingService extends Component {
 						numberOfConnections={ this.getConnections().length }
 					/>
 				</div>
+				{ 'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } ) && (
+					<Notice isCompact status="is-error" className="sharing-service__notice">
+						{ this.props.translate(
+							'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Publicize ' +
+								'by disconnecting and reconnecting your account.'
+						) }
+					</Notice>
+				) }
 			</div>
 		);
 
@@ -523,7 +541,10 @@ export class SharingService extends Component {
 										onRefresh={ this.refresh }
 										onToggleSitewideConnection={ this.toggleSitewideConnection }
 										service={ this.props.service }
-										showDisconnect={ connections.length > 1 || 'broken' === connection.status }
+										showDisconnect={
+											connections.length > 1 ||
+											[ 'broken', 'must_reauth' ].includes( connection.status )
+										}
 									/>
 								) ) }
 							</ServiceConnectedAccounts>

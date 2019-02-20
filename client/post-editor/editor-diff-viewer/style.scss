@@ -59,7 +59,7 @@
 	border-radius: 4px;
 	height: 28px;
 	line-height: 27px;
-	background-color: $gray-text-min;
+	background-color: var( --color-text-subtle );
 	cursor: pointer;
 	padding: 0 16px 0 8px;
 	color: #fff;

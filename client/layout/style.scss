@@ -121,7 +121,7 @@
 	bottom: 0;
 	color: var( --sidebar-text-color );
 	background: var( --sidebar-background );
-	border-right: 1px solid darken( $sidebar-bg-color, 5% );
+	border-right: 1px solid var( --sidebar-border-color );
 	width: $sidebar-width-max;
 	overflow: hidden;
 

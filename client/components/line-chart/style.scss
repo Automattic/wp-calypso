@@ -45,7 +45,7 @@
 
 .line-chart__line-point {
 	cursor: pointer;
-	fill: $white;
+	fill: var( --color-white );
 	stroke-width: 3px;
 }
 

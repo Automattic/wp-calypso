@@ -6,7 +6,7 @@
 	display: inline-block;
 	vertical-align: middle;
 	margin-right: 10px;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .credentials-setup-flow__header-text {
@@ -52,7 +52,7 @@
 	padding: 0 0 5px;
 
 	&:hover {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 
 	span {

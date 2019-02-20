@@ -192,7 +192,7 @@
 
 	&.is-selected {
 		background: var( --color-primary );
-		color: $white;
+		color: var( --color-white );
 	}
 }
 

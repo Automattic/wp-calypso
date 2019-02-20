@@ -41,7 +41,7 @@
 	height: 48px;
 	box-sizing: border-box;
 	color: var( --color-text-subtle );
-	background: $white;
+	background: var( --color-white );
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 
 	@include breakpoint( '>1040px' ) {
@@ -256,18 +256,18 @@
 
 	.editor-revisions-list__revision.is-selected > &,
 	.editor-revisions-list__revision.is-selected > &:hover {
-		background: $gray-text-min;
+		background: var( --color-text-subtle );
 
 		// NOTE: force with a heavy specificity white text, see discussion on
 		// https://github.com/Automattic/wp-calypso/pull/13367#discussion_r114108253
 		* {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 }
 
 .editor-revisions-list__date {
-	color: $gray-text;
+	color: var( --color-text );
 	font-weight: 600;
 	display: block;
 	margin-bottom: 4px;

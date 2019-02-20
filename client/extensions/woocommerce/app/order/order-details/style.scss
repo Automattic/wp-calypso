@@ -80,7 +80,7 @@
 			color: var( --color-primary );
 
 			&:hover {
-				color: $link-highlight;
+				color: var( --color-link-dark );
 			}
 		}
 	}

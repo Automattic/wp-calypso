@@ -62,7 +62,7 @@
 
 	.gsuite-purchase-cta__add-google-apps-card-price-per-user {
 		strong {
-			color: $gray-text;
+			color: var( --color-text );
 			font-size: 24px;
 			font-weight: 300;
 		}

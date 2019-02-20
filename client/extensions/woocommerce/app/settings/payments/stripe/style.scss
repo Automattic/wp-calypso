@@ -13,7 +13,7 @@
 
 		.stripe__connect-account-logo-container {
 			align-items: center;
-			background: $white;
+			background: var( --color-white );
 			border: 1px solid var( --color-neutral-100 );
 			display: flex;
 			height: 46px;
@@ -44,7 +44,7 @@
 
 			.stripe__connect-account-status {
 				border-radius: 3px;
-				color: $white;
+				color: var( --color-white );
 				font-size: 12px;
 				margin-right: 8px;
 				padding: 3px 8px;

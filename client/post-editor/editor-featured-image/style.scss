@@ -33,7 +33,7 @@
 			bottom: 8px;
 			right: 8px;
 		padding: 0;
-		color: $white;
+		color: var( --color-white );
 		opacity: 0.9;
 	}
 
@@ -107,7 +107,7 @@
 
 .editor-featured-image__preview .editor-featured-image__edit-icon {
 	position: absolute;
-	color: $white;
+	color: var( --color-white );
 	opacity: 0.9;
 	top: auto;
 	bottom: 8px;

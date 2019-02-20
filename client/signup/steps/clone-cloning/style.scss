@@ -47,9 +47,9 @@
 		fill: $blue-light;
 	}
 	50% {
-		fill: $white;
+		fill: var( --color-white );
 	}
 	100% {
-		fill: $white;
+		fill: var( --color-white );
 	}
 }

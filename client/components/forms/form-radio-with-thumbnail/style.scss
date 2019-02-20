@@ -3,7 +3,7 @@
 	width: 120px;
 	height: 90px;
 	margin: 2px 0 8px;
-	background-color: $white;
+	background-color: var( --color-white );
 	background-position: 50% 0;
 	background-size: cover;
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),

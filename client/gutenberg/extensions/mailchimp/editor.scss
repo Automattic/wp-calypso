@@ -14,7 +14,7 @@ $blocks-button__line-height: $big-font-size + 6px;
 	.wp-block-jetpack-mailchimp_button {
 		background-color: #0073aa;
 		border-radius: 5px;
-		color: $white;
+		color: var( --color-white );
 		font-family: $sans;
 		font-weight: bold;
 		margin-bottom: 1.5em;

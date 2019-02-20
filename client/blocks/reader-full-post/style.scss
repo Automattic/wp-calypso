@@ -45,7 +45,7 @@
 }
 
 .reader-full-post__visit-site-container {
-	background: $white;
+	background: var( --color-white );
 	border-bottom: 1px solid var( --color-neutral-0 );
 	font-size: 11px;
 	font-weight: 500;
@@ -469,7 +469,7 @@
 
 .reader-full-post__header-date-link,
 .reader-full-post__header-date-link:visited {
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	&:hover {
 		color: var( --color-primary-light );
@@ -482,7 +482,7 @@
 	width: calc( 100% - 120px );
 
 	.gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		margin-right: 5px;
 		position: relative;
 		top: 4px;
@@ -494,7 +494,7 @@
 }
 
 .reader-full-post__header-tag-list {
-	color: $gray;
+	color: var( --color-neutral-light );
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -508,7 +508,7 @@
 }
 
 .reader-full-post__header-tag-list-item {
-	color: $gray;
+	color: var( --color-neutral-light );
 	display: inline;
 	margin-right: 5px;
 
@@ -527,7 +527,7 @@
 
 .reader-full-post__header-tag-list-item-link,
 .reader-full-post__header-tag-list-item-link:visited {
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	&:hover {
 		color: var( --color-primary-light );

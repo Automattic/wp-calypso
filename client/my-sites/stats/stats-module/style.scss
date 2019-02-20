@@ -98,14 +98,14 @@
 		@include breakpoint( '>480px' ) {
 			&:hover {
 				background: var( --color-neutral-0 );
-				border-top-color: $white;
+				border-top-color: var( --color-white );
 			}
 		}
 
 		// Focus state
 		&:focus {
 			background: var( --color-neutral-0 );
-			border-top-color: $white;
+			border-top-color: var( --color-white );
 		}
 
 		@include breakpoint( '>960px' ) {
@@ -116,7 +116,7 @@
 	}
 
 	.right {
-		color: $gray;
+		color: var( --color-neutral-light );
 		position: absolute;
 		right: 24px;
 		top: 0;
@@ -126,7 +126,7 @@
 // Module Header
 
 .module-header {
-	background: $white;
+	background: var( --color-white );
 	height: 40px;
 	line-height: 40px;
 	padding-left: 24px;
@@ -161,7 +161,7 @@
 // 2: So the focus outline isn't covered by the fading pseudo-element
 
 ul.module-header-actions {
-	background: $white;
+	background: var( --color-white );
 	height: 40px;
 	list-style: none;
 	margin: 0;
@@ -207,7 +207,7 @@ ul.module-header-actions {
 
 	.module-header-action-link {
 		@extend %mobile-interface-element;
-		color: $gray;
+		color: var( --color-neutral-light );
 		display: inline-block;
 		height: 40px;
 		line-height: 40px;
@@ -228,13 +228,13 @@ ul.module-header-actions {
 		}
 
 		.module-header & .module-header-action-link:hover {
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 	}
 
 	// Focus state
 	.module-header & .module-header-action-link:focus {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 
 	// Info button
@@ -424,7 +424,7 @@ ul.module-header-actions {
 	}
 
 	tbody th:first-child {
-		background: $white;
+		background: var( --color-white );
 		position: absolute;
 		z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
 	}
@@ -436,7 +436,7 @@ ul.module-header-actions {
 		th:first-child {
 			width: 34px; // 24 (margin-left) + 12 (margin-right) + 1 (border) + 34 = 70
 			transform: translateX( -70px );
-			background: $white;
+			background: var( --color-white );
 			position: fixed;
 			z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
 		}
@@ -495,7 +495,7 @@ ul.module-header-actions {
 		}
 
 		&.is-same {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 
 		&.is-rising,
@@ -512,7 +512,7 @@ ul.module-header-actions {
 
 	thead th,
 	.stats-detail-weeks__date {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	.stats-detail-weeks__date {

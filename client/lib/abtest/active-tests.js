@@ -1,7 +1,7 @@
 /** @format */
 export default {
 	improvedOnboarding: {
-		datestamp: '20190131',
+		datestamp: '20190214',
 		variations: {
 			main: 50,
 			onboarding: 50,
@@ -98,14 +98,6 @@ export default {
 		},
 		defaultVariation: 'googleMyBusinessBanner',
 	},
-	privateByDefault: {
-		datestamp: '20181217',
-		variations: {
-			private: 0,
-			public: 100,
-		},
-		defaultVariation: 'public',
-	},
 	builderReferralThemesBanner: {
 		datestamp: '20181218',
 		variations: {
@@ -121,14 +113,6 @@ export default {
 			remove: 0,
 		},
 		defaultVariation: 'keep',
-	},
-	gSuitePlan: {
-		datestamp: '20190117',
-		variations: {
-			basic: 90,
-			business: 10,
-		},
-		defaultVariation: 'basic',
 	},
 	domainSearchButtonStyles: {
 		datestamp: '20190119',
@@ -153,5 +137,14 @@ export default {
 			enhanced: 50,
 		},
 		defaultVariation: 'original',
+	},
+	onlyJetpackMonthly: {
+		datestamp: '20190212',
+		variations: {
+			original: 50,
+			monthlyOnly: 50,
+		},
+		defaultVariation: 'original',
+		countryCodeTargets: [ 'ES', 'IT', 'PT', 'FR', 'NL', 'DE', 'BE', 'PL', 'SE' ],
 	},
 };

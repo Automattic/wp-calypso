@@ -71,7 +71,7 @@
 			}
 
 			.reader-post-card__title {
-				color: $white;
+				color: var( --color-white );
 				font-family: $sans;
 				position: relative;
 				bottom: 30px;
@@ -87,7 +87,7 @@
 			}
 
 			.reader-post-card__title .reader-post-card__title-link {
-				color: $white;
+				color: var( --color-white );
 				display: inline;
 				font-size: 12px;
 				letter-spacing: 0.01em;
@@ -165,7 +165,7 @@
 		}
 
 		.reader-post-card__timestamp-link {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 
 		.reader-post-options-menu {
@@ -266,7 +266,7 @@
 // Need .reader__content to override .reader__content a
 .reader__content .reader-post-card__timestamp-link,
 .reader__content .reader-post-card__tag-link {
-	color: $gray;
+	color: var( --color-neutral-light );
 	margin-top: 2px;
 	cursor: pointer;
 	&:hover {
@@ -315,7 +315,7 @@
 }
 
 .reader-post-card__tags {
-	color: $gray;
+	color: var( --color-neutral-light );
 	display: flex;
 	flex-direction: row;
 	height: 20px;
@@ -348,7 +348,7 @@
 
 .reader-post-card__tags .gridicons-tag {
 	height: 18px;
-	fill: $gray;
+	fill: var( --color-neutral-light );
 	flex: 0 0 15px;
 	margin-right: 5px;
 }
@@ -656,7 +656,7 @@
 	color: var( --color-primary );
 
 	&:hover {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 }
 

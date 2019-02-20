@@ -7,7 +7,7 @@
 
 .suggestions__item {
 	padding: 12px 16px;
-	background: $white;
+	background: var( --color-white );
 	border: 1px solid var( --color-border-subtle );
 	border-top: 0;
 	font-size: 15px;

@@ -246,6 +246,9 @@
 	--color-plan-premium: #{$muriel-yellow-500};
 	--color-plan-business: #{$muriel-orange-500};
 	--color-plan-ecommerce: #{$muriel-hot-purple-500};
+	--color-jetpack-plan-personal: #{$muriel-yellow-500};
+	--color-jetpack-plan-premium: #{$muriel-green-500};
+	--color-jetpack-plan-professional: #{$muriel-hot-purple-500};
 
 	--color-section-nav-item-background-hover: #{$muriel-blue-0};
 	--color-themes-active-text: #{$muriel-blue-0};
@@ -266,6 +269,7 @@
 	--sidebar-background-gradient: #{hex-to-rgb( $muriel-white )};
 	--sidebar-secondary-background: #{$muriel-white};
 	--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
+	--sidebar-border-color: #{$muriel-gray-50};
 	--sidebar-text-color: #{$muriel-gray-800};
 	--sidebar-gridicon-fill: #{$muriel-gray-500};
 	--sidebar-heading-color: #{$muriel-gray-500};
@@ -316,12 +320,14 @@
 		--color-accent-800: #{$muriel-orange-800};
 		--color-accent-800-rgb: #{hex-to-rgb( $muriel-orange-800 )};
 		--color-accent-900: #{$muriel-orange-900};
-		--color-accent-900-rgb: #{hex-to-rgb( $muriel-orange-900 )};		
-				
-		--color-button-primary-background-hover: #{$muriel-orange-400};		
+		--color-accent-900-rgb: #{hex-to-rgb( $muriel-orange-900 )};
+
+		--color-button-primary-background-hover: #{$muriel-orange-400};
 
 		--sidebar-background: #{$muriel-gray-50};
-		--sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-50 )};		
+		--sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-50 )};
+		--sidebar-heading-color: #{$muriel-gray-600};
+		--sidebar-border-color: #{$muriel-gray-100};		
 		--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-50 )};
 		--sidebar-menu-selected-background-color: #{$muriel-gray-500};
 		--sidebar-menu-selected-a-color: #{$muriel-white};

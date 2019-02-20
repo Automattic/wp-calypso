@@ -17,7 +17,7 @@
 }
 
 .editor-fieldset__legend {
-	color: $gray-text;
+	color: var( --color-text );
 	display: block;
 	font-size: 12px;
 }

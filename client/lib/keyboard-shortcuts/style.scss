@@ -19,7 +19,7 @@
 }
 
 .keyboard-shortcuts__category-disabled {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .keyboard-shortcuts__site-navigation {
@@ -50,7 +50,7 @@
 }
 
 .keyboard-shortcuts__key {
-	background-color: $white;
+	background-color: var( --color-white );
 	border: solid 1px $gray;
 	padding: 0 5px;
 	min-width: 8px;

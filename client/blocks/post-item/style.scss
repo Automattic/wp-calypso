@@ -1,6 +1,6 @@
 /** @format */
 
-$post-item-background-color: $white;
+$post-item-background-color: var( --color-white );
 
 $post-item-border-color: darken( $sidebar-bg-color, 5% );
 $expanded-post-item-outline-color: $sidebar-selected-color;
@@ -98,7 +98,7 @@ a.post-item__title-link:visited {
 	}
 
 	.post-item__panel.is-untitled & {
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-style: italic;
 	}
 

@@ -15,9 +15,10 @@ module.exports = {
 	transformIgnorePatterns: [
 		'node_modules[\\/\\\\](?!flag-icon-css|redux-form|simple-html-tokenizer|draft-js)',
 	],
-	testMatch: [ '<rootDir>/client/**/test/*.js?(x)' ],
+	testMatch: [ '<rootDir>/client/**/test/*.js?(x)', '!**/.eslintrc.*' ],
 	testURL: 'https://example.com',
-	setupTestFrameworkScriptFile: '<rootDir>/test/client/setup-test-framework.js',
+	setupFiles: [ 'regenerator-runtime/runtime' ], // some NPM-published packages depend on the global
+	setupFilesAfterEnv: [ '<rootDir>/test/client/setup-test-framework.js' ],
 	verbose: false,
 	globals: {
 		google: {},

@@ -11,7 +11,7 @@
 	border-top: solid 1px var( --color-neutral-100 );
 
 	.gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		position: relative;
 		top: -13px;
 		background: var( --color-neutral-0 );
@@ -24,7 +24,7 @@
 		border-top: none;
 
 		.gridicon {
-			background: $white;
+			background: var( --color-white );
 		}
 	}
 }

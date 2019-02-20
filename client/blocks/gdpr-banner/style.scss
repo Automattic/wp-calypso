@@ -4,7 +4,7 @@
 	width: 100%;
 	padding: 16px;
 	background-color: var( --color-neutral-700 );
-	color: $white;
+	color: var( --color-white );
 	z-index: z-index( 'root', '.gdpr-banner' );
 
 	animation-duration: 0.5s;
@@ -29,7 +29,7 @@
 	}
 
 	a {
-		color: $white;
+		color: var( --color-white );
 		text-decoration: underline;
 		&:hover {
 			text-decoration: none;

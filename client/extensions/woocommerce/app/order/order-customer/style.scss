@@ -45,7 +45,7 @@
 		padding-bottom: 0;
 
 		&:hover {
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 	}
 }

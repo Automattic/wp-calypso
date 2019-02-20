@@ -53,7 +53,7 @@
 
 .activity-log-tasklist__update-bullet,
 .activity-log-tasklist__update-type {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .activity-log-tasklist__update-bullet {

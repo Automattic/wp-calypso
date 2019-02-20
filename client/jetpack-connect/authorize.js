@@ -8,7 +8,7 @@ import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get, includes, startsWith } from 'lodash';
+import { flowRight, get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import urlUtils from 'url';
 
@@ -34,6 +34,7 @@ import MainWrapper from './main-wrapper';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
@@ -41,10 +42,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
 import { login } from 'lib/paths';
-import {
-	loadTrackingTool,
-	recordTracksEvent as recordTracksEventAction,
-} from 'state/analytics/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
 import {
 	ALREADY_CONNECTED,
@@ -172,7 +170,6 @@ export class JetpackAuthorize extends Component {
 	}
 
 	componentDidMount() {
-		this.props.loadTrackingTool( 'HotJar' );
 		this.trackAffiliate();
 	}
 
@@ -692,7 +689,7 @@ export class JetpackAuthorize extends Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	( state, { authQuery } ) => {
 		// Note: reading from a cookie here rather than redux state,
 		// so any change in value will not execute connect().
@@ -719,9 +716,14 @@ export default connect(
 	},
 	{
 		authorize: authorizeAction,
-		loadTrackingTool,
 		recordTracksEvent: recordTracksEventAction,
 		retryAuth: retryAuthAction,
 		trackAffiliateReferral: affiliateReferral,
 	}
-)( localize( JetpackAuthorize ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( JetpackAuthorize );

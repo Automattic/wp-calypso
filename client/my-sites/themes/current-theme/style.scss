@@ -43,7 +43,7 @@ $current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
 
 .current-theme__label {
 	font-size: 0.8em;
-	color: $gray;
+	color: var( --color-neutral-light );
 	text-transform: uppercase;
 	padding-left: 15px;
 	padding-top: 10px;
@@ -113,7 +113,7 @@ $current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
 		cursor: default;
 
 		span {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 

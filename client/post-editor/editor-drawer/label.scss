@@ -3,7 +3,7 @@
 }
 
 .editor-drawer__label-text {
-	color: $gray-text;
+	color: var( --color-text );
 	display: block;
 	font-size: 12px;
 	line-height: 18px;

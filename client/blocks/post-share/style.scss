@@ -11,7 +11,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	border-top: $section-border;
 	margin: 0;
 	position: relative;
-	background-color: $white;
+	background-color: var( --color-white );
 
 	& .notice {
 		margin: 0 0 16px;
@@ -159,7 +159,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	overflow: hidden;
 
 	&::before {
-		background-color: $white;
+		background-color: var( --color-white );
 		border-radius: 3px;
 		content: '';
 		display: block;
@@ -281,7 +281,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	margin: 0 auto 1px;
 	padding: 16px;
 
-	background: $white;
+	background: var( --color-white );
 
 	border-top: $section-border;
 

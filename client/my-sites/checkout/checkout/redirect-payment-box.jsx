@@ -6,6 +6,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { snakeCase, map, zipObject, isEmpty, mapValues, overSome, some } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -301,20 +302,32 @@ export class RedirectPaymentBox extends PureComponent {
 					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
-						<div className="checkout__pay-button">
-							<button
-								type="submit"
-								className="checkout__button-pay button is-primary "
-								disabled={ this.state.formDisabled }
-							>
-								{ this.renderButtonText() }
-							</button>
-							<SubscriptionText cart={ this.props.cart } />
-						</div>
+						<div className="checkout__payment-box-buttons">
+							<span className="checkout__pay-button">
+								<button
+									type="submit"
+									className="checkout__pay-button-button button is-primary "
+									disabled={ this.state.formDisabled }
+								>
+									{ this.renderButtonText() }
+								</button>
+								<SubscriptionText cart={ this.props.cart } />
+							</span>
 
-						{ showPaymentChatButton && (
-							<PaymentChatButton paymentType={ this.props.paymentType } cart={ this.props.cart } />
-						) }
+							<div className="checkout__secure-payment">
+								<div className="checkout__secure-payment-content">
+									<Gridicon icon="lock" />
+									{ translate( 'Secure Payment' ) }
+								</div>
+							</div>
+
+							{ showPaymentChatButton && (
+								<PaymentChatButton
+									paymentType={ this.props.paymentType }
+									cart={ this.props.cart }
+								/>
+							) }
+						</div>
 					</div>
 				</form>
 				<CartCoupon cart={ this.props.cart } />

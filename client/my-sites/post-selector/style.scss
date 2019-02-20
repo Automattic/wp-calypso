@@ -1,6 +1,6 @@
 .post-selector {
 	position: relative;
-	background-color: $white;
+	background-color: var( --color-white );
 	border: 1px solid var( --color-neutral-100 );
 
 	&.is-compact {
@@ -26,7 +26,7 @@
 	padding: 4px 8px 4px 30px;
 	border-width: 0;
 	border-bottom-width: 1px;
-	background: $white;
+	background: var( --color-white );
 	font-size: 14px;
 	-webkit-appearance: none;
 }
@@ -107,7 +107,7 @@ input[type=checkbox].post-selector__input {
 	flex-shrink: 0;
 	font-size: 11px;
 	text-transform: uppercase;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	.post-selector.is-type-labels-visible & {
 		display: block;

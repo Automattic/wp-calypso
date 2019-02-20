@@ -30,7 +30,7 @@
 		.domain-suggestion__content {
 			h3,
 			.domain-product-price {
-				color: $gray;
+				color: var( --color-neutral-light );
 			}
 		}
 	}
@@ -41,7 +41,7 @@
 		.domain-suggestion__content {
 			h3,
 			.domain-product-price {
-				color: $gray-lighten-30;
+				color: var( --color-neutral-0 );
 			}
 		}
 	}
@@ -57,7 +57,7 @@
 
 	.notice.is-compact {
 		margin: 0 0 0 8px;
-		color: $white;
+		color: var( --color-white );
 
 		&.is-success {
 			background: var( --color-success );
@@ -118,7 +118,7 @@
 }
 
 .domain-product-price__price {
-	font-size: 1.2em;
+	font-size: 0.9em;
 
 	@include breakpoint( '>480px' ) {
 		font-size: 1em;
@@ -177,7 +177,7 @@
 .domain-suggestion__chevron {
 	margin-left: 10px;
 	flex: 1 0 auto;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;

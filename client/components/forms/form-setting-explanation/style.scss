@@ -20,6 +20,6 @@
 	}
 
 	button.is-borderless:hover {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 }

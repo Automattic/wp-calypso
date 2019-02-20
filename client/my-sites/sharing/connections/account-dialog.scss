@@ -21,7 +21,7 @@
 	padding: 2px 0;
 	font-size: 10px;
 	text-transform: uppercase;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	&::after {
 		content: '';

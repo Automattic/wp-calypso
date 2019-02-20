@@ -70,7 +70,7 @@
 	transform: translateY( -50% );
 	background-color: rgba( var( --color-neutral-700-rgb ), 0.85 );
 	border-radius: 24px;
-	color: $white;
+	color: var( --color-white );
 	cursor: pointer;
 
 	.gridicon {
@@ -171,7 +171,7 @@
 }
 
 .editor-media-modal-detail__file-info th {
-	color: $gray;
+	color: var( --color-neutral-light );
 	display: block;
 	font-size: 11px;
 	margin-bottom: 4px;

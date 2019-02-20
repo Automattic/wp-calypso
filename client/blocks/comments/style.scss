@@ -18,7 +18,7 @@
 // Comment Counter
 .comments__count {
 	text-align: center;
-	color: $gray;
+	color: var( --color-neutral-light );
 	float: right;
 }
 
@@ -114,7 +114,7 @@
 }
 
 .comments__form-closed {
-	color: $gray;
+	color: var( --color-neutral-light );
 	margin-top: 20px;
 	margin-bottom: -3px;
 	font-family: $sans;
@@ -261,11 +261,11 @@
 }
 
 .comments__comment-respondee {
-	color: $gray;
+	color: var( --color-neutral-light );
 	margin-right: 12px;
 
 	.gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		position: relative;
 		left: -5px;
 		top: 3px;
@@ -273,7 +273,7 @@
 }
 
 .comments__comment-respondee .comments__comment-respondee-link {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-weight: normal;
 	margin-left: -2px;
 
@@ -375,17 +375,17 @@ a.comments__comment-username {
 }
 
 .comments__comment-timestamp a {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-weight: normal;
 	text-decoration: none;
 
 	&:hover {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 }
 
 .comments__comment-moderation {
-	color: $gray;
+	color: var( --color-neutral-light );
 	margin-top: 0.5em;
 	margin-bottom: 0.5em;
 	font-size: 12px;
@@ -421,14 +421,14 @@ a.comments__comment-username {
 
 // Actions for Individual Comments
 .comments__comment-actions {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 14px;
 	list-style: none;
 	margin-top: -6px;
 
 	button {
 		display: inline-block;
-		color: $gray;
+		color: var( --color-neutral-light );
 		padding: 4px;
 		margin-right: 8px;
 		margin-top: 0;
@@ -526,7 +526,7 @@ a.comments__comment-username {
 }
 
 .comments__view-more {
-	color: $gray;
+	color: var( --color-neutral-light );
 	cursor: pointer;
 	display: block !important; // to overwrite inline-block rule
 	font-size: 14px;
@@ -556,7 +556,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-count {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1;

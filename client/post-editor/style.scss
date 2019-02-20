@@ -12,7 +12,7 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: $white;
+	background-color: var( --color-white );
 	pointer-events: none;
 	z-index: z-index( 'root', '.is-group-editor::before' );
 }
@@ -228,8 +228,8 @@
 
 .post-editor__switch-mode .segmented-control__item.is-selected .segmented-control__link {
 	border-color: var( --color-neutral-100 );
-	border-bottom-color: $white;
-	background-color: $white;
+	border-bottom-color: var( --color-white );
+	background-color: var( --color-white );
 }
 
 .post-editor__header-divider {

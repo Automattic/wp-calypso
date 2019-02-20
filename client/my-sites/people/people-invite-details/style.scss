@@ -19,7 +19,7 @@
 		display: inline-block;
 		width: 130px;
 		margin-right: 16px;
-		color: $gray-text;
+		color: var( --color-text );
 		font-weight: 600;
 		text-align: right;
 	}
@@ -29,7 +29,7 @@
 		font-family: $serif;
 		font-size: 16px;
 		font-weight: 700;
-		color: $gray-text;
+		color: var( --color-text );
 	}
 
 	.gravatar {

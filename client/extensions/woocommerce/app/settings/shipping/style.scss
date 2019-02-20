@@ -78,7 +78,7 @@
 	&.is-placeholder {
 		@include placeholder();
 		pointer-events: none;
-		background: $white;
+		background: var( --color-white );
 
 		.gridicon,
 		p,

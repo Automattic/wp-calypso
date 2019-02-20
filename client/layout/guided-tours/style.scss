@@ -15,12 +15,21 @@
 	animation-name: guided-tours__step-fadein;
 	animation-timing-function: ease-in-out;
 
+	a {
+		color: var( --color-white );
+		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+
 	p {
 		color: var( --color-neutral-0 );
 		margin-bottom: 16px;
 
 		strong {
-			color: $white;
+			color: var( --color-white );
 		}
 
 		&:last-child {
@@ -43,7 +52,7 @@
 	    font-weight: 300;
 	    display: flex;
 	    align-items: center;
-	    color: $white;
+	    color: var( --color-white );
 	    margin-bottom: 10px;
 	}
 
@@ -124,14 +133,14 @@
 
 a.config-elements__text-link,
 .config-elements__text-link {
-	color: $white;
+	color: var( --color-white );
 
 	&:hover {
 		text-decoration: none;
 	}
 
 	&:visited {
-		color: $white;
+		color: var( --color-white );
 	}
 }
 
@@ -145,7 +154,7 @@ a.config-elements__text-link,
 
 	.external-link {
 		font-style: normal;
-		color: $white;
+		color: var( --color-white );
 		border-top: 1px solid var( --color-neutral-700 );
 		display: block;
 		padding-top: 12px;

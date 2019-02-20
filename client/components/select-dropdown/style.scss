@@ -66,7 +66,7 @@ $compact-header-height: 35;
 	border-color: var( --color-neutral-100 );
 	border-width: 1px 1px 2px;
 	border-radius: 4px;
-	background-color: $white;
+	background-color: var( --color-white );
 
 	font-size: 14px;
 	font-weight: 600;
@@ -100,7 +100,7 @@ $compact-header-height: 35;
 
 	.is-disabled & {
 		color: var( --color-neutral-0 );
-		background: $white;
+		background: var( --color-white );
 		border-color: var( --color-neutral-0 );
 		cursor: default;
 
@@ -157,7 +157,7 @@ $compact-header-height: 35;
 	padding: 0;
 	list-style: none;
 	margin: 0;
-	background-color: $white;
+	background-color: var( --color-white );
 	border: 1px solid var( --color-neutral-100 );
 	border-top: 0;
 	// var( --color-primary ) for outer (with focus shadow), $gray for border with header
@@ -214,17 +214,17 @@ $compact-header-height: 35;
 
 	&.is-selected {
 		background-color: var( --color-accent );
-		color: $white;
+		color: var( --color-white );
 
 		.count {
-			border-color: $white;
-			color: $white;
+			border-color: var( --color-white );
+			color: var( --color-white );
 		}
 	}
 
 	&.is-disabled {
-		background-color: $white;
-		color: $gray;
+		background-color: var( --color-white );
+		color: var( --color-neutral-light );
 		cursor: default;
 		opacity: 0.5;
 	}
@@ -236,7 +236,7 @@ $compact-header-height: 35;
 		}
 
 		&.is-selected:hover {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 

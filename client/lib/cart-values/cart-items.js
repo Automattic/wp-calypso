@@ -1133,6 +1133,8 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		if ( withPlansOnly ) {
 			return 'INCLUDED_IN_HIGHER_PLAN';
 		}
+
+		return 'PRICE';
 	}
 
 	if ( isDomainOnly ) {
