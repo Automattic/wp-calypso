@@ -13,6 +13,11 @@ import i18n, { localize } from 'i18n-calypso';
 import FoldableCard from 'components/foldable-card';
 import FormSectionHeading from 'components/forms/form-section-heading';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const DATE_FORMAT = 'MMMM D h:mma z';
 
 const LiveChatClosureNotice = ( {
