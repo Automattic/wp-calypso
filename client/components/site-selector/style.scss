@@ -108,12 +108,16 @@
 
 .site-selector .search {
 	margin: 8px;
-	width: auto;
 	height: 33px;
 	border: 1px solid var( --color-neutral-100 );
 	display: block;
 	opacity: 0;
 	position: absolute;
+
+	// ensure sufficient selector specificity for .search.is-open, too
+	&, &.is-open {
+		width: auto;
+	}
 
 	&.has-focus {
 		box-shadow: 0 0 0 2px var( --color-primary-100 );
