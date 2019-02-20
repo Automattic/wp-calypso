@@ -1,13 +1,13 @@
-/**
- * Internal dependencies
- */
-import swiperApplyAria from './swiper-apply-aria';
-
 const SIXTEEN_BY_NINE = 16 / 9;
 const MAX_HEIGHT_PERCENT_OF_WINDOW_HEIGHT = 0.8;
 const SANITY_MAX_HEIGHT = 600;
 
-export default function swiperResize( swiper ) {
+function swiperInit( swiper ) {
+	swiperResize( swiper );
+	swiperApplyAria( swiper );
+}
+
+function swiperResize( swiper ) {
 	const img = swiper.el.querySelector( '.swiper-slide[data-swiper-slide-index="0"] img' );
 	if ( ! img ) {
 		return;
@@ -26,6 +26,15 @@ export default function swiperResize( swiper ) {
 	swiper.wrapperEl.style.height = wrapperHeight;
 	swiper.el.querySelector( '.wp-block-jetpack-slideshow_button-prev' ).style.top = buttonTop;
 	swiper.el.querySelector( '.wp-block-jetpack-slideshow_button-next' ).style.top = buttonTop;
-
-	swiperApplyAria( swiper );
 }
+
+function swiperApplyAria( swiper ) {
+	for ( let index = 0; index < swiper.slides.length; index++ ) {
+		swiper.slides[ index ].setAttribute(
+			'aria-hidden',
+			index === swiper.activeIndex ? 'false' : 'true'
+		);
+	}
+}
+
+export { swiperApplyAria, swiperInit, swiperResize };

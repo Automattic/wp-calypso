@@ -9,8 +9,7 @@ import ResizeObserver from 'resize-observer-polyfill';
  * Internal dependencies
  */
 import createSwiper from './create-swiper';
-import swiperResize from './swiper-resize';
-import swiperApplyAria from './swiper-apply-aria';
+import { swiperApplyAria, swiperInit, swiperResize } from './swiper-callbacks';
 
 class Slideshow extends Component {
 	pendingRequestAnimationFrame = null;
@@ -168,7 +167,7 @@ class Slideshow extends Component {
 				},
 			},
 			{
-				init: swiperResize,
+				init: swiperInit,
 				imagesReady: swiperResize,
 				transitionEnd: swiperApplyAria,
 			}
