@@ -44,15 +44,22 @@
 	.wp-block-jetpack-slideshow_button-prev,
 	.wp-block-jetpack-slideshow_button-next {
 		background-color: rgba( 0, 0, 0, 0.5 );
+		background-position: center;
+		background-repeat: no-repeat;
 		border: 0;
 		width: 24px;
 		height: 40px;
 		background-size: 24px 40px;
 		box-sizing: content-box;
 		padding: 12px 10px;
-		border-radius: 2px;
+		border-radius: 4px;
 		margin-top: -32px;
 		transition: background-color 200ms;
+		
+		&:focus,
+		&:hover {
+			background-color: rgba( 0, 0, 0, 0.75 );
+		}
 	}
 
 	.wp-block-jetpack-slideshow_caption.gallery-caption {
