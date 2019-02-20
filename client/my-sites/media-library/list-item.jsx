@@ -20,8 +20,6 @@ import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
 import { getMimePrefix } from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
-import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
-
 /**
  * Style dependencies
  */
@@ -44,7 +42,6 @@ export default class extends React.Component {
 
 	static defaultProps = {
 		maxImageWidth: 450,
-		thumbnailType: MEDIA_IMAGE_PHOTON,
 		selectedIndex: -1,
 		onToggle: noop,
 		onEditItem: noop,

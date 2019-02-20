@@ -13,7 +13,7 @@ import React from 'react';
 import { url as mediaUrl } from 'lib/media/utils';
 import MediaLibraryListItemFileDetails from './list-item-file-details';
 
-import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'lib/media/constants';
+import { MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'lib/media/constants';
 
 export default class MediaLibraryListItemImage extends React.Component {
 	static propTypes = {
@@ -27,7 +27,6 @@ export default class MediaLibraryListItemImage extends React.Component {
 	static defaultProps = {
 		maxImageWidth: 450,
 		maxScale: SCALE_CHOICES[ SCALE_CHOICES.length - 1 ],
-		thumbnailType: MEDIA_IMAGE_PHOTON,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -78,7 +77,6 @@ export default class MediaLibraryListItemImage extends React.Component {
 		);
 
 		const url = mediaUrl( this.props.media, {
-			photon: this.props.thumbnailType === MEDIA_IMAGE_PHOTON,
 			resize: `${ width },${ width }`,
 			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
 		} );

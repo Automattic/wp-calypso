@@ -196,7 +196,6 @@ export const MimeTypes = {
 };
 
 export const MEDIA_IMAGE_THUMBNAIL = 'MEDIA_IMAGE_THUMBNAIL';
-export const MEDIA_IMAGE_PHOTON = 'MEDIA_IMAGE_PHOTON';
 export const MEDIA_IMAGE_RESIZER = 'MEDIA_IMAGE_RESIZER';
 
 /**

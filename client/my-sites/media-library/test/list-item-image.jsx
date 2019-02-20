@@ -48,13 +48,6 @@ describe( 'MediaLibraryListItem image', () => {
 
 			expect( wrapper.props().src ).to.be.equal( getPhotonUrl() );
 		} );
-
-		test( 'returns a photon thumbnail for type MEDIA_IMAGE_PHOTON', () => {
-			wrapper = shallow( getItem( 0, 'MEDIA_IMAGE_PHOTON' ) );
-
-			expect( wrapper.props().src ).to.be.equal( getPhotonUrl() );
-		} );
-
 		test( 'returns a resized private thumbnail for type MEDIA_IMAGE_RESIZER', () => {
 			wrapper = shallow( getItem( 0, 'MEDIA_IMAGE_RESIZER' ) );
 
