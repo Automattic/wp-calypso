@@ -21,7 +21,7 @@ class HoursRow extends Component {
 		const { opening, closing } = rowHours;
 		return (
 			<Fragment>
-				<div className="business-hours__row">
+				<div className="business-hours__row" key={ index }>
 					<div className={ classNames( day, 'business-hours__day' ) }>
 						{ index === 0 && this.renderDayColumn() }
 					</div>
