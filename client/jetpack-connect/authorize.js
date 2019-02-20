@@ -40,7 +40,7 @@ import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
+import { JPC_PATH_SITE_TYPE, REMOTE_PATH_AUTH } from './constants';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
@@ -586,7 +586,7 @@ export class JetpackAuthorize extends Component {
 
 		return addQueryArgs(
 			{ redirect: redirectAfterAuth },
-			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+			`${ JPC_PATH_SITE_TYPE }/${ urlToSlug( homeUrl ) }`
 		);
 	}
 
