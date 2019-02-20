@@ -103,9 +103,9 @@ class Slideshow extends Component {
 					className="wp-block-jetpack-slideshow_container swiper-container"
 					ref={ this.slideshowRef }
 				>
-					<div className="swiper-wrapper">
+					<ul className="wp-block-jetpack-slideshow_swiper-wrappper swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
-							<figure className="wp-block-jetpack-slideshow_slide swiper-slide" key={ id }>
+							<li className="wp-block-jetpack-slideshow_slide swiper-slide" key={ id }>
 								<img
 									alt={ alt }
 									className={
@@ -119,9 +119,9 @@ class Slideshow extends Component {
 										{ caption }
 									</figcaption>
 								) }
-							</figure>
+							</li>
 						) ) }
-					</div>
+					</ul>
 					<div
 						className="wp-block-jetpack-slideshow_pagination swiper-pagination swiper-pagination-white"
 						ref={ this.paginationRef }

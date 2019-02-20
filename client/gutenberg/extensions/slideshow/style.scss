@@ -2,6 +2,11 @@
 
 	margin-bottom: 1.5em;
 	position: relative;
+	.wp-block-jetpack-slideshow_swiper-wrappper {
+		padding: 0;
+		margin: 0;
+		line-height: normal;
+	}
 	.wp-block-jetpack-slideshow_container {
 		width: 100%;
 		overflow: hidden;
