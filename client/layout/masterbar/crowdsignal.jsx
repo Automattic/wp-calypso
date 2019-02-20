@@ -26,17 +26,14 @@ const CrowdsignalOauthMasterbar = ( { oauth2Client, translate } ) => (
 				<li className="masterbar__crowdsignal-nav-item masterbar__crowdsignal-nav-text">
 					<p className="masterbar__crowdsignal-text">
 						<span>
-							{ translate(
-								'{{span}}%(product)s is {{/span}}built by the people behind WordPress.com',
-								{
-									args: {
-										product: oauth2Client.title,
-									},
-									components: {
-										span: <span className="masterbar__crowdsignal-wide-screen-only" />,
-									},
+							{ translate( '{{span}}%(product)s is {{/span}}built by the people behind WordPress.com', {
+								args: {
+									product: oauth2Client.title,
+								},
+								components: {
+									span: <span className="masterbar__crowdsignal-wide-screen-only" />
 								}
-							) }
+							} ) }
 						</span>
 					</p>
 				</li>

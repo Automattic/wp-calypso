@@ -168,14 +168,16 @@ class SiteSettingsFormWriting extends Component {
 					/>
 				) }
 
-				{ config.isEnabled( 'press-this' ) && ! this.isMobile() && ! siteIsJetpack && (
-					<div>
-						<SettingsSectionHeader
-							title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
-						/>
-						<PressThis />
-					</div>
-				) }
+				{ config.isEnabled( 'press-this' ) &&
+					! this.isMobile() &&
+					! siteIsJetpack && (
+						<div>
+							<SettingsSectionHeader
+								title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
+							/>
+							<PressThis />
+						</div>
+					) }
 			</form>
 		);
 	}

@@ -718,7 +718,7 @@ class SignupForm extends Component {
 				'isSocialSignupEnabled',
 				'handleSocialResponse',
 				'socialService',
-				'socialServiceResponse',
+				'socialServiceResponse'
 			] );
 
 			const logInUrl = config.isEnabled( 'login/native-login-links' )
