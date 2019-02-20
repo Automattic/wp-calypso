@@ -150,8 +150,8 @@ export default {
 	pluginFeaturedTitle: {
 		datestamp: '20190220',
 		variations: {
-			featured: 70,
-			recommended: 30,
+			featured: 50,
+			recommended: 50,
 		},
 		defaultVariation: 'featured',
 	},
