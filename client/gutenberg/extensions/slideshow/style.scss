@@ -54,11 +54,16 @@
 		padding: 12px 10px;
 		border-radius: 4px;
 		margin-top: -32px;
-		transition: background-color 200ms;
+		transition: background-color 250ms;
 		
 		&:focus,
 		&:hover {
 			background-color: rgba( 0, 0, 0, 0.75 );
+		}
+		
+		&:focus {
+			outline: thin dotted #fff;
+			outline-offset: -4px;
 		}
 	}
 
@@ -84,17 +89,28 @@
 		position: relative;
 
 		.swiper-pagination-bullet {
-			background: transparent;
-			border: 2px solid #000;
+			background: rgba( 0, 0, 0, 0.5 );
 			height: 16px;
+			opacity: 1;
+			transform: scale( 0.75 );
+			transition: background-color 250ms, transform 250ms;
 			vertical-align: top;
 			width: 16px;
+			
+			&:focus,
+			&:hover {
+				background-color: rgba( 0, 0, 0, 0.75 );
+			}
+			
+			&:focus {
+				outline: thin dotted #000;
+				outline-offset: 0;
+			}
 		}
 
 		.swiper-pagination-bullet-active {
-			background: #000;
-			border-color: #000;
-			opacity: 0.6;
+			background-color: rgba( 0, 0, 0, 0.75 );
+			transform: scale( 1 );
 		}
 	}
 
