@@ -14617,9 +14617,9 @@
 			"integrity": "sha1-ys6GOG9ZoNuAUPqQ2baw6IoeNk8="
 		},
 		"qrcode.react": {
-			"version": "0.8.0",
-			"resolved": "https://registry.npmjs.org/qrcode.react/-/qrcode.react-0.8.0.tgz",
-			"integrity": "sha512-16wKpuFvLwciIq2YAsfmPUCnSR8GrYPsXRK5KVdcIuX0+W/MKZbBkFhl44ttRx4TWZHqRjfztoWOxdPF0Hb9JA==",
+			"version": "0.9.3",
+			"resolved": "https://registry.npmjs.org/qrcode.react/-/qrcode.react-0.9.3.tgz",
+			"integrity": "sha512-gGd30Ez7cmrKxyN2M3nueaNLk/f9J7NDRgaD5fVgxGpPLsYGWMn9UQ+XnDpv95cfszTQTdaf4QGLNMf3xU0hmw==",
 			"requires": {
 				"prop-types": "^15.6.0",
 				"qr.js": "0.0.0"
