@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { isEmpty, omit } from 'lodash';
+import { isEmpty, omit, get } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:store-transactions' );
 import inherits from 'inherits';
@@ -52,9 +52,12 @@ inherits( ValidationError, Error );
 function TransactionFlow( initialData, onStep ) {
 	this._initialData = initialData;
 	this._onStep = onStep;
-	this._useEbanxForCard = isEbanxCreditCardProcessingEnabledForCountry(
-		this._initialData.payment.newCardDetails.country
-	);
+
+	this._useEbanxForCard = get( this._initialData.payment, 'newCardDetails.country', false )
+		? isEbanxCreditCardProcessingEnabledForCountry(
+				this._initialData.payment.newCardDetails.country
+		  )
+		: false;
 
 	const paymentMethod = this._initialData.payment.paymentMethod;
 	const paymentHandler = this._paymentHandlers[ paymentMethod ];
