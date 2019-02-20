@@ -17,11 +17,20 @@ export default class SignupProcessingPage extends AsyncBaseContainer {
 	}
 
 	async waitToDisappear( username, password ) {
-		await driverHelper.waitTillNotPresent(
-			this.driver,
-			this.expectedElementSelector,
-			this.explicitWaitMS * 3
-		);
+		let signupProcessingTimeout = this.explicitWaitMS * 9;
+		try {
+			await driverHelper.waitTillNotPresent(
+				this.driver,
+				this.expectedElementSelector,
+				signupProcessingTimeout
+			);
+		} catch ( e ) {
+			throw new Error(
+				'Looks like creating account is taking to long( ' +
+					signupProcessingTimeout +
+					'ms ). Please try again in a while.'
+			);
+		}
 		const url = await this.driver.getCurrentUrl();
 		if ( url.indexOf( 'log-in' ) > -1 ) {
 			SlackNotifier.warn(
@@ -37,7 +46,7 @@ export default class SignupProcessingPage extends AsyncBaseContainer {
 
 		// Hides the floating background on signup that causes issues with Selenium/SauceLabs getting page loaded status
 		if ( global.browserName === 'Internet Explorer' ) {
-			driver.executeScript(
+			await driver.executeScript(
 				'document.querySelector( "' + floatiesStringSelector + '" ).style.display = "none";'
 			);
 		}
