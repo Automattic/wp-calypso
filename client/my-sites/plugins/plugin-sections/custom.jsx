@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,11 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import { sanitizeSectionContent } from 'lib/plugins/sanitize-section-content';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const PluginSectionsCustom = ( { plugin, translate } ) => {
 	const description = sanitizeSectionContent( plugin.description );

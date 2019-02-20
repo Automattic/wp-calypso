@@ -6,10 +6,6 @@
 	white-space: nowrap;
 }
 
-.card.is-compact.section-header.after-compact {
-	margin-top: 16px;
-}
-
 .plugins__header {
 	background: var( --color-white );
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );

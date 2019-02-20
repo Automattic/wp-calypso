@@ -21,6 +21,11 @@ import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
 import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class PluginInstallButton extends Component {
 	installAction = () => {
 		const {

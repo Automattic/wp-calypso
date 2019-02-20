@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,6 +21,11 @@ import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
 import analytics from 'lib/analytics';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 // Constants help determine if the action bar should be a dropdown
 const MAX_ACTIONBAR_HEIGHT = 57;
