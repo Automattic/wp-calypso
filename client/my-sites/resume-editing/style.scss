@@ -49,7 +49,7 @@
 	line-height: 1.1;
 
 	&::after {
-		@include long-content-fade( $size: 24px, $color: $blue-wordpress );
+		@include long-content-fade( $size: 24px, $color: var( --color-primary-rgb ) );
 		left: 25vw;
 		right: auto;
 		margin-left: -24px;
