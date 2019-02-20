@@ -73,6 +73,8 @@ export class AppsBadge extends PureComponent {
 			this.image = null;
 			this.loadImage();
 		}
+
+		this.onLinkClick = this.onLinkClick.bind( this );
 	}
 
 	loadImage() {
