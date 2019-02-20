@@ -23,6 +23,7 @@ export default async function createSwiper(
 			prevEl: '.swiper-button-prev',
 		},
 		pagination: {
+			bulletElement: 'button',
 			clickable: true,
 			el: '.swiper-pagination',
 			type: 'bullets',
