@@ -54,7 +54,7 @@ class HoursList extends Component {
 		const { localization, hasFetched } = this.state;
 		const { startOfWeek } = localization;
 		return (
-			<dl className={ className }>
+			<div className={ className }>
 				{ hasFetched || ! edit ? (
 					Object.keys( hours )
 						.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
@@ -72,7 +72,7 @@ class HoursList extends Component {
 				) : (
 					<Placeholder icon={ icon } label={ __( 'Loading business hours' ) } />
 				) }
-			</dl>
+			</div>
 		);
 	}
 }

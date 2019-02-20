@@ -22,10 +22,10 @@ class HoursRow extends Component {
 		return (
 			<Fragment>
 				<div className="business-hours__row">
-					<dt className={ classNames( day, 'business-hours__day' ) }>
+					<div className={ classNames( day, 'business-hours__day' ) }>
 						{ index === 0 && this.renderDayColumn() }
-					</dt>
-					<dd className={ classNames( day, 'business-hours__hours' ) }>
+					</div>
+					<div className={ classNames( day, 'business-hours__hours' ) }>
 						{ edit ? (
 							<TextControl
 								type="time"
@@ -80,7 +80,7 @@ class HoursRow extends Component {
 						) : (
 							closing
 						) }
-					</dd>
+					</div>
 					<div className="business-hours__remove">
 						{ hours[ day ].length > 1 && (
 							<IconButton
@@ -96,8 +96,8 @@ class HoursRow extends Component {
 				</div>
 				{ index === hours[ day ].length - 1 && (
 					<div className="business-hours__row business-hours-row__add">
-						<dt className={ classNames( day, 'business-hours__day' ) }>&nbsp;</dt>
-						<dd className={ classNames( day, 'business-hours__hours' ) }>
+						<div className={ classNames( day, 'business-hours__day' ) }>&nbsp;</div>
+						<div className={ classNames( day, 'business-hours__hours' ) }>
 							<IconButton
 								isSmall
 								isLink
@@ -108,7 +108,7 @@ class HoursRow extends Component {
 							>
 								{ __( 'Add Hours' ) }
 							</IconButton>
-						</dd>
+						</div>
 						<div className="business-hours__remove">&nbsp;</div>
 					</div>
 				) }
@@ -193,10 +193,10 @@ class HoursRow extends Component {
 		const { day, edit = true } = this.props;
 		return (
 			<div className="business-hours__row business-hours-row__closed">
-				<dt className={ classNames( day, 'business-hours__day' ) }>{ this.renderDayColumn() }</dt>
-				<dd className={ classNames( day, 'closed', 'business-hours__hours' ) }>
+				<div className={ classNames( day, 'business-hours__day' ) }>{ this.renderDayColumn() }</div>
+				<div className={ classNames( day, 'closed', 'business-hours__hours' ) }>
 					{ ! edit && __( 'CLOSED' ) }
-				</dd>
+				</div>
 				<div className="business-hours__remove">&nbsp;</div>
 			</div>
 		);
