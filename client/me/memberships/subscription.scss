@@ -1,43 +1,6 @@
-
-.memberships__list-subscription {
-	display:flex;
-	flex-direction: row;
-}
-
-.memberships__service-name {
-	strong {
-		font-weight: normal;
-	}
-
-	small {
-		color: var( --color-neutral-light );
-		display: block;
-		font-size: 12px;
-		font-style: italic;
-	}
-}
-
-.memberships__list-sub {
-	font-size: 12px;
-	margin: 4px 0 0;
-	color: var( --color-neutral-light );
-}
-
-.memberships__list-date {
-	flex-basis: 170px;
-}
-
-.memberships__list-renewal-price {
-	flex-basis: 100px;
-}
-
-.memberships__service-description {
-	flex-grow: 1;
-}
-
 .memberships__subscription-meta {
 	padding: 0;
-	font-size:13px;
+	font-size: 13px;
 }
 
 .memberships__subscription-inner-meta {
@@ -133,9 +96,9 @@
 	display: block;
 	font-size: 18px;
 	line-height: 1.2em;
-	margin: 20px;
+	padding: 20px;
 	white-space: nowrap;
-	text-align:center;
+	text-align: center;
 }
 
 .memberships__subscription-remove {
@@ -147,7 +110,11 @@
 	&:active,
 	&:focus,
 	&:hover {
-		color: var( --color-link-dark );
+		color: var( --color-error-600 );
+	}
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 2px var( --color-error-light );
 	}
 
 	.gridicon {
