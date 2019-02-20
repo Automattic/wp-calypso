@@ -116,7 +116,7 @@ export default function() {
 	page( '/jetpack/site-type/:site?', siteSelection, controller.siteType, makeLayout, clientRender );
 
 	page(
-		'/jetpack/connect/site-topic/:site?',
+		'/jetpack/site-topic/:site?',
 		siteSelection,
 		controller.siteTopic,
 		makeLayout,
