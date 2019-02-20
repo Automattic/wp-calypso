@@ -115,9 +115,9 @@ class Slideshow extends Component {
 									src={ url }
 								/>
 								{ caption && (
-									<figcaption className="wp-block-jetpack-slideshow_caption">
+									<span className="wp-block-jetpack-slideshow_caption gallery-caption">
 										{ caption }
-									</figcaption>
+									</span>
 								) }
 							</li>
 						) ) }
