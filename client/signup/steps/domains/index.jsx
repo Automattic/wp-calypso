@@ -298,7 +298,7 @@ class DomainsStep extends React.Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, siteGoals } = this.props;
+		const { flowName, siteGoals, signupDependencies } = this.props;
 		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
 
 		return (
@@ -306,10 +306,11 @@ class DomainsStep extends React.Component {
 			flowName === 'subdomain' ||
 			// 'blog' flow, starting with blog themes
 			flowName === 'blog' ||
-			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
 			( ! this.props.isDomainOnly &&
-				siteGoalsArray.length === 1 &&
-				siteGoalsArray.indexOf( 'share' ) !== -1 )
+				// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
+				( ( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
+					// or users chose `Blog` as their site type
+					'blog' === get( signupDependencies, 'siteType' ) ) )
 		);
 	}
 
