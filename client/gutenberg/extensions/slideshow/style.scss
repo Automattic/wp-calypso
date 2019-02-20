@@ -26,7 +26,7 @@
 		margin: 0;
 		position: relative;
 		width: 100%;
-		
+
 		figure {
 			margin: 0;
 		}
@@ -59,12 +59,12 @@
 		border-radius: 4px;
 		margin-top: -32px;
 		transition: background-color 250ms;
-		
+
 		&:focus,
 		&:hover {
 			background-color: rgba( 0, 0, 0, 0.75 );
 		}
-		
+
 		&:focus {
 			outline: thin dotted #fff;
 			outline-offset: -4px;
@@ -93,27 +93,29 @@
 		position: relative;
 
 		.swiper-pagination-bullet {
-			background: rgba( 0, 0, 0, 0.5 );
+			background: currentColor;
+			color: currentColor;
 			height: 16px;
-			opacity: 1;
+			opacity: 0.5;
 			transform: scale( 0.75 );
-			transition: background-color 250ms, transform 250ms;
+			transition: opacity 250ms, transform 250ms;
 			vertical-align: top;
 			width: 16px;
-			
+
 			&:focus,
 			&:hover {
-				background-color: rgba( 0, 0, 0, 0.75 );
+				opacity: 1;
 			}
-			
+
 			&:focus {
-				outline: thin dotted #000;
+				outline: thin dotted;
 				outline-offset: 0;
 			}
 		}
 
 		.swiper-pagination-bullet-active {
-			background-color: rgba( 0, 0, 0, 0.75 );
+			background-color: currentColor;
+			opacity: 1;
 			transform: scale( 1 );
 		}
 	}
