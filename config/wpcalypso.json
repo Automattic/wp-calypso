@@ -136,6 +136,7 @@
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
 		"settings/theme-setup": true,
+		"show-tax": false,
 		"signup/onboarding-flow": true,
 		"signup/social": true,
 		"signup/social-management": true,
