@@ -401,6 +401,35 @@
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-gray-0};
 
+		--color-link: #{$muriel-hot-blue-500};
+		--color-link-rgb: #{hex-to-rgb( $muriel-hot-blue-500 )};
+		--color-link-dark: #{$muriel-hot-blue-700};
+		--color-link-dark-rgb: #{hex-to-rgb( $muriel-hot-blue-700 )};
+		--color-link-light: #{$muriel-hot-blue-300};
+		--color-link-light-rgb: #{hex-to-rgb( $muriel-hot-blue-300 )};
+		--color-link-0: #{$muriel-hot-blue-0};
+		--color-link-0-rgb: #{hex-to-rgb( $muriel-hot-blue-0 )};
+		--color-link-50: #{$muriel-hot-blue-50};
+		--color-link-50-rgb: #{hex-to-rgb( $muriel-hot-blue-50 )};
+		--color-link-100: #{$muriel-hot-blue-100};
+		--color-link-100-rgb: #{hex-to-rgb( $muriel-hot-blue-100 )};
+		--color-link-200: #{$muriel-hot-blue-200};
+		--color-link-200-rgb: #{hex-to-rgb( $muriel-hot-blue-200 )};
+		--color-link-300: #{$muriel-hot-blue-300};
+		--color-link-300-rgb: #{hex-to-rgb( $muriel-hot-blue-300 )};
+		--color-link-400: #{$muriel-hot-blue-400};
+		--color-link-400-rgb: #{hex-to-rgb( $muriel-hot-blue-400 )};
+		--color-link-500: #{$muriel-hot-blue-500};
+		--color-link-500-rgb: #{hex-to-rgb( $muriel-hot-blue-500 )};
+		--color-link-600: #{$muriel-hot-blue-600};
+		--color-link-600-rgb: #{hex-to-rgb( $muriel-hot-blue-600 )};
+		--color-link-700: #{$muriel-hot-blue-700};
+		--color-link-700-rgb: #{hex-to-rgb( $muriel-hot-blue-700 )};
+		--color-link-800: #{$muriel-hot-blue-800};
+		--color-link-800-rgb: #{hex-to-rgb( $muriel-hot-blue-800 )};
+		--color-link-900: #{$muriel-hot-blue-900};
+		--color-link-900-rgb: #{hex-to-rgb( $muriel-hot-blue-900 )};
+
 		--color-button-primary-background-hover: #{$muriel-hot-blue-400};
 		--color-button-primary-scary-background-hover: #{$muriel-hot-red-400};
 
