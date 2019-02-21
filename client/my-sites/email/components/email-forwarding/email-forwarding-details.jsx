@@ -3,44 +3,62 @@
 /**
  * External dependencies
  */
-
+import PropTypes from 'prop-types';
 import React from 'react';
-
-import createReactClass from 'create-react-class';
-
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { EMAIL_FORWARDING } from 'lib/url/support';
-import analyticsMixin from 'lib/mixins/analytics';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
-const EmailForwardingDetails = createReactClass( {
-	displayName: 'EmailForwardingDetails',
-	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
+class EmailForwardingDetails extends React.Component {
+	static propTypes = {
+		translate: PropTypes.func,
+		learnMoreClick: PropTypes.func,
+	};
 
-	render: function() {
+	render() {
+		const { translate, learnMoreClick } = this.props;
 		return (
 			<p className="email-forwarding__explanation">
-				{ this.props.translate(
+				{ translate(
 					'Email Forwarding lets you use your custom domain in your email address, so your email address can be just as memorable as your blog.'
-				) }{' '}
+				) }
 				<a
 					href={ EMAIL_FORWARDING }
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={ this.handleLearnMoreClick }
+					onClick={ learnMoreClick }
 				>
-					{ this.props.translate( 'Learn more.' ) }
+					{ translate( 'Learn more.' ) }
 				</a>
 			</p>
 		);
-	},
+	}
+}
 
-	handleLearnMoreClick() {
-		this.recordEvent( 'learnMoreClick', this.props.selectedDomainName );
+const mapDispatchToProps = dispatch => ( {
+	learnMoreClick: domainName => {
+		dispatch(
+			composeAnalytics(
+				recordGoogleEvent(
+					'Domain Management',
+					'Clicked "Learn more" link in Email Forwarding',
+					'Domain Name',
+					domainName
+				),
+				recordTracksEvent( 'calypso_domain_management_email_forwarding_learn_more_click', {
+					domain_name: domainName,
+				} )
+			)
+		);
 	},
 } );
 
-export default localize( EmailForwardingDetails );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( EmailForwardingDetails ) );

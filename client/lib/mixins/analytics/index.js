@@ -61,68 +61,6 @@ const EVENTS = {
 				} );
 			},
 		},
-
-		emailForwarding: {
-			addNewEmailForwardClick( domainName, mailbox, destination, success ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Add New Email Forward" Button in Email Forwarding',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_email_forwarding_add_new_email_forward_click',
-					{
-						destination,
-						domain_name: domainName,
-						mailbox,
-						success,
-					}
-				);
-			},
-
-			cancelClick( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Cancel" Button in Email Forwarding',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_forwarding_cancel_click', {
-					domain_name: domainName,
-				} );
-			},
-
-			inputFocus( domainName, fieldName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					`Focused On "${ fieldName }" Input in Email Forwarding`,
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					`calypso_domain_management_email_forwarding_${ snakeCase( fieldName ) }_focus`,
-					{ domain_name: domainName }
-				);
-			},
-
-			learnMoreClick( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Learn more" link in Email Forwarding',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_email_forwarding_learn_more_click',
-					{ domain_name: domainName }
-				);
-			},
-		},
 	},
 };
 
