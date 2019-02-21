@@ -75,10 +75,11 @@ TransactionFlow.prototype._pushStep = function( options ) {
 TransactionFlow.prototype._paymentHandlers = {
 	WPCOM_Billing_MoneyPress_Stored: function() {
 		const {
-			mp_ref: payment_key,
-			stored_details_id,
-			payment_partner,
-		} = this._initialData.payment.storedCard;
+				mp_ref: payment_key,
+				stored_details_id,
+				payment_partner,
+			} = this._initialData.payment.storedCard,
+			{ successUrl, cancelUrl } = this._initialData;
 
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with stored card' );
@@ -87,6 +88,8 @@ TransactionFlow.prototype._paymentHandlers = {
 			payment_key,
 			payment_partner,
 			stored_details_id,
+			successUrl,
+			cancelUrl,
 		} );
 	},
 
