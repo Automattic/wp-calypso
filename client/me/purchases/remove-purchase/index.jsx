@@ -20,6 +20,7 @@ import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import GSuiteCancellationDialog from './gsuite-cancellation-dialog';
 import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
 import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/is-survey-filled-in';
 import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/steps-for-product-and-survey';
@@ -439,6 +440,13 @@ class RemovePurchase extends Component {
 				isPrimary: true,
 				label: translate( "I'll Keep It" ),
 			},
+			{
+				action: 'remove',
+				disabled: this.state.isRemoving,
+				isPrimary: true,
+				label: translate( 'Remove Now' ),
+				onClick: this.removePurchase,
+			},
 		];
 		const productName = getName( purchase );
 
@@ -463,6 +471,33 @@ class RemovePurchase extends Component {
 		);
 	}
 
+	renderGsuiteDialog( purchase ) {
+		const { translate } = this.props;
+		const supportButton = this.state.isChatAvailable
+			? this.getChatButton()
+			: this.getContactUsButton();
+		const buttons = [
+			supportButton,
+			{
+				action: 'cancel',
+				disabled: this.state.isRemoving,
+				isPrimary: true,
+				label: translate( "I'll Keep It" ),
+			},
+		];
+
+		return (
+			<Dialog
+				buttons={ buttons }
+				className="remove-purchase__dialog"
+				isVisible={ this.state.isDialogVisible }
+				onClose={ this.closeDialog }
+			>
+				<GSuiteCancellationDialog purchase={ purchase } />
+			</Dialog>
+		);
+	}
+
 	renderDialog( purchase ) {
 		if ( this.props.isAtomicSite ) {
 			return this.renderAtomicDialog( purchase );
@@ -470,6 +505,10 @@ class RemovePurchase extends Component {
 
 		if ( isDomainRegistration( purchase ) ) {
 			return this.renderDomainDialog();
+		}
+
+		if ( isGoogleApps( purchase ) ) {
+			return this.renderGsuiteDialog( purchase );
 		}
 
 		return this.renderPlanDialog();
