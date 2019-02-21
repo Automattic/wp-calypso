@@ -23,19 +23,21 @@
 
 .wp-block-jetpack-repeat-visitor-placeholder {
 	min-height: inherit;
-	transform: scaleY( 1 );
-	transition: all 0.1s linear;
 
 	.components-placeholder__label svg {
 		margin-right: 0.5ch;
 	}
+
+	.components-placeholder__fieldset {
+		flex-wrap: nowrap;
+		.components-base-control {
+			flex-basis: 100%;
+		}
+	}
 }
 
 .wp-block-jetpack-repeat-visitor--is-unselected .wp-block-jetpack-repeat-visitor-placeholder {
-	height: 0;
-	padding: 0;
-	transform: scaleY( 0 );
-	visibility: collapse;
+	display: none;
 }
 
 .wp-block-jetpack-repeat-visitor-threshold {
