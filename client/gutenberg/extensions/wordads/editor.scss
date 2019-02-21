@@ -43,23 +43,36 @@
 }
 
 .wp-block-jetpack-wordads__format-picker {
-	padding: 7px;
 	$active-item-outline-width: 2px;
+
+	// @TODO replace with Gutenberg variable
+	$blue-medium-500: #00a0d2;
+	$dark-gray-500: #555d66;
+	$dark-gray-900: #191e23;
+
+	padding: 7px;
 
 	.components-menu-item__button {
 		margin-top: $active-item-outline-width;
 		margin-bottom: $active-item-outline-width;
 
-		&.is-active {
-			// @TODO replace with Gutenberg variable
-			$blue-medium-500: #00a0d2;
+		&:hover {
+			color: $dark-gray-500;
+			box-shadow: inset 0 0 0 1px $dark-gray-500, inset 0 0 0 $active-item-outline-width $white;
+		}
 
-			// Inspired by @include block-style__focus-active();
+		&:focus,
+		&.is-active {
+			color: $dark-gray-900;
 			box-shadow: 0 0 0 $active-item-outline-width $blue-medium-500 !important;
 
 			// Windows High Contrast mode will show this outline, but not the box-shadow.
-			outline: $active-item-outline-width solid transparent;
+			outline: $active-item-outline-width solid transparent !important;
 			outline-offset: -( $active-item-outline-width );
+		}
+
+		&.is-active {
+			box-shadow: 0 0 0 $active-item-outline-width $dark-gray-500 !important;
 		}
 	}
 }
