@@ -8,7 +8,7 @@ module.exports = ( { options: { preserveCssCustomProperties = true } } ) => ( {
 					__dirname,
 					'node_modules',
 					'@automattic',
-					'calypso-shared-style',
+					'calypso-css-custom-properties',
 					'dist',
 					'custom-properties.css'
 				),

@@ -33,7 +33,7 @@
 // QUIT AND RESTART YOUR BROWSER NORMALLY WHEN YOU'RE DONE MAKING LOCAL CSS CHANGES.
 
 @import 'shared/mixins/mixins';
-@import '../../node_modules/@automattic/calypso-shared-style/src/shared/colors';
+@import '../../node_modules/@automattic/calypso-css-custom-properties/src/shared/colors';
 @import 'shared/extends-forms';
 @import 'shared/forms';
 @import 'shared/typography';

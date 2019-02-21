@@ -13,8 +13,8 @@
 				"lodash": "^4.17.10"
 			}
 		},
-		"@automattic/calypso-shared-style": {
-			"version": "file:packages/calypso-shared-style",
+		"@automattic/calypso-css-custom-properties": {
+			"version": "file:packages/calypso-css-custom-properties",
 			"dev": true,
 			"requires": {
 				"color-studio": "github:automattic/color-studio#279f6ae4eacb15bc4f8f75856101aa4d0f4fd4a7",

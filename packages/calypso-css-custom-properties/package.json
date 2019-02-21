@@ -1,5 +1,5 @@
 {
-	"name": "@automattic/calypso-shared-style",
+	"name": "@automattic/calypso-css-custom-properties",
 	"version": "1.0.0-alpha.0",
 	"description": "Calypso Shared Style Bits",
 	"author": "Automattic",
@@ -10,7 +10,7 @@
 		"sass",
 		"css"
 	],
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/calypso-shared-style/README.md",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/calypso-css-custom-properties/README.md",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso.git"
