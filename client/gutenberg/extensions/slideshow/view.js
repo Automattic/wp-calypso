@@ -36,6 +36,20 @@ typeof window !== 'undefined' &&
 					transitionEnd: swiperApplyAria,
 				}
 			).then( swiper => {
+				if ( autoplay ) {
+					swiper.el.addEventListener(
+						'mouseover',
+						function() {
+							this.autoplay.stop();
+						}.bind( swiper )
+					);
+					swiper.el.addEventListener(
+						'mouseout',
+						function() {
+							this.autoplay.start();
+						}.bind( swiper )
+					);
+				}
 				new ResizeObserver( () => {
 					if ( pendingRequestAnimationFrame ) {
 						cancelAnimationFrame( pendingRequestAnimationFrame );
