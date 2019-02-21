@@ -74,7 +74,7 @@ class ContactsPrivacyCard extends React.Component {
 				this.props.fetchSiteDomains( selectedSite.ID );
 
 				const notice = privateDomain
-					? translate( 'Yay, privacy has been successfully disabled!' )
+					? translate( 'Privacy has been successfully disabled!' )
 					: translate( 'Yay, privacy has been successfully enabled!' );
 
 				this.props.successNotice( notice, {
