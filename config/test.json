@@ -100,6 +100,7 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
+		"show-tax": true,
 		"signup/social": true,
 		"support-user": true,
 		"ui/first-view": false,

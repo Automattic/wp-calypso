@@ -35,8 +35,7 @@ function coerceValues( v ) {
 }
 
 export function getQueryParams( keys ) {
-	const { href } = document.location;
-	const params = get( parseUrl( href, true ), 'query' );
+	const params = get( parseUrl( window.location.href, true ), 'query' );
 	const selectedValues = pickBy( params, ( _, key ) => includes( keys, key ) );
 	return mapValues( selectedValues, coerceValues );
 }
