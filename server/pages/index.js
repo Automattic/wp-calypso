@@ -208,6 +208,25 @@ function getAcceptedLanguagesFromHeader( header ) {
 		.filter( lang => lang );
 }
 
+/*
+ * Look at the request headers and determine if the request is logged in or logged out or if
+ * it's a support session. Set `req.context.isLoggedIn` and `req.context.isSupportSession` flags
+ * accordingly. The handler is called very early (immediately after parsing the cookies) and
+ * all following handlers (including the locale and redirect ones) can rely on the context values.
+ */
+function setupLoggedInContext( req, res, next ) {
+	const isSupportSession = !! req.get( 'x-support-session' );
+	const isLoggedIn = isSupportSession || !! req.cookies.wordpress_logged_in;
+
+	req.context = {
+		...req.context,
+		isSupportSession,
+		isLoggedIn,
+	};
+
+	next();
+}
+
 function getDefaultContext( request ) {
 	let initialServerState = {};
 	let lang = config( 'i18n_default_locale_slug' );
@@ -219,8 +238,6 @@ function getDefaultContext( request ) {
 	const cacheKey = getNormalizedPath( request.path, request.query );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
-	const isSupportSession = !! request.get( 'x-support-session' );
-	const isLoggedIn = isSupportSession || !! request.cookies.wordpress_logged_in;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -265,8 +282,6 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
-		isLoggedIn,
-		isSupportSession,
 	} );
 
 	context.app = {
@@ -565,7 +580,7 @@ function handleLocaleSubdomains( req, res, next ) {
 		const language = getLanguage( langSlug );
 
 		// Switch locales only in a logged-out state.
-		if ( language && ! req.cookies.wordpress_logged_in ) {
+		if ( language && ! req.context.isLoggedIn ) {
 			req.context = {
 				...req.context,
 				lang: language.langSlug,
@@ -591,6 +606,7 @@ module.exports = function() {
 
 	app.use( logSectionResponseTime );
 	app.use( cookieParser() );
+	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
 
 	// redirect homepage if the Reader is disabled
