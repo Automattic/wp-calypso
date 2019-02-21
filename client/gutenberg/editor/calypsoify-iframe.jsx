@@ -24,6 +24,7 @@ import {
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
+import wpcom from 'lib/wp';
 
 /**
  * Style dependencies
@@ -157,15 +158,22 @@ const mapStateToProps = ( state, { postId, postType } ) => {
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 
+	let queryArgs = pickBy( {
+		post: postId,
+		action: postId && 'edit', // If postId is set, open edit view.
+		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
+		calypsoify: 1,
+		force_gutenberg: 1,
+		'frame-nonce': getSiteOption( state, siteId, 'frame_nonce' ) || '',
+	} );
+
+	// needed for loading the editor in SU sessions
+	if ( wpcom.addSupportParams ) {
+		queryArgs = wpcom.addSupportParams( queryArgs );
+	}
+
 	const iframeUrl = addQueryArgs(
-		pickBy( {
-			post: postId,
-			action: postId && 'edit', // If postId is set, open edit view.
-			post_type: postType !== 'post' && postType, // Use postType if it's different than post.
-			calypsoify: 1,
-			force_gutenberg: 1,
-			'frame-nonce': getSiteOption( state, siteId, 'frame_nonce' ) || '',
-		} ),
+		queryArgs,
 		getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' )
 	);
 

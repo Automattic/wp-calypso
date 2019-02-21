@@ -161,17 +161,25 @@ export class PluginsBrowser extends Component {
 	}
 
 	translateCategory( category ) {
+		const { translate } = this.props;
+
 		switch ( category ) {
 			case 'new':
-				return this.props.translate( 'New', {
+				return translate( 'New', {
 					context: 'Category description for the plugin browser.',
 				} );
 			case 'popular':
-				return this.props.translate( 'Popular', {
+				return translate( 'Popular', {
 					context: 'Category description for the plugin browser.',
 				} );
 			case 'featured':
-				return this.props.translate( 'Featured', {
+				if ( abtest( 'pluginFeaturedTitle' ) === 'recommended' ) {
+					return translate( 'Recommended', {
+						context: 'Category description for the plugin browser.',
+					} );
+				}
+
+				return translate( 'Featured', {
 					context: 'Category description for the plugin browser.',
 				} );
 		}
