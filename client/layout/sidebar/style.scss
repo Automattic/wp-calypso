@@ -297,8 +297,8 @@ form.sidebar__button input {
 	a,
 	form {
 		&.sidebar__button:hover {
-			color: var( --color-neutral-700 );
-			border-color: var( --color-neutral-200 );
+			color: var( --sidebar-text-color );
+			border-color: var( --sidebar-text-color );
 		}
 	}
 
