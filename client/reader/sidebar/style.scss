@@ -191,7 +191,7 @@
 	.sidebar__menu-empty,
 	.sidebar__menu-empty:hover {
 		background-color: transparent !important; // needs to be more specific
-		color: var( --color-neutral-700 );
+		color: var( --sidebar-text-color );
 		font-size: 13px;
 		max-width: 60%;
 		padding-right: 32px;
