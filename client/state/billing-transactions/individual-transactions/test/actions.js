@@ -51,6 +51,9 @@ describe( 'actions', () => {
 				],
 			};
 
+			// #tax-on-checkout-placeholder
+			receiptData.tax_amount = '$6.45';
+
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
