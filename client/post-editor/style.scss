@@ -89,7 +89,7 @@
 	.site__title,
 	.site__domain {
 		&::after {
-			@include long-content-fade( $color: hex-to-rgb( $gray-lighten-30 ) );
+			@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
 		}
 	}
 

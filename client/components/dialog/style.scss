@@ -15,13 +15,13 @@
 
 	&.dialog-enter,
 	&.dialog-leave.dialog-leave-active {
-		background-color: rgba( $gray-lighten-30, 0 );
+		background-color: rgba( var( --color-neutral-0-rgb ), 0 );
 	}
 
 	&,
 	&.dialog-enter.dialog-enter-active,
 	&.dialog-leave {
-		background-color: rgba( $gray-lighten-30, 0.8 );
+		background-color: rgba( var( --color-neutral-0-rgb ), 0.8 );
 	}
 
 	// covers the masterbar as well

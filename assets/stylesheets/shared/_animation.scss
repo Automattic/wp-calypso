@@ -255,7 +255,7 @@ html {
 
 @keyframes pulse-light {
 	50% {
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 	}
 }
 
