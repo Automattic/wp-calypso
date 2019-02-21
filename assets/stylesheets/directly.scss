@@ -307,7 +307,7 @@ textarea {
 		font-weight: 500;
 	}
 	.profile .reputation {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 	}
 }
 .avatar {

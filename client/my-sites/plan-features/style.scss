@@ -378,7 +378,7 @@ $plan-features-sidebar-width: 272px;
 
 	.segmented-control__link {
 		border-radius: 6px;
-		border: 2px solid $gray-lighten-10;
+		border: 2px solid --color-neutral-200;
 		color: var( --color-neutral-700 );
 		font-size: 15px;
 		font-weight: 500;
