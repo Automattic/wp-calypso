@@ -1,0 +1,36 @@
+{
+	"name": "@automattic/calypso-shared-style",
+	"version": "1.0.0-alpha.0",
+	"description": "Calypso Shared Style Bits",
+	"author": "Automattic",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"calypso",
+		"wordpress",
+		"sass",
+		"css"
+	],
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/calypso-shared-style/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Automattic/wp-calypso.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"engines": {
+		"node": "^10.13.0",
+		"npm": "^6.1.0"
+	},
+	"main": "dist/custom-properties.css",
+	"dependencies": {
+		"color-studio": "github:automattic/color-studio#1.0.1",
+		"node-sass": "^4.11.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build": "node bin/build-custom-properties-css.js"
+	}
+}
