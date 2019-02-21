@@ -105,7 +105,7 @@ class Slideshow extends Component {
 	};
 
 	resumeAutoplay = () => {
-		this.props.autoplay && this.swiperInstance.autoplay.start();
+		this.props.autoplay && ! this.prefersReducedMotion() && this.swiperInstance.autoplay.start();
 	};
 
 	render() {
@@ -161,6 +161,13 @@ class Slideshow extends Component {
 		);
 	}
 
+	prefersReducedMotion = () => {
+		return (
+			typeof window !== 'undefined' &&
+			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches
+		);
+	};
+
 	buildSwiper = ( initialSlide = 0 ) =>
 		// Using refs instead of className-based selectors allows us to
 		// have multiple swipers on one page without collisions, and
@@ -168,11 +175,12 @@ class Slideshow extends Component {
 		createSwiper(
 			this.slideshowRef.current,
 			{
-				autoplay: this.props.autoplay
-					? {
-							delay: this.props.delay * 1000,
-					  }
-					: false,
+				autoplay:
+					this.props.autoplay && ! this.prefersReducedMotion()
+						? {
+								delay: this.props.delay * 1000,
+						  }
+						: false,
 				effect: this.props.effect,
 				loop: true,
 				initialSlide,

@@ -87,6 +87,9 @@ class SlideshowEdit extends Component {
 			setAttributes,
 		} = this.props;
 		const { align, autoplay, delay, effect, images } = attributes;
+		const prefersReducedMotion =
+			typeof window !== 'undefined' &&
+			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 		const controls = (
 			<Fragment>
 				<InspectorControls>
@@ -109,6 +112,13 @@ class SlideshowEdit extends Component {
 								min={ 1 }
 								max={ 5 }
 							/>
+						) }
+						{ autoplay && prefersReducedMotion && (
+							<span>
+								{ __(
+									'The Reduce Motion accessibility option is selected, therefore autoplay will be disabled in this browser.'
+								) }
+							</span>
 						) }
 					</PanelBody>
 					<PanelBody title={ __( 'Effects' ) }>
