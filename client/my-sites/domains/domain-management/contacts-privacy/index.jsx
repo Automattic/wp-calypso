@@ -20,7 +20,6 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementPrivacyProtection,
 	domainManagementManageConsent,
 } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
@@ -82,17 +81,6 @@ class ContactsPrivacy extends React.PureComponent {
 							) }
 						>
 							{ translate( 'Manage Consent for Personal Data Use' ) }
-						</VerticalNavItem>
-					) }
-
-					{ ! hasPrivacyProtection && privacyAvailable && (
-						<VerticalNavItem
-							path={ domainManagementPrivacyProtection(
-								this.props.selectedSite.slug,
-								this.props.selectedDomainName
-							) }
-						>
-							{ translate( 'Privacy Protection' ) }
 						</VerticalNavItem>
 					) }
 				</VerticalNav>
