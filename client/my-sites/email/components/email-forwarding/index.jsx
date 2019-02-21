@@ -38,7 +38,7 @@ class EmailForwarding extends React.Component {
 				</Header>
 
 				<SectionHeader label={ this.props.translate( 'Email Forwarding' ) } />
-				<Card className="email-forwarding-card">
+				<Card className="email-forwarding__card">
 					<EmailForwardingDetails selectedDomainName={ this.props.selectedDomainName } />
 
 					<EmailForwardingList
