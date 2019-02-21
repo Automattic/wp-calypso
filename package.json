@@ -228,7 +228,6 @@
     "postcss": "postcss -r",
     "prebuild": "npm run -s install-if-deps-outdated",
     "build": "npm run build-css && npm run build-packages && run-p -s build-devdocs:* build-server build-client-if-prod build-client-if-desktop",
-    "prebuild-css": "node bin/build-custom-properties-css.js",
     "build-css": "run-p -s build-css:*",
     "build-css:debug": "node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client --source-map \"public/style-debug.css.map\" assets/stylesheets/style.scss public/style-debug.css && npm run -s postcss -- public/style-debug.css && rtlcss public/style-debug.css public/style-debug-rtl.css",
     "build-css:directly": "node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client assets/stylesheets/directly.scss public/directly.css --output-style compressed && npm run -s postcss -- public/directly.css",
