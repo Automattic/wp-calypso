@@ -22,7 +22,7 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'state/action-types';
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
-import { maybeInjectTaxPlaceholdersIntoPurchases } from 'lib/checkout/tax-placeholders';
+import { injectPurchasesWithPlaceholderValues } from 'lib/tax';
 
 import wp from 'lib/wp';
 const wpcom = wp.undocumented();
@@ -81,7 +81,7 @@ export const fetchSitePurchases = siteId => dispatch => {
 			dispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
-				purchases: maybeInjectTaxPlaceholdersIntoPurchases( data ),
+				purchases: injectPurchasesWithPlaceholderValues( data ),
 			} );
 		} )
 		.catch( () => {
@@ -105,7 +105,7 @@ export const fetchUserPurchases = userId => dispatch => {
 		.then( data => {
 			dispatch( {
 				type: PURCHASES_USER_FETCH_COMPLETED,
-				purchases: maybeInjectTaxPlaceholdersIntoPurchases( data ),
+				purchases: injectPurchasesWithPlaceholderValues( data ),
 				userId,
 			} );
 		} )
