@@ -3,11 +3,11 @@ $hover-color: #f8f9f9;
 
 .wp-block-jetpack-wordads {
 	background: var( --color-white );
-}
 
-.wp-block-jetpack-wordads.aligncenter {
-	.jetpack-wordads__ad {
-		margin: 0 auto;
+	&.aligncenter {
+		.jetpack-wordads__ad {
+			margin: 0 auto;
+		}
 	}
 }
 
@@ -16,9 +16,11 @@ $hover-color: #f8f9f9;
 	font-size: 10px;
 	font-family: sans-serif;
 }
+
 .jetpack-wordads__header {
 	text-align: left;
 }
+
 .jetpack-wordads__footer {
 	text-transform: uppercase;
 	text-align: right;
@@ -34,12 +36,15 @@ $hover-color: #f8f9f9;
 		flex-grow: 2;
 	}
 }
+
 .jetpack-wordads-leaderboard .components-placeholder {
 	min-height: 90px;
 }
+
 .jetpack-wordads-mobile_leaderboard .components-placeholder {
 	min-height: 72px;
 }
+
 .jetpack-wordads-leaderboard.is-selected .components-placeholder,
 .jetpack-wordads-mobile_leaderboard.is-selected .components-placeholder {
 	flex-direction: row;
