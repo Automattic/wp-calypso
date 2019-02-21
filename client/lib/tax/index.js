@@ -140,7 +140,7 @@ export function injectSinglePurchaseWithPlaceholderValues( purchase ) {
 	};
 	return Object.assign(
 		purchase,
-		mapValues( cartPropertyNames, cartKey => placeholderValues[ cartKey ] )
+		mapValues( cartPropertyNames, cartKey => placeholderValues[ cartKey ] || null )
 	);
 }
 

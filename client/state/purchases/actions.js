@@ -81,6 +81,7 @@ export const fetchSitePurchases = siteId => dispatch => {
 			dispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
+				// #tax-on-checkout-placeholder
 				purchases: injectPurchasesWithPlaceholderValues( data ),
 			} );
 		} )
@@ -105,6 +106,7 @@ export const fetchUserPurchases = userId => dispatch => {
 		.then( data => {
 			dispatch( {
 				type: PURCHASES_USER_FETCH_COMPLETED,
+				// #tax-on-checkout-placeholder
 				purchases: injectPurchasesWithPlaceholderValues( data ),
 				userId,
 			} );
