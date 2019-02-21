@@ -38,6 +38,13 @@
 		.is-action-button-selected {
 			background-color: var( --color-neutral-0 );
 
+			a:first-child {
+				&::after {
+					background: overflow-gradient( var( --color-neutral-0-rgb ), 50% );
+				}
+			}
+
+
 			.gridicon {
 				fill: var( --color-neutral-500 );
 			}
