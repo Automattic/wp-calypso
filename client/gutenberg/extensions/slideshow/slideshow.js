@@ -9,7 +9,12 @@ import ResizeObserver from 'resize-observer-polyfill';
  * Internal dependencies
  */
 import createSwiper from './create-swiper';
-import { swiperApplyAria, swiperInit, swiperResize } from './swiper-callbacks';
+import {
+	swiperApplyAria,
+	swiperInit,
+	swiperPaginationRender,
+	swiperResize,
+} from './swiper-callbacks';
 
 class Slideshow extends Component {
 	pendingRequestAnimationFrame = null;
@@ -198,6 +203,7 @@ class Slideshow extends Component {
 				beforeDestroy: this.destroyHoverEvents,
 				init: swiperInit,
 				imagesReady: swiperResize,
+				paginationRender: swiperPaginationRender,
 				transitionEnd: swiperApplyAria,
 			}
 		);

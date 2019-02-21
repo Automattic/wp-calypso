@@ -8,7 +8,12 @@ import ResizeObserver from 'resize-observer-polyfill';
  * Internal dependencies
  */
 import createSwiper from './create-swiper';
-import { swiperApplyAria, swiperInit, swiperResize } from './swiper-callbacks';
+import {
+	swiperApplyAria,
+	swiperInit,
+	swiperPaginationRender,
+	swiperResize,
+} from './swiper-callbacks';
 
 typeof window !== 'undefined' &&
 	window.addEventListener( 'load', function() {
@@ -35,6 +40,7 @@ typeof window !== 'undefined' &&
 				{
 					init: swiperInit,
 					imagesReady: swiperResize,
+					paginationRender: swiperPaginationRender,
 					transitionEnd: swiperApplyAria,
 				}
 			).then( swiper => {

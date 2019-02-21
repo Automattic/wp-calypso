@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import { forEach } from 'lodash';
+
 const SIXTEEN_BY_NINE = 16 / 9;
 const MAX_HEIGHT_PERCENT_OF_WINDOW_HEIGHT = 0.8;
 const SANITY_MAX_HEIGHT = 600;
@@ -29,12 +34,21 @@ function swiperResize( swiper ) {
 }
 
 function swiperApplyAria( swiper ) {
-	for ( let index = 0; index < swiper.slides.length; index++ ) {
-		swiper.slides[ index ].setAttribute(
-			'aria-hidden',
-			index === swiper.activeIndex ? 'false' : 'true'
-		);
-	}
+	forEach( swiper.slides, ( slide, index ) => {
+		slide.setAttribute( 'aria-hidden', index === swiper.activeIndex ? 'false' : 'true' );
+		slide.setAttribute( 'tabindex', index === swiper.activeIndex ? '-1' : '0' );
+	} );
 }
 
-export { swiperApplyAria, swiperInit, swiperResize };
+function swiperPaginationRender( swiper ) {
+	forEach( swiper.pagination.bullets, bullet => {
+		bullet.addEventListener( 'click', () => {
+			const currentSlide = swiper.slides[ swiper.realIndex ];
+			setTimeout( () => {
+				currentSlide.focus();
+			}, 1000 );
+		} );
+	} );
+}
+
+export { swiperApplyAria, swiperInit, swiperPaginationRender, swiperResize };
