@@ -16,7 +16,8 @@
 	.transfer-domain-step__price {
         font-weight: 600;
         text-align: right;
-        &.is-free-with-plan {
+        &.is-free-with-plan,
+		&.is-sale-price {
             font-weight: 400;
             font-size: 90%;
         }
