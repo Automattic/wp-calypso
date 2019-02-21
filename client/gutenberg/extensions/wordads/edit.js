@@ -23,10 +23,7 @@ class WordAdsEdit extends Component {
 		const classes = classNames(
 			'wp-block-jetpack-wordads',
 			`align${ align }`,
-			`jetpack-wordads-${ format }`,
-			{
-				'is-selected': isSelected,
-			}
+			`jetpack-wordads-${ format }`
 		);
 		const selectedFormatObject = AD_FORMATS.filter( ( { tag } ) => tag === format )[ 0 ];
 

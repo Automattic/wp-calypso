@@ -42,11 +42,6 @@
 	min-height: 72px;
 }
 
-.jetpack-wordads-leaderboard.is-selected .components-placeholder,
-.jetpack-wordads-mobile_leaderboard.is-selected .components-placeholder {
-	flex-direction: row;
-}
-
 .wp-block-jetpack-wordads__format-picker-icon::after {
 	// @TODO replace with Gutenberg variable
 	$grid-size-small: 4px;
