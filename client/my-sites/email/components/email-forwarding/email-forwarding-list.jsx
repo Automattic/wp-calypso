@@ -15,8 +15,7 @@ import EmailForwardingItem from './email-forwarding-item';
 
 class EmailForwardingList extends React.Component {
 	render() {
-		let emailForwardingItems,
-			{ list, hasLoadedFromServer } = this.props.emailForwarding;
+		const { list, hasLoadedFromServer } = this.props.emailForwarding;
 
 		if ( ! list && ! hasLoadedFromServer ) {
 			return <span>{ this.props.translate( 'Loading…' ) }</span>;
@@ -26,7 +25,7 @@ class EmailForwardingList extends React.Component {
 			return null;
 		}
 
-		emailForwardingItems = list.map( emailForwarding => {
+		const emailForwardingItems = list.map( emailForwarding => {
 			return (
 				<EmailForwardingItem
 					key={ emailForwarding.email }

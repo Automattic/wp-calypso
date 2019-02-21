@@ -195,7 +195,7 @@ const EmailForwardingAddNew = createReactClass( {
 			{ mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
 		return (
-			<div className="email_forwarding__form-content">
+			<div className="email-forwarding__form-content">
 				<FormFieldset>
 					<FormLabel>{ this.props.translate( 'Emails Sent To' ) }</FormLabel>
 					<FormTextInputWithAffixes
@@ -268,7 +268,8 @@ const EmailForwardingAddNew = createReactClass( {
 	},
 
 	onChange( event ) {
-		let { name, value } = event.target;
+		const { name } = event.target;
+		let { value } = event.target;
 
 		value = value.replace( /\s/g, '' );
 		if ( name === 'mailbox' ) {
