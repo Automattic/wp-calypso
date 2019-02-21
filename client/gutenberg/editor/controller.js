@@ -198,7 +198,13 @@ export const post = ( context, next ) => {
 	} );
 
 	if ( config.isEnabled( 'calypsoify/iframe' ) ) {
-		context.primary = <CalypsoifyIframe postId={ postId } postType={ postType } />;
+		context.primary = (
+			<CalypsoifyIframe
+				postId={ postId }
+				postType={ postType }
+				duplicatePostId={ duplicatePostId }
+			/>
+		);
 	} else {
 		context.primary = <EditorLoader />;
 	}

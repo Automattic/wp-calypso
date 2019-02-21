@@ -6,6 +6,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { map, pickBy, endsWith } from 'lodash';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -32,6 +33,12 @@ import wpcom from 'lib/wp';
 import './style.scss';
 
 class CalypsoifyIframe extends Component {
+	static propTypes = {
+		postId: PropTypes.number,
+		postType: PropTypes.string,
+		duplicatePostId: PropTypes.number,
+	};
+
 	state = {
 		isMediaModalVisible: false,
 	};
@@ -152,7 +159,7 @@ class CalypsoifyIframe extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { postId, postType } ) => {
+const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	const currentRoute = getCurrentRoute( state );
@@ -165,6 +172,7 @@ const mapStateToProps = ( state, { postId, postType } ) => {
 		calypsoify: 1,
 		force_gutenberg: 1,
 		'frame-nonce': getSiteOption( state, siteId, 'frame_nonce' ) || '',
+		'jetpack-copy': duplicatePostId,
 	} );
 
 	// needed for loading the editor in SU sessions
