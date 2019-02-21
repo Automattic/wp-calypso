@@ -17,7 +17,7 @@
 			"version": "file:packages/calypso-css-custom-properties",
 			"dev": true,
 			"requires": {
-				"color-studio": "github:automattic/color-studio#279f6ae4eacb15bc4f8f75856101aa4d0f4fd4a7",
+				"color-studio": "github:automattic/color-studio#1.0.1",
 				"node-sass": "^4.11.0"
 			},
 			"dependencies": {
@@ -5086,10 +5086,6 @@
 				"color-name": "^1.0.0",
 				"simple-swizzle": "^0.2.2"
 			}
-		},
-		"color-studio": {
-			"version": "github:automattic/color-studio#279f6ae4eacb15bc4f8f75856101aa4d0f4fd4a7",
-			"from": "github:automattic/color-studio#1.0.1"
 		},
 		"colors": {
 			"version": "0.6.2",
