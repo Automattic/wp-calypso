@@ -42,41 +42,24 @@
 	min-height: 72px;
 }
 
-.wp-block-jetpack-wordads__format-picker-icon::after {
-	// @TODO replace with Gutenberg variable
-	$grid-size-small: 4px;
-
-	content: '';
-	pointer-events: none;
-	display: block;
-	width: 0;
-	height: 0;
-	border-left: 3px solid transparent;
-	border-right: 3px solid transparent;
-	border-top: 5px solid currentColor;
-	margin-left: $grid-size-small;
-
-	// This gives the icon space on the right side consistent with the material
-	// icon standards.
-	margin-right: 2px;
-}
-
 .wp-block-jetpack-wordads__format-picker {
-	margin: 0;
+	padding: 7px;
+	$active-item-outline-width: 2px;
 
-	.components-button {
-		// @TODO replace with Gutenberg variable
-		$blue-medium-500: #00a0d2;
-
-		width: 100%;
+	.components-menu-item__button {
+		margin-top: $active-item-outline-width;
+		margin-bottom: $active-item-outline-width;
 
 		&.is-active {
+			// @TODO replace with Gutenberg variable
+			$blue-medium-500: #00a0d2;
+
 			// Inspired by @include block-style__focus-active();
-			box-shadow: 0 0 0 2px $blue-medium-500;
+			box-shadow: 0 0 0 $active-item-outline-width $blue-medium-500 !important;
 
 			// Windows High Contrast mode will show this outline, but not the box-shadow.
-			outline: 2px solid transparent;
-			outline-offset: -2px;
+			outline: $active-item-outline-width solid transparent;
+			outline-offset: -( $active-item-outline-width );
 		}
 	}
 }
