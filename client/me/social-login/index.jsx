@@ -177,10 +177,9 @@ export default connect(
 		const currentUser = getCurrentUser( state );
 		const connections = currentUser.social_login || [];
 		const googleConnection = find( connections, { service: 'google' } );
-
 		return {
 			socialConnectionEmail: get( googleConnection, 'service_user_email', '' ),
-			isUserConnectedToGoogle: get( googleConnection, 'service', '' ) === 'google',
+			isUserConnectedToGoogle: googleConnection,
 			isUpdatingSocialConnection: isRequesting( state ),
 			errorUpdatingSocialConnection: getRequestError( state ),
 		};
