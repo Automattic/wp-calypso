@@ -186,21 +186,24 @@ class MailchimpSubscribeEdit extends Component {
 			<div className={ className }>
 				{ ! audition && (
 					<form ref={ this.formRef }>
-						<TextControl
-							disabled
-							placeholder={ emailPlaceholder }
-							onChange={ () => false }
-							title={ __( 'You can edit the email placeholder in the sidebar.' ) }
-							type="email"
-						/>
-						<div className="wp-block-jetpack-mailchimp_button">
-							<RichText
-								formattingControls={ [] }
-								placeholder={ __( 'Add button text…' ) }
-								value={ submitLabel }
-								onChange={ value => setAttributes( { submitLabel: value } ) }
+						<p>
+							<TextControl
+								disabled
+								placeholder={ emailPlaceholder }
+								onChange={ () => false }
+								title={ __( 'You can edit the email placeholder in the sidebar.' ) }
+								type="email"
 							/>
-						</div>
+						</p>
+						<p>
+							<div className="wp-block-jetpack-mailchimp_button">
+								<RichText
+									placeholder={ __( 'Add button text…' ) }
+									value={ submitLabel }
+									onChange={ value => setAttributes( { submitLabel: value } ) }
+								/>
+							</div>
+						</p>
 						<RichText
 							tagName="small"
 							placeholder={ __( 'Write consent text' ) }
