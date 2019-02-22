@@ -73,8 +73,6 @@ export class AppsBadge extends PureComponent {
 			this.image = null;
 			this.loadImage();
 		}
-
-		this.onLinkClick = this.onLinkClick.bind( this );
 	}
 
 	loadImage() {
@@ -97,7 +95,7 @@ export class AppsBadge extends PureComponent {
 		} );
 	};
 
-	onLinkClick() {
+	onLinkClick = () => {
 		const { storeName } = this.props;
 		recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent );
 	}
