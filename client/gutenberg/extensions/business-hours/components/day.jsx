@@ -19,8 +19,8 @@ class Day extends Component {
 		const { day, resetFocus, edit = true } = this.props;
 		const { opening, closing } = interval;
 		return (
-			<Fragment>
-				<div className="business-hours__row" key={ intervalIndex }>
+			<Fragment key={ intervalIndex }>
+				<div className="business-hours__row">
 					<div className={ classNames( day.name, 'business-hours__day' ) }>
 						{ intervalIndex === 0 && this.renderDayToggle() }
 					</div>
