@@ -14,6 +14,10 @@ function swiperInit( swiper ) {
 	swiper.el
 		.querySelector( '.wp-block-jetpack-slideshow_button-pause' )
 		.addEventListener( 'click', () => {
+			// Handle destroyed Swiper instances
+			if ( ! swiper.el ) {
+				return;
+			}
 			if ( swiper.el.classList.contains( PAUSE_CLASS ) ) {
 				swiper.el.classList.remove( PAUSE_CLASS );
 				swiper.autoplay.start();
