@@ -101,7 +101,7 @@
 	}
 }
 
-.gsuite-purchase-cta__add-google-apps-card-features {
+.gsuite-purchase-cta__add-google-apps-card-features-grid {
 	box-sizing: border-box;
 	justify-content: justify-content;
 	margin: 1em 0;
@@ -110,6 +110,11 @@
 		display: flex;
 		flex-flow: row wrap;
 	}
+}
+.gsuite-purchase-cta__add-google-apps-card-features-list {
+	box-sizing: border-box;
+	justify-content: justify-content;
+	margin: 1em 0;
 }
 
 .gsuite-purchase-cta__add-google-apps-card-feature {

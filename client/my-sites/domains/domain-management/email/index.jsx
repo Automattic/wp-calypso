@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
@@ -15,6 +16,8 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getEligibleDomain } from 'lib/domains/gsuite';
 import GSuitePurchaseCta from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-cta';
 import GoogleAppsUsersCard from './google-apps-users-card';
@@ -39,6 +42,7 @@ import DocumentHead from 'components/data/document-head';
 
 class Email extends React.Component {
 	static propTypes = {
+		currencyCode: PropTypes.string.isRequired,
 		domains: PropTypes.array.isRequired,
 		googleAppsUsers: PropTypes.array.isRequired,
 		googleAppsUsersLoaded: PropTypes.bool.isRequired,
@@ -146,11 +150,16 @@ class Email extends React.Component {
 	}
 
 	addGoogleAppsCard() {
-		const { products, selectedDomainName, selectedSite } = this.props;
+		const { currencyCode, products, selectedDomainName, selectedSite } = this.props;
+		const price = get( products, [ 'gapps', 'prices', currencyCode ], 0 );
+		const annualPrice = getAnnualPrice( price, currencyCode );
+		const monthlyPrice = getMonthlyPrice( price, currencyCode );
 		return (
 			<Fragment>
 				<GSuitePurchaseCta
-					product={ products.gapps }
+					annualPrice={ annualPrice }
+					monthlyPrice={ monthlyPrice }
+					productSlug={ 'gapps' }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 				/>
@@ -180,4 +189,9 @@ class Email extends React.Component {
 	};
 }
 
-export default localize( Email );
+export default connect(
+	state => ( {
+		currencyCode: getCurrentUserCurrencyCode( state ),
+	} ),
+	{}
+)( localize( Email ) );

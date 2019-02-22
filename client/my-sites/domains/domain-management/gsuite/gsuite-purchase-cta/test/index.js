@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { Provider } from 'react-redux';
 import React from 'react';
 import renderer from 'react-test-renderer';
 
@@ -11,24 +12,23 @@ import renderer from 'react-test-renderer';
 import { createReduxStore } from 'state';
 import GSuitePurchaseCta from '../';
 
-jest.mock( 'state/current-user/selectors', () => ( {
-	getCurrentUserCurrencyCode: () => {
-		return 'USD';
-	},
-} ) );
-
 jest.mock( 'components/email-verification/email-verification-gate', () => 'EmailVerificationGate' );
+
+jest.mock( '../features', () => 'GSuitePurchaseCtaFeatures' );
 
 describe( 'GSuitePurchaseCta', () => {
 	test( 'it renders GSuitePurchaseCta with basic plan', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
-				<GSuitePurchaseCta
-					product={ { product_slug: 'gapps', prices: { USD: 50 } } }
-					selectedSite={ { ID: 'foo' } }
-					store={ store }
-				/>
+				<Provider store={ store }>
+					<GSuitePurchaseCta
+						annualPrice={ '$50' }
+						monthlyPrice={ '$5' }
+						productSlug={ 'gapps' }
+						selectedSite={ { ID: 'foo' } }
+					/>
+				</Provider>
 			)
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
@@ -38,11 +38,14 @@ describe( 'GSuitePurchaseCta', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
-				<GSuitePurchaseCta
-					product={ { product_slug: 'gappsbusiness', prices: { USD: 50 } } }
-					selectedSite={ { ID: 'foo' } }
-					store={ store }
-				/>
+				<Provider store={ store }>
+					<GSuitePurchaseCta
+						annualPrice={ '$50' }
+						monthlyPrice={ '$5' }
+						productSlug={ 'gappsbusiness' }
+						selectedSite={ { ID: 'foo' } }
+					/>
+				</Provider>
 			)
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
