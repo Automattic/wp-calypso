@@ -8,7 +8,7 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import HoursRow from './hours-row';
+import Day from './hours-row';
 import { icon } from 'gutenberg/extensions/business-hours';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
@@ -50,23 +50,18 @@ class HoursList extends Component {
 
 	render() {
 		const { className, attributes, edit } = this.props;
-		const { hours } = attributes;
+		const { days } = attributes;
 		const { localization, hasFetched } = this.state;
 		const { startOfWeek } = localization;
 		return (
 			<div className={ className }>
 				{ hasFetched || ! edit ? (
-					Object.keys( hours )
-						.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
+					days
+						.concat( days.slice( 0, startOfWeek ) )
 						.slice( startOfWeek )
-						.map( ( dayOfTheWeek, index ) => {
+						.map( ( day, key ) => {
 							return (
-								<HoursRow
-									key={ index }
-									day={ dayOfTheWeek }
-									data={ localization }
-									{ ...this.props }
-								/>
+								<Day key={ key } day={ day } localization={ localization } { ...this.props } />
 							);
 						} )
 				) : (
