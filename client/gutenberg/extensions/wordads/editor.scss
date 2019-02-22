@@ -54,8 +54,10 @@
 	padding: 7px;
 
 	.components-menu-item__button {
-		margin-top: $active-item-outline-width;
-		margin-bottom: $active-item-outline-width;
+		& + & {
+			// Vertical margins collapse, ensure that adjacent margins have enough space
+			margin-top: ( 2 * $active-item-outline-width );
+		}
 
 		&:hover {
 			background-color: $light-gray-100 !important;
