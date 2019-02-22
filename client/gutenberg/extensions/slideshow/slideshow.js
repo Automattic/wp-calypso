@@ -143,7 +143,7 @@ class Slideshow extends Component {
 						ref={ this.btnNextRef }
 					/>
 					<button
-						aria-label={ __( 'Pause/Play' ) }
+						aria-label={ __( 'Pause Slideshow' ) }
 						className="wp-block-jetpack-slideshow_button-pause"
 					/>
 				</div>

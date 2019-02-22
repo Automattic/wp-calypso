@@ -13,7 +13,7 @@ function swiperInit( swiper ) {
 	swiperApplyAria( swiper );
 	swiper.el
 		.querySelector( '.wp-block-jetpack-slideshow_button-pause' )
-		.addEventListener( 'click', () => {
+		.addEventListener( 'click', function() {
 			// Handle destroyed Swiper instances
 			if ( ! swiper.el ) {
 				return;
@@ -21,9 +21,11 @@ function swiperInit( swiper ) {
 			if ( swiper.el.classList.contains( PAUSE_CLASS ) ) {
 				swiper.el.classList.remove( PAUSE_CLASS );
 				swiper.autoplay.start();
+				this.setAttribute( 'aria-label', 'Pause Slideshow' );
 			} else {
 				swiper.el.classList.add( PAUSE_CLASS );
 				swiper.autoplay.stop();
+				this.setAttribute( 'aria-label', 'Play Slideshow' );
 			}
 		} );
 }
