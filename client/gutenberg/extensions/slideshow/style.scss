@@ -73,12 +73,16 @@
 		}
 	}
 
+	&.swiper-container-rtl .swiper-button-prev.swiper-button-white,
 	&.swiper-container-rtl .wp-block-jetpack-slideshow_button-prev,
+	.swiper-button-next.swiper-button-white,
 	.wp-block-jetpack-slideshow_button-next {
 		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M5.88 4.12L13.76 12l-7.88 7.88L8 22l10-10L8 2z" fill="white"/><path fill="none" d="M0 0h24v24H0z"/></svg>' );
 	}
 
+	&.swiper-container-rtl .swiper-button-next.swiper-button-white,
 	&.swiper-container-rtl .wp-block-jetpack-slideshow_button-next,
+	.swiper-button-prev.swiper-button-white,
 	.wp-block-jetpack-slideshow_button-prev {
 		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M18 4.12L10.12 12 18 19.88 15.88 22l-10-10 10-10z" fill="white"/><path fill="none" d="M0 0h24v24H0z"/></svg>' );
 	}
