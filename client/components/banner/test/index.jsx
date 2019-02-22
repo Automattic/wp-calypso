@@ -52,6 +52,7 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
+import PlanPrice from 'my-sites/plan-price/';
 
 /**
  * Internal dependencies
@@ -103,17 +104,17 @@ describe( 'Banner basic tests', () => {
 
 	test( 'should render a <PlanPrice /> when price is specified', () => {
 		const comp = shallow( <Banner { ...props } price={ 100 } /> );
-		assert.lengthOf( comp.find( 'PlanPrice' ), 1 );
+		assert.lengthOf( comp.find( PlanPrice ), 1 );
 	} );
 
 	test( 'should render two <PlanPrice /> components when there are two prices', () => {
 		const comp = shallow( <Banner { ...props } price={ [ 100, 80 ] } /> );
-		assert.lengthOf( comp.find( 'PlanPrice' ), 2 );
+		assert.lengthOf( comp.find( PlanPrice ), 2 );
 	} );
 
 	test( 'should render no <PlanPrice /> components when there are no prices', () => {
 		const comp = shallow( <Banner { ...props } /> );
-		assert.lengthOf( comp.find( 'PlanPrice' ), 0 );
+		assert.lengthOf( comp.find( PlanPrice ), 0 );
 	} );
 
 	test( 'should render a .banner__description when description is specified', () => {
