@@ -132,7 +132,7 @@ class RequestLoginEmailForm extends React.Component {
 				: translate( 'Unable to complete request' );
 
 		return (
-			<div>
+			<div className="magic-login__form">
 				<h1 className="magic-login__form-header">{ translate( 'Email me a login link.' ) }</h1>
 				{ requestError && (
 					<Notice

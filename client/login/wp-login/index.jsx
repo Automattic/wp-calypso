@@ -16,8 +16,10 @@ import { startCase } from 'lodash';
 import DocumentHead from 'components/data/document-head';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import LocaleSuggestions from 'components/locale-suggestions';
+import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import TranslatorInvite from 'components/translator-invite';
 import LoginBlock from 'blocks/login';
+import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
 import LoginLinks from './login-links';
 import Main from 'components/main';
 import PrivateSite from './private-site';
@@ -26,6 +28,7 @@ import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	recordPageViewWithClientId as recordPageView,
+	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
@@ -88,6 +91,10 @@ export class Login extends React.Component {
 		this.props.recordPageView( url, title );
 	}
 
+	recordBackToWpcomLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
+	};
+
 	renderI18nSuggestions() {
 		const { locale, path, isLoginView } = this.props;
 
@@ -108,6 +115,13 @@ export class Login extends React.Component {
 					'wp-login__footer--jetpack': ! isOauthLogin,
 				} ) }
 			>
+				{ isCrowdsignalOAuth2Client( this.props.oauth2Client ) && (
+					<LoggedOutFormBackLink
+						classes={ { 'logged-out-form__link-item': false } }
+						oauth2Client={ this.props.oauth2Client }
+						recordClick={ this.recordBackToWpcomLinkClick } />
+				) }
+
 				{ isOauthLogin ? (
 					<div className="wp-login__footer-links">
 						<a
@@ -229,5 +243,6 @@ export default connect(
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
+		recordTracksEvent,
 	}
 )( localize( Login ) );
