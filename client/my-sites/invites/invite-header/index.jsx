@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,11 @@ import CompactCard from 'components/card/compact';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import Gravatar from 'components/gravatar';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class InviteHeader extends React.Component {
 	static displayName = 'InviteHeader';
