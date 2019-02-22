@@ -33,6 +33,20 @@ class GSuitePurchaseFeatures extends React.Component {
 		}
 	}
 
+	renderFeature( title, description, imagePath, imageAlt ) {
+		return (
+			<div className="gsuite-purchase-features__feature">
+				<div className="gsuite-purchase-features__feature-block">
+					<img alt={ imageAlt } src={ imagePath } />
+				</div>
+				<div className="gsuite-purchase-features__feature-block">
+					<h5 className="gsuite-purchase-features__feature-header">{ title }</h5>
+					<p>{ description }</p>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		const { domainName, type, translate } = this.props;
 
@@ -45,66 +59,36 @@ class GSuitePurchaseFeatures extends React.Component {
 							: 'gsuite-purchase-features__features-list'
 					}
 				>
-					<div className="gsuite-purchase-features__feature">
-						<div className="gsuite-purchase-features__feature-block">
-							<img alt="Gmail Logo" src="/calypso/images/g-suite/logo_gmail_48dp.svg" />
-						</div>
-						<div className="gsuite-purchase-features__feature-block">
-							<h5 className="gsuite-purchase-features__feature-header">
-								{ translate( 'Gmail for @%(domain)s', {
-									args: {
-										domain: domainName,
-									},
-								} ) }
-							</h5>
-							<p>
-								{ translate( 'Professional ad-free email that works with most email clients.' ) }
-							</p>
-						</div>
-					</div>
-
-					<div className="gsuite-purchase-features__feature">
-						<div className="gsuite-purchase-features__feature-block">
-							<img alt="Google Drive Logo" src="/calypso/images/g-suite/logo_drive_48dp.svg" />
-						</div>
-						<div className="gsuite-purchase-features__feature-block">
-							<h5 className="gsuite-purchase-features__feature-header">
-								{ translate( 'Keep all your files secure' ) }
-							</h5>
-							<p>{ this.getStorageText() }</p>
-						</div>
-					</div>
-
-					<div className="gsuite-purchase-features__feature">
-						<div className="gsuite-purchase-features__feature-block">
-							<img alt="Google Docs Logo" src="/calypso/images/g-suite/logo_docs_48dp.svg" />
-						</div>
-						<div className="gsuite-purchase-features__feature-block">
-							<h5 className="gsuite-purchase-features__feature-header">
-								{ translate( 'Docs, spreadsheets and forms' ) }
-							</h5>
-							<p>{ translate( 'Create and edit documents to get your work done faster.' ) }</p>
-						</div>
-					</div>
-
-					<div className="gsuite-purchase-features__feature">
-						<div className="gsuite-purchase-features__feature-block">
-							<img
-								alt="Google Hangouts Logo"
-								src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
-							/>
-						</div>
-						<div className="gsuite-purchase-features__feature-block">
-							<h5 className="gsuite-purchase-features__feature-header">
-								{ translate( 'Connect with your team' ) }
-							</h5>
-							<p>
-								{ translate(
-									'Use text chats, voice calls, or video calls, with built in screen sharing'
-								) }
-							</p>
-						</div>
-					</div>
+					{ this.renderFeature(
+						translate( 'Gmail for @%(domain)s', {
+							args: {
+								domain: domainName,
+							},
+						} ),
+						translate( 'Professional ad-free email that works with most email clients.' ),
+						'/calypso/images/g-suite/logo_gmail_48dp.svg',
+						'Gmail Logo'
+					) }
+					{ this.renderFeature(
+						translate( 'Keep all your files secure' ),
+						this.getStorageText(),
+						'/calypso/images/g-suite/logo_drive_48dp.svg',
+						'Google Drive Logo'
+					) }
+					{ this.renderFeature(
+						translate( 'Docs, spreadsheets and forms' ),
+						translate( 'Create and edit documents to get your work done faster.' ),
+						'/calypso/images/g-suite/logo_docs_48dp.svg',
+						'Google Docs Logo'
+					) }
+					{ this.renderFeature(
+						translate( 'Connect with your team' ),
+						translate(
+							'Use text chats, voice calls, or video calls, with built in screen sharing'
+						),
+						'/calypso/images/g-suite/logo_hangouts_48dp.svg',
+						'Google Hangouts Logo'
+					) }
 				</div>
 
 				<div className="gsuite-purchase-features__learn-more">
