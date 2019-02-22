@@ -8,8 +8,8 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import Day from './hours-row';
-import { icon } from 'gutenberg/extensions/business-hours';
+import Day from 'gutenberg/extensions/business-hours/components/day';
+import { icon } from 'gutenberg/extensions/business-hours/index';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const defaultLocalization = {
@@ -25,7 +25,7 @@ const defaultLocalization = {
 	startOfWeek: 0,
 };
 
-class HoursList extends Component {
+class BusinessHoursEdit extends Component {
 	state = {
 		localization: defaultLocalization,
 		hasFetched: false,
@@ -72,4 +72,4 @@ class HoursList extends Component {
 	}
 }
 
-export default HoursList;
+export default BusinessHoursEdit;

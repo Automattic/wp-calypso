@@ -10,7 +10,7 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 
 import './editor.scss';
-import HoursList from './components/hours-list';
+import BusinessHoursEdit from './edit';
 
 /**
  * Block Registrations:
@@ -91,7 +91,7 @@ export const settings = {
 		},
 	},
 
-	edit: props => <HoursList { ...props } edit={ true } />,
+	edit: props => <BusinessHoursEdit { ...props } edit={ true } />,
 
-	save: props => <HoursList { ...props } edit={ false } />,
+	save: props => <BusinessHoursEdit { ...props } edit={ false } />,
 };
