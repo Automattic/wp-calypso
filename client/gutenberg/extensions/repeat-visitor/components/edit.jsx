@@ -12,7 +12,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { sprintf } from '@wordpress/i18n';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { CRITERIA_AFTER, CRITERIA_BEFORE } from '../constants';
 import { icon } from '../index';
 
@@ -20,16 +20,10 @@ const RADIO_OPTIONS = [
 	{
 		value: CRITERIA_AFTER,
 		label: __( 'Show after threshold' ),
-		noticeLabel: __(
-			'This block will only appear to people who have visited this page at least %d times.'
-		),
 	},
 	{
 		value: CRITERIA_BEFORE,
 		label: __( 'Show before threshold' ),
-		noticeLabel: __(
-			'This block will only appear to people who have visited this page less than %d times.'
-		),
 	},
 ];
 
@@ -41,6 +35,28 @@ class RepeatVisitorEdit extends Component {
 			+threshold > 0 &&
 			this.props.setAttributes( { threshold } );
 	};
+
+	getNoticeLabel() {
+		if ( this.props.attributes.criteria === CRITERIA_AFTER ) {
+			return sprintf(
+				_n(
+					'This block will only appear to people who have visited this page at least once.',
+					'This block will only appear to people who have visited this page at least %d times.',
+					+this.props.attributes.threshold
+				),
+				this.props.attributes.threshold
+			);
+		}
+
+		return sprintf(
+			_n(
+				'This block will only appear to people who have never visited this page before.',
+				'This block will only appear to people who have visited this page less than %d times.',
+				+this.props.attributes.threshold
+			),
+			this.props.attributes.threshold
+		);
+	}
 
 	render() {
 		return (
@@ -72,12 +88,7 @@ class RepeatVisitorEdit extends Component {
 				</Placeholder>
 
 				<Notice status="info" isDismissible={ false }>
-					{ sprintf(
-						this.props.attributes.criteria === CRITERIA_AFTER
-							? RADIO_OPTIONS[ 0 ].noticeLabel
-							: RADIO_OPTIONS[ 1 ].noticeLabel,
-						this.props.attributes.threshold
-					) }
+					{ this.getNoticeLabel() }
 				</Notice>
 				<InnerBlocks />
 			</div>
