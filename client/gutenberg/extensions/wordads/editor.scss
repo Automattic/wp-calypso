@@ -64,18 +64,18 @@
 			color: $dark-gray-900;
 		}
 
-		&.is-active {
-			box-shadow: 0 0 0 $active-item-outline-width $dark-gray-500 !important;
-		}
-
 		&:focus,
 		&.is-active {
 			color: $dark-gray-900;
-			box-shadow: 0 0 0 $active-item-outline-width $blue-medium-500 !important;
+			box-shadow: 0 0 0 $active-item-outline-width $dark-gray-500 !important;
 
 			// Windows High Contrast mode will show this outline, but not the box-shadow.
 			outline: $active-item-outline-width solid transparent !important;
 			outline-offset: -( $active-item-outline-width );
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 $active-item-outline-width $blue-medium-500 !important;
 		}
 	}
 }
