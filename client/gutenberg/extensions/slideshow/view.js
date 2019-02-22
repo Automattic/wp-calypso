@@ -27,7 +27,12 @@ typeof window !== 'undefined' &&
 			createSwiper(
 				slideshowContainer,
 				{
-					autoplay: shouldAutoplay ? { delay: delay * 1000 } : false,
+					autoplay: shouldAutoplay
+						? {
+								delay: delay * 1000,
+								disableOnInteraction: false,
+						  }
+						: false,
 					effect,
 					init: true,
 					initialSlide: 0,

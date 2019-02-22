@@ -169,6 +169,7 @@ class Slideshow extends Component {
 					this.props.autoplay && ! this.prefersReducedMotion()
 						? {
 								delay: this.props.delay * 1000,
+								disableOnInteraction: false,
 						  }
 						: false,
 				effect: this.props.effect,
