@@ -118,6 +118,13 @@ class MailchimpSubscribeEdit extends Component {
 		return null;
 	};
 
+	roleForAuditionType = audition => {
+		if ( audition === NOTIFICATION_ERROR ) {
+			return 'alert';
+		}
+		return 'status';
+	};
+
 	render = () => {
 		const { attributes, className, notices, noticeUI, setAttributes } = this.props;
 		const { audition, connected, connectURL } = this.state;
@@ -214,7 +221,10 @@ class MailchimpSubscribeEdit extends Component {
 					</form>
 				) }
 				{ audition && (
-					<div className={ `${ classPrefix }notification ${ classPrefix }${ audition }` }>
+					<div
+						className={ `${ classPrefix }notification ${ classPrefix }${ audition }` }
+						role={ this.roleForAuditionType( audition ) }
+					>
 						{ this.labelForAuditionType( audition ) }
 					</div>
 				) }
