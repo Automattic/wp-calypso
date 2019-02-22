@@ -49,12 +49,14 @@ typeof window !== 'undefined' &&
 						'mouseover',
 						function() {
 							this.autoplay.stop();
+							this.el.classList.add( 'wp-block-jetpack-slideshow_autoplay-paused' );
 						}.bind( swiper )
 					);
 					swiper.el.addEventListener(
 						'mouseout',
 						function() {
 							this.autoplay.start();
+							this.el.classList.remove( 'wp-block-jetpack-slideshow_autoplay-paused' );
 						}.bind( swiper )
 					);
 				}

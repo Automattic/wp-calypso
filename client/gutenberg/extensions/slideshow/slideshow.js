@@ -107,10 +107,12 @@ class Slideshow extends Component {
 
 	pauseAutoplay = () => {
 		this.swiperInstance.autoplay.stop();
+		this.swiperInstance.el.classList.add( 'wp-block-jetpack-slideshow_autoplay-paused' );
 	};
 
 	resumeAutoplay = () => {
 		this.props.autoplay && ! this.prefersReducedMotion() && this.swiperInstance.autoplay.start();
+		this.swiperInstance.el.classList.remove( 'wp-block-jetpack-slideshow_autoplay-paused' );
 	};
 
 	render() {
@@ -161,6 +163,7 @@ class Slideshow extends Component {
 						className="wp-block-jetpack-slideshow_button-next swiper-button-next swiper-button-white"
 						ref={ this.btnNextRef }
 					/>
+					<button className="wp-block-jetpack-slideshow_button-pause" />
 				</div>
 			</div>
 		);

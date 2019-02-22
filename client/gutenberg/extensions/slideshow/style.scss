@@ -47,7 +47,8 @@
 	}
 
 	.wp-block-jetpack-slideshow_button-prev,
-	.wp-block-jetpack-slideshow_button-next {
+	.wp-block-jetpack-slideshow_button-next,
+	.wp-block-jetpack-slideshow_button-pause {
 		background-color: rgba( 0, 0, 0, 0.5 );
 		background-position: center;
 		background-repeat: no-repeat;
@@ -70,6 +71,24 @@
 			outline: thin dotted #fff;
 			outline-offset: -4px;
 		}
+	}
+
+	.wp-block-jetpack-slideshow_button-pause {
+		background-image: url("data:image/svg+xml,%0A%3Csvg width='24px' height='24px' viewBox='0 0 24 24' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='baseline-pause-24px'%3E%3Cpath d='M6,19 L10,19 L10,5 L6,5 L6,19 Z M14,5 L14,19 L18,19 L18,5 L14,5 Z' id='Shape' fill='%23FFFFFF' fill-rule='nonzero'%3E%3C/path%3E%3Cpolygon id='Path' points='0 0 24 0 24 24 0 24'%3E%3C/polygon%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+		display: none;
+		left: 0;
+		margin-top: 0;
+		position: absolute;
+		top: 0;
+		z-index: 1;
+	}
+
+	.wp-block-jetpack-slideshow_autoplay-paused .wp-block-jetpack-slideshow_button-pause {
+		background-image: url("data:image/svg+xml,%0A%3Csvg width='24px' height='24px' viewBox='0 0 24 24' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='baseline-play_arrow-24px'%3E%3Cpolygon id='Path' fill='%23FFFFFF' fill-rule='nonzero' points='8 5 8 19 19 12'%3E%3C/polygon%3E%3Cpolygon id='Path' points='0 0 24 0 24 24 0 24'%3E%3C/polygon%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+	}
+
+	&[data-autoplay="true"] .wp-block-jetpack-slideshow_button-pause {
+		display: block;
 	}
 
 	.wp-block-jetpack-slideshow_caption.gallery-caption {

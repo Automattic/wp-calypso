@@ -6,10 +6,22 @@ import { forEach } from 'lodash';
 const SIXTEEN_BY_NINE = 16 / 9;
 const MAX_HEIGHT_PERCENT_OF_WINDOW_HEIGHT = 0.8;
 const SANITY_MAX_HEIGHT = 600;
+const PAUSE_CLASS = 'wp-block-jetpack-slideshow_autoplay-paused';
 
 function swiperInit( swiper ) {
 	swiperResize( swiper );
 	swiperApplyAria( swiper );
+	swiper.el
+		.querySelector( '.wp-block-jetpack-slideshow_button-pause' )
+		.addEventListener( 'click', () => {
+			if ( swiper.el.classList.contains( PAUSE_CLASS ) ) {
+				swiper.el.classList.remove( PAUSE_CLASS );
+				swiper.autoplay.start();
+			} else {
+				swiper.el.classList.add( PAUSE_CLASS );
+				swiper.autoplay.stop();
+			}
+		} );
 }
 
 function swiperResize( swiper ) {
