@@ -55,7 +55,7 @@ function swiperPaginationRender( swiper ) {
 			const currentSlide = swiper.slides[ swiper.realIndex ];
 			setTimeout( () => {
 				currentSlide.focus();
-			}, 1000 );
+			}, 500 );
 		} );
 	} );
 }
