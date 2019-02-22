@@ -44,6 +44,8 @@ import { prefetchmShotsPreview } from './site-preview-actions';
 
 import { recordTracksEvent } from 'state/analytics/actions';
 
+import { setSelectedEditor } from 'state/selected-editor/actions';
+
 const NO_ERROR_STATE = {
 	error: false,
 	errorMessage: '',
@@ -314,6 +316,10 @@ class SiteImporterInputPane extends React.Component {
 			site_engine: this.state.importData.engine,
 		} );
 
+		if ( 'engine6' === get( this.props, 'importerData.engine' ) ) {
+			this.props.setSelectedEditor( this.props.site.ID, 'gutenberg' );
+		}
+
 		wpcom.wpcom.req
 			.post( {
 				path: `/sites/${ this.props.site.ID }/site-importer/import-site?${ stringify(
@@ -497,7 +503,7 @@ class SiteImporterInputPane extends React.Component {
 export default flow(
 	connect(
 		null,
-		{ recordTracksEvent }
+		{ recordTracksEvent, setSelectedEditor }
 	),
 	localize
 )( SiteImporterInputPane );
