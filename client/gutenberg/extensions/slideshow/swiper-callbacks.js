@@ -44,7 +44,11 @@ function announceCurrentSlide( swiper ) {
 function swiperApplyAria( swiper ) {
 	forEach( swiper.slides, ( slide, index ) => {
 		slide.setAttribute( 'aria-hidden', index === swiper.activeIndex ? 'false' : 'true' );
-		slide.setAttribute( 'tabindex', index === swiper.activeIndex ? '-1' : '0' );
+		if ( index === swiper.activeIndex ) {
+			slide.setAttribute( 'tabindex', '-1' );
+		} else {
+			slide.removeAttribute( 'tabindex' );
+		}
 	} );
 	announceCurrentSlide( swiper );
 }
