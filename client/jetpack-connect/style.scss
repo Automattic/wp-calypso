@@ -62,22 +62,22 @@
 			color: var( --color-neutral-50 );
 		}
 	}
+}
 
-	.jetpack-connect__step {
-		margin: 0 auto;
-		max-width: 600px;
-		text-align: initial;
+.jetpack-connect__step {
+	margin: 0 auto;
+	max-width: 600px;
+	text-align: initial;
 
-		input[type='radio']:focus {
-			box-shadow: 0 0 0 2px var( --color-jetpack-light );
-		}
+	input[type='radio']:focus {
+		box-shadow: 0 0 0 2px var( --color-jetpack-light );
+	}
 
-		.site-type__option.is-selected {
-			box-shadow: 0 0 0 1px $green-jetpack inset;
+	.site-type__option.is-selected {
+		box-shadow: 0 0 0 1px $green-jetpack inset;
 
-			input[type='radio']:checked::before {
-				background-color: $green-jetpack;
-			}
+		input[type='radio']:checked::before {
+			background-color: $green-jetpack;
 		}
 	}
 }
