@@ -175,7 +175,7 @@ class SocialLogin extends Component {
 export default connect(
 	state => {
 		const currentUser = getCurrentUser( state );
-		const connections = currentUser.social_login || [];
+		const connections = currentUser.social_login_connections || [];
 		const googleConnection = find( connections, { service: 'google' } );
 		return {
 			socialConnectionEmail: get( googleConnection, 'service_user_email', '' ),
