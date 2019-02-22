@@ -194,8 +194,14 @@ class MailchimpSubscribeEdit extends Component {
 				{ ! audition && (
 					<form ref={ this.formRef }>
 						<p>
+							<label for="mailchimp_email" className="wp-block-jetpack-mailchimp_hidden-label">
+								{ emailPlaceholder }
+							</label>
 							<TextControl
+								aria-label={ emailPlaceholder }
 								disabled
+								id="mailchimp_email"
+								name="mailchimp_email"
 								placeholder={ emailPlaceholder }
 								onChange={ () => false }
 								title={ __( 'You can edit the email placeholder in the sidebar.' ) }
