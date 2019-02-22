@@ -80,8 +80,10 @@ export class LoginForm extends Component {
 
 	state = {
 		isFormDisabledWhileLoading: true,
+		invalidForm: false,
 		usernameOrEmail: this.props.socialAccountLinkEmail || this.props.userEmail || '',
 		password: '',
+		invalidUsernameOrEmail: false,
 	};
 
 	componentDidMount() {
@@ -151,9 +153,18 @@ export class LoginForm extends Component {
 
 	onChangeField = event => {
 		this.props.formUpdate();
-
+		const val = event.target.value;
+		this.validateUsernameOrEmail( val );
 		this.setState( {
-			[ event.target.name ]: event.target.value,
+			[ event.target.name ]: val,
+		} );
+	};
+
+	validateUsernameOrEmail = username => {
+		const validUsernameOrEmail = username.match( /[\\|\/]/g ) ? true : false;
+		this.setState( {
+			invalidUsernameOrEmail: validUsernameOrEmail,
+			invalidForm: validUsernameOrEmail,
 		} );
 	};
 
@@ -303,13 +314,13 @@ export class LoginForm extends Component {
 
 						<label htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
-								<a href="#" className="login__form-change-username" onClick={ this.resetView }>
+								<button href="#" className="login__form-change-username" onClick={ this.resetView }>
 									<Gridicon icon="arrow-left" size={ 18 } />
 
 									{ includes( this.state.usernameOrEmail, '@' )
 										? this.props.translate( 'Change Email Address' )
 										: this.props.translate( 'Change Username' ) }
-								</a>
+								</button>
 							) : (
 								this.props.translate( 'Email Address or Username' )
 							) }
@@ -331,6 +342,12 @@ export class LoginForm extends Component {
 						{ requestError && requestError.field === 'usernameOrEmail' && (
 							<FormInputValidation isError text={ requestError.message } />
 						) }
+						{ this.state.invalidUsernameOrEmail ? (
+							<FormInputValidation
+								isError
+								text={ this.props.translate( 'Username/Email should not include slashes.' ) }
+							/>
+						) : null }
 
 						<div
 							className={ classNames( 'login__form-password', {
@@ -384,7 +401,7 @@ export class LoginForm extends Component {
 					) }
 
 					<div className="login__form-action">
-						<FormsButton primary disabled={ isFormDisabled }>
+						<FormsButton primary disabled={ isFormDisabled || this.state.invalidForm }>
 							{ this.isPasswordView() || this.isFullView()
 								? this.props.translate( 'Log In' )
 								: this.props.translate( 'Continue' ) }
