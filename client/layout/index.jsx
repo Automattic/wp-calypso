@@ -179,9 +179,11 @@ export default connect( state => {
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
+	const noMasterbarForRoute = currentRoute === '/log-in/jetpack';
+	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 
 	return {
-		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === sectionName,
+		masterbarIsHidden: ! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
 		isJetpack: isJetpackSite( state, siteId ),
 		isLoading: isSectionLoading( state ),
 		isSupportSession: isSupportSession( state ),
