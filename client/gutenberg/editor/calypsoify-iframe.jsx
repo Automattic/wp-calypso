@@ -29,6 +29,7 @@ import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url'
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
+import { startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
 
 /**
@@ -109,11 +110,14 @@ class CalypsoifyIframe extends Component {
 
 		if ( 'draftIdSet' === action && ! this.props.postId ) {
 			const { postId } = payload;
-			const { currentRoute } = this.props;
+			const { siteId, currentRoute } = this.props;
 
 			if ( ! endsWith( currentRoute, `/${ postId }` ) ) {
 				this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
 				this.props.setRoute( `${ currentRoute }/${ postId }` );
+
+				//set postId on state.ui.editor.postId, so components like editor revisions can read from it
+				this.props.startEditingPost( siteId, postId );
 			}
 		}
 
@@ -229,6 +233,7 @@ const mapDispatchToProps = {
 	setRoute,
 	navigate,
 	openPostRevisionsDialog,
+	startEditingPost,
 };
 
 export default connect(
