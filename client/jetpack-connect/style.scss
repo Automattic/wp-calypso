@@ -74,10 +74,10 @@
 	}
 
 	.site-type__option.is-selected {
-		box-shadow: 0 0 0 1px $green-jetpack inset;
+		box-shadow: 0 0 0 1px var( --color-jetpack ) inset;
 
 		input[type='radio']:checked::before {
-			background-color: $green-jetpack;
+			background-color: var( --color-jetpack );
 		}
 	}
 }
