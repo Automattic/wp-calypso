@@ -11,7 +11,10 @@ export function renderPhone( inputText ) {
 			if ( number.trim() === '' ) {
 				return number;
 			}
-			const just_number = number.replace( /\D/g, '' );
+			let just_number = number.replace( /\D/g, '' );
+			if ( number.startsWith( '+' ) ) {
+				just_number = '+' + just_number;
+			}
 
 			return (
 				<a href={ `tel:${ just_number }` } key={ i }>
