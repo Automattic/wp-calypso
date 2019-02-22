@@ -179,8 +179,10 @@ export class EditorMediaModal extends Component {
 			() => {
 				// Reset the query so that we're adding the new media items to the correct
 				// list, with no external source.
-				MediaActions.setQuery( site.ID, {} );
-				MediaActions.addExternal( site, selectedMedia, originalSource );
+				setTimeout( () => {
+					MediaActions.setQuery( site.ID, {} );
+					MediaActions.addExternal( site, selectedMedia, originalSource );
+				}, 0 );
 			}
 		);
 	}
@@ -219,18 +221,8 @@ export class EditorMediaModal extends Component {
 			const itemsWithTransientId = mediaLibrarySelectedItems.map( item =>
 				Object.assign( {}, item, { ID: uniqueId( 'media-' ), transient: true } )
 			);
-			if (
-				itemsWithTransientId.length === 1 &&
-				MediaUtils.getMimePrefix( itemsWithTransientId[ 0 ] ) === 'image'
-			) {
-				this.copyExternal( itemsWithTransientId, this.state.source );
-				this.props.onClose( {
-					type: 'media',
-					items: itemsWithTransientId,
-				} );
-			} else {
-				this.copyExternalAfterLoadingWordPressLibrary( itemsWithTransientId, this.state.source );
-			}
+
+			this.copyExternalAfterLoadingWordPressLibrary( itemsWithTransientId, this.state.source );
 		} else {
 			const value = mediaLibrarySelectedItems.length
 				? {
@@ -493,21 +485,10 @@ export class EditorMediaModal extends Component {
 			},
 		];
 
-		const getConfirmButtonLabelForExternal = () => {
-			let label = this.props.translate( 'Insert' );
-			if (
-				selectedItems.length > 1 ||
-				( selectedItems.length === 1 && MediaUtils.getMimePrefix( selectedItems[ 0 ] ) !== 'image' )
-			) {
-				label = this.props.translate( 'Copy to media library' );
-			}
-			return label;
-		};
-
 		if ( this.state.source !== '' ) {
 			buttons.push( {
 				action: 'confirm',
-				label: this.props.labels.confirm || getConfirmButtonLabelForExternal(),
+				label: this.props.labels.confirm || this.props.translate( 'Copy to media library' ),
 				isPrimary: true,
 				disabled: isDisabled || 0 === selectedItems.length,
 				onClick: this.confirmSelection,
