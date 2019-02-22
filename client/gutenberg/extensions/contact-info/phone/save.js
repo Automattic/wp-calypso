@@ -12,7 +12,7 @@ export function renderPhone( inputText ) {
 				return number;
 			}
 			let justNumber = number.replace( /\D/g, '' );
-			// Numbers starting with + shoud be part of the number.
+			// Phone numbers starting with + shoud be part of the number.
 			if ( number.substring( 0, 1 ) === '+' ) {
 				justNumber = '+' + justNumber;
 			}
