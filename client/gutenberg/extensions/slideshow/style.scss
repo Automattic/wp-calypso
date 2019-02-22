@@ -52,14 +52,14 @@
 		background-color: rgba( 0, 0, 0, 0.5 );
 		background-position: center;
 		background-repeat: no-repeat;
+		background-size: 24px;
 		border: 0;
 		width: 24px;
-		height: 40px;
-		background-size: 24px 40px;
+		height: 24px;
 		box-sizing: content-box;
-		padding: 10px;
+		padding: 12px;
 		border-radius: 4px;
-		margin-top: -30px;
+		margin-top: -24px;
 		transition: background-color 250ms;
 
 		&:focus,
@@ -73,11 +73,19 @@
 		}
 	}
 
+	&.swiper-container-rtl .wp-block-jetpack-slideshow_button-prev,
+	.wp-block-jetpack-slideshow_button-next {
+		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M5.88 4.12L13.76 12l-7.88 7.88L8 22l10-10L8 2z" fill="white"/><path fill="none" d="M0 0h24v24H0z"/></svg>' );
+	}
+
+	&.swiper-container-rtl .wp-block-jetpack-slideshow_button-next,
+	.wp-block-jetpack-slideshow_button-prev {
+		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M18 4.12L10.12 12 18 19.88 15.88 22l-10-10 10-10z" fill="white"/><path fill="none" d="M0 0h24v24H0z"/></svg>' );
+	}
+
 	.wp-block-jetpack-slideshow_button-pause {
 		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="white"/><path d="M0 0h24v24H0z" fill="none"/></svg>' );
-		background-size: 24px;
 		display: none;
-		height: 24px;
 		margin-top: 0;
 		position: absolute;
 		right: 10px;
