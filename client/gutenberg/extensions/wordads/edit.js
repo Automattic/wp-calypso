@@ -38,7 +38,7 @@ class WordAdsEdit extends Component {
 						className="jetpack-wordads__ad"
 						style={ {
 							width: selectedFormatObject.width,
-							height: selectedFormatObject.height + 30,
+							height: selectedFormatObject.height + selectedFormatObject.editorPadding,
 						} }
 					>
 						<div className="jetpack-wordads__header">{ __( 'Advertisements' ) }</div>
