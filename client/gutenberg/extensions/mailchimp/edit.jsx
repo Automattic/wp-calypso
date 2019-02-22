@@ -205,7 +205,7 @@ class MailchimpSubscribeEdit extends Component {
 							</div>
 						</p>
 						<RichText
-							tagName="small"
+							tagName="p"
 							placeholder={ __( 'Write consent text' ) }
 							value={ consentText }
 							onChange={ value => setAttributes( { consentText: value } ) }
