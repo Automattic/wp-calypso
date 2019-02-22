@@ -57,9 +57,9 @@
 		height: 40px;
 		background-size: 24px 40px;
 		box-sizing: content-box;
-		padding: 12px 10px;
+		padding: 10px;
 		border-radius: 4px;
-		margin-top: -32px;
+		margin-top: -30px;
 		transition: background-color 250ms;
 
 		&:focus,
@@ -75,11 +75,13 @@
 
 	.wp-block-jetpack-slideshow_button-pause {
 		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/><path d="M0 0h24v24H0z" fill="none"/></svg>' );
+		background-size: 24px;
 		display: none;
-		left: 0;
+		height: 24px;
 		margin-top: 0;
 		position: absolute;
-		top: 0;
+		right: 10px;
+		top: 10px;
 		z-index: 1;
 	}
 
