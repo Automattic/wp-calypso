@@ -125,7 +125,7 @@
 	}
 
 	.list-item {
-		border-top: 1px solid $border-ultra-light-gray;
+		border-top: 1px solid var( --color-border-subtle );
 		align-items: center;
 	}
 
@@ -217,7 +217,7 @@
 
 .payments__method-edit-fields {
 	padding: 16px;
-	border-top: 1px solid $border-ultra-light-gray;
+	border-top: 1px solid var( --color-border-subtle );
 	width: 100%;
 
 	@include breakpoint( '>480px' ) {

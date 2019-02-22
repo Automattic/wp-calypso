@@ -92,7 +92,7 @@
 
 .order-activity-log__new-note-content {
 	margin: 0 -15px 16px;
-	border: 1px solid $border-ultra-light-gray;
+	border: 1px solid var( --color-border-subtle );
 	border-width: 1px 0;
 
 	@include breakpoint( '>480px' ) {
