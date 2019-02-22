@@ -58,7 +58,7 @@
 		margin-bottom: $active-item-outline-width;
 
 		&:hover {
-			background-color: $light-gray-100;
+			background-color: $light-gray-100 !important;
 			color: $dark-gray-900;
 		}
 
