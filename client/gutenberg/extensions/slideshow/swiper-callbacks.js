@@ -33,11 +33,20 @@ function swiperResize( swiper ) {
 	swiper.el.querySelector( '.wp-block-jetpack-slideshow_button-next' ).style.top = buttonTop;
 }
 
+function announceCurrentSlide( swiper ) {
+	const currentSlide = swiper.slides[ swiper.activeIndex ];
+	const figcaption = currentSlide.getElementsByTagName( 'FIGCAPTION' )[ 0 ];
+	const img = currentSlide.getElementsByTagName( 'IMG' )[ 0 ];
+	const notification = figcaption ? figcaption.innerText : img.alt;
+	swiper.a11y.notify( notification );
+}
+
 function swiperApplyAria( swiper ) {
 	forEach( swiper.slides, ( slide, index ) => {
 		slide.setAttribute( 'aria-hidden', index === swiper.activeIndex ? 'false' : 'true' );
 		slide.setAttribute( 'tabindex', index === swiper.activeIndex ? '-1' : '0' );
 	} );
+	announceCurrentSlide( swiper );
 }
 
 function swiperPaginationRender( swiper ) {
