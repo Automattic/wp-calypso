@@ -21,6 +21,11 @@ import getSites from 'state/selectors/get-sites';
 import isSiteInProfileLinks from 'state/selectors/is-site-in-profile-links';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ProfileLinksAddWordPress extends Component {
 	// an empty initial state is required to keep render and handleCheckedChange
 	// code simpler / easier to maintain
