@@ -36,7 +36,6 @@ class Slideshow extends Component {
 		this.buildSwiper().then( swiper => {
 			this.swiperInstance = swiper;
 			this.initializeResizeObserver( swiper );
-			this.initializeHoverEvents( swiper );
 		} );
 	}
 
@@ -64,7 +63,6 @@ class Slideshow extends Component {
 			this.buildSwiper( realIndex ).then( swiper => {
 				this.swiperInstance = swiper;
 				this.initializeResizeObserver( swiper );
-				this.initializeHoverEvents( swiper );
 			} );
 		}
 	}
@@ -93,24 +91,6 @@ class Slideshow extends Component {
 			this.resizeObserver.disconnect();
 			this.resizeObserver = null;
 		}
-	};
-
-	initializeHoverEvents = swiper => {
-		swiper.el.addEventListener( 'mouseover', this.pauseAutoplay );
-		swiper.el.addEventListener( 'mouseout', this.resumeAutoplay );
-	};
-
-	destroyHoverEvents = swiper => {
-		swiper.el.removeEventListener( 'mouseover', this.pauseAutoplay );
-		swiper.el.removeEventListener( 'mouseout', this.resumeAutoplay );
-	};
-
-	pauseAutoplay = () => {
-		this.swiperInstance.autoplay.stop();
-	};
-
-	resumeAutoplay = () => {
-		this.props.autoplay && ! this.prefersReducedMotion() && this.swiperInstance.autoplay.start();
 	};
 
 	render() {
@@ -200,7 +180,6 @@ class Slideshow extends Component {
 				},
 			},
 			{
-				beforeDestroy: this.destroyHoverEvents,
 				init: swiperInit,
 				imagesReady: swiperResize,
 				paginationRender: swiperPaginationRender,
