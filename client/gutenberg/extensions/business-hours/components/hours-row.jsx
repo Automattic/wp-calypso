@@ -14,18 +14,17 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 const defaultOpen = '09:00';
 const defaultClose = '17:00';
 
-class HoursRow extends Component {
-	renderOpenedRow = ( rowHours, index ) => {
-		const { day, attributes, setAttributes, resetFocus, edit = true } = this.props;
-		const { hours } = attributes;
-		const { opening, closing } = rowHours;
+class Day extends Component {
+	renderHour = ( hour, hourIndex ) => {
+		const { day, resetFocus, edit = true } = this.props;
+		const { opening, closing } = hour;
 		return (
 			<Fragment>
-				<div className="business-hours__row" key={ index }>
-					<div className={ classNames( day, 'business-hours__day' ) }>
-						{ index === 0 && this.renderDayColumn() }
+				<div className="business-hours__row" key={ hourIndex }>
+					<div className={ classNames( day.name, 'business-hours__day' ) }>
+						{ hourIndex === 0 && this.renderDayToggle() }
 					</div>
-					<div className={ classNames( day, 'business-hours__hours' ) }>
+					<div className={ classNames( day.name, 'business-hours__hours' ) }>
 						{ edit ? (
 							<TextControl
 								type="time"
@@ -34,20 +33,7 @@ class HoursRow extends Component {
 								className="business-hours__open"
 								onChange={ value => {
 									resetFocus && resetFocus();
-									setAttributes( {
-										hours: {
-											...hours,
-											[ day ]: hours[ day ].map( ( daysHours, daysIndex ) => {
-												if ( daysIndex === index ) {
-													return {
-														...daysHours,
-														opening: value,
-													};
-												}
-												return daysHours;
-											} ),
-										},
-									} );
+									this.setHour( value, 'opening', hourIndex );
 								} }
 							/>
 						) : (
@@ -61,20 +47,7 @@ class HoursRow extends Component {
 								className="business-hours__close"
 								onChange={ value => {
 									resetFocus && resetFocus();
-									setAttributes( {
-										hours: {
-											...hours,
-											[ day ]: hours[ day ].map( ( daysHours, daysIndex ) => {
-												if ( daysIndex === index ) {
-													return {
-														...daysHours,
-														closing: value,
-													};
-												}
-												return daysHours;
-											} ),
-										},
-									} );
+									this.setHour( value, 'closing', hourIndex );
 								} }
 							/>
 						) : (
@@ -82,29 +55,28 @@ class HoursRow extends Component {
 						) }
 					</div>
 					<div className="business-hours__remove">
-						{ hours[ day ].length > 1 && (
+						{ day.hours.length > 1 && (
 							<IconButton
 								isSmall
 								isLink
 								icon="trash"
 								onClick={ () => {
-									this.removeHours( day, index );
+									this.removeHour( hourIndex );
 								} }
 							/>
 						) }
 					</div>
 				</div>
-				{ index === hours[ day ].length - 1 && (
+				{ hourIndex === day.hours.length - 1 && (
 					<div className="business-hours__row business-hours-row__add">
-						<div className={ classNames( day, 'business-hours__day' ) }>&nbsp;</div>
-						<div className={ classNames( day, 'business-hours__hours' ) }>
+						<div className={ classNames( day.name, 'business-hours__day' ) }>&nbsp;</div>
+						<div className={ classNames( day.name, 'business-hours__hours' ) }>
 							<IconButton
 								isSmall
 								isLink
 								label={ __( 'Add Hours' ) }
 								icon="plus-alt"
-								onClick={ this.addHours }
-								data-day={ day }
+								onClick={ this.addHour }
 							>
 								{ __( 'Add Hours' ) }
 							</IconButton>
@@ -115,70 +87,96 @@ class HoursRow extends Component {
 			</Fragment>
 		);
 	};
-	toggleClosed = nextValue => {
+	setHour = ( hourValue, hourType, hourIndex ) => {
 		const { day, attributes, setAttributes } = this.props;
-		const { hours } = attributes;
-		const todaysHours = isEmpty( hours[ day ][ 0 ] ) ? {} : hours[ day ][ 0 ];
-		if ( nextValue ) {
-			setAttributes( {
-				hours: {
-					...hours,
-					[ day ]: [
-						{
-							...todaysHours,
-							opening: defaultOpen,
-							closing: defaultClose,
-						},
-					],
-				},
-			} );
-		} else {
-			setAttributes( {
-				hours: {
-					...hours,
-					[ day ]: [],
-				},
-			} );
-		}
-	};
-	addHours = ( {
-		target: {
-			dataset: { day },
-		},
-	} ) => {
-		const { attributes, setAttributes } = this.props;
-		const { hours } = attributes;
-		hours[ day ].push( { opening: '', closing: '' } );
+		const { days } = attributes;
 		setAttributes( {
-			hours: {
-				...hours,
-				[ day ]: hours[ day ],
-			},
+			days: days.map( value => {
+				if ( value.name === day.name ) {
+					return {
+						...value,
+						hours: value.hours.map( ( hour, index ) => {
+							if ( index === hourIndex ) {
+								return {
+									...hour,
+									[ hourType ]: hourValue,
+								};
+							}
+							return hour;
+						} ),
+					};
+				}
+				return value;
+			} ),
 		} );
 	};
-	removeHours = ( day, index ) => {
-		const { attributes, setAttributes } = this.props;
-		const { hours } = attributes;
+	toggleClosed = nextValue => {
+		const { day, attributes, setAttributes } = this.props;
+		const { days } = attributes;
+
 		setAttributes( {
-			hours: {
-				...hours,
-				[ day ]: hours[ day ].filter( ( daysHours, hoursIndex ) => {
-					return hoursIndex !== index;
-				} ),
-			},
+			days: days.map( value => {
+				if ( value.name === day.name ) {
+					const hours = nextValue
+						? [
+								{
+									opening: defaultOpen,
+									closing: defaultClose,
+								},
+						  ]
+						: [];
+					return {
+						...value,
+						hours,
+					};
+				}
+				return value;
+			} ),
+		} );
+	};
+	addHour = () => {
+		const { day, attributes, setAttributes } = this.props;
+		const { days } = attributes;
+		day.hours.push( { opening: '', closing: '' } );
+		setAttributes( {
+			days: days.map( value => {
+				if ( value.name === day.name ) {
+					return {
+						...value,
+						hours: day.hours,
+					};
+				}
+				return value;
+			} ),
+		} );
+	};
+	removeHour = hourIndex => {
+		const { day, attributes, setAttributes } = this.props;
+		const { days } = attributes;
+
+		setAttributes( {
+			days: days.map( value => {
+				if ( day.name === value.name ) {
+					return {
+						...value,
+						hours: value.hours.filter( ( hour, index ) => {
+							return hourIndex !== index;
+						} ),
+					};
+				}
+				return value;
+			} ),
 		} );
 	};
 	isClosed() {
-		const { day, attributes } = this.props;
-		const { hours } = attributes;
-		return isEmpty( hours[ day ][ 0 ] ) && isEmpty( hours[ day ][ 0 ] );
+		const { day } = this.props;
+		return isEmpty( day.hours );
 	}
-	renderDayColumn() {
-		const { day, edit = true, data } = this.props;
-		const { days } = data;
+	renderDayToggle() {
+		const { day, edit = true, localization } = this.props;
 		return (
 			<Fragment>
-				<span className="business-hours__day-name">{ days[ day ] }</span>
+				<span className="business-hours__day-name">{ localization.days[ day.name ] }</span>
 				{ edit && (
 					<ToggleControl
 						label={ this.isClosed() ? __( 'Closed' ) : __( 'Open' ) }
@@ -189,12 +187,14 @@ class HoursRow extends Component {
 			</Fragment>
 		);
 	}
-	renderClosedRow() {
+	renderClosed() {
 		const { day, edit = true } = this.props;
 		return (
 			<div className="business-hours__row business-hours-row__closed">
-				<div className={ classNames( day, 'business-hours__day' ) }>{ this.renderDayColumn() }</div>
-				<div className={ classNames( day, 'closed', 'business-hours__hours' ) }>
+				<div className={ classNames( day.name, 'business-hours__day' ) }>
+					{ this.renderDayToggle() }
+				</div>
+				<div className={ classNames( day.name, 'closed', 'business-hours__hours' ) }>
 					{ ! edit && __( 'CLOSED' ) }
 				</div>
 				<div className="business-hours__remove">&nbsp;</div>
@@ -202,10 +202,9 @@ class HoursRow extends Component {
 		);
 	}
 	render() {
-		const { day, attributes } = this.props;
-		const { hours } = attributes;
-		return this.isClosed() ? this.renderClosedRow() : hours[ day ].map( this.renderOpenedRow );
+		const { day } = this.props;
+		return this.isClosed() ? this.renderClosed() : day.hours.map( this.renderHour );
 	}
 }
 
-export default HoursRow;
+export default Day;
