@@ -10,7 +10,7 @@ import {
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
 } from 'state/action-types';
 import wp from 'lib/wp';
-import { maybeInjectPlaceholderTaxAmountIntoCharge } from 'lib/checkout/tax-placeholder';
+import { maybeInjectPlaceholderTaxAmountIntoCharge } from 'lib/tax';
 
 export const requestBillingTransaction = transactionId => dispatch => {
 	dispatch( {
