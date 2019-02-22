@@ -15,14 +15,14 @@ const defaultOpen = '09:00';
 const defaultClose = '17:00';
 
 class Day extends Component {
-	renderHour = ( hour, hourIndex ) => {
+	renderInterval = ( interval, intervalIndex ) => {
 		const { day, resetFocus, edit = true } = this.props;
-		const { opening, closing } = hour;
+		const { opening, closing } = interval;
 		return (
 			<Fragment>
-				<div className="business-hours__row" key={ hourIndex }>
+				<div className="business-hours__row" key={ intervalIndex }>
 					<div className={ classNames( day.name, 'business-hours__day' ) }>
-						{ hourIndex === 0 && this.renderDayToggle() }
+						{ intervalIndex === 0 && this.renderDayToggle() }
 					</div>
 					<div className={ classNames( day.name, 'business-hours__hours' ) }>
 						{ edit ? (
@@ -33,7 +33,7 @@ class Day extends Component {
 								className="business-hours__open"
 								onChange={ value => {
 									resetFocus && resetFocus();
-									this.setHour( value, 'opening', hourIndex );
+									this.setHour( value, 'opening', intervalIndex );
 								} }
 							/>
 						) : (
@@ -47,7 +47,7 @@ class Day extends Component {
 								className="business-hours__close"
 								onChange={ value => {
 									resetFocus && resetFocus();
-									this.setHour( value, 'closing', hourIndex );
+									this.setHour( value, 'closing', intervalIndex );
 								} }
 							/>
 						) : (
@@ -61,13 +61,13 @@ class Day extends Component {
 								isLink
 								icon="trash"
 								onClick={ () => {
-									this.removeHour( hourIndex );
+									this.removeInterval( intervalIndex );
 								} }
 							/>
 						) }
 					</div>
 				</div>
-				{ hourIndex === day.hours.length - 1 && (
+				{ intervalIndex === day.hours.length - 1 && (
 					<div className="business-hours__row business-hours-row__add">
 						<div className={ classNames( day.name, 'business-hours__day' ) }>&nbsp;</div>
 						<div className={ classNames( day.name, 'business-hours__hours' ) }>
@@ -76,7 +76,7 @@ class Day extends Component {
 								isLink
 								label={ __( 'Add Hours' ) }
 								icon="plus-alt"
-								onClick={ this.addHour }
+								onClick={ this.addInterval }
 							>
 								{ __( 'Add Hours' ) }
 							</IconButton>
@@ -134,7 +134,7 @@ class Day extends Component {
 			} ),
 		} );
 	};
-	addHour = () => {
+	addInterval = () => {
 		const { day, attributes, setAttributes } = this.props;
 		const { days } = attributes;
 		day.hours.push( { opening: '', closing: '' } );
@@ -150,7 +150,7 @@ class Day extends Component {
 			} ),
 		} );
 	};
-	removeHour = hourIndex => {
+	removeInterval = hourIndex => {
 		const { day, attributes, setAttributes } = this.props;
 		const { days } = attributes;
 
@@ -203,7 +203,7 @@ class Day extends Component {
 	}
 	render() {
 		const { day } = this.props;
-		return this.isClosed() ? this.renderClosed() : day.hours.map( this.renderHour );
+		return this.isClosed() ? this.renderClosed() : day.hours.map( this.renderInterval );
 	}
 }
 
