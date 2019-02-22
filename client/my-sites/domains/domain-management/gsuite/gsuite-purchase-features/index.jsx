@@ -19,7 +19,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
  */
 import './style.scss';
 
-class GSuitePurchaseCtaFeatures extends React.Component {
+class GSuitePurchaseFeatures extends React.Component {
 	handleLearnMoreClick = () => {
 		this.props.learnMoreClick( this.props.domainName );
 	};
@@ -41,16 +41,16 @@ class GSuitePurchaseCtaFeatures extends React.Component {
 				<div
 					className={
 						'grid' === type
-							? 'gsuite-purchase-cta__add-google-apps-card-features-grid'
-							: 'gsuite-purchase-cta__add-google-apps-card-features-list'
+							? 'gsuite-purchase-features__features-grid'
+							: 'gsuite-purchase-features__features-list'
 					}
 				>
-					<div className="gsuite-purchase-cta__add-google-apps-card-feature">
-						<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
+					<div className="gsuite-purchase-features__feature">
+						<div className="gsuite-purchase-features__feature-block">
 							<img alt="Gmail Logo" src="/calypso/images/g-suite/logo_gmail_48dp.svg" />
 						</div>
-						<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
-							<h5 className="gsuite-purchase-cta__add-google-apps-card-feature-header">
+						<div className="gsuite-purchase-features__feature-block">
+							<h5 className="gsuite-purchase-features__feature-header">
 								{ translate( 'Gmail for @%(domain)s', {
 									args: {
 										domain: domainName,
@@ -63,39 +63,39 @@ class GSuitePurchaseCtaFeatures extends React.Component {
 						</div>
 					</div>
 
-					<div className="gsuite-purchase-cta__add-google-apps-card-feature">
-						<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
+					<div className="gsuite-purchase-features__feature">
+						<div className="gsuite-purchase-features__feature-block">
 							<img alt="Google Drive Logo" src="/calypso/images/g-suite/logo_drive_48dp.svg" />
 						</div>
-						<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
-							<h5 className="gsuite-purchase-cta__add-google-apps-card-feature-header">
+						<div className="gsuite-purchase-features__feature-block">
+							<h5 className="gsuite-purchase-features__feature-header">
 								{ translate( 'Keep all your files secure' ) }
 							</h5>
 							<p>{ this.getStorageText() }</p>
 						</div>
 					</div>
 
-					<div className="gsuite-purchase-cta__add-google-apps-card-feature">
-						<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
+					<div className="gsuite-purchase-features__feature">
+						<div className="gsuite-purchase-features__feature-block">
 							<img alt="Google Docs Logo" src="/calypso/images/g-suite/logo_docs_48dp.svg" />
 						</div>
-						<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
-							<h5 className="gsuite-purchase-cta__add-google-apps-card-feature-header">
+						<div className="gsuite-purchase-features__feature-block">
+							<h5 className="gsuite-purchase-features__feature-header">
 								{ translate( 'Docs, spreadsheets and forms' ) }
 							</h5>
 							<p>{ translate( 'Create and edit documents to get your work done faster.' ) }</p>
 						</div>
 					</div>
 
-					<div className="gsuite-purchase-cta__add-google-apps-card-feature">
-						<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
+					<div className="gsuite-purchase-features__feature">
+						<div className="gsuite-purchase-features__feature-block">
 							<img
 								alt="Google Hangouts Logo"
 								src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
 							/>
 						</div>
-						<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
-							<h5 className="gsuite-purchase-cta__add-google-apps-card-feature-header">
+						<div className="gsuite-purchase-features__feature-block">
+							<h5 className="gsuite-purchase-features__feature-header">
 								{ translate( 'Connect with your team' ) }
 							</h5>
 							<p>
@@ -107,7 +107,7 @@ class GSuitePurchaseCtaFeatures extends React.Component {
 					</div>
 				</div>
 
-				<div className="gsuite-purchase-cta__add-google-apps-card-learn-more">
+				<div className="gsuite-purchase-features__learn-more">
 					<p>
 						{ translate(
 							'{{strong}}No setup or software required.{{/strong}} ' +
@@ -117,7 +117,7 @@ class GSuitePurchaseCtaFeatures extends React.Component {
 									strong: <strong />,
 									a: (
 										<a
-											className="gsuite-purchase-cta__add-google-apps-card-learn-more-link"
+											className="gsuite-purchase-features__learn-more-link"
 											href={ ADDING_GOOGLE_APPS_TO_YOUR_SITE }
 											target="_blank"
 											rel="noopener noreferrer"
@@ -147,17 +147,17 @@ const learnMoreClick = domainName =>
 		)
 	);
 
-GSuitePurchaseCtaFeatures.propTypes = {
+GSuitePurchaseFeatures.propTypes = {
 	domainName: PropTypes.string.isRequired,
 	productSlug: PropTypes.string.isRequired,
 	type: PropTypes.oneOf( [ 'grid', 'list' ] ),
 };
 
-GSuitePurchaseCtaFeatures.defaultProps = {
+GSuitePurchaseFeatures.defaultProps = {
 	type: 'grid',
 };
 
 export default connect(
 	null,
 	{ learnMoreClick }
-)( localize( GSuitePurchaseCtaFeatures ) );
+)( localize( GSuitePurchaseFeatures ) );

@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GSuitePurchaseCtaFeatures it renders GSuitePurchaseCtaFeatures in a grid 1`] = `
+exports[`GSuitePurchaseFeatures it renders GSuitePurchaseFeatures in a grid 1`] = `
 Array [
   <div
-    className="gsuite-purchase-cta__add-google-apps-card-features-grid"
+    className="gsuite-purchase-features__features-grid"
   >
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Gmail Logo"
@@ -17,10 +17,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Gmail for @testing123.com
         </h5>
@@ -30,10 +30,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Drive Logo"
@@ -41,10 +41,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Keep all your files secure
         </h5>
@@ -54,10 +54,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Docs Logo"
@@ -65,10 +65,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Docs, spreadsheets and forms
         </h5>
@@ -78,10 +78,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Hangouts Logo"
@@ -89,10 +89,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Connect with your team
         </h5>
@@ -103,7 +103,7 @@ Array [
     </div>
   </div>,
   <div
-    className="gsuite-purchase-cta__add-google-apps-card-learn-more"
+    className="gsuite-purchase-features__learn-more"
   >
     <p>
       <strong>
@@ -111,7 +111,7 @@ Array [
       </strong>
        
       <a
-        className="gsuite-purchase-cta__add-google-apps-card-learn-more-link"
+        className="gsuite-purchase-features__learn-more-link"
         href="https://en.support.wordpress.com/adding-g-suite-to-your-site"
         onClick={[Function]}
         rel="noopener noreferrer"
@@ -124,16 +124,16 @@ Array [
 ]
 `;
 
-exports[`GSuitePurchaseCtaFeatures it renders GSuitePurchaseCtaFeatures in a list 1`] = `
+exports[`GSuitePurchaseFeatures it renders GSuitePurchaseFeatures in a list 1`] = `
 Array [
   <div
-    className="gsuite-purchase-cta__add-google-apps-card-features-list"
+    className="gsuite-purchase-features__features-list"
   >
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Gmail Logo"
@@ -141,10 +141,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Gmail for @testing123.com
         </h5>
@@ -154,10 +154,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Drive Logo"
@@ -165,10 +165,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Keep all your files secure
         </h5>
@@ -178,10 +178,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Docs Logo"
@@ -189,10 +189,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Docs, spreadsheets and forms
         </h5>
@@ -202,10 +202,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Hangouts Logo"
@@ -213,10 +213,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Connect with your team
         </h5>
@@ -227,7 +227,7 @@ Array [
     </div>
   </div>,
   <div
-    className="gsuite-purchase-cta__add-google-apps-card-learn-more"
+    className="gsuite-purchase-features__learn-more"
   >
     <p>
       <strong>
@@ -235,7 +235,7 @@ Array [
       </strong>
        
       <a
-        className="gsuite-purchase-cta__add-google-apps-card-learn-more-link"
+        className="gsuite-purchase-features__learn-more-link"
         href="https://en.support.wordpress.com/adding-g-suite-to-your-site"
         onClick={[Function]}
         rel="noopener noreferrer"
@@ -248,16 +248,16 @@ Array [
 ]
 `;
 
-exports[`GSuitePurchaseCtaFeatures it renders GSuitePurchaseCtaFeatures with basic plan 1`] = `
+exports[`GSuitePurchaseFeatures it renders GSuitePurchaseFeatures with basic plan 1`] = `
 Array [
   <div
-    className="gsuite-purchase-cta__add-google-apps-card-features-grid"
+    className="gsuite-purchase-features__features-grid"
   >
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Gmail Logo"
@@ -265,10 +265,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Gmail for @testing123.com
         </h5>
@@ -278,10 +278,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Drive Logo"
@@ -289,10 +289,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Keep all your files secure
         </h5>
@@ -302,10 +302,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Docs Logo"
@@ -313,10 +313,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Docs, spreadsheets and forms
         </h5>
@@ -326,10 +326,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Hangouts Logo"
@@ -337,10 +337,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Connect with your team
         </h5>
@@ -351,7 +351,7 @@ Array [
     </div>
   </div>,
   <div
-    className="gsuite-purchase-cta__add-google-apps-card-learn-more"
+    className="gsuite-purchase-features__learn-more"
   >
     <p>
       <strong>
@@ -359,7 +359,7 @@ Array [
       </strong>
        
       <a
-        className="gsuite-purchase-cta__add-google-apps-card-learn-more-link"
+        className="gsuite-purchase-features__learn-more-link"
         href="https://en.support.wordpress.com/adding-g-suite-to-your-site"
         onClick={[Function]}
         rel="noopener noreferrer"
@@ -372,16 +372,16 @@ Array [
 ]
 `;
 
-exports[`GSuitePurchaseCtaFeatures it renders GSuitePurchaseCtaFeatures with business plan 1`] = `
+exports[`GSuitePurchaseFeatures it renders GSuitePurchaseFeatures with business plan 1`] = `
 Array [
   <div
-    className="gsuite-purchase-cta__add-google-apps-card-features-grid"
+    className="gsuite-purchase-features__features-grid"
   >
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Gmail Logo"
@@ -389,10 +389,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Gmail for @testing123.com
         </h5>
@@ -402,10 +402,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Drive Logo"
@@ -413,10 +413,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Keep all your files secure
         </h5>
@@ -426,10 +426,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Docs Logo"
@@ -437,10 +437,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Docs, spreadsheets and forms
         </h5>
@@ -450,10 +450,10 @@ Array [
       </div>
     </div>
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-feature"
+      className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <img
           alt="Google Hangouts Logo"
@@ -461,10 +461,10 @@ Array [
         />
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-feature-block"
+        className="gsuite-purchase-features__feature-block"
       >
         <h5
-          className="gsuite-purchase-cta__add-google-apps-card-feature-header"
+          className="gsuite-purchase-features__feature-header"
         >
           Connect with your team
         </h5>
@@ -475,7 +475,7 @@ Array [
     </div>
   </div>,
   <div
-    className="gsuite-purchase-cta__add-google-apps-card-learn-more"
+    className="gsuite-purchase-features__learn-more"
   >
     <p>
       <strong>
@@ -483,7 +483,7 @@ Array [
       </strong>
        
       <a
-        className="gsuite-purchase-cta__add-google-apps-card-learn-more-link"
+        className="gsuite-purchase-features__learn-more-link"
         href="https://en.support.wordpress.com/adding-g-suite-to-your-site"
         onClick={[Function]}
         rel="noopener noreferrer"

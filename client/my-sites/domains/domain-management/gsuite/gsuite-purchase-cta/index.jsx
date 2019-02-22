@@ -19,7 +19,7 @@ import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getEligibleDomain } from 'lib/domains/gsuite';
-import GSuitePurchaseCtaFeatures from './features';
+import GSuitePurchaseFeatures from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-features';
 
 /**
  * Style dependencies
@@ -105,7 +105,7 @@ class GSuitePurchaseCta extends React.Component {
 				</CompactCard>
 
 				<CompactCard>
-					<GSuitePurchaseCtaFeatures
+					<GSuitePurchaseFeatures
 						domainName={ domainName }
 						productSlug={ productSlug }
 						type={ 'grid' }

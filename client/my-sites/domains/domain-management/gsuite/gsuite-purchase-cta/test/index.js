@@ -13,8 +13,10 @@ import { createReduxStore } from 'state';
 import GSuitePurchaseCta from '../';
 
 jest.mock( 'components/email-verification/email-verification-gate', () => 'EmailVerificationGate' );
-
-jest.mock( '../features', () => 'GSuitePurchaseCtaFeatures' );
+jest.mock(
+	'my-sites/domains/domain-management/gsuite/gsuite-purchase-features',
+	() => 'GSuitePurchaseFeatures'
+);
 
 describe( 'GSuitePurchaseCta', () => {
 	test( 'it renders GSuitePurchaseCta with basic plan', () => {

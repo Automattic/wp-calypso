@@ -10,42 +10,39 @@ import renderer from 'react-test-renderer';
  * Internal dependencies
  */
 import { createReduxStore } from 'state';
-import GSuitePurchaseCtaFeatures from '../features';
+import GSuitePurchaseFeatures from '../';
 
-describe( 'GSuitePurchaseCtaFeatures', () => {
-	test( 'it renders GSuitePurchaseCtaFeatures with basic plan', () => {
+describe( 'GSuitePurchaseFeatures', () => {
+	test( 'it renders GSuitePurchaseFeatures with basic plan', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
 				<Provider store={ store }>
-					<GSuitePurchaseCtaFeatures domainName={ 'testing123.com' } productSlug={ 'gapps' } />
+					<GSuitePurchaseFeatures domainName={ 'testing123.com' } productSlug={ 'gapps' } />
 				</Provider>
 			)
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
 	} );
 
-	test( 'it renders GSuitePurchaseCtaFeatures with business plan', () => {
+	test( 'it renders GSuitePurchaseFeatures with business plan', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
 				<Provider store={ store }>
-					<GSuitePurchaseCtaFeatures
-						domainName={ 'testing123.com' }
-						productSlug={ 'gappsbusiness' }
-					/>
+					<GSuitePurchaseFeatures domainName={ 'testing123.com' } productSlug={ 'gappsbusiness' } />
 				</Provider>
 			)
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
 	} );
 
-	test( 'it renders GSuitePurchaseCtaFeatures in a grid', () => {
+	test( 'it renders GSuitePurchaseFeatures in a grid', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
 				<Provider store={ store }>
-					<GSuitePurchaseCtaFeatures
+					<GSuitePurchaseFeatures
 						domainName={ 'testing123.com' }
 						productSlug={ 'gapps' }
 						type={ 'grid' }
@@ -56,12 +53,12 @@ describe( 'GSuitePurchaseCtaFeatures', () => {
 		expect( tree ).toMatchSnapshot();
 	} );
 
-	test( 'it renders GSuitePurchaseCtaFeatures in a list', () => {
+	test( 'it renders GSuitePurchaseFeatures in a list', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
 				<Provider store={ store }>
-					<GSuitePurchaseCtaFeatures
+					<GSuitePurchaseFeatures
 						domainName={ 'testing123.com' }
 						productSlug={ 'gapps' }
 						type={ 'list' }

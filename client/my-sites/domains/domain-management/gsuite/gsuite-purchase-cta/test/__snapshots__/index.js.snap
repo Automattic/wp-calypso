@@ -80,7 +80,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
   <div
     className="card is-compact"
   >
-    <GSuitePurchaseCtaFeatures
+    <GSuitePurchaseFeatures
       domainName=""
       productSlug="gapps"
       type="grid"
@@ -182,7 +182,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
   <div
     className="card is-compact"
   >
-    <GSuitePurchaseCtaFeatures
+    <GSuitePurchaseFeatures
       domainName=""
       productSlug="gappsbusiness"
       type="grid"

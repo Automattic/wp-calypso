@@ -101,45 +101,6 @@
 	}
 }
 
-.gsuite-purchase-cta__add-google-apps-card-features-grid {
-	box-sizing: border-box;
-	justify-content: justify-content;
-	margin: 1em 0;
-
-	@include breakpoint( '>960px' ) {
-		display: flex;
-		flex-flow: row wrap;
-	}
-}
-.gsuite-purchase-cta__add-google-apps-card-features-list {
-	box-sizing: border-box;
-	justify-content: justify-content;
-	margin: 1em 0;
-}
-
-.gsuite-purchase-cta__add-google-apps-card-feature {
-	display: flex;
-	flex-basis: 50%;
-	justify-content: flex-start;
-	margin-bottom: 1em;
-}
-
-.gsuite-purchase-cta__add-google-apps-card-feature-block {
-	align-items: flex-start;
-	padding: 0 1em 0 0;
-
-	p {
-		@include breakpoint( '>960px' ) {
-			max-width: 200px;
-		}
-	}
-}
-
-.gsuite-purchase-cta__add-google-apps-card-feature-header {
-	font-size: 17px;
-	font-weight: 600;
-}
-
 .gsuite-purchase-cta__add-google-apps-card-secondary-button {
 	.button {
 		float: none;
@@ -150,11 +111,4 @@
 			display: none;
 		}
 	}
-}
-
-.gsuite-purchase-cta__add-google-apps-card-learn-more {
-	color: var( --color-text-subtle );
-	font-size: 15px;
-	margin-top: 1em;
-	text-align: center;
 }
