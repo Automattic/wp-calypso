@@ -82,7 +82,7 @@ input[type='checkbox'] {
 	}
 
 	&:disabled:checked::before {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 	}
 }
 
