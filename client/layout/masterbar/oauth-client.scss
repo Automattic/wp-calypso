@@ -207,6 +207,19 @@
 				top: 106px;
 			}
 
+			@include breakpoint( '>660px' ) {
+				display: none;
+			}
+
+			&.login__form-terms-bottom {
+				display: none;
+
+				@include breakpoint( '>660px' ) {
+					display: block;
+					position: initial;
+				}
+			}
+
 			a {
 				font-weight: 500;
 			}
