@@ -11,10 +11,14 @@ export function renderPhone( inputText ) {
 			if ( number.trim() === '' ) {
 				return number;
 			}
-			const just_number = number.replace( /\D/g, '' );
+			let justNumber = number.replace( /\D/g, '' );
+			// Phone numbers starting with + shoud be part of the number.
+			if ( number.substring( 0, 1 ) === '+' ) {
+				justNumber = '+' + justNumber;
+			}
 
 			return (
-				<a href={ `tel:${ just_number }` } key={ i }>
+				<a href={ `tel:${ justNumber }` } key={ i }>
 					{ number }
 				</a>
 			);
