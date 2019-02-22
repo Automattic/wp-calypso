@@ -270,7 +270,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				{ this.renderBackLink() }
+				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) && this.renderBackLink() }
 			</div>
 		);
 	}
