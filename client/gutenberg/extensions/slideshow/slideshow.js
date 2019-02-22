@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, createRef } from '@wordpress/element';
 import { isEqual } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -140,6 +141,10 @@ class Slideshow extends Component {
 					<button
 						className="wp-block-jetpack-slideshow_button-next swiper-button-next swiper-button-white"
 						ref={ this.btnNextRef }
+					/>
+					<button
+						aria-label={ __( 'Pause/Play' ) }
+						className="wp-block-jetpack-slideshow_button-pause"
 					/>
 				</div>
 			</div>

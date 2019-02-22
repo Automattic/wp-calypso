@@ -47,7 +47,8 @@
 	}
 
 	.wp-block-jetpack-slideshow_button-prev,
-	.wp-block-jetpack-slideshow_button-next {
+	.wp-block-jetpack-slideshow_button-next,
+	.wp-block-jetpack-slideshow_button-pause {
 		background-color: rgba( 0, 0, 0, 0.5 );
 		background-position: center;
 		background-repeat: no-repeat;
@@ -70,6 +71,24 @@
 			outline: thin dotted #fff;
 			outline-offset: -4px;
 		}
+	}
+
+	.wp-block-jetpack-slideshow_button-pause {
+		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/><path d="M0 0h24v24H0z" fill="none"/></svg>' );
+		display: none;
+		left: 0;
+		margin-top: 0;
+		position: absolute;
+		top: 0;
+		z-index: 1;
+	}
+
+	.wp-block-jetpack-slideshow_autoplay-paused .wp-block-jetpack-slideshow_button-pause {
+		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/><path d="M0 0h24v24H0z" fill="none"/></svg>' );
+	}
+
+	&[data-autoplay='true'] .wp-block-jetpack-slideshow_button-pause {
+		display: block;
 	}
 
 	.wp-block-jetpack-slideshow_caption.gallery-caption {
