@@ -1,17 +1,19 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class InviteFormHeader extends React.Component {
 	static displayName = 'InviteFormHeader';
