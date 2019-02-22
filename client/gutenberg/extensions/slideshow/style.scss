@@ -7,6 +7,12 @@
 		margin: 0;
 		line-height: normal;
 	}
+
+	// Override UL left margin from theme styles
+	.edit-post-visual-editor & ul.wp-block-jetpack-slideshow_swiper-wrappper {
+		margin: 0;
+	}
+
 	.wp-block-jetpack-slideshow_container {
 		width: 100%;
 		overflow: hidden;
