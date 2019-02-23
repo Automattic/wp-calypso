@@ -3,10 +3,10 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -16,8 +16,13 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 
 class EmailForwardingDetails extends React.Component {
 	static propTypes = {
-		translate: PropTypes.func,
-		learnMoreClick: PropTypes.func,
+		domainName: PropTypes.string.isRequired,
+		learnMoreClick: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
+	learnMoreClick = () => {
+		this.props.learnMoreClick();
 	};
 
 	render() {
@@ -40,25 +45,23 @@ class EmailForwardingDetails extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	learnMoreClick: domainName => {
-		dispatch(
-			composeAnalytics(
-				recordGoogleEvent(
-					'Domain Management',
-					'Clicked "Learn more" link in Email Forwarding',
-					'Domain Name',
-					domainName
-				),
-				recordTracksEvent( 'calypso_domain_management_email_forwarding_learn_more_click', {
-					domain_name: domainName,
-				} )
-			)
-		);
-	},
-} );
-
 export default connect(
 	null,
-	mapDispatchToProps
+	( dispatch, props ) => ( {
+		learnMoreClick: () => {
+			dispatch(
+				composeAnalytics(
+					recordGoogleEvent(
+						'Domain Management',
+						'Clicked "Learn more" link in Email Forwarding',
+						'Domain Name',
+						props.domainName
+					),
+					recordTracksEvent( 'calypso_domain_management_email_forwarding_learn_more_click', {
+						domain_name: props.domainName,
+					} )
+				)
+			);
+		},
+	} )
 )( localize( EmailForwardingDetails ) );

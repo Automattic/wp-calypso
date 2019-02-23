@@ -303,7 +303,7 @@ class EmailForwardingAddNew extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
+export default connect( dispatch => ( {
 	addNewEmailForwardClick: ( domainName, mailbox, destination, success ) => {
 		dispatch(
 			composeAnalytics(
@@ -325,7 +325,6 @@ const mapDispatchToProps = dispatch => ( {
 			)
 		);
 	},
-
 	cancelClick: domainName => {
 		dispatch(
 			composeAnalytics(
@@ -341,7 +340,6 @@ const mapDispatchToProps = dispatch => ( {
 			)
 		);
 	},
-
 	destinationFieldFocus: domainName => {
 		dispatch(
 			composeAnalytics(
@@ -357,7 +355,6 @@ const mapDispatchToProps = dispatch => ( {
 			)
 		);
 	},
-
 	mailboxFieldFocus: domainName => {
 		dispatch(
 			composeAnalytics(
@@ -373,9 +370,4 @@ const mapDispatchToProps = dispatch => ( {
 			)
 		);
 	},
-} );
-
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( EmailForwardingAddNew ) );
+} ) )( localize( EmailForwardingAddNew ) );
