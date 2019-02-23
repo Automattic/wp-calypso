@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { Provider } from 'react-redux';
 import React from 'react';
 import renderer from 'react-test-renderer';
 
@@ -16,14 +17,15 @@ describe( 'EmailForwardingItem', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
-				<EmailForwardingItem
-					emailData={ {
-						domain: 'foo.com',
-						forward_address: 'foo@a8c.com',
-						mailbox: 'foo',
-					} }
-					store={ store }
-				/>
+				<Provider store={ store }>
+					<EmailForwardingItem
+						emailData={ {
+							domain: 'foo.com',
+							forward_address: 'foo@a8c.com',
+							mailbox: 'foo',
+						} }
+					/>
+				</Provider>
 			)
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
