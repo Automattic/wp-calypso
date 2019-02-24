@@ -38,7 +38,7 @@ $blocks-button__line-height: $big-font-size + 6px;
 
 	.editor-rich-text__inline-toolbar {
 		pointer-events: none;
-		.components-toolbar  {
+		.components-toolbar {
 			pointer-events: all;
 		}
 	}
