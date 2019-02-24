@@ -209,13 +209,13 @@ class MailchimpSubscribeEdit extends Component {
 							/>
 						</p>
 						<p>
-							<div className="wp-block-jetpack-mailchimp_button">
-								<RichText
-									placeholder={ __( 'Add button text…' ) }
-									value={ submitLabel }
-									onChange={ value => setAttributes( { submitLabel: value } ) }
-								/>
-							</div>
+							<RichText
+								className="wp-block-jetpack-mailchimp_button"
+								onChange={ value => setAttributes( { submitLabel: value } ) }
+								placeholder={ __( 'Add button text…' ) }
+								tagName="span"
+								value={ submitLabel }
+							/>
 						</p>
 						<RichText
 							tagName="p"
