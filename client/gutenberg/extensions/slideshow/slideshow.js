@@ -2,9 +2,12 @@
  * External dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { isBlobURL } from '@wordpress/blob';
+import { Spinner } from '@wordpress/components';
 import { Component, createRef } from '@wordpress/element';
 import { isEqual } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -111,7 +114,14 @@ class Slideshow extends Component {
 				>
 					<ul className="wp-block-jetpack-slideshow_swiper-wrappper swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
-							<li className="wp-block-jetpack-slideshow_slide swiper-slide" key={ id }>
+							<li
+								className={ classnames(
+									'wp-block-jetpack-slideshow_slide',
+									'swiper-slide',
+									isBlobURL( url ) && 'is-transient'
+								) }
+								key={ id }
+							>
 								<figure>
 									<img
 										alt={ alt }
@@ -121,6 +131,7 @@ class Slideshow extends Component {
 										data-id={ id }
 										src={ url }
 									/>
+									{ isBlobURL( url ) && <Spinner /> }
 									{ caption && (
 										<figcaption className="wp-block-jetpack-slideshow_caption gallery-caption">
 											{ caption }

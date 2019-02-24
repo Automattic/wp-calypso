@@ -26,4 +26,18 @@
 			border: 1px solid #555d66;
 		}
 	}
+
+}
+
+.wp-block-jetpack-slideshow_slide {
+	.components-spinner {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		margin-top: -9px;
+		margin-left: -9px;
+	}
+	&.is-transient img {
+		opacity: 0.3;
+	}
 }
