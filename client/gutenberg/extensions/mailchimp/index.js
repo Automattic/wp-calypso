@@ -38,6 +38,12 @@ export const settings = {
 			type: 'string',
 			default: __( 'Join my email list' ),
 		},
+		customBackgroundButtonColor: {
+			type: 'string',
+		},
+		customTextButtonColor: {
+			type: 'string',
+		},
 		consentText: {
 			type: 'string',
 			default: __(
