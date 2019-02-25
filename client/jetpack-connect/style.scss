@@ -80,6 +80,20 @@
 			background-color: var( --color-jetpack );
 		}
 	}
+
+	.site-topic__content {
+		.form-fieldset {
+			position: relative;
+		}
+
+		input[type='text'] {
+			border-color: var( --color-jetpack-dark );
+
+			&:focus {
+				box-shadow: 0 0 0 2px var( --color-jetpack-light );
+			}
+		}
+	}
 }
 
 .jetpack-connect__main-logo {
