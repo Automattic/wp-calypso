@@ -20,13 +20,14 @@ const config = {
 				modules,
 				targets,
 				useBuiltIns: 'entry',
-				shippedProposals: true, // allows es7 features like Promise.prototype.finally
+				// allows es7 features like Promise.prototype.finally
+				shippedProposals: true,
+				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
+				exclude: [ 'transform-typeof-symbol' ],
 			},
 		],
 		'@babel/react',
 	],
-	// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
-	exclude: [ 'transform-typeof-symbol' ],
 	plugins: _.compact( [
 		[
 			path.join(
