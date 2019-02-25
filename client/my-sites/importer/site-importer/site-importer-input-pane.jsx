@@ -316,10 +316,6 @@ class SiteImporterInputPane extends React.Component {
 			site_engine: this.state.importData.engine,
 		} );
 
-		if ( 'engine6' === get( this.props, 'importerData.engine' ) ) {
-			this.props.setSelectedEditor( this.props.site.ID, 'gutenberg' );
-		}
-
 		wpcom.wpcom.req
 			.post( {
 				path: `/sites/${ this.props.site.ID }/site-importer/import-site?${ stringify(
@@ -347,6 +343,13 @@ class SiteImporterInputPane extends React.Component {
 						.join( ', ' ),
 					site_engine: this.state.importData.engine,
 				} );
+
+				// At this point we're assuming that an import is going to happen
+				// so we set the user's editor to Gutenberg in order to make sure
+				// that the posts aren't mangled by the classic editor.
+				if ( 'engine6' === get( this.props, 'importerData.engine' ) ) {
+					this.props.setSelectedEditor( this.props.site.ID, 'gutenberg' );
+				}
 
 				const data = fromApi( resp );
 				const action = createFinishUploadAction( this.props.importerStatus.importerId, data );
