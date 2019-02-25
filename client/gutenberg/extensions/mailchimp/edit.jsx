@@ -131,7 +131,7 @@ class MailchimpSubscribeEdit extends Component {
 		const { audition, connected, connectURL } = this.state;
 		const {
 			emailPlaceholder,
-			submitLabel,
+			submitButtonText,
 			consentText,
 			processingLabel,
 			successLabel,
@@ -213,10 +213,10 @@ class MailchimpSubscribeEdit extends Component {
 						<p>
 							<RichText
 								className="wp-block-jetpack-mailchimp_button"
-								onChange={ value => setAttributes( { submitLabel: value } ) }
+								onChange={ value => setAttributes( { submitButtonText: value } ) }
 								placeholder={ __( 'Add button text…' ) }
 								tagName="span"
-								value={ submitLabel }
+								value={ submitButtonText }
 							/>
 						</p>
 						<RichText

@@ -34,7 +34,7 @@ export const settings = {
 			type: 'string',
 			default: __( 'Enter your email' ),
 		},
-		submitLabel: {
+		submitButtonText: {
 			type: 'string',
 			default: __( 'Join my email list' ),
 		},
