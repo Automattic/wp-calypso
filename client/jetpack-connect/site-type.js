@@ -25,7 +25,7 @@ class JetpackSiteType extends Component {
 
 		this.props.saveSiteType( siteId, siteType );
 
-		page.redirect( `/jetpack/site-topic/${ siteSlug }` );
+		page.redirect( `/jetpack/connect/site-topic/${ siteSlug }` );
 	};
 
 	render() {
