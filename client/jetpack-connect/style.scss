@@ -25,6 +25,23 @@
 		}
 	}
 
+	.ribbon__title {
+		background-color: var( --color-jetpack );
+
+		&::before,
+		&::after {
+			border-top-color: var( --color-jetpack-dark );
+		}
+
+		&::before {
+			border-left-color: var( --color-jetpack-dark );
+		}
+
+		&::after {
+			border-right-color: var( --color-jetpack-dark );
+		}
+	}
+
 	.button.is-primary {
 		background-color: var( --color-jetpack );
 		border-color: var( --color-jetpack-dark );
