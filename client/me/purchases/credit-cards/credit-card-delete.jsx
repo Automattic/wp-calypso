@@ -16,6 +16,11 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 import { isDeletingStoredCard } from 'state/stored-cards/selectors';
 import StoredCard from 'components/credit-card/stored-card';
 
+/**
+ * Style dependencies
+ */
+import './credit-card-delete.scss';
+
 class CreditCardDelete extends React.Component {
 	handleClick = () => {
 		this.props
@@ -35,7 +40,7 @@ class CreditCardDelete extends React.Component {
 
 		return (
 			<button
-				className="button credit-card-delete__button"
+				className="button credit-cards__delete-button"
 				disabled={ this.props.isDeleting }
 				onClick={ this.handleClick }
 			>

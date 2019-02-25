@@ -26,6 +26,11 @@ import QueryStoredCards from 'components/data/query-stored-cards';
 import { addCreditCard } from 'me/purchases/paths';
 import SectionHeader from 'components/section-header';
 
+/**
+ * Style dependencies
+ */
+import './credit-cards.scss';
+
 class CreditCards extends Component {
 	renderCards() {
 		if ( this.props.isFetching && ! this.props.hasLoadedFromServer ) {
