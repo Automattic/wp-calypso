@@ -3,10 +3,9 @@
 /**
  * External dependencies
  */
-
-import React from 'react';
-
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -14,25 +13,26 @@ import { localize } from 'i18n-calypso';
 import EmailForwardingItem from './email-forwarding-item';
 
 class EmailForwardingList extends React.Component {
+	static propTypes = {
+		emailForwarding: PropTypes.object.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
 	render() {
-		let emailForwardingItems,
-			{ list, hasLoadedFromServer } = this.props.emailForwarding;
+		const { emailForwarding, translate } = this.props,
+			{ list, hasLoadedFromServer } = emailForwarding;
 
 		if ( ! list && ! hasLoadedFromServer ) {
-			return <span>{ this.props.translate( 'Loading…' ) }</span>;
+			return <span>{ translate( 'Loading…' ) }</span>;
 		}
 
 		if ( ! list ) {
 			return null;
 		}
 
-		emailForwardingItems = list.map( emailForwarding => {
+		const emailForwardingItems = list.map( emailForwardingItem => {
 			return (
-				<EmailForwardingItem
-					key={ emailForwarding.email }
-					emailData={ emailForwarding }
-					selectedSite={ this.props.selectedSite }
-				/>
+				<EmailForwardingItem key={ emailForwardingItem.email } emailData={ emailForwardingItem } />
 			);
 		} );
 
