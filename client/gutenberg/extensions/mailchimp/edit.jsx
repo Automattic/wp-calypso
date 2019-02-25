@@ -3,6 +3,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import SubmitButton from 'gutenberg/extensions/presets/jetpack/utils/submit-button';
 import {
 	Button,
 	ExternalLink,
@@ -129,14 +130,7 @@ class MailchimpSubscribeEdit extends Component {
 	render = () => {
 		const { attributes, className, instanceId, notices, noticeUI, setAttributes } = this.props;
 		const { audition, connected, connectURL } = this.state;
-		const {
-			emailPlaceholder,
-			submitButtonText,
-			consentText,
-			processingLabel,
-			successLabel,
-			errorLabel,
-		} = attributes;
+		const { emailPlaceholder, consentText, processingLabel, successLabel, errorLabel } = attributes;
 		const classPrefix = 'wp-block-jetpack-mailchimp_';
 		const waiting = (
 			<Placeholder icon={ icon } notices={ notices }>
@@ -211,13 +205,7 @@ class MailchimpSubscribeEdit extends Component {
 							/>
 						</p>
 						<p>
-							<RichText
-								className="wp-block-jetpack-mailchimp_button"
-								onChange={ value => setAttributes( { submitButtonText: value } ) }
-								placeholder={ __( 'Add button text…' ) }
-								tagName="span"
-								value={ submitButtonText }
-							/>
+							<SubmitButton { ...this.props } />
 						</p>
 						<RichText
 							tagName="p"
