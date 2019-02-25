@@ -15,7 +15,7 @@ import DomainsSelect from './domains-select';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextInput from 'components/forms/form-text-input';
-import { getGoogleAppsSupportedDomains } from 'lib/domains';
+import { getGsuiteSupportedDomains } from 'lib/domains/gsuite';
 
 /**
  * Style dependencies
@@ -84,7 +84,7 @@ class NewUserForm extends React.Component {
 						value={ username.value }
 					/>
 					<DomainsSelect
-						domains={ getGoogleAppsSupportedDomains( this.props.domains ) }
+						domains={ getGsuiteSupportedDomains( this.props.domains ) }
 						isError={ isError }
 						isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
 						onChange={ handleFieldChange.bind( this, 'domain' ) }

@@ -18,7 +18,7 @@ import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
-import { isGsuiteRestricted } from 'lib/domains';
+import { isGsuiteRestricted } from 'lib/domains/gsuite';
 import {
 	validate as validateGappsUsers,
 	filter as filterUsers,

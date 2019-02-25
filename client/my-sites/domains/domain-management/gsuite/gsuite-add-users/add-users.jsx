@@ -19,12 +19,11 @@ import Card from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import FormLabel from 'components/forms/form-label';
-import { getEligibleDomain } from 'lib/domains/gsuite';
+import { getEligibleGsuiteDomain, hasGoogleApps } from 'lib/domains/gsuite';
 import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import { addItem } from 'lib/upgrades/actions';
-import { hasGoogleApps } from 'lib/domains';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
 import QueryUserSettings from 'components/data/query-user-settings';
 import NewUserForm from './new-user-form';
@@ -115,7 +114,7 @@ class AddEmailAddressesCard extends React.Component {
 
 	getNewFieldset() {
 		const { selectedDomainName, domains } = this.props;
-		const domain = getEligibleDomain( selectedDomainName, domains );
+		const domain = getEligibleGsuiteDomain( selectedDomainName, domains );
 		return {
 			username: { value: '' },
 			domain: { value: domain },
@@ -141,7 +140,7 @@ class AddEmailAddressesCard extends React.Component {
 
 	setDomainFieldsToFirstDomainName() {
 		const { selectedDomainName, domains } = this.props;
-		const domain = getEligibleDomain( selectedDomainName, domains );
+		const domain = getEligibleGsuiteDomain( selectedDomainName, domains );
 		const nextFieldsets = this.state.fieldsets.map( fieldset => {
 			return update( fieldset, {
 				domain: { value: { $set: domain } },

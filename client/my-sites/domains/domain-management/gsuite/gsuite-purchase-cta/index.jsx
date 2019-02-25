@@ -23,7 +23,7 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getEligibleDomain } from 'lib/domains/gsuite';
+import { getEligibleGsuiteDomain } from 'lib/domains/gsuite';
 
 /**
  * Style dependencies
@@ -261,7 +261,7 @@ export default connect(
 		const domains = getDomainsBySiteId( state, selectedSite.ID );
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			domainName: getEligibleDomain( selectedDomainName, domains ),
+			domainName: getEligibleGsuiteDomain( selectedDomainName, domains ),
 		};
 	},
 	{ learnMoreClick }
