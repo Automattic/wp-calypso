@@ -11,7 +11,7 @@ import userFactory from 'lib/user';
  * @param {String} domainName - domainname
  * @returns {Boolean} -Can a domain add G Suite
  */
-function canDomainAddGsuite( domainName ) {
+function canDomainAddGSuite( domainName ) {
 	const GOOGLE_APPS_INVALID_TLDS = [ 'in' ];
 	const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
 	const tld = domainName.split( '.' )[ 1 ],
@@ -22,7 +22,7 @@ function canDomainAddGsuite( domainName ) {
 	return ! (
 		includes( GOOGLE_APPS_INVALID_TLDS, tld ) ||
 		includesBannedPhrase ||
-		isGsuiteRestricted()
+		isGSuiteRestricted()
 	);
 }
 
@@ -33,8 +33,8 @@ function canDomainAddGsuite( domainName ) {
  * @param {Array} domains - list of domain objects
  * @returns {String} - Eligible domain name
  */
-function getEligibleGsuiteDomain( selectedDomainName, domains ) {
-	if ( selectedDomainName && canDomainAddGsuite( selectedDomainName ) ) {
+function getEligibleGSuiteDomain( selectedDomainName, domains ) {
+	if ( selectedDomainName && canDomainAddGSuite( selectedDomainName ) ) {
 		return selectedDomainName;
 	}
 	const [ eligibleDomain ] = getGSuiteSupportedDomains( domains );
@@ -51,7 +51,7 @@ function getGSuiteSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
 		return (
 			includes( [ domainTypes.REGISTERED, domainTypes.MAPPED ], domain.type ) &&
-			canDomainAddGsuite( domain.name )
+			canDomainAddGSuite( domain.name )
 		);
 	} );
 }
@@ -62,7 +62,7 @@ function getGSuiteSupportedDomains( domains ) {
  * @param {Object} domain - domain object
  * @returns {Boolean} - Does a domain have G Suite
  */
-function hasGsuite( domain ) {
+function hasGSuite( domain ) {
 	return 'no_subscription' !== get( domain, 'googleAppsSubscription.status', '' );
 }
 
@@ -72,7 +72,7 @@ function hasGsuite( domain ) {
  * @param {Array} domains - list of domain objects
  * @returns {Boolean} - Does list of domains contain a G Suited supported domain
  */
-function hasGsuiteSupportedDomain( domains ) {
+function hasGSuiteSupportedDomain( domains ) {
 	return getGSuiteSupportedDomains( domains ).length > 0;
 }
 
@@ -82,7 +82,7 @@ function hasGsuiteSupportedDomain( domains ) {
  * @param {Object} domain - domain object
  * @returns {Boolean} - Does domain have pending G Suite users
  */
-function hasPendingGsuiteUsers( domain ) {
+function hasPendingGSuiteUsers( domain ) {
 	return get( domain, 'googleAppsSubscription.pendingUsers.length', 0 ) !== 0;
 }
 
@@ -91,17 +91,17 @@ function hasPendingGsuiteUsers( domain ) {
  *
  * @returns {Boolean} - Is the user G Suite restricted
  */
-function isGsuiteRestricted() {
+function isGSuiteRestricted() {
 	const user = userFactory();
 	return ! get( user.get(), 'is_valid_google_apps_country', false );
 }
 
 export {
-	canDomainAddGsuite,
-	getEligibleGsuiteDomain,
+	canDomainAddGSuite,
+	getEligibleGSuiteDomain,
 	getGSuiteSupportedDomains,
-	hasGsuite,
-	hasGsuiteSupportedDomain,
-	hasPendingGsuiteUsers,
-	isGsuiteRestricted,
+	hasGSuite,
+	hasGSuiteSupportedDomain,
+	hasPendingGSuiteUsers,
+	isGSuiteRestricted,
 };

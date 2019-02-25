@@ -21,7 +21,7 @@ import { fetchBySiteId } from 'state/google-apps-users/actions';
 import { getBySite, isLoaded } from 'state/google-apps-users/selectors';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { hasGsuiteSupportedDomain } from 'lib/domains/gsuite';
+import { hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -44,7 +44,7 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	redirectIfCannotAddEmail( domains, isRequestingDomains ) {
-		if ( isRequestingDomains || hasGsuiteSupportedDomain( domains ) ) {
+		if ( isRequestingDomains || hasGSuiteSupportedDomain( domains ) ) {
 			return;
 		}
 		this.goToEmail();

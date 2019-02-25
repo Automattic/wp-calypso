@@ -16,10 +16,10 @@ import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import {
-	getEligibleGsuiteDomain,
-	hasGoogleApps,
-	isGsuiteRestricted,
-	hasGsuiteSupportedDomain,
+	getEligibleGSuiteDomain,
+	hasGSuite,
+	isGSuiteRestricted,
+	hasGSuiteSupportedDomain,
 } from 'lib/domains/gsuite';
 import GSuitePurchaseCta from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-cta';
 import GoogleAppsUsersCard from './google-apps-users-card';
@@ -89,11 +89,11 @@ class Email extends React.Component {
 			? [ getSelectedDomain( this.props ) ]
 			: this.props.domains;
 
-		if ( domainList.some( hasGoogleApps ) ) {
+		if ( domainList.some( hasGSuite ) ) {
 			return this.googleAppsUsersCard();
-		} else if ( hasGsuiteSupportedDomain( domainList ) ) {
+		} else if ( hasGSuiteSupportedDomain( domainList ) ) {
 			return this.addGoogleAppsCard();
-		} else if ( isGsuiteRestricted() && this.props.selectedDomainName ) {
+		} else if ( isGSuiteRestricted() && this.props.selectedDomainName ) {
 			return this.addEmailForwardingCard();
 		}
 		return this.emptyContent();
@@ -103,7 +103,7 @@ class Email extends React.Component {
 		const { selectedSite, selectedDomainName, translate } = this.props;
 		let emptyContentProps;
 
-		if ( isGsuiteRestricted() && ! selectedDomainName ) {
+		if ( isGSuiteRestricted() && ! selectedDomainName ) {
 			emptyContentProps = {
 				title: translate( 'Enable powerful email features.' ),
 				line: translate(
@@ -161,7 +161,7 @@ class Email extends React.Component {
 
 	addEmailForwardingCard() {
 		const { domains, selectedDomainName, selectedSite, translate } = this.props;
-		const domain = getEligibleGsuiteDomain( selectedDomainName, domains );
+		const domain = getEligibleGSuiteDomain( selectedDomainName, domains );
 		return (
 			<VerticalNav>
 				<VerticalNavItem path={ domainManagementEmailForwarding( selectedSite.slug, domain ) }>

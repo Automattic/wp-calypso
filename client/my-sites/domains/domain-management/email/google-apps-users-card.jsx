@@ -17,7 +17,7 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 import CompactCard from 'components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
-import { hasPendingGsuiteUsers } from 'lib/domains/gsuite';
+import { hasPendingGSuiteUsers } from 'lib/domains/gsuite';
 import { getSelectedDomain } from 'lib/domains';
 import GoogleAppsUserItem from './google-apps-user-item';
 import Notice from 'components/notice';
@@ -123,7 +123,7 @@ class GoogleAppsUsers extends React.Component {
 	}
 
 	render() {
-		const pendingDomains = this.getDomainsAsList().filter( hasPendingGsuiteUsers );
+		const pendingDomains = this.getDomainsAsList().filter( hasPendingGSuiteUsers );
 		const usersByDomain = groupBy( this.props.googleAppsUsers, 'domain' );
 
 		return (
