@@ -85,6 +85,14 @@
 		.form-fieldset {
 			position: relative;
 		}
+
+		input[type='text'] {
+			border-color: var( --color-jetpack-dark );
+
+			&:focus {
+				box-shadow: 0 0 0 2px var( --color-jetpack-light );
+			}
+		}
 	}
 }
 
