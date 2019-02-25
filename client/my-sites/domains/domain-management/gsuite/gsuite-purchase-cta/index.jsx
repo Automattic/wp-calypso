@@ -17,7 +17,6 @@ import CompactCard from 'components/card/compact';
 import config from 'config';
 import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getEligibleGSuiteDomain } from 'lib/domains/gsuite';
 import GSuitePurchaseFeatures from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-features';
@@ -149,7 +148,6 @@ export default connect(
 	( state, { selectedDomainName, selectedSite } ) => {
 		const domains = getDomainsBySiteId( state, selectedSite.ID );
 		return {
-			currencyCode: getCurrentUserCurrencyCode( state ),
 			domainName: getEligibleGSuiteDomain( selectedDomainName, domains ),
 		};
 	},
