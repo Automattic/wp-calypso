@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { RichText } from '@wordpress/editor';
 import { Component, createRef } from '@wordpress/element';
 import { isEqual } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -122,9 +123,11 @@ class Slideshow extends Component {
 										src={ url }
 									/>
 									{ caption && (
-										<figcaption className="wp-block-jetpack-slideshow_caption gallery-caption">
-											{ caption }
-										</figcaption>
+										<RichText.Content
+											className="wp-block-jetpack-slideshow_caption gallery-caption"
+											tagName="figcaption"
+											value={ caption }
+										/>
 									) }
 								</figure>
 							</li>
