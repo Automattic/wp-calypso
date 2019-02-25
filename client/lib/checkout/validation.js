@@ -13,6 +13,7 @@ import { isValidPostalCode } from 'lib/postal-code';
 import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
+	isValidCNPJ,
 	ebanxFieldRules,
 } from 'lib/checkout/ebanx';
 
@@ -204,17 +205,20 @@ validators.validExpirationDate = {
 	error: validationError,
 };
 
-validators.validCPF = {
+validators.validBrazilTaxId = {
 	isValid( value ) {
 		if ( ! value ) {
 			return false;
 		}
-		return isValidCPF( value );
+		return isValidCPF( value ) || isValidCNPJ( value );
 	},
 	error: function( description ) {
-		return i18n.translate( '%(description)s is invalid. Must be in format: 111.444.777-XX', {
-			args: { description: description },
-		} );
+		return i18n.translate(
+			'%(description)s is invalid. Must be in format: 111.444.777-XX or 11.444.777/0001-XX',
+			{
+				args: { description: description },
+			}
+		);
 	},
 };
 
