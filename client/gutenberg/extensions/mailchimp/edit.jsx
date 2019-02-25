@@ -3,6 +3,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import classnames from 'classnames';
 import SubmitButton from 'gutenberg/extensions/presets/jetpack/utils/submit-button';
 import {
 	Button,
@@ -185,37 +186,37 @@ class MailchimpSubscribeEdit extends Component {
 			</InspectorControls>
 		);
 		const emailInputId = `${ classPrefix }email_input-${ instanceId }`;
+		const classes = classnames(
+			className,
+			audition && 'wp-block-jetpack-mailchimp_notication-audition'
+		);
 		const blockContent = (
-			<div className={ className }>
-				{ ! audition && (
-					<Fragment>
-						<p>
-							<label htmlFor={ emailInputId } className="wp-block-jetpack-mailchimp_hidden-label">
-								{ emailPlaceholder }
-							</label>
-							<TextControl
-								aria-label={ emailPlaceholder }
-								disabled
-								id={ emailInputId }
-								name={ emailInputId }
-								placeholder={ emailPlaceholder }
-								onChange={ () => false }
-								title={ __( 'You can edit the email placeholder in the sidebar.' ) }
-								type="email"
-							/>
-						</p>
-						<p>
-							<SubmitButton { ...this.props } />
-						</p>
-						<RichText
-							tagName="p"
-							placeholder={ __( 'Write consent text' ) }
-							value={ consentText }
-							onChange={ value => setAttributes( { consentText: value } ) }
-							inlineToolbar
-						/>
-					</Fragment>
-				) }
+			<div className={ classes }>
+				<p>
+					<label htmlFor={ emailInputId } className="wp-block-jetpack-mailchimp_hidden-label">
+						{ emailPlaceholder }
+					</label>
+					<TextControl
+						aria-label={ emailPlaceholder }
+						disabled
+						id={ emailInputId }
+						name={ emailInputId }
+						placeholder={ emailPlaceholder }
+						onChange={ () => false }
+						title={ __( 'You can edit the email placeholder in the sidebar.' ) }
+						type="email"
+					/>
+				</p>
+				<p>
+					<SubmitButton { ...this.props } />
+				</p>
+				<RichText
+					tagName="p"
+					placeholder={ __( 'Write consent text' ) }
+					value={ consentText }
+					onChange={ value => setAttributes( { consentText: value } ) }
+					inlineToolbar
+				/>
 				{ audition && (
 					<div
 						className={ `${ classPrefix }notification ${ classPrefix }${ audition }` }
