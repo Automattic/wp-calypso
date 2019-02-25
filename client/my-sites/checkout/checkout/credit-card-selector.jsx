@@ -27,6 +27,7 @@ class CreditCardSelector extends React.Component {
 
 	render() {
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="payment-box-sections">
 				{ this.storedCards() }
 				{ this.newCardForm() }
