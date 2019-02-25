@@ -58,8 +58,26 @@
 		&[disabled],
 		&:disabled {
 			background: var( --color-white );
-			border-color: var( --color-neutral-50);
+			border-color: var( --color-neutral-50 );
 			color: var( --color-neutral-50 );
+		}
+	}
+}
+
+.jetpack-connect__step {
+	margin: 0 auto;
+	max-width: 600px;
+	text-align: initial;
+
+	input[type='radio']:focus {
+		box-shadow: 0 0 0 2px var( --color-jetpack-light );
+	}
+
+	.site-type__option.is-selected {
+		box-shadow: 0 0 0 1px var( --color-jetpack ) inset;
+
+		input[type='radio']:checked::before {
+			background-color: var( --color-jetpack );
 		}
 	}
 }
@@ -540,7 +558,7 @@
 	border: none;
 	color: var( --color-neutral-500 );
 	font-weight: normal;
-	padding: 16px 24px;	
+	padding: 16px 24px;
 	width: 100%;
 
 	&:hover {
