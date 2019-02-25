@@ -25,7 +25,7 @@
 	}
 
 	&::before {
-		background: linear-gradient( -135deg, $gray-lighten-30 8px, transparent 0 ) 0 8px, linear-gradient( 135deg, $gray-lighten-30 8px, transparent 0 ) 0 8px;
+		background: linear-gradient( -135deg, var( --color-neutral-0 ) 8px, transparent 0 ) 0 8px, linear-gradient( 135deg, var( --color-neutral-0 ) 8px, transparent 0 ) 0 8px;
 		background-position: top left;
 		background-repeat: repeat-x;
 		background-size: 16px 16px;
