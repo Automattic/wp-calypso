@@ -19,6 +19,7 @@ import './stored-card.scss';
 
 export const getCreditCardSummary = ( translate, type, digits ) => {
 	const supportedTypes = {
+		[ 'american express' ]: translate( 'American Express' ),
 		amex: translate( 'American Express' ),
 		diners: translate( 'Diners Club' ),
 		discover: translate( 'Discover' ),
@@ -44,7 +45,7 @@ const StoredCard = ( { lastDigits, cardType, name, expiry, translate, moment } )
 
 	const type = cardType && cardType.toLocaleLowerCase();
 	const cardClasses = classNames( 'credit-card__stored-card', {
-		'is-amex': type === 'amex',
+		'is-amex': type === 'amex' || type === 'american express',
 		'is-diners': type === 'diners',
 		'is-discover': type === 'discover',
 		'is-jcb': type === 'jcb',
