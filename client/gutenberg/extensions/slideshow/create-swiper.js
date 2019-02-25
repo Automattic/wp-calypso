@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { mapValues, merge } from 'lodash';
+import '@babel/polyfill';
 
 /**
  * Internal dependencies
