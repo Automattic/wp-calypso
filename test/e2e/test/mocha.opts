@@ -1,4 +1,4 @@
---require @babel/register
+--require lib/babelhook.js
 --require test/mocha.env.js
 --require mocha-steps
 lib/before.js
