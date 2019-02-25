@@ -4,7 +4,13 @@
 import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import { flowRight as compose } from 'lodash';
 import { localize } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import withLocalizedMoment from 'components/with-localized-moment';
 
 /**
  * Style dependencies
@@ -70,4 +76,7 @@ StoredCard.propTypes = {
 	expiry: PropTypes.string.isRequired,
 };
 
-export default localize( StoredCard );
+export default compose(
+	localize,
+	withLocalizedMoment
+)( StoredCard );
