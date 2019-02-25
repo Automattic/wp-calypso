@@ -1,13 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+
+/**
+ * Style dependencies
+ */
+import './stored-card.scss';
 
 export const getCreditCardSummary = ( translate, type, digits ) => {
 	const supportedTypes = {
