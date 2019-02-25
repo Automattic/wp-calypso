@@ -11,5 +11,6 @@ export default ( { attributes: { align, autoplay, delay, effect, images }, class
 		delay={ delay }
 		effect={ effect }
 		images={ images }
+		forSave
 	/>
 );

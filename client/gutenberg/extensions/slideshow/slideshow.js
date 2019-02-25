@@ -98,7 +98,7 @@ class Slideshow extends Component {
 	};
 
 	render() {
-		const { autoplay, className, delay, effect, images } = this.props;
+		const { autoplay, className, delay, effect, forSave, images } = this.props;
 		// Note: React omits the data attribute if the value is null, but NOT if it is false.
 		// This is the reason for the unusual logic related to autoplay below.
 		return (
@@ -114,31 +114,33 @@ class Slideshow extends Component {
 				>
 					<ul className="wp-block-jetpack-slideshow_swiper-wrappper swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
-							<li
-								className={ classnames(
-									'wp-block-jetpack-slideshow_slide',
-									'swiper-slide',
-									isBlobURL( url ) && 'is-transient'
-								) }
-								key={ id }
-							>
-								<figure>
-									<img
-										alt={ alt }
-										className={
-											`wp-block-jetpack-slideshow_image wp-image-${ id }` /* wp-image-${ id } makes WordPress add a srcset */
-										}
-										data-id={ id }
-										src={ url }
-									/>
-									{ isBlobURL( url ) && <Spinner /> }
-									{ caption && (
-										<figcaption className="wp-block-jetpack-slideshow_caption gallery-caption">
-											{ caption }
-										</figcaption>
+							( ! forSave || ( forSave && ! isBlobURL( url ) ) ) && (
+								<li
+									className={ classnames(
+										'wp-block-jetpack-slideshow_slide',
+										'swiper-slide',
+										isBlobURL( url ) && 'is-transient'
 									) }
-								</figure>
-							</li>
+									key={ id }
+								>
+									<figure>
+										<img
+											alt={ alt }
+											className={
+												`wp-block-jetpack-slideshow_image wp-image-${ id }` /* wp-image-${ id } makes WordPress add a srcset */
+											}
+											data-id={ id }
+											src={ url }
+										/>
+										{ isBlobURL( url ) && <Spinner /> }
+										{ caption && (
+											<figcaption className="wp-block-jetpack-slideshow_caption gallery-caption">
+												{ caption }
+											</figcaption>
+										) }
+									</figure>
+								</li>
+							)
 						) ) }
 					</ul>
 					<div
