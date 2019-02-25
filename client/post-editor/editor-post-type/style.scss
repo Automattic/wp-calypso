@@ -2,11 +2,4 @@
 	&.is-loading {
 		@include placeholder;
 	}
-
-	.post-status__text {
-		display: none;
-		color: var( --color-neutral-400 );
-		margin-left: 4px;
-		vertical-align: baseline;
-	}
 }
