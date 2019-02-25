@@ -113,7 +113,6 @@ class Day extends Component {
 	toggleClosed = nextValue => {
 		const { day, attributes, setAttributes } = this.props;
 		const { days } = attributes;
-
 		setAttributes( {
 			days: days.map( value => {
 				if ( value.name === day.name ) {
@@ -168,6 +167,9 @@ class Day extends Component {
 			} ),
 		} );
 	};
+	capitalizeFirstLetter( string ) {
+		return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
+	}
 	isClosed() {
 		const { day } = this.props;
 		return isEmpty( day.hours );
@@ -176,7 +178,9 @@ class Day extends Component {
 		const { day, edit = true, localization } = this.props;
 		return (
 			<Fragment>
-				<span className="business-hours__day-name">{ localization.days[ day.name ] }</span>
+				<span className="business-hours__day-name">
+					{ this.capitalizeFirstLetter( localization.days[ day.name ] ) }
+				</span>
 				{ edit && (
 					<ToggleControl
 						label={ this.isClosed() ? __( 'Closed' ) : __( 'Open' ) }
