@@ -190,7 +190,7 @@ class MailchimpSubscribeEdit extends Component {
 				{ ! audition && (
 					<Fragment>
 						<p>
-							<label for={ emailInputId } className="wp-block-jetpack-mailchimp_hidden-label">
+							<label htmlFor={ emailInputId } className="wp-block-jetpack-mailchimp_hidden-label">
 								{ emailPlaceholder }
 							</label>
 							<TextControl
