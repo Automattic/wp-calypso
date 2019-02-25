@@ -209,8 +209,8 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ translate( 'Earnings' ) }
-				selected={ itemLinkMatches( '/ads', path ) }
+				label={ translate( 'Earn' ) }
+				selected={ itemLinkMatches( '/earn', path ) }
 				link={ '/earn' + this.props.siteSuffix }
 				onNavigate={ this.trackEarnClick }
 				icon="money"
