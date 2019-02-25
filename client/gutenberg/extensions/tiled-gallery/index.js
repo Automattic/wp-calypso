@@ -20,11 +20,6 @@ import {
 } from './constants';
 import './editor.scss';
 
-/**
- * Deprecated versions for migrations
- */
-import * as deprecatedV1 from './deprecated/v1';
-
 // Style names are translated. Avoid introducing an i18n dependency elsewhere (view)
 // by only including the labels here, the only place they're needed.
 //
@@ -182,5 +177,4 @@ export const settings = {
 	},
 	edit,
 	save,
-	deprecated: [ deprecatedV1 ],
 };
