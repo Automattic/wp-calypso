@@ -1,3 +1,9 @@
+$break-xlarge: 1080px;
+$break-large: 960px;	// admin sidebar auto folds
+$break-medium: 782px;   // editor sidebar auto folds
+$break-small: 600px;
+
+
 .wp-block-jetpack-business-hours {
 	overflow: hidden;
 
@@ -81,7 +87,29 @@
 	}
 }
 
-@media screen and ( max-width: 600px ) {
+/*
+	We consider the editor area to be small when the business hours block is:
+	- within a column block
+	- in a screen < xlarge size with the sidebar open
+	- in a screen < small size
+	In these cases we'll apply small screen styles.
+ */
+@mixin editor-area-is-small {
+	@media screen and ( max-width: $break-xlarge ) {
+		.is-sidebar-opened {
+			@content;
+		}
+	}
+	@media screen and ( max-width: $break-small ) {
+		@content;
+	}
+
+	.wp-block-columns {
+		@content;
+	}
+}
+
+@include editor-area-is-small() {
 	.wp-block-jetpack-business-hours {
 
 		.business-hours__row {
