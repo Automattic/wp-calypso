@@ -4,7 +4,7 @@
 // Shared
 @import 'shared/reset'; // css reset before the rest of the styles are defined
 @import 'shared/utils'; // utilities that are used by all CSS but don't produce any code
-@import '../../node_modules/@automattic/calypso-css-custom-properties/src/shared/color-schemes'; // import color schemes
+@import '~@automattic/calypso-css-custom-properties/src/shared/color-schemes'; // import color schemes
 @import 'shared/animation'; // all UI animation
 @import 'shared/forms'; // form styling
 @import 'shared/welcome'; // welcome messages
