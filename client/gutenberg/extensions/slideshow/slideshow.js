@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, createRef } from '@wordpress/element';
 import { isEqual } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -9,7 +10,12 @@ import ResizeObserver from 'resize-observer-polyfill';
  * Internal dependencies
  */
 import createSwiper from './create-swiper';
-import swiperResize from './swiper-resize';
+import {
+	swiperApplyAria,
+	swiperInit,
+	swiperPaginationRender,
+	swiperResize,
+} from './swiper-callbacks';
 
 class Slideshow extends Component {
 	pendingRequestAnimationFrame = null;
@@ -103,41 +109,54 @@ class Slideshow extends Component {
 					className="wp-block-jetpack-slideshow_container swiper-container"
 					ref={ this.slideshowRef }
 				>
-					<div className="swiper-wrapper">
+					<ul className="wp-block-jetpack-slideshow_swiper-wrappper swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
-							<figure className="wp-block-jetpack-slideshow_slide swiper-slide" key={ id }>
-								<img
-									alt={ alt }
-									className={
-										`wp-block-jetpack-slideshow_image wp-image-${ id }` /* wp-image-${ id } makes WordPress add a srcset */
-									}
-									data-id={ id }
-									src={ url }
-								/>
-								{ caption && (
-									<figcaption className="wp-block-jetpack-slideshow_caption">
-										{ caption }
-									</figcaption>
-								) }
-							</figure>
+							<li className="wp-block-jetpack-slideshow_slide swiper-slide" key={ id }>
+								<figure>
+									<img
+										alt={ alt }
+										className={
+											`wp-block-jetpack-slideshow_image wp-image-${ id }` /* wp-image-${ id } makes WordPress add a srcset */
+										}
+										data-id={ id }
+										src={ url }
+									/>
+									{ caption && (
+										<figcaption className="wp-block-jetpack-slideshow_caption gallery-caption">
+											{ caption }
+										</figcaption>
+									) }
+								</figure>
+							</li>
 						) ) }
-					</div>
+					</ul>
 					<div
 						className="wp-block-jetpack-slideshow_pagination swiper-pagination swiper-pagination-white"
 						ref={ this.paginationRef }
 					/>
-					<div
+					<button
 						className="wp-block-jetpack-slideshow_button-prev swiper-button-prev swiper-button-white"
 						ref={ this.btnPrevRef }
 					/>
-					<div
+					<button
 						className="wp-block-jetpack-slideshow_button-next swiper-button-next swiper-button-white"
 						ref={ this.btnNextRef }
+					/>
+					<button
+						aria-label={ __( 'Pause Slideshow' ) }
+						className="wp-block-jetpack-slideshow_button-pause"
 					/>
 				</div>
 			</div>
 		);
 	}
+
+	prefersReducedMotion = () => {
+		return (
+			typeof window !== 'undefined' &&
+			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches
+		);
+	};
 
 	buildSwiper = ( initialSlide = 0 ) =>
 		// Using refs instead of className-based selectors allows us to
@@ -146,11 +165,13 @@ class Slideshow extends Component {
 		createSwiper(
 			this.slideshowRef.current,
 			{
-				autoplay: this.props.autoplay
-					? {
-							delay: this.props.delay * 1000,
-					  }
-					: false,
+				autoplay:
+					this.props.autoplay && ! this.prefersReducedMotion()
+						? {
+								delay: this.props.delay * 1000,
+								disableOnInteraction: false,
+						  }
+						: false,
 				effect: this.props.effect,
 				loop: true,
 				initialSlide,
@@ -165,8 +186,10 @@ class Slideshow extends Component {
 				},
 			},
 			{
-				init: swiperResize,
+				init: swiperInit,
 				imagesReady: swiperResize,
+				paginationRender: swiperPaginationRender,
+				transitionEnd: swiperApplyAria,
 			}
 		);
 }
