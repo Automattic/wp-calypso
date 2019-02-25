@@ -19,7 +19,7 @@ import Card from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import FormLabel from 'components/forms/form-label';
-import { getEligibleGSuiteDomain, hasGoogleApps } from 'lib/domains/gsuite';
+import { getEligibleGSuiteDomain, hasGSuite } from 'lib/domains/gsuite';
 import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
 import { domainManagementEmail } from 'my-sites/domains/paths';
@@ -51,7 +51,7 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	return map( groups, function( users, domain ) {
 		const domainInfo = find( domains, { name: domain } );
 		let item;
-		if ( hasGoogleApps( domainInfo ) ) {
+		if ( hasGSuite( domainInfo ) ) {
 			item = cartItems.googleAppsExtraLicenses( { domain, users } );
 		} else {
 			item = cartItems.googleApps( { domain, users } );
