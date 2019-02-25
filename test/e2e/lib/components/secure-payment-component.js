@@ -104,7 +104,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async containsPersonalPlan() {
-		return this._cartContainsProduct( this.personalPlanSlug );
+		return await this._cartContainsProduct( this.personalPlanSlug );
 	}
 
 	async containsPremiumPlan() {
@@ -117,10 +117,6 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 	async containsDotLiveDomain() {
 		return await this._cartContainsProduct( this.dotLiveDomainSlug );
-	}
-
-	async containsPrivateWhois() {
-		return await this._cartContainsProduct( this.privateWhoisSlug );
 	}
 
 	async payWithStoredCardIfPossible( cardCredentials ) {

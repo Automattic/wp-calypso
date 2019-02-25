@@ -73,6 +73,7 @@
 		"removeDomainsStepFromOnboarding",
 		"showConciergeSessionUpsell",
 		"showConciergeSessionUpsellNonGSuite",
+		"skipBusinessInformation",
 		"builderReferralThemesBanner",
 		"domainSearchButtonStyles",
 		"twoYearPlanByDefault",
@@ -93,6 +94,7 @@
 		[ "showConciergeSessionUpsell_20181214", "skip" ],
 		[ "showConciergeSessionUpsellNonGSuite_20190104", "skip" ],
 		[ "improvedOnboarding_20190214", "main" ],
+		[ "skipBusinessInformation_20190130", "hide" ],
 		[ "twoYearPlanByDefault_20190207", "originalFlavor" ]
 	]
 }

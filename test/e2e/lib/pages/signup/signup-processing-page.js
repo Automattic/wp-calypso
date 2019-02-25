@@ -17,7 +17,7 @@ export default class SignupProcessingPage extends AsyncBaseContainer {
 	}
 
 	async waitToDisappear( username, password ) {
-		let signupProcessingTimeout = this.explicitWaitMS * 9;
+		let signupProcessingTimeout = this.explicitWaitMS * 7.5; // Wait 150s for signup processing
 		try {
 			await driverHelper.waitTillNotPresent(
 				this.driver,
