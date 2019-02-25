@@ -25,6 +25,7 @@ export default function( translate ) {
 				cssClass: 'is-classic-blue',
 			},
 		},
+<<<<<<< HEAD
 		config.isEnabled( 'me/account/color-schemes/powder-snow' ) && {
 			label: translate( 'Powder Snow' ),
 			value: 'powder-snow',
@@ -32,6 +33,8 @@ export default function( translate ) {
 				cssClass: 'is-powder-snow',
 			},
 		},
+=======
+>>>>>>> Enable Nightfall on wpcalypso and development environments for testing.
 		config.isEnabled( 'me/account/color-schemes/nightfall' ) && {
 			label: translate( 'Nightfall' ),
 			value: 'nightfall',
