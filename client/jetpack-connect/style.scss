@@ -62,18 +62,6 @@
 			color: var( --color-neutral-50 );
 		}
 	}
-
-	.jetpack-connect__step {
-		margin: 0 auto;
-		max-width: 600px;
-		text-align: initial;
-
-		.site-topic__content {
-			.form-fieldset {
-				position: relative;
-			}
-		}
-	}
 }
 
 .jetpack-connect__step {
@@ -90,6 +78,12 @@
 
 		input[type='radio']:checked::before {
 			background-color: var( --color-jetpack );
+		}
+	}
+
+	.site-topic__content {
+		.form-fieldset {
+			position: relative;
 		}
 	}
 }
