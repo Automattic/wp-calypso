@@ -35,24 +35,6 @@
 			}
 		}
 
-		.is-action-button-selected {
-			background-color: var( --color-neutral-0 );
-
-			.gridicon {
-				fill: var( --color-neutral-500 );
-			}
-
-			.sidebar__menu-item-label,
-			.menu-link-text {
-				color: var( --color-neutral-700 );
-			}
-
-			.sidebar__button {
-				background-color: var( --color-neutral-400 );
-				color: var( --color-white );
-			}
-		}
-
 		.sidebar-streams__team {
 			border-top: 0;
 		}
