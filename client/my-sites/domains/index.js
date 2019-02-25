@@ -192,14 +192,6 @@ export default function() {
 	} );
 
 	page(
-		paths.domainManagementPrivacyProtection( ':site', ':domain' ),
-		...getCommonHandlers( { warnIfJetpack: false } ),
-		domainManagementController.domainManagementPrivacyProtection,
-		makeLayout,
-		clientRender
-	);
-
-	page(
 		paths.domainManagementPrimaryDomain( ':site', ':domain' ),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementPrimaryDomain,

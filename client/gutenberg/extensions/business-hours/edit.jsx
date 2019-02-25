@@ -8,8 +8,8 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import HoursRow from './hours-row';
-import { icon } from 'gutenberg/extensions/business-hours';
+import Day from 'gutenberg/extensions/business-hours/components/day';
+import { icon } from 'gutenberg/extensions/business-hours/index';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const defaultLocalization = {
@@ -25,7 +25,7 @@ const defaultLocalization = {
 	startOfWeek: 0,
 };
 
-class HoursList extends Component {
+class BusinessHoursEdit extends Component {
 	state = {
 		localization: defaultLocalization,
 		hasFetched: false,
@@ -50,23 +50,18 @@ class HoursList extends Component {
 
 	render() {
 		const { className, attributes, edit } = this.props;
-		const { hours } = attributes;
+		const { days } = attributes;
 		const { localization, hasFetched } = this.state;
 		const { startOfWeek } = localization;
 		return (
 			<div className={ className }>
 				{ hasFetched || ! edit ? (
-					Object.keys( hours )
-						.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
+					days
+						.concat( days.slice( 0, startOfWeek ) )
 						.slice( startOfWeek )
-						.map( ( dayOfTheWeek, index ) => {
+						.map( ( day, key ) => {
 							return (
-								<HoursRow
-									key={ index }
-									day={ dayOfTheWeek }
-									data={ localization }
-									{ ...this.props }
-								/>
+								<Day key={ key } day={ day } localization={ localization } { ...this.props } />
 							);
 						} )
 				) : (
@@ -77,4 +72,4 @@ class HoursList extends Component {
 	}
 }
 
-export default HoursList;
+export default BusinessHoursEdit;

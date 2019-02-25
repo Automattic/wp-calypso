@@ -28,7 +28,7 @@
 
 .shipping-zone__locations-container .list-item,
 .shipping-zone__methods-container .list-item {
-	border-top: 1px solid $border-ultra-light-gray;
+	border-top: 1px solid var( --color-border-subtle );
 }
 
 .shipping-zone__locations-container .list-header + .list-item,

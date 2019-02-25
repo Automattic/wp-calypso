@@ -516,7 +516,7 @@ export function cancelTransferRequest( options, onComplete ) {
 	} );
 }
 
-export function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
+export function enablePrivacyProtection( domainName, onComplete ) {
 	wpcom.enablePrivacyProtection( domainName, error => {
 		if ( error ) {
 			onComplete( error );
@@ -525,9 +525,19 @@ export function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
 
 		Dispatcher.handleServerAction( {
 			type: PRIVACY_PROTECTION_ENABLE_COMPLETED,
-			siteId,
 			domainName,
 		} );
+
+		onComplete( null );
+	} );
+}
+
+export function disablePrivacyProtection( domainName, onComplete ) {
+	wpcom.disablePrivacyProtection( domainName, error => {
+		if ( error ) {
+			onComplete( error );
+			return;
+		}
 
 		onComplete( null );
 	} );

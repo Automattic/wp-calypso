@@ -742,7 +742,7 @@ class WpcomChecklistComponent extends PureComponent {
 					{
 						title: translate( 'Homepage updated!' ),
 						description: translate(
-							'Nide work. If all the text looks good, ' + 'let’s move on to changing your photos.'
+							'Nice work. If all the text looks good, ' + 'let’s move on to changing your photos.'
 						),
 					},
 				] }
@@ -867,8 +867,8 @@ class WpcomChecklistComponent extends PureComponent {
 			staff = translate( 'doctors', { context: 'Health & Medical' } );
 		} else if ( includes( siteVerticals, 'Educations' ) ) {
 			staff = translate( 'educators', { context: 'Educations' } );
-		} else if ( includes( siteVerticals, 'Fitness & Excercise' ) ) {
-			staff = translate( 'professionals', { context: 'Fitness & Excercise' } );
+		} else if ( includes( siteVerticals, 'Fitness & Exercise' ) ) {
+			staff = translate( 'professionals', { context: 'Fitness & Exercise' } );
 		}
 
 		return (

@@ -1,7 +1,7 @@
 /** @format */
 
 import { parse as parseUrl } from 'url';
-import { get, includes, mapValues, merge, pickBy } from 'lodash';
+import { get, includes, isString, mapValues, merge, pickBy, map, has } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -9,6 +9,22 @@ import config from 'config';
 import { reduxGetState } from 'lib/redux-bridge';
 import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
 import getPaymentPostalCode from 'state/selectors/get-payment-postal-code';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:tax-placeholders' );
+
+/*
+ * The functions in this file are a temporary convenience to let us
+ * write the front-end changes related to US sales tax before the actual
+ * data is available from the backend.
+ *
+ * All of these functions should be inert without the `tax-placeholders`
+ * configuration flag, and this flag should never be enable in production.
+ *
+ * This entire file should be removed after the backend changes are ready.
+ *
+ * See also https://github.com/Automattic/wp-calypso/projects/78
+ */
 
 // #tax-on-checkout-placeholder
 export function dummyTaxRate( postalCode, countryCode ) {
@@ -101,4 +117,60 @@ export function injectTaxStateWithPlaceholderValues( tax ) {
 	const overrideValues = getTaxQueryParams();
 
 	return merge( placeholderTaxValues, tax, overrideValues );
+}
+
+export function injectSinglePurchaseWithPlaceholderValues( purchase ) {
+	const purchasePriceText = get( purchase, 'price_text' );
+	if ( ! config.isEnabled( 'show-tax' ) ) {
+		return purchase;
+	}
+
+	// Ignore it if it's "Included with plan"
+	// Note: this won't work in non-english, but it's only temporary anyway
+	if ( isString( purchasePriceText ) && purchasePriceText.match( /include/i ) ) {
+		return purchase;
+	}
+	debug( 'injecting taxAmount into purchase', purchase );
+
+	// Let's reuse the property names from the cart
+	const placeholderValues = getCartQueryParams();
+	const cartPropertyNames = {
+		tax_amount: 'total_tax',
+		tax_text: 'total_tax_display',
+	};
+	return Object.assign(
+		purchase,
+		mapValues( cartPropertyNames, cartKey => placeholderValues[ cartKey ] || null )
+	);
+}
+
+// Apply a function f to a single element, or map if over an array
+const automap = f => arg => ( arg && typeof arg.map === 'function' ? arg.map( f ) : f( arg ) );
+
+/**
+ * Modifies a purchase or an array of purchases by injecting
+ * @param  {purchase | [purchase]} purchases The purchase or purchases to be modified
+ * @return {purchase | [purchase]}           Updated purchase(s)
+ */
+export const injectPurchasesWithPlaceholderValues = automap(
+	injectSinglePurchaseWithPlaceholderValues
+);
+
+export function maybeInjectPlaceholderTaxAmountIntoCharge( charge ) {
+	if (
+		config.isEnabled( 'show-tax' ) &&
+		! has( charge, 'tax_amount' ) &&
+		isString( get( charge, 'amount' ) )
+	) {
+		return Object.assign( charge, {
+			tax_amount: charge.amount.replace( /(\d+)(\d)\.(\d*)\d/, '$1.$2$3' ),
+		} );
+	}
+	return charge;
+}
+
+export function maybeInjectPlaceholderTaxAmountIntoCharges( charges ) {
+	return config.isEnabled( 'show-tax' )
+		? map( charges, maybeInjectPlaceholderTaxAmountIntoCharge )
+		: charges;
 }

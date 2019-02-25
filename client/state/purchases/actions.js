@@ -1,8 +1,12 @@
 /** @format */
-// External dependencies
+/**
+ * External dependencies
+ */
 import i18n from 'i18n-calypso';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import {
 	PRIVACY_PROTECTION_CANCEL,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
@@ -18,6 +22,7 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'state/action-types';
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
+import { injectPurchasesWithPlaceholderValues } from 'lib/tax';
 
 import wp from 'lib/wp';
 const wpcom = wp.undocumented();
@@ -76,7 +81,8 @@ export const fetchSitePurchases = siteId => dispatch => {
 			dispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
-				purchases: data,
+				// #tax-on-checkout-placeholder
+				purchases: injectPurchasesWithPlaceholderValues( data ),
 			} );
 		} )
 		.catch( () => {
@@ -100,7 +106,8 @@ export const fetchUserPurchases = userId => dispatch => {
 		.then( data => {
 			dispatch( {
 				type: PURCHASES_USER_FETCH_COMPLETED,
-				purchases: data,
+				// #tax-on-checkout-placeholder
+				purchases: injectPurchasesWithPlaceholderValues( data ),
 				userId,
 			} );
 		} )

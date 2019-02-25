@@ -1762,12 +1762,12 @@ Undocumented.prototype.cancelTransferRequest = function( { domainName, declineTr
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
 
-Undocumented.prototype.enablePrivacyProtection = function( domainName, fn ) {
-	const data = {
-		domainStatus: JSON.stringify( { command: 'enable-privacy' } ),
-	};
+Undocumented.prototype.enablePrivacyProtection = function( domainName, callback ) {
+	return this.wpcom.req.post( '/domains/' + domainName + '/privacy/enable', callback );
+};
 
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
+Undocumented.prototype.disablePrivacyProtection = function( domainName, callback ) {
+	return this.wpcom.req.post( '/domains/' + domainName + '/privacy/disable', callback );
 };
 
 Undocumented.prototype.acceptTransfer = function( domainName, fn ) {

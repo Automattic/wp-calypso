@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { parse as parseUrl } from 'url';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import { parse as parseUrl } from 'url';
 import config, { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
+import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
 import { addQueryArgs } from 'lib/url';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
@@ -209,7 +211,7 @@ export class LoginLinks extends React.Component {
 
 	renderSignUpLink() {
 		// Taken from client/layout/masterbar/logged-out.jsx
-		const { currentQuery, currentRoute, pathname, translate } = this.props;
+		const { currentQuery, currentRoute, oauth2Client, pathname, translate } = this.props;
 
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
@@ -237,6 +239,17 @@ export class LoginLinks extends React.Component {
 			signupUrl += '/' + signupFlow;
 		}
 
+		if ( config.isEnabled( 'signup/wpcc' ) && isCrowdsignalOAuth2Client( oauth2Client ) ) {
+			const oauth2Flow = 'crowdsignal';
+			const redirectTo = get( currentQuery, 'redirect_to', '');
+			const oauth2Params = {
+				oauth2_client_id: oauth2Client.id,
+				oauth2_redirect: redirectTo,
+			};
+
+			signupUrl = `${ signupUrl }/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
+		}
+
 		return (
 			<a
 				href={ signupUrl }
@@ -257,7 +270,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				{ this.renderBackLink() }
+				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) && this.renderBackLink() }
 			</div>
 		);
 	}

@@ -41,7 +41,7 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
-import { adjustMoment, getStartMoment } from './utils';
+import { adjustMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
@@ -131,11 +131,6 @@ class ActivityLog extends Component {
 			this.props.getRewindRestoreProgress( siteId, rewindState.rewind.restoreId );
 		}
 	};
-
-	getStartMoment() {
-		const { gmtOffset, startDate, timezone } = this.props;
-		return getStartMoment( { gmtOffset, startDate, timezone } );
-	}
 
 	/**
 	 * Close Restore, Backup, or Transfer confirmation dialog.

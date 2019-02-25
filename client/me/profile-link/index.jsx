@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,11 @@ import Button from 'components/button';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { withoutHttp } from 'lib/url';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ProfileLink extends React.Component {
 	static defaultProps = {

@@ -43,6 +43,7 @@ export {
 	declineTransfer,
 	deleteDns,
 	deleteEmailForwarding,
+	disablePrivacyProtection,
 	enablePrivacyProtection,
 	fetchDns,
 	fetchEmailForwarding,

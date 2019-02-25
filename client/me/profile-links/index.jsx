@@ -23,6 +23,11 @@ import { deleteUserProfileLink, resetUserProfileLinkErrors } from 'state/profile
 import getProfileLinks from 'state/selectors/get-profile-links';
 import getProfileLinksErrorType from 'state/selectors/get-profile-links-error-type';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ProfileLinks extends React.Component {
 	state = {
 		showingForm: false,

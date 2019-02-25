@@ -20,7 +20,7 @@
 
 .application-passwords__new-password-display {
 	background: var( --color-neutral-0 );
-	border: 1px solid $border-ultra-light-gray;
+	border: 1px solid var( --color-border-subtle );
 	font-size: 200%;
 	font-weight: 600;
 	width: 70%;

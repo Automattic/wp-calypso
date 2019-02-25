@@ -41,7 +41,7 @@ export function filterUserObject( obj ) {
 		'primary_blog_url',
 		'meta',
 		'is_new_reader',
-		'social_signup_service',
+		'social_login_connections',
 		'abtests',
 	];
 	const decodeWhitelist = [ 'display_name', 'description', 'user_URL' ];
