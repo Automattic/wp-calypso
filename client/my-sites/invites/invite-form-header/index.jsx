@@ -30,7 +30,7 @@ class InviteFormHeader extends React.Component {
 		}
 
 		return (
-			<a href={ site.URL } onClick={ this.clickedSiteLink } className="invite-header__site-link">
+			<a href={ site.URL } onClick={ this.clickedSiteLink }>
 				{ site.title }
 			</a>
 		);
