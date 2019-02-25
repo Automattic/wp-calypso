@@ -883,7 +883,7 @@ class WpcomChecklistComponent extends PureComponent {
 					{
 						title: translate( 'Add staff to your homepage' ),
 						description: translate(
-							'Help customers trust you by telling them about your qualifications.' +
+							'Help customers trust you by telling them about your qualifications. ' +
 								'Click the services block to add your list of services.'
 						),
 					},
