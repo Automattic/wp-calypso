@@ -188,7 +188,7 @@ class MailchimpSubscribeEdit extends Component {
 		const blockContent = (
 			<div className={ className }>
 				{ ! audition && (
-					<form ref={ this.formRef }>
+					<Fragment>
 						<p>
 							<label for={ emailInputId } className="wp-block-jetpack-mailchimp_hidden-label">
 								{ emailPlaceholder }
@@ -214,7 +214,7 @@ class MailchimpSubscribeEdit extends Component {
 							onChange={ value => setAttributes( { consentText: value } ) }
 							inlineToolbar
 						/>
-					</form>
+					</Fragment>
 				) }
 				{ audition && (
 					<div
