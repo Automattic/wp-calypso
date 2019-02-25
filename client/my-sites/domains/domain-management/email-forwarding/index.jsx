@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -19,10 +20,13 @@ import EmailForwardingDetails from './email-forwarding-details';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
+import getEmailForwardingLimit from 'state/selectors/get-email-forwarding-limit';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EmailForwarding extends React.Component {
 	static propTypes = {
 		emailForwarding: PropTypes.object.isRequired,
+		emailForwardingLimit: PropTypes.number.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
@@ -48,6 +52,7 @@ class EmailForwarding extends React.Component {
 
 					<EmailForwardingAddNew
 						emailForwarding={ this.props.emailForwarding }
+						emailForwardingLimit={ this.props.emailForwardingLimit }
 						selectedDomainName={ this.props.selectedDomainName }
 						selectedSite={ this.props.selectedSite }
 					/>
@@ -65,4 +70,13 @@ class EmailForwarding extends React.Component {
 	};
 }
 
-export default localize( EmailForwarding );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
+		};
+	},
+	null
+)( localize( EmailForwarding ) );

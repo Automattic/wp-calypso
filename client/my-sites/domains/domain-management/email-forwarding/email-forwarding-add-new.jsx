@@ -11,7 +11,7 @@ import createReactClass from 'create-react-class';
  * Internal dependencies
  */
 import EmailForwardingLimit from './email-forwarding-limit';
-import { emailForwardingPlanLimit, validateAllFields } from 'lib/domains/email-forwarding';
+import { validateAllFields } from 'lib/domains/email-forwarding';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
@@ -30,6 +30,10 @@ const EmailForwardingAddNew = createReactClass( {
 
 	propTypes: {
 		initialShowForm: PropTypes.bool,
+		emailForwarding: PropTypes.object.isRequired,
+		emailForwardingLimit: PropTypes.number.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	},
 
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
@@ -59,10 +63,7 @@ const EmailForwardingAddNew = createReactClass( {
 	},
 
 	hasReachedLimit() {
-		return (
-			this.props.emailForwarding.list.length >=
-			emailForwardingPlanLimit( this.props.selectedSite.plan )
-		);
+		return this.props.emailForwarding.list.length >= this.props.emailForwardingLimit;
 	},
 
 	onAddEmailForward( event ) {
@@ -252,6 +253,7 @@ const EmailForwardingAddNew = createReactClass( {
 				<EmailForwardingLimit
 					selectedSite={ this.props.selectedSite }
 					emailForwarding={ this.props.emailForwarding }
+					emailForwardingLimit={ this.props.emailForwardingLimit }
 				/>
 
 				{ this.formFields() }

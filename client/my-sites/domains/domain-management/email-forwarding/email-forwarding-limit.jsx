@@ -3,19 +3,21 @@
 /**
  * External dependencies
  */
-
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
-
 class EmailForwardingLimit extends React.Component {
+	static propTypes = {
+		emailForwarding: PropTypes.object.isRequired,
+		emailForwardingLimit: PropTypes.number.isRequired,
+	};
+
 	render() {
-		const used = this.props.emailForwarding.list.length;
+		const { emailForwarding, emailForwardingLimit } = this.props;
+
+		const used = emailForwarding.list.length;
 
 		if ( used < 1 ) {
 			return null;
@@ -26,7 +28,7 @@ class EmailForwardingLimit extends React.Component {
 				{ this.props.translate( 'You are using %(used)s out of %(available)s email forwards.', {
 					args: {
 						used,
-						available: emailForwardingPlanLimit( this.props.selectedSite.plan ),
+						available: emailForwardingLimit,
 					},
 				} ) }
 			</div>
