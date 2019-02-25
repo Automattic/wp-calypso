@@ -25,6 +25,7 @@ import notices from 'notices';
 import { addEmailForwarding } from 'lib/upgrades/actions';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 
+// eslint-disable-next-line react/prefer-es6-class
 const EmailForwardingAddNew = createReactClass( {
 	displayName: 'EmailForwardingAddNew',
 
@@ -33,7 +34,6 @@ const EmailForwardingAddNew = createReactClass( {
 		emailForwarding: PropTypes.object.isRequired,
 		emailForwardingLimit: PropTypes.number.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	},
 
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
@@ -196,7 +196,7 @@ const EmailForwardingAddNew = createReactClass( {
 			{ mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
 		return (
-			<div className="form-content">
+			<div className="email-forwarding__form-content">
 				<FormFieldset>
 					<FormLabel>{ this.props.translate( 'Emails Sent To' ) }</FormLabel>
 					<FormTextInputWithAffixes
@@ -251,7 +251,6 @@ const EmailForwardingAddNew = createReactClass( {
 		return (
 			<form className="email-forwarding__add-new">
 				<EmailForwardingLimit
-					selectedSite={ this.props.selectedSite }
 					emailForwarding={ this.props.emailForwarding }
 					emailForwardingLimit={ this.props.emailForwardingLimit }
 				/>
@@ -270,7 +269,8 @@ const EmailForwardingAddNew = createReactClass( {
 	},
 
 	onChange( event ) {
-		let { name, value } = event.target;
+		const { name } = event.target;
+		let { value } = event.target;
 
 		value = value.replace( /\s/g, '' );
 		if ( name === 'mailbox' ) {
