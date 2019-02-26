@@ -71,7 +71,7 @@ export const name = 'slideshow';
 export const settings = {
 	title: __( 'Slideshow' ),
 	category: 'jetpack',
-	keywords: [ __( 'image' ) ],
+	keywords: [ __( 'image' ), __( 'gallery' ), __( 'slider' ) ],
 	description: __( 'Add an interactive slideshow.' ),
 	attributes,
 	supports: {
