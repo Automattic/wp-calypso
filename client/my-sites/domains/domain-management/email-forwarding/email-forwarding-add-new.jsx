@@ -92,18 +92,10 @@ const EmailForwardingAddNew = createReactClass( {
 			);
 
 			this.props.createEmailForwarding( this.props.selectedDomainName, mailbox, destination );
+			this.formStateController.resetFields( this.getInitialState().fields );
+			this.setState( { formSubmitting: false, showForm: true } );
 		} );
 	},
-
-	// 			if ( error ) {
-	// 				notices.error();
-	// 			} else {
-	// 				this.formStateController.resetFields( this.getInitialState().fields );
-	// 			}
-	// 			this.setState( { formSubmitting: false, showForm: ! error } );
-	// 		} );
-	// 	} );
-	// },
 
 	setFormState( fields ) {
 		this.setState( { fields } );
