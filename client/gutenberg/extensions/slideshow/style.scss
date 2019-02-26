@@ -124,6 +124,9 @@
 		right: 0;
 		text-align: initial;
 		z-index: 1;
+		a {
+			color: inherit;
+		}
 	}
 
 	.wp-block-jetpack-slideshow_pagination.swiper-pagination-bullets {
