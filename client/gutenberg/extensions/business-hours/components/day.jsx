@@ -79,6 +79,7 @@ class Day extends Component {
 			</Fragment>
 		);
 	};
+
 	setHour = ( hourValue, hourType, hourIndex ) => {
 		const { day, attributes, setAttributes } = this.props;
 		const { days } = attributes;
@@ -102,6 +103,7 @@ class Day extends Component {
 			} ),
 		} );
 	};
+
 	toggleClosed = nextValue => {
 		const { day, attributes, setAttributes } = this.props;
 		const { days } = attributes;
@@ -126,6 +128,7 @@ class Day extends Component {
 			} ),
 		} );
 	};
+
 	addInterval = () => {
 		const { day, attributes, setAttributes } = this.props;
 		const { days } = attributes;
@@ -142,6 +145,7 @@ class Day extends Component {
 			} ),
 		} );
 	};
+
 	removeInterval = hourIndex => {
 		const { day, attributes, setAttributes } = this.props;
 		const { days } = attributes;
@@ -160,10 +164,12 @@ class Day extends Component {
 			} ),
 		} );
 	};
+
 	isClosed() {
 		const { day } = this.props;
 		return isEmpty( day.hours );
 	}
+
 	renderDayToggle() {
 		const { day, localization } = this.props;
 		return (
@@ -177,6 +183,7 @@ class Day extends Component {
 			</Fragment>
 		);
 	}
+
 	renderClosed() {
 		const { day } = this.props;
 		return (
@@ -189,6 +196,7 @@ class Day extends Component {
 			</div>
 		);
 	}
+
 	render() {
 		const { day } = this.props;
 		return this.isClosed() ? this.renderClosed() : day.hours.map( this.renderInterval );
