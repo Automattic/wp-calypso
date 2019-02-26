@@ -35,6 +35,12 @@
 		background-color: var( --color-accent );
 		border-color: var( --color-accent );
 	}
+
+	@include breakpoint( '<660px' ) {
+		.button.is-borderless.inline-help__button {
+			padding: 1px;
+		}
+	}
 }
 
 .button.inline-help__classic-editor-toggle,
