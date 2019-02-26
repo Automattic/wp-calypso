@@ -10,22 +10,23 @@ export function renderPhone( inputText ) {
 	}
 	const indexOfFirstNumber = inputText.indexOf( arrayOfNumbers[ 0 ] );
 
-	// Assume that everthing after the first number should be a part of the phone number.
+	// Assume that eveything after the first number should be part of the phone number.
 	// care about the first prefix character.
 	let phoneNumber = indexOfFirstNumber ? inputText.substring( indexOfFirstNumber - 1 ) : inputText;
 	let prefix = indexOfFirstNumber ? inputText.substring( 0, indexOfFirstNumber ) : '';
 
 	let justNumber = phoneNumber.replace( /\D/g, '' );
-	// Phone numbers starting with + shoud be part of the number.
-	if ( /[0-9/+/(]/.test( phoneNumber.substring( 0, 1 ) ) ) {
-		// Remove the special charater from the prefix so they don't appear twice.
+	// Phone numbers starting with + should be part of the number.
+	if ( /[0-9/+/(]/.test( phoneNumber[ 0 ] ) ) {
+		// Remove the special character from the prefix so they don't appear twice.
 		prefix = prefix.slice( 0, -1 );
 		// Phone numbers starting with + shoud be part of the number.
-		if ( phoneNumber.substring( 0, 1 ) === '+' ) {
+		if ( phoneNumber[ 0 ] === '+' ) {
 			justNumber = '+' + justNumber;
 		}
 	} else {
-		phoneNumber = phoneNumber.substring( 1 ); // Remove the first character.
+		// Remove the first character.
+		phoneNumber = phoneNumber.substring( 1 );
 	}
 	const prefixSpan = prefix.trim() ? (
 		<span key="phonePrefix" className="phone-prefix">
