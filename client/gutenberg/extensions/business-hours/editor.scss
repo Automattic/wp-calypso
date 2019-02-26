@@ -25,6 +25,9 @@ $break-small: 600px;
 				width: 40%;
 				font-size: small;
 				font-weight: bold;
+				overflow-x: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
 			}
 
 			.components-form-toggle {
