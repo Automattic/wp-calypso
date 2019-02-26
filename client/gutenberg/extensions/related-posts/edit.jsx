@@ -17,95 +17,95 @@ export const MAX_POSTS_TO_SHOW = 6;
 
 function PlaceholderPostEdit( props ) {
 	return (
-		<div
+		<ul
 			className="jp-related-posts-i2__post"
 			id={ props.id }
 			aria-labelledby={ props.id + '-heading' }
 		>
-			<strong id={ props.id + '-heading' } className="jp-related-posts-i2__post-link">
-				{ __( 'Preview: Not enough related posts found' ) }
-			</strong>
-			{ props.displayThumbnails && (
-				<figure
-					className="jp-related-posts-i2__post-image-placeholder"
-					aria-label={ __( 'Placeholder image' ) }
+			<li className="jp-related-posts-i2__post-link">
+				<a
+					id={ props.id + '-heading' }
+					href={ typeof window !== 'undefined' ? window.location : '' }
 				>
-					<SVG
-						className="jp-related-posts-i2__post-image-placeholder-square"
-						xmlns="http://www.w3.org/2000/svg"
-						width="100%"
-						height="100%"
-						viewBox="0 0 350 200"
+					{ __( 'Preview: Not enough related posts found' ) }
+				</a>
+			</li>
+			{ props.displayThumbnails && (
+				<li className="jp-related-posts-i2__post-image-placeholder">
+					<figure
+						className="jp-related-posts-i2__post-image-placeholder-figure"
+						aria-label={ __( 'Placeholder image' ) }
 					>
-						<title>{ __( 'Grey square' ) }</title>
-						<Path d="M0 0h350v200H0z" fill="#8B8B96" fill-opacity=".1" />
-					</SVG>
-					<SVG
-						className="jp-related-posts-i2__post-image-placeholder-icon"
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						viewBox="0 0 24 24"
-					>
-						<title>{ __( 'Icon for image' ) }</title>
-						<Path fill="none" d="M0 0h24v24H0V0z" />
-						<Path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z" />
-					</SVG>
-				</figure>
+						<SVG
+							className="jp-related-posts-i2__post-image-placeholder-figure-square"
+							xmlns="http://www.w3.org/2000/svg"
+							width="100%"
+							height="100%"
+							viewBox="0 0 350 200"
+						>
+							<title>{ __( 'Grey square' ) }</title>
+							<Path d="M0 0h350v200H0z" fill="#8B8B96" fill-opacity=".1" />
+						</SVG>
+						<SVG
+							className="jp-related-posts-i2__post-image-placeholder-figure-icon"
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+						>
+							<title>{ __( 'Icon for image' ) }</title>
+							<Path fill="none" d="M0 0h24v24H0V0z" />
+							<Path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z" />
+						</SVG>
+					</figure>
+				</li>
 			) }
 
 			{ props.displayDate && (
-				<div className="jp-related-posts-i2__post-date has-small-font-size">
-					{ __( 'August 3, 2018' ) }
-				</div>
+				<div className="jp-related-posts-i2__post-date">{ __( 'August 3, 2018' ) }</div>
 			) }
 			{ props.displayContext && (
-				<div className="jp-related-posts-i2__post-context has-small-font-size">
-					{ __( 'In “Uncategorized”' ) }
-				</div>
+				<div className="jp-related-posts-i2__post-context">{ __( 'In “Uncategorized”' ) }</div>
 			) }
-		</div>
+		</ul>
 	);
 }
 
 function RelatedPostsEditItem( props ) {
 	return (
-		<div
+		<ul
 			className="jp-related-posts-i2__post"
 			id={ props.id }
 			aria-labelledby={ props.id + '-heading' }
 		>
-			<a
-				className="jp-related-posts-i2__post-link"
-				id={ props.id + '-heading' }
-				href={ props.post.url }
-				rel="nofollow noopener noreferrer"
-				target="_blank"
-			>
-				{ props.post.title }
-			</a>
-			{ props.displayThumbnails && props.post.img && props.post.img.src && (
-				<a className="jp-related-posts-i2__post-img-link" href={ props.post.url }>
-					<img
-						className="jp-related-posts-i2__post-img"
-						src={ props.post.img.src }
-						alt={ props.post.title }
-						rel="nofollow noopener noreferrer"
-						target="_blank"
-					/>
+			<li className="jp-related-posts-i2__post-link">
+				<a
+					id={ props.id + '-heading' }
+					href={ props.post.url }
+					rel="nofollow noopener noreferrer"
+					target="_blank"
+				>
+					{ props.post.title }
 				</a>
+			</li>
+			{ props.displayThumbnails && props.post.img && props.post.img.src && (
+				<li className="jp-related-posts-i2__post-img-link">
+					<a href={ props.post.url } rel="nofollow noopener noreferrer" target="_blank">
+						<img
+							className="jp-related-posts-i2__post-img"
+							src={ props.post.img.src }
+							alt={ props.post.img.alt_text }
+						/>
+					</a>
+				</li>
 			) }
 			{ props.displayDate && (
-				<div className="jp-related-posts-i2__post-date has-small-font-size">
-					{ props.post.date }
-				</div>
+				<li className="jp-related-posts-i2__post-date">{ props.post.date }</li>
 			) }
 			{ props.displayContext && (
-				<div className="jp-related-posts-i2__post-context has-small-font-size">
-					{ props.post.context }
-				</div>
+				<li className="jp-related-posts-i2__post-context">{ props.post.context }</li>
 			) }
-		</div>
+		</ul>
 	);
 }
 
@@ -230,11 +230,9 @@ class RelatedPostsEdit extends Component {
 					<Toolbar controls={ layoutControls } />
 				</BlockControls>
 
-				<div className={ className } id={ `related-posts-${ instanceId }` }>
-					<div className={ previewClassName } data-layout={ postLayout }>
-						<RelatedPostsPreviewRows posts={ displayPosts } />
-					</div>
-				</div>
+				<nav className={ previewClassName + ' ' + className } data-layout={ postLayout }>
+					<RelatedPostsPreviewRows posts={ displayPosts } />
+				</nav>
 			</Fragment>
 		);
 	}

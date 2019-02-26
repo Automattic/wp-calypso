@@ -22,23 +22,20 @@
 	&__post {
 		flex-grow: 1;
 		flex-basis: 0;
-		margin: 0 10px;
+		margin: 0 10px !important;
 		display: flex;
 		flex-direction: column;
+		padding-left: 0px;
 	}
 
-	&__post-heading, &__post-img-link, &__post-date, &__post-context {
+	&__post-heading, &__post-img-link, &__post-date, &__post-context, &__post-image-placeholder {
 		flex-direction: row;
+		display: block;
 	}
 
 	&__post-img-link, &__post-image-placeholder {
 		order: -1;
-	}
-
-	&__post-heading {
-		margin: 0.5rem 0;
-		font-size: 1rem;
-		line-height: 1.2em;
+		line-height: 1em;
 	}
 
 	&__post-link {
@@ -46,13 +43,14 @@
 		width: 100%;
 		line-height: 1.2em;
 		margin: 0.2em 0;
+		overflow-wrap: break-word;
 	}
 
 	&__post-img {
 		width: 100%;
 	}
 
-	&__post-image-placeholder {
+	&__post-image-placeholder-figure {
 		display: block;
 		position: relative;
 		margin: 0 auto;
@@ -77,7 +75,7 @@
 		margin: 0;
 		margin-top: 1rem;
 	}
-	.jp-related-posts-i2__post-image-placeholder {
+	.jp-related-posts-i2__post-image-placeholder, img {
 		max-width: 350px;
 		margin: 0;
 	}
