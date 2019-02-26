@@ -53,7 +53,8 @@ import {
 import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
 import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
 import SharingPreviewModal from './sharing-preview-modal';
-import ConnectionsList, { NoConnectionsNotice } from './connections-list';
+import ConnectionsList from './connections-list';
+import NoConnectionsNotice from './no-connections-notice';
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
 import EventsTooltip from 'components/date-picker/events-tooltip';
@@ -484,21 +485,14 @@ class PostShare extends Component {
 	}
 
 	renderPrimarySection() {
-		const { hasFetchedConnections, hasRepublicizeFeature, siteSlug, translate } = this.props;
+		const { hasFetchedConnections, hasRepublicizeFeature, siteSlug } = this.props;
 
 		if ( ! hasFetchedConnections ) {
 			return null;
 		}
 
 		if ( ! this.hasConnections() ) {
-			return (
-				<NoConnectionsNotice
-					{ ...{
-						siteSlug,
-						translate,
-					} }
-				/>
-			);
+			return <NoConnectionsNotice siteSlug={ siteSlug } />;
 		}
 
 		if ( ! hasRepublicizeFeature ) {
