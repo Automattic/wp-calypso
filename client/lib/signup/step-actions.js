@@ -424,8 +424,22 @@ export function createAccount(
 			),
 			( error, response ) => {
 				const errors =
-						error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
-					bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
+					error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
+				// we should either have an error with an error property, or we should have a response with a bearer_token
+				const bearerToken = {};
+				if ( ! errors ) {
+					if ( response && response.bearer_token ) {
+						bearerToken.bearer_token = response.bearer_token;
+					} else {
+						// something odd happened...
+						//eslint-disable-next-line no-console
+						console.error(
+							'Expected either an error or a bearer token. got %o, %o.',
+							error,
+							response
+						);
+					}
+				}
 
 				if ( ! errors ) {
 					// Fire after a new user registers.
