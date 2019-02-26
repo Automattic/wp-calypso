@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import emailForwardsReducer from '../reducer';
-import { EMAIL_FORWARDING_RECEIVE, EMAIL_FORWARDING_REQUEST } from 'state/action-types';
+import { EMAIL_FORWARDING_REQUEST_SUCCESS, EMAIL_FORWARDING_REQUEST } from 'state/action-types';
 
 const TEST_MAILBOX_EXAMPLE_DOT_COM = {
 	email: 'test@example.com',
@@ -32,7 +32,7 @@ const TEST_MAILBOX_TEST_DOT_COM = {
 describe( 'emailForwardsReducer', () => {
 	test( 'should save data', () => {
 		const state = emailForwardsReducer( undefined, {
-			type: EMAIL_FORWARDING_RECEIVE,
+			type: EMAIL_FORWARDING_REQUEST_SUCCESS,
 			domainName: 'example.com',
 			data: {
 				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
@@ -43,7 +43,7 @@ describe( 'emailForwardsReducer', () => {
 			'example.com': {
 				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
 				isRequesting: false,
-				forwardsError: null,
+				errors: null,
 			},
 		} );
 	} );
@@ -53,7 +53,7 @@ describe( 'emailForwardsReducer', () => {
 			'example.com': {
 				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
 				isRequesting: false,
-				forwardsError: null,
+				errors: null,
 			},
 		};
 
@@ -66,7 +66,7 @@ describe( 'emailForwardsReducer', () => {
 			'example.com': {
 				forwards: null,
 				isRequesting: true,
-				forwardsError: null,
+				errors: null,
 			},
 		} );
 	} );
@@ -76,12 +76,12 @@ describe( 'emailForwardsReducer', () => {
 			'example.com': {
 				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
 				isRequesting: false,
-				forwardsError: null,
+				errors: null,
 			},
 			'test.com': {
 				forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
 				isRequesting: false,
-				forwardsError: null,
+				errors: null,
 			},
 		};
 
@@ -94,12 +94,12 @@ describe( 'emailForwardsReducer', () => {
 			'example.com': {
 				forwards: null,
 				isRequesting: true,
-				forwardsError: null,
+				errors: null,
 			},
 			'test.com': {
 				forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
 				isRequesting: false,
-				forwardsError: null,
+				errors: null,
 			},
 		} );
 	} );

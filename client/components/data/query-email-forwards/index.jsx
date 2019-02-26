@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -43,5 +44,12 @@ export default connect(
 			requestingEmailForwards: isRequestingEmailForwards( state, domainName ),
 		};
 	},
-	{ requestEmailForwarding }
+	dispatch => {
+		return bindActionCreators(
+			{
+				requestEmailForwarding,
+			},
+			dispatch
+		);
+	}
 )( QueryEmailForwards );

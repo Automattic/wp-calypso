@@ -5,41 +5,31 @@
  */
 import {
 	EMAIL_FORWARDING_REQUEST,
-	EMAIL_FORWARDING_RECEIVE,
-	EMAIL_FORWARDING_FAILURE,
+	EMAIL_FORWARDING_REQUEST_SUCCESS,
+	EMAIL_FORWARDING_REQUEST_FAILURE,
 } from 'state/action-types';
-import wp from 'lib/wp';
 
-const wpcom = wp.undocumented();
+import 'state/data-layer/wpcom/email-forwarding';
 
-/**
- * Triggers a network request to fetch posts for the specified site and query.
- *
- * @param  {String}   domainName  domainName
- * @return {Function}        Action thunk
- */
-export const requestEmailForwarding = domainName => {
-	return dispatch => {
-		dispatch( {
-			type: EMAIL_FORWARDING_REQUEST,
-			domainName,
-		} );
-
-		return wpcom
-			.getEmailForwards( domainName )
-			.then( data => {
-				dispatch( {
-					type: EMAIL_FORWARDING_RECEIVE,
-					domainName,
-					data,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: EMAIL_FORWARDING_FAILURE,
-					domainName,
-					error,
-				} );
-			} );
+export function requestEmailForwarding( domainName ) {
+	return {
+		type: EMAIL_FORWARDING_REQUEST,
+		domainName,
 	};
-};
+}
+
+export function receiveEmailForwardingRequestSuccess( domainName, data ) {
+	return {
+		type: EMAIL_FORWARDING_REQUEST_SUCCESS,
+		domainName,
+		data,
+	};
+}
+
+export function receiveEmailForwardingRequestFailure( domainName, error ) {
+	return {
+		type: EMAIL_FORWARDING_REQUEST_FAILURE,
+		domainName,
+		error,
+	};
+}

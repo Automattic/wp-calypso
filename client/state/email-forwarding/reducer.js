@@ -6,26 +6,28 @@
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
 	EMAIL_FORWARDING_REQUEST,
-	EMAIL_FORWARDING_RECEIVE,
-	EMAIL_FORWARDING_FAILURE,
+	EMAIL_FORWARDING_REQUEST_SUCCESS,
+	EMAIL_FORWARDING_REQUEST_FAILURE,
 } from 'state/action-types';
+import { forwardsSchema } from './schema';
 
-const forwards = createReducer( null, {
-	[ EMAIL_FORWARDING_FAILURE ]: () => null,
-	[ EMAIL_FORWARDING_RECEIVE ]: ( state, { data } ) => data.forwards,
-	[ EMAIL_FORWARDING_REQUEST ]: () => null,
-} );
-
-const isRequesting = createReducer( false, {
-	[ EMAIL_FORWARDING_FAILURE ]: () => false,
-	[ EMAIL_FORWARDING_RECEIVE ]: () => false,
+export const isRequesting = createReducer( null, {
 	[ EMAIL_FORWARDING_REQUEST ]: () => true,
+	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: () => false,
+	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => false,
 } );
 
-const forwardsError = createReducer( null, {
-	[ EMAIL_FORWARDING_FAILURE ]: ( state, { error } ) => error,
-	[ EMAIL_FORWARDING_RECEIVE ]: () => null,
-	[ EMAIL_FORWARDING_REQUEST ]: () => null,
+export const forwards = createReducer(
+	null,
+	{
+		[ EMAIL_FORWARDING_REQUEST ]: () => null,
+		[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: ( state, { data } ) => data.forwards,
+	},
+	forwardsSchema
+);
+
+export const errors = createReducer( null, {
+	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: ( state, { error } ) => error,
 } );
 
 export default keyedReducer(
@@ -33,6 +35,6 @@ export default keyedReducer(
 	combineReducers( {
 		forwards,
 		isRequesting,
-		forwardsError,
+		errors,
 	} )
 );
