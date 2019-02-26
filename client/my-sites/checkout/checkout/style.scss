@@ -957,15 +957,6 @@
 		margin-right: 4px;
 	}
 
-	.checkout__emergent-paywall {
-		margin-top: 3px;
-	}
-
-	.checkout__paytm {
-		width: 50px;
-		margin: -20px 0;
-	}
-
 	.checkout__wechat {
 		height: 24px;
 		margin-right: 5px;
@@ -999,35 +990,6 @@
 			margin-top: 0;
 		}
 	}
-}
-
-// Emergent Paywall
-// -----------------------------------
-.checkout__emergent-paywall-form {
-	height: 0;
-	width: 0;
-}
-.checkout__emergent-paywall-loading-content {
-	min-height: 300px;
-}
-
-.checkout__emergent-paywall-iframe {
-	width: 100%;
-}
-
-.checkout__emergent-paywall-frame-container {
-	height: 0;
-	overflow: hidden;
-	&.iframe-loaded {
-		height: auto;
-		overflow: visible;
-	}
-}
-
-.checkout__emergent-paywall-support-link {
-	text-align: center;
-	font-size: 11px;
-	margin-top: -6px;
 }
 
 // Ebanx checkout fields
