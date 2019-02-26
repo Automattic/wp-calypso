@@ -35,6 +35,7 @@ import MainWrapper from './main-wrapper';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
+import versionCompare from 'lib/version-compare';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
@@ -574,7 +575,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
+		const { clientId, homeUrl, jpVersion, redirectAfterAuth } = this.props.authQuery;
 		const { canManageOptions, partnerSlug } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
@@ -585,7 +586,9 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		const nextRoute = canManageOptions ? JPC_PATH_SITE_TYPE : JPC_PATH_PLANS;
+		const isJetpackVersionSupported = versionCompare( jpVersion, '7.1-alpha', '>=' );
+		const nextRoute =
+			isJetpackVersionSupported && canManageOptions ? JPC_PATH_SITE_TYPE : JPC_PATH_PLANS;
 
 		return addQueryArgs(
 			{ redirect: redirectAfterAuth },
