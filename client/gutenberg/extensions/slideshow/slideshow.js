@@ -50,7 +50,7 @@ class Slideshow extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { align, autoplay, delay, effect, images, jumpToIndex } = this.props;
+		const { align, autoplay, delay, effect, images } = this.props;
 
 		/* A change in alignment or images only needs an update */
 		if ( align !== prevProps.align || ! isEqual( images, prevProps.images ) ) {
@@ -63,7 +63,10 @@ class Slideshow extends Component {
 			delay !== prevProps.delay ||
 			images !== prevProps.images
 		) {
-			const realIndex = jumpToIndex || this.swiperInstance.realIndex;
+			const realIndex =
+				images.length === prevProps.images.length
+					? this.swiperInstance.realIndex
+					: prevProps.images.length;
 			this.swiperInstance && this.swiperInstance.destroy( true, true );
 			this.buildSwiper( realIndex ).then( swiper => {
 				this.swiperInstance = swiper;
