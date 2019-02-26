@@ -44,7 +44,7 @@
 		fill: var( --color-primary );
 	}
 	20% {
-		fill: $blue-light;
+		fill: var( --color-primary-light );
 	}
 	50% {
 		fill: var( --color-white );
