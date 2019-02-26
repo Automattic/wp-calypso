@@ -414,6 +414,10 @@
 		padding: 15px 50px;
 		text-decoration: none;
 		text-transform: capitalize;
+		
+		@include breakpoint( '<480px' ) {
+			width: auto;
+		}
 
 		&:hover,
 		&:focus {
@@ -581,8 +585,7 @@
 		@include breakpoint( '<660px' ) {
 			margin-right: 6px;
 			margin-left: 6px;		 
-		}
-		
+		}		
 	}
 
 	&.is-section-signup::before,
@@ -597,7 +600,7 @@
 		
 		@include breakpoint( '<480px' ) {
 			font-size: 1.6em;
-			margin: 0;
+			margin: 0 0 8px 0;
 			padding: 0;			
 		}
 	}
