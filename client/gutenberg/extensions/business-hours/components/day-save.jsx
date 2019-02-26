@@ -20,6 +20,7 @@ class DaySave extends Component {
 		_date.setMinutes( minutes );
 		return date( timeFormat, _date );
 	}
+
 	renderInterval = ( interval, key ) => {
 		return (
 			! isEmpty( interval.opening ) &&
@@ -34,13 +35,14 @@ class DaySave extends Component {
 			)
 		);
 	};
+
 	render() {
 		const { day, localization } = this.props;
 		return (
 			<Fragment>
 				<dt className={ day.name }>{ localization.days[ day.name ] }</dt>
 				{ isEmpty( day.hours ) ? (
-					<dd>{ __( 'Closed' ) }</dd>
+					<dd>{ _x( 'Closed', 'business is closed on a full day' ) }</dd>
 				) : (
 					day.hours.map( this.renderInterval )
 				) }
