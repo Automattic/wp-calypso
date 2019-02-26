@@ -14,10 +14,10 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 class DaySave extends Component {
 	formatTime( time ) {
 		const { timeFormat } = this.props;
-		const hoursAndMinutes = time.split( ':' );
+		const [ hours, minutes ] = time.split( ':' );
 		const _date = new Date();
-		_date.setHours( hoursAndMinutes[ 0 ] );
-		_date.setMinutes( hoursAndMinutes[ 1 ] );
+		_date.setHours( hours );
+		_date.setMinutes( minutes );
 		return date( timeFormat, _date );
 	}
 	renderInterval = ( interval, key ) => {
