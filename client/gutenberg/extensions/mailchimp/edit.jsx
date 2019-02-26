@@ -14,7 +14,6 @@ import {
 	TextControl,
 	withNotices,
 } from '@wordpress/components';
-import { compose, withInstanceId } from '@wordpress/compose';
 import { InspectorControls, RichText } from '@wordpress/editor';
 import { Fragment, Component } from '@wordpress/element';
 
@@ -129,7 +128,7 @@ class MailchimpSubscribeEdit extends Component {
 	};
 
 	render = () => {
-		const { attributes, className, instanceId, notices, noticeUI, setAttributes } = this.props;
+		const { attributes, className, notices, noticeUI, setAttributes } = this.props;
 		const { audition, connected, connectURL } = this.state;
 		const { emailPlaceholder, consentText, processingLabel, successLabel, errorLabel } = attributes;
 		const classPrefix = 'wp-block-jetpack-mailchimp_';
@@ -185,7 +184,6 @@ class MailchimpSubscribeEdit extends Component {
 				</PanelBody>
 			</InspectorControls>
 		);
-		const emailInputId = `${ classPrefix }email_input-${ instanceId }`;
 		const classes = classnames(
 			className,
 			audition && 'wp-block-jetpack-mailchimp_notication-audition'
@@ -193,16 +191,11 @@ class MailchimpSubscribeEdit extends Component {
 		const blockContent = (
 			<div className={ classes }>
 				<p>
-					<label htmlFor={ emailInputId } className="wp-block-jetpack-mailchimp_hidden-label">
-						{ emailPlaceholder }
-					</label>
 					<TextControl
 						aria-label={ emailPlaceholder }
 						disabled
-						id={ emailInputId }
-						name={ emailInputId }
-						placeholder={ emailPlaceholder }
 						onChange={ () => false }
+						placeholder={ emailPlaceholder }
 						title={ __( 'You can edit the email placeholder in the sidebar.' ) }
 						type="email"
 					/>
@@ -239,7 +232,4 @@ class MailchimpSubscribeEdit extends Component {
 	};
 }
 
-export default compose(
-	withInstanceId,
-	withNotices
-)( MailchimpSubscribeEdit );
+export default withNotices( MailchimpSubscribeEdit );
