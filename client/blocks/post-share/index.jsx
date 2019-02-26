@@ -51,7 +51,7 @@ import {
 	isRequestingSitePlans as siteIsRequestingPlans,
 } from 'state/sites/plans/selectors';
 import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
-import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
+import { UpgradeToPremiumNudge } from './nudges';
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList from './connections-list';
 import NoConnectionsNotice from './no-connections-notice';
@@ -61,6 +61,11 @@ import EventsTooltip from 'components/date-picker/events-tooltip';
 import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { sectionify } from 'lib/route';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PostShare extends Component {
 	static propTypes = {
