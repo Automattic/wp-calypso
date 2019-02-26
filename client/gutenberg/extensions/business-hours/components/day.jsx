@@ -16,7 +16,7 @@ const defaultClose = '17:00';
 
 class Day extends Component {
 	renderInterval = ( interval, intervalIndex ) => {
-		const { day, resetFocus, edit = true } = this.props;
+		const { day, resetFocus } = this.props;
 		const { opening, closing } = interval;
 		return (
 			<Fragment key={ intervalIndex }>
@@ -25,34 +25,26 @@ class Day extends Component {
 						{ intervalIndex === 0 && this.renderDayToggle() }
 					</div>
 					<div className={ classNames( day.name, 'business-hours__hours' ) }>
-						{ edit ? (
-							<TextControl
-								type="time"
-								label={ __( 'Opening' ) }
-								value={ opening }
-								className="business-hours__open"
-								onChange={ value => {
-									resetFocus && resetFocus();
-									this.setHour( value, 'opening', intervalIndex );
-								} }
-							/>
-						) : (
-							opening
-						) }
-						{ edit ? (
-							<TextControl
-								type="time"
-								label={ __( 'Closing' ) }
-								value={ closing }
-								className="business-hours__close"
-								onChange={ value => {
-									resetFocus && resetFocus();
-									this.setHour( value, 'closing', intervalIndex );
-								} }
-							/>
-						) : (
-							closing
-						) }
+						<TextControl
+							type="time"
+							label={ __( 'Opening' ) }
+							value={ opening }
+							className="business-hours__open"
+							onChange={ value => {
+								resetFocus && resetFocus();
+								this.setHour( value, 'opening', intervalIndex );
+							} }
+						/>
+						<TextControl
+							type="time"
+							label={ __( 'Closing' ) }
+							value={ closing }
+							className="business-hours__close"
+							onChange={ value => {
+								resetFocus && resetFocus();
+								this.setHour( value, 'closing', intervalIndex );
+							} }
+						/>
 					</div>
 					<div className="business-hours__remove">
 						{ day.hours.length > 1 && (
@@ -173,30 +165,26 @@ class Day extends Component {
 		return isEmpty( day.hours );
 	}
 	renderDayToggle() {
-		const { day, edit = true, localization } = this.props;
+		const { day, localization } = this.props;
 		return (
 			<Fragment>
 				<span className="business-hours__day-name">{ localization.days[ day.name ] }</span>
-				{ edit && (
-					<ToggleControl
-						label={ this.isClosed() ? __( 'Closed' ) : __( 'Open' ) }
-						checked={ ! this.isClosed() }
-						onChange={ this.toggleClosed }
-					/>
-				) }
+				<ToggleControl
+					label={ this.isClosed() ? __( 'Closed' ) : __( 'Open' ) }
+					checked={ ! this.isClosed() }
+					onChange={ this.toggleClosed }
+				/>
 			</Fragment>
 		);
 	}
 	renderClosed() {
-		const { day, edit = true } = this.props;
+		const { day } = this.props;
 		return (
 			<div className="business-hours__row business-hours-row__closed">
 				<div className={ classNames( day.name, 'business-hours__day' ) }>
 					{ this.renderDayToggle() }
 				</div>
-				<div className={ classNames( day.name, 'closed', 'business-hours__hours' ) }>
-					{ ! edit && __( 'CLOSED' ) }
-				</div>
+				<div className={ classNames( day.name, 'closed', 'business-hours__hours' ) }>&nbsp;</div>
 				<div className="business-hours__remove">&nbsp;</div>
 			</div>
 		);
