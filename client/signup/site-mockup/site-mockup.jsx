@@ -113,7 +113,7 @@ export default connect(
 				recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
 					size: ownProps.size,
 					vertical_slug: verticalSlug,
-					site_style: ownProps.siteStyle,
+					site_style: ownProps.siteStyle || 'default',
 				} )
 			),
 	} )
