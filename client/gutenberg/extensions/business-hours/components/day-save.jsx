@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
-import { _x, sprintf } from '@wordpress/i18n';
 import { date } from '@wordpress/date';
+import { isEmpty } from 'lodash';
+import { sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class DaySave extends Component {
 	formatTime( time ) {
