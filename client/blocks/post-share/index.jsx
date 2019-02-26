@@ -324,7 +324,6 @@ class PostShare extends Component {
 						showOutsideDays={ false }
 						title={ translate( 'Set date and time' ) }
 						selectedDay={ this.state.scheduledDate }
-						tabIndex={ 3 }
 						siteId={ siteId }
 						onDateChange={ this.scheduleDate }
 						onDayMouseEnter={ this.showCalendarTooltip }
