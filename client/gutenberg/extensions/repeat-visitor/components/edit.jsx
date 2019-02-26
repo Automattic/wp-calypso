@@ -7,6 +7,7 @@ import { Component } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/editor';
 import { withSelect } from '@wordpress/data';
 import classNames from 'classnames';
+import { isInteger } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,7 +32,7 @@ class RepeatVisitorEdit extends Component {
 	setCriteria = criteria => this.props.setAttributes( { criteria } );
 	setThreshold = threshold => {
 		threshold.length &&
-			Number.isFinite( +threshold ) &&
+			isInteger( +threshold ) &&
 			+threshold > 0 &&
 			this.props.setAttributes( { threshold } );
 	};
@@ -75,6 +76,7 @@ class RepeatVisitorEdit extends Component {
 						label={ __( 'Visit count threshold' ) }
 						min="1"
 						onChange={ this.setThreshold }
+						pattern="[0-9]"
 						type="number"
 						value={ this.props.attributes.threshold }
 					/>
