@@ -13,7 +13,7 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import GsuiteNudge from 'my-sites/checkout/gsuite-nudge';
+import GSuiteNudge from 'my-sites/checkout/gsuite-nudge';
 import Checkout from './checkout';
 import CheckoutData from 'components/data/checkout';
 import CartData from 'components/data/cart';
@@ -123,7 +123,7 @@ export function gsuiteNudge( context, next ) {
 
 	context.primary = (
 		<CartData>
-			<GsuiteNudge
+			<GSuiteNudge
 				domain={ domain }
 				receiptId={ Number( receiptId ) }
 				selectedSiteId={ selectedSite.ID }

@@ -19,7 +19,8 @@ import NoticeAction from 'components/notice/notice-action';
 import PendingGappsTosNotice from './pending-gapps-tos-notice';
 import { purchasesRoot } from 'me/purchases/paths';
 import { type as domainTypes, transferStatus, gdprConsentStatus } from 'lib/domains/constants';
-import { isSubdomain, hasPendingGoogleAppsUsers } from 'lib/domains';
+import { hasPendingGSuiteUsers } from 'lib/domains/gsuite';
+import { isSubdomain } from 'lib/domains';
 import {
 	ALL_ABOUT_DOMAINS,
 	CHANGE_NAME_SERVERS,
@@ -818,7 +819,7 @@ export class DomainWarnings extends React.PureComponent {
 	};
 
 	pendingGappsTosAcceptanceDomains = () => {
-		const pendingDomains = this.getDomains().filter( hasPendingGoogleAppsUsers );
+		const pendingDomains = this.getDomains().filter( hasPendingGSuiteUsers );
 		return (
 			pendingDomains.length !== 0 && (
 				<PendingGappsTosNotice

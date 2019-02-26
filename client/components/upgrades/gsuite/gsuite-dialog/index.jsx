@@ -18,7 +18,7 @@ import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
-import { isGsuiteRestricted } from 'lib/domains';
+import { isGSuiteRestricted } from 'lib/domains/gsuite';
 import {
 	validate as validateGappsUsers,
 	filter as filterUsers,
@@ -66,7 +66,7 @@ class GoogleAppsDialog extends React.Component {
 	}
 
 	render() {
-		if ( isGsuiteRestricted() ) {
+		if ( isGSuiteRestricted() ) {
 			this.props.handleClickSkip();
 		} else {
 			return this.renderView();
