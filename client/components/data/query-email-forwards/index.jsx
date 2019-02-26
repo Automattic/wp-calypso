@@ -27,7 +27,7 @@ class QueryEmailForwards extends PureComponent {
 
 	request() {
 		if ( ! this.props.requestingEmailForwards ) {
-			this.props.equestEmailForwarding( this.props.domainName );
+			this.props.requestEmailForwarding( this.props.domainName );
 		}
 	}
 
