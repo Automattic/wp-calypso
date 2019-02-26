@@ -1,8 +1,7 @@
 $break-xlarge: 1080px;
-$break-large: 960px;	// admin sidebar auto folds
-$break-medium: 782px;   // editor sidebar auto folds
+$break-large: 960px; // admin sidebar auto folds
+$break-medium: 782px; // editor sidebar auto folds
 $break-small: 600px;
-
 
 .wp-block-jetpack-business-hours {
 	overflow: hidden;
@@ -11,7 +10,8 @@ $break-small: 600px;
 		display: flex;
 		align-items: center;
 
-		&.business-hours-row__add, &.business-hours-row__closed {
+		&.business-hours-row__add,
+		&.business-hours-row__closed {
 			margin-bottom: 20px;
 		}
 
@@ -62,20 +62,24 @@ $break-small: 600px;
 			}
 		}
 	}
+
 	.business-hours__remove {
 		width: 10%;
 		text-align: center;
 		margin-top: 16px;
 	}
+
 	.business-hours-row__add button {
 		text-decoration: none;
 		svg {
 			pointer-events: none;
 		}
 	}
+
 	.business-hours__remove button {
 		display: inline;
 	}
+
 	.business-hours-row__add .components-button.is-default:hover,
 	.business-hours__remove .components-button.is-default:hover,
 	.business-hours-row__add .components-button.is-default:focus,
@@ -87,12 +91,12 @@ $break-small: 600px;
 	}
 }
 
-/*
-	We consider the editor area to be small when the business hours block is:
-	- within a column block
-	- in a screen < xlarge size with the sidebar open
-	- in a screen < small size
-	In these cases we'll apply small screen styles.
+/**
+ * We consider the editor area to be small when the business hours block is:
+ *   - within a column block
+ *   - in a screen < xlarge size with the sidebar open
+ *   - in a screen < small size
+ * In these cases we'll apply small screen styles.
  */
 @mixin editor-area-is-small {
 	@media screen and ( max-width: $break-xlarge ) {
@@ -111,12 +115,12 @@ $break-small: 600px;
 
 @include editor-area-is-small() {
 	.wp-block-jetpack-business-hours {
-
 		.business-hours__row {
 			flex-wrap: wrap;
 
 			&.business-hours-row__add {
-				.business-hours__day, .business-hours__remove {
+				.business-hours__day,
+				.business-hours__remove {
 					display: none;
 				}
 			}
