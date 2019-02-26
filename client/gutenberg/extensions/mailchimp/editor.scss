@@ -13,7 +13,8 @@
 		}
 	}
 
-	&.wp-block-jetpack-mailchimp_notication-audition p {
+	// Hide everything else except notification when modifying notification labels
+	&.wp-block-jetpack-mailchimp_notication-audition > *:not( .wp-block-jetpack-mailchimp_notification ) {
 		display: none;
 	}
 

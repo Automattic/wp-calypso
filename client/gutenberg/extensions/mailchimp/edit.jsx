@@ -184,12 +184,11 @@ class MailchimpSubscribeEdit extends Component {
 				</PanelBody>
 			</InspectorControls>
 		);
-		const classes = classnames(
-			className,
-			audition && 'wp-block-jetpack-mailchimp_notication-audition'
-		);
+		const blockClasses = classnames( className, {
+			[ `${ classPrefix }notication-audition` ]: audition,
+		} );
 		const blockContent = (
-			<div className={ classes }>
+			<div className={ blockClasses }>
 				<TextControl
 					aria-label={ emailPlaceholder }
 					disabled
