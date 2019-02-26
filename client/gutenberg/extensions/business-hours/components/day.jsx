@@ -16,7 +16,7 @@ const defaultClose = '17:00';
 
 class Day extends Component {
 	renderInterval = ( interval, intervalIndex ) => {
-		const { day, resetFocus } = this.props;
+		const { day } = this.props;
 		const { opening, closing } = interval;
 		return (
 			<Fragment key={ intervalIndex }>
@@ -31,7 +31,6 @@ class Day extends Component {
 							value={ opening }
 							className="business-hours__open"
 							onChange={ value => {
-								resetFocus && resetFocus();
 								this.setHour( value, 'opening', intervalIndex );
 							} }
 						/>
@@ -41,7 +40,6 @@ class Day extends Component {
 							value={ closing }
 							className="business-hours__close"
 							onChange={ value => {
-								resetFocus && resetFocus();
 								this.setHour( value, 'closing', intervalIndex );
 							} }
 						/>
