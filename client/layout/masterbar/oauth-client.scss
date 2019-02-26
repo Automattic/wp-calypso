@@ -98,6 +98,7 @@
 
 	background: #f2f2f2;
 	color: var(--color-text);
+	font-family: 'Muli', $sans;
 
 	&.is-section-login{
 		padding-bottom: 100px;
@@ -110,6 +111,9 @@
 			border: 0;
 			border-radius: 0;
 			box-sizing: border-box;
+			font-family: 'Muli', $sans;
+			font-weight: normal;
+			letter-spacing: 0.5px;
 			padding: 12px 20px;
 		}
 
@@ -144,7 +148,7 @@
 			}
 
 			.gridicon {
-				vertical-align: text-bottom;
+				vertical-align: text-top;
 			}
 		}
 
@@ -177,13 +181,13 @@
 
 		.login__form label {
 			color: var(--color-text);
-			font-weight: 300;
+			font-weight: normal;
 		}
 
 		.login__form-header {
 			font-size: 25px;
 			color: var(--color-text);
-			font-weight: 500;
+			font-weight: 600;
 			margin-bottom: 80px;
 
 			@include breakpoint( '>480px' ) {
@@ -203,8 +207,8 @@
 			span {
 				background-color: transparent;
 				color: var(--color-text);
-				font-size: 22px;
-				font-weight: 500;
+				font-size: 20px;
+				font-weight: 600;
 			}
 		}
 
@@ -214,8 +218,8 @@
 			@include breakpoint( '>660px' ) {
 				color: var(--color-text);
 				display: block;
-				font-size: 22px;
-				font-weight: 500;
+				font-size: 20px;
+				font-weight: 600;
 				margin: 0 0 30px;
 				text-align: center;
 			}
@@ -223,7 +227,6 @@
 
 		.login__form-terms {
 			color: var(--color-text);
-			font-weight: 300;
 			margin: 0;
 			position: absolute;
 				left: 0;
@@ -249,7 +252,7 @@
 			}
 
 			a {
-				font-weight: 500;
+				font-weight: 600;
 			}
 		}
 
@@ -262,7 +265,7 @@
 
 			label {
 				color: var(--color-text);
-				font-weight: 300;
+				font-weight: normal;
 			}
 		}
 
@@ -343,7 +346,6 @@
 		.wp-login__links a {
 			border: 0;
 			color: var(--color-text);
-			font-weight: 300;
 			line-height: 21px;
 			padding: 10px 16px;
 			text-align: center;
