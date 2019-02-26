@@ -7,6 +7,16 @@
 	+ .faq {
 		margin-top: 20px;
 	}
+
+	@include breakpoint( '660px-1280px' ) {
+		position: relative;
+		.is-scrolled-to-left & {
+			left: calc( 20% + 10px );
+		}
+		.is-scrolled-to-right & {
+			left: calc( -20% - 10px );
+		}
+	}
 }
 
 .plans-features-main {
