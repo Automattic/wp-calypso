@@ -7,7 +7,7 @@
 		line-height: normal;
 	}
 
-	// Override <ul /> and <li /> left margins from theme styles
+	// Override <ul /> and <li /> left margins and paddings from theme styles
 	.edit-post-visual-editor & ul.wp-block-jetpack-slideshow_swiper-wrappper,
 	.edit-post-visual-editor & li.wp-block-jetpack-slideshow_slide {
 		margin: 0;
