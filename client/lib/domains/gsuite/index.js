@@ -49,10 +49,10 @@ function getEligibleGSuiteDomain( selectedDomainName, domains ) {
  */
 function getGSuiteSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
-		return (
-			includes( [ domainTypes.REGISTERED, domainTypes.MAPPED ], domain.type ) &&
-			canDomainAddGSuite( domain.name )
-		);
+		const wpcomHosted =
+			includes( [ domainTypes.REGISTERED ], domain.type ) && domain.hasWpcomNameservers;
+		const mapped = includes( [ domainTypes.MAPPED ], domain.type );
+		return ( wpcomHosted || mapped ) && canDomainAddGSuite( domain.name );
 	} );
 }
 

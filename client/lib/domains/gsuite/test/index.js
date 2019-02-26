@@ -65,8 +65,8 @@ describe( 'index', () => {
 			).toEqual( [] );
 		} );
 
-		test( 'returns domain object if domain is valid and type of registered', () => {
-			const registered = { name: 'foo.blog', type: 'REGISTERED' };
+		test( 'returns domain object if domain is valid, type of registered, and wpcom nameservers', () => {
+			const registered = { name: 'foo.blog', type: 'REGISTERED', hasWpcomNameservers: true };
 			expect( getGSuiteSupportedDomains( [ registered ] ) ).toEqual( [ registered ] );
 		} );
 
