@@ -586,7 +586,7 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		const isJetpackVersionSupported = versionCompare( jpVersion, '7.1-beta', '>=' );
+		const isJetpackVersionSupported = versionCompare( jpVersion, '7.1-alpha', '>=' );
 		const nextRoute =
 			isJetpackVersionSupported && canManageOptions ? JPC_PATH_SITE_TYPE : JPC_PATH_PLANS;
 
