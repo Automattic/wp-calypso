@@ -1,5 +1,4 @@
 .wp-block-jetpack-slideshow {
-
 	margin-bottom: 1.5em;
 	position: relative;
 	.wp-block-jetpack-slideshow_swiper-wrappper {
@@ -8,8 +7,9 @@
 		line-height: normal;
 	}
 
-	// Override UL left margin from theme styles
-	.edit-post-visual-editor & ul.wp-block-jetpack-slideshow_swiper-wrappper {
+	// Override <ul /> and <li /> left margins from theme styles
+	.edit-post-visual-editor & ul.wp-block-jetpack-slideshow_swiper-wrappper,
+	.edit-post-visual-editor & li.wp-block-jetpack-slideshow_slide {
 		margin: 0;
 	}
 
@@ -159,5 +159,4 @@
 			transform: scale( 1 );
 		}
 	}
-
 }
