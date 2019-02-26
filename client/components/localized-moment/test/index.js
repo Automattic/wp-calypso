@@ -15,7 +15,7 @@ import globalMoment from 'moment';
  * Internal dependencies
  */
 import { MomentProvider } from '../context';
-import withMoment from '..';
+import { withLocalizedMoment } from '..';
 
 // helper to create state object with specified `languageSlug`
 const createState = localeSlug => ( { ui: { language: { localeSlug } } } );
@@ -39,7 +39,7 @@ class Label extends React.PureComponent {
 	}
 }
 
-const LabelWithMoment = withMoment( Label );
+const LabelWithMoment = withLocalizedMoment( Label );
 
 // expected values of the label in different languages
 const enLabel = 'Thursday November';

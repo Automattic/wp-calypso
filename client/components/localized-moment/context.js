@@ -14,7 +14,7 @@ import debugFactory from 'debug';
  */
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
-const debug = debugFactory( 'calypso:with-localized-moment' );
+const debug = debugFactory( 'calypso:localized-moment' );
 
 const { Provider, Consumer } = React.createContext( moment );
 

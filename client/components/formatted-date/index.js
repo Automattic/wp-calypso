@@ -1,15 +1,12 @@
-/** @format */
 /**
  * External dependencies
- *
  */
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import withMoment from 'components/with-localized-moment';
+import { withLocalizedMoment } from 'components/localized-moment';
 import toCurrentLocale from './to-current-locale';
 
 function FormattedDate( { date, moment, format } ) {
@@ -25,4 +22,4 @@ function FormattedDate( { date, moment, format } ) {
 
 FormattedDate.displayName = 'FormattedDate';
 
-export default withMoment( FormattedDate );
+export default withLocalizedMoment( FormattedDate );
