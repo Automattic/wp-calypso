@@ -73,10 +73,10 @@ class RepeatVisitorEdit extends Component {
 					<TextControl
 						className="wp-block-jetpack-repeat-visitor-threshold"
 						label={ __( 'Visit count threshold' ) }
-						defaultValue={ this.props.attributes.threshold }
 						min="1"
 						onChange={ this.setThreshold }
 						type="number"
+						value={ this.props.attributes.threshold }
 					/>
 
 					<RadioControl
