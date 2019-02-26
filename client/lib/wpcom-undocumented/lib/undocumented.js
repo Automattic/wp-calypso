@@ -1586,7 +1586,7 @@ Undocumented.prototype.uploadTheme = function( siteId, file, onProgress ) {
 	} );
 };
 
-Undocumented.prototype.emailForwards = function( domain ) {
+Undocumented.prototype.getEmailForwards = function( domain ) {
 	debug( '/domains/:domain/email' );
 	return new Promise( ( resolve, rejectPromise ) => {
 		this.wpcom.req.get( '/domains/' + domain + '/email', ( error, data ) => {
@@ -1595,55 +1595,49 @@ Undocumented.prototype.emailForwards = function( domain ) {
 	} );
 };
 
-Undocumented.prototype.addEmailForward = function( domain, mailbox, destination, callback ) {
-	return this.wpcom.req.post(
-		'/domains/' + domain + '/email/new',
-		{},
-		{
-			mailbox: mailbox,
-			destination: destination,
-		},
-		function( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
+Undocumented.prototype.addEmailForward = function( domain, mailbox, destination ) {
+	debug( '/domains/:domain/new' );
+	return new Promise( ( resolve, rejectPromise ) => {
+		this.wpcom.req.post(
+			'/domains/' + domain + '/email/new',
+			{},
+			{
+				mailbox: mailbox,
+				destination: destination,
+			},
+			( error, data ) => {
+				error ? rejectPromise( error ) : resolve( data );
 			}
-
-			callback( null, response );
-		}
-	);
+		);
+	} );
 };
 
-Undocumented.prototype.deleteEmailForward = function( domain, mailbox, callback ) {
-	return this.wpcom.req.post(
-		'/domains/' + domain + '/email/' + mailbox + '/delete',
-		{},
-		{},
-		function( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
+Undocumented.prototype.deleteEmailForward = function( domain, mailbox ) {
+	debug( '/domains/:domain/:mailbox/delete' );
+	return new Promise( ( resolve, rejectPromise ) => {
+		this.wpcom.req.post(
+			'/domains/' + domain + '/email/' + mailbox + '/delete',
+			{},
+			{},
+			( error, data ) => {
+				error ? rejectPromise( error ) : resolve( data );
 			}
-
-			callback( null, response );
-		}
-	);
+		);
+	} );
 };
 
-Undocumented.prototype.resendVerificationEmailForward = function( domain, mailbox, callback ) {
-	return this.wpcom.req.post(
-		'/domains/' + domain + '/email/' + mailbox + '/resend-verification',
-		{},
-		{},
-		function( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
+Undocumented.prototype.resendVerificationEmailForward = function( domain, mailbox ) {
+	debug( '/domains/:domain/:mailbox/resend-verification' );
+	return new Promise( ( resolve, rejectPromise ) => {
+		return this.wpcom.req.post(
+			'/domains/' + domain + '/email/' + mailbox + '/resend-verification',
+			{},
+			{},
+			( error, data ) => {
+				error ? rejectPromise( error ) : resolve( data );
 			}
-
-			callback( null, response );
-		}
-	);
+		);
+	} );
 };
 
 Undocumented.prototype.nameservers = function( domain, callback ) {

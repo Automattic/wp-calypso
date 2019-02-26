@@ -26,7 +26,7 @@ export const requestEmailForwarding = domainName => {
 		} );
 
 		return wpcom
-			.emailForwards( domainName )
+			.getEmailForwards( domainName )
 			.then( data => {
 				dispatch( {
 					type: EMAIL_FORWARDING_RECEIVE,
