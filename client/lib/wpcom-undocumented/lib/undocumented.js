@@ -1586,60 +1586,6 @@ Undocumented.prototype.uploadTheme = function( siteId, file, onProgress ) {
 	} );
 };
 
-Undocumented.prototype.getEmailForwards = function( domain ) {
-	debug( '/domains/:domain/email' );
-	return new Promise( ( resolve, rejectPromise ) => {
-		this.wpcom.req.get( '/domains/' + domain + '/email', ( error, data ) => {
-			error ? rejectPromise( error ) : resolve( data );
-		} );
-	} );
-};
-
-Undocumented.prototype.addEmailForward = function( domain, mailbox, destination ) {
-	debug( '/domains/:domain/new' );
-	return new Promise( ( resolve, rejectPromise ) => {
-		this.wpcom.req.post(
-			'/domains/' + domain + '/email/new',
-			{},
-			{
-				mailbox: mailbox,
-				destination: destination,
-			},
-			( error, data ) => {
-				error ? rejectPromise( error ) : resolve( data );
-			}
-		);
-	} );
-};
-
-Undocumented.prototype.deleteEmailForward = function( domain, mailbox ) {
-	debug( '/domains/:domain/:mailbox/delete' );
-	return new Promise( ( resolve, rejectPromise ) => {
-		this.wpcom.req.post(
-			'/domains/' + domain + '/email/' + mailbox + '/delete',
-			{},
-			{},
-			( error, data ) => {
-				error ? rejectPromise( error ) : resolve( data );
-			}
-		);
-	} );
-};
-
-Undocumented.prototype.resendVerificationEmailForward = function( domain, mailbox ) {
-	debug( '/domains/:domain/:mailbox/resend-verification' );
-	return new Promise( ( resolve, rejectPromise ) => {
-		return this.wpcom.req.post(
-			'/domains/' + domain + '/email/' + mailbox + '/resend-verification',
-			{},
-			{},
-			( error, data ) => {
-				error ? rejectPromise( error ) : resolve( data );
-			}
-		);
-	} );
-};
-
 Undocumented.prototype.nameservers = function( domain, callback ) {
 	return this.wpcom.req.get( '/domains/' + domain + '/nameservers', function( error, response ) {
 		if ( error ) {
