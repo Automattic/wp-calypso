@@ -2,16 +2,15 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { PlainText, InspectorControls } from '@wordpress/editor';
+import { PlainText } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
-import { ToggleControl, PanelBody, ExternalLink } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import ClipboardInput from 'gutenberg/extensions/presets/jetpack/utils/clipboard-input';
-import { default as save, googleMapsUrl } from './save';
+import { default as save } from './save';
 
 class AddressEdit extends Component {
 	constructor( ...args ) {
@@ -116,19 +115,6 @@ class AddressEdit extends Component {
 							onKeyDown={ this.preventEnterKey }
 						/>
 						{ externalLink }
-						<InspectorControls>
-							<PanelBody title={ __( 'Link to Google Maps' ) }>
-								{ externalLink }
-								{ hasContent && <ClipboardInput link={ googleMapsUrl( this.props ) } /> }
-								{ hasContent && (
-									<div>
-										<ExternalLink href={ googleMapsUrl( this.props ) }>
-											{ __( 'Visit Google Maps' ) }
-										</ExternalLink>
-									</div>
-								) }
-							</PanelBody>
-						</InspectorControls>
 					</Fragment>
 				) }
 			</div>
