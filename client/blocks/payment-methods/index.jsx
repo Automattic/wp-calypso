@@ -16,19 +16,19 @@ import { getEnabledPaymentMethods } from 'lib/cart-values';
 
 class PaymentMethods extends Component {
 	renderPaymentMethods = methods => {
-		const methodsLogos = methods.map( method => {
-			if ( method === 'credit-card' ) {
-				return (
-					<div key={ method } className="payment-methods__cc-logos">
-						<PaymentLogo type="mastercard" altText="Mastercard" />
-						<PaymentLogo type="visa" altText="Visa" />
-						<PaymentLogo type="amex" altText="Amex" />
-						<PaymentLogo type="discover" altText="Discover" />
-					</div>
-				);
-			}
+		if ( methods.includes( 'credit-card' ) ) {
+			methods.splice(
+				methods.indexOf( 'credit-card' ),
+				1,
+				'mastercard',
+				'visa',
+				'amex',
+				'discover'
+			);
+		}
 
-			return <PaymentLogo type={ method } key={ method } altText={ method } />;
+		const methodsLogos = methods.map( method => {
+			return <PaymentLogo type={ method } key={ method } />;
 		} );
 
 		return <div className="payment-methods__methods">{ methodsLogos }</div>;
