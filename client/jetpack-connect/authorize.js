@@ -17,6 +17,7 @@ import urlUtils from 'url';
  */
 import AuthFormHeader from './auth-form-header';
 import Button from 'components/button';
+import canCurrentUser from 'state/selectors/can-current-user';
 import Card from 'components/card';
 import config from 'config';
 import Disclaimer from './disclaimer';
@@ -40,7 +41,7 @@ import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
+import { JPC_PATH_PLANS, JPC_PATH_SITE_TYPE, REMOTE_PATH_AUTH } from './constants';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
@@ -574,7 +575,7 @@ export class JetpackAuthorize extends Component {
 
 	getRedirectionTarget() {
 		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
-		const { partnerSlug } = this.props;
+		const { canManageOptions, partnerSlug } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
@@ -584,9 +585,11 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
+		const nextRoute = canManageOptions ? JPC_PATH_SITE_TYPE : JPC_PATH_PLANS;
+
 		return addQueryArgs(
 			{ redirect: redirectAfterAuth },
-			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+			`${ nextRoute }/${ urlToSlug( homeUrl ) }`
 		);
 	}
 
@@ -700,6 +703,7 @@ const connectComponent = connect(
 			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
 			authorizationData: getAuthorizationData( state ),
 			calypsoStartedConnection: isCalypsoStartedConnection( authQuery.site ),
+			canManageOptions: canCurrentUser( state, authQuery.clientId, 'manage_options' ),
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, authQuery.site ),
