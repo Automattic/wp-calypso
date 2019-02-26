@@ -13,11 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	canAccessWordads,
-	isWordadsInstantActivationEligible,
-	canUpgradeToUseWordAds,
-} from 'lib/ads/utils';
+import { isWordadsInstantActivationEligible, canUpgradeToUseWordAds } from 'lib/ads/utils';
 import { isBusiness } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
@@ -39,6 +35,8 @@ import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { isPremium } from '../../../lib/products-values';
+import { userCan } from '../../../lib/site/utils';
 
 class AdsWrapper extends Component {
 	static propTypes = {
@@ -62,7 +60,7 @@ class AdsWrapper extends Component {
 
 	canAccess() {
 		const { canManageOptions, site } = this.props;
-		return site && canManageOptions && canAccessWordads( site );
+		return site && site.options && canManageOptions && userCan( 'manage_options', site );
 	}
 
 	redirectToEarn() {
@@ -201,6 +199,7 @@ class AdsWrapper extends Component {
 
 	render() {
 		const { site, translate } = this.props;
+		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
 
 		if ( ! this.canAccess() ) {
 			return null;
@@ -215,17 +214,12 @@ class AdsWrapper extends Component {
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
-		} else if (
-			! site.options.wordads &&
-			isWordadsInstantActivationEligible( site ) &&
-			! ( isBusiness( site.plan ) && site.jetpack )
-		) {
+		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
 			component = this.renderInstantActivationToggle( component );
-		} else if (
-			! site.options.wordads &&
-			canUpgradeToUseWordAds( site )
-		) {
+		} else if ( canUpgradeToUseWordAds( site ) ) {
 			component = this.renderUpsell();
+		} else if ( ! ( site.options.wordads || jetpackPremium ) ) {
+			component = null;
 		}
 
 		return (
