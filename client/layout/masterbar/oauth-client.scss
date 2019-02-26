@@ -513,7 +513,7 @@
 
 	.step-wrapper {
 		margin: 0 auto 50px auto;
-		width: 778px;
+		max-width: 778px;
 	}
 
 	.logged-out-form {
@@ -577,6 +577,12 @@
 	// Signup styles
 	.signup__step {
 		background: linear-gradient( to bottom, #e6e6e6, transparent );
+		
+		@include breakpoint( '<660px' ) {
+			margin-right: 6px;
+			margin-left: 6px;		 
+		}
+		
 	}
 
 	&.is-section-signup::before,
@@ -588,6 +594,12 @@
 		font-size: 2em;
 		font-family: $sans;
 		margin-top: 2em;
+		
+		@include breakpoint( '<400px' ) {
+			font-size: 1.6em;
+			margin: 0;
+			padding: 0;			
+		}
 	}
 }
 
