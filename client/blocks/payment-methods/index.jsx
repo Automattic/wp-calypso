@@ -7,11 +7,12 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { intersection } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PaymentLogo from 'components/payment-logo';
+import PaymentLogo, { POSSIBLE_TYPES } from 'components/payment-logo';
 import { getEnabledPaymentMethods } from 'lib/cart-values';
 
 class PaymentMethods extends Component {
@@ -26,6 +27,8 @@ class PaymentMethods extends Component {
 				'discover'
 			);
 		}
+
+		methods = intersection( methods, POSSIBLE_TYPES );
 
 		const methodsLogos = methods.map( method => {
 			return <PaymentLogo type={ method } key={ method } />;
