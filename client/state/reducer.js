@@ -34,6 +34,7 @@ import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
+import emailForwarding from './email-forwarding/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import googleMyBusiness from './google-my-business/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
@@ -119,6 +120,7 @@ const reducers = {
 	dataRequests,
 	documentHead,
 	domains,
+	emailForwarding,
 	form,
 	googleAppsUsers,
 	googleMyBusiness,

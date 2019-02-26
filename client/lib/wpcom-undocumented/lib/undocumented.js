@@ -1586,14 +1586,12 @@ Undocumented.prototype.uploadTheme = function( siteId, file, onProgress ) {
 	} );
 };
 
-Undocumented.prototype.emailForwards = function( domain, callback ) {
-	return this.wpcom.req.get( '/domains/' + domain + '/email', function( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
+Undocumented.prototype.emailForwards = function( domain ) {
+	debug( '/domains/:domain/email' );
+	return new Promise( ( resolve, rejectPromise ) => {
+		this.wpcom.req.get( '/domains/' + domain + '/email', ( error, data ) => {
+			error ? rejectPromise( error ) : resolve( data );
+		} );
 	} );
 };
 

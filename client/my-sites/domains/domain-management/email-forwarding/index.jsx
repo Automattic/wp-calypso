@@ -5,7 +5,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import React, { Component } from 'react';
 import page from 'page';
 
 /**
@@ -21,11 +21,13 @@ import { domainManagementEmail } from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import getEmailForwardingLimit from 'state/selectors/get-email-forwarding-limit';
+import getEmailForwardingList from 'state/selectors/get-email-forwarding-list';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import QueryEmailForwards from 'components/data/query-email-forwards';
 
-class EmailForwarding extends React.Component {
+class EmailForwarding extends Component {
 	static propTypes = {
-		emailForwarding: PropTypes.object.isRequired,
+		emailForwardingList: PropTypes.array,
 		emailForwardingLimit: PropTypes.number.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		siteSlug: PropTypes.string.isRequired,
@@ -33,12 +35,23 @@ class EmailForwarding extends React.Component {
 	};
 
 	render() {
-		const { emailForwarding, emailForwardingLimit, selectedDomainName, translate } = this.props;
-		if ( this.isDataLoading() ) {
-			return <MainPlaceholder goBack={ this.goToEditEmail } />;
-		}
+		const { emailForwardingList, selectedDomainName } = this.props;
 		return (
-			<Main className="email-forwarding">
+			<div className="email-forwarding">
+				<QueryEmailForwards domainName={ selectedDomainName } />
+				{ emailForwardingList ? this.renderMain() : this.renderPlaceholder() }
+			</div>
+		);
+	}
+
+	renderPlaceholder() {
+		return <MainPlaceholder goBack={ this.goToEditEmail } />;
+	}
+
+	renderMain() {
+		const { emailForwardingList, emailForwardingLimit, selectedDomainName, translate } = this.props;
+		return (
+			<Main>
 				<Header onClick={ this.goToEditEmail } selectedDomainName={ selectedDomainName }>
 					{ translate( 'Email Forwarding' ) }
 				</Header>
@@ -47,10 +60,10 @@ class EmailForwarding extends React.Component {
 				<Card className="email-forwarding__card">
 					<EmailForwardingDetails selectedDomainName={ selectedDomainName } />
 
-					<EmailForwardingList emailForwarding={ emailForwarding } />
+					<EmailForwardingList emailForwardingList={ emailForwardingList } />
 
 					<EmailForwardingAddNew
-						emailForwarding={ emailForwarding }
+						emailForwardingList={ emailForwardingList }
 						emailForwardingLimit={ emailForwardingLimit }
 						selectedDomainName={ selectedDomainName }
 					/>
@@ -59,20 +72,17 @@ class EmailForwarding extends React.Component {
 		);
 	}
 
-	isDataLoading = () => {
-		return ! this.props.emailForwarding.hasLoadedFromServer;
-	};
-
 	goToEditEmail = () => {
 		page( domainManagementEmail( this.props.siteSlug, this.props.selectedDomainName ) );
 	};
 }
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
-
+		const { selectedDomainName } = ownProps;
 		return {
+			emailForwardingList: getEmailForwardingList( state, selectedDomainName ),
 			emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
 		};

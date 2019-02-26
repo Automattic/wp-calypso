@@ -10,24 +10,18 @@ import { localize } from 'i18n-calypso';
 
 class EmailForwardingLimit extends React.Component {
 	static propTypes = {
-		emailForwarding: PropTypes.object.isRequired,
+		emailForwardingCount: PropTypes.number.isRequired,
 		emailForwardingLimit: PropTypes.number.isRequired,
 	};
 
 	render() {
-		const { emailForwarding, emailForwardingLimit } = this.props;
-
-		const used = emailForwarding.list.length;
-
-		if ( used < 1 ) {
-			return null;
-		}
+		const { emailForwardingCount, emailForwardingLimit } = this.props;
 
 		return (
 			<div className="email-forwarding__limit">
 				{ this.props.translate( 'You are using %(used)s out of %(available)s email forwards.', {
 					args: {
-						used,
+						used: emailForwardingCount,
 						available: emailForwardingLimit,
 					},
 				} ) }
