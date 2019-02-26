@@ -157,12 +157,17 @@ form.sidebar__button {
 	height: 24px;
 	margin-right: 8px;
 	line-height: 18px;
-	background-color: var( --color-surface );
-	color: var( --color-text-subtle );
+	background-color: var( --sidebar-background-color );
+	color: var( --sidebar-text-color );
 	font-size: 12px;
 	font-weight: 600;
 	border-radius: 3px;
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --sidebar-border-color );
+
+	&:hover {
+		border-color: var( --sidebar-text-color );
+		color: var( --sidebar-text-color );
+	}
 
 	@include breakpoint( '<660px' ) {
 		font-size: 14px;
@@ -204,11 +209,12 @@ form.sidebar__button input {
 		}
 
 		.sidebar__button {
-			color: var( --color-neutral-700 );
-			border: 1px solid var( --color-neutral-600 );
+			color: var( --sidebar-menu-selected-a-color );
+			border-color: var( --sidebar-menu-selected-a-color );
 
 			&:hover {
-				color: var( --color-accent );
+				color: var( --sidebar-menu-selected-a-color );
+				border-color: var( --sidebar-menu-selected-a-color );
 			}
 		}
 
@@ -238,8 +244,14 @@ form.sidebar__button input {
 			}
 
 			&.sidebar__button {
-				background-color: lighten( $sidebar-bg-color, 10% );
-				color: var( --color-text );
+				border-color: var( --sidebar-text-color );
+				background-color: var( --sidebar-background-color );
+				color: var( --sidebar-text-color );
+
+				&:hover {
+					border-color: var( --sidebar-text-color );
+					color: var( --sidebar-text-color );
+				}
 			}
 		}
 
@@ -265,8 +277,13 @@ form.sidebar__button input {
 			}
 
 			&.sidebar__button {
-				background-color: var( --color-white );
-				color: var( --color-neutral-700 );
+				background-color: var( --sidebar-background-color );
+				color: var( --sidebar-text-color );
+
+				&:hover {
+					border-color: var( --sidebar-text-color );
+					color: var( --sidebar-text-color );
+				}
 			}
 		}
 
@@ -280,8 +297,8 @@ form.sidebar__button input {
 	a,
 	form {
 		&.sidebar__button:hover {
-			color: var( --color-accent );
-			border-color: var( --sidebar-menu-hover-color );
+			color: var( --sidebar-text-color );
+			border-color: var( --sidebar-text-color );
 		}
 	}
 
