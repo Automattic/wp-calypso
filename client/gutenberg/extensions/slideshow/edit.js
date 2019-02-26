@@ -48,6 +48,7 @@ class SlideshowEdit extends Component {
 		super( ...arguments );
 		this.state = {
 			selectedImage: null,
+			jumpToIndex: null,
 		};
 	}
 	onSelectImages = images => {
@@ -74,12 +75,15 @@ class SlideshowEdit extends Component {
 			filesList: files,
 			onFileChange: images => {
 				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
-				setAttributes( {
-					images: [ ...imagesNormalized, ...currentImages ],
-				} );
 				if ( ! imagesNormalized.every( image => isBlobURL( image.url ) ) ) {
 					unlockPostSaving( lockName );
+					this.setState( { jumpToIndex: null } );
+				} else {
+					this.setState( { jumpToIndex: currentImages.length } );
 				}
+				setAttributes( {
+					images: [ ...currentImages, ...imagesNormalized ],
+				} );
 			},
 			onError: noticeOperations.createErrorNotice,
 		} );
@@ -95,6 +99,7 @@ class SlideshowEdit extends Component {
 			setAttributes,
 		} = this.props;
 		const { align, autoplay, delay, effect, images } = attributes;
+		const { jumpToIndex } = this.state;
 		const prefersReducedMotion =
 			typeof window !== 'undefined' &&
 			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
@@ -196,6 +201,7 @@ class SlideshowEdit extends Component {
 					delay={ delay }
 					effect={ effect }
 					images={ images }
+					jumpToIndex={ jumpToIndex }
 				/>
 				<DropZone onFilesDrop={ this.addFiles } />
 				{ isSelected && (
