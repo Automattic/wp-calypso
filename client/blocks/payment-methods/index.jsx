@@ -28,6 +28,10 @@ function PaymentMethods( { translate, cart } ) {
 
 	methods = intersection( methods, POSSIBLE_TYPES );
 
+	if ( methods.length === 0 ) {
+		return null;
+	}
+
 	return (
 		<div className="payment-methods">
 			<Gridicon
