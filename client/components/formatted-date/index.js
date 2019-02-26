@@ -6,10 +6,12 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { withLocalizedMoment } from 'components/localized-moment';
+import { useLocalizedMoment } from 'components/localized-moment';
 import toCurrentLocale from './to-current-locale';
 
-function FormattedDate( { date, moment, format } ) {
+export default function FormattedDate( { date, format } ) {
+	const [ moment ] = useLocalizedMoment();
+
 	if ( ! moment.isMoment( date ) ) {
 		// only make a new moment if we were passed something else
 		date = moment( date );
@@ -19,7 +21,3 @@ function FormattedDate( { date, moment, format } ) {
 	}
 	return <time dateTime={ date.toISOString( true ) }>{ date.format( format ) }</time>;
 }
-
-FormattedDate.displayName = 'FormattedDate';
-
-export default withLocalizedMoment( FormattedDate );
