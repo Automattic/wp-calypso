@@ -12,7 +12,7 @@ import i18n from 'i18n-calypso';
 
 const ALT_TEXT = {
 	alipay: 'Alipay',
-	amex: 'American Express',
+	amex: 'Amex',
 	bancontact: 'Bancontact',
 	'brazil-tef': 'Transferência bancária',
 	diners: 'Diners Club',
@@ -22,12 +22,12 @@ const ALT_TEXT = {
 	giropay: 'Giropay',
 	ideal: 'iDEAL',
 	jcb: 'JCB',
-	mastercard: 'MasterCard',
+	mastercard: 'Mastercard',
 	p24: 'Przelewy24',
 	paypal: 'PayPal',
 	placeholder: '',
 	unionpay: 'UnionPay',
-	visa: 'VISA',
+	visa: 'Visa',
 	wechat: i18n.translate( 'WeChat Pay', {
 		comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 	} ),
