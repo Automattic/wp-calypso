@@ -47,13 +47,13 @@
 		.plans-features-main__left-overlay {
 			position: absolute;
 			display: block;
-			left: 0px;
+			left: 0;
 		}
 
 		.plans-features-main__right-overlay {
 			position: absolute;
 			display: block;
-			right: 0px;
+			right: 0;
 		}
 	}
 	@include breakpoint( '660px-1040px' ) {
