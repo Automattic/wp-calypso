@@ -63,7 +63,7 @@ const EVENTS = {
 		},
 
 		emailForwarding: {
-			addNewEmailForwardClick( domainName, mailbox, destination, success ) {
+			addNewEmailForwardClick( domainName, mailbox, destination ) {
 				analytics.ga.recordEvent(
 					'Domain Management',
 					'Clicked "Add New Email Forward" Button in Email Forwarding',
@@ -77,7 +77,6 @@ const EVENTS = {
 						destination,
 						domain_name: domainName,
 						mailbox,
-						success,
 					}
 				);
 			},

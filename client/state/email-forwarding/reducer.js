@@ -8,33 +8,88 @@ import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_REQUEST_FAILURE,
+	EMAIL_FORWARDING_CREATE_REQUEST,
+	EMAIL_FORWARDING_CREATE_REQUEST_SUCCESS,
+	EMAIL_FORWARDING_CREATE_REQUEST_FAILURE,
 } from 'state/action-types';
 import { forwardsSchema } from './schema';
 
-export const isRequesting = createReducer( null, {
+export const isRequesting = createReducer( false, {
 	[ EMAIL_FORWARDING_REQUEST ]: () => true,
 	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: () => false,
 	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => false,
 } );
+
+export const isCreateRequesting = createReducer( false, {
+	[ EMAIL_FORWARDING_CREATE_REQUEST ]: () => true,
+	[ EMAIL_FORWARDING_CREATE_REQUEST_SUCCESS ]: () => false,
+	[ EMAIL_FORWARDING_CREATE_REQUEST_FAILURE ]: () => false,
+} );
+
+const handleCreateRequest = ( forwards, { domainName, mailbox, destination } ) => {
+	return [
+		...forwards,
+		{
+			email: `${ mailbox }@${ domainName }`,
+			mailbox,
+			domain: domainName,
+			forward_address: destination,
+			active: false,
+			temporary: true,
+		},
+	];
+};
+
+const handleCreateRequestSuccess = ( forwards, { mailbox, verified } ) => {
+	return forwards.map( forward => {
+		if ( forward.mailbox === mailbox ) {
+			return {
+				...forward,
+				active: verified,
+				temporary: false,
+			};
+		}
+		return forward;
+	} );
+};
+
+const handleCreateRequestFailure = ( forwards, { mailbox } ) => {
+	return forwards.filter( forward => forward.mailbox !== mailbox || forward.temporary !== true );
+};
 
 export const forwards = createReducer(
 	null,
 	{
 		[ EMAIL_FORWARDING_REQUEST ]: () => null,
 		[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: ( state, { data } ) => data.forwards,
+		[ EMAIL_FORWARDING_CREATE_REQUEST ]: handleCreateRequest,
+		[ EMAIL_FORWARDING_CREATE_REQUEST_SUCCESS ]: handleCreateRequestSuccess,
+		[ EMAIL_FORWARDING_CREATE_REQUEST_FAILURE ]: handleCreateRequestFailure,
 	},
 	forwardsSchema
 );
 
-export const errors = createReducer( null, {
+export const getErrors = createReducer( null, {
+	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: () => null,
 	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: ( state, { error } ) => error,
+} );
+
+export const createErrors = createReducer( null, {
+	[ EMAIL_FORWARDING_CREATE_REQUEST_SUCCESS ]: () => null,
+	[ EMAIL_FORWARDING_CREATE_REQUEST_FAILURE ]: ( state, { error } ) => error,
 } );
 
 export default keyedReducer(
 	'domainName',
 	combineReducers( {
 		forwards,
-		isRequesting,
-		errors,
+		requesting: combineReducers( {
+			get: isRequesting,
+			create: isCreateRequesting,
+		} ),
+		errors: combineReducers( {
+			get: getErrors,
+			create: createErrors,
+		} ),
 	} )
 );

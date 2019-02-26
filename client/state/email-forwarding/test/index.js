@@ -42,8 +42,14 @@ describe( 'emailForwardsReducer', () => {
 		expect( state ).to.eql( {
 			'example.com': {
 				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
-				isRequesting: false,
-				errors: null,
+				requesting: {
+					get: false,
+					create: false,
+				},
+				errors: {
+					get: null,
+					create: null,
+				},
 			},
 		} );
 	} );
@@ -52,8 +58,14 @@ describe( 'emailForwardsReducer', () => {
 		const prevState = {
 			'example.com': {
 				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
-				isRequesting: false,
-				errors: null,
+				requesting: {
+					get: false,
+					create: false,
+				},
+				errors: {
+					get: null,
+					create: null,
+				},
 			},
 		};
 
@@ -65,8 +77,14 @@ describe( 'emailForwardsReducer', () => {
 		expect( nextState ).to.eql( {
 			'example.com': {
 				forwards: null,
-				isRequesting: true,
-				errors: null,
+				requesting: {
+					get: true,
+					create: false,
+				},
+				errors: {
+					get: null,
+					create: null,
+				},
 			},
 		} );
 	} );
@@ -75,13 +93,25 @@ describe( 'emailForwardsReducer', () => {
 		const prevState = {
 			'example.com': {
 				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
-				isRequesting: false,
-				errors: null,
+				requesting: {
+					get: false,
+					create: false,
+				},
+				errors: {
+					get: null,
+					create: null,
+				},
 			},
 			'test.com': {
 				forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
-				isRequesting: false,
-				errors: null,
+				requesting: {
+					get: false,
+					create: false,
+				},
+				errors: {
+					get: null,
+					create: null,
+				},
 			},
 		};
 
@@ -93,13 +123,25 @@ describe( 'emailForwardsReducer', () => {
 		expect( nextState ).to.eql( {
 			'example.com': {
 				forwards: null,
-				isRequesting: true,
-				errors: null,
+				requesting: {
+					get: true,
+					create: false,
+				},
+				errors: {
+					get: null,
+					create: null,
+				},
 			},
 			'test.com': {
 				forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
-				isRequesting: false,
-				errors: null,
+				requesting: {
+					get: false,
+					create: false,
+				},
+				errors: {
+					get: null,
+					create: null,
+				},
 			},
 		} );
 	} );

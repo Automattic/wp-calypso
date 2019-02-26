@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {Boolean} If the request is in progress
  */
 export default function isRequestingEmailForwards( state, domainName ) {
-	return get( state.emailForwarding, [ domainName, 'isRequesting' ], false );
+	return get( state.emailForwarding, [ domainName, 'requesting', 'get' ], false );
 }

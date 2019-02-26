@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -21,9 +23,7 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import FormInputValidation from 'components/forms/form-input-validation';
 import formState from 'lib/form-state';
 import analyticsMixin from 'lib/mixins/analytics';
-import notices from 'notices';
-import { addEmailForwarding } from 'lib/upgrades/actions';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import { createEmailForwarding } from 'state/email-forwarding/actions';
 
 // eslint-disable-next-line react/prefer-es6-class
 const EmailForwardingAddNew = createReactClass( {
@@ -31,6 +31,7 @@ const EmailForwardingAddNew = createReactClass( {
 
 	propTypes: {
 		initialShowForm: PropTypes.bool,
+		createEmailForwarding: PropTypes.func.isRequired,
 		emailForwardingList: PropTypes.array,
 		emailForwardingLimit: PropTypes.number.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -83,53 +84,26 @@ const EmailForwardingAddNew = createReactClass( {
 
 			const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
-			addEmailForwarding( this.props.selectedDomainName, mailbox, destination, error => {
-				this.recordEvent(
-					'addNewEmailForwardClick',
-					this.props.selectedDomainName,
-					mailbox,
-					destination,
-					! Boolean( error )
-				);
+			this.recordEvent(
+				'addNewEmailForwardClick',
+				this.props.selectedDomainName,
+				mailbox,
+				destination
+			);
 
-				if ( error ) {
-					notices.error(
-						error.message ||
-							this.props.translate(
-								'Failed to add email forwarding record. ' +
-									'Please try again or ' +
-									'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
-								{
-									components: {
-										contactSupportLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-							)
-					);
-				} else {
-					this.formStateController.resetFields( this.getInitialState().fields );
-
-					notices.success(
-						this.props.translate(
-							'%(email)s has been successfully added! ' +
-								'You must confirm your email before it starts working. ' +
-								'Please check your inbox for %(destination)s.',
-							{
-								args: {
-									email: mailbox + '@' + this.props.selectedDomainName,
-									destination: destination,
-								},
-							}
-						),
-						{
-							duration: 5000,
-						}
-					);
-				}
-				this.setState( { formSubmitting: false, showForm: ! error } );
-			} );
+			this.props.createEmailForwarding( this.props.selectedDomainName, mailbox, destination );
 		} );
 	},
+
+	// 			if ( error ) {
+	// 				notices.error();
+	// 			} else {
+	// 				this.formStateController.resetFields( this.getInitialState().fields );
+	// 			}
+	// 			this.setState( { formSubmitting: false, showForm: ! error } );
+	// 		} );
+	// 	} );
+	// },
 
 	setFormState( fields ) {
 		this.setState( { fields } );
@@ -294,4 +268,14 @@ const EmailForwardingAddNew = createReactClass( {
 	},
 } );
 
-export default localize( EmailForwardingAddNew );
+export default connect(
+	null,
+	dispatch => {
+		return bindActionCreators(
+			{
+				createEmailForwarding,
+			},
+			dispatch
+		);
+	}
+)( localize( EmailForwardingAddNew ) );
