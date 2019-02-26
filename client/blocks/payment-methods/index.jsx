@@ -30,11 +30,7 @@ class PaymentMethods extends Component {
 
 		methods = intersection( methods, POSSIBLE_TYPES );
 
-		const methodsLogos = methods.map( method => {
-			return <PaymentLogo type={ method } key={ method } />;
-		} );
-
-		return <div className="payment-methods__methods">{ methodsLogos }</div>;
+		return methods.map( method => <PaymentLogo type={ method } key={ method } /> );
 	};
 
 	render() {
@@ -55,7 +51,9 @@ class PaymentMethods extends Component {
 					comment: 'Followed by a graphical list of payment methods available to the user',
 				} ) }
 
-				{ this.renderPaymentMethods( getEnabledPaymentMethods( this.props.cart ) ) }
+				<div className="payment-methods__methods">
+					{ this.renderPaymentMethods( getEnabledPaymentMethods( this.props.cart ) ) }
+				</div>
 			</div>
 		);
 	}
