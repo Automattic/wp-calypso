@@ -112,7 +112,7 @@ class SlideshowEdit extends Component {
 						/>
 						{ autoplay && (
 							<RangeControl
-								label={ __( 'Delay between transitions' ) }
+								label={ __( 'Delay between transitions (in seconds)' ) }
 								value={ delay }
 								onChange={ value => {
 									setAttributes( { delay: value } );
