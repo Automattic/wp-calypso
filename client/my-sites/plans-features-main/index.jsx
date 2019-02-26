@@ -46,6 +46,15 @@ import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 import { abtest } from 'lib/abtest';
 
 export class PlansFeaturesMain extends Component {
+	planPositions = [ 'left', 'center', 'right' ];
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			plansPosition: 'center',
+		};
+	}
+
 	componentDidUpdate( prevProps ) {
 		/**
 		 * Happychat does not update with the selected site right now :(
@@ -294,6 +303,22 @@ export class PlansFeaturesMain extends Component {
 		return false;
 	}
 
+	move( direction ) {
+		const offset = direction === 'left' ? -1 : 1;
+		const currentPosition = this.state.plansPosition;
+		const currentPositionIndex = this.planPositions.indexOf( currentPosition );
+		const nextPosition = this.planPositions[ currentPositionIndex + offset ] || currentPosition;
+
+		this.setState( { plansPosition: nextPosition } );
+	}
+
+	handleKeyPress( event ) {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			this.move( 'left' );
+		}
+	}
+
 	render() {
 		const { displayJetpackPlans, isInSignup, plansWithScroll, siteId } = this.props;
 		let faqs = null;
@@ -311,8 +336,20 @@ export class PlansFeaturesMain extends Component {
 				<QuerySitePlans siteId={ siteId } />
 				{ plansWithScroll ? (
 					<div className="plans-features-main__scroll-container">
-						<div className="plans-features-main__left-overlay" />
-						<div className="plans-features-main__right-overlay" />
+						<div
+							className="plans-features-main__left-overlay"
+							onClick={ this.move.bind( this, 'left' ) }
+							onKeyPress={ this.handleKeyPress.bind( this ) }
+							role="button"
+							tabIndex={ -1 }
+						/>
+						<div
+							className="plans-features-main__right-overlay"
+							onClick={ this.move.bind( this, 'right' ) }
+							onKeyPress={ this.handleKeyPress.bind( this ) }
+							role="button"
+							tabIndex={ 0 }
+						/>
 						{ this.getPlanFeatures() }
 					</div>
 				) : null }
