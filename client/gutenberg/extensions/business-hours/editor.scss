@@ -103,12 +103,12 @@ $break-small: 600px;
  * In these cases we'll apply small screen styles.
  */
 @mixin editor-area-is-small {
-	@media screen and ( max-width: $break-xlarge ) {
+	@media ( max-width: $break-xlarge ) {
 		.is-sidebar-opened {
 			@content;
 		}
 	}
-	@media screen and ( max-width: $break-small ) {
+	@media ( max-width: $break-small ) {
 		@content;
 	}
 
