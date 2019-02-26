@@ -1,6 +1,3 @@
-//document/index.jsx
-//perhaps should make layout full screen and see what happens then
-
 body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	@include breakpoint( '>1040px' ) {
 		margin: 0 auto;
@@ -10,27 +7,26 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 }
 
 .signup.is-crowdsignal {
-	.formatted-header {
-		// Crowdsignal color palette
-		--color-link: #384869;
-		--color-text: #384869;
+	// Crowdsignal color palette
+	--color-link: #384869;
+	--color-text: #384869;
 
+	.formatted-header {
 		color: var(--color-text);
 
+		font-family: 'Muli', $sans;
 		margin-bottom: 40px;
 	}
 
 	.formatted-header__title {
 		font-size: 32px;
-		font-weight: 500;
+		font-weight: 600;
 		margin-bottom: 10px;
 	}
 
 	.formatted-header__subtitle {
-		font-weight: 300;
-
 		a {
-			font-weight: 500;
+			font-weight: 600;
 		}
 	}
 }
@@ -43,11 +39,13 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	--color-text: #384869;
 
 	color: var(--color-text);
+	font-family: 'Muli', $sans;
 
 	.button{
 		border: 0;
 		border-radius: 0;
 		box-sizing: border-box;
+		font-family: 'Muli', $sans;
 		padding: 12px 20px;
 	}
 }
@@ -86,7 +84,8 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 	.button {
 		display: block;
-		font-weight: 500;
+		font-weight: normal;
+		letter-spacing: 0.5px;
 		width: 100%;
 	}
 
@@ -99,7 +98,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 
 	.form-label {
-		font-weight: 300;
+		font-weight: normal;
 		margin-top: 15px;
 	}
 
@@ -114,7 +113,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		text-align: left;
 
 		.wordpress-logo {
-			margin: 0 9px 0 0;
+			margin: 0 15px 0 0;
 			height: 22px;
 			width: 22px;
 		}
@@ -123,12 +122,16 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	.social-buttons__button {
 		border: 1px solid #cecfd1;
 	}
+
+	.social-buttons__service-name {
+		margin-left: 15px;
+	}
 }
 
 .signup-form__crowdsignal-card-header {
 	display: none;
 	font-size: 22px;
-	font-weight: 500;
+	font-weight: 600;
 	margin: 0 0 30px;
 	text-align: center;
 
@@ -145,7 +148,6 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .signup-form__crowdsignal-card-subheader {
 	display: none;
-	font-weight: 300;
 	margin: 0 auto;
 	padding: 35px 0 75px;
 	text-align: center;
@@ -171,7 +173,6 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .signup-form__crowdsignal-learn-more {
 	font-size: 12px;
-	font-weight: 200;
 	margin-top: 20px;
 	text-align: center;
 
@@ -199,6 +200,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	display: none;
 	flex-direction: column;
 	font-size: 25px;
+	font-weight: 600;
 	justify-content: center;
 	margin: 0 auto;
 	padding: 35px 0;
@@ -226,6 +228,10 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	color: var(--color-text);
 	display: none;
 	padding: 0;
+
+	&:hover {
+		color: var(--color-text);
+	}
 
 	.signup-form__crowdsignal-back-button-wrapper.is-first-step & {
 		display: inline-block;
