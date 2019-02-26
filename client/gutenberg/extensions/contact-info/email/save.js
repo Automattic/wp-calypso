@@ -20,7 +20,7 @@ const renderEmail = inputText => {
 					<a href={ `mailto:${ email }` } key={ i }>
 						{ emailToValidate }
 					</a>
-					<Fragment>{ email.slice( -1 ) }</Fragment>
+					<Fragment>{ email.slice( -( email.length - emailToValidate.length ) ) }</Fragment>
 				</Fragment>
 			);
 		}
