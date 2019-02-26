@@ -24,7 +24,6 @@ export const icon = renderMaterialIcon(
 
 export const settings = {
 	title: __( 'Business Hours' ),
-	description: __( 'Displays opening hours for your business.' ),
 	icon,
 	category: 'widgets',
 	supports: {
