@@ -4,6 +4,7 @@
 import { Component } from '@wordpress/element';
 import { Placeholder } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -25,7 +26,7 @@ const defaultLocalization = {
 	startOfWeek: 0,
 };
 
-class BusinessHoursEdit extends Component {
+class BusinessHours extends Component {
 	state = {
 		localization: defaultLocalization,
 		hasFetched: false,
@@ -49,27 +50,32 @@ class BusinessHoursEdit extends Component {
 	}
 
 	render() {
-		const { className, attributes, edit } = this.props;
+		const { className, attributes, isSelected, edit } = this.props;
 		const { days } = attributes;
 		const { localization, hasFetched } = this.state;
 		const { startOfWeek } = localization;
+		const localizedWeek = days.concat( days.slice( 0, startOfWeek ) ).slice( startOfWeek );
+
+		if ( ! edit || ! isSelected ) {
+			return (
+				<div className={ className }>
+					<p>hey!</p>
+				</div>
+			);
+		}
+
+		if ( ! hasFetched ) {
+			return <Placeholder icon={ icon } label={ __( 'Loading business hours' ) } />;
+		}
+
 		return (
-			<div className={ className }>
-				{ hasFetched || ! edit ? (
-					days
-						.concat( days.slice( 0, startOfWeek ) )
-						.slice( startOfWeek )
-						.map( ( day, key ) => {
-							return (
-								<Day key={ key } day={ day } localization={ localization } { ...this.props } />
-							);
-						} )
-				) : (
-					<Placeholder icon={ icon } label={ __( 'Loading business hours' ) } />
-				) }
+			<div className={ classNames( className, 'is-edit' ) }>
+				{ localizedWeek.map( ( day, key ) => {
+					return <Day key={ key } day={ day } localization={ localization } { ...this.props } />;
+				} ) }
 			</div>
 		);
 	}
 }
 
-export default BusinessHoursEdit;
+export default BusinessHours;
