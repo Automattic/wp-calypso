@@ -190,19 +190,15 @@ class MailchimpSubscribeEdit extends Component {
 		);
 		const blockContent = (
 			<div className={ classes }>
-				<p>
-					<TextControl
-						aria-label={ emailPlaceholder }
-						disabled
-						onChange={ () => false }
-						placeholder={ emailPlaceholder }
-						title={ __( 'You can edit the email placeholder in the sidebar.' ) }
-						type="email"
-					/>
-				</p>
-				<p>
-					<SubmitButton { ...this.props } />
-				</p>
+				<TextControl
+					aria-label={ emailPlaceholder }
+					disabled
+					onChange={ () => false }
+					placeholder={ emailPlaceholder }
+					title={ __( 'You can edit the email placeholder in the sidebar.' ) }
+					type="email"
+				/>
+				<SubmitButton { ...this.props } />
 				<RichText
 					tagName="p"
 					placeholder={ __( 'Write consent text' ) }
