@@ -3,11 +3,11 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { intersection } from 'lodash';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -52,4 +52,10 @@ function PaymentMethods( { translate, cart } ) {
 		</div>
 	);
 }
+
+PaymentMethods.propTypes = {
+	translate: PropTypes.func.isRequired,
+	cart: PropTypes.object,
+};
+
 export default localize( PaymentMethods );
