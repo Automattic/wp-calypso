@@ -26,7 +26,7 @@ export const settings = {
 	title: __( 'Business Hours' ),
 	description: __( 'Display opening hours for your business.' ),
 	icon,
-	category: 'widgets',
+	category: 'jetpack',
 	supports: {
 		html: true,
 	},
