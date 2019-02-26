@@ -186,12 +186,12 @@ class AdsWrapper extends Component {
 				plan={ PLAN_PREMIUM }
 				title={ translate( 'Upgrade to a Premium Plan and start earning' ) }
 				subtitle={ translate(
-					"By upgrading to a Premium Plan you'll be able to monetize your site using WordAds programme."
+					"By upgrading to a Premium Plan you'll be able to monetize your site using WordAds program."
 				) }
 				highlightedFeature={ FEATURE_WORDADS_INSTANT }
 				benefits={ [
-					translate( 'Instantly enroll into WordAds network.' ),
-					translate( 'Earn from your content and traffic.' ),
+					translate( 'Instantly enroll into the WordAds network.' ),
+					translate( 'Earn money from your content and traffic.' ),
 				] }
 			/>
 		);
