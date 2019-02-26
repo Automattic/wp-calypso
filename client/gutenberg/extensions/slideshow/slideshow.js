@@ -1,11 +1,14 @@
 /**
  * External dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { RichText } from '@wordpress/editor';
-import { Component, createRef } from '@wordpress/element';
-import { isEqual } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
+import classnames from 'classnames';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { Component, createRef } from '@wordpress/element';
+import { isBlobURL } from '@wordpress/blob';
+import { isEqual } from 'lodash';
+import { RichText } from '@wordpress/editor';
+import { Spinner } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -112,7 +115,14 @@ class Slideshow extends Component {
 				>
 					<ul className="wp-block-jetpack-slideshow_swiper-wrappper swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
-							<li className="wp-block-jetpack-slideshow_slide swiper-slide" key={ id }>
+							<li
+								className={ classnames(
+									'wp-block-jetpack-slideshow_slide',
+									'swiper-slide',
+									isBlobURL( url ) && 'is-transient'
+								) }
+								key={ id }
+							>
 								<figure>
 									<img
 										alt={ alt }
@@ -122,6 +132,7 @@ class Slideshow extends Component {
 										data-id={ id }
 										src={ url }
 									/>
+									{ isBlobURL( url ) && <Spinner /> }
 									{ caption && (
 										<RichText.Content
 											className="wp-block-jetpack-slideshow_caption gallery-caption"
