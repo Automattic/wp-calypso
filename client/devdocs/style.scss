@@ -403,13 +403,13 @@ $devdocs-max-width: 720px;
 		padding: 8px;
 		background: var( --color-white );
 		background-color: var( --color-white );
-		color: $blue-dark;
+		color: var( --color-primary-dark );
 	}
 
 	code {
 		background-color: var( --color-white );
 		border-radius: 3px;
-		color: $blue-dark;
+		color: var( --color-primary-dark );
 		font-size: 15px;
 		padding: 2px 6px;
 		max-width: 100px;

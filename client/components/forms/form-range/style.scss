@@ -27,7 +27,7 @@
 	background: radial-gradient(
 		var( --color-primary ),
 		var( --color-primary ) 6px,
-		$blue-dark 7px,
+		var( --color-primary-dark ) 7px,
 		transparent 8px,
 		transparent
 	);
