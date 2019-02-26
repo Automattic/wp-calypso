@@ -27,7 +27,7 @@
 
 		&.is-active {
 			background: var( --color-primary );
-			border-color: darken( $blue-medium, 5 );
+			border-color: var( --color-primary-400 );
 		}
 	}
 
@@ -87,7 +87,7 @@
 
 	&.is-active {
 		background: var( --color-primary );
-		border-color: darken( $blue-medium, 5 );
+		border-color: var( --color-primary-400 );
 	}
 
 	&.has-notification::before {
