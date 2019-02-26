@@ -123,7 +123,7 @@ $plan-features-sidebar-width: 272px;
 
 	&.is-highlighted {
 		border: 1px solid var( --color-primary );
-		background-color: rgba( $blue-wordpress, 0.1 );
+		background-color: rgba( var( --color-primary-rgb ), 0.1 );
 		position: relative;
 		top: -1px;
 
