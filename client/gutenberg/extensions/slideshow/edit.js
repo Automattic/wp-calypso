@@ -75,7 +75,7 @@ class SlideshowEdit extends Component {
 			onFileChange: images => {
 				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
 				setAttributes( {
-					images: [ ...imagesNormalized, ...currentImages ],
+					images: [ ...currentImages, ...imagesNormalized ],
 				} );
 				if ( ! imagesNormalized.every( image => isBlobURL( image.url ) ) ) {
 					unlockPostSaving( lockName );
