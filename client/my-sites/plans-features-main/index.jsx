@@ -315,7 +315,12 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
 				{ plansWithScroll ? (
-					<div className="plans-features-main__scroll-container">
+					<div
+						className={ classNames(
+							'plans-features-main__scroll-container',
+							'is-scrolled-to-' + this.state.plansPosition
+						) }
+					>
 						<div
 							className="plans-features-main__left-overlay"
 							onClick={ this.move.bind( this, 'left' ) }
