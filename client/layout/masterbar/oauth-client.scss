@@ -414,9 +414,10 @@
 		padding: 15px 50px;
 		text-decoration: none;
 		text-transform: capitalize;
+		width: auto;
 		
-		@include breakpoint( '<480px' ) {
-			width: auto;
+		@include breakpoint( '>480px' ) {
+			width: 100%;
 		}
 
 		&:hover,
@@ -580,12 +581,9 @@
 
 	// Signup styles
 	.signup__step {
-		background: linear-gradient( to bottom, #e6e6e6, transparent );
-		
-		@include breakpoint( '<660px' ) {
+		background: linear-gradient( to bottom, #e6e6e6, transparent );		
 			margin-right: 6px;
-			margin-left: 6px;		 
-		}		
+			margin-left: 6px;				
 	}
 
 	&.is-section-signup::before,
@@ -594,14 +592,14 @@
 	}
 
 	.formatted-header__title {
-		font-size: 2em;
-		font-family: $sans;
-		margin-top: 2em;
+		font-size: 1.6em;
+		font-family: $sans;		
+		margin: 0 0 8px 0;
+		padding: 0;
 		
-		@include breakpoint( '<480px' ) {
-			font-size: 1.6em;
-			margin: 0 0 8px 0;
-			padding: 0;			
+		@include breakpoint( '>480px' ) {
+			font-size: 2em;
+			margin: 2em 0 0 0;		
 		}
 	}
 }
