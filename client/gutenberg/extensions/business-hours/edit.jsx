@@ -5,11 +5,13 @@ import { Component } from '@wordpress/element';
 import { Placeholder } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
+import { __experimentalGetSettings } from '@wordpress/date';
 
 /**
  * Internal dependencies
  */
 import Day from 'gutenberg/extensions/business-hours/components/day';
+import DaySave from 'gutenberg/extensions/business-hours/components/day-save';
 import { icon } from 'gutenberg/extensions/business-hours/index';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
@@ -57,10 +59,18 @@ class BusinessHours extends Component {
 		const localizedWeek = days.concat( days.slice( 0, startOfWeek ) ).slice( startOfWeek );
 
 		if ( ! edit || ! isSelected ) {
+			const settings = __experimentalGetSettings();
+			const {
+				formats: { time },
+			} = settings;
 			return (
-				<div className={ className }>
-					<p>hey!</p>
-				</div>
+				<dl className={ classNames( className, 'jetpack-business-hours' ) }>
+					{ localizedWeek.map( ( day, key ) => {
+						return (
+							<DaySave key={ key } day={ day } localization={ localization } timeFormat={ time } />
+						);
+					} ) }
+				</dl>
 			);
 		}
 
