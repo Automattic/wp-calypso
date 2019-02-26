@@ -52,13 +52,13 @@ class BusinessHours extends Component {
 	}
 
 	render() {
-		const { className, attributes, isSelected, edit } = this.props;
+		const { attributes, className, isEdit, isSelected } = this.props;
 		const { days } = attributes;
 		const { localization, hasFetched } = this.state;
 		const { startOfWeek } = localization;
 		const localizedWeek = days.concat( days.slice( 0, startOfWeek ) ).slice( startOfWeek );
 
-		if ( ! edit || ! isSelected ) {
+		if ( ! isEdit || ! isSelected ) {
 			const settings = __experimentalGetSettings();
 			const {
 				formats: { time },
