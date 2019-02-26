@@ -6,6 +6,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
+import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { startCase } from 'lodash';
@@ -13,6 +14,7 @@ import { startCase } from 'lodash';
 /**
  * Internal dependencies
  */
+import AutomatticLogo from 'components/automattic-logo';
 import DocumentHead from 'components/data/document-head';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import LocaleSuggestions from 'components/locale-suggestions';
@@ -154,6 +156,13 @@ export class Login extends React.Component {
 						src="/calypso/images/jetpack/powered-by-jetpack.svg?v=20180619"
 						alt="Powered by Jetpack"
 					/>
+				) }
+
+				{ isCrowdsignalOAuth2Client( this.props.oauth2Client ) && (
+					<div className="wp-login__crowdsignal-footer">
+						<p className="wp-login__crowdsignal-footer-text">Powered by<Gridicon icon="my-sites" size={ 18 } />WordPress.com</p>
+						<p className="wp-login__crowdsignal-footer-text">An<AutomatticLogo size={ 18 } />Company</p>
+					</div>
 				) }
 			</div>
 		);
