@@ -32,8 +32,8 @@ export const settings = {
 	},
 	keywords: [
 		_x( 'opening hours', 'block search term' ),
-		_x( 'hours of operation', 'block search term' ),
-		_x( 'time', 'block search term' ),
+		_x( 'closing time', 'block search term' ),
+		_x( 'schedule', 'block search term' ),
 	],
 	attributes: {
 		days: {
