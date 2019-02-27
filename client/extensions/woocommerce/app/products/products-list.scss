@@ -71,7 +71,7 @@
 	}
 
 	.table-row:hover {
-		background: lighten( $gray, 35% );
+		background: var( --color-neutral-0 );
 	}
 
 	.products__list-name {

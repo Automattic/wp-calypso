@@ -305,7 +305,7 @@
 	border-left: 4px solid var( --color-neutral-0 );
 	margin-left: 16px;
 	padding-bottom: 16px;
-	background: lighten( $gray, 35% );
+	background: var( --color-neutral-0 );
 
 	.reviews__reply-content {
 		padding: 0 16px;

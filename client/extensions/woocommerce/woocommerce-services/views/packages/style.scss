@@ -122,7 +122,7 @@
 		a,
 		button {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: lighten( $gray, 25% );
+			background-color: var( --color-neutral-50 );
 			color: transparent;
 			cursor: default;
 		}
@@ -146,7 +146,7 @@
 	padding: 12px 0;
 	font-size: 14px;
 	border-top: 0;
-	background: lighten( $gray, 35% );
+	background: var( --color-neutral-0 );
 }
 
 .packages__packages-row-icon {

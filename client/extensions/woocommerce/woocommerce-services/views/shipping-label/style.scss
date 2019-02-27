@@ -72,7 +72,7 @@
 
 &.dialog.card.label-reprint-modal {
 	.shipping-label__reprint-modal-notice {
-		color: darken( $gray, 10 );
+		color: var( --color-neutral-400 );
 		font-style: italic;
 	}
 }

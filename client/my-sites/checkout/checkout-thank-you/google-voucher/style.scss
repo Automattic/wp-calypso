@@ -47,7 +47,7 @@
 	background-color: #fbfcfd;
 	height: 116px;
 	box-shadow: 0 1px 0 0 var( --color-neutral-100 ),
-		0 1px 0 lighten( $gray, 40% );
+		0 1px 0 var( --color-neutral-0 );
 }
 
 .google-voucher__dialog-header-image {

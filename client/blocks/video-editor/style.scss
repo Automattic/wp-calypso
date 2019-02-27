@@ -18,7 +18,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-	background: darken( $gray, 52% );
+	background: var( --color-neutral-800 );
 }
 
 .video-editor__preview-wrapper {

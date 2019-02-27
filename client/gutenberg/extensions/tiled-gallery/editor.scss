@@ -4,13 +4,13 @@
 // inspired by from assets/shared/_animations loading-fade
 @keyframes tiled-gallery-img-placeholder {
 	0% {
-		background-color: lighten( $gray, 30% );
+		background-color: var( --color-neutral-0 );
 	}
 	50% {
-		background-color: transparentize( lighten( $gray, 30% ), 0.5 );
+		background-color: rgba( var( --color-neutral-0-rgb ), 0.5 );
 	}
 	100% {
-		background-color: lighten( $gray, 30% );
+		background-color: var( --color-neutral-0 );
 	}
 }
 

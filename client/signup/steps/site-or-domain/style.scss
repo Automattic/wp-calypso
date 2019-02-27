@@ -18,7 +18,7 @@
 	}
 
 	&:hover {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
 	}
 
 	h2 {

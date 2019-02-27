@@ -104,7 +104,7 @@
 
 .editor-confirmation-sidebar__sidebar .editor-confirmation-sidebar__display-preference {
 	@extend .sidebar__footer;
-	background-color: lighten( $gray, 25% );
+	background-color: var( --color-neutral-50 );
 	padding: 4px 10px;
 
 	@include breakpoint( '<660px' ) {
