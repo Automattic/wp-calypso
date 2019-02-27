@@ -30,119 +30,135 @@ const TEST_MAILBOX_TEST_DOT_COM = {
 };
 
 describe( 'emailForwardsReducer', () => {
-	test( 'should save data', () => {
-		const state = emailForwardsReducer( undefined, {
-			type: EMAIL_FORWARDING_REQUEST_SUCCESS,
-			domainName: 'example.com',
-			data: {
-				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
-			},
+	describe( 'requesting email forwards', () => {
+		test( 'should save data', () => {
+			const state = emailForwardsReducer( undefined, {
+				type: EMAIL_FORWARDING_REQUEST_SUCCESS,
+				domainName: 'example.com',
+				data: {
+					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
+				},
+			} );
+
+			expect( state ).to.eql( {
+				'example.com': {
+					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
+					requesting: {
+						get: false,
+						create: false,
+						remove: false,
+					},
+					errors: {
+						get: null,
+						create: null,
+						remove: null,
+					},
+				},
+			} );
 		} );
 
-		expect( state ).to.eql( {
-			'example.com': {
-				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
-				requesting: {
-					get: false,
-					create: false,
+		test( 'should reset data on request to server', () => {
+			const prevState = {
+				'example.com': {
+					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
+					requesting: {
+						get: false,
+						create: false,
+						remove: false,
+					},
+					errors: {
+						get: null,
+						create: null,
+						remove: null,
+					},
 				},
-				errors: {
-					get: null,
-					create: null,
-				},
-			},
-		} );
-	} );
+			};
 
-	test( 'should reset data on request to server', () => {
-		const prevState = {
-			'example.com': {
-				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
-				requesting: {
-					get: false,
-					create: false,
-				},
-				errors: {
-					get: null,
-					create: null,
-				},
-			},
-		};
+			const nextState = emailForwardsReducer( prevState, {
+				type: EMAIL_FORWARDING_REQUEST,
+				domainName: 'example.com',
+			} );
 
-		const nextState = emailForwardsReducer( prevState, {
-			type: EMAIL_FORWARDING_REQUEST,
-			domainName: 'example.com',
-		} );
-
-		expect( nextState ).to.eql( {
-			'example.com': {
-				forwards: null,
-				requesting: {
-					get: true,
-					create: false,
+			expect( nextState ).to.eql( {
+				'example.com': {
+					forwards: null,
+					requesting: {
+						get: true,
+						create: false,
+						remove: false,
+					},
+					errors: {
+						get: null,
+						create: null,
+						remove: null,
+					},
 				},
-				errors: {
-					get: null,
-					create: null,
-				},
-			},
-		} );
-	} );
-
-	test( 'should reset data only for specific domainName on request', () => {
-		const prevState = {
-			'example.com': {
-				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
-				requesting: {
-					get: false,
-					create: false,
-				},
-				errors: {
-					get: null,
-					create: null,
-				},
-			},
-			'test.com': {
-				forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
-				requesting: {
-					get: false,
-					create: false,
-				},
-				errors: {
-					get: null,
-					create: null,
-				},
-			},
-		};
-
-		const nextState = emailForwardsReducer( prevState, {
-			type: EMAIL_FORWARDING_REQUEST,
-			domainName: 'example.com',
+			} );
 		} );
 
-		expect( nextState ).to.eql( {
-			'example.com': {
-				forwards: null,
-				requesting: {
-					get: true,
-					create: false,
+		test( 'should reset data only for specific domainName on request', () => {
+			const prevState = {
+				'example.com': {
+					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
+					requesting: {
+						get: false,
+						create: false,
+						remove: false,
+					},
+					errors: {
+						get: null,
+						create: null,
+						remove: null,
+					},
 				},
-				errors: {
-					get: null,
-					create: null,
+				'test.com': {
+					forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
+					requesting: {
+						get: false,
+						create: false,
+						remove: false,
+					},
+					errors: {
+						get: null,
+						create: null,
+						remove: null,
+					},
 				},
-			},
-			'test.com': {
-				forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
-				requesting: {
-					get: false,
-					create: false,
+			};
+
+			const nextState = emailForwardsReducer( prevState, {
+				type: EMAIL_FORWARDING_REQUEST,
+				domainName: 'example.com',
+			} );
+
+			expect( nextState ).to.eql( {
+				'example.com': {
+					forwards: null,
+					requesting: {
+						get: true,
+						create: false,
+						remove: false,
+					},
+					errors: {
+						get: null,
+						create: null,
+						remove: null,
+					},
 				},
-				errors: {
-					get: null,
-					create: null,
+				'test.com': {
+					forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
+					requesting: {
+						get: false,
+						create: false,
+						remove: false,
+					},
+					errors: {
+						get: null,
+						create: null,
+						remove: null,
+					},
 				},
-			},
+			} );
 		} );
 	} );
 } );
