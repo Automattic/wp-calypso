@@ -47,16 +47,8 @@ describe( 'emailForwardsReducer', () => {
 			expect( state ).to.eql( {
 				'example.com': {
 					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
-					requesting: {
-						get: false,
-						create: false,
-						remove: false,
-					},
-					errors: {
-						get: null,
-						create: null,
-						remove: null,
-					},
+					requesting: false,
+					requestError: null,
 				},
 			} );
 		} );
@@ -65,16 +57,8 @@ describe( 'emailForwardsReducer', () => {
 			const prevState = {
 				'example.com': {
 					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
-					requesting: {
-						get: false,
-						create: false,
-						remove: false,
-					},
-					errors: {
-						get: null,
-						create: null,
-						remove: null,
-					},
+					requesting: false,
+					requestError: null,
 				},
 			};
 
@@ -86,16 +70,8 @@ describe( 'emailForwardsReducer', () => {
 			expect( nextState ).to.eql( {
 				'example.com': {
 					forwards: null,
-					requesting: {
-						get: true,
-						create: false,
-						remove: false,
-					},
-					errors: {
-						get: null,
-						create: null,
-						remove: null,
-					},
+					requesting: true,
+					requestError: null,
 				},
 			} );
 		} );
@@ -104,29 +80,13 @@ describe( 'emailForwardsReducer', () => {
 			const prevState = {
 				'example.com': {
 					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
-					requesting: {
-						get: false,
-						create: false,
-						remove: false,
-					},
-					errors: {
-						get: null,
-						create: null,
-						remove: null,
-					},
+					requesting: false,
+					requestError: null,
 				},
 				'test.com': {
 					forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
-					requesting: {
-						get: false,
-						create: false,
-						remove: false,
-					},
-					errors: {
-						get: null,
-						create: null,
-						remove: null,
-					},
+					requesting: false,
+					requestError: null,
 				},
 			};
 
@@ -138,29 +98,13 @@ describe( 'emailForwardsReducer', () => {
 			expect( nextState ).to.eql( {
 				'example.com': {
 					forwards: null,
-					requesting: {
-						get: true,
-						create: false,
-						remove: false,
-					},
-					errors: {
-						get: null,
-						create: null,
-						remove: null,
-					},
+					requesting: true,
+					requestError: null,
 				},
 				'test.com': {
 					forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
-					requesting: {
-						get: false,
-						create: false,
-						remove: false,
-					},
-					errors: {
-						get: null,
-						create: null,
-						remove: null,
-					},
+					requesting: false,
+					requestError: null,
 				},
 			} );
 		} );
@@ -194,16 +138,8 @@ describe( 'emailForwardsReducer', () => {
 							temporary: true,
 						},
 					],
-					requesting: {
-						get: false,
-						create: true,
-						remove: false,
-					},
-					errors: {
-						get: null,
-						create: null,
-						remove: null,
-					},
+					requesting: false,
+					requestError: null,
 				},
 			} );
 		} );
