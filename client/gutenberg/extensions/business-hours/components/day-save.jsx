@@ -22,11 +22,6 @@ class DaySave extends Component {
 	}
 
 	renderInterval = ( interval, key ) => {
-		if ( isEmpty( interval.opening ) || isEmpty( interval.closing ) ) {
-			return key === 0 ? (
-				<dd key={ key }>{ _x( 'Closed', 'business is closed on a full day' ) }</dd>
-			) : null;
-		}
 		return (
 			<dd key={ key }>
 				{ sprintf(
@@ -40,13 +35,17 @@ class DaySave extends Component {
 
 	render() {
 		const { day, localization } = this.props;
+		const hours = day.hours.filter(
+			// remove any malformed or empty intervals
+			interval => ! isEmpty( interval.opening ) && ! isEmpty( interval.closing )
+		);
 		return (
 			<Fragment>
 				<dt className={ day.name }>{ localization.days[ day.name ] }</dt>
-				{ isEmpty( day.hours ) ? (
+				{ isEmpty( hours ) ? (
 					<dd>{ _x( 'Closed', 'business is closed on a full day' ) }</dd>
 				) : (
-					day.hours.map( this.renderInterval )
+					hours.map( this.renderInterval )
 				) }
 			</Fragment>
 		);
