@@ -53,12 +53,19 @@ describe( 'viewport/react-helpers', () => {
 	function runComponentTests( TestComponent, query ) {
 		// Test initial state (defaults to true).
 		act( () => {
-			ReactDOM.render( <TestComponent />, container );
+			ReactDOM.render(
+				<div>
+					<TestComponent />
+					<TestComponent />
+					<TestComponent />
+				</div>,
+				container
+			);
 		} );
 
-		expect( container.textContent ).toBe( 'true' );
+		expect( container.textContent ).toBe( 'truetruetrue' );
 		expect( listeners[ query ] ).not.toBe( undefined );
-		expect( listeners[ query ].length ).toBe( 1 );
+		expect( listeners[ query ].length ).toBe( 3 );
 
 		// Simulate a window resize by calling the registered listeners for a query
 		// with a different value (false).
@@ -66,7 +73,7 @@ describe( 'viewport/react-helpers', () => {
 			callQueryListeners( query, false );
 		} );
 
-		expect( container.textContent ).toBe( 'false' );
+		expect( container.textContent ).toBe( 'falsefalsefalse' );
 
 		// Ensure that listeners are cleaned up when the component unmounts.
 		act( () => {
