@@ -24,6 +24,10 @@ const matchMediaMock = jest.fn( query => {
 	return mediaListObjectMock;
 } );
 
+// Disable console warnings for this file.
+// eslint-disable-next-line no-console
+console.warn = jest.fn();
+
 describe( 'viewport', () => {
 	beforeAll( async () => {
 		window.matchMedia = matchMediaMock;
