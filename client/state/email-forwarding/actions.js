@@ -27,11 +27,11 @@ export const requestEmailForwarding = domainName => {
 	};
 };
 
-export const receiveEmailForwardingRequestSuccess = ( domainName, data ) => {
+export const receiveEmailForwardingRequestSuccess = ( domainName, forwards ) => {
 	return {
 		type: EMAIL_FORWARDING_REQUEST_SUCCESS,
 		domainName,
-		data,
+		forwards,
 	};
 };
 

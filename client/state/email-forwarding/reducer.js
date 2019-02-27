@@ -77,7 +77,7 @@ export const forwards = createReducer(
 	null,
 	{
 		[ EMAIL_FORWARDING_REQUEST ]: () => null,
-		[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: ( state, { data } ) => data.forwards,
+		[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: ( state, { forwards: newForwards } ) => newForwards,
 		[ EMAIL_FORWARDING_CREATE_REQUEST ]: handleCreateRequest,
 		[ EMAIL_FORWARDING_CREATE_REQUEST_SUCCESS ]: handleCreateRequestSuccess,
 		[ EMAIL_FORWARDING_CREATE_REQUEST_FAILURE ]: handleCreateRequestFailure,

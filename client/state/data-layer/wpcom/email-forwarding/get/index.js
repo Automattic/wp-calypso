@@ -22,7 +22,10 @@ export const requestEmailForwarding = action => {
 };
 
 export const receiveEmailForwardingSuccess = ( action, response ) => {
-	return receiveEmailForwardingRequestSuccess( action.domainName, response );
+	if ( response.forwards ) {
+		return receiveEmailForwardingRequestSuccess( action.domainName, response.forwards );
+	}
+	return receiveEmailForwardingRequestFailure( action.domainName, true );
 };
 
 export const receiveEmailForwardingError = ( action, error ) => {

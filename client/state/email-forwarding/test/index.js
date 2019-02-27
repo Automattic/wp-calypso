@@ -39,9 +39,7 @@ describe( 'emailForwardsReducer', () => {
 			const state = emailForwardsReducer( undefined, {
 				type: EMAIL_FORWARDING_REQUEST_SUCCESS,
 				domainName: 'example.com',
-				data: {
-					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
-				},
+				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
 			} );
 
 			expect( state ).to.eql( {
