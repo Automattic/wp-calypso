@@ -114,5 +114,38 @@ describe( 'jitms', () => {
 			dispatcher( handleRouteChange( action_transition ) );
 			expect( dispatch ).not.toHaveBeenCalled();
 		} );
+
+		test( 'should not dispatch for ignored routes', () => {
+			const dispatch = jest.fn();
+			const state = {
+				ui: {
+					route: {
+						path: {
+							current: '/jetpack/connect/site-type/yourjetpack.blog',
+						},
+					},
+				},
+				sites: {
+					items: {
+						100: {
+							jetpack: true,
+						},
+					},
+				},
+				currentUser: {
+					id: 1000,
+				},
+			};
+			const getState = () => state;
+			const action_transition = {
+				section: {
+					name: 'example',
+				},
+			};
+
+			const dispatcher = createDispatcher( dispatch, getState );
+			dispatcher( handleRouteChange( action_transition ) );
+			expect( dispatch ).not.toHaveBeenCalled();
+		} );
 	} );
 } );

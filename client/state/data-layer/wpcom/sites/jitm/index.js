@@ -3,11 +3,12 @@
 /**
  * External Dependencies
  */
-import { noop, get } from 'lodash';
+import { noop, get, some, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import getCurrentRoute from 'state/selectors/get-current-route';
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import schema from './schema.json';
 import { clearJITM, insertJITM } from 'state/jitm/actions';
@@ -34,6 +35,11 @@ const process = {
 	lastSection: null,
 	lastSite: null,
 };
+
+/**
+ * Routes in which to specifically prevent from displaying JITMs.
+ */
+const routesToIgnore = [ '/jetpack/connect/site-type', '/jetpack/connect/site-topic' ];
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.
@@ -69,6 +75,12 @@ export const fetchJITM = action => ( dispatch, getState ) => {
 	const currentSite = process.lastSite;
 
 	if ( ! isJetpackSite( getState(), currentSite ) ) {
+		return;
+	}
+
+	const currentRoute = getCurrentRoute( getState() );
+	const isIgnoredRoute = some( routesToIgnore, route => startsWith( currentRoute, route ) );
+	if ( isIgnoredRoute ) {
 		return;
 	}
 
