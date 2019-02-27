@@ -22,10 +22,23 @@
 }
 
 .plans-features-main {
+	&.is-no-tabs {
+		margin: 0;
+		width: 100%;
+
+		@include breakpoint( '750px-960px' ) {
+			margin: 0 -24px;
+			width: calc( 100% + 48px );
+		}
+		@include breakpoint( '>960px' ) {
+			margin: 0 -32px;
+			width: calc( 100% + 64px );
+		}
+	}
 	.plans-features-main__scroll-container {
 		@include breakpoint( '660px-1280px' ) {
-			width: 130%;
-			margin-left: -15%;
+			width: 140%;
+			margin-left: -20%;
 		}
 
 		position: relative;
