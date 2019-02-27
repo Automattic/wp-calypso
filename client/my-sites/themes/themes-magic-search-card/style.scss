@@ -149,7 +149,7 @@
 
 .themes-magic-search-card__welcome-header {
 	background-color: var( --color-neutral-0 );
-	border-bottom: 1px solid darken( $gray-light, 10% );
+	border-bottom: 1px solid var( --color-neutral-50 );
 	border-top: 0;
 	padding: 4px 8px;
 	font-size: 13px;
