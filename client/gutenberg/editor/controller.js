@@ -159,6 +159,18 @@ export const post = ( context, next ) => {
 	//check if this value is an integer
 	const duplicatePostId = isInteger( jetpackCopy ) ? jetpackCopy : null;
 
+	if ( config.isEnabled( 'calypsoify/iframe' ) ) {
+		context.primary = (
+			<CalypsoifyIframe
+				postId={ postId }
+				postType={ postType }
+				duplicatePostId={ duplicatePostId }
+			/>
+		);
+
+		return next();
+	}
+
 	const makeEditor = import( /* webpackChunkName: "gutenberg-init" */ './init' ).then( module => {
 		const { initGutenberg } = module;
 		const state = context.store.getState();
@@ -204,17 +216,7 @@ export const post = ( context, next ) => {
 		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
 	} );
 
-	if ( config.isEnabled( 'calypsoify/iframe' ) ) {
-		context.primary = (
-			<CalypsoifyIframe
-				postId={ postId }
-				postType={ postType }
-				duplicatePostId={ duplicatePostId }
-			/>
-		);
-	} else {
-		context.primary = <EditorLoader />;
-	}
+	context.primary = <EditorLoader />;
 
 	next();
 };
