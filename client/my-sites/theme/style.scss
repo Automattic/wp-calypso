@@ -135,7 +135,7 @@
 				to bottom,
 				transparentize( $gray-light, 1 ) 0%,
 				transparentize( $gray-light, 0.5 ) 40%,
-				$gray-light 93%
+				var( --color-neutral-0 ) 93%
 			);
 		}
 	}

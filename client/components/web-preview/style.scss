@@ -34,7 +34,7 @@
 		right: 0;
 		bottom: 0;
 	display: block;
-	background: rgba( $gray-light, 0.8 );
+	background: rgba( var( --color-neutral-0-rgb ), 0.8 );
 }
 
 .web-preview__content {
