@@ -252,7 +252,7 @@ class SiteSettingsImport extends Component {
 		return (
 			<Main>
 				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
-					<h1>{ translate( 'Import' ) }</h1>
+					<h1>{ translate( 'Import Content' ) }</h1>
 				</HeaderCake>
 				<EmailVerificationGate allowUnlaunched>
 					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
