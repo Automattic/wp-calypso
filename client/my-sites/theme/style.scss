@@ -133,8 +133,8 @@
 			height: 30%;
 			background: linear-gradient(
 				to bottom,
-				transparentize( $gray-light, 1 ) 0%,
-				transparentize( $gray-light, 0.5 ) 40%,
+				rgba( var( --color-neutral-0-rgb ), 1 ) 0%,
+				rgba( var( --color-neutral-0-rgb ), 0.5 ) 40%,
 				var( --color-neutral-0 ) 93%
 			);
 		}
