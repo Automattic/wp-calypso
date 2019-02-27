@@ -16,6 +16,9 @@ class DaySave extends Component {
 		const { timeFormat } = this.props;
 		const [ hours, minutes ] = time.split( ':' );
 		const _date = new Date();
+		if ( ! hours || ! minutes ) {
+			return false;
+		}
 		_date.setHours( hours );
 		_date.setMinutes( minutes );
 		return date( timeFormat, _date );
@@ -23,28 +26,29 @@ class DaySave extends Component {
 
 	renderInterval = ( interval, key ) => {
 		return (
-			! isEmpty( interval.opening ) &&
-			! isEmpty( interval.closing ) && (
-				<dd key={ key }>
-					{ sprintf(
-						_x( 'From %s to %s', 'from business opening hour to closing hour' ),
-						this.formatTime( interval.opening ),
-						this.formatTime( interval.closing )
-					) }
-				</dd>
-			)
+			<dd key={ key }>
+				{ sprintf(
+					_x( 'From %s to %s', 'from business opening hour to closing hour' ),
+					this.formatTime( interval.opening ),
+					this.formatTime( interval.closing )
+				) }
+			</dd>
 		);
 	};
 
 	render() {
 		const { day, localization } = this.props;
+		const hours = day.hours.filter(
+			// remove any malformed or empty intervals
+			interval => this.formatTime( interval.opening ) && this.formatTime( interval.closing )
+		);
 		return (
 			<Fragment>
 				<dt className={ day.name }>{ localization.days[ day.name ] }</dt>
-				{ isEmpty( day.hours ) ? (
+				{ isEmpty( hours ) ? (
 					<dd>{ _x( 'Closed', 'business is closed on a full day' ) }</dd>
 				) : (
-					day.hours.map( this.renderInterval )
+					hours.map( this.renderInterval )
 				) }
 			</Fragment>
 		);
