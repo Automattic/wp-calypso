@@ -26,11 +26,15 @@
 		margin: 0;
 		width: 100%;
 
+		// Adjust the margins of the plans table
+		// for the no-tabs variant to use all 
+		// available space, including the default
+		// margin applied to the main area.
 		@include breakpoint( '750px-960px' ) {
 			margin: 0 -24px;
 			width: calc( 100% + 48px );
 		}
-		@include breakpoint( '>960px' ) {
+		@include breakpoint( '960px-1280px' ) {
 			margin: 0 -32px;
 			width: calc( 100% + 64px );
 		}
