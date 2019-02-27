@@ -14,8 +14,8 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import {
-	receiveRemoveEmailForwardingSuccess,
-	receiveRemoveEmailForwardingFailure,
+	receiveRemoveEmailForwardSuccess,
+	receiveRemoveEmailForwardFailure,
 } from 'state/email-forwarding/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -35,38 +35,51 @@ export const removeEmailForward = action => {
 
 export const removeEmailForwardSuccess = ( action, response ) => {
 	const { domainName, mailbox } = action;
-	const actions = [];
 
 	if ( response ) {
-		const successMessage = translate( 'Email forwarding %(email)s has been successfully removed.', {
+		const successMessage = translate( 'Email forward %(email)s has been successfully removed.', {
 			args: {
 				email: mailbox + '@' + domainName,
 			},
 		} );
 
-		actions.push(
+		return [
 			successNotice( successMessage, {
 				duration: 5000,
-			} )
-		);
-
-		actions.push( receiveRemoveEmailForwardingSuccess( domainName, mailbox, response ) );
+			} ),
+			receiveRemoveEmailForwardSuccess( domainName, mailbox, response ),
+		];
 	}
 
-	return actions;
+	return receiveRemoveEmailForwardFailure( domainName, mailbox, true );
 };
 
-export function removeEmailForwardError( action, response ) {
+export const removeEmailForwardError = ( action, error ) => {
 	const { domainName, mailbox } = action;
-	const actions = [];
 
-	if ( response ) {
-		let failureMessage = translate(
-			'Failed to remove email forwarding record %(email)s. ' +
+	let failureMessage = translate(
+		'Failed to remove email forward %(email)s. ' +
+			'Please try again or ' +
+			'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
+		{
+			args: {
+				email: mailbox + '@' + domainName,
+			},
+			components: {
+				contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+			},
+		}
+	);
+
+	if ( error && error.message ) {
+		failureMessage = translate(
+			'Failed to remove email forward %(email)s' +
+				'with message "%(message)s". ' +
 				'Please try again or ' +
 				'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
 			{
 				args: {
+					message: error.message,
 					email: mailbox + '@' + domainName,
 				},
 				components: {
@@ -74,31 +87,13 @@ export function removeEmailForwardError( action, response ) {
 				},
 			}
 		);
-
-		if ( response.message ) {
-			failureMessage = translate(
-				'Failed to remove email forwarding record %(email)s' +
-					'with message "%(message)s".' +
-					'Please try again or ' +
-					'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
-				{
-					args: {
-						message: response.message,
-						email: mailbox + '@' + domainName,
-					},
-					components: {
-						contactSupportLink: <a href={ CALYPSO_CONTACT } />,
-					},
-				}
-			);
-		}
-
-		actions.push( errorNotice( failureMessage ) );
-		actions.push( receiveRemoveEmailForwardingFailure( domainName, mailbox, response ) );
 	}
 
-	return actions;
-}
+	return [
+		errorNotice( failureMessage ),
+		receiveRemoveEmailForwardFailure( domainName, mailbox, error ),
+	];
+};
 
 registerHandlers( 'state/data-layer/wpcom/email-forwarding/remove/index.js', {
 	[ EMAIL_FORWARDING_REMOVE_REQUEST ]: [

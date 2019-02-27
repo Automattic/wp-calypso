@@ -5,13 +5,13 @@ import { EMAIL_FORWARDING_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
-	receiveEmailForwardingRequestSuccess,
-	receiveEmailForwardingRequestFailure,
+	receiveRequestEmailForwardsSuccess,
+	receiveRequestEmailForwardsFailure,
 } from 'state/email-forwarding/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestEmailForwarding = action => {
+export const requestEmailForwards = action => {
 	return http(
 		{
 			method: 'GET',
@@ -21,23 +21,23 @@ export const requestEmailForwarding = action => {
 	);
 };
 
-export const receiveEmailForwardingSuccess = ( action, response ) => {
+export const requestEmailForwardsSuccess = ( action, response ) => {
 	if ( response.forwards ) {
-		return receiveEmailForwardingRequestSuccess( action.domainName, response.forwards );
+		return receiveRequestEmailForwardsSuccess( action.domainName, response.forwards );
 	}
-	return receiveEmailForwardingRequestFailure( action.domainName, true );
+	return receiveRequestEmailForwardsFailure( action.domainName, true );
 };
 
-export const receiveEmailForwardingError = ( action, error ) => {
-	return receiveEmailForwardingRequestFailure( action.domainName, error );
+export const requestEmailForwardsError = ( action, error ) => {
+	return receiveRequestEmailForwardsFailure( action.domainName, error );
 };
 
 registerHandlers( 'state/data-layer/wpcom/email-forwarding/get/index.js', {
 	[ EMAIL_FORWARDING_REQUEST ]: [
 		dispatchRequest( {
-			fetch: requestEmailForwarding,
-			onSuccess: receiveEmailForwardingSuccess,
-			onError: receiveEmailForwardingError,
+			fetch: requestEmailForwards,
+			onSuccess: requestEmailForwardsSuccess,
+			onError: requestEmailForwardsError,
 		} ),
 	],
 } );

@@ -12,7 +12,7 @@ import emailForwardsReducer from '../reducer';
 import {
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_REQUEST,
-	EMAIL_FORWARDING_CREATE_REQUEST,
+	EMAIL_FORWARDING_ADD_REQUEST,
 } from 'state/action-types';
 
 const TEST_MAILBOX_EXAMPLE_DOT_COM = {
@@ -117,7 +117,7 @@ describe( 'emailForwardsReducer', () => {
 					},
 				},
 				{
-					type: EMAIL_FORWARDING_CREATE_REQUEST,
+					type: EMAIL_FORWARDING_ADD_REQUEST,
 					domainName: 'example.com',
 					mailbox: 'test',
 					destination: 'test@forward.com',

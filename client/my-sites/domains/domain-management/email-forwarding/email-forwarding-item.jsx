@@ -34,28 +34,28 @@ class EmailForwardingItem extends React.Component {
 	};
 
 	removeEmailForwardClick = () => {
-		const { temporary, domain, mailbox, forward_address } = this.props.emailData;
+		const { temporary, domain, mailbox, forward_address: destination } = this.props.emailData;
 
 		if ( temporary ) {
 			return;
 		}
 
-		this.props.removeEmailForwardWithAnalytics( domain, mailbox, forward_address );
+		this.props.removeEmailForwardWithAnalytics( domain, mailbox, destination );
 	};
 
 	resendVerificationEmailClick = () => {
-		const { domain, forward_address, mailbox, temporary } = this.props.emailData;
+		const { domain, forward_address: destination, mailbox, temporary } = this.props.emailData;
 
 		if ( temporary ) {
 			return;
 		}
 
-		this.props.resendVerificationEmailWithAnalytics( domain, mailbox, forward_address );
+		this.props.resendVerificationEmailWithAnalytics( domain, mailbox, destination );
 	};
 
 	render() {
 		const { emailData, translate } = this.props;
-		const { active, temporary, email, forward_address } = emailData;
+		const { active, temporary, email, forward_address: destination } = emailData;
 
 		return (
 			<li>
@@ -87,7 +87,7 @@ class EmailForwardingItem extends React.Component {
 							},
 							args: {
 								email: email,
-								forwardTo: forward_address,
+								forwardTo: destination,
 							},
 						}
 					) }

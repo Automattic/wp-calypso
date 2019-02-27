@@ -37,11 +37,10 @@ export const requestResendEmailVerification = action => {
 
 export const resendEmailVerificationSuccess = ( action, response ) => {
 	const { domainName, mailbox, destination } = action;
-	const actions = [];
 
-	if ( response ) {
+	if ( response && response.sent ) {
 		const successMessage = translate(
-			'successfully sent confirmation email for %(email)s to %(destination)s!',
+			'Successfully sent confirmation email for %(email)s to %(destination)s.',
 			{
 				args: {
 					email: mailbox + '@' + domainName,
@@ -50,42 +49,37 @@ export const resendEmailVerificationSuccess = ( action, response ) => {
 			}
 		);
 
-		actions.push(
+		return [
 			successNotice( successMessage, {
 				duration: 5000,
-			} )
-		);
-
-		actions.push( receiveResendVerificationEmailSuccess( domainName, mailbox, response ) );
+			} ),
+			receiveResendVerificationEmailSuccess( domainName, mailbox ),
+		];
 	}
 
-	return actions;
+	return receiveResendVerificationEmailFailure( domainName, mailbox, destination, true );
 };
 
-export const resendEmailVerificationError = ( action, response ) => {
+export const resendEmailVerificationError = ( action, error ) => {
 	const { domainName, mailbox, destination } = action;
-	const actions = [];
 
-	if ( response ) {
-		const failureMessage = translate(
-			'Failed to resend verification email for email forwarding record %(email)s. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-			{
-				args: {
-					email: mailbox + '@' + domainName,
-				},
-				components: {
-					contactSupportLink: <a href={ CALYPSO_CONTACT } />,
-				},
-			}
-		);
+	const failureMessage = translate(
+		'Failed to resend verification email for email forwarding record %(email)s. ' +
+			'Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+		{
+			args: {
+				email: mailbox + '@' + domainName,
+			},
+			components: {
+				contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+			},
+		}
+	);
 
-		actions.push( errorNotice( failureMessage ) );
-		actions.push(
-			receiveResendVerificationEmailFailure( domainName, mailbox, destination, response )
-		);
-	}
-
-	return actions;
+	return [
+		errorNotice( failureMessage ),
+		receiveResendVerificationEmailFailure( domainName, mailbox, destination, error ),
+	];
 };
 
 registerHandlers( 'state/data-layer/wpcom/email-forwarding/resend-email-verification/index.js', {

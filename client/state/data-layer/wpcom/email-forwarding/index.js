@@ -5,7 +5,7 @@
  */
 
 import { mergeHandlers } from 'state/action-watchers/utils';
-import create from './create';
+import add from './add';
 import get from './get';
 import remove from './remove';
 import resendEmailVerification from './resend-email-verification';
@@ -14,5 +14,5 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 
 registerHandlers(
 	'state/data-layer/wpcom/email-forwarding/index.js',
-	mergeHandlers( get, create, remove, resendEmailVerification )
+	mergeHandlers( get, add, remove, resendEmailVerification )
 );

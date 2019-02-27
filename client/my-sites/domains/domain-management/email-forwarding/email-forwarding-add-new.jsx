@@ -23,7 +23,7 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import FormInputValidation from 'components/forms/form-input-validation';
 import formState from 'lib/form-state';
 import analyticsMixin from 'lib/mixins/analytics';
-import { createEmailForwarding } from 'state/email-forwarding/actions';
+import { addEmailForward } from 'state/email-forwarding/actions';
 
 // eslint-disable-next-line react/prefer-es6-class
 const EmailForwardingAddNew = createReactClass( {
@@ -31,7 +31,7 @@ const EmailForwardingAddNew = createReactClass( {
 
 	propTypes: {
 		initialShowForm: PropTypes.bool,
-		createEmailForwarding: PropTypes.func.isRequired,
+		addEmailForward: PropTypes.func.isRequired,
 		emailForwardingList: PropTypes.array,
 		emailForwardingLimit: PropTypes.number.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -91,7 +91,7 @@ const EmailForwardingAddNew = createReactClass( {
 				destination
 			);
 
-			this.props.createEmailForwarding( this.props.selectedDomainName, mailbox, destination );
+			this.props.addEmailForward( this.props.selectedDomainName, mailbox, destination );
 			this.formStateController.resetFields( this.getInitialState().fields );
 			this.setState( { formSubmitting: false, showForm: true } );
 		} );
@@ -265,7 +265,7 @@ export default connect(
 	dispatch => {
 		return bindActionCreators(
 			{
-				createEmailForwarding,
+				addEmailForward,
 			},
 			dispatch
 		);
