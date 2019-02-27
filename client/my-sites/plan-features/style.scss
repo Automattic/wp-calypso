@@ -255,27 +255,27 @@ $plan-features-sidebar-width: 272px;
 
 	.is-no-tabs .plans-features-main__group.is-wpcom & {
 		&.is-blogger-plan {
-			border-top: solid 8px var( --color-plan-blogger );
+			border-top: solid 4px var( --color-plan-blogger );
 			border-bottom: 0;
 		}
 
 		&.is-personal-plan {
-			border-top: solid 8px var( --color-plan-personal );
+			border-top: solid 4px var( --color-plan-personal );
 			border-bottom: 0;
 		}
 
 		&.is-premium-plan {
-			border-top: solid 8px var( --color-plan-premium );
+			border-top: solid 4px var( --color-plan-premium );
 			border-bottom: 0;
 		}
 
 		&.is-business-plan {
-			border-top: solid 8px var( --color-plan-business );
+			border-top: solid 4px var( --color-plan-business );
 			border-bottom: 0;
 		}
 
 		&.is-ecommerce-plan {
-			border-top: solid 8px var( --color-plan-ecommerce );
+			border-top: solid 4px var( --color-plan-ecommerce );
 			border-bottom: 0;
 		}
 	}
@@ -340,8 +340,11 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( '<960px' ) {
 		font-size: 20px;
 	}
+
 	.is-no-tabs & {
-		color: #1a1a1a;
+		color: var( --color-text );
+		font-weight: 700;
+		font-size: 24px;
 		padding: 5px 0 0 3px;
 	}
 }
@@ -567,10 +570,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.is-no-tabs & {
-		font-size: 13px;
-		color: #3d4145;
-		line-height: 22px;
-		padding: 16px 16px 0;
+		padding: 16px;
 	}
 }
 
