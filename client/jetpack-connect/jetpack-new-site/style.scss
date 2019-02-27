@@ -79,7 +79,7 @@
 
 .jetpack-new-site__card-description {
 	margin-bottom: 1em;
-	color: lighten( $gray-dark, 25% );
+	color: var( --color-neutral-400 );
 }
 
 .jetpack-new-site__button-holder {
