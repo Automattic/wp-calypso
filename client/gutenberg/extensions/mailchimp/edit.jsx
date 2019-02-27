@@ -144,12 +144,13 @@ class MailchimpSubscribeEdit extends Component {
 						'You need to connect your Mailchimp account and choose a list in order to start collecting Email subscribers.'
 					) }
 					<br />
-					<ExternalLink href={ connectURL }>{ __( 'Set up Mailchimp form' ) }</ExternalLink>
 					<br />
-					<br />
-					<Button isDefault onClick={ this.apiCall }>
-						{ __( 'Re-check Connection' ) }
+					<Button isPrimary href={ connectURL } target="_blank">
+						{ __( 'Set up Mailchimp form' ) }
 					</Button>
+					<br />
+					<br />
+					<Button onClick={ this.apiCall }>{ __( 'Re-check Connection' ) }</Button>
 				</div>
 			</Placeholder>
 		);
