@@ -30,7 +30,7 @@ const RADIO_OPTIONS = [
 class RepeatVisitorEdit extends Component {
 	setCriteria = criteria => this.props.setAttributes( { criteria } );
 	setThreshold = threshold => {
-		/^\d+$/.test( threshold ) && this.props.setAttributes( { threshold } );
+		/^\d+$/.test( threshold ) && +threshold > 0 && this.props.setAttributes( { threshold } );
 	};
 
 	getNoticeLabel() {
