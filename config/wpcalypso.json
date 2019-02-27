@@ -24,7 +24,7 @@
 		"blogger-plan": false,
 		"comments/management/threaded-view": false,
 		"calypsoify/gutenberg": true,
-		"calypsoify/iframe": false,
+		"calypsoify/iframe": true,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
