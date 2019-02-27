@@ -95,6 +95,7 @@ export class PlansFeaturesMain extends Component {
 			<div
 				className={ classNames(
 					'plans-features-main__group',
+					'is-scrolled-to-' + this.state.plansPosition,
 					'is-' + ( displayJetpackPlans ? 'jetpack' : 'wpcom' ),
 					{
 						[ `is-customer-${ customerType }` ]: ! displayJetpackPlans,
@@ -335,12 +336,7 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
 				{ plansWithScroll ? (
-					<div
-						className={ classNames(
-							'plans-features-main__scroll-container',
-							'is-scrolled-to-' + this.state.plansPosition
-						) }
-					>
+					<div className={ classNames( 'plans-features-main__scroll-container' ) }>
 						<div
 							className="plans-features-main__left-overlay"
 							onClick={ this.move.bind( this, 'left' ) }

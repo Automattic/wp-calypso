@@ -10,11 +10,13 @@
 
 	@include breakpoint( '660px-1280px' ) {
 		position: relative;
-		.is-scrolled-to-left & {
-			left: calc( 20% + 10px );
+		transform: translateX( 0 );
+		transition: transform 0.5s ease-in-out;
+		&.is-scrolled-to-left {
+			transform: translateX( 21% );
 		}
-		.is-scrolled-to-right & {
-			left: calc( -20% - 10px );
+		&.is-scrolled-to-right {
+			transform: translateX( -21% );
 		}
 	}
 }
