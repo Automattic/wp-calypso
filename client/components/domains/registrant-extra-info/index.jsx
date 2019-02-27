@@ -27,7 +27,7 @@ const enabledTldForms = filter( keys( tldSpecificForms ), tld =>
 
 export const tldsWithAdditionalDetailsForms = enabledTldForms;
 
-export default class DomainDetailsForm extends PureComponent {
+export default class ExtraInfoForm extends PureComponent {
 	render() {
 		const { tld, ...props } = this.props;
 		const topLevelOfTld = tld.substring( tld.lastIndexOf( '.' ) + 1 );
