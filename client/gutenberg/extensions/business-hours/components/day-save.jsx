@@ -16,6 +16,9 @@ class DaySave extends Component {
 		const { timeFormat } = this.props;
 		const [ hours, minutes ] = time.split( ':' );
 		const _date = new Date();
+		if ( ! hours || ! minutes ) {
+			return false;
+		}
 		_date.setHours( hours );
 		_date.setMinutes( minutes );
 		return date( timeFormat, _date );
@@ -37,7 +40,7 @@ class DaySave extends Component {
 		const { day, localization } = this.props;
 		const hours = day.hours.filter(
 			// remove any malformed or empty intervals
-			interval => ! isEmpty( interval.opening ) && ! isEmpty( interval.closing )
+			interval => this.formatTime( interval.opening ) && this.formatTime( interval.closing )
 		);
 		return (
 			<Fragment>
