@@ -102,11 +102,22 @@ function getMediaQueryList( breakpoint ) {
 	return mediaQueryLists[ breakpoint ];
 }
 
+/**
+ * Returns whether the current window width matches a breakpoint.
+ * @param {String} breakpoint The breakpoint to consider.
+ *
+ * @returns {Boolean} Whether the provided breakpoint is matched.
+ */
 export function isWithinBreakpoint( breakpoint ) {
 	const mediaQueryList = getMediaQueryList( breakpoint );
 	return mediaQueryList ? mediaQueryList.matches : undefined;
 }
 
+/**
+ * Registers a listener to be notified of changes to breakpoint matching status.
+ * @param {String} breakpoint The breakpoint to consider.
+ * @param {Function} listener The listener to be called on change.
+ */
 export function addWithinBreakpointListener( breakpoint, listener ) {
 	if ( ! listener ) {
 		return;
@@ -120,6 +131,11 @@ export function addWithinBreakpointListener( breakpoint, listener ) {
 	}
 }
 
+/**
+ * Removes a listener that was being notified of changes to breakpoint matching status.
+ * @param {String} breakpoint The breakpoint to consider.
+ * @param {Function} listener The listener to be called on change.
+ */
 export function removeWithinBreakpointListener( breakpoint, listener ) {
 	if ( ! listener ) {
 		return;
@@ -133,30 +149,61 @@ export function removeWithinBreakpointListener( breakpoint, listener ) {
 	}
 }
 
+/**
+ * Returns whether the current window width matches the mobile breakpoint.
+ *
+ * @returns {Boolean} Whether the mobile breakpoint is matched.
+ */
 export function isMobile() {
 	return isWithinBreakpoint( MOBILE_BREAKPOINT );
 }
 
+/**
+ * Registers a listener to be notified of changes to mobile breakpoint matching status.
+ * @param {Function} listener The listener to be called on change.
+ */
 export function addIsMobileListener( listener ) {
-	return addWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
+	addWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
 }
 
+/**
+ * Removes a listener that was being notified of changes to mobile breakpoint matching status.
+ * @param {Function} listener The listener to be called on change.
+ */
 export function removeIsMobileListener( listener ) {
-	return removeWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
+	removeWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
 }
 
+/**
+ * Returns whether the current window width matches the desktop breakpoint.
+ *
+ * @returns {Boolean} Whether the desktop breakpoint is matched.
+ */
 export function isDesktop() {
 	return isWithinBreakpoint( DESKTOP_BREAKPOINT );
 }
 
+/**
+ * Registers a listener to be notified of changes to desktop breakpoint matching status.
+ * @param {Function} listener The listener to be called on change.
+ */
 export function addIsDesktopListener( listener ) {
-	return addWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
+	addWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
 }
 
+/**
+ * Removes a listener that was being notified of changes to desktop breakpoint matching status.
+ * @param {Function} listener The listener to be called on change.
+ */
 export function removeIsDesktopListener( listener ) {
-	return removeWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
+	removeWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
 }
 
+/**
+ * Returns the current window width.
+ * Avoid using this method, as it triggers a layout recalc.
+ * @returns {Number} The current window width, in pixels.
+ */
 export function getWindowInnerWidth() {
 	return isServer ? SERVER_WIDTH : window.innerWidth;
 }
