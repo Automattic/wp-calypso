@@ -88,19 +88,21 @@ const MailchimpSettings = ( {
 						</option>
 					) ) }
 			</select>
-			{ mailchimpLists && mailchimpLists.length > 0 && mailchimpListId !== 0 && (
-				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-				<div className="sharing-connections__mailchimp-gutenberg_explanation">
-					<p>
-						{ translate(
-							'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
-						) }
-						<a href={ translate( 'https://support.wordpress.com/mailchimp-block/' ) }>
-							{ translate( 'Learn more.' ) }
-						</a>
-					</p>
-				</div>
-			) }
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<div className="sharing-connections__mailchimp-gutenberg_explanation">
+				<p>
+					{ translate(
+						'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
+					) }
+					<a
+						href={ 'https://support.wordpress.com/mailchimp-block/' }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ translate( 'Learn more.' ) }
+					</a>
+				</p>
+			</div>
 		</div>
 	);
 	/* eslint-enable jsx-a11y/no-onchange */
