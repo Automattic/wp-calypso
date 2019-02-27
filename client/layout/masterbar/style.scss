@@ -283,7 +283,7 @@ $autobar-height: 20px;
 		width: 18px;
 		height: 18px;
 
-		border: 2px solid $white;
+		border: 2px solid var( --color-white );
 	}
 
 	.gridicon + .masterbar__item-content {

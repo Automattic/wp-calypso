@@ -240,7 +240,7 @@ $theme-info-height: 54px;
 		font-weight: bold;
 
 		.is-active & {
-			color: transparentize( $white, 0.2 );
+			color: rgba( var( --color-white-rgb ), 0.2 );
 		}
 
 		.accessible-focus &:focus {

@@ -12,7 +12,7 @@
 	}
 
 	div.mce-toolbar-grp {
-		background-color: rgba( $white, 0.92 );
+		background-color: rgba( var( --color-white-rgb ), 0.92 );
 		border-color: var( --color-neutral-100 );
 		border-style: solid;
 		border-width: 1px;
