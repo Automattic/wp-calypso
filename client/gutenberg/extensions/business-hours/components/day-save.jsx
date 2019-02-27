@@ -22,17 +22,19 @@ class DaySave extends Component {
 	}
 
 	renderInterval = ( interval, key ) => {
+		if ( isEmpty( interval.opening ) || isEmpty( interval.closing ) ) {
+			return key === 0 ? (
+				<dd key={ key }>{ _x( 'Closed', 'business is closed on a full day' ) }</dd>
+			) : null;
+		}
 		return (
-			! isEmpty( interval.opening ) &&
-			! isEmpty( interval.closing ) && (
-				<dd key={ key }>
-					{ sprintf(
-						_x( 'From %s to %s', 'from business opening hour to closing hour' ),
-						this.formatTime( interval.opening ),
-						this.formatTime( interval.closing )
-					) }
-				</dd>
-			)
+			<dd key={ key }>
+				{ sprintf(
+					_x( 'From %s to %s', 'from business opening hour to closing hour' ),
+					this.formatTime( interval.opening ),
+					this.formatTime( interval.closing )
+				) }
+			</dd>
 		);
 	};
 
