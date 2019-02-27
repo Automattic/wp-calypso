@@ -20,7 +20,7 @@ class DescriptiveHeader extends PureComponent {
 
 		const title = siteTitle.length ? siteTitle : slug;
 		const description = translate(
-			'Import content from another site into ' +
+			'Import site content into ' +
 				'{{strong}}%(title)s{{/strong}}. Learn more about ' +
 				'the import process in our {{a}}support documentation{{/a}}. ' +
 				'Once you start importing, you can visit ' +
