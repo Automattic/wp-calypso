@@ -11,7 +11,7 @@
 	@include breakpoint( '660px-1280px' ) {
 		position: relative;
 		transform: translateX( 0 );
-		transition: transform 0.5s ease-in-out;
+		transition: transform 0.2s ease-in-out;
 		&.is-scrolled-to-left {
 			transform: translateX( 21% );
 		}
@@ -33,7 +33,7 @@
 
 	.plans-features-main__left-overlay,
 	.plans-features-main__right-overlay {
-		background: #f1f1f1;
+		background: #f6f6f6;
 		display: none;
 		height: 100%;
 		opacity: 0.8;
