@@ -15,7 +15,7 @@ import globalMoment from 'moment';
  * Internal dependencies
  */
 import { MomentProvider } from '../context';
-import withMoment from '..';
+import { withLocalizedMoment, useLocalizedMoment } from '..';
 
 // helper to create state object with specified `languageSlug`
 const createState = localeSlug => ( { ui: { language: { localeSlug } } } );
@@ -39,7 +39,13 @@ class Label extends React.PureComponent {
 	}
 }
 
-const LabelWithMoment = withMoment( Label );
+const LabelWithMomentHOC = withLocalizedMoment( Label );
+
+// The same Label component, but this time a stateless functional one that uses hooks
+const LabelWithMomentHook = ( { date } ) => {
+	const [ moment ] = useLocalizedMoment();
+	return moment( date ).format( 'dddd MMMM' );
+};
 
 // expected values of the label in different languages
 const enLabel = 'Thursday November';
@@ -58,7 +64,11 @@ const setLocaleAndWait = async ( languageSlug, store, ...providerWrappers ) => {
 	await Promise.all( providerWrappers.map( getMomentProviderLoadingPromise ) );
 };
 
-describe( 'withLocalizedMoment', () => {
+// Test with both variants of the Label component: wrapped in HOC and using hooks
+describe.each( [
+	[ 'withLocalizedMoment', LabelWithMomentHOC ],
+	[ 'useLocalizedMoment', LabelWithMomentHook ],
+] )( '%s', ( _, LocalizedLabel ) => {
 	// reset the locale before and each after test, to avoid cross-test influence
 	beforeEach( () => globalMoment.locale( 'en' ) );
 	afterEach( () => globalMoment.locale( 'en' ) );
@@ -68,7 +78,7 @@ describe( 'withLocalizedMoment', () => {
 
 		const wrapper = mount(
 			<MomentProvider store={ store }>
-				<LabelWithMoment date="2018-11-01" />
+				<LocalizedLabel date="2018-11-01" />
 			</MomentProvider>
 		);
 
@@ -89,7 +99,7 @@ describe( 'withLocalizedMoment', () => {
 
 		const wrapper = mount(
 			<MomentProvider store={ store }>
-				<LabelWithMoment date="2018-11-01" />
+				<LocalizedLabel date="2018-11-01" />
 			</MomentProvider>
 		);
 
@@ -110,7 +120,7 @@ describe( 'withLocalizedMoment', () => {
 		const wrappers = [ 1, 2 ].map( () =>
 			mount(
 				<MomentProvider store={ store }>
-					<LabelWithMoment date="2018-11-01" />
+					<LocalizedLabel date="2018-11-01" />
 				</MomentProvider>
 			)
 		);

@@ -14,7 +14,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import { getNormalizedPost } from 'state/posts/selectors';
-import withLocalizedMoment from 'components/with-localized-moment';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies

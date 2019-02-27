@@ -14,7 +14,7 @@ import page from 'page';
 import config from 'config';
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
-import { MomentProvider } from 'components/with-localized-moment/context';
+import { MomentProvider } from 'components/localized-moment/context';
 import { login } from 'lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
 import { isUserLoggedIn } from 'state/current-user/selectors';
