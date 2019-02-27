@@ -88,6 +88,21 @@ const MailchimpSettings = ( {
 						</option>
 					) ) }
 			</select>
+			{ mailchimpLists && mailchimpLists.length > 0 && mailchimpListId !== 0 && (
+				<div className="sharing-connections__mailchimp-gutenberg_explanation">
+					<p>
+						{ translate(
+							"You can start collecting your subscriber's email addresses by inserting the Mailchimp block into the post or page content."
+						) }
+					</p>
+					<p>
+						{ translate( 'Head on to edit a post or a page and choose "Mailchimp" block. ' ) }
+						<a href={ translate( 'https://en.support.wordpress.com/mailchimp-block/' ) }>
+							{ translate( 'Find out more here.' ) }
+						</a>
+					</p>
+				</div>
+			) }
 		</div>
 	);
 	/* eslint-enable jsx-a11y/no-onchange */
