@@ -125,7 +125,7 @@ $devdocs-max-width: 720px;
 	.docs-example__wrapper-content {
 		background: var( --color-surface-backdrop );
 		padding: 16px;
-		--docs-example-grid: #{hex-to-rgb( $gray-dark )};
+		--docs-example-grid: #{hex-to-rgb( $muriel-gray-700 )};
 		box-shadow: inset 0 2px 1px rgba( var( --docs-example-grid ), 0.075 );
 
 		// Grid background
