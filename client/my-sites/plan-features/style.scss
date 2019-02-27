@@ -880,11 +880,25 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 .plan-features__table-space {
 	display: none;
 	@include breakpoint( '660px-1280px' ) {
-		.is-no-tabs & {
+		.is-scrolled-to-center & {
 			&:nth-child( 2 ), &:nth-child( 8 ) {
 				background-color: #f6f6f6;
 				display: table-cell;
-				width: 10px;
+				width: 1%;
+			}
+		}
+		.is-scrolled-to-left & {
+			&:nth-child( 6 ) {
+				background-color: #f6f6f6;
+				display: table-cell;
+				width: 1%;
+			}
+		}
+		.is-scrolled-to-right & {
+			&:nth-child( 4 ) {
+				background-color: #f6f6f6;
+				display: table-cell;
+				width: 1%;
 			}
 		}
 	}
