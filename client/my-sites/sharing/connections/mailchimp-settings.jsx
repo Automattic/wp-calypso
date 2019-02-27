@@ -95,7 +95,7 @@ const MailchimpSettings = ( {
 						{ translate(
 							'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
 						) }
-						<a href={ translate( 'https://en.support.wordpress.com/mailchimp-block/' ) }>
+						<a href={ translate( 'https://support.wordpress.com/mailchimp-block/' ) }>
 							{ translate( 'Learn more.' ) }
 						</a>
 					</p>
