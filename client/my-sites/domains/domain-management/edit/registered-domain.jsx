@@ -5,6 +5,7 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card/compact';
 import Notice from 'components/notice';
+import FormToggle from 'components/forms/form-toggle';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Header from './card/header';
 import {
@@ -19,8 +21,10 @@ import {
 	domainManagementEmail,
 	domainManagementNameServers,
 	domainManagementTransfer,
-	domainManagementTransferOut,
 } from 'my-sites/domains/paths';
+import { disablePrivacyProtection, enablePrivacyProtection } from 'lib/upgrades/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
+import { fetchSiteDomains } from 'state/sites/domains/actions';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
@@ -30,6 +34,12 @@ import IcannVerificationCard from 'my-sites/domains/domain-management/components
 const RegisteredDomain = createReactClass( {
 	displayName: 'RegisteredDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+
+	getInitialState() {
+		return {
+			submitting: false,
+		};
+	},
 
 	getAutoRenewalOrExpirationDate() {
 		const { domain, translate } = this.props;
@@ -71,64 +81,58 @@ const RegisteredDomain = createReactClass( {
 		);
 	},
 
+	togglePrivacy() {
+		const { selectedSite, translate } = this.props;
+		const { privateDomain, name } = this.props.domain;
+
+		this.setState( { submitting: true } );
+
+		const callback = error => {
+			if ( error ) {
+				this.props.errorNotice( error.message );
+			} else {
+				this.props.fetchSiteDomains( selectedSite.ID );
+
+				const notice = privateDomain
+					? translate( 'Privacy has been successfully disabled!' )
+					: translate( 'Yay, privacy has been successfully enabled!' );
+
+				this.props.successNotice( notice, {
+					duration: 5000,
+				} );
+			}
+
+			this.setState( { submitting: false } );
+		};
+
+		if ( privateDomain ) {
+			disablePrivacyProtection( name, callback );
+		} else {
+			enablePrivacyProtection( name, callback );
+		}
+	},
+
 	getPrivacyProtection() {
-		const {
-				hasPrivacyProtection,
-				privateDomain,
-				privacyAvailable,
-				name,
-				pendingTransfer,
-			} = this.props.domain,
-			{ slug } = this.props.selectedSite,
-			{ translate } = this.props,
-			privacyPath = domainManagementContactsPrivacy( slug, name ),
-			transferPath = domainManagementTransferOut( slug, name );
-		let label;
+		const { privateDomain, privacyAvailable } = this.props.domain;
+		const { translate } = this.props;
+		const { submitting } = this.state;
 
 		if ( ! privacyAvailable ) {
 			return false;
 		}
 
-		if ( pendingTransfer ) {
-			label = this.getLabel( {
-				status: 'is-warning',
-				icon: 'notice',
-				message: translate( 'Pending Transfer', {
-					context: 'An icon label when domain is pending transfer.',
-				} ),
-			} );
-		} else if ( hasPrivacyProtection ) {
-			if ( privateDomain ) {
-				label = this.getLabel( {
-					status: 'is-success',
-					icon: 'lock',
-					href: privacyPath,
-					message: translate( 'On', {
-						context: 'An icon label when Privacy Protection is enabled.',
-					} ),
-				} );
-			} else {
-				label = this.getLabel( {
-					status: 'is-warning',
-					icon: 'notice',
-					href: transferPath,
-					message: translate( 'Disabled for Transfer', {
-						context: 'An icon label when Privacy Protection is temporarily disabled for transfer.',
-					} ),
-				} );
-			}
-		} else {
-			label = this.getLabel( {
-				status: 'is-warning',
-				icon: 'notice',
-				href: privacyPath,
-				message: translate( 'None', {
-					context: 'An icon label when Privacy Protection is not purchased by the user.',
-				} ),
-			} );
-		}
-
-		return <Property label={ translate( 'Privacy Protection' ) }>{ label }</Property>;
+		return (
+			<Property label={ translate( 'Privacy Protection' ) }>
+				{
+					<FormToggle
+						checked={ privateDomain }
+						toggling={ submitting }
+						disabled={ submitting }
+						onChange={ this.togglePrivacy }
+					/>
+				}
+			</Property>
+		);
 	},
 
 	handlePaymentSettingsClick() {
@@ -264,4 +268,11 @@ const RegisteredDomain = createReactClass( {
 	},
 } );
 
-export default localize( RegisteredDomain );
+export default connect(
+	null,
+	{
+		fetchSiteDomains,
+		errorNotice,
+		successNotice,
+	}
+)( localize( RegisteredDomain ) );
