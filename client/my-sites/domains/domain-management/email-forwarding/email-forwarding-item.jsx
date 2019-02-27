@@ -3,7 +3,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,74 +11,64 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { CALYPSO_CONTACT } from 'lib/url/support';
 import Button from 'components/button';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { resendVerificationEmailForwarding } from 'lib/upgrades/actions';
-import { removeEmailForwarding } from 'state/email-forwarding/actions';
-import notices from 'state/notices/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
+import { removeEmailForward, resendVerificationEmail } from 'state/email-forwarding/actions';
 
 class EmailForwardingItem extends React.Component {
-	deleteItem = () => {
+	static propTypes = {
+		emailData: PropTypes.shape( {
+			domain: PropTypes.string.isRequired,
+			forward_address: PropTypes.string.isRequired,
+			mailbox: PropTypes.string.isRequired,
+			temporary: PropTypes.bool,
+		} ),
+		removeEmailForwardWithAnalytics: PropTypes.func.isRequired,
+		resendVerificationEmailWithAnalytics: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
+	removeEmailForwardClick = () => {
 		const { temporary, domain, mailbox, forward_address } = this.props.emailData;
 
 		if ( temporary ) {
 			return;
 		}
 
-		this.props.removeEmailForwarding( domain, mailbox );
-		this.props.recordDeleteClick( domain, mailbox, forward_address );
+		this.props.removeEmailForwardWithAnalytics( domain, mailbox, forward_address );
 	};
 
-	resendVerificationEmail = () => {
+	resendVerificationEmailClick = () => {
 		const { domain, forward_address, mailbox, temporary } = this.props.emailData;
 
 		if ( temporary ) {
 			return;
 		}
 
-		resendVerificationEmailForwarding( domain, mailbox, ( error, response ) => {
-			this.props.recordResendVerificationClick( domain, mailbox, forward_address, ! error );
-
-			if ( error || ! response.sent ) {
-				notices.error(
-					this.props.translate(
-						'Failed to resend verification email for email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-						{
-							components: {
-								contactSupportLink: <a href={ CALYPSO_CONTACT } />,
-							},
-						}
-					)
-				);
-			} else {
-				notices.success(
-					this.props.translate( 'Yay, successfully sent confirmation email to %(email)s!', {
-						args: {
-							email: forward_address,
-						},
-					} ),
-					{
-						duration: 5000,
-					}
-				);
-			}
-		} );
+		this.props.resendVerificationEmailWithAnalytics( domain, mailbox, forward_address );
 	};
 
 	render() {
+		const { emailData, translate } = this.props;
+		const { active, temporary, email, forward_address } = emailData;
+
 		return (
 			<li>
-				<Button borderless disabled={ this.props.emailData.temporary } onClick={ this.deleteItem }>
+				<Button borderless disabled={ temporary } onClick={ this.removeEmailForwardClick }>
 					<Gridicon icon="trash" />
 				</Button>
 
-				{ ! this.props.emailData.active && (
+				{ ! active && (
 					<Button
-						disabled={ this.props.emailData.temporary }
+						disabled={ temporary }
 						borderless
-						onClick={ this.resendVerificationEmail }
-						title={ this.props.translate( 'Resend Verification Email', {
+						onClick={ this.resendVerificationEmailClick }
+						title={ translate( 'Resend Verification Email', {
 							context: 'Email Forwarding',
 						} ) }
 					>
@@ -88,7 +77,7 @@ class EmailForwardingItem extends React.Component {
 				) }
 
 				<span>
-					{ this.props.translate(
+					{ translate(
 						'{{strong1}}%(email)s{{/strong1}} {{em}}forwards to{{/em}} {{strong2}}%(forwardTo)s{{/strong2}}',
 						{
 							components: {
@@ -97,8 +86,8 @@ class EmailForwardingItem extends React.Component {
 								em: <em />,
 							},
 							args: {
-								email: this.props.emailData.email,
-								forwardTo: this.props.emailData.forward_address,
+								email: email,
+								forwardTo: forward_address,
 							},
 						}
 					) }
@@ -108,62 +97,49 @@ class EmailForwardingItem extends React.Component {
 	}
 }
 
-const recordDeleteClick = ( domainName, mailbox, destination ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked delete Button in Email Forwarding',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent( 'calypso_domain_management_email_forwarding_delete_click', {
-			destination,
-			domain_name: domainName,
-			mailbox,
-		} )
-	);
-
-const recordResendVerificationClick = ( domainName, mailbox, destination, success ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked resend verification email Button in Email Forwarding',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent(
-			'calypso_domain_management_email_forwarding_resend_verification_email_click',
-			{
+const removeEmailForwardWithAnalytics = ( domainName, mailbox, destination ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordGoogleEvent(
+				'Domain Management',
+				'Clicked delete Button in Email Forwarding',
+				'Domain Name',
+				domainName
+			),
+			recordTracksEvent( 'calypso_domain_management_email_forwarding_delete_click', {
 				destination,
 				domain_name: domainName,
 				mailbox,
-				success,
-			}
-		)
+			} )
+		),
+		removeEmailForward( domainName, mailbox )
 	);
 
-EmailForwardingItem.propTypes = {
-	recordDeleteClick: PropTypes.func.isRequired,
-	emailData: PropTypes.shape( {
-		domain: PropTypes.string.isRequired,
-		forward_address: PropTypes.string.isRequired,
-		mailbox: PropTypes.string.isRequired,
-		temporary: PropTypes.bool,
-	} ),
-	recordResendVerificationClick: PropTypes.func.isRequired,
-	translate: PropTypes.func.isRequired,
-};
+const resendVerificationEmailWithAnalytics = ( domainName, mailbox, destination ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordGoogleEvent(
+				'Domain Management',
+				'Clicked resend verification email Button in Email Forwarding',
+				'Domain Name',
+				domainName
+			),
+			recordTracksEvent(
+				'calypso_domain_management_email_forwarding_resend_verification_email_click',
+				{
+					destination,
+					domain_name: domainName,
+					mailbox,
+				}
+			)
+		),
+		resendVerificationEmail( domainName, mailbox, destination )
+	);
 
 export default connect(
 	null,
-	dispatch => {
-		return bindActionCreators(
-			{
-				removeEmailForwarding,
-				recordDeleteClick,
-				recordResendVerificationClick,
-			},
-			dispatch
-		);
+	{
+		removeEmailForwardWithAnalytics,
+		resendVerificationEmailWithAnalytics,
 	}
 )( localize( EmailForwardingItem ) );

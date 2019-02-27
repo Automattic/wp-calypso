@@ -13,6 +13,9 @@ import {
 	EMAIL_FORWARDING_REMOVE_REQUEST,
 	EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
+	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST,
+	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS,
+	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/email-forwarding';
@@ -68,7 +71,7 @@ export const receiveCreateEmailForwardingFailure = ( domainName, mailbox, destin
 	};
 };
 
-export const removeEmailForwarding = ( domainName, mailbox ) => {
+export const removeEmailForward = ( domainName, mailbox ) => {
 	return {
 		type: EMAIL_FORWARDING_REMOVE_REQUEST,
 		domainName,
@@ -90,6 +93,45 @@ export const receiveRemoveEmailForwardingFailure = ( domainName, mailbox, error 
 		type: EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
 		domainName,
 		mailbox,
+		error,
+	};
+};
+
+export const resendVerificationEmail = ( domainName, mailbox, destination ) => {
+	return {
+		type: EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST,
+		domainName,
+		mailbox,
+		destination,
+	};
+};
+
+export const receiveResendVerificationEmailSuccess = (
+	domainName,
+	mailbox,
+	destination,
+	response
+) => {
+	return {
+		type: EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS,
+		domainName,
+		mailbox,
+		destination,
+		response,
+	};
+};
+
+export const receiveResendVerificationEmailFailure = (
+	domainName,
+	mailbox,
+	destination,
+	error
+) => {
+	return {
+		type: EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE,
+		domainName,
+		mailbox,
+		destination,
 		error,
 	};
 };
