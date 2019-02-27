@@ -49,6 +49,7 @@
 	.domain-suggestion__content {
 		display: flex;
 		flex-direction: column;
+		justify-content: flex-start;
 		flex-grow: 2;
 		margin-top: 0;
 	}
