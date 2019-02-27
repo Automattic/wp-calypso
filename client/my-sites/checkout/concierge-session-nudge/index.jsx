@@ -303,7 +303,10 @@ export class ConciergeSessionNudge extends React.Component {
 
 		trackUpsellButtonClick( 'decline' );
 
-		if ( isEligibleForChecklist ) {
+		if ( ! receiptId ) {
+			// Send the user to a generic page (not post-purchase related).
+			page( `/stats/day/${ siteSlug }` );
+		} else if ( isEligibleForChecklist ) {
 			const { selectedSiteSlug } = this.props;
 			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
 				site: selectedSiteSlug,
