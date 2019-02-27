@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
+import { abtest } from 'lib/abtest';
 import {
 	VIEW_CONTACT,
 	VIEW_RICH_RESULT,
@@ -191,6 +192,23 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
+	renderUpworkNudge = () => {
+		if ( abtest( 'builderReferralThemesBanner' ) === 'original' ) {
+			return null;
+		}
+		return (
+			<div className="inline-help__upwork">
+				<a
+					href="http://en.support.wordpress.com/reader/"
+					title="Link to Upwork where you can hire a WordPress expert"
+				>
+					Need a designer to build your site?
+				</a>
+				<p>Hire a WordPress expert!</p>
+			</div>
+		);
+	};
+
 	renderPopoverContent = () => {
 		return (
 			<Fragment>
@@ -200,6 +218,7 @@ class InlineHelpPopover extends Component {
 						openResult={ this.openResultView }
 						query={ this.props.searchQuery }
 					/>
+					{ this.renderUpworkNudge() }
 					<InlineHelpSearchResults
 						openResult={ this.openResultView }
 						searchQuery={ this.props.searchQuery }
