@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
+import { camelCase, upperFirst } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,16 +62,16 @@ export function useDesktopBreakpoint() {
 }
 
 /**
- * React higher order component for getting the status for a breakpoint and
- * keeping it updated.
- *
+ * Auxiliary method to produce a higher order component for getting the status
+ * for a breakpoint and keeping it updated. It also sets the component name.
  * @param {React.Component|Function} Wrapped The component to wrap.
  * @param {String} breakpoint The breakpoint to consider.
+ * @param {String} modifierName The name to modify the component with.
  *
  * @returns {React.Component} The wrapped component.
  */
-export function withBreakpoint( Wrapped, breakpoint ) {
-	return class extends React.Component {
+function withBreakpointAux( Wrapped, breakpoint, modifierName ) {
+	const EnhancedComponent = class extends React.Component {
 		state = { isActive: isWithinBreakpoint( breakpoint ) };
 
 		handleBreakpointChange = currentStatus => {
@@ -89,6 +90,24 @@ export function withBreakpoint( Wrapped, breakpoint ) {
 			return <Wrapped isBreakpointActive={ this.state.isActive } { ...this.props } />;
 		}
 	};
+
+	const { displayName = Wrapped.name || 'Component' } = Wrapped;
+	EnhancedComponent.displayName = `${ upperFirst( camelCase( modifierName ) ) }(${ displayName })`;
+
+	return EnhancedComponent;
+}
+
+/**
+ * React higher order component for getting the status for a breakpoint and
+ * keeping it updated.
+ *
+ * @param {React.Component|Function} Wrapped The component to wrap.
+ * @param {String} breakpoint The breakpoint to consider.
+ *
+ * @returns {React.Component} The wrapped component.
+ */
+export function withBreakpoint( Wrapped, breakpoint ) {
+	return withBreakpointAux( Wrapped, breakpoint, 'WithBreakpoint' );
 }
 
 /**
@@ -100,7 +119,7 @@ export function withBreakpoint( Wrapped, breakpoint ) {
  * @returns {React.Component} The wrapped component.
  */
 export function withMobileBreakpoint( Wrapped ) {
-	return withBreakpoint( Wrapped, MOBILE_BREAKPOINT );
+	return withBreakpointAux( Wrapped, MOBILE_BREAKPOINT, 'WithMobileBreakpoint' );
 }
 
 /**
@@ -112,5 +131,5 @@ export function withMobileBreakpoint( Wrapped ) {
  * @returns {React.Component} The wrapped component.
  */
 export function withDesktopBreakpoint( Wrapped ) {
-	return withBreakpoint( Wrapped, DESKTOP_BREAKPOINT );
+	return withBreakpointAux( Wrapped, DESKTOP_BREAKPOINT, 'WithDesktopBreakpoint' );
 }
