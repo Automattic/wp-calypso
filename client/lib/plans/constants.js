@@ -183,8 +183,7 @@ export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 export const TYPE_ECOMMERCE = 'TYPE_ECOMMERCE';
 
-const WPComGetBillingTimeframe = () =>
-	i18n.translate( '/month, billed annually or every two years' );
+const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
 
 const getPlanBloggerDetails = () => ( {
