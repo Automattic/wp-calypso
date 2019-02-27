@@ -1,21 +1,15 @@
 .plan-pill {
 	position: absolute;
+	top: -8px;
 	left: 10px;
-	top: 65px;
 	z-index: z-index( 'root', '.plan-pill' );
-	overflow: hidden;
-	height: 75px;
+	padding: 0 8px 3px 8px;
 	text-align: center;
+	border-radius: 3px;
+	background: var( --color-accent );
 }
 .plan-pill .plan-pill__title {
 	font-size: 10px;
-	font-weight: normal;
 	color: $white;
-	text-align: center;
-	line-height: 20px;
-	display: block;
-	background: var( --color-accent );
 	text-transform: uppercase;
-	border-radius: 5px;
-	padding: 0 10px;
 }
