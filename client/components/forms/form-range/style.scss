@@ -10,8 +10,8 @@
 		to bottom,
 		transparent,
 		transparent 8px,
-		$gray-lighten-20 8px,
-		$gray-lighten-20 10px,
+		var( --color-neutral-100 ) 8px,
+		var( --color-neutral-100 ) 10px,
 		transparent 10px
 	);
 }
