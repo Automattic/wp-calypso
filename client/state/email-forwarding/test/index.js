@@ -9,7 +9,11 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import emailForwardsReducer from '../reducer';
-import { EMAIL_FORWARDING_REQUEST_SUCCESS, EMAIL_FORWARDING_REQUEST } from 'state/action-types';
+import {
+	EMAIL_FORWARDING_REQUEST_SUCCESS,
+	EMAIL_FORWARDING_REQUEST,
+	EMAIL_FORWARDING_CREATE_REQUEST,
+} from 'state/action-types';
 
 const TEST_MAILBOX_EXAMPLE_DOT_COM = {
 	email: 'test@example.com',
@@ -160,5 +164,52 @@ describe( 'emailForwardsReducer', () => {
 				},
 			} );
 		} );
+	} );
+
+	describe( 'adding email forwards', () => {
+		test( 'adding email forward should insert temporary forward to list', () => {
+			const state = emailForwardsReducer(
+				{
+					'example.com': {
+						forwards: [],
+					},
+				},
+				{
+					type: EMAIL_FORWARDING_CREATE_REQUEST,
+					domainName: 'example.com',
+					mailbox: 'test',
+					destination: 'test@forward.com',
+				}
+			);
+
+			expect( state ).to.eql( {
+				'example.com': {
+					forwards: [
+						{
+							email: 'test@example.com',
+							mailbox: 'test',
+							domain: 'example.com',
+							forward_address: 'test@forward.com',
+							active: false,
+							temporary: true,
+						},
+					],
+					requesting: {
+						get: false,
+						create: true,
+						remove: false,
+					},
+					errors: {
+						get: null,
+						create: null,
+						remove: null,
+					},
+				},
+			} );
+		} );
+	} );
+
+	describe( 'removing email forwards', () => {
+		test( '', () => {} );
 	} );
 } );
