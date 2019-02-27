@@ -88,8 +88,6 @@ const mediaQueryLists = {
 	'480px-960px': createMediaQueryList( { min: 480, max: 960 } ),
 };
 
-const listeners = {};
-
 function getMediaQueryList( breakpoint ) {
 	if ( ! mediaQueryLists.hasOwnProperty( breakpoint ) ) {
 		try {
@@ -117,6 +115,8 @@ export function isWithinBreakpoint( breakpoint ) {
  * Registers a listener to be notified of changes to breakpoint matching status.
  * @param {String} breakpoint The breakpoint to consider.
  * @param {Function} listener The listener to be called on change.
+ *
+ * @returns {Function} The registered subscription; undefined if none.
  */
 export function addWithinBreakpointListener( breakpoint, listener ) {
 	if ( ! listener ) {
@@ -125,27 +125,29 @@ export function addWithinBreakpointListener( breakpoint, listener ) {
 
 	const mediaQueryList = getMediaQueryList( breakpoint );
 
-	if ( mediaQueryList && ! isServer && ! listeners[ listener ] ) {
-		listeners[ listener ] = evt => listener( evt.matches );
-		mediaQueryList.addListener( listeners[ listener ] );
+	if ( mediaQueryList && ! isServer ) {
+		const wrappedListener = evt => listener( evt.matches );
+		mediaQueryList.addListener( wrappedListener );
+		return wrappedListener;
 	}
+
+	return undefined;
 }
 
 /**
  * Removes a listener that was being notified of changes to breakpoint matching status.
  * @param {String} breakpoint The breakpoint to consider.
- * @param {Function} listener The listener to be called on change.
+ * @param {Function} subscription The subscription to be removed.
  */
-export function removeWithinBreakpointListener( breakpoint, listener ) {
-	if ( ! listener ) {
+export function removeWithinBreakpointListener( breakpoint, subscription ) {
+	if ( ! subscription ) {
 		return;
 	}
 
 	const mediaQueryList = getMediaQueryList( breakpoint );
 
-	if ( mediaQueryList && ! isServer && listeners[ listener ] ) {
-		mediaQueryList.removeListener( listeners[ listener ] );
-		delete listeners[ listener ];
+	if ( mediaQueryList && ! isServer && subscription ) {
+		mediaQueryList.removeListener( subscription );
 	}
 }
 
@@ -161,9 +163,11 @@ export function isMobile() {
 /**
  * Registers a listener to be notified of changes to mobile breakpoint matching status.
  * @param {Function} listener The listener to be called on change.
+ *
+ * @returns {Function} The registered subscription; undefined if none.
  */
 export function addIsMobileListener( listener ) {
-	addWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
+	return addWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
 }
 
 /**
@@ -186,9 +190,11 @@ export function isDesktop() {
 /**
  * Registers a listener to be notified of changes to desktop breakpoint matching status.
  * @param {Function} listener The listener to be called on change.
+ *
+ * @returns {Function} The registered subscription; undefined if none.
  */
 export function addIsDesktopListener( listener ) {
-	addWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
+	return addWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
 }
 
 /**

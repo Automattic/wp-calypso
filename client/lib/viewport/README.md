@@ -42,11 +42,11 @@ class MyComponent extends React.Component {
 	};
 
 	componentDidMount() {
-		addIsDesktopListener( this.sizeChanged );
+		this.subscription = addIsDesktopListener( this.sizeChanged );
 	}
 
 	componentWillUnmount() {
-		removeIsDesktopListener( this.sizeChanged );
+		removeIsDesktopListener( this.subscription );
 	}
 }
 ```
@@ -85,11 +85,11 @@ export default withMobileBreakpoint( MyComponent );
 - `isMobile()`: Whether the current screen size matches a mobile breakpoint (<480px)
 - `isDesktop()`: Whether the current screen size matches a desktop breakpoint (>960px)
 - `addWithinBreakpointListener( breakpoint, listener )`: Register a listener for size changes that affect the breakpoint
-- `removeWithinBreakpointListener( breakpoint, listener )`: Unregister a previously registered listener
+- `removeWithinBreakpointListener( breakpoint, subscription )`: Unregister a previously registered subscription
 - `addIsMobileListener( listener )`: Register a listener for size changes that affect the mobile breakpoint (<480px)
-- `removeIsMobileListener( listener )`: Unregister a previously registered listener for the mobile breakpoint (<480px)
+- `removeIsMobileListener( subscription )`: Unregister a previously registered subscription for the mobile breakpoint (<480px)
 - `addIsDesktopListener( listener )`: Register a listener for size changes that affect the desktop breakpoint (>960px)
-- `removeIsDesktopListener( listener )`: Unregister a previously registered listener for the desktop breakpoint (>960px)
+- `removeIsDesktopListener( subscription )`: Unregister a previously registered subscription for the desktop breakpoint (>960px)
 - `getWindowInnerWidth()`: Get the inner width for the browser window. **Warning**: This method triggers a layout recalc, potentially resulting in performance issues. Please use a breakpoint instead wherever possible.
 
 ### Supported hooks

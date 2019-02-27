@@ -31,10 +31,10 @@ export function useBreakpoint( breakpoint ) {
 	}
 
 	useEffect(() => {
-		addWithinBreakpointListener( breakpoint, handleBreakpointChange );
+		const subscription = addWithinBreakpointListener( breakpoint, handleBreakpointChange );
 
 		return function cleanup() {
-			removeWithinBreakpointListener( breakpoint, handleBreakpointChange );
+			removeWithinBreakpointListener( breakpoint, subscription );
 		};
 	}, []);
 
@@ -71,24 +71,9 @@ export function useDesktopBreakpoint() {
  * @returns {React.Component} The wrapped component.
  */
 function withBreakpointAux( Wrapped, breakpoint, modifierName ) {
-	const EnhancedComponent = class extends React.Component {
-		state = { isActive: isWithinBreakpoint( breakpoint ) };
-
-		handleBreakpointChange = currentStatus => {
-			this.setState( { isActive: currentStatus } );
-		};
-
-		componentDidMount() {
-			addWithinBreakpointListener( breakpoint, this.handleBreakpointChange );
-		}
-
-		componentWillUnmount() {
-			removeWithinBreakpointListener( breakpoint, this.handleBreakpointChange );
-		}
-
-		render() {
-			return <Wrapped isBreakpointActive={ this.state.isActive } { ...this.props } />;
-		}
+	const EnhancedComponent = function( props ) {
+		const isActive = useBreakpoint( breakpoint );
+		return <Wrapped isBreakpointActive={ isActive } { ...props } />;
 	};
 
 	const { displayName = Wrapped.name || 'Component' } = Wrapped;
