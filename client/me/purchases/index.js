@@ -91,15 +91,6 @@ export default function( router ) {
 	);
 
 	router(
-		paths.cancelPrivacyProtection( ':site', ':purchaseId' ),
-		sidebar,
-		siteSelection,
-		controller.cancelPrivacyProtection,
-		makeLayout,
-		clientRender
-	);
-
-	router(
 		paths.confirmCancelDomain( ':site', ':purchaseId' ),
 		sidebar,
 		siteSelection,
@@ -133,11 +124,6 @@ export default function( router ) {
 	);
 	router( '/purchases/:siteName/:purchaseId/cancel', ( { params: { siteName, purchaseId } } ) =>
 		page.redirect( paths.cancelPurchase( siteName, purchaseId ) )
-	);
-	router(
-		'/purchases/:siteName/:purchaseId/cancel-private-registration',
-		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( paths.cancelPrivacyProtection( siteName, purchaseId ) )
 	);
 	router(
 		'/purchases/:siteName/:purchaseId/confirm-cancel-domain',

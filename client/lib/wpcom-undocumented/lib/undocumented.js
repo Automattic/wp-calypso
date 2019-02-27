@@ -1911,18 +1911,6 @@ Undocumented.prototype.cancelAndRefundPurchase = function( purchaseId, data, fn 
 	);
 };
 
-Undocumented.prototype.cancelPrivacyProtection = function( purchaseId, fn ) {
-	debug( 'upgrades/{purchaseId}/cancel-privacy-protection' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ purchaseId }/cancel-privacy-protection`,
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.cancelPlanTrial = function( planId, fn ) {
 	debug( '/upgrades/{planId}/cancel-plan-trial' );
 
