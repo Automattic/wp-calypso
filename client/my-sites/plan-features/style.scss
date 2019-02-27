@@ -153,6 +153,23 @@ $plan-features-sidebar-width: 272px;
 			border-right: solid 1px lighten( $gray, 27% );
 		}
 	}
+	@include breakpoint( '660px-1280px' ) {
+		.is-scrolled-to-center & {
+			&:nth-child( 1 ), &:nth-child( 9 ) {
+				opacity: 0.3;
+			}
+		}
+		.is-scrolled-to-left & {
+			&:nth-child( 7 ) {
+				opacity: 0.3;
+			}
+		}
+		.is-scrolled-to-right & {
+			&:nth-child( 3 ) {
+				opacity: 0.3;
+			}
+		}
+	}
 }
 
 .plan-features__table-item.has-partial-border {
