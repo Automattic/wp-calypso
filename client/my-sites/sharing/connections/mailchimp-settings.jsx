@@ -89,6 +89,7 @@ const MailchimpSettings = ( {
 					) ) }
 			</select>
 			{ mailchimpLists && mailchimpLists.length > 0 && mailchimpListId !== 0 && (
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				<div className="sharing-connections__mailchimp-gutenberg_explanation">
 					<p>
 						{ translate(
