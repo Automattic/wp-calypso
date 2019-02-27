@@ -146,7 +146,7 @@ export function removeWithinBreakpointListener( breakpoint, subscription ) {
 
 	const mediaQueryList = getMediaQueryList( breakpoint );
 
-	if ( mediaQueryList && ! isServer && subscription ) {
+	if ( mediaQueryList && ! isServer ) {
 		mediaQueryList.removeListener( subscription );
 	}
 }

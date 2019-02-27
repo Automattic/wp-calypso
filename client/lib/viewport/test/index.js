@@ -86,7 +86,10 @@ describe( 'viewport', () => {
 		test( 'should add a listener for a valid breakpoint', () => {
 			const listener = jest.fn();
 			const event = { matches: 'bar' };
-			expect( () => viewport.addWithinBreakpointListener( '<960px', listener ) ).not.toThrow();
+			let subscription;
+			expect(
+				() => ( subscription = viewport.addWithinBreakpointListener( '<960px', listener ) )
+			).not.toThrow();
 			expect( addListenerMock ).toHaveBeenCalledTimes( 1 );
 			expect( addListenerMock ).toHaveBeenCalledWith(
 				'(max-width: 960px)',
@@ -98,7 +101,7 @@ describe( 'viewport', () => {
 			expect( listener ).toHaveBeenCalledWith( 'bar' );
 			// Clean up.
 			try {
-				viewport.removeWithinBreakpointListener( '<960px', listener );
+				viewport.removeWithinBreakpointListener( '<960px', subscription );
 			} catch {}
 		} );
 	} );
@@ -111,7 +114,8 @@ describe( 'viewport', () => {
 		test( 'should add a listener', () => {
 			const listener = jest.fn();
 			const event = { matches: 'bar' };
-			expect( () => viewport.addIsMobileListener( listener ) ).not.toThrow();
+			let subscription;
+			expect( () => ( subscription = viewport.addIsMobileListener( listener ) ) ).not.toThrow();
 			expect( addListenerMock ).toHaveBeenCalledTimes( 1 );
 			expect( addListenerMock ).toHaveBeenCalledWith(
 				'(max-width: 480px)',
@@ -123,7 +127,7 @@ describe( 'viewport', () => {
 			expect( listener ).toHaveBeenCalledWith( 'bar' );
 			// Clean up.
 			try {
-				viewport.removeIsMobileListener( listener );
+				viewport.removeIsMobileListener( subscription );
 			} catch {}
 		} );
 	} );
@@ -136,7 +140,8 @@ describe( 'viewport', () => {
 		test( 'should add a listener', () => {
 			const listener = jest.fn();
 			const event = { matches: 'bar' };
-			expect( () => viewport.addIsDesktopListener( listener ) ).not.toThrow();
+			let subscription;
+			expect( () => ( subscription = viewport.addIsDesktopListener( listener ) ) ).not.toThrow();
 			expect( addListenerMock ).toHaveBeenCalledTimes( 1 );
 			expect( addListenerMock ).toHaveBeenCalledWith(
 				'(min-width: 961px)',
@@ -148,7 +153,7 @@ describe( 'viewport', () => {
 			expect( listener ).toHaveBeenCalledWith( 'bar' );
 			// Clean up.
 			try {
-				viewport.removeIsDesktopListener( listener );
+				viewport.removeIsDesktopListener( subscription );
 			} catch {}
 		} );
 	} );
