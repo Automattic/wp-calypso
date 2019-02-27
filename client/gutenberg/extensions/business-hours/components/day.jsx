@@ -61,13 +61,7 @@ class Day extends Component {
 					<div className="business-hours__row business-hours-row__add">
 						<div className={ classNames( day.name, 'business-hours__day' ) }>&nbsp;</div>
 						<div className={ classNames( day.name, 'business-hours__hours' ) }>
-							<IconButton
-								isSmall
-								isLink
-								label={ __( 'Add Hours' ) }
-								icon="plus-alt"
-								onClick={ this.addInterval }
-							>
+							<IconButton isLink label={ __( 'Add Hours' ) } onClick={ this.addInterval }>
 								{ __( 'Add Hours' ) }
 							</IconButton>
 						</div>
