@@ -24,14 +24,12 @@ const matchMediaMock = jest.fn( query => {
 	return mediaListObjectMock;
 } );
 
-// Disable console warnings for this file.
-// eslint-disable-next-line no-console
-console.warn = jest.fn();
-
 describe( 'viewport', () => {
 	beforeAll( async () => {
 		window.matchMedia = matchMediaMock;
 		viewport = await import( '..' );
+		// Disable console warnings.
+		jest.spyOn( console, 'warn' ).mockImplementation( () => '' );
 	} );
 
 	beforeEach( () => {
@@ -227,5 +225,9 @@ describe( 'viewport', () => {
 			expect( removeListenerMock ).toHaveBeenCalledTimes( 1 );
 			expect( removeListenerMock ).toHaveBeenCalledWith( '(min-width: 961px)', addedListener );
 		} );
+	} );
+
+	afterAll( () => {
+		jest.restoreAllMocks();
 	} );
 } );

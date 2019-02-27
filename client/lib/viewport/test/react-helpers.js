@@ -46,10 +46,6 @@ const matchMediaMock = jest.fn( query => {
 	return mediaListObjectMock;
 } );
 
-// Disable console warnings for this file.
-// eslint-disable-next-line no-console
-console.warn = jest.fn();
-
 describe( 'viewport/react-helpers', () => {
 	let container;
 
@@ -91,6 +87,8 @@ describe( 'viewport/react-helpers', () => {
 	beforeAll( async () => {
 		window.matchMedia = matchMediaMock;
 		helpers = await import( '../react-helpers' );
+		// Disable console warnings.
+		jest.spyOn( console, 'warn' ).mockImplementation( () => '' );
 	} );
 
 	beforeEach( () => {
@@ -205,5 +203,9 @@ describe( 'viewport/react-helpers', () => {
 			const TestComponent = helpers.withDesktopBreakpoint( BaseComponent );
 			runComponentTests( TestComponent, '(min-width: 961px)' );
 		} );
+	} );
+
+	afterAll( () => {
+		jest.restoreAllMocks();
 	} );
 } );
