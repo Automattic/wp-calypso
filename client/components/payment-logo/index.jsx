@@ -12,7 +12,7 @@ import i18n from 'i18n-calypso';
 
 const ALT_TEXT = {
 	alipay: 'Alipay',
-	amex: 'Amex',
+	amex: 'American Express',
 	bancontact: 'Bancontact',
 	'brazil-tef': 'Transferência bancária',
 	diners: 'Diners Club',
