@@ -176,10 +176,7 @@ const requestSiteVerticalHttpData = ( searchTerm, limit = 5, id = SITE_VERTICALS
 export const isVerticalSearchPending = () =>
 	'pending' === get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
 
-const requestSiteVerticals = debounce( requestSiteVerticalHttpData, 100, {
-	leading: false,
-	trailing: true,
-} );
+const requestSiteVerticals = debounce( requestSiteVerticalHttpData, 666 );
 
 export default localize(
 	connect(
