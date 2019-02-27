@@ -93,13 +93,10 @@ const MailchimpSettings = ( {
 				<div className="sharing-connections__mailchimp-gutenberg_explanation">
 					<p>
 						{ translate(
-							"You can start collecting your subscriber's email addresses by inserting the Mailchimp block into the post or page content."
+							'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
 						) }
-					</p>
-					<p>
-						{ translate( 'Head on to edit a post or a page and choose "Mailchimp" block. ' ) }
 						<a href={ translate( 'https://en.support.wordpress.com/mailchimp-block/' ) }>
-							{ translate( 'Find out more here.' ) }
+							{ translate( 'Learn more.' ) }
 						</a>
 					</p>
 				</div>
