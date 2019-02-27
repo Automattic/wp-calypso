@@ -406,10 +406,10 @@ textarea {
 	.alerting {
 		color: $gray;
 		.beacon {
-			background: $blue-wordpress;
+			background: var( --color-primary );
 			margin: 5px auto;
 			&::after {
-				background: $blue-wordpress;
+				background: var( --color-primary );
 			}
 		}
 	}
