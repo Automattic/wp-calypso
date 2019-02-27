@@ -154,6 +154,7 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 	@include breakpoint( '660px-1280px' ) {
+		transition: opacity 0.2s ease-in-out;
 		.is-scrolled-to-center & {
 			&:nth-child( 1 ), &:nth-child( 9 ) {
 				opacity: 0.3;
