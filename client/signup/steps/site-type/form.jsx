@@ -15,7 +15,7 @@ import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import { allSiteTypes, getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { allSiteTypes } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -32,10 +32,6 @@ class SiteTypeForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	static defaultProps = {
-		siteType: null,
-	};
-
 	constructor( props ) {
 		super( props );
 
@@ -50,14 +46,12 @@ class SiteTypeForm extends Component {
 		const { siteType } = this.state;
 
 		event.preventDefault();
-		// Default siteType is 'blog'
-		const siteTypeInputVal = siteType || getSiteTypePropertyValue( 'id', 2, 'slug' );
 
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
 			value: siteType,
 		} );
 
-		this.props.submitForm( siteTypeInputVal );
+		this.props.submitForm( siteType );
 	};
 
 	renderRadioOptions() {
