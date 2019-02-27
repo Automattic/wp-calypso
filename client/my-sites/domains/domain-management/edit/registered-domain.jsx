@@ -3,14 +3,12 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card/compact';
 import Notice from 'components/notice';
 import FormToggle from 'components/forms/form-toggle';
@@ -30,16 +28,12 @@ import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
-const RegisteredDomain = createReactClass( {
-	displayName: 'RegisteredDomain',
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
-
-	getInitialState() {
-		return {
-			submitting: false,
-		};
-	},
+class RegisteredDomain extends React.PureComponent {
+	state = {
+		submitting: false,
+	};
 
 	getAutoRenewalOrExpirationDate() {
 		const { domain, translate } = this.props;
@@ -69,7 +63,7 @@ const RegisteredDomain = createReactClass( {
 				{ domain.expirationMoment.format( 'LL' ) }
 			</Property>
 		);
-	},
+	}
 
 	getLabel( { status, icon, message, href } ) {
 		return (
@@ -79,9 +73,9 @@ const RegisteredDomain = createReactClass( {
 				</Notice>
 			</a>
 		);
-	},
+	}
 
-	togglePrivacy() {
+	togglePrivacy = () => {
 		const { selectedSite, translate } = this.props;
 		const { privateDomain, name } = this.props.domain;
 
@@ -110,7 +104,7 @@ const RegisteredDomain = createReactClass( {
 		} else {
 			enablePrivacyProtection( name, callback );
 		}
-	},
+	};
 
 	getPrivacyProtection() {
 		const { privateDomain, privacyAvailable } = this.props.domain;
@@ -133,11 +127,11 @@ const RegisteredDomain = createReactClass( {
 				}
 			</Property>
 		);
-	},
+	}
 
-	handlePaymentSettingsClick() {
-		this.recordEvent( 'paymentSettingsClick', this.props.domain );
-	},
+	handlePaymentSettingsClick = () => {
+		this.props.paymentSettingsClick( this.props.domain );
+	};
 
 	domainWarnings() {
 		return (
@@ -159,7 +153,7 @@ const RegisteredDomain = createReactClass( {
 				] }
 			/>
 		);
-	},
+	}
 
 	getVerticalNav() {
 		const { expirationMoment, expired, pendingTransfer } = this.props.domain;
@@ -174,13 +168,13 @@ const RegisteredDomain = createReactClass( {
 				{ ( ! expired || inGracePeriod ) && this.transferNavItem() }
 			</VerticalNav>
 		);
-	},
+	}
 
 	emailNavItem() {
 		const path = domainManagementEmail( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
-	},
+	}
 
 	nameServersNavItem() {
 		const path = domainManagementNameServers(
@@ -193,7 +187,7 @@ const RegisteredDomain = createReactClass( {
 				{ this.props.translate( 'Name Servers and DNS' ) }
 			</VerticalNavItem>
 		);
-	},
+	}
 
 	contactsPrivacyNavItem() {
 		const { privacyAvailable } = this.props.domain;
@@ -208,7 +202,7 @@ const RegisteredDomain = createReactClass( {
 				{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
 			</VerticalNavItem>
 		);
-	},
+	}
 
 	transferNavItem() {
 		const path = domainManagementTransfer( this.props.selectedSite.slug, this.props.domain.name );
@@ -216,7 +210,7 @@ const RegisteredDomain = createReactClass( {
 		return (
 			<VerticalNavItem path={ path }>{ this.props.translate( 'Transfer Domain' ) }</VerticalNavItem>
 		);
-	},
+	}
 
 	render() {
 		const { domain, translate } = this.props;
@@ -224,7 +218,7 @@ const RegisteredDomain = createReactClass( {
 		return (
 			<div>
 				{ this.domainWarnings() }
-				<div className="domain-details-card">
+				<div className="edit__domain-details-card">
 					{ domain.isPendingIcannVerification && domain.currentUserCanManage && (
 						<IcannVerificationCard
 							selectedDomainName={ domain.name }
@@ -265,14 +259,28 @@ const RegisteredDomain = createReactClass( {
 				{ this.getVerticalNav() }
 			</div>
 		);
-	},
-} );
+	}
+}
+
+const paymentSettingsClick = domain =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			`Clicked "Payment Settings" Button on a ${ domain.type } in Edit`,
+			'Domain Name',
+			domain.name
+		),
+		recordTracksEvent( 'calypso_domain_management_edit_payment_settings_click', {
+			section: domain.type,
+		} )
+	);
 
 export default connect(
 	null,
 	{
-		fetchSiteDomains,
 		errorNotice,
+		fetchSiteDomains,
+		paymentSettingsClick,
 		successNotice,
 	}
 )( localize( RegisteredDomain ) );
