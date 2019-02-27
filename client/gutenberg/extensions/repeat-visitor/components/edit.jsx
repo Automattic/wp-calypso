@@ -7,7 +7,6 @@ import { Component } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/editor';
 import { withSelect } from '@wordpress/data';
 import classNames from 'classnames';
-import { isInteger } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,10 +30,7 @@ const RADIO_OPTIONS = [
 class RepeatVisitorEdit extends Component {
 	setCriteria = criteria => this.props.setAttributes( { criteria } );
 	setThreshold = threshold => {
-		threshold.length &&
-			isInteger( +threshold ) &&
-			+threshold > 0 &&
-			this.props.setAttributes( { threshold } );
+		/^\d+$/.test( threshold ) && this.props.setAttributes( { threshold } );
 	};
 
 	getNoticeLabel() {
