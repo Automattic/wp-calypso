@@ -81,6 +81,7 @@ export const remoteValuesSchema = {
 				'classic-bright',
 				'laser-black',
 				'powder-snow',
+				'nightfall',
 			],
 		},
 		'store-dashboardStatsWidgetUnit': {
