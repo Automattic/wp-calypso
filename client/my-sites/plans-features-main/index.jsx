@@ -320,6 +320,30 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
+	getLeftOverlay() {
+		return (
+			<div
+				className="plans-features-main__left-overlay"
+				onClick={ this.move.bind( this, 'left' ) }
+				onKeyPress={ this.handleKeyPress.bind( this ) }
+				role="button"
+				tabIndex={ -1 }
+			/>
+		);
+	}
+
+	getRightOverlay() {
+		return (
+			<div
+				className="plans-features-main__right-overlay"
+				onClick={ this.move.bind( this, 'right' ) }
+				onKeyPress={ this.handleKeyPress.bind( this ) }
+				role="button"
+				tabIndex={ 0 }
+			/>
+		);
+	}
+
 	render() {
 		const { displayJetpackPlans, isInSignup, plansWithScroll, siteId } = this.props;
 		let faqs = null;
@@ -336,21 +360,9 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
 				{ plansWithScroll ? (
-					<div className={ classNames( 'plans-features-main__scroll-container' ) }>
-						<div
-							className="plans-features-main__left-overlay"
-							onClick={ this.move.bind( this, 'left' ) }
-							onKeyPress={ this.handleKeyPress.bind( this ) }
-							role="button"
-							tabIndex={ -1 }
-						/>
-						<div
-							className="plans-features-main__right-overlay"
-							onClick={ this.move.bind( this, 'right' ) }
-							onKeyPress={ this.handleKeyPress.bind( this ) }
-							role="button"
-							tabIndex={ 0 }
-						/>
+					<div className="plans-features-main__scroll-container">
+						{ this.getLeftOverlay() }
+						{ this.getRightOverlay() }
 						{ this.getPlanFeatures() }
 					</div>
 				) : null }
