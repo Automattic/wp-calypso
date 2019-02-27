@@ -57,7 +57,7 @@ textarea {
 // Main button
 .btn {
 	background: var( --color-primary );
-	border: 1px solid darken( $blue-medium, 8% );
+	border: 1px solid var( --color-primary-400 );
 	color: $white;
 	border-width: 1px 1px 2px;
 	cursor: pointer;
@@ -71,7 +71,7 @@ textarea {
 	appearance: none;
 	width: auto;
 	&:hover {
-		border-color: $blue-dark;
+		border-color: var( --color-primary-dark );
 	}
 	&:active,
 	&:active:enabled {
@@ -81,8 +81,8 @@ textarea {
 		color: $white;
 	}
 	&:focus {
-		border-color: $blue-dark;
-		box-shadow: 0 0 0 2px $blue-light;
+		border-color: var( --color-primary-dark );
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
 
