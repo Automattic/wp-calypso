@@ -29,7 +29,8 @@ describe( 'MediaLibraryListItem image', () => {
 		}
 	} );
 
-	const getPhotonUrl = () => photon( fixtures.media[ 0 ].URL, { resize: `${ WIDTH },${ WIDTH }` } );
+	const getResizedUrl = () =>
+		photon( fixtures.media[ 0 ].URL, { resize: `${ WIDTH },${ WIDTH }` } );
 	const getResizedUrl = () =>
 		resize( fixtures.media[ 0 ].URL, { resize: `${ WIDTH },${ WIDTH }` } );
 	const getItem = ( itemPos, type ) => (
@@ -46,7 +47,7 @@ describe( 'MediaLibraryListItem image', () => {
 		test( 'defaults to photon when no thumbnail parameter is passed', () => {
 			wrapper = shallow( getItem( 0 ) );
 
-			expect( wrapper.props().src ).to.be.equal( getPhotonUrl() );
+			expect( wrapper.props().src ).to.be.equal( getResizedUrl() );
 		} );
 		test( 'returns a resized private thumbnail for type MEDIA_IMAGE_RESIZER', () => {
 			wrapper = shallow( getItem( 0, 'MEDIA_IMAGE_RESIZER' ) );
