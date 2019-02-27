@@ -26,6 +26,7 @@ import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 import wpcom from 'lib/wp';
+import { Placeholder } from './placeholder';
 
 /**
  * Style dependencies
@@ -41,6 +42,7 @@ class CalypsoifyIframe extends Component {
 
 	state = {
 		isMediaModalVisible: false,
+		isIframeLoaded: false,
 	};
 
 	constructor( props ) {
@@ -134,14 +136,21 @@ class CalypsoifyIframe extends Component {
 
 	render() {
 		const { iframeUrl, siteId } = this.props;
-		const { isMediaModalVisible, allowedTypes, multiple } = this.state;
+		const { isMediaModalVisible, allowedTypes, multiple, isIframeLoaded } = this.state;
 
 		return (
 			<Fragment>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
-					{ /* eslint-disable-next-line jsx-a11y/iframe-has-title, wpcalypso/jsx-classname-namespace */ }
-					<iframe ref={ this.iframeRef } className={ 'is-iframe-loaded' } src={ iframeUrl } />
+					{ ! isIframeLoaded && <Placeholder /> }
+					{ /* eslint-disable-next-line jsx-a11y/iframe-has-title */ }
+					<iframe
+						ref={ this.iframeRef }
+						/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+						className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
+						src={ iframeUrl }
+						onLoad={ () => this.setState( { isIframeLoaded: true } ) }
+					/>
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
 					<MediaModal
