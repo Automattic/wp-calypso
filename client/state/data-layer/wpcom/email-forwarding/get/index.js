@@ -29,7 +29,7 @@ export const receiveEmailForwardingError = ( action, error ) => {
 	return receiveEmailForwardingRequestFailure( action.domainName, error );
 };
 
-registerHandlers( 'state/data-layer/wpcom/email-forwarding/index.js', {
+registerHandlers( 'state/data-layer/wpcom/email-forwarding/get/index.js', {
 	[ EMAIL_FORWARDING_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestEmailForwarding,

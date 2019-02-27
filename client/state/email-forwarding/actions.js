@@ -10,6 +10,9 @@ import {
 	EMAIL_FORWARDING_CREATE_REQUEST,
 	EMAIL_FORWARDING_CREATE_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_CREATE_REQUEST_FAILURE,
+	EMAIL_FORWARDING_REMOVE_REQUEST,
+	EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
+	EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/email-forwarding';
@@ -61,6 +64,32 @@ export const receiveCreateEmailForwardingFailure = ( domainName, mailbox, destin
 		domainName,
 		mailbox,
 		destination,
+		error,
+	};
+};
+
+export const removeEmailForwarding = ( domainName, mailbox ) => {
+	return {
+		type: EMAIL_FORWARDING_REMOVE_REQUEST,
+		domainName,
+		mailbox,
+	};
+};
+
+export const receiveRemoveEmailForwardingSuccess = ( domainName, mailbox, response ) => {
+	return {
+		type: EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
+		domainName,
+		mailbox,
+		response,
+	};
+};
+
+export const receiveRemoveEmailForwardingFailure = ( domainName, mailbox, error ) => {
+	return {
+		type: EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
+		domainName,
+		mailbox,
 		error,
 	};
 };

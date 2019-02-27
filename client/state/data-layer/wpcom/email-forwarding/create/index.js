@@ -113,7 +113,7 @@ export function newForwardError( action, response ) {
 	return actions;
 }
 
-registerHandlers( 'state/data-layer/wpcom/email-forwading/new/index.js', {
+registerHandlers( 'state/data-layer/wpcom/email-forwarding/create/index.js', {
 	[ EMAIL_FORWARDING_CREATE_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestNewEmailForward,
