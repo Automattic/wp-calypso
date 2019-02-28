@@ -35,32 +35,7 @@ export const requestResendEmailVerification = action => {
 	);
 };
 
-export const resendEmailVerificationSuccess = ( action, response ) => {
-	const { domainName, mailbox, destination } = action;
-
-	if ( response && response.sent ) {
-		const successMessage = translate(
-			'Successfully sent confirmation email for %(email)s to %(destination)s.',
-			{
-				args: {
-					email: mailbox + '@' + domainName,
-					destination,
-				},
-			}
-		);
-
-		return [
-			successNotice( successMessage, {
-				duration: 5000,
-			} ),
-			receiveResendVerificationEmailSuccess( domainName, mailbox ),
-		];
-	}
-
-	return receiveResendVerificationEmailFailure( domainName, mailbox, destination, true );
-};
-
-export const resendEmailVerificationError = ( action, error ) => {
+export const resendEmailVerificationFailure = ( action, error ) => {
 	const { domainName, mailbox, destination } = action;
 
 	const failureMessage = translate(
@@ -82,12 +57,37 @@ export const resendEmailVerificationError = ( action, error ) => {
 	];
 };
 
+export const resendEmailVerificationSuccess = ( action, response ) => {
+	const { domainName, mailbox, destination } = action;
+
+	if ( response && response.sent ) {
+		const successMessage = translate(
+			'Successfully sent confirmation email for %(email)s to %(destination)s.',
+			{
+				args: {
+					email: mailbox + '@' + domainName,
+					destination,
+				},
+			}
+		);
+
+		return [
+			successNotice( successMessage, {
+				duration: 5000,
+			} ),
+			receiveResendVerificationEmailSuccess( domainName, mailbox, destination ),
+		];
+	}
+
+	return resendEmailVerificationFailure( action, true );
+};
+
 registerHandlers( 'state/data-layer/wpcom/email-forwarding/resend-email-verification/index.js', {
 	[ EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestResendEmailVerification,
 			onSuccess: resendEmailVerificationSuccess,
-			onError: resendEmailVerificationError,
+			onError: resendEmailVerificationFailure,
 		} ),
 	],
 } );

@@ -15,7 +15,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import {
 	receiveAddEmailForwardSuccess,
-	receiveAddEmailForwardingFailure,
+	receiveAddEmailForwardFailure,
 } from 'state/email-forwarding/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -67,7 +67,7 @@ export const addEmailForwardFailure = ( action, error ) => {
 
 	return [
 		errorNotice( failureMessage ),
-		receiveAddEmailForwardingFailure( domainName, mailbox, destination, error ),
+		receiveAddEmailForwardFailure( domainName, mailbox, destination, error ),
 	];
 };
 

@@ -47,8 +47,25 @@ describe( 'wpcom-api', () => {
 			} );
 		} );
 
+		describe( '#addEmailForwardFailure', () => {
+			const message = 'An error has occured';
+
+			test( 'should dispatch a error notice and an add email forward failure action on error', () => {
+				const resultActions = addEmailForwardFailure( action, { message } );
+				expect( resultActions ).to.have.lengthOf( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
+				expect( resultActions[ 1 ] ).to.eql( {
+					type: EMAIL_FORWARDING_ADD_REQUEST_FAILURE,
+					domainName,
+					mailbox,
+					destination,
+					error: { message },
+				} );
+			} );
+		} );
+
 		describe( '#addEmailForwardSuccess', () => {
-			test( 'should dispatch a success notice and add email forward success action on a good response', () => {
+			test( 'should dispatch a success notice and an add email forward success action on a good response', () => {
 				const resultActions = addEmailForwardSuccess( action, { created: true, verified: true } );
 				expect( resultActions ).to.have.lengthOf( 2 );
 				expect( isSuccessNotice( resultActions[ 0 ] ) ).to.be.true;
@@ -63,7 +80,7 @@ describe( 'wpcom-api', () => {
 				} );
 			} );
 
-			test( 'should dispatch a success notice with verify and add email forward success action on a response without verification', () => {
+			test( 'should dispatch a success notice with verify and an add email forward success action on a response without verification', () => {
 				const resultActions = addEmailForwardSuccess( action, {
 					created: true,
 					verified: false,
@@ -86,8 +103,8 @@ describe( 'wpcom-api', () => {
 				} );
 			} );
 
-			test( 'should dispatch a error notice and failure event on no response', () => {
-				const resultActions = addEmailForwardSuccess( action, undefined );
+			test( 'should dispatch a error notice and an add email forward failure action on a response with created: false', () => {
+				const resultActions = addEmailForwardSuccess( action, { created: false, verified: false } );
 				expect( resultActions ).to.have.lengthOf( 2 );
 				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
 				expect( resultActions[ 1 ] ).to.eql( {
@@ -98,13 +115,9 @@ describe( 'wpcom-api', () => {
 					error: true,
 				} );
 			} );
-		} );
 
-		describe( '#addEmailForwardFailure', () => {
-			const message = 'An error has occured';
-
-			test( 'should dispatch a error notice and failure event on error', () => {
-				const resultActions = addEmailForwardFailure( action, { message } );
+			test( 'should dispatch a error notice and an add email forward failure action on no response', () => {
+				const resultActions = addEmailForwardSuccess( action, undefined );
 				expect( resultActions ).to.have.lengthOf( 2 );
 				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
 				expect( resultActions[ 1 ] ).to.eql( {
@@ -112,7 +125,7 @@ describe( 'wpcom-api', () => {
 					domainName,
 					mailbox,
 					destination,
-					error: { message },
+					error: true,
 				} );
 			} );
 		} );

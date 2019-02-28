@@ -61,7 +61,7 @@ export const receiveAddEmailForwardSuccess = ( domainName, mailbox, verified ) =
 	};
 };
 
-export const receiveAddEmailForwardingFailure = ( domainName, mailbox, destination, error ) => {
+export const receiveAddEmailForwardFailure = ( domainName, mailbox, destination, error ) => {
 	return {
 		type: EMAIL_FORWARDING_ADD_REQUEST_FAILURE,
 		domainName,
@@ -79,12 +79,11 @@ export const removeEmailForward = ( domainName, mailbox ) => {
 	};
 };
 
-export const receiveRemoveEmailForwardSuccess = ( domainName, mailbox, response ) => {
+export const receiveRemoveEmailForwardSuccess = ( domainName, mailbox ) => {
 	return {
 		type: EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
 		domainName,
 		mailbox,
-		response,
 	};
 };
 

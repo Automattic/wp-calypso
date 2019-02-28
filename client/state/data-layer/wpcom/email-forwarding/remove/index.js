@@ -33,28 +33,7 @@ export const removeEmailForward = action => {
 	);
 };
 
-export const removeEmailForwardSuccess = ( action, response ) => {
-	const { domainName, mailbox } = action;
-
-	if ( response ) {
-		const successMessage = translate( 'Email forward %(email)s has been successfully removed.', {
-			args: {
-				email: mailbox + '@' + domainName,
-			},
-		} );
-
-		return [
-			successNotice( successMessage, {
-				duration: 5000,
-			} ),
-			receiveRemoveEmailForwardSuccess( domainName, mailbox, response ),
-		];
-	}
-
-	return receiveRemoveEmailForwardFailure( domainName, mailbox, true );
-};
-
-export const removeEmailForwardError = ( action, error ) => {
+export const removeEmailForwardFailure = ( action, error ) => {
 	const { domainName, mailbox } = action;
 
 	let failureMessage = translate(
@@ -95,12 +74,33 @@ export const removeEmailForwardError = ( action, error ) => {
 	];
 };
 
+export const removeEmailForwardSuccess = ( action, response ) => {
+	const { domainName, mailbox } = action;
+
+	if ( response && response.deleted ) {
+		const successMessage = translate( 'Email forward %(email)s has been successfully removed.', {
+			args: {
+				email: mailbox + '@' + domainName,
+			},
+		} );
+
+		return [
+			successNotice( successMessage, {
+				duration: 5000,
+			} ),
+			receiveRemoveEmailForwardSuccess( domainName, mailbox ),
+		];
+	}
+
+	return removeEmailForwardFailure( action, true );
+};
+
 registerHandlers( 'state/data-layer/wpcom/email-forwarding/remove/index.js', {
 	[ EMAIL_FORWARDING_REMOVE_REQUEST ]: [
 		dispatchRequest( {
 			fetch: removeEmailForward,
 			onSuccess: removeEmailForwardSuccess,
-			onError: removeEmailForwardError,
+			onError: removeEmailForwardFailure,
 		} ),
 	],
 } );

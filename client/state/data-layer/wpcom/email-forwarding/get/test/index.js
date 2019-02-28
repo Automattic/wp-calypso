@@ -25,7 +25,7 @@ describe( 'wpcom-api', () => {
 			};
 
 		describe( '#getEmailForwards', () => {
-			test( 'should dispatch an HTTP request to the email forwards endpoint', () => {
+			test( 'should dispatch an HTTP request to the get email forwards endpoint', () => {
 				expect( getEmailForwards( action ) ).to.eql(
 					http(
 						{
@@ -38,8 +38,20 @@ describe( 'wpcom-api', () => {
 			} );
 		} );
 
+		describe( '#getEmailForwardsFailure', () => {
+			const message = 'An error has occured';
+
+			test( 'should dispatch a get email forwards failure action on error', () => {
+				expect( getEmailForwardsFailure( action, { message } ) ).to.eql( {
+					type: EMAIL_FORWARDING_REQUEST_FAILURE,
+					domainName,
+					error: { message },
+				} );
+			} );
+		} );
+
 		describe( '#getEmailForwardsSuccess', () => {
-			test( 'should dispatch a success action and list of forawrds on success', () => {
+			test( 'should dispatch a get email forwards success action and list of forwards on success', () => {
 				const forwards = [
 					{
 						email: 'test@example.com',
@@ -57,23 +69,11 @@ describe( 'wpcom-api', () => {
 				} );
 			} );
 
-			test( 'should dispatch a failure action on no response', () => {
+			test( 'should dispatch a get email forwards failure action on no response', () => {
 				expect( getEmailForwardsSuccess( action, undefined ) ).to.eql( {
 					type: EMAIL_FORWARDING_REQUEST_FAILURE,
 					domainName,
 					error: true,
-				} );
-			} );
-		} );
-
-		describe( '#getEmailForwardsFailure', () => {
-			const message = 'An error has occured';
-
-			test( 'should dispatch a failure action on error', () => {
-				expect( getEmailForwardsFailure( action, { message } ) ).to.eql( {
-					type: EMAIL_FORWARDING_REQUEST_FAILURE,
-					domainName,
-					error: { message },
 				} );
 			} );
 		} );
