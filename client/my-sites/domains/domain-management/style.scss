@@ -244,7 +244,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 		.contact-display-content {
 			border: 1px solid var( --color-neutral-0 );
-			color: lighten( $gray-dark, 20% );
+			color: var( --color-neutral );
 			font-size: 12px;
 			line-height: 140%;
 			margin: 0;

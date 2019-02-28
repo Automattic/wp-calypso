@@ -39,7 +39,7 @@
 }
 
 .gsuite-dialog__no-setup-required {
-	color: lighten( $gray-dark, 20% );
+	color: var( --color-neutral );
 }
 
 .gsuite-dialog__product-features {
