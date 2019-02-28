@@ -34,5 +34,8 @@
   "devDependencies": {
     "react-dom": "^16.6.3",
     "react-test-renderer": "^16.6.3"
+  },
+  "scripts": {
+    "build": "node ../../bin/build-package"
   }
 }

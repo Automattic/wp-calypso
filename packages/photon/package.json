@@ -34,5 +34,8 @@
 		"debug": "^3.2.6",
 		"seed-random": "2.2.0",
 		"url": "^0.11.0"
+	},
+	"scripts": {
+		"build": "node ../../bin/build-package"
 	}
 }
