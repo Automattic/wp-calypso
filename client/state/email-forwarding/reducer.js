@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { orderBy } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
@@ -27,21 +32,25 @@ export const requesting = createReducer( false, {
 } );
 
 const handleCreateRequest = ( forwards, { domainName, mailbox, destination } ) => {
-	return [
-		...forwards,
-		{
-			email: `${ mailbox }@${ domainName }`,
-			mailbox,
-			domain: domainName,
-			forward_address: destination,
-			active: false,
-			temporary: true,
-		},
-	];
+	return orderBy(
+		[
+			...( forwards || [] ),
+			{
+				email: `${ mailbox }@${ domainName }`,
+				mailbox,
+				domain: domainName,
+				forward_address: destination,
+				active: false,
+				temporary: true,
+			},
+		],
+		[ 'mailbox' ],
+		[ 'asc' ]
+	);
 };
 
 const handleCreateRequestSuccess = ( forwards, { mailbox, verified } ) => {
-	return forwards.map( forward => {
+	return ( forwards || [] ).map( forward => {
 		if ( forward.mailbox === mailbox ) {
 			return {
 				...forward,
@@ -54,15 +63,17 @@ const handleCreateRequestSuccess = ( forwards, { mailbox, verified } ) => {
 };
 
 const handleCreateRequestFailure = ( forwards, { mailbox } ) => {
-	return forwards.filter( forward => forward.mailbox !== mailbox || forward.temporary !== true );
+	return ( forwards || [] ).filter(
+		forward => forward.mailbox !== mailbox || forward.temporary !== true
+	);
 };
 
 const handleRemoveRequestSuccess = ( forwards, { mailbox } ) => {
-	return forwards.filter( forward => mailbox !== forward.mailbox );
+	return ( forwards || [] ).filter( forward => mailbox !== forward.mailbox );
 };
 
 const changeMailBoxTemporary = temporary => ( forwards, { mailbox } ) => {
-	return forwards.map( forward => {
+	return ( forwards || [] ).map( forward => {
 		if ( mailbox === forward.mailbox ) {
 			return {
 				...forward,

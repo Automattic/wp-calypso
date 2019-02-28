@@ -141,9 +141,38 @@ describe( 'emailForwardsReducer', () => {
 				},
 			} );
 		} );
-	} );
 
-	describe( 'removing email forwards', () => {
-		test( '', () => {} );
+		test( 'adding email forward should insert temporary forward to list when intially null', () => {
+			const state = emailForwardsReducer(
+				{
+					'example.com': {
+						forwards: null,
+					},
+				},
+				{
+					type: EMAIL_FORWARDING_ADD_REQUEST,
+					domainName: 'example.com',
+					mailbox: 'test',
+					destination: 'test@forward.com',
+				}
+			);
+
+			expect( state ).to.eql( {
+				'example.com': {
+					forwards: [
+						{
+							email: 'test@example.com',
+							mailbox: 'test',
+							domain: 'example.com',
+							forward_address: 'test@forward.com',
+							active: false,
+							temporary: true,
+						},
+					],
+					requesting: false,
+					requestError: null,
+				},
+			} );
+		} );
 	} );
 } );
