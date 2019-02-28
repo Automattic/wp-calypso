@@ -10,10 +10,6 @@ import classnames from 'classnames';
  */
 import Card from 'components/card';
 
-export default function CompactCard( props ) {
-	return (
-		<Card { ...props } className={ classnames( props.className, 'is-compact' ) }>
-			{ props.children }
-		</Card>
-	);
+export default function CompactCard( { className, ...props } ) {
+	return <Card { ...props } className={ classnames( className, 'is-compact' ) } />;
 }
