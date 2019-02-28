@@ -63,24 +63,6 @@ const EVENTS = {
 		},
 
 		emailForwarding: {
-			addNewEmailForwardClick( domainName, mailbox, destination ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Add New Email Forward" Button in Email Forwarding',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_email_forwarding_add_new_email_forward_click',
-					{
-						destination,
-						domain_name: domainName,
-						mailbox,
-					}
-				);
-			},
-
 			cancelClick( domainName ) {
 				analytics.ga.recordEvent(
 					'Domain Management',

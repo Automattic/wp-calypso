@@ -21,11 +21,17 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import FormInputValidation from 'components/forms/form-input-validation';
 import formState from 'lib/form-state';
 import { addEmailForward } from 'state/email-forwarding/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 
 class EmailForwardingAddNew extends React.Component {
 	static propTypes = {
 		initialShowForm: PropTypes.bool,
-		addEmailForward: PropTypes.func.isRequired,
+		addNewEmailForwardWithAnalytics: PropTypes.func.isRequired,
 		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -59,7 +65,7 @@ class EmailForwardingAddNew extends React.Component {
 		return this.props.emailForwards.length >= this.props.emailForwardingLimit;
 	}
 
-	onAddEmailForward( event ) {
+	addEmailForwardClick( event ) {
 		event.preventDefault();
 
 		if ( this.state.formSubmitting ) {
@@ -74,17 +80,12 @@ class EmailForwardingAddNew extends React.Component {
 				return;
 			}
 
-			const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
-
-			this.recordEvent(
-				'addNewEmailForwardClick',
-				this.props.selectedDomainName,
-				mailbox,
-				destination
+			const { mailbox, destination, selectedDomainName } = formState.getAllFieldValues(
+				this.state.fields
 			);
 
-			this.props.addEmailForward( this.props.selectedDomainName, mailbox, destination );
-			this.formStateController.resetFields( this.getInitialState().fields );
+			this.props.addNewEmailForwardWithAnalytics( selectedDomainName, mailbox, destination );
+			this.props.this.formStateController.resetFields( this.getInitialState().fields );
 			this.setState( { formSubmitting: false, showForm: true } );
 		} );
 	}
@@ -252,7 +253,26 @@ class EmailForwardingAddNew extends React.Component {
 	}
 }
 
+const addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) => {
+	withAnalytics(
+		composeAnalytics(
+			recordGoogleEvent(
+				'Domain Management',
+				'Clicked "Add New Email Forward" Button in Email Forwarding',
+				'Domain Name',
+				domainName
+			),
+			recordTracksEvent( 'calypso_domain_management_email_forwarding_add_new_email_forward_click', {
+				destination,
+				domain_name: domainName,
+				mailbox,
+			} )
+		),
+		addEmailForward( domainName, mailbox, destination )
+	);
+};
+
 export default connect(
 	null,
-	{ addEmailForward }
+	{ addNewEmailForwardWithAnalytics }
 )( localize( EmailForwardingAddNew ) );
