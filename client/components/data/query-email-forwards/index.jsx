@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -26,6 +25,12 @@ class QueryEmailForwards extends PureComponent {
 		this.request();
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( this.props.domainName !== prevProps.domainName ) {
+			this.request();
+		}
+	}
+
 	request() {
 		if ( ! this.props.requestingEmailForwards ) {
 			this.props.getEmailForwards( this.props.domainName );
@@ -38,18 +43,8 @@ class QueryEmailForwards extends PureComponent {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const { domainName } = ownProps;
-		return {
-			requestingEmailForwards: isRequestingEmailForwards( state, domainName ),
-		};
-	},
-	dispatch => {
-		return bindActionCreators(
-			{
-				getEmailForwards,
-			},
-			dispatch
-		);
-	}
+	( state, ownProps ) => ( {
+		requestingEmailForwards: isRequestingEmailForwards( state, ownProps.domainName ),
+	} ),
+	{ getEmailForwards }
 )( QueryEmailForwards );

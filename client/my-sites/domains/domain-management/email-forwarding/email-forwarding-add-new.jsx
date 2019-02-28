@@ -3,7 +3,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -262,12 +261,5 @@ const EmailForwardingAddNew = createReactClass( {
 
 export default connect(
 	null,
-	dispatch => {
-		return bindActionCreators(
-			{
-				addEmailForward,
-			},
-			dispatch
-		);
-	}
+	{ addEmailForward }
 )( localize( EmailForwardingAddNew ) );

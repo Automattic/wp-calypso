@@ -77,15 +77,12 @@ class EmailForwarding extends Component {
 	};
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const siteId = getSelectedSiteId( state );
-		const { selectedDomainName } = ownProps;
-		return {
-			emailForwards: getEmailForwards( state, selectedDomainName ),
-			emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
-			siteSlug: getSelectedSiteSlug( state ),
-		};
-	},
-	null
-)( localize( EmailForwarding ) );
+export default connect( ( state, ownProps ) => {
+	const siteId = getSelectedSiteId( state );
+	const { selectedDomainName } = ownProps;
+	return {
+		emailForwards: getEmailForwards( state, selectedDomainName ),
+		emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
+	};
+} )( localize( EmailForwarding ) );
