@@ -52,6 +52,30 @@ describe( 'emailForwardsReducer', () => {
 			} );
 		} );
 
+		test( 'should set requestError to false', () => {
+			const prevState = {
+				'example.com': {
+					forwards: null,
+					requesting: false,
+					requestError: true,
+				},
+			};
+
+			const state = emailForwardsReducer( prevState, {
+				type: EMAIL_FORWARDING_REQUEST_SUCCESS,
+				domainName: 'example.com',
+				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
+			} );
+
+			expect( state ).to.eql( {
+				'example.com': {
+					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
+					requesting: false,
+					requestError: false,
+				},
+			} );
+		} );
+
 		test( 'should reset data on request to server', () => {
 			const prevState = {
 				'example.com': {
