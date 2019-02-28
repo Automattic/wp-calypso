@@ -235,7 +235,9 @@ $plan-features-sidebar-width: 272px;
 	padding: 12px 24px 0 15px;
 	border-bottom: solid 2px var( --color-neutral-100 );
 	background-color: $white;
+
 	.is-no-tabs .plans-features-main__group.is-wpcom & {
+		padding: 16px;
 		display: block;
 	}
 
@@ -310,8 +312,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__header-billing-info {
 	clear: both;
 	font-size: 13px;
-	color: #3d4145;
-	padding: 0 10px;
+	color: var( --color-text-subtle );
 }
 
 
@@ -357,16 +358,14 @@ $plan-features-sidebar-width: 272px;
 		color: var( --color-text );
 		font-weight: 700;
 		font-size: 24px;
-		padding: 5px 0 0 3px;
+		margin-bottom: 6px;
 	}
 }
 
 .plan-features__audience {
 	display: block;
 	font-size: 13px;
-	padding: 6px 0 10px 3px;
-	color: #636d75;
-	letter-spacing: 0;
+	color: var( --color-text-subtle );
 }
 
 .plan-features__header-price-group,
@@ -886,17 +885,20 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 .plan-features__pricing {
 	.is-no-tabs & {
 		border-top: solid 1px lighten( $gray, 27% );
+		padding: 8px 16px;
 
-		h4 {
-			color: #1a1a1a;
+		.plan-price {
+			font-weight: bold;
+
+			// I don't know why this is here...
 			float: left;
-			font-size: 48px;
-			padding: 0 12px;
 		}
 
-		sup {
-			color: #1a1a1a;
-			font-size: 26px;
+		.plan-price__currency-symbol {
+			font-size: 18px;
+			font-weight: 400;
+			position: relative;
+			top: 3px;
 		}
 
 		span span {
