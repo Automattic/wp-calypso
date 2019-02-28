@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -13,6 +12,11 @@ import React from 'react';
  */
 import { isExternal } from 'lib/url';
 import { preload } from 'sections-helper';
+
+/**
+ * Style dependencies
+ */
+import './button.scss';
 
 class SidebarButton extends React.Component {
 	static propTypes = {
@@ -35,13 +39,13 @@ class SidebarButton extends React.Component {
 		}
 	};
 
-	getTarget = () => {
+	getTarget() {
 		if ( this.props.forceTargetInternal ) {
 			return null;
 		}
 
 		return isExternal( this.props.href ) ? '_blank' : null;
-	};
+	}
 
 	render() {
 		if ( ! this.props.href ) {

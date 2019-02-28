@@ -9,6 +9,11 @@ import React from 'react';
 import classNames from 'classnames';
 import SidebarRegion from './region';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class extends React.Component {
 	static displayName = 'Sidebar';
 

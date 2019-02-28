@@ -1,0 +1,41 @@
+a.sidebar__button,
+form.sidebar__button {
+	display: flex;
+	position: relative;
+	align-self: center;
+	box-sizing: border-box;
+	overflow: hidden;
+	padding: 2px 8px 3px;
+	height: 24px;
+	margin-right: 8px;
+	line-height: 18px;
+	background-color: var( --sidebar-background-color );
+	color: var( --sidebar-text-color );
+	font-size: 12px;
+	font-weight: 600;
+	border-radius: 3px;
+	border: 1px solid var( --sidebar-border-color );
+
+	&:hover {
+		border-color: var( --sidebar-text-color );
+		color: var( --sidebar-text-color );
+	}
+
+	@include breakpoint( '<660px' ) {
+		font-size: 14px;
+		height: 30px;
+		line-height: 23px;
+	}
+}
+
+// Expanding clickable area of mini buttons
+a.sidebar__button::after,
+form.sidebar__button input {
+	content: '';
+	position: absolute;
+	top: -10px;
+	bottom: -10px;
+	right: -10px;
+	left: -10px;
+	width: 100%;
+}
