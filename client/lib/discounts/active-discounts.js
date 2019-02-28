@@ -72,7 +72,7 @@ export default [
 	{
 		name: 'sale_feb_2019_jp',
 		startsAt: new Date( 2019, 1, 25, 0, 0, 0 ),
-		endsAt: new Date( 2019, 2, 1, 0, 0, 0 ),
+		endsAt: new Date( 2019, 2, 8, 0, 0, 0 ),
 		nudgeText: 'Sale! 20% off all plans',
 		ctaText: 'Upgrade',
 		plansPageNoticeText: 'Enter coupon code “JPSALE20” at checkout to claim your 20% discount',
