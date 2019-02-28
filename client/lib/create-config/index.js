@@ -29,6 +29,8 @@ const config = data => key => {
 		return data[ key ];
 	}
 
+	return false;
+
 	if ( 'development' === process.env.NODE_ENV ) {
 		throw new ReferenceError(
 			`Could not find config value for key '${ key }'\n` +
