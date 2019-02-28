@@ -34,41 +34,6 @@ export const addEmailForward = action => {
 	);
 };
 
-export const addEmailForwardSuccess = ( action, response ) => {
-	const { domainName, mailbox, destination } = action;
-
-	if ( response && response.created ) {
-		let successMessage = translate( '%(email)s has been successfully added!', {
-			args: {
-				email: mailbox + '@' + domainName,
-			},
-		} );
-
-		if ( ! response.verified ) {
-			successMessage = translate(
-				'%(email)s has been successfully added! ' +
-					'You must confirm your email before it starts working. ' +
-					'Please check your inbox for %(destination)s.',
-				{
-					args: {
-						email: mailbox + '@' + domainName,
-						destination: destination,
-					},
-				}
-			);
-		}
-
-		return [
-			successNotice( successMessage, {
-				duration: 5000,
-			} ),
-			receiveAddEmailForwardSuccess( domainName, mailbox, response.verified ),
-		];
-	}
-
-	return receiveAddEmailForwardingFailure( domainName, mailbox, destination, true );
-};
-
 export const addEmailForwardFailure = ( action, error ) => {
 	const { domainName, mailbox, destination } = action;
 
@@ -104,6 +69,41 @@ export const addEmailForwardFailure = ( action, error ) => {
 		errorNotice( failureMessage ),
 		receiveAddEmailForwardingFailure( domainName, mailbox, destination, error ),
 	];
+};
+
+export const addEmailForwardSuccess = ( action, response ) => {
+	const { domainName, mailbox, destination } = action;
+
+	if ( response && response.created ) {
+		let successMessage = translate( '%(email)s has been successfully added!', {
+			args: {
+				email: mailbox + '@' + domainName,
+			},
+		} );
+
+		if ( ! response.verified ) {
+			successMessage = translate(
+				'%(email)s has been successfully added! ' +
+					'You must confirm your email before it starts working. ' +
+					'Please check your inbox for %(destination)s.',
+				{
+					args: {
+						email: mailbox + '@' + domainName,
+						destination: destination,
+					},
+				}
+			);
+		}
+
+		return [
+			successNotice( successMessage, {
+				duration: 5000,
+			} ),
+			receiveAddEmailForwardSuccess( domainName, mailbox, response.verified ),
+		];
+	}
+
+	return addEmailForwardFailure( action, true );
 };
 
 registerHandlers( 'state/data-layer/wpcom/email-forwarding/create/index.js', {
