@@ -53,7 +53,7 @@
 }
 
 .plan-price__currency-symbol {
-	color: $gray;
+	color: var( --color-text-subtle );
 }
 
 .plan-price__integer {
