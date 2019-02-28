@@ -423,6 +423,10 @@ export function createAccount(
 					: null
 			),
 			( error, response ) => {
+				//eslint-disable-next-line no-console
+				console.log( 'ERRORS: ' + JSON.stringify( error ) );
+				//eslint-disable-next-line no-console
+				console.log( 'RESPONSE: ' + JSON.stringify( response ) );
 				const errors =
 					error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
 				// we should either have an error with an error property, or we should have a response with a bearer_token

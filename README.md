@@ -44,6 +44,6 @@ We support the latest two versions of all major browsers, except  IE, where we c
 
 If you have any problems running Calypso, [please see most common issues](./docs/troubleshooting.md).
 
-## Licensert
+## License
 
 Calypso is licensed under [GNU General Public License v2 (or later)](./LICENSE.md).
