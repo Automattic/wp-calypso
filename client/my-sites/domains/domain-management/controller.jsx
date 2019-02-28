@@ -30,7 +30,7 @@ import {
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
 } from 'my-sites/domains/paths';
-import EmailForwarding from 'my-sites/domains/domain-management/email-forwarding';
+import EmailForwarding from 'my-sites/email/email-forwarding';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuiteAddUsers from './gsuite/gsuite-add-users';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
