@@ -13,14 +13,14 @@ import EmailForwardingItem from './email-forwarding-item';
 
 class EmailForwardingList extends React.Component {
 	static propTypes = {
-		emailForwardingList: PropTypes.array,
+		emailForwards: PropTypes.array,
 	};
 
 	render() {
-		const { emailForwardingList } = this.props;
+		const { emailForwards } = this.props;
 		return (
 			<ul className="email-forwarding__list">
-				{ emailForwardingList.map( emailForwardingItem => {
+				{ emailForwards.map( emailForwardingItem => {
 					return (
 						<EmailForwardingItem
 							key={ emailForwardingItem.email }

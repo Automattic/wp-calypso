@@ -32,7 +32,7 @@ const EmailForwardingAddNew = createReactClass( {
 	propTypes: {
 		initialShowForm: PropTypes.bool,
 		addEmailForward: PropTypes.func.isRequired,
-		emailForwardingList: PropTypes.array,
+		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 	},
@@ -60,11 +60,11 @@ const EmailForwardingAddNew = createReactClass( {
 	},
 
 	hasForwards() {
-		return this.props.emailForwardingList.length > 0;
+		return this.props.emailForwards.length > 0;
 	},
 
 	hasReachedLimit() {
-		return this.props.emailForwardingList.length >= this.props.emailForwardingLimit;
+		return this.props.emailForwards.length >= this.props.emailForwardingLimit;
 	},
 
 	onAddEmailForward( event ) {
@@ -214,16 +214,16 @@ const EmailForwardingAddNew = createReactClass( {
 	},
 
 	render() {
-		const { emailForwardingList, emailForwardingLimit } = this.props;
+		const { emailForwards, emailForwardingLimit } = this.props;
 		return (
 			<form className="email-forwarding__add-new">
-				<EmailForwardingLimit
-					emailForwardingCount={ emailForwardingList.length }
-					emailForwardingLimit={ emailForwardingLimit }
-				/>
-
+				{ emailForwards.length > 0 ? (
+					<EmailForwardingLimit
+						emailForwardingCount={ emailForwards.length }
+						emailForwardingLimit={ emailForwardingLimit }
+					/>
+				) : null }
 				{ this.formFields() }
-
 				{ this.formFooter() }
 			</form>
 		);

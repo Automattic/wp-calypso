@@ -21,13 +21,13 @@ import { domainManagementEmail } from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import getEmailForwardingLimit from 'state/selectors/get-email-forwarding-limit';
-import getEmailForwardingList from 'state/selectors/get-email-forwarding-list';
+import getEmailForwards from 'state/selectors/get-email-forwards';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryEmailForwards from 'components/data/query-email-forwards';
 
 class EmailForwarding extends Component {
 	static propTypes = {
-		emailForwardingList: PropTypes.array,
+		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		siteSlug: PropTypes.string.isRequired,
@@ -35,11 +35,11 @@ class EmailForwarding extends Component {
 	};
 
 	render() {
-		const { emailForwardingList, selectedDomainName } = this.props;
+		const { emailForwards, selectedDomainName } = this.props;
 		return (
 			<div className="email-forwarding">
 				<QueryEmailForwards domainName={ selectedDomainName } />
-				{ emailForwardingList ? this.renderMain() : this.renderPlaceholder() }
+				{ emailForwards ? this.renderMain() : this.renderPlaceholder() }
 			</div>
 		);
 	}
@@ -49,7 +49,7 @@ class EmailForwarding extends Component {
 	}
 
 	renderMain() {
-		const { emailForwardingList, emailForwardingLimit, selectedDomainName, translate } = this.props;
+		const { emailForwards, emailForwardingLimit, selectedDomainName, translate } = this.props;
 		return (
 			<Main>
 				<Header onClick={ this.goToEditEmail } selectedDomainName={ selectedDomainName }>
@@ -60,10 +60,10 @@ class EmailForwarding extends Component {
 				<Card className="email-forwarding__card">
 					<EmailForwardingDetails selectedDomainName={ selectedDomainName } />
 
-					<EmailForwardingList emailForwardingList={ emailForwardingList } />
+					<EmailForwardingList emailForwards={ emailForwards } />
 
 					<EmailForwardingAddNew
-						emailForwardingList={ emailForwardingList }
+						emailForwards={ emailForwards }
 						emailForwardingLimit={ emailForwardingLimit }
 						selectedDomainName={ selectedDomainName }
 					/>
@@ -82,7 +82,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const { selectedDomainName } = ownProps;
 		return {
-			emailForwardingList: getEmailForwardingList( state, selectedDomainName ),
+			emailForwards: getEmailForwards( state, selectedDomainName ),
 			emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
 		};
