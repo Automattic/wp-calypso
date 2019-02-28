@@ -28,6 +28,10 @@ export const settings = {
 			type: 'number',
 			default: DEFAULT_THRESHOLD,
 		},
+		isThresholdValid: {
+			type: 'boolean',
+			default: true,
+		},
 	},
 	category: 'jetpack',
 	description: __( 'Control block visibility based on how often a visitor has viewed the page.' ),
