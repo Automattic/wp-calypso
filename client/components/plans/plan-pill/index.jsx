@@ -13,6 +13,6 @@ export default props => (
 			'plan-pill': true,
 		} ) }
 	>
-		<span className="plan-pill__title">{ props.children }</span>
+		{ props.children }
 	</div>
 );

@@ -48,14 +48,6 @@ export class PlanFeaturesHeader extends Component {
 
 		return (
 			<div>
-				{ planLevelsMatch( selectedPlan, planType ) && (
-					<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
-				) }
-				{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
-				{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
-				{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
-				{ this.isPlanCurrent() && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
-
 				<header className={ headerClasses }>
 					<div className="plan-features__header-figure">
 						<PlanIcon plan={ planType } />
@@ -65,6 +57,13 @@ export class PlanFeaturesHeader extends Component {
 						{ this.getPlanFeaturesPrices() }
 						{ this.getBillingTimeframe() }
 					</div>
+					{ planLevelsMatch( selectedPlan, planType ) && (
+						<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
+					) }
+					{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
+					{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
+					{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
+					{ this.isPlanCurrent() && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
 				</header>
 			</div>
 		);
@@ -86,17 +85,16 @@ export class PlanFeaturesHeader extends Component {
 
 		return (
 			<div>
-				{ planLevelsMatch( selectedPlan, planType ) && (
-					<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
-				) }
-				{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
-				{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
-				{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
-				{ this.isPlanCurrent() && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
-
 				<header className={ headerClasses }>
 					<h4 className="plan-features__header-title">{ title }</h4>
 					<div className="plan-features__audience">{ audience }</div>
+					{ planLevelsMatch( selectedPlan, planType ) && (
+						<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
+					) }
+					{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
+					{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
+					{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
+					{ this.isPlanCurrent() && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
 				</header>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
@@ -122,14 +120,14 @@ export class PlanFeaturesHeader extends Component {
 
 		return (
 			<div className="plan-features__header-wrapper">
-				{ newPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
-				{ popular && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
-				{ bestValue && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
 				<header className={ headerClasses }>
 					<div className="plan-features__header-text">
 						<h4 className="plan-features__header-title">{ title }</h4>
 						{ audience }
 					</div>
+					{ newPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
+					{ popular && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
+					{ bestValue && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
 				</header>
 				<div className="plan-features__graphic">
 					<PlanIcon plan={ planType } />
