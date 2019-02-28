@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,6 +21,11 @@ import QueryConnectedApplications from 'components/data/query-connected-applicat
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ConnectedApplications extends PureComponent {
 	static propTypes = {
