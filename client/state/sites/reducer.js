@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
 
 /**

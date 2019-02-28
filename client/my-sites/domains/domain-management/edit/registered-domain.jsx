@@ -22,7 +22,7 @@ import {
 } from 'my-sites/domains/paths';
 import { disablePrivacyProtection, enablePrivacyProtection } from 'lib/upgrades/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { fetchSiteDomains } from 'state/sites/domains/actions';
+import { togglePrivacy } from 'state/sites/domains/actions';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
@@ -85,7 +85,7 @@ class RegisteredDomain extends React.Component {
 			if ( error ) {
 				this.props.errorNotice( error.message );
 			} else {
-				this.props.fetchSiteDomains( selectedSite.ID );
+				this.props.togglePrivacy( selectedSite.ID, name );
 
 				const notice = privateDomain
 					? translate( 'Privacy has been successfully disabled!' )
@@ -279,8 +279,8 @@ export default connect(
 	null,
 	{
 		errorNotice,
-		fetchSiteDomains,
 		paymentSettingsClick,
 		successNotice,
+		togglePrivacy,
 	}
 )( localize( RegisteredDomain ) );

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { map } from 'lodash';
 import { translate } from 'i18n-calypso';
@@ -14,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import { createSiteDomainObject } from './assembler';
 import wp from 'lib/wp';
 import {
+	DOMAIN_PRIVACY_TOGGLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -132,5 +131,13 @@ export function fetchSiteDomains( siteId ) {
 
 				dispatch( domainsRequestFailureAction( siteId, message ) );
 			} );
+	};
+}
+
+export function togglePrivacy( siteId, domain ) {
+	return {
+		type: DOMAIN_PRIVACY_TOGGLE,
+		siteId,
+		domain,
 	};
 }
