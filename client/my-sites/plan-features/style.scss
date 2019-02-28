@@ -117,6 +117,14 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__row {
 	background: var( --color-white );
+	// This seems unnecessary to me.
+	background: var( --color-white );
+
+	.is-no-tabs & {
+		// Without this, the offscreen plans show
+		// different colors for some reason.
+		background: none;
+	}
 }
 
 .plan-features__table-item {
