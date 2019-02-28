@@ -8,7 +8,6 @@ import { isBlobURL } from '@wordpress/blob';
 
 export default function GalleryImageSave( props ) {
 	const {
-		'aria-label': ariaLabel,
 		alt,
 		// caption,
 		height,
@@ -38,7 +37,6 @@ export default function GalleryImageSave( props ) {
 	const img = (
 		<img
 			alt={ alt }
-			aria-label={ ariaLabel }
 			data-height={ height }
 			data-id={ id }
 			data-link={ link }
