@@ -13,6 +13,8 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import userModule from 'lib/user';
+const user = userModule();
 
 /**
  * Module variables
@@ -84,6 +86,19 @@ export function hashPii( data ) {
 	return sha256()
 		.update( data.toString() )
 		.digest( 'hex' );
+}
+
+/**
+ * Returns the current user email after normalizing it (lowercase without spaces) or `false` if no email or user is available.
+ * @return {false|string} The current user email after normalization
+ */
+export function getNormalizedHashedUserEamil() {
+	const currentUser = user.get();
+	if ( currentUser && currentUser.email ) {
+		hashPii( currentUser.email.toLowerCase().replace( /\s/g, '' ) );
+	} else {
+		return false;
+	}
 }
 
 // If this list catches things that are not necessarily forbidden we're ok with
