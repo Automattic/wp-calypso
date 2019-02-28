@@ -588,9 +588,9 @@
 		--sidebar-menu-hover-color: #{$muriel-gray-50};
 
 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
-		--button-is-borderless-color: #{$gray-dark};
-		--count-border-color: #{$gray-dark};
-		--count-color: #{$gray-dark};
+		--button-is-borderless-color: #{$muriel-gray-700};
+		--count-border-color: #{$muriel-gray-700};
+		--count-color: #{$muriel-gray-700};
 		--profile-gravatar-user-secondary-info-color: #{$muriel-gray-50};
 	}
 
