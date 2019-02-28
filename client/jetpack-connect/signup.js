@@ -98,10 +98,9 @@ export class JetpackSignup extends Component {
 
 	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
 		debug( 'submitting new account', userData );
-		userData.extra = { jpc: true };
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props
-				.createAccount( userData )
+				.createAccount( { ...userData, extra: { jpc: true } } )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
 				.finally( afterSubmit )
 		);
