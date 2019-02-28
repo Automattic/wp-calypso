@@ -13,12 +13,12 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import isRequestingEmailForwards from 'state/selectors/is-requesting-email-forwards';
-import { requestEmailForwards } from 'state/email-forwarding/actions';
+import { getEmailForwards } from 'state/email-forwarding/actions';
 
 class QueryEmailForwards extends PureComponent {
 	static propTypes = {
 		domainName: PropTypes.string.isRequired,
-		requestEmailForwards: PropTypes.func.isRequired,
+		getEmailForwards: PropTypes.func.isRequired,
 		requestingEmailForwards: PropTypes.bool.isRequired,
 	};
 
@@ -28,7 +28,7 @@ class QueryEmailForwards extends PureComponent {
 
 	request() {
 		if ( ! this.props.requestingEmailForwards ) {
-			this.props.requestEmailForwards( this.props.domainName );
+			this.props.getEmailForwards( this.props.domainName );
 		}
 	}
 
@@ -47,7 +47,7 @@ export default connect(
 	dispatch => {
 		return bindActionCreators(
 			{
-				requestEmailForwards,
+				getEmailForwards,
 			},
 			dispatch
 		);

@@ -20,14 +20,14 @@ import {
 
 import 'state/data-layer/wpcom/email-forwarding';
 
-export const requestEmailForwards = domainName => {
+export const getEmailForwards = domainName => {
 	return {
 		type: EMAIL_FORWARDING_REQUEST,
 		domainName,
 	};
 };
 
-export const receiveRequestEmailForwardsSuccess = ( domainName, forwards ) => {
+export const receiveGetEmailForwardsSuccess = ( domainName, forwards ) => {
 	return {
 		type: EMAIL_FORWARDING_REQUEST_SUCCESS,
 		domainName,
@@ -35,7 +35,7 @@ export const receiveRequestEmailForwardsSuccess = ( domainName, forwards ) => {
 	};
 };
 
-export const receiveRequestEmailForwardsFailure = ( domainName, error ) => {
+export const receiveGetEmailForwardsFailure = ( domainName, error ) => {
 	return {
 		type: EMAIL_FORWARDING_REQUEST_FAILURE,
 		domainName,
