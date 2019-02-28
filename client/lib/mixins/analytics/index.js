@@ -63,33 +63,6 @@ const EVENTS = {
 		},
 
 		emailForwarding: {
-			cancelClick( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Cancel" Button in Email Forwarding',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_forwarding_cancel_click', {
-					domain_name: domainName,
-				} );
-			},
-
-			inputFocus( domainName, fieldName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					`Focused On "${ fieldName }" Input in Email Forwarding`,
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					`calypso_domain_management_email_forwarding_${ snakeCase( fieldName ) }_focus`,
-					{ domain_name: domainName }
-				);
-			},
-
 			learnMoreClick( domainName ) {
 				analytics.ga.recordEvent(
 					'Domain Management',

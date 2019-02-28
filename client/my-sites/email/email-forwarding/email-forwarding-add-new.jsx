@@ -30,6 +30,9 @@ import {
 
 class EmailForwardingAddNew extends React.Component {
 	static propTypes = {
+		trackCancelClick: PropTypes.func.isRequired,
+		trackDestinationFieldFocus: PropTypes.func.isRequired,
+		trackMailboxFieldFocus: PropTypes.func.isRequired,
 		initialShowForm: PropTypes.bool,
 		addNewEmailForwardWithAnalytics: PropTypes.func.isRequired,
 		emailForwards: PropTypes.array,
@@ -65,7 +68,7 @@ class EmailForwardingAddNew extends React.Component {
 		return this.props.emailForwards.length >= this.props.emailForwardingLimit;
 	}
 
-	addEmailForwardClick( event ) {
+	addEmailForwardClick = event => {
 		event.preventDefault();
 
 		if ( this.state.formSubmitting ) {
@@ -88,16 +91,16 @@ class EmailForwardingAddNew extends React.Component {
 			this.props.this.formStateController.resetFields( this.getInitialState().fields );
 			this.setState( { formSubmitting: false, showForm: true } );
 		} );
-	}
+	};
 
 	setFormState( fields ) {
 		this.setState( { fields } );
 	}
 
-	onShowForm( event ) {
+	onShowForm = event => {
 		event.preventDefault();
 		this.setState( { showForm: true } );
-	}
+	};
 
 	addButton() {
 		const handler = this.shouldShowForm() ? this.onAddEmailForward : this.onShowForm;
@@ -122,7 +125,7 @@ class EmailForwardingAddNew extends React.Component {
 				type="button"
 				isPrimary={ false }
 				disabled={ this.state.formSubmitting }
-				onClick={ this.onCancel }
+				onClick={ this.cancelClick }
 			>
 				{ this.props.translate( 'Cancel' ) }
 			</FormButton>
@@ -143,11 +146,12 @@ class EmailForwardingAddNew extends React.Component {
 			return null;
 		}
 
-		const contactText = this.props.translate( 'contact', {
+		const { translate, selectedDomainName } = this.props,
+			contactText = translate( 'contact', {
 				context: 'part of e-mail address',
 				comment: 'As it would be part of an e-mail address contact@example.com',
 			} ),
-			exampleEmailText = this.props.translate( 'e.g. %(example)s', {
+			exampleEmailText = translate( 'e.g. %(example)s', {
 				args: { example: contactText },
 			} ),
 			isValidMailbox = this.isValid( 'mailbox' ),
@@ -157,43 +161,41 @@ class EmailForwardingAddNew extends React.Component {
 		return (
 			<div className="email-forwarding__form-content">
 				<FormFieldset>
-					<FormLabel>{ this.props.translate( 'Emails Sent To' ) }</FormLabel>
+					<FormLabel>{ translate( 'Emails Sent To' ) }</FormLabel>
 					<FormTextInputWithAffixes
 						disabled={ this.state.formSubmitting }
 						name="mailbox"
 						onChange={ this.onChange }
-						onFocus={ this.handleFieldFocus.bind( this, 'Mailbox' ) }
+						onFocus={ this.mailboxFieldFocus }
 						isError={ ! isValidMailbox }
 						placeholder={ exampleEmailText }
 						type="text"
-						suffix={ '@' + this.props.selectedDomainName }
+						suffix={ '@' + selectedDomainName }
 						value={ mailbox }
 					/>
 					{ ! isValidMailbox && (
 						<FormInputValidation
-							text={ this.props.translate(
-								'Invalid mailbox - only characters [a-z0-9._+-] are allowed'
-							) }
+							text={ translate( 'Invalid mailbox - only characters [a-z0-9._+-] are allowed' ) }
 							isError={ true }
 						/>
 					) }
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ this.props.translate( 'Will Be Forwarded To' ) }</FormLabel>
+					<FormLabel>{ translate( 'Will Be Forwarded To' ) }</FormLabel>
 					<FormTextInput
 						disabled={ this.state.formSubmitting }
 						name="destination"
 						onChange={ this.onChange }
-						onFocus={ this.handleFieldFocus.bind( this, 'Destination' ) }
+						onFocus={ this.destinationFieldFocus }
 						isError={ ! isValidDestination }
-						placeholder={ this.props.translate( 'Your Existing Email Address' ) }
+						placeholder={ translate( 'Your Existing Email Address' ) }
 						type="text"
 						value={ destination }
 					/>
 					{ ! isValidDestination && (
 						<FormInputValidation
-							text={ this.props.translate( 'Invalid destination address' ) }
+							text={ translate( 'Invalid destination address' ) }
 							isError={ true }
 						/>
 					) }
@@ -222,11 +224,10 @@ class EmailForwardingAddNew extends React.Component {
 		);
 	}
 
-	onCancel() {
+	cancelClick = () => {
 		this.setState( { showForm: false } );
-
-		this.recordEvent( 'cancelClick', this.props.selectedDomainName );
-	}
+		this.trackCancelClick( this.props.selectedDomainName );
+	};
 
 	onChange( event ) {
 		const { name } = event.target;
@@ -251,6 +252,14 @@ class EmailForwardingAddNew extends React.Component {
 	handleFieldFocus( fieldName ) {
 		this.recordEvent( 'inputFocus', this.props.selectedDomainName, fieldName );
 	}
+
+	destinationFieldFocus = () => {
+		this.props.trackDestinationFieldFocus( this.props.selectedDomainName );
+	};
+
+	mailboxFieldFocus = () => {
+		this.props.trackMailboxFieldFocus( this.props.selectedDomainName );
+	};
 }
 
 const addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) => {
@@ -272,7 +281,54 @@ const addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) => 
 	);
 };
 
+const trackCancelClick = domainName => {
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Cancel" Button in Email Forwarding',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent( 'calypso_domain_management_email_forwarding_cancel_click', {
+			domain_name: domainName,
+		} )
+	);
+};
+
+const trackDestinationFieldFocus = domainName => {
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Focused On Destination Input in Email Forwarding',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent( 'calypso_domain_management_email_forwarding_destination_focus', {
+			domain_name: domainName,
+		} )
+	);
+};
+
+const trackMailboxFieldFocus = domainName => {
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Focused On Mailbox Input in Email Forwarding',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent( 'calypso_domain_management_email_forwarding_mailbox_focus', {
+			domain_name: domainName,
+		} )
+	);
+};
+
 export default connect(
 	null,
-	{ addNewEmailForwardWithAnalytics }
+	{
+		addNewEmailForwardWithAnalytics,
+		trackCancelClick,
+		trackDestinationFieldFocus,
+		trackMailboxFieldFocus,
+	}
 )( localize( EmailForwardingAddNew ) );
