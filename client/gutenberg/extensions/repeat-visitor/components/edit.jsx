@@ -78,7 +78,7 @@ class RepeatVisitorEdit extends Component {
 					<TextControl
 						className="wp-block-jetpack-repeat-visitor-threshold"
 						defaultValue={ this.props.attributes.threshold }
-						help={ this.props.attributes.isThresholdValid ? '' : 'Please enter a valid number.' }
+						help={ this.props.attributes.isThresholdValid ? '' : __( 'Please enter a valid number.' ) }
 						label={ __( 'Visit count threshold' ) }
 						min="1"
 						onChange={ this.setThreshold }
