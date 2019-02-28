@@ -127,6 +127,11 @@
 	}
 }
 
+.layout__secondary .site__title::after,
+.layout__secondary .site__domain::after {
+	@include long-content-fade( $color: var( --sidebar-background-gradient ) );
+}
+
 .site__home {
 	background: var( --color-accent );
 	color: var( --color-white );
