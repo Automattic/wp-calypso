@@ -206,8 +206,8 @@ export class MySitesSidebar extends Component {
 	};
 
 	earn() {
-		const { path, translate } = this.props;
-		if ( ! canAccessEarnSection() ) {
+		const { path, translate, site } = this.props;
+		if ( ! canAccessEarnSection( site ) ) {
 			return null;
 		}
 
