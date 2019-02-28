@@ -153,21 +153,33 @@ $plan-features-sidebar-width: 272px;
 			border-right: solid 1px lighten( $gray, 27% );
 		}
 	}
+
 	@include breakpoint( '660px-1280px' ) {
-		transition: opacity 0.2s ease-in-out;
+		transition: opacity 0.2s ease-in-out, border-right 0.2s ease-in-out 0.2s;
 		.is-scrolled-to-center & {
 			&:nth-child( 1 ), &:nth-child( 9 ) {
 				opacity: 0.3;
+				border-right: solid 1px lighten( $gray, 27% );
+			}
+
+			&:nth-child( 7 ) {
+				border-right: solid 1px lighten( $gray, 27% );
 			}
 		}
 		.is-scrolled-to-left & {
 			&:nth-child( 7 ) {
 				opacity: 0.3;
+				border-right: solid 1px lighten( $gray, 27% );
+			}
+
+			&:nth-child( 5 ) {
+				border-right: solid 1px lighten( $gray, 27% );
 			}
 		}
 		.is-scrolled-to-right & {
 			&:nth-child( 3 ) {
 				opacity: 0.3;
+				border-right: solid 1px lighten( $gray, 27% );
 			}
 		}
 	}
@@ -923,7 +935,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 .plan-features__table {
 	.is-no-tabs & {
-		tr:last-child td:nth-child(odd) {
+		tr:last-child td:nth-child( odd ) {
 			border-bottom: solid 1px lighten( $gray, 27% );
 		}
 	}
