@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -30,6 +29,11 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'components/search-sites';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const ALL_SITES = 'ALL_SITES';
 
@@ -98,11 +102,7 @@ class SiteSelector extends Component {
 	}
 
 	scrollToHighlightedSite() {
-		if ( ! this.siteSelectorRef ) {
-			return;
-		}
-
-		const selectorElement = ReactDom.findDOMNode( this.siteSelectorRef );
+		const selectorElement = this.siteSelectorRef.current;
 
 		if ( ! selectorElement ) {
 			return;
@@ -192,11 +192,7 @@ class SiteSelector extends Component {
 		const handledByHost = this.props.onSiteSelect( siteId );
 		this.props.onClose( event, siteId );
 
-		if ( ! this.siteSelectorRef ) {
-			return;
-		}
-
-		const node = ReactDom.findDOMNode( this.siteSelectorRef );
+		const node = this.siteSelectorRef.current;
 		if ( node ) {
 			node.scrollTop = 0;
 		}
@@ -267,7 +263,7 @@ class SiteSelector extends Component {
 		return this.props.groups;
 	}
 
-	setSiteSelectorRef = component => ( this.siteSelectorRef = component );
+	siteSelectorRef = React.createRef();
 
 	sitesToBeRendered() {
 		let sites;
@@ -373,7 +369,7 @@ class SiteSelector extends Component {
 		return (
 			<Site
 				site={ site }
-				key={ 'site-' + site.ID }
+				key={ site.ID }
 				indicator={ this.props.indicator }
 				onSelect={ this.onSiteSelect }
 				onMouseEnter={ this.onSiteHover }
@@ -409,7 +405,6 @@ class SiteSelector extends Component {
 				onMouseLeave={ this.onMouseLeave }
 			>
 				<Search
-					ref="siteSearch"
 					onSearch={ this.onSearch }
 					delaySearch={ true }
 					autoFocus={ this.props.autoFocus }
@@ -417,7 +412,7 @@ class SiteSelector extends Component {
 					onSearchClose={ this.props.onClose }
 					onKeyDown={ this.onKeyDown }
 				/>
-				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
+				<div className="site-selector__sites" ref={ this.siteSelectorRef }>
 					{ this.renderAllSites() }
 					{ this.renderRecentSites( sites ) }
 					{ this.renderSites( sites ) }
