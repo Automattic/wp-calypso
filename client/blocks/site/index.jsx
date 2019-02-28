@@ -17,6 +17,11 @@ import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
 import { getSite } from 'state/sites/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Site extends React.Component {
 	static defaultProps = {
 		// onSelect callback
