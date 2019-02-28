@@ -60,9 +60,14 @@
 	.plans-features-main__right-overlay {
 		display: none;
 		height: 100%;
+		padding-top: 185px;
 		top: 8px;
 		width: 19%;
 		z-index: 1;
+	}
+
+	.plans-features-main__left-overlay {
+		text-align: right;
 	}
 
 	@include breakpoint( '660px-1280px' ) {
