@@ -8,6 +8,19 @@ $image-height: 47px;
 	.layout__content {
 		position: static;
 	}
+
+	&.has-no-masterbar {
+		.layout__content {
+			// Adjust the padding as we no longer
+			// show the masterbar.
+			padding: 48px 0 0;
+		}
+
+		// Hide the masterbar for real
+		.masterbar {
+			display: none;
+		}
+	}
 }
 
 .wp-login__main.main {
