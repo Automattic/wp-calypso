@@ -81,7 +81,7 @@ class SiteTypeForm extends Component {
 				<form onSubmit={ this.handleSubmit }>
 					<Card>
 						<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
-						<Button primary={ true } type="submit">
+						<Button primary={ true } type="submit" disabled={ ! this.state.siteType }>
 							{ translate( 'Continue' ) }
 						</Button>
 					</Card>
