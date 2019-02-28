@@ -30,7 +30,7 @@
 		// for the no-tabs variant to use all 
 		// available space, including the default
 		// margin applied to the main area.
-		@include breakpoint( '750px-960px' ) {
+		@include breakpoint( '660px-960px' ) {
 			margin: 0 -24px;
 			width: calc( 100% + 48px );
 
