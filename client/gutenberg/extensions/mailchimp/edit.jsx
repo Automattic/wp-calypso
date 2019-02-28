@@ -145,7 +145,7 @@ class MailchimpSubscribeEdit extends Component {
 					) }
 					<br />
 					<br />
-					<Button isPrimary href={ connectURL } target="_blank">
+					<Button isDefault isLarge href={ connectURL } target="_blank">
 						{ __( 'Set up Mailchimp form' ) }
 					</Button>
 					<br />
