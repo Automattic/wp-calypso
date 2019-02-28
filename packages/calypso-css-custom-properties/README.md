@@ -6,7 +6,6 @@ Most of them are synonyms for colors defined by the [Color Studio](https://autom
 ## Build Steps
 
 ```
-mkdir dist/
-npm i
+npm ci
 npm run build
 ```
