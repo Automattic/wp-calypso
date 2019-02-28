@@ -191,13 +191,31 @@ class Signup extends React.Component {
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
+		this.startTrackingForBusinessSite();
 		this.recordSignupStart();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if (
+			get( this.props.signupDependencies, 'siteType' ) !==
+			get( prevProps.signupDependencies, 'siteType' )
+		) {
+			this.startTrackingForBusinessSite();
+		}
 	}
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
 		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
 		return this.handleFlowComplete( dependencies, filteredDestination );
 	};
+
+	startTrackingForBusinessSite() {
+		const siteType = get( this.props.signupDependencies, 'siteType' );
+
+		if ( siteType === 'business' ) {
+			this.props.loadTrackingTool( 'HotJar' );
+		}
+	}
 
 	recordSignupStart() {
 		analytics.recordSignupStart( {
