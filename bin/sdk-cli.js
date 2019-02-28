@@ -18,6 +18,7 @@ const webpack = require( 'webpack' );
  */
 const gutenberg = require( './sdk/gutenberg.js' );
 const notifications = require( './sdk/notifications.js' );
+const sidebar = require( './sdk/sidebar.js' );
 const generic = require( './sdk/generic.js' );
 
 // Script name is used in help instructions;
@@ -123,6 +124,11 @@ yargsModule
 				},
 			} ),
 		handler: argv => build( notifications, argv ),
+	} )
+	.command( {
+		command: 'sidebar',
+		desc: 'Build the standalone sidebar client',
+		handler: argv => build( sidebar, argv ),
 	} )
 	.command( {
 		command: 'generic <entry-point> <output-name>',
