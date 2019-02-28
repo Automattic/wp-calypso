@@ -6,7 +6,7 @@ import { Path } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 
 import './editor.scss';
@@ -30,7 +30,11 @@ export const settings = {
 	supports: {
 		html: true,
 	},
-
+	keywords: [
+		_x( 'opening hours', 'block search term' ),
+		_x( 'closing time', 'block search term' ),
+		_x( 'schedule', 'block search term' ),
+	],
 	attributes: {
 		days: {
 			type: 'array',
