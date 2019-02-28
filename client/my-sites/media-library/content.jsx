@@ -285,7 +285,7 @@ export class MediaLibraryContent extends React.Component {
 		return (
 			<div className="media-library__connect-message">
 				<p>
-					<img src="/calypso/images/sharing/google-photos-logo.svg" width="96" height="96" alt="" />
+					<img src="/calypso/images/sharing/google-photos-connect.png" width="400" alt="" />
 				</p>
 				<p>{ connectMessage }</p>
 
