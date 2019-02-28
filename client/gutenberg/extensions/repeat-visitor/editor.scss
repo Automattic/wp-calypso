@@ -34,6 +34,10 @@
 			flex-basis: 100%;
 		}
 	}
+
+	.components-base-control__help {
+		color: $muriel-hot-red-500;
+	}
 }
 
 .wp-block-jetpack-repeat-visitor--is-unselected .wp-block-jetpack-repeat-visitor-placeholder {
