@@ -59,6 +59,10 @@ export function createAccount( userData, invite, callback ) {
 			.usersNew(
 				Object.assign( {}, userData, { validate: false, send_verification_email } ),
 				( error, response ) => {
+					//eslint-disable-next-line no-console
+					console.error( 'ERRORS: ' + JSON.stringify( error ) );
+					//eslint-disable-next-line no-console
+					console.error( 'RESPONSE: ' + JSON.stringify( response ) );
 					const bearerToken = response && response.bearer_token;
 					if ( error ) {
 						if ( error.message ) {
