@@ -29,6 +29,10 @@ export function canAccessWordads( site ) {
 	return false;
 }
 
+export function canAccessEarnSection( site ) {
+	return canAccessWordads( site ) || userCan( 'manage_options', site );
+}
+
 export function isWordadsInstantActivationEligible( site ) {
 	if (
 		( isBusiness( site.plan ) || isPremium( site.plan ) ) &&

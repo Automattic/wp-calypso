@@ -54,6 +54,7 @@ import { transferStates } from 'state/automated-transfer/constants';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
+import { canAccessEarnSection } from 'lib/ads/utils';
 
 /**
  * Module variables
@@ -206,6 +207,9 @@ export class MySitesSidebar extends Component {
 
 	earn() {
 		const { path, translate } = this.props;
+		if ( ! canAccessEarnSection() ) {
+			return null;
+		}
 
 		return (
 			<SidebarItem
