@@ -921,3 +921,11 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		}
 	}
 }
+
+.plan-features__table {
+	.is-no-tabs & {
+		tr:last-child td:nth-child(odd) {
+			border-bottom: solid 1px lighten( $gray, 27% );
+		}
+	}
+}
