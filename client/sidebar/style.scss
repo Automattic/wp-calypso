@@ -1,0 +1,40 @@
+.layout {
+	position: fixed;
+	width: 270px;
+	height: 100%;
+	background-color: var( --sidebar-background );
+	overflow: hidden;
+
+	// Set transitons for layout elements
+	.sidebar,
+	.site-selector {
+		transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
+	}
+
+	// Adjust elements when the site-selector is visible.
+	.site-selector {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		pointer-events: none;
+		transform: translateX( -270px );
+	}
+
+	&.focus-sites {
+		.site-selector {
+			pointer-events: auto;
+			transform: translateX( 0 );
+		}
+
+		.sidebar {
+			pointer-events: none;
+			transform: translateX( $sidebar-width-max );
+		}
+	}
+}
+
+.gridicon {
+	fill: currentColor;
+}

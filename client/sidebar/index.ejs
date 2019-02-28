@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Sidebar</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese">
+	<% for ( const style of htmlWebpackPlugin.files.css.filter( s => ! s.includes( '.rtl.css' ) ) ) { %>
+		<link rel="stylesheet" href="<%= style %>">
+	<% } %>
+</head>
+<body>
+	<div id="sidebar__root"></div>
+	<script>
+		window.configData = {};
+	</script>
+	<% for ( const script of htmlWebpackPlugin.files.js ) { %>
+		<script src="<%= script %>"></script>
+	<% } %>
+</body>
+</html>
