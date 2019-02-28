@@ -187,6 +187,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		'block-editor': 1,
 		'frame-nonce': getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		'jetpack-copy': duplicatePostId,
+		origin: window.location.origin,
 	} );
 
 	// needed for loading the editor in SU sessions
