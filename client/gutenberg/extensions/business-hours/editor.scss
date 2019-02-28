@@ -9,7 +9,6 @@ $break-small: 600px;
 
 	.business-hours__row {
 		display: flex;
-		align-items: center;
 
 		&.business-hours-row__add,
 		&.business-hours-row__closed {
@@ -22,8 +21,7 @@ $break-small: 600px;
 			align-items: baseline;
 
 			.business-hours__day-name {
-				width: 40%;
-				font-size: small;
+				width: 60%;
 				font-weight: bold;
 				overflow-x: hidden;
 				text-overflow: ellipsis;
@@ -32,10 +30,6 @@ $break-small: 600px;
 
 			.components-form-toggle {
 				margin-right: 4px;
-			}
-
-			.components-toggle-control__label {
-				font-size: smaller;
 			}
 		}
 
@@ -56,21 +50,16 @@ $break-small: 600px;
 
 				.components-base-control__label {
 					margin-bottom: 0;
-					font-size: smaller;
-				}
-
-				.components-text-control__input {
-					font-size: smaller;
-					padding: 4px;
 				}
 			}
 		}
 	}
 
 	.business-hours__remove {
-		width: 10%;
+		align-self: flex-end;
+		margin-bottom: 8px;
 		text-align: center;
-		margin-top: 16px;
+		width: 10%;
 	}
 
 	.business-hours-row__add button {
@@ -81,7 +70,8 @@ $break-small: 600px;
 	}
 
 	.business-hours__remove button {
-		display: inline;
+		display: block;
+		margin: 0 auto;
 	}
 
 	.business-hours-row__add .components-button.is-default:hover,
