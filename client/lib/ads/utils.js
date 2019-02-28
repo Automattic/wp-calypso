@@ -30,7 +30,7 @@ export function canAccessWordads( site ) {
 }
 
 export function canAccessEarnSection( site ) {
-	return canAccessWordads( site ) || userCan( 'manage_options', site );
+	return canAccessWordads( site ) || ( site && site.user_is_owner );
 }
 
 export function isWordadsInstantActivationEligible( site ) {
