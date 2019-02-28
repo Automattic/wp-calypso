@@ -20,5 +20,3 @@ execSync( `npx babel -d ${ outputDirCommon } ${ inputDir }`, {
 	env: Object.assign( {}, process.env, { CALYPSO_CLIENT: 'false' } ),
 	cwd: root,
 } );
-
-console.log( 'Done building package' );
