@@ -5,15 +5,6 @@
 import { mapValues } from 'lodash';
 import emailValidator from 'email-validator';
 
-/**
- * Internal dependencies
- */
-import { isBusiness } from 'lib/products-values';
-
-export function emailForwardingPlanLimit( plan ) {
-	return isBusiness( plan ) ? 100 : 5;
-}
-
 export function validateAllFields( fieldValues ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
 		const isValid = validateField( {

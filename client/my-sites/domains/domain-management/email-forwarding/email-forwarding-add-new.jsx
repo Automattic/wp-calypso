@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -11,7 +12,7 @@ import createReactClass from 'create-react-class';
  * Internal dependencies
  */
 import EmailForwardingLimit from './email-forwarding-limit';
-import { emailForwardingPlanLimit, validateAllFields } from 'lib/domains/email-forwarding';
+import { validateAllFields } from 'lib/domains/email-forwarding';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
@@ -21,15 +22,18 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import FormInputValidation from 'components/forms/form-input-validation';
 import formState from 'lib/form-state';
 import analyticsMixin from 'lib/mixins/analytics';
-import notices from 'notices';
-import { addEmailForwarding } from 'lib/upgrades/actions';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import { addEmailForward } from 'state/email-forwarding/actions';
 
+// eslint-disable-next-line react/prefer-es6-class
 const EmailForwardingAddNew = createReactClass( {
 	displayName: 'EmailForwardingAddNew',
 
 	propTypes: {
 		initialShowForm: PropTypes.bool,
+		addEmailForward: PropTypes.func.isRequired,
+		emailForwards: PropTypes.array,
+		emailForwardingLimit: PropTypes.number.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
 	},
 
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
@@ -55,14 +59,11 @@ const EmailForwardingAddNew = createReactClass( {
 	},
 
 	hasForwards() {
-		return this.props.emailForwarding.list.length > 0;
+		return this.props.emailForwards.length > 0;
 	},
 
 	hasReachedLimit() {
-		return (
-			this.props.emailForwarding.list.length >=
-			emailForwardingPlanLimit( this.props.selectedSite.plan )
-		);
+		return this.props.emailForwards.length >= this.props.emailForwardingLimit;
 	},
 
 	onAddEmailForward( event ) {
@@ -82,51 +83,16 @@ const EmailForwardingAddNew = createReactClass( {
 
 			const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
-			addEmailForwarding( this.props.selectedDomainName, mailbox, destination, error => {
-				this.recordEvent(
-					'addNewEmailForwardClick',
-					this.props.selectedDomainName,
-					mailbox,
-					destination,
-					! Boolean( error )
-				);
+			this.recordEvent(
+				'addNewEmailForwardClick',
+				this.props.selectedDomainName,
+				mailbox,
+				destination
+			);
 
-				if ( error ) {
-					notices.error(
-						error.message ||
-							this.props.translate(
-								'Failed to add email forwarding record. ' +
-									'Please try again or ' +
-									'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
-								{
-									components: {
-										contactSupportLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-							)
-					);
-				} else {
-					this.formStateController.resetFields( this.getInitialState().fields );
-
-					notices.success(
-						this.props.translate(
-							'%(email)s has been successfully added! ' +
-								'You must confirm your email before it starts working. ' +
-								'Please check your inbox for %(destination)s.',
-							{
-								args: {
-									email: mailbox + '@' + this.props.selectedDomainName,
-									destination: destination,
-								},
-							}
-						),
-						{
-							duration: 5000,
-						}
-					);
-				}
-				this.setState( { formSubmitting: false, showForm: ! error } );
-			} );
+			this.props.addEmailForward( this.props.selectedDomainName, mailbox, destination );
+			this.formStateController.resetFields( this.getInitialState().fields );
+			this.setState( { formSubmitting: false, showForm: true } );
 		} );
 	},
 
@@ -195,7 +161,7 @@ const EmailForwardingAddNew = createReactClass( {
 			{ mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
 		return (
-			<div className="form-content">
+			<div className="email-forwarding__form-content">
 				<FormFieldset>
 					<FormLabel>{ this.props.translate( 'Emails Sent To' ) }</FormLabel>
 					<FormTextInputWithAffixes
@@ -247,15 +213,16 @@ const EmailForwardingAddNew = createReactClass( {
 	},
 
 	render() {
+		const { emailForwards, emailForwardingLimit } = this.props;
 		return (
 			<form className="email-forwarding__add-new">
-				<EmailForwardingLimit
-					selectedSite={ this.props.selectedSite }
-					emailForwarding={ this.props.emailForwarding }
-				/>
-
+				{ emailForwards.length > 0 ? (
+					<EmailForwardingLimit
+						emailForwardingCount={ emailForwards.length }
+						emailForwardingLimit={ emailForwardingLimit }
+					/>
+				) : null }
 				{ this.formFields() }
-
 				{ this.formFooter() }
 			</form>
 		);
@@ -268,7 +235,8 @@ const EmailForwardingAddNew = createReactClass( {
 	},
 
 	onChange( event ) {
-		let { name, value } = event.target;
+		const { name } = event.target;
+		let { value } = event.target;
 
 		value = value.replace( /\s/g, '' );
 		if ( name === 'mailbox' ) {
@@ -291,4 +259,7 @@ const EmailForwardingAddNew = createReactClass( {
 	},
 } );
 
-export default localize( EmailForwardingAddNew );
+export default connect(
+	null,
+	{ addEmailForward }
+)( localize( EmailForwardingAddNew ) );

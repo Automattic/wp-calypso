@@ -1556,68 +1556,6 @@ Undocumented.prototype.uploadTheme = function( siteId, file, onProgress ) {
 	} );
 };
 
-Undocumented.prototype.emailForwards = function( domain, callback ) {
-	return this.wpcom.req.get( '/domains/' + domain + '/email', function( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
-};
-
-Undocumented.prototype.addEmailForward = function( domain, mailbox, destination, callback ) {
-	return this.wpcom.req.post(
-		'/domains/' + domain + '/email/new',
-		{},
-		{
-			mailbox: mailbox,
-			destination: destination,
-		},
-		function( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-
-			callback( null, response );
-		}
-	);
-};
-
-Undocumented.prototype.deleteEmailForward = function( domain, mailbox, callback ) {
-	return this.wpcom.req.post(
-		'/domains/' + domain + '/email/' + mailbox + '/delete',
-		{},
-		{},
-		function( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-
-			callback( null, response );
-		}
-	);
-};
-
-Undocumented.prototype.resendVerificationEmailForward = function( domain, mailbox, callback ) {
-	return this.wpcom.req.post(
-		'/domains/' + domain + '/email/' + mailbox + '/resend-verification',
-		{},
-		{},
-		function( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-
-			callback( null, response );
-		}
-	);
-};
-
 Undocumented.prototype.nameservers = function( domain, callback ) {
 	return this.wpcom.req.get( '/domains/' + domain + '/nameservers', function( error, response ) {
 		if ( error ) {

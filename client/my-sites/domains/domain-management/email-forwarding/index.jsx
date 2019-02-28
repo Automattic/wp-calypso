@@ -2,9 +2,10 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import React, { Component } from 'react';
 import page from 'page';
 
 /**
@@ -19,50 +20,69 @@ import EmailForwardingDetails from './email-forwarding-details';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
+import getEmailForwardingLimit from 'state/selectors/get-email-forwarding-limit';
+import getEmailForwards from 'state/selectors/get-email-forwards';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import QueryEmailForwards from 'components/data/query-email-forwards';
 
-class EmailForwarding extends React.Component {
+class EmailForwarding extends Component {
 	static propTypes = {
-		emailForwarding: PropTypes.object.isRequired,
+		emailForwards: PropTypes.array,
+		emailForwardingLimit: PropTypes.number.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		siteSlug: PropTypes.string.isRequired,
+		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
-		if ( this.isDataLoading() ) {
-			return <MainPlaceholder goBack={ this.goToEditEmail } />;
-		}
+		const { emailForwards, selectedDomainName } = this.props;
 		return (
-			<Main className="email-forwarding">
-				<Header onClick={ this.goToEditEmail } selectedDomainName={ this.props.selectedDomainName }>
-					{ this.props.translate( 'Email Forwarding' ) }
+			<div className="email-forwarding">
+				<QueryEmailForwards domainName={ selectedDomainName } />
+				{ emailForwards ? this.renderMain() : this.renderPlaceholder() }
+			</div>
+		);
+	}
+
+	renderPlaceholder() {
+		return <MainPlaceholder goBack={ this.goToEditEmail } />;
+	}
+
+	renderMain() {
+		const { emailForwards, emailForwardingLimit, selectedDomainName, translate } = this.props;
+		return (
+			<Main>
+				<Header onClick={ this.goToEditEmail } selectedDomainName={ selectedDomainName }>
+					{ translate( 'Email Forwarding' ) }
 				</Header>
 
-				<SectionHeader label={ this.props.translate( 'Email Forwarding' ) } />
-				<Card className="email-forwarding-card">
-					<EmailForwardingDetails selectedDomainName={ this.props.selectedDomainName } />
+				<SectionHeader label={ translate( 'Email Forwarding' ) } />
+				<Card className="email-forwarding__card">
+					<EmailForwardingDetails selectedDomainName={ selectedDomainName } />
 
-					<EmailForwardingList
-						selectedSite={ this.props.selectedSite }
-						emailForwarding={ this.props.emailForwarding }
-					/>
+					<EmailForwardingList emailForwards={ emailForwards } />
 
 					<EmailForwardingAddNew
-						emailForwarding={ this.props.emailForwarding }
-						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite }
+						emailForwards={ emailForwards }
+						emailForwardingLimit={ emailForwardingLimit }
+						selectedDomainName={ selectedDomainName }
 					/>
 				</Card>
 			</Main>
 		);
 	}
 
-	isDataLoading = () => {
-		return ! this.props.emailForwarding.hasLoadedFromServer;
-	};
-
 	goToEditEmail = () => {
-		page( domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page( domainManagementEmail( this.props.siteSlug, this.props.selectedDomainName ) );
 	};
 }
 
-export default localize( EmailForwarding );
+export default connect( ( state, ownProps ) => {
+	const siteId = getSelectedSiteId( state );
+	const { selectedDomainName } = ownProps;
+	return {
+		emailForwards: getEmailForwards( state, selectedDomainName ),
+		emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
+	};
+} )( localize( EmailForwarding ) );
