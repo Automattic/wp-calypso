@@ -184,7 +184,7 @@ class AdsWrapper extends Component {
 		return (
 			<UpgradeNudgeExpanded
 				plan={ PLAN_PREMIUM }
-				title={ translate( 'Upgrade to a Premium Plan and start earning' ) }
+				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
 				subtitle={ translate(
 					"By upgrading to a Premium Plan you'll be able to monetize your site using WordAds program."
 				) }
