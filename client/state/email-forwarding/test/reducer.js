@@ -47,7 +47,7 @@ describe( 'emailForwardsReducer', () => {
 				'example.com': {
 					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 			} );
 		} );
@@ -57,7 +57,7 @@ describe( 'emailForwardsReducer', () => {
 				'example.com': {
 					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 			};
 
@@ -70,7 +70,7 @@ describe( 'emailForwardsReducer', () => {
 				'example.com': {
 					forwards: null,
 					requesting: true,
-					requestError: null,
+					requestError: false,
 				},
 			} );
 		} );
@@ -80,12 +80,12 @@ describe( 'emailForwardsReducer', () => {
 				'example.com': {
 					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 				'test.com': {
 					forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 			};
 
@@ -98,12 +98,12 @@ describe( 'emailForwardsReducer', () => {
 				'example.com': {
 					forwards: null,
 					requesting: true,
-					requestError: null,
+					requestError: false,
 				},
 				'test.com': {
 					forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 			} );
 		} );
@@ -155,7 +155,7 @@ describe( 'emailForwardsReducer', () => {
 						},
 					],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 			} );
 		} );
@@ -188,7 +188,7 @@ describe( 'emailForwardsReducer', () => {
 						},
 					],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 			} );
 		} );
