@@ -10,8 +10,8 @@ import ShallowRenderer from 'react-test-renderer/shallow';
 import i18n, { useTranslate } from '../src';
 
 function Label() {
-	const [ translate, lang ] = useTranslate();
-	return translate( 'hook (%(lang)s)', { args: { lang } } );
+	const translate = useTranslate();
+	return translate( 'hook (%(lang)s)', { args: { lang: translate.localeSlug } } );
 }
 
 describe( 'useTranslate()', () => {

@@ -11,7 +11,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
 const NoConnectionsNotice = ( { siteSlug } ) => {
-	const [ translate ] = useTranslate();
+	const translate = useTranslate();
 
 	return (
 		<Notice

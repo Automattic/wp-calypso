@@ -308,12 +308,12 @@ exposes the `translate` method to React components as a return value of a React 
 resulting component is also reactive, i.e., it gets rerendered when the `i18n` locale changes
 and the state emitter emits a `change` event.
 
-The `useTranslate` function returns an array of two values:
+The `useTranslate` hook returns the `translate` function:
 ```jsx
-const [ translate, localeSlug ] = useTranslate();
+const translate = useTranslate();
 ```
-The `translate` value is the translation function, and `localeSlug` is a string with the current
-locale slug.
+The function can be called to return a localized value of a string, and it also exposes a
+`localeSlug` property whose value is a string with the current locale slug.
 
 ### Usage
 
@@ -322,7 +322,8 @@ import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 function Greeting( { className } ) {
-  const [ translate ] = useTranslate();
+  const translate = useTranslate();
+  debug( 'using translate with locale:', translate.localeSlug );
 	return (
 		<h1 className={ className }>
 			{ translate( 'Hello!' ) }
