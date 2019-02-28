@@ -96,6 +96,7 @@ class SitePicker extends React.Component {
 					showAllSites={ true }
 					allSitesPath={ this.props.allSitesPath }
 					siteBasePath={ this.props.siteBasePath }
+					onSiteSelect={ this.props.onSiteSelect }
 					autoFocus={ this.state.isAutoFocused }
 					onClose={ this.onClose }
 					groups={ true }
