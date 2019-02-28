@@ -38,6 +38,10 @@ describe( 'viewport', () => {
 		removeListenerMock.mockClear();
 	} );
 
+	afterAll( () => {
+		jest.restoreAllMocks();
+	} );
+
 	describe( 'isWithinBreakpoint', () => {
 		test( 'should return undefined when called with no breakpoint', () => {
 			expect( viewport.isWithinBreakpoint() ).toBe( undefined );
@@ -220,9 +224,5 @@ describe( 'viewport', () => {
 			expect( removeListenerMock ).toHaveBeenCalledTimes( 1 );
 			expect( removeListenerMock ).toHaveBeenCalledWith( '(min-width: 961px)', subscription );
 		} );
-	} );
-
-	afterAll( () => {
-		jest.restoreAllMocks();
 	} );
 } );

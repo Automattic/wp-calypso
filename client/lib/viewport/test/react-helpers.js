@@ -105,6 +105,10 @@ describe( 'viewport/react-helpers', () => {
 		removeListenerMock.mockClear();
 	} );
 
+	afterAll( () => {
+		jest.restoreAllMocks();
+	} );
+
 	describe( 'useBreakpoint', () => {
 		test( 'returns undefined when called with no breakpoint', () => {
 			function TestComponent() {
@@ -210,9 +214,5 @@ describe( 'viewport/react-helpers', () => {
 			const TestComponent = helpers.withDesktopBreakpoint( BaseComponent );
 			runComponentTests( TestComponent, '(min-width: 961px)' );
 		} );
-	} );
-
-	afterAll( () => {
-		jest.restoreAllMocks();
 	} );
 } );
