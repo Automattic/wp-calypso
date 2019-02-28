@@ -53,9 +53,9 @@
 	color: var( --color-success );
 }
 
-.plan-price__currency-symbol,
-.plan-price__tax-amount {
-	color: var( --color-neutral-light );
+.plan-price__tax-amount,
+.plan-price__currency-symbol {
+	color: var( --color-text-subtle );
 }
 
 .plan-price__integer {
