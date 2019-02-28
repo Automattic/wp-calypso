@@ -41,8 +41,8 @@ const shouldMinify =
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
-const codeSplit = config.isEnabled( 'code-splitting' );
-const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
+const codeSplit = true; // config.isEnabled( 'code-splitting' );
+const isCalypsoClient = true; // process.env.CALYPSO_CLIENT === 'true';
 
 /*
  * Create reporter for ProgressPlugin (used with EMIT_STATS)
@@ -300,7 +300,11 @@ function getWebpackConfig( {
 		},
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx' ],
-			modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
+			modules: [
+				path.join( __dirname, 'client' ),
+				'node_modules',
+				path.join( __dirname, 'assets' ),
+			],
 			alias: Object.assign(
 				{
 					'gridicons/example': 'gridicons/dist/example',
