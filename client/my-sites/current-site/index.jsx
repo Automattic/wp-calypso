@@ -12,7 +12,6 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import AllSites from 'blocks/all-sites';
-import AsyncLoad from 'components/async-load';
 import Button from 'components/button';
 import Card from 'components/card';
 import Site from 'blocks/site';
@@ -85,13 +84,6 @@ class CurrentSite extends Component {
 				) : (
 					<AllSites />
 				) }
-				<AsyncLoad
-					require="my-sites/current-site/notice"
-					placeholder={ null }
-					site={ selectedSite }
-				/>
-				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
-				<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
 			</Card>
 		);
 	}
