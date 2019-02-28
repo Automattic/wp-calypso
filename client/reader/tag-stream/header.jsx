@@ -115,7 +115,7 @@ class TagStreamHeader extends React.Component {
 					</h1>
 					{ tagImage && (
 						<div className="tag-stream__header-image-byline">
-							{ translate( '{{photoByWrapper}}Photo from{{/photoByWrapper}} {{authorLink/}}', {
+							{ translate( '{{sourceWrapper}}Photo from{{/sourceWrapper}} {{authorLink/}}', {
 								components: {
 									photoByWrapper,
 									authorLink,
