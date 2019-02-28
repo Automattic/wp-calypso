@@ -193,13 +193,16 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderUpworkNudge = () => {
-		if ( abtest( 'builderReferralThemesBanner' ) === 'original' ) {
+		const { upworkNudgeViewed, upworkNudgeClicked } = this.props;
+		if ( abtest( 'builderReferralHelpPopover' ) === 'original' ) {
 			return null;
 		}
+		upworkNudgeViewed();
 		return (
 			<div className="inline-help__upwork">
 				<a
-					href="http://en.support.wordpress.com/reader/"
+					onClick={ upworkNudgeClicked }
+					href={ '/experts/upwork?source=help-menu' }
 					title="Link to Upwork where you can hire a WordPress expert"
 				>
 					Need a designer to build your site?
@@ -372,6 +375,30 @@ const optIn = ( siteId, gutenbergUrl ) => {
 	);
 };
 
+const upworkNudgeViewed = () => {
+	return composeAnalytics(
+		recordGoogleEvent(
+			'Upwork Link Viewed',
+			'Viewed "Need a designer to build your site?" in the help popover.',
+			'View',
+			false
+		),
+		recordTracksEvent( 'calypso_upwork_help_popover_view' )
+	);
+};
+
+const upworkNudgeClicked = () => {
+	return composeAnalytics(
+		recordGoogleEvent(
+			'Upwork Clicked',
+			'Clicked "Need a designer to build your site?" in the help popover.',
+			'Click',
+			false
+		),
+		recordTracksEvent( 'calypso_upwork_help_popover_clicked' )
+	);
+};
+
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
@@ -410,6 +437,8 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	selectResult,
 	resetContactForm: resetInlineHelpContactForm,
+	upworkNudgeViewed,
+	upworkNudgeClicked,
 };
 
 export default connect(
