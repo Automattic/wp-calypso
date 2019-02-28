@@ -15,6 +15,7 @@ import { startCase } from 'lodash';
  */
 import DocumentHead from 'components/data/document-head';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import TranslatorInvite from 'components/translator-invite';
@@ -106,8 +107,13 @@ export class Login extends React.Component {
 	}
 
 	renderFooter() {
-		const { translate } = this.props;
+		const { currentRoute, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
+
+		if ( currentRoute === '/log-in/jetpack' ) {
+			return null;
+		}
+
 		return (
 			<div
 				className={ classNames( 'wp-login__footer', {
@@ -119,7 +125,8 @@ export class Login extends React.Component {
 					<LoggedOutFormBackLink
 						classes={ { 'logged-out-form__link-item': false } }
 						oauth2Client={ this.props.oauth2Client }
-						recordClick={ this.recordBackToWpcomLinkClick } />
+						recordClick={ this.recordBackToWpcomLinkClick }
+					/>
 				) }
 
 				{ isOauthLogin ? (
@@ -236,6 +243,7 @@ export class Login extends React.Component {
 
 export default connect(
 	( state, props ) => ( {
+		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
