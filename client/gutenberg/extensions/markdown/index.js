@@ -1,11 +1,12 @@
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from '@wordpress/i18n';
 
 export const name = 'markdown';
 
-const save = () => <div>{ __( 'Email' ) }</div>;
+// This is a Core translation available in Gutenberg.
+const save = () => <div>{ __( 'Advanced' ) }</div>;
 
 export const settings = {
 	title: __( 'Markdown' ),
