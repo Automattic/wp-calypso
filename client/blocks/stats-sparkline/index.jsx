@@ -33,6 +33,7 @@ const StatsSparkline = ( { isJetpack, siteUrl, className, siteId, highestViews, 
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsInsights" /> }
 			<img
 				className={ className }
+				alt={ title }
 				title={ title }
 				src={ `${ siteUrl }/wp-includes/charts/admin-bar-hours-scale-2x.php?masterbar=1&s=${ siteId }` }
 			/>
