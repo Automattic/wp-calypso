@@ -1,5 +1,5 @@
 const { dirname } = require( 'path' );
-const { mkdirSync, writeFileSync } = require( 'fs' );
+const { mkdirSync, writeFileSync } = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
 const { renderSync } = require( 'node-sass' );
 const packageImporter = require( 'node-sass-package-importer' );
 
