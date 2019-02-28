@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import createReactClass from 'create-react-class';
 
 /**
  * Internal dependencies
@@ -21,22 +20,16 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
 import formState from 'lib/form-state';
-import analyticsMixin from 'lib/mixins/analytics';
 import { addEmailForward } from 'state/email-forwarding/actions';
 
-// eslint-disable-next-line react/prefer-es6-class
-const EmailForwardingAddNew = createReactClass( {
-	displayName: 'EmailForwardingAddNew',
-
-	propTypes: {
+class EmailForwardingAddNew extends React.Component {
+	static propTypes = {
 		initialShowForm: PropTypes.bool,
 		addEmailForward: PropTypes.func.isRequired,
 		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-	},
-
-	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
+	};
 
 	getInitialState() {
 		return {
@@ -44,7 +37,7 @@ const EmailForwardingAddNew = createReactClass( {
 			formSubmitting: false,
 			showForm: false,
 		};
-	},
+	}
 
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
@@ -56,15 +49,15 @@ const EmailForwardingAddNew = createReactClass( {
 		} );
 
 		this.setFormState( this.formStateController.getInitialState() );
-	},
+	}
 
 	hasForwards() {
 		return this.props.emailForwards.length > 0;
-	},
+	}
 
 	hasReachedLimit() {
 		return this.props.emailForwards.length >= this.props.emailForwardingLimit;
-	},
+	}
 
 	onAddEmailForward( event ) {
 		event.preventDefault();
@@ -94,16 +87,16 @@ const EmailForwardingAddNew = createReactClass( {
 			this.formStateController.resetFields( this.getInitialState().fields );
 			this.setState( { formSubmitting: false, showForm: true } );
 		} );
-	},
+	}
 
 	setFormState( fields ) {
 		this.setState( { fields } );
-	},
+	}
 
 	onShowForm( event ) {
 		event.preventDefault();
 		this.setState( { showForm: true } );
-	},
+	}
 
 	addButton() {
 		const handler = this.shouldShowForm() ? this.onAddEmailForward : this.onShowForm;
@@ -116,7 +109,7 @@ const EmailForwardingAddNew = createReactClass( {
 				{ this.props.translate( 'Add New Email Forward' ) }
 			</FormButton>
 		);
-	},
+	}
 
 	cancelButton() {
 		if ( ! this.shouldShowForm() || ! this.hasForwards() ) {
@@ -133,7 +126,7 @@ const EmailForwardingAddNew = createReactClass( {
 				{ this.props.translate( 'Cancel' ) }
 			</FormButton>
 		);
-	},
+	}
 
 	formFooter() {
 		return (
@@ -142,7 +135,7 @@ const EmailForwardingAddNew = createReactClass( {
 				{ this.cancelButton() }
 			</FormFooter>
 		);
-	},
+	}
 
 	formFields() {
 		if ( ! this.shouldShowForm() ) {
@@ -206,11 +199,11 @@ const EmailForwardingAddNew = createReactClass( {
 				</FormFieldset>
 			</div>
 		);
-	},
+	}
 
 	shouldShowForm() {
 		return ! this.hasReachedLimit() && ( ! this.hasForwards() || this.state.showForm );
-	},
+	}
 
 	render() {
 		const { emailForwards, emailForwardingLimit } = this.props;
@@ -226,13 +219,13 @@ const EmailForwardingAddNew = createReactClass( {
 				{ this.formFooter() }
 			</form>
 		);
-	},
+	}
 
 	onCancel() {
 		this.setState( { showForm: false } );
 
 		this.recordEvent( 'cancelClick', this.props.selectedDomainName );
-	},
+	}
 
 	onChange( event ) {
 		const { name } = event.target;
@@ -248,16 +241,16 @@ const EmailForwardingAddNew = createReactClass( {
 			name,
 			value,
 		} );
-	},
+	}
 
 	isValid( fieldName ) {
 		return ! formState.isFieldInvalid( this.state.fields, fieldName );
-	},
+	}
 
 	handleFieldFocus( fieldName ) {
 		this.recordEvent( 'inputFocus', this.props.selectedDomainName, fieldName );
-	},
-} );
+	}
+}
 
 export default connect(
 	null,
