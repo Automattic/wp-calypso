@@ -18,6 +18,7 @@ import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementEmail,
+	domainManagementEmailForwarding,
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementPrimaryDomain,
@@ -30,7 +31,6 @@ import {
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
 } from 'my-sites/domains/paths';
-import EmailForwarding from 'my-sites/domains/domain-management/email-forwarding';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuiteAddUsers from './gsuite/gsuite-add-users';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -167,7 +167,16 @@ export default {
 	},
 
 	domainManagementEmailForwarding( pageContext, next ) {
-		pageContext.primary = <EmailForwarding selectedDomainName={ pageContext.params.domain } />;
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementEmailForwarding( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Email Forwarding"
+				component={ DomainManagement.EmailForwarding }
+				context={ pageContext }
+				needsEmailForwarding
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
 		next();
 	},
 

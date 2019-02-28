@@ -16,7 +16,6 @@ import { localize } from 'i18n-calypso';
 import { EMAIL_FORWARDING } from 'lib/url/support';
 import analyticsMixin from 'lib/mixins/analytics';
 
-// eslint-disable-next-line react/prefer-es6-class
 const EmailForwardingDetails = createReactClass( {
 	displayName: 'EmailForwardingDetails',
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
