@@ -67,12 +67,15 @@ A sample `package.json`:
   "files": [
     "dist",
     "src"
-  ]
+  ],
+  "scripts": {
+    "build": "node ../../bin/build-package"
+  }
 }
 
 ```
 
-Our package compiler will automatically compile code in `src` to `dist`, running `babel` over any source files it finds.
+If your package.json specifies a `build` script, our package compiler will use that to compile the package. If it contains ES6+ code that needs to be transpiled, use Calypso's `bin/build-package` which will automatically compile code in `src/` to `dist/`, running `babel` over any source files it finds.
 
 ## Running Tests
 To run all of the package tests:
