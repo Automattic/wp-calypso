@@ -36,7 +36,7 @@ import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isPremium } from '../../../lib/products-values';
-import { userCan } from '../../../lib/site/utils';
+import { canAccessEarnSection } from '../../../lib/ads/utils';
 
 class AdsWrapper extends Component {
 	static propTypes = {
@@ -51,24 +51,19 @@ class AdsWrapper extends Component {
 	};
 
 	componentDidMount() {
-		this.redirectToEarn();
+		this.redirectToStats();
 	}
 
 	componentDidUpdate() {
-		this.redirectToEarn();
+		this.redirectToStats();
 	}
 
-	canAccess() {
-		const { canManageOptions, site } = this.props;
-		return site && site.options && canManageOptions && userCan( 'manage_options', site );
-	}
-
-	redirectToEarn() {
-		const { siteSlug } = this.props;
+	redirectToStats() {
+		const { siteSlug, site } = this.props;
 		const siteFragment = getSiteFragment( page.current );
 
-		if ( ! this.canAccess() && siteSlug ) {
-			page( '/earn/' + siteSlug );
+		if ( siteSlug && site && ! canAccessEarnSection( site ) ) {
+			page( '/stats/' + siteSlug );
 		} else if ( ! siteFragment ) {
 			page( '/earn/' );
 		}
@@ -201,7 +196,7 @@ class AdsWrapper extends Component {
 		const { site, translate } = this.props;
 		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
 
-		if ( ! this.canAccess() ) {
+		if ( ! canAccessEarnSection( site ) ) {
 			return null;
 		}
 
