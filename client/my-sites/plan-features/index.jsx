@@ -673,7 +673,7 @@ export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 			} );
 			const annualRawPrice = getPlanRawPrice( state, planProductId, false );
 
-			if ( typeof annualDiscountPrice !== 'number' || typeof annualDiscountPrice !== 'number' ) {
+			if ( typeof annualDiscountPrice !== 'number' ) {
 				return 0;
 			}
 

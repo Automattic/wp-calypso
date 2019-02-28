@@ -30,7 +30,7 @@ import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transforme
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 const navigateTo =
-	undefined !== typeof window ? path => window.open( path, '_blank' ) : path => page( path );
+	'undefined' !== typeof window ? path => window.open( path, '_blank' ) : path => page( path );
 
 /**
  * Makes sure that we can initialize a connection

@@ -147,7 +147,7 @@ class StoreStatsChart extends Component {
 		return (
 			<Card className={ classnames( className, 'stats-module' ) }>
 				<div className="store-stats-chart__top">
-					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
+					<div className="store-stats-chart__title">{ chartTitle }</div>
 					{ this.renderLegend( selectedTabIndex ) }
 				</div>
 				<ElementChart loading={ isLoading } data={ chartData } barClick={ this.barClick } />

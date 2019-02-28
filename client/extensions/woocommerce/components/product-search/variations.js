@@ -29,7 +29,7 @@ class ProductVariations extends Component {
 		this.state = {};
 		const attributes = filter( props.product.attributes, { variation: true } );
 		forEach( attributes, attr => {
-			this.state[ attr.name ] = DEFAULT_ATTR;
+			this.setState( { [ attr.name ]: DEFAULT_ATTR } );
 		} );
 	}
 

@@ -67,8 +67,8 @@ class Referrers extends Component {
 				queryParams: { referrer, ...queryParams },
 			} = this.props; // eslint-disable-line no-unused-vars
 			const widgetPath = getWidgetPath( unit, slug, queryParams );
-			this.state.filter = '';
-			this.state.selectedReferrer = {};
+			this.setState( { filter: '' } );
+			this.setState( { selectedReferrer: {} } );
 			page( `${ basePath }${ widgetPath }` );
 		}
 		this.setData( this.props, trimmedStr );

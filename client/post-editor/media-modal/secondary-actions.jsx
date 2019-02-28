@@ -96,7 +96,7 @@ class MediaModalSecondaryActions extends Component {
 						{ ...pick( button, [ 'key', 'disabled', 'onClick', 'primary' ] ) }
 					>
 						{ button.icon && <Gridicon icon={ button.icon } /> }
-						{ button.text && button.text }
+						{ button.text }
 					</Button>
 				) ) }
 			</div>
