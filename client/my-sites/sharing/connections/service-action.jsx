@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 import { getRemovableConnections } from 'state/sharing/publicize/selectors';
 
 const SharingServiceAction = ( {
@@ -78,6 +79,23 @@ const SharingServiceAction = ( {
 			<Button compact disabled={ true }>
 				{ label }
 			</Button>
+		);
+	}
+
+	if ( primary && 'mailchimp' === service.ID ) {
+		return (
+			<ButtonGroup>
+				<Button compact>{ translate( 'Sign up' ) }</Button>
+				<Button
+					primary={ primary }
+					scary={ warning }
+					compact
+					onClick={ onClick }
+					disabled={ isPending }
+				>
+					{ label }
+				</Button>
+			</ButtonGroup>
 		);
 	}
 
