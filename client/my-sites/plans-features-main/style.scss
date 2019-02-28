@@ -33,10 +33,18 @@
 		@include breakpoint( '750px-960px' ) {
 			margin: 0 -24px;
 			width: calc( 100% + 48px );
+
+			.faq, .plans-features-main__notice {
+				margin: 0 24px;
+			}
 		}
 		@include breakpoint( '960px-1280px' ) {
 			margin: 0 -32px;
 			width: calc( 100% + 64px );
+
+			.faq, .plans-features-main__notice {
+				margin: 0 32px;
+			}
 		}
 	}
 	.plans-features-main__scroll-container {
