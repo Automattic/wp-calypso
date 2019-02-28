@@ -40,7 +40,17 @@ class EmailForwardingAddNew extends React.Component {
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
-	getInitialState() {
+	state = {
+		fields: { destination: '', mailbox: '' },
+		formSubmitting: false,
+		showForm: false,
+	};
+
+	getInitialFields() {
+		return { destination: '', mailbox: '' };
+	}
+
+	getInitialFormState() {
 		return {
 			fields: { destination: '', mailbox: '' },
 			formSubmitting: false,
@@ -50,7 +60,7 @@ class EmailForwardingAddNew extends React.Component {
 
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
-			initialFields: this.getInitialState().fields,
+			initialFields: this.getInitialFields(),
 			onNewState: this.setFormState,
 			validatorFunction: ( fieldValues, onComplete ) => {
 				onComplete( null, validateAllFields( fieldValues ) );
@@ -68,7 +78,7 @@ class EmailForwardingAddNew extends React.Component {
 		return this.props.emailForwards.length >= this.props.emailForwardingLimit;
 	}
 
-	addEmailForwardClick = event => {
+	addNewEmailForwardClick = event => {
 		event.preventDefault();
 
 		if ( this.state.formSubmitting ) {
@@ -83,19 +93,21 @@ class EmailForwardingAddNew extends React.Component {
 				return;
 			}
 
-			const { mailbox, destination, selectedDomainName } = formState.getAllFieldValues(
-				this.state.fields
-			);
+			const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
-			this.props.addNewEmailForwardWithAnalytics( selectedDomainName, mailbox, destination );
-			this.props.this.formStateController.resetFields( this.getInitialState().fields );
+			this.props.addNewEmailForwardWithAnalytics(
+				this.props.selectedDomainName,
+				mailbox,
+				destination
+			);
+			this.formStateController.resetFields( this.getInitialFields() );
 			this.setState( { formSubmitting: false, showForm: true } );
 		} );
 	};
 
-	setFormState( fields ) {
+	setFormState = fields => {
 		this.setState( { fields } );
-	}
+	};
 
 	onShowForm = event => {
 		event.preventDefault();
@@ -103,7 +115,7 @@ class EmailForwardingAddNew extends React.Component {
 	};
 
 	addButton() {
-		const handler = this.shouldShowForm() ? this.onAddEmailForward : this.onShowForm;
+		const handler = this.shouldShowForm() ? this.addNewEmailForwardClick : this.onShowForm;
 
 		return (
 			<FormButton
@@ -226,10 +238,10 @@ class EmailForwardingAddNew extends React.Component {
 
 	cancelClick = () => {
 		this.setState( { showForm: false } );
-		this.trackCancelClick( this.props.selectedDomainName );
+		this.props.trackCancelClick( this.props.selectedDomainName );
 	};
 
-	onChange( event ) {
+	onChange = event => {
 		const { name } = event.target;
 		let { value } = event.target;
 
@@ -243,14 +255,10 @@ class EmailForwardingAddNew extends React.Component {
 			name,
 			value,
 		} );
-	}
+	};
 
 	isValid( fieldName ) {
 		return ! formState.isFieldInvalid( this.state.fields, fieldName );
-	}
-
-	handleFieldFocus( fieldName ) {
-		this.recordEvent( 'inputFocus', this.props.selectedDomainName, fieldName );
 	}
 
 	destinationFieldFocus = () => {
@@ -262,7 +270,7 @@ class EmailForwardingAddNew extends React.Component {
 	};
 }
 
-const addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) => {
+const addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) =>
 	withAnalytics(
 		composeAnalytics(
 			recordGoogleEvent(
@@ -279,9 +287,8 @@ const addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) => 
 		),
 		addEmailForward( domainName, mailbox, destination )
 	);
-};
 
-const trackCancelClick = domainName => {
+const trackCancelClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -293,9 +300,8 @@ const trackCancelClick = domainName => {
 			domain_name: domainName,
 		} )
 	);
-};
 
-const trackDestinationFieldFocus = domainName => {
+const trackDestinationFieldFocus = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -307,9 +313,8 @@ const trackDestinationFieldFocus = domainName => {
 			domain_name: domainName,
 		} )
 	);
-};
 
-const trackMailboxFieldFocus = domainName => {
+const trackMailboxFieldFocus = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -321,7 +326,6 @@ const trackMailboxFieldFocus = domainName => {
 			domain_name: domainName,
 		} )
 	);
-};
 
 export default connect(
 	null,
