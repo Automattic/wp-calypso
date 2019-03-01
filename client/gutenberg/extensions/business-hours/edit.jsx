@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { BlockIcon } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import { Placeholder } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
@@ -75,7 +76,12 @@ class BusinessHours extends Component {
 		}
 
 		if ( ! hasFetched ) {
-			return <Placeholder icon={ icon } label={ __( 'Loading business hours' ) } />;
+			return (
+				<Placeholder
+					icon={ <BlockIcon icon={ icon } /> }
+					label={ __( 'Loading business hours' ) }
+				/>
+			);
 		}
 
 		return (
