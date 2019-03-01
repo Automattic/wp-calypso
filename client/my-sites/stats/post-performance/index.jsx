@@ -101,6 +101,7 @@ class StatsPostPerformance extends Component {
 			}
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
@@ -146,6 +147,7 @@ class StatsPostPerformance extends Component {
 				</Card>
 			</div>
 		);
+		/* eslint-enable */
 	}
 }
 
