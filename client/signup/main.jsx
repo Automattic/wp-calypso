@@ -13,12 +13,11 @@ import {
 	defer,
 	find,
 	get,
-	includes,
 	indexOf,
+	isEmpty,
 	isEqual,
 	kebabCase,
 	last,
-	map,
 	pick,
 	startsWith,
 } from 'lodash';
@@ -40,7 +39,6 @@ import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
 import SignupHeader from 'signup/signup-header';
-import QuerySiteDomains from 'components/data/query-site-domains';
 
 // Libraries
 import analytics from 'lib/analytics';
@@ -49,6 +47,8 @@ import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/pro
 import SignupActions from 'lib/signup/actions';
 import SignupFlowController from 'lib/signup/flow-controller';
 import { disableCart } from 'lib/upgrades/actions';
+import { isValidLandingPageVertical } from 'lib/signup/verticals';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -60,9 +60,6 @@ import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
-import getSiteId from 'state/selectors/get-site-id';
-import { isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -96,8 +93,6 @@ class Signup extends React.Component {
 		loadTrackingTool: PropTypes.func.isRequired,
 		setSurvey: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
-		siteDomains: PropTypes.array,
-		isPaidPlan: PropTypes.bool,
 		trackAffiliateReferral: PropTypes.func.isRequired,
 	};
 
@@ -108,8 +103,6 @@ class Signup extends React.Component {
 			controllerHasReset: false,
 			login: false,
 			dependencies: props.signupDependencies,
-			siteDomains: props.siteDomains,
-			isPaidPlan: props.isPaidPlan,
 			shouldShowLoadingScreen: false,
 			resumingStep: undefined,
 			loginHandler: null,
@@ -143,7 +136,7 @@ class Signup extends React.Component {
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
-		this.removeFulfilledSteps( this.props );
+		this.submitQueryDependencies();
 
 		this.updateShouldShowLoadingScreen();
 
@@ -164,14 +157,11 @@ class Signup extends React.Component {
 		}
 
 		this.checkForCartItems( this.props.signupDependencies );
+
 		this.recordStep();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { signupDependencies, stepName, flowName, progress } = nextProps;
-
-		this.removeFulfilledSteps( nextProps );
-
+	UNSAFE_componentWillReceiveProps( { signupDependencies, stepName, flowName, progress } ) {
 		if ( this.props.stepName !== stepName ) {
 			this.recordStep( stepName, flowName );
 		}
@@ -271,23 +261,74 @@ class Signup extends React.Component {
 		}
 	};
 
-	processFulfilledSteps = ( stepName, nextProps ) => {
-		if ( includes( flows.excludedSteps, stepName ) ) {
+	recordExcludeStepEvent = ( step, value ) => {
+		analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
+			step,
+			value,
+		} );
+	};
+
+	submitQueryDependencies = () => {
+		if ( isEmpty( this.props.initialContext && this.props.initialContext.query ) ) {
 			return;
 		}
 
-		const isFulfilledCallback = steps[ stepName ].fulfilledStepCallback;
-		isFulfilledCallback && isFulfilledCallback( stepName, nextProps );
-	};
+		const {
+			initialContext: {
+				query: { vertical, site_type: siteType },
+			},
+			flowName,
+		} = this.props;
 
-	removeFulfilledSteps = nextProps => {
-		const { flowName, stepName } = nextProps;
 		const flowSteps = flows.getFlow( flowName ).steps;
-		map( flowSteps, flowStepName => this.processFulfilledSteps( flowStepName, nextProps ) );
+		const fulfilledSteps = [];
 
-		if ( includes( flows.excludedSteps, stepName ) ) {
-			this.goToNextStep( flowName );
+		// `vertical` query parameter
+		if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
+			debug( 'From query string: vertical = %s', vertical );
+
+			const siteTopicStepName = 'site-topic';
+
+			this.props.setSurvey( {
+				vertical,
+				otherText: '',
+			} );
+			SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
+				surveySiteType: 'blog',
+				surveyQuestion: vertical,
+			} );
+
+			this.props.submitSiteVertical( { name: vertical }, siteTopicStepName );
+
+			// Track our landing page verticals
+			if ( isValidLandingPageVertical( vertical ) ) {
+				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
+					vertical,
+					flow: flowName,
+				} );
+			}
+
+			fulfilledSteps.push( siteTopicStepName );
+
+			this.recordExcludeStepEvent( siteTopicStepName, vertical );
 		}
+
+		//`site_type` query parameter
+		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
+		if ( siteTypeValue ) {
+			debug( 'From query string: site_type = %s', siteType );
+			debug( 'Site type value = %s', siteTypeValue );
+
+			const siteTypeStepName = 'site-type';
+
+			this.props.submitSiteType( siteTypeValue );
+
+			fulfilledSteps.push( siteTypeStepName );
+
+			this.recordExcludeStepEvent( siteTypeStepName, siteTypeValue );
+		}
+
+		flows.excludeSteps( fulfilledSteps );
 	};
 
 	checkForCartItems = signupDependencies => {
@@ -567,26 +608,6 @@ class Signup extends React.Component {
 		);
 	}
 
-	shouldWaitToRender() {
-		const isStepRemovedFromFlow = ! includes(
-			flows.getFlow( this.props.flowName ).steps,
-			this.props.stepName
-		);
-		const isDomainsForSiteEmpty =
-			this.props.isLoggedIn &&
-			this.props.signupDependencies.siteSlug &&
-			0 === this.props.siteDomains.length;
-
-		if ( isStepRemovedFromFlow ) {
-			return true;
-		}
-
-		// siteDomains is sometimes empty, so we need to force update.
-		if ( isDomainsForSiteEmpty ) {
-			return <QuerySiteDomains siteId={ this.props.siteId } />;
-		}
-	}
-
 	render() {
 		if (
 			! this.props.stepName ||
@@ -594,12 +615,6 @@ class Signup extends React.Component {
 			this.state.resumingStep
 		) {
 			return null;
-		}
-
-		// Removes flicker of steps that have been removed from the flow
-		const waitToRenderReturnValue = this.shouldWaitToRender();
-		if ( waitToRenderReturnValue ) {
-			return this.props.siteId && waitToRenderReturnValue;
 		}
 
 		const pageTitle =
@@ -632,23 +647,14 @@ class Signup extends React.Component {
 }
 
 export default connect(
-	state => {
-		const signupDependencies = getSignupDependencyStore( state );
-		const siteId = getSiteId( state, signupDependencies.siteSlug );
-		const siteDomains = getDomainsBySiteId( state, siteId );
-		return {
-			domainsWithPlansOnly: getCurrentUser( state )
-				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-				: true,
-			progress: getSignupProgress( state ),
-			signupDependencies,
-			isLoggedIn: isUserLoggedIn( state ),
-			isPaidPlan: isCurrentPlanPaid( state, siteId ),
-			sitePlanSlug: getSitePlanSlug( state, siteId ),
-			siteDomains,
-			siteId,
-		};
-	},
+	state => ( {
+		domainsWithPlansOnly: getCurrentUser( state )
+			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+			: true,
+		progress: getSignupProgress( state ),
+		signupDependencies: getSignupDependencyStore( state ),
+		isLoggedIn: isUserLoggedIn( state ),
+	} ),
 	{
 		setSurvey,
 		submitSiteType,

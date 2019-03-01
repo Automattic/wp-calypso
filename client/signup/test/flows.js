@@ -59,11 +59,11 @@ describe( 'Signup Flows Configuration', () => {
 
 		afterAll( () => {
 			flows.getFlows.restore();
-			flows.excludeStep();
+			flows.excludeSteps( [] );
 		} );
 
 		test( 'should exclude site step from getFlow', () => {
-			flows.excludeStep( 'site' );
+			flows.excludeSteps( [ 'site' ] );
 			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'user' ] );
 		} );
 	} );

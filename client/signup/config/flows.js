@@ -174,10 +174,10 @@ const Flows = {
 	 * The main usage at the moment is to serve as a quick solution to remove steps that have been pre-fulfilled
 	 * without explicit user inputs, e.g. query arguments.
 	 *
-	 * @param {String} step Name of the step to be excluded.
+	 * @param {Array} steps An array of names of steps to be excluded.
 	 */
-	excludeStep( step ) {
-		step && Flows.excludedSteps.push( step );
+	excludeSteps( steps ) {
+		Flows.excludedSteps = steps;
 	},
 
 	filterExcludedSteps( flow ) {

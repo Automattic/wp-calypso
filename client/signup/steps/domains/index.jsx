@@ -39,7 +39,6 @@ import { getDomainProductSlug } from 'lib/domains';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
-import { getSite } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -61,7 +60,6 @@ class DomainsStep extends React.Component {
 		step: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
-		selectedSite: PropTypes.object,
 	};
 
 	static contextTypes = {
@@ -180,14 +178,6 @@ class DomainsStep extends React.Component {
 		}
 		const repo = this.isPurchasingTheme() ? 'premium' : 'pub';
 		return `${ repo }/${ themeSlug }`;
-	};
-
-	handleSkip = () => {
-		const domainItem = undefined;
-		SignupActions.submitSignupStep( { stepName: this.props.stepName, domainItem }, [], {
-			domainItem,
-		} );
-		this.props.goToNextStep();
 	};
 
 	submitWithDomain = googleAppsCartItem => {
@@ -355,11 +345,6 @@ class DomainsStep extends React.Component {
 			}
 		}
 
-		let showExampleSuggestions = this.props.showExampleSuggestions;
-		if ( 'undefined' === typeof showExampleSuggestions ) {
-			showExampleSuggestions = true;
-		}
-
 		return (
 			<RegisterDomainStep
 				key="domainForm"
@@ -380,15 +365,12 @@ class DomainsStep extends React.Component {
 				includeWordPressDotCom={ ! this.props.isDomainOnly }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
-				showExampleSuggestions={ showExampleSuggestions }
+				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
-				selectedSite={ this.props.selectedSite }
-				showSkipButton={ this.props.showSkipButton }
-				onSkip={ this.handleSkip }
 			/>
 		);
 	};
@@ -537,8 +519,6 @@ class DomainsStep extends React.Component {
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
-				headerText={ this.props.headerText }
-				subHeaderText={ this.props.subHeaderText }
 				fallbackHeaderText={ translate( 'Give your site an address.' ) }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={
@@ -586,7 +566,7 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	state => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 
@@ -600,7 +580,6 @@ export default connect(
 			productsLoaded,
 			siteGoals: getSiteGoals( state ),
 			surveyVertical: getSurveyVertical( state ),
-			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 		};
 	},
 	{

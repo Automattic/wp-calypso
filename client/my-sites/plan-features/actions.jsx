@@ -34,7 +34,6 @@ const PlanFeaturesActions = ( {
 	isPlaceholder = false,
 	isPopular,
 	isInSignup,
-	isLaunchPage,
 	onUpgradeClick = noop,
 	planName,
 	planType,
@@ -70,23 +69,7 @@ const PlanFeaturesActions = ( {
 		if ( isLandingPage ) {
 			buttonText = translate( 'Select', { context: 'button' } );
 		}
-		if ( isLaunchPage ) {
-			if ( freePlan ) {
-				buttonText = translate( 'Keep this plan', {
-					comment:
-						'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-				} );
-			} else {
-				buttonText = translate( 'Select %(plan)s', {
-					args: {
-						plan: planName,
-					},
-					context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
-					comment:
-						'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-				} );
-			}
-		} else if ( isInSignup ) {
+		if ( isInSignup ) {
 			buttonText = translate( 'Start with %(plan)s', {
 				args: {
 					plan: planName,
@@ -144,7 +127,6 @@ PlanFeaturesActions.propTypes = {
 	freePlan: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
-	isLaunchPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	planType: PropTypes.string,
 	primaryUpgrade: PropTypes.bool,

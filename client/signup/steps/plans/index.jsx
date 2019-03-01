@@ -118,7 +118,6 @@ export class PlansStep extends Component {
 			disableBloggerPlanWithNonBlogDomain,
 			hideFreePlan,
 			isDomainOnly,
-			isLaunchPage,
 			selectedSite,
 		} = this.props;
 
@@ -130,7 +129,6 @@ export class PlansStep extends Component {
 					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
-					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
 					displayJetpackPlans={ false }
@@ -152,15 +150,12 @@ export class PlansStep extends Component {
 	plansFeaturesSelection = () => {
 		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
-		let headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
+		let headerText = translate( "Pick a plan that's right for you." );
 
 		//Temporary header for onboarding-dev flow
 		if ( 'onboarding-dev' === flowName ) {
 			headerText = translate( 'Pick your plan' );
 		}
-
-		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
-		const subHeaderText = this.props.subHeaderText;
 
 		return (
 			<StepWrapper
@@ -168,8 +163,7 @@ export class PlansStep extends Component {
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
-				fallbackHeaderText={ fallbackHeaderText }
-				subHeaderText={ subHeaderText }
+				fallbackHeaderText={ headerText }
 				signupProgress={ signupProgress }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
