@@ -31,6 +31,7 @@
 		"access": "public"
 	},
 	"scripts": {
-		"build": "node bin/build-custom-properties-css.js"
+		"build": "node bin/build-custom-properties-css.js",
+		"postinstall": "node bin/postinstall.js"
 	}
 }
