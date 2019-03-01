@@ -24,7 +24,9 @@
 	},
 	"main": "dist/custom-properties.css",
 	"dependencies": {
-		"color-studio": "github:automattic/color-studio#1.0.1",
+		"color-studio": "github:automattic/color-studio#1.0.1"
+	},
+	"devDependencies": {
 		"node-sass": "^4.11.0"
 	},
 	"publishConfig": {
