@@ -19,6 +19,12 @@ export function generateSteps( {
 	createSiteWithCart = noop,
 	currentPage = noop,
 	setThemeOnSite = noop,
+	addDomainToCart = noop,
+	launchSiteApi = noop,
+	isPlanFulfilled = noop,
+	isDomainFulfilled = noop,
+	isSiteTypeFulfilled = noop,
+	isSiteTopicFulfilled = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -76,6 +82,21 @@ export function generateSteps( {
 			props: {
 				headerText: i18n.translate( 'Choose a theme for your new site.' ),
 			},
+		},
+
+		'domains-launch': {
+			stepName: 'domains-launch',
+			apiRequestFunction: addDomainToCart,
+			fulfilledStepCallback: isDomainFulfilled,
+			providesDependencies: [ 'domainItem' ],
+			props: {
+				isDomainOnly: true,
+				showExampleSuggestions: false,
+				showSkipButton: true,
+				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
+				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
+			},
+			dependencies: [ 'siteSlug' ],
 		},
 
 		'plans-site-selected': {
@@ -146,6 +167,20 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
+		},
+
+		'plans-launch': {
+			stepName: 'plans-launch',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				headerText: i18n.translate( 'Getting ready to launch your website' ),
+				subHeaderText: i18n.translate( "Pick a plan that's right for you." ),
+				fallbackHeaderText: i18n.translate( "Almost there, pick a plan that's right for you." ),
+				isLaunchPage: true,
+			},
 		},
 
 		'plans-store-nux': {
@@ -373,11 +408,13 @@ export function generateSteps( {
 		'site-type': {
 			stepName: 'site-type',
 			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
 		'site-topic': {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic' ],
+			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
 		'site-information': {
@@ -446,6 +483,7 @@ export function generateSteps( {
 		'site-topic-with-preview': {
 			stepName: 'site-topic-with-preview',
 			providesDependencies: [ 'siteTopic' ],
+			fulfilledStepCallback: isSiteTopicFulfilled,
 			props: {
 				showSiteMockups: true,
 			},
@@ -509,6 +547,12 @@ export function generateSteps( {
 			},
 			dependencies: [ 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
+		},
+
+		launch: {
+			stepName: 'launch',
+			apiRequestFunction: launchSiteApi,
+			dependencies: [ 'siteSlug' ],
 		},
 	};
 }
