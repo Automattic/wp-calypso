@@ -19,12 +19,13 @@ import { type as domainTypes } from 'lib/domains/constants';
  */
 function getEligibleEmailForwardingDomain( selectedDomainName, domains = [] ) {
 	const eligibleDomains = getEmailForwardingSupportedDomains( domains );
+	let domainName;
 	if ( selectedDomainName ) {
 		eligibleDomains.forEach( function( domain ) {
-			return domain.name === selectedDomainName && selectedDomainName;
+			domainName = domain.name === selectedDomainName && selectedDomainName;
 		} );
 	}
-	return ( eligibleDomains.length && eligibleDomains[ 0 ].name ) || '';
+	return domainName || ( eligibleDomains.length && eligibleDomains[ 0 ].name ) || '';
 }
 
 /**
