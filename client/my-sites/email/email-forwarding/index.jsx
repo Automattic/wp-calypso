@@ -25,6 +25,11 @@ import getEmailForwards from 'state/selectors/get-email-forwards';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryEmailForwards from 'components/data/query-email-forwards';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EmailForwarding extends Component {
 	static propTypes = {
 		emailForwards: PropTypes.array,
