@@ -329,17 +329,6 @@ class SignupForm extends Component {
 
 	handleBlur = () => {
 		const data = this.getUserData();
-		// When a user moves away from the signup form without having entered
-		// anything do not show error messages, think going to click log in.
-		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
-			return;
-		}
-		this.formStateController.sanitize();
-		this.formStateController.validate();
-		this.props.save && this.props.save( this.state.form );
-	};
-
-	handleFocus = event => {
 		const fieldId = event.target.id;
 		// Ensure that username and password field validation does not trigger prematurely
 		if ( fieldId === 'password' ) {
@@ -348,6 +337,14 @@ class SignupForm extends Component {
 		if ( fieldId === 'username' ) {
 			this.setState( { focusUsername: true } );
 		}
+		// When a user moves away from the signup form without having entered
+		// anything do not show error messages, think going to click log in.
+		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
+			return;
+		}
+		this.formStateController.sanitize();
+		this.formStateController.validate();
+		this.props.save && this.props.save( this.state.form );
 	};
 
 	handleSubmit = event => {
@@ -561,7 +558,6 @@ class SignupForm extends Component {
 							isError={ formState.isFieldInvalid( this.state.form, 'username' ) }
 							isValid={ formState.isFieldValid( this.state.form, 'username' ) }
 							onBlur={ this.handleBlur }
-							onFocus={ this.handleFocus }
 							onChange={ this.handleChangeEvent }
 						/>
 
@@ -581,7 +577,6 @@ class SignupForm extends Component {
 					isError={ formState.isFieldInvalid( this.state.form, 'password' ) }
 					isValid={ formState.isFieldValid( this.state.form, 'password' ) }
 					onBlur={ this.handleBlur }
-					onFocus={ this.handleFocus }
 					onChange={ this.handleChangeEvent }
 					submitting={ this.state.submitting || this.props.submitting }
 				/>
