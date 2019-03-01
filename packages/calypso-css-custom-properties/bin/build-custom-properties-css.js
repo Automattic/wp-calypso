@@ -1,10 +1,14 @@
-const { dirname } = require( 'path' );
-const { mkdirSync, writeFileSync } = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
+/* eslint-disable import/no-nodejs-modules */
+const { dirname, join } = require( 'path' );
+const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 const { renderSync } = require( 'node-sass' );
 
-const INPUT_FILE = 'src/custom-properties.scss';
-const OUTPUT_FILE = 'dist/custom-properties.css';
+const INPUT_FILE = join( __dirname, '..', 'src', 'custom-properties.scss' );
+const OUTPUT_FILE = join( __dirname, '..', 'dist', 'custom-properties.css' );
+
+if ( ! existsSync( dirname( OUTPUT_FILE ) ) ) {
+	mkdirSync( dirname( OUTPUT_FILE ), { recursive: true } );
+}
 
 const output = renderSync( { file: INPUT_FILE } );
-mkdirSync( dirname( OUTPUT_FILE ), { recursive: true } ); // Make sure output dir exists
 writeFileSync( OUTPUT_FILE, output.css );

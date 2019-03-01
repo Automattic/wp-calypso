@@ -1,15 +1,12 @@
 /* eslint-disable import/no-nodejs-modules */
-const fs = require( 'fs' );
-const path = require( 'path' );
+const { dirname, join } = require( 'path' );
+const { copyFileSync, existsSync, mkdirSync } = require( 'fs' );
 
 const srcFile = 'color-variables.scss';
-const targetDir = path.join( __dirname, '..', 'src', '__color-studio' );
+const target = join( __dirname, '..', 'src', '__color-studio', srcFile );
 
-if ( ! fs.existsSync( targetDir ) ) {
-	fs.mkdirSync( targetDir );
+if ( ! existsSync( dirname( target ) ) ) {
+	mkdirSync( dirname( target ), { recursive: true } );
 }
 
-fs.copyFileSync(
-	require.resolve( 'color-studio/dist/' + srcFile ),
-	path.join( targetDir, srcFile )
-);
+copyFileSync( require.resolve( 'color-studio/dist/' + srcFile ), join( target ) );
