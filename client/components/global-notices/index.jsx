@@ -18,6 +18,11 @@ import { connect } from 'react-redux';
 import { getNotices } from 'state/notices/selectors';
 import { removeNotice } from 'state/notices/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 // eslint-disable-next-line react/prefer-es6-class
 export const GlobalNotices = createReactClass( {
 	displayName: 'GlobalNotices',
