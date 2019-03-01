@@ -74,17 +74,27 @@ describe( 'viewport', () => {
 		} );
 	} );
 
-	describe( 'addWithinBreakpointListener', () => {
+	describe( 'subscribeIsWithinBreakpoint', () => {
 		test( 'should do nothing if nothing is provided', () => {
-			expect( () => viewport.addWithinBreakpointListener() ).not.toThrow();
+			let unsubscribe;
+			expect( () => ( unsubscribe = viewport.subscribeIsWithinBreakpoint() ) ).not.toThrow();
+			expect( () => unsubscribe() ).not.toThrow();
 			expect( addListenerMock ).not.toHaveBeenCalled();
 		} );
 		test( 'should do nothing if an invalid breakpoint is provided', () => {
-			expect( () => viewport.addWithinBreakpointListener( 'unknown', () => '' ) ).not.toThrow();
+			let unsubscribe;
+			expect(
+				() => ( unsubscribe = viewport.subscribeIsWithinBreakpoint( 'unknown', () => '' ) )
+			).not.toThrow();
+			expect( () => unsubscribe() ).not.toThrow();
 			expect( addListenerMock ).not.toHaveBeenCalled();
 		} );
 		test( 'should do nothing if no listener is provided', () => {
-			expect( () => viewport.addWithinBreakpointListener( '<960px' ) ).not.toThrow();
+			let unsubscribe;
+			expect(
+				() => ( unsubscribe = viewport.subscribeIsWithinBreakpoint( '<960px' ) )
+			).not.toThrow();
+			expect( () => unsubscribe() ).not.toThrow();
 			expect( addListenerMock ).not.toHaveBeenCalled();
 		} );
 		test( 'should add a listener for a valid breakpoint', () => {
@@ -92,7 +102,7 @@ describe( 'viewport', () => {
 			const event = { matches: 'bar' };
 			let unsubscribe;
 			expect(
-				() => ( unsubscribe = viewport.addWithinBreakpointListener( '<960px', listener ) )
+				() => ( unsubscribe = viewport.subscribeIsWithinBreakpoint( '<960px', listener ) )
 			).not.toThrow();
 			expect( addListenerMock ).toHaveBeenCalledTimes( 1 );
 			expect( addListenerMock ).toHaveBeenCalledWith(
@@ -112,16 +122,16 @@ describe( 'viewport', () => {
 		} );
 	} );
 
-	describe( 'addIsMobileListener', () => {
+	describe( 'subscribeIsMobile', () => {
 		test( 'should do nothing if nothing is provided', () => {
-			expect( () => viewport.addIsMobileListener() ).not.toThrow();
+			expect( () => viewport.subscribeIsMobile() ).not.toThrow();
 			expect( addListenerMock ).not.toHaveBeenCalled();
 		} );
 		test( 'should add a listener', () => {
 			const listener = jest.fn();
 			const event = { matches: 'bar' };
 			let unsubscribe;
-			expect( () => ( unsubscribe = viewport.addIsMobileListener( listener ) ) ).not.toThrow();
+			expect( () => ( unsubscribe = viewport.subscribeIsMobile( listener ) ) ).not.toThrow();
 			expect( addListenerMock ).toHaveBeenCalledTimes( 1 );
 			expect( addListenerMock ).toHaveBeenCalledWith(
 				'(max-width: 480px)',
@@ -140,16 +150,16 @@ describe( 'viewport', () => {
 		} );
 	} );
 
-	describe( 'addIsDesktopListener', () => {
+	describe( 'subscribeIsDesktop', () => {
 		test( 'should do nothing if nothing is provided', () => {
-			expect( () => viewport.addIsDesktopListener() ).not.toThrow();
+			expect( () => viewport.subscribeIsDesktop() ).not.toThrow();
 			expect( addListenerMock ).not.toHaveBeenCalled();
 		} );
 		test( 'should add a listener', () => {
 			const listener = jest.fn();
 			const event = { matches: 'bar' };
 			let unsubscribe;
-			expect( () => ( unsubscribe = viewport.addIsDesktopListener( listener ) ) ).not.toThrow();
+			expect( () => ( unsubscribe = viewport.subscribeIsDesktop( listener ) ) ).not.toThrow();
 			expect( addListenerMock ).toHaveBeenCalledTimes( 1 );
 			expect( addListenerMock ).toHaveBeenCalledWith(
 				'(min-width: 961px)',

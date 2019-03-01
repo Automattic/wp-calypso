@@ -10,7 +10,7 @@ import { camelCase, upperFirst } from 'lodash';
  */
 import {
 	isWithinBreakpoint,
-	addWithinBreakpointListener,
+	subscribeIsWithinBreakpoint,
 	MOBILE_BREAKPOINT,
 	DESKTOP_BREAKPOINT,
 } from './index';
@@ -30,13 +30,9 @@ export function useBreakpoint( breakpoint ) {
 	}
 
 	useEffect(() => {
-		const unsubscribe = addWithinBreakpointListener( breakpoint, handleBreakpointChange );
-
-		return function cleanup() {
-			if ( unsubscribe ) {
-				unsubscribe();
-			}
-		};
+		const unsubscribe = subscribeIsWithinBreakpoint( breakpoint, handleBreakpointChange );
+		// The unsubscribe function is the entire cleanup for the effect.
+		return unsubscribe;
 	}, [ breakpoint ]);
 
 	return isActive;

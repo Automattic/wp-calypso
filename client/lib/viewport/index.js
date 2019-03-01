@@ -46,6 +46,8 @@ export const DESKTOP_BREAKPOINT = '>960px';
 
 const isServer = typeof window === 'undefined' || ! window.matchMedia;
 
+const noop = () => null;
+
 function createMediaQueryList( { min, max } = {} ) {
 	if ( min !== undefined && max !== undefined ) {
 		return isServer
@@ -118,9 +120,9 @@ export function isWithinBreakpoint( breakpoint ) {
  *
  * @returns {Function} The function to be called when unsubscribing.
  */
-export function addWithinBreakpointListener( breakpoint, listener ) {
+export function subscribeIsWithinBreakpoint( breakpoint, listener ) {
 	if ( ! listener ) {
-		return;
+		return noop;
 	}
 
 	const mediaQueryList = getMediaQueryList( breakpoint );
@@ -132,7 +134,7 @@ export function addWithinBreakpointListener( breakpoint, listener ) {
 		return () => mediaQueryList.removeListener( wrappedListener );
 	}
 
-	return undefined;
+	return noop;
 }
 
 /**
@@ -150,8 +152,8 @@ export function isMobile() {
  *
  * @returns {Function} The registered subscription; undefined if none.
  */
-export function addIsMobileListener( listener ) {
-	return addWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
+export function subscribeIsMobile( listener ) {
+	return subscribeIsWithinBreakpoint( MOBILE_BREAKPOINT, listener );
 }
 
 /**
@@ -169,8 +171,8 @@ export function isDesktop() {
  *
  * @returns {Function} The registered subscription; undefined if none.
  */
-export function addIsDesktopListener( listener ) {
-	return addWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
+export function subscribeIsDesktop( listener ) {
+	return subscribeIsWithinBreakpoint( DESKTOP_BREAKPOINT, listener );
 }
 
 /**

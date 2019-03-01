@@ -86,9 +86,9 @@ export default withMobileBreakpoint( MyComponent );
 - `isWithinBreakpoint( breakpoint )`: Whether the current screen size matches the breakpoint.
 - `isMobile()`: Whether the current screen size matches a mobile breakpoint (<480px).
 - `isDesktop()`: Whether the current screen size matches a desktop breakpoint (>960px).
-- `addWithinBreakpointListener( breakpoint, listener )`: Register a listener for size changes that affect the breakpoint. Returns the unsubscribe function.
-- `addIsMobileListener( listener )`: Register a listener for size changes that affect the mobile breakpoint (<480px). Returns the unsubscribe function.
-- `addIsDesktopListener( listener )`: Register a listener for size changes that affect the desktop breakpoint (>960px). Returns the unsubscribe function.
+- `subscribeIsWithinBreakpoint( breakpoint, listener )`: Register a listener for size changes that affect the breakpoint. Returns the unsubscribe function.
+- `subscribeIsMobile( listener )`: Register a listener for size changes that affect the mobile breakpoint (<480px). Returns the unsubscribe function.
+- `subscribeIsDesktop( listener )`: Register a listener for size changes that affect the desktop breakpoint (>960px). Returns the unsubscribe function.
 - `getWindowInnerWidth()`: Get the inner width for the browser window. **Warning**: This method triggers a layout recalc, potentially resulting in performance issues. Please use a breakpoint instead wherever possible.
 
 ### Supported hooks
