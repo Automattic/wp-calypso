@@ -23,7 +23,7 @@ import {
  * @returns {Boolean} The current status for the breakpoint.
  */
 export function useBreakpoint( breakpoint ) {
-	const [ isActive, setIsActive ] = useState( isWithinBreakpoint( breakpoint ) );
+	const [ isActive, setIsActive ] = useState( () => isWithinBreakpoint( breakpoint ) );
 
 	function handleBreakpointChange( currentStatus ) {
 		setIsActive( currentStatus );
@@ -37,7 +37,7 @@ export function useBreakpoint( breakpoint ) {
 				unsubscribe();
 			}
 		};
-	}, []);
+	}, [ breakpoint ]);
 
 	return isActive;
 }
