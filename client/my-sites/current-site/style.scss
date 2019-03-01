@@ -76,10 +76,11 @@
 	}
 
 	&:hover {
-		background-color: var( --sidebar-background );
+		background-color: var( --sidebar-menu-hover-background );
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
+			background-color: var( --sidebar-menu-hover-background );
 			color: var( --sidebar-menu-hover-color );
 
 			.gridicon {
