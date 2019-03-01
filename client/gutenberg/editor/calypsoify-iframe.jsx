@@ -137,7 +137,11 @@ class CalypsoifyIframe extends Component {
 	loadRevision = revision => {
 		this.iframePort.postMessage( {
 			action: 'loadRevision',
-			payload: revision,
+			payload: {
+				title: revision.post_title,
+				excerpt: revision.post_excerpt,
+				content: revision.post_content,
+			},
 		} );
 	};
 
