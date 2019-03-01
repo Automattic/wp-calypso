@@ -61,22 +61,6 @@ const EVENTS = {
 				} );
 			},
 		},
-
-		emailForwarding: {
-			learnMoreClick( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Learn more" link in Email Forwarding',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_email_forwarding_learn_more_click',
-					{ domain_name: domainName }
-				);
-			},
-		},
 	},
 };
 
