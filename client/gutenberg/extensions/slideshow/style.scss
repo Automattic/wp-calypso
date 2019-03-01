@@ -133,10 +133,8 @@ $break-small: 600px;
 		}
 	}
 	
-	.swiper-container-fade .wp-block-jetpack-slideshow_slide {
-		.wp-block-jetpack-slideshow_caption.gallery-caption {
-			max-height: calc( 100% - 68px );
-		}
+	&[data-autoplay='true'] .wp-block-jetpack-slideshow_caption.gallery-caption {
+		max-height: calc( 100% - 68px );
 	}
 
 	.wp-block-jetpack-slideshow_pagination.swiper-pagination-bullets {
