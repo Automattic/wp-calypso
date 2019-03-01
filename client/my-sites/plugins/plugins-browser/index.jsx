@@ -48,6 +48,7 @@ import Banner from 'components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 import { abtest } from 'lib/abtest';
+import QuerySiteRecommendedPlugins from 'components/data/query-site-recommended-plugins';
 
 /**
  * Style dependencies
@@ -574,6 +575,7 @@ export class PluginsBrowser extends Component {
 
 		return (
 			<MainComponent wideLayout>
+				{ abtest( 'pluginRecommendations' ) === 'recommended' && <QuerySiteRecommendedPlugins /> }
 				{ this.renderPageViewTracker() }
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
