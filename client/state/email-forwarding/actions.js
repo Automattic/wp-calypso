@@ -18,7 +18,10 @@ import {
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE,
 } from 'state/action-types';
 
-import 'state/data-layer/wpcom/email-forwarding';
+import 'state/data-layer/wpcom/email-forwarding/add';
+import 'state/data-layer/wpcom/email-forwarding/get';
+import 'state/data-layer/wpcom/email-forwarding/remove';
+import 'state/data-layer/wpcom/email-forwarding/resend-email-verification';
 
 export const getEmailForwards = domainName => {
 	return {
