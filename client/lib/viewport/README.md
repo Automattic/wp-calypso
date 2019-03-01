@@ -99,9 +99,9 @@ export default withMobileBreakpoint( MyComponent );
 
 ### Supported higher-order components
 
-- `withBreakpoint( WrappedComponent, breakpoint )`: Returns a wrapped component with the current status for a breakpoint as the `isBreakpointActive` prop.
-- `useMobileBreakpoint( WrappedComponent )`: Returns a wrapped component with the current status for the mobile breakpoint as the `isBreakpointActive` prop.
-- `useDesktopBreakpoint( WrappedComponent )`: Returns a wrapped component with the current status for the desktop breakpoint as the `isBreakpointActive` prop.
+- `withBreakpoint( breakpoint )( WrappedComponent )`: Returns a wrapped component with the current status for a breakpoint as the `isBreakpointActive` prop.
+- `withMobileBreakpoint( WrappedComponent )`: Returns a wrapped component with the current status for the mobile breakpoint as the `isBreakpointActive` prop.
+- `withDesktopBreakpoint( WrappedComponent )`: Returns a wrapped component with the current status for the desktop breakpoint as the `isBreakpointActive` prop.
 
 ### Supported breakpoints
 

@@ -177,7 +177,7 @@ describe( 'viewport/react-helpers', () => {
 		}
 
 		test( 'returns undefined when called with no breakpoint', () => {
-			const TestComponent = helpers.withBreakpoint( ExpectUndefinedComponent );
+			const TestComponent = helpers.withBreakpoint()( ExpectUndefinedComponent );
 
 			act( () => {
 				ReactDOM.render( <TestComponent />, container );
@@ -187,7 +187,7 @@ describe( 'viewport/react-helpers', () => {
 		} );
 
 		test( 'returns undefined for an unknown breakpoint', () => {
-			const TestComponent = helpers.withBreakpoint( ExpectUndefinedComponent, 'unknown' );
+			const TestComponent = helpers.withBreakpoint( 'unknown' )( ExpectUndefinedComponent );
 
 			act( () => {
 				ReactDOM.render( <TestComponent />, container );
@@ -197,7 +197,7 @@ describe( 'viewport/react-helpers', () => {
 		} );
 
 		test( 'returns the current breakpoint state for a valid breakpoint', () => {
-			const TestComponent = helpers.withBreakpoint( BaseComponent, '<960px' );
+			const TestComponent = helpers.withBreakpoint( '<960px' )( BaseComponent );
 			runComponentTests( TestComponent, '(max-width: 960px)' );
 		} );
 	} );
