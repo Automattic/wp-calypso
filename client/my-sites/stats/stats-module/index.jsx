@@ -34,6 +34,11 @@ import {
 } from 'state/stats/lists/selectors';
 import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsModule extends Component {
 	static propTypes = {
 		summary: PropTypes.bool,

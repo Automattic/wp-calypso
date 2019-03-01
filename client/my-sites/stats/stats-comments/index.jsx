@@ -31,6 +31,11 @@ import {
 } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsComments extends Component {
 	static propTypes = {
 		commentsStatsData: PropTypes.object,

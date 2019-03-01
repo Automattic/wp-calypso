@@ -19,6 +19,11 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsSiteOverview extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,

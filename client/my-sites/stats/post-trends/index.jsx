@@ -23,6 +23,11 @@ import { getSiteOption } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteStatsPostStreakData } from 'state/stats/lists/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PostTrends extends React.Component {
 	static displayName = 'PostTrends';
 

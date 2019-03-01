@@ -9,6 +9,11 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsError extends React.PureComponent {
 	static displayName = 'StatsError';
 

@@ -28,6 +28,11 @@ import { getPostStat } from 'state/stats/posts/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsPostPerformance extends Component {
 	static propTypes = {
 		viewCount: PropTypes.number,
