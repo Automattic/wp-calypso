@@ -30,6 +30,12 @@ export function useBreakpoint( breakpoint ) {
 	}
 
 	useEffect(() => {
+		// Pick up changes to breakpoint, if any, and update state accordingly.
+		const currentStatus = isWithinBreakpoint( breakpoint );
+		if ( isActive !== currentStatus ) {
+			handleBreakpointChange( currentStatus );
+		}
+
 		const unsubscribe = subscribeIsWithinBreakpoint( breakpoint, handleBreakpointChange );
 		// The unsubscribe function is the entire cleanup for the effect.
 		return unsubscribe;

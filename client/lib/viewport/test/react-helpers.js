@@ -6,7 +6,7 @@
 /**
  * Internal dependencies
  */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
 
@@ -143,6 +143,56 @@ describe( 'viewport/react-helpers', () => {
 			}
 
 			runComponentTests( TestComponent, '(max-width: 960px)' );
+		} );
+
+		test( 'correctly updates if the breakpoint changes', () => {
+			let callback;
+
+			function TestComponent() {
+				const [ query, setQuery ] = useState( '<960px' );
+				const isActive = helpers.useBreakpoint( query );
+				const changeQuery = () => setQuery( '<480px' );
+
+				useEffect( () => {
+					callback = changeQuery;
+				} );
+
+				return isActive ? 'true' : 'false';
+			}
+
+			// Test initial state (defaults to true).
+			act( () => {
+				ReactDOM.render(
+					<div>
+						<TestComponent />
+					</div>,
+					container
+				);
+			} );
+
+			expect( container.textContent ).toBe( 'true' );
+
+			// Change to false.
+			act( () => {
+				callQueryListeners( '(max-width: 960px)', false );
+			} );
+
+			expect( container.textContent ).toBe( 'false' );
+
+			// Change breakpoint, defaulting back to true.
+			act( () => {
+				callback();
+			} );
+			expect( container.textContent ).toBe( 'true' );
+			expect( listeners[ '(max-width: 960px)' ].length ).toBe( 0 );
+			expect( listeners[ '(max-width: 480px)' ].length ).toBe( 1 );
+
+			// Ensure that listeners are cleaned up when the component unmounts.
+			act( () => {
+				ReactDOM.render( <div />, container );
+			} );
+
+			expect( listeners[ '(max-width: 480px)' ].length ).toBe( 0 );
 		} );
 	} );
 
