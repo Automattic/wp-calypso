@@ -26,10 +26,37 @@ export const getEmailForwardsFailure = ( action, error ) => {
 };
 
 export const getEmailForwardsSuccess = ( action, response ) => {
-	if ( response && response.forwards ) {
-		return receiveGetEmailForwardsSuccess( action.domainName, response.forwards );
+	if ( response && response.type ) {
+		switch ( response.type ) {
+			case 'forward':
+				return response.forwards
+					? receiveGetEmailForwardsSuccess( action.domainName, response )
+					: getEmailForwardsFailure( action, {
+							message: 'No forwards in `forward` type response',
+					  } );
+			case 'google-apps-another-provider':
+				return response.forwards
+					? receiveGetEmailForwardsSuccess( action.domainName, response )
+					: getEmailForwardsFailure( action, {
+							message: 'No forwards in `forward` type response',
+					  } );
+			case 'google-apps':
+				return response.forwards
+					? receiveGetEmailForwardsSuccess( action.domainName, response )
+					: getEmailForwardsFailure( action, {
+							message: 'No forwards in `forward` type response',
+					  } );
+			case 'custom':
+				return response.forwards
+					? receiveGetEmailForwardsSuccess( action.domainName, response )
+					: getEmailForwardsFailure( action, {
+							message: 'No forwards in `forward` type response',
+					  } );
+			default:
+				break;
+		}
 	}
-	return getEmailForwardsFailure( action, true );
+	return getEmailForwardsFailure( action, { message: 'No `type` in get forwards response.' } );
 };
 
 registerHandlers( 'state/data-layer/wpcom/email-forwarding/get/index.js', {

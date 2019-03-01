@@ -30,11 +30,11 @@ export const getEmailForwards = domainName => {
 	};
 };
 
-export const receiveGetEmailForwardsSuccess = ( domainName, forwards ) => {
+export const receiveGetEmailForwardsSuccess = ( domainName, response ) => {
 	return {
 		type: EMAIL_FORWARDING_REQUEST_SUCCESS,
 		domainName,
-		forwards,
+		response,
 	};
 };
 

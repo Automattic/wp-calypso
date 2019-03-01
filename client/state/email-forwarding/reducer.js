@@ -84,11 +84,26 @@ const changeMailBoxTemporary = temporary => ( forwards, { mailbox } ) => {
 	} );
 };
 
+export const type = createReducer( null, {
+	[ EMAIL_FORWARDING_REQUEST ]: () => null,
+	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => null,
+	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: ( state, { response: { type: localType } } ) =>
+		localType || null,
+} );
+
+export const mxServers = createReducer( null, {
+	[ EMAIL_FORWARDING_REQUEST ]: () => null,
+	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => null,
+	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: ( state, { response: { mx_servers } } ) => mx_servers || [],
+} );
+
 export const forwards = createReducer(
 	null,
 	{
 		[ EMAIL_FORWARDING_REQUEST ]: () => null,
-		[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: ( state, { forwards: newForwards } ) => newForwards,
+		[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => null,
+		[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: ( state, { response: { forwards: localForwards } } ) =>
+			localForwards || [],
 		[ EMAIL_FORWARDING_ADD_REQUEST ]: handleCreateRequest,
 		[ EMAIL_FORWARDING_ADD_REQUEST_SUCCESS ]: handleCreateRequestSuccess,
 		[ EMAIL_FORWARDING_ADD_REQUEST_FAILURE ]: handleCreateRequestFailure,
@@ -105,14 +120,16 @@ export const forwards = createReducer(
 export const requestError = createReducer( false, {
 	[ EMAIL_FORWARDING_REQUEST ]: () => false,
 	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: () => false,
-	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => true,
+	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: ( state, { message } ) => message || true,
 } );
 
 export default keyedReducer(
 	'domainName',
 	combineReducers( {
 		forwards,
+		mxServers,
 		requesting,
 		requestError,
+		type,
 	} )
 );
