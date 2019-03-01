@@ -109,10 +109,14 @@ $plan-features-sidebar-width: 272px;
 		margin: 0 15px;
 		width: calc( 100% - 30px );
 	}
+
+	.is-no-tabs & {
+		border-spacing: 0;
+	}
 }
 
-.is-no-tabs .plan-features__table {
-	border-spacing: 0;
+.signup .is-no-tabs .plans-features-main__scroll-container .plan-features__table {
+	border-spacing: 7px 0;
 }
 
 .plan-features__row {
@@ -776,7 +780,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		}
 
 		@include breakpoint( '>1040px' ) {
-			border-spacing: 15px 0 !important;
+			border-spacing: 15px 0;
 			padding: 0;
 		}
 	}
