@@ -139,5 +139,3 @@ describe( 'index', () => {
 		} );
 	} );
 } );
-
-// { googleAppsSubscription: { status: 'no_subscription' } }
