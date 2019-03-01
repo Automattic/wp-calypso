@@ -87,6 +87,9 @@ class CalypsoifyIframe extends Component {
 
 			//once the iframe is loaded and the port exchanged, we no longer need to listen for message
 			window.removeEventListener( 'message', this.onMessage, false );
+
+			// Check if we're generating a post via Press This
+			this.pressThis();
 		}
 	};
 
