@@ -191,6 +191,7 @@ class MailchimpSubscribeEdit extends Component {
 			<div className={ blockClasses }>
 				<TextControl
 					aria-label={ emailPlaceholder }
+					className="wp-block-jetpack-mailchimp_text-input"
 					disabled
 					onChange={ () => false }
 					placeholder={ emailPlaceholder }
