@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash';
 import { sprintf } from '@wordpress/i18n';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
@@ -45,10 +45,11 @@ class DayPreview extends Component {
 		return (
 			<Fragment>
 				<dt className={ day.name }>{ localization.days[ day.name ] }</dt>
-				{ isEmpty( hours ) ?
-					<dd>{ _x( 'Closed', 'business is closed on a full day' ) }</dd> :
+				{ isEmpty( hours ) ? (
+					<dd>{ _x( 'Closed', 'business is closed on a full day' ) }</dd>
+				) : (
 					hours.map( this.renderInterval )
-				}
+				) }
 			</Fragment>
 		);
 	}

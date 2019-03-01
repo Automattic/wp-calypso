@@ -18,13 +18,13 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const defaultLocalization = {
 	days: {
-		Sun: 'Sunday',
-		Mon: 'Monday',
-		Tue: 'Tuesday',
-		Wed: 'Wednesday',
-		Thu: 'Thursday',
-		Fri: 'Friday',
-		Sat: 'Saturday',
+		Sun: __( 'Sunday' ),
+		Mon: __( 'Monday' ),
+		Tue: __( 'Tuesday' ),
+		Wed: __( 'Wednesday' ),
+		Thu: __( 'Thursday' ),
+		Fri: __( 'Friday' ),
+		Sat: __( 'Saturday' ),
 	},
 	startOfWeek: 0,
 };
