@@ -150,7 +150,9 @@ class MailchimpSubscribeEdit extends Component {
 					</Button>
 					<br />
 					<br />
-					<Button onClick={ this.apiCall }>{ __( 'Re-check Connection' ) }</Button>
+					<Button isBorderless onClick={ this.apiCall }>
+						{ __( 'Re-check Connection' ) }
+					</Button>
 				</div>
 			</Placeholder>
 		);
