@@ -126,7 +126,13 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
+		const {
+			displayJetpackPlans,
+			intervalType,
+			selectedPlan,
+			hideFreePlan,
+			plansWithScroll,
+		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
 
@@ -171,7 +177,7 @@ export class PlansFeaturesMain extends Component {
 			];
 		}
 
-		if ( hideFreePlan ) {
+		if ( hideFreePlan || plansWithScroll ) {
 			plans.shift();
 		}
 
