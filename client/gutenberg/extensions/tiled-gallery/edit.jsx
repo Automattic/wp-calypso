@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { Component, Fragment } from '@wordpress/element';
+import { compose } from '@wordpress/compose';
 import { filter, get, pick } from 'lodash';
 import {
 	BlockControls,
@@ -20,6 +21,8 @@ import {
 	Toolbar,
 	withNotices,
 } from '@wordpress/components';
+import { isBlobURL } from '@wordpress/blob';
+import { withDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -91,13 +94,18 @@ class TiledGalleryEdit extends Component {
 
 	addFiles = files => {
 		const currentImages = this.props.attributes.images || [];
-		const { noticeOperations } = this.props;
+		const { lockPostSaving, unlockPostSaving, noticeOperations } = this.props;
+		const lockName = 'tiledGalleryBlockLock';
+		lockPostSaving( lockName );
 		mediaUpload( {
 			allowedTypes: ALLOWED_MEDIA_TYPES,
 			filesList: files,
 			onFileChange: images => {
 				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
 				this.setAttributes( { images: currentImages.concat( imagesNormalized ) } );
+				if ( ! imagesNormalized.every( image => isBlobURL( image.url ) ) ) {
+					unlockPostSaving( lockName );
+				}
 			},
 			onError: noticeOperations.createErrorNotice,
 		} );
@@ -266,4 +274,13 @@ class TiledGalleryEdit extends Component {
 	}
 }
 
-export default withNotices( TiledGalleryEdit );
+export default compose(
+	withDispatch( dispatch => {
+		const { lockPostSaving, unlockPostSaving } = dispatch( 'core/editor' );
+		return {
+			lockPostSaving,
+			unlockPostSaving,
+		};
+	} ),
+	withNotices
+)( TiledGalleryEdit );
