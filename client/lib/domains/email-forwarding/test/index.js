@@ -26,6 +26,12 @@ describe( 'index', () => {
 			expect(
 				getEligibleEmailForwardingDomain( 'foobar.blog', [
 					{
+						name: 'foobar2.blog',
+						type: 'REGISTERED',
+						hasWpcomNameservers: true,
+						googleAppsSubscription: { status: 'no_subscription' },
+					},
+					{
 						name: 'foobar.blog',
 						type: 'REGISTERED',
 						hasWpcomNameservers: true,
