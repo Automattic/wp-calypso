@@ -6,7 +6,12 @@ import { date } from '@wordpress/date';
 import { isEmpty } from 'lodash';
 import { sprintf } from '@wordpress/i18n';
 
-class DaySave extends Component {
+/**
+ * Internal Dependencies
+ */
+import { _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+
+class DayPreview extends Component {
 	formatTime( time ) {
 		const { timeFormat } = this.props;
 		const [ hours, minutes ] = time.split( ':' );
@@ -20,12 +25,10 @@ class DaySave extends Component {
 	}
 
 	renderInterval = ( interval, key ) => {
-		const { intervalText } = this.props;
-
 		return (
 			<dd key={ key }>
 				{ sprintf(
-					intervalText, // 'From %s to %s'
+					_x( 'From %s to %s', 'from business opening hour to closing hour' ),
 					this.formatTime( interval.opening ),
 					this.formatTime( interval.closing )
 				) }
@@ -34,7 +37,7 @@ class DaySave extends Component {
 	};
 
 	render() {
-		const { closedText, day, localization } = this.props;
+		const { day, localization } = this.props;
 		const hours = day.hours.filter(
 			// remove any malformed or empty intervals
 			interval => this.formatTime( interval.opening ) && this.formatTime( interval.closing )
@@ -42,10 +45,13 @@ class DaySave extends Component {
 		return (
 			<Fragment>
 				<dt className={ day.name }>{ localization.days[ day.name ] }</dt>
-				{ isEmpty( hours ) ? <dd>{ closedText }</dd> : hours.map( this.renderInterval ) }
+				{ isEmpty( hours ) ?
+					<dd>{ _x( 'Closed', 'business is closed on a full day' ) }</dd> :
+					hours.map( this.renderInterval )
+				}
 			</Fragment>
 		);
 	}
 }
 
-export default DaySave;
+export default DayPreview;

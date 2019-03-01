@@ -11,10 +11,10 @@ import { __experimentalGetSettings } from '@wordpress/date';
 /**
  * Internal dependencies
  */
-import Day from 'gutenberg/extensions/business-hours/components/day';
-import DaySave from 'gutenberg/extensions/business-hours/components/day-save';
+import DayEdit from 'gutenberg/extensions/business-hours/components/day-edit';
+import DayPreview from 'gutenberg/extensions/business-hours/components/day-preview';
 import { icon } from 'gutenberg/extensions/business-hours/index';
-import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const defaultLocalization = {
 	days: {
@@ -28,7 +28,6 @@ const defaultLocalization = {
 	},
 	startOfWeek: 0,
 };
-const defaultTimeFormat = 'g:i';
 
 class BusinessHours extends Component {
 	state = {
@@ -54,30 +53,11 @@ class BusinessHours extends Component {
 	}
 
 	render() {
-		const { attributes, className, isEdit, isSelected } = this.props;
+		const { attributes, className, isSelected } = this.props;
 		const { days } = attributes;
 		const { localization, hasFetched } = this.state;
 		const { startOfWeek } = localization;
 		const localizedWeek = days.concat( days.slice( 0, startOfWeek ) ).slice( startOfWeek );
-
-		if ( ! isEdit ) {
-			return (
-				<dl className={ classNames( className, 'jetpack-business-hours' ) }>
-					{ localizedWeek.map( ( day, key ) => {
-						return (
-							<DaySave
-								key={ key }
-								day={ day }
-								localization={ defaultLocalization }
-								timeFormat={ defaultTimeFormat }
-								intervalText="From %s to %s"
-								closedText="Closed"
-							/>
-						);
-					} ) }
-				</dl>
-			);
-		}
 
 		if ( ! hasFetched ) {
 			return (
@@ -89,8 +69,6 @@ class BusinessHours extends Component {
 		}
 
 		if ( ! isSelected ) {
-			// Render a preview of the block within the post editor.
-			// The preview will be localized.
 			const settings = __experimentalGetSettings();
 			const {
 				formats: { time },
@@ -99,13 +77,11 @@ class BusinessHours extends Component {
 				<dl className={ classNames( className, 'jetpack-business-hours' ) }>
 					{ localizedWeek.map( ( day, key ) => {
 						return (
-							<DaySave
+							<DayPreview
 								key={ key }
 								day={ day }
 								localization={ localization }
 								timeFormat={ time }
-								intervalText={ _x( 'From %s to %s', 'from business opening hour to closing hour' ) }
-								closedText={ _x( 'Closed', 'business is closed on a full day' ) }
 							/>
 						);
 					} ) }
@@ -116,7 +92,9 @@ class BusinessHours extends Component {
 		return (
 			<div className={ classNames( className, 'is-edit' ) }>
 				{ localizedWeek.map( ( day, key ) => {
-					return <Day key={ key } day={ day } localization={ localization } { ...this.props } />;
+					return (
+						<DayEdit key={ key } day={ day } localization={ localization } { ...this.props } />
+					);
 				} ) }
 			</div>
 		);
