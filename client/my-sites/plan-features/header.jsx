@@ -245,7 +245,7 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const { currencyCode, isInSignup } = this.props;
+		const { currencyCode, isInSignup, plansWithScroll } = this.props;
 
 		if ( fullPrice && discountedPrice ) {
 			return (
@@ -264,7 +264,7 @@ export class PlanFeaturesHeader extends Component {
 							discounted
 						/>
 					</div>
-					{ this.renderCreditLabel() }
+					{ plansWithScroll ? null : this.renderCreditLabel() }
 				</span>
 			);
 		}
