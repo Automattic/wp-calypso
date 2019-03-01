@@ -335,7 +335,7 @@ let isNanigansConfigured = false;
 function setupNanigansGlobal() {
 	isNanigansConfigured = true;
 
-	const normalizedHashedEmail = getNormalizedHashedUserEamil();
+	const normalizedHashedEmail = getNormalizedHashedUserEamil( user );
 
 	window.NaN_api = [
 		[ TRACKING_IDS.nanigansAppId, normalizedHashedEmail ? hashPii( normalizedHashedEmail ) : '' ],
@@ -444,7 +444,7 @@ async function loadTrackingScripts( callback ) {
 
 	// init Pinterest
 	if ( isPinterestEnabled ) {
-		const normalizedHashedEmail = getNormalizedHashedUserEamil();
+		const normalizedHashedEmail = getNormalizedHashedUserEamil( user );
 		const params = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
 		window.pintrk( 'load', '2612678247224', params );
 	}
@@ -1824,7 +1824,7 @@ function recordInCriteo( eventName, eventProps ) {
 	events.push( { event: 'setAccount', account: TRACKING_IDS.criteo } );
 	events.push( { event: 'setSiteType', type: criteoSiteType() } );
 
-	const normalizedHashedEmail = getNormalizedHashedUserEamil();
+	const normalizedHashedEmail = getNormalizedHashedUserEamil( user );
 	if ( normalizedHashedEmail ) {
 		events.push( { event: 'setEmail', email: [ normalizedHashedEmail ] } );
 	}
@@ -1992,7 +1992,7 @@ function initFacebook() {
  * See https://developers.facebook.com/docs/facebook-pixel/pixel-with-ads/conversion-tracking#advanced_match
  */
 function initFacebookAdvancedMatching() {
-	const normalizedHashedEmail = getNormalizedHashedUserEamil();
+	const normalizedHashedEmail = getNormalizedHashedUserEamil( user );
 	const advancedMatching = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
 
 	debug( 'initFacebookAdvancedMatching:', advancedMatching );
