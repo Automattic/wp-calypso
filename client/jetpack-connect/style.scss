@@ -65,6 +65,15 @@ $colophon-height: 50px;
 			color: var( --color-primary-200 );
 		}
 	}
+
+	.spinner__inner,
+	.spinner__outer {
+		border-top-color: var( --color-jetpack );
+	}
+
+	.spinner__inner {
+		border-right-color: var( --color-jetpack );
+	}
 }
 
 .jetpack-connect__main {
