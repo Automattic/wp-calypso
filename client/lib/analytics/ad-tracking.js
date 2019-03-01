@@ -176,6 +176,7 @@ if ( typeof window !== 'undefined' ) {
 		setupOutbrainGlobal();
 	}
 
+	// Pinterest
 	if ( isPinterestEnabled ) {
 		setupPinterestGlobal();
 	}
@@ -316,10 +317,6 @@ function setupPinterestGlobal() {
 		n.queue = [];
 		n.version = '3.0';
 	}
-
-	const normalizedHashedEmail = getNormalizedHashedUserEamil();
-	const params = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
-	window.pintrk( 'load', '2612678247224', params );
 }
 
 /**
@@ -443,6 +440,13 @@ async function loadTrackingScripts( callback ) {
 	// init Quora
 	if ( isQuoraEnabled ) {
 		window.qp( 'init', TRACKING_IDS.quoraPixelId );
+	}
+
+	// init Pinterest
+	if ( isPinterestEnabled ) {
+		const normalizedHashedEmail = getNormalizedHashedUserEamil();
+		const params = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
+		window.pintrk( 'load', '2612678247224', params );
 	}
 
 	// uses JSON.stringify for consistency with recordOrder()
