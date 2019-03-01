@@ -145,12 +145,12 @@ class MailchimpSubscribeEdit extends Component {
 					) }
 					<br />
 					<br />
-					<Button isPrimary isLarge href={ connectURL } target="_blank">
+					<Button isDefault isLarge href={ connectURL } target="_blank">
 						{ __( 'Set up Mailchimp form' ) }
 					</Button>
 					<br />
 					<br />
-					<Button isDefault isLarge onClick={ this.apiCall }>
+					<Button isLink onClick={ this.apiCall }>
 						{ __( 'Re-check Connection' ) }
 					</Button>
 				</div>
