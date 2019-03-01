@@ -90,9 +90,9 @@ describe( 'viewport', () => {
 		test( 'should add a listener for a valid breakpoint', () => {
 			const listener = jest.fn();
 			const event = { matches: 'bar' };
-			let subscription;
+			let unsubscribe;
 			expect(
-				() => ( subscription = viewport.addWithinBreakpointListener( '<960px', listener ) )
+				() => ( unsubscribe = viewport.addWithinBreakpointListener( '<960px', listener ) )
 			).not.toThrow();
 			expect( addListenerMock ).toHaveBeenCalledTimes( 1 );
 			expect( addListenerMock ).toHaveBeenCalledWith(
@@ -100,13 +100,15 @@ describe( 'viewport', () => {
 				expect.any( Function )
 			);
 			// Call registered listener to make sure it got added correctly.
-			addListenerMock.mock.calls[ addListenerMock.mock.calls.length - 1 ][ 1 ]( event );
+			const registeredListener =
+				addListenerMock.mock.calls[ addListenerMock.mock.calls.length - 1 ][ 1 ];
+			registeredListener( event );
 			expect( listener ).toHaveBeenCalledTimes( 1 );
 			expect( listener ).toHaveBeenCalledWith( 'bar' );
 			// Clean up.
-			try {
-				viewport.removeWithinBreakpointListener( '<960px', subscription );
-			} catch {}
+			expect( () => unsubscribe() ).not.toThrow();
+			expect( removeListenerMock ).toHaveBeenCalledTimes( 1 );
+			expect( removeListenerMock ).toHaveBeenCalledWith( '(max-width: 960px)', registeredListener );
 		} );
 	} );
 
@@ -118,21 +120,23 @@ describe( 'viewport', () => {
 		test( 'should add a listener', () => {
 			const listener = jest.fn();
 			const event = { matches: 'bar' };
-			let subscription;
-			expect( () => ( subscription = viewport.addIsMobileListener( listener ) ) ).not.toThrow();
+			let unsubscribe;
+			expect( () => ( unsubscribe = viewport.addIsMobileListener( listener ) ) ).not.toThrow();
 			expect( addListenerMock ).toHaveBeenCalledTimes( 1 );
 			expect( addListenerMock ).toHaveBeenCalledWith(
 				'(max-width: 480px)',
 				expect.any( Function )
 			);
 			// Call registered listener to make sure it got added correctly.
-			addListenerMock.mock.calls[ addListenerMock.mock.calls.length - 1 ][ 1 ]( event );
+			const registeredListener =
+				addListenerMock.mock.calls[ addListenerMock.mock.calls.length - 1 ][ 1 ];
+			registeredListener( event );
 			expect( listener ).toHaveBeenCalledTimes( 1 );
 			expect( listener ).toHaveBeenCalledWith( 'bar' );
 			// Clean up.
-			try {
-				viewport.removeIsMobileListener( subscription );
-			} catch {}
+			expect( () => unsubscribe() ).not.toThrow();
+			expect( removeListenerMock ).toHaveBeenCalledTimes( 1 );
+			expect( removeListenerMock ).toHaveBeenCalledWith( '(max-width: 480px)', registeredListener );
 		} );
 	} );
 
@@ -144,85 +148,23 @@ describe( 'viewport', () => {
 		test( 'should add a listener', () => {
 			const listener = jest.fn();
 			const event = { matches: 'bar' };
-			let subscription;
-			expect( () => ( subscription = viewport.addIsDesktopListener( listener ) ) ).not.toThrow();
+			let unsubscribe;
+			expect( () => ( unsubscribe = viewport.addIsDesktopListener( listener ) ) ).not.toThrow();
 			expect( addListenerMock ).toHaveBeenCalledTimes( 1 );
 			expect( addListenerMock ).toHaveBeenCalledWith(
 				'(min-width: 961px)',
 				expect.any( Function )
 			);
 			// Call registered listener to make sure it got added correctly.
-			addListenerMock.mock.calls[ addListenerMock.mock.calls.length - 1 ][ 1 ]( event );
+			const registeredListener =
+				addListenerMock.mock.calls[ addListenerMock.mock.calls.length - 1 ][ 1 ];
+			registeredListener( event );
 			expect( listener ).toHaveBeenCalledTimes( 1 );
 			expect( listener ).toHaveBeenCalledWith( 'bar' );
 			// Clean up.
-			try {
-				viewport.removeIsDesktopListener( subscription );
-			} catch {}
-		} );
-	} );
-
-	describe( 'removeWithinBreakpointListener', () => {
-		test( 'should do nothing if nothing is provided', () => {
-			expect( () => viewport.removeWithinBreakpointListener() ).not.toThrow();
-			expect( removeListenerMock ).not.toHaveBeenCalled();
-		} );
-		test( 'should do nothing if an invalid breakpoint is provided', () => {
-			expect( () => viewport.removeWithinBreakpointListener( 'unknown', () => '' ) ).not.toThrow();
-			expect( removeListenerMock ).not.toHaveBeenCalled();
-		} );
-		test( 'should do nothing if no listener is provided', () => {
-			expect( () => viewport.removeWithinBreakpointListener( '<960px' ) ).not.toThrow();
-			expect( removeListenerMock ).not.toHaveBeenCalled();
-		} );
-		test( 'should not throw if an unregistered listener is provided', () => {
-			expect( () => viewport.removeWithinBreakpointListener( '<960px', () => '' ) ).not.toThrow();
-		} );
-		test( 'should remove an added listener', () => {
-			const listener = jest.fn();
-			const subscription = viewport.addWithinBreakpointListener( '<960px', listener );
-
-			expect( () =>
-				viewport.removeWithinBreakpointListener( '<960px', subscription )
-			).not.toThrow();
+			expect( () => unsubscribe() ).not.toThrow();
 			expect( removeListenerMock ).toHaveBeenCalledTimes( 1 );
-			expect( removeListenerMock ).toHaveBeenCalledWith( '(max-width: 960px)', subscription );
-		} );
-	} );
-
-	describe( 'removeIsMobileListener', () => {
-		test( 'should do nothing if nothing is provided', () => {
-			expect( () => viewport.removeIsMobileListener() ).not.toThrow();
-			expect( removeListenerMock ).not.toHaveBeenCalled();
-		} );
-		test( 'should not throw if an unregistered listener is provided', () => {
-			expect( () => viewport.removeIsMobileListener( () => '' ) ).not.toThrow();
-		} );
-		test( 'should remove an added listener', () => {
-			const listener = jest.fn();
-			const subscription = viewport.addIsMobileListener( listener );
-
-			expect( () => viewport.removeIsMobileListener( subscription ) ).not.toThrow();
-			expect( removeListenerMock ).toHaveBeenCalledTimes( 1 );
-			expect( removeListenerMock ).toHaveBeenCalledWith( '(max-width: 480px)', subscription );
-		} );
-	} );
-
-	describe( 'removeIsDesktopListener', () => {
-		test( 'should do nothing if nothing is provided', () => {
-			expect( () => viewport.removeIsDesktopListener() ).not.toThrow();
-			expect( removeListenerMock ).not.toHaveBeenCalled();
-		} );
-		test( 'should not throw if an unregistered listener is provided', () => {
-			expect( () => viewport.removeIsDesktopListener( () => '' ) ).not.toThrow();
-		} );
-		test( 'should remove an added listener', () => {
-			const listener = jest.fn();
-			const subscription = viewport.addIsDesktopListener( listener );
-
-			expect( () => viewport.removeIsDesktopListener( subscription ) ).not.toThrow();
-			expect( removeListenerMock ).toHaveBeenCalledTimes( 1 );
-			expect( removeListenerMock ).toHaveBeenCalledWith( '(min-width: 961px)', subscription );
+			expect( removeListenerMock ).toHaveBeenCalledWith( '(min-width: 961px)', registeredListener );
 		} );
 	} );
 } );

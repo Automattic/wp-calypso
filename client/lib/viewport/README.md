@@ -32,7 +32,7 @@ if ( isWithinBreakpoint( '>1400px' ) ) {
 Registering to listen to changes:
 
 ```js
-import { addIsDesktopListener, removeIsDesktopListener } from 'lib/viewport';
+import { addIsDesktopListener } from 'lib/viewport';
 
 class MyComponent extends React.Component {
 	sizeChanged = matches => {
@@ -42,11 +42,13 @@ class MyComponent extends React.Component {
 	};
 
 	componentDidMount() {
-		this.subscription = addIsDesktopListener( this.sizeChanged );
+		this.unsubscribe = addIsDesktopListener( this.sizeChanged );
 	}
 
 	componentWillUnmount() {
-		removeIsDesktopListener( this.subscription );
+		if ( this.unsubscribe ) {
+			this.unsubscribe();
+		}
 	}
 }
 ```
@@ -81,15 +83,12 @@ export default withMobileBreakpoint( MyComponent );
 
 ### Supported methods
 
-- `isWithinBreakpoint( breakpoint )`: Whether the current screen size matches the breakpoint
-- `isMobile()`: Whether the current screen size matches a mobile breakpoint (<480px)
-- `isDesktop()`: Whether the current screen size matches a desktop breakpoint (>960px)
-- `addWithinBreakpointListener( breakpoint, listener )`: Register a listener for size changes that affect the breakpoint
-- `removeWithinBreakpointListener( breakpoint, subscription )`: Unregister a previously registered subscription
-- `addIsMobileListener( listener )`: Register a listener for size changes that affect the mobile breakpoint (<480px)
-- `removeIsMobileListener( subscription )`: Unregister a previously registered subscription for the mobile breakpoint (<480px)
-- `addIsDesktopListener( listener )`: Register a listener for size changes that affect the desktop breakpoint (>960px)
-- `removeIsDesktopListener( subscription )`: Unregister a previously registered subscription for the desktop breakpoint (>960px)
+- `isWithinBreakpoint( breakpoint )`: Whether the current screen size matches the breakpoint.
+- `isMobile()`: Whether the current screen size matches a mobile breakpoint (<480px).
+- `isDesktop()`: Whether the current screen size matches a desktop breakpoint (>960px).
+- `addWithinBreakpointListener( breakpoint, listener )`: Register a listener for size changes that affect the breakpoint. Returns the unsubscribe function.
+- `addIsMobileListener( listener )`: Register a listener for size changes that affect the mobile breakpoint (<480px). Returns the unsubscribe function.
+- `addIsDesktopListener( listener )`: Register a listener for size changes that affect the desktop breakpoint (>960px). Returns the unsubscribe function.
 - `getWindowInnerWidth()`: Get the inner width for the browser window. **Warning**: This method triggers a layout recalc, potentially resulting in performance issues. Please use a breakpoint instead wherever possible.
 
 ### Supported hooks

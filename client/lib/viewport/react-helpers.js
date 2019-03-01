@@ -11,7 +11,6 @@ import { camelCase, upperFirst } from 'lodash';
 import {
 	isWithinBreakpoint,
 	addWithinBreakpointListener,
-	removeWithinBreakpointListener,
 	MOBILE_BREAKPOINT,
 	DESKTOP_BREAKPOINT,
 } from './index';
@@ -31,10 +30,12 @@ export function useBreakpoint( breakpoint ) {
 	}
 
 	useEffect(() => {
-		const subscription = addWithinBreakpointListener( breakpoint, handleBreakpointChange );
+		const unsubscribe = addWithinBreakpointListener( breakpoint, handleBreakpointChange );
 
 		return function cleanup() {
-			removeWithinBreakpointListener( breakpoint, subscription );
+			if ( unsubscribe ) {
+				unsubscribe();
+			}
 		};
 	}, []);
 

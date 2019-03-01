@@ -116,7 +116,7 @@ export function isWithinBreakpoint( breakpoint ) {
  * @param {String} breakpoint The breakpoint to consider.
  * @param {Function} listener The listener to be called on change.
  *
- * @returns {Function} The registered subscription; undefined if none.
+ * @returns {Function} The function to be called when unsubscribing.
  */
 export function addWithinBreakpointListener( breakpoint, listener ) {
 	if ( ! listener ) {
@@ -128,27 +128,11 @@ export function addWithinBreakpointListener( breakpoint, listener ) {
 	if ( mediaQueryList && ! isServer ) {
 		const wrappedListener = evt => listener( evt.matches );
 		mediaQueryList.addListener( wrappedListener );
-		return wrappedListener;
+		// Return unsubscribe function.
+		return () => mediaQueryList.removeListener( wrappedListener );
 	}
 
 	return undefined;
-}
-
-/**
- * Removes a listener that was being notified of changes to breakpoint matching status.
- * @param {String} breakpoint The breakpoint to consider.
- * @param {Function} subscription The subscription to be removed.
- */
-export function removeWithinBreakpointListener( breakpoint, subscription ) {
-	if ( ! subscription ) {
-		return;
-	}
-
-	const mediaQueryList = getMediaQueryList( breakpoint );
-
-	if ( mediaQueryList && ! isServer ) {
-		mediaQueryList.removeListener( subscription );
-	}
 }
 
 /**
@@ -171,14 +155,6 @@ export function addIsMobileListener( listener ) {
 }
 
 /**
- * Removes a listener that was being notified of changes to mobile breakpoint matching status.
- * @param {Function} listener The listener to be called on change.
- */
-export function removeIsMobileListener( listener ) {
-	removeWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
-}
-
-/**
  * Returns whether the current window width matches the desktop breakpoint.
  *
  * @returns {Boolean} Whether the desktop breakpoint is matched.
@@ -195,14 +171,6 @@ export function isDesktop() {
  */
 export function addIsDesktopListener( listener ) {
 	return addWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
-}
-
-/**
- * Removes a listener that was being notified of changes to desktop breakpoint matching status.
- * @param {Function} listener The listener to be called on change.
- */
-export function removeIsDesktopListener( listener ) {
-	removeWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
 }
 
 /**
