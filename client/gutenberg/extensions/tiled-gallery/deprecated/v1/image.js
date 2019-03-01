@@ -1,17 +1,13 @@
 /**
  * External Dependencies
  */
-import classnames from 'classnames';
 import { isBlobURL } from '@wordpress/blob';
-
-/* @TODO Caption has been commented out */
-// import { RichText } from '@wordpress/editor';
 
 export default function GalleryImageSave( props ) {
 	const {
+		'aria-label': ariaLabel,
 		alt,
 		// caption,
-		imageFilter,
 		height,
 		id,
 		link,
@@ -39,6 +35,7 @@ export default function GalleryImageSave( props ) {
 	const img = (
 		<img
 			alt={ alt }
+			aria-label={ ariaLabel }
 			data-height={ height }
 			data-id={ id }
 			data-link={ link }
@@ -49,15 +46,6 @@ export default function GalleryImageSave( props ) {
 	);
 
 	return (
-		<figure
-			className={ classnames( 'tiled-gallery__item', {
-				[ `filter__${ imageFilter }` ]: !! imageFilter,
-			} ) }
-		>
-			{ href ? <a href={ href }>{ img }</a> : img }
-			{ /* ! RichText.isEmpty( caption ) && (
-				<RichText.Content tagName="figcaption" value={ caption } />
-			) */ }
-		</figure>
+		<figure className="tiled-gallery__item">{ href ? <a href={ href }>{ img }</a> : img }</figure>
 	);
 }
