@@ -12,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import Main from 'components/main';
-import MainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
+import EmailForwardingPlaceholder from './email-forwarding-placeholder';
 import Header from 'my-sites/domains/domain-management/components/header';
 import EmailForwardingList from './email-forwarding-list';
 import EmailForwardingAddNew from './email-forwarding-add-new';
@@ -21,6 +21,7 @@ import { domainManagementEmail } from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import getEmailForwardingLimit from 'state/selectors/get-email-forwarding-limit';
+import getEmailForwardingType from 'state/selectors/get-email-forwarding-type';
 import getEmailForwards from 'state/selectors/get-email-forwards';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryEmailForwards from 'components/data/query-email-forwards';
@@ -34,46 +35,52 @@ class EmailForwarding extends Component {
 	static propTypes = {
 		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number.isRequired,
+		emailForwardingType: PropTypes.string.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
-		const { emailForwards, selectedDomainName } = this.props;
-		return (
-			<div className="email-forwarding">
-				<QueryEmailForwards domainName={ selectedDomainName } />
-				{ emailForwards ? this.renderMain() : this.renderPlaceholder() }
-			</div>
-		);
-	}
-
-	renderPlaceholder() {
-		return <MainPlaceholder goBack={ this.goToEditEmail } />;
-	}
-
-	renderMain() {
-		const { emailForwards, emailForwardingLimit, selectedDomainName, translate } = this.props;
+		const { selectedDomainName, translate } = this.props;
 		return (
 			<Main>
+				<QueryEmailForwards domainName={ selectedDomainName } />
 				<Header onClick={ this.goToEditEmail } selectedDomainName={ selectedDomainName }>
 					{ translate( 'Email Forwarding' ) }
 				</Header>
 
 				<SectionHeader label={ translate( 'Email Forwarding' ) } />
-				<Card className="email-forwarding__card">
-					<EmailForwardingDetails selectedDomainName={ selectedDomainName } />
-
-					<EmailForwardingList emailForwards={ emailForwards } />
-
-					<EmailForwardingAddNew
-						emailForwards={ emailForwards }
-						emailForwardingLimit={ emailForwardingLimit }
-						selectedDomainName={ selectedDomainName }
-					/>
-				</Card>
+				{ this.renderContent() }
 			</Main>
+		);
+	}
+
+	renderContent() {
+		const { emailForwardingType } = this.props;
+		switch ( emailForwardingType ) {
+			case 'forward':
+				return this.renderForwards();
+			case null:
+			default:
+				return <EmailForwardingPlaceholder />;
+		}
+	}
+
+	renderForwards() {
+		const { emailForwards, emailForwardingLimit, selectedDomainName } = this.props;
+		return (
+			<Card className="email-forwarding__card">
+				<EmailForwardingDetails selectedDomainName={ selectedDomainName } />
+
+				<EmailForwardingList emailForwards={ emailForwards } />
+
+				<EmailForwardingAddNew
+					emailForwards={ emailForwards }
+					emailForwardingLimit={ emailForwardingLimit }
+					selectedDomainName={ selectedDomainName }
+				/>
+			</Card>
 		);
 	}
 
@@ -88,6 +95,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		emailForwards: getEmailForwards( state, selectedDomainName ),
 		emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
+		emailForwardingType: getEmailForwardingType( state, selectedDomainName ),
 		siteSlug: getSelectedSiteSlug( state ),
 	};
 } )( localize( EmailForwarding ) );
