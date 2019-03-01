@@ -6,6 +6,16 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 }
 
+.is-section-signup.crowdsignal {
+	min-height: calc( 100% - 58px );
+	padding-bottom: 58px;
+	position: relative;
+
+	.layout__content {
+		position: initial;
+	}
+}
+
 .signup.is-crowdsignal {
 	// Crowdsignal color palette
 	--color-link: #384869;
@@ -130,7 +140,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .signup-form__crowdsignal-card-header {
 	display: none;
-	font-size: 22px;
+	font-size: 20px;
 	font-weight: 600;
 	margin: 0 0 30px;
 	text-align: center;
@@ -252,5 +262,50 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 	@include breakpoint( '>660px' ) {
 		display: none;
+	}
+}
+
+.signup-form__crowdsignal-footer {
+	background-color: var(--color-crowdsignal);
+	box-sizing: border-box;
+	color: var(--color-neutral-0);
+	display: flex;
+	flex-direction: row;
+	fill: var(--color-neutral-0);
+	height: 58px;
+	padding: 20px 40px;
+	position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+}
+
+.signup-form__crowdsignal-footer-text {
+	display: none;
+	font-size: 10px;
+	flex: 1;
+	height: 18px;
+	letter-spacing: 0.8px;
+	line-height: 16px;
+	text-align: center;
+	text-transform: uppercase;
+
+	&:last-child {
+		display: inline;
+	}
+
+	@include breakpoint( '>660px' ) {
+		display: inline;
+		text-align: left;
+
+		&:last-child {
+			text-align: right;
+		}
+	}
+
+	.automattic-logo,
+	.gridicon {
+		margin: 0 5px;
+		vertical-align: bottom;
 	}
 }

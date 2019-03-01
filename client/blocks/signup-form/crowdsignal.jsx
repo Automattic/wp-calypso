@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import AutomatticLogo from 'components/automattic-logo';
 import Button from 'components/button';
 import FormButton from 'components/forms/form-button';
 import LoggedOutForm from 'components/logged-out-form';
@@ -158,6 +159,11 @@ class CrowdsignalSignupForm extends Component {
 						<Gridicon icon="arrow-left" />
 						<span>{ translate( 'Back' ) }</span>
 					</Button>
+				</div>
+
+				<div className="signup-form__crowdsignal-footer">
+					<p className="signup-form__crowdsignal-footer-text">Powered by<Gridicon icon="my-sites" size={ 18 } />WordPress.com</p>
+					<p className="signup-form__crowdsignal-footer-text">An<AutomatticLogo size={ 18 } />Company</p>
 				</div>
 			</div>
 		);
