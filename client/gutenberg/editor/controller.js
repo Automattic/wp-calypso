@@ -147,6 +147,11 @@ export const redirect = ( { store: { getState } }, next ) => {
 	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
+function getPressThisData( query ) {
+	const { text, url, title, image, embed } = query;
+	return url ? { text, url, title, image, embed } : null;
+}
+
 export const post = ( context, next ) => {
 	//see post-editor/controller.js for reference
 
@@ -171,6 +176,7 @@ export const post = ( context, next ) => {
 				postId={ postId }
 				postType={ postType }
 				duplicatePostId={ duplicatePostId }
+				pressThis={ pressThis }
 			/>
 		);
 

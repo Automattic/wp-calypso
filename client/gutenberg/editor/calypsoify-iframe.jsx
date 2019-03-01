@@ -42,6 +42,7 @@ class CalypsoifyIframe extends Component {
 		postId: PropTypes.number,
 		postType: PropTypes.string,
 		duplicatePostId: PropTypes.number,
+		pressThis: PropTypes.object,
 	};
 
 	state = {
@@ -158,6 +159,16 @@ class CalypsoifyIframe extends Component {
 		}
 
 		this.setState( { isMediaModalVisible: false } );
+	};
+
+	pressThis = () => {
+		const { pressThis } = this.props;
+		if ( pressThis ) {
+			this.iframePort.postMessage( {
+				action: 'pressThis',
+				payload: pressThis,
+			} );
+		}
 	};
 
 	render() {
