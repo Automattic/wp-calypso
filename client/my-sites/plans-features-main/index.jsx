@@ -135,6 +135,7 @@ export class PlansFeaturesMain extends Component {
 			selectedPlan,
 			hideFreePlan,
 			countryCode,
+			plansWithScroll,
 		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
@@ -188,7 +189,7 @@ export class PlansFeaturesMain extends Component {
 			];
 		}
 
-		if ( hideFreePlan ) {
+		if ( hideFreePlan || plansWithScroll ) {
 			plans.shift();
 		}
 
