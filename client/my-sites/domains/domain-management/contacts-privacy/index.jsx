@@ -50,7 +50,7 @@ class ContactsPrivacy extends React.PureComponent {
 		return (
 			<Main className="contacts-privacy">
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
-					{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
+					{ translate( 'Contacts' ) }
 				</Header>
 
 				<VerticalNav>

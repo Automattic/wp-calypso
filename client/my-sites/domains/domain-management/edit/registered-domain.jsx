@@ -119,6 +119,7 @@ class RegisteredDomain extends React.Component {
 			<Property label={ translate( 'Privacy Protection' ) }>
 				{
 					<FormToggle
+						wrapperClassName="edit__privacy-protection-toggle"
 						checked={ privateDomain }
 						toggling={ submitting }
 						disabled={ submitting }
@@ -190,18 +191,13 @@ class RegisteredDomain extends React.Component {
 	}
 
 	contactsPrivacyNavItem() {
-		const { privacyAvailable } = this.props.domain;
 		const { translate } = this.props;
 		const path = domainManagementContactsPrivacy(
 			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
 
-		return (
-			<VerticalNavItem path={ path }>
-				{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
-			</VerticalNavItem>
-		);
+		return <VerticalNavItem path={ path }>{ translate( 'Contacts' ) }</VerticalNavItem>;
 	}
 
 	transferNavItem() {

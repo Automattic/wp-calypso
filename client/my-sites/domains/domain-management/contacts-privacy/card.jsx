@@ -23,13 +23,35 @@ class ContactsPrivacyCard extends React.PureComponent {
 	};
 
 	render() {
-		const { contactInformation, translate } = this.props;
+		const { contactInformation, privateDomain, translate } = this.props;
+		let privacyText = translate(
+			'{{strong}}Privacy Protection is enabled{{/strong}} so your contact information' +
+				' {{strong}}is not shown{{/strong}}.',
+			{
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
+		if ( ! privateDomain ) {
+			privacyText = translate(
+				'{{strong}}Privacy Protection is disabled{{/strong}} so your own contact information' +
+					' {{strong}}is shown{{/strong}}.',
+				{
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+		}
 
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Domain Contacts' ) } />
 
 				<CompactCard className="contacts-privacy__card">
+					<p>{ privacyText }</p>
+					<ContactDisplay contactInformation={ contactInformation } />
 					<p className="contacts-privacy__settings-explanation">
 						{ translate(
 							'Domain owners are required to provide correct contact information. ' +
@@ -41,8 +63,6 @@ class ContactsPrivacyCard extends React.PureComponent {
 							}
 						) }
 					</p>
-
-					<ContactDisplay contactInformation={ contactInformation } />
 				</CompactCard>
 			</div>
 		);
