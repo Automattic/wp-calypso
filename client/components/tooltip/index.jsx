@@ -14,8 +14,6 @@ import classnames from 'classnames';
 import Popover from 'components/popover';
 import { useMobileBreakpoint } from 'lib/viewport/react-helpers';
 
-const noop = () => {};
-
 function Tooltip( props ) {
 	const isMobile = useMobileBreakpoint();
 
@@ -39,7 +37,6 @@ function Tooltip( props ) {
 			context={ props.context }
 			id={ props.id }
 			isVisible={ props.isVisible }
-			onClose={ noop }
 			position={ props.position }
 			showDelay={ props.showDelay }
 		>
