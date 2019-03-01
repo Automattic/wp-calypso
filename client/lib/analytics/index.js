@@ -332,7 +332,7 @@ const analytics = {
 	},
 
 	recordPurchase: function( { cart, orderId } ) {
-		if ( cart.total_cost < 0.01 ) {
+		if ( cart.total_cost >= 0.01 ) {
 			// Google Analytics
 			const usdValue = costToUSD( cart.total_cost, cart.currency );
 			analytics.ga.recordEvent(

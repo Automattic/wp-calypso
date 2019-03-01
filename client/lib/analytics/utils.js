@@ -95,10 +95,10 @@ export function hashPii( data ) {
 export function getNormalizedHashedUserEamil() {
 	const currentUser = user.get();
 	if ( currentUser && currentUser.email ) {
-		hashPii( currentUser.email.toLowerCase().replace( /\s/g, '' ) );
-	} else {
-		return false;
+		return hashPii( currentUser.email.toLowerCase().replace( /\s/g, '' ) );
 	}
+
+	return false;
 }
 
 // If this list catches things that are not necessarily forbidden we're ok with
