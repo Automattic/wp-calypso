@@ -8,7 +8,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import photon from 'photon';
 import React from 'react';
 
 /**
@@ -29,8 +28,6 @@ describe( 'MediaLibraryListItem image', () => {
 		}
 	} );
 
-	const getResizedUrl = () =>
-		photon( fixtures.media[ 0 ].URL, { resize: `${ WIDTH },${ WIDTH }` } );
 	const getResizedUrl = () =>
 		resize( fixtures.media[ 0 ].URL, { resize: `${ WIDTH },${ WIDTH }` } );
 	const getItem = ( itemPos, type ) => (

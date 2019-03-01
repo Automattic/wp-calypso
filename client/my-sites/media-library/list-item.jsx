@@ -128,9 +128,10 @@ export default class extends React.Component {
 		}
 
 		return (
+			/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 			<div className={ classes } style={ style } onClick={ this.clickItem } { ...props }>
 				<span className="media-library__list-item-selected-icon">
-					<Gridicon icon="checkmark" size={ 20 } />
+					<Gridicon icon="checkmark" size={ 18 } />
 				</span>
 				<figure className="media-library__list-item-figure" title={ title }>
 					{ this.renderItem() }
@@ -138,6 +139,7 @@ export default class extends React.Component {
 					{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
 				</figure>
 			</div>
+			/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 		);
 	}
 }
