@@ -36,6 +36,7 @@
     "react-test-renderer": "^16.6.3"
   },
   "scripts": {
-    "build": "node ../../bin/build-package"
+    "build": "node ../../bin/build-package",
+    "clean": "npx rimraf dist"
   }
 }

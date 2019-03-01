@@ -247,7 +247,7 @@
     "clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public && npm run -s clean:packages",
     "clean:build": "npx rimraf build server/bundler/*.json .babel-cache",
     "clean:devdocs": "npx rimraf server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json",
-    "clean:packages": "npx rimraf packages/*/dist",
+    "clean:packages": "lerna run clean",
     "clean:public": "npx rimraf public/*.{css,css.map,js,js.map} public/images/*.{gif,jpg,png,svg} public/{sections,sections-rtl,vendors~*}",
     "distclean": "npm run -s clean && npx rimraf node_modules packages/*/node_modules",
     "docker": "docker run -it --name wp-calypso --rm -p 80:3000 wp-calypso",
