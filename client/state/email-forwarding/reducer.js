@@ -102,9 +102,10 @@ export const forwards = createReducer(
 	forwardsSchema
 );
 
-export const requestError = createReducer( null, {
-	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: () => null,
-	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: ( state, { message } ) => message,
+export const requestError = createReducer( false, {
+	[ EMAIL_FORWARDING_REQUEST ]: () => false,
+	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: () => false,
+	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => true,
 } );
 
 export default keyedReducer(

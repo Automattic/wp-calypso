@@ -91,3 +91,5 @@ registerHandlers( 'state/data-layer/wpcom/email-forwarding/resend-email-verifica
 		} ),
 	],
 } );
+
+export default {};

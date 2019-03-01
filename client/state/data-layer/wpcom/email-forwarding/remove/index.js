@@ -104,3 +104,5 @@ registerHandlers( 'state/data-layer/wpcom/email-forwarding/remove/index.js', {
 		} ),
 	],
 } );
+
+export default {};
