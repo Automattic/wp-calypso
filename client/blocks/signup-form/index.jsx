@@ -114,6 +114,8 @@ class SignupForm extends Component {
 	state = {
 		notice: null,
 		submitting: false,
+		focusPassword: false,
+		focusUsername: false,
 		form: null,
 		signedUp: false,
 		validationInitialized: false,
@@ -249,6 +251,14 @@ class SignupForm extends Component {
 				: mapKeys( response.messages, ( value, key ) => camelCase( key ) );
 
 			forEach( messages, ( fieldError, field ) => {
+				// If they've yet to tab to the password or username fields, don't show an error message prematurely
+				if ( field === 'password' && ! this.state.focusPassword ) {
+					delete messages.password;
+				}
+				if ( field === 'username' && ! this.state.focusUsername ) {
+					delete messages.username;
+				}
+
 				if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
 					return;
 				}
@@ -327,6 +337,17 @@ class SignupForm extends Component {
 		this.formStateController.sanitize();
 		this.formStateController.validate();
 		this.props.save && this.props.save( this.state.form );
+	};
+
+	handleFocus = event => {
+		const fieldId = event.target.id;
+		// Ensure that username and password field validation does not trigger prematurely
+		if ( fieldId === 'password' ) {
+			this.setState( { focusPassword: true } );
+		}
+		if ( fieldId === 'username' ) {
+			this.setState( { focusUsername: true } );
+		}
 	};
 
 	handleSubmit = event => {
@@ -540,6 +561,7 @@ class SignupForm extends Component {
 							isError={ formState.isFieldInvalid( this.state.form, 'username' ) }
 							isValid={ formState.isFieldValid( this.state.form, 'username' ) }
 							onBlur={ this.handleBlur }
+							onFocus={ this.handleFocus }
 							onChange={ this.handleChangeEvent }
 						/>
 
@@ -559,6 +581,7 @@ class SignupForm extends Component {
 					isError={ formState.isFieldInvalid( this.state.form, 'password' ) }
 					isValid={ formState.isFieldValid( this.state.form, 'password' ) }
 					onBlur={ this.handleBlur }
+					onFocus={ this.handleFocus }
 					onChange={ this.handleChangeEvent }
 					submitting={ this.state.submitting || this.props.submitting }
 				/>
@@ -718,7 +741,7 @@ class SignupForm extends Component {
 				'isSocialSignupEnabled',
 				'handleSocialResponse',
 				'socialService',
-				'socialServiceResponse'
+				'socialServiceResponse',
 			] );
 
 			const logInUrl = config.isEnabled( 'login/native-login-links' )
