@@ -48,7 +48,7 @@ import Banner from 'components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 import { abtest } from 'lib/abtest';
-import QuerySiteRecommendedPlugins from 'components/data/query-site-recommended-plugins';
+import QuerySiteRecommendedPlugins from 'components/data/query-site-recommended-plugins'; // new query component
 
 /**
  * Style dependencies
