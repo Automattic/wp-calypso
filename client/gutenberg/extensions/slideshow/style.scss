@@ -49,6 +49,7 @@
 		object-fit: contain;
 	}
 
+	/* Approach to hiding text in the buttons from http://www.zeldman.com/2012/03/01/replacing-the-9999px-hack-new-image-replacement/ */
 	.wp-block-jetpack-slideshow_button-prev,
 	.wp-block-jetpack-slideshow_button-next,
 	.wp-block-jetpack-slideshow_button-pause {
@@ -60,8 +61,11 @@
 		border-radius: 4px;
 		height: 48px;
 		margin: -24px 0 0;
+		overflow: hidden;
 		padding: 0;
+		text-indent: 100%;
 		transition: background-color 250ms;
+		white-space: nowrap;
 		width: 48px;
 
 		&:focus,
