@@ -18,6 +18,8 @@ import EmailForwardingList from './email-forwarding-list';
 import EmailForwardingAddNew from './email-forwarding-add-new';
 import EmailForwardingDetails from './email-forwarding-details';
 import EmailForwardingCustomMxList from './email-forwarding-custom-mx-list';
+import EmailForwardingGSuiteDetails from './email-forwarding-gsuite-details';
+import EmailForwardingGSuiteDetailsAnotherProvider from './email-forwarding-gsuite-details-another-provider';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
@@ -58,12 +60,21 @@ class EmailForwarding extends Component {
 	}
 
 	renderContent() {
-		const { emailForwardingType, selectedDomainName } = this.props;
+		const { emailForwardingType, selectedDomainName, siteSlug } = this.props;
 		switch ( emailForwardingType ) {
 			case 'forward':
 				return this.renderForwards();
 			case 'custom':
 				return <EmailForwardingCustomMxList selectedDomainName={ selectedDomainName } />;
+			case 'google-apps':
+				return (
+					<EmailForwardingGSuiteDetails
+						selectedDomainName={ selectedDomainName }
+						siteSlug={ siteSlug }
+					/>
+				);
+			case 'google-apps-another-provider':
+				return <EmailForwardingGSuiteDetailsAnotherProvider />;
 			case null:
 			default:
 				return <EmailForwardingPlaceholder />;
