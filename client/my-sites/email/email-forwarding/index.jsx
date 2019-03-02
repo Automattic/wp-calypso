@@ -17,6 +17,7 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import EmailForwardingList from './email-forwarding-list';
 import EmailForwardingAddNew from './email-forwarding-add-new';
 import EmailForwardingDetails from './email-forwarding-details';
+import EmailForwardingCustomMxList from './email-forwarding-custom-mx-list';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
@@ -57,10 +58,12 @@ class EmailForwarding extends Component {
 	}
 
 	renderContent() {
-		const { emailForwardingType } = this.props;
+		const { emailForwardingType, selectedDomainName } = this.props;
 		switch ( emailForwardingType ) {
 			case 'forward':
 				return this.renderForwards();
+			case 'custom':
+				return <EmailForwardingCustomMxList selectedDomainName={ selectedDomainName } />;
 			case null:
 			default:
 				return <EmailForwardingPlaceholder />;

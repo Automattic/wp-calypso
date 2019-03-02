@@ -35,22 +35,15 @@ export const getEmailForwardsSuccess = ( action, response ) => {
 							message: 'No forwards in `forward` type response',
 					  } );
 			case 'google-apps-another-provider':
-				return response.forwards
-					? receiveGetEmailForwardsSuccess( action.domainName, response )
-					: getEmailForwardsFailure( action, {
-							message: 'No forwards in `forward` type response',
-					  } );
+				return receiveGetEmailForwardsSuccess( action.domainName, response );
+
 			case 'google-apps':
-				return response.forwards
-					? receiveGetEmailForwardsSuccess( action.domainName, response )
-					: getEmailForwardsFailure( action, {
-							message: 'No forwards in `forward` type response',
-					  } );
+				return receiveGetEmailForwardsSuccess( action.domainName, response );
 			case 'custom':
-				return response.forwards
+				return response.mx_servers
 					? receiveGetEmailForwardsSuccess( action.domainName, response )
 					: getEmailForwardsFailure( action, {
-							message: 'No forwards in `forward` type response',
+							message: 'No mx_servers in `custom` type response',
 					  } );
 			default:
 				break;
