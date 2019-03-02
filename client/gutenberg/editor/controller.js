@@ -160,6 +160,12 @@ export const post = ( context, next ) => {
 	const duplicatePostId = isInteger( jetpackCopy ) ? jetpackCopy : null;
 
 	if ( config.isEnabled( 'calypsoify/iframe' ) ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+
+		// Set postId on state.ui.editor.postId, so components like editor revisions can read from it.
+		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
+
 		context.primary = (
 			<CalypsoifyIframe
 				postId={ postId }
