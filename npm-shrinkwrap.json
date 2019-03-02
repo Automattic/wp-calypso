@@ -9163,7 +9163,7 @@
 				"jed": "1.1.1",
 				"lodash": "^4.7.11",
 				"lru": "^3.1.0",
-				"moment-timezone": "^0.5.16",
+				"moment-timezone": "^0.5.23",
 				"react": "^16.6.3",
 				"xgettext-js": "^2.0.0"
 			}
@@ -15593,9 +15593,9 @@
 			}
 		},
 		"replace": {
-			"version": "1.0.1",
-			"resolved": "https://registry.npmjs.org/replace/-/replace-1.0.1.tgz",
-			"integrity": "sha512-Qh0XcLMb3LYa6fs7V30zQHACbJTQJUERl22lVjaq0dJp6B5q1t/vARXDauS1ywpIs3ZkT3APj4EA6aOoHoaHDA==",
+			"version": "1.1.0",
+			"resolved": "https://registry.npmjs.org/replace/-/replace-1.1.0.tgz",
+			"integrity": "sha512-0k9rtPG0MUDfJj77XtMCSJKOPdzSwVwM79ZQ6lZuFjqqXrQAMKIMp0g7/8GDAzeERxdktV/LzqbMtJ3yxB23lg==",
 			"dev": true,
 			"requires": {
 				"colors": "1.2.4",
