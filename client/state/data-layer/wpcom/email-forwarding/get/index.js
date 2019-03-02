@@ -1,8 +1,17 @@
+/** @format */
+/**
+ * External Dependencies
+ */
+import React from 'react';
+import { translate } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import { EMAIL_FORWARDING_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'state/notices/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	receiveGetEmailForwardsSuccess,
@@ -22,7 +31,22 @@ export const getEmailForwards = action => {
 };
 
 export const getEmailForwardsFailure = ( action, error ) => {
-	return receiveGetEmailForwardsFailure( action.domainName, error );
+	const { domainName } = action;
+	const failureMessage = translate(
+		'Failed to retrieve email forwarding records for %(domainName)s. ' +
+			'Please try again or ' +
+			'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
+		{
+			components: {
+				contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+			},
+			args: {
+				domainName,
+			},
+		}
+	);
+
+	return [ errorNotice( failureMessage ), receiveGetEmailForwardsFailure( domainName, error ) ];
 };
 
 export const getEmailForwardsSuccess = ( action, response ) => {
