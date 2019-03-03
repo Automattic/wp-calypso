@@ -20,8 +20,8 @@ $autobar-height: 20px;
 
 	.is-support-session & {
 		// DO NOT style these with theme colors. We want them to override whatever theme colors the user has picked.
-		background: $orange-jazzy;
-		border-bottom: 1px solid darken( $orange-jazzy, 4% );
+		background: var( --color-orange );
+		border-bottom: 1px solid var( --color-orange-light );
 	}
 
 	.is-section-theme &,
@@ -121,7 +121,7 @@ $autobar-height: 20px;
 	}
 
 	.is-support-session &.is-active {
-		background: darken( $orange-jazzy, 10% );
+		background: var( --color-orange-dark );
 	}
 
 	@include breakpoint( '<480px' ) {
@@ -252,7 +252,7 @@ $autobar-height: 20px;
 	.is-support-session &:focus,
 	.is-support-session &:hover,
 	.is-support-session &:visited {
-		color: $orange-jazzy;
+		color: var( --color-orange );
 	}
 
 	.is-support-session &.is-active {
