@@ -175,7 +175,11 @@
 	--color-error-800-rgb: #{hex-to-rgb( $muriel-hot-red-800 )};
 	--color-error-900: #{$muriel-hot-red-900};
 	--color-error-900-rgb: #{hex-to-rgb( $muriel-hot-red-900 )};
-
+	
+	--color-orange: #{$muriel-hot-orange-500};	
+	--color-orange-dark: #{$muriel-hot-orange-700};
+	--color-orange-light: #{$muriel-hot-orange-300};
+	
 	--color-surface: #{$muriel-white};
 	--color-surface-backdrop: #{$muriel-gray-0};
 	--color-surface-backdrop-rgb: #{hex-to-rgb( $muriel-gray-0 )};
