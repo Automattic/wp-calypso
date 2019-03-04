@@ -12,7 +12,7 @@ import { isDesktop, isMobile } from 'lib/viewport';
 
 if ( isDesktop() ) {
 	// Render a component optimized for desktop view
-} else ( isMobile() ) {
+} else if ( isMobile() ) {
 	// Render a component optimized for mobile view
 }
 ```
@@ -32,7 +32,7 @@ if ( isWithinBreakpoint( '>1400px' ) ) {
 Registering to listen to changes:
 
 ```js
-import { addIsDesktopListener } from 'lib/viewport';
+import { subscribeIsDesktop } from 'lib/viewport';
 
 class MyComponent extends React.Component {
 	sizeChanged = matches => {
@@ -42,13 +42,11 @@ class MyComponent extends React.Component {
 	};
 
 	componentDidMount() {
-		this.unsubscribe = addIsDesktopListener( this.sizeChanged );
+		this.unsubscribe = subscribeIsDesktop( this.sizeChanged );
 	}
 
 	componentWillUnmount() {
-		if ( this.unsubscribe ) {
-			this.unsubscribe();
-		}
+		this.unsubscribe();
 	}
 }
 ```
