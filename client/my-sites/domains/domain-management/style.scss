@@ -267,6 +267,15 @@ input[type='radio'].domain-management-list-item__radio {
 	.form-toggle__label-content {
 		margin-left: 0;
 	}
+
+	.form-toggle:checked + .form-toggle__label .form-toggle__switch,
+	.form-toggle.is-toggling + .form-toggle__label .form-toggle__switch {
+		background: var( --color-success );
+	}
+
+	.form-toggle:checked:not( :disabled ) + .form-toggle__label:hover .form-toggle__switch {
+		background: var( --color-success-light );
+	}
 }
 
 .domain-details-card,
