@@ -3,7 +3,6 @@
  */
 import ResizeObserver from 'resize-observer-polyfill';
 import classnames from 'classnames';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, createRef } from '@wordpress/element';
 import { isBlobURL } from '@wordpress/blob';
 import { isEqual } from 'lodash';
@@ -159,7 +158,7 @@ class Slideshow extends Component {
 						role="button"
 					/>
 					<a
-						aria-label={ __( 'Pause Slideshow' ) }
+						aria-label="Pause Slideshow"
 						className="wp-block-jetpack-slideshow_button-pause"
 						role="button"
 					/>
