@@ -229,26 +229,14 @@ class SignupForm extends Component {
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
-			'password',
-			this.props.displayUsernameInput && 'username',
+			this.state.focusPassword && 'password',
+			this.props.displayUsernameInput && this.state.focusUsername && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );
 
 		// Object with all fields
 		const data = mapKeys( pick( fields, fieldsForValidation ), ( value, key ) => snakeCase( key ) );
-
-		// Remove fields that have yet to be visited
-		forEach( data, ( value, field ) => {
-			// prevent an error messages from being shown prematurely
-			if ( field === 'password' && ! this.state.focusPassword ) {
-				delete data.password;
-			}
-
-			if ( field === 'username' && ! this.state.focusUsername ) {
-				delete data.username;
-			}
-		} );
 
 		// Submit for validation
 		wpcom.undocumented().validateNewUser( data, ( error, response ) => {
