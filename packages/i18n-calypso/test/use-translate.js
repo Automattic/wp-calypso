@@ -1,8 +1,12 @@
 /**
+ * @jest-environment jsdom
+ */
+/**
  * External dependencies
  */
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import ReactDOM from 'react-dom';
+import { act } from 'react-dom/test-utils';
 
 /**
  * Internal dependencies
@@ -15,6 +19,19 @@ function Label() {
 }
 
 describe( 'useTranslate()', () => {
+	let container;
+
+	beforeEach( () => {
+		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+	} );
+
+	afterEach( () => {
+		ReactDOM.unmountComponentAtNode( container );
+		document.body.removeChild( container );
+		container = null;
+	} );
+
 	test( 'renders a translated string', () => {
 		// set some locale data
 		i18n.setLocale( {
@@ -23,10 +40,11 @@ describe( 'useTranslate()', () => {
 		} );
 
 		// render the Label component
-		const renderer = new ShallowRenderer();
-		renderer.render( <Label /> );
+		act( () => {
+			ReactDOM.render( <Label />, container );
+		} );
 
 		// check that it's translated
-		expect( renderer.getRenderOutput() ).toBe( 'háček (cs)' );
+		expect( container.textContent ).toBe( 'háček (cs)' );
 	} );
 } );
