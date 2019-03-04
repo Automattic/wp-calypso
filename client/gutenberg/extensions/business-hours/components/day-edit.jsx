@@ -14,7 +14,7 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 const defaultOpen = '09:00';
 const defaultClose = '17:00';
 
-class Day extends Component {
+class DayEdit extends Component {
 	renderInterval = ( interval, intervalIndex ) => {
 		const { day } = this.props;
 		const { opening, closing } = interval;
@@ -197,4 +197,4 @@ class Day extends Component {
 	}
 }
 
-export default Day;
+export default DayEdit;
