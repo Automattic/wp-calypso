@@ -23,17 +23,20 @@ import {
  * @returns {Boolean} The current status for the breakpoint.
  */
 export function useBreakpoint( breakpoint ) {
-	const [ isActive, setIsActive ] = useState( () => isWithinBreakpoint( breakpoint ) );
-
-	function handleBreakpointChange( currentStatus ) {
-		setIsActive( currentStatus );
-	}
+	const [ state, setState ] = useState( () => ( {
+		isActive: isWithinBreakpoint( breakpoint ),
+		breakpoint,
+	} ) );
 
 	useEffect(() => {
-		// Pick up changes to breakpoint, if any, and update state accordingly.
-		const currentStatus = isWithinBreakpoint( breakpoint );
-		if ( isActive !== currentStatus ) {
-			handleBreakpointChange( currentStatus );
+		function handleBreakpointChange( currentStatus ) {
+			setState( prevState => {
+				// Ensure we bail out without rendering if nothing changes, by preserving state.
+				if ( prevState.isActive === currentStatus && prevState.breakpoint === breakpoint ) {
+					return prevState;
+				}
+				return { isActive: currentStatus, breakpoint };
+			} );
 		}
 
 		const unsubscribe = subscribeIsWithinBreakpoint( breakpoint, handleBreakpointChange );
@@ -41,7 +44,7 @@ export function useBreakpoint( breakpoint ) {
 		return unsubscribe;
 	}, [ breakpoint ]);
 
-	return isActive;
+	return breakpoint === state.breakpoint ? state.isActive : isWithinBreakpoint( breakpoint );
 }
 
 /**
