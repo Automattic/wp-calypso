@@ -32,10 +32,10 @@ import { abtest } from 'lib/abtest';
 export class PlanFeaturesHeader extends Component {
 	render() {
 		const { isInSignup, plansWithScroll } = this.props;
-		if ( isInSignup ) {
-			return this.renderSignupHeader();
-		} else if ( plansWithScroll ) {
+		if ( plansWithScroll ) {
 			return this.renderPlansHeaderNoTabs();
+		} else if ( isInSignup ) {
+			return this.renderSignupHeader();
 		}
 
 		return this.renderPlansHeader();
