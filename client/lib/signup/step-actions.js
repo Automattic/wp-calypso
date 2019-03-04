@@ -21,6 +21,7 @@ import { cartItems } from 'lib/cart-values';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
+	planItem as getCartItemForPlan,
 } from 'lib/cart-values/cart-items';
 
 // State actions and selectors
@@ -591,7 +592,7 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 		SignupActions.submitSignupStep( { stepName: stepName, cartItem }, [], { cartItem } );
 		recordExcludeStepEvent( stepName, sitePlanSlug );
 		fulfilledDependencies = fulfilledDependencies.concat( [ 'cartItem' ] );
-	} else if ( defaultDependencies &&  defaultDependencies.cartItem ) {
+	} else if ( defaultDependencies && defaultDependencies.cartItem ) {
 		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
 		SignupActions.submitSignupStep( { stepName, cartItem }, [], { cartItem } );
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
@@ -684,5 +685,3 @@ export function isSiteTopicFulfilled( stepName, nextProps ) {
 		flows.excludeStep( stepName );
 	}
 }
-
-

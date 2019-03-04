@@ -139,7 +139,6 @@ class Signup extends React.Component {
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			providedDependencies,
-
 			reduxStore: this.context.store,
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
