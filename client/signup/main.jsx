@@ -598,7 +598,7 @@ class Signup extends React.Component {
 
 		// Removes flicker of steps that have been removed from the flow
 		const waitToRenderReturnValue = this.shouldWaitToRender();
-		if ( waitToRenderReturnValue ) {
+		if ( waitToRenderReturnValue && ! this.state.shouldShowLoadingScreen ) {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
