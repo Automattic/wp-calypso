@@ -142,7 +142,7 @@
 	position: relative;
 	white-space: nowrap;
 	&::after {
-		@include long-content-fade( $color: hex-to-rgb( $gray-light ) );
+		@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
 	}
 }
 

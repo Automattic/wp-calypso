@@ -147,6 +147,11 @@ export const redirect = ( { store: { getState } }, next ) => {
 	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
+function getPressThisData( query ) {
+	const { text, url, title, image, embed } = query;
+	return url ? { text, url, title, image, embed } : null;
+}
+
 export const post = ( context, next ) => {
 	//see post-editor/controller.js for reference
 
@@ -160,11 +165,19 @@ export const post = ( context, next ) => {
 	const duplicatePostId = isInteger( jetpackCopy ) ? jetpackCopy : null;
 
 	if ( config.isEnabled( 'calypsoify/iframe' ) ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const pressThis = getPressThisData( context.query );
+
+		// Set postId on state.ui.editor.postId, so components like editor revisions can read from it.
+		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
+
 		context.primary = (
 			<CalypsoifyIframe
 				postId={ postId }
 				postType={ postType }
 				duplicatePostId={ duplicatePostId }
+				pressThis={ pressThis }
 			/>
 		);
 

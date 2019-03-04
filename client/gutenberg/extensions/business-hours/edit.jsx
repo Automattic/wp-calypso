@@ -11,8 +11,8 @@ import { __experimentalGetSettings } from '@wordpress/date';
 /**
  * Internal dependencies
  */
-import Day from 'gutenberg/extensions/business-hours/components/day';
-import DaySave from 'gutenberg/extensions/business-hours/components/day-save';
+import DayEdit from 'gutenberg/extensions/business-hours/components/day-edit';
+import DayPreview from 'gutenberg/extensions/business-hours/components/day-preview';
 import { icon } from 'gutenberg/extensions/business-hours/index';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
@@ -53,27 +53,11 @@ class BusinessHours extends Component {
 	}
 
 	render() {
-		const { attributes, className, isEdit, isSelected } = this.props;
+		const { attributes, className, isSelected } = this.props;
 		const { days } = attributes;
 		const { localization, hasFetched } = this.state;
 		const { startOfWeek } = localization;
 		const localizedWeek = days.concat( days.slice( 0, startOfWeek ) ).slice( startOfWeek );
-
-		if ( ! isEdit || ! isSelected ) {
-			const settings = __experimentalGetSettings();
-			const {
-				formats: { time },
-			} = settings;
-			return (
-				<dl className={ classNames( className, 'jetpack-business-hours' ) }>
-					{ localizedWeek.map( ( day, key ) => {
-						return (
-							<DaySave key={ key } day={ day } localization={ localization } timeFormat={ time } />
-						);
-					} ) }
-				</dl>
-			);
-		}
 
 		if ( ! hasFetched ) {
 			return (
@@ -84,10 +68,33 @@ class BusinessHours extends Component {
 			);
 		}
 
+		if ( ! isSelected ) {
+			const settings = __experimentalGetSettings();
+			const {
+				formats: { time },
+			} = settings;
+			return (
+				<dl className={ classNames( className, 'jetpack-business-hours' ) }>
+					{ localizedWeek.map( ( day, key ) => {
+						return (
+							<DayPreview
+								key={ key }
+								day={ day }
+								localization={ localization }
+								timeFormat={ time }
+							/>
+						);
+					} ) }
+				</dl>
+			);
+		}
+
 		return (
 			<div className={ classNames( className, 'is-edit' ) }>
 				{ localizedWeek.map( ( day, key ) => {
-					return <Day key={ key } day={ day } localization={ localization } { ...this.props } />;
+					return (
+						<DayEdit key={ key } day={ day } localization={ localization } { ...this.props } />
+					);
 				} ) }
 			</div>
 		);

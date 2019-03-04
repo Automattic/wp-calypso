@@ -86,7 +86,7 @@
 	padding: 12px;
 	border-top: 1px solid var( --color-neutral-100 );
 	color: var( --color-white );
-	background-color: lighten( $gray-dark, 20% );
+	background-color: var( --color-neutral );
 	margin: 0;
 }
 
@@ -338,7 +338,7 @@
 		margin-right: 0;
 
 		a {
-			color: lighten( $blue-light, 10% );
+			color: var( --color-primary-100 );
 		}
 
 	}

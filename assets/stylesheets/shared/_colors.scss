@@ -5,23 +5,12 @@
 // The goals is to eventually have a single source of truth for colors across all our products.
 // For more details see: https://github.com/Automattic/color-studio/
 
-// Primary Accent (Blues)
-$blue-wordpress: $muriel-blue-500;
-$blue-light: $muriel-blue-300;
-$blue-medium: $muriel-blue-500;
-$blue-dark: $muriel-blue-700;
-
 // Jetpack Green
 $green-jetpack: #00be28;
 
 // Grays
 $gray: $muriel-gray-300;
-$gray-light: $muriel-gray-0;
-$gray-dark: $muriel-gray-700;
 
-// Shades of gray
-$gray-lighten-20: $muriel-gray-100; // #c8d7e1
-//
 // See wordpress.com/design-handbook/colors/ for more info.
 
 // Secondary Accent (Oranges)
@@ -32,5 +21,5 @@ $white: $muriel-white;
 $transparent: rgba( 255, 255, 255, 0 );
 
 // Layout
-$masterbar-color: $blue-wordpress;
+$masterbar-color: $muriel-blue-500;
 $sidebar-bg-color: $muriel-gray-0;

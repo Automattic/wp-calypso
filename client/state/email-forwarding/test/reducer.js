@@ -10,8 +10,9 @@ import { expect } from 'chai';
  */
 import emailForwardsReducer from '../reducer';
 import {
-	EMAIL_FORWARDING_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_REQUEST,
+	EMAIL_FORWARDING_REQUEST_SUCCESS,
+	EMAIL_FORWARDING_REQUEST_FAILURE,
 	EMAIL_FORWARDING_ADD_REQUEST,
 } from 'state/action-types';
 
@@ -46,7 +47,31 @@ describe( 'emailForwardsReducer', () => {
 				'example.com': {
 					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
 					requesting: false,
-					requestError: null,
+					requestError: false,
+				},
+			} );
+		} );
+
+		test( 'should set requestError to false', () => {
+			const prevState = {
+				'example.com': {
+					forwards: null,
+					requesting: false,
+					requestError: true,
+				},
+			};
+
+			const state = emailForwardsReducer( prevState, {
+				type: EMAIL_FORWARDING_REQUEST_SUCCESS,
+				domainName: 'example.com',
+				forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
+			} );
+
+			expect( state ).to.eql( {
+				'example.com': {
+					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
+					requesting: false,
+					requestError: false,
 				},
 			} );
 		} );
@@ -56,7 +81,7 @@ describe( 'emailForwardsReducer', () => {
 				'example.com': {
 					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 			};
 
@@ -69,7 +94,7 @@ describe( 'emailForwardsReducer', () => {
 				'example.com': {
 					forwards: null,
 					requesting: true,
-					requestError: null,
+					requestError: false,
 				},
 			} );
 		} );
@@ -79,12 +104,12 @@ describe( 'emailForwardsReducer', () => {
 				'example.com': {
 					forwards: [ TEST_MAILBOX_EXAMPLE_DOT_COM ],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 				'test.com': {
 					forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 			};
 
@@ -97,12 +122,29 @@ describe( 'emailForwardsReducer', () => {
 				'example.com': {
 					forwards: null,
 					requesting: true,
-					requestError: null,
+					requestError: false,
 				},
 				'test.com': {
 					forwards: [ TEST_MAILBOX_TEST_DOT_COM ],
 					requesting: false,
-					requestError: null,
+					requestError: false,
+				},
+			} );
+		} );
+	} );
+
+	describe( 'requesting email forward error', () => {
+		test( 'should set request error to true', () => {
+			const state = emailForwardsReducer( undefined, {
+				type: EMAIL_FORWARDING_REQUEST_FAILURE,
+				domainName: 'example.com',
+			} );
+
+			expect( state ).to.eql( {
+				'example.com': {
+					forwards: null,
+					requesting: false,
+					requestError: true,
 				},
 			} );
 		} );
@@ -137,7 +179,7 @@ describe( 'emailForwardsReducer', () => {
 						},
 					],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 			} );
 		} );
@@ -170,7 +212,7 @@ describe( 'emailForwardsReducer', () => {
 						},
 					],
 					requesting: false,
-					requestError: null,
+					requestError: false,
 				},
 			} );
 		} );

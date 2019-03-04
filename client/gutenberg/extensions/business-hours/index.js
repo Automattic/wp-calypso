@@ -96,7 +96,7 @@ export const settings = {
 		},
 	},
 
-	edit: props => <BusinessHours { ...props } isEdit />,
+	edit: props => <BusinessHours { ...props } />,
 
-	save: props => <BusinessHours { ...props } />,
+	save: () => null,
 };

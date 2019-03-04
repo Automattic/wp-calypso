@@ -123,7 +123,7 @@
 	}
 
 	.following-manage__subscriptions-search .search-card {
-		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.3 );
+		box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.3 );
 
 		.following-manage__search-followed-input.is-compact {
 			height: 32px;

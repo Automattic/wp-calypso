@@ -1,5 +1,5 @@
 .text-diff__additions {
-	background: lighten( $blue-wordpress, 58% );
+	background: var( --color-primary-200 );
 	border-bottom: 2px solid var( --color-primary );
 }
 
