@@ -3,7 +3,6 @@
  */
 import ResizeObserver from 'resize-observer-polyfill';
 import classnames from 'classnames';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, createRef } from '@wordpress/element';
 import { isBlobURL } from '@wordpress/blob';
 import { isEqual } from 'lodash';
@@ -105,6 +104,7 @@ class Slideshow extends Component {
 		const { autoplay, className, delay, effect, images } = this.props;
 		// Note: React omits the data attribute if the value is null, but NOT if it is false.
 		// This is the reason for the unusual logic related to autoplay below.
+		/* eslint-disable jsx-a11y/anchor-is-valid */
 		return (
 			<div
 				className={ className }
@@ -147,25 +147,29 @@ class Slideshow extends Component {
 							</li>
 						) ) }
 					</ul>
+					<a
+						className="wp-block-jetpack-slideshow_button-prev swiper-button-prev swiper-button-white"
+						ref={ this.btnPrevRef }
+						role="button"
+					/>
+					<a
+						className="wp-block-jetpack-slideshow_button-next swiper-button-next swiper-button-white"
+						ref={ this.btnNextRef }
+						role="button"
+					/>
+					<a
+						aria-label="Pause Slideshow"
+						className="wp-block-jetpack-slideshow_button-pause"
+						role="button"
+					/>
 					<div
 						className="wp-block-jetpack-slideshow_pagination swiper-pagination swiper-pagination-white"
 						ref={ this.paginationRef }
 					/>
-					<button
-						className="wp-block-jetpack-slideshow_button-prev swiper-button-prev swiper-button-white"
-						ref={ this.btnPrevRef }
-					/>
-					<button
-						className="wp-block-jetpack-slideshow_button-next swiper-button-next swiper-button-white"
-						ref={ this.btnNextRef }
-					/>
-					<button
-						aria-label={ __( 'Pause Slideshow' ) }
-						className="wp-block-jetpack-slideshow_button-pause"
-					/>
 				</div>
 			</div>
 		);
+		/* eslint-enable jsx-a11y/anchor-is-valid */
 	}
 
 	prefersReducedMotion = () => {
