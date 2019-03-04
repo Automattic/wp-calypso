@@ -489,13 +489,16 @@ jobs:
         test-target:
           type: string
           default: ""
+        jetpack-host:
+          type: string
+          default: ""
       steps:
         - prepare
         - run: *set-e2e-variables
         - run: npm run decryptconfig
         - run:
             name: Run Canary Tests
-            command: env TARGET=<< parameters.test-target >> ./run.sh -R << parameters.test-flags >>
+            command: env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
         - store-artifacts-and-test-results
 
 workflows:
@@ -574,5 +577,123 @@ workflows:
             branches:
               only:
                 - master
+
+  e2e-full-suite-scheduled:
+    jobs:
+    - setup
+    - test-e2e:
+        requires:
+        - setup
+    triggers:
+    - schedule:
+        cron: "0 2,14 * * *"
+        filters:
+          branches:
+            only: master
+
+  e2e-canary-scheduled:
+    jobs:
+      - setup
+      - test-e2e-canary:
+          name: test-e2e-canary-ie
+          requires:
+            - setup
+          test-flags: "-w"
+          test-target: "IE11"
+      - test-e2e-canary:
+          name: test-e2e-canary-woo
+          requires:
+            - setup
+          test-flags: "-W"
+          test-target: "WOO"
+    triggers:
+      - schedule:
+          cron: "0 12,20 * * *"
+          filters:
+            branches:
+              only: master
+
+  e2e-jetpack-be-scheduled:
+    jobs:
+      - setup
+      - test-e2e-canary:
+          name: test-e2e-jetpack
+          requires:
+            - setup
+          test-flags: "-j"
+          jetpack-host: "PRESSABLEBLEEDINGEDGE"
+          test-target: "JETPACK"
+    triggers:
+      - schedule:
+          cron: "0 7,19 * * *"
+          filters:
+            branches:
+              only: master
+
+  e2e-jetpack-scheduled:
+    jobs:
+    - setup
+    - test-e2e-canary:
+        name: test-e2e-jetpack
+        requires:
+        - setup
+        test-flags: "-j"
+        jetpack-host: "PRESSABLE"
+        test-target: "JETPACK"
+    triggers:
+    - schedule:
+        cron: "0 1,13 * * *"
+        filters:
+          branches:
+            only: master
+
+  e2e-canary-i18n-monthly:
+    jobs:
+      - setup
+      - test-e2e-canary:
+          name: test-e2e-i18n-monthly
+          requires:
+            - setup
+          test-target: "I18N"
+          test-flags: "-i"
+          filters:
+            branches:
+              only: master
+    triggers:
+      - schedule:
+          cron: "40 15 19 * *"
+          filters:
+            branches:
+              only: master
+
+  e2e-canary-i18n-nightly:
+    jobs:
+      - setup
+      - test-e2e-canary:
+          name: test-e2e-i18n-nightly
+          requires:
+            - setup
+          test-target: "I18N"
+          test-flags: "-I"
+          filters:
+            branches:
+              only: master
+    triggers:
+      - schedule:
+          cron: "46 4 * * *"
+          filters:
+            branches:
+              only: master
+
+  e2e-canary-on-merge:
+    jobs:
+      - setup:
+          filters:
+            branches:
+              only: master
+      - test-e2e-canary:
+          requires:
+            - setup
+          test-target: "CANARY"
 
 # vi: sts=2 ts=2 sw=2 et
