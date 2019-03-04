@@ -25,7 +25,7 @@ import { addQueryArgs } from 'lib/url';
 import ActivityActor from './activity-actor';
 import ActivityMedia from './activity-media';
 import analytics from 'lib/analytics';
-import { withDesktopBreakpoint } from 'lib/viewport/react-helpers';
+import { withDesktopBreakpoint } from 'lib/viewport/react';
 
 const MAX_STREAM_ITEMS_IN_AGGREGATE = 10;
 

@@ -12,7 +12,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Popover from 'components/popover';
-import { useMobileBreakpoint } from 'lib/viewport/react-helpers';
+import { useMobileBreakpoint } from 'lib/viewport/react';
 
 function Tooltip( props ) {
 	const isMobile = useMobileBreakpoint();

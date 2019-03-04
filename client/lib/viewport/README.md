@@ -56,7 +56,7 @@ It also comes with React helpers that help in registering a component to breakpo
 Using a hook:
 
 ```js
-import { useMobileBreakpoint } from 'lib/viewport/react-helpers';
+import { useMobileBreakpoint } from 'lib/viewport/react';
 
 export default function MyComponent( props ) {
 	const isMobile = useMobileBreakpoint();
@@ -67,7 +67,7 @@ export default function MyComponent( props ) {
 Using a higher-order component:
 
 ```js
-import { withMobileBreakpoint } from 'lib/viewport/react-helpers';
+import { withMobileBreakpoint } from 'lib/viewport/react';
 
 class MyComponent extends React.Component {
 	render() {

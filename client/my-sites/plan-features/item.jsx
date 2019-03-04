@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import InfoPopover from 'components/info-popover';
-import { useMobileBreakpoint } from 'lib/viewport/react-helpers';
+import { useMobileBreakpoint } from 'lib/viewport/react';
 
 export default function PlanFeaturesItem( { children, description, hideInfoPopover } ) {
 	const isMobile = useMobileBreakpoint();

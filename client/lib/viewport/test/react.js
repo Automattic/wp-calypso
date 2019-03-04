@@ -46,7 +46,7 @@ const matchMediaMock = jest.fn( query => {
 	return mediaListObjectMock;
 } );
 
-describe( 'viewport/react-helpers', () => {
+describe( 'viewport/react', () => {
 	let container;
 
 	// Auxiliary method to test a valid component.
@@ -93,7 +93,7 @@ describe( 'viewport/react-helpers', () => {
 
 	beforeAll( async () => {
 		window.matchMedia = matchMediaMock;
-		helpers = await import( '../react-helpers' );
+		helpers = await import( '../react' );
 		// Disable console warnings.
 		jest.spyOn( console, 'warn' ).mockImplementation( () => '' );
 	} );

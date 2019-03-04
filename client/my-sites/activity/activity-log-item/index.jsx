@@ -40,7 +40,7 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { adjustMoment } from '../activity-log/utils';
 import { getSite } from 'state/sites/selectors';
-import { withDesktopBreakpoint } from 'lib/viewport/react-helpers';
+import { withDesktopBreakpoint } from 'lib/viewport/react';
 
 class ActivityLogItem extends Component {
 	static propTypes = {
