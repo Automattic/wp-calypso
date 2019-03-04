@@ -197,7 +197,10 @@ class TiledGalleryEdit extends Component {
 						</Toolbar>
 						<FilterToolbar
 							value={ imageFilter }
-							onChange={ value => setAttributes( { imageFilter: value } ) }
+							onChange={ value => {
+								setAttributes( { imageFilter: value } );
+								this.setState( { selectedImage: null } );
+							} }
 						/>
 					</Fragment>
 				) }
