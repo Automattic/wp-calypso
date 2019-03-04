@@ -93,7 +93,7 @@
 }
 
 .nps-survey__recommendation-option.is-selected {
-	color: darken( $blue-medium, 8% );
+	color: var( --color-primary-400 );
 	font-weight: bold;
 }
 

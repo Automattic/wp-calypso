@@ -139,8 +139,8 @@
 		}
 		&[disabled],
 		&:disabled {
-			background: tint( $blue-light, 50% );
-			border-color: tint( $blue-wordpress, 55% );
+			background: var( --color-primary-50 );
+			border-color: var( --color-primary-200 );
 			color: var( --color-white );
 		}
 	}

@@ -282,7 +282,7 @@
 .mailchimp__sync-notice-syncing {
 	animation: button__busy-animation 3000ms infinite linear;
 	background-size: 120px 100%;
-	background-image: linear-gradient( -45deg, $blue-medium 28%, darken( $blue-medium, 5% ) 28%, darken( $blue-medium, 5% ) 72%, $blue-medium 72% );
+	background-image: linear-gradient( -45deg, var( --color-primary ) 28%, var( --color-primary-dark ) 28%, var( --color-primary-dark ) 72%, var( --color-primary ) 72% );
 	border-color: var( --color-primary-200 );
 }
 

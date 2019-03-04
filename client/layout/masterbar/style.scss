@@ -51,7 +51,7 @@ $autobar-height: 20px;
 	> .masterbar__notifications,
 	> .masterbar__login-links a {
 		&:not( .is-active ) {
-			background: rgba( $blue-wordpress, 0.85 );
+			background: rgba( var( --color-primary-rgb ), 0.85 );
 		}
 
 		&:hover {

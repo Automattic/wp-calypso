@@ -338,7 +338,7 @@
 		margin-right: 0;
 
 		a {
-			color: lighten( $blue-light, 10% );
+			color: var( --color-primary-100 );
 		}
 
 	}
