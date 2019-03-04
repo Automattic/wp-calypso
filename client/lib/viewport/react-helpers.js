@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { camelCase, upperFirst } from 'lodash';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -13,7 +13,7 @@ import {
 	subscribeIsWithinBreakpoint,
 	MOBILE_BREAKPOINT,
 	DESKTOP_BREAKPOINT,
-} from './index';
+} from '.';
 
 /**
  * React hook for getting the status for a breakpoint and keeping it updated.
@@ -68,27 +68,6 @@ export function useDesktopBreakpoint() {
 }
 
 /**
- * Auxiliary method to produce a higher order component for getting the status
- * for a breakpoint and keeping it updated. It also sets the component name.
- * @param {React.Component|Function} Wrapped The component to wrap.
- * @param {String} breakpoint The breakpoint to consider.
- * @param {String} modifierName The name to modify the component with.
- *
- * @returns {Function} The wrapped component.
- */
-function withBreakpointAux( Wrapped, breakpoint, modifierName ) {
-	const EnhancedComponent = function( props ) {
-		const isActive = useBreakpoint( breakpoint );
-		return <Wrapped isBreakpointActive={ isActive } { ...props } />;
-	};
-
-	const displayName = Wrapped.displayName || Wrapped.name || 'Component';
-	EnhancedComponent.displayName = `${ upperFirst( camelCase( modifierName ) ) }(${ displayName })`;
-
-	return EnhancedComponent;
-}
-
-/**
  * React higher order component for getting the status for a breakpoint and
  * keeping it updated.
  *
@@ -97,9 +76,14 @@ function withBreakpointAux( Wrapped, breakpoint, modifierName ) {
  * @returns {Function} A function that given a component returns the
  * wrapped component.
  */
-export function withBreakpoint( breakpoint ) {
-	return Wrapped => withBreakpointAux( Wrapped, breakpoint, 'WithBreakpoint' );
-}
+export const withBreakpoint = breakpoint =>
+	createHigherOrderComponent(
+		WrappedComponent => props => {
+			const isBreakpointActive = useBreakpoint( breakpoint );
+			return <WrappedComponent { ...props } isBreakpointActive={ isBreakpointActive } />;
+		},
+		'WithBreakpoint'
+	);
 
 /**
  * React higher order component for getting the status for the mobile
@@ -109,9 +93,13 @@ export function withBreakpoint( breakpoint ) {
  *
  * @returns {Function} The wrapped component.
  */
-export function withMobileBreakpoint( Wrapped ) {
-	return withBreakpointAux( Wrapped, MOBILE_BREAKPOINT, 'WithMobileBreakpoint' );
-}
+export const withMobileBreakpoint = createHigherOrderComponent(
+	WrappedComponent => props => {
+		const isBreakpointActive = useBreakpoint( MOBILE_BREAKPOINT );
+		return <WrappedComponent { ...props } isBreakpointActive={ isBreakpointActive } />;
+	},
+	'WithMobileBreakpoint'
+);
 
 /**
  * React higher order component for getting the status for the desktop
@@ -121,6 +109,10 @@ export function withMobileBreakpoint( Wrapped ) {
  *
  * @returns {Function} The wrapped component.
  */
-export function withDesktopBreakpoint( Wrapped ) {
-	return withBreakpointAux( Wrapped, DESKTOP_BREAKPOINT, 'WithDesktopBreakpoint' );
-}
+export const withDesktopBreakpoint = createHigherOrderComponent(
+	WrappedComponent => props => {
+		const isBreakpointActive = useBreakpoint( DESKTOP_BREAKPOINT );
+		return <WrappedComponent { ...props } isBreakpointActive={ isBreakpointActive } />;
+	},
+	'WithDesktopBreakpoint'
+);
