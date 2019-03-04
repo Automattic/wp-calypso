@@ -6,7 +6,7 @@ import { getCategories, setCategories } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackLogo from 'gutenberg/extensions/presets/jetpack/utils/jetpack-logo';
 
 setCategories( [
 	...getCategories().filter( ( { slug } ) => slug !== 'jetpack' ),
