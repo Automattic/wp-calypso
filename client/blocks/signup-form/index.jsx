@@ -235,10 +235,7 @@ class SignupForm extends Component {
 			this.props.displayNameInput && 'lastName',
 		] );
 
-		// Object with all fields
 		const data = mapKeys( pick( fields, fieldsForValidation ), ( value, key ) => snakeCase( key ) );
-
-		// Submit for validation
 		wpcom.undocumented().validateNewUser( data, ( error, response ) => {
 			if ( this.props.submitting ) {
 				// this is a stale callback, we have already signed up or are logging in
