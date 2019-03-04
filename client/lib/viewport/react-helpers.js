@@ -29,13 +29,13 @@ export function useBreakpoint( breakpoint ) {
 	} ) );
 
 	useEffect(() => {
-		function handleBreakpointChange( currentStatus ) {
+		function handleBreakpointChange( isActive ) {
 			setState( prevState => {
 				// Ensure we bail out without rendering if nothing changes, by preserving state.
-				if ( prevState.isActive === currentStatus && prevState.breakpoint === breakpoint ) {
+				if ( prevState.isActive === isActive && prevState.breakpoint === breakpoint ) {
 					return prevState;
 				}
-				return { isActive: currentStatus, breakpoint };
+				return { isActive, breakpoint };
 			} );
 		}
 
