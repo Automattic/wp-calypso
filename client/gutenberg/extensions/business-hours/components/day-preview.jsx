@@ -11,7 +11,7 @@ import { sprintf } from '@wordpress/i18n';
  */
 import { _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
-class DaySave extends Component {
+class DayPreview extends Component {
 	formatTime( time ) {
 		const { timeFormat } = this.props;
 		const [ hours, minutes ] = time.split( ':' );
@@ -55,4 +55,4 @@ class DaySave extends Component {
 	}
 }
 
-export default DaySave;
+export default DayPreview;
