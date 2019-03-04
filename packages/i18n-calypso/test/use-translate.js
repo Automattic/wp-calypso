@@ -47,4 +47,25 @@ describe( 'useTranslate()', () => {
 		// check that it's translated
 		expect( container.textContent ).toBe( 'háček (cs)' );
 	} );
+
+	test( 'rerenders after locale change', () => {
+		// reset to default locale
+		i18n.setLocale();
+
+		act( () => {
+			ReactDOM.render( <Label />, container );
+		} );
+
+		expect( container.textContent ).toBe( 'hook (en)' );
+
+		// change locale and ensure that React UI is rerendered
+		act( () => {
+			i18n.setLocale( {
+				'': { localeSlug: 'cs' },
+				'hook (%(lang)s)': [ 'háček (%(lang)s)' ],
+			} );
+		} );
+
+		expect( container.textContent ).toBe( 'háček (cs)' );
+	} );
 } );
