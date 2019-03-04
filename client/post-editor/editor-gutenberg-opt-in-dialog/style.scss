@@ -66,7 +66,7 @@
 }
 
 .editor-gutenberg-opt-in-dialog__illustration {
-	background: $gray-light url( '/calypso/images/illustrations/gutenberg.svg' ) no-repeat;
+	background: var( --color-neutral-0 ) url( '/calypso/images/illustrations/gutenberg.svg' ) no-repeat;
 	background-position: 50%;
 	background-size: 320px;
 	height: 180px;
