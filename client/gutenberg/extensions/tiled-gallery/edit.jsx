@@ -212,7 +212,7 @@ class TiledGalleryEdit extends Component {
 						icon={ <div className="tiled-gallery__media-placeholder-icon">{ icon }</div> }
 						className={ className }
 						labels={ {
-							title: __( 'Tiled gallery' ),
+							title: __( 'Tiled Gallery' ),
 							name: __( 'images' ),
 						} }
 						onSelect={ this.onSelectImages }
@@ -232,7 +232,7 @@ class TiledGalleryEdit extends Component {
 			<Fragment>
 				{ controls }
 				<InspectorControls>
-					<PanelBody title={ __( 'Tiled gallery settings' ) }>
+					<PanelBody title={ __( 'Tiled Gallery settings' ) }>
 						{ layoutSupportsColumns( layoutStyle ) && images.length > 1 && (
 							<RangeControl
 								label={ __( 'Columns' ) }
