@@ -40,7 +40,7 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { adjustMoment } from '../activity-log/utils';
 import { getSite } from 'state/sites/selectors';
-import { isDesktop, addIsDesktopListener, removeIsDesktopListener } from 'lib/viewport';
+import { withDesktopBreakpoint } from 'lib/viewport/react';
 
 class ActivityLogItem extends Component {
 	static propTypes = {
@@ -96,23 +96,22 @@ class ActivityLogItem extends Component {
 		this.forceUpdate();
 	};
 
-	componentDidMount() {
-		addIsDesktopListener( this.sizeChanged );
-	}
-
-	componentWillUnmount() {
-		removeIsDesktopListener( this.sizeChanged );
-	}
-
 	renderHeader() {
 		const {
-			activity: { activityTitle, actorAvatarUrl, actorName, actorRole, actorType, activityMedia },
+			activity: {
+				activityTitle,
+				actorAvatarUrl,
+				actorName,
+				actorRole,
+				actorType,
+				activityMedia,
+				isBreakpointActive: isDesktop,
+			},
 		} = this.props;
-		const isDesktopSize = isDesktop();
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
-				{ activityMedia && isDesktopSize && (
+				{ activityMedia && isDesktop && (
 					<ActivityMedia
 						className={ classNames( {
 							'activity-log-item__activity-media': true,
@@ -134,7 +133,7 @@ class ActivityLogItem extends Component {
 					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
 				</div>
-				{ activityMedia && ! isDesktopSize && (
+				{ activityMedia && ! isDesktop && (
 					<ActivityMedia
 						className="activity-log-item__activity-media is-mobile"
 						icon={ false }
@@ -437,4 +436,4 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( ActivityLogItem ) );
+)( withDesktopBreakpoint( localize( ActivityLogItem ) ) );

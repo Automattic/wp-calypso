@@ -165,4 +165,12 @@ export default {
 		},
 		defaultVariation: 'featured',
 	},
+	builderReferralHelpPopover: {
+		datestamp: '20190227',
+		variations: {
+			builderReferralLink: 10,
+			original: 90,
+		},
+		defaultVariation: 'original',
+	},
 };
