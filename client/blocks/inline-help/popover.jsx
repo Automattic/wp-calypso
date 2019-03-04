@@ -207,7 +207,7 @@ class InlineHelpPopover extends Component {
 				>
 					Need a designer to build your site?
 				</a>
-				<p>Hire a WordPress expert!</p>
+				<p>Hire a WordPress design expert from Upwork.</p>
 			</div>
 		);
 	};
