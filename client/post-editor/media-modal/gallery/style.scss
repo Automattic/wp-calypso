@@ -194,7 +194,7 @@ input.editor-media-modal-gallery__caption[type='text'] {
 			lighten( $gray, 25% ) 40%,
 			transparent 40%,
 			transparent 42%,
-			$gray-lighten-20 42%
+			var( --color-neutral-100 ) 42%
 		);
 	}
 

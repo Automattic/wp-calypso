@@ -8,7 +8,7 @@
 
 .plugins__header {
 	background: var( --color-white );
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	flex-direction: column;
 	display: flex;
 	margin-bottom: 9px;
@@ -20,7 +20,7 @@
 }
 
 .plugins__header .section-nav {
-	border: 1px solid transparentize( $gray-lighten-20, 0.5 );
+	border: 1px solid rgba( var( --color-neutral-100-rgb ), 0.5 );
 	border-width: 0 0 1px;
 	box-shadow: none;
 	flex: auto;
@@ -43,7 +43,7 @@
 		flex-basis: 0;
 
 		&:not( :last-child ) {
-			border-right: 1px solid transparentize( $gray-lighten-20, 0.5 );
+			border-right: 1px solid rgba( var( --color-neutral-100-rgb ), 0.5 );
 		}
 
 		@include breakpoint( '>480px' ) {

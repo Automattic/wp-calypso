@@ -104,7 +104,7 @@
 }
 
 .sticky-panel.is-sticky .themes__search-card {
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 2px 4px var( --color-neutral-100 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 2px 4px var( --color-neutral-100 );
 }
 
 .themes__upload-button {
