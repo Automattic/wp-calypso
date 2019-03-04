@@ -48,17 +48,23 @@ typeof window !== 'undefined' &&
 					paginationRender: swiperPaginationRender,
 					transitionEnd: swiperApplyAria,
 				}
-			).then( swiper => {
-				new ResizeObserver( () => {
-					if ( pendingRequestAnimationFrame ) {
-						cancelAnimationFrame( pendingRequestAnimationFrame );
-						pendingRequestAnimationFrame = null;
-					}
-					pendingRequestAnimationFrame = requestAnimationFrame( () => {
-						swiperResize( swiper );
-						swiper.update();
-					} );
-				} ).observe( swiper.el );
-			} );
+			)
+				.then( swiper => {
+					new ResizeObserver( () => {
+						if ( pendingRequestAnimationFrame ) {
+							cancelAnimationFrame( pendingRequestAnimationFrame );
+							pendingRequestAnimationFrame = null;
+						}
+						pendingRequestAnimationFrame = requestAnimationFrame( () => {
+							swiperResize( swiper );
+							swiper.update();
+						} );
+					} ).observe( swiper.el );
+				} )
+				.catch( () => {
+					slideshowBlock
+						.querySelector( '.wp-block-jetpack-slideshow_container' )
+						.classList.add( 'wp-swiper-initialized' );
+				} );
 		} );
 	} );
