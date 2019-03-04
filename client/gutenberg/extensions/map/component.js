@@ -178,15 +178,30 @@ export class Map extends Component {
 		this.setBoundsByMarkers();
 	};
 	setBoundsByMarkers = () => {
-		const { zoom, points, onSetZoom } = this.props;
+		const { zoom, points, onSetZoom, onSetMapCenter, admin } = this.props;
 		const { map, activeMarker, mapboxgl, zoomControl, boundsSetProgrammatically } = this.state;
 		if ( ! map ) {
 			return;
 		}
+		// Do not allow map dragging in the editor if there are markers, because the positioning will be programmatically overridden.
+		if ( points.length && admin ) {
+			map.dragPan.disable();
+		} else {
+			map.dragPan.enable();
+		}
+
+		// If there are multiple points, zoom is determined by the area they cover, and zoom control is removed.
+		if ( points.length > 1 && admin ) {
+			map.removeControl( zoomControl );
+		} else {
+			map.addControl( zoomControl );
+		}
+
 		// If there are no points at all, there is no data to set bounds to. Abort the function.
 		if ( ! points.length ) {
 			return;
 		}
+
 		// If there is an open info window, resizing will probably move the info window which complicates interaction.
 		if ( activeMarker ) {
 			return;
@@ -195,8 +210,8 @@ export class Map extends Component {
 		points.forEach( point => {
 			bounds.extend( [ point.coordinates.longitude, point.coordinates.latitude ] );
 		} );
+		onSetMapCenter( bounds.getCenter() );
 
-		// If there are multiple points, zoom is determined by the area they cover, and zoom control is removed.
 		if ( points.length > 1 ) {
 			map.fitBounds( bounds, {
 				padding: {
@@ -207,7 +222,6 @@ export class Map extends Component {
 				},
 			} );
 			this.setState( { boundsSetProgrammatically: true } );
-			map.removeControl( zoomControl );
 			return;
 		}
 		// If there is only one point, center map around it.
@@ -222,7 +236,6 @@ export class Map extends Component {
 			// If there are one (or zero) points, and this is not a recent change, respect user's chosen zoom.
 			map.setZoom( parseInt( zoom, 10 ) );
 		}
-		map.addControl( zoomControl );
 		this.setState( { boundsSetProgrammatically: false } );
 	};
 	getMapStyle() {
@@ -271,11 +284,12 @@ export class Map extends Component {
 			map = new mapboxgl.Map( {
 				container: this.mapRef.current,
 				style: this.getMapStyle(),
-				center: this.googlePoint2Mapbox( mapCenter ),
+				center: mapCenter,
 				zoom: parseInt( zoom, 10 ),
 				pitchWithRotate: false,
 				attributionControl: false,
 				dragRotate: false,
+				scrollZoom: false,
 			} );
 		} catch ( e ) {
 			onError( 'mapbox_error', e.message );
@@ -290,6 +304,14 @@ export class Map extends Component {
 		} );
 		map.on( 'zoomend', () => {
 			this.props.onSetZoom( map.getZoom() );
+		} );
+
+		map.on( 'moveend', () => {
+			const { onSetMapCenter, points } = this.props;
+			// If there are no markers, user repositioning controls map center. If there are markers, set programmatically.
+			if ( points.length < 1 ) {
+				onSetMapCenter( map.getCenter() );
+			}
 		} );
 
 		/* Listen for clicks on the Map background, which hides the current popup. */
@@ -307,13 +329,6 @@ export class Map extends Component {
 			window.addEventListener( 'resize', this.debouncedSizeMap );
 		} );
 	}
-	googlePoint2Mapbox( google_point ) {
-		const mapCenter = [
-			google_point.longitude ? google_point.longitude : 0,
-			google_point.latitude ? google_point.latitude : 0,
-		];
-		return mapCenter;
-	}
 }
 
 Map.defaultProps = {
@@ -321,6 +336,7 @@ Map.defaultProps = {
 	mapStyle: 'default',
 	zoom: 13,
 	onSetZoom: () => {},
+	onSetMapCenter: () => {},
 	onMapLoaded: () => {},
 	onMarkerClick: () => {},
 	onError: () => {},
