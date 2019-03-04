@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { BlockControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
@@ -19,10 +18,7 @@ import './editor.scss';
 class WordAdsEdit extends Component {
 	render() {
 		const { attributes, setAttributes } = this.props;
-		const { align, format } = attributes;
-		const classes = classNames( 'wp-block-jetpack-wordads', `jetpack-wordads-${ format }`, {
-			[ `align${ align }` ]: align,
-		} );
+		const { format } = attributes;
 		const selectedFormatObject = AD_FORMATS.filter( ( { tag } ) => tag === format )[ 0 ];
 
 		return (
@@ -33,7 +29,7 @@ class WordAdsEdit extends Component {
 						onChange={ nextFormat => setAttributes( { format: nextFormat } ) }
 					/>
 				</BlockControls>
-				<div className={ classes }>
+				<div className={ `wp-block-jetpack-wordads jetpack-wordads-${ format }` }>
 					<div
 						className="jetpack-wordads__ad"
 						style={ {
