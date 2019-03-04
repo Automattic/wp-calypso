@@ -564,7 +564,7 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	return isEmpty( dependenciesNotProvided );
 }
 
-export function isDomainFulfilled( stepName, nextProps ) {
+export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { siteDomains } = nextProps;
 	let fulfilledDependencies = [];
 
@@ -604,7 +604,7 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
-export function isSiteTypeFulfilled( stepName, nextProps ) {
+export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) {
 	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
 		return;
 	}
@@ -633,7 +633,7 @@ export function isSiteTypeFulfilled( stepName, nextProps ) {
 	}
 }
 
-export function isSiteTopicFulfilled( stepName, nextProps ) {
+export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps ) {
 	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
 		return;
 	}

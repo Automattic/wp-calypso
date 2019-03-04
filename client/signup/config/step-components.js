@@ -63,6 +63,8 @@ export default {
 	plans: PlansStepComponent,
 	'plans-launch': PlansStepComponent,
 	'plans-personal': PlansStepComponent,
+	'plans-premium': PlansStepComponent,
+	'plans-business': PlansStepComponent,
 	'plans-store-nux': PlansAtomicStoreComponent,
 	'plans-site-selected': PlansStepWithoutFreePlan,
 	site: SiteComponent,

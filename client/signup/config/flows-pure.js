@@ -21,24 +21,20 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		business: {
-			steps: [ 'user', 'about', 'themes', 'domains' ],
-			destination: function( dependencies ) {
-				return '/plans/select/business/' + dependencies.siteSlug;
-			},
+			steps: [ 'user', 'about', 'plans-business', 'themes', 'domains' ],
+			destination: getSiteDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
-			lastModified: '2018-01-24',
+			lastModified: '2019-03-04',
 			meta: {
 				skipBundlingPlan: true,
 			},
 		},
 
 		premium: {
-			steps: [ 'user', 'about', 'themes', 'domains' ],
-			destination: function( dependencies ) {
-				return '/plans/select/premium/' + dependencies.siteSlug;
-			},
+			steps: [ 'user', 'about', 'plans-premium', 'themes', 'domains' ],
+			destination: getSiteDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
-			lastModified: '2018-01-24',
+			lastModified: '2019-03-04',
 			meta: {
 				skipBundlingPlan: true,
 			},
@@ -48,7 +44,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			steps: [ 'user', 'about', 'plans-personal', 'themes', 'domains' ],
 			destination: getSiteDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2018-11-09',
+			lastModified: '2019-03-04',
 		},
 
 		free: {

@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { PLAN_PERSONAL } from 'lib/plans/constants';
+import { PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 
 export function generateSteps( {
 	addPlanToCart = noop,
@@ -174,11 +174,33 @@ export function generateSteps( {
 		'plans-personal': {
 			stepName: 'plans-personal',
 			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
-			fulfilledStepCallback: isPlanFulfilled,
 			defaultDependencies: {
 				cartItem: PLAN_PERSONAL,
+			},
+		},
+
+		'plans-premium': {
+			stepName: 'plans-premium',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PREMIUM,
+			},
+		},
+
+		'plans-business': {
+			stepName: 'plans-business',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS,
 			},
 		},
 
