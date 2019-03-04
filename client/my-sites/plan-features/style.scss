@@ -487,7 +487,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__targeted-description-heading {
 	display: block;
-	color: lighten( $gray-dark, 25% );
+	color: var( --color-neutral-400 );
 }
 
 .plan-features__item {

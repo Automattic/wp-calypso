@@ -212,7 +212,7 @@ $theme-info-height: 54px;
 }
 
 .theme__installing {
-	background: transparentize( $gray-dark, 0.5 );
+	background: rgba( var( --color-neutral-dark-rgb ), 0.5 );
 	width: 100%;
 	left: 0;
 	top: 0;
