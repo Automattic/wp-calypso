@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { Path, Polygon, SVG } from '@wordpress/components';
+import classNames from 'classnames';
 
-const JetpackLogo = () => (
+const JetpackLogo = ( { size = 32, className } ) => (
 	<SVG
-		className="jetpack-logo"
-		xmlns="http://www.w3.org/2000/svg"
-		width="32"
-		height="32"
+		className={ classNames( 'jetpack-logo', className ) }
+		width={ size }
+		height={ size }
 		viewBox="0 0 32 32"
 	>
 		<Path
