@@ -235,7 +235,22 @@ class SignupForm extends Component {
 			this.props.displayNameInput && 'lastName',
 		] );
 
+		// Object with all fields
 		const data = mapKeys( pick( fields, fieldsForValidation ), ( value, key ) => snakeCase( key ) );
+
+		// Remove fields that have yet to be visited
+		forEach( data, ( value, field ) => {
+			// prevent an error messages from being shown prematurely
+			if ( field === 'password' && ! this.state.focusPassword ) {
+				delete data.password;
+			}
+
+			if ( field === 'username' && ! this.state.focusUsername ) {
+				delete data.username;
+			}
+		} );
+
+		// Submit for validation
 		wpcom.undocumented().validateNewUser( data, ( error, response ) => {
 			if ( this.props.submitting ) {
 				// this is a stale callback, we have already signed up or are logging in
@@ -251,14 +266,6 @@ class SignupForm extends Component {
 				: mapKeys( response.messages, ( value, key ) => camelCase( key ) );
 
 			forEach( messages, ( fieldError, field ) => {
-				// If they've yet to tab to the password or username fields, don't show an error message prematurely
-				if ( field === 'password' && ! this.state.focusPassword ) {
-					delete messages.password;
-				}
-				if ( field === 'username' && ! this.state.focusUsername ) {
-					delete messages.username;
-				}
-
 				if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
 					return;
 				}
