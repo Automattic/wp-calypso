@@ -100,9 +100,17 @@ describe( 'viewport/react', () => {
 
 	beforeEach( () => {
 		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+
 		matchesMock.mockClear();
 		addListenerMock.mockClear();
 		removeListenerMock.mockClear();
+	} );
+
+	afterEach( () => {
+		document.body.removeChild( container );
+		ReactDOM.unmountComponentAtNode( container );
+		container = null;
 	} );
 
 	afterAll( () => {
