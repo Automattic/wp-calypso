@@ -22,11 +22,16 @@ describe( 'useTranslate()', () => {
 	let container;
 
 	beforeEach( () => {
+		// reset to default locale
+		i18n.setLocale();
+
+		// create container
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 	} );
 
 	afterEach( () => {
+		// tear down the container
 		ReactDOM.unmountComponentAtNode( container );
 		document.body.removeChild( container );
 		container = null;
@@ -49,9 +54,7 @@ describe( 'useTranslate()', () => {
 	} );
 
 	test( 'rerenders after locale change', () => {
-		// reset to default locale
-		i18n.setLocale();
-
+		// render with the default locale
 		act( () => {
 			ReactDOM.render( <Label />, container );
 		} );
@@ -67,5 +70,32 @@ describe( 'useTranslate()', () => {
 		} );
 
 		expect( container.textContent ).toBe( 'háček (cs)' );
+	} );
+
+	test( 'rerenders after update of current locale translations', () => {
+		// set some locale data
+		i18n.setLocale( {
+			'': { localeSlug: 'cs' },
+			'hook (%(lang)s)': [ 'háček (%(lang)s)' ],
+		} );
+
+		// render the Label component
+		act( () => {
+			ReactDOM.render( <Label />, container );
+		} );
+
+		// check that it's translated
+		expect( container.textContent ).toBe( 'háček (cs)' );
+
+		// update the translations for the current locale
+		act( () => {
+			i18n.setLocale( {
+				'': { localeSlug: 'cs' },
+				'hook (%(lang)s)': [ 'hák (%(lang)s)' ],
+			} );
+		} );
+
+		// check that the rendered translation is updated
+		expect( container.textContent ).toBe( 'hák (cs)' );
 	} );
 } );
