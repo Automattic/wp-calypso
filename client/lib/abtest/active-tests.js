@@ -181,4 +181,12 @@ export default {
 		},
 		defaultVariation: 'copy1',
 	},
+	builderReferralHelpBanner: {
+		datestamp: '20190304',
+		variations: {
+			builderReferralBanner: 25,
+			original: 75,
+		},
+		defaultVariation: 'original',
+	},
 };
