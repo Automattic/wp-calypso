@@ -156,23 +156,17 @@ class Slideshow extends Component {
 						className="wp-block-jetpack-slideshow_button-prev swiper-button-prev swiper-button-white"
 						ref={ this.btnPrevRef }
 						role="button"
-					>
-						{ __( 'Previous Slide' ) }
-					</a>
+					/>
 					<a
 						className="wp-block-jetpack-slideshow_button-next swiper-button-next swiper-button-white"
 						ref={ this.btnNextRef }
 						role="button"
-					>
-						{ __( 'Next Slide' ) }
-					</a>
+					/>
 					<a
 						aria-label={ __( 'Pause Slideshow' ) }
 						className="wp-block-jetpack-slideshow_button-pause"
 						role="button"
-					>
-						{ __( 'Pause Slideshow' ) }
-					</a>
+					/>
 				</div>
 			</div>
 		);
