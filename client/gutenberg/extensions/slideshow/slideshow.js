@@ -148,10 +148,6 @@ class Slideshow extends Component {
 							</li>
 						) ) }
 					</ul>
-					<div
-						className="wp-block-jetpack-slideshow_pagination swiper-pagination swiper-pagination-white"
-						ref={ this.paginationRef }
-					/>
 					<a
 						className="wp-block-jetpack-slideshow_button-prev swiper-button-prev swiper-button-white"
 						ref={ this.btnPrevRef }
@@ -166,6 +162,10 @@ class Slideshow extends Component {
 						aria-label={ __( 'Pause Slideshow' ) }
 						className="wp-block-jetpack-slideshow_button-pause"
 						role="button"
+					/>
+					<div
+						className="wp-block-jetpack-slideshow_pagination swiper-pagination swiper-pagination-white"
+						ref={ this.paginationRef }
 					/>
 				</div>
 			</div>
