@@ -92,7 +92,7 @@ export function hashPii( data ) {
  * @param {Object} user The current user
  * @return {false|string} The current user email after normalization
  */
-export function getNormalizedHashedUserEamil( user ) {
+export function getNormalizedHashedUserEmail( user ) {
 	const currentUser = user.get();
 	if ( currentUser && currentUser.email ) {
 		return hashPii( currentUser.email.toLowerCase().replace( /\s/g, '' ) );

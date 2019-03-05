@@ -19,7 +19,7 @@ import {
 	isAdTrackingAllowed,
 	hashPii,
 	costToUSD,
-	getNormalizedHashedUserEamil,
+	getNormalizedHashedUserEmail,
 } from 'lib/analytics/utils';
 import { promisify } from '../../utils';
 import request from 'superagent';
@@ -333,14 +333,13 @@ let isNanigansConfigured = false;
  * (app tracking ID, user's hashed e-mail)
  */
 function setupNanigansGlobal() {
-	isNanigansConfigured = true;
-
-	const normalizedHashedEmail = getNormalizedHashedUserEamil( user );
+	const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
 
 	window.NaN_api = [
-		[ TRACKING_IDS.nanigansAppId, normalizedHashedEmail ? hashPii( normalizedHashedEmail ) : '' ],
+		[ TRACKING_IDS.nanigansAppId, normalizedHashedEmail ? normalizedHashedEmail : '' ],
 	];
 
+	isNanigansConfigured = true;
 	debug( 'Nanigans setup: ', window.NaN_api );
 }
 
@@ -444,7 +443,7 @@ async function loadTrackingScripts( callback ) {
 
 	// init Pinterest
 	if ( isPinterestEnabled ) {
-		const normalizedHashedEmail = getNormalizedHashedUserEamil( user );
+		const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
 		const params = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
 		window.pintrk( 'load', '2612678247224', params );
 	}
@@ -487,7 +486,7 @@ export function retarget( urlPath ) {
 		return;
 	}
 
-	// Non rate limited retargeting
+	// Non rate limited retargeting (main trackers)
 
 	// Quantcast
 	if ( isQuantcastEnabled ) {
@@ -506,6 +505,7 @@ export function retarget( urlPath ) {
 		window.fbq( ...params );
 	}
 
+	// Bing
 	if ( isBingEnabled ) {
 		debug( 'retarget: [Bing]' );
 		window.uetq.push( 'pageLoad' );
@@ -546,7 +546,7 @@ export function retarget( urlPath ) {
 		window.pintrk( 'page' );
 	}
 
-	// Rate limited retargeting
+	// Rate limited retargeting (secondary trackers)
 
 	const nowTimestamp = Date.now() / 1000;
 	if ( nowTimestamp >= lastRetargetTime + retargetingPeriod ) {
@@ -1305,7 +1305,7 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 	debug( 'recordOrderInFloodlight: record purchase' );
 
 	// WPCom + Jetpack legacy "Purchase Confirmation" event
-	let params = {
+	const params_wpsale = {
 		type: 'wpsal0',
 		cat: 'wpsale',
 		qty: 1,
@@ -1315,12 +1315,12 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 		ord: orderId,
 		// num: not required
 	};
-	debug( 'recordOrderInFloodlight:', params );
-	recordParamsInFloodlight( params );
+	debug( 'recordOrderInFloodlight:', params_wpsale );
+	recordParamsInFloodlight( params_wpsale );
 
 	// WPCom
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		params = {
+		const params = {
 			type: 'wpsal0',
 			cat: 'purch0',
 			qty: 1,
@@ -1336,7 +1336,7 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 
 	// Jetpack
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		params = {
+		const params = {
 			type: 'wpsal0',
 			cat: 'purch00',
 			qty: 1,
@@ -1595,7 +1595,7 @@ export function recordPageViewInFloodlight( urlPath ) {
 		maxAge: DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS,
 	} );
 
-	let params = {
+	const params_wpvisit = {
 		type: 'wordp0',
 		cat: 'wpvisit',
 		u6: urlPath,
@@ -1603,10 +1603,10 @@ export function recordPageViewInFloodlight( urlPath ) {
 		ord: sessionId,
 		// num: not required
 	};
-	debug( 'retarget: recordPageViewInFloodlight: wpvisit', params );
-	recordParamsInFloodlight( params );
+	debug( 'retarget: recordPageViewInFloodlight: wpvisit', params_wpvisit );
+	recordParamsInFloodlight( params_wpvisit );
 
-	params = {
+	const params_wppv = {
 		type: 'wordp0',
 		cat: 'wppv',
 		u6: urlPath,
@@ -1614,8 +1614,8 @@ export function recordPageViewInFloodlight( urlPath ) {
 		ord: floodlightCacheBuster(),
 		// num: not required
 	};
-	debug( 'retarget: recordPageViewInFloodlight: wppv', params );
-	recordParamsInFloodlight( params );
+	debug( 'retarget: recordPageViewInFloodlight: wppv', params_wppv );
+	recordParamsInFloodlight( params_wppv );
 }
 
 /**
@@ -1824,7 +1824,7 @@ function recordInCriteo( eventName, eventProps ) {
 	events.push( { event: 'setAccount', account: TRACKING_IDS.criteo } );
 	events.push( { event: 'setSiteType', type: criteoSiteType() } );
 
-	const normalizedHashedEmail = getNormalizedHashedUserEamil( user );
+	const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
 	if ( normalizedHashedEmail ) {
 		events.push( { event: 'setEmail', email: [ normalizedHashedEmail ] } );
 	}
@@ -1992,7 +1992,7 @@ function initFacebook() {
  * See https://developers.facebook.com/docs/facebook-pixel/pixel-with-ads/conversion-tracking#advanced_match
  */
 function initFacebookAdvancedMatching() {
-	const normalizedHashedEmail = getNormalizedHashedUserEamil( user );
+	const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
 	const advancedMatching = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
 
 	debug( 'initFacebookAdvancedMatching:', advancedMatching );
