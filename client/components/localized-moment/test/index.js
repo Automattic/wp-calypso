@@ -43,7 +43,7 @@ const LabelWithMomentHOC = withLocalizedMoment( Label );
 
 // The same Label component, but this time a stateless functional one that uses hooks
 const LabelWithMomentHook = ( { date } ) => {
-	const [ moment ] = useLocalizedMoment();
+	const moment = useLocalizedMoment();
 	return moment( date ).format( 'dddd MMMM' );
 };
 

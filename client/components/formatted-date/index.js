@@ -10,7 +10,7 @@ import { useLocalizedMoment } from 'components/localized-moment';
 import toCurrentLocale from './to-current-locale';
 
 export default function FormattedDate( { date, format } ) {
-	const [ moment ] = useLocalizedMoment();
+	const moment = useLocalizedMoment();
 
 	if ( ! moment.isMoment( date ) ) {
 		// only make a new moment if we were passed something else
