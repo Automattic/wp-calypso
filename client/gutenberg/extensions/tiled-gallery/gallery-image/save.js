@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import classnames from 'classnames';
 import { isBlobURL } from '@wordpress/blob';
 
 /* @TODO Caption has been commented out */
@@ -11,7 +10,6 @@ export default function GalleryImageSave( props ) {
 	const {
 		alt,
 		// caption,
-		imageFilter,
 		height,
 		id,
 		link,
@@ -49,11 +47,7 @@ export default function GalleryImageSave( props ) {
 	);
 
 	return (
-		<figure
-			className={ classnames( 'tiled-gallery__item', {
-				[ `filter__${ imageFilter }` ]: !! imageFilter,
-			} ) }
-		>
+		<figure className="tiled-gallery__item">
 			{ href ? <a href={ href }>{ img }</a> : img }
 			{ /* ! RichText.isEmpty( caption ) && (
 				<RichText.Content tagName="figcaption" value={ caption } />

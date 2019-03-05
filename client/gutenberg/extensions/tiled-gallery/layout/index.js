@@ -50,7 +50,6 @@ export default class Layout extends Component {
 	//   This is because the images are stored in an array in the block attributes.
 	renderImage( img, i ) {
 		const {
-			imageFilter,
 			images,
 			isSave,
 			linkTo,
@@ -72,14 +71,13 @@ export default class Layout extends Component {
 				// caption={ img.caption }
 				height={ img.height }
 				id={ img.id }
-				imageFilter={ imageFilter }
+				origUrl={ img.url }
 				isSelected={ selectedImage === i }
 				key={ i }
 				link={ img.link }
 				linkTo={ linkTo }
 				onRemove={ isSave ? undefined : onRemoveImage( i ) }
 				onSelect={ isSave ? undefined : onSelectImage( i ) }
-				origUrl={ img.url }
 				setAttributes={ isSave ? undefined : setImageAttributes( i ) }
 				url={ this.photonize( img ) }
 				width={ img.width }
