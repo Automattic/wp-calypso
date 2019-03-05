@@ -34,9 +34,15 @@ export const settings = {
 			type: 'string',
 			default: __( 'Enter your email' ),
 		},
-		submitLabel: {
+		submitButtonText: {
 			type: 'string',
 			default: __( 'Join my email list' ),
+		},
+		customBackgroundButtonColor: {
+			type: 'string',
+		},
+		customTextButtonColor: {
+			type: 'string',
 		},
 		consentText: {
 			type: 'string',

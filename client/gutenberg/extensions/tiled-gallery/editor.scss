@@ -4,13 +4,13 @@
 // inspired by from assets/shared/_animations loading-fade
 @keyframes tiled-gallery-img-placeholder {
 	0% {
-		background-color: lighten( $gray, 30% );
+		background-color: var( --color-neutral-0 );
 	}
 	50% {
-		background-color: transparentize( lighten( $gray, 30% ), 0.5 );
+		background-color: rgba( var( --color-neutral-0-rgb ), 0.5 );
 	}
 	100% {
-		background-color: lighten( $gray, 30% );
+		background-color: var( --color-neutral-0 );
 	}
 }
 
@@ -32,6 +32,13 @@
 
 		&.is-selected {
 			outline: 4px solid $tiled-gallery-selection;
+
+			// Disable filters when selected
+			filter: none;
+			&::before,
+			&::after {
+				content: none;
+			}
 		}
 
 		&.is-transient img {
@@ -152,5 +159,25 @@
 		height: 20px;
 		margin-right: 1ch; // stylelint-disable-line unit-whitelist
 		width: 20px;
+	}
+}
+
+.tiled-gallery__filter-picker-menu {
+	$active-item-outline-width: 2px;
+
+	// @TODO replace with Gutenberg variables
+	$dark-gray-500: #555d66;
+	$dark-gray-900: #191e23;
+
+	padding: 7px;
+
+	// Leave space between elements for active state styling
+	.components-menu-item__button + .components-menu-item__button {
+		margin-top: $active-item-outline-width;
+	}
+
+	.components-menu-item__button.is-active {
+		color: $dark-gray-900;
+		box-shadow: 0 0 0 $active-item-outline-width $dark-gray-500 !important;
 	}
 }

@@ -26,7 +26,7 @@ import { isDotComPlan } from 'lib/products-values';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { abtest } from 'lib/abtest';
 
-export class GsuiteNudge extends React.Component {
+export class GSuiteNudge extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
 		receiptId: PropTypes.number.isRequired,
@@ -108,4 +108,4 @@ export default connect( ( state, props ) => {
 		siteTitle: getSiteTitle( state, props.selectedSiteId ),
 		isEligibleForChecklist,
 	};
-} )( localize( GsuiteNudge ) );
+} )( localize( GSuiteNudge ) );

@@ -52,7 +52,7 @@ import { canDisplayCommunityTranslator } from 'components/community-translator/u
 import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
-import withLocalizedMoment from 'components/with-localized-moment';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';

@@ -86,7 +86,7 @@
 	&:focus {
 		.plugin-sections__read-more-text {
 			color: var( --color-primary );
-			outline: solid $gray 1px;
+			outline: solid var( --color-neutral-light ) 1px;
 		}
 	}
 	&::after {

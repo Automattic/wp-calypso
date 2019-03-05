@@ -15,6 +15,5 @@ Supported routes:
 - `/domains/manage/:domain/email-forwarding/:site` - manages email forwarding information for a domain
 - `/domains/manage/:domain/name-servers/:site` - manages name servers for a domain
 - `/domains/manage/:domain/primary-domain/:site` - changes primary domain for a site
-- `/domains/manage/:domain/privacy-protection/:site` - adds privacy protection for a domain
 - `/domains/manage/:domain/redirect-settings/:site` - changes redirect settings for a domain
 - `/domains/manage/:domain/transfer/:site` - allows transfer domain to the different hosting provider

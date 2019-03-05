@@ -24,5 +24,8 @@
   "files": [
     "dist",
     "src"
-  ]
+  ],
+  "scripts": {
+    "build": "node ../../bin/build-package"
+  }
 }

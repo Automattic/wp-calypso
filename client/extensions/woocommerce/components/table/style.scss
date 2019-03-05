@@ -48,7 +48,7 @@
 					background-image: linear-gradient(
 						to right,
 						rgba( 255, 255, 255, 0 ) 0%,
-						$gray-light 90%
+						var( --color-neutral-0 ) 90%
 					);
 				}
 			}

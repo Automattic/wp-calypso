@@ -35,24 +35,6 @@
 			}
 		}
 
-		.is-action-button-selected {
-			background-color: var( --color-neutral-0 );
-
-			.gridicon {
-				fill: var( --color-neutral-500 );
-			}
-
-			.sidebar__menu-item-label,
-			.menu-link-text {
-				color: var( --color-neutral-700 );
-			}
-
-			.sidebar__button {
-				background-color: var( --color-neutral-400 );
-				color: var( --color-white );
-			}
-		}
-
 		.sidebar-streams__team {
 			border-top: 0;
 		}
@@ -276,7 +258,7 @@
 		fill: $white !important;
 
 		@include breakpoint( '<660px' ) {
-			fill: $gray !important;
+			fill: var( --color-neutral-light ) !important;
 		}
 	}
 
@@ -291,7 +273,7 @@
 			position: relative;
 			top: -2px;
 			left: auto;
-			fill: $gray !important; // this needs to be more specific
+			fill: var( --color-neutral-light ) !important; // this needs to be more specific
 			margin-right: 0;
 		}
 	}

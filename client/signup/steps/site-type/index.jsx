@@ -59,7 +59,7 @@ class SiteType extends Component {
 
 export default connect(
 	state => ( {
-		siteType: getSiteType( state ),
+		siteType: getSiteType( state ) || 'blog',
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	( dispatch, { goToNextStep, flowName } ) => ( {

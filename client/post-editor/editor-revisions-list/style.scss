@@ -1,6 +1,3 @@
-// @TODO we should decouple from accordion styles
-@import 'components/accordion/style';
-
 .editor-revisions-list {
 	position: relative;
 	background: var( --color-neutral-0 );
@@ -126,7 +123,7 @@
 	&.button[disabled],
 	&.button.disabled {
 		background: transparent;
-		color: lighten( $gray-text-min, 30% );
+		color: var( --color-neutral-100 );
 		border-color: darken( $sidebar-bg-color, 5% );
 	}
 	.gridicon {
@@ -251,7 +248,7 @@
 
 .editor-revisions-list__button {
 	&:hover {
-		background: $accordion-background-hover;
+		background: var( --color-neutral-0 );
 	}
 
 	.editor-revisions-list__revision.is-selected > &,
@@ -309,7 +306,7 @@
 .editor-revisions-list__additions {
 	margin-right: 12px;
 	b {
-		background: var( --color-accent );
+		background: var( --color-success );
 	}
 }
 

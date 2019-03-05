@@ -33,7 +33,7 @@
 		border: 0;
 
 		&:hover {
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
 		}
 	}
 
@@ -122,7 +122,7 @@
 @include breakpoint( '>480px' ) {
 	.tile-grid__item-copy {
 		padding: 15px;
-		border-top: 1px solid transparentize( $gray-lighten-20, 0.5 );
+		border-top: 1px solid rgba( var( --color-neutral-100-rgb ), 0.5 );
 	}
 }
 

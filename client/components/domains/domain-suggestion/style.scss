@@ -19,13 +19,13 @@
 		transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
 
 		&:hover {
-			box-shadow: 0 0 0 1px $gray;
+			box-shadow: 0 0 0 1px var( --color-neutral-light );
 			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
 		}
 	}
 
 	&.is-added {
-		background-color: lighten( $gray, 35% );
+		background-color: var( --color-neutral-0 );
 
 		.domain-suggestion__content {
 			h3,

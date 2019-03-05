@@ -46,6 +46,6 @@
 	span + span {
 		margin-left: 12px;
 		padding-left: 12px;
-		border-left: 1px solid $gray;
+		border-left: 1px solid var( --color-neutral-light );
 	}
 }

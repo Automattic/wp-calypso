@@ -26,7 +26,7 @@
 	color: var( --color-neutral-600 );
 
 	&::after {
-		@include long-content-fade( $color: hex-to-rgb( $gray-lighten-20 ) );
+		@include long-content-fade( $color: var( --color-neutral-100-rgb ) );
 	}
 }
 

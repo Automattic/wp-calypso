@@ -76,10 +76,6 @@ export function domainManagementDns( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'dns' );
 }
 
-export function domainManagementPrivacyProtection( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'privacy-protection' );
-}
-
 export function domainManagementRedirectSettings( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'redirect-settings' );
 }

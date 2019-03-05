@@ -23,11 +23,6 @@ import {
 	DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
 	DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
-	EMAIL_FORWARDING_ADD_COMPLETED,
-	EMAIL_FORWARDING_DELETE_COMPLETED,
-	EMAIL_FORWARDING_FETCH,
-	EMAIL_FORWARDING_FETCH_COMPLETED,
-	EMAIL_FORWARDING_FETCH_FAILED,
 	ICANN_VERIFICATION_RESEND_COMPLETED,
 	NAMESERVERS_FETCH,
 	NAMESERVERS_FETCH_COMPLETED,
@@ -52,7 +47,6 @@ import {
 } from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
 import DnsStore from 'lib/domains/dns/store';
-import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import NameserversStore from 'lib/domains/nameservers/store';
 import { requestSite } from 'state/sites/actions';
 import wapiDomainInfoAssembler from 'lib/domains/wapi-domain-info/assembler';
@@ -85,69 +79,6 @@ export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dis
 		} );
 	} );
 };
-
-export function fetchEmailForwarding( domainName ) {
-	const emailForwarding = EmailForwardingStore.getByDomainName( domainName );
-
-	if ( ! emailForwarding.needsUpdate ) {
-		return;
-	}
-
-	Dispatcher.handleViewAction( {
-		type: EMAIL_FORWARDING_FETCH,
-		domainName,
-	} );
-
-	wpcom.emailForwards( domainName, ( error, data ) => {
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: EMAIL_FORWARDING_FETCH_FAILED,
-				domainName,
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: EMAIL_FORWARDING_FETCH_COMPLETED,
-				domainName,
-				forwards: data.forwards,
-			} );
-		}
-	} );
-}
-
-export function addEmailForwarding( domainName, mailbox, destination, onComplete ) {
-	wpcom.addEmailForward( domainName, mailbox, destination, error => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: EMAIL_FORWARDING_ADD_COMPLETED,
-				domainName,
-				mailbox,
-				destination,
-			} );
-			fetchEmailForwarding( domainName );
-		}
-
-		onComplete( error );
-	} );
-}
-
-export function deleteEmailForwarding( domainName, mailbox, onComplete ) {
-	wpcom.deleteEmailForward( domainName, mailbox, error => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: EMAIL_FORWARDING_DELETE_COMPLETED,
-				domainName,
-				mailbox,
-			} );
-			fetchEmailForwarding( domainName );
-		}
-
-		onComplete( error );
-	} );
-}
-
-export function resendVerificationEmailForwarding( domainName, mailbox, onComplete ) {
-	wpcom.resendVerificationEmailForward( domainName, mailbox, onComplete );
-}
 
 /**
  * Gets the current WHOIS data for `domainName` from the backend
@@ -516,7 +447,7 @@ export function cancelTransferRequest( options, onComplete ) {
 	} );
 }
 
-export function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
+export function enablePrivacyProtection( domainName, onComplete ) {
 	wpcom.enablePrivacyProtection( domainName, error => {
 		if ( error ) {
 			onComplete( error );
@@ -525,9 +456,19 @@ export function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
 
 		Dispatcher.handleServerAction( {
 			type: PRIVACY_PROTECTION_ENABLE_COMPLETED,
-			siteId,
 			domainName,
 		} );
+
+		onComplete( null );
+	} );
+}
+
+export function disablePrivacyProtection( domainName, onComplete ) {
+	wpcom.disablePrivacyProtection( domainName, error => {
+		if ( error ) {
+			onComplete( error );
+			return;
+		}
 
 		onComplete( null );
 	} );

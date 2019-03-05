@@ -1,16 +1,25 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import { flowRight as compose } from 'lodash';
 import { localize } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import { withLocalizedMoment } from 'components/localized-moment';
+
+/**
+ * Style dependencies
+ */
+import './stored-card.scss';
 
 export const getCreditCardSummary = ( translate, type, digits ) => {
 	const supportedTypes = {
+		[ 'american express' ]: translate( 'American Express' ),
 		amex: translate( 'American Express' ),
 		diners: translate( 'Diners Club' ),
 		discover: translate( 'Discover' ),
@@ -36,7 +45,7 @@ const StoredCard = ( { lastDigits, cardType, name, expiry, translate, moment } )
 
 	const type = cardType && cardType.toLocaleLowerCase();
 	const cardClasses = classNames( 'credit-card__stored-card', {
-		'is-amex': type === 'amex',
+		'is-amex': type === 'amex' || type === 'american express',
 		'is-diners': type === 'diners',
 		'is-discover': type === 'discover',
 		'is-jcb': type === 'jcb',
@@ -68,4 +77,7 @@ StoredCard.propTypes = {
 	expiry: PropTypes.string.isRequired,
 };
 
-export default localize( StoredCard );
+export default compose(
+	localize,
+	withLocalizedMoment
+)( StoredCard );

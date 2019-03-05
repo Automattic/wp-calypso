@@ -6,11 +6,11 @@ import { Path } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 
 import './editor.scss';
-import HoursList from './components/hours-list';
+import BusinessHours from './edit';
 
 /**
  * Block Registrations:
@@ -24,53 +24,79 @@ export const icon = renderMaterialIcon(
 
 export const settings = {
 	title: __( 'Business Hours' ),
+	description: __( 'Display opening hours for your business.' ),
 	icon,
-	category: 'widgets',
+	category: 'jetpack',
 	supports: {
 		html: true,
 	},
-
+	keywords: [
+		_x( 'opening hours', 'block search term' ),
+		_x( 'closing time', 'block search term' ),
+		_x( 'schedule', 'block search term' ),
+	],
 	attributes: {
-		hours: {
-			type: 'object',
-			default: {
-				Sun: [], // closed by default
-				Mon: [
-					{
-						opening: '09:00',
-						closing: '17:00',
-					},
-				],
-				Tue: [
-					{
-						opening: '09:00',
-						closing: '17:00',
-					},
-				],
-				Wed: [
-					{
-						opening: '09:00',
-						closing: '17:00',
-					},
-				],
-				Thu: [
-					{
-						opening: '09:00',
-						closing: '17:00',
-					},
-				],
-				Fri: [
-					{
-						opening: '09:00',
-						closing: '17:00',
-					},
-				],
-				Sat: [], // closed by default
-			},
+		days: {
+			type: 'array',
+			default: [
+				{
+					name: 'Sun',
+					hours: [], // Closed by default
+				},
+				{
+					name: 'Mon',
+					hours: [
+						{
+							opening: '09:00',
+							closing: '17:00',
+						},
+					],
+				},
+				{
+					name: 'Tue',
+					hours: [
+						{
+							opening: '09:00',
+							closing: '17:00',
+						},
+					],
+				},
+				{
+					name: 'Wed',
+					hours: [
+						{
+							opening: '09:00',
+							closing: '17:00',
+						},
+					],
+				},
+				{
+					name: 'Thu',
+					hours: [
+						{
+							opening: '09:00',
+							closing: '17:00',
+						},
+					],
+				},
+				{
+					name: 'Fri',
+					hours: [
+						{
+							opening: '09:00',
+							closing: '17:00',
+						},
+					],
+				},
+				{
+					name: 'Sat',
+					hours: [], // Closed by default
+				},
+			],
 		},
 	},
 
-	edit: props => <HoursList { ...props } edit={ true } />,
+	edit: props => <BusinessHours { ...props } />,
 
-	save: props => <HoursList { ...props } edit={ false } />,
+	save: () => null,
 };

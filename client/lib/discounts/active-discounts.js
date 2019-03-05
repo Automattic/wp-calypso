@@ -61,7 +61,7 @@ export default [
 		endsAt: new Date( 2019, 2, 8, 0, 0, 0 ),
 		nudgeText: 'Sale! 20% off all plans',
 		ctaText: 'Upgrade',
-		plansPageNoticeText: 'Enter coupon code “FEBRUARY20” at checkout to claim your 20% discount',
+		plansPageNoticeText: 'Enter coupon code “MARCH20” at checkout to claim your 20% discount',
 		targetPlans: [
 			{ type: TYPE_FREE, group: GROUP_WPCOM },
 			{ type: TYPE_BLOGGER, group: GROUP_WPCOM },
@@ -72,7 +72,7 @@ export default [
 	{
 		name: 'sale_feb_2019_jp',
 		startsAt: new Date( 2019, 1, 25, 0, 0, 0 ),
-		endsAt: new Date( 2019, 2, 1, 0, 0, 0 ),
+		endsAt: new Date( 2019, 2, 8, 0, 0, 0 ),
 		nudgeText: 'Sale! 20% off all plans',
 		ctaText: 'Upgrade',
 		plansPageNoticeText: 'Enter coupon code “JPSALE20” at checkout to claim your 20% discount',

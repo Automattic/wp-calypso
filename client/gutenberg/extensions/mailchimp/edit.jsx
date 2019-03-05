@@ -3,6 +3,8 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import classnames from 'classnames';
+import SubmitButton from 'gutenberg/extensions/presets/jetpack/utils/submit-button';
 import {
 	Button,
 	ExternalLink,
@@ -118,17 +120,17 @@ class MailchimpSubscribeEdit extends Component {
 		return null;
 	};
 
+	roleForAuditionType = audition => {
+		if ( audition === NOTIFICATION_ERROR ) {
+			return 'alert';
+		}
+		return 'status';
+	};
+
 	render = () => {
 		const { attributes, className, notices, noticeUI, setAttributes } = this.props;
 		const { audition, connected, connectURL } = this.state;
-		const {
-			emailPlaceholder,
-			submitLabel,
-			consentText,
-			processingLabel,
-			successLabel,
-			errorLabel,
-		} = attributes;
+		const { emailPlaceholder, consentText, processingLabel, successLabel, errorLabel } = attributes;
 		const classPrefix = 'wp-block-jetpack-mailchimp_';
 		const waiting = (
 			<Placeholder icon={ icon } notices={ notices }>
@@ -142,10 +144,13 @@ class MailchimpSubscribeEdit extends Component {
 						'You need to connect your Mailchimp account and choose a list in order to start collecting Email subscribers.'
 					) }
 					<br />
-					<ExternalLink href={ connectURL }>{ __( 'Set up Mailchimp form' ) }</ExternalLink>
+					<br />
+					<Button isDefault isLarge href={ connectURL } target="_blank">
+						{ __( 'Set up Mailchimp form' ) }
+					</Button>
 					<br />
 					<br />
-					<Button isDefault onClick={ this.apiCall }>
+					<Button isLink onClick={ this.apiCall }>
 						{ __( 'Re-check Connection' ) }
 					</Button>
 				</div>
@@ -182,36 +187,33 @@ class MailchimpSubscribeEdit extends Component {
 				</PanelBody>
 			</InspectorControls>
 		);
+		const blockClasses = classnames( className, {
+			[ `${ classPrefix }notication-audition` ]: audition,
+		} );
 		const blockContent = (
-			<div className={ className }>
-				{ ! audition && (
-					<form ref={ this.formRef }>
-						<TextControl
-							disabled
-							placeholder={ emailPlaceholder }
-							onChange={ () => false }
-							title={ __( 'You can edit the email placeholder in the sidebar.' ) }
-							type="email"
-						/>
-						<div className="wp-block-jetpack-mailchimp_button">
-							<RichText
-								formattingControls={ [] }
-								placeholder={ __( 'Add button text…' ) }
-								value={ submitLabel }
-								onChange={ value => setAttributes( { submitLabel: value } ) }
-							/>
-						</div>
-						<RichText
-							tagName="small"
-							placeholder={ __( 'Write consent text' ) }
-							value={ consentText }
-							onChange={ value => setAttributes( { consentText: value } ) }
-							inlineToolbar
-						/>
-					</form>
-				) }
+			<div className={ blockClasses }>
+				<TextControl
+					aria-label={ emailPlaceholder }
+					className="wp-block-jetpack-mailchimp_text-input"
+					disabled
+					onChange={ () => false }
+					placeholder={ emailPlaceholder }
+					title={ __( 'You can edit the email placeholder in the sidebar.' ) }
+					type="email"
+				/>
+				<SubmitButton { ...this.props } />
+				<RichText
+					tagName="p"
+					placeholder={ __( 'Write consent text' ) }
+					value={ consentText }
+					onChange={ value => setAttributes( { consentText: value } ) }
+					inlineToolbar
+				/>
 				{ audition && (
-					<div className={ `${ classPrefix }notification ${ classPrefix }${ audition }` }>
+					<div
+						className={ `${ classPrefix }notification ${ classPrefix }${ audition }` }
+						role={ this.roleForAuditionType( audition ) }
+					>
 						{ this.labelForAuditionType( audition ) }
 					</div>
 				) }

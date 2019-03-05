@@ -22,6 +22,6 @@
 	padding: 6px 12px;
 	background-color: var( --color-white );
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 }

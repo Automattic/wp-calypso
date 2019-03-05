@@ -20,7 +20,6 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementPrivacyProtection,
 	domainManagementManageConsent,
 } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
@@ -41,7 +40,7 @@ class ContactsPrivacy extends React.PureComponent {
 
 		const { translate, whois } = this.props;
 		const domain = getSelectedDomain( this.props );
-		const { hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain;
+		const { privateDomain, privacyAvailable } = domain;
 		const canManageConsent =
 			config.isEnabled( 'domains/gdpr-consent-page' ) && domain.supportsGdprConsentManagement;
 		const contactInformation = privateDomain
@@ -51,7 +50,7 @@ class ContactsPrivacy extends React.PureComponent {
 		return (
 			<Main className="contacts-privacy">
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
-					{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
+					{ translate( 'Contacts' ) }
 				</Header>
 
 				<VerticalNav>
@@ -59,10 +58,8 @@ class ContactsPrivacy extends React.PureComponent {
 						contactInformation={ contactInformation }
 						selectedDomainName={ this.props.selectedDomainName }
 						selectedSite={ this.props.selectedSite }
-						hasPrivacyProtection={ hasPrivacyProtection }
 						privateDomain={ privateDomain }
 						privacyAvailable={ privacyAvailable }
-						currentUserCanManage={ currentUserCanManage }
 					/>
 
 					<VerticalNavItem
@@ -82,17 +79,6 @@ class ContactsPrivacy extends React.PureComponent {
 							) }
 						>
 							{ translate( 'Manage Consent for Personal Data Use' ) }
-						</VerticalNavItem>
-					) }
-
-					{ ! hasPrivacyProtection && privacyAvailable && (
-						<VerticalNavItem
-							path={ domainManagementPrivacyProtection(
-								this.props.selectedSite.slug,
-								this.props.selectedDomainName
-							) }
-						>
-							{ translate( 'Privacy Protection' ) }
 						</VerticalNavItem>
 					) }
 				</VerticalNav>

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,6 +21,11 @@ import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'lib/analytics';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class InviteAcceptLoggedIn extends React.Component {
 	state = { submitting: false };

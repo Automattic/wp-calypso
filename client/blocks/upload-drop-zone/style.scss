@@ -1,7 +1,7 @@
 .upload-drop-zone__dropzone {
 	position: relative;
 	background-color: var( --color-neutral-0 );
-	border: 2px dashed $gray;
+	border: 2px dashed var( --color-neutral-light );
 	transition: all 200ms ease-out, color 100ms ease-out;
 	cursor: pointer;
 

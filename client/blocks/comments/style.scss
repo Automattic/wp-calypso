@@ -69,7 +69,7 @@
 		}
 
 		pre {
-			border: 1px solid $gray;
+			border: 1px solid var( --color-neutral-light );
 			box-sizing: border-box;
 			display: block;
 			visibility: hidden;
@@ -173,7 +173,7 @@
 		}
 
 		pre {
-			border: 1px solid $gray;
+			border: 1px solid var( --color-neutral-light );
 			box-sizing: border-box;
 			display: block;
 			visibility: hidden;

@@ -25,6 +25,27 @@ export default function( translate ) {
 				cssClass: 'is-classic-blue',
 			},
 		},
+		config.isEnabled( 'me/account/color-schemes/powder-snow' ) && {
+			label: translate( 'Powder Snow' ),
+			value: 'powder-snow',
+			thumbnail: {
+				cssClass: 'is-powder-snow',
+			},
+		},
+		config.isEnabled( 'me/account/color-schemes/nightfall' ) && {
+			label: translate( 'Nightfall' ),
+			value: 'nightfall',
+			thumbnail: {
+				cssClass: 'is-nightfall',
+			},
+		},
+		config.isEnabled( 'me/account/color-schemes/sakura' ) && {
+			label: translate( 'Sakura' ),
+			value: 'sakura',
+			thumbnail: {
+				cssClass: 'is-sakura',
+			},
+		},
 		config.isEnabled( 'me/account/color-schemes/laser-black' ) && {
 			label: translate( 'Laser Black' ),
 			value: 'laser-black',

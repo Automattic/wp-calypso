@@ -10,8 +10,14 @@
 	align-items: center;
 	flex: 2 1;
 	margin-right: 5px;
+
 	h3 {
 		text-transform: capitalize;
+		margin-right: 3px;
+	}
+
+	p {
+		margin-bottom: 0;
 	}
 }
 .social-login__header-icon {

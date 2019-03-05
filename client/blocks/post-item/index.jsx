@@ -140,7 +140,8 @@ class PostItem extends React.Component {
 
 		const title = post ? post.title : null;
 		const isPlaceholder = ! globalId;
-		const enabledPostLink = isPlaceholder || multiSelectEnabled ? null : postUrl;
+		const isTrashed = post && 'trash' === post.status;
+		const enabledPostLink = isPlaceholder || multiSelectEnabled || isTrashed ? null : postUrl;
 
 		const panelClasses = classnames( 'post-item__panel', className, {
 			'is-untitled': ! title,

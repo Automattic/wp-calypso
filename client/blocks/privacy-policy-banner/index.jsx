@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, identity } from 'lodash';
+import { flowRight as compose, get, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,7 @@ import getCurrentUserRegisterDate from 'state/selectors/get-current-user-registe
 import Banner from 'components/banner';
 import config from 'config';
 import PrivacyPolicyDialog from './privacy-policy-dialog';
-import withMoment from 'components/with-localized-moment';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 const AUTOMATTIC_ENTITY = 'automattic';
 const PRIVACY_POLICY_PREFERENCE = 'privacy_policy';
@@ -175,7 +175,11 @@ const mapDispatchToProps = {
 		} ),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( withMoment( localize( PrivacyPolicyBanner ) ) );
+export default compose(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	),
+	withLocalizedMoment,
+	localize
+)( PrivacyPolicyBanner );

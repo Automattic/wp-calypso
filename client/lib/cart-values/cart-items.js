@@ -914,7 +914,7 @@ export function getDomainRegistrationsWithoutPrivacy( cart ) {
 	return getDomainRegistrations( cart ).filter( function( cartItem ) {
 		return ! some( cart.products, {
 			meta: cartItem.meta,
-			product_slug: 'private_whois',
+			extra: { privacy: true },
 		} );
 	} );
 }
@@ -930,7 +930,7 @@ export function getDomainTransfersWithoutPrivacy( cart ) {
 	return getDomainTransfers( cart ).filter( function( cartItem ) {
 		return ! some( cart.products, {
 			meta: cartItem.meta,
-			product_slug: domainProductSlugs.TRANSFER_IN_PRIVACY,
+			extra: { privacy: true },
 		} );
 	} );
 }
@@ -941,18 +941,33 @@ export function getDomainTransfersWithoutPrivacy( cart ) {
  * @param {Object} cart - cart as `CartValue` object
  * @param {Object[]} domainItems - the list of `CartItemValue` objects for domain registrations
  * @param {Function} changeFunction - the function that adds/removes the privacy protection to a shopping cart
+ * @param {Boolean} value - whether privacy is on or off
+ *
  * @returns {Function} the function that adds/removes privacy protections from the shopping cart
  */
-export function changePrivacyForDomains( cart, domainItems, changeFunction ) {
+export function changePrivacyForDomains( cart, domainItems, changeFunction, value ) {
 	return flow.apply(
 		null,
 		domainItems.map( function( item ) {
-			if ( isDomainTransfer( item ) ) {
-				return changeFunction( domainTransferPrivacy( { domain: item.meta } ) );
-			}
-			return changeFunction( domainPrivacyProtection( { domain: item.meta } ) );
+			return changeFunction( item, updatePrivacyForDomain( item, value ) );
 		} )
 	);
+}
+
+/**
+ * Changes presence of a privacy protection for the given domain cart item.
+ *
+ * @param {Object} item - the `CartItemValue` object for domain registrations
+ * @param {Boolean} value - whether privacy is on or off
+ *
+ * @returns {Object} the new `CartItemValue` with added/removed privacy
+ */
+export function updatePrivacyForDomain( item, value ) {
+	return merge( {}, item, {
+		extra: {
+			privacy: value,
+		},
+	} );
 }
 
 export function addPrivacyToAllDomains( cart ) {
@@ -962,7 +977,8 @@ export function addPrivacyToAllDomains( cart ) {
 			...getDomainRegistrationsWithoutPrivacy( cart ),
 			...getDomainTransfersWithoutPrivacy( cart ),
 		],
-		add
+		replaceItem,
+		true
 	);
 }
 
@@ -970,7 +986,8 @@ export function removePrivacyFromAllDomains( cart ) {
 	return changePrivacyForDomains(
 		cart,
 		[ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ],
-		remove
+		replaceItem,
+		false
 	);
 }
 
@@ -1244,6 +1261,7 @@ export default {
 	themeItem,
 	unlimitedSpaceItem,
 	unlimitedThemesItem,
+	updatePrivacyForDomain,
 	videoPressItem,
 	hasStaleItem,
 	hasTransferProduct,

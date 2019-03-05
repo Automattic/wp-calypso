@@ -21,7 +21,7 @@ import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
 import { adjustMoment } from 'my-sites/activity/activity-log/utils';
 import { requestActivityLogs } from 'state/data-getters';
-import withLocalizedMoment from 'components/with-localized-moment';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies

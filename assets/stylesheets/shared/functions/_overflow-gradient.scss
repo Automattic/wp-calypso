@@ -11,7 +11,7 @@
 //
 // Usage:
 // background: overflow-gradient( var( --sidebar-rgba-test ) );
-// border-image: overflow-gradient( hex-to-rgb( $gray-light ), to left );
+// border-image: overflow-gradient( var( --color-neutral-light-rgb ) ), to left );
 // ==========================================================================
 @function overflow-gradient( $color, $stop: 90%, $direction: to right ) {
 	@return linear-gradient(

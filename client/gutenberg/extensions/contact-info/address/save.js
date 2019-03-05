@@ -17,35 +17,37 @@ const Address = ( {
 	attributes: { address, addressLine2, addressLine3, city, region, postal, country },
 } ) => (
 	<Fragment>
-		{ address && <div class="jetpack-address__address jetpack-address__address1">{ address }</div> }
+		{ address && (
+			<div className="jetpack-address__address jetpack-address__address1">{ address }</div>
+		) }
 		{ addressLine2 && (
-			<div class="jetpack-address__address jetpack-address__address2">{ addressLine2 }</div>
+			<div className="jetpack-address__address jetpack-address__address2">{ addressLine2 }</div>
 		) }
 		{ addressLine3 && (
-			<div class="jetpack-address__address jetpack-address__address3">{ addressLine3 }</div>
+			<div className="jetpack-address__address jetpack-address__address3">{ addressLine3 }</div>
 		) }
-		{ city && ! ( region || postal ) && <div class="jetpack-address__city">{ city }</div> }
+		{ city && ! ( region || postal ) && <div className="jetpack-address__city">{ city }</div> }
 		{ city && ( region || postal ) && (
 			<div>
 				{ [
-					<span class="jetpack-address__city">{ city }</span>,
+					<span className="jetpack-address__city">{ city }</span>,
 					', ',
-					<span class="jetpack-address__region">{ region }</span>,
+					<span className="jetpack-address__region">{ region }</span>,
 					' ',
-					<span class="jetpack-address__postal">{ postal }</span>,
+					<span className="jetpack-address__postal">{ postal }</span>,
 				] }
 			</div>
 		) }
 		{ ! city && ( region || postal ) && (
 			<div>
 				{ [
-					<span class="jetpack-address__region">{ region }</span>,
+					<span className="jetpack-address__region">{ region }</span>,
 					' ',
-					<span class="jetpack-address__postal">{ postal }</span>,
+					<span className="jetpack-address__postal">{ postal }</span>,
 				] }
 			</div>
 		) }
-		{ country && <div class="jetpack-address__country">{ country }</div> }
+		{ country && <div className="jetpack-address__country">{ country }</div> }
 	</Fragment>
 );
 

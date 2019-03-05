@@ -15,7 +15,7 @@
 	border: 6px solid var( --color-primary-dark );
 	border-radius: 6px;
 
-	background-color: rgba( $blue-wordpress, 0.8 );
+	background-color: rgba( var( --color-primary-rgb ), 0.8 );
 
 	&.is-active {
 		opacity: 1;
@@ -24,7 +24,7 @@
 	}
 
 	&.is-dragging-over-element {
-		background-color: rgba( $blue-medium, 0.8 );
+		background-color: rgba( var( --color-primary-rgb ), 0.8 );
 	}
 
 	&.is-full-screen {

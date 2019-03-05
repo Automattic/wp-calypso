@@ -190,11 +190,11 @@ input.editor-media-modal-gallery__caption[type='text'] {
 		height: 130px;
 		background: linear-gradient(
 			to right,
-			lighten( $gray, 25% ),
-			lighten( $gray, 25% ) 40%,
+			var( --color-neutral-50 ),
+			var( --color-neutral-50 ) 40%,
 			transparent 40%,
 			transparent 42%,
-			$gray-lighten-20 42%
+			var( --color-neutral-100 ) 42%
 		);
 	}
 

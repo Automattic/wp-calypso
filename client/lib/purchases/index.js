@@ -92,20 +92,6 @@ function handleRenewNowClick( purchase, siteSlug ) {
 		product_slug: purchase.productSlug,
 	} );
 
-	if ( hasPrivacyProtection( purchase ) ) {
-		const privacyItem = cartItems.getRenewalItemFromCartItem(
-			cartItems.domainPrivacyProtection( {
-				domain: purchase.meta,
-			} ),
-			{
-				id: purchase.id,
-				domain: purchase.domain,
-			}
-		);
-
-		renewItems.push( privacyItem );
-	}
-
 	addItems( renewItems );
 
 	page( '/checkout/' + siteSlug );
@@ -209,6 +195,10 @@ function cardProcessorSupportsUpdates( purchase ) {
  * or deny a refund to a user. Instead, for example, use it to decide whether
  * to display or highlight general help text about the refund policy to users
  * who are likely to be eligible for one.
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ *
+ * @returns {Boolean} Whether in refund period.
  */
 function maybeWithinRefundPeriod( purchase ) {
 	if ( isRefundable( purchase ) ) {

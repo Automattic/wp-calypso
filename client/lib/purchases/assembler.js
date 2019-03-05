@@ -64,6 +64,8 @@ function createPurchaseObject( purchase ) {
 		subscribedDate: purchase.subscribed_date,
 		subscriptionStatus: purchase.subscription_status,
 		tagLine: purchase.tag_line,
+		taxAmount: purchase.tax_amount,
+		taxText: purchase.tax_text,
 		userId: Number( purchase.user_id ),
 	};
 

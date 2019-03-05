@@ -41,7 +41,7 @@ $theme-info-height: 54px;
 		}
 
 		&:hover {
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
 		}
 	}
 
@@ -212,7 +212,7 @@ $theme-info-height: 54px;
 }
 
 .theme__installing {
-	background: transparentize( $gray-dark, 0.5 );
+	background: rgba( var( --color-neutral-dark-rgb ), 0.5 );
 	width: 100%;
 	left: 0;
 	top: 0;
@@ -254,11 +254,11 @@ $theme-info-height: 54px;
 	}
 
 	&.is-active {
-		border-left-color: transparentize( $gray-light, 0.7 );
+		border-left-color: rgba( var( --color-neutral-0-rgb ), 0.7 );
 	}
 
 	&:hover {
-		background-color: transparentize( $gray-light, 0.7 );
+		background-color: rgba( var( --color-neutral-0-rgb ), 0.7 );
 
 		.gridicon {
 			color: var( --color-primary );

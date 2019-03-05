@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,11 @@ import FoldableCard from 'components/foldable-card';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import { deleteConnectedApplication } from 'state/connected-applications/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ConnectedApplicationItem extends React.Component {
 	static defaultProps = {

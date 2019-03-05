@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { mapValues, merge } from 'lodash';
+import '@babel/polyfill';
 
 /**
  * Internal dependencies
@@ -23,6 +24,7 @@ export default async function createSwiper(
 			prevEl: '.swiper-button-prev',
 		},
 		pagination: {
+			bulletElement: 'button',
 			clickable: true,
 			el: '.swiper-pagination',
 			type: 'bullets',

@@ -12,6 +12,11 @@ import PropTypes from 'prop-types';
  */
 import StoredCard from './stored-card';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CreditCard extends React.Component {
 	static propTypes = {
 		card: PropTypes.shape( StoredCard.propTypes ),

@@ -1,4 +1,4 @@
---require lib/babelhook.js
+--require esm
 --require test/mocha.env.js
 --require mocha-steps
 lib/before.js

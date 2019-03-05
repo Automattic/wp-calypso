@@ -3,7 +3,7 @@
  */
 import { PlainText } from '@wordpress/editor';
 
-const simpleInput = ( type, props, placeholder, view, onChange ) => {
+const simpleInput = ( type, props, label, view, onChange ) => {
 	const { isSelected } = props;
 	const value = props.attributes[ type ];
 	return (
@@ -12,7 +12,12 @@ const simpleInput = ( type, props, placeholder, view, onChange ) => {
 		>
 			{ ! isSelected && value !== '' && view( props ) }
 			{ ( isSelected || value === '' ) && (
-				<PlainText value={ value } placeholder={ placeholder } onChange={ onChange } />
+				<PlainText
+					value={ value }
+					placeholder={ label }
+					aria-label={ label }
+					onChange={ onChange }
+				/>
 			) }
 		</div>
 	);
