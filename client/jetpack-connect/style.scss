@@ -75,10 +75,14 @@
 .jetpack-connect__step {
 	display: flex;
 	flex-direction: column;
-	height: 80vh;
+	height: calc( 100vh - 150px );
 	margin: 0 auto;
 	max-width: 600px;
 	text-align: initial;
+
+	@include breakpoint( '>960px' ) {
+		height: calc( 100vh - 170px );
+	}
 
 	input[type='radio']:focus {
 		box-shadow: 0 0 0 2px var( --color-jetpack-light );
@@ -92,9 +96,14 @@
 		}
 	}
 	
-	.wpcom-colophon { 
+	.wpcom-colophon {
+		padding-top: 12px;
 		margin-top: auto;
-	} 
+	}
+
+	.site-type__wrapper {
+		margin: 0 auto;
+	}
 
 	.site-topic__content {		
 		width: 100%;
@@ -124,7 +133,6 @@
 .jetpack-connect__main.is-wide {
 	max-width: 100%;
 	text-align: center;
-	margin-bottom: 24px;
 
 	.jetpack-connect__happychat-button {
 		text-align: center;
