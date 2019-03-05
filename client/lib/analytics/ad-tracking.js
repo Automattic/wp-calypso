@@ -29,8 +29,6 @@ import request from 'superagent';
  */
 const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 const user = userModule();
-let hasStartedFetchingScripts = false,
-	hasFinishedFetchingScripts = false;
 
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments
@@ -119,11 +117,20 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
-	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
+	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800,
+	TRACKING_STATE_VALUES = {
+		NOT_LOADED: 0,
+		LOADING: 1,
+		LOADED: 2,
+	};
 
 /**
  * Globals
  */
+
+// Used to enqueue the various events while the trackers are still loading so they can be fired afterwards.
+let trackingState = TRACKING_STATE_VALUES.NOT_LOADED;
+const trackingEventsQueue = [];
 
 if ( typeof window !== 'undefined' ) {
 	// Facebook
@@ -346,7 +353,19 @@ function setupNanigansGlobal() {
 const loadScript = promisify( loadScriptCallback );
 
 async function loadTrackingScripts( callback ) {
-	hasStartedFetchingScripts = true;
+	debug( `loadTrackingScripts: state is ${ trackingState }` );
+
+	trackingEventsQueue.push( callback );
+	if ( TRACKING_STATE_VALUES.LOADING === trackingState ) {
+		debug( 'loadTrackingScripts: [LOADING] enqueue and return', callback );
+		return;
+	} else if ( TRACKING_STATE_VALUES.NOT_LOADED === trackingState ) {
+		debug( 'loadTrackingScripts: [NOT_LOADED] enqueue and load', callback );
+		trackingState = TRACKING_STATE_VALUES.LOADING;
+	} else {
+		debug( `loadTrackingScripts: [ERROR] unexpected state ${ trackingState }` );
+		return;
+	}
 
 	const scripts = [];
 
@@ -402,16 +421,21 @@ async function loadTrackingScripts( callback ) {
 	let hasError = false;
 	for ( const src of scripts ) {
 		try {
+			// We use `await` to load each script one by one and allow the GUI to load and be responsive while
+			// the trackers get loaded in a user friendly manner.
 			await loadScript( src );
 		} catch ( error ) {
 			hasError = true;
-			debug( 'A tracking script failed to load: ', error );
+			debug( 'loadTrackingScripts: [Load Error] a tracking script failed to load: ', error );
 		}
+		debug( 'loadTrackingScripts: [Loaded]', src );
 	}
 
 	if ( hasError ) {
 		return;
 	}
+
+	debug( 'loadTrackingScripts: load done' );
 
 	// init Facebook
 	if ( isFacebookEnabled ) {
@@ -448,14 +472,15 @@ async function loadTrackingScripts( callback ) {
 		window.pintrk( 'load', '2612678247224', params );
 	}
 
+	debug( 'loadTrackingScripts: init done' );
+
 	// uses JSON.stringify for consistency with recordOrder()
 	debug( 'loadTrackingScripts: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
 
-	hasFinishedFetchingScripts = true;
-
-	if ( typeof callback === 'function' ) {
-		callback();
-	}
+	// call all enqueued event callbacks
+	trackingState = TRACKING_STATE_VALUES.LOADED;
+	trackingEventsQueue.forEach( cb => cb() );
+	debug( 'loadTrackingScripts: event queue done', trackingEventsQueue );
 }
 
 /**
@@ -472,19 +497,16 @@ export function retarget( urlPath ) {
 	}
 
 	if ( ! isAdTrackingAllowed() ) {
+		debug( 'retarget: [Skipping] ad tracking is not allowed', urlPath );
 		return;
 	}
 
-	if ( ! hasStartedFetchingScripts ) {
-		return loadTrackingScripts( retarget.bind( null, urlPath ) );
-	}
-
-	// The reason we check whether the scripts have finished is to avoid a situation
-	// where retarget is called once (which starts the load process) then immediately
-	// again (in which case they've started to be fetched, but haven't finished).
-	if ( ! hasFinishedFetchingScripts ) {
+	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
+		loadTrackingScripts( retarget.bind( null, urlPath ) );
 		return;
 	}
+
+	debug( 'retarget:', urlPath );
 
 	// Non rate limited retargeting (main trackers)
 
@@ -647,6 +669,20 @@ function splitWpcomJetpackCartInfo( cart ) {
 }
 
 export function recordRegistration() {
+	if ( maybeRefreshCountryCodeCookieGdpr( recordRegistration.bind( null ) ) ) {
+		return;
+	}
+
+	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordRegistration: [Skipping] ad tracking is not allowed' );
+		return;
+	}
+
+	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
+		loadTrackingScripts( recordRegistration.bind( null ) );
+		return;
+	}
+
 	// Google Ads Gtag
 
 	if ( isWpcomGoogleAdsGtagEnabled ) {
@@ -711,13 +747,18 @@ export function recordRegistration() {
  * @returns {void}
  */
 export function recordSignup( slug ) {
-	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordSignup: skipping as ad tracking is disallowed' );
+	if ( maybeRefreshCountryCodeCookieGdpr( recordSignup.bind( null, slug ) ) ) {
 		return;
 	}
 
-	if ( ! hasStartedFetchingScripts ) {
-		return loadTrackingScripts( recordSignup.bind( null, slug ) );
+	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordSignup: [Skipping] ad tracking is disallowed' );
+		return;
+	}
+
+	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
+		loadTrackingScripts( recordSignup.bind( null, slug ) );
+		return;
 	}
 
 	// Synthesize a cart object for signup tracking.
@@ -900,12 +941,18 @@ export function retargetViewPlans() {
  * @returns {void}
  */
 export function recordAddToCart( cartItem ) {
-	if ( ! isAdTrackingAllowed() ) {
+	if ( maybeRefreshCountryCodeCookieGdpr( recordAddToCart.bind( null, cartItem ) ) ) {
 		return;
 	}
 
-	if ( ! hasStartedFetchingScripts ) {
-		return loadTrackingScripts( recordAddToCart.bind( null, cartItem ) );
+	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordAddToCart: [Skipping] ad tracking is not allowed' );
+		return;
+	}
+
+	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
+		loadTrackingScripts( recordAddToCart.bind( null, cartItem ) );
+		return;
 	}
 
 	const isJetpackPlan = productsValues.isJetpackPlan( cartItem );
@@ -1039,8 +1086,17 @@ export function recordViewCheckout( cart ) {
  * @returns {void}
  */
 export function recordOrder( cart, orderId ) {
+	if ( maybeRefreshCountryCodeCookieGdpr( recordOrder.bind( null, cart, orderId ) ) ) {
+		return;
+	}
+
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordOrder: [Skipping] ad tracking is not allowed' );
+		return;
+	}
+
+	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
+		loadTrackingScripts( recordOrder.bind( null, cart, orderId ) );
 		return;
 	}
 
@@ -1175,11 +1231,13 @@ export function recordOrder( cart, orderId ) {
  */
 function recordProduct( product, orderId ) {
 	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordProduct: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( ! hasStartedFetchingScripts ) {
-		return loadTrackingScripts( recordProduct.bind( null, product, orderId ) );
+	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
+		loadTrackingScripts( recordProduct.bind( null, product, orderId ) );
+		return;
 	}
 
 	const isJetpackPlan = productsValues.isJetpackPlan( product );
@@ -1818,11 +1876,13 @@ function recordPlansViewInCriteo() {
  */
 function recordInCriteo( eventName, eventProps ) {
 	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
+		debug( 'recordInCriteo: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( ! hasStartedFetchingScripts ) {
-		return loadTrackingScripts( recordInCriteo.bind( null, eventName, eventProps ) );
+	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
+		loadTrackingScripts( recordInCriteo.bind( null, eventName, eventProps ) );
+		return;
 	}
 
 	const events = [];
