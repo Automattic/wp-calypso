@@ -22,7 +22,7 @@
     "node": "^10.13.0",
     "npm": "^6.1.0"
   },
-  "main": "dist/custom-properties.css",
+  "main": "dist/calypso-color-schemes.css",
   "dependencies": {
     "color-studio": "github:automattic/color-studio#1.0.1"
   },
