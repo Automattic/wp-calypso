@@ -164,10 +164,18 @@ commands:
     steps:
       - store_test_results:
           path: /tmp/test_results
+      - store_test_results:
+          path: reports
       - store_artifacts:
           path: /tmp/test_results
       - store_artifacts:
           path: /tmp/artifacts
+      - store_artifacts:
+          path: reports
+          destination: e2e
+      - store_artifacts:
+          path: screenshots
+          destination: e2e
 
 jobs:
   setup:
