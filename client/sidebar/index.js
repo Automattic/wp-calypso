@@ -4,9 +4,7 @@
 import '@babel/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore, applyMiddleware } from 'redux';
 import { connect, Provider } from 'react-redux';
-import thunkMiddleware from 'redux-thunk';
 
 /**
  * Internal dependencies
@@ -14,22 +12,12 @@ import thunkMiddleware from 'redux-thunk';
 import QueryPreferences from 'components/data/query-preferences';
 import QuerySites from 'components/data/query-sites';
 import Navigation from 'my-sites/navigation';
-import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
-import { combineReducers } from 'state/utils';
-import currentUser from 'state/current-user/reducer';
-import media from 'state/media/reducer';
-import preferences from 'state/preferences/reducer';
-import postTypes from 'state/post-types/reducer';
-import sites from 'state/sites/reducer';
-import siteSettings from 'state/site-settings/reducer';
-import stats from 'state/stats/reducer';
-import users from 'state/users/reducer';
-import layoutFocus from 'state/ui/layout-focus/reducer';
 import userFactory from 'lib/user';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { setSelectedSiteId } from 'state/ui/actions';
+import createStore from './store';
 
 /**
  * Style dependencies
@@ -41,21 +29,7 @@ import 'stylesheets/_main.scss';
 import './style.scss';
 
 // Create Redux store
-const reducer = combineReducers( {
-	currentUser,
-	media,
-	preferences,
-	postTypes,
-	sites,
-	siteSettings,
-	stats,
-	users,
-	ui: combineReducers( {
-		layoutFocus,
-	} ),
-} );
-
-const store = createStore( reducer, applyMiddleware( thunkMiddleware, wpcomApiMiddleware ) );
+const store = createStore();
 
 // Create Sidebar/Site Selector component
 const TheSidebar = connect(
