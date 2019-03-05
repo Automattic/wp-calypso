@@ -74,6 +74,15 @@ $colophon-height: 50px;
 	.spinner__inner {
 		border-right-color: var( --color-jetpack );
 	}
+
+	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link {
+		background-color: var( --color-jetpack );
+		border-color: var( --color-jetpack-dark );
+
+		&:hover {
+			background-color: var( --color-jetpack-light );
+		}
+	}
 }
 
 .jetpack-connect__main {
