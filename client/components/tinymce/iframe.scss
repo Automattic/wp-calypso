@@ -135,7 +135,7 @@ a img {
 blockquote {
 	padding: 16px;
 	margin: 8px 0 24px;
-	border-left: 2px solid $gray;
+	border-left: 2px solid var( --color-neutral-light );
 	color: var( --color-neutral-500 );
 	background: var( --color-neutral-0 );
 }

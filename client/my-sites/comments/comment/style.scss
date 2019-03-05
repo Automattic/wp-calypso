@@ -610,11 +610,11 @@
 	margin: 0 auto;
 
 	&:hover {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
 		z-index: z-index( 'root', '.card.comment.is-bulk-mode:hover' );
 	}
 	&.is-pending:hover {
-		box-shadow: inset 4px 0 0 0 var( --color-warning ), 0 0 0 1px $gray,
+		box-shadow: inset 4px 0 0 0 var( --color-warning ), 0 0 0 1px var( --color-neutral-light ),
 			0 2px 4px var( --color-neutral-100 );
 	}
 

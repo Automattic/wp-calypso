@@ -120,6 +120,6 @@
 
 	&::after {
 		margin-bottom: 36px;
-		box-shadow: 0 26px 0 0 lighten( $gray, 23% );
+		box-shadow: 0 26px 0 0 var( --color-neutral-50 );
 	}
 }

@@ -55,7 +55,7 @@
 
 .checkout-thank-you__domain-mapping-details-nameservers,
 .checkout-thank-you__failed-purchases-details-list {
-	border-left: solid 5px lighten( $gray, 25% );
+	border-left: solid 5px var( --color-neutral-50 );
 	list-style: none;
 	margin-left: 0;
 	padding-left: 15px;

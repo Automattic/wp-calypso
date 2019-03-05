@@ -182,7 +182,7 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	.edit-post-header-toolbar__back {
-		border-right: 1px solid lighten( $gray, 25% );
+		border-right: 1px solid var( --color-neutral-50 );
 		border-radius: 0;
 		padding: 10px;
 		.rtl & {
@@ -193,7 +193,7 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	.edit-post-header-toolbar .site {
-		border-right: 1px solid lighten( $gray, 25% );
+		border-right: 1px solid var( --color-neutral-50 );
 		.site__info {
 			width: auto;
 		}

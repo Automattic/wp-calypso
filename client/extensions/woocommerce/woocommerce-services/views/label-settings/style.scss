@@ -82,7 +82,7 @@
 	a,
 	button {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: lighten( $gray, 25% );
+		background-color: var( --color-neutral-50 );
 		color: transparent;
 		cursor: default;
 	}

@@ -233,7 +233,7 @@
 }
 
 .post-editor__header-divider {
-	background-color: lighten( $gray, 25% );
+	background-color: var( --color-neutral-50 );
 	max-width: 700px;
 	margin: 0 auto;
 

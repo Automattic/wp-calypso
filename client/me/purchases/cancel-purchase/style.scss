@@ -25,7 +25,7 @@
 	}
 
 	p {
-		color: darken( $gray, 5% );
+		color: var( --color-neutral-light );
 		display: block;
 		font-size: 13px;
 		line-height: 150%;

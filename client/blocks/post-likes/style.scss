@@ -57,7 +57,7 @@ $post-likes-per-popover-row: 12;
 		line-height: 14px;
 		border-radius: 12px;
 		display: inline-block;
-		border: solid 1px $gray;
+		border: solid 1px var( --color-neutral-light );
 		color: var( --color-text-subtle );
 		padding: 1px 6px;
 		font-weight: 600;
