@@ -42,7 +42,7 @@ class PrimaryHeader extends Component {
 					<FormattedHeader
 						headerText={ translate( 'WordPress.com Support Scheduler' ) }
 						subHeaderText={ translate(
-							'Your Business plan includes two complimentary, half-hour sessions. Use the tool below to schedule. If you need to cancel, let us know ahead of time so we can help you reschedule and preserve the number of sessions available to you.'
+							'Use the tool below to book your in-depth support session.'
 						) }
 					/>
 					<ExternalLink
