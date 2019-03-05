@@ -37,10 +37,15 @@ class Slideshow extends Component {
 	}
 
 	componentDidMount() {
-		this.buildSwiper().then( swiper => {
-			this.swiperInstance = swiper;
-			this.initializeResizeObserver( swiper );
-		} );
+		const { onError } = this.props;
+		this.buildSwiper()
+			.then( swiper => {
+				this.swiperInstance = swiper;
+				this.initializeResizeObserver( swiper );
+			} )
+			.catch( () => {
+				onError( __( 'The Swiper library could not be loaded.' ) );
+			} );
 	}
 
 	componentWillUnmount() {
@@ -49,7 +54,7 @@ class Slideshow extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { align, autoplay, delay, effect, images } = this.props;
+		const { align, autoplay, delay, effect, images, onError } = this.props;
 
 		/* A change in alignment or images only needs an update */
 		if ( align !== prevProps.align || ! isEqual( images, prevProps.images ) ) {
@@ -67,10 +72,14 @@ class Slideshow extends Component {
 					? this.swiperInstance.realIndex
 					: prevProps.images.length;
 			this.swiperInstance && this.swiperInstance.destroy( true, true );
-			this.buildSwiper( realIndex ).then( swiper => {
-				this.swiperInstance = swiper;
-				this.initializeResizeObserver( swiper );
-			} );
+			this.buildSwiper( realIndex )
+				.then( swiper => {
+					this.swiperInstance = swiper;
+					this.initializeResizeObserver( swiper );
+				} )
+				.catch( () => {
+					onError( __( 'The Swiper library could not be loaded.' ) );
+				} );
 		}
 	}
 

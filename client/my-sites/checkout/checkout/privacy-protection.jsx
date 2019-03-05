@@ -67,9 +67,6 @@ class PrivacyProtection extends Component {
 											}
 										) }
 									</span>
-									<span className="checkout__privacy-protection-free-text">
-										{ translate( 'Free' ) }
-									</span>
 									<br />
 									<span className="checkout__privacy-protection-radio-text-description">
 										{ translate(

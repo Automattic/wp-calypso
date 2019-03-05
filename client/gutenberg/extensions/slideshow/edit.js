@@ -196,6 +196,7 @@ class SlideshowEdit extends Component {
 					delay={ delay }
 					effect={ effect }
 					images={ images }
+					onError={ noticeOperations.createErrorNotice }
 				/>
 				<DropZone onFilesDrop={ this.addFiles } />
 				{ isSelected && (

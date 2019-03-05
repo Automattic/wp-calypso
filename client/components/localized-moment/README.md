@@ -32,8 +32,8 @@ automatically rerendered.
 # `useLocalizedMoment`
 
 Is a React hook that can be used inside stateless functional components. The function returns
-an array with two elements: `moment` and `momentLocale`. Their meaning is the same as in the
-`withLocalizedMoment`. It's just a different implementation of the same concept.
+the moment.js instance that can be used to parse and format dates. Its meaning is the same as
+in `withLocalizedMoment`. It's just a different implementation of the same concept.
 
 ## Usage
 
@@ -42,7 +42,7 @@ import React from 'react';
 import { useLocalizedMoment } from 'components/localized-moment';
 
 export default function Label( { date } ) {
-	const [ moment ] = useLocalizedMoment();
+	const moment = useLocalizedMoment();
 	return <span>{ moment( date ).format( 'LLLL' ) }</span>;
 }
 ```

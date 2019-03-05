@@ -1,9 +1,9 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
 import {
+	DOMAIN_PRIVACY_TOGGLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -259,6 +259,12 @@ export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
 	type: SITE_DOMAINS_REQUEST_FAILURE,
 	siteId: SITE_ID_FIRST,
 	error: ERROR_MESSAGE_RESPONSE,
+};
+
+export const ACTION_DOMAIN_PRIVACY_TOGGLE = {
+	type: DOMAIN_PRIVACY_TOGGLE,
+	siteId: SITE_ID_FIRST,
+	domain: REST_API_SITE_DOMAIN_FIRST.domain,
 };
 
 /**

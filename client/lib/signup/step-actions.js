@@ -18,8 +18,10 @@ import userFactory from 'lib/user';
 import { getABTestVariation, getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
-import { isDomainTransfer } from 'lib/products-values';
-import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
+import {
+	updatePrivacyForDomain,
+	supportsPrivacyProtectionPurchase,
+} from 'lib/cart-values/cart-items';
 
 // State actions and selectors
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
@@ -57,7 +59,8 @@ const debug = debugFactory( 'calypso:signup:step-actions' );
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
-	const { cartItem, designType, domainItem, siteUrl, themeSlugWithRepo } = dependencies;
+	const { cartItem, designType, siteUrl, themeSlugWithRepo } = dependencies;
+	let { domainItem } = dependencies;
 
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
@@ -68,20 +71,15 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			domainItem,
 		};
 
-		const domainChoiceCart = [ domainItem ];
 		if ( domainItem ) {
 			const { product_slug: productSlug } = domainItem;
 			const productsList = getProductsList( reduxStore.getState() );
 			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-				domainChoiceCart.push(
-					cartItems.domainPrivacyProtection( {
-						domain: domainItem.meta,
-						source: 'signup',
-					} )
-				);
+				domainItem = updatePrivacyForDomain( domainItem, true );
 			}
 		}
 
+		const domainChoiceCart = [ domainItem ];
 		SignupCart.createCart( cartKey, domainChoiceCart, error =>
 			callback( error, providedDependencies )
 		);
@@ -369,17 +367,7 @@ function processItemCart(
 			const { product_slug: productSlug } = domainItem;
 			const productsList = getProductsList( state );
 			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-				if ( isDomainTransfer( domainItem ) ) {
-					privacyItem = cartItems.domainTransferPrivacy( {
-						domain: domainItem.meta,
-						source: 'signup',
-					} );
-				} else {
-					privacyItem = cartItems.domainPrivacyProtection( {
-						domain: domainItem.meta,
-						source: 'signup',
-					} );
-				}
+				privacyItem = cartItems.updatePrivacyForDomain( domainItem, true );
 
 				if ( privacyItem ) {
 					newCartItems.push( privacyItem );

@@ -23,7 +23,6 @@ import config from 'config';
 import {
 	getName,
 	handleRenewNowClick,
-	hasPrivacyProtection,
 	isCancelable,
 	isExpired,
 	isExpiring,
@@ -68,7 +67,7 @@ import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'components/vertical-nav/item';
-import { cancelPurchase, cancelPrivacyProtection, purchasesRoot } from '../paths';
+import { cancelPurchase, purchasesRoot } from '../paths';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -259,21 +258,6 @@ class ManagePurchase extends Component {
 		);
 	}
 
-	renderCancelPrivacyProtection() {
-		const { purchase, translate } = this.props;
-		const { id } = purchase;
-
-		if ( isExpired( purchase ) || ! hasPrivacyProtection( purchase ) || ! this.props.site ) {
-			return null;
-		}
-
-		return (
-			<CompactCard href={ cancelPrivacyProtection( this.props.siteSlug, id ) }>
-				{ translate( 'Cancel Privacy Protection' ) }
-			</CompactCard>
-		);
-	}
-
 	renderPlanIcon() {
 		const { purchase } = this.props;
 		if ( isPlan( purchase ) ) {
@@ -405,7 +389,6 @@ class ManagePurchase extends Component {
 				{ this.renderRenewNowNavItem() }
 				{ this.renderEditPaymentMethodNavItem() }
 				{ this.renderCancelPurchaseNavItem() }
-				{ this.renderCancelPrivacyProtection() }
 				<RemovePurchase
 					hasLoadedSites={ this.props.hasLoadedSites }
 					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }

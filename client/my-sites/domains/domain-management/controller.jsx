@@ -101,7 +101,7 @@ export default {
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementContactsPrivacy( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts and Privacy"
+				analyticsTitle="Domain Management > Contacts"
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
 				needsDomains
