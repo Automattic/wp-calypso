@@ -131,7 +131,7 @@
 	}
 
 	&:not( .is-active ) {
-		border: 1px solid $gray;
+		border: 1px solid var( --color-neutral-light );
 		padding: $padding-size + 2px;
 	}
 

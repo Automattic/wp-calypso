@@ -1,11 +1,10 @@
 
 $accordion-subtitle-height: 16px;
 $accordion-background-collapsed: $white; // same as body
-$accordion-background-hover: lighten( $gray, 35% );
 $accordion-background-expanded: $white;
 
 .accordion {
-	box-shadow: 0 -1px 0 lighten( $gray, 26% ), 0 1px 0 lighten( $gray, 26% );
+	box-shadow: 0 -1px 0 var( --color-neutral-50 ), 0 1px 0 var( --color-neutral-50 );
 	margin-top: 1px;
 	position: relative;
 }
@@ -27,7 +26,7 @@ $accordion-background-expanded: $white;
 	transition: all 150ms ease-in;
 
 	&:hover {
-		background-color: $accordion-background-hover;
+		background-color: var( --color-neutral-0 );
 
 		.accordion__title {
 			color: var( --color-accent );
@@ -120,7 +119,7 @@ $accordion-background-expanded: $white;
 
 .accordion:not( .is-expanded ) .accordion__toggle:hover .accordion__subtitle {
 	&::after {
-		@include long-content-fade( $color: hex-to-rgb( $accordion-background-hover ) );
+		@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
 	}
 }
 

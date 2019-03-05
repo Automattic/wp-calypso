@@ -75,7 +75,7 @@
 
 .payments__type-container .list-header {
 	justify-content: flex-start;
-	background: lighten( $gray, 35% );
+	background: var( --color-neutral-0 );
 	font-weight: 600;
 	font-size: 14px;
 

@@ -261,7 +261,7 @@
 
 .products__product-form-tinymce-placeholder {
 	@include placeholder();
-	background: lighten( $gray, 35% );
+	background: var( --color-neutral-0 );
 	height: 225px;
 	border: 1px solid var( --color-neutral-100 );
 }

@@ -28,7 +28,7 @@
 		.site-icon,
 		.site__title,
 		.site__domain {
-			background-color: lighten( $gray, 35% );
+			background-color: var( --color-neutral-0 );
 		}
 	}
 }

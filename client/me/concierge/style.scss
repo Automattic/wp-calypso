@@ -7,7 +7,7 @@
 }
 
 .shared__available-time-card.is-expanded {
-	background: lighten( $gray, 36% );
+	background: var( --color-neutral-0 );
 }
 
 .shared__available-time-card-header {

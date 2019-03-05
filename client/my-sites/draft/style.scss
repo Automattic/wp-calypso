@@ -11,7 +11,7 @@
 	}
 
 	&:hover {
-		background: lighten( $gray, 35 );
+		background: var( --color-neutral-0 );
 
 		.draft__title {
 			color: var( --color-neutral-500 );

@@ -258,7 +258,7 @@
 		fill: $white !important;
 
 		@include breakpoint( '<660px' ) {
-			fill: $gray !important;
+			fill: var( --color-neutral-light ) !important;
 		}
 	}
 
@@ -273,7 +273,7 @@
 			position: relative;
 			top: -2px;
 			left: auto;
-			fill: $gray !important; // this needs to be more specific
+			fill: var( --color-neutral-light ) !important; // this needs to be more specific
 			margin-right: 0;
 		}
 	}

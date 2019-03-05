@@ -98,7 +98,7 @@ textarea {
 	-webkit-font-smoothing: subpixel-antialiased;
 
 	&::-webkit-input-placeholder {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 textarea {
@@ -112,7 +112,7 @@ textarea {
 .minimized-view {
 	background: $white;
 	box-shadow: 0 1px 10px rgba( 46, 68, 83, 0.1 );
-	border: 1px solid lighten( $gray, 25% );
+	border: 1px solid var( --color-neutral-50 );
 }
 .maximized-view.is-ask-view {
 	top: 0;
@@ -133,7 +133,7 @@ textarea {
 		text-transform: uppercase;
 		font-size: 11px;
 		font-weight: 700;
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	// Left hamburger button
@@ -141,12 +141,12 @@ textarea {
 		border-right: none;
 		flex: 0 0 40px;
 		.svg-icon {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 		&.disabled {
 			background: transparent;
 			.svg-icon {
-				color: lighten( $gray, 25% );
+				color: var( --color-neutral-50 );
 			}
 		}
 	}
@@ -156,7 +156,7 @@ textarea {
 		border-left: none;
 		flex: 0 0 40px;
 		.svg-icon {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 
@@ -174,7 +174,7 @@ textarea {
 		top: 32px;
 		.question-bar,
 		.question-bar.closed {
-			background: $gray;
+			background: var( --color-neutral-light );
 			padding: 10px 14px;
 		}
 	}
@@ -182,7 +182,7 @@ textarea {
 
 .chat-list-view-item-container {
 	background: var( --color-neutral-0 );
-	border-bottom: 1px solid lighten( $gray, 25% );
+	border-bottom: 1px solid var( --color-neutral-50 );
 	color: var( --color-text );
 	padding: 18px 10px 18px 24px;
 	.chat-list-item-title {
@@ -190,7 +190,7 @@ textarea {
 		font-size: 16px;
 	}
 	.chat-list-item-meta {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 	.unread-message-dot {
 		background: var( --color-success );
@@ -242,7 +242,7 @@ textarea {
 
 .thread-view-container {
 	.expert-response-time {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -311,17 +311,17 @@ textarea {
 	}
 }
 .avatar {
-	background: lighten( $gray, 25% );
+	background: var( --color-neutral-50 );
 }
 
 .system-message {
-	border: 1px solid lighten( $gray, 25% );
+	border: 1px solid var( --color-neutral-50 );
 	background: var( --color-neutral-0 );
 	font-size: 14px;
 	margin-right: 0;
 	border-radius: 8px;
 	&.has-sibling + .system-message {
-		border-top: 1px solid lighten( $gray, 25% );
+		border-top: 1px solid var( --color-neutral-50 );
 	}
 
 	// Green border for success messages
@@ -353,18 +353,18 @@ textarea {
 	// Placeholder displayed when the experts info is loading
 	&.alerting-experts {
 		.expert-name:empty {
-			background: lighten( $gray, 25% );
+			background: var( --color-neutral-50 );
 		}
 		.expert-last-active-date {
-			color: $gray;
+			color: var( --color-neutral-light );
 			&:empty {
-				background: lighten( $gray, 25% );
+				background: var( --color-neutral-50 );
 			}
 		}
 	}
 
 	.icon-avatar {
-		background: lighten( $gray, 25% );
+		background: var( --color-neutral-50 );
 	}
 
 	// Icons inside system messages
@@ -404,7 +404,7 @@ textarea {
 .chat-view-minimized {
 	// When no expert has replied yet
 	.alerting {
-		color: $gray;
+		color: var( --color-neutral-light );
 		.beacon {
 			background: var( --color-primary );
 			margin: 5px auto;
@@ -440,7 +440,7 @@ textarea {
 		box-shadow: none;
 	}
 	.submit-btn[disabled] {
-		background-color: lighten( $gray, 25% );
+		background-color: var( --color-neutral-50 );
 		border: none;
 	}
 }
@@ -456,7 +456,7 @@ textarea {
 		border-left: 1px solid var( --color-neutral-0 );
 	}
 	.toolbar-btn {
-		color: $gray;
+		color: var( --color-neutral-light );
 		border-left: 1px solid var( --color-neutral-0 );
 		.svg-icon {
 			color: var( --color-success );

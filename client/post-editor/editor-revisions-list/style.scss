@@ -1,6 +1,3 @@
-// @TODO we should decouple from accordion styles
-@import 'components/accordion/style';
-
 .editor-revisions-list {
 	position: relative;
 	background: var( --color-neutral-0 );
@@ -251,7 +248,7 @@
 
 .editor-revisions-list__button {
 	&:hover {
-		background: $accordion-background-hover;
+		background: var( --color-neutral-0 );
 	}
 
 	.editor-revisions-list__revision.is-selected > &,

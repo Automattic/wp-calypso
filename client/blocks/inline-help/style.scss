@@ -409,7 +409,7 @@
 		&:hover {
 			cursor: pointer;
 			//color: var( --color-primary );
-			background: lighten( $gray, 35% );
+			background: var( --color-neutral-0 );
 		}
 	}
 
@@ -459,7 +459,7 @@
 	height: 16px;
 	margin: 16px 0;
 	border-radius: 16px;
-	background-color: lighten( $gray, 28 );
+	background-color: var( --color-neutral-0 );
 	color: transparent;
 	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 )
 		infinite;

@@ -324,7 +324,7 @@
 		.checklist__task-title,
 		.checklist__task-description,
 		.checklist__task-duration {
-			background-color: lighten( $gray, 25% );
+			background-color: var( --color-neutral-50 );
 			color: transparent;
 			animation: pulse-light 3s ease-in-out infinite;
 		}

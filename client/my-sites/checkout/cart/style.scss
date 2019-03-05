@@ -199,7 +199,7 @@
 }
 
 .cart__cart-ad {
-	background: lighten( $gray, 34% );
+	background: var( --color-neutral-0 );
 	border: 1px solid var( --color-neutral-0 );
 	border-radius: 4px;
 	font-size: 12px;
@@ -314,7 +314,7 @@ div.popover-cart__popover {
 
 	.cart__total,
 	.cart-buttons {
-		background: lighten( $gray, 34% );
+		background: var( --color-neutral-0 );
 	}
 
 	.cart__total {
@@ -358,7 +358,7 @@ div.popover-cart__popover {
 
 	.cart__total,
 	.cart-buttons {
-		background: lighten( $gray, 34% );
+		background: var( --color-neutral-0 );
 	}
 
 	.cart__total {

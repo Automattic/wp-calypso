@@ -135,7 +135,7 @@ input[type='text'].post-schedule__clock-time {
 	text-align: left;
 	margin-top: 10px;
 	padding: 10px 0 0;
-	border-top: 1px solid lighten( $gray, 25% );
+	border-top: 1px solid var( --color-neutral-50 );
 }
 
 .post-schedule__timezone-info {

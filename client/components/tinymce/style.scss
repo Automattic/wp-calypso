@@ -80,7 +80,7 @@
 .mce-inline-toolbar-grp {
 	div.mce-toolbar-grp {
 		background-color: rgba( $white, 0.92 );
-		border-color: lighten( $gray, 25% );
+		border-color: var( --color-neutral-50 );
 		border-style: solid;
 		border-left-width: 1px;
 		border-right-width: 1px;

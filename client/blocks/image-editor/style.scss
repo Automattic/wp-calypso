@@ -16,7 +16,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-	background: darken( $gray, 52% );
+	background: var( --color-neutral-800 );
 }
 
 .image-editor__toolbar {
@@ -76,7 +76,7 @@
 
 .image-editor__crop-background {
 	position: absolute;
-	background: darken( $gray, 52% );
+	background: var( --color-neutral-800 );
 	opacity: 0.5;
 }
 
@@ -88,7 +88,7 @@
 	margin-left: -4px;
 	border-radius: 50%;
 	border: 2px solid $white;
-	background: darken( $gray, 52% );
+	background: var( --color-neutral-800 );
 
 	&::before {
 		border-radius: 100%;
