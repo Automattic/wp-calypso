@@ -818,7 +818,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
 				return assert.strictEqual(
 					numberOfProductsInCart,
-					2,
+					1,
 					"The cart doesn't contain the expected number of products"
 				);
 			}

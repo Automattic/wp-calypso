@@ -48,6 +48,9 @@ export default class AsyncBaseContainer {
 		if ( global.__JNSite === true ) {
 			await driverHelper.refreshIfJNError( this.driver );
 		}
+		if ( typeof this._preInit === 'function' ) {
+			await this._preInit();
+		}
 		await this.waitForPage();
 		await this.checkForUnknownABTestKeys();
 		await this.checkForConsoleErrors();
