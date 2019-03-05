@@ -238,7 +238,7 @@ class Help extends React.PureComponent {
 
 		return (
 			<Main className="help">
-				{ abtest( 'builderReferralThemesBanner' ) === 'builderReferralHelpBanner' && (
+				{ abtest( 'builderReferralHelpBanner' ) === 'builderReferralBanner' && (
 					<UpworkBanner location={ 'help-home' } />
 				) }
 				<PageViewTracker path="/help" title="Help" />
