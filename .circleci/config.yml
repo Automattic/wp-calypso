@@ -144,7 +144,8 @@ references:
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
     command: |
-        echo 'export NODE_ENV=test' >> $BASH_ENV
+        echo 'export NODE_ENV=test' >> $BASH_ENV &&
+		echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV
 
   defaults: &defaults
     working_directory: ~/wp-calypso
