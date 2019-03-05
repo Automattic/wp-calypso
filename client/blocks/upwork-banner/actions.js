@@ -9,13 +9,15 @@ export const dismissBanner = location => ( dispatch, getState ) => {
 	return dispatch(
 		savePreference( 'upwork-dismissible-banner', {
 			...preference,
-			[ location ]: [
-				...( preference[ location ] || [] ),
-				{
-					dismissedAt: Date.now(),
-					type: 'dismiss',
-				},
-			],
+			...{
+				[ location ]: [
+					...( preference[ location ] || [] ),
+					{
+						dismissedAt: Date.now(),
+						type: 'dismiss',
+					},
+				],
+			},
 		} )
 	);
 };
