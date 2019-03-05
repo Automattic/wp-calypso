@@ -319,7 +319,7 @@ class SignupForm extends Component {
 		} );
 	};
 
-	handleBlur = () => {
+	handleBlur = event => {
 		const data = this.getUserData();
 		const fieldId = event.target.id;
 		// Ensure that username and password field validation does not trigger prematurely
