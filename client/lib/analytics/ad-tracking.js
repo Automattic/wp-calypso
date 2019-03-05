@@ -979,16 +979,21 @@ export function recordAddToCart( cartItem ) {
 			ord: floodlightCacheBuster(), // "Counting method" = "Counter/Standard" requires "ord" to be a random number
 			// num: not required
 		};
-		debug( 'recordSignup: [Floodlight]', params );
+		debug( 'recordAddToCart: [Floodlight]', params );
 		recordParamsInFloodlight( params );
 	}
 
 	// Criteo
 
 	if ( isCriteoEnabled ) {
-		recordInCriteo( 'viewItem', {
-			item: cartItem.product_id,
-		} );
+		const params = [
+			'viewItem',
+			{
+				item: cartItem.product_id,
+			},
+		];
+		debug( 'recordAddToCart: [Criteo]', params );
+		recordInCriteo( ...params );
 	}
 
 	// Pinterest
