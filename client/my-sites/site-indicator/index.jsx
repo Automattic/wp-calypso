@@ -251,15 +251,16 @@ class SiteIndicator extends Component {
 		if ( site ) {
 			accessFailedMessage = (
 				<span>
-					{ translate( 'This site cannot be accessed.' ) }
+					{ translate( 'Jetpack is disconnected.' ) }
 					<Button
 						borderless
 						compact
 						scary
-						href={ `/settings/disconnect-site/${ site.slug }` }
+						href="https://jetpack.com/support/reconnecting-reinstalling-jetpack/"
 						onClick={ this.props.trackSiteDisconnect }
+						target="_blank"
 					>
-						{ translate( 'Remove Site' ) }
+						{ translate( 'I’d like to fix this now' ) }
 					</Button>
 				</span>
 			);
