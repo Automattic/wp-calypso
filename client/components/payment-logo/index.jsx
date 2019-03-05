@@ -18,20 +18,18 @@ const ALT_TEXT = {
 	diners: 'Diners Club',
 	discover: 'Discover',
 	eps: 'eps',
-	'emergent-paywall': 'Net Banking / Paytm / Debit Card',
 	giropay: 'Giropay',
 	ideal: 'iDEAL',
 	jcb: 'JCB',
-	mastercard: 'MasterCard',
+	mastercard: 'Mastercard',
 	p24: 'Przelewy24',
 	paypal: 'PayPal',
 	placeholder: '',
 	unionpay: 'UnionPay',
-	visa: 'VISA',
+	visa: 'Visa',
 	wechat: i18n.translate( 'WeChat Pay', {
 		comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 	} ),
-	'web-payment': 'Web Payment',
 	sofort: 'Sofort',
 };
 

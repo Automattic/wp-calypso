@@ -67,27 +67,19 @@ export class TransferDomain extends Component {
 
 		this.setState( { errorMessage: null } );
 
-		const transferItems = [];
-
-		transferItems.push(
-			cartItems.domainTransfer( {
-				domain,
-				extra: {
-					auth_code: authCode,
-					privacy_available: supportsPrivacy,
-				},
-			} )
-		);
+		let domainTransfer = cartItems.domainTransfer( {
+			domain,
+			extra: {
+				auth_code: authCode,
+				privacy_available: supportsPrivacy,
+			},
+		} );
 
 		if ( supportsPrivacy ) {
-			transferItems.push(
-				cartItems.domainTransferPrivacy( {
-					domain,
-				} )
-			);
+			domainTransfer = cartItems.updatePrivacyForDomain( domainTransfer, true );
 		}
 
-		addItems( transferItems );
+		addItems( [ domainTransfer ] );
 
 		page( '/checkout/' + selectedSiteSlug );
 	};

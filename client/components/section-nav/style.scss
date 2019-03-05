@@ -11,7 +11,7 @@
 	margin: 0 0 17px;
 	background: var( --color-surface );
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 
 	&.is-empty .section-nav__panel {
 		visibility: hidden;
@@ -19,7 +19,7 @@
 
 	@include breakpoint( '<480px' ) {
 		&.is-open {
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
 		}
 	}
 
@@ -107,7 +107,7 @@
 		.section-nav.is-open & {
 			padding-bottom: 15px;
 			border-top: solid 1px var( --color-neutral-100 );
-			background: linear-gradient( to bottom, $gray-light 0%, $white 4px );
+			background: linear-gradient( to bottom, var( --color-neutral-0 ) 0%, $white 4px );
 		}
 	}
 

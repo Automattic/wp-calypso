@@ -1,4 +1,3 @@
-
 $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 .post-share .card.banner,
@@ -13,9 +12,13 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	position: relative;
 	background-color: var( --color-white );
 
-	& .notice {
-		margin: 0 0 16px;
-		border-radius: 0;
+	.notice {
+		margin-bottom: 0;
+
+		&,
+		.notice__icon-wrapper {
+			border-radius: 0;
+		}
 	}
 }
 
@@ -42,7 +45,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 .post-share__wrapper.is-placeholder {
 	padding-bottom: 24px;
-	border-bottom: 1px solid transparentize( $gray-lighten-20, 0.5 );
+	border-bottom: 1px solid rgba( var( --color-neutral-100-rgb ), 0.5 );
 }
 
 .post-share__placeholder {

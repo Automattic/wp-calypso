@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { find, matches } from 'lodash';
 
 /**
@@ -20,8 +18,6 @@ import {
 	PURCHASE_REMOVE_FAILED,
 	PURCHASES_SITE_FETCH_FAILED,
 	PURCHASES_USER_FETCH_FAILED,
-	PRIVACY_PROTECTION_CANCEL_COMPLETED,
-	PRIVACY_PROTECTION_CANCEL_FAILED,
 } from 'state/action-types';
 
 /**
@@ -35,18 +31,6 @@ const initialState = {
 	hasLoadedSitePurchasesFromServer: false,
 	hasLoadedUserPurchasesFromServer: false,
 };
-
-function updatePurchaseById( state, id, properties ) {
-	return {
-		...state,
-		data: state.data.map( purchase => {
-			if ( id === purchase.ID ) {
-				return { ...purchase, ...properties };
-			}
-			return purchase;
-		} ),
-	};
-}
 
 /**
  * Overwrites the purchases in the store with the purchases from the new purchases array
@@ -156,12 +140,4 @@ export default createReducer( initialState, {
 	[ PURCHASE_REMOVE_FAILED ]: assignError,
 	[ PURCHASES_SITE_FETCH_FAILED ]: assignError,
 	[ PURCHASES_USER_FETCH_FAILED ]: assignError,
-
-	[ PRIVACY_PROTECTION_CANCEL_COMPLETED ]: ( state, action ) =>
-		updatePurchaseById( state, action.purchase.ID, action.purchase ),
-
-	[ PRIVACY_PROTECTION_CANCEL_FAILED ]: ( state, action ) =>
-		updatePurchaseById( state, action.purchaseId, {
-			error: action.error,
-		} ),
 } );

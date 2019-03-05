@@ -141,11 +141,11 @@
 
 .editor-media-modal .media-library__list-item-figure {
 	background-color: var( --color-neutral-0 );
-	box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
+	box-shadow: inset 0 0 0 1px var( --color-neutral-50 );
 }
 
 .editor-media-modal .media-library__list-item-file-name {
 	&::after {
-		@include long-content-fade( $color: hex-to-rgb( $gray-light ) );
+		@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
 	}
 }

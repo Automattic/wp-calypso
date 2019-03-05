@@ -44,6 +44,8 @@ import { prefetchmShotsPreview } from './site-preview-actions';
 
 import { recordTracksEvent } from 'state/analytics/actions';
 
+import { setSelectedEditor } from 'state/selected-editor/actions';
+
 const NO_ERROR_STATE = {
 	error: false,
 	errorMessage: '',
@@ -342,6 +344,13 @@ class SiteImporterInputPane extends React.Component {
 					site_engine: this.state.importData.engine,
 				} );
 
+				// At this point we're assuming that an import is going to happen
+				// so we set the user's editor to Gutenberg in order to make sure
+				// that the posts aren't mangled by the classic editor.
+				if ( 'engine6' === get( this.props, 'importerData.engine' ) ) {
+					this.props.setSelectedEditor( this.props.site.ID, 'gutenberg' );
+				}
+
 				const data = fromApi( resp );
 				const action = createFinishUploadAction( this.props.importerStatus.importerId, data );
 				defer( () => {
@@ -497,7 +506,7 @@ class SiteImporterInputPane extends React.Component {
 export default flow(
 	connect(
 		null,
-		{ recordTracksEvent }
+		{ recordTracksEvent, setSelectedEditor }
 	),
 	localize
 )( SiteImporterInputPane );

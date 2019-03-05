@@ -256,7 +256,7 @@ describe( 'validation', () => {
 				expect( result ).toEqual( {
 					errors: {
 						document: [
-							'Taxpayer Identification Number is invalid. Must be in format: 111.444.777-XX',
+							'Taxpayer Identification Number is invalid. Must be in format: 111.444.777-XX or 11.444.777/0001-XX',
 						],
 					},
 				} );

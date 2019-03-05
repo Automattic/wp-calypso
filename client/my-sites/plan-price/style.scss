@@ -43,7 +43,8 @@
 }
 
 .plan-price__currency-symbol,
-.plan-price__fraction {
+.plan-price__fraction,
+.plan-price__tax-amount {
 	vertical-align: super;
 	font-size: 12px;
 }
@@ -52,7 +53,8 @@
 	color: var( --color-success );
 }
 
-.plan-price__currency-symbol {
+.plan-price__currency-symbol,
+.plan-price__tax-amount {
 	color: var( --color-neutral-light );
 }
 

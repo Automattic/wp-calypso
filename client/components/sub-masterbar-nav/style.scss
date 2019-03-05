@@ -42,7 +42,7 @@
 	width: 100%;
 
 	.sub-masterbar-nav__dropdown:not( .is-collapsed ) & {
-		border-top: 1px solid lighten( $blue-dark, 2% );
+		border-top: 1px solid var( --color-primary-600 );
 	}
 }
 

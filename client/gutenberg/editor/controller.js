@@ -6,7 +6,7 @@ import React from 'react';
 import config from 'config';
 import debugFactory from 'debug';
 import page from 'page';
-import { has, set, uniqueId, get } from 'lodash';
+import { has, set, uniqueId, get, isInteger } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -74,7 +74,11 @@ export const loadTranslations = store => {
 
 	const query = domains.reduce( ( currentQuery, domain ) => {
 		const { name, url } = domain;
-		const languageFileUrl = `https://widgets.wp.com/languages/${ url }/${ localeSlug }.json?t=2`;
+		const cacheBuster =
+			window.languageRevisions && window.languageRevisions[ localeSlug ] !== undefined
+				? '&v=' + window.languageRevisions[ localeSlug ]
+				: '';
+		const languageFileUrl = `https://widgets.wp.com/languages/${ url }/${ localeSlug }.json?t=2${ cacheBuster }`;
 		return {
 			...currentQuery,
 			[ name ]: () => requestFromUrl( languageFileUrl ),
@@ -143,6 +147,11 @@ export const redirect = ( { store: { getState } }, next ) => {
 	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
+function getPressThisData( query ) {
+	const { text, url, title, image, embed } = query;
+	return url ? { text, url, title, image, embed } : null;
+}
+
 export const post = ( context, next ) => {
 	//see post-editor/controller.js for reference
 
@@ -150,7 +159,30 @@ export const post = ( context, next ) => {
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
-	const duplicatePostId = get( context, 'query.jetpack-copy', null );
+	const jetpackCopy = parseInt( get( context, 'query.jetpack-copy', null ) );
+
+	//check if this value is an integer
+	const duplicatePostId = isInteger( jetpackCopy ) ? jetpackCopy : null;
+
+	if ( config.isEnabled( 'calypsoify/iframe' ) ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const pressThis = getPressThisData( context.query );
+
+		// Set postId on state.ui.editor.postId, so components like editor revisions can read from it.
+		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
+
+		context.primary = (
+			<CalypsoifyIframe
+				postId={ postId }
+				postType={ postType }
+				duplicatePostId={ duplicatePostId }
+				pressThis={ pressThis }
+			/>
+		);
+
+		return next();
+	}
 
 	const makeEditor = import( /* webpackChunkName: "gutenberg-init" */ './init' ).then( module => {
 		const { initGutenberg } = module;
@@ -197,11 +229,7 @@ export const post = ( context, next ) => {
 		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
 	} );
 
-	if ( config.isEnabled( 'calypsoify/iframe' ) ) {
-		context.primary = <CalypsoifyIframe postId={ postId } postType={ postType } />;
-	} else {
-		context.primary = <EditorLoader />;
-	}
+	context.primary = <EditorLoader />;
 
 	next();
 };

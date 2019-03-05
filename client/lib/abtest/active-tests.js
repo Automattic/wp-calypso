@@ -72,6 +72,16 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	skipBusinessInformation: {
+		datestamp: '20190130',
+		variations: {
+			hide: 50,
+			show: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
 	showConciergeSessionUpsell: {
 		datestamp: '20181214',
 		variations: {
@@ -125,8 +135,8 @@ export default {
 	twoYearPlanByDefault: {
 		datestamp: '20190207',
 		variations: {
-			originalFlavor: 50,
-			twoYearFlavor: 50,
+			originalFlavor: 100,
+			twoYearFlavor: 0,
 		},
 		defaultVariation: 'originalFlavor',
 	},
@@ -154,5 +164,13 @@ export default {
 			recommended: 50,
 		},
 		defaultVariation: 'featured',
+	},
+	builderReferralHelpPopover: {
+		datestamp: '20190227',
+		variations: {
+			builderReferralLink: 10,
+			original: 90,
+		},
+		defaultVariation: 'original',
 	},
 };

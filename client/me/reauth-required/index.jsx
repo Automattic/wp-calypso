@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,6 +26,11 @@ import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import { recordGoogleEvent } from 'state/analytics/actions';
 import userUtilities from 'lib/user/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 // autofocus is used for tracking purposes, not an a11y issue
 /* eslint-disable jsx-a11y/no-autofocus */

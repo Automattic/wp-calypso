@@ -18,11 +18,9 @@ import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementEmail,
-	domainManagementEmailForwarding,
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementPrimaryDomain,
-	domainManagementPrivacyProtection,
 	domainManagementRedirectSettings,
 	domainManagementTransfer,
 	domainManagementTransferIn,
@@ -32,6 +30,7 @@ import {
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
 } from 'my-sites/domains/paths';
+import EmailForwarding from 'my-sites/email/email-forwarding';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuiteAddUsers from './gsuite/gsuite-add-users';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -102,7 +101,7 @@ export default {
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementContactsPrivacy( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts and Privacy"
+				analyticsTitle="Domain Management > Contacts"
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
 				needsDomains
@@ -168,16 +167,7 @@ export default {
 	},
 
 	domainManagementEmailForwarding( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementEmailForwarding( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Email Forwarding"
-				component={ DomainManagement.EmailForwarding }
-				context={ pageContext }
-				needsEmailForwarding
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
+		pageContext.primary = <EmailForwarding selectedDomainName={ pageContext.params.domain } />;
 		next();
 	},
 
@@ -219,21 +209,6 @@ export default {
 				context={ pageContext }
 				needsDomains
 				needsNameservers
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
-	},
-
-	domainManagementPrivacyProtection( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementPrivacyProtection( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts and Privacy > Privacy Protection"
-				component={ DomainManagement.PrivacyProtection }
-				context={ pageContext }
-				needsDomains
-				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);

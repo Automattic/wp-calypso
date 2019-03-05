@@ -30,9 +30,27 @@
 
 	.button {
 		position: absolute;
-		bottom: 3px;
+		top: 29px;
 		right: 3px;
 		width: auto;
+	}
+
+	.site-information__skip-button {
+		left: calc( 100% );
+		width: 80px;
+		color: var( --color-white );
+		text-decoration: underline;
+
+		&:hover {
+			color: var( --color-white );
+		}
+
+		@include breakpoint( '<660px' ) {
+			position: relative;
+			margin: 0 auto;
+			left: 0;
+			top: 0;
+		}
 	}
 }
 

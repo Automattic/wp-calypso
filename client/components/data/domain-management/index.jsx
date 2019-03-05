@@ -13,7 +13,6 @@ import { connect } from 'react-redux';
  */
 import CartStore from 'lib/cart/store';
 import DnsStore from 'lib/domains/dns/store';
-import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import { fetchUsers } from 'lib/users/actions';
 import { fetchByDomain, fetchBySiteId } from 'state/google-apps-users/actions';
 import { getByDomain, getBySite, isLoaded } from 'state/google-apps-users/selectors';
@@ -23,13 +22,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import NameserversStore from 'lib/domains/nameservers/store';
-import {
-	fetchDns,
-	fetchEmailForwarding,
-	fetchNameservers,
-	fetchWapiDomainInfo,
-	fetchWhois,
-} from 'lib/upgrades/actions';
+import { fetchDns, fetchNameservers, fetchWapiDomainInfo, fetchWhois } from 'lib/upgrades/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryProductsList from 'components/data/query-products-list';
@@ -47,7 +40,6 @@ function getStateFromStores( props ) {
 		context: props.context,
 		domains: props.selectedSite ? props.domains : null,
 		dns: DnsStore.getByDomainName( props.selectedDomainName ),
-		emailForwarding: EmailForwardingStore.getByDomainName( props.selectedDomainName ),
 		googleAppsUsers: props.googleAppsUsers,
 		googleAppsUsersLoaded: props.googleAppsUsersLoaded,
 		isRequestingSiteDomains: props.isRequestingSiteDomains,
@@ -76,7 +68,6 @@ class DomainManagementData extends React.Component {
 		needsDns: PropTypes.bool,
 		needsDomains: PropTypes.bool,
 		needsDomainInfo: PropTypes.bool,
-		needsEmailForwarding: PropTypes.bool,
 		needsGoogleApps: PropTypes.bool,
 		needsNameservers: PropTypes.bool,
 		needsPlans: PropTypes.bool,
@@ -111,10 +102,6 @@ class DomainManagementData extends React.Component {
 			fetchWapiDomainInfo( selectedDomainName );
 		}
 
-		if ( this.props.needsEmailForwarding ) {
-			fetchEmailForwarding( selectedDomainName );
-		}
-
 		if (
 			needsGoogleApps &&
 			( prevProps.needsGoogleApps !== needsGoogleApps || prevProps.selectedSite !== selectedSite )
@@ -145,7 +132,6 @@ class DomainManagementData extends React.Component {
 			needsDns,
 			needsDomains,
 			needsDomainInfo,
-			needsEmailForwarding,
 			needsNameservers,
 			needsPlans,
 			needsProductsList,
@@ -164,9 +150,6 @@ class DomainManagementData extends React.Component {
 		}
 		if ( needsDomainInfo ) {
 			stores.push( WapiDomainInfoStore );
-		}
-		if ( needsEmailForwarding ) {
-			stores.push( EmailForwardingStore );
 		}
 		if ( needsNameservers ) {
 			stores.push( NameserversStore );

@@ -25,7 +25,7 @@
 		height: 16px;
 		z-index: -1;
 		background: blue;
-		background: linear-gradient( transparentize( $gray-light, 1 ), $gray-light );
+		background: linear-gradient( rgba( var( --color-neutral-0-rgb ), 1 ), var( --color-neutral-0 ) );
 	}
 }
 

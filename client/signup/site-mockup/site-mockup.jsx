@@ -2,15 +2,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { translate } from 'i18n-calypso';
-
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getSiteVerticalSlug } from 'state/signup/steps/site-vertical/selectors';
 /**
  * Style dependencies
  */
@@ -75,23 +77,44 @@ function SiteMockupOutlines() {
 	);
 }
 
-export default function SiteMockup( { size, content, siteType, siteStyle, title, tagline } ) {
-	const classes = classNames( 'site-mockup__viewport', `is-${ size }`, {
-		[ `is-${ siteType }` ]: !! siteType,
-		[ `is-${ siteStyle }` ]: !! siteStyle,
-	} );
-	return (
-		<div className={ classes }>
-			{ size === 'mobile' ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
-			<div className="site-mockup__body">
-				<div className="site-mockup__content">
-					{ isEmpty( content ) ? (
-						<SiteMockupOutlines />
-					) : (
-						<SiteMockupContent { ...{ content, title, tagline } } />
-					) }
+export class SiteMockup extends PureComponent {
+	handleClick = () => this.props.handleClick( this.props.verticalSlug );
+
+	render() {
+		const { size, content, siteType, siteStyle, title, tagline } = this.props;
+		const classes = classNames( 'site-mockup__viewport', `is-${ size }`, {
+			[ `is-${ siteType }` ]: !! siteType,
+			[ `is-${ siteStyle }` ]: !! siteStyle,
+		} );
+		/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
+		return (
+			<div className={ classes } onClick={ this.handleClick }>
+				{ size === 'mobile' ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
+				<div className="site-mockup__body">
+					<div className="site-mockup__content">
+						{ isEmpty( content ) ? (
+							<SiteMockupOutlines />
+						) : (
+							<SiteMockupContent { ...{ content, title, tagline } } />
+						) }
+					</div>
 				</div>
 			</div>
-		</div>
-	);
+		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
+	}
 }
+
+export default connect(
+	state => ( { verticalSlug: getSiteVerticalSlug( state ) } ),
+	( dispatch, ownProps ) => ( {
+		handleClick: verticalSlug =>
+			dispatch(
+				recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
+					size: ownProps.size,
+					vertical_slug: verticalSlug,
+					site_style: ownProps.siteStyle || 'default',
+				} )
+			),
+	} )
+)( SiteMockup );

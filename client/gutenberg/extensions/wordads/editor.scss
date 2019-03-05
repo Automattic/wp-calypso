@@ -1,11 +1,9 @@
 .wp-block-jetpack-wordads {
 	background: var( --color-white );
+}
 
-	&.aligncenter {
-		.jetpack-wordads__ad {
-			margin: 0 auto;
-		}
-	}
+[data-type='jetpack/wordads'][data-align='center'] .jetpack-wordads__ad {
+	margin: 0 auto;
 }
 
 .jetpack-wordads__header,
@@ -45,34 +43,19 @@
 .wp-block-jetpack-wordads__format-picker {
 	$active-item-outline-width: 2px;
 
-	// @TODO replace with Gutenberg variable
-	$blue-medium-500: #00a0d2;
+	// @TODO replace with Gutenberg variables
 	$dark-gray-500: #555d66;
 	$dark-gray-900: #191e23;
 
 	padding: 7px;
 
-	.components-menu-item__button {
+	// Leave space between elements for active state styling
+	.components-menu-item__button + .components-menu-item__button {
 		margin-top: $active-item-outline-width;
-		margin-bottom: $active-item-outline-width;
+	}
 
-		&:hover {
-			color: $dark-gray-500;
-			box-shadow: inset 0 0 0 1px $dark-gray-500, inset 0 0 0 $active-item-outline-width $white;
-		}
-
-		&:focus,
-		&.is-active {
-			color: $dark-gray-900;
-			box-shadow: 0 0 0 $active-item-outline-width $blue-medium-500 !important;
-
-			// Windows High Contrast mode will show this outline, but not the box-shadow.
-			outline: $active-item-outline-width solid transparent !important;
-			outline-offset: -( $active-item-outline-width );
-		}
-
-		&.is-active {
-			box-shadow: 0 0 0 $active-item-outline-width $dark-gray-500 !important;
-		}
+	.components-menu-item__button.is-active {
+		color: $dark-gray-900;
+		box-shadow: 0 0 0 $active-item-outline-width $dark-gray-500 !important;
 	}
 }

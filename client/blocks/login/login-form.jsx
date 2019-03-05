@@ -281,6 +281,12 @@ export class LoginForm extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
+				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
+					<p className="login__form-subheader">
+						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
+					</p>
+				) }
+
 				{ this.renderPrivateSiteNotice() }
 
 				<Card className="login__form">
@@ -423,6 +429,29 @@ export class LoginForm extends Component {
 							/>
 						</Card>
 					</div>
+				) }
+
+				{ config.isEnabled( 'signup/social' ) && isCrowdsignalOAuth2Client( oauth2Client ) && (
+					<p className="login__form-terms login__form-terms-bottom">
+						{ preventWidows(
+							this.props.translate(
+								'By continuing with any of the options above, ' +
+									'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+								{
+									components: {
+										tosLink: (
+											<a
+												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							),
+							5
+						) }
+					</p>
 				) }
 			</form>
 		);

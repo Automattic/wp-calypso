@@ -44,6 +44,10 @@ describe( 'actions', () => {
 				],
 			};
 
+			// #tax-on-checkout-placeholder
+			successResponse.billing_history[ 0 ].tax_amount = '$1.23';
+			successResponse.upcoming_charges[ 0 ].tax_amount = '$4.56';
+
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()

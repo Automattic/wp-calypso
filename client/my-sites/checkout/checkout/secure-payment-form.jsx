@@ -14,7 +14,6 @@ import debugFactory from 'debug';
  */
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
-import EmergentPaywallBox from './emergent-paywall-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
 import CreditCardPaymentBox from './credit-card-payment-box';
@@ -354,26 +353,6 @@ export class SecurePaymentForm extends Component {
 		);
 	}
 
-	renderEmergentPaywallBox() {
-		return (
-			<PaymentBox
-				classSet="emergent-payments-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod="emergent-paywall"
-				onSelectPaymentMethod={ this.selectPaymentBox }
-			>
-				<EmergentPaywallBox
-					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite }
-					transaction={ this.props.transaction }
-				>
-					{ this.props.children }
-				</EmergentPaywallBox>
-			</PaymentBox>
-		);
-	}
-
 	renderCreditCardPaymentBox() {
 		return (
 			<PaymentBox
@@ -548,13 +527,6 @@ export class SecurePaymentForm extends Component {
 					<div>
 						{ this.renderGreatChoiceHeader() }
 						{ this.renderPayPalPaymentBox() }
-					</div>
-				);
-			case 'emergent-paywall':
-				return (
-					<div>
-						{ this.renderGreatChoiceHeader() }
-						{ this.renderEmergentPaywallBox() }
 					</div>
 				);
 			case 'wechat':

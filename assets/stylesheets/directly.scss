@@ -57,7 +57,7 @@ textarea {
 // Main button
 .btn {
 	background: var( --color-primary );
-	border: 1px solid darken( $blue-medium, 8% );
+	border: 1px solid var( --color-primary-400 );
 	color: $white;
 	border-width: 1px 1px 2px;
 	cursor: pointer;
@@ -71,7 +71,7 @@ textarea {
 	appearance: none;
 	width: auto;
 	&:hover {
-		border-color: $blue-dark;
+		border-color: var( --color-primary-dark );
 	}
 	&:active,
 	&:active:enabled {
@@ -81,8 +81,8 @@ textarea {
 		color: $white;
 	}
 	&:focus {
-		border-color: $blue-dark;
-		box-shadow: 0 0 0 2px $blue-light;
+		border-color: var( --color-primary-dark );
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
 
@@ -98,7 +98,7 @@ textarea {
 	-webkit-font-smoothing: subpixel-antialiased;
 
 	&::-webkit-input-placeholder {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 textarea {
@@ -112,7 +112,7 @@ textarea {
 .minimized-view {
 	background: $white;
 	box-shadow: 0 1px 10px rgba( 46, 68, 83, 0.1 );
-	border: 1px solid lighten( $gray, 25% );
+	border: 1px solid var( --color-neutral-50 );
 }
 .maximized-view.is-ask-view {
 	top: 0;
@@ -124,7 +124,7 @@ textarea {
 /* HEADER */
 
 .header-container {
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 	box-shadow: none;
 	flex: 0 0 32px;
 	height: 32px;
@@ -133,7 +133,7 @@ textarea {
 		text-transform: uppercase;
 		font-size: 11px;
 		font-weight: 700;
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	// Left hamburger button
@@ -141,12 +141,12 @@ textarea {
 		border-right: none;
 		flex: 0 0 40px;
 		.svg-icon {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 		&.disabled {
 			background: transparent;
 			.svg-icon {
-				color: lighten( $gray, 25% );
+				color: var( --color-neutral-50 );
 			}
 		}
 	}
@@ -156,7 +156,7 @@ textarea {
 		border-left: none;
 		flex: 0 0 40px;
 		.svg-icon {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 
@@ -174,15 +174,15 @@ textarea {
 		top: 32px;
 		.question-bar,
 		.question-bar.closed {
-			background: $gray;
+			background: var( --color-neutral-light );
 			padding: 10px 14px;
 		}
 	}
 }
 
 .chat-list-view-item-container {
-	background: $gray-lighten-30;
-	border-bottom: 1px solid lighten( $gray, 25% );
+	background: var( --color-neutral-0 );
+	border-bottom: 1px solid var( --color-neutral-50 );
 	color: var( --color-text );
 	padding: 18px 10px 18px 24px;
 	.chat-list-item-title {
@@ -190,7 +190,7 @@ textarea {
 		font-size: 16px;
 	}
 	.chat-list-item-meta {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 	.unread-message-dot {
 		background: var( --color-success );
@@ -242,7 +242,7 @@ textarea {
 
 .thread-view-container {
 	.expert-response-time {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -307,21 +307,21 @@ textarea {
 		font-weight: 500;
 	}
 	.profile .reputation {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 	}
 }
 .avatar {
-	background: lighten( $gray, 25% );
+	background: var( --color-neutral-50 );
 }
 
 .system-message {
-	border: 1px solid lighten( $gray, 25% );
-	background: $gray-lighten-30;
+	border: 1px solid var( --color-neutral-50 );
+	background: var( --color-neutral-0 );
 	font-size: 14px;
 	margin-right: 0;
 	border-radius: 8px;
 	&.has-sibling + .system-message {
-		border-top: 1px solid lighten( $gray, 25% );
+		border-top: 1px solid var( --color-neutral-50 );
 	}
 
 	// Green border for success messages
@@ -353,18 +353,18 @@ textarea {
 	// Placeholder displayed when the experts info is loading
 	&.alerting-experts {
 		.expert-name:empty {
-			background: lighten( $gray, 25% );
+			background: var( --color-neutral-50 );
 		}
 		.expert-last-active-date {
-			color: $gray;
+			color: var( --color-neutral-light );
 			&:empty {
-				background: lighten( $gray, 25% );
+				background: var( --color-neutral-50 );
 			}
 		}
 	}
 
 	.icon-avatar {
-		background: lighten( $gray, 25% );
+		background: var( --color-neutral-50 );
 	}
 
 	// Icons inside system messages
@@ -395,7 +395,7 @@ textarea {
 
 // Reply box and other tools in the thread view footer
 .thread-view-footer {
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	box-shadow: none;
 	background: $white;
 }
@@ -404,12 +404,12 @@ textarea {
 .chat-view-minimized {
 	// When no expert has replied yet
 	.alerting {
-		color: $gray;
+		color: var( --color-neutral-light );
 		.beacon {
-			background: $blue-wordpress;
+			background: var( --color-primary );
 			margin: 5px auto;
 			&::after {
-				background: $blue-wordpress;
+				background: var( --color-primary );
 			}
 		}
 	}
@@ -440,7 +440,7 @@ textarea {
 		box-shadow: none;
 	}
 	.submit-btn[disabled] {
-		background-color: lighten( $gray, 25% );
+		background-color: var( --color-neutral-50 );
 		border: none;
 	}
 }
@@ -449,15 +449,15 @@ textarea {
 .toolbar-accepted-container,
 .toolbar-default-container,
 .toolbar-rate-container {
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 }
 .toolbar-container {
 	.tooltip-wrapper {
-		border-left: 1px solid $gray-lighten-30;
+		border-left: 1px solid var( --color-neutral-0 );
 	}
 	.toolbar-btn {
-		color: $gray;
-		border-left: 1px solid $gray-lighten-30;
+		color: var( --color-neutral-light );
+		border-left: 1px solid var( --color-neutral-0 );
 		.svg-icon {
 			color: var( --color-success );
 		}

@@ -51,7 +51,7 @@ $autobar-height: 20px;
 	> .masterbar__notifications,
 	> .masterbar__login-links a {
 		&:not( .is-active ) {
-			background: rgba( $blue-wordpress, 0.85 );
+			background: rgba( var( --color-primary-rgb ), 0.85 );
 		}
 
 		&:hover {
@@ -447,7 +447,7 @@ $autobar-height: 20px;
 	height: 46px;
 	line-height: 45px;
 	border-bottom: 1px solid var( --color-neutral-100 );
-	box-shadow: 0 1px 1px rgba( $gray, 0.1 );
+	box-shadow: 0 1px 1px rgba( var( --color-neutral-light-rgb ), 0.1 );
 }
 
 .masterbar__recent-drafts-add-new {

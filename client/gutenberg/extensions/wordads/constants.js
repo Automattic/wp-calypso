@@ -21,6 +21,7 @@ export const AD_FORMATS = [
 		name: __( 'Rectangle 300x250' ),
 		tag: DEFAULT_FORMAT,
 		width: 300,
+		editorPadding: 30,
 	},
 	{
 		height: 90,
@@ -33,6 +34,7 @@ export const AD_FORMATS = [
 		name: __( 'Leaderboard 728x90' ),
 		tag: 'leaderboard',
 		width: 728,
+		editorPadding: 40,
 	},
 	{
 		height: 50,
@@ -45,6 +47,7 @@ export const AD_FORMATS = [
 		name: __( 'Mobile Leaderboard 320x50' ),
 		tag: 'mobile_leaderboard',
 		width: 320,
+		editorPadding: 60,
 	},
 	{
 		height: 600,
@@ -57,5 +60,6 @@ export const AD_FORMATS = [
 		name: __( 'Wide Skyscraper 160x600' ),
 		tag: 'wideskyscraper',
 		width: 160,
+		editorPadding: 30,
 	},
 ];

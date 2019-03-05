@@ -11,7 +11,7 @@
 
 	$payment-cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
 	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24', 'brazil-tef',
-		'emergent-paywall', 'wechat', 'sofort';
+					'wechat', 'sofort';
 
 	@each $brand in $payment-cc-brands {
 		&.is-#{$brand} {
@@ -65,13 +65,6 @@
 	&.is-brazil-tef {
 		background-size: 100px auto;
 		width: 100px;
-	}
-
-	&.is-emergent-paywall {
-		background-size: 200px auto;
-		width: 200px;
-		margin-top: 5px;
-		height: 30px;
 	}
 
 	&.is-sofort {

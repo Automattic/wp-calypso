@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -29,6 +27,11 @@ import NoticeAction from 'components/notice/notice-action';
 import userUtils from 'lib/user/utils';
 import LocaleSuggestions from 'components/locale-suggestions';
 import { getCurrentUser } from 'state/current-user/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module variables

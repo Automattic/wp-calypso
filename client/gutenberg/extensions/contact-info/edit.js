@@ -13,6 +13,7 @@ const ALLOWED_BLOCKS = [
 	'jetpack/email',
 	'jetpack/phone',
 	'jetpack/map',
+	'jetpack/business-hours',
 	'core/paragraph',
 	'core/image',
 	'core/heading',

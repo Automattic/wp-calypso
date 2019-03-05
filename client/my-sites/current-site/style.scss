@@ -46,7 +46,7 @@
 .current-site {
 	.site,
 	.all-sites {
-		background: var( --sidebar-secondary-background );
+		background: var( --sidebar-background );
 		border-bottom: 1px solid var( --sidebar-border-color );
 	}
 }
@@ -76,10 +76,11 @@
 	}
 
 	&:hover {
-		background-color: var( --sidebar-background );
+		background-color: var( --sidebar-menu-hover-background );
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
+			background-color: var( --sidebar-menu-hover-background );
 			color: var( --sidebar-menu-hover-color );
 
 			.gridicon {

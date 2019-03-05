@@ -137,7 +137,7 @@ $date-picker_nav_button_size: 20px;
 
 .DayPicker-Weekdays {
 	margin-top: 10px;
-	border-top: 1px solid lighten( $gray, 25% );
+	border-top: 1px solid var( --color-neutral-50 );
 	display: table-header-group;
 }
 

@@ -135,7 +135,7 @@ a img {
 blockquote {
 	padding: 16px;
 	margin: 8px 0 24px;
-	border-left: 2px solid $gray;
+	border-left: 2px solid var( --color-neutral-light );
 	color: var( --color-neutral-500 );
 	background: var( --color-neutral-0 );
 }
@@ -196,8 +196,8 @@ hr {
 	padding: 0 2px;
 	margin: 0 -2px;
 	border-radius: 2px;
-	box-shadow: 0 0 0 1px rgba( $blue-medium, 0.2 );
-	background: rgba( $blue-medium, 0.2 );
+	box-shadow: 0 0 0 1px rgba( var( --color-primary-rgb ), 0.2 );
+	background: rgba( var( --color-primary-rgb ), 0.2 );
 	color: var( --color-primary-dark );
 }
 

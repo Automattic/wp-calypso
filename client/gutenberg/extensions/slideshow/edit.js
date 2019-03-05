@@ -2,6 +2,9 @@
  * External dependencies
  */
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { isBlobURL } from '@wordpress/blob';
+import { compose } from '@wordpress/compose';
+import { withDispatch } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
 import {
 	BlockControls,
@@ -63,15 +66,20 @@ class SlideshowEdit extends Component {
 	};
 	addFiles = files => {
 		const currentImages = this.props.attributes.images || [];
-		const { noticeOperations, setAttributes } = this.props;
+		const { lockPostSaving, unlockPostSaving, noticeOperations, setAttributes } = this.props;
+		const lockName = 'slideshowBlockLock';
+		lockPostSaving( lockName );
 		mediaUpload( {
 			allowedTypes: ALLOWED_MEDIA_TYPES,
 			filesList: files,
 			onFileChange: images => {
 				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
 				setAttributes( {
-					images: [ ...imagesNormalized, ...currentImages ],
+					images: [ ...currentImages, ...imagesNormalized ],
 				} );
+				if ( ! imagesNormalized.every( image => isBlobURL( image.url ) ) ) {
+					unlockPostSaving( lockName );
+				}
 			},
 			onError: noticeOperations.createErrorNotice,
 		} );
@@ -87,6 +95,9 @@ class SlideshowEdit extends Component {
 			setAttributes,
 		} = this.props;
 		const { align, autoplay, delay, effect, images } = attributes;
+		const prefersReducedMotion =
+			typeof window !== 'undefined' &&
+			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 		const controls = (
 			<Fragment>
 				<InspectorControls>
@@ -101,7 +112,7 @@ class SlideshowEdit extends Component {
 						/>
 						{ autoplay && (
 							<RangeControl
-								label={ __( 'Delay between transitions' ) }
+								label={ __( 'Delay between transitions (in seconds)' ) }
 								value={ delay }
 								onChange={ value => {
 									setAttributes( { delay: value } );
@@ -109,6 +120,13 @@ class SlideshowEdit extends Component {
 								min={ 1 }
 								max={ 5 }
 							/>
+						) }
+						{ autoplay && prefersReducedMotion && (
+							<span>
+								{ __(
+									'The Reduce Motion accessibility option is selected, therefore autoplay will be disabled in this browser.'
+								) }
+							</span>
 						) }
 					</PanelBody>
 					<PanelBody title={ __( 'Effects' ) }>
@@ -178,6 +196,7 @@ class SlideshowEdit extends Component {
 					delay={ delay }
 					effect={ effect }
 					images={ images }
+					onError={ noticeOperations.createErrorNotice }
 				/>
 				<DropZone onFilesDrop={ this.addFiles } />
 				{ isSelected && (
@@ -198,5 +217,13 @@ class SlideshowEdit extends Component {
 		);
 	}
 }
-
-export default withNotices( SlideshowEdit );
+export default compose(
+	withDispatch( dispatch => {
+		const { lockPostSaving, unlockPostSaving } = dispatch( 'core/editor' );
+		return {
+			lockPostSaving,
+			unlockPostSaving,
+		};
+	} ),
+	withNotices
+)( SlideshowEdit );

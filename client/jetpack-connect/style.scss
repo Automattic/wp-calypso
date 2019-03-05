@@ -1,3 +1,11 @@
+.is-section-jetpack-connect {
+	.layout__content {
+		& > .banner {
+			max-width: 600px;
+		}
+	}
+}
+
 .jetpack-connect__main {
 	max-width: 400px;
 
@@ -25,6 +33,23 @@
 		}
 	}
 
+	.ribbon .ribbon__title {
+		background-color: var( --color-jetpack );
+
+		&::before,
+		&::after {
+			border-top-color: var( --color-jetpack-dark );
+		}
+
+		&::before {
+			border-left-color: var( --color-jetpack-dark );
+		}
+
+		&::after {
+			border-right-color: var( --color-jetpack-dark );
+		}
+	}
+
 	.button.is-primary {
 		background-color: var( --color-jetpack );
 		border-color: var( --color-jetpack-dark );
@@ -41,8 +66,40 @@
 		&[disabled],
 		&:disabled {
 			background: var( --color-white );
-			border-color: var( --color-neutral-50);
+			border-color: var( --color-neutral-50 );
 			color: var( --color-neutral-50 );
+		}
+	}
+}
+
+.jetpack-connect__step {
+	margin: 0 auto;
+	max-width: 600px;
+	text-align: initial;
+
+	input[type='radio']:focus {
+		box-shadow: 0 0 0 2px var( --color-jetpack-light );
+	}
+
+	.site-type__option.is-selected {
+		box-shadow: 0 0 0 1px var( --color-jetpack ) inset;
+
+		input[type='radio']:checked::before {
+			background-color: var( --color-jetpack );
+		}
+	}
+
+	.site-topic__content {
+		.form-fieldset {
+			position: relative;
+		}
+
+		input[type='text'] {
+			border-color: var( --color-jetpack-dark );
+
+			&:focus {
+				box-shadow: 0 0 0 2px var( --color-jetpack-light );
+			}
 		}
 	}
 }
@@ -197,7 +254,7 @@
 	width: 100%;
 
 	&:hover > div {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
 	}
 }
 
@@ -225,7 +282,7 @@
 	position: relative;
 	margin: 0;
 	line-height: 0;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 }
 
 .example-components__install-plugin-header {
@@ -431,7 +488,7 @@
 }
 
 .jetpack-connect__connect-button-card {
-	background: lighten( $gray, 34% );
+	background: var( --color-neutral-0 );
 	border-top: 1px solid var( --color-neutral-0 );
 	box-shadow: none;
 	margin: 16px -16px -16px -16px;
@@ -523,7 +580,7 @@
 	border: none;
 	color: var( --color-neutral-500 );
 	font-weight: normal;
-	padding: 16px 24px;	
+	padding: 16px 24px;
 	width: 100%;
 
 	&:hover {

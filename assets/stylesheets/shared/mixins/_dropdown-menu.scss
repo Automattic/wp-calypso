@@ -35,7 +35,7 @@
 		a,
 		a.selected {
 			border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			display: block;
 			float: none;
 			height: auto;

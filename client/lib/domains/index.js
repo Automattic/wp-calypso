@@ -4,21 +4,16 @@
  * External dependencies
  */
 import inherits from 'inherits';
-import { includes, find, get, replace, some } from 'lodash';
+import { includes, find, get, replace } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { type as domainTypes, domainAvailability } from './constants';
 import { parseDomainAgainstTldList } from './utils';
 import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
 import formatCurrency from 'lib/format-currency';
-
-const GOOGLE_APPS_INVALID_TLDS = [ 'in' ];
-const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
-const user = userFactory();
 
 function ValidationError( code ) {
 	this.code = code;
@@ -26,23 +21,6 @@ function ValidationError( code ) {
 }
 
 inherits( ValidationError, Error );
-
-function canAddGoogleApps( domainName ) {
-	const tld = domainName.split( '.' )[ 1 ],
-		includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, function( phrase ) {
-			return includes( domainName, phrase );
-		} );
-
-	return ! (
-		includes( GOOGLE_APPS_INVALID_TLDS, tld ) ||
-		includesBannedPhrase ||
-		isGsuiteRestricted()
-	);
-}
-
-function isGsuiteRestricted() {
-	return ! get( user.get(), 'is_valid_google_apps_country', false );
-}
 
 function checkAuthCode( domainName, authCode, onComplete ) {
 	if ( ! domainName || ! authCode ) {
@@ -174,29 +152,8 @@ function isSubdomain( domainName ) {
 	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
 }
 
-function hasGoogleApps( domain ) {
-	return 'no_subscription' !== get( domain, 'googleAppsSubscription.status', '' );
-}
-
 function isMappedDomain( domain ) {
 	return domain.type === domainTypes.MAPPED;
-}
-
-function getGoogleAppsSupportedDomains( domains ) {
-	return domains.filter( function( domain ) {
-		return (
-			includes( [ domainTypes.REGISTERED, domainTypes.MAPPED ], domain.type ) &&
-			canAddGoogleApps( domain.name )
-		);
-	} );
-}
-
-function hasGoogleAppsSupportedDomain( domains ) {
-	return getGoogleAppsSupportedDomains( domains ).length > 0;
-}
-
-function hasPendingGoogleAppsUsers( domain ) {
-	return get( domain, 'googleAppsSubscription.pendingUsers.length', 0 ) !== 0;
 }
 
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
@@ -333,7 +290,6 @@ function getDomainSuggestionSearch( search, minLength = 2 ) {
 }
 
 export {
-	canAddGoogleApps,
 	canRedirect,
 	checkAuthCode,
 	checkDomainAvailability,
@@ -342,18 +298,13 @@ export {
 	getDomainProductSlug,
 	getDomainTypeText,
 	getFixedDomainSearch,
-	getGoogleAppsSupportedDomains,
 	getMappedDomains,
 	getPrimaryDomain,
 	getRegisteredDomains,
 	getSelectedDomain,
 	getTld,
 	getTopLevelOfTld,
-	hasGoogleApps,
-	hasGoogleAppsSupportedDomain,
 	hasMappedDomain,
-	hasPendingGoogleAppsUsers,
-	isGsuiteRestricted,
 	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain,

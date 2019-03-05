@@ -28,7 +28,7 @@
 .plan-compare-card__title {
 	font-size: 16px;
 	font-weight: 500;
-	color: lighten( $gray-dark, 10% );
+	color: var( --color-neutral-600 );
 }
 
 .plan-compare-card__line {

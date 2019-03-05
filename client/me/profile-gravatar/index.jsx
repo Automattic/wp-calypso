@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,11 @@ import { connect } from 'react-redux';
 import Animate from 'components/animate';
 import Gravatar from 'components/gravatar';
 import { recordGoogleEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ProfileGravatar extends Component {
 	recordGravatarMisclick = () => {
