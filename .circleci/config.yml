@@ -467,6 +467,18 @@ jobs:
           name: Prime calypso.live build
           command: ./test/e2e/scripts/wait-for-running-branch.sh
 
+  test-e2e:
+    <<: *defaults
+    working_directory: ~/wp-calypso/test/e2e
+    parallelism: 2
+    steps:
+      - prepare
+      - run: *set-e2e-variables
+      - run: npm run decryptconfig
+      - run: ./scripts/randomize.sh specs
+      - run: ./scripts/run-wrapper.sh
+      - store-artifacts-and-test-results
+
   test-e2e-canary:
       <<: *defaults
       working_directory: ~/wp-calypso/test/e2e
@@ -487,8 +499,8 @@ jobs:
         - run:
             name: Run Canary Tests
             command: |
-			  env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> \
-			  BRANCHNAME=$CIRCLE_BRANCH ./run.sh -R << parameters.test-flags >>
+              env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> \
+              BRANCHNAME=$CIRCLE_BRANCH ./run.sh -R << parameters.test-flags >>
         - store-artifacts-and-test-results
 
 workflows:
