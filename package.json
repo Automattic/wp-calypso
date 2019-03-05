@@ -286,7 +286,7 @@
   },
   "devDependencies": {
     "@automattic/babel-plugin-i18n-calypso": "file:./packages/babel-plugin-i18n-calypso",
-    "@automattic/calypso-css-custom-properties": "file:./packages/calypso-css-custom-properties",
+    "@automattic/calypso-color-schemes": "file:./packages/calypso-color-schemes",
     "@babel/plugin-transform-react-jsx": "7.3.0",
     "@wordpress/babel-plugin-makepot": "2.1.3",
     "babel-eslint": "10.0.1",

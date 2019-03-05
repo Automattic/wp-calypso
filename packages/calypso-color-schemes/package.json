@@ -1,5 +1,5 @@
 {
-  "name": "@automattic/calypso-css-custom-properties",
+  "name": "@automattic/calypso-color-schemes",
   "version": "1.0.0-alpha.0",
   "description": "Calypso Shared Style Bits",
   "author": "Automattic",
@@ -10,7 +10,7 @@
     "sass",
     "css"
   ],
-  "homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/calypso-css-custom-properties/README.md",
+  "homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/calypso-color-schemes/README.md",
   "repository": {
     "type": "git",
     "url": "https://github.com/Automattic/wp-calypso.git"
@@ -34,7 +34,7 @@
   },
   "scripts": {
     "clean": "npx rimraf dist src/__color-studio",
-    "build": "node bin/build-custom-properties-css.js",
+    "build": "node bin/build-css.js",
     "postinstall": "node bin/postinstall.js"
   }
 }
