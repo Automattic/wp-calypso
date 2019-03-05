@@ -13,7 +13,7 @@ import QueryPreferences from 'components/data/query-preferences';
 import QuerySites from 'components/data/query-sites';
 import Navigation from 'my-sites/navigation';
 import userFactory from 'lib/user';
-import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
+import { setCurrentUser } from 'state/current-user/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { setSelectedSiteId } from 'state/ui/actions';
@@ -62,7 +62,7 @@ const userInitialized = new Promise( resolve => {
 } );
 
 userInitialized.then( user => {
-	setCurrentUserOnReduxStore( user, store );
+	store.dispatch( setCurrentUser( user ) );
 	store.dispatch( setSelectedSiteId( getPrimarySiteId( store.getState() ) ) );
 
 	ReactDOM.render(
