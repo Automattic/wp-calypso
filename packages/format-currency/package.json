@@ -19,7 +19,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"i18n-calypso": "^4.0.0"
+		"i18n-calypso": "file:../i18n-calypso"
 	},
 	"scripts": {
 		"build": "node ../../bin/build-package"
