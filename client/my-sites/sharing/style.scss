@@ -548,7 +548,7 @@
 	margin-bottom: 20px;
 	padding: 20px 24px;
 	background: var( --color-white );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( lighten( $gray, 20% ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 }
 
 .sharing-buttons__fieldset-group {
@@ -1077,4 +1077,8 @@
 
 .sharing-connections__mailchimp-gutenberg_explanation {
 	margin-top: 1.5em;
+}
+
+.connections__signup {
+	margin-right: 8px;
 }
