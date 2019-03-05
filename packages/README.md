@@ -4,4 +4,4 @@ This directory exists to hold a variety of projects and libraries that we use in
 
 ## Adding a new package?
 
-If you want to add a new project or package into this directory, then add a new directry and follow [Publishing Packages with the Monorepo](../docs/monorepo.md) -documentation.
+If you want to add a new project or package into this directory, then add a new directory and follow [Publishing Packages with the Monorepo](../docs/monorepo.md) -documentation.
