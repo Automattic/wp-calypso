@@ -508,7 +508,7 @@ a.comments__comment-username {
 .comments__comment-actions-approve {
 	.gridicon .gridicon-checkmark,
 	&.is-approved {
-		color: $muriel-green-500;
+		color: var( --color-success );
 	}
 }
 
