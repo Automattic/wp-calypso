@@ -24,7 +24,6 @@ import {
 /**
  * Internal dependencies
  */
-import FilterToolbar from './filter-toolbar';
 import Layout from './layout';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALLOWED_MEDIA_TYPES, LAYOUT_STYLES, MAX_COLUMNS } from './constants';
@@ -156,53 +155,31 @@ class TiledGalleryEdit extends Component {
 
 	render() {
 		const { selectedImage } = this.state;
-		const {
-			attributes,
-			isSelected,
-			className,
-			noticeOperations,
-			noticeUI,
-			setAttributes,
-		} = this.props;
-		const {
-			align,
-			columns = defaultColumnsNumber( attributes ),
-			imageFilter,
-			images,
-			linkTo,
-		} = attributes;
+		const { attributes, isSelected, className, noticeOperations, noticeUI } = this.props;
+		const { align, columns = defaultColumnsNumber( attributes ), images, linkTo } = attributes;
 
 		const dropZone = <DropZone onFilesDrop={ this.addFiles } />;
 
 		const controls = (
 			<BlockControls>
 				{ !! images.length && (
-					<Fragment>
-						<Toolbar>
-							<MediaUpload
-								onSelect={ this.onSelectImages }
-								allowedTypes={ ALLOWED_MEDIA_TYPES }
-								multiple
-								gallery
-								value={ images.map( img => img.id ) }
-								render={ ( { open } ) => (
-									<IconButton
-										className="components-toolbar__control"
-										label={ __( 'Edit Gallery' ) }
-										icon="edit"
-										onClick={ open }
-									/>
-								) }
-							/>
-						</Toolbar>
-						<FilterToolbar
-							value={ imageFilter }
-							onChange={ value => {
-								setAttributes( { imageFilter: value } );
-								this.setState( { selectedImage: null } );
-							} }
+					<Toolbar>
+						<MediaUpload
+							onSelect={ this.onSelectImages }
+							allowedTypes={ ALLOWED_MEDIA_TYPES }
+							multiple
+							gallery
+							value={ images.map( img => img.id ) }
+							render={ ( { open } ) => (
+								<IconButton
+									className="components-toolbar__control"
+									label={ __( 'Edit Gallery' ) }
+									icon="edit"
+									onClick={ open }
+								/>
+							) }
 						/>
-					</Fragment>
+					</Toolbar>
 				) }
 			</BlockControls>
 		);
@@ -260,7 +237,6 @@ class TiledGalleryEdit extends Component {
 					align={ align }
 					className={ className }
 					columns={ columns }
-					imageFilter={ imageFilter }
 					images={ images }
 					layoutStyle={ layoutStyle }
 					linkTo={ linkTo }

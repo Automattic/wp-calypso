@@ -59,9 +59,6 @@ const blockAttributes = {
 		default: [],
 		type: 'array',
 	},
-	imageFilter: {
-		type: 'string',
-	},
 	images: {
 		type: 'array',
 		default: [],

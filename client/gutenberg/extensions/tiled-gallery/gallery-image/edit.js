@@ -102,7 +102,6 @@ class GalleryImageEdit extends Component {
 			// caption,
 			height,
 			id,
-			imageFilter,
 			isSelected,
 			link,
 			linkTo,
@@ -154,7 +153,6 @@ class GalleryImageEdit extends Component {
 				className={ classnames( 'tiled-gallery__item', {
 					'is-selected': isSelected,
 					'is-transient': isBlobURL( origUrl ),
-					[ `filter__${ imageFilter }` ]: !! imageFilter,
 				} ) }
 			>
 				{ isSelected && (
