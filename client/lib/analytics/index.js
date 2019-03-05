@@ -332,16 +332,18 @@ const analytics = {
 	},
 
 	recordPurchase: function( { cart, orderId } ) {
-		// Google Analytics
-		const usdValue = costToUSD( cart.total_cost, cart.currency );
-		analytics.ga.recordEvent(
-			'Purchase',
-			'calypso_checkout_payment_success',
-			'',
-			usdValue ? usdValue : undefined
-		);
-		// Marketing
-		recordOrder( cart, orderId );
+		if ( cart.total_cost >= 0.01 ) {
+			// Google Analytics
+			const usdValue = costToUSD( cart.total_cost, cart.currency );
+			analytics.ga.recordEvent(
+				'Purchase',
+				'calypso_checkout_payment_success',
+				'',
+				usdValue ? usdValue : undefined
+			);
+			// Marketing
+			recordOrder( cart, orderId );
+		}
 	},
 
 	timing: {
