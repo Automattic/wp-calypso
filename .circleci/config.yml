@@ -165,17 +165,17 @@ commands:
       - store_test_results:
           path: /tmp/test_results
       - store_test_results:
-          path: /test/e2e/reports
+          path: reports
       - store_artifacts:
           path: /tmp/test_results
       - store_artifacts:
           path: /tmp/artifacts
       - store_artifacts:
-          path: /test/e2e/reports
-          destination: e2e/reports
+          path: reports
+          destination: e2e
       - store_artifacts:
-          path: /test/e2e/screenshots
-          destination: e2e/screenshots
+          path: screenshots
+          destination: e2e
 
 jobs:
   setup:
