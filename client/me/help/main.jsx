@@ -236,8 +236,6 @@ class Help extends React.PureComponent {
 			return this.getPlaceholders();
 		}
 
-		console.log( abtest( 'builderReferralHelpBanner' ) === 'builderReferralBanner' );
-
 		return (
 			<Main className="help">
 				{ abtest( 'builderReferralHelpBanner' ) === 'builderReferralBanner' && (
