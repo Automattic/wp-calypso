@@ -92,5 +92,28 @@ describe( 'Cart Store', () => {
 			Dispatcher.handleServerAction( transactionPaymentSetActions.credits );
 			expect( recordUnrecognizedPaymentMethod ).not.toHaveBeenCalled();
 		} );
+
+		test( 'Should not ignore missing country code values', () => {
+			Dispatcher.handleServerAction( transactionPaymentSetActions.creditCard );
+			expect( setTaxLocation ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					postalCode: '90014',
+				} )
+			);
+
+			Dispatcher.handleServerAction( transactionPaymentSetActions.newCardNoPostalCode );
+			expect( setTaxLocation ).toHaveBeenNthCalledWith(
+				2,
+				expect.objectContaining( {
+					countryCode: 'AI',
+				} )
+			);
+			expect( setTaxLocation ).toHaveBeenNthCalledWith(
+				2,
+				expect.not.objectContaining( {
+					postalCode: expect.anything(),
+				} )
+			);
+		} );
 	} );
 } );
