@@ -321,7 +321,7 @@
     "prettier": "https://github.com/Automattic/wp-prettier/releases/download/wp-1.16.4/wp-prettier-1.16.4.tgz",
     "react-test-renderer": "16.8.3",
     "readline-sync": "1.4.9",
-    "replace": "1.0.1",
+    "replace": "1.1.0",
     "rimraf": "2.6.3",
     "sinon": "7.1.1",
     "sinon-chai": "3.3.0",
