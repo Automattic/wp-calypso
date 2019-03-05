@@ -18,7 +18,7 @@ import config from 'config';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import { hasTouch } from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
-import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
+import { setCurrentUser } from 'state/current-user/actions';
 import { installPerfmonPageHandlers } from 'lib/perfmon';
 import { setupRoutes } from 'sections-middleware';
 import { checkFormHandler } from 'lib/protect-form';
@@ -175,9 +175,9 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 
 	if ( currentUser.get() ) {
 		// Set current user in Redux store
-		setCurrentUserOnReduxStore( currentUser.get(), reduxStore );
+		reduxStore.dispatch( setCurrentUser( currentUser.get() ) );
 		currentUser.on( 'change', () => {
-			setCurrentUserOnReduxStore( currentUser.get(), reduxStore );
+			reduxStore.dispatch( setCurrentUser( currentUser.get() ) );
 		} );
 	}
 

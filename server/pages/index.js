@@ -40,9 +40,9 @@ import stateCache from 'state-cache';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
+import { setCurrentUser } from 'state/current-user/actions';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
-import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 
@@ -383,7 +383,7 @@ function setUpLoggedInRoute( req, res, next ) {
 				req.context.user = data;
 
 				// Setting user in the state is safe as long as we don't cache it
-				setCurrentUserOnReduxStore( data, req.context.store );
+				req.context.store.dispatch( setCurrentUser( data ) );
 
 				if ( data.localeSlug ) {
 					req.context.lang = data.localeSlug;
