@@ -114,6 +114,8 @@ class SignupForm extends Component {
 	state = {
 		notice: null,
 		submitting: false,
+		focusPassword: false,
+		focusUsername: false,
 		form: null,
 		signedUp: false,
 		validationInitialized: false,
@@ -227,8 +229,8 @@ class SignupForm extends Component {
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
-			'password',
-			this.props.displayUsernameInput && 'username',
+			this.state.focusPassword && 'password',
+			this.props.displayUsernameInput && this.state.focusUsername && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );
@@ -317,8 +319,16 @@ class SignupForm extends Component {
 		} );
 	};
 
-	handleBlur = () => {
+	handleBlur = event => {
 		const data = this.getUserData();
+		const fieldId = event.target.id;
+		// Ensure that username and password field validation does not trigger prematurely
+		if ( fieldId === 'password' ) {
+			this.setState( { focusPassword: true } );
+		}
+		if ( fieldId === 'username' ) {
+			this.setState( { focusUsername: true } );
+		}
 		// When a user moves away from the signup form without having entered
 		// anything do not show error messages, think going to click log in.
 		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
@@ -718,7 +728,7 @@ class SignupForm extends Component {
 				'isSocialSignupEnabled',
 				'handleSocialResponse',
 				'socialService',
-				'socialServiceResponse'
+				'socialServiceResponse',
 			] );
 
 			const logInUrl = config.isEnabled( 'login/native-login-links' )
