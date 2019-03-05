@@ -31,7 +31,6 @@ import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
-import { trashPost } from 'state/posts/actions';
 
 /**
  * Style dependencies
@@ -123,10 +122,8 @@ class CalypsoifyIframe extends Component {
 			}
 		}
 
-		if ( 'trashPost' === action ) {
-			const { siteId, postId, postTypeTrashUrl } = this.props;
-			this.props.trashPost( siteId, postId );
-			this.props.navigate( postTypeTrashUrl );
+		if ( 'postTrashed' === action ) {
+			this.props.navigate( this.props.postTypeTrashUrl );
 		}
 
 		if ( 'goToAllPosts' === action ) {
@@ -252,7 +249,6 @@ const mapDispatchToProps = {
 	navigate,
 	openPostRevisionsDialog,
 	startEditingPost,
-	trashPost,
 };
 
 export default connect(
