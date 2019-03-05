@@ -7,7 +7,7 @@ import { getActiveStyleName } from 'gutenberg/extensions/utils';
 import { LAYOUT_STYLES } from './constants';
 
 export default function TiledGallerySave( { attributes } ) {
-	const { images } = attributes;
+	const { imageFilter, images } = attributes;
 
 	if ( ! images.length ) {
 		return null;
@@ -20,6 +20,7 @@ export default function TiledGallerySave( { attributes } ) {
 			align={ align }
 			className={ className }
 			columns={ columns }
+			imageFilter={ imageFilter }
 			images={ images }
 			isSave
 			layoutStyle={ getActiveStyleName( LAYOUT_STYLES, className ) }
