@@ -487,8 +487,8 @@ jobs:
         - run:
             name: Run Canary Tests
             command: |
-            env NODE_ENV=test TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> \
-            BRANCHNAME=$CIRCLE_BRANCH ./run.sh -R << parameters.test-flags >>
+			  env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> \
+			  BRANCHNAME=$CIRCLE_BRANCH ./run.sh -R << parameters.test-flags >>
         - store-artifacts-and-test-results
 
 workflows:
