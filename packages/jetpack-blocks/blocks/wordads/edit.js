@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 import { BlockControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
 import { Placeholder } from '@wordpress/components';

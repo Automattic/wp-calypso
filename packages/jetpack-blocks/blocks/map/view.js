@@ -4,7 +4,7 @@
 import './style.scss';
 import component from './component.js';
 import { settings } from './settings.js';
-import FrontendManagement from 'gutenberg/extensions/shared/frontend-management.js';
+import FrontendManagement from 'shared/frontend-management.js';
 
 typeof window !== 'undefined' &&
 	window.addEventListener( 'load', function() {

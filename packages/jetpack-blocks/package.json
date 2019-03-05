@@ -3,15 +3,12 @@
 	"version": "13.1.1",
 	"description": "Gutenberg blocks for the Jetpack WordPress plugin",
 	"main": "build/editor.js",
-	"files": [
-		"build/"
-	],
 	"publishConfig": {
 		"access": "public"
 	},
 	"scripts": {
 		"clean": "rm -fr ./build",
-		"build": "../../bin/sdk-cli.js gutenberg .",
+		"build": "../../bin/sdk-cli.js gutenberg preset --output-dir build",
 		"prepublishOnly": "npm run clean; NODE_ENV=production npm run build"
 	},
 	"repository": {
@@ -30,5 +27,5 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues?q=issue+label%3AJetpack+label%3A%22%5BGoal%5D+Gutenberg%22+is%3Aopen"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/client/gutenberg/extensions/presets/jetpack#readme"
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/jetpack-blocks#readme"
 }

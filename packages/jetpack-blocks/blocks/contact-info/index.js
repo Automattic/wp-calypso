@@ -8,8 +8,8 @@ import { Path } from '@wordpress/components';
  * Internal dependencies
  */
 import edit from './edit';
-import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
-import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import renderMaterialIcon from 'utils/render-material-icon';
+import { __, _x } from 'utils/i18n';
 import './editor.scss';
 import './style.scss';
 import { name as addressName, settings as addressSettings } from './address/';

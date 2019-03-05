@@ -7,7 +7,7 @@ import { ToggleControl } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 
 const JetpackFieldLabel = ( { setAttributes, label, resetFocus, isSelected, required } ) => {
 	return (

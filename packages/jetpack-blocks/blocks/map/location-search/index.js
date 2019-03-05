@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, createRef } from '@wordpress/element';
 import { BaseControl, TextControl } from '@wordpress/components';
 
@@ -9,6 +8,7 @@ import { BaseControl, TextControl } from '@wordpress/components';
  * Internal dependencies
  */
 import Lookup from '../lookup';
+import { __ } from 'utils/i18n';
 
 const placeholderText = __( 'Add a marker…' );
 

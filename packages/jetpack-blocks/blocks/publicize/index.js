@@ -20,9 +20,9 @@ import { PostTypeSupportCheck } from '@wordpress/editor';
  */
 import './editor.scss';
 import './store';
-import JetpackPluginSidebar from 'gutenberg/extensions/presets/jetpack/editor-shared/jetpack-plugin-sidebar';
+import JetpackPluginSidebar from 'editor-shared/jetpack-plugin-sidebar';
 import PublicizePanel from './panel';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 
 export const name = 'publicize';
 

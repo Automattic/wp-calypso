@@ -7,7 +7,7 @@ import { ClipboardButton, TextControl } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _x } from 'utils/i18n';
 import './clipboard-input.scss';
 
 class ClipboardInput extends Component {

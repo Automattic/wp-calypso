@@ -10,7 +10,7 @@ import { InspectorControls } from '@wordpress/editor';
  * Internal dependencies
  */
 import JetpackFieldLabel from './jetpack-field-label';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 
 const JetpackFieldCheckbox = ( {
 	instanceId,

@@ -19,7 +19,7 @@ import { withDispatch, withSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 
 class PublicizeConnectionVerify extends Component {
 	componentDidMount() {

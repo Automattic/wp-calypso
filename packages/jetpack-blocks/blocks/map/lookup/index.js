@@ -2,13 +2,17 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Button, Popover, withFocusOutside, withSpokenMessages } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { debounce, map } from 'lodash';
 import { ENTER, ESCAPE, UP, DOWN, LEFT, RIGHT } from '@wordpress/keycodes';
 import { sprintf } from '@wordpress/i18n';
 import { withInstanceId, compose } from '@wordpress/compose';
+
+/**
+ * Internal dependencies
+ */
+import { __, _n } from 'utils/i18n';
 
 function filterOptions( options = [], maxResults = 10 ) {
 	const filtered = [];

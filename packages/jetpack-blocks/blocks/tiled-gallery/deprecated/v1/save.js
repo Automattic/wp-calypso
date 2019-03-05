@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import Layout from './layout';
-import { getActiveStyleName } from 'gutenberg/extensions/utils';
+import { getActiveStyleName } from 'utils';
 import { LAYOUT_STYLES } from './constants';
 
 export function defaultColumnsNumber( attributes ) {

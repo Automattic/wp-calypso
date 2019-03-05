@@ -6,7 +6,8 @@ import { Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
+
 const hasAddress = ( { address, addressLine2, addressLine3, city, region, postal, country } ) => {
 	return [ address, addressLine2, addressLine3, city, region, postal, country ].some(
 		value => value !== ''

@@ -12,7 +12,7 @@ import { every } from 'lodash';
  */
 import withVideoPressEdit from './edit';
 import withVideoPressSave from './save';
-import getJetpackExtensionAvailability from 'gutenberg/extensions/presets/jetpack/utils/get-jetpack-extension-availability';
+import getJetpackExtensionAvailability from 'utils/get-jetpack-extension-availability';
 
 const addVideoPressSupport = ( settings, name ) => {
 	if ( 'core/video' !== name ) {
@@ -116,4 +116,4 @@ const addVideoPressSupport = ( settings, name ) => {
 	return settings;
 };
 
-addFilter( 'blocks.registerBlockType', 'gutenberg/extensions/videopress', addVideoPressSupport );
+addFilter( 'blocks.registerBlockType', 'jetpack/videopress', addVideoPressSupport );

@@ -9,7 +9,7 @@ import { ToggleControl } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 import { default as save } from './save';
 
 class AddressEdit extends Component {

@@ -4,7 +4,7 @@
 import './editor.scss';
 import VRImageEdit from './edit';
 import VRImageSave from './save';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 
 export const name = 'vr';
 

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _x } from 'utils/i18n';
 import { isBlobURL } from '@wordpress/blob';
 import { compose } from '@wordpress/compose';
 import { withDispatch } from '@wordpress/data';

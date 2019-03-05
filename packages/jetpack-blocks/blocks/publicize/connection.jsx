@@ -16,9 +16,9 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 import PublicizeServiceIcon from './service-icon';
-import getSiteFragment from 'gutenberg/extensions/presets/jetpack/editor-shared/get-site-fragment';
+import getSiteFragment from 'editor-shared/get-site-fragment';
 
 class PublicizeConnection extends Component {
 	state = {

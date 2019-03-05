@@ -7,7 +7,7 @@ import { Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 import edit from './edit';
 import { DEFAULT_FORMAT } from './constants';
 

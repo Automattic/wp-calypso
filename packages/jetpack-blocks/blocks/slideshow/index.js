@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Path, SVG } from '@wordpress/components';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 
 /**
  * Internal dependencies

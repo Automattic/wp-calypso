@@ -6,8 +6,8 @@ import { sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import './shared/public-path';
-import './editor-shared/block-category'; // Register the Jetpack category
+import 'shared/public-path';
+import 'editor-shared/block-category'; // Register the Jetpack category
 import extensionSlugsJson from './index.json';
 import { _x } from './utils/i18n';
 import { isEnabled } from 'config';
@@ -37,7 +37,7 @@ export async function getExtensions() {
 		 */
 		import( /* webpackMode: "eager" */
 		/* webpackInclude: /\/gutenberg\/extensions\/[a-zA-Z0-9_-]+\/index.js$/ */
-		`../../${ slug }/index.js` ).then( ( { childBlocks, name, settings } ) => ( {
+		`blocks/${ slug }/index.js` ).then( ( { childBlocks, name, settings } ) => ( {
 			childBlocks,
 			name,
 			settings: extensionSlugsJson.beta.includes( slug )

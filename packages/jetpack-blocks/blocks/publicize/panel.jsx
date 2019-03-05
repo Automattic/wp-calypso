@@ -19,7 +19,7 @@ import { withDispatch, withSelect } from '@wordpress/data';
 import PublicizeConnectionVerify from './connection-verify';
 import PublicizeForm from './form';
 import PublicizeSettingsButton from './settings-button';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 
 const PublicizePanel = ( { connections, refreshConnections } ) => (
 	<Fragment>

@@ -6,7 +6,7 @@ import { Dropdown, MenuItem, NavigableMenu, Path, SVG, Toolbar } from '@wordpres
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 import { AD_FORMATS } from './constants';
 
 const label = __( 'Pick an ad format' );

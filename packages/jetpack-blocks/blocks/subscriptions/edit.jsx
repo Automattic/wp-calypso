@@ -7,8 +7,8 @@ import { TextControl, ToggleControl } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import SubmitButton from 'gutenberg/extensions/presets/jetpack/utils/submit-button';
+import { __ } from 'utils/i18n';
+import SubmitButton from 'utils/submit-button';
 import apiFetch from '@wordpress/api-fetch';
 import { sprintf, _n } from '@wordpress/i18n';
 

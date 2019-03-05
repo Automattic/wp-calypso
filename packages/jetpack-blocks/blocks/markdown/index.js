@@ -10,7 +10,7 @@ import { Fragment } from '@wordpress/element';
 import './editor.scss';
 import edit from './edit';
 import save from './save';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 
 export const name = 'markdown';
 

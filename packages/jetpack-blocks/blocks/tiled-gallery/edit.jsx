@@ -26,9 +26,9 @@ import {
  */
 import FilterToolbar from './filter-toolbar';
 import Layout from './layout';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 import { ALLOWED_MEDIA_TYPES, LAYOUT_STYLES, MAX_COLUMNS } from './constants';
-import { getActiveStyleName } from 'gutenberg/extensions/utils';
+import { getActiveStyleName } from 'utils';
 import { icon } from '.';
 
 const linkOptions = [

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import photon from 'photon';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component } from '@wordpress/element';
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { isBlobURL } from '@wordpress/blob';
@@ -16,6 +15,7 @@ import GalleryImageSave from '../gallery-image/save';
 import Mosaic from './mosaic';
 import Square from './square';
 import { PHOTON_MAX_RESIZE } from '../constants';
+import { __ } from 'utils/i18n';
 
 export default class Layout extends Component {
 	photonize( { height, width, url } ) {

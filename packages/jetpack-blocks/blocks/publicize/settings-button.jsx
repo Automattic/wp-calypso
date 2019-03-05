@@ -16,8 +16,8 @@ import { ExternalLink } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import getSiteFragment from 'gutenberg/extensions/presets/jetpack/editor-shared/get-site-fragment';
+import { __ } from 'utils/i18n';
+import getSiteFragment from 'editor-shared/get-site-fragment';
 
 class PublicizeSettingsButton extends Component {
 	getButtonLink() {

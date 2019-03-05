@@ -12,7 +12,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { sprintf } from '@wordpress/i18n';
-import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _n } from 'utils/i18n';
 import { CRITERIA_AFTER, CRITERIA_BEFORE } from '../constants';
 import { icon } from '../index';
 
@@ -78,7 +78,9 @@ class RepeatVisitorEdit extends Component {
 					<TextControl
 						className="wp-block-jetpack-repeat-visitor-threshold"
 						defaultValue={ this.props.attributes.threshold }
-						help={ this.props.attributes.isThresholdValid ? '' : __( 'Please enter a valid number.' ) }
+						help={
+							this.props.attributes.isThresholdValid ? '' : __( 'Please enter a valid number.' )
+						}
 						label={ __( 'Visit count threshold' ) }
 						min="1"
 						onChange={ this.setThreshold }

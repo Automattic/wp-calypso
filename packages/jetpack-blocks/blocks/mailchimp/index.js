@@ -6,7 +6,7 @@ import { Path, SVG } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _x } from 'utils/i18n';
 import edit from './edit';
 import './editor.scss';
 

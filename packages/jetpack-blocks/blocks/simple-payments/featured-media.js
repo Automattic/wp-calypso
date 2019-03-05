@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'utils/i18n';
 
 const onSelectMedia = setAttributes => media =>
 	setAttributes( {

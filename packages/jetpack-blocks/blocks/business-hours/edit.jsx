@@ -11,10 +11,10 @@ import { __experimentalGetSettings } from '@wordpress/date';
 /**
  * Internal dependencies
  */
-import DayEdit from 'gutenberg/extensions/business-hours/components/day-edit';
-import DayPreview from 'gutenberg/extensions/business-hours/components/day-preview';
-import { icon } from 'gutenberg/extensions/business-hours/index';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import DayEdit from './components/day-edit';
+import DayPreview from './components/day-preview';
+import { icon } from '.';
+import { __ } from 'utils/i18n';
 
 const defaultLocalization = {
 	days: {
