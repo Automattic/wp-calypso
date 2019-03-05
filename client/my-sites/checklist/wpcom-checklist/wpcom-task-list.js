@@ -11,6 +11,7 @@ import config from 'config';
  */
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { getVerticalTaskList } from './vertical-task-list';
+import { getABTestVariation } from 'lib/abtest';
 
 const debug = debugModule( 'calypso:wpcom-task-list' );
 
@@ -41,7 +42,6 @@ function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, si
 		getVerticalTaskList( siteVerticals ).forEach( addTask );
 	} else {
 		addTask( 'blogname_set' );
-		addTask( 'site_icon_set' );
 		addTask( 'blogdescription_set' );
 
 		if ( designType === 'blog' ) {
@@ -52,6 +52,19 @@ function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, si
 
 		if ( designType === 'blog' ) {
 			addTask( 'post_published' );
+		}
+
+		// If there is a site segment and
+		// the user has already completed the logo task or
+		// if it's the AB variant
+		if (
+			segmentSlug &&
+			( get( taskStatuses, 'site_logo_set.completed' ) ||
+				'logo' === getABTestVariation( 'checklistSiteLogo' ) )
+		) {
+			addTask( 'site_logo_set' );
+		} else {
+			addTask( 'site_icon_set' );
 		}
 	}
 
