@@ -11,7 +11,7 @@
 	},
 	"scripts": {
 		"clean": "rm -fr ./build",
-		"build": "../../../../../bin/sdk-cli.js gutenberg .",
+		"build": "../../bin/sdk-cli.js gutenberg .",
 		"prepublishOnly": "npm run clean; NODE_ENV=production npm run build"
 	},
 	"repository": {
