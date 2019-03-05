@@ -144,7 +144,8 @@ references:
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
     command: |
-        echo 'export NODE_ENV=test' >> $BASH_ENV
+      echo 'export NODE_ENV=test' >> $BASH_ENV &&
+      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV
 
   defaults: &defaults
     working_directory: ~/wp-calypso
@@ -172,10 +173,10 @@ commands:
           path: /tmp/artifacts
       - store_artifacts:
           path: reports
-          destination: e2e
+          destination: e2e/reports
       - store_artifacts:
           path: screenshots
-          destination: e2e
+          destination: e2e/screenshots
 
 jobs:
   setup:
@@ -476,35 +477,39 @@ jobs:
           command: ./test/e2e/scripts/wait-for-running-branch.sh
 
   test-e2e:
-      <<: *defaults
-      working_directory: ~/wp-calypso/test/e2e
-      parallelism: 2
-      steps:
-        - prepare
-        - run: *set-e2e-variables
-        - run: npm run decryptconfig
-        - run: ./scripts/randomize.sh specs
-        - run: ./scripts/run-wrapper.sh
-        - store-artifacts-and-test-results
+    <<: *defaults
+    working_directory: ~/wp-calypso/test/e2e
+    parallelism: 2
+    steps:
+      - prepare
+      - run: *set-e2e-variables
+      - run: npm run decryptconfig
+      - run: ./scripts/randomize.sh specs
+      - run: ./scripts/run-wrapper.sh
+      - store-artifacts-and-test-results
 
   test-e2e-canary:
-      <<: *defaults
-      working_directory: ~/wp-calypso/test/e2e
-      parameters:
-        test-flags:
-          type: string
-          default: "-C"
-        test-target:
-          type: string
-          default: ""
-      steps:
-        - prepare
-        - run: *set-e2e-variables
-        - run: npm run decryptconfig
-        - run:
-            name: Run Canary Tests
-            command: env TARGET=<< parameters.test-target >> ./run.sh -R << parameters.test-flags >>
-        - store-artifacts-and-test-results
+    <<: *defaults
+    working_directory: ~/wp-calypso/test/e2e
+    parameters:
+      test-flags:
+        type: string
+        default: "-C"
+      test-target:
+        type: string
+        default: ""
+      jetpack-host:
+        type: string
+        default: ""
+    steps:
+      - prepare
+      - run: *set-e2e-variables
+      - run: npm run decryptconfig
+      - run:
+          name: Run Canary Tests
+          command: |
+            env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
+      - store-artifacts-and-test-results
 
 workflows:
   version: 2
@@ -542,22 +547,23 @@ workflows:
       - test-e2e-canary:
           requires:
             - prime-calypso-live
+          test-flags: "-C -S $CIRCLE_SHA1"
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
             - prime-calypso-live
-          test-flags: "-z"
+          test-flags: "-z -S $CIRCLE_SHA1"
           test-target: "IE11"
       - test-e2e-canary:
           name: test-e2e-canary-safari
           requires:
             - prime-calypso-live
-          test-flags: "-y"
+          test-flags: "-y -S $CIRCLE_SHA1"
       - test-e2e-canary:
           name: test-e2e-canary-woo
           requires:
             - prime-calypso-live
-          test-flags: "-W"
+          test-flags: "-W -S $CIRCLE_SHA1"
           test-target: "WOO"
 
   calypso-nightly:
