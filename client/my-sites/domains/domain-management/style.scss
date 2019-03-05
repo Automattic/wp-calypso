@@ -263,6 +263,12 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 }
 
+.edit__privacy-protection-toggle {
+	.form-toggle__label-content {
+		margin-left: 0;
+	}
+}
+
 .domain-details-card,
 .edit__domain-details-card {
 	.flag {

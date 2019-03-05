@@ -95,23 +95,17 @@ class DomainSearch extends Component {
 	addDomain( suggestion ) {
 		this.props.recordAddDomainButtonClick( suggestion.domain_name, 'domains' );
 
-		const items = [
-			cartItems.domainRegistration( {
-				domain: suggestion.domain_name,
-				productSlug: suggestion.product_slug,
-				extra: { privacy_available: suggestion.supports_privacy },
-			} ),
-		];
+		let domainRegistration = cartItems.domainRegistration( {
+			domain: suggestion.domain_name,
+			productSlug: suggestion.product_slug,
+			extra: { privacy_available: suggestion.supports_privacy },
+		} );
 
 		if ( suggestion.supports_privacy ) {
-			items.push(
-				cartItems.domainPrivacyProtection( {
-					domain: suggestion.domain_name,
-				} )
-			);
+			domainRegistration = cartItems.updatePrivacyForDomain( domainRegistration, true );
 		}
 
-		addItems( items );
+		addItems( [ domainRegistration ] );
 		goToDomainCheckout( suggestion, this.props.selectedSiteSlug );
 	}
 
