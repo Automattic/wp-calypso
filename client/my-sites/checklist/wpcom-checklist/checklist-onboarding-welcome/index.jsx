@@ -17,6 +17,7 @@ import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { hideOnboardingWelcomePrompt } from 'state/inline-help/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -28,6 +29,7 @@ class ChecklistOnboardingWelcome extends Component {
 		checkListUrl: PropTypes.string.isRequired,
 		hideOnboardingWelcomePrompt: PropTypes.func,
 		onClose: PropTypes.func,
+		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -36,8 +38,18 @@ class ChecklistOnboardingWelcome extends Component {
 	};
 
 	goToChecklist = () => {
+		this.props.recordTracksEvent( 'calypso_onboarding_welcome_click', {
+			action_type: 'checklist',
+		} );
 		this.onClose();
 		page( this.props.checkListUrl );
+	};
+
+	closeWelcomePrompt = () => {
+		this.props.recordTracksEvent( 'calypso_onboarding_welcome_click', {
+			action_type: 'close',
+		} );
+		this.onClose();
 	};
 
 	onClose = () => {
@@ -71,7 +83,7 @@ class ChecklistOnboardingWelcome extends Component {
 					<Button primary={ true } href={ this.props.checkListUrl } onClick={ this.goToChecklist }>
 						{ translate( 'Start customizing' ) }
 					</Button>
-					<Button onClick={ this.onClose }>{ translate( 'Not now' ) }</Button>
+					<Button onClick={ this.closeWelcomePrompt }>{ translate( 'Not now' ) }</Button>
 				</div>
 			</div>
 		);
@@ -82,5 +94,8 @@ export default connect(
 	state => ( {
 		checkListUrl: `/checklist/${ getSiteSlug( state, getSelectedSiteId( state ) ) }`,
 	} ),
-	{ hideOnboardingWelcomePrompt }
+	{
+		hideOnboardingWelcomePrompt,
+		recordTracksEvent,
+	}
 )( ChecklistOnboardingWelcome );
