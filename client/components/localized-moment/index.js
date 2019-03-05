@@ -23,6 +23,6 @@ export const withLocalizedMoment = createHigherOrderComponent( Wrapped => {
 }, 'WithLocalizedMoment' );
 
 export const useLocalizedMoment = () => {
-	const { moment, momentLocale } = React.useContext( MomentContext );
-	return [ moment, momentLocale ];
+	const { moment } = React.useContext( MomentContext );
+	return moment;
 };
