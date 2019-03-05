@@ -508,7 +508,8 @@ jobs:
             name: Run Canary Tests
             command: |
               env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> \
-              BRANCHNAME=$CIRCLE_BRANCH ./run.sh -R << parameters.test-flags >>
+              BRANCHNAME=$CIRCLE_BRANCH ./run.sh -R << parameters.test-flags >> && \
+              echo $BRANCHNAME && echo << parameters.test-flags >>
         - store-artifacts-and-test-results
 
 workflows:
@@ -547,23 +548,23 @@ workflows:
       - test-e2e-canary:
           requires:
             - prime-calypso-live
-          test-flags: "-C -S ${CIRCLE_SHA1} "
+          test-flags: "-C -S $CIRCLE_SHA1"
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
             - prime-calypso-live
-          test-flags: "-z -S ${CIRCLE_SHA1}"
+          test-flags: "-z -S $CIRCLE_SHA1"
           test-target: "IE11"
       - test-e2e-canary:
           name: test-e2e-canary-safari
           requires:
             - prime-calypso-live
-          test-flags: "-y -S ${CIRCLE_SHA1}"
+          test-flags: "-y -S $CIRCLE_SHA1"
       - test-e2e-canary:
           name: test-e2e-canary-woo
           requires:
             - prime-calypso-live
-          test-flags: "-W -S ${CIRCLE_SHA1}"
+          test-flags: "-W -S $CIRCLE_SHA1"
           test-target: "WOO"
 
   calypso-nightly:
