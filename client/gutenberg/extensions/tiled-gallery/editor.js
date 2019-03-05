@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import '@babel/polyfill';
+
+/**
  * Internal dependencies
  */
 import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
