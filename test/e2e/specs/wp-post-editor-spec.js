@@ -311,7 +311,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 				let errorShown = await this.editorPage.errorDisplayed();
 				return assert.strictEqual(
 					errorShown,
-					true,
+					false,
 					'There is an error shown on the editor page!'
 				);
 			} );

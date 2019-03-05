@@ -173,10 +173,10 @@ commands:
           path: /tmp/artifacts
       - store_artifacts:
           path: reports
-          destination: e2e
+          destination: e2e/reports
       - store_artifacts:
           path: screenshots
-          destination: e2e
+          destination: e2e/screenshots
 
 jobs:
   setup:
@@ -508,9 +508,7 @@ jobs:
         - run:
             name: Run Canary Tests
             command: |
-              env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> \
-              BRANCHNAME=$CIRCLE_BRANCH ./run.sh -R << parameters.test-flags >> && \
-              echo $BRANCHNAME && echo << parameters.test-flags >>
+              env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
         - store-artifacts-and-test-results
 
 workflows:
@@ -608,13 +606,13 @@ workflows:
     jobs:
       - setup
       - test-e2e-canary:
-          name: test-e2e-canary-ie
+          name: test-e2e-canary-ie-sched
           requires:
             - setup
           test-flags: "-w"
           test-target: "IE11"
       - test-e2e-canary:
-          name: test-e2e-canary-woo
+          name: test-e2e-canary-woo-sched
           requires:
             - setup
           test-flags: "-W"
