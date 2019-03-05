@@ -32,8 +32,8 @@ class UpworkBanner extends PureComponent {
 		dismissBanner: PropTypes.func.isRequired,
 		isBannerVisible: PropTypes.bool.isRequired,
 		location: PropTypes.string.isRequired,
-		siteId: PropTypes.number.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
