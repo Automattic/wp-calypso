@@ -2064,11 +2064,30 @@
 			"resolved": "https://registry.npmjs.org/@tannin/postfix/-/postfix-1.0.1.tgz",
 			"integrity": "sha512-y+h7tNlxDPDrH/TrSw1wCSm6FoEAY8FrbUxYng3BMSYBTUsX1utLooizk9v8J1yy6F9AioXNnPZ1qiu2vsa08Q=="
 		},
+		"@types/events": {
+			"version": "3.0.0",
+			"resolved": "https://registry.npmjs.org/@types/events/-/events-3.0.0.tgz",
+			"integrity": "sha512-EaObqwIvayI5a8dCzhFrjKzVwKLxjoG9T6Ppd5CEo07LRKfQ8Yokw54r5+Wq7FaBQ+yXRvQAYPrHwya1/UFt9g=="
+		},
+		"@types/glob": {
+			"version": "7.1.1",
+			"resolved": "https://registry.npmjs.org/@types/glob/-/glob-7.1.1.tgz",
+			"integrity": "sha512-1Bh06cbWJUHMC97acuD6UMG29nMt0Aqz1vF3guLfG+kHHJhy3AyohZFFxYk2f7Q1SQIrNwvncxAE0N/9s70F2w==",
+			"requires": {
+				"@types/events": "*",
+				"@types/minimatch": "*",
+				"@types/node": "*"
+			}
+		},
+		"@types/minimatch": {
+			"version": "3.0.3",
+			"resolved": "https://registry.npmjs.org/@types/minimatch/-/minimatch-3.0.3.tgz",
+			"integrity": "sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA=="
+		},
 		"@types/node": {
 			"version": "11.9.4",
 			"resolved": "https://registry.npmjs.org/@types/node/-/node-11.9.4.tgz",
-			"integrity": "sha512-Zl8dGvAcEmadgs1tmSPcvwzO1YRsz38bVJQvH1RvRqSR9/5n61Q1ktcDL0ht3FXWR+ZpVmXVwN1LuH4Ax23NsA==",
-			"dev": true
+			"integrity": "sha512-Zl8dGvAcEmadgs1tmSPcvwzO1YRsz38bVJQvH1RvRqSR9/5n61Q1ktcDL0ht3FXWR+ZpVmXVwN1LuH4Ax23NsA=="
 		},
 		"@types/q": {
 			"version": "1.5.1",
@@ -8476,10 +8495,11 @@
 			"integrity": "sha512-WHq43gS+6ufNOEqlrDBxVEbb8ntfXrfAUU2ZOpCxrBdGKW3gyv8mCxAfIBD0DroPKGrJ2eSsXsLtY9MPntsyTw=="
 		},
 		"globby": {
-			"version": "9.0.0",
-			"resolved": "https://registry.npmjs.org/globby/-/globby-9.0.0.tgz",
-			"integrity": "sha512-q0qiO/p1w/yJ0hk8V9x1UXlgsXUxlGd0AHUOXZVXBO6aznDtpx7M8D1kBrCAItoPm+4l8r6ATXV1JpjY2SBQOw==",
+			"version": "9.1.0",
+			"resolved": "https://registry.npmjs.org/globby/-/globby-9.1.0.tgz",
+			"integrity": "sha512-VtYjhHr7ncls724Of5W6Kaahz0ag7dB4G62/2HsN+xEKG6SrPzM1AJMerGxQTwJGnN9reeyxdvXbuZYpfssCvg==",
 			"requires": {
+				"@types/glob": "^7.1.1",
 				"array-union": "^1.0.2",
 				"dir-glob": "^2.2.1",
 				"fast-glob": "^2.2.6",
