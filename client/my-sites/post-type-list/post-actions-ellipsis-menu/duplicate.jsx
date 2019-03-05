@@ -16,6 +16,8 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { getPost } from 'state/posts/selectors';
 import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 
@@ -24,12 +26,13 @@ function PostActionsEllipsisMenuDuplicate( {
 	canEdit,
 	status,
 	type,
+	copyPostIsActive,
 	duplicateUrl,
 	onDuplicateClick,
 } ) {
 	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
 
-	if ( ! canEdit || ! validStatus || 'post' !== type ) {
+	if ( ! canEdit || ! validStatus || 'post' !== type || ! copyPostIsActive ) {
 		return null;
 	}
 
@@ -46,6 +49,7 @@ PostActionsEllipsisMenuDuplicate.propTypes = {
 	canEdit: PropTypes.bool,
 	status: PropTypes.string,
 	type: PropTypes.string,
+	copyPostIsActive: PropTypes.bool,
 	duplicateUrl: PropTypes.string,
 	onDuplicateClick: PropTypes.func,
 };
@@ -60,6 +64,9 @@ const mapStateToProps = ( state, { globalId } ) => {
 		canEdit: canCurrentUserEditPost( state, globalId ),
 		status: post.status,
 		type: post.type,
+		copyPostIsActive:
+			false === isJetpackSite( state, post.site_ID ) ||
+			isJetpackModuleActive( state, post.site_ID, 'copy-post' ),
 		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
 	};
 };
