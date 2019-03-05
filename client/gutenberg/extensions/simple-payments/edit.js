@@ -16,6 +16,7 @@ import {
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
+import { getCurrencyDefaults } from 'format-currency';
 
 /**
  * Internal dependencies
@@ -25,7 +26,6 @@ import ProductPlaceholder from './product-placeholder';
 import FeaturedMedia from './featured-media';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { decimalPlaces, formatPrice } from 'lib/simple-payments/utils';
-import { getCurrencyDefaults } from 'lib/format-currency/currencies';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 	SUPPORTED_CURRENCY_LIST,
