@@ -241,7 +241,7 @@ class ThemeShowcase extends React.Component {
 						<RandomThemesBanner banners={ themeBanners } />
 					) }
 					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
-						<UpworkBanner location={ 'themes' } />
+						<UpworkBanner location={ 'themes5' } />
 					) }
 					<ThemesSearchCard
 						onSearch={ this.doSearch }

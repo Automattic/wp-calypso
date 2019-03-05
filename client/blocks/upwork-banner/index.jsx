@@ -32,7 +32,9 @@ class UpworkBanner extends PureComponent {
 		dismissBanner: PropTypes.func.isRequired,
 		isBannerVisible: PropTypes.bool.isRequired,
 		location: PropTypes.string.isRequired,
-		siteId: PropTypes.number,
+		siteId: PropTypes.number.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
@@ -57,8 +59,8 @@ class UpworkBanner extends PureComponent {
 	};
 
 	recordEvent = eventName => {
-		const { location } = this.props;
-		const plan = this.props.currentPlan ? this.props.currentPlan.productSlug : '';
+		const { currentPlan, location } = this.props;
+		const plan = currentPlan ? currentPlan.productSlug : '';
 		this.props.recordTracksEvent( eventName, { plan, location } );
 	};
 
