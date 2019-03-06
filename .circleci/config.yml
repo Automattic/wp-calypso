@@ -149,6 +149,7 @@ references:
 
   move-e2e-artifacts: &move-e2e-artifacts
     name: Move report and screenshots
+    when: always
     command: |
       copy -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
       copy -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
