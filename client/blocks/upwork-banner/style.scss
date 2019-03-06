@@ -35,8 +35,8 @@
 		max-width: 190px;
 		transition: opacity 400ms ease-in-out;
 		position: absolute;
-		top: 0;
-		right: 30px;
+			top: 0;
+			right: 30px;
 		user-select: none;
 
 		@include breakpoint( '<1400px' ) {
@@ -61,8 +61,8 @@
 		line-height: 0.9;
 		padding: 1px 0;
 		position: absolute;
-		right: 0;
-		top: 0;
+			right: 0;
+			top: 0;
 		width: 1.7em;
 		z-index: z-index( '.upwork-banner', '.button.upwork-banner__close' );
 
@@ -72,7 +72,7 @@
 
 		.gridicons-cross-small {
 			position: relative;
-			top: 2px;
+				top: 2px;
 			fill: black;
 		}
 	}

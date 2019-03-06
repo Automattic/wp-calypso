@@ -1,5 +1,9 @@
 .help .upwork-banner {
-	margin-bottom: 24px;
+	margin: 10px 10px 20px;
+
+	@include breakpoint( '>660px' ) {
+		margin: 0 0 24px;
+	}
 }
 
 .help__support-links {
