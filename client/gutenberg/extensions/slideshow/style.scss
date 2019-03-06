@@ -79,18 +79,18 @@
 	&.swiper-container-rtl .wp-block-jetpack-slideshow_button-prev,
 	.swiper-button-next.swiper-button-white,
 	.wp-block-jetpack-slideshow_button-next {
-		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M5.88 4.12L13.76 12l-7.88 7.88L8 22l10-10L8 2z" fill="white"/><path fill="none" d="M0 0h24v24H0z"/></svg>' );
+		background-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5.88 4.12L13.76 12l-7.88 7.88L8 22l10-10L8 2z' fill='white'/%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3C/svg%3E" );
 	}
 
 	&.swiper-container-rtl .swiper-button-next.swiper-button-white,
 	&.swiper-container-rtl .wp-block-jetpack-slideshow_button-next,
 	.swiper-button-prev.swiper-button-white,
 	.wp-block-jetpack-slideshow_button-prev {
-		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M18 4.12L10.12 12 18 19.88 15.88 22l-10-10 10-10z" fill="white"/><path fill="none" d="M0 0h24v24H0z"/></svg>' );
+		background-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M18 4.12L10.12 12 18 19.88 15.88 22l-10-10 10-10z' fill='white'/%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3C/svg%3E" );
 	}
 
 	.wp-block-jetpack-slideshow_button-pause {
-		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="white"/><path d="M0 0h24v24H0z" fill="none"/></svg>' );
+		background-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M6 19h4V5H6v14zm8-14v14h4V5h-4z' fill='white'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E" );
 		display: none;
 		margin-top: 0;
 		position: absolute;
@@ -100,7 +100,7 @@
 	}
 
 	.wp-block-jetpack-slideshow_autoplay-paused .wp-block-jetpack-slideshow_button-pause {
-		background-image: url( 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="white"/><path d="M0 0h24v24H0z" fill="none"/></svg>' );
+		background-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M8 5v14l11-7z' fill='white'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E" );
 	}
 
 	&[data-autoplay='true'] .wp-block-jetpack-slideshow_button-pause {
