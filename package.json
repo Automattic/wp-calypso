@@ -208,7 +208,7 @@
     "webpack-bundle-analyzer": "3.0.4",
     "webpack-cli": "3.2.3",
     "webpack-dev-middleware": "3.5.2",
-    "webpack-rtl-plugin": "1.8.0",
+    "webpack-rtl-plugin": "1.8.1",
     "wpcom": "5.4.2",
     "wpcom-oauth": "0.3.4",
     "wpcom-proxy-request": "5.0.2",
