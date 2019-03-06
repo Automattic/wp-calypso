@@ -16,7 +16,7 @@ import {
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
-import { getCurrencyDefaults } from 'format-currency';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
