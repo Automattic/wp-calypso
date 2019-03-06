@@ -86,7 +86,6 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
-				buttonLink: getEditorUrl( 'page' ),
 				forceButtonTargetInternal: calypsoifyGutenberg,
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
