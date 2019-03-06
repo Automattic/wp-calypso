@@ -85,7 +85,7 @@
 	padding: 0 24px;
 	box-sizing: border-box;
 	background: var( --color-white );
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 }
 
 .editor-confirmation-sidebar__close {
@@ -104,7 +104,7 @@
 
 .editor-confirmation-sidebar__sidebar .editor-confirmation-sidebar__display-preference {
 	@extend .sidebar__footer;
-	background-color: lighten( $gray, 25% );
+	background-color: var( --color-neutral-50 );
 	padding: 4px 10px;
 
 	@include breakpoint( '<660px' ) {

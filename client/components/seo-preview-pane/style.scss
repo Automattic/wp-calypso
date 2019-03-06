@@ -94,7 +94,7 @@
 	margin: 0 10px;
 
 	background-color: var( --color-white );
-	border: 1px solid lighten( $gray, 25% );
+	border: 1px solid var( --color-neutral-50 );
 
 	.reader-post-card {
 		padding: 10px;

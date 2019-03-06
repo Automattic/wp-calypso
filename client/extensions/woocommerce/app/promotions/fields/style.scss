@@ -38,7 +38,7 @@
 	}
 
 	.form-fieldset {
-		border-bottom: 1px solid lighten( $gray, 32% );
+		border-bottom: 1px solid var( --color-neutral-0 );
 		padding-bottom: 16px;
 		margin-bottom: 16px;
 		margin-left: -16px;
@@ -95,7 +95,7 @@
 			border-bottom: 1px solid var( --color-neutral-0 );
 
 			&:hover {
-				background: lighten( $gray-light, 2% );
+				background: var( --color-neutral-0 );
 			}
 
 			&:last-child {

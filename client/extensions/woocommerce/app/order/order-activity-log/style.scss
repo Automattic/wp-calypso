@@ -19,7 +19,7 @@
 		left: 45px;
 		bottom: 0;
 		width: 1px;
-		background: transparentize( $gray-lighten-20, 0.5 );
+		background: rgba( var( --color-neutral-100-rgb ), 0.5 );
 	}
 }
 
@@ -76,7 +76,7 @@
 		box-sizing: border-box;
 		margin-left: 16px;
 		padding: 12px 16px 16px;
-		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 );
+		box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 );
 	}
 
 	.order-activity-log__note-type {

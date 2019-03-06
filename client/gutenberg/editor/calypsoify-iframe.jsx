@@ -25,7 +25,12 @@ import {
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
+import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url';
 import wpcom from 'lib/wp';
+import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
+import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
+import { startEditingPost } from 'state/ui/editor/actions';
+import { Placeholder } from './placeholder';
 
 /**
  * Style dependencies
@@ -37,10 +42,12 @@ class CalypsoifyIframe extends Component {
 		postId: PropTypes.number,
 		postType: PropTypes.string,
 		duplicatePostId: PropTypes.number,
+		pressThis: PropTypes.object,
 	};
 
 	state = {
 		isMediaModalVisible: false,
+		isIframeLoaded: false,
 	};
 
 	constructor( props ) {
@@ -78,8 +85,8 @@ class CalypsoifyIframe extends Component {
 				portForIframe,
 			] );
 
-			//once the iframe is loaded and the port exchanged, we no longer need to listen for message
-			window.removeEventListener( 'message', this.onMessage, false );
+			// Check if we're generating a post via Press This
+			this.pressThis();
 		}
 	};
 
@@ -104,17 +111,39 @@ class CalypsoifyIframe extends Component {
 
 		if ( 'draftIdSet' === action && ! this.props.postId ) {
 			const { postId } = payload;
-			const { currentRoute } = this.props;
+			const { siteId, currentRoute } = this.props;
 
 			if ( ! endsWith( currentRoute, `/${ postId }` ) ) {
 				this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
 				this.props.setRoute( `${ currentRoute }/${ postId }` );
+
+				//set postId on state.ui.editor.postId, so components like editor revisions can read from it
+				this.props.startEditingPost( siteId, postId );
 			}
 		}
 
 		if ( 'postTrashed' === action ) {
 			this.props.navigate( this.props.postTypeTrashUrl );
 		}
+
+		if ( 'goToAllPosts' === action ) {
+			this.props.navigate( this.props.allPostsUrl );
+		}
+
+		if ( 'openRevisions' === action ) {
+			this.props.openPostRevisionsDialog();
+		}
+	};
+
+	loadRevision = revision => {
+		this.iframePort.postMessage( {
+			action: 'loadRevision',
+			payload: {
+				title: revision.post_title,
+				excerpt: revision.post_excerpt,
+				content: revision.post_content,
+			},
+		} );
 	};
 
 	closeMediaModal = media => {
@@ -132,16 +161,33 @@ class CalypsoifyIframe extends Component {
 		this.setState( { isMediaModalVisible: false } );
 	};
 
+	pressThis = () => {
+		const { pressThis } = this.props;
+		if ( pressThis ) {
+			this.iframePort.postMessage( {
+				action: 'pressThis',
+				payload: pressThis,
+			} );
+		}
+	};
+
 	render() {
 		const { iframeUrl, siteId } = this.props;
-		const { isMediaModalVisible, allowedTypes, multiple } = this.state;
+		const { isMediaModalVisible, allowedTypes, multiple, isIframeLoaded } = this.state;
 
 		return (
 			<Fragment>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
-					{ /* eslint-disable-next-line jsx-a11y/iframe-has-title, wpcalypso/jsx-classname-namespace */ }
-					<iframe ref={ this.iframeRef } className={ 'is-iframe-loaded' } src={ iframeUrl } />
+					{ ! isIframeLoaded && <Placeholder /> }
+					{ /* eslint-disable-next-line jsx-a11y/iframe-has-title */ }
+					<iframe
+						ref={ this.iframeRef }
+						/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+						className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
+						src={ iframeUrl }
+						onLoad={ () => this.setState( { isIframeLoaded: true } ) }
+					/>
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
 					<MediaModal
@@ -154,6 +200,7 @@ class CalypsoifyIframe extends Component {
 						visible={ isMediaModalVisible }
 					/>
 				</MediaLibrarySelectedData>
+				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 			</Fragment>
 		);
 	}
@@ -173,6 +220,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		'block-editor': 1,
 		'frame-nonce': getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		'jetpack-copy': duplicatePostId,
+		origin: window.location.origin,
 	} );
 
 	// needed for loading the editor in SU sessions
@@ -186,6 +234,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 	);
 
 	return {
+		allPostsUrl: getPostTypeAllPostsUrl( state, postType ),
 		siteId,
 		siteSlug,
 		currentRoute,
@@ -198,6 +247,8 @@ const mapDispatchToProps = {
 	replaceHistory,
 	setRoute,
 	navigate,
+	openPostRevisionsDialog,
+	startEditingPost,
 };
 
 export default connect(

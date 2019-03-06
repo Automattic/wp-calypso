@@ -118,7 +118,7 @@
 		}
 
 		.module-content-list-item-right::before {
-			background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
+			background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
 		}
 
 		// Display hidden actions
@@ -149,7 +149,7 @@
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
+		background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Display hidden actions
@@ -313,7 +313,7 @@
 
 	// Fade out value if long
 	&::before {
-		@include stats-fade-text( $white );
+		@include stats-fade-text( var( --color-white ) );
 	}
 }
 
@@ -742,7 +742,7 @@ ul.module-content-list-legend {
 	}
 
 	> .module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
+		background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Rotate toggle icon
@@ -765,7 +765,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, $transparent 0%, $white 90% );
+				background-image: linear-gradient( to right, $transparent 0%, var( --color-white ) 90% );
 			}
 		}
 	}
@@ -792,7 +792,7 @@ ul.module-content-list-legend {
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
+		background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Hover changes
@@ -806,7 +806,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, $transparent 0%, $white 90% );
+				background-image: linear-gradient( to right, $transparent 0%, var( --color-white ) 90% );
 			}
 		}
 	}

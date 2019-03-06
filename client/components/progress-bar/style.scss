@@ -17,7 +17,7 @@
 	top: 0;
 	left: 0;
 	height: 100%;
-	background-color: lighten( $blue-dark, 10% );
+	background-color: var( --color-primary );
 	border-radius: 4.5px;
 	transition: width 200ms;
 }
@@ -28,10 +28,10 @@
 	background-size: 50px 100%;
 	background-image: linear-gradient(
 		-45deg,
-		$blue-wordpress 28%,
-		lighten( $blue-wordpress, 5% ) 28%,
-		lighten( $blue-wordpress, 5% ) 72%,
-		$blue-wordpress 72%
+		var( --color-primary ) 28%,
+		var( --color-primary-light ) 28%,
+		var( --color-primary-light ) 72%,
+		var( --color-primary ) 72%
 	);
 }
 

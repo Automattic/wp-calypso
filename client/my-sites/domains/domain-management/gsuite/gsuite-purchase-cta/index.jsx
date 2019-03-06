@@ -18,7 +18,7 @@ import config from 'config';
 import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getEligibleDomain } from 'lib/domains/gsuite';
+import { getEligibleGSuiteDomain } from 'lib/domains/gsuite';
 import GSuitePurchaseFeatures from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-features';
 
 /**
@@ -148,7 +148,7 @@ export default connect(
 	( state, { selectedDomainName, selectedSite } ) => {
 		const domains = getDomainsBySiteId( state, selectedSite.ID );
 		return {
-			domainName: getEligibleDomain( selectedDomainName, domains ),
+			domainName: getEligibleGSuiteDomain( selectedDomainName, domains ),
 		};
 	},
 	null

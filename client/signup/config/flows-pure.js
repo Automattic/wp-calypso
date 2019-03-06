@@ -94,7 +94,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		subdomain: {
-			steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
+			steps: [ 'design-type', 'themes', 'site-topic', 'domains', 'plans', 'user' ],
 			destination: getSiteDestination,
 			description: 'Provide a vertical for subdomains',
 			lastModified: '2016-10-31',
@@ -324,6 +324,14 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		destination: getSiteDestination,
 		description: 'Test private site signup',
 		lastModified: '2018-10-22',
+	};
+
+	flows[ 'launch-site' ] = {
+		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
+		destination: getSiteDestination,
+		description: 'A flow to launch a private site.',
+		providesDependenciesInQuery: [ 'siteSlug' ],
+		lastModified: '2019-01-16',
 	};
 
 	flows.import = {

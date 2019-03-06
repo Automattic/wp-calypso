@@ -2,10 +2,13 @@
  * External dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { RichText } from '@wordpress/editor';
-import { Component, createRef } from '@wordpress/element';
-import { isEqual } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
+import classnames from 'classnames';
+import { Component, createRef } from '@wordpress/element';
+import { isBlobURL } from '@wordpress/blob';
+import { isEqual } from 'lodash';
+import { RichText } from '@wordpress/editor';
+import { Spinner } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -35,10 +38,15 @@ class Slideshow extends Component {
 	}
 
 	componentDidMount() {
-		this.buildSwiper().then( swiper => {
-			this.swiperInstance = swiper;
-			this.initializeResizeObserver( swiper );
-		} );
+		const { onError } = this.props;
+		this.buildSwiper()
+			.then( swiper => {
+				this.swiperInstance = swiper;
+				this.initializeResizeObserver( swiper );
+			} )
+			.catch( () => {
+				onError( __( 'The Swiper library could not be loaded.' ) );
+			} );
 	}
 
 	componentWillUnmount() {
@@ -47,7 +55,7 @@ class Slideshow extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { align, autoplay, delay, effect, images } = this.props;
+		const { align, autoplay, delay, effect, images, onError } = this.props;
 
 		/* A change in alignment or images only needs an update */
 		if ( align !== prevProps.align || ! isEqual( images, prevProps.images ) ) {
@@ -60,12 +68,19 @@ class Slideshow extends Component {
 			delay !== prevProps.delay ||
 			images !== prevProps.images
 		) {
-			const realIndex = images !== prevProps.images ? 0 : this.swiperInstance.realIndex;
+			const realIndex =
+				images.length === prevProps.images.length
+					? this.swiperInstance.realIndex
+					: prevProps.images.length;
 			this.swiperInstance && this.swiperInstance.destroy( true, true );
-			this.buildSwiper( realIndex ).then( swiper => {
-				this.swiperInstance = swiper;
-				this.initializeResizeObserver( swiper );
-			} );
+			this.buildSwiper( realIndex )
+				.then( swiper => {
+					this.swiperInstance = swiper;
+					this.initializeResizeObserver( swiper );
+				} )
+				.catch( () => {
+					onError( __( 'The Swiper library could not be loaded.' ) );
+				} );
 		}
 	}
 
@@ -99,6 +114,7 @@ class Slideshow extends Component {
 		const { autoplay, className, delay, effect, images } = this.props;
 		// Note: React omits the data attribute if the value is null, but NOT if it is false.
 		// This is the reason for the unusual logic related to autoplay below.
+		/* eslint-disable jsx-a11y/anchor-is-valid */
 		return (
 			<div
 				className={ className }
@@ -112,7 +128,14 @@ class Slideshow extends Component {
 				>
 					<ul className="wp-block-jetpack-slideshow_swiper-wrappper swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
-							<li className="wp-block-jetpack-slideshow_slide swiper-slide" key={ id }>
+							<li
+								className={ classnames(
+									'wp-block-jetpack-slideshow_slide',
+									'swiper-slide',
+									isBlobURL( url ) && 'is-transient'
+								) }
+								key={ id }
+							>
 								<figure>
 									<img
 										alt={ alt }
@@ -122,6 +145,7 @@ class Slideshow extends Component {
 										data-id={ id }
 										src={ url }
 									/>
+									{ isBlobURL( url ) && <Spinner /> }
 									{ caption && (
 										<RichText.Content
 											className="wp-block-jetpack-slideshow_caption gallery-caption"
@@ -133,25 +157,29 @@ class Slideshow extends Component {
 							</li>
 						) ) }
 					</ul>
+					<a
+						className="wp-block-jetpack-slideshow_button-prev swiper-button-prev swiper-button-white"
+						ref={ this.btnPrevRef }
+						role="button"
+					/>
+					<a
+						className="wp-block-jetpack-slideshow_button-next swiper-button-next swiper-button-white"
+						ref={ this.btnNextRef }
+						role="button"
+					/>
+					<a
+						aria-label="Pause Slideshow"
+						className="wp-block-jetpack-slideshow_button-pause"
+						role="button"
+					/>
 					<div
 						className="wp-block-jetpack-slideshow_pagination swiper-pagination swiper-pagination-white"
 						ref={ this.paginationRef }
 					/>
-					<button
-						className="wp-block-jetpack-slideshow_button-prev swiper-button-prev swiper-button-white"
-						ref={ this.btnPrevRef }
-					/>
-					<button
-						className="wp-block-jetpack-slideshow_button-next swiper-button-next swiper-button-white"
-						ref={ this.btnNextRef }
-					/>
-					<button
-						aria-label={ __( 'Pause Slideshow' ) }
-						className="wp-block-jetpack-slideshow_button-pause"
-					/>
 				</div>
 			</div>
 		);
+		/* eslint-enable jsx-a11y/anchor-is-valid */
 	}
 
 	prefersReducedMotion = () => {

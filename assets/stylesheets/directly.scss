@@ -57,8 +57,8 @@ textarea {
 // Main button
 .btn {
 	background: var( --color-primary );
-	border: 1px solid darken( $blue-medium, 8% );
-	color: $white;
+	border: 1px solid var( --color-primary-400 );
+	color: var( --color-white );
 	border-width: 1px 1px 2px;
 	cursor: pointer;
 	font-size: 14px;
@@ -71,18 +71,18 @@ textarea {
 	appearance: none;
 	width: auto;
 	&:hover {
-		border-color: $blue-dark;
+		border-color: var( --color-primary-dark );
 	}
 	&:active,
 	&:active:enabled {
 		outline: 0;
 		border-width: 2px 1px 1px;
 		padding: 7px 14px 9px;
-		color: $white;
+		color: var( --color-white );
 	}
 	&:focus {
-		border-color: $blue-dark;
-		box-shadow: 0 0 0 2px $blue-light;
+		border-color: var( --color-primary-dark );
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
 
@@ -98,7 +98,7 @@ textarea {
 	-webkit-font-smoothing: subpixel-antialiased;
 
 	&::-webkit-input-placeholder {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 textarea {
@@ -110,9 +110,9 @@ textarea {
 	background: #f2f6f8;
 }
 .minimized-view {
-	background: $white;
+	background: var( --color-white );
 	box-shadow: 0 1px 10px rgba( 46, 68, 83, 0.1 );
-	border: 1px solid lighten( $gray, 25% );
+	border: 1px solid var( --color-neutral-50 );
 }
 .maximized-view.is-ask-view {
 	top: 0;
@@ -133,7 +133,7 @@ textarea {
 		text-transform: uppercase;
 		font-size: 11px;
 		font-weight: 700;
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	// Left hamburger button
@@ -141,12 +141,12 @@ textarea {
 		border-right: none;
 		flex: 0 0 40px;
 		.svg-icon {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 		&.disabled {
 			background: transparent;
 			.svg-icon {
-				color: lighten( $gray, 25% );
+				color: var( --color-neutral-50 );
 			}
 		}
 	}
@@ -156,7 +156,7 @@ textarea {
 		border-left: none;
 		flex: 0 0 40px;
 		.svg-icon {
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 
@@ -174,7 +174,7 @@ textarea {
 		top: 32px;
 		.question-bar,
 		.question-bar.closed {
-			background: $gray;
+			background: var( --color-neutral-light );
 			padding: 10px 14px;
 		}
 	}
@@ -182,7 +182,7 @@ textarea {
 
 .chat-list-view-item-container {
 	background: var( --color-neutral-0 );
-	border-bottom: 1px solid lighten( $gray, 25% );
+	border-bottom: 1px solid var( --color-neutral-50 );
 	color: var( --color-text );
 	padding: 18px 10px 18px 24px;
 	.chat-list-item-title {
@@ -190,7 +190,7 @@ textarea {
 		font-size: 16px;
 	}
 	.chat-list-item-meta {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 	.unread-message-dot {
 		background: var( --color-success );
@@ -242,7 +242,7 @@ textarea {
 
 .thread-view-container {
 	.expert-response-time {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -290,7 +290,7 @@ textarea {
 			height: 0;
 			border-style: solid;
 			border-width: 0 10px 10px 0;
-			border-color: transparent $white transparent transparent;
+			border-color: transparent var( --color-white ) transparent transparent;
 		}
 		.author img {
 			// Need to override inline styles with !importants
@@ -311,17 +311,17 @@ textarea {
 	}
 }
 .avatar {
-	background: lighten( $gray, 25% );
+	background: var( --color-neutral-50 );
 }
 
 .system-message {
-	border: 1px solid lighten( $gray, 25% );
+	border: 1px solid var( --color-neutral-50 );
 	background: var( --color-neutral-0 );
 	font-size: 14px;
 	margin-right: 0;
 	border-radius: 8px;
 	&.has-sibling + .system-message {
-		border-top: 1px solid lighten( $gray, 25% );
+		border-top: 1px solid var( --color-neutral-50 );
 	}
 
 	// Green border for success messages
@@ -334,9 +334,9 @@ textarea {
 	&.success.inverted {
 		border-color: transparent;
 		background: var( --color-success );
-		color: $white;
+		color: var( --color-white );
 		a {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 
@@ -344,27 +344,27 @@ textarea {
 	&.warning {
 		background: var( --color-warning );
 		border-color: transparent;
-		color: $white;
+		color: var( --color-white );
 		a {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 
 	// Placeholder displayed when the experts info is loading
 	&.alerting-experts {
 		.expert-name:empty {
-			background: lighten( $gray, 25% );
+			background: var( --color-neutral-50 );
 		}
 		.expert-last-active-date {
-			color: $gray;
+			color: var( --color-neutral-light );
 			&:empty {
-				background: lighten( $gray, 25% );
+				background: var( --color-neutral-50 );
 			}
 		}
 	}
 
 	.icon-avatar {
-		background: lighten( $gray, 25% );
+		background: var( --color-neutral-50 );
 	}
 
 	// Icons inside system messages
@@ -374,16 +374,16 @@ textarea {
 			background-color: #14abdd;
 		}
 		&.icon-success {
-			background-color: $white;
+			background-color: var( --color-white );
 			color: var( --color-success );
 		}
 		&.icon-warning {
-			background-color: $white;
+			background-color: var( --color-white );
 			color: var( --color-warning );
 		}
 	}
 	&.inverted .icon.icon-success {
-		background-color: $white;
+		background-color: var( --color-white );
 		color: var( --color-success );
 	}
 }
@@ -397,19 +397,19 @@ textarea {
 .thread-view-footer {
 	border-top: 1px solid var( --color-neutral-0 );
 	box-shadow: none;
-	background: $white;
+	background: var( --color-white );
 }
 
 // Bubble when the thread view is minimized
 .chat-view-minimized {
 	// When no expert has replied yet
 	.alerting {
-		color: $gray;
+		color: var( --color-neutral-light );
 		.beacon {
-			background: $blue-wordpress;
+			background: var( --color-primary );
 			margin: 5px auto;
 			&::after {
-				background: $blue-wordpress;
+				background: var( --color-primary );
 			}
 		}
 	}
@@ -440,7 +440,7 @@ textarea {
 		box-shadow: none;
 	}
 	.submit-btn[disabled] {
-		background-color: lighten( $gray, 25% );
+		background-color: var( --color-neutral-50 );
 		border: none;
 	}
 }
@@ -456,7 +456,7 @@ textarea {
 		border-left: 1px solid var( --color-neutral-0 );
 	}
 	.toolbar-btn {
-		color: $gray;
+		color: var( --color-neutral-light );
 		border-left: 1px solid var( --color-neutral-0 );
 		.svg-icon {
 			color: var( --color-success );
@@ -479,7 +479,7 @@ textarea {
 
 // Displays when the user wants to accept the answer
 .ActionBar {
-	background: $white;
+	background: var( --color-white );
 }
 .ActionBar__button {
 	box-shadow: none;

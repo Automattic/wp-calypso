@@ -66,7 +66,7 @@ import { requestSite } from 'state/sites/actions';
 import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { canAddGoogleApps } from 'lib/domains';
+import { canDomainAddGSuite } from 'lib/domains/gsuite';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
@@ -153,11 +153,11 @@ export class Checkout extends React.Component {
 			cartItems.hasGoogleApps( this.props.cart ) &&
 			this.needsDomainDetails()
 		) {
-			this.setDomainDetailsForGsuiteCart();
+			this.setDomainDetailsForGSuiteCart();
 		}
 	}
 
-	setDomainDetailsForGsuiteCart() {
+	setDomainDetailsForGSuiteCart() {
 		const { contactDetails, cart } = this.props;
 		const domainReceiptId = get(
 			cartItems.getGoogleApps( cart ),
@@ -328,7 +328,7 @@ export class Checkout extends React.Component {
 		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
 		const domainsInSignupContext = filter( domainRegistrations, { extra: { context: 'signup' } } );
 		const domainsForGSuite = filter( domainsInSignupContext, ( { meta } ) =>
-			canAddGoogleApps( meta )
+			canDomainAddGSuite( meta )
 		);
 
 		return domainsForGSuite;

@@ -94,6 +94,11 @@ const addVideoPressSupport = ( settings, name ) => {
 				],
 			},
 
+			supports: {
+				...settings.supports,
+				reusable: false,
+			},
+
 			edit: withVideoPressEdit( settings.edit ),
 
 			save: withVideoPressSave( settings.save ),

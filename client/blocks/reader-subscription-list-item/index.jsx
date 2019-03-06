@@ -25,7 +25,7 @@ import { untrailingslashit } from 'lib/route';
 import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
 import ExternalLink from 'components/external-link';
-import withLocalizedMoment from 'components/with-localized-moment';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies

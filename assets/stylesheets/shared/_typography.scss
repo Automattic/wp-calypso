@@ -18,7 +18,7 @@ $signup-sans: 'Noto Sans', $sans;
 	font-weight: 400;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	color: darken( $gray, 30 );
+	color: var( --color-neutral-600 );
 }
 
 // ======================================================================

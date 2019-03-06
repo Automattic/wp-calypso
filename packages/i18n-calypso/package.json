@@ -28,11 +28,14 @@
     "lodash": "^4.7.11",
     "lru": "^3.1.0",
     "moment-timezone": "^0.5.23",
-    "react": "^16.6.3",
+    "react": "^16.8.3",
     "xgettext-js": "^2.0.0"
   },
   "devDependencies": {
     "react-dom": "^16.6.3",
     "react-test-renderer": "^16.6.3"
+  },
+  "scripts": {
+    "build": "node ../../bin/build-package"
   }
 }

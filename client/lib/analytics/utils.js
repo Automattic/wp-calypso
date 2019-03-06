@@ -86,6 +86,21 @@ export function hashPii( data ) {
 		.digest( 'hex' );
 }
 
+/**
+ * Returns the current user email after normalizing it (lowercase without spaces) or `false` if no email or user is available.
+ *
+ * @param {Object} user The current user
+ * @return {false|string} The current user email after normalization
+ */
+export function getNormalizedHashedUserEmail( user ) {
+	const currentUser = user.get();
+	if ( currentUser && currentUser.email ) {
+		return hashPii( currentUser.email.toLowerCase().replace( /\s/g, '' ) );
+	}
+
+	return false;
+}
+
 // If this list catches things that are not necessarily forbidden we're ok with
 // a little bit of approximation as long as we do catch the ones that we have to.
 // We need to be quite aggressive with how we filter candiate pages as failing

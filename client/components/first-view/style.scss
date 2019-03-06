@@ -52,8 +52,8 @@
 	max-width: 575px;
 	opacity: 0;
 	padding: 20px 24px 20px ( 128px + 4px + 24px );
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
-		0 8px 30px rgba( $gray, 0.2 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+		0 8px 30px rgba( var( --color-neutral-light-rgb ), 0.2 );
 	position: relative;
 	pointer-events: auto;
 	transform: scale( 0.98 ) translateY( 32px );

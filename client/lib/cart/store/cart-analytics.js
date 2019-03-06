@@ -34,7 +34,12 @@ function recordRemoveEvent( cartItem ) {
 }
 
 export function recordUnrecognizedPaymentMethod( action ) {
-	analytics.tracks.recordEvent( 'calypso_cart_unrecognized_payment_method', {
-		payment: JSON.stringify( get( action, 'payment', action ) ),
-	} );
+	const payment = get( action, 'payment' );
+
+	const eventArgs = {
+		payment_method: get( payment, 'paymentMethod', 'missing' ),
+		extra: JSON.stringify( payment ? omit( payment, 'paymentMethod' ) : action ),
+	};
+
+	analytics.tracks.recordEvent( 'calypso_cart_unrecognized_payment_method', eventArgs );
 }

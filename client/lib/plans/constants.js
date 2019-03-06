@@ -81,6 +81,7 @@ export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
 export const FEATURE_EMAIL_SUPPORT = 'email-support';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
+export const FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT = 'email-forwarding-extended-limit';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
 export const FEATURE_BASIC_DESIGN = 'basic-design';
 export const FEATURE_ADVANCED_DESIGN = 'advanced-design';
@@ -436,7 +437,11 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS ],
+	getHiddenFeatures: () => [
+		FEATURE_AUDIO_UPLOADS,
+		FEATURE_GOOGLE_MY_BUSINESS,
+		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
+	],
 } );
 
 const getPlanEcommerceDetails = () => ( {

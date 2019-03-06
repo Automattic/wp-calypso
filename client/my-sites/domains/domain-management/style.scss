@@ -244,7 +244,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 		.contact-display-content {
 			border: 1px solid var( --color-neutral-0 );
-			color: lighten( $gray-dark, 20% );
+			color: var( --color-neutral );
 			font-size: 12px;
 			line-height: 140%;
 			margin: 0;
@@ -260,6 +260,12 @@ input[type='radio'].domain-management-list-item__radio {
 .edit-contact-info__pending-whois-update-card {
 	.notice {
 		margin-bottom: 16px;
+	}
+}
+
+.edit__privacy-protection-toggle {
+	.form-toggle__label-content {
+		margin-left: 0;
 	}
 }
 
@@ -360,7 +366,6 @@ input[type='radio'].domain-management-list-item__radio {
 
 .dns__details,
 .custom-nameservers-form__explanation,
-.email-forwarding__explanation,
 .site-redirect__explanation,
 .dns__domain-connect-explanation {
 	display: block;
@@ -374,7 +379,6 @@ input[type='radio'].domain-management-list-item__radio {
 	margin-bottom: 5px;
 }
 
-.email-forwarding-card,
 .site-redirect-card {
 	form label + input[type='text'] {
 		margin-bottom: 10px;
@@ -387,11 +391,8 @@ input[type='radio'].domain-management-list-item__radio {
 }
 
 .dns__add-new,
-.dns__template-form,
-.email-forwarding__add-new {
-	.email-forwarding__limit,
-	.dns__form-content,
-	.form-content {
+.dns__template-form {
+	.dns__form-content {
 		border-top: 1px solid var( --color-neutral-0 );
 		overflow: visible;
 		padding-top: 20px;
@@ -455,68 +456,6 @@ input[type='radio'].domain-management-list-item__radio {
 			margin-top: 1.5em;
 		}
 	}
-}
-
-.email-forwarding__form {
-	margin-top: 0;
-
-	@include breakpoint( '>480px' ) {
-		margin-top: 15px;
-	}
-}
-
-ul.email-forwarding__list {
-	list-style: none;
-	margin: 15px 0 0;
-	padding: 0;
-
-	li {
-		border-top: 1px solid var( --color-neutral-0 );
-		overflow: auto;
-		padding: 10px 0;
-		position: relative;
-
-		span {
-			font-size: 14px;
-			line-height: 40px;
-
-			@include breakpoint( '<660px' ) {
-				font-size: 12px;
-				line-height: 150%;
-			}
-
-			strong {
-				color: var( --color-text-subtle );
-				font-weight: normal;
-
-				&:first-child {
-					@include breakpoint( '<660px' ) {
-						display: block;
-					}
-				}
-
-				@include breakpoint( '>660px' ) {
-					font-weight: 600;
-				}
-			}
-
-			em {
-				color: var( --color-neutral-light );
-			}
-		}
-
-		.button {
-			float: right;
-			margin-top: -3px;
-		}
-	}
-}
-
-.email-forwarding__limit {
-	font-size: 13px;
-	color: var( --color-neutral-light );
-	line-height: 3em;
-	margin-bottom: 15px;
 }
 
 .privacy-protection-card {

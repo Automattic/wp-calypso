@@ -35,7 +35,12 @@ class JetpackSiteTopic extends Component {
 		return (
 			<MainWrapper isWide>
 				<div className="jetpack-connect__step">
-					<FormattedHeader headerText={ translate( 'Tell us about your website' ) } />
+					<FormattedHeader
+						headerText={ translate( 'Tell us about your website' ) }
+						subHeaderText={ translate(
+							"Enter a keyword and we'll start tailoring a site for you."
+						) }
+					/>
 
 					<SiteTopicForm submitForm={ this.handleSubmit } />
 

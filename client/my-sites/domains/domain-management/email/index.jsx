@@ -16,9 +16,10 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { hasGSuite, isGSuiteRestricted, hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
+import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getEligibleDomain } from 'lib/domains/gsuite';
 import GSuitePurchaseCta from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-cta';
 import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
@@ -31,12 +32,7 @@ import {
 	domainManagementList,
 	domainManagementEmailForwarding,
 } from 'my-sites/domains/paths';
-import {
-	getSelectedDomain,
-	hasGoogleApps,
-	hasGoogleAppsSupportedDomain,
-	isGsuiteRestricted,
-} from 'lib/domains';
+import { getSelectedDomain } from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import DocumentHead from 'components/data/document-head';
 
@@ -79,6 +75,8 @@ class Email extends React.Component {
 	}
 
 	content() {
+		const { domains, selectedDomainName } = this.props;
+		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
 		if (
 			! (
 				! this.props.isRequestingSiteDomains &&
@@ -88,17 +86,14 @@ class Email extends React.Component {
 		) {
 			return <Placeholder />;
 		}
+		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
 
-		const domainList = this.props.selectedDomainName
-			? [ getSelectedDomain( this.props ) ]
-			: this.props.domains;
-
-		if ( domainList.some( hasGoogleApps ) ) {
+		if ( domainList.some( hasGSuite ) ) {
 			return this.googleAppsUsersCard();
-		} else if ( hasGoogleAppsSupportedDomain( domainList ) ) {
+		} else if ( hasGSuiteSupportedDomain( domainList ) ) {
 			return this.addGoogleAppsCard();
-		} else if ( isGsuiteRestricted() && this.props.selectedDomainName ) {
-			return this.addEmailForwardingCard();
+		} else if ( emailForwardingDomain && isGSuiteRestricted() && selectedDomainName ) {
+			return this.addEmailForwardingCard( emailForwardingDomain );
 		}
 		return this.emptyContent();
 	}
@@ -107,7 +102,7 @@ class Email extends React.Component {
 		const { selectedSite, selectedDomainName, translate } = this.props;
 		let emptyContentProps;
 
-		if ( isGsuiteRestricted() && ! selectedDomainName ) {
+		if ( isGSuiteRestricted() && ! selectedDomainName ) {
 			emptyContentProps = {
 				title: translate( 'Enable powerful email features.' ),
 				line: translate(
@@ -150,7 +145,8 @@ class Email extends React.Component {
 	}
 
 	addGoogleAppsCard() {
-		const { currencyCode, products, selectedDomainName, selectedSite } = this.props;
+		const { currencyCode, domains, products, selectedDomainName, selectedSite } = this.props;
+		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
 		const price = get( products, [ 'gapps', 'prices', currencyCode ], 0 );
 		const annualPrice = getAnnualPrice( price, currencyCode );
 		const monthlyPrice = getMonthlyPrice( price, currencyCode );
@@ -163,14 +159,13 @@ class Email extends React.Component {
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 				/>
-				{ this.addEmailForwardingCard() }
+				{ emailForwardingDomain && this.addEmailForwardingCard( emailForwardingDomain ) }
 			</Fragment>
 		);
 	}
 
-	addEmailForwardingCard() {
-		const { domains, selectedDomainName, selectedSite, translate } = this.props;
-		const domain = getEligibleDomain( selectedDomainName, domains );
+	addEmailForwardingCard( domain ) {
+		const { selectedSite, translate } = this.props;
 		return (
 			<VerticalNav>
 				<VerticalNavItem path={ domainManagementEmailForwarding( selectedSite.slug, domain ) }>

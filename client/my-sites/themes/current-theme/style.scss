@@ -1,5 +1,5 @@
 $current-theme-height: 56px;
-$current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
+$current-theme-border: 1px solid rgba( var( --color-neutral-100-rgb ), 0.25 );
 
 .current-theme {
 	font-weight: 600;

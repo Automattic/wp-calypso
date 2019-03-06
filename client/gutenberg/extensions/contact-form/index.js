@@ -399,7 +399,7 @@ export const childBlocks = [
 			title: __( 'Radio' ),
 			keywords: [ __( 'Choose' ), __( 'Select' ), __( 'Option' ) ],
 			description: __(
-				'Inpsired by radios, only one radio item can be selected at a time. Add several radio button items.'
+				'Inspired by radios, only one radio item can be selected at a time. Add several radio button items.'
 			),
 			icon: renderMaterialIcon(
 				<Fragment>

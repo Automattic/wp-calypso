@@ -6,7 +6,7 @@ import { Path } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 
 import './editor.scss';
@@ -26,11 +26,15 @@ export const settings = {
 	title: __( 'Business Hours' ),
 	description: __( 'Display opening hours for your business.' ),
 	icon,
-	category: 'widgets',
+	category: 'jetpack',
 	supports: {
 		html: true,
 	},
-
+	keywords: [
+		_x( 'opening hours', 'block search term' ),
+		_x( 'closing time', 'block search term' ),
+		_x( 'schedule', 'block search term' ),
+	],
 	attributes: {
 		days: {
 			type: 'array',
@@ -92,7 +96,7 @@ export const settings = {
 		},
 	},
 
-	edit: props => <BusinessHours { ...props } isEdit />,
+	edit: props => <BusinessHours { ...props } />,
 
-	save: props => <BusinessHours { ...props } />,
+	save: () => null,
 };

@@ -48,7 +48,7 @@
 		top: 0;
 	width: 30px;
 	height: 130px;
-	background: linear-gradient( to right, $white, rgba( $white, 0.92 ), $transparent );
+	background: linear-gradient( to right, var( --color-white ), rgba( var( --color-white-rgb ), 0.92 ), $transparent );
 	text-align: left;
 	z-index: z-index( 'root', '.post-trends__scroll' );
 
@@ -86,7 +86,7 @@
 }
 
 .post-trends__scroll-right {
-	background: linear-gradient( to left, $white, rgba( $white, 0.92 ), $transparent );
+	background: linear-gradient( to left, var( --color-white ), rgba( var( --color-white-rgb ), 0.92 ), $transparent );
 	text-align: right;
 }
 

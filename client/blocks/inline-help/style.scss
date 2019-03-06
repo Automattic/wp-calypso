@@ -15,7 +15,7 @@
 		border-radius: 100%;
 		background: var( --color-primary );
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-		border: 1px solid darken( $blue-wordpress, 5 );
+		border: 1px solid var( --color-primary );
 
 		.gridicon {
 			fill: var( --color-white );
@@ -27,13 +27,19 @@
 
 		&.is-active {
 			background: var( --color-primary );
-			border-color: darken( $blue-medium, 5 );
+			border-color: var( --color-primary-400 );
 		}
 	}
 
 	.button.inline-help__happychat-button.has-unread {
 		background-color: var( --color-accent );
 		border-color: var( --color-accent );
+	}
+
+	@include breakpoint( '<660px' ) {
+		.button.is-borderless.inline-help__button {
+			padding: 1px;
+		}
 	}
 }
 
@@ -81,13 +87,13 @@
 
 	&.is-active {
 		background: var( --color-primary );
-		border-color: darken( $blue-medium, 5 );
+		border-color: var( --color-primary-400 );
 	}
 
 	&.has-notification::before {
 		display: block;
 		background-color: var( --color-accent-300 );
-		border: 2px solid $white;
+		border: 2px solid var( --color-white );
 		content: '';
 		border-radius: 50%;
 		width: 10px;
@@ -126,7 +132,7 @@
 		bottom: 0 !important;
 		left: 0 !important;
 		position: fixed;
-		background: rgba( $gray-light, 0.8 );
+		background: rgba( var( --color-neutral-0-rgb ), 0.8 );
 
 		.popover__arrow {
 			display: none;
@@ -403,7 +409,7 @@
 		&:hover {
 			cursor: pointer;
 			//color: var( --color-primary );
-			background: lighten( $gray, 35% );
+			background: var( --color-neutral-0 );
 		}
 	}
 
@@ -453,7 +459,7 @@
 	height: 16px;
 	margin: 16px 0;
 	border-radius: 16px;
-	background-color: lighten( $gray, 28 );
+	background-color: var( --color-neutral-0 );
 	color: transparent;
 	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 )
 		infinite;
@@ -496,5 +502,17 @@
 	100% {
 		opacity: 0.3;
 		width: 65%;
+	}
+}
+
+// Upwork AB Test Link
+.inline-help__upwork {
+	border-bottom: 1px solid var( --color-neutral-100 );
+	padding: 12px 16px;
+	text-align: left;
+
+	p {
+		font-size: 12px;
+		margin-bottom: 0;
 	}
 }

@@ -1,0 +1,28 @@
+.domain-skip-suggestion {
+	display: flex;
+	align-items: center;
+
+	& .button.domain-suggestion__action.is-borderless {
+	    flex: 1 0 auto;
+	}
+}
+
+.domain-skip-suggestion__domain-description {
+	padding-right: 1em;
+
+	@include breakpoint( '>660px' ) {
+		width: 75%;
+	}
+
+	> p {
+		color: var( --color-neutral-700 );
+		font-size: 12px;
+		font-weight: 600;
+		margin-bottom: 0;
+		opacity: 0.7;
+
+		@include breakpoint( '>960px' ) {
+			margin-bottom: 8px;
+		}
+	}
+}

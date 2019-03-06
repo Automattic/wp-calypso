@@ -1,7 +1,7 @@
 .location-search__prediction {
 	cursor: pointer;
 	&:hover {
-		color: lighten( $blue-wordpress, 5% );
+		color: var( --color-primary-light );
 	}
 }
 

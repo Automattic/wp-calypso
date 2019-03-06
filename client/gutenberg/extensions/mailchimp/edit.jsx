@@ -144,10 +144,13 @@ class MailchimpSubscribeEdit extends Component {
 						'You need to connect your Mailchimp account and choose a list in order to start collecting Email subscribers.'
 					) }
 					<br />
-					<ExternalLink href={ connectURL }>{ __( 'Set up Mailchimp form' ) }</ExternalLink>
+					<br />
+					<Button isDefault isLarge href={ connectURL } target="_blank">
+						{ __( 'Set up Mailchimp form' ) }
+					</Button>
 					<br />
 					<br />
-					<Button isDefault onClick={ this.apiCall }>
+					<Button isLink onClick={ this.apiCall }>
 						{ __( 'Re-check Connection' ) }
 					</Button>
 				</div>
@@ -191,6 +194,7 @@ class MailchimpSubscribeEdit extends Component {
 			<div className={ blockClasses }>
 				<TextControl
 					aria-label={ emailPlaceholder }
+					className="wp-block-jetpack-mailchimp_text-input"
 					disabled
 					onChange={ () => false }
 					placeholder={ emailPlaceholder }

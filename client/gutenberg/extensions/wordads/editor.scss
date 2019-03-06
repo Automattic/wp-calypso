@@ -1,11 +1,9 @@
 .wp-block-jetpack-wordads {
 	background: var( --color-white );
+}
 
-	&.aligncenter {
-		.jetpack-wordads__ad {
-			margin: 0 auto;
-		}
-	}
+[data-type='jetpack/wordads'][data-align='center'] .jetpack-wordads__ad {
+	margin: 0 auto;
 }
 
 .jetpack-wordads__header,
