@@ -8,6 +8,7 @@ import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -18,7 +19,6 @@ import { getSite, getSiteTitle, getSiteDomain } from 'state/sites/selectors';
 import PurchaseSiteHeader from '../purchases/purchases-site/header';
 import { purchaseType as getPurchaseType, getName } from 'lib/purchases';
 import { paymentMethodName } from 'lib/cart-values';
-import formatCurrency from '@automattic/format-currency';
 
 export function PendingListItem( {
 	translate,

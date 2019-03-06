@@ -11,6 +11,7 @@ import { endsWith, get, isEmpty, noop } from 'lodash';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { stringify } from 'qs';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -35,7 +36,6 @@ import {
 	isDomainMappingFree,
 	isNextDomainFree,
 } from 'lib/cart-values/cart-items';
-import formatCurrency from '@automattic/format-currency';
 import { isPlan } from 'lib/products-values';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 

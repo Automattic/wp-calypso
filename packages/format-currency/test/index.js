@@ -1,7 +1,7 @@
 /** @format */
 
 /**
- * Internal dependencies
+ * External dependencies
  */
 import formatCurrency, {
 	getCurrencyDefaults,

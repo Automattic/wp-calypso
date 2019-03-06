@@ -7,12 +7,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { isNumber } from 'lodash';
+import { formatCurrency, CURRENCIES } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
  */
 import { localize } from 'i18n-calypso';
-import { formatCurrency, CURRENCIES } from '@automattic/format-currency';
 import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';

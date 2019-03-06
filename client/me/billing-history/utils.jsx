@@ -4,11 +4,11 @@
  */
 import { find, map, partition, reduce } from 'lodash';
 import React, { Fragment } from 'react';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import formatCurrency from '@automattic/format-currency';
 import config from 'config';
 
 export const groupDomainProducts = ( originalItems, translate ) => {
