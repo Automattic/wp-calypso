@@ -151,8 +151,8 @@ references:
     name: Move report and screenshots
     when: always
     command: |
-      copy -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
-      copy -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
+      cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
+      cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
 
   defaults: &defaults
     working_directory: ~/wp-calypso
