@@ -4,6 +4,10 @@ $break-small: 600px;
 	margin-bottom: 1.5em;
 	position: relative;
 
+	[tabindex="-1"]:focus {
+		outline: 0;
+	}
+
 	.wp-block-jetpack-slideshow_container {
 		width: 100%;
 		overflow: hidden;
@@ -76,7 +80,7 @@ $break-small: 600px;
 			outline-offset: -4px;
 		}
 	}
-	
+
 	.wp-block-jetpack-slideshow_button-prev,
 	.wp-block-jetpack-slideshow_button-next {
 		display: none;
@@ -132,7 +136,7 @@ $break-small: 600px;
 			color: inherit;
 		}
 	}
-	
+
 	&[data-autoplay='true'] .wp-block-jetpack-slideshow_caption.gallery-caption {
 		max-height: calc( 100% - 68px );
 	}
