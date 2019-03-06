@@ -872,13 +872,15 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		}
 	}
 
-	.plan-price.is-original::before {
-		border-color: var( --color-success );
-	}
+	:not( .is-no-tabs & ) {
+		.plan-price.is-original::before {
+			border-color: var( --color-success );
+		}
 
-	.plan-price,
-	.plan-price.is-original {
-		font-size: 1em;
+		.plan-price,
+		.plan-price.is-original {
+			font-size: 1em;
+		}
 	}
 
 	.plan-features__header-price-group {
