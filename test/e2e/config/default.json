@@ -1,0 +1,98 @@
+{
+	"calypsoBaseURL": "https://wordpress.com",
+	"explicitWaitMS": 20000,
+	"emailWaitMS": 60000,
+	"mochaTimeoutMS": 160000,
+	"mochaDevDocsTimeoutMS": 1000000,
+	"startBrowserTimeoutMS": 60000,
+	"startAppTimeoutMS": 240000,
+	"afterHookTimeoutMS": 60000,
+	"browser": "chrome",
+	"proxy": "direct",
+	"saveAllScreenshots": false,
+	"slackChannelForScreenshots": "#e2eflowtesting-notif",
+	"neverSaveScreenshots": false,
+	"checkForConsoleErrors": false,
+	"reportWarningsToSlack": false,
+	"closeBrowserOnComplete": true,
+	"highlightElements": false,
+	"sauceConfigurations": {
+		"osx-chrome": {
+			"browserName": "chrome",
+			"platform": "OS X 10.13",
+			"screenResolution": "2048x1536",
+			"version": "64.0"
+		},
+	 	"osx-firefox": {
+			"browserName": "firefox",
+			"platform": "OS X 10.11",
+			"screenResolution": "2048x1536",
+			"nativeEvents": true,
+			"version": "46.0"
+	 	},
+	 	"osx-safari": {
+			"browserName": "safari",
+			"platform": "OS X 10.11",
+			"screenResolution": "2048x1536",
+			"nativeEvents": true,
+			"version": "10"
+		},
+		"win-firefox": {
+			"browserName": "firefox",
+			"platform": "Windows 10",
+			"nativeEvents": true,
+			"version": "46.0"
+		},
+		"linux-firefox": {
+			"browserName": "firefox",
+			"platform": "Linux",
+			"nativeEvents": true,
+			"version": "45.0"
+		},
+		"win-ie11": {
+			"browserName": "Internet Explorer",
+			"platform": "Windows 10",
+			"screenResolution": "2560x1600",
+			"version": "11.285",
+		  	"iedriverVersion": "3.141.0",
+		  	"seleniumVersion": "3.141.0"
+		}
+	},
+	"knownABTestKeys": [
+		"businessPlanDescriptionAT",
+		"skipThemesSelectionModal",
+		"springSale30PercentOff",
+		"jetpackSignupGoogleTop",
+		"onlyJetpackMonthly",
+		"cartNudgeUpdateToPremium",
+		"signupAtomicStoreVsPressable",
+		"improvedOnboarding",
+		"privateByDefault",
+		"removeUsername",
+		"removeDomainsStepFromOnboarding",
+		"showConciergeSessionUpsell",
+		"showConciergeSessionUpsellNonGSuite",
+		"skipBusinessInformation",
+		"builderReferralThemesBanner",
+		"domainSearchButtonStyles",
+		"twoYearPlanByDefault",
+		"pluginFeaturedTitle"
+	],
+	"overrideABTests": [
+		[ "businessPlanDescriptionAT_20170605", "original" ],
+		[ "skipThemesSelectionModal_20170904", "show" ],
+		[ "springSale30PercentOff_20180413", "control" ],
+		[ "jetpackSignupGoogleTop_20180427", "original" ],
+		[ "onlyJetpackMonthly_20190212", "original" ],
+		[ "cartNudgeUpdateToPremium_20180903", "control" ],
+		[ "signupAtomicStoreVsPressable_20171101", "atomic" ],
+		[ "privateByDefault_20181113", "public" ],
+		[ "removeUsername_20181213", "showUsername" ],
+		[ "removeDomainsStepFromOnboarding_20181221", "keep" ],
+		[ "showConciergeSessionUpsell_20181214", "skip" ],
+		[ "showConciergeSessionUpsellNonGSuite_20190104", "skip" ],
+		[ "improvedOnboarding_20190214", "main" ],
+		[ "skipBusinessInformation_20190130", "hide" ],
+		[ "twoYearPlanByDefault_20190207", "originalFlavor" ]
+	]
+}

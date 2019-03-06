@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# This is a pre-commit hook to validate the CircleCI config file prior to committing changes
+#  -- To enable:
+#    - 1) Download the CircleCI CLI - https://circleci.com/docs/2.0/local-jobs/#installing-the-cli-locally
+# Inspired by (i.e stolen from) https://circleci.com/blog/circleci-hacks-validate-circleci-config-on-every-commit-with-a-git-hook/
+
+# The following line is needed by the CircleCI Local Build Tool (due to Docker interactivity)
+exec < /dev/tty
+
+# If validation fails, tell Git to stop and provide error message. Otherwise, continue.
+if git diff-index --name-only HEAD | grep .circleci/config.yml; then
+		echo "Validating CircleCI config file..."
+	if ! eMSG=$(circleci config validate -c .circleci/config.yml); then
+		echo "CircleCI Configuration Failed Validation."
+		echo $eMSG
+		exit 1
+	fi
+fi
