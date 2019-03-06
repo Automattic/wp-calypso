@@ -11,7 +11,7 @@ const { compact, constant, get, times } = require( 'lodash' );
 const DIRECTORY_DEPTH = 1; // Relative path of the extensions to preset directory
 
 function sharedScripts( folderName, inputDir ) {
-	const sharedPath = path.join( inputDir, folderName );
+	const sharedPath = path.join( inputDir, '..', folderName );
 	return fs
 		.readdirSync( sharedPath )
 		.map( file => path.join( sharedPath, file ) )
