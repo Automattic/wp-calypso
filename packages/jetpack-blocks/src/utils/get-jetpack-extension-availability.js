@@ -6,7 +6,7 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import extensionSlugsJson from '../index.json';
+import extensionSlugsJson from '../preset/index.json';
 import getJetpackData from './get-jetpack-data';
 
 /**
@@ -24,7 +24,11 @@ export default function getJetpackExtensionAvailability( name ) {
 	const data = getJetpackData();
 	const defaultAvailability = includes( extensionSlugsJson.beta, name );
 	const available = get( data, [ 'available_blocks', name, 'available' ], defaultAvailability );
-	const unavailableReason = get( data, [ 'available_blocks', name, 'unavailable_reason' ], 'unknown' );
+	const unavailableReason = get(
+		data,
+		[ 'available_blocks', name, 'unavailable_reason' ],
+		'unknown'
+	);
 
 	return {
 		available,

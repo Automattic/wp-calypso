@@ -3,7 +3,7 @@
  */
 import Layout from './layout';
 import { defaultColumnsNumber } from './edit';
-import { getActiveStyleName } from 'utils';
+import { getActiveStyleName } from '../../utils';
 import { LAYOUT_STYLES } from './constants';
 
 export default function TiledGallerySave( { attributes } ) {

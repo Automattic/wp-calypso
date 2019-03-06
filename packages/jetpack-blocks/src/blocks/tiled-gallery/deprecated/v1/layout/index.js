@@ -13,7 +13,7 @@ import { sprintf } from '@wordpress/i18n';
 import Image from '../image';
 import Mosaic from './mosaic';
 import Square from './square';
-import { __ } from 'utils/i18n';
+import { __ } from '../../../../../utils/i18n';
 import { PHOTON_MAX_RESIZE } from '../constants';
 
 export default class Layout extends Component {

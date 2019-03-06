@@ -17,7 +17,7 @@ import { isEqual, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { __ } from 'utils/i18n';
+import { __ } from './i18n';
 
 const { getComputedStyle } = window;
 

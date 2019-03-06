@@ -6,7 +6,7 @@ import { Dropdown, MenuItem, NavigableMenu, Path, SVG, Toolbar } from '@wordpres
 /**
  * Internal dependencies
  */
-import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _x } from '../../utils/i18n';
 
 const availableFilters = [
 	{
