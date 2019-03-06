@@ -123,7 +123,7 @@ function getQueryObject( props ) {
 		quantity: SUGGESTION_QUANTITY,
 		vendor: props.vendor,
 		includeSubdomain: props.includeWordPressDotCom || props.includeDotBlogSubdomain,
-		verticalId: props.verticalId,
+		vertical: props.verticalId || props.verticalName,
 	};
 }
 
@@ -139,6 +139,7 @@ class RegisterDomainStep extends React.Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		isSignupStep: PropTypes.bool,
 		verticalId: PropTypes.string,
+		verticalName: PropTypes.string,
 		includeWordPressDotCom: PropTypes.bool,
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
@@ -747,7 +748,7 @@ class RegisterDomainStep extends React.Component {
 			include_dotblogsubdomain: false,
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: this.props.vendor,
-			vertical: this.props.verticalId,
+			vertical: this.props.verticalId || this.props.verticalName,
 			recommendation_context: get( this.props, 'selectedSite.name', '' )
 				.replace( ' ', ',' )
 				.toLocaleLowerCase(),
@@ -845,7 +846,7 @@ class RegisterDomainStep extends React.Component {
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
-			vertical: this.props.verticalId,
+			vertical: this.props.verticalId || this.props.verticalName,
 			...this.getActiveFiltersForAPI(),
 		};
 
