@@ -12,9 +12,9 @@ import { compose, withInstanceId } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import { __ } from 'utils/i18n';
-import renderMaterialIcon from 'utils/render-material-icon';
-import SubmitButton from 'utils/submit-button';
+import { __ } from '../../../utils/i18n';
+import renderMaterialIcon from '../../../utils/render-material-icon';
+import SubmitButton from '../../../utils/submit-button';
 import HelpMessage from 'editor-shared/help-message';
 const ALLOWED_BLOCKS = [
 	'jetpack/markdown',

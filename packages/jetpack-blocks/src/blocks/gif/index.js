@@ -7,7 +7,7 @@ import { Path, SVG } from '@wordpress/components';
  * Internal dependencies
  */
 import edit from './edit';
-import { __ } from 'utils/i18n';
+import { __ } from '../../utils/i18n';
 
 // Ordering is important! Editor overrides style!
 import './style.scss';

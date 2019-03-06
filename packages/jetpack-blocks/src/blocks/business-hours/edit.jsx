@@ -14,7 +14,7 @@ import { __experimentalGetSettings } from '@wordpress/date';
 import DayEdit from './components/day-edit';
 import DayPreview from './components/day-preview';
 import { icon } from '.';
-import { __ } from 'utils/i18n';
+import { __ } from '../../utils/i18n';
 
 const defaultLocalization = {
 	days: {

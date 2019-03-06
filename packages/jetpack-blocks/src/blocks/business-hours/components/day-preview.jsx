@@ -9,7 +9,7 @@ import { sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { _x } from 'utils/i18n';
+import { _x } from '../../../utils/i18n';
 
 class DayPreview extends Component {
 	formatTime( time ) {

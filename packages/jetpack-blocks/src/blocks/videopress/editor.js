@@ -12,7 +12,7 @@ import { every } from 'lodash';
  */
 import withVideoPressEdit from './edit';
 import withVideoPressSave from './save';
-import getJetpackExtensionAvailability from 'utils/get-jetpack-extension-availability';
+import getJetpackExtensionAvailability from '../../utils/get-jetpack-extension-availability';
 
 const addVideoPressSupport = ( settings, name ) => {
 	if ( 'core/video' !== name ) {

@@ -8,7 +8,7 @@ import { BaseControl, TextControl } from '@wordpress/components';
  * Internal dependencies
  */
 import Lookup from '../lookup';
-import { __ } from 'utils/i18n';
+import { __ } from '../../../utils/i18n';
 
 const placeholderText = __( 'Add a marker…' );
 

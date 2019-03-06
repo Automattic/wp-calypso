@@ -8,7 +8,7 @@ import { Button, Dashicon, Popover } from '@wordpress/components';
  * Internal dependencies
  */
 import LocationSearch from '../location-search';
-import { __ } from 'utils/i18n';
+import { __ } from '../../../utils/i18n';
 import './style.scss';
 
 export class AddPoint extends Component {

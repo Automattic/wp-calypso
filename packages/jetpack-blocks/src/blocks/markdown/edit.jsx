@@ -10,7 +10,7 @@ import { withDispatch, withSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import MarkdownRenderer from './renderer';
-import { __ } from 'utils/i18n';
+import { __ } from '../../utils/i18n';
 
 /**
  * Module variables

@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { __ } from 'utils/i18n';
+import { __ } from '../../utils/i18n';
 
 export const settings = {
 	name: 'map',

@@ -6,7 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import { __ } from 'utils/i18n';
+import { __ } from '../../utils/i18n';
 
 export default ( { attributes: { url, view }, className } ) => (
 	<div className={ className }>

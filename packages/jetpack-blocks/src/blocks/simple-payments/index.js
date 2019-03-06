@@ -10,7 +10,7 @@ import { Fragment } from '@wordpress/element';
 import edit from './edit';
 import save from './save';
 import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
-import { __, _x } from 'utils/i18n';
+import { __, _x } from '../../utils/i18n';
 
 /**
  * Styles

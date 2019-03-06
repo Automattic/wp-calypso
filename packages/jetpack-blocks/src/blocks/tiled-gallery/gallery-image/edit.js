@@ -13,7 +13,7 @@ import { withSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { __ } from 'utils/i18n';
+import { __ } from '../../../utils/i18n';
 
 class GalleryImageEdit extends Component {
 	img = createRef();

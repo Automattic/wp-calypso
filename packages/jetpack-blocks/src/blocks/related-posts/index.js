@@ -8,7 +8,7 @@ import { G, Path, SVG } from '@wordpress/components';
  */
 import './style.scss';
 import edit from './edit';
-import { __, _x } from 'utils/i18n';
+import { __, _x } from '../../utils/i18n';
 
 export const name = 'related-posts';
 

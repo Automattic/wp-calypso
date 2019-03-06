@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { __ } from 'utils/i18n';
+import { __ } from '../../utils/i18n';
 import { assign, debounce, get } from 'lodash';
 import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
 import { Children, Component, createRef, Fragment } from '@wordpress/element';

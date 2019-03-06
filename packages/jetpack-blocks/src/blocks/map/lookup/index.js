@@ -12,7 +12,7 @@ import { withInstanceId, compose } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import { __, _n } from 'utils/i18n';
+import { __, _n } from '../../../utils/i18n';
 
 function filterOptions( options = [], maxResults = 10 ) {
 	const filtered = [];

@@ -8,7 +8,7 @@ import { Path, SVG } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __, _x } from 'utils/i18n';
+import { __, _x } from '../../utils/i18n';
 import edit from './edit';
 import save from './save';
 import {

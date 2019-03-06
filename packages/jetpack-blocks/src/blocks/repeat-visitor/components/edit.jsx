@@ -12,7 +12,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { sprintf } from '@wordpress/i18n';
-import { __, _n } from 'utils/i18n';
+import { __, _n } from '../../../utils/i18n';
 import { CRITERIA_AFTER, CRITERIA_BEFORE } from '../constants';
 import { icon } from '../index';
 

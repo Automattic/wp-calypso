@@ -22,7 +22,7 @@ import './editor.scss';
 import './store';
 import JetpackPluginSidebar from 'editor-shared/jetpack-plugin-sidebar';
 import PublicizePanel from './panel';
-import { __ } from 'utils/i18n';
+import { __ } from '../../utils/i18n';
 
 export const name = 'publicize';
 

@@ -11,7 +11,7 @@ import { compose, withInstanceId } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import { __ } from 'utils/i18n';
+import { __ } from '../../utils/i18n';
 
 export const MAX_POSTS_TO_SHOW = 6;
 

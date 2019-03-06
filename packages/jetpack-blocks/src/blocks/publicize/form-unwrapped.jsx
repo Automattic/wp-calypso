@@ -19,7 +19,7 @@ import { uniqueId } from 'lodash';
  */
 import PublicizeConnection from './connection';
 import PublicizeSettingsButton from './settings-button';
-import { __, _n } from 'utils/i18n';
+import { __, _n } from '../../utils/i18n';
 
 export const MAXIMUM_MESSAGE_LENGTH = 256;
 
