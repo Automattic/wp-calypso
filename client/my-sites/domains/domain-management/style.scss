@@ -1,6 +1,6 @@
 .domain-main-placeholder {
 	.domain-management-header__children {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 
 		@include breakpoint( '>480px' ) {
 			max-width: 60%;
@@ -11,7 +11,7 @@
 
 .domain-main-placeholder__card {
 	p {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 		margin-bottom: 0.5em;
 
 		&:first-child {
@@ -143,12 +143,12 @@
 	}
 
 	.domain-management-list-item__title {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 		width: 60%;
 	}
 
 	.domain-management-list-item__type {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 		display: inline-block;
 		width: 40%;
 	}
@@ -426,7 +426,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 	.domain-connect__is-placeholder {
 		span {
-			@include placeholder( 23% );
+			@include placeholder( 50 );
 
 			display: block;
 			margin: 0.8em 0;

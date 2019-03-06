@@ -5,7 +5,7 @@
 	color: var( --color-neutral-700 );
 
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 		width: 60px;
 		margin: 10px 0;
 		height: 21px;

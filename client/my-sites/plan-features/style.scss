@@ -330,7 +330,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: normal;
 
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 		width: 140px;
 		height: 12px;
 		margin-bottom: 15px;
@@ -419,7 +419,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__price {
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 			width: 45px;
 			height: 25px;
 			margin-top: 9px;
@@ -428,7 +428,7 @@ $plan-features-sidebar-width: 272px;
 }
 .plan-features__price-jetpack {
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 			width: 140px;
 			height: 32px;
 			margin-top: 5px;

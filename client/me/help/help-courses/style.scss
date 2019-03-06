@@ -1,6 +1,6 @@
 .help-courses__course-list {
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 		height: 300px;
 	}
 }
@@ -9,7 +9,7 @@
 	margin-top: 16px;
 
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 	}
 
 	.help__help-teaser-button-icon {

@@ -104,7 +104,7 @@
 
 	.cart-item__loading-placeholder {
 		.cart__remove-item {
-			@include placeholder( 23% );
+			@include placeholder( 50 );
 			border-radius: 0;
 			width: 25px;
 		}
@@ -431,7 +431,7 @@ div.popover-cart__popover {
 
 .cart-item__loading-placeholder {
 	span {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 		margin-bottom: 1px;
 	}
 

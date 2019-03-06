@@ -53,7 +53,7 @@
 			width: 50%;
 			height: $editor-revisions-list-header-font-size;
 			align-self: center;
-			@include placeholder( 23% );
+			@include placeholder( 50 );
 		}
 	}
 }
@@ -212,7 +212,7 @@
 		content: '';
 		display: block;
 		box-sizing: border-box;
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 	}
 }
 

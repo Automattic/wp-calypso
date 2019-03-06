@@ -28,7 +28,7 @@
 	.purchase-item__title,
 	.purchase-item__purchase-date,
 	.purchase-item__purchase-type {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 	}
 
 	.purchase-item__plan-icon {

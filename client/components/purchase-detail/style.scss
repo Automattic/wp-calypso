@@ -24,7 +24,7 @@
 		.purchase-detail__button,
 		.purchase-detail__description,
 		.purchase-detail__title {
-			@include placeholder( 23% );
+			@include placeholder( 50 );
 
 			display: block;
 		}

@@ -13,7 +13,7 @@
 	margin: 0 auto;
 
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 	}
 }
 

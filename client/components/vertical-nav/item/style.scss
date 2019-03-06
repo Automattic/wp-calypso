@@ -12,7 +12,7 @@
 
 .vertical-nav-item.is-placeholder {
 	span {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 
 		display: inline-block;
 

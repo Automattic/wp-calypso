@@ -75,7 +75,7 @@
 	}
 
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 
 		margin-left: auto;
 		margin-right: auto;
@@ -164,7 +164,7 @@
 
 	.checkout-thank-you__header-heading,
 	.checkout-thank-you__header-text {
-		@include placeholder( 23% );
+		@include placeholder( 50 );
 
 		display: block;
 

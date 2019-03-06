@@ -35,7 +35,7 @@
 		.manage-purchase__settings-link,
 		.manage-purchase__detail-label,
 		.manage-purchase__detail {
-			@include placeholder( 23% );
+			@include placeholder( 50 );
 
 			display: block;
 		}
