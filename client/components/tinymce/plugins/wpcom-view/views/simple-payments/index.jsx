@@ -17,7 +17,7 @@ import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcod
 import getMediaItem from 'state/selectors/get-media-item';
 import getSimplePayments from 'state/selectors/get-simple-payments';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryMedia from 'components/data/query-media';

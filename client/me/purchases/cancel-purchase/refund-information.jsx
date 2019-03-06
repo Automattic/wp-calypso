@@ -25,7 +25,7 @@ import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'lib/url/support';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
-import { getCurrencyDefaults } from 'lib/format-currency';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,

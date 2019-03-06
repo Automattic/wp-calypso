@@ -47,7 +47,7 @@ jest.mock( 'config', () => {
 	fn.isEnabled = jest.fn( () => null );
 	return fn;
 } );
-jest.mock( 'lib/format-currency', () => ( {
+jest.mock( '@automattic/format-currency', () => ( {
 	getCurrencyObject: price => ( { integer: price } ),
 } ) );
 jest.mock( 'lib/mixins/analytics', () => ( {} ) );

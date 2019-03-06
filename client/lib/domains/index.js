@@ -13,7 +13,7 @@ import wpcom from 'lib/wp';
 import { type as domainTypes, domainAvailability } from './constants';
 import { parseDomainAgainstTldList } from './utils';
 import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 
 function ValidationError( code ) {
 	this.code = code;

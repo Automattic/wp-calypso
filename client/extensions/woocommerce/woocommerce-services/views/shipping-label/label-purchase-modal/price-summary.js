@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
  */
 import Card from 'components/card';
 import Tooltip from 'components/tooltip';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import { getTotalPriceBreakdown } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 class PriceSummary extends Component {

@@ -16,7 +16,7 @@ import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import SectionHeader from 'components/section-header';
 import CompactCard from 'components/card/compact';
 

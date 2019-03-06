@@ -10,7 +10,7 @@ import { plansLink } from 'lib/plans';
 /**
  * Internal Dependencies
  **/
-import { getCurrencyObject } from 'lib/format-currency';
+import { getCurrencyObject } from '@automattic/format-currency';
 
 class PlanIntervalDiscount extends Component {
 	static propTypes = {

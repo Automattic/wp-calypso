@@ -3,7 +3,10 @@
 /**
  * Internal dependencies
  */
-import formatCurrency, { getCurrencyDefaults, getCurrencyObject } from 'lib/format-currency';
+import formatCurrency, {
+	getCurrencyDefaults,
+	getCurrencyObject,
+} from '@automattic/format-currency';
 
 describe( 'formatCurrency', () => {
 	test( 'formats a number to localized currency', () => {

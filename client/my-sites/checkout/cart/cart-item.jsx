@@ -30,7 +30,7 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { removeItem } from 'lib/upgrades/actions';
 import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
-import { getCurrencyObject } from 'lib/format-currency';
+import { getCurrencyObject } from '@automattic/format-currency';
 
 const getIncludedDomain = cartItems.getIncludedDomain;
 

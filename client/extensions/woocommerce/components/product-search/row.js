@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Count from 'components/count';
 import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';

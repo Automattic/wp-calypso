@@ -35,7 +35,7 @@ import {
 	isDomainMappingFree,
 	isNextDomainFree,
 } from 'lib/cart-values/cart-items';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import { isPlan } from 'lib/products-values';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 

@@ -29,7 +29,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import { isRequestingPlans } from 'state/plans/selectors';
-import { getCurrencyObject } from 'lib/format-currency';
+import { getCurrencyObject } from '@automattic/format-currency';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
 import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';

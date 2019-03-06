@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  **/
 import { localize } from 'i18n-calypso';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import InfoPopover from 'components/info-popover';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PlanPrice from 'my-sites/plan-price';

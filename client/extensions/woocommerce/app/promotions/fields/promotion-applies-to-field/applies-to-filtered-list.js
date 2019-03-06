@@ -12,7 +12,7 @@ import warn from 'lib/warn';
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';

@@ -22,7 +22,7 @@ import {
 	isLoaded,
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 
 const RefundDialog = props => {
 	const {

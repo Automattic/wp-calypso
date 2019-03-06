@@ -19,7 +19,7 @@ import {
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';

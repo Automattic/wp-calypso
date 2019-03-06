@@ -5,7 +5,7 @@ Given a currency code, this library will take in a number and display it as mone
 Usage
 ==========
 ```javascript
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 
 const USD = formatCurrency( 9800900.32, 'USD' ); // '$9,800,900.32'
 const EUR = formatCurrency( 9800900.32, 'EUR' ); // '€9.800.900,32'
@@ -15,7 +15,7 @@ const JPY = formatCurrency( 9800900.32, 'JPY' ); // '¥9,800,900'
 Or
 
 ```javascript
-import { getCurrencyObject } from 'lib/format-currency';
+import { getCurrencyObject } from '@automattic/format-currency';
 const USD = getCurrencyObject( 9800900.32, 'USD' ); // { symbol: '$', integer: '9,800,900', fraction: '.32', sign: '' }
 
 ```

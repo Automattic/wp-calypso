@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import {
 	confirmPrintLabel,
 	purchaseLabel,

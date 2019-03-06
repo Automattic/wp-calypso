@@ -14,7 +14,7 @@ import { EVENT_TYPES } from 'woocommerce/state/sites/orders/activity-log/selecto
 import LabelItem from 'woocommerce/woocommerce-services/views/shipping-label/label-item';
 import LabelItemInProgress from 'woocommerce/woocommerce-services/views/shipping-label/label-item-in-progress';
 import { decodeEntities, stripHTML } from 'lib/formatting';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 
 class OrderEvent extends Component {
 	static propTypes = {

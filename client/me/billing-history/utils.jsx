@@ -8,7 +8,7 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import config from 'config';
 
 export const groupDomainProducts = ( originalItems, translate ) => {

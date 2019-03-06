@@ -14,7 +14,7 @@ import React, { Component } from 'react';
  */
 import EmptyContent from 'components/empty-content';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import {
 	areOrdersLoading,
 	areOrdersLoaded,

@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import FoldableCard from 'components/foldable-card';
 import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';

@@ -15,7 +15,7 @@ import FieldError from 'woocommerce/woocommerce-services/components/field-error'
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Notice from 'components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 
 const renderRateNotice = translate => {
 	return (

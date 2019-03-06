@@ -40,7 +40,7 @@ import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getCurrencyDefaults } from 'lib/format-currency';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 class CancelPurchase extends React.Component {
 	static propTypes = {

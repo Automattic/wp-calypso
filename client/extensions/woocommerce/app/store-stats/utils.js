@@ -11,7 +11,7 @@ import qs from 'qs';
  * Internal dependencies
  */
 import { UNITS } from './constants';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * @typedef {Object} Delta

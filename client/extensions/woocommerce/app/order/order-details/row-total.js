@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import PriceInput from 'woocommerce/components/price-input';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';

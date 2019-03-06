@@ -13,7 +13,7 @@ import { every, find, findIndex, get, isNaN, noop } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';

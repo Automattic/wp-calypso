@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrderLineItemTax } from 'woocommerce/lib/order-values';
 import { getOrderItemCost } from 'woocommerce/lib/order-values/totals';

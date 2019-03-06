@@ -12,8 +12,7 @@ import { isNumber } from 'lodash';
  * Internal Dependencies
  */
 import { localize } from 'i18n-calypso';
-import formatCurrency from 'lib/format-currency';
-import { CURRENCIES } from 'lib/format-currency/currencies';
+import { formatCurrency, CURRENCIES } from '@automattic/format-currency';
 import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';

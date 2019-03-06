@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  **/
-import { getCurrencyObject } from 'lib/format-currency';
+import { getCurrencyObject } from '@automattic/format-currency';
 import config from 'config';
 
 export class PlanPrice extends Component {
@@ -53,12 +53,11 @@ export class PlanPrice extends Component {
 				<sup className="plan-price__fraction">
 					{ rawPrice - price.integer > 0 && price.fraction }
 				</sup>
-				{ config.isEnabled( 'show-tax' ) &&
-					taxText && (
-						<sup className="plan-price__tax-amount">
-							{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
-						</sup>
-					) }
+				{ config.isEnabled( 'show-tax' ) && taxText && (
+					<sup className="plan-price__tax-amount">
+						{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
+					</sup>
+				) }
 			</h4>
 		);
 	}

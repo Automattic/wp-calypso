@@ -18,7 +18,7 @@ import { omit } from 'lodash';
 import Button from 'components/button';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormTextInput from 'components/forms/form-text-input';
-import { getCurrencyObject } from 'lib/format-currency';
+import { getCurrencyObject } from '@automattic/format-currency';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';

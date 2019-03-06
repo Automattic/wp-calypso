@@ -15,7 +15,7 @@ import { find, get, isEmpty, mapValues, some } from 'lodash';
  */
 import ShippingRates from './list';
 import StepContainer from '../step-container';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import {
 	toggleStep,
@@ -134,9 +134,7 @@ const showCheckoutShippingInfo = props => {
 
 		return (
 			<div className="rates-step__shipping-info">
-				<Notice showDismiss={ false }>
-					{ shippingInfo }
-				</Notice>
+				<Notice showDismiss={ false }>{ shippingInfo }</Notice>
 			</div>
 		);
 	}

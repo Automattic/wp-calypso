@@ -41,7 +41,7 @@ import { refreshSitePlans } from 'state/sites/plans/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
-import { getCurrencyDefaults } from 'lib/format-currency';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
