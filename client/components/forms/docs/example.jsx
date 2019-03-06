@@ -7,6 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { entries } from 'lodash';
+import { CURRENCIES } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -40,7 +41,6 @@ import FormToggle from 'components/forms/form-toggle';
 import getCountries from 'state/selectors/get-countries';
 import PhoneInput from 'components/phone-input';
 import QuerySmsCountries from 'components/data/query-countries/sms';
-import { CURRENCIES } from '@automattic/format-currency';
 
 const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
 const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {

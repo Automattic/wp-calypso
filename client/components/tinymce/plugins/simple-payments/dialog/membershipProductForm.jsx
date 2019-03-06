@@ -9,6 +9,7 @@ import { reduxForm, Fields, getFormValues, isValid, isDirty } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -18,7 +19,6 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
 import FormSelect from 'components/forms/form-select';
-import { getCurrencyDefaults } from '@automattic/format-currency';
 import QueryMembershipsConnectedAccounts from 'components/data/query-memberships-connected-accounts';
 import Button from 'components/button';
 import { authorizeStripeAccount } from 'state/memberships/connected-accounts/actions';

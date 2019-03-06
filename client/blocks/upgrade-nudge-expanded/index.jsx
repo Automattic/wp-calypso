@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -20,7 +20,6 @@ import QueryPlans from 'components/data/query-plans';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import formatCurrency from '@automattic/format-currency';
 import { preventWidows } from 'lib/formatting';
 import { getFeatureTitle, getPlan } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';

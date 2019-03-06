@@ -8,11 +8,11 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
  **/
-import { getCurrencyObject } from '@automattic/format-currency';
 import config from 'config';
 
 export class PlanPrice extends Component {
