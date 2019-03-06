@@ -82,9 +82,11 @@ export class PlanFeatures extends Component {
 		let bottomButtons = null;
 		let tableBody = null;
 
-		if ( ! isInSignup ) {
+		if ( plansWithScroll || ! isInSignup ) {
 			planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
+		}
 
+		if ( ! isInSignup ) {
 			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
 		}
 
