@@ -3,7 +3,7 @@
 		right: 0;
 		bottom: 0;
 	padding: 6px 8px 8px;
-	background-color: rgba( $white, 0.92 );
+	background-color: rgba( var( --color-white-rgb ), 0.92 );
 	text-transform: uppercase;
 	font-size: 11px;
 	line-height: 1;

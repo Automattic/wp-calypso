@@ -18,7 +18,7 @@
 			left: 8px;
 		padding: 8px;
 		margin-right: 2px;
-		background-color: rgba( $white, 0.92 );
+		background-color: rgba( var( --color-white-rgb ), 0.92 );
 		text-transform: uppercase;
 		font-size: 11px;
 		line-height: 1;

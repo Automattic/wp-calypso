@@ -93,7 +93,7 @@
 	&.has-notification::before {
 		display: block;
 		background-color: var( --color-accent-300 );
-		border: 2px solid $white;
+		border: 2px solid var( --color-white );
 		content: '';
 		border-radius: 50%;
 		width: 10px;

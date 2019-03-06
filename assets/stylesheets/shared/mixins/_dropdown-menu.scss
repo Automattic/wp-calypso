@@ -5,7 +5,7 @@
 
 @mixin dropdown-menu {
 	display: none;
-	background: $white;
+	background: var( --color-white );
 	float: none;
 	line-height: 46px;
 	min-width: 220px;
@@ -19,7 +19,7 @@
 
 	&::after {
 		border: 6px solid transparent;
-		border-bottom-color: $white;
+		border-bottom-color: var( --color-white );
 		content: ' ';
 		height: 0;
 		position: absolute;

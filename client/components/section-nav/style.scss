@@ -107,7 +107,7 @@
 		.section-nav.is-open & {
 			padding-bottom: 15px;
 			border-top: solid 1px var( --color-neutral-100 );
-			background: linear-gradient( to bottom, var( --color-neutral-0 ) 0%, $white 4px );
+			background: linear-gradient( to bottom, var( --color-neutral-0 ) 0%, var( --color-white ) 4px );
 		}
 	}
 

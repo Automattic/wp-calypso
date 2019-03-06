@@ -58,7 +58,7 @@ textarea {
 .btn {
 	background: var( --color-primary );
 	border: 1px solid var( --color-primary-400 );
-	color: $white;
+	color: var( --color-white );
 	border-width: 1px 1px 2px;
 	cursor: pointer;
 	font-size: 14px;
@@ -78,7 +78,7 @@ textarea {
 		outline: 0;
 		border-width: 2px 1px 1px;
 		padding: 7px 14px 9px;
-		color: $white;
+		color: var( --color-white );
 	}
 	&:focus {
 		border-color: var( --color-primary-dark );
@@ -110,7 +110,7 @@ textarea {
 	background: #f2f6f8;
 }
 .minimized-view {
-	background: $white;
+	background: var( --color-white );
 	box-shadow: 0 1px 10px rgba( 46, 68, 83, 0.1 );
 	border: 1px solid var( --color-neutral-50 );
 }
@@ -290,7 +290,7 @@ textarea {
 			height: 0;
 			border-style: solid;
 			border-width: 0 10px 10px 0;
-			border-color: transparent $white transparent transparent;
+			border-color: transparent var( --color-white ) transparent transparent;
 		}
 		.author img {
 			// Need to override inline styles with !importants
@@ -334,9 +334,9 @@ textarea {
 	&.success.inverted {
 		border-color: transparent;
 		background: var( --color-success );
-		color: $white;
+		color: var( --color-white );
 		a {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 
@@ -344,9 +344,9 @@ textarea {
 	&.warning {
 		background: var( --color-warning );
 		border-color: transparent;
-		color: $white;
+		color: var( --color-white );
 		a {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 
@@ -374,16 +374,16 @@ textarea {
 			background-color: #14abdd;
 		}
 		&.icon-success {
-			background-color: $white;
+			background-color: var( --color-white );
 			color: var( --color-success );
 		}
 		&.icon-warning {
-			background-color: $white;
+			background-color: var( --color-white );
 			color: var( --color-warning );
 		}
 	}
 	&.inverted .icon.icon-success {
-		background-color: $white;
+		background-color: var( --color-white );
 		color: var( --color-success );
 	}
 }
@@ -397,7 +397,7 @@ textarea {
 .thread-view-footer {
 	border-top: 1px solid var( --color-neutral-0 );
 	box-shadow: none;
-	background: $white;
+	background: var( --color-white );
 }
 
 // Bubble when the thread view is minimized
@@ -479,7 +479,7 @@ textarea {
 
 // Displays when the user wants to accept the answer
 .ActionBar {
-	background: $white;
+	background: var( --color-white );
 }
 .ActionBar__button {
 	box-shadow: none;

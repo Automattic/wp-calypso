@@ -349,7 +349,7 @@
 .signup-processing__upgrade-nudge {
 	background: var( --color-white );
 	text-align: center;
-	outline: 30px solid $white;
+	outline: 30px solid var( --color-white );
 	margin-bottom: 30px;
 }
 .signup-processing__title-subdomain {

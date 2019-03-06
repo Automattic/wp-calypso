@@ -63,7 +63,7 @@
 
 	.is-expanded & {
 		.accessible-focus &:focus {
-			border: 1px dotted $white;
+			border: 1px dotted var( --color-white );
 			&::before {
 				top: 6px;
 				left: 6px;

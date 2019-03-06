@@ -255,7 +255,7 @@
 	}
 
 	.selected .sidebar__menu-action .gridicon {
-		fill: $white !important;
+		fill: var( --color-white ) !important;
 
 		@include breakpoint( '<660px' ) {
 			fill: var( --color-neutral-light ) !important;

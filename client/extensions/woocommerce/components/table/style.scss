@@ -87,7 +87,7 @@
 			overflow: hidden;
 
 			&::after {
-				background-image: linear-gradient( to right, rgba( 255, 255, 255, 0 ) 0%, $white 90% );
+				background-image: linear-gradient( to right, rgba( var( --color-white-rgb ), 0 ) 0%, var( --color-white ) 90% );
 				position: absolute;
 				z-index: 1;
 				right: 0;
@@ -115,8 +115,8 @@
 				background: radial-gradient(
 					ellipse at center,
 					rgba( var( --color-neutral-700-rgb ), 0.125 ) 0%,
-					rgba( $white, 0 ) 75%,
-					rgba( $white, 0 ) 90%
+					rgba( var( --color-white-rgb ), 0 ) 75%,
+					rgba( var( --color-white-rgb ), 0 ) 90%
 				);
 			}
 

@@ -313,7 +313,7 @@
 
 	// Fade out value if long
 	&::before {
-		@include stats-fade-text( $white );
+		@include stats-fade-text( var( --color-white ) );
 	}
 }
 
@@ -765,7 +765,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, $transparent 0%, $white 90% );
+				background-image: linear-gradient( to right, $transparent 0%, var( --color-white ) 90% );
 			}
 		}
 	}
@@ -806,7 +806,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, $transparent 0%, $white 90% );
+				background-image: linear-gradient( to right, $transparent 0%, var( --color-white ) 90% );
 			}
 		}
 	}

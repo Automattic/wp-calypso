@@ -606,7 +606,7 @@
 
 	label {
 		background-color: var( --color-white );
-		border: 3px solid $white;
+		border: 3px solid var( --color-white );
 		border-radius: 3px;
 		display: block;
 		margin-top: 10px;

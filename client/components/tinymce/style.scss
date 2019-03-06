@@ -79,7 +79,7 @@
 .post-editor,
 .mce-inline-toolbar-grp {
 	div.mce-toolbar-grp {
-		background-color: rgba( $white, 0.92 );
+		background-color: rgba( var( --color-white-rgb ), 0.92 );
 		border-color: var( --color-neutral-50 );
 		border-style: solid;
 		border-left-width: 1px;
@@ -212,7 +212,7 @@
 .mce-tooltip-inner {
 	box-shadow: none !important;
 	background: var( --color-neutral-700 ) !important;
-	color: $white !important;
+	color: var( --color-white ) !important;
 	font-family: $sans !important;
 	padding: 4px 8px 5px !important;
 }

@@ -168,7 +168,7 @@
 		background-color: var( --color-white );
 		color: var( --color-text-subtle );
 		border-bottom: 1px solid var( --color-neutral-0 );
-		border-left: 1px solid $white;
+		border-left: 1px solid var( --color-white );
 		text-align: center; // Center filter in IE 9
 		height: $wpnc__filter-height;
 		box-sizing: border-box;

@@ -290,7 +290,7 @@
 		// draw a triangle
 		width: 0;
 		height: 0;
-		border-bottom: 8px solid $white;
+		border-bottom: 8px solid var( --color-white );
 		border-left: 8px solid transparent;
 	}
 

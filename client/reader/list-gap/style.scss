@@ -34,7 +34,7 @@
 	}
 
 	&::after {
-		background: linear-gradient( -135deg, $white 8px, transparent 0 ) 0 8px, linear-gradient( 135deg, $white 8px, transparent 0 ) 0 8px;
+		background: linear-gradient( -135deg, var( --color-white ) 8px, transparent 0 ) 0 8px, linear-gradient( 135deg, var( --color-white ) 8px, transparent 0 ) 0 8px;
 		background-position: top left;
 		background-repeat: repeat-x;
 		background-size: 16px 16px;
@@ -51,6 +51,6 @@
 	z-index: z-index( 'root', '.reader-list-gap__button' );
 
 	&:hover {
-		color: rgba( $white, 0.8 );
+		color: rgba( var( --color-white-rgb ), 0.8 );
 	}
 }
