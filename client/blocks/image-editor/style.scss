@@ -63,7 +63,7 @@
 	top: 50%;
 	left: 50%;
 	&.is-placeholder {
-		@include placeholder-dark();
+		@include placeholder( 600 );
 	}
 }
 
