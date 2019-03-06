@@ -514,7 +514,7 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { translate, hasSelectedSiteBackUrl } = this.props;
+		const { translate } = this.props;
 		let backUrl = undefined;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
@@ -526,8 +526,6 @@ class DomainsStep extends React.Component {
 			);
 		} else if ( this.props.stepSectionName ) {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() );
-		} else if ( 0 === this.props.positionInFlow && hasSelectedSiteBackUrl ) {
-			backUrl = hasSelectedSiteBackUrl;
 		}
 
 		const fallbackSubHeaderText = this.getSubHeaderText();
@@ -550,7 +548,6 @@ class DomainsStep extends React.Component {
 					</div>
 				}
 				showSiteMockups={ this.props.showSiteMockups }
-				allowBackFirstStep={ !! hasSelectedSiteBackUrl }
 			/>
 		);
 	}
@@ -592,7 +589,6 @@ export default connect(
 	( state, ownProps ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
-		const selectedSite = getSite( state, ownProps.signupDependencies.siteSlug );
 
 		return {
 			designType: getDesignType( state ),
@@ -604,8 +600,7 @@ export default connect(
 			productsLoaded,
 			siteGoals: getSiteGoals( state ),
 			surveyVertical: getSurveyVertical( state ),
-			selectedSite,
-			hasSelectedSiteBackUrl: selectedSite ? '/view/' + selectedSite.slug : false,
+			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 		};
 	},
 	{
