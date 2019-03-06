@@ -22,6 +22,7 @@
   "author": "Alex Kirk <alex.kirk@automattic.com> (https://automattic.com)",
   "license": "GPL-2.0+",
   "scripts": {
+    "clean": "npx rimraf dist",
     "build": "node ../../bin/build-package"
-   }
+  }
 }

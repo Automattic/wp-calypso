@@ -10,7 +10,7 @@ import { registerPlugin } from '@wordpress/plugins';
  * Internal dependencies
  */
 import './jetpack-plugin-sidebar.scss';
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackLogo from './jetpack-logo';
 
 const { Fill, Slot } = createSlotFill( 'JetpackPluginSidebar' );
 

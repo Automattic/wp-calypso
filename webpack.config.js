@@ -44,19 +44,6 @@ const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 
-/**
- * Plugin that generates the `public/custom-properties.css` file before compilation
- */
-class BuildCustomPropertiesCssPlugin {
-	apply( compiler ) {
-		compiler.hooks.compile.tap( 'BuildCustomPropertiesCssPlugin', () =>
-			execSync( 'node ' + path.join( __dirname, 'bin', 'build-custom-properties-css.js' ), {
-				cwd: __dirname,
-			} )
-		);
-	}
-}
-
 /*
  * Create reporter for ProgressPlugin (used with EMIT_STATS)
  */
@@ -370,7 +357,6 @@ function getWebpackConfig( {
 					},
 				} ),
 			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
-			new BuildCustomPropertiesCssPlugin(),
 			new MomentTimezoneDataPlugin( {
 				startYear: 2000,
 			} ),

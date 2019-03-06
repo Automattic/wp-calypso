@@ -1,9 +1,7 @@
-const path = require( 'path' );
-
 module.exports = ( { options: { preserveCssCustomProperties = true } } ) => ( {
 	plugins: {
 		'postcss-custom-properties': {
-			importFrom: [ path.join( __dirname, 'public', 'custom-properties.css' ) ],
+			importFrom: [ require.resolve( '@automattic/calypso-color-schemes' ) ],
 			preserve: preserveCssCustomProperties,
 		},
 		autoprefixer: {},
