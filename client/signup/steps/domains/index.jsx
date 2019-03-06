@@ -514,8 +514,9 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { translate } = this.props;
-		let backUrl = undefined;
+		const { translate, selectedSite } = this.props;
+		let backUrl = undefined,
+			backLabelText = null;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
 			backUrl = getStepUrl(
@@ -526,6 +527,9 @@ class DomainsStep extends React.Component {
 			);
 		} else if ( this.props.stepSectionName ) {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() );
+		} else if ( 0 === this.props.positionInFlow && selectedSite ) {
+			backUrl = '/view/' + selectedSite.slug;
+			backLabelText = translate( 'Back to Site' );
 		}
 
 		const fallbackSubHeaderText = this.getSubHeaderText();
@@ -548,6 +552,8 @@ class DomainsStep extends React.Component {
 					</div>
 				}
 				showSiteMockups={ this.props.showSiteMockups }
+				allowBackFirstStep={ !! selectedSite }
+				backLabelText={ backLabelText }
 			/>
 		);
 	}

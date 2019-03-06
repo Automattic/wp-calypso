@@ -150,7 +150,15 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection = () => {
-		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			signupProgress,
+			translate,
+			selectedSite,
+			siteSlug,
+		} = this.props;
 
 		let headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 
@@ -161,6 +169,13 @@ export class PlansStep extends Component {
 
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
 		const subHeaderText = this.props.subHeaderText;
+
+		let backUrl = undefined,
+			backLabelText = null;
+		if ( 0 === positionInFlow && selectedSite ) {
+			backUrl = '/view/' + siteSlug;
+			backLabelText = translate( 'Back to Site' );
+		}
 
 		return (
 			<StepWrapper
@@ -173,6 +188,9 @@ export class PlansStep extends Component {
 				signupProgress={ signupProgress }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
+				allowBackFirstStep={ !! selectedSite }
+				backUrl={ backUrl }
+				backLabelText={ backLabelText }
 			/>
 		);
 	};
@@ -227,4 +245,5 @@ export default connect( ( state, { path, signupDependencies: { siteSlug, domainI
 	customerType: parseQs( path.split( '?' ).pop() ).customerType,
 	siteGoals: getSiteGoals( state ) || '',
 	siteType: getSiteType( state ),
+	siteSlug,
 } ) )( localize( PlansStep ) );
