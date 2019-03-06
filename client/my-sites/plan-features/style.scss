@@ -802,11 +802,15 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__table-item {
-		text-align: center;
+		:not( .is-no-tabs & ) {
+			text-align: center;
+		}
 	}
 
 	.plan-features__table-item.has-border-bottom {
-		border-bottom: 0;
+		:not( .is-no-tabs & ) {
+			border-bottom: 0;
+		}
 	}
 
 	.plan-features__graphic {
@@ -846,11 +850,6 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		margin: 5px auto;
 	}
 
-	.plan-features__item {
-		margin: 0 15px;
-		text-align: left;
-	}
-
 	.plan-features__item-info {
 		padding: 0 5px;
 	}
@@ -880,6 +879,10 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		.plan-price,
 		.plan-price.is-original {
 			font-size: 1em;
+		}
+		.plan-features__item {
+			margin: 0 15px;
+			text-align: left;
 		}
 	}
 
