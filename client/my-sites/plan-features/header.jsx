@@ -32,6 +32,7 @@ import { abtest } from 'lib/abtest';
 export class PlanFeaturesHeader extends Component {
 	render() {
 		const { isInSignup, plansWithScroll } = this.props;
+		// Do not use the signup-specific header, unify plans for the plansWithScroll test
 		if ( plansWithScroll ) {
 			return this.renderPlansHeaderNoTabs();
 		} else if ( isInSignup ) {
