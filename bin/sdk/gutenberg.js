@@ -108,5 +108,9 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			libraryTarget: 'window',
 		},
 		externals: [ ...baseConfig.externals, 'lodash' ],
+		resolve: {
+			...baseConfig.resolve,
+			modules: [ 'node_modules' ],
+		},
 	};
 };
