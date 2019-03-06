@@ -1,8 +1,19 @@
+$colophon-height: 50px;
+
 .is-section-jetpack-connect {
+
 	.layout__content {
+		position: static;
+
 		& > .banner {
 			max-width: 600px;
 		}
+	}
+
+	&.layout {
+		position: relative;
+		min-height: calc( 100% - #{$colophon-height} );
+		padding-bottom: $colophon-height;
 	}
 }
 
@@ -73,16 +84,9 @@
 }
 
 .jetpack-connect__step {
-	display: flex;
-	flex-direction: column;
-	height: calc( 100vh - 150px );
 	margin: 0 auto;
 	max-width: 600px;
 	text-align: initial;
-
-	@include breakpoint( '>960px' ) {
-		height: calc( 100vh - 170px );
-	}
 
 	input[type='radio']:focus {
 		box-shadow: 0 0 0 2px var( --color-jetpack-light );
@@ -97,16 +101,14 @@
 	}
 	
 	.wpcom-colophon {
-		padding-top: 12px;
-		margin-top: auto;
-	}
-
-	.site-type__wrapper {
-		margin: 0 auto;
-	}
-
-	.site-topic__content {		
+		position: absolute;
+			bottom: 0;
+			left: 0;
 		width: 100%;
+		height: $colophon-height;
+	}
+
+	.site-topic__content {
 		
 		.form-fieldset {
 			position: relative;
