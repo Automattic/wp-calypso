@@ -696,15 +696,4 @@ workflows:
             branches:
               only: master
 
-  e2e-canary-on-merge:
-    jobs:
-      - setup:
-          filters:
-            branches:
-              only: master
-      - test-e2e-canary:
-          requires:
-            - setup
-          test-target: "CANARY"
-
 # vi: sts=2 ts=2 sw=2 et
