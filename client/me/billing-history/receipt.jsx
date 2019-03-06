@@ -40,10 +40,6 @@ class BillingReceipt extends React.Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
-	handleSupportLinkClick = () => {
-		this.recordClickEvent( 'Contact {appName} Support in Billing History Receipt' );
-	};
-
 	handlePrintLinkClick = () => {
 		this.recordClickEvent( 'Print Receipt Button in Billing History Receipt' );
 		window.print();
@@ -252,15 +248,9 @@ class BillingReceipt extends React.Component {
 				</Card>
 
 				<Card compact className="billing-history__receipt-links">
-					<Button href={ transaction.support } primary onClick={ this.handleSupportLinkClick }>
-						{ translate( 'Contact %(transactionService)s Support', {
-							args: {
-								transactionService: transaction.service,
-							},
-							context: 'transactionService is a website, such as WordPress.com.',
-						} ) }
+					<Button primary onClick={ this.handlePrintLinkClick }>
+						{ translate( 'Print Receipt' ) }
 					</Button>
-					<Button onClick={ this.handlePrintLinkClick }>{ translate( 'Print Receipt' ) }</Button>
 				</Card>
 			</div>
 		);
