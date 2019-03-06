@@ -489,27 +489,27 @@ jobs:
       - store-artifacts-and-test-results
 
   test-e2e-canary:
-      <<: *defaults
-      working_directory: ~/wp-calypso/test/e2e
-      parameters:
-        test-flags:
-          type: string
-          default: "-C"
-        test-target:
-          type: string
-          default: ""
-        jetpack-host:
-          type: string
-          default: ""
-      steps:
-        - prepare
-        - run: *set-e2e-variables
-        - run: npm run decryptconfig
-        - run:
-            name: Run Canary Tests
-            command: |
-              env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
-        - store-artifacts-and-test-results
+    <<: *defaults
+    working_directory: ~/wp-calypso/test/e2e
+    parameters:
+      test-flags:
+        type: string
+        default: "-C"
+      test-target:
+        type: string
+        default: ""
+      jetpack-host:
+        type: string
+        default: ""
+    steps:
+      - prepare
+      - run: *set-e2e-variables
+      - run: npm run decryptconfig
+      - run:
+          name: Run Canary Tests
+          command: |
+            env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
+      - store-artifacts-and-test-results
 
 workflows:
   version: 2

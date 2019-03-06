@@ -130,7 +130,7 @@
 }
 
 .thank-you-card__button:focus {
-	outline: 1px dotted $white;
+	outline: 1px dotted var( --color-white );
 }
 
 .thank-you-card__button:active {
@@ -158,7 +158,7 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	color: rgba( $white, 0.4 );
+	color: rgba( var( --color-white-rgb ), 0.4 );
 
 	.gridicon {
 		position: absolute;

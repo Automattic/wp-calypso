@@ -1,5 +1,5 @@
 /** @format */
-import { By } from 'selenium-webdriver';
+import { By, until } from 'selenium-webdriver';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
@@ -18,10 +18,20 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 		this.prePublishButtonSelector = By.css( '.editor-post-publish-panel__toggle' );
 		this.publishHeaderSelector = By.css( '.editor-post-publish-panel__header' );
+		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
 	}
 
 	async _postInit() {
 		await this.removeNUXNotice();
+	}
+
+	async _preInit() {
+		await this.driver.switchTo().defaultContent();
+		await this.driver.wait(
+			until.ableToSwitchToFrame( this.editoriFrameSelector ),
+			this.explicitWaitMS,
+			'Could not locate the editor iFrame.'
+		);
 	}
 
 	async publish( { visit = false } = {} ) {
@@ -199,6 +209,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
 			By.css( '.components-notice.is-success' )
+		);
+	}
+
+	async dismissSuccessNotice() {
+		await this.waitForSuccessViewPostNotice();
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.components-notice__dismiss' )
 		);
 	}
 

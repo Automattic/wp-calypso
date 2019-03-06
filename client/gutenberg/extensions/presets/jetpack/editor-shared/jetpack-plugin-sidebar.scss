@@ -35,7 +35,7 @@
 
 			.jetpack-logo__icon-triangle {
 				// CSS colour variables are not available in Gutenberg extensions when built by SDK
-				fill: $white !important;
+				fill: var( --color-white ) !important;
 			}
 		}
 	}

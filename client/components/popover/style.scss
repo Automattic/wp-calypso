@@ -67,7 +67,7 @@
 
 			&::before {
 				#{$opposite-side}: 2px #{'/*rtl:ignore*/'};
-				border: 10px solid $white;
+				border: 10px solid var( --color-white );
 				content: ' ';
 				position: absolute;
 				#{$cross-side}: 50% #{'/*rtl:ignore*/'};

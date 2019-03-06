@@ -42,7 +42,7 @@ export default async function createSwiper(
 		),
 	};
 	const [ { default: Swiper } ] = await Promise.all( [
-		import( /* webpackChunkName: "swiper" */ 'swiper' ),
+		import( /* webpackChunkName: "swiper" */ 'swiper/dist/js/swiper.js' ),
 		import( /* webpackChunkName: "swiper" */ 'swiper/dist/css/swiper.css' ),
 	] );
 	return new Swiper( container, merge( {}, defaultParams, params ) );

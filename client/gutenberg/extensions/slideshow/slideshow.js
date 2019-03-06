@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import ResizeObserver from 'resize-observer-polyfill';
 import classnames from 'classnames';
 import { Component, createRef } from '@wordpress/element';

@@ -460,8 +460,8 @@
 		background: radial-gradient(
 			ellipse at center,
 			rgba( var( --color-neutral-700-rgb ), 0.125 ) 0%,
-			rgba( $white, 0 ) 75%,
-			rgba( $white, 0 ) 90%
+			rgba( var( --color-white-rgb ), 0 ) 75%,
+			rgba( var( --color-white-rgb ), 0 ) 90%
 		);
 
 		@include breakpoint( '>1280px' ) {

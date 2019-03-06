@@ -251,7 +251,7 @@
 	position: relative;
 
 	&::after {
-		background: linear-gradient( to right, rgba( $white, 0 ), rgba( $white, 1 ) 50% );
+		background: linear-gradient( to right, rgba( var( --color-white-rgb ), 0 ), rgba( var( --color-white-rgb ), 1 ) 50% );
 		content: '';
 		height: 20px;
 		position: absolute;

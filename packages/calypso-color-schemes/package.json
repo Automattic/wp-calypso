@@ -1,0 +1,40 @@
+{
+  "name": "@automattic/calypso-color-schemes",
+  "version": "1.0.0-alpha.0",
+  "description": "Calypso Shared Style Bits",
+  "author": "Automattic",
+  "license": "GPL-2.0-or-later",
+  "keywords": [
+    "calypso",
+    "wordpress",
+    "sass",
+    "css"
+  ],
+  "homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/calypso-color-schemes/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Automattic/wp-calypso.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Automattic/wp-calypso/issues"
+  },
+  "engines": {
+    "node": "^10.13.0",
+    "npm": "^6.1.0"
+  },
+  "main": "dist/calypso-color-schemes.css",
+  "dependencies": {
+    "color-studio": "github:automattic/color-studio#1.0.1"
+  },
+  "devDependencies": {
+    "node-sass": "^4.11.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "npx rimraf dist src/__color-studio",
+    "build": "node bin/build-css.js",
+    "postinstall": "node bin/postinstall.js"
+  }
+}
