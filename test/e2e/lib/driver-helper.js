@@ -375,7 +375,7 @@ export function checkForConsoleErrors( driver ) {
 }
 
 export function logPerformance( driver ) {
-	if ( config.get( 'checkForConsoleErrors' ) === true ) {
+	if ( config.get( 'logNetworkRequests' ) === true ) {
 		driver
 			.manage()
 			.logs()
