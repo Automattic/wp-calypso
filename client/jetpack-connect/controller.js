@@ -18,6 +18,7 @@ import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
+import JetpackSiteOwner from './site-owner';
 import JetpackSiteTopic from './site-topic';
 import JetpackSiteType from './site-type';
 import JetpackSsoForm from './sso';
@@ -294,6 +295,14 @@ export function plansSelection( context, next ) {
 			/>
 		</CheckoutData>
 	);
+	next();
+}
+
+export function siteOwner( context, next ) {
+	analytics.pageView.record( 'jetpack/connect/site-owner', 'Jetpack Site Owner Indicator' );
+
+	context.primary = <JetpackSiteOwner />;
+
 	next();
 }
 

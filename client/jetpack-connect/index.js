@@ -114,6 +114,14 @@ export default function() {
 	);
 
 	page(
+		'/jetpack/connect/site-owner/:site?',
+		siteSelection,
+		controller.siteOwner,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/jetpack/connect/site-type/:site?',
 		siteSelection,
 		controller.siteType,
