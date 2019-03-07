@@ -77,6 +77,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	let builder;
 	let pref = new webdriver.logging.Preferences();
 	pref.setLevel( 'browser', webdriver.logging.Level.SEVERE );
+	pref.setLevel( 'performance', webdriver.logging.Level.ALL );
 	if ( config.has( 'sauce' ) && config.get( 'sauce' ) ) {
 		const sauceURL = 'http://ondemand.saucelabs.com:80/wd/hub';
 		let sauceConfig = config.get( 'sauceConfig' );
