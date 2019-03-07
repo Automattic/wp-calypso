@@ -38,9 +38,6 @@ class DescriptiveHeader extends PureComponent {
 			<CompactCard>
 				<header>
 					{ /* @TODO move these class names over  */ }
-					<h1 className="settings-import__section-title site-settings__importer-section-title importer__section-title">
-						{ translate( 'Import Another Site' ) }
-					</h1>
 					<p className="settings-import__section-description site-settings__importer-section-description">
 						{ description }
 					</p>
