@@ -13,6 +13,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
@@ -128,8 +129,17 @@ class GoogleAppsDialog extends React.Component {
 		);
 	}
 
+	renderButtonCopy() {
+		const { translate } = this.props;
+		if ( abtest( 'gSuiteContinueButtonCopy' ) === 'purchase' ) {
+			return translate( 'Purchase G Suite' );
+		}
+		return translate( 'Purchase G Suite' );
+	}
+
 	footer() {
 		const { translate } = this.props;
+
 		return (
 			<footer className="gsuite-dialog__footer">
 				<Button className="gsuite-dialog__checkout-button" onClick={ this.handleFormCheckout }>
@@ -141,7 +151,7 @@ class GoogleAppsDialog extends React.Component {
 					className="gsuite-dialog__continue-button"
 					onClick={ this.handleFormSubmit }
 				>
-					{ translate( 'Purchase G Suite' ) }
+					{ this.renderButtonCopy() }
 				</Button>
 			</footer>
 		);
