@@ -69,7 +69,7 @@ import {
 
 export class PlanFeatures extends Component {
 	render() {
-		const { isInSignup, planProperties } = this.props;
+		const { isInSignup, planProperties, plansWithScroll } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -81,11 +81,35 @@ export class PlanFeatures extends Component {
 		const mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
 		let planDescriptions;
 		let bottomButtons = null;
+		let tableBody = null;
+
+		if ( plansWithScroll || ! isInSignup ) {
+			planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
+		}
 
 		if ( ! isInSignup ) {
-			planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
-
 			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
+		}
+
+		if ( plansWithScroll ) {
+			tableBody = (
+				<tbody>
+					<tr>{ this.renderPlanHeaders() }</tr>
+					<tr>{ this.renderTopButtons() }</tr>
+					{ planDescriptions }
+					{ this.renderPlanFeatureRows() }
+				</tbody>
+			);
+		} else {
+			tableBody = (
+				<tbody>
+					<tr>{ this.renderPlanHeaders() }</tr>
+					{ planDescriptions }
+					<tr>{ this.renderTopButtons() }</tr>
+					{ this.renderPlanFeatureRows() }
+					{ bottomButtons }
+				</tbody>
+			);
 		}
 
 		return (
@@ -95,15 +119,7 @@ export class PlanFeatures extends Component {
 					{ this.renderNotice() }
 					<div className="plan-features__content">
 						{ mobileView }
-						<table className={ tableClasses }>
-							<tbody>
-								<tr>{ this.renderPlanHeaders() }</tr>
-								{ planDescriptions }
-								<tr>{ this.renderTopButtons() }</tr>
-								{ this.renderPlanFeatureRows() }
-								{ bottomButtons }
-							</tbody>
-						</table>
+						<table className={ tableClasses }>{ tableBody }</table>
 					</div>
 				</div>
 			</div>
@@ -342,6 +358,7 @@ export class PlanFeatures extends Component {
 			isInSignup,
 			isJetpack,
 			planProperties,
+			plansWithScroll,
 			selectedPlan,
 			siteType,
 			showPlanCreditsApplied,
@@ -362,7 +379,9 @@ export class PlanFeatures extends Component {
 				hideMonthly,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
-			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
+			const classes = classNames( 'plan-features__table-item', {
+				'has-border-top': plansWithScroll,
+			} );
 			let audience = planConstantObj.getAudience();
 			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
@@ -387,50 +406,62 @@ export class PlanFeatures extends Component {
 			}
 
 			return (
-				<td key={ planName } className={ classes }>
-					<PlanFeaturesHeader
-						audience={ audience }
-						availableForPurchase={ availableForPurchase }
-						basePlansPath={ basePlansPath }
-						billingTimeFrame={ billingTimeFrame }
-						current={ current }
-						currencyCode={ currencyCode }
-						discountPrice={ discountPrice }
-						hideMonthly={ hideMonthly }
-						isInSignup={ isInSignup }
-						isJetpack={ isJetpack }
-						isPlaceholder={ isPlaceholder }
-						newPlan={ newPlan }
-						bestValue={ bestValue }
-						planType={ planName }
-						popular={ popular }
-						rawPrice={ rawPrice }
-						relatedMonthlyPlan={ relatedMonthlyPlan }
-						selectedPlan={ selectedPlan }
-						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
-						title={ planConstantObj.getTitle() }
-					/>
-				</td>
+				<React.Fragment>
+					<td key={ planName } className={ classes }>
+						<PlanFeaturesHeader
+							audience={ audience }
+							availableForPurchase={ availableForPurchase }
+							basePlansPath={ basePlansPath }
+							billingTimeFrame={ billingTimeFrame }
+							current={ current }
+							currencyCode={ currencyCode }
+							discountPrice={ discountPrice }
+							hideMonthly={ hideMonthly }
+							isInSignup={ isInSignup }
+							isJetpack={ isJetpack }
+							isPlaceholder={ isPlaceholder }
+							newPlan={ newPlan }
+							bestValue={ bestValue }
+							planType={ planName }
+							plansWithScroll={ plansWithScroll }
+							popular={ popular }
+							rawPrice={ rawPrice }
+							relatedMonthlyPlan={ relatedMonthlyPlan }
+							selectedPlan={ selectedPlan }
+							showPlanCreditsApplied={
+								true === showPlanCreditsApplied && ! this.hasDiscountNotice()
+							}
+							title={ planConstantObj.getTitle() }
+						/>
+					</td>
+					<td className="plan-features__table-space" />
+				</React.Fragment>
 			);
 		} );
 	}
 
 	renderPlanDescriptions() {
-		const { planProperties } = this.props;
+		const { planProperties, plansWithScroll } = this.props;
 
 		return map( planProperties, properties => {
 			const { planName, planConstantObj, isPlaceholder } = properties;
-
+			const description = plansWithScroll
+				? planConstantObj.getShortDescription()
+				: planConstantObj.getDescription( abtest );
 			const classes = classNames( 'plan-features__table-item', {
 				'is-placeholder': isPlaceholder,
+				'has-border-bottom': plansWithScroll,
 			} );
 
 			return (
-				<td key={ planName } className={ classes }>
-					{ isPlaceholder ? <SpinnerLine /> : null }
+				<React.Fragment>
+					<td key={ planName } className={ classes }>
+						{ isPlaceholder ? <SpinnerLine /> : null }
 
-					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
-				</td>
+						<p className="plan-features__description">{ description }</p>
+					</td>
+					<td className="plan-features__table-space" />
+				</React.Fragment>
 			);
 		} );
 	}
@@ -443,6 +474,7 @@ export class PlanFeatures extends Component {
 			isLandingPage,
 			isLaunchPage,
 			planProperties,
+			plansWithScroll,
 			selectedPlan,
 			selectedSiteSlug,
 			translate,
@@ -462,7 +494,7 @@ export class PlanFeatures extends Component {
 
 			const classes = classNames(
 				'plan-features__table-item',
-				'has-border-bottom',
+				{ 'has-border-bottom': ! plansWithScroll },
 				'is-top-buttons'
 			);
 
@@ -478,28 +510,31 @@ export class PlanFeatures extends Component {
 			}
 
 			return (
-				<td key={ planName } className={ classes }>
-					<PlanFeaturesActions
-						availableForPurchase={ availableForPurchase }
-						buttonText={ buttonText }
-						canPurchase={ canPurchase }
-						className={ getPlanClass( planName ) }
-						current={ current }
-						freePlan={ isFreePlan( planName ) }
-						forceDisplayButton={ forceDisplayButton }
-						isPlaceholder={ isPlaceholder }
-						isPopular={ popular }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						isLaunchPage={ isLaunchPage }
-						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
-						onUpgradeClick={ onUpgradeClick }
-						planName={ planConstantObj.getTitle() }
-						planType={ planName }
-						primaryUpgrade={ primaryUpgrade }
-						selectedPlan={ selectedPlan }
-					/>
-				</td>
+				<React.Fragment>
+					<td key={ planName } className={ classes }>
+						<PlanFeaturesActions
+							availableForPurchase={ availableForPurchase }
+							buttonText={ buttonText }
+							canPurchase={ canPurchase }
+							className={ getPlanClass( planName ) }
+							current={ current }
+							freePlan={ isFreePlan( planName ) }
+							forceDisplayButton={ forceDisplayButton }
+							isPlaceholder={ isPlaceholder }
+							isPopular={ popular }
+							isInSignup={ isInSignup }
+							isLandingPage={ isLandingPage }
+							isLaunchPage={ isLaunchPage }
+							manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
+							onUpgradeClick={ onUpgradeClick }
+							planName={ planConstantObj.getTitle() }
+							planType={ planName }
+							primaryUpgrade={ primaryUpgrade }
+							selectedPlan={ selectedPlan }
+						/>
+					</td>
+					<td className="plan-features__table-space" />
+				</React.Fragment>
 			);
 		} );
 	}
@@ -532,11 +567,13 @@ export class PlanFeatures extends Component {
 		const description = feature.getDescription
 			? feature.getDescription( abtest, this.props.domainName )
 			: null;
+		const { plansWithScroll } = this.props;
 		return (
 			<PlanFeaturesItem
 				key={ index }
 				description={ description }
 				hideInfoPopover={ feature.hideInfoPopover }
+				hideGridicon={ plansWithScroll }
 			>
 				<span className="plan-features__item-info">
 					<span className="plan-features__item-title">{ feature.getTitle() }</span>
@@ -546,7 +583,7 @@ export class PlanFeatures extends Component {
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties, selectedFeature } = this.props;
+		const { planProperties, selectedFeature, plansWithScroll } = this.props;
 
 		return map( planProperties, properties => {
 			const { features, planName } = properties;
@@ -556,17 +593,26 @@ export class PlanFeatures extends Component {
 				currentFeature = features[ key ];
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
-				'has-partial-border': rowIndex + 1 < featureKeys.length,
+				'has-partial-border': rowIndex + 1 < featureKeys.length && ! plansWithScroll,
+				'has-border-bottom': plansWithScroll,
 				'is-highlighted':
 					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
 			} );
 
-			return currentFeature ? (
-				<td key={ `${ planName }-${ key }` } className={ classes }>
-					{ this.renderFeatureItem( currentFeature ) }
-				</td>
-			) : (
-				<td key={ `${ planName }-none` } className="plan-features__table-item" />
+			return (
+				<React.Fragment>
+					{ currentFeature ? (
+						<td key={ `${ planName }-${ key }` } className={ classes }>
+							{ this.renderFeatureItem( currentFeature ) }
+						</td>
+					) : (
+						<td
+							key={ `${ planName }-none` }
+							className="plan-features__table-item is-empty-feature-item"
+						/>
+					) }
+					<td className="plan-features__table-space" />
+				</React.Fragment>
 			);
 		} );
 	}

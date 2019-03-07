@@ -47,6 +47,15 @@ import { requestGeoLocation } from 'state/data-getters';
 import { abtest } from 'lib/abtest';
 
 export class PlansFeaturesMain extends Component {
+	planPositions = [ 'left', 'center', 'right' ];
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			plansPosition: 'center',
+		};
+	}
+
 	componentDidUpdate( prevProps ) {
 		/**
 		 * Happychat does not update with the selected site right now :(
@@ -73,6 +82,7 @@ export class PlansFeaturesMain extends Component {
 			isLandingPage,
 			isLaunchPage,
 			onUpgradeClick,
+			plansWithScroll,
 			selectedFeature,
 			selectedPlan,
 			withDiscount,
@@ -81,10 +91,12 @@ export class PlansFeaturesMain extends Component {
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const popular = customerType === 'personal' || plansWithScroll ? TYPE_PREMIUM : TYPE_BUSINESS;
 		return (
 			<div
 				className={ classNames(
 					'plans-features-main__group',
+					'is-scrolled-to-' + this.state.plansPosition,
 					'is-' + ( displayJetpackPlans ? 'jetpack' : 'wpcom' ),
 					{
 						[ `is-customer-${ customerType }` ]: ! displayJetpackPlans,
@@ -100,6 +112,7 @@ export class PlansFeaturesMain extends Component {
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
+					plansWithScroll={ plansWithScroll }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					visiblePlans={ visiblePlans }
@@ -107,7 +120,7 @@ export class PlansFeaturesMain extends Component {
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
 					popularPlanSpec={ {
-						type: customerType === 'personal' ? TYPE_PREMIUM : TYPE_BUSINESS,
+						type: popular,
 						group: GROUP_WPCOM,
 					} }
 					siteId={ siteId }
@@ -123,6 +136,7 @@ export class PlansFeaturesMain extends Component {
 			selectedPlan,
 			hideFreePlan,
 			countryCode,
+			plansWithScroll,
 		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
@@ -172,7 +186,7 @@ export class PlansFeaturesMain extends Component {
 			];
 		}
 
-		if ( hideFreePlan ) {
+		if ( hideFreePlan || plansWithScroll ) {
 			plans.shift();
 		}
 
@@ -184,16 +198,16 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
-		const { displayJetpackPlans, customerType, withWPPlanTabs } = this.props;
+		const { displayJetpackPlans, customerType, plansWithScroll, newPlansVisible } = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( type => planMatches( plan, { type } ) ).length > 0;
 
-		if ( displayJetpackPlans ) {
+		if ( displayJetpackPlans || plansWithScroll ) {
 			return plans;
 		}
 
-		if ( ! withWPPlanTabs ) {
+		if ( ! newPlansVisible ) {
 			return plans.filter( plan =>
 				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ] )
 			);
@@ -275,21 +289,97 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	renderToggle() {
-		const { displayJetpackPlans, withWPPlanTabs, countryCode } = this.props;
+		const { displayJetpackPlans, newPlansVisible, plansWithScroll, countryCode } = this.props;
 		if ( displayJetpackPlans ) {
 			if ( abtest( 'onlyJetpackMonthly', countryCode ) === 'monthlyOnly' ) {
 				return false;
 			}
 			return this.getIntervalTypeToggle();
 		}
-		if ( withWPPlanTabs ) {
+		if ( newPlansVisible && ! plansWithScroll ) {
 			return this.getCustomerTypeToggle();
 		}
 		return false;
 	}
 
+	move( direction ) {
+		const offset = direction === 'left' ? -1 : 1;
+		const currentPosition = this.state.plansPosition;
+		const currentPositionIndex = this.planPositions.indexOf( currentPosition );
+		const nextPosition = this.planPositions[ currentPositionIndex + offset ] || currentPosition;
+
+		this.setState( { plansPosition: nextPosition } );
+	}
+
+	handleKeyPress( event ) {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			this.move( 'left' );
+		}
+	}
+
+	getLeftOverlay() {
+		return (
+			<div
+				className="plans-features-main__left-overlay"
+				onClick={ this.move.bind( this, 'left' ) }
+				onKeyPress={ this.handleKeyPress.bind( this ) }
+				role="button"
+				tabIndex={ -1 }
+			>
+				<svg
+					width="28px"
+					height="28px"
+					viewBox="0 0 28 28"
+					version="1.1"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<g stroke="none" fill="none" fillRule="evenodd">
+						<circle id="Oval" fill="#3D4145" cx="14" cy="14" r="14" />
+						<polygon
+							id="Mask"
+							fill="#FFFFFF"
+							fillRule="nonzero"
+							points="22 13 9.83 13 15.42 7.41 14 6 6 14 14 22 15.41 20.59 9.83 15 22 15"
+						/>
+					</g>
+				</svg>
+			</div>
+		);
+	}
+
+	getRightOverlay() {
+		return (
+			<div
+				className="plans-features-main__right-overlay"
+				onClick={ this.move.bind( this, 'right' ) }
+				onKeyPress={ this.handleKeyPress.bind( this ) }
+				role="button"
+				tabIndex={ 0 }
+			>
+				<svg
+					width="28px"
+					height="28px"
+					viewBox="0 0 28 28"
+					version="1.1"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<g stroke="none" fill="none" fillRule="evenodd" transform="rotate(180,14,14)">
+						<circle id="Oval" fill="#3D4145" cx="14" cy="14" r="14" />
+						<polygon
+							id="Mask"
+							fill="#FFFFFF"
+							fillRule="nonzero"
+							points="22 13 9.83 13 15.42 7.41 14 6 6 14 14 22 15.41 20.59 9.83 15 22 15"
+						/>
+					</g>
+				</svg>
+			</div>
+		);
+	}
+
 	render() {
-		const { displayJetpackPlans, isInSignup, siteId } = this.props;
+		const { displayJetpackPlans, isInSignup, plansWithScroll, siteId } = this.props;
 		let faqs = null;
 
 		if ( ! isInSignup ) {
@@ -297,13 +387,20 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		return (
-			<div className="plans-features-main">
+			<div className={ classNames( 'plans-features-main', { 'is-no-tabs': plansWithScroll } ) }>
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 				{ this.renderToggle() }
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
-				{ this.getPlanFeatures() }
+				{ plansWithScroll ? (
+					<div className="plans-features-main__scroll-container">
+						{ this.getLeftOverlay() }
+						{ this.getRightOverlay() }
+						{ this.getPlanFeatures() }
+					</div>
+				) : null }
+				{ ! plansWithScroll ? this.getPlanFeatures() : null }
 				<CartData>
 					<PaymentMethods />
 				</CartData>
@@ -323,12 +420,13 @@ PlansFeaturesMain.propTypes = {
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
+	plansWithScroll: PropTypes.bool,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
 	showFAQ: PropTypes.bool,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
-	withWPPlanTabs: PropTypes.bool,
+	newPlansVisible: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -336,10 +434,11 @@ PlansFeaturesMain.defaultProps = {
 	hideFreePlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
+	plansWithScroll: false,
 	showFAQ: true,
 	siteId: null,
 	siteSlug: '',
-	withWPPlanTabs: false,
+	newPlansVisible: false,
 };
 
 const guessCustomerType = ( state, props ) => {
@@ -375,7 +474,8 @@ export default connect(
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
 			// pretty versatile, we could rename it from discounts to flags/features/anything else and make it more
 			// universal.
-			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
+			newPlansVisible: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
+			plansWithScroll: isDiscountActive( getDiscountByName( 'plans_no_tabs' ), state ),
 			customerType: guessCustomerType( state, props ),
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: get( props.site, [ 'ID' ] ),
