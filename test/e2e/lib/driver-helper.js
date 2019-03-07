@@ -374,6 +374,26 @@ export function checkForConsoleErrors( driver ) {
 	}
 }
 
+export function logPerformance( driver ) {
+	if ( config.get( 'logNetworkRequests' ) === true ) {
+		driver
+			.manage()
+			.logs()
+			.get( 'performance' )
+			.then( browserLogs => {
+				browserLogs.forEach( browserLog => {
+					var message = JSON.parse( browserLog.message ).message;
+					if (
+						message.method === 'Network.responseReceived' ||
+						message.method === 'Network.requestWillBeSent'
+					) {
+						console.log( JSON.stringify( message ) );
+					}
+				} );
+			} );
+	}
+}
+
 export async function ensureMobileMenuOpen( driver ) {
 	const self = this;
 	const mobileHeaderSelector = by.css( '.section-nav__mobile-header' );

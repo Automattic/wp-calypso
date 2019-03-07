@@ -13,6 +13,7 @@
 	"slackChannelForScreenshots": "#e2eflowtesting-notif",
 	"neverSaveScreenshots": false,
 	"checkForConsoleErrors": false,
+	"logNetworkRequests": false,
 	"reportWarningsToSlack": false,
 	"closeBrowserOnComplete": true,
 	"highlightElements": false,
@@ -76,7 +77,8 @@
 		"builderReferralThemesBanner",
 		"domainSearchButtonStyles",
 		"twoYearPlanByDefault",
-		"pluginFeaturedTitle"
+		"pluginFeaturedTitle",
+		"builderReferralHelpPopover"
 	],
 	"overrideABTests": [
 		[ "businessPlanDescriptionAT_20170605", "original" ],
@@ -93,6 +95,7 @@
 		[ "showConciergeSessionUpsellNonGSuite_20190104", "skip" ],
 		[ "improvedOnboarding_20190214", "main" ],
 		[ "skipBusinessInformation_20190130", "hide" ],
-		[ "twoYearPlanByDefault_20190207", "originalFlavor" ]
+		[ "twoYearPlanByDefault_20190207", "originalFlavor" ],
+	  	[ "builderReferralHelpPopover_20190227", "original" ]
 	]
 }

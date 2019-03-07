@@ -108,10 +108,11 @@ afterEach( async function() {
 } );
 
 // Check for console errors
-afterEach( function() {
+afterEach( async function() {
 	this.timeout( afterHookTimeoutMS );
 	const driver = global.__BROWSER__;
-	return driverHelper.checkForConsoleErrors( driver );
+	await driverHelper.logPerformance( driver );
+	return await driverHelper.checkForConsoleErrors( driver );
 } );
 
 // Update Sauce Job Status locally
