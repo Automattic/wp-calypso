@@ -3,7 +3,7 @@
  */
 const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
 
-module.exports = ( { preserveCssCustomProperties, includePaths, prelude } ) => ( {
+module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 		use: [
 		MiniCssExtractPluginWithRTL.loader,
@@ -31,4 +31,9 @@ module.exports = ( { preserveCssCustomProperties, includePaths, prelude } ) => (
 			},
 		},
 	],
+} );
+
+module.exports.plugin = ( { cssFilename } ) => new MiniCssExtractPluginWithRTL( {
+	filename: cssFilename,
+	rtlEnabled: true
 } );

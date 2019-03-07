@@ -8,12 +8,10 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
-const { execSync } = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
-const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
@@ -21,7 +19,7 @@ const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const FilterWarningsPlugin = require( 'webpack-filter-warnings-plugin' );
-const SassConfig = require( '@automattic/calypso-build/src/sass' );
+const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 
 /**
  * Internal dependencies
@@ -237,13 +235,13 @@ function getWebpackConfig( {
 						plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
 					},
 				},
-				SassConfig( {
+				SassConfig.loader( {
 					preserveCssCustomProperties,
 					includePaths: [ path.join( __dirname, 'client' ) ],
 					prelude: `@import '${ path.join(
 						__dirname,
 						'assets/stylesheets/shared/_utils.scss'
-					) }';`
+					) }';`,
 				} ),
 				{
 					include: path.join( __dirname, 'client/sections.js' ),
@@ -301,10 +299,7 @@ function getWebpackConfig( {
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
 			isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
-			new MiniCssExtractPluginWithRTL( {
-				filename: cssFilename,
-				rtlEnabled: true,
-			} ),
+			SassConfig.plugin( { cssFilename } ),
 			new WebpackRTLPlugin( {
 				minify: ! isDevelopment,
 			} ),
