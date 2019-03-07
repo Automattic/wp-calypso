@@ -132,14 +132,6 @@ export default {
 		localeTargets: 'any',
 		countryCodeTargets: [ 'ES', 'IT', 'PT', 'FR', 'NL', 'DE', 'BE', 'PL', 'SE' ],
 	},
-	pluginFeaturedTitle: {
-		datestamp: '20190220',
-		variations: {
-			featured: 50,
-			recommended: 50,
-		},
-		defaultVariation: 'featured',
-	},
 	builderReferralHelpPopover: {
 		datestamp: '20190227',
 		variations: {
