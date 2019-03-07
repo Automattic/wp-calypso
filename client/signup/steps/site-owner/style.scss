@@ -1,0 +1,65 @@
+.site-owner__wrapper {
+	margin: auto;
+	width: 380px;
+
+	// At small screen sizes make the step
+	// full width. -shaun
+	@include breakpoint( '<660px' ) {
+		width: 100%;
+	}
+
+	.card {
+		padding: 0;
+		margin: 0;
+	}
+
+	.form-fieldset {
+		margin: 0;
+	}
+
+	.button {
+		margin: 16px;
+		width: calc( 100% - 32px );
+	}
+}
+
+.site-owner__option {
+	padding: 13px 24px 13px 48px;
+	margin: 0;
+	font-weight: 400;
+	position: relative;
+
+	.form-radio {
+		position: absolute;
+		top: 16px;
+		left: 16px;
+		margin: 0;
+	}
+
+	.site-owner__option-label,
+	.site-owner__option-description {
+		display: block;
+		line-height: 1.4em;
+	}
+
+	.site-owner__option-label {
+		font-size: 16px;
+	}
+
+	.site-owner__option-description {
+		font-size: 14px;
+		color: var( --color-text-subtle );
+	}
+
+	&:hover {
+		cursor: pointer;
+
+		.site-owner__option-label {
+			color: var( --color-text );
+		}
+	}
+
+	&.is-selected {
+		background: var( --color-neutral-0 );
+	}
+}

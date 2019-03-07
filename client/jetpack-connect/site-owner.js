@@ -35,8 +35,10 @@ class JetpackSiteOwner extends Component {
 		return (
 			<MainWrapper isWide>
 				<div className="jetpack-connect__step">
-					<FormattedHeader headerText={ translate( 'Who is the site for?' ) } />
-					// <SiteOwnerForm submitForm={ this.handleSubmit } />
+					<FormattedHeader
+						headerText={ translate( 'Are you setting up this site for yourself or someone else?' ) }
+					/>
+					<SiteOwnerForm submitForm={ this.handleSubmit } />
 					<WpcomColophon />
 				</div>
 			</MainWrapper>
