@@ -19,6 +19,7 @@ import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 
@@ -33,6 +34,7 @@ const hasSidebar = section => {
 };
 
 const LayoutLoggedOut = ( {
+	isJetpackLogin,
 	masterbarIsHidden,
 	oauth2Client,
 	primary,
@@ -50,6 +52,7 @@ const LayoutLoggedOut = ( {
 		'focus-content': true,
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
+		'is-jetpack-login': isJetpackLogin,
 	};
 
 	let masterbar = null;
@@ -111,7 +114,11 @@ LayoutLoggedOut.propTypes = {
 
 export default connect( state => {
 	const section = getSection( state );
+	const currentRoute = getCurrentRoute( state );
+	const isJetpackLogin = currentRoute === '/log-in/jetpack';
+
 	return {
+		isJetpackLogin,
 		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === section.name,
 		section,
 		oauth2Client: getCurrentOAuth2Client( state ),
