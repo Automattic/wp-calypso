@@ -92,10 +92,9 @@
 }
 
 .gsuite-dialog__billing-period {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	line-height: 1.6;
-	text-transform: uppercase;
 
 	@include breakpoint( '<480px' ) {
 		margin-top: 15px;
