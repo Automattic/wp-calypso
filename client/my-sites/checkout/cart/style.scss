@@ -111,9 +111,9 @@
 	}
 
 	.cart__total {
-		color: var( --color-text );
+		color: var( --color-text-subtle );
 		display: table;
-		font-size: 16px;
+		font-size: 20px;
 
 		.cart__total-row.grand-total {
 			display: table-footer-group;
@@ -140,7 +140,7 @@
 		}
 
 		.cart__total-amount.grand-total {
-			font-weight: 600;
+			color: var( --color-text );
 		}
 	}
 
