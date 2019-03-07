@@ -37,7 +37,6 @@ export const createSiteDomainObject = domain => {
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPrimary: Boolean( domain.primary_domain ),
 		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),
-		isPrivate: Boolean( domain.private_domain ),
 		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		manualTransferRequired: Boolean( domain.manual_transfer_required ),
 		newRegistration: Boolean( domain.new_registration ),

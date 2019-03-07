@@ -78,7 +78,6 @@ state.sites.domains = {
 				pendingRegistration: Boolean,
 				pendingRegistrationTime: String,
 				isPrimary: Boolean,
-				isPrivate: Boolean,
 				registrationDate: String.
 				type: String,
 				wpcomDomain: Boolean

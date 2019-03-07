@@ -25,7 +25,6 @@ export const itemsSchema = {
 					hasZone: { type: 'boolean' },
 					isPendingIcannVerification: { type: 'boolean' },
 					isPrimary: { type: 'boolean' },
-					isPrivate: { type: 'boolean' },
 					isWPCOMDomain: { type: 'boolean' },
 					manualTransferRequired: { type: 'boolean' },
 					newRegistration: { type: 'boolean' },

@@ -106,7 +106,6 @@ describe( 'reducer', () => {
 			};
 			const expectedDomain = Object.assign( {}, firstDomain, {
 				privateDomain: ! firstDomain.privateDomain,
-				isPrivate: ! firstDomain.isPrivate,
 			} );
 			const expectedState = {
 				[ siteId ]: [ expectedDomain ],
