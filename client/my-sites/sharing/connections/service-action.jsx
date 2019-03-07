@@ -95,7 +95,13 @@ const SharingServiceAction = ( {
 	}
 
 	return (
-		<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
+		<Button
+			primary={ primary }
+			scary={ warning }
+			compact
+			onClick={ onClick }
+			disabled={ isPending }
+		>
 			{ label }
 		</Button>
 	);
