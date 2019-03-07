@@ -237,7 +237,7 @@
 
 	.checkout-terms,
 	.checkout__domain-refund-policy {
-		color: var( --color-neutral-400 );
+		color: var( --color-text-subtle );
 		margin: 16px 0;
 		padding: 0;
 
@@ -457,7 +457,7 @@
 				}
 
 				> span {
-					color: var( --color-neutral-400 );
+					color: var( --color-text-subtle );
 					font-size: 15px;
 				}
 			}
