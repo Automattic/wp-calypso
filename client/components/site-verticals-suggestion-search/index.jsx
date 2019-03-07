@@ -88,17 +88,20 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	onSiteTopicChange = value => {
 		value = trim( value );
 
+		const hasValue = !! value;
+		const valueLength = value.length || 0;
+		const valueLengthShouldTriggerSearch = valueLength >= this.props.charsToTriggerSearch;
 		const result = this.searchForVerticalMatches( value );
 
 		// Cancel delayed invocations in case of deletion
 		// and make sure the consuming component knows about it.
-		if ( ! value || value.length < this.props.charsToTriggerSearch ) {
+		if ( ! hasValue || ! valueLengthShouldTriggerSearch ) {
 			this.props.requestVerticals.cancel();
 		}
 
 		if (
-			value &&
-			value.length >= this.props.charsToTriggerSearch &&
+			hasValue &&
+			valueLengthShouldTriggerSearch &&
 			// Don't trigger a search if there's already an exact, non-user-defined match from the API
 			! result
 		) {
@@ -176,10 +179,7 @@ const requestSiteVerticalHttpData = ( searchTerm, limit = 5, id = SITE_VERTICALS
 export const isVerticalSearchPending = () =>
 	'pending' === get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
 
-const requestSiteVerticals = debounce( requestSiteVerticalHttpData, 100, {
-	leading: false,
-	trailing: true,
-} );
+const requestSiteVerticals = debounce( requestSiteVerticalHttpData, 333 );
 
 export default localize(
 	connect(
