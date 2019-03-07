@@ -14800,14 +14800,14 @@
       "integrity": "sha512-dye+7rERqNf/6mDT1iwps+4Gf42420xuZgygF33uX178DxffqcyeuHbBuJ382FIcB5iP6mMZOhfW7kI0uXwb/Q=="
     },
     "react": {
-      "version": "16.8.3",
-      "resolved": "https://registry.npmjs.org/react/-/react-16.8.3.tgz",
-      "integrity": "sha512-3UoSIsEq8yTJuSu0luO1QQWYbgGEILm+eJl2QN/VLDi7hL+EN18M3q3oVZwmVzzBJ3DkM7RMdRwBmZZ+b4IzSA==",
+      "version": "16.8.4",
+      "resolved": "https://registry.npmjs.org/react/-/react-16.8.4.tgz",
+      "integrity": "sha512-0GQ6gFXfUH7aZcjGVymlPOASTuSjlQL4ZtVC5YKH+3JL6bBLCVO21DknzmaPlI90LN253ojj02nsapy+j7wIjg==",
       "requires": {
         "loose-envify": "^1.1.0",
         "object-assign": "^4.1.1",
         "prop-types": "^15.6.2",
-        "scheduler": "^0.13.3"
+        "scheduler": "^0.13.4"
       }
     },
     "react-addons-create-fragment": {
@@ -14876,14 +14876,14 @@
       }
     },
     "react-dom": {
-      "version": "16.8.3",
-      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-16.8.3.tgz",
-      "integrity": "sha512-ttMem9yJL4/lpItZAQ2NTFAbV7frotHk5DZEHXUOws2rMmrsvh1Na7ThGT0dTzUIl6pqTOi5tYREfL8AEna3lA==",
+      "version": "16.8.4",
+      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-16.8.4.tgz",
+      "integrity": "sha512-Ob2wK7XG2tUDt7ps7LtLzGYYB6DXMCLj0G5fO6WeEICtT4/HdpOi7W/xLzZnR6RCG1tYza60nMdqtxzA8FaPJQ==",
       "requires": {
         "loose-envify": "^1.1.0",
         "object-assign": "^4.1.1",
         "prop-types": "^15.6.2",
-        "scheduler": "^0.13.3"
+        "scheduler": "^0.13.4"
       }
     },
     "react-is": {
@@ -15007,15 +15007,15 @@
       }
     },
     "react-test-renderer": {
-      "version": "16.8.3",
-      "resolved": "https://registry.npmjs.org/react-test-renderer/-/react-test-renderer-16.8.3.tgz",
-      "integrity": "sha512-rjJGYebduKNZH0k1bUivVrRLX04JfIQ0FKJLPK10TAb06XWhfi4gTobooF9K/DEFNW98iGac3OSxkfIJUN9Mdg==",
+      "version": "16.8.4",
+      "resolved": "https://registry.npmjs.org/react-test-renderer/-/react-test-renderer-16.8.4.tgz",
+      "integrity": "sha512-jQ9Tf/ilIGSr55Cz23AZ/7H3ABEdo9oy2zF9nDHZyhLHDSLKuoILxw2ifpBfuuwQvj4LCoqdru9iZf7gwFH28A==",
       "dev": true,
       "requires": {
         "object-assign": "^4.1.1",
         "prop-types": "^15.6.2",
-        "react-is": "^16.8.3",
-        "scheduler": "^0.13.3"
+        "react-is": "^16.8.4",
+        "scheduler": "^0.13.4"
       }
     },
     "react-transition-group": {
