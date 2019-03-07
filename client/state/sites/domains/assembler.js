@@ -29,7 +29,6 @@ export const createSiteDomainObject = domain => {
 		expirySoon: Boolean( domain.expiry_soon ),
 		gdprConsentStatus: getGdprConsentStatus( domain ),
 		googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
-		hasPrivacyProtection: Boolean( domain.has_private_registration ),
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
