@@ -95,7 +95,7 @@
     "d3-shape": "1.2.2",
     "debug": "3.2.6",
     "deep-freeze": "0.0.1",
-    "diff": "3.5.0",
+    "diff": "4.0.1",
     "doctrine": "3.0.0",
     "dom-helpers": "3.4.0",
     "dom-scroll-into-view": "1.2.1",
