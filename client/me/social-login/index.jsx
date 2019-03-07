@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,6 +30,11 @@ import GoogleLoginButton from 'components/social-buttons/google';
 import userFactory from 'lib/user';
 import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const user = userFactory();
 
