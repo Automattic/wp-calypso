@@ -40,7 +40,7 @@
   },
   "scripts": {
     "clean": "rm -fr ./build",
-    "build": "../../bin/sdk-cli.js gutenberg src/preset --output-dir build",
+    "build": "node bin/build.js",
     "prepublishOnly": "npm run clean; NODE_ENV=production npm run build"
   },
   "repository": {
