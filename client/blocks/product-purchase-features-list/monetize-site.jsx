@@ -15,7 +15,7 @@ import PurchaseDetail from 'components/purchase-detail';
 export default localize( ( { selectedSite, translate } ) => {
 	const adSettingsUrl = selectedSite.jetpack
 		? '/settings/traffic/' + selectedSite.slug
-		: '/ads/settings/' + selectedSite.slug;
+		: '/earn/ads-settings/' + selectedSite.slug;
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
