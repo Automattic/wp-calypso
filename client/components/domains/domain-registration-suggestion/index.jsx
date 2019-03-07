@@ -21,7 +21,6 @@ import {
 	hasDomainInCart,
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { abtest } from 'lib/abtest';
 import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
@@ -140,10 +139,7 @@ class DomainRegistrationSuggestion extends React.Component {
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 
-		let buttonStyles = { primary: true };
-		if ( abtest( 'domainSearchButtonStyles' ) === 'onePrimary' ) {
-			buttonStyles = ! isFeatured ? {} : this.props.buttonStyles;
-		}
+		let buttonStyles = ! isFeatured ? {} : this.props.buttonStyles;
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
