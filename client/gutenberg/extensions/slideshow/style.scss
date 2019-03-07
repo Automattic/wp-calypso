@@ -12,7 +12,7 @@
 		}
 
 		// High specifity to override theme styles
-		.wp-block-jetpack-slideshow_swiper-wrappper,
+		.wp-block-jetpack-slideshow_swiper-wrapper,
 		.wp-block-jetpack-slideshow_slide {
 			padding: 0;
 			margin: 0;
@@ -58,6 +58,7 @@
 		background-size: 24px;
 		border: 0;
 		border-radius: 4px;
+		box-shadow: none;
 		height: 48px;
 		margin: -24px 0 0;
 		padding: 0;
