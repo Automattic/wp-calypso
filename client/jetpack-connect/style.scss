@@ -867,6 +867,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.wp-login__site-return-link:after {
 		background: linear-gradient(to right, rgba( var( --color-jetpack-onboarding-background ) , 0 ), rgba( var( --color-jetpack-onboarding-background ) , 1 ) 90%)
 	}
+
+	.payment-logo.is-paypal {
+		width: 64px;
+		background-color: var( --color-white );
+		background-size: 84%;
+		background-position: 50% 45%;
+		border-radius: 1px;
+	}
 }
 
 .is-section-checkout.is-jetpack-site {
