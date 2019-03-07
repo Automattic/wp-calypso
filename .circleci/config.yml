@@ -147,6 +147,13 @@ references:
       echo 'export NODE_ENV=test' >> $BASH_ENV &&
       echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV
 
+  move-e2e-artifacts: &move-e2e-artifacts
+    name: Move report and screenshots
+    when: always
+    command: |
+      cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
+      cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
+
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker: *docker-image
@@ -165,18 +172,10 @@ commands:
     steps:
       - store_test_results:
           path: /tmp/test_results
-      - store_test_results:
-          path: reports
       - store_artifacts:
           path: /tmp/test_results
       - store_artifacts:
           path: /tmp/artifacts
-      - store_artifacts:
-          path: reports
-          destination: e2e/reports
-      - store_artifacts:
-          path: screenshots
-          destination: e2e/screenshots
 
 jobs:
   setup:
@@ -486,6 +485,7 @@ jobs:
       - run: npm run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
+      - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
 
   test-e2e-canary:
@@ -509,6 +509,7 @@ jobs:
           name: Run Canary Tests
           command: |
             env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
+      - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
 
 workflows:

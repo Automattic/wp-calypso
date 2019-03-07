@@ -1,6 +1,6 @@
 #!/bin/bash
 MAGELLAN=./node_modules/.bin/magellan
-MOCHA_ARGS="--opts ./test/e2e/test/mocha.opts"
+MOCHA_ARGS=""
 WORKERS=8
 GRUNT=./node_modules/.bin/grunt
 REPORTER=""
