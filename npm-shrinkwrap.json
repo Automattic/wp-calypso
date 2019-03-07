@@ -2884,8 +2884,7 @@
     "acorn-walk": {
       "version": "6.1.1",
       "resolved": "https://registry.npmjs.org/acorn-walk/-/acorn-walk-6.1.1.tgz",
-      "integrity": "sha512-OtUw6JUTgxA2QoqqmrmQ7F2NYqiBPi/L2jqHyFtllhOUvXYQXf0Z1CYUinIfyT4bTCGmrA7gX9FvHA81uzCoVw==",
-      "dev": true
+      "integrity": "sha512-OtUw6JUTgxA2QoqqmrmQ7F2NYqiBPi/L2jqHyFtllhOUvXYQXf0Z1CYUinIfyT4bTCGmrA7gX9FvHA81uzCoVw=="
     },
     "after": {
       "version": "0.8.2",
@@ -19129,11 +19128,12 @@
       }
     },
     "webpack-bundle-analyzer": {
-      "version": "3.0.4",
-      "resolved": "https://registry.npmjs.org/webpack-bundle-analyzer/-/webpack-bundle-analyzer-3.0.4.tgz",
-      "integrity": "sha512-ggDUgtKuQki4vmc93Ej65GlYxeCUR/0THa7gA+iqAGC2FFAxO+r+RM9sAUa8HWdw4gJ3/NZHX/QUcVgRjdIsDg==",
+      "version": "3.1.0",
+      "resolved": "https://registry.npmjs.org/webpack-bundle-analyzer/-/webpack-bundle-analyzer-3.1.0.tgz",
+      "integrity": "sha512-nyDyWEs7C6DZlgvu1pR1zzJfIWSiGPbtaByZr8q+Fd2xp70FuM/8ngCJzj3Er1TYRLSFmp1F1OInbEm4DZH8NA==",
       "requires": {
-        "acorn": "^5.7.3",
+        "acorn": "^6.0.7",
+        "acorn-walk": "^6.1.1",
         "bfj": "^6.1.1",
         "chalk": "^2.4.1",
         "commander": "^2.18.0",
@@ -19145,13 +19145,6 @@
         "mkdirp": "^0.5.1",
         "opener": "^1.5.1",
         "ws": "^6.0.0"
-      },
-      "dependencies": {
-        "acorn": {
-          "version": "5.7.3",
-          "resolved": "https://registry.npmjs.org/acorn/-/acorn-5.7.3.tgz",
-          "integrity": "sha512-T/zvzYRfbVojPWahDsE5evJdHb3oJoQfFbsrKM7w5Zcs++Tr257tia3BmMP8XYVjp1S9RZXQMh7gao96BlqZOw=="
-        }
       }
     },
     "webpack-cli": {
