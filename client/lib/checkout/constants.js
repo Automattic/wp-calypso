@@ -24,4 +24,7 @@ export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS = {
 	MX: {
 		fields: [ 'phone-number', 'postal-code' ],
 	},
+	IN: {
+		fields: [ 'pan', 'street-number', 'address-1', 'address-2', 'state', 'city', 'postal-code' ],
+	},
 };
