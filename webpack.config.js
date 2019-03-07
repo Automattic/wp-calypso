@@ -21,6 +21,7 @@ const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const FilterWarningsPlugin = require( 'webpack-filter-warnings-plugin' );
+const SassConfig = require( '@automattic/calypso-build/src/sass' );
 
 /**
  * Internal dependencies
@@ -236,38 +237,14 @@ function getWebpackConfig( {
 						plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
 					},
 				},
-				{
-					test: /\.(sc|sa|c)ss$/,
-					use: [
-						MiniCssExtractPluginWithRTL.loader,
-						{
-							loader: 'css-loader',
-							options: {
-								importLoaders: 2,
-							},
-						},
-						{
-							loader: 'postcss-loader',
-							options: {
-								config: {
-									ctx: {
-										preserveCssCustomProperties,
-									},
-								},
-							},
-						},
-						{
-							loader: 'sass-loader',
-							options: {
-								includePaths: [ path.join( __dirname, 'client' ) ],
-								data: `@import '${ path.join(
-									__dirname,
-									'assets/stylesheets/shared/_utils.scss'
-								) }';`,
-							},
-						},
-					],
-				},
+				SassConfig( {
+					preserveCssCustomProperties,
+					includePaths: [ path.join( __dirname, 'client' ) ],
+					prelude: `@import '${ path.join(
+						__dirname,
+						'assets/stylesheets/shared/_utils.scss'
+					) }';`
+				} ),
 				{
 					include: path.join( __dirname, 'client/sections.js' ),
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
