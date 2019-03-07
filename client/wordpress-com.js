@@ -274,7 +274,7 @@ const sections = [
 	},
 	{
 		name: 'earn',
-		paths: [ '/earn' ],
+		paths: [ '/earn', '/ads' ],
 		module: 'my-sites/earn',
 		secondary: true,
 		group: 'sites',
