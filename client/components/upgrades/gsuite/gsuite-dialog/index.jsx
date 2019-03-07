@@ -134,7 +134,7 @@ class GoogleAppsDialog extends React.Component {
 		if ( abtest( 'gSuiteContinueButtonCopy' ) === 'purchase' ) {
 			return translate( 'Purchase G Suite' );
 		}
-		return translate( 'Purchase G Suite' );
+		return translate( 'Yes, Add Email \u00BB' );
 	}
 
 	footer() {
