@@ -1,7 +1,8 @@
 /** @format */
 
 const { getViewerData, readStatsFromFile } = require( 'webpack-bundle-analyzer/lib/analyzer' );
-const { statSync, writeFileSync } = require( 'fs' );
+const { statSync, readFileSync, writeFileSync } = require( 'fs' );
+const { createHash } = require( 'crypto' );
 const gzip = require( 'gzip-size' );
 
 analyzeBundle();
@@ -18,9 +19,17 @@ function analyzeBundle() {
 	console.log( 'Analyze: finished' );
 }
 
+function hashFile( inputFile ) {
+	const sha = createHash( 'sha1' );
+	const data = readFileSync( inputFile );
+	sha.update( data );
+	return sha.digest( 'hex' ).slice( 0, 20 );
+}
+
 function analyzeStylesheet( inputCSSFile, outputJSONFile ) {
 	const parsedSize = statSync( inputCSSFile ).size;
 	const gzipSize = gzip.fileSync( inputCSSFile );
-	const styleStats = { statSize: parsedSize, parsedSize, gzipSize };
+	const hash = hashFile( inputCSSFile );
+	const styleStats = { statSize: parsedSize, parsedSize, gzipSize, hash };
 	writeFileSync( outputJSONFile, JSON.stringify( styleStats, null, 2 ) );
 }
