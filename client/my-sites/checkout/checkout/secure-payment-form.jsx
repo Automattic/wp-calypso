@@ -541,6 +541,7 @@ export class SecurePaymentForm extends Component {
 			case 'eps':
 			case 'giropay':
 			case 'ideal':
+			case 'netbanking':
 			case 'p24':
 			case 'brazil-tef':
 			case 'sofort':
