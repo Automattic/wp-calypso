@@ -141,7 +141,7 @@ class GoogleAppsDialog extends React.Component {
 					className="gsuite-dialog__continue-button"
 					onClick={ this.handleFormSubmit }
 				>
-					{ translate( 'Yes, Add Email \u00BB' ) }
+					{ translate( 'Purchase G Suite' ) }
 				</Button>
 			</footer>
 		);
