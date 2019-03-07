@@ -7,21 +7,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
-import { capitalize, find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import WordAdsEarnings from 'my-sites/stats/wordads/earnings';
-import AdsSettings from 'my-sites/ads/form-settings';
-import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import { isWordadsInstantActivationEligible, canUpgradeToUseWordAds } from 'lib/ads/utils';
 import { isBusiness } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
@@ -35,16 +27,18 @@ import {
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
+import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
+import { PLAN_PREMIUM, FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteFragment } from 'lib/route';
 import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
 import { isJetpackSite } from 'state/sites/selectors';
+import { isPremium } from '../../../lib/products-values';
+import { canAccessEarnSection } from '../../../lib/ads/utils';
 
-class AdsMain extends Component {
+class AdsWrapper extends Component {
 	static propTypes = {
 		adsProgramName: PropTypes.string,
 		isUnsafe: PropTypes.oneOf( wordadsUnsafeValues ),
@@ -64,59 +58,14 @@ class AdsMain extends Component {
 		this.redirectToStats();
 	}
 
-	canAccess() {
-		const { canManageOptions, site } = this.props;
-		return site && canManageOptions && canAccessWordads( site );
-	}
-
 	redirectToStats() {
-		const { siteSlug } = this.props;
+		const { siteSlug, site } = this.props;
 		const siteFragment = getSiteFragment( page.current );
 
-		if ( ! this.canAccess() && siteSlug ) {
+		if ( siteSlug && site && ! canAccessEarnSection( site ) ) {
 			page( '/stats/' + siteSlug );
 		} else if ( ! siteFragment ) {
-			page( '/stats/' );
-		}
-	}
-
-	getSelectedText() {
-		const selected = find( this.getFilters(), { path: this.props.path } );
-		if ( selected ) {
-			return selected.title;
-		}
-
-		return '';
-	}
-
-	getFilters() {
-		const { site, siteSlug, translate } = this.props;
-		const pathSuffix = siteSlug ? '/' + siteSlug : '';
-
-		return canAccessWordads( site )
-			? [
-					{
-						title: translate( 'Earnings' ),
-						path: '/ads/earnings' + pathSuffix,
-						id: 'ads-earnings',
-					},
-					{
-						title: translate( 'Settings' ),
-						path: '/ads/settings' + pathSuffix,
-						id: 'ads-settings',
-					},
-			  ]
-			: [];
-	}
-
-	getComponent( section ) {
-		switch ( section ) {
-			case 'earnings':
-				return <WordAdsEarnings site={ this.props.site } />;
-			case 'settings':
-				return <AdsSettings />;
-			default:
-				return null;
+			page( '/earn/' );
 		}
 	}
 
@@ -225,14 +174,33 @@ class AdsMain extends Component {
 		);
 	}
 
-	render() {
-		const { adsProgramName, section, site, translate } = this.props;
+	renderUpsell() {
+		const { translate } = this.props;
+		return (
+			<UpgradeNudgeExpanded
+				plan={ PLAN_PREMIUM }
+				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
+				subtitle={ translate(
+					"By upgrading to the Premium plan, you'll be able to monetize your site through the WordAds program."
+				) }
+				highlightedFeature={ FEATURE_WORDADS_INSTANT }
+				benefits={ [
+					translate( 'Instantly enroll into the WordAds network.' ),
+					translate( 'Earn money from your content and traffic.' ),
+				] }
+			/>
+		);
+	}
 
-		if ( ! this.canAccess() ) {
+	render() {
+		const { site, translate } = this.props;
+		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
+
+		if ( ! canAccessEarnSection( site ) ) {
 			return null;
 		}
 
-		let component = this.getComponent( this.props.section );
+		let component = this.props.children;
 		let notice = null;
 
 		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
@@ -241,45 +209,19 @@ class AdsMain extends Component {
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
-		} else if (
-			! site.options.wordads &&
-			isWordadsInstantActivationEligible( site ) &&
-			! ( isBusiness( site.plan ) && site.jetpack )
-		) {
+		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
 			component = this.renderInstantActivationToggle( component );
+		} else if ( canUpgradeToUseWordAds( site ) ) {
+			component = this.renderUpsell();
+		} else if ( ! ( site.options.wordads || jetpackPremium ) ) {
+			component = null;
 		}
 
-		const layoutTitles = {
-			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
-			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
-		};
-
 		return (
-			<Main className="ads">
-				<PageViewTracker
-					path={ `/ads/${ section }/:site` }
-					title={ `${ adsProgramName } ${ capitalize( section ) }` }
-				/>
-				<DocumentHead title={ layoutTitles[ section ] } />
-				<SidebarNavigation />
-				<SectionNav selectedText={ this.getSelectedText() }>
-					<NavTabs>
-						{ this.getFilters().map( filterItem => {
-							return (
-								<NavItem
-									key={ filterItem.id }
-									path={ filterItem.path }
-									selected={ filterItem.path === this.props.path }
-								>
-									{ filterItem.title }
-								</NavItem>
-							);
-						} ) }
-					</NavTabs>
-				</SectionNav>
+			<div>
 				{ notice }
 				{ component }
-			</Main>
+			</div>
 		);
 	}
 }
@@ -319,4 +261,4 @@ export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( localize( AdsMain ) );
+)( localize( AdsWrapper ) );

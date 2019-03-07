@@ -8,17 +8,17 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import adsController from './controller';
+import earnController from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/ads', siteSelection, sites, makeLayout, clientRender );
-	page( '/ads/:site_id', adsController.redirect, makeLayout, clientRender );
+	page( '/earn', siteSelection, sites, makeLayout, clientRender );
+	page( '/earn/:site_id', earnController.redirect, makeLayout, clientRender );
 	page(
-		'/ads/:section/:site_id',
+		'/earn/:section/:site_id',
 		siteSelection,
 		navigation,
-		adsController.layout,
+		earnController.layout,
 		makeLayout,
 		clientRender
 	);

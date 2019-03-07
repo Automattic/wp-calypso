@@ -10,11 +10,11 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import Ads from 'my-sites/ads/main';
+import Main from './main';
 
 export default {
 	redirect: function( context ) {
-		page.redirect( '/ads/settings/' + context.params.site_id );
+		page.redirect( '/earn/ads-earnings/' + context.params.site_id );
 		return;
 	},
 
@@ -24,7 +24,7 @@ export default {
 			window.scrollTo( 0, 0 );
 		}
 
-		context.primary = React.createElement( Ads, {
+		context.primary = React.createElement( Main, {
 			section: context.params.section,
 			path: context.path,
 		} );
