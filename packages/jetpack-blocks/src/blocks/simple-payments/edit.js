@@ -25,11 +25,8 @@ import HelpMessage from './help-message';
 import ProductPlaceholder from './product-placeholder';
 import FeaturedMedia from './featured-media';
 import { __, _n } from '../../utils/i18n';
-import { decimalPlaces, formatPrice } from 'lib/simple-payments/utils';
-import {
-	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
-	SUPPORTED_CURRENCY_LIST,
-} from 'lib/simple-payments/constants';
+import { decimalPlaces, formatPrice } from './utils';
+import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, SUPPORTED_CURRENCY_LIST } from './constants';
 
 class SimplePaymentsEdit extends Component {
 	state = {
