@@ -116,7 +116,9 @@ class Layout extends Component {
 				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
-				<QuerySites allSites />
+				{ this.props.currentRoute && this.props.currentRoute !== '/jetpack/connect/authorize' && (
+					<QuerySites allSites />
+				) }
 				<QueryPreferences />
 				<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
