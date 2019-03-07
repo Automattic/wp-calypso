@@ -21,6 +21,7 @@ import { cartItems } from 'lib/cart-values';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
+	planItem as getCartItemForPlan,
 } from 'lib/cart-values/cart-items';
 
 // State actions and selectors
@@ -563,7 +564,7 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	return isEmpty( dependenciesNotProvided );
 }
 
-export function isDomainFulfilled( stepName, nextProps ) {
+export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { siteDomains } = nextProps;
 	let fulfilledDependencies = [];
 
@@ -582,7 +583,7 @@ export function isDomainFulfilled( stepName, nextProps ) {
 	}
 }
 
-export function isPlanFulfilled( stepName, nextProps ) {
+export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { isPaidPlan, sitePlanSlug } = nextProps;
 	let fulfilledDependencies = [];
 
@@ -590,7 +591,11 @@ export function isPlanFulfilled( stepName, nextProps ) {
 		const cartItem = undefined;
 		SignupActions.submitSignupStep( { stepName: stepName, cartItem }, [], { cartItem } );
 		recordExcludeStepEvent( stepName, sitePlanSlug );
-
+		fulfilledDependencies = fulfilledDependencies.concat( [ 'cartItem' ] );
+	} else if ( defaultDependencies && defaultDependencies.cartItem ) {
+		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
+		SignupActions.submitSignupStep( { stepName, cartItem }, [], { cartItem } );
+		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
 		fulfilledDependencies = fulfilledDependencies.concat( [ 'cartItem' ] );
 	}
 
@@ -599,7 +604,7 @@ export function isPlanFulfilled( stepName, nextProps ) {
 	}
 }
 
-export function isSiteTypeFulfilled( stepName, nextProps ) {
+export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) {
 	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
 		return;
 	}
@@ -628,7 +633,7 @@ export function isSiteTypeFulfilled( stepName, nextProps ) {
 	}
 }
 
-export function isSiteTopicFulfilled( stepName, nextProps ) {
+export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps ) {
 	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
 		return;
 	}
