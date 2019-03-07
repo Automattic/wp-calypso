@@ -42,6 +42,7 @@ $break-small: 600px;
 
 			.components-base-control {
 				display: inline-block;
+				margin-bottom: 0;
 				width: 48%;
 
 				&.business-hours__open {
@@ -62,11 +63,8 @@ $break-small: 600px;
 		width: 10%;
 	}
 
-	.business-hours-row__add button {
-		text-decoration: none;
-		svg {
-			pointer-events: none;
-		}
+	.business-hours-row__add button:hover {
+		box-shadow: none !important;
 	}
 
 	.business-hours__remove button {
