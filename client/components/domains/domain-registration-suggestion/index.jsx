@@ -120,7 +120,6 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion,
 			translate,
 			pendingCheckSuggestion,
-			isFeatured,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
@@ -139,7 +138,7 @@ class DomainRegistrationSuggestion extends React.Component {
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 
-		let buttonStyles = ! isFeatured ? {} : this.props.buttonStyles;
+		let buttonStyles = this.props.buttonStyles;
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
