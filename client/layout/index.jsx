@@ -116,6 +116,11 @@ class Layout extends Component {
 				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
+				/* We avoid requesting sites in the Jetpack Connect authorization step, because this would
+				request all sites before authorization has finished. That would cause the "all sites"
+				request to lack the newly authorized site, and when the request finishes after
+				authorization, it would remove the newly connected site that has been fetched separately.
+				See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
 				{ this.props.currentRoute && this.props.currentRoute !== '/jetpack/connect/authorize' && (
 					<QuerySites allSites />
 				) }
