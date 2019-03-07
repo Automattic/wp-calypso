@@ -15,7 +15,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { DomainDetailsForm, DomainDetailsFormContainer } from '../domain-details-form';
-import { domainRegistration, domainPrivacyProtection } from 'lib/cart-values/cart-items';
+import { domainRegistration } from 'lib/cart-values/cart-items';
 
 jest.mock( 'lib/analytics', () => ( {
 	pageView: {
@@ -105,11 +105,9 @@ describe( 'Domain Details Form', () => {
 		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 1 );
 	} );
 
-	test( 'should render privacy upsell for domain with support and privacy product', () => {
-		const privacyProduct = domainPrivacyProtection( { domain: 'test.test' } );
-
+	test( 'should render privacy upsell for domain with support', () => {
 		const propsWithDomainWithPrivacy = merge( {}, defaultProps, {
-			cart: { products: [ domainProduct, privacyProduct ] },
+			cart: { products: [ domainProduct ] },
 		} );
 
 		const wrapper = shallow( <DomainDetailsForm { ...propsWithDomainWithPrivacy } /> );

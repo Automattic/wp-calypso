@@ -46,7 +46,6 @@ import {
 	isBlogger,
 	isPersonal,
 	isPremium,
-	isPrivacyProtection,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isUnlimitedSpace,
@@ -133,11 +132,7 @@ export function addWithoutReplace( newCartItem ) {
  * @returns {Boolean} whether or not the item should replace the cart
  */
 export function cartItemShouldReplaceCart( cartItem, cart ) {
-	if (
-		isRenewal( cartItem ) &&
-		! isPrivacyProtection( cartItem ) &&
-		! isDomainRedemption( cartItem )
-	) {
+	if ( isRenewal( cartItem ) && ! isDomainRedemption( cartItem ) ) {
 		// adding a renewal replaces the cart unless it is a privacy protection
 		return true;
 	}
@@ -636,16 +631,6 @@ export function siteRedirect( properties ) {
 }
 
 /**
- * Creates a new shopping cart item for a domain privacy protection.
- *
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
- */
-export function domainPrivacyProtection( properties ) {
-	return domainItem( 'private_whois', properties.domain, properties.source );
-}
-
-/**
  * Creates a new shopping cart item for an incoming domain transfer.
  *
  * @param {Object} properties - list of properties
@@ -658,16 +643,6 @@ export function domainTransfer( properties ) {
 			...( properties.extra ? { extra: properties.extra } : {} ),
 		}
 	);
-}
-
-/**
- * Creates a new shopping cart item for an incoming domain transfer privacy.
- *
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
- */
-export function domainTransferPrivacy( properties ) {
-	return domainItem( domainProductSlugs.TRANSFER_IN_PRIVACY, properties.domain, properties.source );
 }
 
 /**
@@ -1197,10 +1172,8 @@ export default {
 	clearCart,
 	customDesignItem,
 	domainMapping,
-	domainPrivacyProtection,
 	domainRegistration,
 	domainTransfer,
-	domainTransferPrivacy,
 	fillGoogleAppsRegistrationData,
 	findFreeTrial,
 	getAll,
