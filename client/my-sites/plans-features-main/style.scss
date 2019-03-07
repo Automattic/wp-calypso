@@ -21,30 +21,52 @@
 	}
 }
 
+
+.is-section-plans .plans-features-main.is-no-tabs {
+	// Adjust the margins of the plans table
+	// for the no-tabs variant to use all
+	// available space, including the default
+	// margin applied to the main area.
+	@include breakpoint( '660px-960px' ) {
+		margin: 0 -24px;
+		width: calc( 100% + 48px );
+
+		.faq, .plans-features-main__notice {
+			margin: 0 24px;
+		}
+	}
+	@include breakpoint( '960px-1280px' ) {
+		margin: 0 -32px;
+		width: calc( 100% + 64px );
+
+		.faq, .plans-features-main__notice {
+			margin: 0 32px;
+		}
+	}
+}
+
 .plans-features-main {
 	&.is-no-tabs {
 		margin: 0;
 		width: 100%;
+		overflow: hidden;
+		max-width: 100vw;
 
-		// Adjust the margins of the plans table
-		// for the no-tabs variant to use all 
-		// available space, including the default
-		// margin applied to the main area.
-		@include breakpoint( '660px-960px' ) {
-			margin: 0 -24px;
-			width: calc( 100% + 48px );
-
-			.faq, .plans-features-main__notice {
-				margin: 0 24px;
+		.plan-features {
+			display: flex;
+			justify-content: center;
+		}
+		.plan-features__table {
+			width: auto;
+		}
+		.plan-features__table-item {
+			min-width: 250px;
+			@include breakpoint( '<960px' ) {
+				min-width: 220px;
 			}
 		}
-		@include breakpoint( '960px-1280px' ) {
-			margin: 0 -32px;
-			width: calc( 100% + 64px );
-
-			.faq, .plans-features-main__notice {
-				margin: 0 32px;
-			}
+		.plans-wrapper {
+			overflow: visible;
 		}
 	}
 	.plans-features-main__scroll-container {
