@@ -102,6 +102,7 @@ class Layout extends Component {
 				`is-group-${ this.props.sectionGroup }`,
 				`is-section-${ this.props.sectionName }`,
 				`focus-${ this.props.currentLayoutFocus }`,
+				{ 'is-add-site-page': this.props.currentRoute === '/jetpack/new' },
 				{ 'is-support-session': this.props.isSupportSession },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'has-chat': this.props.chatIsOpen },

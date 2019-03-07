@@ -34,6 +34,7 @@ const hasSidebar = section => {
 };
 
 const LayoutLoggedOut = ( {
+	currentRoute,
 	isJetpackLogin,
 	masterbarIsHidden,
 	oauth2Client,
@@ -49,6 +50,7 @@ const LayoutLoggedOut = ( {
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
+		'is-add-site-page': currentRoute === '/jetpack/new',
 		'focus-content': true,
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
@@ -106,6 +108,7 @@ LayoutLoggedOut.propTypes = {
 	primary: PropTypes.element,
 	secondary: PropTypes.element,
 	// Connected props
+	currentRoute: PropTypes.string,
 	masterbarIsHidden: PropTypes.bool,
 	section: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	redirectUri: PropTypes.string,
@@ -118,6 +121,7 @@ export default connect( state => {
 	const isJetpackLogin = currentRoute === '/log-in/jetpack';
 
 	return {
+		currentRoute,
 		isJetpackLogin,
 		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === section.name,
 		section,
