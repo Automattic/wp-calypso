@@ -1,87 +1,12 @@
-$colophon-height: 50px;
+$colophon-height: 50px; // wpcomColophon element at the bottom
 
 .is-section-jetpack-connect {
-	background-color: var( --color-jetpack-onboarding-background );
-
-	.formatted-header {
-		color: var( --color-jetpack-onboarding-text );
-	}
-
-	.jetpack-logo__text,
-	.wpcom-colophon path {
-		fill: var( --color-jetpack-onboarding-text );
-	}
-
-	.formatted-header__subtitle,
-	.payment-methods,
-	.jetpack-connect__help-button {
-		color: var( --color-primary-100 );
-	}
-
-	.card,
-	.site-type__wrapper .card,
-	.site-topic__wrapper .card {
-		box-shadow: none;
-		border-radius: 3px;
-	}
-
-	.site__title:after,
-	.site__domain:after {
-		right: 3px;
-	}
-
-	.site-type__option-label {
-		color: var( --color-text );
-	}
 
 	.layout__content {
 		position: static;
 
 		& > .banner {
 			max-width: 600px;
-		}
-	}
-
-	&.layout {
-		position: relative;
-		min-height: calc( 100% - #{$colophon-height} );
-		padding-bottom: $colophon-height;
-	}
-
-	.jetpack-connect__plan-info {
-
-		.formatted-header {
-			color: var( --color-text );
-		}
-
-		.formatted-header__subtitle {
-			color: var( --color-text-subtle );
-		}
-	}
-
-	.logged-out-form__link-item {
-		border-bottom-color: var( --color-neutral-700 );
-
-		&:hover {
-			color: var( --color-primary-200 );
-		}
-	}
-
-	.spinner__inner,
-	.spinner__outer {
-		border-top-color: var( --color-jetpack );
-	}
-
-	.spinner__inner {
-		border-right-color: var( --color-jetpack );
-	}
-
-	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link {
-		background-color: var( --color-jetpack );
-		border-color: var( --color-jetpack-dark );
-
-		&:hover {
-			background-color: var( --color-jetpack-light );
 		}
 	}
 }
@@ -850,4 +775,105 @@ $colophon-height: 50px;
 
 .jetpack-connect__connect-button {
 	text-align: center;
+}
+
+/**
+ * Onboarding styles
+ **/
+.is-section-jetpack-connect:not(.is-add-site-page),
+.is-jetpack-login {
+	background-color: var( --color-jetpack-onboarding-background );
+
+	&.layout {
+		position: relative;
+		min-height: calc( 100% - #{$colophon-height} );
+		padding-bottom: $colophon-height;
+	}
+
+	.login__form-header,
+	.formatted-header {
+		color: var( --color-jetpack-onboarding-text );
+	}
+
+	.jetpack-logo__text,
+	.wpcom-colophon path {
+		fill: var( --color-jetpack-onboarding-text );
+	}
+
+	.formatted-header__subtitle,
+	.payment-methods,
+	.jetpack-connect__help-button {
+		color: var( --color-primary-100 );
+	}
+
+	.card,
+	.site-type__wrapper .card,
+	.site-topic__wrapper .card {
+		box-shadow: none;
+		border-radius: 3px;
+	}
+
+	.site__title:after,
+	.site__domain:after {
+		right: 3px;
+	}
+
+	.login__form-social {
+		margin-top: 1px;
+	}
+
+	.site-type__option-label {
+		color: var( --color-text );
+	}
+
+	.jetpack-connect__plan-info {
+
+		.formatted-header {
+			color: var( --color-text );
+		}
+
+		.formatted-header__subtitle {
+			color: var( --color-text-subtle );
+		}
+	}
+	
+	.wp-login__links a,
+	.logged-out-form__link-item {
+		border-bottom-color: var( --color-neutral-700 );
+
+		&:hover {
+			color: var( --color-primary-200 );
+		}
+	}
+
+	.spinner__inner,
+	.spinner__outer {
+		border-top-color: var( --color-jetpack );
+	}
+
+	.spinner__inner {
+		border-right-color: var( --color-jetpack );
+	}
+
+	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link {
+		background-color: var( --color-jetpack );
+		border-color: var( --color-jetpack-dark );
+
+		&:hover {
+			background-color: var( --color-jetpack-light );
+		}
+	}
+
+	.wp-login__site-return-link:after {
+		background: linear-gradient(to right, rgba( var( --color-jetpack-onboarding-background ) , 0 ), rgba( var( --color-jetpack-onboarding-background ) , 1 ) 90%)
+	}
+}
+
+.is-section-checkout.is-jetpack-site {
+	min-height: 100%;
+	background-color: var( --color-jetpack-onboarding-background );
+
+	.layout__secondary {
+		
+	}
 }
