@@ -125,9 +125,15 @@ class DomainRegistrationSuggestion extends React.Component {
 		const isAdded = hasDomainInCart( cart, domain );
 
 		let buttonContent;
+		let buttonStyles = this.props.buttonStyles;
 
 		if ( isAdded ) {
-			buttonContent = <Gridicon icon="checkmark" />;
+			buttonContent = translate( '{{checkmark/}} In Cart', {
+				context: 'Domain is already added to shopping cart',
+				components: { checkmark: <Gridicon icon="checkmark" /> },
+			} );
+
+			buttonStyles = { ...buttonStyles, primary: false };
 		} else {
 			buttonContent =
 				! isSignupStep &&
@@ -137,8 +143,6 @@ class DomainRegistrationSuggestion extends React.Component {
 					  } )
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
-
-		let buttonStyles = this.props.buttonStyles;
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
