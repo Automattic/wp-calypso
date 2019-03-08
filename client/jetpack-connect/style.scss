@@ -838,11 +838,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 	
 	.wp-login__links a,
+	.logged-out-form__links a,
 	.logged-out-form__link-item {
+		color: var( --color-neutral-300 );
 		border-bottom-color: var( --color-neutral-700 );
 
-		&:hover {
-			color: var( --color-primary-200 );
+		&:hover,
+		&:focus {
+			color: var( --color-primary-300 );
 		}
 	}
 
