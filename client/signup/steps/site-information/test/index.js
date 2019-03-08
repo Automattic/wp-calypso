@@ -20,23 +20,17 @@ jest.mock( 'lib/signup/actions', () => ( {
 	saveSignupStep: jest.fn(),
 } ) );
 
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 describe( '<SiteInformation />', () => {
 	const defaultProps = {
 		siteType: 'business',
 		submitStep: jest.fn(),
 		updateStep: jest.fn(),
-		goToNextStep: jest.fn(),
 		informationType: 'title',
 		translate: x => x,
 		siteInformation: { title: 'Ho ho ho!' },
 		headerText: 'headerTextoidaliciously',
 		formFields: [ 'title', 'address', 'phone' ],
 		stepName: 'site-information',
-		positionInFlow: 0,
 	};
 
 	afterEach( () => {

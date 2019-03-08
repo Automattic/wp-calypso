@@ -72,16 +72,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	skipBusinessInformation: {
-		datestamp: '20190130',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	showConciergeSessionUpsell: {
 		datestamp: '20181214',
 		variations: {
@@ -124,14 +114,6 @@ export default {
 		},
 		defaultVariation: 'keep',
 	},
-	domainSearchButtonStyles: {
-		datestamp: '20190119',
-		variations: {
-			allPrimary: 50,
-			onePrimary: 50,
-		},
-		defaultVariation: 'allPrimary',
-	},
 	twoYearPlanByDefault: {
 		datestamp: '20190207',
 		variations: {
@@ -172,5 +154,21 @@ export default {
 			original: 90,
 		},
 		defaultVariation: 'original',
+	},
+	gSuiteContinueButtonCopy: {
+		datestamp: '20190307',
+		variations: {
+			purchase: 50,
+			original: 50,
+		},
+		defaultVariation: 'original',
+	},
+	checklistSiteLogo: {
+		datestamp: '20190305',
+		variations: {
+			icon: 50,
+			logo: 50,
+		},
+		defaultVariation: 'icon',
 	},
 };

@@ -57,6 +57,7 @@ module.exports = {
 				'jest/valid-describe': 0,
 				'jest/no-test-prefixes': 0,
 				'jest/no-identical-title': 0,
+				'require-await': 0,
 			},
 			globals: {
 				step: false,

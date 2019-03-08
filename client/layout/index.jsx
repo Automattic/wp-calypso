@@ -33,6 +33,7 @@ import {
 	isSectionLoading,
 } from 'state/ui/selectors';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
+import { isJetpackSite } from 'state/sites/selectors';
 import { isSupportSession } from 'state/support/selectors';
 import SitePreview from 'blocks/site-preview';
 import SupportArticleDialog from 'blocks/support-article-dialog';
@@ -101,10 +102,12 @@ class Layout extends Component {
 				`is-group-${ this.props.sectionGroup }`,
 				`is-section-${ this.props.sectionName }`,
 				`focus-${ this.props.currentLayoutFocus }`,
+				{ 'is-add-site-page': this.props.currentRoute === '/jetpack/new' },
 				{ 'is-support-session': this.props.isSupportSession },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'has-chat': this.props.chatIsOpen },
-				{ 'has-no-masterbar': this.props.masterbarIsHidden }
+				{ 'has-no-masterbar': this.props.masterbarIsHidden },
+				{ 'is-jetpack-site': this.props.isJetpack }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -116,7 +119,7 @@ class Layout extends Component {
 				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
-				<QuerySites allSites />
+				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
 				<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
@@ -174,8 +177,12 @@ class Layout extends Component {
 export default connect( state => {
 	const sectionGroup = getSectionGroup( state );
 	const sectionName = getSectionName( state );
+	const currentRoute = getCurrentRoute( state );
+	const siteId = getSelectedSiteId( state );
+
 	return {
 		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === sectionName,
+		isJetpack: isJetpackSite( state, siteId ),
 		isLoading: isSectionLoading( state ),
 		isSupportSession: isSupportSession( state ),
 		sectionGroup,
@@ -185,7 +192,13 @@ export default connect( state => {
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
 		chatIsOpen: isHappychatOpen( state ),
 		colorSchemePreference: getPreference( state, 'colorScheme' ),
-		currentRoute: getCurrentRoute( state ),
-		siteId: getSelectedSiteId( state ),
+		currentRoute,
+		siteId,
+		/* We avoid requesting sites in the Jetpack Connect authorization step, because this would
+		request all sites before authorization has finished. That would cause the "all sites"
+		request to lack the newly authorized site, and when the request finishes after
+		authorization, it would remove the newly connected site that has been fetched separately.
+		See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
+		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 	};
 } )( Layout );

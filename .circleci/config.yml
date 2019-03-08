@@ -147,6 +147,13 @@ references:
       echo 'export NODE_ENV=test' >> $BASH_ENV &&
       echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV
 
+  move-e2e-artifacts: &move-e2e-artifacts
+    name: Move report and screenshots
+    when: always
+    command: |
+      cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
+      cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
+
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker: *docker-image
@@ -165,18 +172,10 @@ commands:
     steps:
       - store_test_results:
           path: /tmp/test_results
-      - store_test_results:
-          path: reports
       - store_artifacts:
           path: /tmp/test_results
       - store_artifacts:
           path: /tmp/artifacts
-      - store_artifacts:
-          path: reports
-          destination: e2e/reports
-      - store_artifacts:
-          path: screenshots
-          destination: e2e/screenshots
 
 jobs:
   setup:
@@ -406,7 +405,7 @@ jobs:
             npm run build-css                                      \
               && npm run preanalyze-bundles                        \
               && node bin/icfy-analyze.js                          \
-              && mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy" \
+              && mv stats.json chart.json style.json "$CIRCLE_ARTIFACTS/icfy" \
               || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
             exit 0
       - save_cache: *save-terser-cache
@@ -486,6 +485,7 @@ jobs:
       - run: npm run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
+      - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
 
   test-e2e-canary:
@@ -509,6 +509,7 @@ jobs:
           name: Run Canary Tests
           command: |
             env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
+      - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
 
 workflows:
@@ -588,5 +589,112 @@ workflows:
             branches:
               only:
                 - master
+
+  e2e-full-suite-scheduled:
+    jobs:
+    - setup
+    - test-e2e:
+        requires:
+        - setup
+    triggers:
+    - schedule:
+        cron: "0 * * * *"
+        filters:
+          branches:
+            only: master
+
+  e2e-canary-scheduled:
+    jobs:
+      - setup
+      - test-e2e-canary:
+          name: test-e2e-canary-ie-sched
+          requires:
+            - setup
+          test-flags: "-w"
+          test-target: "IE11"
+      - test-e2e-canary:
+          name: test-e2e-canary-woo-sched
+          requires:
+            - setup
+          test-flags: "-W"
+          test-target: "WOO"
+    triggers:
+      - schedule:
+          cron: "0 12,20 * * *"
+          filters:
+            branches:
+              only: master
+
+  e2e-jetpack-be-scheduled:
+    jobs:
+      - setup
+      - test-e2e-canary:
+          name: test-e2e-jetpack
+          requires:
+            - setup
+          test-flags: "-j"
+          jetpack-host: "PRESSABLEBLEEDINGEDGE"
+          test-target: "JETPACK"
+    triggers:
+      - schedule:
+          cron: "0 7,19 * * *"
+          filters:
+            branches:
+              only: master
+
+  e2e-jetpack-scheduled:
+    jobs:
+    - setup
+    - test-e2e-canary:
+        name: test-e2e-jetpack
+        requires:
+        - setup
+        test-flags: "-j"
+        jetpack-host: "PRESSABLE"
+        test-target: "JETPACK"
+    triggers:
+    - schedule:
+        cron: "0 1,13 * * *"
+        filters:
+          branches:
+            only: master
+
+  e2e-canary-i18n-monthly:
+    jobs:
+      - setup
+      - test-e2e-canary:
+          name: test-e2e-i18n-monthly
+          requires:
+            - setup
+          test-target: "I18N"
+          test-flags: "-i"
+          filters:
+            branches:
+              only: master
+    triggers:
+      - schedule:
+          cron: "40 15 19 * *"
+          filters:
+            branches:
+              only: master
+
+  e2e-canary-i18n-nightly:
+    jobs:
+      - setup
+      - test-e2e-canary:
+          name: test-e2e-i18n-nightly
+          requires:
+            - setup
+          test-target: "I18N"
+          test-flags: "-I"
+          filters:
+            branches:
+              only: master
+    triggers:
+      - schedule:
+          cron: "46 4 * * *"
+          filters:
+            branches:
+              only: master
 
 # vi: sts=2 ts=2 sw=2 et

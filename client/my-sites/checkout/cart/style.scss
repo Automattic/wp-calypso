@@ -1,3 +1,7 @@
+.is-section-checkout .layout__secondary {
+	border-color: var( --color-border-subtle );
+}
+
 .cart__header {
 	border-top: 1px solid var( --color-border-subtle );
 
@@ -166,7 +170,7 @@
 		form {
 			display: block;
 			border-top: 1px solid var( --color-border-subtle );
-			margin: 15px -15px 0 -15px;
+			margin: 15px -15px 0;
 			padding: 15px 15px 0;
 
 			input[type='text'] {
@@ -202,6 +206,7 @@
 	background: var( --color-neutral-0 );
 	border: 1px solid var( --color-neutral-0 );
 	border-radius: 4px;
+	color: var( --color-text );
 	font-size: 12px;
 	margin: 15px 15px 0;
 	padding: 10px;

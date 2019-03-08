@@ -5,8 +5,4 @@
 	path {
 		fill: var( --color-text );
 	}
-
-	@include breakpoint( '<660px' ) {
-		margin-bottom: 24px;
-	}
 }

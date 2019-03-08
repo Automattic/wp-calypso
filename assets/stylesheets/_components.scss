@@ -166,7 +166,6 @@
 @import 'layout/masterbar/oauth-client.scss';
 @import 'layout/masterbar/crowdsignal.scss';
 @import 'layout/nps-survey-notice/style';
-@import 'layout/offline-status/style';
 @import 'layout/sidebar/style';
 @import 'lib/accept/style';
 @import 'lib/directly/style';
@@ -191,7 +190,6 @@
 @import 'me/help/help-happiness-engineers/style';
 @import 'me/help/help-results/style';
 @import 'me/help/help-search/style';
-@import 'me/help/live-chat-closure-notice/style';
 @import 'me/help/style';
 @import 'me/notification-settings/blogs-settings/style';
 @import 'me/notification-settings/comment-settings/style';
@@ -212,9 +210,9 @@
 @import 'me/security-account-recovery/style';
 @import 'me/sidebar-navigation/style';
 @import 'me/sidebar/style';
-@import 'me/social-login/style';
 @import 'me/two-step/style';
-@import 'my-sites/ads/style';
+@import 'my-sites/earn/style';
+@import 'my-sites/earn/ads/style';
 @import 'my-sites/checklist/style';
 @import 'my-sites/checklist/wpcom-checklist/checklist-banner/style';
 @import 'my-sites/checklist/wpcom-checklist/checklist-navigation/style';

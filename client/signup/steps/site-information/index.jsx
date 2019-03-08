@@ -25,7 +25,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import InfoPopover from 'components/info-popover';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -86,17 +85,6 @@ export class SiteInformation extends Component {
 		this.props.submitStep( this.props.siteInformation );
 	};
 
-	handleSkip = event => {
-		event.preventDefault();
-
-		const emptySiteInformation = {};
-		each( this.props.informationFields, key => {
-			emptySiteInformation[ key ] = '';
-		} );
-
-		this.props.submitStep( emptySiteInformation );
-	};
-
 	getFieldTexts( informationType ) {
 		const { translate, siteType } = this.props;
 		switch ( informationType ) {
@@ -127,22 +115,11 @@ export class SiteInformation extends Component {
 		}
 	}
 
-	renderSubmitButton = () => {
-		const { translate } = this.props;
-
-		return (
-			<>
-				<Button primary type="submit" onClick={ this.handleSubmit }>
-					{ translate( 'Continue' ) }
-				</Button>
-				{ abtest( 'skipBusinessInformation' ) === 'show' && (
-					<Button className="site-information__skip-button" borderless onClick={ this.handleSkip }>
-						{ translate( 'Skip' ) }
-					</Button>
-				) }
-			</>
-		);
-	};
+	renderSubmitButton = () => (
+		<Button primary type="submit" onClick={ this.handleSubmit }>
+			{ this.props.translate( 'Continue' ) }
+		</Button>
+	);
 
 	renderContent() {
 		const { hasMultipleFieldSets, formFields } = this.props;

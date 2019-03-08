@@ -1,8 +1,19 @@
+$colophon-height: 50px;
+
 .is-section-jetpack-connect {
+
 	.layout__content {
+		position: static;
+
 		& > .banner {
 			max-width: 600px;
 		}
+	}
+
+	&.layout {
+		position: relative;
+		min-height: calc( 100% - #{$colophon-height} );
+		padding-bottom: $colophon-height;
 	}
 }
 
@@ -88,8 +99,17 @@
 			background-color: var( --color-jetpack );
 		}
 	}
+	
+	.wpcom-colophon {
+		position: absolute;
+			bottom: 0;
+			left: 0;
+		width: 100%;
+		height: $colophon-height;
+	}
 
 	.site-topic__content {
+		
 		.form-fieldset {
 			position: relative;
 		}
@@ -115,7 +135,6 @@
 .jetpack-connect__main.is-wide {
 	max-width: 100%;
 	text-align: center;
-	margin-bottom: 24px;
 
 	.jetpack-connect__happychat-button {
 		text-align: center;
