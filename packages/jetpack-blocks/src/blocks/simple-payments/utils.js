@@ -6,6 +6,7 @@ import { trimEnd } from 'lodash';
 /**
  * Internal dependencies
  */
+// FIXME: import { getCurrencyDefaults } from '@automattic/format-currency';
 import { getCurrencyDefaults } from '../../../../../client/lib/format-currency/currencies';
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from './constants';
 
