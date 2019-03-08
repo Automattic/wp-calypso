@@ -139,6 +139,7 @@ class StatsDatePicker extends Component {
 	};
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		const { summary, translate, query, showQueryDate, isActivity } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 
