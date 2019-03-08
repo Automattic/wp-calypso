@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,12 +15,9 @@ import React from 'react';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
-import i18n from 'i18n-calypso';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 
-const userLib = userFactory();
-
-export default class EmailUnverifiedNotice extends React.Component {
+class EmailUnverifiedNotice extends React.Component {
 	state = {
 		pendingRequest: false,
 		emailSent: false,
@@ -52,7 +50,7 @@ export default class EmailUnverifiedNotice extends React.Component {
 			pendingRequest: true,
 		} );
 
-		userLib.sendVerificationEmail( ( error, response ) => {
+		user().sendVerificationEmail( ( error, response ) => {
 			this.setState( {
 				emailSent: response && response.success,
 				error: error,
@@ -63,7 +61,7 @@ export default class EmailUnverifiedNotice extends React.Component {
 
 	renderEmailSendPending() {
 		return (
-			<Notice icon="mail" showDismiss={ false } text={ i18n.translate( 'Sending…' ) }>
+			<Notice icon="mail" showDismiss={ false } text={ this.props.translate( 'Sending…' ) }>
 				<NoticeAction>
 					<Spinner />
 				</NoticeAction>
@@ -72,23 +70,18 @@ export default class EmailUnverifiedNotice extends React.Component {
 	}
 
 	renderEmailSendSuccess() {
-		const noticeText = i18n.translate( 'We sent another confirmation email to %(email)s.', {
+		const noticeText = this.props.translate( 'We sent another confirmation email to %(email)s.', {
 			args: { email: this.props.userEmail },
 		} );
 
-		return (
-			<Notice
-				text={ noticeText }
-				status="is-success"
-				onDismissClick={ this.handleDismiss }
-				className="email-verification-notice"
-			/>
-		);
+		return <Notice text={ noticeText } status="is-success" onDismissClick={ this.handleDismiss } />;
 	}
 
 	renderEmailSendError() {
 		const noticeText = [
-			<strong key="email-send-error">{ i18n.translate( 'The email could not be sent.' ) }</strong>,
+			<strong key="email-send-error">
+				{ this.props.translate( 'The email could not be sent.' ) }
+			</strong>,
 			' ',
 			this.state.error.message,
 		];
@@ -99,10 +92,9 @@ export default class EmailUnverifiedNotice extends React.Component {
 				icon="notice"
 				onDismissClick={ this.handleDismiss }
 				status="is-warning"
-				className="email-verification-notice"
 			>
 				<NoticeAction onClick={ this.handleSendVerificationEmail }>
-					{ i18n.translate( 'Try Again' ) }
+					{ this.props.translate( 'Try Again' ) }
 				</NoticeAction>
 			</Notice>
 		);
@@ -126,10 +118,10 @@ export default class EmailUnverifiedNotice extends React.Component {
 		) : (
 			<div>
 				<p>
-					<strong>{ i18n.translate( 'Please confirm your email address' ) }</strong>
+					<strong>{ this.props.translate( 'Please confirm your email address' ) }</strong>
 				</p>
 				<p>
-					{ i18n.translate(
+					{ this.props.translate(
 						'To post and keep using WordPress.com you need to confirm your email address. ' +
 							'Please click the link in the email we sent to %(email)s.',
 						{
@@ -140,12 +132,14 @@ export default class EmailUnverifiedNotice extends React.Component {
 					) }
 				</p>
 				<p>
-					{ i18n.translate(
+					{ this.props.translate(
 						'{{requestButton}}Re-send your confirmation email{{/requestButton}} ' +
 							'or {{changeButton}}change the email address on your account{{/changeButton}}.',
 						{
 							components: {
+								/* eslint-disable jsx-a11y/anchor-is-valid */
 								requestButton: <a href="#" onClick={ this.handleSendVerificationEmail } />,
+								/* eslint-enable jsx-a11y/anchor-is-valid */
 								changeButton: <a href="/me/account" />,
 							},
 						}
@@ -160,14 +154,15 @@ export default class EmailUnverifiedNotice extends React.Component {
 				icon="info"
 				showDismiss={ false }
 				status={ this.props.noticeStatus }
-				className="email-unverified-notice"
 			>
 				{ this.props.noticeText && (
 					<NoticeAction onClick={ this.handleSendVerificationEmail }>
-						{ i18n.translate( 'Resend Email' ) }
+						{ this.props.translate( 'Resend Email' ) }
 					</NoticeAction>
 				) }
 			</Notice>
 		);
 	}
 }
+
+export default localize( EmailUnverifiedNotice );
