@@ -72,6 +72,10 @@ function score( c ) {
 	const checks = [ hasImports, hasExtend, hasInclude, hasNonCompliantToplevelSelectors ];
 	const scores = checks.map( check => check( styles, name ) );
 	scores.score = scores.reduce( ( totalScore, { score: s } ) => totalScore + s, 0 );
+	scores.summary = scores
+		.filter( s => s.name )
+		.map( s => s.name )
+		.join( ', ' );
 	return scores;
 }
 
@@ -94,4 +98,7 @@ for ( const s of scored ) {
 		currentScore = s.scores.score;
 	}
 	console.log( s.component );
+	if ( s.scores.summary ) {
+		console.log( '  ', s.scores.summary );
+	}
 }
