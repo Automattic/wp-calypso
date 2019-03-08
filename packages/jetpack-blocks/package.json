@@ -2,7 +2,7 @@
   "name": "@automattic/jetpack-blocks",
   "version": "13.1.1",
   "description": "Gutenberg blocks for the Jetpack WordPress plugin",
-  "main": "build/editor.js",
+  "main": "dist/editor.js",
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
     "@wordpress/api-fetch": "^2.2.8",
@@ -41,7 +41,7 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "rm -fr ./build",
+    "clean": "npx rimraf ./dist",
     "build": "node bin/build.js",
     "prepublishOnly": "npm run clean; NODE_ENV=production npm run build"
   },
