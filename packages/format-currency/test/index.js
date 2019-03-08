@@ -1,12 +1,7 @@
-/** @format */
-
 /**
- * External dependencies
+ * Internal dependencies
  */
-import formatCurrency, {
-	getCurrencyDefaults,
-	getCurrencyObject,
-} from '@automattic/format-currency';
+import formatCurrency, { getCurrencyDefaults, getCurrencyObject } from '../src';
 
 describe( 'formatCurrency', () => {
 	test( 'formats a number to localized currency', () => {
