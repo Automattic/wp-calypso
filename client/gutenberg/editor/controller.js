@@ -24,7 +24,7 @@ import { EDITOR_START } from 'state/action-types';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { Placeholder } from './placeholder';
-import { JETPACK_DATA_PATH } from 'gutenberg/extensions/presets/jetpack/utils/get-jetpack-data';
+import { JETPACK_DATA_PATH } from '@automattic/jetpack-blocks/src/utils/get-jetpack-data';
 import {
 	requestFromUrl,
 	requestGutenbergBlockAvailability,
