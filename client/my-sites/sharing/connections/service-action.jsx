@@ -71,9 +71,12 @@ const SharingServiceAction = ( {
 	}
 
 	if ( 'google_plus' === service.ID && 1 > removableConnections.length ) {
+		label = translate( 'Unavailable', {
+			context: 'Sharing: Publicize connect unavailable button label',
+		} );
 		return (
 			<Button compact disabled={ true }>
-				Unavailable
+				{ label }
 			</Button>
 		);
 	}
