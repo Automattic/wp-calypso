@@ -73,7 +73,7 @@
 .importer-header__service-title {
 	font-size: 21px;
 	font-weight: 300;
-	color: var( --color-neutral-light );
+	color: var( --color-neutral-700 );
 
 	@include breakpoint( '>480px' ) {
 		clear: none;
