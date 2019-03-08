@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { find } from 'lodash';
+import { find, defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -96,7 +96,9 @@ class CreditCardSelector extends React.Component {
 		} else {
 			newPayment = storedCardPayment( this.getStoredCardDetails( section ) );
 		}
-		setPayment( newPayment );
+		defer( function() {
+			setPayment( newPayment );
+		} );
 	};
 
 	getStoredCardDetails = section => {
