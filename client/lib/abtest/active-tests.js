@@ -173,4 +173,12 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
+	checklistSiteLogo: {
+		datestamp: '20190305',
+		variations: {
+			icon: 50,
+			logo: 50,
+		},
+		defaultVariation: 'icon',
+	},
 };
