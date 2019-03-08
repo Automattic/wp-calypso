@@ -15,7 +15,9 @@ import QueryMailchimpSettings from 'components/data/query-mailchimp-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
+import { isJetpackMinimumVersion, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
 
 const MailchimpSettings = ( {
 	siteId,
@@ -23,6 +25,8 @@ const MailchimpSettings = ( {
 	requestSettingsUpdateAction,
 	mailchimpLists,
 	mailchimpListId,
+	isJetpack,
+	isJetpackConnectionBroken,
 	isJetpackTooOld,
 	siteSlug,
 	translate,
@@ -50,6 +54,26 @@ const MailchimpSettings = ( {
 			translate( 'Subscriber emails will be saved to the %s Mailchimp list', { args: list.name } )
 		);
 	};
+	const common = (
+		<div>
+			{ isJetpack && <QueryJetpackConnection siteId={ siteId } /> }
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<div className="sharing-connections__mailchimp-gutenberg_explanation">
+				<p>
+					{ translate(
+						'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
+					) }
+					<a
+						href={ 'https://support.wordpress.com/mailchimp-block/' }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ translate( 'Learn more.' ) }
+					</a>
+				</p>
+			</div>
+		</div>
+	);
 	if ( isJetpackTooOld ) {
 		return (
 			<div>
@@ -65,6 +89,22 @@ const MailchimpSettings = ( {
 						icon="external"
 					/>
 				</Notice>
+				{ common }
+			</div>
+		);
+	}
+
+	if ( isJetpackConnectionBroken ) {
+		return (
+			<div>
+				<Notice
+					status="is-warning"
+					text={ translate(
+						'Jetpack connection for this site is not active. Please reactivate it.'
+					) }
+					showDismiss={ false }
+				/>
+				{ common }
 			</div>
 		);
 	}
@@ -106,21 +146,7 @@ const MailchimpSettings = ( {
 						</option>
 					) ) }
 			</select>
-			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-			<div className="sharing-connections__mailchimp-gutenberg_explanation">
-				<p>
-					{ translate(
-						'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
-					) }
-					<a
-						href={ 'https://support.wordpress.com/mailchimp-block/' }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						{ translate( 'Learn more.' ) }
-					</a>
-				</p>
-			</div>
+			{ common }
 		</div>
 	);
 	/* eslint-enable jsx-a11y/no-onchange */
@@ -145,10 +171,13 @@ export const renderMailchimpLogo = () => (
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
 		return {
 			siteId: siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			isJetpackTooOld: isJetpackMinimumVersion( state, siteId, '7.1' ) === false,
+			isJetpack: isJetpack,
+			isJetpackConnectionBroken: isJetpack && getJetpackConnectionStatus( state, siteId ) === false,
 			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], null ),
 			mailchimpListId: get(
 				state,
