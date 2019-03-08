@@ -1027,3 +1027,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 }
+
+.jetpack-connect__skip-button {
+	text-align: center;
+	margin: 17px 0;
+
+	.button .gridicon {
+		padding-left: 4px;
+		margin-right: -5px;
+	}
+}
