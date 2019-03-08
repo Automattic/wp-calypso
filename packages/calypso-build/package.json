@@ -25,6 +25,7 @@
 		"css-loader": "2.1.1",
 		"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
 		"postcss-loader": "3.0.0",
-		"sass-loader": "7.1.0"
+		"sass-loader": "7.1.0",
+		"webpack-rtl-plugin": "1.8.0"
 	}
 }
