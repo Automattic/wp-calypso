@@ -3747,12 +3747,12 @@
       }
     },
     "babel-jest": {
-      "version": "24.3.0",
-      "resolved": "https://registry.npmjs.org/babel-jest/-/babel-jest-24.3.0.tgz",
-      "integrity": "sha512-YH62Flana1vImnB3Q59R9t7PzMUbFTlhI4KR/Ri/5hshm+WgxCTuFS8N2uSvEhQXcvzkhrvjBBciJWzOb+4rOA==",
+      "version": "24.3.1",
+      "resolved": "https://registry.npmjs.org/babel-jest/-/babel-jest-24.3.1.tgz",
+      "integrity": "sha512-6KaXyUevY0KAxD5Ba+EBhyfwvc+R2f7JV7BpBZ5T8yJGgj0M1hYDfRhDq35oD5MzprMf/ggT81nEuLtMyxfDIg==",
       "dev": true,
       "requires": {
-        "@jest/transform": "^24.3.0",
+        "@jest/transform": "^24.3.1",
         "@jest/types": "^24.3.0",
         "@types/babel__core": "^7.1.0",
         "babel-plugin-istanbul": "^5.1.0",
@@ -10369,13 +10369,13 @@
       "integrity": "sha1-elSbvZ/+FYWwzQoZHiAwVb7ldLQ="
     },
     "jest": {
-      "version": "24.3.0",
-      "resolved": "https://registry.npmjs.org/jest/-/jest-24.3.0.tgz",
-      "integrity": "sha512-c1EFvnRkTClSj9qcAF3r0UHCf5bpxdGs4+cKJwp53tct6S/ZhSk3NGjjMGBHxm41+6wnJSBl48u6nzIFxoNs9g==",
+      "version": "24.3.1",
+      "resolved": "https://registry.npmjs.org/jest/-/jest-24.3.1.tgz",
+      "integrity": "sha512-SqZguEbYNcZ3r0KUUBN+IkKfyPS1VBbIUiK4Wrc0AiGUR52gJa0fmlWSOCL3x25908QrfoQwkVDu5jCsfXb2ig==",
       "dev": true,
       "requires": {
         "import-local": "^2.0.0",
-        "jest-cli": "^24.3.0"
+        "jest-cli": "^24.3.1"
       },
       "dependencies": {
         "ci-info": {
@@ -10508,23 +10508,6 @@
         "micromatch": "^3.1.10",
         "pretty-format": "^24.3.1",
         "realpath-native": "^1.1.0"
-      },
-      "dependencies": {
-        "babel-jest": {
-          "version": "24.3.1",
-          "resolved": "https://registry.npmjs.org/babel-jest/-/babel-jest-24.3.1.tgz",
-          "integrity": "sha512-6KaXyUevY0KAxD5Ba+EBhyfwvc+R2f7JV7BpBZ5T8yJGgj0M1hYDfRhDq35oD5MzprMf/ggT81nEuLtMyxfDIg==",
-          "dev": true,
-          "requires": {
-            "@jest/transform": "^24.3.1",
-            "@jest/types": "^24.3.0",
-            "@types/babel__core": "^7.1.0",
-            "babel-plugin-istanbul": "^5.1.0",
-            "babel-preset-jest": "^24.3.0",
-            "chalk": "^2.4.2",
-            "slash": "^2.0.0"
-          }
-        }
       }
     },
     "jest-diff": {
