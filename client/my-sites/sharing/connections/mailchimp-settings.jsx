@@ -15,6 +15,7 @@ import QueryMailchimpSettings from 'components/data/query-mailchimp-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import { isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
 
 const MailchimpSettings = ( {
 	siteId,
@@ -22,6 +23,8 @@ const MailchimpSettings = ( {
 	requestSettingsUpdateAction,
 	mailchimpLists,
 	mailchimpListId,
+	isJetpackTooOld,
+	siteSlug,
 	translate,
 } ) => {
 	const chooseMailchimpList = event => {
@@ -47,6 +50,24 @@ const MailchimpSettings = ( {
 			translate( 'Subscriber emails will be saved to the %s Mailchimp list', { args: list.name } )
 		);
 	};
+	if ( isJetpackTooOld ) {
+		return (
+			<div>
+				<Notice
+					status="is-warning"
+					text={ translate(
+						'Please update Jetpack plugin to version 7.1 in order to use the Mailchimp block'
+					) }
+					showDismiss={ false }
+				>
+					<NoticeAction
+						href={ `https://wordpress.com/plugins/jetpack/${ siteSlug }` }
+						icon="external"
+					/>
+				</Notice>
+			</div>
+		);
+	}
 
 	/* eslint-disable jsx-a11y/no-onchange */
 	return (
@@ -126,6 +147,8 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		return {
 			siteId: siteId,
+			siteSlug: getSiteSlug( state, siteId ),
+			isJetpackTooOld: isJetpackMinimumVersion( state, siteId, '7.1' ) === false,
 			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], null ),
 			mailchimpListId: get(
 				state,
