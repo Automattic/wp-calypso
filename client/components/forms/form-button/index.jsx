@@ -18,6 +18,7 @@ class FormButton extends React.Component {
 	static defaultProps = {
 		isSubmitting: false,
 		isPrimary: true,
+		isSecondary: false,
 		type: 'submit',
 	};
 
@@ -28,13 +29,14 @@ class FormButton extends React.Component {
 	};
 
 	render() {
-		const { children, className, isPrimary, ...props } = this.props,
+		const { children, className, isPrimary, isSecondary, ...props } = this.props,
 			buttonClasses = classNames( className, 'form-button' );
 
 		return (
 			<Button
 				{ ...omit( props, [ 'isSubmitting', 'moment', 'numberFormat', 'translate' ] ) }
 				primary={ isPrimary }
+				secondary={ isSecondary }
 				className={ buttonClasses }
 			>
 				{ Children.count( children ) ? children : this.getDefaultButtonAction() }

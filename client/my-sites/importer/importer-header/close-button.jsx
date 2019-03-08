@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
+import FormButton from 'components/forms/form-button';
 import { appStates } from 'state/imports/constants';
 import { cancelImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -59,15 +59,15 @@ export class CloseButton extends React.PureComponent {
 		const disabled = ! isEnabled || isUploading || appStates.UPLOADING === importerState;
 
 		return (
-			<Button
+			<FormButton
 				className="importer-header__action-button"
 				disabled={ disabled }
-				isPrimary
-				scary
+				isPrimary={ false }
+				isSecondary={ true }
 				onClick={ this.handleClick }
 			>
-				{ translate( 'Close', { context: 'verb, to Close a dialog' } ) }
-			</Button>
+				{ translate( 'Cancel', { context: 'verb, to Close a dialog' } ) }
+			</FormButton>
 		);
 	}
 }
