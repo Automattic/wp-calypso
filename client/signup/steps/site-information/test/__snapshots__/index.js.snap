@@ -4,7 +4,6 @@ exports[`<SiteInformation /> should render 1`] = `
 <Localized(StepWrapper)
   fallbackHeaderText="headerTextoidaliciously"
   headerText="headerTextoidaliciously"
-  positionInFlow={0}
   stepContent={
     <div
       className="site-information__wrapper is-single-fieldset"
@@ -41,15 +40,13 @@ exports[`<SiteInformation /> should render 1`] = `
                 placeholder="E.g., Vail Renovations"
                 value="Ho ho ho!"
               />
-              <React.Fragment>
-                <Button
-                  onClick={[Function]}
-                  primary={true}
-                  type="submit"
-                >
-                  Continue
-                </Button>
-              </React.Fragment>
+              <Button
+                onClick={[Function]}
+                primary={true}
+                type="submit"
+              >
+                Continue
+              </Button>
             </FormFieldset>
           </div>
           <div
@@ -79,15 +76,13 @@ exports[`<SiteInformation /> should render 1`] = `
                 placeholder="E.g., 60 29th St, San Francisco, CA 94110"
                 value=""
               />
-              <React.Fragment>
-                <Button
-                  onClick={[Function]}
-                  primary={true}
-                  type="submit"
-                >
-                  Continue
-                </Button>
-              </React.Fragment>
+              <Button
+                onClick={[Function]}
+                primary={true}
+                type="submit"
+              >
+                Continue
+              </Button>
             </FormFieldset>
           </div>
           <div
@@ -117,15 +112,13 @@ exports[`<SiteInformation /> should render 1`] = `
                 placeholder="E.g., (555) 555-5555"
                 value=""
               />
-              <React.Fragment>
-                <Button
-                  onClick={[Function]}
-                  primary={true}
-                  type="submit"
-                >
-                  Continue
-                </Button>
-              </React.Fragment>
+              <Button
+                onClick={[Function]}
+                primary={true}
+                type="submit"
+              >
+                Continue
+              </Button>
             </FormFieldset>
           </div>
         </form>
