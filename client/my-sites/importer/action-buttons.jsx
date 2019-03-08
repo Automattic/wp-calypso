@@ -51,11 +51,21 @@ const getNegativeButton = ( importerState, isUploading ) => {
 	return null;
 };
 
-const ActionButtons = ( { importerStatus, site, isEnabled } ) => {
+const ActionButtons = ( {
+	importerStatus,
+	site,
+	isEnabled,
+	renderNegativeButton,
+	renderPositiveButton,
+} ) => {
 	const { importerState, isUploading } = importerStatus;
 
-	const PositiveButton = getPositiveButton( importerState );
-	const NegativeButton = getNegativeButton( importerState, isUploading );
+	console.log( { renderPositiveButton } );
+
+	const PositiveButton = renderPositiveButton ? null : getPositiveButton( importerState );
+	const NegativeButton = renderNegativeButton
+		? null
+		: getNegativeButton( importerState, isUploading );
 
 	return (
 		<Fragment>
@@ -65,6 +75,8 @@ const ActionButtons = ( { importerStatus, site, isEnabled } ) => {
 			{ PositiveButton && (
 				<PositiveButton importerStatus={ importerStatus } isEnabled={ isEnabled } site={ site } />
 			) }
+			{ renderPositiveButton && renderPositiveButton() }
+			{ renderNegativeButton && renderNegativeButton() }
 		</Fragment>
 	);
 };

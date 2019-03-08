@@ -86,10 +86,11 @@ export default class extends React.PureComponent {
 						description={ uploadDescription }
 						importerStatus={ state }
 						onStartImport={ this.validateSite }
+						isEnabled={ isEnabled }
 					/>
 				) }
 
-				<ActionButtons isEnabled={ isEnabled } site={ site } importerStatus={ state } />
+				{ /* <ActionButtons isEnabled={ isEnabled } site={ site } importerStatus={ state } /> */ }
 			</Card>
 		);
 	}

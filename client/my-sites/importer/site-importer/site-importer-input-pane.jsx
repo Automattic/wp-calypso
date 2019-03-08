@@ -46,6 +46,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 import { setSelectedEditor } from 'state/selected-editor/actions';
 
+import ActionButtons from '../action-buttons';
+
 const NO_ERROR_STATE = {
 	error: false,
 	errorMessage: '',
@@ -439,65 +441,91 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	render() {
+		const site = this.props.site;
+		const state = this.props.importerStatus;
+		const isEnabled = this.props.isEnabled;
+
 		return (
-			<div className="site-importer__site-importer-pane">
-				{ this.state.importStage === 'idle' && (
-					<div>
-						<p>{ this.props.description }</p>
-						<div className="site-importer__site-importer-url-input">
-							<TextInput
-								disabled={ this.state.loading }
-								onChange={ this.setUrl }
-								onKeyPress={ this.validateOnEnter }
-								value={ this.state.siteURLInput }
-								placeholder="https://example.com/"
-							/>
-							<Button
-								primary={ true }
-								disabled={ this.state.loading }
-								busy={ this.state.loading }
-								onClick={ this.validateSite }
-							>
-								{ this.props.translate( 'Continue' ) }
-							</Button>
+			<div className="xxx">
+				<div className="site-importer__site-importer-pane">
+					{ /*  We can get rid of the button and re-jig some of these bits */ }
+					{ this.state.importStage === 'idle' && (
+						<div>
+							<p>{ this.props.description }</p>
+							<div className="site-importer__site-importer-url-input">
+								<TextInput
+									disabled={ this.state.loading }
+									onChange={ this.setUrl }
+									onKeyPress={ this.validateOnEnter }
+									value={ this.state.siteURLInput }
+									placeholder="https://example.com/"
+								/>
+								<Button
+									primary={ true }
+									disabled={ this.state.loading }
+									busy={ this.state.loading }
+									onClick={ this.validateSite }
+								>
+									{ this.props.translate( 'Continue' ) }
+								</Button>
+							</div>
+							{ this.state.availableEndpoints.length > 0 && (
+								<FormSelect
+									onChange={ this.setEndpoint }
+									disabled={ this.state.loading }
+									className="site-importer__site-importer-endpoint-select"
+									value={ this.state.selectedEndpoint }
+								>
+									<option value="">Production Endpoint</option>
+									{ this.state.availableEndpoints.map( endpoint => (
+										<option key={ endpoint.name } value={ endpoint.name }>
+											{ endpoint.title } ({ endpoint.lastModifiedTitle })
+										</option>
+									) ) }
+								</FormSelect>
+							) }
 						</div>
-						{ this.state.availableEndpoints.length > 0 && (
-							<FormSelect
-								onChange={ this.setEndpoint }
-								disabled={ this.state.loading }
-								className="site-importer__site-importer-endpoint-select"
-								value={ this.state.selectedEndpoint }
-							>
-								<option value="">Production Endpoint</option>
-								{ this.state.availableEndpoints.map( endpoint => (
-									<option key={ endpoint.name } value={ endpoint.name }>
-										{ endpoint.title } ({ endpoint.lastModifiedTitle })
-									</option>
-								) ) }
-							</FormSelect>
-						) }
-					</div>
-				) }
-				{ this.state.importStage === 'importable' && (
-					<div className="site-importer__site-importer-confirm-site-pane">
-						<SiteImporterSitePreview
-							siteURL={ this.state.importSiteURL }
-							importData={ this.state.importData }
-							isLoading={ this.state.loading }
-							resetImport={ this.resetImport }
-							startImport={ this.importSite }
-							site={ this.props.site }
+					) }
+					{ this.state.importStage === 'importable' && (
+						<div className="site-importer__site-importer-confirm-site-pane">
+							<SiteImporterSitePreview
+								siteURL={ this.state.importSiteURL }
+								importData={ this.state.importData }
+								isLoading={ this.state.loading }
+								resetImport={ this.resetImport }
+								startImport={ this.importSite }
+								site={ this.props.site }
+							/>
+						</div>
+					) }
+					{ this.state.error && (
+						<ErrorPane
+							type={ this.state.errorType || 'importError' }
+							description={ this.state.errorMessage }
+							retryImport={ this.validateSite }
 						/>
-					</div>
-				) }
-				{ this.state.error && (
-					<ErrorPane
-						type={ this.state.errorType || 'importError' }
-						description={ this.state.errorMessage }
-						retryImport={ this.validateSite }
-					/>
-				) }
-				{ this.state.importStage === 'idle' && this.renderUrlHint() }
+					) }
+					{ this.state.importStage === 'idle' && this.renderUrlHint() }
+				</div>
+				<ActionButtons
+					isEnabled={ isEnabled }
+					site={ site }
+					importerStatus={ state }
+					renderPositiveButton={
+						this.state.importStage === 'idle'
+							? () => (
+									<Button
+										primary
+										disabled={ this.state.loading }
+										busy={ this.state.loading }
+										onClick={ this.validateSite }
+									>
+										{ this.props.translate( 'Continue' ) }
+									</Button>
+							  )
+							: null
+					}
+				/>
 			</div>
 		);
 	}
