@@ -8,7 +8,7 @@ We use CSS custom properties for all color usage. Unless an edge case requires a
 
 ## Semantic Variables
 
-Our naming is based on function and describes the meaning of the color, not the color name itself. This makes maintenance easier, and keeps the focus on **communication over decoration.** [View our colors file](https://github.com/Automattic/wp-calypso/blob/master/assets/stylesheets/shared/_color-schemes.scss#L3) to see all variables, or continue reading for a description.
+Our naming is based on function and describes the meaning of the color, not the color name itself. This makes maintenance easier, and keeps the focus on **communication over decoration.** [View our colors file](https://github.com/Automattic/wp-calypso/blob/master/packages/calypso-color-schemes/src/shared/_color-schemes.scss) to see all variables, or continue reading for a description.
 
 **Common Variables**
 
