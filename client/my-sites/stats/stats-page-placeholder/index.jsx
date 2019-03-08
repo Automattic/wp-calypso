@@ -18,6 +18,7 @@ import Card from 'components/card';
  */
 import './style.scss';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
 const StatsPagePlaceholder = props => (
 	<div className={ classnames( 'main is-wide-layout', props.className ) }>
 		<Card className="stats-module stats-page-placeholder__header is-loading">
