@@ -10,7 +10,7 @@ import { getPlugin, registerPlugin, unregisterPlugin } from '@wordpress/plugins'
  */
 import getJetpackData from './get-jetpack-data';
 import getJetpackExtensionAvailability from './get-jetpack-extension-availability';
-import { getExtensions } from '../editor';
+import { getExtensions } from '../preset/editor';
 
 /**
  * Refreshes registration of Gutenberg extensions (blocks and plugins)
