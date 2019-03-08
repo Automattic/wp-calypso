@@ -1,10 +1,7 @@
-/** @format */
-
 /**
- * Internal dependencies
+ * External dependencies
  */
-
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Constants

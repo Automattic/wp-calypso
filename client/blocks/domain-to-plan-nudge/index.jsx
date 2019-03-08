@@ -3,11 +3,11 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -25,7 +25,6 @@ import {
 	getPlansBySiteId,
 } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
-import formatCurrency from 'lib/format-currency';
 import isEligibleForDomainToPaidPlanUpsell from 'state/selectors/is-eligible-for-domain-to-paid-plan-upsell';
 
 class DomainToPlanNudge extends Component {

@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import { EVENT_TYPES } from 'woocommerce/state/sites/orders/activity-log/selecto
 import LabelItem from 'woocommerce/woocommerce-services/views/shipping-label/label-item';
 import LabelItemInProgress from 'woocommerce/woocommerce-services/views/shipping-label/label-item-in-progress';
 import { decodeEntities, stripHTML } from 'lib/formatting';
-import formatCurrency from 'lib/format-currency';
 
 class OrderEvent extends Component {
 	static propTypes = {

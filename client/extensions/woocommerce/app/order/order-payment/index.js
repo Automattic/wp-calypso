@@ -8,12 +8,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import formatCurrency from 'lib/format-currency';
 import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { isOrderFailed, isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import RefundDialog from './dialog';

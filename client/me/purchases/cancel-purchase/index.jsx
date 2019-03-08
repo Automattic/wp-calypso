@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
@@ -40,7 +41,6 @@ import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getCurrencyDefaults } from 'lib/format-currency';
 
 class CancelPurchase extends React.Component {
 	static propTypes = {

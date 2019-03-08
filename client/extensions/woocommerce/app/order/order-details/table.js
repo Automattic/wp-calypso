@@ -8,12 +8,12 @@ import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { every, find, findIndex, get, isNaN, noop } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import formatCurrency from 'lib/format-currency';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';

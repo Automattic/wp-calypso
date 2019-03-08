@@ -1,4 +1,3 @@
-/** @format */
 export const CURRENCIES = {
 	AED: {
 		symbol: 'د.إ.‏',

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,9 @@ import { numberFormat } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getCurrencyDefaults } from './currencies';
-
 export { getCurrencyDefaults };
+
+export { CURRENCIES } from './currencies';
 
 /**
  * Formats money with a given currency code

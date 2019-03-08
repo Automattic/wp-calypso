@@ -7,6 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, mapValues } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import FieldError from 'woocommerce/woocommerce-services/components/field-error'
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Notice from 'components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
-import formatCurrency from 'lib/format-currency';
 
 const renderRateNotice = translate => {
 	return (

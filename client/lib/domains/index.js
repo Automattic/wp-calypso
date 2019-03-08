@@ -5,6 +5,7 @@
  */
 import inherits from 'inherits';
 import { includes, find, get, replace } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import wpcom from 'lib/wp';
 import { type as domainTypes, domainAvailability } from './constants';
 import { parseDomainAgainstTldList } from './utils';
 import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
-import formatCurrency from 'lib/format-currency';
 
 function ValidationError( code ) {
 	this.code = code;
