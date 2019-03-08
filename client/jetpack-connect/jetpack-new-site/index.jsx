@@ -22,6 +22,11 @@ import { cleanUrl } from '../utils';
 import { persistSession } from '../persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class JetpackNewSite extends Component {
 	constructor() {
 		super();
