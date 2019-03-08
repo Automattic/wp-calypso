@@ -62,6 +62,16 @@
 	}
 }
 
+.importer-action-buttons__container {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 16px;
+}
+
+.importer-action-buttons__action-button {
+	margin-left: 10px;
+}
+
 .importer-header__service-info {
 	margin-bottom: 1.5em;
 
@@ -147,10 +157,6 @@
 .importer__status-message {
 	font-style: italic;
 	color: var( --color-neutral-light );
-}
-
-.importer__mapping-pane {
-	margin-bottom: 58px;
 }
 
 .importer__mapping-header {
@@ -291,6 +297,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
+	margin-bottom: 24px;
 
 	.site-importer__site-preview-column-container {
 		display: flex;

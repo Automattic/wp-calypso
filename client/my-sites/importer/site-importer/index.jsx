@@ -77,7 +77,12 @@ export default class extends React.PureComponent {
 					{ ...{ icon, title, description, isEnabled, site } }
 				/>
 				{ includes( importingStates, state.importerState ) && (
-					<ImportingPane importerStatus={ state } sourceType={ title } site={ this.props.site } />
+					<ImportingPane
+						{ ...this.props }
+						importerStatus={ state }
+						sourceType={ title }
+						site={ this.props.site }
+					/>
 				) }
 				{ includes( uploadingStates, state.importerState ) && (
 					<SiteImporterInputPane
@@ -85,6 +90,7 @@ export default class extends React.PureComponent {
 						description={ uploadDescription }
 						importerStatus={ state }
 						onStartImport={ this.validateSite }
+						isEnabled={ isEnabled }
 					/>
 				) }
 			</Card>

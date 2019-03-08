@@ -17,9 +17,11 @@ import Gridicon from 'gridicons';
  */
 import { startMappingAuthors, startUpload } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
-import Button from 'components/forms/form-button';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
+import ActionButton from 'my-sites/importer/importer-action-buttons/action-button';
+import ActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+import CloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
@@ -31,6 +33,10 @@ class UploadingPane extends React.PureComponent {
 		} ),
 		filename: PropTypes.string,
 		percentComplete: PropTypes.number,
+		site: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+			single_user_site: PropTypes.bool.isRequired,
+		} ).isRequired,
 	};
 
 	static defaultProps = { description: null };
@@ -55,15 +61,12 @@ class UploadingPane extends React.PureComponent {
 				const progressClasses = classNames( 'importer__upload-progress', {
 					'is-complete': uploadPercent > 95,
 				} );
-				let uploaderPrompt;
-
-				if ( uploadPercent < 99 ) {
-					uploaderPrompt = this.props.translate( 'Uploading %(filename)s\u2026', {
-						args: { filename },
-					} );
-				} else {
-					uploaderPrompt = this.props.translate( 'Processing uploaded file\u2026' );
-				}
+				const uploaderPrompt =
+					uploadPercent < 99
+						? this.props.translate( 'Uploading %(filename)s\u2026', {
+								args: { filename },
+						  } )
+						: this.props.translate( 'Processing uploaded file\u2026' );
 
 				return (
 					<div>
@@ -76,12 +79,6 @@ class UploadingPane extends React.PureComponent {
 				return (
 					<div>
 						<p>{ this.props.translate( 'Success! File uploaded.' ) }</p>
-						<Button
-							className="importer__start"
-							onClick={ () => startMappingAuthors( this.props.importerStatus.importerId ) }
-						>
-							{ this.props.translate( 'Continue' ) }
-						</Button>
 					</div>
 				);
 		}
@@ -121,6 +118,8 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	render() {
+		const { importerStatus, site, isEnabled } = this.props;
+		const { importerState, importerId } = this.props.importerStatus;
 		const isReadyForImport = this.isReadyForImport();
 
 		return (
@@ -147,6 +146,14 @@ class UploadingPane extends React.PureComponent {
 					) }
 					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 				</div>
+				<ActionButtonContainer>
+					<CloseButton importerStatus={ importerStatus } site={ site } isEnabled={ isEnabled } />
+					{ importerState === appStates.UPLOAD_SUCCESS && (
+						<ActionButton onClick={ () => startMappingAuthors( importerId ) } primary>
+							{ this.props.translate( 'Continue' ) }
+						</ActionButton>
+					) }
+				</ActionButtonContainer>
 			</div>
 		);
 	}
