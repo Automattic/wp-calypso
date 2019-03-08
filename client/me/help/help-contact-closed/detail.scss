@@ -1,0 +1,15 @@
+.help-contact-closed__detail {
+	display: flex;
+	margin: 16px 0;
+}
+
+.help-contact-closed__detail-icon {
+	border-radius: 50%;
+	margin-right: 16px;
+	background-color: var( --color-white );
+	flex-shrink: 0;
+}
+
+.help-contact-closed__detail-text {
+	padding-right: 15px;
+}

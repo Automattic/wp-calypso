@@ -68,6 +68,11 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_FORUM,
 } from 'state/selectors/get-inline-help-support-variation';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugFactory( 'calypso:help-contact' );
 
 /**
