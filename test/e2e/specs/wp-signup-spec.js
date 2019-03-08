@@ -1634,7 +1634,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	xdescribe( 'Sign up for a free WordPress.com site via the new onboarding flow @parallel', () => {
+	describe( 'Sign up for a free WordPress.com site via the new onboarding flow', () => {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -1721,7 +1721,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	xdescribe( 'Sign up for an account only (no site) then add a site via new onboarding flow @parallel', () => {
+	describe( 'Sign up for an account only (no site) then add a site via new onboarding flow', () => {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 		let undo = null;
