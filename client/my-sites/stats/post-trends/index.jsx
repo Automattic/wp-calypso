@@ -41,9 +41,12 @@ class PostTrends extends React.Component {
 		canScrollRight: false,
 	};
 
+	wrapperRef = React.createRef();
+	yearRef = React.createRef();
+
 	componentDidMount() {
-		const node = this.refs.wrapper,
-			yearNode = this.refs.year,
+		const node = this.wrapperRef.current,
+			yearNode = this.yearRef.current,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin =
 				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
@@ -65,8 +68,8 @@ class PostTrends extends React.Component {
 
 	resize = () => {
 		const scrollProps = {},
-			node = this.refs.wrapper,
-			yearNode = this.refs.year,
+			node = this.wrapperRef,
+			yearNode = this.yearRef,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin =
 				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
@@ -84,8 +87,8 @@ class PostTrends extends React.Component {
 	};
 
 	scroll = direction => {
-		const node = this.refs.wrapper,
-			yearNode = this.refs.year,
+		const node = this.wrapperRef,
+			yearNode = this.yearRef,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin =
 				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
@@ -161,8 +164,8 @@ class PostTrends extends React.Component {
 					<div className={ rightClass } onClick={ this.scrollRight } role="button" tabIndex="0">
 						<span className="right-arrow" />
 					</div>
-					<div ref="wrapper" className="post-trends__wrapper">
-						<div ref="year" className="post-trends__year">
+					<div ref={ this.wrapperRef } className="post-trends__wrapper">
+						<div ref={ this.yearRef } className="post-trends__year">
 							{ this.getMonthComponents() }
 						</div>
 						<div className="post-trends__key-container">
