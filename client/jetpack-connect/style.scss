@@ -940,4 +940,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card {
 		box-shadow: none;
 	}
+
+	.progress-bar.is-pulsing .progress-bar__progress {
+		background-image: linear-gradient(
+			-45deg,
+			var( --color-jetpack ) 28%,
+			var( --color-jetpack-light ) 28%,
+			var( --color-jetpack-light ) 72%,
+			var( --color-jetpack ) 72%
+		);
+	}
 }
