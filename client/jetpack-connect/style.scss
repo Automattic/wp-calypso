@@ -877,6 +877,19 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		border: none;
 	}
 
+	.plan-features__item-checkmark {
+		fill: var( --color-jetpack-dark );
+	}
+
+	.plan-features__item-title a {
+		color: var( --color-jetpack-dark );
+
+		&:hover,
+		&:focus {
+			color: var( --color-jetpack );
+		}
+	}
+
 	.payment-logo.is-paypal {
 		width: 64px;
 		background-color: var( --color-white );
