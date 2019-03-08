@@ -839,7 +839,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	
 	.wp-login__links a,
 	.logged-out-form__links a,
-	.logged-out-form__link-item {
+	.logged-out-form__link-item,
+	.jetpack-connect__back-button {
 		color: var( --color-neutral-300 );
 		border-bottom-color: var( --color-neutral-700 );
 
