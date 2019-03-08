@@ -24,6 +24,11 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const debug = debugFactory( 'calypso:me:security:password' );
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Security extends React.Component {
 	static displayName = 'Security';
 
