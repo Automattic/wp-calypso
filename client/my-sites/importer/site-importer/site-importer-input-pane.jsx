@@ -246,11 +246,17 @@ class SiteImporterInputPane extends React.Component {
 		const params = this.getApiParams();
 		params.site_url = urlForImport;
 
+		this.requestIsSiteImportable( {
+			params,
+			siteId: this.props.site.ID,
+			urlForImport,
+		} );
+	};
+
+	requestIsSiteImportable( { siteId, params, urlForImport } ) {
 		wpcom.wpcom.req
 			.get( {
-				path: `/sites/${ this.props.site.ID }/site-importer/is-site-importable?${ stringify(
-					params
-				) }`,
+				path: `/sites/${ siteId }/site-importer/is-site-importable?${ stringify( params ) }`,
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( resp => {
@@ -268,8 +274,22 @@ class SiteImporterInputPane extends React.Component {
 					importSiteURL: resp.site_url,
 				} );
 
+				this.props.handleSiteImportStateUpdate( {
+					importStage: 'importable',
+					importData: {
+						title: resp.site_title,
+						supported: resp.supported_content,
+						unsupported: resp.unsupported_content,
+						favicon: resp.favicon,
+						engine: resp.engine,
+						url: resp.url,
+					},
+					loading: false,
+					importSiteURL: resp.site_url,
+				} );
+
 				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_success', {
-					blog_id: this.props.site.ID,
+					blog_id: siteId,
 					site_url: resp.site_url,
 					supported_content: resp.supported_content
 						.slice( 0 )
@@ -290,11 +310,11 @@ class SiteImporterInputPane extends React.Component {
 				} );
 
 				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
-					blog_id: this.props.site.ID,
+					blog_id: siteId,
 					site_url: urlForImport,
 				} );
 			} );
-	};
+	}
 
 	importSite = () => {
 		this.setState( {

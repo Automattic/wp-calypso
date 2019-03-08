@@ -38,7 +38,7 @@ const uploadingStates = [
 	appStates.UPLOADING,
 ];
 
-export default class extends React.PureComponent {
+export default class extends React.Component {
 	static displayName = 'SiteImporter';
 
 	static propTypes = {
@@ -59,6 +59,10 @@ export default class extends React.PureComponent {
 			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 		} ),
+	};
+
+	state = {
+		siteImportState: {},
 	};
 
 	render() {
@@ -83,14 +87,29 @@ export default class extends React.PureComponent {
 				{ includes( uploadingStates, state.importerState ) && (
 					<SiteImporterInputPane
 						{ ...this.props }
+						handleSiteImportStateUpdate={ this.updateSiteImportStateUpdate }
 						description={ uploadDescription }
 						importerStatus={ state }
 						onStartImport={ this.validateSite }
 					/>
 				) }
 
-				<ActionButtons isEnabled={ isEnabled } site={ site } importerStatus={ state } />
+				<ActionButtons
+					isEnabled={ isEnabled }
+					site={ site }
+					importerStatus={ state }
+					siteImportState={ this.state.siteImportState }
+				/>
 			</Card>
 		);
 	}
+
+	updateSiteImportStateUpdate = newState => {
+		this.setState( {
+			siteImportState: {
+				...this.state.siteImportState,
+				...newState,
+			},
+		} );
+	};
 }
