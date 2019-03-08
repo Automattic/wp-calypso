@@ -22,6 +22,7 @@
 		"i18n-calypso": "file:../i18n-calypso"
 	},
 	"scripts": {
-		"build": "node ../../bin/build-package"
+		"build": "node ../../bin/build-package",
+		"clean": "npx rimraf dist"
 	}
 }
