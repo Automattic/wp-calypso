@@ -11,11 +11,11 @@ import ReactDOM from 'react-dom';
 import { compact, get, last, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
 import FoldableCard from 'components/foldable-card';
 import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';

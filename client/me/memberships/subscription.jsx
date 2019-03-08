@@ -6,6 +6,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import PurchasesHeader from '../purchases/purchases-list/header';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
-import formatCurrency from 'lib/format-currency';
 import HeaderCake from 'components/header-cake';
 import { purchasesRoot } from '../purchases/paths';
 import Site from 'blocks/site';

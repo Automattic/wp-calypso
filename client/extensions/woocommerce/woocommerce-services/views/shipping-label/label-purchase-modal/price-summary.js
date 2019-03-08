@@ -9,12 +9,13 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import formatCurrency from '@automattic/format-currency';
+
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import Tooltip from 'components/tooltip';
-import formatCurrency from 'lib/format-currency';
 import { getTotalPriceBreakdown } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 class PriceSummary extends Component {

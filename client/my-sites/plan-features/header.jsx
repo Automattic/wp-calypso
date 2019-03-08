@@ -7,12 +7,12 @@ import React, { Component } from 'react';
 import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
  **/
 import { localize } from 'i18n-calypso';
-import formatCurrency from 'lib/format-currency';
 import InfoPopover from 'components/info-popover';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PlanPrice from 'my-sites/plan-price';

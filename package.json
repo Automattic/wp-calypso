@@ -20,6 +20,7 @@
     "> 1%"
   ],
   "dependencies": {
+    "@automattic/format-currency": "file:./packages/format-currency",
     "@automattic/tree-select": "file:./packages/tree-select",
     "@babel/cli": "7.2.3",
     "@babel/core": "7.2.2",

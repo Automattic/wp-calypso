@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import { connect } from 'react-redux';
 import Banner from 'components/banner';
 import { TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
-import formatCurrency from 'lib/format-currency';
 import { getSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanRawPrice, getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
