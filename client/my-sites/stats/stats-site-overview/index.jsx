@@ -47,6 +47,7 @@ class StatsSiteOverview extends Component {
 		const siteStatsPath = [ path, siteSlug ].join( '/' );
 		const headerPath = siteStatsPath;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		return (
 			<div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsSummary" query={ query } /> }
