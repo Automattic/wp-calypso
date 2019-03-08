@@ -7,7 +7,7 @@ const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
-const { compact, constant, get, times } = require( 'lodash' );
+const { compact, get } = require( 'lodash' );
 
 const watchMode = process.argv.includes( '--watch' ) | process.argv.includes( '-w' );
 
