@@ -7,11 +7,12 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
  *
- * @param {boolean}   preserveCssCustomProperties  whether Custom Properties and properties using them should be preserved in their original form
- * @param {string[]}  includePaths                 Sass files lookup paths
- * @param {string}    prelude                      String to prepend to each Sass file
+ * @param  {Object}    _                              Options
+ * @param  {boolean}   _.preserveCssCustomProperties  whether Custom Properties and properties using them should be preserved in their original form
+ * @param  {string[]}  _.includePaths                 Sass files lookup paths
+ * @param  {string}    _.prelude                      String to prepend to each Sass file
  *
- * @return {Object}                                webpack loader object
+ * @return {Object}                                   webpack loader object
  */
 module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
@@ -46,10 +47,11 @@ module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude }
 /**
  * Return an array of styling relevant webpack plugin objects.
  *
- * @param {String}   cssFilename  filename pattern to use for CSS files
- * @param {Boolean}  minify       whether to minify CSS
+ * @param  {Object}   _              Options
+ * @param  {String}   _.cssFilename  filename pattern to use for CSS files
+ * @param  {Boolean}  _.minify       whether to minify CSS
  *
- * @return {Object[]}             styling relevant webpack plugin objects
+ * @return {Object[]}                styling relevant webpack plugin objects
  */
 module.exports.plugins = ( { cssFilename, minify } ) => [
 	new MiniCssExtractPluginWithRTL( {
