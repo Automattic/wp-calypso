@@ -840,7 +840,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.wp-login__links a,
 	.logged-out-form__links a,
 	.logged-out-form__link-item,
-	.jetpack-connect__back-button {
+	.jetpack-connect__back-button,
+	.translator-invite__content a {
 		color: var( --color-neutral-300 );
 		border-bottom-color: var( --color-neutral-700 );
 
@@ -848,6 +849,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		&:focus {
 			color: var( --color-primary-300 );
 		}
+	}
+
+	.translator-invite__content a {
+		border: none;
+	}
+
+	.translator-invite__content {
+		color: var( --color-neutral-500 );
 	}
 
 	.spinner__inner,
