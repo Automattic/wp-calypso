@@ -42,7 +42,7 @@ class PostTrends extends React.Component {
 	};
 
 	componentDidMount() {
-		let node = this.refs.wrapper,
+		const node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin =
@@ -64,7 +64,7 @@ class PostTrends extends React.Component {
 	}
 
 	resize = () => {
-		let scrollProps = {},
+		const scrollProps = {},
 			node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
@@ -84,13 +84,13 @@ class PostTrends extends React.Component {
 	};
 
 	scroll = direction => {
-		let node = this.refs.wrapper,
+		const node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin =
 				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
-				parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 ),
-			left = parseInt( computedStyle.getPropertyValue( 'left' ), 10 );
+				parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
+		let left = parseInt( computedStyle.getPropertyValue( 'left' ), 10 );
 
 		if ( 1 !== direction ) {
 			direction = -1;
@@ -149,15 +149,16 @@ class PostTrends extends React.Component {
 			'is-active': this.state.canScrollRight,
 		} );
 
+		/* eslint-disable jsx-a11y/click-events-have-key-events, wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
 				<SectionHeader label={ this.props.translate( 'Posting Activity' ) } />
 				<Card>
-					<div className={ leftClass } onClick={ this.scrollLeft }>
+					<div className={ leftClass } onClick={ this.scrollLeft } role="button" tabIndex="0">
 						<span className="left-arrow" />
 					</div>
-					<div className={ rightClass } onClick={ this.scrollRight }>
+					<div className={ rightClass } onClick={ this.scrollRight } role="button" tabIndex="0">
 						<span className="right-arrow" />
 					</div>
 					<div ref="wrapper" className="post-trends__wrapper">
