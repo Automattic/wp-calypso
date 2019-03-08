@@ -160,6 +160,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       className="contact-details-form-fields__submit-button"
       disabled={false}
       isPrimary={true}
+      isSecondary={false}
       isSubmitting={false}
       onClick={[Function]}
       type="submit"
