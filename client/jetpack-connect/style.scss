@@ -871,6 +871,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		background: linear-gradient(to right, rgba( var( --color-jetpack-onboarding-background ) , 0 ), rgba( var( --color-jetpack-onboarding-background ) , 1 ) 90%)
 	}
 
+	.plan-features__table-item,
+	.plan-features--signup .plan-features__row:last-of-type .plan-features__table-item {
+		border: none;
+	}
+
 	.payment-logo.is-paypal {
 		width: 64px;
 		background-color: var( --color-white );
