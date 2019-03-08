@@ -33,6 +33,7 @@ import {
 	isSectionLoading,
 } from 'state/ui/selectors';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
+import { isJetpackSite } from 'state/sites/selectors';
 import { isSupportSession } from 'state/support/selectors';
 import SitePreview from 'blocks/site-preview';
 import SupportArticleDialog from 'blocks/support-article-dialog';
@@ -104,7 +105,8 @@ class Layout extends Component {
 				{ 'is-support-session': this.props.isSupportSession },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'has-chat': this.props.chatIsOpen },
-				{ 'has-no-masterbar': this.props.masterbarIsHidden }
+				{ 'has-no-masterbar': this.props.masterbarIsHidden },
+				{ 'is-jetpack-site': this.props.isJetpack }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -175,9 +177,11 @@ export default connect( state => {
 	const sectionGroup = getSectionGroup( state );
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
+	const siteId = getSelectedSiteId( state );
 
 	return {
 		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === sectionName,
+		isJetpack: isJetpackSite( state, siteId ),
 		isLoading: isSectionLoading( state ),
 		isSupportSession: isSupportSession( state ),
 		sectionGroup,
@@ -188,7 +192,7 @@ export default connect( state => {
 		chatIsOpen: isHappychatOpen( state ),
 		colorSchemePreference: getPreference( state, 'colorScheme' ),
 		currentRoute,
-		siteId: getSelectedSiteId( state ),
+		siteId,
 		/* We avoid requesting sites in the Jetpack Connect authorization step, because this would
 		request all sites before authorization has finished. That would cause the "all sites"
 		request to lack the newly authorized site, and when the request finishes after
