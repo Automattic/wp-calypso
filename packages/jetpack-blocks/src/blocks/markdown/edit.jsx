@@ -86,7 +86,7 @@ class MarkdownEdit extends Component {
 		if ( ! isSelected && this.isEmpty() ) {
 			return (
 				<p className={ `${ className }__placeholder` }>
-					{ __( 'Write your _Markdown_ **here**...' ) }
+					{ __( 'Write your _Markdown_ **here**…' ) }
 				</p>
 			);
 		}
