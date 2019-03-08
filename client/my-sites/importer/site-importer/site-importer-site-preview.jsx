@@ -101,18 +101,6 @@ class SiteImporterSitePreview extends React.Component {
 									</ExternalLink>
 								</div>
 							</div>
-							<div className="site-importer__site-importer-confirm-actions">
-								<Button disabled={ isLoading } onClick={ this.props.startImport }>
-									{ this.props.translate( 'Yes! Start import' ) }
-								</Button>
-								<Button
-									disabled={ isLoading }
-									isPrimary={ false }
-									onClick={ this.props.resetImport }
-								>
-									{ this.props.translate( 'No' ) }
-								</Button>
-							</div>
 						</div>
 						<div className={ containerClass }>
 							<div className="site-importer__site-preview-column-container">
@@ -122,6 +110,14 @@ class SiteImporterSitePreview extends React.Component {
 								/>
 								<ImportableContent importData={ this.props.importData } />
 							</div>
+						</div>
+						<div className="site-importer__site-importer-confirm-actions">
+							<Button disabled={ isLoading } onClick={ this.props.startImport }>
+								{ this.props.translate( 'Yes! Start import' ) }
+							</Button>
+							<Button disabled={ isLoading } isPrimary={ false } onClick={ this.props.resetImport }>
+								{ this.props.translate( 'No' ) }
+							</Button>
 						</div>
 					</div>
 				) }
