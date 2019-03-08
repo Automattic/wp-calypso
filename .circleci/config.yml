@@ -474,7 +474,7 @@ jobs:
       - run:
           name: Prime calypso.live build
           command: |
-            if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
+            if [[ -z $CIRCLE_PR_USERNAME ]]; then
               ./test/e2e/scripts/wait-for-running-branch.sh
             fi
             echo 'PRs from external authors cannot run on calypso.live'
