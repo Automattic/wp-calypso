@@ -9,8 +9,7 @@ import { numberFormat } from 'i18n-calypso';
 import { getCurrencyDefaults } from './currencies';
 export { getCurrencyDefaults };
 
-import { CURRENCIES } from './currencies';
-export { CURRENCIES };
+export { CURRENCIES } from './currencies';
 
 /**
  * Formats money with a given currency code
