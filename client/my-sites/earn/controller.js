@@ -17,7 +17,10 @@ export default {
 		page.redirect( '/earn/ads-earnings/' + context.params.site_id );
 		return;
 	},
-
+	redirectToAdsSettings: function( context ) {
+		page.redirect( '/earn/ads-settings/' + context.params.site_id );
+		return;
+	},
 	layout: function( context, next ) {
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
