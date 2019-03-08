@@ -22,9 +22,7 @@ import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-{
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
-}
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 class SharingButtonsOptions extends Component {
 	static propTypes = {
