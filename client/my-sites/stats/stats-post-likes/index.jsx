@@ -47,6 +47,7 @@ export const StatsPostLikes = props => {
 		likesListLabel = translate( 'This panel shows the list of people who like your post.' );
 	}
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 	return (
 		<Card className={ classNames( 'stats-module', 'stats-post-likes', 'is-expanded', classes ) }>
 			<QueryPostLikes siteId={ siteId } postId={ postId } />
