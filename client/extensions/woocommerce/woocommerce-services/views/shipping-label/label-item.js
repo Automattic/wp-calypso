@@ -65,9 +65,11 @@ export class LabelItem extends Component {
 			this.props.openReprintDialog( orderId, siteId, label.labelId );
 		};
 
+		const text = label.labelCached ? translate( 'Reprint' ) : translate( 'Print' );
+
 		return (
 			<PopoverMenuItem onClick={ openDialog } icon="print">
-				{ translate( 'Reprint' ) }
+				{ text }
 			</PopoverMenuItem>
 		);
 	};
