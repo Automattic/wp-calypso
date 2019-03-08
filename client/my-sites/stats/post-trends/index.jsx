@@ -68,8 +68,8 @@ class PostTrends extends React.Component {
 
 	resize = () => {
 		const scrollProps = {},
-			node = this.wrapperRef,
-			yearNode = this.yearRef,
+			node = this.wrapperRef.current,
+			yearNode = this.yearRef.current,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin =
 				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
@@ -87,8 +87,8 @@ class PostTrends extends React.Component {
 	};
 
 	scroll = direction => {
-		const node = this.wrapperRef,
-			yearNode = this.yearRef,
+		const node = this.wrapperRef.current,
+			yearNode = this.yearRef.current,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin =
 				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
