@@ -476,9 +476,10 @@ jobs:
           command: |
             if [[ -z $CIRCLE_PR_USERNAME ]]; then
               ./test/e2e/scripts/wait-for-running-branch.sh
+            else
+              echo 'PRs from external authors cannot run on calypso.live'
+              exit 1
             fi
-            echo 'PRs from external authors cannot run on calypso.live'
-            exit 1
 
   test-e2e:
     <<: *defaults
