@@ -116,7 +116,7 @@ class Layout extends Component {
 				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
-				<QuerySites allSites />
+				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
 				<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
@@ -174,6 +174,8 @@ class Layout extends Component {
 export default connect( state => {
 	const sectionGroup = getSectionGroup( state );
 	const sectionName = getSectionName( state );
+	const currentRoute = getCurrentRoute( state );
+
 	return {
 		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === sectionName,
 		isLoading: isSectionLoading( state ),
@@ -185,7 +187,13 @@ export default connect( state => {
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
 		chatIsOpen: isHappychatOpen( state ),
 		colorSchemePreference: getPreference( state, 'colorScheme' ),
-		currentRoute: getCurrentRoute( state ),
+		currentRoute,
 		siteId: getSelectedSiteId( state ),
+		/* We avoid requesting sites in the Jetpack Connect authorization step, because this would
+		request all sites before authorization has finished. That would cause the "all sites"
+		request to lack the newly authorized site, and when the request finishes after
+		authorization, it would remove the newly connected site that has been fetched separately.
+		See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
+		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 	};
 } )( Layout );
