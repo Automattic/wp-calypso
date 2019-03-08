@@ -45,7 +45,7 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "npx rimraf ./dist",
+    "clean": "npx rimraf dist",
     "build": "node bin/build.js",
     "prepublishOnly": "npm run clean; NODE_ENV=production npm run build"
   },
