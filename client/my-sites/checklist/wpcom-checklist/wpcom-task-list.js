@@ -58,6 +58,7 @@ function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, si
 		// the user has already completed the logo task or
 		// if it's the AB variant
 		if (
+			hasTask( 'site_logo_set' ) &&
 			segmentSlug &&
 			( get( taskStatuses, 'site_logo_set.completed' ) ||
 				'logo' === getABTestVariation( 'checklistSiteLogo' ) )
