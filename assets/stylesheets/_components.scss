@@ -146,8 +146,8 @@
 @import 'components/happychat/agent-w/style';
 @import 'layout/community-translator/style';
 @import 'layout/masterbar/style';
-@import 'layout/masterbar/oauth-client.scss';
-@import 'layout/masterbar/crowdsignal.scss';
+@import 'layout/masterbar/oauth-client';
+@import 'layout/masterbar/crowdsignal';
 @import 'layout/nps-survey-notice/style';
 @import 'layout/sidebar/style';
 @import 'lib/accept/style';
@@ -205,7 +205,7 @@
 @import 'my-sites/exporter/style';
 @import 'my-sites/feature-comparison/style';
 @import 'my-sites/guided-transfer/style';
-@import 'my-sites/media-library/upload-button.scss';
+@import 'my-sites/media-library/upload-button';
 @import 'my-sites/no-results/style';
 @import 'my-sites/pages/style';
 @import 'my-sites/pages/blog-posts-page/style';
@@ -262,7 +262,7 @@
 @import 'my-sites/upgrade-nudge/style';
 @import 'my-sites/checkout/cart/style';
 @import 'my-sites/checkout/checkout/style';
-@import 'my-sites/checkout/checkout/subscription-text.scss';
+@import 'my-sites/checkout/checkout/subscription-text';
 @import 'my-sites/checkout/checkout-thank-you/style';
 @import 'my-sites/checkout/checkout-thank-you/google-voucher/style';
 @import 'my-sites/checkout/concierge-session-nudge/style';
