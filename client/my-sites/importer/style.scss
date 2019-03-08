@@ -50,7 +50,7 @@
 	&.site-importer {
 		background-color: #faad4d;
 	}
-	
+
 	&.squarespace {
 		background-color: #222;
 	}
@@ -117,7 +117,9 @@
 
 .importer__upload-progress,
 .importer__import-progress {
-	width: 80%;
+	&.progress-bar {
+		width: 80%;
+	}
 
 	.progress-bar__progress {
 		background-color: var( --color-accent );
