@@ -65,11 +65,7 @@ class ImporterBlogger extends React.PureComponent {
 								supportLink={
 									'https://en.support.wordpress.com/import/coming-from-blogger/#import'
 								}
-								text={ this.props.translate( 'exporting your content', {
-									args: {
-										importerName,
-									},
-								} ) }
+								text={ this.props.translate( 'exporting your content' ) }
 								showIcon={ false }
 							/>
 						),
