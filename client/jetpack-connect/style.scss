@@ -780,8 +780,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 /**
  * Onboarding styles
  **/
-.is-section-jetpack-connect:not( .is-add-site-page ),
-.is-jetpack-login {
+.layout.is-section-jetpack-connect:not( .is-add-site-page ),
+.layout.is-jetpack-login {
 	background-color: var( --color-jetpack-onboarding-background );
 
 	&.layout {
