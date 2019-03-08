@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 /**
  * Internal dependencies
@@ -312,7 +313,7 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
 				{ plansWithScroll ? (
-					<Scroller elementSelector=".plan-features__table-item">
+					<Scroller elementSelector="tbody > tr:first-child > .plan-features__table-item">
 						{ this.getPlanFeatures() }
 					</Scroller>
 				) : null }
@@ -331,46 +332,24 @@ class Scroller extends React.Component {
 		super( props );
 		this.state = {
 			initializing: true,
+			scrollLeft: 0,
 			scrollPaneWidth: 3 * 200,
-			elementWidth: 0,
 		};
 	}
 
 	componentDidMount() {
-		const { elementSelector } = this.props;
-		const currentNode = ReactDOM.findDOMNode( this );
-		const scrolledElements = currentNode.querySelectorAll( elementSelector );
-
-		if ( scrolledElements.length === 0 ) {
-			return;
-		}
-		const availableSpace = currentNode.offsetWidth;
-		const contentWidth = this.refs.scrolledPane.offsetWidth;
-		const elementWidth = scrolledElements[ 0 ].offsetWidth;
-		const nbActiveElements = Math.min(
-			Math.floor( ( availableSpace - 120 ) / elementWidth - 0.0000001 ),
-			scrolledElements.length
-		);
-
-		// Compute active elements
-		let activeElements = [];
-		for ( let i = 2, max = nbActiveElements; i < max; i++ ) {
-			activeElements.push( i );
-		}
-
-		this.setState(
-			{
-				contentWidth,
-				elementWidth,
-				activeElements,
-				scrollLeft: 0,
-				maxActiveElements: nbActiveElements,
-				initializing: false,
-				scrollPaneWidth: nbActiveElements * elementWidth + 40,
-			},
-			() => this.setActiveElementsClassNames()
-		);
+		this.recalculate();
+		this.debouncedHandleResize = _.debounce( this.handleResize, 400 );
+		window.addEventListener( 'resize', this.debouncedHandleResize, false );
 	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.debouncedHandleResize );
+	}
+
+	handleResize = () => {
+		this.recalculate();
+	};
 
 	render() {
 		const { initializing, scrollPaneWidth, scrollLeft } = this.state;
@@ -380,10 +359,11 @@ class Scroller extends React.Component {
 				<div
 					className={ classNames( 'scroller__scroll-pane', { initializing } ) }
 					style={ { width: this.state.scrollPaneWidth } }
+					ref="scrollPane"
 				>
 					<div
 						className="scroller__scrolled-pane"
-						style={ { marginLeft: scrollLeft } }
+						style={ { marginLeft: scrollLeft * 2 } }
 						ref="scrolledPane"
 					>
 						{ this.props.children }
@@ -456,15 +436,118 @@ class Scroller extends React.Component {
 		);
 	}
 
-	setActiveElementsClassNames() {
-		const { activeElements } = this.state;
+	recalculate() {
+		const currentNode = ReactDOM.findDOMNode( this );
+		const scrolledElements = this.findScrolledElements();
+		const nbElements = scrolledElements.length;
+
+		if ( nbElements === 0 ) {
+			return;
+		}
+		const availableSpace = currentNode.offsetWidth;
+		const contentWidth = this.refs.scrolledPane.offsetWidth;
+		const elementWidth = scrolledElements[ 0 ].offsetWidth;
+		const nbActiveElements = Math.min(
+			Math.floor( ( availableSpace - 120 ) / elementWidth + 0.0000001 ),
+			nbElements
+		);
+		const startAt = Math.floor( ( nbElements - nbActiveElements ) / 2 + 0.0001 );
+		const UI_WIDTH = 40;
+		const scrollPaneWidth = nbActiveElements * elementWidth + UI_WIDTH;
+
+		console.log( nbActiveElements, nbElements, availableSpace, elementWidth );
+
+		this.setState(
+			{
+				contentWidth,
+				elementWidth,
+				scrollPaneWidth,
+				startAt,
+				initializing: false,
+				nbActiveElements: nbActiveElements,
+			},
+			() => {
+				this.applyActiveElementsClassNames();
+				this.moveScrollToFirstActiveElement();
+			}
+		);
+	}
+
+	moveScrollToFirstActiveElement() {
+		const { startAt } = this.state;
+		const scrolledElements = this.findScrolledElements();
+		const scrollPaneRect = this.refs.scrollPane.getBoundingClientRect();
+		const firstActiveRect = scrolledElements[ startAt ].getBoundingClientRect();
+		const scrollLeftDelta = scrollPaneRect.left - firstActiveRect.left;
+		this.setState( {
+			scrollLeft: this.state.scrollLeft + scrollLeftDelta,
+		} );
+	}
+
+	fixScrollPositionAfterResize() {
+		const { startAt } = this.state;
+	}
+
+	scrollLeft() {
+		this.scrollBy( -1 );
+	}
+
+	scrollRight() {
+		this.scrollBy( 1 );
+	}
+
+	scrollBy( offset ) {
+		this.scrollTo( this.state.startAt + offset );
+	}
+
+	scrollTo( newStartAt ) {
+		const prevStartAt = this.state.startAt;
+		if ( prevStartAt === newStartAt || ! this.canScrollTo( newStartAt ) ) {
+			return;
+		}
+
+		const direction = newStartAt - prevStartAt > 0 ? 1 : -1;
+		const scrolledElements = this.findScrolledElements();
+		const scrollLeftDelta =
+			scrolledElements[ prevStartAt ].offsetLeft -
+			scrolledElements[ prevStartAt + direction ].offsetLeft;
+
+		this.setState(
+			{
+				startAt: newStartAt,
+				scrollLeft: this.state.scrollLeft + scrollLeftDelta,
+			},
+			() => this.applyActiveElementsClassNames()
+		);
+	}
+
+	canScrollTo( index ) {
+		const { nbActiveElements } = this.state;
+		return this.isIndexValid( index ) && this.isIndexValid( index + nbActiveElements - 1 );
+	}
+
+	isIndexValid( index ) {
+		const { startAt, nbActiveElements } = this.state;
+		const scrolledElements = this.findScrolledElements();
+		return index >= 0 && index < scrolledElements.length;
+	}
+
+	isElementActive( index ) {
+		const { startAt, nbActiveElements } = this.state;
+		return index >= startAt && index <= startAt + nbActiveElements;
+	}
+
+	findScrolledElements() {
 		const { elementSelector } = this.props;
 		const currentNode = ReactDOM.findDOMNode( this );
-		const scrolledElements = currentNode.querySelectorAll( elementSelector );
-		// Set proper classnames for active elements
+		return currentNode.querySelectorAll( elementSelector );
+	}
+
+	applyActiveElementsClassNames() {
+		const scrolledElements = this.findScrolledElements();
 		for ( let i = 0, max = scrolledElements.length; i < max; i++ ) {
 			const elem = scrolledElements[ i ];
-			if ( activeElements.indexOf( i ) !== -1 ) {
+			if ( this.isElementActive( i ) ) {
 				elem.classList.add( 'is-active' );
 				elem.classList.remove( 'is-inactive' );
 			} else {
@@ -472,92 +555,6 @@ class Scroller extends React.Component {
 				elem.classList.add( 'is-inactive' );
 			}
 		}
-	}
-
-	scrollLeft() {
-		const { activeElements } = this.state;
-		const { elementSelector } = this.props;
-		const currentNode = ReactDOM.findDOMNode( this );
-		const scrolledElements = currentNode.querySelectorAll( elementSelector );
-
-		if ( activeElements[ 0 ] === 0 ) {
-			return;
-		}
-
-		const newActiveElements = [ activeElements[ 0 ] - 1 ].concat(
-			activeElements.slice( 0, activeElements.length - 1 )
-		);
-		const currentVisibleElement = scrolledElements[ activeElements[ 0 ] ];
-		const newVisibleElement = scrolledElements[ newActiveElements[ 0 ] ];
-		const scrollLeftDelta = newVisibleElement.offsetLeft - currentVisibleElement.offsetLeft;
-
-		this.setState(
-			{
-				scrollLeft: this.state.scrollLeft + scrollLeftDelta,
-				activeElements: newActiveElements,
-			},
-			() => this.setActiveElementsClassNames()
-		);
-	}
-
-	scrollRight() {
-		const { activeElements } = this.state;
-		const currentNode = ReactDOM.findDOMNode( this );
-		const scrolledElements = currentNode.querySelectorAll( this.props.elementSelector );
-
-		const lastElement = activeElements.slice( -1 )[ 0 ];
-		const isLastElementActive = lastElement === scrolledElements.length - 1;
-		if ( isLastElementActive ) {
-			return;
-		}
-
-		const newActiveElements = activeElements.slice( 1 ).concat( [ lastElement + 1 ] );
-		const currentVisibleElement = scrolledElements[ lastElement ];
-		const newVisibleElement = scrolledElements[ lastElement + 1 ];
-		const scrollLeftDelta = newVisibleElement.offsetLeft - currentVisibleElement.offsetLeft;
-
-		this.setState(
-			{
-				scrollLeft: this.state.scrollLeft + scrollLeftDelta,
-				activeElements: newActiveElements,
-			},
-			() => this.setActiveElementsClassNames()
-		);
-	}
-
-	computeScrollPosition( activeElements ) {
-		const { activeElements } = this.state;
-		const { elementSelector } = this.props;
-		const currentNode = ReactDOM.findDOMNode( this );
-		const scrolledElements = currentNode.querySelectorAll( elementSelector );
-
-		const lastElement = activeElements.slice( -1 )[ 0 ];
-		const isLastElementActive = lastElement === scrolledElements.length - 1;
-		if ( isLastElementActive ) {
-			return;
-		}
-
-		const newActiveElements = activeElements.slice( 1 ).concat( [ lastElement + 1 ] );
-		const currentVisibleElement = scrolledElements[ lastElement ];
-		const newVisibleElement = scrolledElements[ lastElement + 1 ];
-		const scrollLeftDelta = newVisibleElement.offsetLeft - currentVisibleElement.offsetLeft;
-
-		this.setState(
-			{
-				scrollLeft: this.state.scrollLeft + scrollLeftDelta,
-				activeElements: newActiveElements,
-			},
-			() => this.setActiveElementsClassNames()
-		);
-	}
-
-	move( direction ) {
-		// const offset = direction === 'left' ? -1 : 1;
-		// const currentPosition = this.state.plansPosition;
-		// const currentPositionIndex = this.planPositions.indexOf( currentPosition );
-		// const nextPosition = this.planPositions[ currentPositionIndex + offset ] || currentPosition;
-		//
-		// this.setState( { plansPosition: nextPosition } );
 	}
 
 	handleKeyPress( event ) {
