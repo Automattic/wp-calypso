@@ -20,6 +20,7 @@ import { appStates } from 'state/imports/constants';
 import Button from 'components/forms/form-button';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
+import { isSupportedFileType, parseFileType } from 'lib/importer/file-type-detection';
 
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
@@ -31,6 +32,7 @@ class UploadingPane extends React.PureComponent {
 		} ),
 		filename: PropTypes.string,
 		percentComplete: PropTypes.number,
+		sourceType: PropTypes.string,
 	};
 
 	static defaultProps = { description: null };
@@ -117,7 +119,35 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	startUpload = file => {
-		startUpload( this.props.importerStatus, file );
+		const { sourceType } = this.props;
+		console.log( { sourceType } );
+
+		try {
+			const isSupported = isSupportedFileType( sourceType, file.type );
+
+			if ( ! isSupported ) {
+				const { group, subType } = parseFileType( file );
+				switch ( group ) {
+					case 'image':
+						console.log( { actionType: 'IMPORT_FILE_TYPE_DETECTED_IMAGE' } );
+						return;
+					case 'application':
+						console.log( {
+							actionType: 'IMPORT_FILE_TYPE_DETECTED_APPLICATION',
+							subType,
+						} );
+						return;
+					default:
+						throw 'Unsupported';
+				}
+			}
+
+			console.log( { type: file.type, isSupported } );
+		} catch ( e ) {
+			console.log( 'actionType: IMPORT_FILE_TYPE_DETECTION_ERROR' );
+			return;
+		}
+		//startUpload( this.props.importerStatus, file );
 	};
 
 	render() {

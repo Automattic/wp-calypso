@@ -81,7 +81,11 @@ export default class extends React.PureComponent {
 					<ImportingPane importerStatus={ state } sourceType={ title } { ...{ site } } />
 				) }
 				{ includes( uploadingStates, state.importerState ) && (
-					<UploadingPane description={ uploadDescription } importerStatus={ state } />
+					<UploadingPane
+						description={ uploadDescription }
+						importerStatus={ state }
+						sourceType={ title }
+					/>
 				) }
 			</Card>
 		);
