@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { isNumber } from 'lodash';
-import { formatCurrency, CURRENCIES } from '@automattic/format-currency';
+import formatCurrency, { CURRENCIES } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
