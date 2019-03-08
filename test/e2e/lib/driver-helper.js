@@ -131,12 +131,12 @@ export function waitTillPresentAndDisplayed( driver, selector, waitOverride ) {
 	);
 }
 
-export function waitTillSelected( driver, selector, waitOverride ) {
+export async function waitTillSelected( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
-	return driver.wait(
-		function() {
-			return driver.findElement( selector ).then(
+	return await driver.wait(
+		async function() {
+			return await driver.findElement( selector ).then(
 				function( element ) {
 					return element.isSelected().then(
 						function() {
@@ -295,11 +295,11 @@ export async function setWhenSettable(
 	);
 }
 
-export function setCheckbox( driver, selector ) {
-	return driver.findElement( selector ).then( checkbox => {
-		checkbox.getAttribute( 'checked' ).then( checked => {
+export async function setCheckbox( driver, selector ) {
+	return await driver.findElement( selector ).then( async checkbox => {
+		await checkbox.getAttribute( 'checked' ).then( async checked => {
 			if ( checked !== 'true' ) {
-				return this.clickWhenClickable( driver, selector );
+				return await this.clickWhenClickable( driver, selector );
 			}
 		} );
 	} );
