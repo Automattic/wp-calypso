@@ -1,4 +1,15 @@
-/***
+/**
+ * External dependencies
+ */
+import { includes } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+// FIXME: REMOVE!
+import { getSiteFragment as getCalypsoSiteFragment } from '../../../../client/lib/route/path';
+
+/**
  * Returns the site fragment in the environment we're running Gutenberg in.
  *
  * @returns {?Number|String} Site fragment (ID or slug); null for WP.org wp-admin.
@@ -8,6 +19,15 @@ export default function getSiteFragment() {
 	if ( window && window._currentSiteId ) {
 		return window._currentSiteId;
 	}
+
+	// FIXME: REMOVE THIS BLOCK! vvv
+	// Calypso will contain a site slug or ID in the site fragment.
+	// WP.org will contain either `post` or `post-new.php`.
+	const siteFragment = getCalypsoSiteFragment( window.location.pathname );
+	if ( ! includes( [ 'post.php', 'post-new.php' ], siteFragment ) ) {
+		return siteFragment || null;
+	}
+	// FIXME: REMOVE TO HERE ^^^
 
 	// Gutenberg in Jetpack adds a site fragment in the initial state
 	if (
