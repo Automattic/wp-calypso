@@ -1634,7 +1634,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a free WordPress.com site via the new onboarding flow', () => {
+	describe( 'Sign up for a free WordPress.com site via the new onboarding flow @parallel', () => {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -1643,6 +1643,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
 			undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
+			await driver.sleep( 3000 );
 		} );
 
 		step( 'Can visit the start page', async function() {
@@ -1721,7 +1722,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for an account only (no site) then add a site via new onboarding flow', () => {
+	describe( 'Sign up for an account only (no site) then add a site via new onboarding flow @parallel', () => {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 		let undo = null;
@@ -1729,6 +1730,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
 			undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
+			await driver.sleep( 3000 );
 		} );
 
 		step( 'Can enter the account flow and see the account details page', async function() {
