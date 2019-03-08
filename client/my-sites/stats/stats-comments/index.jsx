@@ -36,6 +36,8 @@ import { recordGoogleEvent } from 'state/analytics/actions';
  */
 import './style.scss';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace*/
+
 class StatsComments extends Component {
 	static propTypes = {
 		commentsStatsData: PropTypes.object,
