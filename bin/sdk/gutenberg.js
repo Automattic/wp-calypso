@@ -6,12 +6,12 @@
 const fs = require( 'fs' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const path = require( 'path' );
-const { compact, constant, get, times } = require( 'lodash' );
+const { compact, get } = require( 'lodash' );
 
-const DIRECTORY_DEPTH = 1; // Relative path of the extensions to preset directory
+const DIRECTORY_DEPTH = '../../'; // Relative path of the extensions to preset directory
 
 function sharedScripts( folderName, inputDir ) {
-	const sharedPath = path.join( inputDir, '..', folderName );
+	const sharedPath = path.join( inputDir, folderName );
 	return fs
 		.readdirSync( sharedPath )
 		.map( file => path.join( sharedPath, file ) )
@@ -20,15 +20,7 @@ function sharedScripts( folderName, inputDir ) {
 
 function blockScripts( type, inputDir, presetBlocks ) {
 	return presetBlocks
-		.map( block =>
-			path.join(
-				inputDir,
-				...times( DIRECTORY_DEPTH, constant( '..' ) ),
-				'blocks',
-				block,
-				`${ type }.js`
-			)
-		)
+		.map( block => path.join( inputDir, `${ DIRECTORY_DEPTH }${ block }/${ type }.js` ) )
 		.filter( fs.existsSync );
 }
 
@@ -59,13 +51,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 
 		// Helps split up each block into its own folder view script
 		viewBlocksScripts = allPresetBlocks.reduce( ( viewBlocks, block ) => {
-			const viewScriptPath = path.join(
-				inputDir,
-				...times( DIRECTORY_DEPTH, constant( '..' ) ),
-				'blocks',
-				block,
-				'view.js'
-			);
+			const viewScriptPath = path.join( inputDir, `${ DIRECTORY_DEPTH }${ block }/view.js` );
 			if ( fs.existsSync( viewScriptPath ) ) {
 				viewBlocks[ block + '/view' ] = [ ...sharedUtilsScripts, ...[ viewScriptPath ] ];
 			}
@@ -122,9 +108,5 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			libraryTarget: 'window',
 		},
 		externals: [ ...baseConfig.externals, 'lodash' ],
-		resolve: {
-			...baseConfig.resolve,
-			modules: [ 'node_modules' ],
-		},
 	};
 };
