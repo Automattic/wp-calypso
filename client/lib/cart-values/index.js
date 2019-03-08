@@ -15,9 +15,6 @@ import config from 'config';
 import cartItems from './cart-items';
 import productsValues from 'lib/products-values';
 
-// #tax-on-checout-placeholder
-import { injectTaxStateWithPlaceholderValues } from 'lib/tax';
-
 const PAYMENT_METHODS = {
 	alipay: 'WPCOM_Billing_Stripe_Source_Alipay',
 	bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
@@ -48,7 +45,9 @@ function preprocessCartForServer( {
 	temporary,
 	extra,
 	products,
-	tax,
+	tax_postal_code,
+	tax_country_code,
+	tax_subdivision_code,
 } ) {
 	const needsUrlCoupon = ! (
 		coupon ||
@@ -64,7 +63,9 @@ function preprocessCartForServer( {
 			is_coupon_applied,
 			is_coupon_removed,
 			currency,
-			tax: injectTaxStateWithPlaceholderValues( tax ), // #tax-on-checkout-placeholder
+			tax_postal_code,
+			tax_country_code,
+			tax_subdivision_code,
 			temporary,
 			extra,
 			products: products.map(
@@ -123,24 +124,29 @@ function removeCoupon() {
 
 function setTaxCountryCode( countryCode ) {
 	return function( cart ) {
-		return update( cart, {
-			tax: { location: { country_code: { $set: countryCode } } },
-		} );
+		return update( cart, { tax_country_code: { $set: countryCode } } );
 	};
 }
 
 function setTaxPostalCode( postalCode ) {
 	return function( cart ) {
-		return update( cart, {
-			tax: { location: { postal_code: { $set: postalCode } } },
-		} );
+		return update( cart, { tax_postal_code: { $set: postalCode } } );
 	};
 }
 
-function setTaxLocation( { postalCode, countryCode } ) {
+// state / region / province etc
+function setTaxSubdivisionCode( subdivisionCode ) {
+	return function( cart ) {
+		return update( cart, { tax_subdivision_code: { $set: subdivisionCode } } );
+	};
+}
+
+function setTaxLocation( { postalCode, countryCode, subdivisionCode } ) {
 	return function( cart ) {
 		return update( cart, {
-			tax: { location: { $set: { postal_code: postalCode, country_code: countryCode } } },
+			tax_country_code: { $set: countryCode },
+			tax_postal_code: { $set: postalCode },
+			tax_subdivision_code: { $set: subdivisionCode },
 		} );
 	};
 }
@@ -374,6 +380,7 @@ export {
 	getLocationOrigin,
 	setTaxCountryCode,
 	setTaxPostalCode,
+	setTaxSubdivisionCode,
 	setTaxLocation,
 };
 
