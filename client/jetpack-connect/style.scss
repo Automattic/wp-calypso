@@ -929,3 +929,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 }
+
+.is-section-checkout-thank-you.is-jetpack-site {
+	min-height: 100%;
+	background-color: var( --color-jetpack-onboarding-background );
+
+	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
+	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
+	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card {
+		box-shadow: none;
+	}
+}
