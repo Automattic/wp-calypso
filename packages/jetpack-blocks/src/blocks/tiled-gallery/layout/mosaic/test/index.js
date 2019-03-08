@@ -1,15 +1,20 @@
 /**
  * External dependencies
  */
+import Adapter from 'enzyme-adapter-react-16';
+import Enzyme, { shallow } from 'enzyme';
 import React from 'react';
+import { createSerializer } from 'enzyme-to-json';
 import { range } from 'lodash';
-import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
 import Mosaic from '..';
 import * as imageSets from '../../test/fixtures/image-sets';
+
+Enzyme.configure( { adapter: new Adapter() } );
+expect.addSnapshotSerializer( createSerializer( { mode: 'deep' } ) );
 
 test( 'renders as expected', () => {
 	Object.keys( imageSets ).forEach( k => {
