@@ -308,7 +308,7 @@ class DomainsStep extends React.Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, siteGoals, signupDependencies } = this.props;
+		const { flowName, siteGoals, signupDependencies, refParameter, verticalName } = this.props;
 		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
 
 		return (
@@ -316,6 +316,8 @@ class DomainsStep extends React.Component {
 			flowName === 'subdomain' ||
 			// 'blog' flow, starting with blog themes
 			flowName === 'blog' ||
+			// this user came from a vertical landing page?
+			( verticalName && /-vertical-landing$/.test( refParameter || '' ) ) ||
 			( ! this.props.isDomainOnly &&
 				// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
 				( ( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||

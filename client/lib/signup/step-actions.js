@@ -559,7 +559,7 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 		return false;
 	}
 
-	const stepProvidesDependencies = steps[ stepName ].providedDependencies;
+	const stepProvidesDependencies = steps[ stepName ].providesDependencies;
 	const dependenciesNotProvided = difference( stepProvidesDependencies, fulfilledDependencies );
 	return isEmpty( dependenciesNotProvided );
 }
@@ -613,9 +613,14 @@ export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) 
 		initialContext: {
 			query: { site_type: siteType },
 		},
+		signupDependencies,
 	} = nextProps;
 	const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
 	let fulfilledDependencies = [];
+
+	if ( siteType === get( signupDependencies, 'siteType' ) ) {
+		return;
+	}
 
 	if ( siteTypeValue ) {
 		debug( 'From query string: site_type = %s', siteType );
@@ -643,10 +648,15 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 			query: { vertical },
 		},
 		flowName,
+		signupDependencies,
 	} = nextProps;
 
 	const flowSteps = flows.getFlow( flowName ).steps;
 	let fulfilledDependencies = [];
+
+	if ( vertical && get( signupDependencies, 'surveyQuestion' ) === vertical ) {
+		return;
+	}
 
 	if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
 		debug( 'From query string: vertical = %s', vertical );
@@ -661,7 +671,9 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 			surveyQuestion: vertical,
 		} );
 
-		nextProps.submitSiteVertical( { name: vertical }, stepName );
+		if ( steps[ stepName ].providesDependencies.indexOf( 'siteTopic' ) !== -1 ) {
+			nextProps.submitSiteVertical( { name: vertical }, stepName );
+		}
 
 		// Track our landing page verticals
 		if ( isValidLandingPageVertical( vertical ) ) {
@@ -684,4 +696,9 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
 	}
+}
+
+export function isAboutPageFulfilled( stepName, defaultDependencies, nextProps ) {
+	isSiteTypeFulfilled( stepName, defaultDependencies, nextProps );
+	isSiteTopicFulfilled( stepName, defaultDependencies, nextProps );
 }

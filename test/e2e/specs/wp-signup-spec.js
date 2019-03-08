@@ -1271,7 +1271,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 	describe( 'Sign up for free subdomain site @parallel', function() {
 		const blogName = dataHelper.getNewBlogName();
-		const expectedDomainName = `${ blogName }.art.blog`;
+		const expectedDomainName = `${ blogName }.school.blog`;
 
 		before( async function() {
 			if ( process.env.SKIP_DOMAIN_TESTS === 'true' ) {
@@ -1293,7 +1293,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				StartPage.getStartURL( {
 					culture: locale,
 					flow: 'subdomain',
-					query: 'vertical=a8c.1',
+					query: 'vertical=Education',
 				} )
 			);
 			const designTypePage = await DesignTypePage.Expect( driver );
@@ -1309,7 +1309,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		);
 
 		step(
-			'Can then see the domains page, and Can search for a blog name, can see and select a free .art.blog address in the results',
+			'Can then see the domains page, and Can search for a blog name, can see and select a free .school.blog address in the results',
 			async function() {
 				const findADomainComponent = await FindADomainComponent.Expect( driver );
 				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
@@ -1550,6 +1550,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			// Retry checking site importability if there's an error.
 			// Cancel test if endpoint still isn't working--can't continue testing this flow.
 			let attempts = 2;
+			// eslint-disable-next-line no-constant-condition
 			while ( true ) {
 				try {
 					await importFromURLPage.submitURL( siteURL );

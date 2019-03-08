@@ -22,6 +22,7 @@ import {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
+	isAboutPageFulfilled,
 } from 'lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -39,4 +40,5 @@ export default generateSteps( {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
+	isAboutPageFulfilled,
 } );

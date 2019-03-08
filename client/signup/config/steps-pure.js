@@ -26,6 +26,7 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
+	isAboutPageFulfilled = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -142,6 +143,7 @@ export function generateSteps( {
 		about: {
 			stepName: 'about',
 			providesDependencies: [ 'designType', 'themeSlugWithRepo', 'siteTitle', 'surveyQuestion' ],
+			fulfilledStepCallback: isAboutPageFulfilled,
 		},
 
 		user: {
