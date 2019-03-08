@@ -22,6 +22,7 @@
   "dependencies": {
     "@automattic/format-currency": "file:./packages/format-currency",
     "@automattic/tree-select": "file:./packages/tree-select",
+    "@automattic/jetpack-blocks": "file:./packages/jetpack-blocks",
     "@babel/cli": "7.2.3",
     "@babel/core": "7.3.4",
     "@babel/plugin-proposal-class-properties": "7.3.4",
