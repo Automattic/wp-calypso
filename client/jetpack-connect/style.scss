@@ -881,7 +881,43 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	min-height: 100%;
 	background-color: var( --color-jetpack-onboarding-background );
 
-	.layout__secondary {
-		
+	.formatted-header {
+		color: var( --color-jetpack-onboarding-text );
+	}
+
+	.card {
+		box-shadow: none;
+		border-radius: 3px;
+
+		&.section-header {
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+
+		&.payment-box {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
+	}
+
+	.button.is-primary {
+		background-color: var( --color-jetpack );
+		border-color: var( --color-jetpack-dark );
+
+		&:hover,
+		&:focus {
+			background-color: var( --color-jetpack-400 );
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var( --color-jetpack-light );
+		}
+
+		&[disabled],
+		&:disabled {
+			background: var( --color-white );
+			border-color: var( --color-neutral-50 );
+			color: var( --color-neutral-50 );
+		}
 	}
 }
