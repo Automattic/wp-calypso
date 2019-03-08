@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import Dispatcher from 'dispatcher';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop, every, flow, has, defer, get, trim, sortBy, reverse } from 'lodash';
+import { isEmpty, noop, every, flow, has, defer, get, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
 import moment from 'moment';
 import { stringify } from 'qs';
@@ -33,7 +33,6 @@ import {
 import user from 'lib/user';
 
 import { appStates } from 'state/imports/constants';
-import Button from 'components/forms/form-button';
 import ErrorPane from '../error-pane';
 import TextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
@@ -45,6 +44,10 @@ import { prefetchmShotsPreview } from './site-preview-actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 import { setSelectedEditor } from 'state/selected-editor/actions';
+
+import ActionButton from 'my-sites/importer/importer-action-buttons/action-button';
+import CloseButton from 'my-sites/importer/importer-action-buttons/close-button';
+import ActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 
 const NO_ERROR_STATE = {
 	error: false,
@@ -439,6 +442,8 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	render() {
+		const { importerStatus, isEnabled, site } = this.props;
+
 		return (
 			<div className="site-importer__site-importer-pane">
 				{ this.state.importStage === 'idle' && (
@@ -452,14 +457,6 @@ class SiteImporterInputPane extends React.Component {
 								value={ this.state.siteURLInput }
 								placeholder="https://example.com/"
 							/>
-							<Button
-								primary={ true }
-								disabled={ this.state.loading }
-								busy={ this.state.loading }
-								onClick={ this.validateSite }
-							>
-								{ this.props.translate( 'Continue' ) }
-							</Button>
 						</div>
 						{ this.state.availableEndpoints.length > 0 && (
 							<FormSelect
@@ -481,12 +478,12 @@ class SiteImporterInputPane extends React.Component {
 				{ this.state.importStage === 'importable' && (
 					<div className="site-importer__site-importer-confirm-site-pane">
 						<SiteImporterSitePreview
+							site={ site }
 							siteURL={ this.state.importSiteURL }
 							importData={ this.state.importData }
 							isLoading={ this.state.loading }
 							resetImport={ this.resetImport }
 							startImport={ this.importSite }
-							site={ this.props.site }
 						/>
 					</div>
 				) }
@@ -498,6 +495,19 @@ class SiteImporterInputPane extends React.Component {
 					/>
 				) }
 				{ this.state.importStage === 'idle' && this.renderUrlHint() }
+				{ this.state.importStage === 'idle' && (
+					<ActionButtonContainer>
+						<CloseButton importerStatus={ importerStatus } site={ site } isEnabled={ isEnabled } />
+						<ActionButton
+							primary
+							disabled={ this.state.loading || isEmpty( this.state.siteURLInput ) }
+							busy={ this.state.loading }
+							onClick={ this.validateSite }
+						>
+							{ this.props.translate( 'Continue' ) }
+						</ActionButton>
+					</ActionButtonContainer>
+				) }
 			</div>
 		);
 	}

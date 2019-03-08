@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -13,24 +11,23 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
-import { appStates } from 'state/imports/constants';
-import { clearImport } from 'lib/importer/actions';
+import ActionButton from './action-button';
+import { resetImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { setImportOriginSiteDetails } from 'state/importer-nux/actions';
+import { SITE_IMPORTER } from 'state/imports/constants';
 
-export class ResetButton extends React.PureComponent {
-	static displayName = 'ResetButton';
+export class DoneButton extends React.PureComponent {
+	static displayName = 'DoneButton';
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
 			importerId: PropTypes.string.isRequired,
-			importerState: PropTypes.string.isRequired,
 			type: PropTypes.string.isRequired,
 		} ),
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
-		isEnabled: PropTypes.bool.isRequired,
 	};
 
 	handleClick = () => {
@@ -40,33 +37,26 @@ export class ResetButton extends React.PureComponent {
 		} = this.props;
 		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
-		clearImport( siteId, importerId );
+		resetImport( siteId, importerId );
 
-		this.props.recordTracksEvent( 'calypso_importer_main_reset_clicked', {
+		if ( SITE_IMPORTER === type ) {
+			// Clear out site details, so that importers list isn't filtered
+			this.props.setImportOriginSiteDetails();
+		}
+
+		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 			blog_id: siteId,
 			importer_id: tracksType,
 		} );
 	};
 
 	render() {
-		const {
-			importerStatus: { importerState },
-			isEnabled,
-			translate,
-		} = this.props;
-
-		const disabled = ! isEnabled || appStates.UPLOADING === importerState;
+		const { translate } = this.props;
 
 		return (
-			<Button
-				className="importer-header__action-button"
-				disabled={ disabled }
-				isPrimary
-				scary
-				onClick={ this.handleClick }
-			>
-				{ translate( 'Close', { context: 'verb, to Close a dialog' } ) }
-			</Button>
+			<ActionButton primary onClick={ this.handleClick }>
+				{ translate( 'Done', { context: 'adjective' } ) }
+			</ActionButton>
 		);
 	}
 }
@@ -74,7 +64,7 @@ export class ResetButton extends React.PureComponent {
 export default flow(
 	connect(
 		null,
-		{ recordTracksEvent }
+		{ setImportOriginSiteDetails, recordTracksEvent }
 	),
 	localize
-)( ResetButton );
+)( DoneButton );
