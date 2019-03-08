@@ -66,7 +66,7 @@ export class CloseButton extends React.PureComponent {
 				scary
 				onClick={ this.handleClick }
 			>
-				{ translate( 'Close', { context: 'verb, to Close a dialog' } ) }
+				{ translate( 'Cancel', { context: 'verb, to Close a dialog' } ) }
 			</Button>
 		);
 	}
