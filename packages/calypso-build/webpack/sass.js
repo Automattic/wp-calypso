@@ -9,13 +9,13 @@ module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude }
 	use: [
 		MiniCssExtractPluginWithRTL.loader,
 		{
-			loader: 'css-loader',
+			loader: require.resolve( 'css-loader' ),
 			options: {
 				importLoaders: 2,
 			},
 		},
 		{
-			loader: 'postcss-loader',
+			loader: require.resolve( 'postcss-loader' ),
 			options: {
 				config: {
 					ctx: {
@@ -25,7 +25,7 @@ module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude }
 			},
 		},
 		{
-			loader: 'sass-loader',
+			loader: require.resolve( 'sass-loader' ),
 			options: {
 				includePaths,
 				data: prelude,
