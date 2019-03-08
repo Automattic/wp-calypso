@@ -54,7 +54,6 @@ class ImporterHeader extends React.PureComponent {
 
 	getButtonComponent() {
 		const { importerState, isUploading } = this.props.importerStatus;
-
 		if ( isUploading || includes( cancelStates, importerState ) ) {
 			return CloseButton;
 		} else if ( includes( stopStates, importerState ) ) {

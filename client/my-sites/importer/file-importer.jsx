@@ -18,7 +18,7 @@ import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
-
+import ActionButtons from './action-buttons';
 /**
  * Module variables
  */
@@ -83,6 +83,8 @@ export default class extends React.PureComponent {
 				{ includes( uploadingStates, state.importerState ) && (
 					<UploadingPane description={ uploadDescription } importerStatus={ state } />
 				) }
+
+				<ActionButtons isEnabled={ isEnabled } site={ site } importerStatus={ state } />
 			</Card>
 		);
 	}

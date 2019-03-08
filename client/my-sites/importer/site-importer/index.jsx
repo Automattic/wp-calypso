@@ -18,6 +18,7 @@ import Card from 'components/card';
 import ImporterHeader from '../importer-header';
 import ImportingPane from '../importing-pane';
 import SiteImporterInputPane from './site-importer-input-pane';
+import ActionButtons from '../action-buttons';
 
 /**
  * Module variables
@@ -87,6 +88,8 @@ export default class extends React.PureComponent {
 						onStartImport={ this.validateSite }
 					/>
 				) }
+
+				<ActionButtons isEnabled={ isEnabled } site={ site } importerStatus={ state } />
 			</Card>
 		);
 	}
