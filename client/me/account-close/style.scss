@@ -11,32 +11,6 @@
 	margin-bottom: 1em;
 }
 
-// Confirm dialog
-.account-close__confirm-dialog {
-	max-width: 424px;
-	padding-bottom: 16px;
-}
-
-h1.account-close__confirm-dialog-header {
-	height: auto;
-	margin-bottom: 16px;
-	font-size: 21px;
-	font-weight: 300;
-	line-height: 24px;
-	color: var( --color-neutral-700 );
-}
-
-.account-close__confirm-dialog-label {
-	margin-bottom: 8px;
-	line-height: 24px;
-	color: var( --color-text-subtle );
-	font-weight: normal;
-}
-
-.account-close__confirm-dialog-target-username {
-	color: var( --color-error );
-}
-
 // Placeholders
 .account-close.is-loading .account-close__body-copy,
 .account-close.is-loading .account-close__body-copy a,

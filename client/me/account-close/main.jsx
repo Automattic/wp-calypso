@@ -37,6 +37,11 @@ import hasCancelableUserPurchases from 'state/selectors/has-cancelable-user-purc
 import getUserPurchasedPremiumThemes from 'state/selectors/get-user-purchased-premium-themes';
 import userUtils from 'lib/user/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class AccountSettingsClose extends Component {
 	state = {
 		showConfirmDialog: false,
