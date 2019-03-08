@@ -4,6 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classNames from 'classnames';
@@ -46,15 +47,6 @@ import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 import { abtest } from 'lib/abtest';
 
 export class PlansFeaturesMain extends Component {
-	planPositions = [ 'left', 'center', 'right' ];
-
-	constructor( props ) {
-		super( props );
-		this.state = {
-			plansPosition: 'center',
-		};
-	}
-
 	componentDidUpdate( prevProps ) {
 		/**
 		 * Happychat does not update with the selected site right now :(
@@ -95,7 +87,6 @@ export class PlansFeaturesMain extends Component {
 			<div
 				className={ classNames(
 					'plans-features-main__group',
-					'is-scrolled-to-' + this.state.plansPosition,
 					'is-' + ( displayJetpackPlans ? 'jetpack' : 'wpcom' ),
 					{
 						[ `is-customer-${ customerType }` ]: ! displayJetpackPlans,
@@ -305,27 +296,110 @@ export class PlansFeaturesMain extends Component {
 		return false;
 	}
 
-	move( direction ) {
-		const offset = direction === 'left' ? -1 : 1;
-		const currentPosition = this.state.plansPosition;
-		const currentPositionIndex = this.planPositions.indexOf( currentPosition );
-		const nextPosition = this.planPositions[ currentPositionIndex + offset ] || currentPosition;
+	render() {
+		const { displayJetpackPlans, isInSignup, plansWithScroll, siteId } = this.props;
+		let faqs = null;
 
-		this.setState( { plansPosition: nextPosition } );
+		if ( ! isInSignup ) {
+			faqs = displayJetpackPlans ? <JetpackFAQ /> : <WpcomFAQ />;
+		}
+
+		return (
+			<div className={ classNames( 'plans-features-main', { 'is-no-tabs': plansWithScroll } ) }>
+				<HappychatConnection />
+				<div className="plans-features-main__notice" />
+				{ this.renderToggle() }
+				<QueryPlans />
+				<QuerySitePlans siteId={ siteId } />
+				{ plansWithScroll ? (
+					<Scroller elementSelector=".plan-features__table-item">
+						{ this.getPlanFeatures() }
+					</Scroller>
+				) : null }
+				{ ! plansWithScroll ? this.getPlanFeatures() : null }
+				<CartData>
+					<PaymentMethods />
+				</CartData>
+				{ faqs }
+			</div>
+		);
+	}
+}
+
+class Scroller extends React.Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			initializing: true,
+			scrollPaneWidth: 3 * 200,
+			elementWidth: 0,
+		};
 	}
 
-	handleKeyPress( event ) {
-		if ( event.key === 'Enter' || event.key === ' ' ) {
-			event.preventDefault();
-			this.move( 'left' );
+	componentDidMount() {
+		const { elementSelector } = this.props;
+		const currentNode = ReactDOM.findDOMNode( this );
+		const scrolledElements = currentNode.querySelectorAll( elementSelector );
+
+		if ( scrolledElements.length === 0 ) {
+			return;
 		}
+		const availableSpace = currentNode.offsetWidth;
+		const contentWidth = this.refs.scrolledPane.offsetWidth;
+		const elementWidth = scrolledElements[ 0 ].offsetWidth;
+		const nbActiveElements = Math.min(
+			Math.floor( ( availableSpace - 120 ) / elementWidth - 0.0000001 ),
+			scrolledElements.length
+		);
+
+		// Compute active elements
+		let activeElements = [];
+		for ( let i = 2, max = nbActiveElements; i < max; i++ ) {
+			activeElements.push( i );
+		}
+
+		this.setState(
+			{
+				contentWidth,
+				elementWidth,
+				activeElements,
+				scrollLeft: 0,
+				maxActiveElements: nbActiveElements,
+				initializing: false,
+				scrollPaneWidth: nbActiveElements * elementWidth + 40,
+			},
+			() => this.setActiveElementsClassNames()
+		);
+	}
+
+	render() {
+		const { initializing, scrollPaneWidth, scrollLeft } = this.state;
+		return (
+			<div className="scroller">
+				{ this.getLeftOverlay() }
+				<div
+					className={ classNames( 'scroller__scroll-pane', { initializing } ) }
+					style={ { width: this.state.scrollPaneWidth } }
+				>
+					<div
+						className="scroller__scrolled-pane"
+						style={ { marginLeft: scrollLeft } }
+						ref="scrolledPane"
+					>
+						{ this.props.children }
+					</div>
+				</div>
+				{ this.getRightOverlay() }
+			</div>
+		);
 	}
 
 	getLeftOverlay() {
 		return (
 			<div
-				className="plans-features-main__left-overlay"
-				onClick={ this.move.bind( this, 'left' ) }
+				className="scroller__left-nav"
+				style={ { width: `calc( (100% - ${ this.state.scrollPaneWidth }px) / 2 )` } }
+				onClick={ () => this.scrollLeft() }
 				onKeyPress={ this.handleKeyPress.bind( this ) }
 				role="button"
 				tabIndex={ -1 }
@@ -354,8 +428,9 @@ export class PlansFeaturesMain extends Component {
 	getRightOverlay() {
 		return (
 			<div
-				className="plans-features-main__right-overlay"
-				onClick={ this.move.bind( this, 'right' ) }
+				className="scroller__right-nav"
+				style={ { width: `calc( (100% - ${ this.state.scrollPaneWidth }px) / 2 )` } }
+				onClick={ () => this.scrollRight() }
 				onKeyPress={ this.handleKeyPress.bind( this ) }
 				role="button"
 				tabIndex={ 0 }
@@ -381,37 +456,122 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
-	render() {
-		const { displayJetpackPlans, isInSignup, plansWithScroll, siteId } = this.props;
-		let faqs = null;
+	setActiveElementsClassNames() {
+		const { activeElements } = this.state;
+		const { elementSelector } = this.props;
+		const currentNode = ReactDOM.findDOMNode( this );
+		const scrolledElements = currentNode.querySelectorAll( elementSelector );
+		// Set proper classnames for active elements
+		for ( let i = 0, max = scrolledElements.length; i < max; i++ ) {
+			const elem = scrolledElements[ i ];
+			if ( activeElements.indexOf( i ) !== -1 ) {
+				elem.classList.add( 'is-active' );
+				elem.classList.remove( 'is-inactive' );
+			} else {
+				elem.classList.remove( 'is-active' );
+				elem.classList.add( 'is-inactive' );
+			}
+		}
+	}
 
-		if ( ! isInSignup ) {
-			faqs = displayJetpackPlans ? <JetpackFAQ /> : <WpcomFAQ />;
+	scrollLeft() {
+		const { activeElements } = this.state;
+		const { elementSelector } = this.props;
+		const currentNode = ReactDOM.findDOMNode( this );
+		const scrolledElements = currentNode.querySelectorAll( elementSelector );
+
+		if ( activeElements[ 0 ] === 0 ) {
+			return;
 		}
 
-		return (
-			<div className={ classNames( 'plans-features-main', { 'is-no-tabs': plansWithScroll } ) }>
-				<HappychatConnection />
-				<div className="plans-features-main__notice" />
-				{ this.renderToggle() }
-				<QueryPlans />
-				<QuerySitePlans siteId={ siteId } />
-				{ plansWithScroll ? (
-					<div className="plans-features-main__scroll-container">
-						{ this.getLeftOverlay() }
-						{ this.getRightOverlay() }
-						{ this.getPlanFeatures() }
-					</div>
-				) : null }
-				{ ! plansWithScroll ? this.getPlanFeatures() : null }
-				<CartData>
-					<PaymentMethods />
-				</CartData>
-				{ faqs }
-			</div>
+		const newActiveElements = [ activeElements[ 0 ] - 1 ].concat(
+			activeElements.slice( 0, activeElements.length - 1 )
+		);
+		const currentVisibleElement = scrolledElements[ activeElements[ 0 ] ];
+		const newVisibleElement = scrolledElements[ newActiveElements[ 0 ] ];
+		const scrollLeftDelta = newVisibleElement.offsetLeft - currentVisibleElement.offsetLeft;
+
+		this.setState(
+			{
+				scrollLeft: this.state.scrollLeft + scrollLeftDelta,
+				activeElements: newActiveElements,
+			},
+			() => this.setActiveElementsClassNames()
 		);
 	}
+
+	scrollRight() {
+		const { activeElements } = this.state;
+		const currentNode = ReactDOM.findDOMNode( this );
+		const scrolledElements = currentNode.querySelectorAll( this.props.elementSelector );
+
+		const lastElement = activeElements.slice( -1 )[ 0 ];
+		const isLastElementActive = lastElement === scrolledElements.length - 1;
+		if ( isLastElementActive ) {
+			return;
+		}
+
+		const newActiveElements = activeElements.slice( 1 ).concat( [ lastElement + 1 ] );
+		const currentVisibleElement = scrolledElements[ lastElement ];
+		const newVisibleElement = scrolledElements[ lastElement + 1 ];
+		const scrollLeftDelta = newVisibleElement.offsetLeft - currentVisibleElement.offsetLeft;
+
+		this.setState(
+			{
+				scrollLeft: this.state.scrollLeft + scrollLeftDelta,
+				activeElements: newActiveElements,
+			},
+			() => this.setActiveElementsClassNames()
+		);
+	}
+
+	computeScrollPosition( activeElements ) {
+		const { activeElements } = this.state;
+		const { elementSelector } = this.props;
+		const currentNode = ReactDOM.findDOMNode( this );
+		const scrolledElements = currentNode.querySelectorAll( elementSelector );
+
+		const lastElement = activeElements.slice( -1 )[ 0 ];
+		const isLastElementActive = lastElement === scrolledElements.length - 1;
+		if ( isLastElementActive ) {
+			return;
+		}
+
+		const newActiveElements = activeElements.slice( 1 ).concat( [ lastElement + 1 ] );
+		const currentVisibleElement = scrolledElements[ lastElement ];
+		const newVisibleElement = scrolledElements[ lastElement + 1 ];
+		const scrollLeftDelta = newVisibleElement.offsetLeft - currentVisibleElement.offsetLeft;
+
+		this.setState(
+			{
+				scrollLeft: this.state.scrollLeft + scrollLeftDelta,
+				activeElements: newActiveElements,
+			},
+			() => this.setActiveElementsClassNames()
+		);
+	}
+
+	move( direction ) {
+		// const offset = direction === 'left' ? -1 : 1;
+		// const currentPosition = this.state.plansPosition;
+		// const currentPositionIndex = this.planPositions.indexOf( currentPosition );
+		// const nextPosition = this.planPositions[ currentPositionIndex + offset ] || currentPosition;
+		//
+		// this.setState( { plansPosition: nextPosition } );
+	}
+
+	handleKeyPress( event ) {
+		// if ( event.key === 'Enter' || event.key === ' ' ) {
+		// 	event.preventDefault();
+		// 	this.move( 'left' );
+		// }
+	}
 }
+
+Scroller.propTypes = {
+	elementSelector: PropTypes.string,
+	initialPosition: PropTypes.number,
+};
 
 PlansFeaturesMain.propTypes = {
 	basePlansPath: PropTypes.string,

@@ -69,50 +69,10 @@
 			overflow: visible;
 		}
 	}
-	.plans-features-main__scroll-container {
-		@include breakpoint( '660px-1280px' ) {
-			width: 140%;
-			margin-left: -20%;
-		}
-
-		position: relative;
-	}
-
-	.plans-features-main__left-overlay,
-	.plans-features-main__right-overlay {
-		display: none;
-		height: 100%;
-		padding-top: 185px;
-		top: 8px;
-		width: 19%;
-		z-index: 1;
-	}
-
-	.plans-features-main__left-overlay {
-		text-align: right;
-	}
 
 	@include breakpoint( '660px-1280px' ) {
 		width: 100%;
 		overflow: hidden;
-
-		.plans-features-main__left-overlay {
-			position: absolute;
-			display: block;
-			left: 0;
-		}
-
-		.plans-features-main__right-overlay {
-			position: absolute;
-			display: block;
-			right: 0;
-		}
-	}
-	@include breakpoint( '660px-1040px' ) {
-		.plans-features-main__left-overlay,
-		.plans-features-main__right-overlay {
-			width: 20%;
-		}
 	}
 }
 
@@ -126,5 +86,51 @@
 	&:hover,
 	&:focus {
 		color: var( --color-primary );
+	}
+}
+
+.scroller {
+	position: relative;
+	display: flex;
+	overflow: hidden;
+	max-width: 100%;
+	justify-content: center;
+
+	&__left-nav,
+	&__right-nav {
+		position: absolute;
+		height: 100%;
+		z-index: 2;
+		padding-top: 185px;
+	}
+
+	&__left-nav {
+		left: 0;
+		svg {
+			float: right;
+		}
+	}
+
+	&__right-nav {
+		right: 0;
+		svg {
+			float: left;
+		}
+	}
+
+	&__scroll-pane.initializing {
+		opacity: 0;
+	}
+
+	&__scroll-pane {
+		position: relative;
+		display: flex;
+		z-index: 1;
+		justify-content: center;
+		border: 2px solid #000;
+	}
+
+	&__scrolled-pane {
+		position: relative;
 	}
 }
