@@ -252,7 +252,7 @@ describe( 'cart-item', () => {
 					product_slug: 'fake',
 				},
 			} );
-			expect( () => instance.calcMonthlyBillingDetails() ).toThrowError();
+			expect( () => instance.calcMonthlyBillingDetails() ).toThrow();
 		} );
 	} );
 

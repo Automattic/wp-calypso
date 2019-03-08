@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,9 +22,8 @@ import { preventWidows } from 'lib/formatting';
 import { getFeatureTitle, getPlan } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
-import { getSitePlan } from 'state/sites/selectors';
+import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PlanIcon from 'components/plans/plan-icon';
 

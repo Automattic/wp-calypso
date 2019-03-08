@@ -160,7 +160,7 @@ class SimplePaymentsEdit extends Component {
 		const { email } = attributes;
 		const { saveEntityRecord } = dispatch( 'core' );
 
-		this.setState( { isSavingProduct: true }, async () => {
+		this.setState( { isSavingProduct: true }, () => {
 			saveEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, this.toApi() )
 				.then( record => {
 					if ( record ) {
