@@ -240,8 +240,13 @@ function getDomainPrice( slug, productsList, currencyCode ) {
 
 function getDomainSalePrice( slug, productsList, currencyCode ) {
 	const saleCost = get( productsList, [ slug, 'sale_cost' ], null );
+	const couponValidForNewDomainPurchase = get(
+		productsList,
+		[ slug, 'sale_coupon', 'allowed_for_new_purchases' ],
+		null
+	);
 
-	if ( ! saleCost ) {
+	if ( ! saleCost || ! couponValidForNewDomainPurchase ) {
 		return null;
 	}
 
@@ -249,17 +254,18 @@ function getDomainSalePrice( slug, productsList, currencyCode ) {
 }
 
 function getDomainTransferSalePrice( slug, productsList, currencyCode ) {
+	const saleCost = get( productsList, [ slug, 'sale_cost' ], null );
 	const couponValidForDomainTransfer = get(
 		productsList,
 		[ slug, 'sale_coupon', 'allowed_for_domain_transfers' ],
 		null
 	);
 
-	if ( ! couponValidForDomainTransfer ) {
+	if ( ! saleCost || ! couponValidForDomainTransfer ) {
 		return null;
 	}
 
-	return getDomainSalePrice( slug, productsList, currencyCode );
+	return formatCurrency( saleCost, currencyCode );
 }
 
 function getAvailableTlds( query = {} ) {
