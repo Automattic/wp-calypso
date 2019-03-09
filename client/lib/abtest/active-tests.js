@@ -81,15 +81,6 @@ export default {
 		defaultVariation: 'skip',
 		allowExistingUsers: true,
 	},
-	showConciergeSessionUpsellNonGSuite: {
-		datestamp: '20190104',
-		variations: {
-			skip: 50,
-			show: 50,
-		},
-		defaultVariation: 'skip',
-		allowExistingUsers: true,
-	},
 	builderReferralStatsNudge: {
 		datestamp: '20181218',
 		variations: {
