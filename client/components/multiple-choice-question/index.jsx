@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { memoize, shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -19,12 +20,16 @@ export default class MultipleChoiceQuestion extends Component {
 		answers: PropTypes.arrayOf( PropTypes.string ).isRequired,
 	};
 
+	/* pulled from https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#what-about-memoization */
+	shuffleAnswers = memoize( answers => shuffle( answers ) );
+
 	render() {
 		const { question, answers } = this.props;
+		const shuffledAnswers = this.shuffleAnswers( answers );
 		return (
 			<div>
 				<FormLegend>{ question }</FormLegend>
-				{ answers.map( answer => {
+				{ shuffledAnswers.map( answer => {
 					return (
 						<FormLabel key={ answer }>
 							<FormRadio name={ answer } value={ answer } />
