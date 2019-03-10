@@ -55,7 +55,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#getEmailForwardsSuccess', () => {
-			test( 'should dispatch a get email forwards success action and list of forwards on success', () => {
+			test( 'should dispatch a get email forwards success action and response on correct "forward" type response', () => {
 				const response = {
 					forwards: [
 						{
@@ -76,6 +76,45 @@ describe( 'wpcom-api', () => {
 				} );
 			} );
 
+			test( 'should dispatch a get email forwards success action and response on correct "custom" type response', () => {
+				const response = {
+					mx_servers: [
+						{
+							server: 'mx.test.com.',
+							priority: '10',
+						},
+					],
+					type: 'custom',
+				};
+				expect( getEmailForwardsSuccess( action, response ) ).to.eql( {
+					type: EMAIL_FORWARDING_REQUEST_SUCCESS,
+					domainName,
+					response,
+				} );
+			} );
+
+			test( 'should dispatch a get email forwards success action and response on correct "google-apps" type response', () => {
+				const response = {
+					type: 'google-apps',
+				};
+				expect( getEmailForwardsSuccess( action, response ) ).to.eql( {
+					type: EMAIL_FORWARDING_REQUEST_SUCCESS,
+					domainName,
+					response,
+				} );
+			} );
+
+			test( 'should dispatch a get email forwards success action and response on correct "google-apps-another-provider" type response', () => {
+				const response = {
+					type: 'google-apps-another-provider',
+				};
+				expect( getEmailForwardsSuccess( action, response ) ).to.eql( {
+					type: EMAIL_FORWARDING_REQUEST_SUCCESS,
+					domainName,
+					response,
+				} );
+			} );
+
 			test( 'should dispatch a get email forwards failure action on no response', () => {
 				const resultActions = getEmailForwardsSuccess( action, undefined );
 				expect( resultActions ).to.have.lengthOf( 2 );
@@ -88,13 +127,45 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should dispatch a get email forwards failure action on response with no type', () => {
-				const resultActions = getEmailForwardsSuccess( action, { forwards: [] } );
+				const resultActions = getEmailForwardsSuccess( action, {} );
 				expect( resultActions ).to.have.lengthOf( 2 );
 				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
 				expect( resultActions[ 1 ] ).to.eql( {
 					type: EMAIL_FORWARDING_REQUEST_FAILURE,
 					domainName,
 					error: { message: 'No `type` in get forwards response.' },
+				} );
+			} );
+
+			test( 'should dispatch a get email forwards failure action on incorrect "forward" type response', () => {
+				const response = {
+					type: 'forward',
+				};
+
+				const resultActions = getEmailForwardsSuccess( action, response );
+				expect( resultActions ).to.have.lengthOf( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
+				expect( resultActions[ 1 ] ).to.eql( {
+					type: EMAIL_FORWARDING_REQUEST_FAILURE,
+					domainName,
+					error: { message: 'No forwards in `forward` type response' },
+				} );
+			} );
+
+			test( 'should dispatch a get email forwards failure action on incorrect "custom" type response', () => {
+				const response = {
+					type: 'custom',
+				};
+
+				const resultActions = getEmailForwardsSuccess( action, response );
+				expect( resultActions ).to.have.lengthOf( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
+				expect( resultActions[ 1 ] ).to.eql( {
+					type: EMAIL_FORWARDING_REQUEST_FAILURE,
+					domainName,
+					error: {
+						message: 'No mx_servers in `custom` type response',
+					},
 				} );
 			} );
 		} );

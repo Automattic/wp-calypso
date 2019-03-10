@@ -37,7 +37,7 @@ class EmailForwarding extends Component {
 	static propTypes = {
 		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number.isRequired,
-		emailForwardingType: PropTypes.string.isRequired,
+		emailForwardingType: PropTypes.string,
 		selectedDomainName: PropTypes.string.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
