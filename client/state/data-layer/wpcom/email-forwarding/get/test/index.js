@@ -13,6 +13,7 @@ import {
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_REQUEST_FAILURE,
 } from 'state/action-types';
+import { isErrorNotice } from '../../test-utils';
 
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -42,7 +43,10 @@ describe( 'wpcom-api', () => {
 			const message = 'An error has occured';
 
 			test( 'should dispatch a get email forwards failure action on error', () => {
-				expect( getEmailForwardsFailure( action, { message } ) ).to.eql( {
+				const resultActions = getEmailForwardsFailure( action, { message } );
+				expect( resultActions ).to.have.lengthOf( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
+				expect( resultActions[ 1 ] ).to.eql( {
 					type: EMAIL_FORWARDING_REQUEST_FAILURE,
 					domainName,
 					error: { message },
@@ -52,28 +56,45 @@ describe( 'wpcom-api', () => {
 
 		describe( '#getEmailForwardsSuccess', () => {
 			test( 'should dispatch a get email forwards success action and list of forwards on success', () => {
-				const forwards = [
-					{
-						email: 'test@example.com',
-						mailbox: 'test',
-						domain: 'example.com',
-						forward_address: 'test@forward.com',
-						active: true,
-						created: 1551136603,
-					},
-				];
-				expect( getEmailForwardsSuccess( action, { forwards } ) ).to.eql( {
+				const response = {
+					forwards: [
+						{
+							email: 'test@example.com',
+							mailbox: 'test',
+							domain: 'example.com',
+							forward_address: 'test@forward.com',
+							active: true,
+							created: 1551136603,
+						},
+					],
+					type: 'forward',
+				};
+				expect( getEmailForwardsSuccess( action, response ) ).to.eql( {
 					type: EMAIL_FORWARDING_REQUEST_SUCCESS,
 					domainName,
-					forwards,
+					response,
 				} );
 			} );
 
 			test( 'should dispatch a get email forwards failure action on no response', () => {
-				expect( getEmailForwardsSuccess( action, undefined ) ).to.eql( {
+				const resultActions = getEmailForwardsSuccess( action, undefined );
+				expect( resultActions ).to.have.lengthOf( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
+				expect( resultActions[ 1 ] ).to.eql( {
 					type: EMAIL_FORWARDING_REQUEST_FAILURE,
 					domainName,
-					error: true,
+					error: { message: 'No `type` in get forwards response.' },
+				} );
+			} );
+
+			test( 'should dispatch a get email forwards failure action on response with no type', () => {
+				const resultActions = getEmailForwardsSuccess( action, { forwards: [] } );
+				expect( resultActions ).to.have.lengthOf( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
+				expect( resultActions[ 1 ] ).to.eql( {
+					type: EMAIL_FORWARDING_REQUEST_FAILURE,
+					domainName,
+					error: { message: 'No `type` in get forwards response.' },
 				} );
 			} );
 		} );

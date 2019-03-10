@@ -59,8 +59,6 @@ export const getEmailForwardsSuccess = ( action, response ) => {
 							message: 'No forwards in `forward` type response',
 					  } );
 			case 'google-apps-another-provider':
-				return receiveGetEmailForwardsSuccess( action.domainName, response );
-
 			case 'google-apps':
 				return receiveGetEmailForwardsSuccess( action.domainName, response );
 			case 'custom':
