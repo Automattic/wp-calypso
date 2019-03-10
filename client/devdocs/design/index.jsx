@@ -246,7 +246,7 @@ class DesignAssets extends React.Component {
 					<LineChart readmeFilePath="line-chart" />
 					<ListEnd readmeFilePath="list-end" />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
-					<MultipleChoiceQuestionExample readmeFilePath="mulitple-choice-question" />
+					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
 					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />
