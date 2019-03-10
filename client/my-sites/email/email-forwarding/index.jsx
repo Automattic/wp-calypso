@@ -22,7 +22,6 @@ import EmailForwardingGSuiteDetails from './email-forwarding-gsuite-details';
 import EmailForwardingGSuiteDetailsAnotherProvider from './email-forwarding-gsuite-details-another-provider';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
-import SectionHeader from 'components/section-header';
 import getEmailForwardingLimit from 'state/selectors/get-email-forwarding-limit';
 import getEmailForwardingType from 'state/selectors/get-email-forwarding-type';
 import getEmailForwards from 'state/selectors/get-email-forwards';
@@ -52,8 +51,6 @@ class EmailForwarding extends Component {
 				<Header onClick={ this.goToEditEmail } selectedDomainName={ selectedDomainName }>
 					{ translate( 'Email Forwarding' ) }
 				</Header>
-
-				<SectionHeader label={ translate( 'Email Forwarding' ) } />
 				{ this.renderContent() }
 			</Main>
 		);
