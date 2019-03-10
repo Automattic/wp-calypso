@@ -16,6 +16,9 @@ import {
 	EMAIL_FORWARDING_ADD_REQUEST,
 	EMAIL_FORWARDING_ADD_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_ADD_REQUEST_FAILURE,
+	EMAIL_FORWARDING_REMOVE_REQUEST,
+	EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
+	EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
 } from 'state/action-types';
 
 const TEST_MAILBOX_EXAMPLE_DOT_COM = {
@@ -518,6 +521,124 @@ describe( 'emailForwardsReducer', () => {
 					forward_address: 'original@mail.com',
 					active: true,
 					created: 1551137704,
+				},
+			] );
+		} );
+	} );
+
+	describe( 'reducing EMAIL_FORWARDING_REMOVE_REQUEST', () => {
+		const initialState = {
+			'example.com': {
+				forwards: [
+					{
+						email: 'a@example.com',
+						mailbox: 'a',
+						domain: 'example.com',
+						forward_address: 'original@mail.com',
+						active: true,
+						created: 1551136603,
+					},
+					{
+						email: 'b@example.com',
+						mailbox: 'b',
+						domain: 'example.com',
+						forward_address: 'original@mail.com',
+						active: true,
+						created: 1551137704,
+					},
+				],
+			},
+		};
+
+		test( 'should make mailbox to be removed temporary', () => {
+			const state = emailForwardsReducer( initialState, {
+				type: EMAIL_FORWARDING_REMOVE_REQUEST,
+				domainName: 'example.com',
+				mailbox: 'b',
+			} );
+
+			expect( state ).to.have.nested.property( 'example\\.com.forwards[1].temporary', true );
+		} );
+	} );
+
+	describe( 'reducing EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE', () => {
+		const initialState = {
+			'example.com': {
+				forwards: [
+					{
+						email: 'a@example.com',
+						mailbox: 'a',
+						domain: 'example.com',
+						forward_address: 'original@mail.com',
+						active: true,
+						created: 1551136603,
+					},
+					{
+						email: 'b@example.com',
+						mailbox: 'b',
+						domain: 'example.com',
+						forward_address: 'original@mail.com',
+						active: true,
+						created: 1551137704,
+						temporary: true,
+					},
+				],
+			},
+		};
+
+		test( 'should make mailbox that was failed to be removed untemporary', () => {
+			const state = emailForwardsReducer( initialState, {
+				type: EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
+				domainName: 'example.com',
+				mailbox: 'b',
+				error: true,
+			} );
+
+			expect( state ).to.have.nested.property( 'example\\.com.forwards[1].temporary', false );
+		} );
+	} );
+
+	describe( 'reducing EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS', () => {
+		const initialState = {
+			'example.com': {
+				forwards: [
+					{
+						email: 'a@example.com',
+						mailbox: 'a',
+						domain: 'example.com',
+						forward_address: 'original@mail.com',
+						active: true,
+						created: 1551136603,
+					},
+					{
+						email: 'b@example.com',
+						mailbox: 'b',
+						domain: 'example.com',
+						forward_address: 'original@mail.com',
+						active: true,
+						created: 1551137704,
+						temporary: true,
+					},
+				],
+			},
+		};
+
+		test( 'should remove removed mailbox', () => {
+			const state = emailForwardsReducer( initialState, {
+				type: EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
+				domainName: 'example.com',
+				mailbox: 'b',
+			} );
+
+			expect( state ).to.have.nested.property( 'example\\.com.forwards' );
+			expect( state[ 'example.com' ].forwards ).to.eql( [
+				{
+					email: 'a@example.com',
+					mailbox: 'a',
+					domain: 'example.com',
+					forward_address: 'original@mail.com',
+					active: true,
+					created: 1551136603,
 				},
 			] );
 		} );
