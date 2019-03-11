@@ -17,7 +17,6 @@ const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
-const FilterWarningsPlugin = require( 'webpack-filter-warnings-plugin' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 
 /**
@@ -327,11 +326,6 @@ function getWebpackConfig( {
 			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
 			new MomentTimezoneDataPlugin( {
 				startYear: 2000,
-			} ),
-			new FilterWarningsPlugin( {
-				// suppress conflicting order warnings from mini-css-extract-plugin.
-				// see https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
-				exclude: /mini-css-extract-plugin[^]*Conflicting order between:/,
 			} ),
 		] ),
 		externals: _.compact( [
