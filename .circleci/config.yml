@@ -465,19 +465,15 @@ jobs:
   #
   prime-calypso-live:
     docker:
-    - image: buildpack-deps
+      - image: buildpack-deps
     working_directory: ~/wp-calypso
     steps:
       - run:
-          name: Check external author
+          name: Prime calypso.live
           command: |
-            if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
-              echo 'PRs from external authors cannot run on calypso.live'
-              exit 1
+            if [[ -z $CIRCLE_PR_USERNAME ]]; then
+              curl "https://hash-$CIRCLE_SHA1.calypso.live"
             fi
-      - run:
-          name: Prime calypso.live build
-          command: curl "https://hash-$CIRCLE_SHA1.calypso.live"
 
   # Wait for calypso.live to be ready
   #
@@ -487,7 +483,7 @@ jobs:
   #
   wait-calypso-live:
     docker:
-    - image: buildpack-deps
+      - image: buildpack-deps
     working_directory: ~/wp-calypso
     steps:
       - run:
