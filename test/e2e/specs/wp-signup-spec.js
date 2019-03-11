@@ -53,7 +53,7 @@ import DeleteAccountFlow from '../lib/flows/delete-account-flow';
 import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 import ThemeDialogComponent from '../lib/components/theme-dialog-component';
 import SignUpStep from '../lib/flows/sign-up-step';
-import overrideABTest from '../lib/override-abtest';
+// import overrideABTest from '../lib/override-abtest';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
 
@@ -73,7 +73,7 @@ before( async function() {
 	this.driver = driver = await driverManager.startBrowser();
 } );
 
-describe.only( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
+describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @parallel @email', function() {
@@ -1642,11 +1642,12 @@ describe.only( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function()
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
+			// undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
 		} );
 
 		step( 'Can visit the start page', async function() {
-			return await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
+			let startPage = await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
+			return await startPage.setABTestControlGroupsInLocalStorage();
 		} );
 
 		step( 'Can see the account page and enter account details', async function() {
@@ -1728,11 +1729,11 @@ describe.only( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function()
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
+			// undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
 		} );
 
 		step( 'Can enter the account flow and see the account details page', async function() {
-			await StartPage.Visit(
+			let startPage = await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( {
 					culture: locale,
@@ -1740,6 +1741,7 @@ describe.only( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function()
 				} )
 			);
 			await CreateYourAccountPage.Expect( driver );
+			return await startPage.setABTestControlGroupsInLocalStorage();
 		} );
 
 		step( 'Can then enter account details and continue', async function() {
