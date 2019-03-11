@@ -7,7 +7,7 @@ This is a component for presenting a question and a list of answers to a user. T
 ## Usage
 
 ```es6
-import MultipleChoiceQuesion from 'components/multiple-choice-question';
+import MultipleChoiceQuestion from 'components/multiple-choice-question';
 
 function MultipleChoiceQuestionExamples( { translate } ) {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
@@ -56,7 +56,7 @@ function MultipleChoiceQuestionExamples( { translate } ) {
 			<p>
 				<b>Answer Text is: </b>
 				{ answerText }
-			</p>-
+			</p>
 		</div>
 	);
 }
@@ -69,7 +69,7 @@ function MultipleChoiceQuestionExamples( { translate } ) {
 - **Type:** `String`
 - **Required:** `yes`
 
-The question to displayy at the top of the multi choice
+The question to display at the top of the multi choice
 
 ### `answers`
 
