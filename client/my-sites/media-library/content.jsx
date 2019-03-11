@@ -10,7 +10,6 @@ import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -280,13 +279,13 @@ export class MediaLibraryContent extends React.Component {
 
 	renderGooglePhotosConnect() {
 		const connectMessage = this.props.translate(
-			'To show Photos from Google, you need to connect your Google account.'
+			'To show your Google Photos library you need to connect your Google account.'
 		);
 
 		return (
 			<div className="media-library__connect-message">
 				<p>
-					<Gridicon icon="image" size={ 72 } />
+					<img src="/calypso/images/sharing/google-photos-connect.png" width="400" alt="" />
 				</p>
 				<p>{ connectMessage }</p>
 
