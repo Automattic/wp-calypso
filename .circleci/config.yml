@@ -472,7 +472,7 @@ jobs:
           name: Prime calypso.live
           command: |
             if [[ -z $CIRCLE_PR_USERNAME ]]; then
-              curl "https://hash-$CIRCLE_SHA1.calypso.live"
+              curl --silent "https://hash-$CIRCLE_SHA1.calypso.live"
             fi
 
   # Wait for calypso.live to be ready
