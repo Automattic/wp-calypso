@@ -31,6 +31,7 @@ module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude }
 					ctx: {
 						preserveCssCustomProperties,
 					},
+					path: 'packages/calypso-build/',
 				},
 			},
 		},
