@@ -26,7 +26,7 @@ export default class MultipleChoiceQuestion extends Component {
 	};
 
 	/* pulled from https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#what-about-memoization */
-	shuffleAnswers = memoize( answers => shuffle( answers ) );
+	shuffleAnswers = memoize( answers => shuffle( answers ), answers => answers.join( '-' ) );
 
 	onAnswerSelected = event => {
 		const selectedAnswer = event.currentTarget.value;
@@ -39,6 +39,7 @@ export default class MultipleChoiceQuestion extends Component {
 	render() {
 		const { question, answers } = this.props;
 		const { selectedAnswer } = this.state;
+
 		const shuffledAnswers = this.shuffleAnswers( answers );
 		return (
 			<div>
