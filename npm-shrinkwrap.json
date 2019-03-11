@@ -19092,9 +19092,9 @@
       }
     },
     "webpack-rtl-plugin": {
-      "version": "1.8.0",
-      "resolved": "https://registry.npmjs.org/webpack-rtl-plugin/-/webpack-rtl-plugin-1.8.0.tgz",
-      "integrity": "sha512-m6WfqfJ73YgetQN8eKwdoLIwnHkQGO9GKgmB7LPMYfODFKqk3SrsjXRLQ+0HprWcH6xoDN61tagZD1+E5US2CA==",
+      "version": "1.8.2",
+      "resolved": "https://registry.npmjs.org/webpack-rtl-plugin/-/webpack-rtl-plugin-1.8.2.tgz",
+      "integrity": "sha512-qQq6zfdolXeNf1L/C8BDZ4eA8k5NgVAHIBr7SCqz9Pi0BQkxCk4o6qSV7q5HTVvmhY33cJfKQQYTqvvPxBNdzw==",
       "requires": {
         "@romainberger/css-diff": "^1.0.3",
         "async": "^2.0.0",
