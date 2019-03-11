@@ -29,6 +29,7 @@ import './style.scss';
 
 class GSuiteStatsNudge extends Component {
 	static propTypes = {
+		domainSlug: PropTypes.string.isRequired,
 		isDismissed: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -70,7 +71,8 @@ class GSuiteStatsNudge extends Component {
 	}
 
 	getHeaderCopy() {
-		const { translate } = this.props;
+		const { domainSlug, translate } = this.props;
+
 		switch ( abtest( 'gSuiteStatsNudge' ) ) {
 			case 'copy1':
 				return translate( 'Get a mailbox powered by G Suite' );
@@ -80,12 +82,11 @@ class GSuiteStatsNudge extends Component {
 				);
 			case 'copy3':
 				return translate(
-					'Customers can’t reach you at sales@yourdomain.com – click here to add a mailbox for just $5/mo”'
+					'Customers can’t reach you at sales@%s – click here to add a mailbox for just $5/mo”',
+					{ args: domainSlug }
 				);
 			case 'copy4':
-				return translate(
-					'Get a mailbox, documents, and (blahblah) for your domain for just $5/mo'
-				);
+				return translate( 'Professional email and so much more' );
 			default:
 		}
 	}
