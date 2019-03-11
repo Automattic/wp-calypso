@@ -32,7 +32,7 @@ const MultipleChoiceQuestion = ( { question, onAnswerChange, answers } ) => {
 	const shuffledAnswers = shuffleAnswers( answers );
 
 	return (
-		<div>
+		<div className="multiple-choice-question">
 			<FormLegend>{ question }</FormLegend>
 			{ shuffledAnswers.map( answer => (
 				<AnswerItem

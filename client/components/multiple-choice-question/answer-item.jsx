@@ -23,6 +23,7 @@ const AnswerItem = ( {
 	return (
 		<FormLabel>
 			<FormRadio
+				value={ id }
 				onChange={ () => {
 					onAnswerChange( id, textResponse );
 				} }
