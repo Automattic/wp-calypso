@@ -20,14 +20,12 @@ const _ = require( 'lodash' );
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( 'config' );
 const bundleEnv = config( 'env' );
-const { useCache, workerCount } = require( './webpack.common' );
+const { commitSha = '(unknown)', useCache, workerCount } = require( './webpack.common' );
 
 /**
  * Internal variables
  */
 const isDevelopment = bundleEnv === 'development';
-
-const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
 /**
  * This lists modules that must use commonJS `require()`s

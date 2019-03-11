@@ -46,6 +46,8 @@ import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 
+const { commitSha = '(unknown)' } = require( '../../webpack.common' );
+
 const debug = debugFactory( 'calypso:pages' );
 
 const SERVER_BASE_PATH = '/public';
@@ -263,7 +265,7 @@ function getDefaultContext( request ) {
 	}
 
 	const context = Object.assign( {}, request.context, {
-		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
+		commitSha,
 		compileDebug: process.env.NODE_ENV === 'development',
 		urls: generateStaticUrls(),
 		user: false,

@@ -25,11 +25,14 @@ if ( 'docker' === process.env.CONTAINER ) {
  */
 const isCi = !! process.env.CIRCLECI;
 
-// process.env.COMMIT_SHA;
+/**
+ * @type {(string|undefined)} Git commit sha of build
+ */
+const commitSha = process.env.COMMIT_SHA ? process.env.COMMIT_SHA : undefined;
+
 // process.env.BABEL;
 // process.env.CALYPSO;
 // process.env.CHECK;
-// process.env.CIRCLECI;
 // process.env.COMMIT;
 // process.env.CONTAINER;
 // process.env.DISABLE;
@@ -46,6 +49,7 @@ const isCi = !! process.env.CIRCLECI;
 // process.env.TARGET;
 
 module.exports = Object.freeze( {
+	commitSha,
 	isCi,
 	useCache,
 	workerCount,
