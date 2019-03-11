@@ -109,7 +109,8 @@ $colophon-height: 50px;
 	}
 
 	.site-topic__content {
-		
+		padding-bottom: 2px;
+
 		.form-fieldset {
 			position: relative;
 		}
@@ -119,6 +120,14 @@ $colophon-height: 50px;
 
 			&:focus {
 				box-shadow: 0 0 0 2px var( --color-jetpack-light );
+			}
+		}
+
+		@include breakpoint( '<660px' ) {
+			.button {
+				font-size: 16px;
+				padding-top: 12px;
+				padding-bottom: 14px;
 			}
 		}
 	}
