@@ -30,27 +30,30 @@ const isCi = !! process.env.CIRCLECI;
  */
 const commitSha = process.env.COMMIT_SHA ? process.env.COMMIT_SHA : undefined;
 
-// process.env.BABEL;
-// process.env.CALYPSO;
-// process.env.CHECK;
-// process.env.COMMIT;
-// process.env.CONTAINER;
-// process.env.DISABLE;
-// process.env.EMIT;
-// process.env.ENABLE;
-// process.env.HOME;
-// process.env.HOST;
-// process.env.MINIFY;
-// process.env.NODE;
-// process.env.PORT;
-// process.env.PROFILE;
-// process.env.PROTOCOL;
-// process.env.SOURCEMAP;
-// process.env.TARGET;
-
 module.exports = Object.freeze( {
 	commitSha,
 	isCi,
 	useCache,
 	workerCount,
 } );
+
+// @TODO:
+// process.env.BABEL_ENV;
+// process.env.CALYPSO_CLIENT;
+// process.env.CALYPSO_ENV;
+// process.env.CALYPSO_IS_FORK;
+// process.env.CHECK_CYCLES;
+// process.env.CONTAINER;
+// process.env.DISABLE_FEATURES;
+// process.env.EMIT_STATS;
+// process.env.ENABLE_FEATURES;
+// process.env.HOME;
+// process.env.HOST;
+// process.env.MINIFY_JS;
+// process.env.NODE_ENV;
+// process.env.PORT;
+// process.env.PROFILE;
+// process.env.PROTOCOL;
+// process.env.SOURCEMAP;
+// process.env.TARGET_BROWSER;
+// process.env.WORKERS;
