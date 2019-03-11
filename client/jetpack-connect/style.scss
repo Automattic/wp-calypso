@@ -123,10 +123,12 @@ $colophon-height: 50px;
 			}
 		}
 
-		.button {
-			font-size: 16px;
-			padding-top: 12px;
-			padding-bottom: 14px;
+		@include breakpoint( '<660px' ) {
+			.button {
+				font-size: 16px;
+				padding-top: 12px;
+				padding-bottom: 14px;
+			}
 		}
 	}
 }
