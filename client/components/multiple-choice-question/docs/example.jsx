@@ -21,7 +21,7 @@ function MultipleChoiceQuestionExamples() {
 		{ prompt: 'Hungry Bunnies' },
 		{ prompt: 'Ravenous Rhinos' },
 		{ prompt: 'Starving Storks' },
-		{ prompt: 'Something Else' },
+		{ prompt: 'Something Else', doNotShuffle: true },
 	];
 
 	return (

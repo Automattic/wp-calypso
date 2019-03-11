@@ -34,7 +34,10 @@ export default class MultipleChoiceQuestion extends Component {
 
 	/* pulled from https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#what-about-memoization */
 	shuffleAnswers = memoize(
-		answers => shuffle( answers ),
+		answers => {
+			const shuffles = shuffle( answers.filter( ( { doNotShuffle } ) => ! doNotShuffle ) );
+			return answers.map( answer => ( answer.doNotShuffle ? answer : shuffles.pop() ) );
+		},
 		answers =>
 			answers
 				.map( answer => values( pick( answer, 'prompt', 'doNotShuffle' ) ).join( '_' ) )
