@@ -540,6 +540,9 @@ workflows:
       - prime-calypso-live:
           requires:
             - setup
+          filters:
+            branches:
+              ignore: master
       - build-jetpack-blocks:
           requires:
             - setup
