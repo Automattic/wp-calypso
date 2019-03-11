@@ -836,6 +836,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			color: var( --color-text-subtle );
 		}
 	}
+
+	.jetpack-connect__site-address-container input:focus {
+		border-color: var( --color-jetpack );
+		box-shadow: 0 0 0 2px var( --color-jetpack-light );
+	}
 	
 	.wp-login__links a,
 	.logged-out-form__links a,
