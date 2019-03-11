@@ -3,6 +3,7 @@
  */
 const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
+const path = require( 'path' );
 
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
@@ -31,7 +32,7 @@ module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude }
 					ctx: {
 						preserveCssCustomProperties,
 					},
-					path: 'packages/calypso-build/',
+					path: path.join( __dirname, '..' ),
 				},
 			},
 		},
