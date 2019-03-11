@@ -18,13 +18,27 @@ export default class MultipleChoiceQuestion extends Component {
 	static propTypes = {
 		question: PropTypes.string.isRequired,
 		answers: PropTypes.arrayOf( PropTypes.string ).isRequired,
+		onAnswerSelected: PropTypes.func,
+	};
+
+	state = {
+		selectedAnswer: null,
 	};
 
 	/* pulled from https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#what-about-memoization */
 	shuffleAnswers = memoize( answers => shuffle( answers ) );
 
+	onAnswerSelected = event => {
+		const selectedAnswer = event.currentTarget.value;
+		this.setState( { selectedAnswer } );
+		if ( this.props.onAnswerSelected ) {
+			this.props.onAnswerSelected( selectedAnswer );
+		}
+	};
+
 	render() {
 		const { question, answers } = this.props;
+		const { selectedAnswer } = this.state;
 		const shuffledAnswers = this.shuffleAnswers( answers );
 		return (
 			<div>
@@ -32,7 +46,12 @@ export default class MultipleChoiceQuestion extends Component {
 				{ shuffledAnswers.map( answer => {
 					return (
 						<FormLabel key={ answer }>
-							<FormRadio name={ answer } value={ answer } />
+							<FormRadio
+								name={ answer }
+								value={ answer }
+								onChange={ this.onAnswerSelected }
+								checked={ answer === selectedAnswer }
+							/>
 							<span>{ answer }</span>
 						</FormLabel>
 					);
