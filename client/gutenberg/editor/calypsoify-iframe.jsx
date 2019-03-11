@@ -15,7 +15,7 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
+import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import {
 	getEnabledFilters,
@@ -64,15 +64,17 @@ class CalypsoifyIframe extends Component {
 	}
 
 	onMessage = ( { data, origin } ) => {
-		if ( ! data || origin.indexOf( this.props.siteSlug ) < 0 ) {
+		if ( ! data || 'gutenbergIframeMessage' !== data.type ) {
 			return;
 		}
 
-		const { action, type } = data;
+		const isValidOrigin = this.props.siteAdminUrl.indexOf( origin ) === 0;
 
-		if ( 'gutenbergIframeMessage' !== type ) {
+		if ( ! isValidOrigin ) {
 			return;
 		}
+
+		const { action } = data;
 
 		if ( 'loaded' === action ) {
 			const { port1: portToIframe, port2: portForIframe } = new MessageChannel();
@@ -208,7 +210,6 @@ class CalypsoifyIframe extends Component {
 
 const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 
@@ -228,18 +229,17 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		queryArgs = wpcom.addSupportParams( queryArgs );
 	}
 
-	const iframeUrl = addQueryArgs(
-		queryArgs,
-		getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' )
-	);
+	const siteAdminUrl = getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
+
+	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
 	return {
 		allPostsUrl: getPostTypeAllPostsUrl( state, postType ),
 		siteId,
-		siteSlug,
 		currentRoute,
 		iframeUrl,
 		postTypeTrashUrl,
+		siteAdminUrl,
 	};
 };
 
