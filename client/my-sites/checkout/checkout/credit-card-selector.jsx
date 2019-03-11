@@ -56,6 +56,11 @@ class CreditCardSelector extends React.Component {
 	};
 
 	componentDidMount() {
+		// This defer is needed to avoid a dispatch within a dispatch when
+		// Flux drives the transition from domains to checkout
+		// We should be able to remove it when we reduxify either the CartStore
+		// or TransitionStore. (see also SecurePaymentForm::setInitialPaymentDetails()
+		// and NewCardForm::handleFieldChange())
 		defer( () => this.savePayment( this.state.section ) );
 	}
 
