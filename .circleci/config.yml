@@ -362,7 +362,6 @@ jobs:
       - save_cache: *save-jest-cache
       - store-artifacts-and-test-results
 
-
   test-server:
     <<: *defaults
     parallelism: 1
@@ -469,7 +468,6 @@ jobs:
     - image: buildpack-deps
     working_directory: ~/wp-calypso
     steps:
-      - prepare
       - run:
           name: Prime calypso.live build
           command: curl "https://hash-$CIRCLE_SHA1.calypso.live"
