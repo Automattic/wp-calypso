@@ -64,15 +64,17 @@ class CalypsoifyIframe extends Component {
 	}
 
 	onMessage = ( { data, origin } ) => {
-		if ( ! data || origin.indexOf( this.props.siteSlug ) < 0 ) {
+		if ( ! data || 'gutenbergIframeMessage' !== data.type ) {
 			return;
 		}
 
-		const { action, type } = data;
+		const isValidOrigin = this.props.siteAdminUrl.indexOf( origin ) === 0;
 
-		if ( 'gutenbergIframeMessage' !== type ) {
+		if ( ! isValidOrigin ) {
 			return;
 		}
+
+		const { action } = data;
 
 		if ( 'loaded' === action ) {
 			const { port1: portToIframe, port2: portForIframe } = new MessageChannel();
@@ -228,10 +230,9 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		queryArgs = wpcom.addSupportParams( queryArgs );
 	}
 
-	const iframeUrl = addQueryArgs(
-		queryArgs,
-		getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' )
-	);
+	const siteAdminUrl = getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
+
+	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
 	return {
 		allPostsUrl: getPostTypeAllPostsUrl( state, postType ),
@@ -240,6 +241,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		currentRoute,
 		iframeUrl,
 		postTypeTrashUrl,
+		siteAdminUrl,
 	};
 };
 
