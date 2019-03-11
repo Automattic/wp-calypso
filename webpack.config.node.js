@@ -20,7 +20,7 @@ const _ = require( 'lodash' );
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( 'config' );
 const bundleEnv = config( 'env' );
-const { workerCount } = require( './webpack.common' );
+const { useCache, workerCount } = require( './webpack.common' );
 
 /**
  * Internal variables
@@ -72,7 +72,7 @@ function getExternals() {
 const babelLoader = {
 	loader: 'babel-loader',
 	options: {
-		cacheDirectory: path.join( __dirname, 'build', '.babel-server-cache' ),
+		cacheDirectory: useCache && path.join( __dirname, 'build', '.babel-server-cache' ),
 		cacheIdentifier,
 	},
 };
