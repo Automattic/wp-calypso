@@ -56,7 +56,7 @@ class CreditCardSelector extends React.Component {
 	};
 
 	componentDidMount() {
-		defer( this.savePayment( this.state.section ) );
+		defer( () => this.savePayment( this.state.section ) );
 	}
 
 	newCardForm = () => {
