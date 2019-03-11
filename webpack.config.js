@@ -18,6 +18,7 @@ const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
+const JsxConfig = require( '@automattic/calypso-build/webpack/jsx' );
 
 /**
  * Internal dependencies
@@ -179,27 +180,11 @@ function getWebpackConfig( {
 			// https://github.com/localForage/localForage/issues/577
 			noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
 			rules: [
-				{
-					test: /\.jsx?$/,
-					exclude: /node_modules\//,
-					use: [
-						{
-							loader: 'thread-loader',
-							options: {
-								workers: workerCount,
-							},
-						},
-						{
-							loader: 'babel-loader',
-							options: {
-								configFile: path.resolve( __dirname, 'babel.config.js' ),
-								babelrc: false,
-								cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
-								cacheIdentifier,
-							},
-						},
-					],
-				},
+				JsxConfig.loader( {
+                    workerCount,
+                    configFile: path.resolve( __dirname, 'babel.config.js' ),
+                    cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+				} ),
 				{
 					test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
 					loader: 'babel-loader',
