@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { memoize, shuffle } from 'lodash';
+import { memoize, pick, shuffle, values } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -17,7 +17,14 @@ import FormRadio from 'components/forms/form-radio';
 export default class MultipleChoiceQuestion extends Component {
 	static propTypes = {
 		question: PropTypes.string.isRequired,
-		answers: PropTypes.arrayOf( PropTypes.string ).isRequired,
+		answers: PropTypes.arrayOf(
+			PropTypes.shape( {
+				prompt: PropTypes.string.isRequired,
+				doNotShuffle: PropTypes.bool,
+				textInput: PropTypes.bool,
+				textInputPrompt: PropTypes.bool,
+			} )
+		).isRequired,
 		onAnswerSelected: PropTypes.func,
 	};
 
@@ -26,7 +33,13 @@ export default class MultipleChoiceQuestion extends Component {
 	};
 
 	/* pulled from https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#what-about-memoization */
-	shuffleAnswers = memoize( answers => shuffle( answers ), answers => answers.join( '-' ) );
+	shuffleAnswers = memoize(
+		answers => shuffle( answers ),
+		answers =>
+			answers
+				.map( answer => values( pick( answer, 'prompt', 'doNotShuffle' ) ).join( '_' ) )
+				.join( '-' )
+	);
 
 	onAnswerSelected = event => {
 		const selectedAnswer = event.currentTarget.value;
@@ -44,16 +57,16 @@ export default class MultipleChoiceQuestion extends Component {
 		return (
 			<div>
 				<FormLegend>{ question }</FormLegend>
-				{ shuffledAnswers.map( answer => {
+				{ shuffledAnswers.map( ( { prompt } ) => {
 					return (
-						<FormLabel key={ answer }>
+						<FormLabel key={ prompt }>
 							<FormRadio
-								name={ answer }
-								value={ answer }
+								name={ prompt }
+								value={ prompt }
 								onChange={ this.onAnswerSelected }
-								checked={ answer === selectedAnswer }
+								checked={ prompt === selectedAnswer }
 							/>
-							<span>{ answer }</span>
+							<span>{ prompt }</span>
 						</FormLabel>
 					);
 				} ) }

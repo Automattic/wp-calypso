@@ -16,12 +16,20 @@ import MultipleChoiceQuestion from '../index';
 function MultipleChoiceQuestionExamples() {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
 
+	const question = 'Please choose one of the following:';
+	const answers = [
+		{ prompt: 'Hungry Bunnies' },
+		{ prompt: 'Ravenous Rhinos' },
+		{ prompt: 'Starving Storks' },
+		{ prompt: 'Something Else' },
+	];
+
 	return (
 		<div>
 			<Card>
 				<MultipleChoiceQuestion
-					question={ 'Please choose one of the following:' }
-					answers={ [ 'Hungry Bunnies', 'Ravenous Rhinos', 'Starving Storks', 'Something Else' ] }
+					question={ question }
+					answers={ answers }
 					onAnswerSelected={ answer => setSelectedAnswer( answer ) }
 				/>
 			</Card>
