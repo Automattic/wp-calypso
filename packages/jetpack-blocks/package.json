@@ -3,6 +3,9 @@
   "version": "13.1.1",
   "description": "Gutenberg blocks for the Jetpack WordPress plugin",
   "main": "dist/editor.js",
+  "files": [
+    "dist/"
+  ],
   "dependencies": {
     "@automattic/format-currency": "file:../format-currency",
     "@babel/polyfill": "^7.2.5",
