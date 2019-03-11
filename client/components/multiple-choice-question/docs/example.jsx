@@ -15,13 +15,25 @@ import MultipleChoiceQuestion from '../index';
 
 function MultipleChoiceQuestionExamples() {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
+	const [ answerText, setAnswerText ] = useState( '' );
 
 	const question = 'Please choose one of the following:';
 	const answers = [
-		{ prompt: 'Hungry Bunnies' },
-		{ prompt: 'Ravenous Rhinos' },
-		{ prompt: 'Starving Storks' },
-		{ prompt: 'Something Else', doNotShuffle: true },
+		{ id: 'hungry-bunnies', answerText: 'Hungry Bunnies' },
+		{
+			id: 'ravenous-rhinos',
+			answerText: 'Ravenous Rhinos',
+			textInput: true,
+			textInputPrompt: 'How many?',
+		},
+		{ id: 'starving-storks', answerText: 'Starving Storks' },
+		{
+			id: 'something-else',
+			answerText: 'Something Else',
+			doNotShuffle: true,
+			textInput: true,
+			textInputPrompt: 'Who else?',
+		},
 	];
 
 	return (
@@ -30,7 +42,10 @@ function MultipleChoiceQuestionExamples() {
 				<MultipleChoiceQuestion
 					question={ question }
 					answers={ answers }
-					onAnswerSelected={ answer => setSelectedAnswer( answer ) }
+					onAnswerChange={ ( answer, text ) => {
+						setSelectedAnswer( answer );
+						setAnswerText( text || '' );
+					} }
 				/>
 			</Card>
 			<Card>
@@ -38,6 +53,10 @@ function MultipleChoiceQuestionExamples() {
 				<p>
 					<b>Selected Answer is: </b>
 					{ selectedAnswer ? selectedAnswer : 'No Answer Currently Selected' }
+				</p>
+				<p>
+					<b>Answer Text is: </b>
+					{ answerText }
 				</p>
 			</Card>
 		</div>
