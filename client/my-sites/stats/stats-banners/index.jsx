@@ -50,9 +50,9 @@ class StatsBanners extends Component {
 	renderBanner() {
 		if ( this.showUpworkBanner() ) {
 			return this.renderUpworkBanner();
-		} else if ( this.showGSuiteBanner ) {
+		} else if ( this.showGSuiteBanner() ) {
 			return this.renderGSuiteBanner();
-		} else if ( this.showGoogleMyBusinessBanner ) {
+		} else if ( this.showGoogleMyBusinessBanner() ) {
 			return this.renderGoogleMyBusinessBanner();
 		}
 	}
@@ -86,9 +86,11 @@ class StatsBanners extends Component {
 
 	showGSuiteBanner() {
 		const { domains } = this.props;
+		const supportedDomains = getGSuiteSupportedDomains( domains );
 		return (
 			this.props.isGSuiteStatsNudgeVisible &&
-			getGSuiteSupportedDomains( domains ).filter( function( domain ) {
+			supportedDomains.length > 0 &&
+			supportedDomains.filter( function( domain ) {
 				return hasGSuite( domain );
 			} ).length === 0
 		);

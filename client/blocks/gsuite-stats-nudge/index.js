@@ -12,6 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import Card from 'components/card';
 import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-dismissed';
@@ -68,8 +69,30 @@ class GSuiteStatsNudge extends Component {
 		return ! this.props.isDismissed;
 	}
 
-	render() {
+	getHeaderCopy() {
 		const { translate } = this.props;
+		switch ( abtest( 'gSuiteStatsNudge' ) ) {
+			case 'copy1':
+				return translate( 'Get a mailbox powered by G Suite' );
+			case 'copy2':
+				return translate(
+					'Get email for your domain powered by G Suite for just $5/mo – limited time offer!'
+				);
+			case 'copy3':
+				return translate(
+					'Customers can’t reach you at sales@yourdomain.com – click here to add a mailbox for just $5/mo”'
+				);
+			case 'copy4':
+				return translate(
+					'Get a mailbox, documents, and (blahblah) for your domain for just $5/mo'
+				);
+			default:
+		}
+	}
+
+	render() {
+		const { siteSlug, translate } = this.props;
+		const url = '/domains/manage/email/' + siteSlug;
 
 		if ( ! this.isVisible() ) {
 			return null;
@@ -94,29 +117,23 @@ class GSuiteStatsNudge extends Component {
 					<div className="gsuite-stats-nudge__image-wrapper">
 						<img
 							className="gsuite-stats-nudge__image"
-							src="/calypso/images/gsuite/illustration-builder-referral.svg"
-							alt={ translate( 'Build your dream site with GSuite' ) }
+							src="/calypso/images/g-suite/g-suite.svg"
+							alt={ translate( 'Get G Suite' ) }
 						/>
 					</div>
 
 					<div className="gsuite-stats-nudge__info">
-						<h1 className="gsuite-stats-nudge__title">
-							{ translate( 'Need an expert to help realize your vision? Hire one!' ) }
-						</h1>
-						<p>
-							{ translate(
-								"We've partnered with GSuite, a network of freelancers with a huge pool of WordPress experts. They know their stuff and they're waiting to help you build your dream site."
-							) }
-						</p>
+						<h1 className="gsuite-stats-nudge__title">{ this.getHeaderCopy() }</h1>
+						{
+							<p>
+								{ translate(
+									"We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site."
+								) }
+							</p>
+						}
 						<div className="gsuite-stats-nudge__button-row">
-							<Button
-								href={ '/experts/gsuite?source=stat-banner' }
-								primary
-								onClick={ this.onStartNowClick }
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								{ translate( 'Find your expert' ) }
+							<Button href={ url } primary onClick={ this.onStartNowClick }>
+								{ translate( 'Get G Suite' ) }
 							</Button>
 						</div>
 					</div>
