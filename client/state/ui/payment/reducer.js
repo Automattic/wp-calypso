@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { find, get } from 'lodash';
+import { find, get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,13 +37,16 @@ export const countryCode = createReducer(
 	{
 		[ PAYMENT_COUNTRY_CODE_SET ]: ( state, action ) => action.countryCode,
 		[ 'FLUX_TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET' ]: ( state, action ) =>
-			get( action, 'rawDetails.country' ) || state,
+			has( action, 'rawDetails.country' ) ? get( action, 'rawDetails.country', null ) : state,
 		[ 'FLUX_TRANSACTION_PAYMENT_SET' ]: ( state, action ) => {
-			return (
-				get( action, 'payment.newCardDetails.country' ) ||
-				extractStoredCardMetaValue( action, 'country_code' ) ||
-				state
-			);
+			const { payment } = action;
+			if ( has( payment, 'newCardDetails' ) ) {
+				return get( payment, 'newCardDetails.country', null );
+			}
+			if ( has( payment, 'storedCard' ) ) {
+				return extractStoredCardMetaValue( action, 'country_code' ) || null;
+			}
+			return state;
 		},
 	},
 	paymentCountryCodeSchema
@@ -60,12 +63,22 @@ export const postalCode = createReducer(
 	null,
 	{
 		[ PAYMENT_POSTAL_CODE_SET ]: ( state, action ) => action.postalCode,
-		[ 'FLUX_TRANSACTION_PAYMENT_SET' ]: ( state, action ) =>
-			get( action, 'payment.newCardDetails.postal-code' ) ||
-			extractStoredCardMetaValue( action, 'card_zip' ) ||
-			state,
 		[ 'FLUX_TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET' ]: ( state, action ) =>
-			get( action, 'rawDetails.postal-code' ) || state,
+			has( action, 'rawDetails.postal-code' )
+				? get( action, 'rawDetails.postal-code', null )
+				: state,
+		[ 'FLUX_TRANSACTION_PAYMENT_SET' ]: ( state, action ) => {
+			const { payment } = action;
+			if ( has( payment, 'newCardDetails' ) ) {
+				return get( payment, 'newCardDetails.postal-code', null );
+			}
+
+			if ( has( payment, 'storedCard' ) ) {
+				return extractStoredCardMetaValue( action, 'card_zip' ) || null;
+			}
+
+			return state;
+		},
 	},
 	paymentPostalCodeSchema
 );

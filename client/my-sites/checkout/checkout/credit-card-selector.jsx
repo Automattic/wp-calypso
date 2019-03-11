@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { find } from 'lodash';
+import { find, defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -55,44 +55,53 @@ class CreditCardSelector extends React.Component {
 		} );
 	};
 
+	componentDidMount() {
+		// This defer is needed to avoid a dispatch within a dispatch when
+		// Flux drives the transition from domains to checkout
+		// We should be able to remove it when we reduxify either the CartStore
+		// or TransitionStore. (see also SecurePaymentForm::setInitialPaymentDetails()
+		// and NewCardForm::handleFieldChange())
+		defer( () => this.savePayment( this.state.section ) );
+	}
+
 	newCardForm = () => {
 		const onSelect = this.handleClickedSection.bind( this, 'new-card' );
 		const classes = classNames( 'checkout__payment-box-section', {
 			'no-stored-cards': this.props.cards.length === 0,
 		} );
+		const selected = 'new-card' === this.state.section;
 
 		return (
-			<CreditCard
-				key="new-card"
-				className={ classes }
-				selected={ 'new-card' === this.state.section }
-				onSelect={ onSelect }
-			>
+			<CreditCard key="new-card" className={ classes } selected={ selected } onSelect={ onSelect }>
 				<NewCardForm
 					countriesList={ this.props.countriesList }
 					transaction={ this.props.transaction }
 					hasStoredCards={ this.props.cards.length > 0 }
+					selected={ selected }
 				/>
 			</CreditCard>
 		);
 	};
 
 	handleClickedSection = section => {
-		let newPayment;
-
 		if ( section === this.state.section ) {
 			return;
 		}
-
 		if ( 'new-card' === section ) {
 			analytics.ga.recordEvent( 'Upgrades', 'Clicked Use a New Credit/Debit Card Link' );
+		}
+		this.savePayment( section );
+		this.setState( { section: section } );
+	};
+
+	savePayment = section => {
+		let newPayment;
+		if ( 'new-card' === section ) {
 			newPayment = newCardPayment( this.props.transaction.newCardRawDetails );
 		} else {
 			newPayment = storedCardPayment( this.getStoredCardDetails( section ) );
 		}
-
 		setPayment( newPayment );
-		this.setState( { section: section } );
 	};
 
 	getStoredCardDetails = section => {
