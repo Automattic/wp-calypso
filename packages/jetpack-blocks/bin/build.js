@@ -52,7 +52,7 @@ const makeConfig = () => {
 
 	// Helps split up each block into its own folder view script
 	const viewBlocksScripts = allPresetBlocks.reduce( ( viewBlocks, block ) => {
-		const viewScriptPath = path.join( '..', 'src', 'blocks', block, 'view.js' );
+		const viewScriptPath = path.join( __dirname, '..', 'src', 'blocks', block, 'view.js' );
 		if ( fs.existsSync( viewScriptPath ) ) {
 			viewBlocks[ block + '/view' ] = [ viewSetup, ...[ viewScriptPath ] ];
 		}
