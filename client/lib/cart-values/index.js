@@ -47,7 +47,6 @@ function preprocessCartForServer( {
 	products,
 	tax_postal_code,
 	tax_country_code,
-	tax_subdivision_code,
 } ) {
 	const needsUrlCoupon = ! (
 		coupon ||
@@ -65,7 +64,6 @@ function preprocessCartForServer( {
 			currency,
 			tax_postal_code,
 			tax_country_code,
-			tax_subdivision_code,
 			temporary,
 			extra,
 			products: products.map(
@@ -134,19 +132,11 @@ function setTaxPostalCode( postalCode ) {
 	};
 }
 
-// state / region / province etc
-function setTaxSubdivisionCode( subdivisionCode ) {
-	return function( cart ) {
-		return update( cart, { tax_subdivision_code: { $set: subdivisionCode } } );
-	};
-}
-
-function setTaxLocation( { postalCode, countryCode, subdivisionCode } ) {
+function setTaxLocation( { postalCode, countryCode } ) {
 	return function( cart ) {
 		return update( cart, {
 			tax_country_code: { $set: countryCode },
 			tax_postal_code: { $set: postalCode },
-			tax_subdivision_code: { $set: subdivisionCode },
 		} );
 	};
 }
@@ -380,7 +370,6 @@ export {
 	getLocationOrigin,
 	setTaxCountryCode,
 	setTaxPostalCode,
-	setTaxSubdivisionCode,
 	setTaxLocation,
 };
 

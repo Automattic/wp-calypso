@@ -181,7 +181,8 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 				// typically set one or the other (or neither)
 				const { rawDetails } = action;
 				has( rawDetails, 'country' ) && update( setTaxCountryCode( get( rawDetails, 'country' ) ) );
-				has( rawDetails, 'postal-code' ) && update( setTaxPostalCode( get( rawDetails, 'postal-code' ) ) );
+				has( rawDetails, 'postal-code' ) &&
+					update( setTaxPostalCode( get( rawDetails, 'postal-code' ) ) );
 			}
 			break;
 
