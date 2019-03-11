@@ -1016,13 +1016,16 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		background: var( --color-jetpack );
 	}
 
-	.button.is-primary {
-		background-color: var( --color-jetpack );
-		border-color: var( --color-jetpack-dark );
+	.button {
 
-		&:hover,
-		&:focus {
-			background-color: var( --color-jetpack-400 );
+		&.is-primary {
+			background-color: var( --color-jetpack );
+			border-color: var( --color-jetpack-dark );
+
+			&:hover,
+			&:focus {
+				background-color: var( --color-jetpack-400 );
+			}
 		}
 
 		&:focus {
