@@ -181,9 +181,10 @@ function getWebpackConfig( {
 			noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
 			rules: [
 				JsxConfig.loader( {
-                    workerCount,
-                    configFile: path.resolve( __dirname, 'babel.config.js' ),
-                    cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+					workerCount,
+					configFile: path.resolve( __dirname, 'babel.config.js' ),
+					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+					cacheIdentifier,
 				} ),
 				{
 					test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
