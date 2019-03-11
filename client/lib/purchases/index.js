@@ -205,6 +205,13 @@ function maybeWithinRefundPeriod( purchase ) {
 		return true;
 	}
 
+	if (
+		'undefined' === typeof purchase.subscribedDate ||
+		'undefined' === typeof purchase.refundPeriodInDays
+	) {
+		return false;
+	}
+
 	// This looks at how much time has elapsed since the subscription date,
 	// which should be relatively reliable for new subscription refunds, but
 	// not renewals. To be completely accurate, this would need to look at the
@@ -213,11 +220,12 @@ function maybeWithinRefundPeriod( purchase ) {
 	// refunded.
 	// Another source of uncertainty here is that it relies on the user's
 	// clock, which might not be accurate.
-	return (
-		'undefined' !== typeof purchase.subscribedDate &&
-		'undefined' !== typeof purchase.refundPeriodInDays &&
-		moment().diff( moment( purchase.subscribedDate ), 'days' ) <= purchase.refundPeriodInDays
-	);
+
+	const utcNow = moment.utc();
+	const whenSubscribed = moment( purchase.subscribedDate ); // carries timezone from input string
+	const daysBetween = utcNow.diff( whenSubscribed, 'days', /* don't truncate result */ true );
+
+	return Math.floor( daysBetween ) <= purchase.refundPeriodInDays;
 }
 
 /**

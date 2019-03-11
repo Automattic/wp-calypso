@@ -99,6 +99,7 @@ describe( 'index', () => {
 					isRefundable: false,
 					refundPeriodInDays: 2,
 					subscribedDate: moment()
+						.utc()
 						.subtract( 1, 'days' )
 						.format(),
 				} )
@@ -110,6 +111,7 @@ describe( 'index', () => {
 					isRefundable: false,
 					refundPeriodInDays: 2,
 					subscribedDate: moment()
+						.utc()
 						.subtract( 2, 'days' )
 						.format(),
 				} )
@@ -122,6 +124,7 @@ describe( 'index', () => {
 					isRefundable: false,
 					refundPeriodInDays: 2,
 					subscribedDate: moment()
+						.utc()
 						.subtract( 71, 'hours' )
 						.format(),
 				} )
@@ -132,7 +135,8 @@ describe( 'index', () => {
 				maybeWithinRefundPeriod( {
 					isRefundable: false,
 					refundPeriodInDays: 2,
-					subscribedDate: moment()
+					subscribedDate: moment
+						.utc()
 						.subtract( 3, 'days' )
 						.format(),
 				} )
@@ -144,6 +148,7 @@ describe( 'index', () => {
 					isRefundable: true,
 					refundPeriodInDays: 2,
 					subscribedDate: moment()
+						.utc()
 						.subtract( 3, 'days' )
 						.format(),
 				} )
@@ -154,6 +159,7 @@ describe( 'index', () => {
 				maybeWithinRefundPeriod( {
 					isRefundable: false,
 					subscribedDate: moment()
+						.utc()
 						.subtract( 1, 'days' )
 						.format(),
 				} )
@@ -176,6 +182,7 @@ describe( 'index', () => {
 			expect(
 				subscribedWithinPastWeek( {
 					subscribedDate: moment()
+						.utc()
 						.subtract( 8, 'days' )
 						.format(),
 				} )
@@ -185,6 +192,7 @@ describe( 'index', () => {
 			expect(
 				subscribedWithinPastWeek( {
 					subscribedDate: moment()
+						.utc()
 						.subtract( 3, 'days' )
 						.format(),
 				} )
