@@ -220,7 +220,7 @@
     "analyze-bundles": "webpack-bundle-analyzer stats.json public -h 127.0.0.1 -p 9898 -s gzip",
     "analyze-css": "node bin/analyze-css.js",
     "autoprefixer": "postcss -u autoprefixer -r --no-map",
-    "postcss": "postcss -r",
+    "postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
     "prebuild": "npm run -s install-if-deps-outdated",
     "build": "npm run build-packages && npm run build-css && run-p -s build-devdocs:* build-server build-client-if-prod build-client-if-desktop",
     "build-css": "run-p -s build-css:*",
