@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { startsWith } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -179,10 +180,15 @@ export default connect( state => {
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
+	const isJetpack = isJetpackSite( state, siteId );
+	const noMasterbarForCheckout = isJetpack && startsWith( currentRoute, '/checkout' );
+	const noMasterbarForRoute = currentRoute === '/log-in/jetpack' || noMasterbarForCheckout;
+	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 
 	return {
-		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === sectionName,
-		isJetpack: isJetpackSite( state, siteId ),
+		masterbarIsHidden:
+			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
+		isJetpack,
 		isLoading: isSectionLoading( state ),
 		isSupportSession: isSupportSession( state ),
 		sectionGroup,

@@ -119,11 +119,14 @@ export default connect( state => {
 	const section = getSection( state );
 	const currentRoute = getCurrentRoute( state );
 	const isJetpackLogin = currentRoute === '/log-in/jetpack';
+	const noMasterbarForRoute = currentRoute === '/log-in/jetpack';
+	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
 
 	return {
 		currentRoute,
 		isJetpackLogin,
-		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === section.name,
+		masterbarIsHidden:
+			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
 		section,
 		oauth2Client: getCurrentOAuth2Client( state ),
 		useOAuth2Layout: showOAuth2Layout( state ),

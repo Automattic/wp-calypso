@@ -47,11 +47,11 @@ class ImporterBlogger extends React.PureComponent {
 				}
 			),
 			uploadDescription: this.props.translate(
-				'To import content from a %(importerName)s site to ' +
-					'{{b}}%(siteTitle)s{{/b}}, upload your ' +
-					'{{b}}%(importerName)s export file{{/b}} here. ' +
-					"Don't have one, or don't know where to find one? " +
-					'Get step by step instructions in our {{inlineSupportLink/}}.',
+				'Upload a {{b}}%(importerName)s export file{{/b}} ' +
+					'to start importing into {{b}}%(siteTitle)s{{/b}}. ' +
+					'A %(importerName)s export file is an XML file ' +
+					'containing your page and post content. ' +
+					'Need help {{inlineSupportLink/}}?',
 				{
 					args: {
 						importerName,
@@ -65,11 +65,7 @@ class ImporterBlogger extends React.PureComponent {
 								supportLink={
 									'https://en.support.wordpress.com/import/coming-from-blogger/#import'
 								}
-								text={ this.props.translate( '%(importerName)s import guide', {
-									args: {
-										importerName,
-									},
-								} ) }
+								text={ this.props.translate( 'exporting your content' ) }
 								showIcon={ false }
 							/>
 						),

@@ -83,6 +83,14 @@ export default function() {
 
 	if ( config.isEnabled( 'upsell/concierge-session' ) ) {
 		page(
+			'/checkout/:site/add-support-session/pending/:orderId',
+			siteSelection,
+			checkoutPending,
+			makeLayout,
+			clientRender
+		);
+
+		page(
 			'/checkout/:site/add-support-session/:receiptId?',
 			siteSelection,
 			conciergeSessionNudge,

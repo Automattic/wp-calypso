@@ -1,3 +1,26 @@
+.is-section-checkout.is-jetpack-site {
+	.layout__content {
+		position: static;
+		// Adjust the padding as we no longer
+		// show the masterbar.
+		padding-top: 48px;
+
+		@include breakpoint( '<660px' ) {
+			padding-top: 0;
+		}
+	}
+
+	// Move the sidebar up top
+	.layout__secondary {
+		top: 0;
+	}
+
+	// Hide the masterbar for real
+	.masterbar {
+		display: none;
+	}
+}
+
 .checkout {
 	position: relative;
 
