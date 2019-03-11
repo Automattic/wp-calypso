@@ -53,7 +53,7 @@ import DeleteAccountFlow from '../lib/flows/delete-account-flow';
 import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 import ThemeDialogComponent from '../lib/components/theme-dialog-component';
 import SignUpStep from '../lib/flows/sign-up-step';
-// import overrideABTest from '../lib/override-abtest';
+import overrideABTest from '../lib/override-abtest';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
 
@@ -1642,12 +1642,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			// undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
+			undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
 		} );
 
 		step( 'Can visit the start page', async function() {
-			let startPage = await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
-			return await startPage.setABTestControlGroupsInLocalStorage();
+			return await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
 		} );
 
 		step( 'Can see the account page and enter account details', async function() {
@@ -1729,11 +1728,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			// undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
+			undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
 		} );
 
 		step( 'Can enter the account flow and see the account details page', async function() {
-			let startPage = await StartPage.Visit(
+			await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( {
 					culture: locale,
@@ -1741,7 +1740,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				} )
 			);
 			await CreateYourAccountPage.Expect( driver );
-			return await startPage.setABTestControlGroupsInLocalStorage();
 		} );
 
 		step( 'Can then enter account details and continue', async function() {
