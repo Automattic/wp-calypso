@@ -20,6 +20,11 @@ import ControlItem from 'components/segmented-control/item';
 import QueryPostStats from 'components/data/query-post-stats';
 import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsPostSummary extends Component {
 	static propTypes = {
 		postId: PropTypes.number,
