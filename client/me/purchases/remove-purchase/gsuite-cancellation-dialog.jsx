@@ -16,7 +16,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import { purchaseType } from 'lib/purchases';
-import GSuitePurchaseCtaFeatures from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-cta/features';
+import GSuitePurchaseFeatures from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-features';
 
 class GSuiteCancellationDialog extends Component {
 	static propTypes = {
@@ -40,7 +40,11 @@ class GSuiteCancellationDialog extends Component {
 							{ components: { siteName: <em>{ gsuiteDomain }</em> } }
 						) }
 					</p>
-					<GSuitePurchaseCtaFeatures productSlug={ productSlug } domainName={ gsuiteDomain } />
+					<GSuitePurchaseFeatures
+						productSlug={ productSlug }
+						domainName={ gsuiteDomain }
+						type={ 'list' }
+					/>
 				</FormFieldset>
 			</Fragment>
 		);
