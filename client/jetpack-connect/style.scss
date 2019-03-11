@@ -886,7 +886,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		background-color: var( --color-jetpack );
 		border-color: var( --color-jetpack-dark );
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var( --color-jetpack-light );
 		}
 	}
