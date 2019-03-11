@@ -82,7 +82,7 @@ class GSuiteStatsNudge extends Component {
 				);
 			case 'copy3':
 				return translate(
-					'Customers can’t reach you at sales@%s – click here to add a mailbox for just $5/mo”',
+					'Customers can’t reach you at sales@%s – click here to add a mailbox for just $5/mo',
 					{ args: domainSlug }
 				);
 			case 'copy4':
