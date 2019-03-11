@@ -856,6 +856,15 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
+	.jetpack-connect__tos-link a {
+		color: var( --color-jetpack-dark );
+
+		&:hover,
+		&:focus {
+			color: var( --color-jetpack );
+		}
+	}
+
 	.translator-invite__content a {
 		border: none;
 	}
