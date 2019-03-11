@@ -69,7 +69,7 @@ function MultipleChoiceQuestionExamples( { translate } ) {
 - **Type:** `String`
 - **Required:** `yes`
 
-The question to display at the top of the multi choice
+The question to display at the top of the multiple choice
 
 ### `answers`
 

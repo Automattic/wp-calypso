@@ -49,8 +49,6 @@ const MultipleChoiceQuestion = ( { question, onAnswerChange, answers } ) => {
 	);
 };
 
-MultipleChoiceQuestion.displayName = 'MultipleChoiceQuestion';
-
 MultipleChoiceQuestion.propTypes = {
 	question: PropTypes.string.isRequired,
 	answers: PropTypes.arrayOf(

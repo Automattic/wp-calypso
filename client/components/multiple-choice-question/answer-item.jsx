@@ -45,8 +45,6 @@ const AnswerItem = ( {
 	);
 };
 
-AnswerItem.displayName = 'AnswerItem';
-
 AnswerItem.propTypes = {
 	answer: PropTypes.shape( {
 		id: PropTypes.string.isRequired,
