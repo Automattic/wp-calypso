@@ -30,7 +30,7 @@ class DayEdit extends Component {
 							label={ __( 'Opening' ) }
 							value={ opening }
 							className="business-hours__open"
-							placeHolder={ defaultOpen }
+							placeholder={ defaultOpen }
 							onChange={ value => {
 								this.setHour( value, 'opening', intervalIndex );
 							} }
@@ -40,7 +40,7 @@ class DayEdit extends Component {
 							label={ __( 'Closing' ) }
 							value={ closing }
 							className="business-hours__close"
-							placeHolder={ defaultClose }
+							placeholder={ defaultClose }
 							onChange={ value => {
 								this.setHour( value, 'closing', intervalIndex );
 							} }
