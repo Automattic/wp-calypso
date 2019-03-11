@@ -31,6 +31,7 @@ const AnswerItem = ( {
 			<span>{ answerText }</span>
 			{ isSelected && textInput ? (
 				<FormTextInput
+					className="multiple-choice-question__answer-item-text-input"
 					value={ textResponse }
 					onChange={ ( { target: { value } } ) => {
 						onAnswerChange( id, value );

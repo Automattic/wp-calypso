@@ -13,6 +13,11 @@ import PropTypes from 'prop-types';
 import AnswerItem from './answer-item';
 import FormLegend from 'components/forms/form-legend';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const shuffleAnswers = memoize(
 	answers => {
 		const shuffles = shuffle( answers.filter( ( { doNotShuffle } ) => ! doNotShuffle ) );
