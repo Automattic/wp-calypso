@@ -56,7 +56,7 @@ class CreditCardSelector extends React.Component {
 	};
 
 	componentDidMount() {
-		this.savePayment( this.state.section );
+		defer( this.savePayment( this.state.section ) );
 	}
 
 	newCardForm = () => {
@@ -96,9 +96,7 @@ class CreditCardSelector extends React.Component {
 		} else {
 			newPayment = storedCardPayment( this.getStoredCardDetails( section ) );
 		}
-		defer( function() {
-			setPayment( newPayment );
-		} );
+		setPayment( newPayment );
 	};
 
 	getStoredCardDetails = section => {
