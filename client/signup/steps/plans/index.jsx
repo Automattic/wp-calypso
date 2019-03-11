@@ -169,9 +169,8 @@ export class PlansStep extends Component {
 
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
 		const subHeaderText = this.props.subHeaderText;
+		let backUrl, backLabelText;
 
-		let backUrl = undefined,
-			backLabelText = null;
 		if ( 0 === positionInFlow && selectedSite ) {
 			backUrl = '/view/' + siteSlug;
 			backLabelText = translate( 'Back to Site' );

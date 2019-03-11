@@ -515,8 +515,7 @@ class DomainsStep extends React.Component {
 		}
 
 		const { translate, selectedSite } = this.props;
-		let backUrl = undefined,
-			backLabelText = null;
+		let backUrl, backLabelText;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
 			backUrl = getStepUrl(
@@ -528,7 +527,7 @@ class DomainsStep extends React.Component {
 		} else if ( this.props.stepSectionName ) {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() );
 		} else if ( 0 === this.props.positionInFlow && selectedSite ) {
-			backUrl = '/view/' + selectedSite.slug;
+			backUrl = `/view/${ selectedSite.slug }`;
 			backLabelText = translate( 'Back to Site' );
 		}
 
