@@ -56,7 +56,10 @@ const makeConfig = () => {
 	const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ];
 
 	// Find all the shared scripts
-	const sharedUtilsScripts = sharedScripts( 'shared', path.join( __dirname, '..', 'src' ) );
+	const sharedUtilsScripts = sharedScripts(
+		'shared',
+		path.join( __dirname, '..', 'src', 'preset' )
+	);
 
 	// Helps split up each block into its own folder view script
 	const viewBlocksScripts = allPresetBlocks.reduce( ( viewBlocks, block ) => {
