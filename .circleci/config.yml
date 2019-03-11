@@ -202,7 +202,7 @@ jobs:
     parallelism: 1
     steps:
       - prepare
-      - run: npx lerna run prepublishOnly --scope 'packages/jetpack-blocks'
+      - run: npx lerna run prepublishOnly --scope '@automattic/jetpack-blocks'
       - run: mv packages/jetpack-blocks/dist $CIRCLE_ARTIFACTS/jetpack-blocks
       - store-artifacts-and-test-results
 
