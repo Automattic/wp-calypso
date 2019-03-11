@@ -469,6 +469,13 @@ jobs:
     working_directory: ~/wp-calypso
     steps:
       - run:
+          name: Check external author
+          command: |
+            if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
+              echo 'PRs from external authors cannot run on calypso.live'
+              exit 1
+            fi
+      - run:
           name: Prime calypso.live build
           command: curl "https://hash-$CIRCLE_SHA1.calypso.live"
 
