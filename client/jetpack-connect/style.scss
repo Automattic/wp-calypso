@@ -865,11 +865,25 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
-	.jetpack-connect__site-address-container input:focus {
+	.login__form input:focus,
+	.jetpack-connect__site-address-container input:focus,
+	.logged-out-form input:focus {
 		border-color: var( --color-jetpack );
 		box-shadow: 0 0 0 2px var( --color-jetpack-light );
 	}
-	
+
+	.login__form-terms a,
+	.jetpack-connect__tos-link a,
+	.signup-form__terms-of-service-link a,
+	.form-input-validation a {
+		color: var( --color-jetpack-dark );
+
+		&:hover,
+		&:focus {
+			color: var( --color-jetpack );
+		}
+	}
+
 	.wp-login__links a,
 	.logged-out-form__links a,
 	.logged-out-form__link-item,
@@ -881,15 +895,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		&:hover,
 		&:focus {
 			color: var( --color-primary-300 );
-		}
-	}
-
-	.jetpack-connect__tos-link a {
-		color: var( --color-jetpack-dark );
-
-		&:hover,
-		&:focus {
-			color: var( --color-jetpack );
 		}
 	}
 
