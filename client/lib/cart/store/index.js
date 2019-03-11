@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { assign, flow, flowRight, get, partialRight } from 'lodash';
+import { assign, flow, flowRight, get, has, partialRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -179,10 +179,9 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
 			{
 				// typically set one or the other (or neither)
-				const countryCode = get( action, 'rawDetails.country' );
-				const postalCode = get( action, 'rawDetails.postal-code' );
-				postalCode && update( setTaxPostalCode( postalCode ) );
-				countryCode && update( setTaxCountryCode( countryCode ) );
+				const { rawDetails } = action;
+				has( rawDetails, 'country' ) && update( setTaxCountryCode( get( rawDetails, 'country' ) ) );
+				has( rawDetails, 'postal-code' ) && update( setTaxPostalCode( get( rawDetails, 'postal-code' ) ) );
 			}
 			break;
 

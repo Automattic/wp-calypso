@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -22,7 +23,6 @@ import {
 	isLoaded,
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import formatCurrency from 'lib/format-currency';
 
 const RefundDialog = props => {
 	const {

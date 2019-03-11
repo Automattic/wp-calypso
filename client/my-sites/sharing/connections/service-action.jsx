@@ -26,8 +26,7 @@ const SharingServiceAction = ( {
 	status,
 	translate,
 } ) => {
-	let primary = false,
-		warning = false,
+	let warning = false,
 		label;
 
 	const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
@@ -69,25 +68,21 @@ const SharingServiceAction = ( {
 		warning = true;
 	} else {
 		label = translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' } );
-		primary = true;
 	}
 
 	if ( 'google_plus' === service.ID && 1 > removableConnections.length ) {
+		label = translate( 'Unavailable', {
+			context: 'Sharing: Publicize connect unavailable button label',
+		} );
 		return (
 			<Button compact disabled={ true }>
-				Unavailable
+				{ label }
 			</Button>
 		);
 	}
 
 	return (
-		<Button
-			primary={ primary }
-			scary={ warning }
-			compact
-			onClick={ onClick }
-			disabled={ isPending }
-		>
+		<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
 			{ label }
 		</Button>
 	);

@@ -3,13 +3,12 @@
 /**
  * External dependencies
  */
-
 import { get, noop, toPairs } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
 import { decodeEntities } from 'lib/formatting';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { getFeaturedImageId } from 'state/posts/utils';

@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import formatCurrency, { getCurrencyDefaults, getCurrencyObject } from 'lib/format-currency';
+import formatCurrency, { getCurrencyDefaults, getCurrencyObject } from '../src';
 
 describe( 'formatCurrency', () => {
 	test( 'formats a number to localized currency', () => {

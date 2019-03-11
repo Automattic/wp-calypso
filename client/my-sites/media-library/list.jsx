@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment, translate } from 'i18n-calypso';
+import { moment } from 'i18n-calypso';
 import { clone, filter, findIndex, min, noop } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
@@ -24,8 +24,6 @@ import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
 import isRtlSelector from 'state/selectors/is-rtl';
-
-const GOOGLE_MAX_RESULTS = 1000;
 
 export class MediaLibraryList extends React.Component {
 	static displayName = 'MediaLibraryList';
@@ -211,25 +209,6 @@ export class MediaLibraryList extends React.Component {
 		}, this );
 	};
 
-	renderTrailingItems = () => {
-		const { media, source } = this.props;
-
-		if ( source === 'google_photos' && media && media.length >= GOOGLE_MAX_RESULTS ) {
-			// Google Photos won't return more than 1000 photos - suggest ways round this to the user
-			const message = translate(
-				'Use the search button to access more photos. You can search for dates, locations, and things.'
-			);
-
-			return (
-				<p>
-					<em>{ message }</em>
-				</p>
-			);
-		}
-
-		return null;
-	};
-
 	sourceIsUngrouped( source ) {
 		const ungroupedSources = [ 'pexels' ];
 		return -1 !== ungroupedSources.indexOf( source );
@@ -280,7 +259,6 @@ export class MediaLibraryList extends React.Component {
 				getItemRef={ this.getItemRef }
 				renderItem={ this.renderItem }
 				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
-				renderTrailingItems={ this.renderTrailingItems }
 				className="media-library__list"
 			/>
 		);

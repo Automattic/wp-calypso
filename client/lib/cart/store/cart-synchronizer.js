@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, flowRight } from 'lodash';
+import { assign, flowRight, get } from 'lodash';
 import i18n from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
 import { TRANSACTION_STEP_SET } from 'lib/upgrades/action-types';
@@ -28,7 +28,8 @@ function preprocessCartFromServer( cart ) {
 		{
 			client_metadata: createClientMetadata(),
 			products: castProductIDsToNumbers( cart.products ),
-		}
+			tax: castTaxObject( cart.tax ), // cast tax.location to object
+		},
 	);
 }
 
@@ -47,6 +48,16 @@ function castProductIDsToNumbers( cartItems ) {
 	return cartItems.map( function( item ) {
 		return assign( {}, item, { product_id: parseInt( item.product_id, 10 ) } );
 	} );
+}
+
+// The API is returning arrays for location that mess with our
+// immutability-helper functions, so we need to make sure to convert
+// these to objects. We should be able to remove this after that's fixed.
+function castTaxObject( tax ) {
+	return {
+		...tax,
+		location: { ...get( tax, 'location' ) }, // cast location to object
+	}
 }
 
 function CartSynchronizer( cartKey, wpcom ) {

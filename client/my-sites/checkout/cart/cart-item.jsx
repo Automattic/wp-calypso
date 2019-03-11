@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { get } from 'lodash';
+import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -30,7 +31,6 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { removeItem } from 'lib/upgrades/actions';
 import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
-import { getCurrencyObject } from 'lib/format-currency';
 
 const getIncludedDomain = cartItems.getIncludedDomain;
 

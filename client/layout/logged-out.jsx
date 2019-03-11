@@ -19,6 +19,7 @@ import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 
@@ -33,6 +34,8 @@ const hasSidebar = section => {
 };
 
 const LayoutLoggedOut = ( {
+	currentRoute,
+	isJetpackLogin,
 	masterbarIsHidden,
 	oauth2Client,
 	primary,
@@ -47,9 +50,11 @@ const LayoutLoggedOut = ( {
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
+		'is-add-site-page': currentRoute === '/jetpack/new',
 		'focus-content': true,
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
+		'is-jetpack-login': isJetpackLogin,
 	};
 
 	let masterbar = null;
@@ -103,6 +108,7 @@ LayoutLoggedOut.propTypes = {
 	primary: PropTypes.element,
 	secondary: PropTypes.element,
 	// Connected props
+	currentRoute: PropTypes.string,
 	masterbarIsHidden: PropTypes.bool,
 	section: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	redirectUri: PropTypes.string,
@@ -111,7 +117,12 @@ LayoutLoggedOut.propTypes = {
 
 export default connect( state => {
 	const section = getSection( state );
+	const currentRoute = getCurrentRoute( state );
+	const isJetpackLogin = currentRoute === '/log-in/jetpack';
+
 	return {
+		currentRoute,
+		isJetpackLogin,
 		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === section.name,
 		section,
 		oauth2Client: getCurrentOAuth2Client( state ),

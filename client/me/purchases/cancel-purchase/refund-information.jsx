@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 import i18n from 'i18n-calypso';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
@@ -25,7 +26,6 @@ import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'lib/url/support';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
-import { getCurrencyDefaults } from 'lib/format-currency';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,

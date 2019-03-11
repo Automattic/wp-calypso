@@ -59,9 +59,6 @@ export class MediaLibraryFilterBar extends Component {
 
 	getSearchPlaceholderText() {
 		const { filter, source, translate } = this.props;
-		if ( 'google_photos' === source ) {
-			return translate( 'Search your Google library…' );
-		}
 
 		if ( 'pexels' === source ) {
 			return translate( 'Search for free photos…' );
@@ -139,21 +136,27 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	renderSearchSection() {
-		if ( this.props.filterRequiresUpgrade || ! this.props.isConnected ) {
+		const { source, onSearch, search, filterRequiresUpgrade, isConnected } = this.props;
+
+		if ( filterRequiresUpgrade || ! isConnected ) {
 			return null;
 		}
 
-		const isPinned = this.props.source === '';
+		if ( source === 'google_photos' ) {
+			return null;
+		}
+
+		const isPinned = source === '';
 
 		// Set the 'key' value so if the source is changed the component is refreshed, forcing it to clear the existing state
 		return (
 			<Search
-				key={ this.props.source }
+				key={ source }
 				analyticsGroup="Media"
 				pinned={ isPinned }
 				fitsContainer
-				onSearch={ this.props.onSearch }
-				initialValue={ this.props.search }
+				onSearch={ onSearch }
+				initialValue={ search }
 				placeholder={ this.getSearchPlaceholderText() }
 				delaySearch={ true }
 			/>

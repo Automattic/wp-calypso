@@ -23,9 +23,9 @@ const KEY_BINDINGS = {
 		},
 		{
 			eventName: 'open-selection',
-			keys: [ 'enter' ],
+			keys: [ [ 'enter' ], [ 'v' ] ],
 			description: {
-				keys: [ 'enter' ],
+				keys: [ [ 'enter' ], [ 'v' ] ],
 				text: translate( 'Open selection' ),
 			},
 		},
