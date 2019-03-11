@@ -921,6 +921,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		background-position: 50% 45%;
 		border-radius: 1px;
 	}
+
+	.jetpack-connect__main-error .empty-content {
+		padding-bottom: 24px;
+		background-color: var( --color-white );
+		border-radius: 3px;
+	}
 }
 
 .is-section-checkout.is-jetpack-site {
