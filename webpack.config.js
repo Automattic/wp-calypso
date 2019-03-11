@@ -25,7 +25,7 @@ const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
-const { workerCount } = require( './webpack.common' );
+const { isCi, useCache, workerCount } = require( './webpack.common' );
 
 /**
  * Internal variables
@@ -187,9 +187,7 @@ function getWebpackConfig( {
 			minimize: shouldMinify,
 			minimizer: [
 				new TerserPlugin( {
-					cache: process.env.CIRCLECI
-						? `${ process.env.HOME }/terser-cache`
-						: 'docker' !== process.env.CONTAINER,
+					cache: useCache && ( isCi ? `${ process.env.HOME }/terser-cache` : true ),
 					parallel: workerCount,
 					sourceMap: Boolean( process.env.SOURCEMAP ),
 					terserOptions: {
@@ -220,7 +218,7 @@ function getWebpackConfig( {
 							options: {
 								configFile: path.resolve( __dirname, 'babel.config.js' ),
 								babelrc: false,
-								cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+								cacheDirectory: useCache && path.join( __dirname, 'build', '.babel-client-cache' ),
 								cacheIdentifier,
 							},
 						},
