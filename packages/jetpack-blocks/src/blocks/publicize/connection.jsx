@@ -18,7 +18,7 @@ import { includes } from 'lodash';
  */
 import { __ } from '../../utils/i18n';
 import PublicizeServiceIcon from './service-icon';
-import getSiteFragment from '../../editor-shared/get-site-fragment';
+import getSiteFragment from '../../shared/get-site-fragment';
 
 class PublicizeConnection extends Component {
 	state = {

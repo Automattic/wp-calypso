@@ -11,13 +11,8 @@ const { compact, get } = require( 'lodash' );
 
 const watchMode = process.argv.includes( '--watch' ) | process.argv.includes( '-w' );
 
-function sharedScripts( folderName, inputDir ) {
-	const sharedPath = path.join( inputDir, folderName );
-	return fs
-		.readdirSync( sharedPath )
-		.map( file => path.join( sharedPath, file ) )
-		.filter( fullPathToFile => fullPathToFile.endsWith( '.js' ) );
-}
+const editorSetup = path.join( __dirname, '..', 'src', 'preset', 'setup', 'editor' );
+const viewSetup = path.join( __dirname, '..', 'src', 'preset', 'setup', 'view' );
 
 function blockScripts( type, inputDir, presetBlocks ) {
 	return presetBlocks
@@ -55,38 +50,24 @@ const makeConfig = () => {
 	const presetBetaBlocks = get( presetIndex, [ 'beta' ], [] );
 	const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ];
 
-	// Find all the shared scripts
-	const sharedUtilsScripts = sharedScripts(
-		'shared',
-		path.join( __dirname, '..', 'src', 'preset' )
-	);
-
 	// Helps split up each block into its own folder view script
 	const viewBlocksScripts = allPresetBlocks.reduce( ( viewBlocks, block ) => {
 		const viewScriptPath = path.join( '..', 'src', 'blocks', block, 'view.js' );
 		if ( fs.existsSync( viewScriptPath ) ) {
-			viewBlocks[ block + '/view' ] = [ ...sharedUtilsScripts, ...[ viewScriptPath ] ];
+			viewBlocks[ block + '/view' ] = [ viewSetup, ...[ viewScriptPath ] ];
 		}
 		return viewBlocks;
 	}, {} );
 
-	// Find all the editor shared scripts
-	const sharedEditorUtilsScripts = sharedScripts(
-		'editor-shared',
-		path.join( __dirname, '..', 'src' )
-	);
-
 	// Combines all the different blocks into one editor.js script
 	const editorScript = [
-		...sharedUtilsScripts,
-		...sharedEditorUtilsScripts,
+		editorSetup,
 		...blockScripts( 'editor', path.join( __dirname, '..', 'src' ), presetBlocks ),
 	];
 
 	// Combines all the different blocks into one editor-beta.js script
 	const editorBetaScript = [
-		...sharedUtilsScripts,
-		...sharedEditorUtilsScripts,
+		editorSetup,
 		...blockScripts( 'editor', path.join( __dirname, '..', 'src' ), allPresetBlocks ),
 	];
 
