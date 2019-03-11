@@ -35,7 +35,7 @@ export async function getExtensions() {
 		 * intended modules.
 		 */
 		import( /* webpackMode: "eager" */
-		/* webpackInclude: /\/gutenberg\/extensions\/[a-zA-Z0-9_-]+\/index.js$/ */
+		/* webpackInclude: /\/blocks\/[a-zA-Z0-9_-]+\/index.js$/ */
 		`../blocks/${ slug }/index.js` ).then( ( { childBlocks, name, settings } ) => ( {
 			childBlocks,
 			name,
