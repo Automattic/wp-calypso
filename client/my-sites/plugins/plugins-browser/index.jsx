@@ -30,6 +30,8 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import getRecommendedPlugins from 'state/selectors/get-recommended-plugins';
+import isRequestingRecommendedPlugins from 'state/selectors/is-requesting-recommended-plugins';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -65,6 +67,8 @@ export class PluginsBrowser extends Component {
 	static displayName = 'PluginsBrowser';
 
 	static propTypes = {
+		isRequestingRecommendedPlugins: PropTypes.bool.isRequired,
+		recommendedPlugins: PropTypes.arrayOf( PropTypes.object ),
 		trackPageView: PropTypes.bool,
 	};
 
@@ -257,6 +261,21 @@ export class PluginsBrowser extends Component {
 		);
 	}
 
+	getRecommendedPluginListView() {
+		return (
+			<PluginsBrowserList
+				currentSites={ this.props.sites }
+				expandedListLink={ false }
+				listName={ 'recommended' }
+				plugins={ this.props.recommendedPlugins }
+				showPlaceholders={ this.props.isRequestingRecommendedPlugins }
+				site={ this.props.siteSlug }
+				size={ SHORT_LIST_LENGTH }
+				title={ this.translateCategory( 'recommended' ) }
+			/>
+		);
+	}
+
 	isWpcomPluginActive( plugin ) {
 		return (
 			'standard' === plugin.plan ||
@@ -314,7 +333,10 @@ export class PluginsBrowser extends Component {
 	getShortListsView() {
 		return (
 			<span>
-				{ this.getPluginSingleListView( 'featured' ) }
+				{ abtest( 'pluginRecommendations' ) === 'recommended'
+					? this.getRecommendedPluginListView()
+					: this.getPluginSingleListView( 'featured' ) }
+
 				{ this.getPluginSingleListView( 'popular' ) }
 				{ this.getPluginSingleListView( 'new' ) }
 			</span>
@@ -575,7 +597,9 @@ export class PluginsBrowser extends Component {
 
 		return (
 			<MainComponent wideLayout>
-				{ abtest( 'pluginRecommendations' ) === 'recommended' && <QuerySiteRecommendedPlugins /> }
+				{ abtest( 'pluginRecommendations' ) === 'recommended' && (
+					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
+				) }
 				{ this.renderPageViewTracker() }
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
@@ -618,6 +642,8 @@ export default flow(
 				selectedSite: getSelectedSite( state ),
 				siteSlug: getSelectedSiteSlug( state ),
 				sites: getSelectedOrAllSitesJetpackCanManage( state ),
+				isRequestingRecommendedPlugins: isRequestingRecommendedPlugins( state.selectedSiteId ),
+				recommendedPlugins: getRecommendedPlugins( state.selectedSiteId ),
 			};
 		},
 		{

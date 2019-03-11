@@ -10,24 +10,24 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-//import getSiteRecommendedPlugins from 'state/selectors/get-site-recommended-plugins';
-//import { listSiteRecommendedPlugins } from 'state/sites/site-recommended-plugins/actions';
+import getRecommendedPlugins from 'state/selectors/get-recommended-plugins';
+import { fetchRecommendedPlugins } from 'state/plugins/recommended/actions';
 
 class QuerySiteRecommendedPlugins extends Component {
 	static propTypes = {
-		blogId: PropTypes.number.isRequired,
+		siteId: PropTypes.number.isRequired,
 		isLoaded: PropTypes.bool.isRequired,
 	};
 
 	componentDidMount() {
 		if ( ! this.props.isLoaded ) {
-			//this.props.listSiteRecommendedPlugins( this.props.blogId );
+			this.props.fetchRecommendedPlugins( this.props.siteId );
 		}
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.blogId !== this.props.blogId && ! this.props.isLoaded ) {
-			//this.props.listSiteRecommendedPlugins( this.props.blogId );
+		if ( prevProps.siteId !== this.props.siteId && ! this.props.isLoaded ) {
+			this.props.fetchRecommendedPlugins( this.props.siteId );
 		}
 	}
 
@@ -37,10 +37,10 @@ class QuerySiteRecommendedPlugins extends Component {
 }
 
 export default connect(
-	( state, { blogId } ) => ( {
-		//isLoaded: !! getSiteRecommendedPlugins( state, blogId ),
+	( state, { siteId } ) => ( {
+		isLoaded: !! getRecommendedPlugins( state, siteId ),
 	} ),
 	{
-		/*listSiteRecommendedPlugins */
+		fetchRecommendedPlugins,
 	}
 )( QuerySiteRecommendedPlugins );
