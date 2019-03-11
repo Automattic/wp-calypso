@@ -978,6 +978,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .layout.is-jetpack-login,
 .is-section-checkout.is-jetpack-site,
 .is-section-checkout-thank-you.is-jetpack-site {
+	::selection {
+		color: var( --color-white );
+		background: var( --color-jetpack );
+	}
 
 	.button.is-primary {
 		background-color: var( --color-jetpack );
