@@ -1643,7 +1643,6 @@ describe.only( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function()
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
 			undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
-			await driver.sleep( 3000 );
 		} );
 
 		step( 'Can visit the start page', async function() {
@@ -1730,7 +1729,6 @@ describe.only( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function()
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
 			undo = await overrideABTest( 'improvedOnboarding_20190214', 'onboarding' );
-			await driver.sleep( 3000 );
 		} );
 
 		step( 'Can enter the account flow and see the account details page', async function() {
