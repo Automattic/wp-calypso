@@ -73,7 +73,7 @@ before( async function() {
 	this.driver = driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
+describe.only( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @parallel @email', function() {
