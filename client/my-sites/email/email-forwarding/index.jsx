@@ -61,8 +61,10 @@ class EmailForwarding extends Component {
 		switch ( emailForwardingType ) {
 			case 'forward':
 				return this.renderForwards();
+
 			case 'custom':
 				return <EmailForwardingCustomMxList selectedDomainName={ selectedDomainName } />;
+
 			case 'google-apps':
 				return (
 					<EmailForwardingGSuiteDetails
@@ -70,9 +72,10 @@ class EmailForwarding extends Component {
 						siteSlug={ siteSlug }
 					/>
 				);
+
 			case 'google-apps-another-provider':
 				return <EmailForwardingGSuiteDetailsAnotherProvider />;
-			case null:
+
 			default:
 				return <EmailForwardingPlaceholder />;
 		}

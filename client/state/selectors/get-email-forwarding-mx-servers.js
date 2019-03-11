@@ -6,11 +6,11 @@
 import { get } from 'lodash';
 
 /**
- * Retrieve a list of custom mx servers for a particular domian
+ * Retrieve a list of custom mx servers for a particular domainn
  *
  * @param  {Object} state    Global state tree
- * @param  {String} domainName domainName to request email forwards for
- * @return {Object}          EmailForwards list
+ * @param  {string} domainName domainName to request email forwards for
+ * @return {?Array} mxServers list or null
  */
 export default function getEmailForwardingMXServers( state, domainName ) {
 	return get( state.emailForwarding, [ domainName, 'mxServers' ], null );

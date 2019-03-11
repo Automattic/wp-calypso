@@ -25,7 +25,7 @@ import {
 } from 'state/action-types';
 import { forwardsSchema, mxSchema, typeSchema } from './schema';
 
-export const requesting = createReducer( false, {
+export const requestingReducer = createReducer( false, {
 	[ EMAIL_FORWARDING_REQUEST ]: () => true,
 	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: () => false,
 	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => false,
@@ -94,7 +94,7 @@ export const typeReducer = createReducer(
 	typeSchema
 );
 
-export const mxServers = createReducer(
+export const mxServersReducer = createReducer(
 	null,
 	{
 		[ EMAIL_FORWARDING_REQUEST ]: () => null,
@@ -124,7 +124,7 @@ export const forwardsReducer = createReducer(
 	forwardsSchema
 );
 
-export const requestError = createReducer( false, {
+export const requestErrorReducer = createReducer( false, {
 	[ EMAIL_FORWARDING_REQUEST ]: () => false,
 	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: () => false,
 	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: ( state, { error: { message } } ) => message || true,
@@ -134,9 +134,9 @@ export default keyedReducer(
 	'domainName',
 	combineReducers( {
 		forwards: forwardsReducer,
-		mxServers,
-		requesting,
-		requestError,
+		mxServers: mxServersReducer,
+		requesting: requestingReducer,
+		requestError: requestErrorReducer,
 		type: typeReducer,
 	} )
 );

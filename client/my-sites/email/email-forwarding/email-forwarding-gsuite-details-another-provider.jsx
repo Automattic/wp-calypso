@@ -16,7 +16,7 @@ const EmailForwardingGSuiteDetailsAnotherProvider = ( { translate } ) => {
 	return (
 		<Card>
 			<p className="email-forwarding__explanation">
-				{ translate( 'You are using G Suite with another provider for this this domain.' ) }
+				{ translate( 'You are using G Suite with another provider for this domain.' ) }
 			</p>
 		</Card>
 	);
