@@ -3,7 +3,11 @@
 		position: static;
 		// Adjust the padding as we no longer
 		// show the masterbar.
-		padding: 48px 0 0;
+		padding-top: 48px;
+
+		@include breakpoint( '<660px' ) {
+			padding-top: 0;
+		}
 	}
 
 	// Move the sidebar up top
