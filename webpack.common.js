@@ -1,6 +1,8 @@
 /* eslint-disable import/no-nodejs-modules */
 
-// Number of workers that should be used for a build
+/**
+ * @type {number} Number of workers that should be used for a build
+ */
 let workerCount;
 if ( process.env.CIRCLECI ) {
 	workerCount = 2;
@@ -10,11 +12,17 @@ if ( process.env.CIRCLECI ) {
 	workerCount = Math.max( 2, Math.floor( require( 'os' ).cpus().length / 2 ) );
 }
 
+/**
+ * @type {boolean} Should the build use caching
+ */
 let useCache = true;
 if ( 'docker' === process.env.CONTAINER ) {
 	useCache = false;
 }
 
+/**
+ * @type {boolean} Running in CI environment
+ */
 const isCi = !! process.env.CIRCLECI;
 
 // process.env.COMMIT_SHA;
