@@ -15,7 +15,7 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
+import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import {
 	getEnabledFilters,
@@ -210,7 +210,6 @@ class CalypsoifyIframe extends Component {
 
 const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 
@@ -237,7 +236,6 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 	return {
 		allPostsUrl: getPostTypeAllPostsUrl( state, postType ),
 		siteId,
-		siteSlug,
 		currentRoute,
 		iframeUrl,
 		postTypeTrashUrl,
