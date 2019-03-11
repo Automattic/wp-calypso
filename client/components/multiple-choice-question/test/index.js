@@ -10,17 +10,8 @@ import renderer from 'react-test-renderer';
  */
 import MultipleChoiceQuestion from '../';
 
-// stub out Form Elements
-
 describe( 'MultipleChoiceQuestion', () => {
-	// const answers = [
-	// 	{ id: 'test-answer-1', answerText: 'Test Anwser One', doNotShuffle: true },
-	// 	{ id: 'test-answer-2', answerText: 'Test Anwser Two', doNotShuffle: true },
-	// 	{ id: 'test-answer-3', answerText: 'Test Anwser Three', doNotShuffle: true },
-	// 	{ id: 'test-answer-4', answerText: 'Test Anwser Four', doNotShuffle: true },
-	// ];
-
-	test( 'should render with the minimum required properties', () => {
+	test( 'should render with the minimum required properties ( plus extra prop to guarantee order )', () => {
 		const tree = renderer
 			.create(
 				<MultipleChoiceQuestion

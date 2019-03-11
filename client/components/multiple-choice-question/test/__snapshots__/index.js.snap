@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`MultipleChoiceQuestion should render with the minimum required properties 1`] = `
+exports[`MultipleChoiceQuestion should render with the minimum required properties ( plus extra prop to guarantee order ) 1`] = `
 <div
   className="multiple-choice-question"
 >
