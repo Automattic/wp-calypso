@@ -202,13 +202,8 @@ jobs:
     parallelism: 1
     steps:
       - prepare
-      - run:
-          name: Build Jetpack Blocks
-          command: |
-            NODE_ENV=production npm run sdk --              \
-              gutenberg                                     \
-              client/gutenberg/extensions/presets/jetpack   \
-              --output-dir=$CIRCLE_ARTIFACTS/jetpack-blocks
+      - run: npx lerna run prepublishOnly --scope '@automattic/jetpack-blocks'
+      - run: mv packages/jetpack-blocks/dist $CIRCLE_ARTIFACTS/jetpack-blocks
       - store-artifacts-and-test-results
 
   lint-and-translate:
