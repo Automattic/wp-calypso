@@ -22,7 +22,6 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		this.premiumPlanSlug = 'value_bundle';
 		this.businessPlanSlug = 'business-bundle';
 		this.dotLiveDomainSlug = 'dotlive_domain';
-		this.privateWhoisSlug = 'private_whois';
 		this.cartTotalSelector = By.css( '.cart__total-amount,.cart-total-amount' );
 	}
 

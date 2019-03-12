@@ -13,7 +13,7 @@ import config from 'config';
  * Internal dependencies
  */
 import cartItems from './cart-items';
-import productsValues from 'lib/products-values';
+import { isCredits, isDomainRedemption, whitelistAttributes } from 'lib/products-values';
 
 // #tax-on-checout-placeholder
 import { injectTaxStateWithPlaceholderValues } from 'lib/tax';
@@ -146,15 +146,11 @@ function setTaxLocation( { postalCode, countryCode } ) {
 }
 
 function canRemoveFromCart( cart, cartItem ) {
-	if ( productsValues.isCredits( cartItem ) ) {
+	if ( isCredits( cartItem ) ) {
 		return false;
 	}
 
-	if (
-		cartItems.hasRenewalItem( cart ) &&
-		( productsValues.isPrivacyProtection( cartItem ) ||
-			productsValues.isDomainRedemption( cartItem ) )
-	) {
+	if ( cartItems.hasRenewalItem( cart ) && isDomainRedemption( cartItem ) ) {
 		return false;
 	}
 
@@ -219,7 +215,7 @@ function fillInAllCartItemAttributes( cart, products ) {
 
 function fillInSingleCartItemAttributes( cartItem, products ) {
 	const product = products[ cartItem.product_slug ];
-	const attributes = productsValues.whitelistAttributes( product );
+	const attributes = whitelistAttributes( product );
 
 	return extend( {}, cartItem, attributes );
 }
