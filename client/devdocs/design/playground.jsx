@@ -27,7 +27,7 @@ import { getExampleCodeFromComponent } from './playground-utils';
 /**
  * Style Dependencies
  */
-import './style.scss';
+import './playground.scss';
 import './syntax.scss';
 
 class DesignAssets extends React.Component {
