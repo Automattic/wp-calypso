@@ -9,12 +9,12 @@ import { savePreference } from 'state/preferences/actions';
 
 export const dismissNudge = () => ( dispatch, getState ) => {
 	const siteId = getSelectedSiteId( getState() );
-	const preference = getPreference( getState(), 'upwork-dismissible-nudge' ) || {};
+	const preference = getPreference( getState(), 'gsuite-dismissible-nudge' ) || {};
 
 	return dispatch(
-		savePreference( 'upwork-dismissible-nudge', {
-			...preference,
-			...{
+		savePreference(
+			'gsuite-dismissible-nudge',
+			Object.assign( {}, preference, {
 				[ siteId ]: [
 					...( preference[ siteId ] || [] ),
 					{
@@ -22,7 +22,7 @@ export const dismissNudge = () => ( dispatch, getState ) => {
 						type: 'dismiss',
 					},
 				],
-			},
-		} )
+			} )
+		)
 	);
 };
