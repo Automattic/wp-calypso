@@ -43,9 +43,9 @@ describe( `[${ host }] Previewing Themes: (${ screenSize })`, function() {
 				this.themesPage = await ThemesPage.Expect( driver );
 				await this.themesPage.waitUntilThemesLoaded();
 				await this.themesPage.showOnlyFreeThemes();
-				await this.themesPage.searchFor( 'Twenty S' );
-				await this.themesPage.waitForThemeStartingWith( 'Twenty S' );
-				return await this.themesPage.selectNewThemeStartingWith( 'Twenty S' );
+				await this.themesPage.searchFor( 'Twenty' );
+				await this.themesPage.waitForThemeStartingWith( 'Twenty' );
+				return await this.themesPage.selectNewThemeStartingWith( 'Twenty' );
 			} );
 
 			step( 'Can see theme details page and open the live demo', async function() {
