@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -12,13 +12,18 @@ import React, { Component } from 'react';
  */
 import * as steps from './steps';
 import Dialog from 'components/dialog';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
+import notices from 'notices';
+import wpcom from 'lib/wp';
 
 class GSuiteCancelPurchaseDialog extends Component {
 	state = {
-		step: steps.resetSteps(),
 		isDisabled: false,
+		step: steps.resetSteps(),
+		surveyAnswerId: null,
+		surveyAnswerAdditionalText: '',
 	};
 
 	nextStepButtonClick = () => {
@@ -42,11 +47,30 @@ class GSuiteCancelPurchaseDialog extends Component {
 		// TODO: copy & simplify from <RemovePurchase />
 	};
 
-	saveSurveyResults = () => {
-		// TODO: copy & simplify from <RemovePurchase />
+	saveSurveyResults = async () => {
+		const { purchase, site, surveyAnswerId, surveyAnswerAdditionalText } = this.props;
+		const survey = wpcom.marketing().survey( 'calypso-gsuite-remove-purchase', purchase.siteId );
+		const surveyData = {
+			'why-cancel': {
+				response: surveyAnswerId,
+				text: surveyAnswerAdditionalText,
+			},
+			type: 'remove',
+		};
+		survey.addResponses( enrichedSurveyData( surveyData, moment(), site, purchase ) );
+
+		const response = await survey.submit();
+		if ( ! response.success ) {
+			notices.error( response.err );
+		}
 	};
 
-	onSurveryAnswerChange = () => {};
+	onSurveryAnswerChange = ( surveyAnswerId, surveyAnswerAdditionalText ) => {
+		this.setState( {
+			surveyAnswerId,
+			surveyAnswerAdditionalText,
+		} );
+	};
 
 	getStepButtons = () => {
 		const { translate } = this.props;
@@ -111,6 +135,7 @@ GSuiteCancelPurchaseDialog.propTypes = {
 	isVisible: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
 	purchase: PropTypes.object.isRequired,
+	site: PropTypes.object.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
