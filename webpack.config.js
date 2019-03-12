@@ -182,7 +182,7 @@ function getWebpackConfig( {
 			rules: [
 				JsxConfig.loader( {
 					workerCount,
-					configFile: path.resolve( __dirname, 'babel.config.js' ),
+					configFile: path.join( __dirname, 'babel.config.js' ),
 					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 					cacheIdentifier,
 				} ),
