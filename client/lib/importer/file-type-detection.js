@@ -24,14 +24,6 @@ export const parseFileType = file => {
 	};
 };
 
-export const isSupportedFileType = ( sourceType, type ) => {
-	const lcSourceType = sourceType.toLowerCase();
-	return (
-		SUPPORTED_FILE_TYPES_BY_ENGINE[ lcSourceType ] &&
-		SUPPORTED_FILE_TYPES_BY_ENGINE[ lcSourceType ].includes( type )
-	);
-};
-
 export const getRecommendedExperience = ( file, selectedEngine ) => {
 	const { type: mimeType } = file;
 	const supportedEngines = supportedEnginesForMimeType( mimeType );

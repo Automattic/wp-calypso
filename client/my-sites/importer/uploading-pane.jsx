@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flow, get, head, includes, isEqual, noop } from 'lodash';
+import { flow, get, head, includes, isEmpty, isEqual, noop } from 'lodash';
 import Gridicon from 'gridicons';
 import debugFactory from 'debug';
 
@@ -21,14 +21,17 @@ import { appStates } from 'state/imports/constants';
 import Button from 'components/forms/form-button';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
-import { isSupportedFileType, getRecommendedExperience } from 'lib/importer/file-type-detection';
+import { getRecommendedExperience } from 'lib/importer/file-type-detection';
 import {
 	clearImportFile,
+	confirmCurrentImportFile,
 	evaluateImportFile,
 	recommendImportUX,
 } from 'state/imports/uploads/actions';
 import getImportUploadFile from 'state/selectors/get-import-upload-file';
 import getImportUploadFileName from 'state/selectors/get-import-upload-filename';
+import getImportUploadFileRecommendedUX from 'state/selectors/get-import-upload-recommended-ux';
+import isImportUploadFileOkToUpload from 'state/selectors/is-import-upload-file-ok-to-upload';
 
 const debug = debugFactory( 'calypso:importer-uploading-pane' );
 
@@ -60,11 +63,24 @@ class UploadingPane extends React.PureComponent {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { uploadFile } = this.props;
+		const { okToUpload, recommendedUX, uploadFile } = this.props;
 		if ( uploadFile && ! isEqual( prevProps.uploadFile, uploadFile ) ) {
-			const recommendedUX = getRecommendedExperience( uploadFile );
-			console.log( { recommendedUX } );
-			this.props.recommendImportUX( recommendedUX );
+			this.props.recommendImportUX( getRecommendedExperience( uploadFile ) );
+			return;
+		}
+
+		if (
+			recommendedUX &&
+			! isEqual( prevProps.recommendedUX, recommendedUX ) &&
+			get( recommendedUX, 'ui' ) === 'calypso-importer'
+		) {
+			// @TODO make sure selected engine matches recommended
+			this.props.confirmCurrentImportFile();
+			return;
+		}
+
+		if ( okToUpload && ! prevProps.okToUpload ) {
+			this.startUpload();
 			return;
 		}
 	}
@@ -162,39 +178,47 @@ class UploadingPane extends React.PureComponent {
 		}
 	};
 
-	startUpload = file => {
-		const { sourceType } = this.props;
-		console.log( { sourceType } );
+	onFileTypeBackClick = () => {
+		this.props.clearImportFile();
+	};
 
-		try {
-			const isSupported = isSupportedFileType( sourceType, file.type );
+	onFileTypeContinueClick = () => {
+		this.props.confirmCurrentImportFile();
+	};
 
-			if ( ! isSupported ) {
-				const { group, subType } = parseFileType( file );
-				switch ( group ) {
-					case 'image':
-						console.log( { actionType: 'IMPORT_FILE_TYPE_DETECTED_IMAGE' } );
-						return;
-					case 'application':
-						console.log( {
-							actionType: 'IMPORT_FILE_TYPE_DETECTED_APPLICATION',
-							subType,
-						} );
-						return;
-					default:
-						throw 'Unsupported';
-				}
-			}
-
-			console.log( { type: file.type, isSupported } );
-		} catch ( e ) {
-			console.log( 'actionType: IMPORT_FILE_TYPE_DETECTION_ERROR' );
-			return;
+	startUpload = () => {
+		const { importerStatus, uploadFile } = this.props;
+		console.log( { importerStatus, uploadFile } );
+		return;
+		if ( isEmpty( importerStatus ) || isEmpty( uploadFile ) ) {
+			// @TODO redux error action
+			throw 'Cannot upload file';
 		}
-		//startUpload( this.props.importerStatus, file );
+		startUpload( importerStatus, uploadFile );
+	};
+
+	renderVerifyFile = () => {
+		const { recommendedUX } = this.props;
+		const { ui } = recommendedUX;
+
+		return (
+			<div>
+				File type may not be supported.
+				<div>Recommended Experience: { ui }</div> } Continue anyway..?
+				<br />
+				<button onClick={ this.onFileTypeBackClick }>Back</button>
+				<button onClick={ this.onFileTypeContinueClick }>Continue</button>
+			</div>
+		);
 	};
 
 	render() {
+		const { recommendedUX } = this.props;
+		const recommendedUI = get( recommendedUX, 'ui' );
+		if ( recommendedUI && recommendedUI !== 'calypso-importer' ) {
+			return this.renderVerifyFile();
+		}
+
 		const isReadyForImport = this.isReadyForImport();
 
 		return (
@@ -229,12 +253,15 @@ class UploadingPane extends React.PureComponent {
 export default flow(
 	connect(
 		state => ( {
+			filename: getImportUploadFileName( state ),
+			okToUpload: isImportUploadFileOkToUpload( state ),
 			percentComplete: get( state, 'imports.uploads.percentComplete' ),
+			recommendedUX: getImportUploadFileRecommendedUX( state ),
 			uploadFile: getImportUploadFile( state ),
-			uploadFileName: getImportUploadFileName( state ),
 		} ),
 		{
 			clearImportFile,
+			confirmCurrentImportFile,
 			evaluateImportFile,
 			recommendImportUX,
 		}

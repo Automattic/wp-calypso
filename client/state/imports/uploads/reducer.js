@@ -9,6 +9,7 @@ import {
 	IMPORTS_UPLOAD_EVALUATE_FILE,
 	IMPORTS_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_FILE_CLEAR,
+	IMPORTS_UPLOAD_FILE_OK_TO_UPLOAD,
 	IMPORTS_UPLOAD_RECOMMEND_UX,
 	IMPORTS_UPLOAD_START,
 } from 'state/action-types';
@@ -36,6 +37,11 @@ const file = createReducer( null, {
 	[ IMPORTS_UPLOAD_FAILED ]: () => null,
 } );
 
+const okToUpload = createReducer( false, {
+	[ IMPORTS_UPLOAD_FILE_CLEAR ]: () => false,
+	[ IMPORTS_UPLOAD_FILE_OK_TO_UPLOAD ]: () => true,
+} );
+
 const recommendedUX = createReducer( null, {
 	[ IMPORTS_UPLOAD_EVALUATE_FILE ]: () => null,
 	[ IMPORTS_UPLOAD_FILE_CLEAR ]: () => null,
@@ -44,6 +50,7 @@ const recommendedUX = createReducer( null, {
 
 export default combineReducers( {
 	inProgress,
+	okToUpload,
 	percentComplete,
 	recommendedUX,
 	file,
