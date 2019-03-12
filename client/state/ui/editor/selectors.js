@@ -16,6 +16,7 @@ import { getPreference } from 'state/preferences/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { isPublished, isBackDatedPublished, isFutureDated, getPreviewURL } from 'state/posts/utils';
 import getEditorUrl from 'state/selectors/get-editor-url';
+import { addQueryArgs } from 'lib/route';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
@@ -47,8 +48,12 @@ export function isEditorNewPost( state ) {
  * @return {String}             Editor URL path
  */
 export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
-	const editorNewPostPath = getEditorUrl( state, siteId, null, type );
-	return `${ editorNewPostPath }?jetpack-copy=${ postId }`;
+	return addQueryArgs(
+		{
+			'jetpack-copy': postId,
+		},
+		getEditorUrl( state, siteId, null, type )
+	);
 }
 
 /**
