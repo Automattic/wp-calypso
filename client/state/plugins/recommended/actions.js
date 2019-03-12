@@ -4,6 +4,8 @@
  */
 import { RECOMMENDED_PLUGINS_REQUEST, RECOMMENDED_PLUGINS_RECEIVE } from 'state/action-types';
 
+import 'state/data-layer/wpcom/sites/plugins/recommended';
+
 /**
  * Returns an action object that's bound to the data layer;
  * fetches a list of recommended plugins for the given siteId.
