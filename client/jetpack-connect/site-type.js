@@ -35,9 +35,7 @@ class JetpackSiteType extends Component {
 			<MainWrapper isWide>
 				<div className="jetpack-connect__step">
 					<FormattedHeader
-						headerText={ translate(
-							'Boost your WordPress site with Security, Performance, and Customization features all in one service.'
-						) }
+						headerText={ translate( 'Boost your site with Security and Performance tools.' ) }
 						subHeaderText={ translate(
 							'To get started, tell us a little bit about your site goals.'
 						) }
