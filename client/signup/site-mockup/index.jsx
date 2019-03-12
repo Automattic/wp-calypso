@@ -148,8 +148,9 @@ class SiteMockups extends Component {
 
 				<div className="site-mockup__help-tip">
 					<p>
-						Scroll down to see your website. Once you complete setup you’ll be able to customize it
-						further.
+						{ translate(
+							'Scroll down to see your website. Once you complete setup you’ll be able to customize it further.'
+						) }
 					</p>
 					<Gridicon icon="chevron-down" />
 				</div>
