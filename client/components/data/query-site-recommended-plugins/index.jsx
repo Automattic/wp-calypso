@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import getRecommendedPlugins from 'state/selectors/get-recommended-plugins';
+import isRequestingRecommendedPlugins from 'state/selectors/is-requesting-recommended-plugins';
 import { fetchRecommendedPlugins } from 'state/plugins/recommended/actions';
 
 class QuerySiteRecommendedPlugins extends Component {
@@ -38,7 +38,7 @@ class QuerySiteRecommendedPlugins extends Component {
 
 export default connect(
 	( state, { siteId } ) => ( {
-		isLoaded: !! getRecommendedPlugins( state, siteId ),
+		isLoaded: isRequestingRecommendedPlugins( state, siteId ),
 	} ),
 	{
 		fetchRecommendedPlugins,

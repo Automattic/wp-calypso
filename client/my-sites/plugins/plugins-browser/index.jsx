@@ -640,8 +640,8 @@ export default flow(
 				selectedSite: getSelectedSite( state ),
 				siteSlug: getSelectedSiteSlug( state ),
 				sites: getSelectedOrAllSitesJetpackCanManage( state ),
-				isRequestingRecommendedPlugins: isRequestingRecommendedPlugins( state.selectedSiteId ),
-				recommendedPlugins: getRecommendedPlugins( state.selectedSiteId ),
+				isRequestingRecommendedPlugins: isRequestingRecommendedPlugins( state, selectedSiteId ),
+				recommendedPlugins: getRecommendedPlugins( state, selectedSiteId ),
 			};
 		},
 		{
