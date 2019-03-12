@@ -292,12 +292,8 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { displayJetpackPlans, isInSignup, siteId, countryCode } = this.props;
+		const { displayJetpackPlans, isInSignup, siteId } = this.props;
 		let faqs = null;
-
-		if ( ! countryCode && displayJetpackPlans ) {
-			return null;
-		}
 
 		if ( ! isInSignup ) {
 			faqs = displayJetpackPlans ? <JetpackFAQ /> : <WpcomFAQ />;
