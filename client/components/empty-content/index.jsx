@@ -9,6 +9,9 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 
+/**
+ * Style Dependencies
+ */
 import './style.scss';
 
 class EmptyContent extends Component {
