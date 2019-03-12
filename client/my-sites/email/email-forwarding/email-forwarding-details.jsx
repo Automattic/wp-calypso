@@ -24,7 +24,7 @@ class EmailForwardingDetails extends React.Component {
 		return (
 			<p className="email-forwarding__explanation">
 				{ this.props.translate(
-					'Email Forwarding lets you use your custom domain in your email address, so your email address can be just as memorable as your blog.'
+					'Create an email address that uses your custom domain and have it automatically forward to the email account of your choice. Now your email address can be as memorable as your website!'
 				) }{' '}
 				<a
 					href={ EMAIL_FORWARDING }

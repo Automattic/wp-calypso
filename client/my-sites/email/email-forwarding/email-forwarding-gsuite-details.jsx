@@ -17,11 +17,14 @@ const EmailForwardingGSuiteDetails = ( { selectedDomainName, siteSlug, translate
 	return (
 		<Card className="email-forwarding__card">
 			<p className="email-forwarding__explanation">
-				{ translate( 'You are using G Suite with this domain. {{a}}Manage it here{{/a}}.', {
-					components: {
-						a: <a href={ domainManagementEmail( siteSlug, selectedDomainName ) } />,
-					},
-				} ) }
+				{ translate(
+					"You're using G Suite with this domain, so you'll use that to create custom email addresses. {{a}}Manage your G Suite settings.{{/a}}",
+					{
+						components: {
+							a: <a href={ domainManagementEmail( siteSlug, selectedDomainName ) } />,
+						},
+					}
+				) }
 			</p>
 		</Card>
 	);

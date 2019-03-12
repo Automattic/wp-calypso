@@ -12,6 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card/compact';
+import { domainManagementDns } from 'my-sites/domains/paths';
 import getEmailForwardingMXServers from 'state/selectors/get-email-forwarding-mx-servers';
 
 class EmailForwardingCustomMxList extends React.Component {
@@ -23,16 +24,23 @@ class EmailForwardingCustomMxList extends React.Component {
 			} )
 		),
 		selectedDomainName: PropTypes.string.isRequired,
+		siteSlug: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { mxServers, translate } = this.props;
+		const { mxServers, translate, selectedDomainName, siteSlug } = this.props;
 		return (
 			<Card className="email-forwarding__card">
 				<p className="email-forwarding__explanation">
 					{ translate(
 						'Your site has custom MX records, which prevents you from adding email forwards via WordPress.com. ' +
-							'Please check with your email provider or remove the MX records to add email forwards.'
+							'Please check with your email provider or remove the MX records to add email forwards. ' +
+							'{{a}}Manage your MX Records.{{/a}}',
+						{
+							components: {
+								a: <a href={ domainManagementDns( siteSlug, selectedDomainName ) } />,
+							},
+						}
 					) }
 				</p>
 				<ul className="email-forwarding__list">
