@@ -80,5 +80,11 @@ body.is-section-jetpack-connect .site-topic__content {
 		position: absolute;
 		top: 3px;
 		right: 3px;
+		transition: all 150ms ease-in-out;
+		transition-delay: 400ms;
+
+		&[disabled] {
+			opacity: 0;
+		}
 	}
 }
