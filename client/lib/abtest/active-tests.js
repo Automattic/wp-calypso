@@ -3,10 +3,10 @@ export default {
 	improvedOnboarding: {
 		datestamp: '20190214',
 		variations: {
-			main: 50,
-			onboarding: 50,
+			main: 0,
+			onboarding: 100,
 		},
-		defaultVariation: 'main',
+		defaultVariation: 'onboarding',
 	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
