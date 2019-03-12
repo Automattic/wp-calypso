@@ -46,6 +46,8 @@ class GSuiteCancelPurchaseDialog extends Component {
 		// TODO: copy & simplify from <RemovePurchase />
 	};
 
+	onSurveryAnswerChange = () => {};
+
 	getStepButtons = () => {
 		const { translate } = this.props;
 		const { step, isDisabled } = this.state;
@@ -98,7 +100,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 				{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
 					<GSuiteCancellationFeatures purchase={ purchase } />
 				) : (
-					<GSuiteCancellationSurvey />
+					<GSuiteCancellationSurvey onSurveryAnswerChange={ this.onSurveryAnswerChange } />
 				) }
 			</Dialog>
 		);

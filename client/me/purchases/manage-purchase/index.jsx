@@ -389,7 +389,6 @@ class ManagePurchase extends Component {
 				{ this.renderRenewNowNavItem() }
 				{ this.renderEditPaymentMethodNavItem() }
 				{ this.renderCancelPurchaseNavItem() }
-				{ /* intercept here if purchase is gsuite, render our own Remove Purchase Dialog */ }
 				<RemovePurchase
 					hasLoadedSites={ this.props.hasLoadedSites }
 					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }

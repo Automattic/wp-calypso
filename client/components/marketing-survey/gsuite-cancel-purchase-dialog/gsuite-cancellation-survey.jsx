@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import MultipleChoiceQuestion from 'components/multiple-choice-question';
 
-const GSuiteCancellationSurvey = ( { translate /*, onInputChange */ } ) => {
+const GSuiteCancellationSurvey = ( { onSurveryAnswerChange, translate } ) => {
 	const question = translate( 'Please tell us why you are cancelling G Suite:' );
 
 	const answers = [
@@ -42,15 +42,14 @@ const GSuiteCancellationSurvey = ( { translate /*, onInputChange */ } ) => {
 			<MultipleChoiceQuestion
 				question={ question }
 				answers={ answers }
-				onAnwserChange={ () => {
-					/* need to call onInputChange here */
-				} }
+				onAnswerChange={ onSurveryAnswerChange }
 			/>
 		</Fragment>
 	);
 };
 
 GSuiteCancellationSurvey.propTypes = {
+	onSurveryAnswerChange: PropTypes.func.isRequired,
 	translate: PropTypes.func,
 };
 

@@ -60,7 +60,7 @@ MultipleChoiceQuestion.propTypes = {
 			textInputPrompt: PropTypes.string,
 		} )
 	).isRequired,
-	onAnswerChange: PropTypes.func,
+	onAnswerChange: PropTypes.func.isRequired,
 };
 
 export default MultipleChoiceQuestion;
