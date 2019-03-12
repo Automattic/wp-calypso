@@ -19,7 +19,6 @@ export const itemsSchema = {
 					expiry: { type: [ 'null', 'string' ] },
 					expirySoon: { type: 'boolean' },
 					googleAppsSubscription: { type: 'object' },
-					hasPrivacyProtection: { type: 'boolean' },
 					hasRegistration: { type: 'boolean' },
 					hasWpcomNameservers: { type: 'boolean' },
 					hasZone: { type: 'boolean' },

@@ -24,13 +24,13 @@ class Locked extends React.Component {
 	};
 
 	unlockAndRequestTransferCode = () => {
-		const { privateDomain, hasPrivacyProtection } = getSelectedDomain( this.props );
+		const { privateDomain } = getSelectedDomain( this.props );
 
 		const options = {
 			siteId: this.props.selectedSite.ID,
 			domainName: this.props.selectedDomainName,
 			unlock: true,
-			disablePrivacy: privateDomain && hasPrivacyProtection,
+			disablePrivacy: privateDomain,
 		};
 
 		this.setState( { submitting: true } );
