@@ -179,9 +179,7 @@ class SharingServiceDescription extends Component {
 			'google_photos' === this.props.service.ID &&
 			'must-disconnect' === this.props.status
 		) {
-			description = this.props.translate(
-				'Please connect again to continue using Photos for Google.'
-			);
+			description = this.props.translate( 'Please connect again to continue using Google Photos.' );
 		} else if ( 'reconnect' === this.props.status || 'must-disconnect' === this.props.status ) {
 			description = this.props.translate( 'There is an issue connecting to %(service)s.', {
 				args: { service: this.props.service.label },
