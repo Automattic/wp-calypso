@@ -164,15 +164,13 @@ const notices = {
 	 */
 	clearNoticesOnNavigation: function( context, next ) {
 		debug( 'clearNoticesOnNavigation' );
-		let length,
-			container,
-			changed = false;
+		let changed = false;
 		const isNoticePersistent = function( notice ) {
 			return notice.persistent;
 		};
 
-		for ( container in list.containerNames ) {
-			length = list[ container ].length;
+		for ( const container in list.containerNames ) {
+			const { length } = list[ container ];
 			list[ container ] = list[ container ].filter( isNoticePersistent );
 			if ( length !== list[ container ].length ) {
 				changed = true;
