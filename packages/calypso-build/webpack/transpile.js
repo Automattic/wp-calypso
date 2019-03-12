@@ -16,34 +16,24 @@ module.exports.loader = ( {
 	cacheDirectory,
 	cacheIdentifier,
 	exclude,
-} ) => {
-	if ( ! workerCount ) {
-		workerCount = 1;
-	}
-
-	if ( ! exclude ) {
-		exclude = /node_modules\//;
-	}
-
-	return {
-		test: /\.jsx?$/,
-		exclude,
-		use: [
-			{
-				loader: require.resolve( 'thread-loader' ),
-				options: {
-					workers: workerCount,
-				},
+} ) => ( {
+	test: /\.jsx?$/,
+	exclude,
+	use: [
+		{
+			loader: require.resolve( 'thread-loader' ),
+			options: {
+				workers: workerCount,
 			},
-			{
-				loader: require.resolve( 'babel-loader' ),
-				options: {
-					configFile,
-					babelrc: false,
-					cacheDirectory,
-					cacheIdentifier,
-				},
+		},
+		{
+			loader: require.resolve( 'babel-loader' ),
+			options: {
+				configFile,
+				babelrc: false,
+				cacheDirectory,
+				cacheIdentifier,
 			},
-		],
-	};
-};
+		},
+	],
+} );

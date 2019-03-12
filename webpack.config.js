@@ -185,6 +185,7 @@ function getWebpackConfig( {
 					configFile: path.join( __dirname, 'babel.config.js' ),
 					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 					cacheIdentifier,
+					exclude: /node_modules\//,
 				} ),
 				{
 					test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
