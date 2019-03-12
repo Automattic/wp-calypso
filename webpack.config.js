@@ -25,7 +25,15 @@ const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
-const { isCi, useCache, workerCount } = require( './webpack.common' );
+const {
+	isCi,
+	shouldCheckForCycles,
+	shouldEmitStats,
+	shouldEmitStatsWithReasons,
+	shouldMinify,
+	useCache,
+	workerCount,
+} = require( './webpack.common' );
 
 /**
  * Internal variables
@@ -33,12 +41,6 @@ const { isCi, useCache, workerCount } = require( './webpack.common' );
 const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
-const shouldMinify =
-	process.env.MINIFY_JS === 'true' ||
-	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' && calypsoEnv !== 'desktop' );
-const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
-const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
-const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 

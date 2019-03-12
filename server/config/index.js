@@ -1,16 +1,15 @@
-/** @format */
 /**
  * Internal dependencies
  */
-
+const { featuresEnabled, featuresDisabled } = require( '../../webpack.common' );
 const configPath = require( 'path' ).resolve( __dirname, '..', '..', 'config' );
 const parser = require( './parser' );
 const createConfig = require( '../../client/lib/create-config' );
 
 const { serverData, clientData } = parser( configPath, {
 	env: process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development',
-	enabledFeatures: process.env.ENABLE_FEATURES,
-	disabledFeatures: process.env.DISABLE_FEATURES,
+	enabledFeatures: featuresEnabled,
+	disabledFeatures: featuresDisabled,
 } );
 
 module.exports = createConfig( serverData );
