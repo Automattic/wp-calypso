@@ -25,6 +25,7 @@ const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
+const getAliasesForExtensions = require( './config/webpack/extensions' );
 
 /**
  * Internal variables
@@ -87,32 +88,6 @@ function createProgressHandler() {
 
 		console.log( message ); // eslint-disable-line no-console
 	};
-}
-
-/**
- * This function scans the /client/extensions directory in order to generate a map that looks like this:
- * {
- *   sensei: 'absolute/path/to/wp-calypso/client/extensions/sensei',
- *   woocommerce: 'absolute/path/to/wp-calypso/client/extensions/woocommerce',
- *   ....
- * }
- *
- * Providing webpack with these aliases instead of telling it to scan client/extensions for every
- * module resolution speeds up builds significantly.
- * @returns {Object} a mapping of extension name to path
- */
-function getAliasesForExtensions() {
-	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
-	const extensionsNames = fs
-		.readdirSync( extensionsDirectory )
-		.filter( filename => filename.indexOf( '.' ) === -1 ); // heuristic for finding directories
-
-	const aliasesMap = {};
-	extensionsNames.forEach(
-		extensionName =>
-			( aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName ) )
-	);
-	return aliasesMap;
 }
 
 /**
@@ -283,7 +258,9 @@ function getWebpackConfig( {
 					store: 'store/dist/store.modern',
 					gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
 				},
-				getAliasesForExtensions()
+				getAliasesForExtensions( {
+					extensionsDirectory: path.join( __dirname, 'client', 'extensions' ),
+				} )
 			),
 		},
 		node: false,
