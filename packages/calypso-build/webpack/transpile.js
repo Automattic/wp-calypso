@@ -6,7 +6,7 @@
  * @param  {string}    _.configFile         Babel loader config file
  * @param  {string}    _.cacheDirectory     Babel loader cache directory
  * @param  {string}    _.cacheIdentifier    Babel loader cache identifier
- *
+ * @param  {regEx}    _.exclude    		    Directories to exclude when looking for files to transpile
  *
  * @return {Object}   webpack loader object
  */
