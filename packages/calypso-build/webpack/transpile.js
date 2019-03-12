@@ -10,7 +10,13 @@
  *
  * @return {Object}   webpack loader object
  */
-module.exports.loader = ( { workerCount, configFile, cacheDirectory, cacheIdentifier } ) => {
+module.exports.loader = ( {
+	workerCount,
+	configFile,
+	cacheDirectory,
+	cacheIdentifier,
+	exclude,
+} ) => {
 	if ( ! workerCount ) {
 		workerCount = 1;
 	}
@@ -20,8 +26,7 @@ module.exports.loader = ( { workerCount, configFile, cacheDirectory, cacheIdenti
 	}
 
 	if ( ! cacheDirectory ) {
-		console.log( 'Please specifiy the bable cacheDirectory' ); // eslint-disable-line no-console
-		return {};
+		console.log( 'No cacheDirectory is set, set one to speed up babel.' ); // eslint-disable-line no-console
 	}
 
 	if ( ! cacheIdentifier ) {
@@ -29,9 +34,13 @@ module.exports.loader = ( { workerCount, configFile, cacheDirectory, cacheIdenti
 		return {};
 	}
 
+	if ( ! exclude ) {
+		exclude = /node_modules\//;
+	}
+
 	return {
 		test: /\.jsx?$/,
-		exclude: /node_modules\//,
+		exclude,
 		use: [
 			{
 				loader: require.resolve( 'thread-loader' ),
