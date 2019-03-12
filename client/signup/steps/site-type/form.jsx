@@ -35,27 +35,27 @@ class SiteTypeForm extends Component {
 		};
 	}
 
-	handleRadioChange = event => this.setState( { siteType: event.currentTarget.value } );
-
-	handleSubmit = event => {
-		const { siteType } = this.state;
-
-		event.preventDefault();
-
+	handleSubmit = type => {
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
-			value: siteType,
+			value: type,
 		} );
 
-		this.props.submitForm( siteType );
+		this.setState( { siteType: type } );
+
+		this.props.submitForm( type );
 	};
 
 	renderRadioOptions() {
 		return getAllSiteTypes().map( siteTypeProperties => (
-			<div className="site-type__option" key={ siteTypeProperties.id }>
+			<button
+				className="site-type__option"
+				key={ siteTypeProperties.id }
+				onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
+			>
 				<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
 				<span className="site-type__option-description">{ siteTypeProperties.description }</span>
 				<Gridicon icon="chevron-right" />
-			</div>
+			</button>
 		) );
 	}
 
