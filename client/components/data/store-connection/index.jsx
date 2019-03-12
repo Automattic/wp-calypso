@@ -29,7 +29,7 @@ class StoreConnection extends React.Component {
 		if ( ! isEqual( this.state, nextState ) ) {
 			this.removeStoreListeners( this.props.stores );
 			this.addStoreListeners( nextProps.stores );
-			this.setState( nextProps.getStateFromStores( nextProps ) );
+			this.setState( nextState );
 		}
 	}
 
