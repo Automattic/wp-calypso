@@ -11,7 +11,6 @@ import { get, isEqual, reduce } from 'lodash';
  */
 import {
 	CURRENT_USER_RECEIVE,
-	CURRENT_USER_FLAGS_RECEIVE,
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
@@ -46,7 +45,8 @@ export const id = createReducer(
 export const flags = createReducer(
 	[],
 	{
-		[ CURRENT_USER_FLAGS_RECEIVE ]: ( state, action ) => action.flags,
+		[ CURRENT_USER_RECEIVE ]: ( state, action ) =>
+			get( action.user, 'meta.data.flags.active_flags', [] ),
 	},
 	flagsSchema
 );
