@@ -53,6 +53,7 @@ class CalypsoifyIframe extends Component {
 	constructor( props ) {
 		super( props );
 		this.iframeRef = React.createRef();
+		this.mediaSelectPort = null;
 	}
 
 	componentDidMount() {
@@ -92,12 +93,19 @@ class CalypsoifyIframe extends Component {
 		}
 	};
 
-	onIframePortMessage = ( { data } ) => {
+	onIframePortMessage = ( { data, ports } ) => {
 		const { action, payload } = data;
 
 		if ( 'openMediaModal' === action ) {
 			const { siteId } = this.props;
 			const { allowedTypes, gallery, multiple, value } = payload;
+
+			if ( ports && ports[ 0 ] ) {
+				// set imperatively on the instance because this is not
+				// the kind of assignment which causes re-renders and we
+				// want it set immediately
+				this.mediaSelectPort = ports[ 0 ];
+			}
 
 			if ( value ) {
 				const selectedItems = Array.isArray( value )
@@ -154,10 +162,22 @@ class CalypsoifyIframe extends Component {
 			const formattedMedia = map( media.items, item => mediaCalypsoToGutenberg( item ) );
 			const payload = multiple ? formattedMedia : formattedMedia[ 0 ];
 
-			this.iframePort.postMessage( {
-				action: 'selectMedia',
-				payload,
-			} );
+			if ( this.mediaSelectPort ) {
+				this.mediaSelectPort.postMessage( payload );
+
+				// this is a once-only port
+				// after sending our message we want to close it out
+				// and prevent sending more messages (which will be ignored)
+				this.mediaSelectPort.close();
+				this.mediaSelectPort = null;
+			} else {
+				// this to be removed once we are reliably
+				// sending the new MessageChannel from the server
+				this.iframePort.postMessage( {
+					action: 'selectMedia',
+					payload,
+				} );
+			}
 		}
 
 		this.setState( { isMediaModalVisible: false } );
