@@ -1,4 +1,3 @@
-
 .editor-drawer {
 	font-size: 13px;
 	background: white;
@@ -7,16 +6,6 @@
 .editor-drawer__description {
 	color: var( --color-neutral-light );
 	font-size: 12px;
-}
-
-.editor-drawer .accordion:not( .is-expanded ) .accordion__toggle {
-	.accordion__subtitle::after {
-		@include long-content-fade();
-	}
-
-	&:hover .accordion__subtitle::after {
-		@include long-content-fade();
-	}
 }
 
 .editor-drawer__accordion.is-loading .accordion__subtitle {
