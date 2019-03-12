@@ -20,19 +20,6 @@ module.exports.loader = ( {
 	if ( ! workerCount ) {
 		workerCount = 1;
 	}
-	if ( ! configFile ) {
-		console.log( 'Please specifiy the bable.js configFile' ); // eslint-disable-line no-console
-		return {};
-	}
-
-	if ( ! cacheDirectory ) {
-		console.log( 'No cacheDirectory is set, set one to speed up babel.' ); // eslint-disable-line no-console
-	}
-
-	if ( ! cacheIdentifier ) {
-		console.log( 'Please specifiy the bable cacheIdentifier' ); // eslint-disable-line no-console
-		return {};
-	}
 
 	if ( ! exclude ) {
 		exclude = /node_modules\//;
