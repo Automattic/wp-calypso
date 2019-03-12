@@ -40,7 +40,6 @@
 		"apple-pay": true,
 		"blogger-plan": true,
 		"calypsoify/gutenberg": true,
-		"calypsoify/iframe": true,
 		"calypsoify/plugins": true,
 		"code-splitting": true,
 		"comments/filters-in-posts": true,

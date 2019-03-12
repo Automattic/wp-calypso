@@ -33,7 +33,6 @@
 		"apple-pay": true,
 		"blogger-plan": false,
 		"calypsoify/gutenberg": true,
-		"calypsoify/iframe": true,
 		"calypsoify/plugins": true,
 		"catch-js-errors": false,
 		"code-splitting": true,
