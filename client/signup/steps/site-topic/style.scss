@@ -1,14 +1,20 @@
 body.is-section-signup .step-wrapper .site-topic__content,
 body.is-section-jetpack-connect .site-topic__content {
 	max-width: 480px;
+	min-height: 46px;
 	margin: 0 auto;
-	border-radius: 4px;
-	background: var( --color-white );
-	box-shadow: 0 3px 6px rgba(0,0,0,0.16),
-				0 3px 6px rgba(0,0,0,0.23);
+	position: relative;
 
 	.form-fieldset {
 		margin-bottom: 0;
+		position: absolute;
+		left: 0;
+		right: 0;
+		z-index: 1000; // I know, I know...
+		border-radius: 4px;
+		background: var( --color-white );
+		box-shadow: 0 3px 6px rgba(0,0,0,0.16),
+					0 3px 6px rgba(0,0,0,0.23);
 	}
 
 	.suggestion-search .gridicon {
@@ -38,7 +44,7 @@ body.is-section-jetpack-connect .site-topic__content {
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 3px rgba( var( --color-accent-rgb ), 0.9 );
+			box-shadow: 0 0 0 2px var( --color-accent );
 		}
 	}
 
