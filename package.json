@@ -237,7 +237,7 @@
     "build-client": "cross-env-shell CALYPSO_CLIENT=true NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS ./node_modules/webpack/bin/webpack.js --display errors-only",
     "build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || cross-env-shell NODE_ARGS=--max_old_space_size=8192 npm run build-client",
     "build-client-if-desktop": "node -e \"process.env.CALYPSO_ENV === 'desktop' && process.exit(1)\" || npm run build-client",
-    "build-packages": "npx lerna run build --stream",
+    "build-packages": "npx lerna run build --stream --ignore='@automattic/jetpack-blocks'",
     "sdk": "node bin/sdk-cli.js",
     "clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public && npm run -s clean:packages",
     "clean:build": "npx rimraf build server/bundler/*.json .babel-cache",
