@@ -14,7 +14,7 @@ import Card from 'components/card/compact';
 
 const EmailForwardingGSuiteDetailsAnotherProvider = ( { translate } ) => {
 	return (
-		<Card>
+		<Card className="email-forwarding__card">
 			<p className="email-forwarding__explanation">
 				{ translate( 'You are using G Suite with another provider for this domain.' ) }
 			</p>

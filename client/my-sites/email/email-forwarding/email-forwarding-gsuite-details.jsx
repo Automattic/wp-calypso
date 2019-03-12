@@ -15,7 +15,7 @@ import { domainManagementEmail } from 'my-sites/domains/paths';
 
 const EmailForwardingGSuiteDetails = ( { selectedDomainName, siteSlug, translate } ) => {
 	return (
-		<Card>
+		<Card className="email-forwarding__card">
 			<p className="email-forwarding__explanation">
 				{ translate( 'You are using G Suite with this domain. {{a}}Manage it here{{/a}}.', {
 					components: {

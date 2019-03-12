@@ -28,7 +28,7 @@ class EmailForwardingCustomMxList extends React.Component {
 	render() {
 		const { mxServers, translate } = this.props;
 		return (
-			<Card>
+			<Card className="email-forwarding__card">
 				<p className="email-forwarding__explanation">
 					{ translate(
 						'Your site has custom MX records, which prevents you from adding email forwards via WordPress.com. ' +
