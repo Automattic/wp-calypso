@@ -327,7 +327,6 @@
     "stacktrace-gps": "3.0.2",
     "stylelint": "9.10.1",
     "supertest": "3.4.2",
-    "webpack-filter-warnings-plugin": "1.2.1",
     "webpack-hot-middleware": "2.24.3",
     "whybundled": "1.4.2"
   },
