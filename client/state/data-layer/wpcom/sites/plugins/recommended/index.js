@@ -6,6 +6,7 @@
 /**
  * Internal dependencies
  */
+import { normalizePluginsList } from 'lib/plugins/utils';
 import { RECOMMENDED_PLUGINS_REQUEST } from 'state/action-types';
 import { receiveRecommendedPlugins } from 'state/plugins/recommended/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
