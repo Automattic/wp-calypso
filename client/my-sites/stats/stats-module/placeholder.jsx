@@ -13,6 +13,11 @@ import classNames from 'classnames';
  */
 import Spinner from 'components/spinner';
 
+/**
+ * Style dependencies
+ */
+import './placeholder.scss';
+
 export default class StatsModulePlaceholder extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,

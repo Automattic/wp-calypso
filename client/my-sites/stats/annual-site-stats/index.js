@@ -22,6 +22,11 @@ import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import ErrorPanel from 'my-sites/stats/stats-error';
 import QuerySiteStats from 'components/data/query-site-stats';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class AnnualSiteStats extends Component {
 	static propTypes = {
 		requesting: PropTypes.bool,

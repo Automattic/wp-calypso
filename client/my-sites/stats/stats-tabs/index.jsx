@@ -14,6 +14,11 @@ import { find } from 'lodash';
  */
 import StatTab from './tab';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class extends React.Component {
 	static displayName = 'StatsTabs';
 

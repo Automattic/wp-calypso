@@ -19,6 +19,11 @@ import qs from 'qs';
 import { recordGoogleEvent as recordGoogleEventAction } from 'state/analytics/actions';
 import isRtlSelector from 'state/selectors/is-rtl';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsPeriodNavigation extends PureComponent {
 	static propTypes = {
 		onPeriodChange: PropTypes.func,
