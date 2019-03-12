@@ -61,7 +61,6 @@ import './style.scss';
  * Module variables
  */
 const SHORT_LIST_LENGTH = 6;
-const visibleCategories = [ 'new', 'popular', 'featured' ];
 
 export class PluginsBrowser extends Component {
 	static displayName = 'PluginsBrowser';
@@ -76,6 +75,7 @@ export class PluginsBrowser extends Component {
 		trackPageViews: true,
 	};
 
+	visibleCategories = [ 'new', 'popular' ];
 	state = this.getPluginsLists( this.props.search );
 
 	reinitializeSearch() {
@@ -88,6 +88,10 @@ export class PluginsBrowser extends Component {
 
 	componentDidMount() {
 		PluginsListStore.on( 'change', this.refreshLists );
+
+		if ( abtest( 'pluginRecommendations' ) === 'featured' ) {
+			this.visibleCategories.push( 'featured' );
+		}
 
 		if ( this.props.search && this.props.searchTitle ) {
 			this.props.recordTracksEvent( 'calypso_plugins_search_noresults_recommendations_show', {
@@ -135,7 +139,7 @@ export class PluginsBrowser extends Component {
 		const shortLists = {};
 		const fullLists = {};
 
-		visibleCategories.forEach( category => {
+		this.visibleCategories.forEach( category => {
 			shortLists[ category ] = PluginsListStore.getShortList( category );
 			fullLists[ category ] = PluginsListStore.getFullList( category );
 		} );
