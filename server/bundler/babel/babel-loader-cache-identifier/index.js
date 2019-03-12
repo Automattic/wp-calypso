@@ -1,7 +1,9 @@
+/** @format */
+
 /**
  * External dependencies
  */
-const fs = require( 'fs' );
+const fs = require( 'fs' ); // eslint-disable-line
 const path = require( 'path' );
 
 /**
