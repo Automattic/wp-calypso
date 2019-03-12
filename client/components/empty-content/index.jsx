@@ -9,6 +9,8 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 
+import './style.scss';
+
 class EmptyContent extends Component {
 	static propTypes = {
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
