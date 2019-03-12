@@ -4,6 +4,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { debounce, find, get, noop, startsWith, throttle, trim, uniq, isEmpty } from 'lodash';
@@ -31,6 +32,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		initialValue: PropTypes.string,
 		lastUpdated: PropTypes.number,
 		onChange: PropTypes.func,
+		requestVerticals: PropTypes.func,
 		placeholder: PropTypes.string,
 		searchResultsLimit: PropTypes.number,
 		shouldShowPopularTopics: PropTypes.func,
@@ -40,6 +42,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		charsToTriggerSearch: 1,
 		initialValue: '',
 		onChange: noop,
+		requestVerticals: noop,
 		placeholder: '',
 		searchResultsLimit: 5,
 	};
@@ -55,43 +58,26 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			defaultVertical: [],
 			railcar: this.getNewRailcar(),
 		};
-		this.requestVerticals( 'business', 1, 'defaultVertical' );
-		this.requestVerticalsThrottled = throttle( this.requestVerticals, 666, {
+		this.props.requestVerticals( 'business', 1, this.setDefaultVerticalResults );
+		this.requestVerticalsThrottled = throttle( this.props.requestVerticals, 666, {
 			leading: true,
 			trailing: true,
 		} );
-		this.requestVerticalsDebounced = debounce( this.requestVerticals, 666 );
+		this.requestVerticalsDebounced = debounce( this.props.requestVerticals, 666 );
 	}
 
 	componentDidMount() {
 		// If we have a stored vertical, grab the preview
-		this.props.initialValue && this.requestVerticals( this.props.initialValue, 1, 'results' );
+		this.props.initialValue &&
+			this.props.requestVerticals( this.props.initialValue, 1, this.setSearchResults );
 	}
 
-	componentDidUpdate( prevProps ) {
-		// Check if there's a direct match for any subsequent
-		// HTTP requests
-		if ( prevProps.lastUpdated !== this.props.lastUpdated ) {
-			this.updateVerticalData(
-				this.searchForVerticalMatches( this.state.searchValue ),
-				this.state.searchValue
-			);
-		}
-	}
+	setSearchResults = results => {
+		this.setState( { results } );
+	};
 
-	requestVerticals = ( search, limit = 10, stateKey ) => {
-		this.isSearchPending = true;
-		this.request = request
-			.get( 'https://public-api.wordpress.com/wpcom/v2/verticals' )
-			.query( { _envelope: 1, search, limit, include_preview: true } )
-			.then( res => {
-				this.isSearchPending = false;
-				this.setState( { [ stateKey ]: convertToCamelCase( get( res.body, 'body', [] ) ) } );
-			} )
-			.catch( err => {
-				debug( err );
-				this.isSearchPending = false;
-			} );
+	setDefaultVerticalResults = defaultVertical => {
+		this.setState( { defaultVertical } );
 	};
 
 	getNewRailcar() {
@@ -142,9 +128,17 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			! result
 		) {
 			if ( valueLength < 5 ) {
-				this.requestVerticalsThrottled( value, this.props.searchResultsLimit, 'results' );
+				this.requestVerticalsThrottled(
+					value,
+					this.props.searchResultsLimit,
+					this.setSearchResults
+				);
 			} else {
-				this.requestVerticalsDebounced( value, this.props.searchResultsLimit, 'results' );
+				this.requestVerticalsDebounced(
+					value,
+					this.props.searchResultsLimit,
+					this.setSearchResults
+				);
 			}
 			this.setState( { railcar: this.getNewRailcar() } );
 		}
@@ -205,5 +199,29 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		);
 	}
 }
-export const isVerticalSearchPending = () => SiteVerticalsSuggestionSearch.isSearchPending;
-export default localize( SiteVerticalsSuggestionSearch );
+export function requestVerticals( search, limit = 7, callback ) {
+	request
+		.get( 'https://public-api.wordpress.com/wpcom/v2/verticals' )
+		.query( { _envelope: 1, search, limit, include_preview: true } )
+		.then( res => {
+			SiteVerticalsSuggestionSearch.isSearchPending = false;
+			callback( convertToCamelCase( get( res.body, 'body', [] ) ) );
+		} )
+		.catch( err => {
+			debug( err );
+			SiteVerticalsSuggestionSearch.isSearchPending = false;
+		} );
+}
+
+export function isVerticalSearchPending() {
+	return SiteVerticalsSuggestionSearch.isSearchPending;
+}
+
+export default localize(
+	connect(
+		null,
+		() => ( {
+			requestVerticals,
+		} )
+	)( SiteVerticalsSuggestionSearch )
+);
