@@ -86,6 +86,16 @@ class SiteTopicForm extends Component {
 						</Button>
 					</FormFieldset>
 				</form>
+
+				<div className="site-topic__common-topics">
+					<div className="site-topic__heading">Common Topics</div>
+					<div className="site-topic__topic-list-item">Restaurant</div>
+					<div className="site-topic__topic-list-item">Clothing Store</div>
+					<div className="site-topic__topic-list-item">Bowling Alley</div>
+					<div className="site-topic__topic-list-item">Cafe</div>
+					<div className="site-topic__topic-list-item">Bakery</div>
+					<div className="site-topic__topic-list-item">Child Care</div>
+				</div>
 			</div>
 		);
 	}
