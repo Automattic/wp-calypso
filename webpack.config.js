@@ -8,7 +8,6 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
-const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
