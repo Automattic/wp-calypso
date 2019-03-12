@@ -278,6 +278,7 @@ export class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
+				countryCode,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			return (
@@ -302,6 +303,7 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
+						countryCode={ countryCode }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
@@ -345,6 +347,7 @@ export class PlanFeatures extends Component {
 			selectedPlan,
 			siteType,
 			showPlanCreditsApplied,
+			countryCode,
 		} = this.props;
 
 		return map( planProperties, properties => {
@@ -409,6 +412,7 @@ export class PlanFeatures extends Component {
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
+						countryCode={ countryCode }
 					/>
 				</td>
 			);

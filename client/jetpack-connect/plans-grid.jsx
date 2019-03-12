@@ -28,6 +28,7 @@ class JetpackPlansGrid extends Component {
 		isLanding: PropTypes.bool,
 		onSelect: PropTypes.func,
 		selectedSite: PropTypes.object,
+		countryCode: PropTypes.string,
 
 		// Connected
 		translate: PropTypes.func.isRequired,
@@ -56,7 +57,6 @@ class JetpackPlansGrid extends Component {
 			<MainWrapper isWide className="jetpack-connect__hide-plan-icons">
 				<div className="jetpack-connect__plans">
 					{ this.renderConnectHeader() }
-
 					<div id="plans">
 						<PlansFeaturesMain
 							site={ this.props.selectedSite || defaultJetpackSite }
@@ -67,6 +67,7 @@ class JetpackPlansGrid extends Component {
 							intervalType={ this.props.interval }
 							hideFreePlan={ this.props.hideFreePlan }
 							displayJetpackPlans={ true }
+							countryCode={ this.props.countryCode }
 						/>
 
 						<PlansSkipButton onClick={ this.handleSkipButtonClick } />

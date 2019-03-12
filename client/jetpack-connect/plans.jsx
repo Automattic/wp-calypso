@@ -38,6 +38,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import { requestGeoLocation } from 'state/data-getters';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -178,7 +179,8 @@ class Plans extends Component {
 			false !== this.props.notJetpack ||
 			! this.props.canPurchasePlans ||
 			false !== this.props.hasPlan ||
-			false !== this.props.isAutomatedTransfer
+			false !== this.props.isAutomatedTransfer ||
+			! this.props.countryCode
 		);
 	}
 
@@ -189,7 +191,7 @@ class Plans extends Component {
 	};
 
 	render() {
-		const { interval, selectedSite, translate } = this.props;
+		const { interval, selectedSite, translate, countryCode } = this.props;
 
 		if ( this.shouldShowPlaceholder() ) {
 			return (
@@ -214,6 +216,7 @@ class Plans extends Component {
 					isLanding={ false }
 					interval={ interval }
 					selectedSite={ selectedSite }
+					countryCode={ countryCode }
 				>
 					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
@@ -255,6 +258,7 @@ const connectComponent = connect(
 			selectedSite,
 			selectedSiteSlug,
 			userId: user ? user.ID : null,
+			countryCode: requestGeoLocation().data,
 		};
 	},
 	{

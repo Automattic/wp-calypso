@@ -130,13 +130,15 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	onlyJetpackMonthly: {
-		datestamp: '20190212',
+	jetpackMontlyPlansOnly: {
+		datestamp: '20190307',
 		variations: {
 			original: 50,
 			monthlyOnly: 50,
 		},
 		defaultVariation: 'original',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 		countryCodeTargets: [ 'ES', 'IT', 'PT', 'FR', 'NL', 'DE', 'BE', 'PL', 'SE' ],
 	},
 	pluginFeaturedTitle: {
