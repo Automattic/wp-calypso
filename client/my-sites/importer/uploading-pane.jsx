@@ -9,8 +9,9 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flow, get, includes, noop } from 'lodash';
+import { flow, get, head, includes, isEqual, noop } from 'lodash';
 import Gridicon from 'gridicons';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -20,7 +21,16 @@ import { appStates } from 'state/imports/constants';
 import Button from 'components/forms/form-button';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
-import { isSupportedFileType, parseFileType } from 'lib/importer/file-type-detection';
+import { isSupportedFileType, getRecommendedExperience } from 'lib/importer/file-type-detection';
+import {
+	clearImportFile,
+	evaluateImportFile,
+	recommendImportUX,
+} from 'state/imports/uploads/actions';
+import getImportUploadFile from 'state/selectors/get-import-upload-file';
+import getImportUploadFileName from 'state/selectors/get-import-upload-filename';
+
+const debug = debugFactory( 'calypso:importer-uploading-pane' );
 
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
@@ -39,8 +49,24 @@ class UploadingPane extends React.PureComponent {
 
 	fileSelectorRef = React.createRef();
 
+	componentDidMount() {
+		// @TODO should we do this...?
+		this.props.clearImportFile();
+	}
+
 	componentWillUnmount() {
 		window.clearInterval( this.randomizeTimer );
+		this.props.clearImportFile();
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { uploadFile } = this.props;
+		if ( uploadFile && ! isEqual( prevProps.uploadFile, uploadFile ) ) {
+			const recommendedUX = getRecommendedExperience( uploadFile );
+			console.log( { recommendedUX } );
+			this.props.recommendImportUX( recommendedUX );
+			return;
+		}
 	}
 
 	getMessage = () => {
@@ -89,15 +115,33 @@ class UploadingPane extends React.PureComponent {
 		}
 	};
 
-	initiateFromDrop = event => {
-		this.startUpload( event[ 0 ] );
-	};
+	initiateFromDrop = files => this.maybeSelectFiles( files );
 
 	initiateFromForm = event => {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.startUpload( this.fileSelectorRef.current.files[ 0 ] );
+		return this.maybeSelectFiles( get( this.fileSelectorRef, 'current.files' ) );
+	};
+
+	// @TODO a better name than `maybeSelectFiles`..?
+	maybeSelectFiles = ( files = [] ) => {
+		if ( ! ( files && files.length ) ) {
+			debug( 'no files' );
+			this.setState( {
+				selectedFile: head( files ),
+			} );
+		}
+
+		if ( files && files.length > 1 ) {
+			/**
+			 * @TODO: Recommend media upload experience instead of just assuming the first file in the list...
+			 * or, preferably, supporting multiple xml files :)
+			 */
+			debug( 'Multiple files were provided. Assuming you meant to use the first one.' );
+		}
+
+		this.props.evaluateImportFile( head( files ) );
 	};
 
 	isReadyForImport() {
@@ -183,9 +227,17 @@ class UploadingPane extends React.PureComponent {
 }
 
 export default flow(
-	connect( state => ( {
-		filename: get( state, 'imports.uploads.filename' ),
-		percentComplete: get( state, 'imports.uploads.percentComplete' ),
-	} ) ),
+	connect(
+		state => ( {
+			percentComplete: get( state, 'imports.uploads.percentComplete' ),
+			uploadFile: getImportUploadFile( state ),
+			uploadFileName: getImportUploadFileName( state ),
+		} ),
+		{
+			clearImportFile,
+			evaluateImportFile,
+			recommendImportUX,
+		}
+	),
 	localize
 )( UploadingPane );
