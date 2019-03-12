@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {Boolean}           True if requesting and false otherwise
  */
 export default function isRequestingRecommendedPlugins( state, siteId ) {
-	return get( state, [ 'plugins', 'recommended', siteId, 'isRequesting' ], false );
+	return get( state, [ 'plugins', 'recommended', 'isRequesting', siteId ], false );
 }

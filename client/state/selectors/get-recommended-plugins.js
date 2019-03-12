@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {?Array<Object>} 		Array of plugin objects
  */
 export default function getRecommendedPlugins( state, siteId ) {
-	return get( state, [ 'plugins', 'recommended', siteId, 'items' ], null );
+	return get( state, [ 'plugins', 'recommended', 'items', siteId ], [] );
 }
