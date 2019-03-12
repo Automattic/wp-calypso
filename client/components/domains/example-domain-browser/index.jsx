@@ -6,6 +6,11 @@
 import React from 'react';
 import classNames from 'classnames';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default function ExampleDomainBrowser( { className } ) {
 	return (
 		<div className={ classNames( 'example-domain-browser', className ) }>

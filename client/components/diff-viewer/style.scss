@@ -1,4 +1,3 @@
-
 .diff-viewer__filename {
 	padding: 2px 4px;
 	background-color: var( --color-neutral-100 );
@@ -12,12 +11,6 @@
 	flex-direction: row;
 	overflow-x: scroll;
 	white-space: pre;
-}
-
-.diff-viewer__path-prefix {
-}
-
-.diff-viewer__path {
 }
 
 .diff-viewer__line-numbers {
