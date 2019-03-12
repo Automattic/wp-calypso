@@ -11,13 +11,7 @@ import i18n from 'i18n-calypso';
  */
 
 import { successNotice } from 'state/notices/actions';
-import userFactory from 'lib/user';
-
-/**
- * Constants
- */
-
-const user = userFactory();
+import user from 'lib/user';
 
 /**
  * Page middleware
@@ -27,7 +21,7 @@ export default function emailVerification( context, next ) {
 	const showVerifiedNotice = '1' === context.query.verified;
 
 	if ( showVerifiedNotice ) {
-		user.signalVerification();
+		user().signalVerification();
 		setTimeout( () => {
 			// TODO: unify these once translations catch up
 			const message =
