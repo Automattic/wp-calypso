@@ -92,6 +92,11 @@ import Spinner from 'components/spinner';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
 // TODO: Enable A/B test handling for M2.1 release

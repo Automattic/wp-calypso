@@ -7,6 +7,11 @@
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ButtonGroup extends PureComponent {
 	static propTypes = {
 		children( props ) {
