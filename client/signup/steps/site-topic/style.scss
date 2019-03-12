@@ -2,28 +2,29 @@ body.is-section-signup .step-wrapper .site-topic__content,
 body.is-section-jetpack-connect .site-topic__content {
 	max-width: 480px;
 	margin: 0 auto;
+	border-radius: 4px;
+	background: var( --color-white );
+	box-shadow: 0 3px 6px rgba(0,0,0,0.16),
+				0 3px 6px rgba(0,0,0,0.23);
 
 	.form-fieldset {
 		margin-bottom: 0;
 	}
 
+	.suggestion-search .gridicon {
+		fill: var( --color-neutral-200 );
+	}
+
 	input {
 		// Extra padding to account for the button and
 		// the search icon.
-		padding: 10px 100px 10px 42px;
+		padding: 10px 100px 12px 42px;
 
 		// Trying out a rounded input
 		border-radius: 4px;
 
-		// Making the border feel a little more "at home"
-		// with signups dark background color.
-		border-color: var( --color-primary-700 );
-
-		// Since there's a 1px padding on the container, and
-		// inputs use actual borders (unlike cards, which
-		// use box-shadow), we need to adjust.
-		margin: 0 -1px;
-		width: calc( 100% + 2px );
+		// No need for a border here
+		border: none;
 
 		@include breakpoint( '<660px' ) {
 			// On smaller screens the buttons get bigger,
@@ -35,9 +36,14 @@ body.is-section-jetpack-connect .site-topic__content {
 			// smaller screens.
 			border-radius: 0;
 		}
+
+		&:focus {
+			box-shadow: 0 0 0 3px rgba( var( --color-accent-rgb ), 0.9 );
+		}
 	}
 
 	.suggestions__wrapper {
+		/*
 		// Without the extra padding from the Card, we need
 		// to adjust the position of the suggestions.
 		top: 46px;
@@ -47,11 +53,48 @@ body.is-section-jetpack-connect .site-topic__content {
 		@include breakpoint( '<660px' ) {
 			top: 52px;
 		}
+		*/
+
+		position: relative;
+		top: 0;
+		box-shadow: none;
+		margin-top: 3px;
+		margin-bottom: 10px;
+	}
+
+	.suggestions__item {
+		padding-left: 40px;
 	}
 
 	.button {
 		position: absolute;
 		top: 3px;
 		right: 3px;
+	}
+}
+
+.site-topic__heading {
+	font-size: 12px;
+	font-weight: 500;
+	text-transform: uppercase;
+	padding: 12px 24px 8px 40px;
+	color: var( --color-neutral-500 );
+}
+
+.site-topic__common-topics {}
+
+.site-topic__topic-list-item {
+	font-size: 15px;
+	color: var( --color-text );
+	border-top: 1px solid var( --color-neutral-50 );
+	padding: 10px 24px 10px 40px;
+
+	&:hover {
+		cursor: pointer;
+		background: var( --color-neutral-0 );
+	}
+
+	&:last-child {
+		border-radius: 0 0 4px 4px;
 	}
 }
