@@ -1,5 +1,4 @@
-.themes-banner,
-.themes-banner__upwork {
+.themes-banner {
 	background: no-repeat var( --color-accent );
 	color: white !important;
 	display: none;
@@ -31,7 +30,6 @@
 	.button.themes-banner__cta {
 		color: inherit;
 		position: relative;
-		z-index: z-index( '.themes-banner__upwork', '.button.themes-banner__cta' );
 	}
 
 	h1 {
@@ -81,7 +79,6 @@
 		right: 0;
 		top: 0;
 		width: 1.7em;
-		z-index: z-index( '.themes-banner__upwork', '.button.themes-banner__close' );
 
 		&:hover {
 			cursor: pointer;
@@ -96,26 +93,5 @@
 
 	@media ( min-width: 769px ) {
 		display: block;
-	}
-}
-
-.themes-banner__upwork {
-	h1,
-	p {
-		color: var( --color-neutral-700 );
-		text-shadow: none;
-	}
-
-	&::before {
-		display: none;
-	}
-
-	img {
-		max-width: 190px;
-		right: 30px;
-
-		@include breakpoint( '<960px' ) {
-			display: none;
-		}
 	}
 }
