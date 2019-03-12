@@ -19,7 +19,7 @@ import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getEligibleGSuiteDomain } from 'lib/domains/gsuite';
-import GSuitePurchaseFeatures from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-features';
+import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
 
 /**
  * Style dependencies
