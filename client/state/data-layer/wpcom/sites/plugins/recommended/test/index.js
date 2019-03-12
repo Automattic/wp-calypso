@@ -15,13 +15,13 @@ describe( 'fetch', () => {
 		expect( output ).toEqual(
 			expect.arrayContaining( [
 				recordTracksEvent( 'calypso_recommended_plugins_requested', {
-					siteId: EXAMPLE_SITE_ID,
+					site_id: EXAMPLE_SITE_ID,
 					limit: LIMIT,
 				} ),
 				expect.objectContaining( {
 					method: 'GET',
-					path: `/sites/${ EXAMPLE_SITE_ID }/plugins/recommend`,
-					query: { apiVersion: '2', limit: LIMIT },
+					path: `/sites/${ EXAMPLE_SITE_ID }/plugins/recommended`,
+					query: { apiNamespace: 'wpcom/v2', limit: LIMIT },
 				} ),
 			] )
 		);
@@ -33,9 +33,7 @@ describe( 'onSuccess', () => {
 		const data = [
 			{
 				name: 'Some Plugin',
-				author: '<a href="https://example.wordpress.com/">Plugin Creator</a>',
 				rating: 84,
-				icons: {},
 				slug: 'some-plugin',
 			},
 		];
@@ -43,7 +41,7 @@ describe( 'onSuccess', () => {
 		expect( output ).toEqual(
 			expect.arrayContaining( [
 				recordTracksEvent( 'calypso_recommended_plugins_received', {
-					siteId: EXAMPLE_SITE_ID,
+					site_id: EXAMPLE_SITE_ID,
 					limit: LIMIT,
 				} ),
 				receiveRecommendedPlugins( EXAMPLE_SITE_ID, data ),
@@ -58,7 +56,7 @@ describe( 'onError', () => {
 		expect( output ).toEqual(
 			expect.arrayContaining( [
 				recordTracksEvent( 'calypso_recommended_plugins_error', {
-					siteId: EXAMPLE_SITE_ID,
+					site_id: EXAMPLE_SITE_ID,
 					limit: LIMIT,
 				} ),
 			] )
