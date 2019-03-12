@@ -11,29 +11,22 @@
 	.card {
 		padding: 0;
 		margin: 0;
-	}
-
-	.form-fieldset {
-		margin: 0;
-	}
-
-	.button {
-		margin: 16px;
-		width: calc( 100% - 32px );
+		border-radius: 3px;
 	}
 }
 
 .site-type__option {
-	padding: 13px 24px 13px 48px;
+	padding: 16px 24px;
 	margin: 0;
 	font-weight: 400;
 	position: relative;
 
-	.form-radio {
-		position: absolute;
-		top: 16px;
-		left: 16px;
-		margin: 0;
+	&:first-child {
+		border-radius: 3px 3px 0 0;
+	}
+
+	&:last-child {
+		border-radius: 0 0 3px 3px;
 	}
 
 	.site-type__option-label,
@@ -43,7 +36,8 @@
 	}
 
 	.site-type__option-label {
-		font-size: 16px;
+		font-size: 18px;
+		color: var( --color-text );
 	}
 
 	.site-type__option-description {
@@ -51,15 +45,26 @@
 		color: var( --color-text-subtle );
 	}
 
-	&:hover {
-		cursor: pointer;
-
-		.site-type__option-label {
-			color: var( --color-text );
-		}
+	.gridicon {
+		position: absolute;
+		top: calc( 50% - 12px );
+		right: 16px;
+		fill: var( --color-neutral-50 );
+		transform: translateX( -4px );
+		transition: all 200ms cubic-bezier( 0.08, 0.74, 0.44, 1.07 );
 	}
 
-	&.is-selected {
+	&:hover {
+		cursor: pointer;
 		background: var( --color-neutral-0 );
+
+		.site-type__option-description {
+			color: var( --color-text );
+		}
+
+		.gridicon {
+			fill: var( --color-neutral-500 );
+			transform: translateX( 0 );
+		}
 	}
 }

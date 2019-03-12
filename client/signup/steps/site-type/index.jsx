@@ -35,8 +35,9 @@ class SiteType extends Component {
 			hasInitializedSitesBackUrl,
 		} = this.props;
 
-		const headerText = translate( 'Start with a site type' );
-		const subHeaderText = '';
+		const headerText = translate( 'What are we building today?' );
+		const subHeaderText =
+			'Choose the best starting point for your site. You can add or change features later on.';
 
 		return (
 			<StepWrapper

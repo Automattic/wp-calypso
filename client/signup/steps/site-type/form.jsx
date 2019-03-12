@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -10,13 +9,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
 import { getAllSiteTypes } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
+import Gridicon from 'gridicons';
 
 /**
  * Style dependencies
@@ -55,36 +51,18 @@ class SiteTypeForm extends Component {
 
 	renderRadioOptions() {
 		return getAllSiteTypes().map( siteTypeProperties => (
-			<FormLabel
-				className={ classNames( 'site-type__option', {
-					'is-selected': siteTypeProperties.slug === this.state.siteType,
-				} ) }
-				key={ siteTypeProperties.id }
-			>
-				<FormRadio
-					value={ siteTypeProperties.slug }
-					checked={ siteTypeProperties.slug === this.state.siteType }
-					onChange={ this.handleRadioChange }
-				/>
+			<div className="site-type__option" key={ siteTypeProperties.id }>
 				<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
 				<span className="site-type__option-description">{ siteTypeProperties.description }</span>
-			</FormLabel>
+				<Gridicon icon="chevron-right" />
+			</div>
 		) );
 	}
 
 	render() {
-		const { translate } = this.props;
-
 		return (
 			<div className="site-type__wrapper">
-				<form onSubmit={ this.handleSubmit }>
-					<Card>
-						<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
-						<Button primary={ true } type="submit" disabled={ ! this.state.siteType }>
-							{ translate( 'Continue' ) }
-						</Button>
-					</Card>
-				</form>
+				<Card>{ this.renderRadioOptions() }</Card>
 			</div>
 		);
 	}
