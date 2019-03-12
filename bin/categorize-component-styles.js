@@ -22,26 +22,6 @@ function hasImports( f ) {
 	return zero;
 }
 
-function hasExtend( f ) {
-	if ( f.includes( '@extend' ) ) {
-		return {
-			score: 1,
-			name: 'uses @extend',
-		};
-	}
-	return zero;
-}
-
-function hasInclude( f ) {
-	if ( f.includes( '@include' ) ) {
-		return {
-			score: 2,
-			name: 'uses @include',
-		};
-	}
-	return zero;
-}
-
 /**
  *
  * @param {String} f
@@ -49,17 +29,23 @@ function hasInclude( f ) {
  */
 function hasNonCompliantToplevelSelectors( f, name ) {
 	let topLevelSelectors;
-	const re = /^\.([\w_-]+)/gm;
+	const re = /^\.([\w_\-\.]+)/gm;
+	let violations = 0;
 	while ( ( topLevelSelectors = re.exec( f ) ) !== null ) {
-		//console.log( topLevelSelectors[1] );
-		if ( ! topLevelSelectors[ 1 ].startsWith( name ) ) {
+		const classes = topLevelSelectors[ 0 ].split( '.' ).filter( Boolean );
+
+		if ( ! classes.some( cls => cls.startsWith( name ) ) ) {
 			// suspect
-			//console.log( 'saw %s, expected %s', topLevelSelectors[1], name );
-			return {
-				score: 3,
-				name: 'odd top level selector',
-			};
+			//console.log( '  saw %s\n  expected %s', topLevelSelectors[0], name );
+			++violations;
 		}
+	}
+
+	if ( violations ) {
+		return {
+			score: violations,
+			name: 'non-compliant top level selectors',
+		};
 	}
 
 	return zero;
@@ -68,8 +54,8 @@ function hasNonCompliantToplevelSelectors( f, name ) {
 function score( c ) {
 	const styles = fs.readFileSync( 'client/' + c + '.scss', { encoding: 'utf8' } );
 	const name = path.basename( c.replace( /\/style$/, '' ) );
-	//console.log( '\n%s', c );
-	const checks = [ hasImports, hasExtend, hasInclude, hasNonCompliantToplevelSelectors ];
+	//console.log( '\nclient/%s.scss => %s', c, name );
+	const checks = [ hasImports, hasNonCompliantToplevelSelectors ];
 	const scores = checks.map( check => check( styles, name ) );
 	scores.score = scores.reduce( ( totalScore, { score: s } ) => totalScore + s, 0 );
 	scores.summary = scores
