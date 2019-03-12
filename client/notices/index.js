@@ -157,7 +157,7 @@ const notices = {
 	},
 
 	/**
-	 * Callback middleware to clear notices when a user leaves current page
+	 * Callback handler to clear notices when a user leaves current page
 	 * @public
 	 * @param {Object} context The page context
 	 * @param {Function} next The continuation
