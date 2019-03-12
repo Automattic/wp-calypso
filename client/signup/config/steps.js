@@ -19,7 +19,6 @@ import {
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
-	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 } from 'lib/signup/step-actions';
@@ -36,7 +35,6 @@ export default generateSteps( {
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
-	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 } );
