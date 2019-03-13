@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flow, get, includes, noop } from 'lodash';
+import { flow, get, includes, noop, truncate } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -64,7 +64,7 @@ class UploadingPane extends React.PureComponent {
 				const uploaderPrompt =
 					importerState === appStates.UPLOADING && uploadPercent < 99
 						? this.props.translate( 'Uploading %(filename)s\u2026', {
-								args: { filename },
+								args: { filename: truncate( filename, { length: 40 } ) },
 						  } )
 						: this.props.translate( 'Processing uploaded file\u2026' );
 
