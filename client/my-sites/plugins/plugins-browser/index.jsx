@@ -89,7 +89,7 @@ export class PluginsBrowser extends Component {
 	componentDidMount() {
 		PluginsListStore.on( 'change', this.refreshLists );
 
-		if ( abtest( 'pluginRecommendations' ) === 'featured' ) {
+		if ( ! this.isRecommendedPluginsEnabled() ) {
 			this.visibleCategories.push( 'featured' );
 		}
 
@@ -106,6 +106,10 @@ export class PluginsBrowser extends Component {
 
 	UNSAFE_componentWillReceiveProps( newProps ) {
 		this.refreshLists( newProps.search );
+	}
+
+	isRecommendedPluginsEnabled() {
+		return !! this.props.selectedSiteId && abtest( 'pluginRecommendations' ) === 'recommended';
 	}
 
 	refreshLists = search => {
@@ -335,7 +339,7 @@ export class PluginsBrowser extends Component {
 	getShortListsView() {
 		return (
 			<span>
-				{ abtest( 'pluginRecommendations' ) === 'recommended'
+				{ this.isRecommendedPluginsEnabled()
 					? this.getRecommendedPluginListView()
 					: this.getPluginSingleListView( 'featured' ) }
 
@@ -599,7 +603,7 @@ export class PluginsBrowser extends Component {
 
 		return (
 			<MainComponent wideLayout>
-				{ abtest( 'pluginRecommendations' ) === 'recommended' && (
+				{ this.isRecommendedPluginsEnabled() && (
 					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
 				) }
 				{ this.renderPageViewTracker() }
