@@ -1117,11 +1117,11 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			await gEmbedsComponentTwitter.isEmbeddedInEditor( this.twitterEditorSelector );
 
 			// Temporary disable Youtube check
-			// this.youtubeEditorSelector = '.wp-block-embed-youtube';
-			// const blockIdYouTube = await gEditorComponent.addBlock( 'YouTube' );
-			// const gEmbedsComponentYouTube = await EmbedsBlockComponent.Expect( driver, blockIdYouTube );
-			// await gEmbedsComponentYouTube.embedUrl( 'https://www.youtube.com/watch?v=xifhQyopjZM' );
-			// await gEmbedsComponentYouTube.isEmbeddedInEditor( this.youtubeEditorSelector ); // TODO: check is it shown in the Editor
+			this.youtubeEditorSelector = '.wp-block-embed-youtube';
+			const blockIdYouTube = await gEditorComponent.addBlock( 'YouTube' );
+			const gEmbedsComponentYouTube = await EmbedsBlockComponent.Expect( driver, blockIdYouTube );
+			await gEmbedsComponentYouTube.embedUrl( 'https://www.youtube.com/watch?v=xifhQyopjZM' );
+			await gEmbedsComponentYouTube.isEmbeddedInEditor( this.youtubeEditorSelector ); // TODO: check is it shown in the Editor
 
 			let errorShown = await gEditorComponent.errorDisplayed();
 			return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
