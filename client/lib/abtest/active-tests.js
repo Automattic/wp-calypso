@@ -1,12 +1,12 @@
 /** @format */
 export default {
 	improvedOnboarding: {
-		datestamp: '20190214',
+		datestamp: '20190314',
 		variations: {
 			main: 0,
 			onboarding: 100,
 		},
-		defaultVariation: 'onboarding',
+		defaultVariation: 'main',
 	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
