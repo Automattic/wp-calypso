@@ -1807,16 +1807,6 @@ Undocumented.prototype.sitePurchases = function( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/purchases' }, fn );
 };
 
-Undocumented.prototype.googleAppsFilterByDomain = function( domainName, fn ) {
-	debug( '/domains/:domainName/google-apps' );
-	return this.wpcom.req.get( { path: '/domains/' + domainName + '/google-apps' }, fn );
-};
-
-Undocumented.prototype.googleAppsFilterBySiteId = function( siteId, fn ) {
-	debug( '/sites/:siteId/google-apps' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/google-apps' }, fn );
-};
-
 Undocumented.prototype.isSiteImportable = function( site_url ) {
 	debug( `/wpcom/v2/site-importer-global/is-site-importable?${ site_url }` );
 
