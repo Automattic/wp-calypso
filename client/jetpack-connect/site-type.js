@@ -35,9 +35,7 @@ class JetpackSiteType extends Component {
 			<MainWrapper isWide>
 				<div className="jetpack-connect__step">
 					<FormattedHeader
-						headerText={ translate(
-							'High performance. Solid security. Your website, just better.'
-						) }
+						headerText={ translate( 'High performance. Solid security. Your site, just better.' ) }
 						subHeaderText={ translate(
 							'To get started, tell us a little bit about your site goals.'
 						) }
