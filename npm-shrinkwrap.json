@@ -17,10 +17,36 @@
       "version": "file:packages/calypso-build",
       "dev": true,
       "requires": {
+        "@wordpress/a11y": "2.0.2",
+        "@wordpress/api-fetch": "2.2.8",
+        "@wordpress/babel-plugin-import-jsx-pragma": "1.1.3",
+        "@wordpress/blob": "2.1.0",
+        "@wordpress/block-library": "2.2.16",
+        "@wordpress/blocks": "6.0.7",
+        "@wordpress/components": "7.0.8",
+        "@wordpress/compose": "3.0.1",
+        "@wordpress/core-data": "2.0.17",
+        "@wordpress/data": "4.2.1",
+        "@wordpress/date": "3.0.1",
+        "@wordpress/deprecated": "2.0.5",
+        "@wordpress/dom": "2.0.8",
+        "@wordpress/edit-post": "3.1.11",
+        "@wordpress/editor": "9.0.11",
+        "@wordpress/element": "2.1.9",
+        "@wordpress/format-library": "1.2.14",
+        "@wordpress/hooks": "2.0.5",
+        "@wordpress/i18n": "3.1.1",
+        "@wordpress/keycodes": "2.0.6",
+        "@wordpress/notices": "1.1.3",
+        "@wordpress/nux": "3.0.9",
+        "@wordpress/plugins": "2.0.11",
+        "@wordpress/rich-text": "3.0.7",
+        "@wordpress/token-list": "1.1.0",
+        "@wordpress/url": "2.3.3",
+        "@wordpress/viewport": "2.1.1",
         "autoprefixer": "9.4.4",
         "babel-loader": "8.0.5",
         "css-loader": "2.1.1",
-        "mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300db7027af8caa9a3015f54a34aec545cc54",
         "postcss-custom-properties": "8.0.9",
         "postcss-loader": "3.0.0",
         "sass-loader": "7.1.0",
@@ -28,13 +54,29 @@
         "thread-loader": "2.1.2",
         "webpack-filter-warnings-plugin": "1.2.1",
         "webpack-rtl-plugin": "1.8.0"
+      },
+      "dependencies": {
+        "mini-css-extract-plugin-with-rtl": {
+          "version": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300db7027af8caa9a3015f54a34aec545cc54",
+          "from": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300db7027af8caa9a3015f54a34aec545cc54",
+          "bundled": true,
+          "requires": {
+            "loader-utils": "^1.1.0",
+            "schema-utils": "^1.0.0",
+            "webpack-sources": "^1.1.0"
+          }
+        }
       }
     },
     "@automattic/calypso-color-schemes": {
       "version": "file:packages/calypso-color-schemes",
       "dev": true,
-      "requires": {
-        "color-studio": "github:automattic/color-studio#279f6ae4eacb15bc4f8f75856101aa4d0f4fd4a7"
+      "dependencies": {
+        "color-studio": {
+          "version": "github:automattic/color-studio#279f6ae4eacb15bc4f8f75856101aa4d0f4fd4a7",
+          "from": "github:automattic/color-studio#279f6ae4eacb15bc4f8f75856101aa4d0f4fd4a7",
+          "bundled": true
+        }
       }
     },
     "@automattic/format-currency": {
@@ -5458,11 +5500,6 @@
         "color-name": "^1.0.0",
         "simple-swizzle": "^0.2.2"
       }
-    },
-    "color-studio": {
-      "version": "github:automattic/color-studio#279f6ae4eacb15bc4f8f75856101aa4d0f4fd4a7",
-      "from": "github:automattic/color-studio#1.0.1",
-      "dev": true
     },
     "colors": {
       "version": "0.6.2",
@@ -12154,16 +12191,6 @@
       "version": "1.2.0",
       "resolved": "https://registry.npmjs.org/mimic-fn/-/mimic-fn-1.2.0.tgz",
       "integrity": "sha512-jf84uxzwiuiIVKiOLpfYk7N46TSy8ubTonmneY9vrpHNAnp0QBt2BxWV9dO3/j+BoVAb+a5G6YDPW3M5HOdMWQ=="
-    },
-    "mini-css-extract-plugin-with-rtl": {
-      "version": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300db7027af8caa9a3015f54a34aec545cc54",
-      "from": "github:Automattic/mini-css-extract-plugin-with-rtl",
-      "dev": true,
-      "requires": {
-        "loader-utils": "^1.1.0",
-        "schema-utils": "^1.0.0",
-        "webpack-sources": "^1.1.0"
-      }
     },
     "minimalistic-assert": {
       "version": "1.0.1",
