@@ -1,5 +1,5 @@
 /**
- * Return a webpack loader object containing our jsx (jsx -> js) stack.
+ * Return a Webpack loader configuration object containing for JavaScript transpilation.
  *
  * @param {Object} _                 Options
  * @param {number} _.workerCount     Number of workers that are being used by the thread-loader
