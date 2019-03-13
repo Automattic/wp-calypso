@@ -8,3 +8,9 @@ export class SomeClass {
 	method() {}
 	static thing = null;
 }
+
+export const ohHeyJsx = (
+	<span role="img" aria-label="Oh, hey!">
+		👋
+	</span>
+);
