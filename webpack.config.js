@@ -15,7 +15,7 @@ const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
-const Minimizer = require( '@automattic/calypso-build/webpack/minify' );
+const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 
@@ -134,7 +134,7 @@ function getWebpackConfig( {
 	cssFilename =
 		cssFilename ||
 		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
-	const minimizerConfig = Minimizer( {
+	const minifyConfig = Minify( {
 		cache: process.env.CIRCLECI
 			? `${ process.env.HOME }/terser-cache`
 			: 'docker' !== process.env.CONTAINER,
@@ -145,7 +145,6 @@ function getWebpackConfig( {
 			safari10: true,
 			mangle: calypsoEnv !== 'desktop',
 		},
-		shouldMinify,
 	} );
 
 	const webpackConfig = {
@@ -171,8 +170,8 @@ function getWebpackConfig( {
 			runtimeChunk: codeSplit ? { name: 'manifest' } : false,
 			moduleIds: 'named',
 			chunkIds: isDevelopment ? 'named' : 'natural',
-			minimize: minimizerConfig.minimize,
-			minimizer: minimizerConfig.minimizer,
+			minimize: shouldMinify,
+			minimizer: [ minifyConfig ],
 		},
 		module: {
 			// avoids this warning:
