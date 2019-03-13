@@ -12,7 +12,12 @@ describe( 'jetpack-blocks-build', () => {
 		() =>
 			new Promise( ( resolve, reject ) => {
 				exec(
-					`SOURCEMAP='none' node ${ join( __dirname, '..', 'bin', 'build.js' ) } --test-build`,
+					`NODE_ENV='development' SOURCEMAP='none' node ${ join(
+						__dirname,
+						'..',
+						'bin',
+						'build.js'
+					) } --test-build`,
 					buildError => {
 						if ( buildError ) {
 							return reject( buildError );

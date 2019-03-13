@@ -115,46 +115,68 @@ module.exports = _defineProperty;
 
 /***/ }),
 
+/***/ \\"./node_modules/@babel/runtime/helpers/interopRequireDefault.js\\":
+/*!**********************************************************************!*\\\\
+  !*** ./node_modules/@babel/runtime/helpers/interopRequireDefault.js ***!
+  \\\\**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    default: obj
+  };
+}
+
+module.exports = _interopRequireDefault;
+
+/***/ }),
+
 /***/ \\"./packages/jetpack-blocks/test/fixtures/test-build.js\\":
 /*!*************************************************************!*\\\\
   !*** ./packages/jetpack-blocks/test/fixtures/test-build.js ***!
   \\\\*************************************************************/
-/*! exports provided: destructuredAs, SomeClass, ohHeyJsx */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
 \\"use strict\\";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \\"destructuredAs\\", function() { return destructuredAs; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \\"SomeClass\\", function() { return SomeClass; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \\"ohHeyJsx\\", function() { return ohHeyJsx; });
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ \\"./node_modules/@babel/runtime/helpers/defineProperty.js\\");
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ \\"@wordpress/element\\");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
 
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ \\"./node_modules/@babel/runtime/helpers/interopRequireDefault.js\\");
+
+Object.defineProperty(exports, \\"__esModule\\", {
+  value: true
+});
+exports.ohHeyJsx = exports.SomeClass = exports.destructuredAs = void 0;
+
+var _element = __webpack_require__(/*! @wordpress/element */ \\"@wordpress/element\\");
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ \\"./node_modules/@babel/runtime/helpers/defineProperty.js\\"));
 
 const {
   destructured: destructuredAs = 'default'
 } = {
   ['destructured']: 'destructured'
 };
+exports.destructuredAs = destructuredAs;
+
 class SomeClass {
   constructor() {
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(this, \\"instanceProp\\", null);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(this, \\"arrowMethod\\", () => {});
+    (0, _defineProperty2.default)(this, \\"instanceProp\\", null);
+    (0, _defineProperty2.default)(this, \\"arrowMethod\\", () => {});
   }
 
   method() {}
 
 }
 
-_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(SomeClass, \\"thing\\", null);
-
-const ohHeyJsx = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__[\\"createElement\\"])(\\"span\\", {
+exports.SomeClass = SomeClass;
+(0, _defineProperty2.default)(SomeClass, \\"thing\\", null);
+const ohHeyJsx = (0, _element.createElement)(\\"span\\", {
   role: \\"img\\",
   \\"aria-label\\": \\"Oh, hey!\\"
 }, \\"\\\\uD83D\\\\uDC4B\\");
+exports.ohHeyJsx = ohHeyJsx;
 
 /***/ }),
 
