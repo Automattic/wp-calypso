@@ -27,7 +27,7 @@ const GSuiteCancellationFeatures = ( { translate, purchase } ) => {
 			<FormFieldset>
 				<p>
 					{ translate(
-						'Are you sure you want to cancel and remove G Suite from {{siteName/}}' +
+						'Are you sure you want to cancel and remove G Suite from {{siteName/}}? ' +
 							"Here's what you'll be missing:",
 						{ components: { siteName: <em>{ gsuiteDomain }</em> } }
 					) }
