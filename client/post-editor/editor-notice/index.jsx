@@ -8,12 +8,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import GlobalNoticesContainer from 'components/global-notices/container';
 import Notice from 'components/notice';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -241,10 +241,10 @@ export class EditorNotice extends Component {
 		const text = this.getErrorMessage() || this.getText( message );
 
 		return (
-			<div className={ classNames( 'editor-notice', { 'is-global': true } ) }>
+			<GlobalNoticesContainer className="editor-notice is-global">
 				{ siteId && <QueryPostTypes siteId={ siteId } /> }
-				{ text && <Notice { ...{ status, text, onDismissClick } } showDismiss={ true } /> }
-			</div>
+				{ text && <Notice { ...{ status, text, onDismissClick } } showDismiss /> }
+			</GlobalNoticesContainer>
 		);
 	}
 }
