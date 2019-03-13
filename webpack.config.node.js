@@ -21,6 +21,7 @@ const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-iden
 const config = require( 'config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
+const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 
 /**
  * Internal variables
@@ -69,14 +70,6 @@ function getExternals() {
 	return externals;
 }
 
-const babelLoader = {
-	loader: 'babel-loader',
-	options: {
-		cacheDirectory: path.join( __dirname, 'build', '.babel-server-cache' ),
-		cacheIdentifier,
-	},
-};
-
 const webpackConfig = {
 	devtool: 'source-map',
 	entry: './index.js',
@@ -101,19 +94,13 @@ const webpackConfig = {
 					options: { forceRequire: true, onlyIsomorphic: true },
 				},
 			},
-			{
-				test: /\.jsx?$/,
+			TranspileConfig.loader( {
+				workerCount,
+				configFile: path.join( __dirname, 'babel.config.js' ),
+				cacheDirectory: path.join( __dirname, 'build', '.babel-server-cache' ),
+				cacheIdentifier,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
-				use: [
-					{
-						loader: 'thread-loader',
-						options: {
-							workers: workerCount,
-						},
-					},
-					babelLoader,
-				],
-			},
+			} ),
 			{
 				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
 				loader: 'babel-loader',
