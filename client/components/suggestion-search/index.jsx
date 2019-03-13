@@ -91,6 +91,7 @@ class SuggestionSearch extends Component {
 					break;
 				case 'Enter':
 					event.preventDefault();
+					this.hideSuggestions();
 					break;
 			}
 		}
@@ -99,14 +100,14 @@ class SuggestionSearch extends Component {
 	};
 
 	handleSuggestionMouseDown = position => {
-		this.setState( { inputValue: position.label } );
+		this.setState( { inputValue: position.label, isStickyValueSelected: false } );
 		this.hideSuggestions();
 		this.props.onChange( position.label );
 	};
 
 	getSuggestions() {
-		if ( ! this.state.query ) {
-			return [];
+		if ( ! this.state.inputValue ) {
+			return this.props.suggestedTopics || [];
 		}
 
 		return ( 'function' === typeof this.props.sortResults
@@ -120,7 +121,7 @@ class SuggestionSearch extends Component {
 	}
 
 	updateFieldFromSuggestion( newValue ) {
-		this.setState( { inputValue: newValue } );
+		this.setState( { inputValue: newValue} );
 		this.props.onChange( newValue );
 	}
 

@@ -116,18 +116,22 @@ class Suggestions extends Component {
 			<div>
 				{ showSuggestions && (
 					<div className="suggestions__wrapper">
-						{ map( this.props.suggestions, ( { label }, index ) => (
-							<Item
-								key={ index }
-								hasHighlight={ index === this.state.suggestionPosition }
-								query={ query }
-								onMouseDown={ this.handleMouseDown }
-								onMouseOver={ this.handleMouseOver }
-								label={ label }
-								ref={ suggestion => {
-									this.refsCollection[ 'suggestion_' + index ] = suggestion;
-								} }
-							/>
+						{ map( this.props.suggestions, ( { label, heading }, index ) => (
+							heading ?
+								<button className="suggestions__item suggestions__heading">
+									<span className="suggestions__label">{ label }</span>
+								</button> :
+								<Item
+									key={ index }
+									hasHighlight={ index === this.state.suggestionPosition }
+									query={ query }
+									onMouseDown={ this.handleMouseDown }
+									onMouseOver={ this.handleMouseOver }
+									label={ label }
+									ref={ suggestion => {
+										this.refsCollection[ 'suggestion_' + index ] = suggestion;
+									} }
+								/>
 						) ) }
 					</div>
 				) }

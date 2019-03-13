@@ -16,6 +16,7 @@ import SuggestionSearch from 'components/suggestion-search';
 import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { convertToCamelCase } from 'state/data-layer/utils';
+import { SITE_VERTICALS_COMMON_TOPICS } from 'components/site-verticals-suggestion-search/common-topics';
 
 export class SiteVerticalsSuggestionSearch extends Component {
 	static propTypes = {
@@ -141,15 +142,18 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	render() {
 		const { translate, placeholder, autoFocus } = this.props;
 		return (
-			<SuggestionSearch
-				id="siteTopic"
-				placeholder={ placeholder || translate( 'e.g. Fashion, travel, design, plumbing' ) }
-				onChange={ this.onSiteTopicChange }
-				suggestions={ this.getSuggestions() }
-				value={ this.state.searchValue }
-				sortResults={ this.sortSearchResults }
-				autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-			/>
+			<>
+				<SuggestionSearch
+					id="siteTopic"
+					placeholder={ placeholder || translate( 'e.g. Fashion, travel, design, plumbing' ) }
+					onChange={ this.onSiteTopicChange }
+					suggestions={ this.getSuggestions() }
+					value={ this.state.searchValue }
+					sortResults={ this.sortSearchResults }
+					suggestedTopics={ this.props.commonTopics }
+					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+				/>
+			</>
 		);
 	}
 }
@@ -190,6 +194,7 @@ export default localize(
 				lastUpdated: get( siteVerticalHttpData, 'lastUpdated', 0 ),
 				verticals: get( siteVerticalHttpData, 'data', [] ),
 				defaultVertical: get( defaultVerticalHttpData, 'data[0]', {} ),
+				commonTopics: SITE_VERTICALS_COMMON_TOPICS,
 			};
 		},
 		() => ( {
