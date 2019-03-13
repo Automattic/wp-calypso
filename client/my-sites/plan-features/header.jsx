@@ -93,7 +93,7 @@ export class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
-					{ countryCode && abtest( 'jetpackMontlyPlansOnly', countryCode ) !== 'monthlyOnly'
+					{ countryCode && abtest( 'jetpackMonthlyPlansOnly', countryCode ) !== 'monthlyOnly'
 						? this.getIntervalDiscount()
 						: null }
 				</div>

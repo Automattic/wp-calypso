@@ -130,7 +130,7 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	jetpackMontlyPlansOnly: {
+	jetpackMonthlyPlansOnly: {
 		datestamp: '20190312',
 		variations: {
 			original: 50,

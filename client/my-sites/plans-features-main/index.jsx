@@ -144,7 +144,7 @@ export class PlansFeaturesMain extends Component {
 		if (
 			countryCode &&
 			displayJetpackPlans &&
-			abtest( 'jetpackMontlyPlansOnly', countryCode ) === 'monthlyOnly'
+			abtest( 'jetpackMonthlyPlansOnly', countryCode ) === 'monthlyOnly'
 		) {
 			term = TERM_MONTHLY;
 		}
@@ -280,7 +280,7 @@ export class PlansFeaturesMain extends Component {
 	renderToggle() {
 		const { displayJetpackPlans, withWPPlanTabs, countryCode } = this.props;
 		if ( displayJetpackPlans ) {
-			if ( countryCode && abtest( 'jetpackMontlyPlansOnly', countryCode ) === 'monthlyOnly' ) {
+			if ( countryCode && abtest( 'jetpackMonthlyPlansOnly', countryCode ) === 'monthlyOnly' ) {
 				return false;
 			}
 			return this.getIntervalTypeToggle();
