@@ -1088,7 +1088,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	xdescribe( 'Insert embeds: @parallel', function() {
+	describe.skip( 'Insert embeds: @parallel', function() {
 		step( 'Can log in', async function() {
 			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
