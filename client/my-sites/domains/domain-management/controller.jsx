@@ -157,7 +157,6 @@ export default {
 				context={ pageContext }
 				needsCart
 				needsDomains
-				needsGoogleApps
 				needsPlans
 				needsProductsList
 				selectedDomainName={ pageContext.params.domain }

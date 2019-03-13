@@ -19,7 +19,9 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { hasGSuite, isGSuiteRestricted, hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
+import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
 import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
@@ -35,13 +37,13 @@ import {
 import { getSelectedDomain } from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import DocumentHead from 'components/data/document-head';
+import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 
 class Email extends React.Component {
 	static propTypes = {
 		currencyCode: PropTypes.string.isRequired,
 		domains: PropTypes.array.isRequired,
-		googleAppsUsers: PropTypes.array.isRequired,
-		googleAppsUsersLoaded: PropTypes.bool.isRequired,
+		gsuiteUsers: PropTypes.array,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		products: PropTypes.object,
 		selectedDomainName: PropTypes.string,
@@ -50,8 +52,10 @@ class Email extends React.Component {
 	};
 
 	render() {
+		const { selectedSite } = this.props;
 		return (
 			<Main className="email" wideLayout={ isPlanFeaturesEnabled() }>
+				{ selectedSite && <QueryGSuiteUsers siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
 				{ this.headerOrPlansNavigation() }
@@ -80,7 +84,7 @@ class Email extends React.Component {
 		if (
 			! (
 				! this.props.isRequestingSiteDomains &&
-				this.props.googleAppsUsersLoaded &&
+				null !== this.props.gsuiteUsers &&
 				get( this.props, 'products.gapps', false )
 			)
 		) {
@@ -185,8 +189,14 @@ class Email extends React.Component {
 }
 
 export default connect(
-	state => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-	} ),
+	state => {
+		const selectedSite = getSelectedSite( state );
+		const siteId = get( selectedSite, 'ID', null );
+		return {
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			gsuiteUsers: getGSuiteUsers( state, siteId ),
+			selectedSite,
+		};
+	},
 	{}
 )( localize( Email ) );

@@ -1,7 +1,7 @@
 /** @format */
 export const gsuiteUsersSchema = {
-	type: 'object',
-	additionalProperties: {
+	type: 'array',
+	items: {
 		oneOf: [
 			{
 				type: 'object',

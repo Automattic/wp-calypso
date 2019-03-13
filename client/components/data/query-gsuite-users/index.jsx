@@ -24,8 +24,8 @@ const QueryGSuiteUsers = ( { siteId, request, isRequesting } ) => {
 
 QueryGSuiteUsers.propTypes = {
 	siteId: PropTypes.number.isRequired,
-	getGSuiteUsers: PropTypes.func.isRequired,
-	requestingGSuiteUsers: PropTypes.func.isRequired,
+	request: PropTypes.func.isRequired,
+	isRequesting: PropTypes.bool.isRequired,
 };
 
 export default connect(

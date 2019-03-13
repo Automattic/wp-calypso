@@ -16,14 +16,7 @@ export const gsuiteUsersReducer = createReducer(
 	{
 		[ GSUITE_USERS_REQUEST ]: () => null,
 		[ GSUITE_USERS_REQUEST_FAILURE ]: () => null,
-		[ GSUITE_USERS_REQUEST_SUCCESS ]: ( state, { response: { accounts } } ) =>
-			accounts.reduce(
-				( accumulator, account ) => ( {
-					...accumulator,
-					[ account.domain ]: account,
-				} ),
-				{}
-			),
+		[ GSUITE_USERS_REQUEST_SUCCESS ]: ( state, { response: { accounts } } ) => accounts,
 	},
 	gsuiteUsersScheama
 );

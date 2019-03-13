@@ -124,7 +124,7 @@ class GoogleAppsUsers extends React.Component {
 
 	render() {
 		const pendingDomains = this.getDomainsAsList().filter( hasPendingGSuiteUsers );
-		const usersByDomain = groupBy( this.props.googleAppsUsers, 'domain' );
+		const usersByDomain = groupBy( this.props.gsuiteUsers, 'domain' );
 
 		return (
 			<div>
@@ -176,7 +176,7 @@ const manageClick = ( domainName, email ) =>
 
 GoogleAppsUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
-	googleAppsUsers: PropTypes.array.isRequired,
+	gsuiteUsers: PropTypes.array.isRequired,
 	selectedDomainName: PropTypes.string,
 	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	user: PropTypes.object.isRequired,
