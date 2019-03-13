@@ -18,7 +18,8 @@ function handleObservedResize( galleries ) {
 		handleObservedResize.pendingRaf = null;
 		for ( const gallery of galleries ) {
 			const { width: galleryWidth } = gallery.contentRect;
-			const rows = Array.from( gallery.target.childNodes );
+			// We can't use childNodes becuase post content may contain unexpected text nodes
+			const rows = Array.from( gallery.target.querySelectorAll( '.tiled-gallery__row' ) );
 			rows.forEach( row => handleRowResize( row, galleryWidth ) );
 		}
 	} );
