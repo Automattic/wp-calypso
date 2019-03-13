@@ -168,7 +168,11 @@ class RemovePurchase extends Component {
 
 		const { isDomainOnlySite, purchase, site, translate } = this.props;
 
-		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
+		if (
+			! isDomainRegistration( purchase ) &&
+			! isGoogleApps( purchase ) &&
+			config.isEnabled( 'upgrades/removal-survey' )
+		) {
 			const survey = wpcom
 				.marketing()
 				.survey( 'calypso-remove-purchase', this.props.purchase.siteId );
@@ -485,6 +489,7 @@ class RemovePurchase extends Component {
 				<GSuiteCancellationPurchaseDialog
 					isVisible={ this.state.isDialogVisible }
 					onClose={ this.closeDialog }
+					onRemovePurchase={ this.removePurchase }
 					purchase={ purchase }
 					site={ this.props.site }
 				/>

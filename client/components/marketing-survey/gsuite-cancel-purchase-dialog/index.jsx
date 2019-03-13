@@ -38,13 +38,9 @@ class GSuiteCancelPurchaseDialog extends Component {
 		} );
 	};
 
-	removeButtonClick = () => {
+	removeButtonClick = action => {
 		this.saveSurveyResults();
-		this.removePurchase();
-	};
-
-	removePurchase = () => {
-		// TODO: copy & simplify from <RemovePurchase />
+		this.props.onRemovePurchase( action );
 	};
 
 	saveSurveyResults = async () => {
@@ -134,6 +130,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 GSuiteCancelPurchaseDialog.propTypes = {
 	isVisible: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
+	onRemovePurchase: PropTypes.func.isRequired,
 	purchase: PropTypes.object.isRequired,
 	site: PropTypes.object.isRequired,
 	translate: PropTypes.func.isRequired,
