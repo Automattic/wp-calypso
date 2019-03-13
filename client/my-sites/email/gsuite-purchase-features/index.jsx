@@ -14,6 +14,7 @@ import React, { Fragment } from 'react';
 import { ADDING_GOOGLE_APPS_TO_YOUR_SITE } from 'lib/url/support';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import GSuitePurchaseFeaturesSingleFeature from './single-feature';
+
 /**
  * Style dependencies
  */
@@ -32,8 +33,6 @@ class GSuitePurchaseFeatures extends React.Component {
 			return translate( 'Get 30GB of storage for all your files synced across devices.' );
 		}
 	}
-
-	renderFeature() {}
 
 	render() {
 		const { domainName, type, translate } = this.props;
@@ -74,7 +73,7 @@ class GSuitePurchaseFeatures extends React.Component {
 						imageAlt={ 'Google Drive Logo' }
 					/>
 					<GSuitePurchaseFeaturesSingleFeature
-						ttitle={ translate( 'Connect with your team' ) }
+						title={ translate( 'Connect with your team' ) }
 						description={ translate(
 							'Use text chats, voice calls, or video calls, with built in screen sharing.'
 						) }

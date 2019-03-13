@@ -18,6 +18,11 @@ import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
 import notices from 'notices';
 import wpcom from 'lib/wp';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class GSuiteCancelPurchaseDialog extends Component {
 	state = {
 		isDisabled: false,
@@ -117,11 +122,13 @@ class GSuiteCancelPurchaseDialog extends Component {
 				isVisible={ isVisible }
 				onClose={ onClose }
 			>
-				{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
-					<GSuiteCancellationFeatures purchase={ purchase } />
-				) : (
-					<GSuiteCancellationSurvey onSurveryAnswerChange={ this.onSurveryAnswerChange } />
-				) }
+				<div className="gsuite-cancel-purchase-dialog__content">
+					{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
+						<GSuiteCancellationFeatures purchase={ purchase } />
+					) : (
+						<GSuiteCancellationSurvey onSurveryAnswerChange={ this.onSurveryAnswerChange } />
+					) }
+				</div>
 			</Dialog>
 		);
 	}

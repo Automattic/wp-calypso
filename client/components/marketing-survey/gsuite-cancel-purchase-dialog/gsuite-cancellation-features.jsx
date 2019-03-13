@@ -16,7 +16,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import { purchaseType } from 'lib/purchases';
-import GSuitePurchaseFeatures from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-features';
+import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
 
 const GSuiteCancellationFeatures = ( { translate, purchase } ) => {
 	const gsuiteDomain = purchaseType( purchase );
