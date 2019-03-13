@@ -465,7 +465,10 @@ export function generateSteps( {
 			stepName: 'site-information-title',
 			providesDependencies: [ 'title' ],
 			props: {
-				headerText: i18n.translate( "Tell us your site's name" ),
+				headerText: i18n.translate( 'Whats the name of your website?' ),
+				subHeaderText: i18n.translate(
+					'Your site’s name will appear at the top, and can be changed at anytime.'
+				),
 				informationFields: [ 'title' ],
 			},
 		},
@@ -538,7 +541,10 @@ export function generateSteps( {
 			stepName: 'site-information-title-with-preview',
 			providesDependencies: [ 'title' ],
 			props: {
-				headerText: i18n.translate( "Tell us your site's name" ),
+				headerText: i18n.translate( 'Whats the name of your website?' ),
+				subHeaderText: i18n.translate(
+					"Your site's name will appear at the top, and can be changed at anytime."
+				),
 				informationFields: [ 'title' ],
 				showSiteMockups: true,
 			},

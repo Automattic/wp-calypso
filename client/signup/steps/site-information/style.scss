@@ -45,6 +45,9 @@
 		// Labels should be white when placed directly
 		// on the primary background color
 		color: var( --color-white );
+
+		// No need for labels when displayed alone
+		display: none;
 	}
 
 	input {
