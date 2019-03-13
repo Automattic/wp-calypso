@@ -1,14 +1,14 @@
 /**
  * Return a webpack loader object containing our jsx (jsx -> js) stack.
  *
- * @param  {Object}    _                    Options
- * @param  {integer}   _.workerCount        Number of workers that are being used by the thread-loader
- * @param  {string}    _.configFile         Babel loader config file
- * @param  {string}    _.cacheDirectory     Babel loader cache directory
- * @param  {string}    _.cacheIdentifier    Babel loader cache identifier
- * @param  {regEx}    _.exclude    		    Directories to exclude when looking for files to transpile
+ * @param {Object} _                 Options
+ * @param {number} _.workerCount     Number of workers that are being used by the thread-loader
+ * @param {string} _.configFile      Babel loader config file
+ * @param {string} _.cacheDirectory  Babel loader cache directory
+ * @param {string} _.cacheIdentifier Babel loader cache identifier
+ * @param {RegExp} _.exclude         Directories to exclude when looking for files to transpile
  *
- * @return {Object}   webpack loader object
+ * @return {Object} Webpack loader object
  */
 module.exports.loader = ( {
 	workerCount,
