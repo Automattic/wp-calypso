@@ -78,7 +78,7 @@
 		"twoYearPlanByDefault",
 		"pluginFeaturedTitle",
 		"builderReferralHelpPopover",
-		"jetpackMonthlyPlansOnly",
+		"jetpackMonthlyPlansOnly"
 	],
 	"overrideABTests": [
 		[ "businessPlanDescriptionAT_20170605", "original" ],
