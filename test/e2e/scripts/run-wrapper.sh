@@ -42,4 +42,4 @@ fi
 #  TESTARGS+=" -x"
 #fi
 
-npm run test
+npm test
