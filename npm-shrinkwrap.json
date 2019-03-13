@@ -7427,7 +7427,10 @@
     },
     "eslint-config-wpcalypso": {
       "version": "file:packages/eslint-config-wpcalypso",
-      "dev": true
+      "dev": true,
+      "requires": {
+        "eslint-plugin-react-hooks": "^1.5.0"
+      }
     },
     "eslint-import-resolver-node": {
       "version": "0.3.2",
@@ -7641,6 +7644,12 @@
           }
         }
       }
+    },
+    "eslint-plugin-react-hooks": {
+      "version": "1.5.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-1.5.0.tgz",
+      "integrity": "sha512-iwDuWR2ReRgvJsNm8fXPtTKdg78IVQF8I4+am3ntztPf/+nPnWZfArFu6aXpaC75/iCYRrkqI8nPCYkxJstmpA==",
+      "dev": true
     },
     "eslint-plugin-wpcalypso": {
       "version": "file:packages/eslint-plugin-wpcalypso",
