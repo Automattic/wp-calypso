@@ -20,7 +20,7 @@ import { hasGSuite, isGSuiteRestricted, hasGSuiteSupportedDomain } from 'lib/dom
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import GSuitePurchaseCta from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-cta';
+import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
 import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
 import VerticalNav from 'components/vertical-nav';
