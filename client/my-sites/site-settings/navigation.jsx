@@ -57,6 +57,16 @@ export class SiteSettingsNavigation extends Component {
 						{ strings.general }
 					</NavItem>
 
+					{ config.isEnabled( 'manage/security' ) && site.jetpack && (
+						<NavItem
+							path={ `/settings/security/${ site.slug }` }
+							preloadSectionName="settings-security"
+							selected={ section === 'security' }
+						>
+							{ strings.security }
+						</NavItem>
+					) }
+
 					<NavItem
 						path={ `/settings/performance/${ site.slug }` }
 						preloadSectionName="settings-performance"
@@ -88,16 +98,6 @@ export class SiteSettingsNavigation extends Component {
 					>
 						{ strings.traffic }
 					</NavItem>
-
-					{ config.isEnabled( 'manage/security' ) && site.jetpack && (
-						<NavItem
-							path={ `/settings/security/${ site.slug }` }
-							preloadSectionName="settings-security"
-							selected={ section === 'security' }
-						>
-							{ strings.security }
-						</NavItem>
-					) }
 				</NavTabs>
 			</SectionNav>
 		);
