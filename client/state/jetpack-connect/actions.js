@@ -34,6 +34,7 @@ import {
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SAVE_SITE_TYPE,
+	JETPACK_CONNECT_SAVE_SITE_USER_TYPE,
 	JETPACK_CONNECT_SAVE_SITE_VERTICAL,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
@@ -47,6 +48,7 @@ import {
 	SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/sites/user-type';
 import 'state/data-layer/wpcom/sites/site-type';
 import 'state/data-layer/wpcom/sites/site-vertical';
 
@@ -511,6 +513,14 @@ export function completeFlow( site ) {
 			type: JETPACK_CONNECT_COMPLETE_FLOW,
 			site,
 		} );
+	};
+}
+
+export function saveSiteUserType( siteId, siteUserType ) {
+	return {
+		type: JETPACK_CONNECT_SAVE_SITE_USER_TYPE,
+		siteId,
+		siteUserType,
 	};
 }
 
