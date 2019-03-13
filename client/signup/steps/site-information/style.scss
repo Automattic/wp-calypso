@@ -62,14 +62,34 @@
 		@include breakpoint( '<660px' ) {
 			padding-top: 15px;
 			padding-bottom: 15px;
+
+			// The rounded borders look strange on
+			// smaller screens.
+			border-radius: 0;
 		}
 
 		// Making the border feel a little more "at home"
 		// with signups dark background color.
-		border-color: var( --color-primary-700 );
+		border-color: transparent;
+
+		// Adding a shadow to fit it with other steps
+		box-shadow: 0 3px 6px rgba(0,0,0,0.16),
+					0 3px 6px rgba(0,0,0,0.23);
+		transition: all 0.2s ease-in-out;
 
 		// Trying out a rounded input
 		border-radius: 4px;
+
+		&:focus {
+			// Add a border when the input is active
+			box-shadow: 0 0 0 2px var(--color-accent),
+						0 3px 6px rgba(0, 0, 0, 0.3),
+						0 4px 10px 3px rgba(0, 0, 0, 0.15);
+		}
+	}
+
+	.button {
+		box-shadow: 0 1px 2px rgba(0,0,0,0.3);
 	}
 
 	.card {
