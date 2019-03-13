@@ -10,6 +10,12 @@ export default class PaymentButtonFrontEndComponent extends AsyncBaseContainer {
 		super( driver, by.css( '.jetpack-simple-payments-wrapper' ) );
 	}
 
+	async _preInit() {
+		// The payment button doesn't always show on the page right away. Waiting a few seconds and refreshing fixes it.
+		await this.driver.sleep( 5000 );
+		return await this.driver.navigate().refresh();
+	}
+
 	async clickPaymentButton() {
 		const payPalPayButtonSelector = by.css( '.paypal-button-card' );
 		await this.driver.wait(
