@@ -167,7 +167,7 @@ function getWebpackConfig( {
 			moduleIds: 'named',
 			chunkIds: isDevelopment ? 'named' : 'natural',
 			minimize: shouldMinify,
-			minimizer: [ minifyConfig ],
+			minimizer: minifyConfig,
 		},
 		module: {
 			// avoids this warning:
