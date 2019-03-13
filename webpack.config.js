@@ -140,11 +140,7 @@ function getWebpackConfig( {
 			: 'docker' !== process.env.CONTAINER,
 		parallel: workerCount,
 		sourceMap: Boolean( process.env.SOURCEMAP ),
-		terserOptions: {
-			ecma: 5,
-			safari10: true,
-			mangle: calypsoEnv !== 'desktop',
-		},
+		terserOptions: { mangle: calypsoEnv !== 'desktop' },
 	} );
 
 	const webpackConfig = {
