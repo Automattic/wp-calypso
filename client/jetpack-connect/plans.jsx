@@ -236,14 +236,13 @@ class Plans extends Component {
 export { Plans as PlansTestComponent };
 
 const connectComponent = connect(
-	state => {
+	( state, props ) => {
 		const user = getCurrentUser( state );
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteSlug = selectedSite ? selectedSite.slug : '';
 
 		const selectedPlanSlug = retrievePlan();
 		const selectedPlan = getPlanBySlug( state, selectedPlanSlug );
-
 		return {
 			calypsoStartedConnection: isCalypsoStartedConnection( selectedSiteSlug ),
 			canPurchasePlans: selectedSite
@@ -258,7 +257,7 @@ const connectComponent = connect(
 			selectedSite,
 			selectedSiteSlug,
 			userId: user ? user.ID : null,
-			countryCode: requestGeoLocation().data,
+			countryCode: props.countryCode || requestGeoLocation().data,
 		};
 	},
 	{
