@@ -134,14 +134,6 @@ function getWebpackConfig( {
 	cssFilename =
 		cssFilename ||
 		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
-	const minifyConfig = Minify( {
-		cache: process.env.CIRCLECI
-			? `${ process.env.HOME }/terser-cache`
-			: 'docker' !== process.env.CONTAINER,
-		parallel: workerCount,
-		sourceMap: Boolean( process.env.SOURCEMAP ),
-		terserOptions: { mangle: calypsoEnv !== 'desktop' },
-	} );
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
@@ -167,7 +159,18 @@ function getWebpackConfig( {
 			moduleIds: 'named',
 			chunkIds: isDevelopment ? 'named' : 'natural',
 			minimize: shouldMinify,
-			minimizer: minifyConfig,
+			minimizer: Minify( {
+				cache: process.env.CIRCLECI
+					? `${ process.env.HOME }/terser-cache`
+					: 'docker' !== process.env.CONTAINER,
+				parallel: workerCount,
+				sourceMap: Boolean( process.env.SOURCEMAP ),
+				terserOptions: {
+					ecma: 5,
+					safari10: true,
+					mangle: calypsoEnv !== 'desktop',
+				},
+			} ),
 		},
 		module: {
 			// avoids this warning:
