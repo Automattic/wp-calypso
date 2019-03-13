@@ -18,6 +18,7 @@ const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpac
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
+const HotModuleReplacementConfig = require( '@automattic/calypso-build/webpack/hot-module-replacement' );
 
 /**
  * Internal dependencies
@@ -138,7 +139,11 @@ function getWebpackConfig( {
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		context: __dirname,
-		entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
+		entry: {
+			build: HotModuleReplacementConfig.entryBuild( isDevelopment, [
+				path.join( __dirname, 'client', 'boot', 'app' ),
+			] ),
+		},
 		mode: isDevelopment ? 'development' : 'production',
 		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 		output: {
@@ -290,6 +295,7 @@ function getWebpackConfig( {
 			new MomentTimezoneDataPlugin( {
 				startYear: 2000,
 			} ),
+			HotModuleReplacementConfig.plugins( isDevelopment ),
 		] ),
 		externals: _.compact( [
 			externalizeWordPressPackages && wordpressExternals,
@@ -309,9 +315,6 @@ function getWebpackConfig( {
 		// also we don't minify so dont name them .min.js
 		webpackConfig.output.filename = '[name].js';
 		webpackConfig.output.chunkFilename = '[name].js';
-
-		webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-		webpackConfig.entry.build.unshift( 'webpack-hot-middleware/client' );
 	}
 
 	if ( ! config.isEnabled( 'desktop' ) ) {
