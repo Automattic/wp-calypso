@@ -437,12 +437,9 @@ export class Checkout extends React.Component {
 				cartItems.hasPersonalPlan( cart ) ||
 				cartItems.hasPremiumPlan( cart ) )
 		) {
-			// Assign a test group as late as possible
-			if ( 'show' === abtest( 'showConciergeSessionUpsellNonGSuite' ) ) {
-				// A user just purchased one of the qualifying plans and is in the "show" ab test variation
-				// Show them the concierge session upsell page
-				return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
-			}
+			// A user just purchased one of the qualifying plans
+			// Show them the concierge session upsell page
+			return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
 		}
 
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
