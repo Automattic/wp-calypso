@@ -55,14 +55,14 @@ class UploadingPane extends React.PureComponent {
 			case appStates.READY_FOR_UPLOAD:
 			case appStates.UPLOAD_FAILURE:
 				return <p>{ this.props.translate( 'Drag a file here, or click to upload a file' ) }</p>;
-
+			case appStates.UPLOAD_PROCESSING:
 			case appStates.UPLOADING: {
 				const uploadPercent = percentComplete;
 				const progressClasses = classNames( 'importer__upload-progress', {
 					'is-complete': uploadPercent > 95,
 				} );
 				const uploaderPrompt =
-					uploadPercent < 99
+					importerState === appStates.UPLOADING && uploadPercent < 99
 						? this.props.translate( 'Uploading %(filename)s\u2026', {
 								args: { filename },
 						  } )
