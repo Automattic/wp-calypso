@@ -133,12 +133,6 @@
 	position: relative;
 }
 
-.post-editor__content-editor .editor-notice .notice {
-	@include breakpoint( '>660px' ) {
-		margin: 0;
-	}
-}
-
 /*
  * Constrain the `MediaLibraryDropZone` to the editor content area, instead of taking up the entire
  * screen. This allows room for the `FeaturedImageDropZone`.
