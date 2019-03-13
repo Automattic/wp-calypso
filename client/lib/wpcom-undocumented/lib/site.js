@@ -207,7 +207,7 @@ UndocumentedSite.prototype.postCounts = function( options, callback ) {
 	const query = Object.assign(
 		{
 			type: 'post',
-			apiNamespace: 'wpcom/v2',
+            apiVersion: '1.1',
 		},
 		options
 	);
