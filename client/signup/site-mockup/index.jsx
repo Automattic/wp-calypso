@@ -18,6 +18,7 @@ import { getSiteVerticalPreview } from 'state/signup/steps/site-vertical/selecto
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { loadFont, getCSS } from 'lib/signup/font-loader';
+import Gridicon from 'gridicons';
 
 /**
  * Style dependencies
@@ -144,8 +145,20 @@ class SiteMockups extends Component {
 		return (
 			<div className={ siteMockupClasses }>
 				{ ! this.state.fontError && <style>{ fontStyle }</style> }
-				<SiteMockup size="desktop" { ...otherProps } />
-				<SiteMockup size="mobile" { ...otherProps } />
+
+				<div className="site-mockup__help-tip">
+					<p>
+						{ translate(
+							'Scroll down to see your website. Once you complete setup you’ll be able to customize it further.'
+						) }
+					</p>
+					<Gridicon icon="chevron-down" />
+				</div>
+
+				<div className="site-mockup__devices">
+					<SiteMockup size="desktop" { ...otherProps } />
+					<SiteMockup size="mobile" { ...otherProps } />
+				</div>
 			</div>
 		);
 	}
