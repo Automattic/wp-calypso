@@ -23,6 +23,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 jest.mock( 'component-closest', () => {} );
 jest.mock( 'components/dialog', () => require( 'components/empty-component' ) );
 jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
+// eslint-disable-next-line import/no-extraneous-dependencies
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
 jest.mock( 'post-editor/media-modal/detail', () => ( {
 	default: require( 'components/empty-component' ),
@@ -90,10 +91,8 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the list view', done => {
-		let media = DUMMY_MEDIA.slice( 0, 1 ),
-			tree;
-
-		tree = shallow(
+		const media = DUMMY_MEDIA.slice( 0, 1 );
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ media }
@@ -135,10 +134,8 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the detail view', done => {
-		let media = DUMMY_MEDIA[ 0 ],
-			tree;
-
-		tree = shallow(
+		const media = DUMMY_MEDIA[ 0 ];
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ [ media ] }
@@ -240,10 +237,10 @@ describe( 'EditorMediaModal', () => {
 		const buttons = tree.getModalButtons();
 
 		expect( buttons.length ).to.be.equals( 2 );
-		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
+		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
 	} );
 
-	test( 'should show a insert button when 1 external image is selected', () => {
+	test( 'should show a copy button when 1 external image is selected', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -257,7 +254,7 @@ describe( 'EditorMediaModal', () => {
 		const buttons = tree.getModalButtons();
 
 		expect( buttons.length ).to.be.equals( 2 );
-		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
+		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
 	} );
 
 	test( 'should show a copy button when 1 external video is selected', () => {
@@ -386,7 +383,7 @@ describe( 'EditorMediaModal', () => {
 			} );
 		} );
 
-		test( 'should copy external media and insert it in the editor if 1 image is selected and button is pressed', done => {
+		test( 'should copy external media if 1 image is selected and button is pressed', done => {
 			const SINGLE_ITEM_MEDIA = DUMMY_MEDIA.slice( 0, 1 );
 			const tree = shallow(
 				<EditorMediaModal
@@ -398,7 +395,7 @@ describe( 'EditorMediaModal', () => {
 			).instance();
 
 			tree.setState( { source: 'external' } );
-			tree.copyExternal = onClose;
+			tree.copyExternalAfterLoadingWordPressLibrary = onClose;
 			tree.confirmSelection();
 
 			// EditorMediaModal will generate transient ID for the media selected
