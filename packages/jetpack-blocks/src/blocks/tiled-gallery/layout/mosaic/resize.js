@@ -33,23 +33,17 @@ function getRowRatio( row ) {
 }
 
 export function getGalleryRows( gallery ) {
-	return typeof gallery.querySelectorAll === 'function'
-		? Array.from( gallery.querySelectorAll( '.tiled-gallery__row' ) )
-		: [];
+	return Array.from( gallery.querySelectorAll( '.tiled-gallery__row' ) );
 }
 
 function getRowCols( row ) {
-	return typeof row.querySelectorAll === 'function'
-		? Array.from( row.querySelectorAll( '.tiled-gallery__col' ) )
-		: [];
+	return Array.from( row.querySelectorAll( '.tiled-gallery__col' ) );
 }
 
 function getColImgs( col ) {
-	return typeof col.querySelectorAll === 'function'
-		? Array.from(
-				col.querySelectorAll( '.tiled-gallery__item > img, .tiled-gallery__item > a > img' )
-		  )
-		: [];
+	return Array.from(
+		col.querySelectorAll( '.tiled-gallery__item > img, .tiled-gallery__item > a > img' )
+	);
 }
 
 function getColumnRatio( col ) {
