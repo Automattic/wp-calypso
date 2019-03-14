@@ -51,6 +51,7 @@ class SiteTypeForm extends Component {
 				className="site-type__option"
 				key={ siteTypeProperties.id }
 				displayAsLink={ true }
+				tagName="button"
 				onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
 			>
 				{ siteTypeProperties.icon && <PlanIcon plan={ siteTypeProperties.icon } /> }
@@ -61,11 +62,7 @@ class SiteTypeForm extends Component {
 	}
 
 	render() {
-		return (
-			<div className="site-type__wrapper">
-				<Card>{ this.renderRadioOptions() }</Card>
-			</div>
-		);
+		return <Card className="site-type__wrapper">{ this.renderRadioOptions() }</Card>;
 	}
 }
 
