@@ -1718,7 +1718,11 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
 		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-		getTitle: () => i18n.translate( 'Daily Off-site Backups' ),
+		getTitle: () => i18n.translate( '{{strong}}Daily{{/strong}} Backups', {
+			components: {
+				strong: <strong />,
+			},
+		} ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with ' +
@@ -1777,7 +1781,11 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY ]: {
 		getSlug: () => FEATURE_MALWARE_SCANNING_DAILY,
-		getTitle: () => i18n.translate( 'Daily Malware Scanning' ),
+		getTitle: () => i18n.translate( '{{strong}}Daily{{/strong}} Malware Scanning', {
+			components: {
+				strong: <strong />,
+			},
+		} ),
 		getDescription: () =>
 			i18n.translate(
 				'Comprehensive, automated scanning for security vulnerabilities or threats on your site.'
@@ -1948,7 +1956,11 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_SEARCH ]: {
 		getSlug: () => FEATURE_SEARCH,
-		getTitle: () => i18n.translate( 'Enhanced Site-wide Search' ),
+		getTitle: () => i18n.translate( '{{strong}}Enhanced{{/strong}} Site-wide Search', {
+			components: {
+				strong: <strong />,
+			},
+		} ),
 		getDescription: () =>
 			i18n.translate(
 				'Fast, relevant search results with custom filtering, powered by Elasticsearch.'
