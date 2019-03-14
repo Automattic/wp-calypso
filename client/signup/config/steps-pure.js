@@ -93,6 +93,7 @@ export function generateSteps( {
 			props: {
 				isDomainOnly: false,
 				showExampleSuggestions: false,
+				includeWordPressDotCom: false,
 				showSkipButton: true,
 				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
 				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
