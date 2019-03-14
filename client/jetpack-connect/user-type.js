@@ -13,18 +13,17 @@ import { localize } from 'i18n-calypso';
 import FormattedHeader from 'components/formatted-header';
 import jetpackOnly from './jetpack-only';
 import MainWrapper from './main-wrapper';
-import SiteOwnerForm from 'signup/steps/site-owner/form';
+import UserTypeForm from 'signup/steps/user-type/form';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WpcomColophon from 'components/wpcom-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { saveSiteVertical } from 'state/jetpack-connect/actions';
+import { saveSiteUserType } from 'state/jetpack-connect/actions';
 
-class JetpackSiteOwner extends Component {
-	handleSubmit = ( { name, slug } ) => {
+class JetpackUserType extends Component {
+	handleSubmit = userType => {
 		const { siteId, siteSlug } = this.props;
-		const siteVertical = name || slug || '';
 
-		this.props.saveSiteVertical( siteId, siteVertical );
+		this.props.saveSiteUserType( siteId, userType );
 
 		page.redirect( `/jetpack/connect/plans/${ siteSlug }` );
 	};
@@ -38,7 +37,7 @@ class JetpackSiteOwner extends Component {
 					<FormattedHeader
 						headerText={ translate( 'Are you setting up this site for yourself or someone else?' ) }
 					/>
-					<SiteOwnerForm submitForm={ this.handleSubmit } />
+					<UserTypeForm submitForm={ this.handleSubmit } />
 					<WpcomColophon />
 				</div>
 			</MainWrapper>
@@ -52,13 +51,13 @@ const connectComponent = connect(
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
-		saveSiteVertical,
+		saveSiteUserType,
 	}
 );
 
 export default flowRight(
 	connectComponent,
-	jetpackOnly,
+	jetpackOnly,// TEMP:
 	localize,
 	withTrackingTool( 'HotJar' )
-)( JetpackSiteOwner );
+)( JetpackUserType );

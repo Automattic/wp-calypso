@@ -1,4 +1,4 @@
-.site-owner__wrapper {
+.user-type__wrapper {
 	margin: auto;
 	width: 380px;
 
@@ -23,7 +23,7 @@
 	}
 }
 
-.site-owner__option {
+.user-type__option {
 	padding: 13px 24px 13px 48px;
 	margin: 0;
 	font-weight: 400;
@@ -36,17 +36,17 @@
 		margin: 0;
 	}
 
-	.site-owner__option-label,
-	.site-owner__option-description {
+	.user-type__option-label,
+	.user-type__option-description {
 		display: block;
 		line-height: 1.4em;
 	}
 
-	.site-owner__option-label {
+	.user-type__option-label {
 		font-size: 16px;
 	}
 
-	.site-owner__option-description {
+	.user-type__option-description {
 		font-size: 14px;
 		color: var( --color-text-subtle );
 	}
@@ -54,7 +54,7 @@
 	&:hover {
 		cursor: pointer;
 
-		.site-owner__option-label {
+		.user-type__option-label {
 			color: var( --color-text );
 		}
 	}

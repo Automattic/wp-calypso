@@ -22,9 +22,9 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './style.scss';
 
-class SiteOwnerForm extends Component {
+class UserTypeForm extends Component {
 	static propTypes = {
-		siteOwner: PropTypes.string,
+		userType: PropTypes.string,
 		submitForm: PropTypes.func.isRequired,
 
 		// from localize() HoC
@@ -35,51 +35,51 @@ class SiteOwnerForm extends Component {
 		super( props );
 
 		this.state = {
-			siteOwner: props.siteOwner,
+			userType: props.userType,
 		};
 	}
 
-	handleRadioChange = event => this.setState( { siteOwner: event.currentTarget.value } );
+	handleRadioChange = event => this.setState( { userType: event.currentTarget.value } );
 
 	handleSubmit = event => {
-		const { siteOwner } = this.state;
+		const { userType } = this.state;
 
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_owner', {
-			value: siteOwner,
+		this.props.recordTracksEvent( 'calypso_signup_actions_submit_user_type', {
+			value: userType,
 		} );
 
-		this.props.submitForm( siteOwner );
+		this.props.submitForm( userType );
 	};
 
 	renderRadioOptions() {
 		const { translate } = this.props;
 
-		const ownersQuestions = [
+		const userTypeQuestions = [
 			{
-				slug: 'true',
+				slug: 'creator',
 				label: translate( 'Myself' ),
 			},
 			{
-				slug: 'false',
+				slug: 'builder',
 				label: translate( 'Someone else' ),
 			},
 		];
-		return ownersQuestions.map( siteOwnerProperties => (
+		return userTypeQuestions.map( userTypeProperties => (
 			<FormLabel
-				className={ classNames( 'site-owner__option', {
-					'is-selected': siteOwnerProperties.slug === this.state.siteOwner,
+				className={ classNames( 'user-type__option', {
+					'is-selected': userTypeProperties.slug === this.state.userType,
 				} ) }
-				key={ siteOwnerProperties.id }
+				key={ userTypeProperties.id }
 			>
 				<FormRadio
-					value={ siteOwnerProperties.slug }
-					checked={ siteOwnerProperties.slug === this.state.siteOwner }
+					value={ userTypeProperties.slug }
+					checked={ userTypeProperties.slug === this.state.userType }
 					onChange={ this.handleRadioChange }
 				/>
-				<strong className="site-owner__option-label">{ siteOwnerProperties.label }</strong>
-				<span className="site-owner__option-description">{ siteOwnerProperties.description }</span>
+				<strong className="user-type__option-label">{ userTypeProperties.label }</strong>
+				<span className="user-type__option-description">{ userTypeProperties.description }</span>
 			</FormLabel>
 		) );
 	}
@@ -88,11 +88,11 @@ class SiteOwnerForm extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="site-owner__wrapper">
+			<div className="user-type__wrapper">
 				<form onSubmit={ this.handleSubmit }>
 					<Card>
 						<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
-						<Button primary={ true } type="submit" disabled={ ! this.state.siteOwner }>
+						<Button primary={ true } type="submit" disabled={ ! this.state.userType }>
 							{ translate( 'Continue' ) }
 						</Button>
 					</Card>
@@ -107,4 +107,4 @@ export default connect(
 	{
 		recordTracksEvent,
 	}
-)( localize( SiteOwnerForm ) );
+)( localize( UserTypeForm ) );
