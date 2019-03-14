@@ -29,6 +29,7 @@
 		"postcss-custom-properties": "8.0.9",
 		"postcss-loader": "3.0.0",
 		"sass-loader": "7.1.0",
+		"terser-webpack-plugin": "1.2.3",
 		"thread-loader": "2.1.2",
 		"webpack-filter-warnings-plugin": "1.2.1",
 		"webpack-rtl-plugin": "1.8.0"

@@ -12,10 +12,10 @@ const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
-const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
+const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 
@@ -159,20 +159,18 @@ function getWebpackConfig( {
 			moduleIds: 'named',
 			chunkIds: isDevelopment ? 'named' : 'natural',
 			minimize: shouldMinify,
-			minimizer: [
-				new TerserPlugin( {
-					cache: process.env.CIRCLECI
-						? `${ process.env.HOME }/terser-cache`
-						: 'docker' !== process.env.CONTAINER,
-					parallel: workerCount,
-					sourceMap: Boolean( process.env.SOURCEMAP ),
-					terserOptions: {
-						ecma: 5,
-						safari10: true,
-						mangle: calypsoEnv !== 'desktop',
-					},
-				} ),
-			],
+			minimizer: Minify( {
+				cache: process.env.CIRCLECI
+					? `${ process.env.HOME }/terser-cache`
+					: 'docker' !== process.env.CONTAINER,
+				parallel: workerCount,
+				sourceMap: Boolean( process.env.SOURCEMAP ),
+				terserOptions: {
+					ecma: 5,
+					safari10: true,
+					mangle: calypsoEnv !== 'desktop',
+				},
+			} ),
 		},
 		module: {
 			// avoids this warning:
