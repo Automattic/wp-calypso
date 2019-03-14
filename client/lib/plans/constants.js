@@ -140,6 +140,8 @@ export const FEATURE_EASY_SITE_MIGRATION = 'easy-site-migration';
 export const FEATURE_MALWARE_SCANNING_DAILY = 'malware-scanning-daily';
 export const FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND = 'malware-scanning-daily-and-on-demand';
 export const FEATURE_ONE_CLICK_THREAT_RESOLUTION = 'one-click-threat-resolution';
+export const FEATURE_AUTOMATIC_SECURITY_FIXES = 'automatic-security-fixes';
+export const FEATURE_ACTIVITY_LOG = 'site-activity-log';
 export const FEATURE_POLLS_PRO = 'polls-pro';
 export const FEATURE_CORE_JETPACK = 'core-jetpack';
 export const FEATURE_BASIC_SUPPORT_JETPACK = 'basic-support-jetpack';
@@ -1792,6 +1794,24 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'One-click Threat Resolution' ),
 		getDescription: () =>
 			i18n.translate( 'Repair any security issues found on your site with just a single click.' ),
+	},
+	[ FEATURE_AUTOMATIC_SECURITY_FIXES ]: {
+		getSlug: () => FEATURE_AUTOMATIC_SECURITY_FIXES,
+		getTitle: () => i18n.translate( '{{strong}}Automatic{{/strong}} Security Fixes', {
+			components: {
+				strong: <strong />,
+			},
+		} ),
+		getDescription: () =>
+			i18n.translate( 'Automated and immediate resolution for a large percentage of known security vulnerabilities or threats.' ),
+	},
+	[ FEATURE_ACTIVITY_LOG ]: {
+		getSlug: () => FEATURE_ACTIVITY_LOG,
+		getTitle: () => i18n.translate( 'Expanded Site Activity' ),
+		getDescription: () =>
+			i18n.translate(
+				'Take the guesswork out of site management and debugging with a filterable record of all the activity happening on your site.'
+			),
 	},
 	[ FEATURE_POLLS_PRO ]: {
 		getSlug: () => FEATURE_POLLS_PRO,
