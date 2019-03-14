@@ -157,7 +157,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 const SITE_VERTICALS_REQUEST_ID = 'site-verticals-search-results';
 const DEFAULT_SITE_VERTICAL_REQUEST_ID = 'default-site-verticals-search-results';
 
-const requestSiteVerticalHttpData = ( searchTerm, limit = 5, id = SITE_VERTICALS_REQUEST_ID ) =>
+const requestSiteVerticalHttpData = ( searchTerm, limit = 7, id = SITE_VERTICALS_REQUEST_ID ) =>
 	requestHttpData(
 		id,
 		http( {
