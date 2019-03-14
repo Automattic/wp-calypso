@@ -18,8 +18,8 @@ import ErrorPane from 'my-sites/importer/error-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { loadmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
 import ImportableContent from 'my-sites/importer/site-importer/site-importer-importable-content';
-import ActionButton from 'my-sites/importer/importer-action-buttons/action-button';
-import ActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
+import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 
 class SiteImporterSitePreview extends React.Component {
 	static propTypes = {
@@ -114,14 +114,18 @@ class SiteImporterSitePreview extends React.Component {
 										<ImportableContent importData={ this.props.importData } />
 									</div>
 								</div>
-								<ActionButtonContainer>
-									<ActionButton disabled={ isLoading } onClick={ this.props.resetImport }>
+								<ImporterActionButtonContainer>
+									<ImporterActionButton disabled={ isLoading } onClick={ this.props.resetImport }>
 										{ this.props.translate( 'Cancel' ) }
-									</ActionButton>
-									<ActionButton disabled={ isLoading } primary onClick={ this.props.startImport }>
+									</ImporterActionButton>
+									<ImporterActionButton
+										disabled={ isLoading }
+										primary
+										onClick={ this.props.startImport }
+									>
 										{ this.props.translate( 'Yes! Start import' ) }
-									</ActionButton>
-								</ActionButtonContainer>
+									</ImporterActionButton>
+								</ImporterActionButtonContainer>
 							</React.Fragment>
 						) }
 						{ isLoading && (
@@ -140,11 +144,11 @@ class SiteImporterSitePreview extends React.Component {
 								) }
 							/>
 						</div>
-						<ActionButtonContainer>
-							<ActionButton disabled={ isLoading } onClick={ this.props.resetImport }>
+						<ImporterActionButtonContainer>
+							<ImporterActionButton disabled={ isLoading } onClick={ this.props.resetImport }>
 								{ this.props.translate( 'Cancel' ) }
-							</ActionButton>
-						</ActionButtonContainer>
+							</ImporterActionButton>
+						</ImporterActionButtonContainer>
 					</React.Fragment>
 				) }
 			</div>

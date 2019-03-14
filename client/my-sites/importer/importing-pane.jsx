@@ -20,10 +20,10 @@ import AuthorMappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
 import { loadTrackingTool } from 'state/analytics/actions';
 
-import CloseButton from 'my-sites/importer/importer-action-buttons/close-button';
-import DoneButton from 'my-sites/importer/importer-action-buttons/done-button';
+import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
+import ImporterDoneButton from 'my-sites/importer/importer-action-buttons/done-button';
 import BusyImportingButton from 'my-sites/importer/importer-action-buttons/busy-importing-button';
-import ActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 
 const sum = ( a, b ) => a + b;
 
@@ -243,13 +243,13 @@ class ImportingPane extends React.PureComponent {
 		const showFallbackButton = isError || ( ! isImporting && ! isFinished );
 
 		return (
-			<ActionButtonContainer>
+			<ImporterActionButtonContainer>
 				{ isImporting && <BusyImportingButton /> }
-				{ isFinished && <DoneButton importerStatus={ importerStatus } site={ site } /> }
+				{ isFinished && <ImporterDoneButton importerStatus={ importerStatus } site={ site } /> }
 				{ showFallbackButton && (
-					<CloseButton importerStatus={ importerStatus } site={ site } isEnabled />
+					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 				) }
-			</ActionButtonContainer>
+			</ImporterActionButtonContainer>
 		);
 	};
 

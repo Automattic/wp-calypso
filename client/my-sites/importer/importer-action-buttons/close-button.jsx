@@ -13,13 +13,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ActionButton from './action-button';
+import ImporterActionButton from './action-button';
 import { appStates } from 'state/imports/constants';
 import { cancelImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-export class CloseButton extends React.PureComponent {
-	static displayName = 'CloseButton';
+export class ImporterCloseButton extends React.PureComponent {
+	static displayName = 'ImporterCloseButton';
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
@@ -59,9 +59,9 @@ export class CloseButton extends React.PureComponent {
 		const disabled = ! isEnabled || isUploading || appStates.UPLOADING === importerState;
 
 		return (
-			<ActionButton disabled={ disabled } onClick={ this.handleClick }>
+			<ImporterActionButton disabled={ disabled } onClick={ this.handleClick }>
 				{ translate( 'Cancel', { context: 'verb, to Close a dialog' } ) }
-			</ActionButton>
+			</ImporterActionButton>
 		);
 	}
 }
@@ -72,4 +72,4 @@ export default flow(
 		{ recordTracksEvent }
 	),
 	localize
-)( CloseButton );
+)( ImporterCloseButton );
