@@ -32,11 +32,12 @@
 		"xgettext-js": "^2.0.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "file:../calypso-build",
 		"react-dom": "^16.6.3",
 		"react-test-renderer": "^16.6.3"
 	},
 	"scripts": {
-		"build": "node ../../bin/build-package",
+		"build": "npx @automattic/calypso-build",
 		"clean": "npx rimraf dist"
 	}
 }

@@ -25,8 +25,11 @@
 		"dist",
 		"src"
 	],
+	"devDependencies": {
+		"@automattic/calypso-build": "file:../calypso-build"
+	},
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"build": "node ../../bin/build-package"
+		"build": "npx @automattic/calypso-build"
 	}
 }

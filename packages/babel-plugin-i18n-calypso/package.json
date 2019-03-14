@@ -9,6 +9,7 @@
 		"lodash": "^4.17.10"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "file:../calypso-build",
 		"@babel/core": "^7.0.0",
 		"@babel/traverse": "^7.0.0"
 	},
@@ -23,6 +24,6 @@
 	"license": "GPL-2.0+",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"build": "node ../../bin/build-package"
+		"build": "npx @automattic/calypso-build"
 	}
 }
