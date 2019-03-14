@@ -41,14 +41,12 @@ describe( 'index', () => {
 	describe( 'cart change functions', () => {
 		describe( 'flow( changeFunctions... )', () => {
 			test( 'should combine multiple cart operations into a single step', () => {
-				let addTwo, newCart;
-
-				addTwo = flow(
+				const addTwo = flow(
 					cartItems.add( PREMIUM_PRODUCT ),
 					cartItems.add( DOMAIN_REGISTRATION_PRODUCT )
 				);
 
-				newCart = addTwo( cartValues.emptyCart( TEST_BLOG_ID ) );
+				const newCart = addTwo( cartValues.emptyCart( TEST_BLOG_ID ) );
 				assert( cartItems.hasProduct( newCart, 'value_bundle' ) );
 				assert( cartItems.hasProduct( newCart, 'dotcom_domain' ) );
 			} );
@@ -56,7 +54,7 @@ describe( 'index', () => {
 
 		describe( 'cartItems.add( cartItem )', () => {
 			test( 'should add the cartItem to the products array', () => {
-				let initialCart = cartValues.emptyCart( TEST_BLOG_ID ),
+				const initialCart = cartValues.emptyCart( TEST_BLOG_ID ),
 					newCart = cartItems.add( PREMIUM_PRODUCT )( initialCart ),
 					expectedCart = {
 						blog_id: TEST_BLOG_ID,
@@ -69,14 +67,12 @@ describe( 'index', () => {
 
 		describe( 'cartItems.remove( cartItem )', () => {
 			test( 'should remove the cartItem from the products array', () => {
-				let initialCart, newCart, expectedCart;
-
-				initialCart = {
+				const initialCart = {
 					blog_id: TEST_BLOG_ID,
 					products: [ PREMIUM_PRODUCT, DOMAIN_REGISTRATION_PRODUCT ],
 				};
-				newCart = cartItems.remove( initialCart.products[ 0 ] )( initialCart );
-				expectedCart = {
+				const newCart = cartItems.remove( initialCart.products[ 0 ] )( initialCart );
+				const expectedCart = {
 					blog_id: TEST_BLOG_ID,
 					products: [ DOMAIN_REGISTRATION_PRODUCT ],
 				};
@@ -88,15 +84,13 @@ describe( 'index', () => {
 
 	describe( 'cartItems.hasProduct( cart, productSlug )', () => {
 		test( 'should return a boolean that says whether the product is in the cart items', () => {
-			let cartWithPremium, cartWithoutPremium;
-
-			cartWithPremium = {
+			const cartWithPremium = {
 				blog_id: TEST_BLOG_ID,
 				products: [ PREMIUM_PRODUCT ],
 			};
 			assert( cartItems.hasProduct( cartWithPremium, 'value_bundle' ) );
 
-			cartWithoutPremium = {
+			const cartWithoutPremium = {
 				blog_id: TEST_BLOG_ID,
 				products: [ DOMAIN_REGISTRATION_PRODUCT ],
 			};
@@ -122,23 +116,21 @@ describe( 'index', () => {
 
 	describe( 'cartItems.hasOnlyProductsOf( cart, productSlug )', () => {
 		test( 'should return a boolean that says whether only products of productSlug are in the cart items', () => {
-			let cartWithSameProductSlugs, cartWithMultipleProductSlugs, emptyCart;
-
-			cartWithMultipleProductSlugs = {
+			const cartWithMultipleProductSlugs = {
 				blog_id: TEST_BLOG_ID,
 				products: [ PREMIUM_PRODUCT, THEME_PRODUCT ],
 			};
 
 			assert( ! cartItems.hasOnlyProductsOf( cartWithMultipleProductSlugs, 'premium_theme' ) );
 
-			cartWithSameProductSlugs = {
+			const cartWithSameProductSlugs = {
 				blog_id: TEST_BLOG_ID,
 				products: [ THEME_PRODUCT, THEME_PRODUCT ],
 			};
 
 			assert( cartItems.hasOnlyProductsOf( cartWithSameProductSlugs, 'premium_theme' ) );
 
-			emptyCart = {};
+			const emptyCart = {};
 			assert( ! cartItems.hasOnlyProductsOf( emptyCart, 'premium_theme' ) );
 		} );
 	} );
