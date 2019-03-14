@@ -49,10 +49,17 @@ class SuggestionSearch extends Component {
 			inputValue: props.value,
 		};
 	}
+	componentDidUpdate( prevProps, prevState ) {
+		if ( prevProps.value !== this.props.value && this.props.value !== prevState.inputValue ) {
+			this.updateInputValue( this.props.value );
+		}
+	}
 
 	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
 
 	hideSuggestions = () => this.setState( { query: '' } );
+
+	updateInputValue = inputValue => this.setState( { inputValue } );
 
 	handleSuggestionChangeEvent = ( { target: { value } } ) => {
 		this.setState( { query: value, inputValue: value } );
@@ -100,7 +107,7 @@ class SuggestionSearch extends Component {
 	};
 
 	handleSuggestionMouseDown = position => {
-		this.setState( { inputValue: position.label } );
+		this.updateInputValue( position.label );
 		this.hideSuggestions();
 		this.props.onChange( position.label );
 	};
@@ -121,7 +128,7 @@ class SuggestionSearch extends Component {
 	}
 
 	updateFieldFromSuggestion( newValue ) {
-		this.setState( { inputValue: newValue } );
+		this.updateInputValue( newValue );
 		this.props.onChange( newValue );
 	}
 
