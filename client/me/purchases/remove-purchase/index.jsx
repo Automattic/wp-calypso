@@ -444,13 +444,6 @@ class RemovePurchase extends Component {
 				isPrimary: true,
 				label: translate( "I'll Keep It" ),
 			},
-			{
-				action: 'remove',
-				disabled: this.state.isRemoving,
-				isPrimary: true,
-				label: translate( 'Remove Now' ),
-				onClick: this.removePurchase,
-			},
 		];
 		const productName = getName( purchase );
 
