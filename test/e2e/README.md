@@ -33,6 +33,8 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 
 ## Pre-requisites
 
+Make sure you are in the /test/e2e directory
+
 ### Install NodeJS
 
 ```bash
