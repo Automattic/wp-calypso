@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, find, get, noop, startsWith, trim, uniq, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -45,6 +46,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		super( props );
 		this.state = {
 			searchValue: props.initialValue,
+			railcar: this.getNewRailcar(),
 		};
 		props.requestDefaultVertical();
 	}
@@ -63,6 +65,14 @@ export class SiteVerticalsSuggestionSearch extends Component {
 				this.state.searchValue
 			);
 		}
+	}
+
+	getNewRailcar() {
+		return {
+			id: `${ uuid().replace( /-/g, '' ) }-site-vertical-suggestion`,
+			fetch_algo: '/verticals',
+			action: 'site_vertical_selected',
+		};
 	}
 
 	// When a user is keying through the results,
@@ -106,6 +116,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			! result
 		) {
 			this.props.requestVerticals( value, this.props.searchResultsLimit );
+			this.setState( { railcar: this.getNewRailcar() } );
 		}
 
 		this.setState( { searchValue: value } );
@@ -149,6 +160,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 				value={ this.state.searchValue }
 				sortResults={ this.sortSearchResults }
 				autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+				railcar={ this.state.railcar }
 			/>
 		);
 	}

@@ -3,10 +3,15 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { pick } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { tracks } from 'lib/analytics';
 
 class Item extends PureComponent {
 	static propTypes = {
@@ -15,12 +20,23 @@ class Item extends PureComponent {
 		query: PropTypes.string,
 		onMouseDown: PropTypes.func.isRequired,
 		onMouseOver: PropTypes.func.isRequired,
+		railcar: PropTypes.object,
 	};
 
 	static defaultProps = {
 		hasHighlight: false,
 		query: '',
 	};
+
+	componentDidMount() {
+		const { railcar } = this.props;
+		if ( railcar ) {
+			tracks.recordEvent(
+				'calypso_traintracks_render',
+				pick( railcar, [ 'railcar', 'fetch_algo', 'fetch_position' ] )
+			);
+		}
+	}
 
 	/**
 	 * Highlights the part of the text that matches the query.
@@ -48,10 +64,18 @@ class Item extends PureComponent {
 	}
 
 	handleMouseDown = event => {
+		const { railcar } = this.props;
+
 		event.stopPropagation();
 		event.preventDefault();
 
 		this.props.onMouseDown( this.props.label );
+		if ( railcar ) {
+			tracks.recordEvent(
+				'calypso_traintracks_interact',
+				pick( railcar, [ 'railcar', 'action' ] )
+			);
+		}
 	};
 
 	handleMouseOver = () => {
