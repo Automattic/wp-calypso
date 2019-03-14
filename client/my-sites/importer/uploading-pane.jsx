@@ -119,7 +119,7 @@ class UploadingPane extends React.PureComponent {
 
 	render() {
 		const { importerStatus, site, isEnabled } = this.props;
-		const { importerState, importerId } = this.props.importerStatus;
+		const { importerState, importerId } = importerStatus;
 		const isReadyForImport = this.isReadyForImport();
 
 		return (
