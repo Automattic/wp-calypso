@@ -18,6 +18,7 @@ exports[`Plans should render plans 1`] = `
   />
   <Connect(Localized(JetpackPlansGrid))
     basePlansPath="/jetpack/connect/plans"
+    countryCode="US"
     hideFreePlan={true}
     isLanding={false}
     onSelect={[Function]}

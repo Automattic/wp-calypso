@@ -27,7 +27,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
-import { requestGeoLocation } from 'state/data-getters';
 import { abtest } from 'lib/abtest';
 
 export class PlanFeaturesHeader extends Component {
@@ -94,7 +93,7 @@ export class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
-					{ abtest( 'onlyJetpackMonthly', countryCode ) !== 'monthlyOnly'
+					{ countryCode && abtest( 'jetpackMonthlyPlansOnly', countryCode ) !== 'monthlyOnly'
 						? this.getIntervalDiscount()
 						: null }
 				</div>
@@ -329,6 +328,7 @@ PlanFeaturesHeader.propTypes = {
 	siteSlug: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
+	countryCode: PropTypes.string,
 
 	// Connected props
 	currentSitePlan: PropTypes.object,
@@ -363,6 +363,5 @@ export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) 
 		isYearly,
 		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
-		countryCode: requestGeoLocation().data || 'US',
 	};
 } )( localize( PlanFeaturesHeader ) );

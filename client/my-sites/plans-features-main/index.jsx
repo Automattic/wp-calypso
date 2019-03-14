@@ -43,7 +43,6 @@ import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { getDiscountByName } from 'lib/discounts';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
-import { requestGeoLocation } from 'state/data-getters';
 import { abtest } from 'lib/abtest';
 
 export class PlansFeaturesMain extends Component {
@@ -142,7 +141,11 @@ export class PlansFeaturesMain extends Component {
 
 		const group = displayJetpackPlans ? GROUP_JETPACK : GROUP_WPCOM;
 
-		if ( displayJetpackPlans && abtest( 'onlyJetpackMonthly', countryCode ) === 'monthlyOnly' ) {
+		if (
+			countryCode &&
+			displayJetpackPlans &&
+			abtest( 'jetpackMonthlyPlansOnly', countryCode ) === 'monthlyOnly'
+		) {
 			term = TERM_MONTHLY;
 		}
 
@@ -277,7 +280,7 @@ export class PlansFeaturesMain extends Component {
 	renderToggle() {
 		const { displayJetpackPlans, withWPPlanTabs, countryCode } = this.props;
 		if ( displayJetpackPlans ) {
-			if ( abtest( 'onlyJetpackMonthly', countryCode ) === 'monthlyOnly' ) {
+			if ( countryCode && abtest( 'jetpackMonthlyPlansOnly', countryCode ) === 'monthlyOnly' ) {
 				return false;
 			}
 			return this.getIntervalTypeToggle();
@@ -380,7 +383,6 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: get( props.site, [ 'ID' ] ),
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
-			countryCode: requestGeoLocation().data || 'US',
 		};
 	},
 	{

@@ -27,6 +27,7 @@ import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { storePlan } from './persistence-utils';
+import { requestGeoLocation } from 'state/data-getters';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 
@@ -89,11 +90,16 @@ class PlansLanding extends Component {
 	};
 
 	render() {
-		const { interval, requestingSites, site, translate, url } = this.props;
+		const { interval, requestingSites, site, translate, url, countryCode } = this.props;
 
 		// We're redirecting in componentDidMount if the site is already connected
 		// so don't bother rendering any markup if this is the case
 		if ( url && ( site || requestingSites ) ) {
+			return <Placeholder />;
+		}
+
+		// if there's no geolocation info, we wait
+		if ( ! countryCode ) {
 			return <Placeholder />;
 		}
 
@@ -108,6 +114,7 @@ class PlansLanding extends Component {
 					interval={ interval }
 					isLanding={ true }
 					onSelect={ this.storeSelectedPlan }
+					countryCode={ countryCode }
 				>
 					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
@@ -129,6 +136,7 @@ const connectComponent = connect(
 		return {
 			requestingSites: isRequestingSites( state ),
 			site,
+			countryCode: requestGeoLocation().data,
 		};
 	},
 	{
