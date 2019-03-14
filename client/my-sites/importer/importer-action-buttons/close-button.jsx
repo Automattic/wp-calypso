@@ -60,7 +60,7 @@ export class ImporterCloseButton extends React.PureComponent {
 
 		return (
 			<ImporterActionButton disabled={ disabled } onClick={ this.handleClick }>
-				{ translate( 'Cancel', { context: 'verb, to Close a dialog' } ) }
+				{ translate( 'Cancel', { context: 'verb, to Cancel an operation' } ) }
 			</ImporterActionButton>
 		);
 	}
