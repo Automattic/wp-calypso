@@ -1728,7 +1728,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME ]: {
 		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 		getTitle: () =>
-			i18n.translate( '{{strong}}Real-time{{/strong}} Off-site Backups', {
+			i18n.translate( '{{strong}}Real-time{{/strong}} Backups', {
 				components: {
 					strong: <strong />,
 				},
