@@ -1023,13 +1023,11 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 		getDescription: () =>
 			i18n.translate(
-				'The most powerful WordPress sites: unlimited premium ' +
-					'themes, real-time backups, and enhanced search.'
+				'The most powerful WordPress sites: real-time backups, ' +
+					'enhanced search, and unlimited premium themes.'
 			),
 		getTagline: () =>
-			i18n.translate(
-				'You have full access to premium themes, marketing tools, and priority support.'
-			),
+			i18n.translate( 'You have full the full suite of security and performance tools.' ),
 		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
@@ -1085,13 +1083,11 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'The most powerful WordPress sites: unlimited premium ' +
-					'themes, real-time backups, and enhanced search.'
+				'The most powerful WordPress sites: real-time backups, ' +
+					'enhanced search, and unlimited premium themes.'
 			),
 		getTagline: () =>
-			i18n.translate(
-				'You have full access to premium themes, marketing tools, and priority support.'
-			),
+			i18n.translate( 'You have full the full suite of security and performance tools.' ),
 		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
