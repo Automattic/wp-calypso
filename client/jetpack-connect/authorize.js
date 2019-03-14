@@ -25,6 +25,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
 import HelpButton from './help-button';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
 import JetpackConnectHappychatButton from './happychat-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
@@ -576,7 +577,7 @@ export class JetpackAuthorize extends Component {
 
 	getRedirectionTarget() {
 		const { clientId, homeUrl, jpVersion, redirectAfterAuth } = this.props.authQuery;
-		const { canManageOptions, partnerSlug } = this.props;
+		const { canManageOptions, isAtomic, partnerSlug } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
@@ -588,7 +589,9 @@ export class JetpackAuthorize extends Component {
 
 		const isJetpackVersionSupported = versionCompare( jpVersion, '7.1-alpha', '>=' );
 		const nextRoute =
-			isJetpackVersionSupported && canManageOptions ? JPC_PATH_SITE_TYPE : JPC_PATH_PLANS;
+			isJetpackVersionSupported && canManageOptions && ! isAtomic
+				? JPC_PATH_SITE_TYPE
+				: JPC_PATH_PLANS;
 
 		return addQueryArgs(
 			{ redirect: redirectAfterAuth },
@@ -710,6 +713,7 @@ const connectComponent = connect(
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, authQuery.site ),
+			isAtomic: isSiteAutomatedTransfer( state, authQuery.clientId ),
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
