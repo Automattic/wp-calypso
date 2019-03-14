@@ -52,7 +52,10 @@ class JetpackSiteType extends Component {
 
 					<SiteTypeForm submitForm={ this.handleSubmit } />
 
-					<SkipButton onClick={ this.goToNextStep } />
+					<SkipButton
+						onClick={ this.goToNextStep }
+						tracksEventName="calypso_jpc_skipped_site_type"
+					/>
 
 					<WpcomColophon />
 				</div>
