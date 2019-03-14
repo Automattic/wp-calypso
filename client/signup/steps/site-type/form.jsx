@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import { getAllSiteTypes } from 'lib/signup/site-type';
+import PlanIcon from 'components/plans/plan-icon';
 import { recordTracksEvent } from 'state/analytics/actions';
-import Gridicon from 'gridicons';
 
 /**
  * Style dependencies
@@ -47,15 +47,16 @@ class SiteTypeForm extends Component {
 
 	renderRadioOptions() {
 		return getAllSiteTypes().map( siteTypeProperties => (
-			<button
+			<Card
 				className="site-type__option"
 				key={ siteTypeProperties.id }
+				displayAsLink={ true }
 				onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
 			>
+				{ siteTypeProperties.icon && <PlanIcon plan={ siteTypeProperties.icon } /> }
 				<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
 				<span className="site-type__option-description">{ siteTypeProperties.description }</span>
-				<Gridicon icon="chevron-right" />
-			</button>
+			</Card>
 		) );
 	}
 
