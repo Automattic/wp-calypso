@@ -1,4 +1,7 @@
 /* eslint-disable no-console, import/no-nodejs-modules, no-process-exit */
+
+process.env.TARGET_BROWSER = 'true';
+
 /**
  * External dependencies
  */
