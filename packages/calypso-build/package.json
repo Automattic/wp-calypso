@@ -21,6 +21,7 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
+	"bin": "./bin/build-package.js",
 	"dependencies": {
 		"autoprefixer": "9.4.4",
 		"babel-loader": "8.0.5",

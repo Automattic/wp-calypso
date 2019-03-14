@@ -1,4 +1,6 @@
-/** @format */
+#!/usr/bin/env node
+
+/* eslint-disable import/no-nodejs-modules,no-console */
 
 // find all the packages
 const path = require( 'path' );
