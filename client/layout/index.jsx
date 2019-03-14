@@ -137,12 +137,7 @@ class Layout extends Component {
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && <JITM /> }
-					<GlobalNotices
-						id="notices"
-						notices={ notices.list }
-						forcePinned={ 'post' === this.props.sectionName }
-					/>
-
+					<GlobalNotices id="notices" notices={ notices.list } />
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
 					</div>

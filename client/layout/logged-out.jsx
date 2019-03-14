@@ -85,16 +85,10 @@ const LayoutLoggedOut = ( {
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } />
 			{ masterbar }
 			<div id="content" className="layout__content">
-				<GlobalNotices
-					id="notices"
-					notices={ notices.list }
-					forcePinned={ 'post' === section.name }
-				/>
-
+				<GlobalNotices id="notices" notices={ notices.list } />
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>
-
 				<div id="secondary" className="layout__secondary">
 					{ secondary }
 				</div>
