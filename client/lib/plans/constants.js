@@ -1027,7 +1027,7 @@ export const PLANS_LIST = {
 					'enhanced search, and unlimited premium themes.'
 			),
 		getTagline: () =>
-			i18n.translate( 'You have full the full suite of security and performance tools.' ),
+			i18n.translate( 'You have the full suite of security and performance tools.' ),
 		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
@@ -1087,7 +1087,7 @@ export const PLANS_LIST = {
 					'enhanced search, and unlimited premium themes.'
 			),
 		getTagline: () =>
-			i18n.translate( 'You have full the full suite of security and performance tools.' ),
+			i18n.translate( 'You have the full suite of security and performance tools.' ),
 		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
