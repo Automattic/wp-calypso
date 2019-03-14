@@ -5,12 +5,11 @@
  */
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
 import MultipleChoiceQuestion from 'components/multiple-choice-question';
 
 const GSuiteCancellationSurvey = ( { onSurveryAnswerChange, translate } ) => {
@@ -40,20 +39,13 @@ const GSuiteCancellationSurvey = ( { onSurveryAnswerChange, translate } ) => {
 	];
 
 	return (
-		<Fragment>
-			<CardHeading tagName="h3" size={ 24 }>
-				{ translate( 'One question before you go.' ) }
-			</CardHeading>
-			<p>
-				{ translate( 'Before you go a quick question to help improve our G Suite integration.' ) }
-			</p>
+		<div className="gsuite-cancel-purchase-dialog__survey">
 			<MultipleChoiceQuestion
-				className="gsuite-cancel-purchase-dialog__survey"
 				question={ question }
 				answers={ answers }
 				onAnswerChange={ onSurveryAnswerChange }
 			/>
-		</Fragment>
+		</div>
 	);
 };
 
