@@ -10,6 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import MultipleChoiceQuestion from 'components/multiple-choice-question';
 import MultipleChoiceAnswer from 'components/multiple-choice-question/answer';
 
@@ -33,10 +34,11 @@ const GSuiteCancellationSurvey = ( { onSurveryAnswerChange, translate } ) => (
 				id={ 'purchased-by-mistake' }
 				answerText={ translate( 'I purchased it by mistake.' ) }
 			/>
-			<MultipleChoiceAnswer
-				id={ 'it-did-not-work' }
-				answerText={ translate( "It didn't work." ) }
-			/>
+			<MultipleChoiceAnswer id={ 'it-did-not-work' } answerText={ translate( "It didn't work." ) }>
+				<Button primary>
+					{ translate( 'Get Help from Support with your G Suite Subscription' ) }
+				</Button>
+			</MultipleChoiceAnswer>
 			<MultipleChoiceAnswer
 				id={ 'another-reason' }
 				answerText={ translate( 'Another reason…' ) }
