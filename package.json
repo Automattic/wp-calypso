@@ -62,7 +62,7 @@
     "@wordpress/url": "2.3.3",
     "@wordpress/viewport": "2.1.1",
     "acorn": "6.1.1",
-    "autoprefixer": "9.4.4",
+    "autoprefixer": "9.5.0",
     "autosize": "4.0.2",
     "babel-loader": "8.0.5",
     "babel-plugin-add-module-exports": "1.0.0",
