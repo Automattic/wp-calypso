@@ -40,7 +40,7 @@ class PeopleNavTabs extends React.Component {
 
 class PeopleSectionNav extends Component {
 	canSearch() {
-		const { isJetpack, jetpackPeopleSupported, filter } = this.props;
+		const { filter } = this.props;
 		if ( ! this.props.site ) {
 			return false;
 		}
@@ -50,16 +50,6 @@ class PeopleSectionNav extends Component {
 			if ( 'followers' === filter || 'viewers' === filter || 'invites' === filter ) {
 				return false;
 			}
-		}
-
-		if ( ! isJetpack ) {
-			// wpcom sites will always support search
-			return true;
-		}
-
-		if ( 'team' === filter && ! jetpackPeopleSupported ) {
-			// Jetpack sites can only search team on versions of 3.7.0-beta or later
-			return false;
 		}
 
 		return true;
