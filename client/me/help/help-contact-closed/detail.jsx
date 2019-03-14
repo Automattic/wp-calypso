@@ -8,6 +8,11 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './detail.scss';
+
 export default localize( props => {
 	const { icon, children } = props;
 
