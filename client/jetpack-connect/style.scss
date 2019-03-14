@@ -808,7 +808,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 /**
  * Onboarding styles
  **/
-.layout.is-section-jetpack-connect:not( .is-add-site-page ),
+.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
 .layout.is-jetpack-login {
 	background-color: var( --color-jetpack-onboarding-background );
 
@@ -1007,7 +1007,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 }
 
-.layout.is-section-jetpack-connect:not( .is-add-site-page ),
+.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
 .layout.is-jetpack-login,
 .is-section-checkout.is-jetpack-site,
 .is-section-checkout-thank-you.is-jetpack-site {
