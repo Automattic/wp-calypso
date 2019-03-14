@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { noop } from 'lodash';
 import React from 'react';
 import renderer from 'react-test-renderer';
 
@@ -9,41 +10,36 @@ import renderer from 'react-test-renderer';
  * Internal dependencies
  */
 import MultipleChoiceQuestion from '../';
+import MultipleChoiceAnswer from '../answer';
 
 describe( 'MultipleChoiceQuestion', () => {
 	test( 'should render with the minimum required properties ( plus extra prop to guarantee order )', () => {
 		const tree = renderer
 			.create(
-				<MultipleChoiceQuestion
-					question={ 'Test Question One' }
-					answers={ [
-						{ id: 'test-answer-1', answerText: 'Test Anwser One', doNotShuffle: true },
-						{ id: 'test-answer-2', answerText: 'Test Anwser Two', doNotShuffle: true },
-						{ id: 'test-answer-3', answerText: 'Test Anwser Three', doNotShuffle: true },
-						{ id: 'test-answer-4', answerText: 'Test Anwser Four', doNotShuffle: true },
-					] }
-				/>
+				<MultipleChoiceQuestion question={ 'Test Question One' } onAnswerChange={ noop }>
+					<MultipleChoiceAnswer
+						id={ 'test-answer-1' }
+						answerText={ 'Test Answer One' }
+						doNotShuffle
+					/>
+					<MultipleChoiceAnswer
+						id={ 'test-answer-2' }
+						answerText={ 'Test Answer Two' }
+						doNotShuffle
+					/>
+					<MultipleChoiceAnswer
+						id={ 'test-answer-3' }
+						answerText={ 'Test Answer Three' }
+						doNotShuffle
+					/>
+					<MultipleChoiceAnswer
+						id={ 'test-answer-4' }
+						answerText={ 'Test Answer Four' }
+						doNotShuffle
+					/>
+				</MultipleChoiceQuestion>
 			)
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
-	} );
-
-	test( 'should respect `doNotShuffle` on answer', () => {
-		const testRender = renderer.create(
-			<MultipleChoiceQuestion
-				question={ 'Test Question One' }
-				answers={ [
-					{ id: 'test-answer-1', answerText: 'Test Anwser One' },
-					{ id: 'test-answer-2', answerText: 'Test Anwser Two', doNotShuffle: true },
-					{ id: 'test-answer-3', answerText: 'Test Anwser Three' },
-					{ id: 'test-answer-4', answerText: 'Test Anwser Four' },
-				] }
-			/>
-		);
-		const answersAndLegend = testRender.root.findByProps( {
-			className: 'multiple-choice-question',
-		} ).children;
-
-		expect( answersAndLegend[ 2 ].props.answer.id ).toEqual( 'test-answer-2' );
 	} );
 } );
