@@ -98,6 +98,11 @@ class PlansLanding extends Component {
 			return <Placeholder />;
 		}
 
+		// if there's no geolocation info, we wait
+		if ( ! countryCode ) {
+			return <Placeholder />;
+		}
+
 		return (
 			<Fragment>
 				<DocumentHead title={ translate( 'Plans' ) } />
