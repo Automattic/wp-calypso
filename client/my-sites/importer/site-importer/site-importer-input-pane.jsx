@@ -45,9 +45,9 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 import { setSelectedEditor } from 'state/selected-editor/actions';
 
-import ActionButton from 'my-sites/importer/importer-action-buttons/action-button';
-import CloseButton from 'my-sites/importer/importer-action-buttons/close-button';
-import ActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
+import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
+import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 
 const NO_ERROR_STATE = {
 	error: false,
@@ -496,17 +496,21 @@ class SiteImporterInputPane extends React.Component {
 				) }
 				{ this.state.importStage === 'idle' && this.renderUrlHint() }
 				{ this.state.importStage === 'idle' && (
-					<ActionButtonContainer>
-						<CloseButton importerStatus={ importerStatus } site={ site } isEnabled={ isEnabled } />
-						<ActionButton
+					<ImporterActionButtonContainer>
+						<ImporterCloseButton
+							importerStatus={ importerStatus }
+							site={ site }
+							isEnabled={ isEnabled }
+						/>
+						<ImporterActionButton
 							primary
 							disabled={ this.state.loading || isEmpty( this.state.siteURLInput ) }
 							busy={ this.state.loading }
 							onClick={ this.validateSite }
 						>
 							{ this.props.translate( 'Continue' ) }
-						</ActionButton>
-					</ActionButtonContainer>
+						</ImporterActionButton>
+					</ImporterActionButtonContainer>
 				) }
 			</div>
 		);

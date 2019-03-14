@@ -19,9 +19,9 @@ import { startMappingAuthors, startUpload } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
-import ActionButton from 'my-sites/importer/importer-action-buttons/action-button';
-import ActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
-import CloseButton from 'my-sites/importer/importer-action-buttons/close-button';
+import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
+import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
@@ -146,14 +146,18 @@ class UploadingPane extends React.PureComponent {
 					) }
 					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 				</div>
-				<ActionButtonContainer>
-					<CloseButton importerStatus={ importerStatus } site={ site } isEnabled={ isEnabled } />
+				<ImporterActionButtonContainer>
+					<ImporterCloseButton
+						importerStatus={ importerStatus }
+						site={ site }
+						isEnabled={ isEnabled }
+					/>
 					{ importerState === appStates.UPLOAD_SUCCESS && (
-						<ActionButton onClick={ () => startMappingAuthors( importerId ) } primary>
+						<ImporterActionButton onClick={ () => startMappingAuthors( importerId ) } primary>
 							{ this.props.translate( 'Continue' ) }
-						</ActionButton>
+						</ImporterActionButton>
 					) }
-				</ActionButtonContainer>
+				</ImporterActionButtonContainer>
 			</div>
 		);
 	}

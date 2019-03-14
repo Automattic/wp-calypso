@@ -3,9 +3,9 @@
  */
 import React from 'react';
 
-const ActionButtonContainer = ( { children } ) =>
+const ImporterActionButtonContainer = ( { children } ) =>
 	children ? <div className="importer-action-buttons__container">{ children }</div> : null;
 
-ActionButtonContainer.displayName = 'ActionButtonContainer';
+ImporterActionButtonContainer.displayName = 'ImporterActionButtonContainer';
 
-export default ActionButtonContainer;
+export default ImporterActionButtonContainer;

@@ -9,10 +9,10 @@ import React from 'react';
  */
 import Button from 'components/button';
 
-const ActionButton = props => (
+const ImporterActionButton = props => (
 	<Button className="importer-action-buttons__action-button" { ...props } />
 );
 
-ActionButton.displayName = 'ActionButton';
+ImporterActionButton.displayName = 'ImporterActionButton';
 
-export default ActionButton;
+export default ImporterActionButton;

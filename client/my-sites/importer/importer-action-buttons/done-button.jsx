@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ActionButton from './action-button';
+import ImporterActionButton from './action-button';
 import { resetImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setImportOriginSiteDetails } from 'state/importer-nux/actions';
@@ -54,9 +54,9 @@ export class DoneButton extends React.PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<ActionButton primary onClick={ this.handleClick }>
+			<ImporterActionButton primary onClick={ this.handleClick }>
 				{ translate( 'Done', { context: 'adjective' } ) }
-			</ActionButton>
+			</ImporterActionButton>
 		);
 	}
 }

@@ -8,12 +8,12 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ActionButton from './action-button';
+import ImporterActionButton from './action-button';
 
 export const StopButton = ( { translate } ) => (
-	<ActionButton primary busy>
+	<ImporterActionButton primary busy>
 		{ translate( 'Importing…' ) }
-	</ActionButton>
+	</ImporterActionButton>
 );
 
 export default localize( StopButton );
