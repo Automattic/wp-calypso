@@ -11,4 +11,4 @@ const TerserPlugin = require( 'terser-webpack-plugin' );
  * @param {Object} options Options passed to the terser plugin
  * @returns {Object[]}     Terser plugin object to be used in Webpack minification.
  */
-module.exports = ( options = {} ) => [ new TerserPlugin( options ) ];
+module.exports = options => [ new TerserPlugin( options ) ];
