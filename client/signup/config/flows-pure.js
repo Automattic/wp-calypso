@@ -333,7 +333,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		destination: ( { importSiteDetails, importUrl, siteSlug } ) =>
 			addQueryArgs(
 				{
-					engine: importSiteDetails.engine || null,
+					engine: importSiteDetails.engine === 'wix' ? 'wix' : null,
 					'from-site': ( importUrl && encodeURIComponent( importUrl ) ) || null,
 				},
 				`/settings/import/${ siteSlug }`
