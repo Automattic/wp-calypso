@@ -6,14 +6,6 @@
 	}
 }
 
-.help__support-links {
-	&.is-placeholder {
-		@include placeholder();
-		height: 250px;
-		margin-bottom: 15px;
-	}
-}
-
 .help__support-link {
 	display: flex;
 
@@ -65,12 +57,22 @@
 	color: var( --color-neutral-700 );
 }
 
-.help__help-teaser-button {
-	&.is-placeholder {
-		@include placeholder();
-		height: 64px;
-		margin-bottom: 15px;
-	}
+.help__support-links.is-placeholder {
+	@include placeholder();
+	height: 250px;
+	margin-bottom: 15px;
+}
+
+.help__help-teaser-button.is-placeholder {
+	@include placeholder();
+	height: 64px;
+	margin-bottom: 15px;
+}
+
+.help-results.is-placeholder {
+	@include placeholder();
+	height: 380px;
+	margin-bottom: 15px;
 }
 
 
