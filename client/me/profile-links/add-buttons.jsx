@@ -19,16 +19,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 
 class AddProfileLinksButtons extends React.Component {
 	static propTypes = {
-		showingForm: PropTypes.bool,
 		showPopoverMenu: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		showingForm: false,
-	};
-
-	state = {
-		popoverPosition: 'top',
 	};
 
 	popoverContext = React.createRef();
@@ -53,7 +44,6 @@ class AddProfileLinksButtons extends React.Component {
 				<PopoverMenu
 					isVisible={ this.props.showPopoverMenu }
 					onClose={ this.props.onClosePopoverMenu }
-					position={ this.state.popoverPosition }
 					context={ this.popoverContext.current }
 				>
 					<PopoverMenuItem onClick={ this.handleAddWordPressSiteButtonClick }>
@@ -64,12 +54,7 @@ class AddProfileLinksButtons extends React.Component {
 					</PopoverMenuItem>
 				</PopoverMenu>
 
-				<Button
-					compact
-					ref={ this.popoverContext }
-					className="popover-icon"
-					onClick={ this.props.onShowPopoverMenu }
-				>
+				<Button compact ref={ this.popoverContext } onClick={ this.props.onShowPopoverMenu }>
 					<Gridicon icon="add-outline" />
 					<span>{ this.props.translate( 'Add' ) }</span>
 				</Button>
