@@ -8,19 +8,16 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
-const { execSync } = require( 'child_process' );
-const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
-const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
-const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
-const FilterWarningsPlugin = require( 'webpack-filter-warnings-plugin' );
+const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
+const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 
 /**
  * Internal dependencies
@@ -28,6 +25,7 @@ const FilterWarningsPlugin = require( 'webpack-filter-warnings-plugin' );
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
+const getAliasesForExtensions = require( './config/webpack/extensions' );
 
 /**
  * Internal variables
@@ -90,32 +88,6 @@ function createProgressHandler() {
 
 		console.log( message ); // eslint-disable-line no-console
 	};
-}
-
-/**
- * This function scans the /client/extensions directory in order to generate a map that looks like this:
- * {
- *   sensei: 'absolute/path/to/wp-calypso/client/extensions/sensei',
- *   woocommerce: 'absolute/path/to/wp-calypso/client/extensions/woocommerce',
- *   ....
- * }
- *
- * Providing webpack with these aliases instead of telling it to scan client/extensions for every
- * module resolution speeds up builds significantly.
- * @returns {Object} a mapping of extension name to path
- */
-function getAliasesForExtensions() {
-	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
-	const extensionsNames = fs
-		.readdirSync( extensionsDirectory )
-		.filter( filename => filename.indexOf( '.' ) === -1 ); // heuristic for finding directories
-
-	const aliasesMap = {};
-	extensionsNames.forEach(
-		extensionName =>
-			( aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName ) )
-	);
-	return aliasesMap;
 }
 
 /**
@@ -207,27 +179,13 @@ function getWebpackConfig( {
 			// https://github.com/localForage/localForage/issues/577
 			noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
 			rules: [
-				{
-					test: /\.jsx?$/,
+				TranspileConfig.loader( {
+					workerCount,
+					configFile: path.join( __dirname, 'babel.config.js' ),
+					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+					cacheIdentifier,
 					exclude: /node_modules\//,
-					use: [
-						{
-							loader: 'thread-loader',
-							options: {
-								workers: workerCount,
-							},
-						},
-						{
-							loader: 'babel-loader',
-							options: {
-								configFile: path.resolve( __dirname, 'babel.config.js' ),
-								babelrc: false,
-								cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
-								cacheIdentifier,
-							},
-						},
-					],
-				},
+				} ),
 				{
 					test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
 					loader: 'babel-loader',
@@ -236,38 +194,14 @@ function getWebpackConfig( {
 						plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
 					},
 				},
-				{
-					test: /\.(sc|sa|c)ss$/,
-					use: [
-						MiniCssExtractPluginWithRTL.loader,
-						{
-							loader: 'css-loader',
-							options: {
-								importLoaders: 2,
-							},
-						},
-						{
-							loader: 'postcss-loader',
-							options: {
-								config: {
-									ctx: {
-										preserveCssCustomProperties,
-									},
-								},
-							},
-						},
-						{
-							loader: 'sass-loader',
-							options: {
-								includePaths: [ path.join( __dirname, 'client' ) ],
-								data: `@import '${ path.join(
-									__dirname,
-									'assets/stylesheets/shared/_utils.scss'
-								) }';`,
-							},
-						},
-					],
-				},
+				SassConfig.loader( {
+					preserveCssCustomProperties,
+					includePaths: [ path.join( __dirname, 'client' ) ],
+					prelude: `@import '${ path.join(
+						__dirname,
+						'assets/stylesheets/shared/_utils.scss'
+					) }';`,
+				} ),
 				{
 					include: path.join( __dirname, 'client/sections.js' ),
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
@@ -310,7 +244,9 @@ function getWebpackConfig( {
 					store: 'store/dist/store.modern',
 					gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
 				},
-				getAliasesForExtensions()
+				getAliasesForExtensions( {
+					extensionsDirectory: path.join( __dirname, 'client', 'extensions' ),
+				} )
 			),
 		},
 		node: false,
@@ -324,13 +260,7 @@ function getWebpackConfig( {
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
 			isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
-			new MiniCssExtractPluginWithRTL( {
-				filename: cssFilename,
-				rtlEnabled: true,
-			} ),
-			new WebpackRTLPlugin( {
-				minify: ! isDevelopment,
-			} ),
+			...SassConfig.plugins( { cssFilename, minify: ! isDevelopment } ),
 			new AssetsWriter( {
 				filename: 'assets.json',
 				path: path.join( __dirname, 'server', 'bundler' ),
@@ -359,11 +289,6 @@ function getWebpackConfig( {
 			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
 			new MomentTimezoneDataPlugin( {
 				startYear: 2000,
-			} ),
-			new FilterWarningsPlugin( {
-				// suppress conflicting order warnings from mini-css-extract-plugin.
-				// see https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
-				exclude: /mini-css-extract-plugin[^]*Conflicting order between:/,
 			} ),
 		] ),
 		externals: _.compact( [

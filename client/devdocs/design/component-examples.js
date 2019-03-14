@@ -53,6 +53,7 @@ export LanguagePicker from 'components/language-picker/docs/example';
 export LineChart from 'components/line-chart/docs/example';
 export ListEnd from 'components/list-end/docs/example';
 export MarkedLinesExample from 'components/marked-lines/docs/example';
+export MultipleChoiceQuestionExample from 'components/multiple-choice-question/docs/example';
 export Notices from 'components/notice/docs/example';
 export PaginationExample from 'components/pagination/docs/example';
 export PaymentLogo from 'components/payment-logo/docs/example';

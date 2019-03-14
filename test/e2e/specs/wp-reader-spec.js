@@ -29,7 +29,7 @@ describe( 'Reader: (' + screenSize + ') @parallel', function() {
 	describe( 'Log in as commenting user', function() {
 		step( 'Can log in as commenting user', async function() {
 			this.loginFlow = new LoginFlow( driver, 'commentingUser' );
-			return await this.loginFlow.login();
+			return await this.loginFlow.login( { useFreshLogin: true } );
 		} );
 
 		describe( 'Leave a comment on the latest post in the Reader', function() {

@@ -1,6 +1,6 @@
 
 .domain-product-price {
-	color: var( --color-neutral-600 );
+	color: var( --color-text );
 	font-weight: 400;
     font-size: 0.875em;
 	line-height: 1;
@@ -32,7 +32,7 @@
 	}
 
 	small {
-		opacity: 0.6;
+		color: var( --color-text-subtle )
 	}
 
 	&.domain-product-price__is-with-plans-only {

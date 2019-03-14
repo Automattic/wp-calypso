@@ -24,12 +24,6 @@ import ReadmeViewer from 'components/readme-viewer';
 import SearchCard from 'components/search-card';
 
 /**
- * Style Dependencies
- */
-import './style.scss';
-import './syntax.scss';
-
-/**
  * Docs examples
  */
 import Accordions from 'components/accordion/docs/example';
@@ -87,6 +81,7 @@ import LanguagePicker from 'components/language-picker/docs/example';
 import LineChart from 'components/line-chart/docs/example';
 import ListEnd from 'components/list-end/docs/example';
 import MarkedLinesExample from 'components/marked-lines/docs/example';
+import MultipleChoiceQuestionExample from 'components/multiple-choice-question/docs/example';
 import Notices from 'components/notice/docs/example';
 import PaginationExample from 'components/pagination/docs/example';
 import PaymentLogo from 'components/payment-logo/docs/example';
@@ -245,6 +240,7 @@ class DesignAssets extends React.Component {
 					<LineChart readmeFilePath="line-chart" />
 					<ListEnd readmeFilePath="list-end" />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
+					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
 					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />

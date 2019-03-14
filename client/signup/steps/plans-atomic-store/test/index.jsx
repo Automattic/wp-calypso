@@ -10,14 +10,6 @@ jest.mock( 'lib/signup/actions', () => ( {
 	submitSignupStep: jest.fn(),
 } ) );
 
-jest.mock( 'lib/cart-values', () => ( {
-	cartItems: {
-		domainPrivacyProtection: jest.fn( () => {
-			return 43;
-		} ),
-	},
-} ) );
-
 jest.mock( 'signup/step-wrapper', () => 'step-wrapper' );
 jest.mock( 'my-sites/plan-features', () => 'plan-features' );
 

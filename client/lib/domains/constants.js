@@ -78,7 +78,6 @@ export const dnsTemplates = {
 
 export const domainProductSlugs = {
 	TRANSFER_IN: 'domain_transfer',
-	TRANSFER_IN_PRIVACY: 'domain_transfer_privacy',
 };
 
 export const gdprConsentStatus = {

@@ -21,6 +21,11 @@ import Months from './months';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsViews extends Component {
 	static propTypes = {
 		query: PropTypes.object,

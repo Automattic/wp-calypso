@@ -81,15 +81,6 @@ export default {
 		defaultVariation: 'skip',
 		allowExistingUsers: true,
 	},
-	showConciergeSessionUpsellNonGSuite: {
-		datestamp: '20190104',
-		variations: {
-			skip: 50,
-			show: 50,
-		},
-		defaultVariation: 'skip',
-		allowExistingUsers: true,
-	},
 	builderReferralStatsNudge: {
 		datestamp: '20181218',
 		variations: {
@@ -170,5 +161,23 @@ export default {
 			logo: 50,
 		},
 		defaultVariation: 'icon',
+	},
+	gSuiteStatsNudge: {
+		datestamp: '20190308',
+		variations: {
+			copy1: 25,
+			copy2: 25,
+			copy3: 25,
+			copy4: 25,
+		},
+		defaultVariation: 'copy1',
+	},
+	builderReferralHelpBanner: {
+		datestamp: '20190304',
+		variations: {
+			builderReferralBanner: 25,
+			original: 75,
+		},
+		defaultVariation: 'original',
 	},
 };

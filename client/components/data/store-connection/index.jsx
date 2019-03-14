@@ -24,10 +24,12 @@ class StoreConnection extends React.Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( this.props, nextProps ) ) {
+		const nextState = nextProps.getStateFromStores( nextProps );
+
+		if ( ! isEqual( this.state, nextState ) ) {
 			this.removeStoreListeners( this.props.stores );
 			this.addStoreListeners( nextProps.stores );
-			this.setState( nextProps.getStateFromStores( nextProps ) );
+			this.setState( nextState );
 		}
 	}
 

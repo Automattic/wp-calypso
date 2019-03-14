@@ -32,7 +32,7 @@ import {
 } from 'my-sites/domains/paths';
 import EmailForwarding from 'my-sites/email/email-forwarding';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import GSuiteAddUsers from './gsuite/gsuite-add-users';
+import GSuiteAddUsers from 'my-sites/email/gsuite-add-users';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { decodeURIComponentIfValid } from 'lib/url';
 

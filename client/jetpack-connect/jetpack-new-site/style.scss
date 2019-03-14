@@ -39,15 +39,6 @@
 	flex-direction: column;
 	width: 360px;
 	margin: 0;
-	transition: transform 0.25s ease, box-shadow 0.35s ease, z-index 0.15s ease;
-
-	&:hover {
-		z-index: 3;
-		transform: scale( 1.075 );
-		box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 ),
-			0 7px 18px rgba( var( --color-neutral-100-rgb ), 0.5 );
-		transition: transform 0.25s ease, box-shadow 0.35s ease, z-index 0.175s ease;
-	}
 
 	@include breakpoint( '<660px' ) {
 		display: none;

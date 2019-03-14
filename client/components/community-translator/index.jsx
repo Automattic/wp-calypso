@@ -16,6 +16,11 @@ import userSettings from 'lib/user-settings';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Local variables
  */
 const debug = debugModule( 'calypso:community-translator' );

@@ -5,7 +5,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
 import { find, findIndex, matchesProperty } from 'lodash';
 
 import BackButton from './button-back';
@@ -68,24 +67,6 @@ export const findNextNoteId = ( noteId, notes ) => {
 	return notes[ nextIndex ].id;
 };
 
-const fetchLocale = localeSlug => {
-	const xhr = new XMLHttpRequest();
-
-	xhr.open( 'GET', `https://widgets.wp.com/languages/notifications/${ localeSlug }.json`, true );
-
-	xhr.onload = ( { target } ) => {
-		if ( 200 !== target.status ) {
-			return;
-		}
-
-		try {
-			i18n.setLocale( JSON.parse( xhr.response ) );
-		} catch ( e ) {}
-	};
-
-	xhr.send();
-};
-
 class Layout extends React.Component {
 	state = {
 		lastSelectedIndex: 0,
@@ -109,10 +90,6 @@ class Layout extends React.Component {
 				modifierKeyIsActive: this.modifierKeyIsActive,
 				lastInputWasKeyboard: false,
 			};
-		}
-
-		if ( this.props.locale && 'en' !== this.props.locale ) {
-			fetchLocale( this.props.locale );
 		}
 
 		window.addEventListener( 'keydown', this.handleKeyDown, false );

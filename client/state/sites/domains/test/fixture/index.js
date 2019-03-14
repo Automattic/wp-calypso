@@ -37,7 +37,6 @@ export const DOMAIN_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
-	hasPrivacyProtection: false,
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
@@ -55,7 +54,6 @@ export const DOMAIN_PRIMARY = {
 	pendingTransfer: false,
 	privateDomain: false,
 	isPrimary: true,
-	isPrivate: false,
 	registrar: '',
 	registrationDate: '2016-03-09T00:00:00+00:00',
 	subscriptionId: SUBSCRIPTION_ID_FIRST,
@@ -89,7 +87,6 @@ export const DOMAIN_NOT_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
-	hasPrivacyProtection: false,
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
@@ -107,7 +104,6 @@ export const DOMAIN_NOT_PRIMARY = {
 	pendingTransfer: false,
 	privateDomain: false,
 	isPrimary: false,
-	isPrivate: false,
 	registrar: '',
 	registrationDate: '',
 	subscriptionId: SUBSCRIPTION_ID_SECOND,

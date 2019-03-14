@@ -28,6 +28,11 @@ import { buildChartData, getQueryDate } from './utility';
 import StatTabs from '../stats-tabs';
 import memoizeLast from 'lib/memoize-last';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
 	gridicon: PropTypes.string,

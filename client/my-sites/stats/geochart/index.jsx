@@ -26,6 +26,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsGeochart extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,

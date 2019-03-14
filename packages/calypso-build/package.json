@@ -1,0 +1,36 @@
+{
+	"name": "@automattic/calypso-build",
+	"version": "1.0.0",
+	"description": "Shared Calypso build configuration files",
+	"keywords": [
+		"config",
+		"webpack",
+		"wordpress"
+	],
+	"author": "Automattic",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git"
+	},
+	"private": true,
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"dependencies": {
+		"autoprefixer": "9.4.4",
+		"babel-loader": "8.0.5",
+		"css-loader": "2.1.1",
+		"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
+		"postcss-custom-properties": "8.0.9",
+		"postcss-loader": "3.0.0",
+		"sass-loader": "7.1.0",
+		"thread-loader": "2.1.2",
+		"webpack-filter-warnings-plugin": "1.2.1",
+		"webpack-rtl-plugin": "1.8.0"
+	}
+}

@@ -91,7 +91,7 @@ export function generateSteps( {
 			fulfilledStepCallback: isDomainFulfilled,
 			providesDependencies: [ 'domainItem' ],
 			props: {
-				isDomainOnly: true,
+				isDomainOnly: false,
 				showExampleSuggestions: false,
 				showSkipButton: true,
 				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),

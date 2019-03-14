@@ -43,7 +43,6 @@ export const items = ( state = {}, action ) => {
 				1,
 				Object.assign( {}, targetDomain, {
 					privateDomain: ! targetDomain.privateDomain,
-					isPrivate: ! targetDomain.isPrivate,
 				} )
 			);
 

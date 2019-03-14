@@ -40,7 +40,7 @@ import PhotoBlogBanner from './themes-banner/photo-blog';
 import SmallBusinessBanner from './themes-banner/small-business';
 import RandomThemesBanner from './themes-banner/random-themes-banner';
 import { getActiveTheme } from 'state/themes/selectors';
-import UpworkBanner from './themes-banner/upwork';
+import UpworkBanner from 'blocks/upwork-banner';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -241,7 +241,7 @@ class ThemeShowcase extends React.Component {
 						<RandomThemesBanner banners={ themeBanners } />
 					) }
 					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
-						<UpworkBanner />
+						<UpworkBanner location={ 'theme-banner' } />
 					) }
 					<ThemesSearchCard
 						onSearch={ this.doSearch }

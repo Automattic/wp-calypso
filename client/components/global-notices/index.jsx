@@ -12,6 +12,7 @@ import React from 'react';
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import GlobalNoticesContainer from './container';
 import notices from 'notices';
 import observe from 'lib/mixins/data-observe'; // eslint-disable-line no-restricted-imports
 import { connect } from 'react-redux';
@@ -108,11 +109,7 @@ export const GlobalNotices = createReactClass( {
 			return null;
 		}
 
-		return (
-			<div id={ this.props.id } className="global-notices">
-				{ noticesList }
-			</div>
-		);
+		return <GlobalNoticesContainer id={ this.props.id }>{ noticesList }</GlobalNoticesContainer>;
 	},
 } );
 

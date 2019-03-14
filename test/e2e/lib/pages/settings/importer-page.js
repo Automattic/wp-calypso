@@ -6,7 +6,7 @@ import * as DriverHelper from '../../driver-helper.js';
 
 export default class ImporterPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.importer__section-title' ) );
+		super( driver, By.css( '.settings-import__section-description' ) );
 	}
 
 	async importerIsDisplayed( importerClass ) {

@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MultipleChoiceQuestion should render with the minimum required properties ( plus extra prop to guarantee order ) 1`] = `
+<div
+  className="multiple-choice-question"
+>
+  <legend
+    className="form-legend"
+  >
+    Test Question One
+  </legend>
+  <label
+    className="form-label"
+    locale="en"
+  >
+    <input
+      checked={false}
+      className="form-radio"
+      onChange={[Function]}
+      type="radio"
+      value="test-answer-1"
+    />
+    <span>
+      Test Anwser One
+    </span>
+  </label>
+  <label
+    className="form-label"
+    locale="en"
+  >
+    <input
+      checked={false}
+      className="form-radio"
+      onChange={[Function]}
+      type="radio"
+      value="test-answer-2"
+    />
+    <span>
+      Test Anwser Two
+    </span>
+  </label>
+  <label
+    className="form-label"
+    locale="en"
+  >
+    <input
+      checked={false}
+      className="form-radio"
+      onChange={[Function]}
+      type="radio"
+      value="test-answer-3"
+    />
+    <span>
+      Test Anwser Three
+    </span>
+  </label>
+  <label
+    className="form-label"
+    locale="en"
+  >
+    <input
+      checked={false}
+      className="form-radio"
+      onChange={[Function]}
+      type="radio"
+      value="test-answer-4"
+    />
+    <span>
+      Test Anwser Four
+    </span>
+  </label>
+</div>
+`;

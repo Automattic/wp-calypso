@@ -101,10 +101,6 @@ function hasIncludedDomain( purchase ) {
 	return Boolean( purchase.includedDomain );
 }
 
-function hasPrivacyProtection( purchase ) {
-	return purchase.hasPrivacyProtection;
-}
-
 /**
  * Checks if a purchase can be cancelled.
  * Returns true for purchases that aren't expired
@@ -404,7 +400,6 @@ export {
 	getSubscriptionEndDate,
 	handleRenewNowClick,
 	hasIncludedDomain,
-	hasPrivacyProtection,
 	isCancelable,
 	isPaidWithCreditCard,
 	isPaidWithPayPalDirect,

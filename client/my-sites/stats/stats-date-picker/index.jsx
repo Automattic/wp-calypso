@@ -20,6 +20,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsDatePicker extends Component {
 	static propTypes = {
 		date: PropTypes.oneOfType( [ PropTypes.object.isRequired, PropTypes.string.isRequired ] ),
@@ -134,6 +139,7 @@ class StatsDatePicker extends Component {
 	};
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		const { summary, translate, query, showQueryDate, isActivity } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 

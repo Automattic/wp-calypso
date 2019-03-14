@@ -51,6 +51,7 @@ import SupportUser from 'support/support-user';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import { isE2ETest } from 'lib/e2e';
 import BodySectionCssClass from './body-section-css-class';
+import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
 
 class Layout extends Component {
 	static displayName = 'Layout';
@@ -108,7 +109,8 @@ class Layout extends Component {
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'has-chat': this.props.chatIsOpen },
 				{ 'has-no-masterbar': this.props.masterbarIsHidden },
-				{ 'is-jetpack-site': this.props.isJetpack }
+				{ 'is-jetpack-site': this.props.isJetpack },
+				{ 'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -137,12 +139,7 @@ class Layout extends Component {
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && <JITM /> }
-					<GlobalNotices
-						id="notices"
-						notices={ notices.list }
-						forcePinned={ 'post' === this.props.sectionName }
-					/>
-
+					<GlobalNotices id="notices" notices={ notices.list } />
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
 					</div>
@@ -184,11 +181,13 @@ export default connect( state => {
 	const noMasterbarForCheckout = isJetpack && startsWith( currentRoute, '/checkout' );
 	const noMasterbarForRoute = currentRoute === '/log-in/jetpack' || noMasterbarForCheckout;
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
+	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 
 	return {
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
 		isJetpack,
+		isJetpackMobileFlow,
 		isLoading: isSectionLoading( state ),
 		isSupportSession: isSupportSession( state ),
 		sectionGroup,

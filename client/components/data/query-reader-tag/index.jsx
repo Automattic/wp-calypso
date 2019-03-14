@@ -12,10 +12,10 @@ import { connect } from 'react-redux';
  */
 import { requestTags } from 'state/reader/tags/items/actions';
 
-const QueryReaderTag = props => {
+const QueryReaderTag = ( { tag, requestTags: request } ) => {
 	useEffect(() => {
-		props.requestTags( props.tag );
-	}, [ props.tag ]);
+		request( tag );
+	}, [ request, tag ]);
 	return null;
 };
 

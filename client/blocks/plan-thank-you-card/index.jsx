@@ -22,6 +22,11 @@ import ThankYouCard from 'components/thank-you-card';
 import PlanIcon from 'components/plans/plan-icon';
 import { getPlanClass } from 'lib/plans/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PlanThankYouCard extends Component {
 	getPlanClass() {
 		const { plan } = this.props;
