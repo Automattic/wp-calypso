@@ -22,13 +22,17 @@ const GSuiteCancellationSurvey = ( { onSurveryAnswerChange, translate } ) => {
 			textInput: true,
 		},
 		{
-			id: 'dont-need-it',
+			id: 'do-not-need-it',
 			answerText: translate( "I don't need it." ),
 			textInput: true,
 		},
 		{
 			id: 'purchased-by-mistake',
 			answerText: translate( 'I purchased it by mistake.' ),
+		},
+		{
+			id: 'it-did-not-work',
+			answerText: translate( "It didn't work." ),
 		},
 		{
 			id: 'another-reason',
