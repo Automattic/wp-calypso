@@ -1,5 +1,6 @@
 /** @format */
 import assert from 'assert';
+import UpsellPage from '../pages/signup/upsell-page';
 import ChecklistPage from '../pages/checklist-page';
 import InlineHelpChecklistComponent from '../components/inline-help-checklist-component.js';
 import SitePreviewComponent from '../components/site-preview-component.js';
@@ -37,6 +38,12 @@ export const canSeeTheInlineHelpCongratulations = () => {
 
 export const canSeeTheOnboardingChecklist = () => {
 	step( 'Can then see the onboarding checklist', async function() {
+		// dismiss upsell page if displayed
+		try {
+			const upsellPage = await UpsellPage.Expect( this.driver );
+			await upsellPage.declineOffer();
+		} catch ( e ) {}
+
 		const checklistPage = await ChecklistPage.Expect( this.driver );
 		const header = await checklistPage.headerExists();
 		const subheader = await checklistPage.subheaderExists();
