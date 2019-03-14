@@ -93,9 +93,9 @@
 		[ "removeDomainsStepFromOnboarding_20181221", "keep" ],
 		[ "showConciergeSessionUpsell_20181214", "skip" ],
 		[ "showConciergeSessionUpsellNonGSuite_20190104", "skip" ],
-		[ "improvedOnboarding_20190214", "main" ],
+		[ "improvedOnboarding_20190314", "main" ],
 		[ "skipBusinessInformation_20190130", "hide" ],
 		[ "twoYearPlanByDefault_20190207", "originalFlavor" ],
-	  	[ "builderReferralHelpPopover_20190227", "original" ]
+		[ "builderReferralHelpPopover_20190227", "original" ]
 	]
 }
