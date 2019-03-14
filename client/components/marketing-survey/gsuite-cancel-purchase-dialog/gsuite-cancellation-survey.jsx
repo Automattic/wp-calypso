@@ -21,13 +21,11 @@ const GSuiteCancellationSurvey = ( { onSurveryAnswerChange, translate } ) => {
 			id: 'too-expensive',
 			answerText: translate( "It's too expensive." ),
 			textInput: true,
-			textInputPrompt: translate( 'How can we improve our G Suite Upgrade?' ),
 		},
 		{
 			id: 'dont-need-it',
 			answerText: translate( "I don't need it." ),
 			textInput: true,
-			textInputPrompt: translate( 'What are we missing that you need?' ),
 		},
 		{
 			id: 'purchased-by-mistake',
