@@ -4,7 +4,7 @@
 /docs/
 /public/
 /packages/*/dist/**/*
-**/node_modules/**/*
+node_modules/
 !.eslintrc.js
 /server/devdocs/search-index.js
 **/presets/**/build/**/*
