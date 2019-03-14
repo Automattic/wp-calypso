@@ -152,11 +152,13 @@ class UploadingPane extends React.PureComponent {
 						site={ site }
 						isEnabled={ isEnabled }
 					/>
-					{ importerState === appStates.UPLOAD_SUCCESS && (
-						<ImporterActionButton onClick={ () => startMappingAuthors( importerId ) } primary>
-							{ this.props.translate( 'Continue' ) }
-						</ImporterActionButton>
-					) }
+					<ImporterActionButton
+						primary
+						disabled={ importerState !== appStates.UPLOAD_SUCCESS }
+						onClick={ () => startMappingAuthors( importerId ) }
+					>
+						{ this.props.translate( 'Continue' ) }
+					</ImporterActionButton>
 				</ImporterActionButtonContainer>
 			</div>
 		);
