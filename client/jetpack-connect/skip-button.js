@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -13,6 +14,17 @@ import Gridicon from 'gridicons';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class SkipButton extends PureComponent {
+	static propTypes = {
+		onClick: PropTypes.func,
+		tracksEventName: PropTypes.string,
+
+		// Connected props
+		recordTracksEvent: PropTypes.func,
+
+		// From localize() HoC
+		translate: PropTypes.func,
+	};
+
 	handleClick = () => {
 		const { onClick, tracksEventName } = this.props;
 
@@ -22,7 +34,9 @@ class SkipButton extends PureComponent {
 			this.props.recordTracksEvent( tracksEventName );
 		}
 
-		onClick();
+		if ( onClick ) {
+			onClick();
+		}
 	};
 
 	render() {
