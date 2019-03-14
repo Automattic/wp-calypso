@@ -36,24 +36,11 @@ const debug = debugFactory( 'calypso:bootstrap' ),
  * @returns {Promise<object>} A promise for a user object.
  */
 module.exports = function( request ) {
-	const authCookieValue = request.cookies.wordpress_logged_in;
+	const authCookieValue = request.cookies[ AUTH_COOKIE_NAME ];
 	const geoCountry = request.get( 'x-geoip-country-code' ) || '';
 	const supportSession = request.get( 'x-support-session' );
 
 	return new Promise( ( resolve, reject ) => {
-		if ( authCookieValue && supportSession ) {
-			reject(
-				new Error(
-					'Both an auth cookie and a support session were provided for bootstrap. This should not occur.'
-				)
-			);
-			return;
-		}
-		if ( ! authCookieValue && ! supportSession ) {
-			reject( new Error( 'Cannot bootstrap without an auth cookie or a support session.' ) );
-			return;
-		}
-
 		// create HTTP Request object
 		const req = superagent.get( url );
 		req.set( 'User-Agent', 'WordPress.com Calypso' );
@@ -62,34 +49,38 @@ module.exports = function( request ) {
 		if ( authCookieValue ) {
 			const decodedAuthCookieValue = decodeURIComponent( authCookieValue );
 
-			if ( typeof API_KEY !== 'string' ) {
-				return reject(
-					new Error( 'Unable to boostrap user because of invalid API key in secrets.json' )
-				);
-			}
-
-			const hmac = crypto.createHmac( 'md5', API_KEY );
-			hmac.update( decodedAuthCookieValue );
-			const hash = hmac.digest( 'hex' );
-
-			req.set( 'Authorization', 'X-WPCALYPSO ' + hash );
 			req.set( 'Cookie', AUTH_COOKIE_NAME + '=' + decodedAuthCookieValue );
-		} else if ( supportSession ) {
-			if ( typeof SUPPORT_SESSION_API_KEY !== 'string' ) {
-				reject(
-					new Error(
-						'Unable to boostrap user because of invalid SUPPORT SESSION API key in secrets.json'
-					)
-				);
-				return;
+
+			if ( supportSession ) {
+				if ( typeof SUPPORT_SESSION_API_KEY !== 'string' ) {
+					reject(
+						new Error(
+							'Unable to boostrap user because of invalid SUPPORT SESSION API key in secrets.json'
+						)
+					);
+					return;
+				}
+
+				const hmac = crypto.createHmac( 'md5', SUPPORT_SESSION_API_KEY );
+				hmac.update( supportSession );
+				const hash = hmac.digest( 'hex' );
+				req.set( 'Authorization', `X-WPCALYPSO-SUPPORT-SESSION ${ hash }` );
+
+				req.set( 'x-support-session', supportSession );
+			} else {
+				if ( typeof API_KEY !== 'string' ) {
+					reject(
+						new Error( 'Unable to boostrap user because of invalid API key in secrets.json' )
+					);
+					return;
+				}
+
+				const hmac = crypto.createHmac( 'md5', API_KEY );
+				hmac.update( decodedAuthCookieValue );
+				const hash = hmac.digest( 'hex' );
+
+				req.set( 'Authorization', 'X-WPCALYPSO ' + hash );
 			}
-
-			const hmac = crypto.createHmac( 'md5', SUPPORT_SESSION_API_KEY );
-			hmac.update( supportSession );
-			const hash = hmac.digest( 'hex' );
-			req.set( 'Authorization', `X-WPCALYPSO-SUPPORT-SESSION ${ hash }` );
-
-			req.set( 'x-support-session', supportSession );
 		}
 
 		// start the request

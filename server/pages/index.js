@@ -216,7 +216,7 @@ function getAcceptedLanguagesFromHeader( header ) {
  */
 function setupLoggedInContext( req, res, next ) {
 	const isSupportSession = !! req.get( 'x-support-session' );
-	const isLoggedIn = isSupportSession || !! req.cookies.wordpress_logged_in;
+	const isLoggedIn = !! req.cookies.wordpress_logged_in;
 
 	req.context = {
 		...req.context,
