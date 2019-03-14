@@ -33,8 +33,5 @@
 		"thread-loader": "2.1.2",
 		"webpack-filter-warnings-plugin": "1.2.1",
 		"webpack-rtl-plugin": "1.8.0"
-	},
-	"devDependencies": {
-		"@wordpress/babel-plugin-makepot": "2.1.3"
 	}
 }
