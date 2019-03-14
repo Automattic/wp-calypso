@@ -37,16 +37,18 @@ Example:
 
 Wrapper repo is basically the same Main repo but with parameterized `./run.sh` command which provide variety of ways to run the tests.  We set things up this way to make it easy to differentiate build types on Circle CI, for example: [history of WooCommerce e2e test runs](https://circleci.com/build-insights/gh/Automattic/wp-e2e-tests-woocommerce/master).
 
-1. [Main repo](https://github.com/Automattic/wp-e2e-tests) - Main repo as it is :)
+1. ~~[Main repo](https://github.com/Automattic/wp-e2e-tests) - Retired e2e repo~~
 1. [Canary tests](https://github.com/Automattic/wp-e2e-tests-canary) - `@canary` tagged tests which runs on every Calypso `master` merge
-1. [IE11 tests](https://github.com/Automattic/wp-e2e-tests-ie11) - IE11 tests running in Sauce Labs. Triggered by `cron` job
-1. [Jetpack stable](https://github.com/Automattic/wp-e2e-tests-jetpack) - Jetpack centric tests (specs tagged with `@jetpack` tag) which uses stable Jetpack releases and hosted on Pressable
-1. [Jetpack bleeding edge](https://github.com/Automattic/wp-e2e-tests-jetpack-be) - Jetpack centric tests (specs tagged with `@jetpack` tag) which uses 'bleeding edge' Jetpack releases and hosted on Pressable
+1. ~~[IE11 tests](https://github.com/Automattic/wp-e2e-tests-ie11) - IE11 tests running in Sauce Labs. Triggered by `cron` job~~
+1. ~~[Jetpack stable](https://github.com/Automattic/wp-e2e-tests-jetpack) - Jetpack centric tests (specs tagged with `@jetpack` tag) which uses stable Jetpack releases and hosted on Pressable~~
+1. ~~[Jetpack bleeding edge](https://github.com/Automattic/wp-e2e-tests-jetpack-be) - Jetpack centric tests (specs tagged with `@jetpack` tag) which uses 'bleeding edge' Jetpack releases and hosted on Pressable~~
 1. [Branches full suite tests](https://github.com/Automattic/wp-e2e-tests-for-branches) - Repo which is used to run e2e full suite tests against Calypso PR's. Triggered by GitHub labels
 1. [Branches canary tests](https://github.com/Automattic/wp-e2e-canary-for-branches) - Repo which is used to run e2e canary tests against Calypso PR's. Triggered by GitHub labels
-1. [Woo tests](https://github.com/Automattic/wp-e2e-tests-woocommerce) - Runs WooCommerce specs
-1. [I18N tests](https://github.com/Automattic/wp-e2e-tests-i18n) - Runs I18N test suite. Triggered by `cron` job
-1. [Jetpack Release Smoke test](https://github.com/Automattic/wp-e2e-tests-jetpack-smoke) - Manually triggered smoke test which is running against multiple set of WPORG hosts
+1. ~~[Woo tests](https://github.com/Automattic/wp-e2e-tests-woocommerce) - Runs WooCommerce specs~~
+1. ~~[I18N tests](https://github.com/Automattic/wp-e2e-tests-i18n) - Runs I18N test suite. Triggered by `cron` job~~
+1. ~~[Jetpack Release Smoke test](https://github.com/Automattic/wp-e2e-tests-jetpack-smoke) - Manually triggered smoke test which is running against multiple set of WPORG hosts~~
+
+** Branches with strikethrough are now unnecessary with the move of e2e tests in to wp-calypso
 
 **Note- If adding to this list, also add to /scripts/circleci-branch-update.sh to ensure they stay up to date on node version
 

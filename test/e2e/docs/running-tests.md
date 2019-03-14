@@ -2,11 +2,17 @@
 
 ## Table of Contents
 
+- [Getting started](#getting-started)
 - [To run the default specs](#to-run-the-default-specs-in-parallel-in-default-browser-sizes---mobile-and-desktop)
 - [To run an individual spec](#to-run-an-individual-spec)
 - [To run with different modes](#to-run-with-different-modes)
 - [To run a specific suite of specs](#to-run-a-specific-suite-of-specs)
 - [To run headlessly](#to-run-headlessly)
+
+## Getting started
+
+You will need to be in the /test/e2e directory to run the tests
+
 
 ## To run the default specs in parallel (in default browser sizes - mobile and desktop)
 
