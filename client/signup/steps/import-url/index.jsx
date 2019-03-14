@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, invoke, isEqual } from 'lodash';
+import { flow, get, invoke, isEmpty, isEqual, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -84,7 +84,7 @@ class ImportURLStepComponent extends Component {
 			}
 		}
 
-		if ( isEqual( prevProps.siteDetails, siteDetails ) || ! siteDetails ) {
+		if ( isEqual( prevProps.siteDetails, siteDetails ) || isEmpty( pickBy( siteDetails ) ) ) {
 			return;
 		}
 
