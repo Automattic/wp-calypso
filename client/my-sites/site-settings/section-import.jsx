@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
+import { filter, flow, get, isEmpty, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -86,11 +86,6 @@ const filterImportsForSite = ( siteID, imports ) => {
 	return filter( imports, importItem => importItem.site.ID === siteID );
 };
 
-const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
-const getImporterForEngine = memoize( engine =>
-	find( importers, [ 'type', getImporterTypeForEngine( engine ) ] )
-);
-
 class SiteSettingsImport extends Component {
 	static propTypes = {
 		site: PropTypes.object,
@@ -98,25 +93,7 @@ class SiteSettingsImport extends Component {
 
 	state = getImporterState();
 
-	onceAutoStartImport = once( () => {
-		const { engine, site } = this.props;
-		const { importers: imports } = this.state;
-
-		if ( ! engine ) {
-			return;
-		}
-
-		if ( ! isEmpty( imports ) ) {
-			// Never clobber an existing import
-			return;
-		}
-
-		if ( ! getImporterForEngine( engine ) ) {
-			return;
-		}
-
-		startImport( site.ID, getImporterTypeForEngine( engine ) );
-	} );
+	onceAutoStartImport = once( ( siteId, importerType ) => startImport( siteId, importerType ) );
 
 	componentDidMount() {
 		ImporterStore.on( 'change', this.updateState );
@@ -124,13 +101,12 @@ class SiteSettingsImport extends Component {
 	}
 
 	componentDidUpdate() {
-		const { site } = this.props;
+		const { engine, site } = this.props;
+		const { importers: imports } = this.state;
 
-		if ( ! ( site && site.ID ) ) {
-			return;
+		if ( isEmpty( imports ) && 'wix' === engine && site && site.ID ) {
+			this.onceAutoStartImport( site.ID, 'importer-type-wix' );
 		}
-
-		this.onceAutoStartImport();
 	}
 
 	componentWillUnmount() {
@@ -227,7 +203,7 @@ class SiteSettingsImport extends Component {
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
 
-		if ( getImporterForEngine( engine ) ) {
+		if ( engine === 'wix' ) {
 			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
 		}
 
