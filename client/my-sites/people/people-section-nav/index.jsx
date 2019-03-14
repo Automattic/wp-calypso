@@ -123,16 +123,15 @@ class PeopleSectionNav extends Component {
 	}
 
 	render() {
-		let selectedText,
-			hasPinnedItems = false,
-			search = null;
+		let hasPinnedItems = false;
+		let search = null;
 
 		if ( this.canSearch() ) {
 			hasPinnedItems = true;
 			search = <PeopleSearch { ...this.props } />;
 		}
 
-		selectedText = find( this.getFilters(), { id: this.props.filter } ).title;
+		const selectedText = find( this.getFilters(), { id: this.props.filter } ).title;
 		return (
 			<SectionNav selectedText={ selectedText } hasPinnedItems={ hasPinnedItems }>
 				<PeopleNavTabs
