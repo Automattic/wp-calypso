@@ -9,7 +9,7 @@ import React from 'react';
 const GSuitePurchaseFeaturesSingleFeature = ( { description, imagePath, imageAlt, title } ) => {
 	return (
 		<div className="gsuite-purchase-features__feature">
-			<div className="gsuite-purchase-features__feature-block">
+			<div className="gsuite-purchase-features__feature-image">
 				<img alt={ imageAlt } src={ imagePath } />
 			</div>
 			<div className="gsuite-purchase-features__feature-block">

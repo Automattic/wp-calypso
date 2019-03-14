@@ -28,6 +28,14 @@
 	.gsuite-purchase-features__learn-more {
 		text-align: left;
 	}
+
+	.gsuite-purchase-features__feature {
+		margin-bottom: 2em;
+	}
+
+	.gsuite-purchase-features__learn-more {
+		margin-top: 2em;
+	}
 }
 
 .gsuite-purchase-features__feature {
@@ -37,9 +45,15 @@
 	margin-bottom: 1em;
 }
 
+.gsuite-purchase-features__feature-image {
+	align-items: flex-start;
+	padding: 0 1em 0 0;
+}
+
 .gsuite-purchase-features__feature-block {
 	align-items: flex-start;
 	padding: 0 1em 0 0;
+	flex: 1;
 }
 
 .gsuite-purchase-features__feature-header {

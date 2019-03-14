@@ -122,13 +122,11 @@ class GSuiteCancelPurchaseDialog extends Component {
 				isVisible={ isVisible }
 				onClose={ onClose }
 			>
-				<div className="gsuite-cancel-purchase-dialog__content">
-					{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
-						<GSuiteCancellationFeatures purchase={ purchase } />
-					) : (
-						<GSuiteCancellationSurvey onSurveryAnswerChange={ this.onSurveryAnswerChange } />
-					) }
-				</div>
+				{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
+					<GSuiteCancellationFeatures purchase={ purchase } />
+				) : (
+					<GSuiteCancellationSurvey onSurveryAnswerChange={ this.onSurveryAnswerChange } />
+				) }
 			</Dialog>
 		);
 	}

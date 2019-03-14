@@ -3,14 +3,14 @@
 /**
  * External dependencies
  */
-
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import CardHeading from 'components/card-heading';
 import MultipleChoiceQuestion from 'components/multiple-choice-question';
 
 const GSuiteCancellationSurvey = ( { onSurveryAnswerChange, translate } ) => {
@@ -20,10 +20,14 @@ const GSuiteCancellationSurvey = ( { onSurveryAnswerChange, translate } ) => {
 		{
 			id: 'too-expensive',
 			answerText: translate( "It's too expensive." ),
+			textInput: true,
+			textInputPrompt: translate( 'How can we improve our G Suite Upgrade?' ),
 		},
 		{
 			id: 'dont-need-it',
 			answerText: translate( "I don't need it." ),
+			textInput: true,
+			textInputPrompt: translate( 'What are we missing that you need?' ),
 		},
 		{
 			id: 'purchased-by-mistake',
@@ -39,7 +43,14 @@ const GSuiteCancellationSurvey = ( { onSurveryAnswerChange, translate } ) => {
 
 	return (
 		<Fragment>
+			<CardHeading tagName="h3" size={ 24 }>
+				{ translate( 'One question before you go.' ) }
+			</CardHeading>
+			<p>
+				{ translate( 'Before you go a quick question to help improve our G Suite integration.' ) }
+			</p>
 			<MultipleChoiceQuestion
+				className="gsuite-cancel-purchase-dialog__survey"
 				question={ question }
 				answers={ answers }
 				onAnswerChange={ onSurveryAnswerChange }
