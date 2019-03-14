@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, find, get, noop, startsWith, trim, uniq, isEmpty } from 'lodash';
+import { find, get, noop, startsWith, trim, uniq, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -179,8 +179,6 @@ const requestSiteVerticalHttpData = ( searchTerm, limit = 5, id = SITE_VERTICALS
 export const isVerticalSearchPending = () =>
 	'pending' === get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
 
-const requestSiteVerticals = debounce( requestSiteVerticalHttpData, 333 );
-
 export default localize(
 	connect(
 		() => {
@@ -193,7 +191,7 @@ export default localize(
 			};
 		},
 		() => ( {
-			requestVerticals: requestSiteVerticals,
+			requestVerticals: requestSiteVerticalHttpData,
 			requestDefaultVertical: ( searchTerm = 'business' ) =>
 				requestSiteVerticalHttpData( searchTerm, 1, DEFAULT_SITE_VERTICAL_REQUEST_ID ),
 		} )
