@@ -1718,11 +1718,12 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
 		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-		getTitle: () => i18n.translate( '{{strong}}Daily{{/strong}} Backups', {
-			components: {
-				strong: <strong />,
-			},
-		} ),
+		getTitle: () =>
+			i18n.translate( '{{strong}}Daily{{/strong}} Backups', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with ' +
@@ -1739,7 +1740,7 @@ export const FEATURES_LIST = {
 			} ),
 		getDescription: () =>
 			i18n.translate(
-				'Automatic realtime backups of every single aspect of your site. ' +
+				'Automatic real-time backups of every single aspect of your site. ' +
 					'Stored safely and optimized for WordPress.'
 			),
 	},
@@ -1781,11 +1782,12 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY ]: {
 		getSlug: () => FEATURE_MALWARE_SCANNING_DAILY,
-		getTitle: () => i18n.translate( '{{strong}}Daily{{/strong}} Malware Scanning', {
-			components: {
-				strong: <strong />,
-			},
-		} ),
+		getTitle: () =>
+			i18n.translate( '{{strong}}Daily{{/strong}} Malware Scanning', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
 				'Comprehensive, automated scanning for security vulnerabilities or threats on your site.'
@@ -1807,13 +1809,16 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_AUTOMATIC_SECURITY_FIXES ]: {
 		getSlug: () => FEATURE_AUTOMATIC_SECURITY_FIXES,
-		getTitle: () => i18n.translate( '{{strong}}Automatic{{/strong}} Security Fixes', {
-			components: {
-				strong: <strong />,
-			},
-		} ),
+		getTitle: () =>
+			i18n.translate( '{{strong}}Automatic{{/strong}} Security Fixes', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
-			i18n.translate( 'Automated and immediate resolution for a large percentage of known security vulnerabilities or threats.' ),
+			i18n.translate(
+				'Automated and immediate resolution for a large percentage of known security vulnerabilities or threats.'
+			),
 	},
 	[ FEATURE_ACTIVITY_LOG ]: {
 		getSlug: () => FEATURE_ACTIVITY_LOG,
@@ -1956,11 +1961,12 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_SEARCH ]: {
 		getSlug: () => FEATURE_SEARCH,
-		getTitle: () => i18n.translate( '{{strong}}Enhanced{{/strong}} Site-wide Search', {
-			components: {
-				strong: <strong />,
-			},
-		} ),
+		getTitle: () =>
+			i18n.translate( '{{strong}}Enhanced{{/strong}} Site-wide Search', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
 				'Fast, relevant search results with custom filtering, powered by Elasticsearch.'
