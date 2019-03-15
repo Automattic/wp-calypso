@@ -140,6 +140,8 @@ export const FEATURE_EASY_SITE_MIGRATION = 'easy-site-migration';
 export const FEATURE_MALWARE_SCANNING_DAILY = 'malware-scanning-daily';
 export const FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND = 'malware-scanning-daily-and-on-demand';
 export const FEATURE_ONE_CLICK_THREAT_RESOLUTION = 'one-click-threat-resolution';
+export const FEATURE_AUTOMATIC_SECURITY_FIXES = 'automatic-security-fixes';
+export const FEATURE_ACTIVITY_LOG = 'site-activity-log';
 export const FEATURE_POLLS_PRO = 'polls-pro';
 export const FEATURE_CORE_JETPACK = 'core-jetpack';
 export const FEATURE_BASIC_SUPPORT_JETPACK = 'basic-support-jetpack';
@@ -855,9 +857,9 @@ export const PLANS_LIST = {
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
-				FEATURE_MARKETING_AUTOMATION,
-				FEATURE_WORDADS_INSTANT,
+				FEATURE_AUTOMATIC_SECURITY_FIXES,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+				FEATURE_WORDADS_INSTANT,
 				FEATURE_ADVANCED_SEO,
 				FEATURE_CONCIERGE_SETUP,
 				FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
@@ -907,9 +909,9 @@ export const PLANS_LIST = {
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
-				FEATURE_MARKETING_AUTOMATION,
-				FEATURE_WORDADS_INSTANT,
+				FEATURE_AUTOMATIC_SECURITY_FIXES,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+				FEATURE_WORDADS_INSTANT,
 				FEATURE_ADVANCED_SEO,
 				FEATURE_CONCIERGE_SETUP,
 				FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
@@ -950,6 +952,7 @@ export const PLANS_LIST = {
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_ACTIVITY_LOG,
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_ALL_FREE_FEATURES_JETPACK,
 		],
@@ -989,6 +992,7 @@ export const PLANS_LIST = {
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_ACTIVITY_LOG,
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_ALL_FREE_FEATURES_JETPACK,
 		],
@@ -1019,13 +1023,11 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 		getDescription: () =>
 			i18n.translate(
-				'The most powerful WordPress sites: unlimited premium ' +
-					'themes, real-time backups, and enhanced search.'
+				'The most powerful WordPress sites: real-time backups, ' +
+					'enhanced search, and unlimited premium themes.'
 			),
 		getTagline: () =>
-			i18n.translate(
-				'You have full access to premium themes, marketing tools, and priority support.'
-			),
+			i18n.translate( 'You have the full suite of security and performance tools.' ),
 		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
@@ -1049,9 +1051,9 @@ export const PLANS_LIST = {
 			] ),
 		getSignupFeatures: () =>
 			compact( [
-				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 				FEATURE_SEARCH,
+				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -1081,13 +1083,11 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'The most powerful WordPress sites: unlimited premium ' +
-					'themes, real-time backups, and enhanced search.'
+				'The most powerful WordPress sites: real-time backups, ' +
+					'enhanced search, and unlimited premium themes.'
 			),
 		getTagline: () =>
-			i18n.translate(
-				'You have full access to premium themes, marketing tools, and priority support.'
-			),
+			i18n.translate( 'You have the full suite of security and performance tools.' ),
 		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
@@ -1110,9 +1110,9 @@ export const PLANS_LIST = {
 			] ),
 		getSignupFeatures: () =>
 			compact( [
-				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 				FEATURE_SEARCH,
+				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
@@ -1714,7 +1714,12 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
 		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-		getTitle: () => i18n.translate( 'Daily Off-site Backups' ),
+		getTitle: () =>
+			i18n.translate( '{{strong}}Daily{{/strong}} Backups', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with ' +
@@ -1724,14 +1729,14 @@ export const FEATURES_LIST = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME ]: {
 		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 		getTitle: () =>
-			i18n.translate( '{{strong}}Real-time{{/strong}} Off-site Backups', {
+			i18n.translate( '{{strong}}Real-time{{/strong}} Backups', {
 				components: {
 					strong: <strong />,
 				},
 			} ),
 		getDescription: () =>
 			i18n.translate(
-				'Automatic realtime backups of every single aspect of your site. ' +
+				'Automatic real-time backups of every single aspect of your site. ' +
 					'Stored safely and optimized for WordPress.'
 			),
 	},
@@ -1773,7 +1778,12 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY ]: {
 		getSlug: () => FEATURE_MALWARE_SCANNING_DAILY,
-		getTitle: () => i18n.translate( 'Daily Malware Scanning' ),
+		getTitle: () =>
+			i18n.translate( '{{strong}}Daily{{/strong}} Malware Scanning', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
 				'Comprehensive, automated scanning for security vulnerabilities or threats on your site.'
@@ -1792,6 +1802,27 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'One-click Threat Resolution' ),
 		getDescription: () =>
 			i18n.translate( 'Repair any security issues found on your site with just a single click.' ),
+	},
+	[ FEATURE_AUTOMATIC_SECURITY_FIXES ]: {
+		getSlug: () => FEATURE_AUTOMATIC_SECURITY_FIXES,
+		getTitle: () =>
+			i18n.translate( '{{strong}}Automatic{{/strong}} Security Fixes', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () =>
+			i18n.translate(
+				'Automated and immediate resolution for a large percentage of known security vulnerabilities or threats.'
+			),
+	},
+	[ FEATURE_ACTIVITY_LOG ]: {
+		getSlug: () => FEATURE_ACTIVITY_LOG,
+		getTitle: () => i18n.translate( 'Expanded Site Activity' ),
+		getDescription: () =>
+			i18n.translate(
+				'Take the guesswork out of site management and debugging with a filterable record of all the activity happening on your site.'
+			),
 	},
 	[ FEATURE_POLLS_PRO ]: {
 		getSlug: () => FEATURE_POLLS_PRO,
@@ -1926,7 +1957,12 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_SEARCH ]: {
 		getSlug: () => FEATURE_SEARCH,
-		getTitle: () => i18n.translate( 'Enhanced Site-wide Search' ),
+		getTitle: () =>
+			i18n.translate( '{{strong}}Enhanced{{/strong}} Site-wide Search', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
 				'Fast, relevant search results with custom filtering, powered by Elasticsearch.'
