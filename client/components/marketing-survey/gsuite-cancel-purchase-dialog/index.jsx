@@ -75,7 +75,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 
 	getStepButtons = () => {
 		const { translate } = this.props;
-		const { step, isDisabled } = this.state;
+		const { step, isDisabled, surveyAnswerId } = this.state;
 		if ( steps.GSUITE_INITIAL_STEP === step ) {
 			return [
 				{
@@ -106,7 +106,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 			{
 				action: 'remove',
 				disabled: isDisabled,
-				isPrimary: true,
+				isPrimary: 'it-did-not-work' !== surveyAnswerId,
 				label: translate( 'Remove Now' ),
 				onClick: this.removeButtonClick,
 			},

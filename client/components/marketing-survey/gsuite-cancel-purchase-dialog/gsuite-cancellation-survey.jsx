@@ -38,9 +38,7 @@ const GSuiteCancellationSurvey = ( { onSurveyAnswerChange, translate } ) => (
 			/>
 
 			<MultipleChoiceAnswer id={ 'it-did-not-work' } answerText={ translate( "It didn't work." ) }>
-				<Button primary>
-					{ translate( 'Get Help from Support with your G Suite Subscription' ) }
-				</Button>
+				<Button primary>{ translate( 'Get Help Now' ) }</Button>
 			</MultipleChoiceAnswer>
 
 			<MultipleChoiceAnswer
