@@ -1,0 +1,6 @@
+.comments__comment-actions-approve {
+	.gridicon .gridicon-checkmark,
+	&.is-approved {
+		color: var( --color-success );
+	}
+}
