@@ -19,6 +19,7 @@ import {
 	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
 	hasDomainInCart,
+	isPaidDomain,
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
@@ -184,12 +185,15 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		const title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
-		const isPaidDomain = 'PRICE' === this.getPriceRule();
+		const paidDomain = isPaidDomain( this.getPriceRule() );
+		const saleBadgeText = translate( 'Sale', {
+			comment: 'Shown next to a domain that has a special discounted sale price',
+		} );
 
 		return (
 			<div className="domain-registration-suggestion__title-wrapper">
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
-				{ productSaleCost && isPaidDomain && <Badge>Sale</Badge> }
+				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
 			</div>
 		);
 	}
@@ -298,11 +302,7 @@ const mapStateToProps = ( state, props ) => {
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
 
 	return {
-		productCost: getDomainPrice(
-			productSlug,
-			getProductsList( state ),
-			getCurrentUserCurrencyCode( state )
-		),
+		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode ),
 		productSaleCost: getDomainSalePrice( productSlug, productsList, currentUserCurrencyCode ),
 	};
 };

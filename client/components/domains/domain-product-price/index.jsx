@@ -24,6 +24,7 @@ class DomainProductPrice extends React.Component {
 		requiresPlan: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		isMappingProduct: PropTypes.bool,
+		salePrice: PropTypes.string,
 	};
 
 	static defaultProps = {

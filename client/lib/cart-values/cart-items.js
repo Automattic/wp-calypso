@@ -1108,6 +1108,10 @@ export function isDomainMappingFree( selectedSite ) {
 	return selectedSite && isPlan( selectedSite.plan ) && ! isBloggerPlan( selectedSite.plan );
 }
 
+export function isPaidDomain( domainPriceRule ) {
+	return 'PRICE' === domainPriceRule;
+}
+
 export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, isDomainOnly ) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
@@ -1220,6 +1224,7 @@ export default {
 	hasRenewalItem,
 	hasTld,
 	hasConciergeSession,
+	isPaidDomain,
 	noAdsItem,
 	planItem,
 	premiumPlan,
