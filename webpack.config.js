@@ -211,7 +211,7 @@ function getWebpackConfig( {
 			alias: Object.assign(
 				{
 					'gridicons/example': 'gridicons/dist/example',
-					'react-virtualized': 'react-virtualized/dist/commonjs',
+					'react-virtualized': 'react-virtualized/dist/es',
 					'social-logos/example': 'social-logos/build/example',
 					debug: path.resolve( __dirname, 'node_modules/debug' ),
 					store: 'store/dist/store.modern',
