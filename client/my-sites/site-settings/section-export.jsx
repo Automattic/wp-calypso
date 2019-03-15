@@ -37,11 +37,10 @@ const SiteSettingsExport = ( { isJetpack, site, siteSlug, translate } ) => {
 };
 
 export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 
 	return {
-		isJetpack: selectedSiteId && isJetpackSite( state, selectedSiteId ),
+		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
 		site,
 		siteSlug: getSelectedSiteSlug( state ),
 	};
