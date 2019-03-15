@@ -1,10 +1,10 @@
 /** @format */
 export default {
 	improvedOnboarding: {
-		datestamp: '20190214',
+		datestamp: '20190314',
 		variations: {
-			main: 50,
-			onboarding: 50,
+			main: 0,
+			onboarding: 100,
 		},
 		defaultVariation: 'main',
 	},
