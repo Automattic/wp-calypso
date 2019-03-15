@@ -93,12 +93,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		const valueLengthShouldTriggerSearch = valueLength >= this.props.charsToTriggerSearch;
 		const result = this.searchForVerticalMatches( value );
 
-		// Cancel delayed invocations in case of deletion
-		// and make sure the consuming component knows about it.
-		if ( ! hasValue || ! valueLengthShouldTriggerSearch ) {
-			this.props.requestVerticals.cancel();
-		}
-
 		if (
 			hasValue &&
 			valueLengthShouldTriggerSearch &&

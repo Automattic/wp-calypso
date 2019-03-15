@@ -76,14 +76,6 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( defaultProps.verticals[ 0 ] );
 	} );
 
-	test( 'should cancel debounced invocations when the search value is falsey or has fewer chars than `props.charsToTriggerSearch`', () => {
-		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-		wrapper.instance().onSiteTopicChange( 'b' );
-		expect( defaultProps.requestVerticals.cancel ).toHaveBeenCalledTimes( 1 );
-		wrapper.instance().onSiteTopicChange( null );
-		expect( defaultProps.requestVerticals.cancel ).toHaveBeenCalledTimes( 2 );
-	} );
-
 	describe( 'searchForVerticalMatches()', () => {
 		test( 'should return `undefined` by default', () => {
 			const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
