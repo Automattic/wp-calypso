@@ -15,7 +15,7 @@ import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import { allSiteTypes } from 'lib/signup/site-type';
+import { getAllSiteTypes } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -34,7 +34,8 @@ class SiteTypeForm extends Component {
 
 	constructor( props ) {
 		super( props );
-
+		// eslint-disable-next-line
+		console.log( 'props', props );
 		this.state = {
 			siteType: props.siteType,
 		};
@@ -55,7 +56,7 @@ class SiteTypeForm extends Component {
 	};
 
 	renderRadioOptions() {
-		return allSiteTypes.map( siteTypeProperties => (
+		return getAllSiteTypes().map( siteTypeProperties => (
 			<FormLabel
 				className={ classNames( 'site-type__option', {
 					'is-selected': siteTypeProperties.slug === this.state.siteType,
