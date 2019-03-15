@@ -360,6 +360,11 @@ class DomainsStep extends React.Component {
 			showExampleSuggestions = true;
 		}
 
+		let includeWordPressDotCom = this.props.includeWordPressDotCom;
+		if ( 'undefined' === typeof includeWordPressDotCom ) {
+			includeWordPressDotCom = ! this.props.isDomainOnly;
+		}
+
 		return (
 			<RegisterDomainStep
 				key="domainForm"
@@ -377,7 +382,7 @@ class DomainsStep extends React.Component {
 				isDomainOnly={ this.props.isDomainOnly }
 				analyticsSection={ this.getAnalyticsSection() }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ ! this.props.isDomainOnly }
+				includeWordPressDotCom={ includeWordPressDotCom }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
