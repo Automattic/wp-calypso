@@ -1,6 +1,6 @@
 // External Dependencies
 @import '~react-virtualized/styles';
-@import "@material/elevation/mdc-elevation";
+@import '@material/elevation/mdc-elevation';
 
 .elevation-1 {
 	@include mdc-elevation( 1 );
