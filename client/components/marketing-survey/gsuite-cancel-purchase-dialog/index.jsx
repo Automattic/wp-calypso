@@ -66,7 +66,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 		}
 	};
 
-	onSurveryAnswerChange = ( surveyAnswerId, surveyAnswerAdditionalText ) => {
+	onSurveyAnswerChange = ( surveyAnswerId, surveyAnswerAdditionalText ) => {
 		this.setState( {
 			surveyAnswerId,
 			surveyAnswerAdditionalText,
@@ -125,7 +125,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 				{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
 					<GSuiteCancellationFeatures purchase={ purchase } />
 				) : (
-					<GSuiteCancellationSurvey onSurveryAnswerChange={ this.onSurveryAnswerChange } />
+					<GSuiteCancellationSurvey onSurveyAnswerChange={ this.onSurveyAnswerChange } />
 				) }
 			</Dialog>
 		);
