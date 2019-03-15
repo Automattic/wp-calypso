@@ -34,6 +34,7 @@
     "@babel/preset-env": "7.3.4",
     "@babel/preset-react": "7.0.0",
     "@babel/runtime": "7.3.4",
+    "@material/elevation": "1.0.0",
     "@wordpress/a11y": "2.0.2",
     "@wordpress/api-fetch": "2.2.8",
     "@wordpress/babel-plugin-import-jsx-pragma": "1.1.3",

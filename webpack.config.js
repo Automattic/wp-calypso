@@ -194,7 +194,10 @@ function getWebpackConfig( {
 				},
 				SassConfig.loader( {
 					preserveCssCustomProperties,
-					includePaths: [ path.join( __dirname, 'client' ) ],
+					includePaths: [
+						path.join( __dirname, 'client' ),
+						path.join( __dirname, 'node_modules' ),
+					],
 					prelude: `@import '${ path.join(
 						__dirname,
 						'assets/stylesheets/shared/_utils.scss'
