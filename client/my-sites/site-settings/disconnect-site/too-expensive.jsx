@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,11 +9,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import QuerySitePlans from 'components/data/query-site-plans';
 import getCurrentPlanPurchaseId from 'state/selectors/get-current-plan-purchase-id';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QuerySitePlans from 'components/data/query-site-plans';
 import { addQueryArgs } from 'lib/url';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 const TooExpensive = ( { confirmHref, planPurchaseId, siteId, siteSlug, translate } ) => {
 	if ( ! planPurchaseId ) {
