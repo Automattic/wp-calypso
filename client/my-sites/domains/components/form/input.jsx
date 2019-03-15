@@ -7,6 +7,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import classNames from 'classnames';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -85,6 +86,10 @@ export default class extends React.Component {
 
 		const validationId = `validation-field-${ this.props.name }`;
 
+		const valueProp = has( this.props, 'defaultValue' )
+			? { defaultValue: this.props.defaultValue }
+			: { value: this.props.value };
+
 		return (
 			<div className={ classes }>
 				<FormLabel htmlFor={ this.props.name } { ...this.props.labelProps }>
@@ -95,7 +100,7 @@ export default class extends React.Component {
 					aria-describedby={ validationId }
 					placeholder={ this.props.placeholder ? this.props.placeholder : this.props.label }
 					id={ this.props.name }
-					value={ this.props.value }
+					{ ...valueProp }
 					name={ this.props.name }
 					ref="input"
 					autoFocus={ this.props.autoFocus }
