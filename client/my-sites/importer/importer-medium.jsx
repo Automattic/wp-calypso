@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FileImporter from './file-importer';
+import InlineSupportLink from 'components/inline-support-link';
 
 /**
  * Module variables
@@ -29,12 +30,25 @@ class ImporterMedium extends React.PureComponent {
 		);
 
 		importerData.uploadDescription = this.props.translate(
-			'Upload a {{b}}Medium export file{{/b}} to start ' + 'importing into {{b2}}%(title)s{{/b2}}.',
+			'Upload your {{b}}%(importerName)s export file{{/b}} to start importing into ' +
+				'{{b}}%(siteTitle)s{{/b}}. A %(importerName)s export file is a ZIP ' +
+				'file containing several HTML files with your stories. ' +
+				'Need help {{inlineSupportLink/}}?',
 			{
-				args: { title: this.props.site.title },
+				args: {
+					importerName: importerData.title,
+					siteTitle: this.props.site.title,
+				},
 				components: {
 					b: <strong />,
-					b2: <strong />,
+					inlineSupportLink: (
+						<InlineSupportLink
+							supportPostId={ 93180 }
+							supportLink={ 'https://en.support.wordpress.com/import/import-from-medium/' }
+							text={ this.props.translate( 'exporting your content' ) }
+							showIcon={ false }
+						/>
+					),
 				},
 			}
 		);

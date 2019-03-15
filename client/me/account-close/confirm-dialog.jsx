@@ -17,6 +17,11 @@ import Button from 'components/button';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { closeAccount } from 'state/account/actions';
 
+/**
+ * Style dependencies
+ */
+import './confirm-dialog.scss';
+
 class AccountCloseConfirmDialog extends React.Component {
 	state = {
 		inputValue: '',
