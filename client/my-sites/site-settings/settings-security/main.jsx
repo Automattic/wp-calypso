@@ -1,31 +1,28 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
+import FormSecurity from 'my-sites/site-settings/form-security';
+import getRewindState from 'state/selectors/get-rewind-state';
+import JetpackCredentials from 'my-sites/site-settings/jetpack-credentials';
+import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
+import Main from 'components/main';
+import QueryRewindState from 'components/data/query-rewind-state';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import FormSecurity from 'my-sites/site-settings/form-security';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import getRewindState from 'state/selectors/get-rewind-state';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import JetpackCredentials from 'my-sites/site-settings/jetpack-credentials';
-import QueryRewindState from 'components/data/query-rewind-state';
 
 const SiteSettingsSecurity = ( {
 	showRewindCredentials,
