@@ -120,6 +120,7 @@ class SiteImporterSitePreview extends React.Component {
 									</ImporterActionButton>
 									<ImporterActionButton
 										disabled={ isLoading }
+										className="site-importer__site-preview-confirm-button"
 										primary
 										onClick={ this.props.startImport }
 									>
