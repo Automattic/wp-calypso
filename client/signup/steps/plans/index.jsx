@@ -38,7 +38,13 @@ import './style.scss';
 
 export class PlansStep extends Component {
 	componentDidMount() {
-		if ( document && document.createElement && document.body ) {
+		if (
+			typeof window !== 'undefined' &&
+			window.location &&
+			typeof document !== 'undefined' &&
+			document.createElement &&
+			document.body
+		) {
 			if ( window.location.search ) {
 				// save this so that we can enter debug mode in the widget
 				window.salesteam_initial_search_string = window.location.search;
