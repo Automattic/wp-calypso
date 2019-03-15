@@ -635,13 +635,10 @@ module.exports = function() {
 			return;
 		}
 		if ( 'change-theme' === req.params.section ) {
-			redirectUrl = req.originalUrl.replace(
-				/^\/sites\/[0-9a-zA-Z\-\.]+\/change\-theme/,
-				'/themes'
-			);
+			redirectUrl = req.originalUrl.replace( /^\/sites\/[0-9a-zA-Z\-.]+\/change-theme/, '/themes' );
 		} else {
 			redirectUrl = req.originalUrl.replace(
-				/^\/sites\/[0-9a-zA-Z\-\.]+\/\w+/,
+				/^\/sites\/[0-9a-zA-Z\-.]+\/\w+/,
 				'/' + req.params.section + '/' + req.params.site
 			);
 		}
