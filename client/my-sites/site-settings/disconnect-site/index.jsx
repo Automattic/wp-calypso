@@ -20,7 +20,6 @@ import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'components/wizard/navigation-link';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import Main from 'components/main';
-import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 
 /**
@@ -35,10 +34,6 @@ export const reasonComponents = {
 };
 
 const DisconnectSite = ( { reason, siteSlug, translate } ) => {
-	if ( ! siteSlug ) {
-		return <Placeholder />;
-	}
-
 	const ReasonComponent = get( reasonComponents, reason, DisconnectSurvey );
 	const confirmHref = '/settings/disconnect-site/confirm/' + siteSlug;
 
