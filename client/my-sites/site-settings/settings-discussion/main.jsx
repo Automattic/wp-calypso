@@ -17,14 +17,9 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import DiscussionForm from 'my-sites/site-settings/form-discussion';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import Placeholder from 'my-sites/site-settings/placeholder';
 import { getSelectedSite } from 'state/ui/selectors';
 
 const SiteSettingsDiscussion = ( { site, translate } ) => {
-	if ( ! site ) {
-		return <Placeholder />;
-	}
-
 	return (
 		<Main className="settings-discussion site-settings">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
