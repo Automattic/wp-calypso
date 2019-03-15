@@ -217,7 +217,9 @@ class UseYourDomainStep extends React.Component {
 			return translate( 'Renews at %(cost)s', { args: { cost: domainProductPrice } } );
 		}
 
-		return translate( '%(cost)s per year', { args: { cost: domainProductPrice } } );
+		if ( domainProductPrice ) {
+			return translate( '%(cost)s per year', { args: { cost: domainProductPrice } } );
+		}
 	};
 
 	getMappingPriceText = () => {
