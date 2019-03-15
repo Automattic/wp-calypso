@@ -63,7 +63,7 @@ export class PlansStep extends Component {
 			const salesTeamScript = document.createElement( 'script' );
 			salesTeamScript.setAttribute(
 				'src',
-				'//widgets.wp.com/wp-content/a8c-plugins/wpcom-salesteam/js/wpcom-salesteam.js?ver=20190221'
+				'//s0.wp.com/wp-content/a8c-plugins/wpcom-salesteam/js/wpcom-salesteam.js?ver=20190221'
 			);
 			salesTeamScript.setAttribute( 'defer', true );
 			document.head.appendChild( salesTeamScript );
