@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { flowRight, get, has } from 'lodash';
+import moment from 'moment-timezone';
 
 /**
  * Internal dependencies
@@ -350,7 +351,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	Timezone() {
-		const { fields, isRequestingSettings, translate, moment } = this.props;
+		const { fields, isRequestingSettings, translate } = this.props;
 		const guessedTimezone = moment.tz.guess();
 		const setGuessedTimezone = this.onTimezoneSelect.bind( this, guessedTimezone );
 
