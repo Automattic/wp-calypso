@@ -9,15 +9,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
+import GeneralSettings from './section-general';
+import JetpackDevModeNotice from './jetpack-dev-mode-notice';
+import Main from 'components/main';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import GeneralSettings from './section-general';
-import SiteSettingsNavigation from './navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import JetpackDevModeNotice from './jetpack-dev-mode-notice';
+import SiteSettingsNavigation from './navigation';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -28,11 +28,11 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 	return (
 		<Main className="site-settings">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<QueryProductsList />
+			<QuerySitePurchases siteId={ siteId } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<SiteSettingsNavigation section={ 'general' } />
-			<QueryProductsList />
-			<QuerySitePurchases siteId={ siteId } />
 			<GeneralSettings />
 		</Main>
 	);
