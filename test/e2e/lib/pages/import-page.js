@@ -35,8 +35,7 @@ export default class ImportPage extends AsyncBaseContainer {
 	async siteImporterCanStartImport() {
 		await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
-			// @TODO use a specific classname for this button
-			By.css( '.site-importer__site-importer-confirm-actions .button.is-primary' )
+			By.css( '.importer-action-buttons__action-button.is-primary' )
 		);
 	}
 }
