@@ -240,7 +240,12 @@ const connectComponent = connect(
 		const user = getCurrentUser( state );
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteSlug = selectedSite ? selectedSite.slug : '';
-
+		const geo = requestGeoLocation();
+		let countryCode = geo.data;
+		if ( ! countryCode && geo.state === 'failure' ) {
+			// if our geo requests are being blocked, we default to US
+			countryCode = 'US';
+		}
 		const selectedPlanSlug = retrievePlan();
 		const selectedPlan = getPlanBySlug( state, selectedPlanSlug );
 		return {
@@ -257,7 +262,7 @@ const connectComponent = connect(
 			selectedSite,
 			selectedSiteSlug,
 			userId: user ? user.ID : null,
-			countryCode: props.countryCode || requestGeoLocation().data,
+			countryCode: props.countryCode || countryCode,
 		};
 	},
 	{

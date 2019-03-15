@@ -132,11 +132,17 @@ const connectComponent = connect(
 	( state, { url } ) => {
 		const rawSite = url ? getJetpackSiteByUrl( state, url ) : null;
 		const site = rawSite ? getSite( state, rawSite.ID ) : null;
+		const geo = requestGeoLocation();
+		let countryCode = geo.data;
+		if ( ! countryCode && geo.state === 'failure' ) {
+			// if our geo requests are being blocked, we default to US
+			countryCode = 'US';
+		}
 
 		return {
 			requestingSites: isRequestingSites( state ),
 			site,
-			countryCode: requestGeoLocation().data,
+			countryCode: countryCode,
 		};
 	},
 	{
