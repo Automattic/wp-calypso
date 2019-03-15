@@ -58,14 +58,15 @@ export class PlansStep extends Component {
 			salesTeamStyles.setAttribute( 'rel', 'stylesheet' );
 			salesTeamStyles.setAttribute( 'type', 'text/css' );
 			salesTeamStyles.setAttribute( 'media', 'all' );
-			document.body.appendChild( salesTeamStyles );
+			document.head.appendChild( salesTeamStyles );
 
 			const salesTeamScript = document.createElement( 'script' );
 			salesTeamScript.setAttribute(
 				'src',
-				'//s0.wp.com/wp-content/a8c-plugins/wpcom-salesteam/js/wpcom-salesteam.js?ver=20190221'
+				'//widgets.wp.com/wp-content/a8c-plugins/wpcom-salesteam/js/wpcom-salesteam.js?ver=20190221'
 			);
-			document.body.appendChild( salesTeamScript );
+			salesTeamScript.setAttribute( 'defer', true );
+			document.head.appendChild( salesTeamScript );
 		}
 
 		SignupActions.saveSignupStep( {
