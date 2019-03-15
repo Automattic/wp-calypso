@@ -17,7 +17,6 @@ import Main from 'components/main';
 import NavigationLink from 'components/wizard/navigation-link';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import { submitSurvey } from 'lib/upgrades/actions';
-import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
@@ -65,10 +64,6 @@ class ConfirmDisconnection extends PureComponent {
 			without( this.constructor.reasonWhitelist, 'troubleshooting', 'other' ), // Redirect those back to initial survey
 			r => r === reason
 		);
-
-		if ( ! siteId ) {
-			return <Placeholder />;
-		}
 
 		return (
 			<Main className="disconnect-site__confirm">
