@@ -16,17 +16,15 @@ import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import WritingForm from 'my-sites/site-settings/form-writing';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const SiteSettingsWriting = ( { site, translate } ) => {
-	return (
-		<Main className="settings-writing site-settings">
-			<DocumentHead title={ translate( 'Site Settings' ) } />
-			<JetpackDevModeNotice />
-			<SidebarNavigation />
-			<SiteSettingsNavigation site={ site } section="writing" />
-			<WritingForm />
-		</Main>
-	);
-};
+const SiteSettingsWriting = ( { site, translate } ) => (
+	<Main className="settings-writing site-settings">
+		<DocumentHead title={ translate( 'Site Settings' ) } />
+		<JetpackDevModeNotice />
+		<SidebarNavigation />
+		<SiteSettingsNavigation site={ site } section="writing" />
+		<WritingForm />
+	</Main>
+);
 
 export default connect( state => ( {
 	site: getSelectedSite( state ),
