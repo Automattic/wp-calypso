@@ -17,13 +17,8 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { isJetpackSite } from 'state/sites/selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
-import Placeholder from 'my-sites/site-settings/placeholder';
 
 const SiteSettingsExport = ( { isJetpack, site, siteSlug, translate } ) => {
-	if ( ! site ) {
-		return <Placeholder />;
-	}
-
 	return (
 		<Main>
 			<HeaderCake backHref={ '/settings/general/' + siteSlug }>
