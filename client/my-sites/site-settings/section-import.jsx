@@ -125,7 +125,7 @@ class SiteSettingsImport extends Component {
 	componentDidUpdate() {
 		const { site } = this.props;
 
-		if ( ! ( site && site.ID ) ) {
+		if ( ! site.ID ) {
 			return;
 		}
 
@@ -266,7 +266,6 @@ class SiteSettingsImport extends Component {
 
 	render() {
 		const { site, siteSlug, translate } = this.props;
-
 		const { jetpack: isJetpack } = site;
 
 		return (
