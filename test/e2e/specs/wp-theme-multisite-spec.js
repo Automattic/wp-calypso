@@ -160,7 +160,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function() {
 					} );
 
 					step( 'should highlight the current theme as active', async function() {
-						await this.themesPage.showOnlyFreeThemes();
+						await this.themesPage.clearSearch();
 						await this.themesPage.searchFor( this.themeSearchName );
 						let name = await this.themesPage.getActiveThemeName();
 						return assert.strictEqual( name, this.currentThemeName );
