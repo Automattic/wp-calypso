@@ -21,7 +21,7 @@ import { fetchBySiteId } from 'state/google-apps-users/actions';
 import { getBySite, isLoaded } from 'state/google-apps-users/selectors';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
+import { hasGSuite, hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -29,22 +29,29 @@ import SectionHeader from 'components/section-header';
 
 class GSuiteAddUsers extends React.Component {
 	componentDidMount() {
-		const { domains, isRequestingDomains, selectedSite } = this.props;
-		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
+		const { domains, isRequestingDomains, selectedDomainName, selectedSite } = this.props;
+		this.redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName );
 		this.props.fetchGoogleAppsUsers( selectedSite.ID );
 	}
 
 	shouldComponentUpdate( nextProps ) {
-		const { domains, isRequestingDomains } = nextProps;
-		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
+		const { domains, isRequestingDomains, selectedDomainName } = nextProps;
+		this.redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName );
 		if ( isRequestingDomains || ! domains.length ) {
 			return false;
 		}
 		return true;
 	}
 
-	redirectIfCannotAddEmail( domains, isRequestingDomains ) {
-		if ( isRequestingDomains || hasGSuiteSupportedDomain( domains ) ) {
+	redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName ) {
+		let selectedDomainHasGSuite = false;
+		if ( selectedDomainName ) {
+			const selectedDomain = domains.reduce( function( selected, domain ) {
+				return domain.name === selectedDomainName ? domain.name : selected;
+			}, '' );
+			selectedDomainHasGSuite = hasGSuite( selectedDomain );
+		}
+		if ( selectedDomainHasGSuite || isRequestingDomains || hasGSuiteSupportedDomain( domains ) ) {
 			return;
 		}
 		this.goToEmail();
