@@ -686,6 +686,9 @@ const Account = createReactClass( {
 						} ) }
 					</FormLabel>
 					<FormTextInput
+						autoCapitalize="off"
+						autoComplete="off"
+						autoCorrect="off"
 						id="username_confirm"
 						name="username_confirm"
 						onFocus={ this.getFocusHandler( 'Username Confirm Field' ) }
@@ -790,7 +793,9 @@ const Account = createReactClass( {
 						<FormFieldset>
 							<FormLabel htmlFor="user_login">{ translate( 'Username' ) }</FormLabel>
 							<FormTextInput
+								autoCapitalize="off"
 								autoComplete="off"
+								autoCorrect="off"
 								className="account__username"
 								disabled={
 									this.getDisabledState() || ! this.getUserSetting( 'user_login_can_be_changed' )
