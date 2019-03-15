@@ -19,17 +19,15 @@ import DiscussionForm from 'my-sites/site-settings/form-discussion';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const SiteSettingsDiscussion = ( { site, translate } ) => {
-	return (
-		<Main className="settings-discussion site-settings">
-			<DocumentHead title={ translate( 'Site Settings' ) } />
-			<JetpackDevModeNotice />
-			<SidebarNavigation />
-			<SiteSettingsNavigation site={ site } section="discussion" />
-			<DiscussionForm />
-		</Main>
-	);
-};
+const SiteSettingsDiscussion = ( { site, translate } ) => (
+	<Main className="settings-discussion site-settings">
+		<DocumentHead title={ translate( 'Site Settings' ) } />
+		<JetpackDevModeNotice />
+		<SidebarNavigation />
+		<SiteSettingsNavigation site={ site } section="discussion" />
+		<DiscussionForm />
+	</Main>
+);
 
 export default connect( state => ( {
 	site: getSelectedSite( state ),
