@@ -13,7 +13,8 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import cartValues, { getLocationOrigin } from 'lib/cart-values';
+import cartValues, { getLocationOrigin, getTaxPostalCode } from 'lib/cart-values';
+import { setTaxPostalCode } from 'lib/upgrades/actions/cart';
 import Input from 'my-sites/domains/components/form/input';
 import notices from 'notices';
 import PaymentCountrySelect from 'components/payment-country-select';
@@ -36,6 +37,10 @@ export class PaypalPaymentBox extends React.Component {
 		country: null,
 		formDisabled: false,
 	};
+
+	handlePostalCodeChange = event => {
+		setTaxPostalCode( event.target.value );
+	}
 
 	handleChange = event => {
 		this.updateLocalStateWithFieldValue( event.target.name, event.target.value );
@@ -131,7 +136,8 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const hasBusinessPlanInCart = some( this.props.cart.products, ( { product_slug } ) =>
+		const { cart } = this.props;
+		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
@@ -154,7 +160,8 @@ export class PaypalPaymentBox extends React.Component {
 								additionalClasses="checkout-field"
 								name="postal-code"
 								label={ this.props.translate( 'Postal Code', { textOnly: true } ) }
-								onChange={ this.handleChange }
+								defaultValue={ getTaxPostalCode( cart ) }
+								onChange={ this.handlePostalCodeChange }
 								disabled={ this.state.formDisabled }
 								eventFormName="Checkout Form"
 							/>
