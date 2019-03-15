@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
  */
 import EmptyContent from 'components/empty-content';
 import ExporterContainer from 'my-sites/exporter';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
 
 const SiteSettingsExport = ( { isJetpack, site, siteSlug, translate } ) => {
 	return (
