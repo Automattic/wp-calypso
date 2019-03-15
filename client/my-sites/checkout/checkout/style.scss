@@ -465,7 +465,8 @@
 				}
 			}
 
-			.checkout__free-domain-credit-illustration {
+			.checkout__free-domain-credit-illustration,
+			.checkout__free-stand-alone-domain-mapping-illustration {
 				max-width: 100%;
 				max-height: 150px;
 				margin: -10px auto 10px;
@@ -483,7 +484,9 @@
 			}
 
 			.checkout__free-domain-credit-illustration + h6,
-			.checkout__free-domain-credit-illustration + h6 + span {
+			.checkout__free-domain-credit-illustration + h6 + span,
+			.checkout__free-stand-alone-domain-mapping-illustration + h6,
+			.checkout__free-stand-alone-domain-mapping-illustration + h6 + span {
 				display: block;
 				padding-left: 20px;
 
