@@ -23,6 +23,7 @@ import formBase from 'me/form-base';
 import config from 'config';
 import { supportsCssCustomProperties } from 'lib/feature-detection';
 import Card from 'components/card';
+import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -39,7 +40,7 @@ import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import observe from 'lib/mixins/data-observe';
+import observe from 'lib/mixins/data-observe'; // eslint-disable-line no-restricted-imports
 import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
 import ColorSchemePicker from 'blocks/color-scheme-picker';
@@ -54,6 +55,11 @@ import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
 
@@ -62,6 +68,7 @@ const colorSchemeKey = 'calypso_preferences.colorScheme';
  */
 const debug = debugFactory( 'calypso:me:account' );
 
+/* eslint-disable react/prefer-es6-class */
 const Account = createReactClass( {
 	displayName: 'Account',
 
@@ -486,13 +493,12 @@ const Account = createReactClass( {
 
 		if ( ! user.get().visible_site_count ) {
 			return (
-				<a
-					className="button"
+				<Button
 					href={ config( 'signup_url' ) }
 					onClick={ this.getClickHandler( 'Primary Site Add New WordPress Button' ) }
 				>
 					{ translate( 'Add New Site' ) }
-				</a>
+				</Button>
 			);
 		}
 
