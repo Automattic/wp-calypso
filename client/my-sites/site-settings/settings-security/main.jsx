@@ -24,7 +24,6 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import Placeholder from 'my-sites/site-settings/placeholder';
 import JetpackCredentials from 'my-sites/site-settings/jetpack-credentials';
 import QueryRewindState from 'components/data/query-rewind-state';
 
@@ -35,10 +34,6 @@ const SiteSettingsSecurity = ( {
 	siteIsJetpack,
 	translate,
 } ) => {
-	if ( ! site ) {
-		return <Placeholder />;
-	}
-
 	if ( ! siteIsJetpack ) {
 		return (
 			<JetpackManageErrorPage
@@ -69,7 +64,7 @@ const SiteSettingsSecurity = ( {
 	}
 
 	return (
-		<Main className="settings-security__main site-settings">
+		<Main className="settings-security site-settings">
 			<QueryRewindState siteId={ siteId } />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<JetpackDevModeNotice />
