@@ -216,7 +216,7 @@ function getAcceptedLanguagesFromHeader( header ) {
  */
 function setupLoggedInContext( req, res, next ) {
 	const isSupportSession = !! req.get( 'x-support-session' );
-	const isLoggedIn = isSupportSession || !! req.cookies.wordpress_logged_in;
+	const isLoggedIn = !! req.cookies.wordpress_logged_in;
 
 	req.context = {
 		...req.context,
@@ -635,13 +635,10 @@ module.exports = function() {
 			return;
 		}
 		if ( 'change-theme' === req.params.section ) {
-			redirectUrl = req.originalUrl.replace(
-				/^\/sites\/[0-9a-zA-Z\-\.]+\/change\-theme/,
-				'/themes'
-			);
+			redirectUrl = req.originalUrl.replace( /^\/sites\/[0-9a-zA-Z\-.]+\/change-theme/, '/themes' );
 		} else {
 			redirectUrl = req.originalUrl.replace(
-				/^\/sites\/[0-9a-zA-Z\-\.]+\/\w+/,
+				/^\/sites\/[0-9a-zA-Z\-.]+\/\w+/,
 				'/' + req.params.section + '/' + req.params.site
 			);
 		}
