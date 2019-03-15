@@ -38,7 +38,6 @@ import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
-import Placeholder from 'my-sites/site-settings/placeholder';
 import DescriptiveHeader from 'my-sites/site-settings/settings-import/descriptive-header';
 import JetpackImporter from 'my-sites/site-settings/settings-import/jetpack-importer';
 
@@ -267,9 +266,6 @@ class SiteSettingsImport extends Component {
 
 	render() {
 		const { site, siteSlug, translate } = this.props;
-		if ( ! site ) {
-			return <Placeholder />;
-		}
 
 		const { jetpack: isJetpack } = site;
 
