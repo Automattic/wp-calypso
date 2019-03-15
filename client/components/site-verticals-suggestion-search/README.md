@@ -36,7 +36,10 @@ _Optional_ placeholder text for the search input field.
 _Optional_ number of characters before an API search is triggered.
 
 ### _(Function)_ `onChange` 
-The callback function for receiving updated value. 
+The callback function for receiving updated value.
+
+### _(Boolean)_ `showPopular` 
+_Optional_ Informs the component whether to show a list of popular vertical topics when the input field is empty.
 
 Returns _{Object}_:
 

@@ -15,6 +15,7 @@ import { shallow } from 'enzyme';
 
 import { SiteVerticalsSuggestionSearch } from '../';
 import SuggestionSearch from 'components/suggestion-search';
+import PopularTopics from 'components/site-verticals-suggestion-search/popular-topics';
 
 jest.mock( 'uuid', () => ( {
 	v4: () => 'fake-uuid',
@@ -45,6 +46,7 @@ const defaultProps = {
 	translate: str => str,
 	charsToTriggerSearch: 2,
 	lastUpdated: 1,
+	shouldShowPopularTopics: jest.fn(),
 };
 
 defaultProps.requestVerticals.cancel = jest.fn();
@@ -78,6 +80,15 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		wrapper.instance().onSiteTopicChange( 'doo' );
 		wrapper.setProps( { lastUpdated: 2 } );
 		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( defaultProps.verticals[ 0 ] );
+	} );
+
+	test( 'should show common topics', () => {
+		defaultProps.shouldShowPopularTopics.mockReturnValueOnce( true );
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } showPopular={ true } />
+		);
+		expect( defaultProps.shouldShowPopularTopics ).toHaveBeenLastCalledWith( '' );
+		expect( wrapper.find( PopularTopics ) ).toHaveLength( 1 );
 	} );
 
 	describe( 'searchForVerticalMatches()', () => {

@@ -17,7 +17,7 @@ import SuggestionSearch from 'components/suggestion-search';
 import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { convertToCamelCase } from 'state/data-layer/utils';
-import CommonTopics from 'components/site-verticals-suggestion-search/common-topics';
+import PopularTopics from 'components/site-verticals-suggestion-search/popular-topics';
 
 /**
  * Style dependencies
@@ -33,6 +33,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		placeholder: PropTypes.string,
 		requestDefaultVertical: PropTypes.func,
 		requestVerticals: PropTypes.func,
+		shouldShowPopularTopics: PropTypes.func,
 		searchResultsLimit: PropTypes.number,
 		verticals: PropTypes.array,
 	};
@@ -44,6 +45,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		placeholder: '',
 		requestDefaultVertical: noop,
 		requestVerticals: noop,
+		shouldShowPopularTopics: noop,
 		searchResultsLimit: 5,
 		verticals: [],
 	};
@@ -121,7 +123,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		this.updateVerticalData( result, value );
 	};
 
-	onCommonTopicSelect = value => {
+	onPopularTopicSelect = value => {
 		this.props.requestVerticals( value, 1 );
 		this.setState( { searchValue: value } );
 	};
@@ -153,7 +155,8 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	};
 
 	render() {
-		const { translate, placeholder, autoFocus } = this.props;
+		const { translate, placeholder, autoFocus, shouldShowPopularTopics } = this.props;
+		const showPopularTopics = shouldShowPopularTopics( this.state.searchValue );
 		return (
 			<>
 				<SuggestionSearch
@@ -166,7 +169,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 					railcar={ this.state.railcar }
 				/>
-				{ ! this.state.searchValue && <CommonTopics onSelect={ this.onCommonTopicSelect } /> }
+				{ showPopularTopics && <PopularTopics onSelect={ this.onPopularTopicSelect } /> }
 			</>
 		);
 	}
@@ -210,7 +213,8 @@ export default localize(
 				defaultVertical: get( defaultVerticalHttpData, 'data[0]', {} ),
 			};
 		},
-		() => ( {
+		( dispatch, ownProps ) => ( {
+			shouldShowPopularTopics: searchValue => isEmpty( searchValue ) && ownProps.showPopular,
 			requestVerticals: requestSiteVerticalHttpData,
 			requestDefaultVertical: ( searchTerm = 'business' ) => {
 				if ( ! get( getHttpData( DEFAULT_SITE_VERTICAL_REQUEST_ID ), 'data', null ) ) {

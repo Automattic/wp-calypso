@@ -17,48 +17,48 @@ import { recordTracksEvent } from 'state/analytics/actions';
 /*
 	These topics are taken from the most popular for each segment.
 */
-const COMMON_TOPICS = {
+const POPULAR_TOPICS = {
 	business: [
-		translate( 'Digital marketing' ),
-		translate( 'Fitness & exercise' ),
-		translate( 'Health Food' ),
-		translate( 'Photography' ),
-		translate( 'Real estate agency' ),
+		translate( 'Travel Agency' ),
+		translate( 'Digital Marketing' ),
+		translate( 'Fashion Designer' ),
+		translate( 'Website Designer' ),
+		translate( 'Real Estate Agent' ),
+		translate( 'Cameras & Photography' ),
 		translate( 'Restaurants' ),
-		translate( 'Website designer' ),
 	],
 	blog: [
+		translate( 'Travel' ),
+		translate( 'Fashion' ),
 		translate( 'Education' ),
-		translate( 'Fashion Designer' ),
+		translate( 'Food' ),
 		translate( 'Music' ),
 		translate( 'Photography' ),
-		translate( 'Sport' ),
-		translate( 'Travel & Recreation' ),
-		translate( 'Video Games' ),
+		translate( 'Sports' ),
 	],
 	professional: [
-		translate( 'Artist' ),
-		translate( 'Architecture' ),
-		translate( 'College' ),
-		translate( 'Computers' ),
-		translate( 'Health & medical' ),
-		translate( 'Photography' ),
+		translate( 'Education' ),
+		translate( 'Higher Education & Academy' ),
+		translate( 'Travel' ),
+		translate( 'School' ),
+		translate( 'Website Designer' ),
+		translate( 'Fashion' ),
 		translate( 'Portfolio' ),
 	],
 	education: [
-		translate( 'Architecture' ),
-		translate( 'Education' ),
 		translate( 'Higher Education & Academy' ),
-		translate( 'Music' ),
-		translate( 'Travel' ),
+		translate( 'Fashion' ),
 		translate( 'School' ),
-		translate( 'Sports' ),
+		translate( 'Website Designer' ),
+		translate( 'Travel' ),
+		translate( 'Design' ),
+		translate( 'Adult Education School' ),
 	],
 };
 
-class CommonTopics extends Component {
+class PopularTopics extends Component {
 	static propTypes = {
-		commonTopics: PropTypes.array.isRequired,
+		popularTopics: PropTypes.array.isRequired,
 		onSelect: PropTypes.func.isRequired,
 	};
 
@@ -73,8 +73,8 @@ class CommonTopics extends Component {
 	render() {
 		return (
 			<div className="site-verticals-suggestion-search__common-topics">
-				<div className="site-verticals-suggestion-search__heading">Common Topics</div>
-				{ this.props.commonTopics.map( ( topic, index ) => (
+				<div className="site-verticals-suggestion-search__heading">{ translate( 'Popular' ) }</div>
+				{ this.props.popularTopics.map( ( topic, index ) => (
 					<button
 						type="button"
 						key={ index }
@@ -93,9 +93,9 @@ class CommonTopics extends Component {
 
 export default connect(
 	state => ( {
-		commonTopics: COMMON_TOPICS[ getSiteType( state ) || 'blog' ],
+		popularTopics: POPULAR_TOPICS[ getSiteType( state ) || 'blog' ],
 	} ),
 	{
 		recordTracksEvent,
 	}
-)( CommonTopics );
+)( PopularTopics );

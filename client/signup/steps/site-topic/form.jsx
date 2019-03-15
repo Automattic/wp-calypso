@@ -78,6 +78,7 @@ class SiteTopicForm extends Component {
 					<FormFieldset>
 						<SiteVerticalsSuggestionSearch
 							onChange={ this.onSiteTopicChange }
+							showPopular={ true }
 							initialValue={ siteTopic }
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
