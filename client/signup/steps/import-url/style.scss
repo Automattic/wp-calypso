@@ -3,35 +3,37 @@
 	margin-bottom: 64px;
 }
 
-.import-url__wrapper .form-setting-explanation {
-	color: var( --color-white );
+// The containing element
+.import-url__wrapper {
+	padding: 0;
+	box-shadow: none;
+	border-radius: 3px;
+	max-width: 640px;
+	margin: auto;
+}
+
+// Actual form input for typing the URL
+.import-url__wrapper .import-url__url-input {
+	border: none;
+	border-radius: 3px;
+	padding: 10px 14px;
 
 	@include breakpoint( '<660px' ) {
-		text-align: center;
+		padding: 14px;
 	}
 }
+
+.import-url__wrapper .import-url__url-input-message {
+	max-width: 640px;
+	margin: 16px auto;
+}
+
 
 .import-url {
 	position: relative;
 
 	&__form {
 		position: relative;
-	}
-
-	.import-url__wrapper &__url-input {
-		padding: 9px 14px;
-
-		@include breakpoint( '<660px' ) {
-			padding: 14px;
-		}
-	}
-
-	&__url-input-message {
-		font-size: 14px;
-		margin: 0;
-		padding-top: 6px;
-		// Normalize height with bottom padding so it doesn't change when an error is shown.
-		padding-bottom: 4px;
 	}
 
 	&__submit-button {
@@ -44,6 +46,7 @@
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: center;
+		margin-top: 80px;
 		margin-bottom: 48px;
 		position: relative;
 

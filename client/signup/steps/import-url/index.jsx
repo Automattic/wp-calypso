@@ -16,9 +16,7 @@ import ExternalLink from 'components/external-link';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import FormButton from 'components/forms/form-button';
-import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import ScreenReaderText from 'components/screen-reader-text';
 import { infoNotice, removeNotice } from 'state/notices/actions';
@@ -40,6 +38,7 @@ import {
 	SITE_IMPORTER_ERR_INVALID_URL,
 } from 'lib/importers/constants';
 import { prefetchmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
+import Notice from 'components/notice';
 
 /**
  * Style dependencies
@@ -208,6 +207,11 @@ class ImportURLStepComponent extends Component {
 		return (
 			<Fragment>
 				<div className="import-url__wrapper">
+					{ showUrlMessage && urlMessage ? (
+						<Notice className="import-url__url-input-message" status="is-error">
+							{ urlMessage }
+						</Notice>
+					) : null }
 					<form className="import-url__form" onSubmit={ this.handleSubmit }>
 						<ScreenReaderText>
 							<FormLabel htmlFor="url-input">Site URL</FormLabel>
@@ -239,17 +243,6 @@ class ImportURLStepComponent extends Component {
 								: translate( 'Continue' ) }
 						</FormButton>
 					</form>
-					{ showUrlMessage && urlMessage ? (
-						<FormInputValidation
-							className="import-url__url-input-message"
-							text={ urlMessage }
-							isError={ !! urlMessage }
-						/>
-					) : (
-						<FormSettingExplanation className="import-url__url-input-message">
-							{ translate( 'Please enter the full URL of your site.' ) }
-						</FormSettingExplanation>
-					) }
 				</div>
 
 				<div className="import-url__example">
