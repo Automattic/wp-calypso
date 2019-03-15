@@ -34,6 +34,13 @@ import { FEATURE_BUSINESS_ONBOARDING } from 'lib/plans/constants';
 import UpworkBanner from 'blocks/upwork-banner';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
+/**
  * Module variables
  */
 const debug = debugModule( 'calypso:help-search' );

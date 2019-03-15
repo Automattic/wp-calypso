@@ -68,6 +68,11 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_FORUM,
 } from 'state/selectors/get-inline-help-support-variation';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugFactory( 'calypso:help-contact' );
 
 /**
@@ -287,7 +292,7 @@ class HelpContact extends React.Component {
 		let buttonLabel = translate( 'Chat with us' );
 
 		switch ( variationSlug ) {
-			case SUPPORT_HAPPYCHAT:
+			case SUPPORT_HAPPYCHAT: {
 				// TEMPORARY: to collect data about the customer preferences, context 1050-happychat-gh
 				// for non english customers check if we have full support in their language
 				let additionalSupportOption = { enabled: false };
@@ -329,7 +334,7 @@ class HelpContact extends React.Component {
 					showSiteField: hasMoreThanOneSite,
 					showQASuggestions: true,
 				};
-
+			}
 			case SUPPORT_TICKET:
 				return {
 					onSubmit: this.submitKayakoTicket,

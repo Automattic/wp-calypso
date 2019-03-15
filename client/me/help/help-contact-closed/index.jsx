@@ -16,6 +16,11 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getUserPurchases } from 'state/purchases/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const thanksgiving2018ClosureStartsAt = i18n.moment( 'Thu, 22 Nov 2018 00:00:00 +0000' );
 
 const BusinessPlanMessage = ( { translate } ) => {

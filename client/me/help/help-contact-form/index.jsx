@@ -39,6 +39,11 @@ import { showQandAOnInlineHelpContactForm } from 'state/inline-help/actions';
 import { generateSubjectFromMessage } from './utils';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const wpcom = wpcomLib.undocumented();

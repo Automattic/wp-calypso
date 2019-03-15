@@ -6,14 +6,6 @@
 	}
 }
 
-.help__support-links {
-	&.is-placeholder {
-		@include placeholder();
-		height: 250px;
-		margin-bottom: 15px;
-	}
-}
-
 .help__support-link {
 	display: flex;
 
@@ -65,51 +57,23 @@
 	color: var( --color-neutral-700 );
 }
 
-.help__help-teaser-button {
-	&.is-placeholder {
-		@include placeholder();
-		height: 64px;
-		margin-bottom: 15px;
-	}
+.help__support-links.is-placeholder {
+	@include placeholder();
+	height: 250px;
+	margin-bottom: 15px;
 }
 
-.help__help-teaser-button .card {
-	border-left: 3px solid var( --color-primary );
-	display: flex;
-	margin: 16px 0;
-	padding: 12px;
-
-	.button {
-		margin-left: auto;
-	}
-
-	&.is-no-margin {
-		margin: 0;
-	}
+.help__help-teaser-button.is-placeholder {
+	@include placeholder();
+	height: 64px;
+	margin-bottom: 15px;
 }
 
-.help__help-teaser-text {
-	padding-right: 10px;
+.help-results.is-placeholder {
+	@include placeholder();
+	height: 380px;
+	margin-bottom: 15px;
 }
 
-.help__help-teaser-button-icon {
-	color: var( --color-primary );
-	border-radius: 50%;
-	margin-right: 16px;
-	background-color: var( --color-white );
-	align-self: center;
-}
 
-.help__help-teaser-button-title {
-	color: var( --color-neutral-700 );
-	font-size: 14px;
-	font-weight: 500;
-	padding-right: 15px;
-}
 
-.help__help-teaser-button-description {
-	color: var( --color-neutral-light );
-	font-size: 12px;
-	display: block;
-	padding-right: 15px;
-}
