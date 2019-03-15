@@ -29,8 +29,7 @@ export const groupDomainProducts = ( originalItems, translate ) => {
 				groups[ product.domain ] = product;
 				groups[ product.domain ].groupCount = 1;
 			}
-			groups[ product.domain ].hasPrivateRegistration |=
-				product.variation_slug === 'wp-private-registration';
+
 			return groups;
 		},
 		{}
@@ -45,9 +44,7 @@ export const groupDomainProducts = ( originalItems, translate ) => {
 			return {
 				...product,
 				amount: formatCurrency( product.raw_amount, product.currency ),
-				variation: product.hasPrivateRegistration
-					? translate( 'Domain Registration with Privacy Protection' )
-					: translate( 'Domain Registration' ),
+				variation: translate( 'Domain Registration' ),
 			};
 		} ),
 	];
