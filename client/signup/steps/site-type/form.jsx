@@ -45,7 +45,7 @@ class SiteTypeForm extends Component {
 		this.props.submitForm( type );
 	};
 
-	renderRadioOptions() {
+	renderSegmentOptions() {
 		return getAllSiteTypes().map( siteTypeProperties => (
 			<Card
 				className="site-type__option"
@@ -62,7 +62,7 @@ class SiteTypeForm extends Component {
 	}
 
 	render() {
-		return <Card className="site-type__wrapper">{ this.renderRadioOptions() }</Card>;
+		return <Card className="site-type__wrapper">{ this.renderSegmentOptions() }</Card>;
 	}
 }
 
