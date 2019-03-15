@@ -8,9 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
+import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import WritingForm from 'my-sites/site-settings/form-writing';
