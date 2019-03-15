@@ -30,7 +30,7 @@ class ImporterMedium extends React.PureComponent {
 		);
 
 		importerData.uploadDescription = this.props.translate(
-			'Upload your %(importerName)s export file to start importing into ' +
+			'Upload your {{b}}%(importerName)s export file{{/b}} to start importing into ' +
 				'{{b}}%(siteTitle)s{{/b}}. A %(importerName)s export file is a ZIP ' +
 				'file containing several HTML files with your stories. ' +
 				'Need help {{inlineSupportLink/}}?',
