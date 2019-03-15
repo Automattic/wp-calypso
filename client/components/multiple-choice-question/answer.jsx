@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { Children, cloneElement, useState } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -11,17 +11,9 @@ import PropTypes from 'prop-types';
  */
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
+import MultipleChoiceAnswerTextInput from './answer-text-input';
 
-const MultipleChoiceAnswer = ( {
-	answerText,
-	children,
-	id,
-	isSelected,
-	onAnswerChange,
-	textInput,
-	textInputPrompt,
-} ) => {
+const MultipleChoiceAnswer = ( { answerText, children, id, isSelected, onAnswerChange } ) => {
 	const [ textResponse, setTextResponse ] = useState( '' );
 
 	return (
@@ -36,17 +28,18 @@ const MultipleChoiceAnswer = ( {
 			<span>{ answerText }</span>
 			{ isSelected && (
 				<div className="multiple-choice-question__answer-item-content">
-					{ textInput && (
-						<FormTextInput
-							value={ textResponse }
-							onChange={ ( { target: { value } } ) => {
-								onAnswerChange( id, value );
-								setTextResponse( value );
-							} }
-							placeholder={ textInputPrompt ? textInputPrompt : '' }
-						/>
-					) }
-					{ children }
+					{ Children.map( children, child => {
+						if ( MultipleChoiceAnswerTextInput === child.type ) {
+							return cloneElement( child, {
+								value: textResponse,
+								onTextChange: newText => {
+									onAnswerChange( id, newText );
+									setTextResponse( newText );
+								},
+							} );
+						}
+						return child;
+					} ) }
 				</div>
 			) }
 		</FormLabel>

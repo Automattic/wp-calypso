@@ -8,6 +8,8 @@ This is a component for presenting a question and a list of answers to a user. T
 
 ```es6
 import MultipleChoiceQuestion from 'components/multiple-choice-question';
+import MultipleChoiceAnswer from 'components/multiple-choice-question/answer';
+import MultipleChoiceAnswerTextInput from 'components/multiple-choice-question/answer-text-input';
 
 function MultipleChoiceQuestionExamples( { translate } ) {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
@@ -23,12 +25,9 @@ function MultipleChoiceQuestionExamples( { translate } ) {
 				} }
 			>
 				<MultipleChoiceAnswer id={ 'hungry-bunnies' } answerText={ 'Hungry Bunnies' } />
-				<MultipleChoiceAnswer
-					id={ 'ravenous-rhinos' }
-					answerText={ 'Ravenous Rhinos' }
-					textInput
-					textInputPrompt={ 'How many?' }
-				/>
+				<MultipleChoiceAnswer id={ 'ravenous-rhinos' } answerText={ 'Ravenous Rhinos' }>
+					<MultipleChoiceAnswerTextInput prompt={ 'How many?' } />
+				</MultipleChoiceAnswer>
 				<MultipleChoiceAnswer id={ 'starving-storks' } answerText={ 'Starving Storks' }>
 					<Button
 						onClick={ () => {
@@ -39,13 +38,8 @@ function MultipleChoiceQuestionExamples( { translate } ) {
 						{ 'The Stork Button' }
 					</Button>
 				</MultipleChoiceAnswer>
-				<MultipleChoiceAnswer
-					id={ 'something-else' }
-					answerText={ 'Something Else' }
-					doNotShuffle
-					textInput
-					textInputPrompt={ 'Who else?' }
-				>
+				<MultipleChoiceAnswer id={ 'something-else' } answerText={ 'Something Else' } doNotShuffle>
+					<MultipleChoiceAnswerTextInput prompt={ 'Who else?' } />
 					<Button
 						onClick={ () => {
 							notices.success( 'The Extra Button was clicked', { duration: 5000 } );

@@ -14,6 +14,7 @@ import Card from 'components/card/compact';
 import CardHeading from 'components/card-heading';
 import MultipleChoiceQuestion from '../';
 import MultipleChoiceAnswer from '../answer';
+import MultipleChoiceAnswerTextInput from '../answer-text-input';
 import notices from 'notices';
 
 function MultipleChoiceQuestionExamples() {
@@ -31,12 +32,9 @@ function MultipleChoiceQuestionExamples() {
 					} }
 				>
 					<MultipleChoiceAnswer id={ 'hungry-bunnies' } answerText={ 'Hungry Bunnies' } />
-					<MultipleChoiceAnswer
-						id={ 'ravenous-rhinos' }
-						answerText={ 'Ravenous Rhinos' }
-						textInput
-						textInputPrompt={ 'How many?' }
-					/>
+					<MultipleChoiceAnswer id={ 'ravenous-rhinos' } answerText={ 'Ravenous Rhinos' }>
+						<MultipleChoiceAnswerTextInput prompt={ 'How many?' } />
+					</MultipleChoiceAnswer>
 					<MultipleChoiceAnswer id={ 'starving-storks' } answerText={ 'Starving Storks' }>
 						<Button
 							onClick={ () => {
@@ -51,9 +49,8 @@ function MultipleChoiceQuestionExamples() {
 						id={ 'something-else' }
 						answerText={ 'Something Else' }
 						doNotShuffle
-						textInput
-						textInputPrompt={ 'Who else?' }
 					>
+						<MultipleChoiceAnswerTextInput prompt={ 'Who else?' } />
 						<Button
 							onClick={ () => {
 								notices.success( 'The Extra Button was clicked', { duration: 5000 } );
