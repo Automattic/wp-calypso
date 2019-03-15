@@ -21,7 +21,6 @@ import GeneralSettings from './section-general';
 import SiteSettingsNavigation from './navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
-import Placeholder from 'my-sites/site-settings/placeholder';
 
 /**
  * Style dependencies
@@ -29,19 +28,15 @@ import Placeholder from 'my-sites/site-settings/placeholder';
 import './style.scss';
 
 const SiteSettingsComponent = ( { siteId, translate } ) => {
-	if ( ! siteId ) {
-		return <Placeholder />;
-	}
-
 	return (
 		<Main className="site-settings">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
-			{ siteId && <SiteSettingsNavigation section={ 'general' } /> }
+			<SiteSettingsNavigation section={ 'general' } />
 			<QueryProductsList />
-			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-			{ siteId && <GeneralSettings /> }
+			<QuerySitePurchases siteId={ siteId } />
+			<GeneralSettings />
 		</Main>
 	);
 };
