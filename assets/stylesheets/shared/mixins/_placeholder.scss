@@ -4,9 +4,9 @@
 // Adds animation to placeholder section
 // ==========================================================================
 
-@mixin placeholder( $lighten-value: 0 ) {
+@mixin placeholder( $value: 0 ) {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: var( --color-neutral-#{$lighten-value} );
+	background-color: var( --color-neutral-#{$value} );
 	color: transparent;
 
 	&::after {
