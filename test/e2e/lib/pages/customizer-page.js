@@ -23,20 +23,23 @@ export default class CustomizerPage extends AsyncBaseContainer {
 
 	async waitForCustomizer() {
 		const self = this;
-		self.driver
+		await self.driver
 			.wait( until.elementLocated( this.metaiFrameElementSelector ), this.explicitWaitMS * 2 )
 			.then(
 				function() {},
-				function( error ) {
+				async function( error ) {
 					const message = `Found issue on customizer page: '${ error }' - Clicking try again button now.`;
 					slackNotifier.warn( message );
-					self.driver
-						.wait( function() {
-							return driverHelper.isElementPresent( self.driver, self.reloadCustomizerSelector );
+					await self.driver
+						.wait( async function() {
+							return await driverHelper.isElementPresent(
+								self.driver,
+								self.reloadCustomizerSelector
+							);
 						}, self.explicitWaitMS )
 						.then(
-							function() {
-								driverHelper.clickWhenClickable(
+							async function() {
+								await driverHelper.clickWhenClickable(
 									self.driver,
 									self.reloadCustomizerSelector,
 									self.explicitWaitMS
@@ -50,44 +53,40 @@ export default class CustomizerPage extends AsyncBaseContainer {
 						);
 				}
 			);
-		this._switchToMetaiFrame();
-		return self.driver.switchTo().defaultContent();
+		await this._switchToMetaiFrame();
+		return await self.driver.switchTo().defaultContent();
 	}
 
 	async close() {
 		const self = this;
-		self._ensureMetaViewOnMobile();
-		self._switchToMetaiFrame();
-		return self.driver.sleep( self.shortSleepMS ).then( () => {
-			return driverHelper
-				.clickWhenClickable( self.driver, by.css( '.customize-controls-close' ) )
-				.then( () => {
-					return self._switchToDefaultContent();
-				} );
-		} );
+		await self._ensureMetaViewOnMobile();
+		await self._switchToMetaiFrame();
+		await self.driver.sleep( self.shortSleepMS );
+		await driverHelper.clickWhenClickable( self.driver, by.css( '.customize-controls-close' ) );
+		return await self._switchToDefaultContent();
 	}
 
 	async _ensureMetaViewOnMobile() {
 		const driver = this.driver;
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			this._switchToMetaiFrame();
-			driverHelper
-				.isElementPresent( driver, by.css( 'div.preview-desktop.preview-only' ) )
-				.then( previewDisplayed => {
-					if ( previewDisplayed === true ) {
-						driverHelper.clickWhenClickable(
-							driver,
-							by.css( 'button.customize-controls-preview-toggle' )
-						);
-					}
-				} );
-			return this._switchToDefaultContent();
+			await this._switchToMetaiFrame();
+			let previewDisplayed = await driverHelper.isElementPresent(
+				driver,
+				by.css( 'div.preview-desktop.preview-only' )
+			);
+			if ( previewDisplayed === true ) {
+				await driverHelper.clickWhenClickable(
+					driver,
+					by.css( 'button.customize-controls-preview-toggle' )
+				);
+			}
+			return await this._switchToDefaultContent();
 		}
 	}
 
 	async _switchToMetaiFrame() {
-		this._switchToDefaultContent();
-		this.driver.wait(
+		await this._switchToDefaultContent();
+		await this.driver.wait(
 			until.ableToSwitchToFrame( this.metaiFrameElementSelector ),
 			this.explicitWaitMS,
 			'Can not switch to the meta iFrame on customizer'
