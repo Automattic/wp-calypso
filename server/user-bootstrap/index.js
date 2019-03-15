@@ -41,6 +41,11 @@ module.exports = function( request ) {
 	const supportSession = request.get( 'x-support-session' );
 
 	return new Promise( ( resolve, reject ) => {
+		if ( ! authCookieValue ) {
+			reject( new Error( 'Cannot bootstrap without an auth cookie' ) );
+			return;
+		}
+
 		// create HTTP Request object
 		const req = superagent.get( url );
 		req.set( 'User-Agent', 'WordPress.com Calypso' );
