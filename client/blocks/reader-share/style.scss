@@ -109,7 +109,7 @@
 .reader-share__site-selector .site__title,
 .reader-share__site-selector .site__domain {
 	&::after {
-		background: linear-gradient( to right, rgba( 255, 255, 255, 0 ), var( --color-neutral-0 ) 90% );
+		@include long-content-fade( $color: var( --color-white-rgb ) );
 		border-radius: 50%;
 	}
 }
