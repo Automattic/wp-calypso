@@ -430,16 +430,28 @@ class PodcastingDetails extends Component {
 	};
 
 	onCoverImageRemoved = () => {
-		this.props.updateFields( {
+		const { submitForm } = this.props;
+
+		const fieldsToUpdate = {
 			podcasting_image_id: '0',
 			podcasting_image: '',
+		};
+
+		this.props.updateFields( fieldsToUpdate, () => {
+			submitForm();
 		} );
 	};
 
 	onCoverImageSelected = ( coverId, coverUrl ) => {
-		this.props.updateFields( {
+		const { submitForm } = this.props;
+
+		const fieldsToUpdate = {
 			podcasting_image_id: String( coverId ),
 			podcasting_image: coverUrl,
+		};
+
+		this.props.updateFields( fieldsToUpdate, () => {
+			submitForm();
 		} );
 	};
 
