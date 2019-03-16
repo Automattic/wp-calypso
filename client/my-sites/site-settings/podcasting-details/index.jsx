@@ -398,7 +398,7 @@ class PodcastingDetails extends Component {
 	}
 
 	onCategorySelected = category => {
-		const { settings, fields, isPodcastingEnabled } = this.props;
+		const { settings, fields, isPodcastingEnabled, submitForm } = this.props;
 
 		const fieldsToUpdate = { podcasting_category_id: String( category.ID ) };
 
@@ -415,7 +415,9 @@ class PodcastingDetails extends Component {
 			}
 		}
 
-		this.props.updateFields( fieldsToUpdate );
+		this.props.updateFields( fieldsToUpdate, () => {
+			submitForm();
+		} );
 	};
 
 	onCategoryCleared = () => {
