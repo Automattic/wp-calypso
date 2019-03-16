@@ -150,7 +150,7 @@
     "moment-timezone": "0.5.23",
     "morgan": "1.9.1",
     "node-sass": "4.11.0",
-    "node-sass-package-importer": "5.3.0",
+    "node-sass-package-importer": "5.3.1",
     "npm-run-all": "4.1.5",
     "objectpath": "1.2.2",
     "page": "1.11.4",
