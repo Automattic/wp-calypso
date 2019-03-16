@@ -10,10 +10,10 @@ import { find, get } from 'lodash';
  */
 
 /**
- * Finds in `allSiteTypes` for item match and returns a property value
+ * Looks up site types array for item match and returns a property value
  *
  * @example
- * // Find the item in `allSiteTypes` where `id === 2`, and return the value of `slug`
+ * // Find the site type where `id === 2`, and return the value of `slug`
  * const siteTypeValue = getSiteTypePropertyValue( 'id', 2, 'slug' );
  *
  * @param {string} key A property name of a site types item
