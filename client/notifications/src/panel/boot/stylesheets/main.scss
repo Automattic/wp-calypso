@@ -383,7 +383,7 @@
 		}
 
 		.unread {
-			background: var( --color-primary-50 );
+			background: rgba( var( --color-primary-rgb ), 0.1);
 		}
 
 		.wpnc__selected-note {
