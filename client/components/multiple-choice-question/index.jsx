@@ -30,7 +30,7 @@ const shuffleAnswers = memoize(
 			.join( '-' )
 );
 
-const MultipleChoiceQuestion = ( { children, onAnswerChange, question } ) => {
+const MultipleChoiceQuestion = ( { disabled, children, onAnswerChange, question } ) => {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
 	const shuffledChildren = shuffleAnswers( children );
 
@@ -45,6 +45,7 @@ const MultipleChoiceQuestion = ( { children, onAnswerChange, question } ) => {
 						onAnswerChange( id, textResponse );
 						setSelectedAnswer( id );
 					},
+					disabled,
 				} )
 			) }
 		</FormFieldset>
@@ -69,8 +70,13 @@ const checkChildrenAreOnlyAnswers = ( props, propName, componentName ) => {
 
 MultipleChoiceQuestion.propTypes = {
 	children: checkChildrenAreOnlyAnswers,
+	disabled: PropTypes.bool,
 	onAnswerChange: PropTypes.func.isRequired,
 	question: PropTypes.string.isRequired,
+};
+
+MultipleChoiceQuestion.defaultProps = {
+	disabled: false,
 };
 
 export default MultipleChoiceQuestion;

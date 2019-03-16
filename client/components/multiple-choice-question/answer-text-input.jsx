@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 
 import FormTextInput from 'components/forms/form-text-input';
 
-const MultipleChoiceAnswerTextInput = ( { prompt, value, onTextChange } ) => {
+const MultipleChoiceAnswerTextInput = ( { disabled, onTextChange, prompt, value } ) => {
 	return (
 		<FormTextInput
 			value={ value }
@@ -20,17 +20,20 @@ const MultipleChoiceAnswerTextInput = ( { prompt, value, onTextChange } ) => {
 				onTextChange( newText );
 			} }
 			placeholder={ prompt }
+			disabled={ disabled }
 		/>
 	);
 };
 
 MultipleChoiceAnswerTextInput.propTypes = {
+	disabled: PropTypes.bool,
 	onTextChange: PropTypes.func,
-	value: PropTypes.string,
 	prompt: PropTypes.string,
+	value: PropTypes.string,
 };
 
 MultipleChoiceAnswerTextInput.defaultProps = {
+	disabled: false,
 	prompt: '',
 };
 

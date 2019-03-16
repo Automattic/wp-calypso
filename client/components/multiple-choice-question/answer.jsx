@@ -13,7 +13,14 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import MultipleChoiceAnswerTextInput from './answer-text-input';
 
-const MultipleChoiceAnswer = ( { answerText, children, id, isSelected, onAnswerChange } ) => {
+const MultipleChoiceAnswer = ( {
+	answerText,
+	disabled,
+	children,
+	id,
+	isSelected,
+	onAnswerChange,
+} ) => {
 	const [ textResponse, setTextResponse ] = useState( '' );
 
 	return (
@@ -24,6 +31,7 @@ const MultipleChoiceAnswer = ( { answerText, children, id, isSelected, onAnswerC
 					onAnswerChange( id, textResponse );
 				} }
 				checked={ isSelected }
+				disabled={ disabled }
 			/>
 			<span>{ answerText }</span>
 			{ isSelected && (
@@ -31,14 +39,17 @@ const MultipleChoiceAnswer = ( { answerText, children, id, isSelected, onAnswerC
 					{ Children.map( children, child => {
 						if ( MultipleChoiceAnswerTextInput === child.type ) {
 							return cloneElement( child, {
-								value: textResponse,
+								disabled,
 								onTextChange: newText => {
 									onAnswerChange( id, newText );
 									setTextResponse( newText );
 								},
+								value: textResponse,
 							} );
 						}
-						return child;
+						return cloneElement( child, {
+							disabled,
+						} );
 					} ) }
 				</div>
 			) }
@@ -48,12 +59,17 @@ const MultipleChoiceAnswer = ( { answerText, children, id, isSelected, onAnswerC
 
 MultipleChoiceAnswer.propTypes = {
 	answerText: PropTypes.string.isRequired,
+	disabled: PropTypes.bool,
 	doNotShuffle: PropTypes.bool,
 	id: PropTypes.string.isRequired,
 	isSelected: PropTypes.bool,
 	onAnswerChange: PropTypes.func,
 	textInput: PropTypes.bool,
 	textInputPrompt: PropTypes.string,
+};
+
+MultipleChoiceAnswer.defaultProps = {
+	disabled: false,
 };
 
 export default MultipleChoiceAnswer;

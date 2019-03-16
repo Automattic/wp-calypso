@@ -15,11 +15,12 @@ import MultipleChoiceQuestion from 'components/multiple-choice-question';
 import MultipleChoiceAnswer from 'components/multiple-choice-question/answer';
 import MultipleChoiceAnswerTextInput from 'components/multiple-choice-question/answer-text-input';
 
-const GSuiteCancellationSurvey = ( { onSurveyAnswerChange, translate } ) => (
+const GSuiteCancellationSurvey = ( { disabled, onSurveyAnswerChange, translate } ) => (
 	<div className="gsuite-cancel-purchase-dialog__survey">
 		<MultipleChoiceQuestion
 			question={ translate( 'Please tell us why you are cancelling G Suite:' ) }
 			onAnswerChange={ onSurveyAnswerChange }
+			disabled={ disabled }
 		>
 			<MultipleChoiceAnswer
 				id={ 'too-expensive' }
@@ -53,8 +54,13 @@ const GSuiteCancellationSurvey = ( { onSurveyAnswerChange, translate } ) => (
 );
 
 GSuiteCancellationSurvey.propTypes = {
+	disabled: PropTypes.bool,
 	onSurveyAnswerChange: PropTypes.func.isRequired,
 	translate: PropTypes.func,
+};
+
+GSuiteCancellationSurvey.defaultProps = {
+	disabled: false,
 };
 
 export default localize( GSuiteCancellationSurvey );

@@ -45,6 +45,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 
 	removeButtonClick = action => {
 		this.saveSurveyResults();
+		this.setState( { isDisabled: true } );
 		this.props.onRemovePurchase( action );
 	};
 
@@ -75,7 +76,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 
 	getStepButtons = () => {
 		const { translate } = this.props;
-		const { step, isDisabled, surveyAnswerId } = this.state;
+		const { isDisabled, step, surveyAnswerId } = this.state;
 		if ( steps.GSUITE_INITIAL_STEP === step ) {
 			return [
 				{
@@ -105,7 +106,9 @@ class GSuiteCancelPurchaseDialog extends Component {
 			},
 			{
 				action: 'remove',
-				disabled: isDisabled,
+				// don't allow the user to complete the survey without an selection
+				disabled: isDisabled || null === surveyAnswerId,
+				// the help button is primary and this button is not when it is shown
 				isPrimary: 'it-did-not-work' !== surveyAnswerId,
 				label: translate( 'Remove Now' ),
 				onClick: this.removeButtonClick,
@@ -114,7 +117,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	render() {
-		const { isVisible, onClose, purchase } = this.props;
+		const { isDisabled, isVisible, onClose, purchase } = this.props;
 		return (
 			<Dialog
 				buttons={ this.getStepButtons() }
@@ -125,7 +128,10 @@ class GSuiteCancelPurchaseDialog extends Component {
 				{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
 					<GSuiteCancellationFeatures purchase={ purchase } />
 				) : (
-					<GSuiteCancellationSurvey onSurveyAnswerChange={ this.onSurveyAnswerChange } />
+					<GSuiteCancellationSurvey
+						disabled={ isDisabled }
+						onSurveyAnswerChange={ this.onSurveyAnswerChange }
+					/>
 				) }
 			</Dialog>
 		);
