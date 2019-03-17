@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, get, noop, startsWith, trim, uniq, isEmpty } from 'lodash';
+import { find, get, noop, startsWith, trim, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { v4 as uuid } from 'uuid';
 
@@ -36,6 +36,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		shouldShowPopularTopics: PropTypes.func,
 		searchResultsLimit: PropTypes.number,
 		verticals: PropTypes.array,
+		defaultVertical: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -48,6 +49,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		shouldShowPopularTopics: noop,
 		searchResultsLimit: 5,
 		verticals: [],
+		defaultVertical: {},
 	};
 
 	constructor( props ) {
@@ -88,7 +90,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	searchForVerticalMatches = ( value = '' ) =>
 		find(
 			this.props.verticals,
-			item => item.verticalName.toLowerCase() === value.toLowerCase() && ! isEmpty( item.preview )
+			item => item.verticalName.toLowerCase() === value.toLowerCase() && !! item.preview
 		);
 
 	updateVerticalData = ( result, value ) =>
@@ -214,7 +216,7 @@ export default localize(
 			};
 		},
 		( dispatch, ownProps ) => ( {
-			shouldShowPopularTopics: searchValue => isEmpty( searchValue ) && ownProps.showPopular,
+			shouldShowPopularTopics: searchValue => ! searchValue && ownProps.showPopular,
 			requestVerticals: requestSiteVerticalHttpData,
 			requestDefaultVertical: ( searchTerm = 'business' ) => {
 				if ( ! get( getHttpData( DEFAULT_SITE_VERTICAL_REQUEST_ID ), 'data', null ) ) {

@@ -4,7 +4,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 
@@ -56,7 +56,7 @@ const POPULAR_TOPICS = {
 	],
 };
 
-class PopularTopics extends Component {
+class PopularTopics extends PureComponent {
 	static propTypes = {
 		popularTopics: PropTypes.array.isRequired,
 		onSelect: PropTypes.func.isRequired,
