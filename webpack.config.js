@@ -150,7 +150,7 @@ function getWebpackConfig( {
 		module: {
 			// avoids this warning:
 			// https://github.com/localForage/localForage/issues/577
-			noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
+			noParse: /[/\\]node_modules[/\\]localforage[/\\]dist[/\\]localforage\.js$/,
 			rules: [
 				TranspileConfig.loader( {
 					workerCount,
@@ -160,7 +160,7 @@ function getWebpackConfig( {
 					exclude: /node_modules\//,
 				} ),
 				{
-					test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
+					test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
 					loader: 'babel-loader',
 					options: {
 						babelrc: false,
@@ -200,7 +200,7 @@ function getWebpackConfig( {
 					use: 'exports-loader?window=tinymce',
 				},
 				{
-					test: /node_modules[\/\\]tinymce/,
+					test: /node_modules[/\\]tinymce/,
 					use: 'imports-loader?this=>window',
 				},
 			],
@@ -231,7 +231,6 @@ function getWebpackConfig( {
 				global: 'window',
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
-			new webpack.IgnorePlugin( /^props$/ ),
 			isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 			...SassConfig.plugins( { cssFilename, minify: ! isDevelopment } ),
 			new AssetsWriter( {
@@ -289,7 +288,7 @@ function getWebpackConfig( {
 
 	if ( ! config.isEnabled( 'desktop' ) ) {
 		webpackConfig.plugins.push(
-			new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
+			new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' )
 		);
 	}
 
