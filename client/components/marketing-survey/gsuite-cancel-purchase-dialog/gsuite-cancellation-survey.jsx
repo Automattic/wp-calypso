@@ -28,45 +28,43 @@ class GSuiteCancellationSurvey extends Component {
 			translate,
 		} = this.props;
 		return (
-			<div className="gsuite-cancel-purchase-dialog__survey">
-				<MultipleChoiceQuestion
-					answers={ [
-						{
-							id: 'too-expensive',
-							answerText: translate( "It's too expensive." ),
-							textInput: true,
-							textInputPrompt: translate( 'How can we improve G Suite?' ),
-						},
-						{
-							id: 'do-not-need-it',
-							answerText: translate( "I don't need it." ),
-							textInput: true,
-							textInputPrompt: translate( 'What are we missing that you need?' ),
-						},
-						{
-							id: 'purchased-by-mistake',
-							answerText: translate( 'I purchased it by mistake.' ),
-						},
-						{
-							id: 'it-did-not-work',
-							answerText: translate( 'I was unable to activate or use the G Suite.' ),
-							textInput: true,
-							textInputPrompt: translate( 'Where did you run into problems?' ),
-						},
-						{
-							id: 'another-reason',
-							answerText: translate( 'Another reason…' ),
-							textInput: true,
-							doNotShuffle: true,
-						},
-					] }
-					question={ translate( 'Please tell us why you are cancelling G Suite:' ) }
-					onAnswerChange={ onSurveyAnswerChange }
-					disabled={ disabled }
-					selectedAnswerId={ surveyAnswerId }
-					selectedAnswerText={ surveyAnswerText }
-				/>
-			</div>
+			<MultipleChoiceQuestion
+				answers={ [
+					{
+						id: 'too-expensive',
+						answerText: translate( "It's too expensive." ),
+						textInput: true,
+						textInputPrompt: translate( 'How can we improve G Suite?' ),
+					},
+					{
+						id: 'do-not-need-it',
+						answerText: translate( "I don't need it." ),
+						textInput: true,
+						textInputPrompt: translate( 'What are we missing that you need?' ),
+					},
+					{
+						id: 'purchased-by-mistake',
+						answerText: translate( 'I purchased it by mistake.' ),
+					},
+					{
+						id: 'it-did-not-work',
+						answerText: translate( 'I was unable to activate or use the G Suite.' ),
+						textInput: true,
+						textInputPrompt: translate( 'Where did you run into problems?' ),
+					},
+					{
+						id: 'another-reason',
+						answerText: translate( 'Another reason…' ),
+						textInput: true,
+						doNotShuffle: true,
+					},
+				] }
+				question={ translate( 'Please tell us why you are cancelling G Suite:' ) }
+				onAnswerChange={ onSurveyAnswerChange }
+				disabled={ disabled }
+				selectedAnswerId={ surveyAnswerId }
+				selectedAnswerText={ surveyAnswerText }
+			/>
 		);
 	}
 }

@@ -6,7 +6,7 @@
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -26,7 +26,7 @@ class GSuiteCancellationFeatures extends Component {
 		const gsuiteDomain = purchaseType( purchase );
 		const { productSlug } = purchase;
 		return (
-			<Fragment>
+			<div className="gsuite-cancel-purchase-dialog__features">
 				<CardHeading tagName="h3" size={ 24 }>
 					{ translate( "We're sorry to see you go." ) }
 				</CardHeading>
@@ -42,7 +42,7 @@ class GSuiteCancellationFeatures extends Component {
 					domainName={ gsuiteDomain }
 					type={ 'list' }
 				/>
-			</Fragment>
+			</div>
 		);
 	}
 }
