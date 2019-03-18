@@ -48,7 +48,7 @@ class GSuiteCancellationSurvey extends Component {
 					},
 					{
 						id: 'it-did-not-work',
-						answerText: translate( 'I was unable to activate or use the G Suite.' ),
+						answerText: translate( 'I was unable to activate or use it.' ),
 						textInput: true,
 						textInputPrompt: translate( 'Where did you run into problems?' ),
 					},
