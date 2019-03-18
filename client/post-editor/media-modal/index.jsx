@@ -64,6 +64,7 @@ function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 				// uploaded via an external URL
 				( MediaUtils.getMimePrefix( item ) !== 'image' ||
 					! MediaUtils.isTransientPreviewable( item ) ||
+					item.external ||
 					modalView === ModalViews.GALLERY )
 		)
 	);
