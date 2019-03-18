@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, values } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Retrieve a list of G Suite users for a site
@@ -13,6 +13,5 @@ import { get, values } from 'lodash';
  * @return {Object}        G Suite Users
  */
 export default function getGSuiteUsers( state, siteId ) {
-	const gsuiteUsersObject = get( state.gsuiteUsers, [ siteId, 'gsuiteUsers' ], null );
-	return gsuiteUsersObject ? values( gsuiteUsersObject ) : null;
+	return get( state.gsuiteUsers, [ siteId, 'users' ], null );
 }

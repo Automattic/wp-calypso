@@ -1,5 +1,5 @@
 /** @format */
-export const gsuiteUsersSchema = {
+export const usersSchema = {
 	type: 'array',
 	items: {
 		oneOf: [

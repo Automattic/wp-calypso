@@ -9,16 +9,16 @@ import {
 	GSUITE_USERS_REQUEST_FAILURE,
 	GSUITE_USERS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { gsuiteUsersScheama } from './schema';
+import { usersSchema } from './schema';
 
-export const gsuiteUsersReducer = createReducer(
+export const usersReducer = createReducer(
 	null,
 	{
 		[ GSUITE_USERS_REQUEST ]: () => null,
 		[ GSUITE_USERS_REQUEST_FAILURE ]: () => null,
 		[ GSUITE_USERS_REQUEST_SUCCESS ]: ( state, { response: { accounts } } ) => accounts,
 	},
-	gsuiteUsersScheama
+	usersSchema
 );
 
 export const requestErrorReducer = createReducer( false, {
@@ -36,7 +36,7 @@ export const requestingReducer = createReducer( false, {
 export default keyedReducer(
 	'siteId',
 	combineReducers( {
-		gsuiteUsers: gsuiteUsersReducer,
+		users: usersReducer,
 		requesting: requestingReducer,
 		requestError: requestErrorReducer,
 	} )
