@@ -1,7 +1,4 @@
 /**
- * External dependencies
- */
-/**
  * Internal dependencies
  */
 import { normalizePluginsList } from 'lib/plugins/utils';
