@@ -249,13 +249,8 @@ class SiteImporterInputPane extends React.Component {
 		const params = this.getApiParams();
 		params.site_url = urlForImport;
 
-		wpcom.wpcom.req
-			.get( {
-				path: `/sites/${ this.props.site.ID }/site-importer/is-site-importable?${ stringify(
-					params
-				) }`,
-				apiNamespace: 'wpcom/v2',
-			} )
+		wpcom
+			.isSiteImportable( urlForImport, this.props.site.ID, params )
 			.then( resp => {
 				this.setState( {
 					importStage: 'importable',

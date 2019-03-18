@@ -6,6 +6,7 @@
  */
 import debugFactory from 'debug';
 import { camelCase, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies.
@@ -1817,7 +1818,20 @@ Undocumented.prototype.googleAppsFilterBySiteId = function( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/google-apps' }, fn );
 };
 
-Undocumented.prototype.isSiteImportable = function( site_url ) {
+Undocumented.prototype.isSiteImportable = function( site_url, siteId, params ) {
+	// Note: There are 2 different is-site-importable endpoints.
+	// One is done within the context of a site, the other doesn't require a site.
+	if ( siteId ) {
+		const path = `/sites/${ siteId }/site-importer/is-site-importable?${ stringify( params ) }`;
+
+		debug( path );
+
+		return this.wpcom.req.get( {
+			path,
+			apiNamespace: 'wpcom/v2',
+		} );
+	}
+
 	debug( `/wpcom/v2/site-importer-global/is-site-importable?${ site_url }` );
 
 	return this.wpcom.req.get(
