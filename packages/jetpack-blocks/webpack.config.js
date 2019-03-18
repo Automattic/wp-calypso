@@ -12,6 +12,7 @@ const fs = require( 'fs' );
 const webpack = require( 'webpack' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
@@ -128,19 +129,7 @@ function getWebpackConfig() {
 						'assets/stylesheets/shared/_utils.scss' // FIX ME
 					) }';`,
 				} ),
-				{
-					// TODO: turn in into a shard.
-					test: /\.(?:gif|jpg|jpeg|png|svg)$/i,
-					use: [
-						{
-							loader: 'file-loader',
-							options: {
-								name: '[name]-[hash].[ext]',
-								outputPath: 'images/',
-							},
-						},
-					],
-				},
+				FileConfig.loader(),
 			],
 		},
 		resolve: {
