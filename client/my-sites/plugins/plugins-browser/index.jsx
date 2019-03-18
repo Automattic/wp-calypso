@@ -31,7 +31,6 @@ import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getRecommendedPlugins from 'state/selectors/get-recommended-plugins';
-import isRequestingRecommendedPlugins from 'state/selectors/is-requesting-recommended-plugins';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -658,8 +657,8 @@ export default flow(
 				selectedSite: getSelectedSite( state ),
 				siteSlug: getSelectedSiteSlug( state ),
 				sites: getSelectedOrAllSitesJetpackCanManage( state ),
-				isRequestingRecommendedPlugins: isRequestingRecommendedPlugins( state, selectedSiteId ),
-				recommendedPlugins: getRecommendedPlugins( state, selectedSiteId ),
+				isRequestingRecommendedPlugins: getRecommendedPlugins( state, selectedSiteId ) === null,
+				recommendedPlugins: getRecommendedPlugins( state, selectedSiteId ) || [],
 			};
 		},
 		{
