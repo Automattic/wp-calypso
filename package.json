@@ -17,7 +17,8 @@
     "Safari >= 10",
     "iOS >= 10",
     "not ie <= 10",
-    "> 1%"
+    "> 1%",
+    "not dead"
   ],
   "dependencies": {
     "@automattic/format-currency": "file:./packages/format-currency",
