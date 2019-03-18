@@ -1,6 +1,6 @@
 module.exports = {
 	parserOptions: {
-		sourceType: 'script', // force require over import
+		sourceType: 'script', // no import, only require
 	},
 	rules: {
 		'import/no-nodejs-modules': 0,
