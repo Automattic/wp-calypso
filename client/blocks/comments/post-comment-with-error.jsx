@@ -11,6 +11,12 @@ import React from 'react';
  */
 import PostCommentForm from './form';
 
+/**
+ * Style dependencies
+ */
+import './post-comment.scss'; // intentional, shares styles
+import './post-comment-with-error.scss';
+
 export default class PostCommentWithError extends React.Component {
 	renderCommentForm() {
 		const { post, commentsTree, commentId, onUpdateCommentText, activeReplyCommentId } = this.props;

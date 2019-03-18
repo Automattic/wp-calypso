@@ -21,6 +21,11 @@ import { editComment } from 'state/comments/actions';
 import { recordAction, recordGaEvent } from 'reader/stats';
 import PostCommentFormTextarea from './form-textarea';
 
+/**
+ * Style dependencies
+ */
+import './comment-edit-form.scss';
+
 class PostCommentForm extends Component {
 	constructor( props ) {
 		super();

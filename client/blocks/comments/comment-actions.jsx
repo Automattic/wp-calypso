@@ -19,6 +19,11 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
 
+/**
+ * Style dependencies
+ */
+import './comment-actions.scss';
+
 const CommentActions = ( {
 	post,
 	comment: { isPlaceholder, status },

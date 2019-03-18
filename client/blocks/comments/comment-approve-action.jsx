@@ -11,6 +11,11 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classnames from 'classnames';
 
+/**
+ * Style dependencies
+ */
+import './comment-approve-action.scss';
+
 const CommentApproveAction = ( { translate, status, approveComment, unapproveComment } ) => {
 	const isApproved = status === 'approved';
 	const buttonStyle = classnames( 'comments__comment-actions-approve', {
