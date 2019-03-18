@@ -35,7 +35,6 @@ const shouldMinify = isDevelopment;
 // process.env.MINIFY_JS === 'true' ||
 // ( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
 
-const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 
 const editorSetup = path.join( __dirname, 'src', 'preset', 'setup', 'editor' );
 const viewSetup = path.join( __dirname, 'src', 'preset', 'setup', 'view' );
