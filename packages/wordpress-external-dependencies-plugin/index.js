@@ -19,35 +19,29 @@ class WordPressExternalDependenciesPlugin {
 	apply( compiler ) {
 		this.externalsPlugin.apply( compiler );
 
-		compiler.hooks.compilation.tap( this.constructor.name, compilation => {
-			compilation.hooks.additionalChunkAssets.tap( this.constructor.name, (/* chunks */) => {
-				// Get entry points
-				compilation.chunkGroups.forEach( chunkGroup => {
-					if ( ! chunkGroup.isInitial() ) {
-						return;
-					}
-
-					dependencyIteration: for ( const [ wpModule, { dependency } ] of wpModules.entries() ) {
-						for ( const chunk of chunkGroup.chunks ) {
-							for ( const chunkModule of chunk.modulesIterable ) {
-								if ( chunkModule.userRequest === wpModule ) {
-									this.entryDeps.has( chunkGroup )
-										? this.entryDeps.get( chunkGroup ).add( dependency )
-										: this.entryDeps.set( chunkGroup, new Set( [ dependency ] ) );
-									continue dependencyIteration;
-								}
+		compiler.hooks.emit.tapAsync( this.constructor.name, ( compilation, callback ) => {
+			for ( const [ , entrypoint ] of compilation.entrypoints.entries() ) {
+				// labelled loop to continue when nested dep is found
+				dependencyIteration: for ( const [ wpModule, { dependency } ] of wpModules.entries() ) {
+					for ( const chunk of entrypoint.chunks ) {
+						for ( const chunkModule of chunk.modulesIterable ) {
+							if ( chunkModule.userRequest === wpModule ) {
+								this.entryDeps.has( entrypoint )
+									? this.entryDeps.get( entrypoint ).add( dependency )
+									: this.entryDeps.set( entrypoint, new Set( [ dependency ] ) );
+								continue dependencyIteration;
 							}
 						}
 					}
-				} );
-				for ( const [ entry, deps ] of this.entryDeps.entries() ) {
-					const entryFiles = entry.getFiles();
-					if ( entryFiles.length ) {
-						const depsFile = entryFiles[ 0 ].replace( '.js', '.deps.json' );
-						compilation.assets[ depsFile ] = new RawSource( JSON.stringify( Array.from( deps ) ) );
-					}
 				}
-			} );
+			}
+
+			for ( const [ entry, deps ] of this.entryDeps.entries() ) {
+				const filename = `${ entry.options.name }.deps.json`;
+				compilation.assets[ filename ] = new RawSource( JSON.stringify( Array.from( deps ) ) );
+			}
+
+			callback();
 		} );
 	}
 }
