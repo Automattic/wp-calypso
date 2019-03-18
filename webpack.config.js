@@ -14,6 +14,7 @@ const AssetsWriter = require( './server/bundler/assets-writer' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
@@ -183,18 +184,7 @@ function getWebpackConfig( {
 					test: /\.html$/,
 					loader: 'html-loader',
 				},
-				{
-					test: /\.(?:gif|jpg|jpeg|png|svg)$/i,
-					use: [
-						{
-							loader: 'file-loader',
-							options: {
-								name: '[name]-[hash].[ext]',
-								outputPath: 'images/',
-							},
-						},
-					],
-				},
+				FileConfig.loader(),
 				{
 					include: require.resolve( 'tinymce/tinymce' ),
 					use: 'exports-loader?window=tinymce',
