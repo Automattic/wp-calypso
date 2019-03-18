@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -22,6 +23,10 @@ const DEFAULT_PLACEHOLDER_NUMBER = 6;
 
 class PluginsBrowserList extends Component {
 	static displayName = 'PluginsBrowserList';
+
+	static propTypes = {
+		plugins: PropTypes.array.isRequired,
+	};
 
 	renderPluginsViewList() {
 		let emptyCounter = 0;
