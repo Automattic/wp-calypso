@@ -23,6 +23,7 @@
   },
   "scripts": {},
   "dependencies": {
-    "webpack": "^4.29.6"
+    "webpack": "^4.29.6",
+    "webpack-sources": "^1.3.0"
   }
 }
