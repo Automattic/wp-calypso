@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  slack: circleci/slack@2.0.0
+
 references:
   shared-environment: &shared-environment
     CIRCLE_ARTIFACTS: /tmp/artifacts
@@ -490,6 +493,8 @@ jobs:
       - run: ./scripts/run-wrapper.sh
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
+      - slack/status:
+          webhook: $SLACK_E2E
 
   test-e2e-canary:
     <<: *defaults
@@ -504,6 +509,9 @@ jobs:
       jetpack-host:
         type: string
         default: ""
+      slack-webhook:
+        type: string
+        default: $SLACK_E2E
     steps:
       - prepare
       - run: *set-e2e-variables
@@ -514,6 +522,8 @@ jobs:
             env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
+      - slack/status:
+          webhook: << parameters.slack-webhook >>
 
 workflows:
   version: 2
@@ -558,6 +568,7 @@ workflows:
             - prime-calypso-live
           test-flags: "-z -S $CIRCLE_SHA1"
           test-target: "IE11"
+          slack-webhook: "$SLACK_IE"
       - test-e2e-canary:
           name: test-e2e-canary-safari
           requires:
@@ -569,6 +580,7 @@ workflows:
             - prime-calypso-live
           test-flags: "-W -S $CIRCLE_SHA1"
           test-target: "WOO"
+          slack-webhook: "$SLACK_WOO"
 
   calypso-nightly:
     jobs:
@@ -615,12 +627,14 @@ workflows:
             - setup
           test-flags: "-w"
           test-target: "IE11"
+          slack-webhook: "$SLACK_IE"
       - test-e2e-canary:
           name: test-e2e-canary-woo-sched
           requires:
             - setup
           test-flags: "-W"
           test-target: "WOO"
+          slack-webhook: "$SLACK_WOO"
     triggers:
       - schedule:
           cron: "0 12,20 * * *"
@@ -639,6 +653,7 @@ workflows:
 #          test-flags: "-j"
 #          jetpack-host: "PRESSABLEBLEEDINGEDGE"
 #          test-target: "JETPACK"
+#          slack-webhook: "$SLACK_JP"
 #    triggers:
 #      - schedule:
 #          cron: "0 7,19 * * *"
@@ -656,6 +671,7 @@ workflows:
 #        test-flags: "-j"
 #        jetpack-host: "PRESSABLE"
 #        test-target: "JETPACK"
+#        slack-webhook: "$SLACK_JP"
 #    triggers:
 #    - schedule:
 #        cron: "0 1,13 * * *"
