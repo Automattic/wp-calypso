@@ -3,13 +3,12 @@
 }
 
 .gsuite-stats-nudge__body {
-	align-items: flex-end;
+	align-items: center;
 	display: flex;
 	padding: 11px 24px; // Standard padding
 
 	@include breakpoint( '>960px' ) {
 		max-height: 300px;
-		padding-bottom: 0; // Allow image to go right to the edge of the card
 	}
 }
 
@@ -27,11 +26,10 @@
 	font-size: 21px;
 	font-weight: 400;
 	margin: 10px 0 5px;
-}
 
-.gsuite-stats-nudge__description {
-	font-size: 16px;
-	font-weight: 400;
+	em {
+		text-decoration: line-through;
+	}
 }
 
 .gsuite-stats-nudge__button-row {

@@ -78,11 +78,12 @@ class GSuiteStatsNudge extends Component {
 				return translate( 'Get a mailbox powered by G Suite' );
 			case 'copy2':
 				return translate(
-					'Get email for your domain powered by G Suite for just $5/mo – limited time offer!'
+					'Get email for your domain powered by G Suite for just {{em}}$6/mo{{/em}} $5/mo – limited time offer!',
+					{ components: { em: <em /> } }
 				);
 			case 'copy3':
 				return translate(
-					'Customers can’t reach you at sales@%s – click here to add a mailbox for just $5/mo',
+					'Customers can’t reach you at contact@%s – click here to add a mailbox for just $5/mo',
 					{ args: domainSlug }
 				);
 			case 'copy4':
@@ -92,7 +93,7 @@ class GSuiteStatsNudge extends Component {
 	}
 
 	render() {
-		const { siteSlug, translate } = this.props;
+		const { domainSlug, siteSlug, translate } = this.props;
 		const url = '/domains/manage/email/' + siteSlug;
 
 		if ( ! this.isVisible() ) {
@@ -118,7 +119,7 @@ class GSuiteStatsNudge extends Component {
 					<div className="gsuite-stats-nudge__image-wrapper">
 						<img
 							className="gsuite-stats-nudge__image"
-							src="/calypso/images/g-suite/g-suite.svg"
+							src="/calypso/images/g-suite/g-suite-stats-banner-illustration.svg"
 							alt={ translate( 'Get G Suite' ) }
 						/>
 					</div>
@@ -128,7 +129,11 @@ class GSuiteStatsNudge extends Component {
 						{
 							<p>
 								{ translate(
-									"We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site."
+									"Let customers reach you at {{strong}}contact@%s{{/strong}}. We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.",
+									{
+										args: domainSlug,
+										components: { strong: <strong /> },
+									}
 								) }
 							</p>
 						}
