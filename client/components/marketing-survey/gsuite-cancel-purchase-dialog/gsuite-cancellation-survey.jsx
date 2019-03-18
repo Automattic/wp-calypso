@@ -20,12 +20,14 @@ const GSuiteCancellationSurvey = ( { disabled, onSurveyAnswerChange, translate }
 				{
 					id: 'too-expensive',
 					answerText: translate( "It's too expensive." ),
-					textPrompt: true,
+					textInput: true,
+					textInputPrompt: translate( 'How can we improve G Suite?' ),
 				},
 				{
 					id: 'do-not-need-it',
 					answerText: translate( "I don't need it." ),
-					textPrompt: true,
+					textInput: true,
+					textInputPrompt: translate( 'What are we missing that you need?' ),
 				},
 				{
 					id: 'purchased-by-mistake',
@@ -39,7 +41,7 @@ const GSuiteCancellationSurvey = ( { disabled, onSurveyAnswerChange, translate }
 				{
 					id: 'another-reason',
 					answerText: translate( 'Another reason…' ),
-					textPrompt: true,
+					textInput: true,
 					doNotShuffle: true,
 				},
 			] }
