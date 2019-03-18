@@ -26,6 +26,11 @@ import { isDotComPlan } from 'lib/products-values';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { abtest } from 'lib/abtest';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class GSuiteNudge extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,

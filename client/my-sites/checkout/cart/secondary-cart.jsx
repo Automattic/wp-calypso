@@ -29,6 +29,11 @@ import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import JetpackLogo from 'components/jetpack-logo';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SecondaryCart extends Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,

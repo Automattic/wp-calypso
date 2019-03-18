@@ -1,4 +1,4 @@
-/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
  * External dependencies
@@ -26,6 +26,12 @@ import CartPlanAd from './cart-plan-ad';
 import { isCredits } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+// eslint-disable-next-line react/prefer-es6-class
 const PopoverCart = createReactClass( {
 	displayName: 'PopoverCart',
 
@@ -38,6 +44,13 @@ const PopoverCart = createReactClass( {
 		pinned: PropTypes.bool.isRequired,
 		showKeepSearching: PropTypes.bool.isRequired,
 		onKeepSearchingClick: PropTypes.func.isRequired,
+	},
+
+	toggleButton: React.createRef(),
+	hasUnmounted: false,
+
+	componentWillUnmount: function() {
+		this.hasUnmounted = true;
 	},
 
 	itemCount: function() {
@@ -69,7 +82,11 @@ const PopoverCart = createReactClass( {
 			<div>
 				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<div className={ classes }>
-					<button className="cart-toggle-button" ref="toggleButton" onClick={ this.onToggle }>
+					<button
+						className="cart-toggle-button"
+						ref={ this.toggleButton }
+						onClick={ this.onToggle }
+					>
 						<div className="popover-cart__label">{ this.props.translate( 'Cart' ) }</div>
 						<Gridicon icon="cart" size={ 24 } />
 						{ countBadge }
@@ -89,7 +106,7 @@ const PopoverCart = createReactClass( {
 					isVisible={ this.props.visible }
 					position="bottom left"
 					onClose={ this.onClose }
-					context={ this.refs.toggleButton }
+					context={ this.toggleButton.current }
 				>
 					{ this.cartBody() }
 					<TrackComponentView
@@ -149,7 +166,7 @@ const PopoverCart = createReactClass( {
 	onClose: function() {
 		// Since this callback can fire after the user navigates off the page, we
 		// we need to check if it's mounted to prevent errors.
-		if ( ! this.isMounted() ) {
+		if ( this.hasUnmounted ) {
 			return;
 		}
 

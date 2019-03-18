@@ -78,6 +78,12 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+
 export class Checkout extends React.Component {
 	static propTypes = {
 		cards: PropTypes.array.isRequired,
