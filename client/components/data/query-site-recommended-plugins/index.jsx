@@ -10,23 +10,19 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isRequestingRecommendedPlugins from 'state/selectors/is-requesting-recommended-plugins';
 import { fetchRecommendedPlugins } from 'state/plugins/recommended/actions';
 
 class QuerySiteRecommendedPlugins extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-		isLoaded: PropTypes.bool.isRequired,
 	};
 
 	componentDidMount() {
-		if ( ! this.props.isLoaded ) {
-			this.props.fetchRecommendedPlugins( this.props.siteId );
-		}
+		this.props.fetchRecommendedPlugins( this.props.siteId );
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteId !== this.props.siteId && ! this.props.isLoaded ) {
+		if ( prevProps.siteId !== this.props.siteId ) {
 			this.props.fetchRecommendedPlugins( this.props.siteId );
 		}
 	}
@@ -37,9 +33,7 @@ class QuerySiteRecommendedPlugins extends Component {
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		isLoaded: isRequestingRecommendedPlugins( state, siteId ),
-	} ),
+	null,
 	{
 		fetchRecommendedPlugins,
 	}
