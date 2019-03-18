@@ -120,12 +120,9 @@ function getWebpackConfig() {
 				SassConfig.loader( {
 					preserveCssCustomProperties,
 					includePaths: [ path.join( __dirname, 'client' ) ],
-					prelude: `@import '${ path.join(
-						__dirname,
-						'..',
-						'..',
-						'assets/stylesheets/shared/_utils.scss' // FIX ME
-					) }';`,
+					prelude: `$green-jetpack: #fff;
+$muriel-hot-red-500: #fff;
+$muriel-hot-green-500: #fff;`, //Todo Add to calypso-color-schemes package
 				} ),
 				FileConfig.loader(),
 			],
