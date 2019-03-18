@@ -45,7 +45,7 @@ function blockScripts( type, inputDir, presetBlocks ) {
  * Return a webpack config object
  *
  *
- * @return {object}                                  webpack config
+ * @return {object} webpack config
  */
 function getWebpackConfig() {
 	const workerCount = 1;
