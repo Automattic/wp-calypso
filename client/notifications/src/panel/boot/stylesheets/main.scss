@@ -383,7 +383,7 @@
 		}
 
 		.unread {
-			background: rgba( var( --color-primary-rgb ), 0.1 );
+			background: rgba( var( --color-primary-rgb ), 0.1 ); // rgba is used to meet AA contrast standard
 		}
 
 		.wpnc__selected-note {
