@@ -157,7 +157,6 @@ function getWebpackConfig() {
 				'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 				global: 'window',
 			} ),
-			new webpack.IgnorePlugin( /^props$/ ), // look into ?
 			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 			...SassConfig.plugins( { cssFilename, minify: ! isDevelopment } ),
 			new DuplicatePackageCheckerPlugin(),
