@@ -93,6 +93,22 @@ The question to display at the top of the multiple choice
 
 Handler for when the selected answer of text is changed. Is called each time a new answer is selected. The arguments are `id`, and optionally `text` if the answer has a text input. It will be called each time the text changes as well. If an answer has existing text when selected that test till be sent
 
+### `selectedAnswerId`
+
+- **Type:** `String`
+- **Required:** `no`
+- **Default:** `null`
+
+Sets the initial answer selection of the multiple choice to the given answer id.
+
+### `selectedAnswerText`
+
+- **Type:** `String`
+- **Required:** `no`
+- **Default:** `''`
+
+sets the text prompt of initial answer selection of the multiple choice to the given text. Only works when `selectedAnswerId` is given.
+
 ### `answers`
 
 - **Type:** `Array`
@@ -138,4 +154,4 @@ If the answer is selected, should a text input be shown.
 - **Required:** `no`
 - **Default:** `''`
 
-the prompt to display in the text input referenced above.
+The prompt to display in the text input referenced above.

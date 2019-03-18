@@ -18,8 +18,9 @@ const MultipleChoiceAnswer = ( {
 	answer: { id, answerText, textInput, textInputPrompt, children },
 	isSelected,
 	onAnswerChange,
+	selectedAnswerText,
 } ) => {
-	const [ textResponse, setTextResponse ] = useState( '' );
+	const [ textResponse, setTextResponse ] = useState( selectedAnswerText );
 
 	return (
 		<FormLabel>
@@ -64,10 +65,12 @@ MultipleChoiceAnswer.propTypes = {
 		textInputPrompt: PropTypes.string,
 		children: PropTypes.object,
 	} ).isRequired,
+	selectedAnswerText: PropTypes.string,
 };
 
 MultipleChoiceAnswer.defaultProps = {
 	disabled: false,
+	selectedAnswerText: '',
 };
 
 export default MultipleChoiceAnswer;

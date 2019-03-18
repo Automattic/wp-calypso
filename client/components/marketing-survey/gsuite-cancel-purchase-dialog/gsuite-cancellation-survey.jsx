@@ -20,7 +20,13 @@ class GSuiteCancellationSurvey extends Component {
 	}
 
 	render() {
-		const { disabled, onSurveyAnswerChange, translate } = this.props;
+		const {
+			disabled,
+			onSurveyAnswerChange,
+			surveyAnswerId,
+			surveyAnswerText,
+			translate,
+		} = this.props;
 		return (
 			<div className="gsuite-cancel-purchase-dialog__survey">
 				<MultipleChoiceQuestion
@@ -57,6 +63,8 @@ class GSuiteCancellationSurvey extends Component {
 					question={ translate( 'Please tell us why you are cancelling G Suite:' ) }
 					onAnswerChange={ onSurveyAnswerChange }
 					disabled={ disabled }
+					selectedAnswerId={ surveyAnswerId }
+					selectedAnswerText={ surveyAnswerText }
 				/>
 			</div>
 		);
@@ -67,6 +75,8 @@ GSuiteCancellationSurvey.propTypes = {
 	disabled: PropTypes.bool,
 	onSurveyAnswerChange: PropTypes.func.isRequired,
 	translate: PropTypes.func,
+	surveyAnswerId: PropTypes.string,
+	surveyAnswerText: PropTypes.string,
 };
 
 GSuiteCancellationSurvey.defaultProps = {

@@ -35,7 +35,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 		return {
 			step: steps.GSUITE_INITIAL_STEP,
 			surveyAnswerId: null,
-			surveyAnswerAdditionalText: '',
+			surveyAnswerText: '',
 		};
 	}
 
@@ -79,12 +79,12 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	saveSurveyResults = async () => {
-		const { purchase, site, surveyAnswerId, surveyAnswerAdditionalText } = this.props;
+		const { purchase, site, surveyAnswerId, surveyAnswerText } = this.props;
 		const survey = wpcom.marketing().survey( 'calypso-gsuite-remove-purchase', purchase.siteId );
 		const surveyData = {
 			'why-cancel': {
 				response: surveyAnswerId,
-				text: surveyAnswerAdditionalText,
+				text: surveyAnswerText,
 			},
 			type: 'remove',
 		};
@@ -96,7 +96,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 		}
 	};
 
-	onSurveyAnswerChange = ( surveyAnswerId, surveyAnswerAdditionalText ) => {
+	onSurveyAnswerChange = ( surveyAnswerId, surveyAnswerText ) => {
 		if ( surveyAnswerId !== this.state.surveyAnswerId ) {
 			this.props.recordTracksEvent(
 				'calypso_purchases_gsuite_remove_purchase_survey_answer_change',
@@ -108,7 +108,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 
 		this.setState( {
 			surveyAnswerId,
-			surveyAnswerAdditionalText,
+			surveyAnswerText,
 		} );
 	};
 
@@ -157,6 +157,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 
 	render() {
 		const { disabled, isVisible, onClose, purchase } = this.props;
+		const { surveyAnswerId, surveyAnswerText } = this.state;
 		return (
 			// By checking isVisible here we prevent rendering a "reset" dialog state before it closes
 			isVisible && (
@@ -172,6 +173,8 @@ class GSuiteCancelPurchaseDialog extends Component {
 						<GSuiteCancellationSurvey
 							disabled={ disabled }
 							onSurveyAnswerChange={ this.onSurveyAnswerChange }
+							surveyAnswerId={ surveyAnswerId }
+							surveyAnswerText={ surveyAnswerText }
 						/>
 					) }
 				</Dialog>

@@ -28,8 +28,15 @@ const shuffleAnswers = memoize(
 		answers.map( answer => values( pick( answer, 'id', 'doNotShuffle' ) ).join( '_' ) ).join( '-' )
 );
 
-const MultipleChoiceQuestion = ( { disabled, answers, onAnswerChange, question } ) => {
-	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
+const MultipleChoiceQuestion = ( {
+	disabled,
+	answers,
+	onAnswerChange,
+	question,
+	selectedAnswerId,
+	selectedAnswerText,
+} ) => {
+	const [ selectedAnswer, setSelectedAnswer ] = useState( selectedAnswerId );
 	const shuffledAnswers = shuffleAnswers( answers );
 
 	return (
@@ -45,6 +52,7 @@ const MultipleChoiceQuestion = ( { disabled, answers, onAnswerChange, question }
 						onAnswerChange( id, textResponse );
 						setSelectedAnswer( id );
 					} }
+					selectedAnswerText={ selectedAnswer === answer.id ? selectedAnswerText : '' }
 				/>
 			) ) }
 		</FormFieldset>
@@ -65,10 +73,14 @@ MultipleChoiceQuestion.propTypes = {
 	disabled: PropTypes.bool,
 	onAnswerChange: PropTypes.func.isRequired,
 	question: PropTypes.string.isRequired,
+	selectedAnswerId: PropTypes.string,
+	selectedAnswerText: PropTypes.string,
 };
 
 MultipleChoiceQuestion.defaultProps = {
 	disabled: false,
+	selectedAnswerId: null,
+	selectedAnswerText: '',
 };
 
 export default MultipleChoiceQuestion;
