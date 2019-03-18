@@ -9,7 +9,7 @@
 }
 
 .billing-history__no-results-cell {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	padding: 24px;
 }
 
@@ -80,7 +80,7 @@
 }
 
 .billing-history__transaction-tax-amount {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	white-space: nowrap;
 }
@@ -119,7 +119,7 @@
 	}
 
 	small {
-		color: var( --color-neutral-light );
+		color: var( --color-text-subtle );
 		display: block;
 		font-size: 12px;
 		font-style: italic;
@@ -255,7 +255,7 @@
 
 		th {
 			border-bottom: 2px solid var( --color-border-subtle );
-			color: var( --color-neutral-light );
+			color: var( --color-text-subtle );
 			font-size: 12px;
 			font-weight: 400;
 			text-transform: uppercase;
@@ -279,13 +279,13 @@
 
 		.billing-history__receipt-item-name {
 			small {
-				color: var( --color-neutral-light );
+				color: var( --color-text-subtle );
 				font-size: 13px;
 				margin-left: 5px;
 				text-transform: lowercase;
 			}
 			em {
-				color: var( --color-neutral-light );
+				color: var( --color-text-subtle );
 				display: block;
 				font-size: 13px;
 			}
