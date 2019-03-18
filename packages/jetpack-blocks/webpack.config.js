@@ -11,7 +11,6 @@ const _ = require( 'lodash' );
 const path = require( 'path' );
 const fs = require( 'fs' );
 const webpack = require( 'webpack' );
-const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
@@ -34,7 +33,6 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 const shouldMinify = isDevelopment;
 // process.env.MINIFY_JS === 'true' ||
 // ( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
-
 
 const editorSetup = path.join( __dirname, 'src', 'preset', 'setup', 'editor' );
 const viewSetup = path.join( __dirname, 'src', 'preset', 'setup', 'view' );
@@ -159,13 +157,6 @@ function getWebpackConfig() {
 			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 			...SassConfig.plugins( { cssFilename, minify: ! isDevelopment } ),
 			new DuplicatePackageCheckerPlugin(),
-			shouldCheckForCycles &&
-				new CircularDependencyPlugin( {
-					exclude: /node_modules/,
-					failOnError: false,
-					allowAsyncCycles: false,
-					cwd: process.cwd(),
-				} ),
 			fs.existsSync( presetPath ) &&
 				new CopyWebpackPlugin( [
 					{
