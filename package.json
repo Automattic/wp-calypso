@@ -23,6 +23,7 @@
 	"dependencies": {
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/tree-select": "file:./packages/tree-select",
+		"@automattic/wordpress-external-dependencies-plugin": "file:./packages/wordpress-external-dependencies-plugin",
 		"@babel/cli": "7.2.3",
 		"@babel/core": "7.4.0",
 		"@babel/plugin-proposal-class-properties": "7.4.0",

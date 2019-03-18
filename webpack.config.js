@@ -19,7 +19,7 @@ const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' 
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const wordpressExternals = require( '@automattic/calypso-build/webpack/wordpress-externals' );
+const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-external-dependencies-plugin' );
 
 /**
  * Internal dependencies
@@ -293,12 +293,9 @@ function getWebpackConfig( {
 			new MomentTimezoneDataPlugin( {
 				startYear: 2000,
 			} ),
+			externalizeWordPressPackages && new WordPressExternalDependenciesPlugin(),
 		] ),
-		externals: _.compact( [
-			externalizeWordPressPackages && wordpressExternals,
-			externalizeWordPressPackages && 'wp',
-			'electron',
-		] ),
+		externals: _.compact( [ 'electron' ] ),
 	};
 
 	if ( calypsoEnv === 'desktop' ) {
