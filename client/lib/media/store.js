@@ -122,7 +122,11 @@ MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
 				receiveSingle( action.siteId, action.data, action.id );
 			}
 
-			MediaStore.emit( 'change' );
+			if ( 'RECEIVE_MEDIA_ITEM' === action.type ) {
+				MediaStore.emit( 'change', action );
+			} else {
+				MediaStore.emit( 'change' );
+			}
 			break;
 
 		case 'REMOVE_MEDIA_ITEM':
@@ -136,7 +140,7 @@ MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
 				removeSingle( action.siteId, action.data );
 			}
 
-			MediaStore.emit( 'change' );
+			MediaStore.emit( 'change', action );
 			break;
 
 		case 'FETCH_MEDIA_ITEM':

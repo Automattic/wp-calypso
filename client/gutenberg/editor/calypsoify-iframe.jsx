@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { map, pickBy, endsWith } from 'lodash';
+import { endsWith, get, map, pickBy, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
+import MediaStore from 'lib/media/store';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
@@ -50,6 +51,7 @@ class CalypsoifyIframe extends Component {
 		super( props );
 		this.iframeRef = React.createRef();
 		this.mediaSelectPort = null;
+		MediaStore.on( 'change', this.updateImageBlocks );
 	}
 
 	componentDidMount() {
@@ -187,6 +189,18 @@ class CalypsoifyIframe extends Component {
 				payload: pressThis,
 			} );
 		}
+	};
+
+	updateImageBlocks = action => {
+		if ( ! action || startsWith( action.data.URL, 'blob:' ) ) {
+			return;
+		}
+		const payload = {
+			id: get( action, 'data.ID' ),
+			url: get( action, 'data.URL' ),
+			transientId: get( action, 'id' ),
+		};
+		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};
 
 	render() {
