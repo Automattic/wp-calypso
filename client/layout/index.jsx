@@ -17,7 +17,6 @@ import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
-import TranslatorLauncher from './community-translator/launcher';
 import config from 'config';
 import PulsingDot from 'components/pulsing-dot';
 import OfflineStatus from 'layout/offline-status';
@@ -150,7 +149,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'i18n/community-translator' ) ? (
 					isCommunityTranslatorEnabled() && <AsyncLoad require="components/community-translator" />
 				) : (
-					<TranslatorLauncher />
+					<AsyncLoad require="layout/community-translator/launcher" placeholder={ null } />
 				) }
 				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
