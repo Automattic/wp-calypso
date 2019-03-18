@@ -28,6 +28,7 @@ class SuggestionSearch extends Component {
 		suggestions: PropTypes.array,
 		value: PropTypes.string,
 		autoFocus: PropTypes.bool,
+		railcar: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -145,6 +146,7 @@ class SuggestionSearch extends Component {
 					query={ escapeRegExp( this.state.query ) }
 					suggestions={ this.getSuggestions() }
 					suggest={ this.handleSuggestionMouseDown }
+					railcar={ this.props.railcar }
 				/>
 			</div>
 		);

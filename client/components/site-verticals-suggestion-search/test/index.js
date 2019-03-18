@@ -16,6 +16,10 @@ import { shallow } from 'enzyme';
 import { SiteVerticalsSuggestionSearch } from '../';
 import SuggestionSearch from 'components/suggestion-search';
 
+jest.mock( 'uuid', () => ( {
+	v4: () => 'fake-uuid',
+} ) );
+
 const defaultProps = {
 	onChange: jest.fn(),
 	requestVerticals: jest.fn(),
