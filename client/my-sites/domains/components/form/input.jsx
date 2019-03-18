@@ -103,7 +103,7 @@ export default class extends React.Component {
 					{ ...valueProp }
 					name={ this.props.name }
 					ref="input"
-					autoFocus={ this.props.autoFocus }
+					autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 					autoComplete={ this.props.autoComplete }
 					disabled={ this.props.disabled }
 					maxLength={ this.props.maxLength }
