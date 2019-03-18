@@ -30,7 +30,7 @@ const config = require( '../../server/config' ); // FIX ME
  * Internal variables
  */
 const bundleEnv = config( 'env' );
-const isDevelopment = process.env.DEV_CYCLES === 'true';
+const isDevelopment = process.env.NODE_ENV !== 'production';
 const shouldMinify = isDevelopment;
 // process.env.MINIFY_JS === 'true' ||
 // ( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
