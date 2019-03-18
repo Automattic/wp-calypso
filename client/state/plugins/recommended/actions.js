@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { RECOMMENDED_PLUGINS_REQUEST, RECOMMENDED_PLUGINS_RECEIVE } from 'state/action-types';
+import { PLUGINS_RECOMMENDED_REQUEST, PLUGINS_RECOMMENDED_RECEIVE } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/plugins/recommended';
 
@@ -18,7 +18,7 @@ export function fetchRecommendedPlugins( siteId, limit = 6 ) {
 	return {
 		limit,
 		siteId,
-		type: RECOMMENDED_PLUGINS_REQUEST,
+		type: PLUGINS_RECOMMENDED_REQUEST,
 	};
 }
 
@@ -34,6 +34,6 @@ export function receiveRecommendedPlugins( siteId, data ) {
 	return {
 		data,
 		siteId,
-		type: RECOMMENDED_PLUGINS_RECEIVE,
+		type: PLUGINS_RECOMMENDED_RECEIVE,
 	};
 }

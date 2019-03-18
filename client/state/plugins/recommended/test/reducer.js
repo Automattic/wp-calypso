@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { items, isRequesting } from '../reducer';
-import { RECOMMENDED_PLUGINS_REQUEST, RECOMMENDED_PLUGINS_RECEIVE } from 'state/action-types';
+import { PLUGINS_RECOMMENDED_REQUEST, PLUGINS_RECOMMENDED_RECEIVE } from 'state/action-types';
 
 const EXAMPLE_SITE_ID = 77203074;
 
@@ -21,7 +21,7 @@ describe( 'Recommended plugins reducer', () => {
 				},
 			];
 			const state = items( undefined, {
-				type: RECOMMENDED_PLUGINS_RECEIVE,
+				type: PLUGINS_RECOMMENDED_RECEIVE,
 				data: EXAMPLE_DATA,
 				siteId: EXAMPLE_SITE_ID,
 			} );
@@ -33,14 +33,14 @@ describe( 'Recommended plugins reducer', () => {
 	describe( 'isRequesting reducer', () => {
 		test( 'should return true upon receiving a recommended plugins request action', () => {
 			const state = isRequesting( undefined, {
-				type: RECOMMENDED_PLUGINS_REQUEST,
+				type: PLUGINS_RECOMMENDED_REQUEST,
 				siteId: EXAMPLE_SITE_ID,
 			} );
 			expect( state ).toEqual( { [ EXAMPLE_SITE_ID ]: true } );
 		} );
 		test( 'should return false upon a successful recommended plugins network request', () => {
 			const state = isRequesting( undefined, {
-				type: RECOMMENDED_PLUGINS_RECEIVE,
+				type: PLUGINS_RECOMMENDED_RECEIVE,
 				siteId: EXAMPLE_SITE_ID,
 			} );
 			expect( state ).toEqual( { [ EXAMPLE_SITE_ID ]: false } );

@@ -3,11 +3,11 @@
  * Internal dependencies
  */
 import { combineReducers, keyedReducer } from 'state/utils';
-import { RECOMMENDED_PLUGINS_REQUEST, RECOMMENDED_PLUGINS_RECEIVE } from 'state/action-types';
+import { PLUGINS_RECOMMENDED_REQUEST, PLUGINS_RECOMMENDED_RECEIVE } from 'state/action-types';
 
 export const items = keyedReducer( 'siteId', ( state = [], action ) => {
 	switch ( action.type ) {
-		case RECOMMENDED_PLUGINS_RECEIVE: {
+		case PLUGINS_RECOMMENDED_RECEIVE: {
 			return action.data;
 		}
 	}
@@ -16,10 +16,10 @@ export const items = keyedReducer( 'siteId', ( state = [], action ) => {
 
 export const isRequesting = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case RECOMMENDED_PLUGINS_REQUEST: {
+		case PLUGINS_RECOMMENDED_REQUEST: {
 			return { ...state, [ action.siteId ]: true };
 		}
-		case RECOMMENDED_PLUGINS_RECEIVE: {
+		case PLUGINS_RECOMMENDED_RECEIVE: {
 			return { ...state, [ action.siteId ]: false };
 		}
 	}

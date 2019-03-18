@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { normalizePluginsList } from 'lib/plugins/utils';
-import { RECOMMENDED_PLUGINS_REQUEST } from 'state/action-types';
+import { PLUGINS_RECOMMENDED_REQUEST } from 'state/action-types';
 import { receiveRecommendedPlugins } from 'state/plugins/recommended/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -38,7 +38,7 @@ export const onError = ( { siteId, limit } ) => {
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/plugins/recommended/index.js', {
-	[ RECOMMENDED_PLUGINS_REQUEST ]: [
+	[ PLUGINS_RECOMMENDED_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
 			onSuccess,
