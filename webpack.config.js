@@ -231,7 +231,6 @@ function getWebpackConfig( {
 				global: 'window',
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
-			new webpack.IgnorePlugin( /^props$/ ),
 			isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 			...SassConfig.plugins( { cssFilename, minify: ! isDevelopment } ),
 			new AssetsWriter( {
