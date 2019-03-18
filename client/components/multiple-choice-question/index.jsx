@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Children, cloneElement, useState } from 'react';
+import React, { useState } from 'react';
 import { memoize, pick, shuffle, values } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -21,55 +21,47 @@ import './style.scss';
 
 const shuffleAnswers = memoize(
 	answers => {
-		const shuffles = shuffle( answers.filter( ( { props: { doNotShuffle } } ) => ! doNotShuffle ) );
-		return answers.map( answer => ( answer.props.doNotShuffle ? answer : shuffles.pop() ) );
+		const shuffles = shuffle( answers.filter( ( { doNotShuffle } ) => ! doNotShuffle ) );
+		return answers.map( answer => ( answer.doNotShuffle ? answer : shuffles.pop() ) );
 	},
 	answers =>
-		answers
-			.map( answer => values( pick( answer.props, 'id', 'doNotShuffle' ) ).join( '_' ) )
-			.join( '-' )
+		answers.map( answer => values( pick( answer, 'id', 'doNotShuffle' ) ).join( '_' ) ).join( '-' )
 );
 
-const MultipleChoiceQuestion = ( { disabled, children, onAnswerChange, question } ) => {
+const MultipleChoiceQuestion = ( { disabled, answers, onAnswerChange, question } ) => {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
-	const shuffledChildren = shuffleAnswers( children );
+	const shuffledAnswers = shuffleAnswers( answers );
 
 	return (
 		<FormFieldset className="multiple-choice-question">
 			<FormLegend>{ question }</FormLegend>
-			{ Children.map( shuffledChildren, child =>
-				cloneElement( child, {
-					key: child.props.id,
-					isSelected: child.props.id && selectedAnswer === child.props.id,
-					onAnswerChange: ( id, textResponse ) => {
+			{ shuffledAnswers.map( answer => (
+				<MultipleChoiceAnswer
+					key={ answer.id }
+					answer={ answer }
+					disabled={ disabled }
+					isSelected={ selectedAnswer === answer.id }
+					onAnswerChange={ ( id, textResponse ) => {
 						onAnswerChange( id, textResponse );
 						setSelectedAnswer( id );
-					},
-					disabled,
-				} )
-			) }
+					} }
+				/>
+			) ) }
 		</FormFieldset>
 	);
 };
 
-const checkChildrenAreOnlyAnswers = ( props, propName, componentName ) => {
-	const prop = props[ propName ];
-
-	let error = null;
-	Children.forEach( prop, child => {
-		if ( MultipleChoiceAnswer !== child.type ) {
-			error = new Error(
-				`${ componentName } should only have children of type MultipleChoiceAnswer. One is of type ${
-					child.type
-				}`
-			);
-		}
-	} );
-	return error;
-};
-
 MultipleChoiceQuestion.propTypes = {
-	children: checkChildrenAreOnlyAnswers,
+	answers: PropTypes.arrayOf(
+		PropTypes.shape( {
+			id: PropTypes.string.isRequired,
+			answerText: PropTypes.string.isRequired,
+			doNotShuffle: PropTypes.bool,
+			textInput: PropTypes.bool,
+			textInputPrompt: PropTypes.string,
+			children: PropTypes.object,
+		} )
+	).isRequired,
 	disabled: PropTypes.bool,
 	onAnswerChange: PropTypes.func.isRequired,
 	question: PropTypes.string.isRequired,

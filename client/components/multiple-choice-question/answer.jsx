@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Children, cloneElement, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -11,13 +11,11 @@ import PropTypes from 'prop-types';
  */
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import MultipleChoiceAnswerTextInput from './answer-text-input';
+import FormTextInput from 'components/forms/form-text-input';
 
 const MultipleChoiceAnswer = ( {
-	answerText,
 	disabled,
-	children,
-	id,
+	answer: { id, answerText, textInput, textInputPrompt, children },
 	isSelected,
 	onAnswerChange,
 } ) => {
@@ -36,21 +34,19 @@ const MultipleChoiceAnswer = ( {
 			<span>{ answerText }</span>
 			{ isSelected && (
 				<div className="multiple-choice-question__answer-item-content">
-					{ Children.map( children, child => {
-						if ( MultipleChoiceAnswerTextInput === child.type ) {
-							return cloneElement( child, {
-								disabled,
-								onTextChange: newText => {
-									onAnswerChange( id, newText );
-									setTextResponse( newText );
-								},
-								value: textResponse,
-							} );
-						}
-						return cloneElement( child, {
-							disabled,
-						} );
-					} ) }
+					{ textInput && (
+						<FormTextInput
+							className="multiple-choice-question__answer-item-text-input"
+							value={ textResponse }
+							onChange={ ( { target: { value } } ) => {
+								onAnswerChange( id, value );
+								setTextResponse( value );
+							} }
+							placeholder={ textInputPrompt ? textInputPrompt : '' }
+							disabled={ disabled }
+						/>
+					) }
+					{ children }
 				</div>
 			) }
 		</FormLabel>
@@ -58,14 +54,16 @@ const MultipleChoiceAnswer = ( {
 };
 
 MultipleChoiceAnswer.propTypes = {
-	answerText: PropTypes.string.isRequired,
 	disabled: PropTypes.bool,
-	doNotShuffle: PropTypes.bool,
-	id: PropTypes.string.isRequired,
 	isSelected: PropTypes.bool,
 	onAnswerChange: PropTypes.func,
-	textInput: PropTypes.bool,
-	textInputPrompt: PropTypes.string,
+	answer: PropTypes.shape( {
+		id: PropTypes.string.isRequired,
+		answerText: PropTypes.string.isRequired,
+		textInput: PropTypes.bool,
+		textInputPrompt: PropTypes.string,
+		children: PropTypes.object,
+	} ).isRequired,
 };
 
 MultipleChoiceAnswer.defaultProps = {

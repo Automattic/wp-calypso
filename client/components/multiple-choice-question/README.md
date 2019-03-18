@@ -8,47 +8,61 @@ This is a component for presenting a question and a list of answers to a user. T
 
 ```es6
 import MultipleChoiceQuestion from 'components/multiple-choice-question';
-import MultipleChoiceAnswer from 'components/multiple-choice-question/answer';
-import MultipleChoiceAnswerTextInput from 'components/multiple-choice-question/answer-text-input';
 
 function MultipleChoiceQuestionExamples( { translate } ) {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
 	const [ answerText, setAnswerText ] = useState( '' );
 
+	const answers = [
+		{ id: 'hungry-bunnies', answerText: 'Hungry Bunnies' },
+		{
+			id: 'ravenous-rhinos',
+			answerText: 'Ravenous Rhinos',
+			textInput: true,
+			textInputPrompt: 'How many?',
+		},
+		{
+			id: 'starving-storks',
+			answerText: 'Starving Storks',
+			children: (
+				<Button
+					onClick={ () => {
+						notices.success( 'The Stork Button was clicked', { duration: 5000 } );
+					} }
+					primary
+				>
+					{ 'The Stork Button' }
+				</Button>
+			),
+		},
+		{
+			id: 'something-else',
+			answerText: 'Something Else',
+			doNotShuffle: true,
+			textInput: true,
+			textInputPrompt: 'Who else?',
+			children: (
+				<Button
+					onClick={ () => {
+						notices.success( 'The Extra Button was clicked', { duration: 5000 } );
+					} }
+				>
+					{ 'The Extra Button' }
+				</Button>
+			),
+		},
+	];
+
 	return (
 		<div>
 			<MultipleChoiceQuestion
+				answers={ answers }
 				question={ 'Please choose one of the following:' }
 				onAnswerChange={ ( answer, text ) => {
 					setSelectedAnswer( answer );
 					setAnswerText( text || '' );
 				} }
-			>
-				<MultipleChoiceAnswer id={ 'hungry-bunnies' } answerText={ 'Hungry Bunnies' } />
-				<MultipleChoiceAnswer id={ 'ravenous-rhinos' } answerText={ 'Ravenous Rhinos' }>
-					<MultipleChoiceAnswerTextInput prompt={ 'How many?' } />
-				</MultipleChoiceAnswer>
-				<MultipleChoiceAnswer id={ 'starving-storks' } answerText={ 'Starving Storks' }>
-					<Button
-						onClick={ () => {
-							notices.success( 'The Stork Button was clicked', { duration: 5000 } );
-						} }
-						primary
-					>
-						{ 'The Stork Button' }
-					</Button>
-				</MultipleChoiceAnswer>
-				<MultipleChoiceAnswer id={ 'something-else' } answerText={ 'Something Else' } doNotShuffle>
-					<MultipleChoiceAnswerTextInput prompt={ 'Who else?' } />
-					<Button
-						onClick={ () => {
-							notices.success( 'The Extra Button was clicked', { duration: 5000 } );
-						} }
-					>
-						{ 'The Extra Button' }
-					</Button>
-				</MultipleChoiceAnswer>
-			</MultipleChoiceQuestion>
+			/>
 			<h2>{ 'Selected Answer' }</h2>
 			<p>
 				<b>Selected Answer is: </b>
@@ -75,34 +89,34 @@ The question to display at the top of the multiple choice
 ### `onAnswerChange`
 
 - **Type:** `Function`
-- **Required:** `no`
-- **Default:** `undefined`
+- **Required:** `yes`
 
-Handler for when the selected answer of text is changed. Is called each time a new answer is selected. The arguments are `id`, and optionally `text` if the answer has a text input.
+Handler for when the selected answer of text is changed. Is called each time a new answer is selected. The arguments are `id`, and optionally `text` if the answer has a text input. It will be called each time the text changes as well. If an answer has existing text when selected that test till be sent
 
-It will be called each time the text changes as well. If an answer previously had text, was changed, then changed back the original text will be saved.
+### `answers`
 
-# Multiple Choice Answer
+- **Type:** `Array`
+- **Required:** `yes`
 
-This Component represents a possible answer for the MultipleChoiceQuestion. it is the only type of child that the Question will accept, and will only work correctly as a child of a Question. It itself will render any of its children when and only when it is selected. In addition it provides a helper that will easily render a child text field, the most common pattern for a child. The input of this child we actually be passed back through the MultipleChoiceQuestion component via the `onAnswerChange` function.
+The answers to display. Each answer is an object with the following properties.
 
-## Props
+#### Props
 
-### `id`
+##### `id`
 
 - **Type:** `String`
 - **Required:** `yes`
 
 A translation-independent way to reference the each answer. This is what will be passed back through the `onAnswerChange` function.
 
-### `answerText`
+##### `answerText`
 
 - **Type:** `String`
 - **Required:** `yes`
 
 The text of the answer to display.
 
-### `doNotShuffle`
+##### `doNotShuffle`
 
 - **Type:** `Boolean`
 - **Required:** `no`
@@ -110,7 +124,7 @@ The text of the answer to display.
 
 prevents the answer from being randomly shuffled. Its position will be respected.
 
-### `textInput`
+##### `textInput`
 
 - **Type:** `Boolean`
 - **Required:** `no`
@@ -118,7 +132,7 @@ prevents the answer from being randomly shuffled. Its position will be respected
 
 If the answer is selected, should a text input be shown.
 
-### `textInputPrompt`
+##### `textInputPrompt`
 
 - **Type:** `String`
 - **Required:** `no`
