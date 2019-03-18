@@ -71,9 +71,10 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async searchFor( phrase ) {
-		const searchToggleSelector = by.css( '#primary div.search' );
-		const searchFieldSelector = by.css( '#primary input.search__input' );
+		const searchToggleSelector = by.css( '.themes-magic-search-card div.search' );
+		const searchFieldSelector = by.css( '.themes-magic-search-card input.search__input' );
 		await driverHelper.clickWhenClickable( this.driver, searchToggleSelector, this.explicitWaitMS );
+		await driverHelper.clearTextArea( this.driver, searchFieldSelector );
 		await driverHelper.setWhenSettable( this.driver, searchFieldSelector, phrase );
 		await this.driver.findElement( searchFieldSelector ).sendKeys( ' ' );
 		return await this.waitUntilThemesLoaded();
@@ -92,5 +93,12 @@ export default class ThemesPage extends AsyncBaseContainer {
 	static _getThemeSelectionXpath( phrase ) {
 		let lowerCasedPhrase = phrase.toLowerCase().replace( ' ', '-' );
 		return by.css( `div[data-e2e-theme*='${ lowerCasedPhrase }']:not(.is-active)` );
+	}
+
+	async clearSearch() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( '.themes-magic-search-card__icon-close' )
+		);
 	}
 }
