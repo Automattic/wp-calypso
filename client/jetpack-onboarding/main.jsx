@@ -39,6 +39,11 @@ import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/
 import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {
 		stepName: PropTypes.string,
@@ -147,7 +152,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 					title={ analyticsPageTitle }
 				/>
 
-				{ /* It is important to use `<QuerySites siteId={ siteSlug } />` here, however wrong that seems.
+				{ /* It is important to use `<QuerySites siteId={siteSlug} />` here, however wrong that seems.
 				 * The reason is that we rely on an `isRequestingSite()` check to tell whether we've
 				 * finished fetching site details, which will tell us whether the site is connected,
 				 * which we need in turn to conditionally send JPO auth credentials (see below).
