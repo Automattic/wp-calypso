@@ -118,7 +118,7 @@ function getWebpackConfig() {
 				TranspileConfig.loader( {
 					workerCount,
 					configFile: path.join( __dirname, '..', '..', 'babel.config.js' ), // FIX ME
-					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+					cacheDirectory: path.join( __dirname, '.cache' ),
 					cacheIdentifier,
 					exclude: /node_modules\//,
 				} ),
