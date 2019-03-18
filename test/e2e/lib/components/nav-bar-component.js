@@ -12,12 +12,21 @@ export default class NavBarComponent extends AsyncBaseContainer {
 	async clickCreateNewPost( { siteURL = null } = {} ) {
 		const postButtonSelector = by.css( 'a.masterbar__item-new' );
 		await driverHelper.clickWhenClickable( this.driver, postButtonSelector );
+		await this.dismissComponentPopover();
 		if ( siteURL !== null ) {
 			return await driverHelper.selectElementByText(
 				this.driver,
 				by.css( '.site__domain' ),
 				siteURL
 			);
+		}
+	}
+	async dismissComponentPopover() {
+		let popoverSelector = by.css( '.components-popover__content' );
+		let dismissPopoverSelector = by.css( '.nux-dot-tip__disable' );
+
+		if ( await driverHelper.isElementPresent( this.driver, popoverSelector ) ) {
+			await driverHelper.clickWhenClickable( dismissPopoverSelector );
 		}
 	}
 	async clickProfileLink() {
