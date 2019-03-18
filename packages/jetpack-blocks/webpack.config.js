@@ -31,8 +31,6 @@ const config = require( '../../server/config' ); // FIX ME
 const bundleEnv = config( 'env' );
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const shouldMinify = isDevelopment;
-// process.env.MINIFY_JS === 'true' ||
-// ( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
 
 const editorSetup = path.join( __dirname, 'src', 'preset', 'setup', 'editor' );
 const viewSetup = path.join( __dirname, 'src', 'preset', 'setup', 'view' );
