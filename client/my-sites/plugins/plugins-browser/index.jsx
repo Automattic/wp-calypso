@@ -282,7 +282,7 @@ export class PluginsBrowser extends Component {
 			<PluginsBrowserList
 				currentSites={ this.props.sites }
 				expandedListLink={ false }
-				listName={ 'recommended' }
+				listName="recommended"
 				plugins={ this.props.recommendedPlugins }
 				showPlaceholders={ this.props.isRequestingRecommendedPlugins }
 				site={ this.props.siteSlug }
