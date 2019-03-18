@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -16,6 +17,7 @@ import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
 import notices from 'notices';
+import { recordTracksEvent } from 'state/analytics/actions';
 import wpcom from 'lib/wp';
 
 /**
@@ -32,21 +34,39 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	nextStepButtonClick = () => {
-		this.setState( ( { step } ) => {
-			return { step: steps.nextStep( step ) };
+		const { step } = this.state;
+		const nextStep = steps.nextStep( step );
+
+		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_next_step_click', {
+			step,
+			next_step: nextStep,
 		} );
+		this.setState( { step: nextStep } );
 	};
 
 	previousStepButtonClick = () => {
-		this.setState( ( { step } ) => {
-			return { step: steps.previousStep( step ) };
+		const { step } = this.state;
+		const prevStep = steps.previousStep( step );
+
+		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_prev_step_click', {
+			step,
+			prev_step: prevStep,
 		} );
+		this.setState( { step: prevStep } );
 	};
 
-	removeButtonClick = action => {
+	cancelButtonClick = closeDialog => {
+		closeDialog();
+		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_keep_it_click' );
+		// this.setState( { step: steps.resetSteps() } );
+		closeDialog();
+	};
+
+	removeButtonClick = closeDialog => {
+		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_click' );
 		this.saveSurveyResults();
 		this.setState( { isDisabled: true } );
-		this.props.onRemovePurchase( action );
+		this.props.onRemovePurchase( closeDialog );
 	};
 
 	saveSurveyResults = async () => {
@@ -68,6 +88,15 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	onSurveyAnswerChange = ( surveyAnswerId, surveyAnswerAdditionalText ) => {
+		if ( surveyAnswerId !== this.state.surveyAnswerId ) {
+			this.props.recordTracksEvent(
+				'calypso_purchases_gsuite_remove_purchase_survey_answer_change',
+				{
+					answer_id: surveyAnswerId,
+				}
+			);
+		}
+
 		this.setState( {
 			surveyAnswerId,
 			surveyAnswerAdditionalText,
@@ -83,6 +112,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 					action: 'cancel',
 					disabled: isDisabled,
 					label: translate( "I'll Keep It" ),
+					onClick: this.cancelButtonClick,
 				},
 				{
 					action: 'next',
@@ -97,6 +127,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 				action: 'cancel',
 				disabled: isDisabled,
 				label: translate( "I'll Keep It" ),
+				onClick: this.cancelButtonClick,
 			},
 			{
 				action: 'prev',
@@ -147,4 +178,9 @@ GSuiteCancelPurchaseDialog.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( GSuiteCancelPurchaseDialog );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( GSuiteCancelPurchaseDialog ) );
