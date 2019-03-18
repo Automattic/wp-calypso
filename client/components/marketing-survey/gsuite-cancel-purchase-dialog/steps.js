@@ -10,7 +10,3 @@ export const nextStep = () => {
 export const previousStep = () => {
 	return GSUITE_INITIAL_STEP;
 };
-
-export const resetSteps = () => {
-	return GSUITE_INITIAL_STEP;
-};

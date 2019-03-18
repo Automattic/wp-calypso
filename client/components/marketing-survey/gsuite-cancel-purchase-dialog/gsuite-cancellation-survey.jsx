@@ -11,7 +11,6 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import MultipleChoiceQuestion from 'components/multiple-choice-question';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -44,8 +43,9 @@ class GSuiteCancellationSurvey extends Component {
 						},
 						{
 							id: 'it-did-not-work',
-							answerText: translate( "It didn't work." ),
-							children: <Button primary>{ translate( 'Get Help Now' ) }</Button>,
+							answerText: translate( 'I was unable to activate or use the G Suite.' ),
+							textInput: true,
+							textInputPrompt: translate( 'Where did you run into problems?' ),
 						},
 						{
 							id: 'another-reason',

@@ -480,6 +480,7 @@ class RemovePurchase extends Component {
 		if ( isGoogleApps( purchase ) ) {
 			return (
 				<GSuiteCancellationPurchaseDialog
+					disabled={ this.state.isRemoving }
 					isVisible={ this.state.isDialogVisible }
 					onClose={ this.closeDialog }
 					onRemovePurchase={ this.removePurchase }

@@ -26,11 +26,21 @@ import wpcom from 'lib/wp';
 import './style.scss';
 
 class GSuiteCancelPurchaseDialog extends Component {
-	state = {
-		isDisabled: false,
-		step: steps.resetSteps(),
-		surveyAnswerId: null,
-		surveyAnswerAdditionalText: '',
+	constructor( props ) {
+		super( props );
+		this.state = this.initialState;
+	}
+
+	get initialState() {
+		return {
+			step: steps.GSUITE_INITIAL_STEP,
+			surveyAnswerId: null,
+			surveyAnswerAdditionalText: '',
+		};
+	}
+
+	resetState = () => {
+		this.setState( this.initialState );
 	};
 
 	nextStepButtonClick = () => {
@@ -56,17 +66,16 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	cancelButtonClick = closeDialog => {
-		closeDialog();
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_keep_it_click' );
-		// this.setState( { step: steps.resetSteps() } );
 		closeDialog();
+		this.resetState();
 	};
 
 	removeButtonClick = closeDialog => {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_click' );
 		this.saveSurveyResults();
-		this.setState( { isDisabled: true } );
 		this.props.onRemovePurchase( closeDialog );
+		this.resetState();
 	};
 
 	saveSurveyResults = async () => {
@@ -104,19 +113,19 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	getStepButtons = () => {
-		const { translate } = this.props;
-		const { isDisabled, step, surveyAnswerId } = this.state;
+		const { disabled, translate } = this.props;
+		const { step, surveyAnswerId } = this.state;
 		if ( steps.GSUITE_INITIAL_STEP === step ) {
 			return [
 				{
 					action: 'cancel',
-					disabled: isDisabled,
+					disabled,
 					label: translate( "I'll Keep It" ),
 					onClick: this.cancelButtonClick,
 				},
 				{
 					action: 'next',
-					disabled: isDisabled,
+					disabled,
 					label: translate( 'Next Step' ),
 					onClick: this.nextStepButtonClick,
 				},
@@ -125,22 +134,21 @@ class GSuiteCancelPurchaseDialog extends Component {
 		return [
 			{
 				action: 'cancel',
-				disabled: isDisabled,
+				disabled,
 				label: translate( "I'll Keep It" ),
 				onClick: this.cancelButtonClick,
 			},
 			{
 				action: 'prev',
-				disabled: isDisabled,
+				disabled,
 				label: translate( 'Previous Step' ),
 				onClick: this.previousStepButtonClick,
 			},
 			{
 				action: 'remove',
 				// don't allow the user to complete the survey without an selection
-				disabled: isDisabled || null === surveyAnswerId,
-				// the help button is primary and this button is not when it is shown
-				isPrimary: 'it-did-not-work' !== surveyAnswerId,
+				disabled: disabled || null === surveyAnswerId,
+				isPrimary: true,
 				label: translate( 'Remove Now' ),
 				onClick: this.removeButtonClick,
 			},
@@ -148,28 +156,31 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	render() {
-		const { isDisabled, isVisible, onClose, purchase } = this.props;
+		const { disabled, isVisible, onClose, purchase } = this.props;
 		return (
-			<Dialog
-				buttons={ this.getStepButtons() }
-				className="gsuite-cancel-purchase-dialog"
-				isVisible={ isVisible }
-				onClose={ onClose }
-			>
-				{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
-					<GSuiteCancellationFeatures purchase={ purchase } />
-				) : (
-					<GSuiteCancellationSurvey
-						disabled={ isDisabled }
-						onSurveyAnswerChange={ this.onSurveyAnswerChange }
-					/>
-				) }
-			</Dialog>
+			isVisible && (
+				<Dialog
+					buttons={ this.getStepButtons() }
+					className="gsuite-cancel-purchase-dialog__dialog"
+					isVisible={ isVisible }
+					onClose={ onClose }
+				>
+					{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
+						<GSuiteCancellationFeatures purchase={ purchase } />
+					) : (
+						<GSuiteCancellationSurvey
+							disabled={ disabled }
+							onSurveyAnswerChange={ this.onSurveyAnswerChange }
+						/>
+					) }
+				</Dialog>
+			)
 		);
 	}
 }
 
 GSuiteCancelPurchaseDialog.propTypes = {
+	disabled: PropTypes.bool,
 	isVisible: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
 	onRemovePurchase: PropTypes.func.isRequired,
