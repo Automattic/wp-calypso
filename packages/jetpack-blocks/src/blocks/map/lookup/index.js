@@ -165,7 +165,7 @@ export class Lookup extends Component {
 		if ( ! debouncedSpeak ) {
 			return;
 		}
-		if ( !! filteredOptions.length ) {
+		if ( filteredOptions.length ) {
 			debouncedSpeak(
 				sprintf(
 					_n(

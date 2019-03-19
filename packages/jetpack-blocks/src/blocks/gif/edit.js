@@ -43,7 +43,7 @@ class GifEdit extends Component {
 		}
 		// https://media.giphy.com/media/gt0hYzKlMpfOg/giphy.gif
 		const match = searchText.match(
-			/http[s]?:\/\/media.giphy.com\/media\/([A-Za-z0-9\-\.]+)\/giphy.gif/
+			/http[s]?:\/\/media.giphy.com\/media\/([A-Za-z0-9\-.]+)\/giphy.gif/
 		);
 		if ( match ) {
 			giphyID = match[ 1 ];
