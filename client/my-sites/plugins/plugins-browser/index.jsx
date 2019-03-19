@@ -23,7 +23,6 @@ import NoResults from 'my-sites/no-results';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
 import PluginsListStore from 'lib/plugins/wporg-data/list-store';
-import PluginsStore from 'lib/plugins/store';
 import PluginsActions from 'lib/plugins/wporg-data/actions';
 import urlSearch from 'lib/url-search';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
@@ -67,7 +66,6 @@ export class PluginsBrowser extends Component {
 	static propTypes = {
 		isRequestingRecommendedPlugins: PropTypes.bool.isRequired,
 		recommendedPlugins: PropTypes.arrayOf( PropTypes.object ),
-		selectedSite: PropTypes.object,
 		trackPageView: PropTypes.bool,
 	};
 
@@ -88,7 +86,6 @@ export class PluginsBrowser extends Component {
 
 	componentDidMount() {
 		PluginsListStore.on( 'change', this.refreshLists );
-		PluginsStore.on( 'change', this.refreshLists );
 
 		if ( ! this.isRecommendedPluginsEnabled() ) {
 			this.visibleCategories.push( 'featured' );
@@ -103,7 +100,6 @@ export class PluginsBrowser extends Component {
 
 	componentWillUnmount() {
 		PluginsListStore.removeListener( 'change', this.refreshLists );
-		PluginsStore.removeListener( 'change', this.refreshLists );
 	}
 
 	UNSAFE_componentWillReceiveProps( newProps ) {
@@ -111,11 +107,7 @@ export class PluginsBrowser extends Component {
 	}
 
 	isRecommendedPluginsEnabled() {
-		return (
-			!! this.props.selectedSiteId &&
-			this.state.installedPlugins.length > 0 &&
-			abtest( 'pluginRecommendations' ) === 'recommended'
-		);
+		return !! this.props.selectedSiteId && abtest( 'pluginRecommendations' ) === 'recommended';
 	}
 
 	refreshLists = search => {
@@ -153,15 +145,12 @@ export class PluginsBrowser extends Component {
 			shortLists[ category ] = PluginsListStore.getShortList( category );
 			fullLists[ category ] = PluginsListStore.getFullList( category );
 		} );
+
 		fullLists.search = PluginsListStore.getSearchList( search );
-		const output = { shortLists, fullLists, installedPlugins: [] };
-
-		if ( this.props.selectedSite ) {
-			// getPlugins can return undefined
-			output.installedPlugins = PluginsStore.getPlugins( this.props.selectedSite ) || [];
-		}
-
-		return output;
+		return {
+			shortLists: shortLists,
+			fullLists: fullLists,
+		};
 	}
 
 	getPluginsShortList( listName ) {
