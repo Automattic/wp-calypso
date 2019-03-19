@@ -34,8 +34,6 @@ class SiteTypeForm extends Component {
 
 	constructor( props ) {
 		super( props );
-		// eslint-disable-next-line
-		console.log( 'props', props );
 		this.state = {
 			siteType: props.siteType,
 		};
