@@ -199,6 +199,7 @@ class CalypsoifyIframe extends Component {
 			id: get( action, 'data.ID' ),
 			url: get( action, 'data.URL' ),
 			transientId: get( action, 'id' ),
+			status: 'REMOVE_MEDIA_ITEM' === action.type ? 'deleted' : 'updated',
 		};
 		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};

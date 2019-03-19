@@ -122,11 +122,8 @@ MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
 				receiveSingle( action.siteId, action.data, action.id );
 			}
 
-			if ( 'RECEIVE_MEDIA_ITEM' === action.type ) {
-				MediaStore.emit( 'change', action );
-			} else {
-				MediaStore.emit( 'change' );
-			}
+			// `action` used by CalypsoifyIframe
+			MediaStore.emit( 'change', 'RECEIVE_MEDIA_ITEM' === action.type && action );
 			break;
 
 		case 'REMOVE_MEDIA_ITEM':
@@ -140,7 +137,8 @@ MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
 				removeSingle( action.siteId, action.data );
 			}
 
-			MediaStore.emit( 'change', action );
+			// `action` used by CalypsoifyIframe
+			MediaStore.emit( 'change', 'deleted' === action.data.status && action );
 			break;
 
 		case 'FETCH_MEDIA_ITEM':
