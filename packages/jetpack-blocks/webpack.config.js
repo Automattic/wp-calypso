@@ -22,13 +22,11 @@ const wordpressExternals = require( '@automattic/calypso-build/webpack/wordpress
  * Internal dependencies
  */
 const cacheIdentifier = require( '../../server/bundler/babel/babel-loader-cache-identifier' ); // FIX ME
-const config = require( '../../server/config' ); // FIX ME
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 //
 /**
  * Internal variables
  */
-const bundleEnv = config( 'env' );
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const shouldMinify = isDevelopment;
 
@@ -132,7 +130,7 @@ function getWebpackConfig() {
 		node: false, // look into ?
 		plugins: _.compact( [
 			new webpack.DefinePlugin( {
-				'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+				'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
 				global: 'window',
 			} ),
 			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
