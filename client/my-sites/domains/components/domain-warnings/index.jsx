@@ -893,17 +893,18 @@ export class DomainWarnings extends React.PureComponent {
 			<NoticeAction href={ domainManagementLink }>{ translate( 'Info' ) }</NoticeAction>
 		);
 
-		const translateParams = {
-			components: {
-				strong: <strong />,
-				a: <a href={ domainManagementLink } rel="noopener noreferrer" />,
-			},
-			args: { domain: domainInTransfer.name },
-		};
-
 		switch ( domainInTransfer.transferStatus ) {
-			case transferStatus.PENDING_OWNER:
+			case transferStatus.PENDING_OWNER: {
 				compactMessage = translate( 'Transfer confirmation required' );
+
+				const translateParams = {
+					components: {
+						strong: <strong />,
+						a: <a href={ domainManagementLink } rel="noopener noreferrer" />,
+					},
+					args: { domain: domainInTransfer.name },
+				};
+
 				if ( domainInTransfer.adminEmail ) {
 					translateParams.args.email = domainInTransfer.adminEmail;
 					message = translate(
@@ -918,6 +919,7 @@ export class DomainWarnings extends React.PureComponent {
 					);
 				}
 				break;
+			}
 			case transferStatus.PENDING_REGISTRY:
 				message = translate(
 					'The transfer of {{strong}}%(domain)s{{/strong}} is in progress. We are waiting ' +
@@ -1093,7 +1095,7 @@ export class DomainWarnings extends React.PureComponent {
 		const notices = this.getPipe()
 			.map( renderer => renderer() )
 			.filter( notice => notice );
-		return notices.length ? <div>{ notices }</div> : null;
+		return notices.length ? <div className="domain-warnings__container">{ notices }</div> : null;
 	}
 }
 
