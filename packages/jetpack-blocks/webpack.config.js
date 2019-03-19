@@ -128,7 +128,7 @@ function getWebpackConfig() {
 			modules: [ 'node_modules' ],
 		},
 		node: false, // look into ?
-		plugins: _.compact( [
+		plugins: [
 			new webpack.DefinePlugin( {
 				'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
 				global: 'window',
@@ -136,14 +136,13 @@ function getWebpackConfig() {
 			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 			...SassConfig.plugins( { cssFilename, minify: ! isDevelopment } ),
 			new DuplicatePackageCheckerPlugin(),
-			fs.existsSync( presetPath ) &&
-				new CopyWebpackPlugin( [
-					{
-						from: presetPath,
-						to: 'index.json',
-					},
-				] ),
-		] ),
+			new CopyWebpackPlugin( [
+				{
+					from: presetPath,
+					to: 'index.json',
+				},
+			] ),
+		],
 		externals: [ wordpressExternals, 'wp', 'lodash' ],
 	};
 
