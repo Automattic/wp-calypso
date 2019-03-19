@@ -702,7 +702,7 @@ class SignupForm extends Component {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ logInUrl }>
-					{ this.props.translate( 'Already have a WordPress.com account? Log in now.' ) }
+					{ this.props.translate( 'Already have a WordPress.com account?' ) }
 				</LoggedOutFormLinkItem>
 				{ this.props.oauth2Client && (
 					<LoggedOutFormBackLink
