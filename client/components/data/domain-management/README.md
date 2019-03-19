@@ -38,7 +38,6 @@ Currently we have both Flux and Redux mixed. Props for loading data:
 - `needsDns` - Loads the `DnsStore` (Flux)
 - `needsDomains` - Loads domain for currently selected site (Redux)
 - `needsDomainInfo` - Loads `WapiDomainInfoStore` (Flux)
-- `needsGoogleApps` - Loads Google Apps email users (Redux)
 - `needsNameservers` - Loads `NameserversStore` (Flux)
 - `needsPlans` - Loads plans for given site (Redux)
 - `needsProductsList` - Loads products list (Redux)
