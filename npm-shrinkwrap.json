@@ -15495,17 +15495,16 @@
 			"integrity": "sha1-nYqSjH8sN1E8LQZOV7Pjw1bp+rs="
 		},
 		"react-redux": {
-			"version": "5.1.1",
-			"resolved": "https://registry.npmjs.org/react-redux/-/react-redux-5.1.1.tgz",
-			"integrity": "sha512-LE7Ned+cv5qe7tMV5BPYkGQ5Lpg8gzgItK07c67yHvJ8t0iaD9kPFPAli/mYkiyJYrs2pJgExR2ZgsGqlrOApg==",
+			"version": "6.0.1",
+			"resolved": "https://registry.npmjs.org/react-redux/-/react-redux-6.0.1.tgz",
+			"integrity": "sha512-T52I52Kxhbqy/6TEfBv85rQSDz6+Y28V/pf52vDWs1YRXG19mcFOGfHnY2HsNFHyhP+ST34Aih98fvt6tqwVcQ==",
 			"requires": {
-				"@babel/runtime": "^7.1.2",
-				"hoist-non-react-statics": "^3.1.0",
+				"@babel/runtime": "^7.3.1",
+				"hoist-non-react-statics": "^3.3.0",
 				"invariant": "^2.2.4",
-				"loose-envify": "^1.1.0",
-				"prop-types": "^15.6.1",
-				"react-is": "^16.6.0",
-				"react-lifecycles-compat": "^3.0.0"
+				"loose-envify": "^1.4.0",
+				"prop-types": "^15.7.2",
+				"react-is": "^16.8.2"
 			},
 			"dependencies": {
 				"hoist-non-react-statics": {
