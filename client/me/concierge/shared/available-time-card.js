@@ -14,8 +14,9 @@ import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import config from 'config';
+import 'moment-timezone'; // monkey patches the existing moment.js
 
 /**
  * Internal dependencies
@@ -26,7 +27,9 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { getLanguage } from 'lib/i18n-utils';
+
 const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 
 class CalendarCard extends Component {
@@ -45,8 +48,10 @@ class CalendarCard extends Component {
 
 		let closestTimestamp;
 
+		const { moment, times, date } = this.props;
+
 		// If there are times passed in, pick a sensible default.
-		if ( Array.isArray( this.props.times ) && ! isEmpty( this.props.times ) ) {
+		if ( Array.isArray( times ) && ! isEmpty( times ) ) {
 			// To find the best default time for the time picker, we're going to pick the time that's
 			// closest to the current time of day. To do this first we find out how many seconds it's
 			// been since midnight on the current real world day...
@@ -54,16 +59,16 @@ class CalendarCard extends Component {
 
 			// Then we'll use that to find the same time of day on the Card's given date. This will be the
 			// target timestamp we're trying to get as close to as possible.
-			const targetTimestamp = this.withTimezone( this.props.date )
+			const targetTimestamp = this.withTimezone( date )
 				.startOf( 'day' )
 				.add( millisecondsSinceMidnight );
 
 			// Default to the first timestamp and calculate how many seconds it's offset from the target
-			closestTimestamp = this.props.times[ 0 ];
+			closestTimestamp = times[ 0 ];
 			let closestTimeOffset = Math.abs( closestTimestamp - targetTimestamp );
 
 			// Then look through all timestamps to find which one is the closest to the target
-			this.props.times.forEach( time => {
+			times.forEach( time => {
 				const offset = Math.abs( time - targetTimestamp );
 				if ( offset < closestTimeOffset ) {
 					closestTimestamp = time;
@@ -77,7 +82,10 @@ class CalendarCard extends Component {
 		};
 	}
 
-	withTimezone = dateTime => moment( dateTime ).tz( this.props.timezone );
+	withTimezone( dateTime ) {
+		const { moment, timezone } = this.props;
+		return moment( dateTime ).tz( timezone );
+	}
 
 	/**
 	 * Returns a string representing the day of the week, with certain dates using natural
@@ -86,7 +94,7 @@ class CalendarCard extends Component {
 	 * @param {Number} date Timestamp of the date
 	 * @returns {String} The name for the day of the week
 	 */
-	getDayOfWeekString = date => {
+	getDayOfWeekString( date ) {
 		const { translate } = this.props;
 		const today = this.withTimezone().startOf( 'day' );
 		const dayOffset = today.diff( date.startOf( 'day' ), 'days' );
@@ -98,9 +106,9 @@ class CalendarCard extends Component {
 				return translate( 'Tomorrow' );
 		}
 		return date.format( 'dddd' );
-	};
+	}
 
-	renderHeader = () => {
+	renderHeader() {
 		// The "Header" is that part of the foldable card that you click on to expand it.
 		const date = this.withTimezone( this.props.date );
 
@@ -112,7 +120,7 @@ class CalendarCard extends Component {
 				</span>
 			</div>
 		);
-	};
+	}
 
 	onChange = ( { target } ) => {
 		this.setState( { selectedTime: target.value } );
@@ -128,8 +136,9 @@ class CalendarCard extends Component {
 			disabled,
 			isDefaultLocale,
 			times,
-			translate,
 			appointmentTimespan,
+			translate,
+			moment,
 		} = this.props;
 
 		const durationInMinutes = moment.duration( appointmentTimespan, 'seconds' ).minutes();
@@ -180,4 +189,4 @@ class CalendarCard extends Component {
 	}
 }
 
-export default localize( CalendarCard );
+export default localize( withLocalizedMoment( CalendarCard ) );
