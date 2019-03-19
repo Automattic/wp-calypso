@@ -88,6 +88,7 @@ export class PaypalPaymentBox extends React.Component {
 			cancelUrl,
 			cart,
 			domainDetails: transaction.domainDetails,
+			"postal-code": getTaxPostalCode( cart ),
 		} );
 
 		// get PayPal Express URL from rest endpoint
@@ -184,7 +185,7 @@ export class PaypalPaymentBox extends React.Component {
 								<button
 									type="submit"
 									className="checkout__pay-button-button button is-primary"
-									disabled={ this.state.formDisabled }
+									disabled={ this.state.formDisabled || cart.hasPendingServerUpdates }
 								>
 									{ this.renderButtonText() }
 								</button>
