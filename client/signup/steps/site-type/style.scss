@@ -3,9 +3,9 @@
 	width: 380px;
 	padding: 0;
 	border-radius: 3px;
-	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),
-				0 3px 1px -2px rgba(0,0,0,0.12),
-				0 1px 5px 0 rgba(0,0,0,0.20);
+	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ),
+				0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
+				0 1px 5px 0 rgba( 0, 0, 0, 0.20 );
 
 	// At small screen sizes make the step
 	// full width. -shaun
@@ -15,7 +15,7 @@
 }
 
 .site-type__option {
-	padding: 16px 16px 16px 64px;
+	padding: 16px 16px 16px 24px;
 	margin: 0;
 	font-weight: 400;
 	position: relative;
@@ -35,15 +35,6 @@
 	&:last-child {
 		border-radius: 0 0 3px 3px;
 		border-bottom: none;
-	}
-
-	.plan-icon {
-		height: 40px;
-		width: 40px;
-		position: absolute;
-		top: 50%;
-		left: 12px;
-		margin-top: -20px;
 	}
 
 	.site-type__option-label,
