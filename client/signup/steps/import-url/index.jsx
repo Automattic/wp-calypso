@@ -208,7 +208,11 @@ class ImportURLStepComponent extends Component {
 			<Fragment>
 				<div className="import-url__wrapper">
 					{ showUrlMessage && urlMessage ? (
-						<Notice className="import-url__url-input-message" status="is-error">
+						<Notice
+							className="import-url__url-input-message"
+							status="is-error"
+							showDismiss={ false }
+						>
 							{ urlMessage }
 						</Notice>
 					) : null }
