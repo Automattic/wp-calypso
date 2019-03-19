@@ -1,5 +1,4 @@
 /** @format */
-const _ = require( 'lodash' );
 
 const targets = { browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ] };
 
@@ -18,7 +17,7 @@ const config = {
 		],
 		'@babel/react',
 	],
-	plugins: _.compact( [
+	plugins: [
 		'@babel/plugin-proposal-class-properties',
 		'@babel/plugin-proposal-export-default-from',
 		'@babel/plugin-proposal-export-namespace-from',
@@ -32,7 +31,7 @@ const config = {
 				useESModules: false,
 			},
 		],
-	] ),
+	],
 	overrides: [
 		{
 			test: './src',
