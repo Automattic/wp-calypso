@@ -8,11 +8,11 @@ exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
     onChange={[Function]}
     placeholder="e.g. Fashion, travel, design, plumbing"
     railcar={
-	  Object {
-	    "action": "site_vertical_selected",
-	    "fetch_algo": "/verticals",
-	    "id": "fakeuuid-site-vertical-suggestion",
-	  }
+      Object {
+        "action": "site_vertical_selected",
+        "fetch_algo": "/verticals",
+        "id": "fakeuuid-site-vertical-suggestion",
+      }
     }
     sortResults={[Function]}
     suggestions={
