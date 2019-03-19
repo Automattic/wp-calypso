@@ -298,7 +298,7 @@
 		"eslint-config-prettier": "4.1.0",
 		"eslint-config-wpcalypso": "file:./packages/eslint-config-wpcalypso",
 		"eslint-plugin-import": "2.14.0",
-		"eslint-plugin-jest": "22.3.0",
+		"eslint-plugin-jest": "22.4.1",
 		"eslint-plugin-jsx-a11y": "6.2.1",
 		"eslint-plugin-react": "7.12.4",
 		"eslint-plugin-wpcalypso": "file:./packages/eslint-plugin-wpcalypso",
