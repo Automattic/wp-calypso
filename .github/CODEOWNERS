@@ -1,0 +1,36 @@
+# We use codeowners to help keep teams in the loop on changes to code 
+# they typically work on. Even though this file is called CODEOWNERS, 
+# we don't really want to enforce or imply ownership of code, just interest. 
+#
+# Anyone can work on anything. 
+#
+# Prefer associating a "team" with a path rather than an individual. That allows individuals to 
+# move around without having to continually update this file.
+#
+# See https://help.github.com/en/articles/about-code-owners for details on the format of this file
+
+# Root level files and configuration
+/*.* @Automattic/team-calypso
+
+# Scripts
+/bin @Automattic/team-calypso
+
+# Client initializaton
+/client/boot @Automattic/team-calypso
+
+# Client framework parts
+/client/config @Automattic/team-calypso
+/client/controller @Automattic/team-calypso
+/client/document @Automattic/team-calypso
+/client/layout @Automattic/team-calypso
+
+# Developer guides
+/docs/coding-guidelines @Automattic/team-calypso
+/docs/guide @Automattic/team-calypso
+/docs/testing @Automattic/team-calypso
+
+# Server infrastructure
+/server @Automattic/team-calypso
+
+# Test infrastructure
+/test @Automattic/team-calypso
