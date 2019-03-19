@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const { createHash } = require( 'crypto' );
 const { ExternalsPlugin } = require( 'webpack' );
 const { RawSource } = require( 'webpack-sources' );
 
@@ -36,9 +37,42 @@ class WordPressExternalDependenciesPlugin {
 				}
 			}
 
+			const filename = compilation.outputOptions.filename.replace( /.js$/, '.deps.json' );
 			for ( const [ entry, deps ] of this.entryDeps.entries() ) {
-				const filename = `${ entry.options.name }.deps.json`;
-				compilation.assets[ filename ] = new RawSource( JSON.stringify( Array.from( deps ) ) );
+				const stableDeps = Array.from( deps );
+				stableDeps.sort();
+				const chunkId = `depschunk_${ entry.id }`;
+				const moduleId = `depsmodule_${ entry.id }`;
+
+				// Act like a chunk or module for paths
+				const data = {
+					contentHashType: 'json',
+					chunk: {
+						entryModule: entry.getRuntimeChunk().entryModule,
+						id: chunkId,
+						hash: createHash( 'sha256' )
+							.update( chunkId )
+							.digest( 'hex' ),
+						contentHash: {
+							json: createHash( 'sha256' )
+								.update( JSON.stringify( stableDeps ) )
+								.digest( 'hex' ),
+						},
+					},
+					module: {
+						id: moduleId,
+						hash: createHash( 'sha256' )
+							.update( moduleId )
+							.digest( 'hex' ),
+					},
+				};
+				data.chunk.hashWithLength = length => data.chunk.hash.substr( 0, length );
+				data.chunk.contentHashWithLength = length =>
+					data.chunk.contentHash[ data.chunk.contentHashType ].substr( 0, length );
+				data.module.hashWithLength = length => data.module.hash.substr( 0, length );
+
+				const assetPath = compilation.getPath( filename, data );
+				compilation.assets[ assetPath ] = new RawSource( JSON.stringify( Array.from( deps ) ) );
 			}
 
 			callback();
