@@ -894,7 +894,7 @@ export class DomainWarnings extends React.PureComponent {
 		);
 
 		switch ( domainInTransfer.transferStatus ) {
-			case transferStatus.PENDING_OWNER:
+			case transferStatus.PENDING_OWNER: {
 				compactMessage = translate( 'Transfer confirmation required' );
 
 				const translateParams = {
@@ -919,6 +919,7 @@ export class DomainWarnings extends React.PureComponent {
 					);
 				}
 				break;
+			}
 			case transferStatus.PENDING_REGISTRY:
 				message = translate(
 					'The transfer of {{strong}}%(domain)s{{/strong}} is in progress. We are waiting ' +
