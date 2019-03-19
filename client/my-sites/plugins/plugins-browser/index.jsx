@@ -59,6 +59,8 @@ import './style.scss';
  * Module variables
  */
 const SHORT_LIST_LENGTH = 6;
+const VISIBLE_CATEGORIES = [ 'new', 'popular', 'featured' ];
+const VISIBLE_CATEGORIES_FOR_RECOMMENDATIONS = [ 'new', 'popular' ];
 
 export class PluginsBrowser extends Component {
 	static displayName = 'PluginsBrowser';
@@ -106,6 +108,13 @@ export class PluginsBrowser extends Component {
 		this.refreshLists( newProps.search );
 	}
 
+	getVisibleCategories() {
+		if ( ! this.isRecommendedPluginsEnabled() ) {
+			return VISIBLE_CATEGORIES;
+		}
+		return VISIBLE_CATEGORIES_FOR_RECOMMENDATIONS;
+	}
+
 	isRecommendedPluginsEnabled() {
 		return !! this.props.selectedSiteId && abtest( 'pluginRecommendations' ) === 'recommended';
 	}
@@ -141,16 +150,13 @@ export class PluginsBrowser extends Component {
 		const shortLists = {};
 		const fullLists = {};
 
-		this.visibleCategories.forEach( category => {
+		this.getVisibleCategories().forEach( category => {
 			shortLists[ category ] = PluginsListStore.getShortList( category );
 			fullLists[ category ] = PluginsListStore.getFullList( category );
 		} );
 
 		fullLists.search = PluginsListStore.getSearchList( search );
-		return {
-			shortLists: shortLists,
-			fullLists: fullLists,
-		};
+		return { shortLists, fullLists };
 	}
 
 	getPluginsShortList( listName ) {
