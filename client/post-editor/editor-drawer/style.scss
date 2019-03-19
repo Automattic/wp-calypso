@@ -8,26 +8,38 @@
 	font-size: 12px;
 }
 
-.editor-drawer__accordion {
-	&.accordion.is-expanded .accordion__subtitle::after {
-		display: none;
-	}
+.editor-drawer__accordion.is-loading .accordion__subtitle {
+	position: relative;
+	color: transparent;
 	
-	&.is-loading .accordion__subtitle {	
-		position: relative;	
-		color: transparent;	
-		
-			&::before {
-				content: '';
-				position: absolute;
+	&::before {
+		content: '';
+		position: absolute;
 				top: 1px;
 				bottom: 1px;
-				width: 60%;
-				background-color: var( --color-neutral-100 );
-				animation: loading-fade 1.6s ease-in-out infinite;
-		}
-	}	
+		width: 60%;
+		background-color: var( --color-neutral-100 );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}				
 }
+
+.editor-drawer__accordion.accordion .accordion__toggle {
+	span.accordion,
+		&:hover span.accordion__subtitle:after {
+			display: none;
+	}
+}
+
+.editor-drawer_accordion.accordion:not(.is-expanded) .accordion__toggle span.accordion__subtitle:after {
+  display: none;
+}
+
+.editor-drawer__accordion.accordion:not(.is-expanded) .accordion__toggle {
+  span.accordion__subtitle:after, 
+	&:hover span.accordion__subtitle:after {
+		display: none;
+  }
+}  
 
 .editor-drawer__heading {
 	font-weight: 400;
