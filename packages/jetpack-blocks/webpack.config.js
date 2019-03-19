@@ -45,7 +45,6 @@ function blockScripts( type, inputDir, presetBlocks ) {
 function getWebpackConfig() {
 	const workerCount = 1;
 	const cssFilename = '[name].css';
-	const preserveCssCustomProperties = true;
 
 	const presetPath = path.join( __dirname, 'src', 'preset', 'index.json' );
 	const presetIndex = require( presetPath );
@@ -113,7 +112,7 @@ function getWebpackConfig() {
 					exclude: /node_modules\//,
 				} ),
 				SassConfig.loader( {
-					preserveCssCustomProperties,
+					preserveCssCustomProperties: false,
 					includePaths: [ path.join( __dirname, 'client' ) ],
 					prelude: '@import "~@automattic/calypso-color-schemes/src/shared/colors";',
 				} ),
