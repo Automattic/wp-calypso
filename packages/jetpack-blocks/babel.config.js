@@ -1,13 +1,9 @@
-/** @format */
-
-const targets = { browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ] };
-
 const config = {
 	presets: [
 		[
 			'@babel/env',
 			{
-				targets,
+				targets: { browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ] },
 				useBuiltIns: 'entry',
 				// allows es7 features like Promise.prototype.finally
 				shippedProposals: true,
