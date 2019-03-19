@@ -81,7 +81,7 @@ function getWebpackConfig() {
 		context: __dirname,
 		entry: {
 			editor: editorScript,
-			...( editorBetaScript && { 'editor-beta': editorBetaScript } ),
+			'editor-beta': editorBetaScript,
 			...viewBlocksScripts,
 		},
 		mode: isDevelopment ? 'development' : 'production',
