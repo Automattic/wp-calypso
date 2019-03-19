@@ -643,10 +643,15 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 			query: { vertical },
 		},
 		flowName,
+		signupDependencies,
 	} = nextProps;
 
 	const flowSteps = flows.getFlow( flowName ).steps;
 	let fulfilledDependencies = [];
+
+	if ( vertical && get( signupDependencies, 'surveyQuestion' ) === vertical ) {
+		return;
+	}
 
 	if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
 		debug( 'From query string: vertical = %s', vertical );
