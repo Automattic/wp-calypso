@@ -23,7 +23,7 @@ const wordpressExternals = require( '@automattic/calypso-build/webpack/wordpress
  */
 const cacheIdentifier = require( '../../server/bundler/babel/babel-loader-cache-identifier' ); // FIX ME
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
-//
+
 /**
  * Internal variables
  */
@@ -40,7 +40,6 @@ function blockScripts( type, inputDir, presetBlocks ) {
 }
 /**
  * Return a webpack config object
- *
  *
  * @return {object} webpack config
  */
@@ -63,13 +62,13 @@ function getWebpackConfig() {
 		}
 		return viewBlocks;
 	}, {} );
-	//
+
 	// Combines all the different blocks into one editor.js script
 	const editorScript = [
 		editorSetup,
 		...blockScripts( 'editor', path.join( __dirname, 'src' ), presetBlocks ),
 	];
-	//
+
 	// Combines all the different blocks into one editor-beta.js script
 	const editorBetaScript = [
 		editorSetup,
