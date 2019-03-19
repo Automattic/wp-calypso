@@ -120,6 +120,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 				{
 					action: 'cancel',
 					disabled,
+					isPrimary: true,
 					label: translate( "I'll Keep It" ),
 					onClick: this.cancelButtonClick,
 				},

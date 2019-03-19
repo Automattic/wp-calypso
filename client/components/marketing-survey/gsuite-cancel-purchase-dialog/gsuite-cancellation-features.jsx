@@ -28,12 +28,11 @@ class GSuiteCancellationFeatures extends Component {
 		return (
 			<div className="gsuite-cancel-purchase-dialog__features">
 				<CardHeading tagName="h3" size={ 24 }>
-					{ translate( "We're sorry to see you go." ) }
+					{ translate( "Are you sure? Here's what you'll be missing:" ) }
 				</CardHeading>
 				<p>
 					{ translate(
-						'Are you sure you want to cancel and remove G Suite from {{siteName/}}? ' +
-							"Here's what you'll be missing:",
+						'If you cancel and remove G Suite from {{siteName/}} you will lose access to the following: ',
 						{ components: { siteName: <em>{ gsuiteDomain }</em> } }
 					) }
 				</p>
