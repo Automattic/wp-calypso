@@ -14,11 +14,10 @@ import React, { Fragment } from 'react';
  */
 
 import AddEmailAddressesCard from './add-users';
+import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import { domainManagementAddGSuiteUsers, domainManagementEmail } from 'my-sites/domains/paths';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { fetchBySiteId } from 'state/google-apps-users/actions';
-import { getBySite, isLoaded } from 'state/google-apps-users/selectors';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
@@ -26,12 +25,13 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import SectionHeader from 'components/section-header';
+import QueryGSuiteUsers from 'components/data/query-gsuite-users';
+import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 
 class GSuiteAddUsers extends React.Component {
 	componentDidMount() {
-		const { domains, isRequestingDomains, selectedSite } = this.props;
+		const { domains, isRequestingDomains } = this.props;
 		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
-		this.props.fetchGoogleAppsUsers( selectedSite.ID );
 	}
 
 	shouldComponentUpdate( nextProps ) {
@@ -58,7 +58,6 @@ class GSuiteAddUsers extends React.Component {
 		const {
 			domains,
 			gsuiteUsers,
-			gsuiteUsersLoaded,
 			isRequestingDomains,
 			selectedDomainName,
 			selectedSite,
@@ -68,14 +67,17 @@ class GSuiteAddUsers extends React.Component {
 		return (
 			<Fragment>
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
-				<AddEmailAddressesCard
-					domains={ domains }
-					isRequestingSiteDomains={ isRequestingDomains }
-					gsuiteUsers={ gsuiteUsers }
-					gsuiteUsersLoaded={ gsuiteUsersLoaded }
-					selectedDomainName={ selectedDomainName }
-					selectedSite={ selectedSite }
-				/>
+				{ gsuiteUsers ? (
+					<AddEmailAddressesCard
+						domains={ domains }
+						isRequestingSiteDomains={ isRequestingDomains }
+						gsuiteUsers={ gsuiteUsers }
+						selectedDomainName={ selectedDomainName }
+						selectedSite={ selectedSite }
+					/>
+				) : (
+					<AddEmailAddressesCardPlaceholder />
+				) }
 			</Fragment>
 		);
 	}
@@ -91,6 +93,7 @@ class GSuiteAddUsers extends React.Component {
 			<Fragment>
 				<PageViewTracker path={ analyticsPath } title="Domain Management > Add G Suite Users" />
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
+				{ selectedSite && <QueryGSuiteUsers siteId={ selectedSite.ID } /> }
 				<Main>
 					<DomainManagementHeader
 						onClick={ this.goToEmail }
@@ -113,8 +116,7 @@ class GSuiteAddUsers extends React.Component {
 
 GSuiteAddUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
-	gsuiteUsers: PropTypes.array.isRequired,
-	gsuiteUsersLoaded: PropTypes.bool.isRequired,
+	gsuiteUsers: PropTypes.array,
 	isRequestingDomains: PropTypes.bool.isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
@@ -123,24 +125,13 @@ GSuiteAddUsers.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect(
-	state => {
-		const selectedSite = getSelectedSite( state );
-		const siteId = get( selectedSite, 'ID', null );
-		const gsuiteUsers = getBySite( state, siteId );
-		return {
-			domains: getDecoratedSiteDomains( state, siteId ),
-			gsuiteUsers,
-			gsuiteUsersLoaded: isLoaded( state ),
-			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
-			selectedSite,
-		};
-	},
-	dispatch => {
-		const googleAppsUsersFetcher = siteId => fetchBySiteId( siteId );
-
-		return {
-			fetchGoogleAppsUsers: siteId => dispatch( googleAppsUsersFetcher( siteId ) ),
-		};
-	}
-)( localize( GSuiteAddUsers ) );
+export default connect( state => {
+	const selectedSite = getSelectedSite( state );
+	const siteId = get( selectedSite, 'ID', null );
+	return {
+		domains: getDecoratedSiteDomains( state, siteId ),
+		gsuiteUsers: getGSuiteUsers( state, siteId ),
+		isRequestingDomains: isRequestingSiteDomains( state, siteId ),
+		selectedSite,
+	};
+} )( localize( GSuiteAddUsers ) );
