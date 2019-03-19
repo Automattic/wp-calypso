@@ -192,7 +192,11 @@ class CalypsoifyIframe extends Component {
 	};
 
 	updateImageBlocks = action => {
-		if ( ! action || startsWith( action.data.URL, 'blob:' ) ) {
+		if (
+			! action ||
+			! startsWith( action.data.mime_type, 'image/' ) ||
+			startsWith( action.data.URL, 'blob:' )
+		) {
 			return;
 		}
 		const payload = {
