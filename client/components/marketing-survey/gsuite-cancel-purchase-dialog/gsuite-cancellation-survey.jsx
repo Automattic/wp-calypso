@@ -70,15 +70,11 @@ class GSuiteCancellationSurvey extends Component {
 }
 
 GSuiteCancellationSurvey.propTypes = {
-	disabled: PropTypes.bool,
+	disabled: PropTypes.bool.isRequired,
 	onSurveyAnswerChange: PropTypes.func.isRequired,
-	translate: PropTypes.func,
+	translate: PropTypes.func.isRequired,
 	surveyAnswerId: PropTypes.string,
 	surveyAnswerText: PropTypes.string,
-};
-
-GSuiteCancellationSurvey.defaultProps = {
-	disabled: false,
 };
 
 export default connect(
