@@ -893,18 +893,17 @@ export class DomainWarnings extends React.PureComponent {
 			<NoticeAction href={ domainManagementLink }>{ translate( 'Info' ) }</NoticeAction>
 		);
 
+		const translateParams = {
+			components: {
+				strong: <strong />,
+				a: <a href={ domainManagementLink } rel="noopener noreferrer" />,
+			},
+			args: { domain: domainInTransfer.name },
+		};
+
 		switch ( domainInTransfer.transferStatus ) {
 			case transferStatus.PENDING_OWNER:
 				compactMessage = translate( 'Transfer confirmation required' );
-
-				const translateParams = {
-					components: {
-						strong: <strong />,
-						a: <a href={ domainManagementLink } rel="noopener noreferrer" />,
-					},
-					args: { domain: domainInTransfer.name },
-				};
-
 				if ( domainInTransfer.adminEmail ) {
 					translateParams.args.email = domainInTransfer.adminEmail;
 					message = translate(
