@@ -21,7 +21,6 @@ const wordpressExternals = require( '@automattic/calypso-build/webpack/wordpress
 /**
  * Internal dependencies
  */
-const cacheIdentifier = require( '../../server/bundler/babel/babel-loader-cache-identifier' ); // FIX ME
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
@@ -111,7 +110,6 @@ function getWebpackConfig() {
 					workerCount,
 					configFile: path.join( __dirname, 'babel.config.js' ),
 					cacheDirectory: path.join( __dirname, '.cache' ),
-					cacheIdentifier,
 					exclude: /node_modules\//,
 				} ),
 				SassConfig.loader( {
