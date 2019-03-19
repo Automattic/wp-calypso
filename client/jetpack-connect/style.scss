@@ -33,16 +33,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .jetpack-connect__main {
 	max-width: 400px;
 
-	.logged-out-form__links {
-		max-width: 100%;
-
-		/* Move up to the Card above */
-		margin-top: -10px;
-		@include breakpoint( '>480px' ) {
-			margin-top: -16px;
-		}
-	}
-
 	.formatted-header {
 		margin-bottom: 16px;
 	}
@@ -544,6 +534,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__site.card {
 	padding: 0;
+	max-width: 360px;
+	margin: 0 auto 16px;
+	border-radius: 3px;
+	box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2 ),
+				0 8px 10px 1px rgba( 0, 0, 0, 0.14 ),
+				0 3px 14px 2px rgba( 0, 0, 0, 0.12 );
 }
 
 .jetpack-connect__sso-terms-dialog {
@@ -657,7 +653,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		margin-bottom: 8px;
 	}
 
-	.logged-out-form__links,
 	.jetpack-connect__happychat-button {
 		text-align: center;
 	}
@@ -826,20 +821,9 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		color: var( --color-primary-100 );
 	}
 
-	.card,
-	.site-type__wrapper .card,
-	.site-topic__wrapper .card {
-		box-shadow: none;
-		border-radius: 3px;
-	}
-
 	.site__title:after,
 	.site__domain:after {
 		right: 3px;
-	}
-
-	.login__form-social {
-		margin-top: 1px;
 	}
 
 	.site-type__option-label {
