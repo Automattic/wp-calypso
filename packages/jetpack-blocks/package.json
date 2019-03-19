@@ -26,17 +26,17 @@
     "@wordpress/token-list": "^1.1.0",
     "@wordpress/url": "^2.3.3",
     "classnames": "^2.2.6",
-    "circular-dependency-plugin": "5.0.2",
+    "circular-dependency-plugin": "^5.0.2",
     "cookie": "^0.3.1",
-    "duplicate-package-checker-webpack-plugin": "3.0.0",
+    "duplicate-package-checker-webpack-plugin": "^3.0.0",
     "email-validator": "^2.0.4",
     "gridicons": "^3.1.1",
     "lodash": "^4.17.11",
-    "markdown-it": "8.4.2",
+    "markdown-it": "^8.4.2",
     "photon": "^2.0.1",
     "refx": "^3.1.1",
     "resize-observer-polyfill": "^1.5.1",
-    "swiper": "4.4.6"
+    "swiper": "^4.4.6"
   },
   "devDependencies": {
     "@automattic/calypso-build": "file:../calypso-build",
@@ -48,7 +48,7 @@
     "enzyme-to-json": "^3.3.5",
     "react": "^16.8.3",
     "webpack": "^4.29.6",
-    "webpack-cli": "3.2.3"
+    "webpack-cli": "^3.2.3"
   },
   "publishConfig": {
     "access": "public"
