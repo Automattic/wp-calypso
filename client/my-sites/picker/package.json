@@ -1,6 +1,6 @@
 {
-  "name": "site navigation picker",
-  "version": "0.0.0",
-  "private": true,
-  "main": "picker.jsx"
+	"name": "site navigation picker",
+	"version": "0.0.0",
+	"private": true,
+	"main": "picker.jsx"
 }

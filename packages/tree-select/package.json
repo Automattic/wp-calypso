@@ -1,32 +1,32 @@
 {
-  "name": "@automattic/tree-select",
-  "version": "1.0.3",
-  "description": "A selector library for Redux",
-  "keywords": [
-    "redux",
-    "selector"
-  ],
-  "author": "Jake Fried <samouri@users.noreply.github.com>",
-  "homepage": "https://github.com/Automattic/wp-calypso",
-  "license": "GPL-2.0-or-later",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Automattic/wp-calypso.git"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "bugs": {
-    "url": "https://github.com/Automattic/wp-calypso/issues"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "scripts": {
-    "clean": "npx rimraf dist",
-    "build": "node ../../bin/build-package"
-  }
+	"name": "@automattic/tree-select",
+	"version": "1.0.3",
+	"description": "A selector library for Redux",
+	"keywords": [
+		"redux",
+		"selector"
+	],
+	"author": "Jake Fried <samouri@users.noreply.github.com>",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"build": "node ../../bin/build-package"
+	}
 }
