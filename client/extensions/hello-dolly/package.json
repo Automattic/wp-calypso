@@ -3,10 +3,15 @@
 	"author": "Automattic",
 	"description": "Hello, Dolly!",
 	"version": "0.0.1",
-	"env_id": [ "development", "wpcalypso" ],
+	"env_id": [
+		"development",
+		"wpcalypso"
+	],
 	"section": {
 		"name": "hello-dolly",
-		"paths": [ "/hello-dolly" ],
+		"paths": [
+			"/hello-dolly"
+		],
 		"module": "hello-dolly",
 		"group": "sites",
 		"secondary": true,

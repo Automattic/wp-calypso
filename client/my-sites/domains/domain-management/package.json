@@ -1,6 +1,6 @@
 {
-  "name": "domains",
-  "version": "0.0.0",
-  "private": true,
-  "main": "domain-management.jsx"
+	"name": "domains",
+	"version": "0.0.0",
+	"private": true,
+	"main": "domain-management.jsx"
 }

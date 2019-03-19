@@ -1,42 +1,42 @@
 {
-  "name": "photon",
-  "version": "2.0.1",
-  "description": "JavaScript library for the WordPress.com Photon image manipulation service",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "sideEffects": false,
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/Automattic/wp-calypso.git"
-  },
-  "keywords": [
-    "wordpress",
-    "photon",
-    "image",
-    "resize",
-    "thumbnail",
-    "filter",
-    "service",
-    "api",
-    "library"
-  ],
-  "author": "Automattic, Inc.",
-  "contributors": [
-    "Nathan Rajlich <nathan@automattic.com>"
-  ],
-  "license": "GPL-2.0-or-later",
-  "bugs": {
-    "url": "https://github.com/Automattic/wp-calypso/issues"
-  },
-  "homepage": "https://github.com/Automattic/wp-calypso",
-  "dependencies": {
-    "crc32": "0.2.2",
-    "debug": "^3.2.6",
-    "seed-random": "2.2.0",
-    "url": "^0.11.0"
-  },
-  "scripts": {
-    "clean": "npx rimraf dist",
-    "build": "node ../../bin/build-package"
-  }
+	"name": "photon",
+	"version": "2.0.1",
+	"description": "JavaScript library for the WordPress.com Photon image manipulation service",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git"
+	},
+	"keywords": [
+		"wordpress",
+		"photon",
+		"image",
+		"resize",
+		"thumbnail",
+		"filter",
+		"service",
+		"api",
+		"library"
+	],
+	"author": "Automattic, Inc.",
+	"contributors": [
+		"Nathan Rajlich <nathan@automattic.com>"
+	],
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"dependencies": {
+		"crc32": "0.2.2",
+		"debug": "^3.2.6",
+		"seed-random": "2.2.0",
+		"url": "^0.11.0"
+	},
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"build": "node ../../bin/build-package"
+	}
 }

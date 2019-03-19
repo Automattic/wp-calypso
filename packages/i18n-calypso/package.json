@@ -1,42 +1,42 @@
 {
-  "name": "i18n-calypso",
-  "version": "4.0.0",
-  "description": "i18n JavaScript library on top of Jed originally used in Calypso",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "sideEffects": false,
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Automattic/wp-calypso.git"
-  },
-  "author": "@automattic",
-  "license": "GPL-2.0-or-later",
-  "bin": {
-    "i18n-calypso": "cli/index.js"
-  },
-  "bugs": {
-    "url": "https://github.com/Automattic/wp-calypso/issues"
-  },
-  "homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/i18n-calypso#readme",
-  "dependencies": {
-    "commander": "^2.9.0",
-    "debug": "^3.2.6",
-    "globby": "^9.0.0",
-    "hash.js": "^1.1.5",
-    "interpolate-components": "1.1.1",
-    "jed": "1.1.1",
-    "lodash": "^4.7.11",
-    "lru": "^3.1.0",
-    "moment-timezone": "^0.5.23",
-    "react": "^16.8.3",
-    "xgettext-js": "^2.0.0"
-  },
-  "devDependencies": {
-    "react-dom": "^16.6.3",
-    "react-test-renderer": "^16.6.3"
-  },
-  "scripts": {
-    "build": "node ../../bin/build-package",
-    "clean": "npx rimraf dist"
-  }
+	"name": "i18n-calypso",
+	"version": "4.0.0",
+	"description": "i18n JavaScript library on top of Jed originally used in Calypso",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git"
+	},
+	"author": "@automattic",
+	"license": "GPL-2.0-or-later",
+	"bin": {
+		"i18n-calypso": "cli/index.js"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/i18n-calypso#readme",
+	"dependencies": {
+		"commander": "^2.9.0",
+		"debug": "^3.2.6",
+		"globby": "^9.0.0",
+		"hash.js": "^1.1.5",
+		"interpolate-components": "1.1.1",
+		"jed": "1.1.1",
+		"lodash": "^4.7.11",
+		"lru": "^3.1.0",
+		"moment-timezone": "^0.5.23",
+		"react": "^16.8.3",
+		"xgettext-js": "^2.0.0"
+	},
+	"devDependencies": {
+		"react-dom": "^16.6.3",
+		"react-test-renderer": "^16.6.3"
+	},
+	"scripts": {
+		"build": "node ../../bin/build-package",
+		"clean": "npx rimraf dist"
+	}
 }
