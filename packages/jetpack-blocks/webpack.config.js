@@ -27,7 +27,6 @@ const wordpressExternals = require( '@automattic/calypso-build/webpack/wordpress
  * Internal variables
  */
 const isDevelopment = process.env.NODE_ENV !== 'production';
-const shouldMinify = isDevelopment;
 
 const editorSetup = path.join( __dirname, 'src', 'preset', 'setup', 'editor' );
 const viewSetup = path.join( __dirname, 'src', 'preset', 'setup', 'view' );
@@ -89,7 +88,7 @@ function getWebpackConfig() {
 			libraryTarget: 'window',
 		},
 		optimization: {
-			minimize: shouldMinify,
+			minimize: ! isDevelopment,
 			minimizer: Minify( {
 				cache: process.env.CIRCLECI
 					? `${ process.env.HOME }/terser-cache`
