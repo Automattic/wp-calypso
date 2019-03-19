@@ -73,7 +73,7 @@
 		"browser-filesaver": "1.1.1",
 		"chalk": "2.4.2",
 		"chokidar": "2.1.2",
-		"chrono-node": "1.3.5",
+		"chrono-node": "1.3.11",
 		"circular-dependency-plugin": "5.0.2",
 		"classnames": "2.2.6",
 		"click-outside": "2.0.2",
