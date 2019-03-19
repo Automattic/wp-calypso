@@ -18518,9 +18518,9 @@
 			"integrity": "sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q="
 		},
 		"twemoji": {
-			"version": "11.2.0",
-			"resolved": "https://registry.npmjs.org/twemoji/-/twemoji-11.2.0.tgz",
-			"integrity": "sha512-DgTadXkRHugun6mjUf1k3ni04WC4jHOX1bN5MjuCM3nwRyIMdXIr8FmWzW5mEIZjht5jD3NaEyXC4j3POdQwyQ=="
+			"version": "11.3.0",
+			"resolved": "https://registry.npmjs.org/twemoji/-/twemoji-11.3.0.tgz",
+			"integrity": "sha512-xN/vlR6+gDmfjt6LInAqwGAv3Agwrmzx5TD1jEFwKS19IOGDrX0/3OB8GP1wUYPVIdkaer5hw6qd+52jzvz0Lg=="
 		},
 		"type-check": {
 			"version": "0.3.2",
