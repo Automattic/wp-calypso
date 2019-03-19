@@ -76,7 +76,7 @@
 		"builderReferralThemesBanner",
 		"domainSearchButtonStyles",
 		"twoYearPlanByDefault",
-		"pluginFeaturedTitle",
+		"pluginRecommendations",
 		"builderReferralHelpPopover",
 		"jetpackMonthlyPlansOnly"
 	],
@@ -96,6 +96,7 @@
 		[ "improvedOnboarding_20190314", "main" ],
 		[ "skipBusinessInformation_20190130", "hide" ],
 		[ "twoYearPlanByDefault_20190207", "originalFlavor" ],
-		[ "builderReferralHelpPopover_20190227", "original" ]
+		[ "builderReferralHelpPopover_20190227", "original" ],
+		[ "pluginRecommendations", "featured" ]
 	]
 }
