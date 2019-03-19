@@ -1,10 +1,39 @@
-.domain-warnings__notice {
-	li {
-		font-size: 12px;
-		list-style: none;
-		margin-left: 0;
+.domain-warnings__container {
+	button {
+		background: none;
+		border: none;
+		color: white;
+		cursor: pointer;
+		padding: 0;
+		text-decoration: underline;
 	}
-	a {
-		align-self: center;
+
+	button:hover {
+		color: white;
+		text-decoration: none;
 	}
+}
+
+.domain-warnings__dialog {
+	min-width: 400px;
+	max-width: 600px;
+
+	@include breakpoint( '<660px' ) {
+		min-width: none;
+		max-width: none;
+	}
+
+	header {
+		display: flex;
+		justify-content: space-between;
+
+		button {
+			cursor: pointer;
+			margin-top: -10px;
+		}
+	}
+}
+
+.domain-warnings__dialog-copy {
+	margin-left: 20px;
 }

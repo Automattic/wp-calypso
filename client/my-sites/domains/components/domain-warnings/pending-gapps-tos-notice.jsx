@@ -16,9 +16,8 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { COMPLETING_GOOGLE_APPS_SIGNUP } from 'lib/url/support';
 import { domainManagementEmail } from 'my-sites/domains/paths';
-import PendingGappsTosNoticeMultipleDomainListItem from './pending-gapps-tos-notice-multiple-domain-list-item';
+import PendingGappsTosNoticeAction from './pending-gapps-tos-notice-action';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getLoginUrlWithTOSRedirect } from 'lib/google-apps';
 
 const learnMoreLink = (
 	<a href={ COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />
@@ -84,29 +83,6 @@ class PendingGappsTosNotice extends React.PureComponent {
 		}
 	}
 
-	recordLogInClick = ( domainName, user, isMultipleDomains ) => {
-		this.props.pendingAccountLogInClick( {
-			domainName,
-			isMultipleDomains,
-			user,
-			severity: this.getNoticeSeverity(),
-			section: this.props.section,
-			siteSlug: this.props.siteSlug,
-		} );
-	};
-
-	logInClickHandlerOneDomain = () => {
-		this.recordLogInClick(
-			this.props.domains[ 0 ].name,
-			this.props.domains[ 0 ].googleAppsSubscription.pendingUsers[ 0 ],
-			false
-		);
-	};
-
-	logInClickHandlerMultipleDomains = ( domainName, user ) => {
-		this.recordLogInClick( domainName, user, true );
-	};
-
 	fixClickHandler = () => {
 		this.props.fixPendingEmailSiteNoticeClick( this.props.siteSlug );
 	};
@@ -160,12 +136,15 @@ class PendingGappsTosNotice extends React.PureComponent {
 					}
 				) }
 			>
-				<NoticeAction
-					href={ getLoginUrlWithTOSRedirect( users[ 0 ], domainName ) }
-					onClick={ this.logInClickHandlerOneDomain }
-					external
-				>
-					{ translate( 'Log in' ) }
+				<NoticeAction>
+					<PendingGappsTosNoticeAction
+						domainName={ domainName }
+						isMultipleDomains={ false }
+						section={ this.props.section }
+						severity={ severity }
+						siteSlug={ this.props.siteSlug }
+						user={ users[ 0 ] }
+					/>
 				</NoticeAction>
 			</Notice>
 		);
@@ -195,12 +174,14 @@ class PendingGappsTosNotice extends React.PureComponent {
 						( { name: domainName, googleAppsSubscription: { pendingUsers: users } } ) => {
 							return (
 								<li key={ `pending-gapps-tos-acceptance-domain-${ domainName }` }>
-									<strong>{ users.join( ', ' ) } </strong>
-									<PendingGappsTosNoticeMultipleDomainListItem
-										href={ getLoginUrlWithTOSRedirect( users[ 0 ], domainName ) }
+									<strong>{ domainName } </strong>
+									<PendingGappsTosNoticeAction
 										domainName={ domainName }
+										isMultipleDomains={ true }
+										section={ this.props.section }
+										severity={ severity }
+										siteSlug={ this.props.siteSlug }
 										user={ users[ 0 ] }
-										onClick={ this.logInClickHandlerMultipleDomains }
 									/>
 								</li>
 							);
@@ -228,31 +209,6 @@ class PendingGappsTosNotice extends React.PureComponent {
 		}
 	}
 }
-
-const pendingAccountLogInClick = ( {
-	siteSlug,
-	domainName,
-	user,
-	severity,
-	isMultipleDomains,
-	section,
-} ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			`Clicked "Log in" link in G Suite pending ToS notice in ${ section }`,
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent( 'calypso_domain_management_gsuite_pending_account_log_in_click', {
-			site_slug: siteSlug,
-			domain_name: domainName,
-			user,
-			severity,
-			is_multiple_domains: isMultipleDomains,
-			section,
-		} )
-	);
 
 const showPendingAccountNotice = ( { siteSlug, severity, isMultipleDomains, section } ) =>
 	composeAnalytics(
@@ -282,7 +238,6 @@ export default connect(
 	null,
 	{
 		fixPendingEmailSiteNoticeClick,
-		pendingAccountLogInClick,
 		showPendingAccountNotice,
 	}
 )( localize( PendingGappsTosNotice ) );

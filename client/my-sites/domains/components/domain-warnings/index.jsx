@@ -1095,7 +1095,7 @@ export class DomainWarnings extends React.PureComponent {
 		const notices = this.getPipe()
 			.map( renderer => renderer() )
 			.filter( notice => notice );
-		return notices.length ? <div>{ notices }</div> : null;
+		return notices.length ? <div className="domain-warnings__container">{ notices }</div> : null;
 	}
 }
 
