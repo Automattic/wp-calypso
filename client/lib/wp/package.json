@@ -1,7 +1,7 @@
 {
-	"name": "wp",
-	"version": "0.0.0",
-	"private": true,
-	"main": "node.js",
-	"browser": "browser.js"
+  "name": "wp",
+  "version": "0.0.0",
+  "private": true,
+  "main": "node.js",
+  "browser": "browser.js"
 }
