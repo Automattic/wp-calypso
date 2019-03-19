@@ -35,7 +35,7 @@ const config = {
 	] ),
 	overrides: [
 		{
-			test: [ './client/gutenberg/extensions', './packages/jetpack-blocks' ],
+			test: './src',
 			plugins: [
 				[
 					'@wordpress/import-jsx-pragma',
