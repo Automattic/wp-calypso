@@ -8,3 +8,7 @@ parenSpacing: true
 jsxBracketSameLine: false
 semi: true
 arrowParens: avoid
+overrides:
+  - files: "package.json"
+    options:
+      useTabs: false
