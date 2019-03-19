@@ -27,7 +27,7 @@ function parseGitDiffToPathArray( command ) {
 	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( name => name.trim() )
-		.filter( name => /\.(jsx?|scss)$/.test( name ) );
+		.filter( name => /(?:package.json|\.jsx?|\.scss)$/.test( name ) );
 }
 
 // grab a list of all the files staged to commit
@@ -70,7 +70,10 @@ if ( toStylelintfix.length ) {
 }
 
 // Now run the linters over everything staged to commit, even if they are partially staged
-const [ toStylelint, toEslint ] = _.partition( files, file => file.endsWith( '.scss' ) );
+const [ toStylelint, toEslint ] = _.partition(
+	files.filter( file => ! file.endsWith( '.json' ) ),
+	file => file.endsWith( '.scss' )
+);
 
 // first stylelint
 if ( toStylelint.length ) {

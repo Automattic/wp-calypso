@@ -252,7 +252,7 @@
 		"prestart": "npx check-node-version --package && npm run -s install-if-deps-outdated && node bin/welcome.js",
 		"start": "npm run -s build",
 		"poststart": "cross-env-shell CALYPSO_CLIENT=true NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS --max_old_space_size=4096 build/bundle.js",
-		"reformat-files": "./node_modules/.bin/prettier --ignore-path .eslintignore --write \"**/*.{js,jsx}\"",
+		"reformat-files": "./node_modules/.bin/prettier --ignore-path .eslintignore --write \"**/*.{js,jsx}\" \"**/package.json\"",
 		"pretest": "npm run -s install-if-deps-outdated",
 		"test": "run-s -s test-client test-packages test-server",
 		"pretest-client": "npm run -s pretest",
