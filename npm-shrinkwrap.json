@@ -6409,9 +6409,9 @@
 			"integrity": "sha512-q0cW1RpvA5c5ma2rch62mX8AYaiLX0+bdaSM2wxSU9tXjU4DNvkx9qiUvjkuWCj3p22UO/hlPivujqMiR9PDzA=="
 		},
 		"d3-scale": {
-			"version": "2.1.2",
-			"resolved": "https://registry.npmjs.org/d3-scale/-/d3-scale-2.1.2.tgz",
-			"integrity": "sha512-bESpd64ylaKzCDzvULcmHKZTlzA/6DGSVwx7QSDj/EnX9cpSevsdiwdHFYI9ouo9tNBbV3v5xztHS2uFeOzh8Q==",
+			"version": "2.2.2",
+			"resolved": "https://registry.npmjs.org/d3-scale/-/d3-scale-2.2.2.tgz",
+			"integrity": "sha512-LbeEvGgIb8UMcAa0EATLNX0lelKWGYDQiPdHj+gLblGVhGLyNbaCn3EvrJf0A3Y/uOOU5aD6MTh5ZFCdEwGiCw==",
 			"requires": {
 				"d3-array": "^1.2.0",
 				"d3-collection": "1",
