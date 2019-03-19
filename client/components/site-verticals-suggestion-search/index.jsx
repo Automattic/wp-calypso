@@ -103,7 +103,17 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	}
 
 	setSearchResults = results => {
-		this.setState( { results } );
+		if ( size( results ) ) {
+			const hasVerticalInput = find(
+				results,
+				item => ! item.isUserInputVertical
+			);
+			// if the only result is a user input, then concat that with the previous results and remove the last user input
+			if ( ! hasVerticalInput && 1 < size( this.state.results ) ) {
+				results = this.state.results.filter( item => ! item.isUserInputVertical ).concat( results );
+			}
+			this.setState( { results } )
+		}
 	};
 
 	setDefaultVerticalResults = defaultVertical => {
@@ -177,9 +187,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			}
 			this.setState( { railcar: this.getNewRailcar() } );
 		}
-
-		// eslint-disable-next-line
-		console.log( 'value, match', value, match, this.state.results );
 
 		this.setState( { searchValue: value, selectedVertical: match } );
 
@@ -267,9 +274,9 @@ export function requestVerticals( search, limit = 7, callback, setLoading = true
 			isSearchPending = false;
 		} );
 }
-
+// this doesn't really work until we add it all to state.
 export function isVerticalSearchPending() {
-	return SiteVerticalsSuggestionSearch.isSearchPending;
+	return isSearchPending;
 }
 
 

@@ -1,7 +1,7 @@
 /**
  * /*
  * Animations
- * 
+ *
  * Defines `slide-in-up` `slide-out-up` `scale-fade`
  * Used for section overlays
  *
@@ -280,5 +280,14 @@ html {
 	}
 	100% {
 		opacity: 0.5;
+	}
+}
+
+@keyframes rotation {
+	from {
+		transform: rotate( 0deg );
+	}
+	to {
+		transform: rotate( 360deg );
 	}
 }

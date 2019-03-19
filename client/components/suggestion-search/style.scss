@@ -14,5 +14,9 @@
 		@include breakpoint( '<660px' ) {
 			top: 16px;
 		}
+
+		&.is-loading {
+			animation: rotation 1s linear infinite;
+		}
 	}
 }

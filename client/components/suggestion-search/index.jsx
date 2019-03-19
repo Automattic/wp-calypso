@@ -5,6 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { escapeRegExp, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
@@ -13,6 +14,7 @@ import Gridicon from 'gridicons';
  */
 import FormTextInput from 'components/forms/form-text-input';
 import Suggestions from 'components/suggestions';
+import { isVerticalSearchPending } from 'components/site-verticals-suggestion-search';
 
 /**
  * Style dependencies
@@ -134,10 +136,10 @@ class SuggestionSearch extends Component {
 
 	render() {
 		const { id, placeholder, autoFocus } = this.props;
-
+		const gridiconType = isVerticalSearchPending() ? 'refresh' : 'search';
 		return (
 			<div className="suggestion-search">
-				<Gridicon icon="search" />
+				<Gridicon className={ classNames( { 'is-loading': isVerticalSearchPending() } ) } icon={ gridiconType } />
 				<FormTextInput
 					id={ id }
 					placeholder={ placeholder }
