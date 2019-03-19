@@ -361,7 +361,6 @@ jobs:
       - save_cache: *save-jest-cache
       - store-artifacts-and-test-results
 
-
   test-server:
     <<: *defaults
     parallelism: 1
@@ -454,19 +453,36 @@ jobs:
                     }'
             fi
 
-  #
   # Prime calypso.live so it has a build ready
   #
   # We can send a request to calypso.live so that it gets a build ready.
-  # This saves time if folks want to test and also saves having e2e jobs wasting container time waiting for the image to build.
+  # This saves time waiting later when waiting for the calypso.live
   #
   # Expected usage:
-  #   - After main tests have passed (test-client, test-server)
+  #   - After setup
   #   - Only on branches (!master)
   #
   prime-calypso-live:
     docker:
-    - image: buildpack-deps
+      - image: buildpack-deps
+    working_directory: ~/wp-calypso
+    steps:
+      - run:
+          name: Prime calypso.live
+          command: |
+            if [[ -z $CIRCLE_PR_USERNAME ]]; then
+              curl --silent "https://hash-$CIRCLE_SHA1.calypso.live"
+            fi
+
+  # Wait for calypso.live to be ready
+  #
+  # Expected usage:
+  #   - After main tests have passed (test-client, test-server)
+  #   - Before e2e tests run
+  #
+  wait-calypso-live:
+    docker:
+      - image: buildpack-deps
     working_directory: ~/wp-calypso
     steps:
       - run:
@@ -530,6 +546,12 @@ workflows:
   calypso:
     jobs:
       - setup
+      - prime-calypso-live:
+          requires:
+            - setup
+          filters:
+            branches:
+              ignore: master
       - build-jetpack-blocks:
           requires:
             - setup
@@ -551,7 +573,7 @@ workflows:
       - test-server:
           requires:
             - setup
-      - prime-calypso-live:
+      - wait-calypso-live:
           requires:
             - test-client
             - test-server
@@ -560,24 +582,24 @@ workflows:
               ignore: master
       - test-e2e-canary:
           requires:
-            - prime-calypso-live
+            - wait-calypso-live
           test-flags: "-C -S $CIRCLE_SHA1"
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
-            - prime-calypso-live
+            - wait-calypso-live
           test-flags: "-z -S $CIRCLE_SHA1"
           test-target: "IE11"
           slack-webhook: "$SLACK_IE"
       - test-e2e-canary:
           name: test-e2e-canary-safari
           requires:
-            - prime-calypso-live
+            - wait-calypso-live
           test-flags: "-y -S $CIRCLE_SHA1"
       - test-e2e-canary:
           name: test-e2e-canary-woo
           requires:
-            - prime-calypso-live
+            - wait-calypso-live
           test-flags: "-W -S $CIRCLE_SHA1"
           test-target: "WOO"
           slack-webhook: "$SLACK_WOO"
