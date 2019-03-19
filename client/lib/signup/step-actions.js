@@ -613,9 +613,14 @@ export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) 
 		initialContext: {
 			query: { site_type: siteType },
 		},
+		signupDependencies,
 	} = nextProps;
 	const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
 	let fulfilledDependencies = [];
+
+	if ( siteType === get( signupDependencies, 'siteType' ) ) {
+		return;
+	}
 
 	if ( siteTypeValue ) {
 		debug( 'From query string: site_type = %s', siteType );
