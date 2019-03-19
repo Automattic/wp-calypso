@@ -14,6 +14,11 @@ import { isMonthly, isYearly, isBiennially } from 'lib/products-values';
  */
 import { cartItems } from 'lib/cart-values';
 
+/**
+ * Style dependencies
+ */
+import './subscription-text.scss';
+
 class SubscriptionText extends React.Component {
 	render() {
 		const { cart, translate } = this.props;
@@ -36,7 +41,7 @@ class SubscriptionText extends React.Component {
 				} );
 			}
 
-			return <span className="subscription-text">{ informative_text }</span>;
+			return <span className="checkout__subscription-text">{ informative_text }</span>;
 		}
 
 		return null;

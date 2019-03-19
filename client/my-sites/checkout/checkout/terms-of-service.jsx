@@ -23,7 +23,7 @@ class TermsOfService extends React.Component {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Terms and Conditions Link' );
 	};
 
-	renderTerms = () => {
+	renderTerms() {
 		let message = this.props.translate(
 			'By checking out, you agree to our {{link}}terms and conditions{{/link}}.',
 			{
@@ -64,11 +64,15 @@ class TermsOfService extends React.Component {
 		}
 
 		return message;
-	};
+	}
 
 	render() {
 		return (
-			<div className="checkout-terms" onClick={ this.recordTermsAndConditionsClick }>
+			<div
+				className="checkout__terms"
+				role="presentation"
+				onClick={ this.recordTermsAndConditionsClick }
+			>
 				<Gridicon icon="info-outline" size={ 18 } />
 				<p>{ this.renderTerms() }</p>
 			</div>

@@ -13,7 +13,7 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Checkout } from '../checkout';
+import { Checkout } from '../';
 import { hasPendingPayment } from 'lib/cart-values';
 import { isEnabled } from 'config';
 

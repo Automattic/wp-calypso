@@ -93,6 +93,11 @@ import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function getPurchases( props ) {
 	return [
 		...get( props, 'receipt.data.purchases', [] ),

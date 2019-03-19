@@ -37,6 +37,11 @@ import { localize } from 'i18n-calypso';
 import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
 import analytics from 'lib/analytics';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ConciergeSessionNudge extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
