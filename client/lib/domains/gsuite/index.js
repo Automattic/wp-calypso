@@ -50,7 +50,8 @@ function getEligibleGSuiteDomain( selectedDomainName, domains ) {
 function getGSuiteSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
 		const wpcomHosted =
-			includes( [ domainTypes.REGISTERED ], domain.type ) && domain.hasWpcomNameservers;
+			includes( [ domainTypes.REGISTERED ], domain.type ) &&
+			( domain.hasWpcomNameservers || hasGSuite( domain ) );
 		const mapped = includes( [ domainTypes.MAPPED ], domain.type );
 		return ( wpcomHosted || mapped ) && canDomainAddGSuite( domain.name );
 	} );
