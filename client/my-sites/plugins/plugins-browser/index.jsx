@@ -640,6 +640,7 @@ export default flow(
 				sitePlan &&
 				( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
 			const hasPremiumPlan = sitePlan && ( hasBusinessPlan || isPremium( sitePlan ) );
+			const recommendedPlugins = getRecommendedPlugins( state, selectedSiteId );
 
 			return {
 				selectedSiteId,
@@ -657,8 +658,8 @@ export default flow(
 				selectedSite: getSelectedSite( state ),
 				siteSlug: getSelectedSiteSlug( state ),
 				sites: getSelectedOrAllSitesJetpackCanManage( state ),
-				isRequestingRecommendedPlugins: getRecommendedPlugins( state, selectedSiteId ) === null,
-				recommendedPlugins: getRecommendedPlugins( state, selectedSiteId ) || [],
+				isRequestingRecommendedPlugins: ! Array.isArray( recommendedPlugins ),
+				recommendedPlugins: recommendedPlugins || [],
 			};
 		},
 		{

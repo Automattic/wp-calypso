@@ -1,23 +1,26 @@
 /**
  * Internal dependencies
  */
-import { items } from '../reducer';
-import { PLUGINS_RECOMMENDED_REQUEST, PLUGINS_RECOMMENDED_RECEIVE } from 'state/action-types';
+import reducer from '../reducer';
+import {
+	PLUGINS_RECOMMENDED_REQUEST_FAILURE,
+	PLUGINS_RECOMMENDED_RECEIVE,
+} from 'state/action-types';
 
 const EXAMPLE_SITE_ID = 77203074;
 
 describe( 'Recommended plugins reducer', () => {
 	describe( 'items reducer', () => {
 		test( 'should default to an empty object', () => {
-			expect( items( undefined, [] ) ).toEqual( {} );
+			expect( reducer( undefined, [] ) ).toEqual( {} );
 		} );
-		test( 'should set state value to null when a network request is in flight', () => {
-			const state = items( undefined, {
-				type: PLUGINS_RECOMMENDED_REQUEST,
+		test( 'should set state value to an empty array when a network request fails', () => {
+			const state = reducer( undefined, {
+				type: PLUGINS_RECOMMENDED_REQUEST_FAILURE,
 				siteId: EXAMPLE_SITE_ID,
 			} );
 			expect( state ).toEqual( {
-				[ EXAMPLE_SITE_ID ]: null,
+				[ EXAMPLE_SITE_ID ]: [],
 			} );
 		} );
 		test( 'should store recommended plugins from successful network requests', () => {
@@ -30,7 +33,7 @@ describe( 'Recommended plugins reducer', () => {
 					slug: 'some-plugin',
 				},
 			];
-			const state = items( undefined, {
+			const state = reducer( undefined, {
 				type: PLUGINS_RECOMMENDED_RECEIVE,
 				data: EXAMPLE_DATA,
 				siteId: EXAMPLE_SITE_ID,

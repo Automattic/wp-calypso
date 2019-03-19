@@ -1,7 +1,11 @@
 /**
  * Internal dependencies
  */
-import { PLUGINS_RECOMMENDED_REQUEST, PLUGINS_RECOMMENDED_RECEIVE } from 'state/action-types';
+import {
+	PLUGINS_RECOMMENDED_RECEIVE,
+	PLUGINS_RECOMMENDED_REQUEST_FAILURE,
+	PLUGINS_RECOMMENDED_REQUEST,
+} from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/plugins/recommended';
 
@@ -27,4 +31,15 @@ export function fetchRecommendedPlugins( siteId, limit = 6 ) {
  */
 export function receiveRecommendedPlugins( siteId, data ) {
 	return { data, siteId, type: PLUGINS_RECOMMENDED_RECEIVE };
+}
+
+/**
+ * Returns an action object to signal that the network request for
+ * recommended plugins has failed.
+ *
+ * @param  {Number}  siteId  Site ID
+ * @return {Object}          Action object
+ */
+export function dispatchRecommendPluginsRequestFailure( siteId ) {
+	return { siteId, type: PLUGINS_RECOMMENDED_REQUEST_FAILURE };
 }

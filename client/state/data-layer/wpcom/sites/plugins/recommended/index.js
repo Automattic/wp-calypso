@@ -3,7 +3,10 @@
  */
 import { normalizePluginsList } from 'lib/plugins/utils';
 import { PLUGINS_RECOMMENDED_REQUEST } from 'state/action-types';
-import { receiveRecommendedPlugins } from 'state/plugins/recommended/actions';
+import {
+	dispatchRecommendPluginsRequestFailure,
+	receiveRecommendedPlugins,
+} from 'state/plugins/recommended/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -34,7 +37,10 @@ export const onSuccess = ( { siteId, limit }, data ) => {
 };
 
 export const onError = ( { siteId, limit } ) => {
-	return [ recordTracksEvent( 'calypso_recommended_plugins_error', { site_id: siteId, limit } ) ];
+	return [
+		recordTracksEvent( 'calypso_recommended_plugins_error', { site_id: siteId, limit } ),
+		dispatchRecommendPluginsRequestFailure(),
+	];
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/plugins/recommended/index.js', {

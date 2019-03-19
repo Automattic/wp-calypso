@@ -1,18 +1,22 @@
 /**
  * Internal dependencies
  */
-import { PLUGINS_RECOMMENDED_REQUEST, PLUGINS_RECOMMENDED_RECEIVE } from 'state/action-types';
+import { keyedReducer } from 'state/utils';
+import {
+	PLUGINS_RECOMMENDED_RECEIVE,
+	PLUGINS_RECOMMENDED_REQUEST_FAILURE,
+} from 'state/action-types';
 
-export const items = ( state = {}, action ) => {
+const reducer = keyedReducer( 'siteId', ( state = null, action ) => {
 	switch ( action.type ) {
-		case PLUGINS_RECOMMENDED_REQUEST: {
-			return { ...state, [ action.siteId ]: null };
-		}
 		case PLUGINS_RECOMMENDED_RECEIVE: {
-			return { ...state, [ action.siteId ]: action.data };
+			return action.data;
+		}
+		case PLUGINS_RECOMMENDED_REQUEST_FAILURE: {
+			return [];
 		}
 	}
 	return state;
-};
+} );
 
-export default items;
+export default reducer;
