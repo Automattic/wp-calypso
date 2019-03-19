@@ -21,10 +21,6 @@ const twitter = {
 	windowArg: 'width=550,height=420,resizeable,scrollbars',
 };
 
-const googlePlus = {
-	url: 'https://plus.google.com/share?url=<URL>',
-};
-
 const linkedin = {
 	url: 'https://www.linkedin.com/shareArticle?mini=true&url=<URL>&title=<TITLE>',
 };
@@ -50,5 +46,4 @@ export default {
 	tumblr,
 	pinterest,
 	telegram,
-	'google-plus': googlePlus,
 };
