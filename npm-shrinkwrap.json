@@ -2779,6 +2779,11 @@
 				"uuid": "^3.3.2"
 			}
 		},
+		"@wordpress/browserslist-config": {
+			"version": "2.3.0",
+			"resolved": "https://registry.npmjs.org/@wordpress/browserslist-config/-/browserslist-config-2.3.0.tgz",
+			"integrity": "sha512-bNOahe6ntNF3pRvCaeh2tGgnpPxe35U6UBfvRjDcOk3sIRvN1S7XlG0rlGZOOD+vJU93VLDM8AUj4uL6VPqPgQ=="
+		},
 		"@wordpress/components": {
 			"version": "7.0.8",
 			"resolved": "https://registry.npmjs.org/@wordpress/components/-/components-7.0.8.tgz",
