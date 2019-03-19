@@ -206,8 +206,12 @@ jobs:
     steps:
       - prepare
       - run: npx lerna bootstrap --concurrency=2 --scope '@automattic/jetpack-blocks'
-      - run: npx lerna run prepublishOnly --stream --scope '@automattic/jetpack-blocks'
-      - run: mv packages/jetpack-blocks/dist $CIRCLE_ARTIFACTS/jetpack-blocks
+      - run: |
+          npx lerna run prepublishOnly                       \
+            --stream                                         \
+            --scope '@automattic/jetpack-blocks'             \
+            -- --                                            \
+            --output-path "$CIRCLE_ARTIFACTS/jetpack-blocks"
       - store-artifacts-and-test-results
 
   lint-and-translate:
