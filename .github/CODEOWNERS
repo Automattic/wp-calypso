@@ -1,8 +1,11 @@
 # We use codeowners to help keep teams in the loop on changes to code 
-# they typically work on. Even though this file is called codeOWNERS, we don't really want to 
-# imply ownership of code, just interest. 
+# they typically work on. Even though this file is called CODEOWNERS, 
+# we don't really want to enforce or imply ownership of code, just interest. 
 #
 # Anyone can work on anything. 
+#
+# Prefer associating a "team" with a path rather than an individual. That allows individuals to 
+# move around without having to continually update this file.
 #
 # See https://help.github.com/en/articles/about-code-owners for details on the format of this file
 
