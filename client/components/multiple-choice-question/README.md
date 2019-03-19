@@ -91,7 +91,8 @@ The question to display at the top of the multiple choice
 - **Type:** `Function`
 - **Required:** `yes`
 
-Handler for when the selected answer of text is changed. Is called each time a new answer is selected. The arguments are `id`, and optionally `text` if the answer has a text input. It will be called each time the text changes as well. If an answer has existing text when selected that test till be sent
+Handler for when the selected answer of the multiple choice is changeed. It is called each time a new answer is selected **OR** when the optional text input of the selected answer is changes. The arguments are `id`, and optionally `text` if the answer has a text input.
+
 
 ### `selectedAnswerId`
 
@@ -123,7 +124,7 @@ The answers to display. Each answer is an object with the following properties.
 - **Type:** `String`
 - **Required:** `yes`
 
-A translation-independent way to reference the each answer. This is what will be passed back through the `onAnswerChange` function.
+A translation-independent way to reference each answer. This is what will be passed back through the `onAnswerChange` function.
 
 ##### `answerText`
 
