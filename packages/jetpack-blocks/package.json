@@ -47,14 +47,15 @@
     "enzyme-adapter-react-16": "^1.9.1",
     "enzyme-to-json": "^3.3.5",
     "react": "^16.8.3",
-    "webpack": "^4.29.6"
+    "webpack": "^4.29.6",
+    "webpack-cli": "3.2.3"
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "clean": "npx rimraf dist",
-    "build": "node $NODE_ARGS ./node_modules/webpack/bin/webpack.js --config ./webpack.config.js",
+    "build": "webpack --config ./webpack.config.js",
     "prepublishOnly": "npm run clean; NODE_ENV=production npm run build"
   },
   "repository": {
