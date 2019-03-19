@@ -193,6 +193,7 @@ class CalypsoifyIframe extends Component {
 
 	updateImageBlocks = action => {
 		if (
+			! this.iframePort ||
 			! action ||
 			! startsWith( action.data.mime_type, 'image/' ) ||
 			startsWith( action.data.URL, 'blob:' )
