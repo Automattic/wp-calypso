@@ -40,7 +40,6 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "file:../calypso-build",
 		"@automattic/calypso-color-schemes": "file:../calypso-color-schemes",
-		"chalk": "2.4.2",
 		"copy-webpack-plugin": "4.6.0",
 		"enzyme": "3.9.0",
 		"enzyme-adapter-react-16": "1.9.1",
