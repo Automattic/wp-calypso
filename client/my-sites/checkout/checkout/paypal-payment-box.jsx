@@ -40,7 +40,7 @@ export class PaypalPaymentBox extends React.Component {
 
 	handlePostalCodeChange = event => {
 		setTaxPostalCode( event.target.value );
-	}
+	};
 
 	handleChange = event => {
 		this.updateLocalStateWithFieldValue( event.target.name, event.target.value );
@@ -160,7 +160,7 @@ export class PaypalPaymentBox extends React.Component {
 								additionalClasses="checkout-field"
 								name="postal-code"
 								label={ this.props.translate( 'Postal Code', { textOnly: true } ) }
-								defaultValue={ getTaxPostalCode( cart ) }
+								value={ getTaxPostalCode( cart ) || '' }
 								onChange={ this.handlePostalCodeChange }
 								disabled={ this.state.formDisabled }
 								eventFormName="Checkout Form"
