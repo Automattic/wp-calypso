@@ -126,7 +126,6 @@ export class DomainWarnings extends React.PureComponent {
 			this.pendingConsent,
 		];
 		const validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
-
 		return intersection( allRules, validRules );
 	}
 
@@ -835,7 +834,6 @@ export class DomainWarnings extends React.PureComponent {
 
 	pendingTransfer = () => {
 		const domain = find( this.getDomains(), 'pendingTransfer' );
-
 		if ( ! domain ) {
 			return null;
 		}
@@ -1095,7 +1093,7 @@ export class DomainWarnings extends React.PureComponent {
 		const notices = this.getPipe()
 			.map( renderer => renderer() )
 			.filter( notice => notice );
-		return notices.length ? <div className="domain-warnings__container">{ notices }</div> : null;
+		return notices.length ? <div>{ notices }</div> : null;
 	}
 }
 

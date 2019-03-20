@@ -19,12 +19,17 @@ import { domainManagementEmail } from 'my-sites/domains/paths';
 import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const learnMoreLink = (
 	<a href={ COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />
 );
 const strong = <strong />;
 
-class PendingGappsTosNotice extends React.PureComponent {
+class PendingGSuiteTosNotice extends React.PureComponent {
 	static propTypes = {
 		siteSlug: PropTypes.string.isRequired,
 		domains: PropTypes.array.isRequired,
@@ -240,4 +245,4 @@ export default connect(
 		fixPendingEmailSiteNoticeClick,
 		showPendingAccountNotice,
 	}
-)( localize( PendingGappsTosNotice ) );
+)( localize( PendingGSuiteTosNotice ) );

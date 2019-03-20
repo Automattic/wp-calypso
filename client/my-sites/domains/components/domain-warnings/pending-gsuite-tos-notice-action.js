@@ -24,7 +24,9 @@ function PendingGSuiteTosNoticeAction( props ) {
 
 	return (
 		<Fragment>
-			<button onClick={ onFixClickHandler }>{ translate( 'Fix' ) }</button>
+			<button className="domain-warnings__action" onClick={ onFixClickHandler }>
+				{ translate( 'Fix' ) }
+			</button>
 			<PendingGSuiteTosNoticeDialog
 				domainName={ props.domainName }
 				isMultipleDomains={ props.isMultipleDomains }

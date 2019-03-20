@@ -1,17 +1,15 @@
-.domain-warnings__container {
-	button {
-		background: none;
-		border: none;
-		color: white;
-		cursor: pointer;
-		padding: 0;
-		text-decoration: underline;
-	}
+.domain-warnings__action {
+	background: none;
+	border: none;
+	color: white;
+	cursor: pointer;
+	padding: 0;
+	text-decoration: underline;
+}
 
-	button:hover {
-		color: white;
-		text-decoration: none;
-	}
+.domain-warnings__action:hover {
+	color: white;
+	text-decoration: none;
 }
 
 .domain-warnings__dialog {
