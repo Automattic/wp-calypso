@@ -16,7 +16,6 @@ import { flowRight as compose } from 'lodash';
  * Internal dependencies
  */
 import FormButton from 'components/forms/form-button';
-import analytics from 'lib/analytics';
 import FormButtonBar from 'components/forms/form-buttons-bar';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
@@ -27,6 +26,7 @@ import Button from 'components/button';
 import Tooltip from 'components/tooltip';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getCurrentUserName } from 'state/current-user/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -86,7 +86,7 @@ class Security2faBackupCodesList extends React.Component {
 	};
 
 	onPrint = () => {
-		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Button' );
+		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Print Backup Codes Button' );
 
 		if ( config.isEnabled( 'desktop' ) ) {
 			require( 'lib/desktop' ).print(
@@ -99,12 +99,12 @@ class Security2faBackupCodesList extends React.Component {
 	};
 
 	onCopy = () => {
-		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Copy to clipboard Button' );
+		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Copy to clipboard Button' );
 		this.setState( { isCopied: true } );
 	};
 
 	saveCodesToFile = () => {
-		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
+		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
 
 		const backupCodes = this.props.backupCodes.join( '\n' );
 		const toSave = new Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
@@ -210,7 +210,7 @@ class Security2faBackupCodesList extends React.Component {
 
 	onNextStep = event => {
 		event.preventDefault();
-		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Next Step Button' );
+		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Backup Codes Next Step Button' );
 		this.props.onNextStep();
 	};
 
@@ -376,7 +376,10 @@ class Security2faBackupCodesList extends React.Component {
 }
 
 export default compose(
-	connect( state => ( { username: getCurrentUserName( state ) } ) ),
+	connect(
+		state => ( { username: getCurrentUserName( state ) } ),
+		{ recordGoogleEvent }
+	),
 	localize,
 	withLocalizedMoment
 )( Security2faBackupCodesList );
