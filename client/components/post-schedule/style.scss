@@ -116,14 +116,7 @@ input[type='text'].post-schedule__clock-time {
 	display: inline-flex;
 	margin: 0 6px;
 	vertical-align: bottom;
-}
-
-.post-schedule__clock .segmented-control__item {
-	display: inline-table;
-}
-
-.post-schedule__clock .segmented-control__link {
-	display: inline-block;
+	line-height: 0;
 }
 
 .info-popover__tooltip.post-schedule__timezone-info,
