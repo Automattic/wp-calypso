@@ -7,14 +7,13 @@ body.is-section-jetpack-connect .site-topic__content {
 
 	.form-fieldset {
 		margin-bottom: 0;
-		position: absolute;
 		left: 0;
 		right: 0;
 		z-index: 1000; // I know, I know...
 		border-radius: 4px;
 		background: var( --color-white );
-		box-shadow: 0 3px 6px rgba(0,0,0,0.16),
-					0 3px 6px rgba(0,0,0,0.23);
+		box-shadow: 0 3px 6px rgba( 0, 0, 0, 0.16 ),
+					0 3px 6px rgba( 0, 0, 0, 0.23 );
 	}
 
 	.suggestion-search .gridicon {
