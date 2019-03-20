@@ -41,6 +41,10 @@ export const settings = {
 			type: 'string',
 			default: DEFAULT_FORMAT,
 		},
+		hideMobile: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 
 	category: 'jetpack',
