@@ -49,17 +49,16 @@ function PendingGSuiteTosNoticeDialog( props ) {
 	};
 
 	const renderEntryCopy = () => {
-		return translate(
-			'In order to finish setup, you must now log into G Suite using the username and password that we sent to your email address (%s).',
-			{
-				args: props.user,
-			}
-		);
+		return translate( 'Do you already have the password for %(gsuiteEmail)s?', {
+			args: {
+				gsuiteEmail: props.user,
+			},
+		} );
 	};
 
 	const renderPasswordResetCopy = () => {
 		return translate(
-			'We have reset your temporary password. Please log in as `%s` with this password to finish setup:',
+			'We have reset the password for %s. Copy the new password below and click to continue.',
 			{
 				args: props.user,
 			}
@@ -69,7 +68,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 	return (
 		<Dialog className="domain-warnings__dialog" isVisible={ props.visible }>
 			<header>
-				<h1>{ translate( 'Finish G Suite Setup' ) }</h1>
+				<h1>{ translate( 'Log in to G Suite to finish setup' ) }</h1>
 				<button onClick={ props.onClose }>
 					<Gridicon icon="cross" />
 				</button>
@@ -79,14 +78,15 @@ function PendingGSuiteTosNoticeDialog( props ) {
 			{ password && (
 				<Fragment>
 					<p>
-						{ translate( 'Password:' ) } <strong>{ password }</strong>
+						<strong className="domain-warnings__password">{ password }</strong>
 						<ClipboardButton
 							className="domain-warnings__dialog-copy"
 							onCopy={ onCopyAction }
 							text={ password }
+							compact={ true }
 						>
 							{ isCopied && <Gridicon icon="checkmark" /> }
-							{ isCopied ? translate( 'Copied!' ) : translate( 'Copy Password' ) }
+							{ isCopied ? translate( 'Copied!' ) : translate( 'Copy' ) }
 						</ClipboardButton>
 					</p>
 					<Button
@@ -102,7 +102,9 @@ function PendingGSuiteTosNoticeDialog( props ) {
 			{ ! password && (
 				<VerticalNav>
 					<VerticalNavItem onClick={ onPasswordClickHandler } key="0" path={ '#' }>
-						{ translate( "I don't have the password" ) }
+						{ translate( "I {{strong}}don't{{/strong}} have the password", {
+							components: { strong: <strong /> },
+						} ) }
 					</VerticalNavItem>
 					<VerticalNavItem
 						onClick={ recordLogInClick }

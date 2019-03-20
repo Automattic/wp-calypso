@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import Button from 'components/button';
 
 /**
  * Internal dependencies
@@ -24,9 +25,9 @@ function PendingGSuiteTosNoticeAction( props ) {
 
 	return (
 		<Fragment>
-			<button className="domain-warnings__action" onClick={ onFixClickHandler }>
-				{ translate( 'Fix' ) }
-			</button>
+			<Button primary={ true } compact={ true } onClick={ onFixClickHandler }>
+				{ translate( 'Finish Setup' ) }
+			</Button>
 			<PendingGSuiteTosNoticeDialog
 				domainName={ props.domainName }
 				isMultipleDomains={ props.isMultipleDomains }
