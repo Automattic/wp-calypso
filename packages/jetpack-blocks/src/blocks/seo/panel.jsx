@@ -10,7 +10,7 @@ import { withDispatch, withSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _n } from '../../utils/i18n';
 
 class SeoPanel extends Component {
 	onMessageChange = event => {
