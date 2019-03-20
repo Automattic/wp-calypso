@@ -16,6 +16,7 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
+import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
@@ -48,11 +49,13 @@ class CalypsoifyIframe extends Component {
 
 	state = {
 		isMediaModalVisible: false,
+		isClassicBlockMediaModalVisible: false,
 		isIframeLoaded: false,
 		isPreviewVisible: false,
 		previewUrl: 'about:blank',
 		postUrl: null,
 		editedPost: null,
+		classicBlockEditorId: null,
 	};
 
 	constructor( props ) {
@@ -96,6 +99,13 @@ class CalypsoifyIframe extends Component {
 
 			// Check if we're generating a post via Press This
 			this.pressThis();
+			return;
+		}
+		if ( 'classicBlockOpenMediaModal' === action ) {
+			this.setState( {
+				isClassicBlockMediaModalVisible: true,
+				classicBlockEditorId: data.editorId,
+			} );
 		}
 	};
 
@@ -196,6 +206,20 @@ class CalypsoifyIframe extends Component {
 		this.setState( { isMediaModalVisible: false } );
 	};
 
+	closeClassicBlockMediaModal = () => this.setState( { isClassicBlockMediaModalVisible: false } );
+
+	insertClassicBlockMedia = markup => {
+		if ( this.iframePort ) {
+			this.iframePort.postMessage( {
+				action: 'insertClassicBlockMedia',
+				payload: {
+					editorId: this.state.classicBlockEditorId,
+					media: markup,
+				},
+			} );
+		}
+	};
+
 	pressThis = () => {
 		const { pressThis } = this.props;
 		if ( pressThis ) {
@@ -263,6 +287,7 @@ class CalypsoifyIframe extends Component {
 			previewUrl,
 			postUrl,
 			editedPost,
+			isClassicBlockMediaModalVisible,
 		} = this.state;
 
 		return (
@@ -288,6 +313,14 @@ class CalypsoifyIframe extends Component {
 						single={ ! multiple }
 						source=""
 						visible={ isMediaModalVisible }
+					/>
+					<EditorMediaModal
+						galleryViewEnabled={ false }
+						onClose={ this.closeClassicBlockMediaModal }
+						onInsertMedia={ this.insertClassicBlockMedia }
+						single
+						source=""
+						visible={ isClassicBlockMediaModalVisible }
 					/>
 				</MediaLibrarySelectedData>
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
