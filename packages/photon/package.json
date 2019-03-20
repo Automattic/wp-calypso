@@ -35,9 +35,6 @@
 		"seed-random": "2.2.0",
 		"url": "^0.11.0"
 	},
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../calypso-build"
-	},
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",

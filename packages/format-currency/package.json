@@ -22,9 +22,6 @@
 	"dependencies": {
 		"i18n-calypso": "file:../i18n-calypso"
 	},
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../calypso-build"
-	},
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",

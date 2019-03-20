@@ -31,11 +31,6 @@
 		"react": "^16.8.3",
 		"xgettext-js": "^2.0.0"
 	},
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../calypso-build",
-		"react-dom": "^16.6.3",
-		"react-test-renderer": "^16.6.3"
-	},
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",

@@ -26,9 +26,6 @@
 	"dependencies": {
 		"color-studio": "github:automattic/color-studio#1.0.1"
 	},
-	"devDependencies": {
-		"node-sass": "^4.11.0"
-	},
 	"publishConfig": {
 		"access": "public"
 	},
