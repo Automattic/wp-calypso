@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,6 +13,7 @@ import ActivityLogBanner from './index';
 import ProgressBar from 'components/progress-bar';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
+import { useLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Normalize timestamp values
@@ -35,22 +36,23 @@ const ms = ts =>
 
 function ProgressBanner( {
 	applySiteOffset,
-	moment,
 	percent,
 	status,
 	siteId,
 	timestamp,
-	translate,
 	restoreId,
 	downloadId,
 	action,
 	context,
 } ) {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
 	let title = '';
 	let description = '';
 	let statusMessage = '';
 
-	const dateTime = applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' );
+	const dateTime = applySiteOffset( moment( ms( timestamp ) ) ).format( 'LLLL' );
 
 	switch ( action ) {
 		case 'restore':
@@ -118,4 +120,4 @@ ProgressBanner.propTypes = {
 	action: PropTypes.oneOf( [ 'restore', 'backup' ] ),
 };
 
-export default localize( ProgressBanner );
+export default ProgressBanner;
