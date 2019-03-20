@@ -1808,10 +1808,10 @@ Undocumented.prototype.sitePurchases = function( siteId, fn ) {
 };
 
 Undocumented.prototype.resetPasswordForMailbox = function( domainName, mailbox, fn ) {
-	debug( '/domains/:domainName/google-apps/:mailbox/get-password' );
+	debug( '/domains/:domainName/google-apps/:mailbox/get-new-password' );
 	return this.wpcom.req.post(
 		{
-			path: '/domains/' + domainName + '/google-apps/' + mailbox + '/get-password',
+			path: '/domains/' + domainName + '/google-apps/' + mailbox + '/get-new-password',
 		},
 		fn
 	);
