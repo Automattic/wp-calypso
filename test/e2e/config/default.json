@@ -63,7 +63,7 @@
 		"businessPlanDescriptionAT",
 		"skipThemesSelectionModal",
 		"springSale30PercentOff",
-		"jetpackSignupGoogleTop",		
+		"jetpackSignupGoogleTop",
 		"cartNudgeUpdateToPremium",
 		"signupAtomicStoreVsPressable",
 		"improvedOnboarding",
@@ -78,7 +78,8 @@
 		"twoYearPlanByDefault",
 		"pluginFeaturedTitle",
 		"builderReferralHelpPopover",
-		"jetpackMonthlyPlansOnly"
+		"jetpackMonthlyPlansOnly",
+        "checklistSiteLogo"
 	],
 	"overrideABTests": [
 		[ "businessPlanDescriptionAT_20170605", "original" ],
@@ -96,6 +97,7 @@
 		[ "improvedOnboarding_20190314", "main" ],
 		[ "skipBusinessInformation_20190130", "hide" ],
 		[ "twoYearPlanByDefault_20190207", "originalFlavor" ],
-		[ "builderReferralHelpPopover_20190227", "original" ]
+		[ "builderReferralHelpPopover_20190227", "original" ],
+		[ "checklistSiteLogo_20190305", "icon" ]
 	]
 }
