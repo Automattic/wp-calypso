@@ -11,6 +11,7 @@ const _ = require( 'lodash' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
+const ConfigFlagPlugin = require( './server/bundler/config-flag-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
@@ -252,6 +253,9 @@ function getWebpackConfig( {
 			new MomentTimezoneDataPlugin( {
 				startYear: 2000,
 			} ),
+			new ConfigFlagPlugin( {
+				desktop: config.isEnabled( 'desktop' ),
+			} ),
 		] ),
 		externals: _.compact( [
 			externalizeWordPressPackages && wordpressExternals,
@@ -274,12 +278,6 @@ function getWebpackConfig( {
 
 		webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 		webpackConfig.entry.build.unshift( 'webpack-hot-middleware/client' );
-	}
-
-	if ( ! config.isEnabled( 'desktop' ) ) {
-		webpackConfig.plugins.push(
-			new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' )
-		);
 	}
 
 	return webpackConfig;
