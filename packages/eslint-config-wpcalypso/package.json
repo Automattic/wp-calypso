@@ -28,5 +28,8 @@
 	},
 	"dependencies": {
 		"eslint-plugin-react-hooks": "^1.5.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "file:../calypso-build"
 	}
 }
