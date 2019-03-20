@@ -206,6 +206,7 @@ function getWebpackConfig( {
 					debug: path.resolve( __dirname, 'node_modules/debug' ),
 					store: 'store/dist/store.modern',
 					gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
+					react: path.resolve( __dirname, 'node_modules/react' ),
 				},
 				getAliasesForExtensions( {
 					extensionsDirectory: path.join( __dirname, 'client', 'extensions' ),
