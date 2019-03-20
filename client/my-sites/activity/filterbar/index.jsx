@@ -151,11 +151,11 @@ const mapStateToProps = state => ( {
 } );
 
 const mapDispatchToProps = dispatch => ( {
-	resetFilters: sideId =>
+	resetFilters: siteId =>
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),
-				updateFilter( sideId, { group: null, after: null, before: null, on: null, page: 1 } )
+				updateFilter( siteId, { group: null, after: null, before: null, on: null, page: 1 } )
 			)
 		),
 } );
