@@ -73,7 +73,8 @@ Your `package.json` can have any of the [normal properties](https://docs.npmjs.c
 	},
 	"scripts": {
 		"build": "npx @automattic/calypso-build",
-		"clean": "npx rimraf dist"
+		"clean": "npx rimraf dist",
+		"prepublishOnly": "npm run clean; npm run build"
 	}
 }
 ```
