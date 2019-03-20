@@ -18,11 +18,17 @@
 # Client initializaton
 /client/boot @Automattic/team-calypso
 
+# Client blocks
+/client/blocks/inline-help @Automattic/onboarding-dev
+
 # Client framework parts
 /client/config @Automattic/team-calypso
 /client/controller @Automattic/team-calypso
 /client/document @Automattic/team-calypso
 /client/layout @Automattic/team-calypso
+
+# Client sites
+/client/my-sites/checklist @Automattic/onboarding-dev
 
 # Developer guides
 /docs/coding-guidelines @Automattic/team-calypso
@@ -37,3 +43,4 @@
 
 # Test infrastructure
 /test @Automattic/team-calypso
+
