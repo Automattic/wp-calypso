@@ -39,28 +39,6 @@ describe( 'I18n', function() {
 						.fromNow()
 				).toBe( 'in ein paar Sekunden' );
 			} );
-			it( 'should be able to convert dates to any timezone', function() {
-				expect(
-					moment( '2014-07-18T14:59:09-07:00' )
-						.tz( 'America/Los_Angeles' )
-						.format( 'LLLL' )
-				).toBe( 'Freitag, 18. Juli 2014 14:59' );
-				expect(
-					moment( '2014-07-18T14:59:09-07:00' )
-						.tz( 'Asia/Tokyo' )
-						.format( 'LLLL' )
-				).toBe( 'Samstag, 19. Juli 2014 06:59' );
-				expect(
-					moment( '2014-07-18T14:59:09-07:00' )
-						.tz( 'Europe/Paris' )
-						.format( 'LLLL' )
-				).toBe( 'Freitag, 18. Juli 2014 23:59' );
-				expect(
-					moment( '2014-07-18T14:59:09-07:00' )
-						.tz( 'Europe/London' )
-						.format( 'LLLL' )
-				).toBe( 'Freitag, 18. Juli 2014 22:59' );
-			} );
 		} );
 	} );
 } );
