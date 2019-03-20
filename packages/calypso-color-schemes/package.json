@@ -23,10 +23,11 @@
 		"npm": "^6.1.0"
 	},
 	"main": "dist/calypso-color-schemes.css",
-	"dependencies": {},
-	"devDependencies": {
-		"node-sass": "^4.11.0",
+	"dependencies": {
 		"color-studio": "github:automattic/color-studio#1.0.1"
+	},
+	"devDependencies": {
+		"node-sass": "^4.11.0"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -35,6 +36,6 @@
 		"prebuild": "node bin/prepare-sass-assets.js",
 		"build": "node bin/build-css.js",
 		"clean": "npx rimraf dist src/__color-studio",
-		"prepublishOnly": "npm run clean; npm run build"
+		"prepare": "npm run clean; npm run build"
 	}
 }
