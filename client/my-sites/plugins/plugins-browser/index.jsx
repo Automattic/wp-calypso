@@ -75,7 +75,6 @@ export class PluginsBrowser extends Component {
 		trackPageViews: true,
 	};
 
-	visibleCategories = [ 'new', 'popular' ];
 	state = this.getPluginsLists( this.props.search );
 
 	reinitializeSearch() {
@@ -88,10 +87,6 @@ export class PluginsBrowser extends Component {
 
 	componentDidMount() {
 		PluginsListStore.on( 'change', this.refreshLists );
-
-		if ( ! this.isRecommendedPluginsEnabled() ) {
-			this.visibleCategories.push( 'featured' );
-		}
 
 		if ( this.props.search && this.props.searchTitle ) {
 			this.props.recordTracksEvent( 'calypso_plugins_search_noresults_recommendations_show', {
