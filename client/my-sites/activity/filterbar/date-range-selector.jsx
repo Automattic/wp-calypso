@@ -244,9 +244,8 @@ export class DateRangeSelector extends Component {
 		const to = this.getToDate();
 		const now = new Date();
 
-		const buttonClass = classnames( {
-			filterbar__selection: true,
-			'is-selected': !! from,
+		const buttonClass = classnames( 'filterbar__selection', {
+			'is-selected': from,
 			'is-active': isVisible && ! from,
 		} );
 

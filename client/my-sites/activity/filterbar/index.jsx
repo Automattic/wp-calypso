@@ -19,6 +19,11 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
 import getPreviousRoute from 'state/selectors/get-previous-route';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class Filterbar extends Component {
 	state = {
 		showActivityTypes: false,
