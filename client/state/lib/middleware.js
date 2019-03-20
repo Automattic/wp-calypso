@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get, once } from 'lodash';
+import { defer, once } from 'lodash';
 import debugFactory from 'debug';
 import notices from 'notices';
 import page from 'page';
@@ -33,7 +33,7 @@ import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-au
 import isFetchingAutomatedTransferStatus from 'state/selectors/is-fetching-automated-transfer-status';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserEmail, getCurrentUserSiteCount } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
@@ -93,15 +93,13 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
 	if ( ! action.query.immediate_login_success ) {
 		return;
 	}
-	const currentUser = getCurrentUser( getState() );
-	if ( ! currentUser ) {
+	const email = getCurrentUserEmail( getState() );
+	if ( ! email ) {
 		return;
 	}
-	const { email } = currentUser;
 
 	// Let redux process all dispatches that are currently queued and show the message
-	const delay = typeof setImmediate !== 'undefined' ? setImmediate : setTimeout;
-	delay( () => {
+	defer( () => {
 		notices.success( createImmediateLoginMessage( action.query.login_reason, email ) );
 	} );
 } );
@@ -163,8 +161,7 @@ let sitesListeners = [];
 const updateSelectedSiteForAnalytics = ( dispatch, action, getState ) => {
 	const state = getState();
 	const selectedSite = getSelectedSite( state );
-	const user = getCurrentUser( state );
-	const siteCount = get( user, 'site_count', 0 );
+	const siteCount = getCurrentUserSiteCount( state );
 	analytics.setSelectedSite( selectedSite );
 	analytics.setSiteCount( siteCount );
 };
