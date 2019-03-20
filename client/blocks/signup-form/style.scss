@@ -30,8 +30,15 @@
 }
 
 .signup-form__social {
+	max-width: 400px;
+	margin: 0 auto 16px;
+	padding: 16px;
+	box-sizing: border-box;
+
 	p {
-		margin: 0 0 20px;
+		font-size: 13px;
+		color: var( --color-white );
+		margin: 0 0 12px;
 		text-align: center;
 
 		&:last-child {
@@ -42,18 +49,14 @@
 
 .signup-form__social-buttons {
 	button {
-		margin: 0 0 10px;
-		width: 100%;
+		display: block;
+		margin: 0 auto;
+		box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ),
+					0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
+					0 1px 3px 0 rgba( 0, 0, 0, 0.20 );
 	}
 }
 
 .social-buttons__button-container + .social-buttons__button-container {
 	margin-top: 10px;
-}
-
-.signup-form__social,
-.signup-form__notice.notice {
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 480px;
 }

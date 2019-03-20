@@ -1,20 +1,11 @@
 .logged-out-form {
-	margin: 0 auto 16px auto;
-	max-width: 480px;
-}
-
-.logged-out-form__links {
-	margin: 0 auto;
-	max-width: 330px;
-	text-align: center;
-
-	body.is-section-signup:not(.is-section-jetpack-connect):not(.is-section-settings) .layout:not(.dops) & a {
-		color: var( --color-white );
-
-		&:hover {
-			color: var( --color-neutral-0 );
-		}
-	}
+	margin: 0 auto 16px;
+	max-width: 360px;
+	padding: 16px;
+	border-radius: 3px;
+	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ),
+				0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
+				0 1px 5px 0 rgba( 0, 0, 0, 0.20 );
 }
 
 .logged-out-form__footer {
@@ -37,18 +28,43 @@
 		float: none;
 		margin: 0;
 		width: 100%;
+		box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ),
+					0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
+					0 1px 3px 0 rgba( 0, 0, 0, 0.20 );
+	}
+}
+
+.logged-out-form__links {
+	margin: 0 auto;
+	max-width: 330px;
+	text-align: center;
+
+	&:before {
+		content: '';
+		display: block;
+		width: 80px;
+		background: rgba( var( --color-white-rgb ), 0.3 );
+		height: 2px;
+		margin: 0 auto 8px;
 	}
 }
 
 .logged-out-form__link-item {
-	border-bottom: 1px solid var( --color-neutral-100 );
 	color: var( --color-neutral-500 );
 	display: block;
 	font-family: $sans;
-	font-size: 14px;
-	line-height: 21px;
-	padding: 16px 24px;
+	font-size: 13px;
+	padding: 8px 16px;
 	cursor: pointer;
+	text-decoration: underline;
+
+	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout:not( .dops ) & {
+		color: var( --color-white );
+
+		&:hover {
+			color: var( --color-neutral-100 );
+		}
+	}
 
 	&:last-child {
 		border-bottom: none;
