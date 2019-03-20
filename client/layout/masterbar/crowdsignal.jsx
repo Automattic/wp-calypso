@@ -17,18 +17,17 @@ class CrowdsignalOauthMasterbar extends Component {
 		const crowdsignalGoogleFontsLink = 'https://fonts.googleapis.com/css?family=Muli:400,600';
 		const crowdsignalFonts = filter(
 			Array.from( document.head.childNodes ),
-			( node ) => node.nodeName.toLowerCase() === 'link' && node.href === crowdsignalGoogleFontsLink,
+			node => node.nodeName.toLowerCase() === 'link' && node.href === crowdsignalGoogleFontsLink
 		);
 
 		if ( crowdsignalFonts.length === 0 ) {
-			document.head.appendChild( tap(
-				document.createElement( 'link' ),
-				( link ) => {
+			document.head.appendChild(
+				tap( document.createElement( 'link' ), link => {
 					link.type = 'text/css';
 					link.rel = 'stylesheet';
 					link.href = crowdsignalGoogleFontsLink;
-				}
-			) );
+				} )
+			);
 		}
 	}
 
@@ -52,14 +51,17 @@ class CrowdsignalOauthMasterbar extends Component {
 						<li className="masterbar__crowdsignal-nav-item masterbar__crowdsignal-nav-text">
 							<p className="masterbar__crowdsignal-text">
 								<span>
-									{ translate( '{{span}}%(product)s is {{/span}}built by the people behind WordPress.com', {
-										args: {
-											product: oauth2Client.title,
-										},
-										components: {
-											span: <span className="masterbar__crowdsignal-wide-screen-only" />
+									{ translate(
+										'{{span}}%(product)s is {{/span}}built by the people behind WordPress.com',
+										{
+											args: {
+												product: oauth2Client.title,
+											},
+											components: {
+												span: <span className="masterbar__crowdsignal-wide-screen-only" />,
+											},
 										}
-									} ) }
+									) }
 								</span>
 							</p>
 						</li>

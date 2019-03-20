@@ -83,7 +83,6 @@ import { abtest } from 'lib/abtest';
  */
 import './style.scss';
 
-
 export class Checkout extends React.Component {
 	static propTypes = {
 		cards: PropTypes.array.isRequired,

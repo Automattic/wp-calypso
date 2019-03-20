@@ -112,12 +112,15 @@ export class UserStep extends Component {
 						'Link displayed on the Signup page to users willing to sign up for WooCommerce via WordPress.com',
 				} );
 			} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-				subHeaderText = translate( 'By creating an account via any of the options below,{{br/}}you agree to our {{a}}Terms of Service{{/a}}.', {
-					components: {
-						a: <a href="https://wordpress.com/tos" target="_blank" rel="noopener noreferrer" />,
-						br: <br />,
+				subHeaderText = translate(
+					'By creating an account via any of the options below,{{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
+					{
+						components: {
+							a: <a href="https://wordpress.com/tos" target="_blank" rel="noopener noreferrer" />,
+							br: <br />,
+						},
 					}
-				} );
+				);
 			} else {
 				subHeaderText = translate(
 					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',

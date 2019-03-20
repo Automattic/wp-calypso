@@ -1,9 +1,7 @@
 {
 	"title": "ProductValue",
 	"type": "object",
-	"required": [
-		"product_slug"
-	],
+	"required": [ "product_slug" ],
 	"additionalProperties": true,
 	"properties": {
 		"product_id": { "type": "number" },

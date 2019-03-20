@@ -41,13 +41,13 @@ class PostScheduleHeader extends React.Component {
 	};
 
 	setToCurrentYear = () => {
-		const { moment, date,onDateChange } = this.props;
+		const { moment, date, onDateChange } = this.props;
 		onDateChange( moment( date ).year( moment().year() ) );
 	};
 
 	setYear = modifier => {
-		const { moment, date,onDateChange } = this.props;
-		const newDate = moment(date).add( modifier, 'y' );
+		const { moment, date, onDateChange } = this.props;
+		const newDate = moment( date ).add( modifier, 'y' );
 
 		if ( 0 > newDate.year() || newDate.year() > 9999 ) {
 			return null;

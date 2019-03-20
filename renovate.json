@@ -7,7 +7,7 @@
 			"rangeStrategy": "replace"
 		},
 		{
-			"packagePatterns": ["^@wordpress"],
+			"packagePatterns": [ "^@wordpress" ],
 			"groupName": "wordpress-monorepo",
 			"separateMajorMinor": false
 		}

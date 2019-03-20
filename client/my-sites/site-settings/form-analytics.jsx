@@ -50,7 +50,7 @@ const hasBusinessPlan = overSome(
 	isEcommerce,
 	isEnterprise,
 	isJetpackBusiness,
-	isVipPlan,
+	isVipPlan
 );
 
 export class GoogleAnalyticsForm extends Component {

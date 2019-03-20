@@ -1,6 +1,6 @@
 {
-  "importId": "defunctImporter",
-  "type": "wordpress",
-  "importStatus": "importStopped",
-  "siteId": 0
+	"importId": "defunctImporter",
+	"type": "wordpress",
+	"importStatus": "importStopped",
+	"siteId": 0
 }
