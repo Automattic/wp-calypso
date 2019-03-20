@@ -33,7 +33,7 @@ test/
 
 Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, and `sideEffects`.
 
-A sample `package.json`:
+### A sample `package.json`:
 
 ```json
 {
@@ -68,8 +68,12 @@ A sample `package.json`:
 		"dist",
 		"src"
 	],
+	"devDependencies": {
+		"@automattic/calypso-build": "file:../calypso-build"
+	},
 	"scripts": {
-		"build": "node ../../bin/build-package"
+		"build": "npx @automattic/calypso-build",
+		"clean": "npx rimraf dist"
 	}
 }
 ```
