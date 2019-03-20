@@ -172,9 +172,13 @@
 }
 
 .site__badge {
-	color: var( --sidebar-gridicon-fill );
+	color: var( --color-neutral );
 	padding-right: 4px;
 	line-height: 0;
 	position: relative;
 	vertical-align: middle;
+}
+
+.layout__secondary .site__badge {
+	color: var( --sidebar-gridicon-fill );
 }
