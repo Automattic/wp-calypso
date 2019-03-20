@@ -79,7 +79,8 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	saveSurveyResults = async () => {
-		const { purchase, site, surveyAnswerId, surveyAnswerText } = this.props;
+		const { purchase, site } = this.props;
+		const { surveyAnswerId, surveyAnswerText } = this.state;
 		const survey = wpcom.marketing().survey( 'calypso-gsuite-remove-purchase', purchase.siteId );
 		const surveyData = {
 			'why-cancel': {
