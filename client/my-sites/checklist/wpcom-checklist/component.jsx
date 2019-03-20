@@ -55,7 +55,6 @@ class WpcomChecklistComponent extends PureComponent {
 		emailSent: false,
 		error: null,
 	};
-	trackedTaskDisplays = {};
 
 	constructor() {
 		super();
@@ -147,11 +146,6 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	trackTaskDisplay = ( id, isCompleted, location ) => {
-		if ( this.trackedTaskDisplays[ id ] ) {
-			return;
-		}
-		this.trackedTaskDisplays[ id ] = true;
-
 		this.props.recordTracksEvent( 'calypso_checklist_task_display', {
 			checklist_name: 'new_blog',
 			site_id: this.props.siteId,
