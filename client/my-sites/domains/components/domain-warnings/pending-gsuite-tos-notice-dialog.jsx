@@ -25,7 +25,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 	const translate = useTranslate();
 
 	const onPasswordClickHandler = e => {
-		e.preventDefault;
+		e.preventDefault();
 		const wpcom = wp.undocumented();
 		const mailbox = props.user.split( '@' )[ 0 ];
 		wpcom.resetPasswordForMailbox( props.domainName, mailbox ).then( data => {

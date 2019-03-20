@@ -13,7 +13,7 @@ import PendingGSuiteTosNoticeDialog from './pending-gsuite-tos-notice-dialog';
 function PendingGSuiteTosNoticeAction( props ) {
 	const [ dialogVisible, setDialogVisible ] = useState( false );
 	const onFixClickHandler = e => {
-		e.preventDefault;
+		e.preventDefault();
 		setDialogVisible( true );
 	};
 	const onCloseClickHandler = () => {
