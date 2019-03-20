@@ -441,7 +441,7 @@ export class CheckoutThankYou extends React.Component {
 
 		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
 			const domainName = find( purchases, isDomainRegistration ).meta;
-
+			// page( domainManagementList( domainName ) );
 			return (
 				<Main className="checkout-thank-you">
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
