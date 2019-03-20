@@ -56,11 +56,7 @@ if ( globalKeyBoardShortcutsEnabled ) {
 	globalKeyboardShortcuts = getGlobalKeyboardShortcuts();
 }
 
-const desktopEnabled = config.isEnabled( 'desktop' );
-let desktop;
-if ( desktopEnabled ) {
-	desktop = require( 'lib/desktop' ).default;
-}
+const desktop = config.isEnabled( 'desktop' ) ? require( 'lib/desktop' ).default : null;
 
 /**
  * Notifies user about the fact that they were automatically logged in
@@ -273,7 +269,7 @@ const handler = ( dispatch, action, getState ) => {
 				if ( globalKeyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
 				}
-				if ( desktopEnabled ) {
+				if ( config.isEnabled( 'desktop' ) ) {
 					updateSelectedSiteForDesktop( dispatch, action, getState );
 				}
 
