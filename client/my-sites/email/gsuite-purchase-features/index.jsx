@@ -13,6 +13,7 @@ import React, { Fragment } from 'react';
  */
 import { ADDING_GOOGLE_APPS_TO_YOUR_SITE } from 'lib/url/support';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import GSuitePurchaseFeaturesSingleFeature from './single-feature';
 
 /**
  * Style dependencies
@@ -29,22 +30,8 @@ class GSuitePurchaseFeatures extends React.Component {
 		if ( 'gapps' === productSlug ) {
 			return translate( 'Get 30GB of storage for all your files synced across devices.' );
 		} else if ( 'gappsbusiness' === productSlug ) {
-			return translate( 'Get 30GB of storage for all your files synced across devices.' );
+			return translate( 'Get unlimited storage for all your files synced across devices.' );
 		}
-	}
-
-	renderFeature( title, description, imagePath, imageAlt ) {
-		return (
-			<div className="gsuite-purchase-features__feature">
-				<div className="gsuite-purchase-features__feature-block">
-					<img alt={ imageAlt } src={ imagePath } />
-				</div>
-				<div className="gsuite-purchase-features__feature-block">
-					<h5 className="gsuite-purchase-features__feature-header">{ title }</h5>
-					<p>{ description }</p>
-				</div>
-			</div>
-		);
 	}
 
 	render() {
@@ -59,36 +46,40 @@ class GSuitePurchaseFeatures extends React.Component {
 							: 'gsuite-purchase-features__features-list'
 					}
 				>
-					{ this.renderFeature(
-						translate( 'Gmail for @%(domain)s', {
+					<GSuitePurchaseFeaturesSingleFeature
+						title={ translate( 'A custom @%(domain)s email address', {
 							args: {
 								domain: domainName,
 							},
-						} ),
-						translate( 'Professional ad-free email that works with most email clients.' ),
-						'/calypso/images/g-suite/logo_gmail_48dp.svg',
-						'Gmail Logo'
-					) }
-					{ this.renderFeature(
-						translate( 'Keep all your files secure' ),
-						this.getStorageText(),
-						'/calypso/images/g-suite/logo_drive_48dp.svg',
-						'Google Drive Logo'
-					) }
-					{ this.renderFeature(
-						translate( 'Docs, spreadsheets and forms' ),
-						translate( 'Create and edit documents to get your work done faster.' ),
-						'/calypso/images/g-suite/logo_docs_48dp.svg',
-						'Google Docs Logo'
-					) }
-					{ this.renderFeature(
-						translate( 'Connect with your team' ),
-						translate(
-							'Use text chats, voice calls, or video calls, with built in screen sharing'
-						),
-						'/calypso/images/g-suite/logo_hangouts_48dp.svg',
-						'Google Hangouts Logo'
-					) }
+						} ) }
+						description={ translate(
+							'Professional ad-free email that works with most email clients.'
+						) }
+						imagePath={ '/calypso/images/g-suite/logo_gmail_48dp.svg' }
+						imageAlt={ 'Gmail Logo' }
+					/>
+					<GSuitePurchaseFeaturesSingleFeature
+						title={ translate( 'Docs, spreadsheets and more' ) }
+						description={ translate(
+							'Collaborate in real-time with documents, spreadsheets and slides.'
+						) }
+						imagePath={ '/calypso/images/g-suite/logo_docs_48dp.svg' }
+						imageAlt={ 'Google Docs Logo' }
+					/>
+					<GSuitePurchaseFeaturesSingleFeature
+						title={ translate( 'Keep all your files secure' ) }
+						description={ this.getStorageText() }
+						imagePath={ '/calypso/images/g-suite/logo_drive_48dp.svg' }
+						imageAlt={ 'Google Drive Logo' }
+					/>
+					<GSuitePurchaseFeaturesSingleFeature
+						title={ translate( 'Connect with your team' ) }
+						description={ translate(
+							'Use text chats, voice calls, or video calls, with built in screen sharing.'
+						) }
+						imagePath={ '/calypso/images/g-suite/logo_hangouts_48dp.svg' }
+						imageAlt={ 'Google Hangouts Logo' }
+					/>
 				</div>
 
 				<div className="gsuite-purchase-features__learn-more">

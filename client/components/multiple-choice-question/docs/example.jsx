@@ -9,15 +9,16 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card/compact';
 import CardHeading from 'components/card-heading';
-import MultipleChoiceQuestion from '../index';
+import MultipleChoiceQuestion from '../';
+import notices from 'notices';
 
 function MultipleChoiceQuestionExamples() {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
 	const [ answerText, setAnswerText ] = useState( '' );
 
-	const question = 'Please choose one of the following:';
 	const answers = [
 		{ id: 'hungry-bunnies', answerText: 'Hungry Bunnies' },
 		{
@@ -26,13 +27,35 @@ function MultipleChoiceQuestionExamples() {
 			textInput: true,
 			textInputPrompt: 'How many?',
 		},
-		{ id: 'starving-storks', answerText: 'Starving Storks' },
+		{
+			id: 'starving-storks',
+			answerText: 'Starving Storks',
+			children: (
+				<Button
+					onClick={ () => {
+						notices.success( 'The Stork Button was clicked', { duration: 5000 } );
+					} }
+					primary
+				>
+					{ 'The Stork Button' }
+				</Button>
+			),
+		},
 		{
 			id: 'something-else',
 			answerText: 'Something Else',
 			doNotShuffle: true,
 			textInput: true,
 			textInputPrompt: 'Who else?',
+			children: (
+				<Button
+					onClick={ () => {
+						notices.success( 'The Extra Button was clicked', { duration: 5000 } );
+					} }
+				>
+					{ 'The Extra Button' }
+				</Button>
+			),
 		},
 	];
 
@@ -40,8 +63,8 @@ function MultipleChoiceQuestionExamples() {
 		<div>
 			<Card>
 				<MultipleChoiceQuestion
-					question={ question }
 					answers={ answers }
+					question={ 'Please choose one of the following:' }
 					onAnswerChange={ ( answer, text ) => {
 						setSelectedAnswer( answer );
 						setAnswerText( text || '' );

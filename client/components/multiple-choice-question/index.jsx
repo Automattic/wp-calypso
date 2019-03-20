@@ -10,7 +10,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import AnswerItem from './answer-item';
+import MultipleChoiceAnswer from './answer';
+import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 
 /**
@@ -27,30 +28,38 @@ const shuffleAnswers = memoize(
 		answers.map( answer => values( pick( answer, 'id', 'doNotShuffle' ) ).join( '_' ) ).join( '-' )
 );
 
-const MultipleChoiceQuestion = ( { question, onAnswerChange, answers } ) => {
-	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
+const MultipleChoiceQuestion = ( {
+	disabled,
+	answers,
+	onAnswerChange,
+	question,
+	selectedAnswerId,
+	selectedAnswerText,
+} ) => {
+	const [ selectedAnswer, setSelectedAnswer ] = useState( selectedAnswerId );
 	const shuffledAnswers = shuffleAnswers( answers );
 
 	return (
-		<div className="multiple-choice-question">
+		<FormFieldset className="multiple-choice-question">
 			<FormLegend>{ question }</FormLegend>
 			{ shuffledAnswers.map( answer => (
-				<AnswerItem
+				<MultipleChoiceAnswer
 					key={ answer.id }
 					answer={ answer }
+					disabled={ disabled }
 					isSelected={ selectedAnswer === answer.id }
 					onAnswerChange={ ( id, textResponse ) => {
 						onAnswerChange( id, textResponse );
 						setSelectedAnswer( id );
 					} }
+					selectedAnswerText={ selectedAnswer === answer.id ? selectedAnswerText : '' }
 				/>
 			) ) }
-		</div>
+		</FormFieldset>
 	);
 };
 
 MultipleChoiceQuestion.propTypes = {
-	question: PropTypes.string.isRequired,
 	answers: PropTypes.arrayOf(
 		PropTypes.shape( {
 			id: PropTypes.string.isRequired,
@@ -58,9 +67,20 @@ MultipleChoiceQuestion.propTypes = {
 			doNotShuffle: PropTypes.bool,
 			textInput: PropTypes.bool,
 			textInputPrompt: PropTypes.string,
+			children: PropTypes.object,
 		} )
 	).isRequired,
-	onAnswerChange: PropTypes.func,
+	disabled: PropTypes.bool,
+	onAnswerChange: PropTypes.func.isRequired,
+	question: PropTypes.string.isRequired,
+	selectedAnswerId: PropTypes.string,
+	selectedAnswerText: PropTypes.string,
+};
+
+MultipleChoiceQuestion.defaultProps = {
+	disabled: false,
+	selectedAnswerId: null,
+	selectedAnswerText: '',
 };
 
 export default MultipleChoiceQuestion;

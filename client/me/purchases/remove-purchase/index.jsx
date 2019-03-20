@@ -20,6 +20,7 @@ import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
 import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
 import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/is-survey-filled-in';
 import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/steps-for-product-and-survey';
@@ -167,7 +168,11 @@ class RemovePurchase extends Component {
 
 		const { isDomainOnlySite, purchase, site, translate } = this.props;
 
-		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
+		if (
+			! isDomainRegistration( purchase ) &&
+			! isGoogleApps( purchase ) &&
+			config.isEnabled( 'upgrades/removal-survey' )
+		) {
 			const survey = wpcom
 				.marketing()
 				.survey( 'calypso-remove-purchase', this.props.purchase.siteId );
@@ -470,6 +475,19 @@ class RemovePurchase extends Component {
 
 		if ( isDomainRegistration( purchase ) ) {
 			return this.renderDomainDialog();
+		}
+
+		if ( isGoogleApps( purchase ) ) {
+			return (
+				<GSuiteCancellationPurchaseDialog
+					disabled={ this.state.isRemoving }
+					isVisible={ this.state.isDialogVisible }
+					onClose={ this.closeDialog }
+					onRemovePurchase={ this.removePurchase }
+					purchase={ purchase }
+					site={ this.props.site }
+				/>
+			);
 		}
 
 		return this.renderPlanDialog();
