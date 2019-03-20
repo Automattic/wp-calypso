@@ -207,15 +207,6 @@ class ImportURLStepComponent extends Component {
 		return (
 			<Fragment>
 				<div className="import-url__wrapper">
-					{ showUrlMessage && urlMessage ? (
-						<Notice
-							className="import-url__url-input-message"
-							status="is-error"
-							showDismiss={ false }
-						>
-							{ urlMessage }
-						</Notice>
-					) : null }
 					<form className="import-url__form" onSubmit={ this.handleSubmit }>
 						<ScreenReaderText>
 							<FormLabel htmlFor="url-input">Site URL</FormLabel>
@@ -247,6 +238,15 @@ class ImportURLStepComponent extends Component {
 								: translate( 'Continue' ) }
 						</FormButton>
 					</form>
+					{ showUrlMessage && urlMessage ? (
+						<Notice
+							className="import-url__url-input-message"
+							status="is-error"
+							showDismiss={ false }
+						>
+							{ urlMessage }
+						</Notice>
+					) : null }
 				</div>
 
 				<div className="import-url__example">
