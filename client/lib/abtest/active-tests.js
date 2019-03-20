@@ -163,6 +163,8 @@ export default {
 			logo: 50,
 		},
 		defaultVariation: 'icon',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 	gSuiteStatsNudge: {
 		datestamp: '20190308',
