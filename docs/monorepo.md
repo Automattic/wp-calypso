@@ -33,7 +33,7 @@ test/
 
 Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, and `sideEffects`.
 
-### A sample `package.json`:
+### A sample `package.json`
 
 ```json
 {
