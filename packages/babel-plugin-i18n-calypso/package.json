@@ -24,6 +24,7 @@
 	"license": "GPL-2.0+",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"build": "npx @automattic/calypso-build"
+		"prepublish": "npm run clean",
+		"prepare": "npx @automattic/calypso-build"
 	}
 }
