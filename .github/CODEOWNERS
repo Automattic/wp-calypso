@@ -21,6 +21,12 @@
 # Client blocks
 /client/blocks/inline-help @Automattic/onboarding-dev
 
+# Client state
+/client/state/signup @Automattic/onboarding-dev
+
+# Client components
+/client/components/site-verticals-suggestion-search @Automattic/onboarding-dev
+
 # Client framework parts
 /client/config @Automattic/team-calypso
 /client/controller @Automattic/team-calypso
