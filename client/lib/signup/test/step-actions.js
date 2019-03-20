@@ -119,7 +119,7 @@ describe( 'isSiteTopicFulfilled()', () => {
 		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic' );
 	} );
 
-	test( 'should not remove any step not unfulfilled', () => {
+	test( 'should not remove any step unfulfilled', () => {
 		const flowName = 'flowWithSiteTopicAndTitle';
 		const stepName = 'site-topic-and-title';
 		const initialContext = { query: { vertical: 'verticalSlug' } };
