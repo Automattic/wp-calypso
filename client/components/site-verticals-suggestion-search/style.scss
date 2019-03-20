@@ -1,0 +1,35 @@
+.site-verticals-suggestion-search__common-topics {
+	margin-bottom: 0;
+	box-shadow: none;
+	margin-top: 3px;
+	border-radius: 0 0 4px 4px;
+}
+
+.site-verticals-suggestion-search__heading {
+	font-size: 10px;
+	font-weight: 500;
+	text-transform: uppercase;
+	padding: 12px 24px 8px 40px;
+	color: var( --color-neutral-400 );
+	border-bottom: 1px solid var( --color-neutral-50 );
+}
+
+.site-verticals-suggestion-search__topic-list-item {
+	font-size: 15px;
+	color: var( --color-text );
+	border-bottom: 1px solid var( --color-neutral-50 );
+	padding: 10px 24px 10px 40px;
+	text-align: left;
+	width: 100%;
+	display: block;
+
+	&:hover, &:focus {
+		cursor: pointer;
+		background: var( --color-neutral-0 );
+	}
+
+	&:last-child {
+		border-radius: 0 0 4px 4px;
+		border-bottom: 0;
+	}
+}
