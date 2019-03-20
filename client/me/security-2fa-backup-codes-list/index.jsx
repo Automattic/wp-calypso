@@ -6,10 +6,11 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import Clipboard from 'clipboard';
-import userFactory from 'lib/user';
 import Gridicon from 'gridicons';
 import { saveAs } from 'browser-filesaver';
+import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,6 +26,7 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import Tooltip from 'components/tooltip';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { getCurrentUserName } from 'state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -103,12 +105,10 @@ class Security2faBackupCodesList extends React.Component {
 
 	saveCodesToFile = () => {
 		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
-		const user = userFactory();
-		const username = user.get().username;
 
 		const backupCodes = this.props.backupCodes.join( '\n' );
 		const toSave = new Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
-		saveAs( toSave, `${ username }-backup-codes.txt` );
+		saveAs( toSave, `${ this.props.username }-backup-codes.txt` );
 	};
 
 	getBackupCodePlainText( backupCodes ) {
@@ -375,4 +375,8 @@ class Security2faBackupCodesList extends React.Component {
 	}
 }
 
-export default localize( withLocalizedMoment( Security2faBackupCodesList ) );
+export default compose(
+	connect( state => ( { username: getCurrentUserName( state ) } ) ),
+	localize,
+	withLocalizedMoment
+)( Security2faBackupCodesList );
