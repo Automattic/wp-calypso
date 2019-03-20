@@ -14,6 +14,7 @@ import Gridicon from 'gridicons';
  */
 import FormTextInput from 'components/forms/form-text-input';
 import Suggestions from 'components/suggestions';
+import Spinner from 'components/spinner';
 import { isVerticalSearchPending } from 'components/site-verticals-suggestion-search';
 
 /**
@@ -136,10 +137,9 @@ class SuggestionSearch extends Component {
 
 	render() {
 		const { id, placeholder, autoFocus } = this.props;
-		const gridiconType = isVerticalSearchPending() ? 'refresh' : 'search';
 		return (
 			<div className="suggestion-search">
-				<Gridicon className={ classNames( { 'is-loading': isVerticalSearchPending() } ) } icon={ gridiconType } />
+				{ isVerticalSearchPending() ? <Spinner /> : <Gridicon icon="search" /> }
 				<FormTextInput
 					id={ id }
 					placeholder={ placeholder }
