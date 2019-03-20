@@ -24,6 +24,7 @@ import Notice from 'components/notice';
 import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import Tooltip from 'components/tooltip';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -379,4 +380,4 @@ class Security2faBackupCodesList extends React.Component {
 	}
 }
 
-export default localize( Security2faBackupCodesList );
+export default localize( withLocalizedMoment( Security2faBackupCodesList ) );
