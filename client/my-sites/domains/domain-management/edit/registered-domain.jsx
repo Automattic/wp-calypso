@@ -145,7 +145,7 @@ class RegisteredDomain extends React.Component {
 					'expiringDomainsCanManage',
 					'newDomainsWithPrimary',
 					'newDomains',
-					'pendingGappsTosAcceptanceDomains',
+					'pendingGSuiteTosAcceptanceDomains',
 					'expiredDomainsCannotManage',
 					'expiringDomainsCannotManage',
 					'pendingTransfer',
