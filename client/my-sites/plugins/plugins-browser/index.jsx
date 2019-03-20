@@ -116,7 +116,7 @@ export class PluginsBrowser extends Component {
 	}
 
 	isRecommendedPluginsEnabled() {
-		return !! this.props.selectedSiteId && abtest( 'pluginRecommendations' ) === 'recommended';
+		return isEnabled( 'recommend-plugins' ) && !! this.props.selectedSiteId;
 	}
 
 	refreshLists = search => {
@@ -180,6 +180,10 @@ export class PluginsBrowser extends Component {
 	translateCategory( category ) {
 		const { translate } = this.props;
 
+		const recommendedText = translate( 'Recommended', {
+			context: 'Category description for the plugin browser.',
+		} );
+
 		switch ( category ) {
 			case 'new':
 				return translate( 'New', {
@@ -190,13 +194,15 @@ export class PluginsBrowser extends Component {
 					context: 'Category description for the plugin browser.',
 				} );
 			case 'featured':
+				if ( abtest( 'pluginFeaturedTitle' ) === 'recommended' ) {
+					return recommendedText;
+				}
+
 				return translate( 'Featured', {
 					context: 'Category description for the plugin browser.',
 				} );
 			case 'recommended':
-				return translate( 'Recommended', {
-					context: 'Category description for the plugin browser.',
-				} );
+				return recommendedText;
 		}
 	}
 
