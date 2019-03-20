@@ -23,9 +23,6 @@
 		"npm": "^6.1.0"
 	},
 	"main": "dist/calypso-color-schemes.css",
-	"dependencies": {
-		"color-studio": "github:automattic/color-studio#1.0.1"
-	},
 	"publishConfig": {
 		"access": "public"
 	},
