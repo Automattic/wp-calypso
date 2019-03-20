@@ -111,11 +111,11 @@ class Security2faBackupCodesList extends React.Component {
 		saveAs( toSave, `${ username }-backup-codes.txt` );
 	};
 
-	getBackupCodePlainText = backupCodes => {
+	getBackupCodePlainText( backupCodes ) {
 		if ( backupCodes.length > 0 ) {
 			return backupCodes.join( '\n' );
 		}
-	};
+	}
 
 	enableDownloadCodesTooltip = () => {
 		this.setState( { downloadCodesTooltip: true } );
@@ -141,7 +141,7 @@ class Security2faBackupCodesList extends React.Component {
 		this.setState( { copyCodesTooltip: false } );
 	};
 
-	getBackupCodeHTML = codes => {
+	getBackupCodeHTML( codes ) {
 		const datePrinted = this.props.moment().format( 'lll' );
 		let row;
 		let html = '<html><head><title>';
@@ -192,7 +192,7 @@ class Security2faBackupCodesList extends React.Component {
 
 		html += '</div></body></html>';
 		return html;
-	};
+	}
 
 	doPopup = codes => {
 		this.popup.document.open( 'text/html' );
@@ -202,21 +202,19 @@ class Security2faBackupCodesList extends React.Component {
 
 		/* this code takes advantage of setTimeout not running until after the
 	print dialog is dismissed - it is more reliable than using focus tricks */
-		setTimeout(
-			function() {
-				this.popup.close();
-				this.popup = false;
-			}.bind( this ),
-			100
-		);
+		setTimeout( () => {
+			this.popup.close();
+			this.popup = false;
+		}, 100 );
 	};
 
 	onNextStep = event => {
 		event.preventDefault();
+		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Next Step Button' );
 		this.props.onNextStep();
 	};
 
-	getPlaceholders = () => {
+	getPlaceholders() {
 		let i;
 		const placeholders = [];
 
@@ -225,17 +223,17 @@ class Security2faBackupCodesList extends React.Component {
 		}
 
 		return placeholders;
-	};
+	}
 
 	onUserAgreesChange = event => {
 		this.setState( { userAgrees: event.target.checked } );
 	};
 
-	getSubmitDisabled = () => {
+	isSubmitDisabled() {
 		return ! this.state.userAgrees;
-	};
+	}
 
-	renderList = () => {
+	renderList() {
 		const backupCodes = this.props.backupCodes.length
 			? this.props.backupCodes
 			: this.getPlaceholders();
@@ -249,7 +247,7 @@ class Security2faBackupCodesList extends React.Component {
 					) }
 				</p>
 				<ol className="security-2fa-backup-codes-list__codes">
-					{ backupCodes.map( function( backupCode, index ) {
+					{ backupCodes.map( ( backupCode, index ) => {
 						const spacedCode = backupCode.concat( ' ' );
 						// we add a space to each backup code so that if the user wants to copy and paste the entire list
 						// the backup codes aren't placed in the clipboard as a single long number
@@ -261,7 +259,7 @@ class Security2faBackupCodesList extends React.Component {
 								<span>{ spacedCode }</span>
 							</li>
 						);
-					}, this ) }
+					} ) }
 				</ol>
 
 				<p className="security-2fa-backup-codes-list__warning">
@@ -288,11 +286,8 @@ class Security2faBackupCodesList extends React.Component {
 
 					<FormButton
 						className="security-2fa-backup-codes-list__next"
-						onClick={ function( event ) {
-							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Next Step Button' );
-							this.onNextStep( event );
-						}.bind( this ) }
-						disabled={ this.getSubmitDisabled() }
+						onClick={ this.onNextStep }
+						disabled={ this.isSubmitDisabled() }
 					>
 						{ this.props.translate( 'All Finished!', {
 							context: 'The user presses the All Finished button at the end of Two-Step setup.',
@@ -355,13 +350,13 @@ class Security2faBackupCodesList extends React.Component {
 				</FormButtonBar>
 			</div>
 		);
-	};
+	}
 
 	clearLastError = () => {
 		this.setState( { lastError: false } );
 	};
 
-	possiblyRenderError = () => {
+	possiblyRenderError() {
 		if ( ! this.state.lastError ) {
 			return null;
 		}
@@ -373,7 +368,7 @@ class Security2faBackupCodesList extends React.Component {
 				text={ this.state.lastError }
 			/>
 		);
-	};
+	}
 
 	render() {
 		return <div className="security-2fa-backup-codes-list">{ this.renderList() }</div>;
