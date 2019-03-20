@@ -35,6 +35,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist src/__color-studio",
 		"prepublish": "npm run clean",
-		"prepare": "node bin/build-css.js"
+		"prepare": "node bin/build-css.js",
+		"postinstall": "node bin/postinstall.js"
 	}
 }
