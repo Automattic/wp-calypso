@@ -48,6 +48,24 @@ function PendingGSuiteTosNoticeDialog( props ) {
 		setIsCopied( true );
 	};
 
+	const renderEntryCopy = () => {
+		return translate(
+			'In order to finish setup, you must now log into G Suite using the username and password that we sent to your email address (%s).',
+			{
+				args: props.user,
+			}
+		);
+	};
+
+	const renderPasswordResetCopy = () => {
+		return translate(
+			'We have reset your temporary password. Please log in as `%s` with this password to finish setup:',
+			{
+				args: props.user,
+			}
+		);
+	};
+
 	return (
 		<Dialog className="domain-warnings__dialog" isVisible={ props.visible }>
 			<header>
@@ -57,22 +75,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 				</button>
 			</header>
 
-			<p>
-				{ password &&
-					translate(
-						'We have reset your temporary password. Please log in as `%s` with this password to finish setup:',
-						{
-							args: props.user,
-						}
-					) }
-				{ ! password &&
-					translate(
-						'In order to finish setup, you must now log into G Suite using the username and password that we sent to your email address (%s).',
-						{
-							args: props.user,
-						}
-					) }
-			</p>
+			<p>{ password ? renderPasswordResetCopy() : renderEntryCopy() }</p>
 			{ password && (
 				<Fragment>
 					<p>
