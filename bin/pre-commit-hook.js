@@ -27,7 +27,7 @@ function parseGitDiffToPathArray( command ) {
 	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( name => name.trim() )
-		.filter( name => /(?:package.json|\.jsx?|\.scss)$/.test( name ) );
+		.filter( name => /(?:\.json|\.jsx?|\.scss)$/.test( name ) );
 }
 
 // grab a list of all the files staged to commit
