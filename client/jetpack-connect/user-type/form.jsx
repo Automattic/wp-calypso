@@ -24,7 +24,6 @@ import './style.scss';
 
 class UserTypeForm extends Component {
 	static propTypes = {
-		userType: PropTypes.string,
 		submitForm: PropTypes.func.isRequired,
 
 		// from localize() HoC
@@ -35,7 +34,7 @@ class UserTypeForm extends Component {
 		super( props );
 
 		this.state = {
-			userType: props.userType,
+			userType: '',
 		};
 	}
 
@@ -53,10 +52,10 @@ class UserTypeForm extends Component {
 		this.props.submitForm( userType );
 	};
 
-	renderRadioOptions() {
+  getUserTypeQuestions = () => {
 		const { translate } = this.props;
 
-		const userTypeQuestions = [
+		return [
 			{
 				slug: 'creator',
 				label: translate( 'Myself' ),
@@ -66,7 +65,12 @@ class UserTypeForm extends Component {
 				label: translate( 'Someone else' ),
 			},
 		];
-		return userTypeQuestions.map( userTypeProperties => (
+	}
+
+	renderRadioOptions() {
+		const { translate } = this.props;
+
+		return this.getUserTypeQuestions().map( userTypeProperties => (
 			<FormLabel
 				className={ classNames( 'user-type__option', {
 					'is-selected': userTypeProperties.slug === this.state.userType,

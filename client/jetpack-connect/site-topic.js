@@ -26,7 +26,7 @@ class JetpackSiteTopic extends Component {
 
 		this.props.saveSiteVertical( siteId, siteVertical );
 
-		page.redirect( `/jetpack/connect/user-type/${ siteSlug }` );
+		page( `/jetpack/connect/user-type/${ siteSlug }` );
 	};
 
 	render() {
