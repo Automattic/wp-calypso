@@ -43,6 +43,7 @@ jest.mock( 'lib/cart-values', () => ( {
 		hasRenewableSubscription: jest.fn( false ),
 		hasRenewalItem: jest.fn( false ),
 	},
+	getTaxPostalCode: () => '12345',
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {

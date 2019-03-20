@@ -5,7 +5,7 @@
  */
 import url from 'url';
 import { extend, get, isArray, invert } from 'lodash';
-import update from 'immutability-helper';
+import update, { extend as extendImmutabilityHelper } from 'immutability-helper';
 import i18n from 'i18n-calypso';
 import config from 'config';
 
@@ -14,6 +14,11 @@ import config from 'config';
  */
 import cartItems from './cart-items';
 import { isCredits, isDomainRedemption, whitelistAttributes } from 'lib/products-values';
+
+// Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
+extendImmutabilityHelper( '$auto', function( value, object ) {
+	return object ? update( object, value ) : update( {}, value );
+} );
 
 // #tax-on-checout-placeholder
 import { injectTaxStateWithPlaceholderValues } from 'lib/tax';
@@ -121,10 +126,28 @@ function removeCoupon() {
 	};
 }
 
+export const getTaxCountryCode = cart => get( cart, [ 'tax', 'location', 'country_code' ] );
+
+export const getTaxPostalCode = cart => get( cart, [ 'tax', 'location', 'postal_code' ] );
+
+export const getTaxLocation = cart => get( cart, [ 'tax', 'location' ], {} );
+
 function setTaxCountryCode( countryCode ) {
 	return function( cart ) {
 		return update( cart, {
-			tax: { location: { country_code: { $set: countryCode } } },
+			$auto: {
+				tax: {
+					$auto: {
+						location: {
+							$auto: {
+								country_code: {
+									$set: countryCode,
+								},
+							},
+						},
+					},
+				},
+			},
 		} );
 	};
 }
@@ -132,7 +155,19 @@ function setTaxCountryCode( countryCode ) {
 function setTaxPostalCode( postalCode ) {
 	return function( cart ) {
 		return update( cart, {
-			tax: { location: { postal_code: { $set: postalCode } } },
+			$auto: {
+				tax: {
+					$auto: {
+						location: {
+							$auto: {
+								postal_code: {
+									$set: postalCode,
+								},
+							},
+						},
+					},
+				},
+			},
 		} );
 	};
 }
@@ -140,7 +175,17 @@ function setTaxPostalCode( postalCode ) {
 function setTaxLocation( { postalCode, countryCode } ) {
 	return function( cart ) {
 		return update( cart, {
-			tax: { location: { $set: { postal_code: postalCode, country_code: countryCode } } },
+			$auto: {
+				tax: {
+					$auto: {
+						location: {
+							$auto: {
+								$set: { postal_code: postalCode, country_code: countryCode },
+							},
+						},
+					},
+				},
+			},
 		} );
 	};
 }
