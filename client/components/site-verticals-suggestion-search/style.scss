@@ -1,9 +1,3 @@
-.site-verticals-suggestion-search__wrapper {
-	margin-bottom: 0;
-	box-shadow: none;
-	border-radius: 0 0 4px 4px;
-}
-
 .site-verticals-suggestion-search__common-topics {
 	margin-bottom: 0;
 	box-shadow: none;
@@ -28,7 +22,6 @@
 	text-align: left;
 	width: 100%;
 	display: block;
-	min-height: 25px;
 
 	&:hover, &:focus {
 		cursor: pointer;
@@ -38,13 +31,6 @@
 	&:last-child {
 		border-radius: 0 0 4px 4px;
 		border-bottom: 0;
-	}
-
-	span {
-		background-color: var( --color-neutral-0 );
-		animation: loading-fade 1.6s ease-in-out infinite;
-		height: 25px;
-		display: block;
 	}
 }
 

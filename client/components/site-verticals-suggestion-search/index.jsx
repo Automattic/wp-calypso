@@ -35,28 +35,6 @@ const debug = debugModule( 'calypso:signup:vertical-search' );
 		- OR create a minimal search icon/throbber, e.g. one dummy item with a loading symbol
  */
 
-
-function SiteVerticalResultsLoading() {
-	return (
-		<div className="site-verticals-suggestion-search__wrapper">
-			<div className="site-verticals-suggestion-search__topic-list-item">
-				<span />
-			</div>
-			<div className="site-verticals-suggestion-search__topic-list-item">
-				<span />
-			</div>
-			<div className="site-verticals-suggestion-search__topic-list-item">
-				<span />
-			</div>
-			<div className="site-verticals-suggestion-search__topic-list-item">
-				<span />
-			</div>
-		</div>
-	);
-}
-
-
-
 export class SiteVerticalsSuggestionSearch extends Component {
 	static propTypes = {
 		charsToTriggerSearch: PropTypes.number,
@@ -88,7 +66,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			selectedVertical: {}, // load saved vertical
 			railcar: this.getNewRailcar(),
 		};
-		this.props.requestVerticals( 'business', 1, this.setDefaultVerticalResults, false  );
+		this.props.requestVerticals( 'business', 1, this.setDefaultVerticalResults, false );
 		this.requestVerticalsThrottled = throttle( this.props.requestVerticals, 666, {
 			leading: true,
 			trailing: true,
@@ -104,15 +82,12 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 	setSearchResults = results => {
 		if ( size( results ) ) {
-			const hasVerticalInput = find(
-				results,
-				item => ! item.isUserInputVertical
-			);
+			const hasVerticalInput = find( results, item => ! item.isUserInputVertical );
 			// if the only result is a user input, then concat that with the previous results and remove the last user input
 			if ( ! hasVerticalInput && 1 < size( this.state.results ) ) {
 				results = this.state.results.filter( item => ! item.isUserInputVertical ).concat( results );
 			}
-			this.setState( { results } )
+			this.setState( { results } );
 		}
 	};
 
@@ -132,13 +107,10 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	// only update the vertical when they select a result.
 	searchForVerticalMatches = ( value = '' ) => {
 		value = value.toLowerCase();
-		return find(
-			this.state.results,
-			item => {
-				const verticalName = item.verticalName.toLowerCase();
-				return ( verticalName === value || startsWith( verticalName, value ) ) && !! item.preview;
-			}
-		);
+		return find( this.state.results, item => {
+			const verticalName = item.verticalName.toLowerCase();
+			return ( verticalName === value || startsWith( verticalName, value ) ) && !! item.preview;
+		} );
 	};
 
 	updateVerticalData = ( result, value ) =>
@@ -200,8 +172,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		this.setState( { searchValue: value } );
 	};
 
-	getSuggestions = () => this.props.verticals.map( vertical => vertical.verticalName );
-
 	sortSearchResults = ( suggestionsArray, queryString ) => {
 		let queryMatch;
 
@@ -235,7 +205,9 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		const { translate, placeholder, autoFocus, shouldShowPopularTopics } = this.props;
 		const suggestions = this.getSuggestions();
 		const areResultsEmpty = 0 === size( suggestions );
-		const showPopularTopics = shouldShowPopularTopics( this.state.searchValue );
+		const showPopularTopics =
+			( ! this.state.searchValue && this.props.showPopular ) ||
+			( this.props.isSearchPending && areResultsEmpty );
 
 		return (
 			<>
@@ -250,7 +222,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 					railcar={ this.state.railcar }
 				/>
 				{ showPopularTopics && <PopularTopics onSelect={ this.onPopularTopicSelect } /> }
-				{ this.props.isSearchPending && areResultsEmpty && <SiteVerticalResultsLoading /> }
 			</>
 		);
 	}
@@ -279,13 +250,13 @@ export function isVerticalSearchPending() {
 	return isSearchPending;
 }
 
-
 export default localize(
 	connect(
 		() => ( {
 			isSearchPending,
 		} ),
-		() => ( {
+		( dispatch, ownProps ) => ( {
+			shouldShowPopularTopics: searchValue => ! searchValue && ownProps.showPopular,
 			requestVerticals,
 		} )
 	)( SiteVerticalsSuggestionSearch )
