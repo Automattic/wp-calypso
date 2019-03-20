@@ -21,6 +21,7 @@ import {
 	checkInboundTransferStatus,
 	getDomainPrice,
 	getDomainProductSlug,
+	getDomainTransferSalePrice,
 	getFixedDomainSearch,
 	getTld,
 	startInboundTransfer,
@@ -164,11 +165,17 @@ class TransferDomainStep extends React.Component {
 			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
 
 		const domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
+		const domainProductSalePrice = getDomainTransferSalePrice(
+			productSlug,
+			productsList,
+			currencyCode
+		);
+
 		let domainProductPriceCost = translate( '%(cost)s {{small}}/year{{/small}}', {
 			args: { cost: domainProductPrice },
 			components: { small: <small /> },
 		} );
-		if ( isFreewithPlan || domainsWithPlansOnlyButNoPlan ) {
+		if ( isFreewithPlan || domainsWithPlansOnlyButNoPlan || domainProductSalePrice ) {
 			domainProductPriceCost = translate(
 				'Renews in one year at: %(cost)s {{small}}/year{{/small}}',
 				{
@@ -187,6 +194,10 @@ class TransferDomainStep extends React.Component {
 			domainProductPriceText = translate(
 				'One additional year of domain registration included in paid plans'
 			);
+		} else if ( domainProductSalePrice ) {
+			domainProductPriceText = translate( 'Sale price is %(cost)s', {
+				args: { cost: domainProductSalePrice },
+			} );
 		}
 
 		if ( ! currencyCode ) {
@@ -197,6 +208,8 @@ class TransferDomainStep extends React.Component {
 			<div
 				className={ classnames( 'transfer-domain-step__price', {
 					'is-free-with-plan': isFreewithPlan || domainsWithPlansOnlyButNoPlan,
+					'is-sale-price':
+						domainProductSalePrice && ! ( isFreewithPlan || domainsWithPlansOnlyButNoPlan ),
 				} ) }
 			>
 				<div className="transfer-domain-step__price-text">{ domainProductPriceText }</div>

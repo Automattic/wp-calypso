@@ -30,7 +30,7 @@ import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
-import { getDomainPrice, getDomainProductSlug } from 'lib/domains';
+import { getDomainPrice, getDomainProductSlug, getDomainTransferSalePrice } from 'lib/domains';
 import {
 	isDomainBundledWithPlan,
 	isDomainMappingFree,
@@ -158,6 +158,38 @@ class UseYourDomainStep extends React.Component {
 		return domainProductFreeText;
 	};
 
+	getTransferSalePriceText = () => {
+		const {
+			cart,
+			currencyCode,
+			translate,
+			domainsWithPlansOnly,
+			isSignupStep,
+			productsList,
+			selectedSite,
+		} = this.props;
+		const { searchQuery } = this.state;
+		const productSlug = getDomainProductSlug( searchQuery );
+		const domainsWithPlansOnlyButNoPlan =
+			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
+		const domainProductSalePrice = getDomainTransferSalePrice(
+			productSlug,
+			productsList,
+			currencyCode
+		);
+
+		if (
+			isEmpty( domainProductSalePrice ) ||
+			isNextDomainFree( cart ) ||
+			isDomainBundledWithPlan( cart, searchQuery ) ||
+			domainsWithPlansOnlyButNoPlan
+		) {
+			return;
+		}
+
+		return translate( 'Sale price is %(cost)s', { args: { cost: domainProductSalePrice } } );
+	};
+
 	getTransferPriceText = () => {
 		const {
 			cart,
@@ -173,21 +205,21 @@ class UseYourDomainStep extends React.Component {
 		const domainsWithPlansOnlyButNoPlan =
 			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
 
-		let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
-		if ( domainProductPrice ) {
-			domainProductPrice += ' per year';
-		}
+		const domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
 
 		if (
 			domainProductPrice &&
 			( isNextDomainFree( cart ) ||
 				isDomainBundledWithPlan( cart, searchQuery ) ||
-				domainsWithPlansOnlyButNoPlan )
+				domainsWithPlansOnlyButNoPlan ||
+				getDomainTransferSalePrice( productSlug, productsList, currencyCode ) )
 		) {
-			domainProductPrice = translate( 'Renews at ' ) + domainProductPrice;
+			return translate( 'Renews at %(cost)s', { args: { cost: domainProductPrice } } );
 		}
 
-		return domainProductPrice;
+		if ( domainProductPrice ) {
+			return translate( '%(cost)s per year', { args: { cost: domainProductPrice } } );
+		}
 	};
 
 	getMappingPriceText = () => {
@@ -206,7 +238,10 @@ class UseYourDomainStep extends React.Component {
 		const price = get( productsList, [ 'domain_map', 'cost' ], null );
 		if ( price ) {
 			mappingProductPrice = formatCurrency( price, currencyCode );
-			mappingProductPrice += ' per year plus registration costs at your current provider';
+			mappingProductPrice = translate(
+				'%(cost)s per year plus registration costs at your current provider',
+				{ args: { cost: mappingProductPrice } }
+			);
 		}
 
 		if (
@@ -304,6 +339,7 @@ class UseYourDomainStep extends React.Component {
 			translate( 'Manage your domain and site from your WordPress.com dashboard' ),
 			translate( 'Extends registration by one year' ),
 			this.getTransferFreeText(),
+			this.getTransferSalePriceText(),
 			this.getTransferPriceText(),
 		];
 		const buttonText = translate( 'Transfer to WordPress.com' );
