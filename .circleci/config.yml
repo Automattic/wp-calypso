@@ -125,9 +125,6 @@ references:
     key: v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
     paths:
       - ~/.npm
-  npm-e2e-install: &npm-e2e-install
-    name: Install e2e npm dependencies
-    command: cd test/e2e && npm ci
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
@@ -192,7 +189,6 @@ jobs:
       # npm dependencies
       - restore_cache: *restore-npm-cache
       - run: *npm-install
-      - run: *npm-e2e-install
       - save_cache: *save-npm-cache
       - run: npm run build-packages
       - persist_to_workspace:
