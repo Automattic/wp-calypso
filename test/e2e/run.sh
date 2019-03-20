@@ -193,7 +193,9 @@ while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:fiIUvxu:h:F" opt; do
       ;;
   esac
 
-  MAGELLAN_CONFIGS+=("./test/e2e/$MAGELLAN_CONFIG")
+  if [ ! -z $MAGELLAN_CONFIG ]; then
+  	MAGELLAN_CONFIGS+=("./test/e2e/$MAGELLAN_CONFIG")
+  fi
   unset MAGELLAN_CONFIG
 done
 
