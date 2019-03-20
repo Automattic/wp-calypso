@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, get, noop, startsWith, trim, uniq } from 'lodash';
+import { find, get, noop, startsWith, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { v4 as uuid } from 'uuid';
 
@@ -14,10 +14,13 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import SuggestionSearch from 'components/suggestion-search';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { convertToCamelCase } from 'state/data-layer/utils';
 import PopularTopics from 'components/site-verticals-suggestion-search/popular-topics';
+import { requestVerticals, requestDefaultVertical } from 'state/signup/steps/site-vertical/actions';
+import {
+	getSiteVerticalsLastUpdated,
+	getSiteVerticals,
+	getDefaultVertical,
+} from 'state/signup/steps/site-vertical/selectors';
 
 /**
  * Style dependencies
@@ -177,52 +180,17 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	}
 }
 
-const SITE_VERTICALS_REQUEST_ID = 'site-verticals-search-results';
-const DEFAULT_SITE_VERTICAL_REQUEST_ID = 'default-site-verticals-search-results';
-
-const requestSiteVerticalHttpData = ( searchTerm, limit = 7, id = SITE_VERTICALS_REQUEST_ID ) => {
-	searchTerm = trim( searchTerm );
-	requestHttpData(
-		id,
-		http( {
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-			path: '/verticals',
-			query: {
-				search: searchTerm,
-				limit,
-				include_preview: true,
-			},
-		} ),
-		{
-			fromApi: () => data => [ [ id, convertToCamelCase( data ) ] ],
-			freshness: -Infinity,
-		}
-	);
-};
-
-export const isVerticalSearchPending = () =>
-	'pending' === get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
-
 export default localize(
 	connect(
-		() => {
-			const siteVerticalHttpData = getHttpData( SITE_VERTICALS_REQUEST_ID );
-			const defaultVerticalHttpData = getHttpData( DEFAULT_SITE_VERTICAL_REQUEST_ID );
-			return {
-				lastUpdated: get( siteVerticalHttpData, 'lastUpdated', 0 ),
-				verticals: get( siteVerticalHttpData, 'data', [] ),
-				defaultVertical: get( defaultVerticalHttpData, 'data[0]', {} ),
-			};
-		},
+		() => ( {
+			lastUpdated: getSiteVerticalsLastUpdated(),
+			verticals: getSiteVerticals(),
+			defaultVertical: getDefaultVertical(),
+		} ),
 		( dispatch, ownProps ) => ( {
 			shouldShowPopularTopics: searchValue => ! searchValue && ownProps.showPopular,
-			requestVerticals: requestSiteVerticalHttpData,
-			requestDefaultVertical: ( searchTerm = 'business' ) => {
-				if ( ! get( getHttpData( DEFAULT_SITE_VERTICAL_REQUEST_ID ), 'data', null ) ) {
-					requestSiteVerticalHttpData( searchTerm, 1, DEFAULT_SITE_VERTICAL_REQUEST_ID );
-				}
-			},
+			requestVerticals,
+			requestDefaultVertical,
 		} )
 	)( SiteVerticalsSuggestionSearch )
 );

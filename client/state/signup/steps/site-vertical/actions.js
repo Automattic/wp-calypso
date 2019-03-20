@@ -5,7 +5,11 @@
  */
 
 import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/action-types';
+import { requestHttpData } from 'state/data-layer/http-data';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { convertToCamelCase } from 'state/data-layer/utils';
 import SignupActions from 'lib/signup/actions';
+import { SITE_VERTICALS_REQUEST_ID, DEFAULT_SITE_VERTICAL_REQUEST_ID } from './constants';
 
 /**
  * Action creator: Set site vertical data
@@ -33,3 +37,25 @@ export const submitSiteVertical = ( siteVerticalData, stepName = 'site-topic' ) 
 	dispatch( setSiteVertical( siteVerticalData ) );
 	SignupActions.submitSignupStep( { stepName }, [], { siteTopic: siteVerticalData.name } );
 };
+
+export const requestVerticals = ( searchTerm, limit = 7, id = SITE_VERTICALS_REQUEST_ID ) =>
+	requestHttpData(
+		id,
+		http( {
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+			path: '/verticals',
+			query: {
+				search: searchTerm.trim(),
+				limit,
+				include_preview: true,
+			},
+		} ),
+		{
+			fromApi: () => data => [ [ id, convertToCamelCase( data ) ] ],
+			freshness: -Infinity,
+		}
+	);
+
+export const requestDefaultVertical = ( searchTerm = 'business' ) =>
+	requestVerticals( searchTerm, 1, DEFAULT_SITE_VERTICAL_REQUEST_ID );
