@@ -28,6 +28,7 @@ import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
+import WebPreview from 'components/web-preview';
 
 /**
  * Style dependencies
@@ -45,6 +46,9 @@ class CalypsoifyIframe extends Component {
 	state = {
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
+		isPreviewVisible: false,
+		previewUrl: 'about:blank',
+		postUrl: null,
 	};
 
 	constructor( props ) {
@@ -141,6 +145,11 @@ class CalypsoifyIframe extends Component {
 		if ( 'openRevisions' === action ) {
 			this.props.openPostRevisionsDialog();
 		}
+
+		if ( 'previewPost' === action ) {
+			const { previewUrl, postUrl } = payload;
+			this.openPreviewModal( { previewUrl, postUrl } );
+		}
 	};
 
 	loadRevision = revision => {
@@ -209,9 +218,28 @@ class CalypsoifyIframe extends Component {
 		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};
 
+	openPreviewModal = ( { previewUrl, postUrl } ) => {
+		this.setState( {
+			isPreviewVisible: true,
+			previewUrl,
+			postUrl,
+		} );
+	};
+
+	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
+
+
 	render() {
 		const { iframeUrl, siteId } = this.props;
-		const { isMediaModalVisible, allowedTypes, multiple, isIframeLoaded } = this.state;
+		const {
+			isMediaModalVisible,
+			allowedTypes,
+			multiple,
+			isIframeLoaded,
+			isPreviewVisible,
+			previewUrl,
+			postUrl,
+		} = this.state;
 
 		return (
 			<Fragment>
@@ -239,6 +267,12 @@ class CalypsoifyIframe extends Component {
 					/>
 				</MediaLibrarySelectedData>
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
+				<WebPreview
+					externalUrl={ postUrl }
+					onClose={ this.closePreviewModal }
+					previewUrl={ previewUrl }
+					showPreview={ isPreviewVisible }
+				/>
 			</Fragment>
 		);
 	}
