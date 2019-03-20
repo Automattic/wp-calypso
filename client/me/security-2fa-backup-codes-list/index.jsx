@@ -50,9 +50,13 @@ class Security2faBackupCodesList extends React.Component {
 
 	popup = false;
 
+	copyCodesButtonRef = React.createRef();
+	printCodesButtonRef = React.createRef();
+	downloadCodesButtonRef = React.createRef();
+
 	componentDidMount() {
 		// Configure clipboard to be triggered on clipboard button press
-		const button = ReactDom.findDOMNode( this.refs.copyCodesBtn );
+		const button = ReactDom.findDOMNode( this.copyCodesButtonRef.current );
 		this.clipboard = new Clipboard( button, {
 			text: () => this.getBackupCodePlainText( this.props.backupCodes ),
 		} );
@@ -299,11 +303,11 @@ class Security2faBackupCodesList extends React.Component {
 							disabled={ ! this.props.backupCodes.length }
 							onMouseEnter={ this.enableCopyCodesTooltip }
 							onMouseLeave={ this.disableCopyCodesTooltip }
-							ref="copyCodesBtn"
+							ref={ this.copyCodesButtonRef }
 						>
 							<Gridicon icon="clipboard" />
 							<Tooltip
-								context={ this.refs && this.refs.copyCodesBtn }
+								context={ this.copyCodesButtonRef.current }
 								isVisible={ this.state.copyCodesTooltip }
 								position="top"
 							>
@@ -317,11 +321,11 @@ class Security2faBackupCodesList extends React.Component {
 							onClick={ this.onPrint }
 							onMouseEnter={ this.enablePrintCodesTooltip }
 							onMouseLeave={ this.disablePrintCodesTooltip }
-							ref="printCodesBtn"
+							ref={ this.printCodesButtonRef }
 						>
 							<Gridicon icon="print" />
 							<Tooltip
-								context={ this.refs && this.refs.printCodesBtn }
+								context={ this.printCodesButtonRef.current }
 								isVisible={ this.state.printCodesTooltip }
 								position="top"
 							>
@@ -335,11 +339,11 @@ class Security2faBackupCodesList extends React.Component {
 							onClick={ this.saveCodesToFile }
 							onMouseEnter={ this.enableDownloadCodesTooltip }
 							onMouseLeave={ this.disableDownloadCodesTooltip }
-							ref="downloadCodesBtn"
+							ref={ this.downloadCodesButtonRef }
 						>
 							<Gridicon icon="cloud-download" />
 							<Tooltip
-								context={ this.refs && this.refs.downloadCodesBtn }
+								context={ this.downloadCodesButtonRef.current }
 								isVisible={ this.state.downloadCodesTooltip }
 								position="top"
 							>
