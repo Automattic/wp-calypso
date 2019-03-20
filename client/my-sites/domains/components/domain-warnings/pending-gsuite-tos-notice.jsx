@@ -16,7 +16,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { COMPLETING_GOOGLE_APPS_SIGNUP } from 'lib/url/support';
 import { domainManagementEmail } from 'my-sites/domains/paths';
-import PendingGappsTosNoticeAction from './pending-gapps-tos-notice-action';
+import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 const learnMoreLink = (
@@ -137,7 +137,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 				) }
 			>
 				<NoticeAction>
-					<PendingGappsTosNoticeAction
+					<PendingGSuiteTosNoticeAction
 						domainName={ domainName }
 						isMultipleDomains={ false }
 						section={ this.props.section }
@@ -175,7 +175,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 							return (
 								<li key={ `pending-gapps-tos-acceptance-domain-${ domainName }` }>
 									<strong>{ domainName } </strong>
-									<PendingGappsTosNoticeAction
+									<PendingGSuiteTosNoticeAction
 										domainName={ domainName }
 										isMultipleDomains={ true }
 										section={ this.props.section }

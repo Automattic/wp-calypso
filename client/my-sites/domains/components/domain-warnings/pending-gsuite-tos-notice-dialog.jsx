@@ -19,7 +19,7 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import wp from 'lib/wp';
 
-function PendingGappsTosNoticeDialog( props ) {
+function PendingGSuiteTosNoticeDialog( props ) {
 	const [ password, setPassword ] = useState( false );
 	const [ isCopied, setIsCopied ] = useState( false );
 	const translate = useTranslate();
@@ -76,14 +76,14 @@ function PendingGappsTosNoticeDialog( props ) {
 			{ password && (
 				<Fragment>
 					<p>
-						Password: <strong>{ password }</strong>
+						{ translate( 'Password:' ) } <strong>{ password }</strong>
 						<ClipboardButton
 							className="domain-warnings__dialog-copy"
 							onCopy={ onCopyAction }
 							text={ password }
 						>
 							{ isCopied && <Gridicon icon="checkmark" /> }
-							{ isCopied ? 'Copied!' : 'Copy Password' }
+							{ isCopied ? translate( 'Copied!' ) : translate( 'Copy Password' ) }
 						</ClipboardButton>
 					</p>
 					<Button
@@ -99,7 +99,7 @@ function PendingGappsTosNoticeDialog( props ) {
 			{ ! password && (
 				<VerticalNav>
 					<VerticalNavItem onClick={ onPasswordClickHandler } key="0" path={ '#' }>
-						I don't have the password
+						{ translate( "I don't have the password" ) }
 					</VerticalNavItem>
 					<VerticalNavItem
 						onClick={ recordLogInClick }
@@ -107,7 +107,7 @@ function PendingGappsTosNoticeDialog( props ) {
 						external
 						key="1"
 					>
-						I have the password, take me to the login page
+						{ translate( 'I have the password, take me to the login page' ) }
 					</VerticalNavItem>
 				</VerticalNav>
 			) }
@@ -115,7 +115,7 @@ function PendingGappsTosNoticeDialog( props ) {
 	);
 }
 
-PendingGappsTosNoticeDialog.propTypes = {
+PendingGSuiteTosNoticeDialog.propTypes = {
 	domainName: PropTypes.string.isRequired,
 	isMultipleDomains: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
@@ -155,4 +155,4 @@ export default connect(
 	{
 		pendingAccountLogInClick,
 	}
-)( PendingGappsTosNoticeDialog );
+)( PendingGSuiteTosNoticeDialog );

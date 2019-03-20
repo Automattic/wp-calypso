@@ -8,9 +8,9 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PendingGappsTosNoticeDialog from './pending-gapps-tos-notice-dialog';
+import PendingGSuiteTosNoticeDialog from './pending-gsuite-tos-notice-dialog';
 
-function PendingGappsTosNoticeAction( props ) {
+function PendingGSuiteTosNoticeAction( props ) {
 	const [ dialogVisible, setDialogVisible ] = useState( false );
 	const onFixClickHandler = e => {
 		e.preventDefault;
@@ -25,7 +25,7 @@ function PendingGappsTosNoticeAction( props ) {
 	return (
 		<Fragment>
 			<button onClick={ onFixClickHandler }>{ translate( 'Fix' ) }</button>
-			<PendingGappsTosNoticeDialog
+			<PendingGSuiteTosNoticeDialog
 				domainName={ props.domainName }
 				isMultipleDomains={ props.isMultipleDomains }
 				onClose={ onCloseClickHandler }
@@ -39,7 +39,7 @@ function PendingGappsTosNoticeAction( props ) {
 	);
 }
 
-PendingGappsTosNoticeAction.propTypes = {
+PendingGSuiteTosNoticeAction.propTypes = {
 	domainName: PropTypes.string.isRequired,
 	isMultipleDomains: PropTypes.bool.isRequired,
 	section: PropTypes.string.isRequired,
@@ -48,4 +48,4 @@ PendingGappsTosNoticeAction.propTypes = {
 	user: PropTypes.string.isRequired,
 };
 
-export default PendingGappsTosNoticeAction;
+export default PendingGSuiteTosNoticeAction;
