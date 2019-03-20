@@ -21,7 +21,7 @@ import { hasPendingGSuiteUsers } from 'lib/domains/gsuite';
 import { getSelectedDomain } from 'lib/domains';
 import GoogleAppsUserItem from './google-apps-user-item';
 import Notice from 'components/notice';
-import PendingGappsTosNotice from 'my-sites/domains/components/domain-warnings/pending-gapps-tos-notice';
+import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import SectionHeader from 'components/section-header';
 
 class GoogleAppsUsers extends React.Component {
@@ -129,8 +129,8 @@ class GoogleAppsUsers extends React.Component {
 		return (
 			<div>
 				{ pendingDomains.length !== 0 && (
-					<PendingGappsTosNotice
-						key="pending-gapps-tos-notice"
+					<PendingGSuiteTosNotice
+						key="pending-gsuite-tos-notice"
 						siteSlug={ this.props.selectedSite.slug }
 						domains={ pendingDomains }
 						section="google-apps"

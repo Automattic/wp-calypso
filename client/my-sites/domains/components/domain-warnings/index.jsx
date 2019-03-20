@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import PendingGappsTosNotice from './pending-gapps-tos-notice';
+import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
 import { purchasesRoot } from 'me/purchases/paths';
 import { type as domainTypes, transferStatus, gdprConsentStatus } from 'lib/domains/constants';
 import { hasPendingGSuiteUsers } from 'lib/domains/gsuite';
@@ -73,7 +73,7 @@ export class DomainWarnings extends React.PureComponent {
 			'expiredDomainsCanManage',
 			'expiringDomainsCanManage',
 			'unverifiedDomainsCanManage',
-			'pendingGappsTosAcceptanceDomains',
+			'pendingGSuiteTosAcceptanceDomains',
 			'expiredDomainsCannotManage',
 			'expiringDomainsCannotManage',
 			'unverifiedDomainsCannotManage',
@@ -115,7 +115,7 @@ export class DomainWarnings extends React.PureComponent {
 			this.expiringDomainsCanManage,
 			this.unverifiedDomainsCanManage,
 			this.unverifiedDomainsCannotManage,
-			this.pendingGappsTosAcceptanceDomains,
+			this.pendingGSuiteTosAcceptanceDomains,
 			this.expiredDomainsCannotManage,
 			this.expiringDomainsCannotManage,
 			this.wrongNSMappedDomains,
@@ -126,7 +126,6 @@ export class DomainWarnings extends React.PureComponent {
 			this.pendingConsent,
 		];
 		const validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
-
 		return intersection( allRules, validRules );
 	}
 
@@ -818,13 +817,13 @@ export class DomainWarnings extends React.PureComponent {
 		);
 	};
 
-	pendingGappsTosAcceptanceDomains = () => {
+	pendingGSuiteTosAcceptanceDomains = () => {
 		const pendingDomains = this.getDomains().filter( hasPendingGSuiteUsers );
 		return (
 			pendingDomains.length !== 0 && (
-				<PendingGappsTosNotice
+				<PendingGSuiteTosNotice
 					isCompact={ this.props.isCompact }
-					key="pending-gapps-tos-notice"
+					key="pending-gsuite-tos-notice"
 					siteSlug={ this.props.selectedSite && this.props.selectedSite.slug }
 					domains={ pendingDomains }
 					section="domain-management"
@@ -835,7 +834,6 @@ export class DomainWarnings extends React.PureComponent {
 
 	pendingTransfer = () => {
 		const domain = find( this.getDomains(), 'pendingTransfer' );
-
 		if ( ! domain ) {
 			return null;
 		}

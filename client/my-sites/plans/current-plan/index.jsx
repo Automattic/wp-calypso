@@ -126,7 +126,7 @@ class CurrentPlan extends Component {
 							'newDomainsWithPrimary',
 							'newDomains',
 							'unverifiedDomainsCanManage',
-							'pendingGappsTosAcceptanceDomains',
+							'pendingGSuiteTosAcceptanceDomains',
 							'unverifiedDomainsCannotManage',
 							'wrongNSMappedDomains',
 							'newTransfersWrongNS',

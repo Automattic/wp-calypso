@@ -78,7 +78,7 @@ export class List extends React.Component {
 						'newDomainsWithPrimary',
 						'newDomains',
 						'unverifiedDomainsCanManage',
-						'pendingGappsTosAcceptanceDomains',
+						'pendingGSuiteTosAcceptanceDomains',
 						'unverifiedDomainsCannotManage',
 						'wrongNSMappedDomains',
 						'transferStatus',
