@@ -15,6 +15,7 @@
 	"browserslist": [
 		"extends @wordpress/browserslist-config"
 	],
+	"defaultE2ETestArgs": "-g -s $BROWSERSIZE",
 	"dependencies": {
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/tree-select": "file:./packages/tree-select",
@@ -256,7 +257,7 @@
 		"pretest-client": "npm run -s pretest",
 		"test-client": "jest -c=test/client/jest.config.js",
 		"test-client:watch": "npm run -s test-client -- --watch",
-		"test-e2e": "cd test/e2e && npm i && npm run test",
+		"test-e2e": "test/e2e/run.sh ${TESTARGS:-$npm_package_defaultE2ETestArgs}",
 		"encrypt-e2e-config": "openssl enc -md sha1 -aes-256-cbc -pass env:CONFIG_KEY -out ./test/e2e/config/encrypted.enc -in ./test/e2e/config/local-$NODE_ENV.json",
 		"decrypt-e2e-config": "openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./test/e2e/config/encrypted.enc -out ./test/e2e/config/local-$NODE_ENV.json",
 		"pretest-integration": "npm run -s pretest",
@@ -321,6 +322,7 @@
 		"stylelint": "9.10.1",
 		"supertest": "3.4.2",
 		"webpack-hot-middleware": "2.24.3",
+		"wp-e2e-tests": "file:./test/e2e",
 		"whybundled": "1.4.2"
 	},
 	"optionalDependencies": {

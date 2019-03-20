@@ -1,0 +1,7 @@
+require:
+  - 'esm'
+  - 'test/e2e/test/mocha.env.js'
+  - 'mocha-steps'
+file:
+  - 'test/e2e/lib/before.js'
+  - 'test/e2e/lib/mocha-hooks.js'
