@@ -9,9 +9,6 @@ import ReactDom from 'react-dom';
 import Clipboard from 'clipboard';
 import userFactory from 'lib/user';
 import Gridicon from 'gridicons';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-list' );
-
 import { saveAs } from 'browser-filesaver';
 
 /**
@@ -54,8 +51,6 @@ class Security2faBackupCodesList extends React.Component {
 	popup = false;
 
 	componentDidMount() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-
 		// Configure clipboard to be triggered on clipboard button press
 		const button = ReactDom.findDOMNode( this.refs.copyCodesBtn );
 		this.clipboard = new Clipboard( button, {
@@ -65,11 +60,8 @@ class Security2faBackupCodesList extends React.Component {
 	}
 
 	componentWillUnmount() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-
 		// Cleanup clipboard object
 		this.clipboard.destroy();
-		delete this.clipboard;
 	}
 
 	openPopup = () => {
