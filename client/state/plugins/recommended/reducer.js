@@ -13,7 +13,7 @@ const reducer = keyedReducer( 'siteId', ( state = null, action ) => {
 			return action.data;
 		}
 		case PLUGINS_RECOMMENDED_REQUEST_FAILURE: {
-			return [];
+			return state || [];
 		}
 	}
 	return state;
