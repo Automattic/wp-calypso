@@ -92,7 +92,7 @@ Please do not use regular [`npm publish`](https://docs.npmjs.com/cli/publish) wi
 
 Using [Lerna](https://lernajs.io/) to publish package(s):
 
-1. Might be good to start unlogged, since Lerna doesn't have `--dry-run` option like NPM does: `npm logout`.
+1. Might be good to start un-authenticated, since Lerna doesn't have `--dry-run` option like NPM does: `npm logout`.
 1. Update packages versions as necessary. We’ll rely on package versions for Lerna to know what to publish. Please be mindful about [semantic versioning](https://semver.org/).
 1. `git checkout master`
 1. `git pull`
