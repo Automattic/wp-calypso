@@ -77,7 +77,6 @@ import {
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
-import ThankYouCard from 'components/thank-you-card';
 import {
 	domainManagementEmail,
 	domainManagementList,
