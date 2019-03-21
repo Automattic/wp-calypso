@@ -42,11 +42,9 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 	"name": "@automattic/your-package",
 	"version": "1.0.0",
 	"description": "My new package",
-
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"sideEffects": false,
-
 	"keywords": [
 		"wordpress"
 	],
@@ -56,7 +54,8 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Automattic/wp-calypso.git"
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/your-package"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -89,4 +88,22 @@ To run one package's tests:
 
 ## Publishing
 
-We do not use the plain `lerna publish` flow. Instead, use `lerna publish from-package` to publish all packages currently out of date, or `npm publish` within a package to publish an individual package. The standard workflow is too limiting for our needs.
+Please do not use regular [`npm publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
+
+Using [Lerna](https://lernajs.io/) to publish package(s):
+
+1. Might be good to start un-authenticated, since Lerna doesn't have `--dry-run` option like NPM does: `npm logout`.
+1. Update packages versions as necessary. We’ll rely on package versions for Lerna to know what to publish. Please be mindful about [semantic versioning](https://semver.org/).
+1. `git checkout master`
+1. `git pull`
+1. `git status` (should be clean!)
+1. `npm run distclean`
+1. `npm ci`
+1. `npx lerna publish from-package`
+1. Say “no” at the prompt.
+1. Lerna will confirm which packages and versions will be published. If something looks off, abort!
+1. Make sure you're logged in at this point, we're going to publish 🚀: `npm whoami`, `npm login`.
+1. Craft the following command, we'll add `--yes` to skip prompts and save OTP cycle time. `--dist-tag next` is optional, use it when publishing unstable versions.
+1. Wait for your npm OTP (one time password) cycle to start, write it into the command and publish:
+1. `NPM_CONFIG_OTP=[YOUR_OTP_CODE] npx lerna publish --dist-tag next from-package --yes`
+1. Pat yourself on the back, you published!
