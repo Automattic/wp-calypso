@@ -13,7 +13,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
-import { setVerticals } from 'state/signup/steps/site-vertical/actions';
+import { setVerticals } from 'state/signup/site-vertical/actions';
 import { SIGNUP_VERTICALS_REQUEST } from 'state/action-types';
 
 export const requestVerticals = action =>
