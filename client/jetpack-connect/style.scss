@@ -63,44 +63,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			display: none;
 		}
 	}
-
-	.ribbon .ribbon__title {
-		background-color: var( --color-jetpack );
-
-		&::before,
-		&::after {
-			border-top-color: var( --color-jetpack-dark );
-		}
-
-		&::before {
-			border-left-color: var( --color-jetpack-dark );
-		}
-
-		&::after {
-			border-right-color: var( --color-jetpack-dark );
-		}
-	}
-
-	.button.is-primary {
-		background-color: var( --color-jetpack );
-		border-color: var( --color-jetpack-dark );
-
-		&:hover,
-		&:focus {
-			background-color: var( --color-jetpack-400 );
-		}
-
-		&:focus {
-			box-shadow: 0 0 0 2px var( --color-jetpack-light );
-		}
-
-		&[disabled],
-		&:disabled {
-			background: var( --color-white );
-			border-color: var( --color-neutral-50 );
-			color: var( --color-neutral-50 );
-		}
-	}
 }
 
 .jetpack-connect__step {
@@ -891,25 +853,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		color: var( --color-neutral-500 );
 	}
 
-	.spinner__inner,
-	.spinner__outer {
-		border-top-color: var( --color-accent );
-	}
-
-	.spinner__inner {
-		border-right-color: var( --color-accent );
-	}
-
-	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link {
-		background-color: var( --color-accent );
-		border-color: var( --color-jetpack-dark );
-
-		&:hover,
-		&:focus {
-			background-color: var( --color-jetpack-light );
-		}
-	}
-
 	.wp-login__site-return-link:after {
 		background: linear-gradient(to right, rgba( var( --color-jetpack-onboarding-background ) , 0 ), rgba( var( --color-jetpack-onboarding-background ) , 1 ) 90%)
 	}
@@ -944,12 +887,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		padding-bottom: 24px;
 		background-color: var( --color-white );
 		border-radius: 3px;
-	}
-
-	.site-verticals-suggestion-search__topic-list-item {
-		&:focus {
-			box-shadow: inset 0 0 0 2px var( --color-jetpack );
-		}
 	}
 
 	.site-topic__content .form-fieldset {
@@ -990,16 +927,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card {
 		box-shadow: none;
 	}
-
-	.progress-bar.is-pulsing .progress-bar__progress {
-		background-image: linear-gradient(
-			-45deg,
-			var( --color-jetpack-dark ) 28%,
-			var( --color-accent ) 28%,
-			var( --color-accent ) 72%,
-			var( --color-jetpack-dark ) 72%
-		);
-	}
 }
 
 .layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
@@ -1009,33 +936,5 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	::selection {
 		color: var( --color-white );
 		background: var( --color-accent );
-	}
-
-	.button {
-
-		&.is-primary {
-			border-color: var( --color-jetpack-dark );
-
-			&:hover,
-			&:focus {
-				background-color: var( --color-jetpack-400 );
-			}
-		}
-
-		&:focus {
-			box-shadow: 0 0 0 2px var( --color-jetpack-light );
-		}
-
-		&[disabled],
-		&:disabled {
-			background: var( --color-white );
-			border-color: var( --color-neutral-50 );
-			color: var( --color-neutral-50 );
-
-			&:hover,
-			&:focus {
-				background: var( --color-white );
-			}
-		}
 	}
 }
