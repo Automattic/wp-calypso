@@ -52,7 +52,7 @@ export const removeEmailForwardFailure = ( action, error ) => {
 
 	if ( error && error.message ) {
 		failureMessage = translate(
-			'Failed to remove email forward %(email)s' +
+			'Failed to remove email forward %(email)s ' +
 				'with message "%(message)s". ' +
 				'Please try again or ' +
 				'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
