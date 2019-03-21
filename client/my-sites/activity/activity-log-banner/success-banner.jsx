@@ -156,13 +156,11 @@ class SuccessBanner extends PureComponent {
 					</Button>
 				) }
 				<HappychatButton
-					className="activity-log-banner__success-happychat activity-log-confirm-dialog__more-info-link"
+					className="activity-log-banner__happychat-button"
 					onClick={ params.trackHappyChat }
 				>
 					<Gridicon icon="chat" />
-					<span className="activity-log-banner__success-happychat-text activity-log-confirm-dialog__more-info-link-text">
-						{ translate( 'Get help' ) }
-					</span>
+					<span>{ translate( 'Get help' ) }</span>
 				</HappychatButton>
 			</ActivityLogBanner>
 		);
