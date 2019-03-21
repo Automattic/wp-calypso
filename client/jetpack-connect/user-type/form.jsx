@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -10,17 +9,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
  */
-import './style.scss';
+import '../style.scss';
 
 class UserTypeForm extends Component {
 	static propTypes = {
@@ -40,10 +35,10 @@ class UserTypeForm extends Component {
 
 	handleRadioChange = event => this.setState( { userType: event.currentTarget.value } );
 
-	handleSubmit = event => {
-		const { userType } = this.state;
+	handleSubmit = userType => {
+		//	const { userType } = this.state;
 
-		event.preventDefault();
+		//	event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_user_type', {
 			value: userType,
@@ -52,7 +47,7 @@ class UserTypeForm extends Component {
 		this.props.submitForm( userType );
 	};
 
-  getUserTypeQuestions = () => {
+	getUserTypeQuestions = () => {
 		const { translate } = this.props;
 
 		return [
@@ -65,44 +60,24 @@ class UserTypeForm extends Component {
 				label: translate( 'Someone else' ),
 			},
 		];
-	}
+	};
 
-	renderRadioOptions() {
-		const { translate } = this.props;
-
+	renderUserTypeProfiles() {
 		return this.getUserTypeQuestions().map( userTypeProperties => (
-			<FormLabel
-				className={ classNames( 'user-type__option', {
-					'is-selected': userTypeProperties.slug === this.state.userType,
-				} ) }
+			<Card
+				className="site-type__option"
 				key={ userTypeProperties.id }
+				displayAsLink
+				tagName="button"
+				onClick={ this.handleSubmit.bind( this, userTypeProperties.slug ) }
 			>
-				<FormRadio
-					value={ userTypeProperties.slug }
-					checked={ userTypeProperties.slug === this.state.userType }
-					onChange={ this.handleRadioChange }
-				/>
-				<strong className="user-type__option-label">{ userTypeProperties.label }</strong>
-				<span className="user-type__option-description">{ userTypeProperties.description }</span>
-			</FormLabel>
+				<strong className="site-type__option-label">{ userTypeProperties.label }</strong>
+			</Card>
 		) );
 	}
 
 	render() {
-		const { translate } = this.props;
-
-		return (
-			<div className="user-type__wrapper">
-				<form onSubmit={ this.handleSubmit }>
-					<Card>
-						<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
-						<Button primary={ true } type="submit" disabled={ ! this.state.userType }>
-							{ translate( 'Continue' ) }
-						</Button>
-					</Card>
-				</form>
-			</div>
-		);
+		return <Card className="site-type__wrapper">{ this.renderUserTypeProfiles() }</Card>;
 	}
 }
 
