@@ -1,0 +1,17 @@
+.email .is-placeholder {
+	.gsuite-user-item__email,
+	.gsuite-user-item__manage-link {
+		@include placeholder();
+	}
+}
+
+.email {
+	.gsuite-user-item__email {
+		float: left;
+	}
+	
+	.gsuite-user-item__manage-link {
+		float: right;
+		font-size: 13px;
+	}
+}
