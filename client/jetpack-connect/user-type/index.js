@@ -25,7 +25,7 @@ class JetpackUserType extends Component {
 
 		this.props.saveSiteUserType( siteId, userType );
 
-		page.redirect( `/jetpack/connect/plans/${ siteSlug }` );
+		page( `/jetpack/connect/plans/${ siteSlug }` );
 	};
 
 	render() {
@@ -33,7 +33,7 @@ class JetpackUserType extends Component {
 
 		return (
 			<MainWrapper isWide>
-				<div className="jetpack-connect__step">
+				<div className="user-type__connect-step">
 					<FormattedHeader
 						headerText={ translate( 'Are you setting up this site for yourself or someone else?' ) }
 					/>

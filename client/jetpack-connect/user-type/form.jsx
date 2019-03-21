@@ -15,7 +15,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 /**
  * Style dependencies
  */
-import '../style.scss';
+import './style.scss';
 
 class UserTypeForm extends Component {
 	static propTypes = {
@@ -25,21 +25,11 @@ class UserTypeForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			userType: '',
-		};
-	}
+	state = { userType: '' };
 
 	handleRadioChange = event => this.setState( { userType: event.currentTarget.value } );
 
 	handleSubmit = userType => {
-		//	const { userType } = this.state;
-
-		//	event.preventDefault();
-
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_user_type', {
 			value: userType,
 		} );
@@ -52,10 +42,12 @@ class UserTypeForm extends Component {
 
 		return [
 			{
+				id: 1,
 				slug: 'creator',
 				label: translate( 'Myself' ),
 			},
 			{
+				id: 2,
 				slug: 'builder',
 				label: translate( 'Someone else' ),
 			},
@@ -65,19 +57,19 @@ class UserTypeForm extends Component {
 	renderUserTypeProfiles() {
 		return this.getUserTypeQuestions().map( userTypeProperties => (
 			<Card
-				className="site-type__option"
+				className="user-type__option"
 				key={ userTypeProperties.id }
 				displayAsLink
 				tagName="button"
 				onClick={ this.handleSubmit.bind( this, userTypeProperties.slug ) }
 			>
-				<strong className="site-type__option-label">{ userTypeProperties.label }</strong>
+				<strong className="user-type__option-label">{ userTypeProperties.label }</strong>
 			</Card>
 		) );
 	}
 
 	render() {
-		return <Card className="site-type__wrapper">{ this.renderUserTypeProfiles() }</Card>;
+		return <Card className="user-type__wrapper">{ this.renderUserTypeProfiles() }</Card>;
 	}
 }
 
