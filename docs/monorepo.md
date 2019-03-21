@@ -99,7 +99,7 @@ Using [Lerna](https://lernajs.io/) to publish package(s):
 1. `git status` (should be clean!)
 1. `npm run distclean`
 1. `npm ci`
-1. `npx lerna publish --dist-tag next from-package`
+1. `npx lerna publish from-package`
 1. Say “no” at the prompt.
 1. Lerna will confirm which packages and versions will be published. If something looks off, abort!
 1. Make sure you're logged in at this point, we're going to publish 🚀
