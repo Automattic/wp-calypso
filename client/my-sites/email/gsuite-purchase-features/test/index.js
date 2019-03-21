@@ -30,7 +30,10 @@ describe( 'GSuitePurchaseFeatures', () => {
 		const tree = renderer
 			.create(
 				<Provider store={ store }>
-					<GSuitePurchaseFeatures domainName={ 'testing123.com' } productSlug={ 'gappsbusiness' } />
+					<GSuitePurchaseFeatures
+						domainName={ 'testing123.com' }
+						productSlug={ 'gapps_unlimited' }
+					/>
 				</Provider>
 			)
 			.toJSON();

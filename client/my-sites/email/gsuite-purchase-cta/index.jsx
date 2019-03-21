@@ -33,7 +33,7 @@ class GSuitePurchaseCta extends React.Component {
 
 	getPlanText() {
 		const { productSlug, translate } = this.props;
-		if ( 'gappsbusiness' === productSlug ) {
+		if ( 'gapps_unlimited' === productSlug ) {
 			return translate( 'Business' );
 		}
 	}
