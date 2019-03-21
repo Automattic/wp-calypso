@@ -13,7 +13,8 @@
 	"module": "dist/esm/index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Automattic/wp-calypso.git"
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/tree-select"
 	},
 	"publishConfig": {
 		"access": "public"

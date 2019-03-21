@@ -56,7 +56,8 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Automattic/wp-calypso.git"
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/your-package"
 	},
 	"publishConfig": {
 		"access": "public"
