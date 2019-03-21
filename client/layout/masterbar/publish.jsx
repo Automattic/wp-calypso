@@ -22,6 +22,7 @@ import isRtlSelector from 'state/selectors/is-rtl';
 import TranslatableString from 'components/translatable/proptype';
 import { getEditorUrl } from 'state/selectors/get-editor-url';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import { reduxGetState } from 'lib/redux-bridge';
 import { navigate } from 'state/ui/actions';
 
 class MasterbarItemNew extends React.Component {
@@ -75,8 +76,9 @@ class MasterbarItemNew extends React.Component {
 		return 'bottom left';
 	}
 
-	onSiteSelect = () => {
-		this.props.openEditor( this.props.editorUrl );
+	onSiteSelect = siteId => {
+		const redirectUrl = getEditorUrl( reduxGetState(), siteId, null, 'post' );
+		this.props.openEditor( redirectUrl );
 		return true; // handledByHost = true, don't let the component nav
 	};
 
