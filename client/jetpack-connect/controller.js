@@ -18,6 +18,7 @@ import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
+import JetpackUserType from './user-type/index';
 import JetpackSiteTopic from './site-topic';
 import JetpackSiteType from './site-type';
 import JetpackSsoForm from './sso';
@@ -294,6 +295,14 @@ export function plansSelection( context, next ) {
 			/>
 		</CheckoutData>
 	);
+	next();
+}
+
+export function userType( context, next ) {
+	analytics.pageView.record( 'jetpack/connect/user-type', 'Jetpack Site User Type Category' );
+
+	context.primary = <JetpackUserType />;
+
 	next();
 }
 
