@@ -33,10 +33,6 @@
 	}
 }
 
-.layout__secondary .site-selector.is-large .site-selector__sites {
-	border-color: var( --sidebar-border-color );
-}
-
 // Styles for Site elements within the Selector
 .site-selector .site,
 .site-selector .all-sites {
@@ -69,11 +65,6 @@
 			color: var( --sidebar-menu-selected-a-color );
 		}
 	}
-}
-
-.layout__secondary .all-sites .count {
-	color: var( --sidebar-text-color );
-	border-color: var( --sidebar-text-color );
 }
 
 // Highlight & hover effects
@@ -150,10 +141,6 @@
 	}
 }
 
-.layout__secondary .site-selector__sites {
-	background: var( --sidebar-background );
-}
-
 .site-selector__no-results {
 	color: var( --color-neutral-light );
 	font-style: italic;
@@ -167,10 +154,6 @@
 	display: flex;
 	flex-direction: row;
 	padding-left: 10px;
-}
-
-.layout__secondary .site-selector__add-new-site {
-	border-color: var( --sidebar-border-color );
 }
 
 .site-selector__add-new-site .button {
@@ -200,14 +183,6 @@
 	}
 }
 
-.layout__secondary .site-selector__add-new-site .button {
-	color: var( --sidebar-heading-color );
-
-	&:hover {
-		color: var( --sidebar-text-color );
-	}
-}
-
 // Containers in the list of sites are larger
 .site-selector .site-action {
 	padding-top: 15px;
@@ -217,20 +192,12 @@
 	border-bottom: 1px solid var( --color-neutral-100 );
 }
 
-.layout__secondary .site-selector .all-sites {
-	border-color: var( --sidebar-border-color );
-}
-
 .site-selector__recent {
 	border-bottom: 1px solid var( --color-neutral-0 );
 
 	&:empty {
 		border-bottom-width: 0;
 	}
-}
-
-.layout__secondary .site-selector__recent {
-	border-color: var( --sidebar-border-color );
 }
 
 .site-selector__hidden-sites-message {
