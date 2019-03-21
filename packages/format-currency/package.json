@@ -9,6 +9,9 @@
 		"type": "git",
 		"url": "git://github.com/Automattic/wp-calypso.git"
 	},
+	"publishConfig": {
+		"access": "public"
+	},
 	"keywords": [
 		"currency",
 		"internationalization"
