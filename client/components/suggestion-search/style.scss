@@ -19,5 +19,8 @@
 
 	.spinner {
 		top: 12px;
+		@include breakpoint( '<660px' ) {
+			top: 17px;
+		}
 	}
 }
