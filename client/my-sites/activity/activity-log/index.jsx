@@ -71,6 +71,11 @@ import { applySiteOffset } from 'lib/site/timezone';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getPreference } from 'state/preferences/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const PAGE_SIZE = 20;
 
 class ActivityLog extends Component {
