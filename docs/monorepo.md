@@ -88,4 +88,19 @@ To run one package's tests:
 
 ## Publishing
 
-We do not use the plain `lerna publish` flow. Instead, use `lerna publish from-package` to publish all packages currently out of date, or `npm publish` within a package to publish an individual package. The standard workflow is too limiting for our needs.
+Please do not use regular [`npm publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
+
+Using Lerna to publish package(s):
+
+1. Login to NPM: `npm whoami`, `npm login`.
+1. Update packages versions as necessary. We’ll rely on package versions for Lerna to know what to publish. Please be mindful about [semantic versioning](https://semver.org/).
+1. `git checkout master`
+1. `git pull`
+1. `git status` (should be clean!)
+1. `npm run distclean`
+1. `npm ci`
+1. `npx lerna publish --dist-tag next from-package`
+1. Lerna will confirm which packages and versions will be published. `--dist-tag next` is optional, we used it to avoid publishing a new latest for `i18n-calypso`. Say “no” at the prompt.
+1. If everything looked good, get this command ready and wait for your NPM OTP (one time password) cycle to start. `--yes` is added to then end to skip the prompt, we already verified which packages will be published and don’t want to waste the OTP cycle time at the prompt.
+1. `NPM_CONFIG_OTP=[YOUR_OTP_CODE] npx lerna publish --dist-tag next from-package --yes`
+1. Pat yourself on the back, you published!
