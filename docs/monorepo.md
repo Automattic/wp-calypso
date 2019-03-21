@@ -42,11 +42,9 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 	"name": "@automattic/your-package",
 	"version": "1.0.0",
 	"description": "My new package",
-
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"sideEffects": false,
-
 	"keywords": [
 		"wordpress"
 	],
