@@ -186,6 +186,7 @@ export class SiteInformation extends Component {
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
 				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
 				showSiteMockups={ this.props.showSiteMockups }
