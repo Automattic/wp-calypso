@@ -44,6 +44,11 @@ import { getSite } from 'state/sites/selectors';
 import { withDesktopBreakpoint } from 'lib/viewport/react';
 import { withLocalizedMoment } from 'components/localized-moment';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ActivityLogItem extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
