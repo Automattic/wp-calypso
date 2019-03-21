@@ -13,7 +13,7 @@ import userFactory from 'lib/user';
  */
 function canDomainAddGSuite( domainName ) {
 	const GOOGLE_APPS_INVALID_TLDS = [ 'in' ];
-	const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
+	const GOOGLE_APPS_BANNED_PHRASES = [ 'google', 'wpcomstaging' ];
 	const tld = domainName.split( '.' )[ 1 ],
 		includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, function( phrase ) {
 			return includes( domainName, phrase );
