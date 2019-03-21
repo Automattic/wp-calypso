@@ -35,6 +35,7 @@ class ChecklistOnboardingWelcome extends Component {
 	static defaultProps = {
 		hideOnboardingWelcomePrompt: noop,
 		onClose: noop,
+		continueUrl: '',
 	};
 
 	goToChecklist = () => {
@@ -49,6 +50,7 @@ class ChecklistOnboardingWelcome extends Component {
 	closeWelcomePrompt = () => {
 		this.props.recordTracksEvent( 'calypso_onboarding_welcome_click', {
 			action_type: 'close',
+			url: this.props.continueUrl,
 		} );
 		this.onClose();
 	};
