@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/format-currency",
-	"version": "1.0.0",
+	"version": "1.0.0-alpha.0",
 	"description": "JavaScript library for formatting currency",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
