@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import MasterbarItem from './item';
 import SitesPopover from 'components/sites-popover';
 import { isMobile } from 'lib/viewport';
@@ -22,7 +22,7 @@ import isRtlSelector from 'state/selectors/is-rtl';
 import TranslatableString from 'components/translatable/proptype';
 import { getEditorUrl } from 'state/selectors/get-editor-url';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import { reduxGetState } from 'lib/redux-bridge';
+import { navigate } from 'state/ui/actions';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
@@ -75,17 +75,9 @@ class MasterbarItemNew extends React.Component {
 		return 'bottom left';
 	}
 
-	onSiteSelect = siteId => {
-		this.props.recordTracksEvent( 'calypso_masterbar_write_button_clicked' );
-		//To avoid binding in connect, please remove me later.
-		const redirectURL = getEditorUrl( reduxGetState(), siteId, null, 'post' );
-		if ( typeof window !== 'undefined' ) {
-			setTimeout( () => {
-				window.location = redirectURL;
-			}, 0 );
-			return true; // handledByHost = true, don't let the component nav
-		}
-		return false; //otherwise fallback to normal handling
+	onSiteSelect = () => {
+		this.props.openEditor( this.props.editorUrl );
+		return true; // handledByHost = true, don't let the component nav
 	};
 
 	renderPopover() {
@@ -141,7 +133,15 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = { recordTracksEvent };
+const mapDispatchToProps = dispatch => ( {
+	openEditor: editorUrl =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_masterbar_write_button_clicked' ),
+				navigate( editorUrl )
+			)
+		),
+} );
 
 export default connect(
 	mapStateToProps,
