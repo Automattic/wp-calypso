@@ -22,6 +22,7 @@
 /client/blocks/inline-help @Automattic/onboarding-dev
 
 # Client state
+/client/state/jetpack-connect @Automattic/luna
 /client/state/signup @Automattic/onboarding-dev
 
 # Client components
@@ -40,6 +41,9 @@
 /docs/coding-guidelines @Automattic/team-calypso
 /docs/guide @Automattic/team-calypso
 /docs/testing @Automattic/team-calypso
+
+# Jetpack Connect
+/client/jetpack-connect @Automattic/luna
 
 # Server infrastructure
 /server @Automattic/team-calypso
