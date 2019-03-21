@@ -50,6 +50,7 @@ class SiteTypeForm extends Component {
 				className="site-type__option"
 				key={ siteTypeProperties.id }
 				displayAsLink
+				data-e2e-title={ siteTypeProperties.slug }
 				tagName="button"
 				onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
 			>
