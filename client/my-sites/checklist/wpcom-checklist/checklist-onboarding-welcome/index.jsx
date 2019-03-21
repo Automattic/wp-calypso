@@ -35,6 +35,7 @@ class ChecklistOnboardingWelcome extends Component {
 	static defaultProps = {
 		hideOnboardingWelcomePrompt: noop,
 		onClose: noop,
+		continueUrl: '',
 	};
 
 	goToChecklist = () => {
