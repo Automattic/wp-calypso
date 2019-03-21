@@ -20,7 +20,7 @@ import { hasGSuite, isGSuiteRestricted, hasGSuiteSupportedDomain } from 'lib/dom
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getCurrentUserCurrencyCode, getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
 import GSuiteUsersCard from 'my-sites/email/gsuite-users-card';
@@ -32,6 +32,7 @@ import EmptyContent from 'components/empty-content';
 import {
 	domainManagementEdit,
 	domainManagementList,
+	domainManagementEmail,
 	domainManagementEmailForwarding,
 } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
@@ -70,17 +71,21 @@ class EmailManagement extends React.Component {
 	}
 
 	headerOrPlansNavigation() {
-		if ( this.props.selectedDomainName ) {
+		const { selectedDomainName, selectedSite } = this.props;
+
+		if ( selectedDomainName ) {
 			return (
-				<Header
-					onClick={ this.goToEditOrList }
-					selectedDomainName={ this.props.selectedDomainName }
-				>
+				<Header onClick={ this.goToEditOrList } selectedDomainName={ selectedDomainName }>
 					{ this.props.translate( 'Email' ) }
 				</Header>
 			);
 		}
-		return <PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />;
+		return (
+			<PlansNavigation
+				cart={ this.props.cart }
+				path={ domainManagementEmail( selectedSite.slug, selectedDomainName ) }
+			/>
+		);
 	}
 
 	content() {
@@ -201,6 +206,7 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			gsuiteUsers: getGSuiteUsers( state, siteId ),
 			selectedSite,
+			user: getCurrentUser( state ),
 		};
 	},
 	{}

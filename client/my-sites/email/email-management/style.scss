@@ -3,17 +3,12 @@
 .email-management {
 	.is-placeholder {
 		.section-header__label {
-			@include placeholder();
-
 			&::before {
 				display: none;
 			}
 		}
 
-		.google-apps-user-item__email,
-		.google-apps-user-item__manage-link {
-			@include placeholder();
-		}
+		@include placeholder();
 	}
 
 	.empty-content__illustration {
@@ -21,6 +16,10 @@
 		height: auto;
 		margin: 20px 0 40px;
 	}
+}
+
+.email-management__placeholder {
+	@include placeholder();
 }
 
 .domain-only-site__settings-notice {
