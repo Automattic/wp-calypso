@@ -92,7 +92,7 @@ Please do not use regular [`npm publish`](https://docs.npmjs.com/cli/publish) wi
 
 Using [Lerna](https://lernajs.io/) to publish package(s):
 
-1. Login to NPM: `npm whoami`, `npm login`.
+1. Might be good to start unlogged, since Lerna doesn't have `--dry-run` option like NPM does: `npm logout`.
 1. Update packages versions as necessary. We’ll rely on package versions for Lerna to know what to publish. Please be mindful about [semantic versioning](https://semver.org/).
 1. `git checkout master`
 1. `git pull`
@@ -102,7 +102,7 @@ Using [Lerna](https://lernajs.io/) to publish package(s):
 1. `npx lerna publish from-package`
 1. Say “no” at the prompt.
 1. Lerna will confirm which packages and versions will be published. If something looks off, abort!
-1. Make sure you're logged in at this point, we're going to publish 🚀
+1. Make sure you're logged in at this point, we're going to publish 🚀: `npm whoami`, `npm login`.
 1. Craft the following command, we'll add `--yes` to skip prompts and save OTP cycle time. `--dist-tag next` is optional, use it when publishing unstable versions.
 1. Wait for your npm OTP (one time password) cycle to start, write it into the command and publish:
 1. `NPM_CONFIG_OTP=[YOUR_OTP_CODE] npx lerna publish --dist-tag next from-package --yes`
