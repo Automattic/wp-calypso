@@ -16,6 +16,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 /*
 	These topics are taken from the most popular for each segment.
+	They should match the translated vertical names, so that they
+	return meaningful results from the verticals API.
 */
 const POPULAR_TOPICS = {
 	business: [
