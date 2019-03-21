@@ -190,38 +190,40 @@
 		color: var( --sidebar-gridicon-fill );
 	}
 	
-	.site-selector.is-large .site-selector__sites {
+	.site-selector {		
+		&.is-large .site-selector__sites {
+			border-color: var( --sidebar-border-color );
+		}
+		
+		&__sites {
+			background: var( --sidebar-background );		
+		}
+	
+		&__add-new-site {
+			border-color: var( --sidebar-border-color );
+		
+			.button {		
+				color: var( --sidebar-heading-color );
+			
+				&:hover {
+					color: var( --sidebar-text-color );	
+				} 
+			}	
+		}
+	
+	.all-sites {
 		border-color: var( --sidebar-border-color );
 	}
+	
+	&__recent {
+		border-color: var( --sidebar-border-color );
+	}		  
+}
 	
 	.all-sites .count {
 		color: var( --sidebar-text-color );	
 		border-color: var( --sidebar-text-color );
 	} 
-	
-	.site-selector__sites {
-		background: var( --sidebar-background );
-	}
-	
-	.site-selector__add-new-site {
-		border-color: var( --sidebar-border-color );
-	}
-	
-	.site-selector__add-new-site .button {		
-		color: var( --sidebar-heading-color );
-		
-		&:hover {
-			color: var( --sidebar-text-color );
-		}
-	}
-	
-	.site-selector .all-sites {
-		border-color: var( --sidebar-border-color );
-	}
-	
-	.site-selector__recent {
-		border-color: var( --sidebar-border-color );
-	}
 }
 
 /*
