@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -64,7 +63,7 @@ export class ChecklistBanner extends Component {
 						lineWidth={ 18 }
 						percentage={ percentage }
 						metric={ translate( 'completed' ) }
-						colors={ [ '#ffffff', '#47b766' ] }
+						colors={ [ '#ffffff', '#008a00' ] }
 					/>
 				</div>
 				<div className="checklist-banner__progress">
@@ -84,7 +83,7 @@ export class ChecklistBanner extends Component {
 							</Button>
 						) }
 					</span>
-					<ProgressBar value={ completed } total={ total } color="#47b766" />
+					<ProgressBar value={ completed } total={ total } color="#008a00" />
 				</div>
 				{ isFinished ? (
 					<>
