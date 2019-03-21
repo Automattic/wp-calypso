@@ -4,7 +4,7 @@
  */
 import React, { PureComponent, Fragment } from 'react';
 import classNames from 'classnames';
-import { isEmpty, noop } from 'lodash';
+import { isEmpty, noop, isFunction } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -39,15 +39,24 @@ function MockupChromeDesktop() {
 	);
 }
 
-function SiteMockupContent( { content, title, tagline } ) {
+function SiteMockupContent( { content, title, tagline, renderContent } ) {
 	/* eslint-disable react/no-danger */
 	return (
 		<Fragment>
-			<div className="site-mockup__site-identity">
-				<div className="site-mockup__title">{ title }</div>
-				<div className="site-mockup__tagline">{ tagline }</div>
-			</div>
-			<div className="site-mockup__entry-content" dangerouslySetInnerHTML={ { __html: content } } />
+			{ ( title || tagline ) && (
+				<div className="site-mockup__site-identity">
+					{ title && <div className="site-mockup__title">{ title }</div> }
+					{ tagline && <div className="site-mockup__tagline">{ tagline }</div> }
+				</div>
+			) }
+			{ isFunction( renderContent ) ? (
+				<div className="site-mockup__entry-content">{ renderContent() }</div>
+			) : (
+				<div
+					className="site-mockup__entry-content"
+					dangerouslySetInnerHTML={ { __html: content } }
+				/>
+			) }
 		</Fragment>
 	);
 	/* eslint-enable react/no-danger */
@@ -78,21 +87,31 @@ export class SiteMockup extends PureComponent {
 	};
 
 	render() {
-		const { size, content, siteType, siteStyle, title, tagline } = this.props;
-		const classes = classNames( 'site-mockup__viewport', `is-${ size }`, {
+		const {
+			size,
+			className,
+			content,
+			renderContent,
+			siteType,
+			siteStyle,
+			title,
+			tagline,
+		} = this.props;
+		const classes = classNames( 'site-mockup__viewport', `is-${ size }`, className, {
 			[ `is-${ siteType }` ]: !! siteType,
 			[ `is-${ siteStyle }` ]: !! siteStyle,
 		} );
+
 		/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 		return (
 			<div className={ classes } onClick={ this.props.onClick }>
 				{ size === 'mobile' ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
 				<div className="site-mockup__body">
 					<div className="site-mockup__content">
-						{ isEmpty( content ) ? (
+						{ isEmpty( content ) && ! isFunction( renderContent ) ? (
 							<SiteMockupOutlines />
 						) : (
-							<SiteMockupContent { ...{ content, title, tagline } } />
+							<SiteMockupContent { ...{ content, title, tagline, renderContent } } />
 						) }
 					</div>
 				</div>
