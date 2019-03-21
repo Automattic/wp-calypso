@@ -39,7 +39,7 @@ import { isPlanFeaturesEnabled } from 'lib/plans';
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 
-const gsuitePlanSlug = 'gapps_unlimited'; // or gapps_unlimited - TODO make this dynamic
+const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
 
 class Email extends React.Component {
 	static propTypes = {
