@@ -9,11 +9,6 @@
 				display: none;
 			}
 		}
-
-		.google-apps-user-item__email,
-		.google-apps-user-item__manage-link {
-			@include placeholder();
-		}
 	}
 }
 
@@ -49,15 +44,6 @@
 	.notice {
 		margin: 0;
 	}
-}
-
-.google-apps-user-item__email {
-	float: left;
-}
-
-.google-apps-user-item__manage-link {
-	float: right;
-	font-size: 13px;
 }
 
 .domain-only-site__settings-notice {

@@ -19,7 +19,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import { hasPendingGSuiteUsers } from 'lib/domains/gsuite';
 import { getSelectedDomain } from 'lib/domains';
-import GoogleAppsUserItem from './google-apps-user-item';
+import GSuiteUserItem from 'my-sites/domains/domain-management/email/gsuite-user-item';
 import Notice from 'components/notice';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import SectionHeader from 'components/section-header';
@@ -47,7 +47,7 @@ class GoogleAppsUsers extends React.Component {
 
 	generateClickHandler( user ) {
 		return () => {
-			this.props.manageClick( this.props.selectedDomainName, user );
+			this.props.manageClick( user.domain, user.email );
 		};
 	}
 
@@ -114,7 +114,7 @@ class GoogleAppsUsers extends React.Component {
 		}
 
 		return (
-			<GoogleAppsUserItem
+			<GSuiteUserItem
 				key={ `google-apps-user-${ user.domain }-${ index }` }
 				user={ user }
 				onClick={ this.generateClickHandler( user ) }

@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GSuiteUserItem renders correctly 1`] = `
+<li>
+  <span
+    className="gsuite-user-item__email"
+  >
+    foo@bar.buzz
+  </span>
+  <a
+    className="external-link gsuite-user-item__manage-link has-icon"
+    href="https://accounts.google.com/AccountChooser?Email=foo@bar.buzz&service=CPanel&continue=https://admin.google.com/a/bar.buzz"
+    onClick={[Function]}
+    rel="external noopener noreferrer"
+    target="_blank"
+  >
+    Manage
+    <svg
+      className="gridicon gridicons-external needs-offset"
+      height={18}
+      viewBox="0 0 24 24"
+      width={18}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g>
+        <path
+          d="M19 13v6c0 1.105-.895 2-2 2H5c-1.105 0-2-.895-2-2V7c0-1.105.895-2 2-2h6v2H5v12h12v-6h2zM13 3v2h4.586l-7.793 7.793 1.414 1.414L19 6.414V11h2V3h-8z"
+        />
+      </g>
+    </svg>
+  </a>
+</li>
+`;
