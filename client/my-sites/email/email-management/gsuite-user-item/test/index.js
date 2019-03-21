@@ -8,7 +8,7 @@ import renderer from 'react-test-renderer';
 /**
  * Internal dependencies
  */
-import GSuiteUserItem from '../';
+import GSuiteUserItem from 'my-sites/email/email-management/gsuite-user-item';
 
 const noop = () => {};
 
