@@ -105,6 +105,5 @@ Using [Lerna](https://lernajs.io/) to publish package(s):
 1. Make sure you're logged in at this point, we're going to publish 🚀
 1. Craft the following command, we'll add `--yes` to skip prompts and save OTP cycle time. `--dist-tag next` is optional, use it when publishing unstable versions.
 1. Wait for your npm OTP (one time password) cycle to start, write it into the command and publish:
-1. If everything looked good, get this command ready and wait for your NPM OTP (one time password) cycle to start. `--yes` is added to then end to skip the prompt, we already verified which packages will be published and don’t want to waste the OTP cycle time at the prompt.
 1. `NPM_CONFIG_OTP=[YOUR_OTP_CODE] npx lerna publish --dist-tag next from-package --yes`
 1. Pat yourself on the back, you published!
