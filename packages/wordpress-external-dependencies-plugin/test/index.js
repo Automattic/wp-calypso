@@ -4,7 +4,10 @@ const { join } = require( 'path' );
 const { readFile } = require( 'fs' );
 const rimraf = require( 'rimraf' ).sync;
 
-afterEach( () => {
+beforeEach( () => {
+	rimraf( join( __dirname, 'result' ) );
+} );
+afterAll( () => {
 	rimraf( join( __dirname, 'result' ) );
 } );
 
