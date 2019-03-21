@@ -33,6 +33,8 @@ test/
 
 Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, and `sideEffects`.
 
+The only exception are `devDependencies` which _must be declared in the wp-calypso root package.json_. `devDependencies` of sub-packages in a monorepo are not reliably installed and cannot be relied on.
+
 ### A sample `package.json`
 
 ```json
@@ -49,9 +51,7 @@ Your `package.json` can have any of the [normal properties](https://docs.npmjs.c
 		"wordpress"
 	],
 	"author": "Your Name <you@example.com> (https://yoursite.wordpress.com/)",
-	"contributors": [
-
-	],
+	"contributors": [],
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"repository": {
@@ -68,18 +68,15 @@ Your `package.json` can have any of the [normal properties](https://docs.npmjs.c
 		"dist",
 		"src"
 	],
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../calypso-build"
-	},
 	"scripts": {
-		"build": "npx @automattic/calypso-build",
 		"clean": "npx rimraf dist",
-		"prepublishOnly": "npm run clean; npm run build"
+		"prepublish": "npm run clean",
+		"prepare": "npx @automattic/calypso-build"
 	}
 }
 ```
 
-If your `package.json` specifies a `build` script, our package compiler will use that to compile the package. If it contains ES6+ code that needs to be transpiled, use Calypso's `bin/build-package` which will automatically compile code in `src/` to `dist/`, running `babel` over any source files it finds.
+If your package requires compilation, the `package.json` `prepare` script should compile the package. If it contains ES6+ code that needs to be transpiled, use `npx @automattic/calypso-build` which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds.
 
 ## Running Tests
 To run all of the package tests:
@@ -88,7 +85,7 @@ To run all of the package tests:
 
 To run one package's tests:
 
-`npm run test-packages -- <package folder>`
+`npm run test-packages [ test file pattern ]`
 
 ## Publishing
 
