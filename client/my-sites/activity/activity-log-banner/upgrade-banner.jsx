@@ -18,6 +18,11 @@ import {
 	PLAN_PERSONAL,
 } from 'lib/plans/constants';
 
+/**
+ * Style dependencies
+ */
+import './upgrade-banner.scss';
+
 class UpgradeBanner extends Component {
 	render() {
 		const { translate, isJetpack } = this.props;

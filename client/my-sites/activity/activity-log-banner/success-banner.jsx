@@ -25,6 +25,11 @@ import {
 } from 'state/activity-log/actions';
 
 /**
+ * Style dependencies
+ */
+import './success-banner.scss';
+
+/**
  * Normalize timestamp values
  *
  * Some timestamps are in seconds instead
