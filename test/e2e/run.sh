@@ -15,9 +15,9 @@ CLEAN=0
 GREP=""
 LOCAL_BROWSER="chrome"
 
-# Warn if NODE_ENV variable is not set
+# Warn if NODE_CONFIG_ENV variable is not set
 if [ "$NODE_CONFIG_ENV" = "" ]; then
-	echo "WARNING: NODE_ENV environment variable is not set."
+	echo "WARNING: NODE_CONFIG_ENV environment variable is not set."
 	exit 1
 fi
 
