@@ -90,7 +90,7 @@ To run one package's tests:
 
 Please do not use regular [`npm publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
 
-Using Lerna to publish package(s):
+Using [Lerna](https://lernajs.io/) to publish package(s):
 
 1. Login to NPM: `npm whoami`, `npm login`.
 1. Update packages versions as necessary. We’ll rely on package versions for Lerna to know what to publish. Please be mindful about [semantic versioning](https://semver.org/).
