@@ -50,6 +50,7 @@ class CalypsoifyIframe extends Component {
 		isPreviewVisible: false,
 		previewUrl: 'about:blank',
 		postUrl: null,
+		editedPost: null,
 	};
 
 	constructor( props ) {
@@ -227,14 +228,21 @@ class CalypsoifyIframe extends Component {
 		} );
 
 		previewPort.onmessage = message => {
-			const { frameNonce } = this.props;
-			const previewUrl = url.parse( message.data, true );
-			if ( frameNonce ) {
-				previewUrl.query[ 'frame-nonce' ] = frameNonce;
-			}
-			delete previewUrl.search;
-			this.setState( { previewUrl: url.format( previewUrl ) } );
 			previewPort.close();
+
+			const { frameNonce } = this.props;
+			const { previewUrl, editedPost } = message.data;
+
+			const parsedPreviewUrl = url.parse( previewUrl, true );
+			if ( frameNonce ) {
+				parsedPreviewUrl.query[ 'frame-nonce' ] = frameNonce;
+			}
+			delete parsedPreviewUrl.search;
+
+			this.setState( {
+				previewUrl: url.format( parsedPreviewUrl ),
+				editedPost,
+			} );
 		};
 	};
 
@@ -250,6 +258,7 @@ class CalypsoifyIframe extends Component {
 			isPreviewVisible,
 			previewUrl,
 			postUrl,
+			editedPost,
 		} = this.state;
 
 		return (
@@ -281,6 +290,7 @@ class CalypsoifyIframe extends Component {
 				<WebPreview
 					externalUrl={ postUrl }
 					onClose={ this.closePreviewModal }
+					overridePost={ editedPost }
 					previewUrl={ previewUrl }
 					showPreview={ isPreviewVisible }
 				/>
