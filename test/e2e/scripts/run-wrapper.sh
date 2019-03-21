@@ -13,7 +13,7 @@ if [ "$CIRCLE_NODE_INDEX" == "0" ]; then
 fi
 
 if [ "$NODE_ENV_OVERRIDE" != "" ]; then
-  NODE_CONFIG_ENV=$NODE_ENV_OVERRIDE
+  NODE_ENV=$NODE_ENV_OVERRIDE
 fi
 
 #disable selenium promise manager
