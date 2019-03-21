@@ -80,7 +80,7 @@ class CurrentSite extends Component {
 
 				{ selectedSite ? (
 					<div>
-						<Site site={ selectedSite } />
+						<Site site={ selectedSite } homeLink={ true } />
 					</div>
 				) : (
 					<AllSites />

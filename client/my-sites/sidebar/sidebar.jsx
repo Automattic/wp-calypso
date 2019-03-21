@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -79,27 +78,6 @@ export class MySitesSidebar extends Component {
 	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
-	};
-
-	onViewSiteClick = event => {
-		const { isPreviewable, siteSuffix } = this.props;
-
-		if ( ! isPreviewable ) {
-			this.trackMenuItemClick( 'view_site_unpreviewable' );
-			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Unpreviewable' );
-			return;
-		}
-
-		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
-			this.trackMenuItemClick( 'view_site_modifier' );
-			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Modifier Key' );
-			return;
-		}
-
-		event.preventDefault();
-		this.trackMenuItemClick( 'view_site' );
-		this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Calypso' );
-		page( '/view' + siteSuffix );
 	};
 
 	manage() {
@@ -173,29 +151,6 @@ export class MySitesSidebar extends Component {
 				link={ activityLink }
 				onNavigate={ this.trackActivityClick }
 				icon="history"
-			/>
-		);
-	}
-
-	preview() {
-		const { isPreviewable, path, site, siteId, translate } = this.props;
-
-		if ( ! siteId ) {
-			return null;
-		}
-
-		const siteUrl = ( site && site.URL ) || '';
-
-		return (
-			<SidebarItem
-				tipTarget="sitePreview"
-				label={ translate( 'View Site' ) }
-				selected={ itemLinkMatches( [ '/view' ], path ) }
-				link={ siteUrl }
-				onNavigate={ this.onViewSiteClick }
-				icon="computer"
-				preloadSectionName="preview"
-				forceInternalLink={ isPreviewable }
 			/>
 		);
 	}
@@ -689,7 +644,6 @@ export class MySitesSidebar extends Component {
 			<div>
 				<SidebarMenu>
 					<ul>
-						{ this.preview() }
 						{ this.stats() }
 						{ this.activity() }
 						{ this.plan() }
