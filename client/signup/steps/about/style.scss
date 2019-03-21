@@ -9,22 +9,24 @@
 	position: absolute;
 	width: 100%;
 	opacity: 1;
-	filter: blur( 0 );
-	transform: translateZ( 0 ) translateX( 0 );
-	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
+	transition: 0.5s ease-in-out opacity;
 }
 
 .about__form-wrapper {
-	max-width: 500px;
+	max-width: 420px;
 	margin: 0 auto;
-	filter: blur( 0 );
-	transform: translateZ( 0 ) translateX( 0 );
-	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
+	transition: 0.5s ease-in-out opacity;
+
+	.card {
+		border-radius: 3px;
+		box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ),
+					0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
+					0 1px 5px 0 rgba( 0, 0, 0, 0.20 );
+	}
 }
 
 .about__wrapper-is-hidden {
 	pointer-events: none;
-	transform: translateZ( 0 ) translateX( 25% );
 	opacity: 0;
 }
 
