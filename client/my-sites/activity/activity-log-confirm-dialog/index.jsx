@@ -19,6 +19,11 @@ import Gridicon from 'gridicons';
 import HappychatButton from 'components/happychat/button';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const ActivityLogConfirmDialog = ( {
 	children,
