@@ -7,6 +7,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { endsWith, get, map, pickBy, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -147,8 +148,8 @@ class CalypsoifyIframe extends Component {
 		}
 
 		if ( 'previewPost' === action ) {
-			const { previewUrl, postUrl } = payload;
-			this.openPreviewModal( { previewUrl, postUrl } );
+			const { postUrl } = payload;
+			this.openPreviewModal( { postUrl, previewPort: ports[ 0 ] } );
 		}
 	};
 
@@ -218,16 +219,26 @@ class CalypsoifyIframe extends Component {
 		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};
 
-	openPreviewModal = ( { previewUrl, postUrl } ) => {
+	openPreviewModal = ( { postUrl, previewPort } ) => {
 		this.setState( {
 			isPreviewVisible: true,
-			previewUrl,
+			previewUrl: 'about:blank',
 			postUrl,
 		} );
+
+		previewPort.onmessage = message => {
+			const { frameNonce } = this.props;
+			const previewUrl = url.parse( message.data, true );
+			if ( frameNonce ) {
+				previewUrl.query[ 'frame-nonce' ] = frameNonce;
+			}
+			delete previewUrl.search;
+			this.setState( { previewUrl: url.format( previewUrl ) } );
+			previewPort.close();
+		};
 	};
 
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
-
 
 	render() {
 		const { iframeUrl, siteId } = this.props;
@@ -282,6 +293,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
+	const frameNonce = getSiteOption( state, siteId, 'frame_nonce' ) || '';
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -289,7 +301,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
 		'block-editor': 1,
-		'frame-nonce': getSiteOption( state, siteId, 'frame_nonce' ) || '',
+		'frame-nonce': frameNonce,
 		'jetpack-copy': duplicatePostId,
 		origin: window.location.origin,
 	} );
@@ -310,6 +322,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		iframeUrl,
 		postTypeTrashUrl,
 		siteAdminUrl,
+		frameNonce,
 	};
 };
 
