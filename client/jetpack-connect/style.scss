@@ -95,10 +95,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		box-shadow: 0 0 0 2px var( --color-jetpack-light );
 	}
 
-	.site-type__option:focus {
-		box-shadow: inset 0 0 0 2px var( --color-jetpack );
-	}
-
 	.wpcom-colophon {
 		position: absolute;
 			bottom: 0;
@@ -116,10 +112,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		input[type='text'] {
 			border-color: var( --color-jetpack-dark );
-
-			&:focus {
-				box-shadow: 0 0 0 2px var( --color-jetpack-light );
-			}
 		}
 
 		@include breakpoint( '<660px' ) {
@@ -1012,7 +1004,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.button {
 
 		&.is-primary {
-			background-color: var( --color-jetpack );
 			border-color: var( --color-jetpack-dark );
 
 			&:hover,
