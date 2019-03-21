@@ -171,6 +171,26 @@
 	}
 }
 
+// Secondary Layout overrides
+.layout__secondary {	
+	.site__title {
+		color: var( --sidebar-text-color );
+	}
+	
+	.site__domain {
+		color: var( --sidebar-heading-color );
+	}
+	
+	.site__title::after,
+	.site__domain::after {
+		@include long-content-fade( $color: var( --sidebar-background-gradient ) );
+	}
+	
+	.site__badge {
+		color: var( --sidebar-gridicon-fill );
+	}
+}
+
 /*
 	Focus States
 	Sites - Site Selector for those with multiple sites
