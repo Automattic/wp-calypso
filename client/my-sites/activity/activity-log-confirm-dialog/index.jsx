@@ -91,7 +91,7 @@ const ActivityLogConfirmDialog = ( {
 			{ notice && (
 				<div className="activity-log-confirm-dialog__notice">
 					<Gridicon icon={ 'notice' } />
-					{ notice }
+					<span className="activity-log-confirm-dialog__notice-content">{ notice }</span>
 				</div>
 			) }
 
