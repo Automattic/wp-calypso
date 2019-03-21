@@ -8,9 +8,9 @@ import { get } from 'lodash';
  *
  * @param  {Object}                   state   Global state tree
  * @param  {Number}                   siteId  The ID of the site we're querying
- * @return {Array<Object>|undefined}          Array of plugin objects.
- *                                            If undefined, there's no request in progress.
+ * @return {?Array<Object>}                   Array of plugin objects.
+ *                                            If null, there's no request in progress.
  */
 export default function getRecommendedPlugins( state, siteId ) {
-	return get( state, [ 'plugins', 'recommended', siteId ] );
+	return get( state, [ 'plugins', 'recommended', siteId ], null );
 }
