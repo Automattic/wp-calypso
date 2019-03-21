@@ -29,5 +29,17 @@ const flows = {
 		steps: [ 'stepRequiringSiteSlug' ],
 		providesDependenciesInQuery: [ 'siteSlug' ],
 	},
+
+	flowWithSiteTopic: {
+		steps: [ 'stepA', 'stepB', 'site-topic' ],
+	},
+
+	flowWithSiteTopicAndTitle: {
+		steps: [ 'stepA', 'stepB', 'site-topic-and-title' ],
+	},
+
+	flowWithSiteTopicAndSurvey: {
+		steps: [ 'stepA', 'stepB', 'site-topic', 'survey' ],
+	},
 };
 export default flows;
