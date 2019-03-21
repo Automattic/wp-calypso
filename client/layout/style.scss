@@ -210,15 +210,15 @@
 				} 
 			}	
 		}
-	
-	.all-sites {
-		border-color: var( --sidebar-border-color );
+		
+		.all-sites {
+			border-color: var( --sidebar-border-color );
+		}
+		
+		&__recent {
+			border-color: var( --sidebar-border-color );
+		}		  
 	}
-	
-	&__recent {
-		border-color: var( --sidebar-border-color );
-	}		  
-}
 	
 	.all-sites .count {
 		color: var( --sidebar-text-color );	
