@@ -87,7 +87,7 @@ class Email extends React.Component {
 			! (
 				! this.props.isRequestingSiteDomains &&
 				null !== this.props.gsuiteUsers &&
-				get( this.props, 'products.' + gsuitePlanSlug, false )
+				get( this.props, [ 'products', gsuitePlanSlug ], false )
 			)
 		) {
 			return <Placeholder />;
