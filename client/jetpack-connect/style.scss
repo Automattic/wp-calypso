@@ -1,5 +1,22 @@
 $colophon-height: 50px; // wpcomColophon element at the bottom
 
+.jetpack-connect__main,
+.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
+.layout.is-jetpack-login,
+.is-section-checkout.is-jetpack-site,
+.is-section-checkout-thank-you.is-jetpack-site {
+	// Override accent variables with Jetpack colors
+	--color-accent:       var( --color-jetpack );
+	--color-accent-light: var( --color-jetpack-light );
+	--color-accent-dark:  var( --color-jetpack-dark );
+
+	// Override global colors with accent variables
+	--color-primary:                         var( --color-accent-dark );
+	--color-primary-light:                   var( --color-accent-light );
+	--color-button-primary-background-hover: var( --color-accent-light );
+	--color-accent-600:                      var( --color-accent-dark );
+}
+
 .is-section-jetpack-connect {
 
 	.layout__content {
@@ -787,13 +804,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 /**
  * Onboarding styles
  **/
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
-.layout.is-jetpack-login,
-.is-section-checkout.is-jetpack-site,
-.is-section-checkout-thank-you.is-jetpack-site {
-	--color-accent: var( --color-jetpack );
-}
-
 .layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
 .layout.is-jetpack-login {
 	background-color: var( --color-jetpack-onboarding-background );
