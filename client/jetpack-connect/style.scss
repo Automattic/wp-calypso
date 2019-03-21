@@ -816,14 +816,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.jetpack-connect__site-address-container input:focus,
 	.logged-out-form input:focus {
 		border-color: var( --color-accent );
-		box-shadow: 0 0 0 2px var( --color-jetpack-light );
+		box-shadow: 0 0 0 2px var( --color-accent-light );
 	}
 
 	.login__form-terms a,
 	.jetpack-connect__tos-link a,
 	.signup-form__terms-of-service-link a,
 	.form-input-validation a {
-		color: var( --color-jetpack-dark );
+		color: var( --color-accent-dark );
 
 		&:hover,
 		&:focus {
@@ -863,11 +863,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 
 	.plan-features__item-checkmark {
-		fill: var( --color-jetpack-dark );
+		fill: var( --color-accent-dark );
 	}
 
 	.plan-features__item-title a {
-		color: var( --color-jetpack-dark );
+		color: var( --color-accent-dark );
 
 		&:hover,
 		&:focus {
