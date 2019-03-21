@@ -17,6 +17,8 @@ import formBase from 'me/form-base';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import FormRadio from 'components/forms/form-radio';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import Main from 'components/main';
@@ -163,7 +165,85 @@ const Profile = createReactClass( {
 					</p>
 				</Card>
 
+				<SectionHeader label={ this.props.translate( 'Profile Privacy' ) } />
+				<Card className="me-profile-privacy">
+					<p>
+						{ this.props.translate(
+							'WordPress.com uses {{link}}Gravatar{{/link}}, a universal avatar service, for your profile. ' +
+								'This enables other sites and services to use your image and profile information when you\'re logged in ' +
+								'with your email address.',
+							{
+								components: {
+									link: <a href="https://gravatar.com" target="_blank" rel="noopener noreferrer" />,
+								},
+							},
+						) }
+					</p>
+
+					<p>
+						{ this.props.translate(
+							'Each WordPress.com account comes with Gravatar enabled by default. You can change the visibility of your ' +
+								'profile by using the settings below. Go to {{link}}Gravatar.com{{/link}} to access all of your account\'s settings.',
+							{
+								components: {
+									link: <a href="https://gravatar.com/profiles/edit/" target="_blank" rel="noopener noreferrer" />
+								},
+							},
+						) }
+					</p>
+
+					<form>
+						<FormFieldset>
+							<FormLabel>
+								<FormRadio name="gravatar_public" value="public" />
+								<span>
+									{ this.props.translate( 'Public' ) }
+								</span>
+							</FormLabel>
+							<FormSettingExplanation className="me-profile-privacy__explanation">
+								{ this.props.translate( 'Your Gravatar and profile information are public.' ) }
+							</FormSettingExplanation>
+
+							<FormLabel>
+								<FormRadio name="gravatar_public" value="private" />
+								<span>
+									{ this.props.translate( 'Hidden' ) }
+								</span>
+							</FormLabel>
+							<FormSettingExplanation className="me-profile-privacy__explanation">
+								{ this.props.translate( 'Your profile information is hidden but people can still see your Gravatar image.' ) }
+							</FormSettingExplanation>
+
+							<FormLabel>
+								<FormRadio name="gravatar_public" value="disabled" />
+								<span>
+									{ this.props.translate( 'Disabled' ) }
+								</span>
+							</FormLabel>
+							<FormSettingExplanation className="me-profile-privacy__explanation">
+								{ this.props.translate( 'Your Gravatar images and profile are hidden.' ) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<p>
+							<FormButton>
+								{ this.props.translate( 'Save Privacy Settings' ) }
+							</FormButton>
+						</p>
+					</form>
+				</Card>
+
 				<ProfileLinks />
+
+				<Card
+					displayAsLink={ true }
+					href="https://en.gravatar.com/profiles/edit/"
+					target="blank"
+					rel="noopener noreferrer"
+				>
+					<p className="me-profile-gravatar__link-title">{ this.props.translate( 'Go to Gravatar.com' ) }</p>
+					<p className="me-profile-gravatar__link-description">{ this.props.translate( 'Access all your Gravatars\' settings' ) }</p>
+				</Card>
 			</Main>
 		);
 	},

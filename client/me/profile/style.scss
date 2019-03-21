@@ -14,3 +14,21 @@
 		clear: right;
 	}
 }
+
+.me-profile-privacy__explanation {
+	margin: 5px 0 5px 25px;
+}
+
+.me-profile-gravatar__link-title {
+	color: var(--color-neutral-700);
+	font-size: 14px;
+	line-height: 18px;
+	margin-bottom: 4px;
+}
+
+.me-profile-gravatar__link-description {
+	color: var(--color-text-subtle);
+	font-size: 13px;
+	font-style: italic;
+	margin-bottom: 0;
+}
