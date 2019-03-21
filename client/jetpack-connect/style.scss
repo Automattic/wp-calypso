@@ -936,6 +936,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		background-color: var( --color-white );
 		border-radius: 3px;
 	}
+
+	.site-verticals-suggestion-search__topic-list-item {
+		
+		&:focus {
+			box-shadow: inset 0 0 0 2px var( --color-jetpack );
+		}
+	}
 }
 
 .is-section-checkout.is-jetpack-site {
