@@ -30,6 +30,8 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
 
+const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
+
 class GoogleAppsDialog extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
@@ -75,14 +77,18 @@ class GoogleAppsDialog extends React.Component {
 	}
 
 	renderView() {
-		const prices = this.getPrices( 'gapps' );
+		const prices = this.getPrices( gsuitePlanSlug );
 
 		return (
 			<form className="gsuite-dialog__form" onSubmit={ this.handleFormSubmit }>
 				<QueryProducts />
 				<CompactCard>{ this.header() }</CompactCard>
 				<CompactCard>
-					<GoogleAppsProductDetails domain={ this.props.domain } plan={ 'gapps' } { ...prices } />
+					<GoogleAppsProductDetails
+						domain={ this.props.domain }
+						plan={ gsuitePlanSlug }
+						{ ...prices }
+					/>
 					{ this.renderGoogleAppsUsers() }
 				</CompactCard>
 				<CompactCard>{ this.footer() }</CompactCard>
@@ -225,7 +231,7 @@ class GoogleAppsDialog extends React.Component {
 
 		return cartItems.googleApps( {
 			domain: this.props.domain,
-			product_slug: 'gapps',
+			product_slug: gsuitePlanSlug,
 			users,
 		} );
 	}

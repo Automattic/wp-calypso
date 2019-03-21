@@ -39,6 +39,8 @@ import { isPlanFeaturesEnabled } from 'lib/plans';
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 
+const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
+
 class Email extends React.Component {
 	static propTypes = {
 		currencyCode: PropTypes.string.isRequired,
@@ -85,7 +87,7 @@ class Email extends React.Component {
 			! (
 				! this.props.isRequestingSiteDomains &&
 				null !== this.props.gsuiteUsers &&
-				get( this.props, 'products.gapps', false )
+				get( this.props, [ 'products', gsuitePlanSlug ], false )
 			)
 		) {
 			return <Placeholder />;
@@ -151,7 +153,7 @@ class Email extends React.Component {
 	addGoogleAppsCard() {
 		const { currencyCode, domains, products, selectedDomainName, selectedSite } = this.props;
 		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
-		const price = get( products, [ 'gapps', 'prices', currencyCode ], 0 );
+		const price = get( products, [ gsuitePlanSlug, 'prices', currencyCode ], 0 );
 		const annualPrice = getAnnualPrice( price, currencyCode );
 		const monthlyPrice = getMonthlyPrice( price, currencyCode );
 		return (
@@ -159,7 +161,7 @@ class Email extends React.Component {
 				<GSuitePurchaseCta
 					annualPrice={ annualPrice }
 					monthlyPrice={ monthlyPrice }
-					productSlug={ 'gapps' }
+					productSlug={ gsuitePlanSlug }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 				/>
