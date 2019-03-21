@@ -54,3 +54,9 @@
 # Test infrastructure
 /test @Automattic/team-calypso
 
+# Jetpack Gutenberg integrations
+packages/jetpack-blocks @Automattic/gutenpack
+
+# Calypso build packages
+packages/calypso-build @Automattic/gutenpack
+packages/calypso-color-schemes @Automattic/gutenpack
