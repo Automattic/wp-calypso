@@ -47,7 +47,7 @@ class GoogleAppsUsers extends React.Component {
 
 	generateClickHandler( user ) {
 		return () => {
-			this.props.manageClick( this.props.selectedDomainName, user );
+			this.props.manageClick( user.domain, user.email );
 		};
 	}
 
