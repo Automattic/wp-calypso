@@ -851,7 +851,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.login__form input:focus,
 	.jetpack-connect__site-address-container input:focus,
 	.logged-out-form input:focus {
-		border-color: var( --color-jetpack );
+		border-color: var( --color-accent );
 		box-shadow: 0 0 0 2px var( --color-jetpack-light );
 	}
 
@@ -863,7 +863,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		&:hover,
 		&:focus {
-			color: var( --color-jetpack );
+			color: var( --color-accent );
 		}
 	}
 
@@ -891,15 +891,15 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.spinner__inner,
 	.spinner__outer {
-		border-top-color: var( --color-jetpack );
+		border-top-color: var( --color-accent );
 	}
 
 	.spinner__inner {
-		border-right-color: var( --color-jetpack );
+		border-right-color: var( --color-accent );
 	}
 
 	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link {
-		background-color: var( --color-jetpack );
+		background-color: var( --color-accent );
 		border-color: var( --color-jetpack-dark );
 
 		&:hover,
@@ -926,7 +926,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		&:hover,
 		&:focus {
-			color: var( --color-jetpack );
+			color: var( --color-accent );
 		}
 	}
 
@@ -993,8 +993,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		background-image: linear-gradient(
 			-45deg,
 			var( --color-jetpack-dark ) 28%,
-			var( --color-jetpack ) 28%,
-			var( --color-jetpack ) 72%,
+			var( --color-accent ) 28%,
+			var( --color-accent ) 72%,
 			var( --color-jetpack-dark ) 72%
 		);
 	}
@@ -1006,7 +1006,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .is-section-checkout-thank-you.is-jetpack-site {
 	::selection {
 		color: var( --color-white );
-		background: var( --color-jetpack );
+		background: var( --color-accent );
 	}
 
 	.button {
