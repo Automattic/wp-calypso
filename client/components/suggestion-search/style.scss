@@ -3,7 +3,8 @@
 	input {
 		padding-left: 42px;
 	}
-	.gridicon {
+	.gridicon,
+	.spinner {
 		position: absolute;
 		top: 10px;
 		left: 10px;
@@ -14,5 +15,9 @@
 		@include breakpoint( '<660px' ) {
 			top: 16px;
 		}
+	}
+
+	.spinner {
+		top: 12px;
 	}
 }

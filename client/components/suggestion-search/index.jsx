@@ -13,6 +13,8 @@ import Gridicon from 'gridicons';
  */
 import FormTextInput from 'components/forms/form-text-input';
 import Suggestions from 'components/suggestions';
+import Spinner from 'components/spinner';
+import { isVerticalSearchPending } from 'components/site-verticals-suggestion-search';
 
 /**
  * Style dependencies
@@ -137,7 +139,7 @@ class SuggestionSearch extends Component {
 
 		return (
 			<div className="suggestion-search">
-				<Gridicon icon="search" />
+				{ isVerticalSearchPending() ? <Spinner /> : <Gridicon icon="search" /> }
 				<FormTextInput
 					id={ id }
 					placeholder={ placeholder }
