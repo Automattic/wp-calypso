@@ -55,45 +55,12 @@
 	margin-bottom: 18px;
 }
 
-.activity-log__first-sync {
-	.empty-content__illustration {
-		margin: 32px 0;
-		max-width: 200px;
-	}
-}
-
-.activity-log__empty-day {
-	background: var( --color-surface-backdrop );
-	width: 100%;
-	padding: 0 16px 4px;
-	position: relative;
-	z-index: 2;
-	margin-bottom: 16px;
-}
-
-.activity-log__empty-day-title {
-	font-weight: 600;
-	white-space: nowrap;
-}
-
-.activity-log__empty-day-events {
-	font-size: 12px;
-	color: var( --color-text-subtle );
-}
-
 .activity-log__pagination {
 	margin: 32px 0 14px;
 
 	&.is-bottom-pagination {
 		margin: 14px 0 48px;
 	}
-}
-
-.activity-log__limit-notice {
-	text-align: center;
-	font-style: italic;
-	font-size: smaller;
-	padding: 20px 0;
 }
 
 .activity-log__fader {
