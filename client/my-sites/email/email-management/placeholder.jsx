@@ -14,7 +14,7 @@ import SectionHeader from 'components/section-header';
 import GSuiteUserItem from 'my-sites/domains/domain-management/email/gsuite-user-item';
 
 const Placeholder = () => (
-	<div className="email__google-apps-users-card is-placeholder">
+	<div className="email-management__gsuite-users-card is-placeholder">
 		<SectionHeader label={ 'G Suite Users' } />
 		<CompactCard className="email__google-apps-users-card-user-list">
 			<ul className="email__google-apps-users-card-user-list-inner">

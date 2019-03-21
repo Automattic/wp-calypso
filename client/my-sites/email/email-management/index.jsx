@@ -23,7 +23,7 @@ import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
-import GoogleAppsUsersCard from './google-apps-users-card';
+import GSuiteUsersCard from 'my-sites/email/gsuite-users-card';
 import Placeholder from './placeholder';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -39,7 +39,12 @@ import { isPlanFeaturesEnabled } from 'lib/plans';
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 
-class Email extends React.Component {
+/**
+ * Style Dependencies
+ */
+import './style.scss';
+
+class EmailManagement extends React.Component {
 	static propTypes = {
 		currencyCode: PropTypes.string.isRequired,
 		domains: PropTypes.array.isRequired,
@@ -54,7 +59,7 @@ class Email extends React.Component {
 	render() {
 		const { selectedSite } = this.props;
 		return (
-			<Main className="email" wideLayout={ isPlanFeaturesEnabled() }>
+			<Main className="email-management" wideLayout={ isPlanFeaturesEnabled() }>
 				{ selectedSite && <QueryGSuiteUsers siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
@@ -93,9 +98,9 @@ class Email extends React.Component {
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
 
 		if ( domainList.some( hasGSuite ) ) {
-			return this.googleAppsUsersCard();
+			return this.gsuiteUsersCard();
 		} else if ( hasGSuiteSupportedDomain( domainList ) ) {
-			return this.addGoogleAppsCard();
+			return this.addGSuiteCard();
 		} else if ( emailForwardingDomain && isGSuiteRestricted() && selectedDomainName ) {
 			return this.addEmailForwardingCard( emailForwardingDomain );
 		}
@@ -144,11 +149,11 @@ class Email extends React.Component {
 		return <EmptyContent { ...emptyContentProps } />;
 	}
 
-	googleAppsUsersCard() {
-		return <GoogleAppsUsersCard { ...this.props } />;
+	gsuiteUsersCard() {
+		return <GSuiteUsersCard { ...this.props } />;
 	}
 
-	addGoogleAppsCard() {
+	addGSuiteCard() {
 		const { currencyCode, domains, products, selectedDomainName, selectedSite } = this.props;
 		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
 		const price = get( products, [ 'gapps', 'prices', currencyCode ], 0 );
@@ -199,4 +204,4 @@ export default connect(
 		};
 	},
 	{}
-)( localize( Email ) );
+)( localize( EmailManagement ) );
