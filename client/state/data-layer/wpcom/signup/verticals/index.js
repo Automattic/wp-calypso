@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { convertToCamelCase } from 'state/data-layer/utils';
 import { errorNotice } from 'state/notices/actions';
 import { setVerticals } from 'state/signup/site-vertical/actions';
 import { SIGNUP_VERTICALS_REQUEST } from 'state/action-types';
@@ -43,6 +44,7 @@ registerHandlers( 'state/data-layer/wpcom/signup/verticals', {
 			fetch: requestVerticals,
 			onSuccess: storeVerticals,
 			onError: showVerticalsRequestError,
+			fromApi: convertToCamelCase,
 		} ),
 	],
 } );
