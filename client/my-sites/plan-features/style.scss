@@ -926,6 +926,8 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 }
 .plan-features__table-space {
+	min-width: 25px;
+	/*
 	display: none;
 	@include breakpoint( '660px-1280px' ) {
 		background-color: #f6f6f6;
@@ -951,6 +953,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 			background-color: transparent;
 		}
 	}
+	*/
 }
 
 .plan-features__table {

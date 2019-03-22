@@ -313,7 +313,11 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
 				{ plansWithScroll ? (
-					<Scroller elementSelector="tbody > tr:first-child > .plan-features__table-item">
+					<Scroller
+						elementSelector=".plan-features__table tbody > tr:first-child > .plan-features__table-item"
+						setElementActive={ this.setElementActive }
+						getRightGutterSizeForElement={ this.getRightGutterSizeForElement }
+					>
 						{ this.getPlanFeatures() }
 					</Scroller>
 				) : null }
@@ -325,7 +329,35 @@ export class PlansFeaturesMain extends Component {
 			</div>
 		);
 	}
+
+	setElementActive = ( index, isActive ) => {
+		const currentNode = ReactDOM.findDOMNode( this );
+		const rows = currentNode.querySelectorAll( '.plan-features__table tbody > tr' );
+		for ( let i = 0, max = rows.length; i < max; i++ ) {
+			const row = rows[ i ];
+			const cols = row.querySelectorAll( '.plan-features__table-item' );
+			const col = cols[ index ];
+			if ( isActive ) {
+				col.classList.add( 'is-active' );
+				col.classList.remove( 'is-inactive' );
+			} else {
+				col.classList.remove( 'is-active' );
+				col.classList.add( 'is-inactive' );
+			}
+		}
+	};
+
+	getRightGutterSizeForElement = index => {
+		const currentNode = ReactDOM.findDOMNode( this );
+		const spacer = currentNode.querySelector(
+			'.plan-features__table tbody > tr:first-child .plan-features__table-space'
+		);
+		console.log( 'spacer', spacer.offsetWidth );
+		return spacer.offsetWidth;
+	};
 }
+
+const EPSILON = 0.00001;
 
 class Scroller extends React.Component {
 	constructor( props ) {
@@ -334,12 +366,13 @@ class Scroller extends React.Component {
 			initializing: true,
 			scrollLeft: 0,
 			scrollPaneWidth: 3 * 200,
+			startAt: null,
 		};
 	}
 
 	componentDidMount() {
 		this.recalculate();
-		this.debouncedHandleResize = _.debounce( this.handleResize, 400 );
+		this.debouncedHandleResize = _.throttle( this.handleResize, 400 );
 		window.addEventListener( 'resize', this.debouncedHandleResize, false );
 	}
 
@@ -358,12 +391,12 @@ class Scroller extends React.Component {
 				{ this.getLeftOverlay() }
 				<div
 					className={ classNames( 'scroller__scroll-pane', { initializing } ) }
-					style={ { width: this.state.scrollPaneWidth } }
+					style={ { width: scrollPaneWidth } }
 					ref="scrollPane"
 				>
 					<div
 						className="scroller__scrolled-pane"
-						style={ { marginLeft: scrollLeft * 2 } }
+						style={ { left: scrollLeft } }
 						ref="scrolledPane"
 					>
 						{ this.props.children }
@@ -444,33 +477,42 @@ class Scroller extends React.Component {
 		if ( nbElements === 0 ) {
 			return;
 		}
+
+		const UI_WIDTH = 60;
 		const availableSpace = currentNode.offsetWidth;
+		const gutterWidth = this.props.getRightGutterSizeForElement( 0 );
 		const contentWidth = this.refs.scrolledPane.offsetWidth;
 		const elementWidth = scrolledElements[ 0 ].offsetWidth;
-		const nbActiveElements = Math.min(
-			Math.floor( ( availableSpace - 120 ) / elementWidth + 0.0000001 ),
-			nbElements
+		const nbActiveElements = Math.max(
+			1,
+			Math.min(
+				Math.floor(
+					( availableSpace - UI_WIDTH + gutterWidth ) / ( elementWidth + gutterWidth ) + EPSILON
+				),
+				nbElements
+			)
 		);
-		const startAt = Math.floor( ( nbElements - nbActiveElements ) / 2 + 0.0001 );
-		const UI_WIDTH = 40;
-		const scrollPaneWidth = nbActiveElements * elementWidth + UI_WIDTH;
+		const startAt = Math.floor( ( nbElements - nbActiveElements ) / 2 + EPSILON );
+		const scrollPaneWidth =
+			nbActiveElements * elementWidth + ( nbActiveElements - 1 ) * gutterWidth;
 
-		console.log( nbActiveElements, nbElements, availableSpace, elementWidth );
-
-		this.setState(
-			{
-				contentWidth,
-				elementWidth,
-				scrollPaneWidth,
-				startAt,
-				initializing: false,
-				nbActiveElements: nbActiveElements,
-			},
-			() => {
+		new Promise( resolve =>
+			this.setState(
+				{
+					contentWidth,
+					elementWidth,
+					scrollPaneWidth,
+					startAt,
+					initializing: false,
+					nbActiveElements: nbActiveElements,
+				},
+				resolve
+			)
+		)
+			.then( () => {
 				this.applyActiveElementsClassNames();
 				this.moveScrollToFirstActiveElement();
-			}
-		);
+			} );
 	}
 
 	moveScrollToFirstActiveElement() {
@@ -479,6 +521,7 @@ class Scroller extends React.Component {
 		const scrollPaneRect = this.refs.scrollPane.getBoundingClientRect();
 		const firstActiveRect = scrolledElements[ startAt ].getBoundingClientRect();
 		const scrollLeftDelta = scrollPaneRect.left - firstActiveRect.left;
+		console.log( 'moveScrollToFirstActiveElement', scrollPaneRect.left, firstActiveRect.left );
 		this.setState( {
 			scrollLeft: this.state.scrollLeft + scrollLeftDelta,
 		} );
@@ -527,14 +570,13 @@ class Scroller extends React.Component {
 	}
 
 	isIndexValid( index ) {
-		const { startAt, nbActiveElements } = this.state;
 		const scrolledElements = this.findScrolledElements();
 		return index >= 0 && index < scrolledElements.length;
 	}
 
 	isElementActive( index ) {
 		const { startAt, nbActiveElements } = this.state;
-		return index >= startAt && index <= startAt + nbActiveElements;
+		return index >= startAt && index < startAt + nbActiveElements;
 	}
 
 	findScrolledElements() {
@@ -546,14 +588,7 @@ class Scroller extends React.Component {
 	applyActiveElementsClassNames() {
 		const scrolledElements = this.findScrolledElements();
 		for ( let i = 0, max = scrolledElements.length; i < max; i++ ) {
-			const elem = scrolledElements[ i ];
-			if ( this.isElementActive( i ) ) {
-				elem.classList.add( 'is-active' );
-				elem.classList.remove( 'is-inactive' );
-			} else {
-				elem.classList.remove( 'is-active' );
-				elem.classList.add( 'is-inactive' );
-			}
+			this.props.setElementActive( i, this.isElementActive( i ) );
 		}
 	}
 
@@ -568,6 +603,7 @@ class Scroller extends React.Component {
 Scroller.propTypes = {
 	elementSelector: PropTypes.string,
 	initialPosition: PropTypes.number,
+	setElementActive: PropTypes.func,
 };
 
 PlansFeaturesMain.propTypes = {
@@ -635,7 +671,7 @@ export default connect(
 			// pretty versatile, we could rename it from discounts to flags/features/anything else and make it more
 			// universal.
 			newPlansVisible: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
-			plansWithScroll: isDiscountActive( getDiscountByName( 'plans_no_tabs' ), state ),
+			plansWithScroll: 1 || isDiscountActive( getDiscountByName( 'plans_no_tabs' ), state ),
 			customerType: guessCustomerType( state, props ),
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: get( props.site, [ 'ID' ] ),

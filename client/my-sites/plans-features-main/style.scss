@@ -68,6 +68,19 @@
 		.plans-wrapper {
 			overflow: visible;
 		}
+
+        .plan-features__mobile {
+            display: none !important;
+        }
+
+        .plan-features__table {
+            display: table !important;
+        }
+
+		.plan-features__table-item.is-inactive {
+			opacity: 0.5;
+			transition: opacity 0.1s ease-in;
+		}
 	}
 
 	@include breakpoint( '660px-1280px' ) {
@@ -132,5 +145,6 @@
 
 	&__scrolled-pane {
 		position: relative;
+		transition: margin-left 0.1s ease-in, left 0.1s ease-in;
 	}
 }
