@@ -11,7 +11,7 @@ import NotFoundPage from '../lib/pages/not-found-page.js';
 import PaypalCheckoutPage from '../lib/pages/external/paypal-checkout-page';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
-import GutenbergPagePreviewComponent from '../lib/gutenberg/gutenberg-page-preview-component';
+import PagePreviewComponent from '../lib/components/page-preview-component';
 import SimplePaymentsBlockComponent from '../lib/gutenberg/blocks/payment-block-component';
 
 import * as driverManager from '../lib/driver-manager.js';
@@ -90,9 +90,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can see correct page title in preview', async function() {
-			const gPagePreviewComponent = await GutenbergPagePreviewComponent.Expect( driver );
-			await gPagePreviewComponent.displayed();
-			let actualPageTitle = await gPagePreviewComponent.pageTitle();
+			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
+			await pagePreviewComponent.displayed();
+			let actualPageTitle = await pagePreviewComponent.pageTitle();
 			assert.strictEqual(
 				actualPageTitle.toUpperCase(),
 				pageTitle.toUpperCase(),
@@ -101,8 +101,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can see correct page content in preview', async function() {
-			const gPagePreviewComponent = await GutenbergPagePreviewComponent.Expect( driver );
-			let content = await gPagePreviewComponent.pageContent();
+			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
+			let content = await pagePreviewComponent.pageContent();
 			assert.strictEqual(
 				content.indexOf( pageQuote ) > -1,
 				true,
@@ -115,8 +115,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can see the image uploaded in the preview', async function() {
-			const gPagePreviewComponent = await GutenbergPagePreviewComponent.Expect( driver );
-			const imageDisplayed = await gPagePreviewComponent.imageDisplayed( fileDetails );
+			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
+			const imageDisplayed = await pagePreviewComponent.imageDisplayed( fileDetails );
 			return assert.strictEqual(
 				imageDisplayed,
 				true,
@@ -125,8 +125,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Can close page preview', async function() {
-			const gPagePreviewComponent = await GutenbergPagePreviewComponent.Expect( driver );
-			await gPagePreviewComponent.close();
+			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
+			await pagePreviewComponent.close();
 		} );
 
 		step( 'Can publish and preview published content', async function() {
