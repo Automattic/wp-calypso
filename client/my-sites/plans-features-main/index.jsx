@@ -31,6 +31,7 @@ import {
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
+import Scroller from 'components/scroller';
 import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';

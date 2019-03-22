@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import "./style.scss";
+
 const EPSILON = 0.00001;
 
 class Scroller extends React.Component {
