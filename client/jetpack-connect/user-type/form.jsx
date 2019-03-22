@@ -60,6 +60,7 @@ class UserTypeForm extends Component {
 				className="user-type__option"
 				key={ userTypeProperties.id }
 				displayAsLink
+				data-e2e-slug={ userTypeProperties.slug }
 				tagName="button"
 				onClick={ this.handleSubmit.bind( this, userTypeProperties.slug ) }
 			>
