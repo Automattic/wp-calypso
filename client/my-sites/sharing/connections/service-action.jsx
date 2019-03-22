@@ -81,6 +81,25 @@ const SharingServiceAction = ( {
 		);
 	}
 
+	if ( 'mailchimp' === service.ID && status === 'not-connected' ) {
+		return (
+			<div>
+				<Button
+					className="connections__signup"
+					compact
+					href="https://public-api.wordpress.com/rest/v1.1/sharing/mailchimp/signup"
+					target="_blank"
+					disabled={ isPending }
+				>
+					{ translate( 'Sign up' ) }
+				</Button>
+				<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
+					{ label }
+				</Button>
+			</div>
+		);
+	}
+
 	return (
 		<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
 			{ label }
