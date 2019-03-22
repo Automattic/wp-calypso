@@ -9,7 +9,7 @@
  * @blame: dmsnell
 */
 
-.seo-search-preview__header {
+.search-preview__header {
 	margin: 0;
 	padding: 8px 0;
 	background-color: var( --color-neutral-0 );
@@ -23,14 +23,14 @@
 	color: var( --color-neutral-400 );
 }
 
-.seo-search-preview__display {
+.search-preview__display {
 	border: 1px solid var( --color-neutral-0 );
 	font-family: arial, sans-serif;
 	padding: 10px 20px;
 	word-wrap: break-word;
 }
 
-.seo-search-preview__title {
+.search-preview__title {
 	color: #1a0dab; // matching Google results
 	font-size: 18px;
 	line-height: 1.2;
@@ -42,7 +42,7 @@
 	}
 }
 
-.seo-search-preview__url {
+.search-preview__url {
 	color: #006621; // matching Google results
 	font-size: 14px;
 	height: 17px;
@@ -50,7 +50,7 @@
 	max-width: 616px;
 }
 
-.seo-search-preview__snippet {
+.search-preview__snippet {
 	color: #545454; // matching Google results
 	font-size: 13px;
 	line-height: 1.4;
