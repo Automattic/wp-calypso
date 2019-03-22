@@ -146,7 +146,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		const present = await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
 			siteSwitcherSelector,
-			1000
+			3000
 		);
 		if ( present ) {
 			return await driverHelper.clickWhenClickable( this.driver, siteSwitcherSelector );
