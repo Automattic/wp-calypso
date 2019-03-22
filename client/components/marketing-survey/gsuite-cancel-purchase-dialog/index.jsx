@@ -179,8 +179,6 @@ class GSuiteCancelPurchaseDialog extends Component {
 				},
 			];
 		}
-		// these buttons are returned in the "removing" state to maintain
-		// visual continuity
 		return [
 			{
 				action: 'cancel',
