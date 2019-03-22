@@ -23,6 +23,7 @@
 	},
 	"bin": "./bin/build-package.js",
 	"dependencies": {
+		"@automattic/calypso-color-schemes": "file:../calypso-color-schemes",
 		"autoprefixer": "9.4.4",
 		"babel-loader": "8.0.5",
 		"css-loader": "2.1.1",
