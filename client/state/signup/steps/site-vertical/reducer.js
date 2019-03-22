@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { omit } from 'lodash';
+// import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,9 +28,12 @@ export default createReducer(
 	initialState,
 	{
 		[ SIGNUP_STEPS_SITE_VERTICAL_SET ]: ( state, siteVerticalData ) => {
+			// return {
+			// 	...state,
+			// 	...omit( siteVerticalData, 'type' ),
+			// };
 			return {
-				...state,
-				...omit( siteVerticalData, 'type' ),
+				name: siteVerticalData.name,
 			};
 		},
 		[ SIGNUP_COMPLETE_RESET ]: () => {
