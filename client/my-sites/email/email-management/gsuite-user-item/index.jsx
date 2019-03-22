@@ -13,7 +13,7 @@ import ExternalLink from 'components/external-link';
 /**
  * Style dependencies
  */
-import './styles.scss';
+import './style.scss';
 
 function GSuiteUserItem( props ) {
 	const translate = useTranslate();

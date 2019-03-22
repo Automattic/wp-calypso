@@ -1,0 +1,33 @@
+/** @format */
+
+.email-management {
+	.is-placeholder {
+		.section-header__label {
+			@include placeholder();
+
+			&::before {
+				display: none;
+			}
+		}
+	}
+	.empty-content__illustration {
+		width: 250px;
+		height: auto;
+		margin: 20px 0 40px;
+	}
+}
+
+.domain-only-site__settings-notice {
+	color: var( --color-neutral-500 );
+	margin-top: 30px;
+	text-align: center;
+
+	&::before {
+		background: var( --color-neutral-100 );
+		content: '';
+		display: block;
+		height: 1px;
+		margin: 0 auto 30px;
+		width: 60px;
+	}
+}

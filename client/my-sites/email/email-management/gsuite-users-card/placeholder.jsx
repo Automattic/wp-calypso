@@ -11,13 +11,18 @@ import React from 'react';
  */
 import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
-import GSuiteUserItem from 'my-sites/domains/domain-management/email/gsuite-user-item';
+import GSuiteUserItem from 'my-sites/email/email-management/gsuite-user-item';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const Placeholder = () => (
-	<div className="email__google-apps-users-card is-placeholder">
+	<div className="gsuite-users-card__container is-placeholder">
 		<SectionHeader label={ 'G Suite Users' } />
-		<CompactCard className="email__google-apps-users-card-user-list">
-			<ul className="email__google-apps-users-card-user-list-inner">
+		<CompactCard className="gsuite-users-card__user-list">
+			<ul className="gsuite-users-card__user-list-inner">
 				<GSuiteUserItem user={ { email: 'mail@example.com', domain: 'example.com' } } />
 			</ul>
 		</CompactCard>

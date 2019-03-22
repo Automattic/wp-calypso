@@ -19,12 +19,17 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import { hasPendingGSuiteUsers } from 'lib/domains/gsuite';
 import { getSelectedDomain } from 'lib/domains';
-import GSuiteUserItem from 'my-sites/domains/domain-management/email/gsuite-user-item';
+import GSuiteUserItem from 'my-sites/email/email-management/gsuite-user-item';
 import Notice from 'components/notice';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import SectionHeader from 'components/section-header';
 
-class GoogleAppsUsers extends React.Component {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+class GSuiteUsersCard extends React.Component {
 	getDomainsAsList() {
 		return this.props.selectedDomainName ? [ getSelectedDomain( this.props ) ] : this.props.domains;
 	}
@@ -57,7 +62,7 @@ class GoogleAppsUsers extends React.Component {
 
 	renderDomain( domain, users ) {
 		return (
-			<div key={ `google-apps-user-${ domain }` } className="email__google-apps-users-card">
+			<div key={ `google-apps-user-${ domain }` } className="gsuite-users-card__container">
 				<SectionHeader label={ domain }>
 					{ this.canAddUsers( domain ) && (
 						<Button
@@ -70,8 +75,8 @@ class GoogleAppsUsers extends React.Component {
 						</Button>
 					) }
 				</SectionHeader>
-				<CompactCard className="email__google-apps-users-card-user-list">
-					<ul className="email__google-apps-users-card-user-list-inner">
+				<CompactCard className="gsuite-users-card__user-list">
+					<ul className="gsuite-users-card__user-list-inner">
 						{ users.map( ( user, index ) => this.renderUser( user, index ) ) }
 					</ul>
 				</CompactCard>
@@ -174,7 +179,7 @@ const manageClick = ( domainName, email ) =>
 		} )
 	);
 
-GoogleAppsUsers.propTypes = {
+GSuiteUsersCard.propTypes = {
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array.isRequired,
 	selectedDomainName: PropTypes.string,
@@ -185,4 +190,4 @@ GoogleAppsUsers.propTypes = {
 export default connect(
 	null,
 	{ addGoogleAppsUserClick, manageClick }
-)( localize( GoogleAppsUsers ) );
+)( localize( GSuiteUsersCard ) );

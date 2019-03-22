@@ -23,8 +23,8 @@ import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
-import GoogleAppsUsersCard from './google-apps-users-card';
-import Placeholder from './placeholder';
+import GSuiteUsersCard from 'my-sites/email/email-management/gsuite-users-card';
+import Placeholder from 'my-sites/email/email-management/gsuite-users-card/placeholder';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import PlansNavigation from 'my-sites/plans/navigation';
@@ -39,9 +39,14 @@ import { isPlanFeaturesEnabled } from 'lib/plans';
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
 
-class Email extends React.Component {
+class EmailManagement extends React.Component {
 	static propTypes = {
 		currencyCode: PropTypes.string.isRequired,
 		domains: PropTypes.array.isRequired,
@@ -56,7 +61,7 @@ class Email extends React.Component {
 	render() {
 		const { selectedSite } = this.props;
 		return (
-			<Main className="email" wideLayout={ isPlanFeaturesEnabled() }>
+			<Main className="email-management" wideLayout={ isPlanFeaturesEnabled() }>
 				{ selectedSite && <QueryGSuiteUsers siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
@@ -147,7 +152,16 @@ class Email extends React.Component {
 	}
 
 	googleAppsUsersCard() {
-		return <GoogleAppsUsersCard { ...this.props } />;
+		const { domains, gsuiteUsers, selectedDomainName, selectedSite, user } = this.props;
+		return (
+			<GSuiteUsersCard
+				domains={ domains }
+				gsuiteUsers={ gsuiteUsers }
+				selectedDomainName={ selectedDomainName }
+				selectedSite={ selectedSite }
+				user={ user }
+			/>
+		);
 	}
 
 	addGoogleAppsCard() {
@@ -201,4 +215,4 @@ export default connect(
 		};
 	},
 	{}
-)( localize( Email ) );
+)( localize( EmailManagement ) );
