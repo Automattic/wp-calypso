@@ -31,9 +31,13 @@ export const ExpandableSidebarMenu = props => {
 		'is-toggle-open': !! expanded,
 		'is-togglable': true,
 	} );
-	return (
-		<SidebarMenu className={ classes }>
-			<ExpandableSidebarHeading title={ title } count={ count } onClick={ onClick } />
+
+	const renderAddForm = onAddClick || onAddSubmit || addLabel || addPlaceholder;
+
+	let addForm = null;
+
+	if ( renderAddForm ) {
+		addForm = (
 			<ExpandableSidebarAddForm
 				hideAddButton={ hideAddButton }
 				addLabel={ addLabel }
@@ -41,6 +45,13 @@ export const ExpandableSidebarMenu = props => {
 				onAddClick={ onAddClick }
 				onAddSubmit={ onAddSubmit }
 			/>
+		);
+	}
+
+	return (
+		<SidebarMenu className={ classes }>
+			<ExpandableSidebarHeading title={ title } count={ count } onClick={ onClick } />
+			{ addForm }
 			<ul className="sidebar__menu-list">{ props.children }</ul>
 		</SidebarMenu>
 	);
