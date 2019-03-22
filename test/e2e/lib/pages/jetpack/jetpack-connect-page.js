@@ -25,4 +25,12 @@ export default class JetpackConnectPage extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable( this.driver, urlInputSelector, url );
 		return await driverHelper.clickWhenClickable( this.driver, confirmButtonSelector );
 	}
+
+	async waitToDisappear() {
+		return await driverHelper.waitTillNotPresent(
+			this.driver,
+			By.css( '.jetpack-connect__main #siteUrl' ),
+			this.explicitWaitMS * 3
+		);
+	}
 }
