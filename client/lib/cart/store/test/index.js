@@ -10,6 +10,7 @@ import { transactionPaymentSetActions, paymentActionLocations } from './fixtures
 import CartStore from 'lib/cart/store';
 import { recordUnrecognizedPaymentMethod } from '../cart-analytics';
 import { setTaxLocation } from 'lib/cart-values';
+import { disableCart, removeCoupon } from 'lib/upgrades/actions/cart';
 
 jest.mock( '../cart-analytics', () => ( {
 	recordEvents: () => ( {} ),
@@ -30,6 +31,7 @@ jest.mock( 'lib/cart-values', () => {
 	return {
 		setTaxLocation: jest.fn( () => () => ( {} ) ),
 		fillInAllCartItemAttributes: jest.fn( () => ( {} ) ),
+		removeCoupon: jest.fn( () => ( i ) => i ),
 	};
 } );
 jest.mock( 'lib/data-poller', () => ( {
@@ -63,6 +65,11 @@ describe( 'Cart Store', () => {
 
 	test( 'Store should have method get', () => {
 		expect( typeof CartStore.get ).toBe( 'function' );
+	} );
+
+	test( 'Store should ignore update actions that arrive after disable', () => {
+		disableCart();
+		expect( () => removeCoupon() ).not.toThrow()
 	} );
 
 	describe( 'Transaction Payment Set', () => {
