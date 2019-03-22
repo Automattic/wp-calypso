@@ -44,6 +44,7 @@ import {
 	setChecklistPromptStep,
 } from 'state/inline-help/actions';
 import getEditorUrl from 'state/selectors/get-editor-url';
+import { emailManagement } from 'my-sites/email/paths';
 
 const userLib = userFactory();
 
@@ -625,7 +626,7 @@ class WpcomChecklistComponent extends PureComponent {
 			: {
 					onClick: () => {
 						this.trackTaskStart( task );
-						page( `/domains/manage/email/${ siteSlug }` );
+						page( emailManagement( siteSlug ) );
 					},
 					onDismiss: this.handleTaskDismiss( task.id ),
 			  };
@@ -662,7 +663,7 @@ class WpcomChecklistComponent extends PureComponent {
 							link: (
 								<a
 									onClick={ () => this.trackTaskStart( task, { clicked_element: 'hyperlink' } ) }
-									href={ `/domains/manage/email/${ siteSlug }` }
+									href={ emailManagement( siteSlug ) }
 								/>
 							),
 						},
@@ -671,7 +672,7 @@ class WpcomChecklistComponent extends PureComponent {
 				completedButtonText={ translate( 'Upgrade' ) }
 				onClick={ () => {
 					this.trackTaskStart( task, { clicked_element: 'button' } );
-					page( `/domains/manage/email/${ siteSlug }` );
+					page( emailManagement( siteSlug ) );
 				} }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 			/>

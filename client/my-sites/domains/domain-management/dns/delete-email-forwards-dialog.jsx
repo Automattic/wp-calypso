@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import { domainManagementEmailForwarding } from 'my-sites/domains/paths';
+import { emailManagementForwarding } from 'my-sites/email/paths';
 
 class DeleteEmailForwardsDialog extends React.Component {
 	static propTypes = {
@@ -51,7 +51,7 @@ class DeleteEmailForwardsDialog extends React.Component {
 				isVisible={ visible }
 				buttons={ buttons }
 				onClose={ this.close }
-				className="cancel-purchase-button__warning-dialog"
+				className="cancel-purchase-button__warning-dialog" // eslint-disable-line wpcalypso/jsx-classname-namespace
 			>
 				<h1>{ translate( 'Are you sure?' ) }</h1>
 				<p>
@@ -72,10 +72,7 @@ class DeleteEmailForwardsDialog extends React.Component {
 	}
 
 	getEmailForwardingPath() {
-		return domainManagementEmailForwarding(
-			this.props.selectedSite.slug,
-			this.props.selectedDomainName
-		);
+		return emailManagementForwarding( this.props.selectedSite.slug, this.props.selectedDomainName );
 	}
 }
 
