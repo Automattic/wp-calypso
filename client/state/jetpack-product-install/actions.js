@@ -7,6 +7,9 @@ import {
 	JETPACK_PRODUCT_INSTALL_STATUS_REQUEST,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/jetpack-blogs/product-install';
+import 'state/data-layer/wpcom/jetpack-blogs/product-install-status';
+
 /**
  * Start the Jetpack product install process for that site.
  *
