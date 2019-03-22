@@ -100,6 +100,12 @@ class CalypsoifyIframe extends Component {
 			return;
 		}
 		if ( 'classicBlockOpenMediaModal' === action ) {
+			if ( data.imageId ) {
+				const { siteId } = this.props;
+				const image = MediaStore.get( siteId, data.imageId );
+				MediaActions.setLibrarySelectedItems( siteId, [ image ] );
+			}
+
 			this.setState( {
 				classicBlockEditorId: data.editorId,
 				isMediaModalVisible: true,
