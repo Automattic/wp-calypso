@@ -31,12 +31,12 @@ export class SearchPreview extends React.PureComponent {
 		const { snippet, title, url } = this.props;
 
 		return (
-			<div className="seo-search-preview">
-				<h2 className="seo-search-preview__header">{ this.props.translate( 'Search Preview' ) }</h2>
-				<div className="seo-search-preview__display">
-					<div className="seo-search-preview__title">{ googleTitle( title ) }</div>
-					<div className="seo-search-preview__url">{ googleUrl( url ) } ▾</div>
-					<div className="seo-search-preview__snippet">{ googleSnippet( snippet || '' ) }</div>
+			<div className="search-preview">
+				<h2 className="search-preview__header">{ this.props.translate( 'Search Preview' ) }</h2>
+				<div className="search-preview__display">
+					<div className="search-preview__title">{ googleTitle( title ) }</div>
+					<div className="search-preview__url">{ googleUrl( url ) } ▾</div>
+					<div className="search-preview__snippet">{ googleSnippet( snippet || '' ) }</div>
 				</div>
 			</div>
 		);
