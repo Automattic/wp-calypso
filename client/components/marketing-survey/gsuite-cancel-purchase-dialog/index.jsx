@@ -16,10 +16,12 @@ import Dialog from 'components/dialog';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getName, purchaseType } from 'lib/purchases';
+import { getPurchasesError } from 'state/purchases/selectors';
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
 import notices from 'notices';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { removePurchase } from 'state/purchases/actions';
 import wpcom from 'lib/wp';
 
 /**
@@ -69,51 +71,19 @@ class GSuiteCancelPurchaseDialog extends Component {
 
 	cancelButtonClick = closeDialog => {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_keep_it_click' );
-		closeDialog();
+		closeDialog( false );
 		this.resetState();
 	};
 
 	removeButtonClick = async closeDialog => {
-		const { domain, productName, translate } = this.props;
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_click' );
 
 		this.setState( {
 			isRemoving: true,
 		} );
-		// this.saveSurveyResults();
-		// this.removePurchase();
-		await new Promise( res => setTimeout( res, 5000 ) );
-		closeDialog();
-		this.props.onClose();
-		this.setState( {
-			isRemoving: false,
-		} );
-
-		// this.recordEvent( 'calypso_purchases_cancel_form_submit' );
-
-		// const response = await removePurchase( purchase.id, this.props.userId );
-
-		closeDialog();
-
-		// notices.error( purchasesError );
-
-		notices.success(
-			translate( '%(productName)s was removed from {{domain/}}.', {
-				args: {
-					productName,
-				},
-				components: {
-					domain: <em>{ domain }</em>,
-				},
-			} ),
-			{
-				persistent: true,
-			}
-		);
-
-		// page( purchasesRoot );
-
-		// this.setState( { isRemoving: false } );
+		await this.saveSurveyResults();
+		await this.removePurchase();
+		closeDialog( true );
 		this.resetState();
 	};
 
@@ -137,7 +107,27 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	removePurchase = async () => {
-		// TODO
+		const { domain, productName, purchase, purchasesError, translate, userId } = this.props;
+
+		await this.props.removePurchase( purchase.id, userId );
+
+		if ( purchasesError ) {
+			notices.error( purchasesError );
+		} else {
+			notices.success(
+				translate( '%(productName)s was removed from {{domain/}}.', {
+					args: {
+						productName,
+					},
+					components: {
+						domain: <em>{ domain }</em>,
+					},
+				} ),
+				{
+					persistent: true,
+				}
+			);
+		}
 	};
 
 	onSurveyAnswerChange = ( surveyAnswerId, surveyAnswerText ) => {
@@ -198,7 +188,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 				// don't allow the user to complete the survey without an selection
 				disabled: isRemoving || null === surveyAnswerId,
 				isPrimary: true,
-				label: translate( 'Remove Now' ),
+				label: isRemoving ? translate( 'Removing…' ) : translate( 'Remove Now' ),
 				onClick: this.removeButtonClick,
 			},
 		];
@@ -233,10 +223,13 @@ class GSuiteCancelPurchaseDialog extends Component {
 }
 
 GSuiteCancelPurchaseDialog.propTypes = {
+	domain: PropTypes.string.isRequired,
 	isVisible: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
 	onRemovePurchase: PropTypes.func.isRequired,
+	productName: PropTypes.string.isRequired,
 	purchase: PropTypes.object.isRequired,
+	purchasesError: PropTypes.string,
 	site: PropTypes.object.isRequired,
 	translate: PropTypes.func.isRequired,
 };
@@ -246,12 +239,12 @@ export default connect(
 		return {
 			productName: getName( purchase ),
 			domain: purchaseType( purchase ),
-			// 		purchasesError: getPurchasesError( state ),
+			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 		};
 	},
 	{
 		recordTracksEvent,
-		// removePurchase,
+		removePurchase,
 	}
 )( localize( GSuiteCancelPurchaseDialog ) );

@@ -101,13 +101,17 @@ class RemovePurchase extends Component {
 		);
 	};
 
-	closeDialog = () => {
+	closeDialog = type => {
 		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 		this.setState( {
 			isDialogVisible: false,
 			surveyStep: INITIAL_STEP,
 			survey: initialSurveyState(),
 		} );
+
+		if ( 'remove' === type ) {
+			page( purchasesRoot );
+		}
 	};
 
 	chatInitiated = () => {
