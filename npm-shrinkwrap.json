@@ -7460,21 +7460,21 @@
 			}
 		},
 		"eslint-plugin-import": {
-			"version": "2.14.0",
-			"resolved": "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.14.0.tgz",
-			"integrity": "sha512-FpuRtniD/AY6sXByma2Wr0TXvXJ4nA/2/04VPlfpmUDPOpOY264x+ILiwnrk/k4RINgDAyFZByxqPUbSQ5YE7g==",
+			"version": "2.16.0",
+			"resolved": "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.16.0.tgz",
+			"integrity": "sha512-z6oqWlf1x5GkHIFgrSvtmudnqM6Q60KM4KvpWi5ubonMjycLjndvd5+8VAZIsTlHC03djdgJuyKG6XO577px6A==",
 			"dev": true,
 			"requires": {
 				"contains-path": "^0.1.0",
-				"debug": "^2.6.8",
+				"debug": "^2.6.9",
 				"doctrine": "1.5.0",
-				"eslint-import-resolver-node": "^0.3.1",
-				"eslint-module-utils": "^2.2.0",
-				"has": "^1.0.1",
-				"lodash": "^4.17.4",
-				"minimatch": "^3.0.3",
+				"eslint-import-resolver-node": "^0.3.2",
+				"eslint-module-utils": "^2.3.0",
+				"has": "^1.0.3",
+				"lodash": "^4.17.11",
+				"minimatch": "^3.0.4",
 				"read-pkg-up": "^2.0.0",
-				"resolve": "^1.6.0"
+				"resolve": "^1.9.0"
 			},
 			"dependencies": {
 				"debug": {
