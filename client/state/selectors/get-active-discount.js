@@ -9,6 +9,7 @@ import { planMatches } from 'lib/plans';
 import { hasActivePromotion } from 'state/active-promotions/selectors';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import memoizeLast from 'lib/memoize-last';
 
 export const isDiscountActive = ( discount, state ) => {
 	const now = new Date();
@@ -42,6 +43,14 @@ export const isDiscountActive = ( discount, state ) => {
 	return true;
 };
 
+// Some simple last value memoization to avoid constant re-renders.
+const composeActiveDiscount = memoizeLast( ( discount, activeVariation ) => ( {
+	...discount,
+	...activeVariation,
+} ) );
+
+const NO_VARIATION = {};
+
 /**
  * Returns info whether the site is eligible for spring discount or not.
  *
@@ -56,9 +65,7 @@ export default state => {
 
 	const activeVariation = discount.variations
 		? discount.variations[ abtest( discount.abTestName ) ]
-		: {};
-	return {
-		...discount,
-		...activeVariation,
-	};
+		: NO_VARIATION;
+
+	return composeActiveDiscount( discount, activeVariation );
 };
