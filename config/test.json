@@ -104,6 +104,7 @@
 		"signup/social": true,
 		"support-user": true,
 		"ui/first-view": false,
+		"ui/streamlined-nav-drawer": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
