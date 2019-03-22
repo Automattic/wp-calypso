@@ -1,18 +1,9 @@
-const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
-const isBrowser = isCalypsoClient || 'true' === process.env.TARGET_BROWSER;
-
-const modules = isBrowser ? false : 'commonjs'; // Use commonjs for Node
-
-// Use target configuration in package.json for browser builds.
-const targets = isBrowser ? undefined : { node: 'current' };
-
 const config = {
 	presets: [
 		[
 			'@babel/env',
 			{
-				modules,
-				targets,
+				modules: false,
 				useBuiltIns: 'entry',
 				corejs: 2,
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
