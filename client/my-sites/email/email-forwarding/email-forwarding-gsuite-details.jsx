@@ -11,7 +11,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card/compact';
-import { domainManagementEmail } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 
 const EmailForwardingGSuiteDetails = ( { selectedDomainName, siteSlug, translate } ) => {
 	return (
@@ -21,7 +21,7 @@ const EmailForwardingGSuiteDetails = ( { selectedDomainName, siteSlug, translate
 					"You're using G Suite with this domain, so you'll use that to create custom email addresses. {{a}}Manage your G Suite settings.{{/a}}",
 					{
 						components: {
-							a: <a href={ domainManagementEmail( siteSlug, selectedDomainName ) } />,
+							a: <a href={ emailManagement( siteSlug, selectedDomainName ) } />,
 						},
 					}
 				) }

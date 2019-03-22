@@ -22,7 +22,7 @@ import FormLabel from 'components/forms/form-label';
 import { getEligibleGSuiteDomain, hasGSuite } from 'lib/domains/gsuite';
 import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
-import { domainManagementEmail } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import { addItem } from 'lib/upgrades/actions';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
 import QueryUserSettings from 'components/data/query-user-settings';
@@ -274,7 +274,7 @@ class AddEmailAddressesCard extends React.Component {
 
 		this.props.cancelClick( this.props.selectedDomainName );
 
-		page( domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page( emailManagement( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 }
 

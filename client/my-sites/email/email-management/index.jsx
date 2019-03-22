@@ -29,11 +29,8 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import PlansNavigation from 'my-sites/plans/navigation';
 import EmptyContent from 'components/empty-content';
-import {
-	domainManagementEdit,
-	domainManagementList,
-	domainManagementEmailForwarding,
-} from 'my-sites/domains/paths';
+import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
+import { emailManagementForwarding } from 'my-sites/email/paths';
 import { getSelectedDomain } from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import DocumentHead from 'components/data/document-head';
@@ -127,10 +124,7 @@ class EmailManagement extends React.Component {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
 				secondaryAction: translate( 'Add Email Forwarding' ),
-				secondaryActionURL: domainManagementEmailForwarding(
-					selectedSite.slug,
-					selectedDomainName
-				),
+				secondaryActionURL: emailManagementForwarding( selectedSite.slug, selectedDomainName ),
 			};
 		} else {
 			emptyContentProps = {
@@ -188,7 +182,7 @@ class EmailManagement extends React.Component {
 		const { selectedSite, translate } = this.props;
 		return (
 			<VerticalNav>
-				<VerticalNavItem path={ domainManagementEmailForwarding( selectedSite.slug, domain ) }>
+				<VerticalNavItem path={ emailManagementForwarding( selectedSite.slug, domain ) }>
 					{ translate( 'Email Forwarding' ) }
 				</VerticalNavItem>
 			</VerticalNav>
