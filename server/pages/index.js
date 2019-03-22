@@ -36,7 +36,7 @@ import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
-import { serverRender, renderJsx } from 'render';
+import { serverRender, renderJsx, attachBuildTimestamp, attachHead, attachI18n } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
@@ -171,13 +171,13 @@ const getFilesForChunk = ( chunkName, request ) => {
 	return groupAssetsByType( allTheFiles );
 };
 
-const getFilesForEntrypoint = target => {
-	const entrypointAssets = getAssets( target ).entrypoints.build.assets.filter(
+const getFilesForEntrypoint = ( target, name ) => {
+	console.log( getAssets( target ) );
+	const entrypointAssets = getAssets( target ).entrypoints[ name ].assets.filter(
 		asset => ! asset.startsWith( 'manifest' )
 	);
 	return groupAssetsByType( entrypointAssets );
 };
-
 /**
  * Generate an object that maps asset names name to a server-relative urls.
  * Assets in request and static files are included.
@@ -311,7 +311,7 @@ function getDefaultContext( request ) {
 		isDebug,
 		badge: false,
 		lang,
-		entrypoint: getFilesForEntrypoint( target ),
+		entrypoint: getFilesForEntrypoint( target, 'build' ),
 		manifest: getAssets( target ).manifests.manifest,
 		faviconURL: config( 'favicon_url' ),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
@@ -749,7 +749,15 @@ module.exports = function() {
 
 	app.get( '/landing/sample', function( req, res ) {
 		const ctx = getDefaultContext( req );
-		const pageHtml = renderJsx( 'landingSample', ctx );
+		attachBuildTimestamp( ctx );
+		attachHead( ctx );
+		attachI18n( ctx );
+		console.log( ctx );
+
+		const pageHtml = renderJsx( 'landingSample', {
+			...ctx,
+			entrypoint: getFilesForEntrypoint( 'landingSample' ),
+		} );
 		res.send( pageHtml );
 	} );
 
