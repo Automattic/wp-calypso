@@ -29,6 +29,7 @@ describe( '<SiteInformation />', () => {
 		translate: x => x,
 		siteInformation: { title: 'Ho ho ho!' },
 		headerText: 'headerTextoidaliciously',
+		subHeaderText: 'subHeaderTextoidaliciously',
 		formFields: [ 'title', 'address', 'phone' ],
 		stepName: 'site-information',
 	};
