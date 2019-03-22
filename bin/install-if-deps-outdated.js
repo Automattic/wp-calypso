@@ -52,7 +52,7 @@ function install() {
 	} );
 	if ( cleanResult.status ) {
 		console.error( 'failed to clean: %o', cleanResult );
-		process.exit( cleanResult );
+		process.exit( cleanResult.status );
 	}
 	const installResult = spawnSync( 'npm', [ 'ci' ], {
 		shell: true,
@@ -60,7 +60,7 @@ function install() {
 	} ).status;
 	if ( installResult.status ) {
 		console.error( 'failed to install: %o', installResult );
-		process.exit( installResult );
+		process.exit( installResult.status );
 	}
 	const touchDate = new Date();
 
