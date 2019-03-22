@@ -44,6 +44,7 @@ import WPHomePage from '../lib/pages/wp-home-page';
 import CheckOutThankyouPage from '../lib/pages/signup/checkout-thankyou-page';
 import JetpackConnectSiteTypePage from '../lib/pages/jetpack/jetpack-connect-site-type-page';
 import JetpackConnectSiteTopicPage from '../lib/pages/jetpack/jetpack-connect-site-topic-page';
+import JetpackConnectUserTypePage from '../lib/pages/jetpack/jetpack-connect-user-type-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -116,7 +117,12 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 
 		step( 'Can select a site topic', async function() {
 			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.setSiteTopic( 'test site' );
+			return await siteTopicPage.selectSiteTopic( 'test site' );
+		} );
+
+		step( 'Can select a user type', async function() {
+			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
+			return await siteTopicPage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {
@@ -175,7 +181,12 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 
 		step( 'Can select a site topic', async function() {
 			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.setSiteTopic( 'test site' );
+			return await siteTopicPage.selectSiteTopic( 'test site' );
+		} );
+
+		step( 'Can select a user type', async function() {
+			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
+			return await siteTopicPage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {
@@ -341,7 +352,12 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 
 		step( 'Can select a site topic', async function() {
 			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.setSiteTopic( 'test site' );
+			return await siteTopicPage.selectSiteTopic( 'test site' );
+		} );
+
+		step( 'Can select a user type', async function() {
+			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
+			return await siteTopicPage.selectUserType( 'creator' );
 		} );
 
 		step(

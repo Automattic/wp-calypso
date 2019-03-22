@@ -8,7 +8,7 @@ export default class JetpackConnectSiteTopicPage extends AsyncBaseContainer {
 		super( driver, By.css( '.jetpack-connect__step .site-topic__content' ) );
 	}
 
-	async setSiteTopic( siteTopic ) {
+	async selectSiteTopic( siteTopic ) {
 		const siteTopicInputSelector = By.css( '.suggestion-search input' );
 		const siteTopicButtonSelector = By.css( '.site-topic__content button:not(disabled)' );
 
