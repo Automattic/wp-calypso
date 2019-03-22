@@ -5,6 +5,7 @@
  */
 import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -14,10 +15,15 @@ import React, { Component } from 'react';
 import * as steps from './steps';
 import Dialog from 'components/dialog';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getName, purchaseType } from 'lib/purchases';
+import { getPurchasesError } from 'state/purchases/selectors';
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
 import notices from 'notices';
+import { purchasesRoot } from 'me/purchases/paths';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { removePurchase } from 'state/purchases/actions';
 import wpcom from 'lib/wp';
 
 /**
@@ -36,6 +42,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 			step: steps.GSUITE_INITIAL_STEP,
 			surveyAnswerId: null,
 			surveyAnswerText: '',
+			isRemoving: false,
 		};
 	}
 
@@ -71,11 +78,21 @@ class GSuiteCancelPurchaseDialog extends Component {
 		this.resetState();
 	};
 
-	removeButtonClick = closeDialog => {
+	removeButtonClick = async closeDialog => {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_click' );
-		this.saveSurveyResults();
-		this.props.onRemovePurchase( closeDialog );
-		this.resetState();
+
+		this.setState( {
+			isRemoving: true,
+		} );
+		await this.saveSurveyResults();
+		const success = await this.removePurchase();
+		if ( success ) {
+			closeDialog();
+			this.resetState();
+			page( purchasesRoot );
+		} else {
+			this.setState( { isRemoving: false } );
+		}
 	};
 
 	saveSurveyResults = async () => {
@@ -97,6 +114,35 @@ class GSuiteCancelPurchaseDialog extends Component {
 		}
 	};
 
+	removePurchase = async () => {
+		const { domain, productName, purchase, translate, userId } = this.props;
+
+		await this.props.removePurchase( purchase.id, userId );
+
+		const { purchasesError } = this.props;
+
+		if ( purchasesError ) {
+			notices.error( purchasesError );
+			return false;
+		}
+
+		notices.success(
+			translate( '%(productName)s was removed from {{domain/}}.', {
+				args: {
+					productName,
+				},
+				components: {
+					domain: <em>{ domain }</em>,
+				},
+			} ),
+			{
+				persistent: true,
+			}
+		);
+
+		return true;
+	};
+
 	onSurveyAnswerChange = ( surveyAnswerId, surveyAnswerText ) => {
 		if ( surveyAnswerId !== this.state.surveyAnswerId ) {
 			this.props.recordTracksEvent(
@@ -114,20 +160,20 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	getStepButtons = () => {
-		const { disabled, translate } = this.props;
-		const { step, surveyAnswerId } = this.state;
+		const { translate } = this.props;
+		const { step, surveyAnswerId, isRemoving } = this.state;
 		if ( steps.GSUITE_INITIAL_STEP === step ) {
 			return [
 				{
 					action: 'cancel',
-					disabled,
+					disabled: isRemoving,
 					isPrimary: true,
 					label: translate( "I'll Keep It" ),
 					onClick: this.cancelButtonClick,
 				},
 				{
 					action: 'next',
-					disabled,
+					disabled: isRemoving,
 					label: translate( 'Next Step' ),
 					onClick: this.nextStepButtonClick,
 				},
@@ -136,30 +182,32 @@ class GSuiteCancelPurchaseDialog extends Component {
 		return [
 			{
 				action: 'cancel',
-				disabled,
+				disabled: isRemoving,
 				label: translate( "I'll Keep It" ),
 				onClick: this.cancelButtonClick,
 			},
 			{
 				action: 'prev',
-				disabled,
+				disabled: isRemoving,
 				label: translate( 'Previous Step' ),
 				onClick: this.previousStepButtonClick,
 			},
 			{
 				action: 'remove',
+				// used to get a busy button
+				additionalClassNames: isRemoving ? [ 'is-busy' ] : undefined,
 				// don't allow the user to complete the survey without an selection
-				disabled: disabled || null === surveyAnswerId,
+				disabled: isRemoving || null === surveyAnswerId,
 				isPrimary: true,
-				label: translate( 'Remove Now' ),
+				label: isRemoving ? translate( 'Removing…' ) : translate( 'Remove Now' ),
 				onClick: this.removeButtonClick,
 			},
 		];
 	};
 
 	render() {
-		const { disabled, isVisible, onClose, purchase } = this.props;
-		const { surveyAnswerId, surveyAnswerText } = this.state;
+		const { isVisible, onClose, purchase } = this.props;
+		const { surveyAnswerId, surveyAnswerText, isRemoving } = this.state;
 		return (
 			// By checking isVisible here we prevent rendering a "reset" dialog state before it closes
 			isVisible && (
@@ -173,7 +221,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 						<GSuiteCancellationFeatures purchase={ purchase } />
 					) : (
 						<GSuiteCancellationSurvey
-							disabled={ disabled }
+							disabled={ isRemoving }
 							onSurveyAnswerChange={ this.onSurveyAnswerChange }
 							surveyAnswerId={ surveyAnswerId }
 							surveyAnswerText={ surveyAnswerText }
@@ -186,18 +234,27 @@ class GSuiteCancelPurchaseDialog extends Component {
 }
 
 GSuiteCancelPurchaseDialog.propTypes = {
-	disabled: PropTypes.bool,
+	domain: PropTypes.string.isRequired,
 	isVisible: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
-	onRemovePurchase: PropTypes.func.isRequired,
+	productName: PropTypes.string.isRequired,
 	purchase: PropTypes.object.isRequired,
+	purchasesError: PropTypes.string,
 	site: PropTypes.object.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
 export default connect(
-	null,
+	( state, { purchase } ) => {
+		return {
+			productName: getName( purchase ),
+			domain: purchaseType( purchase ),
+			purchasesError: getPurchasesError( state ),
+			userId: getCurrentUserId( state ),
+		};
+	},
 	{
 		recordTracksEvent,
+		removePurchase,
 	}
 )( localize( GSuiteCancelPurchaseDialog ) );
