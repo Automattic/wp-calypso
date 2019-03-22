@@ -5,6 +5,7 @@
  */
 import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -20,6 +21,7 @@ import { getPurchasesError } from 'state/purchases/selectors';
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
 import notices from 'notices';
+import { purchasesRoot } from 'me/purchases/paths';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { removePurchase } from 'state/purchases/actions';
 import wpcom from 'lib/wp';
@@ -40,6 +42,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 			step: steps.GSUITE_INITIAL_STEP,
 			surveyAnswerId: null,
 			surveyAnswerText: '',
+			isRemoving: false,
 		};
 	}
 
@@ -71,7 +74,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 
 	cancelButtonClick = closeDialog => {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_keep_it_click' );
-		closeDialog( false );
+		closeDialog();
 		this.resetState();
 	};
 
@@ -82,9 +85,14 @@ class GSuiteCancelPurchaseDialog extends Component {
 			isRemoving: true,
 		} );
 		await this.saveSurveyResults();
-		await this.removePurchase();
-		closeDialog( true );
-		this.resetState();
+		const success = await this.removePurchase();
+		if ( success ) {
+			closeDialog();
+			this.resetState();
+			page( purchasesRoot );
+		} else {
+			this.setState( { isRemoving: false } );
+		}
 	};
 
 	saveSurveyResults = async () => {
@@ -107,27 +115,32 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	removePurchase = async () => {
-		const { domain, productName, purchase, purchasesError, translate, userId } = this.props;
+		const { domain, productName, purchase, translate, userId } = this.props;
 
 		await this.props.removePurchase( purchase.id, userId );
 
+		const { purchasesError } = this.props;
+
 		if ( purchasesError ) {
 			notices.error( purchasesError );
-		} else {
-			notices.success(
-				translate( '%(productName)s was removed from {{domain/}}.', {
-					args: {
-						productName,
-					},
-					components: {
-						domain: <em>{ domain }</em>,
-					},
-				} ),
-				{
-					persistent: true,
-				}
-			);
+			return false;
 		}
+
+		notices.success(
+			translate( '%(productName)s was removed from {{domain/}}.', {
+				args: {
+					productName,
+				},
+				components: {
+					domain: <em>{ domain }</em>,
+				},
+			} ),
+			{
+				persistent: true,
+			}
+		);
+
+		return true;
 	};
 
 	onSurveyAnswerChange = ( surveyAnswerId, surveyAnswerText ) => {
