@@ -239,7 +239,6 @@ GSuiteCancelPurchaseDialog.propTypes = {
 	domain: PropTypes.string.isRequired,
 	isVisible: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
-	onRemovePurchase: PropTypes.func.isRequired,
 	productName: PropTypes.string.isRequired,
 	purchase: PropTypes.object.isRequired,
 	purchasesError: PropTypes.string,
