@@ -30,6 +30,7 @@ describe( '<SiteInformation />', () => {
 		siteInformation: { title: 'Ho ho ho!' },
 		headerText: 'headerTextoidaliciously',
 		subHeaderText: 'subHeaderTextoidaliciously',
+		fallbackSubHeaderText: 'subHeaderTextoidaliciously',
 		formFields: [ 'title', 'address', 'phone' ],
 		stepName: 'site-information',
 	};
