@@ -19,6 +19,8 @@ export default function PlanFeaturesItem( {
 	hideInfoPopover,
 	hideGridicon,
 } ) {
+	const isMobile = useMobileBreakpoint();
+
 	return (
 		<div className="plan-features__item">
 			{ hideGridicon ? null : (
