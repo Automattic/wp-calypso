@@ -8,6 +8,15 @@ export default {
 		},
 		defaultVariation: 'main',
 	},
+	streamlinedNavigationDrawer: {
+		datestamp: '20190321',
+		variations: {
+			test: 5,
+			control: 95,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
