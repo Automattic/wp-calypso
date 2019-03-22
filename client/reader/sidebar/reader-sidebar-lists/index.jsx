@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from '../expandable';
+import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ReaderSidebarListsList from './list';
 
 export class ReaderSidebarLists extends Component {

@@ -18,7 +18,7 @@ const ExpandableSidebarHeading = ( { title, count, onClick } ) => (
 	<SidebarHeading onClick={ onClick }>
 		<Gridicon icon="chevron-down" />
 		<span>{ title }</span>
-		<Count count={ count } />
+        { undefined !== count ? <Count count={ count } /> : null }
 	</SidebarHeading>
 );
 
@@ -29,7 +29,7 @@ ExpandableSidebarHeading.propTypes = {
 };
 
 ExpandableSidebarHeading.defaultProps = {
-	onClick: noop,
+	onClick: noop
 };
 
 export default ExpandableSidebarHeading;
