@@ -46,7 +46,7 @@ import './style.scss';
 
 const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
 
-class EmailManagment extends React.Component {
+class EmailManagement extends React.Component {
 	static propTypes = {
 		currencyCode: PropTypes.string.isRequired,
 		domains: PropTypes.array.isRequired,
@@ -153,7 +153,6 @@ class EmailManagment extends React.Component {
 
 	googleAppsUsersCard() {
 		const { domains, gsuiteUsers, selectedDomainName, selectedSite, user } = this.props;
-
 		return (
 			<GSuiteUsersCard
 				domains={ domains }
@@ -216,4 +215,4 @@ export default connect(
 		};
 	},
 	{}
-)( localize( EmailManagment ) );
+)( localize( EmailManagement ) );

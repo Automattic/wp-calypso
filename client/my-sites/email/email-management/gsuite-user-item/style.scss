@@ -1,11 +1,11 @@
-.email .is-placeholder {
+.email-management .is-placeholder {
 	.gsuite-user-item__email,
 	.gsuite-user-item__manage-link {
 		@include placeholder();
 	}
 }
 
-.email {
+.email-management {
 	.gsuite-user-item__email {
 		float: left;
 	}

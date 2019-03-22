@@ -17,6 +17,7 @@ import {
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
+	domainManagementEmail,
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementPrimaryDomain,
@@ -30,7 +31,7 @@ import {
 	domainManagementDomainConnectMapping,
 } from 'my-sites/domains/paths';
 import EmailForwarding from 'my-sites/email/email-forwarding';
-import EmailManagement from 'my-sites/email/email-management/gsuite-users-card';
+import EmailManagement from 'my-sites/email/email-management';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuiteAddUsers from 'my-sites/email/gsuite-add-users';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -146,7 +147,22 @@ export default {
 	},
 
 	domainManagementEmail( pageContext, next ) {
-		pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementEmail(
+					':site',
+					pageContext.params.domain ? ':domain' : undefined
+				) }
+				analyticsTitle="Domain Management > Email"
+				component={ EmailManagement }
+				context={ pageContext }
+				needsCart
+				needsDomains
+				needsPlans
+				needsProductsList
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
 		next();
 	},
 

@@ -2,14 +2,14 @@
 	margin-bottom: 10px;
 }
 
-.gsuite-users-card__container__user-list {
+.gsuite-users-card__user-list {
 	&.card {
 		padding: 0;
 		@include clear-fix;
 	}
 }
 
-.gsuite-users-card__container__user-list-inner {
+.gsuite-users-card__user-list-inner {
 	list-style: none;
 	margin: 0;
 
