@@ -49,8 +49,6 @@ const composeActiveDiscount = memoizeLast( ( discount, activeVariation ) => ( {
 	...activeVariation,
 } ) );
 
-const NO_VARIATION = {};
-
 /**
  * Returns info whether the site is eligible for spring discount or not.
  *
@@ -58,14 +56,18 @@ const NO_VARIATION = {};
  * @return {Object|null}  Promo description
  */
 export default state => {
-	const discount = activeDiscounts.filter( p => isDiscountActive( p, state ) )[ 0 ];
+	const discount = activeDiscounts.find( p => isDiscountActive( p, state ) );
 	if ( ! discount ) {
 		return null;
 	}
 
 	const activeVariation = discount.variations
 		? discount.variations[ abtest( discount.abTestName ) ]
-		: NO_VARIATION;
+		: null;
+
+	if ( ! activeVariation ) {
+		return discount;
+	}
 
 	return composeActiveDiscount( discount, activeVariation );
 };
