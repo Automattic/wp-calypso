@@ -127,19 +127,47 @@ export function render( element, key = JSON.stringify( element ), req ) {
 	//todo: render an error?
 }
 
-export function serverRender( req, res ) {
-	const context = req.context;
-
-	let title,
-		metas = [],
-		links = [],
-		cacheKey = false;
-
+export function attachI18n( context ) {
 	if ( ! isDefaultLocale( context.lang ) ) {
 		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
 
 		context.i18nLocaleScript = getLanguageFileUrl( langFileName, 'js', context.languageRevisions );
 	}
+
+	if ( context.store ) {
+		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
+
+		const isLocaleRTL = isRTL( context.store.getState() );
+		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
+	}
+}
+
+export function attachHead( context ) {
+	const title = getDocumentHeadFormattedTitle( context.store.getState() );
+	const metas = getDocumentHeadMeta( context.store.getState() );
+	const links = getDocumentHeadLink( context.store.getState() );
+	context.head = {
+		title,
+		metas,
+		links,
+	};
+}
+
+export function attachBuildTimestamp( context ) {
+	try {
+		context.buildTimestamp = BUILD_TIMESTAMP;
+	} catch ( e ) {
+		context.buildTimestamp = null;
+		debug( 'BUILD_TIMESTAMP is not defined for wp-desktop builds and is expected to fail here.' );
+	}
+}
+
+export function serverRender( req, res ) {
+	const context = req.context;
+
+	let cacheKey = false;
+
+	attachI18n( context );
 
 	if ( shouldServerSideRender( context ) ) {
 		cacheKey = getNormalizedPath( context.pathname, context.query );
@@ -151,9 +179,7 @@ export function serverRender( req, res ) {
 	}
 
 	if ( context.store ) {
-		title = getDocumentHeadFormattedTitle( context.store.getState() );
-		metas = getDocumentHeadMeta( context.store.getState() );
-		links = getDocumentHeadLink( context.store.getState() );
+		attachHead( context );
 
 		const cacheableReduxSubtrees = [ 'documentHead' ];
 		const isomorphicSubtrees = isSectionIsomorphic( context.store.getState() )
@@ -171,21 +197,10 @@ export function serverRender( req, res ) {
 			const serverState = initialReducer( cacheableInitialState, { type: SERIALIZE } );
 			stateCache.set( cacheKey, serverState );
 		}
-
-		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
-
-		const isLocaleRTL = isRTL( context.store.getState() );
-		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
-
-	context.head = { title, metas, links };
 	context.clientData = config.clientData;
-	try {
-		context.buildTimestamp = BUILD_TIMESTAMP;
-	} catch ( e ) {
-		context.buildTimestamp = null;
-		debug( 'BUILD_TIMESTAMP is not defined for wp-desktop builds and is expected to fail here.' );
-	}
+
+	attachBuildTimestamp( context );
 
 	if ( config.isEnabled( 'desktop' ) ) {
 		res.send( renderJsx( 'desktop', context ) );

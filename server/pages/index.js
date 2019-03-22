@@ -35,7 +35,7 @@ import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
-import { serverRender, renderJsx } from 'render';
+import { serverRender, renderJsx, attachBuildTimestamp, attachHead, attachI18n } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
@@ -137,8 +137,8 @@ const getFilesForChunk = chunkName => {
 	return groupAssetsByType( allTheFiles );
 };
 
-const getFilesForEntrypoint = () => {
-	const entrypointAssets = getAssets().entrypoints.build.assets.filter(
+const getFilesForEntrypoint = name => {
+	const entrypointAssets = getAssets().entrypoints[ name ].assets.filter(
 		asset => ! asset.startsWith( 'manifest' )
 	);
 	return groupAssetsByType( entrypointAssets );
@@ -273,7 +273,7 @@ function getDefaultContext( request ) {
 		isDebug,
 		badge: false,
 		lang,
-		entrypoint: getFilesForEntrypoint(),
+		entrypoint: getFilesForEntrypoint( 'build' ),
 		manifest: getAssets().manifests.manifest,
 		faviconURL: config( 'favicon_url' ),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
@@ -708,7 +708,15 @@ module.exports = function() {
 
 	app.get( '/landing/sample', function( req, res ) {
 		const ctx = getDefaultContext( req );
-		const pageHtml = renderJsx( 'landingSample', ctx );
+		attachBuildTimestamp( ctx );
+		attachHead( ctx );
+		attachI18n( ctx );
+		console.log( ctx );
+
+		const pageHtml = renderJsx( 'landingSample', {
+			...ctx,
+			entrypoint: getFilesForEntrypoint( 'landingSample' ),
+		} );
 		res.send( pageHtml );
 	} );
 
