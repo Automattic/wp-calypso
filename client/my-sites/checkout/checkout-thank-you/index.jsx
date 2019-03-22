@@ -272,7 +272,7 @@ export class CheckoutThankYou extends React.Component {
 		if ( props.domainOnlySiteFlow && get( props, 'receipt.hasLoadedFromServer', false ) ) {
 			const purchases = getPurchases( props );
 			const failedPurchases = getFailedPurchases( props );
-			if ( props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
+			if ( purchases.length > 0 && ! failedPurchases.length ) {
 				const domainName = find( purchases, isDomainRegistration ).meta;
 				page( domainManagementList( domainName ) );
 			}
