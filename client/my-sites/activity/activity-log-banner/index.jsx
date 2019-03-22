@@ -16,6 +16,11 @@ import Card from 'components/card';
 import ScreenReaderText from 'components/screen-reader-text';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ActivityLogBanner extends Component {
 	static propTypes = {
 		icon: PropTypes.string,

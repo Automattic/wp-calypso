@@ -67,81 +67,17 @@
 	margin-right: -8px;
 }
 
-.activity-log-banner__success-gotit {
-	margin-left: 16px;
-}
-
-.activity-log-banner__progress-bar--queued.is-pulsing .progress-bar__progress {
-	background-image: linear-gradient(
-		-45deg,
-		var( --color-neutral-300 ) 28%,
-		var( --color-neutral-200 ) 28%,
-		var( --color-neutral-200 ) 72%,
-		var( --color-neutral-300 ) 72%
-	);
-}
-
-// HappyChat button in error banner
-.button.is-primary + .activity-log-confirm-dialog__more-info-link {
+// HappyChat button in success/error banner
+.activity-log-banner__happychat-button {
+	color: var( --color-neutral-300 );
+	padding: 8px 8px 0 0;
 	margin-left: 16px;
 	display: inline-block;
 	vertical-align: text-top;
-}
 
-// Got it and HappyChat button in success banner
-.activity-log-banner__success-gotit {
-	margin-left: 8px;
-}
-.activity-log-banner__success-happychat {
-	margin-left: 16px;
-}
-
-.activity-log__fader {
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	background: linear-gradient( to bottom, rgba( 243, 246, 248, 0.1 ), #f3f6f8 );
-	z-index: 179;
-	height: 15%;
-	pointer-events: none;
-}
-
-.activity-log-banner__upgrade {
-	margin-top: 1px;
-
-	.button {
-		white-space: nowrap;
-	}
-}
-
-// Introduction banner
-.activity-log-banner__intro {
-	display: flex;
-	align-items: flex-start;
-	margin-bottom: 44px;
-}
-
-.activity-log-banner__intro-image {
-	max-width: 220px;
-	margin: 8px 16px 0 -8px;
-
-	@include breakpoint( '<960px' ) {
-		max-width: 100px;
-	}
-
-	@include breakpoint( '<660px' ) {
-		max-width: 64px;
-	}
-
-	@include breakpoint( '<480px' ) {
-		display: none;
-	}
-}
-
-.activity-log-banner__intro-description {
-
-	p {
-		font-size: 14px;
+	.gridicon {
+		float: left;
+		top: 0;
+		margin-right: 8px;
 	}
 }

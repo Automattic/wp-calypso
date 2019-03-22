@@ -44,6 +44,11 @@ import { getSite } from 'state/sites/selectors';
 import { withDesktopBreakpoint } from 'lib/viewport/react';
 import { withLocalizedMoment } from 'components/localized-moment';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ActivityLogItem extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
@@ -293,14 +298,9 @@ class ActivityLogItem extends Component {
 					<ActivityLogConfirmDialog
 						key="activity-rewind-dialog"
 						confirmTitle={ translate( 'Confirm Rewind' ) }
-						notice={
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							<span className="activity-log-confirm-dialog__notice-content">
-								{ translate(
-									'This will remove all content and options created or changed since then.'
-								) }
-							</span>
-						}
+						notice={ translate(
+							'This will remove all content and options created or changed since then.'
+						) }
 						onClose={ dismissRewind }
 						onConfirm={ this.confirmRewind }
 						onSettingsChange={ this.restoreSettingsChange }

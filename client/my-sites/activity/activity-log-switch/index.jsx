@@ -17,6 +17,11 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getRewindState from 'state/selectors/get-rewind-state';
 import { getSiteUrl } from 'state/sites/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ActivityLogSwitch extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
