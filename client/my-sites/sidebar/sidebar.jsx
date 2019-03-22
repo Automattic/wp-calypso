@@ -268,6 +268,47 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	design() {
+		const { path, site, translate, canUserEditThemeOptions } = this.props,
+			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
+		let themesLink;
+
+		if ( site && ! canUserEditThemeOptions ) {
+			return null;
+		}
+
+		if ( this.props.isJetpack && ! jetpackEnabled && site.options ) {
+			themesLink = site.options.admin_url + 'themes.php';
+		} else if ( this.props.siteId ) {
+			themesLink = '/themes' + this.props.siteSuffix;
+		} else {
+			themesLink = '/themes';
+		}
+
+		return (
+			<ul>
+				<SidebarItem
+					label={ translate( 'Theme' ) }
+					selected={ itemLinkMatches( themesLink, path ) }
+					link={ themesLink }
+					onNavigate={ this.trackCustomizeClick }
+					icon="customize"
+					preloadSectionName="themes"
+					forceInternalLink
+				/>
+				<SidebarItem
+					label={ translate( 'Customize' ) }
+					selected={ itemLinkMatches( '/customize', path ) }
+					link={ this.props.customizeUrl }
+					onNavigate={ this.trackCustomizeClick }
+					icon="customize"
+					preloadSectionName="customize"
+					forceInternalLink
+				/>
+			</ul>
+		);
+	}
+
 	trackSidebarButtonClick = name => {
 		return () => {
 			this.props.recordTracksEvent(
@@ -685,6 +726,10 @@ export class MySitesSidebar extends Component {
 				!! this.plugins() ||
 				!! this.upgrades();
 
+		if ( isEnabled( 'ui/streamlined-nav-drawer' ) ) {
+			return this.renderStreamlinedSidebarMenus( manage, configuration );
+		}
+
 		return (
 			<div>
 				<SidebarMenu>
@@ -704,7 +749,7 @@ export class MySitesSidebar extends Component {
 					</SidebarMenu>
 				) : null }
 
-				{ !! this.themes() ? (
+				{ this.themes() ? (
 					<SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Personalize' ) }</SidebarHeading>
 						<ul>{ this.themes() }</ul>
@@ -714,6 +759,49 @@ export class MySitesSidebar extends Component {
 				{ configuration ? (
 					<SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
+						<ul>
+							{ this.earn() }
+							{ this.sharing() }
+							{ this.users() }
+							{ this.plugins() }
+							{ this.upgrades() }
+							{ this.siteSettings() }
+							{ this.wpAdmin() }
+						</ul>
+					</SidebarMenu>
+				) : null }
+			</div>
+		);
+	}
+
+	renderStreamlinedSidebarMenus( manage, configuration ) {
+		return (
+			<div>
+				<SidebarMenu>
+					<ul>
+						{ this.stats() }
+						{ this.plan() }
+						{ this.store() }
+					</ul>
+				</SidebarMenu>
+
+				{ manage ? (
+					<SidebarMenu>
+						<SidebarHeading>{ this.props.translate( 'Site' ) }</SidebarHeading>
+						{ this.manage() }
+					</SidebarMenu>
+				) : null }
+
+				{ this.design() ? (
+					<SidebarMenu>
+						<SidebarHeading>{ this.props.translate( 'Design' ) }</SidebarHeading>
+						{ this.design() }
+					</SidebarMenu>
+				) : null }
+
+				{ configuration ? (
+					<SidebarMenu>
+						<SidebarHeading>{ this.props.translate( 'Manage' ) }</SidebarHeading>
 						<ul>
 							{ this.earn() }
 							{ this.sharing() }
