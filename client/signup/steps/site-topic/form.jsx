@@ -13,9 +13,8 @@ import { connect } from 'react-redux';
  */
 import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
-import SiteVerticalsSuggestionSearch, {
-	isVerticalSearchPending,
-} from 'components/site-verticals-suggestion-search';
+import SiteVerticalsSuggestionSearch from // isVerticalSearchPending,
+'components/site-verticals-suggestion-search';
 import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import {
 	getSiteVerticalName,
@@ -25,6 +24,7 @@ import {
 	getSiteVerticalParentId,
 } from 'state/signup/steps/site-vertical/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getVerticals } from 'state/signup/verticals/selectors';
 
 /**
  * Style dependencies
@@ -79,7 +79,7 @@ class SiteTopicForm extends Component {
 						<SiteVerticalsSuggestionSearch
 							onChange={ this.onSiteTopicChange }
 							showPopular={ true }
-							initialValue={ siteTopic }
+							searchValue={ siteTopic }
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 						<Button type="submit" disabled={ isButtonDisabled } primary>
@@ -95,7 +95,8 @@ class SiteTopicForm extends Component {
 export default connect(
 	state => {
 		const siteTopic = getSiteVerticalName( state );
-		const isButtonDisabled = ! siteTopic || isVerticalSearchPending();
+		const isVerticalSearchPending = null == getVerticals( state, siteTopic );
+		const isButtonDisabled = ! siteTopic || isVerticalSearchPending;
 
 		return {
 			siteTopic,
