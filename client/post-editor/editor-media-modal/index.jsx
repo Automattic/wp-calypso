@@ -72,10 +72,9 @@ class EditorMediaModal extends Component {
 
 	onClose = value => {
 		if ( value ) {
-			this.insertMedia( value );
-		} else {
-			this.props.onClose();
+			return this.props.isGutenberg ? this.props.onClose( value ) : this.insertMedia( value );
 		}
+		this.props.onClose();
 	};
 
 	render() {

@@ -13,7 +13,6 @@ import url from 'url';
  * Internal dependencies
  */
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
@@ -48,14 +47,13 @@ class CalypsoifyIframe extends Component {
 	};
 
 	state = {
+		classicBlockEditorId: null,
 		isMediaModalVisible: false,
-		isClassicBlockMediaModalVisible: false,
 		isIframeLoaded: false,
 		isPreviewVisible: false,
 		previewUrl: 'about:blank',
 		postUrl: null,
 		editedPost: null,
-		classicBlockEditorId: null,
 	};
 
 	constructor( props ) {
@@ -103,8 +101,8 @@ class CalypsoifyIframe extends Component {
 		}
 		if ( 'classicBlockOpenMediaModal' === action ) {
 			this.setState( {
-				isClassicBlockMediaModalVisible: true,
 				classicBlockEditorId: data.editorId,
+				isMediaModalVisible: true,
 			} );
 		}
 	};
@@ -180,7 +178,7 @@ class CalypsoifyIframe extends Component {
 	};
 
 	closeMediaModal = media => {
-		if ( media && this.iframePort ) {
+		if ( ! this.state.classicBlockEditorId && media && this.iframePort ) {
 			const { multiple } = this.state;
 			const formattedMedia = map( media.items, item => mediaCalypsoToGutenberg( item ) );
 			const payload = multiple ? formattedMedia : formattedMedia[ 0 ];
@@ -203,13 +201,11 @@ class CalypsoifyIframe extends Component {
 			}
 		}
 
-		this.setState( { isMediaModalVisible: false } );
+		this.setState( { classicBlockEditorId: null, isMediaModalVisible: false } );
 	};
 
-	closeClassicBlockMediaModal = () => this.setState( { isClassicBlockMediaModalVisible: false } );
-
 	insertClassicBlockMedia = markup => {
-		if ( this.iframePort ) {
+		if ( !! this.state.classicBlockEditorId && this.iframePort ) {
 			this.iframePort.postMessage( {
 				action: 'insertClassicBlockMedia',
 				payload: {
@@ -279,6 +275,7 @@ class CalypsoifyIframe extends Component {
 	render() {
 		const { iframeUrl, siteId } = this.props;
 		const {
+			classicBlockEditorId,
 			isMediaModalVisible,
 			allowedTypes,
 			multiple,
@@ -287,7 +284,6 @@ class CalypsoifyIframe extends Component {
 			previewUrl,
 			postUrl,
 			editedPost,
-			isClassicBlockMediaModalVisible,
 		} = this.state;
 
 		return (
@@ -305,22 +301,16 @@ class CalypsoifyIframe extends Component {
 					/>
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
-					<MediaModal
+					<EditorMediaModal
 						disabledDataSources={ getDisabledDataSources( allowedTypes ) }
 						enabledFilters={ getEnabledFilters( allowedTypes ) }
 						galleryViewEnabled={ false }
+						isGutenberg={ ! classicBlockEditorId }
 						onClose={ this.closeMediaModal }
+						onInsertMedia={ this.insertClassicBlockMedia }
 						single={ ! multiple }
 						source=""
 						visible={ isMediaModalVisible }
-					/>
-					<EditorMediaModal
-						galleryViewEnabled={ false }
-						onClose={ this.closeClassicBlockMediaModal }
-						onInsertMedia={ this.insertClassicBlockMedia }
-						single
-						source=""
-						visible={ isClassicBlockMediaModalVisible }
 					/>
 				</MediaLibrarySelectedData>
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
