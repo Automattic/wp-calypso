@@ -22,7 +22,7 @@ export class TwitterPreview extends PureComponent {
 
 		return (
 			<div className="twitter-preview">
-				<div className={ `twitter-card-preview twitter-card-preview__${ type }` }>
+				<div className={ `twitter-preview__${ type }` }>
 					{ image && <div className="twitter-preview__image" style={ previewImageStyle } /> }
 					<div className="twitter-preview__body">
 						<div className="twitter-preview__title">{ title }</div>
