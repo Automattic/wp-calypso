@@ -5,6 +5,10 @@
 	@include breakpoint( '>800px' ) {
 		font-size: 16px;
 		margin-bottom: 40px;
+
+		a {
+			font-size: 14px;
+		}
 	}
 
 	.progress-bar {
@@ -31,8 +35,4 @@
 .current-plan-thank-you-card__title {
 	font-size: 24px;
 	margin: 18px 0 14px;
-}
-
-.current-plan-thank-you-card__skip-setup {
-	font-size: 14px;
 }
