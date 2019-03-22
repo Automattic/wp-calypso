@@ -15,7 +15,7 @@
 # Scripts
 /bin @Automattic/team-calypso
 
-# Client initializaton
+# Client initialization
 /client/boot @Automattic/team-calypso
 
 # Client blocks
@@ -44,6 +44,11 @@
 
 # Jetpack Connect
 /client/jetpack-connect @Automattic/luna
+
+# Reader
+/client/reader @Automattic/reader
+/client/blocks/reader-* @Automattic/reader
+/client/state/reader @Automattic/reader
 
 # Server infrastructure
 /server @Automattic/team-calypso
