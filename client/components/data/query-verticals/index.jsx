@@ -24,10 +24,20 @@ class QueryVerticals extends Component {
 	};
 
 	componentDidMount() {
-		const { isFetched, searchTerm } = this.props;
+		const { searchTerm, limit } = this.props;
+		const trimmedSearchTerm = searchTerm.trim();
 
-		if ( ! isFetched ) {
-			this.props.requestVerticals( searchTerm );
+		if ( trimmedSearchTerm ) {
+			this.props.requestVerticals( trimmedSearchTerm, limit );
+		}
+	}
+
+	componentDidUpdate() {
+		const { isFetched, searchTerm, limit } = this.props;
+		const trimmedSearchTerm = searchTerm.trim();
+
+		if ( ! isFetched && trimmedSearchTerm ) {
+			this.props.requestVerticals( trimmedSearchTerm, limit );
 		}
 	}
 
@@ -38,7 +48,7 @@ class QueryVerticals extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		isFetched: getVerticals( ownProps.searchTerm ),
+		isFetched: null !== getVerticals( ownProps.searchTerm ),
 	} ),
 	{
 		requestVerticals,
