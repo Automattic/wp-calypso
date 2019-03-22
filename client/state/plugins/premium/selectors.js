@@ -4,7 +4,12 @@
  * External dependencies
  */
 
-import { every, filter, find, includes, some } from 'lodash';
+import { every, filter, find, get, includes, some } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import createSelector from 'lib/create-selector';
 
 export const isRequesting = function( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,
@@ -34,6 +39,7 @@ export const getPluginsForSite = function( state, siteId, whitelist = false ) {
 	}
 
 	return filter( pluginList, plugin => {
+		// eslint-disable-next-line no-extra-boolean-cast
 		if ( !! whitelist ) {
 			return whitelist === plugin.slug;
 		}
@@ -92,3 +98,24 @@ export const getNextPlugin = function( state, siteId, whitelist = false ) {
 	}
 	return plugin;
 };
+
+export const getPluginKeys = createSelector(
+	( state, siteId, whitelist = false ) => {
+		const pluginList = getPluginsForSite( state, siteId, whitelist );
+		if ( typeof pluginList === 'undefined' ) {
+			return null;
+		}
+
+		return pluginList.reduce( ( keys, plugin ) => {
+			const key = get( plugin, 'key', null );
+			const slug = get( plugin, 'slug', null );
+
+			if ( key && slug ) {
+				keys[ slug ] = key;
+			}
+
+			return keys;
+		}, {} );
+	},
+	( state, siteId, whitelist ) => [ getPluginsForSite( state, siteId, whitelist ) ]
+);
