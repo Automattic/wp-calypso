@@ -18,7 +18,9 @@ import CompactCard from 'components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import { hasPendingGSuiteUsers } from 'lib/domains/gsuite';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedDomain } from 'lib/domains';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuiteUserItem from 'my-sites/email/email-management/gsuite-user-item';
 import Notice from 'components/notice';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
@@ -68,7 +70,7 @@ class GSuiteUsersCard extends React.Component {
 						<Button
 							primary
 							compact
-							href={ domainManagementAddGSuiteUsers( this.props.selectedSite.slug, domain ) }
+							href={ domainManagementAddGSuiteUsers( this.props.selectedSiteSlug, domain ) }
 							onClick={ this.goToAddGoogleApps }
 						>
 							{ this.props.translate( 'Add G Suite User' ) }
@@ -136,7 +138,7 @@ class GSuiteUsersCard extends React.Component {
 				{ pendingDomains.length !== 0 && (
 					<PendingGSuiteTosNotice
 						key="pending-gsuite-tos-notice"
-						siteSlug={ this.props.selectedSite.slug }
+						siteSlug={ this.props.selectedSiteSlug }
 						domains={ pendingDomains }
 						section="google-apps"
 					/>
@@ -183,11 +185,14 @@ GSuiteUsersCard.propTypes = {
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array.isRequired,
 	selectedDomainName: PropTypes.string,
-	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+	selectedSiteSlug: PropTypes.string.isRequired,
 	user: PropTypes.object.isRequired,
 };
 
 export default connect(
-	null,
+	state => ( {
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+		user: getCurrentUser( state ),
+	} ),
 	{ addGoogleAppsUserClick, manageClick }
 )( localize( GSuiteUsersCard ) );

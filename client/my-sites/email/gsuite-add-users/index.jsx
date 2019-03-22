@@ -15,7 +15,7 @@ import React, { Fragment } from 'react';
 
 import AddEmailAddressesCard from './add-users';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
-import { emailManagementAddGSuiteUsers, emailManagement } from 'my-sites/domains/paths';
+import { emailManagementAddGSuiteUsers, emailManagement } from 'my-sites/email/paths';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';

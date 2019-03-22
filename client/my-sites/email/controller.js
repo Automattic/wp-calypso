@@ -13,7 +13,7 @@ import EmailManagement from 'my-sites/email/email-management';
 import GSuiteAddUsers from 'my-sites/email/gsuite-add-users';
 
 export default {
-	emailManagementAddGSuiteUsersRedirect( pageContext, next ) {
+	emailManagementAddGSuiteUsers( pageContext, next ) {
 		pageContext.primary = <GSuiteAddUsers selectedDomainName={ pageContext.params.domain } />;
 		next();
 	},
