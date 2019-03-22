@@ -31,12 +31,20 @@ class Task extends PureComponent {
 		onDismiss: PropTypes.func,
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
+		trackTaskDisplay: PropTypes.func,
 	};
+
+	static defaultProps = {
+		trackTaskDisplay: () => {},
+	};
+
+	componentDidMount() {
+		this.props.trackTaskDisplay( this.props.id, this.props.completed, 'checklist' );
+	}
 
 	renderCheckmarkIcon() {
 		const { completed, isWarning, translate } = this.props;
 		const onDismiss = ! completed ? this.props.onDismiss : undefined;
-
 		if ( onDismiss ) {
 			return (
 				<Focusable

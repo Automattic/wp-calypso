@@ -55,7 +55,6 @@ class WpcomChecklistComponent extends PureComponent {
 		emailSent: false,
 		error: null,
 	};
-	trackedTaskDisplays = {};
 
 	constructor() {
 		super();
@@ -146,17 +145,13 @@ class WpcomChecklistComponent extends PureComponent {
 		}
 	};
 
-	trackTaskDisplayOnce = task => {
-		if ( this.trackedTaskDisplays[ task.id ] ) {
-			return;
-		}
-		this.trackedTaskDisplays[ task.id ] = true;
-
+	trackTaskDisplay = ( id, isCompleted, location ) => {
 		this.props.recordTracksEvent( 'calypso_checklist_task_display', {
 			checklist_name: 'new_blog',
 			site_id: this.props.siteId,
-			step_name: task.id,
-			completed: task.isCompleted,
+			step_name: id,
+			completed: isCompleted,
+			location,
 		} );
 	};
 
@@ -300,15 +295,6 @@ class WpcomChecklistComponent extends PureComponent {
 		);
 	}
 
-	componentDidUpdate() {
-		const taskList = getTaskList( this.props );
-		taskList.getAll().forEach( task => {
-			if ( this.shouldRenderTask( task.id ) ) {
-				this.trackTaskDisplayOnce( task );
-			}
-		} );
-	}
-
 	renderTask( task ) {
 		const { siteSlug, viewMode, closePopover } = this.props;
 
@@ -334,6 +320,7 @@ class WpcomChecklistComponent extends PureComponent {
 			firstIncomplete,
 			buttonPrimary: firstIncomplete && firstIncomplete.id === task.id,
 			closePopover: closePopover,
+			trackTaskDisplay: this.trackTaskDisplay,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
