@@ -81,7 +81,7 @@ const SharingServiceAction = ( {
 		);
 	}
 
-	if ( primary && 'mailchimp' === service.ID ) {
+	if ( 'mailchimp' === service.ID && status === 'not-connected' ) {
 		return (
 			<div>
 				<Button
@@ -93,13 +93,7 @@ const SharingServiceAction = ( {
 				>
 					{ translate( 'Sign up' ) }
 				</Button>
-				<Button
-					scary={ warning }
-					compact
-					onClick={ onClick }
-					disabled={ isPending }
-					primary={ primary }
-				>
+				<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
 					{ label }
 				</Button>
 			</div>
@@ -107,13 +101,7 @@ const SharingServiceAction = ( {
 	}
 
 	return (
-		<Button
-			primary={ primary }
-			scary={ warning }
-			compact
-			onClick={ onClick }
-			disabled={ isPending }
-		>
+		<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
 			{ label }
 		</Button>
 	);
