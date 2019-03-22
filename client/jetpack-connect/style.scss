@@ -7,7 +7,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		// Adjust the padding as we no longer
 		// show the masterbar.
 		padding-top: 48px;
-
+		overflow: visible;
 		& > .banner {
 			max-width: 600px;
 		}
