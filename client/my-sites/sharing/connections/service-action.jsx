@@ -84,10 +84,22 @@ const SharingServiceAction = ( {
 	if ( primary && 'mailchimp' === service.ID ) {
 		return (
 			<div>
-				<Button className="connections__signup" compact>
+				<Button
+					className="connections__signup"
+					compact
+					href="https://public-api.wordpress.com/rest/v1.1/sharing/mailchimp/signup"
+					target="_blank"
+					disabled={ isPending }
+				>
 					{ translate( 'Sign up' ) }
 				</Button>
-				<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
+				<Button
+					scary={ warning }
+					compact
+					onClick={ onClick }
+					disabled={ isPending }
+					primary={ primary }
+				>
 					{ label }
 				</Button>
 			</div>
