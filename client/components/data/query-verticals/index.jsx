@@ -15,12 +15,13 @@ import { getVerticals } from 'state/signup/verticals/selectors';
 
 class QueryVerticals extends Component {
 	static propTypes = {
-		searchTerm: PropTypes.string.isRequired,
+		searchTerm: PropTypes.string,
 		limit: PropTypes.number,
 	};
 
 	static defaultProps = {
 		limit: 7,
+		searchTerm: '',
 	};
 
 	componentDidMount() {
