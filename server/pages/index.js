@@ -706,6 +706,12 @@ module.exports = function() {
 		res.redirect( redirectUrl );
 	} );
 
+	app.get( '/landing/sample', function( req, res ) {
+		const ctx = getDefaultContext( req );
+		const pageHtml = renderJsx( 'landingSample', ctx );
+		res.send( pageHtml );
+	} );
+
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
