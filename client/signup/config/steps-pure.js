@@ -432,7 +432,12 @@ export function generateSteps( {
 		/* Imports */
 		'from-url': {
 			stepName: 'from-url',
-			providesDependencies: [ 'importSiteDetails', 'importUrl', 'themeSlugWithRepo' ],
+			providesDependencies: [
+				'importSiteDetails',
+				'importUrl',
+				'sitePreviewImageBlob',
+				'themeSlugWithRepo',
+			],
 		},
 
 		'reader-landing': {
