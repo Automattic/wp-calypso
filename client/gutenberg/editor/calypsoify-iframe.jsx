@@ -30,6 +30,8 @@ import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
+import { trashPost } from 'state/posts/actions';
+import { getEditorPostId } from 'state/ui/editor/selectors';
 
 /**
  * Style dependencies
@@ -136,8 +138,10 @@ class CalypsoifyIframe extends Component {
 			}
 		}
 
-		if ( 'postTrashed' === action ) {
-			this.props.navigate( this.props.postTypeTrashUrl );
+		if ( 'trashPost' === action ) {
+			const { siteId, editedPostId, postTypeTrashUrl } = this.props;
+			this.props.trashPost( siteId, editedPostId );
+			this.props.navigate( postTypeTrashUrl );
 		}
 
 		if ( 'goToAllPosts' === action ) {
@@ -333,6 +337,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		postTypeTrashUrl,
 		siteAdminUrl,
 		frameNonce,
+		editedPostId: getEditorPostId( state ),
 	};
 };
 
@@ -342,6 +347,7 @@ const mapDispatchToProps = {
 	navigate,
 	openPostRevisionsDialog,
 	startEditingPost,
+	trashPost,
 };
 
 export default connect(
