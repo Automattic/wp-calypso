@@ -45,7 +45,6 @@ import Notice from 'components/notice';
  */
 import './style.scss';
 
-const CHECKING_SITE_IMPORTABLE_NOTICE = 'checking-site-importable';
 const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
 const EXAMPLE_WIX_URL = 'https://username.wixsite.com/my-site';
 
@@ -62,7 +61,7 @@ class ImportURLStepComponent extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { isSiteImportableError, goToNextStep, stepName, siteDetails, isLoading } = this.props;
+		const { isSiteImportableError, goToNextStep, stepName, siteDetails } = this.props;
 
 		// isSiteImportable error, focus input to revise url.
 		if (
@@ -70,17 +69,6 @@ class ImportURLStepComponent extends Component {
 			isSiteImportableError
 		) {
 			this.focusInput();
-		}
-
-		if ( isLoading !== prevProps.isLoading ) {
-			if ( isLoading ) {
-				this.props.infoNotice(
-					this.props.translate( "Please wait, we're checking to see if we can import this site." ),
-					{ id: CHECKING_SITE_IMPORTABLE_NOTICE, icon: 'info', isLoading: true }
-				);
-			} else {
-				this.props.removeNotice( CHECKING_SITE_IMPORTABLE_NOTICE );
-			}
 		}
 
 		if ( isEqual( prevProps.siteDetails, siteDetails ) || isEmpty( pickBy( siteDetails ) ) ) {
