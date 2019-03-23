@@ -190,6 +190,10 @@
 			overflow: hidden;
 		}
 
+		.sidebar__menu-list svg {
+            display: none;
+        }
+
 		.sidebar__menu-item {
 			opacity: 0;
 			transition: transform 0.15s cubic-bezier( 0.23, 1, 0.32, 1 ), opacity 0.15s ease-in-out;
@@ -593,10 +597,6 @@ form.sidebar__button input {
     order: 99;
 }
 
-.sidebar .sidebar__region {
-	padding-bottom: 46px;
-}
-
 .sidebar .sidebar__menu-item-label {
     padding-left: 20px;
 }
@@ -608,7 +608,7 @@ form.sidebar__button input {
     width: 100%;
 }
 
-.sidebar .sidebar__menu.wp-admin .sidebar__heading {
+.sidebar .sidebar__menu.sidebar__wp-admin .sidebar__heading {
     border-top: 1px solid lightgray;
     justify-content: flex-start;
 }
