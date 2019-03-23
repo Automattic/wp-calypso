@@ -17,6 +17,7 @@ import page from 'page';
 import Button from 'components/button';
 import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
+import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ManageMenu from './manage-menu';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
@@ -25,11 +26,18 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
+import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
 import JetpackLogo from 'components/jetpack-logo';
 import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	isSiteMenuOpen,
+	isDesignMenuOpen,
+	isToolsMenuOpen,
+	isManageMenuOpen,
+} from 'state/ui/my-sites/sidebar/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
@@ -105,6 +113,17 @@ export class MySitesSidebar extends Component {
 	manage() {
 		return (
 			<ManageMenu
+				siteId={ this.props.siteId }
+				path={ this.props.path }
+				isAtomicSite={ this.props.isAtomicSite }
+				onNavigate={ this.onNavigate }
+			/>
+		);
+	}
+
+	site() {
+		return (
+			<SiteMenu
 				siteId={ this.props.siteId }
 				path={ this.props.path }
 				isAtomicSite={ this.props.isAtomicSite }
@@ -786,31 +805,35 @@ export class MySitesSidebar extends Component {
 				</SidebarMenu>
 
 				{ manage ? (
-					<SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Site' ) }</SidebarHeading>
-						{ this.manage() }
-					</SidebarMenu>
+					<ExpandableSidebarMenu title={ this.props.translate( 'Site' ) }>
+						{ this.site() }
+					</ExpandableSidebarMenu>
 				) : null }
 
 				{ this.design() ? (
-					<SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Design' ) }</SidebarHeading>
+					<ExpandableSidebarMenu title={ this.props.translate( 'Design' ) }>
 						{ this.design() }
-					</SidebarMenu>
+					</ExpandableSidebarMenu>
 				) : null }
 
+				<ExpandableSidebarMenu title={ this.props.translate( 'Tools' ) }>
+					<ul />
+				</ExpandableSidebarMenu>
+
 				{ configuration ? (
-					<SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Manage' ) }</SidebarHeading>
+					<ExpandableSidebarMenu title={ this.props.translate( 'Manage' ) }>
 						<ul>
-							{ this.earn() }
-							{ this.sharing() }
-							{ this.users() }
-							{ this.plugins() }
 							{ this.upgrades() }
+							{ this.users() }
+							{ this.sharing() }
 							{ this.siteSettings() }
-							{ this.wpAdmin() }
 						</ul>
+					</ExpandableSidebarMenu>
+				) : null }
+
+				{ 0 && this.wpAdmin() ? (
+					<SidebarMenu className="sidebar__wp-admin">
+						<ul>{ this.wpAdmin() }</ul>
 					</SidebarMenu>
 				) : null }
 			</div>
@@ -839,6 +862,11 @@ function mapStateToProps( state ) {
 
 	const isJetpack = isJetpackSite( state, siteId );
 
+	const isSiteOpen = isSiteMenuOpen( state );
+	const isDesignOpen = isDesignMenuOpen( state );
+	const isToolsOpen = isToolsMenuOpen( state );
+	const isManageOpen = isManageMenuOpen( state );
+
 	const isSharingEnabledOnJetpackSite =
 		isJetpackModuleActive( state, siteId, 'publicize' ) ||
 		( isJetpackModuleActive( state, siteId, 'sharedaddy' ) &&
@@ -863,6 +891,10 @@ function mapStateToProps( state ) {
 		hasJetpackSites: hasJetpackSites( state ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
+		isSiteOpen,
+		isDesignOpen,
+		isToolsOpen,
+		isManageOpen,
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		isSharingEnabledOnJetpackSite,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
