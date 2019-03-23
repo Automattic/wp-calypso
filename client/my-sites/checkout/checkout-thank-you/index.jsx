@@ -413,7 +413,7 @@ export class CheckoutThankYou extends React.Component {
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					{ this.renderConfirmationNotice() }
 					{ this.renderVerifiedEmailRequired() }
-					<AtomicStoreThankYou siteId={ this.props.selectedSite.ID } />
+					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
 		} else if ( wasDotcomPlanPurchased && ( delayedTransferPurchase || this.isNewUser() ) ) {
