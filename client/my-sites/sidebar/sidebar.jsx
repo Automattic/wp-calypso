@@ -61,6 +61,12 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import {
+	toggleMySitesSidebarSiteMenu,
+	toggleMySitesSidebarDesignMenu,
+	toggleMySitesSidebarToolsMenu,
+	toggleMySitesSidebarManageMenu,
+} from 'state/ui/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import { canAccessEarnSection } from 'lib/ads/utils';
 
@@ -805,23 +811,39 @@ export class MySitesSidebar extends Component {
 				</SidebarMenu>
 
 				{ manage ? (
-					<ExpandableSidebarMenu title={ this.props.translate( 'Site' ) }>
+					<ExpandableSidebarMenu
+						onClick={ this.props.toggleMySitesSidebarSiteMenu }
+						expanded={ this.props.isSiteOpen }
+						title={ this.props.translate( 'Site' ) }
+					>
 						{ this.site() }
 					</ExpandableSidebarMenu>
 				) : null }
 
 				{ this.design() ? (
-					<ExpandableSidebarMenu title={ this.props.translate( 'Design' ) }>
+					<ExpandableSidebarMenu
+						onClick={ this.props.toggleMySitesSidebarDesignMenu }
+						expanded={ this.props.isDesignOpen }
+						title={ this.props.translate( 'Design' ) }
+					>
 						{ this.design() }
 					</ExpandableSidebarMenu>
 				) : null }
 
-				<ExpandableSidebarMenu title={ this.props.translate( 'Tools' ) }>
+				<ExpandableSidebarMenu
+					onClick={ this.props.toggleMySitesSidebarToolsMenu }
+					expanded={ this.props.isToolsOpen }
+					title={ this.props.translate( 'Tools' ) }
+				>
 					<ul />
 				</ExpandableSidebarMenu>
 
 				{ configuration ? (
-					<ExpandableSidebarMenu title={ this.props.translate( 'Manage' ) }>
+					<ExpandableSidebarMenu
+						onClick={ this.props.toggleMySitesSidebarManageMenu }
+						expanded={ this.props.isManageOpen }
+						title={ this.props.translate( 'Manage' ) }
+					>
 						<ul>
 							{ this.upgrades() }
 							{ this.users() }
@@ -912,5 +934,9 @@ export default connect(
 		recordTracksEvent,
 		setLayoutFocus,
 		setNextLayoutFocus,
+		toggleMySitesSidebarSiteMenu,
+		toggleMySitesSidebarDesignMenu,
+		toggleMySitesSidebarToolsMenu,
+		toggleMySitesSidebarManageMenu,
 	}
 )( localize( MySitesSidebar ) );
