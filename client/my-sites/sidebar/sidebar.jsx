@@ -28,6 +28,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
+import ToolsMenu from './tools-menu';
 import JetpackLogo from 'components/jetpack-logo';
 import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -130,6 +131,17 @@ export class MySitesSidebar extends Component {
 	site() {
 		return (
 			<SiteMenu
+				siteId={ this.props.siteId }
+				path={ this.props.path }
+				isAtomicSite={ this.props.isAtomicSite }
+				onNavigate={ this.onNavigate }
+			/>
+		);
+	}
+
+	tools() {
+		return (
+			<ToolsMenu
 				siteId={ this.props.siteId }
 				path={ this.props.path }
 				isAtomicSite={ this.props.isAtomicSite }
@@ -835,7 +847,7 @@ export class MySitesSidebar extends Component {
 					expanded={ this.props.isToolsOpen }
 					title={ this.props.translate( 'Tools' ) }
 				>
-					<ul />
+					{ this.tools() }
 				</ExpandableSidebarMenu>
 
 				{ configuration ? (
