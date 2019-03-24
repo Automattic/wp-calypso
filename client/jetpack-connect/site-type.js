@@ -35,13 +35,11 @@ class JetpackSiteType extends Component {
 			<MainWrapper isWide>
 				<div className="jetpack-connect__step">
 					<FormattedHeader
-						headerText={ translate( 'High performance. Solid security. Your site, just better.' ) }
+						headerText={ translate( 'What are we building today?' ) }
 						subHeaderText={ translate(
-							'To get started, tell us a little bit about your site goals.'
+							'Choose the best starting point for your site. You can add or change features later.'
 						) }
 					/>
-
-					<FormattedHeader headerText={ translate( 'What kind of site do you have?' ) } />
 
 					<SiteTypeForm submitForm={ this.handleSubmit } />
 
