@@ -11,19 +11,14 @@
     "related-posts",
     "shortlinks",
     "simple-payments",
-    "subscriptions",
-    "tiled-gallery"
-  ],
-  "beta": [
-    "business-hours",
-    "contact-info",
-    "likes-and-sharing",
-    "mailchimp",
     "slideshow",
+    "subscriptions",
+    "tiled-gallery",
     "videopress",
     "wordads"
   ],
   "beta": [
+    "likes-and-sharing",
     "repeat-visitor",
     "seo",
     "vr"
