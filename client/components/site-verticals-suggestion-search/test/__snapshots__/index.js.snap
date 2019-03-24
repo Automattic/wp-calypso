@@ -6,7 +6,7 @@ exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
     autoFocus={false}
     id="siteTopic"
     onChange={[Function]}
-    placeholder="e.g. Fashion, travel, design, plumbing"
+    placeholder="Enter a keyword or select one from below."
     railcar={
       Object {
         "action": "site_vertical_selected",
