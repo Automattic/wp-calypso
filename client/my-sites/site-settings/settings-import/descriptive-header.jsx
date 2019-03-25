@@ -25,7 +25,6 @@ class DescriptiveHeader extends PureComponent {
 			{
 				components: {
 					a: <a href="https://support.wordpress.com/import/" />,
-					strong: <strong />,
 				},
 			}
 		);
