@@ -547,7 +547,7 @@ export function generateSteps( {
 			props: {
 				headerText: i18n.translate( "Tell us your site's name" ),
 				subHeaderText: i18n.translate(
-					"Your site's name appears at the top and can be changed at anytime."
+					'This will appear at the top of your site and can be changed at anytime.'
 				),
 				informationFields: [ 'title' ],
 				showSiteMockups: true,
