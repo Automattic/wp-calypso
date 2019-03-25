@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -19,10 +18,6 @@ const facebook = {
 const twitter = {
 	url: 'https://twitter.com/intent/tweet?url=<URL>&text=<TITLE>&via=wordpressdotcom',
 	windowArg: 'width=550,height=420,resizeable,scrollbars',
-};
-
-const googlePlus = {
-	url: 'https://plus.google.com/share?url=<URL>',
 };
 
 const linkedin = {
@@ -49,6 +44,5 @@ export default {
 	linkedin,
 	tumblr,
 	pinterest,
-	telegram,
-	'google-plus': googlePlus,
+	telegram,	
 };
