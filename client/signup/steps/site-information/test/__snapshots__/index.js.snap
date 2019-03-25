@@ -3,6 +3,7 @@
 exports[`<SiteInformation /> should render 1`] = `
 <Localized(StepWrapper)
   fallbackHeaderText="headerTextoidaliciously"
+  fallbackSubHeaderText="subHeaderTextoidaliciously"
   headerText="headerTextoidaliciously"
   stepContent={
     <div
@@ -126,5 +127,6 @@ exports[`<SiteInformation /> should render 1`] = `
     </div>
   }
   stepName="site-information"
+  subHeaderText="subHeaderTextoidaliciously"
 />
 `;

@@ -42,6 +42,7 @@ export class SiteInformation extends Component {
 		stepName: PropTypes.string,
 		siteType: PropTypes.string,
 		headerText: PropTypes.string,
+		subHeaderText: PropTypes.string,
 		fieldLabel: PropTypes.string,
 		fieldDescription: PropTypes.string,
 		fieldPlaceholder: PropTypes.string,
@@ -53,6 +54,7 @@ export class SiteInformation extends Component {
 
 	static defaultProps = {
 		headerText: '',
+		subHeaderText: '',
 		fieldLabel: '',
 		fieldDescription: '',
 		fieldPlaceholder: '',
@@ -168,7 +170,14 @@ export class SiteInformation extends Component {
 	}
 
 	render() {
-		const { flowName, headerText, positionInFlow, signupProgress, stepName } = this.props;
+		const {
+			flowName,
+			headerText,
+			subHeaderText,
+			positionInFlow,
+			signupProgress,
+			stepName,
+		} = this.props;
 		return (
 			<StepWrapper
 				flowName={ flowName }
@@ -176,6 +185,8 @@ export class SiteInformation extends Component {
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
 				showSiteMockups={ this.props.showSiteMockups }
