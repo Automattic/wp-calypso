@@ -219,7 +219,9 @@ class ImportURLStepComponent extends Component {
 						>
 							{ urlMessage }
 						</Notice>
-					) : null }
+					) : (
+						<div className="import-url__notice-placeholder" />
+					) }
 				</div>
 
 				<div className="import-url__example">
