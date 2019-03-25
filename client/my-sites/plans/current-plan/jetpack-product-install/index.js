@@ -22,10 +22,15 @@ import {
 /**
  * Module variables
  */
-const nonErrorStates = [ 'not_active', 'key_not_set', 'installed', 'option_name_not_in_whitelist' ];
-const retryableErrorStates = [ 'vaultpress_error' ];
-const plugins = [ 'akismet', 'vaultpress' ];
-const maxRetries = 3;
+const NON_ERROR_STATES = [
+	'not_active',
+	'key_not_set',
+	'installed',
+	'option_name_not_in_whitelist',
+];
+const RETRYABLE_ERROR_STATES = [ 'vaultpress_error' ];
+const PLUGINS = [ 'akismet', 'vaultpress' ];
+const MAX_RETRIES = 3;
 
 export class JetpackProductInstall extends Component {
 	state = {
@@ -82,10 +87,10 @@ export class JetpackProductInstall extends Component {
 			return false;
 		}
 
-		return some( plugins, pluginSlug => {
+		return some( PLUGINS, pluginSlug => {
 			if (
-				nonErrorStates.indexOf( status[ pluginSlug + '_status' ] ) < 0 &&
-				retryableErrorStates.indexOf( status[ pluginSlug + '_status' ] ) < 0
+				NON_ERROR_STATES.indexOf( status[ pluginSlug + '_status' ] ) < 0 &&
+				RETRYABLE_ERROR_STATES.indexOf( status[ pluginSlug + '_status' ] ) < 0
 			) {
 				return true;
 			}
@@ -101,9 +106,9 @@ export class JetpackProductInstall extends Component {
 		}
 
 		return (
-			this.retries < maxRetries &&
-			some( plugins, pluginSlug => {
-				if ( retryableErrorStates.indexOf( status[ pluginSlug + '_status' ] ) >= 0 ) {
+			this.retries < MAX_RETRIES &&
+			some( PLUGINS, pluginSlug => {
+				if ( RETRYABLE_ERROR_STATES.indexOf( status[ pluginSlug + '_status' ] ) >= 0 ) {
 					return true;
 				}
 				return false;
