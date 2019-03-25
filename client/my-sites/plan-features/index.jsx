@@ -715,6 +715,7 @@ export default connect(
 			plans,
 			onUpgradeClick,
 			isLandingPage,
+			isLaunchPage,
 			siteId,
 			displayJetpackPlans,
 			visiblePlans,
@@ -740,9 +741,10 @@ export default connect(
 				const planObject = getPlan( state, planProductId );
 				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const showMonthly = ! isMonthly( plan );
-				const availableForPurchase = isInSignup
-					? true
-					: canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
+				const availableForPurchase =
+					isLaunchPage || ! isInSignup
+						? canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase
+						: true;
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;

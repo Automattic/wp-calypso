@@ -584,15 +584,9 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 }
 
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { isPaidPlan, sitePlanSlug } = nextProps;
 	let fulfilledDependencies = [];
 
-	if ( isPaidPlan ) {
-		const cartItem = undefined;
-		SignupActions.submitSignupStep( { stepName: stepName, cartItem }, [], { cartItem } );
-		recordExcludeStepEvent( stepName, sitePlanSlug );
-		fulfilledDependencies = fulfilledDependencies.concat( [ 'cartItem' ] );
-	} else if ( defaultDependencies && defaultDependencies.cartItem ) {
+	if ( defaultDependencies && defaultDependencies.cartItem ) {
 		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
 		SignupActions.submitSignupStep( { stepName, cartItem }, [], { cartItem } );
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );

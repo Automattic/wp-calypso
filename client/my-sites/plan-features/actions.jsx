@@ -16,10 +16,11 @@ import classNames from 'classnames';
  */
 import Button from 'components/button';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanClass, isMonthly } from 'lib/plans/constants';
 import { planLevelsMatch } from 'lib/plans/index';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import getSiteId from 'state/selectors/get-site-id';
 
 const PlanFeaturesActions = ( {
 	availableForPurchase = true,
@@ -57,12 +58,17 @@ const PlanFeaturesActions = ( {
 		className
 	);
 
-	if ( current && ! isInSignup ) {
-		upgradeButton = (
-			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
-				{ canPurchase ? translate( 'Manage Plan' ) : translate( 'View Plan' ) }
-			</Button>
-		);
+	if ( current ) {
+		if ( ! isInSignup || isLaunchPage ) {
+			const buttonTextCanPurchase = isLaunchPage
+				? translate( 'Keep this plan' )
+				: translate( 'Manage Plan' );
+			upgradeButton = (
+				<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
+					{ canPurchase ? buttonTextCanPurchase : translate( 'View Plan' ) }
+				</Button>
+			);
+		}
 	} else if ( availableForPurchase || isPlaceholder ) {
 		let buttonText = freePlan
 			? translate( 'Select Free', { context: 'button' } )
@@ -153,8 +159,10 @@ PlanFeaturesActions.propTypes = {
 
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup } = ownProps;
-		const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
+		const { isInSignup, isLaunchPage } = ownProps;
+		const signupDependencies = getSignupDependencyStore( state );
+		const selectedSiteId =
+			isLaunchPage || ! isInSignup ? getSiteId( state, signupDependencies.siteSlug ) : null;
 		const currentSitePlan = getCurrentPlan( state, selectedSiteId );
 		return {
 			currentSitePlan,

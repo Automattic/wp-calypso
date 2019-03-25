@@ -23,7 +23,6 @@ export function generateSteps( {
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
-	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 } = {} ) {
@@ -88,7 +87,6 @@ export function generateSteps( {
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
-			fulfilledStepCallback: isDomainFulfilled,
 			providesDependencies: [ 'domainItem' ],
 			props: {
 				isDomainOnly: false,

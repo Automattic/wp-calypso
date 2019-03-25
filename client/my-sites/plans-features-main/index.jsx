@@ -346,7 +346,7 @@ PlansFeaturesMain.defaultProps = {
 };
 
 const guessCustomerType = ( state, props ) => {
-	if ( props.customerType ) {
+	if ( props.customerType && ! props.isLaunchPage ) {
 		return props.customerType;
 	}
 
