@@ -30,6 +30,14 @@
 	.components-placeholder {
 		flex-grow: 2;
 	}
+
+	.components-toggle-control__label {
+		line-height: 1.4em;
+	}
+
+	.components-base-control__field {
+		padding-left: 5px;
+	}
 }
 
 .jetpack-wordads-leaderboard .components-placeholder {

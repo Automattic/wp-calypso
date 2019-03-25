@@ -4,7 +4,7 @@
 import { __ } from '../../utils/i18n';
 import { BlockControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
-import { Placeholder } from '@wordpress/components';
+import { Placeholder, ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -16,9 +16,13 @@ import { icon, title } from './';
 import './editor.scss';
 
 class WordAdsEdit extends Component {
+	handleHideMobileChange = hideMobile => {
+		this.props.setAttributes( { hideMobile: !! hideMobile } );
+	};
+
 	render() {
 		const { attributes, setAttributes } = this.props;
-		const { format } = attributes;
+		const { format, hideMobile } = attributes;
 		const selectedFormatObject = AD_FORMATS.filter( ( { tag } ) => tag === format )[ 0 ];
 
 		return (
@@ -40,6 +44,11 @@ class WordAdsEdit extends Component {
 						<div className="jetpack-wordads__header">{ __( 'Advertisements' ) }</div>
 						<Placeholder icon={ icon } label={ title } />
 						<div className="jetpack-wordads__footer">{ __( 'Report this Ad' ) }</div>
+						<ToggleControl
+							checked={ Boolean( hideMobile ) }
+							label={ __( 'Hide ad on mobile views' ) }
+							onChange={ this.handleHideMobileChange }
+						/>
 					</div>
 				</div>
 			</Fragment>
