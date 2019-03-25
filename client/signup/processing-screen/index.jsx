@@ -136,15 +136,8 @@ export class SignupProcessingScreen extends Component {
 			  );
 	}
 
-	showPreviewAfterLogin = () => {
-		const redirectTo = [ 'onboarding', 'onboarding-dev', 'onboarding-for-business' ].includes(
-			this.props.flowName
-		)
-			? `/view/${ this.state.siteSlug }?welcome`
-			: `/checklist/${ this.state.siteSlug }`;
-
-		this.props.loginHandler( { redirectTo } );
-	};
+	showPreviewAfterLogin = () =>
+		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }` } );
 
 	shouldShowChecklist() {
 		const designType = ( this.props.steps || [] ).reduce( function( accumulator, step ) {
@@ -168,7 +161,7 @@ export class SignupProcessingScreen extends Component {
 	componentDidUpdate = () => {
 		const { loginHandler } = this.props;
 
-		if ( !! loginHandler ) {
+		if ( loginHandler ) {
 			this.shouldShowChecklist() ? this.showPreviewAfterLogin() : loginHandler();
 			return null;
 		}
