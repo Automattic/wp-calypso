@@ -23,12 +23,16 @@ import {
  * Module variables
  */
 const nonErrorStates = [ 'not_active', 'key_not_set', 'installed', 'option_name_not_in_whitelist' ];
+const retryableErrorStates = [ 'vaultpress_error' ];
 const plugins = [ 'akismet', 'vaultpress' ];
+const maxRetries = 3;
 
 export class JetpackProductInstall extends Component {
 	state = {
 		startedInstallation: false,
 	};
+
+	retries = 0;
 
 	componentDidMount() {
 		this.requestStatus();
@@ -80,8 +84,8 @@ export class JetpackProductInstall extends Component {
 
 		return some( plugins, pluginSlug => {
 			if (
-				! status[ pluginSlug + '_status' ] ||
-				nonErrorStates.indexOf( status[ pluginSlug + '_status' ] ) < 0
+				nonErrorStates.indexOf( status[ pluginSlug + '_status' ] ) < 0 &&
+				retryableErrorStates.indexOf( status[ pluginSlug + '_status' ] ) < 0
 			) {
 				return true;
 			}
@@ -89,8 +93,30 @@ export class JetpackProductInstall extends Component {
 		} );
 	}
 
+	installationShouldRetry() {
+		const { status } = this.props;
+
+		if ( ! status ) {
+			return false;
+		}
+
+		return (
+			this.retries < maxRetries &&
+			some( plugins, pluginSlug => {
+				if ( retryableErrorStates.indexOf( status[ pluginSlug + '_status' ] ) >= 0 ) {
+					return true;
+				}
+				return false;
+			} )
+		);
+	}
+
 	requestStatus = () => {
 		this.props.requestJetpackProductInstallStatus( this.props.siteId );
+
+		if ( this.installationShouldRetry() ) {
+			this.retries++;
+		}
 	};
 
 	render() {
@@ -100,9 +126,10 @@ export class JetpackProductInstall extends Component {
 			<Fragment>
 				<QueryPluginKeys siteId={ siteId } />
 
-				{ progressComplete !== 100 && ! this.installationHasErrors() && (
-					<Interval period={ EVERY_SECOND } onTick={ this.requestStatus } />
-				) }
+				{ progressComplete !== 100 &&
+					( ! this.installationHasErrors() || this.installationShouldRetry() ) && (
+						<Interval period={ EVERY_SECOND } onTick={ this.requestStatus } />
+					) }
 			</Fragment>
 		);
 	}
