@@ -16,7 +16,7 @@ import {
 	IMPORTER_NUX_FROM_SIGNUP_SET,
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
 } from 'state/action-types';
-import { loadmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
+import { loadmShotsPreview } from 'lib/mshots';
 import wpLib from 'lib/wp';
 import SignupActions from 'lib/signup/actions';
 

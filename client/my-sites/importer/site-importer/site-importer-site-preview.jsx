@@ -16,7 +16,7 @@ import ExternalLink from 'components/external-link';
 import MiniSitePreview from 'components/mini-site-preview';
 import ErrorPane from 'my-sites/importer/error-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { loadmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
+import { loadmShotsPreview } from 'lib/mshots';
 import ImportableContent from 'my-sites/importer/site-importer/site-importer-importable-content';
 import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
