@@ -875,6 +875,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
+	.jetpack-connect__skip-button .button {
+		&:focus {
+			box-shadow: 0 0 0 transparent;
+		}
+	}
+
 	.translator-invite__content a {
 		border: none;
 	}
