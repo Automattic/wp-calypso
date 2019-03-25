@@ -103,7 +103,7 @@ function mapStateToProps( state ) {
 		selectedSite: getPreviewSite( state ),
 		selectedSiteId,
 		selectedSiteUrl: siteUrl.replace( /::/g, '/' ),
-		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
+		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce_preview' ) || '',
 		previewUrl: getPreviewUrl( state ),
 		isDomainOnlySite: isDomainOnlySite( state, selectedSiteId ),
 	};

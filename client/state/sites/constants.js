@@ -32,6 +32,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'default_sharing_status',
 	'design_type',
 	'frame_nonce',
+	'frame_nonce_preview',
 	'gmt_offset',
 	'has_pending_automated_transfer',
 	'is_automated_transfer',

@@ -564,9 +564,9 @@ export const getPreviewURL = function( site, post, autosavePreviewUrl ) {
 		if ( site.options.is_mapped_domain ) {
 			previewUrl = previewUrl.replace( site.URL, site.options.unmapped_url );
 		}
-		if ( site.options.frame_nonce ) {
+		if ( site.options.frame_nonce_preview ) {
 			parsed = url.parse( previewUrl, true );
-			parsed.query[ 'frame-nonce' ] = site.options.frame_nonce;
+			parsed.query[ 'frame-nonce' ] = site.options.frame_nonce_preview;
 			delete parsed.search;
 			previewUrl = url.format( parsed );
 		}
