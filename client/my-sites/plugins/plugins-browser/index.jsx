@@ -68,6 +68,7 @@ export class PluginsBrowser extends Component {
 	static propTypes = {
 		isRequestingRecommendedPlugins: PropTypes.bool.isRequired,
 		recommendedPlugins: PropTypes.arrayOf( PropTypes.object ),
+		selectedSite: PropTypes.object,
 		trackPageView: PropTypes.bool,
 	};
 
@@ -111,7 +112,11 @@ export class PluginsBrowser extends Component {
 	}
 
 	isRecommendedPluginsEnabled() {
-		return isEnabled( 'recommend-plugins' ) && !! this.props.selectedSiteId;
+		return (
+			isEnabled( 'recommend-plugins' ) &&
+			!! this.props.selectedSiteId &&
+			get( this.props.selectedSite, 'jetpack' )
+		);
 	}
 
 	refreshLists = search => {
