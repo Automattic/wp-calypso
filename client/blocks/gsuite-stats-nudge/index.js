@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import Card from 'components/card';
+import { emailManagement } from 'my-sites/email/paths';
 import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
 import SectionHeader from 'components/section-header';
@@ -94,7 +95,7 @@ class GSuiteStatsNudge extends Component {
 
 	render() {
 		const { domainSlug, siteSlug, translate } = this.props;
-		const url = '/domains/manage/email/' + siteSlug;
+		const url = emailManagement( siteSlug );
 
 		if ( ! this.isVisible() ) {
 			return null;
