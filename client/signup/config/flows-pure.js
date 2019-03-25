@@ -326,11 +326,11 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 
 	flows.import = {
 		steps: [ 'from-url', 'user', 'domains' ],
-		destination: ( { importSiteDetails, importUrl, siteSlug } ) =>
+		destination: ( { importEngine, importSiteUrl, siteSlug } ) =>
 			addQueryArgs(
 				{
-					engine: importSiteDetails.engine || null,
-					'from-site': ( importUrl && encodeURIComponent( importUrl ) ) || null,
+					engine: importEngine || null,
+					'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
 				},
 				`/settings/import/${ siteSlug }`
 			),
