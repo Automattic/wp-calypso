@@ -35,7 +35,7 @@ import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { isJetpackSite, isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
+import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
@@ -607,7 +607,6 @@ const connectComponent = connect(
 			siteSlug: getSelectedSiteSlug( state ),
 			selectedSite,
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
-			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains: getDomainsBySiteId( state, siteId ),
 		};
 	},
