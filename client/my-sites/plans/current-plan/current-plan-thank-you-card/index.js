@@ -99,14 +99,18 @@ export class CurrentPlanThankYouCard extends Component {
 		const { progressComplete, siteId } = this.props;
 
 		return (
-			<Card className="current-plan-thank-you-card">
+			<Fragment>
 				<QuerySitePurchases siteId={ siteId } />
 				<JetpackProductInstall />
 
-				<div className="current-plan-thank-you-card__content">
-					{ progressComplete === 100 ? this.renderSuccess() : this.renderSetup() }
-				</div>
-			</Card>
+				{ progressComplete !== null && (
+					<Card className="current-plan-thank-you-card__main">
+						<div className="current-plan-thank-you-card__content">
+							{ progressComplete === 100 ? this.renderSuccess() : this.renderSetup() }
+						</div>
+					</Card>
+				) }
+			</Fragment>
 		);
 	}
 }
