@@ -325,7 +325,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	};
 
 	flows.import = {
-		steps: [ 'from-url', 'user', 'domains' ],
+		steps: [ 'from-url', 'confirm-import', 'user', 'domains' ],
 		destination: ( { importEngine, importSiteUrl, siteSlug } ) =>
 			addQueryArgs(
 				{

@@ -12,6 +12,9 @@ import { trim } from 'lodash';
 import {
 	IMPORT_IS_SITE_IMPORTABLE_ERROR,
 	IMPORT_IS_SITE_IMPORTABLE_RECEIVE,
+	IMPORT_SIGNUP_SITE_PREVIEW_ERROR,
+	IMPORT_SIGNUP_SITE_PREVIEW_FETCH,
+	IMPORT_SIGNUP_SITE_PREVIEW_RECEIVE,
 	IMPORTER_NUX_URL_INPUT_SET,
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
 } from 'state/action-types';
@@ -89,6 +92,10 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 				throw new Error( error );
 			}
 
+			dispatch( {
+				type: IMPORT_SIGNUP_SITE_PREVIEW_FETCH,
+			} );
+
 			const imageBlob = await loadmShotsPreview( {
 				url: normalizeUrl( siteUrlFromInput ),
 				maxRetries: 30,
@@ -96,6 +103,9 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 			} );
 
 			dispatch( removeNotice( CHECKING_SITE_IMPORTABLE_NOTICE ) );
+			dispatch( {
+				type: IMPORT_SIGNUP_SITE_PREVIEW_RECEIVE,
+			} );
 
 			return SignupActions.submitSignupStep( { stepName }, [], {
 				sitePreviewImageBlob: imageBlob,
@@ -108,6 +118,9 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 		} )
 		.catch( error => {
 			dispatch( removeNotice( CHECKING_SITE_IMPORTABLE_NOTICE ) );
+			dispatch( {
+				type: IMPORT_SIGNUP_SITE_PREVIEW_ERROR,
+			} );
 
 			throw new Error( error );
 		} );
