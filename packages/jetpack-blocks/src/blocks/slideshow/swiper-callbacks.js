@@ -31,6 +31,9 @@ function swiperInit( swiper ) {
 }
 
 function swiperResize( swiper ) {
+	if ( ! swiper || ! swiper.el ) {
+		return;
+	}
 	const img = swiper.el.querySelector( '.swiper-slide[data-swiper-slide-index="0"] img' );
 	if ( ! img ) {
 		return;
@@ -53,6 +56,9 @@ function swiperResize( swiper ) {
 
 function announceCurrentSlide( swiper ) {
 	const currentSlide = swiper.slides[ swiper.activeIndex ];
+	if ( ! currentSlide ) {
+		return;
+	}
 	const figcaption = currentSlide.getElementsByTagName( 'FIGCAPTION' )[ 0 ];
 	const img = currentSlide.getElementsByTagName( 'IMG' )[ 0 ];
 	const notification = figcaption ? figcaption.innerText : img.alt;
