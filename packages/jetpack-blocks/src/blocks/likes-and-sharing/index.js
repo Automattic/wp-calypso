@@ -10,7 +10,7 @@
 /**
  * Internal dependencies
  */
-import JetpackPluginSidebar from 'gutenberg/extensions/presets/jetpack/editor-shared/jetpack-plugin-sidebar';
+import JetpackPluginSidebar from '../../shared/jetpack-plugin-sidebar';
 import LikesAndSharesPanel from './panel';
 
 export const name = 'likes-and-sharing';
