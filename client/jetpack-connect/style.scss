@@ -98,7 +98,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.site-type__option:focus {
 		box-shadow: inset 0 0 0 2px var( --color-jetpack );
 	}
-	
+
 	.wpcom-colophon {
 		position: absolute;
 			bottom: 0;
@@ -935,6 +935,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		padding-bottom: 24px;
 		background-color: var( --color-white );
 		border-radius: 3px;
+	}
+
+	.site-verticals-suggestion-search__topic-list-item {
+		&:focus {
+			box-shadow: inset 0 0 0 2px var( --color-jetpack );
+		}
 	}
 }
 

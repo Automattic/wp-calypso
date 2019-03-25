@@ -196,8 +196,7 @@ export class ActionTypeSelector extends Component {
 		const selectedCheckboxes = this.getSelectedCheckboxes();
 		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes );
 
-		const buttonClass = classnames( {
-			filterbar__selection: true,
+		const buttonClass = classnames( 'filterbar__selection', {
 			'is-selected': hasSelectedCheckboxes,
 			'is-active': isVisible && ! hasSelectedCheckboxes,
 		} );

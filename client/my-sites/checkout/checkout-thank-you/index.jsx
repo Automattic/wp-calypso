@@ -77,7 +77,6 @@ import {
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
-import ThankYouCard from 'components/thank-you-card';
 import {
 	domainManagementEmail,
 	domainManagementList,
@@ -133,6 +132,7 @@ export class CheckoutThankYou extends React.Component {
 
 	componentDidMount() {
 		this.redirectIfThemePurchased();
+		this.redirectIfDomainOnly( this.props );
 
 		const {
 			gsuiteReceipt,
@@ -173,6 +173,7 @@ export class CheckoutThankYou extends React.Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
+		this.redirectIfDomainOnly( nextProps );
 
 		if (
 			! this.props.receipt.hasLoadedFromServer &&
@@ -264,6 +265,17 @@ export class CheckoutThankYou extends React.Component {
 			this.props.activatedTheme( 'premium/' + themeId, this.props.selectedSite.ID );
 
 			page.redirect( '/themes/' + this.props.selectedSite.slug );
+		}
+	};
+
+	redirectIfDomainOnly = props => {
+		if ( props.domainOnlySiteFlow && get( props, 'receipt.hasLoadedFromServer', false ) ) {
+			const purchases = getPurchases( props );
+			const failedPurchases = getFailedPurchases( props );
+			if ( purchases.length > 0 && ! failedPurchases.length ) {
+				const domainName = find( purchases, isDomainRegistration ).meta;
+				page( domainManagementList( domainName ) );
+			}
 		}
 	};
 
@@ -440,25 +452,7 @@ export class CheckoutThankYou extends React.Component {
 		}
 
 		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
-			const domainName = find( purchases, isDomainRegistration ).meta;
-
-			return (
-				<Main className="checkout-thank-you">
-					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-					{ this.renderConfirmationNotice() }
-
-					<ThankYouCard
-						name={ domainName }
-						price={ this.props.receipt.data.displayPrice }
-						heading={ translate( 'Thank you for your purchase!' ) }
-						description={ translate(
-							"That looks like a great domain. Now it's time to get it all set up."
-						) }
-						buttonUrl={ domainManagementList( domainName ) }
-						buttonText={ translate( 'Go To Your Domain' ) }
-					/>
-				</Main>
-			);
+			return null;
 		}
 
 		const goBackText = this.props.selectedSite

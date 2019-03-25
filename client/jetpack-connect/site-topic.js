@@ -11,12 +11,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
-import jetpackOnly from './jetpack-only';
 import MainWrapper from './main-wrapper';
 import SiteTopicForm from 'signup/steps/site-topic/form';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WpcomColophon from 'components/wpcom-colophon';
+import jetpackOnly from './jetpack-only';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import versionCompare from 'lib/version-compare';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSiteOption } from 'state/sites/selectors';
 import { saveSiteVertical } from 'state/jetpack-connect/actions';
 
 class JetpackSiteTopic extends Component {
@@ -26,7 +28,15 @@ class JetpackSiteTopic extends Component {
 
 		this.props.saveSiteVertical( siteId, siteVertical );
 
-		page( `/jetpack/connect/plans/${ siteSlug }` );
+		const jpVersion = this.props.siteJetpackVersion;
+		if ( ! jpVersion ) {
+			return null;
+		}
+		if ( versionCompare( jpVersion, 7.2 ) < 0 || jpVersion === '7.2-alpha' ) {
+			page( `/jetpack/connect/user-type/${ siteSlug }` );
+		} else {
+			page( `/jetpack/connect/plans/${ siteSlug }` );
+		}
 	};
 
 	render() {
@@ -52,10 +62,14 @@ class JetpackSiteTopic extends Component {
 }
 
 const connectComponent = connect(
-	state => ( {
-		siteId: getSelectedSiteId( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
+	state => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			siteId,
+			siteJetpackVersion: getSiteOption( state, siteId, 'jetpack_version' ),
+			siteSlug: getSelectedSiteSlug( state ),
+		};
+	},
 	{
 		saveSiteVertical,
 	}

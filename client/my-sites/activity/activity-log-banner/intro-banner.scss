@@ -1,0 +1,29 @@
+// Introduction banner
+.activity-log-banner__intro {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 44px;
+}
+
+.activity-log-banner__intro-image {
+	max-width: 220px;
+	margin: 8px 16px 0 -8px;
+
+	@include breakpoint( '<960px' ) {
+		max-width: 100px;
+	}
+
+	@include breakpoint( '<660px' ) {
+		max-width: 64px;
+	}
+
+	@include breakpoint( '<480px' ) {
+		display: none;
+	}
+}
+
+.activity-log-banner__intro-description {
+	p {
+		font-size: 14px;
+	}
+}

@@ -29,7 +29,7 @@ class GSuitePurchaseFeatures extends React.Component {
 		const { productSlug, translate } = this.props;
 		if ( 'gapps' === productSlug ) {
 			return translate( 'Get 30GB of storage for all your files synced across devices.' );
-		} else if ( 'gappsbusiness' === productSlug ) {
+		} else if ( 'gapps_unlimited' === productSlug ) {
 			return translate( 'Get unlimited storage for all your files synced across devices.' );
 		}
 	}

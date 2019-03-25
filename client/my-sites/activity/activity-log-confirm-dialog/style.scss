@@ -9,6 +9,7 @@
 		border-radius: 4px;
 		box-shadow: 0 0 0 1px rgba( var( --color-neutral-100 ), 0.5 ),
 			0 2px 5px var( --color-neutral-100 );
+		white-space: normal;
 	}
 	.activity-log-item__activity-icon {
 		background: var( --color-accent );
@@ -135,7 +136,7 @@
 
 .button.activity-log-confirm-dialog__more-info-link {
 	color: var( --color-neutral-300 );
-	padding: 7px 8px 0 0;
+	padding: 8px 8px 0 0;
 	display: inline-block;
 
 	@include breakpoint( '<480px' ) {

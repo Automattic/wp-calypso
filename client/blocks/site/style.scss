@@ -102,20 +102,12 @@
 	line-height: 1.4;
 }
 
-.layout__secondary .site__title {
-	color: var( --sidebar-text-color );
-}
-
 .site__domain {
 	color: var( --color-text-subtle );
 	display: block;
 	max-width: 95%;
 	font-size: 11px;
 	line-height: 1.4;
-}
-
-.layout__secondary .site__domain {
-	color: var( --sidebar-heading-color );
 }
 
 .site__title,
@@ -125,11 +117,6 @@
 	&::after {
 		@include long-content-fade( $color: var( --sidebar-secondary-background-gradient ) );
 	}
-}
-
-.layout__secondary .site__title::after,
-.layout__secondary .site__domain::after {
-	@include long-content-fade( $color: var( --sidebar-background-gradient ) );
 }
 
 .site__home {
@@ -177,8 +164,4 @@
 	line-height: 0;
 	position: relative;
 	vertical-align: middle;
-}
-
-.layout__secondary .site__badge {
-	color: var( --sidebar-gridicon-fill );
 }

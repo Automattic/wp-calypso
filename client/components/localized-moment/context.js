@@ -19,13 +19,13 @@ const debug = debugFactory( 'calypso:localized-moment' );
 const MomentContext = React.createContext( moment );
 
 class MomentProvider extends React.Component {
-	state = { moment, momentLocale: 'en' };
+	state = { moment, momentLocale: moment.locale() };
 
-	async checkAndLoad( previousLocale ) {
+	async checkAndLoad() {
 		const { currentLocale } = this.props;
 
 		// has the requested locale changed?
-		if ( currentLocale === previousLocale ) {
+		if ( currentLocale === this.state.momentLocale ) {
 			return;
 		}
 
@@ -52,11 +52,11 @@ class MomentProvider extends React.Component {
 	}
 
 	componentDidMount() {
-		this.checkAndLoad( 'en' );
+		this.checkAndLoad();
 	}
 
-	componentDidUpdate( prevProps ) {
-		this.checkAndLoad( prevProps.currentLocale );
+	componentDidUpdate() {
+		this.checkAndLoad();
 	}
 
 	render() {

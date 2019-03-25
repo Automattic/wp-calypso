@@ -1,0 +1,59 @@
+.user-type__wrapper {
+	margin: auto;
+	width: 380px;
+	padding: 0;
+	border-radius: 3px;
+	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ),
+				0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
+				0 1px 5px 0 rgba( 0, 0, 0, 0.20 );
+	// At small screen sizes make the step
+	// full width. -shaun
+	@include breakpoint( '<660px' ) {
+		width: 100%;
+	}
+}
+
+.user-type__option {
+	padding: 16px 16px 16px 24px;
+	margin: 0;
+	font-weight: 400;
+	position: relative;
+	width: 100%;
+	text-align: left;
+	box-shadow: none;
+	border-bottom: 1px solid var( --color-neutral-50 );
+
+	@include breakpoint( '>660px' ) {
+		padding-right: 24px;
+	}
+
+	.user-type__option-label,
+	.user-type__option-description {
+		display: block;
+		line-height: 1.4em;
+	}
+
+	.user-type__option-label {
+		font-size: 18px;
+		color: var( --color-text );
+	}
+
+	&:hover {
+		cursor: pointer;
+		background: var( --color-neutral-0 );
+
+		.user-type__option-description {
+			color: var( --color-text );
+		}
+	}
+
+	&:focus {
+		box-shadow: inset 0 0 0 2px var( --color-accent );
+	}
+}
+
+.user-type__connect-step {
+	margin: 0 auto;
+	max-width: 600px;
+	text-align: initial;
+}

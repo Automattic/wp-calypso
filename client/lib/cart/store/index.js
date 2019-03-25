@@ -104,7 +104,7 @@ function update( changeFunction ) {
 	const previousCart = CartStore.get();
 	const nextCart = wrappedFunction( previousCart );
 
-	_synchronizer.update( wrappedFunction );
+	_synchronizer && _synchronizer.update( wrappedFunction );
 	recordEvents( previousCart, nextCart );
 }
 
@@ -181,7 +181,8 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 				// typically set one or the other (or neither)
 				const { rawDetails } = action;
 				has( rawDetails, 'country' ) && update( setTaxCountryCode( get( rawDetails, 'country' ) ) );
-				has( rawDetails, 'postal-code' ) && update( setTaxPostalCode( get( rawDetails, 'postal-code' ) ) );
+				has( rawDetails, 'postal-code' ) &&
+					update( setTaxPostalCode( get( rawDetails, 'postal-code' ) ) );
 			}
 			break;
 
@@ -195,11 +196,12 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 						postalCode = extractStoredCardMetaValue( action, 'card_zip' );
 						countryCode = extractStoredCardMetaValue( action, 'country_code' );
 						break;
-					case 'WPCOM_Billing_MoneyPress_Paygate':
+					case 'WPCOM_Billing_MoneyPress_Paygate': {
 						const paymentDetails = get( action, 'payment.newCardDetails', {} );
 						postalCode = paymentDetails[ 'postal-code' ];
 						countryCode = paymentDetails.country;
 						break;
+					}
 					case 'WPCOM_Billing_WPCOM':
 						postalCode = null;
 						countryCode = null;

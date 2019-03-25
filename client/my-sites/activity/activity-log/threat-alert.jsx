@@ -18,6 +18,11 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
 
 /**
+ * Style dependencies
+ */
+import './threat-alert.scss';
+
+/**
  * Module variables
  */
 const debug = debugFactory( 'calypso:activity-log' );

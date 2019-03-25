@@ -21,10 +21,6 @@
 	}
 }
 
-.activity-log-item.activity-log-item__restore-confirm .card {
-	white-space: normal;
-}
-
 .activity-log-item .foldable-card {
 	.foldable-card__expand .gridicon {
 		transform: none;
@@ -362,9 +358,6 @@
 		display: table;
 		margin-top: rem( 15px );
 	}
-}
-
-.activity-log-item__quick-action-progress {
 }
 
 .activity-log-item__quick-action-success {
