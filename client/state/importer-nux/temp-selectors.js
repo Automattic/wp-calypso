@@ -18,3 +18,5 @@ export const getImporterSiteUrl = state => get( getSiteDetails( state ), 'siteUr
 export const isUrlInputDisabled = state => get( state, 'importerNux.isUrlInputDisabled' );
 
 export const getNuxUrlError = state => get( state, 'importerNux.error' );
+
+export const isSitePreviewLoading = state => get( state, 'importerNux.isSitePreviewLoading' );

@@ -22,7 +22,9 @@ import { setNuxUrlInputValue, submitImportUrlStep } from 'state/importer-nux/act
 import {
 	getNuxUrlError,
 	getNuxUrlInputValue,
+	getSiteDetails,
 	isUrlInputDisabled,
+	isSitePreviewLoading,
 } from 'state/importer-nux/temp-selectors';
 import { validateImportUrl } from 'lib/importers/url-validation';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -286,7 +288,8 @@ export default flow(
 		state => ( {
 			isSiteImportableError: getNuxUrlError( state ),
 			urlInputValue: getNuxUrlInputValue( state ),
-			isLoading: isUrlInputDisabled( state ),
+			siteDetails: getSiteDetails( state ),
+			isLoading: isUrlInputDisabled( state ) || isSitePreviewLoading( state ),
 		} ),
 		{
 			setNuxUrlInputValue,

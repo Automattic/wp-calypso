@@ -411,6 +411,11 @@ export function generateSteps( {
 			],
 		},
 
+		'confirm-import': {
+			stepName: 'confirm-import',
+			dependencies: [ 'sitePreviewImageBlob' ],
+		},
+
 		'reader-landing': {
 			stepName: 'reader-landing',
 			providesDependencies: [],

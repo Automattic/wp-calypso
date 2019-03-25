@@ -21,6 +21,7 @@ export default {
 	'clone-jetpack': loadStep( 'clone-jetpack' ),
 	'clone-ready': loadStep( 'clone-ready' ),
 	'clone-cloning': loadStep( 'clone-cloning' ),
+	'confirm-import': loadStep( 'confirm-import' ),
 	'creds-confirm': loadStep( 'creds-confirm' ),
 	'creds-complete': loadStep( 'creds-complete' ),
 	'creds-permission': loadStep( 'creds-permission' ),
