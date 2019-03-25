@@ -35,13 +35,15 @@ import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { launchSite } from 'state/sites/launch/actions';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import QuerySiteDomains from 'components/data/query-site-domains';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -391,7 +393,26 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderLaunchSite() {
-		const { translate } = this.props;
+		const { translate, siteDomains, siteSlug, siteId, isPaidPlan } = this.props;
+
+		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
+			'site-settings__disable-privacy-settings': ! siteDomains.length,
+		} );
+		const btnText = translate( 'Launch site' );
+		let querySiteDomainsComponent, btnComponent;
+
+		if ( 0 === siteDomains.length ) {
+			querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
+			btnComponent = <Button>{ btnText }</Button>;
+		} else if ( isPaidPlan && siteDomains.length > 1 ) {
+			btnComponent = <Button onClick={ this.props.launchSite }>{ btnText }</Button>;
+			querySiteDomainsComponent = '';
+		} else {
+			btnComponent = (
+				<Button href={ `/start/launch-site?siteSlug=${ siteSlug }` }>{ btnText }</Button>
+			);
+			querySiteDomainsComponent = '';
+		}
 
 		return (
 			<>
@@ -404,10 +425,10 @@ export class SiteSettingsFormGeneral extends Component {
 							) }
 						</p>
 					</div>
-					<div className="site-settings__general-settings-launch-site-button">
-						<Button onClick={ this.props.launchSite }>{ translate( 'Launch site' ) }</Button>
-					</div>
+					<div className={ launchSiteClasses }>{ btnComponent }</div>
 				</Card>
+
+				{ querySiteDomainsComponent }
 			</>
 		);
 	}
@@ -567,7 +588,9 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	const { site } = ownProps;
 
 	return {
-		launchSite: () => dispatch( launchSite( site.ID ) ),
+		launchSite: () => {
+			dispatch( launchSite( site.ID ) );
+		},
 	};
 };
 
@@ -583,6 +606,9 @@ const connectComponent = connect(
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
 			selectedSite,
+			isPaidPlan: isCurrentPlanPaid( state, siteId ),
+			sitePlanSlug: getSitePlanSlug( state, siteId ),
+			siteDomains: getDomainsBySiteId( state, siteId ),
 		};
 	},
 	mapDispatchToProps,
