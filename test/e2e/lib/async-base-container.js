@@ -12,6 +12,7 @@ import { isEqual } from 'lodash';
 import * as driverManager from './driver-manager';
 import * as driverHelper from './driver-helper';
 import * as slackNotifier from './slack-notifier';
+import * as abtests from '../../../client/lib/abtest/active-tests';
 
 export default class AsyncBaseContainer {
 	constructor(
@@ -94,7 +95,7 @@ export default class AsyncBaseContainer {
 	}
 
 	async checkForUnknownABTestKeys() {
-		const knownABTestKeys = config.get( 'knownABTestKeys' );
+		const knownABTestKeys = Object.keys( abtests.default );
 
 		return await this.driver
 			.executeScript( 'return window.localStorage.ABTests;' )
@@ -108,14 +109,22 @@ export default class AsyncBaseContainer {
 				}
 			} );
 	}
-	async setABTestControlGroupsInLocalStorage() {
-		const overrideABTests = config.get( 'overrideABTests' );
 
-		const expectedABTestValue = overrideABTests
-			.map( entry => {
-				return '"' + entry[ 0 ] + '":"' + entry[ 1 ] + '"';
-			} )
-			.join( ',' );
+	async setABTestControlGroupsInLocalStorage() {
+		// eslint-disable-next-line prefer-const
+		let expectedABTestValue = [];
+
+		Object.keys( abtests.default ).forEach( function( test ) {
+			expectedABTestValue.push(
+				'"' +
+					test +
+					'_' +
+					abtests.default[ test ].datestamp +
+					'":"' +
+					abtests.default[ test ].defaultVariation +
+					'"'
+			);
+		} );
 
 		await this.driver.executeScript( 'window.localStorage.clear();' );
 
