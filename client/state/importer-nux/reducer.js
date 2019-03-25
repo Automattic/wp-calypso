@@ -6,6 +6,9 @@ import { combineReducers, createReducer } from 'state/utils';
 import {
 	IMPORT_IS_SITE_IMPORTABLE_ERROR,
 	IMPORT_IS_SITE_IMPORTABLE_RECEIVE,
+	IMPORT_SIGNUP_SITE_PREVIEW_FETCH,
+	IMPORT_SIGNUP_SITE_PREVIEW_RECEIVE,
+	IMPORT_SIGNUP_SITE_PREVIEW_ERROR,
 	IMPORTS_IMPORT_CANCEL,
 	IMPORTER_NUX_URL_INPUT_SET,
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
@@ -23,9 +26,16 @@ export const urlInputValue = createReducer( '', {
 
 export const isUrlInputDisabled = createReducer( false, {
 	[ IMPORT_IS_SITE_IMPORTABLE_START_FETCH ]: () => true,
-	[ SIGNUP_PROGRESS_SAVE_STEP ]: () => false,
+	[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: () => false,
 	[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: () => false,
+	[ SIGNUP_PROGRESS_SAVE_STEP ]: () => false,
 	[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => false,
+} );
+
+export const isSitePreviewLoading = createReducer( false, {
+	[ IMPORT_SIGNUP_SITE_PREVIEW_FETCH ]: () => true,
+	[ IMPORT_SIGNUP_SITE_PREVIEW_RECEIVE ]: () => false,
+	[ IMPORT_SIGNUP_SITE_PREVIEW_ERROR ]: () => false,
 } );
 
 export const siteDetails = createReducer( null, {
@@ -51,4 +61,5 @@ export default combineReducers( {
 	isUrlInputDisabled,
 	siteDetails,
 	urlInputValue,
+	isSitePreviewLoading,
 } );
