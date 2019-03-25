@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import LoginFlow from '../lib/flows/login-flow.js';
 
 import EditorPage from '../lib/pages/editor-page.js';
@@ -141,7 +147,7 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 					await editorSidebar.expandFeaturedImage();
 					// Opens the media model
 					await editorSidebar.openFeaturedImageDialog();
-					let mediaPage = new MediaPage( driver );
+					const mediaPage = new MediaPage( driver );
 					await mediaPage.selectFirstImage();
 					await editorPage.deleteMedia();
 				} );

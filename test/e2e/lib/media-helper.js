@@ -1,5 +1,8 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import fs from 'fs-extra';
 import path from 'path';
 import sanitize from 'sanitize-filename';
@@ -14,14 +17,17 @@ export function createFile( notRandom, uploadDirectoryName = 'image-uploads' ) {
 		randomImageNumber = 0;
 	}
 
-	let originalImageName = 'image' + randomImageNumber;
-	let originalFileName = `${ originalImageName }.jpg`;
-	let originalFile = path.resolve( __dirname, `../${ uploadDirectoryName }/${ originalFileName }` );
-	let newImageName = (
+	const originalImageName = 'image' + randomImageNumber;
+	const originalFileName = `${ originalImageName }.jpg`;
+	const originalFile = path.resolve(
+		__dirname,
+		`../${ uploadDirectoryName }/${ originalFileName }`
+	);
+	const newImageName = (
 		'0000' + ( ( Math.random() * Math.pow( 36, 4 ) ) << 0 ).toString( 36 )
 	).slice( -4 ); // random number
-	let newFileName = `${ newImageName }.jpg`;
-	let newFile = path.resolve( __dirname, `../${ uploadDirectoryName }/${ newFileName }` );
+	const newFileName = `${ newImageName }.jpg`;
+	const newFile = path.resolve( __dirname, `../${ uploadDirectoryName }/${ newFileName }` );
 	fs.copySync( originalFile, newFile );
 
 	return {
@@ -92,7 +98,7 @@ export function writeScreenshot( data, filenameCallback, metadata ) {
 	}
 	const screenshotPath = `${ screenShotDir }/${ filename }.png`;
 	if ( typeof metadata === 'object' ) {
-		for ( let i in metadata ) {
+		for ( const i in metadata ) {
 			pt = pt.pipe( pngitxt.set( i, metadata[ i ] ) );
 		}
 	}
@@ -104,14 +110,14 @@ export function writeTextLogFile( textContent, prefix, pathOverride ) {
 	if ( prefix === undefined ) {
 		prefix = '';
 	}
-	let directoryName = pathOverride || '../logs';
-	let logDir = path.resolve( __dirname, directoryName );
+	const directoryName = pathOverride || '../logs';
+	const logDir = path.resolve( __dirname, directoryName );
 	if ( ! fs.existsSync( logDir ) ) {
 		fs.mkdirSync( logDir );
 	}
-	let dateString = new Date().getTime().toString();
-	let fileName = `${ dateString }-${ prefix }-log.txt`;
-	let logPath = `${ logDir }/${ fileName }`;
+	const dateString = new Date().getTime().toString();
+	const fileName = `${ dateString }-${ prefix }-log.txt`;
+	const logPath = `${ logDir }/${ fileName }`;
 	fs.writeFileSync( logPath, textContent );
 
 	return logPath;

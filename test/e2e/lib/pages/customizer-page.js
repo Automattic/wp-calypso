@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By as by, until } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager';
 import * as slackNotifier from '../slack-notifier';
@@ -70,7 +76,7 @@ export default class CustomizerPage extends AsyncBaseContainer {
 		const driver = this.driver;
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			await this._switchToMetaiFrame();
-			let previewDisplayed = await driverHelper.isElementPresent(
+			const previewDisplayed = await driverHelper.isElementPresent(
 				driver,
 				by.css( 'div.preview-desktop.preview-only' )
 			);

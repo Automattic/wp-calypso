@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By, Key, until } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../driver-helper.js';
 import AsyncBaseContainer from '../async-base-container';
 
@@ -20,7 +27,7 @@ export default class PostEditorSidebarComponent extends AsyncBaseContainer {
 		const contentSelector = By.css( 'div.is-section-post-editor' );
 		const cogSelector = By.css( 'button.editor-ground-control__toggle-sidebar' );
 		await driverHelper.waitTillPresentAndDisplayed( driver, contentSelector );
-		let c = await driver.findElement( contentSelector ).getAttribute( 'class' );
+		const c = await driver.findElement( contentSelector ).getAttribute( 'class' );
 		if ( c.indexOf( 'focus-sidebar' ) < 0 ) {
 			return await driverHelper.clickWhenClickable( driver, cogSelector );
 		}
@@ -31,7 +38,7 @@ export default class PostEditorSidebarComponent extends AsyncBaseContainer {
 		const contentSelector = By.css( 'div.is-section-post-editor' );
 		const cogSelector = By.css( 'button.editor-ground-control__toggle-sidebar' );
 		await driverHelper.waitTillPresentAndDisplayed( driver, contentSelector );
-		let c = await driver.findElement( contentSelector ).getAttribute( 'class' );
+		const c = await driver.findElement( contentSelector ).getAttribute( 'class' );
 		if ( c.indexOf( 'focus-sidebar' ) !== -1 ) {
 			return await driverHelper.clickWhenClickable( driver, cogSelector );
 		}
@@ -121,16 +128,16 @@ export default class PostEditorSidebarComponent extends AsyncBaseContainer {
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, tagEntrySelector );
 		await driverHelper.scrollIntoView( this.driver, tagEntrySelector );
 		await driverHelper.waitForFieldClearable( this.driver, tagEntrySelector );
-		let tagEntryElement = await this.driver.findElement( tagEntrySelector );
+		const tagEntryElement = await this.driver.findElement( tagEntrySelector );
 		await tagEntryElement.sendKeys( tag );
 		return await tagEntryElement.sendKeys( Key.ENTER );
 	}
 
 	async setCommentsForPost( allow = true ) {
-		let driver = this.driver;
+		const driver = this.driver;
 		const selector = By.css( 'input[name=comment_status]' );
 		await driverHelper.waitTillPresentAndDisplayed( driver, selector );
-		let enabled = await driver.findElement( selector ).isEnabled();
+		const enabled = await driver.findElement( selector ).isEnabled();
 		if ( ( allow && ! enabled ) || ( ! allow && enabled ) ) {
 			return await driverHelper.clickWhenClickable( driver, selector );
 		}
@@ -165,16 +172,16 @@ export default class PostEditorSidebarComponent extends AsyncBaseContainer {
 	}
 
 	async setSharingButtons( allow = true ) {
-		let driver = this.driver;
+		const driver = this.driver;
 		const selector = By.css( 'input[name=sharing_enabled]' );
-		let enabled = await driver.findElement( selector ).isEnabled();
+		const enabled = await driver.findElement( selector ).isEnabled();
 		if ( ( allow && ! enabled ) || ( ! allow && enabled ) ) {
 			return await driverHelper.clickWhenClickable( driver, selector );
 		}
 	}
 
 	async revertToDraft() {
-		let revertDraftSelector = By.css( 'button.edit-post-status__revert-to-draft' );
+		const revertDraftSelector = By.css( 'button.edit-post-status__revert-to-draft' );
 		await this._expandOrCollapseSection( 'status', true );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, revertDraftSelector );
 		return await driverHelper.clickWhenClickable( this.driver, revertDraftSelector );
@@ -253,7 +260,7 @@ export default class PostEditorSidebarComponent extends AsyncBaseContainer {
 		const self = this;
 		const postDateDropdownSelector = By.css( '.editor-sidebar .editor-publish-date' );
 		await driverHelper.waitTillPresentAndDisplayed( self.driver, postDateDropdownSelector );
-		let elementClasses = await this.driver
+		const elementClasses = await this.driver
 			.findElement( postDateDropdownSelector )
 			.getAttribute( 'class' );
 		const currentlyOpen = elementClasses.indexOf( 'is-open' ) > -1;
@@ -270,7 +277,7 @@ export default class PostEditorSidebarComponent extends AsyncBaseContainer {
 		const driver = this.driver;
 
 		await driverHelper.waitTillPresentAndDisplayed( driver, headerSelector );
-		let c = await driver.findElement( headerSelector ).getAttribute( 'class' );
+		const c = await driver.findElement( headerSelector ).getAttribute( 'class' );
 		if ( expand && c.indexOf( 'is-expanded' ) < 0 ) {
 			await driverHelper.scrollIntoView( driver, toggleSelector );
 			return await driverHelper.clickWhenClickable( driver, toggleSelector );

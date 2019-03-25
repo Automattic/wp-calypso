@@ -1,5 +1,13 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 

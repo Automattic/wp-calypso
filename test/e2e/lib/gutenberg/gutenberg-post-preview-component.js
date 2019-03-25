@@ -1,5 +1,13 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 import ViewPostPage from '../pages/view-post-page';
 import * as driverHelper from '../driver-helper';

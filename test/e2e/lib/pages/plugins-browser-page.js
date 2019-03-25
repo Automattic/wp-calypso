@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import webdriver from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 import * as SlackNotifier from '../slack-notifier';
 import * as driverHelper from '../driver-helper';
@@ -26,8 +33,10 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 	}
 
 	async pluginTitledShown( pluginTitle, searchTerm ) {
-		let selector = async () => {
-			let allElements = await this.driver.findElements( by.css( '.plugins-browser-item__title' ) );
+		const selector = async () => {
+			const allElements = await this.driver.findElements(
+				by.css( '.plugins-browser-item__title' )
+			);
 			return await webdriver.promise.filter(
 				allElements,
 				async e => ( await e.getText() ) === pluginTitle

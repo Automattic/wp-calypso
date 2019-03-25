@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
-
 import config from 'config';
+
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../lib/driver-manager.js';
 import * as slackNotifier from '../lib/slack-notifier';
 import * as dataHelper from '../lib/data-helper';
@@ -85,7 +91,7 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function() {
 		await navBarComponent.openNotifications();
 		const notificationsComponent = await NotificationsComponent.Expect( driver );
 		await notificationsComponent.selectComments();
-		let content = await notificationsComponent.allCommentsContent();
+		const content = await notificationsComponent.allCommentsContent();
 		return assert.strictEqual(
 			content.includes( expectedContent ),
 			true,

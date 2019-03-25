@@ -1,6 +1,9 @@
 /** @format */
 
-import xmpp from 'xmpp.js';
+/**
+ * External dependencies
+ */
+import xmpp from 'xmpp';
 
 const domain = 'im.wordpress.com';
 

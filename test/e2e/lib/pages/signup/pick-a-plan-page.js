@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 import { By } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../../async-base-container';
 
 import * as driverHelper from '../../driver-helper.js';

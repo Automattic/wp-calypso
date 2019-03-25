@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
 import * as driverHelper from '../driver-helper.js';
@@ -107,7 +113,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async numberOfMenuItems() {
-		let elements = await this.driver.findElements( By.css( '.sidebar .sidebar__menu li' ) );
+		const elements = await this.driver.findElements( By.css( '.sidebar .sidebar__menu li' ) );
 		return elements.length;
 	}
 
@@ -170,7 +176,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 		const sidebarNewSiteButton = By.css( '.my-sites-sidebar__add-new-site' );
 		const siteSwitcherNewSiteButton = By.css( '.site-selector__add-new-site .button svg' );
-		let present = await driverHelper.isElementPresent( this.driver, sidebarNewSiteButton );
+		const present = await driverHelper.isElementPresent( this.driver, sidebarNewSiteButton );
 		if ( present ) {
 			return await driverHelper.clickWhenClickable( this.driver, sidebarNewSiteButton );
 		}
@@ -200,11 +206,11 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			return false;
 		}
 		await this.selectSiteSwitcher();
-		let clearSearch = await driverHelper.isElementPresent( this.driver, clearSearchButton );
+		const clearSearch = await driverHelper.isElementPresent( this.driver, clearSearchButton );
 		if ( clearSearch ) {
 			await driverHelper.clickWhenClickable( this.driver, clearSearchButton );
 		}
-		let foundBroken = await driverHelper.isEventuallyPresentAndDisplayed(
+		const foundBroken = await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
 			brokenSiteButton
 		);

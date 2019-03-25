@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import LoginFlow from './login-flow';
 import SidebarComponent from '../components/sidebar-component';
 import AddNewSitePage from '../pages/add-new-site-page';
@@ -74,7 +80,7 @@ export default class JetpackConnectFlow {
 
 		const removeSites = async () => {
 			const sidebarComponent = await SidebarComponent.Expect( this.driver );
-			let siteRemoved = await sidebarComponent.removeBrokenSite();
+			const siteRemoved = await sidebarComponent.removeBrokenSite();
 			if ( ! siteRemoved || Date.now() - timeStarted > 0.8 * timeout ) {
 				// 80% of timeout
 				// no sites left to remove or removeSites taking too long

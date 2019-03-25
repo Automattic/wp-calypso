@@ -1,5 +1,8 @@
 /** @format */
 
+/**
+ * Internal dependencies
+ */
 import * as slackNotifier from './slack-notifier';
 
 if ( process.argv.length !== 3 ) {

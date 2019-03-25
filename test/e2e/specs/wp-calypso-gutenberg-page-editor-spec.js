@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import LoginFlow from '../lib/flows/login-flow.js';
 
 import ViewPagePage from '../lib/pages/view-page-page.js';
@@ -66,7 +72,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			await gEditorSidebarComponent.enterImageAltText( fileDetails );
 			await gEditorComponent.closeSidebar();
 
-			let errorShown = await gEditorComponent.errorDisplayed();
+			const errorShown = await gEditorComponent.errorDisplayed();
 			return assert.strictEqual(
 				errorShown,
 				false,
@@ -92,7 +98,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		step( 'Can see correct page title in preview', async function() {
 			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
 			await pagePreviewComponent.displayed();
-			let actualPageTitle = await pagePreviewComponent.pageTitle();
+			const actualPageTitle = await pagePreviewComponent.pageTitle();
 			assert.strictEqual(
 				actualPageTitle.toUpperCase(),
 				pageTitle.toUpperCase(),
@@ -102,7 +108,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		step( 'Can see correct page content in preview', async function() {
 			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
-			let content = await pagePreviewComponent.pageContent();
+			const content = await pagePreviewComponent.pageContent();
 			assert.strictEqual(
 				content.indexOf( pageQuote ) > -1,
 				true,
@@ -136,7 +142,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		step( 'Can see correct page title', async function() {
 			const viewPagePage = await ViewPagePage.Expect( driver );
-			let actualPageTitle = await viewPagePage.pageTitle();
+			const actualPageTitle = await viewPagePage.pageTitle();
 			assert.strictEqual(
 				actualPageTitle.toUpperCase(),
 				pageTitle.toUpperCase(),
@@ -146,7 +152,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		step( 'Can see correct page content', async function() {
 			const viewPagePage = await ViewPagePage.Expect( driver );
-			let content = await viewPagePage.pageContent();
+			const content = await viewPagePage.pageContent();
 			assert.strictEqual(
 				content.indexOf( pageQuote ) > -1,
 				true,
@@ -171,7 +177,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		step( 'Can see the image uploaded displayed', async function() {
 			const viewPagePage = await ViewPagePage.Expect( driver );
-			let imageDisplayed = await viewPagePage.imageDisplayed( fileDetails );
+			const imageDisplayed = await viewPagePage.imageDisplayed( fileDetails );
 			assert.strictEqual( imageDisplayed, true, 'Could not see the image in the published page' );
 		} );
 
@@ -183,8 +189,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 	} );
 
 	describe( 'Private Pages: @parallel', function() {
-		let pageTitle = dataHelper.randomPhrase();
-		let pageQuote =
+		const pageTitle = dataHelper.randomPhrase();
+		const pageQuote =
 			'Few people know how to take a walk. The qualifications are endurance, plain clothes, old shoes, an eye for nature, good humor, vast curiosity, good speech, good silence and nothing too much.\n— Ralph Waldo Emerson';
 
 		step( 'Can log in', async function() {
@@ -538,7 +544,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			const gPaymentComponent = await SimplePaymentsBlockComponent.Expect( driver, blockId );
 			await gPaymentComponent.insertPaymentButtonDetails( paymentButtonDetails );
 
-			let errorShown = await gEditorComponent.errorDisplayed();
+			const errorShown = await gEditorComponent.errorDisplayed();
 			assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 
 			await gEditorComponent.enterTitle( pageTitle );
@@ -553,7 +559,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		step( 'Can see the payment button in our published page', async function() {
 			const viewPagePage = await ViewPagePage.Expect( driver );
-			let displayed = await viewPagePage.paymentButtonDisplayed();
+			const displayed = await viewPagePage.paymentButtonDisplayed();
 			return assert.strictEqual(
 				displayed,
 				true,
@@ -564,7 +570,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		step(
 			'The payment button in our published page opens a new Paypal window for payment',
 			async function() {
-				let numberOfOpenBrowserWindows = await driverHelper.numberOfOpenWindows( driver );
+				const numberOfOpenBrowserWindows = await driverHelper.numberOfOpenWindows( driver );
 				assert.strictEqual(
 					numberOfOpenBrowserWindows,
 					1,

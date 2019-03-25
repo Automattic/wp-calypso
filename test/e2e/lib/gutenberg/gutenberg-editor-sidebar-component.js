@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By, Key } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../driver-helper.js';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverManager from '../driver-manager';
@@ -32,7 +39,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async expandPermalink() {
-		return this._expandOrCollapseSectionByText( 'Permalink', true );
+		return await this._expandOrCollapseSectionByText( 'Permalink', true );
 	}
 
 	async expandCategories() {
@@ -40,47 +47,47 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async expandTags() {
-		return this._expandOrCollapseSectionByText( 'Tags', true );
+		return await this._expandOrCollapseSectionByText( 'Tags', true );
 	}
 
 	async expandFeaturedImage() {
-		return this._expandOrCollapseSectionByText( 'Featured Image', true );
+		return await this._expandOrCollapseSectionByText( 'Featured Image', true );
 	}
 
 	async expandExcerpt() {
-		return this._expandOrCollapseSectionByText( 'Excerpt', true );
+		return await this._expandOrCollapseSectionByText( 'Excerpt', true );
 	}
 
 	async expandDiscussion() {
-		return this._expandOrCollapseSectionByText( 'Discussion', true );
+		return await this._expandOrCollapseSectionByText( 'Discussion', true );
 	}
 
 	async collapseStatusAndVisibility() {
-		return this._expandOrCollapseSectionByText( 'Status & Visibility', false );
+		return await this._expandOrCollapseSectionByText( 'Status & Visibility', false );
 	}
 
 	async collapsePermalink() {
-		return this._expandOrCollapseSectionByText( 'Permalink', false );
+		return await this._expandOrCollapseSectionByText( 'Permalink', false );
 	}
 
 	async collapseCategories() {
-		return this._expandOrCollapseSectionByText( 'Categories', false );
+		return await this._expandOrCollapseSectionByText( 'Categories', false );
 	}
 
 	async collapseTags() {
-		return this._expandOrCollapseSectionByText( 'Tags', false );
+		return await this._expandOrCollapseSectionByText( 'Tags', false );
 	}
 
 	async collapseFeaturedImage() {
-		return this._expandOrCollapseSectionByText( 'Featured Image', false );
+		return await this._expandOrCollapseSectionByText( 'Featured Image', false );
 	}
 
 	async collapseExcerpt() {
-		return this._expandOrCollapseSectionByText( 'Excerpt', false );
+		return await this._expandOrCollapseSectionByText( 'Excerpt', false );
 	}
 
 	async collapseDiscussion() {
-		return this._expandOrCollapseSectionByText( 'Discussion', false );
+		return await this._expandOrCollapseSectionByText( 'Discussion', false );
 	}
 
 	async _expandOrCollapseSectionByText( text, expand = true ) {
@@ -91,7 +98,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		);
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, sectionSelector );
 		const sectionButton = await this.driver.findElement( sectionSelector );
-		let c = await sectionButton.getAttribute( 'aria-expanded' );
+		const c = await sectionButton.getAttribute( 'aria-expanded' );
 		if ( expand && c === 'false' ) {
 			await driverHelper.scrollIntoView( this.driver, sectionSelector );
 			return await sectionButton.click();
@@ -146,7 +153,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, tagEntrySelector );
 		await driverHelper.scrollIntoView( this.driver, tagEntrySelector );
 		await driverHelper.waitForFieldClearable( this.driver, tagEntrySelector );
-		let tagEntryElement = await this.driver.findElement( tagEntrySelector );
+		const tagEntryElement = await this.driver.findElement( tagEntrySelector );
 		await tagEntryElement.sendKeys( tag );
 		return await tagEntryElement.sendKeys( Key.ENTER );
 	}
@@ -163,7 +170,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	async displayComponentIfNecessary() {
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			const driver = this.driver;
-			let c = await driver.findElement( this.cogSelector ).getAttribute( 'class' );
+			const c = await driver.findElement( this.cogSelector ).getAttribute( 'class' );
 			if ( c.indexOf( 'is-toggled' ) < 0 ) {
 				return await driverHelper.clickWhenClickable( driver, this.cogSelector );
 			}
@@ -174,7 +181,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			const driver = this.driver;
 
-			let c = await driver.findElement( this.cogSelector ).getAttribute( 'class' );
+			const c = await driver.findElement( this.cogSelector ).getAttribute( 'class' );
 			if ( c.indexOf( 'is-toggled' ) > -1 ) {
 				return await driverHelper.clickWhenClickable( driver, this.closeSelector );
 			}
@@ -233,7 +240,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		await driverHelper.clickWhenClickable( this.driver, nextMonthSelector );
 		await driverHelper.selectElementByText( this.driver, firstDay, '1' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, publishDateSelector );
-		let publishDate = await this.driver.findElement( publishDateSelector ).getText();
+		const publishDate = await this.driver.findElement( publishDateSelector ).getText();
 
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			await this.hideComponentIfNecessary();

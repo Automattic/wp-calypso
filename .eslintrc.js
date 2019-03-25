@@ -47,15 +47,12 @@ module.exports = {
 		{
 			files: [ 'test/e2e/**/*' ],
 			rules: {
-				'valid-jsdoc': 0,
-				'wpcalypso/import-docblock': 0,
-				'prefer-const': 0,
+				'import/no-nodejs-modules': 0,
+				'import/no-extraneous-dependencies': 0,
 				'no-console': 0,
-				'no-var': 0,
 				'jest/valid-describe': 0,
 				'jest/no-test-prefixes': 0,
 				'jest/no-identical-title': 0,
-				'require-await': 0,
 			},
 			globals: {
 				step: false,

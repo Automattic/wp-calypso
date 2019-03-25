@@ -1,5 +1,8 @@
 /** @format */
 
+/**
+ * Internal dependencies
+ */
 import LoginPage from '../pages/login-page.js';
 import EditorPage from '../pages/editor-page';
 import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
@@ -117,7 +120,7 @@ export default class LoginFlow {
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
-			let urlDisplayed = await this.driver.getCurrentUrl();
+			const urlDisplayed = await this.driver.getCurrentUrl();
 			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
 		}
 	}
@@ -139,7 +142,7 @@ export default class LoginFlow {
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
-			let urlDisplayed = await this.driver.getCurrentUrl();
+			const urlDisplayed = await this.driver.getCurrentUrl();
 			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
 		}
 	}
@@ -147,21 +150,21 @@ export default class LoginFlow {
 	async loginAndSelectDomains() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectDomains();
 	}
 
 	async loginAndSelectPeople() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectPeople();
 	}
 
 	async loginAndSelectAddPersonFromSidebar() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectAddPerson();
 	}
 
@@ -187,7 +190,7 @@ export default class LoginFlow {
 		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
 			const siteURL = site || dataHelper.getJetpackSiteName();
 
-			let sideBarComponent = await SidebarComponent.Expect( this.driver );
+			const sideBarComponent = await SidebarComponent.Expect( this.driver );
 			await sideBarComponent.selectSiteSwitcher();
 			await sideBarComponent.searchForSite( siteURL );
 		}
@@ -205,7 +208,7 @@ export default class LoginFlow {
 
 	async loginAndSelectThemes() {
 		await this.loginAndSelectMySite();
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 
 		if ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) {
 			const siteURL = dataHelper.getJetpackSiteName();
@@ -220,26 +223,26 @@ export default class LoginFlow {
 	async loginAndSelectManagePlugins() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectManagePlugins();
 	}
 
 	async loginAndSelectPlugins() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectPlugins();
 	}
 
 	async loginAndSelectSettings() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectSettings();
 	}
 
 	async loginUsingExistingForm() {
-		let loginPage = await LoginPage.Expect( this.driver );
+		const loginPage = await LoginPage.Expect( this.driver );
 		return await loginPage.login(
 			this.account.email || this.account.username,
 			this.account.password

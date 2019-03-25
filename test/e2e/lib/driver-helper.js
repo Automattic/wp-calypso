@@ -1,8 +1,15 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import webdriver from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import * as SlackNotifier from './slack-notifier.js';
 import * as dataHelper from './data-helper';
 
@@ -55,7 +62,7 @@ export function waitTillFocused( driver, selector, pollingOverride, waitOverride
 				async function( element ) {
 					// Poll if element is active every 100 ms until focused or until timeoutPolling is reached
 					for ( let i = 0; i < timeoutPolling / 100; i++ ) {
-						let isFocused =
+						const isFocused =
 							( await driver
 								.switchTo()
 								.activeElement()
@@ -233,7 +240,7 @@ export function elementIsNotPresent( driver, cssSelector ) {
 	} );
 }
 
-export async function waitForFieldClearable( driver, selector ) {
+export function waitForFieldClearable( driver, selector ) {
 	return driver.wait(
 		function() {
 			return driver.findElement( selector ).then(
@@ -261,7 +268,7 @@ export async function waitForFieldClearable( driver, selector ) {
 	);
 }
 
-export async function setWhenSettable(
+export function setWhenSettable(
 	driver,
 	selector,
 	value,
@@ -317,7 +324,7 @@ export function unsetCheckbox( driver, selector ) {
 
 export function waitTillNotPresent( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-	let self = this;
+	const self = this;
 
 	return driver.wait(
 		function() {
@@ -382,7 +389,7 @@ export function logPerformance( driver ) {
 			.get( 'performance' )
 			.then( browserLogs => {
 				browserLogs.forEach( browserLog => {
-					var message = JSON.parse( browserLog.message ).message;
+					const message = JSON.parse( browserLog.message ).message;
 					if (
 						message.method === 'Network.responseReceived' ||
 						message.method === 'Network.requestWillBeSent'
@@ -424,12 +431,12 @@ export function waitForInfiniteListLoad( driver, elementSelector, { numElements 
 }
 
 export async function switchToWindowByIndex( driver, index ) {
-	let handles = await driver.getAllWindowHandles();
+	const handles = await driver.getAllWindowHandles();
 	return await driver.switchTo().window( handles[ index ] );
 }
 
 export async function numberOfOpenWindows( driver ) {
-	let handles = await driver.getAllWindowHandles();
+	const handles = await driver.getAllWindowHandles();
 	return handles.length;
 }
 
@@ -438,7 +445,7 @@ export async function waitForNumberOfWindows( driver, numberWindows, waitOverrid
 
 	return await driver.wait(
 		async function() {
-			let handles = await driver.getAllWindowHandles();
+			const handles = await driver.getAllWindowHandles();
 			return handles.length === numberWindows;
 		},
 		timeoutWait,
@@ -451,7 +458,7 @@ export async function closeCurrentWindow( driver ) {
 }
 
 export async function ensurePopupsClosed( driver ) {
-	let numWindows = await numberOfOpenWindows( driver );
+	const numWindows = await numberOfOpenWindows( driver );
 	let windowIndex;
 	for ( windowIndex = 1; windowIndex < numWindows; windowIndex++ ) {
 		await switchToWindowByIndex( driver, windowIndex );
@@ -488,7 +495,7 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 }
 
 export async function scrollIntoView( driver, selector ) {
-	let selectorElement = await driver.findElement( selector );
+	const selectorElement = await driver.findElement( selector );
 
 	return await driver.executeScript(
 		'arguments[0].scrollIntoView( { block: "center", inline: "center" } )',
@@ -497,7 +504,7 @@ export async function scrollIntoView( driver, selector ) {
 }
 
 export async function scrollToBottom( driver, selector ) {
-	let selectorElement = await driver.findElement( selector );
+	const selectorElement = await driver.findElement( selector );
 
 	return await driver.executeScript(
 		'arguments[0].scrollIntoView( { block: "end", inline: "center" } )',
@@ -506,24 +513,24 @@ export async function scrollToBottom( driver, selector ) {
 }
 
 export async function selectElementByText( driver, selector, text ) {
-	let element = async () => {
-		let allElements = await driver.findElements( selector );
+	const element = async () => {
+		const allElements = await driver.findElements( selector );
 		return await webdriver.promise.filter( allElements, async e => ( await e.getText() ) === text );
 	};
 	return await this.clickWhenClickable( driver, element );
 }
 
 export async function verifyTextPresent( driver, selector, text ) {
-	let element = async () => {
-		let allElements = await driver.findElements( selector );
+	const element = async () => {
+		const allElements = await driver.findElements( selector );
 		return await webdriver.promise.filter( allElements, async e => ( await e.getText() ) === text );
 	};
 	return await this.isElementPresent( driver, element );
 }
 
-export async function getElementByText( driver, selector, text ) {
+export function getElementByText( driver, selector, text ) {
 	return async () => {
-		let allElements = await driver.findElements( selector );
+		const allElements = await driver.findElements( selector );
 		return await webdriver.promise.filter( allElements, async e => ( await e.getText() ) === text );
 	};
 }

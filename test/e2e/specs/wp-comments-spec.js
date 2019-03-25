@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../lib/driver-manager';
 import * as dataHelper from '../lib/data-helper';
 import * as mediaHelper from '../lib/media-helper';

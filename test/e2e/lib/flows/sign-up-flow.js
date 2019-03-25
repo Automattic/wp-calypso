@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import StartPage from '../pages/signup/start-page';
 import CreateYourAccountPage from '../pages/signup/create-your-account-page';
 import SignupProcessingPage from '../pages/signup/signup-processing-page';
@@ -45,7 +51,7 @@ export default class SignUpFlow {
 	async activateAccount() {
 		let activationLink;
 		const emails = await this.emailClient.pollEmailsByRecipient( this.emailAddress );
-		for ( let email of emails ) {
+		for ( const email of emails ) {
 			if ( email.subject.indexOf( 'Activate' ) > -1 ) {
 				activationLink = email.html.links[ 0 ].href;
 			}

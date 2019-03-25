@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
 
+/**
+ * Internal dependencies
+ */
 import SignupProcessingPage from '../pages/signup/signup-processing-page';
 import FindADomainComponent from '../components/find-a-domain-component';
 
@@ -22,7 +28,7 @@ export default class SignUpStep {
 		const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 		await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
 		await findADomainComponent.checkAndRetryForFreeBlogAddresses( expectedBlogAddresses, blogName );
-		let actualAddress = await findADomainComponent.freeBlogAddress();
+		const actualAddress = await findADomainComponent.freeBlogAddress();
 		assert(
 			expectedBlogAddresses.indexOf( actualAddress ) > -1,
 			`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`

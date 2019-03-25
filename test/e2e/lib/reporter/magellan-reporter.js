@@ -10,13 +10,13 @@ const fs = require( 'fs-extra' );
 const XunitViewerParser = require( 'xunit-viewer/parser' );
 const pngitxt = require( 'png-itxt' );
 
-let Reporter = function() {};
+const Reporter = function() {};
 
 util.inherits( Reporter, BaseReporter );
 
 Reporter.prototype.listenTo = function( testRun, test, source ) {
 	// Print STDOUT/ERR to the screen for extra debugging
-	if ( !! process.env.MAGELLANDEBUG ) {
+	if ( process.env.MAGELLANDEBUG ) {
 		source.stdout.pipe( process.stdout );
 		source.stderr.pipe( process.stderr );
 	}
@@ -37,7 +37,7 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 	fs.mkdir( './reports', () => {} );
 
 	// Only enable Slack messages on the master branch
-	let slackClient = getSlackClient();
+	const slackClient = getSlackClient();
 
 	source.on( 'message', msg => {
 		if ( msg.type === 'worker-status' ) {
@@ -71,7 +71,7 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 							) {
 								const SlackUpload = require( 'node-slack-upload' );
 								const slackUpload = new SlackUpload( config.get( 'slackTokenForScreenshots' ) );
-								let slackChannel = configGet( 'slackChannelForScreenshots' );
+								const slackChannel = configGet( 'slackChannelForScreenshots' );
 
 								try {
 									fs.createReadStream( `${ screenshotDir }/${ screenshotPath }` ).pipe(
@@ -159,7 +159,7 @@ function configGet( key ) {
 	const target = process.env.TARGET || null;
 
 	if ( target && config.has( target ) ) {
-		let targetConfig = config.get( target );
+		const targetConfig = config.get( target );
 		if ( targetConfig.has( key ) ) {
 			return targetConfig.get( key );
 		}
@@ -222,7 +222,7 @@ function copyScreenshots( slackClient, dir, path, finalScreenshotDir ) {
 // Only enable Slack messages on the master branch & not for live branches
 function getSlackClient() {
 	if ( process.env.CIRCLE_BRANCH === 'master' && ! process.env.LIVEBRANCHES ) {
-		let slackHook = configGet( 'slackHook' );
+		const slackHook = configGet( 'slackHook' );
 		return slack( slackHook );
 	}
 	return { send: () => {} };
@@ -251,7 +251,7 @@ function sendFailureNotif( slackClient, reportDir, testRun ) {
 		copyReports( slackClient, reportDir, reportPath, testRun.guid );
 	} );
 
-	let fieldsObj = { Error: `${ failuresCount } failed tests` };
+	const fieldsObj = { Error: `${ failuresCount } failed tests` };
 	if ( process.env.DEPLOY_USER ) {
 		fieldsObj[ 'Git Diff' ] =
 			'<https://github.com/Automattic/wp-calypso/compare/' +

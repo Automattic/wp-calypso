@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By as by, until } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../driver-helper.js';
 
 import AsyncBaseContainer from '../async-base-container';
@@ -28,7 +35,7 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 	}
 
 	async selectCommentByText( commentText ) {
-		let commentSelector = by.css( '.wpnc__excerpt' );
+		const commentSelector = by.css( '.wpnc__excerpt' );
 		return await driverHelper.selectElementByText( this.driver, commentSelector, commentText );
 	}
 

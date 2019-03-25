@@ -1,9 +1,12 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import phrase from 'asana-phrase';
 import config from 'config';
 import { difference, map } from 'lodash';
-const fs = require( 'fs' );
+import fs from 'fs';
 
 String.prototype.toProperCase = function() {
 	return this.replace( /\w\S*/g, function( txt ) {
@@ -12,7 +15,7 @@ String.prototype.toProperCase = function() {
 };
 
 export function randomPhrase() {
-	var gen = phrase.default32BitFactory().randomPhrase();
+	const gen = phrase.default32BitFactory().randomPhrase();
 	return `${ gen[ 1 ].toProperCase() } ${ gen[ 2 ].toProperCase() } ${ gen[ 3 ].toProperCase() } ${ gen[ 4 ].toProperCase() }`;
 }
 
@@ -95,7 +98,7 @@ export function getAccountConfig( account ) {
 	let localConfig;
 
 	if ( target && config.has( target ) ) {
-		let targetConfig = config.get( target );
+		const targetConfig = config.get( target );
 		if ( targetConfig.has( 'testAccounts' ) ) {
 			localConfig = targetConfig.get( 'testAccounts' );
 
@@ -129,7 +132,7 @@ export function configGet( key ) {
 	const target = this.getTargetType();
 
 	if ( target && config.has( target ) ) {
-		let targetConfig = config.get( target );
+		const targetConfig = config.get( target );
 		if ( targetConfig.has( key ) ) {
 			return targetConfig.get( key );
 		}
@@ -222,7 +225,7 @@ export function getJetpackSiteName() {
 	}
 
 	// Other Jetpack site
-	let siteName = this.getAccountConfig( 'jetpackUser' + host )[ 2 ];
+	const siteName = this.getAccountConfig( 'jetpackUser' + host )[ 2 ];
 	return siteName.replace( /^https?:\/\//, '' ).replace( /\/wp-admin/, '' );
 }
 
@@ -258,9 +261,9 @@ export function getCalypsoURL( route = '', queryStrings = [], { forceWpCalypso =
 	if ( forceWpCalypso && baseURL === 'https://wordpress.com' ) {
 		baseURL = 'https://wpcalypso.wordpress.com';
 	}
-	let url = baseURL + '/' + route;
+	const url = baseURL + '/' + route;
 
-	for ( let qs of queryStrings ) {
+	for ( const qs of queryStrings ) {
 		queryString = this._appendQueryString( queryString, qs );
 	}
 

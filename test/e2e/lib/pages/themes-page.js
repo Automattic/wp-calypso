@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By as by } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper';
 import * as dataHelper from '../data-helper';
@@ -48,7 +55,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 
 	async waitForThemeStartingWith( phrase ) {
 		const selector = ThemesPage._getThemeSelectionXpath( phrase );
-		return driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		return await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 	}
 
 	async clickNewThemeMoreButton() {
@@ -81,17 +88,17 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async clickPopoverItem( name ) {
-		let actionItemSelector = by.css( '.popover__menu-item' );
+		const actionItemSelector = by.css( '.popover__menu-item' );
 		return await driverHelper.selectElementByText( this.driver, actionItemSelector, name );
 	}
 
 	async popOverMenuDisplayed() {
 		const popOverMenuSelector = by.css( '.popover__menu' );
-		return driverHelper.isEventuallyPresentAndDisplayed( this.driver, popOverMenuSelector );
+		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, popOverMenuSelector );
 	}
 
 	static _getThemeSelectionXpath( phrase ) {
-		let lowerCasedPhrase = phrase.toLowerCase().replace( ' ', '-' );
+		const lowerCasedPhrase = phrase.toLowerCase().replace( ' ', '-' );
 		return by.css( `div[data-e2e-theme*='${ lowerCasedPhrase }']:not(.is-active)` );
 	}
 

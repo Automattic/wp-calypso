@@ -1,5 +1,8 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { listen } from 'push-receiver';
 import request from 'request-promise';
 
@@ -10,7 +13,7 @@ import request from 'request-promise';
 //  * @returns {Boolean} true if token approved
 //  */
 export const approvePushToken = async ( pushToken, bearerToken ) => {
-	let responseString = await request( {
+	const responseString = await request( {
 		url: 'https://public-api.wordpress.com/rest/v1.1/me/two-step/push-authentication',
 		method: 'POST',
 		headers: {

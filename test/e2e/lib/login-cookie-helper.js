@@ -1,5 +1,8 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import fs from 'fs';
 import path from 'path';
 

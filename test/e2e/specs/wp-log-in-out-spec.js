@@ -1,10 +1,16 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
 import { get } from 'lodash';
 import speakeasy from 'speakeasy';
-
 import config from 'config';
+
+/**
+ * External dependencies
+ */
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper';
 
@@ -59,7 +65,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 
 		describe( 'Can Log In', function() {
 			step( 'Can log in', async function() {
-				let loginFlow = new LoginFlow( driver );
+				const loginFlow = new LoginFlow( driver );
 				await loginFlow.login( { useFreshLogin: true } );
 			} );
 
@@ -84,7 +90,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 
 		describe( 'Can Log Out', function() {
 			step( 'Can view profile to log out', async function() {
-				let navbarComponent = await NavBarComponent.Expect( driver );
+				const navbarComponent = await NavBarComponent.Expect( driver );
 				await navbarComponent.clickProfileLink();
 			} );
 
@@ -121,7 +127,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 						twoFALoginPage = new LoginPage( driver );
 						twoFALoginPage.use2FAMethod( 'sms' );
 					} );
-					xmppClient.on( 'e2e:sms', async function( sms ) {
+					xmppClient.on( 'e2e:sms', function( sms ) {
 						const twoFACodeMatches = sms.body.match( /\d+/g );
 						twoFACode = twoFACodeMatches[ 0 ];
 						if ( twoFACode ) {
@@ -135,7 +141,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 
 			step( 'Should be on the /log-in/sms page', async function() {
 				await twoFALoginPage.displayed();
-				let urlDisplayed = await driver.getCurrentUrl();
+				const urlDisplayed = await driver.getCurrentUrl();
 
 				assert(
 					urlDisplayed.indexOf( '/log-in/sms' ) !== -1,
@@ -165,7 +171,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 
 			step( 'Should be on the /log-in/push page', async function() {
 				await twoFALoginPage.displayed();
-				let urlDisplayed = await driver.getCurrentUrl();
+				const urlDisplayed = await driver.getCurrentUrl();
 				assert(
 					urlDisplayed.indexOf( '/log-in/push' ) !== -1,
 					'The 2fa push page is not displayed after log in'
@@ -173,10 +179,10 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 			} );
 
 			step( "Approve push 2fa token and we're logged in", async function() {
-				subscribeToPush( loginFlow.account.pushConfig, async pushToken => {
+				await subscribeToPush( loginFlow.account.pushConfig, async pushToken => {
 					await approvePushToken( pushToken, loginFlow.account.bearerToken );
 					const readerPage = new ReaderPage( driver );
-					let displayed = await readerPage.displayed();
+					const displayed = await readerPage.displayed();
 					assert.strictEqual( displayed, true, 'The reader page is not displayed after log in' );
 				} );
 			} );
@@ -200,7 +206,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 
 			step( 'Should be on the /log-in/authenticator page', async function() {
 				await twoFALoginPage.displayed();
-				let urlDisplayed = await driver.getCurrentUrl();
+				const urlDisplayed = await driver.getCurrentUrl();
 				assert(
 					urlDisplayed.indexOf( '/log-in/authenticator' ) !== -1,
 					'The 2fa authenticator page is not displayed after log in'
@@ -235,7 +241,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 				} );
 
 				step( 'Can find the magic link in the email received', async function() {
-					let emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
+					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
 					magicLinkEmail = emails.find( email => email.subject.indexOf( 'WordPress.com' ) > -1 );
 					assert( magicLinkEmail !== undefined, 'Could not find the magic login email' );
 					magicLoginLink = magicLinkEmail.html.links[ 0 ].href;
@@ -251,8 +257,8 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 						driver.get( magicLoginLink );
 						magicLoginPage = new MagicLoginPage( driver );
 						await magicLoginPage.finishLogin();
-						let readerPage = new ReaderPage( driver );
-						let displayed = await readerPage.displayed();
+						const readerPage = new ReaderPage( driver );
+						const displayed = await readerPage.displayed();
 						assert.strictEqual( displayed, true, 'The reader page is not displayed after log in' );
 					} );
 
@@ -291,7 +297,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 				} );
 
 				step( 'Can find the magic link in the email received', async function() {
-					let emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
+					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
 					magicLinkEmail = emails.find( email => email.subject.indexOf( 'WordPress.com' ) > -1 );
 					assert( magicLinkEmail !== undefined, 'Could not find the magic login email' );
 					magicLoginLink = magicLinkEmail.html.links[ 0 ].href;
@@ -315,7 +321,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 								twoFALoginPage = new LoginPage( driver );
 								twoFALoginPage.use2FAMethod( 'sms' );
 							} );
-							xmppClient.on( 'e2e:sms', async function( sms ) {
+							xmppClient.on( 'e2e:sms', function( sms ) {
 								const twoFACodeMatches = sms.body.match( /\d+/g );
 								twoFACode = twoFACodeMatches[ 0 ];
 								if ( twoFACode ) {
@@ -323,7 +329,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 									resolve();
 								}
 							} );
-							xmppClient.on( 'error', async function() {
+							xmppClient.on( 'error', function() {
 								reject();
 							} );
 						} );
@@ -331,7 +337,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 
 					step( 'Should be on the /log-in/sms page', async function() {
 						await twoFALoginPage.displayed();
-						let urlDisplayed = await driver.getCurrentUrl();
+						const urlDisplayed = await driver.getCurrentUrl();
 
 						assert(
 							urlDisplayed.indexOf( '/log-in/sms' ) !== -1,
@@ -378,7 +384,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 				} );
 
 				step( 'Can find the magic link in the email received', async function() {
-					let emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
+					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
 					magicLinkEmail = emails.find( email => email.subject.indexOf( 'WordPress.com' ) > -1 );
 					assert( magicLinkEmail !== undefined, 'Could not find the magic login email' );
 					magicLoginLink = magicLinkEmail.html.links[ 0 ].href;
@@ -400,7 +406,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 
 					step( 'Should be on the /log-in/authenticator page', async function() {
 						await twoFALoginPage.displayed();
-						let urlDisplayed = await driver.getCurrentUrl();
+						const urlDisplayed = await driver.getCurrentUrl();
 						assert(
 							urlDisplayed.indexOf( '/log-in/authenticator' ) !== -1,
 							'The 2fa authenticator page is not displayed after log in'

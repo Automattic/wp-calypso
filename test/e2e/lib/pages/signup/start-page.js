@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import * as dataHelper from '../../data-helper';
 import * as driverHelper from '../../driver-helper';
 import AsyncBaseContainer from '../../async-base-container';
@@ -23,7 +29,7 @@ export default class StartPage extends AsyncBaseContainer {
 
 	static getStartURL( { culture = 'en', flow = '', query = '' } = {} ) {
 		let route = 'start';
-		let queryStrings = [];
+		const queryStrings = [];
 
 		if ( flow !== '' ) {
 			route += '/' + flow;
