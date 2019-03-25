@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../../async-base-container';
 
 import * as SlackNotifier from '../../slack-notifier';
@@ -17,7 +23,7 @@ export default class SignupProcessingPage extends AsyncBaseContainer {
 	}
 
 	async waitToDisappear( username, password ) {
-		let signupProcessingTimeout = this.explicitWaitMS * 7.5; // Wait 150s for signup processing
+		const signupProcessingTimeout = this.explicitWaitMS * 7.5; // Wait 150s for signup processing
 		try {
 			await driverHelper.waitTillNotPresent(
 				this.driver,

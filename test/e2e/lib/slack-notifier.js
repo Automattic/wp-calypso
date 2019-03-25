@@ -1,12 +1,18 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 import slack from 'slack-notify';
 
+/**
+ * Internal dependencies
+ */
 import * as driverManager from './driver-manager';
 import * as dataHelper from './data-helper';
 
-let messages = [];
+const messages = [];
 
 export function warn( message, { suppressDuplicateMessages = false } = {} ) {
 	if (
@@ -14,7 +20,7 @@ export function warn( message, { suppressDuplicateMessages = false } = {} ) {
 		suppressDuplicateMessages === false
 	) {
 		console.log( message );
-		let slackHook = dataHelper.configGet( 'slackHook' );
+		const slackHook = dataHelper.configGet( 'slackHook' );
 
 		if (
 			slackHook &&

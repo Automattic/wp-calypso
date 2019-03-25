@@ -1,4 +1,8 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
 import config from 'config';
 import path from 'path';
 import fs from 'fs';
@@ -24,7 +28,9 @@ function createDir( dir ) {
 }
 
 function isVideoEnabled() {
-	let video = config.has( 'useTestVideo' ) ? config.get( 'useTestVideo' ) : process.env.TEST_VIDEO;
+	const video = config.has( 'useTestVideo' )
+		? config.get( 'useTestVideo' )
+		: process.env.TEST_VIDEO;
 	return video === 'true';
 }
 

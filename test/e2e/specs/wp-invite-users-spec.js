@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import LoginFlow from '../lib/flows/login-flow.js';
 
 import AcceptInvitePage from '../lib/pages/accept-invite-page.js';
@@ -71,9 +77,9 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		} );
 
 		step( 'Can see an invitation email received for the invite', async function() {
-			let emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
-			let links = emails[ 0 ].html.links;
-			let link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
+			const links = emails[ 0 ].html.links;
+			const link = links.find( l => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -88,8 +94,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await driver.get( acceptInviteURL );
 			const acceptInvitePage = await AcceptInvitePage.Expect( driver );
 
-			let actualEmailAddress = await acceptInvitePage.getEmailPreFilled();
-			let headerInviteText = await acceptInvitePage.getHeaderInviteText();
+			const actualEmailAddress = await acceptInvitePage.getEmailPreFilled();
+			const headerInviteText = await acceptInvitePage.getHeaderInviteText();
 			assert.strictEqual( actualEmailAddress, newInviteEmailAddress );
 			assert( headerInviteText.includes( 'editor' ) );
 
@@ -172,14 +178,14 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 			const revokePage = await RevokePage.Expect( driver );
 			await revokePage.revokeUser();
-			let sent = await revokePage.revokeSent();
+			const sent = await revokePage.revokeSent();
 			return assert( sent, 'The sent confirmation message was not displayed' );
 		} );
 
 		step( 'Can see an invitation email received for the invite', async function() {
-			let emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
-			let links = emails[ 0 ].html.links;
-			let link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
+			const links = emails[ 0 ].html.links;
+			const link = links.find( l => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -195,7 +201,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await AcceptInvitePage.Expect( driver );
 
 			const inviteErrorPage = await InviteErrorPage.Expect( driver );
-			let displayed = await inviteErrorPage.inviteErrorTitleDisplayed();
+			const displayed = await inviteErrorPage.inviteErrorTitleDisplayed();
 			return assert( displayed, 'The invite was not successfully revoked' );
 		} );
 	} );
@@ -234,9 +240,9 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		} );
 
 		step( 'Can see an invitation email received for the invite', async function() {
-			let emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
-			let links = emails[ 0 ].html.links;
-			let link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
+			const links = emails[ 0 ].html.links;
+			const link = links.find( l => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -251,8 +257,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await driver.get( acceptInviteURL );
 			const acceptInvitePage = await AcceptInvitePage.Expect( driver );
 
-			let actualEmailAddress = await acceptInvitePage.getEmailPreFilled();
-			let headerInviteText = await acceptInvitePage.getHeaderInviteText();
+			const actualEmailAddress = await acceptInvitePage.getEmailPreFilled();
+			const headerInviteText = await acceptInvitePage.getHeaderInviteText();
 			assert.strictEqual( actualEmailAddress, newInviteEmailAddress );
 			assert( headerInviteText.includes( 'view' ) );
 
@@ -263,7 +269,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 		step( 'Can see user has been added as a Viewer', async function() {
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			let followMessageDisplayed = await noticesComponent.followMessageTitle();
+			const followMessageDisplayed = await noticesComponent.followMessageTitle();
 			assert.strictEqual(
 				true,
 				followMessageDisplayed.includes( 'viewer' ),
@@ -309,7 +315,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				const peoplePage = await PeoplePage.Expect( driver );
 
 				await peoplePage.selectViewers();
-				let displayed = await peoplePage.viewerDisplayed( newUserName );
+				const displayed = await peoplePage.viewerDisplayed( newUserName );
 				if ( displayed ) {
 					await peoplePage.removeUserByName( newUserName );
 
@@ -350,9 +356,9 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		} );
 
 		step( 'Can see an invitation email received for the invite', async function() {
-			let emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
-			let links = emails[ 0 ].html.links;
-			let link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
+			const links = emails[ 0 ].html.links;
+			const link = links.find( l => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -367,8 +373,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await driver.get( acceptInviteURL );
 			const acceptInvitePage = await AcceptInvitePage.Expect( driver );
 
-			let actualEmailAddress = await acceptInvitePage.getEmailPreFilled();
-			let headerInviteText = await acceptInvitePage.getHeaderInviteText();
+			const actualEmailAddress = await acceptInvitePage.getEmailPreFilled();
+			const headerInviteText = await acceptInvitePage.getHeaderInviteText();
 			assert.strictEqual( actualEmailAddress, newInviteEmailAddress );
 			assert( headerInviteText.includes( 'contributor' ) );
 
@@ -379,7 +385,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		step( 'Can see a notice welcoming the new user as an contributor', async function() {
 			await PostsPage.Expect( driver );
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			let invitesMessageTitleDisplayed = await noticesComponent.inviteMessageTitle();
+			const invitesMessageTitleDisplayed = await noticesComponent.inviteMessageTitle();
 			return assert(
 				invitesMessageTitleDisplayed.includes( 'Contributor' ),
 				`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Contributor'`
@@ -408,7 +414,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await postsPage.viewMyPosts();
 			await postsPage.viewDrafts();
 			await postsPage.waitForPostTitled( reviewPostTitle );
-			let pending = await postsPage.isPostPending();
+			const pending = await postsPage.isPostPending();
 			return assert( pending, 'The pending post was not displayed on the posts page' );
 		} );
 
@@ -417,7 +423,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			const peoplePage = await PeoplePage.Expect( driver );
 			await peoplePage.selectTeam();
 			await peoplePage.searchForUser( newUserName );
-			let numberPeopleShown = await peoplePage.numberSearchResults();
+			const numberPeopleShown = await peoplePage.numberSearchResults();
 			return assert.strictEqual(
 				numberPeopleShown,
 				1,
@@ -433,7 +439,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				await peoplePage.selectOnlyPersonDisplayed();
 				const editTeamMemberPage = await EditTeamMemberPage.Expect( driver );
 				await editTeamMemberPage.changeToNewRole( 'author' );
-				let displayed = await editTeamMemberPage.successNoticeDisplayed();
+				const displayed = await editTeamMemberPage.successNoticeDisplayed();
 				return assert(
 					displayed,
 					'The update successful notice was not shown on the edit team member page.'
@@ -483,9 +489,9 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		} );
 
 		step( 'Can see an invitation email received for the invite', async function() {
-			let emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
-			let links = emails[ 0 ].html.links;
-			let link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
+			const links = emails[ 0 ].html.links;
+			const link = links.find( l => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notStrictEqual(
 				acceptInviteURL,
@@ -500,8 +506,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await driver.get( acceptInviteURL );
 			const acceptInvitePage = await AcceptInvitePage.Expect( driver );
 
-			let actualEmailAddress = await acceptInvitePage.getEmailPreFilled();
-			let headerInviteText = await acceptInvitePage.getHeaderInviteText();
+			const actualEmailAddress = await acceptInvitePage.getEmailPreFilled();
+			const headerInviteText = await acceptInvitePage.getHeaderInviteText();
 			assert.strictEqual( actualEmailAddress, newInviteEmailAddress );
 			assert( headerInviteText.includes( 'follow' ) );
 
@@ -525,7 +531,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			const peoplePage = await PeoplePage.Expect( driver );
 			await peoplePage.selectEmailFollowers();
 			await peoplePage.searchForUser( newUserName );
-			let numberPeopleShown = await peoplePage.numberSearchResults();
+			const numberPeopleShown = await peoplePage.numberSearchResults();
 			assert.strictEqual(
 				numberPeopleShown,
 				1,
@@ -537,7 +543,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			const peoplePage = await PeoplePage.Expect( driver );
 			await peoplePage.removeOnlyEmailFollowerDisplayed();
 			await peoplePage.searchForUser( newUserName );
-			let numberPeopleShown = await peoplePage.numberSearchResults();
+			const numberPeopleShown = await peoplePage.numberSearchResults();
 			assert.strictEqual(
 				numberPeopleShown,
 				0,
@@ -552,7 +558,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await peoplePage.waitForSearchResults();
 			await peoplePage.removeUserByName( newUserName );
 			await peoplePage.waitForSearchResults();
-			let displayed = await peoplePage.viewerDisplayed( newUserName );
+			const displayed = await peoplePage.viewerDisplayed( newUserName );
 			assert.strictEqual(
 				displayed,
 				false,

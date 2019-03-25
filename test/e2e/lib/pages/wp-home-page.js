@@ -1,7 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import webdriver from 'selenium-webdriver';
 import assert from 'assert';
+
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 import localizationData from '../../localization-data.json';
 
@@ -29,7 +36,7 @@ export default class WPHomePage extends AsyncBaseContainer {
 
 	async checkURL( culture ) {
 		const target = culture ? localizationData[ culture ].wpcom_base_url : 'wordpress.com';
-		let currentUrl = await this.driver.getCurrentUrl();
+		const currentUrl = await this.driver.getCurrentUrl();
 		return assert.strictEqual(
 			true,
 			currentUrl.includes( target ),

@@ -1,5 +1,13 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
 import { By, until } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
@@ -143,7 +151,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async titleShown() {
-		let titleSelector = By.css( '#post-title-0' );
+		const titleSelector = By.css( '#post-title-0' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, titleSelector );
 		const element = await this.driver.findElement( titleSelector );
 		return await element.getAttribute( 'value' );
@@ -229,7 +237,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async revertToDraft() {
-		let revertDraftSelector = By.css( 'button.editor-post-switch-to-draft' );
+		const revertDraftSelector = By.css( 'button.editor-post-switch-to-draft' );
 		await driverHelper.clickWhenClickable( this.driver, revertDraftSelector );
 		const revertAlert = await this.driver.switchTo().alert();
 		return await revertAlert.accept();

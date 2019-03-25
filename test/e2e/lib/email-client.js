@@ -1,5 +1,8 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import webdriver from 'selenium-webdriver';
 import config from 'config';
 
@@ -25,7 +28,7 @@ export default class EmailClient {
 	}
 
 	deleteAllEmail() {
-		var d = webdriver.promise.defer();
+		const d = webdriver.promise.defer();
 		this.mailbox.deleteAllEmail( err => {
 			if ( err ) {
 				d.reject( err );

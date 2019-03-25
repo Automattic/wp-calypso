@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 import assert from 'assert';
 
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper';
 
@@ -120,8 +126,8 @@ describe( `[${ host }] Plans: (${ screenSize }) @jetpack`, function() {
 
 			await securePaymentComponent.enterCouponCode( dataHelper.getTestCouponCode() );
 
-			let newCartAmount = await securePaymentComponent.cartTotalAmount();
-			let expectedCartAmount = parseFloat( ( originalCartAmount * 0.99 ).toFixed( 2 ) );
+			const newCartAmount = await securePaymentComponent.cartTotalAmount();
+			const expectedCartAmount = parseFloat( ( originalCartAmount * 0.99 ).toFixed( 2 ) );
 
 			assert.strictEqual( newCartAmount, expectedCartAmount, 'Coupon not applied properly' );
 		} );
@@ -131,7 +137,7 @@ describe( `[${ host }] Plans: (${ screenSize }) @jetpack`, function() {
 
 			await securePaymentComponent.removeCoupon();
 
-			let removedCouponAmount = await securePaymentComponent.cartTotalAmount();
+			const removedCouponAmount = await securePaymentComponent.cartTotalAmount();
 			assert.strictEqual( removedCouponAmount, originalCartAmount, 'Coupon not removed properly' );
 		} );
 

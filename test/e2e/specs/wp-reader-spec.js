@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 import assert from 'assert';
 
+/**
+ * Internal dependencies
+ */
 import LoginFlow from '../lib/flows/login-flow.js';
 
 import ReaderPage from '../lib/pages/reader-page.js';
@@ -40,7 +46,7 @@ describe( 'Reader: (' + screenSize + ') @parallel', function() {
 			step( 'The latest post is on the expected test site', async function() {
 				const testSiteForNotifications = dataHelper.configGet( 'testSiteForNotifications' );
 				const readerPage = await ReaderPage.Expect( driver );
-				let siteOfLatestPost = await readerPage.siteOfLatestPost();
+				const siteOfLatestPost = await readerPage.siteOfLatestPost();
 				return assert.strictEqual(
 					siteOfLatestPost,
 					testSiteForNotifications,

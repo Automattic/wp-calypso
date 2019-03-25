@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import * as dataHelper from '../../data-helper';
 import * as driverHelper from '../../driver-helper';
 import AsyncBaseContainer from '../../async-base-container';
@@ -24,6 +30,6 @@ export default class JetpackAddNewSitePage extends AsyncBaseContainer {
 			screenSize === 'mobile'
 				? By.css( '.jetpack-new-site__mobile-wpcom-site a.button' )
 				: By.css( '.jetpack-new-site__wpcom-site a.button' );
-		return driverHelper.clickWhenClickable( this.driver, wpComButtonSelector );
+		return await driverHelper.clickWhenClickable( this.driver, wpComButtonSelector );
 	}
 }

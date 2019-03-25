@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../lib/driver-manager.js';
 
 import localization_data from '../localization-data.json';
@@ -24,13 +30,13 @@ before( async function() {
 
 after( function( done ) {
 	// Wait between tests to not overload Google
-	let wait_seconds = 10;
+	const wait_seconds = 10;
 	this.timeout( ( wait_seconds + 2 ) * 1e3 );
 	setTimeout( done, wait_seconds * 1e3 );
 } );
 
 function doGoogleAdSearch( search_params ) {
-	let description =
+	const description =
 		'Search for "' +
 		search_params.query +
 		'" on ' +
@@ -64,7 +70,7 @@ function doGoogleAdSearch( search_params ) {
 
 		step( 'Our landing page exists', async function() {
 			const that = this;
-			let url = await this.searchPage.getAdUrl();
+			const url = await this.searchPage.getAdUrl();
 			that.landingPage = await LandingPage.Visit( driver, url );
 			return await that.landingPage.checkURL();
 		} );

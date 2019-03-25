@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 
 import * as driverHelper from '../driver-helper';
@@ -46,7 +53,7 @@ export default class PostsPage extends AsyncBaseContainer {
 	}
 
 	async openSectionNav() {
-		let isOpen = await driverHelper.isElementPresent(
+		const isOpen = await driverHelper.isElementPresent(
 			this.driver,
 			By.css( '.post-type-filter .section-nav.is-open' )
 		);

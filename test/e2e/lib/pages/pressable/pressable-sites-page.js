@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../../async-base-container';
 import PressableSiteSettingsPage from './pressable-site-settings-page';
 import * as driverHelper from '../../driver-helper';

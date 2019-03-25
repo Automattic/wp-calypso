@@ -1,7 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By as by } from 'selenium-webdriver';
 import config from 'config';
+
+/**
+ * Internal dependencies
+ */
 import * as slackNotifier from '../slack-notifier';
 import AsyncBaseContainer from '../async-base-container';
 
@@ -18,7 +25,7 @@ export default class TwitterFeedPage extends AsyncBaseContainer {
 
 	async checkLatestTweetsContain( expectedTweetText ) {
 		const driver = this.driver;
-		return driver
+		return await driver
 			.wait( function() {
 				driver.navigate().refresh();
 				return driver.getPageSource().then( function( source ) {

@@ -1,9 +1,12 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 import { findIndex } from 'lodash';
 
-async function getABTestEraser( name ) {
+function getABTestEraser( name ) {
 	return () => {
 		const overrideABTests = config.get( 'overrideABTests' );
 		const index = findIndex( overrideABTests, item => item[ 0 ] === name );
@@ -14,7 +17,7 @@ async function getABTestEraser( name ) {
 	};
 }
 
-async function getABTestUpdater( name, variation ) {
+function getABTestUpdater( name, variation ) {
 	return () => {
 		const overrideABTests = config.get( 'overrideABTests' );
 		const index = findIndex( overrideABTests, item => item[ 0 ] === name );

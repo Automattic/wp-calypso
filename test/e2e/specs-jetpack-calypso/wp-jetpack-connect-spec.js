@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 import assert from 'assert';
 
+/**
+ * Internal dependencies
+ */
 import LoginFlow from '../lib/flows/login-flow';
 import SignUpFlow from '../lib/flows/sign-up-flow';
 
@@ -101,7 +107,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 
 		step( 'Has site URL in route', async function( done ) {
 			const siteSlug = this.jnFlow.url.replace( /^https?:\/\//, '' );
-			let url = await driver.getCurrentUrl();
+			const url = await driver.getCurrentUrl();
 			if ( url.includes( siteSlug ) ) {
 				return done();
 			}

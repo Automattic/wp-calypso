@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
+
+/**
+ * Internal dependencies
+ */
 import * as slackNotifier from './slack-notifier';
 
 import * as mediaHelper from './media-helper';
@@ -49,7 +56,7 @@ afterEach( async function() {
 	const shortDescribeFileName = this.currentTest
 		.fullTitle()
 		.replace( /.*\)/gi, '' )
-		.replace( /\@.*/gi, '' )
+		.replace( /\@.*/gi, '' ) // eslint-disable-line no-useless-escape
 		.replace( /[^a-z0-9]/gi, '-' )
 		.toLowerCase();
 
@@ -59,7 +66,7 @@ afterEach( async function() {
 	let filenameCallback;
 
 	if ( this.currentTest.state === 'failed' ) {
-		let neverSaveScreenshots = config.get( 'neverSaveScreenshots' );
+		const neverSaveScreenshots = config.get( 'neverSaveScreenshots' );
 		if ( neverSaveScreenshots ) {
 			return null;
 		}

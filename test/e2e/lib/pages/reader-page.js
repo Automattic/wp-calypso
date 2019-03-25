@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By as by } from 'selenium-webdriver';
 import URL from 'url';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import * as dataHelper from '../data-helper';
@@ -16,7 +22,7 @@ export default class ReaderPage extends AsyncBaseContainer {
 	}
 
 	async siteOfLatestPost() {
-		let href = await this.driver
+		const href = await this.driver
 			.findElement( by.css( '.reader-visit-link' ) )
 			.getAttribute( 'href' );
 		return URL.parse( href ).host;
@@ -33,7 +39,7 @@ export default class ReaderPage extends AsyncBaseContainer {
 	}
 
 	async waitForCommentToAppear( comment ) {
-		let commentSelector = by.css( '.comments__comment-content' );
+		const commentSelector = by.css( '.comments__comment-content' );
 		return await driverHelper.verifyTextPresent( this.driver, commentSelector, comment );
 	}
 

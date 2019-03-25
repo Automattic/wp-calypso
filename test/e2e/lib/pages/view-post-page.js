@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper';
 import PaymentButtonFrontEndComponent from '../components/payment-button-front-end-component';
@@ -62,7 +68,7 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async enterPassword( password ) {
-		let element = await this.driver.findElement(
+		const element = await this.driver.findElement(
 			By.css( 'form.post-password-form input[name=post_password]' )
 		);
 		await element.sendKeys( password );

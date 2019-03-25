@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By as by } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../driver-helper.js';
 
 import AsyncBaseContainer from '../async-base-container';
@@ -22,8 +29,8 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		}
 	}
 	async dismissComponentPopover() {
-		let popoverSelector = by.css( '.components-popover__content' );
-		let dismissPopoverSelector = by.css( '.nux-dot-tip__disable' );
+		const popoverSelector = by.css( '.components-popover__content' );
+		const dismissPopoverSelector = by.css( '.nux-dot-tip__disable' );
 
 		if ( await driverHelper.isElementPresent( this.driver, popoverSelector ) ) {
 			await driverHelper.clickWhenClickable( dismissPopoverSelector );
@@ -56,7 +63,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 	async openNotifications() {
 		const driver = this.driver;
 		const notificationsSelector = by.css( '.masterbar__item-notifications' );
-		let classNames = await driver.findElement( notificationsSelector ).getAttribute( 'class' );
+		const classNames = await driver.findElement( notificationsSelector ).getAttribute( 'class' );
 		if ( classNames.includes( 'is-active' ) === false ) {
 			return driverHelper.clickWhenClickable( driver, notificationsSelector );
 		}
@@ -78,7 +85,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		const guidedToursDismissButtonSelector = by.css(
 			'div.guided-tours__step-first button:not(.is-primary)'
 		);
-		let present = await driverHelper.isElementPresent( self.driver, guidedToursDialogSelector );
+		const present = await driverHelper.isElementPresent( self.driver, guidedToursDialogSelector );
 		if ( present === true ) {
 			return await driverHelper.clickWhenClickable( self.driver, guidedToursDismissButtonSelector );
 		}

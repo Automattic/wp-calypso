@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 
 import * as DriverHelper from '../driver-helper.js';
@@ -61,7 +68,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 		if (
 			await DriverHelper.isElementPresent( this.driver, By.css( '.section-header__label .count' ) )
 		) {
-			let noOfViewers = parseInt(
+			const noOfViewers = parseInt(
 				await this.driver.findElement( By.css( '.section-header__label .count' ) ).getText()
 			);
 			retries = Math.round( noOfViewers / 10 );
@@ -115,7 +122,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async numberSearchResults() {
-		let peopleItems = await this.driver.findElements( this.peopleListItemSelector );
+		const peopleItems = await this.driver.findElements( this.peopleListItemSelector );
 		return peopleItems.length;
 	}
 
@@ -124,7 +131,10 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async successNoticeDisplayed() {
-		return DriverHelper.isEventuallyPresentAndDisplayed( this.driver, this.successNoticeSelector );
+		return await DriverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			this.successNoticeSelector
+		);
 	}
 
 	async inviteUser() {
@@ -136,7 +146,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 
 	async waitForPendingInviteDisplayedFor( emailAddress ) {
 		const driver = this.driver;
-		return driver.wait( async () => {
+		return await driver.wait( async () => {
 			driver.navigate().refresh();
 			return await DriverHelper.isElementPresent(
 				driver,

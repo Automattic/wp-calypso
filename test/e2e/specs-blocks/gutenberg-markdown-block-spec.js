@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 import assert from 'assert';
 
+/**
+ * Internal dependencies
+ */
 import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar.js';
 import JetpackConnectFlow from '../lib/flows/jetpack-connect-flow.js';
 import MarkdownBlockComponent from '../lib/gutenberg/blocks/markdown-block-component.js';

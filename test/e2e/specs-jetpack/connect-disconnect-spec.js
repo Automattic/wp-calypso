@@ -1,6 +1,13 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import LoginFlow from '../lib/flows/login-flow';
 import JetpackAuthorizePage from '../lib/pages/jetpack-authorize-page';
 import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page';
@@ -41,7 +48,7 @@ describe( `Jetpack Connect and Disconnect: (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
 	before( async function() {
-		return driverManager.ensureNotLoggedIn( driver );
+		return await driverManager.ensureNotLoggedIn( driver );
 	} );
 
 	describe( 'Connect Jetpack and see if post page is loading correctly', function() {

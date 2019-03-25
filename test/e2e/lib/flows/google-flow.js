@@ -1,5 +1,8 @@
 /** @format */
 
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../driver-manager.js';
 
 import GoogleAdPreviewTool from '../pages/external/google-ad-preview-tool.js';

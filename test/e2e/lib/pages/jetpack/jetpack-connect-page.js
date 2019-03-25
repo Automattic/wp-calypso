@@ -1,5 +1,13 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../../driver-helper';
 import AsyncBaseContainer from '../../async-base-container';
 
@@ -9,8 +17,8 @@ export default class JetpackConnectPage extends AsyncBaseContainer {
 	}
 
 	async addSiteUrl( url ) {
-		let urlInputSelector = By.css( '.jetpack-connect__site-address-container #siteUrl' );
-		let confirmButtonSelector = By.css(
+		const urlInputSelector = By.css( '.jetpack-connect__site-address-container #siteUrl' );
+		const confirmButtonSelector = By.css(
 			'.jetpack-connect__main .jetpack-connect__connect-button:not([disabled])'
 		);
 

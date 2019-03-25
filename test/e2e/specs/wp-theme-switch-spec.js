@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 import assert from 'assert';
 
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../lib/driver-manager.js';
 
 import LoginFlow from '../lib/flows/login-flow.js';
@@ -34,7 +40,7 @@ describe( `[${ host }] Previewing Themes: (${ screenSize })`, function() {
 
 	describe( 'Previewing Themes @parallel @jetpack', function() {
 		step( 'Delete Cookies and Login', async function() {
-			let loginFlow = new LoginFlow( driver );
+			const loginFlow = new LoginFlow( driver );
 			await loginFlow.loginAndSelectThemes();
 		} );
 
@@ -65,24 +71,24 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel @jetpack`,
 	this.timeout( mochaTimeOut );
 	describe( 'Activating Themes:', function() {
 		step( 'Login', async function() {
-			let loginFlow = new LoginFlow( driver );
+			const loginFlow = new LoginFlow( driver );
 			return await loginFlow.loginAndSelectMySite();
 		} );
 
 		step( 'Can open Themes menu', async function() {
-			let sidebarComponent = await SidebarComponent.Expect( driver );
+			const sidebarComponent = await SidebarComponent.Expect( driver );
 			return await sidebarComponent.selectThemes();
 		} );
 
 		describe( 'Can switch free themes', function() {
 			step( 'Can activate a different free theme', async function() {
-				let themesPage = await ThemesPage.Expect( driver );
+				const themesPage = await ThemesPage.Expect( driver );
 				await themesPage.waitUntilThemesLoaded();
 				await themesPage.showOnlyFreeThemes();
 				await themesPage.searchFor( 'Twenty F' );
 				await themesPage.waitForThemeStartingWith( 'Twenty F' );
 				await themesPage.clickNewThemeMoreButton();
-				let displayed = await themesPage.popOverMenuDisplayed();
+				const displayed = await themesPage.popOverMenuDisplayed();
 				assert( displayed, true, 'Popover menu not displayed' );
 				return await themesPage.clickPopoverItem( 'Activate' );
 			} );

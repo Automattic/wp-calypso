@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By as by } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import * as dataHelper from '../data-helper';
 import * as driverHelper from '../driver-helper';
 import AsyncBaseContainer from '../async-base-container';

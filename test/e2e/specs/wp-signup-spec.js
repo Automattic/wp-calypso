@@ -1,9 +1,15 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../lib/driver-manager.js';
 import * as driverHelper from '../lib/driver-helper.js';
 import * as dataHelper from '../lib/data-helper.js';
@@ -118,7 +124,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 					expectedBlogAddresses,
 					blogName
 				);
-				let actualAddress = await findADomainComponent.freeBlogAddress();
+				const actualAddress = await findADomainComponent.freeBlogAddress();
 				assert(
 					expectedBlogAddresses.indexOf( actualAddress ) > -1,
 					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
@@ -150,13 +156,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step( 'Can see email containing magic link', async function() {
 			const emailClient = new EmailClient( signupInboxId );
 			const validator = emails => emails.find( email => email.subject.includes( 'WordPress.com' ) );
-			let emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
+			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
 			assert.strictEqual(
 				emails.length,
 				2,
 				'The number of newly registered emails is not equal to 2 (activation and magic link)'
 			);
-			for ( let email of emails ) {
+			for ( const email of emails ) {
 				if ( email.subject.includes( 'WordPress.com' ) ) {
 					return ( magicLoginLink = email.html.links[ 0 ].href );
 				}
@@ -216,7 +222,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 					expectedBlogAddresses,
 					blogName
 				);
-				let actualAddress = await findADomainComponent.freeBlogAddress();
+				const actualAddress = await findADomainComponent.freeBlogAddress();
 				assert(
 					expectedBlogAddresses.indexOf( actualAddress ) > -1,
 					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
@@ -281,7 +287,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		step( 'Can then see the domains page ', async function() {
 			const findADomainComponent = await FindADomainComponent.Expect( driver );
-			let displayed = await findADomainComponent.displayed();
+			const displayed = await findADomainComponent.displayed();
 			return assert.strictEqual( displayed, true, 'The choose a domain page is not displayed' );
 		} );
 
@@ -297,7 +303,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		step( 'Can then see the plans page and select the premium plan ', async function() {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			let displayed = await pickAPlanPage.displayed();
+			const displayed = await pickAPlanPage.displayed();
 			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
 			return await pickAPlanPage.selectPremiumPlan();
 		} );
@@ -331,8 +337,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 			await securePaymentComponent.enterCouponCode( dataHelper.getTestCouponCode() );
 
-			let newCartAmount = await securePaymentComponent.cartTotalAmount();
-			let expectedCartAmount = originalCartAmount * 0.99;
+			const newCartAmount = await securePaymentComponent.cartTotalAmount();
+			const expectedCartAmount = originalCartAmount * 0.99;
 
 			// The HTML element that cartTotalAmount() parses is rounded to different decimal level depended on the currency.
 			// For example, in USD it would be 2, e.g. 12.34. In JPY or TWD there will be no decimal digits.
@@ -349,7 +355,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 			await securePaymentComponent.removeCoupon();
 
-			let removedCouponAmount = await securePaymentComponent.cartTotalAmount();
+			const removedCouponAmount = await securePaymentComponent.cartTotalAmount();
 			assert.strictEqual( removedCouponAmount, originalCartAmount, 'Coupon not removed properly' );
 		} );
 
@@ -401,7 +407,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		step( 'Can then see the domains page ', async function() {
 			const findADomainComponent = await FindADomainComponent.Expect( driver );
-			let displayed = await findADomainComponent.displayed();
+			const displayed = await findADomainComponent.displayed();
 			return assert.strictEqual( displayed, true, 'The choose a domain page is not displayed' );
 		} );
 
@@ -417,7 +423,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		step( 'Can then see the plans page and select the premium plan ', async function() {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			let displayed = await pickAPlanPage.displayed();
+			const displayed = await pickAPlanPage.displayed();
 			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
 			return await pickAPlanPage.selectPremiumPlan();
 		} );
@@ -871,13 +877,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		step( 'We should only one option - the settings option', async function() {
 			const sideBarComponent = await SideBarComponent.Expect( driver );
-			let numberMenuItems = await sideBarComponent.numberOfMenuItems();
+			const numberMenuItems = await sideBarComponent.numberOfMenuItems();
 			assert.strictEqual(
 				numberMenuItems,
 				1,
 				'There is not a single menu item for a domain only site'
 			);
-			let exists = await sideBarComponent.settingsOptionExists();
+			const exists = await sideBarComponent.settingsOptionExists();
 			return assert( exists, 'The settings menu option does not exist' );
 		} );
 
@@ -894,7 +900,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				await domainDetailsPage.viewPaymentSettings();
 
 				const managePurchasePage = await ManagePurchasePage.Expect( driver );
-				let domainDisplayed = await managePurchasePage.domainDisplayed();
+				const domainDisplayed = await managePurchasePage.domainDisplayed();
 				assert.strictEqual(
 					domainDisplayed,
 					expectedDomainName,
@@ -1117,7 +1123,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 					expectedBlogAddresses,
 					blogName
 				);
-				let actualAddress = await findADomainComponent.freeBlogAddress();
+				const actualAddress = await findADomainComponent.freeBlogAddress();
 				assert(
 					expectedBlogAddresses.indexOf( actualAddress ) > -1,
 					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
@@ -1213,7 +1219,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			'Can then see the secure payment page with the chosen theme in the cart',
 			async function() {
 				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				let products = await securePaymentComponent.getProductsNames();
+				const products = await securePaymentComponent.getProductsNames();
 				assert(
 					products[ 0 ].search( chosenThemeName ),
 					`First product in cart is not ${ chosenThemeName }`
@@ -1317,7 +1323,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 					expectedDomainName,
 					blogName
 				);
-				let actualAddress = await findADomainComponent.freeBlogAddress();
+				const actualAddress = await findADomainComponent.freeBlogAddress();
 				assert(
 					expectedDomainName.indexOf( actualAddress ) > -1,
 					`The displayed blog address: '${ actualAddress }' was not the expected addresses: '${ expectedDomainName }'`
@@ -1426,7 +1432,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 					expectedBlogAddresses,
 					blogName
 				);
-				let actualAddress = await findADomainComponent.freeBlogAddress();
+				const actualAddress = await findADomainComponent.freeBlogAddress();
 				assert(
 					expectedBlogAddresses.indexOf( actualAddress ) > -1,
 					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
@@ -1618,7 +1624,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step( 'Can activate my account from an email', async function() {
 			const emailClient = new EmailClient( signupInboxId );
 			const validator = emails => emails.find( email => email.subject.includes( 'Activate' ) );
-			let emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
+			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
 			assert.strictEqual(
 				emails.length,
 				1,
@@ -1686,7 +1692,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 					expectedBlogAddresses,
 					blogName
 				);
-				let actualAddress = await findADomainComponent.freeBlogAddress();
+				const actualAddress = await findADomainComponent.freeBlogAddress();
 				assert(
 					expectedBlogAddresses.indexOf( actualAddress ) > -1,
 					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
@@ -1798,7 +1804,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 					expectedBlogAddresses,
 					blogName
 				);
-				let actualAddress = await findADomainComponent.freeBlogAddress();
+				const actualAddress = await findADomainComponent.freeBlogAddress();
 				assert(
 					expectedBlogAddresses.indexOf( actualAddress ) > -1,
 					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
