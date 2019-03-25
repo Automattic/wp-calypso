@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import { requestVerticals } from 'state/signup/verticals/actions';
 import { getVerticals } from 'state/signup/verticals/selectors';
 
-class QueryVerticals extends Component {
+export class QueryVerticals extends Component {
 	static propTypes = {
 		searchTerm: PropTypes.string,
 		limit: PropTypes.number,
