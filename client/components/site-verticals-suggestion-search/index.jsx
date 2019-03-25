@@ -51,6 +51,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		super( props );
 		this.state = {
 			railcar: this.getNewRailcar(),
+			candidateVerticals: [],
 		};
 	}
 
@@ -82,7 +83,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			}
 		);
 
-	onSiteTopicChange = value => {
+	onSiteTopicChange = ( value, isNavigating ) => {
 		const hasValue = !! value;
 		const valueLength = value.length || 0;
 		const valueLengthShouldTriggerSearch = valueLength >= this.props.charsToTriggerSearch;
@@ -97,14 +98,35 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			this.setState( { railcar: this.getNewRailcar() } );
 		}
 
-		this.updateVerticalData( result, value );
+		this.props.onChange( {
+			verticalName: value,
+		} );
+
+		this.setState( {
+			isNavigating,
+		} );
 	};
+
+	componentDidUpdate( prevProps ) {
+		// The suggestion list should only be updated when a user is not navigating the list through keying.
+		// Note: it's intentional to use object reference comparison here.
+		// Since `verticals` props is connected from a redux state here, if the two references are identical,
+		// we can safely say that the two content are identical, thanks to the immutability invariant of redux.
+		if ( prevProps.verticals !== this.props.verticals && ! this.state.isNavigating ) {
+			// It's safe here to call setState() because we prevent the indefinite loop by the wrapping condition.
+			// See the official doc here: https://reactjs.org/docs/react-component.html#componentdidupdate
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( {
+				candidateVerticals: this.props.verticals,
+			} );
+		}
+	}
 
 	onPopularTopicSelect = value => {
 		this.setState( { searchValue: value } );
 	};
 
-	getSuggestions = () => this.props.verticals.map( vertical => vertical.verticalName );
+	getSuggestions = () => this.state.candidateVerticals.map( vertical => vertical.verticalName );
 
 	sortSearchResults = ( suggestionsArray, queryString ) => {
 		let queryMatch;
