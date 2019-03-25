@@ -33,7 +33,7 @@ function getLoginUrlWithTOSRedirect( email, domain ) {
 	return (
 		`https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel` +
 		`&continue=https%3A%2F%2Fadmin.google.com%2F${ domain }` +
-		'%2FAcceptTermsOfService%3Fcontinue%3Dhttps%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F1'
+		`%2FAcceptTermsOfService%3Fcontinue%3Dhttps%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F${ email }`
 	);
 }
 
