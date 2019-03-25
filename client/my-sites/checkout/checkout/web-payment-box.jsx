@@ -19,6 +19,7 @@ import Button from 'components/button';
 import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import PaymentCountrySelect from 'components/payment-country-select';
 import Input from 'my-sites/domains/components/form/input';
+import cartValues, { getTaxCountryCode } from 'lib/cart-values';
 import wpcom from 'lib/wp';
 import { newCardPayment } from 'lib/store-transactions';
 import { setPayment } from 'lib/upgrades/actions';
@@ -352,7 +353,7 @@ export class WebPaymentBox extends React.Component {
 								const cardRawDetails = {
 									tokenized_payment_data: token.paymentData,
 									name: payerName,
-									country: this.state.country,
+									country: getTaxCountryCode( this.props.cart ),
 									'postal-code': this.state.postalCode,
 									card_brand: token.paymentMethod.network,
 								};
@@ -409,22 +410,14 @@ export class WebPaymentBox extends React.Component {
 	};
 
 	/**
-	 * @param {string} key    Should only be `country`.
-	 * @param {string} value  Should only be a country name.
-	 */
-	updateSelectedCountry = ( key, value ) => {
-		if ( 'country' === key ) {
-			this.setState( { country: value } );
-		}
-	};
-
-	/**
 	 * @param {object} event  Event object.
 	 */
 	updateSelectedPostalCode = event => {
 		const { name: key, value } = event.target;
 
 		if ( 'postal-code' === key ) {
+			// Request updated tax amounts
+			this.props.setTaxPostalCode( value );
 			this.setState( { postalCode: value } );
 		}
 	};
@@ -433,13 +426,14 @@ export class WebPaymentBox extends React.Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const paymentMethod = this.detectedPaymentMethod;
 		const { cart, translate, countriesList } = this.props;
+		const countryCode = getTaxCountryCode( cart );
 
 		if ( ! paymentMethod ) {
 			return null;
 		}
 
 		const buttonState = this.getButtonState();
-		const buttonDisabled = buttonState.disabled || ! this.state.country || ! this.state.postalCode;
+		const buttonDisabled = buttonState.disabled || ! countryCode || ! this.state.postalCode;
 		let button;
 
 		switch ( paymentMethod ) {
@@ -495,6 +489,7 @@ export class WebPaymentBox extends React.Component {
 							label={ translate( 'Country', { textOnly: true } ) }
 							countriesList={ countriesList }
 							onCountrySelected={ rearg( setTaxCountryCode, [ 1 ] ) }
+							value={ countryCode }
 							eventFormName="Checkout Form"
 						/>
 						<Input
