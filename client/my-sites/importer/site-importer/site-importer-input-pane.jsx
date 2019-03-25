@@ -39,7 +39,7 @@ import FormSelect from 'components/forms/form-select';
 
 import SiteImporterSitePreview from './site-importer-site-preview';
 
-import { prefetchmShotsPreview } from './site-preview-actions';
+import { prefetchmShotsPreview } from 'lib/mshots';
 
 import { recordTracksEvent } from 'state/analytics/actions';
 
