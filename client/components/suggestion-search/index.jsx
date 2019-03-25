@@ -131,7 +131,7 @@ class SuggestionSearch extends Component {
 
 	updateFieldFromSuggestion( newValue ) {
 		this.updateInputValue( newValue );
-		this.props.onChange( newValue );
+		this.props.onChange( newValue, true );
 	}
 
 	render() {
