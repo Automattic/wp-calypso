@@ -45,12 +45,22 @@ if ( needsInstall() ) {
 }
 
 function install() {
+	// run a distclean to clean things up. just ci is not enough with the monorepo.
+	const cleanResult = spawnSync( 'npm', [ 'run', 'distclean' ], {
+		shell: true,
+		stdio: 'inherit',
+	} );
+	if ( cleanResult.status ) {
+		console.error( 'failed to clean: %o', cleanResult );
+		process.exit( cleanResult.status );
+	}
 	const installResult = spawnSync( 'npm', [ 'ci' ], {
 		shell: true,
 		stdio: 'inherit',
 	} ).status;
-	if ( installResult ) {
-		process.exit( installResult );
+	if ( installResult.status ) {
+		console.error( 'failed to install: %o', installResult );
+		process.exit( installResult.status );
 	}
 	const touchDate = new Date();
 
