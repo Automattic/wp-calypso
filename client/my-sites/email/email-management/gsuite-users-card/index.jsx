@@ -130,23 +130,27 @@ class GSuiteUsersCard extends React.Component {
 	}
 
 	render() {
+		const { gsuiteUsers, selectedDomainName, selectedSiteSlug } = this.props;
 		const pendingDomains = this.getDomainsAsList().filter( hasPendingGSuiteUsers );
-		const usersByDomain = groupBy( this.props.gsuiteUsers, 'domain' );
+		const usersByDomain = groupBy( gsuiteUsers, 'domain' );
 
 		return (
 			<div>
 				{ pendingDomains.length !== 0 && (
 					<PendingGSuiteTosNotice
 						key="pending-gsuite-tos-notice"
-						siteSlug={ this.props.selectedSiteSlug }
+						siteSlug={ selectedSiteSlug }
 						domains={ pendingDomains }
 						section="google-apps"
 					/>
 				) }
 
-				{ Object.keys( usersByDomain ).map( domain =>
-					this.renderDomain( domain, usersByDomain[ domain ] )
-				) }
+				{ Object.keys( usersByDomain )
+					.filter(
+						domain =>
+							! selectedDomainName || ( selectedDomainName && domain === selectedDomainName )
+					)
+					.map( domain => this.renderDomain( domain, usersByDomain[ domain ] ) ) }
 			</div>
 		);
 	}
