@@ -33,7 +33,7 @@ class JetpackUserType extends Component {
 
 		return (
 			<MainWrapper isWide>
-				<div className="user-type__connect-step">
+				<div className="user-type__connect-step jetpack-connect__step">
 					<FormattedHeader
 						headerText={ translate( 'Are you setting up this site for yourself or someone else?' ) }
 					/>
