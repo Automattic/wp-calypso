@@ -7,9 +7,10 @@ const config = {
 			'@babel/env',
 			{
 				modules: false,
-				targets: { browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ] },
 				useBuiltIns: 'entry',
-				shippedProposals: true, // allows es7 features like Promise.prototype.finally
+				corejs: 2,
+				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
+				exclude: [ 'transform-typeof-symbol' ],
 			},
 		],
 	],
