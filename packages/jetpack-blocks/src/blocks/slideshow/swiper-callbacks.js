@@ -53,6 +53,9 @@ function swiperResize( swiper ) {
 
 function announceCurrentSlide( swiper ) {
 	const currentSlide = swiper.slides[ swiper.activeIndex ];
+	if ( ! currentSlide ) {
+		return;
+	}
 	const figcaption = currentSlide.getElementsByTagName( 'FIGCAPTION' )[ 0 ];
 	const img = currentSlide.getElementsByTagName( 'IMG' )[ 0 ];
 	const notification = figcaption ? figcaption.innerText : img.alt;
