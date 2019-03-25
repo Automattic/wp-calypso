@@ -588,9 +588,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	const { site } = ownProps;
 
 	return {
-		launchSite: () => {
-			dispatch( launchSite( site.ID ) );
-		},
+		launchSite: () => dispatch( launchSite( site.ID ) ),
 	};
 };
 
