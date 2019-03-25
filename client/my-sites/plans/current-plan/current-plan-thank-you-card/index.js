@@ -38,14 +38,14 @@ export class CurrentPlanThankYouCard extends Component {
 					{ translate( 'Thank you for your purchase!' ) }
 				</h1>
 				<p>
-					{ duration && planName
-						? translate(
-								'Your website is on a %(planName)s plan for %(duration)s. That means it has lots of useful security tools — let’s walk through a short checklist of the essentials so Jetpack can start monitoring things for you.',
-								{
-									args: { duration, planName },
-								}
-						  )
-						: ' ' /* &nbsp; maintain some space */ }
+					{ duration &&
+						planName &&
+						translate(
+							'Your website is on a %(planName)s plan for %(duration)s. That means it has lots of useful security tools — let’s walk through a short checklist of the essentials so Jetpack can start monitoring things for you.',
+							{
+								args: { duration, planName },
+							}
+						) }
 				</p>
 				<p>
 					{ translate(
