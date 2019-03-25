@@ -4,7 +4,7 @@
  */
 import { translate } from 'i18n-calypso';
 import url from 'url';
-import { get, trim } from 'lodash';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -72,7 +72,7 @@ export const fetchIsSiteImportable = site_url => dispatch => {
 		.catch( error => dispatch( { type: IMPORT_IS_SITE_IMPORTABLE_ERROR, error } ) );
 };
 
-export const submitImportUrlStep = ( { stepName, siteUrl } ) => dispatch => {
+export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) => dispatch => {
 	dispatch(
 		infoNotice( translate( "Please wait, we're checking to see if we can import this site." ), {
 			id: CHECKING_SITE_IMPORTABLE_NOTICE,
@@ -81,16 +81,16 @@ export const submitImportUrlStep = ( { stepName, siteUrl } ) => dispatch => {
 		} )
 	);
 
-	return dispatch( fetchIsSiteImportable( siteUrl ) )
+	return dispatch( fetchIsSiteImportable( siteUrlFromInput ) )
 		.then( async siteDetails => {
-			const error = get( siteDetails, 'error' );
+			const { engine, error, favicon, siteTitle, siteUrl: importSiteUrl } = siteDetails;
 
 			if ( error ) {
 				throw new Error( error );
 			}
 
 			const imageBlob = await loadmShotsPreview( {
-				url: normalizeUrl( siteUrl ),
+				url: normalizeUrl( siteUrlFromInput ),
 				maxRetries: 30,
 				retryTimeout: 1000,
 			} );
@@ -99,8 +99,10 @@ export const submitImportUrlStep = ( { stepName, siteUrl } ) => dispatch => {
 
 			return SignupActions.submitSignupStep( { stepName }, [], {
 				sitePreviewImageBlob: imageBlob,
-				importSiteDetails: siteDetails,
-				importUrl: siteDetails.siteUrl,
+				importEngine: engine,
+				importFavicon: favicon,
+				importSiteTitle: siteTitle,
+				importSiteUrl,
 				themeSlugWithRepo: 'pub/radcliffe-2',
 			} );
 		} )

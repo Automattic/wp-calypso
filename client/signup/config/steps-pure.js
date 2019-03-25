@@ -433,8 +433,10 @@ export function generateSteps( {
 		'from-url': {
 			stepName: 'from-url',
 			providesDependencies: [
-				'importSiteDetails',
-				'importUrl',
+				'importEngine',
+				'importFavicon',
+				'importSiteTitle',
+				'importSiteUrl',
 				'sitePreviewImageBlob',
 				'themeSlugWithRepo',
 			],
