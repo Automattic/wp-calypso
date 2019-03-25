@@ -17,10 +17,16 @@ import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-i
 import ProgressBar from 'components/progress-bar';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getPlan } from 'lib/plans';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSitePlanSlug } from 'state/sites/selectors';
 
 export class CurrentPlanThankYouCard extends Component {
+	getMyPlanRoute() {
+		const { siteSlug } = this.props;
+
+		return `/plans/my-plan/${ siteSlug }`;
+	}
+
 	renderSetup() {
 		const { moment, planName, progressComplete, purchaseExpiryDate, translate } = this.props;
 		const duration = purchaseExpiryDate
@@ -57,9 +63,7 @@ export class CurrentPlanThankYouCard extends Component {
 				<ProgressBar isPulsing total={ 100 } value={ progressComplete || 0 } />
 
 				<p>
-					<a href={ /* @TODO (sirreal) fix this */ document.location.pathname }>
-						{ translate( 'Skip setup. I’ll do this later.' ) }
-					</a>
+					<a href={ this.getMyPlanRoute() }>{ translate( 'Skip setup. I’ll do this later.' ) }</a>
 				</p>
 			</Fragment>
 		);
@@ -84,7 +88,7 @@ export class CurrentPlanThankYouCard extends Component {
 					<br />
 					{ translate( "You're now ready to finish the rest of the checklist." ) }
 				</p>
-				<Button primary href={ /* @TODO (sirreal) fix this */ document.location.pathname }>
+				<Button primary href={ this.getMyPlanRoute() }>
 					{ translate( 'Continue' ) }
 				</Button>
 			</Fragment>
@@ -116,5 +120,6 @@ export default connect( state => {
 		progressComplete: getJetpackProductInstallProgress( state, siteId ),
 		purchaseExpiryDate: get( getCurrentPlanPurchase( state, siteId ), [ 'expiryDate' ] ),
 		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
 	};
 } )( localize( CurrentPlanThankYouCard ) );
