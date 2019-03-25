@@ -9,6 +9,11 @@ import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { firstValid, hardTruncation, shortEnough, truncatedAtSpace } from '../helpers';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const TITLE_LENGTH = 63;
 const SNIPPET_LENGTH = 160;
 

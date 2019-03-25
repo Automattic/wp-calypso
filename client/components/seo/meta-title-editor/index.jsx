@@ -14,6 +14,11 @@ import { get, identity, noop } from 'lodash';
 import TitleFormatEditor from 'components/title-format-editor';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const titleTypes = translate => [
 	{ value: 'frontPage', label: translate( 'Front Page' ) },
 	{ value: 'posts', label: translate( 'Posts' ) },
