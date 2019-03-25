@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import getCurrentPlanPurchase from 'state/selectors/get-current-plan-purchase';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
@@ -68,11 +69,25 @@ export class CurrentPlanThankYouCard extends Component {
 		const { translate } = this.props;
 
 		return (
-			<p>
-				{ translate( 'We’ve finished setting up spam filtering and backups for you.' ) }
-				<br />
-				{ translate( "You're now ready to finish the rest of the checklist." ) }
-			</p>
+			<Fragment>
+				<img
+					className="current-plan-thank-you-card__illustration"
+					alt=""
+					aria-hidden="true"
+					src="/calypso/images/illustrations/security.svg"
+				/>
+				<h1 className="current-plan-thank-you-card__title">
+					{ translate( 'So long spam, hello backups!' ) }
+				</h1>
+				<p>
+					{ translate( 'We’ve finished setting up spam filtering and backups for you.' ) }
+					<br />
+					{ translate( "You're now ready to finish the rest of the checklist." ) }
+				</p>
+				<Button primary href={ /* @TODO (sirreal) fix this */ document.location.pathname }>
+					{ translate( 'Continue' ) }
+				</Button>
+			</Fragment>
 		);
 	}
 
