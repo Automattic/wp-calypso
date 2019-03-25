@@ -153,8 +153,15 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	};
 
 	render() {
-		const { translate, placeholder, autoFocus, shouldShowPopularTopics } = this.props;
+		const {
+			translate,
+			placeholder,
+			autoFocus,
+			shouldShowPopularTopics,
+			isVerticalSearchPending,
+		} = this.props;
 		const showPopularTopics = shouldShowPopularTopics( this.props.searchValue );
+
 		return (
 			<>
 				<QueryVerticals searchTerm={ this.props.searchValue } />
@@ -167,6 +174,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 					value={ this.props.searchValue }
 					sortResults={ this.sortSearchResults }
 					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+					isSearching={ isVerticalSearchPending }
 					railcar={ this.state.railcar }
 				/>
 				{ showPopularTopics && <PopularTopics onSelect={ this.onSiteTopicChange } /> }
@@ -177,10 +185,16 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 export default localize(
 	connect(
-		( state, ownProps ) => ( {
-			verticals: getVerticals( state, ownProps.searchValue ) || [],
-			defaultVertical: get( getVerticals( state, 'business' ), '0', {} ),
-		} ),
+		( state, ownProps ) => {
+			const verticals = getVerticals( state, ownProps.searchValue );
+			const isVerticalSearchPending = null == verticals;
+
+			return {
+				verticals: verticals || [],
+				isVerticalSearchPending,
+				defaultVertical: get( getVerticals( state, 'business' ), '0', {} ),
+			};
+		},
 		( dispatch, ownProps ) => ( {
 			shouldShowPopularTopics: searchValue => ! searchValue && ownProps.showPopular,
 		} )
