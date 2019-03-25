@@ -25,6 +25,7 @@ class EditorMediaModal extends Component {
 		site: PropTypes.object,
 		onInsertMedia: PropTypes.func,
 		onClose: PropTypes.func,
+		isGutenberg: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -72,6 +73,10 @@ class EditorMediaModal extends Component {
 
 	onClose = value => {
 		if ( value ) {
+			// `isGutenberg` means that the Media Modal has been opened by a Gutenberg media block,
+			// as opposed to the Classic editor or the Classic block in Gutenberg.
+			// This is needed because `insertMedia` returns the media markup, used by TinyMCE,
+			// while `onClose` returns the media object, used by Gutenberg media blocks.
 			return this.props.isGutenberg ? this.props.onClose( value ) : this.insertMedia( value );
 		}
 		this.props.onClose();
