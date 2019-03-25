@@ -942,6 +942,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			box-shadow: inset 0 0 0 2px var( --color-jetpack );
 		}
 	}
+
+	.site-topic__content .form-fieldset {
+		position: relative;
+	}
 }
 
 .is-section-checkout.is-jetpack-site {
