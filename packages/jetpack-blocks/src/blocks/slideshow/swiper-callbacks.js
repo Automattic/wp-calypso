@@ -31,6 +31,9 @@ function swiperInit( swiper ) {
 }
 
 function swiperResize( swiper ) {
+	if ( ! swiper || ! swiper.el ) {
+		return;
+	}
 	const img = swiper.el.querySelector( '.swiper-slide[data-swiper-slide-index="0"] img' );
 	if ( ! img ) {
 		return;
