@@ -49,7 +49,7 @@ const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
 
 class EmailManagement extends React.Component {
 	static propTypes = {
-		currencyCode: PropTypes.string.isRequired,
+		currencyCode: PropTypes.string,
 		domains: PropTypes.array.isRequired,
 		gsuiteUsers: PropTypes.array,
 		isRequestingDomains: PropTypes.bool.isRequired,
