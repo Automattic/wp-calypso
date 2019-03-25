@@ -42,7 +42,7 @@ export default function() {
 	page(
 		paths.emailManagementForwarding( ':site', ':domain' ),
 		...commonHandlers,
-		controller.emailManagementForwardingRedirect,
+		controller.emailManagementForwarding,
 		makeLayout,
 		clientRender
 	);
