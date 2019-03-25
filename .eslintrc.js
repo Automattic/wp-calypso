@@ -47,7 +47,6 @@ module.exports = {
 		{
 			files: [ 'test/e2e/**/*' ],
 			rules: {
-				'import/no-nodejs-modules': 0,
 				'import/no-extraneous-dependencies': 0,
 				'valid-jsdoc': 0,
 				'wpcalypso/import-docblock': 0,
