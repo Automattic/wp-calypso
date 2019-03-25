@@ -6,21 +6,6 @@
 	margin: 0 auto;
 }
 
-.jetpack-wordads__header,
-.jetpack-wordads__footer {
-	font-size: 10px;
-	font-family: sans-serif;
-}
-
-.jetpack-wordads__header {
-	text-align: left;
-}
-
-.jetpack-wordads__footer {
-	text-transform: uppercase;
-	text-align: right;
-}
-
 .jetpack-wordads__ad {
 	display: flex;
 	overflow: hidden;
@@ -36,7 +21,7 @@
 	}
 
 	.components-base-control__field {
-		padding-left: 5px;
+		padding: 7px;
 	}
 }
 
