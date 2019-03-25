@@ -44,10 +44,9 @@ export default function() {
 	page.redirect( '/domains/manage/edit', paths.domainManagementRoot() );
 	page.redirect( '/domains/manage/edit/:site', paths.domainManagementRoot() );
 
-	page( paths.domainManagementEmail(), domainManagementController.domainManagementEmailRedirect );
-
 	registerMultiPage( {
 		paths: [
+			paths.domainManagementEmail(),
 			paths.domainManagementEmail( ':site', ':domain' ),
 			paths.domainManagementEmail( ':site' ),
 		],
