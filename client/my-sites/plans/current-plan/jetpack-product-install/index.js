@@ -100,9 +100,11 @@ export class JetpackProductInstall extends Component {
 			<Fragment>
 				<QueryPluginKeys siteId={ siteId } />
 
-				{ ! this.installationHasErrors() && progressComplete !== 100 && (
+				{ progressComplete !== 100 && (
 					<Fragment>
-						<Interval period={ EVERY_SECOND } onTick={ this.requestStatus } />
+						{ ! this.installationHasErrors() && (
+							<Interval period={ EVERY_SECOND } onTick={ this.requestStatus } />
+						) }
 
 						<p>
 							{ translate(
