@@ -15,7 +15,7 @@ The node version should be defined in the `.nvmrc` file for use with the [nvm](h
 
 ## Launch Logged-In Window
 
-To facilitate manual testing, the [launch-wpcom-login.js](/scripts/launch-wpcom-login.js) file in `/scripts` will launch a Chrome browser window to WordPress.com and log in with the account definition given on the command line.  The only config requirement for this is that the `local-${NODE_ENV}.json` file needs to have the `testAccounts` object defined.  If no account is given on the command line, `defaultUser` will be used.
+To facilitate manual testing, the [launch-wpcom-login.js](/scripts/launch-wpcom-login.js) file in `/scripts` will launch a Chrome browser window to WordPress.com and log in with the account definition given on the command line.  The only config requirement for this is that the `local-${NODE_CONFIG_ENV}.json` file needs to have the `testAccounts` object defined.  If no account is given on the command line, `defaultUser` will be used.
 
 Example:
 
