@@ -3,15 +3,14 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { get, some } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
 import Interval, { EVERY_SECOND } from 'lib/interval';
-import ProgressBar from 'components/progress-bar';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import { getPluginKeys } from 'state/plugins/premium/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -95,41 +94,14 @@ export class JetpackProductInstall extends Component {
 	};
 
 	render() {
-		const { progressComplete, siteId, translate } = this.props;
+		const { progressComplete, siteId } = this.props;
+
 		return (
 			<Fragment>
 				<QueryPluginKeys siteId={ siteId } />
 
-				{ progressComplete !== 100 && (
-					<Fragment>
-						{ ! this.installationHasErrors() && (
-							<Interval period={ EVERY_SECOND } onTick={ this.requestStatus } />
-						) }
-
-						<p>
-							{ translate(
-								'We’ve taken the liberty of starting the first two items, since they’re key to your site’s safety: we’re configuring spam filtering and backups for you now. Once that’s done, we can work through the rest of the checklist.'
-							) }
-						</p>
-
-						<ProgressBar isPulsing total={ 100 } value={ progressComplete || 0 } />
-
-						<p>
-							<a href={ /* @TODO (sirreal) fix this */ document.location.pathname }>
-								{ translate( 'Skip setup. I’ll do this later.' ) }
-							</a>
-						</p>
-					</Fragment>
-				) }
-
-				{ progressComplete === 100 && (
-					<Fragment>
-						<p>
-							{ translate( 'We’ve finished setting up spam filtering and backups for you.' ) }
-							<br />
-							{ translate( "You're now ready to finish the rest of the checklist." ) }
-						</p>
-					</Fragment>
+				{ progressComplete !== 100 && ! this.installationHasErrors() && (
+					<Interval period={ EVERY_SECOND } onTick={ this.requestStatus } />
 				) }
 			</Fragment>
 		);
@@ -139,18 +111,16 @@ export class JetpackProductInstall extends Component {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
-		const status = getJetpackProductInstallStatus( state, siteId );
-		const progressComplete = get( status, 'progress', null );
 
 		return {
 			siteId,
 			pluginKeys: getPluginKeys( state, siteId ),
-			progressComplete,
-			status,
+			progressComplete: getJetpackProductInstallProgress( state, siteId ),
+			status: getJetpackProductInstallStatus( state, siteId ),
 		};
 	},
 	{
 		requestJetpackProductInstallStatus,
 		startJetpackProductInstall,
 	}
-)( localize( JetpackProductInstall ) );
+)( JetpackProductInstall );
