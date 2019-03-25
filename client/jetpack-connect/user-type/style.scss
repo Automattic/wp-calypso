@@ -50,6 +50,15 @@
 	&:focus {
 		box-shadow: inset 0 0 0 2px var( --color-accent );
 	}
+
+	&:first-child {
+		border-radius: 3px 3px 0 0;
+	}
+
+	&:last-child {
+		border-bottom: none;
+		border-radius: 0 0 3px 3px;
+	}
 }
 
 .user-type__connect-step {
