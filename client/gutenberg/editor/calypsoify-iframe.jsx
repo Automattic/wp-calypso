@@ -7,6 +7,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { endsWith, get, map, pickBy, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
+import WebPreview from 'components/web-preview';
 
 /**
  * Style dependencies
@@ -45,6 +47,10 @@ class CalypsoifyIframe extends Component {
 	state = {
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
+		isPreviewVisible: false,
+		previewUrl: 'about:blank',
+		postUrl: null,
+		editedPost: null,
 	};
 
 	constructor( props ) {
@@ -141,6 +147,11 @@ class CalypsoifyIframe extends Component {
 		if ( 'openRevisions' === action ) {
 			this.props.openPostRevisionsDialog();
 		}
+
+		if ( 'previewPost' === action ) {
+			const { postUrl } = payload;
+			this.openPreviewModal( { postUrl, previewPort: ports[ 0 ] } );
+		}
 	};
 
 	loadRevision = revision => {
@@ -209,9 +220,46 @@ class CalypsoifyIframe extends Component {
 		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};
 
+	openPreviewModal = ( { postUrl, previewPort } ) => {
+		this.setState( {
+			isPreviewVisible: true,
+			previewUrl: 'about:blank',
+			postUrl,
+		} );
+
+		previewPort.onmessage = message => {
+			previewPort.close();
+
+			const { frameNonce } = this.props;
+			const { previewUrl, editedPost } = message.data;
+
+			const parsedPreviewUrl = url.parse( previewUrl, true );
+			if ( frameNonce ) {
+				parsedPreviewUrl.query[ 'frame-nonce' ] = frameNonce;
+			}
+			delete parsedPreviewUrl.search;
+
+			this.setState( {
+				previewUrl: url.format( parsedPreviewUrl ),
+				editedPost,
+			} );
+		};
+	};
+
+	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
+
 	render() {
 		const { iframeUrl, siteId } = this.props;
-		const { isMediaModalVisible, allowedTypes, multiple, isIframeLoaded } = this.state;
+		const {
+			isMediaModalVisible,
+			allowedTypes,
+			multiple,
+			isIframeLoaded,
+			isPreviewVisible,
+			previewUrl,
+			postUrl,
+			editedPost,
+		} = this.state;
 
 		return (
 			<Fragment>
@@ -239,6 +287,13 @@ class CalypsoifyIframe extends Component {
 					/>
 				</MediaLibrarySelectedData>
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
+				<WebPreview
+					externalUrl={ postUrl }
+					onClose={ this.closePreviewModal }
+					overridePost={ editedPost }
+					previewUrl={ previewUrl }
+					showPreview={ isPreviewVisible }
+				/>
 			</Fragment>
 		);
 	}
@@ -248,6 +303,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
+	const frameNonce = getSiteOption( state, siteId, 'frame_nonce' ) || '';
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -255,7 +311,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
 		'block-editor': 1,
-		'frame-nonce': getSiteOption( state, siteId, 'frame_nonce' ) || '',
+		'frame-nonce': frameNonce,
 		'jetpack-copy': duplicatePostId,
 		origin: window.location.origin,
 	} );
@@ -276,6 +332,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		iframeUrl,
 		postTypeTrashUrl,
 		siteAdminUrl,
+		frameNonce,
 	};
 };
 

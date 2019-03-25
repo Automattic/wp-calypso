@@ -9,7 +9,7 @@
 	font-size: 10px;
 	font-weight: 500;
 	text-transform: uppercase;
-	padding: 12px 24px 8px 40px;
+	padding: 12px 24px 8px 42px;
 	color: var( --color-neutral-400 );
 	border-bottom: 1px solid var( --color-neutral-50 );
 }
@@ -18,7 +18,7 @@
 	font-size: 15px;
 	color: var( --color-text );
 	border-bottom: 1px solid var( --color-neutral-50 );
-	padding: 10px 24px 10px 40px;
+	padding: 10px 24px 10px 42px;
 	text-align: left;
 	width: 100%;
 	display: block;
@@ -26,6 +26,10 @@
 	&:hover, &:focus {
 		cursor: pointer;
 		background: var( --color-neutral-0 );
+	}
+
+	&:focus {
+		box-shadow: inset 0 0 0 2px var( --color-accent );
 	}
 
 	&:last-child {

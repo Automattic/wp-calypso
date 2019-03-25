@@ -184,7 +184,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
   >
     <GSuitePurchaseFeatures
       domainName=""
-      productSlug="gappsbusiness"
+      productSlug="gapps_unlimited"
       type="grid"
     />
     <div

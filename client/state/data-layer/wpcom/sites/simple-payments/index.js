@@ -15,7 +15,10 @@ import { getFeaturedImageId } from 'state/posts/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
 import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/product-list/schema';
-import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
+import {
+	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
+	NUMBER_OF_POSTS_BY_REQUEST,
+} from 'lib/simple-payments/constants';
 import { TransformerError } from 'lib/make-json-schema-parser';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_GET,
@@ -169,6 +172,7 @@ export const handleProductList = dispatchRequest( {
 				query: {
 					type: SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 					status: 'publish',
+					number: NUMBER_OF_POSTS_BY_REQUEST,
 				},
 			},
 			action

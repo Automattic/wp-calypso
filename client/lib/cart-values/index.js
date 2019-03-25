@@ -250,9 +250,12 @@ function fillInAllCartItemAttributes( cart, products ) {
 	return update( cart, {
 		products: {
 			$apply: function( items ) {
-				return items.map( function( cartItem ) {
-					return fillInSingleCartItemAttributes( cartItem, products );
-				} );
+				return (
+					items &&
+					items.map( function( cartItem ) {
+						return fillInSingleCartItemAttributes( cartItem, products );
+					} )
+				);
 			},
 		},
 	} );

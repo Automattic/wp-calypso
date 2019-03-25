@@ -5,10 +5,11 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { isEmpty } from 'lodash';
+import { isEmpty, flowRight as compose } from 'lodash';
 import { DateUtils } from 'react-day-picker';
+
 /**
  * Internal dependencies
  */
@@ -16,6 +17,7 @@ import Button from 'components/button';
 import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import DateRangePicker from 'components/date-range';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
@@ -32,7 +34,7 @@ export class DateRangeSelector extends Component {
 	}
 
 	handleClose = () => {
-		const { siteId, filter, onClose, selectDateRange } = this.props;
+		const { moment, siteId, filter, onClose, selectDateRange } = this.props;
 		const fromDate = this.getFromDate( filter );
 		const toDate = this.getToDate( filter );
 
@@ -62,6 +64,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	handleDateRangeCommit = ( startDate, endDate ) => {
+		const { moment, selectDateRange } = this.props;
 		const formattedStartDate = startDate ? moment( startDate ).format( DATE_FORMAT ) : null;
 		const formattedEndDate = endDate
 			? moment( endDate )
@@ -69,7 +72,7 @@ export class DateRangeSelector extends Component {
 					.format( DATE_FORMAT )
 			: null;
 
-		this.props.selectDateRange( this.props.siteId, formattedStartDate, formattedEndDate ); // enough?
+		selectDateRange( this.props.siteId, formattedStartDate, formattedEndDate ); // enough?
 	};
 
 	isSelectingFirstDay = ( from, to, day ) => {
@@ -177,7 +180,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	getFormattedDate = ( from, to ) => {
-		const { translate } = this.props;
+		const { moment, translate } = this.props;
 		const fromMoment = from ? moment( from ) : null;
 		const toMoment = to ? moment( to ) : null;
 		const fromFormated = this.getFormattedFromDate( fromMoment, toMoment );
@@ -199,7 +202,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	getFromDate = () => {
-		const { filter } = this.props;
+		const { moment, filter } = this.props;
 		const { fromDate } = this.state;
 		if ( fromDate ) {
 			return fromDate;
@@ -211,7 +214,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	getToDate = () => {
-		const { filter } = this.props;
+		const { moment, filter } = this.props;
 		const { toDate } = this.state;
 		if ( toDate ) {
 			return toDate;
@@ -241,9 +244,8 @@ export class DateRangeSelector extends Component {
 		const to = this.getToDate();
 		const now = new Date();
 
-		const buttonClass = classnames( {
-			filterbar__selection: true,
-			'is-selected': !! from,
+		const buttonClass = classnames( 'filterbar__selection', {
+			'is-selected': from,
 			'is-active': isVisible && ! from,
 		} );
 
@@ -318,7 +320,11 @@ const mapDispatchToProps = dispatch => ( {
 	},
 } );
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( DateRangeSelector ) );
+export default compose(
+	connect(
+		null,
+		mapDispatchToProps
+	),
+	localize,
+	withLocalizedMoment
+)( DateRangeSelector );

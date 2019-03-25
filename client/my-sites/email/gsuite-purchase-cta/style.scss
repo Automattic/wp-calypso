@@ -1,4 +1,7 @@
 .gsuite-purchase-cta__add-google-apps-card-product-logo {
+	font-size: 150%;
+	color: #757575;
+
 	@include breakpoint( '<660px' ) {
 		width: 236px;
 	}
@@ -10,8 +13,9 @@
 	strong {
 		background: url( '/calypso/images/upgrades/g-suite-logo.png' ) no-repeat left;
 		background-size: 73px;
+		background-position-y: 5px;
 		display: inline-block;
-		height: 19px;
+		height: 23px;
 		margin: 0 6px 0 0;
 		text-indent: -999999px;
 		vertical-align: text-top;

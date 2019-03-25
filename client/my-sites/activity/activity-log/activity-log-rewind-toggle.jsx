@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -17,6 +16,11 @@ import Button from 'components/button';
 import { activateRewind } from 'state/activity-log/actions';
 import isRewindActivating from 'state/selectors/is-rewind-activating';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './activity-log-rewind-toggle.scss';
 
 class ActivityLogRewindToggle extends Component {
 	static propTypes = {
@@ -49,9 +53,8 @@ class ActivityLogRewindToggle extends Component {
 
 		return (
 			<Button
-				className={ classNames( 'activity-log__rewind-toggle', {
-					'is-busy': isSiteKnown && isActivating,
-				} ) }
+				className="activity-log__rewind-toggle"
+				busy={ isSiteKnown && isActivating }
 				primary
 				disabled={ ! isSiteKnown || isActivating }
 				onClick={ this.activateRewind }

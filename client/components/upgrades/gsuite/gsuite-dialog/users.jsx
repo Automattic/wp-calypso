@@ -74,7 +74,7 @@ class GoogleAppsUsers extends React.Component {
 			<GoogleAppsUsersForm
 				domain={ this.props.domain }
 				index={ index }
-				key={ `google-apps-user-form-${ index }` }
+				key={ `gsuite-user-form-${ index }` }
 				onBlur={ this.props.onBlur }
 				recordInputFocus={ this.recordInputFocus }
 				user={ user }
