@@ -41,14 +41,14 @@ export class JetpackProductInstall extends Component {
 
 	componentDidMount() {
 		this.requestStatus();
-		this.startInstall();
+		this.maybeStartInstall();
 	}
 
 	componentDidUpdate() {
-		this.startInstall();
+		this.maybeStartInstall();
 	}
 
-	startInstall() {
+	maybeStartInstall() {
 		const { pluginKeys, progressComplete, siteId } = this.props;
 
 		// We're already installing
