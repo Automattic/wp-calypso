@@ -121,6 +121,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		const selector = SidebarComponent._getSidebarSelector( target, { getButton: clickButton } );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.site__notices' ) );
 		await driverHelper.scrollIntoView( this.driver, selector );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 

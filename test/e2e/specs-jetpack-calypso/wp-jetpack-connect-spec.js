@@ -486,15 +486,31 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			const jetpackConnectAddCredentialsPage = await JetpackConnectAddCredentialsPage.Expect(
 				driver
 			);
-			return await jetpackConnectAddCredentialsPage.enterDetailsAndConnect(
+			await jetpackConnectAddCredentialsPage.enterDetailsAndConnect(
 				jnFlow.username,
 				jnFlow.password
 			);
+			await jetpackConnectAddCredentialsPage.waitToDisappear();
 		} );
 
 		step( 'Can wait for Jetpack get connected', async function() {
 			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
 			return await jetpackAuthorizePage.waitToDisappear();
+		} );
+
+		step( 'Can select a site type', async function() {
+			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
+			return await siteTypePage.selectSiteType( 'blog' );
+		} );
+
+		step( 'Can select a site topic', async function() {
+			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
+			return await siteTopicPage.selectSiteTopic( 'test site' );
+		} );
+
+		step( 'Can select a user type', async function() {
+			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
+			return await siteTopicPage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {

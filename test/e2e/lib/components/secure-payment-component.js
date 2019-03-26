@@ -125,7 +125,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async payWithStoredCardIfPossible( cardCredentials ) {
-		const storedCardSelector = By.css( '.stored-card' );
+		const storedCardSelector = By.css( '.credit-card__stored-card' );
 		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, storedCardSelector ) ) {
 			await driverHelper.clickWhenClickable( this.driver, storedCardSelector );
 		} else {
