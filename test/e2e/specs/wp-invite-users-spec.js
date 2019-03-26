@@ -145,6 +145,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
+			await navBarComponent.dismissStatsPopup();
 			return await NoSitesComponent.Expect( driver );
 		} );
 	} );
