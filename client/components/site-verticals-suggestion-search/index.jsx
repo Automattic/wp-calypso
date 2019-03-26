@@ -17,6 +17,7 @@ import SuggestionSearch from 'components/suggestion-search';
 import PopularTopics from 'components/site-verticals-suggestion-search/popular-topics';
 import QueryVerticals from 'components/data/query-verticals';
 import { getVerticals } from 'state/signup/verticals/selectors';
+import { DEFAULT_VERTICAL_KEY } from 'state/signup/verticals/constants';
 
 /**
  * Style dependencies
@@ -162,7 +163,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		return (
 			<>
 				<QueryVerticals searchTerm={ this.props.searchValue.trim() } />
-				<QueryVerticals searchTerm={ 'business' } limit={ 1 } />
+				<QueryVerticals searchTerm={ DEFAULT_VERTICAL_KEY } limit={ 1 } />
 				<SuggestionSearch
 					id="siteTopic"
 					placeholder={ placeholder || translate( 'Enter a keyword or select one from below.' ) }
