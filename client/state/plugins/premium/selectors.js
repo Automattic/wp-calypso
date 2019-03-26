@@ -102,9 +102,6 @@ export const getNextPlugin = function( state, siteId, whitelist = false ) {
 export const getPluginKeys = createSelector(
 	( state, siteId, whitelist = false ) => {
 		const pluginList = getPluginsForSite( state, siteId, whitelist );
-		if ( typeof pluginList === 'undefined' ) {
-			return null;
-		}
 
 		return pluginList.reduce( ( keys, plugin ) => {
 			const key = get( plugin, 'key', null );
