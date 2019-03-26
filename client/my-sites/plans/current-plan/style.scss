@@ -12,10 +12,12 @@
 	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 
-	@include breakpoint( '>660px' ) {
-		display: flex;
-		align-items: center;
-		text-align: left;
+	.is-jetpack-free & {
+		@include breakpoint( '>660px' ) {
+			display: flex;
+			align-items: center;
+			text-align: left;
+		}
 	}
 }
 
@@ -32,6 +34,10 @@
 	width: 100%;
 	margin-top: -20px;
 	text-align: left;
+
+	.current-plan__header-content:not( .is-jetpack-free ) & {
+		margin-bottom: 44px;
+	}
 }
 
 .current-plan__header-heading,
