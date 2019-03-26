@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import jsxToString from 'jsx-to-string';
+import prettyFormat from 'pretty-format';
 
 export const getExampleCodeFromComponent = ExampleComponent => {
 	if ( ! ExampleComponent.props.exampleCode ) {
@@ -14,8 +14,8 @@ export const getExampleCodeFromComponent = ExampleComponent => {
 		return ExampleComponent.props.exampleCode;
 	}
 
-	return jsxToString( ExampleComponent.props.exampleCode, { useFunctionCode: true } ).replace(
-		/Localized\((\w+)\)/g,
-		'$1'
-	);
+	return prettyFormat( ExampleComponent.props.exampleCode, {
+		plugins: [ prettyFormat.plugins.ReactElement ],
+		printFunctionName: false,
+	} ).replace( /Localized\((\w+)\)/g, '$1' );
 };

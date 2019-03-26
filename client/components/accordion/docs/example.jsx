@@ -8,7 +8,6 @@
  */
 import React from 'react';
 import Gridicon from 'gridicons';
-import jsxToString from 'jsx-to-string';
 
 Gridicon.displayName = 'Gridicon';
 
