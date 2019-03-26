@@ -71,6 +71,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			item => item.verticalName.toLowerCase() === value.toLowerCase() && !! item.preview
 		);
 
+	// TODO: once the siteVertical state got simplified, this can be removed.
 	updateVerticalData = ( result, value ) =>
 		this.props.onChange(
 			result || {
@@ -89,6 +90,8 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		const valueLengthShouldTriggerSearch = valueLength >= this.props.charsToTriggerSearch;
 		const result = this.searchForVerticalMatches( value );
 
+		// TODO:
+		// Where to put the railcar code will be reconsidered.
 		if (
 			hasValue &&
 			valueLengthShouldTriggerSearch &&
