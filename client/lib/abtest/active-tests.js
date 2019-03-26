@@ -132,8 +132,8 @@ export default {
 		localeTargets: 'any',
 		countryCodeTargets: [ 'ES', 'IT', 'PT', 'FR', 'NL', 'DE', 'BE', 'PL', 'SE' ],
 	},
-	pluginFeaturedTitle: {
-		datestamp: '20190220',
+	pluginRecommendations: {
+		datestamp: '20190329',
 		variations: {
 			featured: 50,
 			recommended: 50,

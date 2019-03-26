@@ -113,7 +113,7 @@ export class PluginsBrowser extends Component {
 
 	isRecommendedPluginsEnabled() {
 		return (
-			isEnabled( 'recommend-plugins' ) &&
+			( isEnabled( 'recommend-plugins' ) || abtest( 'pluginRecommendations' ) === 'recommended' ) &&
 			!! this.props.selectedSiteId &&
 			get( this.props.selectedSite, 'jetpack' )
 		);
@@ -180,10 +180,6 @@ export class PluginsBrowser extends Component {
 	translateCategory( category ) {
 		const { translate } = this.props;
 
-		const recommendedText = translate( 'Recommended', {
-			context: 'Category description for the plugin browser.',
-		} );
-
 		switch ( category ) {
 			case 'new':
 				return translate( 'New', {
@@ -194,15 +190,13 @@ export class PluginsBrowser extends Component {
 					context: 'Category description for the plugin browser.',
 				} );
 			case 'featured':
-				if ( abtest( 'pluginFeaturedTitle' ) === 'recommended' ) {
-					return recommendedText;
-				}
-
 				return translate( 'Featured', {
 					context: 'Category description for the plugin browser.',
 				} );
 			case 'recommended':
-				return recommendedText;
+				return translate( 'Recommended', {
+					context: 'Category description for the plugin browser.',
+				} );
 		}
 	}
 
