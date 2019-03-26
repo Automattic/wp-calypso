@@ -25,7 +25,8 @@ import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
 
 export class UpgradeNudge extends React.Component {
 	static propTypes = {
@@ -123,16 +124,17 @@ export class UpgradeNudge extends React.Component {
 			title,
 			translate,
 		} = this.props;
-		const classes = classNames( className, 'upgrade-nudge' );
-		let { href } = this.props;
 
 		if ( ! this.shouldDisplay() ) {
 			return null;
 		}
 
+		let href = this.props.href;
 		if ( ! href && site ) {
 			href = addQueryArgs( { feature, plan }, `/plans/${ site.slug }` );
 		}
+
+		const classes = classNames( 'upgrade-nudge', className );
 
 		if ( compact ) {
 			return (
@@ -176,10 +178,9 @@ export class UpgradeNudge extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
 
 		return {
-			site,
+			site: getSite( state, siteId ),
 			planHasFeature: hasFeature( state, siteId, ownProps.feature ),
 			canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		};
