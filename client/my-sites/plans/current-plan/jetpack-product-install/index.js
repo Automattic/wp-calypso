@@ -27,12 +27,18 @@ import {
  * Module variables
  */
 const NON_ERROR_STATES = [
-	'not_active',
-	'key_not_set',
-	'installed',
-	'option_name_not_in_whitelist',
+	'not_active', // Plugin is not installed
+	'option_name_not_in_whitelist', // Plugin is installed but not activated
+	'key_not_set', // Plugin is installed and activated, but not configured
+	'installed', // Plugin is installed, activated and configured
 ];
-const RETRYABLE_ERROR_STATES = [ 'vaultpress_error' ];
+/**
+ * Those errors are any of the following:
+ * - Temporary, occuring if we request installation status while plugin is beng set up.
+ * - Permanent, occurring if there is a failure we can't fix by waiting.
+ * We attempt to recover from these errors by retrying status requests.
+ */
+const RECOVERABLE_ERROR_STATES = [ 'vaultpress_error' ];
 const PLUGINS = [ 'akismet', 'vaultpress' ];
 const MAX_RETRIES = 3;
 
@@ -44,7 +50,7 @@ export class JetpackProductInstall extends Component {
 	retries = 0;
 
 	componentDidMount() {
-		this.requestStatus();
+		this.requestInstallationStatus();
 		this.maybeStartInstall();
 	}
 
@@ -52,6 +58,14 @@ export class JetpackProductInstall extends Component {
 		this.maybeStartInstall();
 	}
 
+	/**
+	 * Start the plugin installation if all conditions are matched:
+	 * - Installation hasn't started yet.
+	 * - We don't have any non-recoverable installation errors.
+	 * - We have already fetched the plugin installation status.
+	 * - Installation has not finished.
+	 * - We already have the plugin keys.
+	 */
 	maybeStartInstall() {
 		const { pluginKeys, progressComplete, siteId } = this.props;
 
@@ -61,7 +75,7 @@ export class JetpackProductInstall extends Component {
 		}
 
 		// We have non-recoverable installation errors
-		if ( this.installationHasErrors() && ! this.installationHasRetryableErrors() ) {
+		if ( this.installationHasErrors() && ! this.installationHasRecoverableErrors() ) {
 			return;
 		}
 
@@ -75,6 +89,7 @@ export class JetpackProductInstall extends Component {
 			return;
 		}
 
+		// Installation can be started only if we have the Akismet and VaultPress keys
 		if ( pluginKeys && pluginKeys.akismet && pluginKeys.vaultpress ) {
 			this.setState( {
 				startedInstallation: true,
@@ -84,6 +99,12 @@ export class JetpackProductInstall extends Component {
 		}
 	}
 
+	/**
+	 * Used to determine if at least one plugin is in at least one of the provided plugin states.
+	 *
+	 * @param {Array} pluginStates States to check against.
+	 * @return {Boolean} True if at least one plugin is in at least one of the given states, false otherwise.
+	 */
 	arePluginsInState( pluginStates ) {
 		const { status } = this.props;
 
@@ -99,41 +120,78 @@ export class JetpackProductInstall extends Component {
 		} );
 	}
 
+	/**
+	 * Used to determine if at least one plugin is in an error state.
+	 * Potential errors we consider here could be recoverable or not.
+	 * What we don't consider errors are the `NON_ERROR_STATES` above.
+	 *
+	 * @return {Boolean} Whether there are currently any installation errors.
+	 */
 	installationHasErrors() {
-		if ( this.installationHasRetryableErrors() ) {
+		if ( this.installationHasRecoverableErrors() ) {
 			return true;
 		}
 
 		return ! this.arePluginsInState( NON_ERROR_STATES );
 	}
 
-	installationHasRetryableErrors() {
-		return this.arePluginsInState( RETRYABLE_ERROR_STATES );
+	/**
+	 * Used to determine if at least one plugin is in an error state
+	 * that we could potentially recover from by just waiting.
+	 *
+	 * @return {Boolean} Whether there are currently any recoverable errors.
+	 */
+	installationHasRecoverableErrors() {
+		return this.arePluginsInState( RECOVERABLE_ERROR_STATES );
 	}
 
-	installationShouldRetry() {
-		return this.retries < MAX_RETRIES && this.installationHasRetryableErrors();
+	/**
+	 * Whether we should trigger a request to fetch the installation status again.
+	 * Also considered a "retry", as it is triggered when we have recoverable errors.
+	 * Will be true if both conditions are matched:
+	 * - We haven't retried too many times (limit is `MAX_RETRIES`).
+	 * - We currently have recoverable errors.
+	 *
+	 * @return {Boolean} Whether to trigger a request to refetch installation status.
+	 */
+	shouldRefetchInstallationStatus() {
+		return this.retries < MAX_RETRIES && this.installationHasRecoverableErrors();
 	}
 
-	refreshPage = () => window.location.reload();
+	/**
+	 * A helper to refresh the page, which essentially will restart the installation process.
+	 *
+	 * @return {void}
+	 */
+	refreshPage = () => void window.location.reload();
 
-	requestStatus = () => {
+	/**
+	 * Request the current installation status.
+	 * Could be triggered by a timeout as we're waiting for installation to finish,
+	 * or by a retry if we discover we have a recoverable error.
+	 */
+	requestInstallationStatus = () => {
 		this.props.requestJetpackProductInstallStatus( this.props.siteId );
 
-		if ( this.installationShouldRetry() ) {
+		if ( this.shouldRefetchInstallationStatus() ) {
 			this.retries++;
 		}
 	};
 
 	render() {
 		const { progressComplete, siteId, translate } = this.props;
-		const period = this.installationShouldRetry() ? EVERY_FIVE_SECONDS : EVERY_SECOND;
+		/**
+		 * Usually, we'll wait for 1 second before requesting a new installation status,
+		 * but if we're retrying in the case of a recoverable error, we're increasing the timeout
+		 * to 5 seconds, in order to allow more time for the server to complete the setup.
+		 */
+		const period = this.shouldRefetchInstallationStatus() ? EVERY_FIVE_SECONDS : EVERY_SECOND;
 
 		return (
 			<Fragment>
 				<QueryPluginKeys siteId={ siteId } />
 
-				{ ! this.installationShouldRetry() && this.installationHasRetryableErrors() && (
+				{ ! this.shouldRefetchInstallationStatus() && this.installationHasRecoverableErrors() && (
 					<Notice
 						status="is-error"
 						text={ translate( 'Oops! An error has occurred while setting up your plan.' ) }
@@ -146,8 +204,8 @@ export class JetpackProductInstall extends Component {
 				) }
 
 				{ progressComplete !== 100 &&
-					( ! this.installationHasErrors() || this.installationShouldRetry() ) && (
-						<Interval period={ period } onTick={ this.requestStatus } />
+					( ! this.installationHasErrors() || this.shouldRefetchInstallationStatus() ) && (
+						<Interval period={ period } onTick={ this.requestInstallationStatus } />
 					) }
 			</Fragment>
 		);
