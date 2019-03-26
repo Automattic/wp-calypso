@@ -259,7 +259,7 @@ export class PlansFeaturesMain extends Component {
 		const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
 
 		return (
-			<SegmentedControl compact className={ segmentClasses } primary={ true }>
+			<SegmentedControl className={ segmentClasses } primary={ true }>
 				<SegmentedControlItem
 					selected={ customerType === 'personal' }
 					path={ '?customerType=personal' }
