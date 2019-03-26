@@ -9,13 +9,8 @@ import { merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import { UpgradeNudge } from '../index';
-import {
-	FEATURE_CUSTOM_DOMAIN,
-	PLAN_PERSONAL,
-	PLAN_BLOGGER,
-	PLAN_FREE,
-} from '../../../lib/plans/constants';
+import { UpgradeNudge } from '..';
+import { FEATURE_CUSTOM_DOMAIN, PLAN_PERSONAL, PLAN_BLOGGER, PLAN_FREE } from 'lib/plans/constants';
 
 describe( 'UpgradeNudge', () => {
 	const createProps = ( overrideProps = {} ) => {
