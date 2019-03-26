@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/jetpack-blocks",
-	"version": "14.0.0",
+	"version": "15.0.0",
 	"description": "Gutenberg blocks for the Jetpack WordPress plugin",
 	"main": "dist/editor.js",
 	"files": [
@@ -71,6 +71,5 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues?q=issue+label%3AJetpack+label%3A%22%5BGoal%5D+Gutenberg%22+is%3Aopen"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/jetpack-blocks#readme",
-	"gitHead": "d1359dc5b8f9208bea35284dbe9ad5fc8bc02408"
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/jetpack-blocks#readme"
 }
