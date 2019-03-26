@@ -111,21 +111,12 @@ export default class AsyncBaseContainer {
 	}
 
 	async setABTestControlGroupsInLocalStorage() {
-		// eslint-disable-next-line prefer-const
-		let expectedABTestValue = [];
 		const abTestList = abTests.default;
 
-		Object.keys( abTestList ).forEach( function( test ) {
-			expectedABTestValue.push(
-				'"' +
-					test +
-					'_' +
-					abTestList[ test ].datestamp +
-					'":"' +
-					abTestList[ test ].defaultVariation +
-					'"'
-			);
-		} );
+		const expectedABTestValue = Object.keys( abTestList ).map(
+			test =>
+				`"${ test }_${ abTestList[ test ].datestamp }":"${ abTestList[ test ].defaultVariation }"`
+		);
 
 		await this.driver.executeScript( 'window.localStorage.clear();' );
 
