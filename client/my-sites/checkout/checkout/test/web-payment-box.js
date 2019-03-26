@@ -13,8 +13,7 @@ import { identity } from 'lodash';
 import { WebPaymentBox } from '../web-payment-box';
 import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
 import PaymentCountrySelect from 'components/payment-country-select';
-import { setTaxCountryCode } from 'lib/upgrades/actions/cart';
-import { getTaxCountryCode } from 'lib/cart-values';
+import { setTaxCountryCode, setTaxPostalCode } from 'lib/upgrades/actions/cart';
 
 jest.mock( 'config', () => {
 	const configMock = jest.fn( i => i );
@@ -26,6 +25,7 @@ jest.mock( 'lib/upgrades/actions/cart' );
 
 jest.mock( 'lib/cart-values', () => ( {
 	getTaxCountryCode: jest.fn( () => 'TEST_CART_COUNTRY_CODE' ),
+	getTaxPostalCode: jest.fn( () => 'TEST_CART_POSTAL_CODE' ),
 	cartItems: {
 		hasRenewableSubscription: jest.fn(),
 	},
@@ -46,7 +46,7 @@ const defaultCart = {
 	tax: {
 		location: {
 			'country-code': 'TEST_COUNTRY_CODE',
-			'postal-code': 'TEST_POSTAL_CODE',
+			'postal-code': '42',
 		},
 	},
 };
@@ -66,27 +66,46 @@ describe( 'WebPaymentBox', () => {
 	} );
 
 	describe( 'Cart Store Integration', () => {
-		test( 'Should render the country code from the cart store', () => {
-			const wrapper = shallow( <WebPaymentBox { ...defaultProps } />, {
-				context: { store: mockStore },
+		describe( 'Country Code', () => {
+			test( 'Should render value from the cart store', () => {
+				const wrapper = shallow( <WebPaymentBox { ...defaultProps } />, {
+					context: { store: mockStore },
+				} );
+				expect( wrapper.find( PaymentCountrySelect ).prop( 'value' ) ).toEqual(
+					'TEST_CART_COUNTRY_CODE'
+				);
 			} );
-			expect( wrapper.find( PaymentCountrySelect ).prop( 'value' ) ).toEqual(
-				'TEST_CART_COUNTRY_CODE'
-			);
+
+			test( 'Should update the store when changed', () => {
+				const wrapper = shallow( <WebPaymentBox { ...defaultProps } />, {
+					context: { store: mockStore },
+				} );
+
+				const countrySelectWrapper = wrapper
+					.find( PaymentCountrySelect )
+					.dive() // unwrap Connect Call
+					.dive(); // Activate underlying CountrySelect behaviour.
+
+				countrySelectWrapper.simulate( 'change', { target: { value: 'TEST' } } );
+				expect( setTaxCountryCode ).toHaveBeenCalledWith( 'TEST' );
+			} );
 		} );
 
-		test( 'Should update the store when the country is changed', () => {
-			const wrapper = shallow( <WebPaymentBox { ...defaultProps } />, {
+		describe( 'Postal Code', () => {
+			const postalCodeInputWrapper = shallow( <WebPaymentBox { ...defaultProps } />, {
 				context: { store: mockStore },
+			} ).findWhere( n => n.prop( 'name' ) === 'postal-code' );
+
+			test( 'Should render value from the cart store', () => {
+				expect( postalCodeInputWrapper.prop( 'value' ) ).toEqual( 'TEST_CART_POSTAL_CODE' );
 			} );
 
-			const countrySelectWrapper = wrapper
-				.find( PaymentCountrySelect )
-				.dive() // unwrap Connect Call
-				.dive(); // Activate underlying CountrySelect behaviour.
-
-			countrySelectWrapper.simulate( 'change', { target: { value: 'TEST' } } );
-			expect( setTaxCountryCode ).toHaveBeenCalledWith( 'TEST' );
+			test( 'Should update the store when changed', () => {
+				postalCodeInputWrapper.simulate( 'change', {
+					target: { name: 'postal-code', value: '54321' },
+				} );
+				expect( setTaxPostalCode ).toHaveBeenCalledWith( '54321' );
+			} );
 		} );
 	} );
 } );
