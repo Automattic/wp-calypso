@@ -23,7 +23,7 @@ import BloggerImporter from 'my-sites/importer/importer-blogger';
 import SiteImporter from 'my-sites/importer/importer-site-importer';
 import Importer6 from 'my-sites/importer/importer-6';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
-import { fetchState, startImport } from 'lib/importer/actions';
+import { fetchState, autoStartImport } from 'lib/importer/actions';
 import {
 	appStates,
 	WORDPRESS,
@@ -83,7 +83,7 @@ const importers = [
 ];
 
 const filterImportsForSite = ( siteID, imports ) => {
-	return filter( imports, importItem => importItem.site.ID === siteID );
+	return filter( imports, importItem => siteID && get( importItem, 'site.ID' ) === siteID );
 };
 
 const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
@@ -99,7 +99,7 @@ class SiteSettingsImport extends Component {
 	state = getImporterState();
 
 	onceAutoStartImport = once( () => {
-		const { engine, site } = this.props;
+		const { engine, site, fromSite } = this.props;
 		const { importers: imports } = this.state;
 
 		if ( ! engine ) {
@@ -115,7 +115,7 @@ class SiteSettingsImport extends Component {
 			return;
 		}
 
-		startImport( site.ID, getImporterTypeForEngine( engine ) );
+		autoStartImport( site.ID, getImporterTypeForEngine( engine ), fromSite );
 	} );
 
 	componentDidMount() {

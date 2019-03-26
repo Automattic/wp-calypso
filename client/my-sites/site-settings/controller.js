@@ -91,6 +91,7 @@ export function importSite( context, next ) {
 		page.replace( context.pathname, {
 			engine: get( context, 'query.engine' ),
 			siteUrl: get( context, 'query.from-site' ),
+			confirmedSiteUrl: get( context, 'query.confirmed-site-url' ),
 		} );
 		return;
 	}
@@ -99,6 +100,7 @@ export function importSite( context, next ) {
 		setImportOriginSiteDetails( {
 			engine: get( context, 'state.engine' ),
 			siteUrl: decodeURIComponentIfValid( get( context, 'state.siteUrl' ) ),
+			confirmedSiteUrl: decodeURIComponentIfValid( get( context, 'query.confirmed-site-url' ) ),
 		} )
 	);
 
