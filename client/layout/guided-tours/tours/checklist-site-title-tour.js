@@ -53,7 +53,7 @@ export const ChecklistSiteTitleTour = makeTour(
 			) }
 		</Step>
 
-		<Step name="click-save" target="settings-site-profile-save" arrow="top-left" placement="below">
+		<Step name="click-save" target="settings-site-profile-save" arrow="top-right" placement="below">
 			{ ( { translate } ) => (
 				<Fragment>
 					<Continue target="settings-site-profile-save" step="finish" click>
