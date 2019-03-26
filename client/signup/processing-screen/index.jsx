@@ -136,7 +136,7 @@ export class SignupProcessingScreen extends Component {
 			  );
 	}
 
-	showPreviewAfterLogin = () =>
+	showChecklistAfterLogin = () =>
 		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }` } );
 
 	shouldShowChecklist() {
@@ -162,7 +162,7 @@ export class SignupProcessingScreen extends Component {
 		const { loginHandler } = this.props;
 
 		if ( loginHandler ) {
-			this.shouldShowChecklist() ? this.showPreviewAfterLogin() : loginHandler();
+			this.shouldShowChecklist() ? this.showChecklistAfterLogin() : loginHandler();
 			return null;
 		}
 	};
