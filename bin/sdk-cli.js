@@ -62,10 +62,13 @@ const build = ( target, argv ) => {
 
 		if ( stats.hasErrors() ) {
 			console.log( chalk.red( 'Built with errors' ) );
+			process.exitCode = 1;
 		} else if ( stats.hasWarnings() ) {
 			console.log( chalk.yellow( 'Built with warnings' ) );
+			process.exitCode = 0;
 		} else {
 			console.log( chalk.green( 'Built successfully' ) );
+			process.exitCode = 0;
 		}
 	} );
 };
