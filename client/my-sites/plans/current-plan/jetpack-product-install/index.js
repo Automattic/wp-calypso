@@ -30,7 +30,7 @@ const NON_ERROR_STATES = [
 ];
 const RETRYABLE_ERROR_STATES = [ 'vaultpress_error' ];
 const PLUGINS = [ 'akismet', 'vaultpress' ];
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 5;
 
 export class JetpackProductInstall extends Component {
 	state = {
