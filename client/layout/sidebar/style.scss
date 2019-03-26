@@ -616,8 +616,8 @@ form.sidebar__button input {
 		order: 99; 
 	}
 
-	.is-togglable.is-toggle-open .sidebar__heading .gridicon:not(.gridicons-chevron-down) {
-		transform: rotate(0deg);
+	.is-togglable.is-toggle-open .sidebar__heading .gridicon:not( .gridicons-chevron-down ) {
+		transform: rotate( 0deg );
 	}
 
 	/* WP Admin Link */
