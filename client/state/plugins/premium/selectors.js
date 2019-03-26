@@ -117,5 +117,5 @@ export const getPluginKeys = createSelector(
 			return keys;
 		}, {} );
 	},
-	( state, siteId, whitelist ) => [ getPluginsForSite( state, siteId, whitelist ) ]
+	( state, siteId ) => [ state.plugins.premium.plugins[ siteId ] ]
 );
