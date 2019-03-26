@@ -231,6 +231,50 @@
 }
 
 /*
+ * Color overrides for the site selector in the sidebar
+ */
+
+.layout__secondary {
+
+	.site-selector.is-large .site-selector__sites {
+		border-color: var( --sidebar-border-color );
+	}
+
+	.all-sites .count {
+		color: var( --sidebar-text-color );
+		border-color: var( --sidebar-text-color );
+	}
+
+	.site-selector__sites {
+		background: var( --sidebar-background );
+	}
+
+	.site-selector__no-results {
+		color: var( --sidebar-heading-color );
+	}
+
+	.site-selector__add-new-site {
+		border-color: var( --sidebar-border-color );
+	}
+
+	.site-selector__add-new-site .button {
+		color: var( --sidebar-heading-color );
+
+		&:hover {
+			color: var( --sidebar-text-color );
+		}
+	}
+
+	.site-selector .all-sites {
+		border-color: var( --sidebar-border-color );
+	}
+
+	.site-selector__recent {
+		border-color: var( --sidebar-border-color );
+	}
+}
+
+/*
 	Focus States
 	Sites - Site Selector for those with multiple sites
 	Sidebar - The sidebar is the current focus
