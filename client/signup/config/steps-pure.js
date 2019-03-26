@@ -445,6 +445,7 @@ export function generateSteps( {
 		'confirm-import': {
 			stepName: 'confirm-import',
 			dependencies: [ 'sitePreviewImageBlob' ],
+			providesDependencies: [ 'confirmedSiteUrl' ],
 		},
 
 		'reader-landing': {

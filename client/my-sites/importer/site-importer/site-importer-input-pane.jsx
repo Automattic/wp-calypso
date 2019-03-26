@@ -319,17 +319,13 @@ class SiteImporterInputPane extends React.Component {
 			site_engine: this.state.importData.engine,
 		} );
 
-		wpcom.wpcom.req
-			.post( {
-				path: `/sites/${ this.props.site.ID }/site-importer/import-site?${ stringify(
-					this.getApiParams()
-				) }`,
-				apiNamespace: 'wpcom/v2',
-				formData: [
-					[ 'import_status', JSON.stringify( toApi( this.props.importerStatus ) ) ],
-					[ 'site_url', this.state.importSiteURL ],
-				],
-			} )
+		const siteId = this.props.site.ID;
+		const importerStatus = this.props.importerStatus;
+		const apiParams = this.getApiParams();
+		const targetUrl = this.state.importSiteURL;
+
+		wpcom
+			.importWithSiteImporter( siteId, toApi( importerStatus ), apiParams, targetUrl )
 			.then( resp => {
 				this.setState( { loading: false } );
 

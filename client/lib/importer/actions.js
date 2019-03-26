@@ -1,11 +1,9 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import Dispatcher from 'dispatcher';
-import { includes, partial } from 'lodash';
+import { defer, includes, partial } from 'lodash';
 import wpLib from 'lib/wp';
 const wpcom = wpLib.undocumented();
 
@@ -218,8 +216,40 @@ export function startImporting( importerStatus ) {
 		importerId,
 	} );
 
-	wpcom.updateImporter( siteId, importOrder( importerStatus ) );
+	return wpcom.updateImporter( siteId, importOrder( importerStatus ) );
 }
+
+export const autoStartImport = ( siteId, importerType, targetUrl ) => {
+	// TODO: Cover other site-importer imports here. importStatus and params would
+	// need to be amended too.
+	if ( importerType === 'importer-type-wix' ) {
+		const importStatus = {
+			siteId,
+			type: 'wix',
+		};
+		const params = {
+			engine: 'wix',
+		};
+
+		return wpcom
+			.importWithSiteImporter( siteId, importStatus, params, targetUrl )
+			.then( response =>
+				defer( () => {
+					startImporting( {
+						importerId: response.importId,
+						site: { ID: response.siteId },
+					} );
+				} )
+			)
+			.catch( () => {
+				// TODO: Properly handle failure. We should look at
+				// moving the rest of the site-importer actions out
+				// of the components first to reach consistency
+			} );
+	}
+
+	startImport( siteId, importerType );
+};
 
 export const startUpload = ( importerStatus, file ) => {
 	const {

@@ -31,10 +31,15 @@ class ImportURLStepComponent extends Component {
 	showSitePreview = () => this.setState( { showSitePreview: true } );
 
 	handleConfirmationClick = () => {
-		SignupActions.submitSignupStep( {
-			processingMessage: this.props.translate( 'Setting up your site' ),
-			stepName: this.props.stepName,
-		} );
+		const confirmedSiteUrl = get( this.props, 'signupDependencies.importUrl' );
+		SignupActions.submitSignupStep(
+			{
+				processingMessage: this.props.translate( 'Setting up your site' ),
+				stepName: this.props.stepName,
+			},
+			[],
+			{ confirmedSiteUrl }
+		);
 
 		this.props.goToNextStep();
 	};
