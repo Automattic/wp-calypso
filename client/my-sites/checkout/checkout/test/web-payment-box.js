@@ -31,77 +31,78 @@ jest.mock( 'lib/cart-values', () => ( {
 	},
 } ) );
 
-const mockStore = {
-	subscribe: jest.fn(),
-	dispatch: jest.fn(),
-	getState: jest.fn(),
-};
-
 window.ApplePaySession = { canMakePayments: () => true };
 
-const defaultCart = {
-	currency: 'USD',
-	total_cost: 12.34,
-	products: [],
-	tax: {
-		location: {
-			'country-code': 'TEST_COUNTRY_CODE',
-			'postal-code': '42',
-		},
-	},
-};
-
-const defaultProps = {
-	cart: defaultCart,
-	translate: identity,
-	countriesList: [ 'TEST_COUNTRY_CODE' ],
-	onSubmit: jest.fn(),
-	transactionStep: { name: BEFORE_SUBMIT },
-	transaction: {},
-};
-
 describe( 'WebPaymentBox', () => {
+	const defaultCart = {
+		currency: 'USD',
+		total_cost: 12.34,
+		products: [],
+		tax: {
+			location: {
+				'country-code': 'TEST_COUNTRY_CODE',
+				'postal-code': '42',
+			},
+		},
+	};
+
+	const defaultProps = {
+		cart: defaultCart,
+		translate: identity,
+		countriesList: [ 'TEST_COUNTRY_CODE' ],
+		onSubmit: jest.fn(),
+		transactionStep: { name: BEFORE_SUBMIT },
+		transaction: {},
+	};
+
+	const context = {
+		// mock Redux store to keep connect() calls happy
+		store: {
+			subscribe: jest.fn(),
+			dispatch: jest.fn(),
+			getState: jest.fn(),
+		},
+	};
+
 	test( 'should render', () => {
 		shallow( <WebPaymentBox { ...defaultProps } /> );
 	} );
 
 	describe( 'Cart Store Integration', () => {
 		describe( 'Country Code', () => {
+			const countrySelectWrapper = () =>
+				shallow( <WebPaymentBox { ...defaultProps } />, { context } ).find( PaymentCountrySelect );
+
 			test( 'Should render value from the cart store', () => {
-				const wrapper = shallow( <WebPaymentBox { ...defaultProps } />, {
-					context: { store: mockStore },
-				} );
-				expect( wrapper.find( PaymentCountrySelect ).prop( 'value' ) ).toEqual(
-					'TEST_CART_COUNTRY_CODE'
-				);
+				expect(
+					countrySelectWrapper()
+						.find( PaymentCountrySelect )
+						.prop( 'value' )
+				).toEqual( 'TEST_CART_COUNTRY_CODE' );
 			} );
 
 			test( 'Should update the store when changed', () => {
-				const wrapper = shallow( <WebPaymentBox { ...defaultProps } />, {
-					context: { store: mockStore },
-				} );
-
-				const countrySelectWrapper = wrapper
-					.find( PaymentCountrySelect )
+				countrySelectWrapper()
 					.dive() // unwrap Connect Call
-					.dive(); // Activate underlying CountrySelect behaviour.
+					.dive() // Activate underlying CountrySelect behaviour.
+					.simulate( 'change', { target: { value: 'TEST' } } );
 
-				countrySelectWrapper.simulate( 'change', { target: { value: 'TEST' } } );
 				expect( setTaxCountryCode ).toHaveBeenCalledWith( 'TEST' );
 			} );
 		} );
 
 		describe( 'Postal Code', () => {
-			const postalCodeInputWrapper = shallow( <WebPaymentBox { ...defaultProps } />, {
-				context: { store: mockStore },
-			} ).findWhere( n => n.prop( 'name' ) === 'postal-code' );
+			const postalCodeInputWrapper = () =>
+				shallow( <WebPaymentBox { ...defaultProps } />, { context } ).findWhere(
+					n => n.prop( 'name' ) === 'postal-code'
+				);
 
 			test( 'Should render value from the cart store', () => {
-				expect( postalCodeInputWrapper.prop( 'value' ) ).toEqual( 'TEST_CART_POSTAL_CODE' );
+				expect( postalCodeInputWrapper().prop( 'value' ) ).toEqual( 'TEST_CART_POSTAL_CODE' );
 			} );
 
 			test( 'Should update the store when changed', () => {
-				postalCodeInputWrapper.simulate( 'change', {
+				postalCodeInputWrapper().simulate( 'change', {
 					target: { name: 'postal-code', value: '54321' },
 				} );
 				expect( setTaxPostalCode ).toHaveBeenCalledWith( '54321' );
