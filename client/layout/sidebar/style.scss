@@ -194,6 +194,10 @@
             display: none;
         }
 
+        .sidebar__menu-list .gridicons-external {
+			display: inline;
+		}
+
 		.sidebar__menu-item {
 			opacity: 0;
 			transition: transform 0.15s cubic-bezier( 0.23, 1, 0.32, 1 ), opacity 0.15s ease-in-out;
@@ -596,9 +600,14 @@ form.sidebar__button input {
 		flex: 0 1 100%;
 	}
 
-	.sidebar__menu.is-togglable .sidebar__heading {
+	.sidebar__menu.is-togglable .sidebar__heading,
+	.sidebar__menu a {
 		font-size: 15px;
 		font-weight: 600;
+	}
+
+	.sidebar__menu-list .menu-link-text {
+		font-weight: normal;
 	}
 
 	.is-togglable .sidebar__heading .gridicons-chevron-down,
