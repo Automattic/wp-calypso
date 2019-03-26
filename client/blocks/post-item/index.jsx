@@ -35,6 +35,7 @@ import PostShare from 'blocks/post-share';
 import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
+import WpBlockActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu/wp-block-actions-ellipsis-menu';
 import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 import { preload } from 'sections-helper';
@@ -125,6 +126,17 @@ class PostItem extends React.Component {
 		);
 	}
 
+	renderEllipsisMenu() {
+		const { globalId, isTypeWpBlock, multiSelectEnabled } = this.props;
+		if ( multiSelectEnabled ) {
+			return null;
+		}
+		if ( isTypeWpBlock ) {
+			return <WpBlockActionsEllipsisMenu globalId={ globalId } />;
+		}
+		return <PostActionsEllipsisMenu globalId={ globalId } />;
+	}
+
 	render() {
 		const {
 			className,
@@ -210,7 +222,7 @@ class PostItem extends React.Component {
 						globalId={ globalId }
 						onClick={ this.clickHandler( 'image' ) }
 					/>
-					{ ! multiSelectEnabled && <PostActionsEllipsisMenu globalId={ globalId } /> }
+					{ this.renderEllipsisMenu() }
 				</div>
 				{ hasExpandedContent && this.renderExpandedContent() }
 			</div>
@@ -232,6 +244,7 @@ PostItem.propTypes = {
 	compact: PropTypes.bool,
 	hideActiveSharePanel: PropTypes.func,
 	hasExpandedContent: PropTypes.bool,
+	isTypeWpBlock: PropTypes.bool,
 };
 
 export default connect(
@@ -259,6 +272,7 @@ export default connect(
 			hasExpandedContent,
 			isCurrentPostSelected: isPostSelected( state, globalId ),
 			multiSelectEnabled: isMultiSelectEnabled( state ),
+			isTypeWpBlock: 'wp_block' === post.type,
 		};
 	},
 	{
