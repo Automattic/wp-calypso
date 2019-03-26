@@ -6,20 +6,17 @@
 }
 
 .current-plan__header-content {
-	background-color: var( --color-white );
-	padding: 32px;
 	width: 100%;
+	padding: 32px;
+	background-color: var( --color-white );
 	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 
 	@include breakpoint( '>660px' ) {
+		display: flex;
+		align-items: center;
 		text-align: left;
 	}
-	flex-direction: column;
-}
-
-.current-plan__header-content-main {
-	flex-direction: row;
 }
 
 .current-plan__header-icon {
@@ -33,9 +30,8 @@
 
 .current-plan__header-copy {
 	width: 100%;
-	text-align: left;
 	margin-top: -20px;
-	margin-bottom: 40px;
+	text-align: left;
 }
 
 .current-plan__header-heading,
@@ -114,8 +110,13 @@
 }
 
 .current-plan__compare-plans {
-	margin: 16px 0 0;
+	margin-top: 24px;
 	text-align: center;
+
+	@include breakpoint( '>660px' ) {
+		min-width: 140px;
+		margin: 0 0 0 16px;
+	}
 }
 
 .current-plan__text {
