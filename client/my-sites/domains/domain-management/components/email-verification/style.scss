@@ -76,14 +76,8 @@
 	animation: fadeOut 0.3s ease-out;
 }
 
-.domain-details-card {
-	.email-verification__card {
-		margin-bottom: 16px;
-	}
-}
-
-.notice__text {
-	word-break: break-word;
+.domain-details-card .email-verification__card {
+	margin-bottom: 16px;
 }
 
 @keyframes fadeIn {
