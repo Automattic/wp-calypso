@@ -826,6 +826,7 @@ export class MySitesSidebar extends Component {
 					<ExpandableSidebarMenu
 						onClick={ this.props.toggleMySitesSidebarSiteMenu }
 						expanded={ this.props.isSiteOpen }
+						icon="pencil"
 						title={ this.props.translate( 'Site' ) }
 					>
 						{ this.site() }
@@ -836,6 +837,7 @@ export class MySitesSidebar extends Component {
 					<ExpandableSidebarMenu
 						onClick={ this.props.toggleMySitesSidebarDesignMenu }
 						expanded={ this.props.isDesignOpen }
+						icon="customize"
 						title={ this.props.translate( 'Design' ) }
 					>
 						{ this.design() }
@@ -845,6 +847,7 @@ export class MySitesSidebar extends Component {
 				<ExpandableSidebarMenu
 					onClick={ this.props.toggleMySitesSidebarToolsMenu }
 					expanded={ this.props.isToolsOpen }
+					icon="types"
 					title={ this.props.translate( 'Tools' ) }
 				>
 					{ this.tools() }
@@ -854,6 +857,7 @@ export class MySitesSidebar extends Component {
 					<ExpandableSidebarMenu
 						onClick={ this.props.toggleMySitesSidebarManageMenu }
 						expanded={ this.props.isManageOpen }
+						icon="cog"
 						title={ this.props.translate( 'Manage' ) }
 					>
 						<ul>
