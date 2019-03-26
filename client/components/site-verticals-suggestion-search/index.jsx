@@ -164,7 +164,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 		return (
 			<>
-				<QueryVerticals searchTerm={ this.props.searchValue } />
+				<QueryVerticals searchTerm={ this.props.searchValue.trim() } />
 				<QueryVerticals searchTerm={ 'business' } limit={ 1 } />
 				<SuggestionSearch
 					id="siteTopic"
@@ -186,8 +186,10 @@ export class SiteVerticalsSuggestionSearch extends Component {
 export default localize(
 	connect(
 		( state, ownProps ) => {
-			const verticals = getVerticals( state, ownProps.searchValue );
-			const isVerticalSearchPending = null == verticals;
+			const { searchValue } = ownProps;
+			const trimmedSearchValue = searchValue.trim();
+			const verticals = getVerticals( state, trimmedSearchValue );
+			const isVerticalSearchPending = trimmedSearchValue && null == verticals;
 
 			return {
 				verticals: verticals || [],
