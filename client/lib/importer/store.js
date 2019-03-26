@@ -41,6 +41,7 @@ const initialState = Object.freeze( {
 		isFetching: false,
 		retryCount: 0,
 	},
+	autoStartInProgress: false,
 } );
 
 const getImporterItemById = ( state, id ) => get( state, [ 'importers', id ], {} );
@@ -259,6 +260,20 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 					[ action.importerId ]: false,
 				},
 			};
+
+		case 'IMPORTS_AUTO_START_START': {
+			return {
+				...state,
+				autoStartInProgress: true,
+			};
+		}
+
+		case 'IMPORTS_AUTO_START_END': {
+			return {
+				...state,
+				autoStartInProgress: false,
+			};
+		}
 	}
 
 	return state;

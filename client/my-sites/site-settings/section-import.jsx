@@ -255,7 +255,11 @@ class SiteSettingsImport extends Component {
 		this.setState( getImporterState() );
 	};
 
-	renderImportersList() {
+	renderImportersMain() {
+		if (this.state.autoStartInProgress) {
+			return <h2>autoStartInProgress</h2>
+		}
+
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
@@ -273,13 +277,15 @@ class SiteSettingsImport extends Component {
 
 		const { jetpack: isJetpack } = site;
 
+		console.log( { state: this.state } );
+
 		return (
 			<Main>
 				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
 					<h1>{ translate( 'Import Content' ) }</h1>
 				</HeaderCake>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
+					{ isJetpack ? <JetpackImporter /> : this.renderImportersMain() }
 				</EmailVerificationGate>
 			</Main>
 		);

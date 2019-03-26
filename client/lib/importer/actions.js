@@ -220,6 +220,10 @@ export function startImporting( importerStatus ) {
 }
 
 export const autoStartImport = ( siteId, importerType, targetUrl ) => {
+	Dispatcher.handleViewAction( {
+		type: 'IMPORTS_AUTO_START_START',
+	} );
+
 	// TODO: Cover other site-importer imports here. importStatus and params would
 	// need to be amended too.
 	if ( importerType === 'importer-type-wix' ) {
@@ -235,10 +239,13 @@ export const autoStartImport = ( siteId, importerType, targetUrl ) => {
 			.importWithSiteImporter( siteId, importStatus, params, targetUrl )
 			.then( response =>
 				defer( () => {
+					Dispatcher.handleViewAction( {
+						type: 'IMPORTS_AUTO_START_END',
+					} );
 					startImporting( {
 						importerId: response.importId,
 						site: { ID: response.siteId },
-					} );
+					} ).then( () => console.log( 'in then' ) );
 				} )
 			)
 			.catch( () => {
