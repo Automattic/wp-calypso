@@ -13,9 +13,9 @@ import url from 'url';
  * Internal dependencies
  */
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
+import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
@@ -30,6 +30,8 @@ import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
+import { trashPost } from 'state/posts/actions';
+import { getEditorPostId } from 'state/ui/editor/selectors';
 
 /**
  * Style dependencies
@@ -45,6 +47,7 @@ class CalypsoifyIframe extends Component {
 	};
 
 	state = {
+		classicBlockEditorId: null,
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
 		isPreviewVisible: false,
@@ -94,6 +97,19 @@ class CalypsoifyIframe extends Component {
 
 			// Check if we're generating a post via Press This
 			this.pressThis();
+			return;
+		}
+		if ( 'classicBlockOpenMediaModal' === action ) {
+			if ( data.imageId ) {
+				const { siteId } = this.props;
+				const image = MediaStore.get( siteId, data.imageId );
+				MediaActions.setLibrarySelectedItems( siteId, [ image ] );
+			}
+
+			this.setState( {
+				classicBlockEditorId: data.editorId,
+				isMediaModalVisible: true,
+			} );
 		}
 	};
 
@@ -136,8 +152,10 @@ class CalypsoifyIframe extends Component {
 			}
 		}
 
-		if ( 'postTrashed' === action ) {
-			this.props.navigate( this.props.postTypeTrashUrl );
+		if ( 'trashPost' === action ) {
+			const { siteId, editedPostId, postTypeTrashUrl } = this.props;
+			this.props.trashPost( siteId, editedPostId );
+			this.props.navigate( postTypeTrashUrl );
 		}
 
 		if ( 'goToAllPosts' === action ) {
@@ -166,7 +184,7 @@ class CalypsoifyIframe extends Component {
 	};
 
 	closeMediaModal = media => {
-		if ( media && this.iframePort ) {
+		if ( ! this.state.classicBlockEditorId && media && this.iframePort ) {
 			const { multiple } = this.state;
 			const formattedMedia = map( media.items, item => mediaCalypsoToGutenberg( item ) );
 			const payload = multiple ? formattedMedia : formattedMedia[ 0 ];
@@ -189,7 +207,19 @@ class CalypsoifyIframe extends Component {
 			}
 		}
 
-		this.setState( { isMediaModalVisible: false } );
+		this.setState( { classicBlockEditorId: null, isMediaModalVisible: false } );
+	};
+
+	insertClassicBlockMedia = markup => {
+		if ( !! this.state.classicBlockEditorId && this.iframePort ) {
+			this.iframePort.postMessage( {
+				action: 'insertClassicBlockMedia',
+				payload: {
+					editorId: this.state.classicBlockEditorId,
+					media: markup,
+				},
+			} );
+		}
 	};
 
 	pressThis = () => {
@@ -251,6 +281,7 @@ class CalypsoifyIframe extends Component {
 	render() {
 		const { iframeUrl, siteId } = this.props;
 		const {
+			classicBlockEditorId,
 			isMediaModalVisible,
 			allowedTypes,
 			multiple,
@@ -276,11 +307,13 @@ class CalypsoifyIframe extends Component {
 					/>
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
-					<MediaModal
+					<EditorMediaModal
 						disabledDataSources={ getDisabledDataSources( allowedTypes ) }
 						enabledFilters={ getEnabledFilters( allowedTypes ) }
 						galleryViewEnabled={ false }
+						isGutenberg={ ! classicBlockEditorId }
 						onClose={ this.closeMediaModal }
+						onInsertMedia={ this.insertClassicBlockMedia }
 						single={ ! multiple }
 						source=""
 						visible={ isMediaModalVisible }
@@ -333,6 +366,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		postTypeTrashUrl,
 		siteAdminUrl,
 		frameNonce,
+		editedPostId: getEditorPostId( state ),
 	};
 };
 
@@ -342,6 +376,7 @@ const mapDispatchToProps = {
 	navigate,
 	openPostRevisionsDialog,
 	startEditingPost,
+	trashPost,
 };
 
 export default connect(

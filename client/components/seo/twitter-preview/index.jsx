@@ -7,6 +7,11 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const baseDomain = url =>
 	url
 		.replace( /^[^/]+[/]*/, '' ) // strip leading protocol

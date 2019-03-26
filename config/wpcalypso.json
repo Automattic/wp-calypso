@@ -131,6 +131,7 @@
 		"reader/related-posts": true,
 		"reader/high-watermark": true,
 		"reader/user-mention-suggestions": true,
+		"recommend-plugins": true,
 		"resume-editing": true,
 		"republicize": true,
 		"rewind/clone-site": true,

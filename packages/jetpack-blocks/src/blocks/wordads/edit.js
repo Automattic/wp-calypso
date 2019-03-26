@@ -41,9 +41,7 @@ class WordAdsEdit extends Component {
 							height: selectedFormatObject.height + selectedFormatObject.editorPadding,
 						} }
 					>
-						<div className="jetpack-wordads__header">{ __( 'Advertisements' ) }</div>
 						<Placeholder icon={ icon } label={ title } />
-						<div className="jetpack-wordads__footer">{ __( 'Report this Ad' ) }</div>
 						<ToggleControl
 							checked={ Boolean( hideMobile ) }
 							label={ __( 'Hide ad on mobile views' ) }

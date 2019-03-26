@@ -103,7 +103,7 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 				importFavicon: favicon,
 				importSiteTitle: siteTitle,
 				importSiteUrl,
-				themeSlugWithRepo: 'pub/radcliffe-2',
+				themeSlugWithRepo: 'pub/modern-business',
 			} );
 		} )
 		.catch( error => {

@@ -26,7 +26,12 @@ import Task from 'components/checklist/task';
 import { successNotice } from 'state/notices/actions';
 import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteSlug, getSiteFrontPage } from 'state/sites/selectors';
+import {
+	getSiteOption,
+	getSiteSlug,
+	getSiteFrontPage,
+	isCurrentPlanPaid,
+} from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
@@ -186,9 +191,13 @@ class WpcomChecklistComponent extends PureComponent {
 			return;
 		}
 
-		const { siteId } = this.props;
+		const { siteId, domains, isPaidPlan, siteSlug } = this.props;
 
-		this.props.launchSite( siteId );
+		if ( isPaidPlan && domains.length > 1 ) {
+			this.props.launchSite( siteId );
+		} else {
+			location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
+		}
 	};
 
 	verificationTaskButtonText() {
@@ -1009,6 +1018,7 @@ export default connect(
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
+			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 		};
 	},
 	{
