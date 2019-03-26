@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-// import { omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,16 +24,16 @@ const initialState = {
 	preview: '',
 };
 
+// TODO:
+// This reducer can be further simplify since the verticals data can be
+// found in `signup.verticals`, so it only needs to store the site vertical name.
 export default createReducer(
 	initialState,
 	{
 		[ SIGNUP_STEPS_SITE_VERTICAL_SET ]: ( state, siteVerticalData ) => {
-			// return {
-			// 	...state,
-			// 	...omit( siteVerticalData, 'type' ),
-			// };
 			return {
-				name: siteVerticalData.name,
+				...state,
+				...omit( siteVerticalData, 'type' ),
 			};
 		},
 		[ SIGNUP_COMPLETE_RESET ]: () => {

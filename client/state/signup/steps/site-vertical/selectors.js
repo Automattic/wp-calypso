@@ -10,6 +10,7 @@ import { get, find } from 'lodash';
  * Internal dependencies
  */
 import { getVerticals } from 'state/signup/verticals/selectors';
+import { DEFAULT_VERTICAL_KEY } from 'state/signup/verticals/constants';
 
 export function getSiteVerticalName( state ) {
 	return get( state, 'signup.steps.siteVertical.name', '' );
@@ -20,7 +21,6 @@ export function getSiteVerticalData( state ) {
 
 	const verticals = getVerticals( state, verticalName );
 
-	// TODO: this can be optimized
 	const match = find(
 		verticals,
 		item => item.verticalName.toLowerCase() === verticalName.toLowerCase()
@@ -30,13 +30,12 @@ export function getSiteVerticalData( state ) {
 		return match;
 	}
 
-	// TODO: ARRRGHHH. I'm running out of time ...
-	const defaultVerticalData = get( verticals, 'business[0]', {} );
+	const defaultVerticalData = get( verticals, [ DEFAULT_VERTICAL_KEY, 0 ], {} );
 
 	return {
 		isUserInputVertical: true,
 		parent: '',
-		preview: defaultVerticalData.preview,
+		preview: defaultVerticalData.preview || '',
 		verticalId: '',
 		verticalName,
 		verticalSlug: verticalName,

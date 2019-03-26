@@ -13,6 +13,12 @@ import {
 } from '../selectors';
 
 describe( 'selectors', () => {
+	const verticals = {
+		felice: [
+			{ verticalName: 'felice', preview: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->' },
+		],
+	};
+
 	const state = {
 		signup: {
 			steps: {
@@ -21,12 +27,13 @@ describe( 'selectors', () => {
 					name: 'felice',
 					slug: 'happy',
 					isUserInput: false,
-					preview: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->',
 					parentId: 'gluecklich',
 				},
 			},
+			verticals,
 		},
 	};
+
 	describe( 'getSiteVerticalName', () => {
 		test( 'should return empty string as a default state', () => {
 			expect( getSiteVerticalName( {} ) ).toEqual( '' );
@@ -62,7 +69,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return site vertical from the state', () => {
-			expect( getSiteVerticalPreview( state ) ).toEqual( state.signup.steps.siteVertical.preview );
+			expect( getSiteVerticalPreview( state ) ).toEqual( verticals.felice[ 0 ].preview );
 		} );
 	} );
 	describe( '', () => {
