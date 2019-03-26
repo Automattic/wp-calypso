@@ -9,6 +9,7 @@
     "markdown",
     "publicize",
     "related-posts",
+    "repeat-visitor",
     "shortlinks",
     "simple-payments",
     "slideshow",
@@ -18,7 +19,6 @@
     "wordads"
   ],
   "beta": [
-    "repeat-visitor",
     "seo",
     "vr"
   ]
