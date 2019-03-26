@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import './missing/file';
 import 'gutenberg/extensions/editor-notes/editor';
 import 'gutenberg/extensions/prev-next/editor';
 import 'gutenberg/extensions/todo/editor';
