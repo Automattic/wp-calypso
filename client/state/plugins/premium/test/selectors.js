@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,7 @@ import deepFreeze from 'deep-freeze';
 import {
 	getActivePlugin,
 	getNextPlugin,
+	getPluginKeys,
 	getPluginsForSite,
 	isFinished,
 	isInstalling,
@@ -151,6 +150,20 @@ describe( 'Premium Plugin Selectors', () => {
 
 		test( 'Should get `false`, if the requested site is finished installing all plugins', () => {
 			expect( getNextPlugin( state, 'finished.site' ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'getPluginKeys', () => {
+		test( 'Should get an empty object if there are no plugins for this site', () => {
+			expect( getPluginKeys( state, 'no.site' ) ).toEqual( {} );
+		} );
+
+		test( 'Should get plugin keys if there are plugins for this site', () => {
+			expect( getPluginKeys( state, 'start.site' ) ).toEqual( {
+				akismet: 'ak-api-key',
+				polldaddy: 'pd-api-key',
+				vaultpress: 'vp-api-key',
+			} );
 		} );
 	} );
 } );
