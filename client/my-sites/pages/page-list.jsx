@@ -76,7 +76,6 @@ export default class PageList extends Component {
 			search,
 			status: mapStatus( status ),
 			type: 'page',
-			context: 'edit',
 		};
 
 		return (
