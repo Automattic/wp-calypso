@@ -618,9 +618,9 @@ form.sidebar__button input {
 
 	.is-togglable.selected .sidebar__heading {
 		color: #016087;
-		color: var(--sidebar-menu-selected-a-color);
+		color: var( --sidebar-menu-selected-a-color );
 		background-color: #d8dee4;
-		background-color: var(--sidebar-menu-selected-background-color);
+		background-color: var( --sidebar-menu-selected-background-color );
 	}
 
 	.is-togglable .sidebar__heading span {
@@ -657,7 +657,7 @@ form.sidebar__button input {
 
 	.material-icon {
 		fill: #636d75;
-		fill: var(--sidebar-gridicon-fill);
+		fill: var( --sidebar-gridicon-fill );
 		margin-right: 12px;
 		position: relative;
 		top: 2px;
@@ -665,7 +665,7 @@ form.sidebar__button input {
 		width: 24px;
 		margin-right: 12px;
 		flex-shrink: 0;
-		transition: transform .15s cubic-bezier(.175,.885,.32,1.275);
+		transition: transform .15s cubic-bezier( .175,.885,.32, 1.275 );
 	}
 
 	.sidebar__menu.sidebar__wp-admin .sidebar__heading .gridicon {
@@ -682,14 +682,14 @@ form.sidebar__button input {
 		order: 99;
 	}
 
-	.is-togglable.is-toggle-open .sidebar__heading .gridicon:not(.gridicons-chevron-down) {
-		transform: rotate(0deg);
+	.is-togglable.is-toggle-open .sidebar__heading .gridicon:not( .gridicons-chevron-down ) {
+		transform: rotate( 0deg );
 	}
 
 	.is-togglable.selected .sidebar__heading .gridicon,
 	.is-togglable.selected .sidebar__heading .material-icon {
 		fill: #016087;
-		fill: var(--sidebar-menu-selected-a-color);
+		fill: var( --sidebar-menu-selected-a-color );
 	}
 
 	.sidebar__button {
