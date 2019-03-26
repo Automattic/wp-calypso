@@ -12,7 +12,7 @@ import { JETPACK_PRODUCT_INSTALL_REQUEST } from 'state/action-types';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 /**
- * Request the current Jetpack product install status.
+ * Start the Jetpack product install process.
  *
  * @param   {object} action Action to start product install request.
  * @returns {object}        The dispatched action.
