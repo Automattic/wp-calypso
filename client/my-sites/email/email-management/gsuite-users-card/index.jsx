@@ -146,10 +146,7 @@ class GSuiteUsersCard extends React.Component {
 				) }
 
 				{ Object.keys( usersByDomain )
-					.filter(
-						domain =>
-							! selectedDomainName || ( selectedDomainName && domain === selectedDomainName )
-					)
+					.filter( domain => ! selectedDomainName || domain === selectedDomainName )
 					.map( domain => this.renderDomain( domain, usersByDomain[ domain ] ) ) }
 			</div>
 		);
