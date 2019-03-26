@@ -5,7 +5,7 @@ expectedVersion=$(<.nvmrc)
 
 update-wrapper-node-version () {
     version=${expectedVersion:1}
-    config=( $(jq -r '.circleCIToken' ./config/local-${NODE_ENV}.json) )
+    config=( $(jq -r '.circleCIToken' ./config/local-${NODE_CONFIG_ENV}.json) )
     token=${config[0]}
 
     curl --write-out %{http_code} --silent --output /dev/null -X POST --header "Content-Type: application/json" -d "{\"name\":\"NODE_VERSION\", \"value\":\"$version\"}" https://circleci.com/api/v1.1/project/github/automattic/wp-e2e-tests/envvar?circle-token=${token}
