@@ -3,6 +3,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
 
 /**
@@ -11,7 +12,10 @@ import { some } from 'lodash';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
 import Interval, { EVERY_SECOND, EVERY_FIVE_SECONDS } from 'lib/interval';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
+import { JETPACK_CONTACT_SUPPORT } from 'lib/url/support';
 import { getPluginKeys } from 'state/plugins/premium/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -111,6 +115,8 @@ export class JetpackProductInstall extends Component {
 		return this.retries < MAX_RETRIES && this.installationHasRetryableErrors();
 	}
 
+	refreshPage = () => window.location.reload();
+
 	requestStatus = () => {
 		this.props.requestJetpackProductInstallStatus( this.props.siteId );
 
@@ -120,7 +126,7 @@ export class JetpackProductInstall extends Component {
 	};
 
 	render() {
-		const { progressComplete, siteId } = this.props;
+		const { progressComplete, siteId, translate } = this.props;
 		const period = this.installationShouldRetry() ? EVERY_FIVE_SECONDS : EVERY_SECOND;
 
 		return (
@@ -128,7 +134,15 @@ export class JetpackProductInstall extends Component {
 				<QueryPluginKeys siteId={ siteId } />
 
 				{ ! this.installationShouldRetry() && this.installationHasRetryableErrors() && (
-					<div>ERROR! PLEASE RESTART</div>
+					<Notice
+						status="is-error"
+						text={ translate( 'Oops! An error has occurred while setting up your plan.' ) }
+					>
+						<NoticeAction onClick={ this.refreshPage }>{ translate( 'Try again' ) }</NoticeAction>
+						<NoticeAction href={ JETPACK_CONTACT_SUPPORT } external>
+							{ translate( 'Contact support' ) }
+						</NoticeAction>
+					</Notice>
 				) }
 
 				{ progressComplete !== 100 &&
@@ -155,4 +169,4 @@ export default connect(
 		requestJetpackProductInstallStatus,
 		startJetpackProductInstall,
 	}
-)( JetpackProductInstall );
+)( localize( JetpackProductInstall ) );
