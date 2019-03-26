@@ -13,7 +13,7 @@
 		0 1px 2px var( --color-neutral-0 );
 
 	.is-jetpack-free & {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint( '>800px' ) {
 			display: flex;
 			align-items: center;
 			text-align: left;
