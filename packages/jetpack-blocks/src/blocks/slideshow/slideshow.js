@@ -68,10 +68,14 @@ class Slideshow extends Component {
 			delay !== prevProps.delay ||
 			images !== prevProps.images
 		) {
-			const realIndex =
-				images.length === prevProps.images.length
-					? this.swiperInstance.realIndex
-					: prevProps.images.length;
+			let realIndex;
+			if ( ! this.swiperIndex ) {
+				realIndex = 0;
+			} else if ( images.length === prevProps.images.length ) {
+				realIndex = this.swiperInstance.realIndex;
+			} else {
+				realIndex = prevProps.images.length;
+			}
 			this.swiperInstance && this.swiperInstance.destroy( true, true );
 			this.buildSwiper( realIndex )
 				.then( swiper => {
