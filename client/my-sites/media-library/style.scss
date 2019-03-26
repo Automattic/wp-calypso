@@ -242,19 +242,6 @@
 	bottom: 72px;
 }
 
-.media-library__videopress-nudge-container .upgrade-nudge-expanded {
-	position: absolute;
-	left: 0;
-	right: 0;
-	box-shadow: none;
-	margin: 0;
-
-	@include breakpoint( '>960px') {
-		top: 50%;
-		transform: translateY( -50% );
-	}
-}
-
 .empty-content .media-library__videopress-nudge-regular.card.upgrade-nudge {
 	margin-left: auto;
 	margin-right: auto;
