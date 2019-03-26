@@ -638,6 +638,37 @@
 	}
 }
 
+.gravatar {
+    .formatted-header__title {
+        color: var( --color-white );
+    }
+
+    .formatted-header__subtitle {
+        color: var( --color-white );
+			
+			a {
+				color: var( --color-white );
+                text-decoration: underline;
+					
+					&:hover {
+						color: var( --color-neutral-100 );						
+					}
+            }
+    }
+
+    .logged-out-form__links a {
+        color: var( --color-white );
+		
+                &:hover {
+                    color: var( --color-neutral-100 );
+                }
+    }
+
+   .signup-form .logged-out-form__footer {
+        margin: 0;
+    }
+}
+
 // Adding some CSS to cover the --color-primary
 // background color in the signup flow for Akismet.
 .layout.dops.akismet {
