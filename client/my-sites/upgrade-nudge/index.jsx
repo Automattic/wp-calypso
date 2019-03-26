@@ -28,6 +28,11 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class UpgradeNudge extends React.Component {
 	static propTypes = {
 		onClick: PropTypes.func,
