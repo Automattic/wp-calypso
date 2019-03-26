@@ -10,7 +10,7 @@ import { some } from 'lodash';
  */
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
-import Interval, { EVERY_SECOND } from 'lib/interval';
+import Interval, { EVERY_SECOND, EVERY_FIVE_SECONDS } from 'lib/interval';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import { getPluginKeys } from 'state/plugins/premium/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -30,7 +30,7 @@ const NON_ERROR_STATES = [
 ];
 const RETRYABLE_ERROR_STATES = [ 'vaultpress_error' ];
 const PLUGINS = [ 'akismet', 'vaultpress' ];
-const MAX_RETRIES = 5;
+const MAX_RETRIES = 3;
 
 export class JetpackProductInstall extends Component {
 	state = {
@@ -56,8 +56,8 @@ export class JetpackProductInstall extends Component {
 			return;
 		}
 
-		// We have installation errors
-		if ( this.installationHasErrors() ) {
+		// We have non-recoverable installation errors
+		if ( this.installationHasErrors() && ! this.installationHasRetryableErrors() ) {
 			return;
 		}
 
@@ -80,7 +80,7 @@ export class JetpackProductInstall extends Component {
 		}
 	}
 
-	installationHasErrors() {
+	arePluginsInState( pluginStates ) {
 		const { status } = this.props;
 
 		if ( ! status ) {
@@ -88,32 +88,27 @@ export class JetpackProductInstall extends Component {
 		}
 
 		return some( PLUGINS, pluginSlug => {
-			if (
-				NON_ERROR_STATES.indexOf( status[ pluginSlug + '_status' ] ) < 0 &&
-				RETRYABLE_ERROR_STATES.indexOf( status[ pluginSlug + '_status' ] ) < 0
-			) {
+			if ( pluginStates.indexOf( status[ pluginSlug + '_status' ] ) >= 0 ) {
 				return true;
 			}
 			return false;
 		} );
 	}
 
-	installationShouldRetry() {
-		const { status } = this.props;
-
-		if ( ! status ) {
-			return false;
+	installationHasErrors() {
+		if ( this.installationHasRetryableErrors() ) {
+			return true;
 		}
 
-		return (
-			this.retries < MAX_RETRIES &&
-			some( PLUGINS, pluginSlug => {
-				if ( RETRYABLE_ERROR_STATES.indexOf( status[ pluginSlug + '_status' ] ) >= 0 ) {
-					return true;
-				}
-				return false;
-			} )
-		);
+		return ! this.arePluginsInState( NON_ERROR_STATES );
+	}
+
+	installationHasRetryableErrors() {
+		return this.arePluginsInState( RETRYABLE_ERROR_STATES );
+	}
+
+	installationShouldRetry() {
+		return this.retries < MAX_RETRIES && this.installationHasRetryableErrors();
 	}
 
 	requestStatus = () => {
@@ -126,14 +121,19 @@ export class JetpackProductInstall extends Component {
 
 	render() {
 		const { progressComplete, siteId } = this.props;
+		const period = this.installationShouldRetry() ? EVERY_FIVE_SECONDS : EVERY_SECOND;
 
 		return (
 			<Fragment>
 				<QueryPluginKeys siteId={ siteId } />
 
+				{ ! this.installationShouldRetry() && this.installationHasRetryableErrors() && (
+					<div>ERROR! PLEASE RESTART</div>
+				) }
+
 				{ progressComplete !== 100 &&
 					( ! this.installationHasErrors() || this.installationShouldRetry() ) && (
-						<Interval period={ EVERY_SECOND } onTick={ this.requestStatus } />
+						<Interval period={ period } onTick={ this.requestStatus } />
 					) }
 			</Fragment>
 		);
