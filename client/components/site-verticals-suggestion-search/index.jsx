@@ -98,9 +98,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			this.setState( { railcar: this.getNewRailcar() } );
 		}
 
-		this.props.onChange( {
-			verticalName: value,
-		} );
+		this.updateVerticalData( result, value );
 
 		this.setState( {
 			isNavigating,
