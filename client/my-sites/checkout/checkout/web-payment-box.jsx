@@ -240,7 +240,7 @@ export class WebPaymentBox extends React.Component {
 
 		if ( config.isEnabled( 'show-tax' ) && total_tax ) {
 			displayItems = concat( displayItems, {
-				label: 'Tax',
+				label: translate( 'Tax', { comment: 'The tax amount line-item in payment request' } ),
 				amount: { currency: currency, value: total_tax },
 			} );
 		}
@@ -303,7 +303,7 @@ export class WebPaymentBox extends React.Component {
 		} );
 		if ( config.isEnabled( 'show-tax' && total_tax ) ) {
 			displayItems = concat( displayItems, {
-				label: 'Tax',
+				label: translate( 'Tax', { comment: 'The tax amount line-item in payment request' } ),
 				amount: { currency, value: total_tax },
 			} );
 		}
