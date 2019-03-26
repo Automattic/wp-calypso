@@ -33,7 +33,7 @@ import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
 /**

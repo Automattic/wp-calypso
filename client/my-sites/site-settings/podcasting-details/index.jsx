@@ -37,7 +37,7 @@ import PodcastingPublishNotice from './publish-notice';
 import PodcastingSupportLink from './support-link';
 import podcastingTopics from './topics';
 import TermTreeSelector from 'blocks/term-tree-selector';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import UpgradeNudge from 'blocks/upgrade-nudge';
 
 /**
  * Selectors, actions, and query components
