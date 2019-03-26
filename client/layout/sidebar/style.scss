@@ -573,8 +573,63 @@ form.sidebar__button input {
 }
 
 .sidebar__streamlined-nav-drawer {
+	.sidebar__menu-wrapper {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+
 	.sidebar__button {
 		display: none;
+	}
+
+	.sidebar__menu-list a {
+		padding: 10px 16px 10px 55px; 
+	}
+
+	.is-togglable .sidebar__heading {
+		font-weight: 600;
+		justify-content: flex-start;
+	}
+
+	.is-togglable .sidebar__heading span {
+		flex: 0 1 100%;
+	}
+
+	.sidebar__menu.is-togglable .sidebar__heading {
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	.is-togglable .sidebar__heading .gridicons-chevron-down,
+	.sidebar .is-togglable .sidebar__heading .material-icon-exit_to_app {
+		margin-right: 0;
+		top: 0;
+	}
+
+	.sidebar__menu.wp-admin .sidebar__heading .gridicon {
+		order: 0;
+	}
+
+	.sidebar__heading .gridicons-chevron-down {
+		align-self: flex-end;
+		order: 99; 
+	}
+
+	.is-togglable.is-toggle-open .sidebar__heading .gridicon:not(.gridicons-chevron-down) {
+		transform: rotate(0deg);
+	}
+
+	/* WP Admin Link */
+
+	.sidebar__menu.sidebar__wp-admin {
+		width: 100%;
+		margin-top: auto;
+	}
+
+	.sidebar__menu.sidebar__wp-admin .wp-admin {
+		border-top: 1px solid lightgray;
+		justify-content: flex-start;
 	}
 }
 
