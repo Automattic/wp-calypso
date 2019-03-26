@@ -16,10 +16,10 @@ import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Header from './card/header';
 import {
 	domainManagementContactsPrivacy,
-	domainManagementEmail,
 	domainManagementNameServers,
 	domainManagementTransfer,
 } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import { disablePrivacyProtection, enablePrivacyProtection } from 'lib/upgrades/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { togglePrivacy } from 'state/sites/domains/actions';
@@ -172,7 +172,7 @@ class RegisteredDomain extends React.Component {
 	}
 
 	emailNavItem() {
-		const path = domainManagementEmail( this.props.selectedSite.slug, this.props.domain.name );
+		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
 	}

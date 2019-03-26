@@ -77,11 +77,8 @@ import {
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
-import {
-	domainManagementEmail,
-	domainManagementList,
-	domainManagementTransferInPrecheck,
-} from 'my-sites/domains/paths';
+import { domainManagementList, domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
@@ -300,7 +297,7 @@ export class CheckoutThankYou extends React.Component {
 			} else if ( purchases.some( isGoogleApps ) ) {
 				const purchase = find( purchases, isGoogleApps );
 
-				return page( domainManagementEmail( this.props.selectedSite.slug, purchase.meta ) );
+				return page( emailManagement( this.props.selectedSite.slug, purchase.meta ) );
 			}
 		}
 

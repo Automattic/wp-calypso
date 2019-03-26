@@ -3,35 +3,28 @@
 /**
  * External dependencies
  */
-import page from 'page';
+import React from 'react';
 
 /**
  * Internal Dependencies
  */
-import * as domainsPaths from 'my-sites/domains/paths';
+import EmailForwarding from 'my-sites/email/email-forwarding';
+import EmailManagement from 'my-sites/email/email-management';
+import GSuiteAddUsers from 'my-sites/email/gsuite-add-users';
 
 export default {
-	emailManagementAddGSuiteUsersRedirect( pageContext ) {
-		page.redirect(
-			domainsPaths.domainManagementAddGSuiteUsers(
-				pageContext.params.site,
-				pageContext.params.domain
-			)
-		);
+	emailManagementAddGSuiteUsers( pageContext, next ) {
+		pageContext.primary = <GSuiteAddUsers selectedDomainName={ pageContext.params.domain } />;
+		next();
 	},
 
-	emailManagementForwardingRedirect( pageContext ) {
-		page.redirect(
-			domainsPaths.domainManagementEmailForwarding(
-				pageContext.params.site,
-				pageContext.params.domain
-			)
-		);
+	emailManagementForwarding( pageContext, next ) {
+		pageContext.primary = <EmailForwarding selectedDomainName={ pageContext.params.domain } />;
+		next();
 	},
 
-	emailManagementRedirect( pageContext ) {
-		page.redirect(
-			domainsPaths.domainManagementEmail( pageContext.params.site, pageContext.params.domain )
-		);
+	emailManagement( pageContext, next ) {
+		pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
+		next();
 	},
 };

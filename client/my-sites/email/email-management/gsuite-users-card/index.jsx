@@ -18,7 +18,9 @@ import CompactCard from 'components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import { hasPendingGSuiteUsers } from 'lib/domains/gsuite';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedDomain } from 'lib/domains';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuiteUserItem from 'my-sites/email/email-management/gsuite-user-item';
 import Notice from 'components/notice';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
@@ -68,7 +70,7 @@ class GSuiteUsersCard extends React.Component {
 						<Button
 							primary
 							compact
-							href={ domainManagementAddGSuiteUsers( this.props.selectedSite.slug, domain ) }
+							href={ domainManagementAddGSuiteUsers( this.props.selectedSiteSlug, domain ) }
 							onClick={ this.goToAddGoogleApps }
 						>
 							{ this.props.translate( 'Add G Suite User' ) }
@@ -128,23 +130,24 @@ class GSuiteUsersCard extends React.Component {
 	}
 
 	render() {
+		const { gsuiteUsers, selectedDomainName, selectedSiteSlug } = this.props;
 		const pendingDomains = this.getDomainsAsList().filter( hasPendingGSuiteUsers );
-		const usersByDomain = groupBy( this.props.gsuiteUsers, 'domain' );
+		const usersByDomain = groupBy( gsuiteUsers, 'domain' );
 
 		return (
 			<div>
 				{ pendingDomains.length !== 0 && (
 					<PendingGSuiteTosNotice
 						key="pending-gsuite-tos-notice"
-						siteSlug={ this.props.selectedSite.slug }
+						siteSlug={ selectedSiteSlug }
 						domains={ pendingDomains }
 						section="google-apps"
 					/>
 				) }
 
-				{ Object.keys( usersByDomain ).map( domain =>
-					this.renderDomain( domain, usersByDomain[ domain ] )
-				) }
+				{ Object.keys( usersByDomain )
+					.filter( domain => ! selectedDomainName || domain === selectedDomainName )
+					.map( domain => this.renderDomain( domain, usersByDomain[ domain ] ) ) }
 			</div>
 		);
 	}
@@ -183,11 +186,14 @@ GSuiteUsersCard.propTypes = {
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array.isRequired,
 	selectedDomainName: PropTypes.string,
-	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+	selectedSiteSlug: PropTypes.string.isRequired,
 	user: PropTypes.object.isRequired,
 };
 
 export default connect(
-	null,
+	state => ( {
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+		user: getCurrentUser( state ),
+	} ),
 	{ addGoogleAppsUserClick, manageClick }
 )( localize( GSuiteUsersCard ) );

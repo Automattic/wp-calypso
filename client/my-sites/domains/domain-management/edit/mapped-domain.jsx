@@ -17,12 +17,10 @@ import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import {
-	domainManagementDns,
-	domainManagementEmail,
-	domainManagementDomainConnectMapping,
-} from 'my-sites/domains/paths';
+import { domainManagementDns, domainManagementDomainConnectMapping } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 
+// eslint-disable-next-line react/prefer-es6-class
 const MappedDomain = createReactClass( {
 	displayName: 'MappedDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
@@ -91,6 +89,7 @@ const MappedDomain = createReactClass( {
 		const { domain, selectedSite, translate } = this.props;
 
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="domain-details-card">
 				<Header { ...this.props } />
 
@@ -123,7 +122,7 @@ const MappedDomain = createReactClass( {
 	},
 
 	emailNavItem() {
-		const path = domainManagementEmail( this.props.selectedSite.slug, this.props.domain.name );
+		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
 	},

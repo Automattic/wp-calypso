@@ -70,7 +70,7 @@ class PlansNavigation extends React.Component {
 			case '/domains/add':
 				return 'Domains';
 
-			case '/domains/manage/email':
+			case '/email':
 				return 'Email';
 
 			default:
@@ -118,10 +118,7 @@ class PlansNavigation extends React.Component {
 							</NavItem>
 						) }
 						{ canManageDomain && (
-							<NavItem
-								path={ `/domains/manage/email/${ site.slug }` }
-								selected={ path === '/domains/manage/email' }
-							>
+							<NavItem path={ `/email/${ site.slug }` } selected={ path === '/email' }>
 								{ translate( 'Email' ) }
 							</NavItem>
 						) }

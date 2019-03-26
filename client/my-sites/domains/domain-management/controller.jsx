@@ -17,7 +17,6 @@ import {
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementEmail,
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementPrimaryDomain,
@@ -30,10 +29,12 @@ import {
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
 } from 'my-sites/domains/paths';
-import EmailForwarding from 'my-sites/email/email-forwarding';
-import EmailManagement from 'my-sites/email/email-management';
+import {
+	emailManagement,
+	emailManagementAddGSuiteUsers,
+	emailManagementForwarding,
+} from 'my-sites/email/paths';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import GSuiteAddUsers from 'my-sites/email/gsuite-add-users';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { decodeURIComponentIfValid } from 'lib/url';
 
@@ -146,29 +147,14 @@ export default {
 		next();
 	},
 
-	domainManagementEmail( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementEmail(
-					':site',
-					pageContext.params.domain ? ':domain' : undefined
-				) }
-				analyticsTitle="Domain Management > Email"
-				component={ EmailManagement }
-				context={ pageContext }
-				needsCart
-				needsDomains
-				needsPlans
-				needsProductsList
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
+	domainManagementEmailRedirect( pageContext ) {
+		page.redirect( emailManagement( pageContext.params.site, pageContext.params.domain ) );
 	},
 
-	domainManagementEmailForwarding( pageContext, next ) {
-		pageContext.primary = <EmailForwarding selectedDomainName={ pageContext.params.domain } />;
-		next();
+	domainManagementEmailForwardingRedirect( pageContext ) {
+		page.redirect(
+			emailManagementForwarding( pageContext.params.site, pageContext.params.domain )
+		);
 	},
 
 	domainManagementDns( pageContext, next ) {
@@ -215,9 +201,10 @@ export default {
 		next();
 	},
 
-	domainManagementAddGSuiteUsers( pageContext, next ) {
-		pageContext.primary = <GSuiteAddUsers selectedDomainName={ pageContext.params.domain } />;
-		next();
+	domainManagementAddGSuiteUsersRedirect( pageContext ) {
+		page.redirect(
+			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
+		);
 	},
 
 	domainManagementRedirectSettings( pageContext, next ) {
