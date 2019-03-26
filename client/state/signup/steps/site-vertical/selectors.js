@@ -15,22 +15,6 @@ export function getSiteVerticalName( state ) {
 	return get( state, 'signup.steps.siteVertical.name', '' );
 }
 
-export function getSiteVerticalId( state ) {
-	return get( state, 'signup.steps.siteVertical.id', '' );
-}
-
-export function getSiteVerticalParentId( state ) {
-	return get( state, 'signup.steps.siteVertical.parentId', '' );
-}
-
-export function getSiteVerticalSlug( state ) {
-	return get( state, 'signup.steps.siteVertical.slug', '' );
-}
-
-export function getSiteVerticalIsUserInput( state ) {
-	return get( state, 'signup.steps.siteVertical.isUserInput', true );
-}
-
 export function getSiteVerticalData( state ) {
 	const verticalName = get( state, 'signup.steps.siteVertical.name', '' );
 
@@ -61,4 +45,21 @@ export function getSiteVerticalData( state ) {
 
 export function getSiteVerticalPreview( state ) {
 	return get( getSiteVerticalData( state ), 'preview', '' );
+}
+
+// TODO: All the following selectors will be updated to use getSiteVerticalData like getSiteVerticalPreview() does.
+export function getSiteVerticalId( state ) {
+	return get( state, 'signup.steps.siteVertical.id', '' );
+}
+
+export function getSiteVerticalParentId( state ) {
+	return get( state, 'signup.steps.siteVertical.parentId', '' );
+}
+
+export function getSiteVerticalSlug( state ) {
+	return get( state, 'signup.steps.siteVertical.slug', '' );
+}
+
+export function getSiteVerticalIsUserInput( state ) {
+	return get( state, 'signup.steps.siteVertical.isUserInput', true );
 }
