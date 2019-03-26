@@ -31,7 +31,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
 		shouldShowPopularTopics: PropTypes.func,
-		searchResultsLimit: PropTypes.number,
+		searchValue: PropTypes.string,
 		verticals: PropTypes.array,
 		defaultVertical: PropTypes.object,
 	};
@@ -42,7 +42,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		onChange: noop,
 		placeholder: '',
 		shouldShowPopularTopics: noop,
-		searchResultsLimit: 5,
+		searchValue: '',
 		verticals: [],
 		defaultVertical: {},
 	};
@@ -119,10 +119,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			} );
 		}
 	}
-
-	onPopularTopicSelect = value => {
-		this.setState( { searchValue: value } );
-	};
 
 	getSuggestions = () => this.state.candidateVerticals.map( vertical => vertical.verticalName );
 

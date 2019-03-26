@@ -23,7 +23,6 @@ jest.mock( 'uuid', () => ( {
 
 const defaultProps = {
 	onChange: jest.fn(),
-	requestVerticals: jest.fn(),
 	verticals: [
 		{
 			verticalName: 'doo',
@@ -34,7 +33,6 @@ const defaultProps = {
 			verticalId: 'hoodoo',
 		},
 	],
-	requestDefaultVertical: jest.fn(),
 	defaultVertical: {
 		verticalName: 'eeek',
 		verticalSlug: 'ooofff',
@@ -45,11 +43,9 @@ const defaultProps = {
 	},
 	translate: str => str,
 	charsToTriggerSearch: 2,
-	lastUpdated: 1,
 	shouldShowPopularTopics: jest.fn(),
+	searchValue: '',
 };
-
-defaultProps.requestVerticals.cancel = jest.fn();
 
 describe( '<SiteVerticalsSuggestionSearch />', () => {
 	afterEach( () => {
@@ -62,23 +58,9 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
-	test( 'should make an API call onMount where there is a valid initial value', () => {
-		shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } initialValue="scooby" /> );
-		expect( defaultProps.requestVerticals ).toHaveBeenLastCalledWith( 'scooby', 1 );
-	} );
-
-	test( 'should trigger search after > `charsToTriggerSearch` characters and call `onChange` prop', () => {
-		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-		wrapper.instance().onSiteTopicChange( 'b' );
-		expect( defaultProps.requestVerticals ).not.toHaveBeenCalled();
-		wrapper.instance().onSiteTopicChange( 'bo' );
-		expect( defaultProps.requestVerticals ).toHaveBeenLastCalledWith( 'bo', 5 );
-	} );
-
 	test( 'should pass an exact non-user vertical match to the `onChange` prop', () => {
 		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
 		wrapper.instance().onSiteTopicChange( 'doo' );
-		wrapper.setProps( { lastUpdated: 2 } );
 		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( defaultProps.verticals[ 0 ] );
 	} );
 

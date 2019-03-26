@@ -2,6 +2,13 @@
 
 exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
 <Fragment>
+  <Connect(QueryVerticals)
+    searchTerm=""
+  />
+  <Connect(QueryVerticals)
+    limit={1}
+    searchTerm="business"
+  />
   <SuggestionSearch
     autoFocus={false}
     id="siteTopic"
@@ -15,11 +22,7 @@ exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
       }
     }
     sortResults={[Function]}
-    suggestions={
-      Array [
-        "doo",
-      ]
-    }
+    suggestions={Array []}
     value=""
   />
 </Fragment>
