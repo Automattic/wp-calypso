@@ -344,6 +344,15 @@ $plan-features-sidebar-width: 272px;
 .segmented-control.is-customer-type-toggle {
 	max-width: 520px;
 	margin: 8px auto 16px;
+
+	@include breakpoint( '<480px' ) {
+		flex-wrap: wrap;
+		border-radius: 0;
+
+		.segmented-control__link {
+			border-radius: 0;
+		}
+	}
 }
 
 .info-popover.plan-features__header-tip-info {
@@ -526,12 +535,45 @@ $plan-features-sidebar-width: 272px;
 // and override some of the segmented-control styles.
 // This UI should really use buttons instead.
 body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
-	margin: 0 auto;
+	margin: 0 auto 16px;
+	box-shadow: 0 1px 1px 0 rgba(0,0,0,0.14),
+				0 2px 1px -1px rgba(0,0,0,0.12),
+				0 1px 3px 0 rgba(0,0,0,0.20);
 
-	.segmented-control__item {
-		&.is-selected a,
-		&.is-selected a:hover,
-		&.is-selected a:focus {
+	.segmented-control__item a {
+		text-decoration: underline;
+		border: none;
+	}
+
+	.segmented-control__item.is-selected {
+		position: relative;
+
+		// This adds a little pointer arrow to the bottom
+		// of the selected segment item. It relies on the
+		// relative positioning above.
+		@include breakpoint( '>480px' ) {
+			&:after {
+				display: block;
+				content: '';
+				width: 0;
+				height: 0;
+				border-left: 10px solid transparent;
+				border-right: 10px solid transparent;
+				border-top: 10px solid var(--color-primary-700);
+				position: absolute;
+				bottom: -10px;
+				left: calc(50% - 10px);
+			}
+		}
+
+		a,
+		a:hover,
+		a:focus {
+			@include breakpoint( '<660px' ) {
+				flex-wrap: wrap;
+			}
+			cursor: default;
+			text-decoration: none;
 		    background-color: var(--color-primary-700);
 		}
 	}
