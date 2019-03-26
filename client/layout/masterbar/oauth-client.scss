@@ -645,23 +645,23 @@
 
     .formatted-header__subtitle {
         color: var( --color-white );
-			
-			a {
-				color: var( --color-white );
-                text-decoration: underline;
-					
-					&:hover {
-						color: var( --color-neutral-100 );						
-					}
-            }
-    }
+		
+		a {
+			color: var( --color-white );
+			text-decoration: underline;
+				
+			&:hover {
+				color: var( --color-neutral-100 );						
+			}		
+		}
+	}
 
     .logged-out-form__links a {
-        color: var( --color-white );
+        color: var( --color-white );		
 		
-                &:hover {
-                    color: var( --color-neutral-100 );
-                }
+		&:hover {
+			color: var( --color-neutral-100 );
+		}
     }
 
    .signup-form .logged-out-form__footer {
