@@ -12,7 +12,7 @@ import { isEqual } from 'lodash';
 import * as driverManager from './driver-manager';
 import * as driverHelper from './driver-helper';
 import * as slackNotifier from './slack-notifier';
-import * as abtests from '../../../client/lib/abtest/active-tests';
+import * as abTests from '../../../client/lib/abtest/active-tests';
 
 export default class AsyncBaseContainer {
 	constructor(
@@ -95,7 +95,7 @@ export default class AsyncBaseContainer {
 	}
 
 	async checkForUnknownABTestKeys() {
-		const knownABTestKeys = Object.keys( abtests.default );
+		const knownABTestKeys = Object.keys( abTests.default );
 
 		return await this.driver
 			.executeScript( 'return window.localStorage.ABTests;' )
@@ -113,15 +113,16 @@ export default class AsyncBaseContainer {
 	async setABTestControlGroupsInLocalStorage() {
 		// eslint-disable-next-line prefer-const
 		let expectedABTestValue = [];
+		const abTestList = abTests.default;
 
-		Object.keys( abtests.default ).forEach( function( test ) {
+		Object.keys( abTestList ).forEach( function( test ) {
 			expectedABTestValue.push(
 				'"' +
 					test +
 					'_' +
-					abtests.default[ test ].datestamp +
+					abTestList[ test ].datestamp +
 					'":"' +
-					abtests.default[ test ].defaultVariation +
+					abTestList[ test ].defaultVariation +
 					'"'
 			);
 		} );
