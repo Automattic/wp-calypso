@@ -67,8 +67,12 @@ export class CurrentPlanHeader extends Component {
 
 		const currentPlanSlug = currentPlan && currentPlan.productSlug;
 
+		const headerClasses = classNames( 'current-plan__header', {
+			'is-jetpack-free': currentPlan && isFreeJetpackPlan( currentPlan ),
+		} );
+
 		return (
-			<div className="current-plan__header">
+			<div className={ headerClasses }>
 				<div className="current-plan__header-content">
 					<div className="current-plan__header-content-main">
 						<div className="current-plan__header-icon">
