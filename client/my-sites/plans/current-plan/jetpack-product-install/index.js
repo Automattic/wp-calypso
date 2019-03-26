@@ -26,6 +26,9 @@ import {
 /**
  * Module variables
  */
+/**
+ * These are plugin states in the installation lifecycle we consider "non-error" states.
+ */
 const NON_ERROR_STATES = [
 	'not_active', // Plugin is not installed
 	'option_name_not_in_whitelist', // Plugin is installed but not activated
@@ -39,7 +42,13 @@ const NON_ERROR_STATES = [
  * We attempt to recover from these errors by retrying status requests.
  */
 const RECOVERABLE_ERROR_STATES = [ 'vaultpress_error' ];
+/**
+ * The plugins this product installer installs, activates and configures.
+ */
 const PLUGINS = [ 'akismet', 'vaultpress' ];
+/**
+ * Maximum number of attempts to refetch installation status in the event of a recoverable error.
+ */
 const MAX_RETRIES = 3;
 
 export class JetpackProductInstall extends Component {
