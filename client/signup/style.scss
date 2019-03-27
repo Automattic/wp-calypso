@@ -25,6 +25,11 @@ body.is-section-signup {
 			padding: 140px 0 0;
 		}
 	}
+
+	.layout__secondary {
+		background: var( --color-primary );
+		border: 0;
+	}
 }
 
 // Notice the :not(.dops) selector. I've added this to try and
