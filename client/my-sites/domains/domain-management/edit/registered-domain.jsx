@@ -30,6 +30,11 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './registered-domain.scss';
+
 class RegisteredDomain extends React.Component {
 	state = {
 		submitting: false,
