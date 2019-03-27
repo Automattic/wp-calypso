@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -41,6 +40,10 @@ class SortableList extends React.Component {
 		activeOrder: null,
 		position: null,
 	};
+
+	listRef = React.createRef();
+	itemsRefs = new Map();
+	itemShadowRefs = new Map();
 
 	componentWillMount() {
 		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
@@ -115,13 +118,14 @@ class SortableList extends React.Component {
 	};
 
 	getCursorElementIndex = event => {
-		let cursorCompare = this.compareCursorVerticalToElement( this.refs.list, event ),
-			adjustedActiveIndex = this.getAdjustedElementIndex( this.state.activeIndex ),
-			shadowRect = this.refs[ 'wrap-shadow-' + this.state.activeIndex ].getBoundingClientRect(),
-			index;
+		const cursorCompare = this.compareCursorVerticalToElement( this.listRef.current, event );
+		const adjustedActiveIndex = this.getAdjustedElementIndex( this.state.activeIndex );
+		const shadowRect = this.itemShadowRefs
+			.get( 'wrap-shadow-' + this.state.activeIndex )
+			.current.getBoundingClientRect();
 
-		index = findIndex( this.props.children, ( child, i ) => {
-			let isBeyond, adjustedElementIndex, permittedVertical;
+		const index = findIndex( this.props.children, ( child, i ) => {
+			let isBeyond, permittedVertical;
 
 			// Avoid self-comparisons for the active item
 			if ( i === this.state.activeIndex ) {
@@ -130,7 +134,7 @@ class SortableList extends React.Component {
 
 			// Since elements are now shifted around, we want to find their
 			// visible position to make accurate comparisons
-			adjustedElementIndex = this.getAdjustedElementIndex( i );
+			const adjustedElementIndex = this.getAdjustedElementIndex( i );
 
 			// When rearranging on a horizontal plane, permit breaking of
 			// vertical if the cursor is outside the list element on the
@@ -139,12 +143,13 @@ class SortableList extends React.Component {
 			if ( 'horizontal' === this.props.direction ) {
 				if (
 					1 === cursorCompare &&
-					this.refs[ 'wrap-' + i ].getBoundingClientRect().top >= shadowRect.top
+					this.itemsRefs.get( 'wrap-' + i ).current.getBoundingClientRect().top >= shadowRect.top
 				) {
 					permittedVertical = 'bottom';
 				} else if (
 					-1 === cursorCompare &&
-					this.refs[ 'wrap-' + i ].getBoundingClientRect().bottom <= shadowRect.bottom
+					this.itemsRefs.get( 'wrap-' + i ).current.getBoundingClientRect().bottom <=
+						shadowRect.bottom
 				) {
 					permittedVertical = 'top';
 				}
@@ -154,7 +159,7 @@ class SortableList extends React.Component {
 				// If the item which is currently before the active item is
 				// suddenly after, return this item's index
 				isBeyond = this.isCursorBeyondElementThreshold(
-					this.refs[ 'wrap-' + i ],
+					this.itemsRefs.get( 'wrap-' + i ).current,
 					'horizontal' === this.props.direction ? 'left' : 'top',
 					permittedVertical,
 					event
@@ -165,7 +170,7 @@ class SortableList extends React.Component {
 				isBeyond =
 					isBeyond ||
 					this.isCursorBeyondElementThreshold(
-						this.refs[ 'wrap-' + i ],
+						this.itemsRefs.get( 'wrap-' + i ).current,
 						'horizontal' === this.props.direction ? 'right' : 'bottom',
 						permittedVertical,
 						event
@@ -179,7 +184,7 @@ class SortableList extends React.Component {
 	};
 
 	moveItem = direction => {
-		let increment = 'previous' === direction ? -1 : 1,
+		const increment = 'previous' === direction ? -1 : 1,
 			activeOrder = Object.keys( this.props.children ).map( Number );
 
 		activeOrder[ this.state.activeIndex + increment ] = this.state.activeIndex;
@@ -200,7 +205,7 @@ class SortableList extends React.Component {
 	};
 
 	onMouseMove = event => {
-		let activeOrder, newIndex;
+		let activeOrder;
 		if ( null === this.state.activeIndex || ! this.props.allowDrag || hasTouch() ) {
 			return;
 		}
@@ -208,7 +213,7 @@ class SortableList extends React.Component {
 		activeOrder = this.state.activeOrder;
 
 		// Find the new cursor location
-		newIndex = this.getCursorElementIndex( event );
+		const newIndex = this.getCursorElementIndex( event );
 		if ( newIndex >= 0 ) {
 			if ( this.state.activeIndex === newIndex ) {
 				// If we're changing the index back to the active item's
@@ -239,7 +244,7 @@ class SortableList extends React.Component {
 
 		this.setState( {
 			position: this.getPositionForCursorElement(
-				this.refs[ 'wrap-' + this.state.activeIndex ].firstChild,
+				this.itemsRefs.get( 'wrap-' + this.state.activeIndex ).current.firstChild,
 				event
 			),
 			activeOrder: activeOrder,
@@ -265,19 +270,20 @@ class SortableList extends React.Component {
 	};
 
 	getOrderedListItemElements = () => {
+		this.itemsRefs.clear();
+		this.itemShadowRefs.clear();
 		return React.Children.map(
 			this.props.children,
 			function( child, index ) {
-				let isActive = this.state.activeIndex === index,
-					isDraggable = this.props.allowDrag && ! hasTouch(),
-					events = isDraggable ? [ 'onMouseDown', 'onMouseUp' ] : [ 'onClick' ],
-					style = { order: this.getAdjustedElementIndex( index ) },
-					classes = classNames( {
-						'sortable-list__item': true,
-						'is-active': isActive,
-						'is-draggable': isDraggable,
-					} ),
-					item;
+				const isActive = this.state.activeIndex === index;
+				const isDraggable = this.props.allowDrag && ! hasTouch();
+				let events = isDraggable ? [ 'onMouseDown', 'onMouseUp' ] : [ 'onClick' ];
+				const style = { order: this.getAdjustedElementIndex( index ) };
+				const classes = classNames( {
+					'sortable-list__item': true,
+					'is-active': isActive,
+					'is-draggable': isDraggable,
+				} );
 
 				events = fromPairs(
 					events.map( function( event ) {
@@ -288,10 +294,11 @@ class SortableList extends React.Component {
 				if ( isActive ) {
 					assign( style, this.state.position );
 				}
-
-				item = (
+				const itemRef = React.createRef();
+				this.itemsRefs.set( 'wrap-' + index, itemRef );
+				const item = (
 					<li
-						ref={ 'wrap-' + index }
+						ref={ itemRef }
 						key={ 'wrap-' + index }
 						{ ...events }
 						className={ classes }
@@ -302,9 +309,11 @@ class SortableList extends React.Component {
 				);
 
 				if ( isActive && isDraggable ) {
+					const shadowRef = React.createRef();
+					this.itemShadowRefs.set( 'wrap-shadow-' + index, shadowRef );
 					return [
 						<li
-							ref={ 'wrap-shadow-' + index }
+							ref={ shadowRef }
 							key={ 'wrap-shadow-' + index }
 							className="sortable-list__item is-shadow"
 							style={ style }
@@ -361,7 +370,7 @@ class SortableList extends React.Component {
 
 		return (
 			<div className={ classes }>
-				<ol ref="list" className="sortable-list__list">
+				<ol ref={ this.listRef } className="sortable-list__list">
 					{ this.getOrderedListItemElements() }
 				</ol>
 				{ this.getNavigationElement() }
