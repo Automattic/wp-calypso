@@ -33,6 +33,8 @@ import {
 } from 'state/posts/selectors';
 import { getSite } from 'state/sites/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -293,6 +295,18 @@ class Pages extends Component {
 		return this.props.lastPage && ! this.props.loading ? <ListEnd /> : null;
 	}
 
+	renderSectionHeader() {
+		const { newPageLink, translate } = this.props;
+
+		return (
+			<SectionHeader label={ translate( 'Pages' ) }>
+				<Button primary compact className="pages__add-page" href={ newPageLink }>
+					{ translate( 'Add New Page' ) }
+				</Button>
+			</SectionHeader>
+		);
+	}
+
 	renderPagesList( { pages } ) {
 		const { site, lastPage, query } = this.props;
 
@@ -330,6 +344,7 @@ class Pages extends Component {
 		return (
 			<div id="pages" className="pages__page-list">
 				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+				{ this.renderSectionHeader() }
 				{ rows }
 				{ this.renderListEnd() }
 			</div>
@@ -371,6 +386,7 @@ class Pages extends Component {
 				{ showBlogPostsPage && (
 					<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				) }
+				{ this.renderSectionHeader() }
 				{ rows }
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				{ this.renderListEnd() }
