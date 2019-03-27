@@ -7,6 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { getRewindRestoreProgress } from 'state/activity-log/actions';
@@ -34,7 +35,9 @@ const requestRewind = ( action, payload ) =>
 			apiVersion: '1',
 			method: 'POST',
 			path: `/activity-log/${ action.siteId }/rewind/to/${ action.timestamp }`,
-			body: payload,
+			body: Object.assign( payload, {
+				calypso_env: config( 'env_id' ),
+			} ),
 		},
 		action
 	);
