@@ -46,13 +46,13 @@ const helpers = {
 
 const dialogPositioners = {
 	below: rect => {
-		const x = helpers.xAboveBelow( rect.left, rect.right, rect.width );
+		const x = helpers.xAboveBelow( rect.left, rect.right );
 		const y = helpers.yBelow( rect.bottom );
 
 		return { x, y };
 	},
 	above: rect => {
-		const x = helpers.xAboveBelow( rect.left, rect.right, rect.width );
+		const x = helpers.xAboveBelow( rect.left, rect.right );
 		const y = helpers.yAbove( rect.top );
 
 		return { x, y };
