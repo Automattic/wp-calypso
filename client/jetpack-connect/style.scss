@@ -15,6 +15,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	--color-primary-light:                   var( --color-accent-light );
 	--color-button-primary-background-hover: var( --color-accent-light );
 	--color-accent-600:                      var( --color-accent-dark );
+
+	.payment-box-section {
+		--color-primary: var( --color-primary-500 );
+	}
 }
 
 .is-section-jetpack-connect {
