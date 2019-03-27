@@ -407,6 +407,7 @@ sections.push( {
 	enableLoggedOut: true,
 	secondary: false,
 	isomorphic: true,
+	suppressComponentCss: true,
 } );
 
 sections.push( {

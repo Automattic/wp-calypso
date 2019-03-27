@@ -62,6 +62,7 @@ class Document extends React.Component {
 			feedbackURL,
 			inlineScriptNonce,
 			isSupportSession,
+			loadComponentCss,
 		} = this.props;
 
 		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
@@ -111,6 +112,14 @@ class Document extends React.Component {
 						}
 						type="text/css"
 					/>
+					{ loadComponentCss && (
+						<link
+							rel="stylesheet"
+							id="component-css"
+							href={ urls[ isRTL ? 'components-rtl.css' : 'components.css' ] }
+							type="text/css"
+						/>
+					) }
 					{ entrypoint[ csskey ].map( cssChunkLink ) }
 					{ chunkFiles[ csskey ].map( cssChunkLink ) }
 				</Head>

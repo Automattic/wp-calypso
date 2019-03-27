@@ -53,6 +53,8 @@ const calypsoEnv = config( 'env_id' );
 
 const staticFiles = [
 	{ path: 'style.css' },
+	{ path: 'components.css' },
+	{ path: 'components-rtl.css' },
 	{ path: 'editor.css' },
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
@@ -282,6 +284,9 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
+		loadComponentCss: request.context.hasOwnProperty( 'loadComponentCss' )
+			? request.context.loadComponentCss
+			: true,
 	} );
 
 	context.app = {
@@ -727,6 +732,11 @@ module.exports = function() {
 
 					if ( section.group && req.context ) {
 						req.context.sectionGroup = section.group;
+					}
+
+					if ( section.suppressComponentCss ) {
+						console.log( 'suppressing component css for ' + section.name );
+						req.context.loadComponentCss = false;
 					}
 
 					next();

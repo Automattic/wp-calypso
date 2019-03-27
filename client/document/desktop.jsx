@@ -56,6 +56,12 @@ class Desktop extends React.Component {
 					/>
 					<link
 						rel="stylesheet"
+						id="components-css"
+						href={ urls[ isRTL ? 'components-rtl.css' : 'components.css' ] }
+						type="text/css"
+					/>
+					<link
+						rel="stylesheet"
 						type="text/css"
 						data-webpack={ true }
 						href={ `/calypso/build.${ isRTL ? 'rtl.css' : 'css' }` }
