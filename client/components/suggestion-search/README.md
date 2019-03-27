@@ -33,7 +33,7 @@ It's common that this component is used in a form. This `id` prop is passed to t
 
 
 ### `{String} placeholder`
-The placeholder text to show if there has nothing been entered yet.
+The placeholder text to show if nothing has been entered yet.
 
 ### `{Func} onChange`
 The callback function for receiving updated value, whether it's by typing, autocompletion, or suggestion picking. If a user is navigating through the list, it will pass an additional `true` as the 2nd argument.
