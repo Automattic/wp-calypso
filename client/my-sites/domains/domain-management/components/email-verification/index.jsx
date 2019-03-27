@@ -17,6 +17,11 @@ import Button from 'components/button';
 import Card from 'components/card';
 import { errorNotice } from 'state/notices/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EmailVerificationCard extends React.Component {
 	static propTypes = {
 		changeEmailHref: PropTypes.string,
