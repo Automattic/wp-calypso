@@ -4,15 +4,13 @@
  * External dependencies
  */
 import config from 'config';
-import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import * as driverManager from './driver-manager';
 import * as driverHelper from './driver-helper';
-import * as slackNotifier from './slack-notifier';
-import * as abTests from '../../../client/lib/abtest/active-tests';
+import * as overrideABTests from './override-abtest';
 
 export default class AsyncBaseContainer {
 	constructor(
@@ -59,7 +57,7 @@ export default class AsyncBaseContainer {
 			await this._preInit();
 		}
 		await this.waitForPage();
-		await this.checkForUnknownABTestKeys();
+		await overrideABTests.checkForUnknownABTestKeys( this.driver );
 		await this.checkForConsoleErrors();
 		if ( typeof this._postInit === 'function' ) {
 			await this._postInit();
@@ -92,44 +90,5 @@ export default class AsyncBaseContainer {
 
 	async checkForConsoleErrors() {
 		return await driverHelper.checkForConsoleErrors( this.driver );
-	}
-
-	async checkForUnknownABTestKeys() {
-		const knownABTestKeys = Object.keys( abTests.default );
-
-		return await this.driver
-			.executeScript( 'return window.localStorage.ABTests;' )
-			.then( abtestsValue => {
-				for ( const key in JSON.parse( abtestsValue ) ) {
-					const testName = key.split( '_' )[ 0 ];
-					if ( knownABTestKeys.indexOf( testName ) < 0 ) {
-						const message = `Found an AB Testing key in local storage that isn't known: '${ testName }'. This may cause inconsistent A/B test behaviour, please check this is okay and add it to 'knownABTestKeys' in default.config`;
-						slackNotifier.warn( message, { suppressDuplicateMessages: true } );
-					}
-				}
-			} );
-	}
-
-	async setABTestControlGroupsInLocalStorage() {
-		const abTestList = abTests.default;
-
-		const expectedABTestValue = Object.keys( abTestList ).map(
-			test =>
-				`"${ test }_${ abTestList[ test ].datestamp }":"${ abTestList[ test ].defaultVariation }"`
-		);
-
-		await this.driver.executeScript( 'window.localStorage.clear();' );
-
-		await this.driver.executeScript(
-			`window.localStorage.setItem('ABTests','{${ expectedABTestValue }}');`
-		);
-
-		const abtestsValue = await this.driver.executeScript( 'return window.localStorage.ABTests;' );
-		if ( ! isEqual( JSON.parse( abtestsValue ), JSON.parse( `{${ expectedABTestValue }}` ) ) ) {
-			const message = `The localstorage value for AB tests wasn't set correctly.\nExpected value is:\n'{${ expectedABTestValue }}'\nActual value is:\n'${ abtestsValue }'`;
-			slackNotifier.warn( message, { suppressDuplicateMessages: true } );
-		}
-
-		return this.waitForPage();
 	}
 }
