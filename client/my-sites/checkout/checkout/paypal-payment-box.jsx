@@ -27,6 +27,7 @@ import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
 import RecentRenewals from './recent-renewals';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRegistrationAgreement from './domain-registration-agreement';
 
 const wpcom = wp.undocumented();
 
@@ -178,6 +179,7 @@ export class PaypalPaymentBox extends React.Component {
 						) }
 					/>
 					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
+					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
 						<div className="checkout__payment-box-buttons">

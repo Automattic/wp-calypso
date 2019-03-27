@@ -32,6 +32,7 @@ import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRegistrationAgreement from './domain-registration-agreement';
 
 export class CreditCardPaymentBox extends React.Component {
 	static propTypes = {
@@ -198,6 +199,7 @@ export class CreditCardPaymentBox extends React.Component {
 						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 					/>
 					<DomainRegistrationRefundPolicy cart={ cart } />
+					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					{ this.paymentBoxActions() }
 				</form>

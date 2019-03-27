@@ -32,6 +32,7 @@ import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import RecentRenewals from './recent-renewals';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRegistrationAgreement from './domain-registration-agreement';
 
 export class WechatPaymentBox extends Component {
 	static propTypes = {
@@ -177,6 +178,7 @@ export class WechatPaymentBox extends Component {
 						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 					/>
 					<DomainRegistrationRefundPolicy cart={ cart } />
+					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
 						<div className="checkout__payment-buttons  payment-box__payment-buttons">

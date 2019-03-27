@@ -33,6 +33,7 @@ import {
 } from 'lib/store-transactions/step-types';
 import RecentRenewals from './recent-renewals';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRegistrationAgreement from './domain-registration-agreement';
 
 const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
 
@@ -496,6 +497,7 @@ export class WebPaymentBox extends React.Component {
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 				/>
 				<DomainRegistrationRefundPolicy cart={ cart } />
+				<DomainRegistrationAgreement cart={ this.props.cart } />
 
 				<span className="payment-box__payment-buttons">
 					<span className="pay-button">

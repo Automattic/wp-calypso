@@ -31,6 +31,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRegistrationAgreement from './domain-registration-agreement';
 
 export class RedirectPaymentBox extends PureComponent {
 	static displayName = 'RedirectPaymentBox';
@@ -300,6 +301,7 @@ export class RedirectPaymentBox extends PureComponent {
 						) }
 					/>
 					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
+					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
 						<div className="checkout__payment-box-buttons">
