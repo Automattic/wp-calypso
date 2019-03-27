@@ -216,10 +216,11 @@ class RegisteredDomain extends React.Component {
 	render() {
 		const { domain, translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.domainWarnings() }
-				<div className="edit__domain-details-card">
+				<div className="domain-details-card">
 					{ domain.isPendingIcannVerification && domain.currentUserCanManage && (
 						<IcannVerificationCard
 							selectedDomainName={ domain.name }
@@ -260,6 +261,7 @@ class RegisteredDomain extends React.Component {
 				{ this.getVerticalNav() }
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
