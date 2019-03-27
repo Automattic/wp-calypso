@@ -34,7 +34,7 @@ const getWpcomFollowerRole = ( { site, translate } ) => {
 
 const RoleSelect = props => {
 	let { siteRoles } = props;
-	const { site, includeFollower, siteId, id, explanation, translate } = props;
+	const { site, includeFollower, siteId, id, explanation, translate, value } = props;
 	const omitProps = [
 		'site',
 		'key',
@@ -63,7 +63,11 @@ const RoleSelect = props => {
 				map( siteRoles, role => {
 					return (
 						<FormLabel key={ role.name }>
-							<FormRadio value={ role.name } { ...omit( props, omitProps ) } />
+							<FormRadio
+								checked={ role.name === value }
+								value={ role.name }
+								{ ...omit( props, omitProps ) }
+							/>
 							<span>{ role.display_name }</span>
 						</FormLabel>
 					);
