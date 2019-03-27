@@ -243,9 +243,11 @@ class CalypsoifyIframe extends Component {
 		}
 		const payload = {
 			id: get( action, 'data.ID' ),
-			url: get( action, 'data.URL' ),
-			transientId: get( action, 'id' ),
+			height: get( action, 'data.height' ),
 			status: 'REMOVE_MEDIA_ITEM' === action.type ? 'deleted' : 'updated',
+			transientId: get( action, 'id' ),
+			url: get( action, 'data.URL' ),
+			width: get( action, 'data.width' ),
 		};
 		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};
