@@ -121,7 +121,6 @@ input[type='radio'].domain-management-list-item__radio {
 
 .dns__details,
 .custom-nameservers-form__explanation,
-.site-redirect__explanation,
 .dns__domain-connect-explanation {
 	display: block;
 	margin-top: 5px;
@@ -132,17 +131,6 @@ input[type='radio'].domain-management-list-item__radio {
 
 .dns__domain-connect-explanation {
 	margin-bottom: 5px;
-}
-
-.site-redirect-card {
-	form label + input[type='text'] {
-		margin-bottom: 10px;
-	}
-
-	&.fetching input[type='text'] {
-		animation: pulse-light 0.8s ease-in-out infinite;
-		background: var( --color-neutral-100 );
-	}
 }
 
 .dns__add-new,
