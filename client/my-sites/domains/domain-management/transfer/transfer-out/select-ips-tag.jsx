@@ -191,7 +191,7 @@ class SelectIpsTag extends Component {
 
 		return (
 			<Dialog
-				baseClassName="transfer__ips_tag_set_dialog"
+				additionalClassNames="transfer-out__select-ips-tag-dialog"
 				buttons={ buttons }
 				isVisible={ showDialog }
 				onClose={ this.onCloseDialog }
@@ -226,7 +226,7 @@ class SelectIpsTag extends Component {
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Transfer Domain To Another Registrar' ) } />
-				<Card className="transfer-out__select-ips-tag">
+				<Card>
 					<p>
 						{ translate(
 							"{{strong}}.uk{{/strong}} domains are transferred by setting the domain's IPS tag here to the " +
