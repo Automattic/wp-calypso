@@ -10,13 +10,9 @@
 
 .logged-out-form__footer {
 	box-shadow: none;
-	margin: 0 -16px -16px -16px;
+	background: none;
+	margin: 16px -16px -16px -16px;
 	padding: 16px;
-
-	@include breakpoint( '>480px' ) {
-		margin: 0 -24px -24px -24px;
-		padding: 24px;
-	}
 
 	&.is-blended {
 		background: none;
@@ -58,7 +54,8 @@
 	cursor: pointer;
 	text-decoration: underline;
 
-	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout:not( .dops ) & {
+	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout:not( .dops ) &,
+	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout.gravatar & {
 		color: var( --color-white );
 
 		&:hover {

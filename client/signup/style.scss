@@ -29,7 +29,8 @@ body.is-section-signup {
 
 // Notice the :not(.dops) selector. I've added this to try and
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
-body.is-section-signup .layout:not( .dops ) {
+body.is-section-signup .layout:not( .dops ),
+body.is-section-signup .layout.gravatar {
 
 	// Update the logo that appears when loading Calypso
 	// to match the homepage, using primary-dark with opacity.
@@ -148,7 +149,8 @@ body.is-section-signup .layout:not(.dops) .step-wrapper {
 }
 
 // Signup headings
-body.is-section-signup .layout:not(.dops) .formatted-header {
+body.is-section-signup .layout:not( .dops ) .formatted-header,
+body.is-section-signup .layout.gravatar .formatted-header {
 	margin: 0 0 16px;
 
 	.formatted-header__title {
@@ -161,6 +163,15 @@ body.is-section-signup .layout:not(.dops) .formatted-header {
 		margin: 0;
 		font-size: 15px;
 		color: var( --color-white );
+	}
+
+	a {
+		color: var( --color-neutral-0 );
+		text-decoration: underline;
+
+		&:hover {
+			color: var( --color-white );
+		}
 	}
 }
 
