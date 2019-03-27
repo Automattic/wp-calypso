@@ -24,14 +24,8 @@
         text-align: left;
 	}
 
-	.map-domain-step & {
-		@include breakpoint( '<660px' ) {
-			padding-bottom: 5px;
-		}
-	}
-
 	small {
-		color: var( --color-text-subtle )
+		color: var( --color-text-subtle );
 	}
 
 	&.domain-product-price__is-with-plans-only {
