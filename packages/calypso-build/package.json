@@ -22,6 +22,9 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"bin": "./bin/build-package.js",
+	"browserslist": [
+		"extends @wordpress/browserslist-config"
+	],
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "file:../calypso-color-schemes",
 		"autoprefixer": "9.4.4",
