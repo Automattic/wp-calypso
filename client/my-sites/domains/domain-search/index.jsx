@@ -32,6 +32,11 @@ import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DomainSearch extends Component {
 	static propTypes = {
 		basePath: PropTypes.string.isRequired,
