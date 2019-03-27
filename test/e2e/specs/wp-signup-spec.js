@@ -1173,7 +1173,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step( 'Can see the themes page and select premium theme ', async function() {
 			const themesPage = await ThemesPage.Visit( driver, ThemesPage.getStartURL() );
 			await themesPage.waitUntilThemesLoaded();
-			await overrideABTests.setABTestControlGroupsInLocalStorage( driver );
+			await themesPage.setABTestControlGroupsInLocalStorage();
 			await themesPage.showOnlyPremiumThemes();
 			chosenThemeName = await themesPage.getFirstThemeName();
 			return await themesPage.selectNewTheme();
@@ -1647,11 +1647,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			await overrideABTests.setOverriddenABTestsInLocalStorage(
-				driver,
-				'improvedOnboarding',
-				'onboarding'
-			);
+			await overrideABTests.setOverriddenABTests( driver, 'improvedOnboarding', 'onboarding' );
 		} );
 
 		step( 'Can visit the start page', async function() {
@@ -1724,7 +1720,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		after( async function() {
-			await overrideABTests.setABTestControlGroupsInLocalStorage( driver, { reset: true } );
+			await overrideABTests.setABTestControlGroups( driver, { reset: true } );
 		} );
 	} );
 
@@ -1734,11 +1730,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			await overrideABTests.setOverriddenABTestsInLocalStorage(
-				driver,
-				'improvedOnboarding',
-				'onboarding'
-			);
+			await overrideABTests.setOverriddenABTests( driver, 'improvedOnboarding', 'onboarding' );
 		} );
 
 		step( 'Can enter the account flow and see the account details page', async function() {
@@ -1830,7 +1822,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		after( async function() {
-			await overrideABTests.setABTestControlGroupsInLocalStorage( driver, { reset: true } );
+			await overrideABTests.setABTestControlGroups( driver, { reset: true } );
 		} );
 	} );
 } );

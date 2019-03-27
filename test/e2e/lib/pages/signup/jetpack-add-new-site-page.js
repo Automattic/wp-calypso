@@ -12,7 +12,6 @@ import * as dataHelper from '../../data-helper';
 import * as driverHelper from '../../driver-helper';
 import AsyncBaseContainer from '../../async-base-container';
 import * as driverManager from '../../driver-manager';
-import * as overrideABTests from '../../override-abtest';
 
 const screenSize = driverManager.currentScreenSize();
 
@@ -22,7 +21,7 @@ export default class JetpackAddNewSitePage extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		await overrideABTests.setABTestControlGroupsInLocalStorage( this.driver );
+		await this.setABTestControlGroupsInLocalStorage();
 		return await this.driver.navigate().refresh();
 	}
 

@@ -57,7 +57,7 @@ export default class AsyncBaseContainer {
 			await this._preInit();
 		}
 		await this.waitForPage();
-		await overrideABTests.checkForUnknownABTestKeys( this.driver );
+		await this.checkForUnknownABTestKeys();
 		await this.checkForConsoleErrors();
 		if ( typeof this._postInit === 'function' ) {
 			await this._postInit();
@@ -90,5 +90,14 @@ export default class AsyncBaseContainer {
 
 	async checkForConsoleErrors() {
 		return await driverHelper.checkForConsoleErrors( this.driver );
+	}
+
+	async checkForUnknownABTestKeys() {
+		return await overrideABTests.checkForUnknownABTestKeys( this.driver );
+	}
+
+	async setABTestControlGroupsInLocalStorage() {
+		await overrideABTests.setABTestControlGroups( this.driver );
+		return await this.waitForPage();
 	}
 }
