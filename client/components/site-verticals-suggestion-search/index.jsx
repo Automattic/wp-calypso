@@ -28,7 +28,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	static propTypes = {
 		charsToTriggerSearch: PropTypes.number,
 		initialValue: PropTypes.string,
-		lastUpdated: PropTypes.number,
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
 		shouldShowPopularTopics: PropTypes.func,
