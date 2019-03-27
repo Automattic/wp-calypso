@@ -14,7 +14,6 @@ import Gridicon from 'gridicons';
 import FormTextInput from 'components/forms/form-text-input';
 import Suggestions from 'components/suggestions';
 import Spinner from 'components/spinner';
-import { isVerticalSearchPending } from 'components/site-verticals-suggestion-search';
 
 /**
  * Style dependencies
@@ -131,15 +130,15 @@ class SuggestionSearch extends Component {
 
 	updateFieldFromSuggestion( newValue ) {
 		this.updateInputValue( newValue );
-		this.props.onChange( newValue );
+		this.props.onChange( newValue, true );
 	}
 
 	render() {
-		const { id, placeholder, autoFocus } = this.props;
+		const { id, placeholder, autoFocus, isSearching } = this.props;
 
 		return (
 			<div className="suggestion-search">
-				{ isVerticalSearchPending() ? <Spinner /> : <Gridicon icon="search" /> }
+				{ isSearching ? <Spinner /> : <Gridicon icon="search" /> }
 				<FormTextInput
 					id={ id }
 					placeholder={ placeholder }
