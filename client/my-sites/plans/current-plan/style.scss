@@ -22,12 +22,16 @@
 }
 
 .current-plan__header-icon {
-	width: 80px;
-	height: 80px;
-	float: left;
-	margin-left: 20px;
-	margin-right: 40px;
-	display: flex;
+	display: none;
+
+	@include breakpoint( '>480px' ) {
+		display: flex;
+		width: 80px;
+		height: 80px;
+		float: left;
+		margin-left: 20px;
+		margin-right: 40px;
+	}
 }
 
 .current-plan__header-copy {
