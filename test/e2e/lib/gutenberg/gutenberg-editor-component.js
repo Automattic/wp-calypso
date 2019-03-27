@@ -164,6 +164,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await imageBlock.uploadImage( fileDetails );
 	}
 
+	async addImageFromMediaModal( fileDetails ) {
+		const blockId = await this.addBlock( 'Image' );
+
+		const imageBlock = await ImageBlockComponent.Expect( this.driver, blockId );
+		return await imageBlock.insertImageFromMediaModal( fileDetails );
+	}
+
 	async toggleSidebar( open = true ) {
 		const sidebarSelector = '.edit-post-sidebar-header';
 		const sidebarOpen = await driverHelper.isElementPresent(
