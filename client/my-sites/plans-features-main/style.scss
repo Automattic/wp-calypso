@@ -21,3 +21,22 @@
 		color: var( --color-primary );
 	}
 }
+
+.plans-features-main__banner {
+	text-align: center;
+	padding: 5px 0;
+}
+
+.plans-features-main__banner-content {
+	display: inline-block;
+	background: var( --color-white );
+	border-radius: 5px;
+	padding: 5px 20px;
+
+	button.is-borderless {
+		color: var( --color-accent );
+		text-decoration: underline;
+		vertical-align: baseline;
+		margin-left: 0.75em;
+	}
+}

@@ -34,6 +34,7 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
 import { plansLink, planMatches, findPlansKeys, getPlan } from 'lib/plans';
+import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
@@ -294,6 +295,28 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
+	handleFreePlanButtonClick = () => {
+		const { onUpgradeClick } = this.props;
+		onUpgradeClick && onUpgradeClick( null );
+	};
+
+	renderFreePlanBanner() {
+		if ( this.props.hideFreePlan ) {
+			return null;
+		}
+
+		return (
+			<div className="plans-features-main__banner">
+				<div className="plans-features-main__banner-content">
+					Don’t need a plan yet?
+					<Button onClick={ this.handleFreePlanButtonClick } borderless>
+						Start for Free
+					</Button>
+				</div>
+			</div>
+		);
+	}
+
 	renderToggle() {
 		const { displayJetpackPlans, withWPPlanTabs, countryCode } = this.props;
 		if ( displayJetpackPlans ) {
@@ -321,6 +344,7 @@ export class PlansFeaturesMain extends Component {
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 				{ ! plansWithScroll && this.renderToggle() }
+				{ plansWithScroll && this.renderFreePlanBanner() }
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
 				{ this.getPlanFeatures() }
