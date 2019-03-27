@@ -42,16 +42,10 @@ class DomainConnectAuthorizeRecords extends Component {
 
 	renderDnsRecords = records => {
 		return (
-			<ul className="domain-connect__dns-list">
-				{ records.map( ( record, index ) => {
-					return (
-						<DomainConnectDnsRecord
-							key={ index }
-							domain={ this.props.domain }
-							dnsRecord={ record }
-						/>
-					);
-				} ) }
+			<ul className="dns__list">
+				{ records.map( ( record, index ) => (
+					<DomainConnectDnsRecord key={ index } domain={ this.props.domain } dnsRecord={ record } />
+				) ) }
 			</ul>
 		);
 	};

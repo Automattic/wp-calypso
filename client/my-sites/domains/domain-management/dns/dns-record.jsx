@@ -117,13 +117,13 @@ class DnsRecord extends React.Component {
 
 	render() {
 		const { dnsRecord } = this.props;
-		const classes = classNames( { 'is-disabled': isBeingProcessed( dnsRecord ) } );
+		const isDisabled = isBeingProcessed( dnsRecord );
 		const isAllowedToBeRemoved = ! dnsRecord.protected_field || 'MX' === dnsRecord.type;
 
 		return (
-			<li className={ classes }>
+			<li className={ classNames( 'dns__list-item', { 'is-disabled': isDisabled } ) }>
 				<div className="dns__list-type">
-					<label>{ dnsRecord.type }</label>
+					<span>{ dnsRecord.type }</span>
 				</div>
 				<div className="dns__list-info">
 					<strong>{ this.getName() }</strong>

@@ -104,11 +104,11 @@ class DomainConnectDnsRecord extends Component {
 		const data = this.handledBy( record );
 
 		return (
-			<li>
-				<div className="domain-connect__dns-list-type">
+			<li className="dns__list-item">
+				<div className="dns__list-type">
 					<span>{ record.type }</span>
 				</div>
-				<div className="domain-connect__dns-list-info">
+				<div className="dns__list-info">
 					<strong>{ name }</strong>
 					<em>{ data }</em>
 				</div>

@@ -18,6 +18,11 @@ import Toggle from 'components/forms/form-toggle';
 import { domainConnect } from 'lib/domains/constants';
 import { getNormalizedData } from 'lib/domains/dns';
 
+/**
+ * Style dependencies
+ */
+import './domain-connect-record.scss';
+
 class DomainConnectRecord extends React.Component {
 	static propTypes = {
 		enabled: PropTypes.bool.isRequired,
@@ -94,12 +99,11 @@ class DomainConnectRecord extends React.Component {
 		}
 
 		const name = `${ domainConnect.DISCOVERY_TXT_RECORD_NAME }.${ selectedDomainName }`;
-		const classes = classNames( 'dns__domain-connect-record-wrap', { 'is-disabled': ! enabled } );
 
 		return (
 			<div>
-				<div className="dns__domain-connect-record">
-					<div className={ classes }>
+				<ul className="dns__list dns__domain-connect-record">
+					<li className={ classNames( 'dns__list-item', { 'is-disabled': ! enabled } ) }>
 						<div className="dns__list-type">
 							<span>TXT</span>
 						</div>
@@ -107,18 +111,18 @@ class DomainConnectRecord extends React.Component {
 							<strong>{ name }</strong>
 							<em>{ translate( 'Handled by WordPress.com' ) }</em>
 						</div>
-					</div>
-					<form className="dns__domain-connect-toggle">
-						<Toggle
-							id="domain-connect-record"
-							name="domain-connect-record"
-							onChange={ this.handleToggle }
-							type="checkbox"
-							checked={ enabled }
-							value="active"
-						/>
-					</form>
-				</div>
+						<form className="dns__domain-connect-toggle">
+							<Toggle
+								id="domain-connect-record"
+								name="domain-connect-record"
+								onChange={ this.handleToggle }
+								type="checkbox"
+								checked={ enabled }
+								value="active"
+							/>
+						</form>
+					</li>
+				</ul>
 				<div className="dns__domain-connect-explanation">
 					<em>
 						{ translate(

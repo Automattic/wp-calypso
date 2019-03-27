@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -130,15 +130,15 @@ class DnsList extends React.Component {
 		} );
 
 		return (
-			<div className="dns__list">
+			<Fragment>
+				<ul className="dns__list">{ dnsRecordsList }</ul>
 				<DeleteEmailForwardsDialog
 					visible={ dialog.type === 'deleteEmailForwards' }
 					onClose={ this.handleDialogClose }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 				/>
-				<ul>{ dnsRecordsList }</ul>
-			</div>
+			</Fragment>
 		);
 	}
 }
