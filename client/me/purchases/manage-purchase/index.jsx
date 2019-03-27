@@ -21,6 +21,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import {
+	getDomainRegistrationAgreementUrl,
 	getName,
 	handleRenewNowClick,
 	isCancelable,
@@ -314,12 +315,17 @@ class ManagePurchase extends Component {
 			);
 		}
 
+		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
+
 		return (
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
 					<ProductLink purchase={ purchase } selectedSite={ site } />
 				</span>
+				{ registrationAgreementUrl && (
+					<a href={ registrationAgreementUrl }>Domain Registration Agreement</a>
+				) }
 			</div>
 		);
 	}
