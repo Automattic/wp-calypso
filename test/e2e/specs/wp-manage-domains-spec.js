@@ -10,6 +10,7 @@ import config from 'config';
  */
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
+import * as overrideABTests from '../lib/override-abtest';
 
 import DomainsPage from '../lib/pages/domains-page.js';
 import CheckOutPage from '../lib/pages/signup/checkout-page.js';
@@ -71,7 +72,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 
 		step( 'Can see the Domains page and choose add a domain', async function() {
 			const domainsPage = await DomainsPage.Expect( driver );
-			await domainsPage.setABTestControlGroupsInLocalStorage();
+			await overrideABTests.setABTestControlGroupsInLocalStorage( driver );
 			return await domainsPage.clickAddDomain();
 		} );
 
@@ -144,7 +145,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 
 		step( 'Can see the Domains page and choose add a domain', async function() {
 			const domainsPage = await DomainsPage.Expect( driver );
-			await domainsPage.setABTestControlGroupsInLocalStorage();
+			await overrideABTests.setABTestControlGroupsInLocalStorage( driver );
 			return await domainsPage.clickAddDomain();
 		} );
 
@@ -227,7 +228,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 
 		step( 'Can see the Domains page and choose add a domain', async function() {
 			const domainsPage = await DomainsPage.Expect( driver );
-			await domainsPage.setABTestControlGroupsInLocalStorage();
+			await overrideABTests.setABTestControlGroupsInLocalStorage( driver );
 			return await domainsPage.clickAddDomain();
 		} );
 

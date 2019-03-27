@@ -3,47 +3,78 @@
 /**
  * External dependencies
  */
-import config from 'config';
-import { findIndex } from 'lodash';
+import { isEqual } from 'lodash';
 
-function getABTestEraser( name ) {
-	return () => {
-		const overrideABTests = config.get( 'overrideABTests' );
-		const index = findIndex( overrideABTests, item => item[ 0 ] === name );
+/**
+ * Internal dependencies
+ */
+import * as abTests from '../../../client/lib/abtest/active-tests';
+import * as slackNotifier from './slack-notifier';
 
-		if ( index !== -1 ) {
-			overrideABTests.splice( index, 1 );
-		}
-	};
-}
+async function writeABTests( driver, testList ) {
+	await driver.executeScript( 'window.localStorage.clear();' );
 
-function getABTestUpdater( name, variation ) {
-	return () => {
-		const overrideABTests = config.get( 'overrideABTests' );
-		const index = findIndex( overrideABTests, item => item[ 0 ] === name );
+	await driver.executeScript( `window.localStorage.setItem('ABTests','{${ testList }}');` );
 
-		if ( index !== -1 ) {
-			overrideABTests[ index ][ 1 ] = variation;
-		}
-	};
+	const abtestsValue = await driver.executeScript( 'return window.localStorage.ABTests;' );
+	if ( ! isEqual( JSON.parse( abtestsValue ), JSON.parse( `{${ testList }}` ) ) ) {
+		const message = `The localstorage value for AB tests wasn't set correctly.\nExpected value is:\n'{${ testList }}'\nActual value is:\n'${ abtestsValue }'`;
+		slackNotifier.warn( message, { suppressDuplicateMessages: true } );
+	}
 }
 
 /**
  * Overrides an A/B Test.
+ * @param {Browser} driver Webdriver browser instance
  * @param {String} name A/B test name
  * @param {String} variation the variation you want to set
  * @return {Function} undo the changes.
  */
-export default async function overrideABTest( name, variation ) {
-	const overrideABTests = config.get( 'overrideABTests' );
-	const index = findIndex( overrideABTests, item => item[ 0 ] === name );
+export async function setOverriddenABTestsInLocalStorage( driver, name, variation ) {
+	const abTestList = abTests.default;
+	const expectedABTestValue = Object.keys( abTestList ).map( test => {
+		if ( test === name ) {
+			return `"${ test }_${ abTestList[ test ].datestamp }":"${ variation }"`;
+		}
+		return `"${ test }_${ abTestList[ test ].datestamp }":"${
+			abTestList[ test ].defaultVariation
+		}"`;
+	} );
+	return await writeABTests( driver, expectedABTestValue );
+}
 
-	if ( index !== -1 ) {
-		const originalVariation = overrideABTests[ index ][ 1 ];
-		overrideABTests[ index ][ 1 ] = variation;
-		return await getABTestUpdater( name, originalVariation );
+export async function checkForUnknownABTestKeys( driver ) {
+	const knownABTestKeys = Object.keys( abTests.default );
+
+	return await driver.executeScript( 'return window.localStorage.ABTests;' ).then( abtestsValue => {
+		for ( const key in JSON.parse( abtestsValue ) ) {
+			const testName = key.split( '_' )[ 0 ];
+			if ( knownABTestKeys.indexOf( testName ) < 0 ) {
+				const message = `Found an AB Testing key in local storage that isn't known: '${ testName }'. This may cause inconsistent A/B test behaviour, please check this is okay and add it to 'knownABTestKeys' in default.config`;
+				slackNotifier.warn( message, { suppressDuplicateMessages: true } );
+			}
+		}
+	} );
+}
+
+export async function setABTestControlGroupsInLocalStorage( driver, { reset = false } = {} ) {
+	const abTestList = abTests.default;
+	let updateTests = true;
+
+	await driver.executeScript( 'return window.localStorage.ABTests;' ).then( abtestsValue => {
+		const storedValueCount = Object.keys( JSON.parse( abtestsValue ) ).length;
+		const abTestCount = Object.keys( abTestList ).length;
+		if ( storedValueCount === abTestCount && reset === false ) {
+			updateTests = false;
+		}
+	} );
+
+	if ( updateTests === true ) {
+		const expectedABTestValue = Object.keys( abTestList ).map(
+			test =>
+				`"${ test }_${ abTestList[ test ].datestamp }":"${ abTestList[ test ].defaultVariation }"`
+		);
+
+		return await writeABTests( driver, expectedABTestValue );
 	}
-
-	overrideABTests.push( [ name, variation ] );
-	return await getABTestEraser( name );
 }
