@@ -15,10 +15,10 @@ import { localize } from 'i18n-calypso';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
-} from 'components/domains/contact-details-form-fields/custom-form-fieldsets/constants';
-import UsAddressFieldset from 'components/domains/contact-details-form-fields/custom-form-fieldsets/us-address-fieldset';
-import EuAddressFieldset from 'components/domains/contact-details-form-fields/custom-form-fieldsets/eu-address-fieldset';
-import UkAddressFieldset from 'components/domains/contact-details-form-fields/custom-form-fieldsets/uk-address-fieldset';
+} from './constants';
+import UsAddressFieldset from './us-address-fieldset';
+import EuAddressFieldset from './eu-address-fieldset';
+import UkAddressFieldset from './uk-address-fieldset';
 import { Input, HiddenInput } from 'my-sites/domains/components/form';
 
 export class RegionAddressFieldsets extends Component {
