@@ -13,6 +13,7 @@ import { By } from 'selenium-webdriver';
 import * as driverManager from '../lib/driver-manager.js';
 import * as driverHelper from '../lib/driver-helper.js';
 import * as dataHelper from '../lib/data-helper.js';
+import * as overrideABTests from '../lib/override-abtest';
 
 import WPHomePage from '../lib/pages/wp-home-page.js';
 import ChooseAThemePage from '../lib/pages/signup/choose-a-theme-page.js';
@@ -59,7 +60,6 @@ import DeleteAccountFlow from '../lib/flows/delete-account-flow';
 import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 import ThemeDialogComponent from '../lib/components/theme-dialog-component';
 import SignUpStep from '../lib/flows/sign-up-step';
-import overrideABTest from '../lib/override-abtest';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
 
@@ -1644,11 +1644,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
-		let undo = null;
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			undo = await overrideABTest( 'improvedOnboarding_20190314', 'onboarding' );
+			await overrideABTests.setOverriddenABTests( driver, 'improvedOnboarding', 'onboarding' );
 		} );
 
 		step( 'Can visit the start page', async function() {
@@ -1721,20 +1720,17 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		after( async function() {
-			if ( typeof undo === 'function' ) {
-				await undo();
-			}
+			await overrideABTests.setABTestControlGroups( driver, { reset: true } );
 		} );
 	} );
 
 	xdescribe( 'Sign up for an account only (no site) then add a site via new onboarding flow @parallel', () => {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
-		let undo = null;
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			undo = await overrideABTest( 'improvedOnboarding_20190314', 'onboarding' );
+			await overrideABTests.setOverriddenABTests( driver, 'improvedOnboarding', 'onboarding' );
 		} );
 
 		step( 'Can enter the account flow and see the account details page', async function() {
@@ -1826,9 +1822,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		after( async function() {
-			if ( typeof undo === 'function' ) {
-				await undo();
-			}
+			await overrideABTests.setABTestControlGroups( driver, { reset: true } );
 		} );
 	} );
 } );

@@ -16,6 +16,7 @@ import NavBarComponent from '../components/nav-bar-component.js';
 import * as dataHelper from '../data-helper';
 import * as driverManager from '../driver-manager';
 import * as loginCookieHelper from '../login-cookie-helper';
+
 const host = dataHelper.getJetpackHost();
 
 export default class LoginFlow {

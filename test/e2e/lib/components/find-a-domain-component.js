@@ -9,7 +9,6 @@ import { By, until } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
-
 import * as slackNotifier from '../slack-notifier';
 import * as driverHelper from '../driver-helper.js';
 
