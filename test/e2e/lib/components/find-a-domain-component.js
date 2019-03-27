@@ -9,7 +9,6 @@ import { By, until } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
-import * as overrideABTests from '../override-abtest';
 import * as slackNotifier from '../slack-notifier';
 import * as driverHelper from '../driver-helper.js';
 
@@ -33,7 +32,7 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 			this.explicitWaitMS * 2,
 			'The domain results loading element was still present when it should have disappeared by now.'
 		);
-		return await overrideABTests.checkForUnknownABTestKeys( this.driver );
+		return await this.checkForUnknownABTestKeys();
 	}
 
 	async waitForGoogleApps() {

@@ -10,7 +10,6 @@ import { By } from 'selenium-webdriver';
  */
 import * as dataHelper from '../../data-helper';
 import * as driverHelper from '../../driver-helper';
-import * as overrideABTests from '../../override-abtest';
 import AsyncBaseContainer from '../../async-base-container';
 
 export default class StartPage extends AsyncBaseContainer {
@@ -22,7 +21,7 @@ export default class StartPage extends AsyncBaseContainer {
 
 	async _postInit() {
 		if ( this.visiting ) {
-			await overrideABTests.setABTestControlGroupsInLocalStorage( this.driver );
+			await this.setABTestControlGroupsInLocalStorage();
 			await this.driver.get( this.startURL ); // this is the actual calculated start URL
 		}
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.step-wrapper' ) );

@@ -30,7 +30,7 @@ async function writeABTests( driver, testList ) {
  * @param {String} variation the variation you want to set
  * @return {Function} undo the changes.
  */
-export async function setOverriddenABTestsInLocalStorage( driver, name, variation ) {
+export async function setOverriddenABTests( driver, name, variation ) {
 	const abTestList = abTests.default;
 	const expectedABTestValue = Object.keys( abTestList ).map( test => {
 		if ( test === name ) {
@@ -57,7 +57,7 @@ export async function checkForUnknownABTestKeys( driver ) {
 	} );
 }
 
-export async function setABTestControlGroupsInLocalStorage( driver, { reset = false } = {} ) {
+export async function setABTestControlGroups( driver, { reset = false } = {} ) {
 	const abTestList = abTests.default;
 	let updateTests = true;
 

@@ -16,7 +16,6 @@ import NavBarComponent from '../components/nav-bar-component.js';
 import * as dataHelper from '../data-helper';
 import * as driverManager from '../driver-manager';
 import * as loginCookieHelper from '../login-cookie-helper';
-import * as overrideABTests from '../override-abtest';
 
 const host = dataHelper.getJetpackHost();
 
@@ -114,10 +113,7 @@ export default class LoginFlow {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
 			const urlDisplayed = await this.driver.getCurrentUrl();
-			return await overrideABTests.setABTestControlGroupsInLocalStorage(
-				this.driver,
-				urlDisplayed
-			);
+			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
 		}
 	}
 
@@ -139,10 +135,7 @@ export default class LoginFlow {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
 			const urlDisplayed = await this.driver.getCurrentUrl();
-			return await overrideABTests.setABTestControlGroupsInLocalStorage(
-				this.driver,
-				urlDisplayed
-			);
+			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
 		}
 	}
 
