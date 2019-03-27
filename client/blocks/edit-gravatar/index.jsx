@@ -35,6 +35,11 @@ import VerifyEmailDialog from 'components/email-verification/email-verification-
 import DropZone from 'components/drop-zone';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class EditGravatar extends Component {
 	state = {
 		isEditingImage: false,
@@ -174,6 +179,8 @@ export class EditGravatar extends Component {
 		const buttonText = user.email_verified
 			? translate( 'Click to change photo' )
 			: translate( 'Verify your email' );
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/no-static-element-interactions */
 		return (
 			<div
 				className={ classnames(
@@ -243,6 +250,8 @@ export class EditGravatar extends Component {
 				</div>
 			</div>
 		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events */
+		/* eslint-enable jsx-a11y/no-static-element-interactions */
 	}
 }
 
