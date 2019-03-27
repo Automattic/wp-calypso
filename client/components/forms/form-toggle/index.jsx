@@ -9,6 +9,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class FormToggle extends PureComponent {
 	static propTypes = {
 		onChange: PropTypes.func,

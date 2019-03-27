@@ -13,6 +13,11 @@ import { find, get } from 'lodash';
  */
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 	// If the currency value is not defined, don't render this affix at all
 	if ( ! currencyValue ) {

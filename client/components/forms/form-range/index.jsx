@@ -9,6 +9,11 @@ import PropTypes from 'prop-types';
 import { omit, noop } from 'lodash';
 import classnames from 'classnames';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class extends React.Component {
 	static displayName = 'FormRange';
 

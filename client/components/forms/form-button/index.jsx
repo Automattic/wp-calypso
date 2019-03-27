@@ -14,6 +14,11 @@ import React, { Children } from 'react';
  */
 import Button from 'components/button';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class FormButton extends React.Component {
 	static defaultProps = {
 		isSubmitting: false,

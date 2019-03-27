@@ -18,6 +18,11 @@ import { hasTouch } from 'lib/touch-detect';
 
 const debug = debugFactory( 'calypso:forms:sortable-list' );
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SortableList extends React.Component {
 	static propTypes = {
 		direction: PropTypes.oneOf( [ 'horizontal', 'vertical' ] ),
