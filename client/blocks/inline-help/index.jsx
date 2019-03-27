@@ -27,12 +27,17 @@ import {
 	showInlineHelpPopover,
 	hideInlineHelpPopover,
 	hideChecklistPrompt,
+	showChecklistPrompt,
+	setChecklistPromptTaskId,
+	setChecklistPromptStep,
 } from 'state/inline-help/actions';
 import {
 	isInlineHelpPopoverVisible,
 	getChecklistPromptTaskId,
 	isInlineHelpChecklistPromptVisible,
 } from 'state/inline-help/selectors';
+import getTaskUrls from 'state/selectors/get-task-urls';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Module variables
@@ -109,8 +114,17 @@ class InlineHelp extends Component {
 
 	showInlineHelp = () => {
 		debug( 'showing inline help.' );
+		const { taskUrls, checklistPromptTaskId } = this.props;
 		this.props.recordTracksEvent( 'calypso_inlinehelp_show' );
-		this.props.showInlineHelpPopover();
+
+		if ( window.location.pathname === taskUrls[ checklistPromptTaskId ] ) {
+			this.props.setChecklistPromptTaskId( checklistPromptTaskId );
+			this.props.setChecklistPromptStep( 0 );
+			this.props.showInlineHelpPopover();
+			this.props.showChecklistPrompt();
+		} else {
+			this.props.showInlineHelpPopover();
+		}
 	};
 
 	closeInlineHelp = () => {
@@ -199,12 +213,14 @@ class InlineHelp extends Component {
 }
 
 const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
 	return {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
 		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
 		checklistPromptTaskId: getChecklistPromptTaskId( state ),
+		taskUrls: getTaskUrls( state, siteId ),
 	};
 };
 
@@ -213,6 +229,9 @@ const mapDispatchToProps = {
 	showInlineHelpPopover,
 	hideInlineHelpPopover,
 	hideChecklistPrompt,
+	showChecklistPrompt,
+	setChecklistPromptTaskId,
+	setChecklistPromptStep,
 };
 
 export default connect(
