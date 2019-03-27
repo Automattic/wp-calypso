@@ -10,12 +10,9 @@
 
 .logged-out-form__footer {
 	box-shadow: none;
-	margin: 0 -16px -16px -16px;
+	background: none;
+	margin: 16px -16px -16px -16px;
 	padding: 16px;
-
-	@include breakpoint( '>480px' ) {
-		padding: 24px;
-	}
 
 	&.is-blended {
 		background: none;
