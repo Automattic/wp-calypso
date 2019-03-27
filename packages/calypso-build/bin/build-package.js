@@ -8,8 +8,7 @@ const { execSync } = require( 'child_process' );
 
 const dir = process.cwd();
 const root = path.dirname( __dirname );
-// TODO: const babelConfigFile = require.resolve( '@automattic/calypso-build/babel.config.js' );
-const babelConfigFile = path.join( root, '..', '..', 'babel.config.js' );
+const babelConfigFile = require.resolve( '@automattic/calypso-build/babel.config.js' );
 
 const inputDir = path.join( dir, 'src' );
 const outputDirEsm = path.join( dir, 'dist', 'esm' );

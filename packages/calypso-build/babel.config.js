@@ -3,7 +3,6 @@ const config = {
 		[
 			'@babel/env',
 			{
-				modules: false,
 				useBuiltIns: 'entry',
 				corejs: 2,
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
