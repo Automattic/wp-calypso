@@ -37,7 +37,7 @@ const NON_ERROR_STATES = [
 ];
 /**
  * Those errors are any of the following:
- * - Temporary, occuring if we request installation status while plugin is being set up.
+ * - Temporary, occurring if we request installation status while plugin is being set up.
  * - Permanent, occurring if there is a failure we can't fix by waiting.
  * We attempt to recover from these errors by retrying status requests.
  */
