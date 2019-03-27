@@ -32,6 +32,7 @@ import {
 	getSectionName,
 	isSectionLoading,
 } from 'state/ui/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isSupportSession } from 'state/support/selectors';
@@ -177,7 +178,7 @@ export default connect( state => {
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 	const noMasterbarForCheckout = isJetpack && startsWith( currentRoute, '/checkout' );
 	const noMasterbarForRoute = currentRoute === '/log-in/jetpack' || noMasterbarForCheckout;
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
