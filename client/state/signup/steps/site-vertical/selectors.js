@@ -17,8 +17,7 @@ export function getSiteVerticalName( state ) {
 }
 
 export function getSiteVerticalData( state ) {
-	const verticalName = get( state, 'signup.steps.siteVertical.name', '' );
-
+	const verticalName = getSiteVerticalName( state );
 	const verticals = getVerticals( state, verticalName );
 
 	const match = find(
