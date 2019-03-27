@@ -136,7 +136,6 @@
 		// External indicator for sections that aren't available in Calypso
 		&.gridicons-external {
 			position: absolute;
-			top: 13px;
 			right: 8px;
 			left: auto;
 			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
