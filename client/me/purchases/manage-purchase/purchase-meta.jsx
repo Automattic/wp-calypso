@@ -27,8 +27,9 @@ import {
 	isSubscription,
 	paymentLogoType,
 } from 'lib/purchases';
-import { isMonthly } from 'lib/plans/constants';
 import { isDomainRegistration, isDomainTransfer, isConciergeSession } from 'lib/products-values';
+import { getPlan } from 'lib/plans';
+
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { getUser } from 'state/users/selectors';
@@ -37,6 +38,7 @@ import PaymentLogo from 'components/payment-logo';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
+import { TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
@@ -57,8 +59,8 @@ class PurchaseMeta extends Component {
 	renderPrice() {
 		const { purchase, translate } = this.props;
 		const { priceText, currencyCode, productSlug } = purchase;
-		const period =
-			productSlug && isMonthly( productSlug ) ? translate( 'month' ) : translate( 'year' );
+		const plan = getPlan( productSlug );
+		let period = translate( 'year' );
 
 		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 			return translate( '%(priceText)s %(currencyCode)s {{period}}(one-time){{/period}}', {
@@ -71,6 +73,18 @@ class PurchaseMeta extends Component {
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			return translate( 'Free with Plan' );
+		}
+
+		if ( plan && plan.term ) {
+			switch ( plan.term ) {
+				case TERM_BIENNIALLY:
+					period = translate( 'two years' );
+					break;
+
+				case TERM_MONTHLY:
+					period = translate( 'month' );
+					break;
+			}
 		}
 
 		return translate( '%(priceText)s %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
