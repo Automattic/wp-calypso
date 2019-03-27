@@ -110,7 +110,9 @@ const CancelPurchaseRefundInformation = ( {
 				const { precision } = getCurrencyDefaults( purchase.currencyCode );
 				const planCostText =
 					purchase.currencySymbol +
-					parseFloat( purchase.refundAmount + includedDomainPurchase.amount ).toFixed( precision );
+					parseFloat( purchase.refundAmount + includedDomainPurchase.costToUnbundle ).toFixed(
+						precision
+					);
 				if ( isRefundable( includedDomainPurchase ) ) {
 					text.push(
 						i18n.translate(
@@ -145,7 +147,7 @@ const CancelPurchaseRefundInformation = ( {
 									{
 										args: {
 											productName: getName( purchase ),
-											domainCost: includedDomainPurchase.priceText,
+											domainCost: includedDomainPurchase.costToUnbundleText,
 											refundAmount: purchase.refundText,
 										},
 									}
