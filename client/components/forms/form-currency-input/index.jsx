@@ -47,6 +47,7 @@ function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 				className="form-currency-input__select"
 				value={ currencyValue }
 				onChange={ onCurrencyChange }
+				onBlur={ onCurrencyChange }
 			>
 				{ currencyList.map( ( { code, label = code } ) => (
 					<option key={ code } value={ code }>
