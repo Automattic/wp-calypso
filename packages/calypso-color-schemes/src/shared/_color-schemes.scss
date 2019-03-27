@@ -60,6 +60,8 @@
 
 	--color-white: #{$muriel-white};
 	--color-white-rgb: #{hex-to-rgb( $muriel-white )};
+	--color-black: #000000;
+	--color-black-rgb: #000000;
 	--color-neutral: #{$muriel-gray-500};
 	--color-neutral-rgb: #{hex-to-rgb( $muriel-gray-500 )};
 	--color-neutral-dark: #{$muriel-gray-700};
