@@ -1,6 +1,6 @@
 {
-  "calypsoBaseURL": "https://wordpress.com",
-  "saveAllScreenshots": false,
-  "reportWarningsToSlack": true,
-  "checkForConsoleErrors": false
+	"calypsoBaseURL": "https://wordpress.com",
+	"saveAllScreenshots": false,
+	"reportWarningsToSlack": true,
+	"checkForConsoleErrors": false
 }

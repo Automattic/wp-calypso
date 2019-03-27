@@ -98,7 +98,7 @@ export class AppsBadge extends PureComponent {
 	onLinkClick = () => {
 		const { storeName } = this.props;
 		recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent );
-	}
+	};
 
 	render() {
 		const { altText, titleText, storeLink, storeName } = this.props;

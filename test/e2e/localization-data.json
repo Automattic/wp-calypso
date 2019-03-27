@@ -16,7 +16,6 @@
 		]
 	},
 
-
 	"de": {
 		"language": "Deutsch",
 		"currency_symbol": "€",
@@ -33,7 +32,6 @@
 			}
 		]
 	},
-
 
 	"en": {
 		"language": "English",
@@ -58,7 +56,6 @@
 		]
 	},
 
-
 	"es": {
 		"language": "español",
 		"currency_symbol": "€",
@@ -75,7 +72,6 @@
 			}
 		]
 	},
-
 
 	"fr": {
 		"language": "Français",
@@ -111,7 +107,6 @@
 		]
 	},
 
-
 	"id": {
 		"language": "Bahasa",
 		"currency_symbol": "$",
@@ -128,7 +123,6 @@
 			}
 		]
 	},
-
 
 	"it": {
 		"language": "Italiano",
@@ -147,7 +141,6 @@
 		]
 	},
 
-
 	"ja": {
 		"language": "日本語",
 		"currency_symbol": "¥",
@@ -164,7 +157,6 @@
 			}
 		]
 	},
-
 
 	"ko": {
 		"language": "한국어",
@@ -183,7 +175,6 @@
 		]
 	},
 
-
 	"nl": {
 		"language": "Nederlands",
 		"currency_symbol": "€",
@@ -200,7 +191,6 @@
 			}
 		]
 	},
-
 
 	"pt-br": {
 		"language": "Português",
@@ -219,7 +209,6 @@
 		]
 	},
 
-
 	"ru": {
 		"language": "Русский",
 		"currency_symbol": "$",
@@ -236,7 +225,6 @@
 			}
 		]
 	},
-
 
 	"sv": {
 		"language": "svenska",
@@ -255,7 +243,6 @@
 		]
 	},
 
-
 	"tr": {
 		"language": "Türkçe",
 		"currency_symbol": "$",
@@ -273,7 +260,6 @@
 		]
 	},
 
-
 	"zh-cn": {
 		"language": "中文 (簡體)",
 		"currency_symbol": "$",
@@ -290,7 +276,6 @@
 			}
 		]
 	},
-
 
 	"zh-tw": {
 		"language": "中文 (繁體)",

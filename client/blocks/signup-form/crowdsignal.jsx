@@ -25,7 +25,6 @@ import SocialSignupForm from './social';
 import './crowdsignal.scss';
 
 class CrowdsignalSignupForm extends Component {
-
 	static propTypes = {
 		disabled: PropTypes.bool,
 		handleSocialResponse: PropTypes.func,
@@ -65,8 +64,8 @@ class CrowdsignalSignupForm extends Component {
 			<p className="signup-form__crowdsignal-learn-more">
 				{ translate( 'Why WordPress.com? {{a}}Learn more{{/a}}.', {
 					components: {
-						a: link
-					}
+						a: link,
+					},
 				} ) }
 			</p>
 		);
@@ -75,9 +74,13 @@ class CrowdsignalSignupForm extends Component {
 	render() {
 		const { translate } = this.props;
 
-		const socialCardClass = classNames( 'signup-form__crowdsignal-card', 'signup-form__crowdsignal-social', {
-			'is-active': ! this.state.showSignupForm,
-		} );
+		const socialCardClass = classNames(
+			'signup-form__crowdsignal-card',
+			'signup-form__crowdsignal-social',
+			{
+				'is-active': ! this.state.showSignupForm,
+			}
+		);
 		const signupCardClass = classNames( 'signup-form__crowdsignal-card', {
 			'is-active': this.state.showSignupForm,
 		} );
@@ -89,18 +92,27 @@ class CrowdsignalSignupForm extends Component {
 			<div className="signup-form__crowdsignal">
 				<div className="signup-form__crowdsignal-layout">
 					<div className={ socialCardClass }>
-						<h2 className="signup-form__crowdsignal-card-header">{ translate( 'Connect an existing account:' ) }</h2>
+						<h2 className="signup-form__crowdsignal-card-header">
+							{ translate( 'Connect an existing account:' ) }
+						</h2>
 
 						<div className="signup-form__crowdsignal-card-content">
 							<p className="signup-form__crowdsignal-card-subheader">
-								{ translate( 'The fastest way.{{br/}}Use one of your existing accounts{{br/}}to sign up with Crowdsignal:', {
-									components: {
-										br: <br />
+								{ translate(
+									'The fastest way.{{br/}}Use one of your existing accounts{{br/}}to sign up with Crowdsignal:',
+									{
+										components: {
+											br: <br />,
+										},
 									}
-								} ) }
+								) }
 							</p>
 
-							<Button primary href={ this.props.loginLink } className="signup-form__crowdsignal-wpcom">
+							<Button
+								primary
+								href={ this.props.loginLink }
+								className="signup-form__crowdsignal-wpcom"
+							>
 								<WordPressLogo size={ 20 } />
 								<span>{ translate( 'Sign up with WordPress.com' ) }</span>
 							</Button>
@@ -112,7 +124,10 @@ class CrowdsignalSignupForm extends Component {
 									socialServiceResponse={ this.props.socialServiceResponse }
 								/>
 							) }
-							<Button className="signup-form__crowdsignal-show-form" onClick={ this.showSignupForm }>
+							<Button
+								className="signup-form__crowdsignal-show-form"
+								onClick={ this.showSignupForm }
+							>
 								{ translate( 'Create a WordPress.com Account' ) }
 							</Button>
 							{ this.renderLearnMoreLink() }
@@ -124,15 +139,20 @@ class CrowdsignalSignupForm extends Component {
 					</div>
 
 					<div className={ signupCardClass }>
-						<h2 className="signup-form__crowdsignal-card-header">{ translate( 'Create a new WordPress.com account:' ) }</h2>
+						<h2 className="signup-form__crowdsignal-card-header">
+							{ translate( 'Create a new WordPress.com account:' ) }
+						</h2>
 
 						<div className="signup-form__crowdsignal-card-content">
 							<LoggedOutForm onSubmit={ this.props.handleSubmit } noValidate={ true }>
 								{ this.props.formFields }
 
 								<LoggedOutFormFooter>
-									<FormButton className="signup-form__crowdsignal-submit" disabled={ this.props.submitting || this.props.disabled }>
-										{ translate( 'Create a WordPress.com Account') }
+									<FormButton
+										className="signup-form__crowdsignal-submit"
+										disabled={ this.props.submitting || this.props.disabled }
+									>
+										{ translate( 'Create a WordPress.com Account' ) }
 									</FormButton>
 
 									{ this.renderLearnMoreLink() }
@@ -154,16 +174,24 @@ class CrowdsignalSignupForm extends Component {
 						compact
 						className="signup-form__crowdsignal-prev-button"
 						onClick={ this.hideSignupForm }
-						disabled={ this.props.submitting }>
-
+						disabled={ this.props.submitting }
+					>
 						<Gridicon icon="arrow-left" />
 						<span>{ translate( 'Back' ) }</span>
 					</Button>
 				</div>
 
 				<div className="signup-form__crowdsignal-footer">
-					<p className="signup-form__crowdsignal-footer-text">Powered by<Gridicon icon="my-sites" size={ 18 } />WordPress.com</p>
-					<p className="signup-form__crowdsignal-footer-text">An<AutomatticLogo size={ 18 } />Company</p>
+					<p className="signup-form__crowdsignal-footer-text">
+						Powered by
+						<Gridicon icon="my-sites" size={ 18 } />
+						WordPress.com
+					</p>
+					<p className="signup-form__crowdsignal-footer-text">
+						An
+						<AutomatticLogo size={ 18 } />
+						Company
+					</p>
 				</div>
 			</div>
 		);

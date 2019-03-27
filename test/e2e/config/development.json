@@ -1,4 +1,4 @@
 {
-  "calypsoBaseURL": "http://calypso.localhost:3000",
-  "checkForConsoleErrors": true
+	"calypsoBaseURL": "http://calypso.localhost:3000",
+	"checkForConsoleErrors": true
 }

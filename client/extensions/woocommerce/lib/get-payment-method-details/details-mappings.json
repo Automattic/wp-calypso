@@ -6,10 +6,7 @@
 		"methodType": "offline"
 	},
 	"cod": {
-		"fields": [
-			"title",
-			"instructions"
-		],
+		"fields": [ "title", "instructions" ],
 		"methodType": "offline"
 	},
 	"paypal": {
@@ -19,7 +16,7 @@
 		"methodType": "off-site"
 	},
 	"stripe": {
-		"fees": "Fee varies based on country",		
+		"fees": "Fee varies based on country",
 		"informationUrl": "https://stripe.com/pricing",
 		"isSuggested": true,
 		"methodType": "on-site"

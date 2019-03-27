@@ -3,8 +3,22 @@
 /build/
 /docs/
 /public/
-/packages/*/dist/**/*
 node_modules/
 !.eslintrc.js
 /server/devdocs/search-index.js
-**/presets/**/build/**/*
+
+# Gutenberg preset builds
+/client/gutenberg/extensions/presets/*/build
+
+# Built packages
+/packages/*/dist/
+
+#
+# Eslint won't lint json, but prettier shares this ignore
+# Don't operate on these files
+#
+/stats.json
+/server/devdocs/components-usage-stats.json
+/server/devdocs/proptypes-index.json
+/server/bundler/assets.json
+/cached-requests.json

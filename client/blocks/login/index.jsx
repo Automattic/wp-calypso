@@ -203,7 +203,7 @@ class Login extends Component {
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				headerText = translate( 'Howdy!{{br/}}Log in to %(clientTitle)s:', {
 					args: {
-						clientTitle: oauth2Client.title
+						clientTitle: oauth2Client.title,
 					},
 					components: {
 						br: <br />,

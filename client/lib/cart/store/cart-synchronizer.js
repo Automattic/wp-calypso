@@ -29,7 +29,7 @@ function preprocessCartFromServer( cart ) {
 			client_metadata: createClientMetadata(),
 			products: castProductIDsToNumbers( cart.products ),
 			tax: castTaxObject( cart.tax ), // cast tax.location to object
-		},
+		}
 	);
 }
 
@@ -57,7 +57,7 @@ function castTaxObject( tax ) {
 	return {
 		...tax,
 		location: { ...get( tax, 'location' ) }, // cast location to object
-	}
+	};
 }
 
 function CartSynchronizer( cartKey, wpcom ) {

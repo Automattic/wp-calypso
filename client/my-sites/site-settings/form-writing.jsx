@@ -168,16 +168,14 @@ class SiteSettingsFormWriting extends Component {
 					/>
 				) }
 
-				{ config.isEnabled( 'press-this' ) &&
-					! this.isMobile() &&
-					! siteIsJetpack && (
-						<div>
-							<SettingsSectionHeader
-								title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
-							/>
-							<PressThis />
-						</div>
-					) }
+				{ config.isEnabled( 'press-this' ) && ! this.isMobile() && ! siteIsJetpack && (
+					<div>
+						<SettingsSectionHeader
+							title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
+						/>
+						<PressThis />
+					</div>
+				) }
 			</form>
 		);
 	}
@@ -254,7 +252,7 @@ const getFormSettings = settings => {
 	const timezone_string = get( settings, 'timezone_string' );
 
 	if ( ! timezone_string && typeof gmt_offset === 'string' && gmt_offset.length ) {
-		formSettings.timezone_string = 'UTC' + ( /\-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
+		formSettings.timezone_string = 'UTC' + ( /-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
 	}
 
 	return formSettings;
