@@ -3,6 +3,7 @@
  * Internal dependencies
  */
 
+/* eslint-disable no-unused-vars */
 export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	// Return false since we want the iframed block editor for all platforms.
 	// TODO: Remove the selector and all instances in a followup PR.
