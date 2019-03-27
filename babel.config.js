@@ -14,7 +14,6 @@ const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 const targets = isBrowser ? undefined : { node: 'current' };
 
 const config = {
-	babelrcRoots: path.join( __dirname, 'packages', '*' ), // Needed for Jest
 	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),
 	presets: [
 		[
