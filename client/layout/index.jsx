@@ -52,6 +52,11 @@ import { isE2ETest } from 'lib/e2e';
 import BodySectionCssClass from './body-section-css-class';
 import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Layout extends Component {
 	static displayName = 'Layout';
 	static propTypes = {

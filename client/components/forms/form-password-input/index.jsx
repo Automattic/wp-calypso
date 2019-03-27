@@ -15,6 +15,11 @@ import { omit } from 'lodash';
 import FormTextInput from 'components/forms/form-text-input';
 import { isMobile } from 'lib/viewport';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class extends React.Component {
 	static displayName = 'FormPasswordInput';
 

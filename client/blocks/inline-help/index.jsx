@@ -35,6 +35,11 @@ import {
 } from 'state/inline-help/selectors';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );

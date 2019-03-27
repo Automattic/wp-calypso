@@ -24,6 +24,11 @@ import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class MasterbarLoggedOut extends PureComponent {
 	static propTypes = {
 		redirectUri: PropTypes.string,

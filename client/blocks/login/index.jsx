@@ -40,6 +40,11 @@ import PushNotificationApprovalPoller from './two-factor-authentication/push-not
 import userFactory from 'lib/user';
 import SocialConnectPrompt from './social-connect-prompt';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const user = userFactory();
 
 class Login extends Component {

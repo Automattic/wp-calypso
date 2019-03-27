@@ -9,6 +9,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class FormTextInput extends PureComponent {
 	static propTypes = {
 		isError: PropTypes.bool,

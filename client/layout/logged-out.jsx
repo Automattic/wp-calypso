@@ -23,6 +23,11 @@ import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 // Returns true if given section should display sidebar for logged out users.
 const hasSidebar = section => {
 	if ( section.name === 'devdocs' ) {
