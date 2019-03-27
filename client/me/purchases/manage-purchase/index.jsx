@@ -316,6 +316,7 @@ class ManagePurchase extends Component {
 		}
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
+		const domainRegistrationAgreementLinkText = translate( 'Domain Registration Agreement' );
 
 		return (
 			<div className="manage-purchase__content">
@@ -324,7 +325,7 @@ class ManagePurchase extends Component {
 					<ProductLink purchase={ purchase } selectedSite={ site } />
 				</span>
 				{ registrationAgreementUrl && (
-					<a href={ registrationAgreementUrl }>Domain Registration Agreement</a>
+					<a href={ registrationAgreementUrl }>{ domainRegistrationAgreementLinkText }</a>
 				) }
 			</div>
 		);
