@@ -41,7 +41,7 @@ class SecondaryCart extends Component {
 	};
 
 	state = {
-		cartVisible: false,
+		cartVisible: true,
 	};
 
 	UNSAFE_componentWillMount() {

@@ -15,7 +15,7 @@ import { showCartOnMobile } from 'lib/upgrades/actions';
 class CartToggle extends Component {
 	constructor( props ) {
 		super( props );
-		this.state = { isShowingCartOnMobile: false };
+		this.state = { isShowingCartOnMobile: true };
 	}
 
 	toggleCartOnMobile = event => {
