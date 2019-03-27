@@ -90,4 +90,17 @@ export default class NavBarComponent extends AsyncBaseContainer {
 			return await driverHelper.clickWhenClickable( self.driver, guidedToursDismissButtonSelector );
 		}
 	}
+
+	async dismissStatsPopup() {
+		const statsPopupSelector = by.css( '.first-view.is-visible' );
+
+		const isPresent = await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			statsPopupSelector,
+			2000
+		);
+		if ( isPresent === true ) {
+			return await driverHelper.clickWhenClickable( self.driver, statsPopupSelector );
+		}
+	}
 }

@@ -48,12 +48,7 @@ export default class LoginFlow {
 		}
 	}
 
-	async login( {
-		emailSSO = false,
-		jetpackSSO = false,
-		jetpackDIRECT = false,
-		useFreshLogin = false,
-	} = {} ) {
+	async login( { emailSSO = false, jetpackSSO = false, useFreshLogin = false } = {} ) {
 		await driverManager.ensureNotLoggedIn( this.driver );
 
 		if (
@@ -73,22 +68,18 @@ export default class LoginFlow {
 			loginURL = `http://${ dataHelper.getJetpackSiteName() }/wp-admin`;
 		}
 
-		if ( jetpackSSO || jetpackDIRECT ) {
+		if ( jetpackSSO ) {
 			loginPage = await WPAdminLoginPage.Visit( this.driver, loginURL );
+			return await loginPage.logonSSO();
+		}
+		loginPage = await LoginPage.Visit( this.driver );
 
-			if ( jetpackSSO ) {
-				return await loginPage.logonSSO();
-			}
-		} else {
-			loginPage = await LoginPage.Visit( this.driver );
-
-			if ( emailSSO ) {
-				return await loginPage.login(
-					this.account.email || this.account.username,
-					this.account.password,
-					emailSSO
-				);
-			}
+		if ( emailSSO ) {
+			return await loginPage.login(
+				this.account.email || this.account.username,
+				this.account.password,
+				emailSSO
+			);
 		}
 
 		await loginPage.login( this.account.email || this.account.username, this.account.password );
@@ -181,15 +172,13 @@ export default class LoginFlow {
 
 		await this.checkForDevDocsAndRedirectToReader();
 
-		const readerPage = await ReaderPage.Expect( this.driver );
-		await readerPage.waitForPage();
+		await ReaderPage.Expect( this.driver );
 
 		const navbarComponent = await NavBarComponent.Expect( this.driver );
 		await navbarComponent.clickMySites();
 
 		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
 			const siteURL = site || dataHelper.getJetpackSiteName();
-
 			const sideBarComponent = await SidebarComponent.Expect( this.driver );
 			await sideBarComponent.selectSiteSwitcher();
 			await sideBarComponent.searchForSite( siteURL );
@@ -209,14 +198,6 @@ export default class LoginFlow {
 	async loginAndSelectThemes() {
 		await this.loginAndSelectMySite();
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-
-		if ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) {
-			const siteURL = dataHelper.getJetpackSiteName();
-
-			await sideBarComponent.selectSiteSwitcher();
-			await sideBarComponent.searchForSite( siteURL );
-		}
-
 		return await sideBarComponent.selectThemes();
 	}
 

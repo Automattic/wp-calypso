@@ -26,7 +26,6 @@ lerna-debug.log
 
 # config overrides
 /config/*.local.json
-/test/e2e/config/local-*
 
 /coverage
 
@@ -47,12 +46,6 @@ lerna-debug.log
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
 /server/bundler/assets.json
-/test/e2e/image-uploads/
-/test/e2e/image-uploads-store/
-/test/e2e/screenshots/
-/test/e2e/screenshots-i18n/
-/test/e2e/temp/
-/test/e2e/temp-cookies/
 
 *.rdb
 *.db
