@@ -600,4 +600,24 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			await driverHelper.ensurePopupsClosed( driver );
 		} );
 	} );
+
+	describe( 'Use the Calypso Media Modal: @parallel', function() {
+		let fileDetails;
+
+		// Create image file for upload
+		before( async function() {
+			fileDetails = await mediaHelper.createFile();
+			return fileDetails;
+		} );
+
+		step( 'Can log in', async function() {
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			return await loginFlow.loginAndStartNewPage( null, true );
+		} );
+
+		step( 'Can insert an image in an Image block with the Media Modal', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			return await gEditorComponent.addImageFromMediaModal( fileDetails );
+		} );
+	} );
 } );
