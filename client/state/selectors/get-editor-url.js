@@ -10,7 +10,12 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
 	if ( isGutenbergEnabled( state, siteId ) && 'gutenberg' === getSelectedEditor( state, siteId ) ) {
+		// console.log('inside if getGutenbergEditorUrl: ' + getGutenbergEditorUrl( state, siteId, postId, postType ));
 		return getGutenbergEditorUrl( state, siteId, postId, postType );
+	}
+	// console.log('isGutenbergEnabled: ' + isGutenbergEnabled( state, siteId ) + ' getSelectedEditor: ' + getSelectedEditor( state, siteId ));
+	if ( null === getSelectedEditor( state, siteId ) ) {
+		console.log( 'editor val is null' );
 	}
 
 	if ( postId ) {

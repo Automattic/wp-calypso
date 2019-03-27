@@ -44,6 +44,7 @@ class ChecklistPromptTask extends PureComponent {
 	componentDidMount() {
 		const { currentRoute, targetUrl } = this.props;
 
+		console.log( 'currentRoute: ' + currentRoute + ' targetUrl: ' + targetUrl );
 		if ( currentRoute !== targetUrl ) {
 			page( targetUrl );
 		}
@@ -106,6 +107,7 @@ class ChecklistPromptTask extends PureComponent {
 	}
 
 	dismissPopup = () => {
+		console.log( 'dismiss popup called' );
 		this.props.hideChecklistPrompt();
 		this.props.closePopover();
 		this.props.recordTracksEvent( 'calypso_checklist_prompt_dismiss' );

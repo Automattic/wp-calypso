@@ -215,7 +215,7 @@ class WpcomChecklistComponent extends PureComponent {
 		if ( task.isCompleted ) {
 			return;
 		}
-
+		console.log( 'handleInlineHelpStart called' );
 		this.props.setChecklistPromptTaskId( task.id );
 		this.props.setChecklistPromptStep( 0 );
 		this.props.showInlineHelpPopover();

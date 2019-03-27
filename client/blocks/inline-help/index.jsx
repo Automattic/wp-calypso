@@ -38,6 +38,7 @@ import {
 } from 'state/inline-help/selectors';
 import getTaskUrls from 'state/selectors/get-task-urls';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Module variables
@@ -116,19 +117,22 @@ class InlineHelp extends Component {
 		debug( 'showing inline help.' );
 		const { taskUrls, checklistPromptTaskId } = this.props;
 		this.props.recordTracksEvent( 'calypso_inlinehelp_show' );
+		console.log( 'currentroute is : ' + this.props.currentRoute );
+		console.log( 'task url is ' + taskUrls[ checklistPromptTaskId ] );
 
-		if ( window.location.pathname === taskUrls[ checklistPromptTaskId ] ) {
-			this.props.setChecklistPromptTaskId( checklistPromptTaskId );
-			this.props.setChecklistPromptStep( 0 );
-			this.props.showInlineHelpPopover();
-			this.props.showChecklistPrompt();
-		} else {
-			this.props.showInlineHelpPopover();
-		}
+		// if ( window.location.pathname === taskUrls[ checklistPromptTaskId ] ) {
+		// 	this.props.showInlineHelpPopover();
+		// 	this.props.showChecklistPrompt();
+		// } else {
+		// 	this.props.showInlineHelpPopover();
+		// 	this.props.setChecklistPromptTaskId( null );
+		// }
+		this.props.showInlineHelpPopover();
 	};
 
 	closeInlineHelp = () => {
 		debug( 'hiding inline help.' );
+		console.log( 'closeInlineHelp called' );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_close' );
 		this.props.hideInlineHelpPopover();
 		this.props.hideChecklistPrompt();
@@ -221,6 +225,7 @@ const mapStateToProps = state => {
 		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
 		checklistPromptTaskId: getChecklistPromptTaskId( state ),
 		taskUrls: getTaskUrls( state, siteId ),
+		currentRoute: getCurrentRoute( state ),
 	};
 };
 
