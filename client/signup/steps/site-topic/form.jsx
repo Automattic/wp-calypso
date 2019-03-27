@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Button from 'components/button';
+import Gridicon from 'gridicons';
 import FormFieldset from 'components/forms/form-fieldset';
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -70,7 +71,7 @@ class SiteTopicForm extends Component {
 	};
 
 	render() {
-		const { isButtonDisabled, siteTopic, translate } = this.props;
+		const { isButtonDisabled, siteTopic } = this.props;
 		return (
 			<div className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
@@ -82,7 +83,7 @@ class SiteTopicForm extends Component {
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 						<Button type="submit" disabled={ isButtonDisabled } primary>
-							{ translate( 'Continue' ) }
+							<Gridicon icon="arrow-right" />
 						</Button>
 					</FormFieldset>
 				</form>
