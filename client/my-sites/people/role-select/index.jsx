@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
+import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import QuerySites from 'components/data/query-sites';
 import QuerySiteRoles from 'components/data/query-site-roles';
@@ -46,6 +46,8 @@ const RoleSelect = props => {
 		'moment',
 		'numberFormat',
 		'translate',
+		'value',
+		'id',
 	];
 
 	if ( site && siteRoles && includeFollower ) {
@@ -57,16 +59,15 @@ const RoleSelect = props => {
 			{ siteId && <QuerySites siteId={ siteId } /> }
 			{ siteId && <QuerySiteRoles siteId={ siteId } /> }
 			<FormLabel htmlFor={ id }>{ translate( 'Role' ) }</FormLabel>
-			<FormSelect { ...omit( props, omitProps ) }>
-				{ siteRoles &&
-					map( siteRoles, role => {
-						return (
-							<option value={ role.name } key={ role.name }>
-								{ role.display_name }
-							</option>
-						);
-					} ) }
-			</FormSelect>
+			{ siteRoles &&
+				map( siteRoles, role => {
+					return (
+						<FormLabel key={ role.name }>
+							<FormRadio value={ role.name } { ...omit( props, omitProps ) } />
+							<span>{ role.display_name }</span>
+						</FormLabel>
+					);
+				} ) }
 			{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
 		</FormFieldset>
 	);
