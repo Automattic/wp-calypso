@@ -17,6 +17,7 @@ import page from 'page';
 import Button from 'components/button';
 import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
+import EmailSidebarItem from './email-sidebar-item';
 import ManageMenu from './manage-menu';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
@@ -720,6 +721,7 @@ export class MySitesSidebar extends Component {
 							{ this.users() }
 							{ this.plugins() }
 							{ this.upgrades() }
+							<EmailSidebarItem siteId={ this.props.siteId } path={ this.props.path } />
 							{ this.siteSettings() }
 							{ this.wpAdmin() }
 						</ul>

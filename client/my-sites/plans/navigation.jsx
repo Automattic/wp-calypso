@@ -117,11 +117,9 @@ class PlansNavigation extends React.Component {
 								{ translate( 'Domains' ) }
 							</NavItem>
 						) }
-						{ canManageDomain && (
-							<NavItem path={ `/email/${ site.slug }` } selected={ path === '/email' }>
-								{ translate( 'Email' ) }
-							</NavItem>
-						) }
+						<NavItem path={ `/email/${ site.slug }` } selected={ path === '/email' }>
+							{ translate( 'Email' ) }
+						</NavItem>
 					</NavTabs>
 					{ this.cartToggleButton() }
 				</SectionNav>
