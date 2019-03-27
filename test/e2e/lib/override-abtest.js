@@ -62,7 +62,7 @@ export async function setABTestControlGroupsInLocalStorage( driver, { reset = fa
 	let updateTests = true;
 
 	await driver.executeScript( 'return window.localStorage.ABTests;' ).then( abtestsValue => {
-		const storedValueCount = Object.keys( JSON.parse( abtestsValue ) ).length;
+		const storedValueCount = abtestsValue ? Object.keys( JSON.parse( abtestsValue ) ).length : 0;
 		const abTestCount = Object.keys( abTestList ).length;
 		if ( storedValueCount === abTestCount && reset === false ) {
 			updateTests = false;
