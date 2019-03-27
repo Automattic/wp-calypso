@@ -27,6 +27,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PlanIcon from 'components/plans/plan-icon';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class UpgradeNudgeExpanded extends Component {
 	constructor( props ) {
 		super( props );
