@@ -55,10 +55,15 @@ export default class extends React.PureComponent {
 			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
-			siteTitle: PropTypes.string.isRequired,
+			siteTitle: PropTypes.string,
 			statusMessage: PropTypes.string,
 		} ),
 	};
+
+	componentDidMount() {
+		// setTimeout( () => { debugger } );
+		// debugger;
+	}
 
 	render() {
 		const { title, icon, description, uploadDescription } = this.props.importerData;
@@ -69,6 +74,11 @@ export default class extends React.PureComponent {
 			'is-compact': includes( compactStates, state.importerState ),
 			'is-disabled': ! isEnabled,
 		} );
+
+		// console.log( { state } )
+		// if ( includes( importingStates, state.importerState ) ) {
+			// console.log( 'xxxxxxxxx', state.importerState );
+		// }
 
 		return (
 			<Card className={ cardClasses }>
@@ -97,3 +107,4 @@ export default class extends React.PureComponent {
 		);
 	}
 }
+// xx

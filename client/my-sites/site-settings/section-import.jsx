@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
+import { filter, find, first, flow, get, isEmpty, memoize, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,6 +41,8 @@ import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import DescriptiveHeader from 'my-sites/site-settings/settings-import/descriptive-header';
 import JetpackImporter from 'my-sites/site-settings/settings-import/jetpack-importer';
+
+import EmptyContent from 'components/empty-content';
 
 /**
  * Configuration for each of the importers to be rendered in this section. If
@@ -227,8 +229,27 @@ class SiteSettingsImport extends Component {
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
 
+		// console.log( 'zzzzzzz', engine, imports, getImporterForEngine( engine ) );
+
 		if ( getImporterForEngine( engine ) ) {
-			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
+			const activeImports = filterImportsForSite( site.ID, imports );
+			const firstImport = first( activeImports );
+
+			console.log( { firstImport } )
+
+			if ( isEmpty( activeImports ) || get( firstImport, 'importerState' ) === 'importer-upload-success' ) {
+				return (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/illustration-ok.svg"
+						title={ 'Congratulations!' }
+						line={ 'Your password has been reset.' }
+					/>
+				)
+			}
+
+			// console.log( activeImports.length )
+
+			return this.renderActiveImporters( activeImports );
 		}
 
 		if ( ! isHydrated ) {
@@ -256,8 +277,20 @@ class SiteSettingsImport extends Component {
 	};
 
 	renderImportersMain() {
-		if (this.state.autoStartInProgress) {
-			return <h2>autoStartInProgress</h2>
+		const { translate } = this.props;
+		// console.log( this.state.importers );
+
+		if ( this.props.engine && false ) {
+
+		// if (this.state.autoStartInProgress && false ) {
+			// return <h2>autoStartInProgress</h2>
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/illustration-ok.svg"
+					title={ translate( 'Congratulations!' ) }
+					line={ translate( 'Your password has been reset.' ) }
+				/>
+			);
 		}
 
 		return (
@@ -277,7 +310,7 @@ class SiteSettingsImport extends Component {
 
 		const { jetpack: isJetpack } = site;
 
-		console.log( { state: this.state } );
+		// console.log( { state: this.state } );
 
 		return (
 			<Main>

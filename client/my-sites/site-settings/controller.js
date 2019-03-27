@@ -97,7 +97,15 @@ export function importSite( context, next ) {
 	}
 
 	context.store.dispatch(
-		setImportOriginSiteDetails( {
+		true
+		? setImportOriginSiteDetails( {
+			engine: 'wix',
+			siteUrl: 'https://smt593.wixsite.com/wowz/static-page',
+			// engine: get( context, 'state.engine' ),
+			// siteUrl: decodeURIComponentIfValid( get( context, 'state.siteUrl' ) ),
+			confirmedSiteUrl: decodeURIComponentIfValid( get( context, 'query.confirmed-site-url' ) ),
+		} )
+		: setImportOriginSiteDetails( {
 			engine: get( context, 'state.engine' ),
 			siteUrl: decodeURIComponentIfValid( get( context, 'state.siteUrl' ) ),
 			confirmedSiteUrl: decodeURIComponentIfValid( get( context, 'query.confirmed-site-url' ) ),

@@ -60,6 +60,7 @@ const importOrder = importerStatus =>
 
 const apiStart = () => Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
 const apiSuccess = data => {
+	// console.log( 'apiSuccess', data );
 	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_COMPLETED } );
 
 	return data;
@@ -80,6 +81,7 @@ const unlockImport = partial( setImportLock, false );
 const asArray = a => [].concat( a );
 
 function receiveImporterStatus( importerStatus ) {
+	// console.log( 'receiveImporterStatus', importerStatus );
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_IMPORT_RECEIVE,
 		importerStatus,
@@ -209,6 +211,8 @@ export function startImporting( importerStatus ) {
 		site: { ID: siteId },
 	} = importerStatus;
 
+	// console.log( 'startImporting', importerStatus );
+
 	unlockImport( importerId );
 
 	Dispatcher.handleViewAction( {
@@ -239,13 +243,16 @@ export const autoStartImport = ( siteId, importerType, targetUrl ) => {
 			.importWithSiteImporter( siteId, importStatus, params, targetUrl )
 			.then( response =>
 				defer( () => {
-					Dispatcher.handleViewAction( {
-						type: 'IMPORTS_AUTO_START_END',
-					} );
+					// console.log( 'after importWithSiteImporter', response );
 					startImporting( {
 						importerId: response.importId,
 						site: { ID: response.siteId },
-					} ).then( () => console.log( 'in then' ) );
+					} ).then( () => {
+						// console.log( 'after importWithSiteImporter, after startImporting' );
+						Dispatcher.handleViewAction( {
+							type: 'IMPORTS_AUTO_START_END',
+						} );
+					} );
 				} )
 			)
 			.catch( () => {
@@ -256,6 +263,9 @@ export const autoStartImport = ( siteId, importerType, targetUrl ) => {
 	}
 
 	startImport( siteId, importerType );
+	Dispatcher.handleViewAction( {
+		type: 'IMPORTS_AUTO_START_END',
+	} );
 };
 
 export const startUpload = ( importerStatus, file ) => {

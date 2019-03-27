@@ -1836,6 +1836,8 @@ Undocumented.prototype.fetchImporterState = function( siteId ) {
 Undocumented.prototype.updateImporter = function( siteId, importerStatus ) {
 	debug( `/sites/${ siteId }/imports/${ importerStatus.importId }` );
 
+	// console.log( 'updateImporter', importerStatus );
+
 	return this.wpcom.req.post( {
 		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
 		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
