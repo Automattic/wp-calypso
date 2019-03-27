@@ -78,6 +78,7 @@ export class PlansFeaturesMain extends Component {
 			selectedPlan,
 			withDiscount,
 			siteId,
+			plansWithScroll,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -108,6 +109,7 @@ export class PlansFeaturesMain extends Component {
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
+					withScroll={ plansWithScroll }
 					popularPlanSpec={ {
 						type: customerType === 'personal' ? TYPE_PREMIUM : TYPE_BUSINESS,
 						group: GROUP_WPCOM,
@@ -190,13 +192,25 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
-		const { displayJetpackPlans, customerType, withWPPlanTabs } = this.props;
+		const { displayJetpackPlans, customerType, plansWithScroll, withWPPlanTabs } = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( type => planMatches( plan, { type } ) ).length > 0;
 
 		if ( displayJetpackPlans ) {
 			return plans;
+		}
+
+		if ( plansWithScroll ) {
+			return plans.filter( plan =>
+				isPlanOneOfType( plan, [
+					TYPE_BLOGGER,
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+				] )
+			);
 		}
 
 		if ( ! withWPPlanTabs ) {
@@ -295,7 +309,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { displayJetpackPlans, isInSignup, siteId } = this.props;
+		const { displayJetpackPlans, isInSignup, siteId, plansWithScroll } = this.props;
 		let faqs = null;
 
 		if ( ! isInSignup ) {
@@ -306,7 +320,7 @@ export class PlansFeaturesMain extends Component {
 			<div className="plans-features-main">
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
-				{ this.renderToggle() }
+				{ ! plansWithScroll && this.renderToggle() }
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
 				{ this.getPlanFeatures() }
@@ -347,6 +361,7 @@ PlansFeaturesMain.propTypes = {
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 	withWPPlanTabs: PropTypes.bool,
+	plansWithScroll: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -358,6 +373,7 @@ PlansFeaturesMain.defaultProps = {
 	siteId: null,
 	siteSlug: '',
 	withWPPlanTabs: false,
+	plansWithScroll: false,
 };
 
 const guessCustomerType = ( state, props ) => {
@@ -389,13 +405,18 @@ const guessCustomerType = ( state, props ) => {
 export default connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
+		const isNewPlanDiscountActive = isDiscountActive( getDiscountByName( 'new_plans' ), state );
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
 			// pretty versatile, we could rename it from discounts to flags/features/anything else and make it more
 			// universal.
-			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
+			withWPPlanTabs: isNewPlanDiscountActive,
+			plansWithScroll:
+				isNewPlanDiscountActive &&
+				! props.displayJetpackPlans &&
+				abtest( 'plansPresentation' ) === 'scroll',
 			customerType: guessCustomerType( state, props ),
 			domains: getDecoratedSiteDomains( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),

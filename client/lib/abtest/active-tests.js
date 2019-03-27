@@ -183,4 +183,12 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	plansPresentation: {
+		datestamp: '201904010',
+		variations: {
+			tab: 50,
+			scroll: 50,
+		},
+		defaultVariation: 'tab',
+	},
 };
