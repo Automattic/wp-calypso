@@ -164,12 +164,6 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 }
 
-.edit-contact-info__pending-whois-update-card {
-	.notice {
-		margin-bottom: 16px;
-	}
-}
-
 .domain-details-card,
 .edit__domain-details-card {
 	.flag {
@@ -222,14 +216,6 @@ input[type='radio'].domain-management-list-item__radio {
 		padding: 20px 0;
 		text-transform: uppercase;
 	}
-}
-
-.edit-contact-info__privacy-enabled-card-settings-explanation {
-	color: var( --color-text-subtle );
-	display: block;
-	font-size: 13px;
-	font-style: italic;
-	margin: 5px 0;
 }
 
 .dns__details,

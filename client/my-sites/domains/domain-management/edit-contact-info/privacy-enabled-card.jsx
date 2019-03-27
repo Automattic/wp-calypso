@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,14 +13,20 @@ import Card from 'components/card';
 import { domainManagementEdit } from 'my-sites/domains/paths';
 import PropTypes from 'prop-types';
 
-class EditContactInfoPrivacyEnabledCard extends React.PureComponent {
+/**
+ * Style dependencies
+ */
+import './privacy-enabled-card.scss';
+
+export default class EditContactInfoPrivacyEnabledCard extends React.PureComponent {
 	static propTypes = {
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
 	render() {
-		const { selectedDomainName, selectedSite, translate } = this.props;
+		const { selectedDomainName, selectedSite } = this.props;
+		const translate = useTranslate();
 
 		return (
 			<Card className="edit-contact-info__privacy-enabled-card">
@@ -44,5 +50,3 @@ class EditContactInfoPrivacyEnabledCard extends React.PureComponent {
 		);
 	}
 }
-
-export default localize( EditContactInfoPrivacyEnabledCard );
