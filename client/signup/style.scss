@@ -149,7 +149,7 @@ body.is-section-signup .layout:not(.dops) .step-wrapper {
 }
 
 // Signup headings
-body.is-section-signup .layout:not(.dops) .formatted-header,
+body.is-section-signup .layout:not( .dops ) .formatted-header,
 body.is-section-signup .layout.gravatar .formatted-header {
 	margin: 0 0 16px;
 
