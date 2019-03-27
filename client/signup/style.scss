@@ -164,6 +164,15 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		font-size: 15px;
 		color: var( --color-white );
 	}
+
+	a {
+		color: var( --color-neutral-0 );
+		text-decoration: underline;
+
+		&:hover {
+			color: var( --color-white );
+		}
+	}
 }
 
 // Skip button
