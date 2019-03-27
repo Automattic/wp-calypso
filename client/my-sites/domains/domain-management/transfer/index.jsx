@@ -39,7 +39,7 @@ function Transfer( props ) {
 	const slug = get( selectedSite, 'slug' );
 
 	return (
-		<Main className="domain-management-transfer">
+		<Main>
 			<Header
 				selectedDomainName={ selectedDomainName }
 				backHref={ domainManagementEdit( slug, selectedDomainName ) }

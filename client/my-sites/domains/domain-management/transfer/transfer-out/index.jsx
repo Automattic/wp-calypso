@@ -68,7 +68,7 @@ class Transfer extends React.Component {
 		}
 
 		return (
-			<Main className="domain-management-transfer">
+			<Main>
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
 					{ this.props.translate( 'Transfer Domain' ) }
 				</Header>
