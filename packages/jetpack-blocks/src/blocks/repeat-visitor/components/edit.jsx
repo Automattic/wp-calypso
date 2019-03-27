@@ -34,7 +34,7 @@ class RepeatVisitorEdit extends Component {
 	setCriteria = criteria => this.props.setAttributes( { criteria } );
 	setThreshold = threshold => {
 		if ( /^\d+$/.test( threshold ) && +threshold > 0 ) {
-			this.props.setAttributes( { threshold, isThresholdValid: true } );
+			this.props.setAttributes( { threshold: +threshold, isThresholdValid: true } );
 			return;
 		}
 		this.props.setAttributes( { isThresholdValid: false } );
