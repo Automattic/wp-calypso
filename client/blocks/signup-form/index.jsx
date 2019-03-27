@@ -62,7 +62,7 @@ import { getSectionName } from 'state/ui/selectors';
  */
 import './style.scss';
 
-const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
+const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 2000,
 	debug = debugModule( 'calypso:signup-form:form' );
 
 let usernamesSearched = [],
