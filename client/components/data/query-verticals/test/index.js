@@ -34,18 +34,20 @@ describe( 'QueryVerticals', () => {
 		expect( requestVerticals ).not.toHaveBeenCalled();
 	} );
 
-	test( 'should not call request on mount if search term is falsey.', () => {
+	test( 'should call request on update if isFetched is false.', () => {
 		const requestVerticals = jest.fn();
+
 		const wrapped = shallow( <QueryVerticals requestVerticals={ requestVerticals } /> );
+
 		const updatedProps = {
-			searchTerm: undefined,
+			searchTerm: 'Foo',
 			limit: 7,
-			isFetched: true,
+			isFetched: false,
 		};
 
 		wrapped.setProps( updatedProps );
 
-		expect( requestVerticals ).not.toHaveBeenCalled();
+		expect( requestVerticals ).toHaveBeenCalledWith( updatedProps.searchTerm, updatedProps.limit );
 	} );
 
 	test( 'should not call request on update if isFetched is true.', () => {

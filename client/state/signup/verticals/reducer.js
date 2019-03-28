@@ -1,8 +1,4 @@
 /** @format */
-/**
- * External dependencies
- */
-import { toLower, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +12,7 @@ const verticals = createReducer(
 		[ SIGNUP_VERTICALS_SET ]: ( state, action ) => {
 			return {
 				...state,
-				[ trim( toLower( action.search ) ) ]: action.verticals,
+				[ action.search.trim().toLowerCase() ]: action.verticals,
 			};
 		},
 	}

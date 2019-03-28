@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, toLower, trim } from 'lodash';
+import { get } from 'lodash';
 
-export const getVerticals = ( state, searchTerm ) =>
-	get( state, [ 'signup', 'verticals', trim( toLower( searchTerm ) ) ], null );
+export const getVerticals = ( state, searchTerm = '' ) =>
+	get( state, [ 'signup', 'verticals', searchTerm.trim().toLowerCase() ], null );
