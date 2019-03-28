@@ -2,7 +2,6 @@
 
 Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Automattic/wp-calypso) client and WordPress.com in general.
 
-[![Circle CI](https://circleci.com/gh/Automattic/wp-e2e-tests/tree/master.svg?style=svg)](https://circleci.com/gh/Automattic/wp-e2e-tests/tree/master)
 
 ## Table of contents
 
@@ -32,6 +31,8 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
   - [List of wrapper repos & friends](docs/miscellaneous.md#list-of-wrapper-repos--friends)
 
 ## Pre-requisites
+
+Make sure you are in the /test/e2e directory
 
 ### Install NodeJS
 
