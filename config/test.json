@@ -35,7 +35,7 @@
 		"calypsoify/gutenberg": true,
 		"calypsoify/plugins": true,
 		"catch-js-errors": false,
-		"code-splitting": true,
+		"code-splitting": false,
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
