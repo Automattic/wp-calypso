@@ -80,6 +80,10 @@
 		}
 	}
 
+	button {
+		@include elevation ( 1dp );
+	}
+
 	.card {
 		margin: 0 auto;
 		background: transparent;
