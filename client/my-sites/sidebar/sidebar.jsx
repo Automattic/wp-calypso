@@ -851,6 +851,7 @@ export class MySitesSidebar extends Component {
 					title={ this.props.translate( 'Tools' ) }
 				>
 					{ this.tools() }
+					{ this.earn() }
 				</ExpandableSidebarMenu>
 
 				{ configuration ? (
