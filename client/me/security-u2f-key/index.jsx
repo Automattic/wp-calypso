@@ -7,7 +7,7 @@ import Gridicon from 'gridicons';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isSupported } from 'u2f-api';
+import webauthn from 'lib/webauthn';
 
 /**
  * Internal dependencies
@@ -19,11 +19,18 @@ import SecurityU2fKeyAdd from './add';
 import SecurityU2fKeyList from './list';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import wpcom from 'lib/wp';
+import Notice from 'components/notice';
+import { warningNotice, successNotice, removeNotice } from 'state/notices/actions';
+
+function SecurityKeyErrorNotice( text ) {
+	return <Notice status="is-error" icon="notice" />;
+}
 
 class SecurityU2fKey extends React.Component {
 	static initialState = Object.freeze( {
 		addingKey: false,
 		isBrowserSupported: true,
+		errorMessage: false,
 		u2fChallenge: {},
 		u2fKeys: [],
 	} );
@@ -31,8 +38,8 @@ class SecurityU2fKey extends React.Component {
 	state = this.constructor.initialState;
 
 	componentDidMount = () => {
-		this.getChallenge();
-		isSupported().then( this.setSupported );
+		this.getKeysFromServer();
+		webauthn.isSupported().then( this.setSupported );
 	};
 
 	getClickHandler = ( action, callback ) => {
@@ -79,12 +86,12 @@ class SecurityU2fKey extends React.Component {
 		);
 	};
 
-	addKeyCancel = () => {
+	addKeyCancel = err => {
 		this.setState( { addingKey: false } );
 	};
 
-	keysFromServer = data => {
-		this.setState( { u2fKeys: data } );
+	keysFromServer = ( err, data ) => {
+		this.setState( { u2fKeys: data.registrations } );
 	};
 
 	getChallenge = () => {
@@ -92,7 +99,7 @@ class SecurityU2fKey extends React.Component {
 	};
 
 	setChallenge = ( error, data ) => {
-		this.setState( { u2fChallenge: data.challenge[ 0 ] } );
+		this.setState( { u2fChallenge: data } );
 	};
 
 	getKeysFromServer = () => {
@@ -101,8 +108,8 @@ class SecurityU2fKey extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const { addingKey, isBrowserSupported } = this.state;
-		const u2fKeys = [];
+		const { addingKey, isBrowserSupported, errorMessage, u2fKeys } = this.state;
+		//		const u2fKeys = [];
 		return (
 			<Fragment>
 				<SectionHeader label={ translate( 'Security Key' ) }>
@@ -127,6 +134,7 @@ class SecurityU2fKey extends React.Component {
 							registerRequests={ this.state.u2fChallenge }
 						/>
 					) }
+				{ errorMessage && <SecurityKeyErrorNotice text={ errorMessage } /> }
 				{ ! addingKey &&
 					! u2fKeys.length && (
 						<Card>
@@ -142,7 +150,7 @@ class SecurityU2fKey extends React.Component {
 				{ ! addingKey &&
 					!! u2fKeys.length && (
 						<SecurityU2fKeyList
-							securityKeys={ this.props.u2fKeys }
+							securityKeys={ this.state.u2fKeys }
 							onDelete={ this.deleteKeyRegister }
 						/>
 					) }

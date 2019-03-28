@@ -186,6 +186,7 @@
     "tracekit": "0.4.5",
     "twemoji": "11.0.1",
     "u2f-api": "1.0.6",
+    "webauthn-simple-app": "2.0.0",
     "url": "0.11.0",
     "uuid": "3.3.2",
     "valid-url": "1.0.9",

@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import u2f from './u2f-api';
+import webauthn from 'lib/webauthn';
 import Spinner from 'components/spinner';
 
 class SecurityU2fKeyAdd extends React.Component {
@@ -27,15 +28,16 @@ class SecurityU2fKeyAdd extends React.Component {
 	};
 
 	registerKey = () => {
-		// const appId = this.props.registerRequests.appId;
-		delete this.props.registerRequests.appId;
-		// u2f.register( appId, [ this.props.registerRequests ], [], this.keyRegistered );
-		u2f.register(
-			'https://calypso.localhost:3000',
-			[ this.props.registerRequests ],
-			[],
-			this.keyRegistered
-		);
+		let self = this;
+		webauthn
+			.register()
+			.then( data => {
+				self.keyRegistered();
+			} )
+			.catch( err => {
+				console.log( err );
+				self.props.onCancel( err );
+			} );
 	};
 
 	keyRegistered = data => {

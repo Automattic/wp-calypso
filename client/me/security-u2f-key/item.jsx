@@ -26,7 +26,9 @@ class SecurityU2fKeyItem extends Component {
 			<CompactCard>
 				<div className="security-u2f-key__item">
 					<div className="security-u2f-key__item-information">
-						<h2 className="security-u2f-key__item-title">{ this.props.securityKey.registered }</h2>
+						<h2 className="security-u2f-key__item-title">
+							{ this.props.securityKey.registered } Key
+						</h2>
 					</div>
 					<U2FDeleteButton
 						securityKey={ this.props.securityKey }

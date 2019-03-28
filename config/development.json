@@ -5,7 +5,7 @@
 	"client_slug": "browser",
 	"directly_rtm_widget_environment": "sandbox",
 	"hostname": "calypso.localhost",
-	"port": 3000,
+	"port": 2000,
 	"i18n_default_locale_slug": "en",
 	"rtl": false,
 	"jetpack_min_version": "3.3",

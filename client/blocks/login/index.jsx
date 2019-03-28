@@ -33,6 +33,7 @@ import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import JetpackHeader from 'components/jetpack-header';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
+import WebAuthnVerificationForm from './two-factor-authentication/webauthn-verification-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
 import Notice from 'components/notice';
@@ -248,10 +249,17 @@ class Login extends Component {
 			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
 		}
 
-		if ( twoFactorEnabled && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
+		if (
+			twoFactorEnabled &&
+			includes( [ 'authenticator', 'u2f', 'sms', 'backup' ], twoFactorAuthType )
+		) {
 			return (
 				<div>
 					{ poller }
+					<WebAuthnVerificationForm
+						onSuccess={ this.handleValid2FACode }
+						twoFactorAuthType={ twoFactorAuthType }
+					/>
 					<VerificationCodeForm
 						onSuccess={ this.handleValid2FACode }
 						twoFactorAuthType={ twoFactorAuthType }
