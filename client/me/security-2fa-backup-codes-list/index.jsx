@@ -6,19 +6,16 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import Clipboard from 'clipboard';
-import userFactory from 'lib/user';
 import Gridicon from 'gridicons';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-list' );
-
 import { saveAs } from 'browser-filesaver';
+import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormButton from 'components/forms/form-button';
-import analytics from 'lib/analytics';
 import FormButtonBar from 'components/forms/form-buttons-bar';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
@@ -27,6 +24,9 @@ import Notice from 'components/notice';
 import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import Tooltip from 'components/tooltip';
+import { withLocalizedMoment } from 'components/localized-moment';
+import { getCurrentUserName } from 'state/current-user/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -53,11 +53,13 @@ class Security2faBackupCodesList extends React.Component {
 
 	popup = false;
 
-	componentDidMount() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
+	copyCodesButtonRef = React.createRef();
+	printCodesButtonRef = React.createRef();
+	downloadCodesButtonRef = React.createRef();
 
+	componentDidMount() {
 		// Configure clipboard to be triggered on clipboard button press
-		const button = ReactDom.findDOMNode( this.refs.copyCodesBtn );
+		const button = ReactDom.findDOMNode( this.copyCodesButtonRef.current );
 		this.clipboard = new Clipboard( button, {
 			text: () => this.getBackupCodePlainText( this.props.backupCodes ),
 		} );
@@ -65,11 +67,8 @@ class Security2faBackupCodesList extends React.Component {
 	}
 
 	componentWillUnmount() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-
 		// Cleanup clipboard object
 		this.clipboard.destroy();
-		delete this.clipboard;
 	}
 
 	openPopup = () => {
@@ -87,7 +86,7 @@ class Security2faBackupCodesList extends React.Component {
 	};
 
 	onPrint = () => {
-		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Button' );
+		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Print Backup Codes Button' );
 
 		if ( config.isEnabled( 'desktop' ) ) {
 			require( 'lib/desktop' ).print(
@@ -100,25 +99,23 @@ class Security2faBackupCodesList extends React.Component {
 	};
 
 	onCopy = () => {
-		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Copy to clipboard Button' );
+		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Copy to clipboard Button' );
 		this.setState( { isCopied: true } );
 	};
 
 	saveCodesToFile = () => {
-		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
-		const user = userFactory();
-		const username = user.get().username;
+		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
 
 		const backupCodes = this.props.backupCodes.join( '\n' );
 		const toSave = new Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
-		saveAs( toSave, `${ username }-backup-codes.txt` );
+		saveAs( toSave, `${ this.props.username }-backup-codes.txt` );
 	};
 
-	getBackupCodePlainText = backupCodes => {
+	getBackupCodePlainText( backupCodes ) {
 		if ( backupCodes.length > 0 ) {
 			return backupCodes.join( '\n' );
 		}
-	};
+	}
 
 	enableDownloadCodesTooltip = () => {
 		this.setState( { downloadCodesTooltip: true } );
@@ -144,7 +141,7 @@ class Security2faBackupCodesList extends React.Component {
 		this.setState( { copyCodesTooltip: false } );
 	};
 
-	getBackupCodeHTML = codes => {
+	getBackupCodeHTML( codes ) {
 		const datePrinted = this.props.moment().format( 'lll' );
 		let row;
 		let html = '<html><head><title>';
@@ -195,7 +192,7 @@ class Security2faBackupCodesList extends React.Component {
 
 		html += '</div></body></html>';
 		return html;
-	};
+	}
 
 	doPopup = codes => {
 		this.popup.document.open( 'text/html' );
@@ -205,21 +202,19 @@ class Security2faBackupCodesList extends React.Component {
 
 		/* this code takes advantage of setTimeout not running until after the
 	print dialog is dismissed - it is more reliable than using focus tricks */
-		setTimeout(
-			function() {
-				this.popup.close();
-				this.popup = false;
-			}.bind( this ),
-			100
-		);
+		setTimeout( () => {
+			this.popup.close();
+			this.popup = false;
+		}, 100 );
 	};
 
 	onNextStep = event => {
 		event.preventDefault();
+		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Backup Codes Next Step Button' );
 		this.props.onNextStep();
 	};
 
-	getPlaceholders = () => {
+	getPlaceholders() {
 		let i;
 		const placeholders = [];
 
@@ -228,17 +223,17 @@ class Security2faBackupCodesList extends React.Component {
 		}
 
 		return placeholders;
-	};
+	}
 
 	onUserAgreesChange = event => {
 		this.setState( { userAgrees: event.target.checked } );
 	};
 
-	getSubmitDisabled = () => {
+	isSubmitDisabled() {
 		return ! this.state.userAgrees;
-	};
+	}
 
-	renderList = () => {
+	renderList() {
 		const backupCodes = this.props.backupCodes.length
 			? this.props.backupCodes
 			: this.getPlaceholders();
@@ -252,7 +247,7 @@ class Security2faBackupCodesList extends React.Component {
 					) }
 				</p>
 				<ol className="security-2fa-backup-codes-list__codes">
-					{ backupCodes.map( function( backupCode, index ) {
+					{ backupCodes.map( ( backupCode, index ) => {
 						const spacedCode = backupCode.concat( ' ' );
 						// we add a space to each backup code so that if the user wants to copy and paste the entire list
 						// the backup codes aren't placed in the clipboard as a single long number
@@ -264,7 +259,7 @@ class Security2faBackupCodesList extends React.Component {
 								<span>{ spacedCode }</span>
 							</li>
 						);
-					}, this ) }
+					} ) }
 				</ol>
 
 				<p className="security-2fa-backup-codes-list__warning">
@@ -291,11 +286,8 @@ class Security2faBackupCodesList extends React.Component {
 
 					<FormButton
 						className="security-2fa-backup-codes-list__next"
-						onClick={ function( event ) {
-							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Next Step Button' );
-							this.onNextStep( event );
-						}.bind( this ) }
-						disabled={ this.getSubmitDisabled() }
+						onClick={ this.onNextStep }
+						disabled={ this.isSubmitDisabled() }
 					>
 						{ this.props.translate( 'All Finished!', {
 							context: 'The user presses the All Finished button at the end of Two-Step setup.',
@@ -307,11 +299,11 @@ class Security2faBackupCodesList extends React.Component {
 							disabled={ ! this.props.backupCodes.length }
 							onMouseEnter={ this.enableCopyCodesTooltip }
 							onMouseLeave={ this.disableCopyCodesTooltip }
-							ref="copyCodesBtn"
+							ref={ this.copyCodesButtonRef }
 						>
 							<Gridicon icon="clipboard" />
 							<Tooltip
-								context={ this.refs && this.refs.copyCodesBtn }
+								context={ this.copyCodesButtonRef.current }
 								isVisible={ this.state.copyCodesTooltip }
 								position="top"
 							>
@@ -325,11 +317,11 @@ class Security2faBackupCodesList extends React.Component {
 							onClick={ this.onPrint }
 							onMouseEnter={ this.enablePrintCodesTooltip }
 							onMouseLeave={ this.disablePrintCodesTooltip }
-							ref="printCodesBtn"
+							ref={ this.printCodesButtonRef }
 						>
 							<Gridicon icon="print" />
 							<Tooltip
-								context={ this.refs && this.refs.printCodesBtn }
+								context={ this.printCodesButtonRef.current }
 								isVisible={ this.state.printCodesTooltip }
 								position="top"
 							>
@@ -343,11 +335,11 @@ class Security2faBackupCodesList extends React.Component {
 							onClick={ this.saveCodesToFile }
 							onMouseEnter={ this.enableDownloadCodesTooltip }
 							onMouseLeave={ this.disableDownloadCodesTooltip }
-							ref="downloadCodesBtn"
+							ref={ this.downloadCodesButtonRef }
 						>
 							<Gridicon icon="cloud-download" />
 							<Tooltip
-								context={ this.refs && this.refs.downloadCodesBtn }
+								context={ this.downloadCodesButtonRef.current }
 								isVisible={ this.state.downloadCodesTooltip }
 								position="top"
 							>
@@ -358,13 +350,13 @@ class Security2faBackupCodesList extends React.Component {
 				</FormButtonBar>
 			</div>
 		);
-	};
+	}
 
 	clearLastError = () => {
 		this.setState( { lastError: false } );
 	};
 
-	possiblyRenderError = () => {
+	possiblyRenderError() {
 		if ( ! this.state.lastError ) {
 			return null;
 		}
@@ -376,11 +368,18 @@ class Security2faBackupCodesList extends React.Component {
 				text={ this.state.lastError }
 			/>
 		);
-	};
+	}
 
 	render() {
 		return <div className="security-2fa-backup-codes-list">{ this.renderList() }</div>;
 	}
 }
 
-export default localize( Security2faBackupCodesList );
+export default compose(
+	connect(
+		state => ( { username: getCurrentUserName( state ) } ),
+		{ recordGoogleEvent }
+	),
+	localize,
+	withLocalizedMoment
+)( Security2faBackupCodesList );
