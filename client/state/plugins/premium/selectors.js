@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { every, filter, find, get, includes, some } from 'lodash';
 
 /**
