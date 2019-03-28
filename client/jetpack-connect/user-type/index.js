@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import FormattedHeader from 'components/formatted-header';
 import jetpackOnly from '../jetpack-only';
 import MainWrapper from '../main-wrapper';
+import SkipButton from '../skip-button';
 import UserTypeForm from './form';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WpcomColophon from 'components/wpcom-colophon';
@@ -20,12 +21,18 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { saveSiteUserType } from 'state/jetpack-connect/actions';
 
 class JetpackUserType extends Component {
+	goToNextStep = () => {
+		const { siteSlug } = this.props;
+
+		page( `/jetpack/connect/plans/${ siteSlug }` );
+	};
+
 	handleSubmit = userType => {
-		const { siteId, siteSlug } = this.props;
+		const { siteId } = this.props;
 
 		this.props.saveSiteUserType( siteId, userType );
 
-		page( `/jetpack/connect/plans/${ siteSlug }` );
+		this.goToNextStep();
 	};
 
 	render() {
@@ -38,6 +45,10 @@ class JetpackUserType extends Component {
 						headerText={ translate( 'Are you setting up this site for yourself or someone else?' ) }
 					/>
 					<UserTypeForm submitForm={ this.handleSubmit } />
+					<SkipButton
+						onClick={ this.goToNextStep }
+						tracksEventName="calypso_jpc_skipped_user_type"
+					/>
 					<WpcomColophon />
 				</div>
 			</MainWrapper>

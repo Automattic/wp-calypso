@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import FormattedHeader from 'components/formatted-header';
 import MainWrapper from './main-wrapper';
+import SkipButton from './skip-button';
 import SiteTopicForm from 'signup/steps/site-topic/form';
 import WpcomColophon from 'components/wpcom-colophon';
 import jetpackOnly from './jetpack-only';
@@ -22,21 +23,27 @@ import { getSiteOption } from 'state/sites/selectors';
 import { saveSiteVertical } from 'state/jetpack-connect/actions';
 
 class JetpackSiteTopic extends Component {
-	handleSubmit = ( { name, slug } ) => {
-		const { siteId, siteSlug } = this.props;
-		const siteVertical = name || slug || '';
+	goToNextStep = () => {
+		const { siteSlug, siteJetpackVersion } = this.props;
 
-		this.props.saveSiteVertical( siteId, siteVertical );
-
-		const jpVersion = this.props.siteJetpackVersion;
-		if ( ! jpVersion ) {
+		if ( ! siteJetpackVersion ) {
 			return null;
 		}
-		if ( versionCompare( jpVersion, 7.2 ) < 0 || jpVersion === '7.2-alpha' ) {
+
+		if ( versionCompare( siteJetpackVersion, 7.2 ) < 0 || siteJetpackVersion === '7.2-alpha' ) {
 			page( `/jetpack/connect/user-type/${ siteSlug }` );
 		} else {
 			page( `/jetpack/connect/plans/${ siteSlug }` );
 		}
+	};
+
+	handleSubmit = ( { name, slug } ) => {
+		const { siteId } = this.props;
+		const siteVertical = name || slug || '';
+
+		this.props.saveSiteVertical( siteId, siteVertical );
+
+		this.goToNextStep();
 	};
 
 	render() {
@@ -53,6 +60,11 @@ class JetpackSiteTopic extends Component {
 					/>
 
 					<SiteTopicForm submitForm={ this.handleSubmit } />
+
+					<SkipButton
+						onClick={ this.goToNextStep }
+						tracksEventName="calypso_jpc_skipped_site_topic"
+					/>
 
 					<WpcomColophon />
 				</div>
