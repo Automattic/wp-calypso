@@ -11,6 +11,7 @@ import { throttle } from 'lodash';
 /**
  * Internal dependencies
  */
+import Gridicon from 'gridicons';
 
 /**
  * Style dependencies
@@ -79,23 +80,7 @@ class Scroller extends React.Component {
 				role="button"
 				tabIndex={ -1 }
 			>
-				<svg
-					width="28px"
-					height="28px"
-					viewBox="0 0 28 28"
-					version="1.1"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<g stroke="none" fill="none" fillRule="evenodd">
-						<circle id="Oval" fill="#3D4145" cx="14" cy="14" r="14" />
-						<polygon
-							id="Mask"
-							fill="#FFFFFF"
-							fillRule="nonzero"
-							points="22 13 9.83 13 15.42 7.41 14 6 6 14 14 22 15.41 20.59 9.83 15 22 15"
-						/>
-					</g>
-				</svg>
+				<Gridicon icon="arrow-left" size={ 24 } />
 			</div>
 		);
 	}
@@ -110,23 +95,7 @@ class Scroller extends React.Component {
 				role="button"
 				tabIndex={ 0 }
 			>
-				<svg
-					width="28px"
-					height="28px"
-					viewBox="0 0 28 28"
-					version="1.1"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<g stroke="none" fill="none" fillRule="evenodd" transform="rotate(180,14,14)">
-						<circle id="Oval" fill="#3D4145" cx="14" cy="14" r="14" />
-						<polygon
-							id="Mask"
-							fill="#FFFFFF"
-							fillRule="nonzero"
-							points="22 13 9.83 13 15.42 7.41 14 6 6 14 14 22 15.41 20.59 9.83 15 22 15"
-						/>
-					</g>
-				</svg>
+				<Gridicon icon="arrow-right" size={ 24 } />
 			</div>
 		);
 	}

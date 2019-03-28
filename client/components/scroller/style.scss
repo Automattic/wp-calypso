@@ -12,6 +12,13 @@
     height: 100%;
     z-index: 2;
     padding-top: 185px;
+	svg {
+		background-color: #3d4145;
+		border-radius: 50%;
+		path {
+			fill: white;
+		}
+	}
   }
 
   &__left-nav {
