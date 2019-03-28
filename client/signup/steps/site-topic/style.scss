@@ -13,7 +13,7 @@ body.is-section-jetpack-connect .site-topic__content {
 		z-index: 1000; // I know, I know...
 		border-radius: 4px;
 		background: var( --color-white );
-		@include elevation ( 3dp );
+		@include elevation ( 2dp );
 	}
 
 	.suggestion-search .gridicon {

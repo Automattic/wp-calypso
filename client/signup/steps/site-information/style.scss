@@ -45,7 +45,7 @@
 	.form-fieldset {
 		border-radius: 4px;
 		background: var( --color-white );
-		@include elevation ( 3dp );
+		@include elevation ( 2dp );
 	}
 
 	label {

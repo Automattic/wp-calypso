@@ -12,7 +12,7 @@
 		align-items: flex-start;
 
 		.site-mockup__viewport {
-			@include elevation ( 1dp );
+			@include elevation ( 3dp );
 		}
 
 		.site-mockup__viewport.is-desktop {
@@ -42,7 +42,7 @@
 			top: 48px;
 			right: 8px;
 			z-index: 2;
-			@include elevation ( 3dp );
+			@include elevation ( 4dp );
 
 			.site-mockup__body {
 				height: 440px;

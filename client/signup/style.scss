@@ -52,7 +52,7 @@ body.is-section-signup .layout.gravatar {
 			padding-bottom: 16px;
 			margin-bottom: 24px;
 			border-radius: 6px;
-			@include elevation ( 9dp );
+			@include elevation ( 3dp );
 		}
 
 		.empty-content__title {
@@ -63,7 +63,7 @@ body.is-section-signup .layout.gravatar {
 	// With the dark background, the border on cards looks a
 	// a little strange. Lets try a shadow instead. -shaun
 	.is-site-information .site-information__wrapper:not( .is-single-fieldset ) .card {
-		@include elevation ( 9dp );
+		@include elevation ( 2dp );
 
 		.dops & {
 			@include elevation ( 0 );
