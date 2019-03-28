@@ -44,7 +44,7 @@ class SiteTopicStep extends Component {
 		// once we have more granular copies per segments, these should only be used for the default case.
 		const headerText =
 			getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicHeader' ) || '';
-		const commonSubHeaderText = 'This information will help us build the best site for your needs.';
+		const commonSubHeaderText = 'This information helps us build the best site for your needs.';
 
 		return {
 			headerText,
