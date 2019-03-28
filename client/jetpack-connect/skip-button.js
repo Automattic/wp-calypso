@@ -22,7 +22,7 @@ class SkipButton extends PureComponent {
 		recordTracksEvent: PropTypes.func.isRequired,
 
 		// From localize() HoC
-		translate: PropTypes.func,
+		translate: PropTypes.func.isRequired,
 	};
 
 	handleClick = () => {
