@@ -193,27 +193,13 @@ function getWebpackConfig( {
 					cacheIdentifier,
 					exclude: /node_modules\//,
 				} ),
-				{
-					test: /\.jsx?$/,
+				TranspileConfig.loader( {
+					workerCount,
+					configFile: path.resolve( __dirname, 'babel.dependencies.config.js' ),
+					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+					cacheIdentifier,
 					include: shouldTranspileDependency,
-					use: [
-						{
-							loader: 'thread-loader',
-							options: {
-								workers: workerCount,
-							},
-						},
-						{
-							loader: 'babel-loader',
-							options: {
-								configFile: path.resolve( __dirname, 'babel.dependencies.config.js' ),
-								babelrc: false,
-								cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
-								cacheIdentifier,
-							},
-						},
-					],
-				},
+				} ),
 				{
 					test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
 					loader: 'babel-loader',
