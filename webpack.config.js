@@ -184,6 +184,10 @@ function getWebpackConfig( {
 					test: /\.html$/,
 					loader: 'html-loader',
 				},
+				{
+					test: /\.svg$/,
+					loader: [ '@svgr/webpack' ],
+				},
 				FileConfig.loader(),
 				{
 					include: require.resolve( 'tinymce/tinymce' ),
@@ -200,6 +204,7 @@ function getWebpackConfig( {
 			modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
 			alias: Object.assign(
 				{
+					'material-design-icons': path.join( __dirname, 'packages/material-design-icons/src' ),
 					'gridicons/example': 'gridicons/dist/example',
 					'react-virtualized': 'react-virtualized/dist/es',
 					'social-logos/example': 'social-logos/build/example',
