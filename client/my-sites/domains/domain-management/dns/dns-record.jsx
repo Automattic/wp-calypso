@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
 import { endsWith } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
@@ -16,6 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import { isBeingProcessed } from 'lib/domains/dns';
+import DnsRecordsListItem from '../dns-records/item';
 
 class DnsRecord extends React.Component {
 	static propTypes = {
@@ -109,30 +109,27 @@ class DnsRecord extends React.Component {
 
 	renderRemoveButton() {
 		return (
-			<Button borderless onClick={ this.deleteDns }>
-				<Gridicon icon="trash" />
-			</Button>
+			<div className="dns__list-remove">
+				<Button borderless onClick={ this.deleteDns }>
+					<Gridicon icon="trash" />
+				</Button>
+			</div>
 		);
 	}
 
 	render() {
 		const { dnsRecord } = this.props;
-		const isDisabled = isBeingProcessed( dnsRecord );
+		const disabled = isBeingProcessed( dnsRecord );
 		const isAllowedToBeRemoved = ! dnsRecord.protected_field || 'MX' === dnsRecord.type;
 
 		return (
-			<li className={ classNames( 'dns__list-item', { 'is-disabled': isDisabled } ) }>
-				<div className="dns__list-type">
-					<span>{ dnsRecord.type }</span>
-				</div>
-				<div className="dns__list-info">
-					<strong>{ this.getName() }</strong>
-					<em>{ this.handledBy() }</em>
-				</div>
-				<div className="dns__list-remove">
-					{ isAllowedToBeRemoved && this.renderRemoveButton() }
-				</div>
-			</li>
+			<DnsRecordsListItem
+				disabled={ disabled }
+				type={ dnsRecord.type }
+				name={ this.getName() }
+				content={ this.handledBy() }
+				action={ isAllowedToBeRemoved && this.renderRemoveButton() }
+			/>
 		);
 	}
 }

@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ import Toggle from 'components/forms/form-toggle';
 import { domainConnect } from 'lib/domains/constants';
 import { getNormalizedData } from 'lib/domains/dns';
 import DnsRecordsList from '../dns-records/list';
+import DnsRecordsListItem from '../dns-records/item';
 
 /**
  * Style dependencies
@@ -104,25 +104,24 @@ class DomainConnectRecord extends React.Component {
 		return (
 			<Fragment>
 				<DnsRecordsList className="dns__domain-connect-record">
-					<li className={ classNames( 'dns__list-item', { 'is-disabled': ! enabled } ) }>
-						<div className="dns__list-type">
-							<span>TXT</span>
-						</div>
-						<div className="dns__list-info">
-							<strong>{ name }</strong>
-							<em>{ translate( 'Handled by WordPress.com' ) }</em>
-						</div>
-						<form className="dns__domain-connect-toggle">
-							<Toggle
-								id="domain-connect-record"
-								name="domain-connect-record"
-								onChange={ this.handleToggle }
-								type="checkbox"
-								checked={ enabled }
-								value="active"
-							/>
-						</form>
-					</li>
+					<DnsRecordsListItem
+						disabled={ ! enabled }
+						type="TXT"
+						name={ name }
+						content={ translate( 'Handled by WordPress.com' ) }
+						action={
+							<form className="dns__domain-connect-toggle">
+								<Toggle
+									id="domain-connect-record"
+									name="domain-connect-record"
+									onChange={ this.handleToggle }
+									type="checkbox"
+									checked={ enabled }
+									value="active"
+								/>
+							</form>
+						}
+					/>
 				</DnsRecordsList>
 				<div className="dns__domain-connect-explanation">
 					<em>
