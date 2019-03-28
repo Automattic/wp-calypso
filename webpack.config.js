@@ -195,7 +195,7 @@ function getWebpackConfig( {
 				} ),
 				{
 					test: /\.jsx?$/,
-					include: _.memoize( shouldTranspileDependency ),
+					include: shouldTranspileDependency,
 					use: [
 						{
 							loader: 'thread-loader',
