@@ -165,5 +165,11 @@ describe( 'Premium Plugin Selectors', () => {
 				vaultpress: 'vp-api-key',
 			} );
 		} );
+
+		test( 'Should get the same object for the identical calls', () => {
+			const keys1 = getPluginKeys( state, 'start.site' );
+			const keys2 = getPluginKeys( state, 'start.site' );
+			expect( keys1 ).toBe( keys2 );
+		} );
 	} );
 } );
