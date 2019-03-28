@@ -12,8 +12,8 @@ import {
 	IMPORT_IS_SITE_IMPORTABLE_ERROR,
 	IMPORT_IS_SITE_IMPORTABLE_RECEIVE,
 	IMPORTER_NUX_URL_INPUT_SET,
-	IMPORTER_NUX_CLEAR_FROM_SIGNUP,
-	IMPORTER_NUX_SET_FROM_SIGNUP,
+	IMPORTER_NUX_FROM_SIGNUP_CLEAR,
+	IMPORTER_NUX_FROM_SIGNUP_SET,
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
 } from 'state/action-types';
 import { loadmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
@@ -99,9 +99,9 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 		} );
 
 export const setImportingFromSignupFlow = () => ( {
-	type: IMPORTER_NUX_SET_FROM_SIGNUP,
+	type: IMPORTER_NUX_FROM_SIGNUP_SET,
 } );
 
 export const clearImportingFromSignupFlow = () => ( {
-	type: IMPORTER_NUX_CLEAR_FROM_SIGNUP,
+	type: IMPORTER_NUX_FROM_SIGNUP_CLEAR,
 } );

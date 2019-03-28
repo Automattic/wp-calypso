@@ -90,8 +90,8 @@ export function importSite( context, next ) {
 	if ( context.querystring ) {
 		page.replace( context.pathname, {
 			engine: get( context, 'query.engine' ),
+			isFromSignup: get( context, 'query.signup' ),
 			siteUrl: get( context, 'query.from-site' ),
-			signup: get( context, 'query.signup' ),
 		} );
 		return;
 	}
@@ -103,7 +103,7 @@ export function importSite( context, next ) {
 		} )
 	);
 
-	if ( get( context, 'state.signup' ) ) {
+	if ( get( context, 'state.isFromSignup' ) ) {
 		context.store.dispatch( setImportingFromSignupFlow() );
 	}
 

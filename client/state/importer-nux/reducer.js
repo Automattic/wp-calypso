@@ -7,8 +7,8 @@ import {
 	IMPORT_IS_SITE_IMPORTABLE_ERROR,
 	IMPORT_IS_SITE_IMPORTABLE_RECEIVE,
 	IMPORTS_IMPORT_CANCEL,
-	IMPORTER_NUX_CLEAR_FROM_SIGNUP,
-	IMPORTER_NUX_SET_FROM_SIGNUP,
+	IMPORTER_NUX_FROM_SIGNUP_CLEAR,
+	IMPORTER_NUX_FROM_SIGNUP_SET,
 	IMPORTER_NUX_URL_INPUT_SET,
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
 	SIGNUP_PROGRESS_SAVE_STEP,
@@ -24,8 +24,8 @@ export const urlInputValue = createReducer( '', {
 } );
 
 export const isFromSignupFlow = createReducer( false, {
-	[ IMPORTER_NUX_SET_FROM_SIGNUP ]: () => true,
-	[ IMPORTER_NUX_CLEAR_FROM_SIGNUP ]: () => false,
+	[ IMPORTER_NUX_FROM_SIGNUP_SET ]: () => true,
+	[ IMPORTER_NUX_FROM_SIGNUP_CLEAR ]: () => false,
 } );
 
 export const isUrlInputDisabled = createReducer( false, {
