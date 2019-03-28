@@ -92,6 +92,41 @@ function createProgressHandler() {
 	};
 }
 
+const nodeModulesToTranspile = [
+	// general form is <package-name>/.
+	// The trailing slash makes sure we're not matching these as prefixes
+	// In some cases we do want prefix style matching (lodash. for lodash.assign)
+	'd3-array/',
+	'debug/',
+];
+/**
+ * Check to see if we should transpile certain files in node_modules
+ * @param {String} filepath the path of the file to check
+ * @returns {Boolean} True if we should transpile it, false if not
+ *
+ * We had a thought to try to find the package.json and use the engines property
+ * to determine what we should transpile, but not all libraries set engines properly
+ * (see d3-array@2.0.0). Instead, we transpile libraries we know to have dropped Node 4 support
+ * are likely to remain so going forward.
+ */
+function shouldTranspileDependency( filepath ) {
+	// find the last index of node_modules and check from there
+	// we want <working>/node_modules/a-package/node_modules/foo/index.js to only match foo, not a-package
+	const marker = '/node_modules/';
+	const lastIndex = filepath.lastIndexOf( marker );
+	if ( lastIndex === -1 ) {
+		// we're not in node_modules
+		return false;
+	}
+
+	const checkFrom = lastIndex + marker.length;
+
+	return _.some(
+		nodeModulesToTranspile,
+		modulePart => filepath.substring( checkFrom, checkFrom + modulePart.length ) === modulePart
+	);
+}
+
 /**
  * Return a webpack config object
  *
@@ -149,8 +184,6 @@ function getWebpackConfig( {
 			} ),
 		},
 		module: {
-			// avoids this warning:
-			// https://github.com/localForage/localForage/issues/577
 			noParse: /[/\\]node_modules[/\\]localforage[/\\]dist[/\\]localforage\.js$/,
 			rules: [
 				TranspileConfig.loader( {
@@ -159,6 +192,13 @@ function getWebpackConfig( {
 					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 					cacheIdentifier,
 					exclude: /node_modules\//,
+				} ),
+				TranspileConfig.loader( {
+					workerCount,
+					configFile: path.resolve( __dirname, 'babel.dependencies.config.js' ),
+					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+					cacheIdentifier,
+					include: shouldTranspileDependency,
 				} ),
 				{
 					test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
