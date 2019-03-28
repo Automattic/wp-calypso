@@ -192,19 +192,18 @@ class DnsAddNew extends React.Component {
 			formState.hasErrors( this.state.fields );
 
 		return (
-			<form className="dns__add-new">
-				<div className="dns__form-content">
-					<FormFieldset>
-						<FormLabel>{ translate( 'Type', { context: 'DNS Record' } ) }</FormLabel>
-
-						<FormSelect onChange={ this.changeType } value={ this.state.fields.type.value }>
-							{ options }
-						</FormSelect>
-					</FormFieldset>
-
-					{ this.recordFields() }
-				</div>
-
+			<form className="dns__form">
+				<FormFieldset>
+					<FormLabel>{ translate( 'Type', { context: 'DNS Record' } ) }</FormLabel>
+					<FormSelect
+						className="dns__add-new-select-type"
+						onChange={ this.changeType }
+						value={ this.state.fields.type.value }
+					>
+						{ options }
+					</FormSelect>
+				</FormFieldset>
+				{ this.recordFields() }
 				<FormFooter>
 					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
 						{ translate( 'Add New DNS Record' ) }
