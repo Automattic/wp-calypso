@@ -11,7 +11,7 @@ import React from 'react';
 import ImporterActionButton from './action-button';
 
 export const BusyImportingButton = ( { translate } ) => (
-	<ImporterActionButton primary busy>
+	<ImporterActionButton primary busy disabled>
 		{ translate( 'Importing…' ) }
 	</ImporterActionButton>
 );
