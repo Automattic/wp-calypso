@@ -1,7 +1,7 @@
 {
-	"name": "@automattic/your-package",
+	"name": "@automattic/material-design-icons",
 	"version": "1.0.0",
-	"description": "My new package",
+	"description": "Material icons in SVG format.",
 	"main": "src/index.js",
 	"module": "src/index.js",
 	"sideEffects": false,
