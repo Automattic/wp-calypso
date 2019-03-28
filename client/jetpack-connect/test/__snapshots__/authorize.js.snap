@@ -35,6 +35,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         }
       />
       <Card
+        className="jetpack-connect__logged-in-card"
         highlight={false}
         tagName="div"
       >
