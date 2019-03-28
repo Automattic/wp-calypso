@@ -1,0 +1,29 @@
+{
+	"name": "@automattic/your-package",
+	"version": "1.0.0",
+	"description": "My new package",
+	"main": "src/index.js",
+	"module": "src/index.js",
+	"sideEffects": false,
+	"keywords": [
+		"wordpress"
+	],
+	"author": "Brad Griffith <brad.griffith@automattic.com>",
+	"contributors": [],
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/material-design-icons"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"src"
+	]
+}
