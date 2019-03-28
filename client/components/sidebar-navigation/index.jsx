@@ -29,17 +29,16 @@ class SidebarNavigation extends React.Component {
 
 	render() {
 		return (
-			<header className="current-section">
-				<a onClick={ this.toggleSidebar } className={ this.props.linkClassName }>
-					<Gridicon icon="chevron-left" />
-					{ this.props.children }
+			<header className="sidebar-navigation">
+				<button onClick={ this.toggleSidebar } className={ this.props.linkClassName }>
+					<Gridicon icon="arrow-left" />
 					<div>
-						<p className={ 'current-section__' + this.props.sectionName + '-title' }>
+						<h1 className="sidebar-navigation__section-title">{ this.props.title }</h1>
+						<p className={ 'sidebar-navigation__' + this.props.sectionName + '-title' }>
 							{ this.props.sectionTitle }
 						</p>
-						<h1 className="current-section__section-title">{ this.props.title }</h1>
 					</div>
-				</a>
+				</button>
 			</header>
 		);
 	}
