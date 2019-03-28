@@ -126,7 +126,8 @@
 	}
 
 	.gridicon,
-	.jetpack-logo {
+	.jetpack-logo,
+	svg {
 		fill: var( --sidebar-gridicon-fill );
 		height: 24px;
 		width: 24px;
@@ -142,6 +143,16 @@
 			height: 18px;
 			margin-right: 0;
 		}
+	}
+
+	// Currently hiding non-gridicon SVGs while testing new nav drawer design (PR #31742)
+	svg {
+		display: none;
+	}
+
+	.gridicon,
+	.jetpack-logo {
+		display: inline;
 	}
 	
 	&.is-togglable {
@@ -585,6 +596,19 @@ form.sidebar__button input {
 		}
 	}
 
+	.sidebar__menu {
+		.gridicon,
+		.jetpack-logo {
+			display: none;
+		}
+
+		svg,
+		.gridicons-my-sites,
+		.gridicons-chevron-down {
+			display: inline-block;
+		}
+	}
+
 	.sidebar__button {
 		display: none;
 	}
@@ -608,7 +632,7 @@ form.sidebar__button input {
 		font-weight: 600;
 	}
 
-	.sidebar__menu-list .menu-link-text {
+	.sidebar__menu-list .sidebar__menu-link-text {
 		font-weight: normal;
 	}
 

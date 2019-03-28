@@ -22,6 +22,7 @@ export const ExpandableSidebarMenu = props => {
 		count,
 		onClick,
 		icon,
+		materialIcon,
 		hideAddButton,
 		addLabel,
 		addPlaceholder,
@@ -51,7 +52,13 @@ export const ExpandableSidebarMenu = props => {
 
 	return (
 		<SidebarMenu className={ classes }>
-			<ExpandableSidebarHeading title={ title } count={ count } onClick={ onClick } icon={ icon } />
+			<ExpandableSidebarHeading
+				title={ title }
+				count={ count }
+				onClick={ onClick }
+				icon={ icon }
+				materialIcon={ materialIcon }
+			/>
 			{ addForm }
 			<ul className="sidebar__menu-list">{ props.children }</ul>
 		</SidebarMenu>
