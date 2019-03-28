@@ -49,12 +49,12 @@ class DomainRegistrationAgreement extends React.Component {
 		);
 		let key = 0;
 		return (
-			<div>
+			<React.Fragment>
 				<p>{ preamble }</p>
 				{ map( agreementsList, ( { url, domains } ) => (
 					<p key={ key++ }>{ this.renderAgreementLinkForList( url, domains ) }</p>
 				) ) }
-			</div>
+			</React.Fragment>
 		);
 	};
 
