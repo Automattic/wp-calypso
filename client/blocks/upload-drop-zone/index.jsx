@@ -21,6 +21,11 @@ import notices from 'notices';
 import debugFactory from 'debug';
 import { MAX_UPLOAD_ZIP_SIZE } from 'lib/automated-transfer/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugFactory( 'calypso:upload-drop-zone' );
 
 class UploadDropZone extends Component {
