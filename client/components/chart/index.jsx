@@ -18,6 +18,8 @@ import Notice from 'components/notice';
 import isRtlSelector from 'state/selectors/is-rtl';
 import BarContainer from './bar-container';
 
+const hasResizeObserver = typeof window !== 'undefined' && 'ResizeObserver' in window;
+
 /**
  * Style dependencies
  */
@@ -52,17 +54,20 @@ class Chart extends React.Component {
 	};
 
 	componentDidMount() {
-		if ( this.props.data && this.props.data.length && ! this.props.loading ) {
-			this.resize();
+		if ( hasResizeObserver ) {
+			this.resizeObserver = new ResizeObserver( this.resizeWithObserver );
+			this.resizeObserver.observe( this.chart );
+		} else {
+			if ( this.props.data && this.props.data.length && ! this.props.loading ) {
+				this.forceResize();
+			}
+			window.addEventListener( 'resize', this.resizeWithLayout );
 		}
-
-		this.resize = afterLayoutFlush( this.resize );
-		window.addEventListener( 'resize', this.resize );
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.loading && ! this.props.loading ) {
-			return this.resize();
+			return this.forceResize();
 		}
 
 		if ( prevProps.data !== this.props.data ) {
@@ -71,16 +76,44 @@ class Chart extends React.Component {
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.resize );
+		if ( this.resizeObserver ) {
+			this.resizeObserver.unobserve( this.chart );
+		}
+		window.removeEventListener( 'resize', this.resizeWithLayout );
 	}
 
-	resize = () => {
-		if ( ! this.chart ) {
-			return;
+	forceResize = () => {
+		if ( hasResizeObserver ) {
+			return this.resizeWithObserver();
+		}
+		return this.resizeWithLayout();
+	};
+
+	resizeWithObserver = entries => {
+		// Callback. Store new contentRect.
+		if ( entries && entries.length > 0 ) {
+			this.contentRect = entries[ 0 ].contentRect;
 		}
 
+		if ( this.contentRect ) {
+			this.applyResize( this.contentRect.width );
+		} else {
+			// In the unlikely situation that we are asked to do a resize without
+			// having first received a ResizeObserver event, we call the layout
+			// version instead.
+			this.resizeWithLayout();
+		}
+	};
+
+	resizeWithLayout = afterLayoutFlush( () => {
+		if ( this.chart ) {
+			return this.applyResize( this.chart.clientWidth );
+		}
+	} );
+
+	applyResize = chartWidth => {
 		const isTouch = hasTouch();
-		const clientWidth = this.chart.clientWidth - 82;
+		const clientWidth = chartWidth - 82;
 		const minWidth = isTouch ? this.props.minTouchBarWidth : this.props.minBarWidth;
 		const width = isTouch && clientWidth <= 0 ? 350 : clientWidth; // mobile safari bug with zero width
 		const maxBars = Math.floor( width / minWidth );
