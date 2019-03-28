@@ -35,7 +35,7 @@ function getLoginUrlWithTOSRedirect( email, domain ) {
 		`Email=${ encodeURIComponent( email ) }` +
 		`&service=CPanel` +
 		`&continue=${ encodeURIComponent(
-			`https://admin.google.com/${ domain }/AcceptTermsOfService&continue=https://mail.google.com/mail/u/${ email }`
+			`https://admin.google.com/${ domain }/AcceptTermsOfService?continue=https://mail.google.com/mail/u/${ email }`
 		) }`
 	);
 }
