@@ -35,6 +35,7 @@
 	"dependencies": {
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/muriel-style": "file:./packages/muriel-style",
+		"@automattic/material-design-icons": "file:./packages/material-design-icons",
 		"@automattic/tree-select": "file:./packages/tree-select",
 		"@babel/cli": "7.4.3",
 		"@babel/core": "7.4.3",
