@@ -18,8 +18,6 @@ import Button from 'components/button';
 import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import PaymentCountrySelect from 'components/payment-country-select';
 import Input from 'my-sites/domains/components/form/input';
-import TermsOfService from './terms-of-service';
-import cartValues from 'lib/cart-values';
 import wpcom from 'lib/wp';
 import { newCardPayment } from 'lib/store-transactions';
 import { setPayment } from 'lib/upgrades/actions';
@@ -32,8 +30,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
 import RecentRenewals from './recent-renewals';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
-import DomainRegistrationAgreement from './domain-registration-agreement';
+import CheckoutTerms from './checkout-terms';
 
 const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
 
@@ -493,11 +490,8 @@ export class WebPaymentBox extends React.Component {
 				{ this.props.children }
 
 				<RecentRenewals cart={ cart } />
-				<TermsOfService
-					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
-				/>
-				<DomainRegistrationRefundPolicy cart={ cart } />
-				<DomainRegistrationAgreement cart={ this.props.cart } />
+
+				<CheckoutTerms cart={ cart } />
 
 				<span className="payment-box__payment-buttons">
 					<span className="pay-button">

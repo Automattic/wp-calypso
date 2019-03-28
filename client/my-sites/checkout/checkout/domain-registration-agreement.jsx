@@ -18,16 +18,16 @@ import { cartItems } from 'lib/cart-values';
 class DomainRegistrationAgreement extends React.Component {
 	static displayName = 'RegistrationAgreementLink';
 
-	recordRefundsSupportClick = () => {
+	recordRegistrationAgreementClick = () => {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
 	};
 
-	renderAgreementLink = ( url, domains ) => {
-		const message = this.props.translate(
+	renderAgreementLinkForList = ( url, domains ) => {
+		return this.props.translate(
 			'View the {{domainRegistrationAgreementLink}}Domain Registration Agreement{{/domainRegistrationAgreementLink}} for %(domainsList)s.',
 			{
 				args: {
-					domainsList: domains.join( ', ' ),
+					domainsList: domains.join( ', ' ).replace( /, ([^,]*)$/, ' and $1' ),
 				},
 				components: {
 					domainRegistrationAgreementLink: (
@@ -35,14 +35,63 @@ class DomainRegistrationAgreement extends React.Component {
 							href={ url }
 							target="_blank"
 							rel="noopener noreferrer"
-							onClick={ this.recordRefundsSupportClick }
+							onClick={ this.recordRegistrationAgreementClick }
 						/>
 					),
 				},
 			}
 		);
+	};
 
-		return message;
+	renderMultipleAgreements = agreementsList => {
+		const preamble = this.props.translate(
+			'You agree to the following domain name registration agreements:'
+		);
+		let key = 0;
+		return (
+			<div>
+				<p>{ preamble }</p>
+				{ map( agreementsList, ( { url, domains } ) => (
+					<p key={ key++ }>{ this.renderAgreementLinkForList( url, domains ) }</p>
+				) ) }
+			</div>
+		);
+	};
+
+	renderSingleAgreement = ( { url, domains } ) => {
+		return (
+			<p>
+				{ this.props.translate(
+					'You agree to the {{domainRegistrationAgreementLink}}Domain Registration Agreement{{/domainRegistrationAgreementLink}} for %(domainsList)s.',
+					{
+						args: {
+							domainsList: domains.join( ', ' ).replace( /, ([^,]*)$/, ' and $1' ),
+						},
+						components: {
+							domainRegistrationAgreementLink: (
+								<a
+									href={ url }
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={ this.recordRegistrationAgreementClick }
+								/>
+							),
+						},
+					}
+				) }
+			</p>
+		);
+	};
+
+	renderAgreements = () => {
+		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
+		const agreementsList = this.getDomainsByRegistrationAgreement( domainRegistrations );
+
+		if ( agreementsList.length > 1 ) {
+			return this.renderMultipleAgreements( agreementsList );
+		}
+
+		return this.renderSingleAgreement( agreementsList.shift() );
 	};
 
 	getDomainsByRegistrationAgreement() {
@@ -54,6 +103,7 @@ class DomainRegistrationAgreement extends React.Component {
 				)
 			),
 		];
+
 		return reduce(
 			agreementUrls,
 			( domainsByAgreement, url ) => {
@@ -82,16 +132,10 @@ class DomainRegistrationAgreement extends React.Component {
 			return null;
 		}
 
-		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
-		const agreementsList = this.getDomainsByRegistrationAgreement( domainRegistrations );
-		let key = 0;
-
 		return (
 			<div className="checkout__domain-registration-agreement-link">
 				<Gridicon icon="info-outline" size={ 18 } />
-				{ map( agreementsList, ( { url, domains } ) => (
-					<p key={ key++ }>{ this.renderAgreementLink( url, domains ) }</p>
-				) ) }
+				{ this.renderAgreements() }
 			</div>
 		);
 	}

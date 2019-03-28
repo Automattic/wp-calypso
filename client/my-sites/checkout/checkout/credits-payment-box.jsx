@@ -14,14 +14,12 @@ import { overSome, some } from 'lodash';
 import WordPressLogo from 'components/wordpress-logo';
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
-import TermsOfService from './terms-of-service';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import CartToggle from './cart-toggle';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import RecentRenewals from './recent-renewals';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
-import DomainRegistrationAgreement from './domain-registration-agreement';
+import CheckoutTerms from './checkout-terms';
 
 export class CreditsPaymentBox extends React.Component {
 	content = () => {
@@ -60,9 +58,7 @@ export class CreditsPaymentBox extends React.Component {
 					{ this.props.children }
 
 					<RecentRenewals cart={ cart } />
-					<TermsOfService />
-					<DomainRegistrationRefundPolicy cart={ cart } />
-					<DomainRegistrationAgreement cart={ this.props.cart } />
+					<CheckoutTerms cart={ cart } />
 
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-actions">

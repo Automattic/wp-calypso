@@ -18,9 +18,8 @@ import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import CartToggle from './cart-toggle';
 import PaymentChatButton from './payment-chat-button';
 import SubscriptionText from './subscription-text';
-import TermsOfService from './terms-of-service';
 import WeChatPaymentQRcode from './wechat-payment-qrcode';
-import cartValues, { paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
+import { paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
 import userAgent from 'lib/user-agent';
 import { Input } from 'my-sites/domains/components/form';
 import { convertToSnakeCase } from 'state/data-layer/utils';
@@ -33,6 +32,7 @@ import Button from 'components/button';
 import RecentRenewals from './recent-renewals';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
+import CheckoutTerms from './checkout-terms';
 
 export class WechatPaymentBox extends Component {
 	static propTypes = {
@@ -174,9 +174,9 @@ export class WechatPaymentBox extends Component {
 					{ children }
 
 					<RecentRenewals cart={ cart } />
-					<TermsOfService
-						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
-					/>
+
+					<CheckoutTerms cart={ cart } />
+
 					<DomainRegistrationRefundPolicy cart={ cart } />
 					<DomainRegistrationAgreement cart={ this.props.cart } />
 

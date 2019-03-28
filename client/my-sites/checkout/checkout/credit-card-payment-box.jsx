@@ -14,8 +14,6 @@ import Gridicon from 'gridicons';
  */
 import PayButton from './pay-button';
 import CreditCardSelector from './credit-card-selector';
-import TermsOfService from './terms-of-service';
-import cartValues from 'lib/cart-values';
 import {
 	BEFORE_SUBMIT,
 	INPUT_VALIDATION,
@@ -31,8 +29,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
-import DomainRegistrationAgreement from './domain-registration-agreement';
+import CheckoutTerms from './checkout-terms';
 
 export class CreditCardPaymentBox extends React.Component {
 	static propTypes = {
@@ -195,11 +192,8 @@ export class CreditCardPaymentBox extends React.Component {
 					{ this.props.children }
 
 					<RecentRenewals cart={ cart } />
-					<TermsOfService
-						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
-					/>
-					<DomainRegistrationRefundPolicy cart={ cart } />
-					<DomainRegistrationAgreement cart={ this.props.cart } />
+
+					<CheckoutTerms cart={ cart } />
 
 					{ this.paymentBoxActions() }
 				</form>
