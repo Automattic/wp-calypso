@@ -1,16 +1,6 @@
 .input-chrono {
 	position: relative;
 	margin: 6px auto;
-
-	.gridicons-calendar {
-		color: var( --color-neutral-100 );
-		z-index: z-index( '.popover', '.input-chrono .gridicons-calendar' );
-		font-size: 8px;
-		width: 20px;
-		position: absolute;
-			left: 5px;
-			top: 5px;
-	}
 }
 
 .input-chrono__text,
