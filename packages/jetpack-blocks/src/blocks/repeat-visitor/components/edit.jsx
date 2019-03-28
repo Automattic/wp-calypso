@@ -27,17 +27,18 @@ const RADIO_OPTIONS = [
 ];
 
 class RepeatVisitorEdit extends Component {
-	componentDidMount() {
-		this.props.setAttributes( { isThresholdValid: true } );
-	}
+	state = {
+		isThresholdValid: true,
+	};
 
 	setCriteria = criteria => this.props.setAttributes( { criteria } );
 	setThreshold = threshold => {
 		if ( /^\d+$/.test( threshold ) && +threshold > 0 ) {
-			this.props.setAttributes( { threshold: +threshold, isThresholdValid: true } );
+			this.props.setAttributes( { threshold: +threshold } );
+			this.setState( { isThresholdValid: true } );
 			return;
 		}
-		this.props.setAttributes( { isThresholdValid: false } );
+		this.setState( { isThresholdValid: false } );
 	};
 
 	getNoticeLabel() {
@@ -77,9 +78,7 @@ class RepeatVisitorEdit extends Component {
 					<TextControl
 						className="wp-block-jetpack-repeat-visitor-threshold"
 						defaultValue={ this.props.attributes.threshold }
-						help={
-							this.props.attributes.isThresholdValid ? '' : __( 'Please enter a valid number.' )
-						}
+						help={ this.state.isThresholdValid ? '' : __( 'Please enter a valid number.' ) }
 						label={ __( 'Visit count threshold' ) }
 						min="1"
 						onChange={ this.setThreshold }
