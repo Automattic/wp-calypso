@@ -40,9 +40,10 @@ import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/wooc
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import VerificationCodeForm from './two-factor-authentication/verification-code-form';
-import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
+import VerificationCodeForm from './two-factor-authentication/verification-code-form';
+import WebAuthnVerificationForm from './two-factor-authentication/webauthn-verification-form';
+import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 
 /**
  * Style dependencies
@@ -353,10 +354,17 @@ class Login extends Component {
 			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
 		}
 
-		if ( twoFactorEnabled && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
+		if (
+			twoFactorEnabled &&
+			includes( [ 'authenticator', 'u2f', 'sms', 'backup' ], twoFactorAuthType )
+		) {
 			return (
 				<div>
 					{ poller }
+					<WebAuthnVerificationForm
+						onSuccess={ this.handleValid2FACode }
+						twoFactorAuthType={ twoFactorAuthType }
+					/>
 					<VerificationCodeForm
 						isJetpack={ isJetpack }
 						onSuccess={ this.handleValid2FACode }
