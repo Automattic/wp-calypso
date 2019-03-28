@@ -13,7 +13,8 @@
 	"module": "dist/esm/index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Automattic/wp-calypso.git"
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/tree-select"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -25,11 +26,9 @@
 		"dist",
 		"src"
 	],
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../calypso-build"
-	},
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"build": "npx @automattic/calypso-build"
+		"prepublish": "npm run clean",
+		"prepare": "npx @automattic/calypso-build"
 	}
 }

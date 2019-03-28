@@ -6,12 +6,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import scrollTo from 'lib/scroll-to';
 import { localize } from 'i18n-calypso';
+import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import scrollTo from 'lib/scroll-to';
+import { applySiteOffset } from 'lib/site/timezone';
 import ActivityActor from './activity-actor';
 import ActivityDescription from './activity-description';
 import ActivityMedia from './activity-media';
@@ -38,9 +40,14 @@ import getRequestedRewind from 'state/selectors/get-requested-rewind';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import { adjustMoment } from '../activity-log/utils';
 import { getSite } from 'state/sites/selectors';
 import { withDesktopBreakpoint } from 'lib/viewport/react';
+import { withLocalizedMoment } from 'components/localized-moment';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ActivityLogItem extends Component {
 	static propTypes = {
@@ -283,7 +290,7 @@ class ActivityLogItem extends Component {
 
 		const classes = classNames( 'activity-log-item', className );
 
-		const adjustedTime = adjustMoment( { gmtOffset, moment: moment.utc( activityTs ), timezone } );
+		const adjustedTime = applySiteOffset( moment( activityTs ), { timezone, gmtOffset } );
 
 		return (
 			<React.Fragment>
@@ -291,14 +298,9 @@ class ActivityLogItem extends Component {
 					<ActivityLogConfirmDialog
 						key="activity-rewind-dialog"
 						confirmTitle={ translate( 'Confirm Rewind' ) }
-						notice={
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							<span className="activity-log-confirm-dialog__notice-content">
-								{ translate(
-									'This will remove all content and options created or changed since then.'
-								) }
-							</span>
-						}
+						notice={ translate(
+							'This will remove all content and options created or changed since then.'
+						) }
 						onClose={ dismissRewind }
 						onConfirm={ this.confirmRewind }
 						onSettingsChange={ this.restoreSettingsChange }
@@ -433,7 +435,12 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( withDesktopBreakpoint( localize( ActivityLogItem ) ) );
+export default compose(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	),
+	withDesktopBreakpoint,
+	withLocalizedMoment,
+	localize
+)( ActivityLogItem );

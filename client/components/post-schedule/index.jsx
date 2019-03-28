@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { moment } from 'i18n-calypso';
+import moment from 'moment';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 

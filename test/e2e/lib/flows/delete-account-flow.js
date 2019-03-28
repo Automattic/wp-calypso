@@ -1,5 +1,8 @@
 /** @format */
 
+/**
+ * Internal dependencies
+ */
 import CloseAccountPage from '../pages/account/close-account-page';
 import LoggedOutMasterbarComponent from '../components/logged-out-masterbar-component';
 import AccountSettingsPage from '../pages/account/account-settings-page';

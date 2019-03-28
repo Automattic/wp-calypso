@@ -3,8 +3,9 @@
 /**
  * Internal dependencies
  */
-import { createSiteWithCart } from '../step-actions';
+import { createSiteWithCart, isSiteTopicFulfilled } from '../step-actions';
 import { useNock } from 'test/helpers/use-nock';
+import flows from 'signup/config/flows';
 
 jest.mock( 'lib/analytics', () => ( {
 	tracks: { recordEvent() {} },
@@ -16,6 +17,12 @@ jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
+
+jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps-pure' ) );
+jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
+jest.mock( '../actions' );
 
 describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
@@ -86,5 +93,87 @@ describe( 'createSiteWithCart()', () => {
 			[],
 			fakeStore
 		);
+	} );
+} );
+
+describe( 'isSiteTopicFulfilled()', () => {
+	const setSurvey = jest.fn();
+	const submitSiteVertical = jest.fn();
+
+	beforeEach( () => {
+		flows.excludeStep.mockClear();
+		setSurvey.mockClear();
+		submitSiteVertical.mockClear();
+	} );
+
+	test( 'should remove a step fulfilled', () => {
+		const flowName = 'flowWithSiteTopic';
+		const stepName = 'site-topic';
+		const initialContext = { query: { vertical: 'verticalSlug' } };
+		const nextProps = { initialContext, flowName, submitSiteVertical, setSurvey };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+
+		isSiteTopicFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic' );
+	} );
+
+	test( 'should not remove any step unfulfilled', () => {
+		const flowName = 'flowWithSiteTopicAndTitle';
+		const stepName = 'site-topic-and-title';
+		const initialContext = { query: { vertical: 'verticalSlug' } };
+		const nextProps = { initialContext, flowName, submitSiteVertical, setSurvey };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+
+		isSiteTopicFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should call both setSurvey() and submitSiteVertical() when vertical query param passed', () => {
+		const flowName = 'flowWithSiteTopic';
+		const stepName = 'site-topic';
+		const initialContext = { query: { vertical: 'verticalSlug' } };
+		const nextProps = { initialContext, flowName, submitSiteVertical, setSurvey };
+
+		expect( setSurvey ).not.toHaveBeenCalled();
+		expect( submitSiteVertical ).not.toHaveBeenCalled();
+
+		isSiteTopicFulfilled( stepName, undefined, nextProps );
+
+		expect( setSurvey ).toHaveBeenCalled();
+		expect( submitSiteVertical ).toHaveBeenCalled();
+	} );
+
+	test( 'should call neither setSurvey() nor submitSiteVertical() when no vertical query param passed', () => {
+		const flowName = 'flowWithSiteTopic';
+		const stepName = 'site-topic';
+		const initialContext = { query: {} };
+		const nextProps = { initialContext, flowName, submitSiteVertical, setSurvey };
+
+		expect( setSurvey ).not.toHaveBeenCalled();
+		expect( submitSiteVertical ).not.toHaveBeenCalled();
+
+		isSiteTopicFulfilled( stepName, undefined, nextProps );
+
+		expect( setSurvey ).not.toHaveBeenCalled();
+		expect( submitSiteVertical ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should call neither setSurvey() nor submitSiteVertical() when the flow contains survey step', () => {
+		const flowName = 'flowWithSiteTopicAndSurvey';
+		const stepName = 'site-topic';
+		const initialContext = { query: { vertical: 'verticalSlug' } };
+		const nextProps = { initialContext, flowName, submitSiteVertical, setSurvey };
+
+		expect( setSurvey ).not.toHaveBeenCalled();
+		expect( submitSiteVertical ).not.toHaveBeenCalled();
+
+		isSiteTopicFulfilled( stepName, undefined, nextProps );
+
+		expect( setSurvey ).not.toHaveBeenCalled();
+		expect( submitSiteVertical ).not.toHaveBeenCalled();
 	} );
 } );

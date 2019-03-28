@@ -16,10 +16,10 @@ import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Header from './card/header';
 import {
 	domainManagementContactsPrivacy,
-	domainManagementEmail,
 	domainManagementNameServers,
 	domainManagementTransfer,
 } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import { disablePrivacyProtection, enablePrivacyProtection } from 'lib/upgrades/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { togglePrivacy } from 'state/sites/domains/actions';
@@ -27,7 +27,7 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 class RegisteredDomain extends React.Component {
@@ -145,7 +145,7 @@ class RegisteredDomain extends React.Component {
 					'expiringDomainsCanManage',
 					'newDomainsWithPrimary',
 					'newDomains',
-					'pendingGappsTosAcceptanceDomains',
+					'pendingGSuiteTosAcceptanceDomains',
 					'expiredDomainsCannotManage',
 					'expiringDomainsCannotManage',
 					'pendingTransfer',
@@ -172,7 +172,7 @@ class RegisteredDomain extends React.Component {
 	}
 
 	emailNavItem() {
-		const path = domainManagementEmail( this.props.selectedSite.slug, this.props.domain.name );
+		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
 	}

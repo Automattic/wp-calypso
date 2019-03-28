@@ -248,6 +248,7 @@ export class CartItem extends React.Component {
 		} else if ( cartItem.volume === 1 ) {
 			switch ( cartItem.product_slug ) {
 				case 'gapps':
+				case 'gapps_unlimited':
 					return translate( '%(productName)s (1 User)', {
 						args: {
 							productName: cartItem.product_name,
@@ -260,6 +261,7 @@ export class CartItem extends React.Component {
 		} else {
 			switch ( cartItem.product_slug ) {
 				case 'gapps':
+				case 'gapps_unlimited':
 					return translate(
 						'%(productName)s (%(volume)s User)',
 						'%(productName)s (%(volume)s Users)',

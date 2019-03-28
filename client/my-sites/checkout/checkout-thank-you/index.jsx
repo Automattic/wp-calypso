@@ -77,12 +77,8 @@ import {
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
-import ThankYouCard from 'components/thank-you-card';
-import {
-	domainManagementEmail,
-	domainManagementList,
-	domainManagementTransferInPrecheck,
-} from 'my-sites/domains/paths';
+import { domainManagementList, domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
@@ -133,6 +129,7 @@ export class CheckoutThankYou extends React.Component {
 
 	componentDidMount() {
 		this.redirectIfThemePurchased();
+		this.redirectIfDomainOnly( this.props );
 
 		const {
 			gsuiteReceipt,
@@ -173,6 +170,7 @@ export class CheckoutThankYou extends React.Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
+		this.redirectIfDomainOnly( nextProps );
 
 		if (
 			! this.props.receipt.hasLoadedFromServer &&
@@ -267,6 +265,17 @@ export class CheckoutThankYou extends React.Component {
 		}
 	};
 
+	redirectIfDomainOnly = props => {
+		if ( props.domainOnlySiteFlow && get( props, 'receipt.hasLoadedFromServer', false ) ) {
+			const purchases = getPurchases( props );
+			const failedPurchases = getFailedPurchases( props );
+			if ( purchases.length > 0 && ! failedPurchases.length ) {
+				const domainName = find( purchases, isDomainRegistration ).meta;
+				page( domainManagementList( domainName ) );
+			}
+		}
+	};
+
 	goBack = () => {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
@@ -288,7 +297,7 @@ export class CheckoutThankYou extends React.Component {
 			} else if ( purchases.some( isGoogleApps ) ) {
 				const purchase = find( purchases, isGoogleApps );
 
-				return page( domainManagementEmail( this.props.selectedSite.slug, purchase.meta ) );
+				return page( emailManagement( this.props.selectedSite.slug, purchase.meta ) );
 			}
 		}
 
@@ -440,25 +449,7 @@ export class CheckoutThankYou extends React.Component {
 		}
 
 		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
-			const domainName = find( purchases, isDomainRegistration ).meta;
-
-			return (
-				<Main className="checkout-thank-you">
-					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-					{ this.renderConfirmationNotice() }
-
-					<ThankYouCard
-						name={ domainName }
-						price={ this.props.receipt.data.displayPrice }
-						heading={ translate( 'Thank you for your purchase!' ) }
-						description={ translate(
-							"That looks like a great domain. Now it's time to get it all set up."
-						) }
-						buttonUrl={ domainManagementList( domainName ) }
-						buttonText={ translate( 'Go To Your Domain' ) }
-					/>
-				</Main>
-			);
+			return null;
 		}
 
 		const goBackText = this.props.selectedSite

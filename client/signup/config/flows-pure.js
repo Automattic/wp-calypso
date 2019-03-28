@@ -114,8 +114,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 				'site-type',
 				'site-topic-with-preview',
 				'site-information-title-with-preview',
-				'site-information-address-with-preview',
-				'site-information-phone-with-preview',
 				'domains-with-preview',
 				'plans',
 			],
@@ -131,8 +129,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 				'site-topic-with-preview',
 				'site-style-with-preview',
 				'site-information-title-with-preview',
-				'site-information-address-with-preview',
-				'site-information-phone-with-preview',
 				'domains-with-preview',
 				'plans',
 			],
@@ -330,11 +326,11 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 
 	flows.import = {
 		steps: [ 'from-url', 'user', 'domains' ],
-		destination: ( { importSiteDetails, importUrl, siteSlug } ) =>
+		destination: ( { importEngine, importSiteUrl, siteSlug } ) =>
 			addQueryArgs(
 				{
-					engine: importSiteDetails.engine || null,
-					'from-site': ( importUrl && encodeURIComponent( importUrl ) ) || null,
+					engine: importEngine || null,
+					'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
 				},
 				`/settings/import/${ siteSlug }`
 			),

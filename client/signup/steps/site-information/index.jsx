@@ -18,11 +18,16 @@ import SignupActions from 'lib/signup/actions';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { setSiteInformation } from 'state/signup/steps/site-information/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import {
+	getSiteVerticalName,
+	getSiteVerticalPreview,
+} from 'state/signup/steps/site-vertical/selectors';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import InfoPopover from 'components/info-popover';
+import QueryVerticals from 'components/data/query-verticals';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -42,6 +47,7 @@ export class SiteInformation extends Component {
 		stepName: PropTypes.string,
 		siteType: PropTypes.string,
 		headerText: PropTypes.string,
+		subHeaderText: PropTypes.string,
 		fieldLabel: PropTypes.string,
 		fieldDescription: PropTypes.string,
 		fieldPlaceholder: PropTypes.string,
@@ -53,6 +59,7 @@ export class SiteInformation extends Component {
 
 	static defaultProps = {
 		headerText: '',
+		subHeaderText: '',
 		fieldLabel: '',
 		fieldDescription: '',
 		fieldPlaceholder: '',
@@ -122,13 +129,19 @@ export class SiteInformation extends Component {
 	);
 
 	renderContent() {
-		const { hasMultipleFieldSets, formFields } = this.props;
+		const {
+			hasMultipleFieldSets,
+			formFields,
+			shouldFetchVerticalData,
+			siteVerticalName,
+		} = this.props;
 		return (
 			<div
 				className={ classNames( 'site-information__wrapper', {
 					'is-single-fieldset': ! hasMultipleFieldSets,
 				} ) }
 			>
+				{ shouldFetchVerticalData && <QueryVerticals searchTerm={ siteVerticalName } /> }
 				<Card>
 					<form>
 						{ formFields.map( ( fieldName, idx ) => {
@@ -168,7 +181,14 @@ export class SiteInformation extends Component {
 	}
 
 	render() {
-		const { flowName, headerText, positionInFlow, signupProgress, stepName } = this.props;
+		const {
+			flowName,
+			headerText,
+			subHeaderText,
+			positionInFlow,
+			signupProgress,
+			stepName,
+		} = this.props;
 		return (
 			<StepWrapper
 				flowName={ flowName }
@@ -176,6 +196,8 @@ export class SiteInformation extends Component {
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
 				showSiteMockups={ this.props.showSiteMockups }
@@ -187,6 +209,7 @@ export class SiteInformation extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteType = getSiteType( state );
+		const siteVerticalName = getSiteVerticalName( state );
 		const isBusiness = 'business' === siteType;
 		// Only business site types may show the full set of fields.
 		// This is a bespoke check until we implement a business-only flow,
@@ -195,10 +218,17 @@ export default connect(
 			! isBusiness && includes( ownProps.informationFields, 'title' )
 				? [ 'title' ]
 				: ownProps.informationFields;
+		const shouldFetchVerticalData =
+			ownProps.showSiteMockups &&
+			getSiteType( state ) === 'business' &&
+			getSiteVerticalPreview( state ) === '';
+
 		return {
 			formFields,
 			siteInformation: getSiteInformation( state ),
 			siteType,
+			siteVerticalName,
+			shouldFetchVerticalData,
 			hasMultipleFieldSets: size( formFields ) > 1,
 		};
 	},

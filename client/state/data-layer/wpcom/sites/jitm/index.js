@@ -39,7 +39,11 @@ const process = {
 /**
  * Routes in which to specifically prevent from displaying JITMs.
  */
-const routesToIgnore = [ '/jetpack/connect/site-type', '/jetpack/connect/site-topic' ];
+const routesToIgnore = [
+	'/jetpack/connect/user-type',
+	'/jetpack/connect/site-type',
+	'/jetpack/connect/site-topic',
+];
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.

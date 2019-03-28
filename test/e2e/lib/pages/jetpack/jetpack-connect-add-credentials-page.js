@@ -1,6 +1,13 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../../driver-helper';
 import AsyncBaseContainer from '../../async-base-container';
 
@@ -19,7 +26,15 @@ export default class JetpackConnectAddCredentialsPage extends AsyncBaseContainer
 		} );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.jetpack-connect__credentials-submit' )
+			By.css( '.jetpack-connect__credentials-submit:not(disabled)' )
+		);
+	}
+
+	async waitToDisappear() {
+		return await driverHelper.waitTillNotPresent(
+			this.driver,
+			By.css( '.jetpack-connect__credentials-submit' ),
+			this.explicitWaitMS * 2
 		);
 	}
 }

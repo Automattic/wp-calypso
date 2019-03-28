@@ -26,7 +26,12 @@ import Task from 'components/checklist/task';
 import { successNotice } from 'state/notices/actions';
 import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteSlug, getSiteFrontPage } from 'state/sites/selectors';
+import {
+	getSiteOption,
+	getSiteSlug,
+	getSiteFrontPage,
+	isCurrentPlanPaid,
+} from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
@@ -44,6 +49,7 @@ import {
 	setChecklistPromptStep,
 } from 'state/inline-help/actions';
 import getEditorUrl from 'state/selectors/get-editor-url';
+import { emailManagement } from 'my-sites/email/paths';
 
 const userLib = userFactory();
 
@@ -55,7 +61,6 @@ class WpcomChecklistComponent extends PureComponent {
 		emailSent: false,
 		error: null,
 	};
-	trackedTaskDisplays = {};
 
 	constructor() {
 		super();
@@ -146,17 +151,13 @@ class WpcomChecklistComponent extends PureComponent {
 		}
 	};
 
-	trackTaskDisplayOnce = task => {
-		if ( this.trackedTaskDisplays[ task.id ] ) {
-			return;
-		}
-		this.trackedTaskDisplays[ task.id ] = true;
-
+	trackTaskDisplay = ( id, isCompleted, location ) => {
 		this.props.recordTracksEvent( 'calypso_checklist_task_display', {
 			checklist_name: 'new_blog',
 			site_id: this.props.siteId,
-			step_name: task.id,
-			completed: task.isCompleted,
+			step_name: id,
+			completed: isCompleted,
+			location,
 		} );
 	};
 
@@ -191,9 +192,13 @@ class WpcomChecklistComponent extends PureComponent {
 			return;
 		}
 
-		const { siteId } = this.props;
+		const { siteId, domains, isPaidPlan, siteSlug } = this.props;
 
-		this.props.launchSite( siteId );
+		if ( isPaidPlan && domains.length > 1 ) {
+			this.props.launchSite( siteId );
+		} else {
+			location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
+		}
 	};
 
 	verificationTaskButtonText() {
@@ -300,15 +305,6 @@ class WpcomChecklistComponent extends PureComponent {
 		);
 	}
 
-	componentDidUpdate() {
-		const taskList = getTaskList( this.props );
-		taskList.getAll().forEach( task => {
-			if ( this.shouldRenderTask( task.id ) ) {
-				this.trackTaskDisplayOnce( task );
-			}
-		} );
-	}
-
 	renderTask( task ) {
 		const { siteSlug, viewMode, closePopover } = this.props;
 
@@ -334,6 +330,7 @@ class WpcomChecklistComponent extends PureComponent {
 			firstIncomplete,
 			buttonPrimary: firstIncomplete && firstIncomplete.id === task.id,
 			closePopover: closePopover,
+			trackTaskDisplay: this.trackTaskDisplay,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
@@ -638,7 +635,7 @@ class WpcomChecklistComponent extends PureComponent {
 			: {
 					onClick: () => {
 						this.trackTaskStart( task );
-						page( `/domains/manage/email/${ siteSlug }` );
+						page( emailManagement( siteSlug ) );
 					},
 					onDismiss: this.handleTaskDismiss( task.id ),
 			  };
@@ -675,7 +672,7 @@ class WpcomChecklistComponent extends PureComponent {
 							link: (
 								<a
 									onClick={ () => this.trackTaskStart( task, { clicked_element: 'hyperlink' } ) }
-									href={ `/domains/manage/email/${ siteSlug }` }
+									href={ emailManagement( siteSlug ) }
 								/>
 							),
 						},
@@ -684,7 +681,7 @@ class WpcomChecklistComponent extends PureComponent {
 				completedButtonText={ translate( 'Upgrade' ) }
 				onClick={ () => {
 					this.trackTaskStart( task, { clicked_element: 'button' } );
-					page( `/domains/manage/email/${ siteSlug }` );
+					page( emailManagement( siteSlug ) );
 				} }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 			/>
@@ -1022,6 +1019,7 @@ export default connect(
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
+			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 		};
 	},
 	{

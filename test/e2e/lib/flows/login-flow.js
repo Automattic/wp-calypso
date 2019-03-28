@@ -1,5 +1,8 @@
 /** @format */
 
+/**
+ * Internal dependencies
+ */
 import LoginPage from '../pages/login-page.js';
 import EditorPage from '../pages/editor-page';
 import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
@@ -13,6 +16,7 @@ import NavBarComponent from '../components/nav-bar-component.js';
 import * as dataHelper from '../data-helper';
 import * as driverManager from '../driver-manager';
 import * as loginCookieHelper from '../login-cookie-helper';
+
 const host = dataHelper.getJetpackHost();
 
 export default class LoginFlow {
@@ -45,12 +49,7 @@ export default class LoginFlow {
 		}
 	}
 
-	async login( {
-		emailSSO = false,
-		jetpackSSO = false,
-		jetpackDIRECT = false,
-		useFreshLogin = false,
-	} = {} ) {
+	async login( { emailSSO = false, jetpackSSO = false, useFreshLogin = false } = {} ) {
 		await driverManager.ensureNotLoggedIn( this.driver );
 
 		if (
@@ -70,22 +69,18 @@ export default class LoginFlow {
 			loginURL = `http://${ dataHelper.getJetpackSiteName() }/wp-admin`;
 		}
 
-		if ( jetpackSSO || jetpackDIRECT ) {
+		if ( jetpackSSO ) {
 			loginPage = await WPAdminLoginPage.Visit( this.driver, loginURL );
+			return await loginPage.logonSSO();
+		}
+		loginPage = await LoginPage.Visit( this.driver );
 
-			if ( jetpackSSO ) {
-				return await loginPage.logonSSO();
-			}
-		} else {
-			loginPage = await LoginPage.Visit( this.driver );
-
-			if ( emailSSO ) {
-				return await loginPage.login(
-					this.account.email || this.account.username,
-					this.account.password,
-					emailSSO
-				);
-			}
+		if ( emailSSO ) {
+			return await loginPage.login(
+				this.account.email || this.account.username,
+				this.account.password,
+				emailSSO
+			);
 		}
 
 		await loginPage.login( this.account.email || this.account.username, this.account.password );
@@ -117,7 +112,7 @@ export default class LoginFlow {
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
-			let urlDisplayed = await this.driver.getCurrentUrl();
+			const urlDisplayed = await this.driver.getCurrentUrl();
 			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
 		}
 	}
@@ -139,7 +134,7 @@ export default class LoginFlow {
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
-			let urlDisplayed = await this.driver.getCurrentUrl();
+			const urlDisplayed = await this.driver.getCurrentUrl();
 			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
 		}
 	}
@@ -147,21 +142,21 @@ export default class LoginFlow {
 	async loginAndSelectDomains() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectDomains();
 	}
 
 	async loginAndSelectPeople() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectPeople();
 	}
 
 	async loginAndSelectAddPersonFromSidebar() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectAddPerson();
 	}
 
@@ -178,16 +173,14 @@ export default class LoginFlow {
 
 		await this.checkForDevDocsAndRedirectToReader();
 
-		const readerPage = await ReaderPage.Expect( this.driver );
-		await readerPage.waitForPage();
+		await ReaderPage.Expect( this.driver );
 
 		const navbarComponent = await NavBarComponent.Expect( this.driver );
 		await navbarComponent.clickMySites();
 
 		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
 			const siteURL = site || dataHelper.getJetpackSiteName();
-
-			let sideBarComponent = await SidebarComponent.Expect( this.driver );
+			const sideBarComponent = await SidebarComponent.Expect( this.driver );
 			await sideBarComponent.selectSiteSwitcher();
 			await sideBarComponent.searchForSite( siteURL );
 		}
@@ -205,41 +198,33 @@ export default class LoginFlow {
 
 	async loginAndSelectThemes() {
 		await this.loginAndSelectMySite();
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
-
-		if ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) {
-			const siteURL = dataHelper.getJetpackSiteName();
-
-			await sideBarComponent.selectSiteSwitcher();
-			await sideBarComponent.searchForSite( siteURL );
-		}
-
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectThemes();
 	}
 
 	async loginAndSelectManagePlugins() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectManagePlugins();
 	}
 
 	async loginAndSelectPlugins() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectPlugins();
 	}
 
 	async loginAndSelectSettings() {
 		await this.loginAndSelectMySite();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectSettings();
 	}
 
 	async loginUsingExistingForm() {
-		let loginPage = await LoginPage.Expect( this.driver );
+		const loginPage = await LoginPage.Expect( this.driver );
 		return await loginPage.login(
 			this.account.email || this.account.username,
 			this.account.password

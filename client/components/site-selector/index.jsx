@@ -409,9 +409,11 @@ class SiteSelector extends Component {
 				onMouseLeave={ this.onMouseLeave }
 			>
 				<Search
+					// eslint-disable-next-line react/no-string-refs
 					ref="siteSearch"
 					onSearch={ this.onSearch }
 					delaySearch={ true }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus={ this.props.autoFocus }
 					disabled={ ! this.props.hasLoadedSites }
 					onSearchClose={ this.props.onClose }
@@ -493,6 +495,10 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 
 		if ( path.match( /^\/domains\/manage\// ) ) {
 			path = '/domains/manage';
+		}
+
+		if ( path.match( /^\/email\// ) ) {
+			path = '/email';
 		}
 
 		if ( path.match( /^\/store\/stats\// ) ) {

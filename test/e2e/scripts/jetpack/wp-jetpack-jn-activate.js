@@ -1,9 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
+import fs from 'fs';
 
-const fs = require( 'fs' );
-
+/**
+ * Internal dependencies
+ */
 import JetpackConnectFlow from '../../lib/flows/jetpack-connect-flow.js';
 
 import * as driverManager from '../../lib/driver-manager';
@@ -57,7 +62,7 @@ describe( `[${ host }] Jurassic Ninja Connection: (${ screenSize }) @jetpack`, f
 	} );
 
 	step( 'Can save JN credentials to file', async function() {
-		writeJNCredentials( this.jnFlow.url, 'demo', this.jnFlow.password );
+		await writeJNCredentials( this.jnFlow.url, 'demo', this.jnFlow.password );
 	} );
 
 	step( 'Can remove diconnected sites', async function() {

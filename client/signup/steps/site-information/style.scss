@@ -41,35 +41,44 @@
 		margin: 0 auto;
 	}
 
+	// Mimic a card
+	.form-fieldset {
+		border-radius: 4px;
+		background: var( --color-white );
+		box-shadow: 0 3px 6px rgba( 0, 0, 0, 0.16 ),
+					0 3px 6px rgba( 0, 0, 0, 0.23 );
+	}
+
 	label {
-		// Labels should be white when placed directly
-		// on the primary background color
-		color: var( --color-white );
+		// The label isn't needed when
+		// there's only one input.
+		display: none;
 	}
 
 	input {
-		// Extra padding to account for the button and
-		padding: 10px 100px 10px 10px;
+		// Extra padding to account for the button
+		padding: 10px 100px 12px 16px;
 
-		// Since there's a 1px padding on the container, and
-		// inputs use actual borders (unlike cards, which
-		// use box-shadow), we need to adjust.
-		margin: 0 -1px;
-		width: calc( 100% + 2px );
+		// Match the radious of the fieldset
+		border-radius: 4px;
+
+		// No need for a border here
+		border: none;
 
 		// On smaller screens the buttons get bigger,
 		// so this input needs to get bigger, too.
 		@include breakpoint( '<660px' ) {
 			padding-top: 15px;
 			padding-bottom: 15px;
+
+			// The rounded borders look strange on
+			// smaller screens.
+			border-radius: 0;
 		}
 
-		// Making the border feel a little more "at home"
-		// with signups dark background color.
-		border-color: var( --color-primary-700 );
-
-		// Trying out a rounded input
-		border-radius: 4px;
+		&:focus {
+			box-shadow: 0 0 0 2px var( --color-accent );
+		}
 	}
 
 	.card {

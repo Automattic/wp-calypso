@@ -1,5 +1,8 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import webdriver from 'selenium-webdriver';
 import chromedriver from 'chromedriver'; // eslint-disable-line no-unused-vars
 import firefox from 'selenium-webdriver/firefox';
@@ -11,6 +14,9 @@ import { times } from 'lodash';
 
 import * as remote from 'selenium-webdriver/remote';
 
+/**
+ * Internal dependencies
+ */
 import * as dataHelper from './data-helper';
 
 const webDriverImplicitTimeOutMS = 2000;
@@ -18,7 +24,7 @@ const webDriverPageLoadTimeOutMS = 60000;
 const browser = config.get( 'browser' );
 
 export function currentScreenSize() {
-	var screenSize = process.env.BROWSERSIZE;
+	let screenSize = process.env.BROWSERSIZE;
 	if ( screenSize === undefined || screenSize === '' ) {
 		screenSize = 'desktop';
 	}
@@ -26,7 +32,7 @@ export function currentScreenSize() {
 }
 
 export function currentLocale() {
-	var locale = process.env.BROWSERLOCALE;
+	let locale = process.env.BROWSERLOCALE;
 	if ( locale === undefined || locale === '' ) {
 		locale = 'en';
 	}
@@ -51,7 +57,7 @@ export function getSizeAsObject() {
 }
 
 export function getProxyType() {
-	var proxyType = config.get( 'proxy' );
+	const proxyType = config.get( 'proxy' );
 	switch ( proxyType.toLowerCase() ) {
 		case 'direct':
 			return proxy.direct();
@@ -75,13 +81,13 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	let driver;
 	let options;
 	let builder;
-	let pref = new webdriver.logging.Preferences();
+	const pref = new webdriver.logging.Preferences();
 	pref.setLevel( 'browser', webdriver.logging.Level.SEVERE );
 	pref.setLevel( 'performance', webdriver.logging.Level.ALL );
 	if ( config.has( 'sauce' ) && config.get( 'sauce' ) ) {
 		const sauceURL = 'http://ondemand.saucelabs.com:80/wd/hub';
-		let sauceConfig = config.get( 'sauceConfig' );
-		let caps = config.get( 'sauceConfigurations' )[ sauceConfig ];
+		const sauceConfig = config.get( 'sauceConfig' );
+		const caps = config.get( 'sauceConfigurations' )[ sauceConfig ];
 
 		caps.username = config.get( 'sauceUsername' );
 		caps.accessKey = config.get( 'sauceAccessKey' );
@@ -158,7 +164,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 					options.addArguments( '--app=https://www.wordpress.com' );
 				}
 
-				const service = new chrome.ServiceBuilder( chromedriver.path ).build();
+				const service = new chrome.ServiceBuilder( chromedriver.path ).build(); // eslint-disable-line no-case-declarations
 				chrome.setDefaultService( service );
 
 				builder = new webdriver.Builder();
@@ -170,7 +176,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				global.browserName = 'chrome';
 				break;
 			case 'firefox':
-				let profile = new firefox.Profile();
+				const profile = new firefox.Profile(); // eslint-disable-line no-case-declarations
 				profile.setNativeEventsEnabled( true );
 				profile.setPreference( 'browser.startup.homepage_override.mstone', 'ignore' );
 				profile.setPreference( 'browser.startup.homepage', 'about:blank' );
@@ -288,7 +294,7 @@ export async function clearCookiesAndDeleteLocalStorage( driver, siteURL = null 
 	if ( siteURL ) {
 		await driver.get( siteURL );
 	}
-	let url = await driver.getCurrentUrl();
+	const url = await driver.getCurrentUrl();
 	await driver.manage().deleteAllCookies();
 	if ( url.startsWith( 'data:' ) === false && url !== 'about:blank' ) {
 		return await driver.executeScript( 'window.localStorage.clear();' );
@@ -326,7 +332,7 @@ export async function dismissAllAlerts( driver ) {
 		} catch ( err ) {
 			await driver.sleep( 2000 );
 			console.log( `Accepting an open alert: '${ err }'` );
-			let alert = await driver.switchTo().alert();
+			const alert = await driver.switchTo().alert();
 			await alert.dismiss();
 		}
 	} );
@@ -339,7 +345,7 @@ export async function acceptAllAlerts( driver ) {
 		} catch ( err ) {
 			await driver.sleep( 2000 );
 			console.log( `Accepting an open alert: '${ err }'` );
-			let alert = await driver.switchTo().alert();
+			const alert = await driver.switchTo().alert();
 			await alert.accept();
 		}
 	} );

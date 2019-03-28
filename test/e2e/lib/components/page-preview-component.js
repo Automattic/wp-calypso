@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By, until } from 'selenium-webdriver';
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 
 import ViewPagePage from '../../lib/pages/view-page-page.js';
@@ -38,10 +44,8 @@ export default class PagePreviewComponent extends AsyncBaseContainer {
 
 	async close() {
 		await this.driver.switchTo().defaultContent();
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( 'button.web-preview__close' )
-		);
+		const closeButton = await this.driver.findElement( By.css( 'button.web-preview__close' ) );
+		return await this.driver.executeScript( 'arguments[0].click()', closeButton );
 	}
 
 	async edit() {

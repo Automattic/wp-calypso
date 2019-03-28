@@ -1,5 +1,13 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
 import assert from 'assert';
+
+/**
+ * Internal dependencies
+ */
 import UpsellPage from '../pages/signup/upsell-page';
 import ChecklistPage from '../pages/checklist-page';
 import InlineHelpChecklistComponent from '../components/inline-help-checklist-component.js';

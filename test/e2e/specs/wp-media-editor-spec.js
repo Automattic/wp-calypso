@@ -1,14 +1,19 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import LoginFlow from '../lib/flows/login-flow.js';
 
 import assert from 'assert';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper';
-import NavBarComponent from '../lib/components/nav-bar-component';
 import SideBarComponent from '../lib/components/sidebar-component';
 import MediaPage from '../lib/pages/media-page';
 
@@ -28,14 +33,9 @@ describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, 
 	this.timeout( mochaTimeOut );
 
 	describe( 'Edit Existing Media:', function() {
-		before( async function() {
+		before( 'Can login and select my site', async function() {
 			const loginFlow = new LoginFlow( driver );
-			await loginFlow.login();
-		} );
-
-		step( 'Can open the sidebar', async function() {
-			const navBarComponent = await NavBarComponent.Expect( driver );
-			await navBarComponent.clickMySites();
+			await loginFlow.loginAndSelectMySite();
 		} );
 
 		step( "Can see a 'Media' option", async function() {

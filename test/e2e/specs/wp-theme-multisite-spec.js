@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
-
 import config from 'config';
+
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper';
 
@@ -59,7 +65,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function() {
 			} );
 
 			step( 'should show a menu', async function() {
-				let displayed = await this.themesPage.popOverMenuDisplayed();
+				const displayed = await this.themesPage.popOverMenuDisplayed();
 				assert( displayed, 'Popover menu not displayed' );
 			} );
 
@@ -70,7 +76,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function() {
 				} );
 
 				step( 'should show the site selector', async function() {
-					let siteSelectorShown = await this.siteSelector.displayed();
+					const siteSelectorShown = await this.siteSelector.displayed();
 					return assert( siteSelectorShown, 'The site selector was not shown' );
 				} );
 
@@ -82,7 +88,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function() {
 
 					step( 'should open the customizer with the selected site and theme', async function() {
 						this.customizerPage = await CustomizerPage.Expect( driver );
-						let url = await driver.getCurrentUrl();
+						const url = await driver.getCurrentUrl();
 						assert( url.indexOf( this.siteSelector.selectedSiteDomain ) > -1, 'Wrong site domain' );
 						assert( url.indexOf( this.themeSearchName ) > -1, 'Wrong theme' );
 					} );
@@ -125,7 +131,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function() {
 			} );
 
 			step( 'should show a menu', async function() {
-				let displayed = await this.themesPage.popOverMenuDisplayed();
+				const displayed = await this.themesPage.popOverMenuDisplayed();
 				assert( displayed, 'Popover menu not displayed' );
 			} );
 
@@ -136,7 +142,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function() {
 				} );
 
 				step( 'shows the site selector', async function() {
-					let siteSelectorShown = await this.siteSelector.displayed();
+					const siteSelectorShown = await this.siteSelector.displayed();
 					return assert( siteSelectorShown, 'The site selector was not shown' );
 				} );
 
@@ -155,14 +161,14 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function() {
 						this.themeDetailPage = await ThemeDetailPage.Expect( driver );
 						await this.themeDetailPage.goBackToAllThemes();
 						this.currentThemeComponent = await CurrentThemeComponent.Expect( driver );
-						let name = await this.currentThemeComponent.getThemeName();
+						const name = await this.currentThemeComponent.getThemeName();
 						return assert.strictEqual( name, this.currentThemeName );
 					} );
 
 					step( 'should highlight the current theme as active', async function() {
 						await this.themesPage.clearSearch();
 						await this.themesPage.searchFor( this.themeSearchName );
-						let name = await this.themesPage.getActiveThemeName();
+						const name = await this.themesPage.getActiveThemeName();
 						return assert.strictEqual( name, this.currentThemeName );
 					} );
 				} );

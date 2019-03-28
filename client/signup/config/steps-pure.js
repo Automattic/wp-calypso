@@ -432,7 +432,14 @@ export function generateSteps( {
 		/* Imports */
 		'from-url': {
 			stepName: 'from-url',
-			providesDependencies: [ 'importSiteDetails', 'importUrl', 'themeSlugWithRepo' ],
+			providesDependencies: [
+				'importEngine',
+				'importFavicon',
+				'importSiteTitle',
+				'importSiteUrl',
+				'sitePreviewImageBlob',
+				'themeSlugWithRepo',
+			],
 		},
 
 		'reader-landing': {
@@ -457,7 +464,10 @@ export function generateSteps( {
 			stepName: 'site-information',
 			providesDependencies: [ 'title', 'address', 'phone' ],
 			props: {
-				headerText: i18n.translate( 'Help customers find you' ),
+				headerText: i18n.translate( "Tell us your site's name" ),
+				subHeaderText: i18n.translate(
+					'This will appear at the top of your site and can be changed at anytime.'
+				),
 				informationFields: [ 'title', 'address', 'phone' ],
 			},
 		},
@@ -467,6 +477,9 @@ export function generateSteps( {
 			providesDependencies: [ 'title' ],
 			props: {
 				headerText: i18n.translate( "Tell us your site's name" ),
+				subHeaderText: i18n.translate(
+					'This will appear at the top of your site and can be changed at anytime.'
+				),
 				informationFields: [ 'title' ],
 			},
 		},
@@ -540,6 +553,9 @@ export function generateSteps( {
 			providesDependencies: [ 'title' ],
 			props: {
 				headerText: i18n.translate( "Tell us your site's name" ),
+				subHeaderText: i18n.translate(
+					'This will appear at the top of your site and can be changed at anytime.'
+				),
 				informationFields: [ 'title' ],
 				showSiteMockups: true,
 			},

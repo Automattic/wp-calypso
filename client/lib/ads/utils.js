@@ -35,6 +35,7 @@ export function canAccessEarnSection( site ) {
 
 export function isWordadsInstantActivationEligible( site ) {
 	if (
+		! site.jetpack &&
 		( isBusiness( site.plan ) || isPremium( site.plan ) ) &&
 		userCan( 'activate_wordads', site )
 	) {

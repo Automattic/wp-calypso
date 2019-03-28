@@ -3,7 +3,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -22,7 +21,6 @@ import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
 import { addItem, addItems, goToDomainCheckout, removeDomainFromCart } from 'lib/upgrades/actions';
 import cartItems from 'lib/cart-values/cart-items';
-import { isBlogger, isDomainMapping, isDomainRegistration } from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
@@ -121,14 +119,6 @@ class DomainSearch extends Component {
 		} );
 		const { domainRegistrationMaintenanceEndTime } = this.state;
 
-		const domains = this.props.domains.filter( domain => domain.type !== 'WPCOM' );
-		const products = get( this.props, 'cart.products', [] );
-		const plan = get( this.props, 'selectedSite.plan', false );
-
-		const domainInCart = products.some( isDomainMapping ) || products.some( isDomainRegistration );
-		const isBloggerPlan = isBlogger( plan ) || products.some( isBlogger );
-		const atDomainLimit = isBloggerPlan && ( domains.length > 0 || domainInCart );
-
 		let content;
 
 		if ( ! this.state.domainRegistrationAvailable ) {
@@ -149,20 +139,6 @@ class DomainSearch extends Component {
 						},
 					} ) }
 					action={ translate( 'Back to Plans' ) }
-					actionURL={ '/plans/' + selectedSiteSlug }
-				/>
-			);
-		} else if ( atDomainLimit && domainInCart ) {
-			page( '/checkout/' + this.props.selectedSite.slug );
-		} else if ( atDomainLimit ) {
-			content = (
-				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate( 'Domain limit reached' ) }
-					line={ translate(
-						'If you would like to add more domains please checkout our other plans.'
-					) }
-					action={ translate( 'View Plans' ) }
 					actionURL={ '/plans/' + selectedSiteSlug }
 				/>
 			);

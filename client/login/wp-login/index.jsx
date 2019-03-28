@@ -167,8 +167,16 @@ export class Login extends React.Component {
 
 				{ isCrowdsignalOAuth2Client( this.props.oauth2Client ) && (
 					<div className="wp-login__crowdsignal-footer">
-						<p className="wp-login__crowdsignal-footer-text">Powered by<Gridicon icon="my-sites" size={ 18 } />WordPress.com</p>
-						<p className="wp-login__crowdsignal-footer-text">An<AutomatticLogo size={ 18 } />Company</p>
+						<p className="wp-login__crowdsignal-footer-text">
+							Powered by
+							<Gridicon icon="my-sites" size={ 18 } />
+							WordPress.com
+						</p>
+						<p className="wp-login__crowdsignal-footer-text">
+							An
+							<AutomatticLogo size={ 18 } />
+							Company
+						</p>
 					</div>
 				) }
 			</div>

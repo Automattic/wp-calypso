@@ -6,18 +6,18 @@
  * Module dependencies.
  */
 
-var mocha = require( 'mocha' );
-var Spec = mocha.reporters.Spec;
-var XUnit = mocha.reporters.XUnit;
-var utils = mocha.utils;
-var inherits = utils.inherits;
+const mocha = require( 'mocha' );
+const Spec = mocha.reporters.Spec;
+const XUnit = mocha.reporters.XUnit;
+const utils = mocha.utils;
+const inherits = utils.inherits;
 
 let reportDir = './reports';
 
 if ( process.env.TEMP_ASSET_PATH ) {
 	reportDir = `${ process.env.TEMP_ASSET_PATH }/reports`;
 }
-let reportName = reportDir + '/xunit_' + new Date().getTime().toString() + '.xml';
+const reportName = reportDir + '/xunit_' + new Date().getTime().toString() + '.xml';
 
 /**
  * Expose `SpecXUnit`.

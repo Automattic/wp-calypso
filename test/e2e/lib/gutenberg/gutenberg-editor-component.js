@@ -1,5 +1,13 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
 import { By, until } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
@@ -116,7 +124,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const nuxPopupSelector = By.css( '.nux-dot-tip' );
 		const nuxDisableSelector = By.css( '.nux-dot-tip__disable' );
 		if ( await driverHelper.isElementPresent( this.driver, nuxPopupSelector ) ) {
-			driverHelper.clickWhenClickable( this.driver, nuxDisableSelector );
+			await driverHelper.clickWhenClickable( this.driver, nuxDisableSelector );
 		}
 	}
 
@@ -143,7 +151,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async titleShown() {
-		let titleSelector = By.css( '#post-title-0' );
+		const titleSelector = By.css( '#post-title-0' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, titleSelector );
 		const element = await this.driver.findElement( titleSelector );
 		return await element.getAttribute( 'value' );
@@ -154,6 +162,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		const imageBlock = await ImageBlockComponent.Expect( this.driver, blockID );
 		return await imageBlock.uploadImage( fileDetails );
+	}
+
+	async addImageFromMediaModal( fileDetails ) {
+		const blockId = await this.addBlock( 'Image' );
+
+		const imageBlock = await ImageBlockComponent.Expect( this.driver, blockId );
+		return await imageBlock.insertImageFromMediaModal( fileDetails );
 	}
 
 	async toggleSidebar( open = true ) {
@@ -229,7 +244,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async revertToDraft() {
-		let revertDraftSelector = By.css( 'button.editor-post-switch-to-draft' );
+		const revertDraftSelector = By.css( 'button.editor-post-switch-to-draft' );
 		await driverHelper.clickWhenClickable( this.driver, revertDraftSelector );
 		const revertAlert = await this.driver.switchTo().alert();
 		return await revertAlert.accept();

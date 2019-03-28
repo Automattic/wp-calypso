@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By, promise } from 'selenium-webdriver';
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import { currentScreenSize } from '../driver-manager';
@@ -98,7 +104,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async numberOfProductsInCart() {
-		let elements = await this.driver.findElements( By.css( '.product-name' ) );
+		const elements = await this.driver.findElements( By.css( '.product-name' ) );
 		return elements.length;
 	}
 
@@ -119,7 +125,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async payWithStoredCardIfPossible( cardCredentials ) {
-		const storedCardSelector = By.css( '.stored-card' );
+		const storedCardSelector = By.css( '.credit-card__stored-card' );
 		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, storedCardSelector ) ) {
 			await driverHelper.clickWhenClickable( this.driver, storedCardSelector );
 		} else {
@@ -155,17 +161,17 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async cartTotalAmount() {
-		let cartElement = await this.driver.findElement( this.cartTotalSelector );
+		const cartElement = await this.driver.findElement( this.cartTotalSelector );
 
 		if ( currentScreenSize() === 'mobile' ) {
 			await driverHelper.scrollIntoView( this.driver, this.cartTotalSelector );
 		}
 
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.cartTotalSelector );
-		let cartText = await cartElement.getText();
+		const cartText = await cartElement.getText();
 
 		// We need to remove the comma separator first, e.g. 1,024 or 2,048, so `match()` can parse out the whole number properly.
-		let amountMatches = cartText.replace( /,/g, '' ).match( /\d+\.?\d*/g );
+		const amountMatches = cartText.replace( /,/g, '' ).match( /\d+\.?\d*/g );
 		return await parseFloat( amountMatches[ 0 ] );
 	}
 
@@ -223,7 +229,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 	async _cartContainsProduct( productSlug, expectedQuantity = 1 ) {
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.product-name' ) );
-		let elements = await this.driver.findElements(
+		const elements = await this.driver.findElements(
 			By.css( `.product-name[data-e2e-product-slug="${ productSlug }"]` )
 		);
 		return elements.length === expectedQuantity;

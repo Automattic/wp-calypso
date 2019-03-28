@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import webdriver from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../driver-helper.js';
 import * as driverManager from '../driver-manager.js';
 import * as dataHelper from '../data-helper';
@@ -81,7 +87,7 @@ export default class EditorPage extends AsyncBaseContainer {
 			driver,
 			by.className( 'media-library__upload-button' )
 		);
-		let fileNameInput = await driver.findElement( fileNameInputSelector );
+		const fileNameInput = await driver.findElement( fileNameInputSelector );
 		await fileNameInput.sendKeys( file );
 		await driverHelper.elementIsNotPresent( driver, '.media-library__list-item.is-transient' );
 		await driverHelper.elementIsNotPresent( driver, '.media-library .notice.is-error' );
@@ -94,7 +100,7 @@ export default class EditorPage extends AsyncBaseContainer {
 	async saveImage( fileName ) {
 		const driver = this.driver;
 
-		let imageUploadedSelector = webdriver.By.css( 'img[alt="' + fileName + '"]' );
+		const imageUploadedSelector = webdriver.By.css( 'img[alt="' + fileName + '"]' );
 		await driverHelper.waitTillPresentAndDisplayed( driver, imageUploadedSelector );
 		return await driverHelper.clickWhenClickable(
 			driver,
@@ -311,7 +317,7 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async titleShown() {
-		let titleSelector = by.css( '.editor-title__input' );
+		const titleSelector = by.css( '.editor-title__input' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, titleSelector );
 		const element = await this.driver.findElement( titleSelector );
 		return await element.getAttribute( 'value' );

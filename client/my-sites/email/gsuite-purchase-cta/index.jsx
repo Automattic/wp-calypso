@@ -19,6 +19,7 @@ import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getEligibleGSuiteDomain } from 'lib/domains/gsuite';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
 
 /**
@@ -28,12 +29,12 @@ import './style.scss';
 
 class GSuitePurchaseCta extends React.Component {
 	goToAddGoogleApps = () => {
-		page( domainManagementAddGSuiteUsers( this.props.selectedSite.slug, this.props.domainName ) );
+		page( domainManagementAddGSuiteUsers( this.props.selectedSiteSlug, this.props.domainName ) );
 	};
 
 	getPlanText() {
 		const { productSlug, translate } = this.props;
-		if ( 'gappsbusiness' === productSlug ) {
+		if ( 'gapps_unlimited' === productSlug ) {
 			return translate( 'Business' );
 		}
 	}
@@ -141,14 +142,16 @@ GSuitePurchaseCta.propTypes = {
 	monthlyPrice: PropTypes.string.isRequired,
 	productSlug: PropTypes.string.isRequired,
 	selectedDomainName: PropTypes.string,
-	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
 export default connect(
-	( state, { selectedDomainName, selectedSite } ) => {
-		const domains = getDomainsBySiteId( state, selectedSite.ID );
+	( state, { selectedDomainName } ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+		const domains = getDomainsBySiteId( state, selectedSiteId );
 		return {
 			domainName: getEligibleGSuiteDomain( selectedDomainName, domains ),
+			selectedSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
 	null

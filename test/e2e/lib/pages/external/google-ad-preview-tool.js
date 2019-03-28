@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By as by, until } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../../async-base-container';
 import * as driverManager from '../../driver-manager';
 
@@ -10,7 +17,6 @@ export default class GoogleAdPreviewTool extends AsyncBaseContainer {
 	}
 
 	static getURL( screenSize, domain, location, query ) {
-		let url;
 		if ( screenSize === 'mobile' ) {
 			screenSize = 30001;
 		} else if ( screenSize === 'tablet' ) {
@@ -19,7 +25,7 @@ export default class GoogleAdPreviewTool extends AsyncBaseContainer {
 			screenSize = 30000;
 		}
 
-		url =
+		const url =
 			'https://adwords.google.com/anon/AdPreview' +
 			'?lang=' +
 			driverManager.currentLocale() +

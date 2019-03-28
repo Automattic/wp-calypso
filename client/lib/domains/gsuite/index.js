@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { get, includes, some } from 'lodash';
+import { get, includes, some, endsWith } from 'lodash';
 import { type as domainTypes } from 'lib/domains/constants';
 import userFactory from 'lib/user';
 
@@ -12,18 +12,16 @@ import userFactory from 'lib/user';
  * @returns {Boolean} -Can a domain add G Suite
  */
 function canDomainAddGSuite( domainName ) {
-	const GOOGLE_APPS_INVALID_TLDS = [ 'in' ];
+	const GOOGLE_APPS_INVALID_SUFFIXES = [ '.in', '.wpcomstaging.com' ];
 	const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
-	const tld = domainName.split( '.' )[ 1 ],
-		includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, function( phrase ) {
-			return includes( domainName, phrase );
-		} );
-
-	return ! (
-		includes( GOOGLE_APPS_INVALID_TLDS, tld ) ||
-		includesBannedPhrase ||
-		isGSuiteRestricted()
+	const includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, bannedPhrase =>
+		includes( domainName, bannedPhrase )
 	);
+	const hasInvalidSuffix = some( GOOGLE_APPS_INVALID_SUFFIXES, invalidSuffix =>
+		endsWith( domainName, invalidSuffix )
+	);
+
+	return ! ( hasInvalidSuffix || includesBannedPhrase || isGSuiteRestricted() );
 }
 
 /**

@@ -60,6 +60,7 @@ export const onboardingWelcomePrompt = createReducer(
 	{
 		[ INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW ]: state => ( { ...state, isVisible: true } ),
 		[ INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE ]: state => ( { ...state, isVisible: false } ),
+		[ INLINE_HELP_POPOVER_HIDE ]: state => ( { ...state, isVisible: false } ),
 	}
 );
 

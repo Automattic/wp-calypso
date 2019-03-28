@@ -13,45 +13,60 @@ function MultipleChoiceQuestionExamples( { translate } ) {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
 	const [ answerText, setAnswerText ] = useState( '' );
 
-	const question = translate( 'Please choose one of the following:' );
 	const answers = [
-		{
-			id: 'hungry-bunnies',
-			answerText: translate( 'Hungry Bunnies' ),
-		},
+		{ id: 'hungry-bunnies', answerText: 'Hungry Bunnies' },
 		{
 			id: 'ravenous-rhinos',
-			answerText: translate( 'Ravenous Rhinos' ),
+			answerText: 'Ravenous Rhinos',
 			textInput: true,
-			textInputPrompt: translate( 'How many?' ),
+			textInputPrompt: 'How many?',
 		},
 		{
 			id: 'starving-storks',
-			answerText: translate( 'Starving Storks' ),
+			answerText: 'Starving Storks',
+			children: (
+				<Button
+					onClick={ () => {
+						notices.success( 'The Stork Button was clicked', { duration: 5000 } );
+					} }
+					primary
+				>
+					{ 'The Stork Button' }
+				</Button>
+			),
 		},
 		{
 			id: 'something-else',
-			answerText: translate( 'Something Else' ),
+			answerText: 'Something Else',
 			doNotShuffle: true,
 			textInput: true,
-			textInputPrompt: translate( 'Who else?' ),
+			textInputPrompt: 'Who else?',
+			children: (
+				<Button
+					onClick={ () => {
+						notices.success( 'The Extra Button was clicked', { duration: 5000 } );
+					} }
+				>
+					{ 'The Extra Button' }
+				</Button>
+			),
 		},
 	];
 
 	return (
 		<div>
 			<MultipleChoiceQuestion
-				question={ question }
 				answers={ answers }
+				question={ 'Please choose one of the following:' }
 				onAnswerChange={ ( answer, text ) => {
 					setSelectedAnswer( answer );
 					setAnswerText( text || '' );
 				} }
 			/>
-			<h2>{ translate( 'Selected Answer' ) }</h2>
+			<h2>{ 'Selected Answer' }</h2>
 			<p>
 				<b>Selected Answer is: </b>
-				{ selectedAnswer ? selectedAnswer : translate( 'No Answer Currently Selected' ) }
+				{ selectedAnswer ? selectedAnswer : 'No Answer Currently Selected' }
 			</p>
 			<p>
 				<b>Answer Text is: </b>
@@ -71,25 +86,73 @@ function MultipleChoiceQuestionExamples( { translate } ) {
 
 The question to display at the top of the multiple choice
 
+### `onAnswerChange`
+
+- **Type:** `Function`
+- **Required:** `yes`
+
+Handler for when the selected answer of the multiple choice is changeed. It is called each time a new answer is selected **OR** when the optional text input of the selected answer is changes. The arguments are `id`, and optionally `text` if the answer has a text input.
+
+
+### `selectedAnswerId`
+
+- **Type:** `String`
+- **Required:** `no`
+- **Default:** `null`
+
+Sets the initial answer selection of the multiple choice to the given answer id.
+
+### `selectedAnswerText`
+
+- **Type:** `String`
+- **Required:** `no`
+- **Default:** `''`
+
+sets the text prompt of initial answer selection of the multiple choice to the given text. Only works when `selectedAnswerId` is given.
+
 ### `answers`
 
 - **Type:** `Array`
 - **Required:** `yes`
 
-The list of answers to show. they have the following shape:
+The answers to display. Each answer is an object with the following properties.
 
-- `id`: `string` (Required) a translation-independent way to reference the each answer
-- `answerText`: `string` (Required) the text of the answer
-- `doNotShuffle`: `boolean` ( Default `false` ) prevents the anwser from being randomly shuffled. Its position will be respected.
-- `textInput`: `boolean` ( Default `false` ) If the answer is selected, should a text input be shown
-- `textInputPrompt`: `string` ( Default `''` ) the prompt to display in the text input referenced above
+#### Props
 
-### `onAnwserChange`
+##### `id`
 
-- **Type:** `Function`
+- **Type:** `String`
+- **Required:** `yes`
+
+A translation-independent way to reference each answer. This is what will be passed back through the `onAnswerChange` function.
+
+##### `answerText`
+
+- **Type:** `String`
+- **Required:** `yes`
+
+The text of the answer to display.
+
+##### `doNotShuffle`
+
+- **Type:** `Boolean`
 - **Required:** `no`
-- **Default:** `undefined`
+- **Default:** `false`
 
-Handler for when the selected anwser of text is changed. Is called each time a new answer is selected. The arguements are `id`, and optionally `text` if the answer has a text input.
+prevents the answer from being randomly shuffled. Its position will be respected.
 
-It will be called each time the text changes as well. If an answer previously had text, was changed, then changed back the original text will be saved.
+##### `textInput`
+
+- **Type:** `Boolean`
+- **Required:** `no`
+- **Default:** `false`
+
+If the answer is selected, should a text input be shown.
+
+##### `textInputPrompt`
+
+- **Type:** `String`
+- **Required:** `no`
+- **Default:** `''`
+
+The prompt to display in the text input referenced above.

@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import LoginFlow from '../lib/flows/login-flow.js';
 
 import EditorPage from '../lib/pages/editor-page.js';
@@ -57,7 +63,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 			await editorPage.enterContent( pageQuote + '\n' );
 			await editorPage.enterPostImage( fileDetails );
 			await editorPage.waitUntilImageInserted( fileDetails );
-			let errorShown = await editorPage.errorDisplayed();
+			const errorShown = await editorPage.errorDisplayed();
 			assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 		} );
 
@@ -80,7 +86,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 		step( 'Can see correct page title in preview', async function() {
 			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
 			await pagePreviewComponent.displayed();
-			let actualPageTitle = await pagePreviewComponent.pageTitle();
+			const actualPageTitle = await pagePreviewComponent.pageTitle();
 			assert.strictEqual(
 				actualPageTitle.toUpperCase(),
 				pageTitle.toUpperCase(),
@@ -90,7 +96,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 
 		step( 'Can see correct page content in preview', async function() {
 			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
-			let content = await pagePreviewComponent.pageContent();
+			const content = await pagePreviewComponent.pageContent();
 			assert.strictEqual(
 				content.indexOf( pageQuote ) > -1,
 				true,
@@ -125,7 +131,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 		step( 'Can see correct page title in preview', async function() {
 			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
 			await pagePreviewComponent.displayed();
-			let actualPageTitle = await pagePreviewComponent.pageTitle();
+			const actualPageTitle = await pagePreviewComponent.pageTitle();
 			assert.strictEqual(
 				actualPageTitle.toUpperCase(),
 				pageTitle.toUpperCase(),
@@ -166,7 +172,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 
 		step( 'Can see correct page title', async function() {
 			const viewPagePage = await ViewPagePage.Expect( driver );
-			let actualPageTitle = await viewPagePage.pageTitle();
+			const actualPageTitle = await viewPagePage.pageTitle();
 			assert.strictEqual(
 				actualPageTitle.toUpperCase(),
 				pageTitle.toUpperCase(),
@@ -176,7 +182,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 
 		step( 'Can see correct page content', async function() {
 			const viewPagePage = await ViewPagePage.Expect( driver );
-			let content = await viewPagePage.pageContent();
+			const content = await viewPagePage.pageContent();
 			assert.strictEqual(
 				content.indexOf( pageQuote ) > -1,
 				true,
@@ -190,7 +196,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 
 		step( "Can't see sharing buttons", async function() {
 			const viewPagePage = await ViewPagePage.Expect( driver );
-			let visible = await viewPagePage.sharingButtonsVisible();
+			const visible = await viewPagePage.sharingButtonsVisible();
 			assert.strictEqual(
 				visible,
 				false,
@@ -200,7 +206,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 
 		step( 'Can see the image uploaded displayed', async function() {
 			const viewPagePage = await ViewPagePage.Expect( driver );
-			let imageDisplayed = await viewPagePage.imageDisplayed( fileDetails );
+			const imageDisplayed = await viewPagePage.imageDisplayed( fileDetails );
 			assert.strictEqual( imageDisplayed, true, 'Could not see the image in the published page' );
 		} );
 
@@ -212,8 +218,8 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 	} );
 
 	describe( 'Private Pages: @parallel @jetpack', function() {
-		let pageTitle = dataHelper.randomPhrase();
-		let pageQuote =
+		const pageTitle = dataHelper.randomPhrase();
+		const pageQuote =
 			'Few people know how to take a walk. The qualifications are endurance, plain clothes, old shoes, an eye for nature, good humor, vast curiosity, good speech, good silence and nothing too much.\n— Ralph Waldo Emerson\n';
 
 		step( 'Can log in', async function() {
@@ -593,7 +599,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 			await editorPage.enterTitle( pageTitle );
 			await editorPage.insertPaymentButton( paymentButtonDetails );
 
-			let errorShown = await editorPage.errorDisplayed();
+			const errorShown = await editorPage.errorDisplayed();
 			return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 		} );
 
@@ -610,7 +616,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 
 		step( 'Can see the payment button in our published page', async function() {
 			const viewPagePage = await ViewPagePage.Expect( driver );
-			let displayed = await viewPagePage.paymentButtonDisplayed();
+			const displayed = await viewPagePage.paymentButtonDisplayed();
 			assert.strictEqual(
 				displayed,
 				true,
@@ -621,7 +627,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 		step(
 			'The payment button in our published page opens a new Paypal window for payment',
 			async function() {
-				let numberOfOpenBrowserWindows = await driverHelper.numberOfOpenWindows( driver );
+				const numberOfOpenBrowserWindows = await driverHelper.numberOfOpenWindows( driver );
 				assert.strictEqual(
 					numberOfOpenBrowserWindows,
 					1,

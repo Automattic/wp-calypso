@@ -1,7 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By as by } from 'selenium-webdriver';
 import assert from 'assert';
+
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 
 export default class LandingPage extends AsyncBaseContainer {

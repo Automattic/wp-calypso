@@ -5,15 +5,17 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { map, pickBy, endsWith } from 'lodash';
+import { endsWith, get, map, pickBy, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
+import url from 'url';
 
 /**
  * Internal dependencies
  */
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
+import MediaStore from 'lib/media/store';
+import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
@@ -27,6 +29,9 @@ import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
+import WebPreview from 'components/web-preview';
+import { trashPost } from 'state/posts/actions';
+import { getEditorPostId } from 'state/ui/editor/selectors';
 
 /**
  * Style dependencies
@@ -42,14 +47,20 @@ class CalypsoifyIframe extends Component {
 	};
 
 	state = {
+		classicBlockEditorId: null,
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
+		isPreviewVisible: false,
+		previewUrl: 'about:blank',
+		postUrl: null,
+		editedPost: null,
 	};
 
 	constructor( props ) {
 		super( props );
 		this.iframeRef = React.createRef();
 		this.mediaSelectPort = null;
+		MediaStore.on( 'change', this.updateImageBlocks );
 	}
 
 	componentDidMount() {
@@ -86,6 +97,19 @@ class CalypsoifyIframe extends Component {
 
 			// Check if we're generating a post via Press This
 			this.pressThis();
+			return;
+		}
+		if ( 'classicBlockOpenMediaModal' === action ) {
+			if ( data.imageId ) {
+				const { siteId } = this.props;
+				const image = MediaStore.get( siteId, data.imageId );
+				MediaActions.setLibrarySelectedItems( siteId, [ image ] );
+			}
+
+			this.setState( {
+				classicBlockEditorId: data.editorId,
+				isMediaModalVisible: true,
+			} );
 		}
 	};
 
@@ -128,8 +152,10 @@ class CalypsoifyIframe extends Component {
 			}
 		}
 
-		if ( 'postTrashed' === action ) {
-			this.props.navigate( this.props.postTypeTrashUrl );
+		if ( 'trashPost' === action ) {
+			const { siteId, editedPostId, postTypeTrashUrl } = this.props;
+			this.props.trashPost( siteId, editedPostId );
+			this.props.navigate( postTypeTrashUrl );
 		}
 
 		if ( 'goToAllPosts' === action ) {
@@ -138,6 +164,11 @@ class CalypsoifyIframe extends Component {
 
 		if ( 'openRevisions' === action ) {
 			this.props.openPostRevisionsDialog();
+		}
+
+		if ( 'previewPost' === action ) {
+			const { postUrl } = payload;
+			this.openPreviewModal( { postUrl, previewPort: ports[ 0 ] } );
 		}
 	};
 
@@ -153,7 +184,7 @@ class CalypsoifyIframe extends Component {
 	};
 
 	closeMediaModal = media => {
-		if ( media && this.iframePort ) {
+		if ( ! this.state.classicBlockEditorId && media && this.iframePort ) {
 			const { multiple } = this.state;
 			const formattedMedia = map( media.items, item => mediaCalypsoToGutenberg( item ) );
 			const payload = multiple ? formattedMedia : formattedMedia[ 0 ];
@@ -176,7 +207,19 @@ class CalypsoifyIframe extends Component {
 			}
 		}
 
-		this.setState( { isMediaModalVisible: false } );
+		this.setState( { classicBlockEditorId: null, isMediaModalVisible: false } );
+	};
+
+	insertClassicBlockMedia = markup => {
+		if ( !! this.state.classicBlockEditorId && this.iframePort ) {
+			this.iframePort.postMessage( {
+				action: 'insertClassicBlockMedia',
+				payload: {
+					editorId: this.state.classicBlockEditorId,
+					media: markup,
+				},
+			} );
+		}
 	};
 
 	pressThis = () => {
@@ -189,9 +232,67 @@ class CalypsoifyIframe extends Component {
 		}
 	};
 
+	updateImageBlocks = action => {
+		if (
+			! this.iframePort ||
+			! action ||
+			! startsWith( action.data.mime_type, 'image/' ) ||
+			startsWith( action.data.URL, 'blob:' )
+		) {
+			return;
+		}
+		const payload = {
+			id: get( action, 'data.ID' ),
+			height: get( action, 'data.height' ),
+			status: 'REMOVE_MEDIA_ITEM' === action.type ? 'deleted' : 'updated',
+			transientId: get( action, 'id' ),
+			url: get( action, 'data.URL' ),
+			width: get( action, 'data.width' ),
+		};
+		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
+	};
+
+	openPreviewModal = ( { postUrl, previewPort } ) => {
+		this.setState( {
+			isPreviewVisible: true,
+			previewUrl: 'about:blank',
+			postUrl,
+		} );
+
+		previewPort.onmessage = message => {
+			previewPort.close();
+
+			const { frameNonce } = this.props;
+			const { previewUrl, editedPost } = message.data;
+
+			const parsedPreviewUrl = url.parse( previewUrl, true );
+			if ( frameNonce ) {
+				parsedPreviewUrl.query[ 'frame-nonce' ] = frameNonce;
+			}
+			delete parsedPreviewUrl.search;
+
+			this.setState( {
+				previewUrl: url.format( parsedPreviewUrl ),
+				editedPost,
+			} );
+		};
+	};
+
+	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
+
 	render() {
 		const { iframeUrl, siteId } = this.props;
-		const { isMediaModalVisible, allowedTypes, multiple, isIframeLoaded } = this.state;
+		const {
+			classicBlockEditorId,
+			isMediaModalVisible,
+			allowedTypes,
+			multiple,
+			isIframeLoaded,
+			isPreviewVisible,
+			previewUrl,
+			postUrl,
+			editedPost,
+		} = this.state;
 
 		return (
 			<Fragment>
@@ -208,17 +309,26 @@ class CalypsoifyIframe extends Component {
 					/>
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
-					<MediaModal
+					<EditorMediaModal
 						disabledDataSources={ getDisabledDataSources( allowedTypes ) }
 						enabledFilters={ getEnabledFilters( allowedTypes ) }
 						galleryViewEnabled={ false }
+						isGutenberg={ ! classicBlockEditorId }
 						onClose={ this.closeMediaModal }
+						onInsertMedia={ this.insertClassicBlockMedia }
 						single={ ! multiple }
 						source=""
 						visible={ isMediaModalVisible }
 					/>
 				</MediaLibrarySelectedData>
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
+				<WebPreview
+					externalUrl={ postUrl }
+					onClose={ this.closePreviewModal }
+					overridePost={ editedPost }
+					previewUrl={ previewUrl }
+					showPreview={ isPreviewVisible }
+				/>
 			</Fragment>
 		);
 	}
@@ -228,6 +338,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
+	const frameNonce = getSiteOption( state, siteId, 'frame_nonce' ) || '';
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -235,7 +346,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
 		'block-editor': 1,
-		'frame-nonce': getSiteOption( state, siteId, 'frame_nonce' ) || '',
+		'frame-nonce': frameNonce,
 		'jetpack-copy': duplicatePostId,
 		origin: window.location.origin,
 	} );
@@ -256,6 +367,8 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
 		iframeUrl,
 		postTypeTrashUrl,
 		siteAdminUrl,
+		frameNonce,
+		editedPostId: getEditorPostId( state ),
 	};
 };
 
@@ -265,6 +378,7 @@ const mapDispatchToProps = {
 	navigate,
 	openPostRevisionsDialog,
 	startEditingPost,
+	trashPost,
 };
 
 export default connect(

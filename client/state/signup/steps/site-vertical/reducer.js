@@ -24,6 +24,9 @@ const initialState = {
 	preview: '',
 };
 
+// TODO:
+// This reducer can be further simplify since the verticals data can be
+// found in `signup.verticals`, so it only needs to store the site vertical name.
 export default createReducer(
 	initialState,
 	{

@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import webdriver from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../../async-base-container';
 import * as driverHelper from '../../driver-helper';
 
@@ -12,7 +19,7 @@ export default class StoreProductsPage extends AsyncBaseContainer {
 	}
 
 	async atLeastOneProductDisplayed() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
 			by.css( '.products__list-wrapper tr.has-action' )
 		);

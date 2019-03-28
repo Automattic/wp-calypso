@@ -302,9 +302,10 @@ class DomainSearchResults extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state, ownProps ) => {
 	return {
-		siteDesignType: getDesignType( state ),
+		// Set site design type only if we're in signup
+		siteDesignType: ownProps.isSignupStep && getDesignType( state ),
 	};
 };
 

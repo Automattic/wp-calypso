@@ -1,13 +1,14 @@
 {
 	"name": "i18n-calypso",
-	"version": "4.0.0",
+	"version": "4.0.0-alpha.1",
 	"description": "i18n JavaScript library on top of Jed originally used in Calypso",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Automattic/wp-calypso.git"
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/i18n-calypso"
 	},
 	"author": "@automattic",
 	"license": "GPL-2.0-or-later",
@@ -27,17 +28,13 @@
 		"jed": "1.1.1",
 		"lodash": "^4.7.11",
 		"lru": "^3.1.0",
-		"moment-timezone": "^0.5.23",
+		"moment": "^2.24.0",
 		"react": "^16.8.3",
 		"xgettext-js": "^2.0.0"
 	},
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../calypso-build",
-		"react-dom": "^16.6.3",
-		"react-test-renderer": "^16.6.3"
-	},
 	"scripts": {
-		"build": "npx @automattic/calypso-build",
-		"clean": "npx rimraf dist"
+		"clean": "npx rimraf dist",
+		"prepublish": "npm run clean",
+		"prepare": "npx @automattic/calypso-build"
 	}
 }

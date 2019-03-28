@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
  */
 import FormTextInput from 'components/forms/form-text-input';
 import Suggestions from 'components/suggestions';
+import Spinner from 'components/spinner';
 
 /**
  * Style dependencies
@@ -49,10 +50,17 @@ class SuggestionSearch extends Component {
 			inputValue: props.value,
 		};
 	}
+	componentDidUpdate( prevProps, prevState ) {
+		if ( prevProps.value !== this.props.value && this.props.value !== prevState.inputValue ) {
+			this.updateInputValue( this.props.value );
+		}
+	}
 
 	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
 
 	hideSuggestions = () => this.setState( { query: '' } );
+
+	updateInputValue = inputValue => this.setState( { inputValue } );
 
 	handleSuggestionChangeEvent = ( { target: { value } } ) => {
 		this.setState( { query: value, inputValue: value } );
@@ -100,7 +108,7 @@ class SuggestionSearch extends Component {
 	};
 
 	handleSuggestionMouseDown = position => {
-		this.setState( { inputValue: position.label } );
+		this.updateInputValue( position.label );
 		this.hideSuggestions();
 		this.props.onChange( position.label );
 	};
@@ -121,16 +129,16 @@ class SuggestionSearch extends Component {
 	}
 
 	updateFieldFromSuggestion( newValue ) {
-		this.setState( { inputValue: newValue } );
-		this.props.onChange( newValue );
+		this.updateInputValue( newValue );
+		this.props.onChange( newValue, true );
 	}
 
 	render() {
-		const { id, placeholder, autoFocus } = this.props;
+		const { id, placeholder, autoFocus, isSearching } = this.props;
 
 		return (
 			<div className="suggestion-search">
-				<Gridicon icon="search" />
+				{ isSearching ? <Spinner /> : <Gridicon icon="search" /> }
 				<FormTextInput
 					id={ id }
 					placeholder={ placeholder }

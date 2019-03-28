@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
-
 import config from 'config';
+
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../lib/driver-manager';
 import * as dataHelper from '../lib/data-helper';
 

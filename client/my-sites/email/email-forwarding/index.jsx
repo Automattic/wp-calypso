@@ -20,7 +20,7 @@ import EmailForwardingDetails from './email-forwarding-details';
 import EmailForwardingCustomMxList from './email-forwarding-custom-mx-list';
 import EmailForwardingGSuiteDetails from './email-forwarding-gsuite-details';
 import EmailForwardingGSuiteDetailsAnotherProvider from './email-forwarding-gsuite-details-another-provider';
-import { domainManagementEmail } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import Card from 'components/card/compact';
 import getEmailForwardingLimit from 'state/selectors/get-email-forwarding-limit';
 import getEmailForwardingType from 'state/selectors/get-email-forwarding-type';
@@ -106,7 +106,7 @@ class EmailForwarding extends Component {
 	}
 
 	goToEditEmail = () => {
-		page( domainManagementEmail( this.props.siteSlug, this.props.selectedDomainName ) );
+		page( emailManagement( this.props.siteSlug, this.props.selectedDomainName ) );
 	};
 }
 

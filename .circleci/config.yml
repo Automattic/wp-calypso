@@ -147,7 +147,7 @@ references:
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
     command: |
-      echo 'export NODE_ENV=test' >> $BASH_ENV &&
+      echo 'export NODE_CONFIG_ENV=test' >> $BASH_ENV &&
       echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV
 
   move-e2e-artifacts: &move-e2e-artifacts
@@ -199,16 +199,6 @@ jobs:
           root: '~'
           paths:
             - wp-calypso
-
-  build-jetpack-blocks:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run: npx lerna bootstrap --concurrency=2 --scope '@automattic/jetpack-blocks'
-      - run: npx lerna run prepublishOnly --stream --scope '@automattic/jetpack-blocks'
-      - run: mv packages/jetpack-blocks/dist $CIRCLE_ARTIFACTS/jetpack-blocks
-      - store-artifacts-and-test-results
 
   lint-and-translate:
     <<: *defaults
@@ -552,9 +542,6 @@ workflows:
           filters:
             branches:
               ignore: master
-      - build-jetpack-blocks:
-          requires:
-            - setup
       - build-notifications:
           requires:
             - setup
@@ -664,25 +651,25 @@ workflows:
             branches:
               only: master
 
+  e2e-jetpack-be-scheduled:
+    jobs:
+      - setup
+      - test-e2e-canary:
+          name: test-e2e-jetpack
+          requires:
+            - setup
+          test-flags: "-j"
+          jetpack-host: "PRESSABLEBLEEDINGEDGE"
+          test-target: "JETPACK"
+          slack-webhook: "$SLACK_JP"
+    triggers:
+      - schedule:
+          cron: "0 7 * * *"
+          filters:
+            branches:
+              only: master
+
 # Temporarily disabling these scheduled test runs
-#  e2e-jetpack-be-scheduled:
-#    jobs:
-#      - setup
-#      - test-e2e-canary:
-#          name: test-e2e-jetpack
-#          requires:
-#            - setup
-#          test-flags: "-j"
-#          jetpack-host: "PRESSABLEBLEEDINGEDGE"
-#          test-target: "JETPACK"
-#          slack-webhook: "$SLACK_JP"
-#    triggers:
-#      - schedule:
-#          cron: "0 7,19 * * *"
-#          filters:
-#            branches:
-#              only: master
-#
 #  e2e-jetpack-scheduled:
 #    jobs:
 #    - setup

@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By, until } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 import ViewPostPage from '../../lib/pages/view-post-page.js';
 import * as driverHelper from '../driver-helper.js';
@@ -56,10 +62,8 @@ export default class PostPreviewComponent extends AsyncBaseContainer {
 
 	async close() {
 		await this.driver.switchTo().defaultContent();
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( 'button.web-preview__close' )
-		);
+		const closeButton = await this.driver.findElement( By.css( 'button.web-preview__close' ) );
+		return await this.driver.executeScript( 'arguments[0].click()', closeButton );
 	}
 
 	static async switchToIFrame( driver ) {

@@ -19,6 +19,11 @@ import Gridicon from 'gridicons';
 import HappychatButton from 'components/happychat/button';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const ActivityLogConfirmDialog = ( {
 	children,
@@ -86,7 +91,7 @@ const ActivityLogConfirmDialog = ( {
 			{ notice && (
 				<div className="activity-log-confirm-dialog__notice">
 					<Gridicon icon={ 'notice' } />
-					{ notice }
+					<span className="activity-log-confirm-dialog__notice-content">{ notice }</span>
 				</div>
 			) }
 
@@ -99,23 +104,19 @@ const ActivityLogConfirmDialog = ( {
 				</div>
 				<div className="activity-log-confirm-dialog__secondary-actions">
 					<Button
-						borderless={ true }
+						borderless
 						className="activity-log-confirm-dialog__more-info-link"
 						href={ supportLink }
 					>
 						<Gridicon icon="notice" />
-						<span className="activity-log-confirm-dialog__more-info-link-text">
-							{ translate( 'More info' ) }
-						</span>
+						<span>{ translate( 'More info' ) }</span>
 					</Button>
 					<HappychatButton
 						className="activity-log-confirm-dialog__more-info-link"
 						onClick={ happychatEvent }
 					>
 						<Gridicon icon="chat" />
-						<span className="activity-log-confirm-dialog__more-info-link-text">
-							{ translate( 'Any Questions?' ) }
-						</span>
+						<span>{ translate( 'Any Questions?' ) }</span>
 					</HappychatButton>
 				</div>
 			</div>

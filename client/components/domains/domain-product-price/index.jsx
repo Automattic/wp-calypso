@@ -24,6 +24,7 @@ class DomainProductPrice extends React.Component {
 		requiresPlan: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		isMappingProduct: PropTypes.bool,
+		salePrice: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -87,7 +88,27 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
+	renderSalePrice() {
+		const { price, salePrice, translate } = this.props;
+
+		return (
+			<div className={ classnames( 'domain-product-price', 'is-free-domain' ) }>
+				<div className="domain-product-price__sale-price">{ salePrice }</div>
+				<div className="domain-product-price__renewal-price">
+					{ translate( 'Renews at: %(cost)s {{small}}/year{{/small}}', {
+						args: { cost: price },
+						components: { small: <small /> },
+					} ) }
+				</div>
+			</div>
+		);
+	}
+
 	renderPrice() {
+		if ( this.props.salePrice ) {
+			return this.renderSalePrice();
+		}
+
 		return (
 			<div className={ classnames( 'domain-product-price' ) }>
 				<span className="domain-product-price__price">

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-build",
-	"version": "1.0.0",
+	"version": "1.0.0-alpha.0",
 	"description": "Shared Calypso build configuration files",
 	"keywords": [
 		"config",
@@ -12,9 +12,9 @@
 	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Automattic/wp-calypso.git"
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-build"
 	},
-	"private": true,
 	"publishConfig": {
 		"access": "public"
 	},
@@ -23,6 +23,7 @@
 	},
 	"bin": "./bin/build-package.js",
 	"dependencies": {
+		"@automattic/calypso-color-schemes": "file:../calypso-color-schemes",
 		"autoprefixer": "9.4.4",
 		"babel-loader": "8.0.5",
 		"css-loader": "2.1.1",

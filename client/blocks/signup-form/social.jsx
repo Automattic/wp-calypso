@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import config from 'config';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -61,7 +60,7 @@ class SocialSignupForm extends Component {
 		const redirectUri = uxMode === 'redirect' ? `https://${ window.location.host }/start` : null;
 
 		return (
-			<Card className="signup-form__social" compact={ this.props.compact }>
+			<div className="signup-form__social" compact={ this.props.compact }>
 				{ ! this.props.compact && (
 					<p>
 						{ preventWidows(
@@ -79,7 +78,7 @@ class SocialSignupForm extends Component {
 						onClick={ this.trackGoogleLogin }
 					/>
 				</div>
-			</Card>
+			</div>
 		);
 	}
 }

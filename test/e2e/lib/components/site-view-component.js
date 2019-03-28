@@ -2,9 +2,15 @@
 
 // This is the site view shown after clicking on the site name from side bar
 
+/**
+ * External dependencies
+ */
 import { By as by, until } from 'selenium-webdriver';
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../driver-helper.js';
 import AsyncBaseContainer from '../async-base-container';
 

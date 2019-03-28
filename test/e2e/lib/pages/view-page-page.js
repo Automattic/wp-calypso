@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 import PaymentButtonFrontEndComponent from '../components/payment-button-front-end-component';
 
@@ -53,7 +59,7 @@ export default class ViewPagePage extends AsyncBaseContainer {
 	}
 
 	async imageDisplayed( fileDetails ) {
-		let imageElement = await this.driver.findElement(
+		const imageElement = await this.driver.findElement(
 			By.css( `img[alt='${ fileDetails.imageName }']` )
 		);
 		return await driverHelper.imageVisible( this.driver, imageElement );

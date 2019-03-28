@@ -46,7 +46,6 @@
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: center;
-		margin-top: 80px;
 		margin-bottom: 48px;
 		position: relative;
 
@@ -90,4 +89,9 @@
 			vertical-align: middle;
 		}
 	}
+}
+
+.import-url__notice-placeholder {
+	height: 47px;
+	margin: 16px auto;
 }

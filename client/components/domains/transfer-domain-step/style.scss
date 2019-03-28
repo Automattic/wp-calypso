@@ -7,19 +7,21 @@
 		margin-bottom: 9px;
 	}
 
-    .transfer-domain-step__domain-description {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
+	.transfer-domain-step__domain-description {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 20px;
+	}
 
 	.transfer-domain-step__price {
-        font-weight: 600;
-        text-align: right;
-        &.is-free-with-plan {
-            font-weight: 400;
-            font-size: 90%;
-        }
+		font-weight: 600;
+		text-align: right;
+
+		&.is-free-with-plan,
+		&.is-sale-price {
+			font-weight: 400;
+			font-size: 90%;
+		}
 	}
 
 	.transfer-domain-step__free-with-plan {
@@ -96,7 +98,7 @@
 .transfer-domain-step__domain-heading {
 	font-size: 1em;
 	font-weight: 600;
-    margin: auto 0;
+	margin: auto 0;
 }
 
 .transfer-domain-step__add-domain {

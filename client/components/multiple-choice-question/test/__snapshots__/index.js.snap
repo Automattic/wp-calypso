@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`MultipleChoiceQuestion should render with the minimum required properties ( plus extra prop to guarantee order ) 1`] = `
-<div
-  className="multiple-choice-question"
+<fieldset
+  className="multiple-choice-question form-fieldset"
 >
   <legend
     className="form-legend"
@@ -16,12 +16,13 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
     <input
       checked={false}
       className="form-radio"
+      disabled={false}
       onChange={[Function]}
       type="radio"
       value="test-answer-1"
     />
     <span>
-      Test Anwser One
+      Test Answer One
     </span>
   </label>
   <label
@@ -31,12 +32,13 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
     <input
       checked={false}
       className="form-radio"
+      disabled={false}
       onChange={[Function]}
       type="radio"
       value="test-answer-2"
     />
     <span>
-      Test Anwser Two
+      Test Answer Two
     </span>
   </label>
   <label
@@ -46,12 +48,13 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
     <input
       checked={false}
       className="form-radio"
+      disabled={false}
       onChange={[Function]}
       type="radio"
       value="test-answer-3"
     />
     <span>
-      Test Anwser Three
+      Test Answer Three
     </span>
   </label>
   <label
@@ -61,13 +64,14 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
     <input
       checked={false}
       className="form-radio"
+      disabled={false}
       onChange={[Function]}
       type="radio"
       value="test-answer-4"
     />
     <span>
-      Test Anwser Four
+      Test Answer Four
     </span>
   </label>
-</div>
+</fieldset>
 `;

@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import webdriver from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 
 import * as driverHelper from '../driver-helper.js';
@@ -48,7 +54,10 @@ export default class ProfilePage extends AsyncBaseContainer {
 		if ( driverManager.currentScreenSize() !== 'mobile' ) {
 			return;
 		}
-		let displayed = await driverHelper.isElementPresent( this.driver, by.css( '.focus-content' ) );
+		const displayed = await driverHelper.isElementPresent(
+			this.driver,
+			by.css( '.focus-content' )
+		);
 		if ( displayed ) {
 			await this.driver.executeScript( 'window.scrollTo(0, 0);' );
 			return await driverHelper.clickWhenClickable(

@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import FormattedHeader from 'components/formatted-header';
 import jetpackOnly from './jetpack-only';
 import MainWrapper from './main-wrapper';
+import SkipButton from './skip-button';
 import SiteTypeForm from 'signup/steps/site-type/form';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WpcomColophon from 'components/wpcom-colophon';
@@ -20,12 +21,18 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { saveSiteType } from 'state/jetpack-connect/actions';
 
 class JetpackSiteType extends Component {
+	goToNextStep = () => {
+		const { siteSlug } = this.props;
+
+		page( `/jetpack/connect/site-topic/${ siteSlug }` );
+	};
+
 	handleSubmit = siteType => {
-		const { siteId, siteSlug } = this.props;
+		const { siteId } = this.props;
 
 		this.props.saveSiteType( siteId, siteType );
 
-		page( `/jetpack/connect/site-topic/${ siteSlug }` );
+		this.goToNextStep();
 	};
 
 	render() {
@@ -35,15 +42,18 @@ class JetpackSiteType extends Component {
 			<MainWrapper isWide>
 				<div className="jetpack-connect__step">
 					<FormattedHeader
-						headerText={ translate( 'High performance. Solid security. Your site, just better.' ) }
+						headerText={ translate( 'What are we building today?' ) }
 						subHeaderText={ translate(
-							'To get started, tell us a little bit about your site goals.'
+							'Choose the best starting point for your site. You can add or change features later.'
 						) }
 					/>
 
-					<FormattedHeader headerText={ translate( 'What kind of site do you have?' ) } />
-
 					<SiteTypeForm submitForm={ this.handleSubmit } />
+
+					<SkipButton
+						onClick={ this.goToNextStep }
+						tracksEventName="calypso_jpc_skipped_site_type"
+					/>
 
 					<WpcomColophon />
 				</div>

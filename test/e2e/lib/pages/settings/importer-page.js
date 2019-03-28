@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../../async-base-container';
 import * as DriverHelper from '../../driver-helper.js';
 
@@ -10,7 +17,7 @@ export default class ImporterPage extends AsyncBaseContainer {
 	}
 
 	async importerIsDisplayed( importerClass ) {
-		return DriverHelper.isElementPresent(
+		return await DriverHelper.isElementPresent(
 			this.driver,
 			By.css( `.importer__shell .${ importerClass }` )
 		);

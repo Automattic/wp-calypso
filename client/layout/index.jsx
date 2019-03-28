@@ -32,6 +32,7 @@ import {
 	getSectionName,
 	isSectionLoading,
 } from 'state/ui/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isSupportSession } from 'state/support/selectors';
@@ -40,7 +41,6 @@ import SupportArticleDialog from 'blocks/support-article-dialog';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import DocumentHead from 'components/data/document-head';
-import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
 import GdprBanner from 'blocks/gdpr-banner';
 import { getPreference } from 'state/preferences/selectors';
@@ -125,7 +125,9 @@ class Layout extends Component {
 				<QueryPreferences />
 				<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
-				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && <NpsSurveyNotice /> }
+				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && (
+					<AsyncLoad require="layout/nps-survey-notice" placeholder={ null } />
+				) }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				<MasterbarLoggedIn
 					section={ this.props.sectionGroup }
@@ -176,7 +178,7 @@ export default connect( state => {
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 	const noMasterbarForCheckout = isJetpack && startsWith( currentRoute, '/checkout' );
 	const noMasterbarForRoute = currentRoute === '/log-in/jetpack' || noMasterbarForCheckout;
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;

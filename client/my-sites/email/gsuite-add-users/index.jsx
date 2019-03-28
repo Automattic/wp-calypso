@@ -15,7 +15,7 @@ import React, { Fragment } from 'react';
 
 import AddEmailAddressesCard from './add-users';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
-import { domainManagementAddGSuiteUsers, domainManagementEmail } from 'my-sites/domains/paths';
+import { emailManagementAddGSuiteUsers, emailManagement } from 'my-sites/email/paths';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
@@ -51,7 +51,7 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	goToEmail = () => {
-		page( domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page( emailManagement( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 
 	renderAddGSuite() {
@@ -85,7 +85,7 @@ class GSuiteAddUsers extends React.Component {
 	render() {
 		const { translate, selectedDomainName, selectedSite } = this.props;
 
-		const analyticsPath = domainManagementAddGSuiteUsers(
+		const analyticsPath = emailManagementAddGSuiteUsers(
 			':site',
 			selectedDomainName ? ':domain' : undefined
 		);

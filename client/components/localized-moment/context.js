@@ -19,7 +19,7 @@ const debug = debugFactory( 'calypso:localized-moment' );
 const MomentContext = React.createContext( moment );
 
 class MomentProvider extends React.Component {
-	state = { moment, momentLocale: 'en' };
+	state = { moment, momentLocale: moment.locale() };
 
 	async checkAndLoad( previousLocale ) {
 		const { currentLocale } = this.props;
@@ -45,14 +45,18 @@ class MomentProvider extends React.Component {
 			debug( 'Loaded moment locale for %s', currentLocale );
 		}
 
-		if ( moment.locale() !== currentLocale ) {
-			moment.locale( currentLocale );
+		// Since this is an async function that may await on a dynamic import,
+		// we need to check if the props haven't changed in the meantime.
+		if ( currentLocale === this.props.currentLocale ) {
+			if ( moment.locale() !== currentLocale ) {
+				moment.locale( currentLocale );
+			}
+			this.setState( { momentLocale: currentLocale } );
 		}
-		this.setState( { momentLocale: currentLocale } );
 	}
 
 	componentDidMount() {
-		this.checkAndLoad( 'en' );
+		this.checkAndLoad( moment.locale() );
 	}
 
 	componentDidUpdate( prevProps ) {

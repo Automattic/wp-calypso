@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../driver-helper.js';
 import * as driverManager from '../driver-manager.js';
 
@@ -104,7 +111,7 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, viewPostSelector );
 
-		let url = await driver.findElement( viewPostSelector ).getAttribute( 'href' );
+		const url = await driver.findElement( viewPostSelector ).getAttribute( 'href' );
 		if ( reloadPageTwice === true ) {
 			await driver.get( url );
 		}
@@ -121,7 +128,9 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 	async waitForPublishButtonToBeEnabled() {
 		const self = this;
 
-		let d = await self.driver.findElement( self.publishButtonSelector ).getAttribute( 'disabled' );
+		const d = await self.driver
+			.findElement( self.publishButtonSelector )
+			.getAttribute( 'disabled' );
 		return d !== 'true';
 	}
 
@@ -133,7 +142,7 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 	}
 
 	async statusIsPending() {
-		let classNames = await this.driver
+		const classNames = await this.driver
 			.findElement( By.css( '.editor-status-label' ) )
 			.getAttribute( 'class' );
 		return classNames.includes( 'is-pending' );
@@ -147,7 +156,7 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 	}
 
 	async statusIsDraft() {
-		let classNames = await this.driver
+		const classNames = await this.driver
 			.findElement( By.css( '.editor-status-label' ) )
 			.getAttribute( 'class' );
 		return classNames.includes( 'is-draft' );

@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
-
 import config from 'config';
+
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../lib/driver-manager';
 import * as dataHelper from '../lib/data-helper';
 
@@ -30,7 +36,7 @@ describe( `[${ host }] Jetpack Settings on Calypso: (${ screenSize }) @jetpack`,
 	} );
 
 	before( async function() {
-		let loginFlow = new LoginFlow( driver, 'jetpackUser' + host );
+		const loginFlow = new LoginFlow( driver, 'jetpackUser' + host );
 		await loginFlow.loginAndSelectSettings();
 		this.settingsPage = await SettingsPage.Expect( driver );
 		return await this.settingsPage.selectWriting();
@@ -38,17 +44,17 @@ describe( `[${ host }] Jetpack Settings on Calypso: (${ screenSize }) @jetpack`,
 
 	describe( 'Can see Media Settings', function() {
 		step( 'Can see media settings section', async function() {
-			let shown = await this.settingsPage.mediaSettingsSectionDisplayed();
+			const shown = await this.settingsPage.mediaSettingsSectionDisplayed();
 			assert( shown, "Can't see the media settings section under the Writing settings" );
 		} );
 
 		step( 'Can see the Carousel toggle switch', async function() {
-			let shown = await this.settingsPage.carouselToggleDisplayed();
+			const shown = await this.settingsPage.carouselToggleDisplayed();
 			assert( shown, "Can't see the carousel setting toggle under the Writing settings" );
 		} );
 
 		step( 'Can see the Carousel background color drop down', async function() {
-			let shown = await this.settingsPage.carouseBackgroundColorDisplayed();
+			const shown = await this.settingsPage.carouseBackgroundColorDisplayed();
 			assert(
 				shown,
 				"Can't see the carousel background color setting toggle under the Writing settings"
@@ -57,7 +63,7 @@ describe( `[${ host }] Jetpack Settings on Calypso: (${ screenSize }) @jetpack`,
 
 		step( 'Can see the Photon toggle switch', async function() {
 			await this.settingsPage.selectPerformance();
-			let shown = await this.settingsPage.photonToggleDisplayed();
+			const shown = await this.settingsPage.photonToggleDisplayed();
 			assert( shown, "Can't see the Photon setting toggle under the Writing settings" );
 		} );
 	} );

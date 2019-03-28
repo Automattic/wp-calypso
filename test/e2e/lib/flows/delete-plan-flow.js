@@ -1,5 +1,8 @@
 /** @format */
 
+/**
+ * Internal dependencies
+ */
 import ManagePurchasePage from '../pages/manage-purchase-page';
 import CancelPurchasePage from '../pages/cancel-purchase-page';
 import * as SlackNotifier from '../slack-notifier';
@@ -11,7 +14,7 @@ export default class DeletePlanFlow {
 	constructor( driver ) {
 		this.driver = driver;
 	}
-	async deletePlan( planName, { deleteDomainAlso = false } = {} ) {
+	deletePlan( planName, { deleteDomainAlso = false } = {} ) {
 		return ( async () => {
 			const navBarComponent = await NavBarComponent.Expect( this.driver );
 			await navBarComponent.clickProfileLink();

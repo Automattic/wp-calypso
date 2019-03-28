@@ -19,6 +19,11 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
 import getPreviousRoute from 'state/selectors/get-previous-route';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class Filterbar extends Component {
 	state = {
 		showActivityTypes: false,
@@ -151,11 +156,11 @@ const mapStateToProps = state => ( {
 } );
 
 const mapDispatchToProps = dispatch => ( {
-	resetFilters: sideId =>
+	resetFilters: siteId =>
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),
-				updateFilter( sideId, { group: null, after: null, before: null, on: null, page: 1 } )
+				updateFilter( siteId, { group: null, after: null, before: null, on: null, page: 1 } )
 			)
 		),
 } );

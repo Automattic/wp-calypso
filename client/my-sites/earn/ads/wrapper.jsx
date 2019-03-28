@@ -159,9 +159,10 @@ class AdsWrapper extends Component {
 					<p className="ads__activate-description">
 						{ translate(
 							'WordAds allows you to make money from advertising that runs on your site. ' +
-								'Because you have a WordPress.com Premium plan, you can skip the review process and activate WordAds instantly. ' +
+								'Because you have a WordPress.com %(plan)s plan, you can skip the review process and activate WordAds instantly. ' +
 								'{{a}}Learn more about the program.{{/a}}',
 							{
+								args: { plan: this.props.site.plan.product_name_short },
 								components: {
 									a: <a href={ 'http://wordads.co' } />,
 								},

@@ -21,9 +21,9 @@ The properties in the local configuration override the `default.json` properties
 
 If the configuration doesn't exist, the code falls back to using the environmental variables.
 
-Note: `NODE_ENV` is still required, as it is used to determine what `<env>` config to load.
+Note: `NODE_CONFIG_ENV` is still required, as it is used to determine what `<env>` config to load.
 
-For example: `export NODE_ENV='personal'`
+For example: `export NODE_CONFIG_ENV='personal'`
 
 An example configuration file is provided in the config directory.
 

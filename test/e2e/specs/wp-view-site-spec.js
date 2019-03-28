@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
-
 import config from 'config';
+
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper';
 
@@ -37,12 +43,12 @@ describe( `[${ host }] View site from sidebar: (${ screenSize }) @parallel @jetp
 
 		step( 'Can see the web preview button', async function() {
 			this.siteViewComponent = await SiteViewComponent.Expect( driver );
-			let present = await this.siteViewComponent.isWebPreviewPresent();
+			const present = await this.siteViewComponent.isWebPreviewPresent();
 			return assert.strictEqual( present, true, 'The web preview button was not displayed' );
 		} );
 
 		step( 'Can see the web preview "open in new window" button', async function() {
-			let present = await this.siteViewComponent.isOpenInNewWindowButtonPresent();
+			const present = await this.siteViewComponent.isOpenInNewWindowButtonPresent();
 			return assert.strictEqual(
 				present,
 				true,
@@ -51,7 +57,7 @@ describe( `[${ host }] View site from sidebar: (${ screenSize }) @parallel @jetp
 		} );
 
 		step( 'Can see the site preview', async function() {
-			let present = await this.siteViewComponent.isSitePresent();
+			const present = await this.siteViewComponent.isSitePresent();
 			return assert.strictEqual( present, true, 'The web site preview was not displayed' );
 		} );
 
@@ -67,7 +73,7 @@ describe( `[${ host }] View site from sidebar: (${ screenSize }) @parallel @jetp
 			} );
 
 			step( 'Can see sidebar again', async function() {
-				let displayed = await this.sidebarComponent.displayed();
+				const displayed = await this.sidebarComponent.displayed();
 				return assert( displayed, 'The sidebar was not displayed' );
 			} );
 		}

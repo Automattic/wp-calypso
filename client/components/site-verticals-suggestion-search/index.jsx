@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, get, noop, startsWith, trim, uniq, isEmpty } from 'lodash';
+import { find, get, noop, startsWith, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { v4 as uuid } from 'uuid';
 
@@ -14,21 +14,26 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import SuggestionSearch from 'components/suggestion-search';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { convertToCamelCase } from 'state/data-layer/utils';
+import PopularTopics from 'components/site-verticals-suggestion-search/popular-topics';
+import QueryVerticals from 'components/data/query-verticals';
+import { getVerticals } from 'state/signup/verticals/selectors';
+import { DEFAULT_VERTICAL_KEY } from 'state/signup/verticals/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class SiteVerticalsSuggestionSearch extends Component {
 	static propTypes = {
 		charsToTriggerSearch: PropTypes.number,
 		initialValue: PropTypes.string,
-		lastUpdated: PropTypes.number,
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
-		requestDefaultVertical: PropTypes.func,
-		requestVerticals: PropTypes.func,
-		searchResultsLimit: PropTypes.number,
+		shouldShowPopularTopics: PropTypes.func,
+		searchValue: PropTypes.string,
 		verticals: PropTypes.array,
+		defaultVertical: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -36,35 +41,18 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		initialValue: '',
 		onChange: noop,
 		placeholder: '',
-		requestDefaultVertical: noop,
-		requestVerticals: noop,
-		searchResultsLimit: 5,
+		shouldShowPopularTopics: noop,
+		searchValue: '',
 		verticals: [],
+		defaultVertical: {},
 	};
 
 	constructor( props ) {
 		super( props );
 		this.state = {
-			searchValue: props.initialValue,
 			railcar: this.getNewRailcar(),
+			candidateVerticals: [],
 		};
-		props.requestDefaultVertical();
-	}
-
-	componentDidMount() {
-		// If we have a stored vertical, grab the preview
-		this.props.initialValue && this.props.requestVerticals( this.props.initialValue, 1 );
-	}
-
-	componentDidUpdate( prevProps ) {
-		// Check if there's a direct match for any subsequent
-		// HTTP requests
-		if ( prevProps.lastUpdated !== this.props.lastUpdated ) {
-			this.updateVerticalData(
-				this.searchForVerticalMatches( this.state.searchValue ),
-				this.state.searchValue
-			);
-		}
 	}
 
 	getNewRailcar() {
@@ -80,9 +68,10 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	searchForVerticalMatches = ( value = '' ) =>
 		find(
 			this.props.verticals,
-			item => item.verticalName.toLowerCase() === value.toLowerCase() && ! isEmpty( item.preview )
+			item => item.verticalName.toLowerCase() === value.toLowerCase() && !! item.preview
 		);
 
+	// TODO: once the siteVertical state got simplified, this can be removed.
 	updateVerticalData = ( result, value ) =>
 		this.props.onChange(
 			result || {
@@ -95,29 +84,46 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			}
 		);
 
-	onSiteTopicChange = value => {
-		value = trim( value );
-
+	onSiteTopicChange = ( value, isNavigating ) => {
 		const hasValue = !! value;
 		const valueLength = value.length || 0;
 		const valueLengthShouldTriggerSearch = valueLength >= this.props.charsToTriggerSearch;
 		const result = this.searchForVerticalMatches( value );
 
+		// TODO:
+		// Where to put the railcar code will be reconsidered.
 		if (
 			hasValue &&
 			valueLengthShouldTriggerSearch &&
 			// Don't trigger a search if there's already an exact, non-user-defined match from the API
 			! result
 		) {
-			this.props.requestVerticals( value, this.props.searchResultsLimit );
 			this.setState( { railcar: this.getNewRailcar() } );
 		}
 
-		this.setState( { searchValue: value } );
 		this.updateVerticalData( result, value );
+
+		this.setState( {
+			isNavigating,
+		} );
 	};
 
-	getSuggestions = () => this.props.verticals.map( vertical => vertical.verticalName );
+	componentDidUpdate( prevProps ) {
+		// The suggestion list should only be updated when a user is not navigating the list through keying.
+		// Note: it's intentional to use object reference comparison here.
+		// Since `verticals` props is connected from a redux state here, if the two references are identical,
+		// we can safely say that the two content are identical, thanks to the immutability invariant of redux.
+		if ( prevProps.verticals !== this.props.verticals && ! this.state.isNavigating ) {
+			// It's safe here to call setState() because we prevent the indefinite loop by the wrapping condition.
+			// See the official doc here: https://reactjs.org/docs/react-component.html#componentdidupdate
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( {
+				candidateVerticals: this.props.verticals,
+			} );
+		}
+	}
+
+	getSuggestions = () => this.state.candidateVerticals.map( vertical => vertical.verticalName );
 
 	sortSearchResults = ( suggestionsArray, queryString ) => {
 		let queryMatch;
@@ -144,62 +150,52 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	};
 
 	render() {
-		const { translate, placeholder, autoFocus } = this.props;
+		const {
+			translate,
+			placeholder,
+			autoFocus,
+			shouldShowPopularTopics,
+			isVerticalSearchPending,
+		} = this.props;
+		const showPopularTopics = shouldShowPopularTopics( this.props.searchValue );
+
 		return (
-			<SuggestionSearch
-				id="siteTopic"
-				placeholder={ placeholder || translate( 'e.g. Fashion, travel, design, plumbing' ) }
-				onChange={ this.onSiteTopicChange }
-				suggestions={ this.getSuggestions() }
-				value={ this.state.searchValue }
-				sortResults={ this.sortSearchResults }
-				autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-				railcar={ this.state.railcar }
-			/>
+			<>
+				<QueryVerticals searchTerm={ this.props.searchValue.trim() } />
+				<QueryVerticals searchTerm={ DEFAULT_VERTICAL_KEY } limit={ 1 } />
+				<SuggestionSearch
+					id="siteTopic"
+					placeholder={ placeholder || translate( 'Enter a keyword or select one from below.' ) }
+					onChange={ this.onSiteTopicChange }
+					suggestions={ this.getSuggestions() }
+					value={ this.props.searchValue }
+					sortResults={ this.sortSearchResults }
+					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+					isSearching={ isVerticalSearchPending }
+					railcar={ this.state.railcar }
+				/>
+				{ showPopularTopics && <PopularTopics onSelect={ this.onSiteTopicChange } /> }
+			</>
 		);
 	}
 }
 
-const SITE_VERTICALS_REQUEST_ID = 'site-verticals-search-results';
-const DEFAULT_SITE_VERTICAL_REQUEST_ID = 'default-site-verticals-search-results';
-
-const requestSiteVerticalHttpData = ( searchTerm, limit = 7, id = SITE_VERTICALS_REQUEST_ID ) =>
-	requestHttpData(
-		id,
-		http( {
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-			path: '/verticals',
-			query: {
-				search: searchTerm,
-				limit,
-				include_preview: true,
-			},
-		} ),
-		{
-			fromApi: () => data => [ [ id, convertToCamelCase( data ) ] ],
-			freshness: -Infinity,
-		}
-	);
-
-export const isVerticalSearchPending = () =>
-	'pending' === get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
-
 export default localize(
 	connect(
-		() => {
-			const siteVerticalHttpData = getHttpData( SITE_VERTICALS_REQUEST_ID );
-			const defaultVerticalHttpData = getHttpData( DEFAULT_SITE_VERTICAL_REQUEST_ID );
+		( state, ownProps ) => {
+			const { searchValue } = ownProps;
+			const trimmedSearchValue = searchValue.trim();
+			const verticals = getVerticals( state, trimmedSearchValue );
+			const isVerticalSearchPending = trimmedSearchValue && null == verticals;
+
 			return {
-				lastUpdated: get( siteVerticalHttpData, 'lastUpdated', 0 ),
-				verticals: get( siteVerticalHttpData, 'data', [] ),
-				defaultVertical: get( defaultVerticalHttpData, 'data[0]', {} ),
+				verticals: verticals || [],
+				isVerticalSearchPending,
+				defaultVertical: get( getVerticals( state, 'business' ), '0', {} ),
 			};
 		},
-		() => ( {
-			requestVerticals: requestSiteVerticalHttpData,
-			requestDefaultVertical: ( searchTerm = 'business' ) =>
-				requestSiteVerticalHttpData( searchTerm, 1, DEFAULT_SITE_VERTICAL_REQUEST_ID ),
+		( dispatch, ownProps ) => ( {
+			shouldShowPopularTopics: searchValue => ! searchValue && ownProps.showPopular,
 		} )
 	)( SiteVerticalsSuggestionSearch )
 );

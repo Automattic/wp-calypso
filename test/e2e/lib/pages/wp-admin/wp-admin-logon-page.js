@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../../driver-helper';
 import AsyncBaseContainer from '../../async-base-container';
 
@@ -16,7 +22,7 @@ export default class WPAdminLogonPage extends AsyncBaseContainer {
 	}
 
 	async logonSSO() {
-		return driverHelper.clickWhenClickable( this.driver, By.css( '.jetpack-sso.button' ) );
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.jetpack-sso.button' ) );
 	}
 
 	async login( username, password ) {

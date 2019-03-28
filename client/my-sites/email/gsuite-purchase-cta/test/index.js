@@ -41,7 +41,7 @@ describe( 'GSuitePurchaseCta', () => {
 					<GSuitePurchaseCta
 						annualPrice={ '$50' }
 						monthlyPrice={ '$5' }
-						productSlug={ 'gappsbusiness' }
+						productSlug={ 'gapps_unlimited' }
 						selectedSite={ { ID: 'foo' } }
 					/>
 				</Provider>

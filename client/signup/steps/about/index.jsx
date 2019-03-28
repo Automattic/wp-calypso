@@ -479,13 +479,9 @@ class AboutStep extends Component {
 	}
 
 	renderContent() {
-		const {
-			translate,
-			siteTitle,
-			shouldHideSiteTitle,
-			shouldHideSiteGoals,
-			siteTopic,
-		} = this.props;
+		const { translate, siteTitle, shouldHideSiteTitle, shouldHideSiteGoals } = this.props;
+
+		const { siteTopicValue } = this.state;
 
 		const pressableWrapperClassName = classNames( 'about__pressable-wrapper', {
 			'about__wrapper-is-hidden': ! this.state.showStore,
@@ -542,7 +538,7 @@ class AboutStep extends Component {
 									</FormLabel>
 									<SiteVerticalsSuggestionSearch
 										onChange={ this.onSiteTopicChange }
-										initialValue={ siteTopic }
+										searchValue={ siteTopicValue }
 									/>
 								</FormFieldset>
 							) }

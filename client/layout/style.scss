@@ -1,7 +1,7 @@
 /**
  * /*
  * 	Layout Elements
- * 	.layout__loading - Displays when loading Claypso
+ * 	.layout__loading - Displays when loading Calypso
  * 	.layout__content - Contains primary and secondary elements
  * 		.layout__primary - Where the main content lives
  * 		.layout__secondary - Contains the site selector and sidebar elements
@@ -169,6 +169,65 @@
 		-webkit-overflow-scrolling: touch;
 		transform: translateX( -100% );
 	}
+}
+
+// Secondary Layout overrides
+.layout__secondary {	
+	.site__title {
+		color: var( --sidebar-text-color );
+	}
+	
+	.site__domain {
+		color: var( --sidebar-heading-color );
+	}
+	
+	.site__title::after,
+	.site__domain::after {
+		@include long-content-fade( $color: var( --sidebar-background-gradient ) );
+	}
+	
+	.site__badge {
+		color: var( --sidebar-gridicon-fill );
+	}
+	
+	.site-selector {		
+		&.is-large .site-selector__sites {
+			border-color: var( --sidebar-border-color );
+		}
+		
+		&__sites {
+			background: var( --sidebar-background );		
+		}
+	
+		&__add-new-site {
+			border-color: var( --sidebar-border-color );
+		
+			.button {		
+				color: var( --sidebar-heading-color );			
+				&:hover {
+					color: var( --sidebar-text-color );	
+				} 
+			}	
+		}
+		
+		&__recent {
+			border-color: var( --sidebar-border-color );
+		}		  
+		
+		.all-sites {
+			border-color: var( --sidebar-border-color );
+		}				
+	}
+	
+	.all-sites .count {
+		color: var( --sidebar-text-color );	
+		border-color: var( --sidebar-text-color );
+	}
+	
+	.app-promo .app-promo__link {
+		box-shadow: 0 0 0 1px var( --sidebar-border-color ),
+			0 1px 2px var( --sidebar-border-color );
+	} 
 }
 
 /*

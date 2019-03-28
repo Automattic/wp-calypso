@@ -1,7 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
 import PressableLogonPage from '../lib/pages/pressable/pressable-logon-page';
 import PressableSitesPage from '../lib/pages/pressable/pressable-sites-page';
 import PressableApprovePage from '../lib/pages/pressable/pressable-approve-page';
@@ -26,6 +32,7 @@ let driver;
 // Disabled due to p1535659602000200-slack-e2e-testing-discuss
 // tl;dr: There is a bug in my.pressable.com which cause some noise/warnings/errors
 // We shouldn't create new Pressable sites for every test.
+// eslint-disable-next-line no-constant-condition
 if ( false ) {
 	before( async function() {
 		this.timeout( startBrowserTimeoutMS );

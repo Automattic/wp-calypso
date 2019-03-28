@@ -132,12 +132,21 @@ export class PlansStep extends Component {
 	}
 
 	getCustomerType() {
+		if ( this.props.customerType ) {
+			return this.props.customerType;
+		}
+
 		const siteGoals = this.props.siteGoals.split( ',' );
-		return (
-			this.props.customerType ||
+		let customerType =
 			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) ||
-			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' )
-		);
+			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' );
+
+		// Default to 'business' when the blogger plan is not available.
+		if ( customerType === 'personal' && this.props.disableBloggerPlanWithNonBlogDomain ) {
+			customerType = 'business';
+		}
+
+		return customerType;
 	}
 
 	handleFreePlanButtonClick = () => {

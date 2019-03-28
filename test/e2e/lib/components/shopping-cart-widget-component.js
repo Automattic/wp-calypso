@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By as by } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import * as driverHelper from '../driver-helper.js';
 
 import AsyncBaseContainer from '../async-base-container';
@@ -19,20 +26,20 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 	}
 
 	async removeItem( self ) {
-		let cartEmpty = await driverHelper.isElementPresent( this.driver, by.css( '.cart-empty' ) );
+		const cartEmpty = await driverHelper.isElementPresent( this.driver, by.css( '.cart-empty' ) );
 		if ( ! cartEmpty ) {
 			return await driverHelper.clickWhenClickable( self.driver, by.css( '.cart__remove-item' ) );
 		}
 	}
 
 	async empty() {
-		let self = this;
+		const self = this;
 		const cartBadgeSelector = by.css( '.cart__count-badge' );
 
-		let present = await driverHelper.isElementPresent( self.driver, cartBadgeSelector );
+		const present = await driverHelper.isElementPresent( self.driver, cartBadgeSelector );
 		if ( present ) {
 			await self.open();
-			let numItems = await self.driver.findElement( cartBadgeSelector ).getText();
+			const numItems = await self.driver.findElement( cartBadgeSelector ).getText();
 			for ( let i = 0; i < numItems; i++ ) {
 				await self.removeItem( self );
 			}

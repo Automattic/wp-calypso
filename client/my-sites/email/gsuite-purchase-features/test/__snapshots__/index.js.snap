@@ -9,7 +9,7 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-features__feature-block"
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Gmail Logo"
@@ -22,7 +22,7 @@ Array [
         <h5
           className="gsuite-purchase-features__feature-header"
         >
-          Gmail for @testing123.com
+          A custom @testing123.com email address
         </h5>
         <p>
           Professional ad-free email that works with most email clients.
@@ -33,7 +33,31 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
+        className="gsuite-purchase-features__feature-image"
+      >
+        <img
+          alt="Google Docs Logo"
+          src="/calypso/images/g-suite/logo_docs_48dp.svg"
+        />
+      </div>
+      <div
         className="gsuite-purchase-features__feature-block"
+      >
+        <h5
+          className="gsuite-purchase-features__feature-header"
+        >
+          Docs, spreadsheets and more
+        </h5>
+        <p>
+          Collaborate in real-time with documents, spreadsheets and slides.
+        </p>
+      </div>
+    </div>
+    <div
+      className="gsuite-purchase-features__feature"
+    >
+      <div
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Google Drive Logo"
@@ -57,31 +81,7 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-features__feature-block"
-      >
-        <img
-          alt="Google Docs Logo"
-          src="/calypso/images/g-suite/logo_docs_48dp.svg"
-        />
-      </div>
-      <div
-        className="gsuite-purchase-features__feature-block"
-      >
-        <h5
-          className="gsuite-purchase-features__feature-header"
-        >
-          Docs, spreadsheets and forms
-        </h5>
-        <p>
-          Create and edit documents to get your work done faster.
-        </p>
-      </div>
-    </div>
-    <div
-      className="gsuite-purchase-features__feature"
-    >
-      <div
-        className="gsuite-purchase-features__feature-block"
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Google Hangouts Logo"
@@ -97,7 +97,7 @@ Array [
           Connect with your team
         </h5>
         <p>
-          Use text chats, voice calls, or video calls, with built in screen sharing
+          Use text chats, voice calls, or video calls, with built in screen sharing.
         </p>
       </div>
     </div>
@@ -133,7 +133,7 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-features__feature-block"
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Gmail Logo"
@@ -146,7 +146,7 @@ Array [
         <h5
           className="gsuite-purchase-features__feature-header"
         >
-          Gmail for @testing123.com
+          A custom @testing123.com email address
         </h5>
         <p>
           Professional ad-free email that works with most email clients.
@@ -157,7 +157,31 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
+        className="gsuite-purchase-features__feature-image"
+      >
+        <img
+          alt="Google Docs Logo"
+          src="/calypso/images/g-suite/logo_docs_48dp.svg"
+        />
+      </div>
+      <div
         className="gsuite-purchase-features__feature-block"
+      >
+        <h5
+          className="gsuite-purchase-features__feature-header"
+        >
+          Docs, spreadsheets and more
+        </h5>
+        <p>
+          Collaborate in real-time with documents, spreadsheets and slides.
+        </p>
+      </div>
+    </div>
+    <div
+      className="gsuite-purchase-features__feature"
+    >
+      <div
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Google Drive Logo"
@@ -181,31 +205,7 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-features__feature-block"
-      >
-        <img
-          alt="Google Docs Logo"
-          src="/calypso/images/g-suite/logo_docs_48dp.svg"
-        />
-      </div>
-      <div
-        className="gsuite-purchase-features__feature-block"
-      >
-        <h5
-          className="gsuite-purchase-features__feature-header"
-        >
-          Docs, spreadsheets and forms
-        </h5>
-        <p>
-          Create and edit documents to get your work done faster.
-        </p>
-      </div>
-    </div>
-    <div
-      className="gsuite-purchase-features__feature"
-    >
-      <div
-        className="gsuite-purchase-features__feature-block"
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Google Hangouts Logo"
@@ -221,7 +221,7 @@ Array [
           Connect with your team
         </h5>
         <p>
-          Use text chats, voice calls, or video calls, with built in screen sharing
+          Use text chats, voice calls, or video calls, with built in screen sharing.
         </p>
       </div>
     </div>
@@ -257,7 +257,7 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-features__feature-block"
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Gmail Logo"
@@ -270,7 +270,7 @@ Array [
         <h5
           className="gsuite-purchase-features__feature-header"
         >
-          Gmail for @testing123.com
+          A custom @testing123.com email address
         </h5>
         <p>
           Professional ad-free email that works with most email clients.
@@ -281,7 +281,31 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
+        className="gsuite-purchase-features__feature-image"
+      >
+        <img
+          alt="Google Docs Logo"
+          src="/calypso/images/g-suite/logo_docs_48dp.svg"
+        />
+      </div>
+      <div
         className="gsuite-purchase-features__feature-block"
+      >
+        <h5
+          className="gsuite-purchase-features__feature-header"
+        >
+          Docs, spreadsheets and more
+        </h5>
+        <p>
+          Collaborate in real-time with documents, spreadsheets and slides.
+        </p>
+      </div>
+    </div>
+    <div
+      className="gsuite-purchase-features__feature"
+    >
+      <div
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Google Drive Logo"
@@ -305,31 +329,7 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-features__feature-block"
-      >
-        <img
-          alt="Google Docs Logo"
-          src="/calypso/images/g-suite/logo_docs_48dp.svg"
-        />
-      </div>
-      <div
-        className="gsuite-purchase-features__feature-block"
-      >
-        <h5
-          className="gsuite-purchase-features__feature-header"
-        >
-          Docs, spreadsheets and forms
-        </h5>
-        <p>
-          Create and edit documents to get your work done faster.
-        </p>
-      </div>
-    </div>
-    <div
-      className="gsuite-purchase-features__feature"
-    >
-      <div
-        className="gsuite-purchase-features__feature-block"
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Google Hangouts Logo"
@@ -345,7 +345,7 @@ Array [
           Connect with your team
         </h5>
         <p>
-          Use text chats, voice calls, or video calls, with built in screen sharing
+          Use text chats, voice calls, or video calls, with built in screen sharing.
         </p>
       </div>
     </div>
@@ -381,7 +381,7 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-features__feature-block"
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Gmail Logo"
@@ -394,7 +394,7 @@ Array [
         <h5
           className="gsuite-purchase-features__feature-header"
         >
-          Gmail for @testing123.com
+          A custom @testing123.com email address
         </h5>
         <p>
           Professional ad-free email that works with most email clients.
@@ -405,7 +405,31 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
+        className="gsuite-purchase-features__feature-image"
+      >
+        <img
+          alt="Google Docs Logo"
+          src="/calypso/images/g-suite/logo_docs_48dp.svg"
+        />
+      </div>
+      <div
         className="gsuite-purchase-features__feature-block"
+      >
+        <h5
+          className="gsuite-purchase-features__feature-header"
+        >
+          Docs, spreadsheets and more
+        </h5>
+        <p>
+          Collaborate in real-time with documents, spreadsheets and slides.
+        </p>
+      </div>
+    </div>
+    <div
+      className="gsuite-purchase-features__feature"
+    >
+      <div
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Google Drive Logo"
@@ -421,7 +445,7 @@ Array [
           Keep all your files secure
         </h5>
         <p>
-          Get 30GB of storage for all your files synced across devices.
+          Get unlimited storage for all your files synced across devices.
         </p>
       </div>
     </div>
@@ -429,31 +453,7 @@ Array [
       className="gsuite-purchase-features__feature"
     >
       <div
-        className="gsuite-purchase-features__feature-block"
-      >
-        <img
-          alt="Google Docs Logo"
-          src="/calypso/images/g-suite/logo_docs_48dp.svg"
-        />
-      </div>
-      <div
-        className="gsuite-purchase-features__feature-block"
-      >
-        <h5
-          className="gsuite-purchase-features__feature-header"
-        >
-          Docs, spreadsheets and forms
-        </h5>
-        <p>
-          Create and edit documents to get your work done faster.
-        </p>
-      </div>
-    </div>
-    <div
-      className="gsuite-purchase-features__feature"
-    >
-      <div
-        className="gsuite-purchase-features__feature-block"
+        className="gsuite-purchase-features__feature-image"
       >
         <img
           alt="Google Hangouts Logo"
@@ -469,7 +469,7 @@ Array [
           Connect with your team
         </h5>
         <p>
-          Use text chats, voice calls, or video calls, with built in screen sharing
+          Use text chats, voice calls, or video calls, with built in screen sharing.
         </p>
       </div>
     </div>

@@ -1,6 +1,13 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By } from 'selenium-webdriver';
+
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
 
 import SidebarComponent from '../components/sidebar-component.js';
@@ -41,7 +48,7 @@ export default class InvitePeoplePage extends AsyncBaseContainer {
 		const navbarComponent = await NavBarComponent.Expect( this.driver );
 		await navbarComponent.clickMySites();
 
-		let sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectPeople();
 	}
 }

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { isEqual, range, throttle, difference, isEmpty } from 'lodash';
+import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -25,10 +25,14 @@ import {
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
+import { getPostType } from 'state/post-types/selectors';
+import { getEditorUrl } from 'state/selectors/get-editor-url';
 import ListEnd from 'components/list-end';
 import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
@@ -169,6 +173,7 @@ class PostTypeList extends Component {
 		const scrollTop = this.getScrollTop();
 		const { scrollHeight, clientHeight } = scrollContainer;
 		const pixelsBelowViewport = scrollHeight - scrollTop - clientHeight;
+
 		// When the currently loaded list has this many pixels or less
 		// remaining below the viewport, begin loading the next page of items.
 		const thresholdPixels = Math.max( clientHeight, 400 );
@@ -182,6 +187,22 @@ class PostTypeList extends Component {
 		}
 
 		this.setState( { maxRequestedPage: maxRequestedPage + 1 } );
+	}
+
+	renderSectionHeader() {
+		const { editorUrl, postLabels } = this.props;
+
+		if ( ! postLabels ) {
+			return null;
+		}
+
+		return (
+			<SectionHeader label={ postLabels.name }>
+				<Button primary compact className="post-type-list__add-post" href={ editorUrl }>
+					{ postLabels.add_new_item }
+				</Button>
+			</SectionHeader>
+		);
 	}
 
 	renderListEnd() {
@@ -239,6 +260,7 @@ class PostTypeList extends Component {
 
 		return (
 			<div className={ classes }>
+				{ this.renderSectionHeader() }
 				{ query &&
 					range( 1, maxRequestedPage + 1 ).map( page => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
@@ -281,5 +303,7 @@ export default connect( ( state, ownProps ) => {
 		totalPostCount: getPostsFoundForQuery( state, siteId, ownProps.query ),
 		totalPageCount,
 		lastPageToRequest,
+		editorUrl: getEditorUrl( state, siteId, null, ownProps.query.type ),
+		postLabels: get( getPostType( state, siteId, ownProps.query.type ), 'labels' ),
 	};
 } )( localize( PostTypeList ) );

@@ -75,13 +75,13 @@ const RelatedPosts = ( {
 							{ translate( 'Show a thumbnail image where available' ) }
 						</CompactFormToggle>
 					</div>
-					
-					<FormSettingExplanation> 
-						{ translate( 
+
+					<FormSettingExplanation>
+						{ translate(
 							"These settings won't apply to related posts added using the block editor."
 						) }
 					</FormSettingExplanation>
-	
+
 					<RelatedContentPreview
 						showHeadline={ fields.jetpack_relatedposts_show_headline }
 						showThumbnails={ fields.jetpack_relatedposts_show_thumbnails }

@@ -1,8 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import assert from 'assert';
-
 import config from 'config';
+
+/**
+ * Internal dependencies
+ */
 import * as driverManager from '../lib/driver-manager';
 import * as dataHelper from '../lib/data-helper';
 
@@ -30,7 +36,7 @@ describe( `[${ host }] Jetpack Sites on Calypso - Existing Plugins: (${ screenSi
 	before( async function() {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 
-		let loginFlow = new LoginFlow( driver, 'jetpackUser' + host );
+		const loginFlow = new LoginFlow( driver );
 		await loginFlow.loginAndSelectManagePlugins();
 	} );
 
@@ -56,7 +62,7 @@ describe( `[${ host }] Jetpack Sites on Calypso - Existing Plugins: (${ screenSi
 			const expectedPartialText = 'Successfully activated Hello Dolly';
 			const pluginDetailsPage = await PluginDetailsPage.Expect( driver );
 			await pluginDetailsPage.waitForSuccessNotice();
-			let successMessageText = await pluginDetailsPage.getSuccessNoticeText();
+			const successMessageText = await pluginDetailsPage.getSuccessNoticeText();
 			return assert.strictEqual(
 				successMessageText.indexOf( expectedPartialText ) > -1,
 				true,
@@ -72,7 +78,7 @@ describe( `[${ host }] Jetpack Sites on Calypso - Searching Plugins: (${ screenS
 	before( async function() {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 
-		let loginFlow = new LoginFlow( driver, 'jetpackUser' + host );
+		const loginFlow = new LoginFlow( driver, 'jetpackUser' + host );
 		await loginFlow.loginAndSelectPlugins();
 	} );
 
@@ -84,7 +90,7 @@ describe( `[${ host }] Jetpack Sites on Calypso - Searching Plugins: (${ screenS
 				const pluginTitle = 'WP Job Manager';
 				const pluginsBrowserPage = await PluginsBrowserPage.Expect( driver );
 				await pluginsBrowserPage.searchForPlugin( pluginVendor );
-				let pluginDisplayed = await pluginsBrowserPage.pluginTitledShown(
+				const pluginDisplayed = await pluginsBrowserPage.pluginTitledShown(
 					pluginTitle,
 					pluginVendor
 				);

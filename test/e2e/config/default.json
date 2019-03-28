@@ -24,14 +24,14 @@
 			"screenResolution": "2048x1536",
 			"version": "64.0"
 		},
-	 	"osx-firefox": {
+		"osx-firefox": {
 			"browserName": "firefox",
 			"platform": "OS X 10.11",
 			"screenResolution": "2048x1536",
 			"nativeEvents": true,
 			"version": "46.0"
-	 	},
-	 	"osx-safari": {
+		},
+		"osx-safari": {
 			"browserName": "safari",
 			"platform": "OS X 10.11",
 			"screenResolution": "2048x1536",
@@ -55,47 +55,8 @@
 			"platform": "Windows 10",
 			"screenResolution": "2560x1600",
 			"version": "11.285",
-		  	"iedriverVersion": "3.141.0",
-		  	"seleniumVersion": "3.141.0"
+			"iedriverVersion": "3.141.0",
+			"seleniumVersion": "3.141.0"
 		}
-	},
-	"knownABTestKeys": [
-		"businessPlanDescriptionAT",
-		"skipThemesSelectionModal",
-		"springSale30PercentOff",
-		"jetpackSignupGoogleTop",		
-		"cartNudgeUpdateToPremium",
-		"signupAtomicStoreVsPressable",
-		"improvedOnboarding",
-		"privateByDefault",
-		"removeUsername",
-		"removeDomainsStepFromOnboarding",
-		"showConciergeSessionUpsell",
-		"showConciergeSessionUpsellNonGSuite",
-		"skipBusinessInformation",
-		"builderReferralThemesBanner",
-		"domainSearchButtonStyles",
-		"twoYearPlanByDefault",
-		"pluginFeaturedTitle",
-		"builderReferralHelpPopover",
-		"jetpackMonthlyPlansOnly"
-	],
-	"overrideABTests": [
-		[ "businessPlanDescriptionAT_20170605", "original" ],
-		[ "skipThemesSelectionModal_20170904", "show" ],
-		[ "springSale30PercentOff_20180413", "control" ],
-		[ "jetpackSignupGoogleTop_20180427", "original" ],
-		[ "jetpackMonthlyPlansOnly_20190312", "original" ],
-		[ "cartNudgeUpdateToPremium_20180903", "control" ],
-		[ "signupAtomicStoreVsPressable_20171101", "atomic" ],
-		[ "privateByDefault_20181113", "public" ],
-		[ "removeUsername_20181213", "showUsername" ],
-		[ "removeDomainsStepFromOnboarding_20181221", "keep" ],
-		[ "showConciergeSessionUpsell_20181214", "skip" ],
-		[ "showConciergeSessionUpsellNonGSuite_20190104", "skip" ],
-		[ "improvedOnboarding_20190314", "main" ],
-		[ "skipBusinessInformation_20190130", "hide" ],
-		[ "twoYearPlanByDefault_20190207", "originalFlavor" ],
-		[ "builderReferralHelpPopover_20190227", "original" ]
-	]
+	}
 }

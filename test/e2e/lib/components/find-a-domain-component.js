@@ -1,9 +1,14 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 import { By, until } from 'selenium-webdriver';
 
+/**
+ * Internal dependencies
+ */
 import AsyncBaseContainer from '../async-base-container';
-
 import * as slackNotifier from '../slack-notifier';
 import * as driverHelper from '../driver-helper.js';
 
@@ -46,9 +51,9 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 
 	async checkAndRetryForFreeBlogAddresses( expectedBlogAddresses, blogName ) {
 		const self = this;
-		let actualAddress = await self.freeBlogAddress();
+		const actualAddress = await self.freeBlogAddress();
 		if ( expectedBlogAddresses.indexOf( actualAddress ) < 0 ) {
-			let message = `The displayed free blog address: '${ actualAddress }' was not in the expected addresses: '${ expectedBlogAddresses }'. Re-searching for '${ blogName }' now.`;
+			const message = `The displayed free blog address: '${ actualAddress }' was not in the expected addresses: '${ expectedBlogAddresses }'. Re-searching for '${ blogName }' now.`;
 			slackNotifier.warn( message );
 			await self.searchForBlogNameAndWaitForResults( blogName );
 		}

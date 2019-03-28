@@ -44,8 +44,3 @@ Blocks are registered by providing a `name` and `settings` like this:
 ```js
 registerBlockType( 'prefix/name', { /* settings */ } );
 ```
-
-Public blocks should use the `jetpack/` prefix, e.g. `jetpack/markdown`.
-
-Private and internal blocks should use the `a8c/` prefix.
-
