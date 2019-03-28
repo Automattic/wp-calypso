@@ -1,9 +1,21 @@
+/** @format */
+/**
+ * External dependencies
+ */
 import classNames from 'classnames';
 import ReactDOM from 'react-dom';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { throttle } from 'lodash';
 
-import "./style.scss";
+/**
+ * Internal dependencies
+ */
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const EPSILON = 0.00001;
 
@@ -16,11 +28,13 @@ class Scroller extends React.Component {
 			scrollPaneWidth: 3 * 200,
 			startAt: null,
 		};
+		this.scrollPane = React.createRef();
+		this.scrolledPane = React.createRef();
 	}
 
 	componentDidMount() {
 		this.recalculate();
-		this.debouncedHandleResize = _.throttle( this.handleResize, 400 );
+		this.debouncedHandleResize = throttle( this.handleResize, 400 );
 		window.addEventListener( 'resize', this.debouncedHandleResize, false );
 	}
 
@@ -40,12 +54,12 @@ class Scroller extends React.Component {
 				<div
 					className={ classNames( 'scroller__scroll-pane', { initializing } ) }
 					style={ { width: scrollPaneWidth } }
-					ref="scrollPane"
+					ref={ this.scrollPane }
 				>
 					<div
 						className="scroller__scrolled-pane"
 						style={ { left: scrollLeft } }
-						ref="scrolledPane"
+						ref={ this.scrolledPane }
 					>
 						{ this.props.children }
 					</div>
@@ -129,7 +143,7 @@ class Scroller extends React.Component {
 		const UI_WIDTH = 60;
 		const availableSpace = currentNode.offsetWidth;
 		const gutterWidth = this.props.getRightGutterSizeForElement( 0 );
-		const contentWidth = this.refs.scrolledPane.offsetWidth;
+		const contentWidth = this.scrolledPane.current.offsetWidth;
 		const elementWidth = scrolledElements[ 0 ].offsetWidth;
 		const nbActiveElements = Math.max(
 			1,
@@ -156,27 +170,25 @@ class Scroller extends React.Component {
 				},
 				resolve
 			)
-		)
-			.then( () => {
-				this.applyActiveElementsClassNames();
-				this.moveScrollToFirstActiveElement();
-			} );
+		).then( () => {
+			this.applyActiveElementsClassNames();
+			this.moveScrollToFirstActiveElement();
+		} );
 	}
 
 	moveScrollToFirstActiveElement() {
 		const { startAt } = this.state;
 		const scrolledElements = this.findScrolledElements();
-		const scrollPaneRect = this.refs.scrollPane.getBoundingClientRect();
+		const scrollPaneRect = this.scrollPane.current.getBoundingClientRect();
 		const firstActiveRect = scrolledElements[ startAt ].getBoundingClientRect();
 		const scrollLeftDelta = scrollPaneRect.left - firstActiveRect.left;
-		console.log( 'moveScrollToFirstActiveElement', scrollPaneRect.left, firstActiveRect.left );
 		this.setState( {
 			scrollLeft: this.state.scrollLeft + scrollLeftDelta,
 		} );
 	}
 
 	fixScrollPositionAfterResize() {
-		const { startAt } = this.state;
+		// const { startAt } = this.state;
 	}
 
 	scrollLeft() {
@@ -240,7 +252,7 @@ class Scroller extends React.Component {
 		}
 	}
 
-	handleKeyPress( event ) {
+	handleKeyPress(/* event */) {
 		// if ( event.key === 'Enter' || event.key === ' ' ) {
 		// 	event.preventDefault();
 		// 	this.move( 'left' );
