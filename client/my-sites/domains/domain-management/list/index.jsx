@@ -68,6 +68,13 @@ export class List extends React.Component {
 		notice: null,
 	};
 
+	componentDidUpdate( prevProps ) {
+
+		if ( this.props.selectedSite.ID !== prevProps.selectedSite.ID ) {
+			this.hideNotice();
+		}
+	}
+
 	isLoading() {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
 	}
