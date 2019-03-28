@@ -10,7 +10,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import DomainManagement from './domain-management';
+import DomainManagement from '.';
 import DomainManagementData from 'components/data/domain-management';
 import {
 	domainManagementContactsPrivacy,
