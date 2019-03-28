@@ -22,6 +22,7 @@ import CompactCard from 'components/card/compact';
 import config from 'config';
 import {
 	getName,
+	getRenewalPrice,
 	handleRenewNowClick,
 	isCancelable,
 	isExpired,
@@ -373,7 +374,7 @@ class ManagePurchase extends Component {
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
 							<PlanPrice
-								rawPrice={ purchase.amount }
+								rawPrice={ getRenewalPrice( purchase ) }
 								currencyCode={ purchase.currencyCode }
 								taxText={ purchase.taxText }
 							/>
