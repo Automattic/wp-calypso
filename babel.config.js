@@ -5,13 +5,12 @@ const _ = require( 'lodash' );
 const path = require( 'path' );
 
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
-const isBrowser = isCalypsoClient || 'true' === process.env.TARGET_BROWSER;
 
-const modules = isBrowser ? false : 'commonjs'; // Use commonjs for Node
+const modules = isCalypsoClient ? false : 'commonjs'; // Use commonjs for Node
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 
 // Use target configuration in package.json for browser builds.
-const targets = isBrowser ? undefined : { node: 'current' };
+const targets = isCalypsoClient ? undefined : { node: 'current' };
 
 const config = {
 	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),

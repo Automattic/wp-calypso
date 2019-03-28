@@ -3,7 +3,7 @@
 /** @format */
 
 // SDK bundles are for the browser. Ensure that babel preset reflects this.
-process.env.TARGET_BROWSER = 'true';
+process.env.CALYPSO_CLIENT = 'true';
 
 /**
  * External dependencies
