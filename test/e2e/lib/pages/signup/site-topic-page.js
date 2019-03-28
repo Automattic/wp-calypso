@@ -18,7 +18,12 @@ export default class SiteTopicPage extends AsyncBaseContainer {
 	}
 
 	async enterSiteTopic( siteTopic ) {
-		return await driverHelper.setWhenSettable( this.driver, By.css( '#siteTopic' ), siteTopic );
+		await driverHelper.setWhenSettable( this.driver, By.css( '#siteTopic' ), siteTopic );
+		// click info popover icon to close the suggestion overlay
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.suggestions__item.has-highlight' )
+		);
 	}
 
 	async submitForm() {
