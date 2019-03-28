@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
+import { includes, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -122,7 +122,7 @@ export class JetpackProductInstall extends Component {
 		}
 
 		return some( PLUGINS, pluginSlug => {
-			if ( pluginStates.indexOf( status[ pluginSlug + '_status' ] ) >= 0 ) {
+			if ( includes( pluginStates, status[ pluginSlug + '_status' ] ) ) {
 				return true;
 			}
 			return false;
