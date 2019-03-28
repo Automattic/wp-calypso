@@ -18,9 +18,8 @@ export default class SiteTypePage extends AsyncBaseContainer {
 	}
 
 	async _selectType( type ) {
-		const radioButtonSelector = By.css( `input.form-radio[value='${ type }']` );
-		await driverHelper.setCheckbox( this.driver, radioButtonSelector );
-		return await driverHelper.waitTillSelected( this.driver, radioButtonSelector );
+		const typeButtonSelector = By.css( `button.site-type__option[data-e2e-title='${ type }']` );
+		return await driverHelper.clickWhenClickable( this.driver, typeButtonSelector );
 	}
 
 	async selectBlogType() {

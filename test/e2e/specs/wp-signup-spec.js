@@ -1640,7 +1640,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	xdescribe( 'Sign up for a free WordPress.com site via the new onboarding flow @parallel', () => {
+	describe( 'Sign up for a free WordPress.com site via the new onboarding flow @parallel', () => {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -1665,8 +1665,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		step( 'Can see the "Site Type" page, and enter some site information', async function() {
 			const siteTypePage = await SiteTypePage.Expect( driver );
-			await siteTypePage.selectBlogType();
-			return await siteTypePage.submitForm();
+			return await siteTypePage.selectBlogType();
 		} );
 
 		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
@@ -1724,7 +1723,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	xdescribe( 'Sign up for an account only (no site) then add a site via new onboarding flow @parallel', () => {
+	describe( 'Sign up for an account only (no site) then add a site via new onboarding flow @parallel', () => {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 
@@ -1774,8 +1773,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		step( 'Can see the "Site Type" page, and enter some site information', async function() {
 			const siteTypePage = await SiteTypePage.Expect( driver );
-			await siteTypePage.selectBlogType();
-			return await siteTypePage.submitForm();
+			return await siteTypePage.selectBlogType();
 		} );
 
 		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
