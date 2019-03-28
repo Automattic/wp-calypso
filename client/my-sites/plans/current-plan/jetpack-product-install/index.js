@@ -121,12 +121,9 @@ export class JetpackProductInstall extends Component {
 			return false;
 		}
 
-		return some( PLUGINS, pluginSlug => {
-			if ( includes( pluginStates, status[ pluginSlug + '_status' ] ) ) {
-				return true;
-			}
-			return false;
-		} );
+		return some( PLUGINS, pluginSlug =>
+			includes( pluginStates, status[ pluginSlug + '_status' ] )
+		);
 	}
 
 	/**
