@@ -38,6 +38,7 @@
 	"dependencies": {
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/muriel-style": "file:./packages/muriel-style",
+		"@automattic/material-design-icons": "file:./packages/material-design-icons",
 		"@automattic/tree-select": "file:./packages/tree-select",
 		"@automattic/wordpress-external-dependencies-plugin": "file:./packages/wordpress-external-dependencies-plugin",
 		"@babel/cli": "7.2.3",
