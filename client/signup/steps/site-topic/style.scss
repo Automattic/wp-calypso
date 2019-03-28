@@ -13,8 +13,7 @@ body.is-section-jetpack-connect .site-topic__content {
 		z-index: 1000; // I know, I know...
 		border-radius: 4px;
 		background: var( --color-white );
-		box-shadow: 0 3px 6px rgba( 0, 0, 0, 0.16 ),
-					0 3px 6px rgba( 0, 0, 0, 0.23 );
+		@include elevation ( 3dp );
 	}
 
 	.suggestion-search .gridicon {
@@ -51,7 +50,7 @@ body.is-section-jetpack-connect .site-topic__content {
 	.suggestions__wrapper {
 		position: relative;
 		top: 0;
-		box-shadow: none;
+		@include elevation ( 0 );
 		margin-top: 3px;
 		margin-bottom: 0;
 		border-radius: 0 0 4px 4px;
