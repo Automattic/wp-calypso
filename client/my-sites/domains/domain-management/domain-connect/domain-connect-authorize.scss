@@ -40,15 +40,5 @@
 	.domain-connect__dns-records {
 		background-color: var( --color-neutral-0 );
 		color: var( --color-text-subtle );
-
-		* {
-			&:last-child {
-				margin-bottom: 0;
-			}
-		}
-
-		& > * + * {
-			margin-top: 1.5em;
-		}
 	}
 }
