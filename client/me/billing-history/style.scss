@@ -192,6 +192,10 @@
 	min-height: 1.2em;
 }
 
+.billing-history__placeholder {
+	font-style: italic;
+}
+
 .billing-history__receipt-details {
 	background: var( --color-neutral-0 );
 	list-style: none;
@@ -383,7 +387,8 @@
 		.masterbar,
 		.billing-history__receipt-links,
 		.header-cake.card,
-		.inline-help {
+		.inline-help,
+		.billing-history__placeholder {
 			display: none;
 		}
 	}
