@@ -198,7 +198,7 @@ class TransferOtherUser extends React.Component {
 	renderSection() {
 		const { selectedDomainName: domainName, translate, users, selectedSite } = this.props,
 			availableUsers = this.filterAvailableUsers( users ),
-			{ currentUserCanManage } = getSelectedDomain( this.props ),
+			{ currentUserCanManage, domainRegistrationAgreementUrl } = getSelectedDomain( this.props ),
 			saveButtonLabel = translate( 'Transfer Domain' );
 
 		if ( ! currentUserCanManage ) {
@@ -208,7 +208,7 @@ class TransferOtherUser extends React.Component {
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Transfer Domain To Another User' ) } />
-				<Card className="transfer-card">
+				<Card className="transfer-to-other-user__transfer-card">
 					<p>
 						{ translate(
 							'Transferring a domain to another user will give all the rights of the domain to that user. ' +
@@ -241,7 +241,10 @@ class TransferOtherUser extends React.Component {
 							) }
 						</FormSelect>
 					</FormFieldset>
-					<DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } />
+					<DesignatedAgentNotice
+						domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
+						saveButtonLabel={ saveButtonLabel }
+					/>
 					<FormButton
 						disabled={ ! this.state.selectedUserId }
 						onClick={ this.handleTransferDomain }

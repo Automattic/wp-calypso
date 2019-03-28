@@ -3,7 +3,12 @@
 /**
  * Internal dependencies
  */
-import { getDomainType, getGdprConsentStatus, getTransferStatus } from 'lib/domains/utils';
+import {
+	getDomainRegistrationAgreementUrl,
+	getDomainType,
+	getGdprConsentStatus,
+	getTransferStatus,
+} from 'lib/domains/utils';
 import { camelCase, mapKeys } from 'lodash';
 
 function assembleGoogleAppsSubscription( googleAppsSubscription ) {
@@ -24,6 +29,7 @@ export const createSiteDomainObject = domain => {
 		currentUserCanManage: Boolean( domain.current_user_can_manage ),
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),
+		domainRegistrationAgreementUrl: getDomainRegistrationAgreementUrl( domain ),
 		expired: Boolean( domain.expired ),
 		expiry: ! domain.expiry ? null : String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),
