@@ -4,7 +4,7 @@
 }
 
 .input-chrono__text,
-input.input-chrono__input {
+.input-chrono__input {
 	width: 100%;
 	height: 36px;
 	line-height: 36px;
@@ -16,7 +16,7 @@ input.input-chrono__input {
 	font-size: 12px;
 	text-align: left;
 	position: relative;
-	z-index: z-index( '.popover', 'input.input-chrono__input' );
+	z-index: z-index( '.popover', '.input-chrono__input' );
 }
 
 .input-chrono__text {
