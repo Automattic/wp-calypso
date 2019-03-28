@@ -12,7 +12,7 @@ import DomainRegistrationRefundPolicy from './domain-registration-refund-policy'
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import { localize } from 'i18n-calypso';
 
-export class CheckoutTerms extends React.Component {
+class CheckoutTerms extends React.Component {
 	render() {
 		const { cart } = this.props;
 		return (
