@@ -51,6 +51,7 @@ import { promisify } from '../../utils';
 import flows from 'signup/config/flows';
 import steps from 'signup/config/steps';
 import { normalizeImportUrl } from 'state/importer-nux/utils';
+import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
 
 /**
  * Constants
@@ -133,6 +134,7 @@ export function createSiteWithCart(
 		cartItem,
 		domainItem,
 		flowName,
+		lastKnownFlow,
 		googleAppsCartItem,
 		isPurchasingItem,
 		siteUrl,
@@ -151,6 +153,7 @@ export function createSiteWithCart(
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
 	const siteInformation = getSiteInformation( state );
+	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 
 	const newSiteParams = {
 		blog_title: siteTitle,
@@ -163,7 +166,7 @@ export function createSiteWithCart(
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
 			site_information: siteInformation || undefined,
-			site_segment: getSiteTypePropertyValue( 'slug', siteType, 'id' ) || undefined,
+			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
 		},
 		public: -1,
@@ -185,6 +188,11 @@ export function createSiteWithCart(
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
+	}
+	// flowName isn't always passed in
+	const flowToCheck = flowName || lastKnownFlow;
+	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
+		newSiteParams.options.in_page_builder = true;
 	}
 
 	wpcom.undocumented().sitesNew( newSiteParams, function( error, response ) {
