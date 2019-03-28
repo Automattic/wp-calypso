@@ -684,7 +684,7 @@ export class JetpackAuthorize extends Component {
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
 						<AuthFormHeader authQuery={ this.props.authQuery } />
-						<Card>
+						<Card className="jetpack-connect__logged-in-card">
 							<Gravatar user={ this.props.user } size={ 64 } />
 							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
 							{ this.renderNotices() }
