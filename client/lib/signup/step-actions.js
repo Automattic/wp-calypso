@@ -51,7 +51,7 @@ import { promisify } from '../../utils';
 import flows from 'signup/config/flows';
 import steps from 'signup/config/steps';
 import { normalizeImportUrl } from 'state/importer-nux/utils';
-import { isElibigleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
+import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
 
 /**
  * Constants
@@ -191,7 +191,7 @@ export function createSiteWithCart(
 	}
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
-	if ( isElibigleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
+	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
 		newSiteParams.options.in_page_builder = true;
 	}
 

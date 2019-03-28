@@ -21,6 +21,6 @@ export function shouldEnterPageBuilder() {
 	return inTest;
 }
 
-export function isElibigleForPageBuilder( segment, flowName ) {
+export function isEligibleForPageBuilder( segment, flowName ) {
 	return 'en' === getLocaleSlug() && 1 === segment && 'onboarding-for-business' === flowName;
 }
