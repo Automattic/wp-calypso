@@ -4,7 +4,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -17,6 +17,7 @@ import { deleteDns, addDns } from 'lib/upgrades/actions';
 import Toggle from 'components/forms/form-toggle';
 import { domainConnect } from 'lib/domains/constants';
 import { getNormalizedData } from 'lib/domains/dns';
+import DnsRecordsList from '../dns-records/list';
 
 /**
  * Style dependencies
@@ -101,8 +102,8 @@ class DomainConnectRecord extends React.Component {
 		const name = `${ domainConnect.DISCOVERY_TXT_RECORD_NAME }.${ selectedDomainName }`;
 
 		return (
-			<div>
-				<ul className="dns__list dns__domain-connect-record">
+			<Fragment>
+				<DnsRecordsList className="dns__domain-connect-record">
 					<li className={ classNames( 'dns__list-item', { 'is-disabled': ! enabled } ) }>
 						<div className="dns__list-type">
 							<span>TXT</span>
@@ -122,7 +123,7 @@ class DomainConnectRecord extends React.Component {
 							/>
 						</form>
 					</li>
-				</ul>
+				</DnsRecordsList>
 				<div className="dns__domain-connect-explanation">
 					<em>
 						{ translate(
@@ -131,7 +132,7 @@ class DomainConnectRecord extends React.Component {
 						) }
 					</em>
 				</div>
-			</div>
+			</Fragment>
 		);
 	}
 }

@@ -21,58 +21,52 @@
 	width: 100%;
 }
 
-.dns__list {
-	list-style: none;
-	margin: 15px 0 0;
-	padding: 0;
+.dns__list-item {
+	border-top: 1px solid var( --color-neutral-0 );
+	display: flex;
+	justify-content: space-between;
+	overflow: auto;
+	padding: 10px 0;
+	position: relative;
 
-	.dns__list-item {
-		border-top: 1px solid var( --color-neutral-0 );
-		display: flex;
-		justify-content: space-between;
-		overflow: auto;
-		padding: 10px 0;
-		position: relative;
+	.dns__list-type {
+		min-width: 60px;
 
-		.dns__list-type {
-			min-width: 60px;
-
-			span {
-				background: var( --color-neutral-light );
-				border-radius: 2px;
-				color: var( --color-white );
-				display: block;
-				font-size: 12px;
-				margin: 0 10px 0 0;
-				padding: 10px 5px;
-				text-align: center;
-			}
-		}
-
-		.dns__list-info {
-			width: 100%;
-			word-break: break-all;
-
-			strong {
-				color: var( --color-text-subtle );
-				font-weight: normal;
-			}
-
-			em {
-				color: var( --color-text-subtle );
-				display: block;
-				font-size: 11px;
-			}
-		}
-
-		&.is-disabled {
-			opacity: 0.2;
-			cursor: not-allowed;
+		span {
+			background: var( --color-neutral-light );
+			border-radius: 2px;
+			color: var( --color-white );
+			display: block;
+			font-size: 12px;
+			margin: 0 10px 0 0;
+			padding: 10px 5px;
+			text-align: center;
 		}
 	}
 
-	.dns__list-remove {
-		text-align: right;
-		width: 100px;
+	.dns__list-info {
+		width: 100%;
+		word-break: break-all;
+
+		strong {
+			color: var( --color-text-subtle );
+			font-weight: normal;
+		}
+
+		em {
+			color: var( --color-text-subtle );
+			display: block;
+			font-size: 11px;
+		}
 	}
+
+	&.is-disabled {
+		opacity: 0.2;
+		cursor: not-allowed;
+	}
+}
+
+.dns__list-remove {
+	text-align: right;
+	width: 100px;
 }

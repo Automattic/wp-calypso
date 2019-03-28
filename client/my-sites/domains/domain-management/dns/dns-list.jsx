@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DnsRecordsList from '../dns-records/list';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
@@ -131,7 +132,7 @@ class DnsList extends React.Component {
 
 		return (
 			<Fragment>
-				<ul className="dns__list">{ dnsRecordsList }</ul>
+				<DnsRecordsList>{ dnsRecordsList }</DnsRecordsList>
 				<DeleteEmailForwardsDialog
 					visible={ dialog.type === 'deleteEmailForwards' }
 					onClose={ this.handleDialogClose }
