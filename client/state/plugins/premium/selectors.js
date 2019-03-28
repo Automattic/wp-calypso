@@ -107,11 +107,10 @@ export const getPluginKeys = createSelector(
 			const key = get( plugin, 'key', null );
 			const slug = get( plugin, 'slug', null );
 
-			if ( key && slug ) {
-				keys[ slug ] = key;
-			}
-
-			return keys;
+			return {
+				...keys,
+				[ slug ]: key,
+			};
 		}, {} );
 	},
 	( state, siteId ) => [ state.plugins.premium.plugins[ siteId ] ]
