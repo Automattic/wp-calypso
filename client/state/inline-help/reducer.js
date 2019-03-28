@@ -46,7 +46,6 @@ export const checklistPrompt = createReducer(
 			isVisible: false,
 			step: 0,
 		} ),
-		[ INLINE_HELP_POPOVER_HIDE ]: state => ( { ...state, isVisible: false } ),
 		[ INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID ]: ( state, { taskId } ) => ( { ...state, taskId } ),
 		[ INLINE_HELP_CHECKLIST_PROMPT_SET_STEP ]: ( state, { step } ) => ( { ...state, step } ),
 		[ SERIALIZE ]: state => state,
