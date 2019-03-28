@@ -49,18 +49,6 @@ body.is-section-jetpack-connect .site-topic__content {
 	}
 
 	.suggestions__wrapper {
-		/*
-		// Without the extra padding from the Card, we need
-		// to adjust the position of the suggestions.
-		top: 46px;
-
-		// On smaller screens the input gets bigger,
-		// so the suggestions need to move down a little.
-		@include breakpoint( '<660px' ) {
-			top: 52px;
-		}
-		*/
-
 		position: relative;
 		top: 0;
 		box-shadow: none;
@@ -81,7 +69,7 @@ body.is-section-jetpack-connect .site-topic__content {
 		top: 3px;
 		right: 3px;
 		transition: all 150ms ease-in-out;
-		transition-delay: 400ms;
+		transition-delay: 150ms;
 
 		&[disabled] {
 			opacity: 0;
