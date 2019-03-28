@@ -10,7 +10,7 @@ import { stubTrue } from 'lodash';
 /**
  * Internal dependencies
  */
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
 
 const UpgradeNudgeExample = () => {

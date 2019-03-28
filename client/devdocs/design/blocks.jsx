@@ -41,7 +41,7 @@ import Theme from 'components/theme/docs/example';
 import HappinessSupport from 'components/happiness-support/docs/example';
 import ThemesListExample from 'components/themes-list/docs/example';
 import PlanStorage from 'blocks/plan-storage/docs/example';
-import UpgradeNudge from 'my-sites/upgrade-nudge/docs/example';
+import UpgradeNudge from 'blocks/upgrade-nudge/docs/example';
 import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 import DomainTip from 'my-sites/domain-tip/docs/example';
