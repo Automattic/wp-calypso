@@ -453,15 +453,9 @@ export class Checkout extends React.Component {
 			return `/${ destination }/${ selectedSiteSlug }`;
 		}
 
-		/**
-		 * @TODO Enable when plan setup is completed on the My Plan page
-		 *
-		 * This route skips the checkout thank you page where plan setup currently
-		 * occurs. That's undesireable until the plans can be set up correctly on My Plan.
-		 */
-		// if ( this.props.isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ) ) {
-		// 	return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
-		// }
+		if ( this.props.isJetpackNotAtomic && config.isEnabled( 'jetpack/checklist' ) ) {
+			return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
+		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
 			? `/checkout/thank-you/features/${
