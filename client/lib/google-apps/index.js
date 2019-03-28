@@ -31,9 +31,12 @@ function formatPrice( cost, currencyCode, options = {} ) {
 
 function getLoginUrlWithTOSRedirect( email, domain ) {
 	return (
-		`https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel` +
-		`&continue=https%3A%2F%2Fadmin.google.com%2F${ domain }` +
-		`%2FAcceptTermsOfService%3Fcontinue%3Dhttps%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F${ email }`
+		'https://accounts.google.com/AccountChooser?' +
+		`Email=${ encodeURIComponent( email ) }` +
+		`&service=CPanel` +
+		`&continue=${ encodeURIComponent(
+			`https://admin.google.com/${ domain }/AcceptTermsOfService?continue=https://mail.google.com/mail/u/${ email }`
+		) }`
 	);
 }
 
