@@ -6,6 +6,8 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import schema from './schema';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { JETPACK_PRODUCT_INSTALL_STATUS_REQUEST } from 'state/action-types';
@@ -44,6 +46,7 @@ registerHandlers( 'state/data-layer/wpcom/jetpack-blogs/product-install-status',
 			fetch: requestJetpackProductInstallStatus,
 			onSuccess: handleRequestSuccess,
 			onError: noop,
+			fromApi: makeJsonSchemaParser( schema ),
 		} ),
 	],
 } );
