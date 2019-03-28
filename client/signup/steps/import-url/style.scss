@@ -6,7 +6,7 @@
 // The containing element
 .import-url__wrapper {
 	padding: 0;
-	box-shadow: none;
+	@include elevation ( 0 );
 	border-radius: 3px;
 	max-width: 640px;
 	margin: auto;
