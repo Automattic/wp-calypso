@@ -70,6 +70,12 @@ import {
 } from 'state/ui/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import { canAccessEarnSection } from 'lib/ads/utils';
+import { ReactComponent as StatsSvg } from 'material-design-icons/editor/outline-bar_chart-24px.svg';
+import { ReactComponent as PlanSvg } from 'material-design-icons/action/outline-offline_bolt-24px.svg';
+import { ReactComponent as SiteSvg } from 'material-design-icons/image/outline-edit-24px.svg';
+import { ReactComponent as DesignSvg } from 'material-design-icons/content/outline-gesture-24px.svg';
+import { ReactComponent as ToolsSvg } from 'material-design-icons/action/outline-build-24px.svg';
+import { ReactComponent as ManageSvg } from 'material-design-icons/action/outline-settings-24px.svg';
 
 /**
  * Module variables
@@ -176,6 +182,7 @@ export class MySitesSidebar extends Component {
 				link={ statsLink }
 				onNavigate={ this.trackStatsClick }
 				icon="stats-alt"
+				materialIcon={ StatsSvg }
 			>
 				<a href={ statsLink }>
 					<StatsSparkline className="sidebar__sparkline" siteId={ siteId } />
@@ -486,6 +493,7 @@ export class MySitesSidebar extends Component {
 			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a onClick={ this.trackPlanClick } href={ planLink }>
 					<JetpackLogo size={ 24 } />
+					<PlanSvg />
 					<span className="menu-link-text" data-e2e-sidebar={ 'Plan' }>
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
@@ -827,6 +835,7 @@ export class MySitesSidebar extends Component {
 						onClick={ this.props.toggleMySitesSidebarSiteMenu }
 						expanded={ this.props.isSiteOpen }
 						icon="pencil"
+						materialIcon={ SiteSvg }
 						title={ this.props.translate( 'Site' ) }
 					>
 						{ this.site() }
@@ -838,6 +847,7 @@ export class MySitesSidebar extends Component {
 						onClick={ this.props.toggleMySitesSidebarDesignMenu }
 						expanded={ this.props.isDesignOpen }
 						icon="customize"
+						materialIcon={ DesignSvg }
 						title={ this.props.translate( 'Design' ) }
 					>
 						{ this.design() }
@@ -848,6 +858,7 @@ export class MySitesSidebar extends Component {
 					onClick={ this.props.toggleMySitesSidebarToolsMenu }
 					expanded={ this.props.isToolsOpen }
 					icon="types"
+					materialIcon={ ToolsSvg }
 					title={ this.props.translate( 'Tools' ) }
 				>
 					{ this.tools() }
@@ -859,6 +870,7 @@ export class MySitesSidebar extends Component {
 						onClick={ this.props.toggleMySitesSidebarManageMenu }
 						expanded={ this.props.isManageOpen }
 						icon="cog"
+						materialIcon={ ManageSvg }
 						title={ this.props.translate( 'Manage' ) }
 					>
 						<ul>
