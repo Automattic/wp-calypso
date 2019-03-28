@@ -17,7 +17,6 @@ import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import config from 'config';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import { hasTouch } from 'lib/touch-detect';
-import { isWebView } from 'lib/webview-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 import { setCurrentUser } from 'state/current-user/actions';
 import { installPerfmonPageHandlers } from 'lib/perfmon';
@@ -163,12 +162,6 @@ export const utils = () => {
 		document.documentElement.classList.add( 'touch' );
 	} else {
 		document.documentElement.classList.add( 'notouch' );
-	}
-
-	// Infer app webview by checking if user agent contains identifier.
-	// See lib/webview-detect/README.md
-	if ( isWebView() ) {
-		document.documentElement.classList.add( 'webview' );
 	}
 
 	// Add accessible-focus listener
