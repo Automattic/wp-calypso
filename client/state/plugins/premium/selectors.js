@@ -104,8 +104,8 @@ export const getPluginKeys = createSelector(
 		const pluginList = getPluginsForSite( state, siteId, whitelist );
 
 		return pluginList.reduce( ( keys, plugin ) => {
-			const key = get( plugin, 'key', null );
-			const slug = get( plugin, 'slug', null );
+			const key = get( plugin, 'key' );
+			const slug = get( plugin, 'slug' );
 
 			return {
 				...keys,
