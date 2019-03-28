@@ -119,8 +119,7 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 }
 
-.dns__details,
-.custom-nameservers-form__explanation {
+.dns__details {
 	display: block;
 	margin-top: 5px;
 	font-size: 13px;
@@ -138,88 +137,6 @@ input[type='radio'].domain-management-list-item__radio {
 
 	.is-hidden {
 		display: none;
-	}
-}
-
-.name-servers__dns {
-	.name-servers__toggle {
-		display: inline-block;
-		float: right;
-	}
-	.name-servers__explanation {
-		animation: appear 0.5s ease-in-out;
-		color: var( --color-text-subtle );
-		font-size: 13px;
-		font-style: italic;
-		margin-bottom: 0;
-	}
-}
-
-.custom-nameservers-form {
-	animation: appear 0.5s ease-in-out;
-}
-
-.name-servers {
-	.custom-nameservers-row {
-		margin-top: 10px;
-		position: relative;
-
-		input[type='text'] {
-			padding-right: 38px;
-
-			@include breakpoint( '<480px' ) {
-				padding-right: 35px;
-			}
-		}
-
-		.button {
-			position: absolute;
-			right: 7px;
-			top: 8px;
-
-			@include breakpoint( '<480px' ) {
-				right: 4px;
-			}
-		}
-	}
-
-	.notice {
-		font-size: 12px;
-		margin-top: 10px;
-		padding-right: 15px;
-	}
-}
-
-.name-servers__dns-templates-buttons {
-	margin-top: 20px;
-}
-
-.is-placeholder {
-	.name-servers__dns,
-	.name-servers__dns-templates {
-		.name-servers__title {
-			@include placeholder();
-		}
-
-		.name-servers__toggle,
-		.name-servers__dns-templates-buttons {
-			display: none;
-		}
-
-		.name-servers__explanation,
-		.name-servers__explanation a {
-			@include placeholder();
-		}
-	}
-
-	.vertical-nav-item {
-		span:nth-of-type( 1 ) {
-			@include placeholder();
-		}
-
-		span:nth-of-type( 2 ) {
-			display: none;
-		}
 	}
 }
 
