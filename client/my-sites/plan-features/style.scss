@@ -342,69 +342,16 @@ $plan-features-sidebar-width: 272px;
 }
 
 .segmented-control.is-customer-type-toggle {
-	background-color: transparent;
-	margin: 50px auto 20px;
-	max-width: 100%;
-	width: 580px;
-
-	.segmented-control__item {
-		background-color: var( --color-neutral-0 );
-		min-width: 50%;
-
-		&:first-of-type {
-			margin-right: 5px;
-
-			@include breakpoint( '<660px' ) {
-				margin: 0 15px 10px;
-			}
-		}
-
-		&:last-of-type {
-			margin-right: 5px;
-
-			@include breakpoint( '<660px' ) {
-				margin: 0 15px;
-			}
-		}
-
-		&.is-selected + .segmented-control__item .segmented-control__link {
-			border-left-color: var( --color-neutral-200 );
-
-			&:hover {
-				border-left-color: var( --color-neutral-700 );
-			}
-		}
-	}
-
-	.segmented-control__link {
-		border-radius: 6px;
-		border: 2px solid --color-neutral-200;
-		color: var( --color-neutral-700 );
-		font-size: 15px;
-		font-weight: 500;
-		padding: 15px;
-
-		&:hover {
-			background-color: transparent;
-			border: 2px solid var( --color-neutral-700 );
-		}
-	}
-
-	@include breakpoint( '<660px' ) {
-		flex-wrap: wrap;
-	}
+	max-width: 520px;
+	margin: 8px auto 16px;
 
 	@include breakpoint( '<480px' ) {
 		flex-wrap: wrap;
-		margin-bottom: 9px;
+		border-radius: 0;
 
-		.segmented-control__item {
-			width: 100%;
+		.segmented-control__link {
+			border-radius: 0;
 		}
-	}
-
-	&.is-primary .segmented-control__link:hover {
-		background-color: transparent;
 	}
 }
 
@@ -588,30 +535,46 @@ $plan-features-sidebar-width: 272px;
 // and override some of the segmented-control styles.
 // This UI should really use buttons instead.
 body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
-	.segmented-control__item {
-		background: none;
+	margin: 0 auto 16px;
+	box-shadow: 0 1px 1px 0 rgba(0,0,0,0.14),
+				0 2px 1px -1px rgba(0,0,0,0.12),
+				0 1px 3px 0 rgba(0,0,0,0.20);
 
-		&:hover,
-		&:focus {
-			background: none;
+	.segmented-control__item a {
+		text-decoration: underline;
+		border: none;
+	}
+
+	.segmented-control__item.is-selected {
+		position: relative;
+
+		// This adds a little pointer arrow to the bottom
+		// of the selected segment item. It relies on the
+		// relative positioning above.
+		@include breakpoint( '>480px' ) {
+			&:after {
+				display: block;
+				content: '';
+				width: 0;
+				height: 0;
+				border-left: 10px solid transparent;
+				border-right: 10px solid transparent;
+				border-top: 10px solid var(--color-primary-700);
+				position: absolute;
+				bottom: -10px;
+				left: calc(50% - 10px);
+			}
 		}
 
 		a,
 		a:hover,
 		a:focus {
-			background: none;
-			border: none;
-			color: var( --color-white );
-			text-decoration: underline;
-		}
-
-		&.is-selected a,
-		&.is-selected a:hover,
-		&.is-selected a:focus {
-			background: var( --color-white );
-			color: var( --color-text );
-			text-decoration: none;
+			@include breakpoint( '<660px' ) {
+				flex-wrap: wrap;
+			}
 			cursor: default;
+			text-decoration: none;
+		    background-color: var(--color-primary-700);
 		}
 	}
 }
