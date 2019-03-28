@@ -62,7 +62,7 @@ body.is-section-signup .layout.gravatar {
 
 	// With the dark background, the border on cards looks a
 	// a little strange. Lets try a shadow instead. -shaun
-	.is-site-information .site-information__wrapper:not(.is-single-fieldset) .card {
+	.is-site-information .site-information__wrapper:not( .is-single-fieldset ) .card {
 		@include elevation ( 9dp );
 
 		.dops & {
@@ -112,7 +112,7 @@ body.is-section-signup .layout.gravatar {
 
 // The container wrapped around every
 // step in signup
-body.is-section-signup .layout:not(.dops) .step-wrapper {
+body.is-section-signup .layout:not( .dops ) .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
 
