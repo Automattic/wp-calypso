@@ -46,7 +46,10 @@ exports[`<SiteInformation /> should render 1`] = `
                 primary={true}
                 type="submit"
               >
-                Continue
+                <t
+                  icon="arrow-right"
+                  size={24}
+                />
               </Button>
             </FormFieldset>
           </div>
@@ -82,7 +85,10 @@ exports[`<SiteInformation /> should render 1`] = `
                 primary={true}
                 type="submit"
               >
-                Continue
+                <t
+                  icon="arrow-right"
+                  size={24}
+                />
               </Button>
             </FormFieldset>
           </div>
@@ -118,7 +124,10 @@ exports[`<SiteInformation /> should render 1`] = `
                 primary={true}
                 type="submit"
               >
-                Continue
+                <t
+                  icon="arrow-right"
+                  size={24}
+                />
               </Button>
             </FormFieldset>
           </div>
