@@ -94,9 +94,15 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 } );
 
 export default connect(
-	state => ( {
-		siteType: getSiteType( state ),
-		isUserInput: getSiteVerticalIsUserInput( state ),
-	} ),
+	( state, ownProps ) => {
+		const siteType = getSiteType( state );
+
+		return {
+			siteType,
+			isUserInput: getSiteVerticalIsUserInput( state ),
+			// once we roll out previews to all the segments, this can be removed.
+			showSiteMockups: siteType === 'business' && ownProps.showSiteMockups,
+		};
+	},
 	mapDispatchToProps
 )( SiteTopicStep );

@@ -35,6 +35,7 @@ import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getDomainProductSlug } from 'lib/domains';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
@@ -599,6 +600,7 @@ export default connect(
 	( state, ownProps ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
+		const siteType = getSiteType( state );
 
 		return {
 			designType: getDesignType( state ),
@@ -611,6 +613,8 @@ export default connect(
 			siteGoals: getSiteGoals( state ),
 			surveyVertical: getSurveyVertical( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
+			// once we roll out previews to all the segments, this can be removed.
+			showSiteMockups: siteType === 'business' && ownProps.showSiteMockups,
 		};
 	},
 	{

@@ -230,6 +230,8 @@ export default connect(
 			siteVerticalName,
 			shouldFetchVerticalData,
 			hasMultipleFieldSets: size( formFields ) > 1,
+			// once we roll out previews to all the segments, this can be removed.
+			showSiteMockups: siteType === 'business' && ownProps.showSiteMockups,
 		};
 	},
 	( dispatch, ownProps ) => {
