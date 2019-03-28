@@ -72,10 +72,6 @@ export default connect(
 				flowName = 'ecommerce-onboarding';
 			}
 
-			if ( 'business' === siteTypeValue ) {
-				flowName = 'onboarding-for-business';
-			}
-
 			goToNextStep( flowName );
 		},
 	} )
