@@ -1,7 +1,7 @@
 /**
  * Sidebar Navigation Header in Sections
  */
-.current-section {
+.sidebar-navigation {
 	position: relative;
 	margin: 0 0 8px;
 
@@ -9,7 +9,7 @@
 		display: none;
 	}
 
-	a {
+	button {
 		display: flex;
 		justify-content: flex-start;
 		cursor: pointer;
@@ -17,19 +17,26 @@
 		color: var( --color-neutral-700 );
 		background: var( --color-white );
 		border-bottom: 1px solid var( --color-neutral-100 );
+		width: 100%;
 	}
 
-	.current-section__site-title {
+	&__section-title {
+		font-weight: 600;
+		text-align: left;
+	}
+
+	&__site-title {
 		font-size: 10px;
 		color: var( --color-neutral-400 );
-		margin: 2px 0 -3px;
+		margin: 0 0 3px;
+		text-align: left;
 	}
 
 	.site-icon {
 		margin-right: 8px;
 	}
 
-	.gridicons-chevron-left {
+	.gridicons-arrow-left {
 		color: var( --color-neutral-light );
 		margin: 0 8px;
 		align-self: center;
