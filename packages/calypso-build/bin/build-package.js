@@ -17,11 +17,11 @@ const outputDirCommon = path.join( dir, 'dist', 'cjs' );
 console.log( 'Building %s', dir );
 
 execSync( `npx babel --config-file ${ babelConfigFile } -d ${ outputDirEsm } ${ inputDir }`, {
-	env: Object.assign( {}, process.env, { CALYPSO_CLIENT: 'true' } ),
+	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults' } ),
 	cwd: root,
 } );
 
 execSync( `npx babel --config-file ${ babelConfigFile } -d ${ outputDirCommon } ${ inputDir }`, {
-	env: Object.assign( {}, process.env, { CALYPSO_CLIENT: 'false' } ),
+	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'server' } ),
 	cwd: root,
 } );

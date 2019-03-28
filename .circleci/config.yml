@@ -383,7 +383,7 @@ jobs:
           name: Build Stats
           environment:
             NODE_ENV: "production"
-            CALYPSO_CLIENT: "true"
+            BROWSERSLIST_ENV: "defaults"
           command: |
             #
             # This block should not cause a test failure and block PRs.
