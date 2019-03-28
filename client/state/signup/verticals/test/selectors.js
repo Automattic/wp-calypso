@@ -11,7 +11,7 @@ describe( 'state/signup/verticals/selectors', () => {
 			expect( getVerticals( {}, 'aaa' ) ).toBeNull();
 		} );
 
-		const searchTerm = 'Cool';
+		const searchTerm = 'cool';
 		const state = {
 			signup: {
 				verticals: {
@@ -29,6 +29,10 @@ describe( 'state/signup/verticals/selectors', () => {
 
 		test( 'should return null if it does not exist', () => {
 			expect( getVerticals( state, 'Aaa' ) ).toBeNull();
+		} );
+
+		test( 'should return correct results from mixed case and untrimmed value', () => {
+			expect( getVerticals( state, ' COOL ' ) ).toEqual( state.signup.verticals[ searchTerm ] );
 		} );
 	} );
 } );

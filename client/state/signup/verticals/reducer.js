@@ -1,13 +1,25 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { toLower, trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer, keyedReducer } from 'state/utils';
+import { createReducer } from 'state/utils';
 import { SIGNUP_VERTICALS_SET } from 'state/action-types';
 
-const verticals = createReducer( null, {
-	[ SIGNUP_VERTICALS_SET ]: ( state, action ) => action.verticals,
-} );
+const verticals = createReducer(
+	{},
+	{
+		[ SIGNUP_VERTICALS_SET ]: ( state, action ) => {
+			return {
+				...state,
+				[ trim( toLower( action.search ) ) ]: action.verticals,
+			};
+		},
+	}
+);
 
-export default keyedReducer( 'search', verticals );
+export default verticals;
