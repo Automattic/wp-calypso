@@ -65,4 +65,78 @@ describe( 'QueryVerticals', () => {
 
 		expect( requestVerticals ).not.toHaveBeenCalled();
 	} );
+
+	test( 'should create a debounce-wrapped function if debounce time is more than 0 on mount.', () => {
+		const requestVerticals = jest.fn();
+		const debounceFunc = jest.fn();
+		const debounceTime = 100;
+
+		shallow(
+			<QueryVerticals
+				requestVerticals={ requestVerticals }
+				debounceFunc={ debounceFunc }
+				debounceTime={ debounceTime }
+			/>
+		);
+
+		expect( debounceFunc ).toHaveBeenCalledWith( requestVerticals, debounceTime );
+	} );
+
+	test( 'should not create a debounce-wrapped function if debounce time is 0.', () => {
+		const requestVerticals = jest.fn();
+		const debounceFunc = jest.fn();
+
+		shallow(
+			<QueryVerticals
+				requestVerticals={ requestVerticals }
+				debounceFunc={ debounceFunc }
+				debounceTime={ 0 }
+			/>
+		);
+
+		expect( debounceFunc ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should update the debounced function if the debounce time has changed.', () => {
+		const requestVerticals = jest.fn();
+		const debounceFunc = jest.fn();
+
+		const wrapped = shallow(
+			<QueryVerticals
+				requestVerticals={ requestVerticals }
+				debounceFunc={ debounceFunc }
+				debounceTime={ 100 }
+			/>
+		);
+
+		const updatedDebounceTime = 200;
+
+		wrapped.setProps( {
+			debounceTime: updatedDebounceTime,
+		} );
+
+		expect( debounceFunc ).toHaveBeenCalledWith( requestVerticals, updatedDebounceTime );
+	} );
+
+	test( 'should not update the debounced function if the debounce time keeps the same.', () => {
+		const requestVerticals = jest.fn();
+		const debounceFunc = jest.fn();
+		const debounceTime = 100;
+
+		const wrapped = shallow(
+			<QueryVerticals
+				requestVerticals={ requestVerticals }
+				debounceFunc={ debounceFunc }
+				debounceTime={ debounceTime }
+			/>
+		);
+
+		debounceFunc.mockClear();
+
+		wrapped.setProps( {
+			debounceTime,
+		} );
+
+		expect( debounceFunc ).not.toHaveBeenCalled();
+	} );
 } );

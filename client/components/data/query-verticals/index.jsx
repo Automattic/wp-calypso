@@ -5,6 +5,7 @@
  */
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -18,29 +19,49 @@ export class QueryVerticals extends Component {
 		isFetched: PropTypes.bool,
 		searchTerm: PropTypes.string,
 		limit: PropTypes.number,
+		debounceTime: PropTypes.number,
+		debounceFunc: PropTypes.func,
 	};
 
 	static defaultProps = {
 		isFetched: false,
 		limit: 7,
 		searchTerm: '',
+		debounceTime: 0,
+		debounceFunc: debounce,
+	};
+
+	bindDebouncedRequest = () => {
+		const { debounceTime, debounceFunc } = this.props;
+
+		if ( debounceTime > 0 ) {
+			return debounceFunc( this.props.requestVerticals, this.props.debounceTime );
+		}
+
+		return this.props.requestVerticals;
 	};
 
 	componentDidMount() {
 		const { searchTerm = '', limit } = this.props;
 		const trimmedSearchTerm = searchTerm.trim();
 
+		this.debouncedRequest = this.bindDebouncedRequest();
+
 		if ( trimmedSearchTerm ) {
-			this.props.requestVerticals( trimmedSearchTerm, limit );
+			this.debouncedRequest( trimmedSearchTerm, limit );
 		}
 	}
 
-	componentDidUpdate() {
-		const { isFetched, searchTerm = '', limit } = this.props;
+	componentDidUpdate( prevProps ) {
+		const { isFetched, searchTerm, limit, debounceTime } = this.props;
 		const trimmedSearchTerm = searchTerm.trim();
 
+		if ( prevProps.debounceTime !== debounceTime ) {
+			this.debouncedRequest = this.bindDebouncedRequest();
+		}
+
 		if ( ! isFetched && trimmedSearchTerm ) {
-			this.props.requestVerticals( trimmedSearchTerm, limit );
+			this.debouncedRequest( trimmedSearchTerm, limit );
 		}
 	}
 
