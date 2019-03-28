@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
@@ -21,14 +21,8 @@ class AddProfileLinksButtons extends React.Component {
 	static propTypes = {
 		showingForm: PropTypes.bool,
 		showPopoverMenu: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		showingForm: false,
-	};
-
-	state = {
-		popoverPosition: 'top',
+		onShowAddWordPress: PropTypes.func.isRequired,
+		onShowAddOther: PropTypes.func.isRequired,
 	};
 
 	popoverContext = React.createRef();
@@ -48,32 +42,34 @@ class AddProfileLinksButtons extends React.Component {
 	};
 
 	render() {
-		return (
-			<div>
-				<PopoverMenu
-					isVisible={ this.props.showPopoverMenu }
-					onClose={ this.props.onClosePopoverMenu }
-					position={ this.state.popoverPosition }
-					context={ this.popoverContext.current }
-				>
-					<PopoverMenuItem onClick={ this.handleAddWordPressSiteButtonClick }>
-						{ this.props.translate( 'Add WordPress Site' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem onClick={ this.handleOtherSiteButtonClick }>
-						{ this.props.translate( 'Add URL' ) }
-					</PopoverMenuItem>
-				</PopoverMenu>
+		const { translate } = this.props;
 
+		return (
+			<Fragment>
 				<Button
-					compact
 					ref={ this.popoverContext }
-					className="popover-icon"
+					compact
+					disabled={ this.props.showingForm }
 					onClick={ this.props.onShowPopoverMenu }
 				>
 					<Gridicon icon="add-outline" />
-					<span>{ this.props.translate( 'Add' ) }</span>
+					<span>{ translate( 'Add' ) }</span>
 				</Button>
-			</div>
+				{ this.props.showPopoverMenu && (
+					<PopoverMenu
+						isVisible
+						onClose={ this.props.onClosePopoverMenu }
+						context={ this.popoverContext.current }
+					>
+						<PopoverMenuItem onClick={ this.handleAddWordPressSiteButtonClick }>
+							{ translate( 'Add WordPress Site' ) }
+						</PopoverMenuItem>
+						<PopoverMenuItem onClick={ this.handleOtherSiteButtonClick }>
+							{ translate( 'Add URL' ) }
+						</PopoverMenuItem>
+					</PopoverMenu>
+				) }
+			</Fragment>
 		);
 	}
 }
