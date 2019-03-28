@@ -19,7 +19,7 @@ class SkipButton extends PureComponent {
 		tracksEventName: PropTypes.string,
 
 		// Connected props
-		recordTracksEvent: PropTypes.func,
+		recordTracksEvent: PropTypes.func.isRequired,
 
 		// From localize() HoC
 		translate: PropTypes.func,
