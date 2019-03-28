@@ -1048,6 +1048,26 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
+	describe( 'Use the Calypso Media Modal: @parallel', function() {
+		let fileDetails;
+
+		// Create image file for upload
+		before( async function() {
+			fileDetails = await mediaHelper.createFile();
+			return fileDetails;
+		} );
+
+		step( 'Can log in', async function() {
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			return await loginFlow.loginAndStartNewPost( null, true );
+		} );
+
+		step( 'Can insert an image in an Image block with the Media Modal', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			return await gEditorComponent.addImageFromMediaModal( fileDetails );
+		} );
+	} );
+
 	describe( 'Revert a post to draft: @parallel', function() {
 		describe( 'Publish a new post', function() {
 			const originalBlogPostTitle = dataHelper.randomPhrase();
