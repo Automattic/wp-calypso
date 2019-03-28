@@ -166,7 +166,7 @@ export function createSiteWithCart(
 			site_segment: getSiteTypePropertyValue( 'slug', siteType, 'id' ) || undefined,
 			site_vertical: siteVerticalId || undefined,
 		},
-		public: -1,
+		public: 1,
 		validate: false,
 	};
 
