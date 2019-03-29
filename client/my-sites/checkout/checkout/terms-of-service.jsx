@@ -24,25 +24,22 @@ class TermsOfService extends React.Component {
 	};
 
 	renderTerms() {
-		let message = this.props.translate(
-			'By checking out, you agree to our {{link}}terms and conditions{{/link}}.',
-			{
-				components: {
-					link: (
-						<a
-							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
-		);
+		let message = this.props.translate( 'You agree to our {{link}}Terms of Service{{/link}}.', {
+			components: {
+				link: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+		} );
 
 		// Need to add check for subscription products in the cart so we don't show this for one-off purchases like themes
 		if ( this.props.hasRenewableSubscription ) {
 			message = this.props.translate(
-				'By checking out, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
+				'You agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
 				{
 					components: {
 						tosLink: (

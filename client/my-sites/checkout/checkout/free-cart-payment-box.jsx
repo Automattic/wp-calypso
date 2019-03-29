@@ -13,12 +13,11 @@ import React from 'react';
  */
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
-import TermsOfService from './terms-of-service';
 import CartToggle from './cart-toggle';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import { hasOnlyProductsOf } from 'lib/cart-values/cart-items';
 import { isBlogger } from 'lib/products-values';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import CheckoutTerms from './checkout-terms';
 
 class FreeCartPaymentBox extends React.Component {
 	static propTypes = {
@@ -55,8 +54,7 @@ class FreeCartPaymentBox extends React.Component {
 						</div>
 					</div>
 
-					<TermsOfService />
-					<DomainRegistrationRefundPolicy cart={ cart } />
+					<CheckoutTerms cart={ cart } />
 
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-actions">

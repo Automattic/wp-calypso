@@ -395,9 +395,14 @@ function showCreditCardExpiringWarning( purchase ) {
 	);
 }
 
+function getDomainRegistrationAgreementUrl( purchase ) {
+	return purchase.domainRegistrationAgreementUrl;
+}
+
 export {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
+	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
 	getPurchasesBySite,

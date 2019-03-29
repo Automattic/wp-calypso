@@ -72,7 +72,7 @@ describe( 'CreditsPaymentBox', () => {
 		const wrapper = shallow( <CreditsPaymentBox { ...defaultProps } /> );
 		expect( wrapper.find( '.payment-box-section' ) ).toHaveLength( 1 );
 		expect( wrapper.find( '.payment-box-actions' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'TermsOfService' ) ).toHaveLength( 1 );
+		expect( wrapper.find( 'CheckoutTerms' ) ).toHaveLength( 1 );
 	} );
 
 	const eligiblePlans = [

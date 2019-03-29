@@ -73,7 +73,7 @@ describe( 'PaypalPaymentBox', () => {
 		const wrapper = shallow( <PaypalPaymentBox { ...defaultProps } /> );
 		expect( wrapper.find( '.checkout__payment-box-sections' ) ).toHaveLength( 1 );
 		expect( wrapper.find( '.checkout__payment-box-actions' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'TermsOfService' ) ).toHaveLength( 1 );
+		expect( wrapper.find( 'CheckoutTerms' ) ).toHaveLength( 1 );
 	} );
 
 	const eligiblePlans = [

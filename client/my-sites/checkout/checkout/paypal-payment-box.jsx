@@ -19,14 +19,13 @@ import Input from 'my-sites/domains/components/form/input';
 import notices from 'notices';
 import PaymentCountrySelect from 'components/payment-country-select';
 import SubscriptionText from './subscription-text';
-import TermsOfService from './terms-of-service';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
 import RecentRenewals from './recent-renewals';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import CheckoutTerms from './checkout-terms';
 
 const wpcom = wp.undocumented();
 
@@ -172,12 +171,8 @@ export class PaypalPaymentBox extends React.Component {
 					{ this.props.children }
 
 					<RecentRenewals cart={ this.props.cart } />
-					<TermsOfService
-						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(
-							this.props.cart
-						) }
-					/>
-					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
+
+					<CheckoutTerms cart={ cart } />
 
 					<div className="checkout__payment-box-actions">
 						<div className="checkout__payment-box-buttons">

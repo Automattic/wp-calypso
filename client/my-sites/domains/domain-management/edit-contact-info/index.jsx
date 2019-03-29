@@ -77,6 +77,7 @@ class EditContactInfo extends React.Component {
 				<SectionHeader label={ this.props.translate( 'Edit Contact Info' ) } />
 				<EditContactInfoFormCard
 					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
+					domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
 					selectedDomain={ getSelectedDomain( this.props ) }
 					selectedSite={ this.props.selectedSite }
 				/>
