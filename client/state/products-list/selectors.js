@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { pickBy, get } from 'lodash';
+import { pickBy, get, max } from 'lodash';
 
 /**
  * Internal dependencies
@@ -98,11 +98,13 @@ export const planSlugToPlanProduct = ( products, planSlug ) => {
  * @param {Object} state Current redux state
  * @param {Number} siteId Site ID to consider
  * @param {Object} planObject Plan object returned by getPlan() from lib/plans
+ * @param {Number} credits The number of free credits in cart
  * @return {Object} Object with a full and monthly price
  */
-export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) => ( {
+export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject, credits ) => ( {
 	priceFullBeforeDiscount: getPlanRawPrice( state, planObject.getProductId(), false ),
 	priceFull: getPlanPrice( state, siteId, planObject, false ),
+	priceMinusCredits: max( [ getPlanPrice( state, siteId, planObject, false ) - credits, 0 ] ),
 	priceMonthly: getPlanPrice( state, siteId, planObject, true ),
 } );
 
@@ -113,9 +115,10 @@ export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) 
  * @param {Object} state Current redux state
  * @param {Number} siteId Site ID to consider
  * @param {String[]} planSlugs Plans constants
+ * @param {Number} credits The number of free credits in cart
  * @return {Array} A list of objects as described above
  */
-export const computeProductsWithPrices = ( state, siteId, planSlugs ) => {
+export const computeProductsWithPrices = ( state, siteId, planSlugs, credits ) => {
 	const products = getProductsList( state );
 
 	return planSlugs
@@ -123,7 +126,7 @@ export const computeProductsWithPrices = ( state, siteId, planSlugs ) => {
 		.filter( planProduct => planProduct.plan && get( planProduct, [ 'product', 'available' ] ) )
 		.map( availablePlanProduct => ( {
 			...availablePlanProduct,
-			...computeFullAndMonthlyPricesForPlan( state, siteId, availablePlanProduct.plan ),
+			...computeFullAndMonthlyPricesForPlan( state, siteId, availablePlanProduct.plan, credits ),
 		} ) )
 		.filter( availablePlanProduct => availablePlanProduct.priceFull )
 		.sort( ( a, b ) => getTermDuration( a.plan.term ) - getTermDuration( b.plan.term ) );

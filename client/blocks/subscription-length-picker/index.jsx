@@ -29,7 +29,7 @@ export class SubscriptionLengthPicker extends React.Component {
 	static propTypes = {
 		initialValue: PropTypes.string,
 		plans: PropTypes.arrayOf( PropTypes.oneOf( Object.keys( PLANS_LIST ) ) ),
-
+		cart: PropTypes.object,
 		currencyCode: PropTypes.oneOf( Object.keys( CURRENCIES ) ).isRequired,
 		onChange: PropTypes.func,
 		translate: PropTypes.func.isRequired,
@@ -109,11 +109,12 @@ export function myFormatCurrency( price, code, options = {} ) {
 	return formatCurrency( price, code, hasCents ? options : { ...options, precision: 0 } );
 }
 
-export const mapStateToProps = ( state, { plans } ) => {
+export const mapStateToProps = ( state, { plans, cart } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
+	const credits = cart.credits;
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans ),
+		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans, credits ),
 	};
 };
 
