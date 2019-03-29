@@ -58,6 +58,7 @@ function createPurchaseObject( purchase ) {
 		// only generate a moment if `renewDate` is present and positive
 		renewMoment:
 			purchase.renew_date && purchase.renew_date > '0' ? i18n.moment( purchase.renew_date ) : null,
+		saleAmount: purchase.sale_amount,
 		siteId: Number( purchase.blog_id ),
 		siteName: purchase.blogname,
 		subscribedDate: purchase.subscribed_date,

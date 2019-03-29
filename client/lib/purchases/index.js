@@ -382,6 +382,10 @@ function purchaseType( purchase ) {
 	return null;
 }
 
+function getRenewalPrice( purchase ) {
+	return purchase.saleAmount || purchase.amount;
+}
+
 function showCreditCardExpiringWarning( purchase ) {
 	return (
 		! isIncludedWithPlan( purchase ) &&
@@ -397,6 +401,7 @@ export {
 	getIncludedDomain,
 	getName,
 	getPurchasesBySite,
+	getRenewalPrice,
 	getSubscriptionEndDate,
 	handleRenewNowClick,
 	hasIncludedDomain,
