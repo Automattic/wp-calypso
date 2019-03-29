@@ -45,7 +45,8 @@ export class SubscriptionLengthPicker extends React.Component {
 	render() {
 		const { productsWithPrices, translate, shouldShowTax } = this.props;
 		const hasDiscount = productsWithPrices.some(
-			( { priceFullBeforeDiscount, priceFull } ) => priceFull !== priceFullBeforeDiscount
+			( { priceFullBeforeDiscount, priceMinusCredits } ) =>
+				priceMinusCredits !== priceFullBeforeDiscount
 		);
 
 		return (
@@ -67,13 +68,13 @@ export class SubscriptionLengthPicker extends React.Component {
 
 				<div className="subscription-length-picker__options">
 					{ productsWithPrices.map(
-						( { plan, planSlug, priceFullBeforeDiscount, priceFull, priceMonthly } ) => (
+						( { plan, planSlug, priceFullBeforeDiscount, priceMinusCredits, priceMonthly } ) => (
 							<div className="subscription-length-picker__option-container" key={ planSlug }>
 								<SubscriptionLengthOption
 									type={ hasDiscount ? 'upgrade' : 'new-sale' }
 									term={ plan.term }
 									checked={ planSlug === this.props.initialValue }
-									price={ myFormatCurrency( priceFull, this.props.currencyCode ) }
+									price={ myFormatCurrency( priceMinusCredits, this.props.currencyCode ) }
 									priceBeforeDiscount={ myFormatCurrency(
 										priceFullBeforeDiscount,
 										this.props.currencyCode
