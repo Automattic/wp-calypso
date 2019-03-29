@@ -45,8 +45,8 @@ class RepeatVisitorEdit extends Component {
 		if ( this.props.attributes.criteria === CRITERIA_AFTER ) {
 			return sprintf(
 				_n(
-					'This block will only appear to people who have visited this page at least once.',
-					'This block will only appear to people who have visited this page at least %d times.',
+					'This block will only appear to people who have visited this page more than once.',
+					'This block will only appear to people who have visited this page more than %d times.',
 					+this.props.attributes.threshold
 				),
 				this.props.attributes.threshold
@@ -55,8 +55,8 @@ class RepeatVisitorEdit extends Component {
 
 		return sprintf(
 			_n(
-				'This block will only appear to people who have never visited this page before.',
-				'This block will only appear to people who have visited this page less than %d times.',
+				'This block will only appear to people who are visiting this page for the first time.',
+				'This block will only appear to people who have visited this page at most %d times.',
 				+this.props.attributes.threshold
 			),
 			this.props.attributes.threshold
