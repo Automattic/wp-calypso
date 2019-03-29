@@ -3,6 +3,7 @@
 exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
 <Fragment>
   <Connect(QueryVerticals)
+    debounceTime={300}
     searchTerm=""
   />
   <Connect(QueryVerticals)

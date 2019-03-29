@@ -161,7 +161,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 		return (
 			<>
-				<QueryVerticals searchTerm={ this.props.searchValue.trim() } />
+				<QueryVerticals searchTerm={ this.props.searchValue.trim() } debounceTime={ 300 } />
 				<QueryVerticals searchTerm={ DEFAULT_VERTICAL_KEY } limit={ 1 } />
 				<SuggestionSearch
 					id="siteTopic"
