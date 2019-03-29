@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { translate } from 'i18n-calypso';
 import url from 'url';
 import { trim } from 'lodash';
 
@@ -15,14 +14,11 @@ import {
 	IMPORTER_NUX_URL_INPUT_SET,
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
 } from 'state/action-types';
-import { infoNotice, removeNotice } from 'state/notices/actions';
 import { loadmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
 import wpLib from 'lib/wp';
 import SignupActions from 'lib/signup/actions';
 
 const wpcom = wpLib.undocumented();
-
-const CHECKING_SITE_IMPORTABLE_NOTICE = 'checking-site-importable';
 
 const normalizeUrl = targetUrl => {
 	const siteURL = trim( targetUrl );
@@ -72,16 +68,8 @@ export const fetchIsSiteImportable = site_url => dispatch => {
 		.catch( error => dispatch( { type: IMPORT_IS_SITE_IMPORTABLE_ERROR, error } ) );
 };
 
-export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) => dispatch => {
-	dispatch(
-		infoNotice( translate( "Please wait, we're checking to see if we can import this site." ), {
-			id: CHECKING_SITE_IMPORTABLE_NOTICE,
-			icon: 'info',
-			isLoading: true,
-		} )
-	);
-
-	return dispatch( fetchIsSiteImportable( siteUrlFromInput ) )
+export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) => dispatch =>
+	dispatch( fetchIsSiteImportable( siteUrlFromInput ) )
 		.then( async siteDetails => {
 			const { engine, error, favicon, siteTitle, siteUrl: importSiteUrl } = siteDetails;
 
@@ -95,8 +83,6 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 				retryTimeout: 1000,
 			} );
 
-			dispatch( removeNotice( CHECKING_SITE_IMPORTABLE_NOTICE ) );
-
 			return SignupActions.submitSignupStep( { stepName }, [], {
 				sitePreviewImageBlob: imageBlob,
 				importEngine: engine,
@@ -107,8 +93,5 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 			} );
 		} )
 		.catch( error => {
-			dispatch( removeNotice( CHECKING_SITE_IMPORTABLE_NOTICE ) );
-
 			throw new Error( error );
 		} );
-};
