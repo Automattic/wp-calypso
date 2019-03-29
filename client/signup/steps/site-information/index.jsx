@@ -124,7 +124,13 @@ export class SiteInformation extends Component {
 	}
 
 	renderSubmitButton = () => (
-		<Button primary type="submit" onClick={ this.handleSubmit }>
+		<Button
+			title={ this.props.translate( 'Continue' ) }
+			aria-label={ this.props.translate( 'Continue' ) }
+			primary
+			type="submit"
+			onClick={ this.handleSubmit }
+		>
 			<Gridicon icon="arrow-right" />
 		</Button>
 	);
