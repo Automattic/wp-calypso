@@ -90,7 +90,7 @@ class GSuitePurchaseCta extends React.Component {
 								) }
 
 								<h5 className="gsuite-purchase-cta__add-google-apps-card-billing-period">
-									{ translate( '%(price)s billed yearly (2 months free!)', {
+									{ translate( '%(price)s billed yearly', {
 										args: {
 											price: annualPrice,
 										},

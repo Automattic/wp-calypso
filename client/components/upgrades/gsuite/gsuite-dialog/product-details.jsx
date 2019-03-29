@@ -34,7 +34,7 @@ class GoogleAppsProductDetails extends Component {
 	}
 
 	renderPeriod() {
-		return this.props.translate( '%(annualPrice)s Billed yearly — get 2 months free!', {
+		return this.props.translate( '%(annualPrice)s Billed yearly', {
 			args: { annualPrice: this.props.annualPrice },
 		} );
 	}
