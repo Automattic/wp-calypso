@@ -173,23 +173,8 @@ class ImportURLStepComponent extends Component {
 	};
 
 	renderNotice = () => {
-		const { isLoading, translate } = this.props;
 		const { showUrlMessage } = this.state;
 		const urlMessage = this.getUrlMessage();
-
-		if ( isLoading ) {
-			return (
-				<Notice
-					className="import-url__url-input-message"
-					status="is-info"
-					showDismiss={ false }
-					isLoading
-					icon="info"
-				>
-					{ translate( "Please wait, we're checking to see if we can import this site." ) }
-				</Notice>
-			);
-		}
 
 		if ( showUrlMessage && urlMessage ) {
 			return (
