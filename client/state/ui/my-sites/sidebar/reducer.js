@@ -13,45 +13,19 @@ import {
 
 import { combineReducers } from 'state/utils';
 
-export function isSiteOpen( state = false, action ) {
-	switch ( action.type ) {
-		case MY_SITES_SIDEBAR_SITE_TOGGLE:
+function createToggleReducer( type ) {
+	return function( state = false, action ) {
+		if ( type === action.type ) {
 			return ! state;
-	}
+		}
 
-	return state;
-}
-
-export function isDesignOpen( state = false, action ) {
-	switch ( action.type ) {
-		case MY_SITES_SIDEBAR_DESIGN_TOGGLE:
-			return ! state;
-	}
-
-	return state;
-}
-
-export function isToolsOpen( state = false, action ) {
-	switch ( action.type ) {
-		case MY_SITES_SIDEBAR_TOOLS_TOGGLE:
-			return ! state;
-	}
-
-	return state;
-}
-
-export function isManageOpen( state = false, action ) {
-	switch ( action.type ) {
-		case MY_SITES_SIDEBAR_MANAGE_TOGGLE:
-			return ! state;
-	}
-
-	return state;
+		return state;
+	};
 }
 
 export default combineReducers( {
-	isSiteOpen,
-	isDesignOpen,
-	isToolsOpen,
-	isManageOpen,
+	isSiteOpen: createToggleReducer( MY_SITES_SIDEBAR_SITE_TOGGLE ),
+	isDesignOpen: createToggleReducer( MY_SITES_SIDEBAR_DESIGN_TOGGLE ),
+	isToolsOpen: createToggleReducer( MY_SITES_SIDEBAR_TOOLS_TOGGLE ),
+	isManageOpen: createToggleReducer( MY_SITES_SIDEBAR_MANAGE_TOGGLE ),
 } );
