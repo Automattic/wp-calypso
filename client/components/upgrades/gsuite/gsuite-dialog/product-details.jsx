@@ -34,8 +34,8 @@ class GoogleAppsProductDetails extends Component {
 	}
 
 	renderPeriod() {
-		return this.props.translate( '%(annualPrice)s Billed yearly', {
-			args: { annualPrice: this.props.annualPrice },
+		return this.props.translate( '%(price)s billed yearly', {
+			args: { price: this.props.annualPrice },
 		} );
 	}
 
