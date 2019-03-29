@@ -35,7 +35,8 @@ import PostShare from 'blocks/post-share';
 import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
-import WpBlockActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu/wp-block-actions-ellipsis-menu';
+import PostActionsEllipsisMenuEdit from 'my-sites/post-type-list/post-actions-ellipsis-menu/edit';
+import PostActionsEllipsisMenuTrash from 'my-sites/post-type-list/post-actions-ellipsis-menu/trash';
 import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 import { preload } from 'sections-helper';
@@ -126,17 +127,6 @@ class PostItem extends React.Component {
 		);
 	}
 
-	renderEllipsisMenu() {
-		const { globalId, isTypeWpBlock, multiSelectEnabled } = this.props;
-		if ( multiSelectEnabled ) {
-			return null;
-		}
-		if ( isTypeWpBlock ) {
-			return <WpBlockActionsEllipsisMenu globalId={ globalId } />;
-		}
-		return <PostActionsEllipsisMenu globalId={ globalId } />;
-	}
-
 	render() {
 		const {
 			className,
@@ -148,6 +138,7 @@ class PostItem extends React.Component {
 			translate,
 			multiSelectEnabled,
 			hasExpandedContent,
+			isTypeWpBlock,
 		} = this.props;
 
 		const title = post ? post.title : null;
@@ -222,7 +213,15 @@ class PostItem extends React.Component {
 						globalId={ globalId }
 						onClick={ this.clickHandler( 'image' ) }
 					/>
-					{ this.renderEllipsisMenu() }
+					{ ! multiSelectEnabled && ! isTypeWpBlock && (
+						<PostActionsEllipsisMenu globalId={ globalId } />
+					) }
+					{ ! multiSelectEnabled && isTypeWpBlock && (
+						<PostActionsEllipsisMenu globalId={ globalId } includeDefaultActions={ false }>
+							<PostActionsEllipsisMenuEdit key="edit" />
+							<PostActionsEllipsisMenuTrash key="trash" />
+						</PostActionsEllipsisMenu>
+					) }
 				</div>
 				{ hasExpandedContent && this.renderExpandedContent() }
 			</div>
