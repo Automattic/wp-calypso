@@ -66,10 +66,11 @@ import {
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
 } from 'lib/plans/constants';
+import PlanFeaturesScroller from './scroller';
 
 export class PlanFeatures extends Component {
 	render() {
-		const { isInSignup, planProperties } = this.props;
+		const { isInSignup, planProperties, withScroll } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -93,17 +94,19 @@ export class PlanFeatures extends Component {
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
-					<div className="plan-features__content">
+					<div ref={ this.contentRef } className="plan-features__content">
 						{ mobileView }
-						<table className={ tableClasses }>
-							<tbody>
-								<tr>{ this.renderPlanHeaders() }</tr>
-								{ planDescriptions }
-								<tr>{ this.renderTopButtons() }</tr>
-								{ this.renderPlanFeatureRows() }
-								{ bottomButtons }
-							</tbody>
-						</table>
+						<PlanFeaturesScroller withScroll={ withScroll } planCount={ planProperties.length }>
+							<table className={ tableClasses }>
+								<tbody>
+									<tr>{ this.renderPlanHeaders() }</tr>
+									{ planDescriptions }
+									<tr>{ this.renderTopButtons() }</tr>
+									{ this.renderPlanFeatureRows() }
+									{ bottomButtons }
+								</tbody>
+							</table>
+						</PlanFeaturesScroller>
 					</div>
 				</div>
 			</div>
