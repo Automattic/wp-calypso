@@ -54,6 +54,14 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 							}
 						) }
 					</p>
+					<p>
+						{ i18n.translate(
+							'Not sure where to start? Head on over to {{a}}Learn WordPress{{/a}}.',
+							{
+								components: { a: <a href="http://learn.wordpress.com" /> },
+							}
+						) }
+					</p>
 				</div>,
 				{ displayOnNextPage },
 			];
@@ -72,6 +80,14 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 								'own posts and the posts of others, as well as upload media.'
 						) }
 					</p>
+					<p>
+						{ i18n.translate(
+							'Not sure where to start? Head on over to {{a}}Learn WordPress{{/a}}.',
+							{
+								components: { a: <a href="http://learn.wordpress.com" /> },
+							}
+						) }
+					</p>
 				</div>,
 				{ displayOnNextPage },
 			];
@@ -88,6 +104,14 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 						{ i18n.translate(
 							'This is your site dashboard where you can publish and ' +
 								'edit your own posts as well as upload media.'
+						) }
+					</p>
+					<p>
+						{ i18n.translate(
+							'Not sure where to start? Head on over to {{a}}Learn WordPress{{/a}}.',
+							{
+								components: { a: <a href="http://learn.wordpress.com" /> },
+							}
 						) }
 					</p>
 				</div>,
