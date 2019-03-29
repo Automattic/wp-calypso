@@ -19,3 +19,12 @@ import { ReactComponent as SvgExample } from './test.svg';
 <SvgExample />
 ```
 
+## Adding icons
+
+To add icons to this package, download using the Material icon tool:
+
+https://material.io/tools/icons/
+
+Store the SVG files in the sub-folder matching the category used on
+material.io.
+
