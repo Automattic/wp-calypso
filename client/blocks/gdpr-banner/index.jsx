@@ -19,7 +19,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import { isCurrentUserMaybeInGdprZone } from 'lib/analytics/utils';
-import { isMobileApp } from '../../lib/mobile-app';
+import { isWpMobileApp } from 'lib/mobile-app';
 
 const SIX_MONTHS = 6 * 30 * 24 * 60 * 60;
 
@@ -54,7 +54,7 @@ class GdprBanner extends Component {
 		if ( cookies.sensitive_pixel_option === 'yes' || cookies.sensitive_pixel_option === 'no' ) {
 			return false;
 		}
-		if ( isMobileApp() ) {
+		if ( isWpMobileApp() ) {
 			return false;
 		}
 		if ( isCurrentUserMaybeInGdprZone() ) {
