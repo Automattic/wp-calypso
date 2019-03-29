@@ -19,10 +19,6 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"engines": {
-		"node": "^10.13.0",
-		"npm": "^6.1.0"
-	},
 	"main": "dist/calypso-color-schemes.css",
 	"publishConfig": {
 		"access": "public"
