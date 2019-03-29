@@ -11,7 +11,7 @@ describe( 'state/signup/verticals/reducer', () => {
 		expect( reducer( undefined, {} ) ).toEqual( {} );
 	} );
 
-	test( 'should associate the search string to the verticals array.', () => {
+	test( 'should associate a trimmed and lowercase search string to the verticals array.', () => {
 		const search = 'Foo';
 		const verticals = [ { id: 0, verticalName: 'Coffee' }, { id: 1, verticalName: 'Tea' } ];
 
@@ -22,7 +22,7 @@ describe( 'state/signup/verticals/reducer', () => {
 				verticals,
 			} )
 		).toEqual( {
-			[ search ]: verticals,
+			foo: verticals,
 		} );
 	} );
 } );

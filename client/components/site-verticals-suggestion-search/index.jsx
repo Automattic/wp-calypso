@@ -183,11 +183,8 @@ export class SiteVerticalsSuggestionSearch extends Component {
 export default localize(
 	connect(
 		( state, ownProps ) => {
-			const { searchValue } = ownProps;
-			const trimmedSearchValue = searchValue.trim();
-			const verticals = getVerticals( state, trimmedSearchValue );
-			const isVerticalSearchPending = trimmedSearchValue && null == verticals;
-
+			const verticals = getVerticals( state, ownProps.searchValue );
+			const isVerticalSearchPending = ownProps.searchValue && null == verticals;
 			return {
 				verticals: verticals || [],
 				isVerticalSearchPending,

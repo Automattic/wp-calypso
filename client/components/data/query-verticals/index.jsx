@@ -15,17 +15,19 @@ import { getVerticals } from 'state/signup/verticals/selectors';
 
 export class QueryVerticals extends Component {
 	static propTypes = {
+		isFetched: PropTypes.bool,
 		searchTerm: PropTypes.string,
 		limit: PropTypes.number,
 	};
 
 	static defaultProps = {
+		isFetched: false,
 		limit: 7,
 		searchTerm: '',
 	};
 
 	componentDidMount() {
-		const { searchTerm, limit } = this.props;
+		const { searchTerm = '', limit } = this.props;
 		const trimmedSearchTerm = searchTerm.trim();
 
 		if ( trimmedSearchTerm ) {
@@ -34,7 +36,7 @@ export class QueryVerticals extends Component {
 	}
 
 	componentDidUpdate() {
-		const { isFetched, searchTerm, limit } = this.props;
+		const { isFetched, searchTerm = '', limit } = this.props;
 		const trimmedSearchTerm = searchTerm.trim();
 
 		if ( ! isFetched && trimmedSearchTerm ) {
@@ -49,7 +51,7 @@ export class QueryVerticals extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		isFetched: null !== getVerticals( ownProps.searchTerm ),
+		isFetched: null !== getVerticals( state, ownProps.searchTerm ),
 	} ),
 	{
 		requestVerticals,
