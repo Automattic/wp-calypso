@@ -13,7 +13,7 @@ function getAnnualPrice( cost, currencyCode ) {
 }
 
 function getMonthlyPrice( cost, currencyCode ) {
-	return formatPrice( cost / 10, currencyCode );
+	return formatPrice( cost / 12, currencyCode );
 }
 
 function googleAppsSettingsUrl( domainName ) {
