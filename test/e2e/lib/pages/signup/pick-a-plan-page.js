@@ -34,6 +34,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 			skipButtonSelector
 		);
 		if ( skipButtonDisplayed === true ) {
+			console.log( 'skip button displayed' );
 			return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
 		}
 		return await this._selectPlan( 'free' );
@@ -57,12 +58,13 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 			driverManager.currentScreenSize() === 'mobile'
 				? '.plan-features__mobile'
 				: '.plan-features__table';
-		const selector = By.css( `${ plansPrefix } button.is-${ level }-plan:not([disabled])` );
+		const selector = By.css( `${ plansPrefix } button.is-${ level }-plan` );
 		await driverHelper.clickWhenClickable( this.driver, selector );
 		try {
 			await driverHelper.waitTillNotPresent( this.driver, selector );
 		} catch {
 			//If the first click doesn't take, try again
+			console.log( 'first plan click failed' );
 			await driverHelper.clickWhenClickable( this.driver, selector );
 		}
 	}
