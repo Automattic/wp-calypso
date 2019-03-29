@@ -40,7 +40,6 @@ import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugi
 import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
 import contactFormPlugin from './plugins/contact-form/plugin';
 import simplePaymentsPlugin from './plugins/simple-payments/plugin';
-import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
 import wptextpatternPlugin from './plugins/wptextpattern/plugin';
 import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 import insertMenuPlugin from './plugins/insert-menu/plugin';
@@ -70,7 +69,6 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 	editorButtonAnalyticsPlugin,
 	calypsoAlertPlugin,
 	contactFormPlugin,
-	afterTheDeadlinePlugin,
 	wptextpatternPlugin,
 	toolbarPinPlugin,
 	embedPlugin,
@@ -137,7 +135,6 @@ const PLUGINS = [
 	'wpcom',
 	'wpeditimage',
 	'wplink',
-	'AtD',
 	'directionality',
 	'wpemoji',
 	'wpcom/autoresize',
@@ -339,10 +336,6 @@ export default class extends React.Component {
 			menubar: false,
 			indent: false,
 
-			// AfterTheDeadline Configuration
-			atd_rpc_id: 'https://wordpress.com',
-			atd_ignore_enable: true,
-
 			// Try to find a suitable minimum size based on the viewport height
 			// minus the surrounding editor chrome to avoid scrollbars. In the
 			// future, we should calculate from the rendered editor bounds.
@@ -351,7 +344,7 @@ export default class extends React.Component {
 				: Math.max( document.documentElement.clientHeight - 300, 300 ),
 			autoresize_bottom_margin: isGutenbergClassicBlock || isMobile() ? 10 : 50,
 
-			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,${ ltrButton }wpcom_advanced`,
+			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,wp_more,${ ltrButton }wpcom_advanced`,
 			toolbar2:
 				'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
