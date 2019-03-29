@@ -43,6 +43,7 @@ import {
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 } from './utils';
 import versionCompare from 'lib/version-compare';
+import { isWpMobileApp } from 'lib/mobile-app';
 
 /**
  * Style dependencies
@@ -91,7 +92,7 @@ export class AppBanner extends Component {
 	isVisible() {
 		const { dismissedUntil, currentSection } = this.props;
 
-		return this.isMobile() && ! isDismissed( dismissedUntil, currentSection );
+		return this.isMobile() && ! isWpMobileApp() && ! isDismissed( dismissedUntil, currentSection );
 	}
 
 	isiOS() {
