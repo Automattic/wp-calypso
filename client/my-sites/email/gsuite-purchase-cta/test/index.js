@@ -17,16 +17,21 @@ jest.mock( 'my-sites/email/gsuite-purchase-features', () => 'GSuitePurchaseFeatu
 
 describe( 'GSuitePurchaseCta', () => {
 	test( 'it renders GSuitePurchaseCta with basic plan', () => {
-		const store = createReduxStore();
+		const store = createReduxStore( {
+			ui: { selectedSiteId: 123 },
+			sites: {
+				items: {
+					123: {
+						ID: 123,
+						URL: 'https://test.com',
+					},
+				},
+			},
+		} );
 		const tree = renderer
 			.create(
 				<Provider store={ store }>
-					<GSuitePurchaseCta
-						annualPrice={ '$50' }
-						monthlyPrice={ '$5' }
-						productSlug={ 'gapps' }
-						selectedSite={ { ID: 'foo' } }
-					/>
+					<GSuitePurchaseCta annualPrice={ '$50' } monthlyPrice={ '$5' } productSlug={ 'gapps' } />
 				</Provider>
 			)
 			.toJSON();
@@ -34,7 +39,17 @@ describe( 'GSuitePurchaseCta', () => {
 	} );
 
 	test( 'it renders GSuitePurchaseCta with business plan', () => {
-		const store = createReduxStore();
+		const store = createReduxStore( {
+			ui: { selectedSiteId: 123 },
+			sites: {
+				items: {
+					123: {
+						ID: 123,
+						URL: 'https://test.com',
+					},
+				},
+			},
+		} );
 		const tree = renderer
 			.create(
 				<Provider store={ store }>
@@ -42,7 +57,7 @@ describe( 'GSuitePurchaseCta', () => {
 						annualPrice={ '$50' }
 						monthlyPrice={ '$5' }
 						productSlug={ 'gapps_unlimited' }
-						selectedSite={ { ID: 'foo' } }
+						selectedSiteSlug={ 'test.com' }
 					/>
 				</Provider>
 			)

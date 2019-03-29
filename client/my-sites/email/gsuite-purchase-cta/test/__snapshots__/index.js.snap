@@ -63,7 +63,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
           <h5
             className="gsuite-purchase-cta__add-google-apps-card-billing-period"
           >
-            $50 billed yearly (2 months free!)
+            $50 billed yearly
           </h5>
         </div>
       </div>
@@ -165,7 +165,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
           <h5
             className="gsuite-purchase-cta__add-google-apps-card-billing-period"
           >
-            $50 billed yearly (2 months free!)
+            $50 billed yearly
           </h5>
         </div>
       </div>
