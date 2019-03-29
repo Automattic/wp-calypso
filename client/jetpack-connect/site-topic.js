@@ -29,8 +29,7 @@ class JetpackSiteTopic extends Component {
 		if ( ! siteJetpackVersion ) {
 			return null;
 		}
-
-		if ( versionCompare( siteJetpackVersion, 7.2 ) < 0 || siteJetpackVersion === '7.2-alpha' ) {
+		if ( versionCompare( siteJetpackVersion, '7.2-alpha', '>=' ) ) {
 			page( `/jetpack/connect/user-type/${ siteSlug }` );
 		} else {
 			page( `/jetpack/connect/plans/${ siteSlug }` );
