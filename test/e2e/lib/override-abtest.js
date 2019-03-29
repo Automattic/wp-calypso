@@ -12,7 +12,7 @@ import * as abTests from '../../../client/lib/abtest/active-tests';
 import * as slackNotifier from './slack-notifier';
 
 async function writeABTests( driver, testList ) {
-	await driver.executeScript( 'window.localStorage.clear();' );
+	await driver.executeScript( "window.localStorage.removeItem('ABTests');" );
 
 	await driver.executeScript( `window.localStorage.setItem('ABTests','{${ testList }}');` );
 
