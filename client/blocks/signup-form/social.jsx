@@ -60,7 +60,7 @@ class SocialSignupForm extends Component {
 		const redirectUri = uxMode === 'redirect' ? `https://${ window.location.host }/start` : null;
 
 		return (
-			<div className="signup-form__social" compact={ this.props.compact }>
+			<div className="signup-form__social">
 				{ ! this.props.compact && (
 					<p>
 						{ preventWidows(
