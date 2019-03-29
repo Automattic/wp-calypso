@@ -3,7 +3,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { includes, head, omit, find } from 'lodash';
 import page from 'page';
@@ -206,7 +206,7 @@ class TransferOtherUser extends React.Component {
 		}
 
 		return (
-			<div>
+			<Fragment>
 				<SectionHeader label={ translate( 'Transfer Domain To Another User' ) } />
 				<Card className="transfer-to-other-user__transfer-card">
 					<p>
@@ -253,7 +253,7 @@ class TransferOtherUser extends React.Component {
 					</FormButton>
 				</Card>
 				{ this.renderDialog() }
-			</div>
+			</Fragment>
 		);
 	}
 

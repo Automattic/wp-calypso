@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { get, map, reduce } from 'lodash';
 
@@ -49,12 +49,12 @@ class DomainRegistrationAgreement extends React.Component {
 		);
 		let key = 0;
 		return (
-			<React.Fragment>
+			<Fragment>
 				<p>{ preamble }</p>
 				{ map( agreementsList, ( { url, domains } ) => (
 					<p key={ key++ }>{ this.renderAgreementLinkForList( url, domains ) }</p>
 				) ) }
-			</React.Fragment>
+			</Fragment>
 		);
 	};
 

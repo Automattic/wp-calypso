@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 
 /**
  * Internal dependencies
@@ -16,14 +16,14 @@ class CheckoutTerms extends React.Component {
 	render() {
 		const { cart } = this.props;
 		return (
-			<React.Fragment>
+			<Fragment>
 				<div className="checkout__terms">
 					<strong>By checking out:</strong>
 				</div>
 				<TermsOfService hasRenewableSubscription={ cartItems.hasRenewableSubscription( cart ) } />
 				<DomainRegistrationAgreement cart={ cart } />
 				<DomainRegistrationRefundPolicy cart={ cart } />
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }
