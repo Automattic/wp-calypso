@@ -3089,7 +3089,10 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			const modulesActive = verifyJetpackModulesActive( state, siteId, [ 'manage' ] );
+			const modulesActive = verifyJetpackModulesActive( state, siteId, [
+				'contact-form',
+				'manage',
+			] );
 			chaiExpect( modulesActive ).to.equal( false );
 		} );
 	} );
