@@ -42,8 +42,10 @@ exports[`<SiteInformation /> should render 1`] = `
                 value="Ho ho ho!"
               />
               <Button
+                aria-label="Continue"
                 onClick={[Function]}
                 primary={true}
+                title="Continue"
                 type="submit"
               >
                 <t
@@ -81,8 +83,10 @@ exports[`<SiteInformation /> should render 1`] = `
                 value=""
               />
               <Button
+                aria-label="Continue"
                 onClick={[Function]}
                 primary={true}
+                title="Continue"
                 type="submit"
               >
                 <t
@@ -120,8 +124,10 @@ exports[`<SiteInformation /> should render 1`] = `
                 value=""
               />
               <Button
+                aria-label="Continue"
                 onClick={[Function]}
                 primary={true}
+                title="Continue"
                 type="submit"
               >
                 <t
