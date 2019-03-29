@@ -325,7 +325,9 @@ class ManagePurchase extends Component {
 					<ProductLink purchase={ purchase } selectedSite={ site } />
 				</span>
 				{ registrationAgreementUrl && (
-					<a href={ registrationAgreementUrl }>{ domainRegistrationAgreementLinkText }</a>
+					<a href={ registrationAgreementUrl } target="_blank" rel="noopener noreferrer">
+						{ domainRegistrationAgreementLinkText }
+					</a>
 				) }
 			</div>
 		);
