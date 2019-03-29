@@ -3089,10 +3089,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			const modulesActive = verifyJetpackModulesActive( state, siteId, [
-				'after-the-deadline',
-				'manage',
-			] );
+			const modulesActive = verifyJetpackModulesActive( state, siteId, [ 'manage' ] );
 			chaiExpect( modulesActive ).to.equal( false );
 		} );
 	} );

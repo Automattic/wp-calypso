@@ -25,8 +25,7 @@ export const normalizeSettings = settings => {
 			case 'jetpack_portfolio_posts_per_page':
 				break;
 			case 'jetpack_protect_global_whitelist':
-				const whitelist = get( settings[ key ], [ 'local' ], [] );
-				memo[ key ] = whitelist.join( '\n' );
+				memo[ key ] = get( settings[ key ], [ 'local' ], [] ).join( '\n' );
 				break;
 			case 'infinite-scroll':
 				break;
@@ -104,22 +103,6 @@ export const filterSettingsByActiveModules = settings => {
 		markdown: [ 'wpcom_publish_comments_with_markdown' ],
 		protect: [ 'jetpack_protect_global_whitelist' ],
 		sso: [ 'jetpack_sso_match_by_email', 'jetpack_sso_require_two_step' ],
-		'after-the-deadline': [
-			'onpublish',
-			'onupdate',
-			'guess_lang',
-			'Bias Language',
-			'Cliches',
-			'Complex Expression',
-			'Diacritical Marks',
-			'Double Negative',
-			'Hidden Verbs',
-			'Jargon Language',
-			'Passive voice',
-			'Phrases to Avoid',
-			'Redundant Expression',
-			'ignored_phrases',
-		],
 		comments: [ 'highlander_comment_form_prompt', 'jetpack_comment_form_color_scheme' ],
 		carousel: [ 'carousel_background_color', 'carousel_display_exif' ],
 		stats: [ 'admin_bar', 'hide_smile', 'count_roles', 'roles' ],
