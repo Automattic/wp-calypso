@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, find, get, some } from 'lodash';
+import { identity } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -27,26 +27,16 @@ import {
 	showInlineHelpPopover,
 	hideInlineHelpPopover,
 	hideChecklistPrompt,
-	showChecklistPrompt,
-	setChecklistPromptTaskId,
-	setChecklistPromptStep,
 } from 'state/inline-help/actions';
 import {
 	isInlineHelpPopoverVisible,
 	getChecklistPromptTaskId,
 	isInlineHelpChecklistPromptVisible,
 } from 'state/inline-help/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import getEditorUrl from 'state/selectors/get-editor-url';
-import createSelector from 'lib/create-selector';
-import { getSiteFrontPage } from 'state/sites/selectors';
-import { getPostsForQuery } from 'state/posts/selectors';
 
 /**
  * Module variables
  */
-const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
 const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
 	? getGlobalKeyboardShortcuts()
@@ -119,16 +109,8 @@ class InlineHelp extends Component {
 
 	showInlineHelp = () => {
 		debug( 'showing inline help.' );
-		const { currentRoute, taskUrls, checklistPromptTaskId } = this.props;
 		this.props.recordTracksEvent( 'calypso_inlinehelp_show' );
-
-		if ( checklistPromptTaskId && currentRoute === taskUrls[ checklistPromptTaskId ] ) {
-			this.props.showInlineHelpPopover();
-			this.props.showChecklistPrompt();
-		} else {
-			this.props.setChecklistPromptTaskId( null );
-			this.props.showInlineHelpPopover();
-		}
+		this.props.showInlineHelpPopover();
 	};
 
 	closeInlineHelp = () => {
@@ -216,60 +198,13 @@ class InlineHelp extends Component {
 	}
 }
 
-function getContactPage( posts ) {
-	return get(
-		find(
-			posts,
-			post =>
-				post.type === 'page' &&
-				( some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } ) ||
-					post.slug === 'contact' )
-		),
-		'ID',
-		null
-	);
-}
-
-function getPageEditorUrl( state, siteId, pageId ) {
-	if ( ! pageId ) {
-		return null;
-	}
-	return getEditorUrl( state, siteId, pageId, 'page' );
-}
-
-const getTaskUrls = createSelector(
-	( state, siteId ) => {
-		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
-		const firstPostID = get( find( posts, { type: 'post' } ), [ 0, 'ID' ] );
-		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
-		const frontPageUrl = getPageEditorUrl( state, siteId, getSiteFrontPage( state, siteId ) );
-
-		return {
-			post_published: getPageEditorUrl( state, siteId, firstPostID ),
-			contact_page_updated: contactPageUrl,
-			about_text_updated: frontPageUrl,
-			homepage_photo_updated: frontPageUrl,
-			business_hours_added: frontPageUrl,
-			service_list_added: frontPageUrl,
-			staff_info_added: frontPageUrl,
-			product_list_added: frontPageUrl,
-		};
-	},
-	( state, siteId ) => [ getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ) ]
-);
-
 const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const taskUrls = getTaskUrls( state, siteId );
-
 	return {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
 		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
 		checklistPromptTaskId: getChecklistPromptTaskId( state ),
-		taskUrls,
-		currentRoute: getCurrentRoute( state ),
 	};
 };
 
@@ -278,9 +213,6 @@ const mapDispatchToProps = {
 	showInlineHelpPopover,
 	hideInlineHelpPopover,
 	hideChecklistPrompt,
-	showChecklistPrompt,
-	setChecklistPromptTaskId,
-	setChecklistPromptStep,
 };
 
 export default connect(

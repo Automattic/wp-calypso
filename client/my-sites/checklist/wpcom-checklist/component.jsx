@@ -222,6 +222,7 @@ class WpcomChecklistComponent extends PureComponent {
 		if ( task.isCompleted ) {
 			return;
 		}
+
 		this.props.setChecklistPromptTaskId( task.id );
 		this.props.setChecklistPromptStep( 0 );
 		this.props.showInlineHelpPopover();
@@ -973,6 +974,7 @@ function getPageEditorUrl( state, siteId, pageId ) {
 	if ( ! pageId ) {
 		return null;
 	}
+
 	return getEditorUrl( state, siteId, pageId, 'page' );
 }
 
@@ -982,6 +984,7 @@ const getTaskUrls = createSelector(
 		const firstPostID = get( find( posts, { type: 'post' } ), [ 0, 'ID' ] );
 		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
 		const frontPageUrl = getPageEditorUrl( state, siteId, getSiteFrontPage( state, siteId ) );
+
 		return {
 			post_published: getPageEditorUrl( state, siteId, firstPostID ),
 			contact_page_updated: contactPageUrl,
