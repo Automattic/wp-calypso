@@ -18,6 +18,11 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import ScreenReaderText from 'components/screen-reader-text';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class FoldableCard extends Component {
 	static displayName = 'FoldableCard';
 
