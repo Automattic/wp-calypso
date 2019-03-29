@@ -57,7 +57,6 @@ describe( 'GSuitePurchaseCta', () => {
 						annualPrice={ '$50' }
 						monthlyPrice={ '$5' }
 						productSlug={ 'gapps_unlimited' }
-						selectedSiteSlug={ 'test.com' }
 					/>
 				</Provider>
 			)
