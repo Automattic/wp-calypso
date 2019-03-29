@@ -60,6 +60,7 @@ class CalypsoifyIframe extends Component {
 		super( props );
 		this.iframeRef = React.createRef();
 		this.mediaSelectPort = null;
+		this.revisionsPort = null;
 	}
 
 	componentDidMount() {
@@ -167,6 +168,13 @@ class CalypsoifyIframe extends Component {
 		}
 
 		if ( 'openRevisions' === action ) {
+			if ( ports && ports[ 0 ] ) {
+				// set imperatively on the instance because this is not
+				// the kind of assignment which causes re-renders and we
+				// want it set immediately
+				this.revisionsPort = ports[ 0 ];
+			}
+
 			this.props.openPostRevisionsDialog();
 		}
 
@@ -177,14 +185,30 @@ class CalypsoifyIframe extends Component {
 	};
 
 	loadRevision = revision => {
-		this.iframePort.postMessage( {
-			action: 'loadRevision',
-			payload: {
+		if ( this.revisionsPort ) {
+			this.revisionsPort.postMessage( {
 				title: revision.post_title,
 				excerpt: revision.post_excerpt,
 				content: revision.post_content,
-			},
-		} );
+			} );
+
+			// this is a once-only port
+			// after sending our message we want to close it out
+			// and prevent sending more messages (which will be ignored)
+			this.revisionsPort.close();
+			this.revisionsPort = null;
+		} else {
+			// this to be removed once we are reliably
+			// sending the new MessageChannel from the server
+			this.iframePort.postMessage( {
+				action: 'loadRevision',
+				payload: {
+					title: revision.post_title,
+					excerpt: revision.post_excerpt,
+					content: revision.post_content,
+				},
+			} );
+		}
 	};
 
 	closeMediaModal = media => {
