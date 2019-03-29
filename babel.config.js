@@ -1,4 +1,6 @@
-/** @format */
+/**
+ * External dependencies
+ */
 const _ = require( 'lodash' );
 const path = require( 'path' );
 
@@ -12,6 +14,7 @@ const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 const targets = isBrowser ? undefined : { node: 'current' };
 
 const config = {
+	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),
 	presets: [
 		[
 			'@babel/env',
@@ -24,7 +27,6 @@ const config = {
 				exclude: [ 'transform-typeof-symbol' ],
 			},
 		],
-		'@babel/react',
 	],
 	plugins: _.compact( [
 		[
@@ -37,67 +39,9 @@ const config = {
 			),
 			{ async: isCalypsoClient && codeSplit },
 		],
-		'@babel/plugin-proposal-class-properties',
-		'@babel/plugin-proposal-export-default-from',
-		'@babel/plugin-proposal-export-namespace-from',
-		'@babel/plugin-syntax-dynamic-import',
-		[
-			'@babel/transform-runtime',
-			{
-				corejs: false, // we polyfill so we don't need core-js
-				helpers: true,
-				regenerator: false,
-				useESModules: false,
-			},
-		],
 		isCalypsoClient && './inline-imports.js',
 	] ),
-	overrides: [
-		{
-			test: [ './client/gutenberg/extensions' ],
-			plugins: [
-				[
-					'@wordpress/import-jsx-pragma',
-					{
-						scopeVariable: 'createElement',
-						source: '@wordpress/element',
-						isDefault: false,
-					},
-				],
-				[
-					'@babel/transform-react-jsx',
-					{
-						pragma: 'createElement',
-					},
-				],
-			],
-		},
-	],
 	env: {
-		build_pot: {
-			plugins: [
-				[
-					'@wordpress/babel-plugin-makepot',
-					{
-						output: 'build/i18n-calypso/gutenberg-strings.pot',
-						headers: {
-							'content-type': 'text/plain; charset=UTF-8',
-							'x-generator': 'calypso',
-						},
-					},
-				],
-				[
-					'@automattic/babel-plugin-i18n-calypso',
-					{
-						dir: 'build/i18n-calypso/',
-						headers: {
-							'content-type': 'text/plain; charset=UTF-8',
-							'x-generator': 'calypso',
-						},
-					},
-				],
-			],
-		},
 		test: {
 			presets: [ [ '@babel/env', { targets: { node: 'current' } } ] ],
 			plugins: [
