@@ -15,7 +15,7 @@ import {
 	SERIALIZE,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities, stripHTML } from 'lib/formatting';
 import { itemsSchema } from './schema';
 import { safeLink } from 'lib/post-normalizer/utils';
 
@@ -46,7 +46,7 @@ function adaptFeed( feed ) {
 		feed_URL: safeLink( feed.feed_URL ),
 		is_following: feed.is_following,
 		subscribers_count: feed.subscribers_count,
-		description: feed.description && decodeEntities( feed.description ),
+		description: feed.description && decodeEntities( stripHTML( feed.description ) ),
 		last_update: feed.last_update,
 		image: feed.image,
 	};
