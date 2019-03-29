@@ -16,8 +16,6 @@ import Gridicon from 'gridicons';
 import { cartItems } from 'lib/cart-values';
 
 class DomainRegistrationAgreement extends React.Component {
-	static displayName = 'RegistrationAgreementLink';
-
 	recordRegistrationAgreementClick = () => {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
 	};
