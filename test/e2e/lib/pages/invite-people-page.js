@@ -17,7 +17,7 @@ import * as DriverHelper from '../driver-helper.js';
 
 export default class InvitePeoplePage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( 'select#role' ) );
+		super( driver, By.css( 'fieldset#role' ) );
 	}
 
 	async inviteNewUser( email, role, message = '' ) {
@@ -25,7 +25,7 @@ export default class InvitePeoplePage extends AsyncBaseContainer {
 			role = 'follower'; //the select input option uses follower for viewer
 		}
 
-		const roleSelector = By.css( `select#role option[value=${ role }]` );
+		const roleSelector = By.css( `fieldset#role input[value=${ role }]` );
 
 		await DriverHelper.setWhenSettable( this.driver, By.css( 'input.token-field__input' ), email );
 		await DriverHelper.waitTillPresentAndDisplayed( this.driver, roleSelector );
