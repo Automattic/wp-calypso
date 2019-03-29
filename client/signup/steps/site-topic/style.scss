@@ -68,6 +68,7 @@ body.is-section-jetpack-connect .site-topic__content {
 		top: 3px;
 		right: 3px;
 		padding: 5px 8px;
+		@include elevation ( 1dp );
 		transition: all 150ms ease-in-out;
 		transition-delay: 150ms;
 
