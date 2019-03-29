@@ -55,7 +55,7 @@ const RoleSelect = props => {
 	}
 
 	return (
-		<FormFieldset key={ siteId } disabled={ ! siteRoles }>
+		<FormFieldset key={ siteId } disabled={ ! siteRoles } id={ id }>
 			{ siteId && <QuerySites siteId={ siteId } /> }
 			{ siteId && <QuerySiteRoles siteId={ siteId } /> }
 			<FormLabel htmlFor={ id }>{ translate( 'Role' ) }</FormLabel>
