@@ -97,7 +97,7 @@ class Site extends React.Component {
 					target={ this.props.externalLink && '_blank' }
 					title={
 						this.props.homeLink
-							? translate( 'View site %(domain)s', {
+							? translate( 'View %(domain)s', {
 									args: { domain: site.domain },
 							  } )
 							: site.domain
@@ -107,7 +107,7 @@ class Site extends React.Component {
 					onMouseLeave={ this.onMouseLeave }
 					aria-label={
 						this.props.homeLink
-							? translate( 'View site %(domain)s', {
+							? translate( 'View %(domain)s', {
 									args: { domain: site.domain },
 							  } )
 							: site.domain
@@ -135,7 +135,13 @@ class Site extends React.Component {
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 							{ site.title }
 						</div>
-						<div className="site__domain">{ site.domain }</div>
+						<div className="site__domain">
+							{ this.props.homeLink
+								? translate( 'View %(domain)s', {
+										args: { domain: site.domain },
+								  } )
+								: site.domain }
+						</div>
 					</div>
 					{ this.props.homeLink && this.props.showHomeIcon && (
 						<span className="site__home">
