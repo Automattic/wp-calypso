@@ -10,6 +10,11 @@ import React from 'react';
 import chrono from 'chrono-node';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Supported languages
  */
 const supportedLanguages = [ 'en', 'jp' ];
