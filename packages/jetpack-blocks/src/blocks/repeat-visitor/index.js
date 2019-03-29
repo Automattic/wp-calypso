@@ -32,7 +32,7 @@ export const settings = {
 	description: __( 'Control block visibility based on how often a visitor has viewed the page.' ),
 	icon,
 	keywords: [
-		_x( 'traffic', 'block search term' ),
+		_x( 'return', 'block search term' ),
 		_x( 'visitors', 'block search term' ),
 		_x( 'visibility', 'block search term' ),
 	],
