@@ -15,7 +15,7 @@ export default {
 			control: 95,
 		},
 		defaultVariation: 'control',
-		allowExistingUsers: true,
+		allowExistingUsers: false,
 	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
