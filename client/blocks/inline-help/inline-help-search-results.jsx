@@ -8,6 +8,7 @@ import { identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -25,7 +26,10 @@ import {
 import { getLastRouteAction } from 'state/ui/action-log/selectors';
 import { setSearchResults, selectResult } from 'state/inline-help/actions';
 import { getContextResults } from './contextual-help';
+import { getAdminSectionsResults } from './admin-sections';
 import { localizeUrl } from 'lib/i18n-utils';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class InlineHelpSearchResults extends Component {
 	static propTypes = {
@@ -40,30 +44,80 @@ class InlineHelpSearchResults extends Component {
 	};
 
 	renderSearchResults() {
-		if ( isEmpty( this.props.searchQuery ) ) {
+		const { isSearching, searchQuery, searchResults } = this.props;
+
+		if ( isEmpty( searchQuery ) ) {
 			// not searching
 			return this.renderContextHelp();
 		}
 
-		if ( this.props.isSearching ) {
+		if ( isSearching ) {
 			// search, but no results so far
 			return <PlaceholderLines />;
 		}
 
-		if ( isEmpty( this.props.searchResults ) ) {
-			// search done, but nothing found
-			return (
-				<div>
-					<p className="inline-help__empty-results">No results.</p>
-					{ this.renderContextHelp() }
-				</div>
-			);
+		return (
+			<div className="inline-help__search-results">
+				<h2 className="inline-help__view-heading">Support documentation:</h2>
+				{ isEmpty( searchResults ) ? (
+					<>
+						<p className="inline-help__empty-results">
+							Sorry, there were no matches. Here are some of the most searched after help pages for
+							this section:
+						</p>
+						{ this.renderContextHelp() }
+					</>
+				) : (
+					<ul className="inline-help__results-list">
+						{ searchResults && searchResults.map( this.renderHelpLink ) }
+					</ul>
+				) }
+			</div>
+		);
+	}
+
+	renderHelpLink = ( link, index ) => {
+		const classes = { 'is-selected': this.props.selectedResultIndex === index };
+		const onClick =
+			link.type === 'internal' ? this.onInternalLinkClick : this.onHelpLinkClick( index );
+		return (
+			<li
+				key={ link.link ? link.link : link.key }
+				className={ classNames( 'inline-help__results-item', classes ) }
+			>
+				<a
+					href={ localizeUrl( link.link ) }
+					onClick={ onClick }
+					title={ decodeEntities( link.description ) }
+				>
+					{ preventWidows( decodeEntities( link.title ) ) }
+				</a>
+			</li>
+		);
+	};
+
+	renderAdminSectionResults() {
+		if ( ! this.props.siteSlug || isEmpty( this.props.searchQuery ) ) {
+			return;
 		}
 
-		// found something
-		const links = this.props.searchResults;
+		const results = getAdminSectionsResults(
+			this.props.searchQuery,
+			this.props.siteId,
+			this.props.siteSlug
+		);
+
+		if ( isEmpty( results ) ) {
+			return;
+		}
+
 		return (
-			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
+			<div className="inline-help__find-section">
+				<h2 className="inline-help__view-heading">Go to directly to:</h2>
+				<ul className="inline-help__results-list">
+					{ results && results.map( this.renderHelpLink ) }
+				</ul>
+			</div>
 		);
 	}
 
@@ -85,23 +139,7 @@ class InlineHelpSearchResults extends Component {
 		this.props.openResult( event );
 	};
 
-	renderHelpLink = ( link, index ) => {
-		const classes = { 'is-selected': this.props.selectedResultIndex === index };
-		return (
-			<li
-				key={ link.link ? link.link : link.key }
-				className={ classNames( 'inline-help__results-item', classes ) }
-			>
-				<a
-					href={ localizeUrl( link.link ) }
-					onClick={ this.onHelpLinkClick( index ) }
-					title={ decodeEntities( link.description ) }
-				>
-					{ preventWidows( decodeEntities( link.title ) ) }
-				</a>
-			</li>
-		);
-	};
+	onInternalLinkClick = ( { target: { href } } ) => href && page( href );
 
 	render() {
 		return (
@@ -111,6 +149,7 @@ class InlineHelpSearchResults extends Component {
 					requesting={ this.props.isSearching }
 				/>
 				{ this.renderSearchResults() }
+				{ this.renderAdminSectionResults() }
 			</div>
 		);
 	}
@@ -121,7 +160,10 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	selectedResultIndex: getSelectedResultIndex( state ),
+	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
+	siteId: getSelectedSiteId( state ),
 } );
+
 const mapDispatchToProps = {
 	recordTracksEvent,
 	setSearchResults,

@@ -216,6 +216,16 @@
 	.button {
 		vertical-align: middle;
 	}
+
+	.inline-help__search-results,
+	.inline-help__find-section {
+		padding-top: 8px;
+	}
+
+	.inline-help__view-heading {
+		margin: 8px 16px;
+		text-align: left;
+	}
 }
 
 .inline-help__secondary-view {
@@ -377,7 +387,7 @@
 	list-style: none;
 	text-align: left;
 	margin: 0;
-	padding: 8px 0;
+	padding: 0 0 8px 0;
 
 	.help-contact-form & {
 		padding: 0;
@@ -433,11 +443,12 @@
 }
 
 .inline-help__empty-results {
-	padding: 16px 0 0;
+	padding: 0 16px;
 	margin: 0;
 	font-size: 14px;
 	color: var( --color-text-subtle );
 	font-style: italic;
+	text-align: left;
 
 	@include breakpoint( '>660px' ) {
 		font-size: 16px;
