@@ -82,7 +82,13 @@ class SiteTopicForm extends Component {
 							searchValue={ siteTopic }
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
-						<Button type="submit" disabled={ isButtonDisabled } primary>
+						<Button
+							title={ this.props.translate( 'Continue' ) }
+							aria-label={ this.props.translate( 'Continue' ) }
+							type="submit"
+							disabled={ isButtonDisabled }
+							primary
+						>
 							<Gridicon icon="arrow-right" />
 						</Button>
 					</FormFieldset>
