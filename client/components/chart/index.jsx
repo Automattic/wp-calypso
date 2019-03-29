@@ -80,6 +80,7 @@ class Chart extends React.Component {
 			this.resizeObserver.unobserve( this.chart );
 		}
 		window.removeEventListener( 'resize', this.resizeWithLayout );
+		this.resizeWithLayout.cancel();
 	}
 
 	forceResize = () => {
