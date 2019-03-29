@@ -228,7 +228,22 @@ class SiteSettingsImport extends Component {
 		const siteTitle = title.length ? title : slug;
 
 		if ( getImporterForEngine( engine ) ) {
-			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
+			const activeImports = filterImportsForSite( site.ID, imports );
+
+			// If there's no active import started, mock one until we actually start
+			if ( isEmpty( activeImports ) ) {
+				return this.renderActiveImporters( [
+					{
+						// TODO: make this more formal, us a shared constant
+						importerState: 'from-signup',
+						type: getImporterTypeForEngine( engine ),
+						engine,
+						site,
+					},
+				] );
+			}
+
+			return this.renderActiveImporters( activeImports );
 		}
 
 		if ( ! isHydrated ) {
@@ -255,7 +270,7 @@ class SiteSettingsImport extends Component {
 		this.setState( getImporterState() );
 	};
 
-	renderImportersList() {
+	renderImportersMain() {
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
@@ -279,7 +294,7 @@ class SiteSettingsImport extends Component {
 					<h1>{ translate( 'Import Content' ) }</h1>
 				</HeaderCake>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
+					{ isJetpack ? <JetpackImporter /> : this.renderImportersMain() }
 				</EmailVerificationGate>
 			</Main>
 		);
