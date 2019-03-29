@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import prettyFormat from 'pretty-format';
+import format from 'react-element-to-jsx-string';
 
 export const getExampleCodeFromComponent = ExampleComponent => {
 	if ( ! ExampleComponent.props.exampleCode ) {
@@ -14,8 +14,7 @@ export const getExampleCodeFromComponent = ExampleComponent => {
 		return ExampleComponent.props.exampleCode;
 	}
 
-	return prettyFormat( ExampleComponent.props.exampleCode, {
-		plugins: [ prettyFormat.plugins.ReactElement ],
-		printFunctionName: false,
+	return format( ExampleComponent.props.exampleCode, {
+		showDefaultProps: false,
 	} ).replace( /Localized\((\w+)\)/g, '$1' );
 };
