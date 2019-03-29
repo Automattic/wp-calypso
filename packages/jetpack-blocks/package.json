@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/jetpack-blocks",
-	"version": "16.0.0",
+	"version": "16.0.1",
 	"description": "Gutenberg blocks for the Jetpack WordPress plugin",
 	"main": "dist/editor.js",
 	"files": [
