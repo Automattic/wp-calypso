@@ -79,6 +79,8 @@ describe( 'selectors', () => {
 				attachedToPurchaseId: NaN,
 				canExplicitRenew: false,
 				canDisableAutoRenew: false,
+				costToUnbundle: NaN,
+				costToUnbundleText: undefined,
 				currencyCode: undefined,
 				currencySymbol: undefined,
 				description: undefined,
