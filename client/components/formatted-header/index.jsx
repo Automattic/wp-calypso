@@ -13,6 +13,11 @@ import classNames from 'classnames';
  */
 import { preventWidows } from 'lib/formatting';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function FormattedHeader( { id, headerText, subHeaderText } ) {
 	const classes = classNames( 'formatted-header', {
 		'is-without-subhead': ! subHeaderText,
