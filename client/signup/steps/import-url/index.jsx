@@ -43,7 +43,9 @@ import Notice from 'components/notice';
 import './style.scss';
 
 const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
+const EXAMPLE_CUSTOM_DOMAIN_URL = 'https://example.com';
 const EXAMPLE_WIX_URL = 'https://username.wixsite.com/my-site';
+const EXAMPLE_GOCENTRAL_URL = 'https://example.godaddysites.com';
 
 class ImportURLStepComponent extends Component {
 	state = {
@@ -202,7 +204,7 @@ class ImportURLStepComponent extends Component {
 						<FormTextInput
 							id="url-input"
 							className="import-url__url-input"
-							placeholder={ EXAMPLE_WIX_URL }
+							placeholder={ EXAMPLE_CUSTOM_DOMAIN_URL }
 							disabled={ isLoading }
 							defaultValue={ urlInputValue }
 							onChange={ this.handleInputChange }
@@ -233,16 +235,16 @@ class ImportURLStepComponent extends Component {
 						{ translate( 'Example URLs', {
 							comment: 'Title for list of example urls, such as "example.com"',
 						} ) }
-						<li className="import-url__example-url">https://example.com</li>
-
+						<li className="import-url__example-url">{ EXAMPLE_CUSTOM_DOMAIN_URL }</li>
 						<li className="import-url__example-url">{ EXAMPLE_WIX_URL }</li>
+						<li className="import-url__example-url">{ EXAMPLE_GOCENTRAL_URL }</li>
 					</ul>
 					<ExampleDomainBrowser className="import-url__example-browser" />
 				</div>
 
 				<div className="import-url__escape">
 					{ translate(
-						"Don't have a Wix site? We also support importing from {{a}}other sources{{/a}}.",
+						"Don't have a Wix or GoDaddy GoCentral site? We also support importing from {{a}}other sources{{/a}}.",
 						{
 							components: {
 								a: (
@@ -275,7 +277,7 @@ class ImportURLStepComponent extends Component {
 				positionInFlow={ positionInFlow }
 				headerText={ translate( 'Where can we find your old site?' ) }
 				subHeaderText={ translate(
-					"Enter your Wix site's URL, sometimes called a domain name or site address."
+					'Enter your Wix or GoDaddy GoCentral site URL, sometimes called a domain name or site address.'
 				) }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
