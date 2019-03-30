@@ -8,7 +8,7 @@ import i18n from 'i18n-calypso';
 
 export function acceptedNotice( invite, displayOnNextPage = true ) {
 	const site = (
-		<a href={ get( invite, 'site.URL' ) } className="invite-accept__notice-site-link">
+		<a href={ get( invite, 'site.URL' ) } className="invites__notice-site-link">
 			{ get( invite, 'site.title' ) }
 		</a>
 	);
@@ -41,12 +41,12 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 		case 'administrator':
 			return [
 				<div>
-					<h3 className="invite-message__title">
+					<h3 className="invites__title">
 						{ i18n.translate( "You're now an Administrator of: {{site/}}", {
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invite-message__intro">
+					<p className="invites__intro">
 						{ i18n.translate(
 							'This is your site dashboard where you will be able to manage all aspects of %(site)s',
 							{
@@ -69,12 +69,12 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 		case 'editor':
 			return [
 				<div>
-					<h3 className="invite-message__title">
+					<h3 className="invites__title">
 						{ i18n.translate( "You're now an Editor of: {{site/}}", {
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invite-message__intro">
+					<p className="invites__intro">
 						{ i18n.translate(
 							'This is your site dashboard where you can publish and manage your ' +
 								'own posts and the posts of others, as well as upload media.'
@@ -95,12 +95,12 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 		case 'author':
 			return [
 				<div>
-					<h3 className="invite-message__title">
+					<h3 className="invites__title">
 						{ i18n.translate( "You're now an Author of: {{site/}}", {
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invite-message__intro">
+					<p className="invites__intro">
 						{ i18n.translate(
 							'This is your site dashboard where you can publish and ' +
 								'edit your own posts as well as upload media.'
@@ -121,12 +121,12 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 		case 'contributor':
 			return [
 				<div>
-					<h3 className="invite-message__title">
+					<h3 className="invites__title">
 						{ i18n.translate( "You're now a Contributor of: {{site/}}", {
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invite-message__intro">
+					<p className="invites__intro">
 						{ i18n.translate(
 							'This is your site dashboard where you can write and manage your own posts.'
 						) }

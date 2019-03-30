@@ -19,7 +19,7 @@ export default class NoticesComponent extends AsyncBaseContainer {
 	}
 
 	async inviteMessageTitle() {
-		const selector = By.css( '.invite-message__title' );
+		const selector = By.css( '.invites__title' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();
 	}
