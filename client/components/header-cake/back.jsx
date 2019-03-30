@@ -18,6 +18,11 @@ import Button from 'components/button';
 import { getWindowInnerWidth } from 'lib/viewport';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const HIDE_BACK_CRITERIA = {

@@ -14,6 +14,11 @@ import classNames from 'classnames';
 import Card from 'components/card';
 import HeaderCakeBack from './back';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class HeaderCake extends Component {
 	render() {
 		const {
