@@ -28,6 +28,11 @@ import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DeleteUser extends React.Component {
 	static displayName = 'DeleteUser';
 
