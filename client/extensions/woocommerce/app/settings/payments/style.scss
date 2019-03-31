@@ -166,10 +166,6 @@
 	.payments__method-enable-container {
 		width: 20%;
 
-		.form-toggle__label .form-toggle__label-content {
-			margin-left: 0;
-		}
-
 		@include breakpoint( '<660px' ) {
 			width: 30%;
 			padding-left: 0;
