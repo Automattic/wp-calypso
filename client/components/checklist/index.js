@@ -13,6 +13,11 @@ import { times } from 'lodash';
 import ChecklistHeader from 'components/checklist/header';
 import TaskPlaceholder from 'components/checklist/task-placeholder';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class Checklist extends PureComponent {
 	static propTypes = {
 		isPlaceholder: PropTypes.bool,

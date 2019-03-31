@@ -14,6 +14,11 @@ import Card from 'components/card';
 import ProgressBar from 'components/progress-bar';
 import ScreenReaderText from 'components/screen-reader-text';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ChecklistHeader extends PureComponent {
 	static propTypes = {
 		total: PropTypes.number.isRequired,
