@@ -8,6 +8,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class extends React.Component {
 	static displayName = 'NoticeAction';
 
