@@ -43,11 +43,26 @@ function SiteMockupContent( { content, title, tagline } ) {
 	/* eslint-disable react/no-danger */
 	return (
 		<Fragment>
-			<div className="site-mockup__site-identity">
-				<div className="site-mockup__title">{ title }</div>
-				<div className="site-mockup__tagline">{ tagline }</div>
+			<div className="site-mockup__site-identity site-header">
+				<div className="site-mockup__site-branding site-branding-container">
+					<div className="site-mockup__site-branding site-branding">
+						<div className="site-mockup__title site-title">{ title }</div>
+						<div className="site-mockup__tagline site-description">{ tagline }</div>
+					</div>
+				</div>
 			</div>
-			<div className="site-mockup__entry-content" dangerouslySetInnerHTML={ { __html: content } } />
+			<div className="site-mockup__site-content site-content">
+				<div className="site-mockup__content-area content-area">
+					<div className="site-mockup__site-main site-main">
+						<div className="site-mockup__entry entry">
+							<div
+								className="site-mockup__entry-content entry-content"
+								dangerouslySetInnerHTML={ { __html: content } }
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
 		</Fragment>
 	);
 	/* eslint-enable react/no-danger */
@@ -87,13 +102,15 @@ export class SiteMockup extends PureComponent {
 		return (
 			<div className={ classes } onClick={ this.props.onClick }>
 				{ size === 'mobile' ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
-				<div className="site-mockup__body">
-					<div className="site-mockup__content">
-						{ isEmpty( content ) ? (
-							<SiteMockupOutlines />
-						) : (
-							<SiteMockupContent { ...{ content, title, tagline } } />
-						) }
+				<div className="site-mockup__html html">
+					<div className="site-mockup__body body">
+						<div className="site-mockup__site">
+							{ isEmpty( content ) ? (
+								<SiteMockupOutlines />
+							) : (
+								<SiteMockupContent { ...{ content, title, tagline } } />
+							) }
+						</div>
 					</div>
 				</div>
 			</div>
