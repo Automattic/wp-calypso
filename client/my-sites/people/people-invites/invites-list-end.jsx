@@ -14,6 +14,11 @@ import { localize } from 'i18n-calypso';
 import ListEnd from 'components/list-end';
 import { bumpStat } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class InvitesListEnd extends React.PureComponent {
 	static propTypes = {
 		shown: PropTypes.number,
