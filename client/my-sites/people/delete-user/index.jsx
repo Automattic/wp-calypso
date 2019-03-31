@@ -259,7 +259,7 @@ class DeleteUser extends React.Component {
 	renderMultisite = () => {
 		return (
 			<CompactCard className="delete-user__multisite">
-				<a className="delete-user__remove-user" onClick={ this.removeUser }>
+				<a className="delete-user__remove-user" role="presentation" onClick={ this.removeUser }>
 					<Gridicon icon="trash" />
 					{ this.getRemoveText() }
 				</a>
