@@ -40,7 +40,7 @@ class GSuitePurchaseCta extends React.Component {
 	}
 
 	renderCta() {
-		const { annualPrice, domainName, monthlyPrice, productSlug, translate } = this.props;
+		const { annualPrice, domainName, productSlug, translate } = this.props;
 		const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
 
 		return (
@@ -72,12 +72,12 @@ class GSuitePurchaseCta extends React.Component {
 							<div className="gsuite-purchase-cta__add-google-apps-card-price">
 								<h4 className="gsuite-purchase-cta__add-google-apps-card-price-per-user">
 									<span>
-										{ translate( '{{strong}}%(price)s{{/strong}} per user / month', {
+										{ translate( '{{strong}}%(price)s{{/strong}} per user / year', {
 											components: {
 												strong: <strong />,
 											},
 											args: {
-												price: monthlyPrice,
+												price: annualPrice,
 											},
 										} ) }
 									</span>
@@ -88,14 +88,6 @@ class GSuitePurchaseCta extends React.Component {
 										{ translate( 'Add G Suite' ) }
 									</Button>
 								) }
-
-								<h5 className="gsuite-purchase-cta__add-google-apps-card-billing-period">
-									{ translate( '%(price)s billed yearly (2 months free!)', {
-										args: {
-											price: annualPrice,
-										},
-									} ) }
-								</h5>
 							</div>
 						</div>
 
@@ -139,7 +131,6 @@ class GSuitePurchaseCta extends React.Component {
 GSuitePurchaseCta.propTypes = {
 	annualPrice: PropTypes.string.isRequired,
 	domainName: PropTypes.string.isRequired,
-	monthlyPrice: PropTypes.string.isRequired,
 	productSlug: PropTypes.string.isRequired,
 	selectedDomainName: PropTypes.string,
 	selectedSiteSlug: PropTypes.string.isRequired,

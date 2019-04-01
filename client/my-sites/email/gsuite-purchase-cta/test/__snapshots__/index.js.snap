@@ -47,9 +47,9 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
           >
             <span>
               <strong>
-                $5
+                $72
               </strong>
-               per user / month
+               per user / year
             </span>
           </h4>
           <button
@@ -60,11 +60,6 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
           >
             Add G Suite
           </button>
-          <h5
-            className="gsuite-purchase-cta__add-google-apps-card-billing-period"
-          >
-            $50 billed yearly (2 months free!)
-          </h5>
         </div>
       </div>
       <div
@@ -149,9 +144,9 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
           >
             <span>
               <strong>
-                $5
+                $144
               </strong>
-               per user / month
+               per user / year
             </span>
           </h4>
           <button
@@ -162,11 +157,6 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
           >
             Add G Suite
           </button>
-          <h5
-            className="gsuite-purchase-cta__add-google-apps-card-billing-period"
-          >
-            $50 billed yearly (2 months free!)
-          </h5>
         </div>
       </div>
       <div

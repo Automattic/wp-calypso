@@ -18,7 +18,7 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { hasGSuite, isGSuiteRestricted, hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
-import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
+import { getAnnualPrice } from 'lib/google-apps';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
@@ -176,12 +176,10 @@ class EmailManagement extends React.Component {
 		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
 		const price = get( productsList, [ gsuitePlanSlug, 'prices', currencyCode ], 0 );
 		const annualPrice = getAnnualPrice( price, currencyCode );
-		const monthlyPrice = getMonthlyPrice( price, currencyCode );
 		return (
 			<Fragment>
 				<GSuitePurchaseCta
 					annualPrice={ annualPrice }
-					monthlyPrice={ monthlyPrice }
 					productSlug={ gsuitePlanSlug }
 					selectedDomainName={ selectedDomainName }
 				/>

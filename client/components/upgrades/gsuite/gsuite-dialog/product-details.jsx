@@ -15,7 +15,6 @@ import { localize } from 'i18n-calypso';
 class GoogleAppsProductDetails extends Component {
 	static propTypes = {
 		annualPrice: PropTypes.string.isRequired,
-		monthlyPrice: PropTypes.string.isRequired,
 	};
 
 	getStorageText() {
@@ -28,13 +27,7 @@ class GoogleAppsProductDetails extends Component {
 	}
 
 	renderPrice() {
-		return this.props.translate( '%(monthlyPrice)s per user / month', {
-			args: { monthlyPrice: this.props.monthlyPrice },
-		} );
-	}
-
-	renderPeriod() {
-		return this.props.translate( '%(annualPrice)s Billed yearly — get 2 months free!', {
+		return this.props.translate( '%(annualPrice)s per user / year', {
 			args: { annualPrice: this.props.annualPrice },
 		} );
 	}
@@ -58,8 +51,6 @@ class GoogleAppsProductDetails extends Component {
 					</p>
 
 					<div className="gsuite-dialog__price-per-user">{ this.renderPrice() }</div>
-
-					<div className="gsuite-dialog__billing-period">{ this.renderPeriod() }</div>
 				</div>
 
 				<ul className="gsuite-dialog__product-features">
