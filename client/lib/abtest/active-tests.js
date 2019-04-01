@@ -166,16 +166,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	gSuiteStatsNudge: {
-		datestamp: '20190308',
-		variations: {
-			copy1: 25,
-			copy2: 25,
-			copy3: 25,
-			copy4: 25,
-		},
-		defaultVariation: 'copy1',
-	},
 	builderReferralHelpBanner: {
 		datestamp: '20190304',
 		variations: {
