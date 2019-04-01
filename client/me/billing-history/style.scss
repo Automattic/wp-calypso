@@ -199,7 +199,6 @@
 
 	&:empty:not( :focus )::before {
 		content: attr( placeholder );
-		display: block; /* For Firefox */
 		font-style: italic;
 	}
 }
@@ -398,7 +397,6 @@
 
 	.billing-history__billing-details-editable:empty:not( :focus )::before {
 		content: '';
-		display: none;
 	}
 }
 
