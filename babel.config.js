@@ -4,14 +4,12 @@
 const _ = require( 'lodash' );
 const path = require( 'path' );
 
-const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
-const isBrowser = isCalypsoClient || 'true' === process.env.TARGET_BROWSER;
+const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 
 const modules = isBrowser ? false : 'commonjs'; // Use commonjs for Node
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 
-// Use target configuration in package.json for browser builds.
-const targets = isBrowser ? undefined : { node: 'current' };
+// We implicitly use browserslist configuration in package.json for build targets.
 
 const config = {
 	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),
@@ -20,7 +18,6 @@ const config = {
 			'@babel/env',
 			{
 				modules,
-				targets,
 				useBuiltIns: 'entry',
 				corejs: 2,
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
@@ -37,9 +34,9 @@ const config = {
 				'babel',
 				'babel-plugin-transform-wpcalypso-async'
 			),
-			{ async: isCalypsoClient && codeSplit },
+			{ async: isBrowser && codeSplit },
 		],
-		isCalypsoClient && './inline-imports.js',
+		isBrowser && './inline-imports.js',
 	] ),
 	env: {
 		test: {

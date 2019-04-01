@@ -1,10 +1,5 @@
 #!/usr/bin/env node
 
-/** @format */
-
-// SDK bundles are for the browser. Ensure that babel preset reflects this.
-process.env.TARGET_BROWSER = 'true';
-
 /**
  * External dependencies
  */

@@ -12,9 +12,14 @@
 	"bin": {
 		"calypso-sdk": "./bin/sdk-cli.js"
 	},
-	"browserslist": [
-		"extends @wordpress/browserslist-config"
-	],
+	"browserslist": {
+		"defaults": [
+			"extends @wordpress/browserslist-config"
+		],
+		"server": [
+			"current node"
+		]
+	},
 	"dependencies": {
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/tree-select": "file:./packages/tree-select",
@@ -225,8 +230,8 @@
 		"build-devdocs:index:_env": "node server/devdocs/bin/generate-devdocs-index",
 		"build-docker": "node bin/build-docker.js",
 		"prebuild-server": "mkdirp build",
-		"build-server": "cross-env-shell CALYPSO_SERVER=true NODE_PATH=$NODE_PATH:server:client:. webpack --display errors-only --config webpack.config.node.js",
-		"build-client": "cross-env-shell CALYPSO_CLIENT=true NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS ./node_modules/webpack/bin/webpack.js --display errors-only",
+		"build-server": "cross-env-shell BROWSERSLIST_ENV=server NODE_PATH=$NODE_PATH:server:client:. webpack --display errors-only --config webpack.config.node.js",
+		"build-client": "cross-env-shell BROWSERSLIST_ENV=defaults NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS ./node_modules/webpack/bin/webpack.js --display errors-only",
 		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || cross-env-shell NODE_ARGS=--max_old_space_size=8192 npm run build-client",
 		"build-client-if-desktop": "node -e \"process.env.CALYPSO_ENV === 'desktop' && process.exit(1)\" || npm run build-client",
 		"build-packages": "npx lerna run prepare --stream",
@@ -249,7 +254,7 @@
 		"lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/config/index.js\"",
 		"prestart": "npx check-node-version --package && npm run -s install-if-deps-outdated && node bin/welcome.js",
 		"start": "npm run -s build",
-		"poststart": "cross-env-shell CALYPSO_CLIENT=true NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS --max_old_space_size=4096 build/bundle.js",
+		"poststart": "cross-env-shell BROWSERSLIST_ENV=defaults NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS --max_old_space_size=4096 build/bundle.js",
 		"reformat-files": "./node_modules/.bin/prettier --ignore-path .eslintignore --write \"**/*.{js,jsx,json}\"",
 		"pretest": "npm run -s install-if-deps-outdated",
 		"test": "run-s -s test-client test-packages test-server",

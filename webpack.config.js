@@ -42,7 +42,7 @@ const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'fa
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
-const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
+const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 
 /*
  * Create reporter for ProgressPlugin (used with EMIT_STATS)
