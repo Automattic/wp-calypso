@@ -19,7 +19,6 @@ export default class MarkdownBlockComponent extends GutenbergBlockComponent {
 	async setContent( content ) {
 		const inputSelector = By.css( `${ this.blockID } textarea.wp-block-jetpack-markdown__editor` );
 
-		await this.focusBlock();
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, inputSelector );
 		return await driverHelper.setWhenSettable( this.driver, inputSelector, content );
 	}
