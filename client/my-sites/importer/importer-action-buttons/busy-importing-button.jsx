@@ -10,10 +10,10 @@ import React from 'react';
  */
 import ImporterActionButton from './action-button';
 
-export const StopButton = ( { translate } ) => (
-	<ImporterActionButton primary busy>
+export const BusyImportingButton = ( { translate } ) => (
+	<ImporterActionButton primary busy disabled>
 		{ translate( 'Importing…' ) }
 	</ImporterActionButton>
 );
 
-export default localize( StopButton );
+export default localize( BusyImportingButton );
