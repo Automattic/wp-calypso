@@ -602,15 +602,6 @@ workflows:
           test-flags: "-W -S $CIRCLE_SHA1"
           test-target: "WOO"
           slack-webhook: "$SLACK_WOO"
-      - test-e2e-canary:
-          name: test-e2e-jetpack
-          requires:
-          - wait-calypso-live
-          test-flags: "-j"
-          jetpack-host: "PRESSABLEBLEEDINGEDGE"
-          test-target: "JETPACK"
-          slack-webhook: "$SLACK_JP"
-          skip-jetpack: "$SKIP_JETPACK"
 
   calypso-nightly:
     jobs:
