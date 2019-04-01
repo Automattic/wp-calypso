@@ -10,11 +10,6 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { getCurrencyObject } from '@automattic/format-currency';
 
-/**
- * Internal Dependencies
- **/
-import config from 'config';
-
 export class PlanPrice extends Component {
 	render() {
 		const {
@@ -53,7 +48,7 @@ export class PlanPrice extends Component {
 				<sup className="plan-price__fraction">
 					{ rawPrice - price.integer > 0 && price.fraction }
 				</sup>
-				{ config.isEnabled( 'show-tax' ) && taxText && (
+				{ taxText && (
 					<sup className="plan-price__tax-amount">
 						{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
 					</sup>

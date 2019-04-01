@@ -6,11 +6,6 @@ import { find, map, partition, reduce } from 'lodash';
 import React, { Fragment } from 'react';
 import formatCurrency from '@automattic/format-currency';
 
-/**
- * Internal dependencies
- */
-import config from 'config';
-
 export const groupDomainProducts = ( originalItems, translate ) => {
 	const transactionItems = Object.keys( originalItems ).map( key => {
 		return Object.assign( {}, originalItems[ key ] );
@@ -52,7 +47,7 @@ export const groupDomainProducts = ( originalItems, translate ) => {
 };
 
 export function renderTransactionAmount( transaction, { translate, addingTax = false } ) {
-	if ( ! config.isEnabled( 'show-tax' ) || ! transaction.tax || transaction.tax === '$0.00' ) {
+	if ( ! transaction.tax || transaction.tax === '$0.00' ) {
 		return transaction.amount;
 	}
 

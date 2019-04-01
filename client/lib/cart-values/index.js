@@ -387,10 +387,6 @@ export function hasPendingPayment( cart ) {
 }
 
 export function shouldShowTax( cart ) {
-	if ( ! config.isEnabled( 'show-tax' ) ) {
-		return false;
-	}
-
 	return get( cart, [ 'tax', 'display_taxes' ], false );
 }
 

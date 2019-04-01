@@ -11,8 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
-import config from 'config';
+import { cartItems, shouldShowTax } from 'lib/cart-values';
 
 class CartTotal extends React.Component {
 	static propTypes = {
@@ -45,7 +44,7 @@ class CartTotal extends React.Component {
 			return <div className="cart__total" />;
 		}
 
-		const showTax = cart.tax.display_taxes && config.isEnabled( 'show-tax' );
+		const showTax = shouldShowTax( cart );
 		return (
 			<div className="cart__total">
 				<div className="cart__total-row grand-total">

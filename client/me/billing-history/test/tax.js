@@ -11,19 +11,10 @@ import { mount } from 'enzyme';
  * Internal dependencies
  */
 import { renderTransactionAmount } from '../utils';
-import config from 'config';
-
-jest.mock( 'config', () => {
-	const mock = () => 'development';
-	mock.isEnabled = jest.fn();
-	return mock;
-} );
 
 const translate = x => x;
 
 test( 'tax shown if available', () => {
-	config.isEnabled.mockImplementation( flag => flag === 'show-tax' );
-
 	const transaction = {
 		subtotal: '$36.00',
 		tax: '$2.48',
@@ -57,8 +48,6 @@ test( 'tax adding', () => {
 } );
 
 test( 'tax hidden if not available', () => {
-	config.isEnabled.mockImplementation( flag => flag === 'show-tax' );
-
 	const transaction = {
 		subtotal: '$36.00',
 		tax: '$0.00',
@@ -66,16 +55,4 @@ test( 'tax hidden if not available', () => {
 	};
 
 	expect( renderTransactionAmount( transaction, { translate } ) ).toEqual( '$36.00' );
-} );
-
-test( 'respects show-tax config flag', () => {
-	config.isEnabled.mockImplementation( () => false );
-
-	const transaction = {
-		subtotal: '$36.00',
-		tax: '$2.48',
-		amount: '$38.48',
-	};
-
-	expect( renderTransactionAmount( transaction, { translate } ) ).toEqual( '$38.48' );
 } );
