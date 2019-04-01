@@ -38,19 +38,11 @@ export default class NavBarComponent extends AsyncBaseContainer {
 	}
 	async clickProfileLink() {
 		const profileSelector = by.css( 'a.masterbar__item-me' );
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			profileSelector,
-			this.explicitWaitMS
-		);
+		return await driverHelper.clickWhenClickable( this.driver, profileSelector );
 	}
 	async clickMySites() {
 		const mySitesSelector = by.css( 'header.masterbar a.masterbar__item' );
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			mySitesSelector,
-			this.explicitWaitMS
-		);
+		return await driverHelper.clickWhenClickable( this.driver, mySitesSelector );
 	}
 	hasUnreadNotifications() {
 		return this.driver

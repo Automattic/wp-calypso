@@ -21,6 +21,10 @@ import WPAdminLogonPage from '../pages/wp-admin/wp-admin-logon-page';
 import * as driverManager from '../driver-manager';
 import * as driverHelper from '../driver-helper';
 import * as dataHelper from '../data-helper';
+import JetpackConnectPage from '../pages/jetpack/jetpack-connect-page';
+import JetpackConnectSiteTypePage from '../pages/jetpack/jetpack-connect-site-type-page';
+import JetpackConnectSiteTopicPage from '../pages/jetpack/jetpack-connect-site-topic-page';
+import JetpackConnectUserTypePage from '../pages/jetpack/jetpack-connect-user-type-page';
 
 export default class JetpackConnectFlow {
 	constructor( driver, account, template ) {
@@ -51,6 +55,22 @@ export default class JetpackConnectFlow {
 		await sidebarComponent.addNewSite( this.driver );
 		const addNewSitePage = await AddNewSitePage.Expect( this.driver );
 		await addNewSitePage.addSiteUrl( this.url );
+
+		const connectPage = await JetpackConnectPage.Expect( this.driver );
+		await connectPage.waitToDisappear();
+
+		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
+		await jetpackAuthorizePage.waitToDisappear();
+
+		const siteTypePage = await JetpackConnectSiteTypePage.Expect( this.driver );
+		await siteTypePage.selectSiteType( 'blog' );
+
+		const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( this.driver );
+		await siteTopicPage.selectSiteTopic( 'test site' );
+
+		const userTypePage = await JetpackConnectUserTypePage.Expect( this.driver );
+		await userTypePage.selectUserType( 'creator' );
+
 		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 		return await pickAPlanPage.selectFreePlanJetpack();
 	}
@@ -68,6 +88,17 @@ export default class JetpackConnectFlow {
 		await loginFlow.loginUsingExistingForm();
 		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
 		await jetpackAuthorizePage.approveConnection();
+		await jetpackAuthorizePage.waitToDisappear();
+
+		const siteTypePage = await JetpackConnectSiteTypePage.Expect( this.driver );
+		await siteTypePage.selectSiteType( 'blog' );
+
+		const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( this.driver );
+		await siteTopicPage.selectSiteTopic( 'test site' );
+
+		const userTypePage = await JetpackConnectUserTypePage.Expect( this.driver );
+		await userTypePage.selectUserType( 'creator' );
+
 		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 		await pickAPlanPage.selectFreePlanJetpack();
 		await wpAdminJetpack.jumpstartDisplayed();
