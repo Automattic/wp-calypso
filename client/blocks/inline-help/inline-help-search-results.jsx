@@ -113,7 +113,7 @@ class InlineHelpSearchResults extends Component {
 
 		return (
 			<div className="inline-help__find-section">
-				<h2 className="inline-help__view-heading">Go to directly to:</h2>
+				<h2 className="inline-help__view-heading">Go directly to:</h2>
 				<ul className="inline-help__results-list">
 					{ results && results.map( this.renderHelpLink ) }
 				</ul>
