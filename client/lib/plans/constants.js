@@ -186,8 +186,7 @@ export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 export const TYPE_ECOMMERCE = 'TYPE_ECOMMERCE';
 
-const WPComGetBillingTimeframe = () =>
-	i18n.translate( '/month, billed annually or every two years' );
+const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
 
 const getPlanBloggerDetails = () => ( {
@@ -209,6 +208,10 @@ const getPlanBloggerDetails = () => ( {
 					),
 				},
 			}
+		),
+	getShortDescription: () =>
+		i18n.translate(
+			'Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and email support.'
 		),
 	// }}}
 	getPlanCompareFeatures: () => [
@@ -261,6 +264,11 @@ const getPlanPersonalDetails = () => ( {
 				},
 			}
 		),
+	getShortDescription: () =>
+		i18n.translate(
+			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
+				'Get access to high-quality email and live chat support.'
+		),
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_CUSTOM_DOMAIN,
@@ -310,6 +318,11 @@ const getPlanPremiumDetails = () => ( {
 					),
 				},
 			}
+		),
+	getShortDescription: () =>
+		i18n.translate(
+			'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+				' and the ability to monetize your site with ads.'
 		),
 	getPlanCompareFeatures: () =>
 		compact( [
@@ -389,6 +402,12 @@ const getPlanBusinessDetails = () => ( {
 			}
 		);
 	},
+	getShortDescription: () =>
+		i18n.translate(
+			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
+				' Google Analytics support, unlimited' +
+				' storage, and the ability to remove WordPress.com branding.'
+		),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
@@ -468,6 +487,12 @@ const getPlanEcommerceDetails = () => ( {
 			}
 		);
 	},
+	getShortDescription: () =>
+		i18n.translate(
+			'Sell products or services with this powerful, ' +
+				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
+				'so it’ll grow with you as your business grows.'
+		),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with eCommerce and take advantage of its powerful marketplace features.'
