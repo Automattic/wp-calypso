@@ -22,6 +22,7 @@ export const groupDomainProducts = ( originalItems, translate ) => {
 	const groupedDomainProducts = reduce(
 		domainProducts,
 		( groups, product ) => {
+			// eslint-disable-next-line no-extra-boolean-cast
 			if ( !! groups[ product.domain ] ) {
 				groups[ product.domain ].raw_amount += product.raw_amount;
 				groups[ product.domain ].groupCount++;
@@ -51,17 +52,17 @@ export const groupDomainProducts = ( originalItems, translate ) => {
 };
 
 export function renderTransactionAmount( transaction, { translate, addingTax = false } ) {
-	if ( ! config.isEnabled( 'show-tax' ) || ! transaction.tax_amount ) {
+	if ( ! config.isEnabled( 'show-tax' ) || ! transaction.tax || transaction.tax === '$0.00' ) {
 		return transaction.amount;
 	}
 
 	const taxAmount = addingTax
 		? translate( '(+%(taxAmount)s tax)', {
-				args: { taxAmount: transaction.tax_amount },
+				args: { taxAmount: transaction.tax },
 				comment: 'taxAmount is a localized price, like $12.34',
 		  } )
 		: translate( '(includes %(taxAmount)s tax)', {
-				args: { taxAmount: transaction.tax_amount },
+				args: { taxAmount: transaction.tax },
 				comment: 'taxAmount is a localized price, like $12.34',
 		  } );
 
