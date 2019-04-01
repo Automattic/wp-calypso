@@ -83,7 +83,7 @@ export class DoneButton extends React.PureComponent {
 
 		return (
 			<ImporterActionButton primary onClick={ this.handleClick }>
-				{ translate( 'Done', { context: 'adjective' } ) }
+				{ translate( 'View Site' ) }
 			</ImporterActionButton>
 		);
 	}
