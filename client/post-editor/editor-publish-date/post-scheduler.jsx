@@ -49,8 +49,14 @@ export default class PostScheduler extends PureComponent {
 		const tzDate = tz ? moment.tz( date, tz ) : moment( date );
 
 		return {
-			firstDayOfTheMonth: tzDate.clone().startOf( 'month' ),
-			lastDayOfTheMonth: tzDate.clone().endOf( 'month' ),
+			firstDayOfTheMonth: tzDate
+				.clone()
+				.startOf( 'month' )
+				.startOf( 'week' ),
+			lastDayOfTheMonth: tzDate
+				.clone()
+				.endOf( 'month' )
+				.endOf( 'week' ),
 		};
 	}
 
