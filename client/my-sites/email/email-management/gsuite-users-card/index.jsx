@@ -125,6 +125,7 @@ class GSuiteUsersCard extends React.Component {
 				key={ `google-apps-user-${ user.domain }-${ index }` }
 				user={ user }
 				onClick={ this.generateClickHandler( user ) }
+				siteSlug={ this.props.selectedSiteSlug }
 			/>
 		);
 	}

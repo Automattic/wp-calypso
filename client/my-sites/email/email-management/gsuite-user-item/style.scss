@@ -1,6 +1,7 @@
 .email-management .is-placeholder {
 	.gsuite-user-item__email,
-	.gsuite-user-item__manage-link {
+	.gsuite-user-item__manage-link,
+	button {
 		@include placeholder();
 	}
 }
@@ -8,9 +9,11 @@
 .email-management {
 	.gsuite-user-item__email {
 		float: left;
+		line-height: 1.7;
 	}
 	
-	.gsuite-user-item__manage-link {
+	a.gsuite-user-item,
+	.gsuite-user-item__fix {
 		float: right;
 		font-size: 13px;
 	}
