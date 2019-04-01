@@ -121,8 +121,8 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		} );
 
 		step( 'Can select a user type', async function() {
-			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
-			return await siteTopicPage.selectUserType( 'creator' );
+			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
+			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {
@@ -185,8 +185,8 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		} );
 
 		step( 'Can select a user type', async function() {
-			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
-			return await siteTopicPage.selectUserType( 'creator' );
+			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
+			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {
@@ -356,8 +356,8 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		} );
 
 		step( 'Can select a user type', async function() {
-			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
-			return await siteTopicPage.selectUserType( 'creator' );
+			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
+			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step(
@@ -509,8 +509,8 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		} );
 
 		step( 'Can select a user type', async function() {
-			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
-			return await siteTopicPage.selectUserType( 'creator' );
+			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
+			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {
