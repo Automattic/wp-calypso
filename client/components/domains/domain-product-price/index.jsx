@@ -16,6 +16,11 @@ import { localize } from 'i18n-calypso';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DomainProductPrice extends React.Component {
 	static propTypes = {
 		isLoading: PropTypes.bool,
