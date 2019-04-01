@@ -165,13 +165,22 @@ const Profile = createReactClass( {
 					</p>
 				</Card>
 
+				<Card
+					displayAsLink={ true }
+					href="https://en.gravatar.com/profiles/edit/"
+					target="blank"
+					rel="noopener noreferrer"
+				>
+					<p className="me-profile-gravatar__link-title">{ this.props.translate( 'Go to Gravatar.com' ) }</p>
+					<p className="me-profile-gravatar__link-description">{ this.props.translate( 'Access all your Gravatars\' settings' ) }</p>
+				</Card>
+
 				<SectionHeader label={ this.props.translate( 'Profile Privacy' ) } />
 				<Card className="me-profile-privacy">
 					<p>
 						{ this.props.translate(
 							'WordPress.com uses {{link}}Gravatar{{/link}}, a universal avatar service, for your profile. ' +
-								'This enables other sites and services to use your image and profile information when you\'re logged in ' +
-								'with your email address.',
+								'This enables other sites and services to use your image and profile information when using your email address.',
 							{
 								components: {
 									link: <a href="https://gravatar.com" target="_blank" rel="noopener noreferrer" />,
@@ -182,7 +191,7 @@ const Profile = createReactClass( {
 
 					<p>
 						{ this.props.translate(
-							'Each WordPress.com account comes with Gravatar enabled by default. You can change the visibility of your ' +
+							'Your Gravatar profile is public by default. You can change the visibility of your ' +
 								'profile by using the settings below. Go to {{link}}Gravatar.com{{/link}} to access all of your account\'s settings.',
 							{
 								components: {
@@ -211,17 +220,7 @@ const Profile = createReactClass( {
 								</span>
 							</FormLabel>
 							<FormSettingExplanation className="me-profile-privacy__explanation">
-								{ this.props.translate( 'Your profile information is hidden but people can still see your Gravatar image.' ) }
-							</FormSettingExplanation>
-
-							<FormLabel>
-								<FormRadio name="gravatar_public" value="disabled" />
-								<span>
-									{ this.props.translate( 'Disabled' ) }
-								</span>
-							</FormLabel>
-							<FormSettingExplanation className="me-profile-privacy__explanation">
-								{ this.props.translate( 'Your Gravatar images and profile are hidden.' ) }
+								{ this.props.translate( 'Your profile information is hidden but your Gravatar image will still display on third party sites.' ) }
 							</FormSettingExplanation>
 						</FormFieldset>
 
@@ -235,15 +234,25 @@ const Profile = createReactClass( {
 
 				<ProfileLinks />
 
-				<Card
-					displayAsLink={ true }
-					href="https://en.gravatar.com/profiles/edit/"
-					target="blank"
-					rel="noopener noreferrer"
-				>
-					<p className="me-profile-gravatar__link-title">{ this.props.translate( 'Go to Gravatar.com' ) }</p>
-					<p className="me-profile-gravatar__link-description">{ this.props.translate( 'Access all your Gravatars\' settings' ) }</p>
+				<SectionHeader label={ this.props.translate( 'Disable My Gravatar' ) } />
+				<Card>
+					<p>
+						{ this.props.translate(
+							'Disabling your Gravatar will prevent all access to your Gravatar images and profile, and your Gravatar data will be deleted.'
+						) }
+					</p>
+					<ul>
+						<li>{ this.props.translate( 'You will not be able to access Gravatar settings while your account is disabled.' ) }</li>
+						<li>{ this.props.translate( 'You can reenable your account at any time.' ) }</li>
+						<li>{ this.props.translate( 'Reenabling your account within 30 days will automatically restore your data.' ) }</li>
+					</ul>
+					<p>
+						<FormButton scary>
+							{ this.props.translate( 'Disable My Gravatar' ) }
+						</FormButton>
+					</p>
 				</Card>
+
 			</Main>
 		);
 	},
