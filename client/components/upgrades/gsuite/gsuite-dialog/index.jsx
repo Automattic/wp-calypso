@@ -24,7 +24,7 @@ import {
 	validate as validateGappsUsers,
 	filter as filterUsers,
 } from 'lib/domains/google-apps-users';
-import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
+import { getAnnualPrice } from 'lib/google-apps';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
@@ -58,14 +58,11 @@ class GoogleAppsDialog extends React.Component {
 		}
 	}
 
-	getPrices( plan ) {
+	getAnnualPrice( plan ) {
 		const { currencyCode, productsList } = this.props;
 		const price = get( productsList, [ plan, 'prices', currencyCode ], 0 );
 
-		return {
-			annualPrice: getAnnualPrice( price, currencyCode ),
-			monthlyPrice: getMonthlyPrice( price, currencyCode ),
-		};
+		return getAnnualPrice( price, currencyCode );
 	}
 
 	render() {
@@ -77,8 +74,6 @@ class GoogleAppsDialog extends React.Component {
 	}
 
 	renderView() {
-		const prices = this.getPrices( gsuitePlanSlug );
-
 		return (
 			<form className="gsuite-dialog__form" onSubmit={ this.handleFormSubmit }>
 				<QueryProducts />
@@ -87,7 +82,7 @@ class GoogleAppsDialog extends React.Component {
 					<GoogleAppsProductDetails
 						domain={ this.props.domain }
 						plan={ gsuitePlanSlug }
-						{ ...prices }
+						annualPrice={ this.getAnnualPrice( gsuitePlanSlug ) }
 					/>
 					{ this.renderGoogleAppsUsers() }
 				</CompactCard>
