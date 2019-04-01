@@ -53,7 +53,7 @@
 
 	@include breakpoint( '>660px' ) {
 		display: flex;
-        justify-content: space-between;
+		justify-content: space-between;
 	}
 
 	.notice.is-compact {
@@ -107,7 +107,7 @@
 		word-break: break-all;
 
 		@include breakpoint( '>660px' ) {
-            flex-grow: 2;
+			flex-grow: 2;
 		}
 	}
 
@@ -128,18 +128,18 @@
 }
 
 .domain-registration-suggestion__title-wrapper {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 
-    .domain-registration-suggestion__title {
-        width: auto;
-        padding-right: 0.5em;
-    }
+	.domain-registration-suggestion__title {
+		width: auto;
+		padding-right: 0.5em;
+	}
 
-    .badge {
-        align-self: center;
-    }
+	.badge {
+		align-self: center;
+	}
 }
 
 .domain-registration-suggestion__title {
