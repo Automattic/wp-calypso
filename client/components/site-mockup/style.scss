@@ -58,6 +58,10 @@
 	}
 }
 
+// Helps with `calc` styles
+.site-mockup__viewport {
+	box-sizing: border-box;
+}
 
 // Mockup document body; Where all the
 // stuff goes.
