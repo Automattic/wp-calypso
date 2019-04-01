@@ -52,6 +52,7 @@ $z-layers: (
 		'.is-section-signup': 1,
 		'.media-library .search.is-expanded-to-container': 1,
 		'.ribbon': 1,
+		'.plan-pill': 1,
 		'.reader__featured-post-title': 1,
 		'.reader-list-gap__button': 1,
 		'.reader-following-search': 1,
@@ -193,6 +194,10 @@ $z-layers: (
 	'.ribbon': (
 		'.ribbon__title::before': -1,
 		'.ribbon__title::after': -1
+	),
+	'.plan-pill': (
+		'.plan-pill__title::before': -1,
+		'.plan-pill__title::after': -1
 	),
 	'.environment-badge': (
 		'.environment-badge .environment::before': -1,
