@@ -139,11 +139,11 @@ class BillingReceipt extends React.Component {
 		return (
 			<li className="billing-history__billing-details">
 				<strong>{ translate( 'Billing Details' ) }</strong>
-				<div contentEditable="true">
-					<span className="billing-history__placeholder">
-						{ translate( 'Click to add your billing details.' ) }
-					</span>
-				</div>
+				<div
+					contentEditable="true"
+					className="billing-history__billing-details-editable"
+					placeholder={ translate( 'Add your billing details here…' ) }
+				/>
 			</li>
 		);
 	}

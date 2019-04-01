@@ -192,8 +192,16 @@
 	min-height: 1.2em;
 }
 
-.billing-history__placeholder {
-	font-style: italic;
+.billing-history__billing-details-editable {
+	&:hover {
+		outline: 1px black dashed;
+	}
+
+	&:empty:not( :focus )::before {
+		content: attr( placeholder );
+		display: block; /* For Firefox */
+		font-style: italic;
+	}
 }
 
 .billing-history__receipt-details {
@@ -225,10 +233,6 @@
 			margin: 0 5px 0 0;
 			text-transform: uppercase;
 		}
-	}
-
-	.billing-history__billing-details div:hover {
-		border: 2px black dashed;
 	}
 }
 
@@ -387,10 +391,14 @@
 		.masterbar,
 		.billing-history__receipt-links,
 		.header-cake.card,
-		.inline-help,
-		.billing-history__placeholder {
+		.inline-help {
 			display: none;
 		}
+	}
+
+	.billing-history__billing-details-editable:empty:not( :focus )::before {
+		content: '';
+		display: none;
 	}
 }
 
