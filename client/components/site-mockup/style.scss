@@ -93,14 +93,13 @@
 }
 
 // Gutenberg Block Styles
+// Default theme is Professional
 .site-mockup__viewport {
 	@import 'theme-styles/gutenberg-blocks';
+	@import 'theme-styles/professional';
 }
 
 // Theme Styles
-.site-mockup__viewport.is-professional {
-	@import 'theme-styles/professional';
-}
 .site-mockup__viewport.is-modern {
 	@import 'theme-styles/modern';
 }

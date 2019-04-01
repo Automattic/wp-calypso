@@ -44,7 +44,7 @@ function addLinkHrefToHead( href ) {
 
 function getFont( siteStyle, siteType = 'business' ) {
 	if ( isEmpty( siteStyle ) ) {
-		siteStyle = 'default';
+		siteStyle = 'professional';
 	}
 	const styleOptions = getSiteStyleOptions( siteType );
 	const style = find( styleOptions, { id: siteStyle } );

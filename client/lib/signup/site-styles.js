@@ -14,7 +14,7 @@ export const siteStyleOptions = {
 			description: i18n.translate( 'Simple, yet sophisticated, with subtle, elegant typography.', {
 				comment: 'A description of a WordPress theme style.',
 			} ),
-			id: 'default',
+			id: 'professional',
 			label: 'Professional',
 			theme: 'pub/professional-business',
 			font: {
@@ -39,7 +39,7 @@ export const siteStyleOptions = {
 			} ),
 			id: 'modern',
 			label: 'Modern',
-			theme: 'pub/professional-business', // this will be 'pub/modern-business'
+			theme: 'pub/modern-business',
 			font: {
 				name: 'IBM Plex Sans',
 				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
@@ -62,7 +62,7 @@ export const siteStyleOptions = {
 			} ),
 			id: 'sophisticated',
 			label: 'Sophisticated',
-			theme: 'pub/professional-business', // this will be 'pub/sophisticated-business'
+			theme: 'pub/sophisticated-business',
 			font: {
 				name: 'Poppins',
 				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
@@ -86,7 +86,7 @@ export const siteStyleOptions = {
 			} ),
 			id: 'calm',
 			label: 'Calm',
-			theme: 'pub/professional-business', // this will be 'pub/friendly-business'
+			theme: 'pub/calm-business',
 			font: {
 				name: 'Rubik',
 				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
