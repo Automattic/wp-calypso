@@ -40,6 +40,11 @@
 		position: absolute;
 		top: 2px;
 		right: 2px;
+
+		@include breakpoint( '<660px' ) {
+			top: 1px;
+			right: 1px;
+		}
 	}
 
 	&__example {
