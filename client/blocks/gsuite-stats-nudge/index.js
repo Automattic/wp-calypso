@@ -12,7 +12,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import Card from 'components/card';
 import { emailManagement } from 'my-sites/email/paths';
@@ -71,28 +70,6 @@ class GSuiteStatsNudge extends Component {
 		return ! this.props.isDismissed;
 	}
 
-	getHeaderCopy() {
-		const { domainSlug, translate } = this.props;
-
-		switch ( abtest( 'gSuiteStatsNudge' ) ) {
-			case 'copy1':
-				return translate( 'Get a mailbox powered by G Suite' );
-			case 'copy2':
-				return translate(
-					'Get email for your domain powered by G Suite for just {{em}}$6/mo{{/em}} $5/mo – limited time offer!',
-					{ components: { em: <em /> } }
-				);
-			case 'copy3':
-				return translate(
-					'Customers can’t reach you at contact@%s – click here to add a mailbox for just $5/mo',
-					{ args: domainSlug }
-				);
-			case 'copy4':
-				return translate( 'Professional email and so much more' );
-			default:
-		}
-	}
-
 	render() {
 		const { domainSlug, siteSlug, translate } = this.props;
 		const url = emailManagement( siteSlug );
@@ -126,7 +103,12 @@ class GSuiteStatsNudge extends Component {
 					</div>
 
 					<div className="gsuite-stats-nudge__info">
-						<h1 className="gsuite-stats-nudge__title">{ this.getHeaderCopy() }</h1>
+						<h1 className="gsuite-stats-nudge__title">
+							{ translate(
+								'Customers can’t reach you at contact@%s – click here to add a mailbox',
+								{ args: domainSlug }
+							) }
+						</h1>
 						{
 							<p>
 								{ translate(
