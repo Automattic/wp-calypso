@@ -68,27 +68,37 @@ export class SubscriptionLengthPicker extends React.Component {
 
 				<div className="subscription-length-picker__options">
 					{ productsWithPrices.map(
-						( { plan, planSlug, priceFullBeforeDiscount, priceMinusCredits, priceMonthly } ) => (
-							<div className="subscription-length-picker__option-container" key={ planSlug }>
-								<SubscriptionLengthOption
-									type={ hasDiscount ? 'upgrade' : 'new-sale' }
-									term={ plan.term }
-									checked={ planSlug === this.props.initialValue }
-									price={ myFormatCurrency( priceMinusCredits, this.props.currencyCode ) }
-									priceBeforeDiscount={ myFormatCurrency(
-										priceFullBeforeDiscount,
-										this.props.currencyCode
-									) }
-									pricePerMonth={ myFormatCurrency( priceMonthly, this.props.currencyCode ) }
-									savePercent={ Math.round(
-										100 * ( 1 - priceMonthly / this.getHighestMonthlyPrice() )
-									) }
-									value={ planSlug }
-									onCheck={ this.props.onChange }
-									shouldShowTax={ shouldShowTax }
-								/>
-							</div>
-						)
+						( {
+							plan,
+							planSlug,
+							priceFull,
+							priceFullBeforeDiscount,
+							priceMinusCredits,
+							priceMonthly,
+						} ) => {
+							const price = ! priceMinusCredits ? priceFull : priceMinusCredits;
+							return (
+								<div className="subscription-length-picker__option-container" key={ planSlug }>
+									<SubscriptionLengthOption
+										type={ hasDiscount ? 'upgrade' : 'new-sale' }
+										term={ plan.term }
+										checked={ planSlug === this.props.initialValue }
+										price={ myFormatCurrency( price, this.props.currencyCode ) }
+										priceBeforeDiscount={ myFormatCurrency(
+											priceFullBeforeDiscount,
+											this.props.currencyCode
+										) }
+										pricePerMonth={ myFormatCurrency( priceMonthly, this.props.currencyCode ) }
+										savePercent={ Math.round(
+											100 * ( 1 - priceMonthly / this.getHighestMonthlyPrice() )
+										) }
+										value={ planSlug }
+										onCheck={ this.props.onChange }
+										shouldShowTax={ shouldShowTax }
+									/>
+								</div>
+							);
+						}
 					) }
 				</div>
 			</div>
