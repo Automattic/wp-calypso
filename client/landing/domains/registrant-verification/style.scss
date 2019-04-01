@@ -1,0 +1,26 @@
+.heading {
+	font-size: 96px;
+	margin: 32px 0;
+}
+
+.greeting {
+	color: var( --color-text );
+}
+
+
+.registrant-verification {
+	h2 {
+		font-size: 20px;
+		font-weight: 600;
+		margin-bottom: 1em;
+	}
+
+	a {
+		cursor: pointer;
+	}
+
+	.registrant-verification__button {
+		margin-right: 16px;
+		margin-top: 16px;
+	}
+}

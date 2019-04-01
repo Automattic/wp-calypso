@@ -17,7 +17,7 @@ const cssChunkLink = asset => (
 	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
 );
 
-function LandingSample( {
+function DomainsLanding( {
 	branchName,
 	inlineScriptNonce,
 	isDebug,
@@ -132,4 +132,4 @@ function LandingSample( {
 	);
 }
 
-export default LandingSample;
+export default DomainsLanding;

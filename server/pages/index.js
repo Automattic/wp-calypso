@@ -747,16 +747,28 @@ module.exports = function() {
 		res.redirect( redirectUrl );
 	} );
 
-	app.get( '/landing/sample', function( req, res ) {
+	app.get( '/landing/domains/:action', function( req, res ) {
 		const ctx = getDefaultContext( req );
 		attachBuildTimestamp( ctx );
 		attachHead( ctx );
 		attachI18n( ctx );
 		console.log( ctx );
 
-		const pageHtml = renderJsx( 'landingSample', {
+		const action = get( req.params, 'action' );
+		let entrypointName;
+		switch ( action ) {
+			case 'registrant-verification':
+				entrypointName = 'registrantVerification';
+				break;
+
+			default:
+				res.send( renderJsx( '404', ctx ) );
+				return;
+		}
+
+		const pageHtml = renderJsx( 'domains-landing', {
 			...ctx,
-			entrypoint: getFilesForEntrypoint( 'landingSample' ),
+			entrypoint: getFilesForEntrypoint( entrypointName ),
 		} );
 		res.send( pageHtml );
 	} );
