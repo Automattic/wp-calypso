@@ -79,7 +79,9 @@ export class PlanFeatures extends Component {
 			'plan-features--signup': isInSignup,
 		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
-		const mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
+		const mobileView = ! withScroll && (
+			<div className="plan-features__mobile">{ this.renderMobileView() }</div>
+		);
 		let planDescriptions;
 		let bottomButtons = null;
 
@@ -96,7 +98,11 @@ export class PlanFeatures extends Component {
 					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features__content">
 						{ mobileView }
-						<PlanFeaturesScroller withScroll={ withScroll } planCount={ planProperties.length }>
+						<PlanFeaturesScroller
+							withScroll={ withScroll }
+							planCount={ planProperties.length }
+							cellSelector=".plan-features__table-item"
+						>
 							<table className={ tableClasses }>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>

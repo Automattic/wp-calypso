@@ -111,10 +111,6 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.plan-features__row {
-	background: var( --color-white );
-}
-
 .plan-features__table-item {
 	border-right: solid 1px var( --color-neutral-50 );
 	border-left: solid 1px var( --color-neutral-50 );
@@ -627,15 +623,40 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__scroller-container {
 		overflow: auto;
-		overflow: -moz-scrollbars-none;
 		-ms-overflow-style: none;
+		scrollbar-width: none;
 		scroll-snap-type: x mandatory;
 		scroll-behavior: smooth;
-		overscroll-behavior: contain;
 		padding: 0 0 30px;
+
+		&.scroll-snap-disabled {
+			scroll-snap-type: none;
+		}
 
 		&::-webkit-scrollbar {
 			height: 0;
+		}
+
+		.plan-features__table {
+			display: table;
+			padding: 0;
+			margin: 0 auto;
+			width: 100%;
+		}
+
+		.plan-features__header-wrapper {
+			position: relative;
+		}
+
+		/* scroll stops */
+		.plan-features__header-wrapper::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			height: 0;
+			width: 1px;
+			overflow: hidden;
+			scroll-snap-align: start;
 		}
 	}
 
@@ -651,7 +672,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		top: 24px;
 		bottom: 40px;
 		width: 12%;
-		background-color: rgba( var( --color-primary-rgb ), 0.5 );
+		background-color: rgba( var( --color-primary-rgb ), 0.01 );
 		cursor: pointer;
 		overflow: hidden;
 		z-index: 1;
@@ -678,6 +699,10 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		border-radius: 15px;
 		color: var( --color-primary );
 		cursor: pointer;
+
+		:root body.is-section-signup & {
+			padding: 0;
+		}
 
 		&:disabled, &[disabled] {
 			opacity: 0.5;
@@ -718,6 +743,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__table-item {
 		text-align: center;
+		transition: opacity 0.05s
 	}
 
 	.plan-features__table-item.has-border-bottom {
