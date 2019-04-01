@@ -46,7 +46,7 @@ export class DoneButton extends React.PureComponent {
 			importer_id: tracksType,
 		} );
 
-		page( '/view/' + siteSlug );
+		page( '/view/' + ( siteSlug || '' ) );
 	};
 
 	componentWillUnmount() {
