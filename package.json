@@ -329,7 +329,7 @@
 		"whybundled": "1.4.2"
 	},
 	"optionalDependencies": {
-		"fsevents": "2.0.1"
+		"fsevents": "2.0.3"
 	},
 	"husky": {
 		"hooks": {
