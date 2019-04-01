@@ -34,11 +34,9 @@ function getWebpackConfig(
 	env,
 	{
 		entry,
-		output = {
-			path: path.join( __dirname, 'dist' ),
-			filename: '[name].js',
-			libraryTarget: 'window',
-		},
+		'output-path': outputPath = path.join( __dirname, 'dist' ),
+		'output-filename': outputFilename = '[name].js',
+		'output-libary-target': outputLibraryTarget = 'window',
 	}
 ) {
 	const workerCount = 1;
@@ -50,7 +48,11 @@ function getWebpackConfig(
 		entry,
 		mode: isDevelopment ? 'development' : 'production',
 		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
-		output,
+		output: {
+			path: outputPath,
+			filename: outputFilename,
+			libraryTarget: outputLibraryTarget,
+		},
 		optimization: {
 			minimize: ! isDevelopment,
 			minimizer: Minify( {
