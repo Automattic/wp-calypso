@@ -175,10 +175,12 @@ export function createSiteWithCart(
 
 	const importingFromUrl =
 		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( state ) ) : '';
+	const importEngine = 'import' === flowName ? getSelectedImportEngine( state ) : '';
 
 	if ( importingFromUrl ) {
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
+		newSiteParams.options.nux_import_engine = importEngine;
 	} else if (
 		flowName === 'onboarding' &&
 		'remove' === getABTestVariation( 'removeDomainsStepFromOnboarding' )
