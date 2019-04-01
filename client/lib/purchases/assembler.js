@@ -24,6 +24,12 @@ function createPurchaseObject( purchase ) {
 			: null,
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
+		costToUnbundle: purchase.cost_to_unbundle
+			? Number( purchase.cost_to_unbundle )
+			: Number( purchase.amount ),
+		costToUnbundleText: purchase.cost_to_unbundle_display
+			? purchase.cost_to_unbundle_display
+			: purchase.price_text,
 		currencyCode: purchase.currency_code,
 		currencySymbol: purchase.currency_symbol,
 		description: purchase.description,

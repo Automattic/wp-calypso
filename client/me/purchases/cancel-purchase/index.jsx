@@ -115,7 +115,7 @@ class CancelPurchase extends React.Component {
 				const { precision } = getCurrencyDefaults( currency );
 				const fullRefundText =
 					currencySymbol +
-					parseFloat( refundAmount + this.props.includedDomainPurchase.amount ).toFixed(
+					parseFloat( refundAmount + this.props.includedDomainPurchase.costToUnbundle ).toFixed(
 						precision
 					);
 				return this.props.translate( '%(refundText)s to be refunded', {
