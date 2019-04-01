@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { flow } from 'lodash';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import { resetImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setImportOriginSiteDetails } from 'state/importer-nux/actions';
 import { SITE_IMPORTER } from 'state/imports/constants';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class DoneButton extends React.PureComponent {
 	static displayName = 'DoneButton';
@@ -32,23 +34,38 @@ export class DoneButton extends React.PureComponent {
 
 	handleClick = () => {
 		const {
+			importerStatus: { type },
+			site: { ID: siteId },
+			siteSlug,
+		} = this.props;
+
+		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
+
+		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
+			blog_id: siteId,
+			importer_id: tracksType,
+		} );
+
+		page( '/view/' + ( siteSlug || '' ) );
+	};
+
+	componentWillUnmount() {
+		const {
 			importerStatus: { importerId, type },
 			site: { ID: siteId },
 		} = this.props;
-		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
+		/**
+		 * Calling `resetImport` in unmount defers until the redirect is in progress
+		 * Otherwise, you see the importers list during the route change
+		 */
 		resetImport( siteId, importerId );
 
 		if ( SITE_IMPORTER === type ) {
 			// Clear out site details, so that importers list isn't filtered
 			this.props.setImportOriginSiteDetails();
 		}
-
-		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
-			blog_id: siteId,
-			importer_id: tracksType,
-		} );
-	};
+	}
 
 	render() {
 		const { translate } = this.props;
@@ -63,7 +80,9 @@ export class DoneButton extends React.PureComponent {
 
 export default flow(
 	connect(
-		null,
+		state => ( {
+			siteSlug: getSelectedSiteSlug( state ),
+		} ),
 		{ setImportOriginSiteDetails, recordTracksEvent }
 	),
 	localize
