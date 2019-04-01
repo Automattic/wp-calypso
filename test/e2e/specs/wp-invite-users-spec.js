@@ -47,7 +47,7 @@ before( async function() {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Invites:  (${ screenSize })`, function() {
+describe.only( `[${ host }] Invites:  (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Inviting new user as an Editor: @parallel @jetpack', function() {

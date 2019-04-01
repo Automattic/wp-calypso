@@ -527,6 +527,9 @@ jobs:
           command: |
             env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
       - run: *move-e2e-artifacts
+      - run:
+          name: Generate Allure Reports
+          command: ./node_modules/.bin/allure generate ./reports/ -o ./reports/allure
       - store-artifacts-and-test-results
       - slack/status:
           webhook: << parameters.slack-webhook >>
