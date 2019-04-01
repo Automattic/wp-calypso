@@ -205,7 +205,7 @@
 		"wpcom-oauth": "0.3.4",
 		"wpcom-proxy-request": "5.0.2",
 		"wpcom-xhr-request": "1.1.2",
-		"yargs": "12.0.5"
+		"yargs": "13.2.2"
 	},
 	"engines": {
 		"node": "^10.15.2",
