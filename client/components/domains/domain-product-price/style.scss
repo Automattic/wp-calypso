@@ -51,6 +51,11 @@
 	.domain-product-price__price,
 	.domain-product-price__renewal-price {
 		margin: auto 0;
+		font-size: 0.9em;
+
+		@include breakpoint( '>480px' ) {
+			font-size: 1em;
+		}
 	}
 
 	&.is-free-domain,
