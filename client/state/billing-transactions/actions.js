@@ -14,7 +14,6 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
 import wp from 'lib/wp';
-import { maybeInjectPlaceholderTaxAmountIntoCharges } from 'lib/tax';
 
 export const requestBillingTransactions = () => {
 	return dispatch => {
@@ -29,9 +28,8 @@ export const requestBillingTransactions = () => {
 			.then( ( { billing_history, upcoming_charges } ) => {
 				dispatch( {
 					type: BILLING_TRANSACTIONS_RECEIVE,
-					// #tax-on-checkout-placeholder
-					past: maybeInjectPlaceholderTaxAmountIntoCharges( billing_history ),
-					upcoming: maybeInjectPlaceholderTaxAmountIntoCharges( upcoming_charges ),
+					past: billing_history,
+					upcoming: upcoming_charges,
 				} );
 				dispatch( {
 					type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,

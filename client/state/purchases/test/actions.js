@@ -24,8 +24,7 @@ import {
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
-	// #tax-on-checkout-placeholder
-	const purchases = [ { ID: 1, tax_amount: null, tax_text: null } ],
+	const purchases = [ { ID: 1 } ],
 		userId = 1337,
 		siteId = 1234,
 		purchaseId = 31337;
