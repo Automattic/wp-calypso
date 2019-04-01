@@ -26,7 +26,7 @@ import wp from 'lib/wp';
 import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	translatedEbanxError,
-} from 'lib/checkout/ebanx';
+} from 'lib/checkout/processor-specific';
 import analytics from 'lib/analytics';
 
 const wpcom = wp.undocumented();

@@ -15,7 +15,7 @@ import {
 	isValidCPF,
 	isValidCNPJ,
 	shouldRenderAdditionalCountryFields,
-} from '../ebanx';
+} from '../processor-specific';
 import { isPaymentMethodEnabled } from 'lib/cart-values';
 
 jest.mock( 'lib/cart-values', () => {

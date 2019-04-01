@@ -60,6 +60,35 @@ export function isValidCNPJ( cnpj = '' ) {
 	return CNPJ.isValid( cnpj );
 }
 
+export function fullAddressFieldsRules() {
+	return {
+		'street-number': {
+			description: i18n.translate( 'Street Number' ),
+			rules: [ 'required', 'validStreetNumber' ],
+		},
+
+		'address-1': {
+			description: i18n.translate( 'Address' ),
+			rules: [ 'required' ],
+		},
+
+		state: {
+			description: i18n.translate( 'State' ),
+			rules: [ 'required' ],
+		},
+
+		city: {
+			description: i18n.translate( 'City' ),
+			rules: [ 'required' ],
+		},
+
+		'postal-code': {
+			description: i18n.translate( 'Postal Code' ),
+			rules: [ 'required' ],
+		},
+	}
+}
+
 /**
  * Returns ebanx validation rule sets for defined fields. Ebanx required fields may vary according to country
  * See: https://developers.ebanx.com/api-reference/full-api-documentation/ebanx-payment-2/ebanx-payment-guide/guide-create-a-payment/
@@ -70,30 +99,10 @@ export function ebanxFieldRules( country ) {
 	const ebanxFields = PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ country ].fields || [];
 
 	return pick(
-		{
+		Object.assign( {
 			document: {
 				description: i18n.translate( 'Taxpayer Identification Number' ),
 				rules: [ 'validBrazilTaxId' ],
-			},
-
-			'street-number': {
-				description: i18n.translate( 'Street Number' ),
-				rules: [ 'required', 'validStreetNumber' ],
-			},
-
-			'address-1': {
-				description: i18n.translate( 'Address' ),
-				rules: [ 'required' ],
-			},
-
-			state: {
-				description: i18n.translate( 'State' ),
-				rules: [ 'required' ],
-			},
-
-			city: {
-				description: i18n.translate( 'City' ),
-				rules: [ 'required' ],
 			},
 
 			'phone-number': {
@@ -105,7 +114,7 @@ export function ebanxFieldRules( country ) {
 				description: i18n.translate( 'Postal Code' ),
 				rules: [ 'required' ],
 			},
-		},
+		}, fullAddressFieldsRules() ),
 		ebanxFields
 	);
 }

@@ -15,7 +15,7 @@ import {
 	isValidCPF,
 	isValidCNPJ,
 	ebanxFieldRules,
-} from 'lib/checkout/ebanx';
+} from 'lib/checkout/processor-specific';
 
 /**
  * Returns the credit card validation rule set
