@@ -15,6 +15,7 @@ import {
 	isValidCPF,
 	isValidCNPJ,
 	ebanxFieldRules,
+	dLocalFieldRules,
 } from 'lib/checkout/processor-specific';
 
 /**
@@ -123,6 +124,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
 		// TODO: field rules for dlocal/india
+		case 'netbanking':
+			return dLocalFieldRules( 'IN' );
 		case 'token':
 			return tokenFieldRules();
 		default:
@@ -220,6 +223,22 @@ validators.validBrazilTaxId = {
 				args: { description: description },
 			}
 		);
+	},
+};
+
+validators.validIndiaPan = {
+	isValid( value ) {
+		const panRegex = /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/;
+
+		if ( ! value ) {
+			return false;
+		}
+		return panRegex.test( value );
+	},
+	error: function( description ) {
+		return i18n.translate( '%(description)s is invalid', {
+			args: { description: capitalize( description ) },
+		} );
 	},
 };
 

@@ -25,6 +25,15 @@ export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS = {
 		fields: [ 'phone-number', 'postal-code' ],
 	},
 	IN: {
-		fields: [ 'pan', 'street-number', 'address-1', 'address-2', 'state', 'city', 'postal-code' ],
+		fields: [
+			'name',
+			'pan',
+			'street-number',
+			'address-1',
+			'address-2',
+			'state',
+			'city',
+			'postal-code',
+		],
 	},
 };
