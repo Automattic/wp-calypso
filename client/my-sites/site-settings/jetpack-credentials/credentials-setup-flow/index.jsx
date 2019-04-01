@@ -27,14 +27,7 @@ class CredentialsSetupFlow extends Component {
 		siteId: PropTypes.number,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			currentStep: 'start',
-			showPopover: false,
-		};
-	}
+	state = { currentStep: 'start' };
 
 	reset = () => this.setState( { currentStep: 'start' } );
 
