@@ -35,6 +35,8 @@ import PostShare from 'blocks/post-share';
 import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
+import PostActionsEllipsisMenuEdit from 'my-sites/post-type-list/post-actions-ellipsis-menu/edit';
+import PostActionsEllipsisMenuTrash from 'my-sites/post-type-list/post-actions-ellipsis-menu/trash';
 import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 import { preload } from 'sections-helper';
@@ -136,6 +138,7 @@ class PostItem extends React.Component {
 			translate,
 			multiSelectEnabled,
 			hasExpandedContent,
+			isTypeWpBlock,
 		} = this.props;
 
 		const title = post ? post.title : null;
@@ -210,7 +213,15 @@ class PostItem extends React.Component {
 						globalId={ globalId }
 						onClick={ this.clickHandler( 'image' ) }
 					/>
-					{ ! multiSelectEnabled && <PostActionsEllipsisMenu globalId={ globalId } /> }
+					{ ! multiSelectEnabled && ! isTypeWpBlock && (
+						<PostActionsEllipsisMenu globalId={ globalId } />
+					) }
+					{ ! multiSelectEnabled && isTypeWpBlock && (
+						<PostActionsEllipsisMenu globalId={ globalId } includeDefaultActions={ false }>
+							<PostActionsEllipsisMenuEdit key="edit" />
+							<PostActionsEllipsisMenuTrash key="trash" />
+						</PostActionsEllipsisMenu>
+					) }
 				</div>
 				{ hasExpandedContent && this.renderExpandedContent() }
 			</div>
@@ -232,6 +243,7 @@ PostItem.propTypes = {
 	compact: PropTypes.bool,
 	hideActiveSharePanel: PropTypes.func,
 	hasExpandedContent: PropTypes.bool,
+	isTypeWpBlock: PropTypes.bool,
 };
 
 export default connect(
@@ -259,6 +271,7 @@ export default connect(
 			hasExpandedContent,
 			isCurrentPostSelected: isPostSelected( state, globalId ),
 			multiSelectEnabled: isMultiSelectEnabled( state ),
+			isTypeWpBlock: 'wp_block' === post.type,
 		};
 	},
 	{
