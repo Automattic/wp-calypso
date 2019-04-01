@@ -7,6 +7,8 @@ import {
 	IMPORT_IS_SITE_IMPORTABLE_ERROR,
 	IMPORT_IS_SITE_IMPORTABLE_RECEIVE,
 	IMPORTS_IMPORT_CANCEL,
+	IMPORTER_NUX_FROM_SIGNUP_CLEAR,
+	IMPORTER_NUX_FROM_SIGNUP_SET,
 	IMPORTER_NUX_URL_INPUT_SET,
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
 	SIGNUP_PROGRESS_SAVE_STEP,
@@ -19,6 +21,11 @@ registerActionForward( IMPORTS_IMPORT_CANCEL );
 export const urlInputValue = createReducer( '', {
 	[ IMPORTER_NUX_URL_INPUT_SET ]: ( state, { value = '' } ) => value,
 	[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => '',
+} );
+
+export const isFromSignupFlow = createReducer( false, {
+	[ IMPORTER_NUX_FROM_SIGNUP_SET ]: () => true,
+	[ IMPORTER_NUX_FROM_SIGNUP_CLEAR ]: () => false,
 } );
 
 export const isUrlInputDisabled = createReducer( false, {
@@ -48,6 +55,7 @@ export const error = createReducer( null, {
 
 export default combineReducers( {
 	error,
+	isFromSignupFlow,
 	isUrlInputDisabled,
 	siteDetails,
 	urlInputValue,

@@ -331,6 +331,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 				{
 					engine: importEngine || null,
 					'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
+					signup: 1,
 				},
 				`/settings/import/${ siteSlug }`
 			),

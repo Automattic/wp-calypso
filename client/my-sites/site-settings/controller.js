@@ -26,7 +26,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import isVipSite from 'state/selectors/is-vip-site';
 import { SITES_ONCE_CHANGED } from 'state/action-types';
 import { setSection } from 'state/ui/actions';
-import { setImportOriginSiteDetails } from 'state/importer-nux/actions';
+import { setImportingFromSignupFlow, setImportOriginSiteDetails } from 'state/importer-nux/actions';
 import { decodeURIComponentIfValid } from 'lib/url';
 
 function canDeleteSite( state, siteId ) {
@@ -90,6 +90,7 @@ export function importSite( context, next ) {
 	if ( context.querystring ) {
 		page.replace( context.pathname, {
 			engine: get( context, 'query.engine' ),
+			isFromSignup: get( context, 'query.signup' ),
 			siteUrl: get( context, 'query.from-site' ),
 		} );
 		return;
@@ -101,6 +102,10 @@ export function importSite( context, next ) {
 			siteUrl: decodeURIComponentIfValid( get( context, 'state.siteUrl' ) ),
 		} )
 	);
+
+	if ( get( context, 'state.isFromSignup' ) ) {
+		context.store.dispatch( setImportingFromSignupFlow() );
+	}
 
 	context.primary = <AsyncLoad require="my-sites/site-settings/section-import" />;
 	next();
