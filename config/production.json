@@ -111,7 +111,6 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
-		"show-tax": false,
 		"signup/onboarding-flow": true,
 		"signup/social": true,
 		"signup/social-management": true,

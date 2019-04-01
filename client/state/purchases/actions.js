@@ -19,7 +19,6 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'state/action-types';
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
-import { injectPurchasesWithPlaceholderValues } from 'lib/tax';
 
 import wp from 'lib/wp';
 const wpcom = wp.undocumented();
@@ -47,8 +46,7 @@ export const fetchSitePurchases = siteId => dispatch => {
 			dispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
-				// #tax-on-checkout-placeholder
-				purchases: injectPurchasesWithPlaceholderValues( data ),
+				purchases: data,
 			} );
 		} )
 		.catch( () => {
@@ -72,8 +70,7 @@ export const fetchUserPurchases = userId => dispatch => {
 		.then( data => {
 			dispatch( {
 				type: PURCHASES_USER_FETCH_COMPLETED,
-				// #tax-on-checkout-placeholder
-				purchases: injectPurchasesWithPlaceholderValues( data ),
+				purchases: data,
 				userId,
 			} );
 		} )

@@ -90,7 +90,6 @@
 		"rubberband-scroll-disable": false,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
-		"show-tax": false,
 		"signup/onboarding-flow": false,
 		"signup/ecommerce-flow": false,
 		"signup/social": false,

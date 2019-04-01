@@ -20,9 +20,6 @@ extendImmutabilityHelper( '$auto', function( value, object ) {
 	return object ? update( object, value ) : update( {}, value );
 } );
 
-// #tax-on-checout-placeholder
-import { injectTaxStateWithPlaceholderValues } from 'lib/tax';
-
 const PAYMENT_METHODS = {
 	alipay: 'WPCOM_Billing_Stripe_Source_Alipay',
 	bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
@@ -69,7 +66,7 @@ function preprocessCartForServer( {
 			is_coupon_applied,
 			is_coupon_removed,
 			currency,
-			tax: injectTaxStateWithPlaceholderValues( tax ), // #tax-on-checkout-placeholder
+			tax,
 			temporary,
 			extra,
 			products: products.map(
@@ -390,11 +387,6 @@ export function hasPendingPayment( cart ) {
 }
 
 export function shouldShowTax( cart ) {
-	// #tax-on-checkout-placeholder
-	if ( ! config.isEnabled( 'show-tax' ) ) {
-		return false;
-	}
-
 	return get( cart, [ 'tax', 'display_taxes' ], false );
 }
 
