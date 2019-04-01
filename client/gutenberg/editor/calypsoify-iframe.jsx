@@ -60,14 +60,15 @@ class CalypsoifyIframe extends Component {
 		super( props );
 		this.iframeRef = React.createRef();
 		this.mediaSelectPort = null;
-		MediaStore.on( 'change', this.updateImageBlocks );
 	}
 
 	componentDidMount() {
+		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
 	}
 
 	componentWillUnmount() {
+		MediaStore.off( 'change', this.updateImageBlocks );
 		window.removeEventListener( 'message', this.onMessage, false );
 	}
 
