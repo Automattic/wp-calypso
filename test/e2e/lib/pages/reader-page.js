@@ -18,7 +18,7 @@ export default class ReaderPage extends AsyncBaseContainer {
 		if ( ! url ) {
 			url = ReaderPage.getReaderURL();
 		}
-		super( driver, by.css( '.is-section-reader' ), url );
+		super( driver, by.css( '.is-section-reader .reader-post-card' ), url );
 	}
 
 	async siteOfLatestPost() {
