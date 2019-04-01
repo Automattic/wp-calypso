@@ -15,6 +15,8 @@ import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import { getAllSiteTypes } from 'lib/signup/site-type';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -63,23 +65,29 @@ class SiteTypeForm extends Component {
 		this.setState( { hasOtherReasonFocus: focus } );
 	};
 
-	render() {
+	renderBasicCard = () => {
+		return (
+			<Card className="site-type__wrapper">
+				{ getAllSiteTypes().map( siteTypeProperties => (
+					<Card
+						className="site-type__option"
+						key={ siteTypeProperties.id }
+						displayAsLink
+						data-e2e-title={ siteTypeProperties.slug }
+						onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
+					>
+						<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
+					</Card>
+				) ) }
+			</Card>
+		);
+	};
+
+	renderOtherInfo = () => {
 		const { translate } = this.props;
+
 		return (
 			<div>
-				<Card className="site-type__wrapper">
-					{ getAllSiteTypes().map( siteTypeProperties => (
-						<Card
-							className="site-type__option"
-							key={ siteTypeProperties.id }
-							displayAsLink
-							data-e2e-title={ siteTypeProperties.slug }
-							onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
-						>
-							<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
-						</Card>
-					) ) }
-				</Card>
 				<LoggedOutFormLinks className="site-type__links">
 					<LoggedOutFormLinkItem className="site-type__text">
 						Or type your own
@@ -106,11 +114,32 @@ class SiteTypeForm extends Component {
 				</div>
 			</div>
 		);
+	};
+
+	render() {
+		const { isJetpack } = this.props;
+
+		if ( isJetpack === null ) {
+			return <div>{ this.renderBasicCard() }</div>;
+		}
+
+		return (
+			<div>
+				{ this.renderBasicCard() }
+				{ this.renderOtherInfo() }
+			</div>
+		);
 	}
 }
 
 export default connect(
-	null,
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		return {
+			isJetpack,
+		};
+	},
 	{
 		recordTracksEvent,
 	}
