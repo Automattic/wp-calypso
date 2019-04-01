@@ -104,7 +104,10 @@ class GSuiteStatsNudge extends Component {
 
 					<div className="gsuite-stats-nudge__info">
 						<h1 className="gsuite-stats-nudge__title">
-							{ translate( 'Get a mailbox powered by G Suite' ) }
+							{ translate(
+								'Customers can’t reach you at contact@%s – click here to add a mailbox',
+								{ args: domainSlug }
+							) }
 						</h1>
 						{
 							<p>
