@@ -29,6 +29,11 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import FetchError from './fetch-error';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class NameServers extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,

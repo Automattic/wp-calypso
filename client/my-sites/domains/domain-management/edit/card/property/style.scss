@@ -1,0 +1,20 @@
+.domain-details-card__property {
+	font-size: 13px;
+	margin-bottom: 10px;
+	@include clear-fix;
+
+	&:last-of-type {
+		margin-bottom: 0;
+	}
+
+	& > strong {
+		float: left;
+		width: 50%;
+	}
+
+	& > span {
+		float: right;
+		text-align: right;
+		width: 50%;
+	}
+}

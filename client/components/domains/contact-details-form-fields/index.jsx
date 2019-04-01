@@ -36,7 +36,7 @@ import analytics from 'lib/analytics';
 import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
-import RegionAddressFieldsets from 'components/domains/contact-details-form-fields/custom-form-fieldsets/region-address-fieldsets';
+import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import notices from 'notices';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import getCountries from 'state/selectors/get-countries';
@@ -44,8 +44,13 @@ import QueryDomainCountries from 'components/data/query-countries/domains';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
-} from 'components/domains/contact-details-form-fields/custom-form-fieldsets/constants';
+} from './custom-form-fieldsets/constants';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const CONTACT_DETAILS_FORM_FIELDS = [
 	'firstName',

@@ -50,10 +50,6 @@
 			margin-left: 12px;
 		}
 
-		.domain-management-form-footer {
-			justify-content: flex-end;
-		}
-
 		.g-apps-fieldset {
 			.country {
 				margin-top: 15px;
@@ -95,8 +91,7 @@
 	}
 
 	.domain-management-form-footer {
-		padding-right: 0;
-		width: 100%;
+		justify-content: flex-end;
 	}
 
 	.form__hidden-input a {
@@ -135,6 +130,3 @@
 .contact-details-form-fields__container > div.hidden-input {
 	margin-top: 0;
 }
-
-
-

@@ -33,6 +33,11 @@ import SectionHeader from 'components/section-header';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { withoutHttp } from 'lib/url';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SiteRedirect extends React.Component {
 	static propTypes = {
 		location: PropTypes.object.isRequired,

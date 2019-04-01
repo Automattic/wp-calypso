@@ -20,6 +20,11 @@ import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
 import { actionType, noticeType } from './constants';
 import wp from 'lib/wp';
 
+/**
+ * Style dependencies
+ */
+import './domain-connect-authorize.scss';
+
 const wpcom = wp.undocumented();
 
 class DomainConnectAuthorize extends Component {

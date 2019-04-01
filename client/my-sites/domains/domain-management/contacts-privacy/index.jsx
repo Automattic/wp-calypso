@@ -25,6 +25,11 @@ import {
 import { getSelectedDomain } from 'lib/domains';
 import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ContactsPrivacy extends React.PureComponent {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,

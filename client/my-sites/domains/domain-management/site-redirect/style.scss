@@ -1,0 +1,18 @@
+.site-redirect-card {
+	form label + input[type='text'] {
+		margin-bottom: 10px;
+	}
+
+	&.fetching input[type='text'] {
+		animation: pulse-light 0.8s ease-in-out infinite;
+		background: var( --color-neutral-100 );
+	}
+}
+
+.site-redirect__explanation {
+	display: block;
+	margin-top: 5px;
+	font-size: 13px;
+	font-style: italic;
+	color: var( --color-text-subtle );
+}

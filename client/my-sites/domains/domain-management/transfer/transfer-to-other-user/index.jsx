@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -28,6 +29,11 @@ import SectionHeader from 'components/section-header';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const wpcom = wp.undocumented();
 
@@ -145,7 +151,7 @@ class TransferOtherUser extends React.Component {
 			{ slug } = selectedSite;
 
 		return (
-			<Main className="transfer-to-other-user">
+			<Main>
 				<Header
 					selectedDomainName={ selectedDomainName }
 					backHref={ domainManagementTransfer( slug, selectedDomainName ) }
@@ -208,7 +214,7 @@ class TransferOtherUser extends React.Component {
 		return (
 			<Fragment>
 				<SectionHeader label={ translate( 'Transfer Domain To Another User' ) } />
-				<Card className="transfer-to-other-user__transfer-card">
+				<Card>
 					<p>
 						{ translate(
 							'Transferring a domain to another user will give all the rights of the domain to that user. ' +

@@ -77,34 +77,31 @@ class EmailProvider extends Component {
 		const isDataValid = token.match( validationPattern );
 
 		return (
-			<form className="dns__template-form">
-				<div className="dns__form-content">
-					<FormFieldset>
-						<FormLabel htmlFor="dns-template-token">{ label }</FormLabel>
-						<FormTextInput
-							id="dns-template-token"
-							key={ `dns-templates-token-${ name }` }
-							name="token"
-							isError={ ! isEmpty( token ) && ! isDataValid }
-							onChange={ this.onChange }
-							placeholder={ placeholder }
-						/>
-						{ token && ! isDataValid && (
-							<FormInputValidation text={ translate( 'Invalid Token' ) } isError />
-						) }
-					</FormFieldset>
-
-					<FormFooter>
-						<FormButton disabled={ ! isDataValid || submitting } onClick={ this.onAddDnsRecords }>
-							{ translate( 'Set up %(providerName)s', {
-								args: { providerName: name },
-								comment:
-									'%(providerName)s will be replaced with the name of the service ' +
-									'provider that this template is used for, for example G Suite or Office 365',
-							} ) }
-						</FormButton>
-					</FormFooter>
-				</div>
+			<form className="dns__form">
+				<FormFieldset>
+					<FormLabel htmlFor="dns-template-token">{ label }</FormLabel>
+					<FormTextInput
+						id="dns-template-token"
+						key={ `dns-templates-token-${ name }` }
+						name="token"
+						isError={ ! isEmpty( token ) && ! isDataValid }
+						onChange={ this.onChange }
+						placeholder={ placeholder }
+					/>
+					{ token && ! isDataValid && (
+						<FormInputValidation text={ translate( 'Invalid Token' ) } isError />
+					) }
+				</FormFieldset>
+				<FormFooter>
+					<FormButton disabled={ ! isDataValid || submitting } onClick={ this.onAddDnsRecords }>
+						{ translate( 'Set up %(providerName)s', {
+							args: { providerName: name },
+							comment:
+								'%(providerName)s will be replaced with the name of the service ' +
+								'provider that this template is used for, for example G Suite or Office 365',
+						} ) }
+					</FormButton>
+				</FormFooter>
 			</form>
 		);
 	}

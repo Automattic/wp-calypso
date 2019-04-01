@@ -37,7 +37,7 @@ class CustomNameserversRow extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="custom-nameservers-row">
+			<div className="name-servers__custom-nameservers-row">
 				<fieldset>
 					<input
 						type="text"

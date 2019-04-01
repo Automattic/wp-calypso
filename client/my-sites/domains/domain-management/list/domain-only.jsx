@@ -18,13 +18,19 @@ import { domainManagementEdit } from 'my-sites/domains/paths';
 import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 
+/**
+ * Style dependencies
+ */
+import './domain-only.scss';
+
 const DomainOnly = ( { primaryDomain, hasNotice, siteId, slug, translate } ) => {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	if ( ! primaryDomain ) {
 		return (
 			<div>
 				<QuerySiteDomains siteId={ siteId } />
 				<EmptyContent
-					className={ 'domain-only-site__placeholder' }
+					className="domain-only-site__placeholder"
 					illustration={ '/calypso/images/drake/drake-browser.svg' }
 				/>
 			</div>
@@ -55,6 +61,7 @@ const DomainOnly = ( { primaryDomain, hasNotice, siteId, slug, translate } ) => 
 			) }
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 DomainOnly.propTypes = {

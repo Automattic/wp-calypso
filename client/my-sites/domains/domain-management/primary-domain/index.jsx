@@ -13,9 +13,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import Button from 'components/button';
 import Main from 'components/main';
 import Card from 'components/card/compact';
 import Header from 'my-sites/domains/domain-management/components/header';
+import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import Notice from 'components/notice';
 import { domainManagementEdit } from 'my-sites/domains/paths';
 import { setPrimaryDomain } from 'lib/upgrades/actions';
@@ -23,6 +25,11 @@ import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
 import { SETTING_PRIMARY_DOMAIN } from 'lib/url/support';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PrimaryDomain extends React.Component {
 	static propTypes = {
@@ -96,7 +103,7 @@ class PrimaryDomain extends React.Component {
 		const primaryDomainSupportUrl = SETTING_PRIMARY_DOMAIN;
 
 		return (
-			<Main className="domain-management-primary-domain">
+			<Main>
 				<Header selectedDomainName={ selectedDomainName } onClick={ this.goToEditDomainRoot }>
 					{ translate( 'Primary Domain' ) }
 				</Header>
@@ -133,23 +140,14 @@ class PrimaryDomain extends React.Component {
 							}
 						) }
 					</Notice>
-					<section className="primary-domain__actions">
-						<button
-							className="button is-primary"
-							disabled={ this.state.loading }
-							onClick={ this.handleConfirmClick }
-						>
+					<FormFooter>
+						<Button primary disabled={ this.state.loading } onClick={ this.handleConfirmClick }>
 							{ translate( 'Update Primary Domain' ) }
-						</button>
-
-						<button
-							className="button"
-							disabled={ this.state.loading }
-							onClick={ this.handleCancelClick }
-						>
+						</Button>
+						<Button disabled={ this.state.loading } onClick={ this.handleCancelClick }>
 							{ translate( 'Cancel' ) }
-						</button>
-					</section>
+						</Button>
+					</FormFooter>
 				</Card>
 			</Main>
 		);

@@ -72,7 +72,7 @@ class EditContactInfo extends React.Component {
 			return (
 				<EditContactInfoPrivacyEnabledCard
 					selectedDomainName={ this.props.selectedDomainName }
-					selectedSite={ this.props.selectedSite }
+					selectedSiteSlug={ this.props.selectedSite.slug }
 				/>
 			);
 		}
