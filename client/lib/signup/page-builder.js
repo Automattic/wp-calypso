@@ -3,6 +3,7 @@
  */
 import config from 'config';
 import { getLocaleSlug } from 'lib/i18n-utils';
+import { getSectionGroup } from 'state/ui/selectors';
 
 // temp
 let inTest = false;
@@ -23,4 +24,9 @@ export function shouldEnterPageBuilder() {
 
 export function isEligibleForPageBuilder( segment, flowName ) {
 	return 'en' === getLocaleSlug() && 1 === segment && 'onboarding-for-business' === flowName;
+}
+
+export function isBlockEditorSectionInTest( state ) {
+	const isGutenberg = getSectionGroup( state ) === 'gutenberg';
+	return isGutenberg && isInPageBuilderTest();
 }

@@ -18,6 +18,7 @@ import { getSiteOption } from 'state/sites/selectors';
 import AsyncLoad from 'components/async-load';
 import { getNeverShowBannerStatus } from 'my-sites/checklist/wpcom-checklist/checklist-banner/never-show';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { isBlockEditorSectionInTest } from 'lib/signup/page-builder';
 
 class WpcomChecklist extends Component {
 	static propTypes = {
@@ -110,7 +111,7 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
 	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
-	const isSection = isSiteSection( state );
+	const isSection = isSiteSection( state ) && ! isBlockEditorSectionInTest( state );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const siteSegment = get( siteChecklist, 'segment' );
 	const siteVerticals = get( siteChecklist, 'vertical' );
