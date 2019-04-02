@@ -14,13 +14,13 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import { CreditCardFormFields } from '../';
-import { shouldRenderAdditionalCountryFields } from 'lib/checkout/ebanx';
+import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
 } ) );
 
-jest.mock( 'lib/checkout/ebanx', () => {
+jest.mock( 'lib/checkout/processor-specific', () => {
 	return {
 		shouldRenderAdditionalCountryFields: jest.fn( false ),
 	};

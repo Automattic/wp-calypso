@@ -18,7 +18,7 @@ import {
 	getCreditCardFieldRules,
 	mergeValidationRules,
 } from '../validation';
-import * as ebanxMethods from '../ebanx';
+import * as processorSpecificMethods from '../processor-specific';
 
 describe( 'validation', () => {
 	const validCard = {
@@ -171,10 +171,10 @@ describe( 'validation', () => {
 
 		describe( 'validate ebanx non-credit card details', () => {
 			beforeAll( () => {
-				ebanxMethods.isEbanxCreditCardProcessingEnabledForCountry = jest
+				processorSpecificMethods.isEbanxCreditCardProcessingEnabledForCountry = jest
 					.fn()
 					.mockImplementation( () => true );
-				ebanxMethods.isValidCPF = jest.fn().mockImplementation( () => true );
+				processorSpecificMethods.isValidCPF = jest.fn().mockImplementation( () => true );
 			} );
 
 			test( 'should return no errors when details are valid', () => {
@@ -250,7 +250,7 @@ describe( 'validation', () => {
 			} );
 
 			test( 'should return error when CPF is invalid', () => {
-				ebanxMethods.isValidCPF = jest.fn().mockImplementation( () => false );
+				processorSpecificMethods.isValidCPF = jest.fn().mockImplementation( () => false );
 				const invalidCPF = { ...validBrazilianEbanxCard, document: 'blah' };
 				const result = validatePaymentDetails( invalidCPF );
 				expect( result ).toEqual( {

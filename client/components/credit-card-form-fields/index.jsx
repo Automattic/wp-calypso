@@ -19,7 +19,7 @@ import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-spe
 import { Input } from 'my-sites/domains/components/form';
 import InfoPopover from 'components/info-popover';
 import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
-import { shouldRenderAdditionalCountryFields } from 'lib/checkout/ebanx';
+import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
