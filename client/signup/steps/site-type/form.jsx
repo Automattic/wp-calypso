@@ -90,7 +90,7 @@ class SiteTypeForm extends Component {
 			<div>
 				<LoggedOutFormLinks className="site-type__links">
 					<LoggedOutFormLinkItem className="site-type__text">
-						Or type your own
+						{ translate( 'Or type your own' ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
 
