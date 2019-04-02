@@ -1,7 +1,7 @@
 {
 	"mocha_tests": [ "specs" ],
 	"mocha_opts": "test/mocha.opts",
-	"mocha_args": "-R mocha-allure-reporter --reporter-options targetDir=./reports",
+	"mocha_args": "-R mocha-allure2-reporter --reporter-options targetDir=./reports",
 	"max_test_attempts": 3,
 	"max_workers": 3,
 	"suiteTag": "canary",
