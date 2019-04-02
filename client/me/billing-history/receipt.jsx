@@ -140,9 +140,17 @@ class BillingReceipt extends React.Component {
 			<li className="billing-history__billing-details">
 				<strong>{ translate( 'Billing Details' ) }</strong>
 				<div
+					className="billing-history__billing-details-label"
+					id="billing-history__billing-details-label"
+				>
+					{ translate(
+						'Use this field to add your billing information (eg. VAT number, business address) before printing.'
+					) }
+				</div>
+				<div
 					contentEditable="true"
 					className="billing-history__billing-details-editable"
-					placeholder={ translate( 'Add your billing details here…' ) }
+					aria-describedby="billing-history__billing-details-label"
 				/>
 			</li>
 		);
