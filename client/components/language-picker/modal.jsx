@@ -36,6 +36,11 @@ import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 
+/**
+ * Style dependencies
+ */
+import './modal.scss';
+
 export class LanguagePickerModal extends PureComponent {
 	static propTypes = {
 		onSelected: PropTypes.func,
