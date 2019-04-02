@@ -49,7 +49,7 @@
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"devdocs/components-usage-stats": false,
+		"devdocs/components-usage-stats": true,
 		"devdocs/gutenberg-blocks": true,
 		"devdocs/color-scheme-picker": true,
 		"dev/test-helper": true,

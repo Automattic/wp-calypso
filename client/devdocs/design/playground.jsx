@@ -156,6 +156,7 @@ class DesignAssets extends React.Component {
 	}
 }
 
+let connectedDesignAssets;
 if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 	const mapStateToProps = state => {
 		const { componentsUsageStats } = state;
@@ -178,10 +179,10 @@ if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 		dispatchFetchComponentsUsageStats: PropTypes.func,
 	};
 
-	DesignAssets = connect(
+	connectedDesignAssets = connect(
 		mapStateToProps,
 		mapDispatchToProps
 	)( DesignAssets );
 }
 
-export default DesignAssets;
+export default connectedDesignAssets || DesignAssets;
