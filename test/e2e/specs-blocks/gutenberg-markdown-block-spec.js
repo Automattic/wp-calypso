@@ -27,7 +27,6 @@ const host = dataHelper.getJetpackHost();
 let driver;
 let url;
 
-// FIXME: Skip mobile tests for now. https://github.com/Automattic/wp-e2e-tests/issues/1509
 before( async function() {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
