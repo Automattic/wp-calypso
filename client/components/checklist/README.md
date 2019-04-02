@@ -15,6 +15,10 @@ Render as a placeholder.
 
 Whether the task is complete.
 
+### `inProgress { bool }`
+
+Whether the task is in progress.
+
 ### `onClick { Function }`
 
 Handle the action button click.
@@ -77,6 +81,10 @@ Task title
 		completedTitle="Yaks shaved."
 		description="Make sure you shave the yaks so you can get on with your life."
 		duration="10,000 minutes"
+	/>
+	<Task
+		title="Overwaxing banisters!"
+		inProgress={ ! this.state.overwaxBanisters }
 	/>
 </Checklist>
 ```
