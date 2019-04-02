@@ -350,7 +350,7 @@ class SiteImporterInputPane extends React.Component {
 				// At this point we're assuming that an import is going to happen
 				// so we set the user's editor to Gutenberg in order to make sure
 				// that the posts aren't mangled by the classic editor.
-				if ( 'engine6' === get( this.props, 'importerData.engine' ) ) {
+				if ( 'godaddy-gocentral' === get( this.props, 'importerData.engine' ) ) {
 					this.props.setSelectedEditor( this.props.site.ID, 'gutenberg' );
 				}
 
@@ -421,7 +421,7 @@ class SiteImporterInputPane extends React.Component {
 						</ul>
 					</div>
 				);
-			case 'engine6':
+			case 'godaddy-gocentral':
 				return (
 					<div>
 						<p>

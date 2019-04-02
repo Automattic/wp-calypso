@@ -38,13 +38,12 @@ export class ImporterCloseButton extends React.PureComponent {
 			importerStatus: { importerId, type },
 			site: { ID: siteId },
 		} = this.props;
-		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
 		cancelImport( siteId, importerId );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_cancel_clicked', {
 			blog_id: siteId,
-			importer_id: tracksType,
+			importer_id: type,
 		} );
 	};
 

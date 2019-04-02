@@ -13,17 +13,15 @@ import React from 'react';
  */
 import SiteImporter from './site-importer';
 
-class ImporterSiteImporter extends React.PureComponent {
-	static displayName = 'ImporterSiteImporter';
+class ImporterGoDaddyGoCentral extends React.PureComponent {
+	static displayName = 'ImporterGoDaddyGoCentral';
 
 	importerData = {
-		title: 'Wix',
-		icon: 'site-importer',
-		description: this.props.translate( 'Import posts, pages, and media from your Wix.com site.' ),
-		// TODO: we could move this to the component itself. Here were trying to stick to a generalisation
-		// that doesn't really apply for this importer - we don't upload anything as such.
+		title: 'GoDaddy',
+		icon: 'godaddy-gocentral',
+		description: this.props.translate( 'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder.' ),
 		uploadDescription: this.props.translate( 'Type your existing site URL to start the import.' ),
-		engine: 'wix',
+		engine: 'godaddy-gocentral',
 	};
 
 	static propTypes = {
@@ -43,4 +41,4 @@ class ImporterSiteImporter extends React.PureComponent {
 	}
 }
 
-export default localize( ImporterSiteImporter );
+export default localize( ImporterGoDaddyGoCentral );
