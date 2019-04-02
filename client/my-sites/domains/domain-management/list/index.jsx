@@ -1,4 +1,7 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 /** @format */
+
 /**
  * External dependencies
  */
@@ -69,7 +72,9 @@ export class List extends React.Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		if ( get( this.props, 'selectedSite.ID', null ) !== get( prevProps, 'selectedSite.ID', null ) ) {
+		if (
+			get( this.props, 'selectedSite.ID', null ) !== get( prevProps, 'selectedSite.ID', null )
+		) {
 			this.hideNotice();
 		}
 	}
@@ -295,6 +300,8 @@ export class List extends React.Component {
 			return (
 				<Button
 					disabled={ this.state.settingPrimaryDomain }
+					// eslint-disable-next-line react/no-string-refs
+					ref="cancelChangePrimaryButton"
 					borderless
 					compact
 					className="domain-management-list__cancel-change-primary-button"
