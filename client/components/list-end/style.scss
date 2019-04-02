@@ -17,14 +17,4 @@
 		background: var( --color-neutral-0 );
 		padding: 0 8px;
 	}
-
-	// Reader is special since is has a white background, and has lots
-	// of random horizontal lines already.
-	.is-reader-page & {
-		border-top: none;
-
-		.gridicon {
-			background: var( --color-white );
-		}
-	}
 }
