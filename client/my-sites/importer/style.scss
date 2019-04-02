@@ -25,11 +25,9 @@
 
 .importer__service-icon {
 	box-sizing: border-box;
-	float: left;
 	width: 40px;
 	height: 40px;
 	padding: 2px;
-	margin-right: 16px;
 
 	background-color: var( --color-neutral-700 );
 	fill: var( --color-white );
@@ -54,13 +52,14 @@
 	&.squarespace {
 		background-color: #222;
 	}
-
-	@include breakpoint( '>960px' ) {
-		width: 56px;
-		height: 56px;
-		padding: 4px;
-	}
 }
+
+.importer-header__service-title {
+	font-size: 24px;
+	color: var( --color-text );
+}
+
+
 
 .importer-action-buttons__container {
 	display: flex;
@@ -70,24 +69,6 @@
 
 .importer-action-buttons__action-button {
 	margin-left: 10px;
-}
-
-.importer-header__service-info {
-	margin-bottom: 1.5em;
-
-	@include breakpoint( '>480px' ) {
-		margin-left: 60px;
-	}
-}
-
-.importer-header__service-title {
-	font-size: 21px;
-	font-weight: 300;
-	color: var( --color-text-subtle );
-
-	@include breakpoint( '>480px' ) {
-		clear: none;
-	}
 }
 
 .importer-header__action-button {

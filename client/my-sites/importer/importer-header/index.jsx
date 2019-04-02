@@ -37,7 +37,7 @@ class ImporterHeader extends React.PureComponent {
 	};
 
 	render() {
-		const { importerStatus, icon, title, description, site } = this.props;
+		const { importerStatus, icon, title, site } = this.props;
 		const { importerState } = importerStatus;
 		const showStartButton = includes( startStates, importerState );
 
@@ -45,10 +45,7 @@ class ImporterHeader extends React.PureComponent {
 			<header className="importer-header">
 				<ImporterLogo icon={ icon } />
 				{ showStartButton && <StartButton importerStatus={ importerStatus } site={ site } /> }
-				<div className="importer-header__service-info">
-					<h1 className="importer-header__service-title">{ title }</h1>
-					<p>{ description }</p>
-				</div>
+				<h3 className="importer-header__service-title">{ title }</h3>
 			</header>
 		);
 	}
