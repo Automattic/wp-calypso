@@ -1,6 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GSuiteUserItem renders correctly 1`] = `
+exports[`GSuiteUserItem renders user item finish setup button correctly 1`] = `
+<li>
+  <span
+    className="gsuite-user-item__email"
+  >
+    foo@bar.buzz
+  </span>
+  <button
+    className="button gsuite-user-item__fix is-compact"
+    onClick={[Function]}
+    type="button"
+  >
+    Finish Setup
+  </button>
+</li>
+`;
+
+exports[`GSuiteUserItem renders user item with manage correctly 1`] = `
 <li>
   <span
     className="gsuite-user-item__email"
@@ -8,7 +25,7 @@ exports[`GSuiteUserItem renders correctly 1`] = `
     foo@bar.buzz
   </span>
   <a
-    className="external-link gsuite-user-item__manage-link has-icon"
+    className="external-link gsuite-user-item has-icon"
     href="https://accounts.google.com/AccountChooser?Email=foo@bar.buzz&service=CPanel&continue=https://admin.google.com/a/bar.buzz"
     onClick={[Function]}
     rel="external noopener noreferrer"
