@@ -9,11 +9,11 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
-const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
-const Minify = require( '@automattic/calypso-build/webpack/minify' );
-const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
-const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const wordpressExternals = require( '@automattic/calypso-build/webpack/wordpress-externals' );
+const FileConfig = require( './webpack/file-loader' );
+const Minify = require( './webpack/minify' );
+const SassConfig = require( './webpack/sass' );
+const TranspileConfig = require( './webpack/transpile' );
+const wordpressExternals = require( './webpack/wordpress-externals' );
 
 /**
  * Internal dependencies
