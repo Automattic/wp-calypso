@@ -79,7 +79,8 @@ class DesignAssets extends React.Component {
           pinned
           fitsContainer
           placeholder="Search Published..."
-          delaySearch={ true }
+					delaySearch={ true }
+					onSearch={ () => {} }
       />
     </SectionNav>
 </Main>`,
