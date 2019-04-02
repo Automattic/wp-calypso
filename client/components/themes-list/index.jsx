@@ -17,6 +17,11 @@ import EmptyContent from 'components/empty-content';
 import InfiniteScroll from 'components/infinite-scroll';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ThemesList extends React.Component {
 	static propTypes = {
 		themes: PropTypes.array.isRequired,
