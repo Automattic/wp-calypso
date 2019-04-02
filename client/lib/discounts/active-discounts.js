@@ -82,6 +82,14 @@ export default [
 			{ type: TYPE_PREMIUM, group: GROUP_JETPACK },
 		],
 	},
+	{
+		name: 'cool_nudge',
+		startsAt: new Date( 2019, 3, 1, 0, 0, 0 ),
+		endsAt: new Date( 2019, 3, 10, 23, 59, 59 ),
+		plansPageNoticeTextTitle: 'Get a free domain name by upgrading to any plan listed below!',
+		plansPageNoticeText:
+			'Improve your SEO, branding, credibility, and even word-of-mouth marketing with a custom domain. All plan upgrades include a free domain name of your choice for one year.',
+	},
 	// NOTE: These two (new_plans and default_plans_tab_business) should remain at the bottom.
 	// It's a temporary hack and will be removed shortly.
 	{
