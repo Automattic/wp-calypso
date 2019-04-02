@@ -5,8 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, flow, get, map, pickBy, startsWith } from 'lodash';
-import PropTypes from 'prop-types';
+import { endsWith, get, map, pickBy, startsWith } from 'lodash';
 import url from 'url';
 
 /**
@@ -32,39 +31,60 @@ import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
 import { trashPost } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { protectForm } from 'lib/protect-form';
+import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-class CalypsoifyIframe extends Component {
-	static propTypes = {
-		postId: PropTypes.number,
-		postType: PropTypes.string,
-		duplicatePostId: PropTypes.number,
-		pressThis: PropTypes.object,
-		markChanged: PropTypes.func.isRequired,
-		markSaved: PropTypes.func.isRequired,
-	};
+interface Props {
+	duplicatePostId: number;
+	postId: number;
+	postType: string;
+	pressThis: any;
+	siteAdminUrl: string | null;
+}
 
-	state = {
-		classicBlockEditorId: null,
+interface State {
+	allowedTypes?: any;
+	classicBlockEditorId?: any;
+	editedPost?: any;
+	gallery?: any;
+	isIframeLoaded: boolean;
+	isMediaModalVisible: boolean;
+	isPreviewVisible: boolean;
+	multiple?: any;
+	postUrl?: string;
+	previewUrl: string;
+}
+
+enum WindowActions {
+	Loaded = 'loaded',
+	ClassicBlockOpenMediaModel = 'classicBlockOpenMediaModal',
+}
+
+enum EditorActions {
+	GoToAllPosts = 'goToAllPosts',
+	OpenMediaModal = 'openMediaModal',
+	OpenRevisions = 'openRevisions',
+	PreviewPost = 'previewPost',
+	SetDraftId = 'draftIdSet',
+	TrashPost = 'trashPost',
+}
+
+class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
+	state: State = {
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
 		isPreviewVisible: false,
 		previewUrl: 'about:blank',
-		postUrl: null,
-		editedPost: null,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.iframeRef = React.createRef();
-		this.mediaSelectPort = null;
-		this.revisionsPort = null;
-	}
+	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
+	iframePort: MessagePort | null = null;
+	mediaSelectPort: MessagePort | null = null;
+	revisionsPort: MessagePort | null = null;
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
@@ -76,12 +96,13 @@ class CalypsoifyIframe extends Component {
 		window.removeEventListener( 'message', this.onMessage, false );
 	}
 
-	onMessage = ( { data, origin } ) => {
+	onMessage = ( { data, origin }: MessageEvent ) => {
 		if ( ! data || 'gutenbergIframeMessage' !== data.type ) {
 			return;
 		}
 
-		const isValidOrigin = this.props.siteAdminUrl.indexOf( origin ) === 0;
+		const isValidOrigin =
+			this.props.siteAdminUrl && this.props.siteAdminUrl.indexOf( origin ) === 0;
 
 		if ( ! isValidOrigin ) {
 			return;
@@ -89,7 +110,11 @@ class CalypsoifyIframe extends Component {
 
 		const { action } = data;
 
-		if ( 'loaded' === action ) {
+		if (
+			WindowActions.Loaded === action &&
+			this.iframeRef.current &&
+			this.iframeRef.current.contentWindow
+		) {
 			const { port1: iframePortObject, port2: transferredPortObject } = new MessageChannel();
 
 			this.iframePort = iframePortObject;
@@ -107,7 +132,7 @@ class CalypsoifyIframe extends Component {
 
 		// this message comes from inside TinyMCE and therefore
 		// cannot be controlled like the others
-		if ( 'classicBlockOpenMediaModal' === action ) {
+		if ( WindowActions.ClassicBlockOpenMediaModel === action ) {
 			if ( data.imageId ) {
 				const { siteId } = this.props;
 				const image = MediaStore.get( siteId, data.imageId );
@@ -123,10 +148,10 @@ class CalypsoifyIframe extends Component {
 		// any other message is unknown and may indicate a bug
 	};
 
-	onIframePortMessage = ( { data, ports } ) => {
-		const { action, payload } = data;
+	onIframePortMessage = ( { data, ports }: MessageEvent ) => {
+		const { action, payload }: { action: EditorActions; payload: any } = data;
 
-		if ( 'openMediaModal' === action && ports && ports[ 0 ] ) {
+		if ( EditorActions.OpenMediaModal === action && ports && ports[ 0 ] ) {
 			const { siteId } = this.props;
 			const { allowedTypes, gallery, multiple, value } = payload;
 
@@ -147,7 +172,7 @@ class CalypsoifyIframe extends Component {
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
 		}
 
-		if ( 'draftIdSet' === action && ! this.props.postId ) {
+		if ( EditorActions.SetDraftId === action && ! this.props.postId ) {
 			const { postId } = payload;
 			const { siteId, currentRoute } = this.props;
 
@@ -160,13 +185,13 @@ class CalypsoifyIframe extends Component {
 			}
 		}
 
-		if ( 'trashPost' === action ) {
+		if ( EditorActions.TrashPost === action ) {
 			const { siteId, editedPostId, postTypeTrashUrl } = this.props;
 			this.props.trashPost( siteId, editedPostId );
 			this.props.navigate( postTypeTrashUrl );
 		}
 
-		if ( 'goToAllPosts' === action ) {
+		if ( EditorActions.GoToAllPosts === action ) {
 			const { unsavedChanges = false } = payload;
 			if ( unsavedChanges ) {
 				this.props.markChanged();
@@ -176,7 +201,7 @@ class CalypsoifyIframe extends Component {
 			this.props.navigate( this.props.allPostsUrl );
 		}
 
-		if ( 'openRevisions' === action ) {
+		if ( EditorActions.OpenRevisions === action ) {
 			if ( ports && ports[ 0 ] ) {
 				// set imperatively on the instance because this is not
 				// the kind of assignment which causes re-renders and we
@@ -187,19 +212,27 @@ class CalypsoifyIframe extends Component {
 			this.props.openPostRevisionsDialog();
 		}
 
-		if ( 'previewPost' === action ) {
+		if ( EditorActions.PreviewPost === action ) {
 			const { postUrl } = payload;
-			this.openPreviewModal( { postUrl, previewPort: ports[ 0 ] } );
+			this.openPreviewModal( postUrl, ports[ 0 ] );
 		}
 	};
 
-	loadRevision = revision => {
+	loadRevision = ( {
+		post_title: title,
+		post_excerpt: excerpt,
+		post_content: content,
+	}: {
+		post_title: string;
+		post_excerpt: string;
+		post_content: string;
+	} ) => {
+		if ( ! this.iframePort ) {
+			return;
+		}
+
 		if ( this.revisionsPort ) {
-			this.revisionsPort.postMessage( {
-				title: revision.post_title,
-				excerpt: revision.post_excerpt,
-				content: revision.post_content,
-			} );
+			this.revisionsPort.postMessage( { title, excerpt, content } );
 
 			// this is a once-only port
 			// after sending our message we want to close it out
@@ -211,17 +244,13 @@ class CalypsoifyIframe extends Component {
 			// sending the new MessageChannel from the server
 			this.iframePort.postMessage( {
 				action: 'loadRevision',
-				payload: {
-					title: revision.post_title,
-					excerpt: revision.post_excerpt,
-					content: revision.post_content,
-				},
+				payload: { title, excerpt, content },
 			} );
 		}
 	};
 
-	closeMediaModal = media => {
-		if ( ! this.state.classicBlockEditorId && media ) {
+	closeMediaModal = ( media: { items: Parameters< typeof mediaCalypsoToGutenberg >[] } ) => {
+		if ( ! this.state.classicBlockEditorId && media && this.mediaSelectPort ) {
 			const { multiple } = this.state;
 			const formattedMedia = map( media.items, item => mediaCalypsoToGutenberg( item ) );
 			const payload = multiple ? formattedMedia : formattedMedia[ 0 ];
@@ -238,29 +267,34 @@ class CalypsoifyIframe extends Component {
 		this.setState( { classicBlockEditorId: null, isMediaModalVisible: false } );
 	};
 
-	insertClassicBlockMedia = markup => {
-		if ( !! this.state.classicBlockEditorId && this.iframePort ) {
-			this.iframePort.postMessage( {
-				action: 'insertClassicBlockMedia',
-				payload: {
-					editorId: this.state.classicBlockEditorId,
-					media: markup,
-				},
-			} );
+	insertClassicBlockMedia = ( markup: string ) => {
+		if ( ! ( this.state.classicBlockEditorId && this.iframePort ) ) {
+			return;
 		}
+
+		this.iframePort.postMessage( {
+			action: 'insertClassicBlockMedia',
+			payload: {
+				editorId: this.state.classicBlockEditorId,
+				media: markup,
+			},
+		} );
 	};
 
 	pressThis = () => {
 		const { pressThis } = this.props;
-		if ( pressThis ) {
-			this.iframePort.postMessage( {
-				action: 'pressThis',
-				payload: pressThis,
-			} );
+
+		if ( ! ( pressThis && this.iframePort ) ) {
+			return;
 		}
+
+		this.iframePort.postMessage( {
+			action: 'pressThis',
+			payload: pressThis,
+		} );
 	};
 
-	updateImageBlocks = action => {
+	updateImageBlocks = ( action: { data: { mime_type: string; URL: string }; type: string } ) => {
 		if (
 			! this.iframePort ||
 			! action ||
@@ -280,14 +314,14 @@ class CalypsoifyIframe extends Component {
 		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};
 
-	openPreviewModal = ( { postUrl, previewPort } ) => {
+	openPreviewModal = ( postUrl: string, previewPort: MessagePort ) => {
 		this.setState( {
 			isPreviewVisible: true,
 			previewUrl: 'about:blank',
 			postUrl,
 		} );
 
-		previewPort.onmessage = message => {
+		previewPort.onmessage = ( message: MessageEvent ) => {
 			previewPort.close();
 
 			const { frameNonce } = this.props;
@@ -362,7 +396,7 @@ class CalypsoifyIframe extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { postId, postType, duplicatePostId } ) => {
+const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
@@ -409,12 +443,9 @@ const mapDispatchToProps = {
 	trashPost,
 };
 
-const enhance = flow(
-	protectForm,
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)
-);
+type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
 
-export default enhance( CalypsoifyIframe );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( protectForm( CalypsoifyIframe ) );

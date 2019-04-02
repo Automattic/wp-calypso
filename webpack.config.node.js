@@ -136,7 +136,7 @@ const webpackConfig = {
 			path.join( __dirname, 'client', 'extensions' ),
 			'node_modules',
 		],
-		extensions: [ '.json', '.js', '.jsx' ],
+		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,

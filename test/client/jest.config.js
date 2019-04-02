@@ -5,7 +5,7 @@ module.exports = {
 		'^config$': '<rootDir>/server/config/index.js',
 	},
 	transform: {
-		'^.+\\.jsx?$': 'babel-jest',
+		'^.+\\.[jt]sx?$': 'babel-jest',
 		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': '<rootDir>/test/test/helpers/assets/transform.js',
 	},
 	modulePaths: [ '<rootDir>/test/', '<rootDir>/client/', '<rootDir>/client/extensions/' ],
