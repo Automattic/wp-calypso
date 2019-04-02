@@ -143,12 +143,13 @@ export class LanguagePickerModal extends PureComponent {
 					return languages
 						.filter( language => language.popular )
 						.sort( ( a, b ) => a.popular - b.popular );
-				default:
+				default: {
 					const languageGroup = getLanguageGroupById( filter );
 					const subTerritories = languageGroup ? languageGroup.subTerritories : null;
 					return languages
 						.filter( language => some( language.territories, t => includes( subTerritories, t ) ) )
 						.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+				}
 			}
 		}
 
