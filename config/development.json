@@ -84,6 +84,7 @@
 		"jetpack/connect/remote-install": true,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/happychat": true,
+		"jetpack/iframe/editor": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
 		"login/magic-login": true,
