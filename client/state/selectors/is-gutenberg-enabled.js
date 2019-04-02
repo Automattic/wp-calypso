@@ -11,9 +11,15 @@ export const isGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
 		return false;
 	}
+
 	if ( isCalypsoifyGutenbergEnabled( state, siteId ) ) {
 		return true;
 	}
+
+	if ( isEnabled( 'jetpack/iframe/editor' ) ) {
+		return isEnabled( 'gutenberg' ) && ! isVipSite( state, siteId );
+	}
+
 	return (
 		isEnabled( 'gutenberg' ) && ! isJetpackSite( state, siteId ) && ! isVipSite( state, siteId )
 	);

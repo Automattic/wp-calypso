@@ -15,6 +15,10 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 		return false;
 	}
 
+	if ( isEnabled( 'jetpack/iframe/editor' ) ) {
+		return false;
+	}
+
 	// We do want Calypsoify flows for Atomic sites
 	if ( isSiteAutomatedTransfer( state, siteId ) ) {
 		const wpVersion = getWordPressVersion( state, siteId );
