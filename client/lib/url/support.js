@@ -29,6 +29,7 @@ export const CUSTOM_DNS = `${ root }/domains/custom-dns`;
 export const DESIGNATED_AGENT = `${ root }/designated-agent/`;
 export const DOMAIN_HELPER_PREFIX = `${ root }/domain-helper/?host=`;
 export const DOMAIN_REGISTRATION_AGREEMENTS = `${ root }/domain-registration-agreements/`;
+export const DOMAIN_WAITING = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAINS = `${ root }/domains`;
 export const DOMAIN_CONNECT = `${ root }/domain-connect`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_PENDING_CONFIRMATION = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#confirmation`;
