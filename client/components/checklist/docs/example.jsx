@@ -61,6 +61,7 @@ export default class ChecklistExample extends PureComponent {
 						duration="10,000 minutes"
 						completed={ this.state.shaveYak }
 					/>
+					<Task title="Overwaxing banisters!" inProgress />
 				</Checklist>
 			</>
 		);
