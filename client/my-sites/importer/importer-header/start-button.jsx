@@ -29,7 +29,7 @@ class StartButton extends React.PureComponent {
 
 	handleClick = () => {
 		const {
-			importerStatus: { type },
+			importType: type,
 			site: { ID: siteId },
 		} = this.props;
 		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;

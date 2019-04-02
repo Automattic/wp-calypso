@@ -41,6 +41,8 @@ import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import DescriptiveHeader from 'my-sites/site-settings/settings-import/descriptive-header';
 import JetpackImporter from 'my-sites/site-settings/settings-import/jetpack-importer';
+import NewImporterList from 'my-sites/importer/importer-list';
+
 
 /**
  * Configuration for each of the importers to be rendered in this section. If
@@ -145,7 +147,7 @@ class SiteSettingsImport extends Component {
 	 * @param {string} state The state constant for the importer components
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
-	renderIdleImporters( site, siteTitle, state ) {
+	renderIdleImportersX( site, siteTitle, state ) {
 		const importerElements = importers.map( importer => {
 			const { type, isImporterEnabled, component: ImporterComponent } = importer;
 
@@ -183,6 +185,52 @@ class SiteSettingsImport extends Component {
 		);
 
 		return [ ...importerElements, otherImportersCard ];
+	}
+
+	importerDetails = [
+		{
+			title: 'Medium',
+			icon: 'medium',
+			type: MEDIUM,
+			description: this.props.translate(
+				'Import posts, tags, images, and videos ' + 'from a Medium export file.'
+			),
+		},
+		{
+			title: 'Blogger.com',
+			icon: 'blogger-alt',
+			type: MEDIUM,
+			description: this.props.translate(
+				'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
+				{
+					args: {
+						importerName: 'Blogger.com',
+					},
+				}
+			),
+		},
+		{
+			title: 'WordPress',
+			icon: 'wordpress',
+			type: WORDPRESS,
+			description: this.props.translate(
+				'Import posts, pages, and media ' + 'from a WordPress export\u00A0file.'
+			),
+		}
+	]
+
+	renderIdleImporters() {
+		// const importerList = [ {
+		// 	title: 'Medium',
+		// 	icon: 'medium',
+		// 	type: MEDIUM,
+		// 	typeX: MEDIUM,
+		// 	description: translate(),
+		// } ];
+
+		return (
+			<NewImporterList importers={ this.importerDetails }/>
+		);
 	}
 
 	/**
