@@ -37,10 +37,16 @@
 # Client sites
 /client/my-sites/checklist @Automattic/onboarding-dev
 
+# Comments management
+/client/my-sites/comment* @Automattic/lannister
+
 # Developer guides
 /docs/coding-guidelines @Automattic/team-calypso
 /docs/guide @Automattic/team-calypso
 /docs/testing @Automattic/team-calypso
+
+# Gutenberg editor (Gutenframe)
+/client/gutenberg @Automattic/lannister
 
 # Jetpack Connect
 /client/jetpack-connect @Automattic/luna
