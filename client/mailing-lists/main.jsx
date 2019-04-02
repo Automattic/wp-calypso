@@ -103,37 +103,63 @@ class MainComponent extends React.Component {
 	};
 
 	getCategoryName = () => {
-		if ( 'marketing' === this.props.category ) {
+		const category = this.getCategoryFromMessageTypeId();
+		if ( 'marketing' === category ) {
 			return this.props.translate( 'Suggestions' );
-		} else if ( 'research' === this.props.category ) {
+		} else if ( 'research' === category ) {
 			return this.props.translate( 'Research' );
-		} else if ( 'community' === this.props.category ) {
+		} else if ( 'community' === category ) {
 			return this.props.translate( 'Community' );
-		} else if ( 'digest' === this.props.category ) {
+		} else if ( 'digest' === category ) {
 			return this.props.translate( 'Digests' );
 		}
 
-		return this.props.category;
+		return category;
 	};
 
 	getCategoryDescription = () => {
-		if ( 'marketing' === this.props.category ) {
+		const category = this.getCategoryFromMessageTypeId();
+		if ( 'marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of WordPress.com.' );
-		} else if ( 'research' === this.props.category ) {
+		} else if ( 'research' === category ) {
 			return this.props.translate(
 				'Opportunities to participate in WordPress.com research and surveys.'
 			);
-		} else if ( 'community' === this.props.category ) {
+		} else if ( 'community' === category ) {
 			return this.props.translate(
 				'Information on WordPress.com courses and events (online and in-person).'
 			);
-		} else if ( 'digest' === this.props.category ) {
+		} else if ( 'digest' === category ) {
 			return this.props.translate(
 				'Popular content from the blogs you follow, and reports on your own site and its performance.'
 			);
 		}
 
 		return null;
+	};
+
+	/*
+	 * If category is in the list of those that should be mapped, return the mapped value. Otherwise just return the existing category.
+	 * Some unsubscribe links contain a numeric category.
+	 * These are Iterable message type ids that we need to map to our internal categories.
+	 */
+	getCategoryFromMessageTypeId = () => {
+		switch ( this.props.category ) {
+			case '20659':
+				return 'marketing';
+			case '20784':
+				return 'research';
+			case '20786':
+				return 'community';
+			case '20796':
+				return 'digest';
+			case '20783':
+				return 'promotion';
+			case '20785':
+				return 'news';
+			default:
+				return this.props.category;
+		}
 	};
 
 	onUnsubscribeClick = () => {
@@ -171,7 +197,7 @@ class MainComponent extends React.Component {
 
 	render() {
 		const translate = this.props.translate;
-		let headingLabel = this.state.isSubscribed
+		const headingLabel = this.state.isSubscribed
 				? translate( "You're subscribed" )
 				: translate( "We've unsubscribed your email." ),
 			messageLabel = this.state.isSubscribed
