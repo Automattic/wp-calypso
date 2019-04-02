@@ -82,17 +82,18 @@
 	text-align: center;
 	max-width: 380px;
 	position: relative;
-	margin: auto;
+	margin: 56px auto 0;
 
 	&::before {
 		content: '';
 		display: block;
-		width: 80px;
+		width: 60px;
 		height: 2px;
-		color: var( --primary-light );
+		background: var( --color-white );
+		opacity: 0.2;
 		position: absolute;
-		top: 0;
-		left: calc( 50% - 40px );
+		top: -24px;
+		left: calc( 50% - 30px );
 	}
 
 	.site-type__other-form {
@@ -102,13 +103,18 @@
 
 	.site-type__other-label {
 		color: var( --color-white );
-		margin: 24px 0 16px;
+		margin: 16px 0;
 	}
 
 	.site-type__other-input {
 		border-radius: 3px;
+		border: none;
+		padding: 11px 100px 11px 24px;
+		@include elevation ( 2dp );
 
-		&:focus {
+		&:focus,
+		&:focus:hover, // This is weird...
+		&:active {
 			box-shadow: 0 0 0 2px var( --color-accent );
 		}
 	}
@@ -117,5 +123,6 @@
 		position: absolute;
 		top: 3px;
 		right: 3px;
+		@include elevation ( 1dp );
 	}
 }
