@@ -188,6 +188,12 @@ export const TYPE_ECOMMERCE = 'TYPE_ECOMMERCE';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
+const WPComGetTwoLinesBillingTimeframe = () =>
+	i18n.translate( 'per month,{{br/}}billed annually', {
+		components: {
+			br: <br />,
+		},
+	} );
 
 const getPlanBloggerDetails = () => ( {
 	group: GROUP_WPCOM,
@@ -604,6 +610,7 @@ export const PLANS_LIST = {
 		...getPlanBloggerDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
+		getTwoLinesBillingTimeFrame: WPComGetTwoLinesBillingTimeframe,
 		availableFor: plan => includes( [ PLAN_FREE ], plan ),
 		getProductId: () => 1010,
 		getStoreSlug: () => PLAN_BLOGGER,
@@ -614,6 +621,7 @@ export const PLANS_LIST = {
 		...getPlanBloggerDetails(),
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+		getTwoLinesBillingTimeFrame: WPComGetTwoLinesBillingTimeframe,
 		availableFor: plan => includes( [ PLAN_FREE, PLAN_BLOGGER ], plan ),
 		getProductId: () => 1030,
 		getStoreSlug: () => PLAN_BLOGGER_2_YEARS,
@@ -624,6 +632,7 @@ export const PLANS_LIST = {
 		...getPlanPersonalDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
+		getTwoLinesBillingTimeFrame: WPComGetTwoLinesBillingTimeframe,
 		availableFor: plan => includes( [ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ], plan ),
 		getProductId: () => 1009,
 		getStoreSlug: () => PLAN_PERSONAL,
@@ -634,6 +643,7 @@ export const PLANS_LIST = {
 		...getPlanPersonalDetails(),
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+		getTwoLinesBillingTimeFrame: WPComGetTwoLinesBillingTimeframe,
 		availableFor: plan =>
 			includes( [ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL ], plan ),
 		getProductId: () => 1029,
@@ -645,6 +655,7 @@ export const PLANS_LIST = {
 		...getPlanPremiumDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
+		getTwoLinesBillingTimeFrame: WPComGetTwoLinesBillingTimeframe,
 		availableFor: plan =>
 			includes(
 				[ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS ],
@@ -659,6 +670,7 @@ export const PLANS_LIST = {
 		...getPlanPremiumDetails(),
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+		getTwoLinesBillingTimeFrame: WPComGetTwoLinesBillingTimeframe,
 		availableFor: plan =>
 			includes(
 				[
@@ -703,6 +715,7 @@ export const PLANS_LIST = {
 		...getPlanBusinessDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
+		getTwoLinesBillingTimeFrame: WPComGetTwoLinesBillingTimeframe,
 		availableFor: plan =>
 			includes(
 				[
@@ -726,6 +739,7 @@ export const PLANS_LIST = {
 		...getPlanBusinessDetails(),
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+		getTwoLinesBillingTimeFrame: WPComGetTwoLinesBillingTimeframe,
 		availableFor: plan =>
 			includes(
 				[
@@ -750,6 +764,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
+		getTwoLinesBillingTimeFrame: WPComGetTwoLinesBillingTimeframe,
 		availableFor: plan =>
 			includes(
 				[
@@ -775,6 +790,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+		getTwoLinesBillingTimeFrame: WPComGetTwoLinesBillingTimeframe,
 		availableFor: plan =>
 			includes(
 				[

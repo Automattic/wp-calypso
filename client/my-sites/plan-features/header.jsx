@@ -17,7 +17,7 @@ import InfoPopover from 'components/info-popover';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PlanPrice from 'my-sites/plan-price';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
-import Ribbon from 'components/ribbon';
+import PlanPill from 'components/plans/plan-pill';
 import PlanIcon from 'components/plans/plan-icon';
 import { TYPE_FREE, PLANS_LIST, getPlanClass } from 'lib/plans/constants';
 import { getYearlyPlanByMonthly, planMatches } from 'lib/plans';
@@ -27,14 +27,20 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
+import { requestGeoLocation } from 'state/data-getters';
 import { abtest } from 'lib/abtest';
 
 export class PlanFeaturesHeader extends Component {
 	render() {
-		const { isInSignup } = this.props;
-		const content = isInSignup ? this.renderSignupHeader() : this.renderPlansHeader();
+		const { isInSignup, plansWithScroll } = this.props;
+		// Do not use the signup-specific header, unify plans for the plansWithScroll test
+		if ( plansWithScroll ) {
+			return this.renderPlansHeaderNoTabs();
+		} else if ( isInSignup ) {
+			return this.renderSignupHeader();
+		}
 
-		return content;
+		return this.renderPlansHeader();
 	}
 
 	renderPlansHeader() {
@@ -44,13 +50,6 @@ export class PlanFeaturesHeader extends Component {
 
 		return (
 			<header className={ headerClasses }>
-				{ planLevelsMatch( selectedPlan, planType ) && (
-					<Ribbon>{ translate( 'Suggested' ) }</Ribbon>
-				) }
-				{ popular && ! selectedPlan && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
-				{ newPlan && ! selectedPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
-				{ bestValue && ! selectedPlan && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
-				{ this.isPlanCurrent() && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon> }
 				<div className="plan-features__header-figure">
 					<PlanIcon plan={ planType } />
 				</div>
@@ -59,7 +58,49 @@ export class PlanFeaturesHeader extends Component {
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
 				</div>
+				{ planLevelsMatch( selectedPlan, planType ) && (
+					<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
+				) }
+				{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
+				{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
+				{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
+				{ this.isPlanCurrent() && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
 			</header>
+		);
+	}
+
+	renderPlansHeaderNoTabs() {
+		const {
+			newPlan,
+			bestValue,
+			planType,
+			popular,
+			selectedPlan,
+			title,
+			audience,
+			translate,
+		} = this.props;
+
+		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+
+		return (
+			<>
+				<header className={ headerClasses }>
+					<h4 className="plan-features__header-title">{ title }</h4>
+					<div className="plan-features__audience">{ audience }</div>
+					{ planLevelsMatch( selectedPlan, planType ) && (
+						<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
+					) }
+					{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
+					{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
+					{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
+					{ this.isPlanCurrent() && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
+				</header>
+				<div className="plan-features__pricing">
+					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
+					{ this.getIntervalDiscount() }
+				</div>
+			</>
 		);
 	}
 
@@ -80,13 +121,13 @@ export class PlanFeaturesHeader extends Component {
 		return (
 			<div className="plan-features__header-wrapper">
 				<header className={ headerClasses }>
-					{ newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
-					{ popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
-					{ bestValue && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
 					<div className="plan-features__header-text">
 						<h4 className="plan-features__header-title">{ title }</h4>
 						{ audience }
 					</div>
+					{ newPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
+					{ popular && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
+					{ bestValue && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
 				</header>
 				<div className="plan-features__graphic">
 					<PlanIcon plan={ planType } />
@@ -126,6 +167,7 @@ export class PlanFeaturesHeader extends Component {
 			isJetpack,
 			hideMonthly,
 			isInSignup,
+			plansWithScroll,
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -134,11 +176,11 @@ export class PlanFeaturesHeader extends Component {
 			'is-placeholder': isPlaceholder,
 		} );
 
-		if ( isInSignup ) {
+		if ( isInSignup || plansWithScroll ) {
 			return (
-				<span>
+				<div className={ 'plan-features__header-billing-info' }>
 					<span>{ billingTimeFrame }</span>
-				</span>
+				</div>
 			);
 		}
 
@@ -215,7 +257,8 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const { currencyCode, isInSignup } = this.props;
+		const { currencyCode, isInSignup, plansWithScroll } = this.props;
+		const displayFlatPrice = isInSignup && ! plansWithScroll;
 
 		if ( fullPrice && discountedPrice ) {
 			return (
@@ -224,23 +267,27 @@ export class PlanFeaturesHeader extends Component {
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ fullPrice }
-							isInSignup={ isInSignup }
+							isInSignup={ displayFlatPrice }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountedPrice }
-							isInSignup={ isInSignup }
+							isInSignup={ displayFlatPrice }
 							discounted
 						/>
 					</div>
-					{ this.renderCreditLabel() }
+					{ plansWithScroll ? null : this.renderCreditLabel() }
 				</span>
 			);
 		}
 
 		return (
-			<PlanPrice currencyCode={ currencyCode } rawPrice={ fullPrice } isInSignup={ isInSignup } />
+			<PlanPrice
+				currencyCode={ currencyCode }
+				rawPrice={ fullPrice }
+				isInSignup={ displayFlatPrice }
+			/>
 		);
 	}
 
@@ -311,7 +358,7 @@ export class PlanFeaturesHeader extends Component {
 PlanFeaturesHeader.propTypes = {
 	availableForPurchase: PropTypes.bool,
 	bestValue: PropTypes.bool,
-	billingTimeFrame: PropTypes.string.isRequired,
+	billingTimeFrame: PropTypes.oneOf( [ PropTypes.string, PropTypes.array ] ).isRequired,
 	currencyCode: PropTypes.string,
 	current: PropTypes.bool,
 	discountPrice: PropTypes.number,
@@ -328,7 +375,6 @@ PlanFeaturesHeader.propTypes = {
 	siteSlug: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
-	countryCode: PropTypes.string,
 
 	// Connected props
 	currentSitePlan: PropTypes.object,
@@ -363,5 +409,6 @@ export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) 
 		isYearly,
 		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
+		countryCode: requestGeoLocation().data || 'US',
 	};
 } )( localize( PlanFeaturesHeader ) );

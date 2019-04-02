@@ -13,12 +13,19 @@ import Gridicon from 'gridicons';
 import InfoPopover from 'components/info-popover';
 import { useMobileBreakpoint } from 'lib/viewport/react';
 
-export default function PlanFeaturesItem( { children, description, hideInfoPopover } ) {
+export default function PlanFeaturesItem( {
+	children,
+	description,
+	hideInfoPopover,
+	hideGridicon = false,
+} ) {
 	const isMobile = useMobileBreakpoint();
 
 	return (
 		<div className="plan-features__item">
-			<Gridicon className="plan-features__item-checkmark" size={ 18 } icon="checkmark" />
+			{ ! hideGridicon && (
+				<Gridicon className="plan-features__item-checkmark" size={ 18 } icon="checkmark" />
+			) }
 			{ children }
 			{ hideInfoPopover ? null : (
 				<InfoPopover

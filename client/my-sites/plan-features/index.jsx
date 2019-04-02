@@ -85,7 +85,7 @@ export class PlanFeatures extends Component {
 		let planDescriptions;
 		let bottomButtons = null;
 
-		if ( ! isInSignup ) {
+		if ( withScroll || ! isInSignup ) {
 			planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
 
 			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
@@ -106,10 +106,11 @@ export class PlanFeatures extends Component {
 							<table className={ tableClasses }>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
-									{ planDescriptions }
+									{ ! withScroll && planDescriptions }
 									<tr>{ this.renderTopButtons() }</tr>
+									{ withScroll && planDescriptions }
 									{ this.renderPlanFeatureRows() }
-									{ bottomButtons }
+									{ ! withScroll && ! isInSignup && bottomButtons }
 								</tbody>
 							</table>
 						</PlanFeaturesScroller>
@@ -358,6 +359,7 @@ export class PlanFeatures extends Component {
 			siteType,
 			showPlanCreditsApplied,
 			countryCode,
+			withScroll,
 		} = this.props;
 
 		return map( planProperties, properties => {
@@ -402,6 +404,10 @@ export class PlanFeatures extends Component {
 				}
 			}
 
+			if ( withScroll && planConstantObj.getTwoLinesBillingTimeFrame ) {
+				billingTimeFrame = planConstantObj.getTwoLinesBillingTimeFrame();
+			}
+
 			if ( isInSignup && displayJetpackPlans ) {
 				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
 			}
@@ -430,6 +436,7 @@ export class PlanFeatures extends Component {
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
 						countryCode={ countryCode }
+						plansWithScroll={ withScroll }
 					/>
 				</td>
 			);
@@ -437,20 +444,28 @@ export class PlanFeatures extends Component {
 	}
 
 	renderPlanDescriptions() {
-		const { planProperties } = this.props;
+		const { planProperties, withScroll } = this.props;
 
 		return map( planProperties, properties => {
 			const { planName, planConstantObj, isPlaceholder } = properties;
 
 			const classes = classNames( 'plan-features__table-item', {
 				'is-placeholder': isPlaceholder,
+				'is-description': withScroll,
 			} );
+
+			let description = null;
+			if ( withScroll ) {
+				description = planConstantObj.getShortDescription( abtest );
+			} else {
+				description = planConstantObj.getDescription( abtest );
+			}
 
 			return (
 				<td key={ planName } className={ classes }>
 					{ isPlaceholder ? <SpinnerLine /> : null }
 
-					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
+					<p className="plan-features__description">{ description }</p>
 				</td>
 			);
 		} );
@@ -558,6 +573,7 @@ export class PlanFeatures extends Component {
 				key={ index }
 				description={ description }
 				hideInfoPopover={ feature.hideInfoPopover }
+				hideGridicon={ this.props.withScroll }
 			>
 				<span className="plan-features__item-info">
 					<span className="plan-features__item-title">{ feature.getTitle() }</span>
@@ -567,7 +583,7 @@ export class PlanFeatures extends Component {
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties, selectedFeature } = this.props;
+		const { planProperties, selectedFeature, withScroll } = this.props;
 
 		return map( planProperties, properties => {
 			const { features, planName } = properties;
@@ -577,7 +593,7 @@ export class PlanFeatures extends Component {
 				currentFeature = features[ key ];
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
-				'has-partial-border': rowIndex + 1 < featureKeys.length,
+				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
 				'is-highlighted':
 					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
 			} );

@@ -77,6 +77,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 			// when scroll-snap is turned on.
 			this.setState( { scrollSnapDisabled: true }, () => {
 				this.containerElement.scrollLeft = xPos;
+				this.setState( { scrollSnapDisabled: false } );
 			} );
 		}
 	}
@@ -103,10 +104,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 	updateScrollPosition = () => {
 		this.updateScrollPositionRaf = null;
 		if ( this.containerElement ) {
-			this.setState( {
-				scrollPos: this.containerElement.scrollLeft,
-				scrollSnapDisabled: false,
-			} );
+			this.setState( { scrollPos: this.containerElement.scrollLeft } );
 		}
 	};
 
@@ -176,8 +174,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 		return (
 			<>
 				<style>
-					{ `.plan-features__header-wrapper::before { left: ${ -paneWidth -
-						borderSpacing / 2 }px }` }
+					{ `.plan-features__header::before { left: ${ -paneWidth - borderSpacing / 2 }px }` }
 				</style>
 				{ styleWeights.map( ( weight, index ) => {
 					const selector = `${ cellSelector }:nth-child(${ index + 1 })`;
