@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import TextareaAutosize from 'components/textarea-autosize';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
@@ -138,19 +139,22 @@ class BillingReceipt extends React.Component {
 
 		return (
 			<li className="billing-history__billing-details">
-				<strong>{ translate( 'Billing Details' ) }</strong>
+				<label for="billing-history__billing-details-textarea">
+					<strong>{ translate( 'Billing Details' ) }</strong>
+				</label>
 				<div
-					className="billing-history__billing-details-label"
-					id="billing-history__billing-details-label"
+					className="billing-history__billing-details-description"
+					id="billing-history__billing-details-description"
 				>
 					{ translate(
 						'Use this field to add your billing information (eg. VAT number, business address) before printing.'
 					) }
 				</div>
-				<div
-					contentEditable="true"
+				<TextareaAutosize
 					className="billing-history__billing-details-editable"
-					aria-describedby="billing-history__billing-details-label"
+					aria-labelledby="billing-history__billing-details-description"
+					id="billing-history__billing-details-textarea"
+					rows="1"
 				/>
 			</li>
 		);
