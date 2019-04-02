@@ -19,7 +19,7 @@ import Button from 'components/button';
 import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import PaymentCountrySelect from 'components/payment-country-select';
 import Input from 'my-sites/domains/components/form/input';
-import cartValues, { getTaxCountryCode, getTaxPostalCode } from 'lib/cart-values';
+import { getTaxCountryCode, getTaxPostalCode } from 'lib/cart-values';
 import wpcom from 'lib/wp';
 import { newCardPayment } from 'lib/store-transactions';
 import { setPayment } from 'lib/upgrades/actions';
