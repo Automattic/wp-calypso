@@ -646,6 +646,7 @@ export class Checkout extends React.Component {
 		return (
 			<React.Fragment>
 				<SubscriptionLengthPicker
+					cart={ this.props.cart }
 					plans={ availableTerms }
 					initialValue={ planInCart.product_slug }
 					onChange={ this.handleTermChange }

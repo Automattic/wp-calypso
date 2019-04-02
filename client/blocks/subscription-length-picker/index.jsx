@@ -29,7 +29,7 @@ export class SubscriptionLengthPicker extends React.Component {
 	static propTypes = {
 		initialValue: PropTypes.string,
 		plans: PropTypes.arrayOf( PropTypes.oneOf( Object.keys( PLANS_LIST ) ) ),
-
+		cart: PropTypes.object,
 		currencyCode: PropTypes.oneOf( Object.keys( CURRENCIES ) ).isRequired,
 		onChange: PropTypes.func,
 		translate: PropTypes.func.isRequired,
@@ -45,7 +45,8 @@ export class SubscriptionLengthPicker extends React.Component {
 	render() {
 		const { productsWithPrices, translate, shouldShowTax } = this.props;
 		const hasDiscount = productsWithPrices.some(
-			( { priceFullBeforeDiscount, priceFull } ) => priceFull !== priceFullBeforeDiscount
+			( { priceFullBeforeDiscount, priceMinusCredits } ) =>
+				priceMinusCredits !== priceFullBeforeDiscount
 		);
 
 		return (
@@ -67,27 +68,37 @@ export class SubscriptionLengthPicker extends React.Component {
 
 				<div className="subscription-length-picker__options">
 					{ productsWithPrices.map(
-						( { plan, planSlug, priceFullBeforeDiscount, priceFull, priceMonthly } ) => (
-							<div className="subscription-length-picker__option-container" key={ planSlug }>
-								<SubscriptionLengthOption
-									type={ hasDiscount ? 'upgrade' : 'new-sale' }
-									term={ plan.term }
-									checked={ planSlug === this.props.initialValue }
-									price={ myFormatCurrency( priceFull, this.props.currencyCode ) }
-									priceBeforeDiscount={ myFormatCurrency(
-										priceFullBeforeDiscount,
-										this.props.currencyCode
-									) }
-									pricePerMonth={ myFormatCurrency( priceMonthly, this.props.currencyCode ) }
-									savePercent={ Math.round(
-										100 * ( 1 - priceMonthly / this.getHighestMonthlyPrice() )
-									) }
-									value={ planSlug }
-									onCheck={ this.props.onChange }
-									shouldShowTax={ shouldShowTax }
-								/>
-							</div>
-						)
+						( {
+							plan,
+							planSlug,
+							priceFull,
+							priceFullBeforeDiscount,
+							priceMinusCredits,
+							priceMonthly,
+						} ) => {
+							const price = ! priceMinusCredits ? priceFull : priceMinusCredits;
+							return (
+								<div className="subscription-length-picker__option-container" key={ planSlug }>
+									<SubscriptionLengthOption
+										type={ hasDiscount ? 'upgrade' : 'new-sale' }
+										term={ plan.term }
+										checked={ planSlug === this.props.initialValue }
+										price={ myFormatCurrency( price, this.props.currencyCode ) }
+										priceBeforeDiscount={ myFormatCurrency(
+											priceFullBeforeDiscount,
+											this.props.currencyCode
+										) }
+										pricePerMonth={ myFormatCurrency( priceMonthly, this.props.currencyCode ) }
+										savePercent={ Math.round(
+											100 * ( 1 - priceMonthly / this.getHighestMonthlyPrice() )
+										) }
+										value={ planSlug }
+										onCheck={ this.props.onChange }
+										shouldShowTax={ shouldShowTax }
+									/>
+								</div>
+							);
+						}
 					) }
 				</div>
 			</div>
@@ -109,11 +120,12 @@ export function myFormatCurrency( price, code, options = {} ) {
 	return formatCurrency( price, code, hasCents ? options : { ...options, precision: 0 } );
 }
 
-export const mapStateToProps = ( state, { plans } ) => {
+export const mapStateToProps = ( state, { plans, cart } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
+	const credits = cart.credits;
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans ),
+		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans, credits ),
 	};
 };
 
