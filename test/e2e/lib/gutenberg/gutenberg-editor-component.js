@@ -16,8 +16,10 @@ import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
-	constructor( driver, url ) {
+	constructor( driver, url, editorType = 'iframe' ) {
 		super( driver, By.css( '.edit-post-header' ), url );
+		this.editorType = editorType;
+
 		this.publishSelector = By.css(
 			'.editor-post-publish-panel__header-publish-button button[aria-disabled=false]'
 		);
@@ -29,11 +31,20 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
 	}
 
+	static async Expect( driver, editorType ) {
+		const page = new this( driver, null, editorType );
+		await page._expectInit();
+		return page;
+	}
+
 	async _postInit() {
 		await this.removeNUXNotice();
 	}
 
 	async _preInit() {
+		if ( this.editorType !== 'iframe' ) {
+			return;
+		}
 		await this.driver.switchTo().defaultContent();
 		await this.driver.wait(
 			until.ableToSwitchToFrame( this.editoriFrameSelector ),

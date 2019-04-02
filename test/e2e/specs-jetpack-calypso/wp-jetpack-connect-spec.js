@@ -121,8 +121,8 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		} );
 
 		step( 'Can select a user type', async function() {
-			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
-			return await siteTopicPage.selectUserType( 'creator' );
+			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
+			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {
@@ -185,8 +185,8 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		} );
 
 		step( 'Can select a user type', async function() {
-			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
-			return await siteTopicPage.selectUserType( 'creator' );
+			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
+			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {
@@ -310,7 +310,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		step( 'Can create wporg site', async function() {
 			this.timeout( mochaTimeOut * 12 );
 
-			jnFlow = new JetpackConnectFlow( driver, null, 'noJetpack' );
+			jnFlow = new JetpackConnectFlow( driver );
 			return await jnFlow.createJNSite();
 		} );
 
@@ -324,25 +324,15 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			return await jetPackConnectPage.addSiteUrl( jnFlow.url );
 		} );
 
-		step( 'Can enter the Jetpack credentials and install Jetpack', async function() {
-			const jetpackConnectAddCredentialsPage = await JetpackConnectAddCredentialsPage.Expect(
-				driver
-			);
-			return await jetpackConnectAddCredentialsPage.enterDetailsAndConnect(
-				jnFlow.username,
-				jnFlow.password
-			);
+		step( 'Can log into WP.com', async function() {
+			const user = dataHelper.getAccountConfig( 'jetpackConnectUser' );
+			const loginPage = await LoginPage.Expect( driver );
+			return await loginPage.login( user[ 0 ], user[ 1 ] );
 		} );
 
 		step( 'Can wait for Jetpack get connected', async function() {
 			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
 			return await jetpackAuthorizePage.waitToDisappear();
-		} );
-
-		step( 'Can log into WP.com', async function() {
-			const user = dataHelper.getAccountConfig( 'jetpackConnectUser' );
-			const loginPage = await LoginPage.Expect( driver );
-			return await loginPage.login( user[ 0 ], user[ 1 ] );
 		} );
 
 		step( 'Can select a site type', async function() {
@@ -356,8 +346,8 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		} );
 
 		step( 'Can select a user type', async function() {
-			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
-			return await siteTopicPage.selectUserType( 'creator' );
+			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
+			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step(
@@ -461,6 +451,11 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		let jnFlow;
 
 		before( async function() {
+			// This test relies on Jetpack plugin remote installation, which is possible only for Jetpack stable
+			if ( dataHelper.getJetpackHost() === 'PRESSABLEBLEEDINGEDGE' ) {
+				this.skip();
+			}
+
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -509,8 +504,8 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		} );
 
 		step( 'Can select a user type', async function() {
-			const siteTopicPage = await JetpackConnectUserTypePage.Expect( driver );
-			return await siteTopicPage.selectUserType( 'creator' );
+			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
+			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {
