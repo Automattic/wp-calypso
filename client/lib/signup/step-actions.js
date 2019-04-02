@@ -623,14 +623,10 @@ export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) 
 		initialContext: {
 			query: { site_type: siteType },
 		},
-		signupDependencies,
 	} = nextProps;
+
 	const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
 	let fulfilledDependencies = [];
-
-	if ( siteType === get( signupDependencies, 'siteType' ) ) {
-		return;
-	}
 
 	if ( siteTypeValue ) {
 		debug( 'From query string: site_type = %s', siteType );
@@ -658,15 +654,10 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 			query: { vertical },
 		},
 		flowName,
-		signupDependencies,
 	} = nextProps;
 
 	const flowSteps = flows.getFlow( flowName ).steps;
 	let fulfilledDependencies = [];
-
-	if ( vertical && get( signupDependencies, 'surveyQuestion' ) === vertical ) {
-		return;
-	}
 
 	if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
 		debug( 'From query string: vertical = %s', vertical );
