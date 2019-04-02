@@ -12,8 +12,6 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import Button from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import { getAllSiteTypes } from 'lib/signup/site-type';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -87,27 +85,23 @@ class SiteTypeForm extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div>
-				<LoggedOutFormLinks className="site-type__links">
-					<LoggedOutFormLinkItem className="site-type__text">
-						{ translate( 'Or type your own' ) }
-					</LoggedOutFormLinkItem>
-				</LoggedOutFormLinks>
+			<div className="site-type__other-option">
+				<p className="site-type__other-label">{ translate( 'Or type your own' ) }</p>
 
-				<div className="site-type__other-link-item-form">
+				<div className="site-type__other-form">
 					<FormTextInput
-						className="site-type__option-other"
+						className="site-type__other-input"
 						type="text"
 						selectOnFocus
-						placeholder={ translate( 'Site profile' ) }
+						placeholder={ translate( 'Other' ) }
 						onChange={ this.onOtherCatChange }
 						value={ this.state.otherValue }
 					/>
+
 					<Button
 						className="site-type__other-submit"
 						disabled={ false }
 						onClick={ this.handleSubmitOther }
-						compact
 					>
 						{ translate( 'Continue' ) }
 					</Button>
