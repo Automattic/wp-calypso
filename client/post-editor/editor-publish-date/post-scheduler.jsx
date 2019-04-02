@@ -44,13 +44,23 @@ export default class PostScheduler extends PureComponent {
 
 	state = this.getFirstAndLastDayOfTheMonth( this.props.initialDate );
 
+	// Calculates the start and end of the period shown by a monthly calendar UI
+	// for the specified `date`:
+	// - first day of the week containing the first day of the month
+	// - last day of the week containing the last day of the month
 	getFirstAndLastDayOfTheMonth( date ) {
 		const tz = timezone( this.props.site );
 		const tzDate = tz ? moment.tz( date, tz ) : moment( date );
 
 		return {
-			firstDayOfTheMonth: tzDate.clone().startOf( 'month' ),
-			lastDayOfTheMonth: tzDate.clone().endOf( 'month' ),
+			firstDayOfTheMonth: tzDate
+				.clone()
+				.startOf( 'month' )
+				.startOf( 'week' ),
+			lastDayOfTheMonth: tzDate
+				.clone()
+				.endOf( 'month' )
+				.endOf( 'week' ),
 		};
 	}
 
