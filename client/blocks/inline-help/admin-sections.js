@@ -83,7 +83,7 @@ const adminSections = ( siteId, siteSlug ) => [
 		sidebarLabel: 'Import',
 	},
 	{
-		title: 'Earn money from your content and traffic',
+		title: 'Earn money from my content and traffic',
 		description:
 			"By upgrading to the Premium plan, you'll be able to monetize your site through the WordAds program.",
 		link: `/earn/${ siteId }`,
@@ -91,7 +91,7 @@ const adminSections = ( siteId, siteSlug ) => [
 		sidebarLabel: 'Earn',
 	},
 	{
-		title: "Manage your site's users",
+		title: "Manage my site's users",
 		description: '',
 		link: `/people/team/${ siteId }`,
 		synonyms: [ 'administrator', 'editor', 'contributor', 'viewer', 'follower' ],
@@ -105,13 +105,13 @@ const adminSections = ( siteId, siteSlug ) => [
 		sidebarLabel: 'People',
 	},
 	{
-		title: "Change your site's timezone",
+		title: "Change my site's timezone",
 		description: '',
 		link: `/settings/general/${ siteId }`,
 		sidebarLabel: 'Settings',
 	},
 	{
-		title: "Change your site's footer text",
+		title: "Change my site's footer text",
 		description: 'You can customize your website by changing the footer credit in customizer.',
 		link: `/settings/general/${ siteId }`,
 		synonyms: [ 'remove footer', 'update footer' ],
