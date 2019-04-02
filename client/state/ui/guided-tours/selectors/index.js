@@ -44,7 +44,7 @@ const debug = debugFactory( 'calypso:guided-tours' );
 
 const mappable = x => ( ! Array.isArray( x ) ? [ x ] : x );
 
-const relevantFeatures = flatMap( GuidedToursConfig.meta, ( tourMeta, key ) =>
+const relevantFeatures = flatMap( GuidedToursConfig, ( tourMeta, key ) =>
 	mappable( tourMeta.path ).map( path => ( {
 		tour: key,
 		when: tourMeta.when,
