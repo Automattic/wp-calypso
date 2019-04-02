@@ -12,9 +12,12 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
+import { hasGSuite } from 'lib/domains/gsuite';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { domainManagementEdit } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 
@@ -51,7 +54,16 @@ const DomainOnly = ( { primaryDomain, hasNotice, siteId, slug, translate } ) => 
 				secondaryAction={ translate( 'Manage Domain' ) }
 				secondaryActionURL={ domainManagementEdit( slug, domainName ) }
 				illustration={ '/calypso/images/drake/drake-browser.svg' }
-			/>
+			>
+				<Button
+					className="empty-content__action button"
+					href={ emailManagement( slug, domainName ) }
+					primary
+				>
+					{ hasGSuite( primaryDomain ) ? translate( 'Manage Email' ) : translate( 'Add Email' ) }
+				</Button>
+			</EmptyContent>
+
 			{ hasNotice && (
 				<div className="domain-only-site__settings-notice">
 					{ translate(

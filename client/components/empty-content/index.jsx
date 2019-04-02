@@ -108,6 +108,7 @@ class EmptyContent extends Component {
 				{ this.props.line ? <h3 className="empty-content__line">{ this.props.line }</h3> : null }
 				{ action }
 				{ secondaryAction }
+				{ this.props.children }
 			</div>
 		);
 	}
