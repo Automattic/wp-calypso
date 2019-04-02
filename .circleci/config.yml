@@ -497,6 +497,9 @@ jobs:
       - run: npm run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
+      - run:
+          name: Generate Allure Reports
+          command: ./node_modules/.bin/allure generate ./reports/ -o ./reports/allure
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
       - slack/status:
