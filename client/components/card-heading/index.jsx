@@ -14,6 +14,11 @@ import classNames from 'classnames';
  */
 import { preventWidows } from 'lib/formatting';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const validTypeSizes = [ 54, 47, 36, 32, 24, 21, 16, 14, 11 ];
 
 function CardHeading( { tagName = 'h1', size = 21, children } ) {
