@@ -69,8 +69,7 @@ export class List extends React.Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-
-		if ( this.props.selectedSite.ID !== prevProps.selectedSite.ID ) {
+		if ( get( this.props, 'selectedSite.ID', null ) !== get( prevProps, 'selectedSite.ID', null ) {
 			this.hideNotice();
 		}
 	}
