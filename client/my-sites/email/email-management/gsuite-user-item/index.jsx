@@ -78,16 +78,6 @@ function GSuiteUserItem( props ) {
 	);
 }
 
-PendingGSuiteTosNoticeDialog.propTypes = {
-	domainName: PropTypes.string.isRequired,
-	isMultipleDomains: PropTypes.bool.isRequired,
-	onClose: PropTypes.func.isRequired,
-	section: PropTypes.string.isRequired,
-	severity: PropTypes.string.isRequired,
-	siteSlug: PropTypes.string.isRequired,
-	user: PropTypes.string.isRequired,
-};
-
 GSuiteUserItem.propTypes = {
 	user: PropTypes.object.isRequired,
 	onClick: PropTypes.func,
