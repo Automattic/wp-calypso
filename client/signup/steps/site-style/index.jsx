@@ -79,6 +79,7 @@ export class SiteStyleStep extends Component {
 				'is-checked': isChecked,
 				[ `site-style__variation-${ siteStyleProperties.id }` ]: siteStyleProperties.id,
 			} );
+
 			return (
 				<FormLabel
 					htmlFor={ siteStyleProperties.id }
@@ -93,9 +94,7 @@ export class SiteStyleStep extends Component {
 						checked={ isChecked }
 						onChange={ this.handleStyleOptionChange }
 					/>
-					<span>
-						<strong>{ siteStyleProperties.label }</strong>
-					</span>
+					{ siteStyleProperties.buttonSvg }
 				</FormLabel>
 			);
 		} );

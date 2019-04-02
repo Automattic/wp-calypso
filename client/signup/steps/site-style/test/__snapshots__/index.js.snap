@@ -29,11 +29,6 @@ exports[`<SiteStyleStep /> should render 1`] = `
                 onChange={[Function]}
                 value="default"
               />
-              <span>
-                <strong>
-                  nice
-                </strong>
-              </span>
             </Localized(FormLabel)>
             <Localized(FormLabel)
               className="site-style__option-label site-style__variation-eyesore"
@@ -47,11 +42,6 @@ exports[`<SiteStyleStep /> should render 1`] = `
                 onChange={[Function]}
                 value="eyesore"
               />
-              <span>
-                <strong>
-                  nicer
-                </strong>
-              </span>
             </Localized(FormLabel)>
           </FormFieldset>
           <div
