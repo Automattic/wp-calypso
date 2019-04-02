@@ -387,7 +387,7 @@
 	list-style: none;
 	text-align: left;
 	margin: 0;
-	padding: 0 0 8px 0;
+	padding: 0 0 8px;
 
 	.help-contact-form & {
 		padding: 0;
@@ -439,6 +439,10 @@
 				background: none;
 			}
 		}
+	}
+
+	.gridicon {
+		margin: 0 8px -3px 0;
 	}
 }
 

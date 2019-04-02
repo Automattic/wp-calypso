@@ -53,6 +53,7 @@
 		"gutenberg/opt-in": true,
 		"happychat": true,
 		"help": true,
+		"help/admin-section-search": true,
 		"help/courses": true,
 		"jetpack/api-cache": true,
 		"jetpack/blocks/beta": true,

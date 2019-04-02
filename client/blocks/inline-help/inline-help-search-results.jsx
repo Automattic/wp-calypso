@@ -9,6 +9,8 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import page from 'page';
+import Gridicon from 'gridicons';
+import config from 'config';
 
 /**
  * Internal Dependencies
@@ -26,7 +28,7 @@ import {
 import { getLastRouteAction } from 'state/ui/action-log/selectors';
 import { setSearchResults, selectResult } from 'state/inline-help/actions';
 import { getContextResults } from './contextual-help';
-import { getAdminSectionsResults } from './admin-sections';
+import { getAdminSectionsResults } from 'blocks/inline-help/admin-sections';
 import { localizeUrl } from 'lib/i18n-utils';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -58,11 +60,10 @@ class InlineHelpSearchResults extends Component {
 
 		return (
 			<div className="inline-help__search-results">
-				<h2 className="inline-help__view-heading">Support documentation:</h2>
 				{ isEmpty( searchResults ) ? (
 					<>
 						<p className="inline-help__empty-results">
-							Sorry, there were no matches. Here are some of the most searched after help pages for
+							Sorry, there were no matches. Here are some of the most searched for help pages for
 							this section:
 						</p>
 						{ this.renderContextHelp() }
@@ -80,16 +81,15 @@ class InlineHelpSearchResults extends Component {
 		const classes = { 'is-selected': this.props.selectedResultIndex === index };
 		const onClick =
 			link.type === 'internal' ? this.onInternalLinkClick : this.onHelpLinkClick( index );
+		const key = link.key ? link.key : link.link;
 		return (
-			<li
-				key={ link.link ? link.link : link.key }
-				className={ classNames( 'inline-help__results-item', classes ) }
-			>
+			<li key={ key } className={ classNames( 'inline-help__results-item', classes ) }>
 				<a
 					href={ localizeUrl( link.link ) }
 					onClick={ onClick }
 					title={ decodeEntities( link.description ) }
 				>
+					{ link.icon && <Gridicon icon={ link.icon } size={ 18 } /> }
 					{ preventWidows( decodeEntities( link.title ) ) }
 				</a>
 			</li>
@@ -97,23 +97,19 @@ class InlineHelpSearchResults extends Component {
 	};
 
 	renderAdminSectionResults() {
-		if ( ! this.props.siteSlug || isEmpty( this.props.searchQuery ) ) {
+		if ( ! this.props.searchQuery ) {
 			return;
 		}
 
-		const results = getAdminSectionsResults(
-			this.props.searchQuery,
-			this.props.siteId,
-			this.props.siteSlug
-		);
+		const results = getAdminSectionsResults( this.props.searchQuery, this.props.siteSlug );
 
-		if ( isEmpty( results ) ) {
+		if ( results.length < 1 ) {
 			return;
 		}
 
 		return (
 			<div className="inline-help__find-section">
-				<h2 className="inline-help__view-heading">Go directly to:</h2>
+				<h2 className="inline-help__view-heading">Show me where I can:</h2>
 				<ul className="inline-help__results-list">
 					{ results && results.map( this.renderHelpLink ) }
 				</ul>
@@ -139,7 +135,15 @@ class InlineHelpSearchResults extends Component {
 		this.props.openResult( event );
 	};
 
-	onInternalLinkClick = ( { target: { href } } ) => href && page( href );
+	onInternalLinkClick = ( { target: { href } } ) => {
+		if ( href ) {
+			this.props.recordTracksEvent( 'calypso_inlinehelp_admin_section_search', {
+				link: href,
+				search_term: this.props.searchQuery,
+			} );
+			page( href );
+		}
+	};
 
 	render() {
 		return (
@@ -149,7 +153,7 @@ class InlineHelpSearchResults extends Component {
 					requesting={ this.props.isSearching }
 				/>
 				{ this.renderSearchResults() }
-				{ this.renderAdminSectionResults() }
+				{ config.isEnabled( 'help/admin-section-search' ) && this.renderAdminSectionResults() }
 			</div>
 		);
 	}
@@ -161,7 +165,6 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	selectedResultIndex: getSelectedResultIndex( state ),
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
-	siteId: getSelectedSiteId( state ),
 } );
 
 const mapDispatchToProps = {

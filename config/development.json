@@ -72,6 +72,7 @@
 		"guided-tours/theme-sheet-welcome": true,
 		"gutenberg/opt-in": true,
 		"help": true,
+		"help/admin-section-search": true,
 		"help/courses": true,
 		"i18n/community-translator": false,
 		"jetpack/api-cache": true,
