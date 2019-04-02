@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { isInPageBuilderTest } from 'lib/signup/page-builder';
+import { isInPageBuilderTest, getEditHomeUrl } from 'lib/signup/page-builder';
 
 /**
  * Style dependencies
@@ -141,7 +141,7 @@ export class SignupProcessingScreen extends Component {
 		// we are hijacking this method slightly because our page builder
 		// test has the same logic for showing, except also being in the test
 		const redirectTo = isInPageBuilderTest()
-			? `/block-editor/page/${ this.state.siteSlug }/2`
+			? getEditHomeUrl( this.state.siteSlug )
 			: `/checklist/${ this.state.siteSlug }`;
 		this.props.loginHandler( { redirectTo } );
 	};
