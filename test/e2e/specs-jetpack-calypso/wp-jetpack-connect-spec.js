@@ -451,6 +451,11 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		let jnFlow;
 
 		before( async function() {
+			// This test relies on Jetpack plugin remote installation, which is possible only for Jetpack stable
+			if ( dataHelper.getJetpackHost() === 'PRESSABLEBLEEDINGEDGE' ) {
+				this.skip();
+			}
+
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
