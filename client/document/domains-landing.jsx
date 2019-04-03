@@ -10,8 +10,10 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
+// import config from 'config';
 import Head from 'components/head';
 import getStylesheet from './utils/stylesheet';
+import { jsonStringifyForHtml } from '../../server/sanitize';
 
 const cssChunkLink = asset => (
 	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
@@ -19,6 +21,7 @@ const cssChunkLink = asset => (
 
 function DomainsLanding( {
 	branchName,
+	clientData,
 	inlineScriptNonce,
 	isDebug,
 	env,
@@ -32,6 +35,9 @@ function DomainsLanding( {
 	faviconURL,
 } ) {
 	const csskey = isRTL ? 'css.rtl' : 'css.ltr';
+
+	// const inlineScript = ( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };\n` : '' );
+
 	return (
 		<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 			<Head
@@ -73,6 +79,14 @@ function DomainsLanding( {
 						</div>
 					</div>
 				</div>
+				{ clientData && (
+					<script
+						type="text/javascript"
+						dangerouslySetInnerHTML={ {
+							__html: `var configData = ${ jsonStringifyForHtml( clientData ) };`,
+						} }
+					/>
+				) }
 				{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 				{ /*
 				 * inline manifest in production, but reference by url for development.

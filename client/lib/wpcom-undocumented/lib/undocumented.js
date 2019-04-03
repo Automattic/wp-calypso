@@ -2382,4 +2382,8 @@ Undocumented.prototype.applePayMerchantValidation = function( validationURL, env
 	return this.wpcom.req.get( '/apple-pay/merchant-validation/', queries );
 };
 
+Undocumented.prototype.domainsVerifyRegistrantEmail = function( domain, token ) {
+	return this.wpcom.req.get( `/domains/${ domain }/verify-email`, { token: token } );
+};
+
 export default Undocumented;

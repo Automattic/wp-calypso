@@ -160,7 +160,7 @@ function getWebpackConfig( {
 		context: __dirname,
 		entry: {
 			build: [ path.join( __dirname, 'client', 'boot', 'app' ) ],
-			registrantVerification: [
+			domainsRegistrantVerification: [
 				path.join( __dirname, 'client', 'landing', 'domains', 'registrant-verification' ),
 			],
 		},

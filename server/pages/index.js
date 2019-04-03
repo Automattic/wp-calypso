@@ -747,22 +747,24 @@ module.exports = function() {
 		res.redirect( redirectUrl );
 	} );
 
-	app.get( '/landing/domains/:action', function( req, res ) {
+	app.get( '/domain-services/:action', function( req, res ) {
 		const ctx = getDefaultContext( req );
 		attachBuildTimestamp( ctx );
 		attachHead( ctx );
 		attachI18n( ctx );
-		console.log( ctx );
+
+		ctx.clientData = config.clientData;
 
 		const action = get( req.params, 'action' );
 		let entrypointName;
 		switch ( action ) {
 			case 'registrant-verification':
-				entrypointName = 'registrantVerification';
+				entrypointName = 'domainsRegistrantVerification';
 				break;
 
 			default:
-				res.send( renderJsx( '404', ctx ) );
+				render404( req, res );
+				// res.send( renderJsx( '404', ctx ) );
 				return;
 		}
 
