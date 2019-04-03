@@ -24,7 +24,7 @@ import { emailManagement } from 'my-sites/email/paths';
 import Card from 'components/card/compact';
 import getEmailForwardingLimit from 'state/selectors/get-email-forwarding-limit';
 import getEmailForwardingType from 'state/selectors/get-email-forwarding-type';
-import getEmailForwards from 'state/selectors/get-email-forwards';
+import { getEmailForwards } from 'state/selectors/get-email-forwards';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryEmailForwards from 'components/data/query-email-forwards';
 import SectionHeader from 'components/section-header';
