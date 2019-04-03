@@ -97,6 +97,7 @@ const nodeModulesToTranspile = [
 	// The trailing slash makes sure we're not matching these as prefixes
 	// In some cases we do want prefix style matching (lodash. for lodash.assign)
 	'd3-array/',
+	'd3-scale/',
 	'debug/',
 ];
 /**
