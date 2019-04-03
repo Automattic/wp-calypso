@@ -37,6 +37,7 @@ import { isATEnabled } from 'lib/automated-transfer';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { isGSuiteRestricted } from 'lib/domains/gsuite';
 
 /**
  * Module variables
@@ -203,6 +204,10 @@ const googleAppsWithRegistration = ( context, next ) => {
 	const handleClickSkip = () => {
 		page( '/checkout/' + siteSlug );
 	};
+
+	if ( isGSuiteRestricted() ) {
+		next();
+	}
 
 	context.primary = (
 		<Main>
