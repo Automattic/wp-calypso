@@ -525,7 +525,7 @@ jobs:
           name: Skip Jetpack Tests if needed
           command: |
               # If the skip jetpack env var is set, notify slack channel and skip the rest of the steps
-              if [[ "$SKIP_JETPACK" == "true" && "<< parameters.test-target >>" == "JETPACK" ]]
+              if [[ "$SKIP_JETPACK" == "true" && "<< parameters.test-target >>" == "JETPACK" ]]; then
                 curl -X POST -H 'Content-type: application/json' \
                     --data \
                     "{ \
