@@ -18,6 +18,7 @@ import { getSiteOption } from 'state/sites/selectors';
 import AsyncLoad from 'components/async-load';
 import { getNeverShowBannerStatus } from 'my-sites/checklist/wpcom-checklist/checklist-banner/never-show';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { isBlockEditorSectionInTest } from 'lib/signup/page-builder';
 
 class WpcomChecklist extends Component {
 	static propTypes = {
@@ -57,7 +58,13 @@ class WpcomChecklist extends Component {
 	}
 }
 
-function shouldChecklistRender( viewMode, isEligibleForChecklist, taskList, isSection, siteId ) {
+function shouldChecklistRender(
+	viewMode,
+	isEligibleForChecklist,
+	taskList,
+	isSectionEligible,
+	siteId
+) {
 	// Render nothing in notification mode.
 	if ( viewMode === 'notification' ) {
 		return false;
@@ -74,7 +81,7 @@ function shouldChecklistRender( viewMode, isEligibleForChecklist, taskList, isSe
 	}
 
 	// Render nothing in navigation mode if the current section is not site-specific.
-	if ( ! isSection && viewMode === 'navigation' ) {
+	if ( ! isSectionEligible && viewMode === 'navigation' ) {
 		return false;
 	}
 
@@ -90,7 +97,7 @@ function shouldChecklistShowNotification(
 	taskList,
 	storedTask,
 	isEligibleForChecklist,
-	isSection
+	isSectionEligible
 ) {
 	const firstIncomplete = taskList && taskList.getFirstIncompleteTask();
 
@@ -98,7 +105,7 @@ function shouldChecklistShowNotification(
 		firstIncomplete &&
 		( storedTask !== firstIncomplete.id || storedTask === null ) &&
 		isEligibleForChecklist &&
-		isSection
+		isSectionEligible
 	) {
 		return true;
 	}
@@ -110,7 +117,7 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
 	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
-	const isSection = isSiteSection( state );
+	const isSectionEligible = isSiteSection( state ) && ! isBlockEditorSectionInTest( state );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const siteSegment = get( siteChecklist, 'segment' );
 	const siteVerticals = get( siteChecklist, 'vertical' );
@@ -131,14 +138,14 @@ export default connect( ( state, ownProps ) => {
 			viewMode,
 			isEligibleForChecklist,
 			taskList,
-			isSection,
+			isSectionEligible,
 			siteId
 		),
 		shouldShowNotification: shouldChecklistShowNotification(
 			taskList,
 			storedTask,
 			isEligibleForChecklist,
-			isSection
+			isSectionEligible
 		),
 	};
 } )( WpcomChecklist );
