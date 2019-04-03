@@ -2748,14 +2748,6 @@
 				"@babel/runtime": "^7.3.1"
 			}
 		},
-		"@wordpress/babel-plugin-import-jsx-pragma": {
-			"version": "1.1.3",
-			"resolved": "https://registry.npmjs.org/@wordpress/babel-plugin-import-jsx-pragma/-/babel-plugin-import-jsx-pragma-1.1.3.tgz",
-			"integrity": "sha512-WkVeFZpM5yuHigWe8llZDeMRa4bhMQoHu9dzs1s3cmB1do2mhk341Iw34FidWto14Dzd+383K71vxJejqjKOwQ==",
-			"requires": {
-				"@babel/runtime": "^7.0.0"
-			}
-		},
 		"@wordpress/babel-plugin-makepot": {
 			"version": "2.1.3",
 			"resolved": "https://registry.npmjs.org/@wordpress/babel-plugin-makepot/-/babel-plugin-makepot-2.1.3.tgz",
