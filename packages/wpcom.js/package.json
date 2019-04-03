@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "author": "Automattic, Inc.",
   "scripts": {
-    "prepublish": "make standalone"
+    "prepublish": "make all"
   },
   "contributors": [
     "Damian Suarez <rdsuarez@gmail.com>",
@@ -14,7 +14,8 @@
     "Matt Sherman <matt.sherman@automattic.com>",
     "Timmy Crawford <timmy.crawford@automattic.com>",
     "Benoit Person <benoit.person@gmail.com>",
-    "Jake Fried <jake.fried@automattic.com>"
+    "Jake Fried <jake.fried@automattic.com>",
+    "Jarda Snajdr <jsnajdr@gmail.com>"
   ],
   "keywords": [
     "wordpress",
@@ -26,10 +27,12 @@
   ],
   "repository": "git@github.com:Automattic/wpcom.js.git",
   "license": "MIT",
-  "babel": {
-    "presets": [
-      "es2015",
-      "stage-2"
+  "browserslist": {
+    "defaults": [
+      "extends @wordpress/browserslist-config"
+    ],
+    "test": [
+      "current node"
     ]
   },
   "files": [
@@ -41,20 +44,23 @@
     "./build/lib/util/fs.js": "./build/lib/util/fs-browser.js"
   },
   "dependencies": {
-    "babel-runtime": "^6.9.2",
+    "@babel/runtime": "^7.4.3",
+    "core-js": "^2.6.5",
     "debug": "^3.1.0",
     "qs": "^6.5.2",
-    "wpcom-xhr-request": "^1.1.2"
+    "wpcom-xhr-request": "^1.1.3"
   },
   "devDependencies": {
-    "babel-eslint": "^6.1.2",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-stage-2": "^6.11.0",
-    "babel-register": "^6.9.0",
-    "eslint": "^3.6.1",
-    "mocha": "^5.2.0",
-    "n8-make": "1.4.0",
-    "webpack": "^1.13.1",
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/register": "^7.4.0",
+    "@wordpress/browserslist-config": "^2.3.0",
+    "eslint": "^5.16.0",
+    "mocha": "^6.0.2",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
     "wpcom-oauth-cors": "^1.0.0",
     "wpcom-proxy-request": "^5.0.0"
   }

@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-import wpcomFactory from '../';
+import wpcomFactory from '../index';
 import qs from 'qs';
 import oauthCors from 'wpcom-oauth-cors';
 import fixture from './fixture';
