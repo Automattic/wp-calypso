@@ -518,21 +518,45 @@ jobs:
       slack-webhook:
         type: string
         default: $SLACK_E2E
-      skip-jetpack:
-        type: string
-        default: ""
     steps:
       - prepare
       - run: *set-e2e-variables
-      - when:
-          condition: << parameters.skip-jetpack >>
-          steps:
-            - slack/notify:
-                color: '#FF0000'
-                webhook: << parameters.slack-webhook >>
-                message: Jetpack tests have been skipped
-            - run: |
+      - run:
+          name: Skip Jetpack Tests if needed
+          command: |
+              # If the skip jetpack env var is set, notify slack channel and skip the rest of the steps
+              if [[ "$SKIP_JETPACK" == "true" && "<< parameters.test-target >>" == "JETPACK" ]]; then
+                curl -X POST -H 'Content-type: application/json' \
+                    --data \
+                    "{ \
+                      \"attachments\": [ \
+                        { \
+                          \"text\": \"Jetpack tests were skipped\", \
+                          \"fields\": [ \
+                            { \
+                              \"title\": \"Project\", \
+                              \"value\": \"$CIRCLE_PROJECT_REPONAME\", \
+                              \"short\": true \
+                            }, \
+                            { \
+                              \"title\": \"Job Number\", \
+                              \"value\": \"$CIRCLE_BUILD_NUM\", \
+                              \"short\": true \
+                            } \
+                          ], \
+                          \"actions\": [ \
+                            { \
+                              \"type\": \"button\", \
+                              \"text\": \"Visit Job\", \
+                              \"url\": \"$CIRCLE_BUILD_URL\" \
+                            } \
+                          ], \
+                          \"color\": \"#FF0000\" \
+                        } \
+                      ] \
+                    }" << parameters.slack-webhook >>
                 circleci-agent step halt
+              fi
       - run: npm run decryptconfig
       - run:
           name: Run Canary Tests
@@ -674,7 +698,6 @@ workflows:
           jetpack-host: "PRESSABLEBLEEDINGEDGE"
           test-target: "JETPACK"
           slack-webhook: "$SLACK_JP"
-          skip-jetpack: "$SKIP_JETPACK"
     triggers:
       - schedule:
           cron: "0 7 * * *"
@@ -694,7 +717,6 @@ workflows:
 #        jetpack-host: "PRESSABLE"
 #        test-target: "JETPACK"
 #        slack-webhook: "$SLACK_JP"
-#        skip-jetpack: "$SKIP_JETPACK"
 #    triggers:
 #    - schedule:
 #        cron: "0 1,13 * * *"
