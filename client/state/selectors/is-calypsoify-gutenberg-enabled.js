@@ -15,7 +15,7 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 		return false;
 	}
 
-	if ( isEnabled( 'jetpack/iframe/editor' ) ) {
+	if ( isEnabled( 'jetpack/gutenframe' ) ) {
 		return false;
 	}
 

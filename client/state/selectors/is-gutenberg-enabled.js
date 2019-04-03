@@ -16,7 +16,7 @@ export const isGutenbergEnabled = ( state, siteId ) => {
 		return true;
 	}
 
-	if ( isEnabled( 'jetpack/iframe/editor' ) ) {
+	if ( isEnabled( 'jetpack/gutenframe' ) ) {
 		return isEnabled( 'gutenberg' ) && ! isVipSite( state, siteId );
 	}
 
