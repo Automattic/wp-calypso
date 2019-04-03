@@ -174,4 +174,12 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
+	pageBuilderMVP: {
+		datestamp: '20190402',
+		variations: {
+			control: 50,
+			test: 50,
+		},
+		defaultVariation: 'control',
+	},
 };
