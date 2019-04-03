@@ -27,6 +27,5 @@ export function isEligibleForPageBuilder( segment, flowName ) {
 }
 
 export function isBlockEditorSectionInTest( state ) {
-	const isGutenberg = getSectionGroup( state ) === 'gutenberg';
-	return isGutenberg && isInPageBuilderTest();
+	return 'gutenberg' === getSectionGroup( state ) && isInPageBuilderTest();
 }
