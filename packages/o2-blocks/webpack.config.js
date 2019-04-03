@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
 
@@ -16,14 +15,9 @@ const path = require( 'path' );
  * @return {object} webpack config
  */
 function getWebpackConfig() {
-	const editorScript = path.join( __dirname, 'src', 'editor.js' );
-	const viewScript = path.join( __dirname, 'src', 'view.js' );
-	const viewScriptEntry = fs.existsSync( viewScript ) ? { view: viewScript } : {};
-
 	return getBaseWebpackConfig( null, {
 		entry: {
-			editor: editorScript,
-			...viewScriptEntry,
+			editor: path.join( __dirname, 'src', 'editor.js' ),
 		},
 		'output-path': path.join( __dirname, 'dist' ),
 	} );
