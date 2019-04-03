@@ -57,7 +57,13 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 			driverManager.currentScreenSize() === 'mobile'
 				? '.plan-features__mobile'
 				: '.plan-features__table';
-		const selector = By.css( `${ plansPrefix } button.is-${ level }-plan:not([disabled])` );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		const selector = By.css( `${ plansPrefix } button.is-${ level }-plan` );
+		await driverHelper.clickWhenClickable( this.driver, selector );
+		try {
+			await driverHelper.waitTillNotPresent( this.driver, selector );
+		} catch {
+			//If the first click doesn't take, try again
+			await driverHelper.clickWhenClickable( this.driver, selector );
+		}
 	}
 }

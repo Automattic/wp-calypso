@@ -1640,14 +1640,18 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	xdescribe( 'Sign up for a free WordPress.com site via the new onboarding flow @parallel', () => {
+	describe( 'Sign up for a free WordPress.com site via the new onboarding flow @parallel', () => {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			await overrideABTests.setOverriddenABTests( driver, 'improvedOnboarding', 'onboarding' );
+			return await overrideABTests.setOverriddenABTests(
+				driver,
+				'improvedOnboarding',
+				'onboarding'
+			);
 		} );
 
 		step( 'Can visit the start page', async function() {
@@ -1665,8 +1669,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		step( 'Can see the "Site Type" page, and enter some site information', async function() {
 			const siteTypePage = await SiteTypePage.Expect( driver );
-			await siteTypePage.selectBlogType();
-			return await siteTypePage.submitForm();
+			return await siteTypePage.selectBlogType();
 		} );
 
 		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
@@ -1708,29 +1711,32 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
 			async function() {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+				return await new SignUpStep( driver ).continueAlong( userName, passwordForTestAccounts );
 			}
 		);
 
-		sharedSteps.canSeeTheInlineHelpCongratulations();
-		sharedSteps.canSeeTheSitePreview();
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		after( 'Can delete our newly created account', async function() {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
 		} );
 
 		after( async function() {
-			await overrideABTests.setABTestControlGroups( driver, { reset: true } );
+			return await overrideABTests.setABTestControlGroups( driver, { reset: true } );
 		} );
 	} );
 
-	xdescribe( 'Sign up for an account only (no site) then add a site via new onboarding flow @parallel', () => {
+	describe( 'Sign up for an account only (no site) then add a site via new onboarding flow @parallel', () => {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			await overrideABTests.setOverriddenABTests( driver, 'improvedOnboarding', 'onboarding' );
+			return await overrideABTests.setOverriddenABTests(
+				driver,
+				'improvedOnboarding',
+				'onboarding'
+			);
 		} );
 
 		step( 'Can enter the account flow and see the account details page', async function() {
@@ -1757,7 +1763,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
 			async function() {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+				return await new SignUpStep( driver ).continueAlong( userName, passwordForTestAccounts );
 			}
 		);
 
@@ -1774,8 +1780,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		step( 'Can see the "Site Type" page, and enter some site information', async function() {
 			const siteTypePage = await SiteTypePage.Expect( driver );
-			await siteTypePage.selectBlogType();
-			return await siteTypePage.submitForm();
+			return await siteTypePage.selectBlogType();
 		} );
 
 		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
@@ -1814,15 +1819,14 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await pickAPlanPage.selectFreePlan();
 		} );
 
-		sharedSteps.canSeeTheInlineHelpCongratulations();
-		sharedSteps.canSeeTheSitePreview();
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		after( 'Can delete our newly created account', async function() {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
 		} );
 
 		after( async function() {
-			await overrideABTests.setABTestControlGroups( driver, { reset: true } );
+			return await overrideABTests.setABTestControlGroups( driver, { reset: true } );
 		} );
 	} );
 } );
