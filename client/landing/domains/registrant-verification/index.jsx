@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import RenderDom from 'react-dom';
 import PropTypes from 'prop-types';
+import i18n, { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -26,27 +27,63 @@ class RegistrantVerificationPage extends Component {
 		token: PropTypes.string.isRequired,
 	};
 
+	state = {
+		isVerifying: true,
+		success: false,
+		error: false,
+	};
+
 	componentWillMount() {
 		const { domain, token } = this.props;
 		wpcom.domainsVerifyRegistrantEmail( domain, token ).then(
 			data => {
-				console.log( data );
+				this.setState( {
+					success: data.success,
+					isVerifying: false,
+				} );
 			},
-			err => {
-				console.log( err );
+			error => {
+				this.setState( {
+					error: { code: error.error, message: error.message },
+					isVerifying: false,
+				} );
 			}
 		);
 	}
+
+	renderVerificationInProgress = () => {
+		return <p>Verifying...</p>;
+	};
+
+	renderVerificationSuccess = () => {
+		return <p>{ translate( 'Email address verified successfully.' ) }</p>;
+	};
+
+	renderVerificationError = () => {
+		return <p>{ this.state.error.message }</p>;
+	};
+
+	renderVerificationStatus = () => {
+		if ( this.state.isVerifying ) {
+			return this.renderVerificationInProgress();
+		}
+
+		if ( this.state.success ) {
+			return this.renderVerificationSuccess();
+		}
+
+		if ( this.state.error ) {
+			return this.renderVerificationError();
+		}
+	};
 
 	render() {
 		return (
 			<Main className="registrant-verification">
 				<CompactCard>
-					<h2>{ 'Verify your contact information' }</h2>
+					<h2>{ translate( 'Domain Contact Information Verification' ) }</h2>
 				</CompactCard>
-				<CompactCard>
-					<p>Maybe you're verified...maybe not...can't tell yet.</p>
-				</CompactCard>
+				<CompactCard>{ this.renderVerificationStatus() }</CompactCard>
 			</Main>
 		);
 	}
@@ -65,6 +102,10 @@ function getUrlParameter( name ) {
 function boot() {
 	const token = getUrlParameter( 'token' );
 	const domain = getUrlParameter( 'domain' );
+	if ( window.i18nLocaleStrings ) {
+		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
+		i18n.setLocale( i18nLocaleStringsObject );
+	}
 	RenderDom.render(
 		<RegistrantVerificationPage token={ token } domain={ domain } />,
 		document.getElementById( 'primary' )

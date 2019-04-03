@@ -73,9 +73,7 @@ function DomainsLanding( {
 				<div id="wpcom" className="wpcom-site">
 					<div className="wp has-no-sidebar">
 						<div className="layout__content" id="content">
-							<div className="layout__primary" id="primary">
-								Oh look, a landing page.
-							</div>
+							<div className="layout__primary" id="primary" />
 						</div>
 					</div>
 				</div>
