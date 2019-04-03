@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, map, partition, reduce } from 'lodash';
+import { find, map, partition, reduce, some } from 'lodash';
 import React, { Fragment } from 'react';
 import formatCurrency from '@automattic/format-currency';
 
@@ -46,8 +46,17 @@ export const groupDomainProducts = ( originalItems, translate ) => {
 	];
 };
 
+export function transactionIncludesTax( transaction ) {
+	if ( ! transaction || ! transaction.tax ) {
+		return false;
+	}
+
+	// Consider the whole transaction to include tax if any item does
+	return some( transaction.items, 'raw_tax' );
+}
+
 export function renderTransactionAmount( transaction, { translate, addingTax = false } ) {
-	if ( ! transaction.tax || transaction.tax === '$0.00' ) {
+	if ( ! transactionIncludesTax( transaction ) ) {
 		return transaction.amount;
 	}
 
