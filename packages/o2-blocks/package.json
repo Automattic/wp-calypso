@@ -2,8 +2,7 @@
 	"name": "@automattic/o2-blocks",
 	"version": "1.0.0",
 	"description": "Gutenberg extensions for o2 theme.",
-	"main": "dist/cjs/index.js",
-	"module": "dist/esm/index.js",
+	"main": "dist/editor.js",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
