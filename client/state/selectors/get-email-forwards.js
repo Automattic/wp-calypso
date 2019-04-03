@@ -21,7 +21,7 @@ export function getEmailForwards( state, domainName ) {
  *
  * @param  {Object} state   Global state tree
  * @param  {String} domains domains to filter
- * @return {Object}         EmailForwards list
+ * @return {Object}         list of domains with forwards
  */
 export function getDomainsWithForwards( state, domains ) {
 	if ( ! domains || ! domains.length ) {
