@@ -125,7 +125,7 @@ class ThemesUpsellComponent extends Component {
 						<Feature
 							icon={ <Gridicon icon="plugins" size={ 48 } /> }
 							title="Install as Many WordPress Plugins as You Want"
-							description="Plugins are like smartphone apps for WordPress. They improve your site with features like:  SEO and marketing tools, lead generation tools, appointment booking and management, SalesForce and MailChimp integration, Google Analytics, and much, much more."
+							description="Plugins are like smartphone apps for WordPress. They improve your site with features like:  SEO and marketing tools, lead generation tools, appointment booking and management, SalesForce and Mailchimp integration, Google Analytics, and much, much more."
 						/>
 					</div>
 
