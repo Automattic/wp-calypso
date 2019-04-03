@@ -518,21 +518,16 @@ jobs:
       slack-webhook:
         type: string
         default: $SLACK_E2E
-      skip-jetpack:
-        type: string
-        default: ""
     steps:
       - prepare
       - run: *set-e2e-variables
-      - when:
-          condition: << parameters.skip-jetpack >>
-          steps:
-            - slack/notify:
-                color: '#FF0000'
-                webhook: << parameters.slack-webhook >>
-                message: Jetpack tests have been skipped
-            - run: |
-                circleci-agent step halt
+      - run:
+          name: Skip Jetpack Tests if needed
+          command: |
+                if [[ $SKIP_JETPACK == 'true' && << parameters.test-target >> == 'JETPACK' ]]
+                  curl curl -X POST -H 'Content-type: application/json' --data '{"text":"Jetpack tests were skipped", "color":"#FF0000"}' << parameters.slack-webhook >>
+                  circleci-agent step halt
+                fi
       - run: npm run decryptconfig
       - run:
           name: Run Canary Tests
@@ -610,7 +605,6 @@ workflows:
           jetpack-host: "PRESSABLEBLEEDINGEDGE"
           test-target: "JETPACK"
           slack-webhook: "$SLACK_JP"
-          skip-jetpack: $SKIP_JETPACK
 
   calypso-nightly:
     jobs:
@@ -683,7 +677,6 @@ workflows:
           jetpack-host: "PRESSABLEBLEEDINGEDGE"
           test-target: "JETPACK"
           slack-webhook: "$SLACK_JP"
-          skip-jetpack: $SKIP_JETPACK
     triggers:
       - schedule:
           cron: "0 7 * * *"
@@ -703,7 +696,6 @@ workflows:
 #        jetpack-host: "PRESSABLE"
 #        test-target: "JETPACK"
 #        slack-webhook: "$SLACK_JP"
-#        skip-jetpack: $SKIP_JETPACK
 #    triggers:
 #    - schedule:
 #        cron: "0 1,13 * * *"
