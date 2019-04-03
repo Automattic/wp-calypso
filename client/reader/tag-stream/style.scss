@@ -15,20 +15,20 @@
 
 .tag-stream__header .follow-button {
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin: 12px 20px 0 15px;
 	}
 }
 
 .tag-stream__header .follow-button__label {
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: inline;
 	}
 }
 
 .tag-stream__header-image {
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: right center;
@@ -43,7 +43,7 @@
 
 	&::before {
 		content: '';
-		background: rgba( 0, 0, 0, .3 );
+		background: rgba( 0, 0, 0, 0.3 );
 		height: 100%;
 		position: absolute;
 			bottom: 0;
@@ -54,7 +54,7 @@
 }
 
 .tag-stream__header-image .gridicon.gridicons-tag {
-	fill: $white;
+	fill: var( --color-white );
 	position: relative;
 		right: 6px;
 		top: 3px;
@@ -62,38 +62,38 @@
 }
 
 .tag-stream__header-image-title {
-	color: $white;
+	color: var( --color-white );
 	font-size: 28px;
 	line-height: 1.3;
 	margin-top: 42px;
 	text-align: center;
-	text-shadow: 0 1px rgba( 0, 0, 0, .3 );
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
 	z-index: 2;
 }
 
 .tag-stream__header-image-byline {
-	color: $white;
+	color: var( --color-white );
 	font-size: 12px;
 	font-weight: 500;
 	padding-top: 24px;
 	text-align: right;
-	text-shadow: 0 1px rgba(0, 0, 0, .3);
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
 	z-index: 2;
 	-webkit-font-smoothing: antialiased;
 }
 
 .tag-stream__header-image-byline-label {
-	opacity: .7;
+	opacity: 0.7;
 }
 
 .tag-stream__header-image-byline-link,
 .tag-stream__header-image-byline-link:visited {
-	color: $white;
-	opacity: .9;
+	color: var( --color-white );
+	opacity: 0.9;
 }
 
 .tag-stream__header-image-byline-link:hover {
-	color: $white;
+	color: var( --color-white );
 }
 
 // Back button in Tag streams
@@ -105,12 +105,12 @@
 		left: -3px;
 		top: 8px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		left: 13px;
 		top: 20px;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		top: 14px;
 	}
 

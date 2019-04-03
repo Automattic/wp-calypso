@@ -45,7 +45,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 			item: (
 				<GridiconButton
 					icon={ <GridiconShutter /> }
-					label={ i18n.translate( 'Media from Google' ) }
+					label={ i18n.translate( 'Google Photos library' ) }
 					e2e="google-media"
 				/>
 			),

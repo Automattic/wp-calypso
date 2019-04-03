@@ -39,13 +39,16 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
-import { isDiscountActive } from 'state/selectors/get-active-discount.js';
+import { abtest } from 'lib/abtest';
 import { getDiscountByName } from 'lib/discounts';
+import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
+import { getTld } from 'lib/domains';
+import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
 export class PlansFeaturesMain extends Component {
-	UNSAFE_componentWillUpdate( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		/**
 		 * Happychat does not update with the selected site right now :(
 		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
@@ -54,9 +57,9 @@ export class PlansFeaturesMain extends Component {
 		 * @TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
 		 */
 		const { siteId } = this.props;
-		const { siteId: nextSiteId } = nextProps;
-		if ( siteId !== nextSiteId && nextSiteId ) {
-			this.props.selectHappychatSiteId( nextSiteId );
+		const { siteId: prevSiteId } = prevProps;
+		if ( siteId && siteId !== prevSiteId ) {
+			this.props.selectHappychatSiteId( siteId );
 		}
 	}
 
@@ -69,6 +72,7 @@ export class PlansFeaturesMain extends Component {
 			domainName,
 			isInSignup,
 			isLandingPage,
+			isLaunchPage,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -94,8 +98,10 @@ export class PlansFeaturesMain extends Component {
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					displayJetpackPlans={ displayJetpackPlans }
 					domainName={ domainName }
+					nonDotBlogDomains={ this.filterDotBlogDomains() }
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
+					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					visiblePlans={ visiblePlans }
@@ -103,7 +109,7 @@ export class PlansFeaturesMain extends Component {
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
 					popularPlanSpec={ {
-						type: customerType === 'personal' ? TYPE_PERSONAL : TYPE_BUSINESS,
+						type: customerType === 'personal' ? TYPE_PREMIUM : TYPE_BUSINESS,
 						group: GROUP_WPCOM,
 					} }
 					siteId={ siteId }
@@ -113,7 +119,13 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
+		const {
+			displayJetpackPlans,
+			intervalType,
+			selectedPlan,
+			hideFreePlan,
+			countryCode,
+		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
 
@@ -130,9 +142,25 @@ export class PlansFeaturesMain extends Component {
 			term = TERM_ANNUALLY;
 		}
 
+		const group = displayJetpackPlans ? GROUP_JETPACK : GROUP_WPCOM;
+
+		if (
+			countryCode &&
+			displayJetpackPlans &&
+			abtest( 'jetpackMonthlyPlansOnly', countryCode ) === 'monthlyOnly'
+		) {
+			term = TERM_MONTHLY;
+		}
+
+		// In WPCOM, only the business plan is available in monthly term
+		// For any other plan, switch to annually.
+		const businessPlanTerm = term;
+		if ( group === GROUP_WPCOM && term === TERM_MONTHLY ) {
+			term = TERM_ANNUALLY;
+		}
+
 		let plans;
-		if ( displayJetpackPlans ) {
-			const group = GROUP_JETPACK;
+		if ( group === GROUP_JETPACK ) {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
@@ -140,13 +168,12 @@ export class PlansFeaturesMain extends Component {
 				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
 			];
 		} else {
-			const group = GROUP_WPCOM;
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
-				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
+				findPlansKeys( { group, term: businessPlanTerm, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
 			];
 		}
@@ -235,7 +262,7 @@ export class PlansFeaturesMain extends Component {
 		const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
 
 		return (
-			<SegmentedControl compact className={ segmentClasses } primary={ true }>
+			<SegmentedControl className={ segmentClasses } primary={ true }>
 				<SegmentedControlItem
 					selected={ customerType === 'personal' }
 					path={ '?customerType=personal' }
@@ -254,8 +281,11 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	renderToggle() {
-		const { displayJetpackPlans, withWPPlanTabs } = this.props;
+		const { displayJetpackPlans, withWPPlanTabs, countryCode } = this.props;
 		if ( displayJetpackPlans ) {
+			if ( countryCode && abtest( 'jetpackMonthlyPlansOnly', countryCode ) === 'monthlyOnly' ) {
+				return false;
+			}
 			return this.getIntervalTypeToggle();
 		}
 		if ( withWPPlanTabs ) {
@@ -286,6 +316,18 @@ export class PlansFeaturesMain extends Component {
 				{ faqs }
 			</div>
 		);
+	}
+
+	filterDotBlogDomains() {
+		const domains = get( this.props, 'domains', [] );
+		return domains.filter( function( domainInfo ) {
+			if ( domainInfo.type === 'WPCOM' ) {
+				return false;
+			}
+
+			const domainName = get( domainInfo, [ 'domain' ], '' );
+			return ! 'blog'.startsWith( getTld( domainName ) );
+		} );
 	}
 }
 
@@ -346,6 +388,8 @@ const guessCustomerType = ( state, props ) => {
 
 export default connect(
 	( state, props ) => {
+		const siteId = get( props.site, [ 'ID' ] );
+
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
@@ -353,10 +397,13 @@ export default connect(
 			// universal.
 			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			customerType: guessCustomerType( state, props ),
+			domains: getDecoratedSiteDomains( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
-			siteId: get( props.site, [ 'ID' ] ),
+			siteId: siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 		};
 	},
-	{ selectHappychatSiteId }
+	{
+		selectHappychatSiteId,
+	}
 )( localize( PlansFeaturesMain ) );

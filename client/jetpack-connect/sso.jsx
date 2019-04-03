@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, map } from 'lodash';
+import { flowRight, get, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -34,6 +33,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSSO } from 'state/jetpack-connect/selectors';
@@ -268,6 +268,7 @@ class JetpackSsoForm extends Component {
 			{
 				components: {
 					detailsLink: (
+						// eslint-disable-next-line jsx-a11y/anchor-is-valid
 						<a
 							href="#"
 							onClick={ this.onClickSharedDetailsModal }
@@ -470,7 +471,7 @@ class JetpackSsoForm extends Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const jetpackSSO = getSSO( state );
 		return {
@@ -489,4 +490,10 @@ export default connect(
 		authorizeSSO,
 		validateSSONonce,
 	}
-)( localize( JetpackSsoForm ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( JetpackSsoForm );

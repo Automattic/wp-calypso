@@ -156,13 +156,11 @@ export function serverRender( req, res ) {
 		links = getDocumentHeadLink( context.store.getState() );
 
 		const cacheableReduxSubtrees = [ 'documentHead' ];
-		let reduxSubtrees;
+		const isomorphicSubtrees = isSectionIsomorphic( context.store.getState() )
+			? [ 'themes', 'ui' ]
+			: [];
 
-		if ( isSectionIsomorphic( context.store.getState() ) ) {
-			reduxSubtrees = cacheableReduxSubtrees.concat( [ 'ui', 'themes' ] );
-		} else {
-			reduxSubtrees = cacheableReduxSubtrees;
-		}
+		const reduxSubtrees = [ ...cacheableReduxSubtrees, ...isomorphicSubtrees ];
 
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );

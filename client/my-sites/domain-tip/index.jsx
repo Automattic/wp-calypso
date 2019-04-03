@@ -18,7 +18,7 @@ import { getDomainsSuggestions } from 'state/domains/suggestions/selectors';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/products-values';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';

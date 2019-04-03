@@ -8,7 +8,7 @@
 }
 
 .editor-post-formats__format-label {
-	color: $gray-text;
+	color: var( --color-text );
 	font-size: 12px;
 	position: relative;
 	padding-left: 26px;
@@ -21,7 +21,7 @@
 		left: 0;
 	transform: translateY( -50% );
 	line-height: 1;
-	fill: $gray-darken-20;
+	fill: var( --color-neutral-500 );
 
 	.gridicon {
 		margin-top: 3px;

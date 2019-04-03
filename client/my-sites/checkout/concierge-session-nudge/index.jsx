@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import page from 'page';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
-import formatCurrency from 'lib/format-currency';
 import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
@@ -35,15 +35,28 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
+import analytics from 'lib/analytics';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class ConciergeSessionNudge extends React.Component {
 	static propTypes = {
-		receiptId: PropTypes.number.isRequired,
+		receiptId: PropTypes.number,
 		selectedSiteId: PropTypes.number.isRequired,
 	};
 
 	render() {
-		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, translate } = this.props;
+		const {
+			selectedSiteId,
+			isLoading,
+			hasProductsList,
+			hasSitePlans,
+			translate,
+			receiptId,
+		} = this.props;
 		const title = translate( 'Checkout ‹ Support Session', {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
@@ -60,9 +73,13 @@ export class ConciergeSessionNudge extends React.Component {
 					this.renderPlaceholders()
 				) : (
 					<>
-						<CompactCard className="concierge-session-nudge__card-header">
-							{ this.header() }
-						</CompactCard>
+						{ receiptId ? (
+							<CompactCard className="concierge-session-nudge__card-header">
+								{ this.header() }
+							</CompactCard>
+						) : (
+							''
+						) }
 						<CompactCard className="concierge-session-nudge__card-body">
 							{ this.body() }
 						</CompactCard>
@@ -76,15 +93,20 @@ export class ConciergeSessionNudge extends React.Component {
 	}
 
 	renderPlaceholders() {
+		const { receiptId } = this.props;
 		return (
 			<>
-				<CompactCard>
-					<div className="concierge-session-nudge__header">
-						<div className="concierge-session-nudge__placeholders">
-							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+				{ receiptId ? (
+					<CompactCard>
+						<div className="concierge-session-nudge__header">
+							<div className="concierge-session-nudge__placeholders">
+								<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							</div>
 						</div>
-					</div>
-				</CompactCard>
+					</CompactCard>
+				) : (
+					''
+				) }
 				<CompactCard>
 					<div className="concierge-session-nudge__placeholders">
 						<>
@@ -130,9 +152,7 @@ export class ConciergeSessionNudge extends React.Component {
 				<div className="concierge-session-nudge__column-pane">
 					<div className="concierge-session-nudge__column-content">
 						<h4 className="concierge-session-nudge__sub-header">
-							{ translate(
-								'Want to create a site that looks great, gets traffic, and makes money?'
-							) }
+							{ translate( 'Do you need some help building your site?' ) }
 						</h4>
 
 						<p>
@@ -288,11 +308,19 @@ export class ConciergeSessionNudge extends React.Component {
 
 		trackUpsellButtonClick( 'decline' );
 
-		page(
-			isEligibleForChecklist
-				? `/checklist/${ siteSlug }`
-				: `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-		);
+		if ( ! receiptId ) {
+			// Send the user to a generic page (not post-purchase related).
+			page( `/stats/day/${ siteSlug }` );
+		} else if ( isEligibleForChecklist ) {
+			const { selectedSiteSlug } = this.props;
+			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
+				site: selectedSiteSlug,
+				plan: 'paid',
+			} );
+			page( `/checklist/${ siteSlug }` );
+		} else {
+			page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
+		}
 	};
 
 	handleClickAccept = () => {

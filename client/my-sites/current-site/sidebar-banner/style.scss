@@ -3,14 +3,14 @@
 
 	.sidebar-banner__link {
 		background-color: var( --color-success );
-		color: $white;
+		color: var( --color-white );
 		display: flex;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			padding: 0 24px;
 		}
 
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			margin-right: 5px;
 		}
 

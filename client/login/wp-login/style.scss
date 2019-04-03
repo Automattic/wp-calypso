@@ -1,12 +1,25 @@
 $image-height: 47px;
 
-.is-section-login {
+.layout.is-section-login {
 	padding-bottom: $image-height;
 	position: relative;
 	min-height: calc( 100% - #{$image-height} );
 
 	.layout__content {
 		position: static;
+	}
+
+	&.has-no-masterbar {
+		.layout__content {
+			// Adjust the padding as we no longer
+			// show the masterbar.
+			padding-top: 48px;
+		}
+
+		// Hide the masterbar for real
+		.masterbar {
+			display: none;
+		}
 	}
 }
 
@@ -15,31 +28,43 @@ $image-height: 47px;
 }
 
 .wp-login__header {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	font-size: 16px;
 	margin-bottom: 16px;
 	text-align: center;
+
+	body.is-section-signup & {
+		color: var( --color-white );
+	}
 }
 
 .wp-login__links,
 .wp-login__footer {
 	a, button {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		text-decoration: none;
+
+		body.is-section-signup & {
+			color: var( --color-white );
+		}
 	}
 }
 
 .wp-login__links {
 	a, button {
-		border-bottom: 1px solid $gray-lighten-20;
+		border-bottom: 1px solid var( --color-neutral-100 );
 		box-sizing: border-box;
 		cursor: pointer;
 		display: block;
 		font-weight: 500;
 		line-height: 4em;
 		padding: 0 24px;
-		text-align: left;
+		text-align: center;
 		width: 100%;
+
+		body.is-section-signup & {
+			color: var( --color-white );
+		}
 	}
 
 	a:last-of-type {
@@ -57,8 +82,8 @@ $image-height: 47px;
 }
 
 .wp-login__footer--jetpack {
-	background: #fff;
-	border-top: solid 1px #f9fbfc;
+	background: var( --color-white );
+	border-top: solid 1px var( --color-neutral-50 );
 	text-align: center;
 
 	img {

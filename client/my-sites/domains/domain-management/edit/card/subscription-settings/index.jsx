@@ -13,6 +13,11 @@ import Button from 'components/button';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import { type as domainTypes } from 'lib/domains/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SubscriptionSettings extends React.Component {
 	static propTypes = {
 		type: PropTypes.string.isRequired,

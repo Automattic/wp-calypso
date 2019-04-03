@@ -4,7 +4,7 @@
 	float: left;
 	margin: 0;
 	text-align: center;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	cursor: pointer;
 	height: 96px;
 	width: 96px;
@@ -15,7 +15,7 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-		background-color: rgba( $white, 0.75 );
+		background-color: rgba( var( --color-white-rgb ), 0.75 );
 	}
 }
 
@@ -43,7 +43,7 @@
 	align-self: center;
 
 	.is-disabled & {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 	}
 }
 
@@ -62,9 +62,9 @@
 	text-align: center;
 
 	.is-disabled &:disabled {
-		background-color: $gray-light;
-		border-color: $gray-lighten-20;
-		color: $gray-lighten-10;
+		background-color: var( --color-neutral-0 );
+		border-color: var( --color-neutral-100 );
+		color: var( --color-neutral-200 );
 	}
 
 	@include breakpoint( '>960px' ) {

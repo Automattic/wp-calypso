@@ -3,12 +3,12 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -18,10 +18,14 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlan } from 'lib/plans';
-import formatCurrency from 'lib/format-currency';
 import ThankYouCard from 'components/thank-you-card';
 import PlanIcon from 'components/plans/plan-icon';
 import { getPlanClass } from 'lib/plans/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PlanThankYouCard extends Component {
 	getPlanClass() {

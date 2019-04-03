@@ -43,6 +43,11 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ConfirmCancelDomain extends React.Component {
 	static propTypes = {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,

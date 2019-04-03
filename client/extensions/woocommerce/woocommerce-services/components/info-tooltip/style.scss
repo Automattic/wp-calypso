@@ -1,26 +1,26 @@
 .info-tooltip {
 	cursor: help;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 &.tooltip.popover.info-tooltip__container {
 	z-index: z-index( 'root', '.popover.info-tooltip__container' );
 
 	.popover__inner {
-		background: $gray-dark;
+		background: var( --color-neutral-700 );
 	}
 
 	.popover__arrow {
-		border-top-color: $gray-dark;
+		border-top-color: var( --color-neutral-700 );
 	}
 
 	.info-tooltip__contents {
 		padding: 4px;
-		color: $white;
+		color: var( --color-white );
 
 		h1, h2, h3 {
-			margin: 0 0 8px 0;
-			color: $white;
+			margin: 0 0 8px;
+			color: var( --color-white );
 			font-weight: 600;
 			font-size: 1.3em;
 		}

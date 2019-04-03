@@ -23,7 +23,7 @@ import { setEditorMediaModalView } from 'state/ui/editor/actions';
 /**
  * Style dependencies
  */
-import "./style.scss";
+import './style.scss';
 
 class EditorMediaModalDetailBase extends React.Component {
 	static propTypes = {

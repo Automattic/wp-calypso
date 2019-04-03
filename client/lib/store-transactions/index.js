@@ -26,7 +26,8 @@ import wp from 'lib/wp';
 import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	translatedEbanxError,
-} from 'lib/checkout/ebanx';
+} from 'lib/checkout/processor-specific';
+import analytics from 'lib/analytics';
 
 const wpcom = wp.undocumented();
 
@@ -35,10 +36,8 @@ const wpcom = wp.undocumented();
  *
  * @returns {Readable} A stream of transaction flow steps.
  *
- * @param {CartValue} cart - The current state of the user's shopping cart.
- * @param {object} cardDetails - The credit card being used for this
- * @param {object} domainDetails - Optional domain registration details if the shopping cart contains a domain registration product
- *   transaction.
+ * @param {object} params - Includes the cart, domainDetails etc...
+ * @param {function} onStep - Callback
  */
 export function submit( params, onStep ) {
 	return new TransactionFlow( params, onStep );
@@ -76,10 +75,11 @@ TransactionFlow.prototype._pushStep = function( options ) {
 TransactionFlow.prototype._paymentHandlers = {
 	WPCOM_Billing_MoneyPress_Stored: function() {
 		const {
-			mp_ref: payment_key,
-			stored_details_id,
-			payment_partner,
-		} = this._initialData.payment.storedCard;
+				mp_ref: payment_key,
+				stored_details_id,
+				payment_partner,
+			} = this._initialData.payment.storedCard,
+			{ successUrl, cancelUrl } = this._initialData;
 
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with stored card' );
@@ -88,6 +88,8 @@ TransactionFlow.prototype._paymentHandlers = {
 			payment_key,
 			payment_partner,
 			stored_details_id,
+			successUrl,
+			cancelUrl,
 		} );
 	},
 
@@ -250,46 +252,48 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 	}
 }
 
-function createEbanxToken( requestType, cardDetails, callback ) {
+function createEbanxToken( requestType, cardDetails ) {
 	debug( 'creating token with ebanx' );
-	wpcom.ebanxConfiguration(
-		{
-			request_type: requestType,
-		},
-		function( configError, configuration ) {
-			if ( configError ) {
-				callback( configError );
-				return;
-			}
 
-			paymentGatewayLoader
-				.ready( configuration.js_url, 'EBANX', false )
-				.then( Ebanx => {
-					Ebanx.config.setMode( configuration.environment );
-					Ebanx.config.setPublishableKey( configuration.public_key );
-					Ebanx.config.setCountry( cardDetails.country.toLowerCase() );
+	return new Promise( function( resolve, reject ) {
+		wpcom.ebanxConfiguration(
+			{
+				request_type: requestType,
+			},
+			function( configError, configuration ) {
+				if ( configError ) {
+					reject( configError );
+				}
 
-					const parameters = getEbanxParameters( cardDetails );
-					Ebanx.card.createToken( parameters, function( ebanxResponse ) {
-						Ebanx.deviceFingerprint.setup( function( deviceId ) {
-							ebanxResponse.data.deviceId = deviceId;
-							createTokenCallback( ebanxResponse );
+				return paymentGatewayLoader
+					.ready( configuration.js_url, 'EBANX', false )
+					.then( Ebanx => {
+						Ebanx.config.setMode( configuration.environment );
+						Ebanx.config.setPublishableKey( configuration.public_key );
+						Ebanx.config.setCountry( cardDetails.country.toLowerCase() );
+
+						const parameters = getEbanxParameters( cardDetails );
+						Ebanx.card.createToken( parameters, function( ebanxResponse ) {
+							Ebanx.deviceFingerprint.setup( function( deviceId ) {
+								ebanxResponse.data.deviceId = deviceId;
+								return createTokenCallback( ebanxResponse, resolve, reject );
+							} );
 						} );
+					} )
+					.catch( loaderError => {
+						reject( loaderError );
 					} );
-				} )
-				.catch( loaderError => {
-					callback( loaderError );
-				} );
-		}
-	);
+			}
+		);
+	} );
 
-	function createTokenCallback( ebanxResponse ) {
-		if ( ebanxResponse.data.hasOwnProperty( 'status' ) ) {
-			ebanxResponse.data.paymentMethod = 'WPCOM_Billing_Ebanx';
-			callback( null, ebanxResponse.data );
-		} else {
-			callback( translatedEbanxError( ebanxResponse.error.err ) );
+	function createTokenCallback( ebanxResponse, resolve, reject ) {
+		if ( ebanxResponse.error.hasOwnProperty( 'err' ) ) {
+			return reject( translatedEbanxError( ebanxResponse.error.err ) );
 		}
+
+		ebanxResponse.data.paymentMethod = 'WPCOM_Billing_Ebanx';
+		return resolve( ebanxResponse.data );
 	}
 }
 
@@ -328,9 +332,16 @@ function getEbanxParameters( cardDetails ) {
 	};
 }
 
-export function createCardToken( requestType, cardDetails, callback ) {
-	if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetails.country ) ) {
-		return createEbanxToken( requestType, cardDetails, callback );
+export function createCardToken( requestType, cardDetails, callback, forcedPaygate = false ) {
+	if ( ! forcedPaygate && isEbanxCreditCardProcessingEnabledForCountry( cardDetails.country ) ) {
+		return createEbanxToken( requestType, cardDetails ).then(
+			result => callback( null, result ),
+			function( reason ) {
+				analytics.mc.bumpStat( 'cc_token_fallback', 'ebanx_to_paygate' );
+				debug( 'Error creating EBANX token, falling back to paygate', reason );
+				return createCardToken( requestType, cardDetails, callback, true );
+			}
+		);
 	}
 
 	return createPaygateToken( requestType, cardDetails, callback );

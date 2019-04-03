@@ -149,21 +149,20 @@ class ReaderCombinedCardPost extends React.Component {
 								{ post.author.name }
 							</ReaderAuthorLink>
 						) }
-						{ post.date &&
-							post.URL && (
-								<span className="reader-combined-card__timestamp">
-									{ hasAuthorName && <span>, </span> }
-									<a
-										className="reader-combined-card__timestamp-link"
-										onClick={ recordDateClick }
-										href={ post.URL }
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										<TimeSince date={ post.date } />
-									</a>
-								</span>
-							) }
+						{ post.date && post.URL && (
+							<span className="reader-combined-card__timestamp">
+								{ hasAuthorName && <span>, </span> }
+								<a
+									className="reader-combined-card__timestamp-link"
+									onClick={ recordDateClick }
+									href={ post.URL }
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<TimeSince date={ post.date } />
+								</a>
+							</span>
+						) }
 					</div>
 				</div>
 			</li>

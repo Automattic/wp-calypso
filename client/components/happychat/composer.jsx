@@ -12,6 +12,7 @@ import { get, isEmpty, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import scrollbleed from './scrollbleed';
 
 const sendThrottledTyping = throttle(
@@ -25,6 +26,7 @@ const sendThrottledTyping = throttle(
 /*
  * Renders a textarea to be used to comopose a message for the chat.
  */
+// eslint-disable-next-line react/prefer-es6-class
 export const Composer = createReactClass( {
 	displayName: 'Composer',
 	mixins: [ scrollbleed ],
@@ -88,11 +90,16 @@ export const Composer = createReactClass( {
 						value={ message }
 					/>
 				</div>
-				<button className="happychat__submit" disabled={ disabled } onClick={ this.sendMessage }>
+				<Button
+					primary
+					className="happychat__submit"
+					disabled={ disabled }
+					onClick={ this.sendMessage }
+				>
 					<svg viewBox="0 0 24 24" width="24" height="24">
 						<path d="M2 21l21-9L2 3v7l15 2-15 2z" />
 					</svg>
-				</button>
+				</Button>
 			</div>
 		);
 	},

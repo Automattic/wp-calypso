@@ -1,12 +1,11 @@
 /** @format */
 
-$post-item-background-color: $white;
+$post-item-background-color: var( --color-white );
 
 $post-item-border-color: darken( $sidebar-bg-color, 5% );
-$expanded-post-item-outline-color: $sidebar-selected-color;
 
 $post-item-border: solid 1px $post-item-border-color;
-$expanded-post-item-border: 1px solid $expanded-post-item-outline-color;
+$expanded-post-item-border: 1px solid var( --color-neutral );
 $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 .post-item {
@@ -43,11 +42,11 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 .post-item__select {
 	align-self: stretch;
 	display: flex;
-	align-items: start;
+	align-items: flex-start;
 	cursor: pointer;
 
 	&:hover .form-checkbox {
-		border-color: $gray-lighten-10;
+		border-color: var( --color-neutral-200 );
 	}
 
 	padding: 16px 16px 0;
@@ -88,17 +87,17 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 a.post-item__title-link,
 a.post-item__title-link:visited {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	display: block;
 	padding-bottom: 2px;
 	padding-right: 8px;
 
 	&:hover {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 	}
 
 	.post-item__panel.is-untitled & {
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-style: italic;
 	}
 

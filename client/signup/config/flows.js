@@ -12,7 +12,7 @@ import i18n from 'i18n-calypso';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
 import { generateFlows } from './flows-pure';
 
 const user = userFactory();
@@ -174,10 +174,10 @@ const Flows = {
 	 * The main usage at the moment is to serve as a quick solution to remove steps that have been pre-fulfilled
 	 * without explicit user inputs, e.g. query arguments.
 	 *
-	 * @param {Array} steps An array of names of steps to be excluded.
+	 * @param {String} step Name of the step to be excluded.
 	 */
-	excludeSteps( steps ) {
-		Flows.excludedSteps = steps;
+	excludeStep( step ) {
+		step && Flows.excludedSteps.push( step );
 	},
 
 	filterExcludedSteps( flow ) {
@@ -244,16 +244,14 @@ const Flows = {
 	 * @return {Object} A filtered flow object
 	 */
 	getABTestFilteredFlow( flowName, flow ) {
-		// Only do this on the default flow
-		// if ( Flow.defaultFlowName === flowName ) {
-		// }
-
-		// Remove About step in the ecommerce flow if we're in the onboarding AB test
-		if ( 'ecommerce' === flowName && 'onboarding' === abtest( 'improvedOnboarding' ) ) {
-			const afterStep = user && user.get() ? '' : 'user';
-
-			flow = Flows.removeStepFromFlow( 'about', flow );
-			return Flows.insertStepIntoFlow( 'site-type', flow, afterStep );
+		if (
+			'onboarding' === flowName &&
+			'onboarding' === getABTestVariation( 'improvedOnboarding' ) &&
+			'remove' === abtest( 'removeDomainsStepFromOnboarding' )
+		) {
+			flow = Flows.removeStepFromFlow( 'domains', flow );
+			flow = replaceStepInFlow( flow, 'site-information', 'site-information-without-domains' );
+			return flow;
 		}
 
 		return flow;

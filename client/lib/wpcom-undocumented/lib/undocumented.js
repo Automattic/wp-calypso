@@ -467,16 +467,18 @@ Undocumented.prototype._sendRequest = function( originalParams, fn ) {
  *
  * @param {string} domain - The domain name to check.
  * @param {int} blogId - Optional blogId to determine if domain is used on another site.
+ * @param {boolean} isCartPreCheck - specifies whether this availability check is for a domain about to be added to the cart.
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
-Undocumented.prototype.isDomainAvailable = function( domain, blogId, fn ) {
+Undocumented.prototype.isDomainAvailable = function( domain, blogId, isCartPreCheck, fn ) {
 	return this.wpcom.req.get(
 		`/domains/${ encodeURIComponent( domain ) }/is-available`,
 		{
 			blog_id: blogId,
 			apiVersion: '1.3',
+			is_cart_pre_check: isCartPreCheck,
 		},
 		fn
 	);
@@ -511,24 +513,6 @@ Undocumented.prototype.getInboundTransferStatus = function( domain, fn ) {
 	return this.wpcom.req.get(
 		{
 			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-status`,
-		},
-		fn
-	);
-};
-
-/**
- * Restarts a failed inbound domain transfer
- *
- * @param {int|string} siteId The site ID
- * @param {string} domain The domain name
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- * @api public
- */
-Undocumented.prototype.restartInboundTransfer = function( siteId, domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-restart/${ siteId }`,
 		},
 		fn
 	);
@@ -645,13 +629,11 @@ Undocumented.prototype.getDomainContactInformation = function( fn ) {
 			method: 'get',
 		},
 		function( error, data ) {
-			let newData;
-
 			if ( error ) {
 				return fn( error );
 			}
 
-			newData = mapKeysRecursively( data, function( key ) {
+			const newData = mapKeysRecursively( data, function( key ) {
 				return key === '_headers' ? key : camelCase( key );
 			} );
 
@@ -709,13 +691,11 @@ Undocumented.prototype.validateDomainContactInformation = function(
 		error,
 		successData
 	) {
-		let newData;
-
 		if ( error ) {
 			return fn( error );
 		}
 
-		newData = mapKeysRecursively( successData, function( key ) {
+		const newData = mapKeysRecursively( successData, function( key ) {
 			return key === '_headers' ? key : camelCase( key );
 		} );
 
@@ -1024,8 +1004,6 @@ Undocumented.prototype.createConnection = function(
 	options,
 	fn
 ) {
-	let body, path;
-
 	// Method overloading: Optional `options`
 	if ( 'undefined' === typeof fn && 'function' === typeof options ) {
 		fn = options;
@@ -1033,7 +1011,7 @@ Undocumented.prototype.createConnection = function(
 	}
 
 	// Build request body
-	body = { keyring_connection_ID: keyringConnectionId };
+	const body = { keyring_connection_ID: keyringConnectionId };
 	if ( 'boolean' === typeof options.shared ) {
 		body.shared = options.shared;
 	}
@@ -1042,7 +1020,7 @@ Undocumented.prototype.createConnection = function(
 		body.external_user_ID = externalUserId;
 	}
 
-	path = siteId
+	const path = siteId
 		? '/sites/' + siteId + '/publicize-connections/new'
 		: '/me/publicize-connections/new';
 
@@ -1174,36 +1152,6 @@ Undocumented.prototype.ebanxConfiguration = function( query, fn ) {
 	debug( '/me/ebanx-configuration query' );
 
 	return this.wpcom.req.get( '/me/ebanx-configuration', query, fn );
-};
-
-/**
- * GET emergent paywall iframe client configuration
- *
- * @param {string} countryCode - user's country code
- * @param {object} cart - current cart object. See: client/lib/cart/store/index.js
- * @param {Function} fn The callback function
- * @api public
- *
- * @returns {Promise} promise
- */
-Undocumented.prototype.emergentPaywallConfiguration = function(
-	countryCode,
-	cart,
-	domainDetails,
-	fn
-) {
-	debug( '/me/emergent-paywall-configuration query' );
-
-	const data = mapKeysRecursively(
-		{
-			country: countryCode,
-			cart,
-			domainDetails,
-		},
-		snakeCase
-	);
-
-	return this.wpcom.req.post( '/me/emergent-paywall-configuration', data, fn );
 };
 
 /**
@@ -1392,7 +1340,6 @@ Undocumented.prototype.saveABTestData = function( name, variation, callback ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersNew = function( query, fn ) {
-	let args;
 	debug( '/users/new' );
 
 	// This API call is restricted to these OAuth keys
@@ -1400,7 +1347,7 @@ Undocumented.prototype.usersNew = function( query, fn ) {
 
 	// Set the language for the user
 	query.locale = getLocaleSlug();
-	args = {
+	const args = {
 		path: '/users/new',
 		body: query,
 	};
@@ -1492,6 +1439,18 @@ Undocumented.prototype.sitesNew = function( query, fn ) {
 	);
 };
 
+/**
+ * Launches a private site
+ *
+ * @param {string} - ID or slug of the site to be launched
+ * @param {Function} fn - Function to invoke when request is complete
+ */
+Undocumented.prototype.launchSite = function( siteIdOrSlug, fn ) {
+	const path = `/sites/${ siteIdOrSlug }/launch`;
+	debug( path );
+	return this.wpcom.req.post( path, fn );
+};
+
 Undocumented.prototype.themes = function( siteId, query, fn ) {
 	const path = siteId ? '/sites/' + siteId + '/themes' : '/themes';
 	debug( path );
@@ -1516,7 +1475,7 @@ Undocumented.prototype.themeDetails = function( themeId, siteId, fn ) {
  * Hack! Calling the theme modify endpoint without specifying an action will return the full details for a theme.
  * FIXME In the long run, we should try to enable the /sites/${ siteId }/themes/${ theme } endpoint for Jetpack
  * sites so we can delete this method and use the regular `themeDetails` for Jetpack sites, too.
-*/
+ */
 Undocumented.prototype.jetpackThemeDetails = function( themeId, siteId, fn ) {
 	const path = `/sites/${ siteId }/themes`;
 	debug( path );
@@ -1609,68 +1568,6 @@ Undocumented.prototype.uploadTheme = function( siteId, file, onProgress ) {
 	} );
 };
 
-Undocumented.prototype.emailForwards = function( domain, callback ) {
-	return this.wpcom.req.get( '/domains/' + domain + '/email', function( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
-};
-
-Undocumented.prototype.addEmailForward = function( domain, mailbox, destination, callback ) {
-	return this.wpcom.req.post(
-		'/domains/' + domain + '/email/new',
-		{},
-		{
-			mailbox: mailbox,
-			destination: destination,
-		},
-		function( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-
-			callback( null, response );
-		}
-	);
-};
-
-Undocumented.prototype.deleteEmailForward = function( domain, mailbox, callback ) {
-	return this.wpcom.req.post(
-		'/domains/' + domain + '/email/' + mailbox + '/delete',
-		{},
-		{},
-		function( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-
-			callback( null, response );
-		}
-	);
-};
-
-Undocumented.prototype.resendVerificationEmailForward = function( domain, mailbox, callback ) {
-	return this.wpcom.req.post(
-		'/domains/' + domain + '/email/' + mailbox + '/resend-verification',
-		{},
-		{},
-		function( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-
-			callback( null, response );
-		}
-	);
-};
-
 Undocumented.prototype.nameservers = function( domain, callback ) {
 	return this.wpcom.req.get( '/domains/' + domain + '/nameservers', function( error, response ) {
 		if ( error ) {
@@ -1705,7 +1602,7 @@ Undocumented.prototype.fetchDns = function( domainName, fn ) {
 };
 
 Undocumented.prototype.updateDns = function( domain, records, fn ) {
-	let filtered = reject( records, 'isBeingDeleted' ),
+	const filtered = reject( records, 'isBeingDeleted' ),
 		body = { dns: JSON.stringify( filtered ) };
 
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
@@ -1785,12 +1682,12 @@ Undocumented.prototype.cancelTransferRequest = function( { domainName, declineTr
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
 
-Undocumented.prototype.enablePrivacyProtection = function( domainName, fn ) {
-	const data = {
-		domainStatus: JSON.stringify( { command: 'enable-privacy' } ),
-	};
+Undocumented.prototype.enablePrivacyProtection = function( domainName, callback ) {
+	return this.wpcom.req.post( '/domains/' + domainName + '/privacy/enable', callback );
+};
 
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
+Undocumented.prototype.disablePrivacyProtection = function( domainName, callback ) {
+	return this.wpcom.req.post( '/domains/' + domainName + '/privacy/disable', callback );
 };
 
 Undocumented.prototype.acceptTransfer = function( domainName, fn ) {
@@ -1910,14 +1807,14 @@ Undocumented.prototype.sitePurchases = function( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/purchases' }, fn );
 };
 
-Undocumented.prototype.googleAppsFilterByDomain = function( domainName, fn ) {
-	debug( '/domains/:domainName/google-apps' );
-	return this.wpcom.req.get( { path: '/domains/' + domainName + '/google-apps' }, fn );
-};
-
-Undocumented.prototype.googleAppsFilterBySiteId = function( siteId, fn ) {
-	debug( '/sites/:siteId/google-apps' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/google-apps' }, fn );
+Undocumented.prototype.resetPasswordForMailbox = function( domainName, mailbox, fn ) {
+	debug( '/domains/:domainName/google-apps/:mailbox/get-new-password' );
+	return this.wpcom.req.post(
+		{
+			path: '/domains/' + domainName + '/google-apps/' + mailbox + '/get-new-password',
+		},
+		fn
+	);
 };
 
 Undocumented.prototype.isSiteImportable = function( site_url ) {
@@ -1945,9 +1842,9 @@ Undocumented.prototype.updateImporter = function( siteId, importerStatus ) {
 };
 
 Undocumented.prototype.uploadExportFile = function( siteId, params ) {
-	return new Promise( ( resolve, reject ) => {
+	return new Promise( ( resolve, rejectPromise ) => {
 		const resolver = ( error, data ) => {
-			error ? reject( error ) : resolve( data );
+			error ? rejectPromise( error ) : resolve( data );
 		};
 
 		const req = this.wpcom.req.post(
@@ -2009,18 +1906,6 @@ Undocumented.prototype.cancelAndRefundPurchase = function( purchaseId, data, fn 
 		{
 			path: `/upgrades/${ purchaseId }/cancel`,
 			body: data,
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.cancelPrivacyProtection = function( purchaseId, fn ) {
-	debug( 'upgrades/{purchaseId}/cancel-privacy-protection' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ purchaseId }/cancel-privacy-protection`,
-			apiVersion: '1.1',
 		},
 		fn
 	);

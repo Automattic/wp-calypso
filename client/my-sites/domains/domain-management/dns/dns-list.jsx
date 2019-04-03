@@ -5,13 +5,14 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import DnsRecordsList from '../dns-records/list';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
@@ -130,15 +131,15 @@ class DnsList extends React.Component {
 		} );
 
 		return (
-			<div className="dns__list">
+			<Fragment>
+				<DnsRecordsList>{ dnsRecordsList }</DnsRecordsList>
 				<DeleteEmailForwardsDialog
 					visible={ dialog.type === 'deleteEmailForwards' }
 					onClose={ this.handleDialogClose }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 				/>
-				<ul>{ dnsRecordsList }</ul>
-			</div>
+			</Fragment>
 		);
 	}
 }

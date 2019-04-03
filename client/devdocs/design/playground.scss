@@ -1,0 +1,90 @@
+//Playground
+.react-live {
+	.prism-code {
+		background: #000000;
+		box-sizing: border-box;
+		color: #eaeaea;
+		font-size: 16px;
+		line-height: 1.4;
+		margin: 0;
+		padding: 24px;
+	}
+}
+
+.design__playground {
+	margin: -24px;
+	@include breakpoint( '>960px' ) {
+		margin: -32px;
+	}
+}
+
+.design__editor {
+	background: #000000;
+}
+
+.design__error {
+	background: rgba( 0, 0, 0, 0.5 );
+	box-sizing: border-box;
+	color: var( --color-error );
+	position: sticky;
+	top: 0;
+}
+
+.react-live-error,
+.design__preview {
+	padding: 24px;
+	@include breakpoint( '>960px' ) {
+		padding: 32px;
+	}
+}
+
+.design__preview {
+	position: relative;
+	@include breakpoint( '>960px' ) {
+		position: static;
+	}
+}
+
+@include breakpoint( '>960px' ) {
+	.design__playground {
+		display: flex;
+		height: calc( 100vh - 47px );
+	}
+
+	.design__editor,
+	.design__preview {
+		width: 50%;
+		overflow: scroll;
+	}
+}
+
+.design__component-playground-code {
+	max-height: 100px;
+	overflow: hidden;
+	position: relative;
+
+	&.show-code {
+		max-height: none;
+	}
+}
+
+.design__component-playground-clipboard {
+	padding: 0;
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}
+
+.design__component-playground-show-code {
+	margin-top: 1em;
+	text-align: center;
+}
+
+.design__playground-examples {
+	margin-bottom: 1em;
+	text-align: right;
+
+	.select-dropdown__container {
+		text-align: left;
+	}
+}

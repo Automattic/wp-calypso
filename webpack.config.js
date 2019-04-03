@@ -8,23 +8,26 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
-const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
-const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
-const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
-const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
-const os = require( 'os' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
+const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
+const Minify = require( '@automattic/calypso-build/webpack/minify' );
+const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
+const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
+const wordpressExternals = require( '@automattic/calypso-build/webpack/wordpress-externals' );
 
 /**
  * Internal dependencies
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
+const { workerCount } = require( './webpack.common' );
+const getAliasesForExtensions = require( './config/webpack/extensions' );
 
 /**
  * Internal variables
@@ -34,12 +37,12 @@ const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
 const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
-	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
+	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' && calypsoEnv !== 'desktop' );
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
-const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
+const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 
 /*
  * Create reporter for ProgressPlugin (used with EMIT_STATS)
@@ -89,73 +92,41 @@ function createProgressHandler() {
 	};
 }
 
-// Disable unsafe cssnano optimizations like renaming animations or rebasing z-indexes. These
-// optimizations don't work across independently minified stylesheets. As we minify each webpack
-// CSS chunk individually and then load multiple chunks into one document, the optimized names
-// conflict with each other, e.g., multiple animations named `a` or z-indexes starting from 1.
-// TODO: upgrade cssnano from v3 to v4. In v3, all optimizations, including unsafe ones, run by
-// default and need to be disabled explicitly as we do here. In v4, there is a new concept of
-// 'presets' and unsafe optimizations are opt-in rather than opt-out. The `default` preset enables
-// only the safe ones. https://cssnano.co/guides/optimisations
-const cssnanoOptions = {
-	autoprefixer: false,
-	discardUnused: false,
-	mergeIdents: false,
-	reduceIdents: false,
-	zindex: false,
-};
-
+const nodeModulesToTranspile = [
+	// general form is <package-name>/.
+	// The trailing slash makes sure we're not matching these as prefixes
+	// In some cases we do want prefix style matching (lodash. for lodash.assign)
+	'd3-array/',
+	'd3-scale/',
+	'debug/',
+];
 /**
- * This function scans the /client/extensions directory in order to generate a map that looks like this:
- * {
- *   sensei: 'absolute/path/to/wp-calypso/client/extensions/sensei',
- *   woocommerce: 'absolute/path/to/wp-calypso/client/extensions/woocommerce',
- *   ....
- * }
+ * Check to see if we should transpile certain files in node_modules
+ * @param {String} filepath the path of the file to check
+ * @returns {Boolean} True if we should transpile it, false if not
  *
- * Providing webpack with these aliases instead of telling it to scan client/extensions for every
- * module resolution speeds up builds significantly.
- * @returns {Object} a mapping of extension name to path
+ * We had a thought to try to find the package.json and use the engines property
+ * to determine what we should transpile, but not all libraries set engines properly
+ * (see d3-array@2.0.0). Instead, we transpile libraries we know to have dropped Node 4 support
+ * are likely to remain so going forward.
  */
-function getAliasesForExtensions() {
-	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
-	const extensionsNames = fs
-		.readdirSync( extensionsDirectory )
-		.filter( filename => filename.indexOf( '.' ) === -1 ); // heuristic for finding directories
+function shouldTranspileDependency( filepath ) {
+	// find the last index of node_modules and check from there
+	// we want <working>/node_modules/a-package/node_modules/foo/index.js to only match foo, not a-package
+	const marker = '/node_modules/';
+	const lastIndex = filepath.lastIndexOf( marker );
+	if ( lastIndex === -1 ) {
+		// we're not in node_modules
+		return false;
+	}
 
-	const aliasesMap = {};
-	extensionsNames.forEach(
-		extensionName =>
-			( aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName ) )
+	const checkFrom = lastIndex + marker.length;
+
+	return _.some(
+		nodeModulesToTranspile,
+		modulePart => filepath.substring( checkFrom, checkFrom + modulePart.length ) === modulePart
 	);
-	return aliasesMap;
 }
-
-/**
- * Converts @wordpress require into window reference
- *
- * Note this isn't the same as camel case because of the
- * way that numbers don't trigger the capitalized next letter
- *
- * @example
- * wordpressRequire( '@wordpress/api-fetch' ) = 'wp.apiFetch'
- * wordpressRequire( '@wordpress/i18n' ) = 'wp.i18n'
- *
- * @param {string} request import name
- * @return {string} global variable reference for import
- */
-const wordpressRequire = request => {
-	// @wordpress/components -> [ @wordpress, components ]
-	const [ , name ] = request.split( '/' );
-
-	// components -> wp.components
-	return `wp.${ name.replace( /-([a-z])/g, ( match, letter ) => letter.toUpperCase() ) }`;
-};
-
-const wordpressExternals = ( context, request, callback ) =>
-	/^@wordpress\//.test( request )
-		? callback( null, `root ${ wordpressRequire( request ) }` )
-		: callback();
 
 /**
  * Return a webpack config object
@@ -167,7 +138,11 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @return {object}                                  webpack config
  */
-function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false } = {} ) {
+function getWebpackConfig( {
+	cssFilename,
+	externalizeWordPressPackages = false,
+	preserveCssCustomProperties = true,
+} = {} ) {
 	cssFilename =
 		cssFilename ||
 		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
@@ -196,77 +171,52 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 			moduleIds: 'named',
 			chunkIds: isDevelopment ? 'named' : 'natural',
 			minimize: shouldMinify,
-			minimizer: [
-				new TerserPlugin( {
-					cache: process.env.CIRCLECI
-						? `${ process.env.HOME }/terser-cache`
-						: 'docker' !== process.env.CONTAINER,
-					parallel: process.env.CIRCLECI ? 2 : true,
-					sourceMap: Boolean( process.env.SOURCEMAP ),
-					terserOptions: {
-						ecma: 5,
-						safari10: true,
-					},
-				} ),
-			],
+			minimizer: Minify( {
+				cache: process.env.CIRCLECI
+					? `${ process.env.HOME }/terser-cache`
+					: 'docker' !== process.env.CONTAINER,
+				parallel: workerCount,
+				sourceMap: Boolean( process.env.SOURCEMAP ),
+				terserOptions: {
+					ecma: 5,
+					safari10: true,
+					mangle: calypsoEnv !== 'desktop',
+				},
+			} ),
 		},
 		module: {
-			// avoids this warning:
-			// https://github.com/localForage/localForage/issues/577
-			noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
+			noParse: /[/\\]node_modules[/\\]localforage[/\\]dist[/\\]localforage\.js$/,
 			rules: [
-				{
-					test: /\.jsx?$/,
+				TranspileConfig.loader( {
+					workerCount,
+					configFile: path.join( __dirname, 'babel.config.js' ),
+					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+					cacheIdentifier,
 					exclude: /node_modules\//,
-					use: [
-						{
-							loader: 'thread-loader',
-							options: {
-								workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ),
-							},
-						},
-						{
-							loader: 'babel-loader',
-							options: {
-								configFile: path.resolve( __dirname, 'babel.config.js' ),
-								babelrc: false,
-								cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
-								cacheIdentifier,
-							},
-						},
-					],
-				},
+				} ),
+				TranspileConfig.loader( {
+					workerCount,
+					configFile: path.resolve( __dirname, 'babel.dependencies.config.js' ),
+					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+					cacheIdentifier,
+					include: shouldTranspileDependency,
+				} ),
 				{
-					test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
+					test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
 					loader: 'babel-loader',
 					options: {
 						babelrc: false,
 						plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
 					},
 				},
-				{
-					test: /\.(sc|sa|c)ss$/,
-					use: [
-						MiniCssExtractPluginWithRTL.loader,
-						'css-loader',
-						{
-							loader: 'postcss-loader',
-							options: {
-								plugins: [ require( 'autoprefixer' ) ],
-							},
-						},
-						{
-							loader: 'sass-loader',
-							options: {
-								includePaths: [ path.join( __dirname, 'client' ) ],
-								data: `@import '${ path.join(
-									__dirname,
-									'assets/stylesheets/shared/_utils.scss'
-								) }';`,
-							},
-						},
-					],
-				},
+				SassConfig.loader( {
+					preserveCssCustomProperties,
+					includePaths: [ path.join( __dirname, 'client' ) ],
+					prelude: `@import '${ path.join(
+						__dirname,
+						'assets/stylesheets/shared/_utils.scss'
+					) }';`,
+				} ),
 				{
 					include: path.join( __dirname, 'client/sections.js' ),
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
@@ -275,24 +225,13 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					test: /\.html$/,
 					loader: 'html-loader',
 				},
-				{
-					test: /\.(?:gif|jpg|jpeg|png|svg)$/i,
-					use: [
-						{
-							loader: 'file-loader',
-							options: {
-								name: '[name]-[hash].[ext]',
-								outputPath: 'images/',
-							},
-						},
-					],
-				},
+				FileConfig.loader(),
 				{
 					include: require.resolve( 'tinymce/tinymce' ),
 					use: 'exports-loader?window=tinymce',
 				},
 				{
-					test: /node_modules[\/\\]tinymce/,
+					test: /node_modules[/\\]tinymce/,
 					use: 'imports-loader?this=>window',
 				},
 			],
@@ -303,13 +242,15 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 			alias: Object.assign(
 				{
 					'gridicons/example': 'gridicons/dist/example',
-					'react-virtualized': 'react-virtualized/dist/commonjs',
+					'react-virtualized': 'react-virtualized/dist/es',
 					'social-logos/example': 'social-logos/build/example',
 					debug: path.resolve( __dirname, 'node_modules/debug' ),
 					store: 'store/dist/store.modern',
 					gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
 				},
-				getAliasesForExtensions()
+				getAliasesForExtensions( {
+					extensionsDirectory: path.join( __dirname, 'client', 'extensions' ),
+				} )
 			),
 		},
 		node: false,
@@ -321,15 +262,8 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				global: 'window',
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
-			new webpack.IgnorePlugin( /^props$/ ),
 			isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
-			new MiniCssExtractPluginWithRTL( {
-				filename: cssFilename,
-				rtlEnabled: true,
-			} ),
-			new WebpackRTLPlugin( {
-				minify: isDevelopment ? false : cssnanoOptions,
-			} ),
+			...SassConfig.plugins( { cssFilename, minify: ! isDevelopment } ),
 			new AssetsWriter( {
 				filename: 'assets.json',
 				path: path.join( __dirname, 'server', 'bundler' ),
@@ -352,9 +286,13 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						reasons: shouldEmitStatsWithReasons,
 						optimizationBailout: false,
 						chunkOrigins: false,
+						chunkGroups: true,
 					},
 				} ),
 			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
+			new MomentTimezoneDataPlugin( {
+				startYear: 2000,
+			} ),
 		] ),
 		externals: _.compact( [
 			externalizeWordPressPackages && wordpressExternals,
@@ -381,7 +319,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 
 	if ( ! config.isEnabled( 'desktop' ) ) {
 		webpackConfig.plugins.push(
-			new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
+			new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' )
 		);
 	}
 

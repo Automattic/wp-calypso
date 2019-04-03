@@ -11,7 +11,7 @@
 
 		&:hover .wpcom-insert-menu__menu-label,
 		&:focus .wpcom-insert-menu__menu-label {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 	}
 }
@@ -27,7 +27,7 @@
 }
 
 .mce-splitbtn.mce-insert-menu .mce-open.mce-active {
-	background-color: $white;
+	background-color: var( --color-white );
 	outline: 0;
 }
 
@@ -40,7 +40,7 @@
 }
 
 .mce-container .wpcom-insert-menu__menu-label {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	display: inline-block;
 	font-family: $sans;
 	font-size: 13px;
@@ -49,7 +49,7 @@
 }
 
 .wpcom-insert-menu__menu-icon {
-	fill: $gray-darken-20;
+	fill: var( --color-neutral-500 );
 }
 
 .mce-container.mce-menu .mce-container-body .mce-wpcom-insert-menu__menu-item {

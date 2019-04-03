@@ -25,7 +25,7 @@ import MapDomain from 'my-sites/domains/map-domain';
 import TransferDomain from 'my-sites/domains/transfer-domain';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
-import GoogleApps from 'components/upgrades/google-apps';
+import GoogleApps from 'components/upgrades/gsuite';
 import {
 	domainManagementTransferIn,
 	domainManagementTransferInPrecheck,

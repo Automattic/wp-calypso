@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { moment } from 'i18n-calypso';
+import moment from 'moment';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -62,7 +62,7 @@ class PostSchedule extends Component {
 		showTooltip: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.selectedDay ) {
 			return this.setState( {
 				localizedDate: null,
@@ -77,7 +77,7 @@ class PostSchedule extends Component {
 		} );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedDay === nextProps.selectedDay ) {
 			return;
 		}
@@ -91,7 +91,7 @@ class PostSchedule extends Component {
 		} );
 	}
 
-	locale() {
+	getLocaleUtils() {
 		return {
 			formatMonthTitle: function() {
 				return;
@@ -250,7 +250,7 @@ class PostSchedule extends Component {
 
 				<DatePicker
 					events={ this.events() }
-					locale={ this.locale() }
+					localeUtils={ this.getLocaleUtils() }
 					disabledDays={ this.props.disabledDays }
 					showOutsideDays={ this.props.showOutsideDays }
 					modifiers={ this.props.modifiers }

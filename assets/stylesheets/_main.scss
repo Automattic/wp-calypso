@@ -4,7 +4,7 @@
  */
 
 .wpcom-site__logo {
-	fill: $gray-lighten-20;
+	fill: var( --color-neutral-100 );
 	position: fixed;
 	top: 50%;
 	left: 50%;
@@ -22,8 +22,8 @@
 	left: 0;
 	right: 0;
 	padding: 6px;
-	color: $white;
-	background: rgba( $gray-dark, 0.8 );
+	color: var( --color-white );
+	background: rgba( var( --color-neutral-700-rgb ), 0.8 );
 	text-align: center;
 	z-index: z-index( 'root', '.wpcom-site__global-noscript' );
 }
@@ -74,8 +74,8 @@ body {
 }
 
 ::selection {
-	background: rgba( $blue-light, 0.7 );
-	color: $gray-dark;
+	background: rgba( var( --color-primary-light-rgb ), 0.7 );
+	color: var( --color-text );
 }
 
 body,
@@ -89,7 +89,7 @@ textarea,
 	font-family: $sans;
 }
 
-/*rtl:ignore*/
+/*!rtl:ignore*/
 body.rtl,
 .rtl button,
 .rtl input,
@@ -101,7 +101,7 @@ body.rtl,
 	font-family: $sans-rtl;
 }
 
-/*rtl:ignore*/
+/*!rtl:ignore*/
 :lang( he ) body.rtl,
 :lang( he ) .rtl button,
 :lang( he ) .rtl input,
@@ -113,7 +113,7 @@ body.rtl,
 	font-family: $sans;
 }
 
-/*rtl:ignore*/
+/*!rtl:ignore*/
 .rtl {
 	.gridicon {
 		&.gridicons-chevron-left,
@@ -147,7 +147,7 @@ h6 {
 	clear: both;
 }
 hr {
-	background: $gray-lighten-20;
+	background: var( --color-neutral-100 );
 	border: 0;
 	height: 1px;
 	margin-bottom: 1.5em;
@@ -191,8 +191,8 @@ i {
 	font-style: italic;
 }
 blockquote {
-	margin: 10px 0 0 0;
-	background: $gray-light;
+	margin: 10px 0 0;
+	background: var( --color-neutral-0 );
 	padding: 10px 10px 1px;
 	border-radius: 2px;
 }
@@ -200,7 +200,7 @@ address {
 	margin: 0 0 1.5em;
 }
 pre {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	font-family: $monospace;
 	font-size: 15px;
 	line-height: 1.6;
@@ -217,14 +217,14 @@ var {
 }
 abbr,
 acronym {
-	border-bottom: 1px dotted $gray-darken-20;
+	border-bottom: 1px dotted var( --color-neutral-100 );
 	cursor: help;
 	// Prevent double underline in Chrome
 	text-decoration: none;
 }
 mark,
 ins {
-	background: lighten( $alert-yellow, 23% );
+	background: var( --color-warning-light );
 	text-decoration: none;
 }
 small {
@@ -252,13 +252,13 @@ th {
 /* Links */
 a,
 a:visited {
-	color: $blue-wordpress;
+	color: var( --color-link );
 }
 
 a:hover,
 a:focus,
 a:active {
-	color: $link-highlight;
+	color: var( --color-link-dark );
 }
 
 .link--caution,
@@ -269,7 +269,7 @@ a:active {
 	&:hover,
 	&:focus,
 	&:active {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 }
 

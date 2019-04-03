@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,6 +21,11 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
 import { requestSite } from 'state/sites/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PluginAutomatedTransfer extends Component {
 	static propTypes = {
@@ -158,15 +161,14 @@ class PluginAutomatedTransfer extends Component {
 					status={ this.getStatus() }
 					text={ this.getNoticeText() }
 				>
-					{ ! transferComplete &&
-						CONFLICTS === transferState && (
-							<NoticeAction href="#">
-								{ translate( 'View Conflicts', {
-									comment:
-										'Conflicts arose during an Automated Transfer started by a plugin install.',
-								} ) }
-							</NoticeAction>
-						) }
+					{ ! transferComplete && CONFLICTS === transferState && (
+						<NoticeAction href="#">
+							{ translate( 'View Conflicts', {
+								comment:
+									'Conflicts arose during an Automated Transfer started by a plugin install.',
+							} ) }
+						</NoticeAction>
+					) }
 				</Notice>
 				{ this.state.transferComplete && <WpAdminAutoLogin site={ this.props.site } /> }
 			</div>

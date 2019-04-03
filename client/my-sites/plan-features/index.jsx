@@ -8,14 +8,14 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, map, noop, reduce } from 'lodash';
+import { compact, get, last, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
 import FoldableCard from 'components/foldable-card';
 import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';
@@ -38,6 +38,7 @@ import {
 	getMonthlyPlanByYearly,
 	getPlanPath,
 	isFreePlan,
+	getBiennialPlan,
 } from 'lib/plans';
 import {
 	getPlanDiscountedRawPrice,
@@ -51,6 +52,7 @@ import {
 	isCurrentSitePlan,
 	isJetpackSite,
 } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import {
 	isBestValue,
 	isMonthly,
@@ -158,6 +160,12 @@ export class PlanFeatures extends Component {
 		return true;
 	}
 
+	higherPlanAvailable() {
+		const currentPlan = get( this.props, 'sitePlan.product_slug', '' );
+		const highestPlan = last( this.props.planProperties );
+		return currentPlan !== highestPlan.planName && highestPlan.availableForPurchase;
+	}
+
 	renderCreditNotice() {
 		const {
 			canPurchase,
@@ -173,7 +181,8 @@ export class PlanFeatures extends Component {
 			! canPurchase ||
 			! bannerContainer ||
 			! showPlanCreditsApplied ||
-			! planCredits
+			! planCredits ||
+			! this.higherPlanAvailable()
 		) {
 			return null;
 		}
@@ -236,6 +245,7 @@ export class PlanFeatures extends Component {
 			selectedPlan,
 			translate,
 			showPlanCreditsApplied,
+			isLaunchPage,
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -268,6 +278,7 @@ export class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
+				countryCode,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			return (
@@ -292,6 +303,7 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
+						countryCode={ countryCode }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
@@ -302,6 +314,7 @@ export class PlanFeatures extends Component {
 						freePlan={ isFreePlan( planName ) }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
+						isLaunchPage={ isLaunchPage }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						onUpgradeClick={ onUpgradeClick }
@@ -327,6 +340,7 @@ export class PlanFeatures extends Component {
 	renderPlanHeaders() {
 		const {
 			basePlansPath,
+			disableBloggerPlanWithNonBlogDomain,
 			displayJetpackPlans,
 			isInSignup,
 			isJetpack,
@@ -334,6 +348,7 @@ export class PlanFeatures extends Component {
 			selectedPlan,
 			siteType,
 			showPlanCreditsApplied,
+			countryCode,
 		} = this.props;
 
 		return map( planProperties, properties => {
@@ -349,11 +364,18 @@ export class PlanFeatures extends Component {
 				relatedMonthlyPlan,
 				isPlaceholder,
 				hideMonthly,
+				rawPrice,
 			} = properties;
-			const { rawPrice, discountPrice } = properties;
+			let { discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
 			let audience = planConstantObj.getAudience();
 			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
+
+			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
+				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
+					discountPrice = 0;
+				}
+			}
 
 			if ( isInSignup && ! displayJetpackPlans ) {
 				switch ( siteType ) {
@@ -398,6 +420,7 @@ export class PlanFeatures extends Component {
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
+						countryCode={ countryCode }
 					/>
 				</td>
 			);
@@ -430,6 +453,7 @@ export class PlanFeatures extends Component {
 			disableBloggerPlanWithNonBlogDomain,
 			isInSignup,
 			isLandingPage,
+			isLaunchPage,
 			planProperties,
 			selectedPlan,
 			selectedSiteSlug,
@@ -457,7 +481,7 @@ export class PlanFeatures extends Component {
 			let forceDisplayButton = false,
 				buttonText = null;
 
-			if ( disableBloggerPlanWithNonBlogDomain ) {
+			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
 				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
 					availableForPurchase = false;
 					forceDisplayButton = true;
@@ -479,6 +503,7 @@ export class PlanFeatures extends Component {
 						isPopular={ popular }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
+						isLaunchPage={ isLaunchPage }
 						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
 						onUpgradeClick={ onUpgradeClick }
 						planName={ planConstantObj.getTitle() }
@@ -561,16 +586,18 @@ export class PlanFeatures extends Component {
 	renderBottomButtons() {
 		const {
 			canPurchase,
+			disableBloggerPlanWithNonBlogDomain,
 			isInSignup,
 			isLandingPage,
+			isLaunchPage,
 			planProperties,
 			selectedPlan,
 			selectedSiteSlug,
 		} = this.props;
 
 		return map( planProperties, properties => {
+			let { availableForPurchase } = properties;
 			const {
-				availableForPurchase,
 				current,
 				onUpgradeClick,
 				planName,
@@ -584,6 +611,13 @@ export class PlanFeatures extends Component {
 				'has-border-bottom',
 				'is-bottom-buttons'
 			);
+
+			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
+				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
+					availableForPurchase = false;
+				}
+			}
+
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
@@ -594,6 +628,7 @@ export class PlanFeatures extends Component {
 						freePlan={ isFreePlan( planName ) }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
+						isLaunchPage={ isLaunchPage }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
@@ -631,6 +666,7 @@ PlanFeatures.propTypes = {
 	selectedPlan: PropTypes.string,
 	selectedSiteSlug: PropTypes.string,
 	siteId: PropTypes.number,
+	sitePlan: PropTypes.object,
 };
 
 PlanFeatures.defaultProps = {
@@ -674,6 +710,18 @@ export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 const hasPlaceholders = planProperties =>
 	planProperties.filter( planProps => planProps.isPlaceholder ).length > 0;
 
+const maybeGetBiennialPlanSlugVersion = planSlug => {
+	// Test defaulting to the 2 year option for wpcom plans
+	if (
+		planMatches( planSlug, { group: GROUP_WPCOM } ) &&
+		'twoYearFlavor' === abtest( 'twoYearPlanByDefault' )
+	) {
+		planSlug = getBiennialPlan( planSlug ) || planSlug;
+	}
+
+	return planSlug;
+};
+
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
@@ -692,6 +740,7 @@ export default connect(
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
 		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
+		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -717,7 +766,10 @@ export default connect(
 				const newPlan = isNew( plan ) && ! isPaid;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
-				const showMonthlyPrice = ! relatedMonthlyPlan && showMonthly;
+
+				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
+				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
+
 				let planFeatures = getPlanFeaturesObject(
 					planConstantObj.getPlanCompareFeatures( abtest )
 				);
@@ -767,7 +819,9 @@ export default connect(
 					isPlaceholder,
 					onUpgradeClick: onUpgradeClick
 						? () => {
-								const planSlug = getPlanSlug( state, planProductId );
+								const planSlug = maybeGetBiennialPlanSlugVersion(
+									getPlanSlug( state, planProductId )
+								);
 
 								onUpgradeClick( getCartItemForPlan( planSlug ) );
 						  }
@@ -776,7 +830,9 @@ export default connect(
 									return;
 								}
 
-								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }` );
+								const planSlug = maybeGetBiennialPlanSlugVersion( plan );
+
+								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( planSlug ) || '' }` );
 						  },
 					planConstantObj,
 					planName: plan,
@@ -808,6 +864,7 @@ export default connect(
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
+			sitePlan,
 			siteType,
 			planCredits,
 			hasPlaceholders: hasPlaceholders( planProperties ),

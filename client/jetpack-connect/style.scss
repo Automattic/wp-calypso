@@ -1,15 +1,58 @@
-.jetpack-connect__main {
-	max-width: 400px;
+$colophon-height: 50px; // wpcomColophon element at the bottom
 
-	.logged-out-form__links {
-		max-width: 100%;
+.jetpack-connect__main,
+.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
+.layout.is-jetpack-login,
+.is-section-checkout.is-jetpack-site,
+.is-section-checkout-thank-you.is-jetpack-site {
+	// Override accent variables with Jetpack colors
+	--color-accent:       var( --color-jetpack );
+	--color-accent-light: var( --color-jetpack-light );
+	--color-accent-dark:  var( --color-jetpack-dark );
 
-		/* Move up to the Card above */
-		margin-top: -10px;
-		@include breakpoint( '>480px' ) {
-			margin-top: -16px;
+	// Override global colors with accent variables
+	--color-primary:                         var( --color-accent-dark );
+	--color-primary-light:                   var( --color-accent-light );
+	--color-button-primary-background-hover: var( --color-accent-light );
+	--color-accent-600:                      var( --color-accent-dark );
+
+	.payment-box-section {
+		--color-primary: var( --color-primary-500 );
+	}
+}
+
+.is-section-jetpack-connect {
+
+	.layout__content {
+		position: static;
+		// Adjust the padding as we no longer
+		// show the masterbar.
+		padding-top: 48px;
+
+		& > .banner {
+			max-width: 600px;
 		}
 	}
+
+	&.layout {
+		position: relative;
+		min-height: calc( 100% - #{$colophon-height} );
+		padding-bottom: $colophon-height;
+	}
+
+	// Hide the masterbar for real
+	.masterbar {
+		display: none;
+	}
+
+	// Move the back button up top
+	.back-button {
+		top: 0;
+	}
+}
+
+.jetpack-connect__main {
+	max-width: 400px;
 
 	.formatted-header {
 		margin-bottom: 16px;
@@ -24,25 +67,42 @@
 			display: none;
 		}
 	}
+}
 
-	.button.is-primary {
-		background-color: $green-jetpack;
-		border-color: darken( $green-jetpack, 5% );
+.jetpack-connect__step {
+	margin: 0 auto;
+	max-width: 600px;
+	text-align: initial;
 
-		&:hover,
-		&:focus {
-			border-color: darken( $green-jetpack, 30% );
+	input[type='radio']:focus {
+		box-shadow: 0 0 0 2px var( --color-jetpack-light );
+	}
+
+	.wpcom-colophon {
+		position: absolute;
+			bottom: 0;
+			left: 0;
+		width: 100%;
+		height: $colophon-height;
+	}
+
+	.site-topic__content {
+		padding-bottom: 2px;
+
+		.form-fieldset {
+			position: relative;
 		}
 
-		&:focus {
-			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
+		input[type='text'] {
+			border-color: var( --color-jetpack-dark );
 		}
 
-		&[disabled],
-		&:disabled {
-			background: tint( $green-jetpack, 50% );
-			border-color: tint( $green-jetpack, 35% );
-			color: $white;
+		@include breakpoint( '<660px' ) {
+			.button {
+				font-size: 16px;
+				padding-top: 12px;
+				padding-bottom: 14px;
+			}
 		}
 	}
 }
@@ -58,7 +118,6 @@
 .jetpack-connect__main.is-wide {
 	max-width: 100%;
 	text-align: center;
-	margin-bottom: 24px;
 
 	.jetpack-connect__happychat-button {
 		text-align: center;
@@ -100,7 +159,7 @@
 			position: absolute;
 			top: 8px;
 			left: 8px;
-			color: $gray-lighten-20;
+			color: var( --color-neutral-100 );
 		}
 
 		.form-text-input {
@@ -129,12 +188,13 @@
 
 .jetpack-connect__logged-in-form {
 	.jetpack-connect__logged-in-form-user-text {
+		margin-bottom: 0;
 		text-align: center;
 	}
 
 	.gravatar {
 		display: block;
-		margin: 0 auto 8px auto;
+		margin: 0 auto 8px;
 	}
 
 	.button {
@@ -172,7 +232,7 @@
 	}
 
 	@include breakpoint( '>660px' ) {
-		margin: 0 8px 16px 8px;
+		margin: 0 8px 16px;
 	}
 
 	&.jetpack-connect__creds-form {
@@ -186,9 +246,9 @@
 }
 
 .jetpack-connect__install-step-text {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 12px;
-	margin: 8px 0 16px 0;
+	margin: 8px 0 16px;
 	flex-grow: 2;
 }
 
@@ -197,13 +257,13 @@
 	width: 100%;
 
 	&:hover > div {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
+		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
 	}
 }
 
 .example-components__browser-chrome {
 	padding: 8px;
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	border-radius: 8px 8px 0 0;
 }
 
@@ -215,7 +275,7 @@
 .example-components__browser-chrome-dot {
 	display: inline-block;
 	margin-right: 8px;
-	background-color: $gray-lighten-10;
+	background-color: var( --color-neutral-200 );
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
@@ -225,13 +285,13 @@
 	position: relative;
 	margin: 0;
 	line-height: 0;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 }
 
 .example-components__install-plugin-header {
 	width: 100%;
 	padding-bottom: 12%;
-	background-color: $green-jetpack;
+	background-color: var( --color-jetpack );
 }
 
 .example-components__install-plugin-body {
@@ -254,7 +314,7 @@
 	font-size: 12px;
 	padding: 7px 14px;
 	line-height: 1;
-	color: $white;
+	color: var( --color-white );
 	background-color: #008ec2; // wp-admin button blue
 	border: 1px solid #006799;
 	border-radius: 3px;
@@ -297,8 +357,8 @@
 
 	.example-components__content-wp-admin-connect-banner {
 		margin: 10px;
-		padding: 10px 10px 12px 10px;
-		background-color: $white;
+		padding: 10px 10px 12px;
+		background-color: var( --color-white );
 	}
 
 	.example-components__content-wp-admin-connect-button {
@@ -306,7 +366,7 @@
 		font-size: 12px;
 		padding: 7px 14px;
 		line-height: 1;
-		color: $white;
+		color: var( --color-white );
 		border-radius: 3px;
 		background-color: #00be28;
 		border: 2px #00a523 solid;
@@ -317,7 +377,7 @@
 .example-components__connect-jetpack.is-legacy {
 	.example-components__content-wp-admin-connect-banner {
 		margin: 10px;
-		padding: 12px 10px 16px 10px;
+		padding: 12px 10px 16px;
 		text-align: right;
 		background-color: #81a844;
 		border-left: 0;
@@ -328,7 +388,7 @@
 		font-size: 12px;
 		line-height: 1;
 		padding: 11px 10px;
-		color: $white;
+		color: var( --color-white );
 		background-color: #518d2a;
 		border-color: #518d2a;
 		border-radius: 4px;
@@ -339,7 +399,7 @@
 .example-components__content-wp-admin-plugin-card {
 	margin: 10px;
 	padding: 12px 10px;
-	background-color: $white;
+	background-color: var( --color-white );
 }
 
 .example-components__content-wp-admin-plugin-name {
@@ -360,7 +420,7 @@
 	display: inline-block;
 	padding: 7px 14px;
 	line-height: 1;
-	color: $white;
+	color: var( --color-white );
 	background-color: #008ec2; // wp-admin button blue
 	border: 1px solid #006799;
 	border-radius: 3px;
@@ -371,7 +431,7 @@
 	.example-components__browser-chrome-url {
 	height: 40px;
 	font-size: 12px;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .jetpack-connect__sso-user-profile {
@@ -395,7 +455,7 @@
 }
 
 .jetpack-connect__sso-user-email {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	font-weight: 400;
 	text-align: center;
 }
@@ -422,7 +482,7 @@
 
 .jetpack-connect__tos-link {
 	font-size: 11px;
-	margin: 0 0 16px 0;
+	margin: 0 0 16px;
 	text-align: center;
 }
 
@@ -431,8 +491,8 @@
 }
 
 .jetpack-connect__connect-button-card {
-	background: lighten( $gray, 34% );
-	border-top: 1px solid $gray-lighten-30;
+	background: var( --color-neutral-0 );
+	border-top: 1px solid var( --color-neutral-0 );
 	box-shadow: none;
 	margin: 16px -16px -16px -16px;
 	padding: 16px;
@@ -449,6 +509,16 @@
 
 .jetpack-connect__site.card {
 	padding: 0;
+}
+
+.jetpack-connect__site.card,
+.jetpack-connect__logged-in-card.card {
+	max-width: 360px;
+	margin: 0 auto 16px;
+	border-radius: 3px;
+	box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2 ),
+				0 8px 10px 1px rgba( 0, 0, 0, 0.14 ),
+				0 3px 14px 2px rgba( 0, 0, 0, 0.12 );
 }
 
 .jetpack-connect__sso-terms-dialog {
@@ -521,14 +591,13 @@
 .jetpack-connect__happychat-button {
 	background: none;
 	border: none;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-weight: normal;
 	padding: 16px 24px;
-	text-align: left;
 	width: 100%;
 
 	&:hover {
-		color: $blue-medium;
+		color: var( --color-primary );
 	}
 }
 
@@ -563,7 +632,6 @@
 		margin-bottom: 8px;
 	}
 
-	.logged-out-form__links,
 	.jetpack-connect__happychat-button {
 		text-align: center;
 	}
@@ -582,7 +650,7 @@
 		min-height: 400px;
 	}
 
-	.plan-features--signup .plan-price.is-original:before {
+	.plan-features--signup .plan-price.is-original::before {
 		border-top: 0;
 	}
 
@@ -622,8 +690,8 @@
 	}
 
 	&.is-primary {
-		background-color: $green-jetpack;
-		border-color: darken( $green-jetpack, 5% );
+		background-color: var( --color-jetpack );
+		border-color: var( --color-jetpack-dark );
 	}
 }
 
@@ -654,7 +722,7 @@
 		z-index: z-index( 'root', '.jetpack-connect__password-form .gridicon' );
 		left: 8px;
 		top: 7px;
-		fill: $gray-lighten-20;
+		fill: var( --color-neutral-100 );
 	}
 }
 
@@ -701,4 +769,197 @@
 
 .jetpack-connect__connect-button {
 	text-align: center;
+}
+
+/**
+ * Onboarding styles
+ **/
+.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
+.layout.is-jetpack-login {
+	background-color: var( --color-jetpack-onboarding-background );
+
+	&.layout {
+		position: relative;
+		min-height: calc( 100% - #{$colophon-height} );
+		padding-bottom: $colophon-height;
+	}
+
+	.login__form-header,
+	.formatted-header {
+		color: var( --color-jetpack-onboarding-text );
+	}
+
+	.jetpack-logo__text,
+	.wpcom-colophon path {
+		fill: var( --color-jetpack-onboarding-text );
+	}
+
+	.formatted-header__subtitle,
+	.payment-methods,
+	.jetpack-connect__help-button {
+		color: var( --color-primary-100 );
+	}
+
+	.site__title:after,
+	.site__domain:after {
+		right: 3px;
+	}
+
+	.site-type__option-label {
+		color: var( --color-text );
+	}
+
+	.jetpack-connect__plan-info {
+
+		.formatted-header {
+			color: var( --color-text );
+		}
+
+		.formatted-header__subtitle {
+			color: var( --color-text-subtle );
+		}
+	}
+
+	.login__form input:focus,
+	.jetpack-connect__site-address-container input:focus,
+	.logged-out-form input:focus {
+		border-color: var( --color-accent );
+		box-shadow: 0 0 0 2px var( --color-accent-light );
+	}
+
+	.login__form-terms a,
+	.jetpack-connect__tos-link a,
+	.signup-form__terms-of-service-link a,
+	.form-input-validation a {
+		color: var( --color-accent-dark );
+
+		&:hover,
+		&:focus {
+			color: var( --color-accent );
+		}
+	}
+
+	.wp-login__links a,
+	.logged-out-form__links a,
+	.logged-out-form__link-item,
+	.jetpack-connect__back-button,
+	.translator-invite__content a,
+	.jetpack-connect__skip-button .button {
+		color: var( --color-neutral-200 );
+		border-bottom-color: var( --color-neutral-700 );
+
+		&:hover,
+		&:focus {
+			color: var( --color-primary-200 );
+		}
+	}
+
+	.jetpack-connect__skip-button .button {
+		&:focus {
+			box-shadow: 0 0 0 transparent;
+		}
+	}
+
+	.translator-invite__content a {
+		border: none;
+	}
+
+	.translator-invite__content {
+		color: var( --color-neutral-500 );
+	}
+
+	.wp-login__site-return-link:after {
+		background: linear-gradient(to right, rgba( var( --color-jetpack-onboarding-background ) , 0 ), rgba( var( --color-jetpack-onboarding-background ) , 1 ) 90%)
+	}
+
+	.plan-features__table-item,
+	.plan-features--signup .plan-features__row:last-of-type .plan-features__table-item {
+		border: none;
+	}
+
+	.plan-features__item-checkmark {
+		fill: var( --color-accent-dark );
+	}
+
+	.plan-features__item-title a {
+		color: var( --color-accent-dark );
+
+		&:hover,
+		&:focus {
+			color: var( --color-accent );
+		}
+	}
+
+	.payment-logo.is-paypal {
+		width: 64px;
+		background-color: var( --color-white );
+		background-size: 84%;
+		background-position: 50% 45%;
+		border-radius: 1px;
+	}
+
+	.jetpack-connect__main-error .empty-content {
+		padding-bottom: 24px;
+		background-color: var( --color-white );
+		border-radius: 3px;
+	}
+
+	.site-topic__content .form-fieldset {
+		position: relative;
+	}
+}
+
+.is-section-checkout.is-jetpack-site {
+	min-height: 100%;
+	background-color: var( --color-jetpack-onboarding-background );
+
+	.formatted-header {
+		color: var( --color-jetpack-onboarding-text );
+	}
+
+	.card {
+		box-shadow: none;
+		border-radius: 3px;
+
+		&.section-header {
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+
+		&.payment-box {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
+	}
+}
+
+.is-section-checkout-thank-you.is-jetpack-site {
+	min-height: 100%;
+	background-color: var( --color-jetpack-onboarding-background );
+
+	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
+	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
+	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card {
+		box-shadow: none;
+	}
+}
+
+.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
+.layout.is-jetpack-login,
+.is-section-checkout.is-jetpack-site,
+.is-section-checkout-thank-you.is-jetpack-site {
+	::selection {
+		color: var( --color-white );
+		background: var( --color-accent );
+	}
+}
+
+.jetpack-connect__skip-button {
+	text-align: center;
+	margin: 17px 0;
+
+	.button .gridicon {
+		padding-left: 4px;
+		margin-right: -5px;
+	}
 }

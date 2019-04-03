@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,6 +28,7 @@ import {
 	isSectionAndSessionEligibleForNpsSurvey,
 	wasNpsSurveyShownThisSession,
 } from 'state/nps-survey/selectors';
+import { isSupportSession } from 'state/support/selectors';
 import analytics from 'lib/analytics';
 
 const SURVEY_NAME = 'calypso-global-notice-radio-buttons-v1';
@@ -71,7 +71,7 @@ class NpsSurveyNotice extends Component {
 	}
 
 	render() {
-		if ( this.props.isSupportUser || ! this.props.isSectionAndSessionEligible ) {
+		if ( this.props.isSupportSession || ! this.props.isSectionAndSessionEligible ) {
 			return null;
 		}
 
@@ -89,7 +89,7 @@ class NpsSurveyNotice extends Component {
 
 const mapStateToProps = state => {
 	return {
-		isSupportUser: get( state, 'support.isSupportUser', false ),
+		isSupportSession: isSupportSession( state ),
 		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing( state ),
 		hasAnswered: hasAnsweredNpsSurvey( state ),
 		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),

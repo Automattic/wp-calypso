@@ -23,6 +23,11 @@ import toggleInfo from '../toggle-info';
 import countPostLikes from 'state/selectors/count-post-likes';
 import PostLikes from 'blocks/post-likes';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export const StatsPostLikes = props => {
 	const { countLikes, opened, postId, postType, siteId, toggle, translate } = props;
 	const infoIcon = opened ? 'info' : 'info-outline';
@@ -42,6 +47,7 @@ export const StatsPostLikes = props => {
 		likesListLabel = translate( 'This panel shows the list of people who like your post.' );
 	}
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 	return (
 		<Card className={ classNames( 'stats-module', 'stats-post-likes', 'is-expanded', classes ) }>
 			<QueryPostLikes siteId={ siteId } postId={ postId } />

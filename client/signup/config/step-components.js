@@ -27,6 +27,7 @@ import RewindFormCreds from 'signup/steps/rewind-form-creds';
 import SiteOrDomainComponent from 'signup/steps/site-or-domain';
 import SitePicker from 'signup/steps/site-picker';
 import SiteTitleComponent from 'signup/steps/site-title';
+import SiteStyleComponent from 'signup/steps/site-style';
 import SiteTopicComponent from 'signup/steps/site-topic';
 import SiteTypeComponent from 'signup/steps/site-type';
 import SiteInformationComponent from 'signup/steps/site-information';
@@ -36,6 +37,7 @@ import UserSignupComponent from 'signup/steps/user';
 import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
 import ReaderLandingStepComponent from 'signup/steps/reader-landing';
+import LaunchSiteComponent from 'signup/steps/launch-site';
 
 export default {
 	about: AboutStepComponent,
@@ -55,8 +57,14 @@ export default {
 	'domains-store': DomainsStepComponent,
 	'domain-only': DomainsStepComponent,
 	'domains-theme-preselected': DomainsStepComponent,
+	'domains-launch': DomainsStepComponent,
 	'from-url': ImportURLStepComponent,
+	launch: LaunchSiteComponent,
 	plans: PlansStepComponent,
+	'plans-launch': PlansStepComponent,
+	'plans-personal': PlansStepComponent,
+	'plans-premium': PlansStepComponent,
+	'plans-business': PlansStepComponent,
 	'plans-store-nux': PlansAtomicStoreComponent,
 	'plans-site-selected': PlansStepWithoutFreePlan,
 	site: SiteComponent,
@@ -66,8 +74,13 @@ export default {
 	'rewind-add-creds': RewindAddCreds,
 	'rewind-form-creds': RewindFormCreds,
 	'site-information': SiteInformationComponent,
+	'site-information-without-domains': SiteInformationComponent,
+	'site-information-title': SiteInformationComponent,
+	'site-information-address': SiteInformationComponent,
+	'site-information-phone': SiteInformationComponent,
 	'site-or-domain': SiteOrDomainComponent,
 	'site-picker': SitePicker,
+	'site-style': SiteStyleComponent,
 	'site-title': SiteTitleComponent,
 	'site-topic': SiteTopicComponent,
 	'site-type': SiteTypeComponent,
@@ -86,4 +99,12 @@ export default {
 	'oauth2-name': UserSignupComponent,
 	displayname: UserSignupComponent,
 	'reader-landing': ReaderLandingStepComponent,
+	// Steps with preview
+	'site-style-with-preview': SiteStyleComponent,
+	'site-topic-with-preview': SiteTopicComponent,
+	'site-information-with-preview': SiteInformationComponent,
+	'site-information-title-with-preview': SiteInformationComponent,
+	'site-information-address-with-preview': SiteInformationComponent,
+	'site-information-phone-with-preview': SiteInformationComponent,
+	'domains-with-preview': DomainsStepComponent,
 };

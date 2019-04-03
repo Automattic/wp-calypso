@@ -36,21 +36,22 @@ import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
 import {
-	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementEmail,
-	domainManagementEmailForwarding,
 	domainManagementList,
 	domainManagementNameServers,
-	domainManagementPrivacyProtection,
 	domainManagementRedirectSettings,
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
 } from 'my-sites/domains/paths';
+import {
+	emailManagement,
+	emailManagementForwarding,
+	emailManagementAddGSuiteUsers,
+} from 'my-sites/email/paths';
 import SitesComponent from 'my-sites/sites';
 import { warningNotice } from 'state/notices/actions';
 import { makeLayout, render as clientRender } from 'controller';
@@ -78,8 +79,6 @@ const sitesPageTitleForAnalytics = 'Sites';
  * @returns { object } React element containing the site selector and sidebar
  */
 function createNavigation( context ) {
-	const { getState } = getStore( context );
-	const currentUser = getCurrentUser( getState() );
 	const siteFragment = getSiteFragment( context.pathname );
 	let basePath = context.pathname;
 
@@ -92,7 +91,6 @@ function createNavigation( context ) {
 			path={ context.path }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
-			user={ currentUser }
 		/>
 	);
 }
@@ -162,20 +160,19 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 	const allPaths = [
-		domainManagementAddGoogleApps,
 		domainManagementContactsPrivacy,
 		domainManagementDns,
 		domainManagementEdit,
 		domainManagementEditContactInfo,
-		domainManagementEmail,
-		domainManagementEmailForwarding,
 		domainManagementList,
 		domainManagementNameServers,
-		domainManagementPrivacyProtection,
 		domainManagementRedirectSettings,
 		domainManagementTransfer,
 		domainManagementTransferOut,
 		domainManagementTransferToOtherSite,
+		emailManagement,
+		emailManagementAddGSuiteUsers,
+		emailManagementForwarding,
 	];
 
 	let domainManagementPaths = allPaths.map( pathFactory => pathFactory( slug, slug ) );

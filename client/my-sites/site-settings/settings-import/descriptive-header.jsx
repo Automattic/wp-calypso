@@ -15,21 +15,16 @@ import CompactCard from 'components/card/compact';
 
 class DescriptiveHeader extends PureComponent {
 	render() {
-		const { site, translate } = this.props;
-		const { slug, title: siteTitle } = site;
+		const { translate } = this.props;
 
-		const title = siteTitle.length ? siteTitle : slug;
 		const description = translate(
-			'Import content from another site into ' +
-				'{{strong}}%(title)s{{/strong}}. Learn more about ' +
+			'Import content from another site. Learn more about ' +
 				'the import process in our {{a}}support documentation{{/a}}. ' +
 				'Once you start importing, you can visit ' +
 				'this page to check on the progress.',
 			{
-				args: { title },
 				components: {
 					a: <a href="https://support.wordpress.com/import/" />,
-					strong: <strong />,
 				},
 			}
 		);
@@ -38,9 +33,6 @@ class DescriptiveHeader extends PureComponent {
 			<CompactCard>
 				<header>
 					{ /* @TODO move these class names over  */ }
-					<h1 className="settings-import__section-title site-settings__importer-section-title importer__section-title">
-						{ translate( 'Import Another Site' ) }
-					</h1>
 					<p className="settings-import__section-description site-settings__importer-section-description">
 						{ description }
 					</p>

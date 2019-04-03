@@ -37,7 +37,7 @@ import PodcastingPublishNotice from './publish-notice';
 import PodcastingSupportLink from './support-link';
 import podcastingTopics from './topics';
 import TermTreeSelector from 'blocks/term-tree-selector';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import UpgradeNudge from 'blocks/upgrade-nudge';
 
 /**
  * Selectors, actions, and query components
@@ -235,16 +235,15 @@ class PodcastingDetails extends Component {
 							<PodcastingSupportLink showText={ false } iconSize={ 16 } />
 						</h1>
 					</HeaderCake>
-					{ ! error &&
-						plansDataLoaded && (
-							<UpgradeNudge
-								plan={ PLAN_PERSONAL }
-								title={ translate( 'Upload Audio with WordPress.com Personal' ) }
-								message={ translate( 'Embed podcast episodes directly from your media library.' ) }
-								feature={ FEATURE_AUDIO_UPLOADS }
-								event="podcasting_details_upload_audio"
-							/>
-						) }
+					{ ! error && plansDataLoaded && (
+						<UpgradeNudge
+							plan={ PLAN_PERSONAL }
+							title={ translate( 'Upload Audio with WordPress.com Personal' ) }
+							message={ translate( 'Embed podcast episodes directly from your media library.' ) }
+							feature={ FEATURE_AUDIO_UPLOADS }
+							event="podcasting_details_upload_audio"
+						/>
+					) }
 					{ ! error && (
 						<Card className="podcasting-details__category-wrapper">
 							{ this.renderCategorySetting() }

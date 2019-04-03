@@ -1,6 +1,6 @@
 &.payments__dialog {
 	min-width: 90%;
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		min-width: 660px;
 	}
 
@@ -15,10 +15,10 @@
 
 		.button {
 			&.is-borderless {
-				color: $blue-wordpress;
+				color: var( --color-primary );
 
 				&:hover {
-					color: $link-highlight;
+					color: var( --color-link-dark );
 				}
 			}
 		}
@@ -44,7 +44,7 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		flex-direction: column;
 	}
 
@@ -62,7 +62,7 @@
 	max-width: 255px;
 	padding-top: 24px;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		padding-top: 0;
 	}
 }
@@ -75,7 +75,7 @@
 
 .payments__type-container .list-header {
 	justify-content: flex-start;
-	background: lighten( $gray, 35% );
+	background: var( --color-neutral-0 );
 	font-weight: 600;
 	font-size: 14px;
 
@@ -87,7 +87,6 @@
 
 // PAYMENT-METHOD-ROW
 .payments__type-container {
-
 	p.payments__method-suggested {
 		font-size: 11px;
 		text-transform: uppercase;
@@ -102,8 +101,7 @@
 		padding: 0;
 	}
 
-	p.payments__method-information
-	p.payments__method-name {
+	p.payments__method-information p.payments__method-name {
 		font-size: 14px;
 	}
 
@@ -127,7 +125,7 @@
 	}
 
 	.list-item {
-		border-top: 1px solid $border-ultra-light-gray;
+		border-top: 1px solid var( --color-border-subtle );
 		align-items: center;
 	}
 
@@ -141,7 +139,7 @@
 	}
 
 	.payments__method-method-suggested-container {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 50%;
 		}
 	}
@@ -152,27 +150,23 @@
 	}
 
 	.list-item-field.payments__methods-column-fees {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 	}
 
 	.payments__method-method-information-container {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 60%;
 			order: 4;
-			padding-top: 0px;
+			padding-top: 0;
 		}
 	}
 
 	.payments__method-enable-container {
 		width: 20%;
 
-		.form-toggle__label .form-toggle__label-content {
-			margin-left: 0;
-		}
-
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 30%;
 			padding-left: 0;
 			padding-right: 0;
@@ -184,7 +178,7 @@
 
 		.payments__method-enable .form-label {
 			display: inline-block;
-			color: $gray;
+			color: var( --color-neutral-light );
 			font-size: 11px;
 			font-weight: 400;
 			line-height: 16px;
@@ -199,7 +193,7 @@
 	.payments__method-action-container {
 		width: 15%;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 20%;
 			padding-left: 0;
 		}
@@ -214,15 +208,15 @@
 .payments__method-edit-header {
 	font-size: 18px;
 	justify-content: space-between;
-	padding: 0 0 16px 0;
+	padding: 0 0 16px;
 }
 
 .payments__method-edit-fields {
 	padding: 16px;
-	border-top: 1px solid $border-ultra-light-gray;
+	border-top: 1px solid var( --color-border-subtle );
 	width: 100%;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 24px;
 	}
 
@@ -237,7 +231,7 @@
 .payments__method-loading-feelink,
 .payments__method-loading-enabled,
 .payments__method-loading-settings {
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
@@ -246,7 +240,7 @@
 	margin-bottom: 5px;
 	width: 100%;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 60%;
 	}
 }
@@ -255,7 +249,7 @@
 	height: 12px;
 	width: 90%;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 50%;
 	}
 }
@@ -265,7 +259,7 @@
 	margin-bottom: 5px;
 	width: 100%;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 60%;
 	}
 }
@@ -274,7 +268,7 @@
 	height: 12px;
 	width: 90%;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 50%;
 	}
 }

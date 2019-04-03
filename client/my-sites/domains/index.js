@@ -44,40 +44,26 @@ export default function() {
 	page.redirect( '/domains/manage/edit', paths.domainManagementRoot() );
 	page.redirect( '/domains/manage/edit/:site', paths.domainManagementRoot() );
 
-	page( paths.domainManagementEmail(), siteSelection, sites, makeLayout, clientRender );
-
 	registerMultiPage( {
 		paths: [
+			paths.domainManagementEmail(),
 			paths.domainManagementEmail( ':site', ':domain' ),
 			paths.domainManagementEmail( ':site' ),
 		],
-		handlers: [
-			...getCommonHandlers( { noSitePath: paths.domainManagementEmail() } ),
-			domainManagementController.domainManagementEmail,
-			makeLayout,
-			clientRender,
-		],
+		handlers: [ domainManagementController.domainManagementEmailRedirect ],
 	} );
 
 	registerMultiPage( {
 		paths: [
-			paths.domainManagementAddGoogleApps( ':site', ':domain' ),
-			paths.domainManagementAddGoogleApps( ':site' ),
+			paths.domainManagementAddGSuiteUsers( ':site', ':domain' ),
+			paths.domainManagementAddGSuiteUsers( ':site' ),
 		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementAddGoogleApps,
-			makeLayout,
-			clientRender,
-		],
+		handlers: [ domainManagementController.domainManagementAddGSuiteUsersRedirect ],
 	} );
 
 	page(
 		paths.domainManagementEmailForwarding( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementEmailForwarding,
-		makeLayout,
-		clientRender
+		domainManagementController.domainManagementEmailForwardingRedirect
 	);
 
 	page(
@@ -190,14 +176,6 @@ export default function() {
 			clientRender,
 		],
 	} );
-
-	page(
-		paths.domainManagementPrivacyProtection( ':site', ':domain' ),
-		...getCommonHandlers( { warnIfJetpack: false } ),
-		domainManagementController.domainManagementPrivacyProtection,
-		makeLayout,
-		clientRender
-	);
 
 	page(
 		paths.domainManagementPrimaryDomain( ':site', ':domain' ),

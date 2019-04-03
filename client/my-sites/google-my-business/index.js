@@ -9,7 +9,7 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import { makeLayout, redirectLoggedOut } from 'controller';
+import { makeLayout } from 'controller';
 import { navigation, sites, siteSelection } from 'my-sites/controller';
 import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -56,11 +56,10 @@ export default function( router ) {
 
 	router( '/google-my-business', siteSelection, sites, navigation, makeLayout );
 
-	router( '/google-my-business/new', redirectLoggedOut, siteSelection, sites, makeLayout );
+	router( '/google-my-business/new', siteSelection, sites, makeLayout );
 
 	router(
 		'/google-my-business/new/:site',
-		redirectLoggedOut,
 		siteSelection,
 		redirectUnauthorized,
 		newAccount,
@@ -68,17 +67,10 @@ export default function( router ) {
 		makeLayout
 	);
 
-	router(
-		'/google-my-business/select-location',
-		redirectLoggedOut,
-		siteSelection,
-		sites,
-		makeLayout
-	);
+	router( '/google-my-business/select-location', siteSelection, sites, makeLayout );
 
 	router(
 		'/google-my-business/select-location/:site',
-		redirectLoggedOut,
 		siteSelection,
 		redirectUnauthorized,
 		selectLocation,
@@ -86,11 +78,10 @@ export default function( router ) {
 		makeLayout
 	);
 
-	router( '/google-my-business/stats', redirectLoggedOut, siteSelection, sites, makeLayout );
+	router( '/google-my-business/stats', siteSelection, sites, makeLayout );
 
 	router(
 		'/google-my-business/stats/:site',
-		redirectLoggedOut,
 		siteSelection,
 		redirectUnauthorized,
 		loadKeyringsMiddleware,
@@ -116,7 +107,6 @@ export default function( router ) {
 
 	router(
 		'/google-my-business/select-business-type/:site',
-		redirectLoggedOut,
 		siteSelection,
 		redirectUnauthorized,
 		selectBusinessType,

@@ -57,8 +57,8 @@ class EditContactInfo extends React.Component {
 	};
 
 	getCard = () => {
-		const domain = getSelectedDomain( this.props ),
-			{ OPENHRS, OPENSRS } = registrarNames;
+		const domain = getSelectedDomain( this.props );
+		const { OPENHRS, OPENSRS } = registrarNames;
 
 		if ( ! domain.currentUserCanManage ) {
 			return <NonOwnerCard { ...this.props } />;
@@ -69,7 +69,12 @@ class EditContactInfo extends React.Component {
 		}
 
 		if ( ! includes( [ OPENHRS, OPENSRS ], domain.registrar ) && domain.privateDomain ) {
-			return <EditContactInfoPrivacyEnabledCard />;
+			return (
+				<EditContactInfoPrivacyEnabledCard
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSiteSlug={ this.props.selectedSite.slug }
+				/>
+			);
 		}
 
 		return (
@@ -77,6 +82,7 @@ class EditContactInfo extends React.Component {
 				<SectionHeader label={ this.props.translate( 'Edit Contact Info' ) } />
 				<EditContactInfoFormCard
 					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
+					domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
 					selectedDomain={ getSelectedDomain( this.props ) }
 					selectedSite={ this.props.selectedSite }
 				/>

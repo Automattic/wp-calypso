@@ -46,7 +46,11 @@ class StartButton extends React.PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<Button className="importer-header__action-button" isPrimary onClick={ this.handleClick }>
+			<Button
+				className="importer-header__action-button"
+				isPrimary={ false }
+				onClick={ this.handleClick }
+			>
 				{ translate( 'Start Import', { context: 'verb' } ) }
 			</Button>
 		);

@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize, moment } from 'i18n-calypso';
 import { get } from 'lodash';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
@@ -41,7 +42,6 @@ import { refreshSitePlans } from 'state/sites/plans/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
-import { getCurrencyDefaults } from 'lib/format-currency';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {

@@ -7,16 +7,18 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { localize } from 'i18n-calypso';
+import { noop, flowRight as compose } from 'lodash';
+import 'moment-timezone'; // monkey patches the existing moment.js
 
 /**
  * Internal dependencies
  */
+import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import InfoPopover from 'components/info-popover';
+import { withLocalizedMoment } from 'components/localized-moment';
 import getSiteSetting from 'state/selectors/get-site-setting';
-import SegmentedControl from 'components/segmented-control';
 import { isMobile } from 'lib/viewport';
 
 /**
@@ -31,16 +33,15 @@ import {
 } from './utils';
 
 class PostScheduleClock extends Component {
-	constructor() {
-		super( ...arguments );
+	adjustHour = event => this.handleKeyDown( event, 'hour' );
+	adjustMinute = event => this.handleKeyDown( event, 'minute' );
 
-		// bounds
-		this.adjustHour = event => this.handleKeyDown( event, 'hour' );
-		this.adjustMinute = event => this.handleKeyDown( event, 'minute' );
+	setAm = event => this.setAmPm( event, 'AM' );
+	setPm = event => this.setAmPm( event, 'PM' );
 
-		this.setAm = event => this.setAmPm( event, 'AM' );
-		this.setPm = event => this.setAmPm( event, 'PM' );
-	}
+	amPmRef = React.createRef();
+	hourRef = React.createRef();
+	minRef = React.createRef();
 
 	handleKeyDown( event, field ) {
 		const operation = event.keyCode - 39;
@@ -53,7 +54,7 @@ class PostScheduleClock extends Component {
 		let value = Number( event.target.value );
 
 		if ( 'hour' === field ) {
-			if ( this.props.is12hour && this.refs.amPmReference ) {
+			if ( this.props.is12hour && this.amPmRef.current ) {
 				value = this.convertTo24Hour( value );
 			}
 
@@ -73,22 +74,20 @@ class PostScheduleClock extends Component {
 	}
 
 	getTimeValues() {
-		const { amPmReference, hourReference, minuteRef } = this.refs;
-
 		const modifiers = {};
-		const hour = parseAndValidateNumber( hourReference.value );
-		let minute = parseAndValidateNumber( minuteRef.value );
+		const hour = parseAndValidateNumber( this.hourRef.current.value );
+		let minute = parseAndValidateNumber( this.minRef.current.value );
 
 		if ( false !== hour && hour < 24 ) {
 			modifiers.hour = Number( hour );
 		}
 
-		if ( this.props.is12hour && amPmReference ) {
+		if ( this.props.is12hour && this.amPmRef.current ) {
 			if (
 				typeof modifiers.hour === 'undefined' ||
-				( amPmReference.value && modifiers.hour > 12 ) === 'PM'
+				( 'PM' === this.amPmRef.current.value && modifiers.hour > 12 )
 			) {
-				modifiers.hour = Number( hourReference.value.substr( -1 ) );
+				modifiers.hour = Number( this.hourRef.current.value.substr( -1 ) );
 			}
 
 			modifiers.hour = this.convertTo24Hour( modifiers.hour );
@@ -96,7 +95,7 @@ class PostScheduleClock extends Component {
 
 		if ( false !== minute ) {
 			if ( minute > 60 ) {
-				minute = minuteRef.value.substr( -1 );
+				minute = this.hourRef.current.value.substr( -1 );
 			}
 
 			modifiers.minute = Number( minute );
@@ -106,12 +105,12 @@ class PostScheduleClock extends Component {
 	}
 
 	setTime = ( event, modifiers = this.getTimeValues() ) => {
-		const date = moment( this.props.date ).set( modifiers );
+		const date = this.props.moment( this.props.date ).set( modifiers );
 		this.props.onChange( date, modifiers );
 	};
 
 	setAmPm( event, amOrPm ) {
-		this.refs.amPmReference.value = amOrPm;
+		this.amPmRef.current.value = amOrPm;
 		this.setTime( event );
 	}
 
@@ -122,9 +121,9 @@ class PostScheduleClock extends Component {
 	 * @return {Number}      The converted hour.
 	 */
 	convertTo24Hour( hour ) {
-		if ( 'PM' === this.refs.amPmReference.value && hour < 12 ) {
+		if ( 'PM' === this.amPmRef.current.value && hour < 12 ) {
 			hour += 12;
-		} else if ( 'AM' === this.refs.amPmReference.value && 12 === hour ) {
+		} else if ( 'AM' === this.amPmRef.current.value && 12 === hour ) {
 			hour = 0;
 		}
 
@@ -132,7 +131,7 @@ class PostScheduleClock extends Component {
 	}
 
 	renderTimezoneSection() {
-		const { date, gmtOffset, siteId, siteSlug, timezone, translate } = this.props;
+		const { date, gmtOffset, siteId, siteSlug, timezone, moment, translate } = this.props;
 
 		if ( ! ( timezone || isValidGMTOffset( gmtOffset ) ) ) {
 			return;
@@ -155,7 +154,7 @@ class PostScheduleClock extends Component {
 
 		const popoverPosition = isMobile() ? 'top' : 'right';
 		const timezoneText = timezone
-			? `${ timezone.replace( /\_/gi, ' ' ) } ${ tzDateOffset }`
+			? `${ timezone.replace( /_/gi, ' ' ) } ${ tzDateOffset }`
 			: `UTC${ convertHoursToHHMM( gmtOffset ) }`;
 
 		const timezoneInfo = translate(
@@ -192,7 +191,7 @@ class PostScheduleClock extends Component {
 				<input
 					className="post-schedule__clock-time"
 					name="post-schedule__clock_hour"
-					ref="hourReference"
+					ref={ this.hourRef }
 					value={ date.format( is12hour ? 'hh' : 'HH' ) }
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustHour }
@@ -204,7 +203,7 @@ class PostScheduleClock extends Component {
 				<input
 					className="post-schedule__clock-time"
 					name="post-schedule__clock_minute"
-					ref="minuteRef"
+					ref={ this.minRef }
 					value={ date.format( 'mm' ) }
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustMinute }
@@ -215,7 +214,7 @@ class PostScheduleClock extends Component {
 					<span>
 						<input
 							type="hidden"
-							ref="amPmReference"
+							ref={ this.amPmRef }
 							name="post-schedule__clock_am-pm"
 							value={ date.format( 'A' ) }
 						/>
@@ -257,6 +256,10 @@ PostScheduleClock.defaultProps = {
 	onChange: noop,
 };
 
-export default connect( ( state, { siteId } ) => ( {
-	is12hour: is12hr( getSiteSetting( state, siteId, 'time_format' ) ),
-} ) )( localize( PostScheduleClock ) );
+export default compose(
+	connect( ( state, { siteId } ) => ( {
+		is12hour: is12hr( getSiteSetting( state, siteId, 'time_format' ) ),
+	} ) ),
+	localize,
+	withLocalizedMoment
+)( PostScheduleClock );

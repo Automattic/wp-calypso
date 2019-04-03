@@ -1,23 +1,25 @@
-.help__support-links {
-	&.is-placeholder {
-		@include placeholder();
-		height: 250px;
-		margin-bottom: 15px;
+.help .upwork-banner {
+	margin: 10px 10px 20px;
+
+	@include breakpoint( '>660px' ) {
+		margin: 0 0 24px;
 	}
 }
 
 .help__support-link {
 	display: flex;
+
+	&:hover {
+		background-color: var( --color-themes-active-text );
+
+		.help__support-link-title {
+			color: var( --color-primary-dark );
+		}
+	}
 }
 
 .help__support-link .help__support-link-section {
 	padding-right: 32px;
-}
-
-.help__support-link .help__support-link-title {
-	&:hover {
-		color: var( --color-accent );
-	}
 }
 
 .help__support-link-contact.is-card-link {
@@ -27,7 +29,7 @@
 .help__support-link-contact .help__support-link-section {
 	flex-grow: 1;
 }
-	
+
 .help__support-link-contact .gridicon {
 	display: none;
 }
@@ -44,7 +46,7 @@
 .help__support-link-title {
 	font-size: 16px;
 	color: var( --color-primary );
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 21px;
 	}
 }
@@ -52,54 +54,26 @@
 .help__support-link-content {
 	margin-bottom: 0;
 	font-size: 14px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
-.help__help-teaser-button {
-	&.is-placeholder {
-		@include placeholder();
-		height: 64px;
-		margin-bottom: 15px;
-	}
+.help__support-links.is-placeholder {
+	@include placeholder();
+	height: 250px;
+	margin-bottom: 15px;
 }
 
-.help__help-teaser-button .card {
-	border-left: 3px solid var( --color-primary );
-	display: flex;
-	margin: 16px 0;
-	padding: 12px 12px;
-
-	.button {
-		margin-left: auto;
-	}
-
-	&.is-no-margin {
-		margin: 0;
-	}
+.help__help-teaser-button.is-placeholder {
+	@include placeholder();
+	height: 64px;
+	margin-bottom: 15px;
 }
 
-.help__help-teaser-text {
-	padding-right: 10px;
+.help-results.is-placeholder {
+	@include placeholder();
+	height: 380px;
+	margin-bottom: 15px;
 }
 
-.help__help-teaser-button-icon {
-	color: var( --color-primary );
-	border-radius: 50%;
-	margin-right: 16px;
-	background-color: $white;
-	align-self: center;
-}
 
-.help__help-teaser-button-title {
-	color: $gray-dark;
-	font-size: 14px;
-	font-weight: 500;
-	padding-right: 15px;
-}
 
-.help__help-teaser-button-description {
-	color: $gray;
-	font-size: 12px;
-	display: block;
-	padding-right: 15px;
-}

@@ -1,12 +1,11 @@
-
 .card {
 	display: block;
 	position: relative;
-	margin: 0 auto 10px auto;
+	margin: 0 auto 10px;
 	padding: 16px;
 	box-sizing: border-box;
 	background: var( --color-surface );
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
 
 	@include clear-fix;
 
@@ -37,7 +36,7 @@
 			&:active,
 			&:focus,
 			&:hover {
-				color: $link-highlight;
+				color: var( --color-link-dark );
 			}
 		}
 	}
@@ -86,7 +85,7 @@
 a.card:hover,
 .is-card-link.card:hover {
 	.card__link-indicator {
-		color: $gray-text;
+		color: var( --color-text );
 	}
 }
 
@@ -95,6 +94,6 @@ a.card:focus,
 	outline: 0;
 
 	.card__link-indicator {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 	}
 }

@@ -32,6 +32,11 @@ import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
 		post: PropTypes.object,
@@ -178,10 +183,9 @@ class ReaderPostOptionsMenu extends React.Component {
 		return (
 			<span className={ classes }>
 				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
-				{ ! site &&
-					post &&
-					! post.is_external &&
-					post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
+				{ ! site && post && ! post.is_external && post.site_ID && (
+					<QueryReaderSite siteId={ +post.site_ID } />
+				) }
 				{ ! teams && <QueryReaderTeams /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
@@ -210,19 +214,17 @@ class ReaderPostOptionsMenu extends React.Component {
 						/>
 					) }
 
-					{ this.props.showVisitPost &&
-						post.URL && (
-							<PopoverMenuItem onClick={ this.visitPost } icon="external">
-								{ translate( 'Visit Post' ) }
-							</PopoverMenuItem>
-						) }
+					{ this.props.showVisitPost && post.URL && (
+						<PopoverMenuItem onClick={ this.visitPost } icon="external">
+							{ translate( 'Visit Post' ) }
+						</PopoverMenuItem>
+					) }
 
-					{ this.props.showEditPost &&
-						isEditPossible && (
-							<PopoverMenuItem onClick={ this.editPost } icon="pencil">
-								{ translate( 'Edit Post' ) }
-							</PopoverMenuItem>
-						) }
+					{ this.props.showEditPost && isEditPossible && (
+						<PopoverMenuItem onClick={ this.editPost } icon="pencil">
+							{ translate( 'Edit Post' ) }
+						</PopoverMenuItem>
+					) }
 
 					{ ( this.props.showFollow || isEditPossible || post.URL ) &&
 						( isBlockPossible || isDiscoverPost ) && (
@@ -241,13 +243,11 @@ class ReaderPostOptionsMenu extends React.Component {
 						</PopoverMenuItem>
 					) }
 
-					{ this.props.showReportSite &&
-						site &&
-						isBlockPossible && (
-							<PopoverMenuItem onClick={ this.reportSite }>
-								{ translate( 'Report this Site' ) }
-							</PopoverMenuItem>
-						) }
+					{ this.props.showReportSite && site && isBlockPossible && (
+						<PopoverMenuItem onClick={ this.reportSite }>
+							{ translate( 'Report this Site' ) }
+						</PopoverMenuItem>
+					) }
 				</EllipsisMenu>
 			</span>
 		);

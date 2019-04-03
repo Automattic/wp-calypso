@@ -1,10 +1,7 @@
-/** @format */
-
 /**
- * Internal dependencies
+ * External dependencies
  */
-
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Constants
@@ -13,10 +10,6 @@ const GOOGLE_APPS_LINK_PREFIX = 'https://mail.google.com/a/';
 
 function getAnnualPrice( cost, currencyCode ) {
 	return formatPrice( cost, currencyCode );
-}
-
-function getMonthlyPrice( cost, currencyCode ) {
-	return formatPrice( cost / 10, currencyCode );
 }
 
 function googleAppsSettingsUrl( domainName ) {
@@ -32,4 +25,15 @@ function formatPrice( cost, currencyCode, options = {} ) {
 	return formatCurrency( cost, currencyCode, cost % 1 > 0 ? {} : { precision: 0 } );
 }
 
-export { getAnnualPrice, getMonthlyPrice, googleAppsSettingsUrl, formatPrice };
+function getLoginUrlWithTOSRedirect( email, domain ) {
+	return (
+		'https://accounts.google.com/AccountChooser?' +
+		`Email=${ encodeURIComponent( email ) }` +
+		`&service=CPanel` +
+		`&continue=${ encodeURIComponent(
+			`https://admin.google.com/${ domain }/AcceptTermsOfService?continue=https://mail.google.com/mail/u/${ email }`
+		) }`
+	);
+}
+
+export { getAnnualPrice, googleAppsSettingsUrl, formatPrice, getLoginUrlWithTOSRedirect };

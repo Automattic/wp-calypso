@@ -2,7 +2,7 @@
 .foldable-card.card.order-activity-log__day-header.is-expanded {
 	margin: 0 0 16px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin: 0 0 24px;
 	}
 }
@@ -11,7 +11,7 @@
 	position: relative;
 	z-index: 0;
 
-	&:before {
+	&::before {
 		content: '';
 		z-index: -1;
 		position: absolute;
@@ -19,7 +19,7 @@
 		left: 45px;
 		bottom: 0;
 		width: 1px;
-		background: transparentize( $gray-lighten-20, .5 );
+		background: rgba( var( --color-neutral-100-rgb ), 0.5 );
 	}
 }
 
@@ -57,8 +57,8 @@
 		.gridicon {
 			display: inline-block;
 			padding: 4px;
-			background: $blue-medium;
-			fill: $white;
+			background: var( --color-primary );
+			fill: var( --color-white );
 			border-radius: 50%;
 			border: 4px solid white;
 		}
@@ -76,7 +76,7 @@
 		box-sizing: border-box;
 		margin-left: 16px;
 		padding: 12px 16px 16px;
-		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 );
+		box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 );
 	}
 
 	.order-activity-log__note-type {
@@ -92,10 +92,10 @@
 
 .order-activity-log__new-note-content {
 	margin: 0 -15px 16px;
-	border: 1px solid $border-ultra-light-gray;
+	border: 1px solid var( --color-border-subtle );
 	border-width: 1px 0;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin: 0 -24px 24px;
 	}
 
@@ -106,7 +106,7 @@
 
 	.form-textarea {
 		padding: 16px;
-		border-color: $white;
+		border-color: var( --color-white );
 		resize: vertical;
 		display: block;
 		font-size: 14px;
@@ -116,10 +116,10 @@
 		}
 
 		&:focus {
-			border-color: $blue-wordpress;
+			border-color: var( --color-primary );
 		}
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			padding: 16px 24px;
 		}
 	}

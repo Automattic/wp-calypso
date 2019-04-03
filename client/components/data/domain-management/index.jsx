@@ -13,23 +13,14 @@ import { connect } from 'react-redux';
  */
 import CartStore from 'lib/cart/store';
 import DnsStore from 'lib/domains/dns/store';
-import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import { fetchUsers } from 'lib/users/actions';
-import { fetchByDomain, fetchBySiteId } from 'state/google-apps-users/actions';
-import { getByDomain, getBySite, isLoaded } from 'state/google-apps-users/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import NameserversStore from 'lib/domains/nameservers/store';
-import {
-	fetchDns,
-	fetchEmailForwarding,
-	fetchNameservers,
-	fetchWapiDomainInfo,
-	fetchWhois,
-} from 'lib/upgrades/actions';
+import { fetchDns, fetchNameservers, fetchWapiDomainInfo, fetchWhois } from 'lib/upgrades/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryProductsList from 'components/data/query-products-list';
@@ -47,9 +38,6 @@ function getStateFromStores( props ) {
 		context: props.context,
 		domains: props.selectedSite ? props.domains : null,
 		dns: DnsStore.getByDomainName( props.selectedDomainName ),
-		emailForwarding: EmailForwardingStore.getByDomainName( props.selectedDomainName ),
-		googleAppsUsers: props.googleAppsUsers,
-		googleAppsUsersLoaded: props.googleAppsUsersLoaded,
 		isRequestingSiteDomains: props.isRequestingSiteDomains,
 		location: SiteRedirectStore.getBySite( props.selectedSite.domain ),
 		nameservers: NameserversStore.getByDomainName( props.selectedDomainName ),
@@ -76,8 +64,6 @@ class DomainManagementData extends React.Component {
 		needsDns: PropTypes.bool,
 		needsDomains: PropTypes.bool,
 		needsDomainInfo: PropTypes.bool,
-		needsEmailForwarding: PropTypes.bool,
-		needsGoogleApps: PropTypes.bool,
 		needsNameservers: PropTypes.bool,
 		needsPlans: PropTypes.bool,
 		needsProductsList: PropTypes.bool,
@@ -101,7 +87,7 @@ class DomainManagementData extends React.Component {
 	}
 
 	loadData = prevProps => {
-		const { needsGoogleApps, needsUsers, selectedDomainName, selectedSite } = this.props;
+		const { needsUsers, selectedDomainName, selectedSite } = this.props;
 
 		if ( this.props.needsDns ) {
 			fetchDns( selectedDomainName );
@@ -109,17 +95,6 @@ class DomainManagementData extends React.Component {
 
 		if ( this.props.needsDomainInfo ) {
 			fetchWapiDomainInfo( selectedDomainName );
-		}
-
-		if ( this.props.needsEmailForwarding ) {
-			fetchEmailForwarding( selectedDomainName );
-		}
-
-		if (
-			needsGoogleApps &&
-			( prevProps.needsGoogleApps !== needsGoogleApps || prevProps.selectedSite !== selectedSite )
-		) {
-			this.props.fetchGoogleAppsUsers( selectedSite.ID );
 		}
 
 		if ( this.props.needsNameservers ) {
@@ -145,7 +120,6 @@ class DomainManagementData extends React.Component {
 			needsDns,
 			needsDomains,
 			needsDomainInfo,
-			needsEmailForwarding,
 			needsNameservers,
 			needsPlans,
 			needsProductsList,
@@ -164,9 +138,6 @@ class DomainManagementData extends React.Component {
 		}
 		if ( needsDomainInfo ) {
 			stores.push( WapiDomainInfoStore );
-		}
-		if ( needsEmailForwarding ) {
-			stores.push( EmailForwardingStore );
 		}
 		if ( needsNameservers ) {
 			stores.push( NameserversStore );
@@ -195,8 +166,6 @@ class DomainManagementData extends React.Component {
 					currentUser={ this.props.currentUser }
 					domains={ this.props.domains }
 					getStateFromStores={ getStateFromStores }
-					googleAppsUsers={ this.props.googleAppsUsers }
-					googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
 					isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
 					products={ this.props.productsList }
 					selectedDomainName={ this.props.selectedDomainName }
@@ -209,32 +178,16 @@ class DomainManagementData extends React.Component {
 	}
 }
 
-export default connect(
-	( state, { selectedDomainName } ) => {
-		const selectedSite = getSelectedSite( state );
-		const siteId = get( selectedSite, 'ID', null );
-		const googleAppsUsers = selectedDomainName
-			? getByDomain( state, selectedDomainName )
-			: getBySite( state, siteId );
+export default connect( state => {
+	const selectedSite = getSelectedSite( state );
+	const siteId = get( selectedSite, 'ID', null );
 
-		return {
-			currentUser: getCurrentUser( state ),
-			domains: getDecoratedSiteDomains( state, siteId ),
-			googleAppsUsers,
-			googleAppsUsersLoaded: isLoaded( state ),
-			isRequestingSiteDomains: isRequestingSiteDomains( state, siteId ),
-			productsList: getProductsList( state ),
-			sitePlans: getPlansBySite( state, selectedSite ),
-			selectedSite,
-		};
-	},
-	( dispatch, { selectedDomainName } ) => {
-		const googleAppsUsersFetcher = selectedDomainName
-			? () => fetchByDomain( selectedDomainName )
-			: siteId => fetchBySiteId( siteId );
-
-		return {
-			fetchGoogleAppsUsers: siteId => dispatch( googleAppsUsersFetcher( siteId ) ),
-		};
-	}
-)( DomainManagementData );
+	return {
+		currentUser: getCurrentUser( state ),
+		domains: getDecoratedSiteDomains( state, siteId ),
+		isRequestingSiteDomains: isRequestingSiteDomains( state, siteId ),
+		productsList: getProductsList( state ),
+		sitePlans: getPlansBySite( state, selectedSite ),
+		selectedSite,
+	};
+} )( DomainManagementData );

@@ -9,11 +9,19 @@ Checklist
 
 Render as a placeholder.
 
+### `progressText { string } - default: "Your setup list"`
+
+Displayed in the checklist header, right on top of the progress bar.
+
 ## `Task` props
 
 ### `completed { bool }`
 
 Whether the task is complete.
+
+### `inProgress { bool }`
+
+Whether the task is in progress.
 
 ### `onClick { Function }`
 
@@ -77,6 +85,10 @@ Task title
 		completedTitle="Yaks shaved."
 		description="Make sure you shave the yaks so you can get on with your life."
 		duration="10,000 minutes"
+	/>
+	<Task
+		title="Overwaxing banisters!"
+		inProgress={ ! this.state.overwaxBanisters }
 	/>
 </Checklist>
 ```

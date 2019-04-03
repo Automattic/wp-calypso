@@ -1,17 +1,8 @@
 .credit-cards__no-results {
 	display: block;
-	color: $gray;
+	color: var( --color-text-subtle );
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding: 8px;
-	}
-}
-
-.credit-cards__single-card {
-	border: 1px solid $gray-lighten-30;
-	border-top: none;
-
-	&:first-child {
-		border-top: 1px solid $gray-lighten-30;
 	}
 }

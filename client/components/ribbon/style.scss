@@ -11,7 +11,7 @@
 .ribbon .ribbon__title {
 	font-size: 10px;
 	font-weight: normal;
-	color: $white;
+	color: var( --color-white );
 	text-align: center;
 	line-height: 20px;
 	transform: rotate( 45deg );
@@ -25,38 +25,38 @@
 	text-transform: uppercase;
 }
 .ribbon .ribbon__title::before {
-	content: "";
+	content: '';
 	position: absolute;
-	left: 0px;
+	left: 0;
 	top: 100%;
 	z-index: z-index( '.ribbon', '.ribbon__title::before' );
-	border-left: 3px solid var( --color-primary-dark );
+	border-left: 3px solid var( --color-accent-dark );
 	border-right: 3px solid transparent;
 	border-bottom: 3px solid transparent;
-	border-top: 3px solid var( --color-primary-dark );
+	border-top: 3px solid var( --color-accent-dark );
 }
 .ribbon .ribbon__title::after {
-	content: "";
+	content: '';
 	position: absolute;
 	right: 0;
 	top: 100%;
 	z-index: z-index( '.ribbon', '.ribbon__title::after' );
 	border-left: 3px solid transparent;
-	border-right: 3px solid var( --color-primary-dark );
+	border-right: 3px solid var( --color-accent-dark );
 	border-bottom: 3px solid transparent;
-	border-top: 3px solid var( --color-primary-dark );
+	border-top: 3px solid var( --color-accent-dark );
 }
 
 .ribbon.is-green {
 	.ribbon__title {
-		background-color: var( --color-success )
+		background-color: var( --color-success );
 	}
 	.ribbon__title::before {
-		border-left-color: darken( $alert-green, 20% );
-		border-top-color: darken( $alert-green, 20% );
+		border-left-color: var( --color-success-dark );
+		border-top-color: var( --color-success-dark );
 	}
 	.ribbon__title::after {
-		border-right-color: darken( $alert-green, 20% );
-		border-top-color: darken( $alert-green, 20% );
+		border-right-color: var( --color-success-dark );
+		border-top-color: var( --color-success-dark );
 	}
 }

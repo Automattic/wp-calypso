@@ -1,4 +1,3 @@
-
 .domain-suggestion {
 	box-sizing: border-box;
 
@@ -20,18 +19,29 @@
 		transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
 
 		&:hover {
-			box-shadow: 0 0 0 1px $gray;
+			box-shadow: 0 0 0 1px var( --color-neutral-light );
 			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
 		}
 	}
 
 	&.is-added {
-		background-color: lighten( $gray, 35% );
+		background-color: var( --color-neutral-0 );
 
 		.domain-suggestion__content {
 			h3,
 			.domain-product-price {
-				color: $gray;
+				color: var( --color-neutral-light );
+			}
+		}
+	}
+
+	&.is-unavailable {
+		cursor: default;
+
+		.domain-suggestion__content {
+			h3,
+			.domain-product-price {
+				color: var( --color-neutral-0 );
 			}
 		}
 	}
@@ -43,11 +53,12 @@
 
 	@include breakpoint( '>660px' ) {
 		display: flex;
+		justify-content: space-between;
 	}
 
 	.notice.is-compact {
 		margin: 0 0 0 8px;
-		color: $white;
+		color: var( --color-white );
 
 		&.is-success {
 			background: var( --color-success );
@@ -72,7 +83,7 @@
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		color: transparent;
 		min-height: 44px;
 	}
@@ -96,20 +107,29 @@
 		word-break: break-all;
 
 		@include breakpoint( '>660px' ) {
-			width: 75%;
+			flex-grow: 2;
 		}
+	}
 
+	> div {
 		.is-placeholder & {
 			color: transparent;
 		}
 	}
 }
 
-.domain-product-price__price {
-	font-size: 1.2em;
+.domain-registration-suggestion__title-wrapper {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 
-	@include breakpoint( '>480px' ) {
-		font-size: 1em;
+	.domain-registration-suggestion__title {
+		width: auto;
+		padding-right: 0.5em;
+	}
+
+	.badge {
+		align-self: center;
 	}
 }
 
@@ -127,20 +147,12 @@
 .button.domain-suggestion__action {
 	min-width: 66px;
 	text-align: center;
-	color: var( --color-accent );
 	margin-top: 0.5em;
 	padding: 0.25em 3em;
 	float: right;
+	transition: all 0.1s linear;
 
 	&.is-primary {
-		color: $white;
-		transition: all 0.1s linear;
-
-		&:hover {
-			background-color: lighten( $blue-medium, 4% );
-			border-color: darken( $blue-medium, 4% );
-		}
-
 		@include breakpoint( '>480px' ) {
 			margin-left: 1em;
 			margin-top: 0;
@@ -149,7 +161,7 @@
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		border: none;
 		border-radius: 0;
 		color: transparent;
@@ -157,31 +169,26 @@
 		min-height: 26px;
 	}
 
+	&.is-borderless {
+		color: var( --color-primary );
+		padding: 0.25em;
+	}
+
 	@include breakpoint( '>480px' ) {
 		flex: 1 0 auto;
 		float: none;
-	}
-}
-
-.domain-transfer-suggestion {
-	display: flex;
-	align-items: center;
-
-	.button.domain-suggestion__action {
-		flex: 1 0 auto;
-		margin: 0;
-		padding-left: 0;
-		padding-right: 0;
+		margin-left: 1em;
+		margin-top: 0;
 	}
 }
 
 .domain-suggestion__chevron {
 	margin-left: 10px;
 	flex: 1 0 auto;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		color: $gray-lighten-30;
+		color: var( --color-neutral-0 );
 	}
 }

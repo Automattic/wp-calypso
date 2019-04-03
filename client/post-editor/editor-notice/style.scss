@@ -1,5 +1,3 @@
-@import 'components/global-notices/style';
-
 .editor-notice {
 	.notice {
 		margin: 0;
@@ -16,7 +14,7 @@
 
 		a {
 			text-decoration: underline;
-			color: $white;
+			color: var( --color-white );
 			background-image: none;
 
 			&:hover {
@@ -26,7 +24,6 @@
 	}
 
 	&.is-global {
-		@extend .global-notices;
 		z-index: z-index( 'root', '.web-preview .editor-notice' );
 
 		@include breakpoint( '>660px' ) {

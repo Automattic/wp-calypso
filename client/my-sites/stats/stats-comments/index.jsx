@@ -31,6 +31,13 @@ import {
 } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+/* eslint-disable wpcalypso/jsx-classname-namespace*/
+
 class StatsComments extends Component {
 	static propTypes = {
 		commentsStatsData: PropTypes.object,
@@ -137,14 +144,12 @@ class StatsComments extends Component {
 				<SectionHeader label={ translate( 'Comments' ) } />
 				<Card className={ classes }>
 					<div className="module-content">
-						{ noData &&
-							! hasError &&
-							! requestingCommentsStats && (
-								<StatsErrorPanel
-									className="is-empty-message"
-									message={ translate( 'No comments posted' ) }
-								/>
-							) }
+						{ noData && ! hasError && ! requestingCommentsStats && (
+							<StatsErrorPanel
+								className="is-empty-message"
+								message={ translate( 'No comments posted' ) }
+							/>
+						) }
 
 						<StatsModuleSelectDropdown options={ selectOptions } onSelect={ this.changeFilter } />
 

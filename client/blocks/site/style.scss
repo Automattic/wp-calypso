@@ -21,7 +21,7 @@
 		.site__title,
 		.site__domain {
 			animation: pulse-light 0.8s ease-in-out infinite;
-			background-color: $gray-lighten-30;
+			background-color: var( --color-neutral-0 );
 			color: transparent;
 			width: 95%;
 
@@ -121,7 +121,7 @@
 
 .site__home {
 	background: var( --color-accent );
-	color: $white;
+	color: var( --color-white );
 	display: block;
 	width: 32px;
 	height: 32px;
@@ -146,7 +146,7 @@
 	}
 
 	&:hover {
-		color: $white;
+		color: var( --color-white );
 	}
 
 	@include breakpoint( '<660px' ) {
@@ -159,7 +159,7 @@
 }
 
 .site__badge {
-	color: var( --site-selector-gridicon-fill );
+	color: var( --color-neutral );
 	padding-right: 4px;
 	line-height: 0;
 	position: relative;

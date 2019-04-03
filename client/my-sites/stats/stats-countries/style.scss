@@ -1,6 +1,13 @@
 // Countries
 .countryviews {
 	.module-content-list-item-label .icon img {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
+	}
+
+	.stats-module.is-loading &,
+	.stats-module.has-no-data & {
+		.stats-geochart {
+			display:none;
+		}
 	}
 }

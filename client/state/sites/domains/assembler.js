@@ -3,7 +3,12 @@
 /**
  * Internal dependencies
  */
-import { getDomainType, getGdprConsentStatus, getTransferStatus } from 'lib/domains/utils';
+import {
+	getDomainRegistrationAgreementUrl,
+	getDomainType,
+	getGdprConsentStatus,
+	getTransferStatus,
+} from 'lib/domains/utils';
 import { camelCase, mapKeys } from 'lodash';
 
 function assembleGoogleAppsSubscription( googleAppsSubscription ) {
@@ -24,12 +29,12 @@ export const createSiteDomainObject = domain => {
 		currentUserCanManage: Boolean( domain.current_user_can_manage ),
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),
+		domainRegistrationAgreementUrl: getDomainRegistrationAgreementUrl( domain ),
 		expired: Boolean( domain.expired ),
 		expiry: ! domain.expiry ? null : String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),
 		gdprConsentStatus: getGdprConsentStatus( domain ),
 		googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
-		hasPrivacyProtection: Boolean( domain.has_private_registration ),
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
@@ -37,7 +42,6 @@ export const createSiteDomainObject = domain => {
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPrimary: Boolean( domain.primary_domain ),
 		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),
-		isPrivate: Boolean( domain.private_domain ),
 		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		manualTransferRequired: Boolean( domain.manual_transfer_required ),
 		newRegistration: Boolean( domain.new_registration ),
@@ -54,6 +58,7 @@ export const createSiteDomainObject = domain => {
 		registrationDate: String( domain.registration_date ),
 		subscriptionId: domain.subscription_id,
 		supportsDomainConnect: Boolean( domain.supports_domain_connect ),
+		supportsGdprConsentManagement: Boolean( domain.supports_gdpr_consent_management ),
 		tldMaintenanceEndTime: domain.tld_maintenance_end_time,
 		transferAwayEligibleAt: ! domain.transfer_away_eligible_at
 			? null

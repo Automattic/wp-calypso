@@ -8,7 +8,7 @@
 
 	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 	position: relative;
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	margin-bottom: 6%;
 	padding: 16px;
 
@@ -33,7 +33,7 @@
 		// Focus state
 		&:focus {
 			outline: none;
-			color: $link-highlight;
+			color: var( --color-link-dark );
 		}
 	}
 
@@ -42,7 +42,7 @@
 
 		font-size: 21px;
 		line-height: 24px;
-		color: $gray;
+		color: var( --color-neutral-light );
 
 		margin-top: 0;
 		margin-bottom: 20px;

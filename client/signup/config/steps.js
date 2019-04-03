@@ -16,9 +16,14 @@ import {
 	createSiteOrDomain,
 	createSiteWithCart,
 	setThemeOnSite,
+	addDomainToCart,
+	launchSiteApi,
+	isPlanFulfilled,
+	isDomainFulfilled,
+	isSiteTypeFulfilled,
+	isSiteTopicFulfilled,
 } from 'lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
-import { abtest } from 'lib/abtest';
 
 export default generateSteps( {
 	addPlanToCart,
@@ -28,5 +33,10 @@ export default generateSteps( {
 	createSiteWithCart,
 	currentPage,
 	setThemeOnSite,
-	removeUsernameTest: abtest( 'removeUsername' ),
+	addDomainToCart,
+	launchSiteApi,
+	isPlanFulfilled,
+	isDomainFulfilled,
+	isSiteTypeFulfilled,
+	isSiteTopicFulfilled,
 } );

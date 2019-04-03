@@ -1,0 +1,118 @@
+.gsuite-purchase-cta__add-google-apps-card-product-logo {
+	font-size: 150%;
+	color: #757575;
+
+	@include breakpoint( '<660px' ) {
+		width: 236px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		float: left;
+	}
+
+	strong {
+		background: url( '/calypso/images/upgrades/g-suite-logo.png' ) no-repeat left;
+		background-size: 73px;
+		background-position-y: 5px;
+		display: inline-block;
+		height: 23px;
+		margin: 0 6px 0 0;
+		text-indent: -999999px;
+		vertical-align: text-top;
+		width: 73px;
+	}
+}
+
+.gsuite-purchase-cta__add-google-apps-card-product-details {
+	@include breakpoint( '>960px' ) {
+		display: flex;
+	}
+}
+
+.gsuite-purchase-cta__add-google-apps-card-description {
+	box-sizing: border-box;
+	font-size: 14px;
+
+	@include breakpoint( '>960px' ) {
+		flex-basis: 100%;
+		max-width: 400px;
+	}
+
+	.button {
+		float: none;
+		margin: 1em 0 0.5em;
+		padding-left: 2em;
+		padding-right: 2em;
+
+		@include breakpoint( '<960px' ) {
+			width: 100%;
+		}
+	}
+}
+
+.gsuite-purchase-cta__add-google-apps-card-title {
+	color: var( --color-text );
+	font-size: 24px;
+	line-height: 120%;
+	margin: 0 0 10px;
+}
+
+.gsuite-purchase-cta__add-google-apps-card-sub-title {
+	font-size: 18px;
+}
+
+.gsuite-purchase-cta__add-google-apps-card-price {
+	margin: 2em 0 1em;
+
+	.gsuite-purchase-cta__add-google-apps-card-price-per-user {
+		strong {
+			color: var( --color-text );
+			font-size: 24px;
+			font-weight: 300;
+		}
+
+		span {
+			color: var( --color-text-subtle );
+			font-size: 13px;
+			font-weight: normal;
+		}
+	}
+
+	.gsuite-purchase-cta__add-google-apps-card-billing-period {
+		color: var( --color-text-subtle );
+		font-size: 13px;
+		font-style: italic;
+
+		@include breakpoint( '<960px' ) {
+			text-align: center;
+		}
+	}
+}
+
+.gsuite-purchase-cta__add-google-apps-card-logos {
+	display: none;
+
+	@include breakpoint( '>960px' ) {
+		align-items: flex-start;
+		display: flex;
+		flex-grow: 1;
+		margin-left: 20px;
+		justify-content: center;
+	}
+
+	@include breakpoint( '>1040px' ) {
+		align-items: center;
+	}
+}
+
+.gsuite-purchase-cta__add-google-apps-card-secondary-button {
+	.button {
+		float: none;
+		margin: 1em 0;
+		width: 100%;
+
+		@include breakpoint( '>660px' ) {
+			display: none;
+		}
+	}
+}

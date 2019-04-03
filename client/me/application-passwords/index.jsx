@@ -31,6 +31,10 @@ import getApplicationPasswords from 'state/selectors/get-application-passwords';
 import getNewApplicationPassword from 'state/selectors/get-new-application-password';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
 class ApplicationPasswords extends Component {
 	static initialState = Object.freeze( {
 		applicationName: '',

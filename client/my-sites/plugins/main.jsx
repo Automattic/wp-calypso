@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -44,6 +43,11 @@ import {
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import HeaderButton from 'components/header-button';
 import { isEnabled } from 'config';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class PluginsMain extends Component {
 	state = this.getPluginsState( this.props );
@@ -334,10 +338,9 @@ export class PluginsMain extends Component {
 			/>
 		);
 
-		const morePluginsHeader = showInstalledPluginList &&
-			showSuggestedPluginsList && (
-				<h3 className="plugins__more-header">{ this.props.translate( 'More Plugins' ) }</h3>
-			);
+		const morePluginsHeader = showInstalledPluginList && showSuggestedPluginsList && (
+			<h3 className="plugins__more-header">{ this.props.translate( 'More Plugins' ) }</h3>
+		);
 
 		let searchTitle;
 		if ( search ) {

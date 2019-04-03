@@ -65,4 +65,8 @@ is selected.
 
 `onMonthChange` - **optional** Called when month is changed by user.
 
+`locale` - **optional** String representing the current locale slug (eg: `en`). Note that the default component `export`ed is already wrapped in the `localize` HOC which automatically sets this prop for you. Previously this prop was an object of utility overides. This has been moved to a dedicated `localUtils` prop (see below).
+
+`localeUtils` - **optional** Object of [locale utility _overides_](http://react-day-picker.js.org/api/LocaleUtils) which are merged with the default utilities passed into the `react-day-picker` library. Previously this prop was named `locale`, but was moved to its own dedicated prop for API consistency with the React Day Picker library.
+
 ------------

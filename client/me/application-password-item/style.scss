@@ -1,4 +1,4 @@
-.application-password-item__password {
+.application-password-item {
 	overflow: auto;
 }
 
@@ -7,8 +7,8 @@
 }
 
 .application-password-item__generated {
-	color: $gray-darken-10;
-	font-size: .9em;
+	color: var( --color-neutral-400 );
+	font-size: 0.9em;
 }
 
 .application-password-item__revoke {

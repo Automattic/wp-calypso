@@ -14,15 +14,15 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import { CreditCardFormFields } from '../';
-import { shouldRenderAdditionalEbanxFields } from 'lib/checkout/ebanx';
+import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
 } ) );
 
-jest.mock( 'lib/checkout/ebanx', () => {
+jest.mock( 'lib/checkout/processor-specific', () => {
 	return {
-		shouldRenderAdditionalEbanxFields: jest.fn( false ),
+		shouldRenderAdditionalCountryFields: jest.fn( false ),
 	};
 } );
 
@@ -47,27 +47,27 @@ describe( 'CreditCardFormFields', () => {
 
 	test( 'should not render ebanx fields', () => {
 		const wrapper = shallow( <CreditCardFormFields { ...defaultProps } /> );
-		expect( wrapper.find( 'EbanxPaymentFields' ) ).toHaveLength( 0 );
+		expect( wrapper.find( 'CountrySpecificPaymentFields' ) ).toHaveLength( 0 );
 	} );
 
 	describe( 'with ebanx activated', () => {
 		beforeAll( () => {
-			shouldRenderAdditionalEbanxFields.mockReturnValue( true );
+			shouldRenderAdditionalCountryFields.mockReturnValue( true );
 		} );
 		afterAll( () => {
-			shouldRenderAdditionalEbanxFields.mockReturnValue( false );
+			shouldRenderAdditionalCountryFields.mockReturnValue( false );
 		} );
 
 		test( 'should display Ebanx fields when an Ebanx payment country is selected and there is a transaction in process', () => {
 			const wrapper = shallow( <CreditCardFormFields { ...defaultProps } /> );
 			wrapper.setProps( { card: { country: 'BR' } } );
-			expect( wrapper.find( 'EbanxPaymentFields' ) ).toHaveLength( 1 );
+			expect( wrapper.find( 'CountrySpecificPaymentFields' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should not display Ebanx fields when there is a transaction in process', () => {
 			const wrapper = shallow( <CreditCardFormFields { ...defaultProps } /> );
 			wrapper.setProps( { card: { country: 'BR' }, isNewTransaction: false } );
-			expect( wrapper.find( 'EbanxPaymentFields' ) ).toHaveLength( 0 );
+			expect( wrapper.find( 'CountrySpecificPaymentFields' ) ).toHaveLength( 0 );
 		} );
 	} );
 } );

@@ -30,6 +30,11 @@ import { getPlanClass } from 'lib/plans/constants';
 import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'state/sites/selectors';
 import getRewindState from 'state/selectors/get-rewind-state';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DisconnectJetpack extends PureComponent {
 	static propTypes = {
 		disconnectHref: PropTypes.string,

@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { drop, isEmpty, join, find, split, startsWith, values } from 'lodash';
+import { drop, isEmpty, join, find, get, split, startsWith, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -77,6 +77,10 @@ function getGdprConsentStatus( domainFromApi ) {
 	}
 }
 
+function getDomainRegistrationAgreementUrl( domainFromApi ) {
+	return get( domainFromApi, 'domain_registration_agreement_url', null );
+}
+
 /**
  * Depending on the current step in checkout, the user's domain can be found in
  * either the cart or the receipt.
@@ -125,6 +129,7 @@ function parseDomainAgainstTldList( domainFragment, tldList ) {
 
 export {
 	getDomainNameFromReceiptOrCart,
+	getDomainRegistrationAgreementUrl,
 	getDomainType,
 	getGdprConsentStatus,
 	getTransferStatus,

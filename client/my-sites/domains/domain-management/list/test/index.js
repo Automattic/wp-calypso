@@ -122,11 +122,17 @@ describe( 'index', () => {
 			} );
 
 			test( 'should show the cancel button', () => {
-				assert( ReactDom.findDOMNode( component.refs.cancelChangePrimaryButton ) );
+				assert(
+					ReactDom.findDOMNode( component ).querySelector(
+						'.domain-management-list__cancel-change-primary-button'
+					)
+				);
 			} );
 
 			test( 'should disable upon clicking cancel button', () => {
-				const button = ReactDom.findDOMNode( component.refs.cancelChangePrimaryButton );
+				const button = ReactDom.findDOMNode( component ).querySelector(
+					'.domain-management-list__cancel-change-primary-button'
+				);
 				TestUtils.Simulate.click( button );
 				assert( ! component.state.changePrimaryDomainModeEnabled );
 			} );

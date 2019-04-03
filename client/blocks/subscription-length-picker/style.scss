@@ -15,7 +15,16 @@
 	}
 
 	&__option-container {
-		flex-basis: calc( 50% - 10px );
+		&:first-child:nth-last-child( 2 ),
+		&:first-child:nth-last-child( 2 ) ~ div {
+			flex-basis: calc( 50% - 10px );
+			margin-top: 0;
+		}
+
+		flex-basis: calc( 100% );
+		&:not( :first-child ) {
+			margin-top: 20px;
+		}
 
 		@include breakpoint( '<960px' ) {
 			flex-basis: calc( 100% );
@@ -36,7 +45,7 @@
 	padding: $padding-size;
 	border-radius: 5px;
 
-	background: $white;
+	background: var( --color-white );
 
 	.subscription-length-picker__option-radio-wrapper {
 		width: 21px;
@@ -47,7 +56,7 @@
 		width: 21px;
 		height: 21px;
 
-		&:checked:before {
+		&:checked::before {
 			width: 13px;
 			height: 13px;
 		}
@@ -93,20 +102,20 @@
 
 	.subscription-length-picker__option-credit-info {
 		float: right;
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	.subscription-length-picker__option-old-price {
 		position: relative;
 		display: inline-block;
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		margin-right: 5px;
 		text-decoration: line-through;
 	}
 
 	.subscription-length-picker__option-price {
 		display: inline-block;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.subscription-length-picker__option-side-note {
@@ -122,12 +131,12 @@
 	}
 
 	&:not( .is-active ) {
-		border: 1px solid $gray;
+		border: 1px solid var( --color-neutral-light );
 		padding: $padding-size + 2px;
 	}
 
 	&.is-active {
-		border: 3px solid var( --color-success );
+		border: 3px solid var( --color-primary );
 		.subscription-length-picker__option-credit-info {
 			color: var( --color-success );
 		}

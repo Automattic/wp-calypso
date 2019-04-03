@@ -17,6 +17,9 @@ node_modules
 .eslintcache
 test-results*.xml
 /stats.json
+spec-xunit-reporter-0.0.1.tgz
+*xunit_*.xml
+lerna-debug.log
 
 # added during build
 /config/secrets.json

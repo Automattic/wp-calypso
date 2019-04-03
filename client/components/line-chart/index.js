@@ -20,6 +20,11 @@ import D3Base from 'components/d3-base';
 import Tooltip from 'components/tooltip';
 import LineChartLegend from './legend';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const CHART_MARGIN = 0.01;
 const POINTS_MAX = 10;
 const POINTS_SIZE = 3;
@@ -39,9 +44,8 @@ const dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) =>
 		Math.round(
 			mean(
 				tickRefs
-					.map(
-						( tickRef, tickRefIndex ) =>
-							tickRef.__data__.getMonth() === date.getMonth() ? tickRefIndex : null
+					.map( ( tickRef, tickRefIndex ) =>
+						tickRef.__data__.getMonth() === date.getMonth() ? tickRefIndex : null
 					)
 					.filter( e => e !== null )
 			)

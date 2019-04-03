@@ -19,6 +19,11 @@ import { planHasFeature } from 'lib/plans';
 import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
 import PlanStorageBar from './bar';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class PlanStorage extends Component {
 	static propTypes = {
 		className: PropTypes.string,

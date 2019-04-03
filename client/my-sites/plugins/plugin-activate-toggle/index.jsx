@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,11 @@ import PluginsActions from 'lib/plugins/actions';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class PluginActivateToggle extends Component {
 	toggleActivation = () => {

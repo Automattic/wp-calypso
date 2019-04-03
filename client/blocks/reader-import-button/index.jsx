@@ -16,6 +16,11 @@ import wpcom from 'lib/wp';
 import FilePicker from 'components/file-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderImportButton extends React.Component {
 	static propTypes = {
 		onProgress: PropTypes.func,

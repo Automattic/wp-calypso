@@ -8,7 +8,7 @@
 	width: 56px;
 	height: 56px;
 	position: relative;
-	transition: opacity .15s ease-in-out;
+	transition: opacity 0.15s ease-in-out;
 
 	@include breakpoint( '<480px' ) {
 		width: 40px;
@@ -25,15 +25,15 @@
 		transform: translate( -50%, -50% );
 		width: 24px;
 		height: 24px;
-		fill: $white;
+		fill: var( --color-white );
 	}
 	&.is-placeholder {
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 		opacity: 0.3;
 	}
 	&.is-fallback {
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 	}
 }
 

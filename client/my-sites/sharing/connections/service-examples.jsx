@@ -121,17 +121,15 @@ class SharingServiceExamples extends Component {
 				image: {
 					src: '/calypso/images/sharing/google-photos.png',
 					alt: this.props.translate(
-						'Connect to use photos stored in your Google account directly inside the editor',
+						'Connect to use photos stored in your Google Photos library directly inside the editor',
 						{ textOnly: true }
 					),
 				},
 				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to use photos stored in your Google account directly inside the editor. ' +
-						'{{sup}}*{{/sup}}Note that new photos may take a few minutes to appear',
+					'{{strong}}Connect{{/strong}} to use photos stored in your Google Photos library directly inside the editor.',
 					{
 						components: {
 							strong: <strong />,
-							sup: <sup />,
 						},
 					}
 				),
@@ -321,13 +319,21 @@ class SharingServiceExamples extends Component {
 					src: '/calypso/images/sharing/mailchimp-screenshot.png',
 					alt: this.props.translate( 'Add subscribers to MailChimp', { textOnly: true } ),
 				},
-				label: this.props.translate( 'Automatically add blog subscribers to your MailChimp list.' ),
+				label: this.props.translate(
+					'Enable site visitors to sign up for your MailChimp content.'
+				),
 			},
 		];
 	}
 
 	render() {
 		if ( ! includes( SERVICES_WHITELIST, this.props.service.ID ) ) {
+			/**
+			 * TODO: Refactoring this line has to be tackled in a seperate diff.
+			 * Touching this changes services-group.jsx which changes service.jsx
+			 * Basically whole folder needs refactoring.
+			 */
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			return <div className="sharing-service-examples" />;
 		}
 
@@ -338,6 +344,12 @@ class SharingServiceExamples extends Component {
 		const examples = this[ this.props.service.ID ]();
 
 		return (
+			/**
+			 * TODO: Refactoring this line has to be tackled in a seperate diff.
+			 * Touching this changes services-group.jsx which changes service.jsx
+			 * Basically whole folder needs refactoring.
+			 */
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="sharing-service-examples">
 				{ examples.map( ( example, index ) => (
 					<ServiceExample

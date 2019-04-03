@@ -14,7 +14,12 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-user-interop';
+import {
+	isSupportUserSession,
+	isSupportNextSession,
+	supportUserBoot,
+	supportNextBoot,
+} from 'lib/user/support-user-interop';
 import wpcom from 'lib/wp';
 import Emitter from 'lib/mixins/emitter';
 import { isE2ETest } from 'lib/e2e';
@@ -25,6 +30,7 @@ import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility'
 
 /**
  * User component
+ * @class
  */
 function User() {
 	if ( ! ( this instanceof User ) ) {
@@ -64,6 +70,11 @@ User.prototype.initialize = function() {
 		return;
 	}
 
+	if ( isSupportNextSession() ) {
+		// boot the support session and proceed with user bootstrap (unlike the SupportUserSession)
+		supportNextBoot();
+	}
+
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		this.data = window.currentUser || false;
 		debug( 'Bootstrapping user data:', this.data );
@@ -92,6 +103,8 @@ User.prototype.initialize = function() {
 /**
  * Clear localStorage when we detect that there is a mismatch between the ID
  * of the user stored in localStorage and the current user ID
+ *
+ * @param {Number} userId The new user ID.
  **/
 User.prototype.clearStoreIfChanged = function( userId ) {
 	const storedUser = store.get( 'wpcom_user' );
@@ -104,6 +117,8 @@ User.prototype.clearStoreIfChanged = function( userId ) {
 
 /**
  * Get user data
+ *
+ * @returns {Object} The user data.
  */
 User.prototype.get = function() {
 	if ( ! this.data ) {
@@ -211,7 +226,10 @@ User.prototype.getLanguage = function() {
  * Get the URL for a user's avatar (from Gravatar). Uses
  * the short-form query string parameters as options,
  * sets some sane defaults.
+ *
  * @param {Object} options Options per https://secure.gravatar.com/site/implement/images/
+ *
+ * @returns {String} The user's avatar URL based on the options parameter.
  */
 User.prototype.getAvatarUrl = function( options ) {
 	const default_options = {
@@ -251,6 +269,11 @@ User.prototype.clear = function( onClear ) {
 /**
  * Sends the user an email with a link to verify their account if they
  * are unverified.
+ *
+ * @param {Function} [fn] A callback to receive the HTTP response from the send-verification-email endpoint.
+ *
+ * @returns {(Promise|Object)} If a callback is provided, this is an object representing an XMLHttpRequest.
+ *                             If no callback is provided, this is a Promise.
  */
 User.prototype.sendVerificationEmail = function( fn ) {
 	return wpcom

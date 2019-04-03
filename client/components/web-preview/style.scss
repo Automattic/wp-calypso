@@ -21,7 +21,7 @@
 	}
 
 	&.is-with-sidebar {
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			left: 273px;
 		}
 	}
@@ -34,14 +34,14 @@
 		right: 0;
 		bottom: 0;
 	display: block;
-	background: rgba( $gray-light, 0.8 );
+	background: rgba( var( --color-neutral-0-rgb ), 0.8 );
 }
 
 .web-preview__content {
 	display: flex;
 	flex-direction: column;
-	box-shadow: 0 0 0 1px rgba( $gray, 0.5 );
-	background: $gray-light;
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-light-rgb ), 0.5 );
+	background: var( --color-neutral-0 );
 	border-radius: 4px 4px 0 0;
 	position: absolute;
 		top: 0;
@@ -54,7 +54,7 @@
 	transition: transform 0.2s ease-out,
 		opacity 0.1s ease-in-out;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		top: 24px;
 		left: 24px;
 		right: 24px;
@@ -64,20 +64,20 @@
 
 .web-preview__toolbar {
 	height: 46px;
-	background: $white;
-	border-bottom: 1px solid $gray-lighten-20;
+	background: var( --color-white );
+	border-bottom: 1px solid var( --color-neutral-100 );
 	border-radius: 4px 4px 0 0;
 	display: flex;
 }
 
 .web-preview__close.button {
-	border-right: 1px solid lighten( $gray, 25% );
+	border-right: 1px solid var( --color-neutral-50 );
 	padding: 6px 16px;
 	min-width: 80px;
 	color: var( --color-primary );
 	border-radius: 0;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		padding: 6px 32px;
 	}
 
@@ -103,7 +103,7 @@ a.web-preview__external.button {
 	display: flex;
 	justify-content: flex-end;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		// Matches __device-switcher width + margin
 		// and allows the center area to flex equally
 		min-width: 212px;
@@ -130,8 +130,8 @@ a.web-preview__external.button {
 		text-align: center;
 	}
 
-	&:hover .form-text-input:not(:focus) {
-		border-color: $gray-lighten-20;
+	&:hover .form-text-input:not( :focus ) {
+		border-color: var( --color-neutral-100 );
 	}
 
 	.clipboard-button {
@@ -149,10 +149,10 @@ a.web-preview__external.button {
 	padding-right: 8px;
 
 	&.is-active {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -163,11 +163,11 @@ a.web-preview__external.button {
 	height: 100%;
 
 	&.is-active {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&.is-showing-device-switcher {
-		border-left: 1px solid $gray-lighten-20;
+		border-left: 1px solid var( --color-neutral-100 );
 		margin-left: 8px;
 	}
 }
@@ -180,7 +180,7 @@ a.web-preview__external.button {
 .web-preview__back-to-preview-button {
 	display: none;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: block;
 	}
 }
@@ -188,8 +188,8 @@ a.web-preview__external.button {
 .web-preview__toolbar-tray {
 	.button {
 		margin: 4px;
-		&:not(:last-child) {
-			@include breakpoint( "<660px" ) {
+		&:not( :last-child ) {
+			@include breakpoint( '<660px' ) {
 				display: none;
 			}
 		}
@@ -233,7 +233,7 @@ a.web-preview__external.button {
 	width: 100%;
 
 	&.is-resizable {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 
 		.web-preview__frame {
 			.is-tablet & {

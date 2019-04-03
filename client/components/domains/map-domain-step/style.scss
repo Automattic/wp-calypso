@@ -13,15 +13,14 @@
 		min-width: 0;
 		padding-right: 0;
 
+		@include breakpoint( '<660px' ) {
+			padding-bottom: 5px;
+		}
+
 		@include breakpoint( '>960px' ) {
 			float: right;
 			margin: 0;
 		}
-	}
-
-	.domain-product-price__is-with-plans-only {
-		color: $gray-darken-20;
-		line-height: 25px;
 	}
 
 	.notice {
@@ -80,7 +79,7 @@ input.map-domain-step__external-domain {
 
 .map-domain-step__go {
 	flex-grow: 1;
-	margin: 10px 0 0 0;
+	margin: 10px 0 0;
 
 	@include breakpoint( '>660px' ) {
 		min-width: 80px;

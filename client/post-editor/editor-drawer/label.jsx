@@ -15,7 +15,7 @@ import InfoPopover from 'components/info-popover';
 /**
  * Style dependencies
  */
-import './label.scss'
+import './label.scss';
 
 export default function EditorDrawerLabel( { children, labelText, helpText } ) {
 	return (

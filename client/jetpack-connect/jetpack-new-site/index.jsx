@@ -1,10 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,10 +16,16 @@ import config from 'config';
 import JetpackLogo from 'components/jetpack-logo';
 import BackButton from 'components/back-button';
 import SiteUrlInput from '../site-url-input';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WordPressLogo from 'components/wordpress-logo';
 import { cleanUrl } from '../utils';
 import { persistSession } from '../persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class JetpackNewSite extends Component {
 	constructor() {
@@ -91,7 +97,7 @@ class JetpackNewSite extends Component {
 							<div className="jetpack-new-site__card-description">
 								<p>
 									{ this.props.translate(
-										"Tell us what type of site you need and we'll get you setup. " +
+										"Tell us what type of site you need and we'll get you set up. " +
 											'If you need help we’ve got you covered with 24/7 support.'
 									) }
 								</p>
@@ -151,7 +157,15 @@ class JetpackNewSite extends Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	null,
-	{ recordTracksEvent }
-)( localize( JetpackNewSite ) );
+	{
+		recordTracksEvent,
+	}
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( JetpackNewSite );

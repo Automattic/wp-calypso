@@ -81,6 +81,7 @@ export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
 export const FEATURE_EMAIL_SUPPORT = 'email-support';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
+export const FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT = 'email-forwarding-extended-limit';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
 export const FEATURE_BASIC_DESIGN = 'basic-design';
 export const FEATURE_ADVANCED_DESIGN = 'advanced-design';
@@ -139,6 +140,8 @@ export const FEATURE_EASY_SITE_MIGRATION = 'easy-site-migration';
 export const FEATURE_MALWARE_SCANNING_DAILY = 'malware-scanning-daily';
 export const FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND = 'malware-scanning-daily-and-on-demand';
 export const FEATURE_ONE_CLICK_THREAT_RESOLUTION = 'one-click-threat-resolution';
+export const FEATURE_AUTOMATIC_SECURITY_FIXES = 'automatic-security-fixes';
+export const FEATURE_ACTIVITY_LOG = 'site-activity-log';
 export const FEATURE_POLLS_PRO = 'polls-pro';
 export const FEATURE_CORE_JETPACK = 'core-jetpack';
 export const FEATURE_BASIC_SUPPORT_JETPACK = 'basic-support-jetpack';
@@ -436,7 +439,11 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS ],
+	getHiddenFeatures: () => [
+		FEATURE_AUDIO_UPLOADS,
+		FEATURE_GOOGLE_MY_BUSINESS,
+		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
+	],
 } );
 
 const getPlanEcommerceDetails = () => ( {
@@ -515,7 +522,11 @@ const getPlanEcommerceDetails = () => ( {
 		FEATURE_ALL_BUSINESS_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS, FEATURE_UPLOAD_THEMES_PLUGINS ],
+	getHiddenFeatures: () => [
+		FEATURE_AUDIO_UPLOADS,
+		FEATURE_GOOGLE_MY_BUSINESS,
+		FEATURE_UPLOAD_THEMES_PLUGINS,
+	],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -645,6 +656,7 @@ export const PLANS_LIST = {
 		term: TERM_MONTHLY,
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		availableFor: plan =>
+			isEnabled( 'upgrades/wpcom-monthly-plans' ) &&
 			includes(
 				[
 					PLAN_FREE,
@@ -713,7 +725,22 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: plan => includes( [ PLAN_FREE ], plan ),
+		availableFor: plan =>
+			includes(
+				[
+					PLAN_FREE,
+					PLAN_BLOGGER,
+					PLAN_BLOGGER_2_YEARS,
+					PLAN_PERSONAL,
+					PLAN_PERSONAL_2_YEARS,
+					PLAN_PREMIUM,
+					PLAN_PREMIUM_2_YEARS,
+					PLAN_BUSINESS,
+					PLAN_BUSINESS_2_YEARS,
+					PLAN_BUSINESS_MONTHLY,
+				],
+				plan
+			),
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
 		getPathSlug: () => 'ecommerce',
@@ -723,7 +750,23 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: plan => includes( [ PLAN_FREE, PLAN_ECOMMERCE ], plan ),
+		availableFor: plan =>
+			includes(
+				[
+					PLAN_FREE,
+					PLAN_BLOGGER,
+					PLAN_BLOGGER_2_YEARS,
+					PLAN_PERSONAL,
+					PLAN_PERSONAL_2_YEARS,
+					PLAN_PREMIUM,
+					PLAN_PREMIUM_2_YEARS,
+					PLAN_BUSINESS,
+					PLAN_BUSINESS_2_YEARS,
+					PLAN_BUSINESS_MONTHLY,
+					PLAN_ECOMMERCE,
+				],
+				plan
+			),
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
 		getPathSlug: () => 'ecommerce-2-years',
@@ -814,9 +857,9 @@ export const PLANS_LIST = {
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
-				FEATURE_MARKETING_AUTOMATION,
-				FEATURE_WORDADS_INSTANT,
+				FEATURE_AUTOMATIC_SECURITY_FIXES,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+				FEATURE_WORDADS_INSTANT,
 				FEATURE_ADVANCED_SEO,
 				FEATURE_CONCIERGE_SETUP,
 				FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
@@ -866,9 +909,9 @@ export const PLANS_LIST = {
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
-				FEATURE_MARKETING_AUTOMATION,
-				FEATURE_WORDADS_INSTANT,
+				FEATURE_AUTOMATIC_SECURITY_FIXES,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+				FEATURE_WORDADS_INSTANT,
 				FEATURE_ADVANCED_SEO,
 				FEATURE_CONCIERGE_SETUP,
 				FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
@@ -909,6 +952,7 @@ export const PLANS_LIST = {
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_ACTIVITY_LOG,
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_ALL_FREE_FEATURES_JETPACK,
 		],
@@ -948,6 +992,7 @@ export const PLANS_LIST = {
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_ACTIVITY_LOG,
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_ALL_FREE_FEATURES_JETPACK,
 		],
@@ -978,13 +1023,11 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 		getDescription: () =>
 			i18n.translate(
-				'The most powerful WordPress sites: unlimited premium ' +
-					'themes, real-time backups, and enhanced search.'
+				'The most powerful WordPress sites: real-time backups, ' +
+					'enhanced search, and unlimited premium themes.'
 			),
 		getTagline: () =>
-			i18n.translate(
-				'You have full access to premium themes, marketing tools, and priority support.'
-			),
+			i18n.translate( 'You have the full suite of security and performance tools.' ),
 		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
@@ -1008,9 +1051,9 @@ export const PLANS_LIST = {
 			] ),
 		getSignupFeatures: () =>
 			compact( [
-				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 				FEATURE_SEARCH,
+				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -1040,13 +1083,11 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'The most powerful WordPress sites: unlimited premium ' +
-					'themes, real-time backups, and enhanced search.'
+				'The most powerful WordPress sites: real-time backups, ' +
+					'enhanced search, and unlimited premium themes.'
 			),
 		getTagline: () =>
-			i18n.translate(
-				'You have full access to premium themes, marketing tools, and priority support.'
-			),
+			i18n.translate( 'You have the full suite of security and performance tools.' ),
 		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
@@ -1069,9 +1110,9 @@ export const PLANS_LIST = {
 			] ),
 		getSignupFeatures: () =>
 			compact( [
-				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 				FEATURE_SEARCH,
+				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
@@ -1133,7 +1174,9 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ALL_PERSONAL_FEATURES,
 		getTitle: () => i18n.translate( 'All Personal features' ),
 		getDescription: () =>
-			i18n.translate( 'Including email and live chat support, an ad-free experience for your visitors, increased storage space, and a custom domain name for one year.' ),
+			i18n.translate(
+				'Including email and live chat support, an ad-free experience for your visitors, increased storage space, and a custom domain name for one year.'
+			),
 	},
 
 	[ FEATURE_ALL_PREMIUM_FEATURES_JETPACK ]: {
@@ -1158,7 +1201,9 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ALL_PREMIUM_FEATURES,
 		getTitle: () => i18n.translate( 'All Premium features' ),
 		getDescription: () =>
-			i18n.translate( 'Including unlimited premium themes, advanced design and monetization options, simple payment buttons, and a custom domain name for one year.' ),
+			i18n.translate(
+				'Including unlimited premium themes, advanced design and monetization options, simple payment buttons, and a custom domain name for one year.'
+			),
 	},
 
 	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
@@ -1618,7 +1663,9 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_EMAIL_SUPPORT,
 		getTitle: () => i18n.translate( 'Email Support' ),
 		getDescription: () =>
-			i18n.translate( 'High quality email support to help you get your website up and running and working how you want it.' ),
+			i18n.translate(
+				'High quality email support to help you get your website up and running and working how you want it.'
+			),
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
@@ -1667,7 +1714,12 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
 		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-		getTitle: () => i18n.translate( 'Daily Off-site Backups' ),
+		getTitle: () =>
+			i18n.translate( '{{strong}}Daily{{/strong}} Backups', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with ' +
@@ -1677,14 +1729,14 @@ export const FEATURES_LIST = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME ]: {
 		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 		getTitle: () =>
-			i18n.translate( '{{strong}}Real-time{{/strong}} Off-site Backups', {
+			i18n.translate( '{{strong}}Real-time{{/strong}} Backups', {
 				components: {
 					strong: <strong />,
 				},
 			} ),
 		getDescription: () =>
 			i18n.translate(
-				'Automatic realtime backups of every single aspect of your site. ' +
+				'Automatic real-time backups of every single aspect of your site. ' +
 					'Stored safely and optimized for WordPress.'
 			),
 	},
@@ -1726,7 +1778,12 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY ]: {
 		getSlug: () => FEATURE_MALWARE_SCANNING_DAILY,
-		getTitle: () => i18n.translate( 'Daily Malware Scanning' ),
+		getTitle: () =>
+			i18n.translate( '{{strong}}Daily{{/strong}} Malware Scanning', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
 				'Comprehensive, automated scanning for security vulnerabilities or threats on your site.'
@@ -1745,6 +1802,27 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'One-click Threat Resolution' ),
 		getDescription: () =>
 			i18n.translate( 'Repair any security issues found on your site with just a single click.' ),
+	},
+	[ FEATURE_AUTOMATIC_SECURITY_FIXES ]: {
+		getSlug: () => FEATURE_AUTOMATIC_SECURITY_FIXES,
+		getTitle: () =>
+			i18n.translate( '{{strong}}Automatic{{/strong}} Security Fixes', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () =>
+			i18n.translate(
+				'Automated and immediate resolution for a large percentage of known security vulnerabilities or threats.'
+			),
+	},
+	[ FEATURE_ACTIVITY_LOG ]: {
+		getSlug: () => FEATURE_ACTIVITY_LOG,
+		getTitle: () => i18n.translate( 'Expanded Site Activity' ),
+		getDescription: () =>
+			i18n.translate(
+				'Take the guesswork out of site management and debugging with a filterable record of all the activity happening on your site.'
+			),
 	},
 	[ FEATURE_POLLS_PRO ]: {
 		getSlug: () => FEATURE_POLLS_PRO,
@@ -1879,7 +1957,12 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_SEARCH ]: {
 		getSlug: () => FEATURE_SEARCH,
-		getTitle: () => i18n.translate( 'Enhanced Site-wide Search' ),
+		getTitle: () =>
+			i18n.translate( '{{strong}}Enhanced{{/strong}} Site-wide Search', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
 				'Fast, relevant search results with custom filtering, powered by Elasticsearch.'
@@ -1889,37 +1972,55 @@ export const FEATURES_LIST = {
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
 		getTitle: () => i18n.translate( 'Accept Payments in 60+ Countries' ),
-		getDescription: () => i18n.translate( 'Built-in payment processing from leading providers like Stripe, PayPal, and more. Accept payments from customers all over the world.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Built-in payment processing from leading providers like Stripe, PayPal, and more. Accept payments from customers all over the world.'
+			),
 	},
 
 	[ FEATURE_SHIPPING_CARRIERS ]: {
 		getSlug: () => FEATURE_SHIPPING_CARRIERS,
 		getTitle: () => i18n.translate( 'Integrations with Top Shipping Carriers' ),
-		getDescription: () => i18n.translate( 'Ship physical products in a snap - show live rates from shipping carriers like UPS and other shipping options.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Ship physical products in a snap - show live rates from shipping carriers like UPS and other shipping options.'
+			),
 	},
 
 	[ FEATURE_UNLIMITED_PRODUCTS_SERVICES ]: {
 		getSlug: () => FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 		getTitle: () => i18n.translate( 'Unlimited Products or Services' ),
-		getDescription: () => i18n.translate( 'Grow your store as big as you want with the ability to add and sell unlimited products and services.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Grow your store as big as you want with the ability to add and sell unlimited products and services.'
+			),
 	},
 
 	[ FEATURE_ECOMMERCE_MARKETING ]: {
 		getSlug: () => FEATURE_ECOMMERCE_MARKETING,
 		getTitle: () => i18n.translate( 'eCommerce Marketing Tools' ),
-		getDescription: () => i18n.translate( 'Optimize your store for sales by adding in email and social integrations with Facebook and Mailchimp, and more.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Optimize your store for sales by adding in email and social integrations with Facebook and Mailchimp, and more.'
+			),
 	},
 
 	[ FEATURE_PREMIUM_CUSTOMIZABE_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 		getTitle: () => i18n.translate( 'Premium Customizable Starter Themes' ),
-		getDescription: () => i18n.translate( 'Quickly get up and running with a beautiful store theme and additional design options that you can easily make your own.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Quickly get up and running with a beautiful store theme and additional design options that you can easily make your own.'
+			),
 	},
 
 	[ FEATURE_ALL_BUSINESS_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_BUSINESS_FEATURES,
 		getTitle: () => i18n.translate( 'All Business Features' ),
-		getDescription: () => i18n.translate( 'Including the ability to upload plugins and themes, priority support, advanced monetization options, and unlimited premium themes.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Including the ability to upload plugins and themes, priority support, advanced monetization options, and unlimited premium themes.'
+			),
 	},
 };
 
@@ -1943,7 +2044,7 @@ export const getPlanFeaturesObject = planFeaturesList => {
 };
 
 export function isMonthly( plan ) {
-	return includes( JETPACK_MONTHLY_PLANS, plan );
+	return plan === PLAN_BUSINESS_MONTHLY || includes( JETPACK_MONTHLY_PLANS, plan );
 }
 
 export function isNew( plan ) {

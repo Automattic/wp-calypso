@@ -26,8 +26,7 @@ const SharingServiceAction = ( {
 	status,
 	translate,
 } ) => {
-	let primary = false,
-		warning = false,
+	let warning = false,
 		label;
 
 	const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
@@ -69,25 +68,40 @@ const SharingServiceAction = ( {
 		warning = true;
 	} else {
 		label = translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' } );
-		primary = true;
 	}
 
 	if ( 'google_plus' === service.ID && 1 > removableConnections.length ) {
+		label = translate( 'Unavailable', {
+			context: 'Sharing: Publicize connect unavailable button label',
+		} );
 		return (
 			<Button compact disabled={ true }>
-				Unavailable
+				{ label }
 			</Button>
 		);
 	}
 
+	if ( 'mailchimp' === service.ID && status === 'not-connected' ) {
+		return (
+			<div>
+				<Button
+					className="connections__signup"
+					compact
+					href="https://public-api.wordpress.com/rest/v1.1/sharing/mailchimp/signup"
+					target="_blank"
+					disabled={ isPending }
+				>
+					{ translate( 'Sign up' ) }
+				</Button>
+				<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
+					{ label }
+				</Button>
+			</div>
+		);
+	}
+
 	return (
-		<Button
-			primary={ primary }
-			scary={ warning }
-			compact
-			onClick={ onClick }
-			disabled={ isPending }
-		>
+		<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
 			{ label }
 		</Button>
 	);

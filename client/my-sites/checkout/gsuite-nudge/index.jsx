@@ -14,7 +14,7 @@ import page from 'page';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import GoogleAppsDialog from 'components/upgrades/google-apps/google-apps-dialog';
+import GoogleAppsDialog from 'components/upgrades/gsuite/gsuite-dialog';
 import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
@@ -24,8 +24,14 @@ import { addItem, removeItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import { isDotComPlan } from 'lib/products-values';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { abtest } from 'lib/abtest';
 
-export class GsuiteNudge extends React.Component {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+export class GSuiteNudge extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
 		receiptId: PropTypes.number.isRequired,
@@ -35,9 +41,11 @@ export class GsuiteNudge extends React.Component {
 	handleClickSkip = () => {
 		const { siteSlug, receiptId, isEligibleForChecklist } = this.props;
 
+		const destination = abtest( 'improvedOnboarding' ) === 'onboarding' ? 'view' : 'checklist';
+
 		page(
 			isEligibleForChecklist
-				? `/checklist/${ siteSlug }`
+				? `/${ destination }/${ siteSlug }`
 				: `/checkout/thank-you/${ siteSlug }/${ receiptId }`
 		);
 	};
@@ -105,4 +113,4 @@ export default connect( ( state, props ) => {
 		siteTitle: getSiteTitle( state, props.selectedSiteId ),
 		isEligibleForChecklist,
 	};
-} )( localize( GsuiteNudge ) );
+} )( localize( GSuiteNudge ) );

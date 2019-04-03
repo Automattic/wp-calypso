@@ -13,6 +13,11 @@ import Gridicon from 'gridicons';
  */
 import FormSectionHeading from 'components/forms/form-section-heading';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class extends React.PureComponent {
 	static displayName = 'HelpContactConfirmation';
 
@@ -22,6 +27,7 @@ export default class extends React.PureComponent {
 	};
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="help-contact-confirmation">
 				<div className="help-contact-confirmation__contents">

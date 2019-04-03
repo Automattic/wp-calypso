@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 import { capitalize } from 'lodash';
 import { numberFormat, translate } from 'i18n-calypso';
+import memoizeLast from 'lib/memoize-last';
 
 /**
  * Internal dependencies
@@ -43,7 +44,7 @@ export function getQueryDate( queryDate, timezoneOffset, period, quantity ) {
 }
 
 const EMPTY_RESULT = [];
-export function buildChartData( activeLegend, chartTab, data, period, queryDate ) {
+export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, period, queryDate ) => {
 	if ( ! data ) {
 		return EMPTY_RESULT;
 	}
@@ -70,7 +71,7 @@ export function buildChartData( activeLegend, chartTab, data, period, queryDate 
 
 		return item;
 	} );
-}
+} );
 
 function addTooltipData( chartTab, item, period ) {
 	const tooltipData = [];

@@ -28,6 +28,7 @@ export class SiteSettingsNavigation extends Component {
 		const { translate } = this.props;
 		return {
 			general: translate( 'General', { context: 'settings screen' } ),
+			performance: translate( 'Performance', { context: 'settings screen' } ),
 			writing: translate( 'Writing', { context: 'settings screen' } ),
 			discussion: translate( 'Discussion', { context: 'settings screen' } ),
 			traffic: translate( 'Traffic', { context: 'settings screen' } ),
@@ -56,6 +57,24 @@ export class SiteSettingsNavigation extends Component {
 						{ strings.general }
 					</NavItem>
 
+					{ config.isEnabled( 'manage/security' ) && site.jetpack && (
+						<NavItem
+							path={ `/settings/security/${ site.slug }` }
+							preloadSectionName="settings-security"
+							selected={ section === 'security' }
+						>
+							{ strings.security }
+						</NavItem>
+					) }
+
+					<NavItem
+						path={ `/settings/performance/${ site.slug }` }
+						preloadSectionName="settings-performance"
+						selected={ section === 'performance' }
+					>
+						{ strings.performance }
+					</NavItem>
+
 					<NavItem
 						path={ `/settings/writing/${ site.slug }` }
 						preloadSectionName="settings-writing"
@@ -79,17 +98,6 @@ export class SiteSettingsNavigation extends Component {
 					>
 						{ strings.traffic }
 					</NavItem>
-
-					{ config.isEnabled( 'manage/security' ) &&
-						site.jetpack && (
-							<NavItem
-								path={ `/settings/security/${ site.slug }` }
-								preloadSectionName="settings-security"
-								selected={ section === 'security' }
-							>
-								{ strings.security }
-							</NavItem>
-						) }
 				</NavTabs>
 			</SectionNav>
 		);

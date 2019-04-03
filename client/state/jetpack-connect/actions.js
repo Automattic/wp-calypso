@@ -33,6 +33,9 @@ import {
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_RETRY_AUTH,
+	JETPACK_CONNECT_SAVE_SITE_TYPE,
+	JETPACK_CONNECT_SAVE_SITE_USER_TYPE,
+	JETPACK_CONNECT_SAVE_SITE_VERTICAL,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
@@ -44,6 +47,10 @@ import {
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
+
+import 'state/data-layer/wpcom/sites/user-type';
+import 'state/data-layer/wpcom/sites/site-type';
+import 'state/data-layer/wpcom/sites/site-vertical';
 
 /**
  * Module constants
@@ -153,7 +160,7 @@ export function checkUrl( url, isUrlOnSites ) {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
 					url: url,
 					data: null,
-					error: error,
+					error: pick( error, [ 'error', 'status', 'message' ] ),
 				} );
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_error_other', {
@@ -361,10 +368,27 @@ export function authorize( queryObject ) {
 					data: data,
 					error: null,
 				} );
+
 				// Update the user now that we are fully connected.
 				const user = userFactory();
 				user.fetching = false;
 				user.fetch();
+
+				// @TODO: When user fetching is reduxified, let's get rid of this hack.
+				// Currently, we need it to make sure user has been refetched before we continue.
+				// Otherwise the user might see a confusing message that they have no sites.
+				// See p8oabR-j3-p2/#comment-2399 for more information.
+				return new Promise( resolve => {
+					const userFetched = setInterval( () => {
+						const loadedUser = user.get();
+						if ( loadedUser ) {
+							clearInterval( userFetched );
+							resolve( loadedUser );
+						}
+					}, 100 );
+				} );
+			} )
+			.then( () => {
 				// Site may not be accessible yet, so force fetch from wpcom
 				return wpcom.site( client_id ).get( {
 					force: 'wpcom',
@@ -489,5 +513,29 @@ export function completeFlow( site ) {
 			type: JETPACK_CONNECT_COMPLETE_FLOW,
 			site,
 		} );
+	};
+}
+
+export function saveSiteUserType( siteId, siteUserType ) {
+	return {
+		type: JETPACK_CONNECT_SAVE_SITE_USER_TYPE,
+		siteId,
+		siteUserType,
+	};
+}
+
+export function saveSiteType( siteId, siteType ) {
+	return {
+		type: JETPACK_CONNECT_SAVE_SITE_TYPE,
+		siteId,
+		siteType,
+	};
+}
+
+export function saveSiteVertical( siteId, siteVertical ) {
+	return {
+		type: JETPACK_CONNECT_SAVE_SITE_VERTICAL,
+		siteId,
+		siteVertical,
 	};
 }

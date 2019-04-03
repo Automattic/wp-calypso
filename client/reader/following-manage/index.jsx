@@ -41,6 +41,11 @@ import { resemblesUrl, withoutHttp, addSchemeIfMissing, addQueryArgs } from 'lib
 import { recordTrack, recordAction } from 'reader/stats';
 import { SORT_BY_RELEVANCE } from 'state/reader/feed-searches/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const PAGE_SIZE = 4;
 let recommendationsSeed = random( 0, 10000 );
 
@@ -206,8 +211,9 @@ class FollowingManage extends Component {
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Streams' ) }</h1>
 				</MobileBackToSidebar>
-				{ ! searchResults &&
-					sitesQuery && <QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } /> }
+				{ ! searchResults && sitesQuery && (
+					<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
+				) }
 				{ this.shouldRequestMoreRecs() && (
 					<QueryReaderRecommendedSites
 						seed={ recommendationsSeed }
@@ -254,17 +260,16 @@ class FollowingManage extends Component {
 						followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
 					/>
 				) }
-				{ !! sitesQuery &&
-					! isFollowByUrlWithNoSearchResults && (
-						<FollowingManageSearchFeedsResults
-							searchResults={ searchResults }
-							showMoreResults={ showMoreResults }
-							onShowMoreResultsClicked={ this.handleShowMoreClicked }
-							width={ this.state.width }
-							searchResultsCount={ searchResultsCount }
-							query={ sitesQuery }
-						/>
-					) }
+				{ !! sitesQuery && ! isFollowByUrlWithNoSearchResults && (
+					<FollowingManageSearchFeedsResults
+						searchResults={ searchResults }
+						showMoreResults={ showMoreResults }
+						onShowMoreResultsClicked={ this.handleShowMoreClicked }
+						width={ this.state.width }
+						searchResultsCount={ searchResultsCount }
+						query={ sitesQuery }
+					/>
+				) }
 				{ showExistingSubscriptions && (
 					<FollowingManageSubscriptions
 						width={ this.state.width }

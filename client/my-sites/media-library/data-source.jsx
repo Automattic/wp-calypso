@@ -15,8 +15,10 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Button from 'components/button';
+import ScreenReaderText from 'components/screen-reader-text';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import GooglePhotosIcon from './google-photos-icon';
 import config from 'config';
 
 export class MediaLibraryDataSource extends Component {
@@ -64,8 +66,8 @@ export class MediaLibraryDataSource extends Component {
 			},
 			{
 				value: 'google_photos',
-				label: translate( 'Photos from your Google library' ),
-				icon: <Gridicon icon="shutter" size={ 24 } />,
+				label: translate( 'Google Photos library' ),
+				icon: <GooglePhotosIcon />,
 			},
 		];
 		if ( config.isEnabled( 'external-media/free-photo-library' ) ) {
@@ -79,9 +81,7 @@ export class MediaLibraryDataSource extends Component {
 	};
 
 	renderScreenReader( selected ) {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return <span className="screen-reader-text">{ selected && selected.label }</span>;
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		return <ScreenReaderText>{ selected && selected.label }</ScreenReaderText>;
 	}
 
 	renderMenuItems( sources ) {

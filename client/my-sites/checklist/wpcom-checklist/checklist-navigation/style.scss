@@ -1,5 +1,5 @@
 .checklist-navigation {
-	border-top: 1px solid $gray-lighten-20;
+	border-top: 1px solid var( --color-neutral-100 );
 }
 
 .checklist-navigation .button.is-borderless.checklist-navigation__button {
@@ -12,7 +12,7 @@
 
 	&:hover,
 	&:focus {
-		color: var( --color-accent );
+		color: var( --color-primary );
 	}
 }
 
@@ -25,8 +25,8 @@
 	margin-bottom: 8px;
 	&.has-notification::before {
 		display: inline-block;
-		background-color: $orange-jazzy;
-		content: "";
+		background-color: var( --color-primary );
+		content: '';
 		border-radius: 50%;
 		margin-right: 6px;
 		width: 8px;

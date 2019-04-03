@@ -1,7 +1,7 @@
 .upload-drop-zone__dropzone {
 	position: relative;
-	background-color: $gray-light;
-	border: 2px dashed $gray;
+	background-color: var( --color-neutral-0 );
+	border: 2px dashed var( --color-neutral-light );
 	transition: all 200ms ease-out, color 100ms ease-out;
 	cursor: pointer;
 
@@ -10,7 +10,7 @@
 	}
 
 	.file-picker {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -19,18 +19,18 @@
 	}
 
 	&:hover {
-		border-color: $gray-dark;
+		border-color: var( --color-neutral-700 );
 		transform: translate3d( 0, -1px, 0 );
-		box-shadow: 0 2px 4px $gray-lighten-20;
+		box-shadow: 0 2px 4px var( --color-neutral-100 );
 
 		.upload-drop-zone__icon {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 	}
 }
 
 .upload-drop-zone__icon {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .upload-drop-zone__instructions {

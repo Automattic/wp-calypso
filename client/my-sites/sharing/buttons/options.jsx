@@ -22,6 +22,8 @@ import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 class SharingButtonsOptions extends Component {
 	static propTypes = {
 		buttons: PropTypes.array,
@@ -224,7 +226,7 @@ class SharingButtonsOptions extends Component {
 
 				<button
 					type="submit"
-					className="button is-primary sharing-buttons__submit"
+					className="button sharing-buttons__submit"
 					disabled={ saving || ! initialized }
 				>
 					{ saving ? translate( 'Saving…' ) : translate( 'Save Changes' ) }

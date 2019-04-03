@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -16,9 +17,13 @@ import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
-import formatCurrency from 'lib/format-currency';
 import SectionHeader from 'components/section-header';
 import CompactCard from 'components/card/compact';
+
+/**
+ * Style dependencies
+ */
+import './main.scss';
 
 const MembershipItem = ( { translate, subscription, moment } ) => (
 	<CompactCard key={ subscription.ID } href={ '/me/purchases/memberships/' + subscription.ID }>
@@ -32,9 +37,7 @@ const MembershipItem = ( { translate, subscription, moment } ) => (
 			<div className="memberships__service-description">
 				<div className="memberships__service-name">{ subscription.title }</div>
 				<div className="memberships__list-sub">
-					<a href={ subscription.site_url }>
-						{ translate( 'On %s »', { args: subscription.site_title } ) }
-					</a>
+					{ translate( 'On %s', { args: subscription.site_title } ) }
 				</div>
 			</div>
 			<div className="memberships__list-renewal-price">
@@ -60,7 +63,12 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => (
 		{ subscriptions &&
 			subscriptions.map(
 				subscription => (
-					<MembershipItem translate={ translate } subscription={ subscription } moment={ moment } />
+					<MembershipItem
+						key={ subscription.ID }
+						translate={ translate }
+						subscription={ subscription }
+						moment={ moment }
+					/>
 				),
 				this
 			) }

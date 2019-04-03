@@ -1,4 +1,3 @@
-
 $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 .post-share .card.banner,
@@ -11,11 +10,15 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	border-top: $section-border;
 	margin: 0;
 	position: relative;
-	background-color: $white;
+	background-color: var( --color-white );
 
-	& .notice {
-		margin: 0 0 16px 0;
-		border-radius: 0;
+	.notice {
+		margin-bottom: 0;
+
+		&,
+		.notice__icon-wrapper {
+			border-radius: 0;
+		}
 	}
 }
 
@@ -42,7 +45,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 .post-share__wrapper.is-placeholder {
 	padding-bottom: 24px;
-	border-bottom: 1px solid transparentize( $gray-lighten-20, 0.5 );
+	border-bottom: 1px solid rgba( var( --color-neutral-100-rgb ), 0.5 );
 }
 
 .post-share__placeholder {
@@ -124,7 +127,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	align-items: center;
 	cursor: pointer;
 	display: flex;
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 	margin-top: 16px;
 
 	&:first-of-type {
@@ -136,17 +139,13 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	}
 
 	&.is-active {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 
 .post-share__service .form-toggle__wrapper {
 	flex: 0 0 24px;
 	margin-left: auto;
-}
-
-.post-share__service .form-toggle__label .form-toggle__label-content {
-	margin-left: 0;
 }
 
 .post-share__service-account-social-logo {
@@ -159,7 +158,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	overflow: hidden;
 
 	&::before {
-		background-color: $white;
+		background-color: var( --color-white );
 		border-radius: 3px;
 		content: '';
 		display: block;
@@ -218,31 +217,27 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 .post-share__service.is-active,
 .post-share__handle {
 	.social-logo.twitter {
-		color: $color-twitter;
+		color: var( --color-twitter );
 	}
 
 	.social-logo.facebook {
-		color: $color-facebook;
+		color: var( --color-facebook );
 	}
 
 	.social-logo.google-plus {
-		color: $color-gplus;
+		color: var( --color-gplus );
 	}
 
 	.social-logo.linkedin {
-		color: $color-linkedin;
+		color: var( --color-linkedin );
 	}
 
 	.social-logo.tumblr {
-		color: $color-tumblr;
-	}
-
-	.social-logo.path {
-		color: $color-path;
+		color: var( --color-tumblr );
 	}
 
 	.social-logo.eventbrite {
-		color: $color-eventbrite;
+		color: var( --color-eventbrite );
 	}
 
 	.post-share__service-account-image::after {
@@ -261,7 +256,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	margin-left: 8px;
 
 	.post-share__share-button {
-		margin-left: 0px;
+		margin-left: 0;
 	}
 }
 
@@ -285,7 +280,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	margin: 0 auto 1px;
 	padding: 16px;
 
-	background: $white;
+	background: var( --color-white );
 
 	border-top: $section-border;
 
@@ -423,14 +418,14 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 }
 
 .post-share__external-url {
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 	transition: color 200ms;
 	height: 24px;
 	width: 24px;
 
 	&:hover,
 	&:focus {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 	}
 }
 

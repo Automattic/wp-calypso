@@ -7,21 +7,21 @@
 
 	.placeholder-text {
 		color: transparent;
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
 
 .pages__page-list-header {
-	background: $gray-light;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
-	color: $gray;
+	background: var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	color: var( --color-neutral-light );
 	font-size: 11px;
 	padding: 6px 11px;
 	text-transform: uppercase;
 
 	.gridicons-time {
-		color: $gray;
+		color: var( --color-neutral-light );
 		margin-right: 4px;
 		vertical-align: text-top;
 	}
@@ -76,12 +76,12 @@
 }
 
 .page__hierarchy-indent {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	position: absolute;
 	top: 0;
 	left: 0;
 	height: 100%;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 
 	&.is-indented {
 		width: 112px;
@@ -123,7 +123,7 @@
 .page__title,
 .page__title:visited {
 	@extend %content-font;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-weight: 700;
 	font-size: 18px;
 	line-height: 1.2;
@@ -132,12 +132,12 @@
 	margin-right: 33px;
 
 	.gridicon {
-		color: $gray;
+		color: var( --color-neutral-light );
 		margin: 2px 8px -2px 0;
 	}
 }
 .page.is-untitled .page__title {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-style: italic;
 }
 
@@ -146,7 +146,7 @@
 }
 
 .page__popover-more-info {
-	color: $gray;
+	color: var( --color-neutral-light );
 	padding: 4px 16px 8px;
 	font-size: 12px;
 	max-width: 150px;
@@ -159,7 +159,7 @@
 		background-color: var( --color-error );
 		border: 0;
 		box-shadow: none;
-		color: $white;
+		color: var( --color-white );
 	}
 }
 
@@ -170,7 +170,7 @@
 	top: 0;
 	bottom: 0;
 	z-index: z-index( 'root', '.page__shadow-notice-cover' );
-	background-color: rgba( $gray-light, 0.8 );
+	background-color: rgba( var( --color-neutral-0-rgb ), 0.8 );
 	display: flex;
 	align-items: center;
 	overflow: hidden;

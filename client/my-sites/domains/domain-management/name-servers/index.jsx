@@ -17,7 +17,7 @@ import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import CustomNameserversForm from './custom-nameservers-form';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import DnsTemplates from './dns-templates';
 import { domainManagementEdit, domainManagementDns } from 'my-sites/domains/paths';
 import VerticalNav from 'components/vertical-nav';
@@ -28,6 +28,11 @@ import { getSelectedDomain } from 'lib/domains';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import FetchError from './fetch-error';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class NameServers extends React.Component {
 	static propTypes = {
@@ -100,10 +105,9 @@ class NameServers extends React.Component {
 				</VerticalNav>
 
 				<VerticalNav>
-					{ this.hasWpcomNameservers() &&
-						! this.isPendingTransfer() && (
-							<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
-						) }
+					{ this.hasWpcomNameservers() && ! this.isPendingTransfer() && (
+						<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
+					) }
 				</VerticalNav>
 			</React.Fragment>
 		);

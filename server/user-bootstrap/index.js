@@ -20,6 +20,7 @@ const debug = debugFactory( 'calypso:bootstrap' ),
 	/**
 	 * WordPress.com REST API /me endpoint.
 	 */
+	SUPPORT_SESSION_API_KEY = config( 'wpcom_calypso_support_session_rest_api_key' ),
 	API_PATH = 'https://public-api.wordpress.com/rest/v1/me',
 	apiQuery = {
 		meta: 'flags',
@@ -27,29 +28,64 @@ const debug = debugFactory( 'calypso:bootstrap' ),
 	},
 	url = `${ API_PATH }?${ stringify( apiQuery ) }`;
 
-module.exports = function( authCookieValue, geoCountry ) {
+/**
+ * Requests the current user for user bootstrap.
+ *
+ * @param {object} request An Express request.
+ *
+ * @returns {Promise<object>} A promise for a user object.
+ */
+module.exports = function( request ) {
+	const authCookieValue = request.cookies[ AUTH_COOKIE_NAME ];
+	const geoCountry = request.get( 'x-geoip-country-code' ) || '';
+	const supportSession = request.get( 'x-support-session' );
+
 	return new Promise( ( resolve, reject ) => {
+		if ( ! authCookieValue ) {
+			reject( new Error( 'Cannot bootstrap without an auth cookie' ) );
+			return;
+		}
+
 		// create HTTP Request object
 		const req = superagent.get( url );
-		let hmac, hash;
+		req.set( 'User-Agent', 'WordPress.com Calypso' );
+		req.set( 'X-Forwarded-GeoIP-Country-Code', geoCountry );
 
 		if ( authCookieValue ) {
-			authCookieValue = decodeURIComponent( authCookieValue );
+			const decodedAuthCookieValue = decodeURIComponent( authCookieValue );
 
-			if ( typeof API_KEY !== 'string' ) {
-				return reject(
-					new Error( 'Unable to boostrap user because of invalid API key in secrets.json' )
-				);
+			req.set( 'Cookie', AUTH_COOKIE_NAME + '=' + decodedAuthCookieValue );
+
+			if ( supportSession ) {
+				if ( typeof SUPPORT_SESSION_API_KEY !== 'string' ) {
+					reject(
+						new Error(
+							'Unable to boostrap user because of invalid SUPPORT SESSION API key in secrets.json'
+						)
+					);
+					return;
+				}
+
+				const hmac = crypto.createHmac( 'md5', SUPPORT_SESSION_API_KEY );
+				hmac.update( supportSession );
+				const hash = hmac.digest( 'hex' );
+				req.set( 'Authorization', `X-WPCALYPSO-SUPPORT-SESSION ${ hash }` );
+
+				req.set( 'x-support-session', supportSession );
+			} else {
+				if ( typeof API_KEY !== 'string' ) {
+					reject(
+						new Error( 'Unable to boostrap user because of invalid API key in secrets.json' )
+					);
+					return;
+				}
+
+				const hmac = crypto.createHmac( 'md5', API_KEY );
+				hmac.update( decodedAuthCookieValue );
+				const hash = hmac.digest( 'hex' );
+
+				req.set( 'Authorization', 'X-WPCALYPSO ' + hash );
 			}
-
-			hmac = crypto.createHmac( 'md5', API_KEY );
-			hmac.update( authCookieValue );
-			hash = hmac.digest( 'hex' );
-
-			req.set( 'X-Forwarded-GeoIP-Country-Code', geoCountry );
-			req.set( 'Authorization', 'X-WPCALYPSO ' + hash );
-			req.set( 'Cookie', AUTH_COOKIE_NAME + '=' + authCookieValue );
-			req.set( 'User-Agent', 'WordPress.com Calypso' );
 		}
 
 		// start the request

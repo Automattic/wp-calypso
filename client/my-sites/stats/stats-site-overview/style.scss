@@ -6,10 +6,10 @@
 		white-space: nowrap;
 		overflow: hidden;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 
 			&:focus {
-				color: $link-highlight;
+				color: var( --color-link-dark );
 			}
 		}
 	}
@@ -22,12 +22,12 @@
 	.module-header__right-icon {
 		position: relative;
 		float: right;
-		background: $white;
+		background: var( --color-white );
 		padding-right: 15px;
 
 		// Fade out value if text is very long
 		&::before {
-			@include stats-fade-text( $white );
+			@include stats-fade-text( var( --color-white ) );
 		}
 
 		.gridicon {
@@ -35,16 +35,17 @@
 		}
 	}
 
-	.value{
+	.value {
 		font-size: 24px;
 		padding: 16px 0;
 	}
 
 }
 
-.stats__latest-post-summary{
+//TODO see if this is used anywhere
+.stats__latest-post-summary {
 
-		.value{
+		.value {
 			font-size: 32px;
 		}
 }

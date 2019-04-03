@@ -79,15 +79,19 @@ describe( 'selectors', () => {
 				attachedToPurchaseId: NaN,
 				canExplicitRenew: false,
 				canDisableAutoRenew: false,
+				costToUnbundle: NaN,
+				costToUnbundleText: undefined,
 				currencyCode: undefined,
 				currencySymbol: undefined,
+				description: undefined,
 				domain: undefined,
+				domainRegistrationAgreementUrl: null,
 				error: null,
 				expiryDate: undefined,
 				expiryMoment: null,
 				expiryStatus: '',
-				hasPrivacyProtection: false,
 				includedDomain: undefined,
+				includedDomainPurchaseAmount: undefined,
 				isCancelable: false,
 				isDomainRegistration: false,
 				isRefundable: false,
@@ -115,6 +119,8 @@ describe( 'selectors', () => {
 				subscribedDate: undefined,
 				subscriptionStatus: undefined,
 				tagLine: undefined,
+				taxAmount: undefined,
+				taxText: undefined,
 				userId: NaN,
 			} );
 		} );
@@ -226,6 +232,46 @@ describe( 'selectors', () => {
 			);
 
 			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).toBe( 'dev.live' );
+		} );
+
+		test( 'should not return included domain with subscription if the domain has a non-zero amount', () => {
+			const state = {
+				purchases: {
+					data: [
+						{
+							ID: '81414',
+							meta: 'dev.live',
+							blog_id: '123',
+							is_domain_registration: 'true',
+							product_slug: 'dotlive_domain',
+						},
+						{
+							ID: '82867',
+							blog_id: '123',
+							product_slug: 'value_bundle',
+							included_domain: 'dev.live',
+							included_domain_purchase_amount: 25,
+						},
+						{
+							ID: '105103',
+							blog_id: '123',
+							meta: 'wordpress.com',
+							product_slug: 'domain_map',
+						},
+					],
+					error: null,
+					isFetchingSitePurchases: true,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: false,
+				},
+			};
+
+			const subscriptionPurchase = getPurchases( state ).find(
+				purchase => purchase.productSlug === 'value_bundle'
+			);
+
+			expect( getIncludedDomainPurchase( state, subscriptionPurchase ) ).toBeFalsy();
 		} );
 	} );
 

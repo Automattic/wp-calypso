@@ -33,6 +33,11 @@ import withDimensions from 'lib/with-dimensions';
 import { expandComments } from 'state/comments/actions';
 
 /**
+ * Style dependencies
+ */
+import './post-comment.scss';
+
+/**
  * A PostComment is the visual representation for a comment within a tree of comments.
  * Each comment may have a different displayType.  It will be one of:
  *  1. full: display the full content.  no max-height.
@@ -277,14 +282,14 @@ class PostComment extends React.PureComponent {
 		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
 		const commentAuthor = get( comment, 'author', {} );
 		const commentAuthorName = decodeEntities( commentAuthor.name );
-		const commentAuthorUrl = !! commentAuthor.site_ID
+		const commentAuthorUrl = commentAuthor.site_ID
 			? getStreamUrl( null, commentAuthor.site_ID )
 			: commentAuthor && commentAuthor.URL;
 		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
 	};
 
 	renderAuthorTag = ( { authorName, authorUrl, commentId, className } ) => {
-		return !! authorUrl ? (
+		return authorUrl ? (
 			<a
 				href={ authorUrl }
 				className={ className }
@@ -402,18 +407,17 @@ class PostComment extends React.PureComponent {
 						commentId,
 						className: 'comments__comment-username',
 					} ) }
-					{ this.props.showNestingReplyArrow &&
-						parentAuthorName && (
-							<span className="comments__comment-respondee">
-								<Gridicon icon="chevron-right" size={ 16 } />
-								{ this.renderAuthorTag( {
-									className: 'comments__comment-respondee-link',
-									authorName: parentAuthorName,
-									authorUrl: parentAuthorUrl,
-									commentId: parentCommentId,
-								} ) }
-							</span>
-						) }
+					{ this.props.showNestingReplyArrow && parentAuthorName && (
+						<span className="comments__comment-respondee">
+							<Gridicon icon="chevron-right" size={ 16 } />
+							{ this.renderAuthorTag( {
+								className: 'comments__comment-respondee-link',
+								authorName: parentAuthorName,
+								authorUrl: parentAuthorUrl,
+								commentId: parentCommentId,
+							} ) }
+						</span>
+					) }
 					<div className="comments__comment-timestamp">
 						<a
 							href={ comment.URL }

@@ -31,6 +31,11 @@ import accept from 'lib/accept';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import searchUrl from 'lib/search-url';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Media extends Component {
 	static propTypes = {
 		selectedSite: PropTypes.object,
@@ -48,9 +53,14 @@ class Media extends Component {
 		source: '',
 	};
 
+	containerRef = React.createRef();
+
 	componentDidMount() {
+		/* We need to rerender the inner `<MediaLibrary>` with the `containerWidth` that's
+		 * available only after the container gets actually rendered. */
+		/* eslint-disable-next-line react/no-did-mount-set-state */
 		this.setState( {
-			containerWidth: this.refs.container.clientWidth,
+			containerWidth: this.containerRef.current.clientWidth,
 		} );
 	}
 
@@ -162,7 +172,7 @@ class Media extends Component {
 		return [
 			{
 				action: 'delete',
-				additionalClassNames: 'media__modal-delete-item-button is-link',
+				additionalClassNames: 'is-borderless is-scary',
 				label: translate( 'Delete' ),
 				isPrimary: false,
 				disabled: false,
@@ -350,7 +360,7 @@ class Media extends Component {
 	render() {
 		const { selectedSite: site, mediaId, previousRoute, translate } = this.props;
 		return (
-			<div ref="container" className="main main-column media" role="main">
+			<div ref={ this.containerRef } className="main main-column media" role="main">
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<SidebarNavigation />
@@ -393,26 +403,25 @@ class Media extends Component {
 						) }
 					</EditorMediaModalDialog>
 				) }
-				{ site &&
-					site.ID && (
-						<MediaLibrarySelectedData siteId={ site.ID }>
-							<MediaLibrary
-								{ ...this.props }
-								className="media__main-section"
-								onFilterChange={ this.onFilterChange }
-								site={ site }
-								single={ false }
-								filter={ this.props.filter }
-								source={ this.state.source }
-								onEditItem={ this.openDetailsModalForASingleImage }
-								onViewDetails={ this.openDetailsModalForAllSelected }
-								onDeleteItem={ this.handleDeleteMediaEvent }
-								onSourceChange={ this.handleSourceChange }
-								modal={ false }
-								containerWidth={ this.state.containerWidth }
-							/>
-						</MediaLibrarySelectedData>
-					) }
+				{ site && site.ID && (
+					<MediaLibrarySelectedData siteId={ site.ID }>
+						<MediaLibrary
+							{ ...this.props }
+							className="media__main-section"
+							onFilterChange={ this.onFilterChange }
+							site={ site }
+							single={ false }
+							filter={ this.props.filter }
+							source={ this.state.source }
+							onEditItem={ this.openDetailsModalForASingleImage }
+							onViewDetails={ this.openDetailsModalForAllSelected }
+							onDeleteItem={ this.handleDeleteMediaEvent }
+							onSourceChange={ this.handleSourceChange }
+							modal={ false }
+							containerWidth={ this.state.containerWidth }
+						/>
+					</MediaLibrarySelectedData>
+				) }
 			</div>
 		);
 	}

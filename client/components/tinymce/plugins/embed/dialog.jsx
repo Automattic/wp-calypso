@@ -314,20 +314,18 @@ export class EmbedDialog extends React.Component {
 						</div>
 					) }
 
-					{ ! this.state.isLoading &&
-						cachedMarkup &&
-						! isError && (
-							<div ref={ this.handleViewRef } className={ previewBlockClassNames }>
-								<ResizableIframe
-									ref={ this.handleIframeRef }
-									onResize={ this.props.onResize }
-									onLoad={ this.iframeOnLoad }
-									frameBorder="0"
-									seamless
-									width="100%"
-								/>
-							</div>
-						) }
+					{ ! this.state.isLoading && cachedMarkup && ! isError && (
+						<div ref={ this.handleViewRef } className={ previewBlockClassNames }>
+							<ResizableIframe
+								ref={ this.handleIframeRef }
+								onResize={ this.props.onResize }
+								onLoad={ this.iframeOnLoad }
+								frameBorder="0"
+								seamless
+								width="100%"
+							/>
+						</div>
+					) }
 				</div>
 			</Dialog>
 		);

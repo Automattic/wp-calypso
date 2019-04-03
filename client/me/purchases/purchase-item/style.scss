@@ -1,6 +1,5 @@
 .purchase-item.card {
 	&.is-expired {
-
 		.purchase-item__plan-icon,
 		.purchase-item__title,
 		.purchase-item__purchase-type {
@@ -57,8 +56,8 @@
 
 	.gridicon {
 		padding: 4px;
-		background: var( --color-accent );
-		fill: $white;
+		background: var( --color-neutral );
+		fill: var( --color-white );
 	}
 
 	.gridicons-domains {
@@ -77,7 +76,7 @@
 }
 
 .purchase-item__title {
-	color: var( --color-primary );
+	color: var( --color-text );
 	display: block;
 	font-size: 14px;
 	line-height: 1.2em;
@@ -86,11 +85,11 @@
 	position: relative;
 	white-space: nowrap;
 
-	&:after:not( .is-placeholder ) {
+	&::after:not( .is-placeholder ) {
 		@include long-content-fade();
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 18px;
 		max-width: none;
 	}
@@ -105,6 +104,6 @@
 }
 
 .purchase-item__purchase-date {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 12px;
 }

@@ -46,7 +46,6 @@ import {
 	isBlogger,
 	isPersonal,
 	isPremium,
-	isPrivacyProtection,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isUnlimitedSpace,
@@ -133,11 +132,7 @@ export function addWithoutReplace( newCartItem ) {
  * @returns {Boolean} whether or not the item should replace the cart
  */
 export function cartItemShouldReplaceCart( cartItem, cart ) {
-	if (
-		isRenewal( cartItem ) &&
-		! isPrivacyProtection( cartItem ) &&
-		! isDomainRedemption( cartItem )
-	) {
+	if ( isRenewal( cartItem ) && ! isDomainRedemption( cartItem ) ) {
 		// adding a renewal replaces the cart unless it is a privacy protection
 		return true;
 	}
@@ -298,6 +293,16 @@ export function hasPlan( cart ) {
 }
 
 /**
+ * Determines whether there is a Jetpack plan in the shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one Jetpack plan, false otherwise
+ */
+export function hasJetpackPlan( cart ) {
+	return some( getAll( cart ), isJetpackPlan );
+}
+
+/**
  * Determines whether there is an ecommerce plan in the shopping cart.
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -410,6 +415,12 @@ export function hasOnlyDomainProductsWithPrivacySupport( cart ) {
 
 export function hasDomainMapping( cart ) {
 	return some( getAll( cart ), isDomainMapping );
+}
+
+export function hasDomainBeingUsedForPlan( cart ) {
+	return some( getDomainRegistrations( cart ), registration =>
+		isDomainBeingUsedForPlan( cart, registration.meta )
+	);
 }
 
 /**
@@ -620,16 +631,6 @@ export function siteRedirect( properties ) {
 }
 
 /**
- * Creates a new shopping cart item for a domain privacy protection.
- *
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
- */
-export function domainPrivacyProtection( properties ) {
-	return domainItem( 'private_whois', properties.domain, properties.source );
-}
-
-/**
  * Creates a new shopping cart item for an incoming domain transfer.
  *
  * @param {Object} properties - list of properties
@@ -642,16 +643,6 @@ export function domainTransfer( properties ) {
 			...( properties.extra ? { extra: properties.extra } : {} ),
 		}
 	);
-}
-
-/**
- * Creates a new shopping cart item for an incoming domain transfer privacy.
- *
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
- */
-export function domainTransferPrivacy( properties ) {
-	return domainItem( domainProductSlugs.TRANSFER_IN_PRIVACY, properties.domain, properties.source );
 }
 
 /**
@@ -898,7 +889,7 @@ export function getDomainRegistrationsWithoutPrivacy( cart ) {
 	return getDomainRegistrations( cart ).filter( function( cartItem ) {
 		return ! some( cart.products, {
 			meta: cartItem.meta,
-			product_slug: 'private_whois',
+			extra: { privacy: true },
 		} );
 	} );
 }
@@ -914,7 +905,7 @@ export function getDomainTransfersWithoutPrivacy( cart ) {
 	return getDomainTransfers( cart ).filter( function( cartItem ) {
 		return ! some( cart.products, {
 			meta: cartItem.meta,
-			product_slug: domainProductSlugs.TRANSFER_IN_PRIVACY,
+			extra: { privacy: true },
 		} );
 	} );
 }
@@ -925,18 +916,33 @@ export function getDomainTransfersWithoutPrivacy( cart ) {
  * @param {Object} cart - cart as `CartValue` object
  * @param {Object[]} domainItems - the list of `CartItemValue` objects for domain registrations
  * @param {Function} changeFunction - the function that adds/removes the privacy protection to a shopping cart
+ * @param {Boolean} value - whether privacy is on or off
+ *
  * @returns {Function} the function that adds/removes privacy protections from the shopping cart
  */
-export function changePrivacyForDomains( cart, domainItems, changeFunction ) {
+export function changePrivacyForDomains( cart, domainItems, changeFunction, value ) {
 	return flow.apply(
 		null,
 		domainItems.map( function( item ) {
-			if ( isDomainTransfer( item ) ) {
-				return changeFunction( domainTransferPrivacy( { domain: item.meta } ) );
-			}
-			return changeFunction( domainPrivacyProtection( { domain: item.meta } ) );
+			return changeFunction( item, updatePrivacyForDomain( item, value ) );
 		} )
 	);
+}
+
+/**
+ * Changes presence of a privacy protection for the given domain cart item.
+ *
+ * @param {Object} item - the `CartItemValue` object for domain registrations
+ * @param {Boolean} value - whether privacy is on or off
+ *
+ * @returns {Object} the new `CartItemValue` with added/removed privacy
+ */
+export function updatePrivacyForDomain( item, value ) {
+	return merge( {}, item, {
+		extra: {
+			privacy: value,
+		},
+	} );
 }
 
 export function addPrivacyToAllDomains( cart ) {
@@ -946,7 +952,8 @@ export function addPrivacyToAllDomains( cart ) {
 			...getDomainRegistrationsWithoutPrivacy( cart ),
 			...getDomainTransfersWithoutPrivacy( cart ),
 		],
-		add
+		replaceItem,
+		true
 	);
 }
 
@@ -954,7 +961,8 @@ export function removePrivacyFromAllDomains( cart ) {
 	return changePrivacyForDomains(
 		cart,
 		[ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ],
-		remove
+		replaceItem,
+		false
 	);
 }
 
@@ -1074,15 +1082,22 @@ export function shouldBundleDomainWithPlan(
  *
  * @param {object} selectedSite Site
  * @param {object} cart Cart
+ * @param {string} domain Domain name
  * @return {boolean} See description
  */
-export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
+export function hasToUpgradeToPayForADomain( selectedSite, cart, domain ) {
+	if ( ! domain || ! getTld( domain ) ) {
+		return false;
+	}
+
 	const sitePlanSlug = ( ( selectedSite || {} ).plan || {} ).product_slug;
-	if ( sitePlanSlug && isWpComBloggerPlan( sitePlanSlug ) ) {
+	const isDotBlogDomain = 'blog'.startsWith( getTld( domain ) );
+
+	if ( sitePlanSlug && isWpComBloggerPlan( sitePlanSlug ) && ! isDotBlogDomain ) {
 		return true;
 	}
 
-	if ( hasBloggerPlan( cart ) ) {
+	if ( hasBloggerPlan( cart ) && ! isDotBlogDomain ) {
 		return true;
 	}
 
@@ -1091,6 +1106,10 @@ export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
 
 export function isDomainMappingFree( selectedSite ) {
 	return selectedSite && isPlan( selectedSite.plan ) && ! isBloggerPlan( selectedSite.plan );
+}
+
+export function isPaidDomain( domainPriceRule ) {
+	return 'PRICE' === domainPriceRule;
 }
 
 export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, isDomainOnly ) {
@@ -1110,6 +1129,8 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		if ( withPlansOnly ) {
 			return 'INCLUDED_IN_HIGHER_PLAN';
 		}
+
+		return 'PRICE';
 	}
 
 	if ( isDomainOnly ) {
@@ -1124,7 +1145,7 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'INCLUDED_IN_HIGHER_PLAN';
 	}
 
-	if ( hasToUpgradeToPayForADomain( selectedSite, cart ) ) {
+	if ( hasToUpgradeToPayForADomain( selectedSite, cart, suggestion.domain_name ) ) {
 		return 'UPGRADE_TO_HIGHER_PLAN_TO_BUY';
 	}
 
@@ -1155,10 +1176,8 @@ export default {
 	clearCart,
 	customDesignItem,
 	domainMapping,
-	domainPrivacyProtection,
 	domainRegistration,
 	domainTransfer,
-	domainTransferPrivacy,
 	fillGoogleAppsRegistrationData,
 	findFreeTrial,
 	getAll,
@@ -1182,6 +1201,7 @@ export default {
 	guidedTransferItem,
 	isDomainBeingUsedForPlan,
 	isNextDomainFree,
+	hasDomainBeingUsedForPlan,
 	hasDomainCredit,
 	hasDomainInCart,
 	hasDomainMapping,
@@ -1194,6 +1214,7 @@ export default {
 	hasOnlyProductsOf,
 	hasOnlyRenewalItems,
 	hasPlan,
+	hasJetpackPlan,
 	hasOnlyBundledDomainProducts,
 	hasBloggerPlan,
 	hasPersonalPlan,
@@ -1203,6 +1224,7 @@ export default {
 	hasRenewalItem,
 	hasTld,
 	hasConciergeSession,
+	isPaidDomain,
 	noAdsItem,
 	planItem,
 	premiumPlan,
@@ -1217,6 +1239,7 @@ export default {
 	themeItem,
 	unlimitedSpaceItem,
 	unlimitedThemesItem,
+	updatePrivacyForDomain,
 	videoPressItem,
 	hasStaleItem,
 	hasTransferProduct,

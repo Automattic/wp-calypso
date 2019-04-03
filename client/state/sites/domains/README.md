@@ -67,7 +67,6 @@ state.sites.domains = {
 				expiry: setMomentType,
 				expirySoon: Boolean,
 				googleAppsSubscription: String,
-				hasPrivacyProtection: Boolean,
 				hasRegistration: Boolean,
 				hasWpcomNameservers: Boolean,
 				hasZone: Boolean,
@@ -78,7 +77,6 @@ state.sites.domains = {
 				pendingRegistration: Boolean,
 				pendingRegistrationTime: String,
 				isPrimary: Boolean,
-				isPrivate: Boolean,
 				registrationDate: String.
 				type: String,
 				wpcomDomain: Boolean

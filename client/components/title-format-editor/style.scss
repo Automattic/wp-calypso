@@ -4,8 +4,8 @@
 
 	&.disabled {
 		.title-format-editor__editor-wrapper {
-			border: 1px solid $gray-lighten-20;
-			background-color: $gray-light;
+			border: 1px solid var( --color-neutral-100 );
+			background-color: var( --color-neutral-0 );
 		}
 
 		.title-format-editor__token,
@@ -14,7 +14,7 @@
 		}
 
 		.title-format-editor__token {
-			background-color: $gray;
+			background-color: var( --color-neutral-light );
 		}
 	}
 }
@@ -36,17 +36,17 @@
 
 .title-format-editor__button {
 	border-radius: 3px;
-	background-color: $white;
-	color: $gray-darken-30;
-	border: 1px solid $gray-lighten-20;
-	padding: 3px 8px 3px 8px;
+	background-color: var( --color-white );
+	color: var( --color-neutral-600 );
+	border: 1px solid var( --color-neutral-100 );
+	padding: 3px 8px;
 	margin-left: 10px;
 	margin-top: 3px;
 	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
 
-	&:before {
+	&::before {
 		content: '+';
 		margin-right: 4px;
 		font-weight: 600;
@@ -58,15 +58,15 @@
 }
 
 .title-format-editor__editor-wrapper {
-	border: 1px solid $gray-lighten-10;
+	border: 1px solid var( --color-neutral-200 );
 	padding: 7px 14px;
 	line-height: 24px;
 }
 
 .title-format-editor__token {
 	display: inline-block;
-	background-color: $gray-darken-20;
-	color: $white;
+	background-color: var( --color-neutral-500 );
+	color: var( --color-white );
 	border-radius: 4px;
 	cursor: pointer;
 	transition: all 0.3s ease;
@@ -78,12 +78,12 @@
 
 .title-format-editor__token-close {
 	margin-left: 10px;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	font-size: 10px;
 }
 
 .title-format-editor__preview {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-style: italic;
 	margin-top: 5px;
 	font-size: 13px;

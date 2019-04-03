@@ -73,15 +73,14 @@ const QuickSaveButtons = ( {
 							{ translate( 'Save' ) }
 						</button>
 					) }
-					{ ! isSaveAvailable &&
-						showingStatusLabel && (
-							<span
-								className="editor-ground-control__save-status"
-								data-e2e-status={ isSaving ? 'Saving…' : 'Saved' }
-							>
-								{ isSaving ? translate( 'Saving…' ) : translate( 'Saved' ) }
-							</span>
-						) }
+					{ ! isSaveAvailable && showingStatusLabel && (
+						<span
+							className="editor-ground-control__save-status"
+							data-e2e-status={ isSaving ? 'Saving…' : 'Saved' }
+						>
+							{ isSaving ? translate( 'Saving…' ) : translate( 'Saved' ) }
+						</span>
+					) }
 				</div>
 			) }
 		</div>

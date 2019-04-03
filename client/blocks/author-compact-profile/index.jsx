@@ -76,12 +76,11 @@ class AuthorCompactProfile extends React.Component {
 				<a href={ streamUrl } className="author-compact-profile__avatar-link">
 					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
 				</a>
-				{ hasAuthorName &&
-					! hasMatchingAuthorAndSiteNames && (
-						<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>
-							{ author.name }
-						</ReaderAuthorLink>
-					) }
+				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && (
+					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>
+						{ author.name }
+					</ReaderAuthorLink>
+				) }
 				{ siteName && (
 					<ReaderSiteStreamLink
 						className="author-compact-profile__site-link"

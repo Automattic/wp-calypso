@@ -8,7 +8,7 @@
 	list-style: none;
 	margin: 0;
 	max-width: 620px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .keyboard-shortcuts__category {
@@ -19,7 +19,7 @@
 }
 
 .keyboard-shortcuts__category-disabled {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .keyboard-shortcuts__site-navigation {
@@ -50,13 +50,13 @@
 }
 
 .keyboard-shortcuts__key {
-	background-color: $white;
-	border: solid 1px $gray;
+	background-color: var( --color-white );
+	border: solid 1px var( --color-neutral-light );
 	padding: 0 5px;
 	min-width: 8px;
 	text-align: center;
 	border-radius: 5px;
-	box-shadow: 0 1px 1px $gray;
+	box-shadow: 0 1px 1px var( --color-neutral-light );
 	display: inline-block;
 	margin-right: 3px;
 }

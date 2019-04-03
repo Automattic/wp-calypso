@@ -89,7 +89,7 @@ class EditorConfirmationSidebar extends Component {
 		const disabled = this.props.isPasswordProtectedWithInvalidPassword;
 
 		return (
-			<Button disabled={ disabled } onClick={ this.closeAndPublish }>
+			<Button primary disabled={ disabled } onClick={ this.closeAndPublish }>
 				{ buttonLabel }
 			</Button>
 		);
@@ -127,10 +127,7 @@ class EditorConfirmationSidebar extends Component {
 		const buttonLabel = this.getBusyButtonLabel( this.props.publishButtonStatus );
 
 		return (
-			<Button
-				disabled
-				className="editor-confirmation-sidebar__publishing-button is-busy is-primary"
-			>
+			<Button disabled primary busy className="editor-confirmation-sidebar__publishing-button">
 				{ buttonLabel }
 			</Button>
 		);
@@ -150,7 +147,7 @@ class EditorConfirmationSidebar extends Component {
 					<span>
 						{ this.props.translate( 'Show this every time I publish', {
 							comment:
-								'This string appears in the bottom of a publish confirmation sidebar.' +
+								'This string appears in the bottom of a publish confirmation sidebar. ' +
 								'There is limited space. Longer strings will wrap.',
 						} ) }
 					</span>

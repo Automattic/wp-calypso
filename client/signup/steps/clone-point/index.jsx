@@ -11,6 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { applySiteOffset } from 'lib/site/timezone';
 import ActivityLogItem from 'my-sites/activity/activity-log-item';
 import Pagination from 'components/pagination';
 import QuerySites from 'components/data/query-sites';
@@ -19,9 +20,9 @@ import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
-import { adjustMoment } from 'my-sites/activity/activity-log/utils';
 import { requestActivityLogs } from 'state/data-getters';
-import withLocalizedMoment from 'components/with-localized-moment';
+import { getSiteOption } from 'state/sites/selectors';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -65,9 +66,9 @@ class ClonePointStep extends Component {
 		this.setState( { showLog: true } );
 	};
 
-	applySiteOffset = moment => {
+	applySiteOffset = date => {
 		const { timezone, gmtOffset } = this.props;
-		return adjustMoment( { timezone, gmtOffset, moment } );
+		return applySiteOffset( date, { timezone, gmtOffset } );
 	};
 
 	changePage = pageNumber => {
@@ -86,11 +87,11 @@ class ClonePointStep extends Component {
 		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
 
 		const timePeriod = ( () => {
-			const today = this.applySiteOffset( moment.utc( Date.now() ) );
+			const today = this.applySiteOffset( moment() );
 			let last = null;
 
 			return ( { rewindId } ) => {
-				const ts = this.applySiteOffset( moment.utc( rewindId * 1000 ) );
+				const ts = this.applySiteOffset( moment( rewindId * 1000 ) );
 
 				if ( null === last || ! ts.isSame( last, 'day' ) ) {
 					last = ts;
@@ -206,5 +207,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		logs: ( siteId && logs.data ) || [],
+		timezone: getSiteOption( state, siteId, 'timezone' ),
+		gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
 	};
 } )( localize( withLocalizedMoment( ClonePointStep ) ) );

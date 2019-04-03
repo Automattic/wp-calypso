@@ -1,6 +1,6 @@
 .editor-author.is-placeholder .editor-author__name {
 	animation: pulse-light 0.8s ease-in-out infinite;
-	background: $gray-lighten-20;
+	background: var( --color-neutral-100 );
 	display: inline-block;
 	height: 14px;
 	width: 100px;
@@ -13,11 +13,11 @@
 }
 
 .editor-author__name {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	font-size: 13px;
 	margin: 0 8px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }

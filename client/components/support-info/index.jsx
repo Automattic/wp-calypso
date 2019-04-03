@@ -13,6 +13,11 @@ import { localize } from 'i18n-calypso';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SupportInfo extends Component {
 	static propTypes = {
 		text: PropTypes.string,

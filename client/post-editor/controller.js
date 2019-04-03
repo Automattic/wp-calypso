@@ -17,7 +17,7 @@ import { get, has, startsWith } from 'lodash';
  */
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
-import { addSiteFragment } from 'lib/route';
+import { addQueryArgs, addSiteFragment } from 'lib/route';
 import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
@@ -178,7 +178,10 @@ async function maybeCalypsoifyGutenberg( context, next ) {
 		( isCalypsoifyGutenbergEnabled( state, siteId ) || isGutenlypsoEnabled( state, siteId ) ) &&
 		'gutenberg' === getSelectedEditor( state, siteId )
 	) {
-		return window.location.replace( getEditorUrl( state, siteId, postId, postType ) );
+		let url = getEditorUrl( state, siteId, postId, postType );
+		// pass along parameters, for example press-this
+		url = addQueryArgs( context.query, url );
+		return window.location.replace( url );
 	}
 	next();
 }
@@ -187,7 +190,7 @@ export default {
 	post: function( context, next ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
-		const postToCopyId = context.query.copy;
+		const postToCopyId = context.query[ 'jetpack-copy' ];
 
 		recordPlaceholdersTiming();
 
@@ -279,10 +282,6 @@ export default {
 	},
 
 	pressThis: function( context, next ) {
-		context.getSiteSelectionHeaderText = function() {
-			return i18n.translate( 'Select a site to start writing' );
-		};
-
 		if ( ! context.query.url ) {
 			// not pressThis, early return
 			return next();

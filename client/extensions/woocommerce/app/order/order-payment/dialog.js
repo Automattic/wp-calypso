@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find, map, sum } from 'lodash';
 import { localize } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -19,7 +20,6 @@ import {
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
-import formatCurrency from 'lib/format-currency';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';

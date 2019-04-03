@@ -1,10 +1,5 @@
 #!/usr/bin/env node
 
-/** @format */
-
-// SDK bundles are for the browser. Ensure that babel preset reflects this.
-process.env.TARGET_BROWSER = 'true';
-
 /**
  * External dependencies
  */
@@ -24,8 +19,7 @@ const generic = require( './sdk/generic.js' );
 // pick between `npm run calypso-sdk` and `npx calypso-sdk`.
 // Show also how npm scripts require delimiter to pass arguments.
 const calleeScript = path.basename( process.argv[ 1 ] );
-const scriptName =
-	calleeScript === path.basename( __filename ) ? 'npm run sdk' : calleeScript;
+const scriptName = calleeScript === path.basename( __filename ) ? 'npm run sdk' : calleeScript;
 const delimit = scriptName.substring( 0, 3 ) === 'npm' ? '-- ' : '';
 const calypsoRoot = path.resolve( __dirname, '..' );
 
@@ -34,9 +28,7 @@ const getBaseConfig = ( options = {} ) => {
 	const config = getConfig( options );
 
 	// these are currently Calypso-specific
-	const omitPlugins = [
-		webpack.HotModuleReplacementPlugin,
-	];
+	const omitPlugins = [ webpack.HotModuleReplacementPlugin ];
 
 	return {
 		...config,
@@ -65,10 +57,13 @@ const build = ( target, argv ) => {
 
 		if ( stats.hasErrors() ) {
 			console.log( chalk.red( 'Built with errors' ) );
+			process.exitCode = 1;
 		} else if ( stats.hasWarnings() ) {
 			console.log( chalk.yellow( 'Built with warnings' ) );
+			process.exitCode = 0;
 		} else {
 			console.log( chalk.green( 'Built successfully' ) );
+			process.exitCode = 0;
 		}
 	} );
 };
@@ -88,24 +83,26 @@ yargsModule
 		command: 'gutenberg <input-dir>',
 		desc: 'Build a Gutenberg extension',
 		builder: yargs =>
-			yargs.positional('input-dir', {
-				description: 'Directory containing entry point files editor.js and (optionally) view.js ' +
-					'(for editor and frontend view modes, respectively)',
-				type: 'string',
-				required: true,
-				coerce: path.resolve,
-			})
-			.options( {
-				'output-dir': {
-					alias: 'o',
+			yargs
+				.positional( 'input-dir', {
 					description:
-						'Output directory for the built assets. Intermediate directories are created as required.',
+						'Directory containing entry point files editor.js and (optionally) view.js ' +
+						'(for editor and frontend view modes, respectively)',
 					type: 'string',
+					required: true,
 					coerce: path.resolve,
-					requiresArg: true,
-				},
-				watch,
-			} ),
+				} )
+				.options( {
+					'output-dir': {
+						alias: 'o',
+						description:
+							'Output directory for the built assets. Intermediate directories are created as required.',
+						type: 'string',
+						coerce: path.resolve,
+						requiresArg: true,
+					},
+					watch,
+				} ),
 		handler: argv => build( gutenberg, argv ),
 	} )
 	.command( {
@@ -128,26 +125,27 @@ yargsModule
 	.command( {
 		command: 'generic <entry-point> <output-name>',
 		desc: 'Build generic JavaScript code',
-		builder: yargs => yargs
-			.positional( 'entry-point', {
-				description: 'Entry-point for your code',
-				type: 'string',
-				required: true,
-				coerce: path.resolve,
-			} )
-			.positional( 'output-name', {
-				description: 'Output filename',
-				type: 'string',
-				required: true,
-				coerce: path.resolve,
-			} )
-			.options( {
-				'global-wp': {
-					description: 'Externalize the @wordpress packages as globals',
-					type: 'boolean',
-				},
-				watch,
-			} ),
+		builder: yargs =>
+			yargs
+				.positional( 'entry-point', {
+					description: 'Entry-point for your code',
+					type: 'string',
+					required: true,
+					coerce: path.resolve,
+				} )
+				.positional( 'output-name', {
+					description: 'Output filename',
+					type: 'string',
+					required: true,
+					coerce: path.resolve,
+				} )
+				.options( {
+					'global-wp': {
+						description: 'Externalize the @wordpress packages as globals',
+						type: 'boolean',
+					},
+					watch,
+				} ),
 		handler: argv => build( generic, argv ),
 	} )
 	.demandCommand( 1, chalk.red( 'You must provide a valid command!' ) )

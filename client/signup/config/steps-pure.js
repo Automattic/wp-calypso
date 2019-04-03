@@ -10,6 +10,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
+import { PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 
 export function generateSteps( {
 	addPlanToCart = noop,
@@ -19,7 +20,12 @@ export function generateSteps( {
 	createSiteWithCart = noop,
 	currentPage = noop,
 	setThemeOnSite = noop,
-	removeUsernameTest = noop,
+	addDomainToCart = noop,
+	launchSiteApi = noop,
+	isPlanFulfilled = noop,
+	isDomainFulfilled = noop,
+	isSiteTypeFulfilled = noop,
+	isSiteTopicFulfilled = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -79,6 +85,22 @@ export function generateSteps( {
 			},
 		},
 
+		'domains-launch': {
+			stepName: 'domains-launch',
+			apiRequestFunction: addDomainToCart,
+			fulfilledStepCallback: isDomainFulfilled,
+			providesDependencies: [ 'domainItem' ],
+			props: {
+				isDomainOnly: false,
+				showExampleSuggestions: false,
+				includeWordPressDotCom: false,
+				showSkipButton: true,
+				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
+				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
+			},
+			dependencies: [ 'siteSlug' ],
+		},
+
 		'plans-site-selected': {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
@@ -130,8 +152,6 @@ export function generateSteps( {
 			unstorableDependencies: [ 'bearer_token' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
-				displayNameInput: removeUsernameTest === 'hideUsername',
-				displayUsernameInput: removeUsernameTest !== 'hideUsername',
 			},
 		},
 
@@ -149,6 +169,54 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
+		'plans-personal': {
+			stepName: 'plans-personal',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PERSONAL,
+			},
+		},
+
+		'plans-premium': {
+			stepName: 'plans-premium',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PREMIUM,
+			},
+		},
+
+		'plans-business': {
+			stepName: 'plans-business',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS,
+			},
+		},
+
+		'plans-launch': {
+			stepName: 'plans-launch',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				headerText: i18n.translate( 'Getting ready to launch your website' ),
+				subHeaderText: i18n.translate( "Pick a plan that's right for you." ),
+				fallbackHeaderText: i18n.translate( "Almost there, pick a plan that's right for you." ),
+				isLaunchPage: true,
+			},
 		},
 
 		'plans-store-nux': {
@@ -364,7 +432,14 @@ export function generateSteps( {
 		/* Imports */
 		'from-url': {
 			stepName: 'from-url',
-			providesDependencies: [ 'importSiteDetails', 'importUrl', 'themeSlugWithRepo' ],
+			providesDependencies: [
+				'importEngine',
+				'importFavicon',
+				'importSiteTitle',
+				'importSiteUrl',
+				'sitePreviewImageBlob',
+				'themeSlugWithRepo',
+			],
 		},
 
 		'reader-landing': {
@@ -376,16 +451,160 @@ export function generateSteps( {
 		'site-type': {
 			stepName: 'site-type',
 			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
 		'site-topic': {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic' ],
+			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
 		'site-information': {
 			stepName: 'site-information',
-			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
+			providesDependencies: [ 'title', 'address', 'phone' ],
+			props: {
+				headerText: i18n.translate( "Tell us your site's name" ),
+				subHeaderText: i18n.translate(
+					'This will appear at the top of your site and can be changed at anytime.'
+				),
+				informationFields: [ 'title', 'address', 'phone' ],
+			},
+		},
+
+		'site-information-title': {
+			stepName: 'site-information-title',
+			providesDependencies: [ 'title' ],
+			props: {
+				headerText: i18n.translate( "Tell us your site's name" ),
+				subHeaderText: i18n.translate(
+					'This will appear at the top of your site and can be changed at anytime.'
+				),
+				informationFields: [ 'title' ],
+			},
+		},
+
+		'site-information-address': {
+			stepName: 'site-information-address',
+			providesDependencies: [ 'address' ],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'address' ],
+			},
+		},
+
+		'site-information-phone': {
+			stepName: 'site-information-phone',
+			providesDependencies: [ 'phone' ],
+			props: {
+				headerText: i18n.translate( 'Let customers get in touch' ),
+				informationFields: [ 'phone' ],
+			},
+		},
+
+		'site-information-without-domains': {
+			stepName: 'site-information-without-domains',
+			apiRequestFunction: createSiteWithCart,
+			delayApiRequestUntilComplete: true,
+			dependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [
+				'title',
+				'address',
+				'phone',
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+			],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'title', 'address', 'phone' ],
+			},
+		},
+
+		'site-style': {
+			stepName: 'site-style',
+			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
+		},
+
+		// Steps with preview
+		// These can be removed once we make the preview the default
+		'site-topic-with-preview': {
+			stepName: 'site-topic-with-preview',
+			providesDependencies: [ 'siteTopic' ],
+			fulfilledStepCallback: isSiteTopicFulfilled,
+			props: {
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-with-preview': {
+			stepName: 'site-information-with-preview',
+			providesDependencies: [ 'title', 'address', 'phone' ],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'title', 'address', 'phone' ],
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-title-with-preview': {
+			stepName: 'site-information-title-with-preview',
+			providesDependencies: [ 'title' ],
+			props: {
+				headerText: i18n.translate( "Tell us your site's name" ),
+				subHeaderText: i18n.translate(
+					'This will appear at the top of your site and can be changed at anytime.'
+				),
+				informationFields: [ 'title' ],
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-address-with-preview': {
+			stepName: 'site-information-address-with-preview',
+			providesDependencies: [ 'address' ],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'address' ],
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-phone-with-preview': {
+			stepName: 'site-information-phone-with-preview',
+			providesDependencies: [ 'phone' ],
+			props: {
+				headerText: i18n.translate( 'Let customers get in touch' ),
+				informationFields: [ 'phone' ],
+				showSiteMockups: true,
+			},
+		},
+
+		'site-style-with-preview': {
+			stepName: 'site-style-with-preview',
+			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
+			props: {
+				showSiteMockups: true,
+			},
+		},
+
+		'domains-with-preview': {
+			stepName: 'domains-with-preview',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			props: {
+				showSiteMockups: true,
+				isDomainOnly: false,
+			},
+			dependencies: [ 'themeSlugWithRepo' ],
+			delayApiRequestUntilComplete: true,
+		},
+
+		launch: {
+			stepName: 'launch',
+			apiRequestFunction: launchSiteApi,
+			dependencies: [ 'siteSlug' ],
 		},
 	};
 }

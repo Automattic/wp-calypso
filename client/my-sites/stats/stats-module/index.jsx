@@ -24,7 +24,7 @@ import Card from 'components/card';
 import StatsModulePlaceholder from './placeholder';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import UpgradeNudge from 'blocks/upgrade-nudge';
 import AllTimeNav from './all-time-nav';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -33,6 +33,11 @@ import {
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class StatsModule extends Component {
 	static propTypes = {
@@ -159,8 +164,9 @@ class StatsModule extends Component {
 
 		return (
 			<div>
-				{ siteId &&
-					statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+				{ siteId && statType && (
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+				) }
 				{ ! isAllTime && (
 					<SectionHeader
 						className={ headerClass }
@@ -180,19 +186,19 @@ class StatsModule extends Component {
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />
-					{ this.props.showSummaryLink &&
-						displaySummaryLink && <StatsModuleExpand href={ summaryLink } /> }
-					{ summary &&
-						'countryviews' === path && (
-							<UpgradeNudge
-								title={ translate( 'Add Google Analytics' ) }
-								message={ translate(
-									'Upgrade to a Business Plan for Google Analytics integration.'
-								) }
-								event="googleAnalytics-stats-countries"
-								feature={ FEATURE_GOOGLE_ANALYTICS }
-							/>
-						) }
+					{ this.props.showSummaryLink && displaySummaryLink && (
+						<StatsModuleExpand href={ summaryLink } />
+					) }
+					{ summary && 'countryviews' === path && (
+						<UpgradeNudge
+							title={ translate( 'Add Google Analytics' ) }
+							message={ translate(
+								'Upgrade to a Business Plan for Google Analytics integration.'
+							) }
+							event="googleAnalytics-stats-countries"
+							feature={ FEATURE_GOOGLE_ANALYTICS }
+						/>
+					) }
 				</Card>
 				{ isAllTime && (
 					<div className="stats-module__footer-actions">

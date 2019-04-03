@@ -52,6 +52,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'signup_is_store',
 	'site_goals',
 	'software_version',
+	'timezone',
 	'upgraded_filetypes_enabled',
 	'unmapped_url',
 	'verification_services_codes',

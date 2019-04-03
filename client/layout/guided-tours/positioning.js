@@ -34,11 +34,11 @@ const helpers = {
 	yBelow: bottom => {
 		return bottom + DIALOG_PADDING;
 	},
-	xAboveBelow: ( left, right, width ) => {
+	xAboveBelow: ( left, right ) => {
 		if ( left + DIALOG_WIDTH + DIALOG_PADDING < document.documentElement.clientWidth ) {
 			return left + DIALOG_PADDING;
 		} else if ( right - DIALOG_WIDTH - DIALOG_PADDING > 0 ) {
-			return right - ( DIALOG_WIDTH - width );
+			return right - DIALOG_WIDTH;
 		}
 		return DIALOG_PADDING;
 	},
@@ -46,13 +46,13 @@ const helpers = {
 
 const dialogPositioners = {
 	below: rect => {
-		const x = helpers.xAboveBelow( rect.left, rect.right, rect.width );
+		const x = helpers.xAboveBelow( rect.left, rect.right );
 		const y = helpers.yBelow( rect.bottom );
 
 		return { x, y };
 	},
 	above: rect => {
-		const x = helpers.xAboveBelow( rect.left, rect.right, rect.width );
+		const x = helpers.xAboveBelow( rect.left, rect.right );
 		const y = helpers.yAbove( rect.top );
 
 		return { x, y };
@@ -147,7 +147,6 @@ export function getStepPosition( {
 			? target.getBoundingClientRect()
 			: window.document.body.getBoundingClientRect();
 	const position = dialogPositioners[ validatePlacement( placement, target ) ]( rect );
-
 	return {
 		x: position.x,
 		y: position.y - scrollDiff + ( scrollDiff !== 0 ? DIALOG_PADDING : 0 ),

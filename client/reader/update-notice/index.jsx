@@ -18,6 +18,11 @@ import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors'
 import { getCommentById } from 'state/comments/selectors';
 import getStream from 'state/selectors/get-reader-stream';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class UpdateNotice extends React.PureComponent {
 	static propTypes = {
 		streamKey: PropTypes.string,

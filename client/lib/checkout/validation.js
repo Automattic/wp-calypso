@@ -13,8 +13,9 @@ import { isValidPostalCode } from 'lib/postal-code';
 import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
+	isValidCNPJ,
 	ebanxFieldRules,
-} from 'lib/checkout/ebanx';
+} from 'lib/checkout/processor-specific';
 
 /**
  * Returns the credit card validation rule set
@@ -24,15 +25,15 @@ import {
 export function getCreditCardFieldRules() {
 	return {
 		name: {
-			description: i18n.translate( 'Name on Card', {
-				context: 'Upgrades: Card holder name label on credit card form',
+			description: i18n.translate( 'Cardholder Name', {
+				comment: 'Cardholder name label on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
 
 		number: {
 			description: i18n.translate( 'Card Number', {
-				context: 'Upgrades: Card number label on credit card form',
+				comment: 'Card number label on credit card form',
 			} ),
 			rules: [ 'validCreditCardNumber' ],
 		},
@@ -54,7 +55,7 @@ export function getCreditCardFieldRules() {
 
 		'postal-code': {
 			description: i18n.translate( 'Postal Code', {
-				context: 'Upgrades: Postal code on credit card form',
+				comment: 'Postal code on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
@@ -90,15 +91,15 @@ export function tefPaymentFieldRules() {
 export function tokenFieldRules() {
 	return {
 		name: {
-			description: i18n.translate( 'Name on Card', {
-				comment: 'Upgrades: Card holder name label on credit card form',
+			description: i18n.translate( 'Cardholder Name', {
+				comment: 'Cardholder name label on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
 
 		tokenized_payment_data: {
 			description: i18n.translate( 'Tokenized Payment Data', {
-				comment: 'Upgrades: Tokenized payment data from the token provider',
+				comment: 'Tokenized payment data from the token provider',
 			} ),
 			rules: [ 'required' ],
 		},
@@ -135,11 +136,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
  * @returns {object} The aggregated ruleset
  */
 export function mergeValidationRules( ...rulesets ) {
-	return mergeWith(
-		{},
-		...rulesets,
-		( objValue, srcValue ) =>
-			isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
+	return mergeWith( {}, ...rulesets, ( objValue, srcValue ) =>
+		isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
 	);
 }
 
@@ -207,17 +205,20 @@ validators.validExpirationDate = {
 	error: validationError,
 };
 
-validators.validCPF = {
+validators.validBrazilTaxId = {
 	isValid( value ) {
 		if ( ! value ) {
 			return false;
 		}
-		return isValidCPF( value );
+		return isValidCPF( value ) || isValidCNPJ( value );
 	},
 	error: function( description ) {
-		return i18n.translate( '%(description)s is invalid. Must be in format: 111.444.777-XX', {
-			args: { description: description },
-		} );
+		return i18n.translate(
+			'%(description)s is invalid. Must be in format: 111.444.777-XX or 11.444.777/0001-XX',
+			{
+				args: { description: description },
+			}
+		);
 	},
 };
 
@@ -333,7 +334,7 @@ function getConditionalCreditCardRules( { country } ) {
 			return {
 				'postal-code': {
 					description: i18n.translate( 'Postal Code', {
-						context: 'Upgrades: Postal code on credit card form',
+						comment: 'Postal code on credit card form',
 					} ),
 					rules: [ 'required', 'validPostalCodeUS' ],
 				},

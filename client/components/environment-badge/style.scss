@@ -14,10 +14,10 @@
 		display: inline-block;
 		width: 26px;
 		height: 26px;
-		background-color: $white;
-		border: solid 1px $gray-dark;
+		background-color: var( --color-white );
+		border: solid 1px var( --color-neutral-700 );
 		border-radius: 50%;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		margin-left: -4px;
 		text-decoration: none;
 		text-align: center;
@@ -39,8 +39,8 @@
 		padding: 4px 7px 4px 6px;
 		vertical-align: middle;
 		transition: all 0.2s ease-out;
-		background-color: $white;
-		box-shadow: 0 0 0 1px $gray-dark;
+		background-color: var( --color-white );
+		box-shadow: 0 0 0 1px var( --color-neutral-700 );
 
 		&.is-env {
 			display: inline-block;
@@ -48,7 +48,7 @@
 		a {
 			text-decoration: none;
 			display: inline-block;
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 
 			&:hover {
 				transform: scale( 1.1 );
@@ -69,8 +69,8 @@
 		}
 		&.branch-name {
 			text-transform: inherit;
-			background-color: $gray-dark;
-			color: $white;
+			background-color: var( --color-neutral-700 );
+			color: var( --color-white );
 		}
 	}
 

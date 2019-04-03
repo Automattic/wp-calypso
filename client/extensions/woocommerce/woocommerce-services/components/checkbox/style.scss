@@ -9,13 +9,13 @@
 	input {
 		margin: 0;
 
-		&:before {
+		&::before {
 			display: none !important; // Prevent Calypso's Noticons font
 		}
 	}
 
 	.gridicon {
-		color: $blue-medium;
+		color: var( --color-primary );
 		pointer-events: none;
 		position: absolute;
 
@@ -26,6 +26,6 @@
 	}
 
 	&.is-disabled .gridicon {
-		color: lighten( $gray, 10% );
+		color: var( --color-neutral-200 );
 	}
 }

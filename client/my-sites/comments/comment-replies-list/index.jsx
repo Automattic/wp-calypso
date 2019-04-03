@@ -43,20 +43,19 @@ export class CommentRepliesList extends Component {
 
 		return (
 			<div className={ classes }>
-				{ ! showAllReplies &&
-					replies.length > 5 && (
-						<Notice
-							icon="chevron-down"
-							showDismiss={ false }
-							text={ translate( 'Show %(remainingReplies)d more replies', {
-								args: { remainingReplies: replies.length - 5 },
-							} ) }
-						>
-							<NoticeAction onClick={ this.toggleShowAllReplies }>
-								{ translate( 'Show' ) }
-							</NoticeAction>
-						</Notice>
-					) }
+				{ ! showAllReplies && replies.length > 5 && (
+					<Notice
+						icon="chevron-down"
+						showDismiss={ false }
+						text={ translate( 'Show %(remainingReplies)d more replies', {
+							args: { remainingReplies: replies.length - 5 },
+						} ) }
+					>
+						<NoticeAction onClick={ this.toggleShowAllReplies }>
+							{ translate( 'Show' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 				{ map( repliesToShow, ( { commentId } ) => (
 					<Comment
 						commentId={ commentId }

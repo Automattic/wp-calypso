@@ -5,6 +5,7 @@
 @import 'clear-fix';
 @import 'clear-text';
 @import 'dropdown-menu';
+@import 'elevation';
 @import 'heading';
 @import 'hide-content-accessibly';
 @import 'long-content-fade';
@@ -17,7 +18,7 @@
 //======================================================
 @mixin mobile-link-element {
 	-webkit-tap-highlight-color: rgba(
-		$white,
+		var( --color-white-rgb ),
 		0.4
 	); // Until we capture ontouch events in JS this is better than :active
 	-webkit-user-select: none;

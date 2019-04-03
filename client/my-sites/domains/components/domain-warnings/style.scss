@@ -1,10 +1,46 @@
-.domain-warnings__notice {
-	li {
-		font-size: 12px;
-		list-style: none;
-		margin-left: 0;
+.domain-warnings__pending-g-suite-tos-notice .notice__content {
+	padding: 16px;
+}
+
+.domain-warnings__password {
+	font-size: 110%;
+	padding: 5px;
+}
+
+.domain-warnings__action {
+	background: none;
+	border: none;
+	color: white;
+	cursor: pointer;
+	padding: 0;
+	text-decoration: underline;
+}
+
+.domain-warnings__action:hover {
+	color: white;
+	text-decoration: none;
+}
+
+.domain-warnings__dialog {
+	min-width: 400px;
+	max-width: 600px;
+
+	@include breakpoint( '<660px' ) {
+		min-width: none;
+		max-width: none;
 	}
-	a {
-		align-self: center;
+
+	header {
+		display: flex;
+		justify-content: space-between;
+
+		button {
+			cursor: pointer;
+			margin-top: -10px;
+		}
 	}
+}
+
+.domain-warnings__dialog-copy {
+	margin-left: 5px;
 }

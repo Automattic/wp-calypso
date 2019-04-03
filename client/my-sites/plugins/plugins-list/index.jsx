@@ -29,6 +29,11 @@ import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function checkPropsChange( nextProps, propArr ) {
 	let i, prop;
 

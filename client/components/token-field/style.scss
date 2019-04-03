@@ -5,19 +5,19 @@
 	width: 100%;
 	margin: 0;
 	padding: 0;
-	background-color: $white;
-	border: 1px solid $gray-lighten-20;
-	color: $gray-dark;
+	background-color: var( --color-white );
+	border: 1px solid var( --color-neutral-100 );
+	color: var( --color-neutral-700 );
 	cursor: text;
-	transition: all .15s ease-in-out;
+	transition: all 0.15s ease-in-out;
 
 	&:hover {
-		border-color: $gray-lighten-10;
+		border-color: var( --color-neutral-200 );
 	}
 
 	&.is-disabled {
-		background: $gray-light;
-		border-color: $gray-lighten-30;
+		background: var( --color-neutral-0 );
+		border-color: var( --color-neutral-0 );
 	}
 
 	&.is-active {
@@ -34,7 +34,7 @@
 }
 
 // Token input
-input[type="text"].token-field__input {
+input[type='text'].token-field__input {
 	display: inline-block;
 	width: auto;
 	max-width: 100%;
@@ -46,7 +46,7 @@ input[type="text"].token-field__input {
 	outline: none;
 	font-family: inherit;
 	font-size: 14px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	&:focus {
 		box-shadow: none;
@@ -58,7 +58,7 @@ input[type="text"].token-field__input {
 	font-size: 14px;
 	display: flex;
 	margin: 2px 0 2px 8px;
-	color: $white;
+	color: var( --color-white );
 	overflow: hidden;
 
 	&.is-success {
@@ -78,7 +78,7 @@ input[type="text"].token-field__input {
 	&.is-validating {
 		.token-field__token-text,
 		.token-field__remove-token {
-			background: $gray;
+			background: var( --color-neutral-light );
 		}
 	}
 
@@ -93,7 +93,7 @@ input[type="text"].token-field__input {
 
 		.token-field__remove-token {
 			background: transparent;
-			color: $gray;
+			color: var( --color-neutral-light );
 			position: absolute;
 			top: 1px;
 			right: 0;
@@ -115,7 +115,7 @@ input[type="text"].token-field__input {
 
 		&.is-validating {
 			.token-field__token-text {
-				color: $gray-dark;
+				color: var( --color-neutral-700 );
 			}
 		}
 	}
@@ -131,8 +131,8 @@ input[type="text"].token-field__input {
 .token-field__remove-token {
 	display: inline-block;
 	line-height: 24px;
-	background: $gray-darken-20;
-	transition: all .2s cubic-bezier( .4, 1, .4, 1 );
+	background: var( --color-neutral-500 );
+	transition: all 0.2s cubic-bezier( 0.4, 1, 0.4, 1 );
 }
 
 .token-field__token-text {
@@ -146,33 +146,33 @@ input[type="text"].token-field__input {
 .token-field__remove-token {
 	cursor: pointer;
 	border-radius: 0 4px 4px 0;
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 
 	&:hover {
 		color: white;
-		background: $gray-darken-10;
+		background: var( --color-neutral-400 );
 	}
 }
 
 // Suggestion list
 .token-field__suggestions-list {
-	background: $white;
+	background: var( --color-white );
 	max-height: 0;
 	overflow-y: scroll;
-	transition: all .15s ease-in-out;
+	transition: all 0.15s ease-in-out;
 	list-style: none;
 	margin: 0;
 
 	&.is-expanded {
-		background: $white;
-		border-top: 1px solid $gray-lighten-20;
+		background: var( --color-white );
+		border-top: 1px solid var( --color-neutral-100 );
 		max-height: 9em;
 		padding-top: 3px;
 	}
 }
 
 .token-field__suggestion {
-	color: $gray;
+	color: var( --color-neutral-light );
 	display: block;
 	font-size: 13px;
 	padding: 4px 8px;
@@ -180,10 +180,10 @@ input[type="text"].token-field__input {
 
 	&.is-selected {
 		background: var( --color-accent );
-		color: $white;
+		color: var( --color-white );
 	}
 }
 
 .token-field__suggestion-match {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }

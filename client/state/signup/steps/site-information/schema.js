@@ -6,10 +6,10 @@ export const siteInformationSchema = {
 		address: {
 			type: 'string',
 		},
-		email: {
+		phone: {
 			type: 'string',
 		},
-		phone: {
+		title: {
 			type: 'string',
 		},
 	},

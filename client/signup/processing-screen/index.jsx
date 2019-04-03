@@ -14,10 +14,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { isInPageBuilderTest } from 'lib/signup/page-builder';
 
 /**
  * Style dependencies
@@ -48,12 +48,14 @@ export class SignupProcessingScreen extends Component {
 		}
 
 		const siteSlug = dependencies.siteSlug;
-		if ( siteSlug ) {
+		if ( siteSlug && this.state.siteSlug !== siteSlug ) {
 			this.setState( { siteSlug } );
 		}
 
 		const hasPaidSubscription = !! ( dependencies.cartItem || dependencies.domainItem );
-		this.setState( { hasPaidSubscription } );
+		if ( hasPaidSubscription && this.state.hasPaidSubscription !== hasPaidSubscription ) {
+			this.setState( { hasPaidSubscription } );
+		}
 	}
 
 	renderFloaties() {
@@ -136,11 +138,12 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	showChecklistAfterLogin = () => {
-		analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-			site: this.state.siteSlug,
-			plan: 'free',
-		} );
-		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }` } );
+		// we are hijacking this method slightly because our page builder
+		// test has the same logic for showing, except also being in the test
+		const redirectTo = isInPageBuilderTest()
+			? `/block-editor/page/${ this.state.siteSlug }/2`
+			: `/checklist/${ this.state.siteSlug }`;
+		this.props.loginHandler( { redirectTo } );
 	};
 
 	shouldShowChecklist() {
@@ -151,19 +154,28 @@ export class SignupProcessingScreen extends Component {
 		return (
 			config.isEnabled( 'onboarding-checklist' ) &&
 			'store' !== designType &&
-			[ 'main', 'onboarding', 'desktop', 'subdomain' ].includes( this.props.flowName )
+			[
+				'main',
+				'onboarding',
+				'onboarding-dev',
+				'onboarding-for-business',
+				'desktop',
+				'subdomain',
+			].includes( this.props.flowName )
 		);
 	}
 
-	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+	componentDidUpdate = () => {
 		const { loginHandler } = this.props;
 
-		if ( !! loginHandler ) {
+		if ( loginHandler ) {
 			this.shouldShowChecklist() ? this.showChecklistAfterLogin() : loginHandler();
 			return null;
 		}
+	};
 
+	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.renderFloaties() }

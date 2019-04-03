@@ -11,22 +11,17 @@ import { flow, get, invoke, isEqual } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
 import ExampleDomainBrowser from 'components/domains/example-domain-browser';
 import ExternalLink from 'components/external-link';
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import FormButton from 'components/forms/form-button';
-import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import ScreenReaderText from 'components/screen-reader-text';
-import { infoNotice, removeNotice } from 'state/notices/actions';
 import {
-	fetchIsSiteImportable,
 	setImportOriginSiteDetails,
 	setNuxUrlInputValue,
+	submitImportUrlStep,
 } from 'state/importer-nux/actions';
 import {
 	getNuxUrlError,
@@ -40,14 +35,13 @@ import {
 	SITE_IMPORTER_ERR_BAD_REMOTE,
 	SITE_IMPORTER_ERR_INVALID_URL,
 } from 'lib/importers/constants';
-import { prefetchmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
+import Notice from 'components/notice';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const CHECKING_SITE_IMPORTABLE_NOTICE = 'checking-site-importable';
 const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
 const EXAMPLE_WIX_URL = 'https://username.wixsite.com/my-site';
 
@@ -64,7 +58,7 @@ class ImportURLStepComponent extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { isSiteImportableError, goToNextStep, stepName, siteDetails, isLoading } = this.props;
+		const { isSiteImportableError } = this.props;
 
 		// isSiteImportable error, focus input to revise url.
 		if (
@@ -73,33 +67,6 @@ class ImportURLStepComponent extends Component {
 		) {
 			this.focusInput();
 		}
-
-		if ( isLoading !== prevProps.isLoading ) {
-			if ( isLoading ) {
-				this.props.infoNotice(
-					this.props.translate( "Please wait, we're checking to see if we can import this site." ),
-					{ id: CHECKING_SITE_IMPORTABLE_NOTICE, icon: 'info', isLoading: true }
-				);
-			} else {
-				this.props.removeNotice( CHECKING_SITE_IMPORTABLE_NOTICE );
-			}
-		}
-
-		if ( isEqual( prevProps.siteDetails, siteDetails ) || ! siteDetails ) {
-			return;
-		}
-
-		// We have a verified, importable site url.
-		SignupActions.submitSignupStep( { stepName }, [], {
-			importSiteDetails: siteDetails,
-			importUrl: siteDetails.siteUrl,
-			themeSlugWithRepo: 'pub/radcliffe-2',
-		} );
-
-		goToNextStep();
-
-		// Defer the mshot call as to not compete with the flow transition
-		setTimeout( () => prefetchmShotsPreview( siteDetails.siteUrl ), 200 );
 	}
 
 	handleInputChange = event => {
@@ -125,10 +92,14 @@ class ImportURLStepComponent extends Component {
 			return;
 		}
 
-		// Clear out the site details so the step knows when to progress
-		this.props.setImportOriginSiteDetails();
+		const { urlInputValue, stepName } = this.props;
 
-		this.props.fetchIsSiteImportable( this.props.urlInputValue );
+		this.props
+			.submitImportUrlStep( {
+				siteUrl: urlInputValue,
+				stepName,
+			} )
+			.then( this.props.goToNextStep );
 	};
 
 	setInputValueFromProps = () => {
@@ -201,14 +172,28 @@ class ImportURLStepComponent extends Component {
 		} );
 	};
 
+	renderNotice = () => {
+		const { showUrlMessage } = this.state;
+		const urlMessage = this.getUrlMessage();
+
+		if ( showUrlMessage && urlMessage ) {
+			return (
+				<Notice className="import-url__url-input-message" status="is-error" showDismiss={ false }>
+					{ urlMessage }
+				</Notice>
+			);
+		}
+
+		return <div className="import-url__notice-placeholder" />;
+	};
+
 	renderContent = () => {
 		const { isLoading, urlInputValue, translate } = this.props;
-		const { showUrlMessage } = this.state;
 		const urlMessage = this.getUrlMessage();
 
 		return (
 			<Fragment>
-				<Card className="import-url__card" tagName="div">
+				<div className="import-url__wrapper">
 					<form className="import-url__form" onSubmit={ this.handleSubmit }>
 						<ScreenReaderText>
 							<FormLabel htmlFor="url-input">Site URL</FormLabel>
@@ -240,18 +225,8 @@ class ImportURLStepComponent extends Component {
 								: translate( 'Continue' ) }
 						</FormButton>
 					</form>
-					{ showUrlMessage && urlMessage ? (
-						<FormInputValidation
-							className="import-url__url-input-message"
-							text={ urlMessage }
-							isError={ !! urlMessage }
-						/>
-					) : (
-						<FormSettingExplanation className="import-url__url-input-message">
-							{ translate( 'Please enter the full URL of your site.' ) }
-						</FormSettingExplanation>
-					) }
-				</Card>
+					{ this.renderNotice() }
+				</div>
 
 				<div className="import-url__example">
 					<ul className="import-url__example-urls">
@@ -318,12 +293,10 @@ export default flow(
 			isLoading: isUrlInputDisabled( state ),
 		} ),
 		{
-			fetchIsSiteImportable,
 			setNuxUrlInputValue,
 			setImportOriginSiteDetails,
 			recordTracksEvent,
-			infoNotice,
-			removeNotice,
+			submitImportUrlStep,
 		}
 	),
 	localize

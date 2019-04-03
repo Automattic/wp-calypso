@@ -88,6 +88,7 @@ import { isMobile } from 'lib/viewport';
 import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { getPreference } from 'state/preferences/selectors';
 import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
@@ -260,12 +261,14 @@ export default class extends React.Component {
 		const store = this.context.store;
 		let isRtl = false;
 		let localeSlug = 'en';
+		let colorScheme = undefined;
 
 		if ( store ) {
 			const state = store.getState();
 
 			isRtl = isRtlSelector( state );
 			localeSlug = getCurrentLocaleSlug( state );
+			colorScheme = getPreference( state, 'colorScheme' );
 		}
 
 		this.localize( isRtl, localeSlug );
@@ -358,6 +361,8 @@ export default class extends React.Component {
 			tabindex: this.props.tabIndex,
 			body_class: `content post-type-post post-status-draft post-format-standard locale-en-us${ gutenbergClassName }`,
 			add_unload_trigger: false,
+
+			color_scheme: colorScheme,
 
 			setup: setup,
 		} );
@@ -571,13 +576,12 @@ export default class extends React.Component {
 
 		return (
 			<div className={ containerClassName }>
-				{ 'html' === mode &&
-					config.isEnabled( 'post-editor/html-toolbar' ) && (
-						<EditorHtmlToolbar
-							content={ this.textInput.current }
-							onToolbarChangeContent={ this.onToolbarChangeContent }
-						/>
-					) }
+				{ 'html' === mode && config.isEnabled( 'post-editor/html-toolbar' ) && (
+					<EditorHtmlToolbar
+						content={ this.textInput.current }
+						onToolbarChangeContent={ this.onToolbarChangeContent }
+					/>
+				) }
 				<textarea
 					ref={ this.textInput }
 					className={ className }

@@ -3,29 +3,48 @@
 	margin-bottom: 64px;
 }
 
+// The containing element
+.import-url__wrapper {
+	padding: 0;
+	@include elevation ( 0 );
+	border-radius: 3px;
+	max-width: 640px;
+	margin: auto;
+}
+
+// Actual form input for typing the URL
+.import-url__wrapper .import-url__url-input {
+	border: none;
+	border-radius: 3px;
+	padding: 10px 14px;
+
+	@include breakpoint( '<660px' ) {
+		padding: 14px;
+	}
+}
+
+.import-url__wrapper .import-url__url-input-message {
+	max-width: 640px;
+	margin: 16px auto;
+}
+
+
 .import-url {
 	position: relative;
 
 	&__form {
-		display: flex;
-	}
-
-	&__url-input {
-		flex-grow: 1;
-		flex-shrink: 1;
-	}
-
-	&__url-input-message {
-		font-size: 14px;
-		margin: 0;
-		padding-top: 6px;
-		// Normalize height with bottom padding so it doesn't change when an error is shown.
-		padding-bottom: 4px;
+		position: relative;
 	}
 
 	&__submit-button {
-		flex-grow: 0;
-		flex-shrink: 0;
+		position: absolute;
+		top: 2px;
+		right: 2px;
+
+		@include breakpoint( '<660px' ) {
+			top: 1px;
+			right: 1px;
+		}
 	}
 
 	&__example {
@@ -42,15 +61,15 @@
 	}
 
 	&__example-urls {
-		color: $gray-darken-20;
+		color: var( --color-white );
 		list-style: none;
-		margin: 1em 0 1.5em 0;
+		margin: 1em 0 1.5em;
 	}
 
 	&__example-url {
 		font-family: monospace;
 		font-size: 14px;
-		color: $blue-medium;
+		color: var( --color-white );
 
 		&:first-of-type {
 			padding-top: 8px;
@@ -58,12 +77,26 @@
 	}
 
 	&__escape {
-		color: $gray-darken-20;
+		color: var( --color-white );
 		padding: 0 15px 24px;
 		text-align: center;
+
+		a {
+			color: var( --color-white );
+			text-decoration: underline;
+
+			&:hover {
+				color: var( --color-neutral-0 );
+			}
+		}
 
 		.button {
 			vertical-align: middle;
 		}
 	}
+}
+
+.import-url__notice-placeholder {
+	height: 47px;
+	margin: 16px auto;
 }

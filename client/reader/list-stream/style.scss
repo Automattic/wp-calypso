@@ -1,13 +1,13 @@
 .is-group-reader .card.list-stream__header {
 	box-shadow: none;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	display: flex;
 	flex-direction: row;
 	min-height: 48px;
 	margin-top: 24px;
 	padding: 0 14px 14px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding-left: 0;
 		padding-right: 0;
 		margin-top: 0;
@@ -25,14 +25,14 @@
 .list-stream__header-icon {
 	height: 48px;
 	width: 48px;
-	background: $gray-lighten-20;
+	background: var( --color-neutral-100 );
 	text-align: center;
 
 	.gridicon {
-		fill: $white;
+		fill: var( --color-white );
 		height: 24px;
 		position: relative;
-			top: 12px;
+		top: 12px;
 		width: 24px;
 	}
 }
@@ -44,19 +44,19 @@
 	margin: 0 10px;
 	width: calc( 100% - 15px );
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: calc( 100% - 165px );
 	}
 }
 
 .list-stream__header-title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 16px;
 }
 
 .list-stream__header-description {
 	margin: 0;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .list-stream__header-title,
@@ -65,7 +65,7 @@
 	overflow: hidden;
 	position: relative;
 
-	&:after {
+	&::after {
 		@include long-content-fade( $size: 15% );
 	}
 }
@@ -81,15 +81,14 @@
 		z-index: z-index( '.list-stream__header-follow', '.follow-button' );
 
 		.gridicon {
-			fill: var( --color-accent );
+			fill: var( --color-primary );
 		}
 
 		.follow-button__label {
-			color: var( --color-accent );
+			color: var( --color-primary );
 		}
 
 		&.is-following {
-
 			.gridicon {
 				fill: var( --color-success );
 			}
@@ -109,7 +108,7 @@
 	.follow-button,
 	.follow-button__label {
 		color: transparent;
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 
@@ -130,11 +129,11 @@
 	}
 
 	.list-stream__header-action-icon .gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		margin: auto;
 		position: relative;
-			bottom: 0;
-			top: 12px;
-			right: -6px;
+		bottom: 0;
+		top: 12px;
+		right: -6px;
 	}
 }

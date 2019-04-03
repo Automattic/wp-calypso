@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { flowRight, get, has } from 'lodash';
+import moment from 'moment-timezone';
 
 /**
  * Internal dependencies
@@ -20,14 +21,13 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import LanguagePicker from 'components/language-picker';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import config from 'config';
 import notices from 'notices';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import SiteIconSetting from './site-icon-setting';
@@ -35,13 +35,15 @@ import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { launchSite } from 'state/sites/launch/actions';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import QuerySiteDomains from 'components/data/query-site-domains';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -255,14 +257,9 @@ export class SiteSettingsFormGeneral extends Component {
 			isRequestingSettings,
 			onChangeField,
 			siteIsJetpack,
-			supportsLanguageSelection,
 			translate,
 		} = this.props;
 		const errorNotice = this.renderLanguagePickerNotice();
-
-		if ( ! supportsLanguageSelection ) {
-			return null;
-		}
 
 		return (
 			<FormFieldset className={ siteIsJetpack && 'site-settings__has-divider is-top-only' }>
@@ -355,89 +352,13 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	netNeutralityOption() {
-		const {
-			fields,
-			isRequestingSettings,
-			translate,
-			handleToggle,
-			moment,
-			handleSubmitForm,
-			isSavingSettings,
-		} = this.props;
-
-		const today = moment();
-		// Days and years are 1-indexed, and other things are 0-indexed; i.e. December is month 11.
-		const lastDay = moment( { year: 2017, month: 11, day: 31 } );
-
-		if ( today.isAfter( lastDay, 'day' ) ) {
-			return null;
-		}
-
-		return (
-			<div>
-				<SectionHeader label={ translate( 'Net Neutrality' ) }>
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
-				<Card>
-					<FormFieldset>
-						<CompactFormToggle
-							checked={ !! fields.net_neutrality }
-							disabled={ isRequestingSettings }
-							onChange={ handleToggle( 'net_neutrality' ) }
-						>
-							{ translate(
-								'The FCC wants to repeal Net Neutrality. Without Net Neutrality, ' +
-									'big cable and telecom companies can divide the internet into fast ' +
-									'and slow lanes. What would the Internet look like without net neutrality? ' +
-									'Find out by enabling this banner on your site: it shows your support ' +
-									'for real net neutrality rules by displaying a message on the bottom ' +
-									'of your site and "slowing down" some of your posts. ' +
-									'{{netNeutralityLink}}Learn more about Net Neutrality{{/netNeutralityLink}}',
-								{
-									components: {
-										netNeutralityLink: (
-											<a
-												target="_blank"
-												rel="noopener noreferrer"
-												href={
-													'https://en.blog.wordpress.com/2017/07/11/join-us-in-the-fight-for-net-neutrality/'
-												}
-											/>
-										),
-									},
-								}
-							) }
-						</CompactFormToggle>
-					</FormFieldset>
-				</Card>
-			</div>
-		);
-	}
-
 	Timezone() {
-		const {
-			fields,
-			isRequestingSettings,
-			translate,
-			supportsLanguageSelection,
-			moment,
-		} = this.props;
+		const { fields, isRequestingSettings, translate } = this.props;
 		const guessedTimezone = moment.tz.guess();
 		const setGuessedTimezone = this.onTimezoneSelect.bind( this, guessedTimezone );
 
 		return (
-			<FormFieldset
-				className={ ! supportsLanguageSelection && 'site-settings__has-divider is-top-only' }
-			>
+			<FormFieldset>
 				<FormLabel htmlFor="blogtimezone">{ translate( 'Site Timezone' ) }</FormLabel>
 
 				<Timezone
@@ -472,23 +393,42 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderLaunchSite() {
-		const { translate } = this.props;
+		const { translate, siteDomains, siteSlug, siteId, isPaidPlan } = this.props;
+
+		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
+			'site-settings__disable-privacy-settings': ! siteDomains.length,
+		} );
+		const btnText = translate( 'Launch site' );
+		let querySiteDomainsComponent, btnComponent;
+
+		if ( 0 === siteDomains.length ) {
+			querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
+			btnComponent = <Button>{ btnText }</Button>;
+		} else if ( isPaidPlan && siteDomains.length > 1 ) {
+			btnComponent = <Button onClick={ this.props.launchSite }>{ btnText }</Button>;
+			querySiteDomainsComponent = '';
+		} else {
+			btnComponent = (
+				<Button href={ `/start/launch-site?siteSlug=${ siteSlug }` }>{ btnText }</Button>
+			);
+			querySiteDomainsComponent = '';
+		}
 
 		return (
 			<>
-				<SectionHeader label={ translate( 'Launch site' ) } />
+				<SettingsSectionHeader title={ translate( 'Launch site' ) } />
 				<Card className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
 							{ translate(
-								"Your site hasn't been launched yet. Only you can see it until it is launched."
+								"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 							) }
 						</p>
 					</div>
-					<div className="site-settings__general-settings-launch-site-button">
-						<Button onClick={ this.props.launchSite }>{ translate( 'Launch site' ) }</Button>
-					</div>
+					<div className={ launchSiteClasses }>{ btnComponent }</div>
 				</Card>
+
+				{ querySiteDomainsComponent }
 			</>
 		);
 	}
@@ -498,17 +438,14 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<>
-				<SectionHeader label={ translate( 'Privacy' ) } id="site-privacy-settings">
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					id="site-privacy-settings"
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Privacy' ) }
+				/>
 				<Card>
 					<form>{ this.visibilityOptions() }</form>
 				</Card>
@@ -516,16 +453,35 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	disablePrivacySettings = e => {
+		e.target.blur();
+	};
+
 	privacySettingsWrapper() {
 		if ( this.props.isUnlaunchedSite ) {
 			if ( this.props.needsVerification ) {
-				return <EmailVerificationGate>{ this.renderLaunchSite() }</EmailVerificationGate>;
+				return (
+					<EmailVerificationGate>
+						{ this.renderLaunchSite() }
+						{ this.privacySettings() }
+					</EmailVerificationGate>
+				);
 			}
 
-			return this.renderLaunchSite();
+			return (
+				<>
+					{ this.renderLaunchSite() }
+					<div
+						className="site-settings__disable-privacy-settings"
+						onFocus={ this.disablePrivacySettings }
+					>
+						{ this.privacySettings() }
+					</div>
+				</>
+			);
 		}
 
-		return this.privacySettings();
+		return <>{ this.privacySettings() }</>;
 	}
 
 	render() {
@@ -550,20 +506,14 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! siteIsJetpack && this.netNeutralityOption() }
-
-				<SectionHeader label={ translate( 'Site Profile' ) }>
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
-						data-tip-target="settings-site-profile-save"
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
+				<SettingsSectionHeader
+					data-tip-target="settings-site-profile-save"
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Site Profile' ) }
+				/>
 				<Card>
 					<form>
 						{ this.siteOptions() }
@@ -578,7 +528,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
-						<SectionHeader label={ translate( 'Footer Credit' ) } />
+						<SettingsSectionHeader title={ translate( 'Footer Credit' ) } />
 						<CompactCard className="site-settings__footer-credit-explanation">
 							<p>
 								{ preventWidows(
@@ -597,19 +547,18 @@ export class SiteSettingsFormGeneral extends Component {
 								</Button>
 							</div>
 						</CompactCard>
-						{ site &&
-							! isBusiness( site.plan ) && (
-								<Banner
-									feature={ FEATURE_NO_BRANDING }
-									plan={ PLAN_BUSINESS }
-									title={ translate(
-										'Remove the footer credit entirely with WordPress.com Business'
-									) }
-									description={ translate(
-										'Upgrade to remove the footer credit, add Google Analytics and more'
-									) }
-								/>
-							) }
+						{ site && ! isBusiness( site.plan ) && (
+							<Banner
+								feature={ FEATURE_NO_BRANDING }
+								plan={ PLAN_BUSINESS }
+								title={ translate(
+									'Remove the footer credit entirely with WordPress.com Business'
+								) }
+								description={ translate(
+									'Upgrade to remove the footer credit, add Google Analytics and more'
+								) }
+							/>
+						) }
 					</div>
 				) }
 			</div>
@@ -654,9 +603,9 @@ const connectComponent = connect(
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
-			supportsLanguageSelection:
-				! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '5.9-alpha' ),
 			selectedSite,
+			isPaidPlan: isCurrentPlanPaid( state, siteId ),
+			siteDomains: getDomainsBySiteId( state, siteId ),
 		};
 	},
 	mapDispatchToProps,
@@ -672,7 +621,6 @@ const getFormSettings = settings => {
 		timezone_string: '',
 		blog_public: '',
 		admin_url: '',
-		net_neutrality: false,
 	};
 
 	if ( ! settings ) {
@@ -686,15 +634,13 @@ const getFormSettings = settings => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
-
-		net_neutrality: settings.net_neutrality,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;
 
 	if ( ! settings.timezone_string && typeof gmt_offset === 'string' && gmt_offset.length ) {
-		formSettings.timezone_string = 'UTC' + ( /\-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
+		formSettings.timezone_string = 'UTC' + ( /-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
 	}
 
 	return formSettings;

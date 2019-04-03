@@ -19,6 +19,11 @@ import QueryPreferences from 'components/data/query-preferences';
 import { savePreference, setPreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const PREFERENCE_PREFIX = 'dismissible-card-';
 
 class DismissibleCard extends Component {

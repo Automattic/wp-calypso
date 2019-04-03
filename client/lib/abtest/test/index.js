@@ -1,12 +1,10 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { get as getStoreStub, set as setSpy } from 'store';
 
 /**
@@ -14,6 +12,15 @@ import { get as getStoreStub, set as setSpy } from 'store';
  */
 import { abtest } from 'lib/abtest';
 import { getUserStub } from 'lib/user';
+
+const NODE_ENV = process.env.NODE_ENV;
+beforeAll( () => {
+	process.env.NODE_ENV = 'production';
+} );
+
+afterAll( () => {
+	process.env.NODE_ENV = NODE_ENV;
+} );
 
 jest.mock( 'lib/abtest/active-tests', () => ( {
 	mockedTest: {
@@ -84,18 +91,21 @@ jest.mock( 'lib/user', () => {
 jest.mock( 'store', () => ( {
 	enabled: () => true,
 	get: jest.fn(),
-	set: require( 'sinon' ).spy(),
+	set: jest.fn(),
 } ) );
 
 const DATE_BEFORE = '2015-06-30T01:32:21.196Z';
 const DATE_AFTER = '2016-06-30T01:32:21.196Z';
 
 describe( 'abtest', () => {
+	beforeEach( () => {
+		setSpy.mockReset();
+	} );
 	describe( 'stored value', () => {
 		beforeEach( () => {
 			getStoreStub.mockReturnValueOnce( { mockedTest_20160627: 'show' } );
-			setSpy.resetHistory();
 		} );
+
 		test( 'should return stored value and skip store.set for existing users', () => {
 			getUserStub.mockReturnValueOnce( {
 				localeSlug: 'en',
@@ -105,29 +115,31 @@ describe( 'abtest', () => {
 				language: 'en',
 				languages: [ 'en' ],
 			};
-			expect( abtest( 'mockedTest' ) ).to.equal( 'show' );
-			expect( setSpy ).not.to.have.been.called;
+			expect( abtest( 'mockedTest' ) ).toBe( 'show' );
+			expect( setSpy ).not.toHaveBeenCalled();
 		} );
+
 		test( 'should return stored value and skip store.set for any user, including new, non-English users', () => {
 			getUserStub.mockReturnValueOnce( {
 				localeSlug: 'de',
 				date: DATE_AFTER,
 			} );
-			expect( abtest( 'mockedTest' ) ).to.equal( 'show' );
-			expect( setSpy ).not.to.have.been.called;
+			expect( abtest( 'mockedTest' ) ).toBe( 'show' );
+			expect( setSpy ).not.toHaveBeenCalled();
 		} );
+
 		test( 'should return stored value and skip store.set for a logged-out user', () => {
 			getUserStub.mockReturnValueOnce( null );
-			expect( abtest( 'mockedTest' ) ).to.equal( 'show' );
-			expect( setSpy ).not.to.have.been.called;
+			expect( abtest( 'mockedTest' ) ).toBe( 'show' );
+			expect( setSpy ).not.toHaveBeenCalled();
 		} );
 	} );
 
 	describe( 'no stored value', () => {
 		beforeEach( () => {
 			getStoreStub.mockReturnValue( {} );
-			setSpy.resetHistory();
 		} );
+
 		describe( 'existing users', () => {
 			beforeEach( () => {
 				getUserStub.mockReturnValue( {
@@ -136,12 +148,12 @@ describe( 'abtest', () => {
 				} );
 			} );
 			test( 'should return default and skip store.set when allowExistingUsers is false', () => {
-				expect( abtest( 'mockedTest' ) ).to.equal( 'hide' );
-				expect( setSpy ).not.to.have.been.called;
+				expect( abtest( 'mockedTest' ) ).toBe( 'hide' );
+				expect( setSpy ).not.toHaveBeenCalled();
 			} );
 			test( 'should call store.set when allowExistingUsers is true', () => {
 				abtest( 'mockedTestAllowExisting' );
-				expect( setSpy ).to.have.been.calledOnce;
+				expect( setSpy ).toHaveBeenCalledTimes( 1 );
 			} );
 		} );
 
@@ -153,7 +165,7 @@ describe( 'abtest', () => {
 						date: DATE_AFTER,
 					} );
 					abtest( 'mockedTest' );
-					expect( setSpy ).to.have.been.calledOnce;
+					expect( setSpy ).toHaveBeenCalledTimes( 1 );
 				} );
 				test( 'should call store.set for new users with English-Canada settings', () => {
 					getUserStub.mockReturnValue( {
@@ -161,17 +173,18 @@ describe( 'abtest', () => {
 						date: DATE_AFTER,
 					} );
 					abtest( 'mockedTest' );
-					expect( setSpy ).to.have.been.calledOnce;
+					expect( setSpy ).toHaveBeenCalledTimes( 1 );
 				} );
 				test( 'should return default and skip store.set for new users with non-English settings', () => {
 					getUserStub.mockReturnValue( {
 						localeSlug: 'de',
 						date: DATE_AFTER,
 					} );
-					expect( abtest( 'mockedTest' ) ).to.equal( 'hide' );
-					expect( setSpy ).not.to.have.been.called;
+					expect( abtest( 'mockedTest' ) ).toBe( 'hide' );
+					expect( setSpy ).not.toHaveBeenCalled();
 				} );
 			} );
+
 			describe( 'all locales allowed', () => {
 				test( 'should call store.set for new users with English settings', () => {
 					getUserStub.mockReturnValue( {
@@ -179,7 +192,7 @@ describe( 'abtest', () => {
 						date: DATE_AFTER,
 					} );
 					abtest( 'mockedTestAllowAnyLocale' );
-					expect( setSpy ).to.have.been.calledOnce;
+					expect( setSpy ).toHaveBeenCalledTimes( 1 );
 				} );
 				test( 'should call store.set for new users with non-English settings', () => {
 					getUserStub.mockReturnValue( {
@@ -187,17 +200,18 @@ describe( 'abtest', () => {
 						date: DATE_AFTER,
 					} );
 					abtest( 'mockedTestAllowAnyLocale' );
-					expect( setSpy ).to.have.been.calledOnce;
+					expect( setSpy ).toHaveBeenCalledTimes( 1 );
 				} );
 			} );
+
 			describe( 'specific locales only', () => {
 				test( 'should return default and skip store.set for new users with English settings', () => {
 					getUserStub.mockReturnValue( {
 						localeSlug: 'en',
 						date: DATE_AFTER,
 					} );
-					expect( abtest( 'multipeLocaleNotEn' ) ).to.equal( 'hide' );
-					expect( setSpy ).not.to.have.been.called;
+					expect( abtest( 'multipeLocaleNotEn' ) ).toBe( 'hide' );
+					expect( setSpy ).not.toHaveBeenCalled();
 				} );
 				test( 'should call store.set for new users with non-English settings', () => {
 					getUserStub.mockReturnValue( {
@@ -205,17 +219,18 @@ describe( 'abtest', () => {
 						date: DATE_AFTER,
 					} );
 					abtest( 'multipeLocaleNotEn' );
-					expect( setSpy ).to.have.been.calledOnce;
+					expect( setSpy ).toHaveBeenCalledTimes( 1 );
 				} );
 			} );
+
 			describe( 'fr locale only', () => {
 				test( 'should return default and skip store.set for new users with non-french settings', () => {
 					getUserStub.mockReturnValue( {
 						localeSlug: 'de',
 						date: DATE_AFTER,
 					} );
-					expect( abtest( 'mockedTestFrLocale' ) ).to.equal( 'hide' );
-					expect( setSpy ).not.to.have.been.called;
+					expect( abtest( 'mockedTestFrLocale' ) ).toBe( 'hide' );
+					expect( setSpy ).not.toHaveBeenCalled();
 				} );
 				test( 'should call store.set for new users with fr settings', () => {
 					getUserStub.mockReturnValue( {
@@ -223,9 +238,10 @@ describe( 'abtest', () => {
 						date: DATE_AFTER,
 					} );
 					abtest( 'mockedTestFrLocale' );
-					expect( setSpy ).to.have.been.calledOnce;
+					expect( setSpy ).toHaveBeenCalledTimes( 1 );
 				} );
 			} );
+
 			describe( 'IL/IN countryCodeTargets only', () => {
 				beforeEach( () => {
 					getUserStub.mockReturnValue( {
@@ -236,30 +252,31 @@ describe( 'abtest', () => {
 
 				test( 'should return default and skip store.set for new users with no GeoLocation value', () => {
 					abtest( 'mockedTestIlInCountryCodeTargets', null );
-					expect( setSpy ).not.to.have.been.called;
+					expect( setSpy ).not.toHaveBeenCalled();
 				} );
 				test( 'should throw error if countryCodeTarget is set but geoLocation is not passed', () => {
-					expect( () => abtest( 'mockedTestIlInCountryCodeTargets' ) ).to.throw(
+					expect( () => abtest( 'mockedTestIlInCountryCodeTargets' ) ).toThrow(
 						'Test config has countryCodeTargets, but no geoLocation passed to abtest function'
 					);
 				} );
 				test( 'should return default and skip store.set for new users not from Israel', () => {
 					const geoLocation = 'US';
-					expect( abtest( 'mockedTestIlInCountryCodeTargets', geoLocation ) ).to.equal( 'hide' );
-					expect( setSpy ).not.to.have.been.called;
+					expect( abtest( 'mockedTestIlInCountryCodeTargets', geoLocation ) ).toBe( 'hide' );
+					expect( setSpy ).not.toHaveBeenCalled();
 				} );
 				test( 'should call store.set for new users with from Israel', () => {
 					const geoLocation = 'IL';
 					abtest( 'mockedTestIlInCountryCodeTargets', geoLocation );
-					expect( setSpy ).to.have.been.calledOnce;
+					expect( setSpy ).toHaveBeenCalledTimes( 1 );
 				} );
 				test( 'should call store.set for new users with from India', () => {
 					const geoLocation = 'IN';
 					abtest( 'mockedTestIlInCountryCodeTargets', geoLocation );
-					expect( setSpy ).to.have.been.calledOnce;
+					expect( setSpy ).toHaveBeenCalledTimes( 1 );
 				} );
 			} );
 		} );
+
 		describe( 'new-user-no-locale', () => {
 			beforeEach( () => {
 				getUserStub.mockReturnValue( {
@@ -269,38 +286,38 @@ describe( 'abtest', () => {
 			} );
 			test( 'should call store.set for new users with no locale for en only test', () => {
 				abtest( 'mockedTest' );
-				expect( setSpy ).to.have.been.calledOnce;
+				expect( setSpy ).toHaveBeenCalledTimes( 1 );
 			} );
 			test( 'show return default and skip store.set for new users with no locale for fr test', () => {
 				global.navigator.__defineGetter__( 'language', () => 'de' );
-				expect( abtest( 'mockedTestFrLocale' ) ).to.equal( 'hide' );
-				expect( setSpy ).not.to.have.been.called;
+				expect( abtest( 'mockedTestFrLocale' ) ).toBe( 'hide' );
+				expect( setSpy ).not.toHaveBeenCalled();
 			} );
 		} );
+
 		describe( 'logged-out users', () => {
 			beforeEach( () => {
 				getUserStub.mockReturnValue( false );
-				setSpy.resetHistory();
 			} );
 			test( 'should call store.set for logged-out users with English locale', () => {
 				global.navigator.__defineGetter__( 'language', () => 'en' );
 				abtest( 'mockedTest' );
-				expect( setSpy ).to.have.been.calledOnce;
+				expect( setSpy ).toHaveBeenCalledTimes( 1 );
 			} );
 			test( 'show return default and skip store.set for non-English navigator.language', () => {
 				global.navigator.__defineGetter__( 'language', () => 'de' );
-				expect( abtest( 'mockedTest' ) ).to.equal( 'hide' );
-				expect( setSpy ).not.to.have.been.called;
+				expect( abtest( 'mockedTest' ) ).toBe( 'hide' );
+				expect( setSpy ).not.toHaveBeenCalled();
 			} );
 			test( 'should return default and skip store.set for non-English navigator.languages primary preference', () => {
 				global.navigator.__defineGetter__( 'languages', () => [ 'de' ] );
-				expect( abtest( 'mockedTest' ) ).to.equal( 'hide' );
-				expect( setSpy ).not.to.have.been.called;
+				expect( abtest( 'mockedTest' ) ).toBe( 'hide' );
+				expect( setSpy ).not.toHaveBeenCalled();
 			} );
 			test( 'should return default and skip store.set for non-English IE10 userLanguage setting', () => {
 				global.navigator.__defineGetter__( 'userLanguage', () => 'de' );
-				expect( abtest( 'mockedTest' ) ).to.equal( 'hide' );
-				expect( setSpy ).not.to.have.been.called;
+				expect( abtest( 'mockedTest' ) ).toBe( 'hide' );
+				expect( setSpy ).not.toHaveBeenCalled();
 			} );
 		} );
 	} );

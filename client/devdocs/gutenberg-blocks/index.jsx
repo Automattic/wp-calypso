@@ -22,6 +22,11 @@ import Collection from 'devdocs/design/search-collection';
 import { GutenbergBlockExample, generateExample } from './example';
 import examples from './examples';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 registerCoreBlocks();
 
 export default class GutenbergBlocks extends React.Component {

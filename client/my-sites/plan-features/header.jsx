@@ -7,12 +7,12 @@ import React, { Component } from 'react';
 import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
  **/
 import { localize } from 'i18n-calypso';
-import formatCurrency from 'lib/format-currency';
 import InfoPopover from 'components/info-popover';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PlanPrice from 'my-sites/plan-price';
@@ -27,6 +27,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
+import { abtest } from 'lib/abtest';
 
 export class PlanFeaturesHeader extends Component {
 	render() {
@@ -63,7 +64,16 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderSignupHeader() {
-		const { planType, popular, newPlan, bestValue, title, audience, translate } = this.props;
+		const {
+			planType,
+			popular,
+			newPlan,
+			bestValue,
+			title,
+			audience,
+			translate,
+			countryCode,
+		} = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
@@ -83,7 +93,9 @@ export class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
-					{ this.getIntervalDiscount() }
+					{ countryCode && abtest( 'jetpackMonthlyPlansOnly', countryCode ) !== 'monthlyOnly'
+						? this.getIntervalDiscount()
+						: null }
 				</div>
 			</div>
 		);
@@ -141,16 +153,14 @@ export class PlanFeaturesHeader extends Component {
 			return (
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
-					{ isDiscounted &&
-						! isUserCurrentlyOnAFreePlan &&
-						! isPlaceholder && (
-							<InfoPopover
-								className="plan-features__header-tip-info"
-								position={ isMobile() ? 'top' : 'bottom left' }
-							>
-								{ this.getDiscountTooltipMessage() }
-							</InfoPopover>
-						) }
+					{ isDiscounted && ! isUserCurrentlyOnAFreePlan && ! isPlaceholder && (
+						<InfoPopover
+							className="plan-features__header-tip-info"
+							position={ isMobile() ? 'top' : 'bottom left' }
+						>
+							{ this.getDiscountTooltipMessage() }
+						</InfoPopover>
+					) }
 				</p>
 			);
 		}
@@ -174,6 +184,7 @@ export class PlanFeaturesHeader extends Component {
 			isInSignup,
 			isPlaceholder,
 			isJetpack,
+			isSiteAT,
 			discountPrice,
 			rawPrice,
 			relatedMonthlyPlan,
@@ -189,7 +200,8 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		if ( availableForPurchase ) {
-			if ( relatedMonthlyPlan ) {
+			// Only multiply price by 12 for Jetpack plans where we sell both monthly and yearly
+			if ( isJetpack && ! isSiteAT && relatedMonthlyPlan ) {
 				return this.renderPriceGroup(
 					relatedMonthlyPlan.raw_price * 12,
 					discountPrice || rawPrice
@@ -316,6 +328,7 @@ PlanFeaturesHeader.propTypes = {
 	siteSlug: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
+	countryCode: PropTypes.string,
 
 	// Connected props
 	currentSitePlan: PropTypes.object,

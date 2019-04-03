@@ -8,6 +8,6 @@
     <circle fill="#B0B5B8" cx="35.5" cy="45.5" r="16.5"/>
     <path fill="#FFF" d="M90 36h130v107H90z"/>
     <path fill="#016087" d="M0 0h240v20H0z"/>
-    <rect fill="#016087" x="160" y="48" width="48" height="16" rx="3"/>
+    <rect fill="#D8720E" x="160" y="48" width="48" height="16" rx="3"/>
   </g>
 </svg>

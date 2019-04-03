@@ -79,11 +79,11 @@
     font-weight: normal;
     text-align: left;
   }
-  blockquote:before, blockquote:after, q:before, q:after {
-    content: "";
+  blockquote::before, blockquote::after, q::before, q::after {
+    content: '';
   }
   blockquote, q {
-    quotes: "" "";
+    quotes: '' '';
   }
   a:focus {
     outline: thin dotted;
@@ -103,7 +103,7 @@
     appearance: none;
     overflow: auto;
   }
-  input[type="radio"], input[type="checkbox"] {
+  input[type='radio'], input[type='checkbox'] {
     -webkit-appearance: none;
   }
 }

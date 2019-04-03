@@ -28,6 +28,11 @@ import { getPostStat } from 'state/stats/posts/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StatsPostPerformance extends Component {
 	static propTypes = {
 		viewCount: PropTypes.number,
@@ -96,11 +101,13 @@ class StatsPostPerformance extends Component {
 			}
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
-				{ siteId &&
-					post && <QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } /> }
+				{ siteId && post && (
+					<QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } />
+				) }
 				<SectionHeader label={ translate( 'Latest Post Summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
 					<StatsModulePlaceholder isLoading={ loading && ! post } />
@@ -140,6 +147,7 @@ class StatsPostPerformance extends Component {
 				</Card>
 			</div>
 		);
+		/* eslint-enable */
 	}
 }
 

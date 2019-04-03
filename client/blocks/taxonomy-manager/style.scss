@@ -1,13 +1,13 @@
 .taxonomy-manager {
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 }
 
 .taxonomy-manager__header {
 	display: flex;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
-	background: $white;
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
+	background: var( --color-white );
 }
 
 .taxonomy-manager__header .search-card {
@@ -35,7 +35,7 @@
 }
 
 .taxonomy-manager__list-item {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 }
 
 .taxonomy-manager__list-item-card {
@@ -52,7 +52,7 @@
 
 	.taxonomy-manager__icon {
 		padding: 15px;
-		color: $gray;
+		color: var( --color-neutral-light );
 		.gridicon {
 			display: block;
 		}
@@ -74,7 +74,7 @@
 
 		.taxonomy-manager__list-item.is-placeholder & {
 			color: transparent;
-			background-color: $gray-lighten-30;
+			background-color: var( --color-neutral-0 );
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 
@@ -103,7 +103,7 @@
 		.ellipsis-menu__toggle.button.is-borderless {
 			cursor: pointer;
 			font-size: 24px;
-			color: $gray;
+			color: var( --color-neutral-light );
 			padding: 15px 24px;
 			min-width: 24px;
 			.gridicon {
@@ -119,5 +119,5 @@
 
 .taxonomy-manager .virtual-list__list-row.is-empty {
 	padding: 16px 24px;
-	box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
+	box-shadow: 0 0 0 1px rgba( 200, 215, 225, 0.5 ), 0 1px 2px #e9eff3;
 }

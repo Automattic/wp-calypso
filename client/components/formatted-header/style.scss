@@ -1,8 +1,8 @@
 .formatted-header {
-	margin: 16px 0 24px 0;
+	margin: 16px 0 24px;
 	text-align: center;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-bottom: 35px;
 
 		&.is-without-subhead {
@@ -13,19 +13,19 @@
 
 .formatted-header__title {
 	font-size: 24px;
-	margin: 0 0 5px 0;
+	margin: 0 0 5px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		line-height: 1.2em;
 		padding: 0 10px;
 	}
 }
 
 .formatted-header__subtitle {
-	color: darken( $gray, 20 );
+	color: var( --color-neutral-500 );
 	font-size: 14px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin: 0;
 		padding: 0 20px;
 	}

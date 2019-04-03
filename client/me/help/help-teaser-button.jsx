@@ -13,6 +13,11 @@ import Gridicon from 'gridicons';
  */
 import Card from 'components/card';
 
+/**
+ * Style dependencies
+ */
+import './help-teaser-button.scss';
+
 export default localize( ( { title, description, href, onClick } ) => {
 	return (
 		<div className="help__help-teaser-button">

@@ -9,12 +9,12 @@
 }
 
 .billing-history__no-results-cell {
-	color: $gray;
+	color: var( --color-text-subtle );
 	padding: 24px;
 }
 
 .billing-history__transactions thead {
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 }
 
 .billing-history__transactions thead .header-row {
@@ -39,9 +39,9 @@
 	text-align: left;
 	width: 100px;
 	padding: 3px 9px;
-	background-color: $white;
+	background-color: var( --color-white );
 	border-radius: 15px;
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	transition: width 0.25s ease-out;
 	outline: 0;
 
@@ -57,10 +57,10 @@
 
 // Table Body
 .billing-history__transaction {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	height: 66px;
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 
 	&:last-child {
 		border-bottom: none;
@@ -77,6 +77,12 @@
 			@include placeholder();
 		}
 	}
+}
+
+.billing-history__transaction-tax-amount {
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	white-space: nowrap;
 }
 
 .billing-history__header-row {
@@ -113,7 +119,7 @@
 	}
 
 	small {
-		color: $gray;
+		color: var( --color-text-subtle );
 		display: block;
 		font-size: 12px;
 		font-style: italic;
@@ -126,7 +132,7 @@
 
 .billing-history__transaction-links {
 	font-size: 12px;
-	margin: 4px 0 0 0;
+	margin: 4px 0 0;
 
 	a {
 		padding-right: 8px;
@@ -169,10 +175,10 @@
 	}
 
 	.billing-history__transaction-date {
-		color: $gray;
+		color: var( --color-neutral );
 		font-size: 13px;
 		font-style: italic;
-		padding: 5px 0 0 0;
+		padding: 5px 0 0;
 
 		@include breakpoint( '>480px' ) {
 			position: absolute;
@@ -187,10 +193,10 @@
 }
 
 .billing-history__receipt-details {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	list-style: none;
 	padding: 20px 40px;
-	margin: 20px 0 0 0;
+	margin: 20px 0 0;
 	overflow: auto;
 
 	@include breakpoint( '<480px' ) {
@@ -198,9 +204,9 @@
 	}
 
 	li {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 13px;
-		margin: 0 0 15px 0;
+		margin: 0 0 15px;
 		padding: 0;
 
 		&:last-child {
@@ -208,7 +214,7 @@
 		}
 
 		strong {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 			display: block;
 			font-size: 12px;
 			font-weight: 600;
@@ -239,7 +245,7 @@
 	}
 
 	.billing-history__receipt-loading {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 
 	.billing-history__receipt-line-items {
@@ -248,12 +254,17 @@
 		width: 100%;
 
 		th {
-			border-bottom: 2px solid lighten( $gray, 25% );
-			color: $gray;
+			border-bottom: 2px solid var( --color-border-subtle );
+			color: var( --color-text-subtle );
 			font-size: 12px;
 			font-weight: 400;
 			text-transform: uppercase;
 			width: auto;
+		}
+
+		td,
+		th {
+			padding: 10px 0;
 		}
 
 		.billing-history__receipt-desc {
@@ -263,28 +274,18 @@
 
 		.billing-history__receipt-amount {
 			text-align: right;
-		}
-
-		td,
-		th {
-			padding: 10px 0;
-		}
-
-		.billing-history__receipt-amount {
-			color: $gray;
-			text-align: right;
 			vertical-align: middle;
 		}
 
 		.billing-history__receipt-item-name {
 			small {
-				color: $gray;
+				color: var( --color-text-subtle );
 				font-size: 13px;
 				margin-left: 5px;
 				text-transform: lowercase;
 			}
 			em {
-				color: $gray;
+				color: var( --color-text-subtle );
 				display: block;
 				font-size: 13px;
 			}
@@ -292,7 +293,8 @@
 
 		tbody tr {
 			td {
-				border-bottom: 1px solid $gray-lighten-30;
+				color: var( --color-neutral );
+				border-bottom: 1px solid var( --color-border-subtle );
 			}
 
 			&:last-child td {
@@ -306,7 +308,7 @@
 			vertical-align: bottom;
 
 			td {
-				border-top: 2px solid lighten( $gray, 25% );
+				border-top: 2px solid var( --color-border-subtle );
 				padding-bottom: 0;
 			}
 		}

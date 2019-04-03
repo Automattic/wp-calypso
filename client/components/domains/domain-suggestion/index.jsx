@@ -17,8 +17,9 @@ import Button from 'components/button';
 
 class DomainSuggestion extends React.Component {
 	static propTypes = {
-		buttonContent: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
-		buttonProps: PropTypes.object,
+		buttonContent: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
+			.isRequired,
+		buttonStyles: PropTypes.object,
 		extraClasses: PropTypes.string,
 		onButtonClick: PropTypes.func.isRequired,
 		priceRule: PropTypes.string,
@@ -29,12 +30,11 @@ class DomainSuggestion extends React.Component {
 	};
 
 	static defaultProps = {
-		buttonProps: { primary: true },
 		showChevron: false,
 	};
 
 	render() {
-		const { children, extraClasses, hidePrice, isAdded, price, priceRule } = this.props;
+		const { children, extraClasses, hidePrice, isAdded, price, priceRule, salePrice } = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -46,6 +46,7 @@ class DomainSuggestion extends React.Component {
 			extraClasses
 		);
 
+		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
 		return (
 			<div
 				className={ classes }
@@ -56,9 +57,11 @@ class DomainSuggestion extends React.Component {
 			>
 				<div className="domain-suggestion__content">
 					{ children }
-					{ ! hidePrice && <DomainProductPrice price={ price } rule={ priceRule } /> }
+					{ ! hidePrice && (
+						<DomainProductPrice price={ price } salePrice={ salePrice } rule={ priceRule } />
+					) }
 				</div>
-				<Button className="domain-suggestion__action" { ...this.props.buttonProps }>
+				<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
 					{ this.props.buttonContent }
 				</Button>
 				{ this.props.showChevron && (
@@ -66,19 +69,22 @@ class DomainSuggestion extends React.Component {
 				) }
 			</div>
 		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events jsx-a11y/interactive-supports-focus */
 	}
 }
 
 DomainSuggestion.Placeholder = function() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="domain-suggestion card is-compact is-placeholder is-clickable">
 			<div className="domain-suggestion__content">
-				<h3 />
+				<div />
 			</div>
 			<div className="domain-suggestion__action" />
 			<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default DomainSuggestion;

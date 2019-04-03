@@ -1,15 +1,44 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import url from 'url';
+import { trim } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
 	IMPORT_IS_SITE_IMPORTABLE_ERROR,
 	IMPORT_IS_SITE_IMPORTABLE_RECEIVE,
 	IMPORTER_NUX_URL_INPUT_SET,
+	IMPORTER_NUX_FROM_SIGNUP_CLEAR,
+	IMPORTER_NUX_FROM_SIGNUP_SET,
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
 } from 'state/action-types';
+import { loadmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
 import wpLib from 'lib/wp';
+import SignupActions from 'lib/signup/actions';
+
 const wpcom = wpLib.undocumented();
+
+const normalizeUrl = targetUrl => {
+	const siteURL = trim( targetUrl );
+
+	if ( ! siteURL ) {
+		return;
+	}
+
+	const { hostname, pathname } = url.parse(
+		siteURL.startsWith( 'http' ) ? siteURL : 'https://' + siteURL
+	);
+
+	if ( ! hostname ) {
+		return;
+	}
+
+	return hostname + pathname;
+};
 
 export const setNuxUrlInputValue = value => ( {
 	type: IMPORTER_NUX_URL_INPUT_SET,
@@ -40,3 +69,39 @@ export const fetchIsSiteImportable = site_url => dispatch => {
 		)
 		.catch( error => dispatch( { type: IMPORT_IS_SITE_IMPORTABLE_ERROR, error } ) );
 };
+
+export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) => dispatch =>
+	dispatch( fetchIsSiteImportable( siteUrlFromInput ) )
+		.then( async siteDetails => {
+			const { engine, error, favicon, siteTitle, siteUrl: importSiteUrl } = siteDetails;
+
+			if ( error ) {
+				throw new Error( error );
+			}
+
+			const imageBlob = await loadmShotsPreview( {
+				url: normalizeUrl( siteUrlFromInput ),
+				maxRetries: 30,
+				retryTimeout: 1000,
+			} );
+
+			return SignupActions.submitSignupStep( { stepName }, [], {
+				sitePreviewImageBlob: imageBlob,
+				importEngine: engine,
+				importFavicon: favicon,
+				importSiteTitle: siteTitle,
+				importSiteUrl,
+				themeSlugWithRepo: 'pub/modern-business',
+			} );
+		} )
+		.catch( error => {
+			throw new Error( error );
+		} );
+
+export const setImportingFromSignupFlow = () => ( {
+	type: IMPORTER_NUX_FROM_SIGNUP_SET,
+} );
+
+export const clearImportingFromSignupFlow = () => ( {
+	type: IMPORTER_NUX_FROM_SIGNUP_CLEAR,
+} );

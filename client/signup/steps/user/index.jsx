@@ -11,7 +11,7 @@ import { identity, includes, isEmpty, omit, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
@@ -111,12 +111,22 @@ export class UserStep extends Component {
 					comment:
 						'Link displayed on the Signup page to users willing to sign up for WooCommerce via WordPress.com',
 				} );
+			} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
+				subHeaderText = translate(
+					'By creating an account via any of the options below,{{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
+					{
+						components: {
+							a: <a href="https://wordpress.com/tos" target="_blank" rel="noopener noreferrer" />,
+							br: <br />,
+						},
+					}
+				);
 			} else {
 				subHeaderText = translate(
 					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
 					{
 						components: {
-							a: <a href={ WPCC } target="_blank" />,
+							a: <a href={ WPCC } target="_blank" rel="noopener noreferrer" />,
 						},
 						comment:
 							'Text displayed on the Signup page to users willing to sign up for an app via WordPress.com',
@@ -144,12 +154,6 @@ export class UserStep extends Component {
 	submit = data => {
 		const { flowName, stepName, oauth2Signup, translate } = this.props;
 		const dependencies = {};
-		const siteInformationPreFill = { address: '', email: data.userData.email, phone: '' };
-
-		// If the site-information step is enabled, then the email field in that step
-		// will be pre-populated with the value given in the user step
-		this.props.setSiteInformation( siteInformationPreFill );
-
 		if ( oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
 			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
@@ -220,7 +224,11 @@ export class UserStep extends Component {
 	getHeaderText() {
 		const { flowName, oauth2Client, translate, headerText } = this.props;
 
-		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
+		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
+			return translate( 'Sign up for Crowdsignal' );
+		}
+
+		if ( includes( [ 'wpcc' ], flowName ) && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
 				args: { clientTitle: oauth2Client.title },
 				comment:

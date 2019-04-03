@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { filter, flow, get, isEmpty, once } from 'lodash';
+import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
 import BloggerImporter from 'my-sites/importer/importer-blogger';
 import SiteImporter from 'my-sites/importer/importer-site-importer';
+import Importer6 from 'my-sites/importer/importer-6';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
 import { fetchState, startImport } from 'lib/importer/actions';
 import {
@@ -29,18 +30,17 @@ import {
 	MEDIUM,
 	BLOGGER,
 	SITE_IMPORTER,
+	IMPORTER_6,
 	SQUARESPACE,
 } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSelectedSite, getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import DescriptiveHeader from 'my-sites/site-settings/settings-import/descriptive-header';
 import JetpackImporter from 'my-sites/site-settings/settings-import/jetpack-importer';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 /**
  * Configuration for each of the importers to be rendered in this section. If
@@ -75,11 +75,21 @@ const importers = [
 		isImporterEnabled: true,
 		component: SquarespaceImporter,
 	},
+	{
+		type: IMPORTER_6,
+		isImporterEnabled: isEnabled( 'manage/import/engine6' ),
+		component: Importer6,
+	},
 ];
 
 const filterImportsForSite = ( siteID, imports ) => {
 	return filter( imports, importItem => importItem.site.ID === siteID );
 };
+
+const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
+const getImporterForEngine = memoize( engine =>
+	find( importers, [ 'type', getImporterTypeForEngine( engine ) ] )
+);
 
 class SiteSettingsImport extends Component {
 	static propTypes = {
@@ -88,7 +98,25 @@ class SiteSettingsImport extends Component {
 
 	state = getImporterState();
 
-	onceAutoStartImport = once( ( siteId, importerType ) => startImport( siteId, importerType ) );
+	onceAutoStartImport = once( () => {
+		const { engine, site } = this.props;
+		const { importers: imports } = this.state;
+
+		if ( ! engine ) {
+			return;
+		}
+
+		if ( ! isEmpty( imports ) ) {
+			// Never clobber an existing import
+			return;
+		}
+
+		if ( ! getImporterForEngine( engine ) ) {
+			return;
+		}
+
+		startImport( site.ID, getImporterTypeForEngine( engine ) );
+	} );
 
 	componentDidMount() {
 		ImporterStore.on( 'change', this.updateState );
@@ -96,12 +124,13 @@ class SiteSettingsImport extends Component {
 	}
 
 	componentDidUpdate() {
-		const { engine, site } = this.props;
-		const { importers: imports } = this.state;
+		const { site } = this.props;
 
-		if ( isEmpty( imports ) && 'wix' === engine && site && site.ID ) {
-			this.onceAutoStartImport( site.ID, 'importer-type-site-importer' );
+		if ( ! ( site && site.ID ) ) {
+			return;
 		}
+
+		this.onceAutoStartImport();
 	}
 
 	componentWillUnmount() {
@@ -198,7 +227,7 @@ class SiteSettingsImport extends Component {
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
 
-		if ( engine === 'wix' ) {
+		if ( getImporterForEngine( engine ) ) {
 			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
 		}
 
@@ -247,11 +276,9 @@ class SiteSettingsImport extends Component {
 		return (
 			<Main>
 				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
-					<h1>{ translate( 'Import' ) }</h1>
+					<h1>{ translate( 'Import Content' ) }</h1>
 				</HeaderCake>
-				<EmailVerificationGate
-					needsVerification={ this.props.needsVerification && ! this.props.isUnlaunchedSite }
-				>
+				<EmailVerificationGate allowUnlaunched>
 					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
 				</EmailVerificationGate>
 			</Main>
@@ -263,8 +290,6 @@ export default flow(
 	connect( state => ( {
 		engine: getSelectedImportEngine( state ),
 		fromSite: getImporterSiteUrl( state ),
-		isUnlaunchedSite: isUnlaunchedSite( state, getSelectedSiteId( state ) ),
-		needsVerification: ! isCurrentUserEmailVerified( state ),
 		site: getSelectedSite( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ) ),

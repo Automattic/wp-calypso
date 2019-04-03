@@ -19,6 +19,11 @@ import Security2faCodePrompt from 'me/security-2fa-code-prompt';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { successNotice } from 'state/notices/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Security2faDisable extends Component {
 	static propTypes = {
 		onFinished: PropTypes.func.isRequired,

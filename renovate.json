@@ -7,7 +7,7 @@
 			"rangeStrategy": "replace"
 		},
 		{
-			"packagePatterns": ["^@wordpress"],
+			"packagePatterns": [ "^@wordpress" ],
 			"groupName": "wordpress-monorepo",
 			"separateMajorMinor": false
 		}
@@ -18,5 +18,9 @@
 	"lockFileMaintenance": {
 		"enabled": true,
 		"schedule": "every weekday"
-	}
+	},
+	"prConcurrentLimit": 0,
+	"prHourlyLimit": 50,
+	"semanticCommits": true,
+	"semanticCommitType": "chore"
 }

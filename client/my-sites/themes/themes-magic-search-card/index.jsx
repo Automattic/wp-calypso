@@ -325,14 +325,13 @@ class ThemesMagicSearchCard extends React.Component {
 								/>
 							</div>
 						) }
-						{ isPremiumThemesEnabled &&
-							showTierThemesControl && (
-								<SimplifiedSegmentedControl
-									initialSelected={ this.props.tier }
-									options={ tiers }
-									onSelect={ this.props.select }
-								/>
-							) }
+						{ isPremiumThemesEnabled && showTierThemesControl && (
+							<SimplifiedSegmentedControl
+								initialSelected={ this.props.tier }
+								options={ tiers }
+								onSelect={ this.props.select }
+							/>
+						) }
 					</div>
 				</StickyPanel>
 				<div onClick={ this.handleClickInside }>

@@ -26,7 +26,7 @@ describe( 'Plans', () => {
 		path.externalRedirect.mockReset();
 	} );
 	test( 'should render plans', () => {
-		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } /> );
+		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } countryCode={ 'US' } /> );
 
 		expect( wrapper ).toMatchSnapshot();
 		expect( wrapper.find( PlansGrid ) ).toHaveLength( 1 );

@@ -7,6 +7,7 @@ import debugFactory from 'debug';
 import { every, get, includes, isArray, keys, reduce, some } from 'lodash';
 import store from 'store';
 import i18n from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -59,7 +60,7 @@ export const getAllTests = () => keys( activeTests ).map( ABTest );
 const isUserSignedIn = () => user && user.get() !== false;
 
 const parseDateStamp = datestamp => {
-	const date = i18n.moment( datestamp, 'YYYYMMDD' );
+	const date = moment( datestamp, 'YYYYMMDD' );
 
 	if ( ! date.isValid() ) {
 		throw new Error( 'The date ' + datestamp + ' should be in the YYYYMMDD format' );
@@ -145,6 +146,10 @@ ABTest.prototype.init = function( name, geoLocation ) {
 };
 
 ABTest.prototype.getVariationAndSetAsNeeded = function() {
+	if ( 'test' === process.env.NODE_ENV ) {
+		return this.defaultVariation;
+	}
+
 	const savedVariation = this.getSavedVariation( this.experimentId );
 
 	if ( ! this.hasTestStartedYet() ) {
@@ -245,7 +250,7 @@ ABTest.prototype.isEligibleForAbTest = function() {
 };
 
 ABTest.prototype.hasTestStartedYet = function() {
-	return i18n.moment().isAfter( this.startDate );
+	return moment().isAfter( this.startDate );
 };
 
 ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
@@ -265,7 +270,7 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
 };
 
 ABTest.prototype.hasRegisteredBeforeTestBegan = function() {
-	return user && user.get() && i18n.moment( user.get().date ).isBefore( this.startDate );
+	return user && user.get() && moment( user.get().date ).isBefore( this.startDate );
 };
 
 ABTest.prototype.getSavedVariation = function() {

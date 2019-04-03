@@ -13,8 +13,9 @@
 import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
-	shouldRenderAdditionalEbanxFields,
-} from '../ebanx';
+	isValidCNPJ,
+	shouldRenderAdditionalCountryFields,
+} from '../processor-specific';
 import { isPaymentMethodEnabled } from 'lib/cart-values';
 
 jest.mock( 'lib/cart-values', () => {
@@ -53,7 +54,18 @@ describe( 'Ebanx payment processing methods', () => {
 		} );
 	} );
 
-	describe( 'shouldRenderAdditionalEbanxFields', () => {
+	describe( 'isValidCNPJ', () => {
+		test( 'should return true for valid CNPJ (Brazilian company tax identification number)', () => {
+			expect( isValidCNPJ( '94065313000171' ) ).toEqual( true );
+			expect( isValidCNPJ( '94.065.313/0001-71' ) ).toEqual( true );
+		} );
+		test( 'should return false for invalid CPF', () => {
+			expect( isValidCNPJ( '94065313000170' ) ).toEqual( false );
+			expect( isValidCNPJ( '94.065.313/0001-70' ) ).toEqual( false );
+		} );
+	} );
+
+	describe( 'shouldRenderAdditionalCountryFields', () => {
 		beforeAll( () => {
 			isPaymentMethodEnabled.mockReturnValue( true );
 		} );
@@ -62,11 +74,11 @@ describe( 'Ebanx payment processing methods', () => {
 		} );
 
 		test( 'should return false for non-ebanx country', () => {
-			expect( shouldRenderAdditionalEbanxFields( 'AU' ) ).toEqual( false );
+			expect( shouldRenderAdditionalCountryFields( 'AU' ) ).toEqual( false );
 		} );
 		test( 'should return true for ebanx country that requires additional fields', () => {
-			expect( shouldRenderAdditionalEbanxFields( 'BR' ) ).toEqual( true );
-			expect( shouldRenderAdditionalEbanxFields( 'MX' ) ).toEqual( true );
+			expect( shouldRenderAdditionalCountryFields( 'BR' ) ).toEqual( true );
+			expect( shouldRenderAdditionalCountryFields( 'MX' ) ).toEqual( true );
 		} );
 	} );
 } );

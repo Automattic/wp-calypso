@@ -39,7 +39,7 @@ const requestRewind = ( action, payload ) =>
 		action
 	);
 
-const requestRestore = action => requestRewind( action );
+const requestRestore = action => requestRewind( action, { types: action.args } );
 const requestClone = action => requestRewind( action, action.payload );
 
 export const receiveRestoreSuccess = ( { siteId }, restoreId ) => [

@@ -1,9 +1,8 @@
-
 .login {
 	&.is-jetpack {
 		.button.is-primary {
-			background-color: $green-jetpack;
-			border-color: darken( $green-jetpack, 5% );
+			background-color: var( --color-jetpack );
+			border-color: var( --color-jetpack-dark );
 		}
 	}
 }
@@ -15,7 +14,7 @@
 
 .login__form .login__form-userdata {
 	label {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		display: block;
 		font-size: 14px;
 		line-height: 1.5;
@@ -27,7 +26,7 @@
 		margin-bottom: 20px;
 		transition: none;
 
-		/*rtl:ignore*/
+		/*!rtl:ignore*/
 		direction: ltr;
 
 		&.is-error {
@@ -46,8 +45,6 @@
 }
 
 .login__form-action {
-	margin-top: 10px;
-	overflow: auto;
 
 	button {
 		width: 100%;
@@ -67,6 +64,10 @@
 	margin-bottom: 24px;
 	margin-top: 16px;
 	text-align: center;
+
+	body.is-section-signup & {
+		color: var( --color-white );
+	}
 }
 
 .login__form-terms,
@@ -87,7 +88,7 @@
 		a,
 		a:hover {
 			pointer-events: none;
-			color: $gray;
+			color: var( --color-neutral-light );
 		}
 	}
 }
@@ -141,7 +142,7 @@
 	position: relative;
 	white-space: nowrap;
 	&::after {
-		@include long-content-fade( $color: hex-to-rgb( $gray-light ) );
+		@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
 	}
 }
 
@@ -156,10 +157,10 @@
 }
 
 .card.two-factor-authentication__form-action {
-	background: $white;
+	background: var( --color-white );
 
 	button {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 		cursor: pointer;
 
 		&:hover {
@@ -182,8 +183,8 @@
 	text-transform: uppercase;
 
 	span {
-		background: $white;
-		color: $gray;
+		background: var( --color-white );
+		color: var( --color-neutral-light );
 		font-size: 14px;
 		padding-left: 8px;
 		padding-right: 8px;

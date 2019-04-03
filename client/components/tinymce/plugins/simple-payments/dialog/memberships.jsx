@@ -35,7 +35,7 @@ import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/membershi
 import { receiveUpdateProduct, receiveDeleteProduct } from 'state/memberships/product-list/actions';
 import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import UpgradeNudge from 'blocks/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';

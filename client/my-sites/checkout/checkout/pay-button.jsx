@@ -166,10 +166,10 @@ export class PayButton extends React.Component {
 		const buttonState = this.buttonState();
 
 		return (
-			<span className="pay-button">
+			<span className="checkout__pay-button pay-button">
 				<Button
 					type="submit"
-					className="button is-primary button-pay pay-button__button"
+					className="checkout__pay-button-button button is-primary button-pay pay-button__button"
 					busy={ buttonState.disabled }
 					disabled={ buttonState.disabled }
 				>

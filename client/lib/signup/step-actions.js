@@ -4,43 +4,65 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { assign, defer, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
+import { assign, defer, difference, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import { parse as parseURL } from 'url';
 
 /**
  * Internal dependencies
  */
+
+// Libraries
 import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
-const user = userFactory();
-import { getSavedVariations, abtest } from 'lib/abtest';
-import SignupCart from 'lib/signup/cart';
+import { getABTestVariation, getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
-import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
 import { cartItems } from 'lib/cart-values';
-import { isDomainTransfer } from 'lib/products-values';
+import {
+	updatePrivacyForDomain,
+	supportsPrivacyProtectionPurchase,
+	planItem as getCartItemForPlan,
+} from 'lib/cart-values/cart-items';
+
+// State actions and selectors
+import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
+import { getSiteVerticalId, getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
+import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { requestSites } from 'state/sites/actions';
-import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import { normalizeImportUrl } from 'state/importer-nux/utils';
+
+// Current directory dependencies
+import SignupActions from './actions';
+import { isValidLandingPageVertical } from './verticals';
+import { getSiteTypePropertyValue } from './site-type';
+import SignupCart from './cart';
 import { promisify } from '../../utils';
 
+// Others
+import flows from 'signup/config/flows';
+import steps from 'signup/config/steps';
+import { normalizeImportUrl } from 'state/importer-nux/utils';
+import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
+
+/**
+ * Constants
+ */
+const user = userFactory();
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
-	const { cartItem, designType, domainItem, siteUrl, themeSlugWithRepo } = dependencies;
+	const { cartItem, designType, siteUrl, themeSlugWithRepo } = dependencies;
+	let { domainItem } = dependencies;
 
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
@@ -51,20 +73,15 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			domainItem,
 		};
 
-		const domainChoiceCart = [ domainItem ];
 		if ( domainItem ) {
 			const { product_slug: productSlug } = domainItem;
 			const productsList = getProductsList( reduxStore.getState() );
 			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-				domainChoiceCart.push(
-					cartItems.domainPrivacyProtection( {
-						domain: domainItem.meta,
-						source: 'signup',
-					} )
-				);
+				domainItem = updatePrivacyForDomain( domainItem, true );
 			}
 		}
 
+		const domainChoiceCart = [ domainItem ];
 		SignupCart.createCart( cartKey, domainChoiceCart, error =>
 			callback( error, providedDependencies )
 		);
@@ -117,6 +134,7 @@ export function createSiteWithCart(
 		cartItem,
 		domainItem,
 		flowName,
+		lastKnownFlow,
 		googleAppsCartItem,
 		isPurchasingItem,
 		siteUrl,
@@ -129,10 +147,13 @@ export function createSiteWithCart(
 
 	const designType = getDesignType( state ).trim();
 	const siteTitle = getSiteTitle( state ).trim();
+	const siteVerticalId = getSiteVerticalId( state );
 	const siteVertical = getSiteVertical( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
+	const siteStyle = getSiteStyle( state ).trim();
 	const siteInformation = getSiteInformation( state );
+	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 
 	const newSiteParams = {
 		blog_title: siteTitle,
@@ -142,25 +163,38 @@ export function createSiteWithCart(
 			// step object itself depending on if the theme is provided in a
 			// query. See `getThemeSlug` in `DomainsStep`.
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
-			vertical: siteVertical || undefined,
 			siteGoals: siteGoals || undefined,
+			site_style: siteStyle || undefined,
 			site_information: siteInformation || undefined,
-			siteType: siteType || undefined,
+			site_segment: siteSegment || undefined,
+			site_vertical: siteVerticalId || undefined,
 		},
+		public: -1,
 		validate: false,
 	};
 
 	const importingFromUrl =
 		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( state ) ) : '';
+	const importEngine = 'import' === flowName ? getSelectedImportEngine( state ) : '';
 
 	if ( importingFromUrl ) {
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
-		newSiteParams.public = -1;
+		newSiteParams.options.nux_import_engine = importEngine;
+	} else if (
+		flowName === 'onboarding' &&
+		'remove' === getABTestVariation( 'removeDomainsStepFromOnboarding' )
+	) {
+		newSiteParams.blog_name = get( user.get(), 'username', siteTitle ) || siteType || siteVertical;
+		newSiteParams.find_available_url = true;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
-		newSiteParams.public = abtest( 'privateByDefault' ) === 'private' ? -1 : 1;
+	}
+	// flowName isn't always passed in
+	const flowToCheck = flowName || lastKnownFlow;
+	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
+		newSiteParams.options.in_page_builder = true;
 	}
 
 	wpcom.undocumented().sitesNew( newSiteParams, function( error, response ) {
@@ -181,57 +215,20 @@ export function createSiteWithCart(
 			domainItem,
 			themeItem,
 		};
-		const addToCartAndProceed = () => {
-			let privacyItem = null;
 
-			if ( domainItem ) {
-				const { product_slug: productSlug } = domainItem;
-				const productsList = getProductsList( state );
-				if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-					if ( isDomainTransfer( domainItem ) ) {
-						privacyItem = cartItems.domainTransferPrivacy( {
-							domain: domainItem.meta,
-							source: 'signup',
-						} );
-					} else {
-						privacyItem = cartItems.domainPrivacyProtection( {
-							domain: domainItem.meta,
-							source: 'signup',
-						} );
-					}
-				}
-			}
+		const newCartItems = [ cartItem, domainItem, googleAppsCartItem, themeItem ].filter(
+			item => item
+		);
 
-			const newCartItems = [
-				cartItem,
-				domainItem,
-				googleAppsCartItem,
-				themeItem,
-				privacyItem,
-			].filter( item => item );
-
-			if ( newCartItems.length ) {
-				SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
-					callback( cartError, providedDependencies );
-				} );
-			} else {
-				callback( undefined, providedDependencies );
-			}
-		};
-
-		if ( ! user.get() && isFreeThemePreselected ) {
-			setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
-		} else if ( user.get() && isFreeThemePreselected ) {
-			fetchSitesAndUser(
-				siteSlug,
-				setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
-				reduxStore
-			);
-		} else if ( user.get() ) {
-			fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
-		} else {
-			addToCartAndProceed();
-		}
+		processItemCart(
+			providedDependencies,
+			newCartItems,
+			callback,
+			reduxStore,
+			siteSlug,
+			isFreeThemePreselected,
+			themeSlugWithRepo
+		);
 	} );
 }
 
@@ -336,7 +333,9 @@ export function getUsernameSuggestion( username, reduxState ) {
 	} );
 }
 
-export function addPlanToCart( callback, { siteSlug }, { cartItem } ) {
+export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
+	const { siteSlug } = dependencies;
+	const { cartItem } = stepProvidedItems;
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
 		defer( callback );
@@ -344,9 +343,85 @@ export function addPlanToCart( callback, { siteSlug }, { cartItem } ) {
 		return;
 	}
 
+	const providedDependencies = { cartItem };
+
 	const newCartItems = [ cartItem ].filter( item => item );
 
-	SignupCart.addToCart( siteSlug, newCartItems, error => callback( error, { cartItem } ) );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+}
+
+export function addDomainToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
+	const { siteSlug } = dependencies;
+	const { domainItem, googleAppsCartItem } = stepProvidedItems;
+	const providedDependencies = { domainItem };
+
+	const newCartItems = [ domainItem, googleAppsCartItem ].filter( item => item );
+
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+}
+
+function processItemCart(
+	providedDependencies,
+	newCartItems,
+	callback,
+	reduxStore,
+	siteSlug,
+	isFreeThemePreselected,
+	themeSlugWithRepo
+) {
+	const addToCartAndProceed = () => {
+		let privacyItem = null;
+		const state = reduxStore.getState();
+		const { domainItem } = newCartItems;
+
+		if ( domainItem ) {
+			const { product_slug: productSlug } = domainItem;
+			const productsList = getProductsList( state );
+			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
+				privacyItem = cartItems.updatePrivacyForDomain( domainItem, true );
+
+				if ( privacyItem ) {
+					newCartItems.push( privacyItem );
+				}
+			}
+		}
+
+		if ( newCartItems.length ) {
+			SignupCart.addToCart( siteSlug, newCartItems, function( cartError ) {
+				callback( cartError, providedDependencies );
+			} );
+		} else {
+			callback( undefined, providedDependencies );
+		}
+	};
+
+	if ( ! user.get() && isFreeThemePreselected ) {
+		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
+	} else if ( user.get() && isFreeThemePreselected ) {
+		fetchSitesAndUser(
+			siteSlug,
+			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
+			reduxStore
+		);
+	} else if ( user.get() ) {
+		fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
+	} else {
+		addToCartAndProceed();
+	}
+}
+
+export function launchSiteApi( callback, dependencies ) {
+	const { siteSlug } = dependencies;
+
+	wpcom.undocumented().launchSite( siteSlug, function( error ) {
+		if ( error ) {
+			callback( error );
+
+			return;
+		}
+
+		callback();
+	} );
 }
 
 export function createAccount(
@@ -414,13 +489,26 @@ export function createAccount(
 			),
 			( error, response ) => {
 				const errors =
-						error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
-					bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
+					error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
+				// we should either have an error with an error property, or we should have a response with a bearer_token
+				const bearerToken = {};
+				if ( ! errors ) {
+					if ( response && response.bearer_token ) {
+						bearerToken.bearer_token = response.bearer_token;
+					} else {
+						// something odd happened...
+						//eslint-disable-next-line no-console
+						console.error(
+							'Expected either an error or a bearer token. got %o, %o.',
+							error,
+							response
+						);
+					}
+				}
 
 				if ( ! errors ) {
 					// Fire after a new user registers.
-					analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
-					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+					analytics.recordRegistration();
 				}
 
 				const username =
@@ -467,4 +555,144 @@ export function createSite( callback, { themeSlugWithRepo }, { site }, reduxStor
 			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
 		}
 	} );
+}
+
+function recordExcludeStepEvent( step, value ) {
+	analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
+		step,
+		value,
+	} );
+}
+
+function shouldExcludeStep( stepName, fulfilledDependencies ) {
+	if ( isEmpty( fulfilledDependencies ) ) {
+		return false;
+	}
+
+	const stepProvidesDependencies = steps[ stepName ].providesDependencies;
+	const dependenciesNotProvided = difference( stepProvidesDependencies, fulfilledDependencies );
+	return isEmpty( dependenciesNotProvided );
+}
+
+export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { siteDomains } = nextProps;
+	let fulfilledDependencies = [];
+
+	if ( siteDomains && siteDomains.length > 1 ) {
+		const domainItem = undefined;
+		SignupActions.submitSignupStep( { stepName: stepName, domainItem }, [], {
+			domainItem,
+		} );
+		recordExcludeStepEvent( stepName, siteDomains );
+
+		fulfilledDependencies = fulfilledDependencies.concat( [ 'domainItem' ] );
+	}
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+	}
+}
+
+export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { isPaidPlan, sitePlanSlug } = nextProps;
+	let fulfilledDependencies = [];
+
+	if ( isPaidPlan ) {
+		const cartItem = undefined;
+		SignupActions.submitSignupStep( { stepName: stepName, cartItem }, [], { cartItem } );
+		recordExcludeStepEvent( stepName, sitePlanSlug );
+		fulfilledDependencies = fulfilledDependencies.concat( [ 'cartItem' ] );
+	} else if ( defaultDependencies && defaultDependencies.cartItem ) {
+		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
+		SignupActions.submitSignupStep( { stepName, cartItem }, [], { cartItem } );
+		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
+		fulfilledDependencies = fulfilledDependencies.concat( [ 'cartItem' ] );
+	}
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+	}
+}
+
+export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) {
+	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
+		return;
+	}
+
+	const {
+		initialContext: {
+			query: { site_type: siteType },
+		},
+	} = nextProps;
+
+	const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
+	let fulfilledDependencies = [];
+
+	if ( siteTypeValue ) {
+		debug( 'From query string: site_type = %s', siteType );
+		debug( 'Site type value = %s', siteTypeValue );
+
+		nextProps.submitSiteType( siteType );
+		recordExcludeStepEvent( stepName, siteType );
+
+		// nextProps.submitSiteType( siteType ) above provides dependencies
+		fulfilledDependencies = fulfilledDependencies.concat( [ 'siteType', 'themeSlugWithRepo' ] );
+	}
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+	}
+}
+
+export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps ) {
+	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
+		return;
+	}
+
+	const {
+		initialContext: {
+			query: { vertical },
+		},
+		flowName,
+	} = nextProps;
+
+	const flowSteps = flows.getFlow( flowName ).steps;
+	let fulfilledDependencies = [];
+
+	if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
+		debug( 'From query string: vertical = %s', vertical );
+
+		nextProps.setSurvey( {
+			vertical,
+			otherText: '',
+		} );
+
+		SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
+			surveySiteType: 'blog',
+			surveyQuestion: vertical,
+		} );
+
+		nextProps.submitSiteVertical( { name: vertical }, stepName );
+
+		// Track our landing page verticals
+		if ( isValidLandingPageVertical( vertical ) ) {
+			analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
+				vertical,
+				flow: flowName,
+			} );
+		}
+
+		//Add to fulfilled dependencies
+		fulfilledDependencies = fulfilledDependencies.concat( [
+			'surveySiteType',
+			'surveyQuestion',
+			'siteTopic',
+		] );
+
+		recordExcludeStepEvent( stepName, vertical );
+	}
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+	}
 }

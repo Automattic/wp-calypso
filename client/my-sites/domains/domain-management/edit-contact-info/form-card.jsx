@@ -35,6 +35,7 @@ class EditContactInfoFormCard extends React.Component {
 		selectedDomain: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		currentUser: PropTypes.object.isRequired,
+		domainRegistrationAgreementUrl: PropTypes.string.isRequired,
 	};
 
 	constructor( props ) {
@@ -101,7 +102,7 @@ class EditContactInfoFormCard extends React.Component {
 	handleDialogClose = () => this.setState( { showNonDaConfirmationDialog: false } );
 
 	renderTransferLockOptOut() {
-		const { translate } = this.props;
+		const { domainRegistrationAgreementUrl, translate } = this.props;
 		return (
 			<div>
 				<FormLabel>
@@ -124,7 +125,10 @@ class EditContactInfoFormCard extends React.Component {
 						} ) }
 					</span>
 				</FormLabel>
-				<DesignatedAgentNotice saveButtonLabel={ translate( 'Save Contact Info' ) } />
+				<DesignatedAgentNotice
+					domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
+					saveButtonLabel={ translate( 'Save Contact Info' ) }
+				/>
 			</div>
 		);
 	}

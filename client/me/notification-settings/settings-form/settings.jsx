@@ -75,17 +75,16 @@ class NotificationSettingsForm extends PureComponent {
 						settings={ get( this.props.settings, streams.EMAIL ) }
 						onToggle={ this.props.onToggle }
 					/>
-					{ this.props.devices &&
-						this.props.devices.length > 0 && (
-							<Stream
-								key={ streams.DEVICES }
-								blogId={ this.props.blogId }
-								devices={ this.props.devices }
-								settingKeys={ this.props.settingKeys }
-								settings={ get( this.props.settings, streams.DEVICES ) }
-								onToggle={ this.props.onToggle }
-							/>
-						) }
+					{ this.props.devices && this.props.devices.length > 0 && (
+						<Stream
+							key={ streams.DEVICES }
+							blogId={ this.props.blogId }
+							devices={ this.props.devices }
+							settingKeys={ this.props.settingKeys }
+							settings={ get( this.props.settings, streams.DEVICES ) }
+							onToggle={ this.props.onToggle }
+						/>
+					) }
 					<Stream
 						key={ 'selected-stream' }
 						className={ 'selected-stream' }

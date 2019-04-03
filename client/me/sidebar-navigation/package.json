@@ -1,6 +1,6 @@
 {
-  "name": "me sidebar navigation header",
-  "version": "0.0.0",
-  "private": true,
-  "main": "sidebar-navigation.jsx"
+	"name": "me sidebar navigation header",
+	"version": "0.0.0",
+	"private": true,
+	"main": "sidebar-navigation.jsx"
 }

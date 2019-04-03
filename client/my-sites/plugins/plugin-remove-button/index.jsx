@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -16,6 +15,11 @@ import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 import PluginsActions from 'lib/plugins/actions';
 import ExternalLink from 'components/external-link';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PluginRemoveButton extends React.Component {
 	static displayName = 'PluginRemoveButton';

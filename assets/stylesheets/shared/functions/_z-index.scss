@@ -116,6 +116,7 @@ $z-layers: (
 		'.editor-featured-image .editor-drawer-well__remove': 20,
 		'.main': 20, //TODO: this doesn't always have a stacking context
 		//'tinymce-toolbar': 20, client/components/tinymce/index.jsx
+		'.main.calypsoify.is-iframe': 20,
 		'.search': 22,
 		'.reader-update-notice': 22,
 		'.editor-ground-control': 22,
@@ -143,8 +144,6 @@ $z-layers: (
 		'.web-preview .editor-notice': 179,
 		'.editor-gutenberg-opt-in-notice': 179,
 		'.app-banner': 180,
-		'.notices-list.is-pinned': 180,
-		'.notices-list.is-pinned .notice': 180,
 		'.masterbar': 180,
 		'.gdpr-banner': 185,
 		'.detail-page__backdrop': 190,
@@ -185,6 +184,7 @@ $z-layers: (
 		'.image-selector__item.is-transient::after': 1,
 		'.image-selector__item .spinner': 2,
 		'.upwork-stats-nudge__close-icon': 1,
+		'.gsuite-stats-nudge__close-icon': 1,
 	),
 	'.is-section-signup': (
 		'.is-section-signup::before': -1,
@@ -208,8 +208,7 @@ $z-layers: (
 		'.detail-page__action-buttons': 200
 	),
 	'.popover': (
-		'.input-chrono__container .gridicons-calendar': 0,
-		'input.input-chrono': 1,
+		'.input-chrono__input': 1,
 		'.popover .popover__arrow': 1,
 		'.post-schedule__header': 1,
 		'.date-picker__nav-bar': 2,
@@ -270,6 +269,10 @@ $z-layers: (
 		'.thank-you-card__main-icon': 2,
 		'.thank-you-card__header-detail': 2
 	),
+	'.upwork-banner': (
+		'.button.upwork-banner__cta': 2,
+		'.button.upwork-banner__close': 4
+	),
 
 	// The following may be inserted into different areas.
 	// The parent stacking context may be root, or something else depending on where it is inserted.
@@ -298,7 +301,7 @@ $z-layers: (
 @function map-deep-get( $map, $keys... ) {
 	@each $key in $keys {
 		@if not map-has-key( $map, $key) {
-			@warn "No layer found for `#{$key}` of `[#{ $keys }]` in $z-layers map. Property omitted.";
+			@warn 'No layer found for `#{$key}` of `[#{ $keys }]` in $z-layers map. Property omitted.';
 			@return map-get( $map, $key );
 		}
 		$map: map-get( $map, $key );

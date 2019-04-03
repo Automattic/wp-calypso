@@ -21,9 +21,10 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import {
+	getDomainRegistrationAgreementUrl,
 	getName,
+	getRenewalPrice,
 	handleRenewNowClick,
-	hasPrivacyProtection,
 	isCancelable,
 	isExpired,
 	isExpiring,
@@ -53,6 +54,7 @@ import {
 	isDomainMapping,
 	isDomainTransfer,
 	isTheme,
+	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
@@ -67,7 +69,7 @@ import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'components/vertical-nav/item';
-import { cancelPurchase, cancelPrivacyProtection, purchasesRoot } from '../paths';
+import { cancelPurchase, purchasesRoot } from '../paths';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -87,7 +89,7 @@ class ManagePurchase extends Component {
 		userId: PropTypes.number,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.isDataValid() ) {
 			page.redirect( purchasesRoot );
 			return;
@@ -100,7 +102,7 @@ class ManagePurchase extends Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			page.redirect( purchasesRoot );
 			return;
@@ -258,21 +260,6 @@ class ManagePurchase extends Component {
 		);
 	}
 
-	renderCancelPrivacyProtection() {
-		const { purchase, translate } = this.props;
-		const { id } = purchase;
-
-		if ( isExpired( purchase ) || ! hasPrivacyProtection( purchase ) || ! this.props.site ) {
-			return null;
-		}
-
-		return (
-			<CompactCard href={ cancelPrivacyProtection( this.props.siteSlug, id ) }>
-				{ translate( 'Cancel Privacy Protection' ) }
-			</CompactCard>
-		);
-	}
-
 	renderPlanIcon() {
 		const { purchase } = this.props;
 		if ( isPlan( purchase ) ) {
@@ -310,6 +297,8 @@ class ManagePurchase extends Component {
 			description = plan.getDescription();
 		} else if ( isTheme( purchase ) && theme ) {
 			description = theme.description;
+		} else if ( isConciergeSession( purchase ) ) {
+			description = purchase.description;
 		} else if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
 			description = translate(
 				"Replaces your site's free address, %(domain)s, with the domain, " +
@@ -327,12 +316,20 @@ class ManagePurchase extends Component {
 			);
 		}
 
+		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
+		const domainRegistrationAgreementLinkText = translate( 'Domain Registration Agreement' );
+
 		return (
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
 					<ProductLink purchase={ purchase } selectedSite={ site } />
 				</span>
+				{ registrationAgreementUrl && (
+					<a href={ registrationAgreementUrl } target="_blank" rel="noopener noreferrer">
+						{ domainRegistrationAgreementLinkText }
+					</a>
+				) }
 			</div>
 		);
 	}
@@ -385,7 +382,11 @@ class ManagePurchase extends Component {
 						<h2 className="manage-purchase__title">{ getName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
-							<PlanPrice rawPrice={ purchase.amount } currencyCode={ purchase.currencyCode } />
+							<PlanPrice
+								rawPrice={ getRenewalPrice( purchase ) }
+								currencyCode={ purchase.currencyCode }
+								taxText={ purchase.taxText }
+							/>
 						</div>
 					</header>
 					{ this.renderPlanDescription() }
@@ -398,7 +399,6 @@ class ManagePurchase extends Component {
 				{ this.renderRenewNowNavItem() }
 				{ this.renderEditPaymentMethodNavItem() }
 				{ this.renderCancelPurchaseNavItem() }
-				{ this.renderCancelPrivacyProtection() }
 				<RemovePurchase
 					hasLoadedSites={ this.props.hasLoadedSites }
 					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }

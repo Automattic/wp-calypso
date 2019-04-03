@@ -34,7 +34,13 @@ const FeaturedAsset = ( {
 		);
 	}
 
-	return <ReaderFeaturedImage imageUrl={ canonicalMedia.src } href={ postUrl } />;
+	return (
+		<ReaderFeaturedImage
+			imageUrl={ canonicalMedia.src }
+			href={ postUrl }
+			fetched={ canonicalMedia.fetched }
+		/>
+	);
 };
 
 FeaturedAsset.propTypes = {

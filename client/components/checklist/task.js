@@ -5,7 +5,7 @@
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,6 +15,7 @@ import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Focusable from 'components/focusable';
 import ScreenReaderText from 'components/screen-reader-text';
+import Spinner from 'components/spinner';
 
 class Task extends PureComponent {
 	static propTypes = {
@@ -26,15 +27,35 @@ class Task extends PureComponent {
 		completedTitle: PropTypes.node,
 		description: PropTypes.node,
 		duration: PropTypes.string,
+		inProgress: PropTypes.bool,
+		isWarning: PropTypes.bool,
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
+		trackTaskDisplay: PropTypes.func,
 	};
 
-	renderCheckmarkIcon( completed ) {
-		const { translate } = this.props;
+	static defaultProps = {
+		trackTaskDisplay: () => {},
+	};
+
+	componentDidMount() {
+		this.props.trackTaskDisplay( this.props.id, this.props.completed, 'checklist' );
+	}
+
+	renderCheckmarkIcon() {
+		const { completed, inProgress, isWarning, translate } = this.props;
 		const onDismiss = ! completed ? this.props.onDismiss : undefined;
+
+		if ( inProgress ) {
+			return (
+				<Fragment>
+					<ScreenReaderText>{ translate( 'In progress' ) }</ScreenReaderText>
+					{ this.renderGridicon() }
+				</Fragment>
+			);
+		}
 
 		if ( onDismiss ) {
 			return (
@@ -46,7 +67,7 @@ class Task extends PureComponent {
 					<ScreenReaderText>
 						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
 					</ScreenReaderText>
-					<Gridicon icon="checkmark" size={ 18 } />
+					{ this.renderGridicon() }
 				</Focusable>
 			);
 		}
@@ -55,12 +76,38 @@ class Task extends PureComponent {
 			return (
 				<div className="checklist__task-icon">
 					<ScreenReaderText>{ translate( 'Complete' ) }</ScreenReaderText>
-					<Gridicon icon="checkmark" size={ 18 } />
+					{ this.renderGridicon() }
+				</div>
+			);
+		}
+
+		if ( isWarning ) {
+			return (
+				<div>
+					<ScreenReaderText>{ translate( 'Warning' ) }</ScreenReaderText>
+					{ this.renderGridicon() }
 				</div>
 			);
 		}
 
 		return null;
+	}
+
+	renderGridicon() {
+		if ( this.props.inProgress ) {
+			return <Spinner size={ 20 } />;
+		}
+
+		if ( this.props.isWarning ) {
+			return (
+				<div>
+					<div className="checklist__task-warning-background" />
+					<Gridicon icon={ 'notice-outline' } size={ 24 } />
+				</div>
+			);
+		}
+
+		return <Gridicon icon={ 'checkmark' } size={ 18 } />;
 	}
 
 	render() {
@@ -72,6 +119,8 @@ class Task extends PureComponent {
 			completedTitle,
 			description,
 			duration,
+			inProgress,
+			isWarning,
 			onClick,
 			title,
 			translate,
@@ -84,7 +133,9 @@ class Task extends PureComponent {
 		return (
 			<CompactCard
 				className={ classNames( 'checklist__task', {
+					warning: isWarning,
 					'is-completed': completed,
+					'is-in-progress': inProgress,
 					'has-actionlink': hasActionlink,
 					'is-collapsed': isCollapsed,
 				} ) }
@@ -116,7 +167,7 @@ class Task extends PureComponent {
 					) }
 				</div>
 
-				{ this.renderCheckmarkIcon( completed ) }
+				{ this.renderCheckmarkIcon() }
 			</CompactCard>
 		);
 	}

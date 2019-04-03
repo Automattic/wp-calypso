@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
-import { flow, get, includes, noop, partial } from 'lodash';
+import { flow, get, includes, isEmpty, noop, partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,6 +39,7 @@ import { isEnabled } from 'config';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import getEditorUrl from 'state/selectors/get-editor-url';
+import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -271,7 +272,7 @@ class Page extends Component {
 	}
 
 	getCopyItem() {
-		const { calypsoifyGutenberg, page: post, siteSlugOrId } = this.props;
+		const { calypsoifyGutenberg, page: post, duplicateUrl } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
 			! utils.userCan( 'edit_post', post ) ||
@@ -280,10 +281,7 @@ class Page extends Component {
 			return null;
 		}
 		return (
-			<PopoverMenuItem
-				onClick={ this.copyPage }
-				href={ `/page/${ siteSlugOrId }?copy=${ post.ID }` }
-			>
+			<PopoverMenuItem onClick={ this.copyPage } href={ duplicateUrl }>
 				<Gridicon icon="clipboard" size={ 18 } />
 				{ this.props.translate( 'Copy' ) }
 			</PopoverMenuItem>
@@ -376,9 +374,9 @@ class Page extends Component {
 	undoPostStatus = () => this.updatePostStatus( this.props.shadowStatus.undo );
 
 	render() {
-		const { editorUrl, page, shadowStatus, translate } = this.props;
+		const { editorUrl, page, shadowStatus, translate, preventEditingInGutenberg } = this.props;
 		const title = page.title || translate( 'Untitled' );
-		const canEdit = utils.userCan( 'edit_post', page );
+		const canEdit = utils.userCan( 'edit_post', page ) && ! preventEditingInGutenberg;
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
 
 		const viewItem = this.getViewItem();
@@ -631,6 +629,12 @@ const mapState = ( state, props ) => {
 		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
 		isPostsPage: isPostsPage( state, pageSiteId, props.page.ID ),
 		isPreviewable,
+		// Gutenberg prevents editing of empty posts pages
+		// See https://github.com/Automattic/wp-calypso/issues/31917
+		preventEditingInGutenberg:
+			'gutenberg' === getSelectedEditor( state, pageSiteId ) &&
+			isPostsPage( state, pageSiteId, props.page.ID ) &&
+			isEmpty( props.page.content ),
 		previewURL: utils.getPreviewURL( site, props.page ),
 		site,
 		siteSlugOrId,
@@ -639,6 +643,7 @@ const mapState = ( state, props ) => {
 		calypsoifyGutenberg:
 			isCalypsoifyGutenbergEnabled( state, pageSiteId ) &&
 			'gutenberg' === getSelectedEditor( state, pageSiteId ),
+		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 	};
 };
 

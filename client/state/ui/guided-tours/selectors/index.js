@@ -23,7 +23,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName, getSectionGroup } from 'state/ui/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { getActionLog } from 'state/ui/action-log/selectors';
@@ -44,7 +44,7 @@ const debug = debugFactory( 'calypso:guided-tours' );
 
 const mappable = x => ( ! Array.isArray( x ) ? [ x ] : x );
 
-const relevantFeatures = flatMap( GuidedToursConfig.meta, ( tourMeta, key ) =>
+const relevantFeatures = flatMap( GuidedToursConfig, ( tourMeta, key ) =>
 	mappable( tourMeta.path ).map( path => ( {
 		tour: key,
 		when: tourMeta.when,
@@ -77,9 +77,10 @@ const getToursFromFeaturesReached = createSelector(
  * Returns the names of the tours that the user has previously seen, both
  * recently and in the past.
  */
-const getToursSeen = createSelector( state => uniq( map( getToursHistory( state ), 'tourName' ) ), [
-	getToursHistory,
-] );
+const getToursSeen = createSelector(
+	state => uniq( map( getToursHistory( state ), 'tourName' ) ),
+	[ getToursHistory ]
+);
 
 /*
  * Returns the name and timestamp of the tour requested via the URL's query
@@ -203,10 +204,10 @@ const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 export const getGuidedTourState = createSelector(
 	state => {
 		const emptyState = { shouldShow: false };
-
 		const tourState = getRawGuidedTourState( state );
 		const tour = findEligibleTour( state );
-		const shouldShow = !! tour;
+		const isGutenberg = getSectionGroup( state ) === 'gutenberg';
+		const shouldShow = !! tour && ! isGutenberg;
 		const isPaused = !! tourState.isPaused;
 
 		debug(

@@ -7,7 +7,6 @@
 import debugFactory from 'debug';
 import page from 'page';
 import { parse } from 'qs';
-import { some, startsWith } from 'lodash';
 import url from 'url';
 
 /**
@@ -19,10 +18,9 @@ import config from 'config';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import { hasTouch } from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
-import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
+import { setCurrentUser } from 'state/current-user/actions';
 import { installPerfmonPageHandlers } from 'lib/perfmon';
 import { setupRoutes } from 'sections-middleware';
-import { getSections } from 'sections-helper';
 import { checkFormHandler } from 'lib/protect-form';
 import notices from 'notices';
 import authController from 'auth/controller';
@@ -106,26 +104,6 @@ const loggedOutMiddleware = currentUser => {
 			page.redirect( '/devdocs/start' );
 		} );
 	}
-
-	const validSections = getSections().reduce( ( acc, section ) => {
-		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
-	}, [] );
-
-	const isValidSection = sectionPath =>
-		some(
-			validSections,
-			validPath => startsWith( sectionPath, validPath ) || sectionPath.match( validPath )
-		);
-
-	page( '*', ( context, next ) => {
-		if ( context.path && isValidSection( context.path ) ) {
-			// redirect to login page if we're not on it already, only for stats for now
-			if ( startsWith( context.path, '/stats' ) ) {
-				return page.redirect( '/log-in/?redirect_to=' + encodeURIComponent( context.path ) );
-			}
-			next();
-		}
-	} );
 };
 
 const oauthTokenMiddleware = () => {
@@ -197,9 +175,9 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 
 	if ( currentUser.get() ) {
 		// Set current user in Redux store
-		setCurrentUserOnReduxStore( currentUser.get(), reduxStore );
+		reduxStore.dispatch( setCurrentUser( currentUser.get() ) );
 		currentUser.on( 'change', () => {
-			setCurrentUserOnReduxStore( currentUser.get(), reduxStore );
+			reduxStore.dispatch( setCurrentUser( currentUser.get() ) );
 		} );
 	}
 

@@ -7,6 +7,11 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const baseDomain = url =>
 	url
 		.replace( /^[^/]+[/]*/, '' ) // strip leading protocol
@@ -21,13 +26,13 @@ export class TwitterPreview extends PureComponent {
 		};
 
 		return (
-			<div className="twitter-card-preview__container">
-				<div className={ `twitter-card-preview twitter-card-preview__${ type }` }>
-					{ image && <div className="twitter-card-preview__image" style={ previewImageStyle } /> }
-					<div className="twitter-card-preview__body">
-						<div className="twitter-card-preview__title">{ title }</div>
-						<div className="twitter-card-preview__description">{ description }</div>
-						<div className="twitter-card-preview__url">{ baseDomain( url ) }</div>
+			<div className="twitter-preview">
+				<div className={ `twitter-preview__${ type }` }>
+					{ image && <div className="twitter-preview__image" style={ previewImageStyle } /> }
+					<div className="twitter-preview__body">
+						<div className="twitter-preview__title">{ title }</div>
+						<div className="twitter-preview__description">{ description }</div>
+						<div className="twitter-preview__url">{ baseDomain( url ) }</div>
 					</div>
 				</div>
 			</div>

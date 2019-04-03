@@ -25,6 +25,11 @@ import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function getPingbackAttributes( post ) {
 	const typeTitles = {
 		prompt: translate( 'Daily Prompt: ' ),

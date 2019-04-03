@@ -14,6 +14,11 @@ import { redirect as redirectToAcivity } from 'my-sites/activity/controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default function() {
 	const validPeriods = [ 'day', 'week', 'month', 'year' ];
 

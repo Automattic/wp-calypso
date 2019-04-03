@@ -7,6 +7,11 @@ import classNames from 'classnames';
 import { map } from 'lodash';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Surrounds a text string in a <mark>
  * Just a small helper function
  *

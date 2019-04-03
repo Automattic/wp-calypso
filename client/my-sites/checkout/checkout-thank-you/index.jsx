@@ -13,6 +13,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { themeActivated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
 import WordPressLogo from 'components/wordpress-logo';
@@ -71,18 +72,13 @@ import {
 	getFeatureByKey,
 	isJetpackBusinessPlan,
 	isWpComBusinessPlan,
-	isWpComEcommercePlan,
 	shouldFetchSitePlans,
 } from 'lib/plans';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
-import ThankYouCard from 'components/thank-you-card';
-import {
-	domainManagementEmail,
-	domainManagementList,
-	domainManagementTransferInPrecheck,
-} from 'my-sites/domains/paths';
+import { domainManagementList, domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
@@ -92,6 +88,11 @@ import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
 import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function getPurchases( props ) {
 	return [
@@ -128,6 +129,7 @@ export class CheckoutThankYou extends React.Component {
 
 	componentDidMount() {
 		this.redirectIfThemePurchased();
+		this.redirectIfDomainOnly( this.props );
 
 		const {
 			gsuiteReceipt,
@@ -168,6 +170,7 @@ export class CheckoutThankYou extends React.Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
+		this.redirectIfDomainOnly( nextProps );
 
 		if (
 			! this.props.receipt.hasLoadedFromServer &&
@@ -262,6 +265,17 @@ export class CheckoutThankYou extends React.Component {
 		}
 	};
 
+	redirectIfDomainOnly = props => {
+		if ( props.domainOnlySiteFlow && get( props, 'receipt.hasLoadedFromServer', false ) ) {
+			const purchases = getPurchases( props );
+			const failedPurchases = getFailedPurchases( props );
+			if ( purchases.length > 0 && ! failedPurchases.length ) {
+				const domainName = find( purchases, isDomainRegistration ).meta;
+				page( domainManagementList( domainName ) );
+			}
+		}
+	};
+
 	goBack = () => {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
@@ -283,7 +297,7 @@ export class CheckoutThankYou extends React.Component {
 			} else if ( purchases.some( isGoogleApps ) ) {
 				const purchase = find( purchases, isGoogleApps );
 
-				return page( domainManagementEmail( this.props.selectedSite.slug, purchase.meta ) );
+				return page( emailManagement( this.props.selectedSite.slug, purchase.meta ) );
 			}
 		}
 
@@ -347,6 +361,7 @@ export class CheckoutThankYou extends React.Component {
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasDotcomPlanPurchased = false;
+		let wasEcommercePlanPurchased = false;
 		let delayedTransferPurchase = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
@@ -354,6 +369,7 @@ export class CheckoutThankYou extends React.Component {
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
+			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 		}
 
@@ -385,7 +401,7 @@ export class CheckoutThankYou extends React.Component {
 			);
 		}
 
-		if ( isWpComEcommercePlan( this.props.planSlug ) ) {
+		if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
 					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
@@ -433,25 +449,7 @@ export class CheckoutThankYou extends React.Component {
 		}
 
 		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
-			const domainName = find( purchases, isDomainRegistration ).meta;
-
-			return (
-				<Main className="checkout-thank-you">
-					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-					{ this.renderConfirmationNotice() }
-
-					<ThankYouCard
-						name={ domainName }
-						price={ this.props.receipt.data.displayPrice }
-						heading={ translate( 'Thank you for your purchase!' ) }
-						description={ translate(
-							"That looks like a great domain. Now it's time to get it all set up."
-						) }
-						buttonUrl={ domainManagementList( domainName ) }
-						buttonText={ translate( 'Go To Your Domain' ) }
-					/>
-				</Main>
-			);
+			return null;
 		}
 
 		const goBackText = this.props.selectedSite
@@ -518,7 +516,10 @@ export class CheckoutThankYou extends React.Component {
 					DomainRegistrationDetails,
 					...findPurchaseAndDomain( purchases, isDomainRegistration ),
 				];
-			} else if ( purchases.some( isGoogleApps ) ) {
+			} else if (
+				purchases.some( isGoogleApps ) &&
+				abtest( 'gSuitePostCheckoutNotice' ) === 'original'
+			) {
 				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
 			} else if ( purchases.some( isDomainMapping ) ) {
 				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
@@ -570,6 +571,9 @@ export class CheckoutThankYou extends React.Component {
 
 		return (
 			<div>
+				{ purchases.some( isGoogleApps ) && abtest( 'gSuitePostCheckoutNotice' ) === 'enhanced' && (
+					<GoogleAppsDetails isRequired />
+				) }
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
 					primaryPurchase={ primaryPurchase }

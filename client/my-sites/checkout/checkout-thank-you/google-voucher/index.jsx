@@ -26,6 +26,11 @@ import { assignSiteVoucher as assignVoucher } from 'state/sites/vouchers/actions
 import { GOOGLE_CREDITS } from 'state/sites/vouchers/service-types';
 import { getVouchersBySite, getGoogleAdCredits } from 'state/sites/vouchers/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const [ INITIAL_STEP, TERMS_AND_CONDITIONS, CODE_REDEEMED ] = [
 	'INITIAL_STEP',
 	'TERMS_AND_CONDITIONS',

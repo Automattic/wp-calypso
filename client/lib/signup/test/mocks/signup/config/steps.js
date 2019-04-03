@@ -69,4 +69,14 @@ export default {
 			defer( callback );
 		},
 	},
+
+	'site-topic': {
+		stepName: 'site-topic',
+		providesDependencies: [ 'siteTopic' ],
+	},
+
+	'site-topic-and-title': {
+		stepName: 'site-topic-and-title',
+		providesDependencies: [ 'siteTopic', 'siteTitle' ],
+	},
 };

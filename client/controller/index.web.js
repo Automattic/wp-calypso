@@ -14,7 +14,7 @@ import page from 'page';
 import config from 'config';
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
-import { MomentProvider } from 'components/with-localized-moment/context';
+import { MomentProvider } from 'components/localized-moment/context';
 import { login } from 'lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
 import { isUserLoggedIn } from 'state/current-user/selectors';
@@ -96,7 +96,9 @@ export function redirectLoggedOut( context, next ) {
 			loginParameters.locale = login_locale;
 		}
 
-		return page.redirect( login( loginParameters ) );
+		// force full page reload to avoid SSR hydration issues.
+		window.location = login( loginParameters );
+		return;
 	}
 	next();
 }

@@ -1,9 +1,9 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
 import {
+	DOMAIN_PRIVACY_TOGGLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -29,6 +29,7 @@ export const DOMAIN_PRIMARY = {
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.me',
 	domainLockingAvailable: true,
+	domainRegistrationAgreementUrl: null,
 	pointsToWpcom: true,
 	expired: false,
 	expiry: '2017-03-09T00:00:00+00:00',
@@ -37,7 +38,6 @@ export const DOMAIN_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
-	hasPrivacyProtection: false,
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
@@ -55,11 +55,11 @@ export const DOMAIN_PRIMARY = {
 	pendingTransfer: false,
 	privateDomain: false,
 	isPrimary: true,
-	isPrivate: false,
 	registrar: '',
 	registrationDate: '2016-03-09T00:00:00+00:00',
 	subscriptionId: SUBSCRIPTION_ID_FIRST,
 	supportsDomainConnect: false,
+	supportsGdprConsentManagement: true,
 	tldMaintenanceEndTime: 0,
 	type: 'MAPPED',
 	transferAwayEligibleAt: null,
@@ -80,6 +80,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.wordpress.me',
 	domainLockingAvailable: true,
+	domainRegistrationAgreementUrl: null,
 	pointsToWpcom: true,
 	expired: false,
 	expiry: null,
@@ -88,7 +89,6 @@ export const DOMAIN_NOT_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
-	hasPrivacyProtection: false,
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
@@ -106,11 +106,11 @@ export const DOMAIN_NOT_PRIMARY = {
 	pendingTransfer: false,
 	privateDomain: false,
 	isPrimary: false,
-	isPrivate: false,
 	registrar: '',
 	registrationDate: '',
 	subscriptionId: SUBSCRIPTION_ID_SECOND,
 	supportsDomainConnect: false,
+	supportsGdprConsentManagement: true,
 	tldMaintenanceEndTime: 0,
 	type: 'WPCOM',
 	transferAwayEligibleAt: null,
@@ -133,6 +133,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	can_set_as_primary: true,
 	domain: 'retronevergiveup.me',
 	domain_locking_available: true,
+	domainRegistrationAgreementUrl: null,
 	points_to_wpcom: true,
 	expired: false,
 	expiry: '2017-03-09T00:00:00+00:00',
@@ -163,6 +164,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	registration_date: '2016-03-09T00:00:00+00:00',
 	subscription_id: SUBSCRIPTION_ID_FIRST,
 	supports_domain_connect: false,
+	supports_gdpr_consent_management: true,
 	tld_maintenance_end_time: 0,
 	type: 'mapping',
 	transfer_lock_on_whois_update_optional: true,
@@ -178,6 +180,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	can_set_as_primary: true,
 	domain: 'retronevergiveup.wordpress.me',
 	domain_locking_available: true,
+	domainRegistrationAgreementUrl: null,
 	points_to_wpcom: true,
 	expired: false,
 	expiry: false,
@@ -207,6 +210,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	registration_date: '',
 	subscription_id: SUBSCRIPTION_ID_SECOND,
 	supports_domain_connect: false,
+	supports_gdpr_consent_management: true,
 	tld_maintenance_end_time: 0,
 	type: 'wpcom',
 	whois_update_unmodifiable_fields: [ 'first_name', 'last_name' ],
@@ -255,6 +259,12 @@ export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
 	type: SITE_DOMAINS_REQUEST_FAILURE,
 	siteId: SITE_ID_FIRST,
 	error: ERROR_MESSAGE_RESPONSE,
+};
+
+export const ACTION_DOMAIN_PRIVACY_TOGGLE = {
+	type: DOMAIN_PRIVACY_TOGGLE,
+	siteId: SITE_ID_FIRST,
+	domain: REST_API_SITE_DOMAIN_FIRST.domain,
 };
 
 /**

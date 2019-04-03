@@ -54,7 +54,7 @@
 		font-size: 14px;
 		padding: 1px 4px;
 		border-radius: 2px;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 	}
 	> code {
 		display: block;
@@ -77,8 +77,8 @@
 	width: 100%;
 	padding-top: 12px;
 	padding-bottom: 2px;
-	background: $white;
-	color: $gray;
+	background: var( --color-white );
+	color: var( --color-neutral-light );
 	cursor: pointer;
 	font-size: 12px;
 	text-transform: uppercase;
@@ -86,10 +86,10 @@
 	&:focus {
 		.plugin-sections__read-more-text {
 			color: var( --color-primary );
-			outline: solid $gray 1px;
+			outline: solid var( --color-neutral-light ) 1px;
 		}
 	}
-	&:after {
+	&::after {
 		position: absolute;
 			left: 0;
 			bottom: 100%;

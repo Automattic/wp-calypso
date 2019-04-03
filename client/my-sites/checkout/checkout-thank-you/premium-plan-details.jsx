@@ -10,6 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import config from 'config';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
@@ -33,7 +34,9 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 
 	return (
 		<div>
-			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+			{ googleAppsWasPurchased && abtest( 'gSuitePostCheckoutNotice' ) === 'original' && (
+				<GoogleAppsDetails isRequired />
+			) }
 
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
@@ -79,7 +82,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 				title={ i18n.translate( 'Video and audio posts' ) }
 				description={ i18n.translate(
 					'Enrich your posts with video and audio, uploaded directly on your site. ' +
-						'No ads or limits. The Premium plan also adds 10GB of file storage.'
+						'No ads. The Premium plan offers 13GB of file storage.'
 				) }
 				buttonText={ i18n.translate( 'Start a new post' ) }
 				href={ newPost( selectedSite ) }

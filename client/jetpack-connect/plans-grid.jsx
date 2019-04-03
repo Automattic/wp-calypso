@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +13,6 @@ import MainWrapper from './main-wrapper';
 import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlansSkipButton from 'components/plans/plans-skip-button';
-import { abtest } from 'lib/abtest';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -30,6 +28,7 @@ class JetpackPlansGrid extends Component {
 		isLanding: PropTypes.bool,
 		onSelect: PropTypes.func,
 		selectedSite: PropTypes.object,
+		countryCode: PropTypes.string,
 
 		// Connected
 		translate: PropTypes.func.isRequired,
@@ -58,11 +57,6 @@ class JetpackPlansGrid extends Component {
 			<MainWrapper isWide className="jetpack-connect__hide-plan-icons">
 				<div className="jetpack-connect__plans">
 					{ this.renderConnectHeader() }
-
-					{ abtest( 'jetpackFreePlanButtonPosition' ) === 'locationTop' && (
-						<PlansSkipButton onClick={ this.handleSkipButtonClick } />
-					) }
-
 					<div id="plans">
 						<PlansFeaturesMain
 							site={ this.props.selectedSite || defaultJetpackSite }
@@ -73,11 +67,10 @@ class JetpackPlansGrid extends Component {
 							intervalType={ this.props.interval }
 							hideFreePlan={ this.props.hideFreePlan }
 							displayJetpackPlans={ true }
+							countryCode={ this.props.countryCode }
 						/>
 
-						{ abtest( 'jetpackFreePlanButtonPosition' ) === 'locationBottom' && (
-							<PlansSkipButton onClick={ this.handleSkipButtonClick } />
-						) }
+						<PlansSkipButton onClick={ this.handleSkipButtonClick } />
 
 						{ this.props.children }
 					</div>

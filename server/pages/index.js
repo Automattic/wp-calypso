@@ -40,9 +40,9 @@ import stateCache from 'state-cache';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
+import { setCurrentUser } from 'state/current-user/actions';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
-import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 
@@ -208,9 +208,27 @@ function getAcceptedLanguagesFromHeader( header ) {
 		.filter( lang => lang );
 }
 
+/*
+ * Look at the request headers and determine if the request is logged in or logged out or if
+ * it's a support session. Set `req.context.isLoggedIn` and `req.context.isSupportSession` flags
+ * accordingly. The handler is called very early (immediately after parsing the cookies) and
+ * all following handlers (including the locale and redirect ones) can rely on the context values.
+ */
+function setupLoggedInContext( req, res, next ) {
+	const isSupportSession = !! req.get( 'x-support-session' );
+	const isLoggedIn = !! req.cookies.wordpress_logged_in;
+
+	req.context = {
+		...req.context,
+		isSupportSession,
+		isLoggedIn,
+	};
+
+	next();
+}
+
 function getDefaultContext( request ) {
 	let initialServerState = {};
-	let sectionCss;
 	let lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
 	// We don't compare context.query against a whitelist here. Whitelists are route-specific,
@@ -236,10 +254,6 @@ function getDefaultContext( request ) {
 		prideLocations.indexOf( geoLocation ) > -1
 	) {
 		bodyClasses.push( 'pride' );
-	}
-
-	if ( request.context && request.context.sectionCss ) {
-		sectionCss = request.context.sectionCss;
 	}
 
 	// We assign request.context.lang in the handleLocaleSubdomains()
@@ -268,7 +282,6 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
-		sectionCss,
 	} );
 
 	context.app = {
@@ -343,7 +356,6 @@ function setUpLoggedInRoute( req, res, next ) {
 	const setupRequests = [ langPromise ];
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
 		redirectUrl = login( {
@@ -351,9 +363,7 @@ function setUpLoggedInRoute( req, res, next ) {
 			redirectTo: protocol + '://' + config( 'hostname' ) + req.originalUrl,
 		} );
 
-		// if we don't have a wordpress cookie, we know the user needs to
-		// authenticate
-		if ( ! req.cookies.wordpress_logged_in ) {
+		if ( ! req.context.isLoggedIn ) {
 			debug( 'User not logged in. Redirecting to %s', redirectUrl );
 			res.redirect( redirectUrl );
 			return;
@@ -365,7 +375,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		debug( 'Issuing API call to fetch user object' );
 
-		const userPromise = user( req.cookies.wordpress_logged_in, geoCountry )
+		const userPromise = user( req )
 			.then( data => {
 				const end = new Date().getTime() - start;
 
@@ -373,7 +383,7 @@ function setUpLoggedInRoute( req, res, next ) {
 				req.context.user = data;
 
 				// Setting user in the state is safe as long as we don't cache it
-				setCurrentUserOnReduxStore( data, req.context.store );
+				req.context.store.dispatch( setCurrentUser( data ) );
 
 				if ( data.localeSlug ) {
 					req.context.lang = data.localeSlug;
@@ -521,13 +531,10 @@ function setUpCSP( req, res, next ) {
 
 function setUpRoute( req, res, next ) {
 	req.context = getDefaultContext( req );
-	setUpCSP(
-		req,
-		res,
-		() =>
-			req.cookies.wordpress_logged_in // a cookie probably indicates someone is logged-in
-				? setUpLoggedInRoute( req, res, next )
-				: setUpLoggedOutRoute( req, res, next )
+	setUpCSP( req, res, () =>
+		req.context.isLoggedIn
+			? setUpLoggedInRoute( req, res, next )
+			: setUpLoggedOutRoute( req, res, next )
 	);
 }
 
@@ -573,7 +580,7 @@ function handleLocaleSubdomains( req, res, next ) {
 		const language = getLanguage( langSlug );
 
 		// Switch locales only in a logged-out state.
-		if ( language && ! req.cookies.wordpress_logged_in ) {
+		if ( language && ! req.context.isLoggedIn ) {
 			req.context = {
 				...req.context,
 				lang: language.langSlug,
@@ -599,6 +606,7 @@ module.exports = function() {
 
 	app.use( logSectionResponseTime );
 	app.use( cookieParser() );
+	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
 
 	// redirect homepage if the Reader is disabled
@@ -627,13 +635,10 @@ module.exports = function() {
 			return;
 		}
 		if ( 'change-theme' === req.params.section ) {
-			redirectUrl = req.originalUrl.replace(
-				/^\/sites\/[0-9a-zA-Z\-\.]+\/change\-theme/,
-				'/themes'
-			);
+			redirectUrl = req.originalUrl.replace( /^\/sites\/[0-9a-zA-Z\-.]+\/change-theme/, '/themes' );
 		} else {
 			redirectUrl = req.originalUrl.replace(
-				/^\/sites\/[0-9a-zA-Z\-\.]+\/\w+/,
+				/^\/sites\/[0-9a-zA-Z\-.]+\/\w+/,
 				'/' + req.params.section + '/' + req.params.site
 			);
 		}
@@ -642,7 +647,7 @@ module.exports = function() {
 
 	if ( process.env.NODE_ENV !== 'development' ) {
 		app.get( '/discover', function( req, res, next ) {
-			if ( ! req.cookies.wordpress_logged_in ) {
+			if ( ! req.context.isLoggedIn ) {
 				res.redirect( config( 'discover_logged_out_redirect_url' ) );
 			} else {
 				next();
@@ -651,7 +656,7 @@ module.exports = function() {
 
 		// redirect logged-out tag pages to en.wordpress.com
 		app.get( '/tag/:tag_slug', function( req, res, next ) {
-			if ( ! req.cookies.wordpress_logged_in ) {
+			if ( ! req.context.isLoggedIn ) {
 				res.redirect( 'https://en.wordpress.com/tag/' + encodeURIComponent( req.params.tag_slug ) );
 			} else {
 				next();
@@ -660,7 +665,7 @@ module.exports = function() {
 
 		// redirect logged-out searches to en.search.wordpress.com
 		app.get( '/read/search', function( req, res, next ) {
-			if ( ! req.cookies.wordpress_logged_in ) {
+			if ( ! req.context.isLoggedIn ) {
 				res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
 			} else {
 				next();
@@ -668,7 +673,7 @@ module.exports = function() {
 		} );
 
 		app.get( '/plans', function( req, res, next ) {
-			if ( ! req.cookies.wordpress_logged_in ) {
+			if ( ! req.context.isLoggedIn ) {
 				const queryFor = req.query && req.query.for;
 				if ( queryFor && 'jetpack' === queryFor ) {
 					res.redirect(
@@ -722,10 +727,6 @@ module.exports = function() {
 
 					if ( section.group && req.context ) {
 						req.context.sectionGroup = section.group;
-					}
-
-					if ( section.css && req.context ) {
-						req.context.sectionCss = section.css;
 					}
 
 					next();
@@ -807,11 +808,10 @@ module.exports = function() {
 
 		// Maybe not logged in, note that you need docker to test this properly
 		const user = require( 'user-bootstrap' );
-		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
 
 		debug( 'Issuing API call to fetch user object' );
 
-		user( req.cookies.wordpress_logged_in, geoCountry )
+		user( req )
 			.then( data => {
 				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
 

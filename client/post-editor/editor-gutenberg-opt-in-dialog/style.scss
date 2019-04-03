@@ -35,7 +35,7 @@
 
 			&.editor-gutenberg-opt-in-dialog__subhead {
 				font-size: 18px;
-				color: $gray-darken-20;
+				color: var( --color-neutral-500 );
 			}
 		}
 	}
@@ -45,12 +45,12 @@
 		border: none;
 		text-align: inherit;
 
-		&:before {
+		&::before {
 			display: none;
 		}
 
 		.button {
-			margin: 0 24px 8px 24px;
+			margin: 0 24px 8px;
 
 			@include breakpoint( '<660px' ) {
 				display: block;
@@ -66,7 +66,7 @@
 }
 
 .editor-gutenberg-opt-in-dialog__illustration {
-	background: $gray-light url( '/calypso/images/illustrations/gutenberg.svg' ) no-repeat;
+	background: var( --color-neutral-0 ) url( '/calypso/images/illustrations/gutenberg.svg' ) no-repeat;
 	background-position: 50%;
 	background-size: 320px;
 	height: 180px;
@@ -86,7 +86,7 @@
 		bottom: 0;
 	}
 
-	&:after {
+	&::after {
 		content: '';
 		position: absolute;
 		right: 0;
@@ -110,9 +110,9 @@
 	top: 8px;
 	right: 8px;
 	cursor: pointer;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }

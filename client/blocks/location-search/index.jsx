@@ -15,6 +15,11 @@ import { getLocaleSlug } from 'i18n-calypso';
 import SearchCard from 'components/search-card';
 import Prediction from './prediction';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 let autocompleteService = null;
 
 class LocationSearch extends Component {

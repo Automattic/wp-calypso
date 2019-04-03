@@ -16,7 +16,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-	background: darken($gray, 52%);
+	background: var( --color-neutral-800 );
 }
 
 .image-editor__toolbar {
@@ -33,7 +33,7 @@
 .image-editor__toolbar-button {
 	background: $transparent;
 	border: none;
-	color: $white;
+	color: var( --color-white );
 	margin: 0 10px;
 	cursor: pointer;
 	&.is-disabled {
@@ -47,7 +47,7 @@
 }
 
 .image-editor__toolbar-button:hover {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .image-editor__canvas-container {
@@ -69,14 +69,14 @@
 
 .image-editor__crop {
 	position: absolute;
-	border: 1px solid $white;
+	border: 1px solid var( --color-white );
 	cursor: move;
 	box-sizing: border-box;
 }
 
 .image-editor__crop-background {
 	position: absolute;
-	background: darken($gray, 52%);
+	background: var( --color-neutral-800 );
 	opacity: 0.5;
 }
 
@@ -87,10 +87,10 @@
 	margin-top: -4px;
 	margin-left: -4px;
 	border-radius: 50%;
-	border: 2px solid $white;
-	background: darken($gray, 52%);
+	border: 2px solid var( --color-white );
+	background: var( --color-neutral-800 );
 
-	&:before {
+	&::before {
 		border-radius: 100%;
 		content: ' ';
 		display: block;
@@ -109,7 +109,7 @@
 }
 
 .image-editor__buttons {
-	border-top: 1px solid $gray-dark;
+	border-top: 1px solid var( --color-neutral-700 );
 	padding: 16px;
 	text-align: right;
 }

@@ -20,6 +20,11 @@ import SearchCard from 'components/search-card';
 import { localizeUrl } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class HelpSearch extends React.PureComponent {
 	state = {
 		searchQuery: '',
@@ -41,6 +46,7 @@ export class HelpSearch extends React.PureComponent {
 		}
 
 		if ( isEmpty( helpLinks ) ) {
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<div className="help-results__placeholder">
 					<HelpResults

@@ -21,7 +21,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SupportInfo from 'components/support-info';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
@@ -143,7 +143,7 @@ class JetpackAds extends Component {
 				</Card>
 
 				{ wordadsModuleActive && (
-					<CompactCard href={ `/ads/earnings/${ selectedSiteSlug }` }>
+					<CompactCard href={ `/earn/ads-earnings/${ selectedSiteSlug }` }>
 						{ translate( 'View your earnings' ) }
 					</CompactCard>
 				) }
@@ -156,7 +156,7 @@ class JetpackAds extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Ads' ) } />
+				<SettingsSectionHeader title={ translate( 'Ads' ) } />
 
 				{ hasWordadsFeature ? this.renderSettings() : this.renderUpgradeBanner() }
 			</div>

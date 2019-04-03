@@ -1,5 +1,4 @@
 /** @format */
-import { filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +16,9 @@ describe( 'index', () => {
 		let getDependents;
 
 		beforeEach( () => {
-			selector = jest.fn( ( [ posts ], siteId ) => filter( posts, { siteId } ) );
+			selector = jest.fn( ( [ posts ], siteId ) =>
+				Object.values( posts ).filter( p => p.siteId === siteId )
+			);
 			getDependents = jest.fn( state => [ state.posts ] );
 			getSitePosts = treeSelect( getDependents, selector );
 		} );
@@ -240,7 +241,7 @@ describe( 'index', () => {
 
 			const memoizedSelector = treeSelect(
 				state => [ state.posts ],
-				( [ posts ], query ) => filter( posts, { siteId: query.siteId } ),
+				( [ posts ], query ) => Object.values( posts ).filter( p => p.siteId === query.siteId ),
 				{ getCacheKey: query => `key:${ query.siteId }` }
 			);
 

@@ -1,9 +1,10 @@
 /** @format */
+
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { includes, head, omit, find } from 'lodash';
 import page from 'page';
@@ -28,6 +29,11 @@ import SectionHeader from 'components/section-header';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const wpcom = wp.undocumented();
 
@@ -145,7 +151,7 @@ class TransferOtherUser extends React.Component {
 			{ slug } = selectedSite;
 
 		return (
-			<Main className="transfer-to-other-user">
+			<Main>
 				<Header
 					selectedDomainName={ selectedDomainName }
 					backHref={ domainManagementTransfer( slug, selectedDomainName ) }
@@ -198,7 +204,7 @@ class TransferOtherUser extends React.Component {
 	renderSection() {
 		const { selectedDomainName: domainName, translate, users, selectedSite } = this.props,
 			availableUsers = this.filterAvailableUsers( users ),
-			{ currentUserCanManage } = getSelectedDomain( this.props ),
+			{ currentUserCanManage, domainRegistrationAgreementUrl } = getSelectedDomain( this.props ),
 			saveButtonLabel = translate( 'Transfer Domain' );
 
 		if ( ! currentUserCanManage ) {
@@ -206,9 +212,9 @@ class TransferOtherUser extends React.Component {
 		}
 
 		return (
-			<div>
+			<Fragment>
 				<SectionHeader label={ translate( 'Transfer Domain To Another User' ) } />
-				<Card className="transfer-card">
+				<Card>
 					<p>
 						{ translate(
 							'Transferring a domain to another user will give all the rights of the domain to that user. ' +
@@ -241,7 +247,10 @@ class TransferOtherUser extends React.Component {
 							) }
 						</FormSelect>
 					</FormFieldset>
-					<DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } />
+					<DesignatedAgentNotice
+						domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
+						saveButtonLabel={ saveButtonLabel }
+					/>
 					<FormButton
 						disabled={ ! this.state.selectedUserId }
 						onClick={ this.handleTransferDomain }
@@ -250,7 +259,7 @@ class TransferOtherUser extends React.Component {
 					</FormButton>
 				</Card>
 				{ this.renderDialog() }
-			</div>
+			</Fragment>
 		);
 	}
 

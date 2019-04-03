@@ -1,7 +1,7 @@
 .comment-button {
 	align-items: center;
 	box-sizing: border-box;
-	color: $gray;
+	color: var( --color-neutral-light );
 	cursor: pointer;
 	display: inline-flex;
 	list-style-type: none;
@@ -11,7 +11,7 @@
 	&:hover,
 	&:focus,
 	&:active {
-		color: var( --color-accent );
+		color: var( --color-primary );
 	}
 
 	.comment-button__label-count {
@@ -19,8 +19,7 @@
 	}
 
 	.comment-button__label-status {
-
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			display: none;
 		}
 	}
@@ -33,5 +32,5 @@
 
 .comment-button__icon {
 	position: relative;
-		top: 2px;
+	top: 2px;
 }

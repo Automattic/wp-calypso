@@ -32,7 +32,7 @@ import {
 import { mapStateToProps } from '../main';
 
 jest.mock( 'lib/analytics', () => ( {} ) );
-jest.mock( 'lib/user', () => ( {} ) );
+jest.mock( 'lib/user', () => jest.fn() );
 jest.mock( '../help-unverified-warning', () => 'HelpUnverifiedWarning' );
 jest.mock( 'components/card/compact', () => 'CardCompact' );
 jest.mock( 'components/button', () => 'Button' );
@@ -94,14 +94,12 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach(
-		productSlug => {
-			test( `True for plan ${ JSON.stringify( productSlug ) }`, () => {
-				purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
-				expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );
-			} );
-		}
-	);
+	].forEach( productSlug => {
+		test( `True for plan ${ JSON.stringify( productSlug ) }`, () => {
+			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
+			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );
+		} );
+	} );
 
 	test( 'Should be false for purchases not loaded', () => {
 		purchasesSelectors.getUserPurchases.mockImplementation( () => null );

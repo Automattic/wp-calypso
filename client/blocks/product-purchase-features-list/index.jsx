@@ -101,6 +101,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<BusinessOnboarding
+					isWpcomPlan
 					onClick={ this.props.recordBusinessOnboardingClick }
 					link={ `/me/concierge/${ selectedSite.slug }/book` }
 				/>
@@ -186,20 +187,20 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				<HappinessSupportCard
-					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-					isJetpackFreePlan
-					isPlaceholder={ isPlaceholder }
-				/>
 				<JetpackWordPressCom selectedSite={ selectedSite } />
-				<SiteActivity />
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
+				<SiteActivity />
 				<MobileApps />
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
 					selectedSite={ selectedSite }
+				/>
+				<HappinessSupportCard
+					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+					isJetpackFreePlan
+					isPlaceholder={ isPlaceholder }
 				/>
 			</Fragment>
 		);
@@ -215,25 +216,30 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				<HappinessSupportCard
-					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-					isPlaceholder={ isPlaceholder }
-				/>
-				<MonetizeSite selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<JetpackBackupSecurity />
-				<SiteActivity />
-				<JetpackAntiSpam selectedSite={ selectedSite } />
-				<JetpackPublicize selectedSite={ selectedSite } />
-				<JetpackVideo selectedSite={ selectedSite } />
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
+				<JetpackAntiSpam selectedSite={ selectedSite } />
+				<JetpackVideo selectedSite={ selectedSite } />
+				<JetpackWordPressCom selectedSite={ selectedSite } />
+				<MonetizeSite selectedSite={ selectedSite } />
+				<SiteActivity />
+				<JetpackPublicize selectedSite={ selectedSite } />
 				<MobileApps />
 				<SellOnlinePaypal isJetpack />
+				<BusinessOnboarding
+					onClick={ this.props.recordBusinessOnboardingClick }
+					link="https://calendly.com/jetpack/concierge"
+				/>
+
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
 					selectedSite={ selectedSite }
+				/>
+				<HappinessSupportCard
+					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+					isPlaceholder={ isPlaceholder }
 				/>
 			</Fragment>
 		);
@@ -250,21 +256,21 @@ export class ProductPurchaseFeaturesList extends Component {
 
 		return (
 			<Fragment>
-				<HappinessSupportCard
-					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-					isPlaceholder={ isPlaceholder }
-				/>
-				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<JetpackBackupSecurity />
-				<SiteActivity />
-				<JetpackAntiSpam selectedSite={ selectedSite } />
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
+				<JetpackAntiSpam selectedSite={ selectedSite } />
+				<JetpackWordPressCom selectedSite={ selectedSite } />
+				<SiteActivity />
 				<MobileApps />
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
 					selectedSite={ selectedSite }
+				/>
+				<HappinessSupportCard
+					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+					isPlaceholder={ isPlaceholder }
 				/>
 			</Fragment>
 		);
@@ -280,35 +286,36 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
+				<JetpackBackupSecurity />
+				{ supportsJetpackSiteAccelerator && (
+					<JetpackSiteAccelerator selectedSite={ selectedSite } />
+				) }
+				<JetpackAntiSpam selectedSite={ selectedSite } />
+				<JetpackSearch selectedSite={ selectedSite } />
+				<SiteActivity />
+				<JetpackVideo selectedSite={ selectedSite } />
+				<JetpackWordPressCom selectedSite={ selectedSite } />
+				<MonetizeSite selectedSite={ selectedSite } />
+				<MobileApps />
+				<JetpackPublicize selectedSite={ selectedSite } />
+				<SellOnlinePaypal isJetpack />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<GoogleMyBusiness selectedSite={ selectedSite } />
+				<FindNewTheme selectedSite={ selectedSite } />
+
+				<BusinessOnboarding
+					onClick={ this.props.recordBusinessOnboardingClick }
+					link="https://calendly.com/jetpack/concierge"
+				/>
+				<JetpackReturnToDashboard
+					onClick={ recordReturnToDashboardClick }
+					selectedSite={ selectedSite }
+				/>
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_professsional' }
-				/>
-				<BusinessOnboarding
-					onClick={ this.props.recordBusinessOnboardingClick }
-					link="https://calendly.com/jetpack/concierge"
-				/>
-				<JetpackSearch selectedSite={ selectedSite } />
-				<MonetizeSite selectedSite={ selectedSite } />
-				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<GoogleMyBusiness selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
-				<JetpackVideo selectedSite={ selectedSite } />
-				<JetpackPublicize selectedSite={ selectedSite } />
-				<JetpackBackupSecurity />
-				<SiteActivity />
-				<JetpackAntiSpam selectedSite={ selectedSite } />
-				{ supportsJetpackSiteAccelerator && (
-					<JetpackSiteAccelerator selectedSite={ selectedSite } />
-				) }
-				<MobileApps />
-				<SellOnlinePaypal isJetpack />
-				<JetpackReturnToDashboard
-					onClick={ recordReturnToDashboardClick }
-					selectedSite={ selectedSite }
 				/>
 			</Fragment>
 		);

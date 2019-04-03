@@ -5,11 +5,11 @@
 	h1.is-placeholder,
 	p.is-placeholder {
 		width: inherit;
-		background-color: $gray-lighten-30;
-		color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
+		color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 
-		&:before {
+		&::before {
 			content: ' ';
 		}
 	}
@@ -21,14 +21,14 @@
 
 .jetpack-plugins-setup__header {
 	@include heading;
-	margin-bottom: .75em;
+	margin-bottom: 0.75em;
 	text-align: center;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .jetpack-plugins-setup__description {
 	margin-bottom: 3em;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	text-align: center;
 }
 
@@ -51,7 +51,7 @@
 }
 
 .jetpack-plugins-setup .plugin-item__finished {
-	color: $gray;
+	color: var( --color-neutral-light );
 	font-size: 12px;
 	line-height: 1;
 	padding: 6px 0;

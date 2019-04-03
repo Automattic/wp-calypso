@@ -44,7 +44,6 @@ const productDependencies = {
 		gapps: true,
 		gapps_extra_license: true,
 		gapps_unlimited: true,
-		private_whois: true,
 	},
 	[ PLAN_BUSINESS_MONTHLY ]: {
 		domain_redemption: true,
@@ -67,9 +66,6 @@ const productDependencies = {
 	[ PLAN_PREMIUM_2_YEARS ]: {
 		domain_redemption: true,
 	},
-	[ domainProductSlugs.TRANSFER_IN ]: {
-		[ domainProductSlugs.TRANSFER_IN_PRIVACY ]: true,
-	},
 };
 
 function assertValidProduct( product ) {
@@ -86,6 +82,8 @@ export function formatProduct( product ) {
 	return assign( {}, product, {
 		product_slug: product.product_slug || product.productSlug,
 		product_type: product.product_type || product.productType,
+		included_domain_purchase_amount:
+			product.included_domain_purchase_amount || product.includedDomainPurchaseAmount,
 		is_domain_registration:
 			product.is_domain_registration !== undefined
 				? product.is_domain_registration
@@ -250,20 +248,11 @@ export function isDotComPlan( product ) {
 	return isPlan( product ) && ! isJetpackPlan( product );
 }
 
-export function isPrivacyProtection( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.product_slug === 'private_whois';
-}
-
 export function isDomainProduct( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return (
-		isDomainMapping( product ) || isDomainRegistration( product ) || isPrivacyProtection( product )
-	);
+	return isDomainMapping( product ) || isDomainRegistration( product );
 }
 
 export function isDomainRedemption( product ) {
@@ -287,6 +276,13 @@ export function isDomainMapping( product ) {
 	return product.product_slug === 'domain_map';
 }
 
+export function getIncludedDomainPurchaseAmount( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.included_domain_purchase_amount;
+}
+
 export function isSiteRedirect( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -298,7 +294,7 @@ export function isDomainTransferProduct( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return isDomainTransfer( product ) || isDomainTransferPrivacy( product );
+	return isDomainTransfer( product );
 }
 
 export function isDomainTransfer( product ) {
@@ -306,13 +302,6 @@ export function isDomainTransfer( product ) {
 	assertValidProduct( product );
 
 	return product.product_slug === domainProductSlugs.TRANSFER_IN;
-}
-
-export function isDomainTransferPrivacy( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.product_slug === domainProductSlugs.TRANSFER_IN_PRIVACY;
 }
 
 export function isDelayedDomainTransfer( product ) {
@@ -341,8 +330,6 @@ export function getDomainProductRanking( product ) {
 		return 0;
 	} else if ( isDomainMapping( product ) ) {
 		return 1;
-	} else if ( isPrivacyProtection( product ) ) {
-		return 2;
 	}
 }
 
@@ -475,6 +462,7 @@ export function isConciergeSession( product ) {
 export default {
 	formatProduct,
 	getDomainProductRanking,
+	getIncludedDomainPurchaseAmount,
 	includesProduct,
 	isBusiness,
 	isChargeback,
@@ -487,7 +475,6 @@ export default {
 	isDomainRedemption,
 	isDomainRegistration,
 	isDomainTransfer,
-	isDomainTransferPrivacy,
 	isDomainTransferProduct,
 	isBundled,
 	isDotComPlan,
@@ -509,7 +496,6 @@ export default {
 	isNoAds,
 	isPlan,
 	isPremium,
-	isPrivacyProtection,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isTheme,

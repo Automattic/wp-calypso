@@ -7,12 +7,12 @@
 
 	thead .table-heading,
 	thead .table-item {
-		border-bottom: 1px solid $gray-lighten-20;
+		border-bottom: 1px solid var( --color-neutral-100 );
 	}
 
 	tbody .table-heading,
 	tbody .table-item {
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 	}
 
 	// Remove the border from the last item in the body of the table.
@@ -22,7 +22,7 @@
 	}
 
 	&.is-compact-table {
-		padding: .5em 0;
+		padding: 0.5em 0;
 
 		.table-heading,
 		.table-item {
@@ -42,10 +42,14 @@
 			}
 
 			&:hover {
-				background: $gray-light;
+				background: var( --color-neutral-0 );
 
 				.table-item__cell-title:after {
-					background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, $gray-light 90%);
+					background-image: linear-gradient(
+						to right,
+						rgba( 255, 255, 255, 0 ) 0%,
+						var( --color-neutral-0 ) 90%
+					);
 				}
 			}
 		}
@@ -83,13 +87,13 @@
 			overflow: hidden;
 
 			&::after {
-				background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, $white 90%);
+				background-image: linear-gradient( to right, rgba( var( --color-white-rgb ), 0 ) 0%, var( --color-white ) 90% );
 				position: absolute;
 				z-index: 1;
 				right: 0;
 				top: 0;
 				bottom: 0;
-				content: "";
+				content: '';
 				width: 48px;
 			}
 		}
@@ -100,19 +104,24 @@
 			position: relative;
 			overflow: hidden;
 
-			&:after {
-				content: "";
+			&::after {
+				content: '';
 				display: block;
 				width: 24px;
 				height: 100%;
 				position: absolute;
 				right: -12px;
 				top: 0;
-				background: radial-gradient( ellipse at center, rgba( $gray-dark,.125 ) 0%, rgba( $white,0 ) 75%, rgba( $white,0 ) 90% );
+				background: radial-gradient(
+					ellipse at center,
+					rgba( var( --color-neutral-700-rgb ), 0.125 ) 0%,
+					rgba( var( --color-white-rgb ), 0 ) 75%,
+					rgba( var( --color-white-rgb ), 0 ) 90%
+				);
 			}
 
-			@include breakpoint( ">660px" ) {
-				&:after {
+			@include breakpoint( '>660px' ) {
+				&::after {
 					display: none;
 				}
 			}
@@ -133,7 +142,7 @@
 
 .table-row {
 	&:hover {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 
 		&.is-header {
 			background-color: initial;
@@ -141,7 +150,7 @@
 	}
 
 	&.is-header {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-weight: 600;
 	}
 
@@ -150,7 +159,7 @@
 
 		&:focus,
 		&:active {
-			box-shadow: inset 2px 0 0 $blue-medium;
+			box-shadow: inset 2px 0 0 var( --color-primary );
 		}
 	}
 }

@@ -9,11 +9,12 @@ import { Parser } from 'html-to-react';
 import PropTypes from 'prop-types';
 import request from 'superagent';
 
-const htmlToReactParser = new Parser();
-
 /**
- * Internal Dependencies
+ * Style Dependencies
  */
+import './style.scss';
+
+const htmlToReactParser = new Parser();
 
 class ReadmeViewer extends Component {
 	static propTypes = {

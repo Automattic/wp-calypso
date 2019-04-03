@@ -203,6 +203,17 @@ export function getYearlyPlanByMonthly( planSlug ) {
 }
 
 /**
+ * Returns the biennial slug which corresponds to the provided slug or "" if the slug is
+ * not a recognized or cannot be converted.
+ *
+ * @param  {String} planSlug Slug to convert to biennial.
+ * @return {String}          Biennial version slug or "" if the slug could not be converted.
+ */
+export function getBiennialPlan( planSlug ) {
+	return findFirstSimilarPlanKey( planSlug, { term: TERM_BIENNIALLY } ) || '';
+}
+
+/**
  * Returns true if plan "types" match regardless of their interval.
  *
  * For example (fake plans):

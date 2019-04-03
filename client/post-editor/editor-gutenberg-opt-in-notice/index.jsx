@@ -20,6 +20,7 @@ import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actio
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
+import { isMobile } from 'lib/viewport';
 
 /**
  * Style dependencies
@@ -33,13 +34,31 @@ class EditorGutenbergOptInNotice extends Component {
 		showDialog: PropTypes.func,
 		optInEnabled: PropTypes.bool,
 		noticeDismissed: PropTypes.bool,
+		sidebarOpen: PropTypes.bool,
 		dismissNotice: PropTypes.func,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.state = { hasOpenedSidebar: false };
+	}
+
+	static getDerivedStateFromProps( props, state ) {
+		if ( ! state.hasOpenedSidebar && props.sidebarOpen ) {
+			return { hasOpenedSidebar: true };
+		}
+		return null;
+	}
 
 	dismissNotice = () => this.props.dismissNotice( 'gutenberg_nudge_notice_dismissed', true );
 
 	render() {
-		if ( ! this.props.optInEnabled || this.props.noticeDismissed ) {
+		if (
+			! this.props.optInEnabled ||
+			this.props.noticeDismissed ||
+			this.state.hasOpenedSidebar ||
+			isMobile()
+		) {
 			return null;
 		}
 
@@ -50,7 +69,7 @@ class EditorGutenbergOptInNotice extends Component {
 				className="editor-gutenberg-opt-in-notice"
 				status="is-info"
 				onDismissClick={ this.dismissNotice }
-				text={ translate( 'A new editor is coming to level up your layout.' ) }
+				text={ translate( 'Try the new block editor and level up your layout.' ) }
 			>
 				<NoticeAction onClick={ showDialog }>{ translate( 'Learn More' ) }</NoticeAction>
 			</Notice>
@@ -62,6 +81,7 @@ const mapStateToProps = state => ( {
 	optInEnabled:
 		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) ),
 	noticeDismissed: getPreference( state, 'gutenberg_nudge_notice_dismissed' ),
+	sidebarOpen: 'open' === getPreference( state, 'editor-sidebar' ),
 } );
 
 const mapDispatchToProps = {

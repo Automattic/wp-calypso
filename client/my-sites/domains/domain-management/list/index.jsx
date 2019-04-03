@@ -1,4 +1,7 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 /** @format */
+
 /**
  * External dependencies
  */
@@ -49,6 +52,11 @@ import { type } from 'lib/domains/constants';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import DocumentHead from 'components/data/document-head';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class List extends React.Component {
 	static defaultProps = {
 		translate: identity,
@@ -62,6 +70,14 @@ export class List extends React.Component {
 		primaryDomainIndex: -1,
 		notice: null,
 	};
+
+	componentDidUpdate( prevProps ) {
+		if (
+			get( this.props, 'selectedSite.ID', null ) !== get( prevProps, 'selectedSite.ID', null )
+		) {
+			this.hideNotice();
+		}
+	}
 
 	isLoading() {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
@@ -78,7 +94,7 @@ export class List extends React.Component {
 						'newDomainsWithPrimary',
 						'newDomains',
 						'unverifiedDomainsCanManage',
-						'pendingGappsTosAcceptanceDomains',
+						'pendingGSuiteTosAcceptanceDomains',
 						'unverifiedDomainsCannotManage',
 						'wrongNSMappedDomains',
 						'transferStatus',
@@ -150,6 +166,7 @@ export class List extends React.Component {
 
 		const headerText = this.props.translate( 'Domains', { context: 'A navigation label.' } );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout={ isPlanFeaturesEnabled() }>
 				<DocumentHead title={ headerText } />
@@ -169,6 +186,7 @@ export class List extends React.Component {
 				<DomainToPlanNudge />
 			</Main>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	isFreshDomainOnlyRegistration() {
@@ -278,17 +296,21 @@ export class List extends React.Component {
 		}
 
 		if ( this.state.changePrimaryDomainModeEnabled ) {
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<Button
 					disabled={ this.state.settingPrimaryDomain }
+					// eslint-disable-next-line react/no-string-refs
 					ref="cancelChangePrimaryButton"
 					borderless
 					compact
+					className="domain-management-list__cancel-change-primary-button"
 					onClick={ this.disableChangePrimaryDomainMode }
 				>
 					<Gridicon icon="cross" size={ 24 } />
 				</Button>
 			);
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 		return (
 			<div>
@@ -303,6 +325,7 @@ export class List extends React.Component {
 			return null;
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Button
 				compact
@@ -314,6 +337,7 @@ export class List extends React.Component {
 				} ) }
 			</Button>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	addDomainButton() {
@@ -321,6 +345,7 @@ export class List extends React.Component {
 			return null;
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Button
 				primary
@@ -331,6 +356,7 @@ export class List extends React.Component {
 				{ this.props.translate( 'Add Domain' ) }
 			</Button>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	setPrimaryDomain( domainName ) {

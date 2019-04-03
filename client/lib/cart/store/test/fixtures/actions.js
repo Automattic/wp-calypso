@@ -90,6 +90,28 @@ export const payments = {
 			brand: null,
 		},
 	},
+	newCardNoPostalCode: {
+		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		newCardDetails: {
+			country: 'AI',
+			name: 'Albert A. User',
+			cvv: '987',
+			'expiration-date': '12/99',
+			number: '1234567890123452',
+			brand: null,
+		},
+	},
+	newCardNoCountryCode: {
+		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		newCardDetails: {
+			name: 'Albert A. User',
+			'postal-code': '90314',
+			cvv: '987',
+			'expiration-date': '12/99',
+			number: '1234567890123452',
+			brand: null,
+		},
+	},
 };
 
 export const transactionPaymentSetActions = mapValues( payments, payment => ( {

@@ -2,7 +2,7 @@
 	margin: 0;
 	font-size: 28px;
 	line-height: 1.5;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	&.is-placeholder {
 		@include placeholder( 23% );
@@ -11,13 +11,13 @@
 		height: 21px;
 	}
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		font-size: 24px;
 	}
 }
 
 .plan-price.is-original {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .plan-price.is-discounted {
@@ -31,19 +31,20 @@
 	margin-right: 8px;
 }
 
-.plan-price.is-original:before {
+.plan-price.is-original::before {
 	position: absolute;
-	content: "";
+	content: '';
 	left: 0;
 	top: 50%;
 	right: 0;
-	border-top: 2px solid $orange-fire;
+	border-top: 2px solid var( --color-primary );
 	transform: rotate( -16deg );
-	opacity: .9;
+	opacity: 0.9;
 }
 
 .plan-price__currency-symbol,
-.plan-price__fraction {
+.plan-price__fraction,
+.plan-price__tax-amount {
 	vertical-align: super;
 	font-size: 12px;
 }
@@ -52,8 +53,9 @@
 	color: var( --color-success );
 }
 
-.plan-price__currency-symbol {
-	color: $gray;
+.plan-price__currency-symbol,
+.plan-price__tax-amount {
+	color: var( --color-neutral-light );
 }
 
 .plan-price__integer {

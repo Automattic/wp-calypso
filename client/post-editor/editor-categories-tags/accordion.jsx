@@ -31,7 +31,7 @@ import { getTerm } from 'state/terms/selectors';
 /**
  * Style dependencies
  */
-import './style.scss'
+import './style.scss';
 
 export class EditorCategoriesTagsAccordion extends Component {
 	static propTypes = {

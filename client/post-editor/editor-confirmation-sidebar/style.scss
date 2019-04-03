@@ -84,47 +84,33 @@
 	margin-bottom: 16px;
 	padding: 0 24px;
 	box-sizing: border-box;
-	background: $white;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	background: var( --color-white );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 }
 
 .editor-confirmation-sidebar__close {
 	margin-right: auto;
 }
 
-.editor-confirmation-sidebar__action .button {
-	background: var( --color-success );
-	border-color: darken( $alert-green, 20% );
-	color: $white;
-
+.editor-confirmation-sidebar__action .button {	
 	padding: 7px 24px;
 	min-width: 120px;
 	margin: 4px 0 4px 12px;
-
-	&:hover,
-	&:focus {
-		border-color: darken( $alert-green, 40% );
-	}
-	&[disabled],
-	&:disabled {
-		background: lighten( $alert-green, 20% );
-		border-color: tint( $alert-green, 30% );
-	}
 }
 
 .editor-confirmation-sidebar__content-wrap {
-	padding: 0 24px 24px 24px;
+	padding: 0 24px 24px;
 }
 
 .editor-confirmation-sidebar__sidebar .editor-confirmation-sidebar__display-preference {
 	@extend .sidebar__footer;
-	background-color: lighten( $gray, 25% );
+	background-color: var( --color-neutral-50 );
 	padding: 4px 10px;
 
 	@include breakpoint( '<660px' ) {
 		background: none;
 		border-top: none;
-		padding: 0 24px 24px 24px;
+		padding: 0 24px 24px;
 	}
 }
 
@@ -133,7 +119,7 @@ input[type='checkbox'].editor-confirmation-sidebar__display-preference-checkbox 
 }
 
 .editor-confirmation-sidebar__header {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 15px;
 	padding-bottom: 24px;
 }

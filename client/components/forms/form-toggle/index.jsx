@@ -99,9 +99,13 @@ export default class FormToggle extends PureComponent {
 						aria-label={ this.props[ 'aria-label' ] }
 						tabIndex={ this.props.disabled ? -1 : 0 }
 					/>
-					<span className="form-toggle__label-content" onClick={ this.onLabelClick }>
-						{ this.props.children }
-					</span>
+					{ this.props.children && (
+						/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
+						<span className="form-toggle__label-content" onClick={ this.onLabelClick }>
+							{ this.props.children }
+						</span>
+						/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
+					) }
 				</label>
 			</span>
 		);

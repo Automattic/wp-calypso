@@ -1,9 +1,9 @@
 .delete-user__select-placeholder {
-	border-bottom: 1px solid $gray;
+	border-bottom: 1px solid var( --color-neutral-light );
 }
 
 .delete-user__explanation {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .delete-user__single-site .author-selector__author-toggle .gravatar {
@@ -12,7 +12,7 @@
 }
 
 .delete-user__reassign-user-name {
-	margin: 0 3px 0 8px
+	margin: 0 3px 0 8px;
 }
 
 .delete-user__remove-user .gridicon {

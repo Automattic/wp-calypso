@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import { find, forEach, has, some, endsWith, findIndex } from 'lodash';
+import { find, forEach, some, endsWith, findIndex } from 'lodash';
 import url from 'url';
 
 /**
@@ -100,13 +100,14 @@ export function domForHtml( html ) {
 	if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
 		const parser = new DOMParser();
 		const parsed = parser.parseFromString( html, 'text/html' );
-		if ( has( parsed, 'body' ) ) {
+		if ( parsed && parsed.body ) {
 			return parsed.body;
 		}
 	}
 
 	// DOMParser support is not present or non-standard
-	const dom = document.createElement( 'div' );
+	const newDoc = document.implementation.createHTMLDocument( 'processing doc' );
+	const dom = newDoc.createElement( 'div' );
 	dom.innerHTML = html;
 
 	return dom;
@@ -241,7 +242,7 @@ export function deduceImageWidthAndHeight( image ) {
 			width: image.width,
 		};
 	}
-	if ( image.naturalHeight && image.natualWidth ) {
+	if ( image.naturalHeight && image.naturalWidth ) {
 		return {
 			height: image.naturalHeight,
 			width: image.naturalWidth,

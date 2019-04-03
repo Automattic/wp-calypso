@@ -20,10 +20,10 @@
 		width: 36%;
 		line-height: 24px;
 		margin-top: 8px;
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 
-		&:before {
+		&::before {
 			content: ' ';
 		}
 	}
@@ -41,8 +41,8 @@
 	padding: 4px 8px;
 	margin-left: 8px;
 	border-radius: 4px;
-	background: $gray;
-	color: $white;
+	background: var( --color-neutral-light );
+	color: var( --color-white );
 	font-weight: normal;
 }
 

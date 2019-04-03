@@ -6,13 +6,13 @@
 .profile-links__no-links {
 	display: block;
 	font-style: italic;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .profile-links .notice {
 	margin-bottom: 1.5em;
 }
 
-.button.add-buttons__add-wp-site{
+.button.add-buttons__add-wp-site {
 	margin-left: 8px;
 }

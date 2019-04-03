@@ -16,11 +16,6 @@
  */
 import { find } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { switchCSS } from 'lib/i18n-utils/switch-locale';
-
 let sections = null;
 export function receiveSections( s ) {
 	sections = s;
@@ -33,24 +28,7 @@ export function getSections() {
 	return sections;
 }
 
-function maybeLoadCSS( sectionName ) {
-	const section = find( sections, { name: sectionName } );
-
-	if ( ! ( section && section.css ) ) {
-		return;
-	}
-
-	const url =
-		typeof document !== 'undefined' && document.documentElement.dir === 'rtl'
-			? section.css.urls.rtl
-			: section.css.urls.ltr;
-
-	switchCSS( 'section-css-' + section.css.id, url );
-}
-
 export function preload( sectionName ) {
-	maybeLoadCSS( sectionName );
-
 	const section = find( sections, { name: sectionName } );
 
 	if ( section ) {
@@ -59,8 +37,6 @@ export function preload( sectionName ) {
 }
 
 export function load( sectionName, moduleName ) {
-	maybeLoadCSS( sectionName );
-
 	const section = find( sections, { name: sectionName, module: moduleName } );
 
 	if ( ! section ) {

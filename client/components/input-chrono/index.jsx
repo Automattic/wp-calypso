@@ -10,6 +10,11 @@ import React from 'react';
 import chrono from 'chrono-node';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Supported languages
  */
 const supportedLanguages = [ 'en', 'jp' ];
@@ -79,10 +84,10 @@ class InputChrono extends React.Component {
 
 	render() {
 		return (
-			<div className="input-chrono__container">
+			<div className="input-chrono">
 				{ this.isLangSupported( this.props.lang ) ? (
 					<input
-						className="input-chrono"
+						className="input-chrono__input"
 						value={ this.state.value }
 						placeholder={ this.props.placeholder }
 						onKeyDown={ this.onKeyDown }
@@ -91,7 +96,7 @@ class InputChrono extends React.Component {
 						onBlur={ this.handleBlur }
 					/>
 				) : (
-					<div className="text-chrono">{ this.state.value }</div>
+					<div className="input-chrono__text">{ this.state.value }</div>
 				) }
 			</div>
 		);

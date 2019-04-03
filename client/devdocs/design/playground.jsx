@@ -24,6 +24,12 @@ import DropdownItem from 'components/select-dropdown/item';
 import SelectDropdown from 'components/select-dropdown';
 import { getExampleCodeFromComponent } from './playground-utils';
 
+/**
+ * Style Dependencies
+ */
+import './playground.scss';
+import './syntax.scss';
+
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 

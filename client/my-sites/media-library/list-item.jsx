@@ -20,7 +20,10 @@ import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
 import { getMimePrefix } from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
-import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
+/**
+ * Style dependencies
+ */
+import './list-item.scss';
 
 export default class extends React.Component {
 	static displayName = 'MediaLibraryListItem';
@@ -39,7 +42,6 @@ export default class extends React.Component {
 
 	static defaultProps = {
 		maxImageWidth: 450,
-		thumbnailType: MEDIA_IMAGE_PHOTON,
 		selectedIndex: -1,
 		onToggle: noop,
 		onEditItem: noop,
@@ -126,9 +128,10 @@ export default class extends React.Component {
 		}
 
 		return (
+			/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 			<div className={ classes } style={ style } onClick={ this.clickItem } { ...props }>
 				<span className="media-library__list-item-selected-icon">
-					<Gridicon icon="checkmark" size={ 20 } />
+					<Gridicon icon="checkmark" size={ 18 } />
 				</span>
 				<figure className="media-library__list-item-figure" title={ title }>
 					{ this.renderItem() }
@@ -136,6 +139,7 @@ export default class extends React.Component {
 					{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
 				</figure>
 			</div>
+			/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 		);
 	}
 }

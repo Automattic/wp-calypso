@@ -22,7 +22,7 @@
 .theme__sheet-bar-tag {
 	max-width: none;
 	display: block;
-	color: $white;
+	color: var( --color-white );
 	font-size: 16px;
 	font-weight: 200;
 	padding-top: 5px;
@@ -56,7 +56,7 @@
 
 	@include breakpoint( '<960px' ) {
 		&.card {
-			margin: 0 0 1px 0;
+			margin: 0 0 1px;
 		}
 	}
 }
@@ -107,7 +107,7 @@
 	margin-top: -156px;
 	width: 98%;
 	z-index: 1;
-	box-shadow: 0 0 0 1px $transparent, 0px 2px 8px 0px transparentize( $gray-dark, 0.5 );
+	box-shadow: 0 0 0 1px $transparent, 0 2px 8px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
 	background-color: transparentize( white, 0.5 );
 	transition: all 200ms ease-in-out;
 
@@ -124,7 +124,7 @@
 		overflow: hidden;
 		box-shadow: none;
 
-		&:before {
+		&::before {
 			content: '';
 			display: block;
 			position: absolute;
@@ -133,9 +133,9 @@
 			height: 30%;
 			background: linear-gradient(
 				to bottom,
-				transparentize( $gray-light, 1 ) 0%,
-				transparentize( $gray-light, 0.5 ) 40%,
-				$gray-light 93%
+				rgba( var( --color-neutral-0-rgb ), 1 ) 0%,
+				rgba( var( --color-neutral-0-rgb ), 0.5 ) 40%,
+				var( --color-neutral-0 ) 93%
 			);
 		}
 	}
@@ -143,7 +143,7 @@
 	@include breakpoint( '>960px' ) {
 		&.is-active:hover {
 			cursor: pointer;
-			box-shadow: 0 0 0 1px $gray, 0px 2px 10px 0px transparentize( $gray-dark, 0.5 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 10px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
 		}
 	}
 }
@@ -180,8 +180,8 @@
 
 		.theme__sheet-preview-link-text {
 			margin: 0 auto;
-			padding: 2px 8px 3px 8px;
-			background-color: $gray-light;
+			padding: 2px 8px 3px;
+			background-color: var( --color-neutral-0 );
 			color: var( --color-text-subtle );
 			font-size: 11px;
 			font-weight: 600;
@@ -210,7 +210,7 @@
 			max-width: 100%;
 			display: block;
 			margin: 20px auto;
-			border: 1px solid lighten( $gray, 30% );
+			border: 1px solid var( --color-neutral-0 );
 		}
 
 		&.alignright,
@@ -231,33 +231,33 @@
 	}
 
 	.wp-caption {
-		border: 1px solid lighten( $gray, 30% );
-		background-color: $gray-light;
+		border: 1px solid var( --color-neutral-0 );
+		background-color: var( --color-neutral-0 );
 		margin-bottom: 20px;
 	}
 
 	.wp-caption-text {
-		color: darken( $gray, 20% );
+		color: var( --color-neutral-500 );
 		font-size: 12px;
 		padding: 3px 8px 6px;
 	}
 
 	h2 {
-		color: $gray;
+		color: var( --color-neutral-light );
 		font-size: 14px;
 		font-weight: 400;
 
 		margin: -20px -20px 20px;
-		padding: 15px 20px 15px;
+		padding: 15px 20px;
 		border-bottom: 1px solid #dce5eb;
 
 		&:nth-child( n + 2 ) {
 			// Everything except the first
 			border-top: 1px solid #dce5eb;
 			margin: 20px -20px 20px;
-			padding: 15px 20px 15px;
+			padding: 15px 20px;
 
-			&:before {
+			&::before {
 				// The "fake" Card separation
 				content: '';
 				display: block;
@@ -302,7 +302,7 @@
 
 	code {
 		font-size: 14px;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		padding: 1px 4px;
 		border-radius: 2px;
 	}
@@ -310,11 +310,11 @@
 	blockquote {
 		padding: 30px;
 		margin: 0 -20px;
-		border-left: 2px solid $gray;
+		border-left: 2px solid var( --color-neutral-light );
 	}
 
 	.notes {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		margin: 40px -20px 40px;
 		border-top: 1px solid #e9eff3;
 		border-bottom: 1px solid #e9eff3;
@@ -324,7 +324,7 @@
 		line-height: 21px;
 
 		& > p:first-child {
-			color: $gray;
+			color: var( --color-neutral-light );
 			font-weight: 600;
 			margin: 0 0 14px;
 		}
@@ -365,14 +365,14 @@
 	a {
 		display: inline-block;
 		position: relative;
-		background: $gray-lighten-30;
-		color: $gray-dark;
+		background: var( --color-neutral-0 );
+		color: var( --color-neutral-700 );
 		margin: 4px;
 		padding: 2px 12px;
 		border-radius: 3px;
 		transition: all 100ms ease-in;
 
-		&:after {
+		&::after {
 			content: '';
 			pointer-events: none;
 			position: absolute;
@@ -389,10 +389,10 @@
 		}
 
 		&:hover {
-			color: $white;
+			color: var( --color-white );
 			background-color: var( --color-primary-dark );
 
-			&:after {
+			&::after {
 				transform: scale( 1.07, 1.16 );
 			}
 		}
@@ -419,7 +419,7 @@
 	}
 
 	.gridicon {
-		color: $gray-lighten-20;
+		color: var( --color-neutral-100 );
 		flex: 0 0 auto;
 	}
 
@@ -440,7 +440,7 @@
 
 	small {
 		display: block;
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -454,7 +454,7 @@
 	}
 
 	.gridicon {
-		color: $gray-lighten-20;
+		color: var( --color-neutral-100 );
 		flex: 0 0 auto;
 	}
 
@@ -479,14 +479,14 @@
 }
 
 .theme__sheet-footer-line {
-	color: $gray-lighten-20;
-	border-top: 1px solid $gray-lighten-20;
+	color: var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-100 );
 	margin: 32px 0 20px;
 
 	.gridicon {
 		display: block;
 		margin: -12px auto 0;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 	}
 }
 
@@ -501,7 +501,7 @@
 
 	width: 50%;
 
-	margin: 0 0 10px 0;
+	margin: 0 0 10px;
 	background-color: #34444d;
 
 	@include breakpoint( '<960px' ) {

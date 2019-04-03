@@ -16,6 +16,11 @@ import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
 
+/**
+ * Style dependencies
+ */
+import './intro.scss';
+
 const getPreferenceName = isInternal =>
 	isInternal ? 'has_used_reader_conversations_a8c' : 'has_used_reader_conversations';
 

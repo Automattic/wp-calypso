@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -29,6 +27,11 @@ import NoticeAction from 'components/notice/notice-action';
 import userUtils from 'lib/user/utils';
 import LocaleSuggestions from 'components/locale-suggestions';
 import { getCurrentUser } from 'state/current-user/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module variables
@@ -216,18 +219,17 @@ class InviteAccept extends React.Component {
 			<div className="invite-accept">
 				{ this.localeSuggestions() }
 				<div className={ formClasses }>
-					{ this.isMatchEmailError() &&
-						user && (
-							<Notice
-								text={ this.props.translate( 'This invite is only valid for %(email)s.', {
-									args: { email: invite.sentTo },
-								} ) }
-								status="is-error"
-								showDismiss={ false }
-							>
-								{ this.renderNoticeAction() }
-							</Notice>
-						) }
+					{ this.isMatchEmailError() && user && (
+						<Notice
+							text={ this.props.translate( 'This invite is only valid for %(email)s.', {
+								args: { email: invite.sentTo },
+							} ) }
+							status="is-error"
+							showDismiss={ false }
+						>
+							{ this.renderNoticeAction() }
+						</Notice>
+					) }
 					{ ! this.isInvalidInvite() && <InviteHeader { ...invite } /> }
 					{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
 				</div>

@@ -3,10 +3,15 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { pick } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { tracks } from 'lib/analytics';
 
 class Item extends PureComponent {
 	static propTypes = {
@@ -15,12 +20,23 @@ class Item extends PureComponent {
 		query: PropTypes.string,
 		onMouseDown: PropTypes.func.isRequired,
 		onMouseOver: PropTypes.func.isRequired,
+		railcar: PropTypes.object,
 	};
 
 	static defaultProps = {
 		hasHighlight: false,
 		query: '',
 	};
+
+	componentDidMount() {
+		const { railcar } = this.props;
+		if ( railcar ) {
+			tracks.recordEvent(
+				'calypso_traintracks_render',
+				pick( railcar, [ 'railcar', 'fetch_algo', 'fetch_position' ] )
+			);
+		}
+	}
 
 	/**
 	 * Highlights the part of the text that matches the query.
@@ -36,7 +52,7 @@ class Item extends PureComponent {
 			const key = text + i;
 			const lowercasePart = part.toLowerCase();
 			const spanClass = classNames( 'suggestions__label', {
-				'is-emphasized': lowercasePart === query,
+				'is-emphasized': lowercasePart === query.toLowerCase(),
 			} );
 
 			return (
@@ -48,10 +64,18 @@ class Item extends PureComponent {
 	}
 
 	handleMouseDown = event => {
+		const { railcar } = this.props;
+
 		event.stopPropagation();
 		event.preventDefault();
 
 		this.props.onMouseDown( this.props.label );
+		if ( railcar ) {
+			tracks.recordEvent(
+				'calypso_traintracks_interact',
+				pick( railcar, [ 'railcar', 'action' ] )
+			);
+		}
 	};
 
 	handleMouseOver = () => {
@@ -64,13 +88,14 @@ class Item extends PureComponent {
 		const className = classNames( 'suggestions__item', { 'has-highlight': hasHighlight } );
 
 		return (
-			<span
+			<button
 				className={ className }
 				onMouseDown={ this.handleMouseDown }
+				onFocus={ this.handleMouseDown }
 				onMouseOver={ this.handleMouseOver }
 			>
 				{ this.createTextWithHighlight( label, query ) }
-			</span>
+			</button>
 		);
 	}
 }

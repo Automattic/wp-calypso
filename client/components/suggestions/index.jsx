@@ -28,6 +28,7 @@ class Suggestions extends Component {
 			} )
 		).isRequired,
 		suggest: PropTypes.func.isRequired,
+		railcar: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -109,7 +110,7 @@ class Suggestions extends Component {
 		} );
 
 	render() {
-		const { query } = this.props;
+		const { query, railcar } = this.props;
 		const showSuggestions = this.getSuggestionsCount() > 0;
 
 		return (
@@ -117,6 +118,7 @@ class Suggestions extends Component {
 				{ showSuggestions && (
 					<div className="suggestions__wrapper">
 						{ map( this.props.suggestions, ( { label }, index ) => (
+							// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 							<Item
 								key={ index }
 								hasHighlight={ index === this.state.suggestionPosition }
@@ -124,6 +126,13 @@ class Suggestions extends Component {
 								onMouseDown={ this.handleMouseDown }
 								onMouseOver={ this.handleMouseOver }
 								label={ label }
+								railcar={
+									railcar && {
+										...railcar,
+										railcar: `${ railcar.id }-${ index }`,
+										fetch_position: index,
+									}
+								}
 								ref={ suggestion => {
 									this.refsCollection[ 'suggestion_' + index ] = suggestion;
 								} }

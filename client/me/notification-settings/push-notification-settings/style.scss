@@ -1,5 +1,11 @@
 .notification-settings-push-notification-settings__instruction {
-	margin: 24px 0 0 0;
+	margin: 24px 0 0;
+
+	.is-link {
+		&:focus, &:active {
+			color: var( --color-neutral-200 );
+		}
+	}
 }
 
 .notification-settings-push-notification-settings__instruction-dialog {
@@ -19,11 +25,11 @@
 	right: 8px;
 	padding: 0;
 	cursor: pointer;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	&:hover,
 	&:focus {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 
@@ -31,7 +37,7 @@
 	max-width: 500px;
 	text-align: center;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		text-align: left;
 	}
 }
@@ -49,10 +55,10 @@
 	padding: 0 24px;
 
 	p {
-		margin: 16px 0 0 0;
+		margin: 16px 0 0;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 100%;
 		min-height: 80px;
 		position: relative;
@@ -89,7 +95,6 @@
 	text-align: left;
 	margin-top: 32px;
 	margin-bottom: 0;
-	color: $gray-dark;
 }
 
 .notification-settings-push-notification-settings__settings-state {
@@ -97,7 +102,7 @@
 	font-weight: 500;
 	margin-left: 8px;
 	text-transform: uppercase;
-	color: lighten( $gray, 10 );
+	color: var( --color-neutral-200 );
 
 	&.is-enabled {
 		color: var( --color-success );
@@ -107,7 +112,7 @@
 .notification-settings-push-notification-settings__settings-description {
 	margin-bottom: 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-right: 130px;
 	}
 }
@@ -115,7 +120,7 @@
 .notification-settings-push-notification-settings__settings-button {
 	margin-top: 8px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-top: 0;
 		position: absolute;
 	 	bottom: 24px;
@@ -124,19 +129,19 @@
 
 	&.is-enable {
 		background: var( --color-accent );
-		border-color: var( --color-primary );
-		color: $white;
+		border-color: var( --color-accent-dark );
+		color: var( --color-white );
 
 		&:hover,
 		&:focus {
-			border-color: var( --color-primary-dark );
-			color: $white;
+			border-color: var( --color-accent-dark );
+			color: var( --color-white );
 		}
 		&[disabled],
 		&:disabled {
-			background: tint( $blue-light, 50% );
-			border-color: tint( $blue-wordpress, 55% );
-			color: $white;
+			background: var( --color-primary-50 );
+			border-color: var( --color-primary-200 );
+			color: var( --color-white );
 		}
 	}
 }

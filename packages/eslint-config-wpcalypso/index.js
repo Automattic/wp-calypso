@@ -4,6 +4,7 @@ module.exports = {
 	env: {
 		es6: true,
 	},
+	extends: 'eslint:recommended',
 	parserOptions: {
 		ecmaVersion: 7,
 		sourceType: 'module',
@@ -80,6 +81,7 @@ module.exports = {
 		'prefer-const': 2,
 		'quote-props': [ 2, 'as-needed' ],
 		quotes: [ 2, 'single', 'avoid-escape' ],
+		'require-await': 2,
 		semi: 2,
 		'semi-spacing': 2,
 		'space-before-blocks': [ 2, 'always' ],

@@ -7,6 +7,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+/**
+ * Style Dependencies
+ */
+import './style.scss';
+
 export default class extends React.PureComponent {
 	static displayName = 'Gauge';
 

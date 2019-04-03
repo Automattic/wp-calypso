@@ -122,29 +122,26 @@ class Site extends React.Component {
 									<Gridicon icon="lock" size={ 14 } />
 								</span>
 							) }
-							{ site.options &&
-								site.options.is_redirect && (
-									<span className="site__badge">
-										<Gridicon icon="block" size={ 14 } />
-									</span>
-								) }
-							{ site.options &&
-								site.options.is_domain_only && (
-									<span className="site__badge">
-										<Gridicon icon="domains" size={ 14 } />
-									</span>
-								) }
+							{ site.options && site.options.is_redirect && (
+								<span className="site__badge">
+									<Gridicon icon="block" size={ 14 } />
+								</span>
+							) }
+							{ site.options && site.options.is_domain_only && (
+								<span className="site__badge">
+									<Gridicon icon="domains" size={ 14 } />
+								</span>
+							) }
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 							{ site.title }
 						</div>
 						<div className="site__domain">{ site.domain }</div>
 					</div>
-					{ this.props.homeLink &&
-						this.props.showHomeIcon && (
-							<span className="site__home">
-								<Gridicon icon="house" size={ 18 } />
-							</span>
-						) }
+					{ this.props.homeLink && this.props.showHomeIcon && (
+						<span className="site__home">
+							<Gridicon icon="house" size={ 18 } />
+						</span>
+					) }
 				</a>
 				{ this.props.indicator ? <SiteIndicator site={ site } /> : null }
 			</div>

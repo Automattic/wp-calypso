@@ -1,9 +1,6 @@
-// @TODO we should decouple from accordion styles
-@import 'components/accordion/style';
-
 .editor-revisions-list {
 	position: relative;
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	flex-basis: 162px;
 	flex-grow: 0;
 	flex-shrink: 0;
@@ -41,7 +38,7 @@
 	height: 48px;
 	box-sizing: border-box;
 	color: var( --color-text-subtle );
-	background: $white;
+	background: var( --color-white );
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 
 	@include breakpoint( '>1040px' ) {
@@ -126,7 +123,7 @@
 	&.button[disabled],
 	&.button.disabled {
 		background: transparent;
-		color: lighten( $gray-text-min, 30% );
+		color: var( --color-neutral-100 );
 		border-color: darken( $sidebar-bg-color, 5% );
 	}
 	.gridicon {
@@ -233,7 +230,7 @@
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: 1px solid darken( $sidebar-bg-color, 5% );
 	border-radius: 0;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	cursor: pointer;
 	text-align: left;
 	padding: 8px 16px;
@@ -251,23 +248,23 @@
 
 .editor-revisions-list__button {
 	&:hover {
-		background: $accordion-background-hover;
+		background: var( --color-neutral-0 );
 	}
 
 	.editor-revisions-list__revision.is-selected > &,
 	.editor-revisions-list__revision.is-selected > &:hover {
-		background: $gray-text-min;
+		background: var( --color-text-subtle );
 
 		// NOTE: force with a heavy specificity white text, see discussion on
 		// https://github.com/Automattic/wp-calypso/pull/13367#discussion_r114108253
 		* {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 }
 
 .editor-revisions-list__date {
-	color: $gray-text;
+	color: var( --color-text );
 	font-weight: 600;
 	display: block;
 	margin-bottom: 4px;
@@ -309,7 +306,7 @@
 .editor-revisions-list__additions {
 	margin-right: 12px;
 	b {
-		background: var( --color-accent );
+		background: var( --color-success );
 	}
 }
 

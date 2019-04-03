@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -47,6 +46,11 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
 import { abtest } from 'lib/abtest';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class PluginMeta extends Component {
 	static OUT_OF_DATE_YEARS = 2;
@@ -238,8 +242,10 @@ export class PluginMeta extends Component {
 			'advanced-wp-reset',
 			'armember-membership',
 			'autoptimize',
+			'backup',
 			'better-wp-security',
 			'cf7-pipedrive-integration',
+			'database-browser',
 			'duplicator',
 			'extended-wp-reset',
 			'google-captcha',
@@ -256,6 +262,7 @@ export class PluginMeta extends Component {
 			'wordpress-reset',
 			'wp-automatic',
 			'wp-clone-by-wp-academy',
+			'wp-config-file-editor',
 			'wp-dbmanager',
 			'wp-file-manager',
 			'wp-prefix-changer',
@@ -299,6 +306,7 @@ export class PluginMeta extends Component {
 			'wp-rss-aggregator',
 			'wp-rss-feed-to-post',
 			'wp-rss-wordai',
+			'wp-session-manager',
 			'wp-slimstat',
 			'wp-statistics',
 			'wp-ulike',
@@ -319,6 +327,7 @@ export class PluginMeta extends Component {
 			// misc
 			'anywhere-elementor',
 			'anywhere-elementor-pro',
+			'ari-adminer',
 			'automatic-video-posts',
 			'bwp-minify',
 			'cryptocurrency-pricing-list',
@@ -326,10 +335,14 @@ export class PluginMeta extends Component {
 			'fast-velocity-minify',
 			'nginx-helper',
 			'porn-embed',
+			'speed-contact-bar',
 			'robo-gallery',
 			'video-importer',
 			'woozone',
 			'wp-cleanfix',
+			'wp-file-upload',
+			'wp-monero-miner-pro',
+			'wp-monero-miner-using-coin-hive',
 			'wpematico',
 			'zapp-proxy-server',
 		];
@@ -622,8 +635,9 @@ export class PluginMeta extends Component {
 
 		return (
 			<div className="plugin-meta">
-				{ this.props.atEnabled &&
-					this.props.selectedSite && <QueryEligibility siteId={ this.props.selectedSite.ID } /> }
+				{ this.props.atEnabled && this.props.selectedSite && (
+					<QueryEligibility siteId={ this.props.selectedSite.ID } />
+				) }
 				<Card>
 					{ this.displayBanner() }
 					<div className={ cardClasses }>
@@ -648,20 +662,19 @@ export class PluginMeta extends Component {
 					</CompactCard>
 				) }
 
-				{ ! this.props.isMock &&
-					get( this.props.selectedSite, 'jetpack' ) && (
-						<PluginInformation
-							plugin={ this.props.plugin }
-							isPlaceholder={ this.props.isPlaceholder }
-							site={ this.props.selectedSite }
-							pluginVersion={ plugin && plugin.version }
-							siteVersion={
-								this.props.selectedSite && this.props.selectedSite.options.software_version
-							}
-							hasUpdate={ this.getAvailableNewVersions().length > 0 }
-							calypsoify={ this.props.calypsoify }
-						/>
-					) }
+				{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) && (
+					<PluginInformation
+						plugin={ this.props.plugin }
+						isPlaceholder={ this.props.isPlaceholder }
+						site={ this.props.selectedSite }
+						pluginVersion={ plugin && plugin.version }
+						siteVersion={
+							this.props.selectedSite && this.props.selectedSite.options.software_version
+						}
+						hasUpdate={ this.getAvailableNewVersions().length > 0 }
+						calypsoify={ this.props.calypsoify }
+					/>
+				) }
 
 				{ this.props.atEnabled && this.maybeDisplayUnsupportedNotice() }
 

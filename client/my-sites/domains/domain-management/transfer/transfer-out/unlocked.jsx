@@ -20,10 +20,7 @@ import {
 	requestTransferCode,
 } from 'lib/upgrades/actions';
 import notices from 'notices';
-import {
-	displayRequestTransferCodeResponseNotice,
-	renderGdprTransferWarningNotice,
-} from './shared';
+import { displayRequestTransferCodeResponseNotice } from './shared';
 import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
 class Unlocked extends React.Component {
@@ -52,16 +49,13 @@ class Unlocked extends React.Component {
 
 	handleCancelTransferClick = () => {
 		const { translate } = this.props;
-		const {
-			privateDomain,
-			hasPrivacyProtection,
-			pendingTransfer,
-			domainLockingAvailable,
-		} = getSelectedDomain( this.props );
+		const { privateDomain, pendingTransfer, domainLockingAvailable } = getSelectedDomain(
+			this.props
+		);
 
 		this.setState( { submitting: true } );
 
-		const enablePrivacy = hasPrivacyProtection && ! privateDomain;
+		const enablePrivacy = ! privateDomain;
 		const lockDomain = domainLockingAvailable;
 
 		cancelTransferRequest(
@@ -142,8 +136,8 @@ class Unlocked extends React.Component {
 	};
 
 	isDomainAlwaysTransferrable() {
-		const { domainLockingAvailable, hasPrivacyProtection } = getSelectedDomain( this.props );
-		return ! domainLockingAvailable && ! hasPrivacyProtection;
+		const { domainLockingAvailable, privateDomain } = getSelectedDomain( this.props );
+		return ! domainLockingAvailable && ! privateDomain;
 	}
 
 	renderCancelButton( domain ) {
@@ -269,8 +263,8 @@ class Unlocked extends React.Component {
 		const { translate } = this.props;
 		const { submitting } = this.state;
 		const domain = getSelectedDomain( this.props );
-		const { privateDomain, hasPrivacyProtection, domainLockingAvailable } = domain;
-		const privacyDisabled = hasPrivacyProtection && ! privateDomain;
+		const { privateDomain, domainLockingAvailable } = domain;
+		const privacyDisabled = ! privateDomain;
 
 		let domainStateMessage;
 		if ( domainLockingAvailable && privacyDisabled ) {
@@ -288,8 +282,6 @@ class Unlocked extends React.Component {
 
 		return (
 			<div>
-				{ renderGdprTransferWarningNotice() }
-
 				<SectionHeader
 					label={ translate( 'Transfer Domain' ) }
 					className="transfer-out__section-header"
@@ -298,7 +290,7 @@ class Unlocked extends React.Component {
 					{ this.renderSendButton( domain ) }
 				</SectionHeader>
 
-				<Card className="transfer-card">
+				<Card className="transfer-out__card">
 					<div>
 						{ submitting && <p>{ translate( 'Sending request…' ) }</p> }
 						{ domainStateMessage && <p>{ domainStateMessage }</p> }

@@ -1,0 +1,13 @@
+{
+	"mocha_tests": [ "specs-i18n/" ],
+	"mocha_opts": "test/mocha.opts",
+	"mocha_args": "-R spec-xunit-reporter",
+	"max_test_attempts": 1,
+	"max_workers": 1,
+	"suiteTag": "i18n",
+	"sauce": false,
+	"framework": "testarmada-magellan-mocha-plugin",
+	"reporters": [ "./lib/reporter/magellan-reporter.js" ],
+	"executors": [ "testarmada-magellan-local-executor" ],
+	"bail_time": 300000
+}

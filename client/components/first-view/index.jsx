@@ -22,6 +22,11 @@ import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import { hideView } from 'state/ui/first-view/actions';
 import { isEnabled } from 'config';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 // component to avoid having a wrapper element for the transition
 // see: https://facebook.github.io/react/docs/animation.html#rendering-a-single-child
 const TransitionGroupComponent = props => {

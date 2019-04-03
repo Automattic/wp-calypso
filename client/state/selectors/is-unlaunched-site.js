@@ -5,7 +5,6 @@
  */
 
 import getRawSite from 'state/selectors/get-raw-site';
-import { getSiteSettings } from 'state/site-settings/selectors';
 
 /**
  * Returns true if the site is unlaunched

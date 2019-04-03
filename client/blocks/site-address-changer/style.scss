@@ -2,7 +2,7 @@
 .site-address-changer__dialog {
 	text-align: left;
 	max-width: 400px;
-	color: darken( $gray, 20% );
+	color: var( --color-neutral-500 );
 }
 
 .site-address-changer__copy-addition {
@@ -23,7 +23,7 @@
 }
 
 .site-address-changer__select-icon {
-	color: $gray;
+	color: var( --color-neutral-light );
 	margin-left: 6px;
 	align-self: center;
 }
@@ -31,7 +31,7 @@
 .form-text-input-with-affixes__prefix,
 .form-text-input-with-affixes__suffix {
 	&:hover .site-address-changer__select-icon {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 	}
 }
 
@@ -51,7 +51,7 @@
 .site-address-changer__info {
 	color: var( --color-text-subtle );
 	flex-shrink: 1;
-	margin: 5px 0 0 0;
+	margin: 5px 0 0;
 	padding: 0;
 	text-align: center;
 	word-break: break-word;
@@ -99,7 +99,7 @@
 
 .site-address-changer__footer {
 	align-items: center;
-	border-top-color: $gray-light;
+	border-top-color: var( --color-neutral-0 );
 	display: flex;
 	justify-content: space-between;
 

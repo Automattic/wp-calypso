@@ -38,6 +38,37 @@ import './style.scss';
 
 export class PlansStep extends Component {
 	componentDidMount() {
+		if (
+			typeof window !== 'undefined' &&
+			window.location &&
+			typeof document !== 'undefined' &&
+			document.createElement &&
+			document.body
+		) {
+			if ( window.location.search ) {
+				// save this so that we can enter debug mode in the widget
+				window.salesteam_initial_search_string = window.location.search;
+			}
+
+			const salesTeamStyles = document.createElement( 'link' );
+			salesTeamStyles.setAttribute(
+				'href',
+				'//s0.wp.com/wp-content/a8c-plugins/wpcom-salesteam/css/wpcom-salesteam.css?ver=1'
+			);
+			salesTeamStyles.setAttribute( 'rel', 'stylesheet' );
+			salesTeamStyles.setAttribute( 'type', 'text/css' );
+			salesTeamStyles.setAttribute( 'media', 'all' );
+			document.head.appendChild( salesTeamStyles );
+
+			const salesTeamScript = document.createElement( 'script' );
+			salesTeamScript.setAttribute(
+				'src',
+				'//s0.wp.com/wp-content/a8c-plugins/wpcom-salesteam/js/wpcom-salesteam.js?ver=20190221'
+			);
+			salesTeamScript.setAttribute( 'defer', true );
+			document.head.appendChild( salesTeamScript );
+		}
+
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
 		} );
@@ -101,12 +132,21 @@ export class PlansStep extends Component {
 	}
 
 	getCustomerType() {
+		if ( this.props.customerType ) {
+			return this.props.customerType;
+		}
+
 		const siteGoals = this.props.siteGoals.split( ',' );
-		return (
-			this.props.customerType ||
+		let customerType =
 			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) ||
-			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' )
-		);
+			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' );
+
+		// Default to 'business' when the blogger plan is not available.
+		if ( customerType === 'personal' && this.props.disableBloggerPlanWithNonBlogDomain ) {
+			customerType = 'business';
+		}
+
+		return customerType;
 	}
 
 	handleFreePlanButtonClick = () => {
@@ -118,6 +158,7 @@ export class PlansStep extends Component {
 			disableBloggerPlanWithNonBlogDomain,
 			hideFreePlan,
 			isDomainOnly,
+			isLaunchPage,
 			selectedSite,
 		} = this.props;
 
@@ -129,6 +170,7 @@ export class PlansStep extends Component {
 					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
+					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
 					displayJetpackPlans={ false }
@@ -137,24 +179,41 @@ export class PlansStep extends Component {
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 				/>
 				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
-				   * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
-				   * unless we've already selected an option that implies a paid plan.
-				   * This is in particular true for domain names. */
-				hideFreePlan &&
-					! isDomainOnly &&
-					! this.getDomainName() && <PlansSkipButton onClick={ this.handleFreePlanButtonClick } /> }
+				 * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
+				 * unless we've already selected an option that implies a paid plan.
+				 * This is in particular true for domain names. */
+				hideFreePlan && ! isDomainOnly && ! this.getDomainName() && (
+					<PlansSkipButton onClick={ this.handleFreePlanButtonClick } />
+				) }
 			</div>
 		);
 	}
 
 	plansFeaturesSelection = () => {
-		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			signupProgress,
+			translate,
+			selectedSite,
+			siteSlug,
+		} = this.props;
 
-		let headerText = translate( "Pick a plan that's right for you." );
+		let headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 
 		//Temporary header for onboarding-dev flow
 		if ( 'onboarding-dev' === flowName ) {
 			headerText = translate( 'Pick your plan' );
+		}
+
+		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
+		const subHeaderText = this.props.subHeaderText;
+		let backUrl, backLabelText;
+
+		if ( 0 === positionInFlow && selectedSite ) {
+			backUrl = '/view/' + siteSlug;
+			backLabelText = translate( 'Back to Site' );
 		}
 
 		return (
@@ -163,10 +222,14 @@ export class PlansStep extends Component {
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
-				fallbackHeaderText={ headerText }
+				fallbackHeaderText={ fallbackHeaderText }
+				subHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
+				allowBackFirstStep={ !! selectedSite }
+				backUrl={ backUrl }
+				backLabelText={ backLabelText }
 			/>
 		);
 	};
@@ -221,4 +284,5 @@ export default connect( ( state, { path, signupDependencies: { siteSlug, domainI
 	customerType: parseQs( path.split( '?' ).pop() ).customerType,
 	siteGoals: getSiteGoals( state ) || '',
 	siteType: getSiteType( state ),
+	siteSlug,
 } ) )( localize( PlansStep ) );

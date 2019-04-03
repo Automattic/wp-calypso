@@ -14,10 +14,10 @@ Domain contact details data flow (2017-06-07):
 
 ## Components
 
-### Ebanx - ebanx-payment-fields.jsx
+### Processor/country - country-specific-payment-fields.jsx
 
 Processing payments in countries such as Brazil via Ebanx require us to collect extra information from the user.
 
-See: `PAYMENT_PROCESSOR_EBANX_COUNTRIES.BR.fields` in `client/lib/checkout/constants.js`
+See: `PAYMENT_PROCESSOR_COUNTRIES_FIELDS.BR.fields` in `client/lib/checkout/constants.js`
 
-Most prominent is the tax identification number, for which unique validation exists. See: `client/lib/checkout/ebanx.js`
+Most prominent is the tax identification number, for which unique validation exists. See: `client/lib/checkout/processor-specific.js`

@@ -81,12 +81,11 @@ class Desktop extends React.Component {
 					{ badge && (
 						<div className="environment-badge">
 							{ abTestHelper && <div className="environment is-tests" /> }
-							{ branchName &&
-								branchName !== 'master' && (
-									<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>
-										{ branchName }
-									</span>
-								) }
+							{ branchName && branchName !== 'master' && (
+								<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>
+									{ branchName }
+								</span>
+							) }
 							{ devDocs && (
 								<span className="environment is-docs">
 									<a href={ devDocsURL } title="DevDocs">

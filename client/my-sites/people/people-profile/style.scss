@@ -1,4 +1,3 @@
-
 .people-profile {
 	position: relative;
 	@include clear-fix;
@@ -9,7 +8,7 @@
 		.people-profile__role-badge,
 		.gravatar.is-placeholder {
 			color: transparent;
-			background-color: $gray-lighten-30;
+			background-color: var( --color-neutral-0 );
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 
@@ -46,7 +45,7 @@
 }
 
 .people-profile__username {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 16px;
 	font-weight: 600;
 	white-space: pre;
@@ -57,7 +56,7 @@
 		font-size: 21px;
 	}
 
-	&:before {
+	&::before {
 		@include long-content-fade();
 	}
 }
@@ -85,14 +84,14 @@
 
 .people-profile__role-badge {
 	float: left;
-	background: $white;
-	border: 1px solid $gray;
+	background: var( --color-white );
+	border: 1px solid var( --color-neutral-light );
 	border-radius: 2px;
 	color: var( --color-text-subtle );
 	display: inline-block;
 	font-size: 11px;
 	margin-left: 8px;
-	padding: 2px 6px 2px 6px;
+	padding: 2px 6px;
 	white-space: pre;
 
 	&:first-child {
@@ -100,28 +99,28 @@
 	}
 
 	&.role-super-admin {
-		background: $orange-fire;
+		background: var( --color-error );
 		border: none;
-		color: $white;
+		color: var( --color-white );
 	}
 
 	&.role-administrator,
 	&.role-admin-owner {
-		background: $gray-dark;
+		background: var( --color-neutral-700 );
 		border: none;
-		color: $white;
+		color: var( --color-white );
 	}
 
 	&.role-editor {
 		background: var( --color-primary-dark );
 		border: none;
-		color: $white;
+		color: var( --color-white );
 	}
 
 	&.role-author,
 	&.role-contributor {
 		background: var( --color-primary );
 		border: none;
-		color: $white;
+		color: var( --color-white );
 	}
 }

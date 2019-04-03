@@ -54,6 +54,7 @@ import { transferStates } from 'state/automated-transfer/constants';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
+import { canAccessEarnSection } from 'lib/ads/utils';
 
 /**
  * Module variables
@@ -199,28 +200,27 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	trackAdsClick = () => {
-		this.trackMenuItemClick( 'ads' );
+	trackEarnClick = () => {
+		this.trackMenuItemClick( 'earn' );
 		this.onNavigate();
 	};
 
-	ads() {
-		const { path, canUserUseAds } = this.props;
-
-		if ( canUserUseAds ) {
-			return (
-				<SidebarItem
-					label={ this.props.isJetpack ? 'Ads' : 'WordAds' }
-					selected={ itemLinkMatches( '/ads', path ) }
-					link={ '/ads/earnings' + this.props.siteSuffix }
-					onNavigate={ this.trackAdsClick }
-					icon="speaker"
-					tipTarget="wordads"
-				/>
-			);
+	earn() {
+		const { path, translate, site } = this.props;
+		if ( ! canAccessEarnSection( site ) ) {
+			return null;
 		}
 
-		return null;
+		return (
+			<SidebarItem
+				label={ translate( 'Earn' ) }
+				selected={ itemLinkMatches( '/earn', path ) }
+				link={ '/earn' + this.props.siteSuffix }
+				onNavigate={ this.trackEarnClick }
+				icon="money"
+				tipTarget="earn"
+			/>
+		);
 	}
 
 	trackCustomizeClick = () => {
@@ -234,10 +234,6 @@ export class MySitesSidebar extends Component {
 		let themesLink;
 
 		if ( site && ! canUserEditThemeOptions ) {
-			return null;
-		}
-
-		if ( ! isEnabled( 'manage/themes' ) ) {
 			return null;
 		}
 
@@ -719,7 +715,7 @@ export class MySitesSidebar extends Component {
 					<SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
 						<ul>
-							{ this.ads() }
+							{ this.earn() }
 							{ this.sharing() }
 							{ this.users() }
 							{ this.plugins() }

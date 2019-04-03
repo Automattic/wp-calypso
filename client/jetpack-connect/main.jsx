@@ -7,7 +7,7 @@ import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { concat, flowRight, includes } from 'lodash';
+import { concat, flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,6 +24,7 @@ import MainWrapper from './main-wrapper';
 import page from 'page';
 import SiteUrlInput from './site-url-input';
 import versionCompare from 'lib/version-compare';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addCalypsoEnvQueryArg, cleanUrl } from './utils';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
@@ -50,6 +51,7 @@ import {
 	NOT_JETPACK,
 	NOT_WORDPRESS,
 	OUTDATED_JETPACK,
+	SITE_BLACKLISTED,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
 
@@ -75,7 +77,7 @@ export class JetpackConnectMain extends Component {
 				waitingForSites: false,
 		  };
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.url ) {
 			this.checkUrl( cleanUrl( this.props.url ) );
 		}
@@ -243,9 +245,21 @@ export class JetpackConnectMain extends Component {
 		);
 	}
 
+	isError( error ) {
+		return (
+			this.state.currentUrl &&
+			this.isCurrentUrlFetched() &&
+			get( this.props.jetpackConnectSite, [ 'error', 'error' ] ) === error
+		);
+	}
+
 	getStatus() {
 		if ( this.state.currentUrl === '' ) {
 			return false;
+		}
+
+		if ( this.isError( 'site_blacklisted' ) ) {
+			return SITE_BLACKLISTED;
 		}
 
 		if ( this.checkProperty( 'userOwnsSite' ) ) {
@@ -403,5 +417,6 @@ const connectComponent = connect(
 
 export default flowRight(
 	connectComponent,
-	localize
+	localize,
+	withTrackingTool( 'HotJar' )
 )( JetpackConnectMain );

@@ -18,7 +18,7 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { billingHistory } from 'me/purchases/paths';
 import QueryBillingTransaction from 'components/data/query-billing-transaction';
-import { groupDomainProducts } from './utils';
+import { groupDomainProducts, renderTransactionAmount } from './utils';
 import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
 import isPastBillingTransactionError from 'state/selectors/is-past-billing-transaction-error';
 import {
@@ -38,10 +38,6 @@ class BillingReceipt extends React.Component {
 
 	recordClickEvent = action => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	};
-
-	handleSupportLinkClick = () => {
-		this.recordClickEvent( 'Contact {appName} Support in Billing History Receipt' );
 	};
 
 	handlePrintLinkClick = () => {
@@ -192,7 +188,7 @@ class BillingReceipt extends React.Component {
 									transaction.credit
 								}
 							>
-								{ transaction.amount }
+								{ renderTransactionAmount( transaction, { translate } ) }
 							</td>
 						</tr>
 					</tfoot>
@@ -252,15 +248,9 @@ class BillingReceipt extends React.Component {
 				</Card>
 
 				<Card compact className="billing-history__receipt-links">
-					<Button href={ transaction.support } primary onClick={ this.handleSupportLinkClick }>
-						{ translate( 'Contact %(transactionService)s Support', {
-							args: {
-								transactionService: transaction.service,
-							},
-							context: 'transactionService is a website, such as WordPress.com.',
-						} ) }
+					<Button primary onClick={ this.handlePrintLinkClick }>
+						{ translate( 'Print Receipt' ) }
 					</Button>
-					<Button onClick={ this.handlePrintLinkClick }>{ translate( 'Print Receipt' ) }</Button>
 				</Card>
 			</div>
 		);

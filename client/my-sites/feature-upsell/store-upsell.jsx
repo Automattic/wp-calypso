@@ -10,6 +10,7 @@ import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -30,7 +31,6 @@ import QueryActivePromotions from 'components/data/query-active-promotions';
 import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import TipInfo from 'components/purchase-detail/tip-info';
 import { isRequestingPlans } from 'state/plans/selectors';
-import { getCurrencyObject } from 'lib/format-currency';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
 import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';

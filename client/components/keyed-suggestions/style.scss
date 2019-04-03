@@ -1,19 +1,18 @@
-
 .keyed-suggestions__suggestions {
 	display: flex;
 	flex-direction: column;
 }
 
 .keyed-suggestions__category {
-	background-color: $gray-light;
-	border: 1px solid darken( $gray-light, 10% );
-	border-top: 0px;
+	background-color: var( --color-neutral-0 );
+	border: 1px solid var( --color-neutral-50 );
+	border-top: 0;
 	padding: 4px 8px;
 	font-size: 13px;
 
 	.keyed-suggestions__category-name {
 		text-transform: uppercase;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.keyed-suggestions__category-counter {
@@ -30,19 +29,19 @@
 
 .keyed-suggestions__value {
 	display: flex;
-	padding: 10px 10px;
-	background: $white;
-	border: 1px solid darken( $gray-light, 10% );
-	border-top: 0px;
+	padding: 10px;
+	background: var( --color-white );
+	border: 1px solid var( --color-neutral-50 );
+	border-top: 0;
 	font-size: 15px;
 	cursor: pointer;
 
 	&.has-highlight {
-		background-color: var( --color-accent );
-		color: $white;
+		background-color: var( --color-primary );
+		color: var( --color-white );
 
 		.keyed-suggestions__value-description {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 }
@@ -76,11 +75,11 @@
 	height: 19px; /* font-size + 2*padding */
 	overflow: hidden;
 
-	&:before {
+	&::before {
 		@include long-content-fade();
 
 		.has-highlight & {
-			@include long-content-fade( $color: hex-to-rgb( $blue-medium ) );
+			@include long-content-fade( $color: var( --color-primary-rgb ) );
 		}
 	}
 }

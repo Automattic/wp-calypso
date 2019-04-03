@@ -1,4 +1,3 @@
-
 // ==========================================================================
 // Dropdown menu mixin
 // Turn a list into a dropdown menu
@@ -6,7 +5,7 @@
 
 @mixin dropdown-menu {
 	display: none;
-	background: $white;
+	background: var( --color-white );
 	float: none;
 	line-height: 46px;
 	min-width: 220px;
@@ -18,9 +17,9 @@
 	box-sizing: border-box;
 	box-shadow: 0 0 2px rgba( 0, 0, 0, 0.15 ), 0 3px 8px rgba( 0, 0, 0, 0.1 );
 
-	&:after {
+	&::after {
 		border: 6px solid transparent;
-		border-bottom-color: $white;
+		border-bottom-color: var( --color-white );
 		content: ' ';
 		height: 0;
 		position: absolute;
@@ -36,7 +35,7 @@
 		a,
 		a.selected {
 			border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			display: block;
 			float: none;
 			height: auto;
@@ -47,13 +46,13 @@
 			&:hover {
 				border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
 				background: none; // Remove inherited background color
-				color: $link-highlight;
+				color: var( --color-link-dark );
 				box-shadow: none; // Remove inherited box shadow
 			}
 		}
 
 		a.selected {
-			color: $gray-dark;
+			color: var( --color-text );
 		}
 
 		&:last-child a {

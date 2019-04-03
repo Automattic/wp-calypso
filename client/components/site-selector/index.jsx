@@ -409,9 +409,11 @@ class SiteSelector extends Component {
 				onMouseLeave={ this.onMouseLeave }
 			>
 				<Search
+					// eslint-disable-next-line react/no-string-refs
 					ref="siteSearch"
 					onSearch={ this.onSearch }
 					delaySearch={ true }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus={ this.props.autoFocus }
 					disabled={ ! this.props.hasLoadedSites }
 					onSearchClose={ this.props.onClose }
@@ -421,32 +423,31 @@ class SiteSelector extends Component {
 					{ this.renderAllSites() }
 					{ this.renderRecentSites( sites ) }
 					{ this.renderSites( sites ) }
-					{ hiddenSitesCount > 0 &&
-						! this.props.sitesFound && (
-							<span className="site-selector__hidden-sites-message">
-								{ this.props.translate(
-									'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
-									'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
-									{
-										count: hiddenSitesCount,
-										args: {
-											hiddenSitesCount: hiddenSitesCount,
-										},
-										components: {
-											br: <br />,
-											a: (
-												<a
-													href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
-													className="site-selector__manage-hidden-sites"
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								) }
-							</span>
-						) }
+					{ hiddenSitesCount > 0 && ! this.props.sitesFound && (
+						<span className="site-selector__hidden-sites-message">
+							{ this.props.translate(
+								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
+								'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
+								{
+									count: hiddenSitesCount,
+									args: {
+										hiddenSitesCount: hiddenSitesCount,
+									},
+									components: {
+										br: <br />,
+										a: (
+											<a
+												href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
+												className="site-selector__manage-hidden-sites"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</span>
+					) }
 				</div>
 				{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
 			</div>
@@ -494,6 +495,10 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 
 		if ( path.match( /^\/domains\/manage\// ) ) {
 			path = '/domains/manage';
+		}
+
+		if ( path.match( /^\/email\// ) ) {
+			path = '/email';
 		}
 
 		if ( path.match( /^\/store\/stats\// ) ) {

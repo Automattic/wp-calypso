@@ -6,7 +6,6 @@
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -48,9 +47,9 @@ class Document extends React.Component {
 			urls,
 			hasSecondary,
 			sectionGroup,
+			sectionName,
 			clientData,
 			isFluidWidth,
-			sectionCss,
 			env,
 			isDebug,
 			badge,
@@ -62,6 +61,7 @@ class Document extends React.Component {
 			devDocsURL,
 			feedbackURL,
 			inlineScriptNonce,
+			isSupportSession,
 		} = this.props;
 
 		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
@@ -70,6 +70,7 @@ class Document extends React.Component {
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
+			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
@@ -83,7 +84,10 @@ class Document extends React.Component {
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
+				className={ classNames( {
+					'is-fluid-width': isFluidWidth,
+					'is-iframe': sectionName === 'gutenberg-editor',
+				} ) }
 			>
 				<Head
 					title={ head.title }
@@ -109,19 +113,13 @@ class Document extends React.Component {
 					/>
 					{ entrypoint[ csskey ].map( cssChunkLink ) }
 					{ chunkFiles[ csskey ].map( cssChunkLink ) }
-					{ sectionCss && (
-						<link
-							rel="stylesheet"
-							id={ 'section-css-' + sectionCss.id }
-							href={ get( sectionCss, 'urls.' + ( isRTL ? 'rtl' : 'ltr' ) ) }
-							type="text/css"
-						/>
-					) }
 				</Head>
 				<body
 					className={ classNames( {
 						rtl: isRTL,
 						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
+						[ 'is-group-' + sectionGroup ]: sectionGroup,
+						[ 'is-section-' + sectionName ]: sectionName,
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
@@ -138,6 +136,7 @@ class Document extends React.Component {
 							<div
 								className={ classNames( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
+									[ 'is-section-' + sectionName ]: sectionName,
 								} ) }
 							>
 								<div className="masterbar" />
@@ -179,10 +178,10 @@ class Document extends React.Component {
 
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					{ /*
-						* inline manifest in production, but reference by url for development.
-						* this lets us have the performance benefit in prod, without breaking HMR in dev
-						* since the manifest needs to be updated on each save
-						*/ }
+					 * inline manifest in production, but reference by url for development.
+					 * this lets us have the performance benefit in prod, without breaking HMR in dev
+					 * since the manifest needs to be updated on each save
+					 */ }
 					{ env === 'development' && <script src="/calypso/manifest.js" /> }
 					{ env !== 'development' && (
 						<script
@@ -222,11 +221,12 @@ class Document extends React.Component {
 					/>
 					<script
 						nonce={ inlineScriptNonce }
-						type="text/javascript"
 						dangerouslySetInnerHTML={ {
 							__html: `
-							if ( 'serviceWorker' in navigator ) {
-								navigator.serviceWorker.register( '/service-worker.js' );
+							if ('serviceWorker' in navigator) {
+								window.addEventListener('load', function() {
+									navigator.serviceWorker.register('/service-worker.js');
+								});
 							}
 						 `,
 						} }

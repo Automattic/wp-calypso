@@ -1,14 +1,14 @@
-@import "./publicize-message.scss";
-@import "./publicize-options.scss";
-@import "./publicize-services.scss";
+@import './publicize-message.scss';
+@import './publicize-options.scss';
+@import './publicize-services.scss';
 
 .editor-fieldset.editor-sharing__sharing-like-options {
 	margin-top: 0;
 }
 
 .editor-sharing__shortlink {
-	border-top: 1px solid $gray-lighten-30;
-	color: $gray;
+	border-top: 1px solid var( --color-neutral-0 );
+	color: var( --color-neutral-light );
 	font-size: 11px;
 	margin: 16px -16px 0;
 	padding: 8px 16px 0;
@@ -27,9 +27,9 @@
 	user-select: none;
 }
 
-input[type="text"].editor-sharing__shortlink-field {
-	background: $gray-lighten-30;
-	color: $gray-dark;
+input[type='text'].editor-sharing__shortlink-field {
+	background: var( --color-neutral-0 );
+	color: var( --color-neutral-700 );
 	flex-grow: 1;
 	font-size: 12px;
 	width: 100%;
@@ -41,6 +41,10 @@ input[type="text"].editor-sharing__shortlink-field {
 	display: block;
 	font-size: 12px;
 	padding: 2px 0;
+
+	label input[disabled] + span {
+		opacity: 0.5;
+	}
 }
 
 .editor-sharing__broken-publicize-connection {

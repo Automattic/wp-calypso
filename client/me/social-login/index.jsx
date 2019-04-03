@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
+import { find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 const debug = debugFactory( 'calypso:me:security:social-login' );
 
@@ -31,6 +30,11 @@ import GoogleLoginButton from 'components/social-buttons/google';
 import userFactory from 'lib/user';
 import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const user = userFactory();
 
@@ -122,7 +126,7 @@ class SocialLogin extends Component {
 	}
 
 	renderGoogleConnection() {
-		const { isUserConnectedToGoogle } = this.props;
+		const { isUserConnectedToGoogle, socialConnectionEmail } = this.props;
 
 		return (
 			<CompactCard>
@@ -132,6 +136,7 @@ class SocialLogin extends Component {
 							<GoogleIcon width="30" height="30" />
 						</div>
 						<h3>Google</h3>
+						{ socialConnectionEmail && <p>{ ' - ' + socialConnectionEmail }</p> }
 					</div>
 
 					<div className="social-login__header-action">
@@ -173,9 +178,11 @@ class SocialLogin extends Component {
 export default connect(
 	state => {
 		const currentUser = getCurrentUser( state );
-
+		const connections = currentUser.social_login_connections || [];
+		const googleConnection = find( connections, { service: 'google' } );
 		return {
-			isUserConnectedToGoogle: currentUser && currentUser.social_signup_service === 'google',
+			socialConnectionEmail: get( googleConnection, 'service_user_email', '' ),
+			isUserConnectedToGoogle: googleConnection,
 			isUpdatingSocialConnection: isRequesting( state ),
 			errorUpdatingSocialConnection: getRequestError( state ),
 		};

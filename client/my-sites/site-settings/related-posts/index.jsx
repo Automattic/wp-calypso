@@ -13,10 +13,11 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import SectionHeader from 'components/section-header';
 import SupportInfo from 'components/support-info';
 import RelatedContentPreview from './related-content-preview';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 
 /**
  * Style dependencies
@@ -32,7 +33,7 @@ const RelatedPosts = ( {
 } ) => {
 	return (
 		<div>
-			<SectionHeader label={ translate( 'Related Posts' ) } />
+			<SettingsSectionHeader title={ translate( 'Related Posts' ) } />
 
 			<Card className="related-posts__card site-settings__traffic-settings">
 				<FormFieldset>
@@ -74,6 +75,12 @@ const RelatedPosts = ( {
 							{ translate( 'Show a thumbnail image where available' ) }
 						</CompactFormToggle>
 					</div>
+
+					<FormSettingExplanation>
+						{ translate(
+							"These settings won't apply to related posts added using the block editor."
+						) }
+					</FormSettingExplanation>
 
 					<RelatedContentPreview
 						showHeadline={ fields.jetpack_relatedposts_show_headline }

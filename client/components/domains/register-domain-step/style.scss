@@ -2,7 +2,7 @@
 .register-domain-step__search {
 	padding-bottom: 12px;
 
-	.card.is-compact {
+	.register-domain-step__search-card {
 		padding: 0;
 		display: flex;
 		align-items: center;
@@ -13,7 +13,12 @@
 
 		&.is-refocused {
 			animation: shake 0.5s both;
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
+		}
+
+		// Add some padding to account for the filter button.
+		body.is-section-signup & {
+			padding-right: 72px;
 		}
 	}
 
@@ -50,7 +55,7 @@
 
 .register-domain-step__filter-reset-notice,
 .register-domain-step__next-page {
-	color: var( --color-accent );
+	color: var( --color-primary );
 	font-weight: 500;
 	width: 100%;
 	position: relative;
@@ -60,17 +65,17 @@
 	border-radius: 0;
 
 	// from components/card/style.scss
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 
 	// from components/domains/domain-suggestion/style
 	// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
 	transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
 
 	&:hover {
-		color: var( --color-accent );
+		color: var( --color-primary );
 
 		// from components/domains/domain-suggestion/style
-		box-shadow: 0 0 0 1px $gray;
+		box-shadow: 0 0 0 1px var( --color-neutral-light );
 	}
 }
 
@@ -118,6 +123,6 @@
 
 .register-domain-step {
 	.button.is-active {
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 	}
 }

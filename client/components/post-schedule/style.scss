@@ -3,7 +3,7 @@
 
 	&.is-future-date {
 		.DayPicker-Day.DayPicker-Day--is-selected > .date-picker__day {
-			background-color: $orange-jazzy;
+			background-color: var( --color-primary );
 		}
 	}
 }
@@ -19,7 +19,7 @@
 	width: 47%;
 	margin: 0 27%;
 
-	&:first-letter {
+	&::first-letter {
 		text-transform: uppercase;
 	}
 
@@ -28,22 +28,22 @@
 	}
 }
 
-.post-schedule .input-chrono__container {
+.post-schedule .input-chrono {
 	margin: 0 -16px;
 
-	input.input-chrono {
+	.input-chrono__input {
 		padding-left: 16px;
 		padding-right: 16px;
 		border: 0;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	::placeholder {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	::-moz-placeholder {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		opacity: 1;
 	}
 }
@@ -71,10 +71,10 @@
 	left: 0;
 	height: 16px;
 	cursor: pointer;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 
 	&:hover {
-		color: $gray;
+		color: var( --color-neutral-light );
 	}
 }
 
@@ -94,14 +94,14 @@
 
 hr.post-schedule__hr {
 	height: 1px;
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 	margin: 0 -16px;
 }
 
-input[type="text"].post-schedule__clock-time {
+input[type='text'].post-schedule__clock-time {
 	height: 28px;
 	display: inline-block;
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	width: 42px;
 	text-align: center;
 	padding: 0;
@@ -116,14 +116,7 @@ input[type="text"].post-schedule__clock-time {
 	display: inline-flex;
 	margin: 0 6px;
 	vertical-align: bottom;
-}
-
-.post-schedule__clock .segmented-control__item {
-	display: inline-table;
-}
-
-.post-schedule__clock .segmented-control__link {
-	display: inline-block;
+	line-height: 0;
 }
 
 .info-popover__tooltip.post-schedule__timezone-info,
@@ -135,7 +128,7 @@ input[type="text"].post-schedule__clock-time {
 	text-align: left;
 	margin-top: 10px;
 	padding: 10px 0 0;
-	border-top: 1px solid lighten( $gray, 25% );
+	border-top: 1px solid var( --color-neutral-50 );
 }
 
 .post-schedule__timezone-info {

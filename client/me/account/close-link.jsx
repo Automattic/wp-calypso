@@ -9,6 +9,11 @@ import { noop } from 'lodash';
 
 import CompactCard from 'components/card/compact';
 
+/**
+ * Style dependencies
+ */
+import './close-link.scss';
+
 class AccountSettingsCloseLink extends React.Component {
 	render() {
 		const { translate } = this.props;

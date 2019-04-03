@@ -17,7 +17,7 @@
 		display: none;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 10px;
 	}
 }
@@ -42,7 +42,7 @@
 		}
 	}
 
-	html[dir="rtl"] & {
+	html[dir='rtl'] & {
 		.gridicons-arrow-left {
 			transform: scaleX( -1 );
 		}
@@ -51,7 +51,7 @@
 
 .header-cake__title {
 	flex: 1 1 auto;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	text-align: center;
 	word-break: break-word;
 	white-space: nowrap;

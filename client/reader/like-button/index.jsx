@@ -19,6 +19,11 @@ import QueryPostLikes from 'components/data/query-post-likes';
 import getPostLikeCount from 'state/selectors/get-post-like-count';
 import isLikedPost from 'state/selectors/is-liked-post';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderLikeButton extends React.Component {
 	constructor( props ) {
 		super( props );
@@ -91,20 +96,17 @@ class ReaderLikeButton extends React.Component {
 					onLikeToggle={ this.recordLikeToggle }
 					likeSource="reader"
 				/>
-				{ showLikesPopover &&
-					siteId &&
-					postId &&
-					hasEnoughLikes && (
-						<PostLikesPopover
-							className="reader-likes-popover" // eslint-disable-line
-							onMouseEnter={ this.maybeShowLikesPopover }
-							onMouseLeave={ this.maybeHideLikesPopover }
-							siteId={ siteId }
-							postId={ postId }
-							showDisplayNames={ true }
-							context={ likesPopoverContext }
-						/>
-					) }
+				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
+					<PostLikesPopover
+						className="reader-likes-popover" // eslint-disable-line
+						onMouseEnter={ this.maybeShowLikesPopover }
+						onMouseLeave={ this.maybeHideLikesPopover }
+						siteId={ siteId }
+						postId={ postId }
+						showDisplayNames={ true }
+						context={ likesPopoverContext }
+					/>
+				) }
 			</Fragment>
 		);
 	}

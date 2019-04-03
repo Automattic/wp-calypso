@@ -13,7 +13,9 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Checkout } from '../checkout';
+import { Checkout } from '../';
+import { hasPendingPayment } from 'lib/cart-values';
+import { isEnabled } from 'config';
 
 jest.mock( 'lib/upgrades/actions', () => ( {
 	resetTransaction: jest.fn(),
@@ -51,7 +53,15 @@ jest.mock( 'lib/cart-values', () => ( {
 	isPaymentMethodEnabled: jest.fn( false ),
 	paymentMethodName: jest.fn( false ),
 	getEnabledPaymentMethods: jest.fn( false ),
+	hasPendingPayment: jest.fn(),
 } ) );
+
+jest.mock( 'config', () => {
+	const mock = () => 'development';
+	mock.isEnabled = jest.fn();
+	return mock;
+} );
+
 //jsdom doesn't properly mock scrollTo
 global.scrollTo = () => {};
 
@@ -118,5 +128,21 @@ describe( 'Checkout', () => {
 
 		checkout.setProps( { cart: { hasLoadedFromServer: false, products: [] } } );
 		expect( checkout.state().cartSettled ).toBe( true );
+	} );
+
+	test( 'checkout blocked on pending payment', () => {
+		isEnabled.mockImplementation( flag => flag === 'async-payments' );
+		hasPendingPayment.mockImplementation( cart => cart && cart.has_pending_payment );
+
+		const wrapper = shallow( <Checkout { ...defaultProps } /> );
+
+		// Need to generate a prop update in order to set cartSettled correctly.
+		// cartSettled isn't derived from props on init so setting the cart above
+		// does nothing.
+		wrapper.setProps( {
+			cart: { hasLoadedFromServer: true, products: [], has_pending_payment: true },
+		} );
+
+		expect( wrapper.find( 'Localized(PendingPaymentBlocker)' ) ).toHaveLength( 1 );
 	} );
 } );

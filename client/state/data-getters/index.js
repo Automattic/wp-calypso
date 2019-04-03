@@ -13,15 +13,6 @@ import { requestHttpData, httpData, empty } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
-import { isValidPostalCode } from 'lib/postal-code';
-import {
-	bumpStat,
-	composeAnalytics,
-	withAnalytics,
-	recordTracksEvent,
-} from 'state/analytics/actions';
-import { convertToSnakeCase } from 'state/data-layer/utils';
-import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
 import { isEnabled } from 'config';
 import { addQueryArgs } from 'lib/route';
 
@@ -233,57 +224,6 @@ export const requestSitePost = ( siteId, postId, postType, freshness ) => {
 	);
 };
 
-export const requestTaxRate = ( countryCode, postalCode, httpOptions ) => {
-	const defaultOptions = {
-		freshness: 2 * 24 * 60 * 60 * 1000, // 2 days
-	};
-
-	const optionsWithDefaults = { ...defaultOptions, ...httpOptions };
-
-	if ( countryCode !== 'US' ) {
-		return { status: 'invalid', error: 'unsupported country code' };
-	}
-
-	if ( ! isValidPostalCode( postalCode, countryCode ) ) {
-		return { status: 'invalid', error: 'invalid postal code' };
-	}
-
-	const id = `tax-rate-${ countryCode }-${ postalCode }`;
-	const path = `/tax-rate/${ countryCode }/${ postalCode }` && '/sites/example.wordpress.com/hello'; // #tax-on-checkout-placeholder
-
-	const fetchAction = withAnalytics(
-		composeAnalytics(
-			bumpStat( 'calypso_tax_rate_request', 'request' ),
-			bumpStat( 'calypso_tax_rate_request_country_code', countryCode ),
-			bumpStat( 'calypso_tax_rate_request_postal_code', postalCode ),
-			recordTracksEvent(
-				'calypso_tax_rate_request',
-				convertToSnakeCase( {
-					countryCode,
-					postalCode,
-				} )
-			)
-		),
-		http(
-			{
-				path,
-				method: 'GET',
-				apiNamespace: 'wpcom/v2',
-			},
-			{}
-		)
-	);
-
-	return requestHttpData( id, fetchAction, {
-		// #tax-on-checkout-placeholder
-		// eslint-disable-next-line no-unused-vars
-		fromApi: () => tax_data => {
-			return [ [ id, dummyTaxRate( postalCode, countryCode ) ] ];
-		},
-		...optionsWithDefaults,
-	} );
-};
-
 export const requestGutenbergBlockAvailability = siteSlug => {
 	const betaQueryArgument = addQueryArgs( { beta: isEnabled( 'jetpack/blocks/beta' ) }, '' );
 	return requestHttpData(
@@ -312,4 +252,18 @@ export const requestActiveThemeSupport = siteSlug =>
 			{}
 		),
 		{ fromApi: () => data => [ [ `active-theme-support-${ siteSlug }`, data ] ] }
+	);
+
+export const requestGutenbergCoreServerBlockSettings = () =>
+	requestHttpData(
+		'gutenberg-core-server-block-settings',
+		http(
+			{
+				path: `/gutenberg/core-server-block-settings`,
+				method: 'GET',
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{ fromApi: () => data => [ [ 'gutenberg-core-server-block-settings', data ] ] }
 	);

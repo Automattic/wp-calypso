@@ -11,7 +11,7 @@
 	}
 
 	&.foldable-card.is-expanded .foldable-card__content {
-		padding: 16px 16px 0px 16px;
+		padding: 16px 16px 0;
 	}
 
 	&.has-manage-error .foldable-card__action {
@@ -56,7 +56,7 @@
 .plugin-site-network__secondary-site.card.is-compact {
 	padding: 16px 0;
 	box-shadow: none;
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-neutral-0 );
 
 	.site__info {
 		width: auto;

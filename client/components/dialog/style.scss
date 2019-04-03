@@ -15,13 +15,13 @@
 
 	&.dialog-enter,
 	&.dialog-leave.dialog-leave-active {
-		background-color: rgba( $gray-lighten-30, 0 );
+		background-color: rgba( var( --color-neutral-0-rgb ), 0 );
 	}
 
 	&,
 	&.dialog-enter.dialog-enter-active,
 	&.dialog-leave {
-		background-color: rgba( $gray-lighten-30, 0.8 );
+		background-color: rgba( var( --color-neutral-0-rgb ), 0.8 );
 	}
 
 	// covers the masterbar as well
@@ -70,7 +70,7 @@
 	}
 
 	h1 {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 1.375em;
 		font-weight: 600;
 		line-height: 2em;
@@ -84,7 +84,7 @@
 
 .dialog__action-buttons {
 	position: relative;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	padding: 16px;
 	margin: 0;
 	text-align: right;
@@ -100,7 +100,7 @@
 		flex-direction: column-reverse;
 	}
 
-	&:before {
+	&::before {
 		content: '';
 		display: block;
 		position: absolute;
@@ -138,4 +138,8 @@
 
 .ReactModal__Body--open {
 	overflow: hidden;
+}
+
+.ReactModal__Html--open {
+	overflow: visible;
 }

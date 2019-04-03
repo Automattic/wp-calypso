@@ -6,9 +6,51 @@ const path = require( 'path' );
 const fs = require( 'fs' );
 
 const areaCodes = {
-	CA: [ "204", "236", "249", "250", "289", "306", "343", "365", "387", "403", "416", "418", "431", "437", "438", "450", "506", "514", "519", "548", "579", "581", "587", "604", "613", "639", "647", "672", "705", "709", "742", "778", "780", "782", "807", "819", "825", "867", "873", "902", "905" ],
-	DO: [ "809", "829", "849" ],
-	PR: [ "787", "939" ]
+	CA: [
+		'204',
+		'236',
+		'249',
+		'250',
+		'289',
+		'306',
+		'343',
+		'365',
+		'387',
+		'403',
+		'416',
+		'418',
+		'431',
+		'437',
+		'438',
+		'450',
+		'506',
+		'514',
+		'519',
+		'548',
+		'579',
+		'581',
+		'587',
+		'604',
+		'613',
+		'639',
+		'647',
+		'672',
+		'705',
+		'709',
+		'742',
+		'778',
+		'780',
+		'782',
+		'807',
+		'819',
+		'825',
+		'867',
+		'873',
+		'902',
+		'905',
+	],
+	DO: [ '809', '829', '849' ],
+	PR: [ '787', '939' ],
 };
 
 /**
@@ -62,10 +104,11 @@ const priorityData = {
 	BL: 1,
 	// dial code: +599
 	CW: 10,
-	BQ: 1
+	BQ: 1,
 };
 
-const LIBPHONENUMBER_METADATA_URL = 'https://raw.githubusercontent.com/googlei18n/libphonenumber/master/javascript/i18n/phonenumbers/metadatalite.js';
+const LIBPHONENUMBER_METADATA_URL =
+	'https://raw.githubusercontent.com/googlei18n/libphonenumber/master/javascript/i18n/phonenumbers/metadatalite.js';
 
 const libPhoneNumberIndexes = {
 	COUNTRY_CODE: 9,
@@ -75,18 +118,18 @@ const libPhoneNumberIndexes = {
 	NATIONAL_PARSING_PREFIX: 15,
 	NUMBER_FORMAT: 19,
 	INTERNATIONAL_NUMBER_FORMAT: 20, // TYPE: NumberFormat,
-	REGION_AREA_CODE: 23
+	REGION_AREA_CODE: 23,
 };
 
 const numberFormatIndexes = {
 	PATTERN: 1,
 	FORMAT: 2,
 	LEADING_DIGIT_PATTERN: 3,
-	NATIONAL_CALLING_FORMAT: 4
+	NATIONAL_CALLING_FORMAT: 4,
 };
 
 const aliases = {
-	UK: 'GB'
+	UK: 'GB',
 };
 
 function getLibPhoneNumberData() {
@@ -96,7 +139,10 @@ function getLibPhoneNumberData() {
 				throw error || response.statusCode;
 			}
 
-			const capture = body.substring( body.indexOf( 'countryToMetadata = ' ) + 20, body.length - 2 );
+			const capture = body.substring(
+				body.indexOf( 'countryToMetadata = ' ) + 20,
+				body.length - 2
+			);
 			const sandbox = { container: {} };
 			const script = new vm.Script( 'container.data = ' + capture );
 
@@ -120,8 +166,8 @@ function processNumberFormat( format ) {
 		match: format[ numberFormatIndexes.PATTERN ],
 		replace: format[ numberFormatIndexes.FORMAT ],
 		nationalFormat: format[ numberFormatIndexes.NATIONAL_CALLING_FORMAT ] || undefined,
-		leadingDigitPattern: _.last( format[ numberFormatIndexes.LEADING_DIGIT_PATTERN ] || [] )
-	}
+		leadingDigitPattern: _.last( format[ numberFormatIndexes.LEADING_DIGIT_PATTERN ] || [] ),
+	};
 }
 
 /**
@@ -146,7 +192,11 @@ function generateDeepRemoveEmptyArraysFromObject( allowedKeys ) {
 	return function deepRemoveEmptyArraysFromObject( obj ) {
 		for ( let key in obj ) {
 			if ( obj.hasOwnProperty( key ) ) {
-				if ( _.includes( allowedKeys, key ) && _.isArray( obj[ key ] ) && obj[ key ].length === 0 ) {
+				if (
+					_.includes( allowedKeys, key ) &&
+					_.isArray( obj[ key ] ) &&
+					obj[ key ].length === 0
+				) {
 					delete obj[ key ];
 				} else if ( _.isObject( obj[ key ] ) ) {
 					deepRemoveEmptyArraysFromObject( obj[ key ] );
@@ -154,11 +204,11 @@ function generateDeepRemoveEmptyArraysFromObject( allowedKeys ) {
 			}
 		}
 		return obj;
-	}
+	};
 }
 
 function removeAllNumberKeys( obj ) {
-	return _.omitBy( obj, function( val, key ) { return /^\d+$/.test( key ); } );
+	return _.omitBy( obj, ( val, key ) => /^\d+$/.test( key ) );
 }
 
 function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode( countryData ) {
@@ -188,73 +238,91 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 			const country = libPhoneNumberData[ countryCode ];
 			data[ countryCodeUpper ] = {
 				isoCode: countryCodeUpper,
-				dialCode: String( country[ libPhoneNumberIndexes.COUNTRY_DIAL_CODE ] + ( country[ libPhoneNumberIndexes.REGION_AREA_CODE ] || '' ) ),
+				dialCode: String(
+					country[ libPhoneNumberIndexes.COUNTRY_DIAL_CODE ] +
+						( country[ libPhoneNumberIndexes.REGION_AREA_CODE ] || '' )
+				),
 				countryDialCode: String( country[ libPhoneNumberIndexes.COUNTRY_DIAL_CODE ] ),
 				regionCode: country[ libPhoneNumberIndexes.REGION_AREA_CODE ] || '',
 				areaCodes: areaCodes[ countryCode ],
 				nationalPrefix: country[ libPhoneNumberIndexes.NATIONAL_PREFIX ],
-				patterns: ( country[ libPhoneNumberIndexes.NUMBER_FORMAT ] || [] ).map( processNumberFormat ),
-				internationalPatterns: ( country[ libPhoneNumberIndexes.INTERNATIONAL_NUMBER_FORMAT ] || [] ).map( processNumberFormat ),
-				priority: priorityData[ countryCodeUpper ]
+				patterns: ( country[ libPhoneNumberIndexes.NUMBER_FORMAT ] || [] ).map(
+					processNumberFormat
+				),
+				internationalPatterns: (
+					country[ libPhoneNumberIndexes.INTERNATIONAL_NUMBER_FORMAT ] || []
+				).map( processNumberFormat ),
+				priority: priorityData[ countryCodeUpper ],
 			};
 		}
 	}
 
-	const noPattern = _.filter( data, _.conforms( { patterns: function( patterns ) { return patterns.length === 0 } } ) );
+	const noPattern = _.filter( data, _.conforms( { patterns: patterns => patterns.length === 0 } ) );
 	_.forIn( noPattern, function( country ) {
-		country.patternRegion = ( _.maxBy( _.values( _.filter( data, _.conforms( { dialCode: function ( d ) { return d === country.dialCode } } ) ) ), 'priority' ) || {} ).isoCode;
-		console.log( 'Info: ' + country.isoCode + ' didn\'t have a pattern' + ( country.patternRegion ? ' so we use ' + country.patternRegion : '.' ) );
+		country.patternRegion = (
+			_.maxBy( _.values( _.filter( data, { dialCode: country.dialCode } ) ), 'priority' ) || {}
+		).isoCode;
+		console.log(
+			'Info: ' +
+				country.isoCode +
+				" didn't have a pattern" +
+				( country.patternRegion ? ' so we use ' + country.patternRegion : '.' )
+		);
 	} );
 	return data;
 }
 
 // Political correction
 function injectHardCodedValues( libPhoneNumberData ) {
-	return Object.assign( {}, {
-		KV: {
-			isoCode: 'KV',
-			dialCode: '383',
-			nationalPrefix: '0',
-			priority: priorityData.KV
+	return Object.assign(
+		{},
+		{
+			KV: {
+				isoCode: 'KV',
+				dialCode: '383',
+				nationalPrefix: '0',
+				priority: priorityData.KV,
+			},
+			UM: {
+				isoCode: 'UM',
+				dialCode: '1',
+				nationalPrefix: '',
+				patternRegion: 'US',
+				priority: priorityData.UM,
+			},
+			BV: {
+				isoCode: 'BV',
+				dialCode: '47',
+				nationalPrefix: '',
+				priority: priorityData.BV,
+			},
+			TF: {
+				isoCode: 'TF',
+				dialCode: '262',
+				nationalPrefix: '0',
+				priority: priorityData.TF,
+			},
+			HM: {
+				isoCode: 'HM',
+				dialCode: '61',
+				nationalPrefix: '0',
+				priority: priorityData.HM,
+			},
+			PN: {
+				isoCode: 'PN',
+				dialCode: '64',
+				nationalPrefix: '0',
+				priority: priorityData.PN,
+			},
+			GS: {
+				isoCode: 'GS',
+				nationalPrefix: '',
+				dialCode: '500',
+				priority: priorityData.GS,
+			},
 		},
-		UM: {
-			isoCode: 'UM',
-			dialCode: '1',
-			nationalPrefix: '',
-			patternRegion: 'US',
-			priority: priorityData.UM
-		},
-		BV: {
-			isoCode: 'BV',
-			dialCode: '47',
-			nationalPrefix: '',
-			priority: priorityData.BV
-		},
-		TF: {
-			isoCode: 'TF',
-			dialCode: '262',
-			nationalPrefix: '0',
-			priority: priorityData.TF
-		},
-		HM: {
-			isoCode: 'HM',
-			dialCode: '61',
-			nationalPrefix: '0',
-			priority: priorityData.HM
-		},
-		PN: {
-			isoCode: 'PN',
-			dialCode: '64',
-			nationalPrefix: '0',
-			priority: priorityData.PN
-		},
-		GS: {
-			isoCode: 'GS',
-			nationalPrefix: '',
-			dialCode: '500',
-			priority: priorityData.GS
-		}
-	}, libPhoneNumberData );
+		libPhoneNumberData
+	);
 }
 
 /**
@@ -273,17 +341,22 @@ function insertCountryAliases( data ) {
  * @param {Object} data
  */
 function saveToFile( data ) {
-	const scriptStr = (
+	const scriptStr =
 		'/** @format */\n' +
 		'// Generated by build-metadata.js\n' +
 		'/* eslint-disable */\n' +
-		Object
-			.keys( data )
+		Object.keys( data )
 			.map( key => `export const ${ key } = ${ JSON.stringify( data[ key ], null, '\t' ) };\n` )
 			.join( '\n' ) +
-		'/* eslint-enable */\n'
+		'/* eslint-enable */\n';
+	const filePath = path.resolve(
+		__dirname,
+		'..',
+		'client',
+		'components',
+		'phone-input',
+		'data.js'
 	);
-	const filePath = path.resolve( __dirname, '..', 'client', 'components', 'phone-input', 'data.js' );
 	fs.writeFileSync( filePath, scriptStr );
 }
 
@@ -301,18 +374,20 @@ function generateDialCodeMap( metadata ) {
 	}
 	_.forIn( metadata, function( country ) {
 		addValue( country.dialCode, country.isoCode );
-		( country.areaCodes || [] ).forEach( function( areaCode ) { addValue( country.dialCode + areaCode, country.isoCode ) } );
+		( country.areaCodes || [] ).forEach( areaCode =>
+			addValue( country.dialCode + areaCode, country.isoCode )
+		);
 	} );
 
-	return _.mapValues( res, function ( countryCodes ) {
-		return _.orderBy( countryCodes, function( countryCode ) { return metadata[ countryCode ].priority || 0 }, 'desc' );
-	} );
+	return _.mapValues( res, countryCodes =>
+		_.orderBy( countryCodes, countryCode => metadata[ countryCode ].priority || 0, 'desc' )
+	);
 }
 
 function generateFullDataset( metadata ) {
 	return {
 		countries: metadata,
-		dialCodeMap: generateDialCodeMap( metadata )
+		dialCodeMap: generateDialCodeMap( metadata ),
 	};
 }
 
@@ -329,4 +404,4 @@ getLibPhoneNumberData()
 	.catch( function( error ) {
 		console.error( error.stack );
 		process.exit( -1 );
-} );
+	} );

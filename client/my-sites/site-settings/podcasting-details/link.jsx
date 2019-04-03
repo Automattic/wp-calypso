@@ -13,11 +13,11 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import Button from 'components/button';
-import SectionHeader from 'components/section-header';
 import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingSupportLink from './support-link';
 import PodcastingPublishNotice from './publish-notice';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
 import { getTerm } from 'state/terms/selectors';
@@ -32,7 +32,7 @@ class PodcastingLink extends Component {
 
 		return (
 			<div className={ classes }>
-				<SectionHeader label={ translate( 'Podcasting' ) } />
+				<SettingsSectionHeader title={ translate( 'Podcasting' ) } />
 				<Card className="podcasting-details__link-card">{ this.renderCardBody() }</Card>
 			</div>
 		);

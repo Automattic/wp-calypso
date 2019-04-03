@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -18,6 +15,9 @@ import QueryMailchimpSettings from 'components/data/query-mailchimp-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import { isJetpackMinimumVersion, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
 
 const MailchimpSettings = ( {
 	siteId,
@@ -25,6 +25,10 @@ const MailchimpSettings = ( {
 	requestSettingsUpdateAction,
 	mailchimpLists,
 	mailchimpListId,
+	isJetpack,
+	isJetpackConnectionBroken,
+	isJetpackTooOld,
+	siteSlug,
 	translate,
 } ) => {
 	const chooseMailchimpList = event => {
@@ -36,7 +40,7 @@ const MailchimpSettings = ( {
 					follower_list_id: 0,
 					keyring_id: 0,
 				},
-				translate( 'Follower emails will not be synced to MailChimp any more' )
+				translate( 'Subscriber emails will not be saved to Mailchimp any more' )
 			);
 			return;
 		}
@@ -47,42 +51,93 @@ const MailchimpSettings = ( {
 				follower_list_id: event.target.value,
 				keyring_id: keyringConnections[ 0 ].ID,
 			},
-			translate( 'Follower emails will be synced to the %s MailChimp list', { args: list.name } )
+			translate( 'Subscriber emails will be saved to the %s Mailchimp list', { args: list.name } )
 		);
 	};
+	const common = (
+		<div>
+			{ isJetpack && <QueryJetpackConnection siteId={ siteId } /> }
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<div className="sharing-connections__mailchimp-gutenberg_explanation">
+				<p>
+					{ translate(
+						'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
+					) }
+					<a
+						href={ 'https://support.wordpress.com/mailchimp-block/' }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ translate( 'Learn more.' ) }
+					</a>
+				</p>
+			</div>
+		</div>
+	);
+	if ( isJetpackTooOld ) {
+		return (
+			<div>
+				<Notice
+					status="is-warning"
+					text={ translate(
+						'Please update Jetpack plugin to version 7.1 in order to use the Mailchimp block'
+					) }
+					showDismiss={ false }
+				>
+					<NoticeAction
+						href={ `https://wordpress.com/plugins/jetpack/${ siteSlug }` }
+						icon="external"
+					/>
+				</Notice>
+				{ common }
+			</div>
+		);
+	}
+
+	if ( isJetpackConnectionBroken ) {
+		return (
+			<div>
+				<Notice
+					status="is-warning"
+					text={ translate(
+						'Jetpack connection for this site is not active. Please reactivate it.'
+					) }
+					showDismiss={ false }
+				/>
+				{ common }
+			</div>
+		);
+	}
 
 	/* eslint-disable jsx-a11y/no-onchange */
 	return (
 		<div>
 			<QueryMailchimpLists siteId={ siteId } />
 			<QueryMailchimpSettings siteId={ siteId } />
-			<p>{ translate( 'What MailChimp list should we sync follower emails to for this site?' ) }</p>
-			{ isArray( mailchimpLists ) &&
-				mailchimpLists.length === 0 && (
-					<Notice
-						status="is-info"
-						text={ translate(
-							"Looks like you've not set up any MailChimp lists yet. Head to your MailChimp admin to add a list."
-						) }
-						showDismiss={ false }
-					>
-						<NoticeAction href="https://login.mailchimp.com" external={ true } />
-					</Notice>
-				) }
-			{ mailchimpLists &&
-				mailchimpLists.length > 0 &&
-				mailchimpListId === 0 && (
-					<Notice
-						status="is-warning"
-						text={ translate(
-							'Followers will not be synced for this site. Please select a list to sign them up for your MailChimp content'
-						) }
-						showDismiss={ false }
-					/>
-				) }
+			<p>{ translate( 'What Mailchimp list should subscribers be added to?' ) }</p>
+			{ isArray( mailchimpLists ) && mailchimpLists.length === 0 && (
+				<Notice
+					status="is-info"
+					text={ translate(
+						"Looks like you've not set up any Mailchimp lists yet. Head to your Mailchimp admin to add a list."
+					) }
+					showDismiss={ false }
+				>
+					<NoticeAction href="https://login.mailchimp.com" external={ true } />
+				</Notice>
+			) }
+			{ mailchimpLists && mailchimpLists.length > 0 && mailchimpListId === 0 && (
+				<Notice
+					status="is-warning"
+					text={ translate(
+						'Subscribers will not be added to Mailchimp for this site. Please select a list to sign them up for your Mailchimp content'
+					) }
+					showDismiss={ false }
+				/>
+			) }
 			<select value={ mailchimpListId } onChange={ chooseMailchimpList }>
 				<option key="none" value={ 0 }>
-					{ translate( 'Do not sync follower emails for this site' ) }
+					{ translate( 'Do not save subscribers to Mailchimp for this site' ) }
 				</option>
 				{ mailchimpLists &&
 					mailchimpLists.map( list => (
@@ -91,6 +146,7 @@ const MailchimpSettings = ( {
 						</option>
 					) ) }
 			</select>
+			{ common }
 		</div>
 	);
 	/* eslint-enable jsx-a11y/no-onchange */
@@ -115,8 +171,13 @@ export const renderMailchimpLogo = () => (
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
 		return {
 			siteId: siteId,
+			siteSlug: getSiteSlug( state, siteId ),
+			isJetpackTooOld: isJetpackMinimumVersion( state, siteId, '7.1' ) === false,
+			isJetpack: isJetpack,
+			isJetpackConnectionBroken: isJetpack && getJetpackConnectionStatus( state, siteId ) === false,
 			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], null ),
 			mailchimpListId: get(
 				state,

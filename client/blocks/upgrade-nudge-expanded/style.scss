@@ -2,14 +2,14 @@
 	display: flex;
 	flex-direction: column-reverse;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 
 	.upgrade-nudge-expanded__description {
 		margin-bottom: 20px;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			margin-bottom: 0;
 			width: 50%;
 		}
@@ -20,7 +20,7 @@
 			width: 100%;
 		}
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			width: 50%;
 
 			.plan-compare-card {
@@ -38,7 +38,7 @@
 	.upgrade-nudge-expanded__title-plan {
 		width: 56px;
 		height: 56px;
-		border: solid 2px $border-ultra-light-gray;
+		border: solid 2px var( --color-border-subtle );
 		border-radius: 50%;
 		align-self: center;
 		flex-shrink: 0;

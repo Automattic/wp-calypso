@@ -6,38 +6,42 @@
 	&.is-focused {
 		border-color: var( --color-primary );
 		outline: none;
-		box-shadow: 0 0 0 2px var( --color-primary-light );
+		box-shadow: 0 0 0 2px var( --color-primary-100 );
+
+		&:hover {
+			box-shadow: 0 0 0 2px var( --color-primary-200 );
+		}
 
 		&.is-valid {
-			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );
+			box-shadow: 0 0 0 2px var( --color-success-50 );
 		}
 
 		&.is-valid:hover {
-			box-shadow: 0 0 0 2px lighten( $alert-green, 25 );
+			box-shadow: 0 0 0 2px var( --color-success-50 );
 		}
 
 		&.is-error {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 35 );
+			box-shadow: 0 0 0 2px var( --color-error-50 );
 		}
 
 		&.is-error:hover {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 25 );
+			box-shadow: 0 0 0 2px var( --color-error-100 );
 		}
 	}
 
 	&.is-disabled {
-		background: $gray-light;
-		border-color: $gray-lighten-30;
-		color: $gray-lighten-10;
+		background: var( --color-neutral-0 );
+		border-color: var( --color-neutral-0 );
+		color: var( --color-neutral-200 );
 		opacity: 1;
-		-webkit-text-fill-color: $gray-lighten-10;
+		-webkit-text-fill-color: var( --color-neutral-200 );
 
 		&:hover {
 			cursor: default;
 		}
 
 		&::placeholder {
-			color: $gray-lighten-10;
+			color: var( --color-neutral-200 );
 		}
 	}
 
@@ -46,7 +50,7 @@
 	}
 
 	&.is-valid:hover {
-		border-color: darken( $alert-green, 10 );
+		border-color: var( --color-success-400 );
 	}
 
 	&.is-error {
@@ -54,7 +58,7 @@
 	}
 
 	&.is-error:hover {
-		border-color: darken( $alert-red, 10 );
+		border-color: var( --color-error-500 );
 	}
 }
 
@@ -64,13 +68,13 @@
 	text-transform: none;
 }
 
-input[type="text"].form-text-input-with-action__input {
+input[type='text'].form-text-input-with-action__input {
 	flex: 1 1 0;
 	border: none;
 	min-width: 0;
 }
 
-input[type="text"].form-text-input-with-action__input:focus {
+input[type='text'].form-text-input-with-action__input:focus {
 	border: none;
 	box-shadow: none;
 }

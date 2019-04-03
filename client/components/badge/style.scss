@@ -7,11 +7,11 @@
 }
 
 .badge--warning {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	background-color: var( --color-warning );
 }
 
 .badge--success {
-	color: $gray-dark;
-	background-color: lighten( $alert-green, 15%);
+	color: var( --color-white );
+	background-color: var( --color-success );
 }

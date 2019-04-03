@@ -12,6 +12,7 @@ import {
 	hasExpiredSecretError,
 	hasXmlrpcError,
 	isRemoteSiteOnSitesList,
+	isSiteBlacklistedError,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -367,6 +368,53 @@ describe( 'selectors', () => {
 
 		test( 'should be true if all the conditions are met', () => {
 			const hasError = hasExpiredSecretError( stateHasExpiredSecretError );
+			expect( hasError ).toBe( true );
+		} );
+	} );
+
+	describe( '#isSiteBlacklistedError', () => {
+		test( 'should be false when there is an empty state', () => {
+			const hasError = isSiteBlacklistedError( { jetpackConnect: {} } );
+			expect( hasError ).toBe( false );
+		} );
+
+		test( 'should be false when there is no error', () => {
+			const stateHasNoError = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						authorizeError: false,
+					},
+				},
+			};
+			const hasError = isSiteBlacklistedError( stateHasNoError );
+			expect( hasError ).toBe( false );
+		} );
+
+		test( 'should be false when there is another error', () => {
+			const stateHasOtherError = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						authorizeError: {
+							error: 'already_connected',
+						},
+					},
+				},
+			};
+			const hasError = isSiteBlacklistedError( stateHasOtherError );
+			expect( hasError ).toBe( false );
+		} );
+
+		test( 'should be true if site has been blacklisted', () => {
+			const stateHasBeenBlacklistedError = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						authorizeError: {
+							error: 'site_blacklisted',
+						},
+					},
+				},
+			};
+			const hasError = isSiteBlacklistedError( stateHasBeenBlacklistedError );
 			expect( hasError ).toBe( true );
 		} );
 	} );

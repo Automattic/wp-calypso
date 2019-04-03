@@ -11,10 +11,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
 import AuthorMapping from './author-mapping-item';
 import SiteUsersFetcher from 'components/site-users-fetcher';
 import UsersStore from 'lib/users/store';
+
+import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
+import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 
 class AuthorMappingPane extends React.PureComponent {
 	static displayName = 'AuthorMappingPane';
@@ -130,6 +133,8 @@ class AuthorMappingPane extends React.PureComponent {
 			onStartImport,
 			siteId,
 			sourceType,
+			importerStatus,
+			site,
 		} = this.props;
 		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
 		const targetUserCount = this.getUserCount();
@@ -159,9 +164,12 @@ class AuthorMappingPane extends React.PureComponent {
 						/>
 					);
 				} ) }
-				<Button disabled={ ! canStartImport } onClick={ onStartImport }>
-					{ this.props.translate( 'Start Import' ) }
-				</Button>
+				<ImporterActionButtonContainer>
+					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
+					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
+						{ this.props.translate( 'Start Import' ) }
+					</ImporterActionButton>
+				</ImporterActionButtonContainer>
 			</div>
 		);
 	}

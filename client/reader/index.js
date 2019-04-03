@@ -22,7 +22,12 @@ import {
 	updateLastRoute,
 } from './controller';
 import config from 'config';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'controller';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function forceTeamA8C( context, next ) {
 	context.params.team = 'a8c';
@@ -57,7 +62,6 @@ export default function() {
 		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
 			'/read/feeds/:feed_id',
-			redirectLoggedOut,
 			updateLastRoute,
 			prettyRedirects,
 			sidebar,
@@ -72,7 +76,6 @@ export default function() {
 		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects );
 		page(
 			'/read/blogs/:blog_id',
-			redirectLoggedOut,
 			updateLastRoute,
 			prettyRedirects,
 			sidebar,
@@ -90,14 +93,5 @@ export default function() {
 	}
 
 	// Automattic Employee Posts
-	page(
-		'/read/a8c',
-		redirectLoggedOut,
-		updateLastRoute,
-		sidebar,
-		forceTeamA8C,
-		readA8C,
-		makeLayout,
-		clientRender
-	);
+	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C, makeLayout, clientRender );
 }

@@ -20,6 +20,7 @@ import {
 	isJetpackPlan,
 	isPlan,
 	isTheme,
+	isConciergeSession,
 } from 'lib/products-values';
 import { addItems } from 'lib/upgrades/actions';
 
@@ -47,8 +48,8 @@ function getPurchasesBySite( purchases, sites ) {
 					id: currentValue.siteId,
 					name: currentValue.siteName,
 					/* if the purchase is attached to a deleted site,
-				 * there will be no site with this ID in `sites`, so
-				 * we fall back on the domain. */
+					 * there will be no site with this ID in `sites`, so
+					 * we fall back on the domain. */
 					slug: siteObject ? siteObject.slug : currentValue.domain,
 					isDomainOnly: siteObject ? siteObject.options.is_domain_only : false,
 					title: currentValue.siteName || currentValue.domain || '',
@@ -91,20 +92,6 @@ function handleRenewNowClick( purchase, siteSlug ) {
 		product_slug: purchase.productSlug,
 	} );
 
-	if ( hasPrivacyProtection( purchase ) ) {
-		const privacyItem = cartItems.getRenewalItemFromCartItem(
-			cartItems.domainPrivacyProtection( {
-				domain: purchase.meta,
-			} ),
-			{
-				id: purchase.id,
-				domain: purchase.domain,
-			}
-		);
-
-		renewItems.push( privacyItem );
-	}
-
 	addItems( renewItems );
 
 	page( '/checkout/' + siteSlug );
@@ -112,10 +99,6 @@ function handleRenewNowClick( purchase, siteSlug ) {
 
 function hasIncludedDomain( purchase ) {
 	return Boolean( purchase.includedDomain );
-}
-
-function hasPrivacyProtection( purchase ) {
-	return purchase.hasPrivacyProtection;
 }
 
 /**
@@ -208,6 +191,10 @@ function cardProcessorSupportsUpdates( purchase ) {
  * or deny a refund to a user. Instead, for example, use it to decide whether
  * to display or highlight general help text about the refund policy to users
  * who are likely to be eligible for one.
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ *
+ * @returns {Boolean} Whether in refund period.
  */
 function maybeWithinRefundPeriod( purchase ) {
 	if ( isRefundable( purchase ) ) {
@@ -255,6 +242,10 @@ function isRefundable( purchase ) {
  */
 function isRemovable( purchase ) {
 	if ( isIncludedWithPlan( purchase ) ) {
+		return false;
+	}
+
+	if ( isConciergeSession( purchase ) ) {
 		return false;
 	}
 
@@ -372,6 +363,10 @@ function purchaseType( purchase ) {
 		return i18n.translate( 'Premium Theme' );
 	}
 
+	if ( isConciergeSession( purchase ) ) {
+		return i18n.translate( 'One-on-one Support' );
+	}
+
 	if ( isPlan( purchase ) ) {
 		return i18n.translate( 'Site Plan' );
 	}
@@ -387,6 +382,10 @@ function purchaseType( purchase ) {
 	return null;
 }
 
+function getRenewalPrice( purchase ) {
+	return purchase.saleAmount || purchase.amount;
+}
+
 function showCreditCardExpiringWarning( purchase ) {
 	return (
 		! isIncludedWithPlan( purchase ) &&
@@ -396,16 +395,21 @@ function showCreditCardExpiringWarning( purchase ) {
 	);
 }
 
+function getDomainRegistrationAgreementUrl( purchase ) {
+	return purchase.domainRegistrationAgreementUrl;
+}
+
 export {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
+	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
 	getPurchasesBySite,
+	getRenewalPrice,
 	getSubscriptionEndDate,
 	handleRenewNowClick,
 	hasIncludedDomain,
-	hasPrivacyProtection,
 	isCancelable,
 	isPaidWithCreditCard,
 	isPaidWithPayPalDirect,

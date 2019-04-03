@@ -12,6 +12,11 @@ import classNames from 'classnames';
  */
 import { recordPermalinkClick } from 'reader/stats';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PostExcerptLink extends React.Component {
 	static propTypes = {
 		siteName: PropTypes.string,

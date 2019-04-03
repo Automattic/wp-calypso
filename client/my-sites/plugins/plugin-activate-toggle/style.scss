@@ -8,19 +8,19 @@
 
 .plugin-activate-toggle__link:hover,
 .plugin-activate-toggle__link:hover .plugin-activate-toggle__icon {
-	color: $link-highlight;
+	color: var( --color-link-dark );
 }
 
 .plugin-activate-toggle__disabled {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 }
 
 .plugin-activate-toggle__disabled .plugin-activate-toggle__icon {
-	color: $gray-lighten-30;
+	color: var( --color-neutral-0 );
 }
 
 .plugin-activate-toggle__label {
-	margin-left: 0px;
+	margin-left: 0;
 	margin-right: 8px;
 }
 
@@ -34,7 +34,7 @@
 }
 
 .plugin-activate-toggle__link .plugin-activate-toggle__icon {
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .plugin-activate-toggle__icon {

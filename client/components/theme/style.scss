@@ -1,38 +1,37 @@
-
 $theme-info-height: 54px;
 
 .theme {
 	padding: 0;
-	margin: 0 10px 20px 10px;
+	margin: 0 10px 20px;
 	width: 230px; // Fixed width gives desired wrapping...
 	flex-grow: 1; // ...grow allows expansion to fill space after wrap.
 	transition: all 100ms ease-in-out;
 
 	&.is-active {
-		background: var( --color-accent );
+		background: var( --color-primary );
 
 		.theme__info {
-			background: var( --color-accent );
+			background: var( --color-primary );
 		}
 
 		.theme__info-title {
-			color: $white;
+			color: var( --color-white );
 
-			&:before {
-				@include long-content-fade( $color: hex-to-rgb( $blue-medium ) );
+			&::before {
+				@include long-content-fade( $color: var( --color-primary-rgb ) );
 			}
 		}
 
 		button {
-			color: $white;
+			color: var( --color-white );
 
 			&:hover {
-				color: lighten( $blue-light, 10% );
+				color: var( --color-primary-light );
 			}
 		}
 
 		.price {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 
@@ -42,12 +41,12 @@ $theme-info-height: 54px;
 		}
 
 		&:hover {
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
 		}
 	}
 
 	&.is-placeholder {
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -59,13 +58,13 @@ $theme-info-height: 54px;
 	right: 0;
 	height: $theme-info-height;
 	display: flex;
-	background: $white;
+	background: var( --color-white );
 }
 
 .theme__info-title {
 	flex: 1 1 auto;
 	position: relative;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	font-weight: 600;
 	padding: 16px 14px;
@@ -74,7 +73,7 @@ $theme-info-height: 54px;
 	overflow: hidden;
 	white-space: nowrap;
 
-	&:before {
+	&::before {
 		@include long-content-fade();
 	}
 }
@@ -94,12 +93,12 @@ $theme-info-height: 54px;
 .theme__upsell {
 	flex: 0 0 auto;
 	padding: 16px 10px 0 0;
-	color: $gray;
+	color: var( --color-neutral-light );
 }
 
 .theme__upsell-icon svg {
 	transform: scale( 0.8 );
-	border: 2px solid $gray-lighten-10;
+	border: 2px solid var( --color-neutral-200 );
 	border-radius: 100%;
 	display: inline-block;
 	width: 22px;
@@ -129,7 +128,7 @@ $theme-info-height: 54px;
 .theme__badge-active {
 	flex: 0 0 auto;
 	padding: 18px 10px 0;
-	color: lighten( $blue-light, 10% );
+	color: var( --color-themes-active-text );
 	text-transform: uppercase;
 	font-size: 12px;
 	font-weight: 600;
@@ -162,11 +161,11 @@ $theme-info-height: 54px;
 		padding: 6px 9px;
 		margin-bottom: -54px;
 
-		background: $white;
-		border: 1px solid $gray-light;
+		background: var( --color-white );
+		border: 1px solid var( --color-neutral-0 );
 		border-radius: 2px;
 
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		text-transform: uppercase;
 		font-size: 11px;
 		font-weight: 600;
@@ -203,17 +202,17 @@ $theme-info-height: 54px;
 	bottom: 54px;
 	width: 100%;
 	padding-top: 36%;
-	background: $gray-lighten-20;
+	background: var( --color-neutral-100 );
 
 	.gridicon {
 		display: block;
 		margin: -5% auto;
-		fill: $gray-lighten-30;
+		fill: var( --color-neutral-0 );
 	}
 }
 
 .theme__installing {
-	background: transparentize( $gray-dark, 0.5 );
+	background: rgba( var( --color-neutral-dark-rgb ), 0.5 );
 	width: 100%;
 	left: 0;
 	top: 0;
@@ -226,7 +225,7 @@ $theme-info-height: 54px;
 }
 
 .theme__more-button {
-	border-left: 1px solid $gray-light;
+	border-left: 1px solid var( --color-neutral-0 );
 	height: $theme-info-height;
 	display: flex;
 	flex: 0 0 auto;
@@ -234,14 +233,14 @@ $theme-info-height: 54px;
 
 	button {
 		cursor: pointer;
-		color: $gray;
+		color: var( --color-neutral-light );
 		padding: 15px 19px;
 		font-size: 20px;
 		font-weight: 600;
 		font-weight: bold;
 
 		.is-active & {
-			color: transparentize( $white, 0.2 );
+			color: rgba( var( --color-white-rgb ), 0.2 );
 		}
 
 		.accessible-focus &:focus {
@@ -255,18 +254,18 @@ $theme-info-height: 54px;
 	}
 
 	&.is-active {
-		border-left-color: transparentize( $gray-light, 0.7 );
+		border-left-color: rgba( var( --color-neutral-0-rgb ), 0.7 );
 	}
 
 	&:hover {
-		background-color: transparentize( $gray-light, 0.7 );
+		background-color: rgba( var( --color-neutral-0-rgb ), 0.7 );
 
 		.gridicon {
-			color: var( --color-accent );
+			color: var( --color-primary );
 		}
 
 		&.is-active .gridicon {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 
@@ -281,7 +280,7 @@ $theme-info-height: 54px;
 	text-decoration: none;
 
 	&:visited {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&:hover,

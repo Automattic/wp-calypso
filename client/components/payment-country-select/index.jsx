@@ -14,6 +14,7 @@ import { isFunction, noop, omit, some } from 'lodash';
 import CountrySelect from 'my-sites/domains/components/form/country-select';
 import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
 import { setPaymentCountryCode } from 'state/ui/payment/actions';
+import { setTaxCountryCode } from 'lib/upgrades/actions/cart';
 
 export class PaymentCountrySelect extends Component {
 	static propTypes = {
@@ -28,6 +29,7 @@ export class PaymentCountrySelect extends Component {
 		onCountrySelected: noop,
 		countryCode: '',
 		updateGlobalCountryCode: noop,
+		updateCartStore: setTaxCountryCode,
 	};
 
 	componentDidMount = () => {
@@ -65,6 +67,7 @@ export class PaymentCountrySelect extends Component {
 
 	handleFieldChange = event => {
 		this.props.updateGlobalCountryCode( event.target.value );
+		this.props.updateCartStore( event.target.value );
 		// Notify the callback function that a new country was selected.
 		this.props.onCountrySelected( event.target.name, event.target.value );
 		// Also notify the standard onChange field handler, if there is one.
@@ -79,6 +82,7 @@ export class PaymentCountrySelect extends Component {
 			// state.
 			'countryCode',
 			'updateGlobalCountryCode',
+			'updateCartStore',
 			// Don't pass down this component's custom props.
 			'onCountrySelected',
 			// Don't pass down standard CountrySelect props that this component

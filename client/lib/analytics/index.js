@@ -25,13 +25,25 @@ import {
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
-import { doNotTrack, isPiiUrl, shouldReportOmitBlogId, hashPii } from 'lib/analytics/utils';
+import {
+	isGoogleAnalyticsAllowed,
+	mayWeTrackCurrentUserGdpr,
+	doNotTrack,
+	isPiiUrl,
+	shouldReportOmitBlogId,
+	hashPii,
+	costToUSD,
+} from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
 import {
-	mayWeTrackCurrentUserGdpr,
 	retarget,
 	recordAliasInFloodlight,
-	recordPageViewInFloodlight,
+	recordSignupCompletionInFloodlight,
+	recordSignupStartInFloodlight,
+	recordRegistration,
+	recordSignup,
+	recordAddToCart,
+	recordOrder,
 } from 'lib/analytics/ad-tracking';
 import { statsdTimingUrl } from 'lib/analytics/statsd';
 
@@ -124,30 +136,6 @@ if ( typeof document !== 'undefined' ) {
 			_loadTracksError = true;
 		}
 	} ); // W_JS_VER
-}
-
-// Google Analytics
-// Note that doNotTrack() and isPiiUrl() can change at any time so they shouldn't be stored in a variable.
-
-/**
- * Returns whether Google Analytics is allowed.
- *
- * This function returns false if:
- *
- * 1. `google-analytics` feature is disabled
- * 2. `Do Not Track` is enabled
- * 3. the current user could be in the GDPR zone and hasn't consented to tracking
- * 4. `document.location.href` may contain personally identifiable information
- *
- * @returns {Boolean} true if GA is allowed.
- */
-function isGoogleAnalyticsAllowed() {
-	return (
-		config.isEnabled( 'google-analytics' ) &&
-		! doNotTrack() &&
-		! isPiiUrl() &&
-		mayWeTrackCurrentUserGdpr()
-	);
 }
 
 function buildQuerystring( group, name ) {
@@ -274,11 +262,88 @@ const analytics = {
 				pathCounter++;
 				params.this_pageview_path_with_count = urlPath + '(' + pathCounter.toString() + ')';
 				analytics.tracks.recordPageView( urlPath, params );
+				retarget( urlPath ); // Fire page-view/retargeting pixels.
 				analytics.ga.recordPageView( urlPath, pageTitle );
 				analytics.emit( 'page-view', urlPath, pageTitle );
 				mostRecentUrlPath = urlPath;
 			}, 0 );
 		},
+	},
+
+	recordRegistration: function() {
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
+		// Google Analytics
+		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+		// Marketing
+		recordRegistration();
+	},
+
+	recordSignupStart: function( { flow, ref } ) {
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_signup_start', { flow, ref } );
+		// Google Analytics
+		analytics.ga.recordEvent( 'Signup', 'calypso_signup_start' );
+		// Marketing
+		recordSignupStartInFloodlight();
+	},
+
+	recordSignupComplete: function( {
+		isNewUser,
+		isNewSite,
+		hasCartItems,
+		isNewUserOnFreePlan,
+		flow,
+	} ) {
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_signup_complete', {
+			flow: flow,
+			is_new_user: isNewUser,
+			is_new_site: isNewSite,
+			has_cart_items: hasCartItems,
+			is_new_user_on_free_plan: isNewUserOnFreePlan,
+		} );
+		// Google Analytics
+		const flags = [
+			isNewUser && 'is_new_user',
+			isNewSite && 'is_new_site',
+			hasCartItems && 'has_cart_items',
+		].filter( flag => false !== flag );
+		analytics.ga.recordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
+		// Marketing
+		recordSignupCompletionInFloodlight();
+		if ( isNewUser && isNewSite ) {
+			recordSignup( 'new-user-site' );
+		}
+	},
+
+	recordAddToCart: function( { cartItem } ) {
+		// TODO: move Tracks event here?
+		// Google Analytics
+		const usdValue = costToUSD( cartItem.cost, cartItem.currency );
+		analytics.ga.recordEvent(
+			'Checkout',
+			'calypso_cart_product_add',
+			'',
+			usdValue ? usdValue : undefined
+		);
+		// Marketing
+		recordAddToCart( cartItem );
+	},
+
+	recordPurchase: function( { cart, orderId } ) {
+		if ( cart.total_cost >= 0.01 ) {
+			// Google Analytics
+			const usdValue = costToUSD( cart.total_cost, cart.currency );
+			analytics.ga.recordEvent(
+				'Purchase',
+				'calypso_checkout_payment_success',
+				'',
+				usdValue ? usdValue : undefined
+			);
+			// Marketing
+			recordOrder( cart, orderId );
+		}
 	},
 
 	timing: {
@@ -395,12 +460,6 @@ const analytics = {
 			}
 
 			analytics.tracks.recordEvent( 'calypso_page_view', eventProperties );
-
-			// Ensure every Calypso user is added to our retargeting audience via the AdWords retargeting tag
-			retarget();
-
-			// Track the page view with DCM Floodlight as well
-			recordPageViewInFloodlight( urlPath );
 		},
 
 		createRandomId,

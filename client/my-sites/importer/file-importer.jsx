@@ -28,9 +28,9 @@ const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],
 		appStates.IMPORT_SUCCESS,
 		appStates.IMPORTING,
 		appStates.MAP_AUTHORS,
-		appStates.UPLOAD_PROCESSING,
 	],
 	uploadingStates = [
+		appStates.UPLOAD_PROCESSING,
 		appStates.READY_FOR_UPLOAD,
 		appStates.UPLOAD_FAILURE,
 		appStates.UPLOAD_SUCCESS,
@@ -60,28 +60,31 @@ export default class extends React.PureComponent {
 
 	render() {
 		const { title, icon, description, uploadDescription } = this.props.importerData;
-		const site = this.props.site;
-		const state = this.props.importerStatus,
-			isEnabled = appStates.DISABLED !== state.importerState,
-			cardClasses = classNames( 'importer__shell', {
-				'is-compact': includes( compactStates, state.importerState ),
-				'is-disabled': ! isEnabled,
-			} );
+		const { importerStatus, site } = this.props;
+		const { errorData, importerState } = importerStatus;
+		const isEnabled = appStates.DISABLED !== importerState;
+		const cardClasses = classNames( 'importer__shell', {
+			'is-compact': includes( compactStates, importerState ),
+			'is-disabled': ! isEnabled,
+		} );
 
 		return (
 			<Card className={ cardClasses }>
 				<ImporterHeader
-					importerStatus={ state }
+					importerStatus={ importerStatus }
 					{ ...{ icon, title, description, isEnabled, site } }
 				/>
-				{ state.errorData && (
-					<ErrorPane type={ state.errorData.type } description={ state.errorData.description } />
+				{ errorData && <ErrorPane type={ errorData.type } description={ errorData.description } /> }
+				{ includes( importingStates, importerState ) && (
+					<ImportingPane importerStatus={ importerStatus } sourceType={ title } site={ site } />
 				) }
-				{ includes( importingStates, state.importerState ) && (
-					<ImportingPane importerStatus={ state } sourceType={ title } { ...{ site } } />
-				) }
-				{ includes( uploadingStates, state.importerState ) && (
-					<UploadingPane description={ uploadDescription } importerStatus={ state } />
+				{ includes( uploadingStates, importerState ) && (
+					<UploadingPane
+						isEnabled={ isEnabled }
+						description={ uploadDescription }
+						importerStatus={ importerStatus }
+						site={ site }
+					/>
 				) }
 			</Card>
 		);

@@ -1,0 +1,30 @@
+.all-sites-icon {
+	display: flex;
+	margin: 3px 8px 5px 0;
+
+	.site-icon:nth-child( 6 ) {
+		opacity: 0.9;
+	}
+	.site-icon:nth-child( 7 ) {
+		opacity: 0.7;
+	}
+	.site-icon:nth-child( 8 ) {
+		opacity: 0.5;
+	}
+	.site-icon:nth-child( 9 ) {
+		opacity: 0.3;
+	}
+	.site-icon:nth-child( 10 ) {
+		opacity: 0.1;
+	}
+}
+
+.all-sites-icon .site-icon {
+	align-self: auto;
+	margin-right: 1px;
+	display: inline-block;
+
+	&.is-blank {
+		background: var( --color-neutral-light );
+	}
+}

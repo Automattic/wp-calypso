@@ -16,10 +16,11 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import PendingGappsTosNotice from './pending-gapps-tos-notice';
+import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
 import { purchasesRoot } from 'me/purchases/paths';
 import { type as domainTypes, transferStatus, gdprConsentStatus } from 'lib/domains/constants';
-import { isSubdomain, hasPendingGoogleAppsUsers } from 'lib/domains';
+import { hasPendingGSuiteUsers } from 'lib/domains/gsuite';
+import { isSubdomain } from 'lib/domains';
 import {
 	ALL_ABOUT_DOMAINS,
 	CHANGE_NAME_SERVERS,
@@ -37,6 +38,11 @@ import {
 	domainManagementManageConsent,
 } from 'my-sites/domains/paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const debug = _debug( 'calypso:domain-warnings' );
 
@@ -67,7 +73,7 @@ export class DomainWarnings extends React.PureComponent {
 			'expiredDomainsCanManage',
 			'expiringDomainsCanManage',
 			'unverifiedDomainsCanManage',
-			'pendingGappsTosAcceptanceDomains',
+			'pendingGSuiteTosAcceptanceDomains',
 			'expiredDomainsCannotManage',
 			'expiringDomainsCannotManage',
 			'unverifiedDomainsCannotManage',
@@ -109,7 +115,7 @@ export class DomainWarnings extends React.PureComponent {
 			this.expiringDomainsCanManage,
 			this.unverifiedDomainsCanManage,
 			this.unverifiedDomainsCannotManage,
-			this.pendingGappsTosAcceptanceDomains,
+			this.pendingGSuiteTosAcceptanceDomains,
 			this.expiredDomainsCannotManage,
 			this.expiringDomainsCannotManage,
 			this.wrongNSMappedDomains,
@@ -120,7 +126,6 @@ export class DomainWarnings extends React.PureComponent {
 			this.pendingConsent,
 		];
 		const validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
-
 		return intersection( allRules, validRules );
 	}
 
@@ -172,17 +177,17 @@ export class DomainWarnings extends React.PureComponent {
 			const domain = wrongMappedDomains[ 0 ];
 			if ( isSubdomain( domain.name ) ) {
 				text = translate(
-					"{{strong}}%(domainName)s's{{/strong}} CNAME records should be configured.",
+					"{{strong}}%(domainName)s's{{/strong}} DNS records need to be configured.",
 					{
 						components: { strong: <strong /> },
 						args: { domainName: domain.name },
-						context: 'Notice for mapped subdomain that has CNAME records need to set up',
+						context: 'Notice for mapped subdomain that has DNS records need to set up',
 					}
 				);
 				learnMoreUrl = MAP_SUBDOMAIN;
 			} else {
 				text = translate(
-					"{{strong}}%(domainName)s's{{/strong}} name server records should be configured.",
+					"{{strong}}%(domainName)s's{{/strong}} name server records need to be configured.",
 					{
 						components: { strong: <strong /> },
 						args: { domainName: domain.name },
@@ -200,12 +205,12 @@ export class DomainWarnings extends React.PureComponent {
 				</ul>
 			);
 			if ( every( map( wrongMappedDomains, 'name' ), isSubdomain ) ) {
-				text = translate( "Some of your domains' CNAME records should be configured.", {
-					context: 'Notice for mapped subdomain that has CNAME records need to set up',
+				text = translate( "Some of your domains' DNS records need to be configured.", {
+					context: 'Notice for mapped subdomain that has DNS records need to set up',
 				} );
 				learnMoreUrl = MAP_SUBDOMAIN;
 			} else {
-				text = translate( "Some of your domains' name server records should be configured.", {
+				text = translate( "Some of your domains' name server records need to be configured.", {
 					context: 'Mapped domain notice with NS records pointing to somewhere else',
 				} );
 				learnMoreUrl = MAP_EXISTING_DOMAIN_UPDATE_DNS;
@@ -812,13 +817,13 @@ export class DomainWarnings extends React.PureComponent {
 		);
 	};
 
-	pendingGappsTosAcceptanceDomains = () => {
-		const pendingDomains = this.getDomains().filter( hasPendingGoogleAppsUsers );
+	pendingGSuiteTosAcceptanceDomains = () => {
+		const pendingDomains = this.getDomains().filter( hasPendingGSuiteUsers );
 		return (
 			pendingDomains.length !== 0 && (
-				<PendingGappsTosNotice
+				<PendingGSuiteTosNotice
 					isCompact={ this.props.isCompact }
-					key="pending-gapps-tos-notice"
+					key="pending-gsuite-tos-notice"
 					siteSlug={ this.props.selectedSite && this.props.selectedSite.slug }
 					domains={ pendingDomains }
 					section="domain-management"
@@ -829,7 +834,6 @@ export class DomainWarnings extends React.PureComponent {
 
 	pendingTransfer = () => {
 		const domain = find( this.getDomains(), 'pendingTransfer' );
-
 		if ( ! domain ) {
 			return null;
 		}
@@ -888,7 +892,7 @@ export class DomainWarnings extends React.PureComponent {
 		);
 
 		switch ( domainInTransfer.transferStatus ) {
-			case transferStatus.PENDING_OWNER:
+			case transferStatus.PENDING_OWNER: {
 				compactMessage = translate( 'Transfer confirmation required' );
 
 				const translateParams = {
@@ -913,6 +917,7 @@ export class DomainWarnings extends React.PureComponent {
 					);
 				}
 				break;
+			}
 			case transferStatus.PENDING_REGISTRY:
 				message = translate(
 					'The transfer of {{strong}}%(domain)s{{/strong}} is in progress. We are waiting ' +

@@ -1,13 +1,13 @@
 // Sparkline
 // Making things sparky
 .sparkline {
-  .sparkline__line {
-	fill: none;
-	stroke: $blue-wordpress;
-	stroke-width: 1;
-  }
+	.sparkline__line {
+		fill: none;
+		stroke: var( --color-primary );
+		stroke-width: 1;
+	}
 
-  .sparkline__highlight {
-	fill: $orange-jazzy;
-  }
+	.sparkline__highlight {
+		fill: var( --color-accent );
+	}
 }

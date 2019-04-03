@@ -14,7 +14,6 @@ import debugFactory from 'debug';
  */
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
-import EmergentPaywallBox from './emergent-paywall-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
 import CreditCardPaymentBox from './credit-card-payment-box';
@@ -38,7 +37,6 @@ import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-
 import getCountries from 'state/selectors/get-countries';
 import QueryPaymentCountries from 'components/data/query-countries/payments';
 import { INPUT_VALIDATION, REDIRECTING_FOR_AUTHORIZATION } from 'lib/store-transactions/step-types';
-import { recordOrder } from 'lib/analytics/ad-tracking';
 import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
@@ -242,7 +240,7 @@ export class SecurePaymentForm extends Component {
 					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
 					// zero-value cost and would thus lead to a wrong computation of conversions
 					if ( ! hasFreeTrial( cartValue ) ) {
-						recordOrder( cartValue, step.data.receipt_id );
+						analytics.recordPurchase( { cart: cartValue, orderId: step.data.receipt_id } );
 					}
 
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
@@ -352,26 +350,6 @@ export class SecurePaymentForm extends Component {
 				selectedSite={ this.props.selectedSite }
 				transactionStep={ this.props.transaction.step }
 			/>
-		);
-	}
-
-	renderEmergentPaywallBox() {
-		return (
-			<PaymentBox
-				classSet="emergent-payments-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod="emergent-paywall"
-				onSelectPaymentMethod={ this.selectPaymentBox }
-			>
-				<EmergentPaywallBox
-					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite }
-					transaction={ this.props.transaction }
-				>
-					{ this.props.children }
-				</EmergentPaywallBox>
-			</PaymentBox>
 		);
 	}
 
@@ -551,13 +529,6 @@ export class SecurePaymentForm extends Component {
 						{ this.renderPayPalPaymentBox() }
 					</div>
 				);
-			case 'emergent-paywall':
-				return (
-					<div>
-						{ this.renderGreatChoiceHeader() }
-						{ this.renderEmergentPaywallBox() }
-					</div>
-				);
 			case 'wechat':
 				return (
 					<div>
@@ -572,6 +543,7 @@ export class SecurePaymentForm extends Component {
 			case 'ideal':
 			case 'p24':
 			case 'brazil-tef':
+			case 'sofort':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }

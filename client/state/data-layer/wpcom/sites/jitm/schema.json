@@ -1,66 +1,66 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "properties": {
-    "data": {
-      "items": {
-        "properties": {
-          "CTA": {
-            "properties": {
-              "hook": {
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              },
-              "primary": {
-                "type": "boolean"
-              }
-            },
-            "type": "object"
-          },
-          "content": {
-            "properties": {
-              "classes": {
-                "type": "string"
-              },
-              "description": {
-                "type": "string"
-              },
-              "emblem": {
-                "type": "null"
-              },
-              "icon": {
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              }
-            },
-            "type": "object"
-          },
-          "feature_class": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
-          "jitm_stats_url": {
-            "type": "string"
-          },
-          "template": {
-            "type": "string"
-          },
-          "ttl": {
-            "type": "integer"
-          },
-          "url": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "type": "array"
-    }
-  },
-  "type": "object"
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"properties": {
+		"data": {
+			"items": {
+				"properties": {
+					"CTA": {
+						"properties": {
+							"hook": {
+								"type": "string"
+							},
+							"message": {
+								"type": "string"
+							},
+							"primary": {
+								"type": "boolean"
+							}
+						},
+						"type": "object"
+					},
+					"content": {
+						"properties": {
+							"classes": {
+								"type": "string"
+							},
+							"description": {
+								"type": "string"
+							},
+							"emblem": {
+								"type": "null"
+							},
+							"icon": {
+								"type": "string"
+							},
+							"message": {
+								"type": "string"
+							}
+						},
+						"type": "object"
+					},
+					"feature_class": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					},
+					"jitm_stats_url": {
+						"type": "string"
+					},
+					"template": {
+						"type": "string"
+					},
+					"ttl": {
+						"type": "integer"
+					},
+					"url": {
+						"type": "string"
+					}
+				},
+				"type": "object"
+			},
+			"type": "array"
+		}
+	},
+	"type": "object"
 }

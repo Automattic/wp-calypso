@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -29,6 +28,7 @@ import {
 	ERROR_MESSAGE_RESPONSE as errorMessageResponse,
 } from './fixture';
 import {
+	DOMAIN_PRIVACY_TOGGLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -93,6 +93,28 @@ describe( 'reducer', () => {
 			deepFreeze( action );
 
 			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
+		} );
+
+		test( 'should toggle privacy for given site and domain', () => {
+			const state = {
+				[ siteId ]: [ firstDomain ],
+			};
+			const action = {
+				type: DOMAIN_PRIVACY_TOGGLE,
+				siteId,
+				domain: firstDomain.domain,
+			};
+			const expectedDomain = Object.assign( {}, firstDomain, {
+				privateDomain: ! firstDomain.privateDomain,
+			} );
+			const expectedState = {
+				[ siteId ]: [ expectedDomain ],
+			};
+
+			deepFreeze( state );
+			deepFreeze( action );
+
+			expect( itemsReducer( state, action ) ).to.eql( expectedState );
 		} );
 
 		test( 'should accumulate domains for different sites', () => {

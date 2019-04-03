@@ -20,6 +20,7 @@ import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
 import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
 import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/is-survey-filled-in';
 import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/steps-for-product-and-survey';
@@ -33,6 +34,7 @@ import {
 	isRemovable,
 	isRefundable,
 	maybeWithinRefundPeriod,
+	purchaseType,
 } from 'lib/purchases';
 import { isDataLoading } from '../utils';
 import { isDomainRegistration, isGoogleApps, isJetpackPlan, isPlan } from 'lib/products-values';
@@ -166,7 +168,11 @@ class RemovePurchase extends Component {
 
 		const { isDomainOnlySite, purchase, site, translate } = this.props;
 
-		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
+		if (
+			! isDomainRegistration( purchase ) &&
+			! isGoogleApps( purchase ) &&
+			config.isEnabled( 'upgrades/removal-survey' )
+		) {
 			const survey = wpcom
 				.marketing()
 				.survey( 'calypso-remove-purchase', this.props.purchase.siteId );
@@ -296,27 +302,26 @@ class RemovePurchase extends Component {
 						{ args: { domain: productName } }
 					) }
 				</p>
-				{ ! isRefundable( purchase ) &&
-					maybeWithinRefundPeriod( purchase ) && (
-						<p>
-							<strong>
-								{ translate(
-									"We're not able to refund this purchase automatically. " +
-										"If you're canceling within %(refundPeriodInDays)s days of " +
-										'purchase, {{contactLink}}contact us{{/contactLink}} to ' +
-										'request a refund.',
-									{
-										args: {
-											refundPeriodInDays: purchase.refundPeriodInDays,
-										},
-										components: {
-											contactLink: <a href={ CALYPSO_CONTACT } />,
-										},
-									}
-								) }
-							</strong>
-						</p>
-					) }
+				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase ) && (
+					<p>
+						<strong>
+							{ translate(
+								"We're not able to refund this purchase automatically. " +
+									"If you're canceling within %(refundPeriodInDays)s days of " +
+									'purchase, {{contactLink}}contact us{{/contactLink}} to ' +
+									'request a refund.',
+								{
+									args: {
+										refundPeriodInDays: purchase.refundPeriodInDays,
+									},
+									components: {
+										contactLink: <a href={ CALYPSO_CONTACT } />,
+									},
+								}
+							) }
+						</strong>
+					</p>
+				) }
 			</Dialog>
 		);
 	}
@@ -407,7 +412,7 @@ class RemovePurchase extends Component {
 				<p>
 					{ translate( 'Are you sure you want to remove %(productName)s from {{siteName/}}?', {
 						args: { productName },
-						components: { siteName: <em>{ purchase.domain }</em> },
+						components: { siteName: <em>{ purchaseType( purchase ) }</em> },
 					} ) }{' '}
 					{ isGoogleApps( purchase )
 						? translate(
@@ -470,6 +475,17 @@ class RemovePurchase extends Component {
 
 		if ( isDomainRegistration( purchase ) ) {
 			return this.renderDomainDialog();
+		}
+
+		if ( isGoogleApps( purchase ) ) {
+			return (
+				<GSuiteCancellationPurchaseDialog
+					isVisible={ this.state.isDialogVisible }
+					onClose={ this.closeDialog }
+					purchase={ purchase }
+					site={ this.props.site }
+				/>
+			);
 		}
 
 		return this.renderPlanDialog();

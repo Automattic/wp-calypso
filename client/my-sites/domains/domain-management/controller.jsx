@@ -10,20 +10,16 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import DomainManagement from './domain-management';
+import DomainManagement from '.';
 import DomainManagementData from 'components/data/domain-management';
 import {
-	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementEmail,
-	domainManagementEmailForwarding,
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementPrimaryDomain,
-	domainManagementPrivacyProtection,
 	domainManagementRedirectSettings,
 	domainManagementTransfer,
 	domainManagementTransferIn,
@@ -33,6 +29,11 @@ import {
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
 } from 'my-sites/domains/paths';
+import {
+	emailManagement,
+	emailManagementAddGSuiteUsers,
+	emailManagementForwarding,
+} from 'my-sites/email/paths';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { decodeURIComponentIfValid } from 'lib/url';
@@ -102,7 +103,7 @@ export default {
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementContactsPrivacy( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts and Privacy"
+				analyticsTitle="Domain Management > Contacts"
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
 				needsDomains
@@ -146,39 +147,14 @@ export default {
 		next();
 	},
 
-	domainManagementEmail( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementEmail(
-					':site',
-					pageContext.params.domain ? ':domain' : undefined
-				) }
-				analyticsTitle="Domain Management > Email"
-				component={ DomainManagement.Email }
-				context={ pageContext }
-				needsCart
-				needsDomains
-				needsGoogleApps
-				needsPlans
-				needsProductsList
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
+	domainManagementEmailRedirect( pageContext ) {
+		page.redirect( emailManagement( pageContext.params.site, pageContext.params.domain ) );
 	},
 
-	domainManagementEmailForwarding( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementEmailForwarding( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Email Forwarding"
-				component={ DomainManagement.EmailForwarding }
-				context={ pageContext }
-				needsEmailForwarding
-				selectedDomainName={ pageContext.params.domain }
-			/>
+	domainManagementEmailForwardingRedirect( pageContext ) {
+		page.redirect(
+			emailManagementForwarding( pageContext.params.site, pageContext.params.domain )
 		);
-		next();
 	},
 
 	domainManagementDns( pageContext, next ) {
@@ -225,40 +201,10 @@ export default {
 		next();
 	},
 
-	domainManagementPrivacyProtection( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementPrivacyProtection( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts and Privacy > Privacy Protection"
-				component={ DomainManagement.PrivacyProtection }
-				context={ pageContext }
-				needsDomains
-				needsWhois
-				selectedDomainName={ pageContext.params.domain }
-			/>
+	domainManagementAddGSuiteUsersRedirect( pageContext ) {
+		page.redirect(
+			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
 		);
-		next();
-	},
-
-	domainManagementAddGoogleApps( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementAddGoogleApps(
-					':site',
-					pageContext.params.domain ? ':domain' : undefined
-				) }
-				analyticsTitle="Domain Management > Add Google Apps"
-				component={ DomainManagement.AddGoogleApps }
-				context={ pageContext }
-				needsCart
-				needsContactDetails
-				needsDomains
-				needsPlans
-				needsProductsList
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
 	},
 
 	domainManagementRedirectSettings( pageContext, next ) {

@@ -39,6 +39,11 @@ import { showQandAOnInlineHelpContactForm } from 'state/inline-help/actions';
 import { generateSubjectFromMessage } from './utils';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const wpcom = wpcomLib.undocumented();
@@ -431,12 +436,11 @@ export class HelpContactForm extends React.PureComponent {
 					/>
 				) }
 
-				{ ! showQASuggestions &&
-					hasQASuggestions && (
-						<FormButton type="button" onClick={ this.props.showQandAOnInlineHelpContactForm }>
-							{ translate( 'Continue' ) }
-						</FormButton>
-					) }
+				{ ! showQASuggestions && hasQASuggestions && (
+					<FormButton type="button" onClick={ this.props.showQandAOnInlineHelpContactForm }>
+						{ translate( 'Continue' ) }
+					</FormButton>
+				) }
 
 				{ ( showQASuggestions || ! hasQASuggestions ) && (
 					<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
@@ -444,16 +448,15 @@ export class HelpContactForm extends React.PureComponent {
 					</FormButton>
 				) }
 
-				{ additionalSupportOption &&
-					additionalSupportOption.enabled && (
-						<FormButton
-							disabled={ ! this.canSubmitForm() }
-							type="button"
-							onClick={ this.submitAdditionalForm }
-						>
-							{ additionalSupportOption.label }
-						</FormButton>
-					) }
+				{ additionalSupportOption && additionalSupportOption.enabled && (
+					<FormButton
+						disabled={ ! this.canSubmitForm() }
+						type="button"
+						onClick={ this.submitAdditionalForm }
+					>
+						{ additionalSupportOption.label }
+					</FormButton>
+				) }
 			</div>
 		);
 	}

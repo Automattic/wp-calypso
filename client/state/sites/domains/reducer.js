@@ -1,10 +1,14 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { find, indexOf } from 'lodash';
 
 /**
  * Internal dependencies
  */
-
 import {
+	DOMAIN_PRIVACY_TOGGLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -26,6 +30,24 @@ export const items = ( state = {}, action ) => {
 		case SITE_DOMAINS_RECEIVE:
 			return Object.assign( {}, state, {
 				[ siteId ]: action.domains,
+			} );
+		case DOMAIN_PRIVACY_TOGGLE:
+			// Find the domain we want to update
+			const targetDomain = find( state[ siteId ], { domain: action.domain } );
+			const domainIndex = indexOf( state[ siteId ], targetDomain );
+			// Copy as we shouldn't mutate original state
+			const newDomains = [ ...state[ siteId ] ];
+			// Update privacy
+			newDomains.splice(
+				domainIndex,
+				1,
+				Object.assign( {}, targetDomain, {
+					privateDomain: ! targetDomain.privateDomain,
+				} )
+			);
+
+			return Object.assign( {}, state, {
+				[ siteId ]: newDomains,
 			} );
 	}
 
@@ -79,7 +101,7 @@ export const errors = ( state = {}, action ) => {
 };
 
 export default combineReducers( {
+	errors,
 	items,
 	requesting,
-	errors,
 } );

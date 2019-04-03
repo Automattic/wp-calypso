@@ -22,8 +22,8 @@
 	position: relative;
 
 	&::before {
-		color: $gray-lighten-10;
-		content: " • ";
+		color: var( --color-neutral-200 );
+		content: ' • ';
 		position: absolute;
 			left: 0;
 	}

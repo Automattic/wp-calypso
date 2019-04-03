@@ -132,7 +132,7 @@ class RequestLoginEmailForm extends React.Component {
 				: translate( 'Unable to complete request' );
 
 		return (
-			<div>
+			<div className="magic-login__form">
 				<h1 className="magic-login__form-header">{ translate( 'Email me a login link.' ) }</h1>
 				{ requestError && (
 					<Notice
@@ -144,16 +144,15 @@ class RequestLoginEmailForm extends React.Component {
 						status="is-error"
 					/>
 				) }
-				{ currentUser &&
-					currentUser.username && (
-						<p>
-							{ translate( 'NOTE: You are already logged in as user: %(user)s', {
-								args: {
-									user: currentUser.username,
-								},
-							} ) }
-						</p>
-					) }
+				{ currentUser && currentUser.username && (
+					<p>
+						{ translate( 'NOTE: You are already logged in as user: %(user)s', {
+							args: {
+								user: currentUser.username,
+							},
+						} ) }
+					</p>
+				) }
 				<LoggedOutForm onSubmit={ this.onSubmit }>
 					<p>
 						{ translate(

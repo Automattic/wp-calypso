@@ -73,11 +73,35 @@ export const remoteValuesSchema = {
 		},
 		colorScheme: {
 			type: 'string',
-			enum: [ 'default', 'light', 'dark', 'classic-blue', 'classic-bright', 'laser-black' ],
+			enum: [
+				'default',
+				'light',
+				'dark',
+				'classic-blue',
+				'classic-bright',
+				'laser-black',
+				'powder-snow',
+				'nightfall',
+				'sakura',
+			],
 		},
 		'store-dashboardStatsWidgetUnit': {
 			type: 'string',
 			enum: [ 'day', 'week', 'month' ],
+		},
+		'upwork-dismissible-banner': {
+			type: 'object',
+			'^[a-z-]+$': {
+				type: 'array',
+				items: {
+					type: 'object',
+					properties: {
+						dismissedAt: { type: 'number', minimum: 0 },
+						type: { type: 'string', enum: [ 'dismiss' ] },
+					},
+					required: [ 'dismissedAt', 'type' ],
+				},
+			},
 		},
 	},
 };

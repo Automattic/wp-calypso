@@ -4,7 +4,7 @@
  * External dependencies
  */
 import page from 'page';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
@@ -13,7 +13,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
+
 import DocumentHead from 'components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
@@ -26,20 +26,19 @@ import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import StatsBanners from './stats-banners';
 import StatsFirstView from './stats-first-view';
 import StickyPanel from 'components/sticky-panel';
 import JetpackColophon from 'components/jetpack-colophon';
 import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import { getSiteOption, isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
-import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
-import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
-import UpworkStatsNudge from 'blocks/upwork-stats-nudge';
-import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
+
+import memoizeLast from 'lib/memoize-last';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -47,6 +46,11 @@ function updateQueryString( query = {} ) {
 		...query,
 	};
 }
+
+const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
+	period,
+	date: endOf.format( 'YYYY-MM-DD' ),
+} ) );
 
 const CHARTS = [
 	{
@@ -121,25 +125,6 @@ class StatsSite extends Component {
 		}
 	};
 
-	displayBanner() {
-		const { isGoogleMyBusinessStatsNudgeVisible, siteId, slug } = this.props;
-		return (
-			<Fragment>
-				{ config.isEnabled( 'google-my-business' ) &&
-					abtest( 'builderReferralStatsNudge' ) === 'googleMyBusinessBanner' &&
-					siteId && (
-						<GoogleMyBusinessStatsNudge
-							siteSlug={ slug }
-							siteId={ siteId }
-							visible={ isGoogleMyBusinessStatsNudgeVisible }
-						/>
-					) }
-				{ abtest( 'builderReferralStatsNudge' ) === 'builderReferralBanner' &&
-					siteId && <UpworkStatsNudge siteSlug={ slug } siteId={ siteId } /> }
-			</Fragment>
-		);
-	}
-
 	render() {
 		const { date, hasPodcasts, isJetpack, siteId, slug } = this.props;
 
@@ -149,10 +134,7 @@ class StatsSite extends Component {
 		let videoList;
 		let podcastList;
 
-		const query = {
-			period,
-			date: endOf.format( 'YYYY-MM-DD' ),
-		};
+		const query = memoizedQuery( period, endOf );
 
 		// Video plays, and tags and categories are not supported in JetPack Stats
 		if ( ! isJetpack ) {
@@ -199,8 +181,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					{ config.isEnabled( 'onboarding-checklist' ) && <WpcomChecklist viewMode="banner" /> }
-					{ this.displayBanner() }
+					<StatsBanners siteId={ siteId } slug={ slug } />
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }
@@ -305,12 +286,9 @@ export default connect(
 				!! getSiteOption( state, siteId, 'podcasting_archive' ) ||
 				// Podcasting category ID
 				!! getSiteOption( state, siteId, 'podcasting_category_id' ),
-			isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
-				state,
-				siteId
-			),
 			siteId,
 			slug: getSelectedSiteSlug( state ),
+			planSlug: getSitePlanSlug( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent }

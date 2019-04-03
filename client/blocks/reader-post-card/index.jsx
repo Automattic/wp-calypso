@@ -33,6 +33,11 @@ import DiscoverFollowButton from 'reader/discover/follow-button';
 import { expandCard as expandCardAction } from 'state/ui/reader/card-expansions/actions';
 import isReaderCardExpanded from 'state/selectors/is-reader-card-expanded';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderPostCard extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
@@ -242,8 +247,9 @@ class ReaderPostCard extends React.Component {
 					site={ site }
 					postKey={ postKey }
 				>
-					{ isDailyPostChallengeOrPrompt( post ) &&
-						site && <DailyPostButton post={ post } site={ site } /> }
+					{ isDailyPostChallengeOrPrompt( post ) && site && (
+						<DailyPostButton post={ post } site={ site } />
+					) }
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>
@@ -255,14 +261,13 @@ class ReaderPostCard extends React.Component {
 		return (
 			<Card className={ classes } onClick={ onClick }>
 				{ ! compact && postByline }
-				{ showPrimaryFollowButton &&
-					followUrl && (
-						<FollowButton
-							siteUrl={ followUrl }
-							followSource={ followSource }
-							railcar={ post.railcar }
-						/>
-					) }
+				{ showPrimaryFollowButton && followUrl && (
+					<FollowButton
+						siteUrl={ followUrl }
+						followSource={ followSource }
+						railcar={ post.railcar }
+					/>
+				) }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>

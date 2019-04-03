@@ -53,9 +53,9 @@
 }
 
 .nps-survey__recommendation-select-wrapper {
-	background-color: $gray-light;
-	border-top: 1px solid $gray-lighten-20;
-	border-bottom: 1px solid $gray-lighten-20;
+	background-color: var( --color-neutral-0 );
+	border-top: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-100 );
 	padding: 16px 0;
 	text-align: center;
 
@@ -93,7 +93,7 @@
 }
 
 .nps-survey__recommendation-option.is-selected {
-	color: darken( $blue-medium, 8% );
+	color: var( --color-primary-400 );
 	font-weight: bold;
 }
 
@@ -113,5 +113,5 @@
 	top: 0;
 }
 .nps-survey__close-button.button.is-borderless {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 }

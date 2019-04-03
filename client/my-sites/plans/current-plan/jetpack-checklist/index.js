@@ -53,7 +53,10 @@ class JetpackChecklist extends PureComponent {
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				<Checklist isPlaceholder={ ! taskStatuses }>
+				<Checklist
+					isPlaceholder={ ! taskStatuses }
+					progressText={ translate( 'Your Jetpack setup progress' ) }
+				>
 					<Task
 						completed
 						title={ translate(

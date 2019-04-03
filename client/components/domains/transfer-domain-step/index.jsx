@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import { endsWith, get, isEmpty, noop } from 'lodash';
 import page from 'page';
 import { stringify } from 'qs';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -20,6 +21,7 @@ import {
 	checkInboundTransferStatus,
 	getDomainPrice,
 	getDomainProductSlug,
+	getDomainTransferSalePrice,
 	getFixedDomainSearch,
 	getTld,
 	startInboundTransfer,
@@ -145,7 +147,7 @@ class TransferDomainStep extends React.Component {
 		page( this.getMapDomainUrl() );
 	};
 
-	getProductPriceText = () => {
+	renderPriceText = () => {
 		const {
 			cart,
 			currencyCode,
@@ -157,49 +159,71 @@ class TransferDomainStep extends React.Component {
 		} = this.props;
 		const { searchQuery } = this.state;
 		const productSlug = getDomainProductSlug( searchQuery );
+		const isFreewithPlan =
+			isNextDomainFree( cart, searchQuery ) || isDomainBundledWithPlan( cart, searchQuery );
 		const domainsWithPlansOnlyButNoPlan =
 			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
 
-		let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
+		const domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
+		const domainProductSalePrice = getDomainTransferSalePrice(
+			productSlug,
+			productsList,
+			currencyCode
+		);
 
-		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
-			domainProductPrice = translate( 'Free with your plan' );
+		let domainProductPriceCost = translate( '%(cost)s {{small}}/year{{/small}}', {
+			args: { cost: domainProductPrice },
+			components: { small: <small /> },
+		} );
+		if ( isFreewithPlan || domainsWithPlansOnlyButNoPlan || domainProductSalePrice ) {
+			domainProductPriceCost = translate(
+				'Renews in one year at: %(cost)s {{small}}/year{{/small}}',
+				{
+					args: { cost: domainProductPrice },
+					components: { small: <small /> },
+				}
+			);
+		}
+
+		let domainProductPriceText;
+		if ( isFreewithPlan ) {
+			domainProductPriceText = translate(
+				'Adds one year of domain registration for free with your plan'
+			);
 		} else if ( domainsWithPlansOnlyButNoPlan ) {
-			domainProductPrice = translate( 'Included in paid plans' );
+			domainProductPriceText = translate(
+				'One additional year of domain registration included in paid plans'
+			);
+		} else if ( domainProductSalePrice ) {
+			domainProductPriceText = translate( 'Sale price is %(cost)s', {
+				args: { cost: domainProductSalePrice },
+			} );
 		}
 
 		if ( ! currencyCode ) {
 			return null;
 		}
 
-		return domainProductPrice;
-	};
-
-	getProductPriceClass = () => {
-		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite } = this.props;
-		const { searchQuery } = this.state;
-		const domainsWithPlansOnlyButNoPlan =
-			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
-
-		let domainProductClass = 'transfer-domain-step__price';
-
-		if (
-			isNextDomainFree( cart ) ||
-			isDomainBundledWithPlan( cart, searchQuery ) ||
-			domainsWithPlansOnlyButNoPlan
-		) {
-			domainProductClass += ' transfer-domain-step__free-with-plan';
-		}
-
-		return domainProductClass;
+		return (
+			<div
+				className={ classnames( 'transfer-domain-step__price', {
+					'is-free-with-plan': isFreewithPlan || domainsWithPlansOnlyButNoPlan,
+					'is-sale-price':
+						domainProductSalePrice && ! ( isFreewithPlan || domainsWithPlansOnlyButNoPlan ),
+				} ) }
+			>
+				<div className="transfer-domain-step__price-text">{ domainProductPriceText }</div>
+				{ domainProductPrice && (
+					<div className="transfer-domain-step__price-cost">{ domainProductPriceCost }</div>
+				) }
+			</div>
+		);
 	};
 
 	addTransfer() {
-		const { translate } = this.props;
+		const { cart, selectedSite, translate } = this.props;
 		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
-		const domainProductPrice = this.getProductPriceText();
-		const domainProductClass = this.getProductPriceClass();
 
 		return (
 			<div>
@@ -211,12 +235,13 @@ class TransferDomainStep extends React.Component {
 						<div className="transfer-domain-step__domain-heading">
 							{ translate( 'Manage your domain and site together on WordPress.com.' ) }
 						</div>
+						{ this.renderPriceText() }
 					</div>
-
-					<div className={ domainProductClass }>{ domainProductPrice }</div>
 
 					<div className="transfer-domain-step__add-domain" role="group">
 						<FormTextInputWithAffixes
+							// eslint-disable-next-line jsx-a11y/no-autofocus
+							autoFocus={ true }
 							prefix="http://"
 							type="text"
 							value={ searchQuery }
@@ -226,7 +251,11 @@ class TransferDomainStep extends React.Component {
 							onFocus={ this.recordInputFocus }
 						/>
 						<Button
-							disabled={ ! getTld( searchQuery ) || submitting }
+							disabled={
+								! getTld( searchQuery ) ||
+								hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery ) ||
+								submitting
+							}
 							busy={ submitting }
 							className="transfer-domain-step__go button is-primary"
 							onClick={ this.handleFormSubmit }
@@ -356,7 +385,7 @@ class TransferDomainStep extends React.Component {
 
 	render() {
 		let content;
-		const { precheck } = this.state;
+		const { precheck, searchQuery } = this.state;
 		const { isSignupStep, translate, cart, selectedSite } = this.props;
 		const transferIsRestricted = this.transferIsRestricted();
 
@@ -364,16 +393,23 @@ class TransferDomainStep extends React.Component {
 			content = this.getTransferRestrictionMessage();
 		} else if ( precheck && ! isSignupStep ) {
 			content = this.getTransferDomainPrecheck();
-		} else if ( hasToUpgradeToPayForADomain( selectedSite, cart ) ) {
-			content = (
-				<Banner
-					description={ translate( 'To transfer your own domain, upgrade to a personal plan.' ) }
-					plan={ PLAN_PERSONAL }
-					title={ translate( 'Personal plan required' ) }
-				/>
-			);
 		} else {
 			content = this.addTransfer();
+		}
+
+		if ( hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery ) ) {
+			content = (
+				<div>
+					<Banner
+						description={ translate(
+							'Only .blog domains are included with your plan, to use a different tld upgrade to a Personal plan.'
+						) }
+						plan={ PLAN_PERSONAL }
+						title={ translate( 'Personal plan required' ) }
+					/>
+					{ content }
+				</div>
+			);
 		}
 
 		const header = ! isSignupStep && (

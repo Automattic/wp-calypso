@@ -18,7 +18,7 @@ import {
 	getCreditCardFieldRules,
 	mergeValidationRules,
 } from '../validation';
-import * as ebanxMethods from '../ebanx';
+import * as processorSpecificMethods from '../processor-specific';
 
 describe( 'validation', () => {
 	const validCard = {
@@ -90,18 +90,18 @@ describe( 'validation', () => {
 
 				expect( result ).toEqual( {
 					errors: {
-						name: [ 'Missing required Name on Card field' ],
+						name: [ 'Missing required Cardholder Name field' ],
 					},
 				} );
 			} );
 
-			test( 'should return error when Name on Card is missing', () => {
+			test( 'should return error when Cardholder Name is missing', () => {
 				const invalidCardHolderName = { ...validCard, name: '' };
 				const result = validatePaymentDetails( invalidCardHolderName );
 
 				expect( result ).toEqual( {
 					errors: {
-						name: [ 'Missing required Name on Card field' ],
+						name: [ 'Missing required Cardholder Name field' ],
 					},
 				} );
 			} );
@@ -171,10 +171,10 @@ describe( 'validation', () => {
 
 		describe( 'validate ebanx non-credit card details', () => {
 			beforeAll( () => {
-				ebanxMethods.isEbanxCreditCardProcessingEnabledForCountry = jest
+				processorSpecificMethods.isEbanxCreditCardProcessingEnabledForCountry = jest
 					.fn()
 					.mockImplementation( () => true );
-				ebanxMethods.isValidCPF = jest.fn().mockImplementation( () => true );
+				processorSpecificMethods.isValidCPF = jest.fn().mockImplementation( () => true );
 			} );
 
 			test( 'should return no errors when details are valid', () => {
@@ -250,13 +250,13 @@ describe( 'validation', () => {
 			} );
 
 			test( 'should return error when CPF is invalid', () => {
-				ebanxMethods.isValidCPF = jest.fn().mockImplementation( () => false );
+				processorSpecificMethods.isValidCPF = jest.fn().mockImplementation( () => false );
 				const invalidCPF = { ...validBrazilianEbanxCard, document: 'blah' };
 				const result = validatePaymentDetails( invalidCPF );
 				expect( result ).toEqual( {
 					errors: {
 						document: [
-							'Taxpayer Identification Number is invalid. Must be in format: 111.444.777-XX',
+							'Taxpayer Identification Number is invalid. Must be in format: 111.444.777-XX or 11.444.777/0001-XX',
 						],
 					},
 				} );

@@ -9,14 +9,19 @@ import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_SITE_INFORMATION_SET } from 'state/
 import { createReducer } from 'state/utils';
 import { siteInformationSchema } from './schema';
 
+const initialState = {
+	address: '',
+	phone: '',
+	title: '',
+};
+
 export default createReducer(
-	{},
+	initialState,
 	{
-		[ SIGNUP_STEPS_SITE_INFORMATION_SET ]: ( state, { address, email, phone } ) => {
+		[ SIGNUP_STEPS_SITE_INFORMATION_SET ]: ( state, { data } ) => {
 			return {
-				address,
-				email,
-				phone,
+				...state,
+				...data,
 			};
 		},
 		[ SIGNUP_COMPLETE_RESET ]: () => {

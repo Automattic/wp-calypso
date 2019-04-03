@@ -14,6 +14,11 @@ import { localize } from 'i18n-calypso';
 import { fillGap } from 'state/reader/streams/actions';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Gap extends React.Component {
 	static propTypes = {
 		gap: PropTypes.object.isRequired,

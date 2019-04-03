@@ -23,7 +23,7 @@
 
 	.plugin-action__label {
 		@include breakpoint( '<480px' ) {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 	}
 }
@@ -54,7 +54,7 @@
 	cursor: pointer;
 
 	.is-disabled & {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		cursor: default;
 	}
 

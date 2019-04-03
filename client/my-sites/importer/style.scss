@@ -14,13 +14,13 @@
 	font-size: 21px;
 	font-weight: 300;
 	line-height: 24px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	margin-bottom: 16px;
 }
 
 .site-settings__importer-section-description {
 	font-size: 14px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .importer__service-icon {
@@ -31,12 +31,12 @@
 	padding: 2px;
 	margin-right: 16px;
 
-	background-color: $gray-dark;
-	fill: $white;
+	background-color: var( --color-neutral-700 );
+	fill: var( --color-white );
 	border-radius: 4px;
 
 	&.wordpress {
-		background-color: var( --color-primary );
+		background-color: var( --color-wpcom );
 	}
 
 	&.medium {
@@ -50,6 +50,7 @@
 	&.site-importer {
 		background-color: #faad4d;
 	}
+
 	&.squarespace {
 		background-color: #222;
 	}
@@ -59,6 +60,16 @@
 		height: 56px;
 		padding: 4px;
 	}
+}
+
+.importer-action-buttons__container {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 16px;
+}
+
+.importer-action-buttons__action-button {
+	margin-left: 10px;
 }
 
 .importer-header__service-info {
@@ -72,7 +83,7 @@
 .importer-header__service-title {
 	font-size: 21px;
 	font-weight: 300;
-	color: $gray;
+	color: var( --color-text-subtle );
 
 	@include breakpoint( '>480px' ) {
 		clear: none;
@@ -89,11 +100,11 @@
 	height: 150px;
 	margin-bottom: 24px;
 
-	border: 5px solid $gray-lighten-30;
-	fill: $gray-lighten-10;
+	border: 5px solid var( --color-neutral-0 );
+	fill: var( --color-neutral-200 );
 	font-size: 14px;
 	font-weight: 600;
-	color: $gray;
+	color: var( --color-neutral-light );
 	text-align: center;
 
 	input {
@@ -101,7 +112,7 @@
 	}
 
 	.accessible-focus &:focus {
-		border-color: $gray-lighten-10;
+		border-color: var( --color-neutral-200 );
 	}
 }
 
@@ -116,7 +127,9 @@
 
 .importer__upload-progress,
 .importer__import-progress {
-	width: 80%;
+	&.progress-bar {
+		width: 80%;
+	}
 
 	.progress-bar__progress {
 		background-color: var( --color-accent );
@@ -143,20 +156,16 @@
 
 .importer__status-message {
 	font-style: italic;
-	color: $gray;
-}
-
-.importer__mapping-pane {
-	margin-bottom: 58px;
+	color: var( --color-neutral-light );
 }
 
 .importer__mapping-header {
-	border-bottom: 1px solid $gray;
+	border-bottom: 1px solid var( --color-neutral-light );
 	margin-bottom: 16px;
 	padding-bottom: 8px;
 
 	font-size: 11px;
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	@include clear-fix;
 }
@@ -200,7 +209,7 @@
 	padding-top: 7px;
 	float: left;
 	display: inline-block;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	text-align: left;
 	font-size: 14px;
@@ -209,7 +218,7 @@
 
 .importer__mapping-relation {
 	float: left;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 }
 
 .site-importer__site-importer-pane {
@@ -288,6 +297,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
+	margin-bottom: 24px;
 
 	.site-importer__site-preview-column-container {
 		display: flex;

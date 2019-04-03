@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { defer, keys, snakeCase } from 'lodash';
+import { defer, includes, keys, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,17 +25,37 @@ const SignupActions = {
 	},
 
 	submitSignupStep( step, errors, providedDependencies ) {
+		const { stepName } = step;
+
 		// Transform the keys since tracks events only accept snaked prop names.
 		const inputs = keys( providedDependencies ).reduce( ( props, name ) => {
-			const propName = snakeCase( name );
+			let propName = snakeCase( name );
+			let propValue = providedDependencies[ name ];
+
+			if ( stepName === 'from-url' && propName === 'site_preview_image_blob' ) {
+				/**
+				 * There's no need to include a resource ID in our event.
+				 * Just record that a preview was fetched
+				 * @see the `sitePreviewImageBlob` dependency
+				 */
+				propName = 'site_preview_image_fetched';
+				propValue = !! propValue;
+			}
+
+			// Ensure we don't capture identifiable user data we don't need.
+			if ( includes( [ 'email', 'address', 'phone' ], propName ) ) {
+				propName = `user_entered_${ propName }`;
+				propValue = !! propValue;
+			}
+
 			return {
 				...props,
-				[ propName ]: providedDependencies[ name ],
+				[ propName ]: propValue,
 			};
 		}, {} );
 
 		analytics.tracks.recordEvent( 'calypso_signup_actions_submit_step', {
-			step: step.stepName,
+			step: stepName,
 			...inputs,
 		} );
 

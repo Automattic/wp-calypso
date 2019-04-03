@@ -45,8 +45,8 @@
 }
 
 .reader-full-post__visit-site-container {
-	background: $white;
-	border-bottom: 1px solid $gray-light;
+	background: var( --color-white );
+	border-bottom: 1px solid var( --color-neutral-0 );
 	font-size: 11px;
 	font-weight: 500;
 	height: 46px;
@@ -68,7 +68,7 @@
 	}
 
 	.external-link .gridicons-external {
-		fill: $gray-darken-10;
+		fill: var( --color-neutral-400 );
 		top: 5px;
 
 		@include breakpoint( '>660px' ) {
@@ -77,12 +77,12 @@
 	}
 
 	.external-link {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		display: block;
 		padding: 10px 10px 15px 6px;
 
 		@include breakpoint( '>660px' ) {
-			padding: 10px 20px 15px 20px;
+			padding: 10px 20px 15px;
 		}
 
 		&:hover {
@@ -139,7 +139,7 @@
 }
 
 .reader-full-post__story-content {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 17px;
 	line-height: 28px;
 }
@@ -302,7 +302,7 @@
 
 	a.reader-author-link,
 	a.author-compact-profile__site-link {
-		color: var( --color-accent );
+		color: var( --color-primary );
 
 		&:hover {
 			color: var( --color-primary-light );
@@ -332,7 +332,7 @@
 		align-items: flex-start;
 		background: white;
 		display: flex;
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		flex-direction: row;
 		height: 47px;
 		justify-content: flex-end;
@@ -414,7 +414,7 @@
 
 .reader-full-post__header-title {
 	clear: none;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -444,7 +444,7 @@
 
 	.reader-full-post__header-title-link,
 	.reader-full-post__header-title-link:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 
@@ -469,7 +469,7 @@
 
 .reader-full-post__header-date-link,
 .reader-full-post__header-date-link:visited {
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	&:hover {
 		color: var( --color-primary-light );
@@ -482,7 +482,7 @@
 	width: calc( 100% - 120px );
 
 	.gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-light );
 		margin-right: 5px;
 		position: relative;
 		top: 4px;
@@ -494,7 +494,7 @@
 }
 
 .reader-full-post__header-tag-list {
-	color: $gray;
+	color: var( --color-neutral-light );
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -508,7 +508,7 @@
 }
 
 .reader-full-post__header-tag-list-item {
-	color: $gray;
+	color: var( --color-neutral-light );
 	display: inline;
 	margin-right: 5px;
 
@@ -527,7 +527,7 @@
 
 .reader-full-post__header-tag-list-item-link,
 .reader-full-post__header-tag-list-item-link:visited {
-	color: $gray;
+	color: var( --color-neutral-light );
 
 	&:hover {
 		color: var( --color-primary-light );

@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -27,7 +28,6 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
-import { getCurrencyObject } from 'lib/format-currency';
 import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
 import { hasFeature } from 'state/sites/plans/selectors';
 import redirectIf from './redirect-if';

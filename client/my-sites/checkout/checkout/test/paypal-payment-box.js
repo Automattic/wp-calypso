@@ -43,6 +43,7 @@ jest.mock( 'lib/cart-values', () => ( {
 		hasRenewableSubscription: jest.fn( false ),
 		hasRenewalItem: jest.fn( false ),
 	},
+	getTaxPostalCode: () => '12345',
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -71,8 +72,8 @@ describe( 'PaypalPaymentBox', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		const wrapper = shallow( <PaypalPaymentBox { ...defaultProps } /> );
 		expect( wrapper.find( '.checkout__payment-box-sections' ) ).toHaveLength( 1 );
-		expect( wrapper.find( '.payment-box-actions' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'TermsOfService' ) ).toHaveLength( 1 );
+		expect( wrapper.find( '.checkout__payment-box-actions' ) ).toHaveLength( 1 );
+		expect( wrapper.find( 'CheckoutTerms' ) ).toHaveLength( 1 );
 	} );
 
 	const eligiblePlans = [

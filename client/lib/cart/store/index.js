@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { assign, flow, flowRight, get, partialRight } from 'lodash';
+import { assign, flow, flowRight, get, has, partialRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -104,7 +104,7 @@ function update( changeFunction ) {
 	const previousCart = CartStore.get();
 	const nextCart = wrappedFunction( previousCart );
 
-	_synchronizer.update( wrappedFunction );
+	_synchronizer && _synchronizer.update( wrappedFunction );
 	recordEvents( previousCart, nextCart );
 }
 
@@ -179,10 +179,10 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
 			{
 				// typically set one or the other (or neither)
-				const countryCode = get( action, 'rawDetails.country' );
-				const postalCode = get( action, 'rawDetails.postal-code' );
-				postalCode && update( setTaxPostalCode( postalCode ) );
-				countryCode && update( setTaxCountryCode( countryCode ) );
+				const { rawDetails } = action;
+				has( rawDetails, 'country' ) && update( setTaxCountryCode( get( rawDetails, 'country' ) ) );
+				has( rawDetails, 'postal-code' ) &&
+					update( setTaxPostalCode( get( rawDetails, 'postal-code' ) ) );
 			}
 			break;
 
@@ -196,11 +196,12 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 						postalCode = extractStoredCardMetaValue( action, 'card_zip' );
 						countryCode = extractStoredCardMetaValue( action, 'country_code' );
 						break;
-					case 'WPCOM_Billing_MoneyPress_Paygate':
+					case 'WPCOM_Billing_MoneyPress_Paygate': {
 						const paymentDetails = get( action, 'payment.newCardDetails', {} );
 						postalCode = paymentDetails[ 'postal-code' ];
 						countryCode = paymentDetails.country;
 						break;
+					}
 					case 'WPCOM_Billing_WPCOM':
 						postalCode = null;
 						countryCode = null;

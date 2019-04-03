@@ -30,6 +30,11 @@ import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-b
 import { getCurrentUserId } from 'state/current-user/selectors';
 
 /**
+ * Style dependencies
+ */
+import './post-comment-list.scss';
+
+/**
  * PostCommentList displays a list of comments for a post.
  * It has the capability of either starting from the latest comment for a post,
  * or it may begin from any commentId within the post by specifying a commentId.
@@ -361,7 +366,7 @@ class PostCommentList extends React.Component {
 			haveLaterCommentsToFetch,
 		} = this.props.commentsFetchingStatus;
 
-		const amountOfCommentsToTake = !! this.props.startingCommentId
+		const amountOfCommentsToTake = this.props.startingCommentId
 			? Infinity
 			: this.state.amountOfCommentsToTake;
 
@@ -449,17 +454,16 @@ class PostCommentList extends React.Component {
 					</SegmentedControl>
 				) }
 				{ this.renderCommentsList( displayedComments ) }
-				{ showViewMoreComments &&
-					this.props.startingCommentId && (
-						<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
-							{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
-								args: {
-									shown: displayedCommentsCount,
-									total: actualCommentsCount,
-								},
-							} ) }
-						</button>
-					) }
+				{ showViewMoreComments && this.props.startingCommentId && (
+					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
+						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
+							args: {
+								shown: displayedCommentsCount,
+								total: actualCommentsCount,
+							},
+						} ) }
+					</button>
+				) }
 				<PostCommentFormRoot
 					post={ this.props.post }
 					commentsTree={ this.props.commentsTree }

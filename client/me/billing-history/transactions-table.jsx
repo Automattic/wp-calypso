@@ -18,7 +18,7 @@ import { capitalPDangit } from 'lib/formatting';
 import CompactCard from 'components/card/compact';
 import Pagination from 'components/pagination';
 import TransactionsHeader from './transactions-header';
-import { groupDomainProducts } from './utils';
+import { groupDomainProducts, renderTransactionAmount } from './utils';
 import SearchCard from 'components/search-card';
 import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
@@ -139,7 +139,7 @@ class TransactionsTable extends React.Component {
 	};
 
 	renderRows = () => {
-		const { transactions, date, app, query } = this.props;
+		const { transactions, date, app, query, transactionType, translate } = this.props;
 		if ( ! transactions ) {
 			return this.renderPlaceholder();
 		}
@@ -176,7 +176,12 @@ class TransactionsTable extends React.Component {
 							</div>
 						</div>
 					</td>
-					<td className="billing-history__amount">{ transaction.amount }</td>
+					<td className="billing-history__amount">
+						{ renderTransactionAmount( transaction, {
+							addingTax: transactionType === 'upcoming',
+							translate,
+						} ) }
+					</td>
 				</tr>
 			);
 		}, this );

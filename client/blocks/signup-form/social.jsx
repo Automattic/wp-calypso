@@ -13,17 +13,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import config from 'config';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
+		compact: PropTypes.bool,
 		handleResponse: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
+	};
+
+	static defaultProps = {
+		compact: false,
 	};
 
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
@@ -56,12 +60,14 @@ class SocialSignupForm extends Component {
 		const redirectUri = uxMode === 'redirect' ? `https://${ window.location.host }/start` : null;
 
 		return (
-			<Card className="signup-form__social">
-				<p>
-					{ preventWidows(
-						this.props.translate( 'Or connect your existing profile to get started faster.' )
-					) }
-				</p>
+			<div className="signup-form__social">
+				{ ! this.props.compact && (
+					<p>
+						{ preventWidows(
+							this.props.translate( 'Or connect your existing profile to get started faster.' )
+						) }
+					</p>
+				) }
 
 				<div className="signup-form__social-buttons">
 					<GoogleLoginButton
@@ -72,7 +78,7 @@ class SocialSignupForm extends Component {
 						onClick={ this.trackGoogleLogin }
 					/>
 				</div>
-			</Card>
+			</div>
 		);
 	}
 }

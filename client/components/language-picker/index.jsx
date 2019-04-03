@@ -19,6 +19,11 @@ import QueryLanguageNames from 'components/data/query-language-names';
 import { requestGeoLocation } from 'state/data-getters';
 import { getLanguageCodeLabels } from './utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class LanguagePicker extends PureComponent {
 	static propTypes = {
 		languages: PropTypes.array.isRequired,

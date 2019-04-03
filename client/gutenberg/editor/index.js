@@ -56,6 +56,11 @@ export default function() {
 				clientRender
 			);
 		}
+
+		page( '/block-editor/*/*', '/block-editor/post' );
+		page( '/block-editor/:site', context =>
+			page.redirect( `/block-editor/post/${ context.params.site }` )
+		);
 	} else {
 		page( '/block-editor', '/post' );
 		page( '/block-editor/*', '/post' );
