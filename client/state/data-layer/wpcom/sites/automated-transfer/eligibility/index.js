@@ -41,6 +41,7 @@ const statusMapping = {
 	no_ssl_certificate: eligibilityHolds.NO_SSL_CERTIFICATE,
 	email_unverified: eligibilityHolds.EMAIL_UNVERIFIED,
 	excessive_disk_space: eligibilityHolds.EXCESSIVE_DISK_SPACE,
+	blocked_atomic_transfer: eligibilityHolds.BLOCKED_ATOMIC_TRANSFER,
 };
 
 /**

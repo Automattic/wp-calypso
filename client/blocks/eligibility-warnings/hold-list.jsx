@@ -98,6 +98,13 @@ function getHoldMessages( siteSlug, translate ) {
 			),
 			supportUrl: localizeUrl( 'https://en.support.wordpress.com/help-support-options/' ),
 		},
+		BLOCKED_ATOMIC_TRANSFER: {
+			title: translate( "We can't proceed with this upload" ),
+			description: translate(
+				'This site is not currently eligible for installing themes and plugins. Please contact support to straighten things out.'
+			),
+			supportUrl: localizeUrl( 'https://en.support.wordpress.com/help-support-options/' ),
+		},
 	};
 }
 
