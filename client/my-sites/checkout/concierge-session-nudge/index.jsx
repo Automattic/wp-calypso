@@ -23,6 +23,7 @@ import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
+import { isInPageBuilderTest, getEditHomeUrl } from 'lib/signup/page-builder';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -312,9 +313,11 @@ export class ConciergeSessionNudge extends React.Component {
 			// Send the user to a generic page (not post-purchase related).
 			page( `/stats/day/${ siteSlug }` );
 		} else if ( isEligibleForChecklist ) {
-			const { selectedSiteSlug } = this.props;
+			if ( isInPageBuilderTest() ) {
+				return page( getEditHomeUrl( siteSlug ) );
+			}
 			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-				site: selectedSiteSlug,
+				site: siteSlug,
 				plan: 'paid',
 			} );
 			page( `/checklist/${ siteSlug }` );

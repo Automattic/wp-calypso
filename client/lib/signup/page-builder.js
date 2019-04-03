@@ -21,6 +21,11 @@ export function shouldEnterPageBuilder() {
 	return inTest;
 }
 
+export function getEditHomeUrl( siteSlug ) {
+	// @todo we will need to retrieve the home page ID from site options
+	return `/block-editor/page/${ siteSlug }/2`;
+}
+
 export function isEligibleForPageBuilder( segment, flowName ) {
 	return 'en' === getLocaleSlug() && 1 === segment && 'onboarding-for-business' === flowName;
 }
