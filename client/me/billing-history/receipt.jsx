@@ -139,7 +139,7 @@ class BillingReceipt extends React.Component {
 
 		return (
 			<li className="billing-history__billing-details">
-				<label for="billing-history__billing-details-textarea">
+				<label htmlFor="billing-history__billing-details-textarea">
 					<strong>{ translate( 'Billing Details' ) }</strong>
 				</label>
 				<div
