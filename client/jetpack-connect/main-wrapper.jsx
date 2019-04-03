@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -38,7 +36,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		return (
 			<Main className={ classNames( className, wrapperClassName ) }>
 				<div className="jetpack-connect__main-logo">
-					<JetpackHeader partnerSlug={ this.props.partnerSlug } />
+					<JetpackHeader partnerSlug={ this.props.partnerSlug } darkColorScheme />
 				</div>
 				{ children }
 			</Main>
