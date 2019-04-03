@@ -51,8 +51,6 @@ A full list of config values are:
 | reportWarningsToSlack | Specifies whether warnings should be reported to Slack - should be used for CI builds | `false` | Yes |  Yes |
 | closeBrowserOnComplete | Specifies whether to close the browser window when the tests are done | `true` | Yes |  Yes |
 | sauceConfigurations | Config values for launching browsers on Sauce Labs | `{ "osx-chrome": { "browserName": "chrome", "platform": "OS X 10.11", "screenResolution": "2048x1536", "version": "50.0" } }`  | Yes (if using Sauce) |  Yes |
-| knownABTestKeys | An array of expected, known AB testing keys used in localstorage. If a key is found on any page that isn't in here, the test will fail | [ "freeTrials_20160112", "plansPageBusinessAATest_20160108" ] | Yes | Yes |
-| overrideABTests | An array of key/value pairs for AB tests and their values to manually override their settings | [ [ "signupStore_20160927", "designTypeWithStore" ] ] | Yes | Yes |
 | testUserName   | This is an existing test WordPress.com account for testing purposes - this account should have a **single** site | testuser123 | Yes | **NO** |
 | testPassword   | This is the password for the test WordPress.com account | testpassword$$$%### | Yes | **NO** |
 | testUserNameMultiSite   | This is an existing test WordPress.com account for testing purposes **that has multiple sites** | testuser123 | Yes | **NO** |
