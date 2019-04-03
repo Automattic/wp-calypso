@@ -19889,9 +19889,9 @@
 			}
 		},
 		"webpack-dev-middleware": {
-			"version": "3.6.1",
-			"resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-3.6.1.tgz",
-			"integrity": "sha512-XQmemun8QJexMEvNFbD2BIg4eSKrmSIMrTfnl2nql2Sc6OGAYFyb8rwuYrCjl/IiEYYuyTEiimMscu7EXji/Dw==",
+			"version": "3.6.2",
+			"resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-3.6.2.tgz",
+			"integrity": "sha512-A47I5SX60IkHrMmZUlB0ZKSWi29TZTcPz7cha1Z75yYOsgWh/1AcPmQEbC8ZIbU3A1ytSv1PMU0PyPz2Lmz2jg==",
 			"requires": {
 				"memory-fs": "^0.4.1",
 				"mime": "^2.3.1",
