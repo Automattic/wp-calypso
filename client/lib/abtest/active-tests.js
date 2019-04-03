@@ -181,5 +181,6 @@ export default {
 			test: 50,
 		},
 		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };
