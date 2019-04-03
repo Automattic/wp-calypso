@@ -37,7 +37,7 @@ class PartnerLogoGroup extends PureComponent {
 				<g fill="none" fillRule="evenodd">
 					<g>
 						<g>
-							<g transform="translate(219 35.082353)">
+							<g transform="translate(219 35.082353)" className="jetpack-header__partner-logo-plus">
 								<Gridicon icon="plus-small" size={ 72 } />
 							</g>
 							{ this.props.children }
