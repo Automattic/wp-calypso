@@ -161,6 +161,13 @@
 		}
 	}
 
+	.spinner {
+		display: none;
+		position: absolute;
+		top: 12px;
+		left: 24px;
+	}
+
 	&-warning-background {
 		display: block;
 		position: absolute;
@@ -305,6 +312,33 @@
 			.checklist__task-action {
 				padding-right: 0;
 			}
+		}
+	}
+
+	&.is-in-progress {
+		padding-top: 12px;
+		padding-bottom: 12px;
+		background: var( --color-neutral-0 );
+
+		.checklist__task-title,
+		.checklist__task-title-link {
+			color: var( --color-text-subtle );
+			font-size: 14px;
+			cursor: default;
+		}
+
+		.spinner {
+			display: block;
+		}
+
+		.checklist__task-description,
+		.checklist__task-duration,
+		.checklist__task-secondary {
+			display: none;
+		}
+
+		.checklist__task-completed-description {
+			display: block;
 		}
 	}
 
