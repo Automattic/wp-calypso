@@ -1,11 +1,19 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
 /**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
+import getSiteOptions from 'state/selectors/get-site-options';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isJetpackSite } from 'state/sites/selectors';
+import versionCompare from 'lib/version-compare';
 
 export const isGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -17,7 +25,11 @@ export const isGutenbergEnabled = ( state, siteId ) => {
 	}
 
 	if ( isEnabled( 'jetpack/gutenframe' ) ) {
-		return isEnabled( 'gutenberg' ) && ! isVipSite( state, siteId );
+		if (
+			versionCompare( get( getSiteOptions( state, siteId ), 'jetpack_version', 0 ), '7.3', '>=' )
+		) {
+			return isEnabled( 'gutenberg' ) && ! isVipSite( state, siteId );
+		}
 	}
 
 	return (

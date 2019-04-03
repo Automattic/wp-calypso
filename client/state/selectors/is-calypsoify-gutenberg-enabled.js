@@ -1,4 +1,10 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -6,6 +12,7 @@ import { isEnabled } from 'config';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import getSiteOptions from 'state/selectors/get-site-options';
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
 import isPluginActive from 'state/selectors/is-plugin-active';
@@ -16,7 +23,11 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	}
 
 	if ( isEnabled( 'jetpack/gutenframe' ) ) {
-		return false;
+		if (
+			versionCompare( get( getSiteOptions( state, siteId ), 'jetpack_version', 0 ), '7.3', '>=' )
+		) {
+			return false;
+		}
 	}
 
 	// We do want Calypsoify flows for Atomic sites
