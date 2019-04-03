@@ -192,6 +192,16 @@
 	min-height: 1.2em;
 }
 
+.billing-history__billing-details-description {
+	font-style: italic;
+}
+
+.billing-history__billing-details-editable {
+	border: 1px solid var( --color-neutral-200 );
+	margin-top: 5px;
+	font-size: 13px;
+}
+
 .billing-history__receipt-details {
 	background: var( --color-neutral-0 );
 	list-style: none;
@@ -221,10 +231,6 @@
 			margin: 0 5px 0 0;
 			text-transform: uppercase;
 		}
-	}
-
-	.billing-history__billing-details div:hover {
-		border: 2px black dashed;
 	}
 }
 
@@ -383,9 +389,17 @@
 		.masterbar,
 		.billing-history__receipt-links,
 		.header-cake.card,
-		.inline-help {
+		.inline-help,
+		.billing-history__billing-details-description {
 			display: none;
 		}
+	}
+
+	.billing-history__billing-details-editable {
+		background: transparent;
+		border: 0;
+		padding: 0;
+		margin: 0;
 	}
 }
 
