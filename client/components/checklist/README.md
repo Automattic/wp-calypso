@@ -9,6 +9,10 @@ Checklist
 
 Render as a placeholder.
 
+### `progressText { string } - default: "Your setup list"`
+
+Displayed in the checklist header, right on top of the progress bar.
+
 ## `Task` props
 
 ### `completed { bool }`

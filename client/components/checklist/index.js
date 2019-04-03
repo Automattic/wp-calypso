@@ -16,6 +16,7 @@ import TaskPlaceholder from 'components/checklist/task-placeholder';
 export default class Checklist extends PureComponent {
 	static propTypes = {
 		isPlaceholder: PropTypes.bool,
+		progressText: PropTypes.string,
 		updateCompletion: PropTypes.func,
 	};
 
@@ -77,6 +78,7 @@ export default class Checklist extends PureComponent {
 					hideCompleted={ this.state.hideCompleted }
 					onClick={ this.toggleCompleted }
 					total={ total }
+					progressText={ this.props.progressText }
 				/>
 				<div className="checklist__tasks">{ this.props.children }</div>
 			</div>

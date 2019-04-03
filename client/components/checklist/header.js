@@ -20,6 +20,7 @@ export class ChecklistHeader extends PureComponent {
 		completed: PropTypes.number.isRequired,
 		hideCompleted: PropTypes.bool,
 		onClick: PropTypes.func,
+		progressText: PropTypes.string,
 	};
 
 	render() {
@@ -27,12 +28,13 @@ export class ChecklistHeader extends PureComponent {
 		const buttonText = hideCompleted
 			? translate( 'Show completed' )
 			: translate( 'Hide completed' );
+		const progressText = this.props.progressText || translate( 'Your setup list' );
 
 		return (
 			<Card compact className="checklist__header">
 				<div className="checklist__header-main">
 					<div className="checklist__header-progress">
-						<h2 className="checklist__header-progress-text">{ translate( 'Your setup list' ) }</h2>
+						<h2 className="checklist__header-progress-text">{ progressText }</h2>
 						<span className="checklist__header-progress-number">{ `${ completed }/${ total }` }</span>
 					</div>
 					<ProgressBar compact total={ total } value={ completed } />
