@@ -21,6 +21,7 @@ import SecondaryCart from './cart/secondary-cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import ConciergeSessionNudge from './concierge-session-nudge';
+import { isGSuiteRestricted } from 'lib/domains/gsuite';
 
 export function checkout( context, next ) {
 	const { feature, plan, product } = context.params;
@@ -119,6 +120,10 @@ export function gsuiteNudge( context, next ) {
 
 	if ( ! selectedSite ) {
 		return null;
+	}
+
+	if ( isGSuiteRestricted() ) {
+		next();
 	}
 
 	context.primary = (
