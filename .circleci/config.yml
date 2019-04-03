@@ -531,7 +531,7 @@ jobs:
                     "{ \
                       \"attachments\": [ \
                         { \
-                          \"text\": \"Jetpack tests were skipped", \
+                          \"text\": \"Jetpack tests were skipped\", \
                           \"fields\": [ \
                             { \
                               \"title\": \"Project\", \
