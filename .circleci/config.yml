@@ -524,10 +524,39 @@ jobs:
       - run:
           name: Skip Jetpack Tests if needed
           command: |
-                if [[ $SKIP_JETPACK == 'true' && << parameters.test-target >> == 'JETPACK' ]]
-                  curl curl -X POST -H 'Content-type: application/json' --data '{"text":"Jetpack tests were skipped", "color":"#FF0000"}' << parameters.slack-webhook >>
-                  circleci-agent step halt
-                fi
+              # If the skip jetpack env var is set, notify slack channel and skip the rest of the steps
+              if [[ "$SKIP_JETPACK" == "true" && "<< parameters.test-target >>" == "JETPACK" ]]
+                curl -X POST -H 'Content-type: application/json' \
+                    --data \
+                    "{ \
+                      \"attachments\": [ \
+                        { \
+                          \"text\": \"Jetpack tests were skipped", \
+                          \"fields\": [ \
+                            { \
+                              \"title\": \"Project\", \
+                              \"value\": \"$CIRCLE_PROJECT_REPONAME\", \
+                              \"short\": true \
+                            }, \
+                            { \
+                              \"title\": \"Job Number\", \
+                              \"value\": \"$CIRCLE_BUILD_NUM\", \
+                              \"short\": true \
+                            } \
+                          ], \
+                          \"actions\": [ \
+                            { \
+                              \"type\": \"button\", \
+                              \"text\": \"Visit Job\", \
+                              \"url\": \"$CIRCLE_BUILD_URL\" \
+                            } \
+                          ], \
+                          \"color\": \"#FF0000\" \
+                        } \
+                      ] \
+                    }" << parameters.slack-webhook >>
+                circleci-agent step halt
+              fi
       - run: npm run decryptconfig
       - run:
           name: Run Canary Tests
