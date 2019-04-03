@@ -80,6 +80,7 @@ class DesignAssets extends React.Component {
           fitsContainer
           placeholder="Search Published..."
           delaySearch={ true }
+          onSearch={ () => {} }
       />
     </SectionNav>
 </Main>`,
