@@ -699,7 +699,7 @@ export function canJetpackSiteManage( state, siteId ) {
 	}
 
 	// Since Jetpack 7.3, Manage is no longer a module and is baked directly into Jetpack. All will be "Manageable "
-	if ( versionCompare( siteJetpackVersion, '7.3', '>=' ) ) {
+	if ( versionCompare( siteJetpackVersion, '7.3-alpha', '>=' ) ) {
 		return true;
 	}
 
