@@ -13,16 +13,16 @@
 			.menu-link-icon,
 			.sidebar__menu-action .gridicon,
 			.sidebar-dynamic-menu-action-icon {
-				fill: var( --color-neutral-light );
+				fill: var( --sidebar-gridicon-fill );
 			}
 
 			.sidebar-streams__edit-icon {
-				fill: var( --color-white );
+				fill: var( --sidebar-gridicon-fill );
 			}
 
 			.gridicon {
 				@include breakpoint( '<660px' ) {
-					fill: var( --color-primary );
+					fill: var( --sidebar-gridicon-fill );
 				}
 			}
 
@@ -30,7 +30,7 @@
 			li > a:visited,
 			:not( .sidebar__button ) {
 				@include breakpoint( '<660px' ) {
-					color: var( --color-primary );
+					color: var( --sidebar-text-color );
 				}
 			}
 		}
