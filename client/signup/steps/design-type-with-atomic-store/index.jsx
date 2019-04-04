@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,6 +20,11 @@ import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { getThemeForDesignType } from 'signup/utils';
+
+/**
+ * Style dependencies
+ */
+import '../design-type-with-store/style.scss';
 
 class DesignTypeWithAtomicStoreStep extends Component {
 	state = {
