@@ -30,7 +30,7 @@
 			li > a:visited,
 			:not( .sidebar__button ) {
 				@include breakpoint( '<660px' ) {
-					color: var( --sidebar-menu-selected-a-color );
+					color: var( --sidebar-text-color );
 				}
 			}
 		}
