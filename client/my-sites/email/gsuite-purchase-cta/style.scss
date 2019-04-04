@@ -61,32 +61,39 @@
 	font-size: 18px;
 }
 
-.gsuite-purchase-cta__add-google-apps-card-price {
-	margin: 2em 0 1em;
+.gsuite-purchase-cta__gsuite-skus {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 
-	.gsuite-purchase-cta__add-google-apps-card-price-per-user {
-		strong {
-			color: var( --color-text );
-			font-size: 24px;
-			font-weight: 300;
-		}
+	@include breakpoint( '>960px' ) {
+		flex-direction: row;
+	}
+}
 
-		span {
-			color: var( --color-text-subtle );
-			font-size: 13px;
-			font-weight: normal;
-		}
+.gsuite-purchase-cta__sku-info-name {
+	font-size: 150%;
+	color: #757575;
+}
+
+.gsuite-purchase-cta__sku-info-name-price-per-user {
+	strong {
+		color: var( --color-text );
+		font-size: 24px;
+		font-weight: 300;
 	}
 
-	.gsuite-purchase-cta__add-google-apps-card-billing-period {
+	span {
 		color: var( --color-text-subtle );
 		font-size: 13px;
-		font-style: italic;
-
-		@include breakpoint( '<960px' ) {
-			text-align: center;
-		}
+		font-weight: normal;
 	}
+}
+
+.gsuite-purchase-cta__sku-info-name-storage {
+	color: var( --color-text-subtle );
+	font-size: 13px;
+	font-style: italic;
 }
 
 .gsuite-purchase-cta__add-google-apps-card-logos {

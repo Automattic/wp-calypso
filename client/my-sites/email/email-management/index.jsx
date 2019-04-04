@@ -45,7 +45,7 @@ import QueryProductsList from 'components/data/query-products-list';
  */
 import './style.scss';
 
-const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
+const gsuitePlanSlug = 'gapps_unlimited'; // or gapps_unlimited - TODO make this dynamic
 
 class EmailManagement extends React.Component {
 	static propTypes = {

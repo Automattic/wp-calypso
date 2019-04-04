@@ -21,6 +21,7 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getEligibleGSuiteDomain } from 'lib/domains/gsuite';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
+import GSuitePurchaseCtaSkuInfo from './sku-info';
 
 /**
  * Style dependencies
@@ -69,30 +70,22 @@ class GSuitePurchaseCta extends React.Component {
 								) }
 							</p>
 
-							<div className="gsuite-purchase-cta__add-google-apps-card-price">
-								<h4 className="gsuite-purchase-cta__add-google-apps-card-price-per-user">
-									<span>
-										{ translate( '{{strong}}%(price)s{{/strong}} per user / year', {
-											components: {
-												strong: <strong />,
-											},
-											args: {
-												price: annualPrice,
-											},
-										} ) }
-									</span>
-								</h4>
-
-								{ upgradeAvailable && (
-									<Button type="button" onClick={ this.goToAddGoogleApps }>
-										{ translate( 'Add G Suite' ) }
-									</Button>
-								) }
+							<div className="gsuite-purchase-cta__gsuite-skus">
+								<GSuitePurchaseCtaSkuInfo
+									annualPrice={ annualPrice }
+									buttonText={ translate( 'Add G Suite' ) }
+									showButton={ upgradeAvailable }
+									skuName={ 'G Suite' }
+									skuSubText={ '30GB of Storage' }
+								/>
+								<GSuitePurchaseCtaSkuInfo
+									annualPrice={ annualPrice }
+									buttonText={ translate( 'Add G Suite Business' ) }
+									showButton={ upgradeAvailable }
+									skuName={ 'G Suite Business' }
+									skuSubText={ 'Unlimited Storage' }
+								/>
 							</div>
-						</div>
-
-						<div className="gsuite-purchase-cta__add-google-apps-card-logos">
-							<img alt="G Suite Logo" src="/calypso/images/g-suite/g-suite.svg" />
 						</div>
 					</div>
 				</CompactCard>
