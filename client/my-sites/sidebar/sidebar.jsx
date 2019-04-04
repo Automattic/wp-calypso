@@ -71,6 +71,7 @@ import {
 } from 'state/ui/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import { canAccessEarnSection } from 'lib/ads/utils';
+import { ReactComponent as CartSvg } from 'material-design-icons/action/outline-shopping_cart-24px.svg';
 import { ReactComponent as StatsSvg } from 'material-design-icons/editor/outline-bar_chart-24px.svg';
 import { ReactComponent as PlanSvg } from 'material-design-icons/action/outline-offline_bolt-24px.svg';
 import { ReactComponent as SiteSvg } from 'material-design-icons/image/outline-edit-24px.svg';
@@ -537,6 +538,7 @@ export class MySitesSidebar extends Component {
 				link={ storeLink }
 				onNavigate={ this.trackStoreClick }
 				icon="cart"
+				materialIcon={ CartSvg }
 				forceInternalLink
 			>
 				<div className="sidebar__chevron-right">
