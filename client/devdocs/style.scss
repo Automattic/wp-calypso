@@ -49,12 +49,6 @@ $devdocs-max-width: 720px;
 // Block and Component examples
 .main.devdocs.devdocs__blocks,
 .main.devdocs.devdocs__components,
-.main.devdocs.devdocs__gutenberg-blocks,
-.main.devdocs.devdocs__gutenberg-components {
-	// Make way for showing big components and multiple columns
-	max-width: 100%;
-}
-
 .design__collection {
 	// Use multiple columns when listing components
 	.main.devdocs.is-list & {
