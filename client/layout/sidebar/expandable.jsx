@@ -5,6 +5,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,10 +30,13 @@ export const ExpandableSidebarMenu = props => {
 		onAddClick,
 		onAddSubmit,
 	} = props;
+
 	const classes = classNames( className, {
 		'is-toggle-open': !! expanded,
 		'is-togglable': true,
 	} );
+
+	const menuId = uniqueId( 'menu' );
 
 	const renderAddForm = onAddClick || onAddSubmit || addLabel || addPlaceholder;
 
@@ -58,9 +62,13 @@ export const ExpandableSidebarMenu = props => {
 				onClick={ onClick }
 				icon={ icon }
 				materialIcon={ materialIcon }
+				expanded={ expanded }
+				menuId={ menuId }
 			/>
 			{ addForm }
-			<ul className="sidebar__menu-list">{ props.children }</ul>
+			<ul role="region" id={ menuId } className="sidebar__menu-list" hidden={ ! expanded }>
+				{ props.children }
+			</ul>
 		</SidebarMenu>
 	);
 };
