@@ -85,17 +85,6 @@ Me.prototype.likes = function( query, fn ) {
 };
 
 /**
- * A list of the current user's group
- *
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @return {Function} request handler
- */
-Me.prototype.groups = function( query, fn ) {
-	return this.wpcom.req.get( '/me/groups', query, fn );
-};
-
-/**
  * Get current user's connected applications.
  *
  * @param {Object} [query] - query object parameter

@@ -61,19 +61,6 @@ describe( 'wpcom.me', function() {
 		} );
 	} );
 
-	describe( 'wpcom.me.groups', function() {
-		it( 'should require groups', done => {
-			me.groups()
-				.then( data => {
-					assert.equal( 'object', typeof data.groups );
-					assert.ok( data.groups instanceof Array );
-
-					done();
-				} )
-				.catch( done );
-		} );
-	} );
-
 	describe( 'wpcom.me.keyringConnections', function() {
 		it( 'should get current user\' keyring connections', done => {
 			me.keyringConnections()
