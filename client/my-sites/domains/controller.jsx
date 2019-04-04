@@ -189,6 +189,10 @@ const transferDomainPrecheck = ( context, next ) => {
 };
 
 const googleAppsWithRegistration = ( context, next ) => {
+	if ( isGSuiteRestricted() ) {
+		next();
+	}
+
 	const state = context.store.getState();
 	const siteSlug = getSelectedSiteSlug( state ) || '';
 
@@ -204,10 +208,6 @@ const googleAppsWithRegistration = ( context, next ) => {
 	const handleClickSkip = () => {
 		page( '/checkout/' + siteSlug );
 	};
-
-	if ( isGSuiteRestricted() ) {
-		next();
-	}
 
 	context.primary = (
 		<Main>
