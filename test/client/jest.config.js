@@ -3,11 +3,12 @@
 module.exports = {
 	moduleNameMapper: {
 		'^config$': '<rootDir>/server/config/index.js',
-		'\\.svg$': '@svgr/webpack',
+		'^material-design-icons/(.*)$': '<rootDir>/packages/material-design-icons/src/$1',
 	},
 	transform: {
 		'^.+\\.jsx?$': 'babel-jest',
-		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': '<rootDir>/test/test/helpers/assets/transform.js',
+		'\\.(gif|jpg|jpeg|png|scss|sass|css)$': '<rootDir>/test/test/helpers/assets/transform.js',
+		'\\.(svg)$': '<rootDir>/test/test/helpers/assets/svgr-transform.js',
 	},
 	modulePaths: [ '<rootDir>/test/', '<rootDir>/client/', '<rootDir>/client/extensions/' ],
 	rootDir: './../../',
