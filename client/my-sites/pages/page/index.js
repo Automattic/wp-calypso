@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
-import { flow, get, includes, isEmpty, noop, partial } from 'lodash';
+import { flow, get, includes, noop, partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +26,7 @@ import * as utils from 'state/posts/utils';
 import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
+import InfoPopover from 'components/info-popover';
 import { preload } from 'sections-helper';
 import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -374,9 +375,9 @@ class Page extends Component {
 	undoPostStatus = () => this.updatePostStatus( this.props.shadowStatus.undo );
 
 	render() {
-		const { editorUrl, page, shadowStatus, translate, preventEditingInGutenberg } = this.props;
+		const { editorUrl, page, shadowStatus, translate, isPostsPage: latestPostsPage } = this.props;
 		const title = page.title || translate( 'Untitled' );
-		const canEdit = utils.userCan( 'edit_post', page ) && ! preventEditingInGutenberg;
+		const canEdit = utils.userCan( 'edit_post', page ) && ! latestPostsPage;
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
 
 		const viewItem = this.getViewItem();
@@ -459,6 +460,13 @@ class Page extends Component {
 					>
 						{ depthIndicator }
 						{ title }
+						{ latestPostsPage && (
+							<InfoPopover position="right">
+								{ translate(
+									'The content of your latest posts page is automatically generated and it cannot be edited.'
+								) }
+							</InfoPopover>
+						) }
 					</a>
 					<PageCardInfo
 						page={ page }
@@ -629,12 +637,6 @@ const mapState = ( state, props ) => {
 		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
 		isPostsPage: isPostsPage( state, pageSiteId, props.page.ID ),
 		isPreviewable,
-		// Gutenberg prevents editing of empty posts pages
-		// See https://github.com/Automattic/wp-calypso/issues/31917
-		preventEditingInGutenberg:
-			'gutenberg' === getSelectedEditor( state, pageSiteId ) &&
-			isPostsPage( state, pageSiteId, props.page.ID ) &&
-			isEmpty( props.page.content ),
 		previewURL: utils.getPreviewURL( site, props.page ),
 		site,
 		siteSlugOrId,
