@@ -33,7 +33,6 @@ class SiteImporterSitePreview extends React.Component {
 
 	state = {
 		previewRetries: 0,
-		siteURL: this.props.siteURL,
 		sitePreviewImage: '',
 		sitePreviewFailed: false,
 		loadingPreviewImage: true,
@@ -48,7 +47,7 @@ class SiteImporterSitePreview extends React.Component {
 		this.setState( { loadingPreviewImage: true, previewStartTime: Date.now() } );
 
 		loadmShotsPreview( {
-			url: this.state.siteURL,
+			url: this.props.siteURL,
 			maxRetries: 30,
 			retryTimeout: 1000,
 		} )
@@ -61,7 +60,7 @@ class SiteImporterSitePreview extends React.Component {
 
 				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_success', {
 					blog_id: this.props.site.ID,
-					site_url: this.state.siteURL,
+					site_url: this.props.siteURL,
 					time_taken_ms: Date.now() - this.state.previewStartTime,
 				} );
 			} )
@@ -74,7 +73,7 @@ class SiteImporterSitePreview extends React.Component {
 
 				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_fail', {
 					blog_id: this.props.site.ID,
-					site_url: this.state.siteURL,
+					site_url: this.props.siteURL,
 					time_taken_ms: Date.now() - this.state.previewStartTime,
 				} );
 			} );
