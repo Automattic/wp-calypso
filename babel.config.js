@@ -38,27 +38,6 @@ const config = {
 		],
 		isBrowser && './inline-imports.js',
 	] ),
-	overrides: [
-		{
-			test: [ './client/gutenberg/extensions' ],
-			plugins: [
-				[
-					'@wordpress/import-jsx-pragma',
-					{
-						scopeVariable: 'createElement',
-						source: '@wordpress/element',
-						isDefault: false,
-					},
-				],
-				[
-					'@babel/transform-react-jsx',
-					{
-						pragma: 'createElement',
-					},
-				],
-			],
-		},
-	],
 	env: {
 		test: {
 			presets: [ [ '@babel/env', { targets: { node: 'current' } } ] ],
