@@ -57,22 +57,21 @@ class WordPressExternalDependenciesPlugin {
 		this.externalsPlugin.apply( compiler );
 
 		const { output } = compiler.options;
-		const { /*path: outputPath,*/ filename: outputFilename } = output;
+		const { filename: outputFilename } = output;
 
 		compiler.hooks.emit.tap( this.constructor.name, compilation => {
-			// const stats = compilation.getStats();
+			// Each entrypoint will get a .deps.json file
 			for ( const [ entrypointName, entrypoint ] of compilation.entrypoints.entries() ) {
 				const entrypointExternalizedWpDeps = new Set();
 
+				// Search for externalized dependencies in all modules in all entrypoint chunks
 				for ( const c of entrypoint.chunks ) {
-					for ( const chunkModule of c.modulesIterable ) {
-						const { userRequest } = chunkModule;
-
+					for ( const { userRequest } of c.modulesIterable ) {
 						if ( this.externalizedDeps.has( userRequest ) ) {
-							// Pass externalized deps
 							// Transform @wordpress deps:
 							//   @wordpress/i18n -> wp-i18n
 							//   @wordpress/escape-html -> wp-escape-html
+							// Pass other externalized deps as they are
 							entrypointExternalizedWpDeps.add(
 								userRequest.startsWith( WORDPRESS_NAMESPACE )
 									? 'wp-' + userRequest.substring( WORDPRESS_NAMESPACE.length )
@@ -82,10 +81,8 @@ class WordPressExternalDependenciesPlugin {
 					}
 				}
 
-				const depsArray = Array.from( entrypointExternalizedWpDeps );
-				depsArray.sort();
-
-				const depsString = JSON.stringify( depsArray );
+				const sortedDepsArray = Array.from( entrypointExternalizedWpDeps ).sort();
+				const depsString = JSON.stringify( sortedDepsArray );
 
 				const [ filename, query ] = entrypointName.split( '?', 2 );
 				const depsFile = compilation.getPath( outputFilename.replace( /\.js$/i, '.deps.json' ), {
