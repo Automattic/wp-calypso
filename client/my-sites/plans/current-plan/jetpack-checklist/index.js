@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
 import Checklist from 'components/checklist';
 import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import Task from 'components/checklist/task';
@@ -53,6 +54,7 @@ class JetpackChecklist extends PureComponent {
 	render() {
 		const {
 			akismetFinished,
+			isPaidPlan,
 			productInstallStatus,
 			siteId,
 			siteSlug,
@@ -63,7 +65,7 @@ class JetpackChecklist extends PureComponent {
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				<QueryJetpackProductInstallStatus siteId={ siteId } />
+				{ isPaidPlan && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
 
 				<Checklist
 					isPlaceholder={ ! taskStatuses }
@@ -75,7 +77,7 @@ class JetpackChecklist extends PureComponent {
 							"We've automatically protected you from brute force login attacks."
 						) }
 					/>
-					{ productInstallStatus && (
+					{ isPaidPlan && productInstallStatus && (
 						<Task
 							title={ translate( "We're automatically turning on spam filtering." ) }
 							completedTitle={ translate( "We've automatically turned on spam filtering." ) }
@@ -125,6 +127,7 @@ export default connect(
 
 		return {
 			akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
+			isPaidPlan: isSiteOnPaidPlan( state, siteId ),
 			productInstallStatus,
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
