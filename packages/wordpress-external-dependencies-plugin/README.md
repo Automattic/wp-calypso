@@ -21,7 +21,7 @@ Use this plugin as you would other webpack plugins:
 // webpack.config.js
 const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-external-dependencies-plugin' );
 
-module.expoers = {
+module.exports = {
   // …snip
   plugins: [
     new WordPressExternalDependenciesPlugin(),
