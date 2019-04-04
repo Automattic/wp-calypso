@@ -26,7 +26,11 @@ export const isGutenbergEnabled = ( state, siteId ) => {
 
 	if ( isEnabled( 'jetpack/gutenframe' ) ) {
 		if (
-			versionCompare( get( getSiteOptions( state, siteId ), 'jetpack_version', 0 ), '7.3', '>=' )
+			versionCompare(
+				get( getSiteOptions( state, siteId ), 'jetpack_version', 0 ),
+				'7.3-alpha',
+				'>='
+			)
 		) {
 			return isEnabled( 'gutenberg' ) && ! isVipSite( state, siteId );
 		}
