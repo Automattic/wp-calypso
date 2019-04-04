@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "Gutenberg extensions for o2 theme.",
 	"main": "dist/editor.js",
-	"sideEffects": true,
+	"sideEffects": false,
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/Automattic/wp-calypso.git",
@@ -18,8 +18,8 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prebuild": "npm run clean",
-		"build": "webpack --config='../calypso-build/webpack.config.js' --output-path='./dist' --env.WP='true' editor='./src/editor.js' "
+		"prepublish": "npm run clean",
+		"prepare": "webpack --config='../../packages/calypso-build/webpack.config.js' --output-path='./dist' --env.WP='true' editor='./src/editor.js' "
 	},
 	"dependencies": {
 		"@wordpress/blocks": "6.0.7",
