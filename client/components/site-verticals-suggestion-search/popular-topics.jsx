@@ -71,10 +71,16 @@ class PopularTopics extends PureComponent {
 		} );
 	};
 	render() {
+		const { popularTopics } = this.props;
+
+		if ( ! popularTopics.length ) {
+			return null;
+		}
+
 		return (
 			<div className="site-verticals-suggestion-search__common-topics">
 				<div className="site-verticals-suggestion-search__heading">{ translate( 'Popular' ) }</div>
-				{ this.props.popularTopics.map( ( topic, index ) => (
+				{ popularTopics.map( ( topic, index ) => (
 					<button
 						type="button"
 						key={ index }
@@ -93,7 +99,7 @@ class PopularTopics extends PureComponent {
 
 export default connect(
 	state => ( {
-		popularTopics: POPULAR_TOPICS[ getSiteType( state ) || 'blog' ],
+		popularTopics: POPULAR_TOPICS[ getSiteType( state ) || 'blog' ] || [],
 	} ),
 	{
 		recordTracksEvent,
