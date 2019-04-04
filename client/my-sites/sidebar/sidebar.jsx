@@ -16,7 +16,7 @@ import page from 'page';
  */
 import { abtest } from 'lib/abtest';
 import Button from 'components/button';
-import { isEnabled } from 'config';
+import config, { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ManageMenu from './manage-menu';
@@ -752,7 +752,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		return (
-			process.env.NODE_ENV !== 'production' || abtest( 'streamlinedNavigationDrawer' ) === 'test'
+			config( 'env_id' ) !== 'production' || abtest( 'streamlinedNavigationDrawer' ) === 'test'
 		);
 	}
 
