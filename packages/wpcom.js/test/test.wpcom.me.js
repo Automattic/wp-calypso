@@ -92,7 +92,6 @@ describe( 'wpcom.me', function() {
 			me.postsList()
 				.then( data => {
 					assert.equal( 'number', typeof data.found );
-					assert.equal( 'object', typeof data.meta );
 					assert.ok( data.posts instanceof Array );
 					done();
 				} )
