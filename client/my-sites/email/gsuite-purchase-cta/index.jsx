@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -12,16 +13,19 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import { getAnnualPrice } from 'lib/google-apps';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getEligibleGSuiteDomain } from 'lib/domains/gsuite';
+import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
 import GSuitePurchaseCtaSkuInfo from './sku-info';
+import QueryProductsList from 'components/data/query-products-list';
 
 /**
  * Style dependencies
@@ -33,25 +37,27 @@ class GSuitePurchaseCta extends React.Component {
 		page( domainManagementAddGSuiteUsers( this.props.selectedSiteSlug, this.props.domainName ) );
 	};
 
-	getPlanText() {
-		const { productSlug, translate } = this.props;
-		if ( 'gapps_unlimited' === productSlug ) {
-			return translate( 'Business' );
-		}
-	}
-
 	renderCta() {
-		const { annualPrice, domainName, productSlug, translate } = this.props;
+		const { currencyCode, domainName, productsList, translate } = this.props;
 		const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
+
+		const basicAnnualPrice = getAnnualPrice(
+			get( productsList.gapps, [ 'prices', currencyCode ], 0 ),
+			currencyCode
+		);
+		const businessAnnualPrice = getAnnualPrice(
+			get( productsList.gapps_unlimited, [ 'prices', currencyCode ], 0 ),
+			currencyCode
+		);
 
 		return (
 			<Fragment>
+				<QueryProductsList />
 				<CompactCard>
 					<header className="gsuite-purchase-cta__add-google-apps-card-header">
 						<h3 className="gsuite-purchase-cta__add-google-apps-card-product-logo">
 							{ /* Intentionally not translated */ }
 							<strong>G Suite</strong>
-							{ this.getPlanText() }
 						</h3>
 					</header>
 				</CompactCard>
@@ -72,14 +78,14 @@ class GSuitePurchaseCta extends React.Component {
 
 							<div className="gsuite-purchase-cta__gsuite-skus">
 								<GSuitePurchaseCtaSkuInfo
-									annualPrice={ annualPrice }
+									annualPrice={ basicAnnualPrice }
 									buttonText={ translate( 'Add G Suite' ) }
 									showButton={ upgradeAvailable }
 									skuName={ 'G Suite' }
 									skuSubText={ '30GB of Storage' }
 								/>
 								<GSuitePurchaseCtaSkuInfo
-									annualPrice={ annualPrice }
+									annualPrice={ businessAnnualPrice }
 									buttonText={ translate( 'Add G Suite Business' ) }
 									showButton={ upgradeAvailable }
 									skuName={ 'G Suite Business' }
@@ -88,22 +94,8 @@ class GSuitePurchaseCta extends React.Component {
 							</div>
 						</div>
 					</div>
-				</CompactCard>
 
-				<CompactCard>
-					<GSuitePurchaseFeatures
-						domainName={ domainName }
-						productSlug={ productSlug }
-						type={ 'grid' }
-					/>
-
-					<div className="gsuite-purchase-cta__add-google-apps-card-secondary-button">
-						{ upgradeAvailable && (
-							<Button type="button" onClick={ this.goToAddGoogleApps }>
-								{ translate( 'Add G Suite' ) }
-							</Button>
-						) }
-					</div>
+					<GSuitePurchaseFeatures domainName={ domainName } type={ 'grid' } />
 				</CompactCard>
 			</Fragment>
 		);
@@ -122,9 +114,8 @@ class GSuitePurchaseCta extends React.Component {
 }
 
 GSuitePurchaseCta.propTypes = {
-	annualPrice: PropTypes.string.isRequired,
 	domainName: PropTypes.string.isRequired,
-	productSlug: PropTypes.string.isRequired,
+	productsList: PropTypes.object,
 	selectedDomainName: PropTypes.string,
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
@@ -134,7 +125,9 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 		const domains = getDomainsBySiteId( state, selectedSiteId );
 		return {
+			currencyCode: getCurrentUserCurrencyCode( state ),
 			domainName: getEligibleGSuiteDomain( selectedDomainName, domains ),
+			productsList: getProductsList( state ),
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
