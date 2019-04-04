@@ -13,7 +13,7 @@ import classnames from 'classnames';
 // import config from 'config';
 import Head from 'components/head';
 import getStylesheet from './utils/stylesheet';
-import { jsonStringifyForHtml } from '../../server/sanitize';
+import { jsonStringifyForHtml } from 'server/sanitize';
 
 const cssChunkLink = asset => (
 	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
@@ -22,6 +22,7 @@ const cssChunkLink = asset => (
 function DomainsLanding( {
 	branchName,
 	clientData,
+	domainsLandingData,
 	inlineScriptNonce,
 	isDebug,
 	env,
@@ -77,6 +78,14 @@ function DomainsLanding( {
 						</div>
 					</div>
 				</div>
+				{ domainsLandingData && (
+					<script
+						type="text/javascript"
+						dangerouslySetInnerHTML={ {
+							__html: `var domainsLandingData = ${ jsonStringifyForHtml( domainsLandingData ) };`,
+						} }
+					/>
+				) }
 				{ clientData && (
 					<script
 						type="text/javascript"

@@ -754,23 +754,23 @@ module.exports = function() {
 		attachI18n( ctx );
 
 		ctx.clientData = config.clientData;
+		ctx.domainsLandingData = { action: get( req.params, 'action', 'unknown-action' ) };
 
-		const action = get( req.params, 'action' );
-		let entrypointName;
-		switch ( action ) {
-			case 'registrant-verification':
-				entrypointName = 'domainsRegistrantVerification';
-				break;
-
-			default:
-				render404( req, res );
-				// res.send( renderJsx( '404', ctx ) );
-				return;
-		}
-
+		// let entrypointName;
+		// switch ( action ) {
+		// 	case 'registrant-verification':
+		// 		entrypointName = 'landingDomains';
+		// 		break;
+		//
+		// 	default:
+		// 		render404( req, res );
+		// 		// res.send( renderJsx( '404', ctx ) );
+		// 		return;
+		// }
+		//
 		const pageHtml = renderJsx( 'domains-landing', {
 			...ctx,
-			entrypoint: getFilesForEntrypoint( entrypointName ),
+			entrypoint: getFilesForEntrypoint( 'domainsLanding' ),
 		} );
 		res.send( pageHtml );
 	} );

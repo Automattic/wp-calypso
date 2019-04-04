@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import RenderDom from 'react-dom';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import i18n, { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Main from 'components/main';
+import DomainsLandingHeader from '../header';
 import wp from 'lib/wp';
+import EmptyContent from '../../../components/empty-content';
 
 /**
  *
@@ -24,11 +24,12 @@ const wpcom = wp.undocumented();
 class RegistrantVerificationPage extends Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
+		email: PropTypes.string.isRequired,
 		token: PropTypes.string.isRequired,
 	};
 
 	state = {
-		isVerifying: true,
+		isLoading: true,
 		success: false,
 		error: false,
 	};
@@ -39,13 +40,15 @@ class RegistrantVerificationPage extends Component {
 			data => {
 				this.setState( {
 					success: data.success,
-					isVerifying: false,
+					error: false,
+					isLoading: false,
 				} );
 			},
 			error => {
 				this.setState( {
 					error: { code: error.error, message: error.message },
-					isVerifying: false,
+					success: false,
+					isLoading: false,
 				} );
 			}
 		);
@@ -55,8 +58,35 @@ class RegistrantVerificationPage extends Component {
 		return <p>Verifying...</p>;
 	};
 
+	handleClickClose = () => {
+		window.close();
+	};
+
 	renderVerificationSuccess = () => {
-		return <p>{ translate( 'Email address verified successfully.' ) }</p>;
+		const { translate } = this.props;
+		const message = translate(
+			'Thank your for verifying your contact information for:{{br /}}{{strong}}%(domain)s{{/strong}}.',
+			{
+				args: {
+					domain: this.props.domain,
+				},
+				components: {
+					strong: <strong />,
+					br: <br />,
+				},
+			}
+		);
+
+		return (
+			<div className="registrant-verification__success">
+				<EmptyContent
+					illustration="/calypso/images/illustrations/illustration-ok.svg"
+					title={ translate( 'Success!' ) }
+					line={ message }
+				/>
+				<h3>{ translate( '(All done. You can close this window now.)' ) }</h3>
+			</div>
+		);
 	};
 
 	renderVerificationError = () => {
@@ -64,7 +94,7 @@ class RegistrantVerificationPage extends Component {
 	};
 
 	renderVerificationStatus = () => {
-		if ( this.state.isVerifying ) {
+		if ( this.state.isLoading ) {
 			return this.renderVerificationInProgress();
 		}
 
@@ -78,38 +108,14 @@ class RegistrantVerificationPage extends Component {
 	};
 
 	render() {
+		const { translate } = this.props;
 		return (
-			<Main className="registrant-verification">
-				<CompactCard>
-					<h2>{ translate( 'Domain Contact Information Verification' ) }</h2>
-				</CompactCard>
+			<Fragment>
+				<DomainsLandingHeader title={ translate( 'Domain Contact Verification' ) } />
 				<CompactCard>{ this.renderVerificationStatus() }</CompactCard>
-			</Main>
+			</Fragment>
 		);
 	}
 }
 
-function getUrlParameter( name ) {
-	name = name.replace( /[[]/, '\\[' ).replace( /[\]]/, '\\]' );
-	const regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
-	const results = regex.exec( location.search );
-	return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
-}
-
-/**
- * Default export. Boots up the landing page.
- */
-function boot() {
-	const token = getUrlParameter( 'token' );
-	const domain = getUrlParameter( 'domain' );
-	if ( window.i18nLocaleStrings ) {
-		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		i18n.setLocale( i18nLocaleStringsObject );
-	}
-	RenderDom.render(
-		<RegistrantVerificationPage token={ token } domain={ domain } />,
-		document.getElementById( 'primary' )
-	);
-}
-
-boot();
+export default localize( RegistrantVerificationPage );

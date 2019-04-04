@@ -160,9 +160,7 @@ function getWebpackConfig( {
 		context: __dirname,
 		entry: {
 			build: [ path.join( __dirname, 'client', 'boot', 'app' ) ],
-			domainsRegistrantVerification: [
-				path.join( __dirname, 'client', 'landing', 'domains', 'registrant-verification' ),
-			],
+			domainsLanding: [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
 		},
 		mode: isDevelopment ? 'development' : 'production',
 		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),

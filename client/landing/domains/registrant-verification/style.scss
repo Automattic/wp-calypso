@@ -1,26 +1,13 @@
-.heading {
-	font-size: 96px;
-	margin: 32px 0;
+.registrant-verification__success {
+	text-align: center;
 }
 
-.greeting {
-	color: var( --color-text );
-}
+@mixin placeholder( $lighten-percentage: 30% ) {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: lighten( $gray, $lighten-percentage );
+	color: transparent;
 
-
-.registrant-verification {
-	h2 {
-		font-size: 20px;
-		font-weight: 600;
-		margin-bottom: 1em;
-	}
-
-	a {
-		cursor: pointer;
-	}
-
-	.registrant-verification__button {
-		margin-right: 16px;
-		margin-top: 16px;
+	&::after {
+		content: '\00a0';
 	}
 }
