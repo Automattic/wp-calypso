@@ -1,4 +1,3 @@
-/** @format */
 /**
  **** WARNING: No ES6 modules here. Not transpiled! ****
  */
@@ -295,7 +294,7 @@ function getWebpackConfig( {
 			} ),
 			externalizeWordPressPackages && new WordPressExternalDependenciesPlugin(),
 		] ),
-		externals: _.compact( [ 'electron' ] ),
+		externals: [ 'electron' ],
 	};
 
 	if ( calypsoEnv === 'desktop' ) {
