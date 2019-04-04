@@ -60,7 +60,11 @@ export default class SidebarItem extends React.Component {
 				>
 					<Gridicon icon={ this.props.icon } size={ 24 } />
 					{ MaterialIcon ? <MaterialIcon /> : null }
-					<span className="sidebar__menu-link-text" data-e2e-sidebar={ this.props.label }>
+					{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
+					<span
+						className="sidebar__menu-link-text menu-link-text"
+						data-e2e-sidebar={ this.props.label }
+					>
 						{ this.props.label }
 					</span>
 					{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
