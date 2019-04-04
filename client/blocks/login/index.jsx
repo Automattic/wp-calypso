@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -214,7 +212,7 @@ class Login extends Component {
 			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
 			preHeader = (
 				<div className="login__jetpack-logo">
-					<JetpackHeader partnerSlug={ this.props.partnerSlug } />
+					<JetpackHeader partnerSlug={ this.props.partnerSlug } darkColorScheme />
 				</div>
 			);
 		}

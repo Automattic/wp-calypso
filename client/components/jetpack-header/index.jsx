@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External Dependencies
  */
@@ -27,12 +25,13 @@ export class JetpackHeader extends PureComponent {
 	static displayName = 'JetpackHeader';
 
 	static propTypes = {
+		darkColorScheme: PropTypes.bool,
 		partnerSlug: PropTypes.string,
 		width: PropTypes.number,
 	};
 
 	renderLogo() {
-		const { partnerSlug, width } = this.props;
+		const { darkColorScheme, partnerSlug, width } = this.props;
 
 		switch ( partnerSlug ) {
 			case 'dreamhost':
@@ -42,7 +41,7 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1270 170"
 						partnerName="DreamHost"
 					>
-						<JetpackDreamhostLogo />
+						<JetpackDreamhostLogo darkColorScheme={ darkColorScheme } />
 					</JetpackPartnerLogoGroup>
 				);
 
@@ -53,7 +52,7 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1150 170"
 						partnerName="Pressable"
 					>
-						<JetpackPressableLogo />
+						<JetpackPressableLogo darkColorScheme={ darkColorScheme } />
 					</JetpackPartnerLogoGroup>
 				);
 
@@ -64,7 +63,7 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1128 170"
 						partnerName="Bluehost"
 					>
-						<JetpackBluehostLogo />
+						<JetpackBluehostLogo darkColorScheme={ darkColorScheme } />
 					</JetpackPartnerLogoGroup>
 				);
 
@@ -75,13 +74,13 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 936 151"
 						partnerName="InMotion"
 					>
-						<JetpackInmotionLogo />
+						<JetpackInmotionLogo darkColorScheme={ darkColorScheme } />
 					</JetpackPartnerLogoGroup>
 				);
 
 			case 'milesweb':
 				// This is a raster logo that contains the Jetpack logo already.
-				return <JetpackMileswebLogo />;
+				return <JetpackMileswebLogo darkColorScheme={ darkColorScheme } />;
 
 			case 'liquidweb':
 				return (
@@ -90,7 +89,7 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1034 150"
 						partnerName="Liquid Web"
 					>
-						<JetpackLiquidWebLogo />
+						<JetpackLiquidWebLogo darkColorScheme={ darkColorScheme } />
 					</JetpackPartnerLogoGroup>
 				);
 			default:

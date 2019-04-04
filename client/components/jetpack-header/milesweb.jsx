@@ -1,19 +1,20 @@
-/** @format */
-
 /**
  * External Dependencies
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
-function JetpackMileswebLogo( { translate } ) {
+function JetpackMileswebLogo( { darkColorScheme, translate } ) {
+	const img = darkColorScheme
+		? 'jetpack-milesweb-connection-dark.png'
+		: 'jetpack-milesweb-connection.png';
 	return (
 		<img
 			alt={ translate( 'Co-branded Jetpack and %(partnerName)s logo', {
 				args: { partnerName: 'MilesWeb' },
 			} ) }
 			height="85px"
-			src="/calypso/images/jetpack/jetpack-milesweb-connection.png"
+			src={ `/calypso/images/jetpack/${ img }` }
 			width="662.5px"
 		/>
 	);
