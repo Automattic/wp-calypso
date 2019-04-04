@@ -71,6 +71,7 @@ import {
 } from 'state/ui/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import { canAccessEarnSection } from 'lib/ads/utils';
+import MaterialIcon from 'components/material-icon';
 
 /**
  * Module variables
@@ -529,6 +530,7 @@ export class MySitesSidebar extends Component {
 				link={ storeLink }
 				onNavigate={ this.trackStoreClick }
 				icon="cart"
+				materialIcon={ <MaterialIcon icon="shopping_cart" /> }
 				forceInternalLink
 			>
 				<div className="sidebar__chevron-right">
