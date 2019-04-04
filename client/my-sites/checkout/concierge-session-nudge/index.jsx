@@ -186,7 +186,7 @@ export class ConciergeSessionNudge extends React.Component {
 								/>
 								<span className="concierge-session-nudge__checklist-item-text">
 									{ translate(
-										'{{b}}Traffic:{{/b}} How to get free search engine traffic with SEO tools.',
+										'{{b}}Traffic:{{/b}} How to make your site search-engine friendly.',
 										{
 											components: { b: <b /> },
 											comment: "This is a benefit listed on a 'Purchase a call with us' page",
