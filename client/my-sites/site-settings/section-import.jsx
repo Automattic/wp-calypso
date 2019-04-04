@@ -5,11 +5,11 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
+import { map, filter, find, first, flow, includes, get, isEmpty, memoize, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -115,7 +115,7 @@ class SiteSettingsImport extends Component {
 			return;
 		}
 
-		autoStartImport( site.ID, getImporterTypeForEngine( engine ), fromSite );
+		autoStartImport( site, getImporterTypeForEngine( engine ), fromSite );
 	} );
 
 	componentDidMount() {
@@ -225,13 +225,20 @@ class SiteSettingsImport extends Component {
 		} = this.state;
 		const { engine, site } = this.props;
 		const { slug, title } = site;
-		const siteTitle = title.length ? title : slug;
+		const siteTitle = title.length ? title : slug;;
 
 		if ( getImporterForEngine( engine ) ) {
 			const activeImports = filterImportsForSite( site.ID, imports );
+			const firstImport = first( activeImports );
+
+			const signupImportStarted = firstImport && includes(
+				[ 'importer-importing', 'importer-import-succes', 'importer-map-authors' ],
+				firstImport.importerState
+			);
 
 			// If there's no active import started, mock one until we actually start
-			if ( isEmpty( activeImports ) ) {
+			if ( isEmpty( activeImports ) || signupImportStarted ) {
+				// console.log( 'rendering from-signup placeholder' );
 				return this.renderActiveImporters( [
 					{
 						// TODO: make this more formal, us a shared constant
@@ -242,6 +249,7 @@ class SiteSettingsImport extends Component {
 					},
 				] );
 			}
+			// console.log( 'rendering regular activeImports' );
 
 			return this.renderActiveImporters( activeImports );
 		}
@@ -272,11 +280,11 @@ class SiteSettingsImport extends Component {
 
 	renderImportersMain() {
 		return (
-			<>
+			<Fragment>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
 				<DescriptiveHeader />
 				{ this.renderImporters() }
-			</>
+			</Fragment>
 		);
 	}
 

@@ -3,7 +3,7 @@
  * External dependencies
  */
 import Dispatcher from 'dispatcher';
-import { defer, includes, partial } from 'lodash';
+import { defer, get, includes, partial } from 'lodash';
 import wpLib from 'lib/wp';
 const wpcom = wpLib.undocumented();
 
@@ -177,6 +177,8 @@ export function clearImport( siteId, importerId ) {
 export function startMappingAuthors( importerId ) {
 	lockImport( importerId );
 
+	console.log( 'xx startMappingAuthors', importerId );
+
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_AUTHORS_START_MAPPING,
 		importerId,
@@ -219,36 +221,63 @@ export function startImporting( importerStatus ) {
 	return wpcom.updateImporter( siteId, importOrder( importerStatus ) );
 }
 
-export const autoStartImport = ( siteId, importerType, targetUrl ) => {
+export const autoStartImport = ( site, importerType, targetUrl ) => {
 	// TODO: Cover other site-importer imports here. importStatus and params would
 	// need to be amended too.
+	// how to detect if there are multiple authors (WP.com), and multiple incoming authors (external site)?
 	if ( importerType === 'importer-type-wix' ) {
 		const importStatus = {
-			siteId,
+			siteId: site.ID,
 			type: 'wix',
 		};
 		const params = {
 			engine: 'wix',
 		};
 
+		console.log( 'autoStartImport', { site } );
+
 		return wpcom
-			.importWithSiteImporter( siteId, importStatus, params, targetUrl )
-			.then( response =>
+			.importWithSiteImporter( site.ID, importStatus, params, targetUrl )
+			.then( response => {
+				const sourceAuthors = get( response, 'customData.sourceAuthors' );
+				const isSingleAuthorSite = get( site, 'single_user_site', true );
+				// Do we want to map authors when the WP.com site is single author but the import is multi?
+				const isSingleAuthorTargetSite = sourceAuthors.length === 1;
+
+				console.log( isSingleAuthorSite && isSingleAuthorTargetSite, { sourceAuthors, site } );
+
+				if ( isSingleAuthorSite  ) {
+				// if ( isSingleAuthorSite && isSingleAuthorTargetSite ) {
+					// do we need the defer? How can we return startImporting thenable if we do?
+					defer( () => {
+						console.log( 'autoStartImport: startImporting', response.importId );
+
+						// Fake an importerStatus object
+						startImporting( {
+							importerId: response.importId,
+							site: { ID: response.siteId },
+						} );
+					} )
+
+					return;
+				}
+
 				defer( () => {
-					startImporting( {
-						importerId: response.importId,
-						site: { ID: response.siteId },
-					} );
-				} )
-			)
-			.catch( () => {
+					console.log( 'autoStartImport: startMappingAuthors', response.importId );
+					startMappingAuthors( response.importId );
+				} );
+
+				// startImport( site.ID, importerType );
+			} )
+			.catch( error => {
+				console.log( 'in autoStartImport catch', error );
 				// TODO: Properly handle failure. We should look at
 				// moving the rest of the site-importer actions out
 				// of the components first to reach consistency
 			} );
 	}
 
-	startImport( siteId, importerType );
+	startImport( site.ID, importerType );
 };
 
 export const startUpload = ( importerStatus, file ) => {

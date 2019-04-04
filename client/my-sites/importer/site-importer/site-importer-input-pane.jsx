@@ -100,7 +100,10 @@ class SiteImporterInputPane extends React.Component {
 
 		if ( newImporterState !== oldImporterState && newImporterState === appStates.UPLOAD_SUCCESS ) {
 			// WXR was uploaded, map the authors
-			if ( singleAuthorSite ) {
+			// I think the main issues we have stem from actions being baked in to components like this.
+			// We can't call actions elsewhere without this logic coming in to effect.
+			if ( singleAuthorSite && false ) {
+				console.log( 'decide whether or not to do mapping', false )
 				defer( props => {
 					const currentUserData = user().get();
 					const currentUser = {
@@ -115,6 +118,7 @@ class SiteImporterInputPane extends React.Component {
 					} );
 				}, nextProps );
 			} else {
+				console.log( 'decide whether or not to do mapping', true )
 				defer( props => startMappingAuthors( props.importerStatus.importerId ), nextProps );
 
 				this.props.recordTracksEvent( 'calypso_site_importer_map_authors_multi', {

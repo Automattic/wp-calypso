@@ -123,6 +123,8 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			const { importerId } = action;
 			const importerItem = getImporterItemById( state, importerId );
 
+			console.log( IMPORTS_AUTHORS_START_MAPPING, { state, importerId } )
+
 			return {
 				...state,
 				importers: {
