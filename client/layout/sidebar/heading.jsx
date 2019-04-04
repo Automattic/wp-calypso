@@ -21,6 +21,7 @@ const SidebarHeading = ( { children, onClick, ...extraProps } ) => {
 		};
 	}
 
+	/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
 	return (
 		<h2
 			tabIndex={ tabIndex }
