@@ -21,7 +21,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
-		"prepare": "npx webpack --config ./webpack.config.js"
+		"prepare": "webpack --config='../calypso-build/webpack.config.js' --output-path='./dist' editor='./src/editor.js' "
 	},
 	"dependencies": {
 		"@wordpress/blocks": "6.0.7",
