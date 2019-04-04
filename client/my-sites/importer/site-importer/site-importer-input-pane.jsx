@@ -5,55 +5,36 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import Dispatcher from 'dispatcher';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { isEmpty, noop, every, flow, has, defer, get, trim, sortBy, reverse } from 'lodash';
+import { isEmpty, noop, flow, has, get, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
 import moment from 'moment';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies
  */
-import wpLib from 'lib/wp';
 import config from 'config';
+import wpLib from 'lib/wp';
 import { validateImportUrl } from 'lib/importers/url-validation';
-
-const wpcom = wpLib.undocumented();
-
-import { toApi, fromApi } from 'lib/importer/common';
-
-import {
-	mapAuthor,
-	startMappingAuthors,
-	startImporting,
-	createFinishUploadAction,
-} from 'lib/importer/actions';
-import user from 'lib/user';
-
-import { appStates } from 'state/imports/constants';
-import ErrorPane from '../error-pane';
 import TextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
-
-import SiteImporterSitePreview from './site-importer-site-preview';
-
-import { prefetchmShotsPreview } from 'lib/mshots';
-
 import { recordTracksEvent } from 'state/analytics/actions';
-
 import { setSelectedEditor } from 'state/selected-editor/actions';
-
+import {
+	importSite,
+	validateSiteIsImportable,
+	resetSiteImporterImport,
+	setValidationError,
+} from 'state/imports/site-importer/actions';
 import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+import ErrorPane from '../error-pane';
+import SiteImporterSitePreview from './site-importer-site-preview';
 
-const NO_ERROR_STATE = {
-	error: false,
-	errorMessage: '',
-	errorType: null,
-};
+const wpcom = wpLib.undocumented();
+
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
 
@@ -71,11 +52,6 @@ class SiteImporterInputPane extends React.Component {
 	static defaultProps = { description: null, onStartImport: noop };
 
 	state = {
-		// TODO this is bad, make it better. Both appStates and state should be unified in one.
-		importStage: 'idle',
-		error: false,
-		errorMessage: '',
-		errorType: null,
 		siteURLInput: this.props.fromSite || '',
 		selectedEndpoint: '',
 		availableEndpoints: [],
@@ -90,60 +66,6 @@ class SiteImporterInputPane extends React.Component {
 	componentDidMount() {
 		this.validateSite();
 	}
-
-	// TODO This can be improved if we move to Redux.
-	UNSAFE_componentWillReceiveProps = nextProps => {
-		// TODO test on a site without posts
-		const newImporterState = nextProps.importerStatus.importerState;
-		const oldImporterState = this.props.importerStatus.importerState;
-		const singleAuthorSite = get( this.props.site, 'single_user_site', true );
-
-		if ( newImporterState !== oldImporterState && newImporterState === appStates.UPLOAD_SUCCESS ) {
-			// WXR was uploaded, map the authors
-			if ( singleAuthorSite ) {
-				defer( props => {
-					const currentUserData = user().get();
-					const currentUser = {
-						...currentUserData,
-						name: currentUserData.display_name,
-					};
-
-					// map all the authors to the current user
-					// TODO: when converting to redux, allow for multiple mappings in a single action
-					props.importerStatus.customData.sourceAuthors.forEach( author => {
-						mapAuthor( props.importerStatus.importerId, author, currentUser );
-					} );
-				}, nextProps );
-			} else {
-				defer( props => startMappingAuthors( props.importerStatus.importerId ), nextProps );
-
-				this.props.recordTracksEvent( 'calypso_site_importer_map_authors_multi', {
-					blog_id: this.props.site.ID,
-					site_url: this.state.importSiteURL,
-				} );
-			}
-
-			// Do not continue execution of the function as the rest should be executed on the next update.
-			return;
-		}
-
-		if ( singleAuthorSite && has( this.props, 'importerStatus.customData.sourceAuthors' ) ) {
-			// Authors have been mapped, start the import
-			const oldAuthors = every( this.props.importerStatus.customData.sourceAuthors, 'mappedTo' );
-			const newAuthors = every( nextProps.importerStatus.customData.sourceAuthors, 'mappedTo' );
-
-			if ( oldAuthors === false && newAuthors === true ) {
-				defer( props => {
-					startImporting( props.importerStatus );
-				}, nextProps );
-
-				this.props.recordTracksEvent( 'calypso_site_importer_map_authors_single', {
-					blog_id: this.props.site.ID,
-					site_url: this.state.importSiteURL,
-				} );
-			}
-		}
-	};
 
 	fetchEndpoints = () => {
 		wpcom.wpcom.req
@@ -222,178 +144,39 @@ class SiteImporterInputPane extends React.Component {
 		const errorMessage = validateImportUrl( siteURL );
 
 		if ( errorMessage ) {
-			this.setState( {
-				loading: false,
-				error: true,
-				errorMessage,
-				errorType: 'validationError',
-			} );
-			return;
+			return this.props.setValidationError( errorMessage );
 		}
 
 		// normalized URL
 		const urlForImport = hostname + pathname;
 
-		this.setState( {
-			loading: true,
-			...NO_ERROR_STATE,
+		return this.props.validateSiteIsImportable( {
+			params: {
+				...this.getApiParams(),
+				site_url: urlForImport,
+			},
+			site: this.props.site,
+			targetSiteUrl: urlForImport,
 		} );
-
-		this.props.recordTracksEvent( 'calypso_site_importer_validate_site_start', {
-			blog_id: this.props.site.ID,
-			site_url: urlForImport,
-		} );
-
-		prefetchmShotsPreview( urlForImport );
-
-		const params = this.getApiParams();
-		params.site_url = urlForImport;
-
-		wpcom.wpcom.req
-			.get( {
-				path: `/sites/${ this.props.site.ID }/site-importer/is-site-importable?${ stringify(
-					params
-				) }`,
-				apiNamespace: 'wpcom/v2',
-			} )
-			.then( resp => {
-				this.setState( {
-					importStage: 'importable',
-					importData: {
-						title: resp.site_title,
-						supported: resp.supported_content,
-						unsupported: resp.unsupported_content,
-						favicon: resp.favicon,
-						engine: resp.engine,
-						url: resp.url,
-					},
-					loading: false,
-					importSiteURL: resp.site_url,
-				} );
-
-				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_success', {
-					blog_id: this.props.site.ID,
-					site_url: resp.site_url,
-					supported_content: resp.supported_content
-						.slice( 0 )
-						.sort()
-						.join( ', ' ),
-					unsupported_content: resp.unsupported_content
-						.slice( 0 )
-						.sort()
-						.join( ', ' ),
-					site_engine: resp.engine,
-				} );
-			} )
-			.catch( err => {
-				this.setState( {
-					loading: false,
-					error: true,
-					errorMessage: `${ err.message }`,
-				} );
-
-				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
-					blog_id: this.props.site.ID,
-					site_url: urlForImport,
-				} );
-			} );
 	};
 
 	importSite = () => {
-		this.setState( {
-			loading: true,
-			...NO_ERROR_STATE,
+		this.props.importSite( {
+			engine: this.props.importData.engine,
+			importerStatus: this.props.importerStatus,
+			params: this.getApiParams(),
+			site: this.props.site,
+			supportedContent: this.props.importData.supported,
+			targetSiteUrl: this.props.urlInputValue,
+			unsupportedContent: this.props.importData.unsupported,
 		} );
-
-		this.props.recordTracksEvent( 'calypso_site_importer_start_import_request', {
-			blog_id: this.props.site.ID,
-			site_url: this.state.importSiteURL,
-			supported_content: this.state.importData.supported
-				.slice( 0 )
-				.sort()
-				.join( ', ' ),
-			unsupported_content: this.state.importData.unsupported
-				.slice( 0 )
-				.sort()
-				.join( ', ' ),
-			site_engine: this.state.importData.engine,
-		} );
-
-		wpcom.wpcom.req
-			.post( {
-				path: `/sites/${ this.props.site.ID }/site-importer/import-site?${ stringify(
-					this.getApiParams()
-				) }`,
-				apiNamespace: 'wpcom/v2',
-				formData: [
-					[ 'import_status', JSON.stringify( toApi( this.props.importerStatus ) ) ],
-					[ 'site_url', this.state.importSiteURL ],
-				],
-			} )
-			.then( resp => {
-				this.setState( { loading: false } );
-
-				this.props.recordTracksEvent( 'calypso_site_importer_start_import_success', {
-					blog_id: this.props.site.ID,
-					site_url: this.state.importSiteURL,
-					supported_content: this.state.importData.supported
-						.slice( 0 )
-						.sort()
-						.join( ', ' ),
-					unsupported_content: this.state.importData.unsupported
-						.slice( 0 )
-						.sort()
-						.join( ', ' ),
-					site_engine: this.state.importData.engine,
-				} );
-
-				// At this point we're assuming that an import is going to happen
-				// so we set the user's editor to Gutenberg in order to make sure
-				// that the posts aren't mangled by the classic editor.
-				if ( 'godaddy-gocentral' === get( this.props, 'importerData.engine' ) ) {
-					this.props.setSelectedEditor( this.props.site.ID, 'gutenberg' );
-				}
-
-				const data = fromApi( resp );
-				const action = createFinishUploadAction( this.props.importerStatus.importerId, data );
-				defer( () => {
-					Dispatcher.handleViewAction( action );
-				} );
-			} )
-			.catch( err => {
-				this.props.recordTracksEvent( 'calypso_site_importer_start_import_fail', {
-					blog_id: this.props.site.ID,
-					site_url: this.state.importSiteURL,
-					supported_content: this.state.importData.supported
-						.slice( 0 )
-						.sort()
-						.join( ', ' ),
-					unsupported_content: this.state.importData.unsupported
-						.slice( 0 )
-						.sort()
-						.join( ', ' ),
-					site_engine: this.state.importData.engine,
-				} );
-
-				this.setState( {
-					loading: false,
-					error: true,
-					errorMessage: `${ err.message } (${ err.code })`,
-				} );
-			} );
 	};
 
 	resetImport = () => {
-		this.props.recordTracksEvent( 'calypso_site_importer_reset_import', {
-			blog_id: this.props.site.ID,
-			site_url: this.state.importSiteURL || this.state.siteURLInput,
-			previous_stage: this.state.importStage,
-		} );
-
-		this.setState( {
-			loading: false,
-			importStage: 'idle',
-			...NO_ERROR_STATE,
+		this.props.resetSiteImporterImport( {
+			site: this.props.site,
+			targetSiteUrl: this.props.urlInputValue || this.state.siteURLInput,
+			importStage: this.props.importStage,
 		} );
 	};
 
@@ -442,16 +225,16 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	render() {
-		const { importerStatus, isEnabled, site } = this.props;
+		const { importerStatus, isEnabled, site, error, isLoading, importStage } = this.props;
 
 		return (
 			<div className="site-importer__site-importer-pane">
-				{ this.state.importStage === 'idle' && (
+				{ importStage === 'idle' && (
 					<div>
 						<p>{ this.props.description }</p>
 						<div className="site-importer__site-importer-url-input">
 							<TextInput
-								disabled={ this.state.loading }
+								disabled={ isLoading }
 								onChange={ this.setUrl }
 								onKeyPress={ this.validateOnEnter }
 								value={ this.state.siteURLInput }
@@ -461,7 +244,7 @@ class SiteImporterInputPane extends React.Component {
 						{ this.state.availableEndpoints.length > 0 && (
 							<FormSelect
 								onChange={ this.setEndpoint }
-								disabled={ this.state.loading }
+								disabled={ isLoading }
 								className="site-importer__site-importer-endpoint-select"
 								value={ this.state.selectedEndpoint }
 							>
@@ -475,27 +258,27 @@ class SiteImporterInputPane extends React.Component {
 						) }
 					</div>
 				) }
-				{ this.state.importStage === 'importable' && (
+				{ importStage === 'importable' && (
 					<div className="site-importer__site-importer-confirm-site-pane">
 						<SiteImporterSitePreview
 							site={ site }
-							siteURL={ this.state.importSiteURL }
-							importData={ this.state.importData }
-							isLoading={ this.state.loading }
+							siteURL={ this.props.urlInputValue }
+							importData={ this.props.importData }
+							isLoading={ isLoading }
 							resetImport={ this.resetImport }
 							startImport={ this.importSite }
 						/>
 					</div>
 				) }
-				{ this.state.error && (
+				{ error && error.errorMessage && (
 					<ErrorPane
-						type={ this.state.errorType || 'importError' }
-						description={ this.state.errorMessage }
+						type={ error.errorType || 'importError' }
+						description={ error.errorMessage }
 						retryImport={ this.validateSite }
 					/>
 				) }
-				{ this.state.importStage === 'idle' && this.renderUrlHint() }
-				{ this.state.importStage === 'idle' && (
+				{ importStage === 'idle' && this.renderUrlHint() }
+				{ importStage === 'idle' && (
 					<ImporterActionButtonContainer>
 						<ImporterCloseButton
 							importerStatus={ importerStatus }
@@ -504,8 +287,8 @@ class SiteImporterInputPane extends React.Component {
 						/>
 						<ImporterActionButton
 							primary
-							disabled={ this.state.loading || isEmpty( this.state.siteURLInput ) }
-							busy={ this.state.loading }
+							disabled={ isLoading || isEmpty( this.state.siteURLInput ) }
+							busy={ isLoading }
 							onClick={ this.validateSite }
 						>
 							{ this.props.translate( 'Continue' ) }
@@ -519,8 +302,29 @@ class SiteImporterInputPane extends React.Component {
 
 export default flow(
 	connect(
-		null,
-		{ recordTracksEvent, setSelectedEditor }
+		state => {
+			const { isLoading, error, importData, importStage, urlInputValue } = get(
+				state,
+				'imports.siteImporter',
+				{}
+			);
+
+			return {
+				isLoading,
+				error,
+				importData,
+				importStage,
+				urlInputValue,
+			};
+		},
+		{
+			recordTracksEvent,
+			setSelectedEditor,
+			importSite,
+			validateSiteIsImportable,
+			resetSiteImporterImport,
+			setValidationError,
+		}
 	),
 	localize
 )( SiteImporterInputPane );
