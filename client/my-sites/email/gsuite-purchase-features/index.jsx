@@ -27,10 +27,15 @@ class GSuitePurchaseFeatures extends React.Component {
 
 	getStorageText() {
 		const { productSlug, translate } = this.props;
-		if ( 'gapps' === productSlug ) {
-			return translate( 'Get 30GB of storage for all your files synced across devices.' );
-		} else if ( 'gapps_unlimited' === productSlug ) {
-			return translate( 'Get unlimited storage for all your files synced across devices.' );
+		switch ( productSlug ) {
+			case 'gapps':
+				return translate( 'Get 30GB of storage for all your files synced across devices.' );
+			case 'gapps_unlimited':
+				return translate( 'Get unlimited storage for all your files synced across devices.' );
+			default:
+				return translate(
+					'Get 30GB or unlimited storage for all your files synced across devices.'
+				);
 		}
 	}
 
@@ -124,7 +129,7 @@ const learnMoreClick = domainName =>
 
 GSuitePurchaseFeatures.propTypes = {
 	domainName: PropTypes.string.isRequired,
-	productSlug: PropTypes.string.isRequired,
+	productSlug: PropTypes.string,
 	type: PropTypes.oneOf( [ 'grid', 'list' ] ),
 };
 

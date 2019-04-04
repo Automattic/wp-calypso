@@ -1,4 +1,4 @@
-.gsuite-purchase-cta__add-google-apps-card-product-logo {
+.gsuite-purchase-cta__product-logo {
 	font-size: 150%;
 	color: #757575;
 
@@ -15,7 +15,7 @@
 		background-size: 73px;
 		background-position-y: 5px;
 		display: inline-block;
-		height: 23px;
+		height: 32px;
 		margin: 0 6px 0 0;
 		text-indent: -999999px;
 		vertical-align: text-top;
@@ -23,13 +23,20 @@
 	}
 }
 
-.gsuite-purchase-cta__add-google-apps-card-product-details {
-	@include breakpoint( '>960px' ) {
-		display: flex;
-	}
+.gsuite-purchase-cta__body {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 }
 
-.gsuite-purchase-cta__add-google-apps-card-description {
+.gsuite-purchase-cta__header {
+	display: flex;
+	flex-direction: row;
+}
+
+.gsuite-purchase-cta__header-description {
+	display: flex;
+	flex-direction: column;
 	box-sizing: border-box;
 	font-size: 14px;
 
@@ -37,7 +44,46 @@
 		flex-basis: 100%;
 		max-width: 400px;
 	}
+}
 
+.gsuite-purchase-cta__header-description-title {
+	color: var( --color-text );
+	font-size: 24px;
+	line-height: 120%;
+	margin: 0 0 10px;
+}
+
+.gsuite-purchase-cta__header-description-sub-title {
+	font-size: 18px;
+}
+
+.gsuite-purchase-cta__header-image {
+	display: none;
+
+	@include breakpoint( '>960px' ) {
+		align-items: flex-start;
+		display: flex;
+		flex-grow: 1;
+		margin-left: 20px;
+		justify-content: center;
+	}
+
+	@include breakpoint( '>1040px' ) {
+		align-items: center;
+	}
+}
+
+.gsuite-purchase-cta__skus {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	@include breakpoint( '>960px' ) {
+		flex-direction: row;
+	}
+}
+
+.gsuite-purchase-cta__sku-info {
 	.button {
 		float: none;
 		margin: 1em 0 0.5em;
@@ -47,27 +93,6 @@
 		@include breakpoint( '<960px' ) {
 			width: 100%;
 		}
-	}
-}
-
-.gsuite-purchase-cta__add-google-apps-card-title {
-	color: var( --color-text );
-	font-size: 24px;
-	line-height: 120%;
-	margin: 0 0 10px;
-}
-
-.gsuite-purchase-cta__add-google-apps-card-sub-title {
-	font-size: 18px;
-}
-
-.gsuite-purchase-cta__gsuite-skus {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-
-	@include breakpoint( '>960px' ) {
-		flex-direction: row;
 	}
 }
 
@@ -94,32 +119,4 @@
 	color: var( --color-text-subtle );
 	font-size: 13px;
 	font-style: italic;
-}
-
-.gsuite-purchase-cta__add-google-apps-card-logos {
-	display: none;
-
-	@include breakpoint( '>960px' ) {
-		align-items: flex-start;
-		display: flex;
-		flex-grow: 1;
-		margin-left: 20px;
-		justify-content: center;
-	}
-
-	@include breakpoint( '>1040px' ) {
-		align-items: center;
-	}
-}
-
-.gsuite-purchase-cta__add-google-apps-card-secondary-button {
-	.button {
-		float: none;
-		margin: 1em 0;
-		width: 100%;
-
-		@include breakpoint( '>660px' ) {
-			display: none;
-		}
-	}
 }
