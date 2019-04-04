@@ -876,7 +876,7 @@ export class MySitesSidebar extends Component {
 					</ExpandableSidebarMenu>
 				) : null }
 
-				{ 0 && this.wpAdmin() ? (
+				{ this.wpAdmin() ? (
 					<SidebarMenu className="sidebar__wp-admin">
 						<ul>{ this.wpAdmin() }</ul>
 					</SidebarMenu>
@@ -886,8 +886,14 @@ export class MySitesSidebar extends Component {
 	}
 
 	render() {
+		let className;
+
+		if ( this.shouldShowStreamlinedNavDrawer() ) {
+			className = 'sidebar__streamlined-nav-drawer';
+		}
+
 		return (
-			<Sidebar>
+			<Sidebar className={ className }>
 				<SidebarRegion>
 					<CurrentSite />
 					{ this.renderSidebarMenus() }
