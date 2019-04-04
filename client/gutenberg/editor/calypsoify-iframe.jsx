@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, pickBy, startsWith } from 'lodash';
+import { endsWith, flow, get, map, pickBy, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import url from 'url';
 
@@ -32,6 +32,7 @@ import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
 import { trashPost } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
+import { protectForm } from 'lib/protect-form';
 
 /**
  * Style dependencies
@@ -44,6 +45,8 @@ class CalypsoifyIframe extends Component {
 		postType: PropTypes.string,
 		duplicatePostId: PropTypes.number,
 		pressThis: PropTypes.object,
+		markChanged: PropTypes.func.isRequired,
+		markSaved: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -159,6 +162,12 @@ class CalypsoifyIframe extends Component {
 		}
 
 		if ( 'goToAllPosts' === action ) {
+			const { unsavedChanges = false } = payload;
+			if ( unsavedChanges ) {
+				this.props.markChanged();
+			} else {
+				this.props.markSaved();
+			}
 			this.props.navigate( this.props.allPostsUrl );
 		}
 
@@ -381,7 +390,12 @@ const mapDispatchToProps = {
 	trashPost,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( CalypsoifyIframe );
+const enhance = flow(
+	protectForm,
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)
+);
+
+export default enhance( CalypsoifyIframe );
