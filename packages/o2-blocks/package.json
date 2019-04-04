@@ -9,9 +9,7 @@
 		"url": "git://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/o2-blocks"
 	},
-	"publishConfig": {
-		"access": "public"
-	},
+	"private": true,
 	"author": "Automattic, Inc.",
 	"license": "GPL-2.0-or-later",
 	"bugs": {
