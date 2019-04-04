@@ -19,6 +19,7 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WpcomColophon from 'components/wpcom-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { saveSiteType } from 'state/jetpack-connect/actions';
+import { setSiteType } from 'state/signup/steps/site-type/actions';
 
 class JetpackSiteType extends Component {
 	goToNextStep = () => {
@@ -31,6 +32,7 @@ class JetpackSiteType extends Component {
 		const { siteId } = this.props;
 
 		this.props.saveSiteType( siteId, siteType );
+		this.props.setSiteType( siteType );
 
 		this.goToNextStep();
 	};
@@ -69,6 +71,7 @@ const connectComponent = connect(
 	} ),
 	{
 		saveSiteType,
+		setSiteType,
 	}
 );
 
