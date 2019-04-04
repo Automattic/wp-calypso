@@ -74,7 +74,7 @@ class GSuiteAddUsers extends React.Component {
 				{ domainsWithForwards.length ? (
 					<Notice showDismiss={ false } status="is-warning">
 						{ translate(
-							'This site has domains with email forwards. If you add G Suite those forwards will stop working. The following domains have forwards:'
+							'Please note that email forwards are not compatible with G Suite, and will be disabled once G Suite is added to this domain. The following domains have forwards:'
 						) }
 						<ul>
 							{ domainsWithForwards.map( domainName => {
