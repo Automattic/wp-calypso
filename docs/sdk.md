@@ -1,8 +1,8 @@
-<!-- @format -->
+# Calypso SDK build tool
 
-# Calypso SDK
+Calypso <abbr title="software development kit">SDK</abbr> build tool is an early stage tool with the goal to build, visualize, test, and deliver interfaces for multiple platforms from a single source.
 
-Calypso <abbr title="software development kit">SDK</abbr> is an early stage tool with the goal to build, visualize, test, and deliver interfaces for multiple platforms from a single source.
+It basically takes parts of Calypso Webpack config uses it to build asset bundles that can be used outside Calypso.
 
 ## Using SDK CLI
 
@@ -30,79 +30,6 @@ calypso-sdk --help
 ## SDK modules
 
 SDK can be extended with modules to perform different tasks. Currently we have two tasks; build Gutenberg extensions and Notifications client.
-
-### Gutenberg extensions
-
-SDK module to build [Gutenberg](https://wordpress.org/gutenberg/handbook/) extensions.
-
-See usage instructions:
-
-```bash
-npm run sdk -- gutenberg --help
-```
-
-These extensions live under `client/gutenberg/extensions` directory. There are some presets to bundle multiple extensions into one in `client/gutenberg/extensions/presets` directory.
-
-By default, these extensions will be built under `build` folder in the same folder with entry script.
-
-Some dependencies will be omitted from the bundle using webpack externals. They are expected to be
-present in the environment where the produced scripts are run.
-
-- @wordpress/\* dependencies
-- lodash
-
-The produced bundles expect these scripts to be available in the global scope when run, i.e.
-`window.lodash`.
-
-Read more from [Gutenberg extension docs](../client/gutenberg/extensions/README.md).
-
-#### Gutenberg extensions presets
-
-Presets are bundles of multiple extensions or blocks that live in a particular plugin.
-They can be found in `client/gutenberg/extensions/presets` directory.
-
-To create a new preset, create a new folder in that directory and add an `index.json` file.
-The file should be an object of arrays of the extensions folder names that you want to bundle together
-for different environments.
-
-```js
-{
-  "production": [
-    "contact-form",
-    "map",
-    "markdown",
-    "publicize",
-    "simple-payments"
-  ],
-  "beta": [
-    "related-posts",
-    "tiled-gallery",
-    "vr"
-  ]
-}
-```
-
-When you run the sdk command `npm run sdk -- gutenberg client/gutenberg/extensions/presets/your-new-preset`
-You will end up with something like this.
-
-```
-editor.js
-editor.css
-editot.rtl.css
-tiled-gallery/view.js
-tiled-gallery/view.css
-tiled-gallery/view.rtl.css
-```
-
-Note the individual folders get created for each of the extensions only if they contain
-a view.js file. (In this case markdown only has a editor.js file) Also the `editor` (js and css) file
-also contains the code present for the frontend (js and css) files so you don't need to load both files.
-
-If the preset contains a `/editor-shared` directory the shared files will also be
-bundled into the editor (js and css).
-
-If the preset contains a `/shared` directory the shared files will also be bundled
-into the editor (js and css) as well as the individual blocks view (js and css) bundles.
 
 ### Notifications
 
