@@ -4,10 +4,6 @@
  * Note this isn't the same as camel case because of the
  * way that numbers don't trigger the capitalized next letter
  *
- * @example
- * wordpressRequire( '@wordpress/api-fetch' ) = 'wp.apiFetch'
- * wordpressRequire( '@wordpress/i18n' ) = 'wp.i18n'
- *
  * @param {string} request import name
  * @return {string} global variable reference for import
  */
