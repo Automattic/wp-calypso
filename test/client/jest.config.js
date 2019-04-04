@@ -3,6 +3,7 @@
 module.exports = {
 	moduleNameMapper: {
 		'^config$': '<rootDir>/server/config/index.js',
+		'\\.svg$': '@svgr/webpack',
 	},
 	transform: {
 		'^.+\\.jsx?$': 'babel-jest',
