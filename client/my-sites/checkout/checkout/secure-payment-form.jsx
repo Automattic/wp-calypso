@@ -40,6 +40,7 @@ import { INPUT_VALIDATION, REDIRECTING_FOR_AUTHORIZATION } from 'lib/store-trans
 import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
+import FormattedHeader from 'components/formatted-header';
 
 /**
  * Module variables
@@ -564,16 +565,10 @@ export class SecurePaymentForm extends Component {
 	};
 
 	renderGreatChoiceHeader() {
-		const formatHeaderClass = 'formatted-header',
-			formatHeaderTitleClass = 'formatted-header__title';
+		const { translate } = this.props;
+		const headerText = translate( 'Great choice! How would you like to pay?' );
 
-		return (
-			<header className={ formatHeaderClass }>
-				<h1 className={ formatHeaderTitleClass }>
-					{ this.props.translate( 'Great choice! How would you like to pay?' ) }
-				</h1>
-			</header>
-		);
+		return <FormattedHeader headerText={ headerText } />;
 	}
 
 	render() {
