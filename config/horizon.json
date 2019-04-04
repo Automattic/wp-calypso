@@ -46,6 +46,7 @@
 		"jetpack/api-cache": true,
 		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
+		"jetpack/gutenframe": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
 		"login/native-login-links": true,
