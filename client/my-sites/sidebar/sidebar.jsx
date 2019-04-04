@@ -905,7 +905,7 @@ export class MySitesSidebar extends Component {
 	render() {
 		let className;
 
-		if ( isEnabled( 'ui/streamlined-nav-drawer' ) ) {
+		if ( this.shouldShowStreamlinedNavDrawer() ) {
 			className = 'sidebar__streamlined-nav-drawer';
 		}
 
