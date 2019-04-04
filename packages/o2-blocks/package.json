@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/o2-blocks",
-	"version": "1.0.0",
+	"version": "1.0.0-alpha.0",
 	"description": "Gutenberg extensions for o2 theme.",
 	"main": "dist/editor.js",
 	"sideEffects": false,
@@ -9,9 +9,7 @@
 		"url": "git://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/o2-blocks"
 	},
-	"publishConfig": {
-		"access": "public"
-	},
+	"private": true,
 	"author": "Automattic, Inc.",
 	"license": "GPL-2.0-or-later",
 	"bugs": {
