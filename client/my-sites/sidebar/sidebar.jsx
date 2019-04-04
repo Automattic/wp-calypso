@@ -14,6 +14,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
@@ -745,6 +746,16 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
+	shouldShowStreamlinedNavDrawer() {
+		if ( ! isEnabled( 'ui/streamlined-nav-drawer' ) ) {
+			return false;
+		}
+
+		return (
+			process.env.NODE_ENV !== 'production' || abtest( 'streamlinedNavigationDrawer' ) === 'test'
+		);
+	}
+
 	renderSidebarMenus() {
 		if ( this.props.isDomainOnly ) {
 			return (
@@ -771,7 +782,7 @@ export class MySitesSidebar extends Component {
 				!! this.plugins() ||
 				!! this.upgrades();
 
-		if ( isEnabled( 'ui/streamlined-nav-drawer' ) ) {
+		if ( this.shouldShowStreamlinedNavDrawer() ) {
 			return this.renderStreamlinedSidebarMenus( manage, configuration );
 		}
 
