@@ -108,6 +108,8 @@ const nodeModulesToTranspile = [
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
+	'@wordpress/',
+	'react-dates',
 ];
 /**
  * Check to see if we should transpile certain files in node_modules
@@ -208,14 +210,6 @@ const webpackConfig = {
 				cacheIdentifier,
 				include: shouldTranspileDependency,
 			} ),
-			{
-				test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
-				loader: 'babel-loader',
-				options: {
-					babelrc: false,
-					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
-				},
-			},
 			SassConfig.loader( {
 				preserveCssCustomProperties: true,
 				includePaths: [ path.join( __dirname, 'client' ) ],
@@ -318,7 +312,7 @@ if ( isDevelopment ) {
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' )
+		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' )
 	);
 }
 
@@ -336,7 +330,7 @@ const polyfillsSkippedInEvergreen = [
 if ( browserslistEnv === 'evergreen' ) {
 	for ( const polyfill of polyfillsSkippedInEvergreen ) {
 		webpackConfig.plugins.push(
-			new webpack.NormalModuleReplacementPlugin( polyfill, 'lodash/noop' )
+			new webpack.NormalModuleReplacementPlugin( polyfill, 'lodash-es/noop' )
 		);
 	}
 }

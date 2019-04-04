@@ -5,11 +5,7 @@
  */
 
 import React from 'react';
-import concat from 'lodash/fp/concat';
-import filter from 'lodash/fp/filter';
-import flow from 'lodash/fp/flow';
-import map from 'lodash/fp/map';
-import sortBy from 'lodash/fp/sortBy';
+import { concat, filter, flow, map, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +27,7 @@ class PaymentLogoExamples extends React.PureComponent {
 	static displayName = 'PaymentLogo';
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="payment-logo-example">
 				<p>Empty Placeholder</p>

@@ -97,14 +97,6 @@ const webpackConfig = {
 				exclude: /(node_modules|devdocs[/\\]search-index)/,
 			} ),
 			{
-				test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
-				loader: 'babel-loader',
-				options: {
-					babelrc: false,
-					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
-				},
-			},
-			{
 				test: /\.(?:gif|jpg|jpeg|png|svg)$/,
 				use: [
 					{
