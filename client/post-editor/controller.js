@@ -15,6 +15,7 @@ import { get, has, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
 import { addQueryArgs, addSiteFragment } from 'lib/route';
@@ -175,7 +176,9 @@ async function maybeCalypsoifyGutenberg( context, next ) {
 	const postId = getPostID( context );
 
 	if (
-		( isCalypsoifyGutenbergEnabled( state, siteId ) || isGutenlypsoEnabled( state, siteId ) ) &&
+		( isCalypsoifyGutenbergEnabled( state, siteId ) ||
+			isGutenlypsoEnabled( state, siteId ) ||
+			isEnabled( 'jetpack/gutenframe' ) ) &&
 		'gutenberg' === getSelectedEditor( state, siteId )
 	) {
 		let url = getEditorUrl( state, siteId, postId, postType );
