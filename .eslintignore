@@ -7,9 +7,6 @@ node_modules/
 !.eslintrc.js
 /server/devdocs/search-index.js
 
-# Gutenberg preset builds
-/client/gutenberg/extensions/presets/*/build
-
 # Built packages
 /packages/*/dist/
 

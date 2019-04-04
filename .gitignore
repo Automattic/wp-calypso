@@ -56,8 +56,5 @@ cover.html
 
 cached-requests.json
 
-# Gutenberg extensions
-/client/gutenberg/extensions/**/build
-
 # package output
 /packages/*/dist/
