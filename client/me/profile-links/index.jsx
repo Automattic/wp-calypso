@@ -173,11 +173,10 @@ class ProfileLinks extends React.Component {
 	render() {
 		return (
 			<Fragment>
-				<div>
-					<QueryProfileLinks />
+				<QueryProfileLinks />
 					<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
 						<AddProfileLinksButtons
-							showingForm={ !! this.state.showingForm }
+							showingForm={ this.state.showingForm }
 							onShowAddOther={ this.showAddOther }
 							showPopoverMenu={ this.state.showPopoverMenu }
 							onShowAddWordPress={ this.showAddWordPress }
@@ -185,8 +184,7 @@ class ProfileLinks extends React.Component {
 							onClosePopoverMenu={ this.closePopoverMenu }
 						/>
 					</SectionHeader>
-					<Card>{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
-				</div>
+					<Card>{ this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
 				<ListEnd />
 			</Fragment>
 		);
