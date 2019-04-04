@@ -13,7 +13,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Checklist from 'components/checklist';
+import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import Task from 'components/checklist/task';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -49,11 +51,20 @@ class JetpackChecklist extends PureComponent {
 	};
 
 	render() {
-		const { siteId, siteSlug, taskStatuses, translate } = this.props;
+		const {
+			akismetFinished,
+			productInstallStatus,
+			siteId,
+			siteSlug,
+			taskStatuses,
+			translate,
+		} = this.props;
 
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				<QueryJetpackProductInstallStatus siteId={ siteId } />
+
 				<Checklist
 					isPlaceholder={ ! taskStatuses }
 					progressText={ translate( 'Your Jetpack setup progress' ) }
@@ -64,7 +75,14 @@ class JetpackChecklist extends PureComponent {
 							"We've automatically protected you from brute force login attacks."
 						) }
 					/>
-					<Task completed title={ translate( "We've automatically turned on spam filtering." ) } />
+					{ productInstallStatus && (
+						<Task
+							title={ translate( "We're automatically turning on spam filtering." ) }
+							completedTitle={ translate( "We've automatically turned on spam filtering." ) }
+							completed={ akismetFinished }
+							inProgress={ ! akismetFinished }
+						/>
+					) }
 					{ map( taskStatuses, ( status, taskId ) => {
 						const task = JETPACK_CHECKLIST_TASKS[ taskId ];
 
@@ -103,8 +121,11 @@ class JetpackChecklist extends PureComponent {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
 
 		return {
+			akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
+			productInstallStatus,
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
