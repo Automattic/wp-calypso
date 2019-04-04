@@ -16,6 +16,7 @@ import Checklist from 'components/checklist';
 import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import JetpackChecklistHeader from './header';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import Task from 'components/checklist/task';
@@ -25,6 +26,11 @@ import { isDesktop } from 'lib/viewport';
 import { JETPACK_CHECKLIST_TASKS } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class JetpackChecklist extends PureComponent {
 	isComplete( taskId ) {
@@ -66,6 +72,8 @@ class JetpackChecklist extends PureComponent {
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ isPaidPlan && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
+
+				<JetpackChecklistHeader />
 
 				<Checklist
 					isPlaceholder={ ! taskStatuses }
