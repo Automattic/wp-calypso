@@ -37,6 +37,7 @@ import { isATEnabled } from 'lib/automated-transfer';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { isGSuiteRestricted } from 'lib/domains/gsuite';
 
 /**
  * Module variables
@@ -188,6 +189,10 @@ const transferDomainPrecheck = ( context, next ) => {
 };
 
 const googleAppsWithRegistration = ( context, next ) => {
+	if ( isGSuiteRestricted() ) {
+		next();
+	}
+
 	const state = context.store.getState();
 	const siteSlug = getSelectedSiteSlug( state ) || '';
 
