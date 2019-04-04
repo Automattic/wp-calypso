@@ -274,8 +274,8 @@ describe( 'wpcom.site', function() {
 
 						assert.equal( 'number', typeof data.monthly_comments );
 						assert.equal( 'number', typeof data.total_comments );
-						assert.equal( 'string', typeof data.most_active_day );
-						assert.equal( 'string', typeof data.most_active_time );
+						assert.ok( 'most_active_day' in data );
+						assert.ok( 'most_active_time' in data );
 						done();
 					} )
 					.catch( done );
@@ -288,7 +288,7 @@ describe( 'wpcom.site', function() {
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.date ) );
 						assert.equal( 'object', typeof data.days );
-						assert.equal( 'object', typeof data['country-info'] );
+						assert.equal( 'object', typeof data[ 'country-info' ] );
 						done();
 					} )
 					.catch( done );
