@@ -6,7 +6,7 @@
 
 import getRawSite from 'state/selectors/get-raw-site';
 
-const EMTPY_OPTIONS = Object.freeze( {} );
+const EMPTY_OPTIONS = Object.freeze( {} );
 
 /**
  * Returns the site options
@@ -20,5 +20,5 @@ export default ( state, siteId ) => {
 	if ( ! site ) {
 		return null;
 	}
-	return site.options || EMTPY_OPTIONS;
+	return site.options || EMPTY_OPTIONS;
 };
