@@ -81,9 +81,11 @@ class WordPressExternalDependenciesPlugin {
 					}
 				}
 
+				// Build a stable JSON string that declares the WordPress script dependencies.
 				const sortedDepsArray = Array.from( entrypointExternalizedWpDeps ).sort();
 				const depsString = JSON.stringify( sortedDepsArray );
 
+				// Determine a name for the `[entrypoint].deps.json` file.
 				const [ filename, query ] = entrypointName.split( '?', 2 );
 				const depsFile = compilation.getPath( outputFilename.replace( /\.js$/i, '.deps.json' ), {
 					chunk: entrypoint.getRuntimeChunk(),
@@ -95,6 +97,7 @@ class WordPressExternalDependenciesPlugin {
 						.digest( 'hex' ),
 				} );
 
+				// Inject source/file into the compilation for webpack to output.
 				compilation.assets[ depsFile ] = new RawSource( depsString );
 				entrypoint.getRuntimeChunk().files.push( depsFile );
 			}
