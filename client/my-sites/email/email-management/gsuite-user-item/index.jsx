@@ -57,10 +57,8 @@ function GSuiteUserItem( props ) {
 				{ props.siteSlug && (
 					<PendingGSuiteTosNoticeDialog
 						domainName={ props.user.domain }
-						isMultipleDomains={ false }
 						onClose={ onCloseClickHandler }
 						section={ 'gsuite-users-manage-user' }
-						severity={ 'info' }
 						siteSlug={ props.siteSlug }
 						user={ props.user.email }
 						visible={ dialogVisible }

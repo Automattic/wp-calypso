@@ -28,11 +28,19 @@ function PendingGSuiteTosNoticeDialog( props ) {
 		props.trackEvent( {
 			domainName: props.domainName,
 			message,
-			tracksEvent,
 			section: props.section,
 			siteSlug: props.siteSlug,
+			tracksEvent,
 			user: props.user,
 		} );
+	};
+
+	const onCopyAction = () => {
+		setIsCopied( true );
+		trackEvent(
+			`Clicked "Copy Password" link in G Suite pending ToS dialog via ${ props.section }`,
+			'calypso_domain_management_gsuite_pending_account_copy_password_click'
+		);
 	};
 
 	const onPasswordClick = e => {
@@ -59,14 +67,6 @@ function PendingGSuiteTosNoticeDialog( props ) {
 		trackEvent(
 			`Clicked "Login" link after reset in G Suite pending ToS dialog via ${ props.section }`,
 			'calypso_domain_management_gsuite_pending_account_login_after_reset_click'
-		);
-	};
-
-	const onCopyAction = () => {
-		setIsCopied( true );
-		trackEvent(
-			`Clicked "Copy Password" link in G Suite pending ToS dialog via ${ props.section }`,
-			'calypso_domain_management_gsuite_pending_account_copy_password_click'
 		);
 	};
 
@@ -145,10 +145,8 @@ function PendingGSuiteTosNoticeDialog( props ) {
 
 PendingGSuiteTosNoticeDialog.propTypes = {
 	domainName: PropTypes.string.isRequired,
-	isMultipleDomains: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
 	section: PropTypes.string.isRequired,
-	severity: PropTypes.string.isRequired,
 	siteSlug: PropTypes.string.isRequired,
 	trackEvent: PropTypes.func.isRequired,
 	user: PropTypes.string.isRequired,
