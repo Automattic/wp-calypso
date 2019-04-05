@@ -13,6 +13,7 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
@@ -64,6 +65,8 @@ class GSuitePurchaseCta extends React.Component {
 		const businessAnnualPriceFormatted =
 			null === businessAnnualPrice ? '-' : getAnnualPrice( businessAnnualPrice, currencyCode );
 
+		const inABTest = abtest( 'gSuiteSkuSelect' ) === 'show';
+
 		return (
 			<Fragment>
 				<QueryProductsList />
@@ -98,14 +101,16 @@ class GSuitePurchaseCta extends React.Component {
 									skuName={ translate( 'G Suite' ) }
 									skuSubText={ translate( '30GB of Storage' ) }
 								/>
-								<GSuitePurchaseCtaSkuInfo
-									annualPrice={ businessAnnualPriceFormatted }
-									buttonText={ translate( 'Add G Suite Business' ) }
-									onButtonClick={ () => this.goToAddGSuiteUsers( 'business' ) }
-									showButton={ upgradeAvailable }
-									skuName={ translate( 'G Suite Business' ) }
-									skuSubText={ translate( 'Unlimited Storage' ) }
-								/>
+								{ inABTest && (
+									<GSuitePurchaseCtaSkuInfo
+										annualPrice={ businessAnnualPriceFormatted }
+										buttonText={ translate( 'Add G Suite Business' ) }
+										onButtonClick={ () => this.goToAddGSuiteUsers( 'business' ) }
+										showButton={ upgradeAvailable }
+										skuName={ translate( 'G Suite Business' ) }
+										skuSubText={ translate( 'Unlimited Storage' ) }
+									/>
+								) }
 							</div>
 						</div>
 
@@ -115,7 +120,11 @@ class GSuitePurchaseCta extends React.Component {
 					</div>
 				</CompactCard>
 				<CompactCard>
-					<GSuitePurchaseFeatures domainName={ domainName } type={ 'grid' } />
+					<GSuitePurchaseFeatures
+						domainName={ domainName }
+						type={ 'grid' }
+						productSlug={ inABTest ? null : 'gapps' }
+					/>
 				</CompactCard>
 			</Fragment>
 		);

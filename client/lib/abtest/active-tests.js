@@ -183,4 +183,12 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	gSuiteSkuSelect: {
+		datestamp: '20190405',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+	},
 };
