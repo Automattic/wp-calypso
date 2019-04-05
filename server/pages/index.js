@@ -756,18 +756,6 @@ module.exports = function() {
 		ctx.clientData = config.clientData;
 		ctx.domainsLandingData = { action: get( req.params, 'action', 'unknown-action' ) };
 
-		// let entrypointName;
-		// switch ( action ) {
-		// 	case 'registrant-verification':
-		// 		entrypointName = 'landingDomains';
-		// 		break;
-		//
-		// 	default:
-		// 		render404( req, res );
-		// 		// res.send( renderJsx( '404', ctx ) );
-		// 		return;
-		// }
-		//
 		const pageHtml = renderJsx( 'domains-landing', {
 			...ctx,
 			entrypoint: getFilesForEntrypoint( 'domainsLanding' ),
