@@ -50,10 +50,6 @@ function canDeleteSite( state, siteId ) {
 	return true;
 }
 
-export function redirectToGeneral() {
-	page.redirect( '/settings/general' );
-}
-
 export function redirectIfCantDeleteSite( context, next ) {
 	const state = context.store.getState();
 	const dispatch = context.store.dispatch;
