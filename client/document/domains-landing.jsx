@@ -37,8 +37,6 @@ function DomainsLanding( {
 } ) {
 	const csskey = isRTL ? 'css.rtl' : 'css.ltr';
 
-	// const inlineScript = ( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };\n` : '' );
-
 	return (
 		<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 			<Head
