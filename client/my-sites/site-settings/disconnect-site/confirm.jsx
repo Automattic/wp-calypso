@@ -1,26 +1,25 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { compact, find, flowRight, isArray, without } from 'lodash';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import DisconnectJetpack from 'blocks/disconnect-jetpack';
 import DocumentHead from 'components/data/document-head';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
 import NavigationLink from 'components/wizard/navigation-link';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import { submitSurvey } from 'lib/upgrades/actions';
-import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { submitSurvey } from 'lib/upgrades/actions';
 
 class ConfirmDisconnection extends PureComponent {
 	static propTypes = {
@@ -65,10 +64,6 @@ class ConfirmDisconnection extends PureComponent {
 			without( this.constructor.reasonWhitelist, 'troubleshooting', 'other' ), // Redirect those back to initial survey
 			r => r === reason
 		);
-
-		if ( ! siteId ) {
-			return <Placeholder />;
-		}
 
 		return (
 			<Main className="disconnect-site__confirm">

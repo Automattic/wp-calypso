@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,17 +10,16 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import DisconnectSurvey from './disconnect-survey';
+import DocumentHead from 'components/data/document-head';
+import FormattedHeader from 'components/formatted-header';
+import Main from 'components/main';
 import MissingFeature from './missing-feature';
+import NavigationLink from 'components/wizard/navigation-link';
+import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 import TooDifficult from './too-difficult';
 import TooExpensive from './too-expensive';
 import Troubleshoot from './troubleshoot';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import NavigationLink from 'components/wizard/navigation-link';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import Main from 'components/main';
-import Placeholder from 'my-sites/site-settings/placeholder';
-import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 
 /**
  * Style dependencies
@@ -35,10 +33,6 @@ export const reasonComponents = {
 };
 
 const DisconnectSite = ( { reason, siteSlug, translate } ) => {
-	if ( ! siteSlug ) {
-		return <Placeholder />;
-	}
-
 	const ReasonComponent = get( reasonComponents, reason, DisconnectSurvey );
 	const confirmHref = '/settings/disconnect-site/confirm/' + siteSlug;
 
