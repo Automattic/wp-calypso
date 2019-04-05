@@ -59,7 +59,7 @@ function GSuiteUserItem( props ) {
 						domainName={ props.user.domain }
 						isMultipleDomains={ false }
 						onClose={ onCloseClickHandler }
-						section={ 'gsuite-user-manage' }
+						section={ 'gsuite-users-manage-user' }
 						severity={ 'info' }
 						siteSlug={ props.siteSlug }
 						user={ props.user.email }

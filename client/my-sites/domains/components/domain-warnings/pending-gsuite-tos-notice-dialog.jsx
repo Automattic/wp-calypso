@@ -24,28 +24,50 @@ function PendingGSuiteTosNoticeDialog( props ) {
 	const [ isCopied, setIsCopied ] = useState( false );
 	const translate = useTranslate();
 
-	const onPasswordClickHandler = e => {
+	const trackEvent = ( message, tracksEvent ) => {
+		props.trackEvent( {
+			domainName: props.domainName,
+			message,
+			tracksEvent,
+			section: props.section,
+			siteSlug: props.siteSlug,
+			user: props.user,
+		} );
+	};
+
+	const onPasswordClick = e => {
 		e.preventDefault();
 		const wpcom = wp.undocumented();
 		const mailbox = props.user.split( '@' )[ 0 ];
 		wpcom.resetPasswordForMailbox( props.domainName, mailbox ).then( data => {
 			setPassword( data.password );
 		} );
+		trackEvent(
+			`Clicked "Get Password" link in G Suite pending ToS dialog via ${ props.section }`,
+			'calypso_domain_management_gsuite_pending_account_get_password_click'
+		);
 	};
 
-	const recordLogInClick = () => {
-		props.pendingAccountLogInClick( {
-			domainName: props.domainName,
-			isMultipleDomains: props.isMultipleDomains,
-			user: props.user,
-			severity: props.severity,
-			section: props.section,
-			siteSlug: props.siteSlug,
-		} );
+	const onLogInClick = () => {
+		trackEvent(
+			`Clicked "Get Password" link in G Suite pending ToS dialog via ${ props.section }`,
+			'calypso_domain_management_gsuite_pending_account_login_click'
+		);
+	};
+
+	const onResetPasswordLogInClick = () => {
+		trackEvent(
+			`Clicked "Login" link after reset in G Suite pending ToS dialog via ${ props.section }`,
+			'calypso_domain_management_gsuite_pending_account_login_after_reset_click'
+		);
 	};
 
 	const onCopyAction = () => {
 		setIsCopied( true );
+		trackEvent(
+			`Clicked "Copy Password" link in G Suite pending ToS dialog via ${ props.section }`,
+			'calypso_domain_management_gsuite_pending_account_copy_password_click'
+		);
 	};
 
 	const renderEntryCopy = () => {
@@ -91,6 +113,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 					</p>
 					<Button
 						href={ getLoginUrlWithTOSRedirect( props.user, props.domainName ) }
+						onClick={ onResetPasswordLogInClick }
 						primary={ isCopied }
 						rel="noopener noreferrer"
 						target="_blank"
@@ -101,13 +124,13 @@ function PendingGSuiteTosNoticeDialog( props ) {
 			) }
 			{ ! password && (
 				<VerticalNav>
-					<VerticalNavItem onClick={ onPasswordClickHandler } key="0" path={ '#' }>
+					<VerticalNavItem onClick={ onPasswordClick } key="0" path={ '#' }>
 						{ translate( "I {{strong}}don't{{/strong}} have the password", {
 							components: { strong: <strong /> },
 						} ) }
 					</VerticalNavItem>
 					<VerticalNavItem
-						onClick={ recordLogInClick }
+						onClick={ onLogInClick }
 						path={ getLoginUrlWithTOSRedirect( props.user, props.domainName ) }
 						external
 						key="1"
@@ -127,37 +150,24 @@ PendingGSuiteTosNoticeDialog.propTypes = {
 	section: PropTypes.string.isRequired,
 	severity: PropTypes.string.isRequired,
 	siteSlug: PropTypes.string.isRequired,
+	trackEvent: PropTypes.func.isRequired,
 	user: PropTypes.string.isRequired,
 };
 
-const pendingAccountLogInClick = ( {
-	siteSlug,
-	domainName,
-	user,
-	severity,
-	isMultipleDomains,
-	section,
-} ) =>
+const trackEvent = ( { domainName, message, section, siteSlug, tracksEvent, user } ) =>
 	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			`Clicked "Log in" link in G Suite pending ToS notice in ${ section }`,
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent( 'calypso_domain_management_gsuite_pending_account_log_in_click', {
-			site_slug: siteSlug,
+		recordGoogleEvent( 'Domain Management', message, 'Domain Name', domainName ),
+		recordTracksEvent( tracksEvent, {
 			domain_name: domainName,
-			user,
-			severity,
-			is_multiple_domains: isMultipleDomains,
 			section,
+			site_slug: siteSlug,
+			user,
 		} )
 	);
 
 export default connect(
 	null,
 	{
-		pendingAccountLogInClick,
+		trackEvent,
 	}
 )( PendingGSuiteTosNoticeDialog );

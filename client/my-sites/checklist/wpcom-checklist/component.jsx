@@ -749,7 +749,7 @@ class WpcomChecklistComponent extends PureComponent {
 					domainName={ domainName }
 					isMultipleDomains={ false }
 					onClose={ this.onCloseGSuiteDialogClickHandler }
-					section={ 'gsuite-user-manage' }
+					section={ 'gsuite-timeline-task' }
 					severity={ 'info' }
 					siteSlug={ this.props.siteSlug }
 					user={ user }
