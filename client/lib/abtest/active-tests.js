@@ -177,8 +177,8 @@ export default {
 	pageBuilderMVP: {
 		datestamp: '20190402',
 		variations: {
-			control: 50,
-			test: 50,
+			control: 0,
+			test: 1,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
