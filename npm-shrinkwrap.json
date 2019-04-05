@@ -13704,9 +13704,9 @@
 			"integrity": "sha512-NcWuJFHDA8V3wkDgR/j4+gZx+YQwstPgfQDV8ndUeWWzta3dnDTBxpVzqS9lkmJAuV5YX35lmyojl6HO5JXAgw=="
 		},
 		"marked": {
-			"version": "0.5.2",
-			"resolved": "https://registry.npmjs.org/marked/-/marked-0.5.2.tgz",
-			"integrity": "sha512-fdZvBa7/vSQIZCi4uuwo2N3q+7jJURpMVCcbaX0S1Mg65WZ5ilXvC67MviJAsdjqqgD+CEq4RKo5AYGgINkVAA=="
+			"version": "0.6.2",
+			"resolved": "https://registry.npmjs.org/marked/-/marked-0.6.2.tgz",
+			"integrity": "sha512-LqxwVH3P/rqKX4EKGz7+c2G9r98WeM/SW34ybhgNGhUQNKtf1GmmSkJ6cDGJ/t6tiyae49qRkpyTw2B9HOrgUA=="
 		},
 		"mathml-tag-names": {
 			"version": "2.1.0",
