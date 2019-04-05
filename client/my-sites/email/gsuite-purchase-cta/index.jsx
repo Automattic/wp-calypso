@@ -61,47 +61,45 @@ class GSuitePurchaseCta extends React.Component {
 						</h3>
 					</header>
 				</CompactCard>
-
 				<CompactCard>
-					<div className="gsuite-purchase-cta__body">
-						<div className="gsuite-purchase-cta__header">
-							<div className="gsuite-purchase-cta__header-description">
-								<h2 className="gsuite-purchase-cta__header-description-title">
-									{ translate( 'Professional email and so much more.' ) }
-								</h2>
+					<div className="gsuite-purchase-cta__header">
+						<div className="gsuite-purchase-cta__header-description">
+							<h2 className="gsuite-purchase-cta__header-description-title">
+								{ translate( 'Professional email and so much more.' ) }
+							</h2>
 
-								<p className="gsuite-purchase-cta__description-sub-title">
-									{ translate(
-										"We've partnered with Google to offer you email, " +
-											'storage, docs, calendars, and more integrated with your site.'
-									) }
-								</p>
+							<p className="gsuite-purchase-cta__description-sub-title">
+								{ translate(
+									"We've partnered with Google to offer you email, " +
+										'storage, docs, calendars, and more integrated with your site.'
+								) }
+							</p>
 
-								<div className="gsuite-purchase-cta__skus">
-									<GSuitePurchaseCtaSkuInfo
-										annualPrice={ basicAnnualPrice }
-										buttonText={ translate( 'Add G Suite' ) }
-										showButton={ upgradeAvailable }
-										skuName={ translate( 'G Suite' ) }
-										skuSubText={ translate( '30GB of Storage' ) }
-									/>
-									<GSuitePurchaseCtaSkuInfo
-										annualPrice={ businessAnnualPrice }
-										buttonText={ translate( 'Add G Suite Business' ) }
-										showButton={ upgradeAvailable }
-										skuName={ translate( 'G Suite Business' ) }
-										skuSubText={ translate( 'Unlimited Storage' ) }
-									/>
-								</div>
-							</div>
-
-							<div className="gsuite-purchase-cta__header-image">
-								<img alt="G Suite Logo" src="/calypso/images/g-suite/g-suite.svg" />
+							<div className="gsuite-purchase-cta__skus">
+								<GSuitePurchaseCtaSkuInfo
+									annualPrice={ basicAnnualPrice }
+									buttonText={ translate( 'Add G Suite' ) }
+									showButton={ upgradeAvailable }
+									skuName={ translate( 'G Suite' ) }
+									skuSubText={ translate( '30GB of Storage' ) }
+								/>
+								<GSuitePurchaseCtaSkuInfo
+									annualPrice={ businessAnnualPrice }
+									buttonText={ translate( 'Add G Suite Business' ) }
+									showButton={ upgradeAvailable }
+									skuName={ translate( 'G Suite Business' ) }
+									skuSubText={ translate( 'Unlimited Storage' ) }
+								/>
 							</div>
 						</div>
 
-						<GSuitePurchaseFeatures domainName={ domainName } type={ 'grid' } />
+						<div className="gsuite-purchase-cta__header-image">
+							<img alt="G Suite Logo" src="/calypso/images/g-suite/g-suite.svg" />
+						</div>
 					</div>
+				</CompactCard>
+				<CompactCard>
+					<GSuitePurchaseFeatures domainName={ domainName } type={ 'grid' } />
 				</CompactCard>
 			</Fragment>
 		);

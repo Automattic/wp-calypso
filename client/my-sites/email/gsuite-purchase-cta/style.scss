@@ -23,12 +23,6 @@
 	}
 }
 
-.gsuite-purchase-cta__body {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-}
-
 .gsuite-purchase-cta__header {
 	display: flex;
 	flex-direction: row;
@@ -40,7 +34,7 @@
 	box-sizing: border-box;
 	font-size: 14px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint( '>1040px' ) {
 		flex-basis: 100%;
 		max-width: 400px;
 	}
@@ -60,16 +54,12 @@
 .gsuite-purchase-cta__header-image {
 	display: none;
 
-	@include breakpoint( '>960px' ) {
-		align-items: flex-start;
+	@include breakpoint( '>1040px' ) {
+		align-items: center;
 		display: flex;
 		flex-grow: 1;
 		margin-left: 20px;
 		justify-content: center;
-	}
-
-	@include breakpoint( '>1040px' ) {
-		align-items: center;
 	}
 }
 
@@ -78,7 +68,7 @@
 	flex-direction: column;
 	justify-content: space-between;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint( '>1040px' ) {
 		flex-direction: row;
 	}
 }
@@ -89,8 +79,10 @@
 		margin: 1em 0 0.5em;
 		padding-left: 2em;
 		padding-right: 2em;
+	}
 
-		@include breakpoint( '<960px' ) {
+	@include breakpoint( '<1040px' ) {
+		.button {
 			width: 100%;
 		}
 	}
