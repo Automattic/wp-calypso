@@ -82,7 +82,6 @@ class InvitePeople extends React.Component {
 		}
 
 		this.hjLoaded = true;
-
 		this.props.loadTrackingTool( 'HotJar' );
 	};
 
