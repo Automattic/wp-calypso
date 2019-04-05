@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,11 @@ import DesktopDownloadCard from './desktop-download-card.jsx';
 import MobileDownloadCard from './mobile-download-card.jsx';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export const GetApps = () => {
 	return (
