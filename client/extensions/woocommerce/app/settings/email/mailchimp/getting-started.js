@@ -19,7 +19,7 @@ const GettingStarted = localize(
 		const allow = translate( 'Allow customers to subscribe to your Email list' );
 		const send = translate( 'Send abandoned cart emails' );
 		const create = translate( 'Create purchase-based segments for targeted campaigns' );
-		const getStarted = translate( 'Get started with MailChimp' );
+		const getStarted = translate( 'Get started with Mailchimp' );
 		const list = [ allow, send, create ];
 		const wizardLink = getLink( 'settings/email/:site/wizard', site );
 

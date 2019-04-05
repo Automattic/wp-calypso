@@ -16,7 +16,7 @@ export default () => (
 	<div>
 		<p>
 			{ translate(
-				'To get started, you need a MailChimp account. Please log in or register by clicking the button below.'
+				'To get started, you need a Mailchimp account. Please log in or register by clicking the button below.'
 			) }
 		</p>
 		<Button

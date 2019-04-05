@@ -317,10 +317,10 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/mailchimp-screenshot.png',
-					alt: this.props.translate( 'Add subscribers to MailChimp', { textOnly: true } ),
+					alt: this.props.translate( 'Add subscribers to Mailchimp', { textOnly: true } ),
 				},
 				label: this.props.translate(
-					'Enable site visitors to sign up for your MailChimp content.'
+					'Enable site visitors to sign up for your Mailchimp content.'
 				),
 			},
 		];

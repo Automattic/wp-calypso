@@ -69,15 +69,15 @@ class SharingServiceDescription extends Component {
 			mailchimp: function() {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate(
-						'Allow users to sign up to your MailChimp mailing list.',
-						'Allow users to sign up to your MailChimp mailing lists.',
+						'Allow users to sign up to your Mailchimp mailing list.',
+						'Allow users to sign up to your Mailchimp mailing lists.',
 						{
 							count: this.props.numberOfConnections,
 						}
 					);
 				}
 
-				return this.props.translate( 'Allow users to sign up to your MailChimp mailing list.' );
+				return this.props.translate( 'Allow users to sign up to your Mailchimp mailing list.' );
 			},
 			linkedin: function() {
 				if ( this.props.numberOfConnections > 0 ) {

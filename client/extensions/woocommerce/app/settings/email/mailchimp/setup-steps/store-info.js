@@ -57,7 +57,7 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 		<div className="setup-steps__store-info-field">
 			<p>
 				{ translate(
-					'MailChimp needs to know some basic information about your store ' +
+					'Mailchimp needs to know some basic information about your store ' +
 						'to provide you with the best experience. Note that every field is required.'
 				) }
 			</p>
