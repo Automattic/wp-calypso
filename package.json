@@ -37,6 +37,7 @@
 	},
 	"dependencies": {
 		"@automattic/format-currency": "file:./packages/format-currency",
+		"@automattic/muriel-typography": "file:./packages/muriel-typography",
 		"@automattic/tree-select": "file:./packages/tree-select",
 		"@automattic/wordpress-external-dependencies-plugin": "file:./packages/wordpress-external-dependencies-plugin",
 		"@babel/cli": "7.2.3",

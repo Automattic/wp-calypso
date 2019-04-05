@@ -70,6 +70,9 @@
 				"i18n-calypso": "file:packages/i18n-calypso"
 			}
 		},
+		"@automattic/muriel-typography": {
+			"version": "file:packages/muriel-typography"
+		},
 		"@automattic/tree-select": {
 			"version": "file:packages/tree-select"
 		},
