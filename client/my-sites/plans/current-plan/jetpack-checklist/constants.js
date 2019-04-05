@@ -19,7 +19,7 @@ export const JETPACK_CHECKLIST_TASKS = {
 		description: translate(
 			"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
 		),
-		completedButtonText: translate( 'Change' ),
+		completedButtonText: translate( 'Change', { context: 'verb' } ),
 		completedTitle: translate( 'You turned on backups and scanning.' ),
 		getUrl: siteSlug => `/activity-log/${ siteSlug }`,
 		duration: getJetpackChecklistTaskDuration( 2 ),
@@ -29,7 +29,7 @@ export const JETPACK_CHECKLIST_TASKS = {
 		description: translate(
 			"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications."
 		),
-		completedButtonText: translate( 'Change' ),
+		completedButtonText: translate( 'Change', { context: 'verb' } ),
 		completedTitle: translate( 'You turned on Jetpack Monitor.' ),
 		getUrl: siteSlug => `/settings/security/${ siteSlug }`,
 		duration: getJetpackChecklistTaskDuration( 3 ),
@@ -40,7 +40,7 @@ export const JETPACK_CHECKLIST_TASKS = {
 		description: translate(
 			'Choose which WordPress plugins you want to keep automatically updated.'
 		),
-		completedButtonText: translate( 'Change' ),
+		completedButtonText: translate( 'Change', { context: 'verb' } ),
 		completedTitle: translate( 'You turned on automatic plugin updates.' ),
 		getUrl: siteSlug => `/plugins/manage/${ siteSlug }`,
 		duration: getJetpackChecklistTaskDuration( 3 ),
@@ -51,7 +51,7 @@ export const JETPACK_CHECKLIST_TASKS = {
 		description: translate(
 			'Manage your log in preferences and two-factor authentication settings.'
 		),
-		completedButtonText: translate( 'Change' ),
+		completedButtonText: translate( 'Change', { context: 'verb' } ),
 		completedTitle: translate( 'You completed your sign in preferences.' ),
 		getUrl: siteSlug => `/settings/security/${ siteSlug }`,
 		duration: getJetpackChecklistTaskDuration( 3 ),
