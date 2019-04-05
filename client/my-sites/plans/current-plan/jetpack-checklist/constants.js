@@ -25,12 +25,12 @@ export const JETPACK_CHECKLIST_TASKS = {
 		duration: getJetpackChecklistTaskDuration( 2 ),
 	},
 	jetpack_monitor: {
-		title: translate( 'Jetpack Monitor' ),
+		title: translate( 'Downtime Monitoring' ),
 		description: translate(
 			"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications."
 		),
 		completedButtonText: translate( 'Change', { context: 'verb' } ),
-		completedTitle: translate( 'You turned on Jetpack Monitor.' ),
+		completedTitle: translate( 'You turned on Downtime Monitoring.' ),
 		getUrl: siteSlug => `/settings/security/${ siteSlug }`,
 		duration: getJetpackChecklistTaskDuration( 3 ),
 		tourId: 'jetpackMonitoring',
