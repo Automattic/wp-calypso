@@ -21738,10 +21738,11 @@
 			}
 		},
 		"wpcom-xhr-request": {
-			"version": "1.1.2",
-			"resolved": "https://registry.npmjs.org/wpcom-xhr-request/-/wpcom-xhr-request-1.1.2.tgz",
-			"integrity": "sha512-46tcMsyP+jWsZcAeRBg01X3VJZPjfC5L65zQEzYhuZLoOKAjK6GEVli/bEjYrFsM8ZddOHGT3YaGeRRoVHbPiQ==",
+			"version": "1.1.3",
+			"resolved": "https://registry.npmjs.org/wpcom-xhr-request/-/wpcom-xhr-request-1.1.3.tgz",
+			"integrity": "sha512-a7/6bICMqLFLfNfv3ft0Wxm0Pah00NpzAZh801m9DnfJXm4T6lr6Ou2N3sdZoJNU2UudTfk1uS+7j9GSgOUCxA==",
 			"requires": {
+				"babel-runtime": "^6.26.0",
 				"debug": "^3.1.0",
 				"superagent": "^3.8.3",
 				"wp-error": "^1.3.0"
