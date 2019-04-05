@@ -22,20 +22,11 @@ import './style.scss';
 class DomainsLandingPage extends Component {
 	static propTypes = {
 		action: PropTypes.string.isRequired,
+		query: PropTypes.object.isRequired,
 	};
 
-	getUrlParameter( name ) {
-		name = name.replace( /[[]/, '\\[' ).replace( /[\]]/, '\\]' );
-		const regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
-		const results = regex.exec( location.search );
-		return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
-	}
-
 	renderRegistrantVerificationContent() {
-		const token = this.getUrlParameter( 'token' );
-		const domain = this.getUrlParameter( 'domain' );
-		const email = this.getUrlParameter( 'email' );
-
+		const { domain, email, token } = this.props.query;
 		return <RegistrantVerificationPage domain={ domain } email={ email } token={ token } />;
 	}
 
@@ -69,7 +60,10 @@ function boot() {
 	}
 
 	RenderDom.render(
-		<DomainsLandingPage action={ window.domainsLandingData.action } />,
+		<DomainsLandingPage
+			action={ window.domainsLandingData.action }
+			query={ window.domainsLandingData.query }
+		/>,
 		document.getElementById( 'primary' )
 	);
 }
