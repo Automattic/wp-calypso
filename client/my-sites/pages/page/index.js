@@ -211,7 +211,11 @@ class Page extends Component {
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.editPage } onMouseOver={ preloadEditor }>
+			<PopoverMenuItem
+				onClick={ this.editPage }
+				onMouseOver={ preloadEditor }
+				onFocus={ preloadEditor }
+			>
 				<Gridicon icon="pencil" size={ 18 } />
 				{ this.props.translate( 'Edit' ) }
 			</PopoverMenuItem>
@@ -456,6 +460,7 @@ class Page extends Component {
 						}
 						onClick={ this.props.recordPageTitle }
 						onMouseOver={ preloadEditor }
+						onFocus={ preloadEditor }
 						data-tip-target={ 'page-' + page.slug }
 					>
 						{ depthIndicator }
@@ -463,7 +468,7 @@ class Page extends Component {
 						{ latestPostsPage && (
 							<InfoPopover position="right">
 								{ translate(
-									'The content of your latest posts page is automatically generated and it cannot be edited.'
+									'The content of your latest posts page is automatically generated and cannot be edited.'
 								) }
 							</InfoPopover>
 						) }
