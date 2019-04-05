@@ -13,7 +13,9 @@
 	"files": [
 		"index.js"
 	],
-	"private": true,
+	"publishConfig": {
+		"access": "public"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
