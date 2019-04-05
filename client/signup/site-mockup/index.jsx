@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { each, isEmpty } from 'lodash';
+import { debounce, each, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -48,6 +48,18 @@ class SiteMockups extends Component {
 		super( props );
 		this.state = this.getNewFontLoaderState( props );
 	}
+
+	shouldComponentUpdate( nextProps ) {
+		// Debouncing updates to the preview content
+		// prevents the flashing effect.
+		if ( nextProps.verticalPreviewContent !== this.props.verticalPreviewContent ) {
+			this.updateDebounced();
+			return false;
+		}
+
+		return true;
+	}
+	updateDebounced = debounce( this.forceUpdate, 777, { leading: false } );
 
 	getNewFontLoaderState( props ) {
 		const state = {
