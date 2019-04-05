@@ -7,7 +7,6 @@ import debugModule from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import url from 'url';
 import {
 	assign,
 	defer,
@@ -29,6 +28,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
+import { urlParseAmpCompatible } from 'lib/analytics/utils';
 
 /**
  * Style dependencies
@@ -237,7 +237,7 @@ class Signup extends React.Component {
 
 	recordReferralVisit() {
 		const urlPath = location.href;
-		const parsedUrl = url.parse( urlPath, true );
+		const parsedUrl = urlParseAmpCompatible( urlPath );
 		const affiliateId = parsedUrl.query.aff;
 		const campaignId = parsedUrl.query.cid;
 		const subId = parsedUrl.query.sid;
