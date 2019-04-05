@@ -43,7 +43,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @return {object}                                webpack config
  */
 function getWebpackConfig(
-	env,
+	env = {}, // eslint-disable-line no-unused-vars
 	{
 		entry,
 		'output-path': outputPath = path.join( __dirname, 'dist' ),
@@ -56,7 +56,6 @@ function getWebpackConfig(
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
-		context: __dirname,
 		entry,
 		mode: isDevelopment ? 'development' : 'production',
 		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
