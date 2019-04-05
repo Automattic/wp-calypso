@@ -92,6 +92,7 @@ a.card:hover,
 a.card:focus,
 .is-card-link.card:focus {
 	outline: 2px solid var( --color-primary-light );
+	z-index: 1;
 
 	.card__link-indicator {
 		color: var( --color-link-dark );
