@@ -19,7 +19,6 @@ import {
 	legacyRedirects,
 	manageConnection,
 	redirectIfCantDeleteSite,
-	redirectToGeneral,
 	startOver,
 	themeSetup,
 } from 'my-sites/site-settings/controller';
@@ -29,7 +28,7 @@ import { reasonComponents as reasons } from './disconnect-site';
 import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
 
 export default function() {
-	page( '/settings', siteSelection, redirectToGeneral );
+	page( '/settings', '/settings/general' );
 	page(
 		'/settings/general/:site_id',
 		siteSelection,
@@ -73,9 +72,9 @@ export default function() {
 	page(
 		'/settings/delete-site/:site_id',
 		siteSelection,
+		redirectIfCantDeleteSite,
 		navigation,
 		setScroll,
-		redirectIfCantDeleteSite,
 		deleteSite,
 		makeLayout,
 		clientRender
@@ -110,9 +109,9 @@ export default function() {
 	page(
 		'/settings/start-over/:site_id',
 		siteSelection,
+		redirectIfCantDeleteSite,
 		navigation,
 		setScroll,
-		redirectIfCantDeleteSite,
 		startOver,
 		makeLayout,
 		clientRender
