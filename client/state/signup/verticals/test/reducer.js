@@ -7,8 +7,8 @@ import reducer from '../reducer';
 import { SIGNUP_VERTICALS_SET } from 'state/action-types';
 
 describe( 'state/signup/verticals/reducer', () => {
-	test( 'should default to an empty object.', () => {
-		expect( reducer( undefined, {} ) ).toEqual( {} );
+	test( 'should default to `null`', () => {
+		expect( reducer( undefined, {} ) ).toEqual( null );
 	} );
 
 	test( 'should associate a trimmed and lowercase search string to the verticals array.', () => {

@@ -12,7 +12,6 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-
 import { SiteVerticalsSuggestionSearch } from '../';
 import SuggestionSearch from 'components/suggestion-search';
 import PopularTopics from 'components/site-verticals-suggestion-search/popular-topics';
@@ -42,8 +41,6 @@ const defaultProps = {
 		verticalId: 'argh',
 	},
 	translate: str => str,
-	charsToTriggerSearch: 2,
-	shouldShowPopularTopics: jest.fn(),
 	searchValue: '',
 };
 
@@ -64,12 +61,10 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( defaultProps.verticals[ 0 ] );
 	} );
 
-	test( 'should show common topics', () => {
-		defaultProps.shouldShowPopularTopics.mockReturnValueOnce( true );
+	test( 'should show popular topics', () => {
 		const wrapper = shallow(
 			<SiteVerticalsSuggestionSearch { ...defaultProps } showPopular={ true } />
 		);
-		expect( defaultProps.shouldShowPopularTopics ).toHaveBeenLastCalledWith( '' );
 		expect( wrapper.find( PopularTopics ) ).toHaveLength( 1 );
 	} );
 
@@ -102,8 +97,8 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		test( 'should return default vertical object', () => {
 			wrapper.instance().updateVerticalData();
 			expect( defaultProps.onChange ).toHaveBeenLastCalledWith( {
-				verticalName: undefined,
-				verticalSlug: undefined,
+				verticalName: '',
+				verticalSlug: '',
 				isUserInputVertical: true,
 				preview: defaultProps.defaultVertical.preview,
 				verticalId: '',
@@ -126,36 +121,6 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		test( 'should return result', () => {
 			wrapper.instance().updateVerticalData( { deal: 'nodeal' }, 'ciao' );
 			expect( defaultProps.onChange ).toHaveBeenLastCalledWith( { deal: 'nodeal' } );
-		} );
-	} );
-
-	describe( 'sortSearchResults()', () => {
-		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-		test( 'should return sorted results with `startsWith` matches at the start and exact match at the end', () => {
-			const sortedResults = wrapper
-				.instance()
-				.sortSearchResults( [ 'Bar', 'Bari Beaches', 'Bartender', 'Foobar', 'Crowbar' ], ' bar ' );
-			expect( sortedResults ).toEqual( [
-				'Bari Beaches',
-				'Bartender',
-				'Foobar',
-				'Crowbar',
-				'Bar',
-			] );
-		} );
-
-		test( 'should omit non-matches', () => {
-			const sortedResults = wrapper
-				.instance()
-				.sortSearchResults( [ 'Bar', 'Bartender', 'Foobar', 'Terminal spiv' ], 'spiv' );
-			expect( sortedResults ).toEqual( [ 'Terminal spiv' ] );
-		} );
-
-		test( 'should not sort when no `startsWith` suggestions', () => {
-			const sortedResults = wrapper
-				.instance()
-				.sortSearchResults( [ 'Stammabschnitt', 'Tim Tam', '123 Tam', 'Tam' ], 'tam' );
-			expect( sortedResults ).toEqual( [ 'Stammabschnitt', 'Tim Tam', '123 Tam', 'Tam' ] );
 		} );
 	} );
 } );

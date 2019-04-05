@@ -101,8 +101,7 @@ class SiteTopicForm extends Component {
 export default connect(
 	state => {
 		const siteTopic = getSiteVerticalName( state );
-		const isVerticalSearchPending = null == getVerticals( state, siteTopic );
-		const isButtonDisabled = ! siteTopic || isVerticalSearchPending;
+		const isButtonDisabled = ! siteTopic || null == getVerticals( state, siteTopic );
 
 		return {
 			siteTopic,
