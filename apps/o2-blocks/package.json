@@ -1,5 +1,5 @@
 {
-	"name": "@automattic/o2-blocks",
+	"name": "@automattic-ignore/o2-blocks",
 	"version": "1.0.0",
 	"description": "Gutenberg extensions for o2 theme.",
 	"main": "dist/editor.js",
