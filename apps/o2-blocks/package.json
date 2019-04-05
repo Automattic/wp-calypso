@@ -1,5 +1,5 @@
 {
-	"name": "@automattic-ignore/o2-blocks",
+	"name": "@automattic/o2-blocks",
 	"version": "1.0.0",
 	"description": "Gutenberg extensions for o2 theme.",
 	"main": "dist/editor.js",
@@ -18,8 +18,8 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
-		"prepare": "webpack --config='../../packages/calypso-build/webpack.config.js' --output-path='./dist' editor='./src/editor.js' "
+		"prebuild": "npm run clean",
+		"build": "webpack --config='../../packages/calypso-build/webpack.config.js' --output-path='./dist' editor='./src/editor.js' "
 	},
 	"dependencies": {
 		"@wordpress/blocks": "6.0.7",
