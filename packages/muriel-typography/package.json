@@ -1,0 +1,24 @@
+{
+	"name": "@automattic/muriel-typography",
+	"version": "1.0.0",
+	"description": "Typography constructs for Muriel",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"muriel",
+		"typography",
+		"sass"
+	],
+	"author": "@automattic",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/i18n-calypso"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/muriel-typograph#readme"
+}
