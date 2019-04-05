@@ -25,6 +25,7 @@ import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
 import GSuitePurchaseCtaSkuInfo from './sku-info';
+import { recordTracksEvent } from 'state/analytics/actions';
 import QueryProductsList from 'components/data/query-products-list';
 
 /**
@@ -34,6 +35,11 @@ import './style.scss';
 
 class GSuitePurchaseCta extends React.Component {
 	goToAddGSuiteUsers = planType => {
+		this.props.recordTracksEvent( 'calypso_email_gsuite_purchase_cta_get_gsuite_click', {
+			plan_type: planType,
+			domain: this.props.domainName,
+		} );
+
 		page(
 			emailManagementNewGSuiteAccount(
 				this.props.selectedSiteSlug,
@@ -145,5 +151,5 @@ export default connect(
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
-	null
+	{ recordTracksEvent }
 )( localize( GSuitePurchaseCta ) );
