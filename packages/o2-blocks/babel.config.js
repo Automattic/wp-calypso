@@ -2,7 +2,7 @@ module.exports = {
 	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),
 	plugins: [
 		[
-			'@wordpress/import-jsx-pragma',
+			'@wordpress/babel-plugin-import-jsx-pragma',
 			{
 				scopeVariable: 'createElement',
 				source: '@wordpress/element',
