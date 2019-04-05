@@ -272,7 +272,7 @@ jobs:
       - run:
           name: Build Notifications Panel
           command: |
-            NODE_ENV=production npm run sdk -- notifications --output-dir=$CIRCLE_ARTIFACTS/notifications-panel
+            NODE_ENV=production npm run build-notifications -- --output-path=$CIRCLE_ARTIFACTS/notifications-panel
       - store-artifacts-and-test-results
 
   test-client:
