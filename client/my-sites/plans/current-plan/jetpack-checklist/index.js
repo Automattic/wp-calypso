@@ -6,19 +6,23 @@
 import page from 'page';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Checklist from 'components/checklist';
+import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import Task from 'components/checklist/task';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
+import { JETPACK_CHECKLIST_TASKS } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
@@ -48,11 +52,21 @@ class JetpackChecklist extends PureComponent {
 	};
 
 	render() {
-		const { siteId, siteSlug, taskStatuses, translate } = this.props;
+		const {
+			akismetFinished,
+			isPaidPlan,
+			productInstallStatus,
+			siteId,
+			siteSlug,
+			taskStatuses,
+			translate,
+		} = this.props;
 
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				{ isPaidPlan && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
+
 				<Checklist
 					isPlaceholder={ ! taskStatuses }
 					progressText={ translate( 'Your Jetpack setup progress' ) }
@@ -63,66 +77,43 @@ class JetpackChecklist extends PureComponent {
 							"We've automatically protected you from brute force login attacks."
 						) }
 					/>
-					<Task completed title={ translate( "We've automatically turned on spam filtering." ) } />
-					<Task
-						completed
-						completedButtonText={ translate( 'Change' ) }
-						completedTitle={ translate( 'You turned on backups and scanning.' ) }
-						description={ translate(
-							"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
-						) }
-						duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
-						onClick={ this.handleTaskStart( {
-							taskId: 'jetpack_backups',
-							url: `/activity-log/${ siteSlug }`,
-						} ) }
-						title={ translate( 'Backups & Scanning' ) }
-					/>
-					<Task
-						completed={ this.isComplete( 'jetpack_monitor' ) }
-						completedButtonText={ translate( 'Change' ) }
-						completedTitle={ translate( 'You turned on Jetpack Monitor.' ) }
-						description={ translate(
-							"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications."
-						) }
-						duration={ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }
-						onClick={ this.handleTaskStart( {
-							taskId: 'jetpack_monitor',
-							tourId: 'jetpackMonitoring',
-							url: `/settings/security/${ siteSlug }`,
-						} ) }
-						title={ translate( 'Jetpack Monitor' ) }
-					/>
-					<Task
-						completed={ this.isComplete( 'jetpack_plugin_updates' ) }
-						completedButtonText={ translate( 'Change' ) }
-						completedTitle={ translate( 'You turned on automatic plugin updates.' ) }
-						description={ translate(
-							'Choose which WordPress plugins you want to keep automatically updated.'
-						) }
-						duration={ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }
-						onClick={ this.handleTaskStart( {
-							taskId: 'jetpack_plugin_updates',
-							tourId: 'jetpackPluginUpdates',
-							url: `/plugins/manage/${ siteSlug }`,
-						} ) }
-						title={ translate( 'Automatic Plugin Updates' ) }
-					/>
-					<Task
-						completed={ this.isComplete( 'jetpack_sign_in' ) }
-						completedButtonText={ translate( 'Change' ) }
-						completedTitle={ translate( 'You completed your sign in preferences.' ) }
-						description={ translate(
-							'Manage your log in preferences and two-factor authentication settings.'
-						) }
-						duration={ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }
-						onClick={ this.handleTaskStart( {
-							taskId: 'jetpack_sign_in',
-							tourId: 'jetpackSignIn',
-							url: `/settings/security/${ siteSlug }`,
-						} ) }
-						title={ translate( 'WordPress.com sign in' ) }
-					/>
+					{ isPaidPlan && productInstallStatus && (
+						<Task
+							title={ translate( "We're automatically turning on spam filtering." ) }
+							completedTitle={ translate( "We've automatically turned on spam filtering." ) }
+							completed={ akismetFinished }
+							inProgress={ ! akismetFinished }
+						/>
+					) }
+					{ map( taskStatuses, ( status, taskId ) => {
+						const task = JETPACK_CHECKLIST_TASKS[ taskId ];
+
+						if ( ! task ) {
+							// UI does not support this task yet.
+							recordTracksEvent( 'calypso_jetpack_checklist_unsupported_task', {
+								task_id: taskId,
+								site_id: siteId,
+							} );
+							return;
+						}
+
+						return (
+							<Task
+								completed={ get( status, 'completed', false ) }
+								completedButtonText={ task.completedButtonText }
+								completedTitle={ task.completedTitle }
+								description={ task.description }
+								duration={ task.duration }
+								onClick={ this.handleTaskStart( {
+									taskId,
+									url: task.getUrl( siteSlug ),
+									tourId: get( task, 'tourId', null ),
+								} ) }
+								title={ task.title }
+								key={ taskId }
+							/>
+						);
+					} ) }
 				</Checklist>
 			</Fragment>
 		);
@@ -132,8 +123,12 @@ class JetpackChecklist extends PureComponent {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
 
 		return {
+			akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
+			isPaidPlan: isSiteOnPaidPlan( state, siteId ),
+			productInstallStatus,
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
