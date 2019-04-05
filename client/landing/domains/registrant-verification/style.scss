@@ -1,13 +1,67 @@
-.registrant-verification__success {
+.registrant-verification {
 	text-align: center;
-}
 
-@mixin placeholder( $lighten-percentage: 30% ) {
-	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: lighten( $gray, $lighten-percentage );
-	color: transparent;
+	.registrant-verification__title {
+		color: var( --color-neutral-700 );
+		font-size: 34px;
+		font-weight: 300;
 
-	&::after {
-		content: '\00a0';
+		@include breakpoint( '<660px' ) {
+			font-size: 24px;
+		}
+	}
+
+	.registrant-verification__message {
+		 color: var( --color-neutral-500 );
+		 font-size: 22px;
+		 font-weight: 300;
+		 margin-bottom: 40px;
+
+		 @include breakpoint( '<660px' ) {
+			 font-size: 16px;
+		 }
+	 }
+
+	.registrant-verification__footer {
+		color: var( --color-neutral-500 );
+		font-size: 18px;
+		font-weight: 300;
+		margin-bottom: 40px;
+
+		@include breakpoint( '<660px' ) {
+			font-size: 16px;
+		}
+	}
+
+	.registrant-verification__content {
+		padding-bottom: 50px;
+	}
+
+	.registrant-verification__action-button {
+		margin-bottom: 40px;
+	}
+
+	.registrant-verification__loading-placeholder {
+		text-align: center;
+
+		img {
+			@include placeholder(23%);
+			width: 400px;
+			height: 250px;
+		}
+
+		h3 {
+			@include placeholder(23%);
+			height: 24px;
+			margin: 0 auto 10px;
+			width: 50%;
+		}
+
+		p {
+			@include placeholder(23%);
+			height: 20px;
+			margin: 0 auto 5px;
+			width: 70%;
+		}
 	}
 }
