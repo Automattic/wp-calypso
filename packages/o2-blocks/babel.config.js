@@ -1,22 +1,22 @@
 module.exports = {
 	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),
-    plugins: [
-        [
-            '@wordpress/import-jsx-pragma',
-            {
-                scopeVariable: 'createElement',
-                source: '@wordpress/element',
-                isDefault: false,
-            },
-        ],
-        [
-            '@babel/transform-react-jsx',
-            {
-                pragma: 'createElement',
-            },
-        ],
-    ],
-    env: {
+	plugins: [
+		[
+			'@wordpress/import-jsx-pragma',
+			{
+				scopeVariable: 'createElement',
+				source: '@wordpress/element',
+				isDefault: false,
+			},
+		],
+		[
+			'@babel/transform-react-jsx',
+			{
+				pragma: 'createElement',
+			},
+		],
+	],
+	env: {
 		build_pot: {
 			plugins: [
 				[
@@ -28,8 +28,8 @@ module.exports = {
 							'x-generator': 'calypso',
 						},
 					},
-                ],
-            ],
-        },
-    },
+				],
+			],
+		},
+	},
 };
