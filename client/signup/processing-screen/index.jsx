@@ -140,9 +140,10 @@ export class SignupProcessingScreen extends Component {
 	showChecklistAfterLogin = () => {
 		// we are hijacking this method slightly because our page builder
 		// test has the same logic for showing, except also being in the test
-		const redirectTo = isInPageBuilderTest()
-			? getEditHomeUrl( this.state.siteSlug )
-			: `/checklist/${ this.state.siteSlug }`;
+		const redirectTo =
+			isInPageBuilderTest() && this.props.signupDependencies.siteType === 'business'
+				? getEditHomeUrl( this.state.siteSlug )
+				: `/checklist/${ this.state.siteSlug }`;
 		this.props.loginHandler( { redirectTo } );
 	};
 
