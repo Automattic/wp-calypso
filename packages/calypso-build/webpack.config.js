@@ -13,7 +13,7 @@ const FileConfig = require( './webpack/file-loader' );
 const Minify = require( './webpack/minify' );
 const SassConfig = require( './webpack/sass' );
 const TranspileConfig = require( './webpack/transpile' );
-const wordpressExternals = require( './webpack/wordpress-externals' );
+const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-external-dependencies-plugin' );
 
 /**
  * Internal dependencies
@@ -108,8 +108,8 @@ function getWebpackConfig(
 			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 			...SassConfig.plugins( { cssFilename, minify: ! isDevelopment } ),
 			new DuplicatePackageCheckerPlugin(),
+			new WordPressExternalDependenciesPlugin(),
 		],
-		externals: [ wordpressExternals, 'wp', 'lodash' ],
 	};
 
 	return webpackConfig;

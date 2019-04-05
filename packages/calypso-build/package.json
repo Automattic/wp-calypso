@@ -27,6 +27,7 @@
 	],
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "file:../calypso-color-schemes",
+		"@automattic/wordpress-external-dependencies-plugin": "file:../wordpress-external-dependencies-plugin",
 		"autoprefixer": "9.4.4",
 		"babel-loader": "8.0.5",
 		"css-loader": "2.1.1",
