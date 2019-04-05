@@ -172,7 +172,6 @@ const getFilesForChunk = ( chunkName, request ) => {
 };
 
 const getFilesForEntrypoint = ( target, name ) => {
-	console.log( getAssets( target ) );
 	const entrypointAssets = getAssets( target ).entrypoints[ name ].assets.filter(
 		asset => ! asset.startsWith( 'manifest' )
 	);
@@ -760,9 +759,11 @@ module.exports = function() {
 			query: get( req, 'query', {} ),
 		};
 
+		const target = getBuildTargetFromRequest( req );
+
 		const pageHtml = renderJsx( 'domains-landing', {
 			...ctx,
-			entrypoint: getFilesForEntrypoint( 'domainsLanding' ),
+			entrypoint: getFilesForEntrypoint( target, 'domainsLanding' ),
 		} );
 		res.send( pageHtml );
 	} );

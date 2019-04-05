@@ -34,6 +34,7 @@ function DomainsLanding( {
 	manifest,
 	urls,
 	faviconURL,
+	addEvergreenCheck,
 } ) {
 	const csskey = isRTL ? 'css.rtl' : 'css.ltr';
 
@@ -92,13 +93,36 @@ function DomainsLanding( {
 						} }
 					/>
 				) }
+				{ // Use <script nomodule> to redirect browsers with no ES module
+				// support to the fallback build. ES module support is a convenient
+				// test to determine that a browser is modern enough to handle
+				// the evergreen bundle.
+				addEvergreenCheck && (
+					<script
+						nonce={ inlineScriptNonce }
+						noModule
+						dangerouslySetInnerHTML={ {
+							__html: `
+						(function() {
+							var url = window.location.href;
+
+							if ( url.indexOf( 'forceFallback=1' ) === -1 ) {
+								url += ( url.indexOf( '?' ) !== -1 ? '&' : '?' );
+								url += 'forceFallback=1';
+								window.location.href = url;
+							}
+						})();
+						`,
+						} }
+					/>
+				) }
 				{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 				{ /*
 				 * inline manifest in production, but reference by url for development.
 				 * this lets us have the performance benefit in prod, without breaking HMR in dev
 				 * since the manifest needs to be updated on each save
 				 */ }
-				{ env === 'development' && <script src="/calypso/manifest.js" /> }
+				{ env === 'development' && <script src="/calypso/evergreen/manifest.js" /> }
 				{ env !== 'development' && (
 					<script
 						nonce={ inlineScriptNonce }
