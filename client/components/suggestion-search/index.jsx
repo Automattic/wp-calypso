@@ -110,7 +110,7 @@ class SuggestionSearch extends Component {
 	handleSuggestionMouseDown = position => {
 		this.updateInputValue( position.label );
 		this.hideSuggestions();
-		this.props.onChange( position.label );
+		this.props.onChange( position.label, true );
 	};
 
 	getSuggestions() {

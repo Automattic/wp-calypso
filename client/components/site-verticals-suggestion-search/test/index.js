@@ -50,10 +50,6 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		jest.resetAllMocks();
 	} );
 
-	beforeEach( () => {
-		//SiteVerticalsSuggestionSearch.bindDebounce = jest.fn().mockImplementation( fn => fn );
-	} );
-
 	test( 'should render', () => {
 		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
 		expect( wrapper.find( SuggestionSearch ) ).toHaveLength( 1 );

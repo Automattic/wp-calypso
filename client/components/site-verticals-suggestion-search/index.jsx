@@ -33,7 +33,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		placeholder: PropTypes.string,
 		searchValue: PropTypes.string,
 		showPopular: PropTypes.bool,
-		shouldShowPopularTopics: PropTypes.func,
 		verticals: PropTypes.array,
 	};
 
@@ -46,7 +45,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		placeholder: '',
 		searchValue: '',
 		showPopular: false,
-		shouldShowPopularTopics: () => {},
 		verticals: [],
 	};
 
@@ -126,8 +124,8 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	/**
 	 * Searches the API results for a direct match on the user search query.
 	 *
-	 * @param {String} value Search query array
-	 * @returns {Object?} An object from the vertical results array
+	 * @param {String} value       Search query array
+	 * @returns {Object|undefined} An object from the vertical results array
 	 */
 	searchForVerticalMatches = ( value = '' ) =>
 		find(
@@ -143,15 +141,15 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 * @param {String} value Search query array
 	 */
 	updateVerticalData = ( verticalData, value = '' ) => {
-		value = value.trim();
+		const trimmedValue = value.trim();
 		this.props.onChange(
 			verticalData || {
 				isUserInputVertical: true,
 				parent: '',
 				preview: get( this.props.defaultVertical, 'preview', '' ),
 				verticalId: '',
-				verticalName: value,
-				verticalSlug: value,
+				verticalName: trimmedValue,
+				verticalSlug: trimmedValue,
 			}
 		);
 	};
@@ -159,23 +157,24 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	/**
 	 * Callback to be passed to consuming component when the search field is updated.
 	 *
-	 * @param {String} value The new search value
-	 * @param {Bool} isSuggestionSelected Whether the user has selected a suggestion
+	 * @param {String}  value                The new search value
+	 * @param {Boolean} isSuggestionSelected Whether the user has selected a suggestion
 	 */
 	onSiteTopicChange = ( value, isSuggestionSelected = false ) => {
+		const newState = {
+			isSuggestionSelected,
+			inputValue: value,
+		};
+
 		if ( value && value !== this.props.searchValue ) {
-			this.setState( { railcar: this.getNewRailcar() } );
+			newState.railcar = this.getNewRailcar();
 		}
+
+		this.setState( { ...newState } );
 
 		// We debounce the update on the vertical while the user is typing
 		// to prevent unnecessary site preview updates
-		this.setState(
-			{
-				isSuggestionSelected,
-				inputValue: value,
-			},
-			() => this.updateVerticalDataDebounced( this.searchForVerticalMatches( value ), value )
-		);
+		this.updateVerticalDataDebounced( this.searchForVerticalMatches( value ), value );
 	};
 
 	/*
