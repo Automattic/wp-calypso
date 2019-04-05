@@ -11,6 +11,11 @@
 		height: 21px;
 	}
 
+	.badge {
+		margin-left: 8px;
+		vertical-align: super;
+	}
+
 	@include breakpoint( '<960px' ) {
 		font-size: 24px;
 	}
