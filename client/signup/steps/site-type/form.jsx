@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import Button from 'components/forms/form-button';
+import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import { getAllSiteTypes } from 'lib/signup/site-type';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -24,17 +24,21 @@ import './style.scss';
 
 class SiteTypeForm extends Component {
 	static propTypes = {
+		siteType: PropTypes.string,
 		submitForm: PropTypes.func.isRequired,
 
 		// from localize() HoC
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = {
-		otherValue: '',
-		siteType: '',
-		hasOtherReasonFocus: false,
-	};
+	constructor( props ) {
+		super( props );
+		this.state = {
+			hasOtherReasonFocus: false,
+			otherValue: '',
+			siteType: props.siteType,
+		};
+	}
 
 	onOtherCatChange = event => {
 		this.setState( {
@@ -53,14 +57,7 @@ class SiteTypeForm extends Component {
 	};
 
 	handleSubmitOther = () => {
-		if ( ! this.state.otherValue || this.state.hasOtherReasonFocus ) {
-			return;
-		}
 		this.handleSubmit( 'other—' + this.state.otherValue );
-	};
-
-	setOtherReasonFocus = focus => () => {
-		this.setState( { hasOtherReasonFocus: focus } );
 	};
 
 	renderBasicCard = () => {
@@ -70,6 +67,7 @@ class SiteTypeForm extends Component {
 					<Card
 						className="site-type__option"
 						key={ siteTypeProperties.id }
+						tagName="button"
 						displayAsLink
 						data-e2e-title={ siteTypeProperties.slug }
 						onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
@@ -91,7 +89,6 @@ class SiteTypeForm extends Component {
 				<div className="site-type__other-form">
 					<FormTextInput
 						className="site-type__other-input"
-						type="text"
 						selectOnFocus
 						placeholder={ translate( 'Other' ) }
 						onChange={ this.onOtherCatChange }
@@ -113,27 +110,23 @@ class SiteTypeForm extends Component {
 	render() {
 		const { isJetpack } = this.props;
 
-		if ( isJetpack === null ) {
-			return <div>{ this.renderBasicCard() }</div>;
+		if ( ! isJetpack ) {
+			return <Fragment> { this.renderBasicCard() } </Fragment>;
 		}
 
 		return (
-			<div>
+			<Fragment>
 				{ this.renderBasicCard() }
 				{ this.renderOtherInfo() }
-			</div>
+			</Fragment>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		return {
-			isJetpack,
-		};
-	},
+	state => ( {
+		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+	} ),
 	{
 		recordTracksEvent,
 	}
