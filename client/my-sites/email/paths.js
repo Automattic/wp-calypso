@@ -5,18 +5,20 @@
  */
 import { startsWith } from 'lodash';
 
-export function emailManagementAddGSuiteUsers( siteName, planType, domainName ) {
+export function emailManagementAddGSuiteUsers( siteName, domainName ) {
 	let path;
 
-	planType = planType ? planType : 'basic';
-
 	if ( domainName ) {
-		path = emailManagementEdit( siteName, domainName, planType + '/add-gsuite-users' );
+		path = emailManagementEdit( siteName, domainName, '/add-gsuite-users' );
 	} else {
-		path = '/email/' + planType + '/add-gsuite-users/' + siteName;
+		path = '/email/add-gsuite-users/' + siteName;
 	}
 
 	return path;
+}
+
+export function emailManagementNewGSuiteAccount( siteName, domainName, planType ) {
+	return emailManagementEdit( siteName, domainName, 'new-gsuite-account/' + planType );
 }
 
 export function emailManagement( siteName, domainName ) {

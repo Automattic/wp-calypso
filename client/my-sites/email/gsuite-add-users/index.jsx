@@ -15,7 +15,11 @@ import React, { Fragment } from 'react';
 
 import AddEmailAddressesCard from './add-users';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
-import { emailManagementAddGSuiteUsers, emailManagement } from 'my-sites/email/paths';
+import {
+	emailManagementAddGSuiteUsers,
+	emailManagementNewGSuiteAccount,
+	emailManagement,
+} from 'my-sites/email/paths';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
@@ -85,13 +89,11 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	render() {
-		const { translate, selectedDomainName, selectedSite } = this.props;
+		const { translate, planType, selectedDomainName, selectedSite } = this.props;
 
-		const analyticsPath = emailManagementAddGSuiteUsers(
-			':site',
-			':planType',
-			selectedDomainName ? ':domain' : undefined
-		);
+		const analyticsPath = planType
+			? emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' )
+			: emailManagementAddGSuiteUsers( ':site', selectedDomainName ? ':domain' : undefined );
 		return (
 			<Fragment>
 				<PageViewTracker path={ analyticsPath } title="Domain Management > Add G Suite Users" />

@@ -15,7 +15,7 @@ import React, { Fragment } from 'react';
  */
 import CompactCard from 'components/card/compact';
 import config from 'config';
-import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
+import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getAnnualPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -35,7 +35,11 @@ import './style.scss';
 class GSuitePurchaseCta extends React.Component {
 	goToAddGSuiteUsers = planType => {
 		page(
-			emailManagementAddGSuiteUsers( this.props.selectedSiteSlug, planType, this.props.domainName )
+			emailManagementNewGSuiteAccount(
+				this.props.selectedSiteSlug,
+				this.props.domainName,
+				planType
+			)
 		);
 	};
 
@@ -43,12 +47,12 @@ class GSuitePurchaseCta extends React.Component {
 		const { currencyCode, domainName, productsList, translate } = this.props;
 		const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
 
-		const basicAnnualPrice = get( productsList.gapps, [ 'prices', currencyCode ], null );
+		const basicAnnualPrice = get( productsList, [ 'gapps', 'prices', currencyCode ], null );
 		const basicAnnualPriceFormatted =
 			null === basicAnnualPrice ? '-' : getAnnualPrice( basicAnnualPrice, currencyCode );
 		const businessAnnualPrice = get(
-			productsList.gapps_unlimited,
-			[ 'prices', currencyCode ],
+			productsList,
+			[ 'gapps_unlimited', 'prices', currencyCode ],
 			null
 		);
 		const businessAnnualPriceFormatted =
@@ -83,7 +87,7 @@ class GSuitePurchaseCta extends React.Component {
 								<GSuitePurchaseCtaSkuInfo
 									annualPrice={ basicAnnualPriceFormatted }
 									buttonText={ translate( 'Add G Suite' ) }
-									nButtonClick={ () => this.goToAddGSuiteUsers( 'basic' ) }
+									onButtonClick={ () => this.goToAddGSuiteUsers( 'basic' ) }
 									showButton={ upgradeAvailable }
 									skuName={ translate( 'G Suite' ) }
 									skuSubText={ translate( '30GB of Storage' ) }

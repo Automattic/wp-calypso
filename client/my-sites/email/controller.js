@@ -14,6 +14,11 @@ import GSuiteAddUsers from 'my-sites/email/gsuite-add-users';
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
+		pageContext.primary = <GSuiteAddUsers selectedDomainName={ pageContext.params.domain } />;
+		next();
+	},
+
+	emailManagementNewGSuiteAccount( pageContext, next ) {
 		pageContext.primary = (
 			<GSuiteAddUsers
 				planType={ pageContext.params.planType }
