@@ -1,0 +1,27 @@
+.jetpack-checklist__header {
+	display: flex;
+}
+
+.jetpack-checklist__header-illustration {
+	max-width: 128px;
+	margin-right: 20px;
+}
+
+.jetpack-checklist__header-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+@include breakpoint( '<660px' ) {
+	.jetpack-checklist__header {
+		display: block;
+	}
+
+	.jetpack-checklist__header-illustration {
+		max-width: 80%;
+		display: block;
+		margin: 20px auto;
+	}
+}
