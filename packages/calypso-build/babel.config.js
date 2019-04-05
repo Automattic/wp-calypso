@@ -26,22 +26,6 @@ const config = {
 			},
 		],
 	],
-	env: {
-		build_pot: {
-			plugins: [
-				[
-					'@automattic/babel-plugin-i18n-calypso',
-					{
-						dir: 'build/i18n-calypso/',
-						headers: {
-							'content-type': 'text/plain; charset=UTF-8',
-							'x-generator': 'calypso',
-						},
-					},
-				],
-			],
-		},
-	},
 };
 
 module.exports = config;
