@@ -102,9 +102,9 @@ class ChecklistMain extends PureComponent {
 					/>
 					<FormattedHeader
 						headerText={
-							this.props.siteHasFreePlan
-								? translate( 'Your site has been created!' )
-								: translate( 'Thank you for your purchase!' )
+							! this.props.siteHasFreePlan
+								? translate( 'Thank you for your purchase!' )
+								: translate( 'Your site has been created!' )
 						}
 						subHeaderText={
 							'gsuite' === displayMode
