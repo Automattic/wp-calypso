@@ -28,8 +28,8 @@ export default function() {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementAddGSuiteUsers( ':site', ':domain' ),
-			paths.emailManagementAddGSuiteUsers( ':site' ),
+			paths.emailManagementAddGSuiteUsers( ':site', ':planType', ':domain' ),
+			paths.emailManagementAddGSuiteUsers( ':site', ':planType' ),
 		],
 		handlers: [
 			...commonHandlers,

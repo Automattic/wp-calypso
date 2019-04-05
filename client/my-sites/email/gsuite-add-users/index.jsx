@@ -58,6 +58,7 @@ class GSuiteAddUsers extends React.Component {
 		const {
 			domains,
 			gsuiteUsers,
+			planType,
 			isRequestingDomains,
 			selectedDomainName,
 			selectedSite,
@@ -72,6 +73,7 @@ class GSuiteAddUsers extends React.Component {
 						domains={ domains }
 						isRequestingSiteDomains={ isRequestingDomains }
 						gsuiteUsers={ gsuiteUsers }
+						planType={ planType }
 						selectedDomainName={ selectedDomainName }
 						selectedSite={ selectedSite }
 					/>
@@ -87,6 +89,7 @@ class GSuiteAddUsers extends React.Component {
 
 		const analyticsPath = emailManagementAddGSuiteUsers(
 			':site',
+			':planType',
 			selectedDomainName ? ':domain' : undefined
 		);
 		return (
@@ -118,6 +121,7 @@ GSuiteAddUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array,
 	isRequestingDomains: PropTypes.bool.isRequired,
+	planType: PropTypes.oneOf( [ 'basic', 'business' ] ),
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,

@@ -15,7 +15,7 @@ import React, { Fragment } from 'react';
  */
 import CompactCard from 'components/card/compact';
 import config from 'config';
-import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
+import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getAnnualPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -33,8 +33,10 @@ import QueryProductsList from 'components/data/query-products-list';
 import './style.scss';
 
 class GSuitePurchaseCta extends React.Component {
-	goToAddGoogleApps = () => {
-		page( domainManagementAddGSuiteUsers( this.props.selectedSiteSlug, this.props.domainName ) );
+	goToAddGSuiteUsers = planType => {
+		page(
+			emailManagementAddGSuiteUsers( this.props.selectedSiteSlug, planType, this.props.domainName )
+		);
 	};
 
 	renderCta() {
@@ -79,6 +81,7 @@ class GSuitePurchaseCta extends React.Component {
 								<GSuitePurchaseCtaSkuInfo
 									annualPrice={ basicAnnualPrice }
 									buttonText={ translate( 'Add G Suite' ) }
+									nButtonClick={ () => this.goToAddGSuiteUsers( 'basic' ) }
 									showButton={ upgradeAvailable }
 									skuName={ translate( 'G Suite' ) }
 									skuSubText={ translate( '30GB of Storage' ) }
@@ -86,6 +89,7 @@ class GSuitePurchaseCta extends React.Component {
 								<GSuitePurchaseCtaSkuInfo
 									annualPrice={ businessAnnualPrice }
 									buttonText={ translate( 'Add G Suite Business' ) }
+									onButtonClick={ () => this.goToAddGSuiteUsers( 'business' ) }
 									showButton={ upgradeAvailable }
 									skuName={ translate( 'G Suite Business' ) }
 									skuSubText={ translate( 'Unlimited Storage' ) }
