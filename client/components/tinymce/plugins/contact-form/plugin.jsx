@@ -26,7 +26,7 @@ import {
 import { serialize, deserialize } from './shortcode-utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
-const wpcomContactForm = editor => {
+function wpcomContactForm( editor ) {
 	let node;
 	const store = editor.getParam( 'redux_store' );
 
@@ -100,6 +100,7 @@ const wpcomContactForm = editor => {
 		onPostRender() {
 			this.innerHtml(
 				renderToStaticMarkup(
+					// eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
 					<button type="button" role="presentation">
 						<GridiconMention />
 					</button>
@@ -107,7 +108,7 @@ const wpcomContactForm = editor => {
 			);
 		},
 	} );
-};
+}
 
 export default () => {
 	tinymce.PluginManager.add( 'wpcom/contactform', wpcomContactForm );
