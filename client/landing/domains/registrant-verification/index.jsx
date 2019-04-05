@@ -4,22 +4,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
 import DomainsLandingHeader from '../header';
+import DomainsLandingContentCard from '../content-card';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import wp from 'lib/wp';
-
-/**
- *
- * Style dependencies
- */
-import './style.scss';
 
 const wpcom = wp.undocumented();
 
@@ -236,34 +228,19 @@ class RegistrantVerificationPage extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const contentClasses = classNames( 'registrant-verification__content', {
-			'registrant-verification__loading-placeholder': this.state.isLoading,
-		} );
 
 		return (
 			<div className="registrant-verification">
 				<DomainsLandingHeader title={ translate( 'Domain Contact Verification' ) } />
-				<CompactCard className={ contentClasses }>
-					{ this.state.illustration && <img src={ this.state.illustration } alt="" /> }
-					{ this.state.title && (
-						<h2 className="registrant-verification__title">{ this.state.title }</h2>
-					) }
-					{ this.state.message && (
-						<h3 className="registrant-verification__message">{ this.state.message }</h3>
-					) }
-					{ this.state.actionTitle && (
-						<Button
-							className="registrant-verification__action-button"
-							primary
-							onClick={ this.state.actionCallback }
-						>
-							{ this.state.actionTitle }
-						</Button>
-					) }
-					{ this.state.footer && (
-						<p className="registrant-verification__footer">{ this.state.footer }</p>
-					) }
-				</CompactCard>
+				<DomainsLandingContentCard
+					illustration={ this.state.illustration }
+					title={ this.state.title }
+					message={ this.state.message }
+					actionTitle={ this.state.actionTitle }
+					actionCallback={ this.state.actionCallback }
+					footer={ this.state.footer }
+					isLoading={ this.state.isLoading }
+				/>
 			</div>
 		);
 	}

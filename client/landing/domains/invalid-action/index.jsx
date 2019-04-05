@@ -7,9 +7,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import EmptyContent from 'components/empty-content';
 import DomainsLandingHeader from '../header';
+import DomainsLandingContentCard from '../content-card';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 
 class InvalidActionPage extends Component {
@@ -28,15 +27,11 @@ class InvalidActionPage extends Component {
 		return (
 			<Fragment>
 				<DomainsLandingHeader />
-				<CompactCard>
-					<EmptyContent
-						illustration="/calypso/images/illustrations/illustration-404.svg"
-						title={ title }
-						line={ message }
-						action="Return Home"
-						actionURL="/"
-					/>
-				</CompactCard>
+				<DomainsLandingContentCard
+					illustration="/calypso/images/illustrations/illustration-404.svg"
+					title={ title }
+					message={ message }
+				/>
 			</Fragment>
 		);
 	}

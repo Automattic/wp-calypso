@@ -1,28 +1,30 @@
-.registrant-verification {
+.content-card {
 	text-align: center;
+	padding-bottom: 50px;
 
-	.registrant-verification__title {
+	.content-card__title {
 		color: var( --color-neutral-700 );
 		font-size: 34px;
 		font-weight: 300;
+		margin-bottom: 1em;
 
 		@include breakpoint( '<660px' ) {
 			font-size: 24px;
 		}
 	}
 
-	.registrant-verification__message {
-		 color: var( --color-neutral-500 );
-		 font-size: 22px;
-		 font-weight: 300;
-		 margin-bottom: 40px;
+	.content-card__message {
+		color: var( --color-neutral-500 );
+		font-size: 22px;
+		font-weight: 300;
+		margin-bottom: 40px;
 
-		 @include breakpoint( '<660px' ) {
-			 font-size: 16px;
-		 }
-	 }
+		@include breakpoint( '<660px' ) {
+			font-size: 16px;
+		}
+	}
 
-	.registrant-verification__footer {
+	.content-card__footer {
 		color: var( --color-neutral-500 );
 		font-size: 18px;
 		font-weight: 300;
@@ -33,34 +35,30 @@
 		}
 	}
 
-	.registrant-verification__content {
-		padding-bottom: 50px;
-	}
-
-	.registrant-verification__action-button {
+	.content-card__action-button {
 		margin-bottom: 40px;
 	}
 
-	.registrant-verification__loading-placeholder {
-		text-align: center;
-
-		img {
+	&.content-card__loading-placeholder {
+		.content-card__illustration {
 			@include placeholder(23%);
 			width: 400px;
 			height: 250px;
+			margin-left: auto;
+			margin-right: auto;
 		}
 
-		h3 {
+		.content-card__message {
 			@include placeholder(23%);
 			height: 24px;
 			margin: 0 auto 10px;
 			width: 50%;
 		}
 
-		p {
+		.content-card__footer {
 			@include placeholder(23%);
 			height: 20px;
-			margin: 0 auto 5px;
+			margin: 40px auto;
 			width: 70%;
 		}
 	}

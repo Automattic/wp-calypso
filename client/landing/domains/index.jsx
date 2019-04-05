@@ -13,12 +13,6 @@ import RegistrantVerificationPage from './registrant-verification';
 import InvalidActionPage from './invalid-action';
 import Main from 'components/main';
 
-/**
- *
- * Style dependencies
- */
-import './style.scss';
-
 class DomainsLandingPage extends Component {
 	static propTypes = {
 		action: PropTypes.string.isRequired,
