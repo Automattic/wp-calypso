@@ -24,7 +24,6 @@ import { isJetpackSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
-import { SITES_ONCE_CHANGED } from 'state/action-types';
 import { setSection } from 'state/ui/actions';
 import { setImportingFromSignupFlow, setImportOriginSiteDetails } from 'state/importer-nux/actions';
 import { decodeURIComponentIfValid } from 'lib/url';
@@ -52,27 +51,11 @@ function canDeleteSite( state, siteId ) {
 
 export function redirectIfCantDeleteSite( context, next ) {
 	const state = context.store.getState();
-	const dispatch = context.store.dispatch;
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
 
-	if ( siteId && ! canDeleteSite( state, siteId ) ) {
-		return page.redirect( '/settings/general/' + siteSlug );
+	if ( ! canDeleteSite( state, getSelectedSiteId( state ) ) ) {
+		return page.redirect( '/settings/general/' + getSelectedSiteSlug( state ) );
 	}
 
-	if ( ! siteId ) {
-		dispatch( {
-			type: SITES_ONCE_CHANGED,
-			listener: () => {
-				const updatedState = context.store.getState();
-				const updatedSiteId = getSelectedSiteId( updatedState );
-				const updatedSiteSlug = getSelectedSiteSlug( updatedState );
-				if ( ! canDeleteSite( updatedState, updatedSiteId ) ) {
-					return page.redirect( '/settings/general/' + updatedSiteSlug );
-				}
-			},
-		} );
-	}
 	next();
 }
 

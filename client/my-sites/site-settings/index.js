@@ -72,9 +72,9 @@ export default function() {
 	page(
 		'/settings/delete-site/:site_id',
 		siteSelection,
+		redirectIfCantDeleteSite,
 		navigation,
 		setScroll,
-		redirectIfCantDeleteSite,
 		deleteSite,
 		makeLayout,
 		clientRender
@@ -109,9 +109,9 @@ export default function() {
 	page(
 		'/settings/start-over/:site_id',
 		siteSelection,
+		redirectIfCantDeleteSite,
 		navigation,
 		setScroll,
-		redirectIfCantDeleteSite,
 		startOver,
 		makeLayout,
 		clientRender
