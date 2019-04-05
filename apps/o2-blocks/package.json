@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "Gutenberg extensions for o2 theme.",
 	"main": "dist/editor.js",
-	"sideEffects": false,
+	"sideEffects": true,
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/Automattic/wp-calypso.git",
