@@ -43,14 +43,16 @@ class GSuitePurchaseCta extends React.Component {
 		const { currencyCode, domainName, productsList, translate } = this.props;
 		const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
 
-		const basicAnnualPrice = getAnnualPrice(
-			get( productsList.gapps, [ 'prices', currencyCode ], 0 ),
-			currencyCode
+		const basicAnnualPrice = get( productsList.gapps, [ 'prices', currencyCode ], null );
+		const basicAnnualPriceFormatted =
+			null === basicAnnualPrice ? '-' : getAnnualPrice( basicAnnualPrice, currencyCode );
+		const businessAnnualPrice = get(
+			productsList.gapps_unlimited,
+			[ 'prices', currencyCode ],
+			null
 		);
-		const businessAnnualPrice = getAnnualPrice(
-			get( productsList.gapps_unlimited, [ 'prices', currencyCode ], 0 ),
-			currencyCode
-		);
+		const businessAnnualPriceFormatted =
+			null === businessAnnualPrice ? '-' : getAnnualPrice( businessAnnualPrice, currencyCode );
 
 		return (
 			<Fragment>
@@ -79,7 +81,7 @@ class GSuitePurchaseCta extends React.Component {
 
 							<div className="gsuite-purchase-cta__skus">
 								<GSuitePurchaseCtaSkuInfo
-									annualPrice={ basicAnnualPrice }
+									annualPrice={ basicAnnualPriceFormatted }
 									buttonText={ translate( 'Add G Suite' ) }
 									nButtonClick={ () => this.goToAddGSuiteUsers( 'basic' ) }
 									showButton={ upgradeAvailable }
@@ -87,7 +89,7 @@ class GSuitePurchaseCta extends React.Component {
 									skuSubText={ translate( '30GB of Storage' ) }
 								/>
 								<GSuitePurchaseCtaSkuInfo
-									annualPrice={ businessAnnualPrice }
+									annualPrice={ businessAnnualPriceFormatted }
 									buttonText={ translate( 'Add G Suite Business' ) }
 									onButtonClick={ () => this.goToAddGSuiteUsers( 'business' ) }
 									showButton={ upgradeAvailable }
