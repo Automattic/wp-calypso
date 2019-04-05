@@ -594,6 +594,7 @@ export class PlanFeatures extends Component {
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
 				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
+				'is-last-feature': rowIndex + 1 === featureKeys.length,
 				'is-highlighted':
 					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
 			} );

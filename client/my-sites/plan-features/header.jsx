@@ -358,7 +358,7 @@ export class PlanFeaturesHeader extends Component {
 PlanFeaturesHeader.propTypes = {
 	availableForPurchase: PropTypes.bool,
 	bestValue: PropTypes.bool,
-	billingTimeFrame: PropTypes.oneOf( [ PropTypes.string, PropTypes.array ] ).isRequired,
+	billingTimeFrame: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
 	currencyCode: PropTypes.string,
 	current: PropTypes.bool,
 	discountPrice: PropTypes.number,
