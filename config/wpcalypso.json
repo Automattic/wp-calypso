@@ -96,7 +96,7 @@
 		"me/account": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
-		"me/account/color-schemes/laser-black": true,
+		"me/account/color-schemes/laser-black": false,
 		"me/find-friends": false,
 		"me/my-profile": true,
 		"me/notifications": true,

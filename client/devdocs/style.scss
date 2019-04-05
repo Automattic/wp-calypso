@@ -153,10 +153,6 @@ $devdocs-max-width: 720px;
 		.card:last-child {
 			margin-bottom: 0;
 		}
-
-		.is-laser-black & {
-			--docs-example-grid: 255, 255, 255;
-		}
 	}
 
 	// Styles specific to the single component view

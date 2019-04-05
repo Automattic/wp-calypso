@@ -4,11 +4,6 @@
  */
 import { compact } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import config from 'config';
-
 export default function( translate ) {
 	return compact( [
 		{
@@ -44,13 +39,6 @@ export default function( translate ) {
 			value: 'sakura',
 			thumbnail: {
 				cssClass: 'is-sakura',
-			},
-		},
-		config.isEnabled( 'me/account/color-schemes/laser-black' ) && {
-			label: translate( 'Laser Black' ),
-			value: 'laser-black',
-			thumbnail: {
-				cssClass: 'is-laser-black',
 			},
 		},
 	] );
