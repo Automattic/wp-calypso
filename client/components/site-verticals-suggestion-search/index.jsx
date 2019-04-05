@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, find, get } from 'lodash';
+import { find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { v4 as uuid } from 'uuid';
 
@@ -29,7 +29,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		autoFocus: PropTypes.bool,
 		defaultVertical: PropTypes.object,
 		onChange: PropTypes.func,
-		onChangeDebounceFn: PropTypes.func,
 		placeholder: PropTypes.string,
 		searchValue: PropTypes.string,
 		showPopular: PropTypes.bool,
@@ -40,8 +39,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		autoFocus: false,
 		defaultVertical: {},
 		onChange: () => {},
-		// For unit test dependency injection
-		onChangeDebounceFn: fn => debounce( fn, 1000 ),
 		placeholder: '',
 		searchValue: '',
 		showPopular: false,
@@ -56,7 +53,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			isSuggestionSelected: false,
 			inputValue: props.searchValue,
 		};
-		this.updateVerticalDataDebounced = props.onChangeDebounceFn( this.updateVerticalData );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -174,7 +170,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 		// We debounce the update on the vertical while the user is typing
 		// to prevent unnecessary site preview updates
-		this.updateVerticalDataDebounced( this.searchForVerticalMatches( value ), value );
+		this.updateVerticalData( this.searchForVerticalMatches( value ), value );
 	};
 
 	/*

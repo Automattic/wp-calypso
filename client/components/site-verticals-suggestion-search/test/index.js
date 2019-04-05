@@ -40,7 +40,6 @@ const defaultProps = {
 		parent: 'whoops',
 		verticalId: 'argh',
 	},
-	onChangeDebounceFn: fn => fn,
 	translate: str => str,
 	searchValue: '',
 };
