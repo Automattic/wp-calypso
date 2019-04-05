@@ -22,6 +22,7 @@ import wp from 'lib/wp';
 function PendingGSuiteTosNoticeDialog( props ) {
 	const [ password, setPassword ] = useState( false );
 	const [ isCopied, setIsCopied ] = useState( false );
+	const [ openTracked, setOpenTracked ] = useState( false );
 	const translate = useTranslate();
 
 	const trackEvent = ( message, tracksEvent ) => {
@@ -33,6 +34,23 @@ function PendingGSuiteTosNoticeDialog( props ) {
 			tracksEvent,
 			user: props.user,
 		} );
+	};
+
+	if ( props.visible && ! openTracked ) {
+		trackEvent(
+			`Opened G Suite "ToS Dialog" via ${ props.section }`,
+			'calypso_domain_management_gsuite_pending_account_open_dialog'
+		);
+		setOpenTracked( true );
+	}
+
+	const onCloseClick = () => {
+		trackEvent(
+			`Clicked "Close ToS Dialog" link in G Suite pending ToS dialog via ${ props.section }`,
+			'calypso_domain_management_gsuite_pending_account_close_dialog_click'
+		);
+		setOpenTracked( false );
+		props.onClose();
 	};
 
 	const onCopyAction = () => {
@@ -91,7 +109,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 		<Dialog className="domain-warnings__dialog" isVisible={ props.visible }>
 			<header>
 				<h1>{ translate( 'Log in to G Suite to finish setup' ) }</h1>
-				<button onClick={ props.onClose }>
+				<button onClick={ onCloseClick }>
 					<Gridicon icon="cross" />
 				</button>
 			</header>
