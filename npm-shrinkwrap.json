@@ -4722,12 +4722,12 @@
 			}
 		},
 		"babel-jest": {
-			"version": "24.7.0",
-			"resolved": "https://registry.npmjs.org/babel-jest/-/babel-jest-24.7.0.tgz",
-			"integrity": "sha512-7WRraf28jlluyVLPyDY4+DXzCptiWor44caqRzefo+3btgHUb7FXEFXeqxwH2UuNCMnNY3plh/7hQ9bsLVwmUQ==",
+			"version": "24.7.1",
+			"resolved": "https://registry.npmjs.org/babel-jest/-/babel-jest-24.7.1.tgz",
+			"integrity": "sha512-GPnLqfk8Mtt0i4OemjWkChi73A3ALs4w2/QbG64uAj8b5mmwzxc7jbJVRZt8NJkxi6FopVHog9S3xX6UJKb2qg==",
 			"dev": true,
 			"requires": {
-				"@jest/transform": "^24.7.0",
+				"@jest/transform": "^24.7.1",
 				"@jest/types": "^24.7.0",
 				"@types/babel__core": "^7.1.0",
 				"babel-plugin-istanbul": "^5.1.0",
@@ -11943,13 +11943,13 @@
 			"integrity": "sha1-elSbvZ/+FYWwzQoZHiAwVb7ldLQ="
 		},
 		"jest": {
-			"version": "24.7.0",
-			"resolved": "https://registry.npmjs.org/jest/-/jest-24.7.0.tgz",
-			"integrity": "sha512-1bb9H06UeqTgiyZ9Lm81No06YdWq7f4ahLdQZJnQ0n2wuyA+ODrRfbqM8emmSS85IDw54LodW0tlud/b2F+4dQ==",
+			"version": "24.7.1",
+			"resolved": "https://registry.npmjs.org/jest/-/jest-24.7.1.tgz",
+			"integrity": "sha512-AbvRar5r++izmqo5gdbAjTeA6uNRGoNRuj5vHB0OnDXo2DXWZJVuaObiGgtlvhKb+cWy2oYbQSfxv7Q7GjnAtA==",
 			"dev": true,
 			"requires": {
 				"import-local": "^2.0.0",
-				"jest-cli": "^24.7.0"
+				"jest-cli": "^24.7.1"
 			},
 			"dependencies": {
 				"jest-cli": {
