@@ -21,12 +21,11 @@ import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { sendInvites } from 'lib/invites/actions';
+import { sendInvites, createInviteValidation } from 'lib/invites/actions';
 import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import CountedTextarea from 'components/forms/counted-textarea';
-import { createInviteValidation } from 'lib/invites/actions';
 import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
 import InvitesSentStore from 'lib/invites/stores/invites-sent';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -45,7 +44,10 @@ import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-mod
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import {
+	loadTrackingTool,
+	recordTracksEvent as recordTracksEventAction,
+} from 'state/analytics/actions';
 
 /**
  * Module variables
@@ -58,6 +60,11 @@ class InvitePeople extends React.Component {
 	componentDidMount() {
 		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
 		InvitesSentStore.on( 'change', this.refreshFormState );
+		this.maybeLoadHotJar();
+	}
+
+	componentDidUpdate() {
+		this.maybeLoadHotJar();
 	}
 
 	componentWillUnmount() {
@@ -68,6 +75,16 @@ class InvitePeople extends React.Component {
 	componentWillReceiveProps() {
 		this.setState( this.resetState() );
 	}
+
+	maybeLoadHotJar = () => {
+		if ( this.hjLoaded ) {
+			return;
+		}
+
+		this.hjLoaded = true;
+
+		this.props.loadTrackingTool( 'HotJar' );
+	};
 
 	resetState = () => {
 		return {
@@ -225,6 +242,8 @@ class InvitePeople extends React.Component {
 			number_email_invitees: groupedInvitees.email ? groupedInvitees.email.length : 0,
 			has_custom_message: 'string' === typeof message && !! message.length,
 		} );
+
+		page( `/people/new/${ this.props.site.slug }/sent` );
 	};
 
 	isSubmitDisabled = () => {
@@ -285,10 +304,10 @@ class InvitePeople extends React.Component {
 			needsVerification,
 			isJetpack,
 			showSSONotice,
+			onClickSendInvites,
 			onFocusTokenField,
 			onFocusRoleSelect,
 			onFocusCustomMessage,
-			onClickSendInvites,
 		} = this.props;
 
 		const inviteForm = (
@@ -457,6 +476,7 @@ export default connect(
 			},
 			dispatch
 		),
+		loadTrackingTool,
 		recordTracksEventAction,
 		onFocusTokenField: () =>
 			dispatch( recordTracksEventAction( 'calypso_invite_people_token_field_focus' ) ),
