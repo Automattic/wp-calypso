@@ -9,7 +9,7 @@ export function emailManagementAddGSuiteUsers( siteName, domainName ) {
 	let path;
 
 	if ( domainName ) {
-		path = emailManagementEdit( siteName, domainName, 'add-gsuite-users' );
+		path = emailManagementEdit( siteName, domainName, 'gsuite/add-users' );
 	} else {
 		path = '/email/add-gsuite-users/' + siteName;
 	}
@@ -18,7 +18,7 @@ export function emailManagementAddGSuiteUsers( siteName, domainName ) {
 }
 
 export function emailManagementNewGSuiteAccount( siteName, domainName, planType ) {
-	return emailManagementEdit( siteName, domainName, 'new-gsuite-account/' + planType );
+	return emailManagementEdit( siteName, domainName, 'gsuite/new/' + planType );
 }
 
 export function emailManagement( siteName, domainName ) {
