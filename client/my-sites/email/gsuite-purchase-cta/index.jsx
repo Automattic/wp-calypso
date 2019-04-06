@@ -109,6 +109,9 @@ class GSuitePurchaseCta extends React.Component {
 										showButton={ upgradeAvailable }
 										skuName={ translate( 'G Suite Business' ) }
 										skuSubText={ translate( 'Unlimited Storage' ) }
+										skuSubNoticeText={ translate(
+											'Accounts with fewer than 5 users have 1 TB per user'
+										) }
 									/>
 								) }
 							</div>

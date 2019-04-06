@@ -107,8 +107,19 @@
 	}
 }
 
-.gsuite-purchase-cta__sku-info-name-storage {
-	color: var( --color-text-subtle );
-	font-size: 13px;
-	font-style: italic;
+.gsuite-purchase-cta__sku-info-sub-text {
+	display: flex;
+	direction: row;
+
+	h5 {
+		color: var( --color-text-subtle );
+		font-size: 13px;
+		font-style: italic;
+	}
+
+	height: 19.5px;
+
+	.info-popover {
+		margin-left: 3px;
+	}
 }

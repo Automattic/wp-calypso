@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/forms/form-button';
+import InfoPopover from 'components/info-popover';
 
 function GSuitePurchaseCtaSkuInfo( {
 	annualPrice,
@@ -17,6 +18,7 @@ function GSuitePurchaseCtaSkuInfo( {
 	showButton,
 	onButtonClick,
 	skuName,
+	skuSubNoticeText,
 	skuSubText,
 	translate,
 } ) {
@@ -35,7 +37,10 @@ function GSuitePurchaseCtaSkuInfo( {
 					} ) }
 				</span>
 			</h4>
-			<h5 className="gsuite-purchase-cta__sku-info-name-storage">{ skuSubText }</h5>
+			<div className="gsuite-purchase-cta__sku-info-sub-text">
+				<h5>{ skuSubText }</h5>
+				{ skuSubNoticeText && <InfoPopover>{ skuSubNoticeText }</InfoPopover> }
+			</div>
 			{ showButton && (
 				<Button type="button" onClick={ onButtonClick }>
 					{ buttonText }
