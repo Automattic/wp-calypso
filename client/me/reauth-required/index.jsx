@@ -14,7 +14,6 @@ const debug = debugFactory( 'calypso:me:reauth-required' );
  */
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
