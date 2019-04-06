@@ -46,7 +46,7 @@ export default class FormVerificationCodeInput extends React.Component {
 		if ( method === 'backup' ) {
 			placeholder = constants.eightDigitBackupCodePlaceholder;
 		} else if ( method === 'sms' ) {
-			placeholder = constants.sixDigit2faPlaceholder;
+			placeholder = constants.sevenDigit2faPlaceholder;
 		}
 
 		return (
