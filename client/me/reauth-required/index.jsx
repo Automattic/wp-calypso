@@ -279,12 +279,12 @@ const ReauthRequired = createReactClass( {
 					</FormFieldset>
 
 					{ this.renderSMSResendThrottled() }
-					
+
 					<FormButtonsBar>
 					{ this.renderVerifyButton() }
 
 					{ this.renderBottomSendSMSButton() }
-					</FormButtonsBar>		
+					</FormButtonsBar>
 				</form>
 			</Dialog>
 		);
