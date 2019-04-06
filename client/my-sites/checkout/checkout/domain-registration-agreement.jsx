@@ -93,10 +93,12 @@ class DomainRegistrationAgreement extends React.Component {
 	};
 
 	getDomainsByRegistrationAgreement() {
-		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
+		const { cart } = this.props;
+		const domainItems = cartItems.getDomainRegistrations( cart );
+		domainItems.push( ...cartItems.getDomainTransfers( cart ) );
 		const agreementUrls = [
 			...new Set(
-				map( domainRegistrations, registration =>
+				map( domainItems, registration =>
 					get( registration, 'extra.domain_registration_agreement_url' )
 				)
 			),
@@ -106,10 +108,10 @@ class DomainRegistrationAgreement extends React.Component {
 			agreementUrls,
 			( domainsByAgreement, url ) => {
 				const domainsList = reduce(
-					domainRegistrations,
-					( domains, registration ) => {
-						if ( registration.extra.domain_registration_agreement_url === url ) {
-							domains.push( registration.meta );
+					domainItems,
+					( domains, domainItem ) => {
+						if ( domainItem.extra.domain_registration_agreement_url === url ) {
+							domains.push( domainItem.meta );
 						}
 						return domains;
 					},
@@ -126,7 +128,8 @@ class DomainRegistrationAgreement extends React.Component {
 	}
 
 	render() {
-		if ( ! cartItems.hasDomainRegistration( this.props.cart ) ) {
+		const { cart } = this.props;
+		if ( ! ( cartItems.hasDomainRegistration( cart ) || cartItems.hasTransferProduct( cart ) ) ) {
 			return null;
 		}
 
