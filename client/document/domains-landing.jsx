@@ -13,7 +13,7 @@ import classnames from 'classnames';
 // import config from 'config';
 import Head from 'components/head';
 import getStylesheet from './utils/stylesheet';
-import { jsonStringifyForHtml } from 'server/sanitize';
+import { jsonStringifyForHtml } from '../../server/sanitize';
 
 const cssChunkLink = asset => (
 	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
