@@ -254,6 +254,7 @@ const ReauthRequired = createReactClass( {
 						<FormVerificationCodeInput
 							autoFocus
 							id="code"
+							disabled={ ! this.state.smsCodeSent && this.props.twoStepAuthorization.isTwoStepSMSEnabled() }
 							isError={ this.props.twoStepAuthorization.codeValidationFailed() }
 							name="code"
 							method={ method }
@@ -265,7 +266,7 @@ const ReauthRequired = createReactClass( {
 						{ this.renderFailedValidationMsg() }
 					</FormFieldset>
 
-					<FormFieldset>
+					<FormFieldset className="reauth-required__remember-checkbox">
 						<FormLabel>
 							<FormCheckbox
 								id="remember2fa"
@@ -280,7 +281,7 @@ const ReauthRequired = createReactClass( {
 
 					{ this.renderSMSResendThrottled() }
 
-					<FormButtonsBar>
+					<FormButtonsBar className="reauth-required__buttons">
 					{ this.renderVerifyButton() }
 
 					{ this.renderBottomSendSMSButton() }
