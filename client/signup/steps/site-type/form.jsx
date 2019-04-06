@@ -34,7 +34,6 @@ class SiteTypeForm extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			hasOtherReasonFocus: false,
 			otherValue: '',
 			siteType: props.siteType,
 		};
