@@ -11,7 +11,7 @@ export function emailManagementAddGSuiteUsers( siteName, domainName ) {
 	if ( domainName ) {
 		path = emailManagementEdit( siteName, domainName, 'gsuite/add-users' );
 	} else {
-		path = '/email/add-gsuite-users/' + siteName;
+		path = '/email/gsuite/add-users/' + siteName;
 	}
 
 	return path;
