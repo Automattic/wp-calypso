@@ -15,6 +15,10 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	.notice {
 		margin-bottom: 0;
 
+		+ div > .post-share__main {
+			padding-top: 16px;
+		}
+
 		&,
 		.notice__icon-wrapper {
 			border-radius: 0;
