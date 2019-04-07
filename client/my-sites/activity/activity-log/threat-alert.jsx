@@ -28,8 +28,6 @@ import './threat-alert.scss';
 const debug = debugFactory( 'calypso:activity-log' );
 
 const detailType = threat => {
-	console.log( threat );
-
 	if ( threat.hasOwnProperty( 'table' ) ) {
 		return 'table';
 	}
@@ -61,12 +59,11 @@ const headerTitle = ( translate, threat ) => {
 				'The table {{table/}} contains suspicious links.',
 				{
 					components: {
-						table: (
-							<code className="activity-log__threat-alert-table">{threat.table}</code>
-						),
+						table: <code className="activity-log__threat-alert-table">{ threat.table }</code>,
 					},
 					count: threat.rows.length,
-				});
+				}
+			);
 
 		case 'core':
 			return translate( 'The file {{filename/}} has been modified from its original.', {
@@ -146,32 +143,18 @@ const headerSubtitle = ( translate, threat ) => {
 };
 
 export class ThreatAlert extends Component {
-
-	formatTableRows = ( rows ) => {
-		let l;
-
-		rows.forEach( ( row, i ) => {
-			l = (
-				<p>{ row.url }</p>
-			);
-		} );
-	};
-
 	mainDescription() {
-		const { threat } = this.props;
+		const { threat, translate } = this.props;
 
 		if ( threat.filename ) {
 			return (
 				<Fragment>
 					<p>
 						{ translate( 'Threat {{threatSignature/}} found in file:', {
-							comment:
-								'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
+							comment: 'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
 							components: {
 								threatSignature: (
-									<span className="activity-log__threat-alert-signature">
-										{ threat.signature }
-									</span>
+									<span className="activity-log__threat-alert-signature">{ threat.signature }</span>
 								),
 							},
 						} ) }
@@ -183,16 +166,20 @@ export class ThreatAlert extends Component {
 
 		if ( threat.table ) {
 			return (
-
 				<Fragment>
-					<p>This is a table threat</p>
+					{ Object.values( threat.rows ).map( row => (
+						<div key={ row.id }>
+							<p>{ row.description }</p>
+							<p>{ threat.objectType }</p>
+							<p>{ row.id }</p>
+							<p>{ row.url }</p>
+						</div>
+					) ) }
 				</Fragment>
 			);
 		}
 
-		return (
-			<p className="activity-log__threat-alert-signature">{ threat.signature }</p>
-		);
+		return <p className="activity-log__threat-alert-signature">{ threat.signature }</p>;
 	}
 
 	render() {
