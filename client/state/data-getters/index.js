@@ -187,6 +187,7 @@ export const requestSiteAlerts = siteId => {
 										},
 								  }
 								: {} ),
+							...( threat.table ? { table: threat.table, rows: threat.rows } : {} ),
 						} ) ),
 						warnings,
 						updates: {

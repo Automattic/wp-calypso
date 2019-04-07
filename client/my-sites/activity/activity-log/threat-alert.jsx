@@ -28,6 +28,11 @@ import './threat-alert.scss';
 const debug = debugFactory( 'calypso:activity-log' );
 
 const detailType = threat => {
+
+	if ( threat.hasOwnProperty( 'table' ) ) {
+		return 'table';
+	}
+
 	if ( threat.hasOwnProperty( 'diff' ) ) {
 		return 'core';
 	}
@@ -49,6 +54,19 @@ const headerTitle = ( translate, threat ) => {
 	const basename = s => s.replace( /.*\//, '' );
 
 	switch ( detailType( threat ) ) {
+		case 'table':
+			return translate(
+				'The table {{table/}} contains a suspicious link.',
+				'The table {{table/}} contains suspicious links.',
+				{
+					components: {
+						table: (
+							<code className="activity-log__threat-alert-table">{threat.table}</code>
+						),
+					},
+					count: threat.rows.length,
+				});
+
 		case 'core':
 			return translate( 'The file {{filename/}} has been modified from its original.', {
 				components: {
