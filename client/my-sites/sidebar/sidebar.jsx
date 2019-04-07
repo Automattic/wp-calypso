@@ -876,6 +876,7 @@ export class MySitesSidebar extends Component {
 				>
 					{ this.tools() }
 					{ this.earn() }
+					{ this.activity() }
 				</ExpandableSidebarMenu>
 
 				{ configuration ? (
