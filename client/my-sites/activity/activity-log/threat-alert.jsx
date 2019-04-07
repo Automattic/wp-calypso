@@ -28,6 +28,7 @@ import './threat-alert.scss';
 const debug = debugFactory( 'calypso:activity-log' );
 
 const detailType = threat => {
+	console.log( threat );
 
 	if ( threat.hasOwnProperty( 'table' ) ) {
 		return 'table';
@@ -123,6 +124,7 @@ const headerSubtitle = ( translate, threat ) => {
 			return translate( 'Vulnerability found in WordPress' );
 
 		case 'file':
+		case 'table':
 			return translate( 'Threat found ({{signature/}})', {
 				components: {
 					signature: (
@@ -144,6 +146,55 @@ const headerSubtitle = ( translate, threat ) => {
 };
 
 export class ThreatAlert extends Component {
+
+	formatTableRows = ( rows ) => {
+		let l;
+
+		rows.forEach( ( row, i ) => {
+			l = (
+				<p>{ row.url }</p>
+			);
+		} );
+	};
+
+	mainDescription() {
+		const { threat } = this.props;
+
+		if ( threat.filename ) {
+			return (
+				<Fragment>
+					<p>
+						{ translate( 'Threat {{threatSignature/}} found in file:', {
+							comment:
+								'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
+							components: {
+								threatSignature: (
+									<span className="activity-log__threat-alert-signature">
+										{ threat.signature }
+									</span>
+								),
+							},
+						} ) }
+					</p>
+					<pre className="activity-log__threat-alert-filename">{ threat.filename }</pre>
+				</Fragment>
+			);
+		}
+
+		if ( threat.table ) {
+			return (
+
+				<Fragment>
+					<p>This is a table threat</p>
+				</Fragment>
+			);
+		}
+
+		return (
+			<p className="activity-log__threat-alert-signature">{ threat.signature }</p>
+		);
+	}
+
 	render() {
 		const { threat, translate } = this.props;
 
@@ -207,26 +258,7 @@ export class ThreatAlert extends Component {
 				>
 					<Fragment>
 						<p className="activity-log__threat-alert-description">{ threat.description }</p>
-						{ threat.filename ? (
-							<Fragment>
-								<p>
-									{ translate( 'Threat {{threatSignature/}} found in file:', {
-										comment:
-											'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
-										components: {
-											threatSignature: (
-												<span className="activity-log__threat-alert-signature">
-													{ threat.signature }
-												</span>
-											),
-										},
-									} ) }
-								</p>
-								<pre className="activity-log__threat-alert-filename">{ threat.filename }</pre>
-							</Fragment>
-						) : (
-							<p className="activity-log__threat-alert-signature">{ threat.signature }</p>
-						) }
+						{ this.mainDescription() }
 						{ threat.context && <MarkedLines context={ threat.context } /> }
 						{ threat.diff && <DiffViewer diff={ threat.diff } /> }
 					</Fragment>
