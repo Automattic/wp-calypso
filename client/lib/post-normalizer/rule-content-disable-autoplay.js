@@ -1,22 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { forEach } from 'lodash';
+import { forEach, isArray } from 'lodash';
 import url from 'url';
-
-/**
- * Internal Dependencies
- */
 
 function stripAutoPlays( query ) {
 	const keys = Object.keys( query ).filter( function( k ) {
 		return /^auto_?play$/i.test( k );
 	} );
 	forEach( keys, key => {
-		const val = query[ key ].toLowerCase();
+		// In the rare case that we're handed an array of values, use the first one
+		const firstValue = isArray( query[ key ] ) ? query[ key ][ 0 ] : query[ key ];
+		const val = firstValue.toLowerCase();
 		if ( val === '1' ) {
 			query[ key ] = '0';
 		} else if ( val === 'true' ) {
