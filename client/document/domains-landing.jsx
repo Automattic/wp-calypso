@@ -10,7 +10,6 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-// import config from 'config';
 import Head from 'components/head';
 import getStylesheet from './utils/stylesheet';
 import { jsonStringifyForHtml } from '../../server/sanitize';
