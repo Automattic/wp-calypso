@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forEach, isArray } from 'lodash';
+import { forEach } from 'lodash';
 import url from 'url';
 
 function stripAutoPlays( query ) {
@@ -10,7 +10,7 @@ function stripAutoPlays( query ) {
 	} );
 	forEach( keys, key => {
 		// In the rare case that we're handed an array of values, use the first one
-		const firstValue = isArray( query[ key ] ) ? query[ key ][ 0 ] : query[ key ];
+		const firstValue = Array.isArray( query[ key ] ) ? query[ key ][ 0 ] : query[ key ];
 		const val = firstValue.toLowerCase();
 		if ( val === '1' ) {
 			query[ key ] = '0';
