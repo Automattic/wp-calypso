@@ -17,13 +17,23 @@ import SetupTos from './setup-tos';
 import SetupForm from './setup-form';
 import SetupFooter from './setup-footer';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CredentialsSetupFlow extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 	};
 
-	componentWillMount() {
-		this.setState( { currentStep: 'start', showPopover: false } );
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			currentStep: 'start',
+			showPopover: false,
+		};
 	}
 
 	reset = () => this.setState( { currentStep: 'start' } );
