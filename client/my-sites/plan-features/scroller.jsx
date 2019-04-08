@@ -58,8 +58,10 @@ export default class PlanFeaturesScroller extends PureComponent {
 
 	setWrapperRef = element => {
 		this.scrollWrapperDOM = element;
-		element.addEventListener( 'scroll', this.handleScroll );
-		this.updateViewportWidth();
+		if ( element ) {
+			element.addEventListener( 'scroll', this.handleScroll );
+			this.updateViewportWidth();
+		}
 	};
 
 	scrollLeft = event => {
@@ -148,8 +150,8 @@ export default class PlanFeaturesScroller extends PureComponent {
 					index = clamp( round( initialSelectedIndex - visibleCount / 2 ), minIndex, maxIndex );
 				}
 
-				this.initialized = true;
 				this.scrollBy( index );
+				this.initialized = true;
 			} );
 		}
 	};

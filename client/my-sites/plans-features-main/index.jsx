@@ -113,7 +113,7 @@ export class PlansFeaturesMain extends Component {
 					withDiscount={ withDiscount }
 					withScroll={ plansWithScroll }
 					popularPlanSpec={ {
-						type: customerType === 'personal' || plansWithScroll ? TYPE_PREMIUM : TYPE_BUSINESS,
+						type: customerType === 'personal' ? TYPE_PREMIUM : TYPE_BUSINESS,
 						group: GROUP_WPCOM,
 					} }
 					siteId={ siteId }
