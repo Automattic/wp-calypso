@@ -7,13 +7,9 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import JetpackBluehostLogo from './bluehost';
-import JetpackDreamhostLogo from './dreamhost';
-import JetpackInmotionLogo from './inmotion';
+import AsyncLoad from 'components/async-load';
+
 import JetpackLogo from 'components/jetpack-logo';
-import JetpackMileswebLogo from './milesweb';
-import JetpackPressableLogo from './pressable';
-import JetpackLiquidWebLogo from './liquidweb';
 import JetpackPartnerLogoGroup from './partner-logo-group';
 
 /**
@@ -41,7 +37,7 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1270 170"
 						partnerName="DreamHost"
 					>
-						<JetpackDreamhostLogo darkColorScheme={ darkColorScheme } />
+						<AsyncLoad require="./dreamhost" darkColorScheme={ darkColorScheme } />
 					</JetpackPartnerLogoGroup>
 				);
 
@@ -52,7 +48,7 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1150 170"
 						partnerName="Pressable"
 					>
-						<JetpackPressableLogo darkColorScheme={ darkColorScheme } />
+						<AsyncLoad require="./pressable" darkColorScheme={ darkColorScheme } />
 					</JetpackPartnerLogoGroup>
 				);
 
@@ -63,7 +59,7 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1128 170"
 						partnerName="Bluehost"
 					>
-						<JetpackBluehostLogo darkColorScheme={ darkColorScheme } />
+						<AsyncLoad require="./bluehost" darkColorScheme={ darkColorScheme } />
 					</JetpackPartnerLogoGroup>
 				);
 
@@ -74,13 +70,13 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 936 151"
 						partnerName="InMotion"
 					>
-						<JetpackInmotionLogo darkColorScheme={ darkColorScheme } />
+						<AsyncLoad require="./inmotion" darkColorScheme={ darkColorScheme } />
 					</JetpackPartnerLogoGroup>
 				);
 
 			case 'milesweb':
 				// This is a raster logo that contains the Jetpack logo already.
-				return <JetpackMileswebLogo darkColorScheme={ darkColorScheme } />;
+				return <AsyncLoad require="./milesweb" darkColorScheme={ darkColorScheme } />;
 
 			case 'liquidweb':
 				return (
@@ -89,7 +85,7 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1034 150"
 						partnerName="Liquid Web"
 					>
-						<JetpackLiquidWebLogo darkColorScheme={ darkColorScheme } />
+						<AsyncLoad require="./liquidweb" darkColorScheme={ darkColorScheme } />
 					</JetpackPartnerLogoGroup>
 				);
 			default:
