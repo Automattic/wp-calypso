@@ -2,15 +2,15 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import JetpackHeader from '..';
-import { getPreference } from 'state/preferences/selectors';
 
-class JetpackHeaderExample extends PureComponent {
+export default class JetpackHeaderExample extends PureComponent {
+	static displayName = 'JetpackHeaderExample';
+
 	static defaultProps = {
 		exampleCode: (
 			<div>
@@ -26,26 +26,6 @@ class JetpackHeaderExample extends PureComponent {
 	};
 
 	render() {
-		const darkColorScheme = this.props.colorSchemePreference === 'laser-black';
-
-		return (
-			<div>
-				<JetpackHeader />
-				<JetpackHeader partnerSlug="dreamhost" darkColorScheme={ darkColorScheme } />
-				<JetpackHeader partnerSlug="pressable" darkColorScheme={ darkColorScheme } />
-				<JetpackHeader partnerSlug="milesweb" darkColorScheme={ darkColorScheme } />
-				<JetpackHeader partnerSlug="bluehost" darkColorScheme={ darkColorScheme } />
-				<JetpackHeader partnerSlug="inmotion" darkColorScheme={ darkColorScheme } />
-				<JetpackHeader partnerSlug="liquidweb" darkColorScheme={ darkColorScheme } />
-			</div>
-		);
+		return this.props.exampleCode;
 	}
 }
-
-const ConnectedJetpackHeaderExample = connect( state => ( {
-	colorSchemePreference: getPreference( state, 'colorScheme' ),
-} ) )( JetpackHeaderExample );
-
-ConnectedJetpackHeaderExample.displayName = 'JetpackHeaderExample';
-
-export default ConnectedJetpackHeaderExample;
