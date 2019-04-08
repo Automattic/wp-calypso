@@ -31,3 +31,9 @@
 		padding: 32px;
 	}
 }
+
+.banner.themes__showcase-banner {
+	@include banner-dark();
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
