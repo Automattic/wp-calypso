@@ -17,9 +17,8 @@ import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
 import ThemesSelectionHeader from './themes-selection-header';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
@@ -165,6 +164,18 @@ class ThemesSelection extends Component {
 	}
 }
 
+function bindIsThemeActive( state, siteId ) {
+	return themeId => isThemeActive( state, themeId, siteId );
+}
+
+function bindIsInstallingTheme( state, siteId ) {
+	return themeId => isInstallingTheme( state, themeId, siteId );
+}
+
+function bindGetPremiumThemePrice( state, siteId ) {
+	themeId => getPremiumThemePrice( state, themeId, siteId );
+}
+
 const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
@@ -197,14 +208,14 @@ const ConnectedThemesSelection = connect(
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: !! getCurrentUserId( state ),
-			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
-			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId ),
+			isThemeActive: bindIsThemeActive( state, siteId ),
+			isInstallingTheme: bindIsInstallingTheme( state, siteId ),
 			// Note: This component assumes that purchase and plans data is already present in the state tree
 			// (used by the `isPremiumThemeAvailable` selector). That data is provided by the `<QuerySitePurchases />`
 			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them
 			// provides caching, and both are already being rendered by a parent component. So to avoid
 			// redundant AJAX requests, we're not rendering these query components locally.
-			getPremiumThemePrice: themeId => getPremiumThemePrice( state, themeId, siteId ),
+			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
 		};
 	},
