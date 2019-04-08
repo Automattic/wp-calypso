@@ -53,7 +53,6 @@ export class Happychat extends Component {
 		this.props.setBlurred();
 	}
 
-	// transform-class-properties syntax so this is bound within the function
 	onCloseChatTitle = () => {
 		const { onMinimizeChat, onMinimizedChat, onCloseChat } = this.props;
 		onMinimizeChat();
