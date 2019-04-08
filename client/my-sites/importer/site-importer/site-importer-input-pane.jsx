@@ -15,7 +15,7 @@ import moment from 'moment';
  * Internal dependencies
  */
 import config from 'config';
-import wpLib from 'lib/wp';
+import wpcom from 'lib/wp';
 import { validateImportUrl } from 'lib/importers/url-validation';
 import TextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
@@ -32,8 +32,6 @@ import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 import ErrorPane from '../error-pane';
 import SiteImporterSitePreview from './site-importer-site-preview';
-
-const wpcom = wpLib.undocumented();
 
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
@@ -57,7 +55,7 @@ class SiteImporterInputPane extends React.Component {
 		availableEndpoints: [],
 	};
 
-	UNSAFE_componentWillMount = () => {
+	componentWillMount = () => {
 		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
 			this.fetchEndpoints();
 		}
@@ -68,7 +66,7 @@ class SiteImporterInputPane extends React.Component {
 	}
 
 	fetchEndpoints = () => {
-		wpcom.wpcom.req
+		wpcom.req
 			.get( {
 				path: `/sites/${ this.props.site.ID }/site-importer/list-endpoints`,
 				apiNamespace: 'wpcom/v2',
