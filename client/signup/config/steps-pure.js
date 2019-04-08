@@ -507,18 +507,14 @@ export function generateSteps( {
 			apiRequestFunction: createSiteWithCart,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'themeSlugWithRepo' ],
-			providesDependencies: [
-				'title',
-				'address',
-				'phone',
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-			],
+			providesDependencies: [ 'title', 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 			props: {
-				headerText: i18n.translate( 'Help customers find you' ),
-				informationFields: [ 'title', 'address', 'phone' ],
+				headerText: i18n.translate( "Tell us your site's name" ),
+				subHeaderText: i18n.translate(
+					'This will appear at the top of your site and can be changed at anytime.'
+				),
+				informationFields: [ 'title' ],
+				showSiteMockups: true,
 			},
 		},
 
