@@ -637,6 +637,9 @@ workflows:
           test-flags: "-W -S $CIRCLE_SHA1"
           test-target: "WOO"
           slack-webhook: "$SLACK_WOO"
+      - test-e2e:
+          requires:
+            - wait-calypso-live
 
   calypso-nightly:
     jobs:
