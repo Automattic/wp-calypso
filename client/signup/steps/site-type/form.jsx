@@ -56,7 +56,8 @@ class SiteTypeForm extends Component {
 	};
 
 	handleSubmitOther = () => {
-		this.handleSubmit( 'other—' + this.state.otherValue );
+		const fieldValue = this.state.otherValue ? 'other—' + this.state.otherValue : 'other–other';
+		this.handleSubmit( fieldValue );
 	};
 
 	renderBasicCard = () => {
@@ -72,6 +73,9 @@ class SiteTypeForm extends Component {
 						onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
 					>
 						<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
+						<span className="site-type__option-description">
+							{ siteTypeProperties.description }
+						</span>
 					</Card>
 				) ) }
 			</Card>
