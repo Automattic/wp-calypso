@@ -1,37 +1,3 @@
-.themes__upload-button {
-	float: right;
-
-	&.is-compact {
-		margin-top: 23px;
-		color: var( --color-neutral-700 );
-		.gridicon {
-			padding-right: 4px;
-		}
-
-		@include breakpoint( '<660px' ) {
-			margin-top: 18px;
-		}
-
-		@include breakpoint( '<480px' ) {
-			margin-top: 24px;
-			margin-right: 15px;
-			font-size: 0;
-			.gridicon {
-				padding: 0;
-				margin-right: 0;
-			}
-		}
-	}
-}
-
-.is-section-themes.has-no-sidebar .themes__content {
-	padding: 0 0 32px;
-
-	@include breakpoint( '>480px' ) {
-		padding: 32px;
-	}
-}
-
 .banner.is-theme-showcase-banner {
 	@include banner-dark();
 	margin-top: 15px;
