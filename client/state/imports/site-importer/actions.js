@@ -10,7 +10,7 @@ import { defer, every, get } from 'lodash';
  * Internal dependencies
  */
 import { toApi, fromApi } from 'lib/importer/common';
-import wpLib from 'lib/wp';
+import wpcom from 'lib/wp';
 import user from 'lib/user';
 import {
 	mapAuthor,
@@ -33,7 +33,11 @@ import {
 import { getState as getImporterState } from 'lib/importer/store';
 import { prefetchmShotsPreview } from 'lib/mshots';
 
-const wpcom = wpLib.undocumented();
+const sortAndStringify = items =>
+	items
+		.slice( 0 )
+		.sort()
+		.join( ', ' );
 
 export const startSiteImporterImport = () => ( {
 	type: SITE_IMPORTER_IMPORT_START,
@@ -53,12 +57,12 @@ export const startSiteImporterIsSiteImportable = () => ( {
 	type: SITE_IMPORTER_VALIDATE_SITE_IMPORTABLE_START,
 } );
 
-export const startSiteImporterIsSiteImportableSuccessful = response => ( {
+export const siteImporterIsSiteImportableSuccessful = response => ( {
 	type: SITE_IMPORTER_VALIDATE_SITE_IMPORTABLE_SUCCESS,
 	response,
 } );
 
-export const startSiteImporterIsSiteImportableFailed = error => ( {
+export const siteImporterIsSiteImportableFailed = error => ( {
 	type: SITE_IMPORTER_VALIDATE_SITE_IMPORTABLE_FAILURE,
 	message: error.message,
 } );
@@ -112,10 +116,12 @@ export const startMappingSiteImporterAuthors = ( {
 	} else {
 		startMappingAuthors( importerId );
 
-		recordTracksEvent( 'calypso_site_importer_map_authors_multi', {
-			blog_id: siteId,
-			site_url: targetSiteUrl,
-		} );
+		dispatch(
+			recordTracksEvent( 'calypso_site_importer_map_authors_multi', {
+				blog_id: siteId,
+				site_url: targetSiteUrl,
+			} )
+		);
 	}
 };
 
@@ -132,25 +138,15 @@ export const importSite = ( {
 	const trackingParams = {
 		blog_id: siteId,
 		site_url: targetSiteUrl,
-		supported_content: supportedContent
-			.slice( 0 )
-			.sort()
-			.join( ', ' ),
-		unsupported_content: unsupportedContent
-			.slice( 0 )
-			.sort()
-			.join( ', ' ),
+		supported_content: sortAndStringify( supportedContent ),
+		unsupported_content: sortAndStringify( unsupportedContent ),
 		site_engine: engine,
 	};
 
-	dispatch(
-		withAnalytics(
-			recordTracksEvent( 'calypso_site_importer_start_import_request', trackingParams ),
-			startSiteImporterImport()
-		)
-	);
+	dispatch( recordTracksEvent( 'calypso_site_importer_start_import_request', trackingParams ) );
+	dispatch( startSiteImporterImport() );
 
-	wpcom.wpcom.req
+	wpcom.req
 		.post( {
 			path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
 			apiNamespace: 'wpcom/v2',
@@ -167,35 +163,27 @@ export const importSite = ( {
 				dispatch( setSelectedEditor( siteId, 'gutenberg' ) );
 			}
 
+			dispatch( recordTracksEvent( 'calypso_site_importer_start_import_success', trackingParams ) );
+			dispatch( siteImporterImportSuccessful( response ) );
+
+			const data = fromApi( response );
+			// Note: We're creating the finishUploadAction using the locally generated ID here
+			// as opposed to the new import ID recieved in the API response.
+			const action = createFinishUploadAction( importerStatus.importerId, data );
+
+			Dispatcher.handleViewAction( action );
+
 			dispatch(
-				withAnalytics(
-					recordTracksEvent( 'calypso_site_importer_start_import_success', trackingParams ),
-					siteImporterImportSuccessful( response )
-				)
-			);
-
-			defer( () => {
-				const data = fromApi( response );
-				// Note: We're creating the finishUploadAction using the locally generated ID here
-				// as opposed to the new import ID recieved in the API response.
-				const action = createFinishUploadAction( importerStatus.importerId, data );
-
-				Dispatcher.handleViewAction( action );
-
 				startMappingSiteImporterAuthors( {
 					importerStatus: data,
 					site,
 					targetSiteUrl,
-				} )( dispatch );
-			} );
+				} )
+			);
 		} )
 		.catch( error => {
-			dispatch(
-				withAnalytics(
-					recordTracksEvent( 'calypso_site_importer_start_import_fail', trackingParams ),
-					siteImporterImportFailed( error )
-				)
-			);
+			dispatch( recordTracksEvent( 'calypso_site_importer_start_import_fail', trackingParams ) );
+			dispatch( siteImporterImportFailed( error ) );
 		} );
 };
 
@@ -205,61 +193,47 @@ export const validateSiteIsImportable = ( { params, site, targetSiteUrl } ) => d
 	prefetchmShotsPreview( targetSiteUrl );
 
 	dispatch(
-		withAnalytics(
-			recordTracksEvent( 'calypso_site_importer_validate_site_start', {
-				blog_id: siteId,
-				site_url: targetSiteUrl,
-			} ),
-			startSiteImporterIsSiteImportable()
-		)
+		recordTracksEvent( 'calypso_site_importer_validate_site_start', {
+			blog_id: siteId,
+			site_url: targetSiteUrl,
+		} )
 	);
+	dispatch( startSiteImporterIsSiteImportable() );
 
-	return wpcom.wpcom.req
+	return wpcom.req
 		.get( {
 			path: `/sites/${ siteId }/site-importer/is-site-importable?${ stringify( params ) }`,
 			apiNamespace: 'wpcom/v2',
 		} )
-		.then( response =>
+		.then( response => {
 			dispatch(
-				withAnalytics(
-					recordTracksEvent( 'calypso_site_importer_validate_site_success', {
-						blog_id: siteId,
-						site_url: response.site_url,
-						supported_content: response.supported_content
-							.slice( 0 )
-							.sort()
-							.join( ', ' ),
-						unsupported_content: response.unsupported_content
-							.slice( 0 )
-							.sort()
-							.join( ', ' ),
-						site_engine: response.engine,
-					} ),
-					startSiteImporterIsSiteImportableSuccessful( response )
-				)
-			)
-		)
-		.catch( error =>
+				recordTracksEvent( 'calypso_site_importer_validate_site_success', {
+					blog_id: siteId,
+					site_url: response.site_url,
+					supported_content: sortAndStringify( response.supported_content ),
+					unsupported_content: sortAndStringify( response.unsupported_content ),
+					site_engine: response.engine,
+				} )
+			);
+			dispatch( siteImporterIsSiteImportableSuccessful( response ) );
+		} )
+		.catch( error => {
 			dispatch(
-				withAnalytics(
-					recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
-						blog_id: siteId,
-						site_url: targetSiteUrl,
-					} ),
-					startSiteImporterIsSiteImportableFailed( error )
-				)
-			)
-		);
+				recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
+					blog_id: siteId,
+					site_url: targetSiteUrl,
+				} )
+			);
+			dispatch( siteImporterIsSiteImportableFailed( error ) );
+		} );
 };
 
-export const resetSiteImporterImport = ( { importStage, site, targetSiteUrl } ) => dispatch =>
-	dispatch(
-		withAnalytics(
-			recordTracksEvent( 'calypso_site_importer_reset_import', {
-				blog_id: site.ID,
-				site_url: targetSiteUrl,
-				previous_stage: importStage,
-			} ),
-			{ type: SITE_IMPORTER_IMPORT_RESET }
-		)
+export const resetSiteImporterImport = ( { importStage, site, targetSiteUrl } ) =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_site_importer_reset_import', {
+			blog_id: site.ID,
+			site_url: targetSiteUrl,
+			previous_stage: importStage,
+		} ),
+		{ type: SITE_IMPORTER_IMPORT_RESET }
 	);
