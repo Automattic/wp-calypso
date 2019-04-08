@@ -14,10 +14,6 @@
 		transform: translateY( 200px );
 	}
 
-	&.is-loaded {
-		opacity: 0.1;
-	}
-
 	&.is-desktop {
 		border-radius: 4px;
 		// Side by side layout uses flexbox to show
@@ -38,10 +34,10 @@
 
 	&.is-phone {
 		border-radius: 12px;
-		width: 280px;
+		width: 350px;
 		transition-delay: 200ms;
 		@include breakpoint( '>960px' ) {
-			min-width: 280px;
+			min-width: 350px;
 		}
 		// Grouped layout shows a fixed-height mobile mockup
 		// overlaid on top of the desktop mockup.

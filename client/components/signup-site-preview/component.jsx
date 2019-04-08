@@ -74,7 +74,7 @@ export class SignupSitePreview extends Component {
 	}
 
 	componentDidMount() {
-		this.setIframeSource();
+		this.setIframeSource( this.props );
 	}
 
 	shouldComponentUpdate( nextProps ) {
@@ -83,7 +83,7 @@ export class SignupSitePreview extends Component {
 			this.props.fontUrl !== nextProps.fontUrl ||
 			this.props.langSlug !== nextProps.langSlug
 		) {
-			this.setIframeSource();
+			this.setIframeSource( nextProps );
 			return false;
 		}
 
@@ -151,12 +151,10 @@ export class SignupSitePreview extends Component {
 		this.setIframeIsLoading();
 	};
 
-	setIframeSource = () => {
+	setIframeSource = ( { content, cssUrl, fontUrl, isRtl, langSlug } ) => {
 		if ( ! this.iframe.current ) {
 			return;
 		}
-		const { cssUrl, fontUrl, content, isRtl, langSlug } = this.props;
-
 		// For memory management: https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
 		URL.revokeObjectURL( this.iframe.current.src );
 

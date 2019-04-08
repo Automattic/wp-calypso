@@ -51,46 +51,72 @@ export function getIframeSource( content, cssUrl, fontUrl, isRtl = false, langSl
 			<link type="text/css" media="all" rel="stylesheet" href="${ cssUrl }" />
 			<link type="text/css" media="all" rel="stylesheet" href="${ fontUrl }" />
 			<style type="text/css">
+			
 				.is-loading {
+					position: relative;
 					background: white;
 				}
-
-				.is-loading .site,
-				.loading-placeholder-container {
-					display: none;
+				.is-loading .site {
+					opacity: 0;
 				}
-
-				.is-loading .loading-placeholder-container {
-					display: block;
+				
+				.site {
+					opacity: 1;
+					transition: opacity 1s ease-in;
+				}
+				
+				.wp-block-cover,
+				img {
 					animation: loading-animation 1.5s infinite;
-				}
-
-				.loading-placeholder-container__header,
-				.loading-placeholder-container__banner,
-				.loading-placeholder-container__content {
-					background-color: rgba( 0, 0, 0, 0.1 );
-					margin: 0 auto 20px;
+					background-color: rgba( 0, 0, 0, 0.1 ) !important;
 				}
 				
-				.loading-placeholder-container__header {
-					margin-top: 20px;
-					height: 75px;
-					width: 75%;
+				.spinner {
+					display: none;
+					position: absolute;
+					top: 40px;
+					width: 100%;
+					z-index: 1000;
 				}
 				
-				.loading-placeholder-container__banner {
-					height: 150px;
+				.is-loading .spinner {
+					display: flex;
+					align-items: center;
 				}
 				
-				.loading-placeholder-container__content {
-					height: 250px;
-					width: 85%;
+				.spinner__outer, .spinner__inner {
+					margin: auto;
+					box-sizing: border-box;
+					border: 0.1em solid transparent;
+					border-radius: 50%;
+					animation: 3s linear infinite;
+					animation-name: rotate-spinner;
+				}
+				
+				.spinner__outer {
+					border-top-color: rgba( 0, 0, 0, 0.7 );
+					width: 20px;
+					height: 20px;
+					font-size: 20px;
+				}
+				
+				.spinner__inner {
+					width: 100%;
+					height: 100%;
+					border-top-color: rgba( 0, 0, 0, 0.7 );
+					border-right-color: rgba( 0, 0, 0, 0.7 );
+					opacity: 0.4;
 				}
 				
 				@keyframes loading-animation {
-				  0%   { opacity:1; }
-				  50%  { opacity:0; }
-				  100% { opacity:1; }
+					0%   { background-color: rgba( 0, 0, 0, 0.7 ); }
+					50%  { background-color: rgba( 0, 0, 0, 1 ); }
+					100% { background-color: rgba( 0, 0, 0, 0.7 ); }
+				}
+				@keyframes rotate-spinner {
+					100% {
+						transform: rotate( 360deg );
+					}
 				}
 			</style>
 		</head>
@@ -106,10 +132,10 @@ export function getIframeSource( content, cssUrl, fontUrl, isRtl = false, langSl
 					</section>
 				</div>
 			</div>
-			<div class="loading-placeholder-container">
-				<div class="loading-placeholder-container__header">&nbsp;</div>
-				<div class="loading-placeholder-container__banner">&nbsp</div>
-				<div class="loading-placeholder-container__content">&nbsp</div>
+			<div class="spinner">
+				<div class="spinner__outer">
+					<div class="spinner__inner" />
+				</div>
 			</div>
 		</body>
 	</html>`;
