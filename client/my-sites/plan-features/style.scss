@@ -744,6 +744,11 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		overflow: hidden;
 		width: calc(100vw - 273px);
 		margin-left: calc(50% - 50vw + 136px);
+
+		@include breakpoint( '<660px' ) {
+			margin-left: 0;
+			width: 100%;
+		}
 	}
 
 	.signup__steps & .plan-features--signup {
