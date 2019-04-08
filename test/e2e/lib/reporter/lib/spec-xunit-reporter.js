@@ -37,7 +37,7 @@ function SpecXUnit( runner ) {
 			overwrite: false,
 			html: false,
 			json: true,
-			reportDir: `${ reportDir }/ma-reports`,
+			reportDir: 'ma-reports',
 		},
 	} );
 	XUnit.call( this, runner, { reporterOptions: { output: reportName } } );
