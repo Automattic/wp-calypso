@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import { debounce, intersection, difference, includes, partial } from 'lodash';
+import { debounce, intersection, difference, includes } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -59,8 +59,9 @@ class ThemesMagicSearchCard extends React.Component {
 		};
 	}
 
-	setSuggestionsRefs = ( key, suggestionComponent ) =>
-		( this.suggestionsRefs[ key ] = suggestionComponent );
+	setSuggestionsRefs = key => suggestionComponent => {
+		this.suggestionsRefs[ key ] = suggestionComponent;
+	};
 
 	setSearchInputRef = search => ( this.searchInputRef = search );
 
@@ -345,7 +346,7 @@ class ThemesMagicSearchCard extends React.Component {
 				<div role="presentation" onClick={ this.handleClickInside }>
 					{ renderSuggestions && (
 						<KeyedSuggestions
-							ref={ partial( this.setSuggestionsRefs, 'suggestions' ) }
+							ref={ this.setSuggestionsRefs( 'suggestions' ) }
 							terms={ this.props.filters }
 							input={ this.state.editedSearchElement }
 							suggest={ this.suggest }
@@ -353,7 +354,7 @@ class ThemesMagicSearchCard extends React.Component {
 					) }
 					{ ! renderSuggestions && (
 						<MagicSearchWelcome
-							ref={ partial( this.setSuggestionsRefs, 'welcome' ) }
+							ref={ this.setSuggestionsRefs( 'welcome' ) }
 							taxonomies={ filtersKeys }
 							topSearches={ [] }
 							suggestionsCallback={ this.insertTextInInput }
