@@ -32,6 +32,11 @@ import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 
+/**
+ * Style dependencies
+ */
+import './themes-selection.scss';
+
 class ThemesSelection extends Component {
 	static propTypes = {
 		emptyContent: PropTypes.element,
