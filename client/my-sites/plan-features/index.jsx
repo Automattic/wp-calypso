@@ -8,7 +8,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, get, last, map, noop, reduce } from 'lodash';
+import { compact, get, findIndex, last, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
@@ -102,6 +102,7 @@ export class PlanFeatures extends Component {
 							withScroll={ withScroll }
 							planCount={ planProperties.length }
 							cellSelector=".plan-features__table-item"
+							initialSelectedIndex={ findIndex( planProperties, { popular: true } ) }
 						>
 							<table className={ tableClasses }>
 								<tbody>

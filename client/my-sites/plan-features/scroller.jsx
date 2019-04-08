@@ -4,7 +4,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
-import { inRange, range, round } from 'lodash';
+import { clamp, inRange, range, round } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -21,16 +21,19 @@ export default class PlanFeaturesScroller extends PureComponent {
 	static propTypes = {
 		withScroll: PropTypes.bool.isRequired,
 		planCount: PropTypes.number.isRequired,
+		initialSelectedIndex: PropTypes.number.isRequired,
 	};
 
 	static defaultProps = {
 		withScroll: false,
 		planCount: 0,
+		initialSelectedIndex: 0,
 	};
 
 	constructor( props ) {
 		super( props );
 		this.scrollWrapperDOM = null;
+		this.initialized = false;
 		this.state = {
 			viewportWidth: 0,
 			scrollPos: 0,
@@ -85,7 +88,9 @@ export default class PlanFeaturesScroller extends PureComponent {
 			// when scroll-snap is turned on.
 			this.setState( { scrollSnapDisabled: true }, async () => {
 				await this.animateScroll( from, to );
-				this.setState( { scrollSnapDisabled: false } );
+				this.setState( { scrollSnapDisabled: false }, () => {
+					this.scrollWrapperDOM.scrollLeft = to;
+				} );
 			} );
 		}
 	}
@@ -128,9 +133,24 @@ export default class PlanFeaturesScroller extends PureComponent {
 	updateViewportWidth = () => {
 		this.updateViewportWidthRaf = null;
 		if ( this.scrollWrapperDOM ) {
-			this.setState( { viewportWidth: this.scrollWrapperDOM.offsetWidth }, () =>
-				this.scrollBy( 0 )
-			);
+			this.setState( { viewportWidth: this.scrollWrapperDOM.offsetWidth }, () => {
+				if ( this.initialized ) {
+					this.scrollBy( 0 );
+					return;
+				}
+
+				const { initialSelectedIndex, planCount } = this.props;
+				const { visibleCount } = this.computeStyleVars();
+				const [ minIndex, maxIndex ] = [ 0, planCount - visibleCount ];
+				let index = 0;
+
+				if ( planCount > visibleCount ) {
+					index = clamp( round( initialSelectedIndex - visibleCount / 2 ), minIndex, maxIndex );
+				}
+
+				this.initialized = true;
+				this.scrollBy( index );
+			} );
 		}
 	};
 
