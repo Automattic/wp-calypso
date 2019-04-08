@@ -35,7 +35,6 @@ import { login } from 'lib/paths';
 import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';
-import SocialConnectPrompt from './social-connect-prompt';
 import AsyncLoad from 'components/async-load';
 
 const user = userFactory();
@@ -284,7 +283,7 @@ class Login extends Component {
 		}
 
 		if ( socialConnect ) {
-			return <SocialConnectPrompt onSuccess={ this.handleValidLogin } />;
+			return <AsyncLoad require="./social-connect-prompt" onSuccess={ this.handleValidLogin } />;
 		}
 
 		return (
