@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { flowRight, get, partial, some, values, xor } from 'lodash';
+import { filter, flowRight, get, partial, some, values, xor } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -242,7 +242,7 @@ const connectComponent = connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const isTwitterButtonAllowed =
 			! isJetpack || isJetpackMinimumVersion( state, siteId, '3.4-dev' );
-		const postTypes = values( getPostTypes( state, siteId ) );
+		const postTypes = filter( values( getPostTypes( state, siteId ) ), 'public' );
 
 		return {
 			buttons: getSharingButtons( state, siteId ),
