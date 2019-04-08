@@ -6,7 +6,7 @@
 
 import React from 'react';
 import page from 'page';
-import { filter, get, groupBy, includes, isEmpty, pickBy, some, uniqueId } from 'lodash';
+import { filter, flowRight, get, groupBy, includes, isEmpty, pickBy, some, uniqueId } from 'lodash';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -44,10 +44,8 @@ import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-mod
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import {
-	loadTrackingTool,
-	recordTracksEvent as recordTracksEventAction,
-} from 'state/analytics/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 
 /**
  * Module variables
@@ -60,11 +58,6 @@ class InvitePeople extends React.Component {
 	componentDidMount() {
 		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
 		InvitesSentStore.on( 'change', this.refreshFormState );
-		this.maybeLoadHotJar();
-	}
-
-	componentDidUpdate() {
-		this.maybeLoadHotJar();
 	}
 
 	componentWillUnmount() {
@@ -75,15 +68,6 @@ class InvitePeople extends React.Component {
 	componentWillReceiveProps() {
 		this.setState( this.resetState() );
 	}
-
-	maybeLoadHotJar = () => {
-		if ( this.hjLoaded ) {
-			return;
-		}
-
-		this.hjLoaded = true;
-		this.props.loadTrackingTool( 'HotJar' );
-	};
 
 	resetState = () => {
 		return {
@@ -453,7 +437,7 @@ class InvitePeople extends React.Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const activating = isActivatingJetpackModule( state, siteId, 'sso' );
@@ -475,7 +459,6 @@ export default connect(
 			},
 			dispatch
 		),
-		loadTrackingTool,
 		recordTracksEventAction,
 		onFocusTokenField: () =>
 			dispatch( recordTracksEventAction( 'calypso_invite_people_token_field_focus' ) ),
@@ -488,4 +471,10 @@ export default connect(
 		onClickRoleExplanation: () =>
 			dispatch( recordTracksEventAction( 'calypso_invite_people_role_explanation_link_click' ) ),
 	} )
-)( localize( InvitePeople ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( InvitePeople );
