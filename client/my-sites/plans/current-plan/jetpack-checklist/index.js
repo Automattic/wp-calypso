@@ -12,14 +12,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Checklist from 'components/checklist';
+import { Checklist, Task } from 'components/checklist';
 import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import JetpackChecklistHeader from './header';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import Task from 'components/checklist/task';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';

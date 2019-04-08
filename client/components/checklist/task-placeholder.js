@@ -9,11 +9,6 @@ import React from 'react';
  */
 import Card from 'components/card';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 export default function TaskPlaceholder() {
 	return (
 		<Card compact className="checklist__task is-placeholder">

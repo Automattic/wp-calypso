@@ -17,11 +17,6 @@ import Focusable from 'components/focusable';
 import ScreenReaderText from 'components/screen-reader-text';
 import Spinner from 'components/spinner';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class Task extends PureComponent {
 	static propTypes = {
 		buttonPrimary: PropTypes.bool,
