@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -86,7 +87,8 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 	}
 
 	return (
-		<div>
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		<Main className="themes">
 			<SidebarNavigation />
 			<CurrentTheme siteId={ siteId } />
 			{ ! requestingSitePlans && ! hasUnlimitedPremiumThemes && (
@@ -142,7 +144,8 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 					</div>
 				) }
 			</ThemeShowcase>
-		</div>
+		</Main>
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
 } );
 

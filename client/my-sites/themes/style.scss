@@ -58,10 +58,9 @@
 }
 
 .themes__thanks-modal-loading {
-	min-height: 50px;
+	min-height: 90px;
 	display: flex;
 	align-items: center;
-	min-height: 90px;
 
 	.pulsing-dot {
 		margin: 0 auto;
@@ -145,10 +144,4 @@
 	@include banner-dark();
 	margin-top: 15px;
 	margin-bottom: 15px;
-}
-
-// prevent themes panel from appearing on top of the sidebar when you click back
-.is-section-themes.focus-sidebar #secondary,
-.is-section-themes.focus-sites #secondary {
-	z-index: z-index( 'root', '.is-section-themes.focus-sidebar #secondary' );
 }
