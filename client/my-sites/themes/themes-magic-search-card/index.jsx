@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import { debounce, intersection, difference, includes } from 'lodash';
+import { intersection, difference, includes, flowRight as compose } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -20,7 +20,7 @@ import SimplifiedSegmentedControl from 'components/segmented-control/simplified'
 import KeyedSuggestions from 'components/keyed-suggestions';
 import StickyPanel from 'components/sticky-panel';
 import config from 'config';
-import { isMobile } from 'lib/viewport';
+import { withMobileBreakpoint } from 'lib/viewport/react';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
 import getThemeFilters from 'state/selectors/get-theme-filters';
@@ -38,6 +38,7 @@ class ThemesMagicSearchCard extends React.Component {
 		search: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		showTierThemesControl: PropTypes.bool,
+		isBreakpointActive: PropTypes.bool, // comes from withMobileBreakpoint HOC
 	};
 
 	static defaultProps = {
@@ -51,7 +52,6 @@ class ThemesMagicSearchCard extends React.Component {
 		this.suggestionsRefs = {};
 
 		this.state = {
-			isMobile: isMobile(),
 			searchIsOpen: false,
 			editedSearchElement: '',
 			cursorPosition: 0,
@@ -65,19 +65,8 @@ class ThemesMagicSearchCard extends React.Component {
 
 	setSearchInputRef = search => ( this.searchInputRef = search );
 
-	componentWillMount() {
-		this.onResize = debounce( () => {
-			this.setState( { isMobile: isMobile() } );
-		}, 250 );
-	}
-
 	componentDidMount() {
 		this.findTextForSuggestions( this.props.search );
-		window.addEventListener( 'resize', this.onResize );
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.onResize );
 	}
 
 	onSearchOpen = () => {
@@ -296,7 +285,7 @@ class ThemesMagicSearchCard extends React.Component {
 				onKeyDown={ this.onKeyDown }
 				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
-				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
+				fitsContainer={ this.props.isBreakpointActive && this.state.searchIsOpen }
 				hideClose={ true }
 			/>
 		);
@@ -366,7 +355,12 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 }
 
-export default connect( state => ( {
-	filters: getThemeFilters( state ),
-	allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
-} ) )( localize( wrapWithClickOutside( ThemesMagicSearchCard ) ) );
+export default compose(
+	connect( state => ( {
+		filters: getThemeFilters( state ),
+		allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
+	} ) ),
+	localize,
+	wrapWithClickOutside,
+	withMobileBreakpoint
+)( ThemesMagicSearchCard );
