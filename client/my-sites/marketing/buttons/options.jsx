@@ -56,7 +56,7 @@ class SharingButtonsOptions extends Component {
 
 	handleMultiCheckboxChange = ( name, event ) => {
 		const delta = xor( this.props.settings.sharing_show, event.value );
-		this.props.onChange( name, event.value.length ? event.value : null );
+		this.props.onChange( name, event.value );
 		if ( delta.length ) {
 			const checked = -1 !== event.value.indexOf( delta[ 0 ] );
 			this.props.recordGoogleEvent(
