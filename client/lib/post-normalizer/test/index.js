@@ -355,6 +355,48 @@ describe( 'index', () => {
 				}
 			);
 		} );
+
+		test( 'should strip autoplay like attributes from iframes', done => {
+			normalizer(
+				{ content: '<iframe src="https://example.com/?autoplay=1"></iframe>' },
+				[ normalizer.withContentDOM( [ normalizer.content.disableAutoPlayOnEmbeds ] ) ],
+				function( err, normalized ) {
+					assert.strictEqual(
+						normalized.content,
+						'<iframe src="https://example.com/?autoplay=0"></iframe>'
+					);
+					done( err );
+				}
+			);
+		} );
+
+		test( 'should strip multiple autoplay like attributes from iframes', done => {
+			normalizer(
+				{ content: '<iframe src="https://example.com/?autoplay=1&autoplay=2"></iframe>' },
+				[ normalizer.withContentDOM( [ normalizer.content.disableAutoPlayOnEmbeds ] ) ],
+				function( err, normalized ) {
+					assert.strictEqual(
+						normalized.content,
+						'<iframe src="https://example.com/?autoplay=0"></iframe>'
+					);
+					done( err );
+				}
+			);
+		} );
+
+		test( 'should reduce multiple autoplay like attributes to one value', done => {
+			normalizer(
+				{ content: '<iframe src="https://example.com/?autoplay=0&autoplay=2"></iframe>' },
+				[ normalizer.withContentDOM( [ normalizer.content.disableAutoPlayOnEmbeds ] ) ],
+				function( err, normalized ) {
+					assert.strictEqual(
+						normalized.content,
+						'<iframe src="https://example.com/?autoplay=0"></iframe>'
+					);
+					done( err );
+				}
+			);
+		} );
 	} );
 
 	describe( 'the content normalizer (withContentDOM)', () => {
