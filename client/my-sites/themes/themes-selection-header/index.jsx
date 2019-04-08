@@ -14,6 +14,11 @@ import classNames from 'classnames';
 import SectionHeader from 'components/section-header';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const ThemesSelectionHeader = ( { label, count, translate } ) => {
 	const selectionHeaderClassName = classNames( 'themes-selection-header', {
 		'is-placeholder': count === null,
