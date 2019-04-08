@@ -1,0 +1,26 @@
+.themes__site-selector-modal {
+	padding-bottom: 24px;
+	overflow-y: inherit;
+
+	.site-selector-modal__content {
+		.theme {
+			@include breakpoint( '>480px' ) {
+				width: 300px;
+			}
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		h1 {
+			text-align: center;
+			font-weight: 300;
+			margin-bottom: 0;
+		}
+
+		> h2 {
+			text-align: center;
+			font-size: 0.75em;
+			line-height: 0.75em;
+		}
+	}
+}
