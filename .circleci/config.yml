@@ -25,6 +25,7 @@ references:
         "$CIRCLE_TEST_REPORTS/packages"         \
         "$CIRCLE_TEST_REPORTS/server"           \
         "$CIRCLE_TEST_REPORTS/e2ereports"       \
+        "$CIRCLE_TEST_REPORTS/e2e-mareport"     \
         "$HOME/jest-cache"                      \
         "$HOME/terser-cache"
 
@@ -155,14 +156,15 @@ references:
     when: always
     command: |
       cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
-      cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
+      cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots &&
+      cp -r ./mochawesome-reports $CIRCLE_TEST_REPORTS/e2e-mareport
 
   generate-e2e-ma-report: &generate-e2e-ma-report
     name: Generate mochawesome report
     when: always
     command: |
-      ./node_modules/.bin/mochawesome-merge --reportDir ./reports/ma-reports > mochawesome-full.json
-      ./node_modules/.bin/marge -o ./reports/mochawesome-reports --showSkipped true mochawesome-full.json
+      ./node_modules/.bin/mochawesome-merge --reportDir ./ma-reports > mochawesome-full.json
+      ./node_modules/.bin/marge -o ./mochawesome-reports --showSkipped true mochawesome-full.json
 
   defaults: &defaults
     working_directory: ~/wp-calypso
