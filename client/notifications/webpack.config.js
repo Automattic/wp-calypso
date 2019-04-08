@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-const _ = require( 'lodash' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const path = require( 'path' );
@@ -51,8 +50,10 @@ function getWebpackConfig(
 		} ).stdout.replace( '\n', '' ),
 	};
 
-	return _.merge( {}, webpackConfig, {
+	return {
+		...webpackConfig,
 		plugins: [
+			...webpackConfig.plugins,
 			new HtmlWebpackPlugin( {
 				filename: path.join( outputPath, 'index.html' ),
 				template: path.join( __dirname, 'src', 'index.ejs' ),
@@ -77,7 +78,7 @@ function getWebpackConfig(
 				inject: false,
 			} ),
 		],
-	} );
+	};
 }
 
 module.exports = getWebpackConfig;
