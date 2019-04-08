@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -28,16 +28,31 @@ import {
 } from 'state/account-recovery/settings/selectors';
 import getUserSettings from 'state/selectors/get-user-settings';
 import hasUserSettings from 'state/selectors/has-user-settings';
-import { sendSMS } from 'state/mobile-download-sms/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import phoneValidation from 'lib/phone-validation';
 import userAgent from 'lib/user-agent';
 import twoStepAuthorization from 'lib/two-step-authorization';
 
-import {
-	isAppSMSRequestSending,
-	didAppSMSRequestCompleteSuccessfully,
-	didAppSMSRequestCompleteWithError,
-} from 'state/selectors/get-apps-sms-request';
+function sendSMS( phone ) {
+	function onSuccess( dispatch ) {
+		dispatch( successNotice( i18n.translate( 'SMS Sent. Go check your messages!' ) ) );
+	}
+
+	function onFailure( dispatch ) {
+		dispatch(
+			errorNotice( i18n.translate( 'We couldn’t send the SMS — double check your number.' ) )
+		);
+	}
+
+	return http( {
+		method: 'POST',
+		apiNamespace: 'wpcom/v2',
+		path: '/me/get-apps/send-download-sms',
+		body: { phone },
+		onSuccess,
+		onFailure,
+	} );
+}
 
 class MobileDownloadCard extends React.Component {
 	static propTypes = {
@@ -52,9 +67,6 @@ class MobileDownloadCard extends React.Component {
 		} ),
 		hasLoadedStoredPhone: PropTypes.bool,
 		hasSendingError: PropTypes.bool,
-		didSend: PropTypes.bool,
-		successNotice: PropTypes.func,
-		errorNotice: PropTypes.func,
 	};
 
 	state = {
@@ -68,18 +80,6 @@ class MobileDownloadCard extends React.Component {
 
 	componentWillUnmount() {
 		twoStepAuthorization.off( 'change', this.maybeFetchAccountRecoverySettings );
-	}
-
-	componentDidUpdate( previousProps ) {
-		if ( previousProps.hasSendingError === false && this.props.hasSendingError === true ) {
-			this.props.errorNotice(
-				this.props.translate( 'We couldn’t send the SMS — double check your number.' )
-			);
-		}
-
-		if ( previousProps.didSend === false && this.props.didSend === true ) {
-			this.props.successNotice( this.props.translate( 'SMS Sent. Go check your messages!' ) );
-		}
 	}
 
 	maybeFetchAccountRecoverySettings = () => {
@@ -281,13 +281,8 @@ export default connect(
 		countriesList: getCountries( state, 'sms' ),
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady( state ),
-
 		userSettings: getUserSettings( state ),
 		hasUserSettings: hasUserSettings( state ),
-
-		isSending: isAppSMSRequestSending( state ),
-		didSend: didAppSMSRequestCompleteSuccessfully( state ),
-		hasSendingError: didAppSMSRequestCompleteWithError( state ),
 	} ),
-	{ successNotice, errorNotice, sendSMS, fetchUserSettings, accountRecoverySettingsFetch }
+	{ sendSMS, fetchUserSettings, accountRecoverySettingsFetch }
 )( localize( MobileDownloadCard ) );
