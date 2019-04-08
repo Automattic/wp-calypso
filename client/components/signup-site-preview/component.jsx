@@ -13,7 +13,8 @@ import { localize, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getIframeSource, getIframePageContent } from 'components/signup-site-preview/utils';
+import SignupSitePreviewIframe from 'components/signup-site-preview/iframe';
+import Spinner from 'components/spinner';
 
 /**
  * Style dependencies
@@ -49,136 +50,71 @@ function MockupChromeDesktop() {
 
 export class SignupSitePreview extends Component {
 	static propTypes = {
+		className: PropTypes.string,
+		cssUrl: PropTypes.string,
 		// The viewport device to show initially
 		defaultViewportDevice: PropTypes.oneOf( [ 'desktop', 'phone' ] ),
+		fontUrl: PropTypes.string,
 		isRtl: PropTypes.bool,
 		langSlug: PropTypes.string,
-		cssUrl: PropTypes.string,
-		fontUrl: PropTypes.string,
 		// Iframe body content
 		content: PropTypes.object,
 		onPreviewClick: PropTypes.func,
+		resize: PropTypes.bool,
+		scrolling: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		className: '',
 		defaultViewportDevice: 'desktop',
 		isRtl: false,
 		langSlug: 'en',
 		content: {},
 		onPreviewClick: () => {},
+		resize: false,
+		scrolling: true,
 	};
 
 	constructor( props ) {
 		super( props );
-		this.iframe = React.createRef();
+		this.state = {
+			isLoaded: false,
+			wrapperHeight: 800,
+		};
 	}
 
-	componentDidMount() {
-		this.setIframeSource();
-	}
-
-	shouldComponentUpdate( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			this.props.cssUrl !== nextProps.cssUrl ||
-			this.props.fontUrl !== nextProps.fontUrl ||
-			this.props.langSlug !== nextProps.langSlug
+			this.props.cssUrl !== prevProps.cssUrl ||
+			this.props.fontUrl !== prevProps.fontUrl ||
+			this.props.langSlug !== prevProps.langSlug
 		) {
-			this.setIframeSource();
-			return false;
-		}
-
-		if ( this.props.content.title !== nextProps.content.title ) {
-			this.setIframeContent( '.site-builder__title', nextProps.content.title );
-			return false;
-		}
-
-		if ( this.props.content.tagline !== nextProps.content.tagline ) {
-			this.setIframeContent( '.site-builder__description', nextProps.content.tagline );
-			return false;
-		}
-
-		if ( this.props.content.body !== nextProps.content.body ) {
-			this.setIframePageContent( nextProps.content );
-			return false;
-		}
-
-		return false;
-	}
-
-	setIframePageContent( content ) {
-		if ( ! this.iframe.current ) {
-			return;
-		}
-		const element = this.iframe.current.contentWindow.document.querySelector( '.entry' );
-
-		if ( element ) {
-			element.innerHTML = getIframePageContent( content );
+			this.setIsLoaded( false );
 		}
 	}
 
-	setIframeContent( selector, content ) {
-		if ( ! this.iframe.current ) {
-			return;
-		}
-		const element = this.iframe.current.contentWindow.document.querySelector( selector );
-
-		if ( element ) {
-			element.innerHTML = content;
-		}
-	}
-
-	setOnPreviewClick = () => {
-		if ( ! this.iframe.current ) {
-			return;
-		}
-
-		this.iframe.current.contentWindow.document.querySelector( '.home' ).onclick = () =>
-			this.props.onPreviewClick( this.props.defaultViewportDevice );
-	};
-
-	setIframeIsLoading = () => {
-		if ( ! this.iframe.current ) {
-			return;
-		}
-
-		this.iframe.current.contentWindow.document
-			.querySelector( '.home' )
-			.classList.remove( 'is-loading' );
-	};
-
-	setLoaded = () => {
-		this.setOnPreviewClick();
-		this.setIframeIsLoading();
-	};
-
-	setIframeSource = () => {
-		if ( ! this.iframe.current ) {
-			return;
-		}
-		const { cssUrl, fontUrl, content, isRtl, langSlug } = this.props;
-
-		// For memory management: https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
-		URL.revokeObjectURL( this.iframe.current.src );
-
-		this.iframe.current.src = getIframeSource( content, cssUrl, fontUrl, isRtl, langSlug );
-	};
+	setIsLoaded = isLoaded => this.setState( { isLoaded } );
+	setWrapperHeight = wrapperHeight => this.setState( { wrapperHeight } );
 
 	render() {
-		const { content, isDesktop, isPhone } = this.props;
+		const { isDesktop, isPhone } = this.props;
 		const className = classNames( this.props.className, 'signup-site-preview__wrapper', {
 			'is-desktop': isDesktop,
 			'is-phone': isPhone,
 		} );
+		const wrapperHeightStyle = {
+			height: this.state.wrapperHeight,
+		};
 
 		return (
-			<div className={ className }>
+			<div className={ className } style={ this.props.resize ? wrapperHeightStyle : null }>
 				<div className="signup-site-preview__iframe-wrapper">
 					{ isPhone ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
-					<iframe
-						ref={ this.iframe }
-						className="signup-site-preview__iframe"
-						title={ `${ content.title } – ${ content.tagline }` }
-						onLoad={ this.setLoaded }
+					{ ! this.state.isLoaded && <Spinner size={ isPhone ? 20 : 40 } /> }
+					<SignupSitePreviewIframe
+						{ ...this.props }
+						setIsLoaded={ this.setIsLoaded }
+						setWrapperHeight={ this.setWrapperHeight }
 					/>
 				</div>
 			</div>

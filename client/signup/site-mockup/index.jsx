@@ -131,7 +131,14 @@ class SiteMockups extends Component {
 		this.props.handleClick( this.props.verticalSlug, this.props.siteStyle, size );
 
 	render() {
-		const { fontUrl, shouldShowHelpTip, title, themeSlug, verticalPreviewContent } = this.props;
+		const {
+			fontUrl,
+			shouldShowHelpTip,
+			siteStyle,
+			title,
+			themeSlug,
+			verticalPreviewContent,
+		} = this.props;
 
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
 			'is-empty': isEmpty( verticalPreviewContent ),
@@ -149,6 +156,8 @@ class SiteMockups extends Component {
 			},
 			langSlug,
 			isRtl,
+			onPreviewClick: this.handleClick,
+			className: siteStyle,
 		};
 
 		return (
@@ -157,14 +166,11 @@ class SiteMockups extends Component {
 				<div className="site-mockup__devices">
 					<SignupSitePreview
 						defaultViewportDevice="desktop"
+						resize={ true }
+						scrolling={ false }
 						{ ...otherProps }
-						onPreviewClick={ this.handleClick }
 					/>
-					<SignupSitePreview
-						defaultViewportDevice="phone"
-						{ ...otherProps }
-						onPreviewClick={ this.handleClick }
-					/>
+					<SignupSitePreview defaultViewportDevice="phone" { ...otherProps } />
 				</div>
 			</div>
 		);

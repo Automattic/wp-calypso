@@ -1,14 +1,13 @@
 /** @format */
 
 /**
- * Returns a theme base CSS URI.
- *
- * @param  {String}  themeSlug A theme slug, e.g., `pub/business`
- * @param  {Boolean} isRtl     If the current locale is a right-to-left language
- * @return {String}            The theme CSS URI.
+ * Internal dependencies
  */
-export function getThemeCssUri( themeSlug, isRtl ) {
-	return `https://s0.wp.com/wp-content/themes/${ themeSlug }/style${ isRtl ? '-rtl' : '' }.css`;
+
+// Detect IE 11 and below
+export function isIE() {
+	const ua = window.navigator.userAgent;
+	return -1 !== ua.indexOf( 'MSIE' ) || -1 !== ua.indexOf( 'Trident/' );
 }
 
 /**
@@ -29,6 +28,16 @@ export function getIframePageContent( { body, title, tagline } ) {
 }
 
 /**
+ * Returns CSS link HTML
+ *
+ * @param  {String} url 	The css file path
+ * @return {String}         The HTML source or an empty string if `url` is absent.
+ */
+export function getCSSLinkHtml( url ) {
+	return url ? `<link type="text/css" media="all" rel="stylesheet" href="${ url }" />` : '';
+}
+
+/**
  * Returns a WordPress page shell HTML
  *
  * @param  {Object}  content   Object containing `title`, `tagline` and `body` strings
@@ -36,65 +45,78 @@ export function getIframePageContent( { body, title, tagline } ) {
  * @param  {String}  fontUrl   A URL to the font CSS file
  * @param  {Boolean} isRtl     If the current locale is a right-to-left language
  * @param  {String}  langSlug  The slug of the current locale
+ * @param  {Boolean} scrolling Whether to allow scrolling on the body
  * @return {String}            The HTML source.
  */
-export function getIframeSource( content, cssUrl, fontUrl, isRtl = false, langSlug = 'en' ) {
+export function getIframeSource(
+	content,
+	cssUrl,
+	fontUrl,
+	isRtl = false,
+	langSlug = 'en',
+	scrolling = true
+) {
 	const source = `
 		<html lang="${ langSlug }" dir="${ isRtl ? 'rtl' : 'ltr' }">
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<link rel="dns-prefetch" href="//s1.wp.com">
+			<link rel="dns-prefetch" href="//s0.wp.com">
 			<link rel="dns-prefetch" href="//fonts.googleapis.com">
 			<title>${ content.title } – ${ content.tagline }</title>
 			<link type="text/css" media="all" rel="stylesheet" href="https://s0.wp.com/wp-content/plugins/gutenberg-core/build/block-library/style.css" />
-			<link type="text/css" media="all" rel="stylesheet" href="${ cssUrl }" />
-			<link type="text/css" media="all" rel="stylesheet" href="${ fontUrl }" />
+			${ getCSSLinkHtml( cssUrl ) }
+			${ getCSSLinkHtml( fontUrl ) }
 			<style type="text/css">
+				body {
+					padding-bottom: 25px;
+				}
+				
+				.no-scrolling {
+					overflow: hidden;
+				}
+				
 				.is-loading {
+					position: relative;
 					background: white;
 				}
+				.is-loading .site {
+					opacity: 0;
+				}
+				
+				.site {
+					opacity: 1;
+					transition: opacity 1s ease-in;
+				}	
 
-				.is-loading .site,
-				.loading-placeholder-container {
-					display: none;
+				@media only screen and (min-width: 768px) {
+					/*
+						Some of the themes use js to dynamically set the height of the banner
+						Let's set a fixed max-height.
+					*/
+					.entry .entry-content .wp-block-cover-image, 
+					.entry .entry-content .wp-block-cover {
+						min-height: 500px !important;
+					}
 				}
 
-				.is-loading .loading-placeholder-container {
-					display: block;
+				
+				.is-loading .wp-block-cover,
+				.is-loading img {
 					animation: loading-animation 1.5s infinite;
-				}
-
-				.loading-placeholder-container__header,
-				.loading-placeholder-container__banner,
-				.loading-placeholder-container__content {
-					background-color: rgba( 0, 0, 0, 0.1 );
-					margin: 0 auto 20px;
-				}
-				
-				.loading-placeholder-container__header {
-					margin-top: 20px;
-					height: 75px;
-					width: 75%;
-				}
-				
-				.loading-placeholder-container__banner {
-					height: 150px;
-				}
-				
-				.loading-placeholder-container__content {
-					height: 250px;
-					width: 85%;
+					background-color: rgba( 0, 0, 0, 0.1 ) !important;
 				}
 				
 				@keyframes loading-animation {
-				  0%   { opacity:1; }
-				  50%  { opacity:0; }
-				  100% { opacity:1; }
+					0%   { background-color: rgba( 0, 0, 0, 0.7 ); }
+					50%  { background-color: rgba( 0, 0, 0, 1 ); }
+					100% { background-color: rgba( 0, 0, 0, 0.7 ); }
 				}
 			</style>
 		</head>
-		<body class="home page-template-default page logged-in is-loading">
+		<body class="home page-template-default page logged-in is-loading ${
+			scrolling ? '' : 'no-scrolling'
+		}">
 			<div id="page" class="site">
 				<div id="content" class="site-content">
 					<section id="primary" class="content-area">
@@ -106,13 +128,12 @@ export function getIframeSource( content, cssUrl, fontUrl, isRtl = false, langSl
 					</section>
 				</div>
 			</div>
-			<div class="loading-placeholder-container">
-				<div class="loading-placeholder-container__header">&nbsp;</div>
-				<div class="loading-placeholder-container__banner">&nbsp</div>
-				<div class="loading-placeholder-container__content">&nbsp</div>
-			</div>
 		</body>
 	</html>`;
+
+	if ( isIE() ) {
+		return source;
+	}
 
 	return URL.createObjectURL( new Blob( [ source ], { type: 'text/html' } ) );
 }

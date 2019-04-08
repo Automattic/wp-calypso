@@ -10,62 +10,16 @@
 		max-width: 1200px;
 		display: flex;
 		align-items: flex-start;
-
-		.site-mockup__viewport {
-			@include elevation ( 3dp );
-		}
-
-		.site-mockup__viewport.is-desktop {
-			margin-right: 16px;
-
-			// Forces the desktop preview to take up
-			// all available horizontal space.
-			flex-grow: 1;
-		}
-
-		.site-mockup__viewport.is-phone {
-			min-width: 300px;
-
-			.site-mockup__body {
-				height: 440px;
-			}
-		}
 	}
 
-	// Grouped layout shows a fixed-height mobile mockup
-	// overlaid on top of the desktop mockup.
-	@include breakpoint( '660px-960px' ) {
-		position: relative;
-
-		.site-mockup__viewport.is-phone {
-			position: absolute;
-			top: 48px;
-			right: 8px;
-			z-index: 2;
-			@include elevation ( 4dp );
-
-			.site-mockup__body {
-				height: 440px;
-			}
-		}
-	}
-
-	// Only show the mobile view at small
-	// breakpoints.
 	@include breakpoint( '<660px' ) {
 		padding-right: 1px;
 		padding-left: 1px;
 		padding-bottom: 0;
+	}
 
-		.site-mockup__viewport.is-desktop {
-			display: none;
-		}
-
-		.site-mockup__viewport.is-phone {
-			width: 100%;
-			max-width: 480px;
-			border-radius: 12px 12px 0 0;
-		}
+	@include breakpoint( '660px-960px' ) {
+		position: relative;
 	}
 }
 
@@ -89,33 +43,5 @@
 	.is-empty & {
 		opacity: 0;
 		transform: translateY( 80px );
-	}
-}
-
-// The mockups themselves, both mobile
-// and desktop variants.
-.site-mockup__viewport {
-	margin: 0 auto;
-	background: var( --color-white );
-	position: relative;
-	transition: all 300ms cubic-bezier( 0.08, 0.74, 0.44, 1.07 );
-	transition-delay: 100ms;
-
-	// Hide the mockups until we have vertical
-	// data to show.
-	.is-empty & {
-		opacity: 0;
-		transform: translateY( 200px );
-	}
-
-	&.is-desktop {
-		border-radius: 4px;
-		height: 100%;
-	}
-
-	&.is-phone {
-		border-radius: 12px;
-		width: 280px;
-		transition-delay: 80ms;
 	}
 }

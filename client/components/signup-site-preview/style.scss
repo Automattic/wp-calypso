@@ -14,10 +14,6 @@
 		transform: translateY( 200px );
 	}
 
-	&.is-loaded {
-		opacity: 0.1;
-	}
-
 	&.is-desktop {
 		border-radius: 4px;
 		// Side by side layout uses flexbox to show
@@ -29,10 +25,11 @@
 			// all available horizontal space.
 			flex-grow: 1;
 		}
-		// Only show the mobile view at small
-		// breakpoints.
+
 		@include breakpoint( '<660px' ) {
-			display: none;
+			width: 100%;
+			max-width: 480px;
+			border-radius: 12px;
 		}
 	}
 
@@ -40,6 +37,10 @@
 		border-radius: 12px;
 		width: 280px;
 		transition-delay: 200ms;
+		height: 468px;
+		padding: 0 0 24px;
+		@include elevation ( 4dp );
+
 		@include breakpoint( '>960px' ) {
 			min-width: 280px;
 		}
@@ -47,20 +48,19 @@
 		// overlaid on top of the desktop mockup.
 		@include breakpoint( '660px-960px' ) {
 			position: absolute;
-			top: 40px;
+			top: 48px;
 			right: 8px;
 			z-index: 2;
 			box-shadow: 0 0 6px 0 rgba( 0, 0, 0, 0.5 ),
 			0 6px 50px 0 rgba( 0, 0, 0, 0.3 );
 		}
+
+		// Only show one iframe at small
+		// breakpoints.
 		@include breakpoint( '<660px' ) {
-			width: 100%;
-			max-width: 480px;
-			border-radius: 12px 12px 0 0;
+			display: none;
 		}
 	}
-
-
 }
 
 .signup-site-preview__iframe-wrapper {
@@ -70,14 +70,22 @@
 	height: 100%;
 	position: relative;
 	overflow: hidden;
-	border-radius: 4px;
 
 	.is-desktop & {
 		border-radius: 4px;
+		@include elevation ( 3dp );
+		@include breakpoint( '<660px' ) {
+			border-radius: 12px 12px 0 0;
+		}
 	}
 
 	.is-phone & {
-		border-radius: 12px;
+		border-bottom: 1px solid var( --color-neutral-100 );
+		border-radius: 12px 12px 0 0;
+	}
+
+	.spinner {
+		margin-top: 40px;
 	}
 }
 
@@ -88,15 +96,18 @@
 	left: 0;
 	border: 0;
 	width: 100%;
-	height: 100%;
+	height: calc( 100% - 25px );
 }
 
 // Browser chrome to make mockups look
 // a little more like a website/phone.
-.signup-site-preview__chrome-desktop {
+.signup-site-preview__chrome-desktop,
+.signup-site-preview__chrome-mobile {
 	height: 28px;
 	border-bottom: 1px solid var( --color-neutral-100 );
+}
 
+.signup-site-preview__chrome-desktop {
 	// Desktop chrome has some OS dots to
 	// help signify its a browser.
 	svg {
@@ -104,6 +115,9 @@
 		top: 8px;
 		left: 8px;
 		fill: var( --color-neutral );
+		@include breakpoint( '<660px' ) {
+			display: none;
+		}
 	}
 
 	.signup-site-preview__chrome-label {
@@ -121,12 +135,18 @@
 		width: 70%;
 		background: var( --color-neutral-0 );
 		border-radius: 3px;
+
+		// At small screen sizes "hide" the label
+		// text as its mostly redundant.
+		@include breakpoint( '<660px' ) {
+			color: var( --color-neutral-0 );
+			width: 96%;
+			border-radius: 16px;
+		}
 	}
 }
 
 .signup-site-preview__chrome-mobile {
-	height: 28px;
-
 	.signup-site-preview__chrome-label {
 		position: relative;
 		top: 6px;
@@ -140,12 +160,5 @@
 		width: 60px;
 		background: var( --color-neutral-0 );
 		border-radius: 16px;
-
-		// At small screen sizes "hide" the label
-		// text as its mostly redundent.
-		@include breakpoint( '<660px' ) {
-			color: var( --color-neutral-0 );
-			width: 96%;
-		}
 	}
 }
