@@ -16,6 +16,9 @@ function stripAutoPlays( query ) {
 			query[ key ] = '0';
 		} else if ( val === 'true' ) {
 			query[ key ] = 'false';
+		} else {
+			// force a singular value
+			query[ key ] = val;
 		}
 	} );
 	return query;
