@@ -63,7 +63,7 @@
 		"@wordpress/i18n": "3.1.1",
 		"@wordpress/url": "2.3.3",
 		"acorn": "6.1.1",
-		"autoprefixer": "9.4.4",
+		"autoprefixer": "9.5.1",
 		"autosize": "4.0.2",
 		"babel-loader": "8.0.5",
 		"babel-plugin-add-module-exports": "1.0.0",

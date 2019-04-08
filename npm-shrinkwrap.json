@@ -33,6 +33,22 @@
 				"webpack": "4.29.6",
 				"webpack-filter-warnings-plugin": "1.2.1",
 				"webpack-rtl-plugin": "1.8.0"
+			},
+			"dependencies": {
+				"autoprefixer": {
+					"version": "9.4.4",
+					"resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.4.4.tgz",
+					"integrity": "sha512-7tpjBadJyHKf+gOJEmKhZIksWxdZCSrnKbbTJNsw+/zX9+f//DLELRQPWjjjVoDbbWlCuNRkN7RfmZwDVgWMLw==",
+					"dev": true,
+					"requires": {
+						"browserslist": "^4.3.7",
+						"caniuse-lite": "^1.0.30000926",
+						"normalize-range": "^0.1.2",
+						"num2fraction": "^1.2.2",
+						"postcss": "^7.0.7",
+						"postcss-value-parser": "^3.3.1"
+					}
+				}
 			}
 		},
 		"@automattic/calypso-color-schemes": {
@@ -4599,15 +4615,15 @@
 			"integrity": "sha1-D+9a1G8b16hQLGVyfwNn1e5D1pY="
 		},
 		"autoprefixer": {
-			"version": "9.4.4",
-			"resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.4.4.tgz",
-			"integrity": "sha512-7tpjBadJyHKf+gOJEmKhZIksWxdZCSrnKbbTJNsw+/zX9+f//DLELRQPWjjjVoDbbWlCuNRkN7RfmZwDVgWMLw==",
+			"version": "9.5.1",
+			"resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.5.1.tgz",
+			"integrity": "sha512-KJSzkStUl3wP0D5sdMlP82Q52JLy5+atf2MHAre48+ckWkXgixmfHyWmA77wFDy6jTHU6mIgXv6hAQ2mf1PjJQ==",
 			"requires": {
-				"browserslist": "^4.3.7",
-				"caniuse-lite": "^1.0.30000926",
+				"browserslist": "^4.5.4",
+				"caniuse-lite": "^1.0.30000957",
 				"normalize-range": "^0.1.2",
 				"num2fraction": "^1.2.2",
-				"postcss": "^7.0.7",
+				"postcss": "^7.0.14",
 				"postcss-value-parser": "^3.3.1"
 			}
 		},
