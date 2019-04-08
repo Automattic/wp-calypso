@@ -57,6 +57,11 @@ class SiteTypeForm extends Component {
 
 	handleSubmitOther = () => {
 		const fieldValue = this.state.otherValue ? 'other—' + this.state.otherValue : 'other–other';
+
+		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
+			value: 'other',
+		} );
+
 		this.handleSubmit( fieldValue );
 	};
 
