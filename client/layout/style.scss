@@ -216,7 +216,11 @@
 		
 		.all-sites {
 			border-color: var( --sidebar-border-color );
-		}				
+		}
+	}
+
+	.site-selector__no-results {
+		color: var( --sidebar-heading-color );
 	}
 	
 	.all-sites .count {
