@@ -10192,9 +10192,9 @@
 			"integrity": "sha1-3BXKHGcjh8p2vTesCjlbogQqLCg="
 		},
 		"get-video-id": {
-			"version": "3.1.0",
-			"resolved": "https://registry.npmjs.org/get-video-id/-/get-video-id-3.1.0.tgz",
-			"integrity": "sha512-dWjLwCBtvGB8aP5S91Vs5W01dTaEykY43whz+wSS9G0zkuTmh7FZ1rZ4A5M33vf/8vvHPlMhLreUSdEJ4yW7Dw==",
+			"version": "3.1.1",
+			"resolved": "https://registry.npmjs.org/get-video-id/-/get-video-id-3.1.1.tgz",
+			"integrity": "sha512-Ejpfw/3aP+hiCUcJC+uPRZVYWO5kZett6xCm8ljRf+tN54gi/DTlK11tr4IExjCmM5vIZd2aocBGZwB4Fa0Jcg==",
 			"requires": {
 				"get-src": "^1.0.1"
 			}
