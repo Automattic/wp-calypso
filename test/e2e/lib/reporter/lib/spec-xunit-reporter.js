@@ -7,7 +7,7 @@
  */
 
 const mocha = require( 'mocha' );
-const Spec = mocha.reporters.Spec;
+const mochawesome = require( 'mochawesome' );
 const XUnit = mocha.reporters.XUnit;
 const utils = mocha.utils;
 const inherits = utils.inherits;
@@ -32,12 +32,19 @@ exports = module.exports = SpecXUnit;
  * @param {Runner} runner Test runner object, handled implicitly by mocha
  */
 function SpecXUnit( runner ) {
-	Spec.call( this, runner );
+	mochawesome.call( this, runner, {
+		reporterOptions: {
+			overwrite: false,
+			html: false,
+			json: true,
+			reportDir: `${ reportDir }/ma-reports`,
+		},
+	} );
 	XUnit.call( this, runner, { reporterOptions: { output: reportName } } );
 }
 
 /**
  * Inherit from Spec and XUnit prototypes.
  */
-inherits( SpecXUnit, Spec );
+inherits( SpecXUnit, mochawesome );
 inherits( SpecXUnit, XUnit );

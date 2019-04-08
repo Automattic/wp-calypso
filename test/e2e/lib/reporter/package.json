@@ -6,6 +6,7 @@
 	"dependencies": {
 		"config": "1.28.0",
 		"mocha": "5.2.0",
-		"fs-extra": "0.22.1"
+		"fs-extra": "0.22.1",
+		"mochawesome": "3.1.1"
 	}
 }

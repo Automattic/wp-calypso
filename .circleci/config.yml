@@ -157,6 +157,13 @@ references:
       cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
       cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
 
+  generate-e2e-ma-report: &generate-e2e-ma-report
+    name: Generate mochawesome report
+    when: always
+    command: |
+      ./node_modules/.bin/mochawesome-merge --reportDir ./reports/ma-reports > mochawesome-full.json
+      ./node_modules/.bin/marge -o ./reports/mochawesome-reports --showSkipped true mochawesome-full.json
+
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker: *docker-image
@@ -497,6 +504,7 @@ jobs:
       - run: npm run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
+      - run: *generate-e2e-ma-report
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
       - slack/status:
@@ -562,6 +570,7 @@ jobs:
           name: Run Canary Tests
           command: |
             env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
+      - run: *generate-e2e-ma-report
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
       - slack/status:
