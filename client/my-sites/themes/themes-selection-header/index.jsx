@@ -7,19 +7,21 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import SectionHeader from 'components/section-header';
-import { localize } from 'i18n-calypso';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const ThemesSelectionHeader = ( { label, count, translate } ) => {
+const ThemesSelectionHeader = ( { label, count } ) => {
+	const translate = useTranslate();
+
 	const selectionHeaderClassName = classNames( 'themes-selection-header', {
 		'is-placeholder': count === null,
 	} );
@@ -36,4 +38,4 @@ ThemesSelectionHeader.propTypes = {
 	count: PropTypes.number,
 };
 
-export default localize( ThemesSelectionHeader );
+export default ThemesSelectionHeader;
