@@ -184,7 +184,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	plansPresentation: {
-		datestamp: '201904010',
+		datestamp: '20190410',
 		variations: {
 			tab: 50,
 			scroll: 50,
