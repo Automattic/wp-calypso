@@ -17,14 +17,12 @@ import FormLabel from 'components/forms/form-label';
 import { toggleWPcomEmailSetting } from 'state/notification-settings/actions';
 
 class EmailCategory extends React.Component {
-	static propTypes() {
-		return {
-			name: PropTypes.string,
-			isEnabled: PropTypes.bool,
-			title: PropTypes.string,
-			description: PropTypes.string,
-		};
-	}
+	static propTypes = {
+		name: PropTypes.string,
+		isEnabled: PropTypes.bool,
+		title: PropTypes.string,
+		description: PropTypes.string,
+	};
 
 	toggleSetting = () => {
 		this.props.toggleWPcomEmailSetting( this.props.name );

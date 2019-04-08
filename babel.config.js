@@ -38,28 +38,21 @@ const config = {
 		],
 		isBrowser && './inline-imports.js',
 	] ),
-	overrides: [
-		{
-			test: [ './client/gutenberg/extensions' ],
+	env: {
+		build_pot: {
 			plugins: [
 				[
-					'@wordpress/import-jsx-pragma',
+					'@automattic/babel-plugin-i18n-calypso',
 					{
-						scopeVariable: 'createElement',
-						source: '@wordpress/element',
-						isDefault: false,
-					},
-				],
-				[
-					'@babel/transform-react-jsx',
-					{
-						pragma: 'createElement',
+						dir: 'build/i18n-calypso/',
+						headers: {
+							'content-type': 'text/plain; charset=UTF-8',
+							'x-generator': 'calypso',
+						},
 					},
 				],
 			],
 		},
-	],
-	env: {
 		test: {
 			presets: [ [ '@babel/env', { targets: { node: 'current' } } ] ],
 			plugins: [

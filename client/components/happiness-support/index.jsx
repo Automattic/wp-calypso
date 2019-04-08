@@ -25,6 +25,11 @@ import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection-connected';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class HappinessSupport extends Component {
 	static propTypes = {
 		isJetpack: PropTypes.bool,
