@@ -20,7 +20,7 @@ export default {
 		next();
 	},
 
-	emaklManagementAddGSuiteUsersLegacyRedirect( pageContext ) {
+	emailManagementAddGSuiteUsersLegacyRedirect( pageContext ) {
 		page.redirect(
 			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
 		);

@@ -50,6 +50,12 @@ class GSuitePurchaseCta extends React.Component {
 		);
 	};
 
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_email_gsuite_purchase_cta_view', {
+			domain: this.props.domainName,
+		} );
+	}
+
 	renderCta() {
 		const { currencyCode, domainName, productsList, translate } = this.props;
 		const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );

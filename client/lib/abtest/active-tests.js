@@ -184,7 +184,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	gSuiteSkuSelect: {
-		datestamp: '20190405',
+		datestamp: '20190408',
 		variations: {
 			show: 50,
 			hide: 50,
