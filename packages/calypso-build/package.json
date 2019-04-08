@@ -28,6 +28,8 @@
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "file:../calypso-color-schemes",
 		"@automattic/wordpress-external-dependencies-plugin": "file:../wordpress-external-dependencies-plugin",
+		"@babel/plugin-transform-react-jsx": "7.3.0",
+		"@wordpress/babel-plugin-import-jsx-pragma": "2.1.0",
 		"autoprefixer": "9.4.4",
 		"babel-loader": "8.0.5",
 		"browserslist": "4.5.4",
