@@ -430,18 +430,16 @@ const guessCustomerType = ( state, props ) => {
 export default connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
-		const isNewPlanDiscountActive = isDiscountActive( getDiscountByName( 'new_plans' ), state );
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
 			// pretty versatile, we could rename it from discounts to flags/features/anything else and make it more
 			// universal.
-			withWPPlanTabs: isNewPlanDiscountActive,
+			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			plansWithScroll:
-				isNewPlanDiscountActive &&
 				! props.displayJetpackPlans &&
-				abtest( 'plansPresentation' ) === 'scroll',
+				isDiscountActive( getDiscountByName( 'plans_no_tabs' ), state ),
 			customerType: guessCustomerType( state, props ),
 			domains: getDecoratedSiteDomains( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),

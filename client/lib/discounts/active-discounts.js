@@ -82,6 +82,11 @@ export default [
 			{ type: TYPE_PREMIUM, group: GROUP_JETPACK },
 		],
 	},
+	{
+		name: 'plans_no_tabs',
+		startsAt: new Date( 2018, 2, 7, 0, 0, 0 ),
+		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
+	},
 	// NOTE: These two (new_plans and default_plans_tab_business) should remain at the bottom.
 	// It's a temporary hack and will be removed shortly.
 	{
