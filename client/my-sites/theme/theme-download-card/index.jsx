@@ -15,6 +15,11 @@ import Button from 'components/button';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ThemeDownloadCard extends React.PureComponent {
 	static propTypes = {
 		href: PropTypes.string,
