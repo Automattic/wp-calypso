@@ -13,7 +13,8 @@ import { localize, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getIframeSource, getIframePageContent } from 'components/signup-site-preview/utils';
+import SignupSitePreviewIframe from 'components/signup-site-preview/iframe';
+import Spinner from 'components/spinner';
 
 /**
  * Style dependencies
@@ -70,99 +71,25 @@ export class SignupSitePreview extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.iframe = React.createRef();
+		this.state = {
+			isLoaded: false,
+		};
 	}
 
-	componentDidMount() {
-		this.setIframeSource( this.props );
-	}
-
-	shouldComponentUpdate( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			this.props.cssUrl !== nextProps.cssUrl ||
-			this.props.fontUrl !== nextProps.fontUrl ||
-			this.props.langSlug !== nextProps.langSlug
+			this.props.cssUrl !== prevProps.cssUrl ||
+			this.props.fontUrl !== prevProps.fontUrl ||
+			this.props.langSlug !== prevProps.langSlug
 		) {
-			this.setIframeSource( nextProps );
-			return false;
-		}
-
-		if ( this.props.content.title !== nextProps.content.title ) {
-			this.setIframeContent( '.site-builder__title', nextProps.content.title );
-			return false;
-		}
-
-		if ( this.props.content.tagline !== nextProps.content.tagline ) {
-			this.setIframeContent( '.site-builder__description', nextProps.content.tagline );
-			return false;
-		}
-
-		if ( this.props.content.body !== nextProps.content.body ) {
-			this.setIframePageContent( nextProps.content );
-			return false;
-		}
-
-		return false;
-	}
-
-	setIframePageContent( content ) {
-		if ( ! this.iframe.current ) {
-			return;
-		}
-		const element = this.iframe.current.contentWindow.document.querySelector( '.entry' );
-
-		if ( element ) {
-			element.innerHTML = getIframePageContent( content );
+			this.setIsLoaded( false );
 		}
 	}
 
-	setIframeContent( selector, content ) {
-		if ( ! this.iframe.current ) {
-			return;
-		}
-		const element = this.iframe.current.contentWindow.document.querySelector( selector );
-
-		if ( element ) {
-			element.innerHTML = content;
-		}
-	}
-
-	setOnPreviewClick = () => {
-		if ( ! this.iframe.current ) {
-			return;
-		}
-
-		this.iframe.current.contentWindow.document.querySelector( '.home' ).onclick = () =>
-			this.props.onPreviewClick( this.props.defaultViewportDevice );
-	};
-
-	setIframeIsLoading = () => {
-		if ( ! this.iframe.current ) {
-			return;
-		}
-
-		this.iframe.current.contentWindow.document
-			.querySelector( '.home' )
-			.classList.remove( 'is-loading' );
-	};
-
-	setLoaded = () => {
-		this.setOnPreviewClick();
-		this.setIframeIsLoading();
-	};
-
-	setIframeSource = ( { content, cssUrl, fontUrl, isRtl, langSlug } ) => {
-		if ( ! this.iframe.current ) {
-			return;
-		}
-		// For memory management: https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
-		URL.revokeObjectURL( this.iframe.current.src );
-
-		this.iframe.current.src = getIframeSource( content, cssUrl, fontUrl, isRtl, langSlug );
-	};
+	setIsLoaded = isLoaded => this.setState( { isLoaded } );
 
 	render() {
-		const { content, isDesktop, isPhone } = this.props;
+		const { isDesktop, isPhone } = this.props;
 		const className = classNames( this.props.className, 'signup-site-preview__wrapper', {
 			'is-desktop': isDesktop,
 			'is-phone': isPhone,
@@ -172,12 +99,8 @@ export class SignupSitePreview extends Component {
 			<div className={ className }>
 				<div className="signup-site-preview__iframe-wrapper">
 					{ isPhone ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
-					<iframe
-						ref={ this.iframe }
-						className="signup-site-preview__iframe"
-						title={ `${ content.title } – ${ content.tagline }` }
-						onLoad={ this.setLoaded }
-					/>
+					{ ! this.state.isLoaded && <Spinner size={ 40 } /> }
+					<SignupSitePreviewIframe { ...this.props } setIsLoaded={ this.setIsLoaded } />
 				</div>
 			</div>
 		);

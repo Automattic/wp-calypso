@@ -1,17 +1,6 @@
 /** @format */
 
 /**
- * Returns a theme base CSS URI.
- *
- * @param  {String}  themeSlug A theme slug, e.g., `pub/business`
- * @param  {Boolean} isRtl     If the current locale is a right-to-left language
- * @return {String}            The theme CSS URI.
- */
-export function getThemeCssUri( themeSlug, isRtl ) {
-	return `https://s0.wp.com/wp-content/themes/${ themeSlug }/style${ isRtl ? '-rtl' : '' }.css`;
-}
-
-/**
  * Returns entry content HTML
  *
  * @param  {Object} content Object containing `title`, `tagline` and `body` strings
@@ -26,6 +15,16 @@ export function getIframePageContent( { body, title, tagline } ) {
 			</div>
 			${ body }
 		</div>`;
+}
+
+/**
+ * Returns CSS link HTML
+ *
+ * @param  {String} url 	The css file path
+ * @return {String}         The HTML source or an empty string if `url` is absent.
+ */
+export function getCSSLinkHtml( url ) {
+	return url ? `<link type="text/css" media="all" rel="stylesheet" href="${ url }" />` : '';
 }
 
 /**
@@ -44,12 +43,12 @@ export function getIframeSource( content, cssUrl, fontUrl, isRtl = false, langSl
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<link rel="dns-prefetch" href="//s1.wp.com">
+			<link rel="dns-prefetch" href="//s0.wp.com">
 			<link rel="dns-prefetch" href="//fonts.googleapis.com">
 			<title>${ content.title } – ${ content.tagline }</title>
 			<link type="text/css" media="all" rel="stylesheet" href="https://s0.wp.com/wp-content/plugins/gutenberg-core/build/block-library/style.css" />
-			<link type="text/css" media="all" rel="stylesheet" href="${ cssUrl }" />
-			<link type="text/css" media="all" rel="stylesheet" href="${ fontUrl }" />
+			${ getCSSLinkHtml( cssUrl ) }
+			${ getCSSLinkHtml( fontUrl ) }
 			<style type="text/css">
 			
 				.is-loading {
@@ -70,53 +69,12 @@ export function getIframeSource( content, cssUrl, fontUrl, isRtl = false, langSl
 					animation: loading-animation 1.5s infinite;
 					background-color: rgba( 0, 0, 0, 0.1 ) !important;
 				}
-				
-				.spinner {
-					display: none;
-					position: absolute;
-					top: 40px;
-					width: 100%;
-					z-index: 1000;
-				}
-				
-				.is-loading .spinner {
-					display: flex;
-					align-items: center;
-				}
-				
-				.spinner__outer, .spinner__inner {
-					margin: auto;
-					box-sizing: border-box;
-					border: 0.1em solid transparent;
-					border-radius: 50%;
-					animation: 3s linear infinite;
-					animation-name: rotate-spinner;
-				}
-				
-				.spinner__outer {
-					border-top-color: rgba( 0, 0, 0, 0.7 );
-					width: 20px;
-					height: 20px;
-					font-size: 20px;
-				}
-				
-				.spinner__inner {
-					width: 100%;
-					height: 100%;
-					border-top-color: rgba( 0, 0, 0, 0.7 );
-					border-right-color: rgba( 0, 0, 0, 0.7 );
-					opacity: 0.4;
-				}
+			
 				
 				@keyframes loading-animation {
 					0%   { background-color: rgba( 0, 0, 0, 0.7 ); }
 					50%  { background-color: rgba( 0, 0, 0, 1 ); }
 					100% { background-color: rgba( 0, 0, 0, 0.7 ); }
-				}
-				@keyframes rotate-spinner {
-					100% {
-						transform: rotate( 360deg );
-					}
 				}
 			</style>
 		</head>
@@ -130,11 +88,6 @@ export function getIframeSource( content, cssUrl, fontUrl, isRtl = false, langSl
 							</article>
 						</div>
 					</section>
-				</div>
-			</div>
-			<div class="spinner">
-				<div class="spinner__outer">
-					<div class="spinner__inner" />
 				</div>
 			</div>
 		</body>
