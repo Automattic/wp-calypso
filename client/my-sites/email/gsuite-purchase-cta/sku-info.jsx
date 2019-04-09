@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -21,8 +21,8 @@ function GSuitePurchaseCtaSkuInfo( {
 	skuName,
 	skuStorage,
 	skuStorageNotice,
-	translate,
 } ) {
+	const translate = useTranslate();
 	return (
 		<div className="gsuite-purchase-cta__sku-info">
 			{ skuName && (
@@ -69,7 +69,6 @@ GSuitePurchaseCtaSkuInfo.propTypes = {
 	skuName: PropTypes.string,
 	skuSubNoticeText: PropTypes.string,
 	skuSubText: PropTypes.string,
-	translate: PropTypes.func.isRequired,
 };
 
-export default localize( GSuitePurchaseCtaSkuInfo );
+export default GSuitePurchaseCtaSkuInfo;

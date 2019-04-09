@@ -7,21 +7,21 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
 import config from 'config';
+import CompactCard from 'components/card/compact';
 import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getAnnualPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductCost } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
 import GSuitePurchaseCtaSkuInfo from 'my-sites/email/gsuite-purchase-cta/sku-info';
+import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QueryProductsList from 'components/data/query-products-list';
 
@@ -30,7 +30,15 @@ import QueryProductsList from 'components/data/query-products-list';
  */
 import './style.scss';
 
-class GSuitePurchaseCta extends Component {
+export class GSuitePurchaseCta extends React.Component {
+	static propTypes = {
+		domainName: PropTypes.string.isRequired,
+		gsuiteBasicAnnualCost: PropTypes.string.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+		selectedSiteSlug: PropTypes.string.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
 	goToAddGSuiteUsers = planType => {
 		this.props.recordTracksEvent( 'calypso_email_gsuite_purchase_cta_get_gsuite_click', {
 			domain: this.props.domainName,
@@ -106,12 +114,6 @@ class GSuitePurchaseCta extends Component {
 		);
 	}
 }
-
-GSuitePurchaseCta.propTypes = {
-	domainName: PropTypes.string.isRequired,
-	gsuiteBasicAnnualCost: PropTypes.string.isRequired,
-	selectedSiteSlug: PropTypes.string.isRequired,
-};
 
 export default connect(
 	state => {

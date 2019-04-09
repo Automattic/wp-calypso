@@ -16,35 +16,33 @@ jest.mock( 'components/info-popover', () => 'InfoPopover' );
 
 describe( 'GSuitePurchaseCta', () => {
 	test( 'it renders GSuitePurchaseCtaSkuInfo with all required props', () => {
-		expect(
-			renderer
-				.create(
-					<GSuitePurchaseCtaSkuInfo
-						annualPrice={ '$72' }
-						buttonText={ 'Add G Suite' }
-						onButtonClick={ noop }
-						showButton={ true }
-					/>
-				)
-				.toJSON()
-		).toMatchSnapshot();
+		const tree = renderer
+			.create(
+				<GSuitePurchaseCtaSkuInfo
+					annualPrice={ '$72' }
+					buttonText={ 'Add G Suite' }
+					onButtonClick={ noop }
+					showButton={ true }
+				/>
+			)
+			.toJSON();
+		expect( tree ).toMatchSnapshot();
 	} );
 
 	test( 'it renders GSuitePurchaseCtaSkuInfo with all props', () => {
-		expect(
-			renderer
-				.create(
-					<GSuitePurchaseCtaSkuInfo
-						annualPrice={ '$144' }
-						buttonText={ 'Add G Suite Business' }
-						onButtonClick={ noop }
-						skuName={ 'G Suite Business' }
-						skuStorage={ 'Unlimited Storage' }
-						skuStorageNotice={ 'Accounts with fewer than 5 users have 1 TB per user' }
-						showButton={ true }
-					/>
-				)
-				.toJSON()
-		).toMatchSnapshot();
+		const tree = renderer
+			.create(
+				<GSuitePurchaseCtaSkuInfo
+					annualPrice={ '$144' }
+					buttonText={ 'Add G Suite Business' }
+					onButtonClick={ noop }
+					skuName={ 'G Suite Business' }
+					skuStorage={ 'Unlimited Storage' }
+					skuStorageNotice={ 'Accounts with fewer than 5 users have 1 TB per user' }
+					showButton={ true }
+				/>
+			)
+			.toJSON();
+		expect( tree ).toMatchSnapshot();
 	} );
 } );

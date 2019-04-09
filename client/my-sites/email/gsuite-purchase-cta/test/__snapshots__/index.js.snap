@@ -5,6 +5,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
   noticeStatus="is-info"
   noticeText="You must verify your email to purchase G Suite."
 >
+  <QueryProductsList />
   <div
     className="card is-compact"
   >
