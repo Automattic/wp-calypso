@@ -1,4 +1,5 @@
 module.exports = {
 	rootDir: './../../',
-	projects: [ '<rootDir>/packages/*' ],
+	// run tests for all packages that have a Jest config file
+	projects: [ '<rootDir>/packages/*/jest.config.js' ],
 };
