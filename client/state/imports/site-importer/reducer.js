@@ -79,10 +79,9 @@ const importData = createReducer( DEFAULT_IMPORT_DATA, {
 	} ),
 } );
 
-const urlInputValue = createReducer( '', {
+const validatedSiteUrl = createReducer( '', {
 	[ SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS ]: ( state, { response } ) =>
 		get( response, 'site_url', '' ),
-	// [ SITE_IMPORTER_URL_INPUT_CHANGE ]: ( state, value ) => value,
 } );
 
 export default combineReducers( {
@@ -90,5 +89,5 @@ export default combineReducers( {
 	error,
 	importStage,
 	importData,
-	urlInputValue,
+	validatedSiteUrl,
 } );
