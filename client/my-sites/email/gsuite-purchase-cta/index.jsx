@@ -31,9 +31,10 @@ import QueryProductsList from 'components/data/query-products-list';
 import './style.scss';
 
 class GSuitePurchaseCta extends Component {
-	goToAddGSuiteUsers = () => {
+	goToAddGSuiteUsers = planType => {
 		this.props.recordTracksEvent( 'calypso_email_gsuite_purchase_cta_get_gsuite_click', {
 			domain: this.props.domainName,
+			plan_type: planType,
 		} );
 
 		page( emailManagementAddGSuiteUsers( this.props.selectedSiteSlug, this.props.domainName ) );
@@ -81,7 +82,9 @@ class GSuitePurchaseCta extends Component {
 								<GSuitePurchaseCtaSkuInfo
 									annualPrice={ gsuiteBasicAnnualCost }
 									buttonText={ translate( 'Add G Suite' ) }
-									onButtonClick={ this.goToAddGSuiteUsers }
+									onButtonClick={ () => {
+										this.goToAddGSuiteUsers( 'basic' );
+									} }
 									showButton={ upgradeAvailable }
 								/>
 							</div>
