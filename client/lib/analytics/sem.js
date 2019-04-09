@@ -81,8 +81,12 @@ function setUtmCookie( name, value ) {
  * Updates tracking based on URL query parameters.
  */
 export function updateQueryParamsTracking() {
-	const parsedUrl = urlParseAmpCompatible( document.location.href );
-	const query = parsedUrl.query;
+	if ( ! document.location.search ) {
+		debug( 'No query data in URL.' );
+		return;
+	}
+
+	const query = urlParseAmpCompatible( document.location.href ).query;
 
 	// Sanitize query params
 	const sanitized_query = {};
