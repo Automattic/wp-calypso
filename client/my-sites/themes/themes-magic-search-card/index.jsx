@@ -309,6 +309,7 @@ class ThemesMagicSearchCard extends React.Component {
 				<StickyPanel>
 					<div
 						className={ themesSearchCardClass }
+						role="presentation"
 						data-tip-target="themes-search-card"
 						onClick={ this.handleClickInside }
 					>
@@ -334,7 +335,7 @@ class ThemesMagicSearchCard extends React.Component {
 						) }
 					</div>
 				</StickyPanel>
-				<div onClick={ this.handleClickInside }>
+				<div role="presentation" onClick={ this.handleClickInside }>
 					{ renderSuggestions && (
 						<KeyedSuggestions
 							ref={ partial( this.setSuggestionsRefs, 'suggestions' ) }
