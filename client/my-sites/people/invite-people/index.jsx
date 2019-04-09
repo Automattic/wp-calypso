@@ -6,7 +6,7 @@
 
 import React from 'react';
 import page from 'page';
-import { filter, get, groupBy, includes, isEmpty, pickBy, some, uniqueId } from 'lodash';
+import { filter, flowRight, get, groupBy, includes, isEmpty, pickBy, some, uniqueId } from 'lodash';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -21,12 +21,11 @@ import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { sendInvites } from 'lib/invites/actions';
+import { sendInvites, createInviteValidation } from 'lib/invites/actions';
 import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import CountedTextarea from 'components/forms/counted-textarea';
-import { createInviteValidation } from 'lib/invites/actions';
 import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
 import InvitesSentStore from 'lib/invites/stores/invites-sent';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -46,6 +45,7 @@ import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 
 /**
  * Module variables
@@ -225,6 +225,8 @@ class InvitePeople extends React.Component {
 			number_email_invitees: groupedInvitees.email ? groupedInvitees.email.length : 0,
 			has_custom_message: 'string' === typeof message && !! message.length,
 		} );
+
+		page( `/people/new/${ this.props.site.slug }/sent` );
 	};
 
 	isSubmitDisabled = () => {
@@ -285,10 +287,10 @@ class InvitePeople extends React.Component {
 			needsVerification,
 			isJetpack,
 			showSSONotice,
+			onClickSendInvites,
 			onFocusTokenField,
 			onFocusRoleSelect,
 			onFocusCustomMessage,
-			onClickSendInvites,
 		} = this.props;
 
 		const inviteForm = (
@@ -435,7 +437,7 @@ class InvitePeople extends React.Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const activating = isActivatingJetpackModule( state, siteId, 'sso' );
@@ -469,4 +471,10 @@ export default connect(
 		onClickRoleExplanation: () =>
 			dispatch( recordTracksEventAction( 'calypso_invite_people_role_explanation_link_click' ) ),
 	} )
-)( localize( InvitePeople ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( InvitePeople );
