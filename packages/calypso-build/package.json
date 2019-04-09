@@ -44,6 +44,7 @@
 		"css-loader": "2.1.1",
 		"duplicate-package-checker-webpack-plugin": "3.0.0",
 		"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
+		"node-sass": "4.11.0",
 		"postcss-custom-properties": "8.0.9",
 		"postcss-loader": "3.0.0",
 		"sass-loader": "7.1.0",

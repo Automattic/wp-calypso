@@ -34,6 +34,7 @@
 				"css-loader": "2.1.1",
 				"duplicate-package-checker-webpack-plugin": "3.0.0",
 				"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300db7027af8caa9a3015f54a34aec545cc54",
+				"node-sass": "4.11.0",
 				"postcss-custom-properties": "8.0.9",
 				"postcss-loader": "3.0.0",
 				"sass-loader": "7.1.0",
@@ -2100,9 +2101,9 @@
 			}
 		},
 		"@octokit/rest": {
-			"version": "16.23.2",
-			"resolved": "https://registry.npmjs.org/@octokit/rest/-/rest-16.23.2.tgz",
-			"integrity": "sha512-ZxiZMaCuqBG/IsbgNRVfGwYsvBb5DjHuMGjJgOrinT+/b+1j1U7PiGyRkHDJdjTGA6N/PsMC2lP2ZybX9579iA==",
+			"version": "16.23.3",
+			"resolved": "https://registry.npmjs.org/@octokit/rest/-/rest-16.23.3.tgz",
+			"integrity": "sha512-kwL6gtvWC5j9mXK9O6V7wCwdGDUIoT2im1CfExqCunOHTcs4SPC1V29ajAPJ5sz2sErt0abiQzGORZBZ4GVbEw==",
 			"requires": {
 				"@octokit/request": "2.4.2",
 				"atob-lite": "^2.0.0",
