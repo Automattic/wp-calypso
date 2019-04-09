@@ -18,8 +18,7 @@ import {
 	getTriedCustomizerDuringInitialSetup,
 	getCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
-import Checklist from 'components/checklist';
-import Task from 'components/checklist/task';
+import { Checklist, Task } from 'components/checklist';
 import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
