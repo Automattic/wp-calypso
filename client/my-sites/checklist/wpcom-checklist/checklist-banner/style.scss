@@ -18,6 +18,10 @@
 		letter-spacing: 0;
 	}
 
+	.gauge__label {
+		color: var( --color-success ) !important; /* important overrides inline style with CSS var */
+	}
+
 	@include breakpoint( '<660px' ) {
 		display: none;
 	}
