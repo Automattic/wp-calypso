@@ -640,7 +640,7 @@ class ThemeSheet extends React.Component {
 			pageUpsellBanner = (
 				<Banner
 					plan={ PLAN_PREMIUM }
-					className="is-particular-theme-banner" // eslint-disable-line wpcalypso/jsx-classname-namespace
+					className="theme__page-upsell-banner"
 					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
 					description={ translate(
 						'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
@@ -651,7 +651,7 @@ class ThemeSheet extends React.Component {
 				/>
 			);
 			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
-				className: 'is-theme-preview-banner',
+				className: 'theme__preview-upsell-banner',
 			} );
 		}
 		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );

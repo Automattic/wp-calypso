@@ -495,7 +495,7 @@
 	display: none;
 }
 
-.banner.is-particular-theme-banner {
+.banner.theme__page-upsell-banner {
 	@include banner-dark();
 
 	width: 50%;
@@ -508,7 +508,7 @@
 	}
 }
 
-.banner.is-theme-preview-banner {
+.banner.theme__preview-upsell-banner {
 	@include banner-dark();
 	width: 100%;
 	margin: 0;
