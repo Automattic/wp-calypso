@@ -21,7 +21,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/i18n-calypso#readme",
 	"dependencies": {
 		"commander": "^2.9.0",
-		"debug": "^3.2.6",
+		"debug": "^4.0.0",
 		"globby": "^9.0.0",
 		"hash.js": "^1.1.5",
 		"interpolate-components": "1.1.1",
