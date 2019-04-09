@@ -12,18 +12,22 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
+import { hasGSuite } from 'lib/domains/gsuite';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { domainManagementEdit } from 'my-sites/domains/paths';
+import { emailManagement } from 'my-sites/email/paths';
 import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './domain-only.scss';
 
-const DomainOnly = ( { primaryDomain, hasNotice, siteId, slug, translate } ) => {
+const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, translate } ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	if ( ! primaryDomain ) {
 		return (
@@ -38,6 +42,16 @@ const DomainOnly = ( { primaryDomain, hasNotice, siteId, slug, translate } ) => 
 	}
 
 	const domainName = primaryDomain.name;
+	const domainHasGSuite = hasGSuite( primaryDomain );
+
+	const recordEmailClick = () => {
+		const tracksName = domainHasGSuite
+			? 'calypso_domain_only_gsuite_manage'
+			: 'calypso_domain_only_gsuite_cta';
+		recordTracks( tracksName, {
+			domain: domainName,
+		} );
+	};
 
 	return (
 		<div>
@@ -51,7 +65,17 @@ const DomainOnly = ( { primaryDomain, hasNotice, siteId, slug, translate } ) => 
 				secondaryAction={ translate( 'Manage Domain' ) }
 				secondaryActionURL={ domainManagementEdit( slug, domainName ) }
 				illustration={ '/calypso/images/drake/drake-browser.svg' }
-			/>
+			>
+				<Button
+					className="empty-content__action button"
+					href={ emailManagement( slug, domainName ) }
+					primary={ ! domainHasGSuite }
+					onClick={ recordEmailClick }
+				>
+					{ domainHasGSuite ? translate( 'Manage Email' ) : translate( 'Add Email' ) }
+				</Button>
+			</EmptyContent>
+
 			{ hasNotice && (
 				<div className="domain-only-site__settings-notice">
 					{ translate(
@@ -71,9 +95,12 @@ DomainOnly.propTypes = {
 	siteId: PropTypes.number.isRequired,
 };
 
-export default connect( ( state, ownProps ) => {
-	return {
-		slug: getSiteSlug( state, ownProps.siteId ),
-		primaryDomain: getPrimaryDomainBySiteId( state, ownProps.siteId ),
-	};
-} )( localize( DomainOnly ) );
+export default connect(
+	( state, ownProps ) => {
+		return {
+			slug: getSiteSlug( state, ownProps.siteId ),
+			primaryDomain: getPrimaryDomainBySiteId( state, ownProps.siteId ),
+		};
+	},
+	{ recordTracks: recordTracksEvent }
+)( localize( DomainOnly ) );
