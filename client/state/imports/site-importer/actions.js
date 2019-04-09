@@ -21,15 +21,15 @@ import {
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
-	SITE_IMPORTER_IMPORT_START,
-	SITE_IMPORTER_IMPORT_SUCCESS,
 	SITE_IMPORTER_IMPORT_FAILURE,
 	SITE_IMPORTER_IMPORT_RESET,
+	SITE_IMPORTER_IMPORT_START,
+	SITE_IMPORTER_IMPORT_SUCCESS,
+	SITE_IMPORTER_IS_SITE_IMPORTABLE_FAILURE,
+	SITE_IMPORTER_IS_SITE_IMPORTABLE_START,
+	SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS,
 	SITE_IMPORTER_VALIDATION_ERROR_SET,
-	SITE_IMPORTER_VALIDATE_SITE_IMPORTABLE_START,
-	SITE_IMPORTER_VALIDATE_SITE_IMPORTABLE_SUCCESS,
-	SITE_IMPORTER_VALIDATE_SITE_IMPORTABLE_FAILURE,
-} from './action-types';
+} from 'state/action-types';
 import { getState as getImporterState } from 'lib/importer/store';
 import { prefetchmShotsPreview } from 'lib/mshots';
 
@@ -54,16 +54,16 @@ export const siteImporterImportFailed = error => ( {
 } );
 
 export const startSiteImporterIsSiteImportable = () => ( {
-	type: SITE_IMPORTER_VALIDATE_SITE_IMPORTABLE_START,
+	type: SITE_IMPORTER_IS_SITE_IMPORTABLE_START,
 } );
 
 export const siteImporterIsSiteImportableSuccessful = response => ( {
-	type: SITE_IMPORTER_VALIDATE_SITE_IMPORTABLE_SUCCESS,
+	type: SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS,
 	response,
 } );
 
 export const siteImporterIsSiteImportableFailed = error => ( {
-	type: SITE_IMPORTER_VALIDATE_SITE_IMPORTABLE_FAILURE,
+	type: SITE_IMPORTER_IS_SITE_IMPORTABLE_FAILURE,
 	message: error.message,
 } );
 
