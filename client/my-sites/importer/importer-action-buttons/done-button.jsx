@@ -44,11 +44,9 @@ export class DoneButton extends React.PureComponent {
 			siteSlug,
 		} = this.props;
 
-		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
-
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 			blog_id: siteId,
-			importer_id: tracksType,
+			importer_id: type,
 		} );
 
 		const destination = '/view/' + ( siteSlug || '' );

@@ -32,13 +32,12 @@ class StartButton extends React.PureComponent {
 			importerStatus: { type },
 			site: { ID: siteId },
 		} = this.props;
-		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
 		startImport( siteId, type );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 			blog_id: siteId,
-			importer_id: tracksType,
+			importer_id: type,
 		} );
 	};
 
