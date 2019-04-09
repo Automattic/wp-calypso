@@ -26,3 +26,11 @@ Blocks are registered by providing a `name` and `settings` like this:
 ```js
 registerBlockType( 'prefix/name', { /* settings */ } );
 ```
+
+## Building
+
+To build bundle in `apps/o2-blocks/dist`, run:
+
+```bash
+npx lerna run prepare --scope="@automattic/o2-blocks"
+```

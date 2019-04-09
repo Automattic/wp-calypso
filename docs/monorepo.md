@@ -78,6 +78,7 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 If your package requires compilation, the `package.json` `prepare` script should compile the package. If it contains ES6+ code that needs to be transpiled, use `npx @automattic/calypso-build` which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds.
 
 ## Running Tests
+
 To run all of the package tests:
 
 `npm run test-packages`
@@ -85,6 +86,22 @@ To run all of the package tests:
 To run one package's tests:
 
 `npm run test-packages [ test file pattern ]`
+
+## Building packages
+
+Packages are automatically build on `npm start` unless they're in `/apps` directory.
+
+You can build packages also by running:
+
+```bash
+npm run build-packages
+```
+
+Or even specific packages:
+
+```bash
+npx lerna run prepare --scope="@automattic/calypso-build"
+```
 
 ## Publishing
 
