@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
-import { RichText } from '@wordpress/editor';
+import { RichText } from '@wordpress/block-editor';
 
 import './editor.scss';
 

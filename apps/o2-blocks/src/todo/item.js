@@ -5,7 +5,7 @@
  */
 import { Button, Dashicon } from '@wordpress/components';
 import { Component } from '@wordpress/element';
-import { RichText } from '@wordpress/editor';
+import { RichText } from '@wordpress/block-editor';
 
 export const ItemEditor = class extends Component {
 	constructor() {

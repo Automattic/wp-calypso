@@ -22,9 +22,9 @@
 		"build": "webpack --config='../../packages/calypso-build/webpack.config.js' --output-path='./dist' --env.WP='true' editor='./src/editor.js' "
 	},
 	"dependencies": {
+		"@wordpress/block-editor": "1.0.0",
 		"@wordpress/blocks": "6.0.7",
 		"@wordpress/components": "7.0.8",
-		"@wordpress/editor": "9.0.11",
 		"@wordpress/element": "2.1.9",
 		"@wordpress/i18n": "3.1.1",
 		"classnames": "2.2.6"

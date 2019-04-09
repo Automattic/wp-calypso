@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, Dashicon } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { registerBlockType } from '@wordpress/blocks';
-import { RichText } from '@wordpress/editor';
+import { RichText } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
