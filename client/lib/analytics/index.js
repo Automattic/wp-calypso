@@ -45,6 +45,9 @@ import {
 	recordAddToCart,
 	recordOrder,
 } from 'lib/analytics/ad-tracking';
+
+import { updateQueryParamsTracking } from 'lib/analytics/sem';
+
 import { statsdTimingUrl } from 'lib/analytics/statsd';
 
 /**
@@ -77,7 +80,7 @@ if ( typeof window !== 'undefined' ) {
 }
 
 function getUrlParameter( name ) {
-	name = name.replace( /[\[]/, '\\[' ).replace( /[\]]/, '\\]' );
+	name = name.replace( /[[]/g, '\\[' ).replace( /[\]]/g, '\\]' );
 	const regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
 	const results = regex.exec( location.search );
 	return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
@@ -262,6 +265,7 @@ const analytics = {
 				pathCounter++;
 				params.this_pageview_path_with_count = urlPath + '(' + pathCounter.toString() + ')';
 				analytics.tracks.recordPageView( urlPath, params );
+				updateQueryParamsTracking();
 				retarget( urlPath ); // Fire page-view/retargeting pixels.
 				analytics.ga.recordPageView( urlPath, pageTitle );
 				analytics.emit( 'page-view', urlPath, pageTitle );
@@ -543,6 +547,7 @@ const analytics = {
 					window.ga( 'set', 'dimension3', clientId );
 				} );
 				window.ga( 'set', 'anonymizeIp', true );
+				window.ga( 'set', 'useAmpClientId', true );
 				analytics.ga.initialized = true;
 			}
 		},
