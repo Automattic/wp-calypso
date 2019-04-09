@@ -231,15 +231,14 @@ class ThemeSheet extends React.Component {
 		return demo_uri && ! retired;
 	}
 
-	renderPreviewButton( demo_uri = this.props.demo_uri, props = {} ) {
+	renderPreviewButton() {
 		return (
 			<a
-				className={ 'theme__sheet-preview-link' }
+				className="theme__sheet-preview-link"
 				onClick={ this.previewAction }
 				data-tip-target="theme-sheet-preview"
-				href={ demo_uri }
+				href={ this.props.demo_uri }
 				rel="noopener noreferrer"
-				{ ...props }
 			>
 				<span className="theme__sheet-preview-link-text">
 					{ i18n.translate( 'Open Live Demo', {
@@ -270,7 +269,7 @@ class ThemeSheet extends React.Component {
 		if ( this.isThemeAvailable() ) {
 			return (
 				<div className="theme__sheet-screenshot is-active" onClick={ this.previewAction }>
-					{ this.shouldRenderPreviewButton() ? this.renderPreviewButton() : null }
+					{ this.shouldRenderPreviewButton() && this.renderPreviewButton() }
 					{ img }
 				</div>
 			);
