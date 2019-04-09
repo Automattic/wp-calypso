@@ -79,13 +79,11 @@
 	color: transparent;
 }
 
-.theme__sheet-section-nav {
-	.is-theme-preview {
-		margin-left: auto;
+.theme__sheet-preview-nav-item {
+	margin-left: auto;
 
-		@include breakpoint( '<960px' ) {
-			display: none;
-		}
+	@include breakpoint( '<960px' ) {
+		display: none;
 	}
 }
 

@@ -301,10 +301,9 @@ class ThemeSheet extends React.Component {
 				) ) }
 				{ this.shouldRenderPreviewButton() ? (
 					<NavItem
-						key="theme-preview"
 						path={ this.props.demo_uri }
 						onClick={ this.previewAction }
-						className={ 'is-' + 'theme-preview' }
+						className="theme__sheet-preview-nav-item"
 					>
 						{ i18n.translate( 'Open Live Demo', {
 							context: 'Individual theme live preview button',
