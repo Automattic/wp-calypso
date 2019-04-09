@@ -19,12 +19,10 @@ import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getAnnualPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getEligibleGSuiteDomain } from 'lib/domains/gsuite';
 import { getProductsList } from 'state/products-list/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
-import GSuitePurchaseCtaSkuInfo from './sku-info';
+import GSuitePurchaseCtaSkuInfo from 'my-sites/email/gsuite-purchase-cta/sku-info';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QueryProductsList from 'components/data/query-products-list';
 
@@ -112,19 +110,16 @@ class GSuitePurchaseCta extends Component {
 }
 
 GSuitePurchaseCta.propTypes = {
+	currencyCode: PropTypes.string.isRequired,
 	domainName: PropTypes.string.isRequired,
 	productsList: PropTypes.object,
-	selectedDomainName: PropTypes.string,
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
 export default connect(
-	( state, { selectedDomainName } ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const domains = getDomainsBySiteId( state, selectedSiteId );
+	state => {
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			domainName: getEligibleGSuiteDomain( selectedDomainName, domains ),
 			productsList: getProductsList( state ),
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 		};

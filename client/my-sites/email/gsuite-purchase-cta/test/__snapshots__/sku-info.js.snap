@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all props 1`] = `
+<div
+  className="gsuite-purchase-cta__sku-info"
+>
+  <div
+    className="gsuite-purchase-cta__sku-info-name-area"
+  >
+    <h3>
+      G Suite Business
+    </h3>
+  </div>
+  <h4
+    className="gsuite-purchase-cta__sku-info-name-price-per-user"
+  >
+    <span>
+      <strong>
+        $144
+      </strong>
+       per user / year
+    </span>
+  </h4>
+  <div
+    className="gsuite-purchase-cta__sku-info-storage-area"
+  >
+    <h5>
+      Unlimited Storage
+    </h5>
+    <InfoPopover>
+      Accounts with fewer than 5 users have 1 TB per user
+    </InfoPopover>
+  </div>
+  <Button
+    className="gsuite-purchase-cta__sku-info-button"
+    onClick={[Function]}
+    type="button"
+  >
+    Add G Suite Business
+  </Button>
+</div>
+`;
+
+exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all required props 1`] = `
+<div
+  className="gsuite-purchase-cta__sku-info"
+>
+  <h4
+    className="gsuite-purchase-cta__sku-info-name-price-per-user"
+  >
+    <span>
+      <strong>
+        $72
+      </strong>
+       per user / year
+    </span>
+  </h4>
+  <Button
+    className="gsuite-purchase-cta__sku-info-button"
+    onClick={[Function]}
+    type="button"
+  >
+    Add G Suite
+  </Button>
+</div>
+`;

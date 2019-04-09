@@ -14,46 +14,43 @@ import GSuitePurchaseCta from '../';
 
 jest.mock( 'components/email-verification/email-verification-gate', () => 'EmailVerificationGate' );
 jest.mock( 'my-sites/email/gsuite-purchase-features', () => 'GSuitePurchaseFeatures' );
+jest.mock( 'my-sites/email/gsuite-purchase-cta/sku-info', () => 'GSuitePurchaseCtaSkuInfo' );
 
 describe( 'GSuitePurchaseCta', () => {
-	test( 'it renders GSuitePurchaseCta with basic plan', () => {
-		const store = createReduxStore( {
-			ui: { selectedSiteId: 123 },
-			sites: {
-				items: {
-					123: {
-						ID: 123,
-						URL: 'https://test.com',
+	const testStore = createReduxStore( {
+		currentUser: {
+			currencyCode: 'USD',
+		},
+		productsList: {
+			items: {
+				gapps: {
+					prices: {
+						USD: 72,
+					},
+				},
+				gapps_unlimited: {
+					prices: {
+						USD: 144,
 					},
 				},
 			},
-		} );
-		const tree = renderer
-			.create(
-				<Provider store={ store }>
-					<GSuitePurchaseCta annualPrice={ '$72' } productSlug={ 'gapps' } />
-				</Provider>
-			)
-			.toJSON();
-		expect( tree ).toMatchSnapshot();
+		},
+		sites: {
+			items: {
+				123: {
+					ID: 123,
+					URL: 'https://test.com',
+				},
+			},
+		},
+		ui: { selectedSiteId: 123 },
 	} );
 
-	test( 'it renders GSuitePurchaseCta with business plan', () => {
-		const store = createReduxStore( {
-			ui: { selectedSiteId: 123 },
-			sites: {
-				items: {
-					123: {
-						ID: 123,
-						URL: 'https://test.com',
-					},
-				},
-			},
-		} );
+	test( 'it renders GSuitePurchaseCta with basic plan', () => {
 		const tree = renderer
 			.create(
-				<Provider store={ store }>
-					<GSuitePurchaseCta annualPrice={ '$144' } productSlug={ 'gapps_unlimited' } />
+				<Provider store={ testStore }>
+					<GSuitePurchaseCta domainName={ 'test.com' } />
 				</Provider>
 			)
 			.toJSON();

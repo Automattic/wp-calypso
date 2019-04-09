@@ -16,11 +16,11 @@ import InfoPopover from 'components/info-popover';
 function GSuitePurchaseCtaSkuInfo( {
 	annualPrice,
 	buttonText,
-	showButton,
 	onButtonClick,
+	showButton,
 	skuName,
-	skuSubNoticeText,
-	skuSubText,
+	skuStorage,
+	skuStorageNotice,
 	translate,
 } ) {
 	return (
@@ -42,10 +42,10 @@ function GSuitePurchaseCtaSkuInfo( {
 					} ) }
 				</span>
 			</h4>
-			{ skuSubText && (
-				<div className="gsuite-purchase-cta__sku-info-sub-text-area">
-					<h5>{ skuSubText }</h5>
-					{ skuSubNoticeText && <InfoPopover>{ skuSubNoticeText }</InfoPopover> }
+			{ skuStorage && (
+				<div className="gsuite-purchase-cta__sku-info-storage-area">
+					<h5>{ skuStorage }</h5>
+					{ skuStorageNotice && <InfoPopover>{ skuStorageNotice }</InfoPopover> }
 				</div>
 			) }
 			{ showButton && (

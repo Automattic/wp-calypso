@@ -15,7 +15,12 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { hasGSuite, isGSuiteRestricted, hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
+import {
+	hasGSuite,
+	isGSuiteRestricted,
+	hasGSuiteSupportedDomain,
+	getEligibleGSuiteDomain,
+} from 'lib/domains/gsuite';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
@@ -92,7 +97,7 @@ class EmailManagement extends React.Component {
 		if ( domainList.some( hasGSuite ) ) {
 			return this.googleAppsUsersCard();
 		} else if ( hasGSuiteSupportedDomain( domainList ) ) {
-			return this.addGoogleAppsCard();
+			return this.addGSuiteCta( getEligibleGSuiteDomain( selectedDomainName, domainList ) );
 		} else if ( emailForwardingDomain && isGSuiteRestricted() && selectedDomainName ) {
 			return this.addEmailForwardingCard( emailForwardingDomain );
 		}
@@ -149,12 +154,12 @@ class EmailManagement extends React.Component {
 		);
 	}
 
-	addGoogleAppsCard() {
+	addGSuiteCta( domainName ) {
 		const { domains, selectedDomainName } = this.props;
 		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
 		return (
 			<Fragment>
-				<GSuitePurchaseCta selectedDomainName={ selectedDomainName } />
+				<GSuitePurchaseCta domainName={ domainName } />
 				{ emailForwardingDomain && this.addEmailForwardingCard( emailForwardingDomain ) }
 			</Fragment>
 		);

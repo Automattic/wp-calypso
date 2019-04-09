@@ -8,11 +8,9 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
   <div
     className="card is-compact"
   >
-    <header
-      className="gsuite-purchase-cta__add-google-apps-card-header"
-    >
+    <header>
       <h3
-        className="gsuite-purchase-cta__add-google-apps-card-product-logo"
+        className="gsuite-purchase-cta__product-logo"
       >
         <strong>
           G Suite
@@ -24,46 +22,34 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
     className="card is-compact"
   >
     <div
-      className="gsuite-purchase-cta__add-google-apps-card-product-details"
+      className="gsuite-purchase-cta__header"
     >
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-description"
+        className="gsuite-purchase-cta__header-description"
       >
         <h2
-          className="gsuite-purchase-cta__add-google-apps-card-title"
+          className="gsuite-purchase-cta__header-description-title"
         >
           Professional email and so much more.
         </h2>
         <p
-          className="gsuite-purchase-cta__add-google-apps-card-sub-title"
+          className="gsuite-purchase-cta__header-description-sub-title"
         >
           We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.
         </p>
         <div
-          className="gsuite-purchase-cta__add-google-apps-card-price"
+          className="gsuite-purchase-cta__skus"
         >
-          <h4
-            className="gsuite-purchase-cta__add-google-apps-card-price-per-user"
-          >
-            <span>
-              <strong>
-                $72
-              </strong>
-               per user / year
-            </span>
-          </h4>
-          <button
-            className="button form-button is-primary"
-            locale="en"
-            onClick={[Function]}
-            type="button"
-          >
-            Add G Suite
-          </button>
+          <GSuitePurchaseCtaSkuInfo
+            annualPrice="$72"
+            buttonText="Add G Suite"
+            onButtonClick={[Function]}
+            showButton={true}
+          />
         </div>
       </div>
       <div
-        className="gsuite-purchase-cta__add-google-apps-card-logos"
+        className="gsuite-purchase-cta__header-image"
       >
         <img
           alt="G Suite Logo"
@@ -76,119 +62,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
     className="card is-compact"
   >
     <GSuitePurchaseFeatures
-      domainName=""
+      domainName="test.com"
       productSlug="gapps"
       type="grid"
     />
-    <div
-      className="gsuite-purchase-cta__add-google-apps-card-secondary-button"
-    >
-      <button
-        className="button form-button is-primary"
-        locale="en"
-        onClick={[Function]}
-        type="button"
-      >
-        Add G Suite
-      </button>
-    </div>
-  </div>
-</EmailVerificationGate>
-`;
-
-exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] = `
-<EmailVerificationGate
-  noticeStatus="is-info"
-  noticeText="You must verify your email to purchase G Suite."
->
-  <div
-    className="card is-compact"
-  >
-    <header
-      className="gsuite-purchase-cta__add-google-apps-card-header"
-    >
-      <h3
-        className="gsuite-purchase-cta__add-google-apps-card-product-logo"
-      >
-        <strong>
-          G Suite
-        </strong>
-        Business
-      </h3>
-    </header>
-  </div>
-  <div
-    className="card is-compact"
-  >
-    <div
-      className="gsuite-purchase-cta__add-google-apps-card-product-details"
-    >
-      <div
-        className="gsuite-purchase-cta__add-google-apps-card-description"
-      >
-        <h2
-          className="gsuite-purchase-cta__add-google-apps-card-title"
-        >
-          Professional email and so much more.
-        </h2>
-        <p
-          className="gsuite-purchase-cta__add-google-apps-card-sub-title"
-        >
-          We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.
-        </p>
-        <div
-          className="gsuite-purchase-cta__add-google-apps-card-price"
-        >
-          <h4
-            className="gsuite-purchase-cta__add-google-apps-card-price-per-user"
-          >
-            <span>
-              <strong>
-                $144
-              </strong>
-               per user / year
-            </span>
-          </h4>
-          <button
-            className="button form-button is-primary"
-            locale="en"
-            onClick={[Function]}
-            type="button"
-          >
-            Add G Suite
-          </button>
-        </div>
-      </div>
-      <div
-        className="gsuite-purchase-cta__add-google-apps-card-logos"
-      >
-        <img
-          alt="G Suite Logo"
-          src="/calypso/images/g-suite/g-suite.svg"
-        />
-      </div>
-    </div>
-  </div>
-  <div
-    className="card is-compact"
-  >
-    <GSuitePurchaseFeatures
-      domainName=""
-      productSlug="gapps_unlimited"
-      type="grid"
-    />
-    <div
-      className="gsuite-purchase-cta__add-google-apps-card-secondary-button"
-    >
-      <button
-        className="button form-button is-primary"
-        locale="en"
-        onClick={[Function]}
-        type="button"
-      >
-        Add G Suite
-      </button>
-    </div>
   </div>
 </EmailVerificationGate>
 `;
