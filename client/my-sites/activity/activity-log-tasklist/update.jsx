@@ -75,8 +75,7 @@ class ActivityLogTaskUpdate extends Component {
 				</span>
 				<span className="activity-log-tasklist__update-action">
 					<SplitButton
-						compact
-						primary
+						compact					
 						label={ translate( 'Update' ) }
 						onClick={ this.handleEnqueue }
 						disabled={ disable }
