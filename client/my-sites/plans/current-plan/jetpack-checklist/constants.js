@@ -14,16 +14,6 @@ export function getJetpackChecklistTaskDuration( minutes ) {
 }
 
 export const JETPACK_CHECKLIST_TASKS = {
-	jetpack_backups: {
-		title: translate( 'Backups & Scanning' ),
-		description: translate(
-			"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
-		),
-		completedButtonText: translate( 'Change', { context: 'verb' } ),
-		completedTitle: translate( 'You turned on backups and scanning.' ),
-		getUrl: siteSlug => `/activity-log/${ siteSlug }`,
-		duration: getJetpackChecklistTaskDuration( 2 ),
-	},
 	jetpack_monitor: {
 		title: translate( 'Downtime Monitoring' ),
 		description: translate(
@@ -57,4 +47,20 @@ export const JETPACK_CHECKLIST_TASKS = {
 		duration: getJetpackChecklistTaskDuration( 3 ),
 		tourId: 'jetpackSignIn',
 	},
+};
+
+export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND = {
+	title: translate( 'Backups & Scanning' ),
+	description: translate(
+		"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
+	),
+	completedButtonText: translate( 'Change', { context: 'verb' } ),
+	completedTitle: translate( 'You turned on backups and scanning.' ),
+	getUrl: siteSlug => `/settings/security/${ siteSlug }`,
+	duration: getJetpackChecklistTaskDuration( 3 ),
+};
+
+export const JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS = {
+	title: translate( "We're automatically turning on backups and scanning." ),
+	completedTitle: translate( "We've automatically turned on backups and scanning." ),
 };
