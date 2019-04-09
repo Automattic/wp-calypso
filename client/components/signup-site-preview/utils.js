@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * Internal dependencies
+ */
+import userAgent from 'lib/user-agent';
+
+/**
  * Returns entry content HTML
  *
  * @param  {Object} content Object containing `title`, `tagline` and `body` strings
@@ -64,12 +69,11 @@ export function getIframeSource( content, cssUrl, fontUrl, isRtl = false, langSl
 					transition: opacity 1s ease-in;
 				}
 				
-				.wp-block-cover,
-				img {
+				.is-loading .wp-block-cover,
+				.is-loading img {
 					animation: loading-animation 1.5s infinite;
 					background-color: rgba( 0, 0, 0, 0.1 ) !important;
 				}
-			
 				
 				@keyframes loading-animation {
 					0%   { background-color: rgba( 0, 0, 0, 0.7 ); }
@@ -92,6 +96,10 @@ export function getIframeSource( content, cssUrl, fontUrl, isRtl = false, langSl
 			</div>
 		</body>
 	</html>`;
+
+	if ( userAgent.isIE ) {
+		return source;
+	}
 
 	return URL.createObjectURL( new Blob( [ source ], { type: 'text/html' } ) );
 }

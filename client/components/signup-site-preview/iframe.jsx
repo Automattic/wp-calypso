@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import userAgent from 'lib/user-agent';
 import { getIframeSource, getIframePageContent } from 'components/signup-site-preview/utils';
 
 export default class SignupSitePreviewIframe extends Component {
@@ -96,7 +97,7 @@ export default class SignupSitePreviewIframe extends Component {
 			return;
 		}
 
-		this.iframe.current.contentWindow.document.querySelector( '.home' ).onclick = () =>
+		this.iframe.current.contentWindow.document.body.onclick = () =>
 			this.props.onPreviewClick( this.props.defaultViewportDevice );
 	};
 
@@ -120,10 +121,18 @@ export default class SignupSitePreviewIframe extends Component {
 		if ( ! this.iframe.current ) {
 			return;
 		}
-		// For memory management: https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
-		URL.revokeObjectURL( this.iframe.current.src );
 
-		this.iframe.current.src = getIframeSource( content, cssUrl, fontUrl, isRtl, langSlug );
+		const iframeSrc = getIframeSource( content, cssUrl, fontUrl, isRtl, langSlug );
+
+		if ( userAgent.isIE ) {
+			this.iframe.current.contentWindow.document.open();
+			this.iframe.current.contentWindow.document.write( iframeSrc );
+			this.iframe.current.contentWindow.document.close();
+		} else {
+			// For memory management: https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
+			URL.revokeObjectURL( this.iframe.current.src );
+			this.iframe.current.src = iframeSrc;
+		}
 	};
 
 	render() {
