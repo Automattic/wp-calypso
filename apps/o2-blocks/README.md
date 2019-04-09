@@ -32,5 +32,5 @@ registerBlockType( 'prefix/name', { /* settings */ } );
 To build bundle in `apps/o2-blocks/dist`, run:
 
 ```bash
-npx lerna run prepare --scope="@automattic/o2-blocks"
+npx lerna run build --scope="*/o2-blocks
 ```
