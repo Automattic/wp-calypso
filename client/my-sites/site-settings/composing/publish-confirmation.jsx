@@ -54,8 +54,9 @@ class PublishConfirmation extends Component {
 					<FormLabel>{ translate( 'Show publish confirmation' ) }</FormLabel>
 					<FormSettingExplanation isIndented>
 						{ translate(
-							'Publish confirmation setting is now handled by the Block Editor. ' +
-								"You can access it by opening the Options item in Editor's ellipsis menu."
+							'The Block Editor handles the Publish confirmation setting. ' +
+								'To enable it, go to Options under the Ellipses menu in the Editor ' +
+								'and check "Enable Pre-publish checks."'
 						) }
 					</FormSettingExplanation>
 				</FormFieldset>
