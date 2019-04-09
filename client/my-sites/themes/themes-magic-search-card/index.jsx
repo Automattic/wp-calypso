@@ -31,10 +31,17 @@ const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', '
 
 class ThemesMagicSearchCard extends React.Component {
 	static propTypes = {
+		tier: PropTypes.string,
+		select: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
+		onSearch: PropTypes.func.isRequired,
+		search: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 		showTierThemesControl: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		tier: 'all',
 		showTierThemesControl: true,
 	};
 
@@ -357,19 +364,6 @@ class ThemesMagicSearchCard extends React.Component {
 		);
 	}
 }
-
-ThemesMagicSearchCard.propTypes = {
-	tier: PropTypes.string,
-	select: PropTypes.func.isRequired,
-	siteId: PropTypes.number,
-	onSearch: PropTypes.func.isRequired,
-	search: PropTypes.string,
-	translate: PropTypes.func.isRequired,
-};
-
-ThemesMagicSearchCard.defaultProps = {
-	tier: 'all',
-};
 
 export default connect( state => ( {
 	filters: getThemeFilters( state ),
