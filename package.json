@@ -294,7 +294,7 @@
 		"enzyme": "3.9.0",
 		"enzyme-adapter-react-16": "1.12.1",
 		"enzyme-to-json": "3.3.5",
-		"eslint": "5.15.3",
+		"eslint": "5.16.0",
 		"eslint-config-prettier": "4.1.0",
 		"eslint-config-wpcalypso": "file:./packages/eslint-config-wpcalypso",
 		"eslint-plugin-import": "2.16.0",
