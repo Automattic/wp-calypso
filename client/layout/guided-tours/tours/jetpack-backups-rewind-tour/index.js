@@ -29,6 +29,15 @@ function whenWeCanAutoconfigure( state ) {
 	return canAutoconfigure || credentials.some( c => c.type === 'auto' );
 }
 
+const JetpackBackupsRewindTourButtons = ( { backText, translate } ) => (
+	<Fragment>
+		<SiteLink isButton href="/plans/my-plan/:site">
+			{ backText || translate( 'Return to the checklist' ) }
+		</SiteLink>
+		<Quit>{ translate( 'No, thanks.' ) }</Quit>
+	</Fragment>
+);
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackBackupsRewindTour = makeTour(
 	<Tour { ...meta }>
@@ -57,10 +66,7 @@ export const JetpackBackupsRewindTour = makeTour(
 							click
 							hidden
 						/>
-						<SiteLink href="/plans/my-plan/:site">
-							{ translate( 'Return to the checklist' ) }
-						</SiteLink>
-						<Quit>{ translate( 'No, thanks.' ) }</Quit>
+						<JetpackBackupsRewindTourButtons translate={ translate } />
 					</ButtonRow>
 				</Fragment>
 			) }
@@ -91,10 +97,7 @@ export const JetpackBackupsRewindTour = makeTour(
 								click
 								hidden
 							/>
-							<SiteLink href="/plans/my-plan/:site">
-								{ translate( 'Return to the checklist' ) }
-							</SiteLink>
-							<Quit>{ translate( 'No, thanks.' ) }</Quit>
+							<JetpackBackupsRewindTourButtons translate={ translate } />
 						</ButtonRow>
 					</ConditionalBlock>
 					<ConditionalBlock when={ not( whenWeCanAutoconfigure ) }>
@@ -110,10 +113,7 @@ export const JetpackBackupsRewindTour = makeTour(
 								click
 								hidden
 							/>
-							<SiteLink href="/plans/my-plan/:site">
-								{ translate( 'Return to the checklist' ) }
-							</SiteLink>
-							<Quit>{ translate( 'No, thanks.' ) }</Quit>
+							<JetpackBackupsRewindTourButtons translate={ translate } />
 						</ButtonRow>
 					</ConditionalBlock>
 				</Fragment>
@@ -149,10 +149,10 @@ export const JetpackBackupsRewindTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<SiteLink isButton href="/plans/my-plan/:site">
-							{ translate( "Yes, let's do it." ) }
-						</SiteLink>
-						<Quit>{ translate( 'No thanks.' ) }</Quit>
+						<JetpackBackupsRewindTourButtons
+							translate={ translate }
+							backText={ translate( "Yes, let's do it." ) }
+						/>
 					</ButtonRow>
 				</Fragment>
 			) }
