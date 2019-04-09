@@ -18,11 +18,11 @@ const ImporterLogo = ( { icon } ) => {
 		return <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />;
 	}
 
-	if ( includes( [ 'wix' ], icon ) ) {
+	if ( 'wix' === icon ) {
 		return <WixLogo />;
 	}
 
-	if ( includes( [ 'godaddy-gocentral' ], icon ) ) {
+	if ( 'godaddy-gocentral' === icon ) {
 		return <GoDaddyGoCentralLogo />;
 	}
 	return (
