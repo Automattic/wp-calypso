@@ -7,14 +7,7 @@ Dockerfile
 /build
 /cached-requests.json
 /node_modules
-/public/*.css
-/public/*.css.map
-/public/*.js
-/public/*.js.map
-/public/sections-rtl/*.css
-/public/sections-rtl/*.css.map
-/public/sections/*.css
-/public/sections/*.css.map
+/public
 /server/bundler/*.json
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
