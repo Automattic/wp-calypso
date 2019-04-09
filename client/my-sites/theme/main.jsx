@@ -1,12 +1,4 @@
 /**
- * /* eslint-disable react/no-danger
- *
- * @format
- */
-
-// FIXME!!!^ we want to ensure we have sanitised data…
-
-/**
  * External dependencies
  */
 import PropTypes from 'prop-types';
@@ -348,6 +340,7 @@ class ThemeSheet extends React.Component {
 
 	renderDescription = () => {
 		if ( this.props.descriptionLong ) {
+			// eslint-disable-next-line react/no-danger
 			return <div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />;
 		}
 		// description doesn't contain any formatting, so we don't need to dangerouslySetInnerHTML
@@ -380,6 +373,7 @@ class ThemeSheet extends React.Component {
 	};
 
 	renderSetupTab = () => {
+		/* eslint-disable react/no-danger */
 		return (
 			<div>
 				<Card className="theme__sheet-content">
@@ -387,6 +381,7 @@ class ThemeSheet extends React.Component {
 				</Card>
 			</div>
 		);
+		/* eslint-enable react/no-danger */
 	};
 
 	renderSupportContactUsCard = buttonCount => {
