@@ -46,7 +46,7 @@ import {
 	recordOrder,
 } from 'lib/analytics/ad-tracking';
 
-import { updateSEM } from 'lib/analytics/sem';
+import { updateQueryParamsTracking } from 'lib/analytics/sem';
 
 import { statsdTimingUrl } from 'lib/analytics/statsd';
 
@@ -265,7 +265,7 @@ const analytics = {
 				pathCounter++;
 				params.this_pageview_path_with_count = urlPath + '(' + pathCounter.toString() + ')';
 				analytics.tracks.recordPageView( urlPath, params );
-				updateSEM();
+				updateQueryParamsTracking();
 				retarget( urlPath ); // Fire page-view/retargeting pixels.
 				analytics.ga.recordPageView( urlPath, pageTitle );
 				analytics.emit( 'page-view', urlPath, pageTitle );

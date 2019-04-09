@@ -78,9 +78,9 @@ function setUtmCookie( name, value ) {
 }
 
 /**
- * Initializes the cookies for SEM attribution `ad_details` and `ad_timestamp`.
+ * Updates tracking based on URL query parameters.
  */
-export function updateSEM() {
+export function updateQueryParamsTracking() {
 	const parsedUrl = urlParseAmpCompatible( document.location.href );
 	const query = parsedUrl.query;
 
