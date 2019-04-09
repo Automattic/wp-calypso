@@ -23,7 +23,7 @@ import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
@@ -179,6 +179,7 @@ async function maybeCalypsoifyGutenberg( context, next ) {
 		( isCalypsoifyGutenbergEnabled( state, siteId ) ||
 			isGutenlypsoEnabled( state, siteId ) ||
 			isEnabled( 'jetpack/gutenframe' ) ) &&
+		false !== isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
 		'gutenberg' === getSelectedEditor( state, siteId )
 	) {
 		let url = getEditorUrl( state, siteId, postId, postType );
