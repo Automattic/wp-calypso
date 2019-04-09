@@ -1,0 +1,33 @@
+{
+	"name": "@automattic/gutenframe",
+	"version": "1.0.0-alpha.0",
+	"description": "Utilities for the block editor iframe connections",
+	"main": "dist/server.js",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/gutenframe"
+	},
+	"private": true,
+	"author": "Automattic, Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prebuild": "npm run clean",
+		"prepare": "webpack"
+	},
+	"dependencies": {
+		"@wordpress/data": "4.4.0",
+		"@wordpress/blocks": "6.0.7",
+		"@wordpress/hooks": "2.0.5",
+		"@wordpress/url": "2.3.3",
+		"jquery": "1.12.3",
+		"lodash": "4.17.11",
+		"react": "16.8.6"
+	}
+}
