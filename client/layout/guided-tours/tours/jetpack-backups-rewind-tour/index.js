@@ -68,30 +68,53 @@ export const JetpackBackupsRewindTour = makeTour(
 
 		<Step
 			name="autoconfigureOrConfirm"
-			target=".credentials-setup-flow__tos"
+			target=".credentials-setup-flow__tos .is-primary"
 			placement="beside"
 			arrow="right-top"
 			style={ {
-				display: 'none',
+				animationDelay: '0.7s',
+				zIndex: 1,
 			} }
 		>
-			{ () => (
+			{ ( { translate } ) => (
 				<Fragment>
 					<ConditionalBlock when={ whenWeCanAutoconfigure }>
-						<Continue
-							target=".credentials-setup-flow__tos-buttons .is-primary"
-							step="finish"
-							click
-							hidden
-						/>
+						<p>
+							{ translate(
+								"You can click this button to provide WordPress.com with access to your host's server."
+							) }
+						</p>
+						<ButtonRow>
+							<Continue
+								target=".credentials-setup-flow__tos-buttons .is-primary"
+								step="finish"
+								click
+								hidden
+							/>
+							<SiteLink href="/plans/my-plan/:site">
+								{ translate( 'Return to the checklist' ) }
+							</SiteLink>
+							<Quit>{ translate( 'No, thanks.' ) }</Quit>
+						</ButtonRow>
 					</ConditionalBlock>
 					<ConditionalBlock when={ not( whenWeCanAutoconfigure ) }>
-						<Continue
-							target=".credentials-setup-flow__tos-buttons .is-primary"
-							step="credentials"
-							click
-							hidden
-						/>
+						<p>
+							{ translate(
+								'You can click the button in order to agree and continue to the credentials form.'
+							) }
+						</p>
+						<ButtonRow>
+							<Continue
+								target=".credentials-setup-flow__tos-buttons .is-primary"
+								step="credentials"
+								click
+								hidden
+							/>
+							<SiteLink href="/plans/my-plan/:site">
+								{ translate( 'Return to the checklist' ) }
+							</SiteLink>
+							<Quit>{ translate( 'No, thanks.' ) }</Quit>
+						</ButtonRow>
 					</ConditionalBlock>
 				</Fragment>
 			) }
@@ -111,7 +134,7 @@ export const JetpackBackupsRewindTour = makeTour(
 			) }
 		</Step>
 
-		<Step name="finish" target=".credentials-configured" placement="beside" arrow="right-top">
+		<Step name="finish" target=".credentials-configured" placement="right">
 			{ ( { translate } ) => (
 				<Fragment>
 					<h1 className="tours__title">
