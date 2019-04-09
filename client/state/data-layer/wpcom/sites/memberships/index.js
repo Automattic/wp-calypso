@@ -9,7 +9,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { MEMBERSHIPS_PRODUCTS_RECEIVE, MEMBERSHIPS_PRODUCTS_LIST } from 'state/action-types';
+import {
+	MEMBERSHIPS_PRODUCTS_RECEIVE,
+	MEMBERSHIPS_PRODUCTS_LIST,
+	MEMBERSHIPS_EARNINGS_GET,
+	MEMBERSHIPS_EARNINGS_RECEIVE,
+} from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
@@ -51,6 +56,25 @@ export const handleMembershipProductsList = dispatchRequest( {
 	onError: noop,
 } );
 
+export const handleMembershipGetEarnings = dispatchRequest( {
+	fetch: action =>
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ action.siteId }/memberships/earnings`,
+				apiNamespace: 'wpcom/v2',
+			},
+			action
+		),
+	onSuccess: ( { siteId }, earnings ) => ( {
+		type: MEMBERSHIPS_EARNINGS_RECEIVE,
+		siteId,
+		earnings,
+	} ),
+	onError: noop,
+} );
+
 registerHandlers( 'state/data-layer/wpcom/sites/memberships/index.js', {
 	[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
+	[ MEMBERSHIPS_EARNINGS_GET ]: [ handleMembershipGetEarnings ],
 } );

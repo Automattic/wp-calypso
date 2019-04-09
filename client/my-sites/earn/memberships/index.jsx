@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
 
 /**
  * Internal dependencies
@@ -15,7 +16,12 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 
 class MembershipsSection extends Component {
 	render() {
-		return <div>{ 'Potato' }</div>;
+		return (
+			<div>
+				<QueryMembershipsEarnings siteId={ this.props.siteId } />
+				<div>{ 'Potato' }</div>
+			</div>
+		);
 	}
 }
 
