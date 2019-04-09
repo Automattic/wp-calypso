@@ -142,7 +142,7 @@ class GSuiteUsersCard extends React.Component {
 						key="pending-gsuite-tos-notice"
 						siteSlug={ selectedSiteSlug }
 						domains={ pendingDomains }
-						section="google-apps"
+						section="gsuite-users-manage-notice"
 					/>
 				) }
 

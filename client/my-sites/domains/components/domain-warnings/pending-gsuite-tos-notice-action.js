@@ -30,10 +30,8 @@ function PendingGSuiteTosNoticeAction( props ) {
 			</Button>
 			<PendingGSuiteTosNoticeDialog
 				domainName={ props.domainName }
-				isMultipleDomains={ props.isMultipleDomains }
 				onClose={ onCloseClickHandler }
 				section={ props.section }
-				severity={ props.severity }
 				siteSlug={ props.siteSlug }
 				user={ props.user }
 				visible={ dialogVisible }

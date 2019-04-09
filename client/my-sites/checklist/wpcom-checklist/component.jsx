@@ -747,10 +747,8 @@ class WpcomChecklistComponent extends PureComponent {
 
 				<PendingGSuiteTosNoticeDialog
 					domainName={ domainName }
-					isMultipleDomains={ false }
 					onClose={ this.onCloseGSuiteDialogClickHandler }
-					section={ 'gsuite-user-manage' }
-					severity={ 'info' }
+					section={ 'gsuite-timeline-task' }
 					siteSlug={ this.props.siteSlug }
 					user={ user }
 					visible={ this.state.gSuiteDialogVisible }
