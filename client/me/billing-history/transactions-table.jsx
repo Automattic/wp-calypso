@@ -179,6 +179,7 @@ class TransactionsTable extends React.Component {
 					<td className="billing-history__amount">
 						{ renderTransactionAmount( transaction, {
 							addingTax: transactionType === 'upcoming',
+							estimated: transactionType === 'upcoming',
 							translate,
 						} ) }
 					</td>
