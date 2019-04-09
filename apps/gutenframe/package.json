@@ -3,7 +3,7 @@
 	"version": "1.0.0-alpha.0",
 	"description": "Utilities for the block editor iframe connections",
 	"main": "dist/server.js",
-	"sideEffects": false,
+	"sideEffects": true,
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/Automattic/wp-calypso.git",
@@ -19,7 +19,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prebuild": "npm run clean",
-		"prepare": "webpack"
+		"build": "webpack --config='../../packages/calypso-build/webpack.config.js' --output-path='./dist' --env.WP='true' server='./src/server.js' "
 	},
 	"dependencies": {
 		"@wordpress/data": "4.4.0",
