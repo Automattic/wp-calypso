@@ -52,6 +52,7 @@
 		"@wordpress/browserslist-config": "2.3.0",
 		"@wordpress/components": "7.0.8",
 		"@wordpress/compose": "3.0.1",
+		"@wordpress/data": "4.4.0",
 		"@wordpress/date": "3.0.1",
 		"@wordpress/edit-post": "3.1.11",
 		"@wordpress/element": "2.1.9",
