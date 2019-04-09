@@ -1,0 +1,66 @@
+.memberships__earnings-breakdown-list {
+	margin: 0;
+	border-top: 1px solid var( --color-neutral-0 );
+}
+
+
+.memberships__earnings-breakdown-label {
+	color: var( --color-neutral-600 );
+	font-size: 10px;
+	letter-spacing: 0.1em;
+	line-height: 1.6;
+	text-transform: uppercase;
+
+	@include breakpoint( '<480px' ) {
+		font-size: 14px;
+		line-height: 1.8;
+	}
+}
+
+.memberships__earnings-breakdown-item {
+	width: 33%;
+	float: left;
+	padding: 5px 0 10px;
+	list-style-type: none;
+	text-align: center;
+	border-left: 1px solid var( --color-neutral-0 );
+
+	@include breakpoint( '<480px' ) {
+		width: auto;
+		float: none;
+		padding: 10px 24px;
+		text-align: left;
+		border: 0;
+		border-top: 1px solid var( --color-neutral-0 );
+	}
+
+	&:first-child {
+		border: 0;
+	}
+}
+
+.memberships__earnings-breakdown-label {
+	color: var( --color-neutral-600 );
+	font-size: 10px;
+	letter-spacing: 0.1em;
+	line-height: 1.6;
+	text-transform: uppercase;
+
+	@include breakpoint( '<480px' ) {
+		font-size: 14px;
+		line-height: 1.8;
+	}
+}
+
+
+.memberships__earnings-breakdown-value {
+	width: 100%;
+	display: block;
+	font-size: 25px;
+
+	@include breakpoint( '<480px' ) {
+		width: auto;
+		float: right;
+		font-size: 16px;
+	}
+}
