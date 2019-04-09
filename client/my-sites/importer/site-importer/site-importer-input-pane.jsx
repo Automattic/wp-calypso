@@ -165,7 +165,7 @@ class SiteImporterInputPane extends React.Component {
 			params: this.getApiParams(),
 			site: this.props.site,
 			supportedContent: this.props.importData.supported,
-			targetSiteUrl: this.props.urlInputValue,
+			targetSiteUrl: this.props.validatedSiteUrl,
 			unsupportedContent: this.props.importData.unsupported,
 		} );
 	};
@@ -173,7 +173,7 @@ class SiteImporterInputPane extends React.Component {
 	resetImport = () => {
 		this.props.resetSiteImporterImport( {
 			site: this.props.site,
-			targetSiteUrl: this.props.urlInputValue || this.state.siteURLInput,
+			targetSiteUrl: this.props.validatedSiteUrl || this.state.siteURLInput,
 			importStage: this.props.importStage,
 		} );
 	};
@@ -260,7 +260,7 @@ class SiteImporterInputPane extends React.Component {
 					<div className="site-importer__site-importer-confirm-site-pane">
 						<SiteImporterSitePreview
 							site={ site }
-							siteURL={ this.props.urlInputValue }
+							siteURL={ this.props.validatedSiteUrl }
 							importData={ this.props.importData }
 							isLoading={ isLoading }
 							resetImport={ this.resetImport }
@@ -301,7 +301,7 @@ class SiteImporterInputPane extends React.Component {
 export default flow(
 	connect(
 		state => {
-			const { isLoading, error, importData, importStage, urlInputValue } = get(
+			const { isLoading, error, importData, importStage, validatedSiteUrl } = get(
 				state,
 				'imports.siteImporter',
 				{}
@@ -312,7 +312,7 @@ export default flow(
 				error,
 				importData,
 				importStage,
-				urlInputValue,
+				validatedSiteUrl,
 			};
 		},
 		{
