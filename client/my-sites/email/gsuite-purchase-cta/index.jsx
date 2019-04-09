@@ -4,7 +4,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -19,7 +18,7 @@ import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getAnnualPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getProductsList } from 'state/products-list/selectors';
+import { getProductCost } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
 import GSuitePurchaseCtaSkuInfo from 'my-sites/email/gsuite-purchase-cta/sku-info';
@@ -47,12 +46,8 @@ class GSuitePurchaseCta extends Component {
 	}
 
 	render() {
-		const { currencyCode, domainName, productsList, translate } = this.props;
+		const { domainName, gsuiteBasicAnnualCost, translate } = this.props;
 		const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
-
-		const annualPrice = get( productsList, [ 'gapps', 'prices', currencyCode ], null );
-		const annualPriceFormatted =
-			null === annualPrice ? '-' : getAnnualPrice( annualPrice, currencyCode );
 
 		return (
 			<EmailVerificationGate
@@ -84,7 +79,7 @@ class GSuitePurchaseCta extends Component {
 
 							<div className="gsuite-purchase-cta__skus">
 								<GSuitePurchaseCtaSkuInfo
-									annualPrice={ annualPriceFormatted }
+									annualPrice={ gsuiteBasicAnnualCost }
 									buttonText={ translate( 'Add G Suite' ) }
 									onButtonClick={ this.goToAddGSuiteUsers }
 									showButton={ upgradeAvailable }
@@ -110,17 +105,18 @@ class GSuitePurchaseCta extends Component {
 }
 
 GSuitePurchaseCta.propTypes = {
-	currencyCode: PropTypes.string.isRequired,
 	domainName: PropTypes.string.isRequired,
-	productsList: PropTypes.object,
+	gsuiteBasicAnnualCost: PropTypes.string.isRequired,
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
 export default connect(
 	state => {
+		const gappsCost = getProductCost( state, 'gapps' );
+		const currencyCode = getCurrentUserCurrencyCode( state );
 		return {
-			currencyCode: getCurrentUserCurrencyCode( state ),
-			productsList: getProductsList( state ),
+			gsuiteBasicAnnualCost:
+				gappsCost && currencyCode ? getAnnualPrice( gappsCost, currencyCode ) : '-',
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},

@@ -12,6 +12,7 @@ import renderer from 'react-test-renderer';
 import { createReduxStore } from 'state';
 import GSuitePurchaseCta from '../';
 
+// components to mock
 jest.mock( 'components/email-verification/email-verification-gate', () => 'EmailVerificationGate' );
 jest.mock( 'my-sites/email/gsuite-purchase-features', () => 'GSuitePurchaseFeatures' );
 jest.mock( 'my-sites/email/gsuite-purchase-cta/sku-info', () => 'GSuitePurchaseCtaSkuInfo' );
@@ -24,14 +25,10 @@ describe( 'GSuitePurchaseCta', () => {
 		productsList: {
 			items: {
 				gapps: {
-					prices: {
-						USD: 72,
-					},
+					cost: 72,
 				},
 				gapps_unlimited: {
-					prices: {
-						USD: 144,
-					},
+					cost: 144,
 				},
 			},
 		},
@@ -46,7 +43,7 @@ describe( 'GSuitePurchaseCta', () => {
 		ui: { selectedSiteId: 123 },
 	} );
 
-	test( 'it renders GSuitePurchaseCta with basic plan', () => {
+	test( 'it renders GSuitePurchaseCta', () => {
 		const tree = renderer
 			.create(
 				<Provider store={ testStore }>
