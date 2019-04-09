@@ -268,10 +268,15 @@ class ThemeSheet extends React.Component {
 
 		if ( this.isThemeAvailable() ) {
 			return (
-				<div className="theme__sheet-screenshot is-active" onClick={ this.previewAction }>
+				<a
+					className="theme__sheet-screenshot is-active"
+					href={ this.props.demo_uri }
+					onClick={ this.previewAction }
+					rel="noopener noreferrer"
+				>
 					{ this.shouldRenderPreviewButton() && this.renderPreviewButton() }
 					{ img }
-				</div>
+				</a>
 			);
 		}
 
