@@ -31,32 +31,7 @@ lerna-debug.log
 
 /build
 
-/public/*.css
-/public/*.css.map
-
-/public/fallback/*.js
-/public/fallback/*.js.map
-/public/fallback/*.css
-/public/fallback/*.css.map
-/public/fallback/vendors~*
-/public/fallback/sections/*
-/public/fallback/sections-rtl/*
-/public/fallback/images/*.gif
-/public/fallback/images/*.jpg
-/public/fallback/images/*.png
-/public/fallback/images/*.svg
-
-/public/evergreen/*.js
-/public/evergreen/*.js.map
-/public/evergreen/*.css
-/public/evergreen/*.css.map
-/public/evergreen/vendors~*
-/public/evergreen/sections/*
-/public/evergreen/sections-rtl/*
-/public/evergreen/images/*.gif
-/public/evergreen/images/*.jpg
-/public/evergreen/images/*.png
-/public/evergreen/images/*.svg
+/public/
 
 /server/devdocs/search-index.js
 /server/devdocs/components-usage-stats.json
