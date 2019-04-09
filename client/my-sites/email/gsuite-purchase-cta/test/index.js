@@ -27,7 +27,6 @@ describe( 'GSuitePurchaseCta', () => {
 					gsuiteBasicAnnualCost={ '$72' }
 					recordTracksEvent={ noop }
 					selectedSiteSlug={ 'test.wordpress.com' }
-					translate={ text => text }
 				/>
 			)
 			.toJSON();
