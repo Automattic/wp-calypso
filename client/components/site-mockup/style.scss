@@ -139,13 +139,20 @@
 
 }
 
+@keyframes pulse {
+	0%   { background-color: rgba( var( --color-neutral-500-rgb ), 0.7 ); }
+	50%  { background-color: rgba( var( --color-neutral-500-rgb ), 1 ); }
+	100% { background-color: rgba( var( --color-neutral-500-rgb ), 0.7 ); }
+}
+
 // Gutenberg Content
 .site-mockup__entry-content {
 	color: #1e1e1e;
 
 	.wp-block-cover {
 		position: relative;
-		background-color: #000;
+		background-color: var( --color-neutral-500 );
+		animation: pulse 1.5s infinite;
 		background-size: cover;
 		background-position: center center;
 		display: flex;
@@ -236,6 +243,8 @@
 			margin: 0;
 
 			img {
+				background-color: var( --color-neutral-500 );
+				animation: pulse 1.5s infinite;
 				height: auto;
 				max-width: unset;
 				width: 100%;
