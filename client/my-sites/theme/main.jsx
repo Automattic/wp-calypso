@@ -61,6 +61,11 @@ import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/consta
 import { hasFeature } from 'state/sites/plans/selectors';
 import getPreviousRoute from 'state/selectors/get-previous-route';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ThemeSheet extends React.Component {
 	static displayName = 'ThemeSheet';
 
