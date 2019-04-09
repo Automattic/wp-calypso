@@ -43,9 +43,10 @@ const URL_PARAM_WHITELIST = [
 	'ref',
 	'format', // amp/non-amp
 ];
+const VALID_UTM_SOURCE_CAMPAIGN = new RegExp( '^[a-zA-Z\\d_\\-]{1,' + MAX_UTM_LENGTH + '}$' );
 
-function isValidUtmSurceOrCampaign( value ) {
-	return null !== value.match( new RegExp( '^[a-zA-Z\\d_\\-]{1,' + MAX_UTM_LENGTH + '}$' ) );
+function isValidUtmSourceOrCampaign( value ) {
+	return VALID_UTM_SOURCE_CAMPAIGN.test( value );
 }
 
 function isValidOtherUrlParamValue( key, value ) {
@@ -62,7 +63,7 @@ function isValidWhitelistedUrlParamValue( key, value ) {
 	if ( -1 === URL_PARAM_WHITELIST.indexOf( key ) ) {
 		return false;
 	} else if ( 'utm_source' === key || 'utm_campaign' === value ) {
-		return isValidUtmSurceOrCampaign( value );
+		return isValidUtmSourceOrCampaign( value );
 	}
 
 	return isValidOtherUrlParamValue( key, value );
