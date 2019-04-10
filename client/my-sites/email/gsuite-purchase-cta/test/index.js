@@ -23,8 +23,9 @@ describe( 'GSuitePurchaseCta', () => {
 		const tree = renderer
 			.create(
 				<GSuitePurchaseCta
+					currencyCode={ 'USD' }
 					domainName={ 'test.com' }
-					gsuiteBasicAnnualCost={ '$72' }
+					gsuiteBasicCost={ 72 }
 					recordTracksEvent={ noop }
 					selectedSiteSlug={ 'test.wordpress.com' }
 				/>

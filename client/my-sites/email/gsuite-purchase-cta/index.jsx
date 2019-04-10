@@ -31,8 +31,9 @@ import QueryProductsList from 'components/data/query-products-list';
 import './style.scss';
 
 export const GSuitePurchaseCta = ( {
+	currencyCode,
 	domainName,
-	gsuiteBasicAnnualCost,
+	gsuiteBasicCost,
 	recordTracksEvent: recordEvent,
 	selectedSiteSlug,
 } ) => {
@@ -84,7 +85,11 @@ export const GSuitePurchaseCta = ( {
 
 						<div className="gsuite-purchase-cta__skus">
 							<GSuitePurchaseCtaSkuInfo
-								annualPrice={ gsuiteBasicAnnualCost }
+								annualPrice={
+									gsuiteBasicCost && currencyCode
+										? getAnnualPrice( gsuiteBasicCost, currencyCode )
+										: '-'
+								}
 								buttonText={ translate( 'Add G Suite' ) }
 								onButtonClick={ () => {
 									goToAddGSuiteUsers( 'basic' );
@@ -107,21 +112,18 @@ export const GSuitePurchaseCta = ( {
 };
 
 GSuitePurchaseCta.propTypes = {
+	currencyCode: PropTypes.string.isRequired,
 	domainName: PropTypes.string.isRequired,
-	gsuiteBasicAnnualCost: PropTypes.string.isRequired,
+	gsuiteBasicCost: PropTypes.number.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
 export default connect(
-	state => {
-		const gappsCost = getProductCost( state, 'gapps' );
-		const currencyCode = getCurrentUserCurrencyCode( state );
-		return {
-			gsuiteBasicAnnualCost:
-				gappsCost && currencyCode ? getAnnualPrice( gappsCost, currencyCode ) : '-',
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-		};
-	},
+	state => ( {
+		gsuiteBasicCost: getProductCost( state, 'gapps' ),
+		currencyCode: getCurrentUserCurrencyCode( state ),
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+	} ),
 	{ recordTracksEvent }
 )( GSuitePurchaseCta );

@@ -37,8 +37,8 @@ describe( 'GSuitePurchaseCta', () => {
 					buttonText={ 'Add G Suite Business' }
 					onButtonClick={ noop }
 					skuName={ 'G Suite Business' }
-					skuStorage={ 'Unlimited Storage' }
-					skuStorageNotice={ 'Accounts with fewer than 5 users have 1 TB per user' }
+					storageText={ 'Unlimited Storage' }
+					storageNoticeText={ 'Accounts with fewer than 5 users have 1 TB per user' }
 					showButton={ true }
 				/>
 			)

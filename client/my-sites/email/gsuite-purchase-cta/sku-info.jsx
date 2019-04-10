@@ -19,8 +19,8 @@ function GSuitePurchaseCtaSkuInfo( {
 	onButtonClick,
 	showButton,
 	skuName,
-	skuStorage,
-	skuStorageNotice,
+	storageText,
+	storageNoticeText,
 } ) {
 	const translate = useTranslate();
 	return (
@@ -42,10 +42,10 @@ function GSuitePurchaseCtaSkuInfo( {
 					} ) }
 				</span>
 			</h4>
-			{ skuStorage && (
+			{ storageText && (
 				<div className="gsuite-purchase-cta__sku-info-storage-area">
-					<h5>{ skuStorage }</h5>
-					{ skuStorageNotice && <InfoPopover>{ skuStorageNotice }</InfoPopover> }
+					<h5>{ storageText }</h5>
+					{ storageNoticeText && <InfoPopover>{ storageNoticeText }</InfoPopover> }
 				</div>
 			) }
 			{ showButton && (
@@ -67,8 +67,8 @@ GSuitePurchaseCtaSkuInfo.propTypes = {
 	showButton: PropTypes.bool.isRequired,
 	onButtonClick: PropTypes.func.isRequired,
 	skuName: PropTypes.string,
-	skuStorage: PropTypes.string,
-	skuStorageNotice: PropTypes.string,
+	storageText: PropTypes.string,
+	storageNoticeText: PropTypes.string,
 };
 
 export default GSuitePurchaseCtaSkuInfo;
