@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/wpcom-block-editor",
 	"version": "1.0.0-alpha.0",
-	"description": "Utilities for block editor in WordPress.com integration",
+	"description": "Utilities for the block editor in WordPress.com integration",
 	"sideEffects": true,
 	"repository": {
 		"type": "git",
