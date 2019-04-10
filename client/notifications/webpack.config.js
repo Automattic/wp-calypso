@@ -29,14 +29,14 @@ const spawnSync = require( 'child_process' ).spawnSync;
  * @return {object}                                webpack config
  */
 function getWebpackConfig(
-	env = {}, // eslint-disable-line no-unused-vars
+	env = {},
 	{
 		entry = path.join( __dirname, 'src', 'standalone' ),
 		'output-path': outputPath = path.join( __dirname, 'dist' ),
 		'output-filename': outputFilename = 'build.min.js',
 	}
 ) {
-	const webpackConfig = getBaseWebpackConfig( null, {
+	const webpackConfig = getBaseWebpackConfig( env, {
 		entry,
 		'output-filename': outputFilename,
 		'output-path': outputPath,
