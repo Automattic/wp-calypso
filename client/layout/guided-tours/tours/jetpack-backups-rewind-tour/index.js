@@ -7,6 +7,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
 import getRewindState from 'state/selectors/get-rewind-state';
 import meta from './meta';
 import {
@@ -27,6 +28,12 @@ function whenWeCanAutoconfigure( state ) {
 	const { canAutoconfigure, credentials = [] } = getRewindState( state, siteId );
 
 	return canAutoconfigure || credentials.some( c => c.type === 'auto' );
+}
+
+// @ TODO: debug why this doesn't listen to state changes properly
+function siteHasCredentials( state ) {
+	const siteId = getSelectedSiteId( state );
+	return getJetpackCredentialsUpdateStatus( state, siteId ) === 'success';
 }
 
 const JetpackBackupsRewindTourButtons = ( { backText, translate } ) => (
@@ -66,8 +73,8 @@ export const JetpackBackupsRewindTour = makeTour(
 		<Step
 			name="autoconfigureOrConfirm"
 			target=".credentials-setup-flow__tos .is-primary"
-			placement="beside"
-			arrow="right-top"
+			placement="below"
+			arrow="top-left"
 		>
 			{ ( { translate } ) => (
 				<Fragment>
@@ -117,7 +124,13 @@ export const JetpackBackupsRewindTour = makeTour(
 			} }
 		>
 			{ () => (
-				<Continue target=".rewind-credentials-form .is-primary" step="finish" click hidden />
+				<Continue
+					target=".rewind-credentials-form .is-primary"
+					step="finish"
+					when={ siteHasCredentials }
+					click
+					hidden
+				/>
 			) }
 		</Step>
 
