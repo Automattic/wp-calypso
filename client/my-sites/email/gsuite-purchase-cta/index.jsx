@@ -112,9 +112,9 @@ export const GSuitePurchaseCta = ( {
 };
 
 GSuitePurchaseCta.propTypes = {
-	currencyCode: PropTypes.string.isRequired,
+	currencyCode: PropTypes.string,
 	domainName: PropTypes.string.isRequired,
-	gsuiteBasicCost: PropTypes.number.isRequired,
+	gsuiteBasicCost: PropTypes.number,
 	recordTracksEvent: PropTypes.func.isRequired,
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
