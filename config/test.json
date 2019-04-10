@@ -40,7 +40,6 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"devdocs/components-usage-stats": false,
-		"devdocs/gutenberg-blocks": true,
 		"gdpr-banner": false,
 		"google-analytics": false,
 		"google-my-business": false,
