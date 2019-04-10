@@ -60,12 +60,22 @@ function GSuitePurchaseCtaSkuInfo( {
 						} ) }
 				</span>
 			</h4>
+			{ showMonthlyPrice && (
+				<h5 className="gsuite-purchase-cta__sku-info-annual-price">
+					{ translate( '%(price)s billed yearly', {
+						args: {
+							price: annualPrice,
+						},
+					} ) }
+				</h5>
+			) }
 			{ storageText && (
 				<div className="gsuite-purchase-cta__sku-info-storage-area">
 					<h5>{ storageText }</h5>
 					{ storageNoticeText && <InfoPopover>{ storageNoticeText }</InfoPopover> }
 				</div>
 			) }
+
 			{ showButton && (
 				<Button
 					className="gsuite-purchase-cta__sku-info-button"

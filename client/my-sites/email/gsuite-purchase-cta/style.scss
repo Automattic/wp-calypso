@@ -66,10 +66,14 @@
 .gsuite-purchase-cta__skus {
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	justify-content: space-evenly;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint( '>660px' ) {
 		flex-direction: row;
+	}
+
+	@include breakpoint( '>1040px' ) {
+		justify-content: space-between;
 	}
 }
 
@@ -78,6 +82,11 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+
+	&:only-child {
+		margin-left: 0;
+		margin-right: 0;
+	}
 }
 
 .gsuite-purchase-cta__sku-info-name-area {
@@ -117,6 +126,12 @@
 	.info-popover {
 		margin-left: 3px;
 	}
+}
+
+.gsuite-purchase-cta__sku-info-annual-price {
+	color: var( --color-text-subtle );
+	font-size: 13px;
+	font-style: italic;
 }
 
 .gsuite-purchase-cta__sku-info-button {
