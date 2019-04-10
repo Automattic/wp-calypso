@@ -50,14 +50,16 @@ module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude }
 /**
  * Return an array of styling relevant webpack plugin objects.
  *
- * @param  {Object}   _              Options
- * @param  {String}   _.cssFilename  filename pattern to use for CSS files
- * @param  {Boolean}  _.minify       whether to minify CSS
+ * @param  {Object}   _                   Options
+ * @param  {String}   _.chunkCssFilename  filename pattern to use for CSS files
+ * @param  {String}   _.cssFilename       filename pattern to use for CSS chunk files
+ * @param  {Boolean}  _.minify            whether to minify CSS
  *
- * @return {Object[]}                styling relevant webpack plugin objects
+ * @return {Object[]}                     styling relevant webpack plugin objects
  */
-module.exports.plugins = ( { cssFilename, minify } ) => [
+module.exports.plugins = ( { cssChunkFilename, cssFilename, minify } ) => [
 	new MiniCssExtractPluginWithRTL( {
+		chunkFilename: cssChunkFilename,
 		filename: cssFilename,
 		rtlEnabled: true,
 	} ),
