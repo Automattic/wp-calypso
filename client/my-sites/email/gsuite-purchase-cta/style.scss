@@ -1,6 +1,6 @@
 .gsuite-purchase-cta__product-logo {
-	font-size: 150%;
 	color: #757575;
+	font-size: 150%;
 
 	@include breakpoint( '<660px' ) {
 		width: 236px;
@@ -29,9 +29,9 @@
 }
 
 .gsuite-purchase-cta__header-description {
+	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	box-sizing: border-box;
 	font-size: 14px;
 
 	@include breakpoint( '>1040px' ) {
@@ -58,8 +58,8 @@
 		align-items: center;
 		display: flex;
 		flex-grow: 1;
-		margin-left: 20px;
 		justify-content: center;
+		margin-left: 20px;
 	}
 }
 
@@ -74,16 +74,16 @@
 }
 
 .gsuite-purchase-cta__sku-info {
+	align-items: flex-start;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	align-items: flex-start;
 }
 
 .gsuite-purchase-cta__sku-info-name-area {
 	h3 {
-		font-size: 150%;
 		color: #757575;
+		font-size: 150%;
 	}
 }
 
@@ -103,7 +103,7 @@
 
 .gsuite-purchase-cta__sku-info-storage-area {
 	display: flex;
-	direction: row;
+	flex-direction: row;
 	// the InfoPopover will try to make this div bigger when it is rendered
 	// we want them to always be the same size for when they appear side-by-side
 	height: 19.5px;
