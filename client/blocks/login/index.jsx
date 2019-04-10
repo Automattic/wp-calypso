@@ -28,7 +28,6 @@ import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/s
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import JetpackHeader from 'components/jetpack-header';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
@@ -36,7 +35,7 @@ import { login } from 'lib/paths';
 import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';
-import SocialConnectPrompt from './social-connect-prompt';
+import AsyncLoad from 'components/async-load';
 
 const user = userFactory();
 
@@ -212,7 +211,12 @@ class Login extends Component {
 			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
 			preHeader = (
 				<div className="login__jetpack-logo">
-					<JetpackHeader partnerSlug={ this.props.partnerSlug } darkColorScheme />
+					<AsyncLoad
+						require="components/jetpack-header"
+						placeholder={ null }
+						partnerSlug={ this.props.partnerSlug }
+						darkColorScheme
+					/>
 				</div>
 			);
 		}
@@ -280,7 +284,12 @@ class Login extends Component {
 		}
 
 		if ( socialConnect ) {
-			return <SocialConnectPrompt onSuccess={ this.handleValidLogin } />;
+			return (
+				<AsyncLoad
+					require="blocks/login/social-connect-prompt"
+					onSuccess={ this.handleValidLogin }
+				/>
+			);
 		}
 
 		return (
