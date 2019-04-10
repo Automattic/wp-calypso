@@ -27,6 +27,7 @@
 		"@wordpress/url": "2.3.3",
 		"jquery": "^1.12",
 		"lodash": "4.17.11",
-		"react": "16.8.6"
+		"react": "16.8.6",
+		"tinymce": "4.8.5"
 	}
 }

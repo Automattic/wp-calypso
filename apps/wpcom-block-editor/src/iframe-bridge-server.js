@@ -1,4 +1,4 @@
-/* global tinymce, calypsoifyGutenberg */
+/* global calypsoifyGutenberg */
 
 /**
  * External dependencies
@@ -10,34 +10,13 @@ import { createBlock, parse } from '@wordpress/blocks';
 import { addFilter } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
+import tinymce from 'tinymce/tinymce';
 
 /**
- * Sends a message object to the parent. The object is extended to include a type that
- * identifies the source as Gutenberg related.
- *
- * @param {Object} message object containing the action to be performed on the parent and any require options
+ * Internal dependencies
  */
-function sendMessage( message ) {
-	if ( ! window || ! window.parent ) {
-		return;
-	}
-
-	window.parent.postMessage( { ...message, type: 'gutenbergIframeMessage' }, '*' );
-}
-
-/**
- * Checks self and top to determine if we are being loaded in an iframe.
- * Can't use window.frameElement because we are being embedded from a different origin.
- *
- * @return {Boolean} Whether this script is loaded in a iframe.
- */
-function inIframe() {
-	try {
-		return window.self !== window.top;
-	} catch ( e ) {
-		return true;
-	}
-}
+import { inIframe, sendMessage } from './utils';
+import './classic-block-media-modal';
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
