@@ -12,6 +12,10 @@ function getAnnualPrice( cost, currencyCode ) {
 	return formatPrice( cost, currencyCode );
 }
 
+function getMonthlyPrice( cost, currencyCode ) {
+	return formatPrice( cost / 12, currencyCode );
+}
+
 function googleAppsSettingsUrl( domainName ) {
 	return GOOGLE_APPS_LINK_PREFIX + domainName;
 }
@@ -36,4 +40,10 @@ function getLoginUrlWithTOSRedirect( email, domain ) {
 	);
 }
 
-export { getAnnualPrice, googleAppsSettingsUrl, formatPrice, getLoginUrlWithTOSRedirect };
+export {
+	getAnnualPrice,
+	getMonthlyPrice,
+	googleAppsSettingsUrl,
+	formatPrice,
+	getLoginUrlWithTOSRedirect,
+};

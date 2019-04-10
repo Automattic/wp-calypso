@@ -42,10 +42,11 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
           className="gsuite-purchase-cta__skus"
         >
           <GSuitePurchaseCtaSkuInfo
-            annualPrice="$72"
             buttonText="Add G Suite"
+            currencyCode="USD"
             onButtonClick={[Function]}
             showButton={true}
+            skuCost={72}
           />
         </div>
       </div>

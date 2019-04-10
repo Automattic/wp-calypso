@@ -15,17 +15,8 @@ jest.mock( 'components/forms/form-button', () => 'Button' );
 jest.mock( 'components/info-popover', () => 'InfoPopover' );
 
 describe( 'GSuitePurchaseCta', () => {
-	test( 'it renders GSuitePurchaseCtaSkuInfo with all required props', () => {
-		const tree = renderer
-			.create(
-				<GSuitePurchaseCtaSkuInfo
-					annualPrice={ '$72' }
-					buttonText={ 'Add G Suite' }
-					onButtonClick={ noop }
-					showButton={ true }
-				/>
-			)
-			.toJSON();
+	test( 'it renders GSuitePurchaseCtaSkuInfo with no props', () => {
+		const tree = renderer.create( <GSuitePurchaseCtaSkuInfo /> ).toJSON();
 		expect( tree ).toMatchSnapshot();
 	} );
 
@@ -33,13 +24,15 @@ describe( 'GSuitePurchaseCta', () => {
 		const tree = renderer
 			.create(
 				<GSuitePurchaseCtaSkuInfo
-					annualPrice={ '$144' }
 					buttonText={ 'Add G Suite Business' }
+					currencyCode={ 'USD' }
 					onButtonClick={ noop }
+					showButton={ true }
+					showMonthlyPrice={ false }
+					skuCost={ 144 }
 					skuName={ 'G Suite Business' }
 					storageText={ 'Unlimited Storage' }
 					storageNoticeText={ 'Accounts with fewer than 5 users have 1 TB per user' }
-					showButton={ true }
 				/>
 			)
 			.toJSON();

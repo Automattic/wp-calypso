@@ -16,7 +16,6 @@ import config from 'config';
 import CompactCard from 'components/card/compact';
 import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getAnnualPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductCost } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -54,9 +53,6 @@ export const GSuitePurchaseCta = ( {
 
 	const translate = useTranslate();
 	const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
-	// display '-' instead of 0 if we don't have a price yet
-	const gsuiteBasicAnnualCost =
-		gsuiteBasicCost && currencyCode ? getAnnualPrice( gsuiteBasicCost, currencyCode ) : '-';
 
 	return (
 		<EmailVerificationGate
@@ -88,12 +84,13 @@ export const GSuitePurchaseCta = ( {
 
 						<div className="gsuite-purchase-cta__skus">
 							<GSuitePurchaseCtaSkuInfo
-								annualPrice={ gsuiteBasicAnnualCost }
+								currencyCode={ currencyCode }
 								buttonText={ translate( 'Add G Suite' ) }
 								onButtonClick={ () => {
 									goToAddGSuiteUsers( 'basic' );
 								} }
 								showButton={ upgradeAvailable }
+								skuCost={ gsuiteBasicCost }
 							/>
 						</div>
 					</div>
