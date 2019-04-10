@@ -12,6 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import config from 'config';
 import CompactCard from 'components/card/compact';
 import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
@@ -33,6 +34,7 @@ export const GSuitePurchaseCta = ( {
 	currencyCode,
 	domainName,
 	gsuiteBasicCost,
+	gsuiteBusinessCost,
 	recordTracksEvent: recordEvent,
 	selectedSiteSlug,
 } ) => {
@@ -53,6 +55,13 @@ export const GSuitePurchaseCta = ( {
 
 	const translate = useTranslate();
 	const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
+	const abTestGroup = abtest( 'gsuitePurchaseCtaOptions' );
+	const showBusinessOption =
+		abTestGroup === 'showBusinessWithAnnualPrices' ||
+		abTestGroup === 'showBusinessWithMonthlyPrices';
+	const showMonthlyPrice =
+		abTestGroup === 'hideBusinessWithMonthlyPrices' ||
+		abTestGroup === 'showBusinessWithMonthlyPrices';
 
 	return (
 		<EmailVerificationGate
@@ -90,8 +99,28 @@ export const GSuitePurchaseCta = ( {
 									goToAddGSuiteUsers( 'basic' );
 								} }
 								showButton={ upgradeAvailable }
+								showMonthlyPrice={ showMonthlyPrice }
 								skuCost={ gsuiteBasicCost }
+								skuName={ showBusinessOption ? translate( 'G Suite Basic' ) : undefined }
+								storageText={ showBusinessOption ? translate( '30 GB of Storage' ) : undefined }
 							/>
+							{ showBusinessOption && (
+								<GSuitePurchaseCtaSkuInfo
+									currencyCode={ currencyCode }
+									buttonText={ translate( 'Add G Suite Business' ) }
+									onButtonClick={ () => {
+										goToAddGSuiteUsers( 'business' );
+									} }
+									showButton={ upgradeAvailable }
+									showMonthlyPrice={ showMonthlyPrice }
+									skuCost={ gsuiteBusinessCost }
+									skuName={ translate( 'G Suite Business' ) }
+									storageText={ translate( 'Unlimited Storage' ) }
+									storageNoticeText={ translate(
+										'Accounts with fewer than 5 users have 1 TB per user.'
+									) }
+								/>
+							) }
 						</div>
 					</div>
 
@@ -111,6 +140,7 @@ GSuitePurchaseCta.propTypes = {
 	currencyCode: PropTypes.string,
 	domainName: PropTypes.string.isRequired,
 	gsuiteBasicCost: PropTypes.number,
+	gsuiteBusinessCost: PropTypes.number,
 	recordTracksEvent: PropTypes.func.isRequired,
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
@@ -118,6 +148,7 @@ GSuitePurchaseCta.propTypes = {
 export default connect(
 	state => ( {
 		gsuiteBasicCost: getProductCost( state, 'gapps' ),
+		gsuiteBusinessCost: getProductCost( state, 'gapps_unlimited' ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	} ),
