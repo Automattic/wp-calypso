@@ -39,6 +39,22 @@ export default function() {
 		],
 	} );
 
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementAddGSuiteUsersLegacy( ':site', ':domain' ),
+			paths.emailManagementAddGSuiteUsersLegacy( ':site' ),
+		],
+		handlers: [ controller.emailManagementAddGSuiteUsersLegacyRedirect ],
+	} );
+
+	page(
+		paths.emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' ),
+		...commonHandlers,
+		controller.emailManagementNewGSuiteAccount,
+		makeLayout,
+		clientRender
+	);
+
 	page(
 		paths.emailManagementForwarding( ':site', ':domain' ),
 		...commonHandlers,

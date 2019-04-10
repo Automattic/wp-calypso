@@ -51,6 +51,7 @@ import {
 	emailManagement,
 	emailManagementForwarding,
 	emailManagementAddGSuiteUsers,
+	emailManagementNewGSuiteAccount,
 } from 'my-sites/email/paths';
 import SitesComponent from 'my-sites/sites';
 import { warningNotice } from 'state/notices/actions';
@@ -172,6 +173,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 		domainManagementTransferToOtherSite,
 		emailManagement,
 		emailManagementAddGSuiteUsers,
+		emailManagementNewGSuiteAccount,
 		emailManagementForwarding,
 	];
 
