@@ -14,7 +14,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import config from 'config';
 import CompactCard from 'components/card/compact';
-import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
+import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getAnnualPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -49,7 +49,7 @@ export const GSuitePurchaseCta = ( {
 			plan_type: planType,
 		} );
 
-		page( emailManagementAddGSuiteUsers( selectedSiteSlug, domainName ) );
+		page( emailManagementNewGSuiteAccount( selectedSiteSlug, domainName, planType ) );
 	};
 
 	const translate = useTranslate();
