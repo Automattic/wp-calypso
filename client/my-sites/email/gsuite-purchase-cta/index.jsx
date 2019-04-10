@@ -3,11 +3,11 @@
 /**
  * External dependencies
  */
-import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -54,6 +54,9 @@ export const GSuitePurchaseCta = ( {
 
 	const translate = useTranslate();
 	const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
+	// display '-' instead of 0 if we don;t have a price yet
+	const gsuiteBasicAnnualCost =
+		gsuiteBasicCost && currencyCode ? getAnnualPrice( gsuiteBasicCost, currencyCode ) : '-';
 
 	return (
 		<EmailVerificationGate
@@ -85,11 +88,7 @@ export const GSuitePurchaseCta = ( {
 
 						<div className="gsuite-purchase-cta__skus">
 							<GSuitePurchaseCtaSkuInfo
-								annualPrice={
-									gsuiteBasicCost && currencyCode
-										? getAnnualPrice( gsuiteBasicCost, currencyCode )
-										: '-'
-								}
+								annualPrice={ gsuiteBasicAnnualCost }
 								buttonText={ translate( 'Add G Suite' ) }
 								onButtonClick={ () => {
 									goToAddGSuiteUsers( 'basic' );
