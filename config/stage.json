@@ -60,8 +60,6 @@
 		"manage/customize": true,
 		"manage/edit-user": true,
 		"manage/import-in-sidebar": true,
-		"manage/import/engine6": true,
-		"manage/import/medium": true,
 		"manage/pages": true,
 		"manage/payment-methods": true,
 		"manage/plan-features": true,
