@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-build",
-	"version": "1.0.0-beta.2",
+	"version": "1.0.0-beta.3",
 	"description": "Shared Calypso build configuration files",
 	"keywords": [
 		"config",
