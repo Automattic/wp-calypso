@@ -97,7 +97,7 @@ class EmailManagement extends React.Component {
 		if ( domainList.some( hasGSuite ) ) {
 			return this.googleAppsUsersCard();
 		} else if ( hasGSuiteSupportedDomain( domainList ) ) {
-			return this.addGSuiteCta( getEligibleGSuiteDomain( selectedDomainName, domainList ) );
+			return this.addGSuiteCta();
 		} else if ( emailForwardingDomain && isGSuiteRestricted() && selectedDomainName ) {
 			return this.addEmailForwardingCard( emailForwardingDomain );
 		}
@@ -154,12 +154,13 @@ class EmailManagement extends React.Component {
 		);
 	}
 
-	addGSuiteCta( domainName ) {
+	addGSuiteCta() {
 		const { domains, selectedDomainName } = this.props;
 		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
+		const gsuiteDomainName = getEligibleGSuiteDomain( selectedDomainName, domains );
 		return (
 			<Fragment>
-				<GSuitePurchaseCta domainName={ domainName } />
+				<GSuitePurchaseCta domainName={ gsuiteDomainName } />
 				{ emailForwardingDomain && this.addEmailForwardingCard( emailForwardingDomain ) }
 			</Fragment>
 		);
