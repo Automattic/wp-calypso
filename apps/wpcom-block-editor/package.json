@@ -18,7 +18,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prebuild": "npm run clean",
-		"build": "webpack --config='../../packages/calypso-build/webpack.config.js' --output-path='./dist' --env.WP='true' iframe-bridge-server='./src/iframe-bridge-server.js' "
+		"build": "webpack --config='../../packages/calypso-build/webpack.config.js' --output-path='./dist' --env.WP='true' iframe-bridge-server='./src/iframe-bridge-server.js' tinymce='./src/tinymce.js'"
 	},
 	"dependencies": {
 		"@wordpress/data": "4.4.0",

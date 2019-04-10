@@ -16,7 +16,6 @@ import tinymce from 'tinymce/tinymce';
  * Internal dependencies
  */
 import { inIframe, sendMessage } from './utils';
-import './classic-block-media-modal';
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
