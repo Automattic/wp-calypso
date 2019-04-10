@@ -20,7 +20,7 @@ function GuidedTours( props ) {
 		return null;
 	}
 
-	return <AsyncLoad require="./component" { ...ownProps } />;
+	return <AsyncLoad require="layout/guided-tours/component" { ...ownProps } />;
 }
 
 export default connect( state => {
