@@ -53,7 +53,10 @@ function getWebpackConfig(
 	}
 ) {
 	const workerCount = 1;
-	const cssFilename = '[name].css';
+	const cssFilename = path.parse( outputFilename ).name + '.css';
+	const cssChunkFilename = outputChunkFilename
+		? path.parse( outputChunkFilename ).name + '.css'
+		: undefined;
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
@@ -107,7 +110,7 @@ function getWebpackConfig(
 				global: 'window',
 			} ),
 			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
-			...SassConfig.plugins( { cssFilename, minify: ! isDevelopment } ),
+			...SassConfig.plugins( { cssChunkFilename, cssFilename, minify: ! isDevelopment } ),
 			new DuplicatePackageCheckerPlugin(),
 			...( env.WP ? [ new WordPressExternalDependenciesPlugin() ] : [] ),
 		],
