@@ -73,9 +73,7 @@ export class CurrentPlanThankYouCard extends Component {
 									<ProgressBar isPulsing total={ 100 } value={ progressComplete || 0 } />
 
 									<p>
-										<a href={ this.getMyPlanRoute() }>
-											{ translate( 'Skip setup. I’ll do this later.' ) }
-										</a>
+										<a href={ this.getMyPlanRoute() }>{ translate( 'Hide message' ) }</a>
 									</p>
 								</Fragment>
 							) }
