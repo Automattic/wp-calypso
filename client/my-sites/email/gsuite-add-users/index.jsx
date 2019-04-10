@@ -15,19 +15,20 @@ import React, { Fragment } from 'react';
 
 import AddEmailAddressesCard from './add-users';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
-import { emailManagementAddGSuiteUsers, emailManagement } from 'my-sites/email/paths';
+import {
+	emailManagementAddGSuiteUsers,
+	emailManagementNewGSuiteAccount,
+	emailManagement,
+} from 'my-sites/email/paths';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
-import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
-import { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
 import { getSelectedSite } from 'state/ui/selectors';
+import { hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
 import Main from 'components/main';
-import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import SectionHeader from 'components/section-header';
-import QueryEmailForwards from 'components/data/query-email-forwards';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 
@@ -60,40 +61,23 @@ class GSuiteAddUsers extends React.Component {
 	renderAddGSuite() {
 		const {
 			domains,
-			domainsWithForwards,
 			gsuiteUsers,
+			planType,
 			isRequestingDomains,
 			selectedDomainName,
 			selectedSite,
 			translate,
 		} = this.props;
-		const gSuiteSupportedDomains = getGSuiteSupportedDomains( domains );
 
 		return (
 			<Fragment>
-				{ domainsWithForwards.length ? (
-					<Notice showDismiss={ false } status="is-warning">
-						{ translate(
-							'Please note that email forwards are not compatible with G Suite, and will be disabled once G Suite is added to this domain. The following domains have forwards:'
-						) }
-						<ul>
-							{ domainsWithForwards.map( domainName => {
-								return <li key={ domainName }>{ domainName }</li>;
-							} ) }
-						</ul>
-					</Notice>
-				) : (
-					''
-				) }
-				{ gSuiteSupportedDomains.map( domain => {
-					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
-				} ) }
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
 				{ gsuiteUsers ? (
 					<AddEmailAddressesCard
 						domains={ domains }
 						isRequestingSiteDomains={ isRequestingDomains }
 						gsuiteUsers={ gsuiteUsers }
+						planType={ planType }
 						selectedDomainName={ selectedDomainName }
 						selectedSite={ selectedSite }
 					/>
@@ -105,12 +89,11 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	render() {
-		const { translate, selectedDomainName, selectedSite } = this.props;
+		const { translate, planType, selectedDomainName, selectedSite } = this.props;
 
-		const analyticsPath = emailManagementAddGSuiteUsers(
-			':site',
-			selectedDomainName ? ':domain' : undefined
-		);
+		const analyticsPath = planType
+			? emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' )
+			: emailManagementAddGSuiteUsers( ':site', selectedDomainName ? ':domain' : undefined );
 		return (
 			<Fragment>
 				<PageViewTracker path={ analyticsPath } title="Domain Management > Add G Suite Users" />
@@ -140,6 +123,7 @@ GSuiteAddUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array,
 	isRequestingDomains: PropTypes.bool.isRequired,
+	planType: PropTypes.oneOf( [ 'basic', 'business' ] ),
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
@@ -150,10 +134,8 @@ GSuiteAddUsers.propTypes = {
 export default connect( state => {
 	const selectedSite = getSelectedSite( state );
 	const siteId = get( selectedSite, 'ID', null );
-	const domains = getDecoratedSiteDomains( state, siteId );
 	return {
-		domains,
-		domainsWithForwards: getDomainsWithForwards( state, domains ),
+		domains: getDecoratedSiteDomains( state, siteId ),
 		gsuiteUsers: getGSuiteUsers( state, siteId ),
 		isRequestingDomains: isRequestingSiteDomains( state, siteId ),
 		selectedSite,

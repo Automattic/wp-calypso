@@ -33,7 +33,7 @@ import NewUserForm from './new-user-form';
  */
 import './add-users.scss';
 
-function getGoogleAppsCartItems( { domains, fieldsets } ) {
+function getGoogleAppsCartItems( { domains, fieldsets, product_slug } ) {
 	let groups = groupBy( fieldsets, function( fieldset ) {
 		return fieldset.domain.value;
 	} );
@@ -54,7 +54,7 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 		if ( hasGSuite( domainInfo ) ) {
 			item = cartItems.googleAppsExtraLicenses( { domain, users } );
 		} else {
-			item = cartItems.googleApps( { domain, users } );
+			item = cartItems.googleApps( { domain, product_slug, users } );
 		}
 
 		return item;
@@ -258,6 +258,7 @@ class AddEmailAddressesCard extends React.Component {
 
 	addProductsAndGoToCheckout() {
 		const googleAppsCartItems = getGoogleAppsCartItems( {
+			product_slug: 'business' === this.props.planType ? 'gapps_unlimited' : 'gapps',
 			domains: this.props.domains,
 			fieldsets: filterUsers( {
 				users: this.state.fieldsets,
@@ -323,6 +324,7 @@ AddEmailAddressesCard.propTypes = {
 	domains: PropTypes.array.isRequired,
 	isRequestingSiteDomains: PropTypes.bool.isRequired,
 	gsuiteUsers: PropTypes.array.isRequired,
+	planType: PropTypes.oneOf( [ 'basic', 'business' ] ),
 	selectedDomainName: PropTypes.string,
 };
 
