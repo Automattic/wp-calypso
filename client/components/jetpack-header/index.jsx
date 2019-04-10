@@ -40,6 +40,7 @@ export class JetpackHeader extends PureComponent {
 						<AsyncLoad
 							require="components/jetpack-header/dreamhost"
 							darkColorScheme={ darkColorScheme }
+							placeholder={ null }
 						/>
 					</JetpackPartnerLogoGroup>
 				);
@@ -54,6 +55,7 @@ export class JetpackHeader extends PureComponent {
 						<AsyncLoad
 							require="components/jetpack-header/pressable"
 							darkColorScheme={ darkColorScheme }
+							placeholder={ null }
 						/>
 					</JetpackPartnerLogoGroup>
 				);
@@ -68,6 +70,7 @@ export class JetpackHeader extends PureComponent {
 						<AsyncLoad
 							require="components/jetpack-header/bluehost"
 							darkColorScheme={ darkColorScheme }
+							placeholder={ null }
 						/>
 					</JetpackPartnerLogoGroup>
 				);
@@ -82,6 +85,7 @@ export class JetpackHeader extends PureComponent {
 						<AsyncLoad
 							require="components/jetpack-header/inmotion"
 							darkColorScheme={ darkColorScheme }
+							placeholder={ null }
 						/>
 					</JetpackPartnerLogoGroup>
 				);
@@ -92,6 +96,7 @@ export class JetpackHeader extends PureComponent {
 					<AsyncLoad
 						require="components/jetpack-header/milesweb"
 						darkColorScheme={ darkColorScheme }
+						placeholder={ null }
 					/>
 				);
 
@@ -105,6 +110,7 @@ export class JetpackHeader extends PureComponent {
 						<AsyncLoad
 							require="components/jetpack-header/liquidweb"
 							darkColorScheme={ darkColorScheme }
+							placeholder={ null }
 						/>
 					</JetpackPartnerLogoGroup>
 				);

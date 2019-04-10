@@ -213,6 +213,7 @@ class Login extends Component {
 				<div className="login__jetpack-logo">
 					<AsyncLoad
 						require="components/jetpack-header"
+						placeholder={ null }
 						partnerSlug={ this.props.partnerSlug }
 						darkColorScheme
 					/>
