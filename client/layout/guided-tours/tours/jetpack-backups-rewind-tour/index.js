@@ -41,16 +41,7 @@ const JetpackBackupsRewindTourButtons = ( { backText, translate } ) => (
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackBackupsRewindTour = makeTour(
 	<Tour { ...meta }>
-		<Step
-			name="init"
-			target=".credentials-setup-flow"
-			placement="beside"
-			arrow="right-top"
-			style={ {
-				animationDelay: '0.7s',
-				zIndex: 1,
-			} }
-		>
+		<Step name="init" target=".credentials-setup-flow" placement="beside" arrow="right-top">
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
@@ -77,10 +68,6 @@ export const JetpackBackupsRewindTour = makeTour(
 			target=".credentials-setup-flow__tos .is-primary"
 			placement="beside"
 			arrow="right-top"
-			style={ {
-				animationDelay: '0.7s',
-				zIndex: 1,
-			} }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
