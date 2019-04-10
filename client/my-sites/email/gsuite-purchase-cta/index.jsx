@@ -54,7 +54,7 @@ export const GSuitePurchaseCta = ( {
 
 	const translate = useTranslate();
 	const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
-	// display '-' instead of 0 if we don;t have a price yet
+	// display '-' instead of 0 if we don't have a price yet
 	const gsuiteBasicAnnualCost =
 		gsuiteBasicCost && currencyCode ? getAnnualPrice( gsuiteBasicCost, currencyCode ) : '-';
 
