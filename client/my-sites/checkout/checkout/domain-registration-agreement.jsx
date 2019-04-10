@@ -82,8 +82,7 @@ class DomainRegistrationAgreement extends React.Component {
 	};
 
 	renderAgreements = () => {
-		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
-		const agreementsList = this.getDomainsByRegistrationAgreement( domainRegistrations );
+		const agreementsList = this.getDomainsByRegistrationAgreement();
 
 		if ( agreementsList.length > 1 ) {
 			return this.renderMultipleAgreements( agreementsList );
