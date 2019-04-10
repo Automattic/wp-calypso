@@ -111,7 +111,7 @@ class WordPressExternalDependenciesPlugin {
  * following numbers.
  *
  * From @wordpress/scripts@3.1.0
- * Duplicated here to avoid depending on @wordpress/script with bloated dependencies.
+ * Duplicated here to avoid depending on @wordpress/scripts with bloated dependencies.
  *
  * @param {string} string Input dash-delimited string.
  *
