@@ -18,10 +18,13 @@ const list = createReducer(
 			...state,
 			[ data.siteId ]: {
 				total: get( data, 'subscribers.total', 0 ),
-				ownerships: get( data, 'subscribers.ownerships', [] ).reduce( ( prev, item ) => {
-					prev[ item.id ] = item;
-					return prev;
-				}, get( state, [ data.siteId, 'ownerships' ], {} ) ),
+				ownerships: get( data, 'subscribers.ownerships', [] ).reduce(
+					( prev, item ) => {
+						prev[ item.id ] = item;
+						return prev;
+					},
+					{ ...get( state, [ data.siteId, 'ownerships' ], {} ) }
+				),
 			},
 		} ),
 	}

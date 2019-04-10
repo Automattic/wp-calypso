@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, orderBy } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -87,9 +87,15 @@ class MembershipsSection extends Component {
 				</div>
 				<div className="memberships__module-content module-content">
 					<div>
-						{ Object.values( this.props.subscribers ).map( sub => this.renderSubscriber( sub ) ) }
+						{ orderBy( Object.values( this.props.subscribers ), [ 'id' ], [ 'desc' ] ).map( sub =>
+							this.renderSubscriber( sub )
+						) }
 					</div>
-					<InfiniteScroll nextPageMethod={ this.fetchNextSubscriberPage } />
+					<InfiniteScroll
+						nextPageMethod={ triggeredByInteraction =>
+							this.fetchNextSubscriberPage( triggeredByInteraction, false )
+						}
+					/>
 				</div>
 			</Card>
 		);
