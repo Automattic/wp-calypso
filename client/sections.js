@@ -42,4 +42,10 @@ sections.push( {
 	enableLoggedOut: true,
 } );
 
+sections.push( {
+	name: 'looka',
+	paths: [ '/looka' ],
+	module: 'my-sites/looka',
+} );
+
 module.exports = sections.concat( extensionSections.filter( Boolean ) );
