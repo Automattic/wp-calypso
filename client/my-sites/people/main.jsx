@@ -27,6 +27,19 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 
 class People extends React.Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			totalFollowers: 0,
+		};
+	}
+
+	getFollowers = count => {
+		if ( count ) {
+			this.setState( { totalFollowers: count } );
+		}
+	};
+
 	renderPeopleList() {
 		const { site, search, filter, translate } = this.props;
 
@@ -34,14 +47,28 @@ class People extends React.Component {
 			case 'team':
 				return <TeamList site={ site } search={ search } />;
 			case 'followers':
-				return <FollowersList site={ site } label={ translate( 'Followers' ) } />;
+				return (
+					<FollowersList
+						site={ site }
+						label={ translate( 'You have %(number)d follower', 'You have %(number)d followers', {
+							count: this.state.totalFollowers,
+							args: { number: this.state.totalFollowers },
+						} ) }
+						getFollowers={ this.getFollowers }
+					/>
+				);
 			case 'email-followers':
 				return (
 					<FollowersList
 						site={ site }
 						search={ search }
-						label={ translate( 'Email Followers' ) }
+						label={ translate(
+							'You have %(number)d email follower',
+							'You have %(number)d email followers',
+							{ count: this.state.totalFollowers, args: { number: this.state.totalFollowers } }
+						) }
 						type="email"
+						getFollowers={ this.getFollowers }
 					/>
 				);
 			case 'viewers':

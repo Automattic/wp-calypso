@@ -37,6 +37,16 @@ const Followers = localize(
 			bulkEditing: false,
 		};
 
+		sendTotalFollowers() {
+			this.props.getFollowers( this.props.totalFollowers );
+		}
+
+		componentDidUpdate( prevProps ) {
+			if ( prevProps.totalFollowers !== this.props.totalFollowers ) {
+				this.sendTotalFollowers();
+			}
+		}
+
 		renderPlaceholders() {
 			return <PeopleListItem key="people-list-item-placeholder" />;
 		}
@@ -260,6 +270,7 @@ const FollowersList = props => {
 			site={ props.site }
 			label={ props.label }
 			type={ props.type }
+			getFollowers={ props.getFollowers }
 		>
 			<Followers />
 		</DataComponent>
