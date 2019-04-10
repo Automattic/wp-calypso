@@ -12,8 +12,10 @@ import page from 'page';
  */
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection } from 'my-sites/controller';
-import { onboarding } from './controller';
+import { onboarding, editor, explore } from './controller';
 
 export default function() {
-	page( '/looka/:domain?', siteSelection, navigation, onboarding, makeLayout, clientRender );
+	page( '/looka/onboarding', siteSelection, navigation, onboarding, makeLayout, clientRender );
+	page( '/looka/explore', siteSelection, navigation, explore, makeLayout, clientRender );
+	page( '/looka/editor', siteSelection, navigation, editor, makeLayout, clientRender );
 }
