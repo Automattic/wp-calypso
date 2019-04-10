@@ -177,7 +177,7 @@ export class TldFilterBar extends Component {
 						maxSuggestions={ 500 }
 						onChange={ this.handleTokenChange }
 						placeholder={ translate( 'Select an extension' ) }
-						suggestions={ this.props.availableTlds }
+						suggestions={ [ ...this.props.availableTlds ].sort() }
 						tokenizeOnSpace
 						value={ this.props.filters.tlds }
 					/>
