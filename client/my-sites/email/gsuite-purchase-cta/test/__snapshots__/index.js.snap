@@ -46,6 +46,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
             currencyCode="USD"
             onButtonClick={[Function]}
             showButton={true}
+            showMonthlyPrice={false}
             skuCost={72}
           />
         </div>

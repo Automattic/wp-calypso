@@ -38,4 +38,22 @@ describe( 'GSuitePurchaseCta', () => {
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
 	} );
+
+	test( 'it renders GSuitePurchaseCtaSkuInfo with monthly prices', () => {
+		const tree = renderer
+			.create(
+				<GSuitePurchaseCtaSkuInfo
+					buttonText={ 'Add G Suite Business' }
+					currencyCode={ 'USD' }
+					onButtonClick={ noop }
+					showButton={ true }
+					showMonthlyPrice={ true }
+					skuCost={ 144 }
+					skuName={ 'G Suite Business' }
+					storageText={ 'Unlimited Storage' }
+				/>
+			)
+			.toJSON();
+		expect( tree ).toMatchSnapshot();
+	} );
 } );

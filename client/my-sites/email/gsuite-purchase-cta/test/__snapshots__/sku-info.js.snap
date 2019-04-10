@@ -41,6 +41,49 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all props 1`
 </div>
 `;
 
+exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with monthly prices 1`] = `
+<div
+  className="gsuite-purchase-cta__sku-info"
+>
+  <div
+    className="gsuite-purchase-cta__sku-info-name-area"
+  >
+    <h3>
+      G Suite Business
+    </h3>
+  </div>
+  <h4
+    className="gsuite-purchase-cta__sku-info-name-price-per-user"
+  >
+    <span>
+      <strong>
+        $12
+      </strong>
+       per user / month
+    </span>
+  </h4>
+  <h5
+    className="gsuite-purchase-cta__sku-info-annual-price"
+  >
+    $144 billed yearly
+  </h5>
+  <div
+    className="gsuite-purchase-cta__sku-info-storage-area"
+  >
+    <h5>
+      Unlimited Storage
+    </h5>
+  </div>
+  <Button
+    className="gsuite-purchase-cta__sku-info-button"
+    onClick={[Function]}
+    type="button"
+  >
+    Add G Suite Business
+  </Button>
+</div>
+`;
+
 exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with no props 1`] = `
 <div
   className="gsuite-purchase-cta__sku-info"
