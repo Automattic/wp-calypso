@@ -3,7 +3,6 @@
  */
 const { ExternalsPlugin } = require( 'webpack' );
 const { RawSource } = require( 'webpack-sources' );
-const { camelCaseDash } = require( '@wordpress/scripts/utils' );
 const { createHash } = require( 'crypto' );
 
 const WORDPRESS_NAMESPACE = '@wordpress/';
@@ -103,6 +102,23 @@ class WordPressExternalDependenciesPlugin {
 			}
 		} );
 	}
+}
+
+/**
+ * Given a string, returns a new string with dash separators converted to
+ * camelCase equivalent. This is not as aggressive as `_.camelCase` in
+ * converting to uppercase, where Lodash will also capitalize letters
+ * following numbers.
+ *
+ * From @wordpress/scripts@3.1.0
+ * Duplicated here to avoid depending on @wordpress/scripts with bloated dependencies.
+ *
+ * @param {string} string Input dash-delimited string.
+ *
+ * @return {string} Camel-cased string.
+ */
+function camelCaseDash( string ) {
+	return string.replace( /-([a-z])/g, ( match, letter ) => letter.toUpperCase() );
 }
 
 function basename( name ) {
