@@ -777,6 +777,10 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 .plan-features__scroller-container {
 	padding: 0 0 30px;
+
+	.is-section-plans & {
+		margin: 0 0 30px;
+	}
 }
 
 .plan-features__scroller-wrapper {
@@ -893,10 +897,13 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__table-item {
 		border-top: solid 1px var( --color-neutral-50 );
-		border-right: none;
-		border-left: none;
 		vertical-align: middle;
 		padding: 7px 0;
+
+		.is-signup-section & {
+			border-right: none;
+			border-left: none;
+		}
 
 		&:empty {
 			background: transparent;
@@ -964,7 +971,6 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	top: 24px;
 	bottom: 40px;
 	width: 12%;
-	background-color: rgba( var( --color-primary-rgb ), 0.01 );
 	cursor: pointer;
 	overflow: hidden;
 	z-index: 1;
