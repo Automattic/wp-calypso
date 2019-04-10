@@ -96,7 +96,7 @@ export class SiteNotice extends React.Component {
 	}
 
 	freeToPaidPlanNotice() {
-		if ( ! this.props.isEligibleForFreeToPaidUpsell ) {
+		if ( ! this.props.isEligibleForFreeToPaidUpsell || this.props.isDomainOnly ) {
 			return null;
 		}
 
