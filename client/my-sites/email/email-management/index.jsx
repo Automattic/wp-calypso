@@ -89,7 +89,7 @@ class EmailManagement extends React.Component {
 	content() {
 		const { domains, gsuiteUsers, isRequestingDomains, selectedDomainName } = this.props;
 		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
-		if ( ! ( ! isRequestingDomains && null !== gsuiteUsers ) ) {
+		if ( isRequestingDomains || ! gsuiteUsers ) {
 			return <Placeholder />;
 		}
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
