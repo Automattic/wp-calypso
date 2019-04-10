@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { isEmpty, noop, flow, has, get, trim, sortBy, reverse } from 'lodash';
+import { isEmpty, noop, flowRight, has, get, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
 import moment from 'moment';
 
@@ -55,14 +55,12 @@ class SiteImporterInputPane extends React.Component {
 		availableEndpoints: [],
 	};
 
-	componentWillMount = () => {
+	componentDidMount() {
+		this.validateSite();
+
 		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
 			this.fetchEndpoints();
 		}
-	};
-
-	componentDidMount() {
-		this.validateSite();
 	}
 
 	fetchEndpoints = () => {
@@ -298,7 +296,7 @@ class SiteImporterInputPane extends React.Component {
 	}
 }
 
-export default flow(
+export default flowRight(
 	connect(
 		state => {
 			const { isLoading, error, importData, importStage, validatedSiteUrl } = get(
