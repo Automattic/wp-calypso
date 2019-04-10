@@ -74,8 +74,11 @@ function overrideRevisions( calypsoPort ) {
 		const payload = get( message, 'data.payload', null );
 
 		if ( action === 'loadRevision' && payload ) {
-			const blocks = parse( payload.content );
-			dispatch( 'core/editor' ).editPost( payload );
+			const currentPost = select( 'core/editor' ).getCurrentPost();
+			const postRevision = { ...currentPost, ...payload };
+			const blocks = parse( postRevision.content );
+
+			dispatch( 'core/editor' ).updatePost( postRevision );
 			dispatch( 'core/editor' ).resetBlocks( blocks );
 
 			calypsoPort.removeEventListener( 'message', onLoadRevision, false );
