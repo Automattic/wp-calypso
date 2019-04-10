@@ -16,7 +16,6 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
-import Main from 'components/main';
 import Button from 'components/button';
 import ThemesSelection from './themes-selection';
 import SubMasterbarNav from 'components/sub-masterbar-nav';
@@ -94,7 +93,7 @@ class ThemeShowcase extends React.Component {
 	};
 
 	doSearch = searchBoxContent => {
-		const filterRegex = /([\w-]*)\:([\w-]*)/g;
+		const filterRegex = /([\w-]*):([\w-]*)/g;
 		const { filterToTermTable } = this.props;
 
 		const filters = searchBoxContent.match( filterRegex ) || [];
@@ -221,8 +220,7 @@ class ThemeShowcase extends React.Component {
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
-			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			<Main className="themes">
+			<div>
 				<DocumentHead title={ title } meta={ metas } link={ links } />
 				<PageViewTracker
 					path={ this.props.analyticsPath }
@@ -300,7 +298,7 @@ class ThemeShowcase extends React.Component {
 					<ThemePreview />
 					{ this.props.children }
 				</div>
-			</Main>
+			</div>
 		);
 	}
 }
