@@ -116,7 +116,6 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 		return canChat ? dispatch( openChat() ) : navigateTo( '/help' );
 	};
 
-	const { translate } = i18n;
 	const baseOptions = { duration: 10000, id: action.noticeId };
 
 	const announce = ( message, options ) =>
@@ -146,10 +145,10 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 	switch ( error.error ) {
 		case 'service_unavailable':
 			announce(
-				translate(
+				i18n.translate(
 					'A error occurred when we were trying to validate your site information. Please make sure your credentials and host URL are correct and try again. If you need help, please click on the support chat link.'
 				),
-				{ button: translate( 'Support chat' ), onClick: getHelp }
+				{ button: i18n.translate( 'Support chat' ), onClick: getHelp }
 			);
 			spreadHappiness(
 				'Rewind Credentials: update request failed on timeout (could be us or remote site)'
@@ -158,14 +157,14 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 
 		case 'missing_args':
 			announce(
-				translate( 'Something seems to be missing — please fill out all the required fields.' )
+				i18n.translate( 'Something seems to be missing — please fill out all the required fields.' )
 			);
 			spreadHappiness( 'Rewind Credentials: missing API args (contact a dev)' );
 			break;
 
 		case 'invalid_args':
 			announce(
-				translate(
+				i18n.translate(
 					"The information you entered seems to be incorrect. Let's take " +
 						'another look to ensure everything is in the right place.'
 				)
@@ -175,7 +174,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 
 		case 'invalid_credentials':
 			announce(
-				translate(
+				i18n.translate(
 					"We couldn't connect to your site. Please verify your credentials and give it another try."
 				)
 			);
@@ -184,29 +183,29 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 
 		case 'invalid_wordpress_path':
 			announce(
-				translate(
+				i18n.translate(
 					'We looked for `wp-config.php` in the WordPress installation ' +
 						"path you provided but couldn't find it."
 				),
-				{ button: translate( 'Get help' ), onClick: getHelp }
+				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
 			);
 			spreadHappiness( "Rewind Credentials: can't find WordPress installation files" );
 			break;
 
 		case 'read_only_install':
 			announce(
-				translate(
+				i18n.translate(
 					'It looks like your server is read-only. ' +
 						'To create backups and rewind your site, we need permission to write to your server.'
 				),
-				{ button: translate( 'Get help' ), onClick: getHelp }
+				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
 			);
 			spreadHappiness( 'Rewind Credentials: creds only seem to provide read-only access' );
 			break;
 
 		case 'unreachable_path':
 			announce(
-				translate(
+				i18n.translate(
 					'We tried to access your WordPress installation through its publicly available URL, ' +
 						"but it didn't work. Please make sure the directory is accessible and try again."
 				)
@@ -215,7 +214,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			break;
 
 		default:
-			announce( translate( 'Error saving. Please check your credentials and try again.' ) );
+			announce( i18n.translate( 'Error saving. Please check your credentials and try again.' ) );
 			spreadHappiness( 'Rewind Credentials: unknown failure saving credentials' );
 	}
 };
