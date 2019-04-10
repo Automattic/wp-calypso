@@ -13,7 +13,12 @@ function getAnnualPrice( cost, currencyCode ) {
 }
 
 function getMonthlyPrice( cost, currencyCode ) {
-	return formatPrice( cost / 12, currencyCode );
+	return formatPrice( cost / 12, currencyCode, { precision: 0 } );
+}
+
+function getAnnualSavings( cost, currencyCode, savingsThreshold = 0 ) {
+	const savings = applyPrecision( applyPrecision( cost / 12, 0 ) * 12 - cost, 0 );
+	return savingsThreshold > savings ? null : formatPrice( savings, currencyCode );
 }
 
 function googleAppsSettingsUrl( domainName ) {
@@ -21,12 +26,16 @@ function googleAppsSettingsUrl( domainName ) {
 }
 
 function formatPrice( cost, currencyCode, options = {} ) {
-	if ( options.precision ) {
-		const exponent = Math.pow( 10, options.precision );
-		cost = Math.round( cost * exponent ) / exponent;
+	if ( undefined !== options.precision ) {
+		cost = applyPrecision( cost, options.precision );
 	}
 
 	return formatCurrency( cost, currencyCode, cost % 1 > 0 ? {} : { precision: 0 } );
+}
+
+function applyPrecision( cost, precision ) {
+	const exponent = Math.pow( 10, precision );
+	return Math.ceil( cost * exponent ) / exponent;
 }
 
 function getLoginUrlWithTOSRedirect( email, domain ) {
@@ -42,6 +51,7 @@ function getLoginUrlWithTOSRedirect( email, domain ) {
 
 export {
 	getAnnualPrice,
+	getAnnualSavings,
 	getMonthlyPrice,
 	googleAppsSettingsUrl,
 	formatPrice,
