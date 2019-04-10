@@ -104,7 +104,9 @@ export class SiteStyleStep extends Component {
 	renderContent = () => (
 		<div className="site-style__form-wrapper">
 			<form className="site-style__form" onSubmit={ this.handleSubmit }>
-				<FormFieldset className="site-style__fieldset">{ this.renderStyleOptions() }</FormFieldset>
+				<FormFieldset className="site-style__fieldset" role="radiogroup">
+					{ this.renderStyleOptions() }
+				</FormFieldset>
 				<div className="site-style__submit-wrapper">
 					<Button
 						title={ this.props.translate( 'Continue' ) }
