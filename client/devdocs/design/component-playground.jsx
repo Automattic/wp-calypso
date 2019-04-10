@@ -41,15 +41,7 @@ class ComponentPlayground extends Component {
 			'design__component-playground-code': true,
 			'show-code': toggleCode ? this.state.showCode : true,
 		} );
-		const { section } = this.props;
-		let scope = null;
-		switch ( section ) {
-			case 'gutenberg-blocks':
-				scope = require( 'gutenberg-blocks' );
-				break;
-			default:
-				scope = require( 'devdocs/design/playground-scope' );
-		}
+		const scope = require( 'devdocs/design/playground-scope' );
 
 		return (
 			<LiveProvider
