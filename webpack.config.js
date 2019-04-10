@@ -163,6 +163,7 @@ function getWebpackConfig( {
 		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 		output: {
 			path: path.join( __dirname, 'public', extraPath ),
+			pathinfo: false,
 			publicPath: `/calypso/${ extraPath }/`,
 			filename: '[name].[chunkhash].min.js', // prefer the chunkhash, which depends on the chunk, not the entire build
 			chunkFilename: '[name].[chunkhash].min.js', // ditto
@@ -226,6 +227,9 @@ function getWebpackConfig( {
 				{
 					include: path.join( __dirname, 'client/sections.js' ),
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+					options: {
+						include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
+					},
 				},
 				{
 					test: /\.html$/,
