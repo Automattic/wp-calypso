@@ -92,7 +92,7 @@ export const currencyCode = createReducer(
 export function capabilities( state = {}, action ) {
 	switch ( action.type ) {
 		case SITE_RECEIVE:
-		case SITES_RECEIVE:
+		case SITES_RECEIVE: {
 			const sites = action.site ? [ action.site ] : action.sites;
 			return reduce(
 				sites,
@@ -110,6 +110,7 @@ export function capabilities( state = {}, action ) {
 				},
 				state
 			);
+		}
 	}
 
 	return state;
