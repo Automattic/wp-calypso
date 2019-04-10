@@ -19,6 +19,7 @@ references:
         "$CIRCLE_ARTIFACTS/notifications-panel" \
         "$CIRCLE_ARTIFACTS/translate"           \
         "$CIRCLE_ARTIFACTS/screenshots"         \
+        "$CIRCLE_ARTIFACTS/wpcom-block-editor"  \
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
         "$CIRCLE_TEST_REPORTS/integration"      \
@@ -273,6 +274,18 @@ jobs:
           name: Build Notifications Panel
           command: |
             NODE_ENV=production npm run sdk -- notifications --output-dir=$CIRCLE_ARTIFACTS/notifications-panel
+      - store-artifacts-and-test-results
+
+  build-wpcom-block-editor:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: Build the block editor in WordPress.com integration utils package
+          command: |
+            npx lerna run build --scope='@automattic/wpcom-block-editor'
+            cp -r ./apps/wpcom-block-editor/dist $CIRCLE_ARTIFACTS/wpcom-block-editor
       - store-artifacts-and-test-results
 
   test-client:
@@ -579,6 +592,9 @@ workflows:
             branches:
               ignore: master
       - build-notifications:
+          requires:
+            - setup
+      - build-wpcom-block-editor:
           requires:
             - setup
       - icfy-stats:
