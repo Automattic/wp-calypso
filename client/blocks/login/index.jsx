@@ -283,7 +283,12 @@ class Login extends Component {
 		}
 
 		if ( socialConnect ) {
-			return <AsyncLoad require="./social-connect-prompt" onSuccess={ this.handleValidLogin } />;
+			return (
+				<AsyncLoad
+					require="blocks/login/social-connect-prompt"
+					onSuccess={ this.handleValidLogin }
+				/>
+			);
 		}
 
 		return (

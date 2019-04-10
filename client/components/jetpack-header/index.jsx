@@ -37,7 +37,10 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1270 170"
 						partnerName="DreamHost"
 					>
-						<AsyncLoad require="./dreamhost" darkColorScheme={ darkColorScheme } />
+						<AsyncLoad
+							require="components/jetpack-header/dreamhost"
+							darkColorScheme={ darkColorScheme }
+						/>
 					</JetpackPartnerLogoGroup>
 				);
 
@@ -48,7 +51,10 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1150 170"
 						partnerName="Pressable"
 					>
-						<AsyncLoad require="./pressable" darkColorScheme={ darkColorScheme } />
+						<AsyncLoad
+							require="components/jetpack-header/pressable"
+							darkColorScheme={ darkColorScheme }
+						/>
 					</JetpackPartnerLogoGroup>
 				);
 
@@ -59,7 +65,10 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1128 170"
 						partnerName="Bluehost"
 					>
-						<AsyncLoad require="./bluehost" darkColorScheme={ darkColorScheme } />
+						<AsyncLoad
+							require="components/jetpack-header/bluehost"
+							darkColorScheme={ darkColorScheme }
+						/>
 					</JetpackPartnerLogoGroup>
 				);
 
@@ -70,13 +79,21 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 936 151"
 						partnerName="InMotion"
 					>
-						<AsyncLoad require="./inmotion" darkColorScheme={ darkColorScheme } />
+						<AsyncLoad
+							require="components/jetpack-header/inmotion"
+							darkColorScheme={ darkColorScheme }
+						/>
 					</JetpackPartnerLogoGroup>
 				);
 
 			case 'milesweb':
 				// This is a raster logo that contains the Jetpack logo already.
-				return <AsyncLoad require="./milesweb" darkColorScheme={ darkColorScheme } />;
+				return (
+					<AsyncLoad
+						require="components/jetpack-header/milesweb"
+						darkColorScheme={ darkColorScheme }
+					/>
+				);
 
 			case 'liquidweb':
 				return (
@@ -85,7 +102,10 @@ export class JetpackHeader extends PureComponent {
 						viewBox="0 0 1034 150"
 						partnerName="Liquid Web"
 					>
-						<AsyncLoad require="./liquidweb" darkColorScheme={ darkColorScheme } />
+						<AsyncLoad
+							require="components/jetpack-header/liquidweb"
+							darkColorScheme={ darkColorScheme }
+						/>
 					</JetpackPartnerLogoGroup>
 				);
 			default:
