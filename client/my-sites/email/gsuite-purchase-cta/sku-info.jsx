@@ -67,8 +67,8 @@ GSuitePurchaseCtaSkuInfo.propTypes = {
 	showButton: PropTypes.bool.isRequired,
 	onButtonClick: PropTypes.func.isRequired,
 	skuName: PropTypes.string,
-	skuSubNoticeText: PropTypes.string,
-	skuSubText: PropTypes.string,
+	skuStorage: PropTypes.string,
+	skuStorageNotice: PropTypes.string,
 };
 
 export default GSuitePurchaseCtaSkuInfo;
