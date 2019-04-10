@@ -75,7 +75,7 @@
 		display: block;
 	}
 
-	.gridicons-info-outline g {
+	.gridicons-info-outline use {
 		// revert the translate(1px,1px) done by needs-offset
 		transform: none;
 	}
