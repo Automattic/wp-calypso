@@ -46,6 +46,7 @@ function getWebpackConfig(
 	env = {}, // eslint-disable-line no-unused-vars
 	{
 		entry,
+		'output-chunk-filename': outputChunkFilename,
 		'output-path': outputPath = path.join( __dirname, 'dist' ),
 		'output-filename': outputFilename = '[name].js',
 		'output-libary-target': outputLibraryTarget = 'window',
@@ -60,6 +61,7 @@ function getWebpackConfig(
 		mode: isDevelopment ? 'development' : 'production',
 		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 		output: {
+			chunkFilename: outputChunkFilename,
 			path: outputPath,
 			filename: outputFilename,
 			libraryTarget: outputLibraryTarget,
