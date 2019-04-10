@@ -1,6 +1,6 @@
-.gsuite-purchase-cta__add-google-apps-card-product-logo {
-	font-size: 150%;
+.gsuite-purchase-cta__product-logo {
 	color: #757575;
+	font-size: 150%;
 
 	@include breakpoint( '<660px' ) {
 		width: 236px;
@@ -15,7 +15,7 @@
 		background-size: 73px;
 		background-position-y: 5px;
 		display: inline-block;
-		height: 23px;
+		height: 32px;
 		margin: 0 6px 0 0;
 		text-indent: -999999px;
 		vertical-align: text-top;
@@ -23,96 +23,109 @@
 	}
 }
 
-.gsuite-purchase-cta__add-google-apps-card-product-details {
-	@include breakpoint( '>960px' ) {
-		display: flex;
-	}
+.gsuite-purchase-cta__header {
+	display: flex;
+	flex-direction: row;
 }
 
-.gsuite-purchase-cta__add-google-apps-card-description {
+.gsuite-purchase-cta__header-description {
 	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
 	font-size: 14px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint( '>1040px' ) {
 		flex-basis: 100%;
 		max-width: 400px;
 	}
-
-	.button {
-		float: none;
-		margin: 1em 0 0.5em;
-		padding-left: 2em;
-		padding-right: 2em;
-
-		@include breakpoint( '<960px' ) {
-			width: 100%;
-		}
-	}
 }
 
-.gsuite-purchase-cta__add-google-apps-card-title {
+.gsuite-purchase-cta__header-description-title {
 	color: var( --color-text );
 	font-size: 24px;
 	line-height: 120%;
 	margin: 0 0 10px;
 }
 
-.gsuite-purchase-cta__add-google-apps-card-sub-title {
+.gsuite-purchase-cta__header-description-sub-title {
 	font-size: 18px;
 }
 
-.gsuite-purchase-cta__add-google-apps-card-price {
-	margin: 2em 0 1em;
-
-	.gsuite-purchase-cta__add-google-apps-card-price-per-user {
-		strong {
-			color: var( --color-text );
-			font-size: 24px;
-			font-weight: 300;
-		}
-
-		span {
-			color: var( --color-text-subtle );
-			font-size: 13px;
-			font-weight: normal;
-		}
-	}
-
-	.gsuite-purchase-cta__add-google-apps-card-billing-period {
-		color: var( --color-text-subtle );
-		font-size: 13px;
-		font-style: italic;
-
-		@include breakpoint( '<960px' ) {
-			text-align: center;
-		}
-	}
-}
-
-.gsuite-purchase-cta__add-google-apps-card-logos {
+.gsuite-purchase-cta__header-image {
 	display: none;
-
-	@include breakpoint( '>960px' ) {
-		align-items: flex-start;
-		display: flex;
-		flex-grow: 1;
-		margin-left: 20px;
-		justify-content: center;
-	}
 
 	@include breakpoint( '>1040px' ) {
 		align-items: center;
+		display: flex;
+		flex-grow: 1;
+		justify-content: center;
+		margin-left: 20px;
 	}
 }
 
-.gsuite-purchase-cta__add-google-apps-card-secondary-button {
-	.button {
-		float: none;
-		margin: 1em 0;
-		width: 100%;
+.gsuite-purchase-cta__skus {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 
-		@include breakpoint( '>660px' ) {
-			display: none;
-		}
+	@include breakpoint( '>960px' ) {
+		flex-direction: row;
+	}
+}
+
+.gsuite-purchase-cta__sku-info {
+	align-items: flex-start;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.gsuite-purchase-cta__sku-info-name-area {
+	h3 {
+		color: #757575;
+		font-size: 150%;
+	}
+}
+
+.gsuite-purchase-cta__sku-info-name-price-per-user {
+	strong {
+		color: var( --color-text );
+		font-size: 24px;
+		font-weight: 300;
+	}
+
+	span {
+		color: var( --color-text-subtle );
+		font-size: 13px;
+		font-weight: normal;
+	}
+}
+
+.gsuite-purchase-cta__sku-info-storage-area {
+	display: flex;
+	flex-direction: row;
+	// the InfoPopover will try to make this div bigger when it is rendered
+	// we want them to always be the same size for when they appear side-by-side
+	height: 19.5px;
+
+	h5 {
+		color: var( --color-text-subtle );
+		font-size: 13px;
+		font-style: italic;
+	}
+
+	.info-popover {
+		margin-left: 3px;
+	}
+}
+
+.gsuite-purchase-cta__sku-info-button {
+	float: none;
+	margin: 1em 0 0.5em;
+	padding-left: 2em;
+	padding-right: 2em;
+
+	@include breakpoint( '<480px' ) {
+		width: 100%;
 	}
 }

@@ -4,7 +4,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import page from 'page';
@@ -16,13 +15,15 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { hasGSuite, isGSuiteRestricted, hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
+import {
+	hasGSuite,
+	isGSuiteRestricted,
+	hasGSuiteSupportedDomain,
+	getEligibleGSuiteDomain,
+} from 'lib/domains/gsuite';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
-import { getAnnualPrice } from 'lib/google-apps';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
-import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
 import GSuiteUsersCard from 'my-sites/email/email-management/gsuite-users-card';
@@ -38,22 +39,17 @@ import { isPlanFeaturesEnabled } from 'lib/plans';
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import QueryProductsList from 'components/data/query-products-list';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
-
 class EmailManagement extends React.Component {
 	static propTypes = {
-		currencyCode: PropTypes.string,
 		domains: PropTypes.array.isRequired,
 		gsuiteUsers: PropTypes.array,
 		isRequestingDomains: PropTypes.bool.isRequired,
-		productsList: PropTypes.object,
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
 		selectedDomainName: PropTypes.string,
@@ -65,7 +61,6 @@ class EmailManagement extends React.Component {
 			<Main className="email-management" wideLayout={ isPlanFeaturesEnabled() }>
 				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
-				<QueryProductsList />
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
 				{ this.headerOrPlansNavigation() }
@@ -92,21 +87,9 @@ class EmailManagement extends React.Component {
 	}
 
 	content() {
-		const {
-			domains,
-			gsuiteUsers,
-			isRequestingDomains,
-			selectedDomainName,
-			productsList,
-		} = this.props;
+		const { domains, gsuiteUsers, isRequestingDomains, selectedDomainName } = this.props;
 		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
-		if (
-			! (
-				! isRequestingDomains &&
-				null !== gsuiteUsers &&
-				get( productsList, [ gsuitePlanSlug ], false )
-			)
-		) {
+		if ( isRequestingDomains || ! gsuiteUsers ) {
 			return <Placeholder />;
 		}
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
@@ -114,7 +97,7 @@ class EmailManagement extends React.Component {
 		if ( domainList.some( hasGSuite ) ) {
 			return this.googleAppsUsersCard();
 		} else if ( hasGSuiteSupportedDomain( domainList ) ) {
-			return this.addGoogleAppsCard();
+			return this.addGSuiteCta();
 		} else if ( emailForwardingDomain && isGSuiteRestricted() && selectedDomainName ) {
 			return this.addEmailForwardingCard( emailForwardingDomain );
 		}
@@ -171,18 +154,13 @@ class EmailManagement extends React.Component {
 		);
 	}
 
-	addGoogleAppsCard() {
-		const { currencyCode, domains, productsList, selectedDomainName } = this.props;
+	addGSuiteCta() {
+		const { domains, selectedDomainName } = this.props;
 		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
-		const price = get( productsList, [ gsuitePlanSlug, 'prices', currencyCode ], 0 );
-		const annualPrice = getAnnualPrice( price, currencyCode );
+		const gsuiteDomainName = getEligibleGSuiteDomain( selectedDomainName, domains );
 		return (
 			<Fragment>
-				<GSuitePurchaseCta
-					annualPrice={ annualPrice }
-					productSlug={ gsuitePlanSlug }
-					selectedDomainName={ selectedDomainName }
-				/>
+				<GSuitePurchaseCta domainName={ gsuiteDomainName } />
 				{ emailForwardingDomain && this.addEmailForwardingCard( emailForwardingDomain ) }
 			</Fragment>
 		);
@@ -213,11 +191,9 @@ export default connect(
 	state => {
 		const selectedSiteId = getSelectedSiteId( state );
 		return {
-			currencyCode: getCurrentUserCurrencyCode( state ),
 			domains: getDecoratedSiteDomains( state, selectedSiteId ),
 			gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
 			isRequestingDomains: isRequestingSiteDomains( state, selectedSiteId ),
-			productsList: getProductsList( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 		};

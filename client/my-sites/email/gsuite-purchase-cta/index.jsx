@@ -4,146 +4,125 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React, { useEffect } from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
-import CompactCard from 'components/card/compact';
 import config from 'config';
-import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
+import CompactCard from 'components/card/compact';
+import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getEligibleGSuiteDomain } from 'lib/domains/gsuite';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getAnnualPrice } from 'lib/google-apps';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getProductCost } from 'state/products-list/selectors';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
+import GSuitePurchaseCtaSkuInfo from 'my-sites/email/gsuite-purchase-cta/sku-info';
 import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
+import { recordTracksEvent } from 'state/analytics/actions';
+import QueryProductsList from 'components/data/query-products-list';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-class GSuitePurchaseCta extends React.Component {
-	goToAddGoogleApps = () => {
-		page( domainManagementAddGSuiteUsers( this.props.selectedSiteSlug, this.props.domainName ) );
+export const GSuitePurchaseCta = ( {
+	currencyCode,
+	domainName,
+	gsuiteBasicCost,
+	recordTracksEvent: recordEvent,
+	selectedSiteSlug,
+} ) => {
+	useEffect(() => {
+		recordEvent( 'calypso_email_gsuite_purchase_cta_view', {
+			domain_name: domainName,
+		} );
+	}, [ domainName ]);
+
+	const goToAddGSuiteUsers = planType => {
+		recordEvent( 'calypso_email_gsuite_purchase_cta_get_gsuite_click', {
+			domain_name: domainName,
+			plan_type: planType,
+		} );
+
+		page( emailManagementAddGSuiteUsers( selectedSiteSlug, domainName ) );
 	};
 
-	getPlanText() {
-		const { productSlug, translate } = this.props;
-		if ( 'gapps_unlimited' === productSlug ) {
-			return translate( 'Business' );
-		}
-	}
+	const translate = useTranslate();
+	const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
+	// display '-' instead of 0 if we don't have a price yet
+	const gsuiteBasicAnnualCost =
+		gsuiteBasicCost && currencyCode ? getAnnualPrice( gsuiteBasicCost, currencyCode ) : '-';
 
-	renderCta() {
-		const { annualPrice, domainName, productSlug, translate } = this.props;
-		const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
+	return (
+		<EmailVerificationGate
+			noticeText={ translate( 'You must verify your email to purchase G Suite.' ) }
+			noticeStatus="is-info"
+		>
+			<QueryProductsList />
+			<CompactCard>
+				<header>
+					<h3 className="gsuite-purchase-cta__product-logo">
+						{ /* Intentionally not translated */ }
+						<strong>G Suite</strong>
+					</h3>
+				</header>
+			</CompactCard>
+			<CompactCard>
+				<div className="gsuite-purchase-cta__header">
+					<div className="gsuite-purchase-cta__header-description">
+						<h2 className="gsuite-purchase-cta__header-description-title">
+							{ translate( 'Professional email and so much more.' ) }
+						</h2>
 
-		return (
-			<Fragment>
-				<CompactCard>
-					<header className="gsuite-purchase-cta__add-google-apps-card-header">
-						<h3 className="gsuite-purchase-cta__add-google-apps-card-product-logo">
-							{ /* Intentionally not translated */ }
-							<strong>G Suite</strong>
-							{ this.getPlanText() }
-						</h3>
-					</header>
-				</CompactCard>
+						<p className="gsuite-purchase-cta__header-description-sub-title">
+							{ translate(
+								"We've partnered with Google to offer you email, " +
+									'storage, docs, calendars, and more integrated with your site.'
+							) }
+						</p>
 
-				<CompactCard>
-					<div className="gsuite-purchase-cta__add-google-apps-card-product-details">
-						<div className="gsuite-purchase-cta__add-google-apps-card-description">
-							<h2 className="gsuite-purchase-cta__add-google-apps-card-title">
-								{ translate( 'Professional email and so much more.' ) }
-							</h2>
-
-							<p className="gsuite-purchase-cta__add-google-apps-card-sub-title">
-								{ translate(
-									"We've partnered with Google to offer you email, " +
-										'storage, docs, calendars, and more integrated with your site.'
-								) }
-							</p>
-
-							<div className="gsuite-purchase-cta__add-google-apps-card-price">
-								<h4 className="gsuite-purchase-cta__add-google-apps-card-price-per-user">
-									<span>
-										{ translate( '{{strong}}%(price)s{{/strong}} per user / year', {
-											components: {
-												strong: <strong />,
-											},
-											args: {
-												price: annualPrice,
-											},
-										} ) }
-									</span>
-								</h4>
-
-								{ upgradeAvailable && (
-									<Button type="button" onClick={ this.goToAddGoogleApps }>
-										{ translate( 'Add G Suite' ) }
-									</Button>
-								) }
-							</div>
-						</div>
-
-						<div className="gsuite-purchase-cta__add-google-apps-card-logos">
-							<img alt="G Suite Logo" src="/calypso/images/g-suite/g-suite.svg" />
+						<div className="gsuite-purchase-cta__skus">
+							<GSuitePurchaseCtaSkuInfo
+								annualPrice={ gsuiteBasicAnnualCost }
+								buttonText={ translate( 'Add G Suite' ) }
+								onButtonClick={ () => {
+									goToAddGSuiteUsers( 'basic' );
+								} }
+								showButton={ upgradeAvailable }
+							/>
 						</div>
 					</div>
-				</CompactCard>
 
-				<CompactCard>
-					<GSuitePurchaseFeatures
-						domainName={ domainName }
-						productSlug={ productSlug }
-						type={ 'grid' }
-					/>
-
-					<div className="gsuite-purchase-cta__add-google-apps-card-secondary-button">
-						{ upgradeAvailable && (
-							<Button type="button" onClick={ this.goToAddGoogleApps }>
-								{ translate( 'Add G Suite' ) }
-							</Button>
-						) }
+					<div className="gsuite-purchase-cta__header-image">
+						<img alt="G Suite Logo" src="/calypso/images/g-suite/g-suite.svg" />
 					</div>
-				</CompactCard>
-			</Fragment>
-		);
-	}
-
-	render() {
-		return (
-			<EmailVerificationGate
-				noticeText={ this.props.translate( 'You must verify your email to purchase G Suite.' ) }
-				noticeStatus="is-info"
-			>
-				{ this.renderCta() }
-			</EmailVerificationGate>
-		);
-	}
-}
+				</div>
+			</CompactCard>
+			<CompactCard>
+				<GSuitePurchaseFeatures domainName={ domainName } type={ 'grid' } productSlug={ 'gapps' } />
+			</CompactCard>
+		</EmailVerificationGate>
+	);
+};
 
 GSuitePurchaseCta.propTypes = {
-	annualPrice: PropTypes.string.isRequired,
+	currencyCode: PropTypes.string,
 	domainName: PropTypes.string.isRequired,
-	productSlug: PropTypes.string.isRequired,
-	selectedDomainName: PropTypes.string,
+	gsuiteBasicCost: PropTypes.number,
+	recordTracksEvent: PropTypes.func.isRequired,
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
 export default connect(
-	( state, { selectedDomainName } ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const domains = getDomainsBySiteId( state, selectedSiteId );
-		return {
-			domainName: getEligibleGSuiteDomain( selectedDomainName, domains ),
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-		};
-	},
-	null
-)( localize( GSuitePurchaseCta ) );
+	state => ( {
+		gsuiteBasicCost: getProductCost( state, 'gapps' ),
+		currencyCode: getCurrentUserCurrencyCode( state ),
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+	} ),
+	{ recordTracksEvent }
+)( GSuitePurchaseCta );
