@@ -231,6 +231,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 		return (
 			<>
 				<style>
+					{ `.signup__step.is-plans { overflow-x: hidden; }` }
 					{ `.plan-features__header::before { left: ${ -paneWidth - borderSpacing / 2 }px }` }
 				</style>
 				{ styleWeights.map( ( weight, index ) => {
@@ -283,6 +284,8 @@ export default class PlanFeaturesScroller extends PureComponent {
 		}
 
 		const vars = this.computeStyleVars();
+		const disabledLeft = 0 === vars.visibleIndex;
+		const disabledRight = planCount === vars.visibleIndex + vars.visibleCount;
 		const containerClass = classNames( 'plan-features__scroller-container', {
 			'scroll-snap-disabled': this.state.scrollSnapDisabled,
 		} );
@@ -292,13 +295,13 @@ export default class PlanFeaturesScroller extends PureComponent {
 			<div className={ containerClass }>
 				{ this.renderStyle( vars ) }
 				<div
-					className="plan-features__scroll-left"
+					className={ classNames( 'plan-features__scroll-left', { disabled: disabledLeft } ) }
 					style={ { width: vars.paneWidth } }
 					onClick={ this.scrollLeft }
 				>
 					<Button
 						className="plan-features__scroll-button"
-						disabled={ 0 === vars.visibleIndex }
+						disabled={ disabledLeft }
 						onClick={ this.scrollLeft }
 						tabIndex="0"
 					>
@@ -314,13 +317,13 @@ export default class PlanFeaturesScroller extends PureComponent {
 					</div>
 				</div>
 				<div
-					className="plan-features__scroll-right"
+					className={ classNames( 'plan-features__scroll-right', { disabled: disabledRight } ) }
 					style={ { width: vars.paneWidth } }
 					onClick={ this.scrollRight }
 				>
 					<Button
 						className="plan-features__scroll-button"
-						disabled={ planCount === vars.visibleIndex + vars.visibleCount }
+						disabled={ disabledRight }
 						onClick={ this.scrollRight }
 					>
 						<Gridicon icon="arrow-right" size={ 24 } />
