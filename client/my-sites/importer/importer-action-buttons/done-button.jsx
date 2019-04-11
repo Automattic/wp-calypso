@@ -20,7 +20,6 @@ import {
 	setImportOriginSiteDetails,
 } from 'state/importer-nux/actions';
 import { isImportingFromSignupFlow } from 'state/importer-nux/temp-selectors';
-import { SITE_IMPORTER } from 'state/imports/constants';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class DoneButton extends React.PureComponent {
@@ -55,7 +54,7 @@ export class DoneButton extends React.PureComponent {
 
 	componentWillUnmount() {
 		const {
-			importerStatus: { importerId, type },
+			importerStatus: { importerId },
 			site: { ID: siteId },
 			isSignup,
 		} = this.props;
@@ -65,11 +64,6 @@ export class DoneButton extends React.PureComponent {
 		 * Otherwise, you see the importers list during the route change
 		 */
 		resetImport( siteId, importerId );
-
-		if ( SITE_IMPORTER === type ) {
-			// Clear out site details, so that importers list isn't filtered
-			this.props.setImportOriginSiteDetails();
-		}
 
 		if ( isSignup ) {
 			this.props.clearImportingFromSignupFlow();
