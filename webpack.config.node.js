@@ -153,7 +153,6 @@ const webpackConfig = {
 		} ),
 		new webpack.DefinePlugin( {
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
-			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
