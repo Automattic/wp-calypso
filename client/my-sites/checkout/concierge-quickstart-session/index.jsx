@@ -137,7 +137,7 @@ export class ConciergeQuickstartSession extends React.Component {
 		return (
 			<header className="concierge-quickstart-session__header">
 				<h2 className="concierge-quickstart-session__title">
-					{ translate( 'Hold tight, your site is being upgraded…' ) }
+					{ translate( 'Hold tight, your site is being upgraded.' ) }
 				</h2>
 			</header>
 		);
@@ -145,8 +145,7 @@ export class ConciergeQuickstartSession extends React.Component {
 
 	body() {
 		const { translate, productCost, productDisplayCost, currencyCode } = this.props;
-		const fullCost = Math.round( productCost * 2 );
-		//const savings = fullCost - productCost;
+		const fullCost = Math.round( productCost * 2.021 );
 		return (
 			<Fragment>
 				<h4 className="concierge-quickstart-session__sub-header">
@@ -156,7 +155,7 @@ export class ConciergeQuickstartSession extends React.Component {
 					<div className="concierge-quickstart-session__column-content">
 						<p>
 							{ translate(
-								"What if you could sit with a true expert, someone who's helped hundreds of people succeed online, and get their help to build a great site… in less time you ever thought possible?"
+								"What if you could sit with a true expert, someone who's helped hundreds of people succeed online, and get their advice to build a great site… in less time you ever thought possible?"
 							) }
 						</p>
 						<p>
@@ -176,7 +175,10 @@ export class ConciergeQuickstartSession extends React.Component {
 						</p>
 						<p>
 							{ translate(
-								'On these sessions, a Happiness Engineer will show you everything you need to build a great site in the fastest way possible, including:'
+								'During your {{i}}Quick Start{{/i}}, a Happiness Engineer will offer pro advice on everything you need to build a great site in the fastest way possible, like for example:',
+								{
+									components: { i: <em /> },
+								}
 							) }
 						</p>
 						<ul className="concierge-quickstart-session__checklist">
@@ -187,7 +189,6 @@ export class ConciergeQuickstartSession extends React.Component {
 								/>
 								<span className="concierge-quickstart-session__checklist-item-text">
 									{ translate( 'How to choose the right design for your site and audience.', {
-										components: { b: <b /> },
 										comment: "This is a benefit listed on a 'Purchase a call with us' page",
 									} ) }
 								</span>
@@ -199,9 +200,8 @@ export class ConciergeQuickstartSession extends React.Component {
 								/>
 								<span className="concierge-quickstart-session__checklist-item-text">
 									{ translate(
-										'How to effortlessly customize your site with your own branding, images, fonts, and colors.',
+										'How to customize your site with your branding, images, fonts, and colors.',
 										{
-											components: { b: <b /> },
 											comment: "This is a benefit listed on a 'Purchase a call with us' page",
 										}
 									) }
@@ -213,10 +213,12 @@ export class ConciergeQuickstartSession extends React.Component {
 									className="concierge-quickstart-session__checklist-item-icon"
 								/>
 								<span className="concierge-quickstart-session__checklist-item-text">
-									{ translate( 'What content, text, and pages to add to your site (and why).', {
-										components: { b: <b /> },
-										comment: "This is a benefit listed on a 'Purchase a call with us' page",
-									} ) }
+									{ translate(
+										'What content, text, and pages you should have in your site (and why).',
+										{
+											comment: "This is a benefit listed on a 'Purchase a call with us' page",
+										}
+									) }
 								</span>
 							</li>
 							<li className="concierge-quickstart-session__checklist-item">
@@ -228,7 +230,6 @@ export class ConciergeQuickstartSession extends React.Component {
 									{ translate(
 										'How to spread the word and get traffic, likes, and followers for your site.',
 										{
-											components: { b: <b /> },
 											comment: "This is a benefit listed on a 'Purchase a call with us' page",
 										}
 									) }
@@ -243,7 +244,6 @@ export class ConciergeQuickstartSession extends React.Component {
 									{ translate(
 										'How to establish a solid foundation in your site to prevent headaches and problems.',
 										{
-											components: { b: <b /> },
 											comment: "This is a benefit listed on a 'Purchase a call with us' page",
 										}
 									) }
@@ -253,27 +253,18 @@ export class ConciergeQuickstartSession extends React.Component {
 
 						<p>
 							{ translate(
-								'At the end of the session, not only will you have answers to your questions, but you will be 100x more effective on your way to the site you always dreamed of!'
-							) }
-						</p>
-						{ /*
-						<h4 className="concierge-quickstart-session__sub-header">
-							{ translate(
-								'Reserve a 45-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
+								'The session will be tailored entirely to your needs. In the end, not only will you have answers to your questions but you will be 100x more effective on your way to the site you always dreamed!',
 								{
-									args: {
-										saveAmount: formatCurrency( savings, currencyCode ),
-									},
+									components: { i: <i /> },
 								}
 							) }
-						</h4>
-						*/ }
+						</p>
 						<p>
 							<b>
 								{ translate(
 									'Book your {{i}}Quick Start{{/i}} session below at a special one-time price of {{del}}%(oldPrice)s{{/del}} %(price)s.',
 									{
-										components: { del: <del />, i: <em /> },
+										components: { del: <del />, i: <i /> },
 										args: {
 											oldPrice: formatCurrency( fullCost, currencyCode ),
 											price: productDisplayCost,
@@ -284,11 +275,24 @@ export class ConciergeQuickstartSession extends React.Component {
 						</p>
 						<p>
 							{ translate(
-								'{{b}}Please notice:{{/b}} This is a one-time-only offer because you just upgraded your plan and we want you to rock it. Also, sessions are currently limited to English.',
+								'Please notice, this is a one-time offer because you just got a new plan and we want you to make the most out of it! Regular price for {{i}}Quick Start{{/i}} sessions is %(oldPrice)s.',
 								{
-									components: { b: <b /> },
+									components: { b: <b />, i: <i /> },
+									args: {
+										oldPrice: formatCurrency( fullCost, currencyCode ),
+									},
 								}
 							) }
+						</p>
+						<p>
+							<em>
+								{ translate(
+									'Note: {{i}}Quick Start{{/i}} sessions are currently available only in English.',
+									{
+										components: { i: <i /> },
+									}
+								) }
+							</em>
 						</p>
 					</div>
 					<div className="concierge-quickstart-session__column-doodle">
