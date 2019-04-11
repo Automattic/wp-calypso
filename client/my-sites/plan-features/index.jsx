@@ -53,6 +53,7 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
 import {
 	isBestValue,
 	isMonthly,
@@ -98,23 +99,25 @@ export class PlanFeatures extends Component {
 					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features__content">
 						{ mobileView }
-						<PlanFeaturesScroller
-							withScroll={ withScroll }
-							planCount={ planProperties.length }
-							cellSelector=".plan-features__table-item"
-							initialSelectedIndex={ findIndex( planProperties, { popular: true } ) }
-						>
-							<table className={ tableClasses }>
-								<tbody>
-									<tr>{ this.renderPlanHeaders() }</tr>
-									{ ! withScroll && planDescriptions }
-									<tr>{ this.renderTopButtons() }</tr>
-									{ withScroll && planDescriptions }
-									{ this.renderPlanFeatureRows() }
-									{ ! withScroll && ! isInSignup && bottomButtons }
-								</tbody>
-							</table>
-						</PlanFeaturesScroller>
+						{ ! this.props.isRequestingActivePromotions && (
+							<PlanFeaturesScroller
+								withScroll={ withScroll }
+								planCount={ planProperties.length }
+								cellSelector=".plan-features__table-item"
+								initialSelectedIndex={ findIndex( planProperties, { popular: true } ) }
+							>
+								<table className={ tableClasses }>
+									<tbody>
+										<tr>{ this.renderPlanHeaders() }</tr>
+										{ ! withScroll && planDescriptions }
+										<tr>{ this.renderTopButtons() }</tr>
+										{ withScroll && planDescriptions }
+										{ this.renderPlanFeatureRows() }
+										{ ! withScroll && ! isInSignup && bottomButtons }
+									</tbody>
+								</table>
+							</PlanFeaturesScroller>
+						) }
 					</div>
 				</div>
 			</div>
@@ -894,6 +897,7 @@ export default connect(
 			sitePlan,
 			siteType,
 			planCredits,
+			isRequestingActivePromotions: isRequestingActivePromotions( state ),
 			hasPlaceholders: hasPlaceholders( planProperties ),
 			showPlanCreditsApplied:
 				sitePlan &&
