@@ -12,7 +12,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/forms/form-button';
-import { getAnnualPrice, getAnnualSavings, getMonthlyPrice } from 'lib/google-apps';
+import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import InfoPopover from 'components/info-popover';
 
 function GSuitePurchaseCtaSkuInfo( {
@@ -30,8 +30,6 @@ function GSuitePurchaseCtaSkuInfo( {
 
 	const annualPrice = skuCost && currencyCode ? getAnnualPrice( skuCost, currencyCode ) : '-';
 	const monthlyPrice = skuCost && currencyCode ? getMonthlyPrice( skuCost, currencyCode ) : '-';
-	const annualSavings =
-		skuCost && currencyCode ? getAnnualSavings( skuCost, currencyCode, 5 ) : null;
 
 	return (
 		<div className="gsuite-purchase-cta__sku-info">
@@ -68,17 +66,7 @@ function GSuitePurchaseCtaSkuInfo( {
 						} ) }
 				</span>
 			</h4>
-			{ showMonthlyPrice && annualSavings && (
-				<h5 className="gsuite-purchase-cta__sku-info-annual-price">
-					{ translate( '%(price)s billed yearly - save %(savings)s!', {
-						args: {
-							price: annualPrice,
-							savings: annualSavings,
-						},
-					} ) }
-				</h5>
-			) }
-			{ showMonthlyPrice && ! annualSavings && (
+			{ showMonthlyPrice && (
 				<h5 className="gsuite-purchase-cta__sku-info-annual-price">
 					{ translate( '%(price)s billed yearly', {
 						args: {

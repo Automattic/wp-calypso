@@ -13,12 +13,7 @@ function getAnnualPrice( cost, currencyCode ) {
 }
 
 function getMonthlyPrice( cost, currencyCode ) {
-	return formatPrice( cost / 12, currencyCode, { precision: 0 } );
-}
-
-function getAnnualSavings( cost, currencyCode, savingsThreshold = 0 ) {
-	const savings = applyPrecision( applyPrecision( cost / 12, 0 ) * 12 - cost, 0 );
-	return savingsThreshold > savings ? null : formatPrice( savings, currencyCode );
+	return formatPrice( cost / 12, currencyCode );
 }
 
 function googleAppsSettingsUrl( domainName ) {
@@ -51,7 +46,6 @@ function getLoginUrlWithTOSRedirect( email, domain ) {
 
 export {
 	getAnnualPrice,
-	getAnnualSavings,
 	getMonthlyPrice,
 	googleAppsSettingsUrl,
 	formatPrice,

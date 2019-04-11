@@ -55,7 +55,10 @@ export const GSuitePurchaseCta = ( {
 
 	const translate = useTranslate();
 	const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
-	const abTestGroup = abtest( 'gsuitePurchaseCtaOptions' );
+	// only allow test for USD users, this is supposed to be a countryCode but nothing prevents
+	// arbitrary codes being used. Also wait until we have the currencyCode to check.
+	const abTestGroup =
+		null !== currencyCode ? abtest( 'gsuitePurchaseCtaOptions', currencyCode ) : 'none';
 	const showBusinessOption =
 		abTestGroup === 'showBusinessWithAnnualPrices' ||
 		abTestGroup === 'showBusinessWithMonthlyPrices';
