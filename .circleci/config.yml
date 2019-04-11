@@ -284,7 +284,9 @@ jobs:
       - run:
           name: Build the block editor in WordPress.com integration utils package
           command: |
+            npx lerna run clean --scope='@automattic/wpcom-block-editor'
             npx lerna run bundle --scope='@automattic/wpcom-block-editor' -- -- --output-path=$CIRCLE_ARTIFACTS/wpcom-block-editor
+            NODE_ENV=production npx lerna run bundle --scope='@automattic/wpcom-block-editor' -- -- --output-path=$CIRCLE_ARTIFACTS/wpcom-block-editor --output-filename=[name].min.js
       - store-artifacts-and-test-results
 
   test-client:
