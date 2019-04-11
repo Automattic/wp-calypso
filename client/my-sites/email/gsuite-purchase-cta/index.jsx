@@ -12,11 +12,11 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import config from 'config';
 import CompactCard from 'components/card/compact';
 import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getAnnualPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductCost } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -34,6 +34,7 @@ export const GSuitePurchaseCta = ( {
 	currencyCode,
 	domainName,
 	gsuiteBasicCost,
+	gsuiteBusinessCost,
 	recordTracksEvent: recordEvent,
 	selectedSiteSlug,
 } ) => {
@@ -54,9 +55,49 @@ export const GSuitePurchaseCta = ( {
 
 	const translate = useTranslate();
 	const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
-	// display '-' instead of 0 if we don't have a price yet
-	const gsuiteBasicAnnualCost =
-		gsuiteBasicCost && currencyCode ? getAnnualPrice( gsuiteBasicCost, currencyCode ) : '-';
+	// only allow test for USD users, this is supposed to be a countryCode but nothing prevents
+	// arbitrary codes being used. Also wait until we have the currencyCode to check.
+	const abTestGroup =
+		null !== currencyCode ? abtest( 'gsuitePurchaseCtaOptions', currencyCode ) : 'none';
+	const showBusinessOption =
+		abTestGroup === 'showBusinessWithAnnualPrices' ||
+		abTestGroup === 'showBusinessWithMonthlyPrices';
+	const showMonthlyPrice =
+		abTestGroup === 'hideBusinessWithMonthlyPrices' ||
+		abTestGroup === 'showBusinessWithMonthlyPrices';
+
+	const renderBasicSku = () => (
+		<GSuitePurchaseCtaSkuInfo
+			currencyCode={ currencyCode }
+			buttonText={
+				showBusinessOption ? translate( 'Add G Suite Basic' ) : translate( 'Add G Suite' )
+			}
+			onButtonClick={ () => {
+				goToAddGSuiteUsers( 'basic' );
+			} }
+			showButton={ upgradeAvailable }
+			showMonthlyPrice={ showMonthlyPrice }
+			skuCost={ gsuiteBasicCost }
+			skuName={ showBusinessOption ? translate( 'G Suite Basic' ) : undefined }
+			storageText={ showBusinessOption ? translate( '30 GB of Storage' ) : undefined }
+		/>
+	);
+
+	const renderBusinessSku = () => (
+		<GSuitePurchaseCtaSkuInfo
+			currencyCode={ currencyCode }
+			buttonText={ translate( 'Add G Suite Business' ) }
+			onButtonClick={ () => {
+				goToAddGSuiteUsers( 'business' );
+			} }
+			showButton={ upgradeAvailable }
+			showMonthlyPrice={ showMonthlyPrice }
+			skuCost={ gsuiteBusinessCost }
+			skuName={ translate( 'G Suite Business' ) }
+			storageText={ translate( 'Unlimited Storage' ) }
+			storageNoticeText={ translate( 'Accounts with fewer than 5 users have 1 TB per user.' ) }
+		/>
+	);
 
 	return (
 		<EmailVerificationGate
@@ -85,17 +126,13 @@ export const GSuitePurchaseCta = ( {
 									'storage, docs, calendars, and more integrated with your site.'
 							) }
 						</p>
-
-						<div className="gsuite-purchase-cta__skus">
-							<GSuitePurchaseCtaSkuInfo
-								annualPrice={ gsuiteBasicAnnualCost }
-								buttonText={ translate( 'Add G Suite' ) }
-								onButtonClick={ () => {
-									goToAddGSuiteUsers( 'basic' );
-								} }
-								showButton={ upgradeAvailable }
-							/>
-						</div>
+						{ ! showBusinessOption && renderBasicSku() }
+						{ showBusinessOption && (
+							<div className="gsuite-purchase-cta__skus">
+								{ renderBasicSku() }
+								{ renderBusinessSku() }
+							</div>
+						) }
 					</div>
 
 					<div className="gsuite-purchase-cta__header-image">
@@ -114,6 +151,7 @@ GSuitePurchaseCta.propTypes = {
 	currencyCode: PropTypes.string,
 	domainName: PropTypes.string.isRequired,
 	gsuiteBasicCost: PropTypes.number,
+	gsuiteBusinessCost: PropTypes.number,
 	recordTracksEvent: PropTypes.func.isRequired,
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
@@ -121,6 +159,7 @@ GSuitePurchaseCta.propTypes = {
 export default connect(
 	state => ( {
 		gsuiteBasicCost: getProductCost( state, 'gapps' ),
+		gsuiteBusinessCost: getProductCost( state, 'gapps_unlimited' ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	} ),

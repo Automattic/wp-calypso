@@ -183,4 +183,16 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	gsuitePurchaseCtaOptions: {
+		datestamp: '20190411',
+		variations: {
+			hideBusinessWithAnnualPrices: 25,
+			hideBusinessWithMonthlyPrices: 25,
+			showBusinessWithAnnualPrices: 25,
+			showBusinessWithMonthlyPrices: 25,
+		},
+		defaultVariation: 'hideBusinessWithAnnualPrices',
+		allowExistingUsers: true,
+		countryCodeTargets: [ 'USD' ],
+	},
 };
