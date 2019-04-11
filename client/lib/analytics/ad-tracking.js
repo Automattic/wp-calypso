@@ -84,7 +84,6 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	ICON_MEDIA_ORDER_PIXEL_URL =
 		'https://tags.w55c.net/rs?id=d299eef42f2d4135a96d0d40ace66f3a&t=checkout',
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
-	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
 	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
 	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
 	OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js',
@@ -105,6 +104,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 		outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
 		nanigansAppId: '653793',
+		wpcomFloodlightGtag: 'DC-6355556',
 		wpcomGoogleAdsGtag: 'AW-946162814',
 		wpcomGoogleAdsGtagRegistration: 'AW-946162814/_6cKCK6miZYBEP6YlcMD', // "WordPress.com Registration"
 		wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
@@ -161,6 +161,10 @@ if ( typeof window !== 'undefined' ) {
 	// Google Ads Gtag for Jetpack
 	if ( isJetpackGoogleAdsGtagEnabled ) {
 		setupJetpackGoogleAdsGtag();
+	}
+
+	if ( isFloodlightEnabled ) {
+		setupWpcomFloodlightGtag();
 	}
 
 	// Twitter
@@ -381,6 +385,7 @@ async function loadTrackingScripts( callback ) {
 	const enabledGtags = [
 		isWpcomGoogleAdsGtagEnabled && TRACKING_IDS.wpcomGoogleAdsGtag,
 		isJetpackGoogleAdsGtagEnabled && TRACKING_IDS.jetpackGoogleAdsGtag,
+		isFloodlightEnabled && TRACKING_IDS.wpcomFloodlightGtag,
 	].filter( id => false !== id );
 	if ( enabledGtags.length > 0 ) {
 		scripts.push( GOOGLE_GTAG_SCRIPT_URL + enabledGtags[ 0 ] );
@@ -718,14 +723,22 @@ export function recordRegistration() {
 	// DCM Floodlight
 
 	if ( isFloodlightEnabled ) {
-		const params = {
-			type: 'wordp0',
-			cat: 'regis0',
-			ord: 1, // "Counting method" = "Counter/Unique" requires "ord" to be 1
-			num: floodlightCacheBuster(),
-		};
-		debug( 'recordRegistration: [Floodlight]', params );
-		recordParamsInFloodlight( params );
+		// const params = {
+		// 	type: 'wordp0',
+		// 	cat: 'regis0',
+		// 	ord: 1, // "Counting method" = "Counter/Unique" requires "ord" to be 1
+		// 	num: floodlightCacheBuster(),
+		// };
+		// debug( 'recordRegistration: [Floodlight]', params );
+		// recordParamsInFloodlight( params );
+		debug( 'recordRegistration: [Floodlight]' );
+		recordParamsInFloodlightGtag( {
+			// 'allow_custom_scripts': true,
+			// 'u2': '[&products]',
+			// 'u4': '[UserIDLogIn]',
+			// 'u5': '[UserIDNLogIn]',
+			send_to: 'DC-6355556/wordp0/regis0+unique',
+		} );
 	}
 
 	// Pinterest
@@ -862,14 +875,22 @@ export function recordSignup( slug ) {
 	// DCM Floodlight
 
 	if ( isFloodlightEnabled ) {
-		const params = {
-			type: 'wordp0',
-			cat: 'signu1',
-			ord: 1, // "Counting method" = "Unique" requires "ord" to be 1
-			num: floodlightCacheBuster(),
-		};
-		debug( 'recordSignup: [Floodlight]', params );
-		recordParamsInFloodlight( params );
+		// const params = {
+		// 	type: 'wordp0',
+		// 	cat: 'signu1',
+		// 	ord: 1, // "Counting method" = "Unique" requires "ord" to be 1
+		// 	num: floodlightCacheBuster(),
+		// };
+		// debug( 'recordSignup: [Floodlight]', params );
+		// recordParamsInFloodlight( params );
+		debug( 'recordSignup: [Floodlight]' );
+		recordParamsInFloodlightGtag( {
+			// 'allow_custom_scripts': true,
+			// 'u2': '[&products]',
+			// 'u4': '[UserIDLogIn]',
+			// 'u5': '[UserIDNLogIn]',
+			send_to: 'DC-6355556/wordp0/signu1+unique',
+		} );
 	}
 
 	// Quantcast
@@ -1019,15 +1040,23 @@ export function recordAddToCart( cartItem ) {
 	// DCM Floodlight
 
 	if ( isFloodlightEnabled ) {
-		const params = {
-			type: 'wordp0',
-			cat: 'addto0',
-			u2: cartItem.product_name,
-			ord: floodlightCacheBuster(), // "Counting method" = "Counter/Standard" requires "ord" to be a random number
-			// num: not required
-		};
-		debug( 'recordAddToCart: [Floodlight]', params );
-		recordParamsInFloodlight( params );
+		// const params = {
+		// 	type: 'wordp0',
+		// 	cat: 'addto0',
+		// 	u2: cartItem.product_name,
+		// 	ord: floodlightCacheBuster(), // "Counting method" = "Counter/Standard" requires "ord" to be a random number
+		// 	// num: not required
+		// };
+		// debug( 'recordAddToCart: [Floodlight]', params );
+		// recordParamsInFloodlight( params );
+		debug( 'recordAddToCart: [Floodlight]' );
+		recordParamsInFloodlightGtag( {
+			// 'allow_custom_scripts': true,
+			// 'u2': '[&products]',
+			// 'u4': '[UserIDLogIn]',
+			// 'u5': '[UserIDNLogIn]',
+			send_to: 'DC-6355556/wordp0/addto0+standard',
+		} );
 	}
 
 	// Criteo
@@ -1368,49 +1397,79 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 	debug( 'recordOrderInFloodlight: record purchase' );
 
 	// WPCom + Jetpack legacy "Purchase Confirmation" event
-	const params_wpsale = {
-		type: 'wpsal0',
-		cat: 'wpsale',
-		qty: 1,
-		cost: cart.total_cost,
+	// const params_wpsale = {
+	// 	type: 'wpsal0',
+	// 	cat: 'wpsale',
+	// 	qty: 1,
+	// 	cost: cart.total_cost,
+	// 	u2: cart.products.map( product => product.product_name ).join( ', ' ),
+	// 	u3: cart.currency,
+	// 	ord: orderId,
+	// 	// num: not required
+	// };
+	// debug( 'recordOrderInFloodlight:', params_wpsale );
+	// recordParamsInFloodlight( params_wpsale );
+	debug( 'recordOrderInFloodlight:' );
+	recordParamsInFloodlightGtag( {
+		// 'allow_custom_scripts': true,
+		value: cart.total_cost,
+		transaction_id: orderId,
+		u1: cart.total_cost,
 		u2: cart.products.map( product => product.product_name ).join( ', ' ),
 		u3: cart.currency,
-		ord: orderId,
-		// num: not required
-	};
-	debug( 'recordOrderInFloodlight:', params_wpsale );
-	recordParamsInFloodlight( params_wpsale );
+		send_to: 'DC-6355556/wpsal0/wpsale+transactions',
+	} );
 
 	// WPCom
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		const params = {
-			type: 'wpsal0',
-			cat: 'purch0',
-			qty: 1,
-			cost: wpcomJetpackCartInfo.wpcomCost,
+		// const params = {
+		// 	type: 'wpsal0',
+		// 	cat: 'purch0',
+		// 	qty: 1,
+		// 	cost: wpcomJetpackCartInfo.wpcomCost,
+		// 	u2: wpcomJetpackCartInfo.wpcomProducts.map( product => product.product_name ).join( ', ' ),
+		// 	u3: cart.currency,
+		// 	ord: orderId,
+		// 	// num: not required
+		// };
+		// debug( 'recordOrderInFloodlight: WPCom', params );
+		// recordParamsInFloodlight( params );
+		debug( 'recordOrderInFloodlight: WPCom' );
+		recordParamsInFloodlightGtag( {
+			// 'allow_custom_scripts': true,
+			value: wpcomJetpackCartInfo.wpcomCost,
+			transaction_id: orderId,
+			u1: wpcomJetpackCartInfo.wpcomCost,
 			u2: wpcomJetpackCartInfo.wpcomProducts.map( product => product.product_name ).join( ', ' ),
 			u3: cart.currency,
-			ord: orderId,
-			// num: not required
-		};
-		debug( 'recordOrderInFloodlight: WPCom', params );
-		recordParamsInFloodlight( params );
+			send_to: 'DC-6355556/wpsal0/purch0+transactions',
+		} );
 	}
 
 	// Jetpack
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		const params = {
-			type: 'wpsal0',
-			cat: 'purch00',
-			qty: 1,
-			cost: wpcomJetpackCartInfo.jetpackCost,
+		// const params = {
+		// 	type: 'wpsal0',
+		// 	cat: 'purch00',
+		// 	qty: 1,
+		// 	cost: wpcomJetpackCartInfo.jetpackCost,
+		// 	u2: wpcomJetpackCartInfo.jetpackProducts.map( product => product.product_name ).join( ', ' ),
+		// 	u3: cart.currency,
+		// 	ord: orderId,
+		// 	// num: not required
+		// };
+		// debug( 'recordOrderInFloodlight: Jetpack', params );
+		// recordParamsInFloodlight( params );
+		debug( 'recordOrderInFloodlight: Jetpack' );
+		recordParamsInFloodlightGtag( {
+			// 'allow_custom_scripts': true,
+			value: wpcomJetpackCartInfo.jetpackCost,
+			transaction_id: orderId,
+			u1: wpcomJetpackCartInfo.jetpackCost,
 			u2: wpcomJetpackCartInfo.jetpackProducts.map( product => product.product_name ).join( ', ' ),
 			u3: cart.currency,
-			ord: orderId,
-			// num: not required
-		};
-		debug( 'recordOrderInFloodlight: Jetpack', params );
-		recordParamsInFloodlight( params );
+			send_to: 'DC-6355556/wpsal0/purch00+transactions',
+		} );
 	}
 }
 
@@ -1540,14 +1599,21 @@ export function recordAliasInFloodlight() {
 
 	debug( 'recordAliasInFloodlight: Aliasing anonymous user id with WordPress.com user id' );
 
-	const params = {
-		type: 'wordp0',
-		cat: 'alias0',
-		ord: floodlightCacheBuster(),
-		// num: not required
-	};
-	debug( 'recordAliasInFloodlight:', params );
-	recordParamsInFloodlight( params );
+	// const params = {
+	// 	type: 'wordp0',
+	// 	cat: 'alias0',
+	// 	ord: floodlightCacheBuster(),
+	// 	// num: not required
+	// };
+	// debug( 'recordAliasInFloodlight:', params );
+	// recordParamsInFloodlight( params );
+	debug( 'recordAliasInFloodlight:' );
+	recordParamsInFloodlightGtag( {
+		// 'allow_custom_scripts': true,
+		// 'u4': '[UserIDLogIn]',
+		// 'u5': '[UserIDNLogIn]',
+		send_to: 'DC-6355556/wordp0/alias0+standard',
+	} );
 }
 
 /**
@@ -1606,16 +1672,21 @@ export function recordSignupStartInFloodlight() {
 		return;
 	}
 
-	debug( 'DCM Floodlight: Recording sign up start' );
-
-	const params = {
-		type: 'wordp0',
-		cat: 'pre-p0',
-		ord: 1, // "Counting method" = "Unique" requires "ord" to be 1
-		num: floodlightCacheBuster(),
-	};
-	debug( 'recordSignupStartInFloodlight:', params );
-	recordParamsInFloodlight( params );
+	// const params = {
+	// 	type: 'wordp0',
+	// 	cat: 'pre-p0',
+	// 	ord: 1, // "Counting method" = "Unique" requires "ord" to be 1
+	// 	num: floodlightCacheBuster(),
+	// };
+	// debug( 'recordSignupStartInFloodlight:', params );
+	// recordParamsInFloodlight( params );
+	debug( 'recordSignupStartInFloodlight:' );
+	recordParamsInFloodlightGtag( {
+		// u2: '[&products]',
+		// u4: '[UserIDLogIn]',
+		// u5: '[UserIDNLogIn]',
+		send_to: 'DC-6355556/wordp0/pre-p0+unique',
+	} );
 }
 
 /**
@@ -1628,16 +1699,22 @@ export function recordSignupCompletionInFloodlight() {
 		return;
 	}
 
-	debug( 'DCM Floodlight: Recording sign up completion' );
-
-	const params = {
-		type: 'wordp0',
-		cat: 'signu0',
-		ord: 1, // "Counting method" = "Unique" requires "ord" to be 1
-		num: floodlightCacheBuster(),
-	};
-	debug( 'recordSignupCompletionInFloodlight:', params );
-	recordParamsInFloodlight( params );
+	// const params = {
+	// 	type: 'wordp0',
+	// 	cat: 'signu0',
+	// 	ord: 1, // "Counting method" = "Unique" requires "ord" to be 1
+	// 	num: floodlightCacheBuster(),
+	// };
+	// debug( 'recordSignupCompletionInFloodlight:', params );
+	// recordParamsInFloodlight( params );
+	debug( 'recordSignupCompletionInFloodlight:' );
+	recordParamsInFloodlightGtag( {
+		// 'allow_custom_scripts': true,
+		// 'u2': '[&products]',
+		// 'u4': '[UserIDLogIn]',
+		// 'u5': '[UserIDNLogIn]',
+		send_to: 'DC-6355556/wordp0/signu0+unique',
+	} );
 }
 
 /**
@@ -1658,27 +1735,46 @@ export function recordPageViewInFloodlight( urlPath ) {
 		maxAge: DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS,
 	} );
 
-	const params_wpvisit = {
-		type: 'wordp0',
-		cat: 'wpvisit',
+	// const params_wpvisit = {
+	// 	type: 'wordp0',
+	// 	cat: 'wpvisit',
+	// 	u6: urlPath,
+	// 	u7: sessionId,
+	// 	ord: sessionId,
+	// 	// num: not required
+	// };
+	// debug( 'retarget: recordPageViewInFloodlight: wpvisit', params_wpvisit );
+	// recordParamsInFloodlight( params_wpvisit );
+	debug( 'retarget: recordPageViewInFloodlight: wpvisit' );
+	recordParamsInFloodlightGtag( {
+		// 'allow_custom_scripts': true,
+		session_id: sessionId,
+		// 'u4': '[UserIDLogIn]',
+		// 'u5': '[UserIDNLogIn]',
 		u6: urlPath,
 		u7: sessionId,
-		ord: sessionId,
-		// num: not required
-	};
-	debug( 'retarget: recordPageViewInFloodlight: wpvisit', params_wpvisit );
-	recordParamsInFloodlight( params_wpvisit );
+		send_to: 'DC-6355556/wordp0/wpvisit+per_session',
+	} );
 
-	const params_wppv = {
-		type: 'wordp0',
-		cat: 'wppv',
+	// const params_wppv = {
+	// 	type: 'wordp0',
+	// 	cat: 'wppv',
+	// 	u6: urlPath,
+	// 	u7: sessionId,
+	// 	ord: floodlightCacheBuster(),
+	// 	// num: not required
+	// };
+	// debug( 'retarget: recordPageViewInFloodlight: wppv', params_wppv );
+	// recordParamsInFloodlight( params_wppv );
+	debug( 'retarget: recordPageViewInFloodlight: wppv' );
+	recordParamsInFloodlightGtag( {
+		// 'allow_custom_scripts': true,
+		// 'u4': '[UserIDLogIn]',
+		// 'u5': '[UserIDNLogIn]',
 		u6: urlPath,
 		u7: sessionId,
-		ord: floodlightCacheBuster(),
-		// num: not required
-	};
-	debug( 'retarget: recordPageViewInFloodlight: wppv', params_wppv );
-	recordParamsInFloodlight( params_wppv );
+		send_to: 'DC-6355556/wordp0/wppv+standard',
+	} );
 }
 
 /**
@@ -1732,54 +1828,63 @@ function tracksAnonymousUserId() {
 	return cookies.tk_ai;
 }
 
+function recordParamsInFloodlightGtag( params ) {
+	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
+		return;
+	}
+
+	// Adds u4 (user id) and u5 (anonymous user id) parameters
+	const defaults = assign( floodlightUserParams(), {
+		// See: https://support.google.com/searchads/answer/7566546?hl=en
+		allow_custom_scripts: true,
+	} );
+
+	const finalParams = [ 'event', 'conversion', assign( {}, defaults, params ) ];
+
+	debug( 'recordParamsInFloodlightGtag:', finalParams );
+
+	window.gtag( ...finalParams );
+}
+
 /**
  * Given an object of Floodlight params, this dynamically loads an iframe with the appropraite URL
  *
  * @param {Object} params - An object of Floodlight params
  * @returns {void}
  */
-function recordParamsInFloodlight( params ) {
-	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
-		return;
-	}
-
-	// Add in the u4 and u5 params
-	params = assign( params, floodlightUserParams() );
-
-	// As well as the advertiser id
-	params.src = TRACKING_IDS.dcmFloodlightAdvertiserId;
-
-	debug( 'recordParamsInFloodlight:', params );
-
-	// Note that we're not generating a URL with traditional query arguments
-	// Instead, each parameter is separated by a semicolon
-	const urlParams = Object.keys( params )
-		.map( function( key ) {
-			return encodeURIComponent( key ) + '=' + encodeURIComponent( params[ key ] );
-		} )
-		.join( ';' );
-
-	// The implementation guidance includes the question mark at the end of the URL
-	const urlWithParams = DCM_FLOODLIGHT_IFRAME_URL + ';' + urlParams + '?';
-
-	// Unlike other advertising networks, DCM Floodlight requires we load an iframe
-	const iframe = document.createElement( 'iframe' );
-	iframe.setAttribute( 'src', urlWithParams );
-	iframe.setAttribute( 'width', '1' );
-	iframe.setAttribute( 'height', '1' );
-	iframe.setAttribute( 'frameborder', '0' );
-	iframe.setAttribute( 'style', 'display: none' );
-	document.body.appendChild( iframe );
-}
-
-/**
- * Returns a random value to pass with as Flodlight's `ord` parameter
- *
- * @returns {Number} A large random number
- */
-function floodlightCacheBuster() {
-	return Math.random() * 10000000000000;
-}
+// function recordParamsInFloodlight( params ) {
+// 	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
+// 		return;
+// 	}
+//
+// 	// Add in the u4 and u5 params
+// 	params = assign( params, floodlightUserParams() );
+//
+// 	// As well as the advertiser id
+// 	params.src = TRACKING_IDS.dcmFloodlightAdvertiserId;
+//
+// 	debug( 'recordParamsInFloodlight:', params );
+//
+// 	// Note that we're not generating a URL with traditional query arguments
+// 	// Instead, each parameter is separated by a semicolon
+// 	const urlParams = Object.keys( params )
+// 		.map( function( key ) {
+// 			return encodeURIComponent( key ) + '=' + encodeURIComponent( params[ key ] );
+// 		} )
+// 		.join( ';' );
+//
+// 	// The implementation guidance includes the question mark at the end of the URL
+// 	const urlWithParams = DCM_FLOODLIGHT_IFRAME_URL + ';' + urlParams + '?';
+//
+// 	// Unlike other advertising networks, DCM Floodlight requires we load an iframe
+// 	const iframe = document.createElement( 'iframe' );
+// 	iframe.setAttribute( 'src', urlWithParams );
+// 	iframe.setAttribute( 'width', '1' );
+// 	iframe.setAttribute( 'height', '1' );
+// 	iframe.setAttribute( 'frameborder', '0' );
+// 	iframe.setAttribute( 'style', 'display: none' );
+// 	document.body.appendChild( iframe );
+// }
 
 /**
  * Records an order in Criteo
@@ -2030,6 +2135,11 @@ function setupJetpackGoogleAdsGtag() {
 function setupWpcomGoogleAdsGtag() {
 	setupGtag();
 	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAdsGtag );
+}
+
+function setupWpcomFloodlightGtag() {
+	setupGtag();
+	window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
 }
 
 /**
