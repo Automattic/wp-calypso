@@ -11,6 +11,16 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all props 1`
       G Suite Business
     </h3>
   </div>
+  <div
+    className="gsuite-purchase-cta__sku-info-storage-area"
+  >
+    <h4>
+      Unlimited Storage
+    </h4>
+    <InfoPopover>
+      Accounts with fewer than 5 users have 1 TB per user
+    </InfoPopover>
+  </div>
   <h4
     className="gsuite-purchase-cta__sku-info-name-price-per-user"
   >
@@ -21,16 +31,6 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all props 1`
        per user / year
     </span>
   </h4>
-  <div
-    className="gsuite-purchase-cta__sku-info-storage-area"
-  >
-    <h5>
-      Unlimited Storage
-    </h5>
-    <InfoPopover>
-      Accounts with fewer than 5 users have 1 TB per user
-    </InfoPopover>
-  </div>
   <Button
     className="gsuite-purchase-cta__sku-info-button"
     onClick={[Function]}
@@ -41,7 +41,50 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all props 1`
 </div>
 `;
 
-exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all required props 1`] = `
+exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with monthly prices 1`] = `
+<div
+  className="gsuite-purchase-cta__sku-info"
+>
+  <div
+    className="gsuite-purchase-cta__sku-info-name-area"
+  >
+    <h3>
+      G Suite Business
+    </h3>
+  </div>
+  <div
+    className="gsuite-purchase-cta__sku-info-storage-area"
+  >
+    <h4>
+      Unlimited Storage
+    </h4>
+  </div>
+  <h4
+    className="gsuite-purchase-cta__sku-info-name-price-per-user"
+  >
+    <span>
+      <strong>
+        $12
+      </strong>
+       per user / month
+    </span>
+  </h4>
+  <h5
+    className="gsuite-purchase-cta__sku-info-annual-price"
+  >
+    $144 billed yearly
+  </h5>
+  <Button
+    className="gsuite-purchase-cta__sku-info-button"
+    onClick={[Function]}
+    type="button"
+  >
+    Add G Suite Business
+  </Button>
+</div>
+`;
+
+exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with no props 1`] = `
 <div
   className="gsuite-purchase-cta__sku-info"
 >
@@ -50,7 +93,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all required
   >
     <span>
       <strong>
-        $72
+        -
       </strong>
        per user / year
     </span>
@@ -60,7 +103,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all required
     onClick={[Function]}
     type="button"
   >
-    Add G Suite
+    Click Here
   </Button>
 </div>
 `;

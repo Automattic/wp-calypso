@@ -183,7 +183,19 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	domainSuggestionsEnCheck: {
+	gsuitePurchaseCtaOptions: {
+		datestamp: '20190411',
+		variations: {
+			hideBusinessWithAnnualPrices: 25,
+			hideBusinessWithMonthlyPrices: 25,
+			showBusinessWithAnnualPrices: 25,
+			showBusinessWithMonthlyPrices: 25,
+		},
+		defaultVariation: 'hideBusinessWithAnnualPrices',
+		allowExistingUsers: true,
+		countryCodeTargets: [ 'USD' ],
+	},
+  domainSuggestionsEnCheck: {
 		datestamp: '20190415',
 		variations: {
 			control: 50,
@@ -191,5 +203,5 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-	},
+  },
 };

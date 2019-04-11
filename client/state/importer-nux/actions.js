@@ -19,6 +19,7 @@ import {
 import { loadmShotsPreview } from 'lib/mshots';
 import wpLib from 'lib/wp';
 import SignupActions from 'lib/signup/actions';
+import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 
 const wpcom = wpLib.undocumented();
 
@@ -79,6 +80,8 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 				throw new Error( error );
 			}
 
+			dispatch( setSiteTitle( siteTitle ) );
+
 			const imageBlob = await loadmShotsPreview( {
 				url: normalizeUrl( siteUrlFromInput ),
 				maxRetries: 30,
@@ -89,8 +92,8 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 				sitePreviewImageBlob: imageBlob,
 				importEngine: engine,
 				importFavicon: favicon,
-				importSiteTitle: siteTitle,
 				importSiteUrl,
+				siteTitle,
 				themeSlugWithRepo: 'pub/modern-business',
 			} );
 		} )

@@ -435,9 +435,9 @@ export function generateSteps( {
 			providesDependencies: [
 				'importEngine',
 				'importFavicon',
-				'importSiteTitle',
 				'importSiteUrl',
 				'sitePreviewImageBlob',
+				'siteTitle',
 				'themeSlugWithRepo',
 			],
 		},
