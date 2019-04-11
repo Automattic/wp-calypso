@@ -10,6 +10,11 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { getCurrencyObject } from '@automattic/format-currency';
 
+/**
+ * Internal dependencies
+ */
+import Badge from 'components/badge';
+
 export class PlanPrice extends Component {
 	render() {
 		const {
@@ -19,6 +24,7 @@ export class PlanPrice extends Component {
 			discounted,
 			className,
 			isInSignup,
+			isOnSale,
 			taxText,
 			translate,
 		} = this.props;
@@ -41,6 +47,10 @@ export class PlanPrice extends Component {
 			);
 		}
 
+		const saleBadgeText = translate( 'Sale', {
+			comment: 'Shown next to a domain that has a special discounted sale price',
+		} );
+
 		return (
 			<h4 className={ classes }>
 				<sup className="plan-price__currency-symbol">{ price.symbol }</sup>
@@ -53,6 +63,7 @@ export class PlanPrice extends Component {
 						{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
 					</sup>
 				) }
+				{ isOnSale && <Badge>{ saleBadgeText }</Badge> }
 			</h4>
 		);
 	}
@@ -66,6 +77,7 @@ PlanPrice.propTypes = {
 	discounted: PropTypes.bool,
 	currencyCode: PropTypes.string,
 	className: PropTypes.string,
+	isOnSale: PropTypes.bool,
 	taxText: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
@@ -75,4 +87,5 @@ PlanPrice.defaultProps = {
 	original: false,
 	discounted: false,
 	className: '',
+	isOnSale: false,
 };
