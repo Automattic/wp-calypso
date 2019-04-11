@@ -71,7 +71,7 @@ function DomainsLanding( {
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
 				<div id="wpcom" className="wpcom-site">
 					<div className="wp has-no-sidebar">
-						<div className="layout__content" id="content">
+						<div className="domains-landing layout__content" id="content">
 							<div className="layout__primary" id="primary" />
 						</div>
 					</div>

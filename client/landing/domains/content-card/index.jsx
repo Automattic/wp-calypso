@@ -62,7 +62,9 @@ class DomainsLandingContentCard extends Component {
 
 		return (
 			<CompactCard className="content-card">
-				{ illustration && <img src={ illustration } alt="" /> }
+				{ illustration && (
+					<img className="content-card__illustration" src={ illustration } alt="" />
+				) }
 				{ <h2 className="content-card__title">{ title }</h2> }
 				{ message && <h3 className="content-card__message">{ message }</h3> }
 				{ actionTitle && (
