@@ -163,9 +163,7 @@ function getWebpackConfig( {
 	}
 
 	const cssFilename = path.parse( outputFilename ).name + '.css';
-	const cssChunkFilename = outputChunkFilename
-		? path.parse( outputChunkFilename ).name + '.css'
-		: undefined;
+	const cssChunkFilename = path.parse( outputChunkFilename ).name + '.css';
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
