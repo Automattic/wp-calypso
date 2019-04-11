@@ -183,4 +183,14 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	gsuiteAfterDomainPurchaseOptions: {
+		datestamp: '20190411',
+		variations: {
+			hideMonthlyPrice: 50,
+			showMonthlyPrice: 50,
+		},
+		defaultVariation: 'hideMonthlyPrice',
+		allowExistingUsers: true,
+		countryCodeTargets: [ 'USD' ],
+	},
 };

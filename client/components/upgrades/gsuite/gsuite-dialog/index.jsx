@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,11 +23,10 @@ import {
 	validate as validateGappsUsers,
 	filter as filterUsers,
 } from 'lib/domains/google-apps-users';
-import { getAnnualPrice } from 'lib/google-apps';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
+import { getProductCost } from 'state/products-list/selectors';
 
 const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
 
@@ -58,13 +56,6 @@ class GoogleAppsDialog extends React.Component {
 		}
 	}
 
-	getAnnualPrice( plan ) {
-		const { currencyCode, productsList } = this.props;
-		const price = get( productsList, [ plan, 'prices', currencyCode ], 0 );
-
-		return getAnnualPrice( price, currencyCode );
-	}
-
 	render() {
 		if ( isGSuiteRestricted() ) {
 			this.props.handleClickSkip();
@@ -81,8 +72,9 @@ class GoogleAppsDialog extends React.Component {
 				<CompactCard>
 					<GoogleAppsProductDetails
 						domain={ this.props.domain }
+						cost={ this.props.gsuiteBasicCost }
+						currencyCode={ this.props.currencyCode }
 						plan={ gsuitePlanSlug }
-						annualPrice={ this.getAnnualPrice( gsuitePlanSlug ) }
 					/>
 					{ this.renderGoogleAppsUsers() }
 				</CompactCard>
@@ -256,7 +248,7 @@ const recordFormSubmit = section =>
 export default connect(
 	state => ( {
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		productsList: getProductsList( state ),
+		gsuiteBasicCost: getProductCost( state, 'gapps' ),
 	} ),
 	{
 		recordAddEmailButtonClick,
