@@ -83,7 +83,7 @@ const webpackConfig = {
 	module: {
 		rules: [
 			{
-				test: /extensions[\/\\]index/,
+				test: /extensions[/\\]index/,
 				exclude: path.join( __dirname, 'node_modules' ),
 				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
 			},
@@ -99,10 +99,10 @@ const webpackConfig = {
 				configFile: path.join( __dirname, 'babel.config.js' ),
 				cacheDirectory: path.join( __dirname, 'build', '.babel-server-cache' ),
 				cacheIdentifier,
-				exclude: /(node_modules|devdocs[\/\\]search-index)/,
+				exclude: /(node_modules|devdocs[/\\]search-index)/,
 			} ),
 			{
-				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
+				test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
 				loader: 'babel-loader',
 				options: {
 					babelrc: false,
@@ -157,15 +157,15 @@ const webpackConfig = {
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]user$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]user$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
-			/^components[\/\\]popover$/,
+			/^components[/\\]popover$/,
 			'components/null-component'
 		), // Depends on BOM and interactions don't work without JS
 		new webpack.NormalModuleReplacementPlugin(
-			/^my-sites[\/\\]themes[\/\\]theme-upload$/,
+			/^my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
 	] ),
@@ -174,7 +174,7 @@ const webpackConfig = {
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
+		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' )
 	);
 }
 
