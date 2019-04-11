@@ -63,6 +63,39 @@ export const GSuitePurchaseCta = ( {
 		abTestGroup === 'hideBusinessWithMonthlyPrices' ||
 		abTestGroup === 'showBusinessWithMonthlyPrices';
 
+	const renderBasicSku = () => (
+		<GSuitePurchaseCtaSkuInfo
+			currencyCode={ currencyCode }
+			buttonText={
+				showBusinessOption ? translate( 'Add G Suite Basic' ) : translate( 'Add G Suite' )
+			}
+			onButtonClick={ () => {
+				goToAddGSuiteUsers( 'basic' );
+			} }
+			showButton={ upgradeAvailable }
+			showMonthlyPrice={ showMonthlyPrice }
+			skuCost={ gsuiteBasicCost }
+			skuName={ showBusinessOption ? translate( 'G Suite Basic' ) : undefined }
+			storageText={ showBusinessOption ? translate( '30 GB of Storage' ) : undefined }
+		/>
+	);
+
+	const renderBusinessSku = () => (
+		<GSuitePurchaseCtaSkuInfo
+			currencyCode={ currencyCode }
+			buttonText={ translate( 'Add G Suite Business' ) }
+			onButtonClick={ () => {
+				goToAddGSuiteUsers( 'business' );
+			} }
+			showButton={ upgradeAvailable }
+			showMonthlyPrice={ showMonthlyPrice }
+			skuCost={ gsuiteBusinessCost }
+			skuName={ translate( 'G Suite Business' ) }
+			storageText={ translate( 'Unlimited Storage' ) }
+			storageNoticeText={ translate( 'Accounts with fewer than 5 users have 1 TB per user.' ) }
+		/>
+	);
+
 	return (
 		<EmailVerificationGate
 			noticeText={ translate( 'You must verify your email to purchase G Suite.' ) }
@@ -90,38 +123,13 @@ export const GSuitePurchaseCta = ( {
 									'storage, docs, calendars, and more integrated with your site.'
 							) }
 						</p>
-
-						<div className="gsuite-purchase-cta__skus">
-							<GSuitePurchaseCtaSkuInfo
-								currencyCode={ currencyCode }
-								buttonText={ translate( 'Add G Suite Basic' ) }
-								onButtonClick={ () => {
-									goToAddGSuiteUsers( 'basic' );
-								} }
-								showButton={ upgradeAvailable }
-								showMonthlyPrice={ showMonthlyPrice }
-								skuCost={ gsuiteBasicCost }
-								skuName={ showBusinessOption ? translate( 'G Suite Basic' ) : undefined }
-								storageText={ showBusinessOption ? translate( '30 GB of Storage' ) : undefined }
-							/>
-							{ showBusinessOption && (
-								<GSuitePurchaseCtaSkuInfo
-									currencyCode={ currencyCode }
-									buttonText={ translate( 'Add G Suite Business' ) }
-									onButtonClick={ () => {
-										goToAddGSuiteUsers( 'business' );
-									} }
-									showButton={ upgradeAvailable }
-									showMonthlyPrice={ showMonthlyPrice }
-									skuCost={ gsuiteBusinessCost }
-									skuName={ translate( 'G Suite Business' ) }
-									storageText={ translate( 'Unlimited Storage' ) }
-									storageNoticeText={ translate(
-										'Accounts with fewer than 5 users have 1 TB per user.'
-									) }
-								/>
-							) }
-						</div>
+						{ ! showBusinessOption && renderBasicSku() }
+						{ showBusinessOption && (
+							<div className="gsuite-purchase-cta__skus">
+								{ renderBasicSku() }
+								{ renderBusinessSku() }
+							</div>
+						) }
 					</div>
 
 					<div className="gsuite-purchase-cta__header-image">
