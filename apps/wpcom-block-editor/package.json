@@ -18,7 +18,8 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prebuild": "npm run clean",
-		"build": "webpack --config='../../packages/calypso-build/webpack.config.js' --output-path='./dist' --env.WP='true' iframe-bridge-server='./src/iframe-bridge-server.js' "
+		"bundle": "webpack --config='../../packages/calypso-build/webpack.config.js' --env.WP='true' iframe-bridge-server='./src/iframe-bridge-server.js'",
+		"build": "npm run bundle -- --output-path=./dist"
 	},
 	"dependencies": {
 		"@wordpress/data": "4.4.0",
