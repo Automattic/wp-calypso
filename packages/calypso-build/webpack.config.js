@@ -53,10 +53,20 @@ function getWebpackConfig(
 	}
 ) {
 	const workerCount = 1;
-	const cssFilename = path.parse( outputFilename ).name + '.css';
-	const cssChunkFilename = outputChunkFilename
-		? path.parse( outputChunkFilename ).name + '.css'
-		: undefined;
+
+	// Determine cssFilename based on the provided `output.filename`
+	const [ cssFilename, filenameQueryString ] = outputFilename.split( '?', 2 );
+	cssFilename.replace(
+		/\.js$/i,
+		'.css' + ( filenameQueryString ? `?${ filenameQueryString }` : '' )
+	);
+
+	// Determine cssChunkFilename based on the provided output.filename
+	const [ cssChunkFilename, chunkQueryString ] = outputChunkFilename.split( '?', 2 );
+	cssChunkFilename.replace(
+		/\.js$/i,
+		'.css' + ( chunkQueryString ? `?${ chunkQueryString }` : '' )
+	);
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
