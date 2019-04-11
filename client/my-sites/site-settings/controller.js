@@ -4,7 +4,7 @@
  */
 import page from 'page';
 import React from 'react';
-import { get } from 'lodash';
+import { get, isEmpty, omit, pick } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -27,6 +27,7 @@ import isVipSite from 'state/selectors/is-vip-site';
 import { setSection } from 'state/ui/actions';
 import { setImportingFromSignupFlow, setImportOriginSiteDetails } from 'state/importer-nux/actions';
 import { decodeURIComponentIfValid } from 'lib/url';
+import { addQueryArgs } from 'lib/route';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -65,12 +66,19 @@ export function general( context, next ) {
 }
 
 export function importSite( context, next ) {
-	// Pull supported query arguments into state & discard the rest
-	if ( context.querystring ) {
-		page.replace( context.pathname, {
-			engine: get( context, 'query.engine' ),
-			isFromSignup: get( context, 'query.signup' ),
-			siteUrl: get( context, 'query.from-site' ),
+	const { query } = context;
+	const argsToExtract = [ 'engine', 'isFromSignup', 'from-site' ];
+
+	// Pull supported query arguments into state (& out of the address bar)
+	const extractedArgs = pick( query, argsToExtract );
+
+	if ( ! isEmpty( extractedArgs ) ) {
+		const destination = addQueryArgs( omit( query, argsToExtract ), context.pathname );
+
+		page.replace( destination, {
+			engine: query.engine,
+			isFromSignup: query.signup,
+			siteUrl: query[ 'from-site' ],
 		} );
 		return;
 	}
