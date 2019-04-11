@@ -331,7 +331,7 @@ class Signup extends React.Component {
 
 		const isNewUser = !! (
 			( dependencies && dependencies.username ) ||
-			( isNewishUser && 0 === existingSiteCount - 1 )
+			( isNewishUser && dependencies && dependencies.siteSlug && 0 === existingSiteCount - 1 )
 		);
 		const isNewSite = !! ( dependencies && dependencies.siteSlug );
 		const hasCartItems = !! (
