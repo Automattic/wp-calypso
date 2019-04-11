@@ -1,14 +1,14 @@
 .post-actions-ellipsis-menu {
+	display: flex;
 	flex-shrink: 0;
 	margin-left: 8px;
-}
 
-.post-actions-ellipsis-menu,
-.post-actions-ellipsis-menu .ellipsis-menu {
-	display: flex;
-}
+	.ellipsis-menu {
+		display: flex;
+	}
 
-.post-actions-ellipsis-menu .ellipsis-menu__toggle {
-	padding: 0 16px;
-	margin-right: -16px;
+	.ellipsis-menu__toggle {
+		padding: 0 16px;
+		margin-right: -16px;
+	}
 }
