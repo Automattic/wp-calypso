@@ -109,7 +109,11 @@ function getWebpackConfig(
 				global: 'window',
 			} ),
 			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
-			...SassConfig.plugins( { cssChunkFilename, cssFilename, minify: ! isDevelopment } ),
+			...SassConfig.plugins( {
+				chunkFilename: cssChunkFilename,
+				filename: cssFilename,
+				minify: ! isDevelopment,
+			} ),
 			new DuplicatePackageCheckerPlugin(),
 			...( env.WP ? [ new WordPressExternalDependenciesPlugin() ] : [] ),
 		],
