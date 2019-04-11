@@ -19,7 +19,7 @@ const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-external-dependencies-plugin' );
-const { cssNameFromFilename } = require( './webpack/util' );
+const { cssNameFromFilename } = require( '@automattic/calypso-build/webpack/util' );
 
 /**
  * Internal dependencies
