@@ -19721,6 +19721,11 @@
 			"resolved": "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz",
 			"integrity": "sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c="
 		},
+		"u2f-api": {
+			"version": "1.0.10",
+			"resolved": "https://registry.npmjs.org/u2f-api/-/u2f-api-1.0.10.tgz",
+			"integrity": "sha512-0Zh+IqM2l6xaA/IUJDT9WwoEM6nwPx6ive4flVVYEfzzgXIrKFRaenieItsEkbXIgOZEw13nO3o3oLtSDOyesA=="
+		},
 		"ua-parser-js": {
 			"version": "0.7.19",
 			"resolved": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.19.tgz",
