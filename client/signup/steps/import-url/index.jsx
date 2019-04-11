@@ -18,15 +18,10 @@ import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import ScreenReaderText from 'components/screen-reader-text';
-import {
-	setImportOriginSiteDetails,
-	setNuxUrlInputValue,
-	submitImportUrlStep,
-} from 'state/importer-nux/actions';
+import { setNuxUrlInputValue, submitImportUrlStep } from 'state/importer-nux/actions';
 import {
 	getNuxUrlError,
 	getNuxUrlInputValue,
-	getSiteDetails,
 	isUrlInputDisabled,
 } from 'state/importer-nux/temp-selectors';
 import { validateImportUrl } from 'lib/importers/url-validation';
@@ -289,12 +284,10 @@ export default flow(
 		state => ( {
 			isSiteImportableError: getNuxUrlError( state ),
 			urlInputValue: getNuxUrlInputValue( state ),
-			siteDetails: getSiteDetails( state ),
 			isLoading: isUrlInputDisabled( state ),
 		} ),
 		{
 			setNuxUrlInputValue,
-			setImportOriginSiteDetails,
 			recordTracksEvent,
 			submitImportUrlStep,
 		}
