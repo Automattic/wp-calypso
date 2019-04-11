@@ -723,20 +723,8 @@ export function recordRegistration() {
 	// DCM Floodlight
 
 	if ( isFloodlightEnabled ) {
-		// const params = {
-		// 	type: 'wordp0',
-		// 	cat: 'regis0',
-		// 	ord: 1, // "Counting method" = "Counter/Unique" requires "ord" to be 1
-		// 	num: floodlightCacheBuster(),
-		// };
-		// debug( 'recordRegistration: [Floodlight]', params );
-		// recordParamsInFloodlight( params );
 		debug( 'recordRegistration: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
-			// 'allow_custom_scripts': true,
-			// 'u2': '[&products]',
-			// 'u4': '[UserIDLogIn]',
-			// 'u5': '[UserIDNLogIn]',
 			send_to: 'DC-6355556/wordp0/regis0+unique',
 		} );
 	}
@@ -875,20 +863,8 @@ export function recordSignup( slug ) {
 	// DCM Floodlight
 
 	if ( isFloodlightEnabled ) {
-		// const params = {
-		// 	type: 'wordp0',
-		// 	cat: 'signu1',
-		// 	ord: 1, // "Counting method" = "Unique" requires "ord" to be 1
-		// 	num: floodlightCacheBuster(),
-		// };
-		// debug( 'recordSignup: [Floodlight]', params );
-		// recordParamsInFloodlight( params );
 		debug( 'recordSignup: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
-			// 'allow_custom_scripts': true,
-			// 'u2': '[&products]',
-			// 'u4': '[UserIDLogIn]',
-			// 'u5': '[UserIDNLogIn]',
 			send_to: 'DC-6355556/wordp0/signu1+unique',
 		} );
 	}
@@ -1040,21 +1016,8 @@ export function recordAddToCart( cartItem ) {
 	// DCM Floodlight
 
 	if ( isFloodlightEnabled ) {
-		// const params = {
-		// 	type: 'wordp0',
-		// 	cat: 'addto0',
-		// 	u2: cartItem.product_name,
-		// 	ord: floodlightCacheBuster(), // "Counting method" = "Counter/Standard" requires "ord" to be a random number
-		// 	// num: not required
-		// };
-		// debug( 'recordAddToCart: [Floodlight]', params );
-		// recordParamsInFloodlight( params );
 		debug( 'recordAddToCart: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
-			// 'allow_custom_scripts': true,
-			// 'u2': '[&products]',
-			// 'u4': '[UserIDLogIn]',
-			// 'u5': '[UserIDNLogIn]',
 			send_to: 'DC-6355556/wordp0/addto0+standard',
 		} );
 	}
@@ -1396,22 +1359,8 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 
 	debug( 'recordOrderInFloodlight: record purchase' );
 
-	// WPCom + Jetpack legacy "Purchase Confirmation" event
-	// const params_wpsale = {
-	// 	type: 'wpsal0',
-	// 	cat: 'wpsale',
-	// 	qty: 1,
-	// 	cost: cart.total_cost,
-	// 	u2: cart.products.map( product => product.product_name ).join( ', ' ),
-	// 	u3: cart.currency,
-	// 	ord: orderId,
-	// 	// num: not required
-	// };
-	// debug( 'recordOrderInFloodlight:', params_wpsale );
-	// recordParamsInFloodlight( params_wpsale );
 	debug( 'recordOrderInFloodlight:' );
 	recordParamsInFloodlightGtag( {
-		// 'allow_custom_scripts': true,
 		value: cart.total_cost,
 		transaction_id: orderId,
 		u1: cart.total_cost,
@@ -1422,21 +1371,8 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 
 	// WPCom
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		// const params = {
-		// 	type: 'wpsal0',
-		// 	cat: 'purch0',
-		// 	qty: 1,
-		// 	cost: wpcomJetpackCartInfo.wpcomCost,
-		// 	u2: wpcomJetpackCartInfo.wpcomProducts.map( product => product.product_name ).join( ', ' ),
-		// 	u3: cart.currency,
-		// 	ord: orderId,
-		// 	// num: not required
-		// };
-		// debug( 'recordOrderInFloodlight: WPCom', params );
-		// recordParamsInFloodlight( params );
 		debug( 'recordOrderInFloodlight: WPCom' );
 		recordParamsInFloodlightGtag( {
-			// 'allow_custom_scripts': true,
 			value: wpcomJetpackCartInfo.wpcomCost,
 			transaction_id: orderId,
 			u1: wpcomJetpackCartInfo.wpcomCost,
@@ -1448,21 +1384,8 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 
 	// Jetpack
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		// const params = {
-		// 	type: 'wpsal0',
-		// 	cat: 'purch00',
-		// 	qty: 1,
-		// 	cost: wpcomJetpackCartInfo.jetpackCost,
-		// 	u2: wpcomJetpackCartInfo.jetpackProducts.map( product => product.product_name ).join( ', ' ),
-		// 	u3: cart.currency,
-		// 	ord: orderId,
-		// 	// num: not required
-		// };
-		// debug( 'recordOrderInFloodlight: Jetpack', params );
-		// recordParamsInFloodlight( params );
 		debug( 'recordOrderInFloodlight: Jetpack' );
 		recordParamsInFloodlightGtag( {
-			// 'allow_custom_scripts': true,
 			value: wpcomJetpackCartInfo.jetpackCost,
 			transaction_id: orderId,
 			u1: wpcomJetpackCartInfo.jetpackCost,
@@ -1599,19 +1522,8 @@ export function recordAliasInFloodlight() {
 
 	debug( 'recordAliasInFloodlight: Aliasing anonymous user id with WordPress.com user id' );
 
-	// const params = {
-	// 	type: 'wordp0',
-	// 	cat: 'alias0',
-	// 	ord: floodlightCacheBuster(),
-	// 	// num: not required
-	// };
-	// debug( 'recordAliasInFloodlight:', params );
-	// recordParamsInFloodlight( params );
 	debug( 'recordAliasInFloodlight:' );
 	recordParamsInFloodlightGtag( {
-		// 'allow_custom_scripts': true,
-		// 'u4': '[UserIDLogIn]',
-		// 'u5': '[UserIDNLogIn]',
 		send_to: 'DC-6355556/wordp0/alias0+standard',
 	} );
 }
@@ -1672,19 +1584,8 @@ export function recordSignupStartInFloodlight() {
 		return;
 	}
 
-	// const params = {
-	// 	type: 'wordp0',
-	// 	cat: 'pre-p0',
-	// 	ord: 1, // "Counting method" = "Unique" requires "ord" to be 1
-	// 	num: floodlightCacheBuster(),
-	// };
-	// debug( 'recordSignupStartInFloodlight:', params );
-	// recordParamsInFloodlight( params );
 	debug( 'recordSignupStartInFloodlight:' );
 	recordParamsInFloodlightGtag( {
-		// u2: '[&products]',
-		// u4: '[UserIDLogIn]',
-		// u5: '[UserIDNLogIn]',
 		send_to: 'DC-6355556/wordp0/pre-p0+unique',
 	} );
 }
@@ -1699,20 +1600,8 @@ export function recordSignupCompletionInFloodlight() {
 		return;
 	}
 
-	// const params = {
-	// 	type: 'wordp0',
-	// 	cat: 'signu0',
-	// 	ord: 1, // "Counting method" = "Unique" requires "ord" to be 1
-	// 	num: floodlightCacheBuster(),
-	// };
-	// debug( 'recordSignupCompletionInFloodlight:', params );
-	// recordParamsInFloodlight( params );
 	debug( 'recordSignupCompletionInFloodlight:' );
 	recordParamsInFloodlightGtag( {
-		// 'allow_custom_scripts': true,
-		// 'u2': '[&products]',
-		// 'u4': '[UserIDLogIn]',
-		// 'u5': '[UserIDNLogIn]',
 		send_to: 'DC-6355556/wordp0/signu0+unique',
 	} );
 }
@@ -1735,42 +1624,16 @@ export function recordPageViewInFloodlight( urlPath ) {
 		maxAge: DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS,
 	} );
 
-	// const params_wpvisit = {
-	// 	type: 'wordp0',
-	// 	cat: 'wpvisit',
-	// 	u6: urlPath,
-	// 	u7: sessionId,
-	// 	ord: sessionId,
-	// 	// num: not required
-	// };
-	// debug( 'retarget: recordPageViewInFloodlight: wpvisit', params_wpvisit );
-	// recordParamsInFloodlight( params_wpvisit );
 	debug( 'retarget: recordPageViewInFloodlight: wpvisit' );
 	recordParamsInFloodlightGtag( {
-		// 'allow_custom_scripts': true,
 		session_id: sessionId,
-		// 'u4': '[UserIDLogIn]',
-		// 'u5': '[UserIDNLogIn]',
 		u6: urlPath,
 		u7: sessionId,
 		send_to: 'DC-6355556/wordp0/wpvisit+per_session',
 	} );
 
-	// const params_wppv = {
-	// 	type: 'wordp0',
-	// 	cat: 'wppv',
-	// 	u6: urlPath,
-	// 	u7: sessionId,
-	// 	ord: floodlightCacheBuster(),
-	// 	// num: not required
-	// };
-	// debug( 'retarget: recordPageViewInFloodlight: wppv', params_wppv );
-	// recordParamsInFloodlight( params_wppv );
 	debug( 'retarget: recordPageViewInFloodlight: wppv' );
 	recordParamsInFloodlightGtag( {
-		// 'allow_custom_scripts': true,
-		// 'u4': '[UserIDLogIn]',
-		// 'u5': '[UserIDNLogIn]',
 		u6: urlPath,
 		u7: sessionId,
 		send_to: 'DC-6355556/wordp0/wppv+standard',
@@ -1828,6 +1691,11 @@ function tracksAnonymousUserId() {
 	return cookies.tk_ai;
 }
 
+/**
+ * Records Floodlight events using Gtag and automatically adds `u4`, `u5`, and `allow_custom_scripts: true`.
+ *
+ * @param {Object} params An object of Floodlight params.
+ */
 function recordParamsInFloodlightGtag( params ) {
 	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
 		return;
@@ -1845,46 +1713,6 @@ function recordParamsInFloodlightGtag( params ) {
 
 	window.gtag( ...finalParams );
 }
-
-/**
- * Given an object of Floodlight params, this dynamically loads an iframe with the appropraite URL
- *
- * @param {Object} params - An object of Floodlight params
- * @returns {void}
- */
-// function recordParamsInFloodlight( params ) {
-// 	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
-// 		return;
-// 	}
-//
-// 	// Add in the u4 and u5 params
-// 	params = assign( params, floodlightUserParams() );
-//
-// 	// As well as the advertiser id
-// 	params.src = TRACKING_IDS.dcmFloodlightAdvertiserId;
-//
-// 	debug( 'recordParamsInFloodlight:', params );
-//
-// 	// Note that we're not generating a URL with traditional query arguments
-// 	// Instead, each parameter is separated by a semicolon
-// 	const urlParams = Object.keys( params )
-// 		.map( function( key ) {
-// 			return encodeURIComponent( key ) + '=' + encodeURIComponent( params[ key ] );
-// 		} )
-// 		.join( ';' );
-//
-// 	// The implementation guidance includes the question mark at the end of the URL
-// 	const urlWithParams = DCM_FLOODLIGHT_IFRAME_URL + ';' + urlParams + '?';
-//
-// 	// Unlike other advertising networks, DCM Floodlight requires we load an iframe
-// 	const iframe = document.createElement( 'iframe' );
-// 	iframe.setAttribute( 'src', urlWithParams );
-// 	iframe.setAttribute( 'width', '1' );
-// 	iframe.setAttribute( 'height', '1' );
-// 	iframe.setAttribute( 'frameborder', '0' );
-// 	iframe.setAttribute( 'style', 'display: none' );
-// 	document.body.appendChild( iframe );
-// }
 
 /**
  * Records an order in Criteo
