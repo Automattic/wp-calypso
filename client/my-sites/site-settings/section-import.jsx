@@ -13,6 +13,7 @@ import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import DocumentHead from 'components/data/document-head';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
@@ -256,6 +257,7 @@ class SiteSettingsImport extends Component {
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
+				<DocumentHead title="Import" />
 				<DescriptiveHeader />
 				{ this.renderImporters() }
 			</>
