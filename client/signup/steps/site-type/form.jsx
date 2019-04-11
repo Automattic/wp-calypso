@@ -53,7 +53,7 @@ class SiteTypeForm extends Component {
 
 		this.setState( { siteType: type } );
 
-		this.props.submitForm( type + '-' + this.state.otherValue );
+		this.props.submitForm( type === 'other' ? type + '-' + this.state.otherValue : type );
 	};
 
 	handleSubmitOther = () => this.handleSubmit( 'other' );
