@@ -15,6 +15,11 @@ import { localize } from 'i18n-calypso';
  */
 import { getPost } from 'state/posts/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function PostTypePostAuthor( { name } ) {
 	if ( ! name ) {
 		return null;
