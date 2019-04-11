@@ -183,7 +183,7 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	gsuiteAfterDomainPurchaseOptions: {
+	gsuiteDomainFlowOptions: {
 		datestamp: '20190411',
 		variations: {
 			hideMonthlyPrice: 50,

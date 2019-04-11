@@ -20,7 +20,7 @@ function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 	// currencyCode can safely replace the countryCode, just make sure we have one first
 	const showMonthlyPrice =
 		null !== currencyCode
-			? 'showMonthlyPrice' === abtest( 'gsuiteAfterDomainPurchaseOptions', currencyCode )
+			? 'showMonthlyPrice' === abtest( 'gsuiteDomainFlowOptions', currencyCode )
 			: false;
 
 	const getStorageText = () => {
