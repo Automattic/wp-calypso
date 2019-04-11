@@ -19,6 +19,7 @@ const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-external-dependencies-plugin' );
+const { cssNameFromFilename } = require( './webpack/util' );
 
 /**
  * Internal dependencies
@@ -162,8 +163,8 @@ function getWebpackConfig( {
 		outputChunkFilename = '[name].js';
 	}
 
-	const cssFilename = path.parse( outputFilename ).name + '.css';
-	const cssChunkFilename = path.parse( outputChunkFilename ).name + '.css';
+	const cssFilename = cssNameFromFilename( outputFilename );
+	const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
