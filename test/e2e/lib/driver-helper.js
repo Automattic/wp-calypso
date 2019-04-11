@@ -512,6 +512,15 @@ export async function scrollToBottom( driver, selector ) {
 	);
 }
 
+export async function scrollToTop( driver, selector ) {
+	const selectorElement = await driver.findElement( selector );
+
+	return await driver.executeScript(
+		'arguments[0].scrollIntoView( { block: "start", inline: "center" } )',
+		selectorElement
+	);
+}
+
 export async function selectElementByText( driver, selector, text ) {
 	const element = async () => {
 		const allElements = await driver.findElements( selector );
