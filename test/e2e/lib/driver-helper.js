@@ -494,29 +494,11 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 	return await refreshIfNeeded();
 }
 
-export async function scrollIntoView( driver, selector ) {
+export async function scrollIntoView( driver, selector, position = 'center' ) {
 	const selectorElement = await driver.findElement( selector );
 
 	return await driver.executeScript(
-		'arguments[0].scrollIntoView( { block: "center", inline: "center" } )',
-		selectorElement
-	);
-}
-
-export async function scrollToBottom( driver, selector ) {
-	const selectorElement = await driver.findElement( selector );
-
-	return await driver.executeScript(
-		'arguments[0].scrollIntoView( { block: "end", inline: "center" } )',
-		selectorElement
-	);
-}
-
-export async function scrollToTop( driver, selector ) {
-	const selectorElement = await driver.findElement( selector );
-
-	return await driver.executeScript(
-		'arguments[0].scrollIntoView( { block: "start", inline: "center" } )',
+		`arguments[0].scrollIntoView( { block: "${ position }", inline: "center" } )`,
 		selectorElement
 	);
 }

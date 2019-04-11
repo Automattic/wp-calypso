@@ -84,7 +84,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 			if ( displayed ) {
 				break;
 			} else {
-				await DriverHelper.scrollToBottom( this.driver, By.css( '.layout__primary' ) );
+				await DriverHelper.scrollIntoView( this.driver, By.css( '.layout__primary' ), 'end' );
 			}
 		}
 		return displayed;
