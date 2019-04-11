@@ -158,7 +158,10 @@ function getWebpackConfig( {
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		context: __dirname,
-		entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
+		entry: {
+			build: [ path.join( __dirname, 'client', 'boot', 'app' ) ],
+			domainsLanding: [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
+		},
 		mode: isDevelopment ? 'development' : 'production',
 		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 		output: {
