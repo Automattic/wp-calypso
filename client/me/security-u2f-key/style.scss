@@ -30,7 +30,7 @@
 		flex-shrink: 0;
 
 		.security-u2f-key__item-subtitle {
-			color: $gray-darken-10;
+			color: var( --color-neutral-500 );
 			font-size: 0.9em;
 			margin-bottom: 0;
 		}
