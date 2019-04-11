@@ -74,3 +74,4 @@ cached-requests.json
 
 # package output
 /packages/*/dist/
+/packages/*/package-lock.json
