@@ -103,7 +103,6 @@ function getWebpackConfig(
 				} ),
 				SassConfig.loader( {
 					preserveCssCustomProperties: false,
-					includePaths: [ path.join( __dirname, 'client' ) ],
 					prelude: '@import "~@automattic/calypso-color-schemes/src/shared/colors";',
 				} ),
 				FileConfig.loader(),
