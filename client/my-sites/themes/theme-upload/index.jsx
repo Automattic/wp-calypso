@@ -59,6 +59,11 @@ import redirectIf from 'my-sites/feature-upsell/redirect-if';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
 class Upload extends React.Component {
@@ -190,7 +195,7 @@ class Upload extends React.Component {
 
 		return (
 			<div className="theme-upload__theme-sheet">
-				<img className="theme-upload__screenshot" src={ theme.screenshot } />
+				<img className="theme-upload__screenshot" src={ theme.screenshot } alt="" />
 				<h2 className="theme-upload__theme-name">{ theme.name }</h2>
 				<div className="theme-upload__author">
 					{ translate( 'by ' ) }

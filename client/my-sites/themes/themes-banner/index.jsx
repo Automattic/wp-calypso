@@ -22,6 +22,11 @@ import { getActiveTheme, getThemeDetailsUrl } from 'state/themes/selectors';
 import { isThemesBannerVisible } from 'state/themes/themes-ui/selectors';
 import { hideThemesBanner as hideThemesBannerAction } from 'state/themes/themes-ui/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ThemesBanner extends PureComponent {
 	static propTypes = {
 		themeId: PropTypes.string,

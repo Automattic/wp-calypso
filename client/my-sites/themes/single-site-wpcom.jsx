@@ -43,7 +43,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 			upsellBanner = (
 				<Banner
 					plan={ PLAN_PREMIUM }
-					className="is-theme-showcase-banner" // eslint-disable-line wpcalypso/jsx-classname-namespace
+					className="themes__showcase-banner"
 					title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
 					event="themes_plans_free_personal"
 					callToAction={ translate( 'View Plans' ) }

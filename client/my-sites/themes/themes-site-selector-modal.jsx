@@ -19,6 +19,11 @@ import { trackClick } from './helpers';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getTheme } from 'state/themes/selectors';
 
+/**
+ * Style dependencies
+ */
+import './themes-site-selector-modal.scss';
+
 const OPTION_SHAPE = PropTypes.shape( {
 	label: PropTypes.string,
 	header: PropTypes.string,
@@ -140,11 +145,14 @@ class ThemesSiteSelectorModal extends React.Component {
 	}
 }
 
+const bindGetSiteSlug = state => siteId => getSiteSlug( state, siteId );
+const bindGetWpcomTheme = state => themeId => getTheme( state, 'wpcom', themeId );
+
 export default connect( state => ( {
 	// We don't need a <QueryTheme /> component to fetch data for the theme since the
 	// ThemesSiteSelectorModal will always be called from a context where those data are available.
 	// FIXME: Since the siteId and themeId are part of the component's internal state, we can't use them
 	// here. Instead, we have to return helper functions.
-	getSiteSlug: siteId => getSiteSlug( state, siteId ),
-	getWpcomTheme: themeId => getTheme( state, 'wpcom', themeId ),
+	getSiteSlug: bindGetSiteSlug( state ),
+	getWpcomTheme: bindGetWpcomTheme( state ),
 } ) )( ThemesSiteSelectorModal );

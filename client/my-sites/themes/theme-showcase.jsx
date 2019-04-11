@@ -41,6 +41,11 @@ import RandomThemesBanner from './themes-banner/random-themes-banner';
 import { getActiveTheme } from 'state/themes/selectors';
 import UpworkBanner from 'blocks/upwork-banner';
 
+/**
+ * Style dependencies
+ */
+import './theme-showcase.scss';
+
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
 	portfolio: { icon: 'custom-post-type', order: 2 },

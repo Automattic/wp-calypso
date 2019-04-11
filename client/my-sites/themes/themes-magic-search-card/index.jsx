@@ -26,6 +26,11 @@ import MagicSearchWelcome from './welcome';
 import getThemeFilters from 'state/selectors/get-theme-filters';
 import getThemeFilterToTermTable from 'state/selectors/get-theme-filter-to-term-table';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 //We want those taxonomies if they are used to be presented in this order
 const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];
 

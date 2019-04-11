@@ -79,13 +79,11 @@
 	color: transparent;
 }
 
-.theme__sheet-section-nav {
-	.is-theme-preview {
-		margin-left: auto;
+.theme__sheet-preview-nav-item {
+	margin-left: auto;
 
-		@include breakpoint( '<960px' ) {
-			display: none;
-		}
+	@include breakpoint( '<960px' ) {
+		display: none;
 	}
 }
 
@@ -143,7 +141,8 @@
 	@include breakpoint( '>960px' ) {
 		&.is-active:hover {
 			cursor: pointer;
-			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 10px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ),
+				0 2px 10px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
 		}
 	}
 }
@@ -254,7 +253,7 @@
 		&:nth-child( n + 2 ) {
 			// Everything except the first
 			border-top: 1px solid #dce5eb;
-			margin: 20px -20px 20px;
+			margin: 20px -20px;
 			padding: 15px 20px;
 
 			&::before {
@@ -315,7 +314,7 @@
 
 	.notes {
 		background: var( --color-neutral-0 );
-		margin: 40px -20px 40px;
+		margin: 40px -20px;
 		border-top: 1px solid #e9eff3;
 		border-bottom: 1px solid #e9eff3;
 		padding: 20px;
@@ -496,7 +495,7 @@
 	display: none;
 }
 
-.banner.is-particular-theme-banner {
+.banner.theme__page-upsell-banner {
 	@include banner-dark();
 
 	width: 50%;
@@ -509,7 +508,7 @@
 	}
 }
 
-.banner.is-theme-preview-banner {
+.banner.theme__preview-upsell-banner {
 	@include banner-dark();
 	width: 100%;
 	margin: 0;
