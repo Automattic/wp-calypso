@@ -18,6 +18,7 @@ const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-exte
 /**
  * Internal dependencies
  */
+const { cssNameFromFilename } = require( './webpack/util' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
@@ -54,19 +55,8 @@ function getWebpackConfig(
 ) {
 	const workerCount = 1;
 
-	// Determine cssFilename based on the provided `output.filename`
-	const [ cssFilename, filenameQueryString ] = outputFilename.split( '?', 2 );
-	cssFilename.replace(
-		/\.js$/i,
-		'.css' + ( filenameQueryString ? `?${ filenameQueryString }` : '' )
-	);
-
-	// Determine cssChunkFilename based on the provided output.filename
-	const [ cssChunkFilename, chunkQueryString ] = outputChunkFilename.split( '?', 2 );
-	cssChunkFilename.replace(
-		/\.js$/i,
-		'.css' + ( chunkQueryString ? `?${ chunkQueryString }` : '' )
-	);
+	const cssFilename = cssNameFromFilename( outputFilename );
+	const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
