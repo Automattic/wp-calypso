@@ -126,7 +126,6 @@
 	}
 
 	.gridicon,
-	.jetpack-logo,
 	svg {
 		fill: var( --sidebar-gridicon-fill );
 		height: 24px;
@@ -608,8 +607,7 @@ form.sidebar__button input {
 	}
 
 	.sidebar__menu {
-		.gridicon,
-		.jetpack-logo {
+		.gridicon {
 			display: none;
 		}
 

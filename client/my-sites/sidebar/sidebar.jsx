@@ -73,7 +73,6 @@ import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import { canAccessEarnSection } from 'lib/ads/utils';
 import { ReactComponent as CartSvg } from 'material-design-icons/action/outline-shopping_cart-24px.svg';
 import { ReactComponent as StatsSvg } from 'material-design-icons/editor/outline-bar_chart-24px.svg';
-import { ReactComponent as PlanSvg } from 'material-design-icons/action/outline-offline_bolt-24px.svg';
 import { ReactComponent as SiteSvg } from 'material-design-icons/image/outline-edit-24px.svg';
 import { ReactComponent as DesignSvg } from 'material-design-icons/content/outline-gesture-24px.svg';
 import { ReactComponent as ToolsSvg } from 'material-design-icons/action/outline-build-24px.svg';
@@ -495,7 +494,6 @@ export class MySitesSidebar extends Component {
 			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a onClick={ this.trackPlanClick } href={ planLink }>
 					<JetpackLogo size={ 24 } />
-					<PlanSvg />
 					<span className="menu-link-text" data-e2e-sidebar={ 'Plan' }>
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
