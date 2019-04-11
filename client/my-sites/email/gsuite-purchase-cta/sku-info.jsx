@@ -40,6 +40,12 @@ function GSuitePurchaseCtaSkuInfo( {
 					<h3>{ skuName }</h3>
 				</div>
 			) }
+			{ storageText && (
+				<div className="gsuite-purchase-cta__sku-info-storage-area">
+					<h4>{ storageText }</h4>
+					{ storageNoticeText && <InfoPopover>{ storageNoticeText }</InfoPopover> }
+				</div>
+			) }
 			<h4 className="gsuite-purchase-cta__sku-info-name-price-per-user">
 				<span>
 					{ ! showMonthlyPrice &&
@@ -81,13 +87,6 @@ function GSuitePurchaseCtaSkuInfo( {
 					} ) }
 				</h5>
 			) }
-			{ storageText && (
-				<div className="gsuite-purchase-cta__sku-info-storage-area">
-					<h5>{ storageText }</h5>
-					{ storageNoticeText && <InfoPopover>{ storageNoticeText }</InfoPopover> }
-				</div>
-			) }
-
 			{ showButton && (
 				<Button
 					className="gsuite-purchase-cta__sku-info-button"
