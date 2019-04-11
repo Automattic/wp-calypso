@@ -195,7 +195,7 @@ export default {
 		allowExistingUsers: true,
 		countryCodeTargets: [ 'USD' ],
 	},
-  domainSuggestionsEnCheck: {
+	domainSuggestionsEnCheck: {
 		datestamp: '20190415',
 		variations: {
 			control: 50,
@@ -203,5 +203,5 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-  },
+	},
 };
