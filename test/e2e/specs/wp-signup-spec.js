@@ -1299,7 +1299,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				StartPage.getStartURL( {
 					culture: locale,
 					flow: 'subdomain',
-					query: 'vertical=a8c.1',
+					query: 'vertical=art',
 				} )
 			);
 			const designTypePage = await DesignTypePage.Expect( driver );
