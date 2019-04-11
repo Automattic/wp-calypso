@@ -3,6 +3,7 @@
  */
 import React, { Fragment } from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -30,12 +31,6 @@ function whenWeCanAutoconfigure( state ) {
 	return canAutoconfigure || credentials.some( c => c.type === 'auto' );
 }
 
-// @ TODO: debug why this doesn't listen to state changes properly
-function siteHasCredentials( state ) {
-	const siteId = getSelectedSiteId( state );
-	return getJetpackCredentialsUpdateStatus( state, siteId ) === 'success';
-}
-
 const JetpackBackupsRewindTourButtons = ( { backText, translate } ) => (
 	<Fragment>
 		<SiteLink isButton href="/plans/my-plan/:site">
@@ -44,6 +39,20 @@ const JetpackBackupsRewindTourButtons = ( { backText, translate } ) => (
 		<Quit>{ translate( 'No, thanks.' ) }</Quit>
 	</Fragment>
 );
+
+const ContinueToLastStep = ( { siteHasCredentials } ) => (
+	<Continue
+		target=".rewind-credentials-form .is-primary"
+		step="finish"
+		when={ () => siteHasCredentials }
+		click
+		hidden
+	/>
+);
+const ConnectedContinueToLastStep = connect( state => ( {
+	siteHasCredentials:
+		getJetpackCredentialsUpdateStatus( state, getSelectedSiteId( state ) ) === 'success',
+} ) )( ContinueToLastStep );
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackBackupsRewindTour = makeTour(
@@ -123,15 +132,7 @@ export const JetpackBackupsRewindTour = makeTour(
 				display: 'none',
 			} }
 		>
-			{ () => (
-				<Continue
-					target=".rewind-credentials-form .is-primary"
-					step="finish"
-					when={ siteHasCredentials }
-					click
-					hidden
-				/>
-			) }
+			{ () => <ConnectedContinueToLastStep /> }
 		</Step>
 
 		<Step name="finish" target=".credentials-configured" placement="right">
