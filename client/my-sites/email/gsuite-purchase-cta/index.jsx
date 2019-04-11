@@ -94,7 +94,7 @@ export const GSuitePurchaseCta = ( {
 						<div className="gsuite-purchase-cta__skus">
 							<GSuitePurchaseCtaSkuInfo
 								currencyCode={ currencyCode }
-								buttonText={ translate( 'Add G Suite' ) }
+								buttonText={ translate( 'Add G Suite Basic' ) }
 								onButtonClick={ () => {
 									goToAddGSuiteUsers( 'basic' );
 								} }
