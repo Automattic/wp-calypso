@@ -48,22 +48,15 @@ class SiteTypeForm extends Component {
 	handleSubmit = type => {
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
 			value: type,
+			user_input_site_type: this.state.otherValue || null,
 		} );
 
 		this.setState( { siteType: type } );
 
-		this.props.submitForm( type );
+		this.props.submitForm( type + '-' + this.state.otherValue );
 	};
 
-	handleSubmitOther = () => {
-		const fieldValue = this.state.otherValue ? 'other—' + this.state.otherValue : 'other–other';
-
-		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
-			value: 'other',
-		} );
-
-		this.handleSubmit( fieldValue );
-	};
+	handleSubmitOther = () => this.handleSubmit( 'other' );
 
 	renderBasicCard = () => {
 		return (
@@ -118,14 +111,10 @@ class SiteTypeForm extends Component {
 	render() {
 		const { isJetpack } = this.props;
 
-		if ( ! isJetpack ) {
-			return <Fragment> { this.renderBasicCard() } </Fragment>;
-		}
-
 		return (
 			<Fragment>
 				{ this.renderBasicCard() }
-				{ this.renderOtherInfo() }
+				{ isJetpack && this.renderOtherInfo() }
 			</Fragment>
 		);
 	}
