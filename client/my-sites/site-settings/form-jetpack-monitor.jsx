@@ -40,6 +40,16 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		}
 	}
 
+	isNotesEnabledForBlog = () => {
+		const { siteId } = this.props;
+		// Only enable for 10% of users for now (blog IDs that finish by 1).
+		if ( 1 === siteId % 10 ) {
+			return true;
+		}
+
+		return false;
+	};
+
 	recordEvent = event => {
 		return () => {
 			this.props.trackEvent( event );
@@ -151,8 +161,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 					<div className="site-settings__child-settings">
 						{ this.settingsMonitorEmailCheckbox() }
-						{ config.isEnabled( 'settings/security/monitor/wp-note' ) &&
-							this.settingsMonitorWpNoteCheckbox() }
+						{ this.isNotesEnabledForBlog() && this.settingsMonitorWpNoteCheckbox() }
 					</div>
 				</Card>
 			</div>

@@ -136,7 +136,6 @@
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
-		"settings/security/monitor/wp-note": true,
 		"settings/theme-setup": true,
 		"signup/onboarding-flow": true,
 		"signup/social": true,
