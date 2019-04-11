@@ -49,6 +49,7 @@
 		"@babel/polyfill": "7.4.0",
 		"@babel/preset-env": "7.4.2",
 		"@babel/runtime": "7.4.2",
+		"@svgr/webpack": "4.1.0",
 		"@wordpress/blocks": "6.0.7",
 		"@wordpress/browserslist-config": "2.3.0",
 		"@wordpress/components": "7.0.8",
