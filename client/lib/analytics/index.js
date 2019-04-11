@@ -274,15 +274,6 @@ const analytics = {
 		},
 	},
 
-	recordRegistration: function() {
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
-		// Google Analytics
-		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
-		// Marketing
-		recordRegistration();
-	},
-
 	recordSignupStart: function( { flow, ref } ) {
 		// Tracks
 		analytics.tracks.recordEvent( 'calypso_signup_start', { flow, ref } );
@@ -292,21 +283,35 @@ const analytics = {
 		recordSignupStartInFloodlight();
 	},
 
-	recordSignupComplete: function( {
-		isNewUser,
-		isNewSite,
-		hasCartItems,
-		isNewUserOnFreePlan,
-		flow,
-	} ) {
+	recordRegistration: function() {
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
+		// Google Analytics
+		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+		// Marketing
+		recordRegistration();
+	},
+
+	recordSocialRegistration: function() {
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
+		// Google Analytics
+		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_social_complete' );
+		// Marketing
+		recordRegistration();
+	},
+
+	recordSignupComplete: function( { isNewUser, isNewSite, hasCartItems, flow }, callback ) {
+		let callbackDelay = 1000; // Give trackers time.
+
 		// Tracks
 		analytics.tracks.recordEvent( 'calypso_signup_complete', {
 			flow: flow,
 			is_new_user: isNewUser,
 			is_new_site: isNewSite,
 			has_cart_items: hasCartItems,
-			is_new_user_on_free_plan: isNewUserOnFreePlan,
 		} );
+
 		// Google Analytics
 		const flags = [
 			isNewUser && 'is_new_user',
@@ -314,10 +319,17 @@ const analytics = {
 			hasCartItems && 'has_cart_items',
 		].filter( flag => false !== flag );
 		analytics.ga.recordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
+
 		// Marketing
-		recordSignupCompletionInFloodlight();
+		recordSignupCompletionInFloodlight(); // Every signup.
+
 		if ( isNewUser && isNewSite ) {
-			recordSignup( 'new-user-site' );
+			recordSignup( 'new-user-site' ); // New User, Site Creations.
+			callbackDelay += 2000; // Allow additional time for signup trackers.
+		}
+
+		if ( 'function' === typeof callback ) {
+			setTimeout( callback, callbackDelay );
 		}
 	},
 
@@ -574,6 +586,11 @@ const analytics = {
 			label,
 			value
 		) {
+			if ( 'undefined' !== typeof value && /^[0-9.]+$/.test( String( value ) ) ) {
+				value = Math.round( Number( String( value ) ) ); // GA requires an integer value.
+				// https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#eventValue
+			}
+
 			let debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
 
 			if ( 'undefined' !== typeof label ) {

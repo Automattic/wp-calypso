@@ -23,6 +23,7 @@ import {
 } from 'lodash';
 import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -53,7 +54,13 @@ import { disableCart } from 'lib/upgrades/actions';
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { currentUserHasFlag, getCurrentUser, isUserLoggedIn } from 'state/current-user/selectors';
+import {
+	isUserLoggedIn,
+	getCurrentUser,
+	currentUserHasFlag,
+	getCurrentUserSiteCount,
+} from 'state/current-user/selectors';
+import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
@@ -99,6 +106,7 @@ class Signup extends React.Component {
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
 		isPaidPlan: PropTypes.bool,
+		isTrackingSignup: PropTypes.bool,
 		trackAffiliateReferral: PropTypes.func.isRequired,
 	};
 
@@ -111,6 +119,7 @@ class Signup extends React.Component {
 			dependencies: props.signupDependencies,
 			siteDomains: props.siteDomains,
 			isPaidPlan: props.isPaidPlan,
+			isTrackingSignup: false,
 			shouldShowLoadingScreen: false,
 			resumingStep: undefined,
 			loginHandler: null,
@@ -257,7 +266,10 @@ class Signup extends React.Component {
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
 		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress ),
 			waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress ),
-			startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
+			isTrackingSignup =
+				! hasInvalidSteps && this.isEveryStepSubmitted( progress ) && this.state.isTrackingSignup,
+			startLoadingScreen =
+				( waitingForServer || isTrackingSignup ) && ! this.state.shouldShowLoadingScreen;
 
 		if ( ! this.isEveryStepSubmitted( progress ) ) {
 			this.goToFirstInvalidStep( progress );
@@ -315,29 +327,53 @@ class Signup extends React.Component {
 	handleFlowComplete = ( dependencies, destination ) => {
 		debug( 'The flow is completed. Destination: %s', destination );
 
-		const isNewUser = !! ( dependencies && dependencies.username );
+		const { isNewishUser, existingSiteCount } = this.props;
+
+		const isNewUser = !! (
+			( dependencies && dependencies.username ) ||
+			( isNewishUser && 0 === existingSiteCount - 1 )
+		);
 		const isNewSite = !! ( dependencies && dependencies.siteSlug );
 		const hasCartItems = !! (
 			dependencies &&
 			( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
 		);
-		const isNewUserOnFreePlan = isNewUser && isNewSite && ! hasCartItems;
 
-		analytics.recordSignupComplete( {
+		const debugProps = {
+			isNewishUser,
+			existingSiteCount,
 			isNewUser,
 			isNewSite,
 			hasCartItems,
-			isNewUserOnFreePlan,
 			flow: this.props.flowName,
-		} );
+		};
+		debug( 'Tracking signup completion.', debugProps );
 
-		if ( dependencies.cartItem || dependencies.domainItem ) {
-			this.handleLogin( dependencies, destination );
-		} else {
-			this.setState( {
-				loginHandler: this.handleLogin.bind( this, dependencies, destination ),
-			} );
-		}
+		this.setState( { isTrackingSignup: true } );
+		this.updateShouldShowLoadingScreen();
+
+		analytics.recordSignupComplete(
+			{
+				isNewUser,
+				isNewSite,
+				hasCartItems,
+				flow: this.props.flowName,
+			},
+			() => {
+				debug( 'Done tracking signup completion.' );
+
+				this.setState( { isTrackingSignup: false } );
+				this.updateShouldShowLoadingScreen();
+
+				if ( dependencies.cartItem || dependencies.domainItem ) {
+					this.handleLogin( dependencies, destination );
+				} else {
+					this.setState( {
+						loginHandler: this.handleLogin.bind( this, dependencies, destination ),
+					} );
+				}
+			}
+		);
 	};
 
 	handleLogin = ( dependencies, destination, event ) => {
@@ -646,6 +682,8 @@ export default connect(
 			progress: getSignupProgress( state ),
 			signupDependencies,
 			isLoggedIn: isUserLoggedIn( state ),
+			isNewishUser: isUserRegistrationDaysWithinRange( state, moment(), 0, 7 ),
+			existingSiteCount: getCurrentUserSiteCount( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,

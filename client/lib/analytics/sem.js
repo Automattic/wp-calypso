@@ -73,7 +73,12 @@ function setUtmCookie( name, value ) {
 	document.cookie = cookie.serialize( name, value, {
 		path: '/',
 		maxAge: UTM_COOKIE_MAX_AGE,
-		// domain: '.wordpress.com',
+		domain:
+			'.' +
+			document.location.hostname
+				.split( '.' )
+				.slice( -2 )
+				.join( '.' ),
 	} );
 }
 
