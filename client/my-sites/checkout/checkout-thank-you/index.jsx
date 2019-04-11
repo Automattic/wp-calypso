@@ -68,12 +68,8 @@ import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import TransferPending from './transfer-pending';
 import PurchaseDetail from 'components/purchase-detail';
-import {
-	getFeatureByKey,
-	isJetpackBusinessPlan,
-	isWpComBusinessPlan,
-	shouldFetchSitePlans,
-} from 'lib/plans';
+import { isJetpackBusinessPlan, isWpComBusinessPlan, shouldFetchSitePlans } from 'lib/plans';
+import { getFeatureByKey } from 'lib/plans/features-list';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';

@@ -8,7 +8,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PLANS_LIST } from 'lib/plans/constants';
+import { PLANS_LIST } from 'lib/plans/plans-list';
 import { getPlanPath } from 'lib/plans';
 import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 

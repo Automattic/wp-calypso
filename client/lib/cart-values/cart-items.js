@@ -57,7 +57,6 @@ import sortProducts from 'lib/products-values/sort';
 import { getTld } from 'lib/domains';
 import { domainProductSlugs } from 'lib/domains/constants';
 import {
-	getTermDuration,
 	getPlan,
 	isBloggerPlan,
 	isBusinessPlan,
@@ -66,6 +65,7 @@ import {
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 } from 'lib/plans';
+import { getTermDuration } from 'lib/plans/constants';
 
 /**
  * Adds the specified item to a shopping cart.
@@ -850,7 +850,7 @@ export function getRenewalItemFromProduct( product, properties ) {
  * Returns a renewal CartItem object from the given cartItem and properties.
  *
  * @param {Object} cartItem - item as `CartItemValue` object
- * @param {Object} properties - properties to be included in the new CartItem object
+ * @param {Object} properties - properties to be included in the new CartItem object
  * @returns {Object} a CartItem object
  */
 export function getRenewalItemFromCartItem( cartItem, properties ) {

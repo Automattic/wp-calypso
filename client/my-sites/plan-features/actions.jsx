@@ -17,8 +17,8 @@ import classNames from 'classnames';
 import Button from 'components/button';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlanClass, isMonthly } from 'lib/plans/constants';
-import { planLevelsMatch } from 'lib/plans/index';
+import { isMonthly } from 'lib/plans/constants';
+import { getPlanClass, planLevelsMatch } from 'lib/plans';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const PlanFeaturesActions = ( {

@@ -15,7 +15,7 @@ import classNames from 'classnames';
 import PlanThankYouCard from 'blocks/plan-thank-you-card';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getPlanClass } from 'lib/plans/constants';
+import { getPlanClass } from 'lib/plans';
 
 class AtomicStoreThankYouCard extends Component {
 	renderAction() {

@@ -64,9 +64,8 @@ import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	GROUP_JETPACK,
 	TYPE_FREE,
-	getPlanClass,
 } from 'lib/plans/constants';
-import { getPlan, planMatches } from 'lib/plans';
+import { getPlan, getPlanClass, planMatches } from 'lib/plans';
 
 const vpFeatures = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: true,

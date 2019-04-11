@@ -39,13 +39,13 @@ import {
 	TYPE_BUSINESS,
 	TYPE_PERSONAL,
 	TYPE_BLOGGER,
-	PLANS_LIST,
 	TYPE_PREMIUM,
 	TYPE_FREE,
-	getPlanClass,
 } from '../constants';
+import { PLANS_LIST } from '../plans-list';
 import {
 	getPlan,
+	getPlanClass,
 	isBusinessPlan,
 	isPersonalPlan,
 	isPremiumPlan,

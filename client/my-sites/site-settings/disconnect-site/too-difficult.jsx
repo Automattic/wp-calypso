@@ -15,7 +15,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlanClass } from 'lib/plans/constants';
+import { getPlanClass } from 'lib/plans';
 import { addQueryArgs } from 'lib/url';
 
 function getFeatures( planClass, translate ) {
