@@ -124,10 +124,15 @@
 	.button {
 		min-width: 48%;
 	}
-	.guided-tours__quit-button {
+	.guided-tours__quit-button,
+	a.button {
 		color: var( --color-neutral-100 );
 		background: none;
 		border: 1px rgba( var( --color-white-rgb ), 0.2 ) solid;
+	}
+
+	a.button {
+		text-decoration: none;
 	}
 }
 

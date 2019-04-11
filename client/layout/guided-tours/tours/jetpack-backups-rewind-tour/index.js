@@ -33,7 +33,7 @@ function whenWeCanAutoconfigure( state ) {
 
 const JetpackBackupsRewindTourButtons = ( { backText, translate } ) => (
 	<Fragment>
-		<SiteLink isButton href="/plans/my-plan/:site">
+		<SiteLink isButton isPrimaryButton={ false } href="/plans/my-plan/:site">
 			{ backText || translate( 'Return to the checklist' ) }
 		</SiteLink>
 		<Quit>{ translate( 'No, thanks.' ) }</Quit>
