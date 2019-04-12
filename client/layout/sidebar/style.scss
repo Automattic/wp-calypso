@@ -685,7 +685,7 @@ form.sidebar__button input {
 	}
 
 	.sidebar__menu.sidebar__wp-admin .wp-admin {
-		border-top: 1px solid lightgray;
+		border-top: 1px solid var(--sidebar-border-color);
 		justify-content: flex-start;
 	}
 }
