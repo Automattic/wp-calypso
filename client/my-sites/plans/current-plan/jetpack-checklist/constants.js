@@ -50,7 +50,7 @@ export const JETPACK_CHECKLIST_TASKS = {
 };
 
 export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND = {
-	title: translate( 'Backups & Scanning' ),
+	title: translate( 'Backup and Scan' ),
 	description: translate(
 		"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
 	),
