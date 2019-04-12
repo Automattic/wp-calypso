@@ -292,13 +292,7 @@ global.CalypsoI18nDebugDiacritic = '\u0332'; // Combining Line Below
 /*
  * Intersperse composing diacritics
  */
-const underlineString = string => {
-	let result = '';
-	// _.reduce doesn't use es6 iterator semantics to avoid unicode issues :(
-	for ( const symbol of string ) {
-		result += symbol + global.CalypsoI18nDebugDiacritic;
-	}
-	return result;
-};
+const underlineString = string =>
+	String( string ).replace( /(.)/gu, `$1${ global.CalypsoI18nDebugDiacritic }` );
 
 export const underlineTranslation = applyToInterpolatedStringFragments( underlineString );
