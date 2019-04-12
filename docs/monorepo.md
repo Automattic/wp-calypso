@@ -1,11 +1,15 @@
-Publishing Packages with the Monorepo
-=====================================
+# Publishing with the Monorepo
 
 Calypso is a monorepo. In addition to the Calypso application, it also hosts a number of independent modules that are published to NPM.
 
 ## Module Layout
 
-These modules live under the `packages` directory, one folder per module.
+These modules live under the `packages` and `apps` directories, one folder per module.
+
+Two different directories for modules are:
+
+`/packages` — projects and libraries that we use in Calypso but also might publish as independent outputs or packages.
+`/apps` — projects that we _do not_ use directly in Calypso and publish as independent outputs or packages.
 
 Modules should follow our convention for layout:
 ```
@@ -33,7 +37,7 @@ test/
 
 Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, and `sideEffects`.
 
-The only exception are `devDependencies` which _must be declared in the wp-calypso root package.json_. `devDependencies` of sub-packages in a monorepo are not reliably installed and cannot be relied on.
+The only exception are `devDependencies` which _must be declared in the wp-calypso root `package.json`_. `devDependencies` of sub-packages in a monorepo are not reliably installed and cannot be relied on.
 
 ### A sample `package.json`
 
@@ -87,11 +91,11 @@ To run one package's tests:
 
 `npm run test-packages [ test file pattern ]`
 
-## Building packages
+## Building packages & apps
 
 Packages will have their `prepare` scripts run automatically on `npm install`.
 
-Independent apps can use `build` instead of `prepare` so avoid unnecessary builds on `npm install`.
+Independent apps in `/apps` directory use `build` instead of `prepare` so avoid unnecessary builds on `npm install`.
 
 You can build packages also by running:
 
@@ -103,6 +107,12 @@ Or even specific packages:
 
 ```bash
 npx lerna run prepare --scope="@automattic/calypso-build"
+```
+
+Or specific apps:
+
+```bash
+npx lerna run build --scope="@automattic/calypso-build"
 ```
 
 ## Publishing

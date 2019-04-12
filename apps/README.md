@@ -7,3 +7,13 @@ For packages that are used also in Calypso, see [`/packages`](../packages)
 ## Adding a new app?
 
 If you want to add a new project into this directory, then add a new directory and follow [Publishing with the Monorepo](../docs/monorepo.md) -documentation.
+
+## Building
+
+Apps (unlike packages) are not built on Calypso's `npm install`.
+
+You must manually build apps by running:
+
+```bash
+npx lerna run build --scope="@automattic/app-name"
+```
