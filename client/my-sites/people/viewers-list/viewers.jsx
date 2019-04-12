@@ -129,7 +129,7 @@ class Viewers extends React.PureComponent {
 				<InfiniteList
 					key={ this.props.siteId }
 					items={ this.props.viewers }
-					id="people-selector-infinite-list"
+					className="viewers-list__infinite is-people"
 					ref={ this.infiniteList }
 					fetchingNextPage={ this.props.fetching }
 					lastPage={ this.isLastPage() }

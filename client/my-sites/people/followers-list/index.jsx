@@ -226,7 +226,7 @@ const Followers = localize(
 						{ ...infiniteListConditionals }
 						key={ key }
 						items={ this.props.followers }
-						className="people-selector__infinite-list"
+						className="followers-list__infinite is-people"
 						ref={ this.infiniteList }
 						fetchNextPage={ this.fetchNextPage }
 						getItemRef={ this.getFollowerRef }
