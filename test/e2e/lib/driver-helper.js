@@ -494,29 +494,20 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 	return await refreshIfNeeded();
 }
 
-export async function scrollIntoView( driver, selector ) {
+/**
+ * @description
+ * Scroll element on a page to desired position
+ *
+ * @param {Object} driver WebDriver
+ * @param {Object} selector A element's selector
+ * @param {String} position An element's position. Can be 'start', 'end' and 'center'
+ * @returns {Promise<void>} Promise
+ */
+export async function scrollIntoView( driver, selector, position = 'center' ) {
 	const selectorElement = await driver.findElement( selector );
 
 	return await driver.executeScript(
-		'arguments[0].scrollIntoView( { block: "center", inline: "center" } )',
-		selectorElement
-	);
-}
-
-export async function scrollToBottom( driver, selector ) {
-	const selectorElement = await driver.findElement( selector );
-
-	return await driver.executeScript(
-		'arguments[0].scrollIntoView( { block: "end", inline: "center" } )',
-		selectorElement
-	);
-}
-
-export async function scrollToTop( driver, selector ) {
-	const selectorElement = await driver.findElement( selector );
-
-	return await driver.executeScript(
-		'arguments[0].scrollIntoView( { block: "start", inline: "center" } )',
+		`arguments[0].scrollIntoView( { block: "${ position }", inline: "center" } )`,
 		selectorElement
 	);
 }
