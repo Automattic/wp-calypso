@@ -494,6 +494,15 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 	return await refreshIfNeeded();
 }
 
+/**
+ * @description
+ * Scroll element on a page to desired position
+ *
+ * @param {Object} driver WebDriver
+ * @param {Object} selector A element's selector
+ * @param {String} position An element's position. Can be 'start', 'end' and 'center'
+ * @returns {Promise<void>} Promise
+ */
 export async function scrollIntoView( driver, selector, position = 'center' ) {
 	const selectorElement = await driver.findElement( selector );
 
