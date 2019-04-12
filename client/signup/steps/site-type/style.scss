@@ -17,7 +17,6 @@
 	margin: 0;
 	font-weight: 400;
 	position: relative;
-	width: 100%;
 	text-align: left;
 	@include elevation ( 0 );
 	border-bottom: 1px solid var( --color-neutral-50 );
@@ -76,5 +75,54 @@
 	&:focus .card__link-indicator {
 		opacity: 1;
 		transform: translateX( 0 );
+	}
+}
+
+.site-type__other-option {
+	text-align: center;
+	max-width: 380px;
+	position: relative;
+	margin: 56px auto 0;
+
+	&::before {
+		content: '';
+		display: block;
+		width: 60px;
+		height: 2px;
+		background: var( --color-white );
+		opacity: 0.2;
+		position: absolute;
+		top: -24px;
+		left: calc( 50% - 30px );
+	}
+
+	.site-type__other-form {
+		position: relative;
+
+	}
+
+	.site-type__other-label {
+		color: var( --color-white );
+		margin: 16px 0;
+	}
+
+	.site-type__other-input {
+		border-radius: 3px;
+		border: none;
+		padding: 11px 100px 11px 24px;
+		@include elevation ( 2dp );
+
+		&:focus,
+		&:focus:hover, // This is weird...
+		&:active {
+			box-shadow: 0 0 0 2px var( --color-accent );
+		}
+	}
+
+	.site-type__other-submit {
+		position: absolute;
+		top: 3px;
+		right: 3px;
+		@include elevation ( 1dp );
 	}
 }
