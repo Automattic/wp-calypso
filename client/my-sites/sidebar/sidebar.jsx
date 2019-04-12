@@ -333,21 +333,21 @@ export class MySitesSidebar extends Component {
 		return (
 			<ul>
 				<SidebarItem
-					label={ translate( 'Theme' ) }
-					selected={ itemLinkMatches( themesLink, path ) }
-					link={ themesLink }
-					onNavigate={ this.trackCustomizeClick }
-					icon="customize"
-					preloadSectionName="themes"
-					forceInternalLink
-				/>
-				<SidebarItem
 					label={ translate( 'Customize' ) }
 					selected={ itemLinkMatches( '/customize', path ) }
 					link={ this.props.customizeUrl }
 					onNavigate={ this.trackCustomizeClick }
 					icon="customize"
 					preloadSectionName="customize"
+					forceInternalLink
+				/>
+				<SidebarItem
+					label={ translate( 'Themes' ) }
+					selected={ itemLinkMatches( themesLink, path ) }
+					link={ themesLink }
+					onNavigate={ this.trackCustomizeClick }
+					icon="customize"
+					preloadSectionName="themes"
 					forceInternalLink
 				/>
 			</ul>
