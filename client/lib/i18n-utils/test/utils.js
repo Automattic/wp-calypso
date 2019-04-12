@@ -2,7 +2,8 @@
 /**
  * External dependencies
  */
-import { getLocaleSlug } from 'i18n-calypso';
+import { getLocaleSlug, translate } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import {
 	canBeTranslated,
 	getPathParts,
 	filterLanguageRevisions,
+	applyToInterpolatedStringFragments,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -143,6 +145,7 @@ jest.mock( 'config', () => key => {
 
 jest.mock( 'i18n-calypso', () => ( {
 	getLocaleSlug: jest.fn( () => 'en' ),
+	translate: jest.requireActual( 'i18n-calypso' ).translate,
 } ) );
 
 describe( 'utils', () => {
@@ -574,6 +577,72 @@ describe( 'utils', () => {
 			};
 
 			expect( filterLanguageRevisions( invalid ) ).toEqual( valid );
+		} );
+	} );
+
+	describe( 'applyToInterpolatedStringFragments', () => {
+		const toUpperCase = s => s.toUpperCase();
+		const uppercaseTranslation = applyToInterpolatedStringFragments( toUpperCase );
+
+		test( 'should apply to simple strings', () => {
+			expect( uppercaseTranslation( translate( 'A simple string.' ) ) ).toEqual(
+				'A SIMPLE STRING.'
+			);
+		} );
+
+		test( 'should apply to interpolated strings', () => {
+			expect(
+				uppercaseTranslation( translate( "It's %(hour)s o'clock", { args: { hour: 12 } } ) )
+			).toEqual( "IT'S 12 O'CLOCK" );
+		} );
+
+		test( 'should apply to strings inside components', () => {
+			const interpolatedTranslation = translate( '{{bold}}More {{href}}here{{/href}}{{/bold}}.', {
+				components: {
+					href: <a href={ 'example.com' } target="_blank" rel="noopener noreferrer" />,
+					bold: <strong />,
+				},
+			} );
+
+			const stringifiedResult = JSON.stringify( uppercaseTranslation( interpolatedTranslation ) );
+
+			expect( stringifiedResult ).toMatch( 'MORE ' );
+			expect( stringifiedResult ).toMatch( 'HERE' );
+		} );
+
+		test( 'should preserve other component properties', () => {
+			const interpolatedTranslation = translate( '{{bold}}More {{href}}here{{/href}}{{/bold}}.', {
+				components: {
+					href: <a href="example.com" target="_blank" rel="noopener noreferrer" />,
+					bold: <strong />,
+				},
+			} );
+
+			const stringifiedResult = JSON.stringify( uppercaseTranslation( interpolatedTranslation ) );
+
+			expect( stringifiedResult ).toMatch( 'example.com' );
+			expect( stringifiedResult ).toMatch( '_blank' );
+			expect( stringifiedResult ).toMatch( 'a' );
+			expect( stringifiedResult ).toMatch( 'noopener' );
+		} );
+
+		// This is a bit tricky, skipping for now.
+		test.skip( 'should not apply to arguments', () => {
+			expect(
+				uppercaseTranslation( translate( "It's %(meal)s!", { args: { meal: 'lunchtime' } } ) )
+			).toEqual( "IT'S lunchtime!" );
+		} );
+
+		// This is a bit tricky, skipping for now.
+		test.skip( 'should apply only to the string, not to component arguments', () => {
+			const testTranslation = translate( "I'm the parent {{child/}}", {
+				components: { child: <div>I'm the child</div> },
+			} );
+
+			const stringifiedResult = JSON.stringify( uppercaseTranslation( testTranslation ) );
+
+			expect( stringifiedResult ).toMatch( "I'M THE PARENT" );
+			expect( stringifiedResult ).toMatch( "I'm the child" );
 		} );
 	} );
 } );

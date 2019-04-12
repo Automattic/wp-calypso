@@ -22,6 +22,8 @@ export {
 	removeLocaleFromPath,
 	getPathParts,
 	filterLanguageRevisions,
+	applyToInterpolatedStringFragments,
+	underlineTranslation,
 } from './utils';
 
 export const getLocaleSlug = () => config( 'i18n_default_locale_slug' );

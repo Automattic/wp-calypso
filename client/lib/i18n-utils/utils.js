@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, isString, map, pickBy, includes, endsWith } from 'lodash';
+import { find, isArray, isString, isObject, map, pickBy, reduce, includes, endsWith } from 'lodash';
 import url from 'url';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -244,3 +244,55 @@ export function filterLanguageRevisions( languageRevisions ) {
 		return true;
 	} );
 }
+
+/*
+ * Apply fn to the strings returned from translate(), abstracting away the
+ * different types introduced by interpolating components.
+ * Note: recurses through children's strings (not properties) too
+ *
+ * @param {Function} String -> String
+ * @returns {Function} Translation -> Translation
+ */
+export const applyToInterpolatedStringFragments = fn => {
+	const _applyToInterpolatedStringFragments = ( translation, options ) => {
+		if ( isString( translation ) ) {
+			return fn( translation, options );
+		}
+
+		if ( isArray( translation ) ) {
+			return map( translation, fragment =>
+				_applyToInterpolatedStringFragments( fragment, options )
+			);
+		}
+
+		if ( isObject( translation ) && translation.props && translation.props.children ) {
+			// recurse into react objects to catch strings inside components
+			// (e.g. translate( '{{a}}>here<{{/a}}' )
+			return {
+				...translation,
+				props: {
+					...translation.props,
+					children: _applyToInterpolatedStringFragments( translation.props.children, options ),
+				},
+			};
+		}
+
+		return translation;
+	};
+	return _applyToInterpolatedStringFragments;
+};
+
+/* TMP DEBUG - this is just here for trying out different composing diacritics */
+import { reRenderTranslations } from 'i18n-calypso';
+global.reRenderTranslations = reRenderTranslations;
+global.CalypsoI18nDebugDiacritic = '\u035f'; // Double Macron Below
+global.CalypsoI18nDebugDiacritic = '\u0331'; // Combining Macron Below
+global.CalypsoI18nDebugDiacritic = '\u0332'; // Combining Line Below
+
+/*
+ * Intersperse composing diacritics
+ */
+const underlineString = string =>
+	reduce( string, ( acc, letter ) => acc + letter + global.CalypsoI18nDebugDiacritic, '' );
+
+export const underlineTranslation = applyToInterpolatedStringFragments( underlineString );

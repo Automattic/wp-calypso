@@ -8,6 +8,7 @@ import debugFactory from 'debug';
 import page from 'page';
 import { parse } from 'qs';
 import url from 'url';
+import { registerTranslateHook } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import { setupRoutes } from 'sections-middleware';
 import { checkFormHandler } from 'lib/protect-form';
 import notices from 'notices';
 import authController from 'auth/controller';
+import { underlineTranslation } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso' );
 
@@ -154,6 +156,10 @@ export const utils = () => {
 
 	if ( process.env.NODE_ENV === 'development' ) {
 		require( './dev-modules' ).default();
+
+		if ( config.isEnabled( 'i18n/show-translatability' ) ) {
+			registerTranslateHook( underlineTranslation );
+		}
 	}
 
 	// Infer touch screen by checking if device supports touch events
