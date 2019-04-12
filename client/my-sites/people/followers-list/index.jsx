@@ -36,6 +36,12 @@ const maxFollowers = 1000;
 
 const Followers = localize(
 	class FollowersComponent extends Component {
+		constructor() {
+			super();
+
+			this.infiniteList = React.createRef();
+		}
+
 		state = {
 			bulkEditing: false,
 		};
@@ -173,7 +179,7 @@ const Followers = localize(
 				headerText = this.props.translate(
 					'You have %(number)d follower',
 					'You have %(number)d followers',
-					{ 
+					{
 						args: { number: this.props.totalFollowers },
 						count: this.props.totalUsers,
 					}
@@ -183,7 +189,7 @@ const Followers = localize(
 					headerText = this.props.translate(
 						'You have %(number)d email follower',
 						'You have %(number)d email followers',
-						{ 
+						{
 							args: { number: this.props.totalFollowers },
 							count: this.props.totalUsers,
 						}
@@ -221,6 +227,7 @@ const Followers = localize(
 						key={ key }
 						items={ this.props.followers }
 						className="people-selector__infinite-list"
+						ref={ this.infiniteList }
 						fetchNextPage={ this.fetchNextPage }
 						getItemRef={ this.getFollowerRef }
 						renderLoadingPlaceholders={ this.renderPlaceholders }

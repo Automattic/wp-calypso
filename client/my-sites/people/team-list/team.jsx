@@ -29,6 +29,12 @@ const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 class Team extends React.Component {
 	static displayName = 'Team';
 
+	constructor() {
+		super();
+
+		this.infiniteList = React.createRef();
+	}
+
 	state = {
 		bulkEditing: false,
 	};
@@ -43,13 +49,17 @@ class Team extends React.Component {
 		let people;
 		let headerText;
 		if ( this.props.totalUsers ) {
-			headerText = this.props.translate( 'There is %(numberPeople)d person in your team', 'There are %(numberPeople)d people in your team', {
-				args: {
-					numberPeople: this.props.totalUsers,
-				},
-				count: this.props.totalUsers,
-				context: 'A navigation label.',
-			} );
+			headerText = this.props.translate(
+				'There is %(numberPeople)d person in your team',
+				'There are %(numberPeople)d people in your team',
+				{
+					args: {
+						numberPeople: this.props.totalUsers,
+					},
+					count: this.props.totalUsers,
+					context: 'A navigation label.',
+				}
+			);
 		}
 
 		if (
@@ -92,6 +102,7 @@ class Team extends React.Component {
 					key={ key }
 					items={ this.props.users }
 					className="people-selector__infinite-list"
+					ref={ this.infiniteList }
 					fetchingNextPage={ this.props.fetchingUsers }
 					lastPage={ this.isLastPage() }
 					fetchNextPage={ this.fetchNextPage }
