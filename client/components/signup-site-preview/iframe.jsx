@@ -113,19 +113,22 @@ export default class SignupSitePreviewIframe extends Component {
 		if ( ! this.iframe.current ) {
 			return;
 		}
+		const element = this.iframe.current.contentWindow.document.body;
 
-		this.iframe.current.contentWindow.document.body.onclick = () =>
-			this.props.onPreviewClick( this.props.defaultViewportDevice );
+		if ( element ) {
+			element.onclick = () => this.props.onPreviewClick( this.props.defaultViewportDevice );
+		}
 	};
 
 	setIframeIsLoading = () => {
 		if ( ! this.iframe.current ) {
 			return;
 		}
+		const element = this.iframe.current.contentWindow.document.querySelector( '.home' );
 
-		this.iframe.current.contentWindow.document
-			.querySelector( '.home' )
-			.classList.remove( 'is-loading' );
+		if ( element ) {
+			element.classList.remove( 'is-loading' );
+		}
 	};
 
 	setContainerHeight = () => {
@@ -133,9 +136,11 @@ export default class SignupSitePreviewIframe extends Component {
 			return;
 		}
 
-		this.props.setWrapperHeight(
-			this.iframe.current.contentWindow.document.querySelector( '#page' ).scrollHeight + 25
-		);
+		const element = this.iframe.current.contentWindow.document.querySelector( '#page' );
+
+		if ( element ) {
+			this.props.setWrapperHeight( element.scrollHeight + 25 );
+		}
 	};
 
 	setLoaded = () => {
