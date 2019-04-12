@@ -160,24 +160,24 @@ export class ConciergeQuickstartSession extends React.Component {
 						</p>
 						<p>
 							<b>
-								{ translate( 'Introducing WordPress.com {{i}}Quick Start{{/i}} Sessions.', {
-									components: { i: <em /> },
+								{ translate( 'Introducing WordPress.com {{em}}Quick Start{{/em}} Sessions.', {
+									components: { em: <em /> },
 								} ) }
 							</b>
 						</p>
 						<p>
 							{ translate(
-								"{{i}}Quick Start{{/i}} sessions are 45-minute one-on-one conversations between you and one of our website building experts. They know WordPress inside out and will help you achieve your goals with a smile. That's why we call them Happiness Engineers.",
+								"{{em}}Quick Start{{/em}} sessions are 45-minute one-on-one conversations between you and one of our website building experts. They know WordPress inside out and will help you achieve your goals with a smile. That's why we call them Happiness Engineers.",
 								{
-									components: { i: <em /> },
+									components: { em: <em /> },
 								}
 							) }
 						</p>
 						<p>
 							{ translate(
-								'During your {{i}}Quick Start{{/i}}, a Happiness Engineer will offer pro advice on everything you need to build a great site in the fastest way possible, like for example:',
+								'During your {{em}}Quick Start{{/em}}, a Happiness Engineer will offer pro advice on everything you need to build a great site in the fastest way possible, like for example:',
 								{
-									components: { i: <em /> },
+									components: { em: <em /> },
 								}
 							) }
 						</p>
@@ -253,18 +253,15 @@ export class ConciergeQuickstartSession extends React.Component {
 
 						<p>
 							{ translate(
-								'The session will be tailored entirely to your needs. In the end, not only will you have answers to your questions but you will be 100x more effective on your way to the site you always dreamed!',
-								{
-									components: { i: <i /> },
-								}
+								'The session will be tailored entirely to your needs. In the end, not only will you have answers to your questions but you will be 100x more effective on your way to the site you always dreamed!'
 							) }
 						</p>
 						<p>
 							<b>
 								{ translate(
-									'Book your {{i}}Quick Start{{/i}} session below at a special one-time price of {{del}}%(oldPrice)s{{/del}} %(price)s.',
+									'Book your {{em}}Quick Start{{/em}} session below at a special one-time price of {{del}}%(oldPrice)s{{/del}} %(price)s.',
 									{
-										components: { del: <del />, i: <i /> },
+										components: { del: <del />, em: <em /> },
 										args: {
 											oldPrice: formatCurrency( fullCost, currencyCode ),
 											price: productDisplayCost,
@@ -275,9 +272,9 @@ export class ConciergeQuickstartSession extends React.Component {
 						</p>
 						<p>
 							{ translate(
-								'Please notice, this is a one-time offer because you just got a new plan and we want you to make the most out of it! Regular price for {{i}}Quick Start{{/i}} sessions is %(oldPrice)s.',
+								'Please notice, this is a one-time offer because you just got a new plan and we want you to make the most out of it! Regular price for {{em}}Quick Start{{/em}} sessions is %(oldPrice)s.',
 								{
-									components: { b: <b />, i: <i /> },
+									components: { b: <b />, em: <em /> },
 									args: {
 										oldPrice: formatCurrency( fullCost, currencyCode ),
 									},
@@ -287,9 +284,9 @@ export class ConciergeQuickstartSession extends React.Component {
 						<p>
 							<em>
 								{ translate(
-									'Note: {{i}}Quick Start{{/i}} sessions are currently available only in English.',
+									'Note: {{em}}Quick Start{{/em}} sessions are currently available only in English.',
 									{
-										components: { i: <i /> },
+										components: { em: <em /> },
 									}
 								) }
 							</em>
