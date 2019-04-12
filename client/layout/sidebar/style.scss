@@ -200,6 +200,10 @@ form.sidebar__button input {
 				color: inherit;
 			}
 
+			&:focus {
+				z-index: 1;
+			}
+
 			&:first-child::after {
 				background: overflow-gradient(
 					var( --sidebar-menu-selected-a-first-child-after-background ),
