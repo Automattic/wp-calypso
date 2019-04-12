@@ -257,7 +257,6 @@ class SiteSettingsImport extends Component {
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-				<DocumentHead title="Import" />
 				<DescriptiveHeader />
 				{ this.renderImporters() }
 			</>
@@ -270,6 +269,7 @@ class SiteSettingsImport extends Component {
 
 		return (
 			<Main>
+				<DocumentHead title={ translate( 'Import' ) } />
 				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
 					<h1>{ translate( 'Import Content' ) }</h1>
 				</HeaderCake>
