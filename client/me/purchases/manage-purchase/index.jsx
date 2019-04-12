@@ -386,6 +386,7 @@ class ManagePurchase extends Component {
 								rawPrice={ getRenewalPrice( purchase ) }
 								currencyCode={ purchase.currencyCode }
 								taxText={ purchase.taxText }
+								isOnSale={ !! purchase.saleAmount }
 							/>
 						</div>
 					</header>

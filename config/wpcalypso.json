@@ -31,7 +31,6 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": false,
 		"devdocs/components-usage-stats": false,
-		"devdocs/gutenberg-blocks": true,
 		"devdocs/color-scheme-picker": true,
 		"dev/test-helper": true,
 		"dev/preferences-helper": true,

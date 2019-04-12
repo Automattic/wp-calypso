@@ -10,15 +10,20 @@ import SocialLogo from 'social-logos';
 /**
  * Internal dependencies
  */
-import SiteImporterLogo from './site-importer/logo';
+import GoDaddyGoCentralLogo from './logos/godaddy-gocentral';
+import WixLogo from './logos/wix';
 
 const ImporterLogo = ( { icon } ) => {
 	if ( includes( [ 'wordpress', 'medium', 'blogger-alt', 'squarespace' ], icon ) ) {
 		return <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />;
 	}
 
-	if ( includes( [ 'site-importer' ], icon ) ) {
-		return <SiteImporterLogo />;
+	if ( 'wix' === icon ) {
+		return <WixLogo />;
+	}
+
+	if ( 'godaddy-gocentral' === icon ) {
+		return <GoDaddyGoCentralLogo />;
 	}
 	return (
 		<svg

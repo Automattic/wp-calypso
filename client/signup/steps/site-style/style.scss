@@ -86,12 +86,10 @@
 
 	&.is-checked,
 	&.is-checked:hover {
-		border-color: var( --color-accent );
-
+		border-color: var( --color-accent-light );
 		// A nice big border for the bigger
 		// buttons on small screens.
-		box-shadow: 0 0 0 6px inset var( --color-accent );
-
+		box-shadow: inset 0 0 0 6px var( --color-accent-light );
 		@include breakpoint( '<660px' ) {
 			// This should prolly go somewhere else
 			svg {
@@ -102,7 +100,7 @@
 		@include breakpoint( '>660px' ) {
 			// On bigger screens the border
 			// gets smaller.
-			box-shadow: 0 0 0 2px inset var( --color-accent );
+			box-shadow: inset 0 0 0 2px var( --color-accent-light );
 
 			svg {
 				transform: scale( 0.9 );
@@ -116,7 +114,9 @@
 
 	input[type='radio'] {
 		position: absolute;
-		left: -1000px;
+		left: -10000px;
+		top: -10000px;
+		overflow: hidden;
 	}
 
 	svg {
@@ -136,6 +136,11 @@
 
 	&.site-style__variation-calm {
 		background-color: #faf8f5;
+	}
+
+	&:focus {
+		border-color: var( --color-accent-light );
+		background-color: var( --color-neutral-0 );
 	}
 }
 

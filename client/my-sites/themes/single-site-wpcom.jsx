@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -42,7 +43,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 			upsellBanner = (
 				<Banner
 					plan={ PLAN_PREMIUM }
-					className="is-theme-showcase-banner" // eslint-disable-line wpcalypso/jsx-classname-namespace
+					className="themes__showcase-banner"
 					title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
 					event="themes_plans_free_personal"
 					callToAction={ translate( 'View Plans' ) }
@@ -65,7 +66,8 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 		}
 	}
 	return (
-		<div>
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		<Main className="themes">
 			<SidebarNavigation />
 			<CurrentTheme siteId={ siteId } />
 			{ bannerLocationBelowSearch ? null : upsellBanner }
@@ -80,7 +82,8 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				<ThanksModal source={ 'list' } />
 			</ThemeShowcase>
-		</div>
+		</Main>
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
 } );
 

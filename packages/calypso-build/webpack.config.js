@@ -18,6 +18,7 @@ const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-exte
 /**
  * Internal dependencies
  */
+const { cssNameFromFilename } = require( './webpack/util' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
@@ -46,13 +47,16 @@ function getWebpackConfig(
 	env = {}, // eslint-disable-line no-unused-vars
 	{
 		entry,
+		'output-chunk-filename': outputChunkFilename,
 		'output-path': outputPath = path.join( __dirname, 'dist' ),
 		'output-filename': outputFilename = '[name].js',
 		'output-libary-target': outputLibraryTarget = 'window',
 	}
 ) {
 	const workerCount = 1;
-	const cssFilename = '[name].css';
+
+	const cssFilename = cssNameFromFilename( outputFilename );
+	const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
@@ -60,6 +64,7 @@ function getWebpackConfig(
 		mode: isDevelopment ? 'development' : 'production',
 		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 		output: {
+			chunkFilename: outputChunkFilename,
 			path: outputPath,
 			filename: outputFilename,
 			libraryTarget: outputLibraryTarget,
@@ -88,7 +93,6 @@ function getWebpackConfig(
 				} ),
 				SassConfig.loader( {
 					preserveCssCustomProperties: false,
-					includePaths: [ path.join( __dirname, 'client' ) ],
 					prelude: '@import "~@automattic/calypso-color-schemes/src/shared/colors";',
 				} ),
 				FileConfig.loader(),
@@ -105,9 +109,13 @@ function getWebpackConfig(
 				global: 'window',
 			} ),
 			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
-			...SassConfig.plugins( { cssFilename, minify: ! isDevelopment } ),
+			...SassConfig.plugins( {
+				chunkFilename: cssChunkFilename,
+				filename: cssFilename,
+				minify: ! isDevelopment,
+			} ),
 			new DuplicatePackageCheckerPlugin(),
-			new WordPressExternalDependenciesPlugin(),
+			...( env.WP ? [ new WordPressExternalDependenciesPlugin() ] : [] ),
 		],
 	};
 

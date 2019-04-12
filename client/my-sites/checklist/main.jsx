@@ -15,7 +15,7 @@ import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import FormattedHeader from 'components/formatted-header';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
@@ -102,9 +102,9 @@ class ChecklistMain extends PureComponent {
 					/>
 					<FormattedHeader
 						headerText={
-							this.props.siteHasFreePlan
-								? translate( 'Your site has been created!' )
-								: translate( 'Thank you for your purchase!' )
+							this.props.siteHasPaidPlan
+								? translate( 'Thank you for your purchase!' )
+								: translate( 'Your site has been created!' )
 						}
 						subHeaderText={
 							'gsuite' === displayMode
@@ -179,7 +179,7 @@ export default connect( state => {
 		isAtomic,
 		isJetpack,
 		isNewlyCreatedSite: isNewSite( state, siteId ),
-		siteHasFreePlan: isSiteOnFreePlan( state, siteId ),
+		siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		user: getCurrentUser( state ),

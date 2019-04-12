@@ -1,6 +1,0 @@
-@import '~@wordpress/components/build-style/style';
-
-// Styles the contenteditable div included in the Gutenberg Autocomplete component example as an input
-.devdocs__gutenberg-components-example--autocomplete [contenteditable] {
-	@extend %form-field;
-}

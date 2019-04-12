@@ -34,9 +34,43 @@ function addModuleImportToSections( { sections, shouldSplit, onlyIsomorphic } ) 
 	return sectionsFile;
 }
 
+function printSectionsAndPaths( sections ) {
+	let lastSection = null;
+	const sortedSections = [ ...sections ];
+	sortedSections.sort( ( a, b ) => {
+		return a.name.localeCompare( b.name );
+	} );
+	for ( const section of sortedSections ) {
+		if ( lastSection !== section.name ) {
+			console.log( `\t${ section.name }:` );
+			lastSection = section.name;
+		}
+		for ( const p of section.paths ) {
+			console.log( `\t\t${ p }` );
+		}
+	}
+}
+
 const loader = function() {
-	const { forceRequire, onlyIsomorphic } = getOptions( this ) || {};
-	const sections = require( this.resourcePath );
+	const options = getOptions( this ) || {};
+	const { forceRequire, onlyIsomorphic } = options;
+	let { include } = options;
+	let sections = require( this.resourcePath );
+
+	if ( include ) {
+		if ( ! Array.isArray( include ) ) {
+			include = include.split( ',' );
+		}
+		console.log( `[sections-loader] Limiting build to ${ include.join( ', ' ) } sections` );
+		const allSections = sections;
+		sections = allSections.filter( section => include.includes( section.name ) );
+		if ( ! sections.length ) {
+			// nothing matched. warn.
+			console.warn( `[sections-loader] No sections matched ${ include.join( ',' ) }` );
+			console.warn( `[sections-loader] Available sections are:` );
+			printSectionsAndPaths( allSections );
+		}
+	}
 
 	return addModuleImportToSections( {
 		sections,

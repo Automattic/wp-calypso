@@ -15,6 +15,7 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import Gridicon from 'gridicons';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
@@ -103,10 +104,17 @@ export class SiteStyleStep extends Component {
 	renderContent = () => (
 		<div className="site-style__form-wrapper">
 			<form className="site-style__form" onSubmit={ this.handleSubmit }>
-				<FormFieldset className="site-style__fieldset">{ this.renderStyleOptions() }</FormFieldset>
+				<FormFieldset className="site-style__fieldset" role="radiogroup">
+					{ this.renderStyleOptions() }
+				</FormFieldset>
 				<div className="site-style__submit-wrapper">
-					<Button primary={ true } type="submit">
-						{ this.props.translate( 'Continue' ) }
+					<Button
+						title={ this.props.translate( 'Continue' ) }
+						aria-label={ this.props.translate( 'Continue' ) }
+						type="submit"
+						primary
+					>
+						<Gridicon icon="arrow-right" />
 					</Button>
 				</div>
 			</form>

@@ -100,8 +100,8 @@ export default {
 	removeDomainsStepFromOnboarding: {
 		datestamp: '20181221',
 		variations: {
-			keep: 100,
-			remove: 0,
+			keep: 50,
+			remove: 50,
 		},
 		defaultVariation: 'keep',
 	},
@@ -191,5 +191,17 @@ export default {
 		},
 		defaultVariation: 'controlSupportSession',
 		allowExistingUsers: true,
+	},
+	gsuitePurchaseCtaOptions: {
+		datestamp: '20190411',
+		variations: {
+			hideBusinessWithAnnualPrices: 25,
+			hideBusinessWithMonthlyPrices: 25,
+			showBusinessWithAnnualPrices: 25,
+			showBusinessWithMonthlyPrices: 25,
+		},
+		defaultVariation: 'hideBusinessWithAnnualPrices',
+		allowExistingUsers: true,
+		countryCodeTargets: [ 'USD' ],
 	},
 };

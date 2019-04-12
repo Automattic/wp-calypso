@@ -115,7 +115,7 @@ ProgressBanner.propTypes = {
 	applySiteOffset: PropTypes.func.isRequired,
 	percent: PropTypes.number,
 	siteId: PropTypes.number,
-	status: PropTypes.oneOf( [ 'queued', 'running' ] ),
+	status: PropTypes.oneOf( [ 'queued', 'running', 'fail' ] ),
 	timestamp: PropTypes.string,
 	action: PropTypes.oneOf( [ 'restore', 'backup' ] ),
 };

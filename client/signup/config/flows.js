@@ -12,7 +12,7 @@ import i18n from 'i18n-calypso';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
-import { abtest, getABTestVariation } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import { generateFlows } from './flows-pure';
 
 const user = userFactory();
@@ -245,12 +245,16 @@ const Flows = {
 	 */
 	getABTestFilteredFlow( flowName, flow ) {
 		if (
-			'onboarding' === flowName &&
-			'onboarding' === getABTestVariation( 'improvedOnboarding' ) &&
+			'onboarding-for-business' === flowName &&
 			'remove' === abtest( 'removeDomainsStepFromOnboarding' )
 		) {
-			flow = Flows.removeStepFromFlow( 'domains', flow );
-			flow = replaceStepInFlow( flow, 'site-information', 'site-information-without-domains' );
+			flow = Flows.removeStepFromFlow( 'domains-with-preview', flow );
+			flow = replaceStepInFlow(
+				flow,
+				'site-information-title-with-preview',
+				'site-information-without-domains'
+			);
+
 			return flow;
 		}
 

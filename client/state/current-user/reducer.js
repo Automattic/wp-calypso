@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get, isEqual, reduce } from 'lodash';
+import { get, isEqual, reduce, keys, first } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,7 @@ import {
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
 	PLANS_RECEIVE,
+	PRODUCTS_LIST_RECEIVE,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
@@ -62,11 +63,18 @@ export const flags = createReducer(
 export const currencyCode = createReducer(
 	null,
 	{
+		[ PRODUCTS_LIST_RECEIVE ]: ( state, action ) => {
+			return get(
+				action.productsList,
+				[ first( keys( action.productsList ) ), 'currency_code' ],
+				state
+			);
+		},
 		[ PLANS_RECEIVE ]: ( state, action ) => {
-			return get( action.plans[ 0 ], 'currency_code', state );
+			return get( action.plans, [ 0, 'currency_code' ], state );
 		},
 		[ SITE_PLANS_FETCH_COMPLETED ]: ( state, action ) => {
-			return get( action.plans[ 0 ], 'currencyCode', state );
+			return get( action.plans, [ 0, 'currencyCode' ], state );
 		},
 	},
 	currencyCodeSchema
@@ -84,7 +92,7 @@ export const currencyCode = createReducer(
 export function capabilities( state = {}, action ) {
 	switch ( action.type ) {
 		case SITE_RECEIVE:
-		case SITES_RECEIVE:
+		case SITES_RECEIVE: {
 			const sites = action.site ? [ action.site ] : action.sites;
 			return reduce(
 				sites,
@@ -102,6 +110,7 @@ export function capabilities( state = {}, action ) {
 				},
 				state
 			);
+		}
 	}
 
 	return state;

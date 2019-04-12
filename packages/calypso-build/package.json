@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-build",
-	"version": "1.0.0-alpha.4",
+	"version": "1.0.0-beta.5",
 	"description": "Shared Calypso build configuration files",
 	"keywords": [
 		"config",
@@ -28,7 +28,15 @@
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "file:../calypso-color-schemes",
 		"@automattic/wordpress-external-dependencies-plugin": "file:../wordpress-external-dependencies-plugin",
+		"@babel/core": "7.4.0",
+		"@babel/plugin-proposal-class-properties": "7.4.0",
+		"@babel/plugin-proposal-export-default-from": "7.2.0",
+		"@babel/plugin-proposal-export-namespace-from": "7.2.0",
+		"@babel/plugin-syntax-dynamic-import": "7.2.0",
 		"@babel/plugin-transform-react-jsx": "7.3.0",
+		"@babel/plugin-transform-runtime": "7.4.0",
+		"@babel/preset-env": "7.4.2",
+		"@babel/preset-react": "7.0.0",
 		"@wordpress/babel-plugin-import-jsx-pragma": "2.1.0",
 		"autoprefixer": "9.4.4",
 		"babel-loader": "8.0.5",
@@ -37,6 +45,7 @@
 		"css-loader": "2.1.1",
 		"duplicate-package-checker-webpack-plugin": "3.0.0",
 		"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
+		"node-sass": "4.11.0",
 		"postcss-custom-properties": "8.0.9",
 		"postcss-loader": "3.0.0",
 		"sass-loader": "7.1.0",

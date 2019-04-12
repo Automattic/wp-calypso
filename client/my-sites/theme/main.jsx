@@ -1,12 +1,4 @@
 /**
- * /* eslint-disable react/no-danger
- *
- * @format
- */
-
-// FIXME!!!^ we want to ensure we have sanitised data…
-
-/**
  * External dependencies
  */
 import PropTypes from 'prop-types';
@@ -68,6 +60,11 @@ import ThemeFeaturesCard from './theme-features-card';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import getPreviousRoute from 'state/selectors/get-previous-route';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ThemeSheet extends React.Component {
 	static displayName = 'ThemeSheet';
@@ -231,15 +228,14 @@ class ThemeSheet extends React.Component {
 		return demo_uri && ! retired;
 	}
 
-	renderPreviewButton( demo_uri = this.props.demo_uri, props = {} ) {
+	renderPreviewButton() {
 		return (
 			<a
-				className={ 'theme__sheet-preview-link' }
+				className="theme__sheet-preview-link"
 				onClick={ this.previewAction }
 				data-tip-target="theme-sheet-preview"
-				href={ demo_uri }
+				href={ this.props.demo_uri }
 				rel="noopener noreferrer"
-				{ ...props }
 			>
 				<span className="theme__sheet-preview-link-text">
 					{ i18n.translate( 'Open Live Demo', {
@@ -269,10 +265,15 @@ class ThemeSheet extends React.Component {
 
 		if ( this.isThemeAvailable() ) {
 			return (
-				<div className="theme__sheet-screenshot is-active" onClick={ this.previewAction }>
-					{ this.shouldRenderPreviewButton() ? this.renderPreviewButton() : null }
+				<a
+					className="theme__sheet-screenshot is-active"
+					href={ this.props.demo_uri }
+					onClick={ this.previewAction }
+					rel="noopener noreferrer"
+				>
+					{ this.shouldRenderPreviewButton() && this.renderPreviewButton() }
 					{ img }
-				</div>
+				</a>
 			);
 		}
 
@@ -302,10 +303,9 @@ class ThemeSheet extends React.Component {
 				) ) }
 				{ this.shouldRenderPreviewButton() ? (
 					<NavItem
-						key="theme-preview"
 						path={ this.props.demo_uri }
 						onClick={ this.previewAction }
-						className={ 'is-' + 'theme-preview' }
+						className="theme__sheet-preview-nav-item"
 					>
 						{ i18n.translate( 'Open Live Demo', {
 							context: 'Individual theme live preview button',
@@ -345,6 +345,7 @@ class ThemeSheet extends React.Component {
 
 	renderDescription = () => {
 		if ( this.props.descriptionLong ) {
+			// eslint-disable-next-line react/no-danger
 			return <div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />;
 		}
 		// description doesn't contain any formatting, so we don't need to dangerouslySetInnerHTML
@@ -377,6 +378,7 @@ class ThemeSheet extends React.Component {
 	};
 
 	renderSetupTab = () => {
+		/* eslint-disable react/no-danger */
 		return (
 			<div>
 				<Card className="theme__sheet-content">
@@ -384,6 +386,7 @@ class ThemeSheet extends React.Component {
 				</Card>
 			</div>
 		);
+		/* eslint-enable react/no-danger */
 	};
 
 	renderSupportContactUsCard = buttonCount => {
@@ -642,7 +645,7 @@ class ThemeSheet extends React.Component {
 			pageUpsellBanner = (
 				<Banner
 					plan={ PLAN_PREMIUM }
-					className="is-particular-theme-banner" // eslint-disable-line wpcalypso/jsx-classname-namespace
+					className="theme__page-upsell-banner"
 					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
 					description={ translate(
 						'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
@@ -653,7 +656,7 @@ class ThemeSheet extends React.Component {
 				/>
 			);
 			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
-				className: 'is-theme-preview-banner',
+				className: 'theme__preview-upsell-banner',
 			} );
 		}
 		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );

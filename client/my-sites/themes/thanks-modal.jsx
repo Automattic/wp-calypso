@@ -28,6 +28,11 @@ import {
 import { clearActivated } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './thanks-modal.scss';
+
 class ThanksModal extends Component {
 	static propTypes = {
 		// Where is the modal being used?

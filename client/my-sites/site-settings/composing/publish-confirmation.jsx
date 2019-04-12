@@ -15,12 +15,15 @@ import { bindActionCreators } from 'redux';
  */
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import QueryPreferences from 'components/data/query-preferences';
 import { isFetchingPreferences } from 'state/preferences/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
+import { isGutenbergEnabled } from 'state/selectors/is-gutenberg-enabled';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 
 class PublishConfirmation extends Component {
 	constructor( props ) {
@@ -43,7 +46,22 @@ class PublishConfirmation extends Component {
 	}
 
 	render() {
-		const { fetchingPreferences, translate } = this.props;
+		const { fetchingPreferences, translate, showPublishFlow } = this.props;
+
+		if ( showPublishFlow ) {
+			return (
+				<FormFieldset>
+					<FormLabel>{ translate( 'Show publish confirmation' ) }</FormLabel>
+					<FormSettingExplanation isIndented>
+						{ translate(
+							'The Block Editor handles the Publish confirmation setting. ' +
+								'To enable it, go to Options under the Ellipses menu in the Editor ' +
+								'and check "Enable Pre-publish checks."'
+						) }
+					</FormSettingExplanation>
+				</FormFieldset>
+			);
+		}
 
 		return (
 			<FormFieldset className="composing__publish-confirmation has-divider is-bottom-only">
@@ -87,6 +105,8 @@ export default connect(
 			siteId,
 			fetchingPreferences: isFetchingPreferences( state ),
 			publishConfirmationEnabled: isConfirmationSidebarEnabled( state, siteId ),
+			showPublishFlow:
+				isGutenbergEnabled( state, siteId ) && getSelectedEditor( state, siteId ) === 'gutenberg',
 		};
 	},
 	dispatch => {

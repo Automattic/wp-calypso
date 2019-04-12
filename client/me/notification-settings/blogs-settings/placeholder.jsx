@@ -1,4 +1,4 @@
-/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
  * External dependencies
@@ -29,7 +29,7 @@ export default class extends React.Component {
 								<Gridicon
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 									className="notification-settings-blog-settings-placeholder__blog__content__icon__gridicon"
-									icon="globe"
+									icon="site"
 								/>
 							</div>
 							<div className="notification-settings-blog-settings-placeholder__blog__info">

@@ -3,7 +3,6 @@
  */
 const { ExternalsPlugin } = require( 'webpack' );
 const { RawSource } = require( 'webpack-sources' );
-const { camelCaseDash } = require( '@wordpress/scripts/utils' );
 const { createHash } = require( 'crypto' );
 
 const WORDPRESS_NAMESPACE = '@wordpress/';
@@ -32,6 +31,10 @@ class WordPressExternalDependenciesPlugin {
 				break;
 			case 'react-dom':
 				externRootRequest = 'ReactDOM';
+				break;
+
+			case 'tinymce/tinymce':
+				externRootRequest = 'tinymce';
 				break;
 
 			default:
@@ -68,15 +71,23 @@ class WordPressExternalDependenciesPlugin {
 				for ( const c of entrypoint.chunks ) {
 					for ( const { userRequest } of c.modulesIterable ) {
 						if ( this.externalizedDeps.has( userRequest ) ) {
-							// Transform @wordpress deps:
-							//   @wordpress/i18n -> wp-i18n
-							//   @wordpress/escape-html -> wp-escape-html
-							// Pass other externalized deps as they are
-							entrypointExternalizedWpDeps.add(
-								userRequest.startsWith( WORDPRESS_NAMESPACE )
-									? 'wp-' + userRequest.substring( WORDPRESS_NAMESPACE.length )
-									: userRequest
-							);
+							let handle;
+
+							if ( userRequest.startsWith( WORDPRESS_NAMESPACE ) ) {
+								// Transform @wordpress deps:
+								//   @wordpress/i18n -> wp-i18n
+								//   @wordpress/escape-html -> wp-escape-html
+								handle = 'wp-' + userRequest.substring( WORDPRESS_NAMESPACE.length );
+							} else if ( 'tinymce/tinymce' === userRequest ) {
+								// Transform Tiny MCE dep:
+								//   tinyme/tinymce -> tiny_mce
+								handle = 'tiny_mce';
+							} else {
+								// Pass other externalized deps as they are
+								handle = userRequest;
+							}
+
+							entrypointExternalizedWpDeps.add( handle );
 						}
 					}
 				}
@@ -103,6 +114,23 @@ class WordPressExternalDependenciesPlugin {
 			}
 		} );
 	}
+}
+
+/**
+ * Given a string, returns a new string with dash separators converted to
+ * camelCase equivalent. This is not as aggressive as `_.camelCase` in
+ * converting to uppercase, where Lodash will also capitalize letters
+ * following numbers.
+ *
+ * From @wordpress/scripts@3.1.0
+ * Duplicated here to avoid depending on @wordpress/scripts with bloated dependencies.
+ *
+ * @param {string} string Input dash-delimited string.
+ *
+ * @return {string} Camel-cased string.
+ */
+function camelCaseDash( string ) {
+	return string.replace( /-([a-z])/g, ( match, letter ) => letter.toUpperCase() );
 }
 
 function basename( name ) {

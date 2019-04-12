@@ -18,8 +18,8 @@ import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
 import BloggerImporter from 'my-sites/importer/importer-blogger';
-import SiteImporter from 'my-sites/importer/importer-site-importer';
-import Importer6 from 'my-sites/importer/importer-6';
+import WixImporter from 'my-sites/importer/importer-wix';
+import GoDaddyGoCentralImporter from 'my-sites/importer/importer-godaddy-gocentral';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
 import { fetchState, startImport } from 'lib/importer/actions';
 import {
@@ -27,8 +27,8 @@ import {
 	WORDPRESS,
 	MEDIUM,
 	BLOGGER,
-	SITE_IMPORTER,
-	IMPORTER_6,
+	WIX,
+	GODADDY_GOCENTRAL,
 	SQUARESPACE,
 } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
@@ -53,19 +53,19 @@ const importers = [
 		component: WordPressImporter,
 	},
 	{
-		type: MEDIUM,
-		isImporterEnabled: isEnabled( 'manage/import/medium' ),
-		component: MediumImporter,
-	},
-	{
 		type: BLOGGER,
 		isImporterEnabled: true,
 		component: BloggerImporter,
 	},
 	{
-		type: SITE_IMPORTER,
-		isImporterEnabled: true,
-		component: SiteImporter,
+		type: GODADDY_GOCENTRAL,
+		isImporterEnabled: isEnabled( 'manage/import/engine6' ),
+		component: GoDaddyGoCentralImporter,
+	},
+	{
+		type: MEDIUM,
+		isImporterEnabled: isEnabled( 'manage/import/medium' ),
+		component: MediumImporter,
 	},
 	{
 		type: SQUARESPACE,
@@ -73,9 +73,9 @@ const importers = [
 		component: SquarespaceImporter,
 	},
 	{
-		type: IMPORTER_6,
-		isImporterEnabled: isEnabled( 'manage/import/engine6' ),
-		component: Importer6,
+		type: WIX,
+		isImporterEnabled: true,
+		component: WixImporter,
 	},
 ];
 
