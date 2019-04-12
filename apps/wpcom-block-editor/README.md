@@ -1,4 +1,4 @@
-# @automattic/wpcom-block-editor
+# WP.com block editor
 
 This package provides utilities for the WordPress.com block editor integration. 
 
@@ -44,6 +44,8 @@ The `build-wpcom-block-editor` CircleCI job automatically generates a build on e
 
 <img alt="CircleCI job" width="700" src="https://cldup.com/hpfqhRKU0i-1200x1200.png" />
 
-The build files are stored as artifacts of the job. 
+The build files are stored as artifacts of the job.
 
 <img alt="Artifacts" width="700" src="https://cldup.com/W1yGG6MCsM-1200x1200.png" />
+
+_You must be logged in to CircleCI for the Artifacts tab to be displayed._
