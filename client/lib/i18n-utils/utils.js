@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, isArray, isString, isObject, map, pickBy, reduce, includes, endsWith } from 'lodash';
+import { find, isArray, isString, isObject, map, pickBy, includes, endsWith } from 'lodash';
 import url from 'url';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -292,7 +292,13 @@ global.CalypsoI18nDebugDiacritic = '\u0332'; // Combining Line Below
 /*
  * Intersperse composing diacritics
  */
-const underlineString = string =>
-	reduce( string, ( acc, letter ) => acc + letter + global.CalypsoI18nDebugDiacritic, '' );
+const underlineString = string => {
+	let result = '';
+	// _.reduce doesn't use es6 iterator semantics to avoid unicode issues :(
+	for ( const symbol of string ) {
+		result += symbol + global.CalypsoI18nDebugDiacritic;
+	}
+	return result;
+};
 
 export const underlineTranslation = applyToInterpolatedStringFragments( underlineString );
