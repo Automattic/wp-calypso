@@ -182,7 +182,7 @@ export function createSiteWithCart(
 		newSiteParams.find_available_url = true;
 		newSiteParams.options.nux_import_engine = importEngine;
 	} else if (
-		flowName === 'onboarding' &&
+		flowName === 'onboarding-for-business' &&
 		'remove' === getABTestVariation( 'removeDomainsStepFromOnboarding' )
 	) {
 		newSiteParams.blog_name = get( user.get(), 'username', siteTitle ) || siteType || siteVertical;
