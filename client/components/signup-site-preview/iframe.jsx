@@ -94,7 +94,7 @@ export default class SignupSitePreviewIframe extends Component {
 
 		if ( element ) {
 			element.innerHTML = getIframePageContent( content );
-			this.setContainerHeight();
+			this.props.resize && this.setContainerHeight();
 		}
 	}
 
