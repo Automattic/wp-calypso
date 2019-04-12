@@ -138,7 +138,7 @@
 		&.gridicons-external {
 			position: absolute;
 			top: 13px;
-			right: 8px;
+			right: 15px;
 			left: auto;
 			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
 			height: 18px;
@@ -604,12 +604,25 @@ form.sidebar__button input {
 		.gridicons-chevron-down {
 			display: inline-block;
 		}
+	
+		&.is-togglable {
+			.sidebar__menu-list {
+				padding-bottom: 0;
+				padding-top: 0;
+			}
+		}
+		
+		&.is-toggle-open {
+			.sidebar__heading {
+				background-color: transparent;
+			}
+		}
 	}
 
 	.sidebar__button {
 		display: none;
 	}
-
+			
 	.sidebar__menu-list a {
 		padding: 10px 16px 10px 55px; 
 	}
