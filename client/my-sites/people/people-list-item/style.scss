@@ -16,6 +16,11 @@
 	.bulk-editing & {
 		padding-left: 40px;
 	}
+
+	&:focus {
+		outline: 2px solid var( --color-primary-light );
+		z-index: 1;
+	}
 }
 
 .people-list-item__checkbox[type=checkbox] {
