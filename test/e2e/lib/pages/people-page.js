@@ -14,7 +14,7 @@ import * as DriverHelper from '../driver-helper.js';
 
 export default class PeoplePage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.people-selector__infinite-list' ) );
+		super( driver, By.css( '#people-selector-infinite-list' ) );
 		this.searchButtonSelector = By.css( '.section-nav__panel div.search' );
 		this.searchInputSelector = By.css( '.section-nav__panel input.search__input' );
 		this.searchResultsLoadingSelector = By.css( '.people-profile.is-placeholder' );
