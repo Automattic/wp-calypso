@@ -38,12 +38,19 @@ class Team extends React.Component {
 
 	render() {
 		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
-			listClass = classNames( {
-				'bulk-editing': this.state.bulkEditing,
-				'people-invites__invites-list': true,
-			} );
+		const listClass = this.state.bulkEditing ? 'bulk-editing' : null;
 		let headerText = this.props.translate( 'Team', { context: 'A navigation label.' } );
 		let people;
+		let headerText;
+		if ( this.props.totalUsers ) {
+			headerText = this.props.translate( 'There is %(numberPeople)d person in your team', 'There are %(numberPeople)d people in your team', {
+				args: {
+					numberPeople: this.props.totalUsers,
+				},
+				count: this.props.totalUsers,
+				context: 'A navigation label.',
+			} );
+		}
 
 		if (
 			this.props.fetchInitialized &&
@@ -103,11 +110,7 @@ class Team extends React.Component {
 				<PeopleListSectionHeader
 					label={ headerText }
 					site={ this.props.site }
-					count={
-						this.props.fetchingUsers || this.props.fetchOptions.search
-							? null
-							: this.props.totalUsers
-					}
+					isPlaceholder={ this.props.fetchingUsers || this.props.fetchOptions.search }
 				/>
 				<Card className={ listClass }>{ people }</Card>
 				{ this.isLastPage() && <ListEnd /> }
