@@ -670,8 +670,9 @@ form.sidebar__button input {
 		padding-top: 10px;
 	}
 
-	:hover + & .gridicon {
-		fill: var( --color-primary );
+	.sidebar__menu.sidebar__wp-admin .wp-admin {
+		border-top: 1px solid var(--sidebar-border-color);
+		justify-content: flex-start;
 	}
 }
 
