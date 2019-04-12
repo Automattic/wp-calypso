@@ -23,12 +23,13 @@ import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSite, getSiteAdminUrl, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import isGutenlypsoEnabled from 'state/selectors/is-gutenlypso-enabled';
+import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
 
@@ -163,7 +164,7 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
-async function maybeCalypsoifyGutenberg( context, next ) {
+async function loadSelectedEditor( context, next ) {
 	const tmpState = context.store.getState();
 	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
 	if ( ! selectedEditor ) {
@@ -172,21 +173,40 @@ async function maybeCalypsoifyGutenberg( context, next ) {
 
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const postType = determinePostType( context );
-	const postId = getPostID( context );
 
 	if (
-		( isCalypsoifyGutenbergEnabled( state, siteId ) ||
-			isGutenlypsoEnabled( state, siteId ) ||
-			isEnabled( 'jetpack/gutenframe' ) ) &&
-		false !== isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
-		'gutenberg' === getSelectedEditor( state, siteId )
+		! isCalypsoifyGutenbergEnabled( state, siteId ) &&
+		! isGutenlypsoEnabled( state, siteId ) &&
+		! isEnabled( 'jetpack/gutenframe' )
 	) {
+		return next();
+	}
+
+	if ( 'gutenberg' === getSelectedEditor( state, siteId ) ) {
+		const postType = determinePostType( context );
+		const postId = getPostID( context );
+
+		if ( false === isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) ) {
+			const siteAdminUrl = getSiteAdminUrl( state, siteId );
+			let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
+
+			if ( postId ) {
+				url = `${ siteAdminUrl }post.php?post=${ postId }&action=edit`;
+			}
+
+			if ( isSiteAtomic( state, siteId ) ) {
+				url = addQueryArgs( { calypsoify: '1' }, url );
+			}
+
+			return window.location.replace( addQueryArgs( context.query, url ) );
+		}
+
 		let url = getEditorUrl( state, siteId, postId, postType );
 		// pass along parameters, for example press-this
 		url = addQueryArgs( context.query, url );
 		return window.location.replace( url );
 	}
+
 	next();
 }
 
@@ -315,6 +335,6 @@ export default {
 			return next();
 		}
 
-		maybeCalypsoifyGutenberg( context, next );
+		loadSelectedEditor( context, next );
 	},
 };
