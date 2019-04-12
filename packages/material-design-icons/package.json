@@ -18,7 +18,7 @@
 		"directory": "packages/material-design-icons"
 	},
 	"publishConfig": {
-		"access": "public"
+		"access": "private"
 	},
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
