@@ -89,7 +89,9 @@ To run one package's tests:
 
 ## Building packages
 
-Packages are automatically build on `npm start` unless they're in `/apps` directory.
+Packages will have their `prepare` scripts run automatically on `npm install`.
+
+Independent apps can use `build` instead of `prepare` so avoid unnecessary builds on `npm install`.
 
 You can build packages also by running:
 
