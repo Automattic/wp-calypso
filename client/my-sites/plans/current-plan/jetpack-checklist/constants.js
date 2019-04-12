@@ -52,7 +52,7 @@ export const JETPACK_CHECKLIST_TASKS = {
 export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND = {
 	title: translate( 'Backup and Scan' ),
 	description: translate(
-		"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
+		"Connect your site's server to Jetpack to perform backups, restores, and security scans."
 	),
 	completedButtonText: translate( 'Change', { context: 'verb' } ),
 	completedTitle: translate( 'You turned on backups and scanning.' ),
