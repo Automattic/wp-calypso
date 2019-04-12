@@ -1,4 +1,4 @@
-# photon.js
+# Photon.js
 
 JavaScript library for the [WordPress.com][] [Photon][] image manipulation service.
 

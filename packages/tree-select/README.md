@@ -1,4 +1,4 @@
-# `treeSelect`
+# Tree select
 
 This module exports a function which creates a cached state selector for use with the Redux global application state. It is a good idea to use this function over plain selectors whenever either the computation over state or React's rerenders are expensive.
 It is called `treeSelect` because it internally uses a tree of dependencies to allow the gc to free memory without explicitly clearing the cache.

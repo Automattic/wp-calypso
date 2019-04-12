@@ -1,3 +1,3 @@
-# @automattic/format-currency
+# Format currency
 
 A library for formatting currency.
