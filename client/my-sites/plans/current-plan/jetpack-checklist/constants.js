@@ -61,6 +61,6 @@ export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND = {
 };
 
 export const JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS = {
-	title: translate( "We're automatically turning on backups and scanning." ),
-	completedTitle: translate( "We've automatically turned on backups and scanning." ),
+	title: translate( "We're automatically turning on Backup and Scan." ),
+	completedTitle: translate( "We've automatically turned on Backup and Scan." ),
 };
