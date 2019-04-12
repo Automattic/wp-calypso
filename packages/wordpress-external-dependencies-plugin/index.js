@@ -33,6 +33,10 @@ class WordPressExternalDependenciesPlugin {
 				externRootRequest = 'ReactDOM';
 				break;
 
+			case 'tinymce/tinymce':
+				externRootRequest = 'tinymce';
+				break;
+
 			default:
 				if ( request.startsWith( WORDPRESS_NAMESPACE ) ) {
 					// @wordpress/api-fetch -> wp.apiFetch
@@ -67,15 +71,23 @@ class WordPressExternalDependenciesPlugin {
 				for ( const c of entrypoint.chunks ) {
 					for ( const { userRequest } of c.modulesIterable ) {
 						if ( this.externalizedDeps.has( userRequest ) ) {
-							// Transform @wordpress deps:
-							//   @wordpress/i18n -> wp-i18n
-							//   @wordpress/escape-html -> wp-escape-html
-							// Pass other externalized deps as they are
-							entrypointExternalizedWpDeps.add(
-								userRequest.startsWith( WORDPRESS_NAMESPACE )
-									? 'wp-' + userRequest.substring( WORDPRESS_NAMESPACE.length )
-									: userRequest
-							);
+							let handle;
+
+							if ( userRequest.startsWith( WORDPRESS_NAMESPACE ) ) {
+								// Transform @wordpress deps:
+								//   @wordpress/i18n -> wp-i18n
+								//   @wordpress/escape-html -> wp-escape-html
+								handle = 'wp-' + userRequest.substring( WORDPRESS_NAMESPACE.length );
+							} else if ( 'tinymce/tinymce' === userRequest ) {
+								// Transform Tiny MCE dep:
+								//   tinyme/tinymce -> tiny_mce
+								handle = 'tiny_mce';
+							} else {
+								// Pass other externalized deps as they are
+								handle = userRequest;
+							}
+
+							entrypointExternalizedWpDeps.add( handle );
 						}
 					}
 				}
