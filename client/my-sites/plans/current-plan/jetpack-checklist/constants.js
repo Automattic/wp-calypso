@@ -55,7 +55,7 @@ export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND = {
 		"Connect your site's server to Jetpack to perform backups, restores, and security scans."
 	),
 	completedButtonText: translate( 'Change', { context: 'verb' } ),
-	completedTitle: translate( 'You turned on backups and scanning.' ),
+	completedTitle: translate( 'You turned on Backup and Scan.' ),
 	getUrl: siteSlug => `/settings/security/${ siteSlug }`,
 	duration: getJetpackChecklistTaskDuration( 3 ),
 };
