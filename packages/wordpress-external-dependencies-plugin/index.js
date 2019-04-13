@@ -80,8 +80,8 @@ class WordPressExternalDependenciesPlugin {
 								handle = 'wp-' + userRequest.substring( WORDPRESS_NAMESPACE.length );
 							} else if ( 'tinymce/tinymce' === userRequest ) {
 								// Transform Tiny MCE dep:
-								//   tinyme/tinymce -> tiny_mce
-								handle = 'tiny_mce';
+								//   tinyme/tinymce -> wp-tinymce
+								handle = 'wp-tinymce';
 							} else {
 								// Pass other externalized deps as they are
 								handle = userRequest;
