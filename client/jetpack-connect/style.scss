@@ -1,3 +1,5 @@
+@import './colors.scss';
+
 $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__main,
@@ -5,16 +7,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .layout.is-jetpack-login,
 .is-section-checkout.is-jetpack-site,
 .is-section-checkout-thank-you.is-jetpack-site {
-	// Override accent variables with Jetpack colors
-	--color-accent:       var( --color-jetpack );
-	--color-accent-light: var( --color-jetpack-light );
-	--color-accent-dark:  var( --color-jetpack-dark );
-
-	// Override global colors with accent variables
-	--color-primary:                         var( --color-accent-dark );
-	--color-primary-light:                   var( --color-accent-light );
-	--color-button-primary-background-hover: var( --color-accent-light );
-	--color-accent-600:                      var( --color-accent-dark );
+	@include jetpack-connect-colors();
 
 	.payment-box-section {
 		--color-primary: var( --color-primary-500 );

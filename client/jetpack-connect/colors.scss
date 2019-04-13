@@ -1,0 +1,12 @@
+@mixin jetpack-connect-colors() {
+	// Override accent variables with Jetpack colors
+	--color-accent:       var( --color-jetpack );
+	--color-accent-light: var( --color-jetpack-light );
+	--color-accent-dark:  var( --color-jetpack-dark );
+
+	// Override global colors with accent variables
+	--color-primary:                         var( --color-accent-dark );
+	--color-primary-light:                   var( --color-accent-light );
+	--color-button-primary-background-hover: var( --color-accent-light );
+	--color-accent-600:                      var( --color-accent-dark );
+}
