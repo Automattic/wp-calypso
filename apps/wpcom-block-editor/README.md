@@ -10,6 +10,10 @@ These utilities are intended to be built and then served from `widgets.wp.com`, 
 
 Server-side handlers of the different communication channels we establish with the client-side when Calypso loads the iframed block editor. See [`calypsoify-iframe.jsx`](https://github.com/Automattic/wp-calypso/blob/master/client/gutenberg/editor/calypsoify-iframe.jsx).
 
+### `rich-text.js`
+
+Extensions for the Rich Text toolbar with the Calypso buttons missing on Core (i.e. underline, justify).
+
 ### `tinymce.js`
 
 Tiny MCE plugin that overrides the core media modal used on classic blocks with the Calypso media modal.
@@ -22,18 +26,10 @@ Shared utilities to be used across the package.
 
 ### Manual
 
-To manually build the package, execute the command below:
+To manually build the package, execute the command below passing the directory where the distributable files will be generated:
 
 ```
-npx lerna run build --scope='@automattic/wpcom-block-editor'
-```
-
-This will generate the distributable files under the `dist` folder.
-
-If you want to generate the build in a different folder, you can use the `bundle` script instead:
-
-```
-npx lerna run bundle --scope='@automattic/wpcom-block-editor' -- -- --output-path=/path-to-folder
+npx lerna run build --scope='@automattic/wpcom-block-editor' -- -- --output-path=/path-to-folder
 ```
 
 _Wonky double `--` is needed for first skipping Lerna args and then NPM args to reach Webpack._

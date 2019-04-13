@@ -16,15 +16,19 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prebuild": "npm run clean",
-		"bundle": "webpack --config='../../packages/calypso-build/webpack.config.js' --env.WP='true' iframe-bridge-server='./src/iframe-bridge-server.js' tinymce='./src/tinymce.js'",
-		"build": "npm run bundle -- --output-path=./dist"
+		"bundle": "webpack --config='../../packages/calypso-build/webpack.config.js' --env.WP='true'",
+		"build:iframe-bridge-server": "npm run bundle -- iframe-bridge-server='./src/iframe-bridge-server.js'",
+		"build:tinymce": "npm run bundle -- tinymce='./src/tinymce.js'",
+		"build:rich-text": "npm run bundle -- rich-text='./src/rich-text.js'",
+		"build": "npm-run-all --parallel \"build:* -- {@}\" --"
 	},
 	"dependencies": {
 		"@wordpress/data": "4.4.0",
 		"@wordpress/blocks": "6.0.7",
+		"@wordpress/compose": "3.2.0",
+		"@wordpress/editor": "9.2.2",
 		"@wordpress/hooks": "2.0.5",
+		"@wordpress/rich-text": "3.2.2",
 		"@wordpress/url": "2.3.3",
 		"jquery": "^1.12",
 		"lodash": "4.17.11",
