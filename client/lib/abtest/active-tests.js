@@ -98,7 +98,7 @@ export default {
 		defaultVariation: 'original',
 	},
 	removeDomainsStepFromOnboarding: {
-		datestamp: '20181221',
+		datestamp: '20190412',
 		variations: {
 			keep: 50,
 			remove: 50,
