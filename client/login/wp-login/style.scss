@@ -174,7 +174,7 @@ $image-height: 47px;
 		color: var( --color-neutral-500 );
 	}
 
-	.wp-login__site-return-link:after {
-		background: linear-gradient(to right, rgba( var( --color-jetpack-onboarding-background ) , 0 ), rgba( var( --color-jetpack-onboarding-background ) , 1 ) 90%)
+	.wp-login__site-return-link::after {
+		background: linear-gradient( to right, rgba( var( --color-jetpack-onboarding-background ), 0 ), rgba( var( --color-jetpack-onboarding-background ), 1 ) 90% );
 	}
 }
