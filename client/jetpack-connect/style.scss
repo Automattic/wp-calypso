@@ -3,8 +3,7 @@
 $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__main,
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
-.layout.is-jetpack-login {
+.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ) {
 	@include jetpack-connect-colors();
 }
 
@@ -761,8 +760,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 /**
  * Onboarding styles
  **/
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
-.layout.is-jetpack-login {
+.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ) {
 	background-color: var( --color-jetpack-onboarding-background );
 
 	&.layout {
@@ -771,7 +769,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		padding-bottom: $colophon-height;
 	}
 
-	.login__form-header,
 	.formatted-header {
 		color: var( --color-jetpack-onboarding-text );
 	}
@@ -807,14 +804,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
-	.login__form input:focus,
 	.jetpack-connect__site-address-container input:focus,
 	.logged-out-form input:focus {
 		border-color: var( --color-accent );
 		box-shadow: 0 0 0 2px var( --color-accent-light );
 	}
 
-	.login__form-terms a,
 	.jetpack-connect__tos-link a,
 	.signup-form__terms-of-service-link a,
 	.form-input-validation a {
@@ -826,11 +821,9 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
-	.wp-login__links a,
 	.logged-out-form__links a,
 	.logged-out-form__link-item,
 	.jetpack-connect__back-button,
-	.translator-invite__content a,
 	.jetpack-connect__skip-button .button {
 		color: var( --color-neutral-200 );
 		border-bottom-color: var( --color-neutral-700 );
@@ -845,18 +838,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		&:focus {
 			box-shadow: 0 0 0 transparent;
 		}
-	}
-
-	.translator-invite__content a {
-		border: none;
-	}
-
-	.translator-invite__content {
-		color: var( --color-neutral-500 );
-	}
-
-	.wp-login__site-return-link::after {
-		background: linear-gradient( to right, rgba( var( --color-jetpack-onboarding-background ), 0 ), rgba( var( --color-jetpack-onboarding-background ), 1 ) 90% );
 	}
 
 	.plan-features__table-item,
