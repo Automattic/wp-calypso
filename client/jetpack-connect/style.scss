@@ -4,14 +4,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__main,
 .layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
-.layout.is-jetpack-login,
-.is-section-checkout.is-jetpack-site,
-.is-section-checkout-thank-you.is-jetpack-site {
+.layout.is-jetpack-login {
 	@include jetpack-connect-colors();
-
-	.payment-box-section {
-		--color-primary: var( --color-primary-500 );
-	}
 }
 
 .is-section-jetpack-connect {
@@ -899,51 +893,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.site-topic__content .form-fieldset {
 		position: relative;
-	}
-}
-
-.is-section-checkout.is-jetpack-site {
-	min-height: 100%;
-	background-color: var( --color-jetpack-onboarding-background );
-
-	.formatted-header {
-		color: var( --color-jetpack-onboarding-text );
-	}
-
-	.card {
-		box-shadow: none;
-		border-radius: 3px;
-
-		&.section-header {
-			border-bottom-left-radius: 0;
-			border-bottom-right-radius: 0;
-		}
-
-		&.payment-box {
-			border-top-left-radius: 0;
-			border-top-right-radius: 0;
-		}
-	}
-}
-
-.is-section-checkout-thank-you.is-jetpack-site {
-	min-height: 100%;
-	background-color: var( --color-jetpack-onboarding-background );
-
-	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
-	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
-	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card {
-		box-shadow: none;
-	}
-}
-
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
-.layout.is-jetpack-login,
-.is-section-checkout.is-jetpack-site,
-.is-section-checkout-thank-you.is-jetpack-site {
-	::selection {
-		color: var( --color-white );
-		background: var( --color-accent );
 	}
 }
 

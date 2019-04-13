@@ -9,4 +9,9 @@
 	--color-primary-light:                   var( --color-accent-light );
 	--color-button-primary-background-hover: var( --color-accent-light );
 	--color-accent-600:                      var( --color-accent-dark );
+
+	::selection {
+		color: var( --color-white );
+		background: var( --color-accent );
+	}
 }
