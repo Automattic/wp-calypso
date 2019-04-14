@@ -428,6 +428,14 @@
 			"wpLocale": "en_GB",
 			"territories": [ "154" ]
 		},
+		{
+			"value": 903,
+			"langSlug": "en_debug",
+			"name": "English (Debug)",
+			"wpLocale": "en_US",
+			"popular": 1,
+			"territories": [ "019" ]
+		},
 		{ "value": 18, "langSlug": "eo", "name": "Esperanto", "wpLocale": "eo", "territories": [] },
 		{
 			"value": 19,

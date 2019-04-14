@@ -58,7 +58,7 @@ export function isLocaleVariant( locale ) {
  * @return {boolean} true when the locale is NOT a member of the exception list
  */
 export function canBeTranslated( locale ) {
-	return [ 'en', 'sr_latin' ].indexOf( locale ) === -1;
+	return [ 'en', 'sr_latin', 'en_debug' ].indexOf( locale ) === -1;
 }
 
 /**
