@@ -18,7 +18,6 @@ import './style.scss';
 
 class DomainsLandingContentCard extends Component {
 	static propTypes = {
-		illustration: PropTypes.string,
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ).isRequired,
 		message: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 		actionTitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
@@ -36,7 +35,6 @@ class DomainsLandingContentCard extends Component {
 
 		return (
 			<CompactCard className="content-card content-card__loading-placeholder">
-				<div className="content-card__illustration">loading</div>
 				<h2 className="content-card__title">{ title }</h2>
 				<h3 className="content-card__message">loading</h3>
 				<h3 className="content-card__message">loading</h3>
@@ -46,15 +44,7 @@ class DomainsLandingContentCard extends Component {
 	};
 
 	render() {
-		const {
-			illustration,
-			title,
-			message,
-			actionTitle,
-			actionCallback,
-			footer,
-			isLoading,
-		} = this.props;
+		const { title, message, actionTitle, actionCallback, footer, isLoading } = this.props;
 
 		if ( isLoading ) {
 			return this.renderPlaceholder();
@@ -62,9 +52,6 @@ class DomainsLandingContentCard extends Component {
 
 		return (
 			<CompactCard className="content-card">
-				{ illustration && (
-					<img className="content-card__illustration" src={ illustration } alt="" />
-				) }
 				{ <h2 className="content-card__title">{ title }</h2> }
 				{ message && <h3 className="content-card__message">{ message }</h3> }
 				{ actionTitle && (

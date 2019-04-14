@@ -49,7 +49,6 @@ class RegistrantVerificationPage extends Component {
 		const { translate } = this.props;
 		return {
 			isLoading: true,
-			illustration: '/calypso/images/illustrations/whoops.svg',
 			title: translate( 'Verifying your contact information…' ),
 			message: 'Loading…',
 			actionTitle: null,
@@ -61,7 +60,6 @@ class RegistrantVerificationPage extends Component {
 	getVerificationSuccessState = () => {
 		const { domain, translate } = this.props;
 		return {
-			illustration: '/calypso/images/illustrations/illustration-ok.svg',
 			title: translate( 'Success!' ),
 			message: translate(
 				'Thank your for verifying your contact information for:{{br /}}{{strong}}%(domain)s{{/strong}}.',
@@ -126,7 +124,6 @@ class RegistrantVerificationPage extends Component {
 			const { domain, email, translate } = this.props;
 
 			return {
-				illustration: '/calypso/images/illustrations/illustration-ok.svg',
 				title: translate( 'Already verified.' ),
 				message: translate(
 					"You've already verified {{strong}}%(email)s{{/strong}} for:{{br /}}{{strong}}%(domain)s{{/strong}}.",
@@ -168,7 +165,6 @@ class RegistrantVerificationPage extends Component {
 
 		return {
 			title: translate( 'Uh oh!' ),
-			illustration: '/calypso/images/illustrations/error.svg',
 			message: translate( 'Hmm. Something went wrong.' ),
 			actionTitle: null,
 			actionCallback: null,
@@ -214,7 +210,6 @@ class RegistrantVerificationPage extends Component {
 				this.setErrorState( { error: 'resend_email_failed' } );
 			} else {
 				this.setState( {
-					illustration: '/calypso/images/illustrations/illustration-ok.svg',
 					title: translate( 'Email sent!' ),
 					message: translate( 'Check your email.' ),
 					actionTitle: null,
@@ -233,7 +228,6 @@ class RegistrantVerificationPage extends Component {
 			<div className="registrant-verification">
 				<DomainsLandingHeader title={ translate( 'Domain Contact Verification' ) } />
 				<DomainsLandingContentCard
-					illustration={ this.state.illustration }
 					title={ this.state.title }
 					message={ this.state.message }
 					actionTitle={ this.state.actionTitle }
