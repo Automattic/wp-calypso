@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEnabled } from 'config';
 import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
 
 /**
@@ -60,12 +59,12 @@ const importers = [
 	},
 	{
 		type: GODADDY_GOCENTRAL,
-		isImporterEnabled: isEnabled( 'manage/import/engine6' ),
+		isImporterEnabled: true,
 		component: GoDaddyGoCentralImporter,
 	},
 	{
 		type: MEDIUM,
-		isImporterEnabled: isEnabled( 'manage/import/medium' ),
+		isImporterEnabled: true,
 		component: MediumImporter,
 	},
 	{
