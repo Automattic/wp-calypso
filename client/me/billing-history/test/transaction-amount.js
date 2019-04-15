@@ -78,7 +78,33 @@ describe( 'TransactionAmount', () => {
 		).toContain( '$38.49' );
 	} );
 
-	test( 'tax inclusive', () => {} );
-	test( 'tax exclusive', () => {} );
-	test( 'tax applicable', () => {} );
+	// test( 'tax inclusive', () => {
+	// 	const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" taxIncluded={ true } /> );
+	// 	expect(
+	// 		wrapper
+	// 			.find( 'div' )
+	// 			.last()
+	// 			.text()
+	// 	).toContain( '(includes $1.23 tax)' );
+	// } );
+
+	// test( 'tax exclusive', () => {
+	// 	const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" taxExcluded={ true } /> );
+	// 	expect(
+	// 		wrapper
+	// 			.find( 'div' )
+	// 			.last()
+	// 			.text()
+	// 	).toContain( '(+$1.23 tax)' );
+	// } );
+
+	// test( 'tax applicable', () => {
+	// 	const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" applicable={ true } /> );
+	// 	expect(
+	// 		wrapper
+	// 			.find( 'div' )
+	// 			.last()
+	// 			.text()
+	// 	).toContain( '(+ applicable tax)' );
+	// } );
 } );
