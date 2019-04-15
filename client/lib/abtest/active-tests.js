@@ -183,6 +183,15 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	conciergeQuickstartSession: {
+		datestamp: '20190409',
+		variations: {
+			controlSupportSession: 50,
+			variantQuickstartSession: 50,
+		},
+		defaultVariation: 'controlSupportSession',
+		allowExistingUsers: true,
+	},
 	gsuitePurchaseCtaOptions: {
 		datestamp: '20190411',
 		variations: {
