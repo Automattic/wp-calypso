@@ -1,11 +1,11 @@
 /**
  * @format
- * @jest-environment jsdom
  */
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import React from 'react';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
@@ -28,7 +28,10 @@ describe( 'TransactionAmount', () => {
 
 	const upcoming = { amount: '€38.48' };
 
-	test( 'amount', () => {} );
+	test( 'amount', () => {
+		const wrapper = shallow( <TransactionAmount amount="$38.49" tax="$1.23" /> );
+		expect( wrapper.text() ).toContain( '' );
+	} );
 	test( 'tax exempt', () => {} );
 	test( 'tax inclusive', () => {} );
 	test( 'tax exclusive', () => {} );
