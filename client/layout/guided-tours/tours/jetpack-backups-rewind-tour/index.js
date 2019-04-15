@@ -126,8 +126,6 @@ export const JetpackBackupsRewindTour = makeTour(
 		<Step
 			name="credentials"
 			target=".rewind-credentials-form"
-			placement="beside"
-			arrow="right-top"
 			style={ {
 				display: 'none',
 			} }
