@@ -1,13 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { isNull, noop, omitBy } from 'lodash';
 
 /**
@@ -16,57 +14,61 @@ import { isNull, noop, omitBy } from 'lodash';
 import Gridicon from 'gridicons';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
 
-class CommentButton extends Component {
-	static propTypes = {
-		commentCount: PropTypes.number,
-		href: PropTypes.string,
-		onClick: PropTypes.func,
-		showLabel: PropTypes.bool,
-		tagName: PropTypes.string,
-		target: PropTypes.string,
-	};
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-	static defaultProps = {
-		commentCount: 0,
-		href: null,
-		onClick: noop,
-		showLabel: true,
-		size: 24,
-		tagName: 'li',
-		target: null,
-	};
+function CommentButton( props ) {
+	const { commentCount, href, onClick, showLabel, tagName, target } = props;
+	const translate = useTranslate();
 
-	render() {
-		const { commentCount, href, onClick, showLabel, tagName, target, translate } = this.props;
-
-		return React.createElement(
-			tagName,
-			omitBy(
-				{
-					className: 'comment-button',
-					href: 'a' === tagName ? href : null,
-					onClick,
-					target: 'a' === tagName ? target : null,
-				},
-				isNull
-			),
-			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />,
-			<span className="comment-button__label">
-				{ commentCount > 0 && (
-					<span className="comment-button__label-count">{ commentCount }</span>
-				) }
-				{ showLabel && commentCount > 0 && (
-					<span className="comment-button__label-status">
-						{ translate( 'Comment', 'Comments', {
-							context: 'noun',
-							count: commentCount,
-						} ) }
-					</span>
-				) }
-			</span>
-		);
-	}
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return React.createElement(
+		tagName,
+		omitBy(
+			{
+				className: 'comment-button',
+				href: 'a' === tagName ? href : null,
+				onClick,
+				target: 'a' === tagName ? target : null,
+			},
+			isNull
+		),
+		<Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
+		<span className="comment-button__label">
+			{ commentCount > 0 && <span className="comment-button__label-count">{ commentCount }</span> }
+			{ showLabel && commentCount > 0 && (
+				<span className="comment-button__label-status">
+					{ translate( 'Comment', 'Comments', {
+						context: 'noun',
+						count: commentCount,
+					} ) }
+				</span>
+			) }
+		</span>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
+
+CommentButton.propTypes = {
+	commentCount: PropTypes.number,
+	href: PropTypes.string,
+	onClick: PropTypes.func,
+	showLabel: PropTypes.bool,
+	tagName: PropTypes.string,
+	target: PropTypes.string,
+};
+
+CommentButton.defaultProps = {
+	commentCount: 0,
+	href: null,
+	onClick: noop,
+	showLabel: true,
+	size: 24,
+	tagName: 'li',
+	target: null,
+};
 
 const mapStateToProps = ( state, ownProps ) => {
 	const { post: { site_ID: siteId, ID: postId } = {}, commentCount } = ownProps;
@@ -76,4 +78,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( CommentButton ) );
+export default connect( mapStateToProps )( CommentButton );
