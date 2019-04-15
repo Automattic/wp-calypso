@@ -14,6 +14,7 @@ import {
 	gsuiteNudge,
 	sitelessCheckout,
 	conciergeSessionNudge,
+	conciergeQuickstartSession,
 } from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, render as clientRender } from 'controller';
@@ -94,6 +95,22 @@ export default function() {
 			'/checkout/:site/add-support-session/:receiptId?',
 			siteSelection,
 			conciergeSessionNudge,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/checkout/:site/add-quickstart-session/pending/:orderId',
+			siteSelection,
+			checkoutPending,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/checkout/:site/add-quickstart-session/:receiptId?',
+			siteSelection,
+			conciergeQuickstartSession,
 			makeLayout,
 			clientRender
 		);

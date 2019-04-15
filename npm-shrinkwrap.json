@@ -18,6 +18,7 @@
 			"requires": {
 				"@automattic/calypso-color-schemes": "file:packages/calypso-color-schemes",
 				"@automattic/wordpress-external-dependencies-plugin": "file:packages/wordpress-external-dependencies-plugin",
+				"@babel/core": "7.4.0",
 				"@babel/plugin-proposal-class-properties": "7.4.0",
 				"@babel/plugin-proposal-export-default-from": "7.2.0",
 				"@babel/plugin-proposal-export-namespace-from": "7.2.0",
@@ -2449,9 +2450,9 @@
 			"integrity": "sha512-Nggtk7/ljfNPpAX8CjxxLkMKuO6u2gH1ozmTvGclWF2pNcxTf6YGghYNYNWZRKrimXGhQ8yZqvAHep7h80K04g=="
 		},
 		"@types/babel__core": {
-			"version": "7.1.0",
-			"resolved": "https://registry.npmjs.org/@types/babel__core/-/babel__core-7.1.0.tgz",
-			"integrity": "sha512-wJTeJRt7BToFx3USrCDs2BhEi4ijBInTQjOIukj6a/5tEkwpFMVZ+1ppgmE+Q/FQyc5P/VWUbx7I9NELrKruHA==",
+			"version": "7.1.1",
+			"resolved": "https://registry.npmjs.org/@types/babel__core/-/babel__core-7.1.1.tgz",
+			"integrity": "sha512-+hjBtgcFPYyCTo0A15+nxrCVJL7aC6Acg87TXd5OW3QhHswdrOLoles+ldL2Uk8q++7yIfl4tURtztccdeeyOw==",
 			"dev": true,
 			"requires": {
 				"@babel/parser": "^7.1.0",
@@ -2516,9 +2517,9 @@
 			"integrity": "sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA=="
 		},
 		"@types/node": {
-			"version": "11.13.2",
-			"resolved": "https://registry.npmjs.org/@types/node/-/node-11.13.2.tgz",
-			"integrity": "sha512-HOtU5KqROKT7qX/itKHuTtt5fV0iXbheQvrgbLNXFJQBY/eh+VS5vmmTAVlo3qIGMsypm0G4N1t2AXjy1ZicaQ=="
+			"version": "11.13.4",
+			"resolved": "https://registry.npmjs.org/@types/node/-/node-11.13.4.tgz",
+			"integrity": "sha512-+rabAZZ3Yn7tF/XPGHupKIL5EcAbrLxnTr/hgQICxbeuAfWtT0UZSfULE+ndusckBItcv4o6ZeOJplQikVcLvQ=="
 		},
 		"@types/q": {
 			"version": "1.5.2",
@@ -3101,11 +3102,6 @@
 						"@babel/runtime": "^7.3.1",
 						"qs": "^6.5.2"
 					}
-				},
-				"sprintf-js": {
-					"version": "1.1.2",
-					"resolved": "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.1.2.tgz",
-					"integrity": "sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug=="
 				}
 			}
 		},
@@ -13662,6 +13658,12 @@
 			"version": "1.4.0",
 			"resolved": "https://registry.npmjs.org/natural-compare/-/natural-compare-1.4.0.tgz",
 			"integrity": "sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=",
+			"dev": true
+		},
+		"ncp": {
+			"version": "2.0.0",
+			"resolved": "https://registry.npmjs.org/ncp/-/ncp-2.0.0.tgz",
+			"integrity": "sha1-GVoh1sRuNh0vsSgbo4uR6d9727M=",
 			"dev": true
 		},
 		"nearley": {

@@ -445,6 +445,10 @@ export class Checkout extends React.Component {
 		) {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
+			if ( 'variantQuickstartSession' === abtest( 'conciergeQuickstartSession' ) ) {
+				return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
+			}
+
 			return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
 		}
 

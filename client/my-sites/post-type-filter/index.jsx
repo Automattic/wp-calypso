@@ -29,6 +29,11 @@ import AuthorSegmented from './author-segmented';
 import Button from 'components/button';
 import Gridicon from 'gridicons';
 
+/**
+ * Internal dependencies
+ */
+import './style.scss';
+
 export class PostTypeFilter extends Component {
 	static displayName = 'PostTypeFilter';
 

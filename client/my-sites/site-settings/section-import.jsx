@@ -13,6 +13,7 @@ import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import DocumentHead from 'components/data/document-head';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
@@ -268,6 +269,7 @@ class SiteSettingsImport extends Component {
 
 		return (
 			<Main>
+				<DocumentHead title={ translate( 'Import' ) } />
 				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
 					<h1>{ translate( 'Import Content' ) }</h1>
 				</HeaderCake>

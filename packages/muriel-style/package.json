@@ -20,5 +20,6 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/muriel-style#readme"
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/muriel-style#readme",
+	"private": true
 }

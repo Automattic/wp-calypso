@@ -152,7 +152,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			`.editor-block-list__block.is-selected[aria-label*='${ name }']`
 		);
 
-		await driverHelper.scrollToTop( this.driver, By.css( '.editor-writing-flow' ) );
+		await driverHelper.scrollIntoView( this.driver, By.css( '.editor-writing-flow' ), 'start' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterToggleSelector );
 		await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterMenuSelector );

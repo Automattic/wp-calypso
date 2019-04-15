@@ -181,7 +181,7 @@ function getWebpackConfig( {
 			},
 			runtimeChunk: codeSplit ? { name: 'manifest' } : false,
 			moduleIds: 'named',
-			chunkIds: isDevelopment ? 'named' : 'natural',
+			chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
 			minimize: shouldMinify,
 			minimizer: Minify( {
 				cache: process.env.CIRCLECI

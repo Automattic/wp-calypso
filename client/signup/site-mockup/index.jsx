@@ -59,7 +59,7 @@ class SiteMockups extends Component {
 
 		return true;
 	}
-	updateDebounced = debounce( this.forceUpdate, 777, { leading: false } );
+	updateDebounced = debounce( this.forceUpdate, 777 );
 
 	getNewFontLoaderState( props ) {
 		const state = {

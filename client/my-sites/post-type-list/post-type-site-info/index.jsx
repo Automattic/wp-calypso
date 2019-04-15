@@ -16,6 +16,11 @@ import { getPost } from 'state/posts/selectors';
 import { getSite, getSiteTitle } from 'state/sites/selectors';
 import SiteIcon from 'blocks/site-icon';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function PostTypeSiteInfo( { site, siteTitle } ) {
 	if ( ! site ) {
 		return null;

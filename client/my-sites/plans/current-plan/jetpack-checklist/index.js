@@ -15,14 +15,20 @@ import { localize } from 'i18n-calypso';
 import { Checklist, Task } from 'components/checklist';
 import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import getRewindState from 'state/selectors/get-rewind-state';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import JetpackChecklistHeader from './header';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
+import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
-import { JETPACK_CHECKLIST_TASKS } from './constants';
+import {
+	JETPACK_CHECKLIST_TASKS,
+	JETPACK_CHECKLIST_TASK_BACKUPS_REWIND,
+	JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS,
+} from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
@@ -61,16 +67,22 @@ class JetpackChecklist extends PureComponent {
 			akismetFinished,
 			isPaidPlan,
 			productInstallStatus,
+			rewindState,
 			siteId,
 			siteSlug,
 			taskStatuses,
 			translate,
+			vaultpressFinished,
 		} = this.props;
+		const isRewindActive = rewindState === 'active';
+		const isRewindAvailable = rewindState !== 'uninitialized' && rewindState !== 'unavailable';
+		const isRewindUnAvailable = rewindState === 'unavailable';
 
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ isPaidPlan && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
+				{ isPaidPlan && <QueryRewindState siteId={ siteId } /> }
 
 				<JetpackChecklistHeader />
 
@@ -84,6 +96,24 @@ class JetpackChecklist extends PureComponent {
 							"We've automatically protected you from brute force login attacks."
 						) }
 					/>
+					{ isPaidPlan && isRewindAvailable && (
+						<Task
+							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_REWIND }
+							onClick={ this.handleTaskStart( {
+								taskId: 'jetpack_backups',
+								url: JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ),
+								tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',
+							} ) }
+							completed={ isRewindActive }
+						/>
+					) }
+					{ isPaidPlan && isRewindUnAvailable && productInstallStatus && (
+						<Task
+							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS }
+							completed={ vaultpressFinished }
+							inProgress={ ! vaultpressFinished }
+						/>
+					) }
 					{ isPaidPlan && productInstallStatus && (
 						<Task
 							title={ translate( "We're automatically turning on spam filtering." ) }
@@ -96,11 +126,7 @@ class JetpackChecklist extends PureComponent {
 						const task = JETPACK_CHECKLIST_TASKS[ taskId ];
 
 						if ( ! task ) {
-							// UI does not support this task yet.
-							recordTracksEvent( 'calypso_jetpack_checklist_unsupported_task', {
-								task_id: taskId,
-								site_id: siteId,
-							} );
+							// UI does not support this task.
 							return;
 						}
 
@@ -131,10 +157,14 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
+		const rewindState = get( getRewindState( state, siteId ), 'state', 'uninitialized' );
 
 		return {
 			akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
+			vaultpressFinished:
+				productInstallStatus && productInstallStatus.vaultpress_status === 'installed',
 			isPaidPlan: isSiteOnPaidPlan( state, siteId ),
+			rewindState,
 			productInstallStatus,
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),

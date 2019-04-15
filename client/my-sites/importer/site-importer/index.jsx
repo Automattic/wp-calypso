@@ -55,7 +55,6 @@ export default class extends React.PureComponent {
 			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
-			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 		} ),
 	};
