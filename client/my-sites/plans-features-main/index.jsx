@@ -439,7 +439,9 @@ export default connect(
 			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			plansWithScroll:
 				! props.displayJetpackPlans &&
-				isDiscountActive( getDiscountByName( 'plans_no_tabs' ), state ),
+				// XXX: The below line should be removed once the PR gets approved or rejected,
+				( abtest( 'plansNoTabs' ) === 'test' ||
+					isDiscountActive( getDiscountByName( 'plans_no_tabs' ), state ) ),
 			customerType: guessCustomerType( state, props ),
 			domains: getDecoratedSiteDomains( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
