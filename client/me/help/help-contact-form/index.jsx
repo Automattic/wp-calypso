@@ -27,7 +27,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import InlineHelpCompactResults from 'blocks/inline-help/inline-help-compact-results';
-import ChatBusinessConciergeNotice from '../chat-business-concierge-notice';
 import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite, getHelpSelectedSiteId } from 'state/help/selectors';
 import wpcomLib from 'lib/wp';
@@ -369,12 +368,6 @@ export class HelpContactForm extends React.PureComponent {
 		return (
 			<div className="help-contact-form">
 				{ formDescription && <p>{ formDescription }</p> }
-
-				<ChatBusinessConciergeNotice
-					from="2017-07-19T00:00:00Z"
-					to="2017-07-21T00:00:00Z"
-					selectedSite={ this.props.helpSite }
-				/>
 
 				{ showHowCanWeHelpField && (
 					<div>
