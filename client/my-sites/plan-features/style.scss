@@ -4,7 +4,7 @@ $plan-features-sidebar-width: 272px;
 /* Breakpoints 1150px, */
 
 .plan-features__content {
-	margin: -16px -16px 0 -16px;
+	margin: -16px -16px 0;
 	padding-top: $plan-features-header-banner-height;
 }
 
@@ -535,11 +535,12 @@ $plan-features-sidebar-width: 272px;
 // The #primary id is included to increase specificity
 // and override some of the segmented-control styles.
 // This UI should really use buttons instead.
+/* stylelint-disable selector-max-id */
 body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	margin: 0 auto 16px;
-	box-shadow: 0 1px 1px 0 rgba(0,0,0,0.14),
-				0 2px 1px -1px rgba(0,0,0,0.12),
-				0 1px 3px 0 rgba(0,0,0,0.20);
+	box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ),
+				0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
+				0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
 
 	.segmented-control__item a {
 		text-decoration: underline;
@@ -553,17 +554,17 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		// of the selected segment item. It relies on the
 		// relative positioning above.
 		@include breakpoint( '>480px' ) {
-			&:after {
+			&::after {
 				display: block;
 				content: '';
 				width: 0;
 				height: 0;
 				border-left: 10px solid transparent;
 				border-right: 10px solid transparent;
-				border-top: 10px solid var(--color-primary-700);
+				border-top: 10px solid var( --color-primary-700 );
 				position: absolute;
 				bottom: -10px;
-				left: calc(50% - 10px);
+				left: calc( 50% - 10px );
 			}
 		}
 
@@ -575,10 +576,11 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 			}
 			cursor: default;
 			text-decoration: none;
-		    background-color: var(--color-primary-700);
+			background-color: var( --color-primary-700 );
 		}
 	}
 }
+/* stylelint-enable */
 
 .plans-wrapper {
 	margin: 0 auto;
@@ -623,7 +625,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__content {
-		margin: -16px 0 0 0;
+		margin: -16px 0 0;
 	}
 
 	.plan-features__header {
@@ -637,7 +639,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__table-item {
 		text-align: center;
-		transition: opacity 0.05s
+		transition: opacity 0.05s;
 	}
 
 	.plan-features__table-item.has-border-bottom {
@@ -737,22 +739,22 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.is-section-signup & {
 		width: 100vw;
-		margin-left: calc(50% - 50vw);
+		margin-left: calc( 50% - 50vw );
 
 		@media ( min-width: 1600px ) {
 			max-width: 1600px;
 			margin-left: -280px;
 		}
 
-		@include breakpoint('<1040px') {
+		@include breakpoint( '<1040px' ) {
 			padding-top: 12px;
 		}
 	}
 
 	.is-section-plans & {
 		overflow: hidden;
-		width: calc(100vw - 278px);
-		margin-left: calc(50% - 50vw + 138px);
+		width: calc( 100vw - 278px );
+		margin-left: calc( 50% - 50vw + 138px );
 
 		@include breakpoint( '<660px' ) {
 			margin-left: 0;
@@ -805,6 +807,10 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		margin: 0 auto;
 		width: 100%;
 		border-spacing: 7px 0;
+
+		.is-section-plans & {
+			border-spacing: 0;
+		}
 	}
 
 	.plan-features__header {
@@ -872,8 +878,6 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__pricing {
-		display: flex;
-		flex-direction: row;
 		padding: 8px 16px;
 		margin: 0;
 		border-top: solid 1px lighten( $gray, 27% );
@@ -908,6 +912,10 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		&:empty {
 			background: transparent;
 			border-top: none;
+		}
+
+		&.has-border-top {
+			vertical-align: top;
 		}
 
 		&.has-border-top, &.is-top-buttons, &.is-description {
@@ -959,7 +967,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		margin-left: 10px;
 	}
 
-	.plan-features__row:last-child .plan-features__table-item{
+	.plan-features__row:last-child .plan-features__table-item {
 		border-bottom: solid 1px var( --color-neutral-50 );
 	}
 }
@@ -1053,7 +1061,7 @@ button.plan-features__scroll-button {
 	width: auto;
 	bottom: 0;
 	left: 50%;
-	transform: translateX(-50%);
+	transform: translateX( -50% );
 	white-space: nowrap;
 
 	.is-section-plans & {

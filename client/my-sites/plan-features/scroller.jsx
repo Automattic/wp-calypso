@@ -221,8 +221,8 @@ export default class PlanFeaturesScroller extends PureComponent {
 		};
 	}
 
-	renderStyle( { styleWeights, borderSpacing, paneWidth, visibleIndex } ) {
-		const { cellSelector } = this.props;
+	renderStyle( { styleWeights, borderSpacing, paneWidth, visibleIndex, visibleCount } ) {
+		const { cellSelector, planCount } = this.props;
 
 		if ( ! styleWeights ) {
 			return null;
@@ -243,10 +243,14 @@ export default class PlanFeaturesScroller extends PureComponent {
 					}
 
 					const transform = translateX ? `transform: translateX( ${ translateX }% );` : '';
+					const border =
+						! transform && planCount > visibleCount && index > visibleIndex
+							? 'border-left: 0;'
+							: '';
 
 					return (
 						<style key={ selector }>
-							{ `${ selector } { opacity: ${ opacity }; ${ transform } }` }
+							{ `${ selector } { opacity: ${ opacity }; ${ border } ${ transform } }` }
 						</style>
 					);
 				} ) }
