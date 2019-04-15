@@ -21,6 +21,7 @@ function TransactionAmount( {
 	return (
 		<React.Fragment>
 			<div className="">{ amount }</div>
+			<div className="">{ tax }</div>
 		</React.Fragment>
 	);
 }

@@ -29,8 +29,24 @@ describe( 'TransactionAmount', () => {
 
 	test( 'amount', () => {
 		const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" /> );
-		expect( wrapper.find( 'div' ).text() ).toContain( '$38.49' );
+		expect(
+			wrapper
+				.find( 'div' )
+				.first()
+				.text()
+		).toContain( '$38.49' );
 	} );
+
+	test( 'tax', () => {
+		const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" /> );
+		expect(
+			wrapper
+				.find( 'div' )
+				.last()
+				.text()
+		).toContain( '$1.23' );
+	} );
+
 	test( 'tax exempt', () => {} );
 	test( 'tax inclusive', () => {} );
 	test( 'tax exclusive', () => {} );
