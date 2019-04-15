@@ -12,7 +12,6 @@ import { By } from 'selenium-webdriver';
 import AsyncBaseContainer from '../../async-base-container';
 
 import * as driverHelper from '../../driver-helper.js';
-import * as driverManager from '../../driver-manager';
 import { getJetpackHost } from '../../data-helper.js';
 
 export default class PickAPlanPage extends AsyncBaseContainer {
@@ -55,11 +54,8 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 	async _selectPlan( level ) {
 		// We are switching from two separate designs for mobile and desktop plans to one. There will be two buttons -
 		// one visible and one hidden in control and only one button in the test variation.
-		const plansPrefix =
-			driverManager.currentScreenSize() === 'mobile'
-				? '.plan-features__mobile'
-				: '.plan-features__table';
-		let selector = By.css( `${ plansPrefix } button.is-${ level }-plan` );
+		let selector = By.css( `.plan-features__mobile button.is-${ level }-plan, 
+			.plan-features__table button.is-${ level }-plan` );
 
 		if ( level === 'free' ) {
 			if ( ! ( await driverHelper.isElementPresent( this.driver, selector ) ) ) {
