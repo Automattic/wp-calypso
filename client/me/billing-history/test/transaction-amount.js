@@ -27,6 +27,21 @@ describe( 'TransactionAmount', () => {
 
 	const upcoming = { amount: '€38.48' };
 
+	test( 'amount class', () => {
+		const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" /> );
+		expect( wrapper.find( '.billing-history__transaction-amount' ) ).toHaveLength( 1 );
+	} );
+
+	test( 'tax class', () => {
+		const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" /> );
+		expect( wrapper.find( '.billing-history__transaction-amount-tax' ) ).toHaveLength( 1 );
+	} );
+
+	test( 'tax exempt no tax div', () => {
+		const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" exempt={ true } /> );
+		expect( wrapper.find( 'div.billing-history__transaction-amount-tax' ) ).toHaveLength( 0 );
+	} );
+
 	test( 'amount', () => {
 		const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" /> );
 		expect(

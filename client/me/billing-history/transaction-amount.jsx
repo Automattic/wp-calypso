@@ -20,8 +20,8 @@ function TransactionAmount( {
 } ) {
 	return (
 		<React.Fragment>
-			<div className="">{ amount }</div>
-			<div className="">{ tax }</div>
+			<div className="billing-history__transaction-amount">{ amount }</div>
+			{ exempt || <div className="billing-history__transaction-amount-tax">{ tax }</div> }
 		</React.Fragment>
 	);
 }
