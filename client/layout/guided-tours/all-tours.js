@@ -21,6 +21,7 @@ import { ChecklistSiteIconTour } from 'layout/guided-tours/tours/checklist-site-
 import { ChecklistSiteTaglineTour } from 'layout/guided-tours/tours/checklist-site-tagline-tour';
 import { ChecklistSiteTitleTour } from 'layout/guided-tours/tours/checklist-site-title-tour';
 import { ChecklistUserAvatarTour } from 'layout/guided-tours/tours/checklist-user-avatar-tour';
+import { JetpackBackupsRewindTour } from 'layout/guided-tours/tours/jetpack-backups-rewind-tour';
 import { JetpackBasicTour } from 'layout/guided-tours/tours/jetpack-basic-tour';
 import { JetpackMonitoringTour } from 'layout/guided-tours/tours/jetpack-monitoring-tour';
 import { JetpackPluginUpdatesTour } from 'layout/guided-tours/tours/jetpack-plugin-updates-tour';
@@ -40,6 +41,7 @@ export default combineTours( {
 	checklistSiteTitle: ChecklistSiteTitleTour,
 	checklistUserAvatar: ChecklistUserAvatarTour,
 	jetpack: JetpackBasicTour,
+	jetpackBackupsRewind: JetpackBackupsRewindTour,
 	jetpackMonitoring: JetpackMonitoringTour,
 	jetpackPluginUpdates: JetpackPluginUpdatesTour,
 	jetpackSignIn: JetpackSignInTour,
