@@ -51,8 +51,6 @@ export function transactionIncludesTax( transaction ) {
 		return false;
 	}
 
-	// TODO: Make sure that upcoming charges with estimates return true
-
 	// Consider the whole transaction to include tax if any item does
 	return some( transaction.items, 'raw_tax' );
 }
