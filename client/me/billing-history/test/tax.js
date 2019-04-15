@@ -133,16 +133,7 @@ test( 'tax hidden if not available', () => {
 } );
 
 test( 'tax applicable shown if upcoming', () => {
-	const upcoming = {
-		subtotal: '$36.00',
-		tax: '$2.48',
-		amount: '$38.48',
-		items: [
-			{
-				raw_tax: 2.48,
-			},
-		],
-	};
+	const upcoming = { amount: '€38.48' };
 
 	// Provider redux store context required by dep on connected popover
 	const store = createReduxStore();
@@ -151,5 +142,5 @@ test( 'tax applicable shown if upcoming', () => {
 			{ renderTransactionAmount( upcoming, { translate, addingTax: true, estimated: true } ) }
 		</Provider>
 	);
-	expect( wrapper.last().text() ).toEqual( '$38.48(+ applicable tax)' );
+	expect( wrapper.last().text() ).toEqual( '€38.48(+ applicable tax)' );
 } );

@@ -61,7 +61,7 @@ export function renderTransactionAmount(
 	transaction,
 	{ translate, addingTax = false, estimated = false }
 ) {
-	if ( ! transactionIncludesTax( transaction ) ) {
+	if ( ! transactionIncludesTax( transaction ) && ! estimated ) {
 		return transaction.amount;
 	}
 
