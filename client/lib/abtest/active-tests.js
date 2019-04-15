@@ -213,4 +213,14 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+  gsuiteDomainFlowOptions: {
+		datestamp: '20190415',
+		variations: {
+			hideMonthlyPrice: 50,
+			showMonthlyPrice: 50,
+		},
+		defaultVariation: 'hideMonthlyPrice',
+		allowExistingUsers: true,
+		countryCodeTargets: [ 'USD' ],
+	},
 };
