@@ -46,7 +46,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	cursor: pointer;
 
 	&:hover .form-checkbox {
-	color: var( --color-text-subtle );
+		border-color: var( --color-neutral-200 );
 	}
 
 	padding: 16px 16px 0;
@@ -97,7 +97,7 @@ a.post-item__title-link:visited {
 	}
 
 	.post-item__panel.is-untitled & {
-	color: var( --color-text-subtle );
+		color: var( --color-text-subtle );
 		font-style: italic;
 	}
 

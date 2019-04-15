@@ -27,7 +27,7 @@
 	}
 
 	.post-edit-button__label {
-	color: var( --color-text-subtle );
+		color: var( --color-text-subtle );
 
 		@include breakpoint( '<480px' ) {
 			display: none;
