@@ -182,32 +182,32 @@ async function loadSelectedEditor( context, next ) {
 		return next();
 	}
 
-	if ( 'gutenberg' === getSelectedEditor( state, siteId ) ) {
-		const postType = determinePostType( context );
-		const postId = getPostID( context );
-
-		if ( false === isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) ) {
-			const siteAdminUrl = getSiteAdminUrl( state, siteId );
-			let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
-
-			if ( postId ) {
-				url = `${ siteAdminUrl }post.php?post=${ postId }&action=edit`;
-			}
-
-			if ( isSiteAtomic( state, siteId ) ) {
-				url = addQueryArgs( { calypsoify: '1' }, url );
-			}
-
-			return window.location.replace( addQueryArgs( context.query, url ) );
-		}
-
-		let url = getEditorUrl( state, siteId, postId, postType );
-		// pass along parameters, for example press-this
-		url = addQueryArgs( context.query, url );
-		return window.location.replace( url );
+	if ( 'gutenberg' !== getSelectedEditor( state, siteId ) ) {
+		return next();
 	}
 
-	next();
+	const postType = determinePostType( context );
+	const postId = getPostID( context );
+
+	if ( false === isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) ) {
+		const siteAdminUrl = getSiteAdminUrl( state, siteId );
+		let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
+
+		if ( postId ) {
+			url = `${ siteAdminUrl }post.php?post=${ postId }&action=edit`;
+		}
+
+		if ( isSiteAtomic( state, siteId ) ) {
+			url = addQueryArgs( { calypsoify: '1' }, url );
+		}
+
+		return window.location.replace( addQueryArgs( context.query, url ) );
+	}
+
+	let url = getEditorUrl( state, siteId, postId, postType );
+	// pass along parameters, for example press-this
+	url = addQueryArgs( context.query, url );
+	return window.location.replace( url );
 }
 
 export default {
