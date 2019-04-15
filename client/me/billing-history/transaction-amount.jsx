@@ -13,15 +13,15 @@ function TransactionAmount( {
 	translate,
 	amount,
 	tax,
-	exempt = false,
-	applicable = false,
-	included = false,
-	excluded = false,
+	taxExempt = false,
+	taxApplicable = false,
+	taxIncluded = false,
+	taxExcluded = false,
 } ) {
 	return (
 		<React.Fragment>
 			<div className="billing-history__transaction-amount">{ amount }</div>
-			{ exempt || <div className="billing-history__transaction-amount-tax">{ tax }</div> }
+			{ taxExempt || <div className="billing-history__transaction-amount-tax">{ tax }</div> }
 		</React.Fragment>
 	);
 }
@@ -30,10 +30,10 @@ TransactionAmount.propTypes = {
 	translate: PropTypes.func.isRequired,
 	amount: PropTypes.string.isRequired,
 	tax: PropTypes.string.isRequired,
-	exempt: PropTypes.bool,
-	applicable: PropTypes.bool,
-	included: PropTypes.bool,
-	excluded: PropTypes.bool,
+	taxExempt: PropTypes.bool,
+	taxApplicable: PropTypes.bool,
+	taxIncluded: PropTypes.bool,
+	taxExcluded: PropTypes.bool,
 };
 
 export default localize( TransactionAmount );

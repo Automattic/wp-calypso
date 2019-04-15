@@ -38,7 +38,7 @@ describe( 'TransactionAmount', () => {
 	} );
 
 	test( 'tax exempt no tax div', () => {
-		const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" exempt={ true } /> );
+		const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" taxExempt={ true } /> );
 		expect( wrapper.find( 'div.billing-history__transaction-amount-tax' ) ).toHaveLength( 0 );
 	} );
 
@@ -63,7 +63,7 @@ describe( 'TransactionAmount', () => {
 	} );
 
 	test( 'tax exempt', () => {
-		const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" exempt={ true } /> );
+		const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" taxExempt={ true } /> );
 		expect(
 			wrapper
 				.find( 'div' )
