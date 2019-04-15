@@ -62,12 +62,6 @@ export function renderTransactionAmount(
 	transaction,
 	{ translate, addingTax = false, estimated = false }
 ) {
-	if ( estimated ) {
-		// TMP
-		transaction.tax = transaction.tax || '$1.23';
-		transaction.items = transaction.items || [ { raw_tax: 2 } ];
-	}
-
 	if ( ! transactionIncludesTax( transaction ) ) {
 		return transaction.amount;
 	}
