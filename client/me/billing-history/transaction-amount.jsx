@@ -20,7 +20,7 @@ function TransactionAmount( {
 } ) {
 	return (
 		<React.Fragment>
-			<div class="">{ null }</div>
+			<div className="">{ amount }</div>
 		</React.Fragment>
 	);
 }

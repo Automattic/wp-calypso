@@ -1,18 +1,17 @@
 /**
  * @format
+ * @jest-environment jsdom
  */
 /**
  * External dependencies
  */
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 
 /**
  * Internal dependencies
  */
 import TransactionAmount from '../transaction-amount';
-
-// const translate = x => x;
 
 describe( 'TransactionAmount', () => {
 	const transaction = {
@@ -29,8 +28,8 @@ describe( 'TransactionAmount', () => {
 	const upcoming = { amount: '€38.48' };
 
 	test( 'amount', () => {
-		const wrapper = shallow( <TransactionAmount amount="$38.49" tax="$1.23" /> );
-		expect( wrapper.text() ).toContain( '' );
+		const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" /> );
+		expect( wrapper.find( 'div' ).text() ).toContain( '$38.49' );
 	} );
 	test( 'tax exempt', () => {} );
 	test( 'tax inclusive', () => {} );
