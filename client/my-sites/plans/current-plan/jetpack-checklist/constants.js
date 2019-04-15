@@ -49,6 +49,10 @@ export const JETPACK_CHECKLIST_TASKS = {
 	},
 };
 
+export const JETPACK_CHECKLIST_TASK_PROTECT = {
+	title: translate( "We've automatically protected you from brute force login attacks." ),
+};
+
 export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND = {
 	title: translate( 'Backup and Scan' ),
 	description: translate(
