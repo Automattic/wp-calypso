@@ -5,12 +5,15 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { renderTransactionAmount, transactionIncludesTax } from '../utils';
+import { createReduxStore } from 'state';
 
 const translate = x => x;
 
@@ -127,4 +130,27 @@ test( 'tax hidden if not available', () => {
 	};
 
 	expect( renderTransactionAmount( transaction, { translate } ) ).toEqual( '$36.00' );
+} );
+
+test( 'tax applicable shown if upcoming', () => {
+	const upcoming = {
+		subtotal: '$36.00',
+		tax: '$2.48',
+		amount: '$38.48',
+		items: [
+			{
+				raw_tax: 2.48,
+			},
+		],
+	};
+
+	// Provider redux store context required by dep on connected popover
+	const store = createReduxStore();
+	const wrapper = mount(
+		<Provider store={ store }>
+			{ renderTransactionAmount( upcoming, { translate, addingTax: true, estimated: true } ) }
+		</Provider>
+	);
+	expect( wrapper.last().text() ).toEqual( '$38.48(+%(taxAmount)s tax)' );
+	expect( wrapper.find( 'InfoPopover' ) ).toHaveLength( 1 );
 } );
