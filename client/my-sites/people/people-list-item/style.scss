@@ -19,7 +19,7 @@
 
 	&:focus {
 		outline: 2px solid var( --color-primary-light );
-		z-index: 1;
+		z-index: z-index( 'root', '.people-list-item.card.is-compact:focus' );
 	}
 }
 
