@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -13,6 +13,7 @@ import { get, includes } from 'lodash';
  */
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
+import FormattedHeader from 'components/formatted-header';
 import SignupActions from 'lib/signup/actions';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import getRewindState from 'state/selectors/get-rewind-state';
@@ -68,28 +69,24 @@ class RewindFormCreds extends Component {
 	stepContent = () => {
 		const { translate, siteId } = this.props;
 
-		return [
-			<div key="rewind-form-creds__header" className="rewind-form-creds__header">
-				<h3 className="rewind-form-creds__title rewind-switch__heading">
-					{ translate( 'Site credentials' ) }
-				</h3>
-				<p className="rewind-form-creds__description rewind-switch__description">
-					{ translate(
+		return (
+			<Fragment>
+				<FormattedHeader
+					headerText={ translate( 'Site credentials' ) }
+					subHeaderText={ translate(
 						"We'll guide you through the process of finding and entering your site's credentials."
 					) }
-				</p>
-			</div>,
-			<Card
-				key="rewind-form-creds__card"
-				className="rewind-form-creds__card rewind-switch__card rewind-switch__content"
-			>
-				<Card compact className="rewind-form-creds__legend">
-					{ translate( 'Enter your credentials' ) }
+				/>
+				<Card className="rewind-form-creds__card rewind-switch__card rewind-switch__content">
+					<Card compact className="rewind-form-creds__legend">
+						{ translate( 'Enter your credentials' ) }
+					</Card>
+					<RewindCredentialsForm role="main" siteId={ siteId } allowCancel={ false } />
+					<SetupFooter />
 				</Card>
-				<RewindCredentialsForm role="main" siteId={ siteId } allowCancel={ false } />
-				<SetupFooter />
-			</Card>,
-		];
+				,
+			</Fragment>
+		);
 	};
 
 	render() {

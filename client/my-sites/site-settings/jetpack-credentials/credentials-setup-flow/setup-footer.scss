@@ -1,0 +1,16 @@
+.credentials-setup-flow__footer .button.is-borderless {
+	margin-right: 24px;
+	color: var( --color-primary );
+	padding: 0 0 5px;
+
+	&:hover {
+		color: var( --color-link-dark );
+	}
+}
+
+.credentials-setup-flow__footer-popover .popover__inner {
+	color: var( --color-neutral-500 );
+	font-size: 13px;
+	max-width: 220px;
+	padding: 16px;
+}

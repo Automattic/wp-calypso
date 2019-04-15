@@ -45,24 +45,3 @@
 .credentials-setup-flow__tos-buttons .is-borderless {
 	margin-right: 15px;
 }
-
-.credentials-setup-flow__footer .button.is-borderless {
-	margin-right: 24px;
-	color: var( --color-primary );
-	padding: 0 0 5px;
-
-	&:hover {
-		color: var( --color-link-dark );
-	}
-
-	span {
-		margin-left: 6px;
-	}
-}
-
-.credentials-setup-flow__popover .popover__inner {
-	color: var( --color-neutral-500 );
-	font-size: 13px;
-	max-width: 220px;
-	padding: 16px;
-}
