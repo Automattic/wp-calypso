@@ -2,11 +2,17 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import uploadsReducer from 'state/imports/uploads/reducer';
 import siteImporterReducer from 'state/imports/site-importer/reducer';
+import { IMPORTS_FETCH_COMPLETED } from 'state/action-types';
+
+const isHydrated = createReducer( false, {
+	[ IMPORTS_FETCH_COMPLETED ]: () => true,
+} );
 
 export default combineReducers( {
+	isHydrated,
 	uploads: uploadsReducer,
 	siteImporter: siteImporterReducer,
 } );
