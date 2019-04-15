@@ -24,7 +24,7 @@ import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
 import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
 
-class TransactionsTable extends React.Component {
+export class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';
 
 	static defaultProps = {
