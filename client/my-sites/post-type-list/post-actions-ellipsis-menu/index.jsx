@@ -21,6 +21,11 @@ import PostActionsEllipsisMenuView from './view';
 import PostActionsEllipsisMenuRestore from './restore';
 import PostActionsEllipsisMenuDuplicate from './duplicate';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default function PostActionsEllipsisMenu( { globalId, includeDefaultActions, children } ) {
 	let actions = [];
 

@@ -15,6 +15,11 @@ import { localize } from 'i18n-calypso';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './max-pages-notice.scss';
+
 class PostTypeListMaxPagesNotice extends Component {
 	static propTypes = {
 		displayedPosts: PropTypes.number,
@@ -50,10 +55,12 @@ class PostTypeListMaxPagesNotice extends Component {
 				{ translate( 'To view more posts, {{a}}switch to a specific site{{/a}}.', {
 					components: {
 						a: (
+							/* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 							<a
 								className="post-type-list__max-pages-notice-link"
 								onClick={ this.focusSiteSelector }
 							/>
+							/* eslint-enable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 						),
 					},
 				} ) }
