@@ -18,22 +18,19 @@ function TransactionAmount( {
 	taxIncluded = false,
 	taxExcluded = false,
 } ) {
-	const taxAmount = taxIncluded
-		? translate( '(includes %(taxAmount)s tax)', {
-				args: { taxAmount: tax },
-				comment: 'taxAmount is a localized price, like $12.34',
-		  } )
-		: tax;
+	let taxAmount = tax;
 
-	// let taxAmount = addingTax
-	// 	? translate( '(+%(taxAmount)s tax)', {
-	// 			args: { taxAmount: transaction.tax },
-	// 			comment: 'taxAmount is a localized price, like $12.34',
-	// 	  } )
-	// 	: translate( '(includes %(taxAmount)s tax)', {
-	// 			args: { taxAmount: transaction.tax },
-	// 			comment: 'taxAmount is a localized price, like $12.34',
-	// 	  } );
+	if ( taxIncluded ) {
+		taxAmount = translate( '(includes %(taxAmount)s tax)', {
+			args: { taxAmount: tax },
+			comment: 'taxAmount is a localized price, like $12.34',
+		} );
+	} else if ( taxExcluded ) {
+		taxAmount = translate( '(+%(taxAmount)s tax)', {
+			args: { taxAmount: tax },
+			comment: 'taxAmount is a localized price, like $12.34',
+		} );
+	}
 
 	// if ( estimated ) {
 	// 	taxAmount = translate( '(+ applicable tax)', {
