@@ -98,13 +98,15 @@ describe( 'TransactionAmount', () => {
 		).toContain( '(+$1.23 tax)' );
 	} );
 
-	// test( 'tax applicable', () => {
-	// 	const wrapper = mount( <TransactionAmount amount="$38.49" tax="$1.23" applicable={ true } /> );
-	// 	expect(
-	// 		wrapper
-	// 			.find( 'div' )
-	// 			.last()
-	// 			.text()
-	// 	).toContain( '(+ applicable tax)' );
-	// } );
+	test( 'tax applicable', () => {
+		const wrapper = mount(
+			<TransactionAmount amount="$38.49" tax="$1.23" taxApplicable={ true } />
+		);
+		expect(
+			wrapper
+				.find( 'div' )
+				.last()
+				.text()
+		).toContain( '(+ applicable tax)' );
+	} );
 } );
