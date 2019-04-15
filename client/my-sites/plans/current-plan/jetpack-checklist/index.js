@@ -26,6 +26,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
 import {
 	JETPACK_CHECKLIST_TASKS,
+	JETPACK_CHECKLIST_TASK_AKISMET,
 	JETPACK_CHECKLIST_TASK_BACKUPS_REWIND,
 	JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS,
 	JETPACK_CHECKLIST_TASK_PROTECT,
@@ -112,8 +113,7 @@ class JetpackChecklist extends PureComponent {
 					) }
 					{ isPaidPlan && productInstallStatus && (
 						<Task
-							title={ translate( "We're automatically turning on spam filtering." ) }
-							completedTitle={ translate( "We've automatically turned on spam filtering." ) }
+							{ ...JETPACK_CHECKLIST_TASK_AKISMET }
 							completed={ akismetFinished }
 							inProgress={ ! akismetFinished }
 						/>

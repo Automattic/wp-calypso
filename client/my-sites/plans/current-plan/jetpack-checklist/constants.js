@@ -49,6 +49,11 @@ export const JETPACK_CHECKLIST_TASKS = {
 	},
 };
 
+export const JETPACK_CHECKLIST_TASK_AKISMET = {
+	title: translate( "We're automatically turning on spam filtering." ),
+	completedTitle: translate( "We've automatically turned on spam filtering." ),
+};
+
 export const JETPACK_CHECKLIST_TASK_PROTECT = {
 	title: translate( "We've automatically protected you from brute force login attacks." ),
 };
