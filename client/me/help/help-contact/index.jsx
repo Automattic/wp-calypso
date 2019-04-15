@@ -528,18 +528,11 @@ class HelpContact extends React.Component {
 				{ isUserAffectedByLiveChatClosure && (
 					<Fragment>
 						<LiveChatClosureNotice
-							holidayName="Christmas"
+							holidayName="Easter"
 							compact={ compact }
-							displayAt="2018-12-17 00:00Z"
-							closesAt="2018-12-24 00:00Z"
-							reopensAt="2018-12-26 07:00Z"
-						/>
-						<LiveChatClosureNotice
-							holidayName="New Year's Day"
-							compact={ compact }
-							displayAt="2018-12-26 07:00Z"
-							closesAt="2019-01-01 00:00Z"
-							reopensAt="2019-01-02 07:00Z"
+							displayAt="2019-04-18 00:00Z"
+							closesAt="2019-04-21 00:00Z"
+							reopensAt="2019-04-22 00:00Z"
 						/>
 					</Fragment>
 				) }
