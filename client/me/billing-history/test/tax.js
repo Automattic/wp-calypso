@@ -151,6 +151,6 @@ test( 'tax applicable shown if upcoming', () => {
 			{ renderTransactionAmount( upcoming, { translate, addingTax: true, estimated: true } ) }
 		</Provider>
 	);
-	expect( wrapper.last().text() ).toEqual( '$38.48(+%(taxAmount)s tax)' );
+	expect( wrapper.last().text() ).toEqual( '$38.48(+ applicable tax)' );
 	expect( wrapper.find( 'InfoPopover' ) ).toHaveLength( 1 );
 } );

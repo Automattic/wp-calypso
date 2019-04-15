@@ -66,7 +66,7 @@ export function renderTransactionAmount(
 		return transaction.amount;
 	}
 
-	const taxAmount = addingTax
+	let taxAmount = addingTax
 		? translate( '(+%(taxAmount)s tax)', {
 				args: { taxAmount: transaction.tax },
 				comment: 'taxAmount is a localized price, like $12.34',
@@ -75,6 +75,13 @@ export function renderTransactionAmount(
 				args: { taxAmount: transaction.tax },
 				comment: 'taxAmount is a localized price, like $12.34',
 		  } );
+
+	if ( estimated ) {
+		taxAmount = translate( '(+ applicable tax)', {
+			comment:
+				'Positioned next to a tax exclusive price amount to explain there is potential for an extra tax in addition to the price at sale time',
+		} );
+	}
 
 	return (
 		<Fragment>
