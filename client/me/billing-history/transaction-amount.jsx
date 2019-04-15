@@ -18,10 +18,34 @@ function TransactionAmount( {
 	taxIncluded = false,
 	taxExcluded = false,
 } ) {
+	const taxAmount = taxIncluded
+		? translate( '(includes %(taxAmount)s tax)', {
+				args: { taxAmount: tax },
+				comment: 'taxAmount is a localized price, like $12.34',
+		  } )
+		: tax;
+
+	// let taxAmount = addingTax
+	// 	? translate( '(+%(taxAmount)s tax)', {
+	// 			args: { taxAmount: transaction.tax },
+	// 			comment: 'taxAmount is a localized price, like $12.34',
+	// 	  } )
+	// 	: translate( '(includes %(taxAmount)s tax)', {
+	// 			args: { taxAmount: transaction.tax },
+	// 			comment: 'taxAmount is a localized price, like $12.34',
+	// 	  } );
+
+	// if ( estimated ) {
+	// 	taxAmount = translate( '(+ applicable tax)', {
+	// 		comment:
+	// 			'Positioned next to a tax exclusive price amount to explain there is potential for an extra tax in addition to the price at sale time',
+	// 	} );
+	// }
+
 	return (
 		<React.Fragment>
 			<div className="billing-history__transaction-amount">{ amount }</div>
-			{ taxExempt || <div className="billing-history__transaction-amount-tax">{ tax }</div> }
+			{ taxExempt || <div className="billing-history__transaction-amount-tax">{ taxAmount }</div> }
 		</React.Fragment>
 	);
 }
