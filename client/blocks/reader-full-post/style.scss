@@ -469,7 +469,7 @@
 
 .reader-full-post__header-date-link,
 .reader-full-post__header-date-link:visited {
-	color: var( --color-neutral );
+	color: var( --color-text-subtle );
 
 	&:hover {
 		color: var( --color-primary-light );
@@ -494,7 +494,7 @@
 }
 
 .reader-full-post__header-tag-list {
-	color: var( --color-neutral );
+	color: var( --color-text-subtle );
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -508,7 +508,7 @@
 }
 
 .reader-full-post__header-tag-list-item {
-	color: var( --color-neutral );
+	color: var( --color-text-subtle );
 	display: inline;
 	margin-right: 5px;
 
@@ -527,7 +527,7 @@
 
 .reader-full-post__header-tag-list-item-link,
 .reader-full-post__header-tag-list-item-link:visited {
-	color: var( --color-neutral );
+	color: var( --color-text-subtle );
 
 	&:hover {
 		color: var( --color-primary-light );

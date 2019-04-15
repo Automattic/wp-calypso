@@ -1,5 +1,5 @@
 .reader-site-notification-settings__button {
-	color: var( --color-neutral );
+	color: var( --color-text-subtle );
 
 	&:hover {
 		cursor: pointer;
@@ -70,7 +70,7 @@
 
 .reader-site-notification-settings__popout-hint,
 .reader-site-notification-settings__popout-instructions-hint {
-	color: var( --color-neutral );
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	margin-bottom: 0;
 }
