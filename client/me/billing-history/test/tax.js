@@ -152,5 +152,4 @@ test( 'tax applicable shown if upcoming', () => {
 		</Provider>
 	);
 	expect( wrapper.last().text() ).toEqual( '$38.48(+ applicable tax)' );
-	expect( wrapper.find( 'InfoPopover' ) ).toHaveLength( 1 );
 } );

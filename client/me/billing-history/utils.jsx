@@ -5,7 +5,6 @@
 import { find, map, partition, reduce, some } from 'lodash';
 import React, { Fragment } from 'react';
 import formatCurrency from '@automattic/format-currency';
-import InfoPopover from 'components/info-popover';
 
 export const groupDomainProducts = ( originalItems, translate ) => {
 	const transactionItems = Object.keys( originalItems ).map( key => {
@@ -86,17 +85,7 @@ export function renderTransactionAmount(
 	return (
 		<Fragment>
 			<div>{ transaction.amount }</div>
-			<div className="billing-history__transaction-tax-amount">
-				{ taxAmount }
-				{ estimated && (
-					<InfoPopover position="bottom left">
-						{ translate( 'Tax amount is only an estimate', {
-							comment:
-								'Disclaimer indicating uncertaintanty about actual taxes that will be applied in the future',
-						} ) }
-					</InfoPopover>
-				) }
-			</div>
+			<div className="billing-history__transaction-tax-amount">{ taxAmount }</div>
 		</Fragment>
 	);
 }
