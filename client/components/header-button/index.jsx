@@ -11,6 +11,11 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const HeaderButton = ( { icon, label, ...rest } ) => (
 	<Button className="header-button" { ...rest }>
 		{ icon && <Gridicon icon={ icon } size={ 18 } /> }
