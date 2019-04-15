@@ -216,11 +216,8 @@ class SiteSettingsImport extends Component {
 	 * @returns {Array} Importer react elements
 	 */
 	renderImporters() {
-		const {
-			api: { isHydrated },
-			importers: imports,
-		} = this.state;
-		const { engine, site } = this.props;
+		const { importers: imports } = this.state;
+		const { engine, isHydrated, site } = this.props;
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
 
@@ -284,6 +281,7 @@ export default flow(
 	connect( state => ( {
 		engine: getSelectedImportEngine( state ),
 		fromSite: getImporterSiteUrl( state ),
+		isHydrated: !! get( state, 'imports.isHydrated' ),
 		site: getSelectedSite( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ) ),

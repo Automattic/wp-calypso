@@ -62,7 +62,15 @@ const importOrder = importerStatus =>
 
 const apiStart = () => Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
 const apiSuccess = data => {
-	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_COMPLETED } );
+	const apiFetchCompleteAction = {
+		type: IMPORTS_FETCH_COMPLETED,
+	};
+
+	Dispatcher.handleViewAction( apiFetchCompleteAction );
+	reduxDispatch( {
+		...data,
+		...apiFetchCompleteAction,
+	} );
 
 	return data;
 };
