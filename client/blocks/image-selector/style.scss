@@ -205,7 +205,7 @@
 
 		&:hover {
 			.gridicon {
-				color: var( --color-neutral-600 );
+				color: var( --color-text );
 			}
 		}
 	}
@@ -282,7 +282,7 @@
 
 	&:hover {
 		.gridicon {
-			color: var( --color-neutral-600 );
+			color: var( --color-text );
 		}
 	}
 }

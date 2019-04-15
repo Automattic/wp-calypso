@@ -56,7 +56,7 @@
 }
 
 .comments__comment-author {
-	color: var( --color-neutral-600 );
+	color: var( --color-text );
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 14px;
@@ -71,7 +71,7 @@
 }
 
 .comments__comment-username {
-	color: var( --color-neutral-600 );
+	color: var( --color-text );
 	height: 21px;
 	margin-right: 7px;
 }
