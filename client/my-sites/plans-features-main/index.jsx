@@ -302,6 +302,8 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
+		const { translate } = this.props;
+		const className = 'is-free-plan';
 		if ( this.props.hideFreePlan ) {
 			return null;
 		}
@@ -309,9 +311,9 @@ export class PlansFeaturesMain extends Component {
 		return (
 			<div className="plans-features-main__banner">
 				<div className="plans-features-main__banner-content">
-					Don’t need a plan yet?
-					<Button onClick={ this.handleFreePlanButtonClick } borderless>
-						Start for Free
+					{ translate( 'Don’t need a plan yet?' ) }
+					<Button className={ className } onClick={ this.handleFreePlanButtonClick } borderless>
+						{ translate( 'Start for Free' ) }
 					</Button>
 				</div>
 			</div>
