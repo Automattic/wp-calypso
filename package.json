@@ -9,9 +9,6 @@
 		"url": "https://github.com/Automattic/wp-calypso.git"
 	},
 	"main": "index.js",
-	"bin": {
-		"calypso-sdk": "./bin/sdk-cli.js"
-	},
 	"browserslist": {
 		"defaults": [
 			"extends @wordpress/browserslist-config"
@@ -234,7 +231,6 @@
 		"build-client-if-desktop": "node -e \"process.env.CALYPSO_ENV === 'desktop' && process.exit(1)\" || npm run build-client",
 		"build-notifications": "webpack --config='client/notifications/webpack.config.js'",
 		"build-packages": "npx lerna run prepare --stream",
-		"sdk": "node bin/sdk-cli.js",
 		"clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public && npm run -s clean:packages",
 		"clean:build": "npx rimraf build server/bundler/*.json .babel-cache",
 		"clean:devdocs": "npx rimraf server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json",
