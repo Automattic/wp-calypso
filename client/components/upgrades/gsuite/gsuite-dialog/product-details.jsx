@@ -14,7 +14,6 @@ import { abtest } from 'lib/abtest';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/gsuite';
 import GSuiteCompactFeatures from 'components/gsuite/gsuite-features/compact';
 
-
 function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 	const translate = useTranslate();
 	const annualPrice = getAnnualPrice( cost, currencyCode );
