@@ -1,43 +1,126 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import React from 'react';
+
+/**
  * Internal dependencies
  */
-import AboutStepComponent from 'signup/steps/about';
-import CloneStartComponent from 'signup/steps/clone-start';
-import CloneDestinationComponent from 'signup/steps/clone-destination';
-import CloneCredentialsComponent from 'signup/steps/clone-credentials';
-import ClonePointComponent from 'signup/steps/clone-point';
-import CloneJetpackComponent from 'signup/steps/clone-jetpack';
-import CloneReadyComponent from 'signup/steps/clone-ready';
-import CloneCloningComponent from 'signup/steps/clone-cloning';
-import CredsConfirmComponent from 'signup/steps/creds-confirm';
-import CredsCompleteComponent from 'signup/steps/creds-complete';
-import CredsPermissionComponent from 'signup/steps/creds-permission';
-import DesignTypeComponent from 'signup/steps/design-type';
-import DesignTypeWithAtomicStoreComponent from 'signup/steps/design-type-with-atomic-store';
-import DomainsStepComponent from 'signup/steps/domains';
-import ImportURLStepComponent from 'signup/steps/import-url';
-import PlansStepComponent from 'signup/steps/plans';
-import SiteComponent from 'signup/steps/site';
-import RebrandCitiesWelcomeComponent from 'signup/steps/rebrand-cities-welcome';
-import RewindMigrate from 'signup/steps/rewind-migrate';
-import RewindWereBacking from 'signup/steps/rewind-were-backing';
-import RewindAddCreds from 'signup/steps/rewind-add-creds';
-import RewindFormCreds from 'signup/steps/rewind-form-creds';
-import SiteOrDomainComponent from 'signup/steps/site-or-domain';
-import SitePicker from 'signup/steps/site-picker';
-import SiteTitleComponent from 'signup/steps/site-title';
-import SiteStyleComponent from 'signup/steps/site-style';
-import SiteTopicComponent from 'signup/steps/site-topic';
-import SiteTypeComponent from 'signup/steps/site-type';
-import SiteInformationComponent from 'signup/steps/site-information';
-import SurveyStepComponent from 'signup/steps/survey';
-import ThemeSelectionComponent from 'signup/steps/theme-selection';
-import UserSignupComponent from 'signup/steps/user';
-import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
-import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
-import ReaderLandingStepComponent from 'signup/steps/reader-landing';
-import LaunchSiteComponent from 'signup/steps/launch-site';
+import AsyncLoad from 'components/async-load';
+
+const AboutStepComponent = props => (
+	<AsyncLoad require="signup/steps/about" placeholder={ null } { ...props } />
+);
+const CloneStartComponent = props => (
+	<AsyncLoad require="signup/steps/clone-start" placeholder={ null } { ...props } />
+);
+const CloneDestinationComponent = props => (
+	<AsyncLoad require="signup/steps/clone-destination" placeholder={ null } { ...props } />
+);
+const CloneCredentialsComponent = props => (
+	<AsyncLoad require="signup/steps/clone-credentials" placeholder={ null } { ...props } />
+);
+const ClonePointComponent = props => (
+	<AsyncLoad require="signup/steps/clone-point" placeholder={ null } { ...props } />
+);
+const CloneJetpackComponent = props => (
+	<AsyncLoad require="signup/steps/clone-jetpack" placeholder={ null } { ...props } />
+);
+const CloneReadyComponent = props => (
+	<AsyncLoad require="signup/steps/clone-ready" placeholder={ null } { ...props } />
+);
+const CloneCloningComponent = props => (
+	<AsyncLoad require="signup/steps/clone-cloning" placeholder={ null } { ...props } />
+);
+const CredsConfirmComponent = props => (
+	<AsyncLoad require="signup/steps/creds-confirm" placeholder={ null } { ...props } />
+);
+const CredsCompleteComponent = props => (
+	<AsyncLoad require="signup/steps/creds-complete" placeholder={ null } { ...props } />
+);
+const CredsPermissionComponent = props => (
+	<AsyncLoad require="signup/steps/creds-permission" placeholder={ null } { ...props } />
+);
+const DesignTypeComponent = props => (
+	<AsyncLoad require="signup/steps/design-type" placeholder={ null } { ...props } />
+);
+const DesignTypeWithAtomicStoreComponent = props => (
+	<AsyncLoad
+		require="signup/steps/design-type-with-atomic-store"
+		placeholder={ null }
+		{ ...props }
+	/>
+);
+const DomainsStepComponent = props => (
+	<AsyncLoad require="signup/steps/domains" placeholder={ null } { ...props } />
+);
+const ImportURLStepComponent = props => (
+	<AsyncLoad require="signup/steps/import-url" placeholder={ null } { ...props } />
+);
+const PlansStepComponent = props => (
+	<AsyncLoad require="signup/steps/plans" placeholder={ null } { ...props } />
+);
+const SiteComponent = props => (
+	<AsyncLoad require="signup/steps/site" placeholder={ null } { ...props } />
+);
+const RebrandCitiesWelcomeComponent = props => (
+	<AsyncLoad require="signup/steps/rebrand-cities-welcome" placeholder={ null } { ...props } />
+);
+const RewindMigrate = props => (
+	<AsyncLoad require="signup/steps/rewind-migrate" placeholder={ null } { ...props } />
+);
+const RewindWereBacking = props => (
+	<AsyncLoad require="signup/steps/rewind-were-backing" placeholder={ null } { ...props } />
+);
+const RewindAddCreds = props => (
+	<AsyncLoad require="signup/steps/rewind-add-creds" placeholder={ null } { ...props } />
+);
+const RewindFormCreds = props => (
+	<AsyncLoad require="signup/steps/rewind-form-creds" placeholder={ null } { ...props } />
+);
+const SiteOrDomainComponent = props => (
+	<AsyncLoad require="signup/steps/site-or-domain" placeholder={ null } { ...props } />
+);
+const SitePicker = props => (
+	<AsyncLoad require="signup/steps/site-picker" placeholder={ null } { ...props } />
+);
+const SiteTitleComponent = props => (
+	<AsyncLoad require="signup/steps/site-title" placeholder={ null } { ...props } />
+);
+const SiteStyleComponent = props => (
+	<AsyncLoad require="signup/steps/site-style" placeholder={ null } { ...props } />
+);
+const SiteTopicComponent = props => (
+	<AsyncLoad require="signup/steps/site-topic" placeholder={ null } { ...props } />
+);
+const SiteTypeComponent = props => (
+	<AsyncLoad require="signup/steps/site-type" placeholder={ null } { ...props } />
+);
+const SiteInformationComponent = props => (
+	<AsyncLoad require="signup/steps/site-information" placeholder={ null } { ...props } />
+);
+const SurveyStepComponent = props => (
+	<AsyncLoad require="signup/steps/survey" placeholder={ null } { ...props } />
+);
+const ThemeSelectionComponent = props => (
+	<AsyncLoad require="signup/steps/theme-selection" placeholder={ null } { ...props } />
+);
+const UserSignupComponent = props => (
+	<AsyncLoad require="signup/steps/user" placeholder={ null } { ...props } />
+);
+const PlansStepWithoutFreePlan = props => (
+	<AsyncLoad require="signup/steps/plans-without-free" placeholder={ null } { ...props } />
+);
+const PlansAtomicStoreComponent = props => (
+	<AsyncLoad require="signup/steps/plans-atomic-store" placeholder={ null } { ...props } />
+);
+const ReaderLandingStepComponent = props => (
+	<AsyncLoad require="signup/steps/reader-landing" placeholder={ null } { ...props } />
+);
+const LaunchSiteComponent = props => (
+	<AsyncLoad require="signup/steps/launch-site" placeholder={ null } { ...props } />
+);
 
 export default {
 	about: AboutStepComponent,
