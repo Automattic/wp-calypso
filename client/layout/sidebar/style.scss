@@ -48,10 +48,6 @@
 .sidebar__menu {
 	display: block;
 
-	@include breakpoint( '<660px' ) {
-		margin-top: 24px;
-	}
-
 	li {
 		display: flex;
 
