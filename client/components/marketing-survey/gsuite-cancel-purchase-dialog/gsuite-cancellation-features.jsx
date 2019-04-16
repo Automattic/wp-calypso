@@ -13,6 +13,7 @@ import React, { Component } from 'react';
  */
 import CardHeading from 'components/card-heading';
 import GSuiteFeatures from 'my-sites/email/gsuite-features';
+import GSuiteLearnMore from 'my-sites/email/gsuite-learn-more';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { purchaseType } from 'lib/purchases';
 
@@ -20,6 +21,10 @@ class GSuiteCancellationFeatures extends Component {
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_features_view' );
 	}
+
+	handleLearnMoreClick = () => {
+		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_learn_more_click' );
+	};
 
 	render() {
 		const { purchase, translate } = this.props;
@@ -37,6 +42,7 @@ class GSuiteCancellationFeatures extends Component {
 					) }
 				</p>
 				<GSuiteFeatures productSlug={ productSlug } domainName={ gsuiteDomain } type={ 'list' } />
+				<GSuiteLearnMore onClick={ this.handleLearnMoreClick } />
 			</div>
 		);
 	}
