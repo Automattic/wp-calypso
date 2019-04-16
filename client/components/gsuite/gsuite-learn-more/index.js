@@ -45,7 +45,7 @@ const GSuiteLearnMore = ( { onLearnMoreClick } ) => {
 	);
 };
 
-GSuiteLearnMore.PropTypes = {
+GSuiteLearnMore.propTypes = {
 	onLearnMoreClick: PropTypes.func,
 };
 

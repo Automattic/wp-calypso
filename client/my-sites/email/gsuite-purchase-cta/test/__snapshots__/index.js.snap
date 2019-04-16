@@ -20,51 +20,160 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
     </header>
   </div>
   <div
-    className="card is-compact"
+    className="card gsuite-purchase-cta__header is-compact"
   >
     <div
-      className="gsuite-purchase-cta__header"
+      className="gsuite-purchase-cta__header-description"
     >
-      <div
-        className="gsuite-purchase-cta__header-description"
+      <h2
+        className="gsuite-purchase-cta__header-description-title"
       >
-        <h2
-          className="gsuite-purchase-cta__header-description-title"
-        >
-          Professional email and so much more.
-        </h2>
-        <p
-          className="gsuite-purchase-cta__header-description-sub-title"
-        >
-          We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.
-        </p>
-        <GSuitePurchaseCtaSkuInfo
-          buttonText="Add G Suite"
-          currencyCode="USD"
-          onButtonClick={[Function]}
-          showButton={true}
-          showMonthlyPrice={false}
-          skuCost={72}
-        />
-      </div>
-      <div
-        className="gsuite-purchase-cta__header-image"
+        Professional email and so much more.
+      </h2>
+      <p
+        className="gsuite-purchase-cta__header-description-sub-title"
       >
-        <img
-          alt="G Suite Logo"
-          src="/calypso/images/g-suite/g-suite.svg"
-        />
-      </div>
+        We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.
+      </p>
+      <GSuitePurchaseCtaSkuInfo
+        buttonText="Add G Suite"
+        currencyCode="USD"
+        onButtonClick={[Function]}
+        showButton={true}
+        showMonthlyPrice={false}
+        skuCost={72}
+      />
+    </div>
+    <div
+      className="gsuite-purchase-cta__header-image"
+    >
+      <img
+        alt="G Suite Logo"
+        src="/calypso/images/g-suite/g-suite.svg"
+      />
     </div>
   </div>
   <div
-    className="card is-compact"
+    className="card gsuite-purchase-cta__info is-compact"
   >
-    <GSuitePurchaseFeatures
-      domainName="test.com"
-      productSlug="gapps"
-      type="grid"
-    />
+    <div
+      className="gsuite-features__grid"
+    >
+      <div
+        className="gsuite-features__feature"
+      >
+        <div
+          className="gsuite-features__feature-image"
+        >
+          <img
+            alt="Gmail Logo"
+            src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+          />
+        </div>
+        <div
+          className="gsuite-features__feature-block"
+        >
+          <h5
+            className="gsuite-features__feature-header"
+          >
+            A custom @test.com email address
+          </h5>
+          <p>
+            Professional ad-free email that works with most email clients.
+          </p>
+        </div>
+      </div>
+      <div
+        className="gsuite-features__feature"
+      >
+        <div
+          className="gsuite-features__feature-image"
+        >
+          <img
+            alt="Google Docs Logo"
+            src="/calypso/images/g-suite/logo_docs_48dp.svg"
+          />
+        </div>
+        <div
+          className="gsuite-features__feature-block"
+        >
+          <h5
+            className="gsuite-features__feature-header"
+          >
+            Docs, spreadsheets and more
+          </h5>
+          <p>
+            Collaborate in real-time with documents, spreadsheets and slides.
+          </p>
+        </div>
+      </div>
+      <div
+        className="gsuite-features__feature"
+      >
+        <div
+          className="gsuite-features__feature-image"
+        >
+          <img
+            alt="Google Drive Logo"
+            src="/calypso/images/g-suite/logo_drive_48dp.svg"
+          />
+        </div>
+        <div
+          className="gsuite-features__feature-block"
+        >
+          <h5
+            className="gsuite-features__feature-header"
+          >
+            Keep all your files secure
+          </h5>
+          <p>
+            Get 30GB of storage for all your files synced across devices.
+          </p>
+        </div>
+      </div>
+      <div
+        className="gsuite-features__feature"
+      >
+        <div
+          className="gsuite-features__feature-image"
+        >
+          <img
+            alt="Google Hangouts Logo"
+            src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+          />
+        </div>
+        <div
+          className="gsuite-features__feature-block"
+        >
+          <h5
+            className="gsuite-features__feature-header"
+          >
+            Connect with your team
+          </h5>
+          <p>
+            Use text chats, voice calls, or video calls, with built in screen sharing.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      className="gsuite-learn-more"
+    >
+      <p>
+        <strong>
+          No setup or software required.
+        </strong>
+         
+        <a
+          className="gsuite-learn-more__link"
+          href="https://en.support.wordpress.com/adding-g-suite-to-your-site"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Learn more about integrating G Suite with your site.
+        </a>
+      </p>
+    </div>
   </div>
 </EmailVerificationGate>
 `;
