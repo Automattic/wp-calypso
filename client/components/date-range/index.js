@@ -22,6 +22,11 @@ import DateRangeHeader from './header';
 import DateRangeTrigger from './trigger';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const NO_DATE_SELECTED_VALUE = null;
