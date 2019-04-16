@@ -150,7 +150,7 @@ class ThemeEnhancements extends Component {
 			<FormFieldset>
 				<SupportInfo
 					text={ translate(
-						"Adds a new panel to the Customizer so you can modify your theme's appearance using custom CSS."
+						"Adds options for CSS preprocessor use, disabling the theme's CSS, or custom image width."
 					) }
 					link="https://jetpack.com/support/custom-css/"
 				/>
@@ -158,7 +158,7 @@ class ThemeEnhancements extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="custom-css"
-					label={ translate( "Tweak your site's theme using custom CSS" ) }
+					label={ translate( 'Enhance CSS customization panel' ) }
 					disabled={ formPending }
 				/>
 			</FormFieldset>
