@@ -12,7 +12,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/forms/form-button';
-import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
+import { getAnnualPrice, getMonthlyPrice } from 'lib/gsuite';
 import InfoPopover from 'components/info-popover';
 
 function GSuitePurchaseCtaSkuInfo( {
