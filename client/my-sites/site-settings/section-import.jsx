@@ -33,6 +33,7 @@ import {
 } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import isImportDataHydrated from 'state/selectors/is-import-data-hydrated';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
@@ -281,7 +282,7 @@ export default flow(
 	connect( state => ( {
 		engine: getSelectedImportEngine( state ),
 		fromSite: getImporterSiteUrl( state ),
-		isHydrated: !! get( state, 'imports.isHydrated' ),
+		isHydrated: isImportDataHydrated( state ),
 		site: getSelectedSite( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ) ),
