@@ -21,7 +21,9 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"bin": "./bin/build-package.js",
+	"bin": {
+		"transpile": "./bin/build-package.js"
+	},
 	"browserslist": [
 		"extends @wordpress/browserslist-config"
 	],

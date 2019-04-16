@@ -12,6 +12,7 @@ Two different directories for modules are:
 `/apps` — projects that can produce independent, binary-like outputs deployed elsewhere. Typically not published to NPM or build on `npm start`.
 
 Modules should follow our convention for layout:
+
 ```
 # your package.json
 package.json
@@ -49,9 +50,7 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"sideEffects": false,
-	"keywords": [
-		"wordpress"
-	],
+	"keywords": [ "wordpress" ],
 	"author": "Your Name <you@example.com> (https://yoursite.wordpress.com/)",
 	"contributors": [],
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -67,14 +66,11 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"files": [
-		"dist",
-		"src"
-	],
+	"files": [ "dist", "src" ],
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
-		"prepare": "npx @automattic/calypso-build"
+		"prepare": "npx --package @automattic/calypso-build transpile"
 	}
 }
 ```
@@ -116,6 +112,7 @@ npx lerna run build --scope="@automattic/calypso-build"
 All `prepare` scripts found in all `package.json`s of apps and packages are always run on Calypso's `npm install`. Therefore independent apps in `/apps` directory can use `build` instead of `prepare` so avoid unnecessary builds.
 
 You can also run other custom `package.json` scripts only for your app or package:
+
 ```bash
 npx lerna run your-script --scope="@automattic/your-package"
 ```
