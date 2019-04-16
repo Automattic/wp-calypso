@@ -3,8 +3,12 @@
 /**
  * External dependencies
  */
+import { isEmpty } from 'lodash';
 
-import { get } from 'lodash';
+/**
+ * Internal dependencies
+ */
+import getImportServerData from 'state/selectors/get-import-server-data';
 
 /**
  * Returns true if importer state has been successfully fetched from the API
@@ -13,5 +17,5 @@ import { get } from 'lodash';
  * @return {Boolean} True if data has been fetched
  */
 export default function isImportDataHydrated( state ) {
-	return !! get( state, 'imports.isHydrated' );
+	return ! isEmpty( getImportServerData( state ) );
 }

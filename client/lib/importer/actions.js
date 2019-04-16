@@ -68,8 +68,8 @@ const apiSuccess = data => {
 
 	Dispatcher.handleViewAction( apiFetchCompleteAction );
 	reduxDispatch( {
-		...data,
 		...apiFetchCompleteAction,
+		data,
 	} );
 
 	return data;
