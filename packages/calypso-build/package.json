@@ -22,7 +22,7 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"bin": {
-		"transpile": "./bin/build-package.js"
+		"transpile": "./bin/transpile.js"
 	},
 	"browserslist": [
 		"extends @wordpress/browserslist-config"
