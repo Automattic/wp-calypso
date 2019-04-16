@@ -262,12 +262,10 @@ export class WebPaymentBox extends React.Component {
 			PAYMENT_REQUEST_OPTIONS
 		);
 
-		const environment = 'production' === config( 'env' ) ? undefined : 'sandbox';
-
 		paymentRequest.onmerchantvalidation = event => {
 			wpcom
 				.undocumented()
-				.applePayMerchantValidation( event.validationURL, environment )
+				.applePayMerchantValidation( event.validationURL )
 				.then( json => event.complete( json ) )
 				.catch( error => {
 					debug( 'onmerchantvalidation error', error );
