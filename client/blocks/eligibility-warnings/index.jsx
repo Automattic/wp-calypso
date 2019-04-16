@@ -29,6 +29,11 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList from './hold-list';
 import WarningList from './warning-list';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export const EligibilityWarnings = ( {
 	backUrl,
 	context,
