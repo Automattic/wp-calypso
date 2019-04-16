@@ -14,7 +14,7 @@ import Button from 'components/button';
 import ClipboardButton from 'components/forms/clipboard-button';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import Dialog from 'components/dialog';
-import { getLoginUrlWithTOSRedirect } from 'lib/google-apps';
+import { getLoginUrlWithTOSRedirect } from 'lib/gsuite';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import wp from 'lib/wp';

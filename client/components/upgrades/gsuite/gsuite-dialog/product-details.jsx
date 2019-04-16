@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
-import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
+import { getAnnualPrice, getMonthlyPrice } from 'lib/gsuite';
 
 function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 	const translate = useTranslate();
