@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { forwardRef, useState, useEffect } from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
@@ -78,10 +78,11 @@ export function useDesktopBreakpoint() {
  */
 export const withBreakpoint = breakpoint =>
 	createHigherOrderComponent(
-		WrappedComponent => props => {
-			const isBreakpointActive = useBreakpoint( breakpoint );
-			return <WrappedComponent { ...props } isBreakpointActive={ isBreakpointActive } />;
-		},
+		WrappedComponent =>
+			forwardRef( ( props, ref ) => {
+				const isActive = useBreakpoint( breakpoint );
+				return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;
+			} ),
 		'WithBreakpoint'
 	);
 
@@ -94,10 +95,11 @@ export const withBreakpoint = breakpoint =>
  * @returns {Function} The wrapped component.
  */
 export const withMobileBreakpoint = createHigherOrderComponent(
-	WrappedComponent => props => {
-		const isBreakpointActive = useBreakpoint( MOBILE_BREAKPOINT );
-		return <WrappedComponent { ...props } isBreakpointActive={ isBreakpointActive } />;
-	},
+	WrappedComponent =>
+		forwardRef( ( props, ref ) => {
+			const isActive = useBreakpoint( MOBILE_BREAKPOINT );
+			return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;
+		} ),
 	'WithMobileBreakpoint'
 );
 
@@ -110,9 +112,10 @@ export const withMobileBreakpoint = createHigherOrderComponent(
  * @returns {Function} The wrapped component.
  */
 export const withDesktopBreakpoint = createHigherOrderComponent(
-	WrappedComponent => props => {
-		const isBreakpointActive = useBreakpoint( DESKTOP_BREAKPOINT );
-		return <WrappedComponent { ...props } isBreakpointActive={ isBreakpointActive } />;
-	},
+	WrappedComponent =>
+		forwardRef( ( props, ref ) => {
+			const isActive = useBreakpoint( DESKTOP_BREAKPOINT );
+			return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;
+		} ),
 	'WithDesktopBreakpoint'
 );

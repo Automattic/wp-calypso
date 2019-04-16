@@ -2372,14 +2372,8 @@ Undocumented.prototype.getDomainConnectSyncUxUrl = function(
 	);
 };
 
-Undocumented.prototype.applePayMerchantValidation = function( validationURL, environment ) {
-	const queries = { validation_url: validationURL };
-
-	if ( environment ) {
-		queries.environment = environment;
-	}
-
-	return this.wpcom.req.get( '/apple-pay/merchant-validation/', queries );
+Undocumented.prototype.applePayMerchantValidation = function( validationURL ) {
+	return this.wpcom.req.get( '/apple-pay/merchant-validation/', { validation_url: validationURL } );
 };
 
 Undocumented.prototype.domainsVerifyRegistrantEmail = function( domain, email, token ) {

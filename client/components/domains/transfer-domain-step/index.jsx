@@ -54,6 +54,11 @@ import {
 	hasToUpgradeToPayForADomain,
 } from 'lib/cart-values/cart-items';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class TransferDomainStep extends React.Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,
@@ -510,7 +515,7 @@ class TransferDomainStep extends React.Component {
 							break;
 						case domainAvailability.MAPPABLE:
 						case domainAvailability.TLD_NOT_SUPPORTED:
-						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
+						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY: {
 							const tld = getTld( domain );
 
 							this.setState( {
@@ -528,7 +533,8 @@ class TransferDomainStep extends React.Component {
 								noticeSeverity: 'info',
 							} );
 							break;
-						case domainAvailability.UNKNOWN:
+						}
+						case domainAvailability.UNKNOWN: {
 							const mappableStatus = get( result, 'mappable', error );
 
 							if ( domainAvailability.MAPPABLE === mappableStatus ) {
@@ -548,7 +554,8 @@ class TransferDomainStep extends React.Component {
 								} );
 								break;
 							}
-						default:
+						}
+						default: {
 							let site = get( result, 'other_site_domain', null );
 							if ( ! site ) {
 								site = get( this.props, 'selectedSite.slug', null );
@@ -560,6 +567,7 @@ class TransferDomainStep extends React.Component {
 								maintenanceEndTime,
 							} );
 							this.setState( { notice: message, noticeSeverity: severity } );
+						}
 					}
 
 					this.setState( { submittingAvailability: false } );

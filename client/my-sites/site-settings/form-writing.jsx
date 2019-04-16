@@ -27,6 +27,7 @@ import PodcastingLink from 'my-sites/site-settings/podcasting-details/link';
 import Masterbar from './masterbar';
 import MediaSettingsWriting from './media-settings-writing';
 import ThemeEnhancements from './theme-enhancements';
+import Widgets from './widgets';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
@@ -158,6 +159,15 @@ class SiteSettingsFormWriting extends Component {
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 				/>
+
+				{ siteIsJetpack && (
+					<Widgets
+						onSubmitForm={ handleSubmitForm }
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+						fields={ fields }
+					/>
+				) }
 
 				{ siteIsJetpack && config.isEnabled( 'press-this' ) && (
 					<PublishingTools
