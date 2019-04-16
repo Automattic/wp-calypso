@@ -42,11 +42,7 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 	};
 
 	return (
-		<div
-			className={
-				'grid' === type ? 'gsuite-features__features-grid' : 'gsuite-features__features-list'
-			}
-		>
+		<div className={ 'grid' === type ? 'gsuite-features__grid' : 'gsuite-features__list' }>
 			<GSuiteSingleFeature
 				title={ translate( 'A custom @%(domain)s email address', {
 					args: {

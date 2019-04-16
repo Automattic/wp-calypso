@@ -8,11 +8,7 @@ import React from 'react';
 
 const GSuiteSingleFeature = ( { compact, description, imagePath, imageAlt, title } ) => {
 	return (
-		<div
-			className={
-				compact ? 'gsuite-features__compact-feature' : 'gsuite-purchase-features__feature'
-			}
-		>
+		<div className={ compact ? 'gsuite-features__compact-feature' : 'gsuite-features__feature' }>
 			<div className="gsuite-features__feature-image">
 				<img alt={ imageAlt } src={ imagePath } />
 			</div>
