@@ -25,6 +25,7 @@ import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
 import JetpackAds from 'my-sites/site-settings/jetpack-ads';
 import RelatedPosts from 'my-sites/site-settings/related-posts';
 import Sitemaps from 'my-sites/site-settings/sitemaps';
+import Shortlinks from 'my-sites/site-settings/shortlinks';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -72,6 +73,13 @@ const SiteSettingsTraffic = ( {
 			/>
 		) }
 		<AnalyticsSettings />
+		{ isJetpack && (
+			<Shortlinks
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+			/>
+		) }
 		<Sitemaps
 			isSavingSettings={ isSavingSettings }
 			isRequestingSettings={ isRequestingSettings }
