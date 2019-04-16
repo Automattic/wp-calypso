@@ -11,7 +11,11 @@ import { noop } from 'lodash';
 import config from 'config';
 import { addQueryArgs } from 'lib/route';
 
-export function generateFlows( { getSiteDestination = noop, getPostsDestination = noop } = {} ) {
+export function generateFlows( {
+	getSiteDestination = noop,
+	getPostsDestination = noop,
+	getRedirectDestination = noop,
+} = {} ) {
 	const flows = {
 		account: {
 			steps: [ 'user' ],
@@ -277,9 +281,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	if ( config.isEnabled( 'signup/wpcc' ) ) {
 		flows.wpcc = {
 			steps: [ 'oauth2-user' ],
-			destination: function( dependencies ) {
-				return dependencies.oauth2_redirect || '/';
-			},
+			destination: getRedirectDestination,
 			description: 'WordPress.com Connect signup flow',
 			lastModified: '2017-08-24',
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
@@ -349,7 +351,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 
 	flows.crowdsignal = {
 		steps: [ 'oauth2-name' ],
-		destination: dependencies => dependencies.oauth2_redirect || '/',
+		destination: getRedirectDestination,
 		description: "Crowdsignal's custom WordPress.com Connect signup flow",
 		lastModified: '2018-11-14',
 		disallowResume: true,

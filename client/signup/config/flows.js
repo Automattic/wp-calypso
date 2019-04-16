@@ -52,7 +52,18 @@ function getPostsDestination( dependencies ) {
 	return '/posts/' + dependencies.siteSlug;
 }
 
-const flows = generateFlows( { getPostsDestination, getSiteDestination } );
+function getRedirectDestination( dependencies ) {
+	if (
+		dependencies.oauth2_redirect &&
+		dependencies.oauth2_redirect.match( /^https%3A%2F%2Fpublic-api.wordpress.com/i )
+	) {
+		return dependencies.oauth2_redirect;
+	}
+
+	return '/';
+}
+
+const flows = generateFlows( { getPostsDestination, getSiteDestination, getRedirectDestination } );
 
 function removeUserStepFromFlow( flow ) {
 	if ( ! flow ) {
