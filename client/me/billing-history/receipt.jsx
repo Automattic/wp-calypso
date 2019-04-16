@@ -119,26 +119,10 @@ class BillingReceipt extends React.Component {
 		);
 	}
 
-	renderBillingDetails() {
-		const { transaction, translate } = this.props;
-		if ( ! transaction.cc_name && ! transaction.cc_email ) {
-			return null;
-		}
-
-		return (
-			<li className="billing-history__billing-details">
-				<strong>{ translate( 'Billing Details' ) }</strong>
-				<div contentEditable="true">{ transaction.cc_name }</div>
-				<div contentEditable="true">{ transaction.cc_email }</div>
-			</li>
-		);
-	}
-
-	renderEmptyBillingDetails() {
+	renderBillingDetailsLabels() {
 		const { translate } = this.props;
-
 		return (
-			<li className="billing-history__billing-details">
+			<div>
 				<label htmlFor="billing-history__billing-details-textarea">
 					<strong>{ translate( 'Billing Details' ) }</strong>
 				</label>
@@ -150,6 +134,34 @@ class BillingReceipt extends React.Component {
 						'Use this field to add your billing information (eg. VAT number, business address) before printing.'
 					) }
 				</div>
+			</div>
+		);
+	}
+
+	renderBillingDetails() {
+		const { transaction } = this.props;
+		if ( ! transaction.cc_name && ! transaction.cc_email ) {
+			return null;
+		}
+
+		return (
+			<li className="billing-history__billing-details">
+				{ this.renderBillingDetailsLabels() }
+				<TextareaAutosize
+					className="billing-history__billing-details-editable"
+					aria-labelledby="billing-history__billing-details-description"
+					id="billing-history__billing-details-textarea"
+					rows="1"
+					defaultValue={ transaction.cc_name + '\n' + transaction.cc_email }
+				/>
+			</li>
+		);
+	}
+
+	renderEmptyBillingDetails() {
+		return (
+			<li className="billing-history__billing-details">
+				{ this.renderBillingDetailsLabels() }
 				<TextareaAutosize
 					className="billing-history__billing-details-editable"
 					aria-labelledby="billing-history__billing-details-description"
