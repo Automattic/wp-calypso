@@ -13,7 +13,6 @@ import { partial } from 'lodash';
  */
 import { getPlan } from 'lib/plans';
 import {
-	PLANS_LIST,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	TYPE_ECOMMERCE,
@@ -23,6 +22,7 @@ import {
 	TYPE_BLOGGER,
 	TYPE_FREE,
 } from 'lib/plans/constants';
+import { PLANS_LIST } from 'lib/plans/plans-list';
 import FindNewTheme from './find-new-theme';
 import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';

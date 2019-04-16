@@ -15,7 +15,6 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import {
-	getValidFeatureKeys,
 	planMatches,
 	isBloggerPlan,
 	isPersonalPlan,
@@ -49,7 +48,7 @@ export class Banner extends Component {
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
-		feature: PropTypes.oneOf( getValidFeatureKeys() ),
+		feature: PropTypes.string,
 		href: PropTypes.string,
 		icon: PropTypes.string,
 		list: PropTypes.arrayOf( PropTypes.string ),

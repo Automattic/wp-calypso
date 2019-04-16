@@ -20,7 +20,6 @@ import Card from 'components/card';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { getPlans, getValidFeatureKeys } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -43,8 +42,8 @@ export class UpgradeNudge extends React.Component {
 		href: PropTypes.string,
 		jetpack: PropTypes.bool,
 		compact: PropTypes.bool,
-		plan: PropTypes.oneOf( [ null, ...Object.keys( getPlans() ) ] ),
-		feature: PropTypes.oneOf( [ null, ...getValidFeatureKeys() ] ),
+		plan: PropTypes.string,
+		feature: PropTypes.string,
 		shouldDisplay: PropTypes.oneOfType( [ PropTypes.func, PropTypes.bool ] ),
 		site: PropTypes.object,
 		translate: PropTypes.func,

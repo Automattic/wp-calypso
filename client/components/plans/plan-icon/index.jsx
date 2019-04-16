@@ -11,7 +11,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { GROUP_JETPACK, PLANS_LIST, getPlanClass } from 'lib/plans/constants';
+import { GROUP_JETPACK } from 'lib/plans/constants';
+import { PLANS_LIST } from 'lib/plans/plans-list';
 import {
 	planMatches,
 	isBloggerPlan,
@@ -19,6 +20,7 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
+	getPlanClass,
 } from 'lib/plans';
 
 export default class PlanIcon extends Component {

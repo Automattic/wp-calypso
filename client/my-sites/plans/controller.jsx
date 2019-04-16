@@ -12,7 +12,7 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { isValidFeatureKey } from 'lib/plans';
+import { isValidFeatureKey } from 'lib/plans/features-list';
 import Plans from './plans';
 import CheckoutData from 'components/data/checkout';
 

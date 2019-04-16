@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { PLANS_LIST } from 'lib/plans/constants';
+import { PLANS_LIST } from 'lib/plans/plans-list';
 import QueryPlans from 'components/data/query-plans';
 import QueryProductsList from 'components/data/query-products-list';
 import SubscriptionLengthOption from './option';
