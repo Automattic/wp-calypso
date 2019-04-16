@@ -55,7 +55,7 @@ class Shortcodes extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="shortcodes"
-					label={ translate( 'Compose using shortcodes to embed media from popular sites.' ) }
+					label={ translate( 'Compose using shortcodes to embed media from popular sites' ) }
 					disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
 				/>
 			</Card>

@@ -58,7 +58,7 @@ class Latex extends Component {
 					siteId={ selectedSiteId }
 					moduleSlug="latex"
 					label={ translate(
-						'Use the LaTeX markup language to write mathematical equations and formulas.'
+						'Use the LaTeX markup language to write mathematical equations and formulas'
 					) }
 					disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
 				/>
