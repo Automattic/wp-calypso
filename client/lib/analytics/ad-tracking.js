@@ -1018,6 +1018,7 @@ export function recordAddToCart( cartItem ) {
 	if ( isFloodlightEnabled ) {
 		debug( 'recordAddToCart: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
+			u2: cartItem.product_name,
 			send_to: 'DC-6355556/wordp0/addto0+standard',
 		} );
 	}
