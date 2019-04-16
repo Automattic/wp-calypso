@@ -6,7 +6,7 @@
 import page from 'page';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { get, map } from 'lodash';
+import { get, includes, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -158,7 +158,8 @@ export default connect(
 		return {
 			akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
 			vaultpressFinished:
-				productInstallStatus && productInstallStatus.vaultpress_status === 'installed',
+				productInstallStatus &&
+				includes( [ 'installed', 'skipped' ], productInstallStatus.vaultpress_status ),
 			isPaidPlan: isSiteOnPaidPlan( state, siteId ),
 			rewindState,
 			productInstallStatus,

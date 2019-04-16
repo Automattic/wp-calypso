@@ -34,6 +34,7 @@ const NON_ERROR_STATES = [
 	'option_name_not_in_whitelist', // Plugin is installed but not activated
 	'key_not_set', // Plugin is installed and activated, but not configured
 	'installed', // Plugin is installed, activated and configured
+	'skipped', // Plugin installation is skipped as unnecessary
 ];
 /**
  * Those errors are any of the following:
