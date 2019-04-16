@@ -195,13 +195,4 @@ export default {
 		allowExistingUsers: true,
 		countryCodeTargets: [ 'USD' ],
 	},
-	plansNoTabs: {
-		datestamp: '20190415',
-		variations: {
-			control: 1,
-			test: 0,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 };
