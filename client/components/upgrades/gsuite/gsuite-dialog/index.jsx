@@ -28,6 +28,11 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { getProductCost } from 'state/products-list/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
 
 class GoogleAppsDialog extends React.Component {
