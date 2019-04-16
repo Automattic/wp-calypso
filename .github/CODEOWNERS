@@ -75,3 +75,7 @@ packages/calypso-color-schemes @Automattic/gutenpack
 /client/components/upgrades/gsuite @Automattic/amber
 /client/my-sites/domains/components/domain-warnings @Automattic/amber
 /client/my-sites/email @Automattic/amber
+/client/lib/google-apps/ @Automattic/amber
+/client/lib/domains/email-forwarding @Automattic/amber
+/client/lib/domains/google-apps-users @Automattic/amber
+/client/lib/domains/gsuite @Automattic/amber
