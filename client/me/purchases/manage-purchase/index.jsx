@@ -77,6 +77,11 @@ import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import CartStore from 'lib/cart/store';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ManagePurchase extends Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
