@@ -52,7 +52,7 @@ class Widgets extends Component {
 
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
-					moduleSlug="widget-visibility"
+					moduleSlug="widgets"
 					label={ translate(
 						'Make extra widgets available for use on your site including images and Twitter streams'
 					) }
@@ -75,7 +75,7 @@ class Widgets extends Component {
 
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
-					moduleSlug="widgets"
+					moduleSlug="widget-visibility"
 					label={ translate( 'Control where widgets appear on your site' ) }
 					disabled={ formPending }
 				/>
