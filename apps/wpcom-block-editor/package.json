@@ -17,9 +17,9 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"bundle": "webpack --config='../../packages/calypso-build/webpack.config.js' --env.WP='true'",
-		"build:iframe-bridge-server": "npm run bundle -- iframe-bridge-server='./src/iframe-bridge-server.js'",
-		"build:tinymce": "npm run bundle -- tinymce='./src/tinymce.js'",
-		"build:rich-text": "npm run bundle -- rich-text='./src/rich-text.js'",
+		"build:common": "npm run bundle -- common='./src/common'",
+		"build:calypso-iframe-bridge-server": "npm run bundle -- calypso-iframe-bridge-server='./src/calypso/iframe-bridge-server.js'",
+		"build:calypso-tinymce": "npm run bundle -- calypso-tinymce='./src/calypso/tinymce.js'",
 		"build": "npm-run-all --parallel \"build:* -- {@}\" --"
 	},
 	"dependencies": {
