@@ -74,7 +74,7 @@ class JetpackChecklist extends PureComponent {
 			translate,
 			vaultpressFinished,
 		} = this.props;
-		const isRewindActive = rewindState === 'active';
+		const isRewindActive = rewindState === 'active' || rewindState === 'provisioning';
 		const isRewindAvailable = rewindState !== 'uninitialized' && rewindState !== 'unavailable';
 		const isRewindUnAvailable = rewindState === 'unavailable';
 
