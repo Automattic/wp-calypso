@@ -19,6 +19,7 @@ const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-external-dependencies-plugin' );
+const { cssNameFromFilename } = require( '@automattic/calypso-build/webpack/util' );
 
 /**
  * Internal dependencies
@@ -147,13 +148,23 @@ function shouldTranspileDependency( filepath ) {
  * @return {object}                                  webpack config
  */
 function getWebpackConfig( {
-	cssFilename,
 	externalizeWordPressPackages = false,
 	preserveCssCustomProperties = true,
 } = {} ) {
-	cssFilename =
-		cssFilename ||
-		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
+	let outputFilename = '[name].[chunkhash].min.js'; // prefer the chunkhash, which depends on the chunk, not the entire build
+	let outputChunkFilename = '[name].[chunkhash].min.js'; // ditto
+
+	// we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
+	// also we don't minify so dont name them .min.js
+	//
+	// Desktop: no chunks or dll here, just one big file for the desktop app
+	if ( isDevelopment || calypsoEnv === 'desktop' ) {
+		outputFilename = '[name].js';
+		outputChunkFilename = '[name].js';
+	}
+
+	const cssFilename = cssNameFromFilename( outputFilename );
+	const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
@@ -168,8 +179,8 @@ function getWebpackConfig( {
 			path: path.join( __dirname, 'public', extraPath ),
 			pathinfo: false,
 			publicPath: `/calypso/${ extraPath }/`,
-			filename: '[name].[chunkhash].min.js', // prefer the chunkhash, which depends on the chunk, not the entire build
-			chunkFilename: '[name].[chunkhash].min.js', // ditto
+			filename: outputFilename,
+			chunkFilename: outputChunkFilename,
 			devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 		},
 		optimization: {
@@ -276,7 +287,11 @@ function getWebpackConfig( {
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
-			...SassConfig.plugins( { filename: cssFilename, minify: ! isDevelopment } ),
+			...SassConfig.plugins( {
+				chunkFilename: cssChunkFilename,
+				filename: cssFilename,
+				minify: ! isDevelopment,
+			} ),
 			isCalypsoClient &&
 				new AssetsWriter( {
 					filename:
@@ -316,18 +331,7 @@ function getWebpackConfig( {
 		externals: [ 'electron' ],
 	};
 
-	if ( calypsoEnv === 'desktop' ) {
-		// no chunks or dll here, just one big file for the desktop app
-		webpackConfig.output.filename = '[name].js';
-		webpackConfig.output.chunkFilename = '[name].js';
-	}
-
 	if ( isDevelopment ) {
-		// we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
-		// also we don't minify so dont name them .min.js
-		webpackConfig.output.filename = '[name].js';
-		webpackConfig.output.chunkFilename = '[name].js';
-
 		webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 		webpackConfig.entry.build.unshift( 'webpack-hot-middleware/client' );
 	}
