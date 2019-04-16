@@ -53,7 +53,7 @@ class Shortlinks extends Component {
 					<FormFieldset>
 						<SupportInfo
 							text={ translate(
-								'Create short and simple links for all posts and pages so you can have more space to write on social media sites.'
+								'Generates shorter links so you can have more space to write on social media sites.'
 							) }
 							link="https://jetpack.com/support/shortlinks/"
 						/>
@@ -61,9 +61,7 @@ class Shortlinks extends Component {
 						<JetpackModuleToggle
 							siteId={ selectedSiteId }
 							moduleSlug="shortlinks"
-							label={ translate(
-								'Create short and simple links for all posts and pages so you can have more space to write on social media sites.'
-							) }
+							label={ translate( 'Create short and simple links for all posts and pages' ) }
 							disabled={ formPending }
 						/>
 					</FormFieldset>
