@@ -60,7 +60,10 @@ const clearOrder = ( siteId, importerId ) =>
 const importOrder = importerStatus =>
 	toApi( Object.assign( {}, importerStatus, { importerState: appStates.IMPORTING } ) );
 
-const apiStart = () => Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
+const apiStart = () => {
+	Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
+	reduxDispatch( { type: IMPORTS_FETCH } );
+};
 const apiSuccess = data => {
 	const apiFetchCompleteAction = {
 		type: IMPORTS_FETCH_COMPLETED,
@@ -68,15 +71,15 @@ const apiSuccess = data => {
 
 	Dispatcher.handleViewAction( apiFetchCompleteAction );
 	reduxDispatch( {
-		...data,
 		...apiFetchCompleteAction,
+		data,
 	} );
 
 	return data;
 };
 const apiFailure = data => {
 	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_FAILED } );
-
+	reduxDispatch( { type: IMPORTS_FETCH_FAILED } );
 	return data;
 };
 const setImportLock = ( shouldEnableLock, importerId ) => {

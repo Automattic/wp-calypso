@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
+import { defer, filter, find, flow, get, isEmpty, isEqual, memoize, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -113,7 +113,7 @@ class SiteSettingsImport extends Component {
 			return;
 		}
 
-		startImport( site.ID, getImporterTypeForEngine( engine ) );
+		defer( () => startImport( site.ID, getImporterTypeForEngine( engine ) ) );
 	} );
 
 	componentDidMount() {
@@ -247,7 +247,13 @@ class SiteSettingsImport extends Component {
 	};
 
 	updateState = () => {
-		this.setState( getImporterState() );
+		const newState = getImporterState();
+		if ( isEqual( this.state, newState ) ) {
+			// Don't trigger a re-render if nothing has changed
+			return;
+		}
+
+		this.setState( newState );
 	};
 
 	renderImportersList() {
