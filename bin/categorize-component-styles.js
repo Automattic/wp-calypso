@@ -8,7 +8,7 @@ const components = componentsStyle
 	.split( '\n' )
 	.filter( line => line.startsWith( '@import' ) )
 	.map( component => component.substring( 9, component.length - 2 ) );
-console.log( components.length );
+console.log( `Scoring ${ components.length } components...` );
 
 const zero = { score: 0 };
 
@@ -29,7 +29,7 @@ function hasImports( f ) {
  */
 function hasNonCompliantToplevelSelectors( f, name ) {
 	let topLevelSelectors;
-	const re = /^\.([\w_\-\.]+)/gm;
+	const re = /^\.([\w_\-.]+)/gm;
 	let violations = 0;
 	while ( ( topLevelSelectors = re.exec( f ) ) !== null ) {
 		const classes = topLevelSelectors[ 0 ].split( '.' ).filter( Boolean );
@@ -51,12 +51,38 @@ function hasNonCompliantToplevelSelectors( f, name ) {
 	return zero;
 }
 
+const childProcess = require( 'child_process' );
+function overridenByOthers( f, name, componentPath ) {
+	const results = childProcess.spawnSync(
+		'git',
+		[
+			'grep',
+			'-l',
+			'-F',
+			`.${ name }`,
+			'--',
+			`"*.scss"`,
+			`":^${ componentPath }"`,
+			':^assets/stylesheets/shared/functions/_z-index.scss',
+		],
+		{ encoding: 'utf8', shell: true }
+	);
+	const matchCount = results.stdout.split( '\n' ).length - 1;
+	if ( matchCount > 0 ) {
+		return {
+			score: matchCount,
+			name: `styles overriden by ${ matchCount } consumers`,
+		};
+	}
+	return zero;
+}
+
 function score( c ) {
 	const styles = fs.readFileSync( 'client/' + c + '.scss', { encoding: 'utf8' } );
 	const name = path.basename( c.replace( /\/style$/, '' ) );
-	//console.log( '\nclient/%s.scss => %s', c, name );
-	const checks = [ hasImports, hasNonCompliantToplevelSelectors ];
-	const scores = checks.map( check => check( styles, name ) );
+	const componentPath = `client/${ path.dirname( c ) }/`;
+	const checks = [ hasImports, hasNonCompliantToplevelSelectors, overridenByOthers ];
+	const scores = checks.map( check => check( styles, name, componentPath ) );
 	scores.score = scores.reduce( ( totalScore, { score: s } ) => totalScore + s, 0 );
 	scores.summary = scores
 		.filter( s => s.name )
