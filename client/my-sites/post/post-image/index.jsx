@@ -13,9 +13,6 @@ import classnames from 'classnames';
  */
 import './style.scss';
 
-/**
- * Main
- */
 class PostImage extends React.PureComponent {
 	static propTypes = {
 		postImages: PropTypes.shape( {
@@ -47,28 +44,30 @@ class PostImage extends React.PureComponent {
 	};
 
 	render() {
-		let imageURL = this._getImageURL(),
-			containerClasses,
-			containerStyles;
+		const imageURL = this._getImageURL();
 
 		if ( ! imageURL ) {
 			return null;
 		}
 
+		let containerStyles;
 		if ( this.state.collapsed ) {
 			containerStyles = {
 				backgroundImage: 'url(' + imageURL + ')',
 			};
 		}
 
-		containerClasses = classnames( {
+		const containerClasses = classnames( {
 			'post-image': true,
 			'is-collapsed': this.state.collapsed,
 		} );
 
 		return (
+			/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */
 			<div className={ containerClasses } style={ containerStyles } onClick={ this._handleClick }>
-				{ ! this.state.collapsed ? <img src={ imageURL } className="post-image__image" /> : null }
+				{ ! this.state.collapsed ? (
+					<img src={ imageURL } alt="" className="post-image__image" />
+				) : null }
 			</div>
 		);
 	}
