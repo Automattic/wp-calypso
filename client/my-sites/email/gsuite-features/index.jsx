@@ -17,7 +17,7 @@ import GSuitePurchaseFeaturesSingleFeature from './single-feature';
  */
 import './style.scss';
 
-const GSuitePurchaseFeatures = ( { compact, domainName, productSlug, type } ) => {
+const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 	const translate = useTranslate();
 
 	const getStorageText = () => {
@@ -101,16 +101,16 @@ const GSuitePurchaseFeatures = ( { compact, domainName, productSlug, type } ) =>
 	);
 };
 
-GSuitePurchaseFeatures.propTypes = {
+GSuiteFeatures.propTypes = {
 	compact: PropTypes.bool.isRequired,
 	domainName: PropTypes.string.isRequired,
 	productSlug: PropTypes.string,
 	type: PropTypes.oneOf( [ 'grid', 'list' ] ),
 };
 
-GSuitePurchaseFeatures.defaultProps = {
+GSuiteFeatures.defaultProps = {
 	compact: false,
 	type: 'grid',
 };
 
-export default GSuitePurchaseFeatures;
+export default GSuiteFeatures;

@@ -7,8 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
+import GSuiteFeatures from 'my-sites/email/gsuite-features';
 
 export default function GSuiteCompactFeatures( props ) {
-	return <GSuitePurchaseFeatures { ...props } compact />;
+	return <GSuiteFeatures { ...props } compact />;
 }

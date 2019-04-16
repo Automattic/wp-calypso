@@ -10,62 +10,51 @@ import renderer from 'react-test-renderer';
  * Internal dependencies
  */
 import { createReduxStore } from 'state';
-import GSuitePurchaseFeatures from '../';
+import GSuiteFeatures from '../';
 
-describe( 'GSuitePurchaseFeatures', () => {
-	test( 'it renders GSuitePurchaseFeatures with basic plan', () => {
+describe( 'GSuiteFeatures', () => {
+	test( 'it renders GSuiteFeatures with basic plan', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
 				<Provider store={ store }>
-					<GSuitePurchaseFeatures domainName={ 'testing123.com' } productSlug={ 'gapps' } />
+					<GSuiteFeatures domainName={ 'testing123.com' } productSlug={ 'gapps' } />
 				</Provider>
 			)
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
 	} );
 
-	test( 'it renders GSuitePurchaseFeatures with business plan', () => {
+	test( 'it renders GSuiteFeatures with business plan', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
 				<Provider store={ store }>
-					<GSuitePurchaseFeatures
-						domainName={ 'testing123.com' }
-						productSlug={ 'gapps_unlimited' }
-					/>
+					<GSuiteFeatures domainName={ 'testing123.com' } productSlug={ 'gapps_unlimited' } />
 				</Provider>
 			)
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
 	} );
 
-	test( 'it renders GSuitePurchaseFeatures in a grid', () => {
+	test( 'it renders GSuiteFeatures in a grid', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
 				<Provider store={ store }>
-					<GSuitePurchaseFeatures
-						domainName={ 'testing123.com' }
-						productSlug={ 'gapps' }
-						type={ 'grid' }
-					/>
+					<GSuiteFeatures domainName={ 'testing123.com' } productSlug={ 'gapps' } type={ 'grid' } />
 				</Provider>
 			)
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
 	} );
 
-	test( 'it renders GSuitePurchaseFeatures in a list', () => {
+	test( 'it renders GSuiteFeatures in a list', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
 				<Provider store={ store }>
-					<GSuitePurchaseFeatures
-						domainName={ 'testing123.com' }
-						productSlug={ 'gapps' }
-						type={ 'list' }
-					/>
+					<GSuiteFeatures domainName={ 'testing123.com' } productSlug={ 'gapps' } type={ 'list' } />
 				</Provider>
 			)
 			.toJSON();

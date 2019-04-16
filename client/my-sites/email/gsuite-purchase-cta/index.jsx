@@ -21,7 +21,7 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductCost } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseCtaSkuInfo from 'my-sites/email/gsuite-purchase-cta/sku-info';
-import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
+import GSuiteFeatures from 'my-sites/email/gsuite-features';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QueryProductsList from 'components/data/query-products-list';
 
@@ -141,7 +141,7 @@ export const GSuitePurchaseCta = ( {
 				</div>
 			</CompactCard>
 			<CompactCard>
-				<GSuitePurchaseFeatures domainName={ domainName } type={ 'grid' } productSlug={ 'gapps' } />
+				<GSuiteFeatures domainName={ domainName } type={ 'grid' } productSlug={ 'gapps' } />
 			</CompactCard>
 		</EmailVerificationGate>
 	);

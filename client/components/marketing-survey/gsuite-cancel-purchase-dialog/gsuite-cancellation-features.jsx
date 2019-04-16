@@ -12,7 +12,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
-import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
+import GSuiteFeatures from 'my-sites/email/gsuite-features';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { purchaseType } from 'lib/purchases';
 
@@ -36,11 +36,7 @@ class GSuiteCancellationFeatures extends Component {
 						{ components: { siteName: <em>{ gsuiteDomain }</em> } }
 					) }
 				</p>
-				<GSuitePurchaseFeatures
-					productSlug={ productSlug }
-					domainName={ gsuiteDomain }
-					type={ 'list' }
-				/>
+				<GSuiteFeatures productSlug={ productSlug } domainName={ gsuiteDomain } type={ 'list' } />
 			</div>
 		);
 	}
