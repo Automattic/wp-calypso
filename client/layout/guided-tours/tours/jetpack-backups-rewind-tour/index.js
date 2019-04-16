@@ -57,7 +57,7 @@ const ConnectedContinueToLastStep = connect( state => ( {
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackBackupsRewindTour = makeTour(
 	<Tour { ...meta }>
-		<Step name="init" target=".credentials-setup-flow" placement="beside" arrow="right-top">
+		<Step name="init" target=".credentials-setup-flow" placement="below" arrow="top-left">
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
@@ -126,8 +126,6 @@ export const JetpackBackupsRewindTour = makeTour(
 		<Step
 			name="credentials"
 			target=".rewind-credentials-form"
-			placement="beside"
-			arrow="right-top"
 			style={ {
 				display: 'none',
 			} }
