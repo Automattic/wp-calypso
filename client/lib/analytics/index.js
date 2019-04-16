@@ -134,7 +134,7 @@ function checkForBlockedTracks() {
 }
 
 if ( typeof document !== 'undefined' ) {
-	loadScript( '//stats.wp.com/w.js?56', function( error ) {
+	loadScript( '//stats.wp.com/w.js?60', function( error ) {
 		if ( error ) {
 			_loadTracksError = true;
 		}
