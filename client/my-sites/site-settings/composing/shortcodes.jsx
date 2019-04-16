@@ -49,7 +49,9 @@ class Shortcodes extends Component {
 			<Card className="composing__card site-settings__card">
 				<QueryJetpackConnection siteId={ selectedSiteId } />
 				<SupportInfo
-					text={ translate( 'Embed media from popular sites when you author your content.' ) }
+					text={ translate(
+						'Shortcodes are WordPress-specific markup that let you add media from popular sites. This feature is no longer necessary as the editor now handles media embeds rather gracefully.'
+					) }
 					link="https://jetpack.com/support/shortcode-embeds/"
 				/>
 				<JetpackModuleToggle
