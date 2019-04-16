@@ -4,7 +4,19 @@
  */
 import { combineReducers, createReducer } from 'state/utils';
 import uploadsReducer from 'state/imports/uploads/reducer';
-import { IMPORTS_FETCH_COMPLETED, SELECTED_SITE_SET } from 'state/action-types';
+import {
+	IMPORTS_FETCH,
+	IMPORTS_FETCH_COMPLETED,
+	IMPORTS_FETCH_FAILED,
+	SELECTED_SITE_SET,
+} from 'state/action-types';
+
+const isFetching = createReducer( false, {
+	[ IMPORTS_FETCH ]: () => true,
+	[ IMPORTS_FETCH_COMPLETED ]: () => false,
+	[ IMPORTS_FETCH_FAILED ]: () => false,
+	[ SELECTED_SITE_SET ]: () => false,
+} );
 
 // @TODO better name than serverData
 const serverData = createReducer( null, {
@@ -23,6 +35,7 @@ const serverData = createReducer( null, {
 } );
 
 export default combineReducers( {
+	isFetching,
 	serverData,
 	uploads: uploadsReducer,
 } );

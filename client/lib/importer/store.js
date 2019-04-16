@@ -37,8 +37,6 @@ const initialState = Object.freeze( {
 	importers: {},
 	importerLocks: {},
 	api: {
-		isHydrated: false,
-		isFetching: false,
 		retryCount: 0,
 	},
 } );
@@ -59,7 +57,6 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				...state,
 				api: {
 					...state.api,
-					isFetching: true,
 				},
 			};
 
@@ -68,7 +65,6 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				...state,
 				api: {
 					...state.api,
-					isFetching: false,
 					retryCount: get( state, 'api.retryCount', 0 ) + 1,
 				},
 			};
@@ -78,8 +74,6 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				...state,
 				api: {
 					...state.api,
-					isFetching: false,
-					isHydrated: true,
 					retryCount: 0,
 				},
 			};
@@ -164,7 +158,6 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				...state,
 				api: {
 					...state.api,
-					isHydrated: true,
 				},
 			};
 			const importerId = get( action, 'importerStatus.importerId' );
