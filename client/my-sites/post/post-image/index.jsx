@@ -9,6 +9,11 @@ import React from 'react';
 import classnames from 'classnames';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Main
  */
 class PostImage extends React.PureComponent {
