@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GSuiteSingleFeature it renders GSuiteSingleFeature 1`] = `
+<div
+  className="gsuite-features__feature"
+>
+  <div
+    className="gsuite-features__feature-image"
+  >
+    <img
+      alt="image alt"
+      src="/test/image/path.svg"
+    />
+  </div>
+  <div
+    className="gsuite-features__feature-block"
+  >
+    <h5
+      className="gsuite-features__feature-header"
+    >
+      title
+    </h5>
+    <p>
+      description
+    </p>
+  </div>
+</div>
+`;

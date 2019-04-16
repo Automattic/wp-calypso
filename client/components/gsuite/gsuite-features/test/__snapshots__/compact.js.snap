@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GSuiteFeatures it renders GSuiteFeatures in a grid 1`] = `
+exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures in a grid 1`] = `
 <div
   className="gsuite-features__grid"
 >
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -23,13 +23,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a grid 1`] = `
       >
         A custom @testing123.com email address
       </h5>
-      <p>
-        Professional ad-free email that works with most email clients.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -47,13 +44,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a grid 1`] = `
       >
         Docs, spreadsheets and more
       </h5>
-      <p>
-        Collaborate in real-time with documents, spreadsheets and slides.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -69,15 +63,12 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a grid 1`] = `
       <h5
         className="gsuite-features__feature-header"
       >
-        Keep all your files secure
+        30GB Online File Storage
       </h5>
-      <p>
-        Get 30GB of storage for all your files synced across devices.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -93,22 +84,19 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a grid 1`] = `
       <h5
         className="gsuite-features__feature-header"
       >
-        Connect with your team
+        Video and voice calls
       </h5>
-      <p>
-        Use text chats, voice calls, or video calls, with built in screen sharing.
-      </p>
     </div>
   </div>
 </div>
 `;
 
-exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
+exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures in a list 1`] = `
 <div
   className="gsuite-features__list"
 >
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -126,13 +114,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
       >
         A custom @testing123.com email address
       </h5>
-      <p>
-        Professional ad-free email that works with most email clients.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -150,13 +135,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
       >
         Docs, spreadsheets and more
       </h5>
-      <p>
-        Collaborate in real-time with documents, spreadsheets and slides.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -172,15 +154,12 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
       <h5
         className="gsuite-features__feature-header"
       >
-        Keep all your files secure
+        30GB Online File Storage
       </h5>
-      <p>
-        Get 30GB of storage for all your files synced across devices.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -196,22 +175,19 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
       <h5
         className="gsuite-features__feature-header"
       >
-        Connect with your team
+        Video and voice calls
       </h5>
-      <p>
-        Use text chats, voice calls, or video calls, with built in screen sharing.
-      </p>
     </div>
   </div>
 </div>
 `;
 
-exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
+exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with basic plan 1`] = `
 <div
   className="gsuite-features__grid"
 >
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -229,13 +205,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
       >
         A custom @testing123.com email address
       </h5>
-      <p>
-        Professional ad-free email that works with most email clients.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -253,13 +226,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
       >
         Docs, spreadsheets and more
       </h5>
-      <p>
-        Collaborate in real-time with documents, spreadsheets and slides.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -275,15 +245,12 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
       <h5
         className="gsuite-features__feature-header"
       >
-        Keep all your files secure
+        30GB Online File Storage
       </h5>
-      <p>
-        Get 30GB of storage for all your files synced across devices.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -299,22 +266,19 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
       <h5
         className="gsuite-features__feature-header"
       >
-        Connect with your team
+        Video and voice calls
       </h5>
-      <p>
-        Use text chats, voice calls, or video calls, with built in screen sharing.
-      </p>
     </div>
   </div>
 </div>
 `;
 
-exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
+exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with business plan 1`] = `
 <div
   className="gsuite-features__grid"
 >
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -332,13 +296,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
       >
         A custom @testing123.com email address
       </h5>
-      <p>
-        Professional ad-free email that works with most email clients.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -356,13 +317,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
       >
         Docs, spreadsheets and more
       </h5>
-      <p>
-        Collaborate in real-time with documents, spreadsheets and slides.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -378,15 +336,12 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
       <h5
         className="gsuite-features__feature-header"
       >
-        Keep all your files secure
+        Unlimited cloud storage (or 1TB per user if fewer than 5 users)
       </h5>
-      <p>
-        Get unlimited storage for all your files synced across devices.
-      </p>
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    className="gsuite-features__compact-feature"
   >
     <div
       className="gsuite-features__feature-image"
@@ -402,11 +357,8 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
       <h5
         className="gsuite-features__feature-header"
       >
-        Connect with your team
+        Video and voice calls
       </h5>
-      <p>
-        Use text chats, voice calls, or video calls, with built in screen sharing.
-      </p>
     </div>
   </div>
 </div>
