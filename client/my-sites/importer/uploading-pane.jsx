@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flow, get, includes, noop, truncate } from 'lodash';
+import { defer, flow, get, includes, noop, truncate } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -19,7 +19,6 @@ import { startMappingAuthors, startUpload } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
-import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 
@@ -43,8 +42,17 @@ class UploadingPane extends React.PureComponent {
 
 	fileSelectorRef = React.createRef();
 
-	componentWillUnmount() {
-		window.clearInterval( this.randomizeTimer );
+	componentDidUpdate( prevProps ) {
+		const { importerStatus } = this.props;
+		const { importerState, importerId } = importerStatus;
+		const { importerStatus: prevImporterStatus } = prevProps;
+
+		if (
+			prevImporterStatus.importerState === appStates.UPLOADING &&
+			importerState === appStates.UPLOAD_SUCCESS
+		) {
+			defer( () => startMappingAuthors( importerId ) );
+		}
 	}
 
 	getMessage = () => {
@@ -119,7 +127,6 @@ class UploadingPane extends React.PureComponent {
 
 	render() {
 		const { importerStatus, site, isEnabled } = this.props;
-		const { importerState, importerId } = importerStatus;
 		const isReadyForImport = this.isReadyForImport();
 
 		return (
@@ -152,13 +159,6 @@ class UploadingPane extends React.PureComponent {
 						site={ site }
 						isEnabled={ isEnabled }
 					/>
-					<ImporterActionButton
-						primary
-						disabled={ importerState !== appStates.UPLOAD_SUCCESS }
-						onClick={ () => startMappingAuthors( importerId ) }
-					>
-						{ this.props.translate( 'Continue' ) }
-					</ImporterActionButton>
 				</ImporterActionButtonContainer>
 			</div>
 		);
