@@ -26,8 +26,10 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
 import {
 	JETPACK_CHECKLIST_TASKS,
+	JETPACK_CHECKLIST_TASK_AKISMET,
 	JETPACK_CHECKLIST_TASK_BACKUPS_REWIND,
 	JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS,
+	JETPACK_CHECKLIST_TASK_PROTECT,
 } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -90,12 +92,7 @@ class JetpackChecklist extends PureComponent {
 					isPlaceholder={ ! taskStatuses }
 					progressText={ translate( 'Your Jetpack setup progress' ) }
 				>
-					<Task
-						completed
-						title={ translate(
-							"We've automatically protected you from brute force login attacks."
-						) }
-					/>
+					<Task completed { ...JETPACK_CHECKLIST_TASK_PROTECT } />
 					{ isPaidPlan && isRewindAvailable && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_REWIND }
@@ -116,8 +113,7 @@ class JetpackChecklist extends PureComponent {
 					) }
 					{ isPaidPlan && productInstallStatus && (
 						<Task
-							title={ translate( "We're automatically turning on spam filtering." ) }
-							completedTitle={ translate( "We've automatically turned on spam filtering." ) }
+							{ ...JETPACK_CHECKLIST_TASK_AKISMET }
 							completed={ akismetFinished }
 							inProgress={ ! akismetFinished }
 						/>
