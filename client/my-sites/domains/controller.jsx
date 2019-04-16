@@ -37,7 +37,7 @@ import { isATEnabled } from 'lib/automated-transfer';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { isGSuiteRestricted } from 'lib/domains/gsuite';
+import { isGSuiteRestricted } from 'lib/gsuite';
 
 /**
  * Module variables

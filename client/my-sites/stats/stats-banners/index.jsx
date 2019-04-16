@@ -15,7 +15,7 @@ import { abtest } from 'lib/abtest';
 import config from 'config';
 import ECommerceManageNudge from 'blocks/ecommerce-manage-nudge';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import { getGSuiteSupportedDomains, hasGSuite } from 'lib/domains/gsuite';
+import { getGSuiteSupportedDomains, hasGSuite } from 'lib/gsuite';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
 import GSuiteStatsNudge from 'blocks/gsuite-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';

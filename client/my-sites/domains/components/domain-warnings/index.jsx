@@ -19,7 +19,7 @@ import NoticeAction from 'components/notice/notice-action';
 import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
 import { purchasesRoot } from 'me/purchases/paths';
 import { type as domainTypes, transferStatus, gdprConsentStatus } from 'lib/domains/constants';
-import { hasPendingGSuiteUsers } from 'lib/domains/gsuite';
+import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import { isSubdomain } from 'lib/domains';
 import {
 	ALL_ABOUT_DOMAINS,

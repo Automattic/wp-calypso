@@ -20,7 +20,7 @@ import {
 	isGSuiteRestricted,
 	hasGSuiteSupportedDomain,
 	getEligibleGSuiteDomain,
-} from 'lib/domains/gsuite';
+} from 'lib/gsuite';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';

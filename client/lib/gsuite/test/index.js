@@ -9,7 +9,7 @@ import {
 	hasGSuiteSupportedDomain,
 	hasPendingGSuiteUsers,
 	isGSuiteRestricted,
-} from 'lib/domains/gsuite';
+} from 'lib/gsuite';
 
 jest.mock( 'lib/user/', () => {
 	return () => {
