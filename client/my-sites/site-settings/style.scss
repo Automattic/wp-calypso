@@ -446,6 +446,7 @@
 	margin-top: 3px;
 }
 
+.site-settings__card + .site-settings__card,
 .site-settings__foldable-card + .site-settings__card,
 .site-settings__foldable-card + .card.is-compact:last-child,
 .site-settings__card + .card.is-compact:last-child {

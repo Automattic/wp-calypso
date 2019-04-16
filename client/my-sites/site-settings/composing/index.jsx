@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
  */
 import AfterTheDeadline from './after-the-deadline';
 import Latex from './latex';
+import Shortcodes from './shortcodes';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DateTimeFormat from '../date-time-format';
@@ -58,6 +59,13 @@ const Composing = ( {
 						setFieldValue={ setFieldValue }
 					/>
 					<Latex
+						fields={ fields }
+						handleToggle={ handleToggle }
+						isRequestingSettings={ isRequestingSettings }
+						isSavingSettings={ isSavingSettings }
+						setFieldValue={ setFieldValue }
+					/>
+					<Shortcodes
 						fields={ fields }
 						handleToggle={ handleToggle }
 						isRequestingSettings={ isRequestingSettings }
