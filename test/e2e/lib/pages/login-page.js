@@ -13,6 +13,7 @@ import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import * as dataHelper from '../data-helper';
 import * as SlackNotifier from '../slack-notifier';
+import * as driverManager from '../driver-manager';
 
 // This is the Calypso WordPress.com login page
 // For the wp-admin login page see /wp-admin/wp-admin-logon-page
@@ -52,6 +53,7 @@ export default class LoginPage extends AsyncBaseContainer {
 				await SlackNotifier.warn( `The login didn't work as expected - retrying now: '${ e }'`, {
 					suppressDuplicateMessages: true,
 				} );
+				await driverManager.ensureNotLoggedIn( this.driver );
 				return await this.login( username, password, { retry: false } );
 			}
 		}
