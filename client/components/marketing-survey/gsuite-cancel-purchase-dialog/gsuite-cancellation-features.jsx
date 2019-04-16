@@ -12,8 +12,8 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
-import GSuiteFeatures from 'my-sites/email/gsuite-features';
-import GSuiteLearnMore from 'my-sites/email/gsuite-learn-more';
+import GSuiteFeatures from 'components/gsuite/gsuite-features';
+import GSuiteLearnMore from 'components/gsuite/gsuite-learn-more';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { purchaseType } from 'lib/purchases';
 

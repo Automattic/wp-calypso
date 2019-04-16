@@ -12,7 +12,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { abtest } from 'lib/abtest';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
-import GSuiteCompactFeatures from 'my-sites/email/gsuite-features/compact';
+import GSuiteCompactFeatures from 'components/gsuite/gsuite-features/compact';
 
 function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 	const translate = useTranslate();

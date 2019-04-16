@@ -20,8 +20,8 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductCost } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import GSuiteFeatures from 'my-sites/email/gsuite-features';
-import GSuiteLearnMore from 'my-sites/email/gsuite-learn-more';
+import GSuiteFeatures from 'components/gsuite/gsuite-features';
+import GSuiteLearnMore from 'components/gsuite/gsuite-learn-more';
 import GSuitePurchaseCtaSkuInfo from 'my-sites/email/gsuite-purchase-cta/sku-info';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QueryProductsList from 'components/data/query-products-list';
