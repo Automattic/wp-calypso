@@ -115,6 +115,16 @@ Or specific apps:
 npx lerna run build --scope="@automattic/calypso-build"
 ```
 
+## Developing packages
+
+When developing packages in Calypso repository that external consumers (like Jetpack repository) depend on, you might want to test them without going through the publishing flow first.
+
+1. Enter the package you're testing
+1. Run [`npm link`](https://docs.npmjs.com/cli/link) — the package will be installed on global scope and symlinked to the folder in Calypso
+1. Enter the consumer's folder (such as Jetpack)
+1. Type `npm link @automattic/package-name` — the package will be symlinked between Calypso and Jetpack and any modifications you make in Calypso, will show up in Jetpack.
+1. Remember to build your changes between modifications in Calypso.
+
 ## Publishing
 
 Please do not use regular [`npm publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
