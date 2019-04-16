@@ -12,6 +12,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { abtest } from 'lib/abtest';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
+import GSuiteCompactFeatures from 'my-sites/email/gsuite-purchase-features/compact';
 
 function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 	const translate = useTranslate();
@@ -22,14 +23,6 @@ function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 		null !== currencyCode
 			? 'showMonthlyPrice' === abtest( 'gsuiteDomainFlowOptions', currencyCode )
 			: false;
-
-	const getStorageText = () => {
-		if ( 'gapps' === plan ) {
-			return translate( '30GB Online File Storage' );
-		} else if ( 'gapps_unlimited' === plan ) {
-			return translate( 'Unlimited cloud storage (or 1TB per user if fewer than 5 users)' );
-		}
-	};
 
 	const renderAnnualPrice = () => {
 		return (
@@ -77,32 +70,7 @@ function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 				{ showMonthlyPrice ? renderMonthlyPrice() : renderAnnualPrice() }
 			</div>
 
-			<ul className="gsuite-dialog__product-features">
-				<li className="gsuite-dialog__product-feature">
-					<img src="/calypso/images/g-suite/logo_gmail_48dp.svg" alt="" />
-					<p>
-						{ translate( 'Professional email {{nowrap}}(@%(domain)s){{/nowrap}}', {
-							args: { domain: domain },
-							components: { nowrap: <span className="gsuite-dialog__domain" /> },
-						} ) }
-					</p>
-				</li>
-
-				<li className="gsuite-dialog__product-feature">
-					<img src="/calypso/images/g-suite/logo_drive_48dp.svg" alt="" />
-					<p>{ getStorageText() }</p>
-				</li>
-
-				<li className="gsuite-dialog__product-feature">
-					<img src="/calypso/images/g-suite/logo_docs_48dp.svg" alt="" />
-					<p>{ translate( 'Docs, spreadsheets, and more' ) }</p>
-				</li>
-
-				<li className="gsuite-dialog__product-feature">
-					<img src="/calypso/images/g-suite/logo_hangouts_48px.png" alt="" />
-					<p>{ translate( 'Video and voice calls' ) }</p>
-				</li>
-			</ul>
+			<GSuiteCompactFeatures domainName={ domain } productSlug={ plan } type={ 'list' } />
 		</div>
 	);
 }
