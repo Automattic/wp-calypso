@@ -13,7 +13,19 @@ import userFactory from 'lib/user';
 /**
  * Constants
  */
-const GOOGLE_APPS_LINK_PREFIX = 'https://mail.google.com/a/';
+const GSUITE_LINK_PREFIX = 'https://mail.google.com/a/';
+
+/**
+ * Applies a precision to the cost
+ *
+ * @param {Number} cost - cost
+ * @param {Object} precision - precision to apply to cost
+ * @returns {Boolean} - Returns price with applied precision
+ */
+function applyPrecision( cost, precision ) {
+	const exponent = Math.pow( 10, precision );
+	return Math.ceil( cost * exponent ) / exponent;
+}
 
 /**
  * Can a domain add G Suite
@@ -32,6 +44,33 @@ function canDomainAddGSuite( domainName ) {
 	);
 
 	return ! ( hasInvalidSuffix || includesBannedPhrase || isGSuiteRestricted() );
+}
+
+/**
+ * Formats price gievn cost and currency
+ *
+ * @param {Number} cost - cost
+ * @param {String} currencyCode - currency code to format with
+ * @param {Object} options - options containing precision
+ * @returns {Boolean} - Returns a formatted price
+ */
+function formatPrice( cost, currencyCode, options = {} ) {
+	if ( undefined !== options.precision ) {
+		cost = applyPrecision( cost, options.precision );
+	}
+
+	return formatCurrency( cost, currencyCode, cost % 1 > 0 ? {} : { precision: 0 } );
+}
+
+/**
+ * Gets the formatted annual cost
+ *
+ * @param {Number} cost - cost
+ * @param {String} currencyCode - currency code to format with
+ * @returns {String} - Formatted Annual price
+ */
+function getAnnualPrice( cost, currencyCode ) {
+	return formatPrice( cost, currencyCode );
 }
 
 /**
@@ -63,6 +102,45 @@ function getGSuiteSupportedDomains( domains ) {
 		const mapped = includes( [ domainTypes.MAPPED ], domain.type );
 		return ( wpcomHosted || mapped ) && canDomainAddGSuite( domain.name );
 	} );
+}
+
+/**
+ * Creates the Google ToS redirect url given email and domain
+ *
+ * @param {String} email - email
+ * @param {String} domain - domain name
+ * @returns {String} - ToS url redirect
+ */
+function getLoginUrlWithTOSRedirect( email, domain ) {
+	return (
+		'https://accounts.google.com/AccountChooser?' +
+		`Email=${ encodeURIComponent( email ) }` +
+		`&service=CPanel` +
+		`&continue=${ encodeURIComponent(
+			`https://admin.google.com/${ domain }/AcceptTermsOfService?continue=https://mail.google.com/mail/u/${ email }`
+		) }`
+	);
+}
+
+/**
+ * Gets the formatted monthly cost
+ *
+ * @param {Number} cost - cost
+ * @param {String} currencyCode - currency code to format with
+ * @returns {String} - Formatted Monthly price
+ */
+function getMonthlyPrice( cost, currencyCode ) {
+	return formatPrice( cost / 12, currencyCode );
+}
+
+/**
+ * Returns G Suite management url
+ *
+ * @param {String} domainName - domain name
+ * @returns {String} - Returns G Suite settings url
+ */
+function getGSuiteSettingsUrl( domainName ) {
+	return GSUITE_LINK_PREFIX + domainName;
 }
 
 /**
@@ -105,51 +183,15 @@ function isGSuiteRestricted() {
 	return ! get( user.get(), 'is_valid_google_apps_country', false );
 }
 
-function getAnnualPrice( cost, currencyCode ) {
-	return formatPrice( cost, currencyCode );
-}
-
-function getMonthlyPrice( cost, currencyCode ) {
-	return formatPrice( cost / 12, currencyCode );
-}
-
-function googleAppsSettingsUrl( domainName ) {
-	return GOOGLE_APPS_LINK_PREFIX + domainName;
-}
-
-function formatPrice( cost, currencyCode, options = {} ) {
-	if ( undefined !== options.precision ) {
-		cost = applyPrecision( cost, options.precision );
-	}
-
-	return formatCurrency( cost, currencyCode, cost % 1 > 0 ? {} : { precision: 0 } );
-}
-
-function applyPrecision( cost, precision ) {
-	const exponent = Math.pow( 10, precision );
-	return Math.ceil( cost * exponent ) / exponent;
-}
-
-function getLoginUrlWithTOSRedirect( email, domain ) {
-	return (
-		'https://accounts.google.com/AccountChooser?' +
-		`Email=${ encodeURIComponent( email ) }` +
-		`&service=CPanel` +
-		`&continue=${ encodeURIComponent(
-			`https://admin.google.com/${ domain }/AcceptTermsOfService?continue=https://mail.google.com/mail/u/${ email }`
-		) }`
-	);
-}
-
 export {
 	canDomainAddGSuite,
 	formatPrice,
 	getAnnualPrice,
 	getEligibleGSuiteDomain,
+	getGSuiteSettingsUrl,
 	getGSuiteSupportedDomains,
 	getLoginUrlWithTOSRedirect,
 	getMonthlyPrice,
-	googleAppsSettingsUrl,
 	hasGSuite,
 	hasGSuiteSupportedDomain,
 	hasPendingGSuiteUsers,
