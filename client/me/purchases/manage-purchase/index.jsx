@@ -5,7 +5,7 @@
  */
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { moment, localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
@@ -225,8 +225,15 @@ class ManagePurchase extends Component {
 		} else if ( isRefundable( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				if ( isRenewal( purchase ) ) {
-					text = translate( 'Contact Support to Cancel Domain and Refund' );
-					link = CALYPSO_CONTACT;
+					const hoursSinceRenewal = Math.ceil(
+						moment().diff( purchase.mostRecentRenewMoment, 'hours', true )
+					);
+					if ( hoursSinceRenewal < 96 ) {
+						text = translate( 'Cancel Domain and Refund' );
+					} else {
+						text = translate( 'Contact Support to Cancel Domain and Refund' );
+						link = CALYPSO_CONTACT;
+					}
 				} else {
 					text = translate( 'Cancel Domain and Refund' );
 				}
