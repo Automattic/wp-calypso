@@ -35,6 +35,16 @@
 	}
 }
 
+@include breakpoint( '<660px' ) {
+	li.sidebar__menu {
+		border-bottom: 1px solid var( --sidebar-border-color );
+
+		&:first-child {
+			border-top: 1px solid var( --sidebar-border-color );
+		}
+	}
+}
+
 // Sidebar group headings
 .sidebar__heading {
 	color: var( --sidebar-heading-color );
@@ -52,11 +62,10 @@
 		display: flex;
 
 		@include breakpoint( '<660px' ) {
-			border-bottom: 1px solid var( --sidebar-border-color );
 			background-color: var( --sidebar-background );
 
-			&:first-child {
-				border-top: 1px solid var( --sidebar-border-color );
+			&.stats {
+				border-bottom: 1px solid var( --sidebar-border-color );
 			}
 		}
 	}
@@ -678,11 +687,19 @@ form.sidebar__button input {
 	.sidebar__menu.sidebar__wp-admin {
 		width: 100%;
 		margin-top: auto;
+
+		@include breakpoint( '<660px' ) {
+    	border: none;
+		}
 	}
 
 	.sidebar__menu.sidebar__wp-admin .wp-admin {
 		border-top: 1px solid var(--sidebar-border-color);
 		justify-content: flex-start;
+
+		@include breakpoint( '<660px' ) {
+    	border-top: none;
+		}
 	}
 }
 
