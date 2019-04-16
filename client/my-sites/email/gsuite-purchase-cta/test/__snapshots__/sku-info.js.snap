@@ -21,27 +21,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all props 1`
       Accounts with fewer than 5 users have 1 TB per user
     </InfoPopover>
   </div>
-  <h4
-    className="gsuite-purchase-cta__sku-info-name-price-per-user"
-  >
-    <span>
-      <strong>
-        $144
-      </strong>
-       per user / year
-    </span>
-  </h4>
-  <Button
-    className="gsuite-purchase-cta__sku-info-button"
-    onClick={[Function]}
-    type="button"
-  >
-    Add G Suite Business
-  </Button>
 </div>
 `;
 
-exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with monthly prices 1`] = `
+exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with all required props 1`] = `
 <div
   className="gsuite-purchase-cta__sku-info"
 >
@@ -59,51 +42,5 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with monthly pric
       Unlimited Storage
     </h4>
   </div>
-  <h4
-    className="gsuite-purchase-cta__sku-info-name-price-per-user"
-  >
-    <span>
-      <strong>
-        $12
-      </strong>
-       per user / month
-    </span>
-  </h4>
-  <h5
-    className="gsuite-purchase-cta__sku-info-annual-price"
-  >
-    $144 billed yearly
-  </h5>
-  <Button
-    className="gsuite-purchase-cta__sku-info-button"
-    onClick={[Function]}
-    type="button"
-  >
-    Add G Suite Business
-  </Button>
-</div>
-`;
-
-exports[`GSuitePurchaseCta it renders GSuitePurchaseCtaSkuInfo with no props 1`] = `
-<div
-  className="gsuite-purchase-cta__sku-info"
->
-  <h4
-    className="gsuite-purchase-cta__sku-info-name-price-per-user"
-  >
-    <span>
-      <strong>
-        -
-      </strong>
-       per user / year
-    </span>
-  </h4>
-  <Button
-    className="gsuite-purchase-cta__sku-info-button"
-    onClick={[Function]}
-    type="button"
-  >
-    Click Here
-  </Button>
 </div>
 `;
