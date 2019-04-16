@@ -172,7 +172,7 @@ class CalendarCard extends Component {
 					>
 						{ times.map( time => (
 							<option value={ time } key={ time }>
-								{ this.withTimezone( time ).format( 'HH:mm z' ) }
+								{ this.withTimezone( time ).format( 'LT z' ) }
 							</option>
 						) ) }
 					</FormSelect>
