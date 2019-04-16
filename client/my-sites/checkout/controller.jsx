@@ -22,7 +22,7 @@ import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import ConciergeSessionNudge from './concierge-session-nudge';
 import ConciergeQuickstartSession from './concierge-quickstart-session';
-import { isGSuiteRestricted } from 'lib/domains/gsuite';
+import { isGSuiteRestricted } from 'lib/gsuite';
 
 export function checkout( context, next ) {
 	const { feature, plan, product } = context.params;

@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { canDomainAddGSuite } from 'lib/domains/gsuite';
+import { canDomainAddGSuite } from 'lib/gsuite';
 import page from 'page';
 import userFactory from 'lib/user';
 

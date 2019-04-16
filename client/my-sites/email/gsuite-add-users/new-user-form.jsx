@@ -15,7 +15,7 @@ import DomainsSelect from './domains-select';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextInput from 'components/forms/form-text-input';
-import { getGSuiteSupportedDomains } from 'lib/domains/gsuite';
+import { getGSuiteSupportedDomains } from 'lib/gsuite';
 
 /**
  * Style dependencies

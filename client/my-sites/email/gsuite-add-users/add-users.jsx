@@ -19,7 +19,7 @@ import Card from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import FormLabel from 'components/forms/form-label';
-import { getEligibleGSuiteDomain, hasGSuite } from 'lib/domains/gsuite';
+import { getEligibleGSuiteDomain, hasGSuite } from 'lib/gsuite';
 import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
 import { emailManagement } from 'my-sites/email/paths';

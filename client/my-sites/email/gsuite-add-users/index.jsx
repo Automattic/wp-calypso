@@ -24,7 +24,7 @@ import DomainManagementHeader from 'my-sites/domains/domain-management/component
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
-import { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from 'lib/domains/gsuite';
+import { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from 'lib/gsuite';
 import { getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
 import Notice from 'components/notice';

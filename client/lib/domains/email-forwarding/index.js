@@ -7,7 +7,7 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import { hasGSuite } from 'lib/domains/gsuite';
+import { hasGSuite } from 'lib/gsuite';
 import { type as domainTypes } from 'lib/domains/constants';
 
 /**
