@@ -1,3 +1,5 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 /** @format */
 /**
  * External dependencies
@@ -13,6 +15,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Card from 'components/card';
+import classNames from 'classnames';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import { fetchUsers } from 'lib/users/actions';
 import InfiniteList from 'components/infinite-list';
@@ -34,8 +37,11 @@ class Team extends React.Component {
 		this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
 
 	render() {
-		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) );
-		const listClass = this.state.bulkEditing ? 'bulk-editing' : null;
+		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
+			listClass = classNames( {
+				'bulk-editing': this.state.bulkEditing,
+				'people-invites__invites-list': true,
+			} );
 		let headerText = this.props.translate( 'Team', { context: 'A navigation label.' } );
 		let people;
 
@@ -79,7 +85,6 @@ class Team extends React.Component {
 					key={ key }
 					items={ this.props.users }
 					className="people-selector__infinite-list"
-					ref="infiniteList"
 					fetchingNextPage={ this.props.fetchingUsers }
 					lastPage={ this.isLastPage() }
 					fetchNextPage={ this.fetchNextPage }

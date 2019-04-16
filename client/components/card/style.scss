@@ -91,8 +91,6 @@ a.card:hover,
 
 a.card:focus,
 .is-card-link.card:focus {
-	outline: 0;
-
 	.card__link-indicator {
 		color: var( --color-link-dark );
 	}

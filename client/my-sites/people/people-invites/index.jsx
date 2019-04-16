@@ -133,7 +133,9 @@ class PeopleInvites extends React.PureComponent {
 							count={ pendingInviteCount }
 							site={ site }
 						/>
-						<Card>{ pendingInvites.map( this.renderInvite ) }</Card>
+						<Card className="people-invites__invites-list">
+							{ pendingInvites.map( this.renderInvite ) }
+						</Card>
 					</div>
 				) : (
 					<div className="people-invites__pending">{ this.renderInviteUsersAction( false ) }</div>
@@ -148,7 +150,9 @@ class PeopleInvites extends React.PureComponent {
 						>
 							{ this.renderClearAll() }
 						</PeopleListSectionHeader>
-						<Card>{ acceptedInvites.map( this.renderInvite ) }</Card>
+						<Card className="people-invites__invites-list">
+							{ acceptedInvites.map( this.renderInvite ) }
+						</Card>
 					</div>
 				) }
 

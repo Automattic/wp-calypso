@@ -1,3 +1,5 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 /** @format */
 
 /**
@@ -14,6 +16,7 @@ import { localize } from 'i18n-calypso';
  */
 import PeopleListItem from 'my-sites/people/people-list-item';
 import Card from 'components/card';
+import classNames from 'classnames';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import FollowersActions from 'lib/followers/actions';
 import EmailFollowersActions from 'lib/email-followers/actions';
@@ -138,7 +141,10 @@ const Followers = localize(
 
 		render() {
 			const key = deterministicStringify( omit( this.props.fetchOptions, [ 'max', 'page' ] ) ),
-				listClass = this.state.bulkEditing ? 'bulk-editing' : null;
+				listClass = classNames( {
+					'bulk-editing': this.state.bulkEditing,
+					'people-invites__invites-list': true,
+				} );
 
 			if ( this.noFollowerSearchResults() ) {
 				return (
@@ -193,7 +199,6 @@ const Followers = localize(
 						key={ key }
 						items={ this.props.followers }
 						className="people-selector__infinite-list"
-						ref="infiniteList"
 						fetchNextPage={ this.fetchNextPage }
 						getItemRef={ this.getFollowerRef }
 						renderLoadingPlaceholders={ this.renderPlaceholders }
