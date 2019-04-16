@@ -34,7 +34,7 @@ before( async function() {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Plans: (${ screenSize }) @jetpack`, function() {
+describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Comparing Plans:', function() {
