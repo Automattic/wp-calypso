@@ -4,53 +4,24 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
-import { getAnnualPrice, getMonthlyPrice } from 'lib/gsuite';
+import GSuitePrice from 'components/gsuite/gsuite-price';
 import GSuiteCompactFeatures from 'components/gsuite/gsuite-features/compact';
 
 function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 	const translate = useTranslate();
-	const annualPrice = getAnnualPrice( cost, currencyCode );
-	const monthlyPrice = getMonthlyPrice( cost, currencyCode );
+
 	// currencyCode can safely replace the countryCode, just make sure we have one first
 	const showMonthlyPrice =
 		null !== currencyCode
 			? 'showMonthlyPrice' === abtest( 'gsuiteDomainFlowOptions', currencyCode )
 			: false;
-
-	const renderAnnualPrice = () => {
-		return (
-			<div className="gsuite-dialog__price-per-user">
-				{ translate( '%(annualPrice)s per user / year', {
-					args: { annualPrice },
-				} ) }
-			</div>
-		);
-	};
-
-	const renderMonthlyPrice = () => {
-		return (
-			<Fragment>
-				<div className="gsuite-dialog__price-per-user">
-					{ translate( '%(monthlyPrice)s per user / month', {
-						args: { monthlyPrice },
-					} ) }
-				</div>
-
-				<div className="gsuite-dialog__billing-period">
-					{ translate( '%(annualPrice)s billed yearly', {
-						args: { annualPrice },
-					} ) }
-				</div>
-			</Fragment>
-		);
-	};
 
 	return (
 		<div className="gsuite-dialog__product-details">
@@ -67,7 +38,11 @@ function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 					) }
 				</p>
 
-				{ showMonthlyPrice ? renderMonthlyPrice() : renderAnnualPrice() }
+				<GSuitePrice
+					cost={ cost }
+					currencyCode={ currencyCode }
+					showMonthlyPrice={ showMonthlyPrice }
+				/>
 			</div>
 
 			<GSuiteCompactFeatures domainName={ domain } productSlug={ plan } type={ 'list' } />
