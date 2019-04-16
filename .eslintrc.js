@@ -5,7 +5,7 @@ const reactVersion = require( './package.json' ).dependencies.react;
 module.exports = {
 	root: true,
 	extends: [
-		'wpcalypso/react',
+		'plugin:wpcalypso/react',
 		'plugin:jsx-a11y/recommended',
 		'plugin:jest/recommended',
 		'prettier',
@@ -54,7 +54,7 @@ module.exports = {
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
 	},
-	plugins: [ 'jest', 'jsx-a11y', 'import' ],
+	plugins: [ 'jest', 'jsx-a11y', 'import', 'wpcalypso' ],
 	settings: {
 		react: {
 			version: reactVersion,

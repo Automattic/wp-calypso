@@ -1,6 +1,7 @@
 #### next (…)
 
 - Enhancement: Update `i18n-ellipsis` rule to catch usage in @wordpress/i18n functions
+- Combine `eslint-plugin-wpcalypso` and `eslint-config-wpcalypso` modules into one.
 
 #### v4.0.2 (2018-08-10)
 
@@ -70,7 +71,7 @@
 
 #### v1.4.1 (2016-08-12)
 
-- Add: String template support for all rules 
+- Add: String template support for all rules
 
 #### v1.4.0 (2016-07-29)
 

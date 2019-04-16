@@ -1,4 +1,3 @@
-/** @format */
 /**
  * @fileoverview ESLint rules for the WordPress.com Calypso project
  * @author Automattic
@@ -10,5 +9,10 @@
 // Plugin Definition
 //------------------------------------------------------------------------------
 
-// import all rules in lib/rules
-module.exports.rules = require( './rules' );
+const rules = require( './rules' );
+const configs = require( './configs' );
+
+module.exports = {
+	rules,
+	configs,
+};
