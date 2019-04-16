@@ -41,4 +41,6 @@ function addSwitchToClassicButton() {
 	} );
 }
 
-addSwitchToClassicButton();
+$( () => {
+	addSwitchToClassicButton();
+} );
