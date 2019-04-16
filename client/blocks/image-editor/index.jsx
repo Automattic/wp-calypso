@@ -38,6 +38,11 @@ import QuerySites from 'components/data/query-sites';
 import { AspectRatios, AspectRatiosValues } from 'state/ui/editor/image-editor/constants';
 import { getDefaultAspectRatio } from './utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ImageEditor extends React.Component {
 	static propTypes = {
 		// Component props
@@ -74,6 +79,8 @@ class ImageEditor extends React.Component {
 		noticeText: null,
 		noticeStatus: 'is-info',
 	};
+
+	editCanvasRef = React.createRef();
 
 	componentWillReceiveProps( newProps ) {
 		const { media: currentMedia } = this.props;
@@ -164,7 +171,7 @@ class ImageEditor extends React.Component {
 			return;
 		}
 
-		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
+		const canvasComponent = this.editCanvasRef.current.getWrappedInstance();
 
 		canvasComponent.toBlob( this.convertBlobToImage );
 	};
@@ -257,7 +264,7 @@ class ImageEditor extends React.Component {
 
 				<figure>
 					<div className="image-editor__content">
-						<ImageEditorCanvas ref="editCanvas" onLoadError={ this.onLoadCanvasError } />
+						<ImageEditorCanvas ref={ this.editCanvasRef } onLoadError={ this.onLoadCanvasError } />
 						<ImageEditorToolbar
 							onShowNotice={ this.showNotice }
 							allowedAspectRatios={ allowedAspectRatios }
