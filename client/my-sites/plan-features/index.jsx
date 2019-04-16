@@ -408,10 +408,6 @@ export class PlanFeatures extends Component {
 				}
 			}
 
-			if ( withScroll && planConstantObj.getTwoLinesBillingTimeFrame ) {
-				billingTimeFrame = planConstantObj.getTwoLinesBillingTimeFrame();
-			}
-
 			if ( isInSignup && displayJetpackPlans ) {
 				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
 			}
