@@ -23,6 +23,11 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const BillingHistory = ( { pastTransactions, translate } ) => (
 	<Main className="billing-history">
 		<DocumentHead title={ translate( 'Billing History' ) } />
