@@ -13,6 +13,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import Button from 'components/button';
 import config from 'config';
 import CompactCard from 'components/card/compact';
 import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
@@ -22,6 +23,7 @@ import { getProductCost } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuiteFeatures from 'components/gsuite/gsuite-features';
 import GSuiteLearnMore from 'components/gsuite/gsuite-learn-more';
+import GSuitePrice from 'components/gsuite/gsuite-price';
 import GSuitePurchaseCtaSkuInfo from 'my-sites/email/gsuite-purchase-cta/sku-info';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QueryProductsList from 'components/data/query-products-list';
@@ -74,36 +76,55 @@ export const GSuitePurchaseCta = ( {
 		abTestGroup === 'showBusinessWithMonthlyPrices';
 
 	const renderBasicSku = () => (
-		<GSuitePurchaseCtaSkuInfo
-			currencyCode={ currencyCode }
-			buttonText={
-				showBusinessOption ? translate( 'Add G Suite Basic' ) : translate( 'Add G Suite' )
-			}
-			onButtonClick={ () => {
-				goToAddGSuiteUsers( 'basic' );
-			} }
-			showButton={ upgradeAvailable }
-			showMonthlyPrice={ showMonthlyPrice }
-			skuCost={ gsuiteBasicCost }
-			skuName={ showBusinessOption ? translate( 'G Suite Basic' ) : undefined }
-			storageText={ showBusinessOption ? translate( '30 GB of Storage' ) : undefined }
-		/>
+		<div>
+			{ showBusinessOption && (
+				<GSuitePurchaseCtaSkuInfo
+					skuName={ translate( 'G Suite Basic' ) }
+					storageText={ translate( '30 GB of Storage' ) }
+				/>
+			) }
+			<GSuitePrice
+				cost={ gsuiteBasicCost }
+				currencyCode={ currencyCode }
+				showMonthlyPrice={ showMonthlyPrice }
+			/>
+			{ upgradeAvailable && (
+				<Button
+					className="gsuite-purchase-cta__get-gsuite-button"
+					onClick={ () => {
+						goToAddGSuiteUsers( 'basic' );
+					} }
+					primary
+				>
+					{ showBusinessOption ? translate( 'Add G Suite Basic' ) : translate( 'Add G Suite' ) }
+				</Button>
+			) }
+		</div>
 	);
 
 	const renderBusinessSku = () => (
-		<GSuitePurchaseCtaSkuInfo
-			currencyCode={ currencyCode }
-			buttonText={ translate( 'Add G Suite Business' ) }
-			onButtonClick={ () => {
-				goToAddGSuiteUsers( 'business' );
-			} }
-			showButton={ upgradeAvailable }
-			showMonthlyPrice={ showMonthlyPrice }
-			skuCost={ gsuiteBusinessCost }
-			skuName={ translate( 'G Suite Business' ) }
-			storageText={ translate( 'Unlimited Storage' ) }
-			storageNoticeText={ translate( 'Accounts with fewer than 5 users have 1 TB per user.' ) }
-		/>
+		<div>
+			<GSuitePurchaseCtaSkuInfo
+				skuName={ translate( 'G Suite Business' ) }
+				storageText={ translate( 'Unlimited Storage' ) }
+				storageNoticeText={ translate( 'Accounts with fewer than 5 users have 1 TB per user.' ) }
+			/>
+			<GSuitePrice
+				cost={ gsuiteBusinessCost }
+				currencyCode={ currencyCode }
+				showMonthlyPrice={ showMonthlyPrice }
+			/>
+			{ upgradeAvailable && (
+				<Button
+					className="gsuite-purchase-cta__get-gsuite-button"
+					onClick={ () => {
+						goToAddGSuiteUsers( 'business' );
+					} }
+				>
+					{ translate( 'Add G Suite Business' ) }
+				</Button>
+			) }
+		</div>
 	);
 
 	return (
