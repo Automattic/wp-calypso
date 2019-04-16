@@ -10,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import GSuitePurchaseFeaturesSingleFeature from './single-feature';
+import GSuiteSingleFeature from './single-feature';
 
 /**
  * Style dependencies
@@ -44,12 +44,10 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 	return (
 		<div
 			className={
-				'grid' === type
-					? 'gsuite-purchase-features__features-grid'
-					: 'gsuite-purchase-features__features-list'
+				'grid' === type ? 'gsuite-features__features-grid' : 'gsuite-features__features-list'
 			}
 		>
-			<GSuitePurchaseFeaturesSingleFeature
+			<GSuiteSingleFeature
 				title={ translate( 'A custom @%(domain)s email address', {
 					args: {
 						domain: domainName,
@@ -64,7 +62,7 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 				imageAlt={ 'Gmail Logo' }
 				compact={ compact }
 			/>
-			<GSuitePurchaseFeaturesSingleFeature
+			<GSuiteSingleFeature
 				title={ translate( 'Docs, spreadsheets and more' ) }
 				description={
 					compact
@@ -75,14 +73,14 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 				imageAlt={ 'Google Docs Logo' }
 				compact={ compact }
 			/>
-			<GSuitePurchaseFeaturesSingleFeature
+			<GSuiteSingleFeature
 				title={ getStorageTitle() }
 				description={ compact ? undefined : getStorageText() }
 				imagePath={ '/calypso/images/g-suite/logo_drive_48dp.svg' }
 				imageAlt={ 'Google Drive Logo' }
 				compact={ compact }
 			/>
-			<GSuitePurchaseFeaturesSingleFeature
+			<GSuiteSingleFeature
 				title={
 					compact ? translate( 'Video and voice calls' ) : translate( 'Connect with your team' )
 				}

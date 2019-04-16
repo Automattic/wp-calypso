@@ -1,4 +1,4 @@
-.gsuite-purchase-features__features-grid {
+.gsuite-features__features-grid {
 	box-sizing: border-box;
 	justify-content: justify-content;
 	margin: 1em 0;
@@ -8,7 +8,7 @@
 		flex-flow: row wrap;
 	}
 
-	.gsuite-purchase-features__feature-block {
+	.gsuite-features__feature-block {
 		p {
 			@include breakpoint( '>960px' ) {
 				max-width: 200px;
@@ -20,12 +20,12 @@
 		text-align: center;
 	}
 }
-.gsuite-purchase-features__features-list {
+.gsuite-features__features-list {
 	box-sizing: border-box;
 	justify-content: justify-content;
 	margin: 1em 0;
 
-	.gsuite-purchase-features__feature {
+	.gsuite-features__feature {
 		margin-bottom: 2em;
 	}
 
@@ -35,35 +35,35 @@
 	}
 }
 
-.gsuite-purchase-features__compact-feature,
-.gsuite-purchase-features__feature {
+.gsuite-features__compact-feature,
+.gsuite-features__feature {
 	display: flex;
 	flex-basis: 50%;
 	justify-content: flex-start;
 	margin-bottom: 1em;
 }
-.gsuite-purchase-features__feature {
-	.gsuite-purchase-features__feature-header {
+.gsuite-features__feature {
+	.gsuite-features__feature-header {
 		font-size: 17px;
 		font-weight: 600;
 	}
 }
 
-.gsuite-purchase-features__compact-feature {
-	.gsuite-purchase-features__feature-image {
+.gsuite-features__compact-feature {
+	.gsuite-features__feature-image {
 		width: 24px;
 	}
-	.gsuite-purchase-features__feature-header {
+	.gsuite-features__feature-header {
 		font-size: 15px;
 	}
 }
 
-.gsuite-purchase-features__feature-image {
+.gsuite-features__feature-image {
 	align-items: flex-start;
 	padding: 0 1em 0 0;
 }
 
-.gsuite-purchase-features__feature-block {
+.gsuite-features__feature-block {
 	align-items: flex-start;
 	padding: 0 1em 0 0;
 	flex: 1;
