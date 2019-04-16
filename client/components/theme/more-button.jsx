@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
  */
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenuSeparator from 'components/popover/menu-separator';
 import { isOutsideCalypso } from 'lib/url';
 
 /**
@@ -83,7 +84,7 @@ class ThemeMoreButton extends Component {
 						this.props.options,
 						function( option, key ) {
 							if ( option.separator ) {
-								return <hr key={ key } className="popover__hr" />;
+								return <PopoverMenuSeparator key={ key } />;
 							}
 							if ( option.getUrl ) {
 								const url = option.getUrl( this.props.themeId );
