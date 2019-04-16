@@ -4,9 +4,10 @@
  */
 import { combineReducers, createReducer } from 'state/utils';
 import uploadsReducer from 'state/imports/uploads/reducer';
-import { IMPORTS_FETCH_COMPLETED } from 'state/action-types';
+import { IMPORTS_FETCH_COMPLETED, SELECTED_SITE_SET } from 'state/action-types';
 
 const isHydrated = createReducer( false, {
+	[ SELECTED_SITE_SET ]: () => false,
 	[ IMPORTS_FETCH_COMPLETED ]: () => true,
 } );
 
