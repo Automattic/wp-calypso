@@ -13,8 +13,7 @@ import { parse as parseUrl } from 'url';
  * Internal dependencies
  */
 import config from 'config';
-import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
-import MagicLogin from './magic-login';
+import AsyncLoad from 'components/async-load';
 import WPLogin from './wp-login';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getLanguageSlugs } from 'lib/i18n-utils';
@@ -87,7 +86,7 @@ export function login( context, next ) {
 export function magicLogin( context, next ) {
 	const { path } = context;
 
-	context.primary = <MagicLogin path={ path } />;
+	context.primary = <AsyncLoad require="./magic-login" placeholder={ null } path={ path } />;
 
 	next();
 }
@@ -108,7 +107,13 @@ export function magicLoginUse( context, next ) {
 	const { client_id, email, token } = previousQuery;
 
 	context.primary = (
-		<HandleEmailedLinkForm clientId={ client_id } emailAddress={ email } token={ token } />
+		<AsyncLoad
+			require="./magic-login/handle-emailed-link-form"
+			placeholder={ null }
+			clientId={ client_id }
+			emailAddress={ email }
+			token={ token }
+		/>
 	);
 
 	next();
