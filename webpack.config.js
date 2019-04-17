@@ -18,7 +18,6 @@ const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' 
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-external-dependencies-plugin' );
 const { cssNameFromFilename } = require( '@automattic/calypso-build/webpack/util' );
 
 /**
@@ -142,15 +141,9 @@ function shouldTranspileDependency( filepath ) {
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  *
- * @param {object}  env                              additional config options
- * @param {boolean} env.externalizeWordPressPackages whether to bundle or extern the `@wordpress/` packages
- *
  * @return {object}                                  webpack config
  */
-function getWebpackConfig( {
-	externalizeWordPressPackages = false,
-	preserveCssCustomProperties = true,
-} = {} ) {
+function getWebpackConfig() {
 	let outputFilename = '[name].[chunkhash].min.js'; // prefer the chunkhash, which depends on the chunk, not the entire build
 	let outputChunkFilename = '[name].[chunkhash].min.js'; // ditto
 
@@ -231,7 +224,7 @@ function getWebpackConfig( {
 					},
 				},
 				SassConfig.loader( {
-					preserveCssCustomProperties,
+					preserveCssCustomProperties: true,
 					includePaths: [ path.join( __dirname, 'client' ) ],
 					prelude: `@import '${ path.join(
 						__dirname,
@@ -326,7 +319,6 @@ function getWebpackConfig( {
 			new MomentTimezoneDataPlugin( {
 				startYear: 2000,
 			} ),
-			externalizeWordPressPackages && new WordPressExternalDependenciesPlugin(),
 		] ),
 		externals: [ 'electron' ],
 	};
