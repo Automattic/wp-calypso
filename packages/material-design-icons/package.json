@@ -25,5 +25,13 @@
 	},
 	"files": [
 		"src"
-	]
+	],
+	"devDependencies": {
+		"grunt": "^0.4.5",
+		"grunt-cli": "^1.2.0",
+		"grunt-svgstore": "^1.0.0"
+	},
+	"scripts": {
+		"build": "grunt --verbose"
+	}
 }
