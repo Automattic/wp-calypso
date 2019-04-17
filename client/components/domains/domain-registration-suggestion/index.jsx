@@ -27,10 +27,12 @@ import {
 	VALID_MATCH_REASONS,
 } from 'components/domains/domain-registration-suggestion/utility';
 import ProgressBar from 'components/progress-bar';
-import { getDomainPrice, getDomainSalePrice } from 'lib/domains';
+import { getDomainPrice, getDomainSalePrice, getTld, isHstsMandatory } from 'lib/domains';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import Badge from 'components/badge';
+import InfoPopover from 'components/info-popover';
+import { HTTPS_SSL } from 'lib/url/support';
 
 const NOTICE_GREEN = '#4ab866';
 
@@ -172,6 +174,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 	renderDomain() {
 		const {
+			showHstsNotice,
 			productSaleCost,
 			suggestion: { domain_name: domain },
 			translate,
@@ -194,6 +197,27 @@ class DomainRegistrationSuggestion extends React.Component {
 			<div className="domain-registration-suggestion__title-wrapper">
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
 				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
+				{ showHstsNotice && (
+					<InfoPopover
+						className="domain-registration-suggestion__hsts-tooltip"
+						position={ 'right' }
+					>
+						{ translate(
+							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
+								'to host a website. When you host this domain at WordPress.com an SSL ' +
+								'certificate is included in your paid plan. {{a}}Learn more{{/a}}.',
+							{
+								args: {
+									tld: '.' + getTld( domain ),
+								},
+								components: {
+									a: <a href={ HTTPS_SSL } target="_blank" rel="noopener noreferrer" />,
+									strong: <strong />,
+								},
+							}
+						) }
+					</InfoPopover>
+				) }
 			</div>
 		);
 	}
@@ -302,6 +326,7 @@ const mapStateToProps = ( state, props ) => {
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
 
 	return {
+		showHstsNotice: isHstsMandatory( productSlug, productsList ),
 		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode ),
 		productSaleCost: getDomainSalePrice( productSlug, productsList, currentUserCurrencyCode ),
 	};
