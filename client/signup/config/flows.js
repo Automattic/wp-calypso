@@ -55,7 +55,7 @@ function getPostsDestination( dependencies ) {
 function getRedirectDestination( dependencies ) {
 	if (
 		dependencies.oauth2_redirect &&
-		dependencies.oauth2_redirect.match( /^https%3A%2F%2Fpublic-api.wordpress.com/i )
+		dependencies.oauth2_redirect.startsWith( 'https://public-api.wordpress.com' )
 	) {
 		return dependencies.oauth2_redirect;
 	}
