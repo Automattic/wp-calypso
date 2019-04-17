@@ -19,8 +19,8 @@ const GSUITE_LINK_PREFIX = 'https://mail.google.com/a/';
  * Applies a precision to the cost
  *
  * @param {Number} cost - cost
- * @param {Object} precision - precision to apply to cost
- * @returns {Boolean} - Returns price with applied precision
+ * @param {Number} precision - precision to apply to cost
+ * @returns {String} - Returns price with applied precision
  */
 function applyPrecision( cost, precision ) {
 	const exponent = Math.pow( 10, precision );
@@ -47,12 +47,12 @@ function canDomainAddGSuite( domainName ) {
 }
 
 /**
- * Formats price gievn cost and currency
+ * Formats price given cost and currency
  *
  * @param {Number} cost - cost
  * @param {String} currencyCode - currency code to format with
  * @param {Object} options - options containing precision
- * @returns {Boolean} - Returns a formatted price
+ * @returns {String} - Returns a formatted price
  */
 function formatPrice( cost, currencyCode, options = {} ) {
 	if ( undefined !== options.precision ) {
