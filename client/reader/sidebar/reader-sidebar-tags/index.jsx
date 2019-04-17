@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from '../expandable';
+import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ReaderSidebarTagsList from './list';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';

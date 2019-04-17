@@ -144,6 +144,147 @@
 			margin-right: 0;
 		}
 	}
+
+	&.is-togglable {
+		@include breakpoint( '<660px' ) {
+			margin-top: 0;
+		}
+
+		.sidebar__heading {
+			color: var( --sidebar-text-color );
+			cursor: pointer;
+			font-weight: normal;
+			margin: 0;
+			padding: 10px 16px 10px 20px;
+			transition: background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+			.gridicon {
+				fill: var( --sidebar-gridicon-fill );
+				position: relative;
+				top: 2px;
+				height: 18px; // Smaller than recommended for gridicon, but works here
+				transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+			}
+
+			.count {
+				color: var( --sidebar-text-color );
+				border-color: var( --sidebar-text-color );
+				font-size: 13px;
+				padding: 2px 7px 2px 6px;
+				margin-left: 8px;
+			}
+
+			&:hover {
+				color: var( --sidebar-menu-hover-color );
+				background-color: var( --sidebar-menu-hover-background );
+
+				.gridicon {
+					fill: var( --sidebar-gridicon-fill );
+				}
+			}
+		
+			.accessible-focus &:focus {
+				outline: none;
+				box-shadow: inset 0 0 0 2px var( --color-primary-light );
+
+				&::after {
+					top: 2px;
+					right: 2px;
+					bottom: 2px;
+				}
+			}
+		}
+
+		.sidebar__menu-list,
+		.sidebar__menu-empty {
+			height: 0;
+			overflow: hidden;
+		}
+
+		.sidebar__menu-item {
+			opacity: 0;
+			transition: transform 0.15s cubic-bezier( 0.23, 1, 0.32, 1 ), opacity 0.15s ease-in-out;
+			transition-delay: 0.05s;
+			transform: translateY( -100px );
+		}
+
+		&.is-toggle-open {
+			.sidebar__heading {
+				background-color: var( --sidebar-menu-hover-background );
+				box-shadow: 0 1px 0 var( --sidebar-border-color ), 0 -1px 0 var( --sidebar-border-color );
+
+				.gridicon {
+					transform: rotate( 180deg );
+				}
+			}
+
+			.sidebar__menu-add-button {
+				color: var( --color-text-subtle );
+				opacity: 1;
+				pointer-events: auto;
+				transform: translateX( 0 );
+
+
+				&:hover {
+					border-color: var( --sidebar-menu-hover-color );
+					color: var( --color-accent );
+				}
+			}
+
+			.sidebar__menu-list,
+			.sidebar__menu-empty {
+				height: auto;
+				padding-top: 8px;
+				padding-bottom: 8px;
+			}
+
+			.sidebar__menu-item {
+				opacity: 1;
+				transform: translateY( 0 );
+
+				.add-new {
+					background: var( --color-white );
+					border: 1px solid var( --color-neutral-100 );
+					border-radius: 3px;
+					font-size: 11px;
+					padding: 6px 7px;
+					position: absolute;
+					top: 2px;
+					right: 8px;
+					text-transform: none;
+				}
+			}
+
+			.sidebar__menu-list .sidebar__menu-item,
+			.sidebar__menu-list .sidebar-dynamic-menu__tag {
+				li {
+					&:first-child {
+						@include breakpoint( '<660px' ) {
+							margin-top: -5px;
+						}
+					}
+
+					&:last-child {
+						@include breakpoint( '<660px' ) {
+							border-bottom: 1px solid rgba( 200, 215, 225, 0.5 );
+						}
+					}
+				}
+			}
+		}
+
+		.is-add-open .sidebar__menu-add {
+			opacity: 1;
+			pointer-events: auto;
+			transform: translateX( 0 );
+		}
+
+		.selected .sidebar__menu-item-label {
+			@include breakpoint( '<660px' ) {
+				color: var( --color-primary );
+			}
+		}
+	}
 }
 
 a.sidebar__button,

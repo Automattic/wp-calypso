@@ -14,18 +14,33 @@ import Count from 'components/count';
 import SidebarHeading from 'layout/sidebar/heading';
 import TranslatableString from 'components/translatable/proptype';
 
-const ExpandableSidebarHeading = ( { title, count, onClick } ) => (
-	<SidebarHeading onClick={ onClick }>
-		<Gridicon icon="chevron-down" />
-		<span>{ title }</span>
-		<Count count={ count } />
-	</SidebarHeading>
-);
+const ExpandableSidebarHeading = ( {
+	title,
+	count,
+	onClick,
+	icon,
+	materialIcon,
+	expanded,
+	menuId,
+} ) => {
+	const MaterialIcon = materialIcon;
+
+	return (
+		<SidebarHeading aria-controls={ menuId } aria-expanded={ expanded } onClick={ onClick }>
+			{ icon ? <Gridicon icon={ icon } /> : null }
+			{ materialIcon ? <MaterialIcon /> : null }
+			<Gridicon icon="chevron-down" />
+			<span>{ title }</span>
+			{ undefined !== count ? <Count count={ count } /> : null }
+		</SidebarHeading>
+	);
+};
 
 ExpandableSidebarHeading.propTypes = {
 	title: TranslatableString.isRequired,
 	count: PropTypes.number,
 	onClick: PropTypes.func,
+	icon: PropTypes.string,
 };
 
 ExpandableSidebarHeading.defaultProps = {
