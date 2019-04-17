@@ -96,20 +96,6 @@
 	}
 }
 
-.gsuite-purchase-cta__sku-info-name-price-per-user {
-	strong {
-		color: var( --color-text );
-		font-size: 24px;
-		font-weight: 300;
-	}
-
-	span {
-		color: var( --color-text-subtle );
-		font-size: 13px;
-		font-weight: normal;
-	}
-}
-
 .gsuite-purchase-cta__sku-info-storage-area {
 	display: flex;
 	flex-direction: row;
@@ -128,13 +114,7 @@
 	}
 }
 
-.gsuite-purchase-cta__sku-info-annual-price {
-	color: var( --color-text-subtle );
-	font-size: 13px;
-	font-style: italic;
-}
-
-.gsuite-purchase-cta__sku-info-button {
+.gsuite-purchase-cta__get-gsuite-button {
 	float: none;
 	margin: 1em 0 0.5em;
 	padding-left: 2em;
