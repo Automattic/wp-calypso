@@ -329,7 +329,7 @@ function paymentMethodName( method ) {
 		eps: 'EPS',
 		giropay: 'Giropay',
 		ideal: 'iDEAL',
-		netbanking: 'NetBanking',
+		netbanking: 'Net Banking',
 		paypal: 'PayPal',
 		p24: 'Przelewy24',
 		'brazil-tef': 'Transferência bancária',
