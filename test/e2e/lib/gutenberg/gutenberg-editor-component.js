@@ -138,7 +138,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( await driverHelper.isElementPresent( this.driver, nuxPopupSelector ) ) {
 			await driverHelper.clickWhenClickable( this.driver, nuxDisableSelector );
 			try {
-				await driverHelper.elementIsNotPresent( this.driver, nuxPopupSelector );
+				await driverHelper.waitTillNotPresent(
+					this.driver,
+					nuxPopupSelector,
+					this.explicitWaitMS / 2
+				);
 			} catch {
 				await this.closeSidebar();
 				await driverHelper.clickWhenClickable( this.driver, nuxDisableSelector );
