@@ -71,7 +71,6 @@ import {
 } from 'state/ui/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import { canAccessEarnSection } from 'lib/ads/utils';
-import MaterialIcon from 'components/material-icon';
 
 /**
  * Module variables
@@ -178,6 +177,7 @@ export class MySitesSidebar extends Component {
 				link={ statsLink }
 				onNavigate={ this.trackStatsClick }
 				icon="stats-alt"
+				materialIcon="bar_chart"
 			>
 				<a href={ statsLink }>
 					<StatsSparkline className="sidebar__sparkline" siteId={ siteId } />
@@ -530,7 +530,7 @@ export class MySitesSidebar extends Component {
 				link={ storeLink }
 				onNavigate={ this.trackStoreClick }
 				icon="cart"
-				materialIcon={ <MaterialIcon icon="shopping_cart" /> }
+				materialIcon="shopping_cart"
 				forceInternalLink
 			>
 				<div className="sidebar__chevron-right">
@@ -840,6 +840,7 @@ export class MySitesSidebar extends Component {
 						onClick={ this.props.toggleMySitesSidebarSiteMenu }
 						expanded={ this.props.isSiteOpen }
 						title={ this.props.translate( 'Site' ) }
+						materialIcon="edit"
 					>
 						{ this.site() }
 					</ExpandableSidebarMenu>
@@ -850,6 +851,7 @@ export class MySitesSidebar extends Component {
 						onClick={ this.props.toggleMySitesSidebarDesignMenu }
 						expanded={ this.props.isDesignOpen }
 						title={ this.props.translate( 'Design' ) }
+						materialIcon="gesture"
 					>
 						{ this.design() }
 					</ExpandableSidebarMenu>
@@ -859,6 +861,7 @@ export class MySitesSidebar extends Component {
 					onClick={ this.props.toggleMySitesSidebarToolsMenu }
 					expanded={ this.props.isToolsOpen }
 					title={ this.props.translate( 'Tools' ) }
+					materialIcon="build"
 				>
 					{ this.tools() }
 					{ this.earn() }
@@ -870,6 +873,7 @@ export class MySitesSidebar extends Component {
 						onClick={ this.props.toggleMySitesSidebarManageMenu }
 						expanded={ this.props.isManageOpen }
 						title={ this.props.translate( 'Manage' ) }
+						materialIcon="settings"
 					>
 						<ul>
 							{ this.upgrades() }

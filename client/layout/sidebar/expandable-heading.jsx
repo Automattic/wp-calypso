@@ -11,6 +11,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Count from 'components/count';
+import MaterialIcon from 'components/material-icon';
 import SidebarHeading from 'layout/sidebar/heading';
 import TranslatableString from 'components/translatable/proptype';
 
@@ -23,12 +24,10 @@ const ExpandableSidebarHeading = ( {
 	expanded,
 	menuId,
 } ) => {
-	const MaterialIcon = materialIcon;
-
 	return (
 		<SidebarHeading aria-controls={ menuId } aria-expanded={ expanded } onClick={ onClick }>
 			{ icon ? <Gridicon icon={ icon } /> : null }
-			{ materialIcon ? <MaterialIcon /> : null }
+			{ materialIcon ? <MaterialIcon icon={ materialIcon } /> : null }
 			<Gridicon icon="chevron-down" />
 			<span>{ title }</span>
 			{ undefined !== count ? <Count count={ count } /> : null }
@@ -41,6 +40,7 @@ ExpandableSidebarHeading.propTypes = {
 	count: PropTypes.number,
 	onClick: PropTypes.func,
 	icon: PropTypes.string,
+	materialIcon: PropTypes.string,
 };
 
 ExpandableSidebarHeading.defaultProps = {

@@ -131,7 +131,6 @@
 	}
 
 	.gridicon,
-	.jetpack-logo {
 	svg {
 		fill: var( --sidebar-gridicon-fill );
 		height: 24px;
@@ -142,7 +141,6 @@
 		// External indicator for sections that aren't available in Calypso
 		&.gridicons-external {
 			position: absolute;
-			top: 13px;
 			right: 15px;
 			left: auto;
 			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
@@ -151,6 +149,16 @@
 		}
 	}
 
+	// Currently hiding non-gridicon SVGs while testing new nav drawer design (PR #31742)
+	svg {
+		display: none;
+	}
+
+	.gridicon,
+	.jetpack-logo {
+		display: inline;
+	}
+	
 	&.is-togglable {
 		@include breakpoint( '<660px' ) {
 			margin-top: 0;
@@ -211,6 +219,10 @@
             display: none;
         }
 
+        .sidebar__menu-list .gridicons-external {
+			display: inline;
+		}
+
 		.sidebar__menu-item {
 			opacity: 0;
 			transition: transform 0.15s cubic-bezier( 0.23, 1, 0.32, 1 ), opacity 0.15s ease-in-out;
@@ -221,7 +233,6 @@
 		&.is-toggle-open {
 			.sidebar__heading {
 				background-color: var( --sidebar-menu-hover-background );
-				box-shadow: 0 1px 0 var( --sidebar-border-color ), 0 -1px 0 var( --sidebar-border-color );
 
 				.gridicon {
 					transform: rotate( 180deg );
@@ -295,6 +306,7 @@
 			}
 		}
 	}
+
 }
 
 a.sidebar__button,
@@ -671,12 +683,22 @@ form.sidebar__button input {
 	}
 
 	/* WP Admin Link */
+
+	.sidebar__menu.sidebar__wp-admin {
+		width: 100%;
+		margin-top: auto;
+
+		@include breakpoint( '<660px' ) {
+    	border: none;
+		}
+	}
+
 	.sidebar__menu.sidebar__wp-admin .wp-admin {
 		border-top: 1px solid var(--sidebar-border-color);
 		justify-content: flex-start;
 
 		@include breakpoint( '<660px' ) {
-			border-top: none;
+    	border-top: none;
 		}
 	}
 }
