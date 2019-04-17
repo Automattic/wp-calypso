@@ -57,6 +57,7 @@ import login from './login/reducer';
 import media from './media/reducer';
 import memberships from './memberships/reducer';
 import mailchimp from './mailchimp/reducer';
+import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import notificationSettings from './notification-settings/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
@@ -144,6 +145,7 @@ const reducers = {
 	login,
 	media,
 	memberships,
+	mySites,
 	notices,
 	notificationSettings,
 	notificationsUnseenCount,

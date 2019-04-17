@@ -39,7 +39,7 @@ import {
 	isDesignMenuOpen,
 	isToolsMenuOpen,
 	isManageMenuOpen,
-} from 'state/ui/my-sites/sidebar/selectors';
+} from 'state/my-sites/sidebar/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';

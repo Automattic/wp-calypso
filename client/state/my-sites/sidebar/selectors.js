@@ -1,17 +1,17 @@
 /** @format */
 
 export function isSiteMenuOpen( state ) {
-	return state.ui.mySites.isSiteOpen;
+	return state.mySites.isSiteOpen;
 }
 
 export function isDesignMenuOpen( state ) {
-	return state.ui.mySites.isDesignOpen;
+	return state.mySites.isDesignOpen;
 }
 
 export function isToolsMenuOpen( state ) {
-	return state.ui.mySites.isToolsOpen;
+	return state.mySites.isToolsOpen;
 }
 
 export function isManageMenuOpen( state ) {
-	return state.ui.mySites.isManageOpen;
+	return state.mySites.isManageOpen;
 }

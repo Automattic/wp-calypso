@@ -23,7 +23,6 @@ import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
 import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
 import mediaModal from './media-modal/reducer';
-import mySites from './my-sites/reducer';
 import npsSurveyNotice from './nps-survey-notice/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
 import payment from './payment/reducer';
@@ -118,7 +117,6 @@ const reducer = combineReducers( {
 	mediaModal,
 	npsSurveyNotice,
 	oauth2Clients,
-	mySites,
 	payment,
 	postTypeList,
 	preview,

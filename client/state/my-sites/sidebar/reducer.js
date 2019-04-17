@@ -14,13 +14,19 @@ import {
 import { combineReducers } from 'state/utils';
 
 function createToggleReducer( type ) {
-	return function( state = false, action ) {
+	let reducer = function( state = false, action ) {
 		if ( type === action.type ) {
 			return ! state;
 		}
 
 		return state;
 	};
+
+	reducer.schema = {
+		type: 'boolean'
+	};
+
+	return reducer;
 }
 
 export default combineReducers( {
