@@ -14,7 +14,7 @@ import {
 import { combineReducers } from 'state/utils';
 
 function createToggleReducer( type ) {
-	let reducer = function( state = false, action ) {
+	const reducer = function( state = false, action ) {
 		if ( type === action.type ) {
 			return ! state;
 		}
@@ -23,7 +23,7 @@ function createToggleReducer( type ) {
 	};
 
 	reducer.schema = {
-		type: 'boolean'
+		type: 'boolean',
 	};
 
 	return reducer;
