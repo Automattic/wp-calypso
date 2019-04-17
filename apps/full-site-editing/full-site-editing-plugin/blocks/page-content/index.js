@@ -4,6 +4,10 @@
  */
 import classNames from 'classnames';
 import { find, get, map } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
 import { BlockControls } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { IconButton, Placeholder, SelectControl, Toolbar } from '@wordpress/components';
