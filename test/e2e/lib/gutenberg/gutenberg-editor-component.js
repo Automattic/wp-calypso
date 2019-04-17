@@ -144,7 +144,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					this.explicitWaitMS / 2
 				);
 			} catch {
-				await this.closeSidebar();
+				if ( driverManager.currentScreenSize() === 'mobile' ) {
+					await this.closeSidebar();
+				}
 				await driverHelper.clickWhenClickable( this.driver, nuxDisableSelector );
 			}
 		}
