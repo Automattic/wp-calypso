@@ -1027,21 +1027,31 @@
 .sharing-buttons-preview__panel-content .sharing-buttons-preview-button {
 	margin-top: 8px;
 	cursor: pointer;
+	opacity: 0.4;
 	@include breakpoint( '<480px' ) {
 		margin: 18px 18px 0 0;
 	}
 
 	&.style-icon:hover {
 		border: none;
-		opacity: 0.6;
+		opacity: 0.7;
 	}
 
 	&.is-enabled {
-		opacity: 0.3;
+		opacity: 1;
 	}
 
-	&.is-enabled.style-icon {
-		opacity: 0.2;
+	&.style-icon.share-email,
+	&.style-icon.share-print {
+		opacity: 0.6;
+
+		&:hover {
+			opacity: 0.9;
+		}
+
+		&.is-enabled {
+			opacity: 1;
+		}
 	}
 }
 
