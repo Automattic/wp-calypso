@@ -164,7 +164,7 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
-async function loadSelectedEditor( context, next ) {
+async function redirectIfBlockEditor( context, next ) {
 	const tmpState = context.store.getState();
 	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
 	if ( ! selectedEditor ) {
@@ -335,6 +335,6 @@ export default {
 			return next();
 		}
 
-		loadSelectedEditor( context, next );
+		redirectIfBlockEditor( context, next );
 	},
 };
