@@ -4,36 +4,36 @@ This package provides utilities for the WordPress.com block editor integration.
 
 These utilities are intended to be built and then served from `widgets.wp.com`, so they can be loaded by a WordPress.com or a Jetpack connected site.
 
+## Environments
+
+There are two environments the block editor integration supports:
+
+- **WP Admin block editor**. The block editor loaded by the WP Admin interface on `https://<SITE_SLUG>/wp-admin/post-new.php`.
+- **Calypso block editor**. This is the block editor loaded by Calypso on `https://wordpress.com/block-editor/post/<SITE_SLUG>`. It is actually the WP Admin block editor embed on an iframe. We also refer to this implementation as _Gutenframe_.
+ 
 ## File architecture
 
-### `iframe-bridge-server.js`
+- `/common`: Logic than runs on both environments (WP Admin and Calypso).
+- `/calypso`: Logic than runs only on the Calypso iframed block editor.  
 
-Server-side handlers of the different communication channels we establish with the client-side when Calypso loads the iframed block editor. See [`calypsoify-iframe.jsx`](https://github.com/Automattic/wp-calypso/blob/master/client/gutenberg/editor/calypsoify-iframe.jsx).
+### Common utilities
 
-### `tinymce.js`
+- `rich-text.js`: Extensions for the Rich Text toolbar with the Calypso buttons missing on Core (i.e. underline, justify).
+- `switch-to-classic.js`: Append a button to the "More tools" menu for switching to the classic editor.
 
-Tiny MCE plugin that overrides the core media modal used on classic blocks with the Calypso media modal.
+### Calypso utilities
 
-### `utils.js`
-
-Shared utilities to be used across the package.
+- `iframe-bridge-server.js`: Server-side handlers of the different communication channels we establish with the client-side when Calypso loads the iframed block editor. See [`calypsoify-iframe.jsx`](https://github.com/Automattic/wp-calypso/blob/master/client/gutenberg/editor/calypsoify-iframe.jsx).
+- `tinymce.js`: Tiny MCE plugin that overrides the core media modal used on classic blocks with the Calypso media modal.
 
 ## Build
 
 ### Manual
 
-To manually build the package, execute the command below:
+To manually build the package, execute the command below passing the directory where the distributable files will be generated:
 
 ```
-npx lerna run build --scope='@automattic/wpcom-block-editor'
-```
-
-This will generate the distributable files under the `dist` folder.
-
-If you want to generate the build in a different folder, you can use the `bundle` script instead:
-
-```
-npx lerna run bundle --scope='@automattic/wpcom-block-editor' -- -- --output-path=/path-to-folder
+npx lerna run build --scope='@automattic/wpcom-block-editor' -- -- --output-path=/path-to-folder
 ```
 
 _Wonky double `--` is needed for first skipping Lerna args and then NPM args to reach Webpack._
