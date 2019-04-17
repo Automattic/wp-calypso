@@ -18,7 +18,7 @@ function addSwitchToClassicButton() {
 				<button type="button" aria-label="${ wpcomGutenberg.switchToClassic.label }" role="menuitem"
 					class="components-button components-menu-item__button components-menu-item__button-switch">
 					${ wpcomGutenberg.switchToClassic.label }
-				</button>;
+				</button>
 			` );
 			$( '.components-menu-item__button-switch' ).on( 'click', () => {
 				$.wpcom_proxy_request( {
