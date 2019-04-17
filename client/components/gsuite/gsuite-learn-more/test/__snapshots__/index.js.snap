@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GSuiteLearnMore it renders GSuiteLearnMore with no props 1`] = `
+<div
+  className="gsuite-learn-more"
+>
+  <p>
+    <strong>
+      No setup or software required.
+    </strong>
+     
+    <a
+      className="gsuite-learn-more__link"
+      href="https://en.support.wordpress.com/adding-g-suite-to-your-site"
+      onClick={[Function]}
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Learn more about integrating G Suite with your site.
+    </a>
+  </p>
+</div>
+`;
