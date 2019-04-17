@@ -13,7 +13,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { IconButton, Placeholder, SelectControl, Toolbar } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
-import { Fragment } from '@wordpress/element';
+import { Fragment, RawHTML } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -23,9 +23,8 @@ import './style.scss';
 
 const edit = compose(
 	withSelect( select => ( {
-		pages: select( 'core' ).getEntityRecords( 'postType', 'page', {
-			per_page: -1,
-		} ),
+		// TODO: Replace with a better way to fetch pages
+		pages: select( 'core' ).getEntityRecords( 'postType', 'page' ),
 	} ) ),
 	withState( {
 		isEditing: false,
@@ -36,7 +35,7 @@ const edit = compose(
 	const selectOptions = [
 		{ label: '', value: undefined },
 		...map( pages, page => ( {
-			label: `[${ page.id }] ${ page.title.rendered }`,
+			label: page.title.rendered,
 			value: page.id,
 		} ) ),
 	];
@@ -96,13 +95,9 @@ const edit = compose(
 					</Placeholder>
 				) }
 				{ showPreview && (
-					<div
-						className="wpcom-page-content-block__preview"
-						// eslint-disable-next-line react/no-danger
-						dangerouslySetInnerHTML={ {
-							__html: get( selectedPage, 'content.rendered' ),
-						} }
-					/>
+					<RawHTML className="wpcom-page-content-block__preview">
+						{ get( selectedPage, 'content.rendered' ) }
+					</RawHTML>
 				) }
 			</div>
 		</Fragment>
