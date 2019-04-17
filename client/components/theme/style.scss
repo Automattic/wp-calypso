@@ -276,19 +276,6 @@ $theme-info-height: 54px;
 	}
 }
 
-.theme__more-button-menu-item {
-	text-decoration: none;
-
-	&:visited {
-		color: var( --color-neutral-700 );
-	}
-
-	&:hover,
-	&:focus {
-		color: white;
-	}
-}
-
 .theme__ribbon {
 	text-transfrom: capitalize;
 }
