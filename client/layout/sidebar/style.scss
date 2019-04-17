@@ -618,7 +618,8 @@ form.sidebar__button input {
 
 		svg,
 		.gridicons-my-sites,
-		.gridicons-chevron-down {
+		.gridicons-chevron-down,
+		.gridicons-external {
 			display: inline-block;
 		}
 	
@@ -689,16 +690,16 @@ form.sidebar__button input {
 		margin-top: auto;
 
 		@include breakpoint( '<660px' ) {
-    	border: none;
+			border: none;
 		}
 	}
 
 	.sidebar__menu.sidebar__wp-admin .wp-admin {
-		border-top: 1px solid var(--sidebar-border-color);
+		border-top: 1px solid var( --sidebar-border-color );
 		justify-content: flex-start;
 
 		@include breakpoint( '<660px' ) {
-    	border-top: none;
+			border-top: none;
 		}
 	}
 }
