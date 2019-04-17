@@ -213,7 +213,7 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-  gsuiteDomainFlowOptions: {
+	gsuiteDomainFlowOptions: {
 		datestamp: '20190415',
 		variations: {
 			hideMonthlyPrice: 50,

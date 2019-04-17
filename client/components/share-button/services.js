@@ -44,5 +44,5 @@ export default {
 	linkedin,
 	tumblr,
 	pinterest,
-	telegram,	
+	telegram,
 };

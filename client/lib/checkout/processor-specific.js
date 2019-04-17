@@ -86,7 +86,7 @@ export function fullAddressFieldsRules() {
 			description: i18n.translate( 'Postal Code' ),
 			rules: [ 'required' ],
 		},
-	}
+	};
 }
 
 /**
@@ -99,22 +99,25 @@ export function ebanxFieldRules( country ) {
 	const ebanxFields = PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ country ].fields || [];
 
 	return pick(
-		Object.assign( {
-			document: {
-				description: i18n.translate( 'Taxpayer Identification Number' ),
-				rules: [ 'validBrazilTaxId' ],
-			},
+		Object.assign(
+			{
+				document: {
+					description: i18n.translate( 'Taxpayer Identification Number' ),
+					rules: [ 'validBrazilTaxId' ],
+				},
 
-			'phone-number': {
-				description: i18n.translate( 'Phone Number' ),
-				rules: [ 'required' ],
-			},
+				'phone-number': {
+					description: i18n.translate( 'Phone Number' ),
+					rules: [ 'required' ],
+				},
 
-			'postal-code': {
-				description: i18n.translate( 'Postal Code' ),
-				rules: [ 'required' ],
+				'postal-code': {
+					description: i18n.translate( 'Postal Code' ),
+					rules: [ 'required' ],
+				},
 			},
-		}, fullAddressFieldsRules() ),
+			fullAddressFieldsRules()
+		),
 		ebanxFields
 	);
 }

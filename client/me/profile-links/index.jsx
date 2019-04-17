@@ -174,17 +174,17 @@ class ProfileLinks extends React.Component {
 		return (
 			<Fragment>
 				<QueryProfileLinks />
-					<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
-						<AddProfileLinksButtons
-							showingForm={ this.state.showingForm }
-							onShowAddOther={ this.showAddOther }
-							showPopoverMenu={ this.state.showPopoverMenu }
-							onShowAddWordPress={ this.showAddWordPress }
-							onShowPopoverMenu={ this.showPopoverMenu }
-							onClosePopoverMenu={ this.closePopoverMenu }
-						/>
-					</SectionHeader>
-					<Card>{ this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
+				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
+					<AddProfileLinksButtons
+						showingForm={ this.state.showingForm }
+						onShowAddOther={ this.showAddOther }
+						showPopoverMenu={ this.state.showPopoverMenu }
+						onShowAddWordPress={ this.showAddWordPress }
+						onShowPopoverMenu={ this.showPopoverMenu }
+						onClosePopoverMenu={ this.closePopoverMenu }
+					/>
+				</SectionHeader>
+				<Card>{ this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
 				<ListEnd />
 			</Fragment>
 		);
