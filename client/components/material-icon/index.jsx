@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import React from 'react';
 import PropTypes from 'prop-types';
 import svg4everybody from 'svg4everybody';
+import spritePath from 'material-design-icons/svg-sprite/material-icons.svg';
 
 const isBrowser = typeof window !== 'undefined';
 if ( isBrowser ) {
@@ -20,7 +21,7 @@ function MaterialIcon( props ) {
 	const iconName = `material-icon-${ icon }`;
 	const iconClass = classnames( 'material-icon', iconName, className );
 
-	const svgPath = `icon-${ style }-${ icon }-${ size }px`;
+	const svgId = `icon-${ style }-${ icon }-${ size }px`;
 
 	return (
 		<svg
@@ -32,7 +33,7 @@ function MaterialIcon( props ) {
 			onClick={ onClick }
 			{ ...otherProps }
 		>
-			<use xlinkHref={ `/calypso/images/material-design-icons/material-icons.svg#${ svgPath }` } />
+			<use xlinkHref={ `${ spritePath }#${ svgId }` } />
 		</svg>
 	);
 }
