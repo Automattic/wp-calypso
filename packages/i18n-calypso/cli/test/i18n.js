@@ -11,8 +11,10 @@ const i18nCalypsoCLI = require( '../i18n' );
 
 // generate whitelist file
 const sourceFiles = [
-	'examples/i18n-test-examples.jsx',
 	'examples/i18n-test-example-second-file.jsx',
+	'examples/i18n-test-examples.ts',
+	'examples/i18n-test-examples.tsx',
+	'examples/i18n-test-examples.jsx',
 ].map( file => path.join( __dirname, file ) );
 
 /**
@@ -99,7 +101,7 @@ describe( 'POT', () => {
 	test( 'should combine strings', () => {
 		expect( output ).toEqual(
 			expect.stringMatching(
-				/#: test\/examples\/i18n-test-examples.jsx:\d+\n#: test\/examples\/i18n-test-examples.jsx:\d+\n#. Second ocurrence\nmsgid "My hat has three corners."/
+				/(?:#: test\/examples\/i18n-test-examples.[jt]sx?:\d+\n)+#. Second ocurrence\nmsgid "My hat has three corners."/
 			)
 		);
 	} );
