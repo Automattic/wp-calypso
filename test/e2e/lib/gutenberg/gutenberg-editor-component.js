@@ -134,11 +134,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async removeNUXNotice() {
 		const nuxPopupSelector = By.css( '.nux-dot-tip' );
 		const nuxDisableSelector = By.css( '.nux-dot-tip__disable' );
-		const headerSelector = By.css( '.edit-post-header' );
+		const headerSelector = By.css( '.edit-post-sidebar-header' );
 
 		if (
-			( await driverHelper.isElementPresent( this.driver, nuxPopupSelector ) ) &&
-			( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, headerSelector ) )
+			( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, headerSelector ) ) &&
+			( await driverHelper.isElementPresent( this.driver, nuxPopupSelector ) )
 		) {
 			await driverHelper.clickWhenClickable( this.driver, nuxDisableSelector );
 		}
