@@ -200,7 +200,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				{ showHstsNotice && (
 					<InfoPopover
 						className="domain-registration-suggestion__hsts-tooltip"
-						position={ 'right' }
+						position={ 'top' }
 					>
 						{ translate(
 							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
