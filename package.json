@@ -276,6 +276,7 @@
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "file:./packages/babel-plugin-i18n-calypso",
+		"@automattic/babel-plugin-transform-wpcalypso-async": "file:./packages/babel-plugin-transform-wpcalypso-async",
 		"@automattic/calypso-build": "file:./packages/calypso-build",
 		"@automattic/calypso-color-schemes": "file:./packages/calypso-color-schemes",
 		"@wordpress/babel-plugin-makepot": "2.1.3",
