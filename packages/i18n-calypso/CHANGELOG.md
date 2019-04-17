@@ -1,3 +1,10 @@
+4.0.0
+------
+
+* Add TypeScript handling.
+* Add useTranslate hook.
+* Remove moment-timezone dependency.
+
 3.0.0
 ------
 
