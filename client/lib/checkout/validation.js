@@ -14,8 +14,7 @@ import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
 	isValidCNPJ,
-	ebanxFieldRules,
-	dLocalFieldRules,
+	countrySpecificFieldRules,
 } from 'lib/checkout/processor-specific';
 
 /**
@@ -81,7 +80,7 @@ export function tefPaymentFieldRules() {
 				rules: [ 'required' ],
 			},
 		},
-		ebanxFieldRules( 'BR' )
+		countrySpecificFieldRules( 'BR' )
 	);
 }
 
@@ -125,7 +124,7 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 			return tefPaymentFieldRules();
 		// TODO: field rules for dlocal/india
 		case 'netbanking':
-			return dLocalFieldRules( 'IN' );
+			return countrySpecificFieldRules( 'IN' );
 		case 'token':
 			return tokenFieldRules();
 		default:
@@ -337,7 +336,9 @@ function getErrors( field, value, paymentDetails ) {
 
 function getEbanxCreditCardRules( { country } ) {
 	return (
-		country && isEbanxCreditCardProcessingEnabledForCountry( country ) && ebanxFieldRules( country )
+		country &&
+		isEbanxCreditCardProcessingEnabledForCountry( country ) &&
+		countrySpecificFieldRules( country )
 	);
 }
 
