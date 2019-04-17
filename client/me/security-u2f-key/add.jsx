@@ -40,16 +40,7 @@ class SecurityU2fKeyAdd extends React.Component {
 		this.props.onRegister( data );
 	};
 
-	createChallenge() {
-		return 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'.replace( /[xy]/g, function( c ) {
-			const r = ( Math.random() * 16 ) | 0,
-				v = c === 'x' ? r : ( r & 0x3 ) | 0x8;
-			return v.toString( 16 );
-		} );
-	}
-
 	render() {
-		window.u2f = u2f;
 		return (
 			<Card>
 				{ !! u2f && (

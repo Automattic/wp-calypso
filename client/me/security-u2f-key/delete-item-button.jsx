@@ -80,6 +80,5 @@ export default connect(
 	{
 		successNotice,
 		recordGoogleEvent,
-	},
-	null
+	}
 )( localize( U2FKeyDeleteButton ) );

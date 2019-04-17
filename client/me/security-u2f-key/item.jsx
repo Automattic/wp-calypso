@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
  */
 import CompactCard from 'components/card/compact';
 import { recordGoogleEvent } from '../../state/analytics/actions';
-import U2FDeleteButton from './delete-item-button';
+import U2fDeleteButton from './delete-item-button';
 
 class SecurityU2fKeyItem extends Component {
 	static propTypes = {
@@ -26,7 +26,7 @@ class SecurityU2fKeyItem extends Component {
 					<div className="security-u2f-key__item-information">
 						<h2 className="security-u2f-key__item-title">{ this.props.securityKey.registered }</h2>
 					</div>
-					<U2FDeleteButton
+					<U2fDeleteButton
 						securityKey={ this.props.securityKey }
 						onDelete={ this.props.onDelete }
 					/>
