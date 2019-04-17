@@ -13,13 +13,14 @@
 .checklist-banner__gauge {
 	position: relative;
 
-	.gauge__metric {
-		text-transform: none;
-		letter-spacing: 0;
-	}
-
 	.gauge__label {
 		color: var( --color-success ) !important; /* important overrides inline style with CSS var */
+
+		/* this has to nest under .gauge__label to override the specificity for the stock styles */
+		.gauge__metric {
+			text-transform: none;
+			letter-spacing: 0;
+		}
 	}
 
 	@include breakpoint( '<660px' ) {
