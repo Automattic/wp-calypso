@@ -20,8 +20,9 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductCost } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import GSuiteFeatures from 'components/gsuite/gsuite-features';
+import GSuiteLearnMore from 'components/gsuite/gsuite-learn-more';
 import GSuitePurchaseCtaSkuInfo from 'my-sites/email/gsuite-purchase-cta/sku-info';
-import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QueryProductsList from 'components/data/query-products-list';
 
@@ -51,6 +52,12 @@ export const GSuitePurchaseCta = ( {
 		} );
 
 		page( emailManagementNewGSuiteAccount( selectedSiteSlug, domainName, planType ) );
+	};
+
+	const handleLearnMoreClick = () => {
+		recordEvent( 'calypso_email_gsuite_purchase_cta_learn_more_click', {
+			domain_name: domainName,
+		} );
 	};
 
 	const translate = useTranslate();
@@ -113,35 +120,34 @@ export const GSuitePurchaseCta = ( {
 					</h3>
 				</header>
 			</CompactCard>
-			<CompactCard>
-				<div className="gsuite-purchase-cta__header">
-					<div className="gsuite-purchase-cta__header-description">
-						<h2 className="gsuite-purchase-cta__header-description-title">
-							{ translate( 'Professional email and so much more.' ) }
-						</h2>
+			<CompactCard className="gsuite-purchase-cta__header">
+				<div className="gsuite-purchase-cta__header-description">
+					<h2 className="gsuite-purchase-cta__header-description-title">
+						{ translate( 'Professional email and so much more.' ) }
+					</h2>
 
-						<p className="gsuite-purchase-cta__header-description-sub-title">
-							{ translate(
-								"We've partnered with Google to offer you email, " +
-									'storage, docs, calendars, and more integrated with your site.'
-							) }
-						</p>
-						{ ! showBusinessOption && renderBasicSku() }
-						{ showBusinessOption && (
-							<div className="gsuite-purchase-cta__skus">
-								{ renderBasicSku() }
-								{ renderBusinessSku() }
-							</div>
+					<p className="gsuite-purchase-cta__header-description-sub-title">
+						{ translate(
+							"We've partnered with Google to offer you email, " +
+								'storage, docs, calendars, and more integrated with your site.'
 						) }
-					</div>
+					</p>
+					{ ! showBusinessOption && renderBasicSku() }
+					{ showBusinessOption && (
+						<div className="gsuite-purchase-cta__skus">
+							{ renderBasicSku() }
+							{ renderBusinessSku() }
+						</div>
+					) }
+				</div>
 
-					<div className="gsuite-purchase-cta__header-image">
-						<img alt="G Suite Logo" src="/calypso/images/g-suite/g-suite.svg" />
-					</div>
+				<div className="gsuite-purchase-cta__header-image">
+					<img alt="G Suite Logo" src="/calypso/images/g-suite/g-suite.svg" />
 				</div>
 			</CompactCard>
-			<CompactCard>
-				<GSuitePurchaseFeatures domainName={ domainName } type={ 'grid' } productSlug={ 'gapps' } />
+			<CompactCard className="gsuite-purchase-cta__info">
+				<GSuiteFeatures domainName={ domainName } type={ 'grid' } productSlug={ 'gapps' } />
+				<GSuiteLearnMore onClick={ handleLearnMoreClick } />
 			</CompactCard>
 		</EmailVerificationGate>
 	);

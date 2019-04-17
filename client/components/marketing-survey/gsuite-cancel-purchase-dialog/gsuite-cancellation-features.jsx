@@ -12,7 +12,8 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
-import GSuitePurchaseFeatures from 'my-sites/email/gsuite-purchase-features';
+import GSuiteFeatures from 'components/gsuite/gsuite-features';
+import GSuiteLearnMore from 'components/gsuite/gsuite-learn-more';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { purchaseType } from 'lib/purchases';
 
@@ -20,6 +21,10 @@ class GSuiteCancellationFeatures extends Component {
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_features_view' );
 	}
+
+	handleLearnMoreClick = () => {
+		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_learn_more_click' );
+	};
 
 	render() {
 		const { purchase, translate } = this.props;
@@ -36,11 +41,8 @@ class GSuiteCancellationFeatures extends Component {
 						{ components: { siteName: <em>{ gsuiteDomain }</em> } }
 					) }
 				</p>
-				<GSuitePurchaseFeatures
-					productSlug={ productSlug }
-					domainName={ gsuiteDomain }
-					type={ 'list' }
-				/>
+				<GSuiteFeatures productSlug={ productSlug } domainName={ gsuiteDomain } type={ 'list' } />
+				<GSuiteLearnMore onClick={ this.handleLearnMoreClick } />
 			</div>
 		);
 	}

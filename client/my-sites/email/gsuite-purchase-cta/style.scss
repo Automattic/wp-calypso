@@ -144,3 +144,9 @@
 		width: 100%;
 	}
 }
+
+.gsuite-purchase-cta__info .gsuite-learn-more {
+	@include breakpoint( '>960px' ) {
+		text-align: center;
+	}
+}
