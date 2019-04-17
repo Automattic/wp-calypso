@@ -2,7 +2,6 @@
 .site-style__form-wrapper {
 	@include breakpoint( '>660px' ) {
 		display: flex;
-		justify-content: center;
 	}
 }
 
