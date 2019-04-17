@@ -4,14 +4,7 @@
 import classnames from 'classnames';
 import React from 'react';
 import PropTypes from 'prop-types';
-import svg4everybody from 'svg4everybody';
 import spritePath from '@automattic/material-design-icons/svg-sprite/material-icons.svg';
-
-const isBrowser = typeof window !== 'undefined';
-if ( isBrowser ) {
-	// Polyfill SVG external content support. Noop in the evergreen build.
-	svg4everybody();
-}
 
 function MaterialIcon( props ) {
 	const { size = 24, style = 'outline', icon, onClick, className, ...otherProps } = props;
