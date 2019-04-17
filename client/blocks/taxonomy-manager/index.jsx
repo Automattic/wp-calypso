@@ -21,6 +21,11 @@ import QueryTaxonomies from 'components/data/query-taxonomies';
 import TermFormDialog from 'blocks/term-form-dialog';
 import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class TaxonomyManager extends Component {
 	static propTypes = {
 		taxonomy: PropTypes.string,
