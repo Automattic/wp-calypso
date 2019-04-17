@@ -100,7 +100,7 @@ class PreviewMain extends React.Component {
 			{
 				theme_preview: true,
 				iframe: true,
-				'frame-nonce': this.props.site.options.frame_nonce_preview,
+				'frame-nonce': this.props.site.options.frame_nonce_site_only,
 			},
 			baseUrl
 		);
