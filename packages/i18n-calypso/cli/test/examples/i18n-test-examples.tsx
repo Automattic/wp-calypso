@@ -1,6 +1,6 @@
 // This file is just an example of different translation requests that will be parsed as part of the test. This file itself doesn't need to actually work. :-)
 /*eslint-disable */
-function test() {
+function test( unused: any ): any {
 	// simplest case... just a translation, no special options
 	var content = i18n.translate( 'My hat has three corners.' );
 
