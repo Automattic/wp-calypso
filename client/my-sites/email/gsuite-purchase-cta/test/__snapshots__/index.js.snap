@@ -74,64 +74,6 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta 1`] = `
     <div
       className="gsuite-features__grid"
     >
-      <h2
-        className="gsuite-purchase-cta__header-description-title"
-      >
-        Professional email and so much more.
-      </h2>
-      <p
-        className="gsuite-purchase-cta__header-description-sub-title"
-      >
-        We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.
-      </p>
-      <GSuitePurchaseCtaSkuInfo
-        buttonText="Add G Suite"
-        currencyCode="USD"
-        onButtonClick={[Function]}
-        showButton={true}
-        showMonthlyPrice={false}
-        skuCost={72}
-      />
-    </div>
-    <div
-      className="gsuite-purchase-cta__header-image"
-    >
-      <img
-        alt="G Suite Logo"
-        src="/calypso/images/g-suite/g-suite.svg"
-      />
-    </div>
-  </div>
-  <div
-    className="card gsuite-purchase-cta__info is-compact"
-  >
-    <div
-      className="gsuite-features__grid"
-    >
-      <div
-        className="gsuite-features__feature"
-      >
-        <div
-          className="gsuite-features__feature-image"
-        >
-          <img
-            alt="Gmail Logo"
-            src="/calypso/images/g-suite/logo_gmail_48dp.svg"
-          />
-        </div>
-        <div
-          className="gsuite-features__feature-block"
-        >
-          <h5
-            className="gsuite-features__feature-header"
-          >
-            A custom @test.com email address
-          </h5>
-          <p>
-            Professional ad-free email that works with most email clients.
-          </p>
-        </div>
-      </div>
       <div
         className="gsuite-features__feature"
       >
