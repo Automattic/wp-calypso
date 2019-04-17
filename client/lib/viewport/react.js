@@ -28,7 +28,7 @@ export function useBreakpoint( breakpoint ) {
 		breakpoint,
 	} ) );
 
-	useEffect(() => {
+	useEffect( () => {
 		function handleBreakpointChange( isActive ) {
 			setState( prevState => {
 				// Ensure we bail out without rendering if nothing changes, by preserving state.
@@ -42,7 +42,7 @@ export function useBreakpoint( breakpoint ) {
 		const unsubscribe = subscribeIsWithinBreakpoint( breakpoint, handleBreakpointChange );
 		// The unsubscribe function is the entire cleanup for the effect.
 		return unsubscribe;
-	}, [ breakpoint ]);
+	}, [ breakpoint ] );
 
 	return breakpoint === state.breakpoint ? state.isActive : isWithinBreakpoint( breakpoint );
 }

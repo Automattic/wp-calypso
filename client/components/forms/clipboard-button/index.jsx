@@ -23,19 +23,19 @@ function ClipboardButton( { className, text, onCopy = noop, ...rest } ) {
 	const successCallback = React.useRef();
 
 	// update the callbacks on rerenders that change `text` or `onCopy`
-	React.useEffect(() => {
+	React.useEffect( () => {
 		textCallback.current = () => text;
 		successCallback.current = onCopy;
-	}, [ text, onCopy ]);
+	}, [ text, onCopy ] );
 
 	// create the `Clipboard` object on mount and destroy on unmount
-	React.useEffect(() => {
+	React.useEffect( () => {
 		const buttonEl = ReactDom.findDOMNode( buttonRef.current );
 		const clipboard = new Clipboard( buttonEl, { text: () => textCallback.current() } );
 		clipboard.on( 'success', () => successCallback.current() );
 
 		return () => clipboard.destroy();
-	}, []);
+	}, [] );
 
 	return (
 		<Button

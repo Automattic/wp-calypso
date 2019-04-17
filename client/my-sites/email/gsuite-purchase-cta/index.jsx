@@ -38,11 +38,11 @@ export const GSuitePurchaseCta = ( {
 	recordTracksEvent: recordEvent,
 	selectedSiteSlug,
 } ) => {
-	useEffect(() => {
+	useEffect( () => {
 		recordEvent( 'calypso_email_gsuite_purchase_cta_view', {
 			domain_name: domainName,
 		} );
-	}, [ domainName ]);
+	}, [ domainName ] );
 
 	const goToAddGSuiteUsers = planType => {
 		recordEvent( 'calypso_email_gsuite_purchase_cta_get_gsuite_click', {

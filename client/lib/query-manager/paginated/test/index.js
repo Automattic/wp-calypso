@@ -306,9 +306,9 @@ describe( 'PaginatedQueryManager', () => {
 		} );
 
 		test( 'should use the constructors DefaultQuery.number if query object does not specify it', () => {
-			const customizedManager = new class extends TestCustomQueryManager {
+			const customizedManager = new ( class extends TestCustomQueryManager {
 				static DefaultQuery = { number: 25 };
-			}().receive(
+			} )().receive(
 				[
 					{ ID: 144 },
 					{ ID: 152 },

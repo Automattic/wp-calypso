@@ -13,11 +13,11 @@ export default function( i18n ) {
 	return function useTranslate() {
 		const [ translate, setTranslate ] = React.useState( bindTranslate );
 
-		React.useEffect(() => {
+		React.useEffect( () => {
 			const onChange = () => setTranslate( bindTranslate );
 			i18n.on( 'change', onChange );
 			return () => i18n.off( 'change', onChange );
-		}, []);
+		}, [] );
 
 		return translate;
 	};
