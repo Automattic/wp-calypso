@@ -32,7 +32,7 @@
 		"jquery": "^1.12",
 		"lodash": "4.17.11",
 		"react": "16.8.6",
-		"tinymce": "4.8.5"
+		"tinymce": "4.9.4"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "file:../../packages/calypso-build"
