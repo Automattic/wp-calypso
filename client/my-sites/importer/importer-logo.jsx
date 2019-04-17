@@ -23,7 +23,7 @@ const ImporterLogo = ( { icon } ) => {
 	}
 
 	if ( 'godaddy-gocentral' === icon ) {
-		return <GoDaddyGoCentralLogo />;
+		return <GoDaddyGoCentralLogo size={ 48 } />;
 	}
 	return (
 		<svg
