@@ -81,6 +81,7 @@ export JetpackLogo from 'components/jetpack-logo';
 export LanguagePicker from 'components/language-picker';
 export ListEnd from 'components/list-end';
 export Main from 'components/main';
+export MaterialIcon from 'components/material-icon';
 export MarkedLines from 'components/marked-lines';
 export Notices from 'components/notice';
 export Pagination from 'components/pagination';
