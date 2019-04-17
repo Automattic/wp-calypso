@@ -14,8 +14,7 @@ There are two environments the block editor integration supports:
 ## File architecture
 
 - `/common`: Logic than runs on both environments (WP Admin and Calypso).
-- `/calypso`: Logic than runs only on the Calypso iframed block editor. 
-- `/wp-admin`: Logic than runs only on the WP Admin block editor. 
+- `/calypso`: Logic than runs only on the Calypso iframed block editor.  
 
 ### Common utilities
 
