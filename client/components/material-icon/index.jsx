@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import React from 'react';
 import PropTypes from 'prop-types';
 import svg4everybody from 'svg4everybody';
-import spritePath from 'material-design-icons/svg-sprite/material-icons.svg';
+import spritePath from '@automattic/material-design-icons/svg-sprite/material-icons.svg';
 
 const isBrowser = typeof window !== 'undefined';
 if ( isBrowser ) {
