@@ -117,6 +117,7 @@ export function generateFlows( {
 				'user',
 				'site-type',
 				'site-topic-with-preview',
+				'site-style-with-preview',
 				'site-information-title-with-preview',
 				'domains-with-preview',
 				'plans',
