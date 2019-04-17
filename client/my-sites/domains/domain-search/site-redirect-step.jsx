@@ -64,7 +64,12 @@ class SiteRedirectStep extends React.Component {
 							onChange={ this.setSearchQuery }
 							onClick={ this.recordInputFocus }
 						/>
-						<Button primary className="site-redirect-step__go" onClick={ this.recordGoButtonClick }>
+						<Button
+							primary
+							className="site-redirect-step__go"
+							type="submit"
+							onClick={ this.recordGoButtonClick }
+						>
 							{ translate( 'Go', {
 								context: 'Upgrades: Label for adding Site Redirect',
 							} ) }
