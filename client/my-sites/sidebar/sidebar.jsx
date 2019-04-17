@@ -826,7 +826,7 @@ export class MySitesSidebar extends Component {
 
 	renderStreamlinedSidebarMenus( manage, configuration ) {
 		return (
-			<div>
+			<div class="sidebar__menu-wrapper">
 				<SidebarMenu>
 					<ul>
 						{ this.stats() }
