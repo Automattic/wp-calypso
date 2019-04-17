@@ -68,3 +68,13 @@
 # Calypso build packages
 packages/calypso-build @Automattic/gutenpack
 packages/calypso-color-schemes @Automattic/gutenpack
+
+# G Suite
+/client/blocks/gsuite-stats-nudge @Automattic/amber
+/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/amber
+/client/components/upgrades/gsuite @Automattic/amber
+/client/lib/domains/email-forwarding @Automattic/amber
+/client/lib/domains/google-apps-users @Automattic/amber
+/client/lib/gsuite @Automattic/amber
+/client/my-sites/domains/components/domain-warnings @Automattic/amber
+/client/my-sites/email @Automattic/amber
