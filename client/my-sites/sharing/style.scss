@@ -1027,9 +1027,17 @@
 .sharing-buttons-preview__panel-content .sharing-buttons-preview-button {
 	margin-top: 8px;
 	cursor: pointer;
-	opacity: 0.4;
+	opacity: 0.6;
 	@include breakpoint( '<480px' ) {
 		margin: 18px 18px 0 0;
+	}
+
+	&:hover {
+		opacity: 0.8;
+	}
+
+	&.style-icon {
+		opacity: 0.4;
 	}
 
 	&.style-icon:hover {
@@ -1041,6 +1049,7 @@
 		opacity: 1;
 	}
 
+	/* These icons have a light background and need special treatment to stay readable. */
 	&.style-icon.share-email,
 	&.style-icon.share-print {
 		opacity: 0.6;
