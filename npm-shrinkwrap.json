@@ -4738,9 +4738,9 @@
 			}
 		},
 		"babel-plugin-add-module-exports": {
-			"version": "1.0.0",
-			"resolved": "https://registry.npmjs.org/babel-plugin-add-module-exports/-/babel-plugin-add-module-exports-1.0.0.tgz",
-			"integrity": "sha512-m0sMxPL4FaN2K69GQgaRJa4Ny15qKSdoknIcpN+gz+NaJlAW9pge/povs13tPYsKDboflrEQC+/3kfIsONBTaw==",
+			"version": "1.0.2",
+			"resolved": "https://registry.npmjs.org/babel-plugin-add-module-exports/-/babel-plugin-add-module-exports-1.0.2.tgz",
+			"integrity": "sha512-4paN7RivvU3Rzju1vGSHWPjO8Y0rI6droWvSFKI6dvEQ4mvoV0zGojnlzVRfI6N8zISo6VERXt3coIuVmzuvNg==",
 			"requires": {
 				"chokidar": "^2.0.4"
 			}
