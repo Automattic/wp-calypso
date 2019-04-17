@@ -27,11 +27,7 @@ class InvalidActionPage extends Component {
 		return (
 			<Fragment>
 				<DomainsLandingHeader />
-				<DomainsLandingContentCard
-					illustration="/calypso/images/illustrations/illustration-404.svg"
-					title={ title }
-					message={ message }
-				/>
+				<DomainsLandingContentCard title={ title } message={ message } />
 			</Fragment>
 		);
 	}

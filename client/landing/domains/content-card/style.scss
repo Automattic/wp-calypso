@@ -28,7 +28,7 @@
 		color: var( --color-neutral-500 );
 		font-size: 18px;
 		font-weight: 300;
-		margin-bottom: 40px;
+		margin-bottom: 16px;
 
 		@include breakpoint( '<660px' ) {
 			font-size: 16px;
@@ -46,6 +46,10 @@
 			height: 250px;
 			margin-left: auto;
 			margin-right: auto;
+
+			@include breakpoint( '<480px' ) {
+				display: none;
+			}
 		}
 
 		.content-card__message {

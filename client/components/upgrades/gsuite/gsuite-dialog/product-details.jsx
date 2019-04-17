@@ -14,6 +14,7 @@ import { abtest } from 'lib/abtest';
 import GSuitePrice from 'components/gsuite/gsuite-price';
 import GSuiteCompactFeatures from 'components/gsuite/gsuite-features/compact';
 
+
 function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 	const translate = useTranslate();
 

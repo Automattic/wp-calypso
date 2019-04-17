@@ -17,7 +17,7 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 import CompactCard from 'components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
-import { hasPendingGSuiteUsers } from 'lib/domains/gsuite';
+import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedDomain } from 'lib/domains';
 import { getSelectedSiteSlug } from 'state/ui/selectors';

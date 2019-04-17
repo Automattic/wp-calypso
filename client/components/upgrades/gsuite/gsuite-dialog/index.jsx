@@ -18,7 +18,7 @@ import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
-import { isGSuiteRestricted } from 'lib/domains/gsuite';
+import { isGSuiteRestricted } from 'lib/gsuite';
 import {
 	validate as validateGappsUsers,
 	filter as filterUsers,
@@ -27,6 +27,11 @@ import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/an
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { getProductCost } from 'state/products-list/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
 

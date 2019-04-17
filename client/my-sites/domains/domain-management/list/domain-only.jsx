@@ -14,7 +14,7 @@ import React from 'react';
  */
 import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
-import { hasGSuite } from 'lib/domains/gsuite';
+import { hasGSuite } from 'lib/gsuite';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { domainManagementEdit } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';

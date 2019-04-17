@@ -18,7 +18,6 @@ const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' 
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-external-dependencies-plugin' );
 const { cssNameFromFilename } = require( '@automattic/calypso-build/webpack/util' );
 
 /**
@@ -137,212 +136,191 @@ function shouldTranspileDependency( filepath ) {
 	);
 }
 
-/**
- * Return a webpack config object
- *
- * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
- *
- * @param {object}  env                              additional config options
- * @param {boolean} env.externalizeWordPressPackages whether to bundle or extern the `@wordpress/` packages
- *
- * @return {object}                                  webpack config
- */
-function getWebpackConfig( {
-	externalizeWordPressPackages = false,
-	preserveCssCustomProperties = true,
-} = {} ) {
-	let outputFilename = '[name].[chunkhash].min.js'; // prefer the chunkhash, which depends on the chunk, not the entire build
-	let outputChunkFilename = '[name].[chunkhash].min.js'; // ditto
+let outputFilename = '[name].[chunkhash].min.js'; // prefer the chunkhash, which depends on the chunk, not the entire build
+let outputChunkFilename = '[name].[chunkhash].min.js'; // ditto
 
-	// we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
-	// also we don't minify so dont name them .min.js
-	//
-	// Desktop: no chunks or dll here, just one big file for the desktop app
-	if ( isDevelopment || calypsoEnv === 'desktop' ) {
-		outputFilename = '[name].js';
-		outputChunkFilename = '[name].js';
-	}
-
-	const cssFilename = cssNameFromFilename( outputFilename );
-	const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
-
-	const webpackConfig = {
-		bail: ! isDevelopment,
-		context: __dirname,
-		entry: {
-			build: [ path.join( __dirname, 'client', 'boot', 'app' ) ],
-			domainsLanding: [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
-		},
-		mode: isDevelopment ? 'development' : 'production',
-		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
-		output: {
-			path: path.join( __dirname, 'public', extraPath ),
-			pathinfo: false,
-			publicPath: `/calypso/${ extraPath }/`,
-			filename: outputFilename,
-			chunkFilename: outputChunkFilename,
-			devtoolModuleFilenameTemplate: 'app:///[resource-path]',
-		},
-		optimization: {
-			splitChunks: {
-				chunks: codeSplit ? 'all' : 'async',
-				name: isDevelopment || shouldEmitStats,
-				maxAsyncRequests: 20,
-				maxInitialRequests: 5,
-			},
-			runtimeChunk: codeSplit ? { name: 'manifest' } : false,
-			moduleIds: 'named',
-			chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
-			minimize: shouldMinify,
-			minimizer: Minify( {
-				cache: process.env.CIRCLECI
-					? `${ process.env.HOME }/terser-cache/${ extraPath }`
-					: 'docker' !== process.env.CONTAINER,
-				parallel: workerCount,
-				sourceMap: Boolean( process.env.SOURCEMAP ),
-				terserOptions: {
-					mangle: calypsoEnv !== 'desktop',
-				},
-			} ),
-		},
-		module: {
-			noParse: /[/\\]node_modules[/\\]localforage[/\\]dist[/\\]localforage\.js$/,
-			rules: [
-				TranspileConfig.loader( {
-					workerCount,
-					configFile: path.join( __dirname, 'babel.config.js' ),
-					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache', extraPath ),
-					cacheIdentifier,
-					exclude: /node_modules\//,
-				} ),
-				TranspileConfig.loader( {
-					workerCount,
-					configFile: path.resolve( __dirname, 'babel.dependencies.config.js' ),
-					cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache', extraPath ),
-					cacheIdentifier,
-					include: shouldTranspileDependency,
-				} ),
-				{
-					test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
-					loader: 'babel-loader',
-					options: {
-						babelrc: false,
-						plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
-					},
-				},
-				SassConfig.loader( {
-					preserveCssCustomProperties,
-					includePaths: [ path.join( __dirname, 'client' ) ],
-					prelude: `@import '${ path.join(
-						__dirname,
-						'assets/stylesheets/shared/_utils.scss'
-					) }';`,
-				} ),
-				{
-					include: path.join( __dirname, 'client/sections.js' ),
-					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
-					options: {
-						include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
-					},
-				},
-				{
-					test: /\.html$/,
-					loader: 'html-loader',
-				},
-				FileConfig.loader(),
-				{
-					include: require.resolve( 'tinymce/tinymce' ),
-					use: 'exports-loader?window=tinymce',
-				},
-				{
-					test: /node_modules[/\\]tinymce/,
-					use: 'imports-loader?this=>window',
-				},
-			],
-		},
-		resolve: {
-			extensions: [ '.json', '.js', '.jsx' ],
-			modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
-			alias: Object.assign(
-				{
-					'gridicons/example': 'gridicons/dist/example',
-					'react-virtualized': 'react-virtualized/dist/es',
-					'social-logos/example': 'social-logos/build/example',
-					debug: path.resolve( __dirname, 'node_modules/debug' ),
-					store: 'store/dist/store.modern',
-					gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
-				},
-				getAliasesForExtensions( {
-					extensionsDirectory: path.join( __dirname, 'client', 'extensions' ),
-				} )
-			),
-		},
-		node: false,
-		plugins: _.compact( [
-			! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
-			new webpack.DefinePlugin( {
-				'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
-				PROJECT_NAME: JSON.stringify( config( 'project' ) ),
-				global: 'window',
-			} ),
-			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
-			isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
-			...SassConfig.plugins( {
-				chunkFilename: cssChunkFilename,
-				filename: cssFilename,
-				minify: ! isDevelopment,
-			} ),
-			isCalypsoClient &&
-				new AssetsWriter( {
-					filename:
-						browserslistEnv === 'defaults'
-							? 'assets-fallback.json'
-							: `assets-${ browserslistEnv }.json`,
-					path: path.join( __dirname, 'server', 'bundler' ),
-					assetExtraPath: extraPath,
-				} ),
-			new DuplicatePackageCheckerPlugin(),
-			shouldCheckForCycles &&
-				new CircularDependencyPlugin( {
-					exclude: /node_modules/,
-					failOnError: false,
-					allowAsyncCycles: false,
-					cwd: process.cwd(),
-				} ),
-			shouldEmitStats &&
-				new BundleAnalyzerPlugin( {
-					analyzerMode: 'disabled', // just write the stats.json file
-					generateStatsFile: true,
-					statsFilename: path.join( __dirname, 'stats.json' ),
-					statsOptions: {
-						source: false,
-						reasons: shouldEmitStatsWithReasons,
-						optimizationBailout: false,
-						chunkOrigins: false,
-						chunkGroups: true,
-					},
-				} ),
-			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
-			new MomentTimezoneDataPlugin( {
-				startYear: 2000,
-			} ),
-			externalizeWordPressPackages && new WordPressExternalDependenciesPlugin(),
-		] ),
-		externals: [ 'electron' ],
-	};
-
-	if ( isDevelopment ) {
-		webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-		webpackConfig.entry.build.unshift( 'webpack-hot-middleware/client' );
-	}
-
-	if ( ! config.isEnabled( 'desktop' ) ) {
-		webpackConfig.plugins.push(
-			new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' )
-		);
-	}
-
-	return webpackConfig;
+// we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
+// also we don't minify so dont name them .min.js
+//
+// Desktop: no chunks or dll here, just one big file for the desktop app
+if ( isDevelopment || calypsoEnv === 'desktop' ) {
+	outputFilename = '[name].js';
+	outputChunkFilename = '[name].js';
 }
 
-module.exports = getWebpackConfig;
+const cssFilename = cssNameFromFilename( outputFilename );
+const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
+
+const webpackConfig = {
+	bail: ! isDevelopment,
+	context: __dirname,
+	entry: {
+		build: [ path.join( __dirname, 'client', 'boot', 'app' ) ],
+		domainsLanding: [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
+	},
+	mode: isDevelopment ? 'development' : 'production',
+	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
+	output: {
+		path: path.join( __dirname, 'public', extraPath ),
+		pathinfo: false,
+		publicPath: `/calypso/${ extraPath }/`,
+		filename: outputFilename,
+		chunkFilename: outputChunkFilename,
+		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
+	},
+	optimization: {
+		splitChunks: {
+			chunks: codeSplit ? 'all' : 'async',
+			name: isDevelopment || shouldEmitStats,
+			maxAsyncRequests: 20,
+			maxInitialRequests: 5,
+		},
+		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
+		moduleIds: 'named',
+		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
+		minimize: shouldMinify,
+		minimizer: Minify( {
+			cache: process.env.CIRCLECI
+				? `${ process.env.HOME }/terser-cache/${ extraPath }`
+				: 'docker' !== process.env.CONTAINER,
+			parallel: workerCount,
+			sourceMap: Boolean( process.env.SOURCEMAP ),
+			terserOptions: {
+				mangle: calypsoEnv !== 'desktop',
+			},
+		} ),
+	},
+	module: {
+		noParse: /[/\\]node_modules[/\\]localforage[/\\]dist[/\\]localforage\.js$/,
+		rules: [
+			TranspileConfig.loader( {
+				workerCount,
+				configFile: path.join( __dirname, 'babel.config.js' ),
+				cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache', extraPath ),
+				cacheIdentifier,
+				exclude: /node_modules\//,
+			} ),
+			TranspileConfig.loader( {
+				workerCount,
+				configFile: path.resolve( __dirname, 'babel.dependencies.config.js' ),
+				cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache', extraPath ),
+				cacheIdentifier,
+				include: shouldTranspileDependency,
+			} ),
+			{
+				test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
+				loader: 'babel-loader',
+				options: {
+					babelrc: false,
+					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
+				},
+			},
+			SassConfig.loader( {
+				preserveCssCustomProperties: true,
+				includePaths: [ path.join( __dirname, 'client' ) ],
+				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
+			} ),
+			{
+				include: path.join( __dirname, 'client/sections.js' ),
+				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+				options: {
+					include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
+				},
+			},
+			{
+				test: /\.html$/,
+				loader: 'html-loader',
+			},
+			FileConfig.loader(),
+			{
+				include: require.resolve( 'tinymce/tinymce' ),
+				use: 'exports-loader?window=tinymce',
+			},
+			{
+				test: /node_modules[/\\]tinymce/,
+				use: 'imports-loader?this=>window',
+			},
+		],
+	},
+	resolve: {
+		extensions: [ '.json', '.js', '.jsx' ],
+		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
+		alias: Object.assign(
+			{
+				'gridicons/example': 'gridicons/dist/example',
+				'react-virtualized': 'react-virtualized/dist/es',
+				'social-logos/example': 'social-logos/build/example',
+				debug: path.resolve( __dirname, 'node_modules/debug' ),
+				store: 'store/dist/store.modern',
+				gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
+			},
+			getAliasesForExtensions( {
+				extensionsDirectory: path.join( __dirname, 'client', 'extensions' ),
+			} )
+		),
+	},
+	node: false,
+	plugins: _.compact( [
+		! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
+		new webpack.DefinePlugin( {
+			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
+			global: 'window',
+		} ),
+		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
+		isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
+		...SassConfig.plugins( {
+			chunkFilename: cssChunkFilename,
+			filename: cssFilename,
+			minify: ! isDevelopment,
+		} ),
+		isCalypsoClient &&
+			new AssetsWriter( {
+				filename:
+					browserslistEnv === 'defaults'
+						? 'assets-fallback.json'
+						: `assets-${ browserslistEnv }.json`,
+				path: path.join( __dirname, 'server', 'bundler' ),
+				assetExtraPath: extraPath,
+			} ),
+		new DuplicatePackageCheckerPlugin(),
+		shouldCheckForCycles &&
+			new CircularDependencyPlugin( {
+				exclude: /node_modules/,
+				failOnError: false,
+				allowAsyncCycles: false,
+				cwd: process.cwd(),
+			} ),
+		shouldEmitStats &&
+			new BundleAnalyzerPlugin( {
+				analyzerMode: 'disabled', // just write the stats.json file
+				generateStatsFile: true,
+				statsFilename: path.join( __dirname, 'stats.json' ),
+				statsOptions: {
+					source: false,
+					reasons: shouldEmitStatsWithReasons,
+					optimizationBailout: false,
+					chunkOrigins: false,
+					chunkGroups: true,
+				},
+			} ),
+		shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
+		new MomentTimezoneDataPlugin( {
+			startYear: 2000,
+		} ),
+	] ),
+	externals: [ 'electron' ],
+};
+
+if ( isDevelopment ) {
+	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
+	webpackConfig.entry.build.unshift( 'webpack-hot-middleware/client' );
+}
+
+if ( ! config.isEnabled( 'desktop' ) ) {
+	webpackConfig.plugins.push(
+		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' )
+	);
+}
+
+module.exports = webpackConfig;

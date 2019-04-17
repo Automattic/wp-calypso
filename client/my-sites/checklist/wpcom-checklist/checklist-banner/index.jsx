@@ -23,6 +23,11 @@ import { setNeverShowBannerStatus } from './never-show';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getSiteChecklistIsLoading from 'state/selectors/get-site-checklist-is-loading';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ChecklistBanner extends Component {
 	static propTypes = {
 		isEligibleForDotcomChecklist: PropTypes.bool,
