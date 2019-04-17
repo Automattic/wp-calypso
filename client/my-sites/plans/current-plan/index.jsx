@@ -38,6 +38,11 @@ import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import CurrentPlanThankYouCard from './current-plan-thank-you-card';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CurrentPlan extends Component {
 	static propTypes = {
 		selectedSiteId: PropTypes.number,
