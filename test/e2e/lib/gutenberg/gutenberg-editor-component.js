@@ -137,11 +137,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const headerSelector = By.css( '.edit-post-header' );
 
 		if (
-			( await driverHelper.isEventuallyPresentAndDisplayed(
-				this.driver,
-				nuxPopupSelector,
-				this.explicitWaitMS / 2
-			) ) &&
+			( await driverHelper.isElementPresent( this.driver, nuxPopupSelector ) ) &&
 			( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, headerSelector ) )
 		) {
 			await driverHelper.clickWhenClickable( this.driver, nuxDisableSelector );
