@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import React from 'react';
 import PropTypes from 'prop-types';
 import svg4everybody from 'svg4everybody';
@@ -17,9 +18,7 @@ function MaterialIcon( props ) {
 	// Using a missing icon doesn't produce any errors, just a blank icon, which is the exact intended behaviour.
 	// This means we don't need to perform any checks on the icon name.
 	const iconName = `material-icon-${ icon }`;
-	const iconClass = [ 'material-icon', iconName, className ]
-		.filter( Boolean ) // Remove all falsy values.
-		.join( ' ' );
+	const iconClass = classnames( 'material-icon', iconName, className );
 
 	const svgPath = `icon-${ style }-${ icon }-${ size }px`;
 
@@ -39,7 +38,6 @@ function MaterialIcon( props ) {
 }
 
 MaterialIcon.propTypes = {
-	category: PropTypes.string.isRequired,
 	icon: PropTypes.string.isRequired,
 	style: PropTypes.string,
 	size: PropTypes.number,
