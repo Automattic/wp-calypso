@@ -62,7 +62,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		step( 'Can enter page title, content and image', async function() {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.removeNUXNotice();
 			await gEditorComponent.enterTitle( pageTitle );
 			await gEditorComponent.enterText( pageQuote );
 			await gEditorComponent.addImage( fileDetails );
@@ -200,7 +199,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		step( 'Can enter page title and content', async function() {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.removeNUXNotice();
 			await gEditorComponent.enterTitle( pageTitle );
 			await gEditorComponent.enterText( pageQuote );
 			return await gEditorComponent.ensureSaved();
