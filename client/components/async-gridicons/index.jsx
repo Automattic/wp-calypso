@@ -13,8 +13,10 @@ import FallbackIcon from './fallback';
 const loadedIcons = new Map();
 
 function loadIcon( icon ) {
-	return import( /* webpackChunkName: "gridicons", webpackInclude: /\.js$/, webpackExclude: /dist\/(index\.js|example\.js)$/, webpackMode: "lazy-once" */
-	`gridicons/dist/${ icon }` ).then(
+	return import(
+		/* webpackChunkName: "gridicons", webpackInclude: /\.js$/, webpackExclude: /dist\/(index\.js|example\.js)$/, webpackMode: "lazy-once" */
+		`gridicons/dist/${ icon }`
+	).then(
 		g => {
 			loadedIcons.set( icon, g.default );
 			return g.default;

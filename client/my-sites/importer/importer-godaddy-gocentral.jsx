@@ -19,7 +19,9 @@ class ImporterGoDaddyGoCentral extends React.PureComponent {
 	importerData = {
 		title: 'GoDaddy',
 		icon: 'godaddy-gocentral',
-		description: this.props.translate( 'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder.' ),
+		description: this.props.translate(
+			'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder.'
+		),
 		uploadDescription: this.props.translate( 'Type your existing site URL to start the import.' ),
 		engine: 'godaddy-gocentral',
 	};

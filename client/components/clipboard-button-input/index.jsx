@@ -29,12 +29,12 @@ function ClipboardButtonInput( { value = '', className, disabled, hideHttp, disp
 	const [ isCopied, setCopied ] = React.useState( false );
 
 	// toggle the `isCopied` flag back to `false` after 4 seconds
-	React.useEffect(() => {
+	React.useEffect( () => {
 		if ( isCopied ) {
 			const confirmationTimeout = setTimeout( () => setCopied( false ), 4000 );
 			return () => clearTimeout( confirmationTimeout );
 		}
-	}, [ isCopied ]);
+	}, [ isCopied ] );
 
 	const showConfirmation = () => {
 		setCopied( true );

@@ -13,9 +13,9 @@ import { connect } from 'react-redux';
 import { requestTags } from 'state/reader/tags/items/actions';
 
 const QueryReaderTag = ( { tag, requestTags: request } ) => {
-	useEffect(() => {
+	useEffect( () => {
 		request( tag );
-	}, [ request, tag ]);
+	}, [ request, tag ] );
 	return null;
 };
 

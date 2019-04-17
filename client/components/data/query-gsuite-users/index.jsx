@@ -14,11 +14,11 @@ import isRequestingGSuiteUsers from 'state/selectors/is-requesting-gsuite-users'
 import { getGSuiteUsers } from 'state/gsuite-users/actions';
 
 const QueryGSuiteUsers = ( { siteId, request, isRequesting } ) => {
-	useEffect(() => {
+	useEffect( () => {
 		if ( ! isRequesting ) {
 			request( siteId );
 		}
-	}, [ siteId, request, isRequesting ]);
+	}, [ siteId, request, isRequesting ] );
 	return null;
 };
 

@@ -23,9 +23,7 @@ import {
 import { SettingsButton } from '../button-labels';
 
 export const SiteTitleTour = makeTour(
-	<Tour
-		{...meta}
-	>
+	<Tour { ...meta }>
 		<Step name="init" placement="right" next="click-settings" style={ { animationDelay: '2s' } }>
 			{ ( { translate } ) => (
 				<Fragment>
