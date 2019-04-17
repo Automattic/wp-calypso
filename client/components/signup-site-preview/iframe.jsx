@@ -11,7 +11,12 @@ import { debounce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getIframeSource, getIframePageContent, isIE } from 'components/signup-site-preview/utils';
+import {
+	getIframeSource,
+	getIframePageContent,
+	isIE,
+	revokeObjectURL,
+} from 'components/signup-site-preview/utils';
 
 export default class SignupSitePreviewIframe extends Component {
 	static propTypes = {
@@ -168,8 +173,7 @@ export default class SignupSitePreviewIframe extends Component {
 			this.iframe.current.contentWindow.document.write( iframeSrc );
 			this.iframe.current.contentWindow.document.close();
 		} else {
-			// For memory management: https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
-			URL.revokeObjectURL( this.iframe.current.src );
+			revokeObjectURL( this.iframe.current.src );
 			this.iframe.current.src = iframeSrc;
 		}
 	};

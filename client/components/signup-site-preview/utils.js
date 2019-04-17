@@ -38,6 +38,16 @@ export function getCSSLinkHtml( url ) {
 }
 
 /**
+ * Releases an existing object URL to let the browser know not to keep the reference to the file any longer.
+ * For memory management: https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
+ *
+ * @param  {String} objectUrl A DOMString containing a URL representing an object
+ */
+export function revokeObjectURL( objectUrl ) {
+	URL.revokeObjectURL( objectUrl );
+}
+
+/**
  * Returns a WordPress page shell HTML
  *
  * @param  {Object}  content   Object containing `title`, `tagline` and `body` strings
