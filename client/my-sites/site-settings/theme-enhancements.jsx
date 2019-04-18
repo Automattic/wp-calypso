@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
@@ -142,6 +142,29 @@ class ThemeEnhancements extends Component {
 		);
 	}
 
+	renderCustomCSSSettings() {
+		const { selectedSiteId, translate } = this.props;
+		const formPending = this.isFormPending();
+
+		return (
+			<FormFieldset>
+				<SupportInfo
+					text={ translate(
+						"Adds options for CSS preprocessor use, disabling the theme's CSS, or custom image width."
+					) }
+					link="https://jetpack.com/support/custom-css/"
+				/>
+
+				<JetpackModuleToggle
+					siteId={ selectedSiteId }
+					moduleSlug="custom-css"
+					label={ translate( 'Enhance CSS customization panel' ) }
+					disabled={ formPending }
+				/>
+			</FormFieldset>
+		);
+	}
+
 	renderMinilevenSettings() {
 		const { selectedSiteId, minilevenModuleActive, translate } = this.props;
 		const formPending = this.isFormPending();
@@ -201,11 +224,13 @@ class ThemeEnhancements extends Component {
 
 				<Card className="theme-enhancements__card site-settings">
 					{ siteIsJetpack ? (
-						<div>
+						<Fragment>
 							{ this.renderJetpackInfiniteScrollSettings() }
 							<hr />
+							{ this.renderCustomCSSSettings() }
+							<hr />
 							{ this.renderMinilevenSettings() }
-						</div>
+						</Fragment>
 					) : (
 						this.renderSimpleSiteInfiniteScrollSettings()
 					) }
