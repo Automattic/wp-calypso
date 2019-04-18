@@ -39,16 +39,20 @@ ln -s ~/Dev/wp-calypso/apps/full-site-editing/blank-theme/ ~/Dev/wordpress/wp-co
 
 ## Build System
 
-There are 4 scripts that perform roughly the same tasks, but on different folders and environments:
+Note: these scripts must be run from the Calypso root.
 
-```
-npm run dev:plugin
-npm run dev:theme
-```
-Compile from the `index.js` entry point, put the unminified output into `/dist`, and watch for changes.
+- `npx lerna run dev --scope='@automattic/full-site-editing'`<br>
+Compiles both the theme and the plugin, and watches for changes.
 
-```
-npm run build:plugin
-npm run build:theme
-```
-Compile from the `index.js` entry point, and put the minified output into `/dist`.
+- `npx lerna run build --scope='@automattic/full-site-editing'`<br>
+Compiles and minifies for production both the theme and the plugin.
+
+The entry points are:
+
+- `/blank-theme/index.js`
+- `/full-site-editing-plugin/index.js`
+
+The outputs are:
+
+- `/blank-theme/dist/blank-theme.(js|css)`
+- `/full-site-editing-plugin/dist/full-site-editing-plugin.(js|css)`

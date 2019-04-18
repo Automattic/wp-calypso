@@ -16,12 +16,14 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"plugin": "webpack --folder='plugin' --env.WP='true'",
-		"dev:plugin": "npx lerna run plugin",
-		"build:plugin": "NODE_ENV=production npx lerna run plugin",
-		"theme": "webpack --folder='theme' --env.WP='true'",
-		"dev:theme": "npx lerna run theme",
-		"build:theme": "NODE_ENV=production npx lerna run theme"
+		"plugin": "webpack --source='plugin'",
+		"dev:plugin": "npm run plugin",
+		"build:plugin": "NODE_ENV=production npm run plugin",
+		"theme": "webpack --source='theme'",
+		"dev:theme": "npm run theme",
+		"build:theme": "NODE_ENV=production npm run theme",
+		"dev": "npm-run-all --parallel dev:*",
+		"build": "npm-run-all --parallel build:*"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "file:../../packages/calypso-build",

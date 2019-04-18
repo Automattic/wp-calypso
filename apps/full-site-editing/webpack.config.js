@@ -25,11 +25,13 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  *
  * @param  {object}  env                           environment options
  * @param  {object}  argv                          options map
- * @param  {object}  argv.folder                   "plugin" or "theme"
+ * @param  {object}  argv.source                   "plugin" or "theme"
  * @return {object}                                webpack config
  */
-function getWebpackConfig( env, argv ) {
-	if ( 'theme' === argv.folder ) {
+function getWebpackConfig( env = {}, argv = {} ) {
+	env.WP = true;
+
+	if ( 'theme' === argv.source ) {
 		argv.entry = path.join( __dirname, 'blank-theme' );
 		argv[ 'output-path' ] = path.join( __dirname, 'blank-theme', 'dist' );
 		argv[ 'output-filename' ] = 'blank-theme.js';
