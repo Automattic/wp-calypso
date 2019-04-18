@@ -82,18 +82,17 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	isVerticalSearchPending = () => this.state.inputValue && 0 === this.props.verticals.length;
 
 	/**
-	 * Sets `state.results` with incoming vertical results, retaining previous non-user vertical search results
-	 * if the incoming vertical results contain only user-defined results.
-	 *
-	 * This function could better be performed in the backend eventually.
+	 * Sets `state.candidateVerticals` with incoming vertical results.
 	 *
 	 * @param {Array} results Incoming vertical results
 	 */
 	setSearchResults = results => {
 		if ( results && results.length ) {
-			const { inputValue } = this.state;
 			this.setState( { candidateVerticals: results }, () =>
-				this.updateVerticalData( this.searchForVerticalMatches( inputValue ), inputValue )
+				this.updateVerticalData(
+					this.searchForVerticalMatches( this.state.inputValue ),
+					this.state.inputValue
+				)
 			);
 		}
 	};
@@ -160,6 +159,8 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 	/**
 	 * Returns an array of vertical values - suggestions - that is consumable by `<SuggestionSearch />`
+	 * We use the `this.state.candidateVerticals` array instead of `this.props.verticals`
+	 * so `<SuggestionSearch />` has a list to filter in between requests.
 	 *
 	 * @returns {Array} The array of vertical values.
 	 */
