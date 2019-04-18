@@ -276,6 +276,17 @@ jobs:
             NODE_ENV=production npm run build-notifications -- --output-path=$CIRCLE_ARTIFACTS/notifications-panel
       - store-artifacts-and-test-results
 
+  build-o2-blocks:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: Build Gutenberg Blocks for internal p2s
+          command: |
+            npx lerna run build --scope='@automattic/o2-blocks' -- -- --output-path=$CIRCLE_ARTIFACTS/o2-blocks
+      - store-artifacts-and-test-results
+
   build-wpcom-block-editor:
     <<: *defaults
     parallelism: 1
