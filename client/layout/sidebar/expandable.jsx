@@ -5,7 +5,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { uniqueId } from 'lodash';
+import { get, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,10 +15,31 @@ import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import TranslatableString from 'components/translatable/proptype';
 
+function containsSelectedSidebarItem( children ) {
+	let selectedItemFound = false;
+
+	React.Children.forEach( children, child => {
+		if ( selectedItemFound ) {
+			return true;
+		}
+
+		if ( get( child, 'props.selected' ) ) {
+			selectedItemFound = true;
+		} else {
+			const descendants = get( child, 'props.children' );
+
+			if ( descendants ) {
+				selectedItemFound = containsSelectedSidebarItem( descendants );
+			}
+		}
+	} );
+
+	return selectedItemFound;
+}
+
 export const ExpandableSidebarMenu = props => {
 	const {
 		className,
-		expanded,
 		title,
 		count,
 		onClick,
@@ -31,6 +52,12 @@ export const ExpandableSidebarMenu = props => {
 		onAddSubmit,
 	} = props;
 
+	let { expanded } = props;
+
+	if ( null === expanded ) {
+		expanded = containsSelectedSidebarItem( props.children );
+	}
+
 	const classes = classNames( className, {
 		'is-toggle-open': !! expanded,
 		'is-togglable': true,
@@ -39,7 +66,6 @@ export const ExpandableSidebarMenu = props => {
 	const menuId = uniqueId( 'menu' );
 
 	const renderAddForm = onAddClick || onAddSubmit || addLabel || addPlaceholder;
-
 	let addForm = null;
 
 	if ( renderAddForm ) {
@@ -83,10 +109,10 @@ ExpandableSidebarMenu.propTypes = {
 	onClick: PropTypes.func,
 	hideAddButton: PropTypes.bool,
 	icon: PropTypes.string,
+	expanded: PropTypes.bool,
 };
 
 ExpandableSidebarMenu.defaultProps = {
-	expanded: false,
 	hideAddButton: false,
 };
 

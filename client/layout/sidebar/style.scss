@@ -35,6 +35,16 @@
 	}
 }
 
+@include breakpoint( '<660px' ) {
+	li.sidebar__menu {
+		border-bottom: 1px solid var( --sidebar-border-color );
+
+		&:first-child {
+			border-top: 1px solid var( --sidebar-border-color );
+		}
+	}
+}
+
 // Sidebar group headings
 .sidebar__heading {
 	color: var( --sidebar-heading-color );
@@ -48,19 +58,14 @@
 .sidebar__menu {
 	display: block;
 
-	@include breakpoint( '<660px' ) {
-		margin-top: 24px;
-	}
-
 	li {
 		display: flex;
 
 		@include breakpoint( '<660px' ) {
-			border-bottom: 1px solid var( --sidebar-border-color );
 			background-color: var( --sidebar-background );
 
-			&:first-child {
-				border-top: 1px solid var( --sidebar-border-color );
+			&.stats {
+				border-bottom: 1px solid var( --sidebar-border-color );
 			}
 		}
 	}
@@ -126,7 +131,7 @@
 	}
 
 	.gridicon,
-	.jetpack-logo {
+	svg {
 		fill: var( --sidebar-gridicon-fill );
 		height: 24px;
 		width: 24px;
@@ -136,8 +141,7 @@
 		// External indicator for sections that aren't available in Calypso
 		&.gridicons-external {
 			position: absolute;
-			top: 13px;
-			right: 8px;
+			right: 15px;
 			left: auto;
 			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
 			height: 18px;
@@ -145,6 +149,16 @@
 		}
 	}
 
+	// Currently hiding non-gridicon SVGs while testing new nav drawer design (PR #31742)
+	svg {
+		display: none;
+	}
+
+	.gridicon,
+	.jetpack-logo {
+		display: inline;
+	}
+	
 	&.is-togglable {
 		@include breakpoint( '<660px' ) {
 			margin-top: 0;
@@ -201,6 +215,14 @@
 			overflow: hidden;
 		}
 
+		.sidebar__menu-list svg {
+            display: none;
+        }
+
+        .sidebar__menu-list .gridicons-external {
+			display: inline;
+		}
+
 		.sidebar__menu-item {
 			opacity: 0;
 			transition: transform 0.15s cubic-bezier( 0.23, 1, 0.32, 1 ), opacity 0.15s ease-in-out;
@@ -211,7 +233,6 @@
 		&.is-toggle-open {
 			.sidebar__heading {
 				background-color: var( --sidebar-menu-hover-background );
-				box-shadow: 0 1px 0 var( --sidebar-border-color ), 0 -1px 0 var( --sidebar-border-color );
 
 				.gridicon {
 					transform: rotate( 180deg );
@@ -284,6 +305,7 @@
 			}
 		}
 	}
+
 }
 
 a.sidebar__button,
@@ -577,17 +599,107 @@ form.sidebar__button input {
 	}
 }
 
-.sidebar__chevron-right {
-	position: relative;
-	width: 36px;
-	height: 46px;
-	pointer-events: none;
+.sidebar__streamlined-nav-drawer {
+	.sidebar__menu-wrapper {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
 
-	.gridicon {
-		padding-top: 10px;
+		>li:last-child {
+			margin-bottom: 20px;
+		}
 	}
 
-	:hover + & .gridicon {
-		fill: var( --color-primary );
+	.sidebar__menu {
+		.gridicon {
+			display: none;
+		}
+
+		svg,
+		.gridicons-my-sites,
+		.gridicons-chevron-down,
+		.gridicons-external {
+			display: inline-block;
+		}
+	
+		&.is-togglable {
+			.sidebar__menu-list {
+				padding-bottom: 0;
+				padding-top: 0;
+			}
+		}
+		
+		&.is-toggle-open {
+			.sidebar__heading {
+				background-color: transparent;
+			}
+		}
+	}
+
+	.sidebar__button {
+		display: none;
+	}
+			
+	.sidebar__menu-list a {
+		padding: 10px 16px 10px 55px; 
+	}
+
+	.is-togglable .sidebar__heading {
+		font-weight: 600;
+		justify-content: flex-start;
+	}
+
+	.is-togglable .sidebar__heading span {
+		flex: 0 1 100%;
+	}
+
+	.sidebar__menu.is-togglable .sidebar__heading,
+	.sidebar__menu a {
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	.sidebar__menu-list .sidebar__menu-link-text {
+		font-weight: normal;
+	}
+
+	.is-togglable .sidebar__heading .gridicons-chevron-down,
+	.sidebar .is-togglable .sidebar__heading .material-icon-exit_to_app {
+		margin-right: 0;
+		top: 0;
+	}
+
+	.sidebar__menu.wp-admin .sidebar__heading .gridicon {
+		order: 0;
+	}
+
+	.sidebar__heading .gridicons-chevron-down {
+		align-self: flex-end;
+		order: 99; 
+	}
+
+	.is-togglable.is-toggle-open .sidebar__heading .gridicon:not( .gridicons-chevron-down ) {
+		transform: rotate( 0deg );
+	}
+
+	/* WP Admin Link */
+
+	.sidebar__menu.sidebar__wp-admin {
+		width: 100%;
+		margin-top: auto;
+
+		@include breakpoint( '<660px' ) {
+			border: none;
+		}
+	}
+
+	.sidebar__menu.sidebar__wp-admin .wp-admin {
+		border-top: 1px solid var( --sidebar-border-color );
+		justify-content: flex-start;
+
+		@include breakpoint( '<660px' ) {
+			border-top: none;
+		}
 	}
 }
+
