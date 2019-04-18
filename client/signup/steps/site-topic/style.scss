@@ -69,8 +69,6 @@ body.is-section-jetpack-connect .site-topic__content {
 		right: 3px;
 		padding: 5px 8px;
 		@include elevation ( 1dp );
-		transition: all 150ms ease-in-out;
-		transition-delay: 150ms;
 
 		&[disabled] {
 			opacity: 0;
@@ -79,6 +77,10 @@ body.is-section-jetpack-connect .site-topic__content {
 		.gridicon {
 			height: 24px;
 			width: 24px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			padding: 9px 12px;
 		}
 	}
 }

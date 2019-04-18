@@ -30,14 +30,24 @@
 
 	.button {
 		position: absolute;
-		bottom: 3px;
+		top: 3px;
 		right: 3px;
 		width: auto;
 		padding: 5px 8px;
+		transition: none;
 
 		.gridicon {
 			height: 24px;
 			width: 24px;
+		}
+	}
+}
+
+/* We need specificity here to overwrite client/signup/style.scss */
+body.is-section-signup {
+	.site-information__wrapper .site-information__field-control button.button {
+		@include breakpoint( '<660px' ) {
+			padding: 9px 12px;
 		}
 	}
 }
