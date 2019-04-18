@@ -194,6 +194,7 @@
 		.new-account {
 			padding-bottom: 0.48em;
 			background: var( --color-white );
+			// stylelint-disable-next-line selector-max-id
 			#content & {
 				font-size: 0.9em;
 			}
