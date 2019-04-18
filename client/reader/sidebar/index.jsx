@@ -97,12 +97,6 @@ export class ReaderSidebar extends React.Component {
 		recordTrack( 'calypso_reader_sidebar_followed_sites_clicked' );
 	}
 
-	handleReaderSidebarFollowManageClicked() {
-		recordAction( 'clicked_reader_sidebar_follow_manage' );
-		recordGaEvent( 'Clicked Reader Sidebar Follow Manage' );
-		recordTrack( 'calypso_reader_sidebar_follow_manage_clicked' );
-	}
-
 	handleReaderSidebarConversationsClicked() {
 		recordAction( 'clicked_reader_sidebar_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar Conversations' );
@@ -151,13 +145,6 @@ export class ReaderSidebar extends React.Component {
 									<span className="menu-link-text">
 										{ this.props.translate( 'Followed Sites' ) }
 									</span>
-								</a>
-								<a
-									href="/following/manage"
-									onClick={ this.handleReaderSidebarFollowManageClicked }
-									className="sidebar__button"
-								>
-									{ this.props.translate( 'Manage' ) }
 								</a>
 							</li>
 							<li
