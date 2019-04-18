@@ -35,6 +35,10 @@ import QueryEmailForwards from 'components/data/query-email-forwards';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 
+//TODO: hacked together for dev
+import GSuiteAddUsersA from 'components/gsuite/gsuite-add-users';
+import Card from 'components/card';
+
 class GSuiteAddUsers extends React.Component {
 	componentDidMount() {
 		const { domains, isRequestingDomains } = this.props;
@@ -105,6 +109,11 @@ class GSuiteAddUsers extends React.Component {
 					/>
 				) : (
 					<AddEmailAddressesCardPlaceholder />
+				) }
+				{ gsuiteUsers && gSuiteSupportedDomains && (
+					<Card>
+						<GSuiteAddUsersA domains={ gSuiteSupportedDomains } />
+					</Card>
 				) }
 			</Fragment>
 		);
