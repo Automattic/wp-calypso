@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, includes, reject } from 'lodash';
+import { assign, includes, reject, startsWith } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -55,7 +55,7 @@ function getPostsDestination( dependencies ) {
 function getRedirectDestination( dependencies ) {
 	if (
 		dependencies.oauth2_redirect &&
-		dependencies.oauth2_redirect.startsWith( 'https://public-api.wordpress.com' )
+		startsWith( dependencies.oauth2_redirect, 'https://public-api.wordpress.com' )
 	) {
 		return dependencies.oauth2_redirect;
 	}
