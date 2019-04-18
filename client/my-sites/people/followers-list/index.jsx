@@ -181,7 +181,7 @@ const Followers = localize(
 					'You have %(number)d followers',
 					{
 						args: { number: this.props.totalFollowers },
-						count: this.props.totalUsers,
+						count: this.props.totalFollowers,
 					}
 				);
 
@@ -191,7 +191,7 @@ const Followers = localize(
 						'You have %(number)d email followers',
 						{
 							args: { number: this.props.totalFollowers },
-							count: this.props.totalUsers,
+							count: this.props.totalFollowers,
 						}
 					);
 				}
