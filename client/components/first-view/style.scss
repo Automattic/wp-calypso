@@ -65,10 +65,6 @@
 		text-align: center;
 	}
 
-	@include breakpoint( '>660px' ) {}
-
-	@include breakpoint( '>960px' ) {}
-
 	.first-view__icon {
 		position: absolute;
 			top: 0;
