@@ -68,7 +68,7 @@ import {
 	toggleMySitesSidebarDesignMenu,
 	toggleMySitesSidebarToolsMenu,
 	toggleMySitesSidebarManageMenu,
-} from 'state/ui/my-sites/sidebar/actions';
+} from 'state/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import { canAccessEarnSection } from 'lib/ads/utils';
 
