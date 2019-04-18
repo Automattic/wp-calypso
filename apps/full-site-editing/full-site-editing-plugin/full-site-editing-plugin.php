@@ -18,26 +18,24 @@ class WPCOM_Full_Site_Editing {
 	}
 
 	function register_script_and_style() {
+		$script_dependencies = json_decode( file_get_contents(
+			plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.deps.json'
+		), true );
 		wp_register_script(
 			'wpcom-full-site-editing-script',
 			plugins_url( 'dist/full-site-editing-plugin.js', __FILE__ ),
-			array(
-				'wp-block-editor',
-				'wp-blocks',
-				'wp-components',
-				'wp-compose',
-				'wp-data',
-				'wp-element',
-				'wp-i18n',
-			),
+			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.js' )
 		);
 
+		$style_file = is_rtl()
+			? 'dist/full-site-editing-plugin.rtl.css'
+			: 'dist/full-site-editing-plugin.css';
 		wp_register_style(
 			'wpcom-full-site-editing-style',
-			plugins_url( 'dist/full-site-editing-plugin.css', __FILE__ ),
+			plugins_url( $style_file, __FILE__ ),
 			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.css' )
+			filemtime( plugin_dir_path( __FILE__ ) . $style_file )
 		);
 	}
 
