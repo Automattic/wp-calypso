@@ -107,7 +107,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await PostsPage.Expect( driver );
 
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const invitesMessageTitleDisplayed = await noticesComponent.inviteMessageTitle();
+			const invitesMessageTitleDisplayed = await noticesComponent.inviteNoticeContent();
 			return assert(
 				invitesMessageTitleDisplayed.includes( 'Editor' ),
 				`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Editor'`
@@ -270,7 +270,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 		step( 'Can see user has been added as a Viewer', async function() {
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const followMessageDisplayed = await noticesComponent.followMessageTitle();
+			const followMessageDisplayed = await noticesComponent.getNoticeContent();
 			assert.strictEqual(
 				true,
 				followMessageDisplayed.includes( 'viewer' ),
@@ -386,7 +386,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		step( 'Can see a notice welcoming the new user as an contributor', async function() {
 			await PostsPage.Expect( driver );
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const invitesMessageTitleDisplayed = await noticesComponent.inviteMessageTitle();
+			const invitesMessageTitleDisplayed = await noticesComponent.inviteNoticeContent();
 			return assert(
 				invitesMessageTitleDisplayed.includes( 'Contributor' ),
 				`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Contributor'`
@@ -518,7 +518,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 		step( 'User has been added as a Follower', async function() {
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const followMessageDisplayed = noticesComponent.followMessageTitle();
+			const followMessageDisplayed = noticesComponent.getNoticeContent();
 			assert(
 				followMessageDisplayed.includes( 'following' ),
 				`The follow message '${ followMessageDisplayed }' does not include 'following'`
