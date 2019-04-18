@@ -194,6 +194,7 @@
 		.new-account {
 			padding-bottom: 0.48em;
 			background: var( --color-white );
+			// stylelint-disable-next-line selector-max-id
 			#content & {
 				font-size: 0.9em;
 			}
@@ -962,7 +963,7 @@
 	&.is-bottom {
 		margin: 14px 0 0;
 		@include breakpoint( '<480px' ) {
-			margin: 15px -8px 0 -8px;
+			margin: 15px -8px 0;
 		}
 	}
 

@@ -162,13 +162,25 @@
 }
 
 @keyframes customizer-loading-dot {
-	0% { opacity: 0; }
-	50% { opacity: 0; }
-	100% { opacity: 1; }
+	0% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 @keyframes customizer-pulse-animation {
-	0% { opacity: 0.5; }
-	50% { opacity: 1; }
-	100% { opacity: 0.5; }
+	0% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.5;
+	}
 }

@@ -182,7 +182,7 @@
 					fill: var( --sidebar-gridicon-fill );
 				}
 			}
-		
+
 			.accessible-focus &:focus {
 				outline: none;
 				box-shadow: inset 0 0 0 2px var( --color-primary-light );
@@ -223,7 +223,6 @@
 				opacity: 1;
 				pointer-events: auto;
 				transform: translateX( 0 );
-
 
 				&:hover {
 					border-color: var( --sidebar-menu-hover-color );

@@ -172,7 +172,7 @@
 }
 
 // Secondary Layout overrides
-.layout__secondary {	
+.layout__secondary {
 	.site__title {
 		color: var( --sidebar-text-color );
 	}
@@ -190,29 +190,29 @@
 		color: var( --sidebar-gridicon-fill );
 	}
 	
-	.site-selector {		
+	.site-selector {
 		&.is-large .site-selector__sites {
 			border-color: var( --sidebar-border-color );
 		}
 		
 		&__sites {
-			background: var( --sidebar-background );		
+			background: var( --sidebar-background );
 		}
 	
 		&__add-new-site {
 			border-color: var( --sidebar-border-color );
 		
-			.button {		
-				color: var( --sidebar-heading-color );			
+			.button {
+				color: var( --sidebar-heading-color );
 				&:hover {
-					color: var( --sidebar-text-color );	
-				} 
-			}	
+					color: var( --sidebar-text-color );
+				}
+			}
 		}
 		
 		&__recent {
 			border-color: var( --sidebar-border-color );
-		}		  
+		}
 		
 		.all-sites {
 			border-color: var( --sidebar-border-color );
@@ -224,14 +224,14 @@
 	}
 	
 	.all-sites .count {
-		color: var( --sidebar-text-color );	
+		color: var( --sidebar-text-color );
 		border-color: var( --sidebar-text-color );
 	}
 	
 	.app-promo .app-promo__link {
 		box-shadow: 0 0 0 1px var( --sidebar-border-color ),
 			0 1px 2px var( --sidebar-border-color );
-	} 
+	}
 }
 
 /*

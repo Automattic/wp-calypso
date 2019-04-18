@@ -262,7 +262,7 @@
 		}
 
 		// Firefox-only position fix
-		@-moz-document url-prefix() {
+		@-moz-document url-prefix('') {
 			&:first-child::first-letter {
 				margin-top: 9px;
 			}
@@ -333,7 +333,7 @@
 			margin-left: 0;
 		}
 
-		@media (max-width: 1400px) {
+		@media ( max-width: 1400px ) {
 			background: var( --color-neutral-0 );
 			margin: 0 0 24px;
 			padding: 16px;

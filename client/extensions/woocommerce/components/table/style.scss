@@ -44,7 +44,7 @@
 			&:hover {
 				background: var( --color-neutral-0 );
 
-				.table-item__cell-title:after {
+				.table-item__cell-title::after {
 					background-image: linear-gradient(
 						to right,
 						rgba( 255, 255, 255, 0 ) 0%,

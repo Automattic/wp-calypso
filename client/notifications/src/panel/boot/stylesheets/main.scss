@@ -159,7 +159,7 @@
 		font-size: $wpnc__capital-font-size;
 	}
 
-	.rtl header .back:after {
+	.rtl header .back::after {
 		transform: rotate( 90deg );
 	}
 
@@ -432,7 +432,7 @@
 			display: flex;
 			@extend %headertext;
 			color: var( --color-neutral-400 );
-			padding: 6px 0px;
+			padding: 6px 0;
 			background: rgba( 255, 255, 255, 0.95 );
 			border-bottom: 1px solid var( --color-neutral-0 );
 
@@ -504,8 +504,8 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-		left: 0px;
-		right: 0px;
+		left: 0;
+		right: 0;
 		box-shadow: -3px 1px 10px -2px rgba( var( --color-neutral-700-rgb ), 0.075 );
 
 		@media only screen and ( min-width: 480px ) {
@@ -630,7 +630,7 @@
 		.wpnc__preface p {
 			display: inline;
 
-			&:after {
+			&::after {
 				content: ' ';
 			}
 
@@ -716,11 +716,11 @@
 		.wpnc__body-todo {
 			list-style: none;
 
-			.wpnc__todo-done:before {
+			.wpnc__todo-done::before {
 				content: '◉ ';
 			}
 
-			.wpnc__todo-not-done:before {
+			.wpnc__todo-not-done::before {
 				content: '◎ ';
 			}
 		}
@@ -829,8 +829,8 @@
 		.wpnc__single-view {
 			right: 410px;
 			left: 10px;
-			top: 0px;
-			bottom: 0px;
+			top: 0;
+			bottom: 0;
 			z-index: -1;
 
 			header {
@@ -840,7 +840,7 @@
 			}
 
 			.wpnc__note {
-				margin-top: 0px;
+				margin-top: 0;
 			}
 
 			-webkit-transform: translate3d( 0, 0, 0 ); // fix for getting scrollbar in right z-index

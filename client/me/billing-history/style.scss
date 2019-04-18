@@ -389,6 +389,7 @@ textarea.billing-history__billing-details-editable {
 @media print {
 	.is-section-billing,
 	.is-section-purchases {
+		// stylelint-disable-next-line selector-max-id
 		#secondary,
 		.masterbar,
 		.billing-history__receipt-links,

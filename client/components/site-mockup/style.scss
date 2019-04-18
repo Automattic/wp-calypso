@@ -140,9 +140,15 @@
 }
 
 @keyframes pulse {
-	0%   { background-color: rgba( var( --color-neutral-500-rgb ), 0.7 ); }
-	50%  { background-color: rgba( var( --color-neutral-500-rgb ), 1 ); }
-	100% { background-color: rgba( var( --color-neutral-500-rgb ), 0.7 ); }
+	0% {
+		background-color: rgba( var( --color-neutral-500-rgb ), 0.7 );
+	}
+	50% {
+		background-color: rgba( var( --color-neutral-500-rgb ), 1 );
+	}
+	100% {
+		background-color: rgba( var( --color-neutral-500-rgb ), 0.7 );
+	}
 }
 
 // Gutenberg Content

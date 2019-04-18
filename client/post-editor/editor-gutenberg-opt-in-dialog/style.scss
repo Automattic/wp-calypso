@@ -71,7 +71,7 @@
 	background-size: 320px;
 	height: 180px;
 	width: calc( 100% + 24px + 24px );
-	margin: 0 -24px 24px -24px;
+	margin: 0 -24px 24px;
 	position: relative;
 
 	@include breakpoint( '>660px' ) {

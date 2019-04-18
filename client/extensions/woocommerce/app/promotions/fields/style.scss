@@ -65,7 +65,6 @@
 	.search {
 		margin-bottom: 0;
 		border: 1px solid var( --color-neutral-100 );
-		z-index: 0; // Keeps search from overlapping header above.
 		box-sizing: border-box;
 		z-index: 9;
 	}
