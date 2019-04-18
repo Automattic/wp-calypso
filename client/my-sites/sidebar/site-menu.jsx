@@ -39,7 +39,7 @@ import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenber
 import { getEditorUrl as getEditorUrlStateSelector } from 'state/selectors/get-editor-url';
 import isVipSite from 'state/selectors/is-vip-site';
 
-class ManageMenu extends PureComponent {
+class SiteMenu extends PureComponent {
 	static propTypes = {
 		path: PropTypes.string,
 		onNavigate: PropTypes.func,
@@ -356,4 +356,4 @@ export default connect(
 	{ recordTracksEvent },
 	null,
 	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser', 'getEditorUrl' ] } ) }
-)( localize( ManageMenu ) );
+)( localize( SiteMenu ) );

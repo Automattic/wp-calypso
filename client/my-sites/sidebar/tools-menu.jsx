@@ -22,7 +22,7 @@ import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/c
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-class ManageMenu extends PureComponent {
+class ToolsMenu extends PureComponent {
 	static propTypes = {
 		path: PropTypes.string,
 		onNavigate: PropTypes.func,
@@ -146,4 +146,4 @@ export default connect(
 	{ recordTracksEvent },
 	null,
 	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser' ] } ) }
-)( localize( ManageMenu ) );
+)( localize( ToolsMenu ) );
