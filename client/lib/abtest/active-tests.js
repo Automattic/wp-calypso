@@ -175,10 +175,10 @@ export default {
 		defaultVariation: 'original',
 	},
 	pageBuilderMVP: {
-		datestamp: '20190402',
+		datestamp: '20190418',
 		variations: {
-			control: 0,
-			test: 1,
+			control: 50,
+			test: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
