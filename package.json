@@ -136,7 +136,7 @@
 		"marked": "0.5.2",
 		"mkdirp": "0.5.1",
 		"moment": "2.24.0",
-		"moment-timezone": "0.5.23",
+		"moment-timezone": "0.5.25",
 		"morgan": "1.9.1",
 		"node-sass": "4.11.0",
 		"node-sass-package-importer": "5.3.1",
