@@ -204,7 +204,6 @@
 	.DayPicker-Day,
 	.DayPicker-Day:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
 	.DayPicker-Day--range:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside) {
-		height: auto;
 		line-height: initial;
 		padding: 0.25em; // fix and allow target area
 		width: 24px; // fix and allow target area
