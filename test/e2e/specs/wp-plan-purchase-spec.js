@@ -13,12 +13,14 @@ import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper';
 
 import LoginFlow from '../lib/flows/login-flow.js';
-
 import PlansPage from '../lib/pages/plans-page.js';
 import StatsPage from '../lib/pages/stats-page.js';
-
 import SidebarComponent from '../lib/components/sidebar-component.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component';
+import NavBarComponent from '../lib/components/nav-bar-component';
+import ProfilePage from '../lib/pages/profile-page';
+import PurchasesPage from '../lib/pages/purchases-page';
+import ManagePurchasePage from '../lib/pages/manage-purchase-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -32,7 +34,7 @@ before( async function() {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Plans: (${ screenSize }) @jetpack`, function() {
+describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Comparing Plans:', function() {
@@ -145,6 +147,68 @@ describe( `[${ host }] Plans: (${ screenSize }) @jetpack`, function() {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
 			return await securePaymentComponent.removeFromCart();
+		} );
+	} );
+
+	describe( 'Renew a plan:', function() {
+		before( async function() {
+			return await driverManager.ensureNotLoggedIn( driver );
+		} );
+
+		step( 'Can log into WordPress.com', async function() {
+			const loginFlow = new LoginFlow( driver );
+			return await loginFlow.login();
+		} );
+
+		step( 'Can navigate to purchases', async function() {
+			const navBarComponent = await NavBarComponent.Expect( driver );
+			await navBarComponent.clickProfileLink();
+			const profilePage = await ProfilePage.Expect( driver );
+			await profilePage.chooseManagePurchases();
+			const purchasesPage = await PurchasesPage.Expect( driver );
+			await purchasesPage.dismissGuidedTour();
+			return await purchasesPage.selectPremiumPlanOnConnectedSite();
+		} );
+
+		step( '"Renew Now" link takes user to Payment Details form', async function() {
+			const managePurchasePage = await ManagePurchasePage.Expect( driver );
+			await managePurchasePage.chooseRenewNow();
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const premiumPlanInCart = await securePaymentComponent.containsPremiumPlan();
+			return assert.strictEqual(
+				premiumPlanInCart,
+				true,
+				"The cart doesn't contain the premium plan"
+			);
+		} );
+	} );
+
+	describe( 'Upgrade a plan:', function() {
+		before( async function() {
+			return await driverManager.ensureNotLoggedIn( driver );
+		} );
+
+		step( 'Can log into WordPress.com', async function() {
+			const loginFlow = new LoginFlow( driver );
+			return await loginFlow.loginAndSelectMySite();
+		} );
+
+		step( 'Can navigate to plans page and select business plan', async function() {
+			const sidebarComponent = await SidebarComponent.Expect( driver );
+			await sidebarComponent.selectPlan();
+			const plansPage = await PlansPage.Expect( driver );
+			await plansPage.openPlansTab();
+			return await plansPage.selectBusinessPlan();
+		} );
+
+		step( 'User is taken to be Payment Details form', async function() {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const businessPlanInCart = await securePaymentComponent.containsBusinessPlan();
+			return assert.strictEqual(
+				businessPlanInCart,
+				true,
+				"The cart doesn't contain the business plan"
+			);
 		} );
 	} );
 } );
