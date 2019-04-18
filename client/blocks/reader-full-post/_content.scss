@@ -262,7 +262,7 @@
 		}
 
 		// Firefox-only position fix
-		@-moz-document url-prefix() {
+		@-moz-document url-prefix('') {
 			&:first-child::first-letter {
 				margin-top: 9px;
 			}
