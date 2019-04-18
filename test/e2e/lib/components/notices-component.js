@@ -15,17 +15,33 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class NoticesComponent extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '#notices' ), null, config.get( 'explicitWaitMS' ) * 3 );
+		super( driver, By.css( '.notice' ), null, config.get( 'explicitWaitMS' ) * 3 );
 	}
 
-	async inviteMessageTitle() {
-		const selector = By.css( '.invites__title' );
+	async successNoticeDisplayed() {
+		const selector = By.css( '.notice.is-success' );
+		return await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+	}
+
+	async errorNoticeDisplayed() {
+		const selector = By.css( '.notice.is-error' );
+		return await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+	}
+
+	async getNoticeContent() {
+		const selector = By.css( '.notice .notice__text' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();
 	}
 
-	async followMessageTitle() {
-		const selector = By.css( '#notices .notice__text' );
+	async dismissNotice() {
+		const selector = By.css( '.notice.is-dismissable .notice__dismiss' );
+		// await driverHelper.waitTillPresentAndDisplayed( this.driver, selector); // verify notice is dismissable
+		return await driverHelper.clickWhenClickable( this.driver, selector );
+	}
+
+	async inviteNoticeContent() {
+		const selector = By.css( '.notice .invites__title' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();
 	}
