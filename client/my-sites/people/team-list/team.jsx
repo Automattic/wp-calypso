@@ -44,7 +44,10 @@ class Team extends React.Component {
 
 	render() {
 		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
-		const listClass = this.state.bulkEditing ? 'bulk-editing' : null;
+			listClass = classNames( {
+				'bulk-editing': this.state.bulkEditing,
+				'people-invites__invites-list': true,
+			} );
 		let headerText = this.props.translate( 'Team', { context: 'A navigation label.' } );
 		let people;
 		let headerText;
