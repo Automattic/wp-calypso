@@ -136,7 +136,10 @@ class SharingButtons extends Component {
 				id="sharing-buttons"
 				className="sharing-settings sharing-buttons"
 			>
-				<PageViewTracker path="/sharing/buttons/:site" title="Sharing > Sharing Buttons" />
+				<PageViewTracker
+					path="/marketing/sharing-buttons/:site"
+					title="Sharing > Sharing Buttons"
+				/>
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySharingButtons siteId={ siteId } />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }

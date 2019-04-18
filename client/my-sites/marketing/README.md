@@ -1,7 +1,6 @@
-Sharing
-=======================
+# Marketing
 
-The components within this directory are used to enable a user to manage their sharing settings.
+The components within this directory are used to enable a user to manage their marketing settings.
 
 ## Connections
 

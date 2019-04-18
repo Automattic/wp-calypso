@@ -22,7 +22,7 @@ export default localize( ( { selectedSite, translate } ) => {
 					'Schedule unlimited tweets, Facebook posts, and other social posts in advance.'
 				) }
 				buttonText={ translate( 'Learn more' ) }
-				href={ `/sharing/${ selectedSite.slug }` }
+				href={ `/marketing/connections/${ selectedSite.slug }` }
 			/>
 		</div>
 	);

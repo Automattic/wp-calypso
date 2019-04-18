@@ -554,6 +554,40 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
+	trackMarketingClick = () => {
+		this.trackMenuItemClick( 'marketing' );
+		this.onNavigate();
+	};
+
+	marketing() {
+		const { isJetpack, isSharingEnabledOnJetpackSite, path, site } = this.props;
+		const marketingLink = '/marketing' + this.props.siteSuffix;
+
+		if ( site && ! this.props.canUserPublishPosts ) {
+			return null;
+		}
+
+		if ( ! this.props.siteId ) {
+			return null;
+		}
+
+		if ( isJetpack && ! isSharingEnabledOnJetpackSite ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				label={ this.props.translate( 'Marketing' ) }
+				selected={ itemLinkMatches( '/marketing', path ) }
+				link={ marketingLink }
+				onNavigate={ this.trackMarketingClick }
+				icon="speaker"
+				preloadSectionName="marketing"
+				tipTarget="marketing"
+			/>
+		);
+	}
+
 	trackSharingClick = () => {
 		this.trackMenuItemClick( 'sharing' );
 		this.onNavigate();
@@ -770,6 +804,7 @@ export class MySitesSidebar extends Component {
 
 		const manage = !! this.manage(),
 			configuration =
+				!! this.marketing() ||
 				!! this.sharing() ||
 				!! this.users() ||
 				!! this.siteSettings() ||
@@ -811,6 +846,7 @@ export class MySitesSidebar extends Component {
 						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
 						<ul>
 							{ this.earn() }
+							{ this.marketing() }
 							{ this.sharing() }
 							{ this.users() }
 							{ this.plugins() }

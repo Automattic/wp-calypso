@@ -9,14 +9,17 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { jetpackModuleActive, navigation, sites, siteSelection } from 'my-sites/controller';
-import { buttons, connections, layout } from './controller';
+import { jetpackModuleActive, navigation, siteSelection } from 'my-sites/controller';
+import { buttons, connections, layout, redirectButtons, redirectConnections } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( /^\/sharing(\/buttons)?$/, siteSelection, sites, makeLayout, clientRender );
+	page( '/sharing/:domain', redirectConnections );
+	page( '/sharing/buttons/:domain', redirectButtons );
+	page( '/marketing/:domain', redirectConnections );
+
 	page(
-		'/sharing/:domain',
+		'/marketing/connections/:domain',
 		siteSelection,
 		navigation,
 		jetpackModuleActive( 'publicize', false ),
@@ -26,7 +29,7 @@ export default function() {
 		clientRender
 	);
 	page(
-		'/sharing/buttons/:domain',
+		'/marketing/sharing-buttons/:domain',
 		siteSelection,
 		navigation,
 		jetpackModuleActive( 'sharedaddy' ),
