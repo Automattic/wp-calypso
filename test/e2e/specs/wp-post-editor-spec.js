@@ -22,6 +22,7 @@ import PaypalCheckoutPage from '../lib/pages/external/paypal-checkout-page';
 
 import SidebarComponent from '../lib/components/sidebar-component.js';
 import NavBarComponent from '../lib/components/nav-bar-component.js';
+import NoticesComponent from '../lib/components/notices-component.js';
 import PostPreviewComponent from '../lib/components/post-preview-component.js';
 import PostEditorSidebarComponent from '../lib/components/post-editor-sidebar-component.js';
 import PostEditorToolbarComponent from '../lib/components/post-editor-toolbar-component';
@@ -1019,8 +1020,8 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 			} );
 
 			step( 'Can then see the Posts page with a confirmation message', async function() {
-				const postsPage = await PostsPage.Expect( driver );
-				const displayed = await postsPage.successNoticeDisplayed();
+				const noticesComponent = await NoticesComponent.Expect( driver );
+				const displayed = await noticesComponent.successNoticeDisplayed();
 				return assert.strictEqual(
 					displayed,
 					true,

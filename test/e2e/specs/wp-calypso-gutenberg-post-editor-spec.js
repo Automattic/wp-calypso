@@ -19,6 +19,7 @@ import ActivityPage from '../lib/pages/stats/activity-page';
 import PaypalCheckoutPage from '../lib/pages/external/paypal-checkout-page';
 
 import SidebarComponent from '../lib/components/sidebar-component.js';
+import NoticesComponent from '../lib/components/notices-component.js';
 import NavBarComponent from '../lib/components/nav-bar-component.js';
 import PostPreviewComponent from '../lib/components/post-preview-component';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
@@ -375,8 +376,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			} );
 
 			step( 'Can then see the Posts page with a confirmation message', async function() {
-				const postsPage = await PostsPage.Expect( driver );
-				const displayed = await postsPage.successNoticeDisplayed();
+				const noticesComponent = await NoticesComponent.Expect( driver );
+				const displayed = await noticesComponent.successNoticeDisplayed();
 				return assert.strictEqual(
 					displayed,
 					true,
@@ -801,8 +802,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			} );
 
 			step( 'Can then see the Posts page with a confirmation message', async function() {
-				const postsPage = await PostsPage.Expect( driver );
-				const displayed = await postsPage.successNoticeDisplayed();
+				const noticesComponent = await NoticesComponent.Expect( driver );
+				const displayed = await noticesComponent.successNoticeDisplayed();
 				return assert.strictEqual(
 					displayed,
 					true,
