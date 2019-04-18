@@ -142,15 +142,27 @@
 		border-color: var( --color-accent-light );
 		background-color: var( --color-neutral-0 );
 	}
+
 }
 
 .site-style__submit-wrapper {
 	align-self: center;
 
+	.button {
+		width: auto;
+		padding: 5px 8px;
+
+		.gridicon {
+			height: 24px;
+			width: 24px;
+		}
+	}
+
 	@include breakpoint( '<660px' ) {
 		padding: 8px;
 
 		.button {
+			position: static;
 			width: 100%;
 		}
 	}
