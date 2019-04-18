@@ -54,7 +54,7 @@ class Widgets extends Component {
 					siteId={ selectedSiteId }
 					moduleSlug="widgets"
 					label={ translate(
-						'Enable widget visibility controls to display widgets only on particular posts or pages'
+						'Make extra widgets available for use on your site including images and Twitter streams'
 					) }
 					disabled={ formPending }
 				/>
@@ -70,7 +70,7 @@ class Widgets extends Component {
 			<FormFieldset>
 				<SupportInfo
 					text={ translate(
-						'Widget visibility lets you decide which widgets appear on which pages, so you can finely tailor widget content.'
+						'Widget visibility lets you decide which widgets appear on which pages, so you can finely tailor widget content. '
 					) }
 					link="https://jetpack.com/support/widget-visibility"
 				/>
@@ -78,7 +78,9 @@ class Widgets extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="widget-visibility"
-					label={ translate( 'Control where widgets appear on your site' ) }
+					label={ translate(
+						'Enable widget visibility controls to display widgets only on particular posts or pages'
+					) }
 					disabled={ formPending }
 				/>
 			</FormFieldset>
