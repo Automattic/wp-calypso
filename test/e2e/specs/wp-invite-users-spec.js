@@ -130,7 +130,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await peoplePage.selectOnlyPersonDisplayed();
 			const editTeamMemberPage = await EditTeamMemberPage.Expect( driver );
 			await editTeamMemberPage.removeUserAndDeleteContent();
-			const displayed = await peoplePage.successNoticeDisplayed();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			const displayed = await noticesComponent.successNoticeDisplayed();
 			return assert.strictEqual(
 				displayed,
 				true,
@@ -440,7 +441,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				await peoplePage.selectOnlyPersonDisplayed();
 				const editTeamMemberPage = await EditTeamMemberPage.Expect( driver );
 				await editTeamMemberPage.changeToNewRole( 'author' );
-				const displayed = await editTeamMemberPage.successNoticeDisplayed();
+				const noticesComponent = await NoticesComponent.Expect( driver );
+				const displayed = await noticesComponent.successNoticeDisplayed();
 				return assert(
 					displayed,
 					'The update successful notice was not shown on the edit team member page.'
