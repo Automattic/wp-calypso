@@ -16,7 +16,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"bundle": "cb --env.WP",
+		"bundle": "cb --config='./webpack.config.js' --env.WP",
 		"build:dev": "npm run bundle --",
 		"build:prod": "NODE_ENV=production npm run bundle --",
 		"build": "npm-run-all --parallel \"build:* -- {@}\" --"
