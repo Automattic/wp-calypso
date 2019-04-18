@@ -23,6 +23,8 @@ import config from 'config';
 import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
 
 /**
  * Style dependencies
@@ -53,6 +55,7 @@ const FollowingStream = props => {
 	const placeholderText = getSearchPlaceholderText();
 	const now = new Date();
 	const showRegistrationMsg = props.userInUSA && now < lastDayForVoteBanner;
+	const { translate } = props;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -81,6 +84,11 @@ const FollowingStream = props => {
 				/>
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
+			<SectionHeader label={ translate( 'Following' ) }>
+				<Button primary compact className="following__manage" href="/following/manage">
+					{ translate( 'Manage' ) }
+				</Button>
+			</SectionHeader>
 		</Stream>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
