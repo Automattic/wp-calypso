@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-import emailValidator from 'email-validator';
 import formatCurrency from '@automattic/format-currency';
-import { get, includes, some, endsWith, mapValues } from 'lodash';
-import i18n from 'i18n-calypso';
+import { get, includes, some, endsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -199,60 +197,6 @@ function isGSuiteRestricted() {
 	return ! get( user.get(), 'is_valid_google_apps_country', false );
 }
 
-const removePreviousErrors = ( { value } ) => ( {
-	value,
-	error: null,
-} );
-
-const requiredField = ( { value, error } ) => ( {
-	value,
-	error:
-		! error && ( ! value || '' === value ) ? i18n.translate( 'This field is required.' ) : error,
-} );
-
-const sixtyCharacterField = ( { value, error } ) => ( {
-	value,
-	error:
-		! error && 60 < value.length
-			? i18n.translate( "This field can't be longer than 60 characters." )
-			: error,
-} );
-
-const validEmailCharacterField = ( { value, error } ) => ( {
-	value,
-	error:
-		! error && ! /^[0-9a-z_'-](\.?[0-9a-z_'-])*$/i.test( value )
-			? i18n.translate(
-					'Only number, letters, dashes, underscores, apostrophes and periods are allowed.'
-			  )
-			: error,
-} );
-
-const validateOverallEmail = (
-	{ value: mailBoxValue, error: mailBoxError },
-	{ value: domainValue }
-) => ( {
-	value: mailBoxValue,
-	error:
-		! mailBoxError && ! emailValidator.validate( `${ mailBoxValue }@${ domainValue }` )
-			? i18n.translate( 'Please provide a valid email address.' )
-			: mailBoxError,
-} );
-
-function validateUser( user ) {
-	// every field is required. Also scrubs previous errors.
-	const { domain, mailBox, firstName, lastName } = mapValues( user, field =>
-		requiredField( removePreviousErrors( field ) )
-	);
-
-	return {
-		domain,
-		mailBox: validateOverallEmail( validEmailCharacterField( mailBox ), domain ),
-		firstName: sixtyCharacterField( firstName ),
-		lastName: sixtyCharacterField( lastName ),
-	};
-}
-
 export {
 	canDomainAddGSuite,
 	formatPrice,
@@ -267,5 +211,4 @@ export {
 	hasGSuiteSupportedDomain,
 	hasPendingGSuiteUsers,
 	isGSuiteRestricted,
-	validateUser,
 };

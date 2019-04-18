@@ -36,10 +36,33 @@ import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 
 //TODO: hacked together for dev
-import GSuiteAddUsersA from 'components/gsuite/gsuite-add-users';
+import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import Card from 'components/card';
+import { newUsers, validateAgainstExistingUsers } from 'lib/gsuite/new-users';
 
 class GSuiteAddUsers extends React.Component {
+	state = {
+		users: [],
+	};
+
+	static getDerivedStateFromProps( { domains, isRequestingDomains }, { users } ) {
+		if ( ! isRequestingDomains && 0 === users.length ) {
+			const gSuiteSupportedDomains = getGSuiteSupportedDomains( domains );
+			if ( 0 < gSuiteSupportedDomains.length ) {
+				return {
+					users: newUsers( gSuiteSupportedDomains[ 0 ].name ),
+				};
+			}
+		}
+		return null;
+	}
+
+	onUsersChange = users => {
+		this.setState( {
+			users,
+		} );
+	};
+
 	componentDidMount() {
 		const { domains, isRequestingDomains } = this.props;
 		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
@@ -76,6 +99,9 @@ class GSuiteAddUsers extends React.Component {
 			selectedSite,
 			translate,
 		} = this.props;
+
+		const { users } = this.state;
+
 		const gSuiteSupportedDomains = getGSuiteSupportedDomains( domains );
 
 		return (
@@ -98,22 +124,17 @@ class GSuiteAddUsers extends React.Component {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
-				{ gsuiteUsers ? (
-					<AddEmailAddressesCard
-						domains={ domains }
-						isRequestingSiteDomains={ isRequestingDomains }
-						gsuiteUsers={ gsuiteUsers }
-						planType={ planType }
-						selectedDomainName={ selectedDomainName }
-						selectedSite={ selectedSite }
-					/>
+				{ gsuiteUsers && gSuiteSupportedDomains && ! isRequestingDomains ? (
+					<Card>
+						<GSuiteNewUserList
+							extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
+							domains={ gSuiteSupportedDomains }
+							users={ users }
+							onUsersChange={ this.onUsersChange }
+						/>
+					</Card>
 				) : (
 					<AddEmailAddressesCardPlaceholder />
-				) }
-				{ gsuiteUsers && gSuiteSupportedDomains && (
-					<Card>
-						<GSuiteAddUsersA domains={ gSuiteSupportedDomains } />
-					</Card>
 				) }
 			</Fragment>
 		);
