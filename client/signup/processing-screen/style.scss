@@ -322,7 +322,7 @@
 }
 
 .signup-processing-screen__loader,
-.signup-processing-screen__loader:after {
+.signup-processing-screen__loader::after {
 	border-radius: 50%;
 	height: 10em;
 	width: 10em;

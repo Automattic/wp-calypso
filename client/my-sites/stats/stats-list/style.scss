@@ -161,17 +161,13 @@
 // Highlight toggle icon if item has a sublist
 
 @include breakpoint( '>480px' ) {
-	.module-content-list
-		> .module-content-list-item-toggle
-		> .module-content-list-item-wrapper:hover
+	.module-content-list > .module-content-list-item-toggle > .module-content-list-item-wrapper:hover
 		.module-content-list-item-label::before {
 		color: var( --color-link-dark );
 	}
 }
 
-.module-content-list
-	> .module-content-list-item-toggle
-	> .module-content-list-item-wrapper:focus
+.module-content-list > .module-content-list-item-toggle > .module-content-list-item-wrapper:focus
 	.module-content-list-item-label::before {
 	color: var( --color-link-dark );
 }

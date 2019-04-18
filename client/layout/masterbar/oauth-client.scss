@@ -97,10 +97,10 @@
 	--color-text: #384869;
 
 	background: #f2f2f2;
-	color: var(--color-text);
+	color: var( --color-text );
 	font-family: 'Muli', $sans;
 
-	&.is-section-login{
+	&.is-section-login {
 		padding-bottom: 100px;
 
 		@include breakpoint( '>660px' ) {
@@ -133,7 +133,7 @@
 
 		.logged-out-form__back-link {
 			border: 0;
-			color: var(--color-text);
+			color: var( --color-text );
 			font-weight: normal;
 			line-height: 21px;
 			margin: 30px 0 20px;
@@ -145,7 +145,7 @@
 			}
 
 			&:hover {
-				color: var(--color-text);
+				color: var( --color-text );
 			}
 
 			.gridicon {
@@ -162,8 +162,8 @@
 			display: block;
 
 			@include breakpoint( '>660px' ) {
-				background-color: var(--color-white);
-				box-shadow: 0 2px 3px 0 var(--color-neutral-100);
+				background-color: var( --color-white );
+				box-shadow: 0 2px 3px 0 var( --color-neutral-100 );
 				margin: 0 auto;
 				padding: 35px 55px 20px;
 				width: 550px;
@@ -181,13 +181,13 @@
 		}
 
 		.login__form label {
-			color: var(--color-text);
+			color: var( --color-text );
 			font-weight: normal;
 		}
 
 		.login__form-header {
 			font-size: 25px;
-			color: var(--color-text);
+			color: var( --color-text );
 			font-weight: 600;
 			margin-bottom: 80px;
 
@@ -207,7 +207,7 @@
 
 			span {
 				background-color: transparent;
-				color: var(--color-text);
+				color: var( --color-text );
 				font-size: 20px;
 				font-weight: 600;
 			}
@@ -217,7 +217,7 @@
 			display: none;
 
 			@include breakpoint( '>660px' ) {
-				color: var(--color-text);
+				color: var( --color-text );
 				display: block;
 				font-size: 20px;
 				font-weight: 600;
@@ -227,7 +227,7 @@
 		}
 
 		.login__form-terms {
-			color: var(--color-text);
+			color: var( --color-text );
 			margin: 0;
 			position: absolute;
 				left: 0;
@@ -265,7 +265,7 @@
 			}
 
 			label {
-				color: var(--color-text);
+				color: var( --color-text );
 				font-weight: normal;
 			}
 		}
@@ -274,8 +274,8 @@
 			margin: 0;
 
 			&:disabled {
-				background-color: var(--color-neutral-50);
-				color: var(--color-white);
+				background-color: var( --color-neutral-50 );
+				color: var( --color-white );
 			}
 		}
 
@@ -285,7 +285,7 @@
 		}
 
 		.magic-login__footer a {
-			color: var(--color-text);
+			color: var( --color-text );
 			font-weight: normal;
 			margin: 20px 0 15px;
 			padding: 10px 16px;
@@ -297,8 +297,8 @@
 			display: block;
 
 			@include breakpoint( '>660px' ) {
-				background-color: var(--color-white);
-				box-shadow: 0 2px 3px 0 var(--color-neutral-100);
+				background-color: var( --color-white );
+				box-shadow: 0 2px 3px 0 var( --color-neutral-100 );
 				margin: 0 auto;
 				max-width: 550px;
 				padding: 40px 55px 30px;
@@ -324,12 +324,12 @@
 		}
 
 		.wp-login__crowdsignal-footer {
-			background-color: var(--color-crowdsignal);
+			background-color: var( --color-crowdsignal );
 			box-sizing: border-box;
-			color: var(--color-neutral-0);
+			color: var( --color-neutral-0 );
 			display: flex;
 			flex-direction: row;
-			fill: var(--color-neutral-0);
+			fill: var( --color-neutral-0 );
 			height: 58px;
 			padding: 20px 40px;
 			position: absolute;
@@ -382,7 +382,7 @@
 		}
 
 		.wp-login__footer-links a {
-			color: var(--color-text);
+			color: var( --color-text );
 		}
 
 		.wp-login__links {
@@ -391,13 +391,13 @@
 
 		.wp-login__links a {
 			border: 0;
-			color: var(--color-text);
+			color: var( --color-text );
 			line-height: 21px;
 			padding: 10px 16px;
 			text-align: center;
 
 			&:hover {
-				color: var(--color-text);
+				color: var( --color-text );
 			}
 		}
 
@@ -564,7 +564,7 @@
 	}
 
 	.step-wrapper {
-		margin: 0 auto 50px auto;
+		margin: 0 auto 50px;
 		max-width: 778px;
 	}
 
@@ -628,9 +628,9 @@
 
 	// Signup styles
 	.signup__step {
-		background: linear-gradient( to bottom, #e6e6e6, transparent );		
+		background: linear-gradient( to bottom, #e6e6e6, transparent );
 		margin-right: 6px;
-		margin-left: 6px;				
+		margin-left: 6px;
 	}
 
 	&.is-section-signup::before,
@@ -640,13 +640,13 @@
 
 	.formatted-header__title {
 		font-size: 1.6em;
-		font-family: $sans;		
-		margin: 0 0 8px 0;
+		font-family: $sans;
+		margin: 0 0 8px;
 		padding: 0;
 		
 		@include breakpoint( '>480px' ) {
 			font-size: 2em;
-			margin: 2em 0 0 0;		
+			margin: 2em 0 0;
 		}
 	}
 }

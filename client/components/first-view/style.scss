@@ -81,7 +81,7 @@
 			border-right: none;
 			border-bottom: 1px solid var( --color-neutral-0 );
 			padding: 16px 0;
-			margin: -20px -24px 24px -24px;
+			margin: -20px -24px 24px;
 
 			@media ( max-height: 480px ) {
 				display: none;
@@ -89,7 +89,7 @@
 
 			@media ( max-height: 660px ) {
 				width: calc( 100% + 80px );
-				margin: -34px -40px 40px -40px;
+				margin: -34px -40px 40px;
 				zoom: 0.6;
 			}
 		}
