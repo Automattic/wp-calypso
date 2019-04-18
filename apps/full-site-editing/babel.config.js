@@ -1,4 +1,4 @@
 module.exports = {
 	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),
-	presets: [ require( '@wordpress/babel-preset-default' ) ],
+	presets: [ require( '@automattic/calypso-build/babel/wordpress-element' ) ],
 };

@@ -26,8 +26,7 @@
 		"build": "npm-run-all --parallel build:*"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "file:../../packages/calypso-build",
-		"@wordpress/babel-preset-default": "^4.1.0"
+		"@automattic/calypso-build": "file:../../packages/calypso-build"
 	},
 	"dependencies": {
 		"@wordpress/block-editor": "^2.0.0",
