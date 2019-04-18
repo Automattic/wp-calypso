@@ -22,6 +22,10 @@ function createToggleReducer( type ) {
 		return state;
 	};
 
+	reducer.schema = {
+		type: 'boolean',
+	};
+
 	return reducer;
 }
 
