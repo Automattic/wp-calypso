@@ -29,11 +29,11 @@
 		"@automattic/calypso-build": "file:../../packages/calypso-build"
 	},
 	"dependencies": {
-		"@wordpress/block-editor": "^2.0.0",
 		"@wordpress/blocks": "^6.2.3",
 		"@wordpress/components": "^7.3.0",
 		"@wordpress/compose": "^3.2.0",
 		"@wordpress/data": "^4.4.0",
+		"@wordpress/editor": "^9.2.4",
 		"@wordpress/element": "^2.3.0",
 		"@wordpress/i18n": "^3.3.0",
 		"classnames": "^2.2.6",

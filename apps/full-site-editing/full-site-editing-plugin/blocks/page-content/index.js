@@ -8,11 +8,11 @@ import { find, get, map } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { BlockControls } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { IconButton, Placeholder, SelectControl, Toolbar } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
+import { BlockControls } from '@wordpress/editor';
 import { Fragment, RawHTML } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
