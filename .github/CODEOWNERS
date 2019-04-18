@@ -65,10 +65,6 @@
 # Test infrastructure
 /test @Automattic/team-calypso
 
-# Calypso build packages
-packages/calypso-build @Automattic/gutenpack
-packages/calypso-color-schemes @Automattic/gutenpack
-
 # G Suite
 /client/blocks/gsuite-stats-nudge @Automattic/amber
 /client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/amber
