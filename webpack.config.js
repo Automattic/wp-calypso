@@ -324,10 +324,10 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 }
 
 // The SVG external content polyfill (svg4everybody) isn't needed for evergreen browsers, so don't bundle it.
-/*if ( browserslistEnv === 'evergreen' ) {
+if ( browserslistEnv === 'evergreen' ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^svg4everybody$/, 'lodash/noop' )
 	);
-}*/
+}
 
 module.exports = webpackConfig;
