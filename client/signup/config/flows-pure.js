@@ -15,6 +15,7 @@ export function generateFlows( {
 	getSiteDestination = noop,
 	getPostsDestination = noop,
 	getRedirectDestination = noop,
+	getChecklistDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -313,7 +314,7 @@ export function generateFlows( {
 
 	flows.private = {
 		steps: [ 'user', 'site' ],
-		destination: getSiteDestination,
+		destination: getChecklistDestination,
 		description: 'Test private site signup',
 		lastModified: '2018-10-22',
 	};

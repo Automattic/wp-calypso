@@ -63,7 +63,16 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-const flows = generateFlows( { getPostsDestination, getSiteDestination, getRedirectDestination } );
+function getChecklistDestination( dependencies ) {
+	return '/checklist/' + dependencies.siteSlug;
+}
+
+const flows = generateFlows( {
+	getPostsDestination,
+	getSiteDestination,
+	getRedirectDestination,
+	getChecklistDestination,
+} );
 
 function removeUserStepFromFlow( flow ) {
 	if ( ! flow ) {
