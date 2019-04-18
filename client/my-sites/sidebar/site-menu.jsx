@@ -132,7 +132,7 @@ class SiteMenu extends PureComponent {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
 			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
 		}
-		this.props.recordTracksEvent( 'calypso_mysites_manage_sidebar_item_clicked', {
+		this.props.recordTracksEvent( 'calypso_mysites_site_sidebar_item_clicked', {
 			menu_item: postType,
 		} );
 		this.props.onNavigate();
