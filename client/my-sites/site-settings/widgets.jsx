@@ -70,7 +70,7 @@ class Widgets extends Component {
 			<FormFieldset>
 				<SupportInfo
 					text={ translate(
-						'Widget visibility lets you decide which widgets appear on which pages, so you can finely tailor widget content. '
+						'Widget visibility lets you decide which widgets appear on which pages, so you can finely tailor widget content.'
 					) }
 					link="https://jetpack.com/support/widget-visibility"
 				/>
