@@ -48,7 +48,6 @@ class Team extends React.Component {
 				'bulk-editing': this.state.bulkEditing,
 				'people-invites__invites-list': true,
 			} );
-		let headerText = this.props.translate( 'Team', { context: 'A navigation label.' } );
 		let people;
 		let headerText;
 		if ( this.props.totalUsers ) {
