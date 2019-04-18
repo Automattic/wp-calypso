@@ -69,14 +69,18 @@ class Widgets extends Component {
 		return (
 			<FormFieldset>
 				<SupportInfo
-					text={ translate( 'Configure widgets to appear only on certain posts or pages.' ) }
+					text={ translate(
+						'Widget visibility lets you decide which widgets appear on which pages, so you can finely tailor widget content.'
+					) }
 					link="https://jetpack.com/support/widget-visibility"
 				/>
 
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="widget-visibility"
-					label={ translate( 'Control where widgets appear on your site' ) }
+					label={ translate(
+						'Enable widget visibility controls to display widgets only on particular posts or pages'
+					) }
 					disabled={ formPending }
 				/>
 			</FormFieldset>
