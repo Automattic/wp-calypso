@@ -34,16 +34,9 @@ class People extends React.Component {
 			case 'team':
 				return <TeamList site={ site } search={ search } />;
 			case 'followers':
-				return <FollowersList site={ site } label={ translate( 'Followers' ) } />;
+				return <FollowersList site={ site } />;
 			case 'email-followers':
-				return (
-					<FollowersList
-						site={ site }
-						search={ search }
-						label={ translate( 'Email Followers' ) }
-						type="email"
-					/>
-				);
+				return <FollowersList site={ site } search={ search } type="email" />;
 			case 'viewers':
 				return <ViewersList site={ site } label={ translate( 'Viewers' ) } />;
 			default:

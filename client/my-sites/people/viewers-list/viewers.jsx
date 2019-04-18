@@ -23,6 +23,12 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 class Viewers extends React.PureComponent {
 	static displayName = 'Viewers';
 
+	constructor() {
+		super();
+
+		this.infiniteList = React.createRef();
+	}
+
 	state = {
 		bulkEditing: false,
 	};
@@ -123,8 +129,8 @@ class Viewers extends React.PureComponent {
 				<InfiniteList
 					key={ this.props.siteId }
 					items={ this.props.viewers }
-					className="people-selector__infinite-list"
-					ref="infiniteList"
+					className="viewers-list__infinite is-people"
+					ref={ this.infiniteList }
 					fetchingNextPage={ this.props.fetching }
 					lastPage={ this.isLastPage() }
 					fetchNextPage={ this.fetchNextPage }

@@ -29,6 +29,12 @@ const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 class Team extends React.Component {
 	static displayName = 'Team';
 
+	constructor() {
+		super();
+
+		this.infiniteList = React.createRef();
+	}
+
 	state = {
 		bulkEditing: false,
 	};
@@ -42,8 +48,21 @@ class Team extends React.Component {
 				'bulk-editing': this.state.bulkEditing,
 				'people-invites__invites-list': true,
 			} );
-		let headerText = this.props.translate( 'Team', { context: 'A navigation label.' } );
 		let people;
+		let headerText;
+		if ( this.props.totalUsers ) {
+			headerText = this.props.translate(
+				'There is %(numberPeople)d person in your team',
+				'There are %(numberPeople)d people in your team',
+				{
+					args: {
+						numberPeople: this.props.totalUsers,
+					},
+					count: this.props.totalUsers,
+					context: 'A navigation label.',
+				}
+			);
+		}
 
 		if (
 			this.props.fetchInitialized &&
@@ -84,7 +103,8 @@ class Team extends React.Component {
 				<InfiniteList
 					key={ key }
 					items={ this.props.users }
-					className="people-selector__infinite-list"
+					className="team-list__infinite is-people"
+					ref={ this.infiniteList }
 					fetchingNextPage={ this.props.fetchingUsers }
 					lastPage={ this.isLastPage() }
 					fetchNextPage={ this.fetchNextPage }
@@ -103,11 +123,7 @@ class Team extends React.Component {
 				<PeopleListSectionHeader
 					label={ headerText }
 					site={ this.props.site }
-					count={
-						this.props.fetchingUsers || this.props.fetchOptions.search
-							? null
-							: this.props.totalUsers
-					}
+					isPlaceholder={ this.props.fetchingUsers || this.props.fetchOptions.search }
 				/>
 				<Card className={ listClass }>{ people }</Card>
 				{ this.isLastPage() && <ListEnd /> }

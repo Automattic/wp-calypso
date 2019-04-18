@@ -54,3 +54,9 @@
 		margin-right: 0;
 	}
 }
+
+.is-placeholder {
+	.section-header__label {
+		@include placeholder;
+	}
+}

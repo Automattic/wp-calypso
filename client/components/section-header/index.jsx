@@ -22,12 +22,16 @@ export default class SectionHeader extends PureComponent {
 	static defaultProps = {
 		label: '',
 		href: null,
+		isPlaceholder: false,
 	};
 
 	render() {
 		const hasCount = 'number' === typeof this.props.count;
 		const isEmpty = ! ( this.props.label || hasCount || this.props.children );
-		const classes = classNames( this.props.className, 'section-header', { 'is-empty': isEmpty } );
+		const classes = classNames( this.props.className, 'section-header', {
+			'is-empty': isEmpty,
+			'is-placeholder': this.props.isPlaceholder,
+		} );
 		const { id } = this.props;
 		const otherProps = { id };
 

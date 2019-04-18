@@ -36,6 +36,12 @@ const maxFollowers = 1000;
 
 const Followers = localize(
 	class FollowersComponent extends Component {
+		constructor() {
+			super();
+
+			this.infiniteList = React.createRef();
+		}
+
 		state = {
 			bulkEditing: false,
 		};
@@ -168,7 +174,29 @@ const Followers = localize(
 				return <EmptyContent title={ emptyTitle } />;
 			}
 
-			let headerText = this.props.label;
+			let headerText;
+			if ( this.props.totalFollowers ) {
+				headerText = this.props.translate(
+					'You have %(number)d follower',
+					'You have %(number)d followers',
+					{
+						args: { number: this.props.totalFollowers },
+						count: this.props.totalFollowers,
+					}
+				);
+
+				if ( this.props.type === 'email' ) {
+					headerText = this.props.translate(
+						'You have %(number)d email follower',
+						'You have %(number)d email followers',
+						{
+							args: { number: this.props.totalFollowers },
+							count: this.props.totalFollowers,
+						}
+					);
+				}
+			}
+
 			let followers;
 			if ( this.props.followers.length ) {
 				if ( this.props.fetchOptions.search && this.props.totalFollowers ) {
@@ -198,7 +226,8 @@ const Followers = localize(
 						{ ...infiniteListConditionals }
 						key={ key }
 						items={ this.props.followers }
-						className="people-selector__infinite-list"
+						className="followers-list__infinite is-people"
+						ref={ this.infiniteList }
 						fetchNextPage={ this.fetchNextPage }
 						getItemRef={ this.getFollowerRef }
 						renderLoadingPlaceholders={ this.renderPlaceholders }
@@ -221,13 +250,9 @@ const Followers = localize(
 				<div>
 					<PeopleListSectionHeader
 						isFollower
+						isPlaceholder={ this.props.fetching || this.props.fetchOptions.search }
 						label={ headerText }
 						site={ this.props.site }
-						count={
-							this.props.fetching || this.props.fetchOptions.search
-								? null
-								: this.props.totalFollowers
-						}
 					>
 						{ downloadListLink && (
 							<Button href={ downloadListLink } compact>
@@ -260,12 +285,7 @@ const FollowersList = props => {
 	}
 
 	return (
-		<DataComponent
-			fetchOptions={ fetchOptions }
-			site={ props.site }
-			label={ props.label }
-			type={ props.type }
-		>
+		<DataComponent fetchOptions={ fetchOptions } site={ props.site } type={ props.type }>
 			<Followers />
 		</DataComponent>
 	);
