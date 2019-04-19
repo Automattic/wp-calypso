@@ -604,6 +604,9 @@ workflows:
       - build-notifications:
           requires:
             - setup
+      - build-o2-blocks:
+          requires:
+            - setup
       - build-wpcom-block-editor:
           requires:
             - setup
