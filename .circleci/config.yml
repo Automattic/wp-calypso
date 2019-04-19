@@ -284,7 +284,7 @@ jobs:
       - run:
           name: Build Gutenberg Blocks for internal p2s
           command: |
-            npx lerna run build --scope='@automattic/o2-blocks' -- -- --output-path=$CIRCLE_ARTIFACTS/o2-blocks
+            NODE_ENV=production npx lerna run build --scope='@automattic/o2-blocks' -- -- --output-path=$CIRCLE_ARTIFACTS/o2-blocks
       - store-artifacts-and-test-results
 
   build-wpcom-block-editor:
