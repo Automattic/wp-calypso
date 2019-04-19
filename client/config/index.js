@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import cookie from 'cookie';
+
+/**
  * Internal dependencies
  */
 
@@ -29,10 +34,8 @@ export function isCalypsoLive() {
 }
 
 if ( process.env.NODE_ENV === 'development' || configData.env_id === 'stage' || isCalypsoLive() ) {
-	const match =
-		document.location.search && document.location.search.match( /[?&]flags=([^&]+)(&|$)/ );
-	if ( match ) {
-		const flags = match[ 1 ].split( ',' );
+	function applyFlags( flagsString ) {
+		const flags = flagsString.split( ',' );
 		flags.forEach( flagRaw => {
 			const flag = flagRaw.replace( /^[-+]/, '' );
 			const enabled = ! /^-/.test( flagRaw );
@@ -45,6 +48,18 @@ if ( process.env.NODE_ENV === 'development' || configData.env_id === 'stage' || 
 				flag
 			);
 		} );
+	}
+
+	const cookies = cookie.parse( document.cookie );
+
+	if ( cookies.flags ) {
+		applyFlags( cookies.flags );
+	}
+
+	const match =
+		document.location.search && document.location.search.match( /[?&]flags=([^&]+)(&|$)/ );
+	if ( match ) {
+		applyFlags( match[ 1 ] );
 	}
 }
 

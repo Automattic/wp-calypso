@@ -32,12 +32,19 @@ we can process the compiled scripts and remove code for disabled features in
 production.
 
 When Calypso is running in development mode or in the `stage` environment, you
-can specify a `?flags=` query argument to modify feature flags for each full
-page load.  Examples:
+can specify a `?flags=` query argument or a `flags` cookie to modify feature 
+flags for each full page load.  
+
+Query argument examples:
 
 - `?flags=flag1`: Enable feature `flag1`.
 - `?flags=-flag2`: Disable feature `flag2`.
 - `?flags=+flag1,-flag2`: Enable feature `flag1` and disable feature `flag2`.
+
+You can use the same syntax in a cookie:
+
+- `document.cookie = 'flags=+flag1,-flag2;max-age=1209600;path=/';`: Enable feature `flag1` and disable feature `flag2`.
+- `document.cookie = 'flags=';`: Reset flags cookie to return to config values.
 
 Note: the `?flags` argument won't work for feature flags used by the Node.js
 server.  For this case, you can use the
