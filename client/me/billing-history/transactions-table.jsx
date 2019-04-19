@@ -23,6 +23,8 @@ import SearchCard from 'components/search-card';
 import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
 import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
+import { planMatches } from 'lib/plans';
+import { TERM_BIENNIALLY } from 'lib/plans/constants';
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';
@@ -87,11 +89,17 @@ class TransactionsTable extends React.Component {
 
 	serviceNameDescription = transaction => {
 		let description;
+		const isTwoYearPlan = planMatches( transaction.wpcom_product_slug, { term: TERM_BIENNIALLY } );
 		if ( transaction.domain ) {
 			description = (
 				<div>
 					<strong>{ transaction.plan }</strong>
 					<small>{ transaction.domain }</small>
+					{ isTwoYearPlan ? (
+						<div>
+							<small>{ this.props.translate( 'Two year subscription' ) }</small>
+						</div>
+					) : null }
 				</div>
 			);
 		} else {
