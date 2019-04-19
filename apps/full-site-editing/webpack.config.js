@@ -33,11 +33,11 @@ function getWebpackConfig( env = {}, argv = {} ) {
 
 	if ( 'theme' === argv.source ) {
 		argv.entry = path.join( __dirname, 'blank-theme' );
-		argv[ 'output-path' ] = path.join( __dirname, 'blank-theme', 'dist' );
+		argv[ 'output-path' ] = path.join( __dirname, 'dist', 'blank-theme' );
 		argv[ 'output-filename' ] = 'blank-theme.js';
 	} else {
 		argv.entry = path.join( __dirname, 'full-site-editing-plugin' );
-		argv[ 'output-path' ] = path.join( __dirname, 'full-site-editing-plugin', 'dist' );
+		argv[ 'output-path' ] = path.join( __dirname, 'dist', 'full-site-editing-plugin' );
 		argv[ 'output-filename' ] = 'full-site-editing-plugin.js';
 	}
 
