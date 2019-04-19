@@ -6,7 +6,7 @@ For projects that can produce independent, binary-like outputs deployed elsewher
 
 ## Adding a new package?
 
-If you want to add a new project or package into this directory, then add a new directory and follow [Publishing with the Monorepo](../docs/monorepo.md) -documentation.
+If you want to add a new project or package into this directory, then add a new directory and follow [monorepo -documentation](../docs/monorepo.md).
 
 ## Building
 
