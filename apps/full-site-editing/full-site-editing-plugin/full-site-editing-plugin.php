@@ -3,7 +3,7 @@
  * Plugin Name: Full Site Editing
  */
 
-class WPCOM_Full_Site_Editing {
+class A8C_Full_Site_Editing {
 	static $initialized = false;
 
 	function __construct() {
@@ -22,7 +22,7 @@ class WPCOM_Full_Site_Editing {
 			plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.deps.json'
 		), true );
 		wp_register_script(
-			'wpcom-full-site-editing-script',
+			'a8c-full-site-editing-script',
 			plugins_url( 'dist/full-site-editing-plugin.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.js' )
@@ -32,7 +32,7 @@ class WPCOM_Full_Site_Editing {
 			? 'dist/full-site-editing-plugin.rtl.css'
 			: 'dist/full-site-editing-plugin.css';
 		wp_register_style(
-			'wpcom-full-site-editing-style',
+			'a8c-full-site-editing-style',
 			plugins_url( $style_file, __FILE__ ),
 			array(),
 			filemtime( plugin_dir_path( __FILE__ ) . $style_file )
@@ -41,11 +41,11 @@ class WPCOM_Full_Site_Editing {
 
 	function register_blocks() {
 		// This block is only a preview block, it doesn't render anything.
-		register_block_type( 'wpcom/page-content', [
-			'editor_script' => 'wpcom-full-site-editing-script',
-			'editor_style' => 'wpcom-full-site-editing-style',
+		register_block_type( 'a8c/page-content', [
+			'editor_script' => 'a8c-full-site-editing-script',
+			'editor_style' => 'a8c-full-site-editing-style',
 		] );
 	}
 }
 
-new WPCOM_Full_Site_Editing();
+new A8C_Full_Site_Editing();

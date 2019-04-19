@@ -72,7 +72,7 @@ const edit = compose(
 				</BlockControls>
 			) }
 			<div
-				className={ classNames( 'wpcom-page-content-block', {
+				className={ classNames( 'a8c-page-content-block', {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
@@ -82,7 +82,7 @@ const edit = compose(
 						label={ __( 'Page Content' ) }
 						instructions={ __( 'Select a page to preview' ) }
 					>
-						<div className="wpcom-page-content-block__selector">
+						<div className="a8c-page-content-block__selector">
 							<SelectControl
 								onChange={ onChange }
 								options={ selectOptions }
@@ -95,7 +95,7 @@ const edit = compose(
 					</Placeholder>
 				) }
 				{ showPreview && (
-					<RawHTML className="wpcom-page-content-block__preview">
+					<RawHTML className="a8c-page-content-block__preview">
 						{ get( selectedPage, 'content.rendered' ) }
 					</RawHTML>
 				) }
@@ -104,7 +104,7 @@ const edit = compose(
 	);
 } );
 
-registerBlockType( 'wpcom/page-content', {
+registerBlockType( 'a8c/page-content', {
 	title: __( 'Page Content Preview' ),
 	icon: 'layout',
 	category: 'layout',
