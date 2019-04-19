@@ -221,11 +221,7 @@ class GoogleAppsDialog extends React.Component {
 			};
 		} );
 
-		return cartItems.googleApps( {
-			domain: this.props.domain,
-			product_slug: gsuitePlanSlug,
-			users,
-		} );
+		return cartItems.gsuite( this.props.domain, users, gsuitePlanSlug );
 	}
 }
 

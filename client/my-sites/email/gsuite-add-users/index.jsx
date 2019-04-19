@@ -12,8 +12,7 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-
-import AddEmailAddressesCard from './add-users';
+import { addItem } from 'lib/upgrades/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import {
 	emailManagementAddGSuiteUsers,
@@ -38,7 +37,13 @@ import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 //TODO: hacked together for dev
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import Card from 'components/card';
-import { newUsers, validateAgainstExistingUsers } from 'lib/gsuite/new-users';
+import Button from 'components/button';
+import {
+	getItemsForCart,
+	newUsers,
+	userIsReady,
+	validateAgainstExistingUsers,
+} from 'lib/gsuite/new-users';
 
 class GSuiteAddUsers extends React.Component {
 	state = {
@@ -61,6 +66,21 @@ class GSuiteAddUsers extends React.Component {
 		this.setState( {
 			users,
 		} );
+	};
+
+	handleContinue = () => {
+		const { domains, planType, selectedSite } = this.props;
+		const { users } = this.state;
+		const canContinue = 0 < users.length && users.every( userIsReady );
+
+		if ( canContinue ) {
+			getItemsForCart(
+				domains,
+				'business' === planType ? 'gapps_unlimited' : 'gapps',
+				users
+			).forEach( addItem );
+			page( '/checkout/' + selectedSite.slug );
+		}
 	};
 
 	componentDidMount() {
@@ -93,16 +113,14 @@ class GSuiteAddUsers extends React.Component {
 			domains,
 			domainsWithForwards,
 			gsuiteUsers,
-			planType,
 			isRequestingDomains,
-			selectedDomainName,
-			selectedSite,
 			translate,
 		} = this.props;
 
 		const { users } = this.state;
 
 		const gSuiteSupportedDomains = getGSuiteSupportedDomains( domains );
+		const canContinue = 0 < users.length && users.every( userIsReady );
 
 		return (
 			<Fragment>
@@ -125,14 +143,22 @@ class GSuiteAddUsers extends React.Component {
 				} ) }
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
 				{ gsuiteUsers && gSuiteSupportedDomains && ! isRequestingDomains ? (
-					<Card>
-						<GSuiteNewUserList
-							extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
-							domains={ gSuiteSupportedDomains }
-							users={ users }
-							onUsersChange={ this.onUsersChange }
-						/>
-					</Card>
+					<Fragment>
+						<Card>
+							<GSuiteNewUserList
+								extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
+								domains={ gSuiteSupportedDomains }
+								users={ users }
+								onUsersChange={ this.onUsersChange }
+							/>
+						</Card>
+						<Card>
+							<Button disabled={ ! canContinue } onClick={ this.handleContinue }>
+								{ translate( 'Continue' ) }
+							</Button>
+							<Button>{ translate( 'Cancel' ) }</Button>
+						</Card>
+					</Fragment>
 				) : (
 					<AddEmailAddressesCardPlaceholder />
 				) }

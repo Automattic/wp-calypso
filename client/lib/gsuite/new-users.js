@@ -1,10 +1,12 @@
 /**
  * External dependencies
  */
+import { cartItems } from 'lib/cart-values';
 import emailValidator from 'email-validator';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { includes, mapValues } from 'lodash';
+import { find, includes, groupBy, map, mapValues } from 'lodash';
+import { hasGSuite } from '.';
 
 const removePreviousErrors = ( { value } ) => ( {
 	value,
@@ -56,7 +58,7 @@ const validateOverallEmailAgainstExistingEmails = (
 			: mailBoxError,
 } );
 
-function validateUser( user ) {
+const validateUser = user => {
 	// every field is required. Also scrubs previous errors.
 	const { domain, mailBox, firstName, lastName } = mapValues( user, field =>
 		requiredField( removePreviousErrors( field ) )
@@ -68,7 +70,7 @@ function validateUser( user ) {
 		firstName: sixtyCharacterField( firstName ),
 		lastName: sixtyCharacterField( lastName ),
 	};
-}
+};
 
 const validateAgainstExistingUsers = (
 	{ domain, mailBox, firstName, lastName },
@@ -80,7 +82,7 @@ const validateAgainstExistingUsers = (
 	mailBox: validateOverallEmailAgainstExistingEmails( mailBox, domain, existingGSuiteUsers ),
 } );
 
-function newUser( domain = '' ) {
+const newUser = ( domain = '' ) => {
 	return {
 		firstName: {
 			value: '',
@@ -99,20 +101,46 @@ function newUser( domain = '' ) {
 			error: null,
 		},
 	};
-}
+};
 
-function newUsers( domain ) {
+const newUsers = domain => {
 	return [ newUser( domain ) ];
-}
+};
 
-function isUserEmpty( {
-	firstName: { value: firstName },
-	lastName: { value: lastName },
-	mailBox: { value: mailBox },
+const isUserComplete = user => {
+	return Object.values( user ).every( ( { value } ) => '' !== value );
+};
+
+const doesUserHaveError = user => {
+	return Object.values( user ).some( ( { error } ) => null !== error );
+};
+
+const userIsReady = user => isUserComplete( user ) && ! doesUserHaveError( user );
+
+const transformUser = ( {
+	firstName: { value: firstname },
+	lastName: { value: lastname },
 	domain: { value: domain },
-} ) {
-	return '' !== firstName && '' !== lastName && '' !== mailBox && '' !== domain;
-}
+	mailBox: { value: mailBox },
+} ) => ( {
+	email: `${ mailBox }@${ domain }`.toLowerCase(),
+	firstname,
+	lastname,
+} );
+
+const getItemsForCart = ( domains, productSlug, users ) => {
+	const groups = mapValues( groupBy( users, 'domain.value' ), groupedUsers =>
+		groupedUsers.map( transformUser )
+	);
+
+	return map( groups, ( groupedUsers, domain ) => {
+		const domainInfo = find( domains, { name: domain } );
+
+		return hasGSuite( domainInfo )
+			? cartItems.gsuiteExtraLicenses( domain, groupedUsers )
+			: cartItems.gsuite( domain, groupedUsers, productSlug );
+	} );
+};
 
 const valueShape = PropTypes.shape( {
 	value: PropTypes.string.isRequired,
@@ -126,4 +154,14 @@ const userShape = PropTypes.shape( {
 	domain: valueShape,
 } );
 
-export { isUserEmpty, newUser, newUsers, userShape, validateAgainstExistingUsers, validateUser };
+export {
+	doesUserHaveError,
+	getItemsForCart,
+	isUserComplete,
+	newUser,
+	newUsers,
+	userIsReady,
+	userShape,
+	validateAgainstExistingUsers,
+	validateUser,
+};

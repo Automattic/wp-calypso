@@ -656,17 +656,14 @@ function getGoogleApps( cart ) {
 	return filter( getAll( cart ), isGoogleApps );
 }
 
-function googleApps( properties ) {
-	const productSlug = properties.product_slug || 'gapps',
-		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
-
-	return assign( item, { extra: { google_apps_users: properties.users } } );
+function gsuite( domain, users, productSlug = 'gapps' ) {
+	return assign( domainItem( productSlug, domain ), { extra: { google_apps_users: users } } );
 }
 
-export function googleAppsExtraLicenses( properties ) {
-	const item = domainItem( 'gapps_extra_license', properties.domain, properties.source );
-
-	return assign( item, { extra: { google_apps_users: properties.users } } );
+export function gsuiteExtraLicenses( domain, users ) {
+	return assign( domainItem( 'gapps_extra_license', domain ), {
+		extra: { google_apps_users: users },
+	} );
 }
 
 export function fillGoogleAppsRegistrationData( cart, registrationData ) {
@@ -808,7 +805,7 @@ export function getRenewalItemFromProduct( product, properties ) {
 	}
 
 	if ( isGoogleApps( product ) ) {
-		cartItem = googleApps( product );
+		cartItem = gsuite( product );
 	}
 
 	if ( isSiteRedirect( product ) ) {
@@ -1196,8 +1193,8 @@ export default {
 	getRenewalItems,
 	getSiteRedirects,
 	getTlds,
-	googleApps,
-	googleAppsExtraLicenses,
+	gsuite,
+	gsuiteExtraLicenses,
 	guidedTransferItem,
 	isDomainBeingUsedForPlan,
 	isNextDomainFree,

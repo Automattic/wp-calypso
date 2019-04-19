@@ -52,7 +52,7 @@ function getGoogleAppsCartItems( { domains, fieldsets, product_slug } ) {
 		const domainInfo = find( domains, { name: domain } );
 		let item;
 		if ( hasGSuite( domainInfo ) ) {
-			item = cartItems.googleAppsExtraLicenses( { domain, users } );
+			item = cartItems.gsuiteExtraLicenses( { domain, users } );
 		} else {
 			item = cartItems.googleApps( { domain, product_slug, users } );
 		}
