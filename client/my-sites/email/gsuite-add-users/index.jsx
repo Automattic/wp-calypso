@@ -121,6 +121,7 @@ class GSuiteAddUsers extends React.Component {
 			domainsWithForwards,
 			gsuiteUsers,
 			isRequestingDomains,
+			selectedDomainName,
 			translate,
 		} = this.props;
 
@@ -155,8 +156,9 @@ class GSuiteAddUsers extends React.Component {
 							<GSuiteNewUserList
 								extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
 								domains={ gSuiteSupportedDomains }
-								users={ users }
 								onUsersChange={ this.onUsersChange }
+								selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
+								users={ users }
 							/>
 						</Card>
 						<Card>

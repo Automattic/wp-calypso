@@ -14,9 +14,15 @@ import { useTranslate } from 'i18n-calypso';
 import GSuiteNewUser from './new-user';
 import { newUser, userShape, validateUser } from 'lib/gsuite/new-users';
 
-const GSuiteNewUserList = ( { domains, extraValidation, onUsersChange, users } ) => {
+const GSuiteNewUserList = ( {
+	domains,
+	extraValidation,
+	selectedDomainName,
+	onUsersChange,
+	users,
+} ) => {
 	const translate = useTranslate();
-	const firstDomainName = domains[ 0 ].domain;
+	const domainName = '' !== selectedDomainName ? selectedDomainName : domains[ 0 ].domain;
 
 	const onUserValueChange = index => ( field, value ) => {
 		const modifiedUser = extraValidation(
@@ -29,12 +35,12 @@ const GSuiteNewUserList = ( { domains, extraValidation, onUsersChange, users } )
 	};
 
 	const onUserAdd = () => {
-		onUsersChange( [ ...users, newUser( firstDomainName ) ] );
+		onUsersChange( [ ...users, newUser( domainName ) ] );
 	};
 
 	const onUserRemove = index => () => {
 		const newUserList = users.filter( ( user, userIndex ) => userIndex !== index );
-		onUsersChange( 0 < newUserList.length ? newUserList : [ newUser( firstDomainName ) ] );
+		onUsersChange( 0 < newUserList.length ? newUserList : [ newUser( domainName ) ] );
 	};
 
 	return (
@@ -56,7 +62,6 @@ const GSuiteNewUserList = ( { domains, extraValidation, onUsersChange, users } )
 							: [ ...accumulator, <hr key={ `${ index }-hr` } />, current ],
 					[]
 				) }
-
 			<button onClick={ onUserAdd }>
 				<Gridicon icon="plus" />
 				{ translate( 'Add Another User' ) }
@@ -68,6 +73,7 @@ const GSuiteNewUserList = ( { domains, extraValidation, onUsersChange, users } )
 GSuiteNewUserList.propTypes = {
 	domains: PropTypes.array.isRequired,
 	extraValidation: PropTypes.func.isRequired,
+	selectedDomainName: PropTypes.string.isRequired,
 	onUsersChange: PropTypes.func,
 	users: PropTypes.arrayOf( userShape ).isRequired,
 };
