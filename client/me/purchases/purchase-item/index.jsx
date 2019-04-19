@@ -35,6 +35,7 @@ import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'gridicons';
 import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { getPlanTermLabel } from 'lib/plans';
 
 const eventProperties = warning => ( { warning, position: 'purchase-list' } );
 
@@ -178,13 +179,14 @@ class PurchaseItem extends Component {
 	}
 
 	render() {
-		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack } = this.props;
-		const classes = classNames(
-			'purchase-item',
+		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack, translate } = this.props;
+		const classes = classNames;
+		'purchase-item',
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
 			{ 'is-placeholder': isPlaceholder },
-			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
-		);
+			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) };
+		const termLabel =
+			purchase && purchase.productSlug ? getPlanTermLabel( purchase.productSlug, translate ) : null;
 
 		let content;
 		if ( isPlaceholder ) {
@@ -196,6 +198,7 @@ class PurchaseItem extends Component {
 					<div className="purchase-item__details">
 						<div className="purchase-item__title">{ getName( purchase ) }</div>
 						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
+						{ termLabel ? <div className="purchase-item__term-label">{ termLabel }</div> : null }
 						<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
 					</div>
 				</span>
