@@ -270,6 +270,7 @@ export class PluginMeta extends Component {
 			'wpmu-database-reset',
 			'wps-hide-login',
 			'z-inventory-manager',
+			'wp-uninstaller-by-azed',
 
 			// backup
 			'backup-wd',
@@ -289,6 +290,7 @@ export class PluginMeta extends Component {
 			'wp-rocket',
 			'wp-speed-of-light',
 			'wp-super-cache',
+			'sg-cachepress',
 
 			// sql heavy
 			'another-wordpress-classifieds-plugin',
@@ -345,6 +347,10 @@ export class PluginMeta extends Component {
 			'wp-monero-miner-using-coin-hive',
 			'wpematico',
 			'zapp-proxy-server',
+			'propellerads-official',
+			'p3',
+			'yellow-pencil-visual-theme-customizer',
+			'yuzo-related-post',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
