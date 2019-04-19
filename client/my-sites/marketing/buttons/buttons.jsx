@@ -138,7 +138,7 @@ class SharingButtons extends Component {
 			>
 				<PageViewTracker
 					path="/marketing/sharing-buttons/:site"
-					title="Sharing > Sharing Buttons"
+					title="Marketing > Sharing Buttons"
 				/>
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySharingButtons siteId={ siteId } />
