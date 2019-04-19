@@ -588,40 +588,6 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	trackSharingClick = () => {
-		this.trackMenuItemClick( 'sharing' );
-		this.onNavigate();
-	};
-
-	sharing() {
-		const { isJetpack, isSharingEnabledOnJetpackSite, path, site } = this.props;
-		const sharingLink = '/sharing' + this.props.siteSuffix;
-
-		if ( site && ! this.props.canUserPublishPosts ) {
-			return null;
-		}
-
-		if ( ! this.props.siteId ) {
-			return null;
-		}
-
-		if ( isJetpack && ! isSharingEnabledOnJetpackSite ) {
-			return null;
-		}
-
-		return (
-			<SidebarItem
-				label={ this.props.translate( 'Sharing' ) }
-				selected={ itemLinkMatches( '/sharing', path ) }
-				link={ sharingLink }
-				onNavigate={ this.trackSharingClick }
-				icon="share"
-				preloadSectionName="sharing"
-				tipTarget="sharing"
-			/>
-		);
-	}
-
 	trackPeopleClick = () => {
 		this.trackMenuItemClick( 'people' );
 		this.onNavigate();
@@ -805,7 +771,6 @@ export class MySitesSidebar extends Component {
 		const manage = !! this.manage(),
 			configuration =
 				!! this.marketing() ||
-				!! this.sharing() ||
 				!! this.users() ||
 				!! this.siteSettings() ||
 				!! this.plugins() ||
@@ -847,7 +812,6 @@ export class MySitesSidebar extends Component {
 						<ul>
 							{ this.earn() }
 							{ this.marketing() }
-							{ this.sharing() }
 							{ this.users() }
 							{ this.plugins() }
 							{ this.upgrades() }
@@ -901,6 +865,7 @@ export class MySitesSidebar extends Component {
 				>
 					{ this.tools() }
 					{ this.earn() }
+					{ this.marketing() }
 					{ this.activity() }
 				</ExpandableSidebarMenu>
 
@@ -914,7 +879,6 @@ export class MySitesSidebar extends Component {
 						<ul>
 							{ this.upgrades() }
 							{ this.users() }
-							{ this.sharing() }
 							{ this.siteSettings() }
 						</ul>
 					</ExpandableSidebarMenu>
