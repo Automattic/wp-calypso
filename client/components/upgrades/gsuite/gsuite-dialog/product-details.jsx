@@ -10,18 +10,11 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import GSuitePrice from 'components/gsuite/gsuite-price';
 import GSuiteCompactFeatures from 'components/gsuite/gsuite-features/compact';
 
 function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 	const translate = useTranslate();
-
-	// currencyCode can safely replace the countryCode, just make sure we have one first
-	const showMonthlyPrice =
-		null !== currencyCode
-			? 'showMonthlyPrice' === abtest( 'gsuiteDomainFlowOptions', currencyCode )
-			: false;
 
 	return (
 		<div className="gsuite-dialog__product-details">
@@ -38,11 +31,7 @@ function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 					) }
 				</p>
 
-				<GSuitePrice
-					cost={ cost }
-					currencyCode={ currencyCode }
-					showMonthlyPrice={ showMonthlyPrice }
-				/>
+				<GSuitePrice cost={ cost } currencyCode={ currencyCode } showMonthlyPrice />
 			</div>
 
 			<GSuiteCompactFeatures domainName={ domain } productSlug={ plan } type={ 'list' } />
