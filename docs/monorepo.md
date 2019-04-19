@@ -1,11 +1,15 @@
-Publishing Packages with the Monorepo
-=====================================
+# Working with the Monorepo
 
 Calypso is a monorepo. In addition to the Calypso application, it also hosts a number of independent modules that are published to NPM.
 
 ## Module Layout
 
-These modules live under the `packages` directory, one folder per module.
+These modules live under the `packages` and `apps` directories, one folder per module.
+
+Two different directories for modules are:
+
+`/packages` — projects and libraries that we might publish as [NPM packages](https://docs.npmjs.com/about-packages-and-modules). Typically used also elsewhere in Calypso and build on `npm start`. See "Publishing" below.
+`/apps` — projects that can produce independent, binary-like outputs deployed elsewhere. Typically not published to NPM or build on `npm start`.
 
 Modules should follow our convention for layout:
 ```
@@ -33,7 +37,7 @@ test/
 
 Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, and `sideEffects`.
 
-The only exception are `devDependencies` which _must be declared in the wp-calypso root package.json_. `devDependencies` of sub-packages in a monorepo are not reliably installed and cannot be relied on.
+The only exception are `devDependencies` which _must be declared in the wp-calypso root `package.json`_. `devDependencies` of sub-packages in a monorepo are not reliably installed and cannot be relied on.
 
 ### A sample `package.json`
 
@@ -78,6 +82,7 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 If your package requires compilation, the `package.json` `prepare` script should compile the package. If it contains ES6+ code that needs to be transpiled, use `npx @automattic/calypso-build` which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds.
 
 ## Running Tests
+
 To run all of the package tests:
 
 `npm run test-packages`
@@ -85,6 +90,47 @@ To run all of the package tests:
 To run one package's tests:
 
 `npm run test-packages [ test file pattern ]`
+
+## Building packages & apps
+
+Packages will have their `prepare` scripts run automatically on `npm install`.
+
+You can build packages also by running:
+
+```bash
+npm run build-packages
+```
+
+Or even specific packages:
+
+```bash
+npx lerna run prepare --scope="@automattic/calypso-build"
+```
+
+Or specific apps:
+
+```bash
+npx lerna run build --scope="@automattic/calypso-build"
+```
+
+All `prepare` scripts found in all `package.json`s of apps and packages are always run on Calypso's `npm install`. Therefore independent apps in `/apps` directory can use `build` instead of `prepare` so avoid unnecessary builds.
+
+You can also run other custom `package.json` scripts only for your app or package:
+```bash
+npx lerna run your-script --scope="@automattic/your-package"
+```
+
+## Developing packages
+
+When developing packages in Calypso repository that external consumers (like Jetpack repository) depend on, you might want to test them without going through the publishing flow first.
+
+1. Enter the package you're testing
+1. Run [`npm link`](https://docs.npmjs.com/cli/link) — the package will be installed on global scope and symlinked to the folder in Calypso
+1. Enter the consumer's folder (such as Jetpack)
+1. Type `npm link @automattic/package-name` — the package will be symlinked between Calypso and Jetpack and any modifications you make in Calypso, will show up in Jetpack.
+1. Remember to build your changes between modifications in Calypso.
+
+Note that if you're building with Webpack, you may need to turn off [`resolve.symlinks`](https://webpack.js.org/configuration/resolve/#resolvesymlinks) for it to work as expected.
 
 ## Publishing
 

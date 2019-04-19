@@ -1,4 +1,4 @@
-# material-design-icons
+# Material design icons
 
 This package currently only provides Material icon SVGs required by the Calypso
 nav drawer.  The official `material-design-icons` package (https://github.com/google/material-design-icons)
@@ -27,4 +27,3 @@ https://material.io/tools/icons/
 
 Store the SVG files in the sub-folder matching the category used on
 material.io.
-

@@ -1,5 +1,4 @@
-I18n Calypso
-============
+# I18n Calypso
 
 This lib enables translations, exposing three public methods:
 

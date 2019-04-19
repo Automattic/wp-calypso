@@ -1,6 +1,6 @@
 # WP.com block editor
 
-This package provides utilities for the WordPress.com block editor integration. 
+This package provides utilities for the WordPress.com block editor integration.
 
 These utilities are intended to be built and then served from `widgets.wp.com`, so they can be loaded by a WordPress.com or a Jetpack connected site.
 

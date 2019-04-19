@@ -1,4 +1,4 @@
-# @automattic/wordpress-external-dependencies-plugin
+# WordPress external dependencies plugin
 
 This webpack plugin serves two purposes:
 
