@@ -27,6 +27,8 @@ import {
 	requestBillingTransaction,
 } from 'state/billing-transactions/individual-transactions/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { planMatches } from 'lib/plans';
+import { TERM_BIENNIALLY } from 'lib/plans/constants';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
@@ -177,11 +179,13 @@ class BillingReceipt extends React.Component {
 		const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
 
 		const items = groupedTransactionItems.map( item => {
+			const isTwoYearPlan = planMatches( item.wpcom_product_slug, { term: TERM_BIENNIALLY } );
 			return (
 				<tr key={ item.id }>
 					<td className="billing-history__receipt-item-name">
 						<span>{ item.variation }</span>
 						<small>({ item.type_localized })</small>
+						{ isTwoYearPlan ? <em>{ translate( 'Two year subscription' ) }</em> : null }
 						<br />
 						<em>{ item.domain }</em>
 					</td>
