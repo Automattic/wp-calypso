@@ -130,6 +130,8 @@ When developing packages in Calypso repository that external consumers (like Jet
 1. Type `npm link @automattic/package-name` — the package will be symlinked between Calypso and Jetpack and any modifications you make in Calypso, will show up in Jetpack.
 1. Remember to build your changes between modifications in Calypso.
 
+Note that if you're building with Webpack, you may need to turn off [`resolve.symlinks`](https://webpack.js.org/configuration/resolve/#resolvesymlinks) for it to work as expected.
+
 ## Publishing
 
 Please do not use regular [`npm publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
