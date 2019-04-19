@@ -23,7 +23,11 @@ import DomainManagementHeader from 'my-sites/domains/domain-management/component
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
-import { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from 'lib/gsuite';
+import {
+	getEligibleGSuiteDomain,
+	getGSuiteSupportedDomains,
+	hasGSuiteSupportedDomain,
+} from 'lib/gsuite';
 import { getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
 import Notice from 'components/notice';
@@ -50,12 +54,15 @@ class GSuiteAddUsers extends React.Component {
 		users: [],
 	};
 
-	static getDerivedStateFromProps( { domains, isRequestingDomains }, { users } ) {
+	static getDerivedStateFromProps(
+		{ domains, isRequestingDomains, selectedDomainName },
+		{ users }
+	) {
 		if ( ! isRequestingDomains && 0 === users.length ) {
-			const gSuiteSupportedDomains = getGSuiteSupportedDomains( domains );
-			if ( 0 < gSuiteSupportedDomains.length ) {
+			const domainName = getEligibleGSuiteDomain( selectedDomainName, domains );
+			if ( 0 < domainName.length ) {
 				return {
-					users: newUsers( gSuiteSupportedDomains[ 0 ].name ),
+					users: newUsers( domainName ),
 				};
 			}
 		}
