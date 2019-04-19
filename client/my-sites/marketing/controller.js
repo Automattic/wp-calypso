@@ -26,12 +26,12 @@ import {
 import versionCompare from 'lib/version-compare';
 
 export const redirectButtons = context => {
-	page.redirect( '/marketing/connections/' + context.params.domain );
+	page.redirect( '/marketing/sharing-buttons/' + context.params.domain );
 	return;
 };
 
 export const redirectConnections = context => {
-	page.redirect( '/marketing/sharing-buttons/' + context.params.domain );
+	page.redirect( '/marketing/connections/' + context.params.domain );
 	return;
 };
 
