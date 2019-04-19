@@ -35,6 +35,6 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
-		"prepare": "../calypso-build/bin/transpile.js"
+		"prepare": "npx --package @automattic/calypso-build transpile"
 	}
 }
