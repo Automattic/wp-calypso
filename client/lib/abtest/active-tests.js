@@ -184,10 +184,10 @@ export default {
 		defaultVariation: 'original',
 	},
 	pageBuilderMVP: {
-		datestamp: '20190418',
+		datestamp: '20190419',
 		variations: {
-			control: 50,
-			test: 50,
+			control: 100,
+			test: 0,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
