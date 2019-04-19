@@ -1,8 +1,8 @@
 # Apps
 
-This directory exists to hold a variety of projects that we do not use directly in Calypso and publish as independent outputs or packages.
+This directory exists to hold a variety of projects that can produce independent, binary-like outputs deployed elsewhere. Typically not published to NPM or build on `npm start`
 
-For packages that are used also in Calypso, see [`/packages`](../packages)
+For packages that we might publish as NPM packages, see [`/packages`](../packages).
 
 ## Adding a new app?
 
