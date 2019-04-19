@@ -349,7 +349,6 @@ export class PluginMeta extends Component {
 			'zapp-proxy-server',
 			'propellerads-official',
 			'p3',
-			'yellow-pencil-visual-theme-customizer',
 			'yuzo-related-post',
 		];
 
