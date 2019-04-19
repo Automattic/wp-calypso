@@ -1,4 +1,4 @@
-# Publishing with the Monorepo
+# Working with the Monorepo
 
 Calypso is a monorepo. In addition to the Calypso application, it also hosts a number of independent modules that are published to NPM.
 
