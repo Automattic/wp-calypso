@@ -36,8 +36,4 @@ export default class EditTeamMemberPage extends AsyncBaseContainer {
 		);
 		return await DriverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.is-success' ) );
 	}
-
-	async successNoticeDisplayed() {
-		return await DriverHelper.isElementPresent( this.driver, By.css( '.is-success' ) );
-	}
 }
