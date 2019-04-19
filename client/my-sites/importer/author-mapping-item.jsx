@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,7 +45,7 @@ class ImporterAuthorMapping extends React.Component {
 		const { hasSingleAuthor, onSelect: selectAuthor } = this.props;
 
 		if ( hasSingleAuthor ) {
-			selectAuthor( this.props.currentUser );
+			defer( () => selectAuthor( this.props.currentUser ) );
 		}
 	}
 

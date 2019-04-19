@@ -18,6 +18,7 @@ import Card from 'components/card';
 import ImporterHeader from '../importer-header';
 import ImportingPane from '../importing-pane';
 import SiteImporterInputPane from './site-importer-input-pane';
+import FromSignupLandingPane from '../from-signup-landing-pane';
 
 /**
  * Module variables
@@ -75,6 +76,9 @@ export default class extends React.PureComponent {
 					importerStatus={ state }
 					{ ...{ icon, title, description, isEnabled, site } }
 				/>
+				{ state.importerState === appStates.FROM_SIGNUP && (
+					<FromSignupLandingPane engine={ state.engine } />
+				) }
 				{ includes( importingStates, state.importerState ) && (
 					<ImportingPane
 						{ ...this.props }

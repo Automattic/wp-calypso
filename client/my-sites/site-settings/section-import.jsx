@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
+import { filter, find, first, flow, includes, get, isEmpty, memoize, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +21,8 @@ import BloggerImporter from 'my-sites/importer/importer-blogger';
 import WixImporter from 'my-sites/importer/importer-wix';
 import GoDaddyGoCentralImporter from 'my-sites/importer/importer-godaddy-gocentral';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
-import { fetchState, startImport } from 'lib/importer/actions';
+import { fetchState } from 'lib/importer/actions';
+import { autoStartSiteImport } from 'state/imports/site-importer/actions';
 import {
 	appStates,
 	WORDPRESS,
@@ -80,7 +81,7 @@ const importers = [
 ];
 
 const filterImportsForSite = ( siteID, imports ) => {
-	return filter( imports, importItem => importItem.site.ID === siteID );
+	return filter( imports, importItem => siteID && get( importItem, 'site.ID' ) === siteID );
 };
 
 const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
@@ -96,7 +97,7 @@ class SiteSettingsImport extends Component {
 	state = getImporterState();
 
 	onceAutoStartImport = once( () => {
-		const { engine, site } = this.props;
+		const { engine, site, fromSite } = this.props;
 		const { importers: imports } = this.state;
 
 		if ( ! engine ) {
@@ -112,7 +113,23 @@ class SiteSettingsImport extends Component {
 			return;
 		}
 
-		startImport( site.ID, getImporterTypeForEngine( engine ) );
+		const importerType = getImporterTypeForEngine( engine );
+
+		this.props.autoStartSiteImport( {
+			importerStatus: {
+				site,
+				siteId: site.ID,
+				type: importerType,
+				importerState: appStates.UPLOAD_SUCCESS,
+			},
+			params: {
+				engine,
+				site_url: fromSite,
+			},
+			site,
+			importerType,
+			targetSiteUrl: fromSite,
+		} );
 	} );
 
 	componentDidMount() {
@@ -225,7 +242,27 @@ class SiteSettingsImport extends Component {
 		const siteTitle = title.length ? title : slug;
 
 		if ( getImporterForEngine( engine ) ) {
-			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
+			const activeImports = filterImportsForSite( site.ID, imports );
+			const firstImport = first( activeImports );
+			const signupImportStarted =
+				firstImport &&
+				includes(
+					[ appStates.IMPORTING, appStates.IMPORT_SUCCESS, appStates.MAP_AUTHORS ],
+					firstImport.importerState
+				);
+
+			// If there's no active import started, mock one until we actually
+			// start importing to avoid showing the UI going through each stage.
+			if ( ! signupImportStarted ) {
+				return this.renderActiveImporters( [
+					{
+						importerState: appStates.FROM_SIGNUP,
+						type: getImporterTypeForEngine( engine ),
+						engine,
+						site,
+					},
+				] );
+			}
 		}
 
 		if ( ! isHydrated ) {
@@ -252,7 +289,7 @@ class SiteSettingsImport extends Component {
 		this.setState( getImporterState() );
 	};
 
-	renderImportersList() {
+	renderImportersMain() {
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
@@ -273,7 +310,7 @@ class SiteSettingsImport extends Component {
 					<h1>{ translate( 'Import Content' ) }</h1>
 				</HeaderCake>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
+					{ isJetpack ? <JetpackImporter /> : this.renderImportersMain() }
 				</EmailVerificationGate>
 			</Main>
 		);
@@ -281,11 +318,14 @@ class SiteSettingsImport extends Component {
 }
 
 export default flow(
-	connect( state => ( {
-		engine: getSelectedImportEngine( state ),
-		fromSite: getImporterSiteUrl( state ),
-		site: getSelectedSite( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} ) ),
+	connect(
+		state => ( {
+			engine: getSelectedImportEngine( state ),
+			fromSite: getImporterSiteUrl( state ),
+			site: getSelectedSite( state ),
+			siteSlug: getSelectedSiteSlug( state ),
+		} ),
+		{ autoStartSiteImport }
+	),
 	localize
 )( SiteSettingsImport );
