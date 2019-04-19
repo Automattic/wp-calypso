@@ -8,8 +8,8 @@ These modules live under the `packages` and `apps` directories, one folder per m
 
 Two different directories for modules are:
 
-`/packages` — projects and libraries that we use in Calypso but also might publish as independent outputs or packages.
-`/apps` — projects that we _do not_ use directly in Calypso and publish as independent outputs or packages.
+`/packages` — projects and libraries that we might publish as [NPM packages](https://docs.npmjs.com/about-packages-and-modules). Typically used also elsewhere in Calypso and build on `npm start`. See "Publishing" below.
+`/apps` — projects that can produce independent, binary-like outputs deployed elsewhere. Typically not published to NPM or build on `npm start`.
 
 Modules should follow our convention for layout:
 ```
