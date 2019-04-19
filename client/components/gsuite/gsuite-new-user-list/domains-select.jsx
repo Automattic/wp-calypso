@@ -16,8 +16,8 @@ const DomainsSelect = ( { domains, isError, onChange, value } ) => {
 		<FormSelect value={ value } onChange={ onChange } isError={ isError }>
 			{ domains.map( domain => {
 				return (
-					<option value={ domain.name } key={ domain.name }>
-						@{ domain.name }
+					<option value={ domain } key={ domain }>
+						@{ domain }
 					</option>
 				);
 			} ) }
@@ -26,7 +26,7 @@ const DomainsSelect = ( { domains, isError, onChange, value } ) => {
 };
 
 DomainsSelect.propTypes = {
-	domains: PropTypes.array.isRequired,
+	domains: PropTypes.arrayOf( PropTypes.string ).isRequired,
 	isError: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,
 	value: PropTypes.string.isRequired,

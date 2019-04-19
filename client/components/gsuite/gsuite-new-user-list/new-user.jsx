@@ -66,7 +66,6 @@ const GSuiteNewUser = ( {
 				{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
 				<DomainsSelect
 					domains={ domains }
-					// isError={ hasMailBoxError }
 					onChange={ event => {
 						onUserValueChange( 'domain', event.target.value );
 					} }
@@ -111,7 +110,7 @@ const GSuiteNewUser = ( {
 };
 
 GSuiteNewUser.propTypes = {
-	domains: PropTypes.array.isRequired,
+	domains: PropTypes.arrayOf( PropTypes.string ).isRequired,
 	onUserRemove: PropTypes.func.isRequired,
 	onUserValueChange: PropTypes.func.isRequired,
 	user: userShape.isRequired,

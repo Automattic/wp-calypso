@@ -26,7 +26,6 @@ class GoogleApps extends Component {
 		onAddGoogleApps: PropTypes.func.isRequired,
 		onClickSkip: PropTypes.func.isRequired,
 		onSave: PropTypes.func,
-		initialState: PropTypes.object,
 		analyticsSection: PropTypes.string,
 		initialGoogleAppsCartItem: PropTypes.object,
 	};
@@ -70,8 +69,6 @@ class GoogleApps extends Component {
 					selectedSite={ this.props.selectedSite }
 					analyticsSection={ this.props.analyticsSection }
 					onSave={ this.props.onSave }
-					initialState={ this.props.initialState }
-					initialGoogleAppsCartItem={ this.props.initialGoogleAppsCartItem }
 				/>
 			</div>
 		);

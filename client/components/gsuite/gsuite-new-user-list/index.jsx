@@ -22,7 +22,6 @@ const GSuiteNewUserList = ( {
 	users,
 } ) => {
 	const translate = useTranslate();
-	const domainName = '' !== selectedDomainName ? selectedDomainName : domains[ 0 ].domain;
 
 	const onUserValueChange = index => ( field, value ) => {
 		const modifiedUser = extraValidation(
@@ -35,12 +34,12 @@ const GSuiteNewUserList = ( {
 	};
 
 	const onUserAdd = () => {
-		onUsersChange( [ ...users, newUser( domainName ) ] );
+		onUsersChange( [ ...users, newUser( selectedDomainName ) ] );
 	};
 
 	const onUserRemove = index => () => {
 		const newUserList = users.filter( ( user, userIndex ) => userIndex !== index );
-		onUsersChange( 0 < newUserList.length ? newUserList : [ newUser( domainName ) ] );
+		onUsersChange( 0 < newUserList.length ? newUserList : [ newUser( selectedDomainName ) ] );
 	};
 
 	return (
@@ -49,7 +48,7 @@ const GSuiteNewUserList = ( {
 				.map( ( user, index ) => (
 					<GSuiteNewUser
 						key={ `${ index }-body` }
-						domains={ domains }
+						domains={ domains ? domains.map( domain => domain.name ) : [ selectedDomainName ] }
 						user={ user }
 						onUserValueChange={ onUserValueChange( index ) }
 						onUserRemove={ onUserRemove( index ) }
@@ -71,7 +70,7 @@ const GSuiteNewUserList = ( {
 };
 
 GSuiteNewUserList.propTypes = {
-	domains: PropTypes.array.isRequired,
+	domains: PropTypes.array,
 	extraValidation: PropTypes.func.isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
 	onUsersChange: PropTypes.func,
