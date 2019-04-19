@@ -47,5 +47,7 @@ cover.html
 
 cached-requests.json
 
-# package output
+# Monorepo output
+/apps/*/dist/
+/client/notifications/dist/
 /packages/*/dist/
