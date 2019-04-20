@@ -26,6 +26,7 @@ const config = {
 		],
 	],
 	plugins: _.compact( [
+		'optimize-react',
 		[
 			path.join(
 				__dirname,

@@ -283,6 +283,7 @@
 		"babel-eslint": "10.0.1",
 		"babel-jest": "24.7.1",
 		"babel-plugin-dynamic-import-node": "2.2.0",
+		"babel-plugin-optimize-react": "0.0.4",
 		"chai": "4.2.0",
 		"chai-enzyme": "1.0.0-beta.1",
 		"check-node-version": "3.3.0",
