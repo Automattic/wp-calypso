@@ -25,9 +25,6 @@
 		"dev": "npm-run-all --parallel dev:*",
 		"build": "npm-run-all --parallel build:*"
 	},
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../../packages/calypso-build"
-	},
 	"dependencies": {
 		"@wordpress/blocks": "^6.2.3",
 		"@wordpress/components": "^7.3.0",
