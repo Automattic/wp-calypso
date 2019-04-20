@@ -30,7 +30,6 @@ import { createReducerStore } from 'lib/store';
  * Module variables
  */
 const initialState = Object.freeze( {
-	count: 0,
 	importers: {},
 	importerLocks: {},
 } );
@@ -160,7 +159,6 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		case IMPORTS_IMPORT_START:
 			return {
 				...state,
-				count: get( state, 'count', 0 ) + 1,
 				importers: {
 					...state.importers,
 					[ action.importerId ]: {
