@@ -10,9 +10,6 @@ import { get, includes, map, omit, omitBy } from 'lodash';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
-	IMPORTS_FETCH,
-	IMPORTS_FETCH_FAILED,
-	IMPORTS_FETCH_COMPLETED,
 	IMPORTS_IMPORT_CANCEL,
 	IMPORTS_IMPORT_LOCK,
 	IMPORTS_IMPORT_RECEIVE,
@@ -36,9 +33,6 @@ const initialState = Object.freeze( {
 	count: 0,
 	importers: {},
 	importerLocks: {},
-	api: {
-		retryCount: 0,
-	},
 } );
 
 const getImporterItemById = ( state, id ) => get( state, [ 'importers', id ], {} );
@@ -51,32 +45,6 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			// this is here to enable
 			// unit-testing the store
 			return initialState;
-
-		case IMPORTS_FETCH:
-			return {
-				...state,
-				api: {
-					...state.api,
-				},
-			};
-
-		case IMPORTS_FETCH_FAILED:
-			return {
-				...state,
-				api: {
-					...state.api,
-					retryCount: get( state, 'api.retryCount', 0 ) + 1,
-				},
-			};
-
-		case IMPORTS_FETCH_COMPLETED:
-			return {
-				...state,
-				api: {
-					...state.api,
-					retryCount: 0,
-				},
-			};
 
 		case IMPORTS_IMPORT_CANCEL:
 		case IMPORTS_IMPORT_RESET:
@@ -154,22 +122,16 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			};
 		}
 		case IMPORTS_IMPORT_RECEIVE: {
-			const newState = {
-				...state,
-				api: {
-					...state.api,
-				},
-			};
 			const importerId = get( action, 'importerStatus.importerId' );
 
-			if ( get( newState, [ 'importerLocks', importerId ] ) ) {
-				return newState;
+			if ( get( state, [ 'importerLocks', importerId ] ) ) {
+				return state;
 			}
 
 			const activeImporters = omitBy(
 				{
 					// filter the original set of importers...
-					...newState.importers,
+					...state.importers,
 					// ...and the importer being received.
 					[ importerId ]: action.importerStatus,
 				},
@@ -178,7 +140,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			);
 
 			return {
-				...newState,
+				...state,
 				importers: activeImporters,
 			};
 		}
