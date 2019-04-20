@@ -101,10 +101,9 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case IS_DOT_COM:
-				noticeValues.icon = 'block';
-				noticeValues.text = translate(
-					"That's a WordPress.com site, so you don't need to connect it."
-				);
+				noticeValues.status = 'is-success';
+				noticeValues.icon = 'plugins';
+				noticeValues.text = translate( "That's a WordPress.com site, so it's always connected!" );
 				return noticeValues;
 
 			case NOT_WORDPRESS:
