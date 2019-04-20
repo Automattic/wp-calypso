@@ -11,11 +11,9 @@ import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
 	IMPORTS_IMPORT_CANCEL,
-	IMPORTS_IMPORT_LOCK,
 	IMPORTS_IMPORT_RECEIVE,
 	IMPORTS_IMPORT_RESET,
 	IMPORTS_IMPORT_START,
-	IMPORTS_IMPORT_UNLOCK,
 	IMPORTS_START_IMPORTING,
 	IMPORTS_STORE_RESET,
 	IMPORTS_UPLOAD_FAILED,
@@ -25,13 +23,13 @@ import {
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { createReducerStore } from 'lib/store';
+import { reduxGetState } from 'lib/redux-bridge';
 
 /**
  * Module variables
  */
 const initialState = Object.freeze( {
 	importers: {},
-	importerLocks: {},
 } );
 
 const getImporterItemById = ( state, id ) => get( state, [ 'importers', id ], {} );
@@ -121,9 +119,11 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			};
 		}
 		case IMPORTS_IMPORT_RECEIVE: {
+			const reduxState = reduxGetState();
 			const importerId = get( action, 'importerStatus.importerId' );
+			const isImporterLocked = get( reduxState, [ 'imports', 'lockedImports', importerId ], false );
 
-			if ( get( state, [ 'importerLocks', importerId ] ) ) {
+			if ( isImporterLocked ) {
 				return state;
 			}
 
@@ -192,24 +192,6 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 						importerState: appStates.UPLOADING,
 						filename: action.filename,
 					},
-				},
-			};
-
-		case IMPORTS_IMPORT_LOCK:
-			return {
-				...state,
-				importerLocks: {
-					...state.importerLocks,
-					[ action.importerId ]: true,
-				},
-			};
-
-		case IMPORTS_IMPORT_UNLOCK:
-			return {
-				...state,
-				importerLocks: {
-					...state.importerLocks,
-					[ action.importerId ]: false,
 				},
 			};
 	}

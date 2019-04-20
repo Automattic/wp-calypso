@@ -5,7 +5,7 @@
  */
 
 import Dispatcher from 'dispatcher';
-import { includes, partial } from 'lodash';
+import { includes, flowRight } from 'lodash';
 import wpLib from 'lib/wp';
 const wpcom = wpLib.undocumented();
 
@@ -19,11 +19,9 @@ import {
 	IMPORTS_FETCH_FAILED,
 	IMPORTS_FETCH_COMPLETED,
 	IMPORTS_IMPORT_CANCEL,
-	IMPORTS_IMPORT_LOCK,
 	IMPORTS_IMPORT_RECEIVE,
 	IMPORTS_IMPORT_RESET,
 	IMPORTS_IMPORT_START,
-	IMPORTS_IMPORT_UNLOCK,
 	IMPORTS_START_IMPORTING,
 	IMPORTS_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_COMPLETED,
@@ -33,6 +31,7 @@ import {
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
 import { reduxDispatch } from 'lib/redux-bridge';
+import { lockImportSession, unlockImportSession } from 'state/imports/actions';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
@@ -82,13 +81,15 @@ const apiFailure = data => {
 	reduxDispatch( { type: IMPORTS_FETCH_FAILED } );
 	return data;
 };
-const setImportLock = ( shouldEnableLock, importerId ) => {
-	const type = shouldEnableLock ? IMPORTS_IMPORT_LOCK : IMPORTS_IMPORT_UNLOCK;
 
-	Dispatcher.handleViewAction( { type, importerId } );
-};
-const lockImport = partial( setImportLock, true );
-const unlockImport = partial( setImportLock, false );
+const lockImport = flowRight(
+	reduxDispatch,
+	lockImportSession
+);
+const unlockImport = flowRight(
+	reduxDispatch,
+	unlockImportSession
+);
 
 const asArray = a => [].concat( a );
 
