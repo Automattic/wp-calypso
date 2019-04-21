@@ -242,6 +242,10 @@
 		position: absolute;
 		top: 12px;
 		right: 12px;
+		
+		&:hover {
+			color: var( --color-accent );
+		}
 	}
 
 	&:focus {
