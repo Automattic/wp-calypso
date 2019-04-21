@@ -129,15 +129,16 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLabel htmlFor="wpversion">{ translate( 'WordPress Version' ) }</FormLabel>
-				<FormInput
-					name="wpversion"
-					id="wpversion"
-					data-tip-target="site-title-input"
-					type="text"
-					value={ get( selectedSite, 'options.software_version' ) }
-					disabled
-				/>
+				<FormLabel 
+					className="site-settings__wordpress-version" 
+					htmlFor="wpversion"
+				>
+					{ translate( 'WordPress Version: ' ) }
+				</FormLabel>
+				
+				<p className="site-settings__wordpress-version">
+					{ get( selectedSite, 'options.software_version' ) }
+				</p>
 			</FormFieldset>
 		);
 	}
