@@ -626,6 +626,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.plan-price.is-discounted {
 		margin-right: 0;
 	}
+	
+	.plan-pill {
+		left: 50%;
+		transform: translateX(-50%);
+	}
 
 	.formatted-header,
 	.formatted-header.is-without-subhead {
