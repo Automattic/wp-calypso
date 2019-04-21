@@ -57,23 +57,18 @@ class SiteImporterInputPane extends React.Component {
 		availableEndpoints: [],
 	};
 
+	componentWillMount() {
+		// Previously we used component state here - this was essentially clean-slated
+		// Whenever this component mounts. Now that we hold this state in redux we have to
+		// mock that implicit reset by reseting the equivalent state manually.
+		this.resetImport();
+	}
+
 	componentDidMount() {
 		this.validateSite();
 
 		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
 			this.fetchEndpoints();
-		}
-	}
-
-	componentWillUnmount() {
-		const {
-			importerStatus: { importerState, importerId } = {},
-			site: { ID: siteId } = {},
-		} = this.props;
-
-		if ( ! includes( [ appStates.UPLOAD_SUCCESS ], importerState ) ) {
-			cancelImport( siteId, importerId );
-			this.resetImport();
 		}
 	}
 
