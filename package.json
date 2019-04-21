@@ -190,7 +190,7 @@
 		"valid-url": "1.0.9",
 		"webpack": "4.29.6",
 		"webpack-bundle-analyzer": "3.3.2",
-		"webpack-cli": "3.3.0",
+		"webpack-cli": "3.3.1",
 		"webpack-dev-middleware": "3.6.2",
 		"wpcom": "5.4.2",
 		"wpcom-oauth": "0.3.4",
