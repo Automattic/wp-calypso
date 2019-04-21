@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import Dispatcher from 'dispatcher';
 import { stringify } from 'qs';
 import { defer, every, get } from 'lodash';
 
@@ -12,12 +11,7 @@ import { defer, every, get } from 'lodash';
 import { toApi, fromApi } from 'lib/importer/common';
 import wpcom from 'lib/wp';
 import user from 'lib/user';
-import {
-	mapAuthor,
-	startMappingAuthors,
-	startImporting,
-	createFinishUploadAction,
-} from 'lib/importer/actions';
+import { mapAuthor, startMappingAuthors, startImporting, finishUpload } from 'lib/importer/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
@@ -169,9 +163,7 @@ export const importSite = ( {
 			const data = fromApi( response );
 			// Note: We're creating the finishUploadAction using the locally generated ID here
 			// as opposed to the new import ID recieved in the API response.
-			const action = createFinishUploadAction( importerStatus.importerId, data );
-
-			Dispatcher.handleViewAction( action );
+			finishUpload( importerStatus.importerId, data );
 
 			dispatch(
 				startMappingSiteImporterAuthors( {

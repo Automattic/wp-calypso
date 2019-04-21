@@ -4,6 +4,7 @@ export const appStates = Object.freeze( {
 	DEFUNCT: 'importer-defunct',
 	DISABLED: 'importer-disabled',
 	EXPIRE_PENDING: 'importer-expire-pending',
+	IMPORT_EXPIRED: 'importExpired',
 	IMPORT_FAILURE: 'importer-import-failure',
 	IMPORT_SUCCESS: 'importer-import-success',
 	IMPORTING: 'importer-importing',

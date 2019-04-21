@@ -6,14 +6,13 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { defer, filter, find, flow, get, isEmpty, isEqual, memoize, once } from 'lodash';
+import { defer, filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
-import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
@@ -94,17 +93,14 @@ class SiteSettingsImport extends Component {
 		site: PropTypes.object,
 	};
 
-	state = getImporterState();
-
 	onceAutoStartImport = once( () => {
-		const { engine, site } = this.props;
-		const { importers: imports } = this.state;
+		const { engine, site, importItems } = this.props;
 
 		if ( ! engine ) {
 			return;
 		}
 
-		if ( ! isEmpty( imports ) ) {
+		if ( ! isEmpty( importItems ) ) {
 			// Never clobber an existing import
 			return;
 		}
@@ -117,7 +113,6 @@ class SiteSettingsImport extends Component {
 	} );
 
 	componentDidMount() {
-		ImporterStore.on( 'change', this.updateState );
 		this.updateFromAPI();
 	}
 
@@ -129,10 +124,6 @@ class SiteSettingsImport extends Component {
 		}
 
 		this.onceAutoStartImport();
-	}
-
-	componentWillUnmount() {
-		ImporterStore.off( 'change', this.updateState );
 	}
 
 	/**
@@ -217,20 +208,19 @@ class SiteSettingsImport extends Component {
 	 * @returns {Array} Importer react elements
 	 */
 	renderImporters() {
-		const { importers: imports } = this.state;
-		const { engine, isHydrated, site } = this.props;
+		const { engine, isHydrated, site, importItems } = this.props;
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
 
 		if ( getImporterForEngine( engine ) ) {
-			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
+			return this.renderActiveImporters( filterImportsForSite( site.ID, importItems ) );
 		}
 
 		if ( ! isHydrated ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
 		}
 
-		const importsForSite = filterImportsForSite( site.ID, imports )
+		const importsForSite = filterImportsForSite( site.ID, importItems )
 			// Add in the 'site' and 'siteTitle' properties to the import objects.
 			.map( item => Object.assign( {}, item, { site, siteTitle } ) );
 
@@ -244,16 +234,6 @@ class SiteSettingsImport extends Component {
 	updateFromAPI = () => {
 		const siteID = get( this, 'props.site.ID' );
 		siteID && fetchState( siteID );
-	};
-
-	updateState = () => {
-		const newState = getImporterState();
-		if ( isEqual( this.state, newState ) ) {
-			// Don't trigger a re-render if nothing has changed
-			return;
-		}
-
-		this.setState( newState );
 	};
 
 	renderImportersList() {
@@ -291,6 +271,7 @@ export default flow(
 		isHydrated: isImportDataHydrated( state ),
 		site: getSelectedSite( state ),
 		siteSlug: getSelectedSiteSlug( state ),
+		importItems: get( state, 'imports.items' ),
 	} ) ),
 	localize
 )( SiteSettingsImport );

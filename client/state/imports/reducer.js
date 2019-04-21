@@ -11,6 +11,7 @@ import {
 } from 'state/action-types';
 import uploadsReducer from 'state/imports/uploads/reducer';
 import siteImporterReducer from 'state/imports/site-importer/reducer';
+import itemsReducer from 'state/imports/items/reducer';
 import lockedImportsReducer from 'state/imports/locked-imports/reducer';
 
 const isFetching = createReducer( false, {
@@ -31,4 +32,5 @@ export default combineReducers( {
 	uploads: uploadsReducer,
 	siteImporter: siteImporterReducer,
 	lockedImports: lockedImportsReducer,
+	items: itemsReducer,
 } );

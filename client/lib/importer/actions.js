@@ -5,7 +5,7 @@
  */
 
 import Dispatcher from 'dispatcher';
-import { includes, flowRight } from 'lodash';
+import { flowRight, get, includes, keys, reject, pickBy } from 'lodash';
 import wpLib from 'lib/wp';
 const wpcom = wpLib.undocumented();
 
@@ -30,10 +30,13 @@ import {
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
-import { reduxDispatch } from 'lib/redux-bridge';
+import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { lockImportSession, unlockImportSession } from 'state/imports/actions';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
+
+const isImporterLocked = importerId =>
+	includes( keys( pickBy( get( reduxGetState(), 'imports.lockedImports' ) ) ), importerId );
 
 /*
  * The following `order` functions prepare objects that can be
@@ -93,21 +96,31 @@ const unlockImport = flowRight(
 
 const asArray = a => [].concat( a );
 
-function receiveImporterStatus( importerStatus ) {
-	Dispatcher.handleViewAction( {
+const rejectExpiredImporters = importers =>
+	reject( importers, ( { importStatus } ) => importStatus === appStates.IMPORT_EXPIRED );
+
+function receiveImporterStatus( importerStatus = {} ) {
+	const receiveImporterStatusAction = {
 		type: IMPORTS_IMPORT_RECEIVE,
 		importerStatus,
-	} );
+		isImporterLocked: isImporterLocked( importerStatus.importerId ),
+	};
+
+	Dispatcher.handleViewAction( receiveImporterStatusAction );
+	reduxDispatch( receiveImporterStatusAction );
 }
 
 export function cancelImport( siteId, importerId ) {
 	lockImport( importerId );
 
-	Dispatcher.handleViewAction( {
+	const cancelAction = {
 		type: IMPORTS_IMPORT_CANCEL,
 		importerId,
 		siteId,
-	} );
+	};
+
+	Dispatcher.handleViewAction( cancelAction );
+	reduxDispatch( cancelAction );
 
 	// Bail if this is merely a local importer object because
 	// there is nothing on the server-side to cancel
@@ -131,6 +144,7 @@ export function fetchState( siteId ) {
 		.fetchImporterState( siteId )
 		.then( apiSuccess )
 		.then( asArray )
+		.then( rejectExpiredImporters )
 		.then( importers => importers.map( fromApi ) )
 		.then( importers => importers.map( receiveImporterStatus ) )
 		.catch( apiFailure );
@@ -142,23 +156,37 @@ export const createFinishUploadAction = ( importerId, importerStatus ) => ( {
 	importerStatus,
 } );
 
-export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) =>
-	Dispatcher.handleViewAction( {
+export const finishUpload = ( importerId, importerStatus ) => {
+	const finishUploadAction = createFinishUploadAction( importerId, importerStatus );
+
+	Dispatcher.handleViewAction( finishUploadAction );
+	reduxDispatch( finishUploadAction );
+};
+
+export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => {
+	const setAuthorMappingAction = {
 		type: IMPORTS_AUTHORS_SET_MAPPING,
 		importerId,
 		sourceAuthor,
 		targetAuthor,
-	} );
+	};
+
+	Dispatcher.handleViewAction( setAuthorMappingAction );
+	reduxDispatch( setAuthorMappingAction );
+};
 
 export function resetImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
 	lockImport( importerId );
 
-	Dispatcher.handleViewAction( {
+	const resetImportAction = {
 		type: IMPORTS_IMPORT_RESET,
 		importerId,
 		siteId,
-	} );
+	};
+
+	Dispatcher.handleViewAction( resetImportAction );
+	reduxDispatch( resetImportAction );
 
 	apiStart();
 	wpcom
@@ -173,11 +201,14 @@ export function clearImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
 	lockImport( importerId );
 
-	Dispatcher.handleViewAction( {
+	const clearImportAction = {
 		type: IMPORTS_IMPORT_RESET,
 		importerId,
 		siteId,
-	} );
+	};
+
+	Dispatcher.handleViewAction( clearImportAction );
+	reduxDispatch( clearImportAction );
 
 	apiStart();
 	wpcom
@@ -191,10 +222,13 @@ export function clearImport( siteId, importerId ) {
 export function startMappingAuthors( importerId ) {
 	lockImport( importerId );
 
-	Dispatcher.handleViewAction( {
+	const startMappingAuthorsAction = {
 		type: IMPORTS_AUTHORS_START_MAPPING,
 		importerId,
-	} );
+	};
+
+	Dispatcher.handleViewAction( startMappingAuthorsAction );
+	reduxDispatch( startMappingAuthorsAction );
 }
 
 export const setUploadProgress = ( importerId, data ) => ( {
@@ -214,6 +248,8 @@ export const startImport = ( siteId, importerType ) => {
 	};
 
 	Dispatcher.handleViewAction( action );
+	reduxDispatch( action );
+
 	return action;
 };
 
@@ -222,13 +258,15 @@ export function startImporting( importerStatus ) {
 		importerId,
 		site: { ID: siteId },
 	} = importerStatus;
-
 	unlockImport( importerId );
 
-	Dispatcher.handleViewAction( {
+	const startImportingAction = {
 		type: IMPORTS_START_IMPORTING,
 		importerId,
-	} );
+	};
+
+	Dispatcher.handleViewAction( startImportingAction );
+	reduxDispatch( startImportingAction );
 
 	wpcom.updateImporter( siteId, importOrder( importerStatus ) );
 }
@@ -264,12 +302,7 @@ export const startUpload = ( importerStatus, file ) => {
 		} )
 		.then( data => Object.assign( data, { siteId } ) )
 		.then( fromApi )
-		.then( importerData => {
-			const finishUploadAction = createFinishUploadAction( importerId, importerData );
-
-			Dispatcher.handleViewAction( finishUploadAction );
-			reduxDispatch( finishUploadAction );
-		} )
+		.then( importerData => finishUpload( importerId, importerData ) )
 		.catch( error => {
 			const failUploadAction = {
 				type: IMPORTS_UPLOAD_FAILED,
