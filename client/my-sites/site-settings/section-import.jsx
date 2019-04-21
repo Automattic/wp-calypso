@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { defer, filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
+import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +20,8 @@ import BloggerImporter from 'my-sites/importer/importer-blogger';
 import WixImporter from 'my-sites/importer/importer-wix';
 import GoDaddyGoCentralImporter from 'my-sites/importer/importer-godaddy-gocentral';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
-import { fetchState, startImport } from 'lib/importer/actions';
+import { fetchState } from 'lib/importer/actions';
+import { startImport } from 'state/imports/actions';
 import {
 	appStates,
 	WORDPRESS,
@@ -109,7 +110,7 @@ class SiteSettingsImport extends Component {
 			return;
 		}
 
-		defer( () => startImport( site.ID, getImporterTypeForEngine( engine ) ) );
+		this.props.startImport( site.ID, getImporterTypeForEngine( engine ) );
 	} );
 
 	componentDidMount() {
@@ -265,13 +266,16 @@ class SiteSettingsImport extends Component {
 }
 
 export default flow(
-	connect( state => ( {
-		engine: getSelectedImportEngine( state ),
-		fromSite: getImporterSiteUrl( state ),
-		isHydrated: isImportDataHydrated( state ),
-		site: getSelectedSite( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-		importItems: get( state, 'imports.items' ),
-	} ) ),
+	connect(
+		state => ( {
+			engine: getSelectedImportEngine( state ),
+			fromSite: getImporterSiteUrl( state ),
+			isHydrated: isImportDataHydrated( state ),
+			site: getSelectedSite( state ),
+			siteSlug: getSelectedSiteSlug( state ),
+			importItems: get( state, 'imports.items' ),
+		} ),
+		{ startImport }
+	),
 	localize
 )( SiteSettingsImport );

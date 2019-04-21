@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Button from 'components/forms/form-button';
-import { startImport } from 'lib/importer/actions';
+import { startImport } from 'state/imports/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class StartButton extends React.PureComponent {
@@ -33,8 +33,7 @@ class StartButton extends React.PureComponent {
 			site: { ID: siteId },
 		} = this.props;
 
-		startImport( siteId, type );
-
+		this.props.startImport( siteId, type );
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 			blog_id: siteId,
 			importer_id: type,
@@ -59,7 +58,7 @@ class StartButton extends React.PureComponent {
 export default flow(
 	connect(
 		null,
-		{ recordTracksEvent }
+		{ recordTracksEvent, startImport }
 	),
 	localize
 )( StartButton );

@@ -21,7 +21,6 @@ import {
 	IMPORTS_IMPORT_CANCEL,
 	IMPORTS_IMPORT_RECEIVE,
 	IMPORTS_IMPORT_RESET,
-	IMPORTS_IMPORT_START,
 	IMPORTS_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
@@ -228,21 +227,6 @@ export const setUploadProgress = ( importerId, data ) => ( {
 	uploadTotal: data.uploadTotal,
 	importerId,
 } );
-
-export const startImport = ( siteId, importerType ) => {
-	const action = {
-		type: IMPORTS_IMPORT_START,
-		// Use a fake ID until the server returns the real one
-		importerId: `${ ID_GENERATOR_PREFIX }${ Math.round( Math.random() * 10000 ) }`,
-		importerType,
-		siteId,
-	};
-
-	Dispatcher.handleViewAction( action );
-	reduxDispatch( action );
-
-	return action;
-};
 
 export const startUpload = ( importerStatus, file ) => {
 	const {
