@@ -22,7 +22,6 @@ import {
 	IMPORTS_IMPORT_RECEIVE,
 	IMPORTS_IMPORT_RESET,
 	IMPORTS_IMPORT_START,
-	IMPORTS_START_IMPORTING,
 	IMPORTS_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
@@ -31,7 +30,7 @@ import {
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
-import { lockImportSession, unlockImportSession } from 'state/imports/actions';
+import { lockImportSession } from 'state/imports/actions';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
@@ -57,10 +56,6 @@ const expiryOrder = ( siteId, importerId ) =>
 // Creates a request to clear all import sessions
 const clearOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.IMPORT_CLEAR, site: { ID: siteId } } );
-
-// Creates a request object to start performing the actual import
-const importOrder = importerStatus =>
-	toApi( Object.assign( {}, importerStatus, { importerState: appStates.IMPORTING } ) );
 
 const apiStart = () => {
 	Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
@@ -88,10 +83,6 @@ const apiFailure = data => {
 const lockImport = flowRight(
 	reduxDispatch,
 	lockImportSession
-);
-const unlockImport = flowRight(
-	reduxDispatch,
-	unlockImportSession
 );
 
 const asArray = a => [].concat( a );
@@ -252,24 +243,6 @@ export const startImport = ( siteId, importerType ) => {
 
 	return action;
 };
-
-export function startImporting( importerStatus ) {
-	const {
-		importerId,
-		site: { ID: siteId },
-	} = importerStatus;
-	unlockImport( importerId );
-
-	const startImportingAction = {
-		type: IMPORTS_START_IMPORTING,
-		importerId,
-	};
-
-	Dispatcher.handleViewAction( startImportingAction );
-	reduxDispatch( startImportingAction );
-
-	wpcom.updateImporter( siteId, importOrder( importerStatus ) );
-}
 
 export const startUpload = ( importerStatus, file ) => {
 	const {

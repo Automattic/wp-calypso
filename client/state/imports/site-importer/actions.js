@@ -11,7 +11,8 @@ import { defer, every, get } from 'lodash';
 import { toApi, fromApi } from 'lib/importer/common';
 import wpcom from 'lib/wp';
 import user from 'lib/user';
-import { mapAuthor, startMappingAuthors, startImporting, finishUpload } from 'lib/importer/actions';
+import { mapAuthor, startMappingAuthors, finishUpload } from 'lib/importer/actions';
+import { startImporting } from 'state/imports/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
@@ -24,7 +25,6 @@ import {
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS,
 	SITE_IMPORTER_VALIDATION_ERROR_SET,
 } from 'state/action-types';
-import { getState as getImporterState } from 'lib/importer/store';
 import { prefetchmShotsPreview } from 'lib/mshots';
 
 const sortAndStringify = items =>
@@ -66,11 +66,10 @@ export const setValidationError = message => ( {
 	message,
 } );
 
-export const startMappingSiteImporterAuthors = ( {
-	importerStatus,
-	site,
-	targetSiteUrl,
-} ) => dispatch => {
+export const startMappingSiteImporterAuthors = ( { importerStatus, site, targetSiteUrl } ) => (
+	dispatch,
+	getState
+) => {
 	const singleAuthorSite = get( site, 'single_user_site', true );
 	const siteId = site.ID;
 	const { importerId } = importerStatus;
@@ -90,15 +89,14 @@ export const startMappingSiteImporterAuthors = ( {
 
 		// Check if all authors are mapped before starting the import.
 		defer( () => {
-			const newState = get( getImporterState(), [ 'importers', importerId ] );
+			const newState = get( getState(), [ 'imports', 'items', importerId ] );
 			const areAllAuthorsMapped = every(
 				get( newState, 'customData.sourceAuthors', [] ),
 				'mappedTo'
 			);
 
 			if ( areAllAuthorsMapped ) {
-				startImporting( newState );
-
+				dispatch( startImporting( newState ) );
 				dispatch(
 					recordTracksEvent( 'calypso_site_importer_map_authors_single', {
 						blog_id: siteId,

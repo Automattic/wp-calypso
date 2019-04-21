@@ -13,7 +13,8 @@ import { defer, get, has, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { mapAuthor, startImporting } from 'lib/importer/actions';
+import { mapAuthor } from 'lib/importer/actions';
+import { startImporting } from 'state/imports/actions';
 import { appStates } from 'state/imports/constants';
 import ProgressBar from 'components/progress-bar';
 import AuthorMappingPane from './author-mapping-pane';
@@ -296,7 +297,7 @@ class ImportingPane extends React.PureComponent {
 					<AuthorMappingPane
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ this.handleOnMap }
-						onStartImport={ () => startImporting( this.props.importerStatus ) }
+						onStartImport={ () => this.props.startImporting( this.props.importerStatus ) }
 						siteId={ siteId }
 						sourceType={ sourceType }
 						sourceAuthors={ customData.sourceAuthors }
@@ -327,5 +328,5 @@ class ImportingPane extends React.PureComponent {
 
 export default connect(
 	null,
-	{ loadTrackingTool }
+	{ loadTrackingTool, startImporting }
 )( localize( ImportingPane ) );
