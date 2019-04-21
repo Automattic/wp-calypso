@@ -670,6 +670,7 @@ class PushNotificationSettings extends React.Component {
 		let blockedInstruction,
 			buttonClass,
 			buttonDisabled,
+			buttonPrimary,
 			buttonText,
 			deniedText,
 			stateClass,
@@ -683,6 +684,7 @@ class PushNotificationSettings extends React.Component {
 			case 'disabling':
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = true;
+				buttonPrimary = true;
 				buttonText = this.props.translate( 'Enable' );
 				stateClass = { 'is-disabled': true };
 				stateText = this.props.translate( 'Disabled' );
@@ -690,6 +692,7 @@ class PushNotificationSettings extends React.Component {
 			case 'enabling':
 				buttonClass = { 'is-disable': true };
 				buttonDisabled = true;
+				buttonPrimary = false;
 				buttonText = this.props.translate( 'Disable' );
 				stateClass = { 'is-enabled': true };
 				stateText = this.props.translate( 'Enabled' );
@@ -697,6 +700,7 @@ class PushNotificationSettings extends React.Component {
 			case 'unsubscribed':
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = false;
+				buttonPrimary = true;
 				buttonText = this.props.translate( 'Enable' );
 				stateClass = { 'is-disabled': true };
 				stateText = this.props.translate( 'Disabled' );
@@ -704,6 +708,7 @@ class PushNotificationSettings extends React.Component {
 			case 'subscribed':
 				buttonClass = { 'is-disable': true };
 				buttonDisabled = false;
+				buttonPrimary = false;
 				buttonText = this.props.translate( 'Disable' );
 				stateClass = { 'is-enabled': true };
 				stateText = this.props.translate( 'Enabled' );
@@ -712,6 +717,7 @@ class PushNotificationSettings extends React.Component {
 				blockedInstruction = this.getBlockedInstruction();
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = true;
+				buttonPrimary = true;
 				buttonText = this.props.translate( 'Enable' );
 				stateClass = { 'is-disabled': true };
 				stateText = this.props.translate( 'Disabled' );
@@ -784,6 +790,7 @@ class PushNotificationSettings extends React.Component {
 						buttonClass
 					) }
 					disabled={ buttonDisabled }
+					primary={ buttonPrimary }
 					onClick={ this.clickHandler }
 				>
 					{ buttonText }
