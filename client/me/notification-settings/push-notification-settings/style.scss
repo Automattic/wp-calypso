@@ -126,22 +126,4 @@
 	 	bottom: 24px;
 		right: 24px;
 	}
-
-	&.is-enable {
-		background: var( --color-accent );
-		border-color: var( --color-accent-dark );
-		color: var( --color-white );
-
-		&:hover,
-		&:focus {
-			border-color: var( --color-accent-dark );
-			color: var( --color-white );
-		}
-		&[disabled],
-		&:disabled {
-			background: var( --color-primary-50 );
-			border-color: var( --color-primary-200 );
-			color: var( --color-white );
-		}
-	}
 }
