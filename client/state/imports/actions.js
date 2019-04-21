@@ -1,5 +1,10 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import { get, includes, keys, pickBy } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import wpLib from 'lib/wp';
@@ -9,6 +14,7 @@ import {
 	IMPORTS_START_IMPORTING,
 	IMPORTS_IMPORT_START,
 	IMPORTS_UPLOAD_COMPLETED,
+	IMPORTS_IMPORT_RECEIVE,
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { toApi } from 'lib/importer/common';
@@ -16,6 +22,9 @@ import { toApi } from 'lib/importer/common';
 const wpcom = wpLib.undocumented();
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
+
+const isImporterLocked = ( state, importerId ) =>
+	includes( keys( pickBy( get( state, 'imports.lockedImports' ) ) ), importerId );
 
 export const lockImportSession = importerId => ( {
 	type: IMPORTS_IMPORT_LOCK,
@@ -62,6 +71,13 @@ export const startImporting = importerStatus => dispatch => {
 		} )
 	);
 };
+
+export const receiveImporterStatus = ( importerStatus = {} ) => ( dispatch, getState ) =>
+	dispatch( {
+		type: IMPORTS_IMPORT_RECEIVE,
+		importerStatus,
+		isImporterLocked: isImporterLocked( getState(), importerStatus.importerId ),
+	} );
 
 export const finishUpload = ( importerId, importerStatus ) => ( {
 	type: IMPORTS_UPLOAD_COMPLETED,

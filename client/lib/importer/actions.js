@@ -5,7 +5,7 @@
  */
 
 import Dispatcher from 'dispatcher';
-import { flowRight, get, includes, keys, reject, pickBy } from 'lodash';
+import { flowRight, includes, reject } from 'lodash';
 import wpLib from 'lib/wp';
 const wpcom = wpLib.undocumented();
 
@@ -19,7 +19,6 @@ import {
 	IMPORTS_FETCH_FAILED,
 	IMPORTS_FETCH_COMPLETED,
 	IMPORTS_IMPORT_CANCEL,
-	IMPORTS_IMPORT_RECEIVE,
 	IMPORTS_IMPORT_RESET,
 	IMPORTS_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
@@ -27,13 +26,10 @@ import {
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
-import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
-import { lockImportSession, finishUpload } from 'state/imports/actions';
+import { reduxDispatch } from 'lib/redux-bridge';
+import { lockImportSession, finishUpload, receiveImporterStatus } from 'state/imports/actions';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
-
-const isImporterLocked = importerId =>
-	includes( keys( pickBy( get( reduxGetState(), 'imports.lockedImports' ) ) ), importerId );
 
 /*
  * The following `order` functions prepare objects that can be
@@ -78,29 +74,22 @@ const apiFailure = data => {
 	return data;
 };
 
-const lockImport = flowRight(
-	reduxDispatch,
-	lockImportSession
-);
+const createReduxDispatchable = action =>
+	flowRight(
+		reduxDispatch,
+		action
+	);
+
+const dispatchLockImport = createReduxDispatchable( lockImportSession );
+const dispatchReceiveImporterStatus = createReduxDispatchable( receiveImporterStatus );
 
 const asArray = a => [].concat( a );
 
 const rejectExpiredImporters = importers =>
 	reject( importers, ( { importStatus } ) => importStatus === appStates.IMPORT_EXPIRED );
 
-function receiveImporterStatus( importerStatus = {} ) {
-	const receiveImporterStatusAction = {
-		type: IMPORTS_IMPORT_RECEIVE,
-		importerStatus,
-		isImporterLocked: isImporterLocked( importerStatus.importerId ),
-	};
-
-	Dispatcher.handleViewAction( receiveImporterStatusAction );
-	reduxDispatch( receiveImporterStatusAction );
-}
-
 export function cancelImport( siteId, importerId ) {
-	lockImport( importerId );
+	dispatchLockImport( importerId );
 
 	const cancelAction = {
 		type: IMPORTS_IMPORT_CANCEL,
@@ -122,7 +111,7 @@ export function cancelImport( siteId, importerId ) {
 		.updateImporter( siteId, cancelOrder( siteId, importerId ) )
 		.then( apiSuccess )
 		.then( fromApi )
-		.then( receiveImporterStatus )
+		.then( dispatchReceiveImporterStatus )
 		.catch( apiFailure );
 }
 
@@ -135,7 +124,7 @@ export function fetchState( siteId ) {
 		.then( asArray )
 		.then( rejectExpiredImporters )
 		.then( importers => importers.map( fromApi ) )
-		.then( importers => importers.map( receiveImporterStatus ) )
+		.then( importers => importers.map( dispatchReceiveImporterStatus ) )
 		.catch( apiFailure );
 }
 
@@ -153,7 +142,7 @@ export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => {
 
 export function resetImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
-	lockImport( importerId );
+	dispatchLockImport( importerId );
 
 	const resetImportAction = {
 		type: IMPORTS_IMPORT_RESET,
@@ -169,13 +158,13 @@ export function resetImport( siteId, importerId ) {
 		.updateImporter( siteId, expiryOrder( siteId, importerId ) )
 		.then( apiSuccess )
 		.then( fromApi )
-		.then( receiveImporterStatus )
+		.then( dispatchReceiveImporterStatus )
 		.catch( apiFailure );
 }
 
 export function clearImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
-	lockImport( importerId );
+	dispatchLockImport( importerId );
 
 	const clearImportAction = {
 		type: IMPORTS_IMPORT_RESET,
@@ -191,12 +180,12 @@ export function clearImport( siteId, importerId ) {
 		.updateImporter( siteId, clearOrder( siteId, importerId ) )
 		.then( apiSuccess )
 		.then( fromApi )
-		.then( receiveImporterStatus )
+		.then( dispatchReceiveImporterStatus )
 		.catch( apiFailure );
 }
 
 export function startMappingAuthors( importerId ) {
-	lockImport( importerId );
+	dispatchLockImport( importerId );
 
 	const startMappingAuthorsAction = {
 		type: IMPORTS_AUTHORS_START_MAPPING,
