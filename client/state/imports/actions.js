@@ -8,6 +8,7 @@ import {
 	IMPORTS_IMPORT_UNLOCK,
 	IMPORTS_START_IMPORTING,
 	IMPORTS_IMPORT_START,
+	IMPORTS_UPLOAD_COMPLETED,
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { toApi } from 'lib/importer/common';
@@ -61,3 +62,9 @@ export const startImporting = importerStatus => dispatch => {
 		} )
 	);
 };
+
+export const finishUpload = ( importerId, importerStatus ) => ( {
+	type: IMPORTS_UPLOAD_COMPLETED,
+	importerId,
+	importerStatus,
+} );

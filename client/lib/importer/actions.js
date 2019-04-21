@@ -22,14 +22,13 @@ import {
 	IMPORTS_IMPORT_RECEIVE,
 	IMPORTS_IMPORT_RESET,
 	IMPORTS_UPLOAD_FAILED,
-	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
-import { lockImportSession } from 'state/imports/actions';
+import { lockImportSession, finishUpload } from 'state/imports/actions';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
@@ -140,19 +139,6 @@ export function fetchState( siteId ) {
 		.catch( apiFailure );
 }
 
-export const createFinishUploadAction = ( importerId, importerStatus ) => ( {
-	type: IMPORTS_UPLOAD_COMPLETED,
-	importerId,
-	importerStatus,
-} );
-
-export const finishUpload = ( importerId, importerStatus ) => {
-	const finishUploadAction = createFinishUploadAction( importerId, importerStatus );
-
-	Dispatcher.handleViewAction( finishUploadAction );
-	reduxDispatch( finishUploadAction );
-};
-
 export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => {
 	const setAuthorMappingAction = {
 		type: IMPORTS_AUTHORS_SET_MAPPING,
@@ -259,7 +245,9 @@ export const startUpload = ( importerStatus, file ) => {
 		} )
 		.then( data => Object.assign( data, { siteId } ) )
 		.then( fromApi )
-		.then( importerData => finishUpload( importerId, importerData ) )
+		.then( importerData => {
+			reduxDispatch( finishUpload( importerId, importerData ) );
+		} )
 		.catch( error => {
 			const failUploadAction = {
 				type: IMPORTS_UPLOAD_FAILED,

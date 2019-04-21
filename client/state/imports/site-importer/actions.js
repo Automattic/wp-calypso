@@ -11,8 +11,8 @@ import { defer, every, get } from 'lodash';
 import { toApi, fromApi } from 'lib/importer/common';
 import wpcom from 'lib/wp';
 import user from 'lib/user';
-import { mapAuthor, startMappingAuthors, finishUpload } from 'lib/importer/actions';
-import { startImporting } from 'state/imports/actions';
+import { mapAuthor, startMappingAuthors } from 'lib/importer/actions';
+import { startImporting, finishUpload } from 'state/imports/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
@@ -159,10 +159,9 @@ export const importSite = ( {
 			dispatch( siteImporterImportSuccessful( response ) );
 
 			const data = fromApi( response );
-			// Note: We're creating the finishUploadAction using the locally generated ID here
+			// Note: We're using the locally generated ID here
 			// as opposed to the new import ID recieved in the API response.
-			finishUpload( importerStatus.importerId, data );
-
+			dispatch( finishUpload( importerStatus.importerId, data ) );
 			dispatch(
 				startMappingSiteImporterAuthors( {
 					importerStatus: data,
