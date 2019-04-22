@@ -8,7 +8,6 @@ import { defer, every, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { toApi, fromApi } from 'lib/importer/common';
 import wpcom from 'lib/wp';
 import user from 'lib/user';
 import {
@@ -17,6 +16,7 @@ import {
 	startImporting,
 	startMappingAuthors,
 } from 'state/imports/actions';
+import { toApi, fromApi } from 'state/imports/common';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {

@@ -27,7 +27,7 @@ import {
 	IMPORTS_UPLOAD_FAILED,
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
-import { fromApi, toApi } from 'lib/importer/common';
+import { fromApi, toApi } from 'state/imports/common';
 
 const wpcom = wpLib.undocumented();
 
