@@ -109,10 +109,7 @@ export const GSuitePurchaseCta = ( {
 				</div>
 			</CompactCard>
 			<CompactCard className="gsuite-purchase-cta__info">
-				<GSuiteFeatures
-					domainName={ domainName }
-					productSlug={ showBusinessOption ? undefined : 'gapps' }
-				/>
+				<GSuiteFeatures domainName={ domainName } productSlug={ 'gapps' } />
 				<GSuiteLearnMore onClick={ handleLearnMoreClick } />
 			</CompactCard>
 		</EmailVerificationGate>
