@@ -15,6 +15,8 @@ import {
 	IMPORTS_IMPORT_START,
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_IMPORT_RECEIVE,
+	IMPORTS_AUTHORS_START_MAPPING,
+	IMPORTS_AUTHORS_SET_MAPPING,
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { toApi } from 'lib/importer/common';
@@ -83,4 +85,19 @@ export const finishUpload = ( importerId, importerStatus ) => ( {
 	type: IMPORTS_UPLOAD_COMPLETED,
 	importerId,
 	importerStatus,
+} );
+
+export const startMappingAuthors = importerId => dispatch => {
+	dispatch( lockImportSession( importerId ) );
+	dispatch( {
+		type: IMPORTS_AUTHORS_START_MAPPING,
+		importerId,
+	} );
+};
+
+export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => ( {
+	type: IMPORTS_AUTHORS_SET_MAPPING,
+	importerId,
+	sourceAuthor,
+	targetAuthor,
 } );

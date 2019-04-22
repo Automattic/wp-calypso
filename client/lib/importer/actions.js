@@ -13,8 +13,6 @@ const wpcom = wpLib.undocumented();
  * Internal dependencies
  */
 import {
-	IMPORTS_AUTHORS_SET_MAPPING,
-	IMPORTS_AUTHORS_START_MAPPING,
 	IMPORTS_FETCH,
 	IMPORTS_FETCH_FAILED,
 	IMPORTS_FETCH_COMPLETED,
@@ -128,18 +126,6 @@ export function fetchState( siteId ) {
 		.catch( apiFailure );
 }
 
-export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => {
-	const setAuthorMappingAction = {
-		type: IMPORTS_AUTHORS_SET_MAPPING,
-		importerId,
-		sourceAuthor,
-		targetAuthor,
-	};
-
-	Dispatcher.handleViewAction( setAuthorMappingAction );
-	reduxDispatch( setAuthorMappingAction );
-};
-
 export function resetImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
 	dispatchLockImport( importerId );
@@ -182,18 +168,6 @@ export function clearImport( siteId, importerId ) {
 		.then( fromApi )
 		.then( dispatchReceiveImporterStatus )
 		.catch( apiFailure );
-}
-
-export function startMappingAuthors( importerId ) {
-	dispatchLockImport( importerId );
-
-	const startMappingAuthorsAction = {
-		type: IMPORTS_AUTHORS_START_MAPPING,
-		importerId,
-	};
-
-	Dispatcher.handleViewAction( startMappingAuthorsAction );
-	reduxDispatch( startMappingAuthorsAction );
 }
 
 export const setUploadProgress = ( importerId, data ) => ( {

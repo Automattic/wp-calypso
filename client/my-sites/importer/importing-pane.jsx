@@ -8,13 +8,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
-import { defer, get, has, omit } from 'lodash';
+import { get, has, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { mapAuthor } from 'lib/importer/actions';
-import { startImporting } from 'state/imports/actions';
+import { mapAuthor, startImporting } from 'state/imports/actions';
 import { appStates } from 'state/imports/constants';
 import ProgressBar from 'components/progress-bar';
 import AuthorMappingPane from './author-mapping-pane';
@@ -227,7 +226,7 @@ class ImportingPane extends React.PureComponent {
 	}
 
 	handleOnMap = ( source, target ) =>
-		defer( () => mapAuthor( get( this.props, 'importerStatus.importerId' ), source, target ) );
+		this.props.mapAuthor( get( this.props, 'importerStatus.importerId' ), source, target );
 
 	renderActionButtons = () => {
 		if ( this.isProcessing() || this.isMapping() ) {
@@ -328,5 +327,5 @@ class ImportingPane extends React.PureComponent {
 
 export default connect(
 	null,
-	{ loadTrackingTool, startImporting }
+	{ loadTrackingTool, mapAuthor, startImporting }
 )( localize( ImportingPane ) );

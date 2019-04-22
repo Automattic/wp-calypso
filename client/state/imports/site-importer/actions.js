@@ -11,8 +11,12 @@ import { defer, every, get } from 'lodash';
 import { toApi, fromApi } from 'lib/importer/common';
 import wpcom from 'lib/wp';
 import user from 'lib/user';
-import { mapAuthor, startMappingAuthors } from 'lib/importer/actions';
-import { startImporting, finishUpload } from 'state/imports/actions';
+import {
+	finishUpload,
+	mapAuthor,
+	startImporting,
+	startMappingAuthors,
+} from 'state/imports/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
@@ -85,7 +89,7 @@ export const startMappingSiteImporterAuthors = ( { importerStatus, site, targetS
 
 		// map all the authors to the current user
 		// TODO: when converting to redux, allow for multiple mappings in a single action
-		sourceAuthors.forEach( author => mapAuthor( importerId, author, currentUser ) );
+		sourceAuthors.forEach( author => dispatch( mapAuthor( importerId, author, currentUser ) ) );
 
 		// Check if all authors are mapped before starting the import.
 		defer( () => {
@@ -106,8 +110,7 @@ export const startMappingSiteImporterAuthors = ( { importerStatus, site, targetS
 			}
 		} );
 	} else {
-		startMappingAuthors( importerId );
-
+		dispatch( startMappingAuthors( importerId ) );
 		dispatch(
 			recordTracksEvent( 'calypso_site_importer_map_authors_multi', {
 				blog_id: siteId,
