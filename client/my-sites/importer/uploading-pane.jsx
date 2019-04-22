@@ -15,8 +15,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { startUpload } from 'lib/importer/actions';
-import { startMappingAuthors } from 'state/imports/actions';
+import { startMappingAuthors, startUpload } from 'state/imports/actions';
 import { appStates } from 'state/imports/constants';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
@@ -124,7 +123,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	startUpload = file => {
-		startUpload( this.props.importerStatus, file );
+		this.props.startUpload( this.props.importerStatus, file );
 	};
 
 	startMappingAuthors = () => {
@@ -178,7 +177,7 @@ export default flow(
 			filename: get( state, 'imports.uploads.filename' ),
 			percentComplete: get( state, 'imports.uploads.percentComplete' ),
 		} ),
-		{ startMappingAuthors }
+		{ startMappingAuthors, startUpload }
 	),
 	localize
 )( UploadingPane );

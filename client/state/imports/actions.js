@@ -22,6 +22,9 @@ import {
 	IMPORTS_FETCH_COMPLETED,
 	IMPORTS_FETCH_FAILED,
 	IMPORTS_IMPORT_RESET,
+	IMPORTS_UPLOAD_START,
+	IMPORTS_UPLOAD_SET_PROGRESS,
+	IMPORTS_UPLOAD_FAILED,
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from 'lib/importer/common';
@@ -184,5 +187,55 @@ export const resetImport = ( siteId, importerId ) => dispatch => {
 		} )
 		.catch( error => {
 			dispatch( { type: IMPORTS_FETCH_FAILED, error } );
+		} );
+};
+
+export const setUploadProgress = ( importerId, data ) => ( {
+	type: IMPORTS_UPLOAD_SET_PROGRESS,
+	uploadLoaded: data.uploadLoaded,
+	uploadTotal: data.uploadTotal,
+	importerId,
+} );
+
+export const startUpload = ( importerStatus, file ) => dispatch => {
+	const {
+		importerId,
+		site: { ID: siteId },
+	} = importerStatus;
+
+	dispatch( {
+		type: IMPORTS_UPLOAD_START,
+		filename: file.name,
+		importerId,
+	} );
+
+	wpcom
+		.uploadExportFile( siteId, {
+			importStatus: toApi( importerStatus ),
+			file,
+			onprogress: event => {
+				dispatch(
+					setUploadProgress( importerId, {
+						uploadLoaded: event.loaded,
+						uploadTotal: event.total,
+					} )
+				);
+			},
+			onabort: () => dispatch( cancelImport( siteId, importerId ) ),
+		} )
+		.then( response => {
+			const importerData = fromApi( {
+				...response,
+				siteId,
+			} );
+
+			dispatch( finishUpload( importerId, importerData ) );
+		} )
+		.catch( error => {
+			dispatch( {
+				type: IMPORTS_UPLOAD_FAILED,
+				importerId,
+				error: error.message,
+			} );
 		} );
 };
