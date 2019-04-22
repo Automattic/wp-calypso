@@ -184,7 +184,7 @@ class BillingReceipt extends React.Component {
 					<td className="billing-history__receipt-item-name">
 						<span>{ item.variation }</span>
 						<small>({ item.type_localized })</small>
-						<em>{ termLabel }</em>
+						{ termLabel ? <em>{ termLabel }</em> : null }
 						<br />
 						<em>{ item.domain }</em>
 					</td>

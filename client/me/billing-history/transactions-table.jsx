@@ -88,17 +88,13 @@ class TransactionsTable extends React.Component {
 
 	serviceNameDescription = transaction => {
 		let description;
-		const termLabel = getPlanTermLabel( transaction.wpcom_product_slug, this.props.translate );
 		if ( transaction.domain ) {
+			const termLabel = getPlanTermLabel( transaction.wpcom_product_slug, this.props.translate );
 			description = (
 				<div>
 					<strong>{ transaction.plan }</strong>
 					<small>{ transaction.domain }</small>
-					{ termLabel ? (
-						<div>
-							<small>{ termLabel }</small>
-						</div>
-					) : null }
+					{ termLabel ? <small>{ termLabel }</small> : null }
 				</div>
 			);
 		} else {

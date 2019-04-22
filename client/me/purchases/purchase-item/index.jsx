@@ -180,11 +180,12 @@ class PurchaseItem extends Component {
 
 	render() {
 		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack, translate } = this.props;
-		const classes = classNames;
-		'purchase-item',
+		const classes = classNames(
+			'purchase-item',
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
 			{ 'is-placeholder': isPlaceholder },
-			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) };
+			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
+		);
 		const termLabel =
 			purchase && purchase.productSlug ? getPlanTermLabel( purchase.productSlug, translate ) : null;
 
