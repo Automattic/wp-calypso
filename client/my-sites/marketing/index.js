@@ -15,7 +15,7 @@ import {
 	connections,
 	layout,
 	redirectSharingButtons,
-	redirectConnections,
+	redirectSeo,
 	seo,
 } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
@@ -25,13 +25,14 @@ export default function() {
 		'/marketing',
 		'/marketing/connections',
 		'/marketing/sharing-buttons',
+		'/marketing/seo',
 		'/sharing',
 		'/sharing/buttons',
 	].forEach( path => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
 
-	page( '/sharing/:domain', redirectConnections );
+	page( '/sharing/:domain', redirectSeo );
 	page( '/sharing/buttons/:domain', redirectSharingButtons );
-	page( '/marketing/:domain', redirectConnections );
+	page( '/marketing/:domain', redirectSeo );
 
 	page(
 		'/marketing/connections/:domain',

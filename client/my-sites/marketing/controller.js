@@ -31,8 +31,8 @@ export const redirectSharingButtons = context => {
 	return;
 };
 
-export const redirectConnections = context => {
-	page.redirect( '/marketing/connections/' + context.params.domain );
+export const redirectSeo = context => {
+	page.redirect( '/marketing/seo/' + context.params.domain );
 	return;
 };
 
