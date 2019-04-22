@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, noop, flowRight, has, get, trim, sortBy, reverse } from 'lodash';
+import { isEmpty, noop, flowRight, has, get, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
 import moment from 'moment';
 
@@ -32,8 +32,6 @@ import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 import ErrorPane from '../error-pane';
 import SiteImporterSitePreview from './site-importer-site-preview';
-import { appStates } from 'state/imports/constants';
-import { cancelImport } from 'lib/importer/actions';
 
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';

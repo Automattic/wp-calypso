@@ -17,9 +17,13 @@ import {
 	IMPORTS_IMPORT_RECEIVE,
 	IMPORTS_AUTHORS_START_MAPPING,
 	IMPORTS_AUTHORS_SET_MAPPING,
+	IMPORTS_IMPORT_CANCEL,
+	IMPORTS_FETCH,
+	IMPORTS_FETCH_COMPLETED,
+	IMPORTS_FETCH_FAILED,
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
-import { toApi } from 'lib/importer/common';
+import { fromApi, toApi } from 'lib/importer/common';
 
 const wpcom = wpLib.undocumented();
 
@@ -101,3 +105,37 @@ export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => ( {
 	sourceAuthor,
 	targetAuthor,
 } );
+
+export const cancelImport = ( siteId, importerId ) => dispatch => {
+	dispatch( lockImportSession( importerId ) );
+	dispatch( {
+		type: IMPORTS_IMPORT_CANCEL,
+		importerId,
+		siteId,
+	} );
+
+	// Bail if this is merely a local importer object because
+	// there is nothing on the server-side to cancel
+	if ( includes( importerId, ID_GENERATOR_PREFIX ) ) {
+		return;
+	}
+
+	dispatch( { type: IMPORTS_FETCH } );
+
+	wpcom
+		.updateImporter(
+			siteId,
+			toApi( {
+				importerId,
+				importerState: appStates.CANCEL_PENDING,
+				site: { ID: siteId },
+			} )
+		)
+		.then( response => {
+			dispatch( { type: IMPORTS_FETCH_COMPLETED } );
+			dispatch( receiveImporterStatus( fromApi( response ) ) );
+		} )
+		.catch( error => {
+			dispatch( { type: IMPORTS_FETCH_FAILED, error } );
+		} );
+};

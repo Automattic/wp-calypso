@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
  */
 import ImporterActionButton from './action-button';
 import { appStates } from 'state/imports/constants';
-import { cancelImport } from 'lib/importer/actions';
+import { cancelImport } from 'state/imports/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 export class ImporterCloseButton extends React.PureComponent {
@@ -39,7 +39,7 @@ export class ImporterCloseButton extends React.PureComponent {
 			site: { ID: siteId },
 		} = this.props;
 
-		cancelImport( siteId, importerId );
+		this.props.cancelImport( siteId, importerId );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_cancel_clicked', {
 			blog_id: siteId,
@@ -68,7 +68,7 @@ export class ImporterCloseButton extends React.PureComponent {
 export default flow(
 	connect(
 		null,
-		{ recordTracksEvent }
+		{ cancelImport, recordTracksEvent }
 	),
 	localize
 )( ImporterCloseButton );

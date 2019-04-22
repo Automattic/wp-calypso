@@ -5,7 +5,7 @@
  */
 
 import Dispatcher from 'dispatcher';
-import { flowRight, includes, reject } from 'lodash';
+import { flowRight, reject } from 'lodash';
 import wpLib from 'lib/wp';
 const wpcom = wpLib.undocumented();
 
@@ -16,7 +16,6 @@ import {
 	IMPORTS_FETCH,
 	IMPORTS_FETCH_FAILED,
 	IMPORTS_FETCH_COMPLETED,
-	IMPORTS_IMPORT_CANCEL,
 	IMPORTS_IMPORT_RESET,
 	IMPORTS_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
@@ -25,9 +24,12 @@ import {
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
 import { reduxDispatch } from 'lib/redux-bridge';
-import { lockImportSession, finishUpload, receiveImporterStatus } from 'state/imports/actions';
-
-const ID_GENERATOR_PREFIX = 'local-generated-id-';
+import {
+	cancelImport,
+	lockImportSession,
+	finishUpload,
+	receiveImporterStatus,
+} from 'state/imports/actions';
 
 /*
  * The following `order` functions prepare objects that can be
@@ -36,10 +38,6 @@ const ID_GENERATOR_PREFIX = 'local-generated-id-';
  * or request object, so that the calling function can send it
  * to the API.
  */
-
-// Creates a request object to cancel an importer
-const cancelOrder = ( siteId, importerId ) =>
-	toApi( { importerId, importerState: appStates.CANCEL_PENDING, site: { ID: siteId } } );
 
 // Creates a request to expire an importer session
 const expiryOrder = ( siteId, importerId ) =>
@@ -80,38 +78,12 @@ const createReduxDispatchable = action =>
 
 const dispatchLockImport = createReduxDispatchable( lockImportSession );
 const dispatchReceiveImporterStatus = createReduxDispatchable( receiveImporterStatus );
+const dispatchCancelImport = createReduxDispatchable( cancelImport );
 
 const asArray = a => [].concat( a );
 
 const rejectExpiredImporters = importers =>
 	reject( importers, ( { importStatus } ) => importStatus === appStates.IMPORT_EXPIRED );
-
-export function cancelImport( siteId, importerId ) {
-	dispatchLockImport( importerId );
-
-	const cancelAction = {
-		type: IMPORTS_IMPORT_CANCEL,
-		importerId,
-		siteId,
-	};
-
-	Dispatcher.handleViewAction( cancelAction );
-	reduxDispatch( cancelAction );
-
-	// Bail if this is merely a local importer object because
-	// there is nothing on the server-side to cancel
-	if ( includes( importerId, ID_GENERATOR_PREFIX ) ) {
-		return;
-	}
-
-	apiStart();
-	wpcom
-		.updateImporter( siteId, cancelOrder( siteId, importerId ) )
-		.then( apiSuccess )
-		.then( fromApi )
-		.then( dispatchReceiveImporterStatus )
-		.catch( apiFailure );
-}
 
 export function fetchState( siteId ) {
 	apiStart();
@@ -204,7 +176,7 @@ export const startUpload = ( importerStatus, file ) => {
 				Dispatcher.handleViewAction( uploadProgressAction );
 				reduxDispatch( uploadProgressAction );
 			},
-			onabort: () => cancelImport( siteId, importerId ),
+			onabort: () => dispatchCancelImport( siteId, importerId ),
 		} )
 		.then( data => Object.assign( data, { siteId } ) )
 		.then( fromApi )
