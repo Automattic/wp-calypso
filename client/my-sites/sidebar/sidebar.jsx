@@ -810,8 +810,8 @@ export class MySitesSidebar extends Component {
 					<SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
 						<ul>
-							{ this.earn() }
 							{ this.marketing() }
+							{ this.earn() }
 							{ this.users() }
 							{ this.plugins() }
 							{ this.upgrades() }
@@ -864,8 +864,8 @@ export class MySitesSidebar extends Component {
 					materialIcon="build"
 				>
 					{ this.tools() }
-					{ this.earn() }
 					{ this.marketing() }
+					{ this.earn() }
 					{ this.activity() }
 				</ExpandableSidebarMenu>
 
