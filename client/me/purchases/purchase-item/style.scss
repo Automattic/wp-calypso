@@ -69,6 +69,7 @@
 	}
 }
 
+.purchase-item__term-label,
 .purchase-item__purchase-date,
 .purchase-item__purchase-type {
 	line-height: 14px;
@@ -95,7 +96,8 @@
 	}
 }
 
-.purchase-item__purchase-type {
+.purchase-item__term-label,
+.purchase-item__purchase-type, {
 	color: var( --color-text-subtle );
 	font-size: 12px;
 	margin: 0 0 4px;

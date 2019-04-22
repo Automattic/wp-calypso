@@ -27,6 +27,7 @@ import {
 	requestBillingTransaction,
 } from 'state/billing-transactions/individual-transactions/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { getPlanTermLabel } from 'lib/plans';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
@@ -177,11 +178,13 @@ class BillingReceipt extends React.Component {
 		const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
 
 		const items = groupedTransactionItems.map( item => {
+			const termLabel = getPlanTermLabel( item.wpcom_product_slug, translate );
 			return (
 				<tr key={ item.id }>
 					<td className="billing-history__receipt-item-name">
 						<span>{ item.variation }</span>
 						<small>({ item.type_localized })</small>
+						{ termLabel ? <em>{ termLabel }</em> : null }
 						<br />
 						<em>{ item.domain }</em>
 					</td>
