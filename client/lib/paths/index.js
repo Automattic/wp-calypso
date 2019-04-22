@@ -42,7 +42,7 @@ export function newPage( site ) {
  * @return {string}      URL to manage Publicize connections
  */
 export function publicizeConnections( site ) {
-	let url = '/sharing';
+	let url = '/marketing/connections';
 
 	if ( site ) {
 		url += '/' + site.slug;

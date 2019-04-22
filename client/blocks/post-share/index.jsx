@@ -368,7 +368,7 @@ class PostShare extends Component {
 						showDismiss={ false }
 						text={ translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
 					>
-						<NoticeAction href={ `/sharing/${ siteSlug }` }>
+						<NoticeAction href={ `/marketing/connections/${ siteSlug }` }>
 							{ translate( 'Reconnect' ) }
 						</NoticeAction>
 					</Notice>
@@ -394,7 +394,7 @@ class PostShare extends Component {
 								{ translate( 'Learn More' ) }
 							</NoticeAction>
 						) }
-						<NoticeAction href={ `/sharing/${ siteSlug }` }>
+						<NoticeAction href={ `/marketing/connections/${ siteSlug }` }>
 							{ translate( 'Disconnect' ) }
 						</NoticeAction>
 					</Notice>
@@ -480,7 +480,7 @@ class PostShare extends Component {
 				<div className="post-share__manage-connections-link">
 					{ translate( '{{a}}Manage connections{{/a}}', {
 						components: {
-							a: <a href={ `/sharing/${ siteId }` } />,
+							a: <a href={ `/marketing/connections/${ siteId }` } />,
 						},
 					} ) }
 				</div>
@@ -566,7 +566,7 @@ class PostShare extends Component {
 									'Share on your connected social media accounts using ' + '{{a}}Publicize{{/a}}.',
 									{
 										components: {
-											a: <a href={ `/sharing/${ siteSlug }` } />,
+											a: <a href={ `/marketing/connections/${ siteSlug }` } />,
 										},
 									}
 								) }

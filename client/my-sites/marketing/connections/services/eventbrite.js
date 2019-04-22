@@ -10,7 +10,7 @@ import { last, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
+import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
 import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 

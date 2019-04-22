@@ -50,7 +50,7 @@ export const Sharing = ( {
 	if ( showConnections ) {
 		filters.push( {
 			id: 'sharing-connections',
-			route: '/sharing' + pathSuffix,
+			route: '/marketing/connections' + pathSuffix,
 			title: translate( 'Connections' ),
 		} );
 	}
@@ -60,7 +60,7 @@ export const Sharing = ( {
 	if ( showButtons ) {
 		filters.push( {
 			id: 'sharing-buttons',
-			route: '/sharing/buttons' + pathSuffix,
+			route: '/marketing/sharing-buttons' + pathSuffix,
 			title: translate( 'Sharing Buttons' ),
 		} );
 	}
