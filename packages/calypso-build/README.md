@@ -47,6 +47,8 @@ It's also possible to define more than one entry point (resulting in one bundle 
 
 If you have some experience with Webpack, the format of these [command line options will seem familiar](https://webpack.js.org/api/cli/) to you. In fact, `cb` is a a thin wrapper around Webpack's Command Line Interface (CLI) tool, pointing it to the `webpack.config.js` file that ships with `@automattic/calypso-build`.
 
+It was our conscious decision to stick to Webpack's interface rather than covering it up with our own abstraction, since the build tool doesn't really add any conceptually different functionality, and our previous SDK approach showed that we ended up replicating features readily provided by Webpack anyway.
+
 ### `--env.WP` option to automatically compute dependencies
 
 That `webpack.config.js` introduces one rather WordPress/Gutenberg specific "environment" option, `WP`, which you can set as follows:
@@ -61,6 +63,32 @@ This will make Webpack use `wordpress-external-dependencies-plugin` to infer NPM
 
 ## Advanced Usage: Use own Webpack Config
 
-If you find that the command line options provided by the `cb` tool do not cut it for your project (e.g. if you need to run other Webpack loaders or plugins).
+If you find that the command line options provided by the `cb` tool do not cut it for your project (e.g. if you need to run other Webpack loaders or plugins), you can use your own `webpack.config.js` file to extend the one provided by `@automattic/calypso-build`. The latter exports a [function](https://webpack.js.org/configuration/configuration-types#exporting-a-function) that can be called from your config file, allowing you to extend the resulting object:
+
+```js
+const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
+const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+
+function getWebpackConfig( env, argv ) {
+	const webpackConfig = getBaseWebpackConfig( env, argv );
+
+	return {
+		...webpackConfig,
+		plugins: [
+			...webpackConfig.plugins,
+			new CopyWebpackPlugin( [
+				{
+					from: 'src/index.json',
+					to: 'index.json',
+				},
+			] ),
+		],
+	};
+}
+
+module.exports = getWebpackConfig;
+```
+
+## Advanced Usage: Use own Babel Config
 
 [To be continued]
