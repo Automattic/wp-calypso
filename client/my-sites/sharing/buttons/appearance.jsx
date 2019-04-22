@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
 import ButtonsPreview from './preview';
 import ButtonsPreviewPlaceholder from './preview-placeholder';
 import ButtonsStyle from './style';
+import SupportInfo from 'components/support-info';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -134,6 +135,13 @@ class SharingButtonsAppearance extends Component {
 						onChange={ this.onReblogsLikesCheckboxClicked }
 						disabled={ ! this.props.initialized }
 					/>
+					<SupportInfo
+						text={ translate(
+							'The Like button is an easy way for your readers to show appreciation for your posts.'
+						) }
+						link="https://support.wordpress.com/likes/"
+						privacyLink={ false }
+					/>				
 					<span>
 						{ translate( 'Show like button', { context: 'Sharing options: Checkbox label' } ) }
 					</span>
