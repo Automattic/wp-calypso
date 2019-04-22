@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import MultiCheckbox from 'components/forms/multi-checkbox';
+import SupportInfo from 'components/support-info';
 import { getPostTypes } from 'state/post-types/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
@@ -186,6 +187,13 @@ class SharingButtonsOptions extends Component {
 						checked={ checked }
 						onChange={ this.handleChange }
 						disabled={ ! initialized }
+					/>
+					<SupportInfo
+						text={ translate(
+							'When a reader leaves a comment on your content, offer an option to show appreciation for it.'
+						) }
+						link="https://support.wordpress.com/comment-likes/"
+						privacyLink={ false }
 					/>
 					<span>
 						{ translate( 'On for all posts', { context: 'Sharing options: Comment Likes' } ) }
