@@ -43,10 +43,6 @@ import {
 const expiryOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.EXPIRE_PENDING, site: { ID: siteId } } );
 
-// Creates a request to clear all import sessions
-const clearOrder = ( siteId, importerId ) =>
-	toApi( { importerId, importerState: appStates.IMPORT_CLEAR, site: { ID: siteId } } );
-
 const apiStart = () => {
 	Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
 	reduxDispatch( { type: IMPORTS_FETCH } );
@@ -114,28 +110,6 @@ export function resetImport( siteId, importerId ) {
 	apiStart();
 	wpcom
 		.updateImporter( siteId, expiryOrder( siteId, importerId ) )
-		.then( apiSuccess )
-		.then( fromApi )
-		.then( dispatchReceiveImporterStatus )
-		.catch( apiFailure );
-}
-
-export function clearImport( siteId, importerId ) {
-	// We are done with this import session, so lock it away
-	dispatchLockImport( importerId );
-
-	const clearImportAction = {
-		type: IMPORTS_IMPORT_RESET,
-		importerId,
-		siteId,
-	};
-
-	Dispatcher.handleViewAction( clearImportAction );
-	reduxDispatch( clearImportAction );
-
-	apiStart();
-	wpcom
-		.updateImporter( siteId, clearOrder( siteId, importerId ) )
 		.then( apiSuccess )
 		.then( fromApi )
 		.then( dispatchReceiveImporterStatus )
