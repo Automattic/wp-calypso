@@ -69,7 +69,7 @@ class SiteMockups extends Component {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_signup_site_preview_rendered', {
+		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
 			site_type: siteType,
 			vertical_slug: verticalSlug,
 			site_style: siteStyle || 'default',
@@ -98,8 +98,13 @@ class SiteMockups extends Component {
 		return content;
 	}
 
-	handleClick = size =>
-		this.props.handleClick( this.props.verticalSlug, this.props.siteStyle, size );
+	handleClick = size => {
+		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
+			size,
+			vertical_slug: this.props.verticalSlug,
+			site_style: this.props.siteStyle || 'default',
+		} );
+	};
 
 	render() {
 		const {
@@ -167,14 +172,7 @@ export default connect(
 			fontUrl: style.fontUrl,
 		};
 	},
-	dispatch => ( {
-		handleClick: ( verticalSlug, siteStyle, size ) =>
-			dispatch(
-				recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
-					size,
-					vertical_slug: verticalSlug,
-					site_style: siteStyle || 'default',
-				} )
-			),
-	} )
+	{
+		recordTracksEvent,
+	}
 )( SiteMockups );
