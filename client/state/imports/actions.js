@@ -21,6 +21,7 @@ import {
 	IMPORTS_FETCH,
 	IMPORTS_FETCH_COMPLETED,
 	IMPORTS_FETCH_FAILED,
+	IMPORTS_IMPORT_RESET,
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from 'lib/importer/common';
@@ -128,6 +129,34 @@ export const cancelImport = ( siteId, importerId ) => dispatch => {
 			toApi( {
 				importerId,
 				importerState: appStates.CANCEL_PENDING,
+				site: { ID: siteId },
+			} )
+		)
+		.then( response => {
+			dispatch( { type: IMPORTS_FETCH_COMPLETED } );
+			dispatch( receiveImporterStatus( fromApi( response ) ) );
+		} )
+		.catch( error => {
+			dispatch( { type: IMPORTS_FETCH_FAILED, error } );
+		} );
+};
+
+export const resetImport = ( siteId, importerId ) => dispatch => {
+	// We are done with this import session, so lock it away
+	dispatch( lockImportSession( importerId ) );
+	dispatch( {
+		type: IMPORTS_IMPORT_RESET,
+		importerId,
+		siteId,
+	} );
+	dispatch( { type: IMPORTS_FETCH } );
+
+	wpcom
+		.updateImporter(
+			siteId,
+			toApi( {
+				importerId,
+				importerState: appStates.EXPIRE_PENDING,
 				site: { ID: siteId },
 			} )
 		)

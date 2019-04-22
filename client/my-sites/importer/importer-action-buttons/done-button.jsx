@@ -13,7 +13,7 @@ import page from 'page';
  * Internal dependencies
  */
 import ImporterActionButton from './action-button';
-import { resetImport } from 'lib/importer/actions';
+import { resetImport } from 'state/imports/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	clearImportingFromSignupFlow,
@@ -63,7 +63,7 @@ export class DoneButton extends React.PureComponent {
 		 * Calling `resetImport` in unmount defers until the redirect is in progress
 		 * Otherwise, you see the importers list during the route change
 		 */
-		resetImport( siteId, importerId );
+		this.props.resetImport( siteId, importerId );
 
 		if ( isSignup ) {
 			this.props.clearImportingFromSignupFlow();
@@ -87,7 +87,12 @@ export default flow(
 			isSignup: isImportingFromSignupFlow( state ),
 			siteSlug: getSelectedSiteSlug( state ),
 		} ),
-		{ clearImportingFromSignupFlow, setImportOriginSiteDetails, recordTracksEvent }
+		{
+			clearImportingFromSignupFlow,
+			setImportOriginSiteDetails,
+			recordTracksEvent,
+			resetImport,
+		}
 	),
 	localize
 )( DoneButton );

@@ -16,7 +16,6 @@ import {
 	IMPORTS_FETCH,
 	IMPORTS_FETCH_FAILED,
 	IMPORTS_FETCH_COMPLETED,
-	IMPORTS_IMPORT_RESET,
 	IMPORTS_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
@@ -24,24 +23,7 @@ import {
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
 import { reduxDispatch } from 'lib/redux-bridge';
-import {
-	cancelImport,
-	lockImportSession,
-	finishUpload,
-	receiveImporterStatus,
-} from 'state/imports/actions';
-
-/*
- * The following `order` functions prepare objects that can be
- * sent to the API to accomplish a specific purpose. Instead of
- * actually calling the API, however, they return the _order_,
- * or request object, so that the calling function can send it
- * to the API.
- */
-
-// Creates a request to expire an importer session
-const expiryOrder = ( siteId, importerId ) =>
-	toApi( { importerId, importerState: appStates.EXPIRE_PENDING, site: { ID: siteId } } );
+import { cancelImport, finishUpload, receiveImporterStatus } from 'state/imports/actions';
 
 const apiStart = () => {
 	Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
@@ -72,7 +54,6 @@ const createReduxDispatchable = action =>
 		action
 	);
 
-const dispatchLockImport = createReduxDispatchable( lockImportSession );
 const dispatchReceiveImporterStatus = createReduxDispatchable( receiveImporterStatus );
 const dispatchCancelImport = createReduxDispatchable( cancelImport );
 
@@ -91,28 +72,6 @@ export function fetchState( siteId ) {
 		.then( rejectExpiredImporters )
 		.then( importers => importers.map( fromApi ) )
 		.then( importers => importers.map( dispatchReceiveImporterStatus ) )
-		.catch( apiFailure );
-}
-
-export function resetImport( siteId, importerId ) {
-	// We are done with this import session, so lock it away
-	dispatchLockImport( importerId );
-
-	const resetImportAction = {
-		type: IMPORTS_IMPORT_RESET,
-		importerId,
-		siteId,
-	};
-
-	Dispatcher.handleViewAction( resetImportAction );
-	reduxDispatch( resetImportAction );
-
-	apiStart();
-	wpcom
-		.updateImporter( siteId, expiryOrder( siteId, importerId ) )
-		.then( apiSuccess )
-		.then( fromApi )
-		.then( dispatchReceiveImporterStatus )
 		.catch( apiFailure );
 }
 
