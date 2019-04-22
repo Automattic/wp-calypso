@@ -201,18 +201,6 @@ export default {
 		defaultVariation: 'controlSupportSession',
 		allowExistingUsers: true,
 	},
-	gsuitePurchaseCtaOptions: {
-		datestamp: '20190411',
-		variations: {
-			hideBusinessWithAnnualPrices: 25,
-			hideBusinessWithMonthlyPrices: 25,
-			showBusinessWithAnnualPrices: 25,
-			showBusinessWithMonthlyPrices: 25,
-		},
-		defaultVariation: 'hideBusinessWithAnnualPrices',
-		allowExistingUsers: true,
-		countryCodeTargets: [ 'USD' ],
-	},
 	domainSuggestionsEnCheck: {
 		datestamp: '20190415',
 		variations: {
@@ -221,15 +209,5 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-	},
-	gsuiteDomainFlowOptions: {
-		datestamp: '20190415',
-		variations: {
-			hideMonthlyPrice: 50,
-			showMonthlyPrice: 50,
-		},
-		defaultVariation: 'hideMonthlyPrice',
-		allowExistingUsers: true,
-		countryCodeTargets: [ 'USD' ],
 	},
 };
