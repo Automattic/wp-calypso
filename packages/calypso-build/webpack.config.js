@@ -6,6 +6,7 @@
 /**
  * External dependencies
  */
+const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
@@ -58,6 +59,11 @@ function getWebpackConfig(
 	const cssFilename = cssNameFromFilename( outputFilename );
 	const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
+	let babelConfig = path.join( process.cwd(), 'babel.config.js' );
+	if ( ! fs.existsSync( babelConfig ) ) {
+		babelConfig = path.join( __dirname, 'babel.config.js' ); // Default to this package's Babel config
+	}
+
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		entry,
@@ -88,6 +94,7 @@ function getWebpackConfig(
 			rules: [
 				TranspileConfig.loader( {
 					cacheDirectory: true,
+					configFile: babelConfig,
 					exclude: /node_modules\//,
 					workerCount,
 				} ),
