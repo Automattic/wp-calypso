@@ -55,8 +55,8 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectThemes() {
-		await this.expandDrawerItem( 'Themes' );
-		return await this._scrollToAndClickMenuItem( 'themes', { clickButton: true } );
+		await this.expandDrawerItem( 'Design' );
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.menu-link-text[data-e2e-sidebar="Themes"]' ) ) // TODO: data-tip-target target is missing
 	}
 
 	async customizeTheme() {
