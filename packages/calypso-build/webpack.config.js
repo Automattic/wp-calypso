@@ -87,9 +87,9 @@ function getWebpackConfig(
 		module: {
 			rules: [
 				TranspileConfig.loader( {
-					workerCount,
 					cacheDirectory: true,
 					exclude: /node_modules\//,
+					workerCount,
 				} ),
 				SassConfig.loader( {
 					preserveCssCustomProperties: false,
