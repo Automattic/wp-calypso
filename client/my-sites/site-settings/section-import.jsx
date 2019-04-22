@@ -20,8 +20,7 @@ import BloggerImporter from 'my-sites/importer/importer-blogger';
 import WixImporter from 'my-sites/importer/importer-wix';
 import GoDaddyGoCentralImporter from 'my-sites/importer/importer-godaddy-gocentral';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
-import { fetchState } from 'lib/importer/actions';
-import { startImport } from 'state/imports/actions';
+import { fetchState, startImport } from 'state/imports/actions';
 import {
 	appStates,
 	WORDPRESS,
@@ -234,7 +233,7 @@ class SiteSettingsImport extends Component {
 
 	updateFromAPI = () => {
 		const siteID = get( this, 'props.site.ID' );
-		siteID && fetchState( siteID );
+		siteID && this.props.fetchState( siteID );
 	};
 
 	renderImportersList() {
@@ -275,7 +274,7 @@ export default flow(
 			siteSlug: getSelectedSiteSlug( state ),
 			importItems: get( state, 'imports.items' ),
 		} ),
-		{ startImport }
+		{ fetchState, startImport }
 	),
 	localize
 )( SiteSettingsImport );

@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, includes, keys, pickBy } from 'lodash';
+import { castArray, each, get, includes, keys, pickBy, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -106,6 +106,24 @@ export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => ( {
 	sourceAuthor,
 	targetAuthor,
 } );
+
+export const fetchState = siteId => dispatch => {
+	dispatch( { type: IMPORTS_FETCH } );
+
+	return wpcom
+		.fetchImporterState( siteId )
+		.then( response => {
+			dispatch( { type: IMPORTS_FETCH_COMPLETED } );
+			const importers = reject( castArray( response ), { importStatus: appStates.IMPORT_EXPIRED } );
+
+			each( importers, importer => {
+				dispatch( receiveImporterStatus( fromApi( importer ) ) );
+			} );
+		} )
+		.catch( error => {
+			dispatch( { type: IMPORTS_FETCH_FAILED, error } );
+		} );
+};
 
 export const cancelImport = ( siteId, importerId ) => dispatch => {
 	dispatch( lockImportSession( importerId ) );
