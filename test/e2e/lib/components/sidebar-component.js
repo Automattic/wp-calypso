@@ -18,11 +18,30 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		this.storeSelector = By.css( '.menu-link-text[data-e2e-sidebar="Store"]' );
 	}
 
+	async expandDrawerItem( itemName ) {
+		const selector = await driverHelper.getElementByText(
+			this.driver,
+			By.css( '.sidebar__heading' ),
+			itemName
+		);
+		const itemSelector = await this.driver.findElement( selector );
+		const isExpanded = await itemSelector.getAttribute( 'aria-expanded' );
+		if ( isExpanded === 'false' ) {
+			await driverHelper.selectElementByText(
+				this.driver,
+				By.css( '.sidebar__heading' ),
+				itemName
+			);
+		}
+	}
+
 	async selectDomains() {
+		await this.expandDrawerItem( 'Manage' );
 		return await this._scrollToAndClickMenuItem( 'domains' );
 	}
 
 	async selectPeople() {
+		await this.expandDrawerItem( 'Manage' );
 		return await this._scrollToAndClickMenuItem( 'people' );
 	}
 
@@ -31,10 +50,12 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectManagePlugins() {
+		await this.expandDrawerItem( 'Tools' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-plugins', { clickButton: true } );
 	}
 
 	async selectThemes() {
+		await this.expandDrawerItem( 'Themes' );
 		return await this._scrollToAndClickMenuItem( 'themes', { clickButton: true } );
 	}
 
@@ -55,6 +76,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectActivity() {
+		await this.expandDrawerItem( 'Tools' );
 		return await this._scrollToAndClickMenuItem( 'activity' );
 	}
 
@@ -67,10 +89,12 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectSettings() {
+		await this.expandDrawerItem( 'Manage' );
 		return await this._scrollToAndClickMenuItem( 'settings' );
 	}
 
 	async selectMedia() {
+		await this.expandDrawerItem( 'Site' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-media' );
 	}
 
@@ -79,14 +103,17 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPages() {
+		await this.expandDrawerItem( 'Site' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-page' );
 	}
 
 	async selectPosts() {
+		await this.expandDrawerItem( 'Site' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-post' );
 	}
 
 	async selectComments() {
+		await this.expandDrawerItem( 'Site' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-comments' );
 	}
 
