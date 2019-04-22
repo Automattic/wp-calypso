@@ -108,6 +108,7 @@ class Layout extends Component {
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'has-chat': this.props.chatIsOpen },
 				{ 'has-no-masterbar': this.props.masterbarIsHidden },
+				{ 'is-jetpack-login': this.props.isJetpackLogin },
 				{ 'is-jetpack-site': this.props.isJetpack },
 				{ 'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow }
 			),
@@ -178,9 +179,10 @@ export default connect( state => {
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
+	const isJetpackLogin = currentRoute === '/log-in/jetpack';
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 	const noMasterbarForCheckout = isJetpack && startsWith( currentRoute, '/checkout' );
-	const noMasterbarForRoute = currentRoute === '/log-in/jetpack' || noMasterbarForCheckout;
+	const noMasterbarForRoute = isJetpackLogin || noMasterbarForCheckout;
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 
@@ -188,6 +190,7 @@ export default connect( state => {
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
 		isJetpack,
+		isJetpackLogin,
 		isJetpackMobileFlow,
 		isLoading: isSectionLoading( state ),
 		isSupportSession: isSupportSession( state ),
