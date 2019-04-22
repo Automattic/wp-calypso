@@ -89,6 +89,14 @@ function getWebpackConfig( env, argv ) {
 module.exports = getWebpackConfig;
 ```
 
+Don't forget to tell `cb` to use your own `webpack.config.js` rather than `@automattic/calypso-build`'s!
+
+```json
+	"scripts": {
+		"build": "cb --config='./webpack.config.js' ./src/editor.js"
+	}
+```
+
 ## Advanced Usage: Use own Babel Config
 
 [To be continued]
