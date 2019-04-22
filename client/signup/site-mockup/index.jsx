@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, each, find, isEmpty } from 'lodash';
+import { each, find, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -66,18 +66,19 @@ class SiteMockups extends Component {
 		verticalPreviewContent: '',
 	};
 
-	shouldComponentUpdate( nextProps ) {
-		// Debouncing updates to the preview content
-		// prevents the flashing effect.
-		if ( nextProps.verticalPreviewContent !== this.props.verticalPreviewContent ) {
-			this.updateDebounced();
-			return false;
+	componentDidUpdate( prevProps ) {
+		const { siteStyle, siteType, verticalPreviewContent, verticalSlug } = this.props;
+
+		if ( ! verticalPreviewContent || prevProps.verticalPreviewContent === verticalPreviewContent ) {
+			return;
 		}
 
-		return true;
+		recordTracksEvent( 'calypso_signup_site_preview_rendered', {
+			site_type: siteType,
+			vertical_slug: verticalSlug,
+			site_style: siteStyle || 'default',
+		} );
 	}
-
-	updateDebounced = debounce( this.forceUpdate, 777 );
 
 	/**
 	 * Returns an interpolated site preview content block with template markers
