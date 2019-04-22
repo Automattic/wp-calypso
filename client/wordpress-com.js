@@ -90,6 +90,13 @@ const sections = [
 		secondary: false,
 	},
 	{
+		name: 'marketing',
+		paths: [ '/marketing' ],
+		module: 'my-sites/marketing',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'media',
 		paths: [ '/media' ],
 		module: 'my-sites/media',
@@ -169,7 +176,7 @@ const sections = [
 	{
 		name: 'sharing',
 		paths: [ '/sharing' ],
-		module: 'my-sites/sharing',
+		module: 'my-sites/marketing',
 		secondary: true,
 		group: 'sites',
 	},

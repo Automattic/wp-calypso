@@ -20,7 +20,7 @@ import SharingServicesGroup from './services-group';
 
 const SharingConnections = ( { translate } ) => (
 	<div className="sharing-settings sharing-connections">
-		<PageViewTracker path="/sharing/:site" title="Sharing > Connections" />
+		<PageViewTracker path="/marketing/connections/:site" title="Marketing > Connections" />
 		<QueryKeyringConnections />
 		<QueryKeyringServices />
 		<QueryPublicizeConnections selectedSite />

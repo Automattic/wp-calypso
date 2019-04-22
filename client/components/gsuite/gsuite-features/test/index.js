@@ -27,12 +27,8 @@ describe( 'GSuiteFeatures', () => {
 		expect( tree ).toMatchSnapshot();
 	} );
 
-	test( 'it renders GSuiteFeatures in a grid', () => {
-		const tree = renderer
-			.create(
-				<GSuiteFeatures domainName={ 'testing123.com' } productSlug={ 'gapps' } type={ 'grid' } />
-			)
-			.toJSON();
+	test( 'it renders GSuiteFeatures without a productSlug', () => {
+		const tree = renderer.create( <GSuiteFeatures domainName={ 'testing123.com' } /> ).toJSON();
 		expect( tree ).toMatchSnapshot();
 	} );
 

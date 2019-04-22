@@ -554,14 +554,14 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
-	trackSharingClick = () => {
-		this.trackMenuItemClick( 'sharing' );
+	trackMarketingClick = () => {
+		this.trackMenuItemClick( 'marketing' );
 		this.onNavigate();
 	};
 
-	sharing() {
+	marketing() {
 		const { isJetpack, isSharingEnabledOnJetpackSite, path, site } = this.props;
-		const sharingLink = '/sharing' + this.props.siteSuffix;
+		const marketingLink = '/marketing' + this.props.siteSuffix;
 
 		if ( site && ! this.props.canUserPublishPosts ) {
 			return null;
@@ -577,13 +577,13 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ this.props.translate( 'Sharing' ) }
-				selected={ itemLinkMatches( '/sharing', path ) }
-				link={ sharingLink }
-				onNavigate={ this.trackSharingClick }
-				icon="share"
-				preloadSectionName="sharing"
-				tipTarget="sharing"
+				label={ this.props.translate( 'Marketing' ) }
+				selected={ itemLinkMatches( '/marketing', path ) }
+				link={ marketingLink }
+				onNavigate={ this.trackMarketingClick }
+				icon="speaker"
+				preloadSectionName="marketing"
+				tipTarget="marketing"
 			/>
 		);
 	}
@@ -770,7 +770,7 @@ export class MySitesSidebar extends Component {
 
 		const manage = !! this.manage(),
 			configuration =
-				!! this.sharing() ||
+				!! this.marketing() ||
 				!! this.users() ||
 				!! this.siteSettings() ||
 				!! this.plugins() ||
@@ -810,8 +810,8 @@ export class MySitesSidebar extends Component {
 					<SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
 						<ul>
+							{ this.marketing() }
 							{ this.earn() }
-							{ this.sharing() }
 							{ this.users() }
 							{ this.plugins() }
 							{ this.upgrades() }
@@ -864,6 +864,7 @@ export class MySitesSidebar extends Component {
 					materialIcon="build"
 				>
 					{ this.tools() }
+					{ this.marketing() }
 					{ this.earn() }
 					{ this.activity() }
 				</ExpandableSidebarMenu>
@@ -878,7 +879,6 @@ export class MySitesSidebar extends Component {
 						<ul>
 							{ this.upgrades() }
 							{ this.users() }
-							{ this.sharing() }
 							{ this.siteSettings() }
 						</ul>
 					</ExpandableSidebarMenu>

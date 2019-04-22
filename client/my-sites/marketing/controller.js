@@ -25,6 +25,16 @@ import {
 } from 'state/sites/selectors';
 import versionCompare from 'lib/version-compare';
 
+export const redirectSharingButtons = context => {
+	page.redirect( '/marketing/sharing-buttons/' + context.params.domain );
+	return;
+};
+
+export const redirectConnections = context => {
+	page.redirect( '/marketing/connections/' + context.params.domain );
+	return;
+};
+
 export const layout = ( context, next ) => {
 	const { contentComponent, path } = context;
 
@@ -54,7 +64,7 @@ export const connections = ( context, next ) => {
 		// active, but ShareDaddy is active
 		page.redirect(
 			isJetpackModuleActive( state, siteId, 'sharedaddy' )
-				? `/sharing/buttons/${ siteSlug }`
+				? `/marketing/sharing-buttons/${ siteSlug }`
 				: '/stats'
 		);
 	} else {

@@ -27,7 +27,7 @@ function parseGitDiffToPathArray( command ) {
 	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( name => name.trim() )
-		.filter( name => /(?:\.json|\.jsx?|\.scss)$/.test( name ) );
+		.filter( name => /(?:\.json|\.[jt]sx?|\.scss)$/.test( name ) );
 }
 
 // grab a list of all the files staged to commit
@@ -53,7 +53,7 @@ const toFormat = files.filter( file => ! dirtyFiles.has( file ) );
 // single line comments.
 const [ toStylelintfix, toPrettify ] = _.partition( toFormat, file => file.endsWith( '.scss' ) );
 
-// Format the JS and JSX files with prettier, then re-stage them. Swallow the output.
+// Format JavaScript and TypeScript files with prettier, then re-stage them. Swallow the output.
 toPrettify.forEach( file => console.log( `Prettier formatting staged file: ${ file }` ) );
 if ( toPrettify.length ) {
 	execSync(
