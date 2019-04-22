@@ -154,18 +154,18 @@ export function manageConnection( context, next ) {
 }
 
 export function legacyRedirects( context, next ) {
-	const section = context.params.section,
-		redirectMap = {
-			account: '/me/account',
-			password: '/me/security',
-			'public-profile': '/me/public-profile',
-			notifications: '/me/notifications',
-			disbursements: '/me/public-profile',
-			earnings: '/me/public-profile',
-			'billing-history': billingHistory,
-			'billing-history-v2': billingHistory,
-			'connected-apps': '/me/security/connected-applications',
-		};
+	const section = context.params.section;
+	const redirectMap = {
+		account: '/me/account',
+		password: '/me/security',
+		'public-profile': '/me/public-profile',
+		notifications: '/me/notifications',
+		disbursements: '/me/public-profile',
+		earnings: '/me/public-profile',
+		'billing-history': billingHistory,
+		'billing-history-v2': billingHistory,
+		'connected-apps': '/me/security/connected-applications',
+	};
 	if ( ! context ) {
 		return page( '/me/public-profile' );
 	}
@@ -173,4 +173,8 @@ export function legacyRedirects( context, next ) {
 		return page.redirect( redirectMap[ section ] );
 	}
 	next();
+}
+
+export function redirectToSeo( context ) {
+	return page.redirect( '/marketing/seo/' + context.params.site_id );
 }

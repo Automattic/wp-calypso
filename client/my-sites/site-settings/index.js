@@ -19,6 +19,7 @@ import {
 	legacyRedirects,
 	manageConnection,
 	redirectIfCantDeleteSite,
+	redirectToSeo,
 	startOver,
 	themeSetup,
 } from 'my-sites/site-settings/controller';
@@ -135,6 +136,10 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
+
+	page( '/settings/traffic/:site_id', redirectToSeo );
+	page( '/settings/analytics/:site_id?', redirectToSeo );
+	page( '/settings/seo/:site_id?', redirectToSeo );
 
 	page( '/settings/:section', legacyRedirects, siteSelection, sites, makeLayout, clientRender );
 }

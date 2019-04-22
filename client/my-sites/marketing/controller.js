@@ -15,6 +15,7 @@ import notices from 'notices';
 import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
+import SharingSeo from './seo/';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import {
@@ -101,6 +102,37 @@ export const buttons = ( context, next ) => {
 	}
 
 	context.contentComponent = createElement( SharingButtons );
+
+	next();
+};
+
+export const seo = ( context, next ) => {
+	const { store } = context;
+	const state = store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	if ( siteId && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
+		notices.error(
+			translate( 'You are not authorized to manage sharing settings for this site.' )
+		);
+	}
+
+	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+
+	if (
+		siteId &&
+		isJetpackSite( state, siteId ) &&
+		( ! isJetpackModuleActive( state, siteId, 'sharedaddy' ) ||
+			versionCompare( siteJetpackVersion, '3.4-dev', '<' ) )
+	) {
+		notices.error(
+			translate(
+				'This page is only available to Jetpack sites running version 3.4 or higher with the Sharing module activated.'
+			)
+		);
+	}
+
+	context.contentComponent = createElement( SharingSeo );
 
 	next();
 };

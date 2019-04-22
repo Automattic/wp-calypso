@@ -16,6 +16,7 @@ import {
 	layout,
 	redirectSharingButtons,
 	redirectConnections,
+	seo,
 } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -43,6 +44,16 @@ export default function() {
 		clientRender
 	);
 
+	page(
+		'/marketing/seo/:domain',
+		siteSelection,
+		navigation,
+		jetpackModuleActive( 'publicize', false ),
+		seo,
+		layout,
+		makeLayout,
+		clientRender
+	);
 	page(
 		'/marketing/sharing-buttons/:domain',
 		siteSelection,
