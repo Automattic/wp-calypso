@@ -49,7 +49,6 @@ export default function() {
 		'/marketing/seo/:domain',
 		siteSelection,
 		navigation,
-		jetpackModuleActive( 'publicize', false ),
 		seo,
 		layout,
 		makeLayout,
