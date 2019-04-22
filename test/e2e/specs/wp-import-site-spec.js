@@ -42,14 +42,6 @@ describe( 'Verify Import Option: (' + screenSize + ') @parallel', function() {
 		await navBarComponent.clickMySites();
 	} );
 
-	step( "Can see an 'Import' option", async function() {
-		const sideBarComponent = await SideBarComponent.Expect( driver );
-		return assert(
-			await sideBarComponent.settingsOptionExists(),
-			'The settings menu option does not exist'
-		);
-	} );
-
 	step( "Following 'Import' menu option opens the Import page", async function() {
 		const sideBarComponent = await SideBarComponent.Expect( driver );
 		await sideBarComponent.selectImport();
