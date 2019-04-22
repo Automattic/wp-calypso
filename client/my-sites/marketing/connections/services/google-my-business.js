@@ -12,7 +12,7 @@ import { isEqual } from 'lodash';
  */
 import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
-import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
+import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
 import { requestSiteKeyrings } from 'state/site-keyrings/actions';
 import { isRequestingSiteKeyrings } from 'state/site-keyrings/selectors';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';

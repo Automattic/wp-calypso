@@ -12,8 +12,7 @@ class A8C_Full_Site_Editing {
 		}
 		self::$initialized = true;
 
-		$this->register_script_and_style();
-
+		add_action( 'init', array( $this, 'register_script_and_style' ), 100 );
 		add_action( 'init', array( $this, 'register_blocks' ), 100 );
 	}
 

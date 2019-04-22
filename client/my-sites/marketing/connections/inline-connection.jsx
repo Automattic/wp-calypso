@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import { getKeyringServiceByName } from 'state/sharing/services/selectors';
 import QueryKeyringServices from 'components/data/query-keyring-services';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import InlineConnectionAction from 'my-sites/sharing/connections/inline-connection-action';
+import InlineConnectionAction from 'my-sites/marketing/connections/inline-connection-action';
 
 class InlineConnection extends Component {
 	static propTypes = {

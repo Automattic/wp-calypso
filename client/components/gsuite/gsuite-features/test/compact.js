@@ -27,15 +27,9 @@ describe( 'GSuiteCompactFeatures', () => {
 		expect( tree ).toMatchSnapshot();
 	} );
 
-	test( 'it renders GSuiteCompactFeatures in a grid', () => {
+	test( 'it renders GSuiteCompactFeatures with no productSlug', () => {
 		const tree = renderer
-			.create(
-				<GSuiteCompactFeatures
-					domainName={ 'testing123.com' }
-					productSlug={ 'gapps' }
-					type={ 'grid' }
-				/>
-			)
+			.create( <GSuiteCompactFeatures domainName={ 'testing123.com' } /> )
 			.toJSON();
 		expect( tree ).toMatchSnapshot();
 	} );

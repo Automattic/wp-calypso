@@ -14,7 +14,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ButtonsPreviewButton from 'my-sites/sharing/buttons/preview-button';
+import ButtonsPreviewButton from 'my-sites/marketing/buttons/preview-button';
 import ResizableIframe from 'components/resizable-iframe';
 import previewWidget from './preview-widget';
 import { hasTouch } from 'lib/touch-detect';
