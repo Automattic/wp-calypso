@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { debounce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,7 +41,7 @@ class SiteTopicForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onSiteTopicChange = verticalData => {
+	onSiteTopicChange = debounce( verticalData => {
 		this.props.setSiteVertical( {
 			isUserInput: verticalData.isUserInputVertical,
 			name: verticalData.verticalName,
@@ -49,7 +50,7 @@ class SiteTopicForm extends Component {
 			id: verticalData.verticalId,
 			parentId: verticalData.parent,
 		} );
-	};
+	}, 777 );
 
 	onSubmit = event => {
 		const { isUserInput, siteSlug, siteTopic, verticalId, verticalParentId } = this.props;
