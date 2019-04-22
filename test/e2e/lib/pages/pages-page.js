@@ -37,4 +37,9 @@ export default class PagesPage extends AsyncBaseContainer {
 		const pageTitleSelector = By.linkText( `${ title }` );
 		return await driverHelper.clickWhenClickable( this.driver, pageTitleSelector );
 	}
+
+	async selectAddNewPage() {
+		const selector = By.css( '.pages__add-page' );
+		return await driverHelper.clickWhenClickable( this.driver, selector );
+	}
 }
