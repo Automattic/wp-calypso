@@ -9,13 +9,28 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { jetpackModuleActive, navigation, siteSelection } from 'my-sites/controller';
-import { buttons, connections, layout, redirectButtons, redirectConnections } from './controller';
+import { jetpackModuleActive, navigation, siteSelection, sites } from 'my-sites/controller';
+import {
+	buttons,
+	connections,
+	layout,
+	redirectSharingButtons,
+	redirectConnections,
+} from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
+	page( /^\/sharing(\/buttons)?$/, siteSelection, sites, makeLayout, clientRender );
+	page( /^\/marketing?$/, siteSelection, sites, makeLayout, clientRender );
+	page(
+		/^\/marketing(\/sharing-buttons)(\/connections)?$/,
+		siteSelection,
+		sites,
+		makeLayout,
+		clientRender
+	);
 	page( '/sharing/:domain', redirectConnections );
-	page( '/sharing/buttons/:domain', redirectButtons );
+	page( '/sharing/buttons/:domain', redirectSharingButtons );
 	page( '/marketing/:domain', redirectConnections );
 
 	page(

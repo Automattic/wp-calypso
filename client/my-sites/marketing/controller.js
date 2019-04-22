@@ -25,7 +25,7 @@ import {
 } from 'state/sites/selectors';
 import versionCompare from 'lib/version-compare';
 
-export const redirectButtons = context => {
+export const redirectSharingButtons = context => {
 	page.redirect( '/marketing/sharing-buttons/' + context.params.domain );
 	return;
 };
