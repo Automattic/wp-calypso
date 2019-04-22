@@ -99,4 +99,13 @@ Don't forget to tell `cb` to use your own `webpack.config.js` rather than `@auto
 
 ## Advanced Usage: Use own Babel Config
 
-[To be continued]
+It is also possible to customize how Babel transpiles a project. Simply add a `babel.config.js` to your project's root (i.e. the location you call `npm run build` from), and the build tool will pick it up over its own `babel.config.js` to transpile your project.
+
+This can be useful for building Gutenberg blocks, which use the [`@wordpress/element` abstraction layer](https://www.npmjs.com/package/@wordpress/element) over React components, requiring a different set of transpilation rules. Conveniently, `@automattic/calypso-build` provides a Babel preset for this purpose:
+
+```js
+module.exports = {
+	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),
+	presets: [ require( '@automattic/calypso-build/babel/wordpress-element' ) ],
+};
+```
