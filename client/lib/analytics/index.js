@@ -55,6 +55,7 @@ import { statsdTimingUrl } from 'lib/analytics/statsd';
  */
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
+const queueDebug = debug( 'calypso:analytics:queue' );
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 const statsdDebug = debug( 'calypso:analytics:statsd' );
@@ -254,23 +255,104 @@ const analytics = {
 		},
 	},
 
-	// pageView is a wrapper for pageview events across Tracks and GA
+	// pageView is a wrapper for pageview events across Tracks and GA.
 	pageView: {
 		record: function( urlPath, pageTitle, params = {} ) {
-			// add delay to avoid stale `_dl` in recorded calypso_page_view event details
-			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript
+			// Add delay to avoid stale `_dl` in recorded calypso_page_view event details.
+			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript.
 			setTimeout( () => {
+				// Process queue.
+				analytics.queue.process();
+
+				// Add paths to parameters.
 				params.last_pageview_path_with_count =
 					mostRecentUrlPath + '(' + pathCounter.toString() + ')';
-				pathCounter++;
-				params.this_pageview_path_with_count = urlPath + '(' + pathCounter.toString() + ')';
+				params.this_pageview_path_with_count = urlPath + '(' + ( pathCounter + 1 ).toString() + ')';
+
+				// Tracks & Google Analytics.
 				analytics.tracks.recordPageView( urlPath, params );
-				updateQueryParamsTracking();
-				retarget( urlPath ); // Fire page-view/retargeting pixels.
 				analytics.ga.recordPageView( urlPath, pageTitle );
+
+				// SEM & Ad Tracking.
+				updateQueryParamsTracking();
+				retarget( urlPath ); // Retargeting pixels.
+
+				// Event emitter.
 				analytics.emit( 'page-view', urlPath, pageTitle );
+
+				// Record this path.
 				mostRecentUrlPath = urlPath;
+				pathCounter++;
 			}, 0 );
+		},
+	},
+
+	// This is `localStorage` queue for delayed event triggers.
+	queue: {
+		lsKey: function() {
+			return 'analyticsQueue';
+		},
+
+		clear: function() {
+			if ( ! window.localStorage ) {
+				return; // Not possible.
+			}
+
+			window.localStorage.removeItem( analytics.queue.lsKey() );
+		},
+
+		get: function() {
+			if ( ! window.localStorage ) {
+				return []; // Not possible.
+			}
+
+			let items = window.localStorage.getItem( analytics.queue.lsKey() );
+
+			items = items ? JSON.parse( items ) : [];
+			items = Array.isArray( items ) ? items : [];
+
+			return items;
+		},
+
+		add: function( trigger, ...args ) {
+			if ( ! window.localStorage ) {
+				// If unable to queue, trigger it now.
+				if ( 'string' === typeof trigger && 'function' === typeof analytics[ trigger ] ) {
+					analytics[ trigger ].apply( null, args || undefined );
+				}
+				return; // Not possible.
+			}
+
+			let items = analytics.queue.get();
+			const newItem = { trigger, args };
+
+			items.push( newItem );
+			items = items.slice( -100 ); // Upper limit.
+
+			queueDebug( 'Adding new item to queue.', newItem );
+			window.localStorage.setItem( analytics.queue.lsKey(), JSON.stringify( items ) );
+		},
+
+		process: function() {
+			if ( ! window.localStorage ) {
+				return; // Not possible.
+			}
+
+			const items = analytics.queue.get();
+			analytics.queue.clear();
+
+			queueDebug( 'Processing items in queue.', items );
+
+			items.forEach( item => {
+				if (
+					'object' === typeof item &&
+					'string' === typeof item.trigger &&
+					'function' === typeof analytics[ item.trigger ]
+				) {
+					queueDebug( 'Processing item in queue.', item );
+					analytics[ item.trigger ].apply( null, item.args || undefined );
+				}
+			} );
 		},
 	},
 
@@ -301,8 +383,15 @@ const analytics = {
 		recordRegistration();
 	},
 
-	recordSignupComplete: function( { isNewUser, isNewSite, hasCartItems, flow }, callback ) {
-		let callbackDelay = 1000; // Give trackers time.
+	recordSignupComplete: function( { isNewUser, isNewSite, hasCartItems, flow }, now ) {
+		if ( ! now ) {
+			// Delay using the analytics localStorage queue.
+			return analytics.queue.add(
+				'recordSignupComplete',
+				{ isNewUser, isNewSite, hasCartItems, flow },
+				true
+			);
+		}
 
 		// Tracks
 		analytics.tracks.recordEvent( 'calypso_signup_complete', {
@@ -320,16 +409,12 @@ const analytics = {
 		].filter( flag => false !== flag );
 		analytics.ga.recordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
 
-		// Marketing
+		// Ad Tracking: Deprecated Floodlight pixels.
 		recordSignupCompletionInFloodlight(); // Every signup.
 
+		// Ad Tracking: New user, site creations.
 		if ( isNewUser && isNewSite ) {
-			recordSignup( 'new-user-site' ); // New User, Site Creations.
-			callbackDelay += 2000; // Allow additional time for signup trackers.
-		}
-
-		if ( 'function' === typeof callback ) {
-			setTimeout( callback, callbackDelay );
+			recordSignup( 'new-user-site' );
 		}
 	},
 
@@ -586,7 +671,7 @@ const analytics = {
 			label,
 			value
 		) {
-			if ( 'undefined' !== typeof value && /^[0-9.]+$/.test( String( value ) ) ) {
+			if ( 'undefined' !== typeof value && ! isNaN( Number( String( value ) ) ) ) {
 				value = Math.round( Number( String( value ) ) ); // GA requires an integer value.
 				// https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#eventValue
 			}
@@ -716,5 +801,6 @@ emitter( analytics );
 export default analytics;
 export const ga = analytics.ga;
 export const mc = analytics.mc;
-export const pageView = analytics.pageView;
+export const queue = analytics.queue;
 export const tracks = analytics.tracks;
+export const pageView = analytics.pageView;

@@ -23,7 +23,6 @@ import {
 } from 'lodash';
 import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -106,7 +105,6 @@ class Signup extends React.Component {
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
 		isPaidPlan: PropTypes.bool,
-		isTrackingSignup: PropTypes.bool,
 		trackAffiliateReferral: PropTypes.func.isRequired,
 	};
 
@@ -119,7 +117,6 @@ class Signup extends React.Component {
 			dependencies: props.signupDependencies,
 			siteDomains: props.siteDomains,
 			isPaidPlan: props.isPaidPlan,
-			isTrackingSignup: false,
 			shouldShowLoadingScreen: false,
 			resumingStep: undefined,
 			loginHandler: null,
@@ -266,10 +263,7 @@ class Signup extends React.Component {
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
 		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress ),
 			waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress ),
-			isTrackingSignup =
-				! hasInvalidSteps && this.isEveryStepSubmitted( progress ) && this.state.isTrackingSignup,
-			startLoadingScreen =
-				( waitingForServer || isTrackingSignup ) && ! this.state.shouldShowLoadingScreen;
+			startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
 
 		if ( ! this.isEveryStepSubmitted( progress ) ) {
 			this.goToFirstInvalidStep( progress );
@@ -331,7 +325,7 @@ class Signup extends React.Component {
 
 		const isNewUser = !! (
 			( dependencies && dependencies.username ) ||
-			( isNewishUser && dependencies && dependencies.siteSlug && 0 === existingSiteCount - 1 )
+			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
 		);
 		const isNewSite = !! ( dependencies && dependencies.siteSlug );
 		const hasCartItems = !! (
@@ -349,31 +343,20 @@ class Signup extends React.Component {
 		};
 		debug( 'Tracking signup completion.', debugProps );
 
-		this.setState( { isTrackingSignup: true } );
-		this.updateShouldShowLoadingScreen();
+		analytics.recordSignupComplete( {
+			isNewUser,
+			isNewSite,
+			hasCartItems,
+			flow: this.props.flowName,
+		} );
 
-		analytics.recordSignupComplete(
-			{
-				isNewUser,
-				isNewSite,
-				hasCartItems,
-				flow: this.props.flowName,
-			},
-			() => {
-				debug( 'Done tracking signup completion.' );
-
-				this.setState( { isTrackingSignup: false } );
-				this.updateShouldShowLoadingScreen();
-
-				if ( dependencies.cartItem || dependencies.domainItem ) {
-					this.handleLogin( dependencies, destination );
-				} else {
-					this.setState( {
-						loginHandler: this.handleLogin.bind( this, dependencies, destination ),
-					} );
-				}
-			}
-		);
+		if ( dependencies && ( dependencies.cartItem || dependencies.domainItem ) ) {
+			this.handleLogin( dependencies, destination );
+		} else {
+			this.setState( {
+				loginHandler: this.handleLogin.bind( this, dependencies, destination ),
+			} );
+		}
 	};
 
 	handleLogin = ( dependencies, destination, event ) => {
@@ -664,7 +647,9 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) && <SiteMockups stepName={ this.props.stepName } /> }
+				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) && (
+					<SiteMockups stepName={ this.props.stepName } />
+				) }
 			</div>
 		);
 	}
@@ -682,7 +667,7 @@ export default connect(
 			progress: getSignupProgress( state ),
 			signupDependencies,
 			isLoggedIn: isUserLoggedIn( state ),
-			isNewishUser: isUserRegistrationDaysWithinRange( state, moment(), 0, 7 ),
+			isNewishUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 			existingSiteCount: getCurrentUserSiteCount( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			sitePlanSlug: getSitePlanSlug( state, siteId ),

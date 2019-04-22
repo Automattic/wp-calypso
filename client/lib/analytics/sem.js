@@ -73,6 +73,8 @@ function setUtmCookie( name, value ) {
 	document.cookie = cookie.serialize( name, value, {
 		path: '/',
 		maxAge: UTM_COOKIE_MAX_AGE,
+		// NOTE: Domains having more than a single extension (e.g., example.us.com)
+		// would require additional custom logic to work out the root domain name.
 		domain:
 			'.' +
 			document.location.hostname
