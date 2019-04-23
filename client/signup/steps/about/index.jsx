@@ -5,8 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, includes } from 'lodash';
-import classNames from 'classnames';
+import { noop, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,8 +27,6 @@ import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
-import PressableStoreStep from '../design-type-with-store/pressable-store';
-import { abtest } from 'lib/abtest';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import {
@@ -71,7 +68,6 @@ class AboutStep extends Component {
 			verticalParentId: props.verticalParentId,
 			siteTopicValue: props.siteTopic,
 			userExperience: props.userExperience,
-			showStore: false,
 			pendingStoreClick: false,
 			hasPrepopulatedVertical,
 		};
@@ -108,8 +104,6 @@ class AboutStep extends Component {
 	}
 
 	setFormState = state => this._isMounted && this.setState( { form: state } );
-
-	setPressableStore = ref => ( this.pressableStore = ref );
 
 	onSiteTopicChange = ( { parent, verticalId, verticalName, verticalSlug } ) => {
 		const verticalParentId = parent || verticalId;
@@ -177,8 +171,6 @@ class AboutStep extends Component {
 			} );
 		}.bind( this );
 	}
-
-	handleStoreBackClick = () => this.setState( { showStore: false }, this.scrollUp );
 
 	handleSubmit = event => {
 		event.preventDefault();
@@ -289,22 +281,6 @@ class AboutStep extends Component {
 		}
 
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', eventAttributes );
-
-		//Pressable
-		if (
-			designType === DESIGN_TYPE_STORE &&
-			abtest( 'signupAtomicStoreVsPressable' ) === 'pressable'
-		) {
-			this.scrollUp();
-
-			this.setState( {
-				showStore: true,
-			} );
-
-			invoke( this, 'pressableStore.focus' );
-
-			return;
-		}
 
 		//Create site
 		SignupActions.submitSignupStep(
@@ -478,26 +454,9 @@ class AboutStep extends Component {
 
 		const { siteTopicValue } = this.state;
 
-		const pressableWrapperClassName = classNames( 'about__pressable-wrapper', {
-			'about__wrapper-is-hidden': ! this.state.showStore,
-		} );
-
-		const aboutFormClassName = classNames( 'about__form-wrapper', {
-			'about__wrapper-is-hidden': this.state.showStore,
-		} );
-
 		return (
 			<div className="about__wrapper">
-				<div className={ pressableWrapperClassName }>
-					<PressableStoreStep
-						{ ...this.props }
-						onBackClick={ this.handleStoreBackClick }
-						setRef={ this.setPressableStore }
-						isVisible={ this.state.showStore }
-					/>
-				</div>
-
-				<div className={ aboutFormClassName }>
+				<div className="about__form-wrapper">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
 							{ ! shouldHideSiteTitle && (
