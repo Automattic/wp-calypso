@@ -174,6 +174,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 	renderDomain() {
 		const {
+			isFeatured,
 			showHstsNotice,
 			productSaleCost,
 			suggestion: { domain_name: domain },
@@ -192,13 +193,18 @@ class DomainRegistrationSuggestion extends React.Component {
 		const saleBadgeText = translate( 'Sale', {
 			comment: 'Shown next to a domain that has a special discounted sale price',
 		} );
+		const infoPopoverSize = isFeatured ? 22 : 18;
 
 		return (
 			<div className="domain-registration-suggestion__title-wrapper">
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
 				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
 				{ showHstsNotice && (
-					<InfoPopover className="domain-registration-suggestion__hsts-tooltip" position={ 'top' }>
+					<InfoPopover
+						className="domain-registration-suggestion__hsts-tooltip"
+						iconSize={ infoPopoverSize }
+						position={ 'right' }
+					>
 						{ translate(
 							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
 								'to host a website. When you host this domain at WordPress.com an SSL ' +
