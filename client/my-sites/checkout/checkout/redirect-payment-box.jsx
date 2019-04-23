@@ -32,6 +32,7 @@ import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
+import { setPayment } from 'lib/upgrades/actions';
 
 export class RedirectPaymentBox extends PureComponent {
 	static displayName = 'RedirectPaymentBox';
@@ -52,6 +53,12 @@ export class RedirectPaymentBox extends PureComponent {
 			errorMessages: [],
 			paymentDetails: this.setPaymentDetailsState( props.paymentType ),
 		};
+
+		// Call setPayment to reset the tax location
+		const newPayment = {
+			paymentMethod: paymentMethodClassName( props.paymentType ),
+		};
+		setPayment( newPayment );
 	}
 
 	setPaymentDetailsState( paymentType ) {
