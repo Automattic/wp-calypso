@@ -1,6 +1,5 @@
-/** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { includes } from 'lodash';
 
@@ -12,7 +11,7 @@ const authorNameBlacklist = [ 'admin' ];
  * @param {string} authorName Author name
  * @returns {boolean} True if blacklisted
  */
-export const isAuthorNameBlacklisted = authorName => {
+export const isAuthorNameBlacklisted = ( authorName: string ): boolean => {
 	if ( ! authorName ) {
 		return false;
 	}
