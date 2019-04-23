@@ -25,7 +25,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		color: var( --color-text );
 
 		font-family: 'Muli', $sans;
-		margin-bottom: 40px;
+		margin-bottom: 20px;
 	}
 
 	.formatted-header__title {
@@ -35,6 +35,8 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 
 	.formatted-header__subtitle {
+		font-size: 15px;
+
 		a {
 			font-weight: 600;
 		}
@@ -115,6 +117,10 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	.logged-out-form__footer {
 		margin-top: 40px;
 	}
+
+	.signup-form__social {
+		padding: 0;
+	}
 }
 
 .signup-form__crowdsignal-social {
@@ -175,6 +181,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	background-color: var( --color-crowdsignal );
 	color: var( --color-white );
 	text-align: center;
+	margin-bottom: 0;
 
 	@include breakpoint( '>660px' ) {
 		display: none;
@@ -263,6 +270,12 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	@include breakpoint( '>660px' ) {
 		display: none;
 	}
+}
+
+.signup-form__crowdsignal-tos {
+	text-align: center;
+	color: var( --color-neutral-500 );
+	margin-top: 20px;
 }
 
 .signup-form__crowdsignal-footer {
