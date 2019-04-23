@@ -636,7 +636,6 @@ workflows:
                 - master
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
-              only: /^(?!pull\/).*$/
       - test-e2e-canary:
           requires:
             - wait-calypso-live
