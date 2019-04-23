@@ -9,6 +9,7 @@ import {
 	getSiteVerticalSlug,
 	getSiteVerticalIsUserInput,
 	getSiteVerticalPreview,
+	getSiteVerticalPreviewIframeContent,
 	getSiteVerticalParentId,
 	getSiteVerticalData,
 } from '../selectors';
@@ -34,6 +35,7 @@ describe( 'selectors', () => {
 	const state = {
 		signup: {
 			steps: {
+				siteTitle: 'Whatever you want it to be',
 				siteVertical: {
 					id: 'p4u',
 					name: 'felice',
@@ -120,6 +122,18 @@ describe( 'selectors', () => {
 
 		test( 'should return direct match', () => {
 			expect( getSiteVerticalData( state ) ).toEqual( verticals.felice[ 0 ] );
+		} );
+	} );
+	describe( 'getSiteVerticalPreviewIframeContent', () => {
+		test( 'should return empty object on empty', () => {
+			expect( getSiteVerticalPreviewIframeContent() ).toEqual( {} );
+		} );
+		test( 'should return populated object on valid state', () => {
+			expect( getSiteVerticalPreviewIframeContent( state ) ).toEqual( {
+				body: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->',
+				tagline: 'You’ll be able to customize this to your needs.',
+				title: 'Whatever you want it to be',
+			} );
 		} );
 	} );
 } );

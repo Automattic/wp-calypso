@@ -107,6 +107,7 @@ class AboutStep extends Component {
 
 	onSiteTopicChange = ( { parent, verticalId, verticalName, verticalSlug } ) => {
 		const verticalParentId = parent || verticalId;
+
 		this.setState( {
 			verticalId: verticalId,
 			siteTopicValue: verticalName,

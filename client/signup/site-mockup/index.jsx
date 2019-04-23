@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, each, find, isEmpty } from 'lodash';
+import { debounce, find, get, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 import debugFactory from 'debug';
 
@@ -18,9 +18,12 @@ import SignupSitePreview from 'components/signup-site-preview';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import {
 	getSiteVerticalPreview,
+	getSiteVerticalPreviewIframeContent,
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
+import { getSignupSitePreviewLastShown } from 'state/signup/site-preview/selectors';
+import { showSignupSitePreview } from 'state/signup/site-preview/actions';
 import { getSiteStyleOptions, getThemeCssUri } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
@@ -53,7 +56,8 @@ class SiteMockups extends Component {
 		stepName: PropTypes.string,
 		title: PropTypes.string,
 		vertical: PropTypes.string,
-		verticalPreviewContent: PropTypes.string,
+		verticalPreview: PropTypes.string,
+		verticalPreviewContent: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -62,47 +66,38 @@ class SiteMockups extends Component {
 		stepName: '',
 		title: '',
 		vertical: '',
-		verticalPreviewContent: '',
+		verticalPreview: '',
+		verticalPreviewContent: {},
 	};
 
-	debouncedRenderedEvent = debounce( () => {
-		const { siteStyle, siteType, verticalSlug } = this.props;
+	debouncedshowSignupSitePreview = debounce( this.props.showSignupSitePreview, 300 );
 
-		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
-			site_type: siteType,
-			vertical_slug: verticalSlug,
-			site_style: siteStyle || 'default',
-		} );
-	}, 777 );
-
-	componentDidUpdate( prevProps ) {
-		const { verticalPreviewContent } = this.props;
-
-		if ( verticalPreviewContent && prevProps.verticalPreviewContent !== verticalPreviewContent ) {
-			this.debouncedRenderedEvent();
-		}
+	componentDidMount() {
+		this.props.showSignupSitePreview();
 	}
 
-	/**
-	 * Returns an interpolated site preview content block with template markers
-	 *
-	 * @param {string} content Content to format
-	 * @return {string} Formatted content
-	 */
-	getContent( content = '' ) {
-		const { title: CompanyName } = this.props;
-		if ( 'string' === typeof content ) {
-			each(
-				{
-					CompanyName,
-					Address: translate( 'Your Address' ),
-					Phone: translate( 'Your Phone Number' ),
-				},
-				( value, key ) =>
-					( content = content.replace( new RegExp( '{{' + key + '}}', 'gi' ), value ) )
-			);
+	componentDidUpdate( prevProps ) {
+		const {
+			siteStyle,
+			siteType,
+			verticalPreview,
+			verticalSlug,
+			verticalPreviewContent,
+		} = this.props;
+
+		if ( prevProps.verticalPreview !== verticalPreview ) {
+			this.debouncedshowSignupSitePreview();
+			return;
 		}
-		return content;
+
+		const body = get( verticalPreviewContent, 'body' );
+		if ( body && body !== get( prevProps, 'verticalPreviewContent.body' ) ) {
+			this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
+				site_type: siteType,
+				vertical_slug: verticalSlug,
+				site_style: siteStyle || 'default',
+			} );
+		}
 	}
 
 	handleClick = size => {
@@ -116,9 +111,9 @@ class SiteMockups extends Component {
 	render() {
 		const {
 			fontUrl,
+			lastShown,
 			shouldShowHelpTip,
 			siteStyle,
-			title,
 			themeSlug,
 			verticalPreviewContent,
 		} = this.props;
@@ -132,11 +127,7 @@ class SiteMockups extends Component {
 		const otherProps = {
 			fontUrl,
 			cssUrl: getThemeCssUri( themeSlug, isRtl ),
-			content: {
-				title,
-				tagline: translate( 'You’ll be able to customize this to your needs.' ),
-				body: this.getContent( verticalPreviewContent ),
-			},
+			content: verticalPreviewContent,
 			langSlug,
 			isRtl,
 			onPreviewClick: this.handleClick,
@@ -146,7 +137,7 @@ class SiteMockups extends Component {
 		debug( 'Rendering SiteMockups component' );
 
 		return (
-			<div className={ siteMockupClasses }>
+			<div className={ siteMockupClasses } key={ lastShown }>
 				{ shouldShowHelpTip && <SiteMockupHelpTip /> }
 				<div className="site-mockup__devices">
 					<SignupSitePreview
@@ -170,9 +161,11 @@ export default connect(
 		const style = find( styleOptions, { id: siteStyle || 'modern' } );
 		return {
 			title: getSiteTitle( state ) || translate( 'Your New Website' ),
+			lastShown: getSignupSitePreviewLastShown( state ), // updates memoized selectors
 			siteStyle,
 			siteType,
-			verticalPreviewContent: getSiteVerticalPreview( state ),
+			verticalPreview: getSiteVerticalPreview( state ),
+			verticalPreviewContent: getSiteVerticalPreviewIframeContent( state ),
 			verticalSlug: getSiteVerticalSlug( state ),
 			shouldShowHelpTip:
 				'site-topic-with-preview' === ownProps.stepName ||
@@ -183,5 +176,6 @@ export default connect(
 	},
 	{
 		recordTracksEvent,
+		showSignupSitePreview,
 	}
 )( SiteMockups );
