@@ -69,8 +69,16 @@ class SiteMockups extends Component {
 		verticalPreviewContent: '',
 	};
 
+	state = {
+		displayedVerticalPreviewContent: this.props.verticalPreviewContent,
+	};
+
 	debouncedRenderedEvent = debounce( () => {
-		const { siteStyle, siteType, verticalSlug } = this.props;
+		const { siteStyle, siteType, verticalPreviewContent, verticalSlug } = this.props;
+
+		this.setState( {
+			displayedVerticalPreviewContent: verticalPreviewContent,
+		} );
 
 		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
 			site_type: siteType,
@@ -144,17 +152,12 @@ class SiteMockups extends Component {
 	};
 
 	render() {
-		const {
-			fontUrl,
-			shouldShowHelpTip,
-			siteStyle,
-			title,
-			themeSlug,
-			verticalPreviewContent,
-		} = this.props;
+		const { fontUrl, shouldShowHelpTip, siteStyle, title, themeSlug } = this.props;
+
+		const { displayedVerticalPreviewContent } = this.state;
 
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
-			'is-empty': isEmpty( verticalPreviewContent ),
+			'is-empty': isEmpty( displayedVerticalPreviewContent ),
 		} );
 		const langSlug = getLocaleSlug();
 		const language = getLanguage( langSlug );
@@ -165,7 +168,7 @@ class SiteMockups extends Component {
 			content: {
 				title,
 				tagline: this.getTagline(),
-				body: this.getContent( verticalPreviewContent ),
+				body: this.getContent( displayedVerticalPreviewContent ),
 			},
 			langSlug,
 			isRtl,
