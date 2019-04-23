@@ -72,17 +72,17 @@ const edit = compose(
 				</BlockControls>
 			) }
 			<div
-				className={ classNames( 'a8c-page-content-block', {
+				className={ classNames( 'a8c-content-preview-block', {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
 				{ showPlaceholder && (
 					<Placeholder
 						icon="layout"
-						label={ __( 'Page Content' ) }
+						label={ __( 'Content Preview' ) }
 						instructions={ __( 'Select a page to preview' ) }
 					>
-						<div className="a8c-page-content-block__selector">
+						<div className="a8c-content-preview-block__selector">
 							<SelectControl
 								onChange={ onChange }
 								options={ selectOptions }
@@ -95,7 +95,7 @@ const edit = compose(
 					</Placeholder>
 				) }
 				{ showPreview && (
-					<RawHTML className="a8c-page-content-block__preview">
+					<RawHTML className="a8c-content-preview-block__preview">
 						{ get( selectedPage, 'content.rendered' ) }
 					</RawHTML>
 				) }
@@ -104,8 +104,8 @@ const edit = compose(
 	);
 } );
 
-registerBlockType( 'a8c/page-content', {
-	title: __( 'Page Content Preview' ),
+registerBlockType( 'a8c/content-preview', {
+	title: __( 'Content Preview' ),
 	icon: 'layout',
 	category: 'layout',
 	attributes: {

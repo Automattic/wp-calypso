@@ -40,7 +40,7 @@ class A8C_Full_Site_Editing {
 
 	function register_blocks() {
 		// This block is only a preview block, it doesn't render anything.
-		register_block_type( 'a8c/page-content', [
+		register_block_type( 'a8c/content-preview', [
 			'editor_script' => 'a8c-full-site-editing-script',
 			'editor_style' => 'a8c-full-site-editing-style',
 		] );
