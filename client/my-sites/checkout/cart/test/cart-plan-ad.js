@@ -102,9 +102,9 @@ describe( 'cart-plan-ad', () => {
 
 	test( 'Should call recordTracksEvent() when the cta clicked', () => {
 		const recordTracksEvent = jest.fn();
-		const ad = shallow( <CartPlanAd { ...props } recordTracksEvent={ recordTracksEvent } /> );
+		const wrapper = shallow( <CartPlanAd { ...props } recordTracksEvent={ recordTracksEvent } /> );
 
-		ad.find( 'a' ).simulate( 'click' );
+		wrapper.find( 'Button' ).simulate( 'click' );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_banner_cta_click', {
 			cta_name: 'cart_domain_to_plan_upsell',
