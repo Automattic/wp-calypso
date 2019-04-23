@@ -1,10 +1,10 @@
 # Calypso Build Tools
 
-This package is a set of configuration files and scripts that allow for simple building of projects based on modern versions of JavaScript (ES6+ and JSX) and SASS. It is meant to somewhat standardize the "dialect" of JavaScript that are used across Automattic's products, and to remove maintenance burden from individual contributors by providing a unified build toolset. It is hoped to be of use to the wider WordPress and JavaScript communities as well.
+This package is a set of configuration files and scripts that allow for simple building of projects based on modern versions of JavaScript (ESNext and JSX) and SASS. It is meant to somewhat standardize the "dialect" of JavaScript that are used across Automattic's products, and to remove maintenance burden from individual contributors by providing a unified build toolset. It is hoped to be of use to the wider WordPress and JavaScript communities as well.
 
 ## Features
 
-`calypso-build` supports ES6+/JSX transpilation out of the box, as well as bundling of SASS files imported through `@import style.scss` statements, and automatic generation of RTL versions of those style files.
+`calypso-build` supports ESNext/JSX transpilation out of the box, as well as bundling of SASS files imported through `@import style.scss` statements, and automatic generation of RTL versions of those style files.
 
 It is designed in a way that in its simplest form is very easy to invoke, with very little configuration overhead, yet can be customized in a more fine-grained way as a project's needs evolve.
 
