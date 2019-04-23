@@ -49,7 +49,7 @@
 		"@types/debug": "4.1.4",
 		"@types/lodash": "4.14.123",
 		"@types/page": "1.8.0",
-		"@types/react": "16.8.13",
+		"@types/react": "16.8.14",
 		"@types/react-redux": "7.0.6",
 		"@typescript-eslint/eslint-plugin": "1.6.0",
 		"@typescript-eslint/parser": "1.6.0",
