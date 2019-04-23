@@ -8,6 +8,7 @@
  */
 const fs = require( 'fs' );
 const path = require( 'path' );
+const process = require( 'process' );
 const webpack = require( 'webpack' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const FileConfig = require( './webpack/file-loader' );
@@ -49,7 +50,7 @@ function getWebpackConfig(
 	{
 		entry,
 		'output-chunk-filename': outputChunkFilename,
-		'output-path': outputPath = path.join( __dirname, 'dist' ),
+		'output-path': outputPath = path.join( process.cwd(), 'dist' ),
 		'output-filename': outputFilename = '[name].js',
 		'output-libary-target': outputLibraryTarget = 'window',
 	}

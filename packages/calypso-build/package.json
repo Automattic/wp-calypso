@@ -21,7 +21,10 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"bin": "./bin/build-package.js",
+	"bin": {
+		"transpile": "./bin/transpile.js",
+		"calypso-build": "./bin/calypso-build.js"
+	},
 	"browserslist": [
 		"extends @wordpress/browserslist-config"
 	],
@@ -52,6 +55,7 @@
 		"terser-webpack-plugin": "1.2.3",
 		"thread-loader": "2.1.2",
 		"webpack": "4.29.6",
+		"webpack-cli": "3.3.0",
 		"webpack-filter-warnings-plugin": "1.2.1",
 		"webpack-rtl-plugin": "1.8.0"
 	}
