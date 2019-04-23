@@ -152,10 +152,10 @@ function isSubdomain( domainName ) {
 	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
 }
 
-function isHstsMandatory( productSlug, productsList ) {
+function isHstsRequired( productSlug, productsList ) {
 	const product = find( productsList, [ 'product_slug', productSlug ] ) || {};
 
-	return get( product, 'is_hsts_mandatory', false );
+	return get( product, 'is_hsts_required', false );
 }
 
 function isMappedDomain( domain ) {
@@ -343,7 +343,7 @@ export {
 	getTld,
 	getTopLevelOfTld,
 	hasMappedDomain,
-	isHstsMandatory,
+	isHstsRequired,
 	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain,
