@@ -3,15 +3,14 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { find, get, map } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
-import { IconButton, Placeholder, SelectControl, Toolbar } from '@wordpress/components';
+import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
-import { withSelect } from '@wordpress/data';
 import { BlockControls } from '@wordpress/editor';
 import { Fragment, RawHTML } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -19,41 +18,26 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import PostAutocomplete from '../../components/post-autocomplete';
 import './style.scss';
 
 const edit = compose(
-	withSelect( select => ( {
-		// TODO: Replace with a better way to fetch pages
-		pages: select( 'core' ).getEntityRecords( 'postType', 'page' ),
-	} ) ),
 	withState( {
 		isEditing: false,
 	} )
-)( ( { attributes, isEditing, pages, setAttributes, setState } ) => {
-	const { align, selectedPageId } = attributes;
-
-	const selectOptions = [
-		{ label: '', value: undefined },
-		...map( pages, page => ( {
-			label: page.title.rendered,
-			value: page.id,
-		} ) ),
-	];
+)( ( { attributes, isEditing, setAttributes, setState } ) => {
+	const { align, selectedPost } = attributes;
 
 	const toggleEditing = () => setState( { isEditing: ! isEditing } );
 
-	const onChange = pageId => {
-		if ( pageId ) {
-			setState( { isEditing: false } );
-		}
-		setAttributes( { selectedPageId: parseInt( pageId, 10 ) } );
+	const onSelectPost = post => {
+		setState( { isEditing: false } );
+		setAttributes( { selectedPost: post } );
 	};
 
-	const selectedPage = find( pages, { id: selectedPageId } );
-
-	const showToggleButton = ! isEditing || !! selectedPageId;
-	const showPlaceholder = isEditing || ! selectedPageId;
-	const showPreview = ! isEditing && !! selectedPageId;
+	const showToggleButton = ! isEditing || !! selectedPost;
+	const showPlaceholder = isEditing || ! selectedPost;
+	const showPreview = ! isEditing && !! selectedPost;
 
 	return (
 		<Fragment>
@@ -80,23 +64,19 @@ const edit = compose(
 					<Placeholder
 						icon="layout"
 						label={ __( 'Content Preview' ) }
-						instructions={ __( 'Select a page to preview' ) }
+						instructions={ __( 'Select something to preview' ) }
 					>
 						<div className="a8c-content-preview-block__selector">
-							<SelectControl
-								onChange={ onChange }
-								options={ selectOptions }
-								value={ selectedPageId }
-							/>
-							{ !! selectedPageId && (
-								<a href={ `?post=${ selectedPageId }&action=edit` }>{ __( 'Edit Page' ) }</a>
+							<PostAutocomplete onSelectPost={ onSelectPost } />
+							{ !! selectedPost && (
+								<a href={ `?post=${ selectedPost.id }&action=edit` }>{ __( 'Edit' ) }</a>
 							) }
 						</div>
 					</Placeholder>
 				) }
 				{ showPreview && (
 					<RawHTML className="a8c-content-preview-block__preview">
-						{ get( selectedPage, 'content.rendered' ) }
+						{ get( selectedPost, 'content.rendered' ) }
 					</RawHTML>
 				) }
 			</div>
@@ -110,7 +90,7 @@ registerBlockType( 'a8c/content-preview', {
 	icon: 'layout',
 	category: 'layout',
 	attributes: {
-		selectedPageId: { type: 'number' },
+		selectedPost: { type: 'object' },
 	},
 	supports: {
 		align: [ 'wide', 'full' ],
