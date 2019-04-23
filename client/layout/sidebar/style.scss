@@ -64,6 +64,10 @@
 		@include breakpoint( '<660px' ) {
 			background-color: var( --sidebar-background );
 
+			&.selected:not(.sidebar__plugins-item) {
+				background-color: var( --sidebar-menu-selected-background-color );
+			}
+
 			&.stats {
 				border-bottom: 1px solid var( --sidebar-border-color );
 			}
@@ -87,7 +91,7 @@
 			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ), 50% );
 
 			@include breakpoint( '<660px' ) {
-				background: linear-gradient( to right, rgba( var( --sidebar-menu-a-first-child-after-background ), 0 ), rgba( var( --sidebar-menu-a-first-child-after-background ), 1 ) 50% );
+				background: none;
 			}
 		}
 	}
