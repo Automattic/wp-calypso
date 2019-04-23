@@ -15,7 +15,7 @@ import notices from 'notices';
 import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
-import SharingSeo from './seo/';
+import Traffic from './traffic/';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import {
@@ -31,8 +31,8 @@ export const redirectSharingButtons = context => {
 	return;
 };
 
-export const redirectSeo = context => {
-	page.redirect( '/marketing/seo/' + context.params.domain );
+export const redirectTraffic = context => {
+	page.redirect( '/marketing/traffic/' + context.params.domain );
 	return;
 };
 
@@ -106,7 +106,7 @@ export const buttons = ( context, next ) => {
 	next();
 };
 
-export const seo = ( context, next ) => {
+export const traffic = ( context, next ) => {
 	const { store } = context;
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
@@ -132,7 +132,7 @@ export const seo = ( context, next ) => {
 		);
 	}
 
-	context.contentComponent = createElement( SharingSeo );
+	context.contentComponent = createElement( Traffic );
 
 	next();
 };

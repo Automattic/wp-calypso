@@ -175,6 +175,6 @@ export function legacyRedirects( context, next ) {
 	next();
 }
 
-export function redirectToSeo( context ) {
-	return page.redirect( '/marketing/seo/' + context.params.site_id );
+export function redirectToTraffic( context ) {
+	return page.redirect( '/marketing/traffic/' + context.params.site_id );
 }

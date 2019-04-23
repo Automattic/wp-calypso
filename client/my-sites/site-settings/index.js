@@ -19,7 +19,7 @@ import {
 	legacyRedirects,
 	manageConnection,
 	redirectIfCantDeleteSite,
-	redirectToSeo,
+	redirectToTraffic,
 	startOver,
 	themeSetup,
 } from 'my-sites/site-settings/controller';
@@ -137,9 +137,9 @@ export default function() {
 		clientRender
 	);
 
-	page( '/settings/traffic/:site_id', redirectToSeo );
-	page( '/settings/analytics/:site_id?', redirectToSeo );
-	page( '/settings/seo/:site_id?', redirectToSeo );
+	page( '/settings/traffic/:site_id', redirectToTraffic );
+	page( '/settings/analytics/:site_id?', redirectToTraffic );
+	page( '/settings/seo/:site_id?', redirectToTraffic );
 
 	page( '/settings/:section', legacyRedirects, siteSelection, sites, makeLayout, clientRender );
 }

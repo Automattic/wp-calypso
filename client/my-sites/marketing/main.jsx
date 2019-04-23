@@ -38,7 +38,7 @@ export const Sharing = ( {
 	path,
 	showButtons,
 	showConnections,
-	showSeo,
+	showTraffic,
 	siteId,
 	siteSlug,
 	translate,
@@ -48,11 +48,11 @@ export const Sharing = ( {
 
 	// Include SEO link if a site is selected and the
 	// required Jetpack module is active
-	if ( showSeo ) {
+	if ( showTraffic ) {
 		filters.push( {
-			id: 'seo',
-			route: '/marketing/seo' + pathSuffix,
-			title: translate( 'SEO' ),
+			id: 'traffic',
+			route: '/marketing/traffic' + pathSuffix,
+			title: translate( 'Traffic' ),
 		} );
 	}
 
@@ -127,7 +127,7 @@ export default connect( state => {
 	return {
 		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
 		showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
-		showSeo: !! siteId,
+		showTraffic: !! siteId,
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};
