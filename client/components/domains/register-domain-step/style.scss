@@ -53,8 +53,7 @@
 	}
 }
 
-.register-domain-step__filter-reset-notice,
-.register-domain-step__next-page {
+.register-domain-step__filter-reset-notice {
 	color: var( --color-primary );
 	font-weight: 500;
 	width: 100%;
@@ -80,6 +79,14 @@
 }
 
 .register-domain-step__next-page {
+	.register-domain-step__next-page-button {
+		color: var( --color-primary );
+
+		&:hover {
+			color: var( --color-primary-dark );
+		}
+	}
+
 	.spinner {
 		margin-left: 0.5em;
 
