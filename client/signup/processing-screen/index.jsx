@@ -106,33 +106,40 @@ export class SignupProcessingScreen extends Component {
 
 			return loginHandler
 				? this.props.translate(
-						"{{strong}}Done!{{/strong}} Thanks for waiting, %(domain)s is all set up and we're ready " +
-							'for you to get started.',
+						"{{strong}}Done!{{/strong}} Thanks for waiting, %(domain)s is all set up and we're ready {{br/}}for you to get started.",
 						{
-							components: { strong: <strong /> },
+							components: { strong: <strong />, br: <br /> },
 							args: { domain },
+							comment:
+								'The second line after the breaking tag {{br/}} should fit unbroken in 384px and greater and have a max of 30 characters.',
 						}
 				  )
 				: this.props.translate(
-						'{{strong}}Awesome!{{/strong}} Give us one minute and we’ll move right along.',
+						'{{strong}}Awesome!{{/strong}} Give us one minute and {{br/}}we’ll move right along.',
 						{
-							components: { strong: <strong /> },
+							components: { strong: <strong />, br: <br /> },
 							args: { domain },
+							comment:
+								'The second line after the breaking tag {{br/}} should fit unbroken in 384px and greater and have a max of 30 characters.',
 						}
 				  );
 		}
 
 		return loginHandler
 			? this.props.translate(
-					'{{strong}}Done!{{/strong}} Thanks for waiting, we’re ready for you to get started.',
+					'{{strong}}Done!{{/strong}} Thanks for waiting, we’re ready for you {{br/}}to get started.',
 					{
-						components: { strong: <strong /> },
+						components: { strong: <strong />, br: <br /> },
+						comment:
+							'The second line after the breaking tag {{br/}} should fit unbroken in 384px and greater and have a max of 30 characters.',
 					}
 			  )
 			: this.props.translate(
-					'{{strong}}Awesome!{{/strong}} Give us one minute and we’ll move right along.',
+					'{{strong}}Awesome!{{/strong}} Give us one minute and {{br/}}we’ll move right along.',
 					{
-						components: { strong: <strong /> },
+						components: { strong: <strong />, br: <br /> },
+						comment:
+							'The second line after the breaking tag {{br/}} should fit unbroken in 384px and greater and have a max of 30 characters.',
 					}
 			  );
 	}
