@@ -1,6 +1,6 @@
 # Calypso Build Tools
 
-This package is a set of configuration files and scripts that allow for simple building of projects based on modern versions of JavaScript (ESNext and JSX) and SASS. It is meant to somewhat standardize the "dialect" of JavaScript that are used across Automattic's products, and to remove maintenance burden from individual contributors by providing a unified build toolset. It is hoped to be of use to the wider WordPress and JavaScript communities as well.
+This package is a set of configuration files and scripts that allow for simple building of projects based on modern versions of JavaScript (ESNext and JSX) and SASS. It is meant to somewhat standardize the "dialect" of JavaScript that is used across Automattic's products, and to remove maintenance burden from individual contributors by providing a unified build toolset. It is hoped to be of use to the wider WordPress and JavaScript communities as well.
 
 ## Features
 
@@ -95,7 +95,7 @@ function getWebpackConfig( env, argv ) {
 module.exports = getWebpackConfig;
 ```
 
-`calypso-build` will automatically pick up your `webpack.config.js` if it's in the same directory that the command is called from. You can override that filename and location using the `--config` option:
+`calypso-build` will automatically pick up your `webpack.config.js` if it's in the same directory that the command is called from. You can customize that filename and location using the `--config` option:
 
 ```json
 	"scripts": {
@@ -109,7 +109,7 @@ It is also possible to customize how Babel transpiles a project. Simply add a `b
 
 ### Using the `wordpress-element` Babel preset
 
-This can be useful for building Gutenberg blocks, which use the [`@wordpress/element` abstraction layer](https://www.npmjs.com/package/@wordpress/element) over React components, requiring a different set of transpilation rules. Conveniently, `@automattic/calypso-build` provides a Babel preset for this purpose:
+This can be useful for building Gutenberg blocks, which use the [`@wordpress/element` abstraction layer](https://www.npmjs.com/package/@wordpress/element) over React components, requiring a different set of transpilation rules from JSX. Conveniently, `@automattic/calypso-build` provides a Babel preset for this purpose:
 
 ```js
 module.exports = {
