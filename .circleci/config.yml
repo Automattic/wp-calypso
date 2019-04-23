@@ -631,7 +631,11 @@ workflows:
             - test-server
           filters:
             branches:
-              ignore: master
+              ignore:
+                # Do not spin up calypso.live for `master`
+                - master
+                # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
+                - /pull\/[0-9]+/
               only: /^(?!pull\/).*$/
       - test-e2e-canary:
           requires:
