@@ -453,3 +453,19 @@ export function applyTestFiltersToPlansList( planName, abtest ) {
 
 	return filteredPlanConstantObj;
 }
+
+export function getPlanTermLabel( planName, translate ) {
+	const plan = getPlan( planName );
+	if ( ! plan || ! plan.term ) {
+		return;
+	}
+
+	switch ( plan.term ) {
+		case TERM_MONTHLY:
+			return translate( 'Monthly subscription' );
+		case TERM_ANNUALLY:
+			return translate( 'Annual subscription' );
+		case TERM_BIENNIALLY:
+			return translate( 'Two year subscription' );
+	}
+}

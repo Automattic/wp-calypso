@@ -23,6 +23,7 @@ import SearchCard from 'components/search-card';
 import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
 import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
+import { getPlanTermLabel } from 'lib/plans';
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';
@@ -88,10 +89,12 @@ class TransactionsTable extends React.Component {
 	serviceNameDescription = transaction => {
 		let description;
 		if ( transaction.domain ) {
+			const termLabel = getPlanTermLabel( transaction.wpcom_product_slug, this.props.translate );
 			description = (
 				<div>
 					<strong>{ transaction.plan }</strong>
 					<small>{ transaction.domain }</small>
+					{ termLabel ? <small>{ termLabel }</small> : null }
 				</div>
 			);
 		} else {

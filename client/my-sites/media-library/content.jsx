@@ -30,7 +30,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
-import InlineConnection from 'my-sites/sharing/connections/inline-connection';
+import InlineConnection from 'my-sites/marketing/connections/inline-connection';
 import {
 	isKeyringConnectionsFetching,
 	getKeyringConnectionsByName,
@@ -274,7 +274,7 @@ export class MediaLibraryContent extends React.Component {
 
 	goToSharing = ev => {
 		ev.preventDefault();
-		page( `/sharing/${ this.props.site.slug }` );
+		page( `/marketing/connections/${ this.props.site.slug }` );
 	};
 
 	renderGooglePhotosConnect() {

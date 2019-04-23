@@ -109,8 +109,8 @@ export default {
 	removeDomainsStepFromOnboarding: {
 		datestamp: '20190412',
 		variations: {
-			keep: 50,
-			remove: 50,
+			keep: 100,
+			remove: 0,
 		},
 		defaultVariation: 'keep',
 	},
@@ -184,10 +184,10 @@ export default {
 		defaultVariation: 'original',
 	},
 	pageBuilderMVP: {
-		datestamp: '20190418',
+		datestamp: '20190419',
 		variations: {
-			control: 50,
-			test: 50,
+			control: 100,
+			test: 0,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -201,18 +201,6 @@ export default {
 		defaultVariation: 'controlSupportSession',
 		allowExistingUsers: true,
 	},
-	gsuitePurchaseCtaOptions: {
-		datestamp: '20190411',
-		variations: {
-			hideBusinessWithAnnualPrices: 25,
-			hideBusinessWithMonthlyPrices: 25,
-			showBusinessWithAnnualPrices: 25,
-			showBusinessWithMonthlyPrices: 25,
-		},
-		defaultVariation: 'hideBusinessWithAnnualPrices',
-		allowExistingUsers: true,
-		countryCodeTargets: [ 'USD' ],
-	},
 	domainSuggestionsEnCheck: {
 		datestamp: '20190415',
 		variations: {
@@ -221,15 +209,5 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-	},
-	gsuiteDomainFlowOptions: {
-		datestamp: '20190415',
-		variations: {
-			hideMonthlyPrice: 50,
-			showMonthlyPrice: 50,
-		},
-		defaultVariation: 'hideMonthlyPrice',
-		allowExistingUsers: true,
-		countryCodeTargets: [ 'USD' ],
 	},
 };

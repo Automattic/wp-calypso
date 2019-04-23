@@ -313,22 +313,6 @@ export function generateSteps( {
 			},
 		},
 
-		'get-dot-blog-plans': {
-			apiRequestFunction: createSiteWithCart,
-			stepName: 'get-dot-blog-plans',
-			dependencies: [ 'cartItem' ],
-			providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem' ],
-		},
-
-		'get-dot-blog-themes': {
-			stepName: 'get-dot-blog-themes',
-			props: {
-				designType: 'blog',
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
-		},
-
 		// Currently, these two steps explicitly submit other steps to skip them, and
 		// should not be used outside of the `domain-first` flow.
 		'site-or-domain': {

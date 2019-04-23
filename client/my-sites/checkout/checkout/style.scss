@@ -1,25 +1,4 @@
-.is-section-checkout.is-jetpack-site {
-	.layout__content {
-		position: static;
-		// Adjust the padding as we no longer
-		// show the masterbar.
-		padding-top: 48px;
-
-		@include breakpoint( '<660px' ) {
-			padding-top: 0;
-		}
-	}
-
-	// Move the sidebar up top
-	.layout__secondary {
-		top: 0;
-	}
-
-	// Hide the masterbar for real
-	.masterbar {
-		display: none;
-	}
-}
+@import 'jetpack-connect/colors.scss';
 
 .checkout {
 	position: relative;
@@ -1071,4 +1050,71 @@
 	display: block;
 	font-size: 12px;
 	font-style: italic;
+}
+
+.is-section-checkout.is-jetpack-site {
+	.layout__content {
+		position: static;
+		// Adjust the padding as we no longer
+		// show the masterbar.
+		padding-top: 48px;
+
+		@include breakpoint( '<660px' ) {
+			padding-top: 0;
+		}
+	}
+
+	// Move the sidebar up top
+	.layout__secondary {
+		top: 0;
+	}
+
+	// Hide the masterbar for real
+	.masterbar {
+		display: none;
+	}
+}
+
+.is-section-checkout.is-jetpack-site,
+.is-section-checkout-thank-you.is-jetpack-site {
+	@include jetpack-connect-colors();
+
+	.payment-box-section {
+		--color-primary: var( --color-primary-500 );
+	}
+}
+
+.is-section-checkout.is-jetpack-site {
+	min-height: 100%;
+	background-color: var( --color-jetpack-onboarding-background );
+
+	.formatted-header {
+		color: var( --color-jetpack-onboarding-text );
+	}
+
+	.card {
+		box-shadow: none;
+		border-radius: 3px;
+
+		&.section-header {
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+
+		&.payment-box {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
+	}
+}
+
+.is-section-checkout-thank-you.is-jetpack-site {
+	min-height: 100%;
+	background-color: var( --color-jetpack-onboarding-background );
+
+	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
+	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
+	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card {
+		box-shadow: none;
+	}
 }

@@ -13,8 +13,7 @@ const path = require( 'path' );
  * @return {String}    Module version
  */
 function getModuleVersion( id ) {
-	return require( path.dirname( require.resolve( id ) ).replace( /[\/\\]lib/, '' ) + '/package' )
-		.version;
+	return require( id + '/package.json' ).version;
 }
 
 /**
@@ -29,7 +28,7 @@ module.exports = JSON.stringify( {
 	'babel-loader': getModuleVersion( 'babel-loader' ),
 	'babel-core': getModuleVersion( '@babel/core' ),
 	'babel-plugin-transform-wpcalypso-async': getModuleVersion(
-		'../babel-plugin-transform-wpcalypso-async'
+		'@automattic/babel-plugin-transform-wpcalypso-async'
 	),
 	babelrc: fs.readFileSync( path.resolve( __dirname, '../../../../babel.config.js' ), 'utf8' ),
 	env: process.env.BABEL_ENV || process.env.NODE_ENV,

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -14,7 +13,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { appStates } from 'state/imports/constants';
-import { recordTracksEvent } from 'state/analytics/actions';
 import ImporterLogo from 'my-sites/importer/importer-logo';
 import StartButton from 'my-sites/importer/importer-header/start-button';
 
@@ -54,9 +52,6 @@ class ImporterHeader extends React.PureComponent {
 	}
 }
 
-export default connect(
-	state => ( {
-		isUploading: get( state, 'imports.uploads.inProgress' ),
-	} ),
-	{ recordTracksEvent }
-)( localize( ImporterHeader ) );
+export default connect( state => ( {
+	isUploading: get( state, 'imports.uploads.inProgress' ),
+} ) )( localize( ImporterHeader ) );

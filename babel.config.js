@@ -2,7 +2,6 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
-const path = require( 'path' );
 
 const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 
@@ -26,16 +25,7 @@ const config = {
 		],
 	],
 	plugins: _.compact( [
-		[
-			path.join(
-				__dirname,
-				'server',
-				'bundler',
-				'babel',
-				'babel-plugin-transform-wpcalypso-async'
-			),
-			{ async: isBrowser && codeSplit },
-		],
+		[ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ],
 		isBrowser && './inline-imports.js',
 	] ),
 	env: {

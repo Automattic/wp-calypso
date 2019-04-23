@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
-import { get, find, defer, pick, isEqual } from 'lodash';
+import { get, defer, pick, isEqual } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -30,8 +30,6 @@ import cartValues, {
 	cartItems,
 	getLocationOrigin,
 } from 'lib/cart-values';
-import Notice from 'components/notice';
-import { preventWidows } from 'lib/formatting';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import getCountries from 'state/selectors/get-countries';
@@ -476,32 +474,6 @@ export class SecurePaymentForm extends Component {
 		);
 	}
 
-	renderGetDotBlogNotice() {
-		const hasProductFromGetDotBlogSignup = find(
-			this.props.cart.products,
-			product => product.extra && product.extra.source === 'get-dot-blog-signup'
-		);
-
-		if (
-			this.getVisiblePaymentBox( this.props ) !== 'credit-card' ||
-			! hasProductFromGetDotBlogSignup
-		) {
-			return;
-		}
-
-		return (
-			<Notice icon="notice" showDismiss={ false }>
-				{ preventWidows(
-					this.props.translate(
-						'You can reuse the payment information you entered on get.blog, ' +
-							'a WordPress.com service. Confirm your order below.'
-					),
-					4
-				) }
-			</Notice>
-		);
-	}
-
 	renderPaymentBox = visiblePaymentBox => {
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
@@ -590,7 +562,6 @@ export class SecurePaymentForm extends Component {
 
 		return (
 			<div className="checkout__secure-payment-form">
-				{ this.renderGetDotBlogNotice() }
 				{ this.renderPaymentBox( visiblePaymentBox ) }
 			</div>
 		);

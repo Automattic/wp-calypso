@@ -219,7 +219,7 @@ jobs:
             FILES_TO_LINT=$(
               git diff --name-only --diff-filter=d origin/master... \
                 | grep -E '^(client/|server/|packages/)'            \
-                | grep -E '\.jsx?$'
+                | grep -E '\.[jt]sx?$'
             ) || exit 0
 
             if [[ ! -z $FILES_TO_LINT ]]; then
@@ -238,7 +238,7 @@ jobs:
           name: Build New Strings .pot
           when: always
           command: |
-            git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
+            git clone --single-branch --depth=1 --branch 'update/include-typescript' https://github.com/Automattic/gp-localci-client.git
             bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
             rm -rf gp-localci-client
       - store-artifacts-and-test-results
@@ -274,6 +274,17 @@ jobs:
           name: Build Notifications Panel
           command: |
             NODE_ENV=production npm run build-notifications -- --output-path=$CIRCLE_ARTIFACTS/notifications-panel
+      - store-artifacts-and-test-results
+
+  build-o2-blocks:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: Build Gutenberg Blocks for internal p2s
+          command: |
+            NODE_ENV=production npx lerna run build --scope='@automattic/o2-blocks' -- -- --output-path=$CIRCLE_ARTIFACTS/o2-blocks
       - store-artifacts-and-test-results
 
   build-wpcom-block-editor:
@@ -591,6 +602,9 @@ workflows:
             branches:
               ignore: master
       - build-notifications:
+          requires:
+            - setup
+      - build-o2-blocks:
           requires:
             - setup
       - build-wpcom-block-editor:

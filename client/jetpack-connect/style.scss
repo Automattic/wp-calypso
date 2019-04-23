@@ -1,24 +1,10 @@
+@import './colors.scss';
+
 $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__main,
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
-.layout.is-jetpack-login,
-.is-section-checkout.is-jetpack-site,
-.is-section-checkout-thank-you.is-jetpack-site {
-	// Override accent variables with Jetpack colors
-	--color-accent:       var( --color-jetpack );
-	--color-accent-light: var( --color-jetpack-light );
-	--color-accent-dark:  var( --color-jetpack-dark );
-
-	// Override global colors with accent variables
-	--color-primary:                         var( --color-accent-dark );
-	--color-primary-light:                   var( --color-accent-light );
-	--color-button-primary-background-hover: var( --color-accent-light );
-	--color-accent-600:                      var( --color-accent-dark );
-
-	.payment-box-section {
-		--color-primary: var( --color-primary-500 );
-	}
+.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ) {
+	@include jetpack-connect-colors();
 }
 
 .is-section-jetpack-connect {
@@ -614,7 +600,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.plan-price.is-original {
 		align-self: center;
-		font-size: 16px;
 		margin-top: 6px;
 	}
 
@@ -774,8 +759,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 /**
  * Onboarding styles
  **/
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
-.layout.is-jetpack-login {
+.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ) {
 	background-color: var( --color-jetpack-onboarding-background );
 
 	&.layout {
@@ -784,7 +768,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		padding-bottom: $colophon-height;
 	}
 
-	.login__form-header,
 	.formatted-header {
 		color: var( --color-jetpack-onboarding-text );
 	}
@@ -820,14 +803,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
-	.login__form input:focus,
 	.jetpack-connect__site-address-container input:focus,
 	.logged-out-form input:focus {
 		border-color: var( --color-accent );
 		box-shadow: 0 0 0 2px var( --color-accent-light );
 	}
 
-	.login__form-terms a,
 	.jetpack-connect__tos-link a,
 	.signup-form__terms-of-service-link a,
 	.form-input-validation a {
@@ -839,11 +820,9 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
-	.wp-login__links a,
 	.logged-out-form__links a,
 	.logged-out-form__link-item,
 	.jetpack-connect__back-button,
-	.translator-invite__content a,
 	.jetpack-connect__skip-button .button {
 		color: var( --color-neutral-200 );
 		border-bottom-color: var( --color-neutral-700 );
@@ -858,18 +837,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		&:focus {
 			box-shadow: 0 0 0 transparent;
 		}
-	}
-
-	.translator-invite__content a {
-		border: none;
-	}
-
-	.translator-invite__content {
-		color: var( --color-neutral-500 );
-	}
-
-	.wp-login__site-return-link::after {
-		background: linear-gradient( to right, rgba( var( --color-jetpack-onboarding-background ), 0 ), rgba( var( --color-jetpack-onboarding-background ), 1 ) 90% );
 	}
 
 	.plan-features__table-item,
@@ -906,51 +873,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.site-topic__content .form-fieldset {
 		position: relative;
-	}
-}
-
-.is-section-checkout.is-jetpack-site {
-	min-height: 100%;
-	background-color: var( --color-jetpack-onboarding-background );
-
-	.formatted-header {
-		color: var( --color-jetpack-onboarding-text );
-	}
-
-	.card {
-		box-shadow: none;
-		border-radius: 3px;
-
-		&.section-header {
-			border-bottom-left-radius: 0;
-			border-bottom-right-radius: 0;
-		}
-
-		&.payment-box {
-			border-top-left-radius: 0;
-			border-top-right-radius: 0;
-		}
-	}
-}
-
-.is-section-checkout-thank-you.is-jetpack-site {
-	min-height: 100%;
-	background-color: var( --color-jetpack-onboarding-background );
-
-	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
-	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
-	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card {
-		box-shadow: none;
-	}
-}
-
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
-.layout.is-jetpack-login,
-.is-section-checkout.is-jetpack-site,
-.is-section-checkout-thank-you.is-jetpack-site {
-	::selection {
-		color: var( --color-white );
-		background: var( --color-accent );
 	}
 }
 
