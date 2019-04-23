@@ -632,6 +632,7 @@ workflows:
           filters:
             branches:
               ignore: master
+              only: /^(?!pull\/).*$/
       - test-e2e-canary:
           requires:
             - wait-calypso-live
