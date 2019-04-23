@@ -19,7 +19,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prebuild": "npm run clean",
-		"build": "cb editor='./src/editor.js' --env.WP"
+		"build": "calypso-build editor='./src/editor.js' --env.WP"
 	},
 	"dependencies": {
 		"@wordpress/blocks": "6.0.7",

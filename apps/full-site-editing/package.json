@@ -16,10 +16,10 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"plugin": "cb --source='plugin'",
+		"plugin": "calypso-build --source='plugin'",
 		"dev:plugin": "npm run plugin",
 		"build:plugin": "NODE_ENV=production npm run plugin",
-		"theme": "cb --source='theme'",
+		"theme": "calypso-build --source='theme'",
 		"dev:theme": "npm run theme",
 		"build:theme": "NODE_ENV=production npm run theme",
 		"dev": "npm-run-all --parallel dev:*",

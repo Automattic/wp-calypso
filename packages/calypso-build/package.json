@@ -23,7 +23,7 @@
 	},
 	"bin": {
 		"transpile": "./bin/transpile.js",
-		"cb": "./bin/cb.js"
+		"calypso-build": "./bin/calypso-build.js"
 	},
 	"browserslist": [
 		"extends @wordpress/browserslist-config"
