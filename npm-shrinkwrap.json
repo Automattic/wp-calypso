@@ -20490,9 +20490,9 @@
 			"integrity": "sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c="
 		},
 		"typescript": {
-			"version": "3.4.3",
-			"resolved": "https://registry.npmjs.org/typescript/-/typescript-3.4.3.tgz",
-			"integrity": "sha512-FFgHdPt4T/duxx6Ndf7hwgMZZjZpB+U0nMNGVCYPq0rEzWKjEDobm4J6yb3CS7naZ0yURFqdw9Gwc7UOh/P9oQ=="
+			"version": "3.4.5",
+			"resolved": "https://registry.npmjs.org/typescript/-/typescript-3.4.5.tgz",
+			"integrity": "sha512-YycBxUb49UUhdNMU5aJ7z5Ej2XGmaIBL0x34vZ82fn3hGvD+bgrMrVDpatgz2f7YxUMJxMkbWxJZeAvDxVe7Vw=="
 		},
 		"ua-parser-js": {
 			"version": "0.7.19",
