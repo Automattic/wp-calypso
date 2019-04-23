@@ -10,18 +10,18 @@ It is designed in a way that in its simplest form is very easy to invoke, with v
 
 ## Usage
 
-In your project's `package.json`, add `@automattic/calypso-build` to your project's `devDependencies`. Then, add a `build` script that invokes the `cb` shorthand:
+In your project's `package.json`, add `@automattic/calypso-build` to your project's `devDependencies`. Then, add a `build` script that invokes the `calypso-build` command:
 
 ```json
 	"devDependencies": {
         "@automattic/calypso-build": "1.0.0-beta.5"
     },
 	"scripts": {
-		"build": "cb ./src/editor.js"
+		"build": "calypso-build ./src/editor.js"
 	}
 ```
 
-Simple as that -- the only argument you really need to pass to `cb` is an entry point file for your project. By default, this will create a `dist/` subfolder in your current working directory that will contain the built files -- typically one `.js`, one `.css`, and one `.rtl.css` file.
+Simple as that -- the only argument you really need to pass to `calypso-build` is an entry point file for your project. By default, this will create a `dist/` subfolder in your current working directory that will contain the built files -- typically one `.js`, one `.css`, and one `.rtl.css` file.
 
 ### `--output-path`
 
@@ -29,7 +29,7 @@ If you want your built files to go elsewhere, you can customize the output path 
 
 ```json
 	"scripts": {
-		"build": "cb --output-path='./build' ./src/editor.js"
+		"build": "calypso-build --output-path='./build' ./src/editor.js"
 	}
 ```
 
@@ -39,13 +39,13 @@ It's also possible to define more than one entry point (resulting in one bundle 
 
 ```json
 	"scripts": {
-		"build": "cb --output-path='./build' editor=./src/editor.js view=./src/view.js"
+		"build": "calypso-build --output-path='./build' editor=./src/editor.js view=./src/view.js"
 	}
 ```
 
 ### Command Line Interface based on Webpack's
 
-If you have some experience with Webpack, the format of these [command line options will seem familiar](https://webpack.js.org/api/cli/) to you. In fact, `cb` is a a thin wrapper around Webpack's Command Line Interface (CLI) tool, pointing it to the `webpack.config.js` file that ships with `@automattic/calypso-build`.
+If you have some experience with Webpack, the format of these [command line options will seem familiar](https://webpack.js.org/api/cli/) to you. In fact, `calypso-build` is a a thin wrapper around Webpack's Command Line Interface (CLI) tool, pointing it to the `webpack.config.js` file that ships with `@automattic/calypso-build`.
 
 It was our conscious decision to stick to Webpack's interface rather than covering it up with our own abstraction, since the build tool doesn't really add any conceptually different functionality, and our previous SDK approach showed that we ended up replicating features readily provided by Webpack anyway.
 
@@ -55,7 +55,7 @@ That `webpack.config.js` introduces one rather WordPress/Gutenberg specific "env
 
 ```json
 	"scripts": {
-		"build": "cb ./src/editor.js --env.WP"
+		"build": "calypso-build ./src/editor.js --env.WP"
 	}
 ```
 
@@ -63,7 +63,7 @@ This will make Webpack use `wordpress-external-dependencies-plugin` to infer NPM
 
 ## Advanced Usage: Use own Webpack Config
 
-If you find that the command line options provided by the `cb` tool do not cut it for your project (e.g. if you need to run other Webpack loaders or plugins), you can use your own `webpack.config.js` file to extend the one provided by `@automattic/calypso-build`. The latter exports a [function](https://webpack.js.org/configuration/configuration-types#exporting-a-function) that can be called from your config file, allowing you to extend the resulting object:
+If you find that the command line options provided by the `calypso-build` tool do not cut it for your project (e.g. if you need to run other Webpack loaders or plugins), you can use your own `webpack.config.js` file to extend the one provided by `@automattic/calypso-build`. The latter exports a [function](https://webpack.js.org/configuration/configuration-types#exporting-a-function) that can be called from your config file, allowing you to extend the resulting object:
 
 ```js
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
@@ -89,11 +89,11 @@ function getWebpackConfig( env, argv ) {
 module.exports = getWebpackConfig;
 ```
 
-Don't forget to tell `cb` to use your own `webpack.config.js` rather than `@automattic/calypso-build`'s!
+Don't forget to tell `calypso-build` to use your own `webpack.config.js` rather than `@automattic/calypso-build`'s!
 
 ```json
 	"scripts": {
-		"build": "cb --config='./webpack.config.js' ./src/editor.js"
+		"build": "calypso-build --config='./webpack.config.js' ./src/editor.js"
 	}
 ```
 
