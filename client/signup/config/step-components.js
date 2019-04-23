@@ -42,16 +42,6 @@ const CredsCompleteComponent = props => (
 const CredsPermissionComponent = props => (
 	<AsyncLoad require="signup/steps/creds-permission" placeholder={ null } { ...props } />
 );
-const DesignTypeComponent = props => (
-	<AsyncLoad require="signup/steps/design-type" placeholder={ null } { ...props } />
-);
-const DesignTypeWithAtomicStoreComponent = props => (
-	<AsyncLoad
-		require="signup/steps/design-type-with-atomic-store"
-		placeholder={ null }
-		{ ...props }
-	/>
-);
 const DomainsStepComponent = props => (
 	<AsyncLoad require="signup/steps/domains" placeholder={ null } { ...props } />
 );
@@ -134,8 +124,6 @@ export default {
 	'creds-confirm': CredsConfirmComponent,
 	'creds-complete': CredsCompleteComponent,
 	'creds-permission': CredsPermissionComponent,
-	'design-type': DesignTypeComponent,
-	'design-type-with-store-nux': DesignTypeWithAtomicStoreComponent,
 	domains: DomainsStepComponent,
 	'domains-store': DomainsStepComponent,
 	'domain-only': DomainsStepComponent,

@@ -108,21 +108,6 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 		},
 
-		'design-type': {
-			stepName: 'design-type',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo' ],
-		},
-
-		'design-type-with-store': {
-			stepName: 'design-type-with-store',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo' ],
-		},
-
-		'design-type-with-store-nux': {
-			stepName: 'design-type-with-store-nux',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo' ],
-		},
-
 		site: {
 			stepName: 'site',
 			apiRequestFunction: createSite,
