@@ -89,11 +89,11 @@ function getWebpackConfig( env, argv ) {
 module.exports = getWebpackConfig;
 ```
 
-Don't forget to tell `calypso-build` to use your own `webpack.config.js` rather than `@automattic/calypso-build`'s!
+`calypso-build` will automatically pick up your `webpack.config.js` if it's in the same directory that the command is called from. You can override that filename and location using the `--config` option:
 
 ```json
 	"scripts": {
-		"build": "calypso-build --config='./webpack.config.js' ./src/editor.js"
+		"build": "calypso-build --config='./config-files/webpack.config.js' ./src/editor.js"
 	}
 ```
 
