@@ -106,6 +106,7 @@
 		"reader/user-mention-suggestions": false,
 		"resume-editing": true,
 		"republicize": true,
+		"rewind-alerts": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
