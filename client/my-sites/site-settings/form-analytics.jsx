@@ -43,7 +43,7 @@ import {
 	TYPE_BUSINESS,
 	TERM_ANNUALLY,
 } from 'lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'lib/plans';
+import { findFirstSimilarPlanKey, isJetpackPersonalPlan } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 
@@ -286,7 +286,8 @@ export class GoogleAnalyticsForm extends Component {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isGoogleAnalyticsEligible = site && site.plan && isCurrentPlanPaid( state, siteId );
+	const isGoogleAnalyticsEligible =
+		site && site.plan && isCurrentPlanPaid( state, siteId ) && ! isJetpackPersonalPlan( site.plan );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
