@@ -14,6 +14,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -36,9 +37,11 @@ class CartPlanAd extends Component {
 		const domainRegistrations = cartItems.getDomainRegistrations( cart );
 		const isDomainPremium =
 			domainRegistrations.length === 1 && get( domainRegistrations[ 0 ], 'extra.premium', false );
+		const hasRenewalItem = cartItems.hasRenewalItem( cart );
 
 		return (
 			! isDomainOnly &&
+			! hasRenewalItem &&
 			cart.hasLoadedFromServer &&
 			! cart.hasPendingServerUpdates &&
 			! cartItems.hasDomainCredit( cart ) &&
@@ -63,9 +66,9 @@ class CartPlanAd extends Component {
 						components: { strong: <strong /> },
 					}
 				) }{' '}
-				<a href="" onClick={ this.addToCartAndRedirect }>
+				<Button onClick={ this.addToCartAndRedirect } borderless compact>
 					{ this.props.translate( 'Upgrade Now' ) }
-				</a>
+				</Button>
 			</CartAd>
 		);
 	}
