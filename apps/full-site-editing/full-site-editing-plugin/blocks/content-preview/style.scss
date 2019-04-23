@@ -2,10 +2,13 @@
 	padding: 0 12px;
 }
 
-.a8c-content-preview-block__selector a {
-	font-family: sans-serif;
-	font-size: 13px;
-	padding-left: 8px;
+.a8c-content-preview-block__selector {
+	width: 300px;
+	a {
+		font-family: sans-serif;
+		font-size: 13px;
+		padding-left: 8px;
+	}
 }
 
 .a8c-content-preview-block__preview {
