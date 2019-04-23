@@ -8,18 +8,36 @@ import PropTypes from 'prop-types';
 import { find, includes, groupBy, map, mapValues } from 'lodash';
 import { hasGSuite } from '.';
 
-const removePreviousErrors = ( { value } ) => ( {
+interface userField {
+	value: string;
+	error: string | null;
+}
+
+interface user {
+	domain: userField;
+	mailBox: userField;
+	firstName: userField;
+	lastName: userField;
+}
+
+interface googleAppsProductUser {
+	firstname: string;
+	lastname: string;
+	email: string;
+}
+
+const removePreviousErrors = ( { value }: userField ): userField => ( {
 	value,
 	error: null,
 } );
 
-const requiredField = ( { value, error } ) => ( {
+const requiredField = ( { value, error }: userField ): userField => ( {
 	value,
 	error:
 		! error && ( ! value || '' === value ) ? i18n.translate( 'This field is required.' ) : error,
 } );
 
-const sixtyCharacterField = ( { value, error } ) => ( {
+const sixtyCharacterField = ( { value, error }: userField ): userField => ( {
 	value,
 	error:
 		! error && 60 < value.length
@@ -27,7 +45,7 @@ const sixtyCharacterField = ( { value, error } ) => ( {
 			: error,
 } );
 
-const validEmailCharacterField = ( { value, error } ) => ( {
+const validEmailCharacterField = ( { value, error }: userField ): userField => ( {
 	value,
 	error:
 		! error && ! /^[0-9a-z_'-](\.?[0-9a-z_'-])*$/i.test( value )
@@ -37,7 +55,10 @@ const validEmailCharacterField = ( { value, error } ) => ( {
 			: error,
 } );
 
-const validateOverallEmail = ( { value: mailBox, error: mailBoxError }, { value: domain } ) => ( {
+const validateOverallEmail = (
+	{ value: mailBox, error: mailBoxError }: userField,
+	{ value: domain }: userField
+): userField => ( {
 	value: mailBox,
 	error:
 		! mailBoxError && ! emailValidator.validate( `${ mailBox }@${ domain }` )
@@ -46,10 +67,10 @@ const validateOverallEmail = ( { value: mailBox, error: mailBoxError }, { value:
 } );
 
 const validateOverallEmailAgainstExistingEmails = (
-	{ value: mailBox, error: mailBoxError },
-	{ value: domain },
-	existingGSuiteUsers
-) => ( {
+	{ value: mailBox, error: mailBoxError }: userField,
+	{ value: domain }: userField,
+	existingGSuiteUsers: any[]
+): userField => ( {
 	value: mailBox,
 	error:
 		! mailBoxError &&
@@ -58,7 +79,7 @@ const validateOverallEmailAgainstExistingEmails = (
 			: mailBoxError,
 } );
 
-const validateUser = user => {
+const validateUser = ( user: user ): user => {
 	// every field is required. Also scrubs previous errors.
 	const { domain, mailBox, firstName, lastName } = mapValues( user, field =>
 		requiredField( removePreviousErrors( field ) )
@@ -73,8 +94,8 @@ const validateUser = user => {
 };
 
 const validateAgainstExistingUsers = (
-	{ domain, mailBox, firstName, lastName },
-	existingGSuiteUsers
+	{ domain, mailBox, firstName, lastName }: user,
+	existingGSuiteUsers: any[]
 ) => ( {
 	firstName,
 	lastName,
@@ -82,7 +103,7 @@ const validateAgainstExistingUsers = (
 	mailBox: validateOverallEmailAgainstExistingEmails( mailBox, domain, existingGSuiteUsers ),
 } );
 
-const newUser = ( domain = '' ) => {
+const newUser = ( domain: string = '' ): user => {
 	return {
 		firstName: {
 			value: '',
@@ -103,32 +124,33 @@ const newUser = ( domain = '' ) => {
 	};
 };
 
-const newUsers = domain => {
+const newUsers = ( domain: string ): user[] => {
 	return [ newUser( domain ) ];
 };
 
-const isUserComplete = user => {
+const isUserComplete = ( user: user ): boolean => {
 	return Object.values( user ).every( ( { value } ) => '' !== value );
 };
 
-const doesUserHaveError = user => {
+const doesUserHaveError = ( user: user ): boolean => {
 	return Object.values( user ).some( ( { error } ) => null !== error );
 };
 
-const userIsReady = user => isUserComplete( user ) && ! doesUserHaveError( user );
+const userIsReady = ( user: user ): boolean =>
+	isUserComplete( user ) && ! doesUserHaveError( user );
 
 const transformUser = ( {
 	firstName: { value: firstname },
 	lastName: { value: lastname },
 	domain: { value: domain },
 	mailBox: { value: mailBox },
-} ) => ( {
+}: user ): googleAppsProductUser => ( {
 	email: `${ mailBox }@${ domain }`.toLowerCase(),
 	firstname,
 	lastname,
 } );
 
-const getItemsForCart = ( domains, productSlug, users ) => {
+const getItemsForCart = ( domains: any[], productSlug: string, users: user[] ) => {
 	const groups = mapValues( groupBy( users, 'domain.value' ), groupedUsers =>
 		groupedUsers.map( transformUser )
 	);

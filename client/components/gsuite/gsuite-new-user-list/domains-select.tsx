@@ -4,14 +4,26 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { FunctionComponentElement } from 'react';
 
 /**
  * Internal dependencies
  */
 import FormSelect from 'components/forms/form-select';
 
-const DomainsSelect = ( { domains, isError, onChange, value } ) => {
+interface DomainsSelectProps {
+	domains: string[];
+	isError: boolean;
+	onChange: ( event: any ) => void;
+	value: string;
+}
+
+const DomainsSelect = ( {
+	domains,
+	isError,
+	onChange,
+	value,
+}: DomainsSelectProps ): FunctionComponentElement< DomainsSelectProps > => {
 	return (
 		<FormSelect value={ value } onChange={ onChange } isError={ isError }>
 			{ domains.map( domain => {
