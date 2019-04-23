@@ -55,6 +55,7 @@ export const GOOGLE_APPS_LEARNING_CENTER = 'https://gsuite.google.com/learning-c
 export const GOOGLE_PLUS_EMBEDS = `${ root }/google-plus-embeds`;
 export const GRAVATAR_HOVERCARDS = `${ root }/gravatar-hovercards`;
 export const GUIDED_TRANSFER = `${ root }/guided-transfer`;
+export const HTTPS_SSL = `${ root }/https-ssl`;
 export const IMPORT = `${ root }/import`;
 export const INSTAGRAM_WIDGET = `${ root }/instagram/instagram-widget`;
 export const JETPACK_SUPPORT = 'https://jetpack.com/support/';

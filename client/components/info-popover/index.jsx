@@ -50,6 +50,8 @@ export default class InfoPopover extends Component {
 
 	handleClick = event => {
 		event.preventDefault();
+		event.stopPropagation();
+
 		this.setState( { showPopover: ! this.state.showPopover }, this.recordStats );
 	};
 
