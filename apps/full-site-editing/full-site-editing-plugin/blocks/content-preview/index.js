@@ -67,7 +67,10 @@ const edit = compose(
 						instructions={ __( 'Select something to preview' ) }
 					>
 						<div className="a8c-content-preview-block__selector">
-							<PostAutocomplete onSelectPost={ onSelectPost } />
+							<PostAutocomplete
+								selectedPostTitle={ get( selectedPost, 'title.rendered' ) }
+								onSelectPost={ onSelectPost }
+							/>
 							{ !! selectedPost && (
 								<a href={ `?post=${ selectedPost.id }&action=edit` }>{ __( 'Edit' ) }</a>
 							) }
