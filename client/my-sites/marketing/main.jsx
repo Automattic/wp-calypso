@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -14,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import canCurrentUser from 'state/selectors/can-current-user';
-
+import config from 'config';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import DocumentHead from 'components/data/document-head';
 import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
@@ -53,6 +52,14 @@ export const Sharing = ( {
 			id: 'traffic',
 			route: '/marketing/traffic' + pathSuffix,
 			title: translate( 'Traffic' ),
+		} );
+	}
+
+	if ( config.isEnabled( 'marketing/tools' ) ) {
+		filters.push( {
+			id: 'marketing-tools',
+			route: '/marketing/tools' + pathSuffix,
+			title: translate( 'Marketing Tools' ),
 		} );
 	}
 

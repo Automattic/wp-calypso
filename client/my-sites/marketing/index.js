@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import page from 'page';
 
 /**
@@ -14,6 +13,7 @@ import {
 	buttons,
 	connections,
 	layout,
+	marketingTools,
 	redirectSharingButtons,
 	redirectTraffic,
 	traffic,
@@ -26,6 +26,7 @@ export default function() {
 		'/marketing/connections',
 		'/marketing/sharing-buttons',
 		'/marketing/traffic',
+		'/marketing/tools',
 		'/sharing',
 		'/sharing/buttons',
 	].forEach( path => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
@@ -60,6 +61,16 @@ export default function() {
 		navigation,
 		jetpackModuleActive( 'sharedaddy' ),
 		buttons,
+		layout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketing/tools/:domain',
+		siteSelection,
+		navigation,
+		marketingTools,
 		layout,
 		makeLayout,
 		clientRender
