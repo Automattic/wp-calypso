@@ -536,8 +536,8 @@ class HelpContact extends React.Component {
 							holidayName="Easter"
 							compact={ compact }
 							displayAt="2019-04-18 00:00Z"
-							closesAt="2019-04-21 00:00Z"
-							reopensAt="2019-04-22 00:00Z"
+							closesAt="2019-04-21 06:00Z"
+							reopensAt="2019-04-22 06:00Z"
 						/>
 					</Fragment>
 				) }

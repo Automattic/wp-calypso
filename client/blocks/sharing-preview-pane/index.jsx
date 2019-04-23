@@ -91,7 +91,9 @@ class SharingPreviewPane extends PureComponent {
 					status="is-info"
 					showDismiss={ false }
 				>
-					<NoticeAction href={ '/sharing/' + siteSlug }>{ translate( 'Settings' ) }</NoticeAction>
+					<NoticeAction href={ '/marketing/connections/' + siteSlug }>
+						{ translate( 'Settings' ) }
+					</NoticeAction>
 				</Notice>
 			);
 		}

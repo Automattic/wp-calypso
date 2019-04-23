@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
+import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
 
 export class Facebook extends SharingService {
 	static propTypes = {

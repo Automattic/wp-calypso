@@ -243,7 +243,7 @@ const webpackConfig = {
 		],
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx' ],
+			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
 		alias: Object.assign(
 			{

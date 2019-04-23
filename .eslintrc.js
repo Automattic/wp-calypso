@@ -10,6 +10,7 @@ module.exports = {
 		'plugin:jest/recommended',
 		'prettier',
 		'prettier/react',
+		'prettier/@typescript-eslint',
 	],
 	overrides: [
 		{
@@ -36,7 +37,7 @@ module.exports = {
 			},
 		},
 	],
-	parser: 'babel-eslint',
+	parser: '@typescript-eslint/parser',
 	env: {
 		browser: true,
 		'jest/globals': true,
@@ -61,8 +62,15 @@ module.exports = {
 		},
 	},
 	rules: {
+		'@typescript-eslint/explicit-function-return-type': 0,
+		'@typescript-eslint/explicit-member-accessibility': 0,
+		'@typescript-eslint/no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
+		'@typescript-eslint/no-use-before-define': [ 'error', { functions: false, typedefs: false } ],
+		'@typescript-eslint/no-var-requires': 0,
+
 		// REST API objects include underscores
 		camelcase: 0,
+		'@typescript-eslint/camelcase': 0,
 
 		// TODO: why did we turn this off?
 		'jest/valid-expect': 0,

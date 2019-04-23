@@ -5,11 +5,12 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, ComponentType } from 'react';
 import debugModule from 'debug';
 import page from 'page';
 import i18n from 'i18n-calypso';
 import { includes, without } from 'lodash';
+import { Subtract } from 'utility-types';
 
 /**
  * Module variables
@@ -52,11 +53,18 @@ function markSaved( form ) {
 	formsChanged = without( formsChanged, form );
 }
 
+export interface ProtectedFormProps {
+	markChanged: () => void;
+	markSaved: () => void;
+}
+
 /*
  * HOC that passes markChanged/markSaved props to the wrapped component instance
  */
-export const protectForm = WrappedComponent => {
-	return class ProtectedFormComponent extends Component {
+export const protectForm = < P extends ProtectedFormProps >(
+	WrappedComponent: ComponentType< P >
+): ComponentType< Subtract< P, ProtectedFormProps > > =>
+	class ProtectedFormComponent extends Component< Subtract< P, ProtectedFormProps > > {
 		markChanged = () => markChanged( this );
 		markSaved = () => markSaved( this );
 
@@ -74,12 +82,11 @@ export const protectForm = WrappedComponent => {
 				<WrappedComponent
 					markChanged={ this.markChanged }
 					markSaved={ this.markSaved }
-					{ ...this.props }
+					{ ...this.props as P }
 				/>
 			);
 		}
 	};
-};
 
 /*
  * Declarative variant that takes a 'isChanged' prop.
