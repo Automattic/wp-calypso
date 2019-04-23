@@ -8,6 +8,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { jetpackModuleActive, navigation, siteSelection, sites } from 'my-sites/controller';
 import {
 	buttons,
@@ -21,7 +22,7 @@ import {
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	[
+	const paths = [
 		'/marketing',
 		'/marketing/connections',
 		'/marketing/sharing-buttons',
@@ -29,7 +30,13 @@ export default function() {
 		'/marketing/tools',
 		'/sharing',
 		'/sharing/buttons',
-	].forEach( path => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
+	];
+
+	if ( config.isEnabled( 'marketing/tools' ) ) {
+		paths.push( '/marketing/tools' );
+	}
+
+	paths.forEach( path => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
 
 	page( '/sharing/:domain', redirectTraffic );
 	page( '/sharing/buttons/:domain', redirectSharingButtons );
@@ -66,13 +73,23 @@ export default function() {
 		clientRender
 	);
 
-	page(
-		'/marketing/tools/:domain',
-		siteSelection,
-		navigation,
-		marketingTools,
-		layout,
-		makeLayout,
-		clientRender
-	);
+	if ( config.isEnabled( 'marketing/tools' ) ) {
+		page(
+			'/marketing/tools/:domain',
+			siteSelection,
+			navigation,
+			marketingTools,
+			layout,
+			makeLayout,
+			clientRender
+		);
+	}
+
+	page( '/marketing/:domain', context => {
+		if ( config.isEnabled( 'marketing/tools' ) ) {
+			page.redirect( `/marketing/tools/${ context.params.domain }` );
+		} else {
+			redirectConnections();
+		}
+	} );
 }
