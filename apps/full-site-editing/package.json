@@ -26,6 +26,7 @@
 		"build": "rimraf dist && npm-run-all --parallel build:*"
 	},
 	"dependencies": {
+		"@wordpress/api-fetch": "^3.1.2",
 		"@wordpress/blocks": "^6.2.3",
 		"@wordpress/components": "^7.3.0",
 		"@wordpress/compose": "^3.2.0",
@@ -33,6 +34,7 @@
 		"@wordpress/editor": "^9.2.4",
 		"@wordpress/element": "^2.3.0",
 		"@wordpress/i18n": "^3.3.0",
+		"@wordpress/url": "^2.5.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.11"
 	}
