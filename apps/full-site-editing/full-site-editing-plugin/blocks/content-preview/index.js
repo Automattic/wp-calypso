@@ -106,6 +106,7 @@ const edit = compose(
 
 registerBlockType( 'a8c/content-preview', {
 	title: __( 'Content Preview' ),
+	description: __( 'Previews the content of a post or a page into the editor.' ),
 	icon: 'layout',
 	category: 'layout',
 	attributes: {
@@ -115,7 +116,6 @@ registerBlockType( 'a8c/content-preview', {
 		align: [ 'wide', 'full' ],
 		anchor: true,
 		html: false,
-		multiple: false,
 		reusable: false,
 	},
 	edit,
