@@ -19,6 +19,7 @@ const adminSections = memoize( siteSlug => [
 		title: 'Add a new domain',
 		description: 'Set up your domain whether it’s registered with WordPress.com or elsewhere.',
 		link: `/domains/add/${ siteSlug }`,
+		synonyms: [ 'domain' ],
 		icon: 'domains',
 	},
 	{
@@ -59,6 +60,7 @@ const adminSections = memoize( siteSlug => [
 		title: 'Find a plan to suit my site',
 		description: '',
 		link: `/plans/${ siteSlug }`,
+		synonyms: [ 'upgrade', 'business', 'profressional', 'personal' ],
 		icon: 'plans',
 	},
 	{
