@@ -25,7 +25,8 @@ export const normalizeSettings = settings => {
 			case 'jetpack_portfolio_posts_per_page':
 				break;
 			case 'jetpack_protect_global_whitelist':
-				memo[ key ] = get( settings[ key ], [ 'local' ], [] ).join( '\n' );
+				const whitelist = get( settings[ key ], [ 'local' ], [] );
+				memo[ key ] = whitelist.join( '\n' );
 				break;
 			case 'infinite-scroll':
 				break;

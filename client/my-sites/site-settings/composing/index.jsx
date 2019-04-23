@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 import Latex from './latex';
 import Shortcodes from './shortcodes';
 import Card from 'components/card';
-import CompactCard from 'components/card/compact';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
 import PublishConfirmation from './publish-confirmation';
@@ -33,11 +32,9 @@ const Composing = ( {
 	siteIsJetpack,
 	updateFields,
 } ) => {
-	const CardComponent = siteIsJetpack ? CompactCard : Card;
-
 	return (
 		<Fragment>
-			<CardComponent className="composing__card site-settings">
+			<Card className="composing__card site-settings">
 				<PublishConfirmation />
 				<DefaultPostFormat
 					eventTracker={ eventTracker }
@@ -46,7 +43,7 @@ const Composing = ( {
 					isSavingSettings={ isSavingSettings }
 					onChangeField={ onChangeField }
 				/>
-			</CardComponent>
+			</Card>
 
 			{ siteIsJetpack && (
 				<Fragment>
