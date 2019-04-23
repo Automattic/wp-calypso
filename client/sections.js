@@ -167,9 +167,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'sharing',
-		paths: [ '/sharing' ],
-		module: 'my-sites/sharing',
+		name: 'marketing',
+		paths: [ '/marketing', '/sharing' ],
+		module: 'my-sites/marketing',
 		secondary: true,
 		group: 'sites',
 	},
