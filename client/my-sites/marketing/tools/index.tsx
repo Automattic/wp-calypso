@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -12,7 +13,7 @@ import { useTranslate } from 'i18n-calypso';
 import ActionCard from 'components/action-card';
 import Button from 'components/button';
 import { getSitePlanSlug, hasFeature } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import MarketingToolFeature from './feature';
 import {
 	FEATURE_GOOGLE_MY_BUSINESS,
@@ -29,17 +30,22 @@ import './style.scss';
 interface MarketingToolsProps {
 	hasGoogleMyBusinessAvailable: boolean;
 	planIsLessThanPremium: boolean;
+	selectedSiteSlug: string | null;
 }
 
 export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 	hasGoogleMyBusinessAvailable,
 	planIsLessThanPremium,
+	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
 
+	const handleBoostMyTrafficClick = () => {
+		page( selectedSiteSlug ? `/marketing/traffic/${ selectedSiteSlug }` : '/marketing/traffic' );
+	};
+
 	return (
 		<Fragment>
-			{ /* <MarketingToolsHeader /> */ }
 			<ActionCard
 				headerText={ translate( 'Drive more traffic to your site with our SEO tools' ) }
 				mainText={ translate(
@@ -47,6 +53,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 				) }
 				buttonText={ translate( 'Boost my traffic' ) }
 				buttonPrimary
+				buttonOnClick={ handleBoostMyTrafficClick }
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 			/>
 			<div className="tools__feature-list">
@@ -61,19 +68,23 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 					<Button compact>{ translate( 'Sign up' ) }</Button>
 					<Button compact>{ translate( 'Connect' ) }</Button>
 				</MarketingToolFeature>
-				{ planIsLessThanPremium && (
-					<MarketingToolFeature
-						title={ translate( 'Advertise online using a $100 credit with Google Adwords' ) }
-						description={ translate(
-							'Upgrade your plan to take advantage of online advertising to improve your marketing efforts.'
-						) }
-						disclaimer={ translate(
-							'Offer valid in US after spending the first $25 on Google Ads.'
-						) }
-					>
-						<Button compact>{ translate( 'Upgrade to Premium' ) }</Button>
-					</MarketingToolFeature>
-				) }
+
+				<MarketingToolFeature
+					title={ translate( 'Advertise online using a $100 credit with Google Adwords' ) }
+					description={ translate(
+						'Upgrade your plan to take advantage of online advertising to improve your marketing efforts.'
+					) }
+					disclaimer={ translate(
+						'Offer valid in US after spending the first $25 on Google Ads.'
+					) }
+				>
+					<Button compact>
+						{ planIsLessThanPremium
+							? translate( 'Upgrade to Premium' )
+							: translate( 'Generate Code' ) }
+					</Button>
+				</MarketingToolFeature>
+
 				<MarketingToolFeature
 					title={ translate( 'Make your brand stand out with a professional logo' ) }
 					description={ translate(
@@ -118,11 +129,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 MarketingTools.propTypes = {
 	hasGoogleMyBusinessAvailable: PropTypes.bool.isRequired,
 	planIsLessThanPremium: PropTypes.bool.isRequired,
-};
-
-MarketingTools.defaultProps = {
-	hasGoogleMyBusinessAvailable: false,
-	planIsLessThanPremium: false,
+	selectedSiteSlug: PropTypes.string,
 };
 
 export default connect( state => {
@@ -135,5 +142,6 @@ export default connect( state => {
 		planIsLessThanPremium: selectedSitePlanSlug
 			? ! [ PLAN_ECOMMERCE, PLAN_BUSINESS, PLAN_PREMIUM ].includes( selectedSitePlanSlug )
 			: false,
+		selectedSiteSlug: getSelectedSiteSlug( state ),
 	};
 } )( MarketingTools );
