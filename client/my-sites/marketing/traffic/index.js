@@ -14,8 +14,6 @@ import { flowRight, partialRight, pick } from 'lodash';
  */
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
 import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
 import SiteVerification from 'my-sites/site-settings/seo-settings/site-verification';
@@ -30,9 +28,15 @@ import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SiteSettingsTraffic = ( {
 	fields,
 	handleAutosavingToggle,
+	handleAutosavingRadio,
 	handleSubmitForm,
 	isJetpack,
 	isRequestingSettings,
@@ -43,8 +47,6 @@ const SiteSettingsTraffic = ( {
 	<Main className="settings-traffic site-settings">
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		<JetpackDevModeNotice />
-		<SidebarNavigation />
-		<SiteSettingsNavigation section="traffic" />
 
 		{ isJetpack && (
 			<JetpackAds
@@ -75,9 +77,12 @@ const SiteSettingsTraffic = ( {
 		<AnalyticsSettings />
 		{ isJetpack && (
 			<Shortlinks
+				handleAutosavingRadio={ handleAutosavingRadio }
+				handleAutosavingToggle={ handleAutosavingToggle }
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
+				onSubmitForm={ handleSubmitForm }
 			/>
 		) }
 		<Sitemaps

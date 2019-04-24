@@ -298,7 +298,6 @@ export class SeoForm extends React.Component {
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
 				{ ( isSitePrivate || isSiteHidden ) && hasSupportingPlan( selectedSite.plan ) && (
 					<Notice
 						status="is-warning"
