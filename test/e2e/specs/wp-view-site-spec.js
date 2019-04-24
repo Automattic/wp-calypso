@@ -30,7 +30,7 @@ before( async function() {
 
 describe( `[${ host }] View site from sidebar: (${ screenSize }) @parallel @jetpack`, function() {
 	this.timeout( mochaTimeOut );
-	describe( 'View site and close:', function() {
+	describe.skip( 'View site and close:', function() {
 		step( 'Can Log In and go to My Sites', async function() {
 			const loginFlow = new LoginFlow( driver );
 			return await loginFlow.loginAndSelectMySite();
@@ -38,7 +38,7 @@ describe( `[${ host }] View site from sidebar: (${ screenSize }) @parallel @jetp
 
 		step( 'Can view the default site from sidebar', async function() {
 			this.sidebarComponent = await SidebarComponent.Expect( driver );
-			return await this.sidebarComponent.selectViewThisSite();
+			return await this.sidebarComponent.selectViewThisSite(); // TODO: Where to select Preview site?
 		} );
 
 		step( 'Can see the web preview button', async function() {
