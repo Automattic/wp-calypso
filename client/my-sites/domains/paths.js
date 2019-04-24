@@ -139,6 +139,15 @@ export function domainUseYourDomain( siteName, domain ) {
 	return path;
 }
 
+export function domainTrademarkClaimsNotice( siteName, domain ) {
+	let path = `/domains/add/trademark-claims-notice/${ siteName }`;
+	if ( domain ) {
+		path += `?initialQuery=${ domain }`;
+	}
+
+	return path;
+}
+
 export function getSectionName( pathname ) {
 	const regExp = new RegExp( '^' + domainManagementRoot() + '/[^/]+/([^/]+)', 'g' );
 	const matches = regExp.exec( pathname );

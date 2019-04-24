@@ -96,6 +96,7 @@ import { isBlogger } from 'lib/products-values';
  * Style dependencies
  */
 import './style.scss';
+import TrademarkClaimsNotice from '../trademark-claims-notice';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
@@ -237,6 +238,8 @@ class RegisterDomainStep extends React.Component {
 			suggestionErrorData: null,
 			pendingCheckSuggestion: null,
 			unavailableDomains: [],
+			trademarkClaimsNoticeInfo: null,
+			selectedSuggestion: null,
 		};
 	}
 
@@ -380,7 +383,12 @@ class RegisterDomainStep extends React.Component {
 			showSuggestionNotice,
 			suggestionError,
 			suggestionErrorData,
+			trademarkClaimsNoticeInfo,
 		} = this.state;
+
+		if ( trademarkClaimsNoticeInfo ) {
+			return this.renderTrademarkClaimsNotice();
+		}
 
 		const { message: suggestionMessage, severity: suggestionSeverity } = showSuggestionNotice
 			? getAvailabilityNotice( lastDomainSearched, suggestionError, suggestionErrorData )
@@ -456,6 +464,34 @@ class RegisterDomainStep extends React.Component {
 					onSubmit={ this.onFiltersSubmit }
 				/>
 			)
+		);
+	}
+
+	rejectTrademarkClaim = () => {
+		this.setState( {
+			selectedSuggestion: null,
+			trademarkClaimsNoticeInfo: null,
+		} );
+	};
+
+	acceptTrademarkClaim = () => {
+		this.setState( {
+			selectedSuggestion: null,
+			trademarkClaimsNoticeInfo: null,
+		} );
+	};
+
+	renderTrademarkClaimsNotice() {
+		const { isSignupStep } = this.props;
+		const { selectedSuggestion, trademarkClaimsNoticeInfo } = this.state;
+		return (
+			<TrademarkClaimsNotice
+				isSignupStep={ isSignupStep }
+				onAccept={ this.acceptTrademarkClaim }
+				onReject={ this.rejectTrademarkClaim }
+				suggestion={ selectedSuggestion }
+				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
+			/>
 		);
 	}
 
@@ -664,7 +700,10 @@ class RegisterDomainStep extends React.Component {
 				},
 				( error, result ) => {
 					const status = get( result, 'status', error );
-					resolve( status !== domainAvailability.AVAILABLE ? status : null );
+					resolve( {
+						status: status !== domainAvailability.AVAILABLE ? status : null,
+						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
+					} );
 				}
 			);
 		} );
@@ -1056,7 +1095,7 @@ class RegisterDomainStep extends React.Component {
 
 			this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
-				.then( status => {
+				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
 					this.setState( { pendingCheckSuggestion: null } );
 					this.props.recordDomainAddAvailabilityPreCheck(
 						domain,
@@ -1067,6 +1106,13 @@ class RegisterDomainStep extends React.Component {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
+						} );
+					}
+
+					if ( trademarkClaimsNoticeInfo ) {
+						this.setState( {
+							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
+							selectedSuggestion: suggestion,
 						} );
 					} else {
 						this.props.onAddDomain( suggestion );
