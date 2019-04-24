@@ -48,8 +48,12 @@
 }
 
 .tools__feature-list {
+	position: relative;
+	left: calc( -0.5em );
 	display: flex;
 	flex-wrap: wrap;
+	// margins of the items will "hang off the side" invisibly
+	width: calc( 100% + 1em );
 }
 
 .tools__feature-list-item {
@@ -73,9 +77,7 @@
 }
 
 .tools__feature-list-item-child-row {
-	display: flex;
-	justify-content: end;
 	> * {
-		margin: 0 0.5em;
+		margin: 0 1em 0 0;
 	}
 }
