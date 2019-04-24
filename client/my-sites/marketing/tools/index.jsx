@@ -22,7 +22,7 @@ function MarketingTools() {
 	return (
 		<Fragment>
 			<MarketingToolsHeader />
-			<div>
+			<div className="tools__feature-list">
 				<MarketingToolFeature
 					title={ translate(
 						'Reach out to your customers through email marketing with MailChimp'

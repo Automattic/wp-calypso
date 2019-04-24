@@ -47,6 +47,20 @@
 	}
 }
 
-// .tools__header-image {
-// 	max-height: 400px;
-// }
+.tools__feature-list {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.tools__feature-list-item {
+	margin: 0.5em;
+	width: calc( 100% - 1em );
+	@include breakpoint( '>1040px' ) {
+		width: calc( 50% - 1em );
+	}
+}
+
+.tools__feature-list-item-disclaimer {
+	color: var( --color-text-subtle );
+	font-style: italic;
+}
