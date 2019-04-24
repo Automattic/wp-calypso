@@ -10,7 +10,6 @@ import {
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
-	SIGNUP_PROGRESS_SET,
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 } from 'state/action-types';
@@ -30,15 +29,6 @@ jest.mock( 'signup/config/steps-pure', () => ( {
 
 describe( 'reducer', () => {
 	describe( 'setting and resetting the state', () => {
-		test( 'should handle manually setting the state', () => {
-			const initialState = [];
-			const action = {
-				type: SIGNUP_PROGRESS_SET,
-				steps: [ { test: 123 } ],
-			};
-			const finalState = [ { test: 123 } ];
-			expect( reducer( initialState, action ) ).toEqual( finalState );
-		} );
 		test( 'should handle resetting the state', () => {
 			const initialState = [ { test: 123 } ];
 			const action = {

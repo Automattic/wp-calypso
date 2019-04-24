@@ -14,10 +14,10 @@ import { get, includes } from 'lodash';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
-import SignupActions from 'lib/signup/actions';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import getRewindState from 'state/selectors/get-rewind-state';
 import SetupFooter from 'my-sites/site-settings/jetpack-credentials/credentials-setup-flow/setup-footer';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -44,7 +44,7 @@ class RewindFormCreds extends Component {
 	 */
 	componentWillUpdate( nextProps ) {
 		if ( nextProps.rewindIsNowActive ) {
-			SignupActions.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
+			this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
 			this.props.goToNextStep();
 		}
 	}
@@ -59,7 +59,7 @@ class RewindFormCreds extends Component {
 		return this.props.rewindIsNowActive !== nextProps.rewindIsNowActive;
 	}
 
-	stepContent = () => {
+	stepContent() {
 		const { translate, siteId } = this.props;
 
 		return (
@@ -80,7 +80,7 @@ class RewindFormCreds extends Component {
 				,
 			</Fragment>
 		);
-	};
+	}
 
 	render() {
 		return (
@@ -107,5 +107,5 @@ export default connect(
 			rewindIsNowActive: includes( [ 'active', 'provisioning' ], rewindState.state ),
 		};
 	},
-	null
+	{ submitSignupStep }
 )( localize( RewindFormCreds ) );

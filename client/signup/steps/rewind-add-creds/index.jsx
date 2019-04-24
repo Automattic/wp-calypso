@@ -12,9 +12,9 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
 import Button from 'components/button';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -34,14 +34,14 @@ class RewindAddCreds extends Component {
 	};
 
 	goToCredsForm = () => {
-		SignupActions.submitSignupStep( {
+		this.props.submitSignupStep( {
 			stepName: this.props.stepName,
 		} );
 
 		this.props.goToNextStep();
 	};
 
-	stepContent = () => {
+	stepContent() {
 		const { translate } = this.props;
 
 		return (
@@ -62,7 +62,7 @@ class RewindAddCreds extends Component {
 				</Button>
 			</Card>
 		);
-	};
+	}
 
 	render() {
 		return (
@@ -88,5 +88,5 @@ export default connect(
 			siteSlug: get( ownProps, [ 'initialContext', 'query', 'siteSlug' ], '' ),
 		};
 	},
-	null
+	{ submitSignupStep }
 )( localize( RewindAddCreds ) );

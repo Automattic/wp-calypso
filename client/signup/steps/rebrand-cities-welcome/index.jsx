@@ -12,10 +12,10 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -28,7 +28,7 @@ class RebrandCitiesWelcomeStep extends Component {
 
 		this.props.setSiteTitle( siteTitle );
 
-		SignupActions.submitSignupStep( {
+		this.props.submitSignupStep( {
 			isPurchasingItem: false,
 			siteUrl: generateUniqueRebrandCitiesSiteUrl(),
 			stepName,
@@ -79,5 +79,5 @@ class RebrandCitiesWelcomeStep extends Component {
 
 export default connect(
 	null,
-	{ setSiteTitle }
+	{ setSiteTitle, submitSignupStep }
 )( localize( RebrandCitiesWelcomeStep ) );

@@ -136,7 +136,7 @@ describe( 'progress-store', () => {
 		SignupActions.submitSignupStep( { stepName: 'site-selection' } );
 		expect( first( SignupProgressStore.get() ).status ).toEqual( 'completed' );
 
-		SignupActions.processedSignupStep( { stepName: 'site-selection' } );
+		SignupActions.completeSignupStep( { stepName: 'site-selection' } );
 		expect( first( SignupProgressStore.get() ).status ).toEqual( 'completed' );
 	} );
 

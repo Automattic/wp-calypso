@@ -26,9 +26,9 @@ import {
 } from './utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import store from 'store';
-import SignupProgressStore from 'lib/signup/progress-store';
 import { setCurrentFlowName } from 'state/signup/flow/actions';
 import { isUserLoggedIn } from 'state/current-user/selectors';
+import { getSignupProgress } from 'state/signup/progress/selectors';
 
 /**
  * Constants
@@ -77,19 +77,20 @@ export default {
 	},
 
 	redirectToFlow( context, next ) {
-		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const flowName = getFlowName( context.params );
 		const localeFromParams = getLocale( context.params );
 		const localeFromStore = store.get( 'signup-locale' );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
-		SignupProgressStore.setReduxStore( context.store );
+
+		const userLoggedIn = isUserLoggedIn( context.store.getState() );
+		const signupProgress = getSignupProgress( context.store.getState() );
 
 		// if flow can be resumed, use saved locale
 		if (
 			! userLoggedIn &&
 			! localeFromParams &&
 			localeFromStore &&
-			canResumeFlow( flowName, SignupProgressStore.get() )
+			canResumeFlow( flowName, signupProgress )
 		) {
 			window.location =
 				getStepUrl(

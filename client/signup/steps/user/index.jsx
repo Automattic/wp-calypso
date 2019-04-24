@@ -15,11 +15,11 @@ import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
-import SignupActions from 'lib/signup/actions';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { WPCC } from 'lib/url/support';
 import config from 'config';
 
@@ -85,9 +85,7 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		SignupActions.saveSignupStep( {
-			stepName: this.props.stepName,
-		} );
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
 	setSubHeaderText( props ) {
@@ -154,9 +152,9 @@ export class UserStep extends Component {
 	}
 
 	save = form => {
-		SignupActions.saveSignupStep( {
+		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
-			form: form,
+			form,
 		} );
 	};
 
@@ -168,7 +166,7 @@ export class UserStep extends Component {
 			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
 		}
 
-		SignupActions.submitSignupStep(
+		this.props.submitSignupStep(
 			{
 				flowName,
 				stepName,
@@ -342,5 +340,7 @@ export default connect(
 	{
 		recordTracksEvent,
 		fetchOAuth2ClientData,
+		saveSignupStep,
+		submitSignupStep,
 	}
 )( localize( UserStep ) );

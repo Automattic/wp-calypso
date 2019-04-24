@@ -6,10 +6,6 @@ jest.mock( 'lib/analytics', () => ( {
 	},
 } ) );
 
-jest.mock( 'lib/signup/actions', () => ( {
-	submitSignupStep: jest.fn(),
-} ) );
-
 jest.mock( 'signup/step-wrapper', () => 'step-wrapper' );
 jest.mock( 'my-sites/plan-features', () => 'plan-features' );
 
@@ -26,7 +22,6 @@ jest.mock( 'i18n-calypso', () => ( {
 } ) );
 
 import analytics from 'lib/analytics';
-import SignupActions from 'lib/signup/actions';
 
 const translate = x => x;
 

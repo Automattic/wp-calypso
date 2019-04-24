@@ -12,13 +12,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import SignupActions from 'lib/signup/actions';
 import { SiteStyleStep } from '../';
-
-jest.mock( 'lib/signup/actions', () => ( {
-	submitSignupStep: jest.fn(),
-	saveSignupStep: jest.fn(),
-} ) );
 
 describe( '<SiteStyleStep />', () => {
 	const defaultProps = {

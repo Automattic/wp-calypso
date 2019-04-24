@@ -49,7 +49,7 @@ describe( 'dependency-store', () => {
 
 		expect( SignupDependencyStore.get() ).toEqual( { bearer_token: 'TOKEN' } );
 
-		SignupActions.processedSignupStep( { stepName: 'userCreation' }, [], {
+		SignupActions.completeSignupStep( { stepName: 'userCreation' }, [], {
 			bearer_token: 'TOKEN2',
 		} );
 

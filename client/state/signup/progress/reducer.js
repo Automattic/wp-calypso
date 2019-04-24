@@ -18,7 +18,6 @@ import {
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
 	SIGNUP_PROGRESS_SAVE_STEP,
-	SIGNUP_PROGRESS_SET,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
@@ -55,7 +54,7 @@ function removeUnneededSteps( state, { flowName } ) {
 	let flowSteps = [];
 	const user = userFactory();
 
-	flowSteps = get( flows, `${ flowName }.steps`, [] );
+	flowSteps = get( flows, [ flowName, 'steps' ], [] );
 
 	if ( user && user.get() ) {
 		flowSteps = flowSteps.filter( item => item !== 'user' );
@@ -76,7 +75,7 @@ function saveStep( state, { step } ) {
 }
 
 function submitStep( state, { step } ) {
-	const stepHasApiRequestFunction = get( stepsConfig, `${ step.stepName }.apiRequestFunction` );
+	const stepHasApiRequestFunction = get( stepsConfig, [ step.stepName, 'apiRequestFunction' ] );
 	const status = stepHasApiRequestFunction ? 'pending' : 'completed';
 
 	if ( find( state, { stepName: step.stepName } ) ) {
@@ -128,7 +127,6 @@ export default createReducer(
 		[ SIGNUP_PROGRESS_PROCESS_STEP ]: processStep,
 		[ SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS ]: removeUnneededSteps,
 		[ SIGNUP_PROGRESS_SAVE_STEP ]: saveStep,
-		[ SIGNUP_PROGRESS_SET ]: overwriteSteps,
 		[ SIGNUP_PROGRESS_SUBMIT_STEP ]: submitStep,
 	},
 	schema

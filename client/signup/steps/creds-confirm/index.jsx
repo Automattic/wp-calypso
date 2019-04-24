@@ -15,10 +15,10 @@ import page from 'page';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
-import SignupActions from 'lib/signup/actions';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -57,15 +57,13 @@ class CredsConfirmStep extends Component {
 		this.autoConfigCredentials();
 
 		this.props.recordTracksEvent( 'calypso_pressable_nux_credentials_share', {} );
-
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
-
+		this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
 		this.props.goToStep(
 			'pressable-nux' === this.props.flowName ? 'creds-complete' : 'rewind-were-backing'
 		);
 	};
 
-	renderStepContent = () => {
+	renderStepContent() {
 		const { translate } = this.props;
 
 		return (
@@ -87,7 +85,7 @@ class CredsConfirmStep extends Component {
 				</Button>
 			</Card>
 		);
-	};
+	}
 
 	render() {
 		return (
@@ -117,5 +115,6 @@ export default connect(
 	{
 		autoConfigCredentials,
 		recordTracksEvent,
+		submitSignupStep,
 	}
 )( localize( CredsConfirmStep ) );

@@ -5,7 +5,7 @@
  */
 
 import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/action-types';
-import SignupActions from 'lib/signup/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Action creator: Set site vertical data
@@ -31,5 +31,5 @@ export function setSiteVertical( siteVerticalData ) {
  */
 export const submitSiteVertical = ( siteVerticalData, stepName = 'site-topic' ) => dispatch => {
 	dispatch( setSiteVertical( siteVerticalData ) );
-	SignupActions.submitSignupStep( { stepName }, { siteTopic: siteVerticalData.name } );
+	dispatch( submitSignupStep( { stepName }, { siteTopic: siteVerticalData.name } ) );
 };

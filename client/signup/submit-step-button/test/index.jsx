@@ -11,7 +11,7 @@ import { stub } from 'sinon';
  * Internal dependencies
  */
 import SubmitStepButton from '..';
-import { submitSignupStep } from 'lib/signup/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 jest.mock( 'lib/signup/actions', () => ( {
 	submitSignupStep: require( 'sinon' ).stub(),

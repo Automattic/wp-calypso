@@ -3,26 +3,31 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import SignupActions from 'lib/signup/actions';
+import Button from 'components/button';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
-export default class SubmitStepButton extends Component {
+class SubmitStepButton extends Component {
 	handleSubmit = () => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName } );
-
+		this.props.submitSignupStep( { stepName: this.props.stepName } );
 		this.props.goToNextStep();
 	};
 
 	render() {
 		return (
-			<button onClick={ this.handleSubmit } className="submit-step-button button is-primary">
+			<Button primary className="submit-step-button" onClick={ this.handleSubmit }>
 				{ this.props.buttonText }
-			</button>
+			</Button>
 		);
 	}
 }
+
+export default connect(
+	null,
+	{ submitSignupStep }
+)( SubmitStepButton );

@@ -16,9 +16,6 @@ jest.mock( 'lib/analytics', () => ( {
 		recordEvent: () => {},
 	},
 } ) );
-jest.mock( 'lib/signup/actions', () => ( {
-	submitSignupStep: jest.fn(),
-} ) );
 jest.mock( 'signup/utils', () => ( {
 	getStepUrl: jest.fn(),
 } ) );

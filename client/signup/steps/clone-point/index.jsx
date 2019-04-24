@@ -16,13 +16,13 @@ import ActivityLogItem from 'my-sites/activity/activity-log-item';
 import Pagination from 'components/pagination';
 import QuerySites from 'components/data/query-sites';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
 import { requestActivityLogs } from 'state/data-getters';
 import { getSiteOption } from 'state/sites/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -47,14 +47,12 @@ class ClonePointStep extends Component {
 	};
 
 	selectCurrent = () => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, { clonePoint: 0 } );
-
+		this.props.submitSignupStep( { stepName: this.props.stepName }, { clonePoint: 0 } );
 		this.props.goToNextStep();
 	};
 
 	selectedPoint = activityTs => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, { clonePoint: activityTs } );
-
+		this.props.submitSignupStep( { stepName: this.props.stepName }, { clonePoint: activityTs } );
 		this.props.goToNextStep();
 	};
 
@@ -62,17 +60,17 @@ class ClonePointStep extends Component {
 		this.setState( { showLog: true } );
 	};
 
-	applySiteOffset = date => {
+	applySiteOffset( date ) {
 		const { timezone, gmtOffset } = this.props;
 		return applySiteOffset( date, { timezone, gmtOffset } );
-	};
+	}
 
 	changePage = pageNumber => {
 		this.setState( { currentPage: pageNumber } );
 		window.scrollTo( 0, 0 );
 	};
 
-	renderActivityLog = () => {
+	renderActivityLog() {
 		const { siteId, logs, moment, translate } = this.props;
 
 		const actualPage = Math.max(
@@ -137,9 +135,9 @@ class ClonePointStep extends Component {
 				/>
 			</div>
 		);
-	};
+	}
 
-	renderSelector = () => {
+	renderSelector() {
 		const { translate } = this.props;
 
 		return (
@@ -162,15 +160,15 @@ class ClonePointStep extends Component {
 				/>
 			</TileGrid>
 		);
-	};
+	}
 
-	renderStepContent = () => {
+	renderStepContent() {
 		return (
 			<div className="clone-point__wrap">
 				{ this.state.showLog ? this.renderActivityLog() : this.renderSelector() }
 			</div>
 		);
-	};
+	}
 
 	render() {
 		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
@@ -196,14 +194,17 @@ class ClonePointStep extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
-	const logs = siteId && requestActivityLogs( siteId, {} );
+export default connect(
+	( state, ownProps ) => {
+		const siteId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
+		const logs = siteId && requestActivityLogs( siteId, {} );
 
-	return {
-		siteId,
-		logs: ( siteId && logs.data ) || [],
-		timezone: getSiteOption( state, siteId, 'timezone' ),
-		gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
-	};
-} )( localize( withLocalizedMoment( ClonePointStep ) ) );
+		return {
+			siteId,
+			logs: ( siteId && logs.data ) || [],
+			timezone: getSiteOption( state, siteId, 'timezone' ),
+			gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
+		};
+	},
+	{ submitSignupStep }
+)( localize( withLocalizedMoment( ClonePointStep ) ) );

@@ -11,7 +11,6 @@ import { noop, includes } from 'lodash';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import formState from 'lib/form-state';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
@@ -35,6 +34,7 @@ import {
 } from 'state/signup/steps/site-vertical/selectors';
 import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 //Form components
 import Card from 'components/card';
@@ -94,9 +94,7 @@ class AboutStep extends Component {
 		} );
 		this.setFormState( this.formStateController.getInitialState() );
 
-		SignupActions.saveSignupStep( {
-			stepName: this.props.stepName,
-		} );
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
 	componentWillUnmount() {
@@ -283,7 +281,7 @@ class AboutStep extends Component {
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', eventAttributes );
 
 		//Create site
-		SignupActions.submitSignupStep(
+		this.props.submitSignupStep(
 			{ stepName },
 			{
 				themeSlugWithRepo: themeRepo,
@@ -581,5 +579,7 @@ export default connect(
 		setUserExperience,
 		recordTracksEvent,
 		setSiteVertical,
+		saveSignupStep,
+		submitSignupStep,
 	}
 )( localize( AboutStep ) );

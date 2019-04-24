@@ -6,11 +6,6 @@ jest.mock( 'lib/analytics', () => ( {
 	},
 } ) );
 
-jest.mock( 'lib/signup/actions', () => ( {
-	submitSignupStep: jest.fn(),
-	saveSignupStep: jest.fn(),
-} ) );
-
 jest.mock( 'signup/step-wrapper', () => 'step-wrapper' );
 jest.mock( 'my-sites/plan-features', () => 'plan-features' );
 

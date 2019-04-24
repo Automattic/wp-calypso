@@ -13,7 +13,7 @@ import { get, isEmpty } from 'lodash';
  */
 import { cartItems } from 'lib/cart-values';
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
@@ -111,7 +111,7 @@ class SiteOrDomain extends Component {
 		const domainItem = cartItems.domainRegistration( { productSlug, domain } );
 		const siteUrl = domain;
 
-		SignupActions.submitSignupStep(
+		this.props.submitSignupStep(
 			{
 				stepName,
 				domainItem,
@@ -129,12 +129,12 @@ class SiteOrDomain extends Component {
 
 		// we can skip the next two steps in the `domain-first` flow if the
 		// user is only purchasing a domain
-		SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
-		SignupActions.submitSignupStep(
+		this.props.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
+		this.props.submitSignupStep(
 			{ stepName: 'themes', wasSkipped: true },
 			{ themeSlugWithRepo: 'pub/twentysixteen' }
 		);
-		SignupActions.submitSignupStep(
+		this.props.submitSignupStep(
 			{ stepName: 'plans-site-selected', wasSkipped: true },
 			{ cartItem: null }
 		);
@@ -151,7 +151,7 @@ class SiteOrDomain extends Component {
 		} else if ( designType === 'existing-site' ) {
 			goToNextStep();
 		} else {
-			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
+			this.props.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
 			goToStep( 'themes' );
 		}
 	};
@@ -198,13 +198,16 @@ class SiteOrDomain extends Component {
 	}
 }
 
-export default connect( state => {
-	const productsList = getAvailableProductsList( state );
-	const productsLoaded = ! isEmpty( productsList );
+export default connect(
+	state => {
+		const productsList = getAvailableProductsList( state );
+		const productsLoaded = ! isEmpty( productsList );
 
-	return {
-		isLoggedIn: !! getCurrentUserId( state ),
-		productsList,
-		productsLoaded,
-	};
-} )( localize( SiteOrDomain ) );
+		return {
+			isLoggedIn: !! getCurrentUserId( state ),
+			productsList,
+			productsLoaded,
+		};
+	},
+	{ submitSignupStep }
+)( localize( SiteOrDomain ) );

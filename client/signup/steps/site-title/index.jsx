@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -26,6 +25,7 @@ import {
 	getSiteVerticalName,
 	getSiteVerticalPreview,
 } from 'state/signup/steps/site-vertical/selectors';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -48,9 +48,7 @@ class SiteTitleStep extends Component {
 	};
 
 	componentDidMount() {
-		SignupActions.saveSignupStep( {
-			stepName: this.props.stepName,
-		} );
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
 	handleInputChange = ( { currentTarget: { value = '' } } ) => this.props.setSiteTitle( value );
@@ -58,23 +56,14 @@ class SiteTitleStep extends Component {
 	handleSubmit = event => {
 		event.preventDefault();
 
-		const { goToNextStep, flowName, siteTitle, stepName } = this.props;
+		const { flowName, siteTitle, stepName } = this.props;
 
 		this.props.setSiteTitle( siteTitle );
-
-		SignupActions.submitSignupStep(
-			{
-				stepName,
-				flowName,
-			},
-			{ siteTitle }
-		);
-
+		this.props.submitSignupStep( { stepName, flowName }, { siteTitle } );
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_title', {
 			value: siteTitle,
 		} );
-
-		goToNextStep();
+		this.props.goToNextStep();
 	};
 
 	renderSiteTitleStep = () => {
@@ -98,13 +87,7 @@ class SiteTitleStep extends Component {
 								autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 								aria-label={ fieldLabel }
 							/>
-							<Button
-								title={ this.props.translate( 'Continue' ) }
-								aria-label={ this.props.translate( 'Continue' ) }
-								primary
-								type="submit"
-								onClick={ this.handleSubmit }
-							>
+							<Button primary type="submit" onClick={ this.handleSubmit }>
 								{ this.props.translate( 'Continue' ) }
 							</Button>{' '}
 						</FormFieldset>
@@ -157,5 +140,10 @@ export default connect(
 			siteType,
 		};
 	},
-	{ recordTracksEvent, setSiteTitle }
+	{
+		recordTracksEvent,
+		setSiteTitle,
+		saveSignupStep,
+		submitSignupStep,
+	}
 )( localize( SiteTitleStep ) );

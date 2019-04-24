@@ -3,19 +3,31 @@
 /**
  * Internal dependencies
  */
-import { SIGNUP_COMPLETE_RESET, SIGNUP_DEPENDENCY_STORE_UPDATE } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import {
+	SIGNUP_DEPENDENCY_STORE_UPDATE,
+	SIGNUP_PROGRESS_SUBMIT_STEP,
+	SIGNUP_PROGRESS_COMPLETE_STEP,
+	SIGNUP_COMPLETE_RESET,
+} from 'state/action-types';
 import { dependencyStoreSchema } from './schema';
 
-export default createReducer(
-	{},
-	{
-		[ SIGNUP_DEPENDENCY_STORE_UPDATE ]: ( state = {}, { dependencies } ) => {
-			return { ...state, ...dependencies };
-		},
-		[ SIGNUP_COMPLETE_RESET ]: () => {
-			return {};
-		},
-	},
-	dependencyStoreSchema
-);
+const EMPTY = {};
+
+function reducer( state = EMPTY, action ) {
+	switch ( action.type ) {
+		case SIGNUP_DEPENDENCY_STORE_UPDATE:
+		case SIGNUP_PROGRESS_SUBMIT_STEP:
+		case SIGNUP_PROGRESS_COMPLETE_STEP:
+			return { ...state, ...action.step.providedDependencies };
+
+		case SIGNUP_COMPLETE_RESET:
+			return EMPTY;
+
+		default:
+			return state;
+	}
+}
+
+reducer.schema = dependencyStoreSchema;
+
+export default reducer;

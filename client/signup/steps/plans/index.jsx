@@ -20,7 +20,6 @@ import { getTld, isSubdomain } from 'lib/domains';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlansSkipButton from 'components/plans/plans-skip-button';
@@ -30,6 +29,7 @@ import { planHasFeature } from '../../../lib/plans';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -69,9 +69,7 @@ export class PlansStep extends Component {
 			document.head.appendChild( salesTeamScript );
 		}
 
-		SignupActions.saveSignupStep( {
-			stepName: this.props.stepName,
-		} );
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
 	onSelectPlan = cartItem => {
@@ -110,7 +108,7 @@ export class PlansStep extends Component {
 
 		const providedDependencies = { cartItem };
 
-		SignupActions.submitSignupStep( step, providedDependencies );
+		this.props.submitSignupStep( step, providedDependencies );
 
 		goToNextStep();
 	};
@@ -180,7 +178,7 @@ export class PlansStep extends Component {
 		);
 	}
 
-	plansFeaturesSelection = () => {
+	plansFeaturesSelection() {
 		const {
 			flowName,
 			stepName,
@@ -223,7 +221,7 @@ export class PlansStep extends Component {
 				backLabelText={ backLabelText }
 			/>
 		);
-	};
+	}
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
@@ -263,17 +261,20 @@ export const isDotBlogDomainRegistration = domainItem => {
 	return is_domain_registration && getTld( meta ) === 'blog';
 };
 
-export default connect( ( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
-	// Blogger plan is only available if user chose either a free domain or a .blog domain registration
-	disableBloggerPlanWithNonBlogDomain:
-		domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
-	// This step could be used to set up an existing site, in which case
-	// some descendants of this component may display discounted prices if
-	// they apply to the given site.
-	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
-	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
-	customerType: parseQs( path.split( '?' ).pop() ).customerType,
-	siteGoals: getSiteGoals( state ) || '',
-	siteType: getSiteType( state ),
-	siteSlug,
-} ) )( localize( PlansStep ) );
+export default connect(
+	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
+		disableBloggerPlanWithNonBlogDomain:
+			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
+		// This step could be used to set up an existing site, in which case
+		// some descendants of this component may display discounted prices if
+		// they apply to the given site.
+		isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
+		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+		customerType: parseQs( path.split( '?' ).pop() ).customerType,
+		siteGoals: getSiteGoals( state ) || '',
+		siteType: getSiteType( state ),
+		siteSlug,
+	} ),
+	{ saveSignupStep, submitSignupStep }
+)( localize( PlansStep ) );

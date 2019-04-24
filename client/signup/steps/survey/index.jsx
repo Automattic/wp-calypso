@@ -14,13 +14,13 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import analytics from 'lib/analytics';
 import verticals from './verticals';
 import Button from 'components/button';
 import { getStepUrl } from 'signup/utils';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import { setSurvey } from 'state/signup/steps/survey/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -42,7 +42,7 @@ class SurveyStep extends React.Component {
 		verticalList: verticals.get(),
 	};
 
-	getOtherWriteIn = () => {
+	getOtherWriteIn() {
 		return (
 			this.state.otherWriteIn ||
 			get(
@@ -51,7 +51,7 @@ class SurveyStep extends React.Component {
 				''
 			)
 		);
-	};
+	}
 
 	renderVertical = vertical => {
 		return (
@@ -74,7 +74,7 @@ class SurveyStep extends React.Component {
 		);
 	};
 
-	renderOther = () => {
+	renderOther() {
 		const otherWriteIn = this.getOtherWriteIn();
 		return (
 			<div className="survey__other">
@@ -90,9 +90,9 @@ class SurveyStep extends React.Component {
 				</p>
 			</div>
 		);
-	};
+	}
 
-	renderOptionList = () => {
+	renderOptionList() {
 		return (
 			<div className="survey__verticals-list">
 				{ this.state.verticalList.map( this.renderVertical ) }
@@ -102,7 +102,7 @@ class SurveyStep extends React.Component {
 				</Button>
 			</div>
 		);
-	};
+	}
 
 	render() {
 		const blogHeaderText = this.props.translate( "Let's create your new WordPress.com blog!" );
@@ -174,7 +174,7 @@ class SurveyStep extends React.Component {
 			siteType: this.props.surveySiteType,
 		} );
 
-		SignupActions.submitSignupStep(
+		this.props.submitSignupStep(
 			{
 				stepName: this.props.stepName,
 				stepSectionName: this.props.stepSectionName,
@@ -189,5 +189,5 @@ class SurveyStep extends React.Component {
 
 export default connect(
 	null,
-	{ setSurvey }
+	{ setSurvey, submitSignupStep }
 )( localize( SurveyStep ) );
