@@ -442,8 +442,8 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 					'The publish date shown is not the expected publish date'
 				);
 				await editorConfirmationSidebarComponent.confirmAndPublish();
-				const postEditorToolbarComponent = await PostEditorToolbarComponent.Expect( driver );
-				await postEditorToolbarComponent.waitForPostSucessNotice();
+				const noticesComponent = await NoticesComponent.Expect( driver );
+				await noticesComponent.successNoticeDisplayed();
 				const postEditorPage = await EditorPage.Expect( driver );
 				return assert(
 					await postEditorPage.postIsScheduled(),

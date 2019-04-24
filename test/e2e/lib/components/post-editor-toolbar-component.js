@@ -14,14 +14,12 @@ import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
 import PostPreviewComponent from './post-preview-component.js';
 import EditorConfirmationSidebarComponent from './editor-confirmation-sidebar-component';
+import NoticesComponent from './notices-component';
 
 export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.editor-ground-control' ) );
 		this.publishButtonSelector = By.css( '.editor-publish-button' );
-		this.successNoticeSelector = By.css(
-			'.post-editor__notice.is-success,.post-editor-notice.is-success,.notice.is-success,.post-editor-notice.is-success'
-		);
 	}
 
 	async ensureSaved( { clickSave = true } = {} ) {
@@ -64,15 +62,9 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 		);
 	}
 
-	async waitForPostSucessNotice() {
-		return await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			this.successNoticeSelector
-		);
-	}
-
 	async waitForSuccessViewPostNotice() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.successNoticeSelector );
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
+		await noticesComponent.successNoticeDisplayed();
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
 			By.css( '.notice.is-success' )
