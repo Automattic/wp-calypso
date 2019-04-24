@@ -40,7 +40,7 @@
 	word-break: break-word;
 
 	p {
-		color: var( --color-neutral-600 );
+		color: var( --color-text );
 
 		&:last-child {
 			margin-bottom: 0;
@@ -51,7 +51,7 @@
 		background: var( --color-neutral-0 );
 		border-left: 2px solid var( --color-neutral-0 );
 		border-radius: 0;
-		color: var( --color-neutral-600 );
+		color: var( --color-text );
 		margin: 8px 0 16px;
 		padding: 8px 16px;
 	}

@@ -141,7 +141,6 @@ export const SELECTED_SITE = deepFreeze( {
 		jetpack_version: '5.4',
 		main_network_site: `http://${ SITE_SLUG }`,
 		active_modules: [
-			'after-the-deadline',
 			'contact-form',
 			'custom-content-types',
 			'custom-css',

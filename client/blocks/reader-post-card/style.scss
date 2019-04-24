@@ -165,7 +165,7 @@
 		}
 
 		.reader-post-card__timestamp-link {
-			color: var( --color-neutral-light );
+			color: var( --color-text-subtle );
 		}
 
 		.reader-post-options-menu {
@@ -265,7 +265,7 @@
 // Need .reader__content to override .reader__content a
 .reader__content .reader-post-card__timestamp-link,
 .reader__content .reader-post-card__tag-link {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	margin-top: 2px;
 	cursor: pointer;
 	&:hover {
@@ -314,7 +314,7 @@
 }
 
 .reader-post-card__tags {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	display: flex;
 	flex-direction: row;
 	height: 20px;

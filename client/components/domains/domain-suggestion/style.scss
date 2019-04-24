@@ -125,11 +125,17 @@
 
 	.domain-registration-suggestion__title {
 		width: auto;
-		padding-right: 0.5em;
+		padding-right: 0.2em;
 	}
 
 	.badge {
 		align-self: center;
+	}
+
+	.domain-registration-suggestion__hsts-tooltip {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 }
 
