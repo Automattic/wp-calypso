@@ -84,12 +84,4 @@ export default function() {
 			clientRender
 		);
 	}
-
-	page( '/marketing/:domain', context => {
-		if ( config.isEnabled( 'marketing/tools' ) ) {
-			page.redirect( `/marketing/tools/${ context.params.domain }` );
-		} else {
-			redirectConnections();
-		}
-	} );
 }
