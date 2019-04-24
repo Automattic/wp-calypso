@@ -36,7 +36,7 @@ export default class NoticesComponent extends AsyncBaseContainer {
 
 	async dismissNotice() {
 		const selector = By.css( '.notice.is-dismissable .notice__dismiss' );
-		// await driverHelper.waitTillPresentAndDisplayed( this.driver, selector); // verify notice is dismissable
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 

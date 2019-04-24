@@ -12,6 +12,7 @@ import config from 'config';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import { currentScreenSize } from '../driver-manager';
+import NoticesComponent from './notices-component';
 
 export default class SecurePaymentComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -180,7 +181,8 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( 'button[data-e2e-type="apply-coupon"]' )
 		);
-		return await driverHelper.clickWhenClickable( this.driver, By.css( '.notice__dismiss' ) );
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
+		return await noticesComponent.dismissNotice();
 	}
 
 	async enterCouponCode( couponCode ) {
