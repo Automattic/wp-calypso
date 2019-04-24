@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { filter, flowRight, get, partial, some, values, xor } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -13,12 +13,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Banner from 'components/banner';
 import MultiCheckbox from 'components/forms/multi-checkbox';
 import { getPostTypes } from 'state/post-types/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import getSharingButtons from 'state/selectors/get-sharing-buttons';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { isJetpackSite, isJetpackMinimumVersion, getSiteAdminUrl } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -223,27 +224,44 @@ class SharingButtonsOptions extends Component {
 		);
 	};
 
+	getWpAdminBanner = () => {
+		const { isSharingShowAllowed, siteAdminUrl, translate } = this.props;
+		if ( isSharingShowAllowed ) {
+			return;
+		}
+		return (
+			<Banner
+				className="sharing-buttons__banner"
+				href={ `${ siteAdminUrl }options-general.php?page=sharing` }
+				title={ translate( 'Visit WP Admin for more sharing buttons options.' ) }
+			/>
+		);
+	};
+
 	render() {
 		const { initialized, saving, siteId, translate } = this.props;
 
 		return (
-			<div className="sharing-buttons__panel">
-				{ siteId && <QueryPostTypes siteId={ siteId } /> }
-				<h4>{ translate( 'Options' ) }</h4>
-				<div className="sharing-buttons__fieldset-group">
-					{ this.getSharingShowOptionsElement() }
-					{ this.getCommentLikesOptionElement() }
-					{ this.getTwitterViaOptionElement() }
-				</div>
+			<Fragment>
+				<div className="sharing-buttons__panel">
+					{ siteId && <QueryPostTypes siteId={ siteId } /> }
+					<h4>{ translate( 'Options' ) }</h4>
+					<div className="sharing-buttons__fieldset-group">
+						{ this.getSharingShowOptionsElement() }
+						{ this.getCommentLikesOptionElement() }
+						{ this.getTwitterViaOptionElement() }
+					</div>
 
-				<button
-					type="submit"
-					className="button sharing-buttons__submit"
-					disabled={ saving || ! initialized }
-				>
-					{ saving ? translate( 'Saving…' ) : translate( 'Save Changes' ) }
-				</button>
-			</div>
+					<button
+						type="submit"
+						className="button sharing-buttons__submit"
+						disabled={ saving || ! initialized }
+					>
+						{ saving ? translate( 'Saving…' ) : translate( 'Save Changes' ) }
+					</button>
+				</div>
+				{ this.getWpAdminBanner() }
+			</Fragment>
 		);
 	}
 }
@@ -265,6 +283,7 @@ const connectComponent = connect(
 			isSharingShowAllowed,
 			isTwitterButtonAllowed,
 			postTypes,
+			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			siteId,
 		};
 	},
