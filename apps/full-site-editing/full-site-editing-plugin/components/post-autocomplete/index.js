@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { map, throttle } from 'lodash';
+import { debounce, map } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -19,7 +19,7 @@ import { addQueryArgs } from '@wordpress/url';
  */
 import './style.scss';
 
-const updateSuggestions = throttle( async ( search, setState ) => {
+const updateSuggestions = debounce( async ( search, setState ) => {
 	setState( {
 		loading: true,
 		showSuggestions: true,
@@ -39,7 +39,7 @@ const updateSuggestions = throttle( async ( search, setState ) => {
 		showSuggestions: true,
 		suggestions,
 	} );
-} );
+}, 200 );
 
 const selectSuggestion = async ( suggestion, setState ) => {
 	setState( {
@@ -75,7 +75,7 @@ const PostAutocomplete = withState( {
 		showSuggestions,
 		suggestions,
 	} ) => {
-		const onChange = async inputValue => {
+		const onChange = inputValue => {
 			setState( { search: inputValue } );
 			if ( inputValue.length < 2 ) {
 				setState( {
@@ -84,7 +84,7 @@ const PostAutocomplete = withState( {
 				} );
 				return;
 			}
-			await updateSuggestions( inputValue, setState );
+			updateSuggestions( inputValue, setState );
 		};
 
 		const onClick = suggestion => async () => {
