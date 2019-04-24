@@ -10,13 +10,13 @@ import { debounce, map } from 'lodash';
 import apiFetch from '@wordpress/api-fetch';
 import { Button, Popover, Spinner, TextControl } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
-import { select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
  */
+import fetchPost from '../../lib/fetch-post';
 import './style.scss';
 
 const updateSuggestions = debounce( async ( search, setState ) => {
@@ -49,10 +49,7 @@ const selectSuggestion = async ( suggestion, setState ) => {
 		suggestions: [],
 	} );
 
-	const postType = select( 'core' ).getEntityRecord( 'root', 'postType', suggestion.subtype );
-	const selectedPost = await apiFetch( {
-		path: `/wp/v2/${ postType.rest_base }/${ suggestion.id }`,
-	} );
+	const selectedPost = await fetchPost( suggestion.id, suggestion.subtype );
 
 	setState( {
 		loading: false,
