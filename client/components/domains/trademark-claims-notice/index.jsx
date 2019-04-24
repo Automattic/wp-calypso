@@ -395,6 +395,8 @@ class TrademarkClaimsNotice extends React.Component {
 			udrpCases = [ udrpCases ];
 		}
 
+		// Note: Please don't update the language rendered here as it is specified in the RPM-Requirements of the
+		// ICANN TMCH functional specifications in: https://tools.ietf.org/html/draft-ietf-eppext-tmch-func-spec-01#ref-RPM-Requirements
 		return (
 			<div className="trademark-claims-notice__claim-item" key="claim-cases">
 				<p>

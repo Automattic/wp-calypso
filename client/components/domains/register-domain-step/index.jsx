@@ -475,10 +475,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	acceptTrademarkClaim = () => {
-		this.setState( {
-			selectedSuggestion: null,
-			trademarkClaimsNoticeInfo: null,
-		} );
+		this.props.onAddDomain( this.state.selectedSuggestion );
 	};
 
 	renderTrademarkClaimsNotice() {
