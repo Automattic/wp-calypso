@@ -40,6 +40,12 @@ export default class NoticesComponent extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
+	async clickSuccessNotice() {
+		const selector = By.css( '.notice.is-success a' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		return await driverHelper.clickWhenClickable( this.driver, selector );
+	}
+
 	async inviteNoticeContent() {
 		const selector = By.css( '.notice .invites__title' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
