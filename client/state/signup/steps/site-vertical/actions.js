@@ -31,5 +31,5 @@ export function setSiteVertical( siteVerticalData ) {
  */
 export const submitSiteVertical = ( siteVerticalData, stepName = 'site-topic' ) => dispatch => {
 	dispatch( setSiteVertical( siteVerticalData ) );
-	SignupActions.submitSignupStep( { stepName }, [], { siteTopic: siteVerticalData.name } );
+	SignupActions.submitSignupStep( { stepName }, { siteTopic: siteVerticalData.name } );
 };

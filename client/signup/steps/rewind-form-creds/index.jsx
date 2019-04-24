@@ -44,13 +44,7 @@ class RewindFormCreds extends Component {
 	 */
 	componentWillUpdate( nextProps ) {
 		if ( nextProps.rewindIsNowActive ) {
-			SignupActions.submitSignupStep(
-				{
-					stepName: this.props.stepName,
-				},
-				undefined,
-				{ rewindconfig: true }
-			);
+			SignupActions.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
 			this.props.goToNextStep();
 		}
 	}

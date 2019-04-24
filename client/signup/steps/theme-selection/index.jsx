@@ -52,7 +52,6 @@ class ThemeSelectionStep extends Component {
 				stepName: this.props.stepName,
 				repoSlug,
 			},
-			null,
 			{
 				themeSlugWithRepo: repoSlug,
 			}

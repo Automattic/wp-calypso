@@ -115,7 +115,6 @@ class DomainsStep extends React.Component {
 					isPurchasingItem: true,
 					stepSectionName: props.stepSectionName,
 				},
-				[],
 				{ domainItem }
 			);
 
@@ -183,9 +182,7 @@ class DomainsStep extends React.Component {
 
 	handleSkip = () => {
 		const domainItem = undefined;
-		SignupActions.submitSignupStep( { stepName: this.props.stepName, domainItem }, [], {
-			domainItem,
-		} );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName, domainItem }, { domainItem } );
 		this.props.goToNextStep();
 	};
 
@@ -216,7 +213,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 
@@ -245,7 +241,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 
@@ -276,7 +271,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 

@@ -308,14 +308,11 @@ class AboutStep extends Component {
 
 		//Create site
 		SignupActions.submitSignupStep(
-			{
-				stepName,
-			},
-			[],
+			{ stepName },
 			{
 				themeSlugWithRepo: themeRepo,
 				siteTitle: siteTitleValue,
-				designType: designType,
+				designType,
 				surveyQuestion: siteTopicInput,
 			}
 		);

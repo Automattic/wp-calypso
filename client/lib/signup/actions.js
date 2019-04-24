@@ -24,7 +24,7 @@ const SignupActions = {
 		} );
 	},
 
-	submitSignupStep( step, errors, providedDependencies ) {
+	submitSignupStep( step, providedDependencies ) {
 		const { stepName } = step;
 
 		// Transform the keys since tracks events only accept snaked prop names.
@@ -62,7 +62,6 @@ const SignupActions = {
 		Dispatcher.handleViewAction( {
 			type: 'SUBMIT_SIGNUP_STEP',
 			data: step,
-			errors: undefined === errors ? [] : errors,
 			providedDependencies: providedDependencies,
 		} );
 	},

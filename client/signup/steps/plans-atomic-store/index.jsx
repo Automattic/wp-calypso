@@ -98,7 +98,7 @@ export class PlansAtomicStoreStep extends Component {
 
 		const providedDependencies = { cartItem };
 
-		SignupActions.submitSignupStep( step, [], providedDependencies );
+		SignupActions.submitSignupStep( step, providedDependencies );
 
 		goToNextStep();
 	}

@@ -162,16 +162,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 				site_style: styleLabel,
 			} )
 		);
-		SignupActions.submitSignupStep(
-			{
-				stepName,
-			},
-			[],
-			{
-				siteStyle,
-				themeSlugWithRepo,
-			}
-		);
+		SignupActions.submitSignupStep( { stepName }, { siteStyle, themeSlugWithRepo } );
 
 		goToNextStep( flowName );
 	},

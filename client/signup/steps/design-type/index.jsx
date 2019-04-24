@@ -140,10 +140,10 @@ export class DesignTypeStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			designType,
-			themeSlugWithRepo,
-		} );
+		SignupActions.submitSignupStep(
+			{ stepName: this.props.stepName },
+			{ designType, themeSlugWithRepo }
+		);
 		this.props.goToNextStep();
 	}
 }
