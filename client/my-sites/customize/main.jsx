@@ -282,7 +282,7 @@ class Customize extends React.Component {
 
 	renderErrorPage = error => {
 		return (
-			<div className="main main-column customize" role="main">
+			<div className="main main-column customize customize__main-error" role="main">
 				<PageViewTracker path="/customize/:site" title="Customizer" />
 				<SidebarNavigation />
 				<EmptyContent
@@ -317,7 +317,7 @@ class Customize extends React.Component {
 
 		if ( ! this.props.site ) {
 			return (
-				<div className="main main-column customize is-iframe" role="main">
+				<div className="main main-column customize customize__main is-iframe" role="main">
 					<PageViewTracker path="/customize/:site" title="Customizer" />
 					<CustomizerLoadingPanel />
 				</div>
@@ -343,10 +343,10 @@ class Customize extends React.Component {
 			// component. If the loading takes longer than 25 seconds (see
 			// waitForLoading above) then an error will be shown.
 			return (
-				<div className="main main-column customize is-iframe" role="main">
+				<div className="main main-column customize customize__main is-iframe" role="main">
 					<PageViewTracker path="/customize/:site" title="Customizer" />
 					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
-					<iframe className={ iframeClassName } src={ iframeUrl } />
+					<iframe className={ iframeClassName } src={ iframeUrl } title="Customizer" />
 				</div>
 			);
 		}
