@@ -23,6 +23,7 @@ import EmptyContent from 'components/empty-content';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Actions from 'my-sites/customize/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { requestSite } from 'state/sites/actions';
 import { themeActivated } from 'state/themes/actions';
 import { getCustomizerFocus } from './panels';
 import getMenusUrl from 'state/selectors/get-menus-url';
@@ -127,6 +128,7 @@ class Customize extends React.Component {
 
 		debug( 'returning to previous page', path );
 		page.back( path );
+		this.props.requestSite( this.props.siteId );
 	};
 
 	navigateTo = destination => {
@@ -368,11 +370,12 @@ export default connect(
 		const siteId = get( site, 'ID' );
 		return {
 			site,
+			siteId,
 			menusUrl: getMenusUrl( state, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
 			// TODO: include panel from props?
 			customizerUrl: getCustomizerUrl( state, siteId ),
 		};
 	},
-	{ themeActivated }
+	{ requestSite, themeActivated }
 )( localize( Customize ) );
