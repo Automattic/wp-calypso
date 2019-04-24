@@ -1,22 +1,33 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import { getSitePlanSlug } from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import MarketingToolFeature from './feature';
 import MarketingToolsHeader from './header';
+import { PLAN_ECOMMERCE, PLAN_BUSINESS, PLAN_PREMIUM } from 'lib/plans/constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function MarketingTools() {
+interface MarketingToolsProps {
+	hasPremiumPlanOrGreater: boolean;
+}
+
+const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
+	hasPremiumPlanOrGreater,
+} ) => {
 	const translate = useTranslate();
 
 	return (
@@ -34,17 +45,19 @@ function MarketingTools() {
 					<Button compact>{ translate( 'Sign up' ) }</Button>
 					<Button compact>{ translate( 'Connect' ) }</Button>
 				</MarketingToolFeature>
-				<MarketingToolFeature
-					title={ translate( 'Advertise online using a $100 credit with Google Adwords' ) }
-					description={ translate(
-						'Upgrade your plan to take advantage of online advertising to improve your marketing efforts.'
-					) }
-					disclaimer={ translate(
-						'Offer valid in US after spending the first $25 on Google Ads.'
-					) }
-				>
-					<Button compact>{ translate( 'Upgrade to Premium' ) }</Button>
-				</MarketingToolFeature>
+				{ ! hasPremiumPlanOrGreater && (
+					<MarketingToolFeature
+						title={ translate( 'Advertise online using a $100 credit with Google Adwords' ) }
+						description={ translate(
+							'Upgrade your plan to take advantage of online advertising to improve your marketing efforts.'
+						) }
+						disclaimer={ translate(
+							'Offer valid in US after spending the first $25 on Google Ads.'
+						) }
+					>
+						<Button compact>{ translate( 'Upgrade to Premium' ) }</Button>
+					</MarketingToolFeature>
+				) }
 				<MarketingToolFeature
 					title={ translate( 'Make your brand stand out with a professional logo' ) }
 					description={ translate(
@@ -80,6 +93,23 @@ function MarketingTools() {
 			</div>
 		</Fragment>
 	);
-}
+};
 
-export default MarketingTools;
+MarketingTools.propTypes = {
+	hasPremiumPlanOrGreater: PropTypes.bool.isRequired,
+};
+
+MarketingTools.defaultProps = {
+	// default to true so that the section will appear ( poss. after render ) for applicable sites instead of disappearing from non-applicable sites
+	hasPremiumPlanOrGreater: true,
+};
+
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const selectedSitePlanSlug = selectedSiteId ? getSitePlanSlug( state, selectedSiteId ) : null;
+	return {
+		hasPremiumPlanOrGreater: selectedSitePlanSlug
+			? [ PLAN_ECOMMERCE, PLAN_BUSINESS, PLAN_PREMIUM ].includes( selectedSitePlanSlug )
+			: true,
+	};
+} )( MarketingTools );
