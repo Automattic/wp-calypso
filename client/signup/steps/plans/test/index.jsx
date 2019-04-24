@@ -98,7 +98,7 @@ describe( 'Plans.onSelectPlan', () => {
 		};
 		const comp = new PlansStep( myProps );
 		comp.onSelectPlan( { product_slug: PLAN_FREE } );
-		expect( myProps.goToNextStep ).toBeCalled();
+		expect( myProps.goToNextStep ).toHaveBeenCalled();
 	} );
 
 	test( 'Should call submitSignupStep with step details', () => {
@@ -107,7 +107,7 @@ describe( 'Plans.onSelectPlan', () => {
 		const comp = new PlansStep( tplProps );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
-		expect( SignupActions.submitSignupStep ).toBeCalled();
+		expect( SignupActions.submitSignupStep ).toHaveBeenCalled();
 
 		const calls = SignupActions.submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
@@ -129,7 +129,7 @@ describe( 'Plans.onSelectPlan', () => {
 		const comp = new PlansStep( myProps );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
-		expect( SignupActions.submitSignupStep ).toBeCalled();
+		expect( SignupActions.submitSignupStep ).toHaveBeenCalled();
 
 		const calls = SignupActions.submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
@@ -142,7 +142,7 @@ describe( 'Plans.onSelectPlan', () => {
 		const comp = new PlansStep( tplProps );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
-		expect( SignupActions.submitSignupStep ).toBeCalled();
+		expect( SignupActions.submitSignupStep ).toHaveBeenCalled();
 
 		const calls = SignupActions.submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
@@ -156,7 +156,7 @@ describe( 'Plans.onSelectPlan', () => {
 		const cartItem = { product_slug: PLAN_FREE, free_trial: false };
 		comp.onSelectPlan( cartItem );
 
-		expect( analytics.tracks.recordEvent ).toBeCalled();
+		expect( analytics.tracks.recordEvent ).toHaveBeenCalled();
 
 		const calls = analytics.tracks.recordEvent.mock.calls;
 		const args = calls[ calls.length - 1 ];
@@ -183,7 +183,7 @@ describe( 'Plans.onSelectPlan', () => {
 			const cartItem = { product_slug: plan };
 			const comp = new PlansStep( myProps );
 			comp.onSelectPlan( cartItem );
-			expect( myProps.goToNextStep ).toBeCalled();
+			expect( myProps.goToNextStep ).toHaveBeenCalled();
 			expect( cartItem.extra ).toEqual( {
 				is_store_signup: true,
 			} );
@@ -206,7 +206,7 @@ describe( 'Plans.onSelectPlan', () => {
 			const cartItem = { product_slug: plan };
 			const comp = new PlansStep( myProps );
 			comp.onSelectPlan( cartItem );
-			expect( myProps.goToNextStep ).toBeCalled();
+			expect( myProps.goToNextStep ).toHaveBeenCalled();
 			expect( cartItem.extra ).toEqual( undefined );
 		} );
 	} );
