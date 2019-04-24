@@ -9,11 +9,11 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ActionCard from 'components/action-card';
 import Button from 'components/button';
 import { getSitePlanSlug, hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import MarketingToolFeature from './feature';
-import MarketingToolsHeader from './header';
 import {
 	FEATURE_GOOGLE_MY_BUSINESS,
 	PLAN_ECOMMERCE,
@@ -39,7 +39,16 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 
 	return (
 		<Fragment>
-			<MarketingToolsHeader />
+			{ /* <MarketingToolsHeader /> */ }
+			<ActionCard
+				headerText={ translate( 'Drive more traffic to your site with our SEO tools' ) }
+				mainText={ translate(
+					"Optimize your site for search engines and social media by taking advantage of our SEO tools. We'll nail down important SEO strategies to get more exposure for your business."
+				) }
+				buttonText={ translate( 'Boost my traffic' ) }
+				buttonPrimary
+				illustration="/calypso/images/illustrations/illustration-404.svg"
+			/>
 			<div className="tools__feature-list">
 				<MarketingToolFeature
 					title={ translate(
