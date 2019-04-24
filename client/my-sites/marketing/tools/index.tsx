@@ -10,11 +10,16 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
+import { getSitePlanSlug, hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import MarketingToolFeature from './feature';
 import MarketingToolsHeader from './header';
-import { PLAN_ECOMMERCE, PLAN_BUSINESS, PLAN_PREMIUM } from 'lib/plans/constants';
+import {
+	FEATURE_GOOGLE_MY_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+} from 'lib/plans/constants';
 
 /**
  * Style dependencies
@@ -22,11 +27,13 @@ import { PLAN_ECOMMERCE, PLAN_BUSINESS, PLAN_PREMIUM } from 'lib/plans/constants
 import './style.scss';
 
 interface MarketingToolsProps {
-	hasPremiumPlanOrGreater: boolean;
+	hasGoogleMyBusinessAvailable: boolean;
+	planIsLessThanPremium: boolean;
 }
 
-const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
-	hasPremiumPlanOrGreater,
+export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
+	hasGoogleMyBusinessAvailable,
+	planIsLessThanPremium,
 } ) => {
 	const translate = useTranslate();
 
@@ -45,7 +52,7 @@ const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 					<Button compact>{ translate( 'Sign up' ) }</Button>
 					<Button compact>{ translate( 'Connect' ) }</Button>
 				</MarketingToolFeature>
-				{ ! hasPremiumPlanOrGreater && (
+				{ planIsLessThanPremium && (
 					<MarketingToolFeature
 						title={ translate( 'Advertise online using a $100 credit with Google Adwords' ) }
 						description={ translate(
@@ -74,14 +81,16 @@ const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 				>
 					<Button compact>{ translate( 'Start sharing' ) }</Button>
 				</MarketingToolFeature>
-				<MarketingToolFeature
-					title={ translate( 'Let your customers find you on Google' ) }
-					description={ translate(
-						'Get ahead of your competition. Be there when customers search businesses like yours on Google Search and Maps by connecting to Google My Business.'
-					) }
-				>
-					<Button compact>{ translate( 'Connect to Google My Business' ) }</Button>
-				</MarketingToolFeature>
+				{ hasGoogleMyBusinessAvailable && (
+					<MarketingToolFeature
+						title={ translate( 'Let your customers find you on Google' ) }
+						description={ translate(
+							'Get ahead of your competition. Be there when customers search businesses like yours on Google Search and Maps by connecting to Google My Business.'
+						) }
+					>
+						<Button compact>{ translate( 'Connect to Google My Business' ) }</Button>
+					</MarketingToolFeature>
+				) }
 				<MarketingToolFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
 					description={ translate(
@@ -96,20 +105,24 @@ const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 };
 
 MarketingTools.propTypes = {
-	hasPremiumPlanOrGreater: PropTypes.bool.isRequired,
+	hasGoogleMyBusinessAvailable: PropTypes.bool.isRequired,
+	planIsLessThanPremium: PropTypes.bool.isRequired,
 };
 
 MarketingTools.defaultProps = {
-	// default to true so that the section will appear ( poss. after render ) for applicable sites instead of disappearing from non-applicable sites
-	hasPremiumPlanOrGreater: true,
+	hasGoogleMyBusinessAvailable: false,
+	planIsLessThanPremium: false,
 };
 
 export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSitePlanSlug = selectedSiteId ? getSitePlanSlug( state, selectedSiteId ) : null;
 	return {
-		hasPremiumPlanOrGreater: selectedSitePlanSlug
-			? [ PLAN_ECOMMERCE, PLAN_BUSINESS, PLAN_PREMIUM ].includes( selectedSitePlanSlug )
-			: true,
+		hasGoogleMyBusinessAvailable: selectedSiteId
+			? hasFeature( state, selectedSiteId, FEATURE_GOOGLE_MY_BUSINESS )
+			: false,
+		planIsLessThanPremium: selectedSitePlanSlug
+			? ! [ PLAN_ECOMMERCE, PLAN_BUSINESS, PLAN_PREMIUM ].includes( selectedSitePlanSlug )
+			: false,
 	};
 } )( MarketingTools );
