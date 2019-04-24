@@ -75,4 +75,5 @@ export default {
 	'site-information-address-with-preview': loadStep( 'site-information' ),
 	'site-information-phone-with-preview': loadStep( 'site-information' ),
 	'domains-with-preview': loadStep( 'domains' ),
+	'site-title-with-preview': loadStep( 'site-title' ),
 };
