@@ -114,15 +114,10 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 	switch ( action.type ) {
 		case 'SAVE_SIGNUP_STEP':
 			SignupProgressStore.reduxStore.dispatch(
-				saveStep(
-					addStorableDependencies(
-						{
-							...step,
-							lastKnownFlow: currentFlowName,
-						},
-						action
-					)
-				)
+				saveStep( {
+					...step,
+					lastKnownFlow: currentFlowName,
+				} )
 			);
 			break;
 		case 'SUBMIT_SIGNUP_STEP':
