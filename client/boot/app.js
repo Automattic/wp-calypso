@@ -6,7 +6,6 @@ import './polyfills';
  * External dependencies
  */
 import debugFactory from 'debug';
-import { invoke } from 'lodash';
 import page from 'page';
 
 /**
@@ -24,18 +23,13 @@ const debug = debugFactory( 'calypso' );
 const boot = currentUser => {
 	debug( "Starting Calypso. Let's do this." );
 
-	const project = require( `./project/${ PROJECT_NAME }` );
 	utils();
-	invoke( project, 'utils' );
 	getInitialState( initialReducer ).then( initialState => {
 		const reduxStore = createReduxStore( initialState, initialReducer );
 		persistOnChange( reduxStore );
 		locales( currentUser, reduxStore );
-		invoke( project, 'locales', currentUser, reduxStore );
 		configureReduxStore( currentUser, reduxStore );
-		invoke( project, 'configureReduxStore', currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );
-		invoke( project, 'setupMiddlewares', currentUser, reduxStore );
 		detectHistoryNavigation.start();
 		page.start( { decodeURLComponents: false } );
 	} );
