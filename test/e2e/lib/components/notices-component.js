@@ -25,7 +25,7 @@ export default class NoticesComponent extends AsyncBaseContainer {
 
 	async errorNoticeDisplayed() {
 		const selector = By.css( '.notice.is-error' );
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
 	}
 
 	async getNoticeContent() {
