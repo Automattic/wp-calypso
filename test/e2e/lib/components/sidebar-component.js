@@ -24,6 +24,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			By.css( '.sidebar__heading' ),
 			itemName
 		);
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		const itemSelector = await this.driver.findElement( selector );
 		const isExpanded = await itemSelector.getAttribute( 'aria-expanded' );
 		if ( isExpanded === 'false' ) {
