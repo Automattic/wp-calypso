@@ -139,9 +139,7 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 			);
 			break;
 		case 'PROCESS_SIGNUP_STEP':
-			SignupProgressStore.reduxStore.dispatch(
-				processStep( addStorableDependencies( step, action ) )
-			);
+			SignupProgressStore.reduxStore.dispatch( processStep( step ) );
 			break;
 		case 'PROCESSED_SIGNUP_STEP':
 			SignupProgressStore.reduxStore.dispatch(
