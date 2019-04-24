@@ -305,17 +305,6 @@ export default function() {
 		);
 
 		page(
-			paths.domainTrademarkClaimsNotice( ':site' ),
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.trademarkClaimsNotice,
-			makeLayout,
-			clientRender
-		);
-
-		page(
 			paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
 			siteSelection,
 			navigation,
