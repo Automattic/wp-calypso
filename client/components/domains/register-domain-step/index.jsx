@@ -87,7 +87,6 @@ import {
 	resetSearchCount,
 	enqueueSearchStatReport,
 } from 'components/domains/register-domain-step/analytics';
-import Spinner from 'components/spinner';
 import Button from 'components/button';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
@@ -495,19 +494,14 @@ class RegisterDomainStep extends React.Component {
 		} );
 		return (
 			<CompactCard className={ className }>
-				<div className="register-domain-step__next-page-content">
-					<Button
-						borderless
-						className="register-domain-step__next-page-button"
-						disabled={ isLoading }
-						onClick={ this.showNextPage }
-					>
-						{ this.props.translate( 'Show more results' ) }
-					</Button>
-				</div>
-				<div className="register-domain-step__next-page-loader">
-					<Spinner size={ 20 } />
-				</div>
+				<Button
+					className="register-domain-step__next-page-button"
+					disabled={ isLoading }
+					busy={ isLoading }
+					onClick={ this.showNextPage }
+				>
+					{ this.props.translate( 'Show more results' ) }
+				</Button>
 			</CompactCard>
 		);
 	}
