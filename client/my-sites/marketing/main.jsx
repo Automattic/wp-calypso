@@ -86,7 +86,7 @@ export const Sharing = ( {
 	const selected = find( filters, { route: path } );
 
 	return (
-		<Main className="sharing">
+		<Main wideLayout className="sharing">
 			<DocumentHead title={ translate( 'Sharing' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
