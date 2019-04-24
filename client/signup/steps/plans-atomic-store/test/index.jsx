@@ -107,7 +107,6 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 
 		const calls = SignupActions.submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
-		expect( typeof args[ 0 ].processingMessage ).toEqual( 'string' );
 		expect( args[ 0 ].stepName ).toEqual( 'Step name' );
 		expect( args[ 0 ].stepSectionName ).toEqual( 'Step section name' );
 		expect( args[ 0 ].cartItem ).toBe( cartItem );

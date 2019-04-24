@@ -214,11 +214,10 @@ describe( 'reducer', () => {
 		} );
 		describe( 'saving an existing step', () => {
 			test( 'should update the step with a "pending" status if the step has a corresponding API request function', () => {
-				// It should also drop processingMessage and wasSkipped values
+				// It should also drop the wasSkipped value
 				const initialState = [
 					{
 						stepName: 'stepWithAPI',
-						processingMessage: 'something',
 						wasSkipped: true,
 					},
 				];
@@ -235,11 +234,10 @@ describe( 'reducer', () => {
 				expect( reducer( initialState, action ) ).toEqual( finalState );
 			} );
 			test( 'should update the step with a "completed" status if the step does not have a corresponding API request function', () => {
-				// It should also drop processingMessage and wasSkipped values
+				// It should also drop the wasSkipped value
 				const initialState = [
 					{
 						stepName: 'stepWithoutAPI',
-						processingMessage: 'something',
 						wasSkipped: true,
 					},
 				];

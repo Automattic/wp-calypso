@@ -7,7 +7,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { isEmpty, intersection } from 'lodash';
+import { intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
@@ -81,7 +81,6 @@ export class PlansStep extends Component {
 			stepName,
 			flowName,
 			goToNextStep,
-			translate,
 		} = this.props;
 
 		if ( cartItem ) {
@@ -109,9 +108,6 @@ export class PlansStep extends Component {
 		}
 
 		const step = {
-			processingMessage: isEmpty( cartItem )
-				? translate( 'Free plan selected' )
-				: translate( 'Adding your plan' ),
 			stepName,
 			stepSectionName,
 			cartItem,

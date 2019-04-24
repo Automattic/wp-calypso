@@ -44,7 +44,6 @@ class CredsPermissionStep extends Component {
 
 		SignupActions.submitSignupStep(
 			{
-				processingMessage: this.props.translate( 'Setting up your site' ),
 				stepName: this.props.stepName,
 			},
 			undefined,
