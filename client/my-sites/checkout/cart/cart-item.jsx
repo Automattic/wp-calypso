@@ -280,15 +280,17 @@ export class CartItem extends React.Component {
 
 	removeButton() {
 		const { cart, cartItem, translate } = this.props;
+		const labelText = translate( 'Remove item' );
 
 		if ( canRemoveFromCart( cart, cartItem ) ) {
 			return (
 				<button
 					className="cart__remove-item"
 					onClick={ this.removeFromCart }
-					aria-label={ translate( 'Remove item' ) }
+					aria-label={ labelText }
+					title={ labelText }
 				>
-					<Gridicon icon="trash" size={ 18 } />
+					<Gridicon icon="trash" size={ 24 } />
 				</button>
 			);
 		}

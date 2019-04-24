@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import InviteHeader from 'my-sites/invites/invite-header';
 import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
 import { login } from 'lib/paths';
@@ -230,7 +229,6 @@ class InviteAccept extends React.Component {
 							{ this.renderNoticeAction() }
 						</Notice>
 					) }
-					{ ! this.isInvalidInvite() && <InviteHeader { ...invite } /> }
 					{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
 				</div>
 			</div>

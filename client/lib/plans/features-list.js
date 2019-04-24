@@ -3,12 +3,15 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import i18n from 'i18n-calypso';
 import { invoke } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import * as constants from './constants';
+import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
 
 export const FEATURES_LIST = {
 	[ constants.FEATURE_BLANK ]: {
@@ -114,10 +117,23 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_FREE_DOMAIN ]: {
 		getSlug: () => constants.FEATURE_FREE_DOMAIN,
-		getTitle: () => i18n.translate( 'Free domain for one year' ),
+		getTitle: () => i18n.translate( 'Free Domain for One Year' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get a free domain for one year. Premium domains not included. Your domain will renew at its regular price.'
+				'Get a free domain for one year. ' +
+					'Premium domains not included. ' +
+					'Your domain will renew at its {{a}}regular price{{/a}}.',
+				{
+					components: {
+						a: (
+							<a
+								href={ DOMAIN_PRICING_AND_AVAILABLE_TLDS }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
 			),
 	},
 
@@ -306,7 +322,20 @@ export const FEATURES_LIST = {
 			}
 
 			return i18n.translate(
-				'Get a free domain for one year. Premium domains not included. Your domain will renew at its regular price.'
+				'Get a free domain for one year. ' +
+					'Premium domains not included. ' +
+					'Your domain will renew at its {{a}}regular price{{/a}}.',
+				{
+					components: {
+						a: (
+							<a
+								href={ DOMAIN_PRICING_AND_AVAILABLE_TLDS }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
 			);
 		},
 	},

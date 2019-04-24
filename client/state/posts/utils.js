@@ -42,7 +42,6 @@ import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
-import postNormalizer from 'lib/post-normalizer';
 
 /**
  * Constants
@@ -675,25 +674,6 @@ export const isPage = function( post ) {
 	return post && 'page' === post.type;
 };
 
-export const normalizeSync = function( post, callback ) {
-	const imageWidth = 653;
-	postNormalizer(
-		post,
-		[
-			postNormalizer.decodeEntities,
-			postNormalizer.stripHTML,
-			postNormalizer.safeImageProperties( imageWidth ),
-			postNormalizer.withContentDOM( [
-				postNormalizer.content.removeStyles,
-				postNormalizer.content.makeImagesSafe( imageWidth ),
-				postNormalizer.content.detectMedia,
-			] ),
-			postNormalizer.pickCanonicalImage,
-		],
-		callback
-	);
-};
-
 export const getVisibility = function( post ) {
 	if ( ! post ) {
 		return null;
@@ -708,10 +688,6 @@ export const getVisibility = function( post ) {
 	}
 
 	return 'public';
-};
-
-export const normalizeAsync = function( post, callback ) {
-	postNormalizer( post, [ postNormalizer.keepValidImages( 72, 72 ) ], callback );
 };
 
 export const removeSlug = function( path ) {

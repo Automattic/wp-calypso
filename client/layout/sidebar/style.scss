@@ -621,6 +621,10 @@ form.sidebar__button input {
 		.gridicons-external {
 			display: inline-block;
 		}
+		
+		.selected svg {
+			fill: var( --sidebar-menu-selected-a-color );
+		}
 	
 		&.is-togglable {
 			.sidebar__menu-list {

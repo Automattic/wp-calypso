@@ -66,7 +66,7 @@
 /test @Automattic/team-calypso
 
 # Types, TypeScript, and type annotations
-*.ts *.tsx @Automattic/type-review
+*.ts *.tsx docs/coding-guidelines/typescript* @Automattic/type-review
 
 # G Suite
 /client/blocks/gsuite-stats-nudge @Automattic/amber

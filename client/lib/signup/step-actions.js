@@ -456,7 +456,7 @@ export function createAccount(
 				if ( errors ) {
 					callback( errors );
 				} else {
-					analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
+					analytics.recordSocialRegistration();
 					callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 				}
 			}
