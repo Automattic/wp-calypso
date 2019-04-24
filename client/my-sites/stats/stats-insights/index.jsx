@@ -26,7 +26,6 @@ import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import StatsFirstView from '../stats-first-view';
 import SectionHeader from 'components/section-header';
 import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
@@ -57,7 +56,6 @@ const StatsInsights = props => {
 		<Main wideLayout>
 			<DocumentHead title={ translate( 'Stats' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
-			<StatsFirstView />
 			<SidebarNavigation />
 			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
 			<div>
