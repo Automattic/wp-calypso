@@ -39,6 +39,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'is_domain_only',
 	'is_mapped_domain',
 	'is_redirect',
+	'is_wpcom_atomic',
 	'is_wpcom_store',
 	'woocommerce_is_active',
 	'jetpack_version',
