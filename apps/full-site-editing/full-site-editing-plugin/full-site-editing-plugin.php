@@ -14,6 +14,12 @@ class A8C_Full_Site_Editing {
 
 		add_action( 'init', array( $this, 'register_script_and_style' ), 100 );
 		add_action( 'init', array( $this, 'register_blocks' ), 100 );
+		add_action( 'init', array( $this, 'register_wp_template' ) );
+	}
+
+	function register_wp_template() {
+		require_once plugin_dir_path( __FILE__ ) . 'wp-template.php';
+		fse_register_wp_template();
 	}
 
 	function register_script_and_style() {
