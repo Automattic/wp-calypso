@@ -40,6 +40,10 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		a {
 			font-weight: 600;
 		}
+
+		@include breakpoint( '<660px' ) {
+			margin: 40px 0;
+		}
 	}
 }
 
@@ -132,6 +136,10 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 			margin: 0 15px 0 0;
 			height: 22px;
 			width: 22px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			margin-bottom: 20px;
 		}
 	}
 
@@ -277,6 +285,10 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	color: var( --color-neutral-500 );
 	margin-top: 20px;
 	padding: 0 20px;
+
+	@include breakpoint( '<660px' ) {
+		margin-top: 40px;
+	}
 }
 
 .signup-form__crowdsignal-footer {
