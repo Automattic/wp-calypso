@@ -195,31 +195,43 @@ class SharingButtonsOptions extends Component {
 		);
 	}
 
-	render() {
-		const { initialized, saving, settings, siteId, translate } = this.props;
+	getSharingShowOptionsElement = () => {
+		const { initialized, isSharingShowAllowed, settings, translate } = this.props;
+
+		if ( ! isSharingShowAllowed ) {
+			return;
+		}
+
 		const changeSharingPostTypes = partial( this.handleMultiCheckboxChange, 'sharing_show' );
+		return (
+			<fieldset className="sharing-buttons__fieldset">
+				<legend className="sharing-buttons__fieldset-heading">
+					{ translate( 'Show sharing buttons on', {
+						context: 'Sharing options: Header',
+						comment:
+							'Possible values are: "Front page, Archive Pages, and Search Results", "Posts", "Pages", "Media"',
+					} ) }
+				</legend>
+				<MultiCheckbox
+					name="sharing_show"
+					options={ this.getDisplayOptions() }
+					checked={ settings.sharing_show }
+					onChange={ changeSharingPostTypes }
+					disabled={ ! initialized }
+				/>
+			</fieldset>
+		);
+	};
+
+	render() {
+		const { initialized, saving, siteId, translate } = this.props;
 
 		return (
 			<div className="sharing-buttons__panel">
 				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				<h4>{ translate( 'Options' ) }</h4>
 				<div className="sharing-buttons__fieldset-group">
-					<fieldset className="sharing-buttons__fieldset">
-						<legend className="sharing-buttons__fieldset-heading">
-							{ translate( 'Show sharing buttons on', {
-								context: 'Sharing options: Header',
-								comment:
-									'Possible values are: "Front page, Archive Pages, and Search Results", "Posts", "Pages", "Media"',
-							} ) }
-						</legend>
-						<MultiCheckbox
-							name="sharing_show"
-							options={ this.getDisplayOptions() }
-							checked={ settings.sharing_show }
-							onChange={ changeSharingPostTypes }
-							disabled={ ! initialized }
-						/>
-					</fieldset>
+					{ this.getSharingShowOptionsElement() }
 					{ this.getCommentLikesOptionElement() }
 					{ this.getTwitterViaOptionElement() }
 				</div>
@@ -242,12 +254,15 @@ const connectComponent = connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const isTwitterButtonAllowed =
 			! isJetpack || isJetpackMinimumVersion( state, siteId, '3.4-dev' );
+		const isSharingShowAllowed = ! isJetpack || isJetpackMinimumVersion( state, siteId, '7.3' );
+
 		const postTypes = filter( values( getPostTypes( state, siteId ) ), 'public' );
 
 		return {
 			buttons: getSharingButtons( state, siteId ),
 			initialized: !! postTypes || !! getSiteSettings( state, siteId ),
 			isJetpack,
+			isSharingShowAllowed,
 			isTwitterButtonAllowed,
 			postTypes,
 			siteId,
