@@ -53,6 +53,8 @@
 }
 
 .tools__feature-list-item {
+	display: flex;
+	flex-direction: column;
 	margin: 0.5em;
 	width: calc( 100% - 1em );
 	@include breakpoint( '>1040px' ) {
@@ -63,4 +65,17 @@
 .tools__feature-list-item-disclaimer {
 	color: var( --color-text-subtle );
 	font-style: italic;
+}
+
+.tools__feature-list-item-body {
+	// grow this, leave buttons on the bottom of the card
+	flex: 1 0 auto;
+}
+
+.tools__feature-list-item-child-row {
+	display: flex;
+	justify-content: end;
+	> * {
+		margin: 0 0.5em;
+	}
 }
