@@ -425,9 +425,8 @@ $devdocs-max-width: 720px;
 		padding: 1px 5px 2px;
 		border-radius: 3px;
 
-		&.status-awaiting-fixes {
+		&.status-needs-author-reply {
 			background: #ea652d;
-			color: $invert;
 		}
 
 		&.status-needs-review {

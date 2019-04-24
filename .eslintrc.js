@@ -48,8 +48,6 @@ module.exports = {
 	globals: {
 		// this is our custom function that's transformed by babel into either a dynamic import or a normal require
 		asyncRequire: true,
-		// this is the name of the project from the build config. Injected at boot in a script tag.
-		PROJECT_NAME: true,
 		// this is the SHA of the current commit. Injected at boot in a script tag.
 		COMMIT_SHA: true,
 		// this is when Webpack last built the bundle
