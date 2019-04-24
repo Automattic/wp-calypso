@@ -18,6 +18,7 @@ import QueryPublicizeConnections from 'components/data/query-publicize-connectio
 import SharingServicesGroup from './services-group';
 
 const SharingConnections = ( { translate } ) => (
+	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	<div className="sharing-settings sharing-connections">
 		<PageViewTracker path="/marketing/connections/:site" title="Marketing > Connections" />
 		<QueryKeyringConnections />

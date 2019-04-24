@@ -86,6 +86,7 @@ export const Sharing = ( {
 	const selected = find( filters, { route: path } );
 
 	return (
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
 			<DocumentHead title={ translate( 'Sharing' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
