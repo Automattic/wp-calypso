@@ -81,16 +81,18 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 				>
 					<Button compact>{ translate( 'Start sharing' ) }</Button>
 				</MarketingToolFeature>
-				{ hasGoogleMyBusinessAvailable && (
-					<MarketingToolFeature
-						title={ translate( 'Let your customers find you on Google' ) }
-						description={ translate(
-							'Get ahead of your competition. Be there when customers search businesses like yours on Google Search and Maps by connecting to Google My Business.'
-						) }
-					>
-						<Button compact>{ translate( 'Connect to Google My Business' ) }</Button>
-					</MarketingToolFeature>
-				) }
+				<MarketingToolFeature
+					title={ translate( 'Let your customers find you on Google' ) }
+					description={ translate(
+						'Get ahead of your competition. Be there when customers search businesses like yours on Google Search and Maps by connecting to Google My Business.'
+					) }
+				>
+					<Button compact>
+						{ hasGoogleMyBusinessAvailable
+							? translate( 'Connect to Google My Business' )
+							: translate( 'Upgrade to Business' ) }
+					</Button>
+				</MarketingToolFeature>
 				<MarketingToolFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
 					description={ translate(
