@@ -19,25 +19,42 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import PostAutocomplete from '../../components/post-autocomplete';
+import fetchPost from '../../lib/fetch-post';
 import './style.scss';
+
+const setSelectedPost = async ( attributes, setState ) => {
+	const { selectedPostId, selectedPostType } = attributes;
+	const selectedPost = await fetchPost( selectedPostId, selectedPostType );
+	setState( {
+		selectedPost,
+	} );
+};
 
 const edit = compose(
 	withState( {
 		isEditing: false,
+		selectedPost: null,
 	} )
-)( ( { attributes, isEditing, setAttributes, setState } ) => {
-	const { align, selectedPost } = attributes;
+)( ( { attributes, isEditing, selectedPost, setAttributes, setState } ) => {
+	const { align, selectedPostId } = attributes;
+
+	if ( !! selectedPostId && ! selectedPost ) {
+		setSelectedPost( attributes, setState );
+	}
 
 	const toggleEditing = () => setState( { isEditing: ! isEditing } );
 
 	const onSelectPost = post => {
-		setState( { isEditing: false } );
-		setAttributes( { selectedPost: post } );
+		setState( { isEditing: false, selectedPost: post } );
+		setAttributes( {
+			selectedPostId: get( post, 'id' ),
+			selectedPostType: get( post, 'type' ),
+		} );
 	};
 
-	const showToggleButton = ! isEditing || !! selectedPost;
-	const showPlaceholder = isEditing || ! selectedPost;
-	const showPreview = ! isEditing && !! selectedPost;
+	const showToggleButton = ! isEditing || !! selectedPostId;
+	const showPlaceholder = isEditing || ! selectedPostId;
+	const showPreview = ! isEditing && !! selectedPostId;
 
 	return (
 		<Fragment>
@@ -71,8 +88,8 @@ const edit = compose(
 								selectedPostTitle={ get( selectedPost, 'title.rendered' ) }
 								onSelectPost={ onSelectPost }
 							/>
-							{ !! selectedPost && (
-								<a href={ `?post=${ selectedPost.id }&action=edit` }>{ __( 'Edit' ) }</a>
+							{ !! selectedPostId && (
+								<a href={ `?post=${ selectedPostId }&action=edit` }>{ __( 'Edit' ) }</a>
 							) }
 						</div>
 					</Placeholder>
@@ -93,7 +110,8 @@ registerBlockType( 'a8c/content-preview', {
 	icon: 'layout',
 	category: 'layout',
 	attributes: {
-		selectedPost: { type: 'object' },
+		selectedPostId: { type: 'number' },
+		selectedPostType: { type: 'string' },
 	},
 	supports: {
 		align: [ 'wide', 'full' ],
