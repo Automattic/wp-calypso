@@ -7,13 +7,13 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { defer } from 'lodash';
+import { defer, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 
@@ -27,6 +27,9 @@ class TrademarkClaimsNotice extends React.Component {
 		isSignupStep: PropTypes.bool,
 		onAccept: PropTypes.func,
 		onReject: PropTypes.func,
+		recordAcknowledgeTrademarkButtonClickInTrademarkNotice: PropTypes.func,
+		recordChooseAnotherDomainButtonClickInTrademarkNotice: PropTypes.func,
+		recordShowTrademarkNoticeButtonClickInTrademarkNotice: PropTypes.func,
 		suggestion: PropTypes.object,
 		trademarkClaimsNoticeInfo: PropTypes.object,
 	};
@@ -96,9 +99,11 @@ class TrademarkClaimsNotice extends React.Component {
 	};
 
 	showNotice = () => {
+		const domainName = get( this.props, 'suggestion.domain_name' );
 		this.setState( { showFullNotice: true } );
 		window.addEventListener( 'scroll', this.handleScroll );
 		defer( this.checkWindowIsScrollable );
+		this.props.recordShowTrademarkNoticeButtonClickInTrademarkNotice( domainName );
 	};
 
 	renderShowNoticeLink = () => {
@@ -110,17 +115,29 @@ class TrademarkClaimsNotice extends React.Component {
 		);
 	};
 
+	onAccept = () => {
+		const domainName = get( this.props, 'suggestion.domain_name' );
+		this.props.recordAcknowledgeTrademarkButtonClickInTrademarkNotice( domainName );
+		this.props.onAccept();
+	};
+
+	onReject = () => {
+		const domainName = get( this.props, 'suggestion.domain_name' );
+		this.props.recordChooseAnotherDomainButtonClickInTrademarkNotice( domainName );
+		this.props.onReject();
+	};
+
 	renderNoticeActions = () => {
-		const { onAccept, onReject, translate } = this.props;
+		const { translate } = this.props;
 		const { hasScrolledToBottom } = this.state;
 		return (
 			<div className="trademark-claims-notice__layout">
 				<div className="trademark-claims-notice__actions-background">
 					<CompactCard className="trademark-claims-notice__actions">
-						<Button borderless onClick={ onReject } disabled={ ! hasScrolledToBottom }>
+						<Button borderless onClick={ this.onReject } disabled={ ! hasScrolledToBottom }>
 							{ translate( 'Choose Another Domain' ) }
 						</Button>
-						<Button primary onClick={ onAccept } disabled={ ! hasScrolledToBottom }>
+						<Button primary onClick={ this.onAccept } disabled={ ! hasScrolledToBottom }>
 							{ translate( 'Acknowledge Trademark' ) }
 						</Button>
 					</CompactCard>
@@ -494,16 +511,53 @@ class TrademarkClaimsNotice extends React.Component {
 	}
 }
 
-const recordAcknowledgeButtonClickInTrademarkClaimsNotice = domain_name =>
-	recordTracksEvent( 'calypso_trademark_claims_notice_acknowledge_click', { domain_name } );
+export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = domainName =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Search',
+			'Clicked "Show Trademark Notice" on the Trademark Notice page in the Domain Search Step',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent( 'calypso_show_trademark_notice_click', {
+			domain_name: domainName,
+			section: 'domains',
+		} )
+	);
 
-const recordRejectButtonClickInTrademarkClaimsNotice = domain_name =>
-	recordTracksEvent( 'calypso_trademark_claims_notice_reject_click', { domain_name } );
+export const recordChooseAnotherDomainButtonClickInTrademarkNotice = domainName =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Search',
+			'Clicked "Choose Another Domain" on the Trademark Notice page in the Domain Search Step',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent( 'calypso_choose_another_domain_trademark_notice_click', {
+			domain_name: domainName,
+			section: 'domains',
+		} )
+	);
+
+export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = domainName =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Search',
+			'Clicked "Acknowledge Trademark" on the Trademark Notice page in the Domain Search Step',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent( 'calypso_acknowledge_trademark_notice_click', {
+			domain_name: domainName,
+			section: 'domains',
+		} )
+	);
 
 export default connect(
 	() => ( {} ),
 	{
-		recordAcknowledgeButtonClickInTrademarkClaimsNotice,
-		recordRejectButtonClickInTrademarkClaimsNotice,
+		recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
+		recordChooseAnotherDomainButtonClickInTrademarkNotice,
+		recordShowTrademarkNoticeButtonClickInTrademarkNotice,
 	}
 )( localize( TrademarkClaimsNotice ) );
