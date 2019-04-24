@@ -64,7 +64,10 @@ export class ConciergeQuickstartSession extends React.Component {
 
 		return (
 			<Main className="concierge-quickstart-session">
-				<PageViewTracker path="/checkout/:site/add-support-session/:receipt_id" title={ title } />
+				<PageViewTracker
+					path="/checkout/:site/add-quickstart-session/:receipt_id"
+					title={ title }
+				/>
 				<DocumentHead title={ title } />
 				<QuerySites siteId={ selectedSiteId } />
 				{ ! hasProductsList && <QueryProductsList /> }
