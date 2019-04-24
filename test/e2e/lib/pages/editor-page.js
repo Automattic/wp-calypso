@@ -281,7 +281,7 @@ export default class EditorPage extends AsyncBaseContainer {
 
 	async errorDisplayed() {
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
-		return await noticesComponent.errorNoticeDisplayed();
+		return await noticesComponent.waitForerrorNoticeDisplayed();
 	}
 
 	async ensureContactFormDisplayedInPost() {
