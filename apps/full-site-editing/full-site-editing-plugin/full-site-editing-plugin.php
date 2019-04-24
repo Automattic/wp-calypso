@@ -45,12 +45,16 @@ class A8C_Full_Site_Editing {
 		);
 	}
 
+	// We only need to declare script and style as dependencies once
+	// Because they'll be then enqueued for every block.
 	function register_blocks() {
 		register_block_type( 'a8c/content-slot', array(
 			'editor_script'   => 'a8c-full-site-editing-script',
 			'editor_style'    => 'a8c-full-site-editing-style',
 			'render_callback' => 'render_content_slot_block',
 		 ) );
+
+		register_block_type( 'a8c/content-renderer' );
 	}
 }
 
