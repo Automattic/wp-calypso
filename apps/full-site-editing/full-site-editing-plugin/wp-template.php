@@ -68,8 +68,6 @@ class A8C_REST_Templates_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Checks if a block can be read.
 	 *
-	 * @since 5.0.0
-	 *
 	 * @param object $post Post object that backs the block.
 	 * @return bool Whether the block can be read.
 	 */
@@ -85,8 +83,6 @@ class A8C_REST_Templates_Controller extends WP_REST_Posts_Controller {
 
 	/**
 	 * Filters a response based on the context defined in the schema.
-	 *
-	 * @since 5.0.0
 	 *
 	 * @param array  $data    Response data to fiter.
 	 * @param string $context Context defined in the schema.
@@ -108,8 +104,6 @@ class A8C_REST_Templates_Controller extends WP_REST_Posts_Controller {
 
 	/**
 	 * Retrieves the block's schema, conforming to JSON Schema.
-	 *
-	 * @since 5.0.0
 	 *
 	 * @return array Item schema data.
 	 */
