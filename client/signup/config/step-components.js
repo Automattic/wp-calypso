@@ -44,11 +44,6 @@ export default {
 	'rewind-were-backing': loadStep( 'rewind-were-backing' ),
 	'rewind-add-creds': loadStep( 'rewind-add-creds' ),
 	'rewind-form-creds': loadStep( 'rewind-form-creds' ),
-	'site-information': loadStep( 'site-information' ),
-	'site-information-without-domains': loadStep( 'site-information' ),
-	'site-information-title': loadStep( 'site-information' ),
-	'site-information-address': loadStep( 'site-information' ),
-	'site-information-phone': loadStep( 'site-information' ),
 	'site-or-domain': loadStep( 'site-or-domain' ),
 	'site-picker': loadStep( 'site-picker' ),
 	'site-style': loadStep( 'site-style' ),
@@ -70,10 +65,6 @@ export default {
 	// Steps with preview
 	'site-style-with-preview': loadStep( 'site-style' ),
 	'site-topic-with-preview': loadStep( 'site-topic' ),
-	'site-information-with-preview': loadStep( 'site-information' ),
-	'site-information-title-with-preview': loadStep( 'site-information' ),
-	'site-information-address-with-preview': loadStep( 'site-information' ),
-	'site-information-phone-with-preview': loadStep( 'site-information' ),
 	'domains-with-preview': loadStep( 'domains' ),
 	'site-title-with-preview': loadStep( 'site-title' ),
 };

@@ -14,8 +14,6 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-/*import SignupSiteTitle from 'components/signup-site-title';
-import SiteTitleExample from 'components/site-title-example';*/
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
@@ -60,8 +58,10 @@ class SiteTitleStep extends Component {
 
 	handleInputChange = ( { currentTarget: { value = '' } } ) => this.props.setSiteTitle( value );
 
-	submitSiteTitleStep = siteTitle => {
-		const { goToNextStep, flowName, stepName } = this.props;
+	handleSubmit = event => {
+		event.preventDefault();
+
+		const { goToNextStep, flowName, siteTitle, stepName, translate } = this.props;
 
 		this.props.setSiteTitle( siteTitle );
 
@@ -70,6 +70,7 @@ class SiteTitleStep extends Component {
 				stepName,
 				flowName,
 			},
+			[],
 			{ siteTitle }
 		);
 

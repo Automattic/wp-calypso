@@ -243,8 +243,8 @@ const Flows = {
 			flow = Flows.removeStepFromFlow( 'domains-with-preview', flow );
 			flow = replaceStepInFlow(
 				flow,
-				'site-information-title-with-preview',
-				'site-information-without-domains'
+				'site-title-with-preview',
+				'site-title-without-domains'
 			);
 
 			return flow;

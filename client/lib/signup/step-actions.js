@@ -31,7 +31,6 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteVerticalId, getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
-import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
@@ -152,7 +151,6 @@ export function createSiteWithCart(
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
-	const siteInformation = getSiteInformation( state );
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 
 	const newSiteParams = {
@@ -165,7 +163,6 @@ export function createSiteWithCart(
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
-			site_information: siteInformation || undefined,
 			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
 		},
