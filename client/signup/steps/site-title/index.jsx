@@ -61,7 +61,7 @@ class SiteTitleStep extends Component {
 	handleSubmit = event => {
 		event.preventDefault();
 
-		const { goToNextStep, flowName, siteTitle, stepName, translate } = this.props;
+		const { goToNextStep, flowName, siteTitle, stepName } = this.props;
 
 		this.props.setSiteTitle( siteTitle );
 
@@ -70,12 +70,11 @@ class SiteTitleStep extends Component {
 				stepName,
 				flowName,
 			},
-			[],
 			{ siteTitle }
 		);
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_information', {
-			user_entered_title: !! siteTitle,
+		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_title', {
+			value: siteTitle,
 		} );
 
 		goToNextStep();
