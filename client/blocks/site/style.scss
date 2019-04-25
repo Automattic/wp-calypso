@@ -76,6 +76,10 @@
 	}
 }
 
+button.site__content {
+	text-align: left;
+}
+
 // Adjusts the SiteIcon component for use
 // within a Site item
 .site .site-icon {
@@ -136,7 +140,7 @@
 	top: 17px;
 
 	.gridicon {
-		margin-top: 5px;
+		margin-top: 7px;
 		vertical-align: middle;
 	}
 

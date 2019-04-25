@@ -9,13 +9,18 @@ import classnames from 'classnames';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
-import { getSite } from 'state/sites/selectors';
+import { getSite, isSitePreviewable } from 'state/sites/selectors';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
 class Site extends React.Component {
 	static defaultProps = {
@@ -68,6 +73,33 @@ class Site extends React.Component {
 		this.props.onMouseLeave( event, this.props.site.ID );
 	};
 
+	onViewSiteClick = event => {
+		const { isPreviewable, siteSuffix } = this.props;
+
+		if ( ! isPreviewable ) {
+			this.trackMenuItemClick( 'view_site_unpreviewable' );
+			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Unpreviewable' );
+			return;
+		}
+
+		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
+			this.trackMenuItemClick( 'view_site_modifier' );
+			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Modifier Key' );
+			return;
+		}
+
+		event.preventDefault();
+		this.trackMenuItemClick( 'view_site' );
+		this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Calypso' );
+		page( '/view' + siteSuffix );
+	};
+
+	trackMenuItemClick = menuItemName => {
+		this.props.recordTracksEvent(
+			'calypso_mysites_sidebar_' + menuItemName.replace( /-/g, '_' ) + '_clicked'
+		);
+	};
+
 	render() {
 		const { site, translate } = this.props;
 
@@ -90,11 +122,9 @@ class Site extends React.Component {
 
 		return (
 			<div className={ siteClass }>
-				<a
+				<button
 					className="site__content"
-					href={ this.props.homeLink ? site.URL : this.props.href }
 					data-tip-target={ this.props.tipTarget }
-					target={ this.props.externalLink && '_blank' }
 					title={
 						this.props.homeLink
 							? translate( 'View %(domain)s', {
@@ -102,7 +132,7 @@ class Site extends React.Component {
 							  } )
 							: site.domain
 					}
-					onClick={ this.onSelect }
+					onClick={ this.onViewSiteClick }
 					onMouseEnter={ this.onMouseEnter }
 					onMouseLeave={ this.onMouseLeave }
 					aria-label={
@@ -148,13 +178,32 @@ class Site extends React.Component {
 							<Gridicon icon="house" size={ 18 } />
 						</span>
 					) }
-				</a>
+				</button>
 				{ this.props.indicator ? <SiteIndicator site={ site } /> : null }
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, { siteId, site } ) => ( {
-	site: siteId ? getSite( state, siteId ) : site,
-} ) )( localize( Site ) );
+function mapStateToProps( state ) {
+	const currentUser = getCurrentUser( state );
+	const selectedSiteId = getSelectedSiteId( state );
+	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
+	const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
+	const site = getSite( state, siteId );
+
+	return {
+		isPreviewable: isSitePreviewable( state, siteId ),
+		siteId,
+		site,
+		siteSuffix: site ? '/' + site.slug : '',
+	};
+}
+
+export default connect(
+	mapStateToProps,
+	{
+		recordGoogleEvent,
+		recordTracksEvent,
+	}
+)( localize( Site ) );
