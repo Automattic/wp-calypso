@@ -46,9 +46,11 @@ export class CartPlanAd extends Component {
 		const domainRegistrations = cartItems.getDomainRegistrations( cart );
 		const isDomainPremium =
 			domainRegistrations.length === 1 && get( domainRegistrations[ 0 ], 'extra.premium', false );
+		const hasRenewalItem = cartItems.hasRenewalItem( cart );
 
 		return (
 			! isDomainOnly &&
+			! hasRenewalItem &&
 			cart.hasLoadedFromServer &&
 			! cart.hasPendingServerUpdates &&
 			! cartItems.hasDomainCredit( cart ) &&
