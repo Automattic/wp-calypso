@@ -113,10 +113,16 @@ export class UserStep extends Component {
 				} );
 			} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				subHeaderText = translate(
-					'By creating an account via any of the options below,{{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
+					'Crowdsignal now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}',
 					{
 						components: {
-							a: <a href="https://wordpress.com/tos" target="_blank" rel="noopener noreferrer" />,
+							a: (
+								<a
+									href="https://crowdsignal.com/2012/12/03/crowdsignal-wordpress-account/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
 							br: <br />,
 						},
 					}
