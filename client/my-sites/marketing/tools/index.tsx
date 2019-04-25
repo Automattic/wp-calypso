@@ -73,7 +73,14 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts to help build your dream site."
 					) }
 				>
-					<Button onClick={ handleFindYourExpectClick }>{ translate( 'Find your expert' ) }</Button>
+					<Button
+						href={ '/experts/upwork?source=marketingtools' }
+						onClick={ handleFindYourExpectClick }
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						{ translate( 'Find your expert' ) }
+					</Button>
 				</MarketingToolFeature>
 			</div>
 		</Fragment>
