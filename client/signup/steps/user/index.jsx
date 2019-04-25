@@ -152,7 +152,7 @@ export class UserStep extends Component {
 	};
 
 	submit = data => {
-		const { flowName, stepName, oauth2Signup, translate } = this.props;
+		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
 		if ( oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
@@ -161,7 +161,6 @@ export class UserStep extends Component {
 
 		SignupActions.submitSignupStep(
 			{
-				processingMessage: translate( 'Creating your account' ),
 				flowName,
 				stepName,
 				oauth2Signup,

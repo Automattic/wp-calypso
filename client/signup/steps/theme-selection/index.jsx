@@ -50,7 +50,6 @@ class ThemeSelectionStep extends Component {
 		SignupActions.submitSignupStep(
 			{
 				stepName: this.props.stepName,
-				processingMessage: this.props.translate( 'Adding your theme' ),
 				repoSlug,
 			},
 			null,

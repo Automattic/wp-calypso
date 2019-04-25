@@ -44,7 +44,6 @@ class CredsPermissionStep extends Component {
 
 		SignupActions.submitSignupStep(
 			{
-				processingMessage: this.props.translate( 'Setting up your site' ),
 				stepName: this.props.stepName,
 			},
 			undefined,
@@ -63,7 +62,11 @@ class CredsPermissionStep extends Component {
 			<Card className="creds-permission__card">
 				<QuerySites />
 				<h3 className="creds-permission__title">{ translate( 'Start backing up your site' ) }</h3>
-				<img className="creds-permission__image" src="/calypso/images/illustrations/security.svg" />
+				<img
+					className="creds-permission__image"
+					src="/calypso/images/illustrations/security.svg"
+					alt=""
+				/>
 				<p className="creds-permission__description">
 					{ translate(
 						'Jetpack, a plugin already on your site, can back up and secure your site at no ' +
