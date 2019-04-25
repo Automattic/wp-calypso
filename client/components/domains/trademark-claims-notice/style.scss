@@ -70,7 +70,7 @@
 		}
 
 		.trademark-claims-notice__actions-background {
-			background: var(--color-surface-backdrop);
+			background: var( --color-surface-backdrop );
 			padding: 0 1px 32px;
 
 			@include breakpoint('<960px') {
