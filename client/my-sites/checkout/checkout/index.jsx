@@ -40,6 +40,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QueryPlans from 'components/data/query-plans';
 import SecurePaymentForm from './secure-payment-form';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
+import { isExternal } from 'lib/url';
 import { AUTO_RENEWAL } from 'lib/url/support';
 import {
 	RECEIVED_WPCOM_RESPONSE,
@@ -362,7 +363,7 @@ export class Checkout extends React.Component {
 			0
 		);
 
-		if ( redirectTo ) {
+		if ( redirectTo && ! isExternal( redirectTo ) ) {
 			return redirectTo;
 		}
 
