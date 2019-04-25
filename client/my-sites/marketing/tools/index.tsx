@@ -12,15 +12,8 @@ import { useTranslate } from 'i18n-calypso';
  */
 import ActionCard from 'components/action-card';
 import Button from 'components/button';
-import { getSitePlanSlug, hasFeature } from 'state/sites/plans/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import MarketingToolFeature from './feature';
-import {
-	FEATURE_GOOGLE_MY_BUSINESS,
-	PLAN_ECOMMERCE,
-	PLAN_BUSINESS,
-	PLAN_PREMIUM,
-} from 'lib/plans/constants';
 
 /**
  * Style dependencies
@@ -28,14 +21,10 @@ import {
 import './style.scss';
 
 interface MarketingToolsProps {
-	hasGoogleMyBusinessAvailable: boolean;
-	planIsLessThanPremium: boolean;
 	selectedSiteSlug: string | null;
 }
 
 export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
-	hasGoogleMyBusinessAvailable,
-	planIsLessThanPremium,
 	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
@@ -50,6 +39,10 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 				? `/marketing/sharing-buttons/${ selectedSiteSlug }`
 				: '/marketing/sharing-buttons'
 		);
+	};
+
+	const handleFindYourExpectClick = () => {
+		//TODO: not a noop
 	};
 
 	return (
@@ -67,42 +60,6 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 			/>
 			<div className="tools__feature-list">
 				<MarketingToolFeature
-					title={ translate(
-						'Reach out to your customers through email marketing with MailChimp'
-					) }
-					description={ translate(
-						"We've partnered with MailChimp so you can reach our to your customers through personalized messaging and custom email campaigns."
-					) }
-				>
-					<Button>{ translate( 'Sign up' ) }</Button>
-					<Button>{ translate( 'Connect' ) }</Button>
-				</MarketingToolFeature>
-
-				<MarketingToolFeature
-					title={ translate( 'Advertise online using a $100 credit with Google Adwords' ) }
-					description={ translate(
-						'Upgrade your plan to take advantage of online advertising to improve your marketing efforts.'
-					) }
-					disclaimer={ translate(
-						'Offer valid in US after spending the first $25 on Google Ads.'
-					) }
-				>
-					<Button>
-						{ planIsLessThanPremium
-							? translate( 'Upgrade to Premium' )
-							: translate( 'Generate Code' ) }
-					</Button>
-				</MarketingToolFeature>
-
-				<MarketingToolFeature
-					title={ translate( 'Make your brand stand out with a professional logo' ) }
-					description={ translate(
-						'A logo is an integral part of your brand to make it successful. Create a logo now to stand out from the crowd.'
-					) }
-				>
-					<Button>{ translate( 'Design your logo' ) }</Button>
-				</MarketingToolFeature>
-				<MarketingToolFeature
 					title={ translate( 'Easily share your blog posts to your social media circle' ) }
 					description={ translate(
 						"Connect to Publicize to make it easy to share your site's posts on several social media networks."
@@ -111,24 +68,12 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 					<Button onClick={ handleStartSharingClick }>{ translate( 'Start sharing' ) }</Button>
 				</MarketingToolFeature>
 				<MarketingToolFeature
-					title={ translate( 'Let your customers find you on Google' ) }
-					description={ translate(
-						'Get ahead of your competition. Be there when customers search businesses like yours on Google Search and Maps by connecting to Google My Business.'
-					) }
-				>
-					<Button>
-						{ hasGoogleMyBusinessAvailable
-							? translate( 'Connect to Google My Business' )
-							: translate( 'Upgrade to Business' ) }
-					</Button>
-				</MarketingToolFeature>
-				<MarketingToolFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
 					description={ translate(
 						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts to help build your dream site."
 					) }
 				>
-					<Button>{ translate( 'Find your expert' ) }</Button>
+					<Button onClick={ handleFindYourExpectClick }>{ translate( 'Find your expert' ) }</Button>
 				</MarketingToolFeature>
 			</div>
 		</Fragment>
@@ -136,21 +81,9 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 };
 
 MarketingTools.propTypes = {
-	hasGoogleMyBusinessAvailable: PropTypes.bool.isRequired,
-	planIsLessThanPremium: PropTypes.bool.isRequired,
 	selectedSiteSlug: PropTypes.string,
 };
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const selectedSitePlanSlug = selectedSiteId ? getSitePlanSlug( state, selectedSiteId ) : null;
-	return {
-		hasGoogleMyBusinessAvailable: selectedSiteId
-			? hasFeature( state, selectedSiteId, FEATURE_GOOGLE_MY_BUSINESS )
-			: false,
-		planIsLessThanPremium: selectedSitePlanSlug
-			? ! [ PLAN_ECOMMERCE, PLAN_BUSINESS, PLAN_PREMIUM ].includes( selectedSitePlanSlug )
-			: false,
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	};
-} )( MarketingTools );
+export default connect( state => ( {
+	selectedSiteSlug: getSelectedSiteSlug( state ),
+} ) )( MarketingTools );

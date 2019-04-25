@@ -22,7 +22,7 @@ const MarketingToolFeature: FunctionComponent< MarketingToolFeatureProps > = ( {
 	description,
 	disclaimer,
 	title,
-}: MarketingToolFeatureProps ) => {
+} ) => {
 	return (
 		<Card className="tools__feature-list-item">
 			<div className="tools__feature-list-item-body">
