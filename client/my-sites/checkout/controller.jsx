@@ -20,6 +20,7 @@ import CartData from 'components/data/cart';
 import SecondaryCart from './cart/secondary-cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
+import ConciergeSessionNudge from './concierge-session-nudge';
 import ConciergeQuickstartSession from './concierge-quickstart-session';
 import { isGSuiteRestricted } from 'lib/gsuite';
 
@@ -133,6 +134,28 @@ export function gsuiteNudge( context, next ) {
 				receiptId={ Number( receiptId ) }
 				selectedSiteId={ selectedSite.ID }
 			/>
+		</CartData>
+	);
+
+	next();
+}
+
+export function conciergeSessionNudge( context, next ) {
+	const { receiptId } = context.params;
+	context.store.dispatch(
+		setSection( { name: 'concierge-session-nudge' }, { hasSidebar: false } )
+	);
+
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( ! selectedSite ) {
+		return null;
+	}
+
+	context.primary = (
+		<CartData>
+			<ConciergeSessionNudge receiptId={ Number( receiptId ) } selectedSiteId={ selectedSite.ID } />
 		</CartData>
 	);
 
