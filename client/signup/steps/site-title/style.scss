@@ -1,59 +1,9 @@
-.site-information__wrapper {
+.site-title__wrapper {
+	max-width: 480px;
+	min-height: 46px;
+	margin: 0 auto;
 	position: relative;
-	display: flex;
-
-	.button {
-		margin: 0 auto;
-		display: block;
-		width: 200px;
-	}
-
-	.card {
-		width: 480px;
-		padding: 16px;
-	}
-}
-
-.site-information__field-control {
-	margin: 0 auto 20px;
-	filter: blur( 0 );
-	transform: translateZ( 0 ) translateX( 0 );
-	transition: 500ms ease-in-out opacity, 500ms ease-in-out filter, 500ms ease-in-out transform;
-
-	&:last-child {
-		margin: 0 auto;
-	}
-
-	.form-fieldset {
-		margin-bottom: 0;
-	}
-
-	.button {
-		position: absolute;
-		top: 3px;
-		right: 3px;
-		width: auto;
-		padding: 5px 8px;
-		transition: none;
-
-		.gridicon {
-			height: 24px;
-			width: 24px;
-		}
-	}
-}
-
-/* We need specificity here to overwrite client/signup/style.scss */
-body.is-section-signup {
-	.site-information__wrapper .site-information__field-control button.button {
-		@include breakpoint( '<660px' ) {
-			padding: 9px 12px;
-		}
-	}
-}
-
-.site-information__wrapper.is-single-fieldset {
-	.site-information__field-control {
+	.site-title__field-control {
 		margin: 0 auto;
 	}
 
@@ -109,17 +59,49 @@ body.is-section-signup {
 	}
 }
 
-.site-information__info-popover {
+.site-title__info-popover {
 	margin-left: 5px;
 
 	.gridicon {
-		color: var( --color-neutral-light );
 		margin-bottom: -3px;
+		color: var( --color-white );
+	}
+}
 
-		.is-single-fieldset & {
-			// Make the icon white when its place on the
-			// primary background color.
-			color: var( --color-white );
+.site-title__field-control {
+	margin: 0 auto 20px;
+	filter: blur( 0 );
+	transform: translateZ( 0 ) translateX( 0 );
+	transition: 500ms ease-in-out opacity, 500ms ease-in-out filter, 500ms ease-in-out transform;
+
+	&:last-child {
+		margin: 0 auto;
+	}
+
+	.form-fieldset {
+		margin-bottom: 0;
+	}
+
+	.button {
+		position: absolute;
+		top: 3px;
+		right: 3px;
+		width: auto;
+		padding: 5px 8px;
+		transition: none;
+
+		.gridicon {
+			height: 24px;
+			width: 24px;
+		}
+	}
+}
+
+/* We need specificity here to overwrite client/signup/style.scss */
+body.is-section-signup {
+	.site-title__wrapper .site-title__field-control button.button {
+		@include breakpoint( '<660px' ) {
+			padding: 9px 12px;
 		}
 	}
 }

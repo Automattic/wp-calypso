@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +11,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import Gridicon from 'gridicons';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
@@ -60,7 +58,7 @@ class SiteTitleStep extends Component {
 		} );
 	}
 
-	handleInputChange = siteTitle => this.props.setSiteTitle( siteTitle );
+	handleInputChange = ( { currentTarget: { value = '' } } ) => this.props.setSiteTitle( value );
 
 	submitSiteTitleStep = siteTitle => {
 		const { goToNextStep, flowName, stepName } = this.props;
@@ -97,44 +95,38 @@ class SiteTitleStep extends Component {
 			"We'll use this as your site title. Don't worry, you can change this later."
 		);
 		return (
-			<div
-				className={ classNames( 'site-information__wrapper', {
-					'is-single-fieldset': true,
-				} ) }
-			>
+			<div className="site-title__wrapper">
 				{ shouldFetchVerticalData && <QueryVerticals searchTerm={ siteVerticalName } /> }
-				<Card>
-					<form>
-						<div className="site-information__field-control site-information__title">
-							<FormFieldset>
-								<FormLabel htmlFor="title">
-									{ fieldLabel }
-									<InfoPopover className="site-information__info-popover" position="top">
-										{ fieldDescription }
-									</InfoPopover>
-								</FormLabel>
-								<FormTextInput
-									id="title"
-									name="title"
-									placeholder={ fieldPlaceholder }
-									onChange={ this.handleInputChange }
-									value={ siteTitle }
-									maxLength={ 100 }
-									autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-								/>
-								<Button
-									title={ this.props.translate( 'Continue' ) }
-									aria-label={ this.props.translate( 'Continue' ) }
-									primary
-									type="submit"
-									onClick={ this.handleSubmit }
-								>
-									<Gridicon icon="arrow-right" />
-								</Button>{' '}
-							</FormFieldset>
-						</div>
-					</form>
-				</Card>
+				<form>
+					<div className="site-title__field-control site-title__title">
+						<FormFieldset>
+							<FormLabel htmlFor="title">
+								{ fieldLabel }
+								<InfoPopover className="site-title__info-popover" position="top">
+									{ fieldDescription }
+								</InfoPopover>
+							</FormLabel>
+							<FormTextInput
+								id="title"
+								name="title"
+								placeholder={ fieldPlaceholder }
+								onChange={ this.handleInputChange }
+								value={ siteTitle }
+								maxLength={ 100 }
+								autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+							/>
+							<Button
+								title={ this.props.translate( 'Continue' ) }
+								aria-label={ this.props.translate( 'Continue' ) }
+								primary
+								type="submit"
+								onClick={ this.handleSubmit }
+							>
+								<Gridicon icon="arrow-right" />
+							</Button>{' '}
+						</FormFieldset>
+					</div>
+				</form>
 			</div>
 		);
 	};
