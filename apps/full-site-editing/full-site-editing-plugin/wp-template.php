@@ -37,7 +37,7 @@ function fse_register_wp_template() {
 			'show_in_menu'          => true,
 			'rewrite'               => false,
 			'show_in_rest'          => true,
-			'rest_base'             => 'Templates',
+			'rest_base'             => 'templates',
 			'rest_controller_class' => 'A8C_REST_Templates_Controller',
 			'capability_type'       => 'Template',
 			'capabilities'          => array(
