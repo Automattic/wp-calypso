@@ -95,7 +95,7 @@ Example:
 {
     submitButton: this.hasAnotherStep()
         ? translate( 'Continue' )
-        : translate( 'Continue to Checkout' ),
+        : translate( 'Continue' ),
     organization: translate(
         'Registering this domain for a company? + Add Organization Name',
         'Registering these domains for a company? + Add Organization Name',
