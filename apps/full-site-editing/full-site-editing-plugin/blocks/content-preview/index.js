@@ -10,7 +10,7 @@ import { get } from 'lodash';
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
-import { compose, withState } from '@wordpress/compose';
+import { withState } from '@wordpress/compose';
 import { BlockControls } from '@wordpress/editor';
 import { Fragment, RawHTML } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -30,12 +30,10 @@ const setSelectedPost = async ( attributes, setState ) => {
 	} );
 };
 
-const edit = compose(
-	withState( {
-		isEditing: false,
-		selectedPost: null,
-	} )
-)( ( { attributes, isEditing, selectedPost, setAttributes, setState } ) => {
+const edit = withState( {
+	isEditing: false,
+	selectedPost: null,
+} )( ( { attributes, isEditing, selectedPost, setAttributes, setState } ) => {
 	const { align, selectedPostId } = attributes;
 
 	if ( !! selectedPostId && ! selectedPost ) {
