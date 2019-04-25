@@ -2,7 +2,9 @@
 /**
  * Plugin Name: Full Site Editing
  */
+
 require_once( 'blocks/content-slot/index.php' );
+require_once( 'blocks/content-renderer/render.php' );
 
 class A8C_Full_Site_Editing {
 	static $initialized = false;
@@ -54,7 +56,9 @@ class A8C_Full_Site_Editing {
 			'render_callback' => 'render_content_slot_block',
 		 ) );
 
-		register_block_type( 'a8c/content-renderer' );
+		register_block_type( 'a8c/content-renderer', array(
+			'render_callback' => 'render_content_renderer_block',
+		) );
 	}
 }
 

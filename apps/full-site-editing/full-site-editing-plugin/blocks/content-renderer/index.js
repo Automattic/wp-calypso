@@ -10,7 +10,7 @@ import { get } from 'lodash';
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
-import { compose, withState } from '@wordpress/compose';
+import { withState } from '@wordpress/compose';
 import { BlockControls } from '@wordpress/editor';
 import { Fragment, RawHTML } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -19,25 +19,40 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import PostAutocomplete from '../../components/post-autocomplete';
+import fetchPost from '../../lib/fetch-post';
 import './style.scss';
 
-const edit = compose(
-	withState( {
-		isEditing: false,
-	} )
-)( ( { attributes, isEditing, setAttributes, setState } ) => {
-	const { align, selectedPost } = attributes;
+const setSelectedPost = async ( attributes, setState ) => {
+	const { selectedPostId, selectedPostType } = attributes;
+	const selectedPost = await fetchPost( selectedPostId, selectedPostType );
+	setState( {
+		selectedPost,
+	} );
+};
+
+const edit = withState( {
+	isEditing: false,
+	selectedPost: null,
+} )( ( { attributes, isEditing, selectedPost, setAttributes, setState } ) => {
+	const { align, selectedPostId } = attributes;
+
+	if ( !! selectedPostId && ! selectedPost ) {
+		setSelectedPost( attributes, setState );
+	}
 
 	const toggleEditing = () => setState( { isEditing: ! isEditing } );
 
 	const onSelectPost = post => {
-		setState( { isEditing: false } );
-		setAttributes( { selectedPost: post } );
+		setState( { isEditing: false, selectedPost: post } );
+		setAttributes( {
+			selectedPostId: get( post, 'id' ),
+			selectedPostType: get( post, 'type' ),
+		} );
 	};
 
-	const showToggleButton = ! isEditing || !! selectedPost;
-	const showPlaceholder = isEditing || ! selectedPost;
-	const showContent = ! isEditing && !! selectedPost;
+	const showToggleButton = ! isEditing || !! selectedPostId;
+	const showPlaceholder = isEditing || ! selectedPostId;
+	const showContent = ! isEditing && !! selectedPostId;
 
 	return (
 		<Fragment>
@@ -71,8 +86,8 @@ const edit = compose(
 								selectedPostTitle={ get( selectedPost, 'title.rendered' ) }
 								onSelectPost={ onSelectPost }
 							/>
-							{ !! selectedPost && (
-								<a href={ `?post=${ selectedPost.id }&action=edit` }>{ __( 'Edit' ) }</a>
+							{ !! selectedPostId && (
+								<a href={ `?post=${ selectedPostId }&action=edit` }>{ __( 'Edit' ) }</a>
 							) }
 						</div>
 					</Placeholder>
@@ -87,25 +102,14 @@ const edit = compose(
 	);
 } );
 
-const save = ( { attributes } ) => {
-	const { align, selectedPost } = attributes;
-	const className = classNames( 'a8c-content-renderer', { [ `align${ align }` ]: align } );
-	return (
-		<div className={ className }>
-			<RawHTML className="a8c-content-renderer-block__content">
-				{ get( selectedPost, 'content.rendered' ) }
-			</RawHTML>
-		</div>
-	);
-};
-
 registerBlockType( 'a8c/content-renderer', {
 	title: __( 'Content Renderer' ),
 	description: __( 'Renders the content of a post or a page.' ),
 	icon: 'layout',
 	category: 'layout',
 	attributes: {
-		selectedPost: { type: 'object' },
+		selectedPostId: { type: 'number' },
+		selectedPostType: { type: 'string' },
 	},
 	supports: {
 		align: [ 'wide', 'full' ],
@@ -114,5 +118,5 @@ registerBlockType( 'a8c/content-renderer', {
 		reusable: false,
 	},
 	edit,
-	save,
+	save: () => null,
 } );
