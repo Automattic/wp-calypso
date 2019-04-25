@@ -559,7 +559,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	marketing() {
-		const { isJetpack, isSharingEnabledOnJetpackSite, path, site } = this.props;
+		const { path, site } = this.props;
 		const marketingLink = '/marketing' + this.props.siteSuffix;
 
 		if ( site && ! this.props.canUserPublishPosts ) {
@@ -567,10 +567,6 @@ export class MySitesSidebar extends Component {
 		}
 
 		if ( ! this.props.siteId ) {
-			return null;
-		}
-
-		if ( isJetpack && ! isSharingEnabledOnJetpackSite ) {
 			return null;
 		}
 
