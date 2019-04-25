@@ -327,7 +327,7 @@
 		"readline-sync": "1.4.9",
 		"replace": "1.1.0",
 		"rimraf": "2.6.3",
-		"sinon": "7.3.1",
+		"sinon": "7.3.2",
 		"sinon-chai": "3.3.0",
 		"socket.io": "2.2.0",
 		"stacktrace-gps": "3.0.2",
