@@ -174,11 +174,18 @@ async function redirectIfBlockEditor( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
-	// URLs with a set-editor=classic param are used for switching from the block editor to the classic editor, so we
-	// bypass the selected editor check if it is present and update the selected editor for the current user/site pair.
-	const switchToEditor = get( context.query, 'set-editor' );
-	if ( switchToEditor && 'classic' === switchToEditor ) {
-		context.store.dispatch( setSelectedEditor( siteId, 'classic' ) );
+	// URLs with a set-editor=<editorName> param are used for indicating that the user wants to use always the given
+	// editor, so we update the selected editor for the current user/site pair.
+	const newEditorChoice = get( context.query, 'set-editor' );
+	const oldEditorChoice = getSelectedEditor( state, siteId );
+	const allowedEditors = [ 'classic', 'gutenberg' ];
+
+	if ( allowedEditors.indexOf( newEditorChoice ) !== -1 && newEditorChoice !== oldEditorChoice ) {
+		context.store.dispatch( setSelectedEditor( siteId, newEditorChoice ) );
+	}
+
+	// If the new editor is classic, we bypass the selected editor check.
+	if ( 'classic' === newEditorChoice ) {
 		return next();
 	}
 
