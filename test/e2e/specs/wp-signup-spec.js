@@ -923,7 +923,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a business paid plan w/ domain name coming in via /create as business flow in CAD currency @parallel', function() {
+	// Temporarily disable till API response is not solved
+	// While processing signup:
+	// GET https://public-api.wordpress.com/rest/v1.1/me/shopping-cart/e2eflowtesting1556181838164985.wordpress.com?http_envelope=1 500
+	describe.skip( 'Sign up for a site on a business paid plan w/ domain name coming in via /create as business flow in CAD currency @parallel', function() {
 		const siteName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ siteName }.live`;
 		const emailAddress = dataHelper.getEmailAddress( siteName, signupInboxId );
