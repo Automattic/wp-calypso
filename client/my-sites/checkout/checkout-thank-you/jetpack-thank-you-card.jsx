@@ -480,8 +480,7 @@ export class JetpackThankYouCard extends Component {
 	}
 
 	renderAction( progress = 0 ) {
-		const { goBackToSiteLink, selectedSite: site, translate } = this.props;
-		const buttonUrl = site && goBackToSiteLink;
+		const { siteId, selectedSite: site, translate } = this.props;
 		// We return instructions for setting up manually
 		// when we finish if something errored
 		if ( this.isErrored() && ! this.props.isInstalling ) {
@@ -499,6 +498,10 @@ export class JetpackThankYouCard extends Component {
 			);
 		}
 
+		// TODO: Before this branch is merged
+		// * checklist must be in stable Calypso
+		// * we need to update this URL to the final path /plans/my-plan/${ siteId }?thank-you
+		const buttonUrl = site && `https://wpcalypso.wordpress.com/plans/my-plan/${ siteId }?thank-you`;
 		if ( 100 === progress ) {
 			return (
 				<div className="checkout-thank-you__jetpack-action-buttons">
@@ -509,7 +512,7 @@ export class JetpackThankYouCard extends Component {
 						onClick={ this.onBackToYourSiteClick }
 						href={ buttonUrl }
 					>
-						{ translate( 'Back to your site' ) }
+						{ translate( 'Start checklist' ) }
 					</a>
 					{ this.renderLiveChatButton() }
 				</div>
