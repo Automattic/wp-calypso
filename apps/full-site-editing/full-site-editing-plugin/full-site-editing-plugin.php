@@ -18,13 +18,13 @@ class A8C_Full_Site_Editing {
 
 	function register_script_and_style() {
 		$script_dependencies = json_decode( file_get_contents(
-			plugin_dir_path( __FILE__ ) . 'full-site-editing-plugin.deps.json'
+			plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.deps.json'
 		), true );
 		wp_register_script(
 			'a8c-full-site-editing-script',
-			plugins_url( 'full-site-editing-plugin.js', __FILE__ ),
+			plugins_url( 'dist/full-site-editing-plugin.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'full-site-editing-plugin.js' )
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.js' )
 		);
 
 		$style_file = is_rtl()
@@ -32,9 +32,9 @@ class A8C_Full_Site_Editing {
 			: 'full-site-editing-plugin.css';
 		wp_register_style(
 			'a8c-full-site-editing-style',
-			plugins_url( $style_file, __FILE__ ),
+			plugins_url( 'dist/' . $style_file, __FILE__ ),
 			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . $style_file )
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 		);
 	}
 
