@@ -88,14 +88,17 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 				retryTimeout: 1000,
 			} );
 
-			return SignupActions.submitSignupStep( { stepName }, [], {
-				sitePreviewImageBlob: imageBlob,
-				importEngine: engine,
-				importFavicon: favicon,
-				importSiteUrl,
-				siteTitle,
-				themeSlugWithRepo: 'pub/modern-business',
-			} );
+			return SignupActions.submitSignupStep(
+				{ stepName },
+				{
+					sitePreviewImageBlob: imageBlob,
+					importEngine: engine,
+					importFavicon: favicon,
+					importSiteUrl,
+					siteTitle,
+					themeSlugWithRepo: 'pub/modern-business',
+				}
+			);
 		} )
 		.catch( error => {
 			throw new Error( error );

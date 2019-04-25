@@ -121,7 +121,6 @@ class SiteOrDomain extends Component {
 				siteUrl,
 				isPurchasingItem: true,
 			},
-			[],
 			{ designType, domainItem, siteUrl }
 		);
 	}
@@ -131,13 +130,15 @@ class SiteOrDomain extends Component {
 
 		// we can skip the next two steps in the `domain-first` flow if the
 		// user is only purchasing a domain
-		SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
-		SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
-			themeSlugWithRepo: 'pub/twentysixteen',
-		} );
-		SignupActions.submitSignupStep( { stepName: 'plans-site-selected', wasSkipped: true }, [], {
-			cartItem: null,
-		} );
+		SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
+		SignupActions.submitSignupStep(
+			{ stepName: 'themes', wasSkipped: true },
+			{ themeSlugWithRepo: 'pub/twentysixteen' }
+		);
+		SignupActions.submitSignupStep(
+			{ stepName: 'plans-site-selected', wasSkipped: true },
+			{ cartItem: null }
+		);
 		goToStep( 'user' );
 	}
 
@@ -151,7 +152,7 @@ class SiteOrDomain extends Component {
 		} else if ( designType === 'existing-site' ) {
 			goToNextStep();
 		} else {
-			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
+			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
 			goToStep( 'themes' );
 		}
 	};

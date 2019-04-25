@@ -142,7 +142,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 
 		const calls = SignupActions.submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
-		expect( args[ 2 ].cartItem ).toBe( cartItem );
+		expect( args[ 1 ].cartItem ).toBe( cartItem );
 	} );
 
 	test( 'Should call recordEvent when cartItem is specified', () => {

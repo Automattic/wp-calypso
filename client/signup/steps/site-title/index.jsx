@@ -37,7 +37,6 @@ class SiteTitleStep extends React.Component {
 				stepName: this.props.stepName,
 				siteTitle,
 			},
-			[],
 			{ siteTitle }
 		);
 

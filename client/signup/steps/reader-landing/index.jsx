@@ -20,7 +20,7 @@ import './style.scss';
 
 class ReaderLandingStep extends Component {
 	handleButtonClick = () => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {} );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName } );
 		this.props.goToNextStep();
 	};
 
