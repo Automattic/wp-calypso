@@ -40,7 +40,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import {
 	FEATURE_GOOGLE_ANALYTICS,
 	TYPE_PREMIUM,
-	TYPE_BUSINESS,
+	TYPE_BLOGGER,
 	TERM_ANNUALLY,
 } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey, isJetpackPersonalPlan } from 'lib/plans';
@@ -120,10 +120,8 @@ export class GoogleAnalyticsForm extends Component {
 		const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
 
 		const nudgeTitle = siteIsJetpack
-			? translate(
-					'Connect your site to Google Analytics in seconds with Jetpack Premium or Professional'
-			  )
-			: translate( 'Connect your site to Google Analytics in seconds with the Business plan' );
+			? translate( 'Enable Google Analytics by upgrading to Jetpack Premium' )
+			: translate( 'Enable Google Analytics by upgrading to any paid plan' );
 
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
@@ -145,7 +143,7 @@ export class GoogleAnalyticsForm extends Component {
 						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
-							type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
+							type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BLOGGER,
 							...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 						} ) }
 						title={ nudgeTitle }
@@ -278,7 +276,7 @@ export class GoogleAnalyticsForm extends Component {
 		if ( ! this.props.site ) {
 			return null;
 		}
-		// Only show Google Analytics for business users.
+		// Only show Google Analytics for users with a paid plan.
 		return this.form();
 	}
 }
