@@ -39,7 +39,25 @@ export default class PagesPage extends AsyncBaseContainer {
 	}
 
 	async selectAddNewPage() {
-		const selector = By.css( '.pages__add-page' );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		const addPageSelector = By.css( '.pages__add-page' ); // Add button when there are pages
+		const startPageSelector = By.css( '.empty-content__action' ); // Add button when there are no pages
+
+		if (
+			await driverHelper.isEventuallyPresentAndDisplayed(
+				this.driver,
+				addPageSelector,
+				this.explicitWaitMS / 5
+			)
+		) {
+			return await driverHelper.clickWhenClickable( this.driver, addPageSelector );
+		} else if (
+			await driverHelper.isEventuallyPresentAndDisplayed(
+				this.driver,
+				startPageSelector,
+				this.explicitWaitMS / 5
+			)
+		) {
+			return await driverHelper.clickWhenClickable( this.driver, startPageSelector );
+		}
 	}
 }
