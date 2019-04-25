@@ -32,7 +32,7 @@ function fse_register_wp_template() {
 				'item_scheduled'           => __( 'Template scheduled.' ),
 				'item_updated'             => __( 'Template updated.' ),
 			),
-			'public'                => false,
+			'public'                => true, // temp to support the search endpoint
 			'show_ui'               => true,
 			'show_in_menu'          => true,
 			'rewrite'               => false,
