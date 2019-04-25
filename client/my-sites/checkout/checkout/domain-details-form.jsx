@@ -144,9 +144,7 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	getSubmitButtonText() {
-		return this.hasAnotherStep()
-			? this.props.translate( 'Continue' )
-			: this.props.translate( 'Continue' );
+		return this.props.translate( 'Continue' );
 	}
 
 	renderSubmitButton() {
