@@ -35,7 +35,6 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
 import StickyPanel from 'components/sticky-panel';
@@ -88,7 +87,7 @@ import {
 	resetSearchCount,
 	enqueueSearchStatReport,
 } from 'components/domains/register-domain-step/analytics';
-import Spinner from 'components/spinner';
+import Button from 'components/button';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
 
@@ -490,23 +489,20 @@ class RegisterDomainStep extends React.Component {
 			return null;
 		}
 
-		const className = classNames( 'button', 'register-domain-step__next-page', {
+		const className = classNames( 'register-domain-step__next-page', {
 			'register-domain-step__next-page--is-loading': isLoading,
 		} );
 		return (
-			<Card
-				className={ className }
-				disabled={ isLoading }
-				onClick={ this.showNextPage }
-				tagName="button"
-			>
-				<div className="register-domain-step__next-page-content">
+			<CompactCard className={ className }>
+				<Button
+					className="register-domain-step__next-page-button"
+					disabled={ isLoading }
+					busy={ isLoading }
+					onClick={ this.showNextPage }
+				>
 					{ this.props.translate( 'Show more results' ) }
-				</div>
-				<div className="register-domain-step__next-page-loader">
-					<Spinner size={ 20 } />
-				</div>
-			</Card>
+				</Button>
+			</CompactCard>
 		);
 	}
 
