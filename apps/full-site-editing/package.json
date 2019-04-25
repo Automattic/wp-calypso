@@ -16,15 +16,14 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"copy-to-dist": "cp -R *plugin *theme dist",
 		"plugin": "calypso-build --source='plugin'",
 		"dev:plugin": "npm run plugin",
 		"build:plugin": "NODE_ENV=production npm run plugin",
 		"theme": "calypso-build --source='theme'",
 		"dev:theme": "npm run theme",
 		"build:theme": "NODE_ENV=production npm run theme",
-		"dev": "rimraf dist && mkdir dist && npm run copy-to-dist && npm-run-all --parallel dev:*",
-		"build": "rimraf dist && npm-run-all --parallel build:* && npm run copy-to-dist"
+		"dev": "rimraf dist && npm-run-all --parallel dev:*",
+		"build": "rimraf dist && npm-run-all --parallel build:*"
 	},
 	"dependencies": {
 		"@wordpress/blocks": "^6.2.3",
