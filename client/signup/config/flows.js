@@ -39,10 +39,6 @@ function getSiteDestination( dependencies ) {
 	return protocol + '://' + dependencies.siteSlug;
 }
 
-function getChecklistDestination( dependencies ) {
-	return '/checklist/' + dependencies.siteSlug;
-}
-
 function getRedirectDestination( dependencies ) {
 	if (
 		dependencies.oauth2_redirect &&
@@ -59,7 +55,6 @@ function getChecklistDestination( dependencies ) {
 }
 
 const flows = generateFlows( {
-	getPostsDestination,
 	getSiteDestination,
 	getRedirectDestination,
 	getChecklistDestination,

@@ -13,7 +13,6 @@ import { addQueryArgs } from 'lib/route';
 
 export function generateFlows( {
 	getSiteDestination = noop,
-	getPostsDestination = noop,
 	getRedirectDestination = noop,
 	getChecklistDestination = noop,
 } = {} ) {
@@ -116,7 +115,7 @@ export function generateFlows( {
 				'domains-with-preview',
 				'plans',
 			],
-			destination: getSiteDestination,
+			destination: getChecklistDestination,
 			description: 'The improved onboarding flow for business site types.',
 			lastModified: '2019-01-24',
 		},
