@@ -97,6 +97,9 @@ function getWebpackConfig(
 					cacheDirectory: true,
 					configFile: babelConfig,
 					exclude: /node_modules\//,
+					presets: [ env.WP && path.join( __dirname, 'babel', 'wordpress-element' ) ].filter(
+						Boolean
+					),
 					workerCount,
 				} ),
 				SassConfig.loader( {
