@@ -14,7 +14,7 @@ import ActionCard from 'components/action-card';
 import Button from 'components/button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import MarketingToolFeature from './feature';
-
+import { marketingToolsSharingButtons, marketingToolsTraffic } from 'my-sites/marketing/paths';
 /**
  * Style dependencies
  */
@@ -30,19 +30,11 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 	const translate = useTranslate();
 
 	const handleBoostMyTrafficClick = () => {
-		page( selectedSiteSlug ? `/marketing/traffic/${ selectedSiteSlug }` : '/marketing/traffic' );
+		page( marketingToolsTraffic( selectedSiteSlug ) );
 	};
 
 	const handleStartSharingClick = () => {
-		page(
-			selectedSiteSlug
-				? `/marketing/sharing-buttons/${ selectedSiteSlug }`
-				: '/marketing/sharing-buttons'
-		);
-	};
-
-	const handleFindYourExpectClick = () => {
-		//TODO: not a noop
+		page( marketingToolsSharingButtons( selectedSiteSlug ) );
 	};
 
 	return (
@@ -73,12 +65,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts to help build your dream site."
 					) }
 				>
-					<Button
-						href={ '/experts/upwork?source=marketingtools' }
-						onClick={ handleFindYourExpectClick }
-						rel="noopener noreferrer"
-						target="_blank"
-					>
+					<Button href={ '/experts/upwork?source=marketingtools' } target="_blank">
 						{ translate( 'Find your expert' ) }
 					</Button>
 				</MarketingToolFeature>

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React, { ReactNode, FunctionComponent } from 'react';
 
 /**
@@ -33,12 +32,6 @@ const MarketingToolFeature: FunctionComponent< MarketingToolFeatureProps > = ( {
 			<div className="tools__feature-list-item-child-row">{ children }</div>
 		</Card>
 	);
-};
-
-MarketingToolFeature.propTypes = {
-	description: PropTypes.string.isRequired,
-	disclaimer: PropTypes.string,
-	title: PropTypes.string.isRequired,
 };
 
 export default MarketingToolFeature;
