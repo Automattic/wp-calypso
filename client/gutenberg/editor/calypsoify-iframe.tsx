@@ -16,7 +16,12 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteAdminUrl, isRequestingSites } from 'state/sites/selectors';
+import {
+	getSiteOption,
+	getSiteAdminUrl,
+	isRequestingSites,
+	isRequestingSite,
+} from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
@@ -424,6 +429,9 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
+	// Prevents the iframe from loading using a cached frame nonce.
+	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
+
 	return {
 		allPostsUrl: getPostTypeAllPostsUrl( state, postType ),
 		currentRoute,
@@ -431,7 +439,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 		frameNonce,
 		iframeUrl,
 		postTypeTrashUrl,
-		shouldLoadIframe: ! isRequestingSites( state ), // Prevents the iframe from loading using a cached frame nonce.
+		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
 	};
