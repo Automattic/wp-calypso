@@ -41,15 +41,15 @@ function fse_register_wp_template() {
 			'rest_controller_class' => 'A8C_REST_Templates_Controller',
 			'capability_type'       => 'Template',
 			'capabilities'          => array(
-				// You need to be able to edit posts, in order to read Templates in their raw form.
+				// You need to be able to edit posts, in order to read templates in their raw form.
 				'read'                   => 'edit_posts',
-				// You need to be able to publish posts, in order to create Templates.
-				'create_posts'           => 'customize',
-				'edit_posts'             => 'customize',
-				'edit_published_posts'   => 'customize',
-				'delete_published_posts' => 'customize',
-				'edit_others_posts'      => 'customize',
-				'delete_others_posts'    => 'customize',
+				// You need to be able to customize, in order to create templates.
+				'create_posts'           => 'edit_theme_options',
+				'edit_posts'             => 'edit_theme_options',
+				'edit_published_posts'   => 'edit_theme_options',
+				'delete_published_posts' => 'edit_theme_options',
+				'edit_others_posts'      => 'edit_theme_options',
+				'delete_others_posts'    => 'edit_theme_options',
 			),
 			'map_meta_cap'          => true,
 			'supports'              => array(
