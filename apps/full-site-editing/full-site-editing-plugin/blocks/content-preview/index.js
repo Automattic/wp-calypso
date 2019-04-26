@@ -23,6 +23,7 @@ registerBlockType( 'a8c/content-preview', {
 		align: [ 'wide', 'full' ],
 		anchor: true,
 		html: false,
+		multiple: false,
 		reusable: false,
 	},
 	edit,
