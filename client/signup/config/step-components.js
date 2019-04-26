@@ -165,6 +165,7 @@ export default {
 	'site-picker': SitePicker,
 	'site-style': SiteStyleComponent,
 	'site-title': SiteTitleComponent,
+	'site-title-without-domains': SiteTitleComponent,
 	'site-topic': SiteTopicComponent,
 	'site-type': SiteTypeComponent,
 	survey: SurveyStepComponent,
@@ -190,4 +191,5 @@ export default {
 	'site-information-address-with-preview': SiteInformationComponent,
 	'site-information-phone-with-preview': SiteInformationComponent,
 	'domains-with-preview': DomainsStepComponent,
+	'site-title-with-preview': SiteTitleComponent,
 };

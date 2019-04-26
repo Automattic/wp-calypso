@@ -60,16 +60,6 @@ body.is-section-signup .layout.gravatar {
 		}
 	}
 
-	// With the dark background, the border on cards looks a
-	// a little strange. Lets try a shadow instead. -shaun
-	.is-site-information .site-information__wrapper:not( .is-single-fieldset ) .card {
-		@include elevation ( 2dp );
-
-		.dops & {
-			@include elevation ( 0 );
-		}
-	}
-
 	//Masterbar is hidden but still has height
 	//which is how sticky panel offset is calculated.
 	//Setting height to zero removes the offset

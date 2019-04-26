@@ -502,6 +502,17 @@ export function generateSteps( {
 			},
 		},
 
+		'site-title-without-domains': {
+			stepName: 'site-title-without-domains',
+			apiRequestFunction: createSiteWithCart,
+			delayApiRequestUntilComplete: true,
+			dependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'siteTitle', 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			props: {
+				showSiteMockups: true,
+			},
+		},
+
 		'site-style': {
 			stepName: 'site-style',
 			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
@@ -579,6 +590,14 @@ export function generateSteps( {
 			},
 			dependencies: [ 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
+		},
+
+		'site-title-with-preview': {
+			stepName: 'site-title-with-preview',
+			providesDependencies: [ 'siteTitle' ],
+			props: {
+				showSiteMockups: true,
+			},
 		},
 
 		launch: {

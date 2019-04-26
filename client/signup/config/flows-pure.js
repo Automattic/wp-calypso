@@ -107,7 +107,7 @@ export function generateFlows( {
 		},
 
 		onboarding: {
-			steps: [ 'user', 'site-type', 'site-topic', 'site-information-title', 'domains', 'plans' ],
+			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2019-01-24',
@@ -118,7 +118,7 @@ export function generateFlows( {
 				'user',
 				'site-type',
 				'site-topic-with-preview',
-				'site-information-title-with-preview',
+				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
 				'plans',
@@ -133,7 +133,7 @@ export function generateFlows( {
 				'user',
 				'site-type',
 				'site-topic-with-preview',
-				'site-information-title-with-preview',
+				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
 				'plans',

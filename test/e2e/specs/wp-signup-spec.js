@@ -30,7 +30,7 @@ import CheckOutThankyouPage from '../lib/pages/signup/checkout-thankyou-page.js'
 import ImportFromURLPage from '../lib/pages/signup/import-from-url-page';
 import SiteTypePage from '../lib/pages/signup/site-type-page';
 import SiteTopicPage from '../lib/pages/signup/site-topic-page';
-import SiteInfoPage from '../lib/pages/signup/site-info-page';
+import SiteTitlePage from '../lib/pages/signup/site-title-page';
 import LoginPage from '../lib/pages/login-page';
 import MagicLoginPage from '../lib/pages/magic-login-page';
 import ReaderPage from '../lib/pages/reader-page';
@@ -1682,9 +1682,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step( 'Can see the "Site Information" page, and enter the site title', async function() {
-			const siteInfoPage = await SiteInfoPage.Expect( driver );
-			await siteInfoPage.enterSiteTitle( blogName );
-			return await siteInfoPage.submitForm();
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(
@@ -1793,9 +1793,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step( 'Can see the "Site Information" page, and enter the site title', async function() {
-			const siteInfoPage = await SiteInfoPage.Expect( driver );
-			await siteInfoPage.enterSiteTitle( blogName );
-			return await siteInfoPage.submitForm();
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(

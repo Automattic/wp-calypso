@@ -12,9 +12,9 @@ import * as driverHelper from '../../driver-helper.js';
 
 import AsyncBaseContainer from '../../async-base-container';
 
-export default class SiteInfoPage extends AsyncBaseContainer {
+export default class SiteTitlePage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.site-information__wrapper' ) );
+		super( driver, By.css( '.site-title__wrapper' ) );
 	}
 
 	async enterSiteTitle( siteTitle ) {
@@ -24,7 +24,7 @@ export default class SiteInfoPage extends AsyncBaseContainer {
 	async submitForm() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.site-information__wrapper button.is-primary' )
+			By.css( '.site-title__wrapper button.is-primary' )
 		);
 	}
 }
