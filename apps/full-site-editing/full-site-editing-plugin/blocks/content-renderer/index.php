@@ -4,7 +4,7 @@ function render_content_renderer_block( $attributes ) {
 	if ( ! isset( $attributes['selectedPostId'] ) || ! is_int( $attributes['selectedPostId'] ) ) {
 		return;
 	}
-	$align = $attributes['align'] ? ' align' . $attributes['selectedPostId'] : '';
+	$align = isset( $attributes['align'] ) ? ' align' . $attributes['align'] : '';
 	$post = get_post( $attributes['selectedPostId'] );
 	setup_postdata( $post );
 
