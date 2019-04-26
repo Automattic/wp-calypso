@@ -92,13 +92,6 @@ export function generateFlows( {
 			lastModified: '2016-01-27',
 		},
 
-		subdomain: {
-			steps: [ 'design-type', 'themes', 'site-topic', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'Provide a vertical for subdomains',
-			lastModified: '2016-10-31',
-		},
-
 		main: {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
 			destination: getSiteDestination,

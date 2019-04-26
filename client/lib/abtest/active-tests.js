@@ -26,16 +26,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	signupAtomicStoreVsPressable: {
-		datestamp: '20171101',
-		variations: {
-			atomic: 99,
-			pressable: 1,
-		},
-		defaultVariation: 'atomic',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	businessPlanDescriptionAT: {
 		datestamp: '20170605',
 		variations: {
