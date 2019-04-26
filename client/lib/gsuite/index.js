@@ -100,7 +100,8 @@ function getGSuiteSupportedDomains( domains ) {
 			includes( [ domainTypes.REGISTERED ], domain.type ) &&
 			( domain.hasWpcomNameservers || hasGSuite( domain ) );
 		const mapped = includes( [ domainTypes.MAPPED ], domain.type );
-		return ( wpcomHosted || mapped ) && canDomainAddGSuite( domain.name );
+		const notOtherProvidor = domain.googleAppsSubscription.status !== 'other_provider';
+		return ( wpcomHosted || mapped ) && canDomainAddGSuite( domain.name ) && notOtherProvidor;
 	} );
 }
 
@@ -150,7 +151,8 @@ function getGSuiteSettingsUrl( domainName ) {
  * @returns {Boolean} - Does a domain have G Suite
  */
 function hasGSuite( domain ) {
-	return 'no_subscription' !== get( domain, 'googleAppsSubscription.status', '' );
+	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
+	return 'no_subscription' !== domainStatus && 'other_provider' !== domainStatus;
 }
 
 /**
