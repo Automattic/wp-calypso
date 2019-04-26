@@ -65,7 +65,7 @@ function getWebpackConfig(
 	if ( ! fs.existsSync( babelConfig ) ) {
 		// Default to this package's Babel presets
 		presets = [
-			path.join( __dirname, 'babel', 'calypso-build' ),
+			path.join( __dirname, 'babel', 'default' ),
 			env.WP && path.join( __dirname, 'babel', 'wordpress-element' ),
 		].filter( Boolean );
 		babelConfig = undefined;
