@@ -1,4 +1,4 @@
 /**
  * Internal dependencies
  */
-import './blocks/content-preview';
+import './blocks/content-slot';

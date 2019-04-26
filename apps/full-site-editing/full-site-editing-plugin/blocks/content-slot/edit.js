@@ -19,7 +19,7 @@ import { __ } from '@wordpress/i18n';
  */
 import PostAutocomplete from '../../components/post-autocomplete';
 
-const ContentPreviewEdit = withState( {
+const ContentSlotEdit = withState( {
 	isEditing: false,
 	selectedPost: null,
 } )( ( { attributes, isEditing, selectedPost, setState } ) => {
@@ -44,7 +44,7 @@ const ContentPreviewEdit = withState( {
 							className={ classNames( 'components-icon-button components-toolbar__control', {
 								'is-active': isEditing,
 							} ) }
-							label={ __( 'Change Preview' ) }
+							label={ __( 'Change Preview', 'jetpack' ) }
 							onClick={ toggleEditing }
 							icon="edit"
 						/>
@@ -52,29 +52,30 @@ const ContentPreviewEdit = withState( {
 				</BlockControls>
 			) }
 			<div
-				className={ classNames( 'a8c-content-preview-block', {
+				className={ classNames( 'a8c-content-slot-block', {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
 				{ showPlaceholder && (
 					<Placeholder
 						icon="layout"
-						label={ __( 'Content Preview' ) }
-						instructions={ __( 'Select something to preview' ) }
+						label={ __( 'Content Slot', 'jetpack' ) }
+						instructions={ __( 'Placeholder for a post or a page.', 'jetpack' ) }
 					>
-						<div className="a8c-content-preview-block__selector">
+						<div className="a8c-content-slot-block__selector">
+							<div>{ __( 'Select something to preview:', 'jetpack' ) }</div>
 							<PostAutocomplete
 								selectedPostTitle={ get( selectedPost, 'title.rendered' ) }
 								onSelectPost={ onSelectPost }
 							/>
 							{ !! selectedPost && (
-								<a href={ `?post=${ selectedPost.id }&action=edit` }>{ __( 'Edit' ) }</a>
+								<a href={ `?post=${ selectedPost.id }&action=edit` }>{ __( 'Edit', 'jetpack' ) }</a>
 							) }
 						</div>
 					</Placeholder>
 				) }
 				{ showPreview && (
-					<RawHTML className="a8c-content-preview-block__preview">
+					<RawHTML className="a8c-content-slot-block__preview">
 						{ get( selectedPost, 'content.rendered' ) }
 					</RawHTML>
 				) }
@@ -83,4 +84,4 @@ const ContentPreviewEdit = withState( {
 	);
 } );
 
-export default ContentPreviewEdit;
+export default ContentSlotEdit;

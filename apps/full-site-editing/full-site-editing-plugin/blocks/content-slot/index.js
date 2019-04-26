@@ -10,9 +10,9 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-registerBlockType( 'a8c/content-preview', {
-	title: __( 'Content Preview' ),
-	description: __( 'Previews the content of a post or a page into the editor.' ),
+registerBlockType( 'a8c/content-slot', {
+	title: __( 'Content Slot', 'jetpack' ),
+	description: __( 'Placeholder for a post or a page.', 'jetpack' ),
 	icon: 'layout',
 	category: 'layout',
 	supports: {

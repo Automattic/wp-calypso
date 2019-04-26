@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  */
-require_once( 'blocks/content-preview/index.php' );
+require_once( 'blocks/content-slot/index.php' );
 
 class A8C_Full_Site_Editing {
 	static $initialized = false;
@@ -40,10 +40,10 @@ class A8C_Full_Site_Editing {
 	}
 
 	function register_blocks() {
-		register_block_type( 'a8c/content-preview', array(
+		register_block_type( 'a8c/content-slot', array(
 			'editor_script'   => 'a8c-full-site-editing-script',
 			'editor_style'    => 'a8c-full-site-editing-style',
-			'render_callback' => 'render_content_preview_block',
+			'render_callback' => 'render_content_slot_block',
 		 ) );
 	}
 }
