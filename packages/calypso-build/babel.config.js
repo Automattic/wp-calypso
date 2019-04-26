@@ -1,5 +1,5 @@
 /*
- * Only for `bin/build-packages`.
+ * Only for `bin/transpile`.
  * Don't use this in your projects -- use `@automattic/calypso-build/babel/default instead.
  */
 
