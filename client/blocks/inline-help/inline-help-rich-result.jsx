@@ -86,9 +86,9 @@ class InlineHelpRichResult extends Component {
 					videoLink: get( result, RESULT_LINK ),
 				} );
 			}
+		} else if ( type === RESULT_ARTICLE && postId && isLocaleEnglish ) {
 			// Until we can deliver localized inline support article content, we send the
 			// the user to the localized support blog, if one exists.
-		} else if ( type === RESULT_ARTICLE && postId && isLocaleEnglish ) {
 			this.props.openSupportArticleDialog( { postId, postUrl: href } );
 		} else {
 			if ( ! href ) {
