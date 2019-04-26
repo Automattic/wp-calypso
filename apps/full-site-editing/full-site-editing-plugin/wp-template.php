@@ -21,9 +21,9 @@ function fse_register_wp_template() {
 				'view_item'                => __( 'View Template' ),
 				'all_items'                => __( 'All Templates' ),
 				'search_items'             => __( 'Search Templates' ),
-				'not_found'                => __( 'No Templates found.' ),
-				'not_found_in_trash'       => __( 'No Templates found in Trash.' ),
-				'filter_items_list'        => __( 'Filter Templates list' ),
+				'not_found'                => __( 'No templates found.' ),
+				'not_found_in_trash'       => __( 'No templates found in Trash.' ),
+				'filter_items_list'        => __( 'Filter templates list' ),
 				'items_list_navigation'    => __( 'Templates list navigation' ),
 				'items_list'               => __( 'Templates list' ),
 				'item_published'           => __( 'Template published.' ),
@@ -39,7 +39,7 @@ function fse_register_wp_template() {
 			'show_in_rest'          => true,
 			'rest_base'             => 'templates',
 			'rest_controller_class' => 'A8C_REST_Templates_Controller',
-			'capability_type'       => 'Template',
+			'capability_type'       => 'template',
 			'capabilities'          => array(
 				// You need to be able to edit posts, in order to read templates in their raw form.
 				'read'                   => 'edit_posts',
