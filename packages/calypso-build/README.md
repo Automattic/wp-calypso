@@ -52,7 +52,7 @@ If you have some experience with Webpack, the format of these [command line opti
 
 It was our conscious decision to stick to Webpack's interface rather than covering it up with our own abstraction, since the build tool doesn't really add any conceptually different functionality, and our previous SDK approach showed that we ended up replicating features readily provided by Webpack anyway.
 
-### `--env.WP` option to automatically compute dependencies
+### `--env.WP` option to automatically compute dependencies, and transpile JSX to `@wordpress/element`
 
 That `webpack.config.js` introduces one rather WordPress/Gutenberg specific "environment" option, `WP`, which you can set as follows:
 
@@ -62,7 +62,11 @@ That `webpack.config.js` introduces one rather WordPress/Gutenberg specific "env
 	}
 ```
 
-This will make Webpack use `wordpress-external-dependencies-plugin` to infer NPM packages that are commonly used by Gutenberg blocks (anything in the `@wordpress/` scope, `lodash`, React, jQuery, etc) from the source files it bundles, and produce a `.deps.json` file containing an array of those dependencies for use with `wp_enqueue_script`. For more information, see `wordpress-external-dependencies-plugin`'s [docs](../wordpress-external-dependencies-plugin/README.md).
+The impact of this option is twofold:
+
+1. It will make Webpack use `wordpress-external-dependencies-plugin` to infer NPM packages that are commonly used by Gutenberg blocks (anything in the `@wordpress/` scope, `lodash`, React, jQuery, etc) from the source files it bundles, and produce a `.deps.json` file containing an array of those dependencies for use with `wp_enqueue_script`. For more information, see `wordpress-external-dependencies-plugin`'s [docs](../wordpress-external-dependencies-plugin/README.md).
+
+2. It will transpile JSX to [`@wordpress/element`](https://www.npmjs.com/package/@wordpress/element) rather than React components. This is also required for Gutenberg blocks.
 
 ## Advanced Usage: Use own Webpack Config
 
@@ -104,13 +108,14 @@ module.exports = getWebpackConfig;
 
 It is also possible to customize how Babel transpiles a project. Simply add a `babel.config.js` to your project's root (i.e. the location you call `npm run build` from), and the build tool will pick it up over its own `babel.config.js` to transpile your project.
 
-### Using the `wordpress-element` Babel preset
-
-This can be useful for building Gutenberg blocks, which use the [`@wordpress/element` abstraction layer](https://www.npmjs.com/package/@wordpress/element) over React components, requiring a different set of transpilation rules from JSX. Conveniently, `@automattic/calypso-build` provides a Babel preset for this purpose:
+To extend the default behavior provided by `@automattic/calypso-build`, you can use presets found in its `babel/` directory, and add your own presets and/or plugins, e.g.
 
 ```js
 module.exports = {
-	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),
-	presets: [ require( '@automattic/calypso-build/babel/wordpress-element' ) ],
+	presets: [
+		require( '@automattic/calypso-build/babel/default' ),
+		require( '@automattic/calypso-build/babel/wordpress-element' ),
+	],
+	plugins: [ require( 'my-custom-babel-plugin' ) ],
 };
 ```
