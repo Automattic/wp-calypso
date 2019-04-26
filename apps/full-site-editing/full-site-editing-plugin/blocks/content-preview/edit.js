@@ -18,39 +18,22 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import PostAutocomplete from '../../components/post-autocomplete';
-import fetchPost from '../../lib/fetch-post';
-
-const setSelectedPost = async ( attributes, setState ) => {
-	const { selectedPostId, selectedPostType } = attributes;
-	const selectedPost = await fetchPost( selectedPostId, selectedPostType );
-	setState( {
-		selectedPost,
-	} );
-};
 
 const ContentPreviewEdit = withState( {
 	isEditing: false,
 	selectedPost: null,
-} )( ( { attributes, isEditing, selectedPost, setAttributes, setState } ) => {
-	const { align, selectedPostId } = attributes;
-
-	if ( !! selectedPostId && ! selectedPost ) {
-		setSelectedPost( attributes, setState );
-	}
+} )( ( { attributes, isEditing, selectedPost, setState } ) => {
+	const { align } = attributes;
 
 	const toggleEditing = () => setState( { isEditing: ! isEditing } );
 
 	const onSelectPost = post => {
 		setState( { isEditing: false, selectedPost: post } );
-		setAttributes( {
-			selectedPostId: get( post, 'id' ),
-			selectedPostType: get( post, 'type' ),
-		} );
 	};
 
-	const showToggleButton = ! isEditing || !! selectedPostId;
-	const showPlaceholder = isEditing || ! selectedPostId;
-	const showPreview = ! isEditing && !! selectedPostId;
+	const showToggleButton = ! isEditing || !! selectedPost;
+	const showPlaceholder = isEditing || ! selectedPost;
+	const showPreview = ! isEditing && !! selectedPost;
 
 	return (
 		<Fragment>
@@ -84,8 +67,8 @@ const ContentPreviewEdit = withState( {
 								selectedPostTitle={ get( selectedPost, 'title.rendered' ) }
 								onSelectPost={ onSelectPost }
 							/>
-							{ !! selectedPostId && (
-								<a href={ `?post=${ selectedPostId }&action=edit` }>{ __( 'Edit' ) }</a>
+							{ !! selectedPost && (
+								<a href={ `?post=${ selectedPost.id }&action=edit` }>{ __( 'Edit' ) }</a>
 							) }
 						</div>
 					</Placeholder>

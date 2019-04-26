@@ -15,10 +15,6 @@ registerBlockType( 'a8c/content-preview', {
 	description: __( 'Previews the content of a post or a page into the editor.' ),
 	icon: 'layout',
 	category: 'layout',
-	attributes: {
-		selectedPostId: { type: 'number' },
-		selectedPostType: { type: 'string' },
-	},
 	supports: {
 		align: [ 'wide', 'full' ],
 		anchor: true,
