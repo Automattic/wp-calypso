@@ -14,6 +14,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import {
 	shouldBundleDomainWithPlan,
@@ -131,6 +132,10 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let buttonContent;
 		let buttonStyles = this.props.buttonStyles;
+		const buttonCopyTest =
+			abtest( 'domainSelectButtonCopy' ) === 'purchase'
+				? translate( 'Purchase', { context: 'Domain mapping suggestion button' } )
+				: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 
 		if ( isAdded ) {
 			buttonContent = translate( '{{checkmark/}} In Cart', {
@@ -139,14 +144,19 @@ class DomainRegistrationSuggestion extends React.Component {
 			} );
 
 			buttonStyles = { ...buttonStyles, primary: false };
+		} else if ( isSignupStep ) {
+			buttonContent = translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		} else {
-			buttonContent =
-				! isSignupStep &&
-				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
-					? translate( 'Upgrade', {
-							context: 'Domain mapping suggestion button with plan upgrade',
-					  } )
-					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
+			buttonContent = shouldBundleDomainWithPlan(
+				domainsWithPlansOnly,
+				selectedSite,
+				cart,
+				suggestion
+			)
+				? translate( 'Upgrade', {
+						context: 'Domain mapping suggestion button with plan upgrade',
+				  } )
+				: buttonCopyTest;
 		}
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {

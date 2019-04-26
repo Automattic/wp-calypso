@@ -135,4 +135,13 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	domainSelectButtonCopy: {
+		datestamp: '20190426',
+		variations: {
+			select: 50,
+			purchase: 50,
+		},
+		defaultVariation: 'select',
+		allowExistingUsers: true,
+	},
 };
