@@ -31,6 +31,10 @@ export const lastname = createReducer( '', {
 	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.lastname,
 } );
 
+export const phoneNumber = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.phoneNumber,
+} );
+
 export const status = createReducer( null, {
 	[ CONCIERGE_UPDATE_BOOKING_STATUS ]: ( state, action ) => action.status,
 } );
@@ -42,4 +46,5 @@ export default combineReducers( {
 	timezone,
 	status,
 	isRebrandCitiesSite,
+	phoneNumber,
 } );
