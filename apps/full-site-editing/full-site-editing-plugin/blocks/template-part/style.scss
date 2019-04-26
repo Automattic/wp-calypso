@@ -1,8 +1,8 @@
-.a8c-content-renderer-block.alignfull {
+.a8c-template-part-block.alignfull {
 	padding: 0 12px;
 }
 
-.a8c-content-renderer-block__selector {
+.a8c-template-part-block__selector {
 	width: 300px;
 	a {
 		font-family: sans-serif;
@@ -11,7 +11,7 @@
 	}
 }
 
-.a8c-content-renderer-block__content {
+.a8c-template-part-block__content {
 	pointer-events: none;
 	&::after {
 		content: '';

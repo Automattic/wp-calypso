@@ -10,9 +10,9 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-registerBlockType( 'a8c/content-renderer', {
-	title: __( 'Content Renderer' ),
-	description: __( 'Renders the content of a post or a page.' ),
+registerBlockType( 'a8c/template-part', {
+	title: __( 'Template Part' ),
+	description: __( 'Display a template part.' ),
 	icon: 'layout',
 	category: 'layout',
 	attributes: {

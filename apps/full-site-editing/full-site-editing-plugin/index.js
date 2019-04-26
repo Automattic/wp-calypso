@@ -2,4 +2,4 @@
  * Internal dependencies
  */
 import './blocks/content-slot';
-import './blocks/content-renderer';
+import './blocks/template-part';

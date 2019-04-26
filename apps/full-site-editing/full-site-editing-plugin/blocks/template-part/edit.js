@@ -29,7 +29,7 @@ const setSelectedPost = async ( attributes, setState ) => {
 	} );
 };
 
-const ContentRendererEdit = withState( {
+const TemplatePartEdit = withState( {
 	isEditing: false,
 	selectedPost: null,
 } )( ( { attributes, isEditing, selectedPost, setAttributes, setState } ) => {
@@ -62,7 +62,7 @@ const ContentRendererEdit = withState( {
 							className={ classNames( 'components-icon-button components-toolbar__control', {
 								'is-active': isEditing,
 							} ) }
-							label={ __( 'Change Content' ) }
+							label={ __( 'Change Template Part' ) }
 							onClick={ toggleEditing }
 							icon="edit"
 						/>
@@ -70,17 +70,17 @@ const ContentRendererEdit = withState( {
 				</BlockControls>
 			) }
 			<div
-				className={ classNames( 'a8c-content-renderer-block', {
+				className={ classNames( 'a8c-template-part-block', {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
 				{ showPlaceholder && (
 					<Placeholder
 						icon="layout"
-						label={ __( 'Content Renderer' ) }
-						instructions={ __( 'Select something to render' ) }
+						label={ __( 'Template Part' ) }
+						instructions={ __( 'Select a template part to display' ) }
 					>
-						<div className="a8c-content-renderer-block__selector">
+						<div className="a8c-template-part-block__selector">
 							<PostAutocomplete
 								selectedPostTitle={ get( selectedPost, 'title.rendered' ) }
 								onSelectPost={ onSelectPost }
@@ -92,7 +92,7 @@ const ContentRendererEdit = withState( {
 					</Placeholder>
 				) }
 				{ showContent && (
-					<RawHTML className="a8c-content-renderer-block__content">
+					<RawHTML className="a8c-template-part-block__content">
 						{ get( selectedPost, 'content.rendered' ) }
 					</RawHTML>
 				) }
@@ -101,4 +101,4 @@ const ContentRendererEdit = withState( {
 	);
 } );
 
-export default ContentRendererEdit;
+export default TemplatePartEdit;

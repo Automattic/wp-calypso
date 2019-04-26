@@ -1,6 +1,6 @@
 <?php
 
-function render_content_renderer_block( $attributes ) {
+function render_template_part_block( $attributes ) {
 	if ( ! isset( $attributes['selectedPostId'] ) || ! is_int( $attributes['selectedPostId'] ) ) {
 		return;
 	}
@@ -8,7 +8,7 @@ function render_content_renderer_block( $attributes ) {
 	$post = get_post( $attributes['selectedPostId'] );
 	setup_postdata( $post );
 
-	$content = '<div class="a8c-content-renderer'. $align . '">'
+	$content = '<div class="a8c-template-part'. $align . '">'
 		. apply_filters( 'the_content', get_the_content() )
 		. '</div>';
 
