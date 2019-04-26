@@ -16,7 +16,6 @@ import { connect } from 'react-redux';
  */
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { isInPageBuilderTest, getEditHomeUrl } from 'lib/signup/page-builder';
 
 /**
  * Style dependencies
