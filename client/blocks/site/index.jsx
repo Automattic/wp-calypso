@@ -74,27 +74,21 @@ class Site extends React.Component {
 		const { isPreviewable, siteSlug } = this.props;
 
 		if ( ! isPreviewable ) {
-			this.trackMenuItemClick( 'view_site_unpreviewable' );
+			this.props.recordTracksEvent( 'calypso_mysites_sidebar_view_site_unpreviewable_clicked' );
 			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Unpreviewable' );
 			return;
 		}
 
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
-			this.trackMenuItemClick( 'view_site_modifier' );
+			this.props.recordTracksEvent( 'calypso_mysites_sidebar_view_site_modifier_clicked' );
 			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Modifier Key' );
 			return;
 		}
 
 		event.preventDefault();
-		this.trackMenuItemClick( 'view_site' );
+		this.props.recordTracksEvent( 'calypso_mysites_sidebar_view_site_clicked' );
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Calypso' );
 		page( '/view/' + siteSlug );
-	};
-
-	trackMenuItemClick = menuItemName => {
-		this.props.recordTracksEvent(
-			'calypso_mysites_sidebar_' + menuItemName.replace( /-/g, '_' ) + '_clicked'
-		);
 	};
 
 	render() {
