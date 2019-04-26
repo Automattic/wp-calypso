@@ -87,6 +87,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_VALUE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_ORIGIN_COUNTRY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MARK_AS_PRINTED,
 } from '../action-types';
 import { WOOCOMMERCE_ORDER_UPDATE_SUCCESS } from 'woocommerce/state/action-types';
 import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
@@ -1287,6 +1288,22 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG ] = state => 
 	return {
 		...state,
 		detailsDialog: null,
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MARK_AS_PRINTED ] = ( state, { labelId } ) => {
+	return {
+		...state,
+		labels: state.labels.map( label => {
+			if ( label.label_id !== labelId ) {
+				return label;
+			}
+
+			return {
+				...label,
+				print_date: Date.now(),
+			};
+		} ),
 	};
 };
 

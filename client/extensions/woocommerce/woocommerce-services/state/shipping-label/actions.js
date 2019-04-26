@@ -108,6 +108,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_VALUE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_ORIGIN_COUNTRY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MARK_AS_PRINTED,
 } from '../action-types.js';
 
 const PRINTING_FAILED_NOTICE_ID = 'label-image-download-failed';
@@ -751,6 +752,15 @@ const labelStatusTask = ( orderId, siteId, labelId, retryCount ) => {
 		} );
 };
 
+const markLabelAsPrinted = ( orderId, siteId, label ) => {
+	return {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MARK_AS_PRINTED,
+		labelId: label.label_id,
+		orderId,
+		siteId,
+	};
+};
+
 const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError, labels ) => {
 	dispatch( exitPrintingFlow( orderId, siteId, true ) );
 	dispatch( clearAvailableRates( orderId, siteId ) );
@@ -807,6 +817,10 @@ const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError, lab
 			} )
 		);
 	}
+
+	labels.forEach( label => {
+		dispatch( markLabelAsPrinted( orderId, siteId, label ) );
+	} );
 };
 
 /**
