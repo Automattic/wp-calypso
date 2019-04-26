@@ -16,7 +16,7 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
+import { getSiteOption, getSiteAdminUrl, isRequestingSites } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
@@ -343,7 +343,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
 
 	render() {
-		const { iframeUrl, siteId } = this.props;
+		const { iframeUrl, siteId, shouldLoadIframe } = this.props;
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
@@ -361,14 +361,16 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
-					{ /* eslint-disable-next-line jsx-a11y/iframe-has-title */ }
-					<iframe
-						ref={ this.iframeRef }
-						/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-						className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
-						src={ iframeUrl }
-						onLoad={ () => this.setState( { isIframeLoaded: true } ) }
-					/>
+					{ shouldLoadIframe && (
+						/* eslint-disable-next-line jsx-a11y/iframe-has-title */
+						<iframe
+							ref={ this.iframeRef }
+							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+							className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
+							src={ iframeUrl }
+							onLoad={ () => this.setState( { isIframeLoaded: true } ) }
+						/>
+					) }
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
 					<EditorMediaModal
@@ -424,13 +426,14 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 
 	return {
 		allPostsUrl: getPostTypeAllPostsUrl( state, postType ),
-		siteId,
 		currentRoute,
+		editedPostId: getEditorPostId( state ),
+		frameNonce,
 		iframeUrl,
 		postTypeTrashUrl,
+		shouldLoadIframe: ! isRequestingSites( state ), // Prevents the iframe from loading using a cached frame nonce.
 		siteAdminUrl,
-		frameNonce,
-		editedPostId: getEditorPostId( state ),
+		siteId,
 	};
 };
 
