@@ -12,7 +12,7 @@ const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 
 const config = {
 	presets: [
-		require( '@automattic/calypso-build/babel.config.js' ),
+		require( '@automattic/calypso-build/babel/default' ),
 		[
 			'@babel/env',
 			{
