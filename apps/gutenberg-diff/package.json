@@ -1,0 +1,35 @@
+{
+	"name": "@automattic/gutenberg-diff",
+	"version": "1.0.0-alpha.0",
+	"description": "Cherry picking new Gutenberg features that haven't been merged into core yet",
+	"sideEffects": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/gutenberg-diff"
+	},
+	"private": true,
+	"author": "Automattic, Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"bundle": "calypso-build",
+		"dev": "npm run bundle",
+		"build": "NODE_ENV=production npm run bundle",
+		"clean": "npx rimraf gutenberg-diff-plugin/dist"
+	},
+	"dependencies": {
+		"@wordpress/blocks": "^6.2.3",
+		"@wordpress/components": "^7.3.0",
+		"@wordpress/compose": "^3.2.0",
+		"@wordpress/data": "^4.4.0",
+		"@wordpress/editor": "^9.2.4",
+		"@wordpress/element": "^2.3.0",
+		"@wordpress/i18n": "^3.3.0",
+		"classnames": "^2.2.6",
+		"lodash": "^4.17.11"
+	}
+}

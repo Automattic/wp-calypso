@@ -20,6 +20,7 @@ references:
         "$CIRCLE_ARTIFACTS/translate"           \
         "$CIRCLE_ARTIFACTS/screenshots"         \
         "$CIRCLE_ARTIFACTS/full-site-editing"   \
+        "$CIRCLE_ARTIFACTS/gutenberg-diff"      \
         "$CIRCLE_ARTIFACTS/wpcom-block-editor"  \
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
@@ -311,6 +312,18 @@ jobs:
             cp -R apps/full-site-editing/blank-theme $CIRCLE_ARTIFACTS/full-site-editing/
             cp -R apps/full-site-editing/full-site-editing-plugin $CIRCLE_ARTIFACTS/full-site-editing/
       - store-artifacts-and-test-results
+
+  build-gutenberg-diff:
+    <<: *defaults
+    parallelism: 1
+    steps:
+    - prepare
+    - run:
+        name: Build the Gutenberg Diff plugins
+        command: |
+          npx lerna run build --scope='@automattic/gutenberg-diff'
+          cp -R apps/gutenberg-diff/gutenberg-diff-plugin $CIRCLE_ARTIFACTS/gutenberg-diff/
+    - store-artifacts-and-test-results
 
   test-client:
     <<: *defaults
@@ -616,6 +629,9 @@ workflows:
             branches:
               ignore: master
       - build-full-site-editing:
+          requires:
+            - setup
+      - build-gutenberg-diff:
           requires:
             - setup
       - build-notifications:

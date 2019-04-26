@@ -1,0 +1,86 @@
+/**
+ * Group: All Alignment Settings
+ */
+
+$block-padding: 14px;
+$block-spacing: 4px;
+
+.wp-block[data-type="gutenberg-diff/group"] {
+
+  // Ensure not rendering outside the element
+  // as -1px causes overflow-x scrollbars
+  .editor-block-list__insertion-point {
+    left: 0;
+    right: 0;
+  }
+
+  // Only applied when background is added to cancel out padding
+  > .editor-block-list__block-edit > div > .wp-block-group.has-background > .editor-inner-blocks {
+    margin-top: -#{$block-padding*2 + $block-spacing};
+    margin-bottom: -#{$block-padding*2 + $block-spacing};
+  }
+
+  // Full Width Blocks
+  // specificity required to only target immediate child Blocks of Group
+  > .editor-block-list__block-edit > div > .wp-block-group > .editor-inner-blocks > .editor-block-list__layout > .wp-block[data-align="full"] {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: $block-padding*2;
+    padding-right: $block-padding*2;
+  }
+
+  // Full Width Blocks with a background (ie: has padding)
+  > .editor-block-list__block-edit > div > .wp-block-group.has-background > .editor-inner-blocks > .editor-block-list__layout > .wp-block[data-align="full"] {
+    // note: using position `left` causes hoz scrollbars so
+    // we opt to use margin instead
+    // the 30px matches the hoz padding applied in `theme.scss`
+    // added when the Block has a background set
+    margin-left: -30px;
+
+    // 60px here is x2 the hoz padding from `theme.scss` added when
+    // the Block has a background set
+    // note: also duplicated below for full width Groups
+    width: calc(100% + 60px);
+  }
+}
+
+/**
+ * Group: Full Width Alignment
+ */
+.wp-block[data-type="gutenberg-diff/group"][data-align="full"] {
+
+  // First tier of InnerBlocks must act like the container of the standard canvas
+  > .editor-block-list__block-edit > div > .wp-block-group > .editor-inner-blocks {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0;
+    padding-right: 0;
+
+    > .editor-block-list__layout {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+
+  // Full Width Blocks
+  // specificity required to only target immediate child Blocks of Group
+  > .editor-block-list__block-edit > div > .wp-block-group > .editor-inner-blocks > .editor-block-list__layout > .wp-block[data-align="full"] {
+    padding-right: 0;
+    padding-left: 0;
+    left: 0;
+    width: 100%;
+    max-width: none;
+
+    // Allow to be flush with the edges of the canvas
+    > .editor-block-list__block-edit {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+
+  // Full Width Blocks with a background (ie: has padding)
+  // note: also duplicated above for all Group widths
+  > .editor-block-list__block-edit > div > .wp-block-group.has-background > .editor-inner-blocks > .editor-block-list__layout > .wp-block[data-align="full"] {
+    width: calc(100% + 60px);
+  }
+}
