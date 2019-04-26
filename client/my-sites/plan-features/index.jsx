@@ -71,7 +71,7 @@ import PlanFeaturesScroller from './scroller';
 
 export class PlanFeatures extends Component {
 	render() {
-		const { isInSignup, planProperties, withScroll } = this.props;
+		const { isInSignup, planProperties, plans, selectedPlan, withScroll } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -92,6 +92,10 @@ export class PlanFeatures extends Component {
 			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
 		}
 
+		const initialSelectedIndex = selectedPlan
+			? plans.indexOf( selectedPlan )
+			: findIndex( planProperties, { popular: true } );
+
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
@@ -104,7 +108,7 @@ export class PlanFeatures extends Component {
 								withScroll={ withScroll }
 								planCount={ planProperties.length }
 								cellSelector=".plan-features__table-item"
-								initialSelectedIndex={ findIndex( planProperties, { popular: true } ) }
+								initialSelectedIndex={ initialSelectedIndex }
 							>
 								<table className={ tableClasses }>
 									<tbody>
