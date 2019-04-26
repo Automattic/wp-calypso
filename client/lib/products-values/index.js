@@ -456,7 +456,9 @@ export function isConciergeSession( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return 'concierge-session' === product.product_slug;
+	return (
+		'concierge-session' === product.product_slug || 'concierge-quickstart' === product.product_slug
+	);
 }
 
 export default {

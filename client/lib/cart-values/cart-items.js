@@ -732,6 +732,12 @@ export function conciergeSessionItem() {
 	};
 }
 
+export function conciergeSessionAltItem() {
+	return {
+		product_slug: 'concierge-quickstart',
+	};
+}
+
 /**
  * Creates a new shopping cart item for the specified plan.
  *
@@ -1244,4 +1250,5 @@ export default {
 	hasStaleItem,
 	hasTransferProduct,
 	conciergeSessionItem,
+	conciergeSessionAltItem,
 };

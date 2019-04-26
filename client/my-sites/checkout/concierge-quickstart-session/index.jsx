@@ -37,6 +37,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
 import analytics from 'lib/analytics';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -58,7 +59,7 @@ export class ConciergeQuickstartSession extends React.Component {
 			translate,
 			receiptId,
 		} = this.props;
-		const title = translate( 'Checkout ‹ Support Session', {
+		const title = translate( 'Checkout ‹ Quick Start Session', {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
@@ -365,7 +366,11 @@ export class ConciergeQuickstartSession extends React.Component {
 
 		trackUpsellButtonClick( 'accept' );
 
-		addItem( cartItems.conciergeSessionItem() );
+		if ( 'variantNewPrice' === abtest( 'conciergePricing' ) ) {
+			addItem( cartItems.conciergeSessionAltItem() );
+		} else {
+			addItem( cartItems.conciergeSessionItem() );
+		}
 
 		page( `/checkout/${ siteSlug }` );
 	};
@@ -383,6 +388,10 @@ export default connect(
 		const { selectedSiteId } = props;
 		const productsList = getProductsList( state );
 		const sitePlans = getPlansBySiteId( state ).data;
+		const productSlug =
+			'variantNewPrice' === abtest( 'conciergePricing' )
+				? 'concierge-quickstart'
+				: 'concierge-session';
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
@@ -391,8 +400,8 @@ export default connect(
 			siteSlug: getSiteSlug( state, selectedSiteId ),
 			isEligibleForChecklist: isEligibleForDotcomChecklist( state, selectedSiteId ),
 			redirectToPageBuilder: siteQualifiesForPageBuilder( state, selectedSiteId ),
-			productCost: getProductCost( state, 'concierge-session' ),
-			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
+			productCost: getProductCost( state, productSlug ),
+			productDisplayCost: getProductDisplayCost( state, productSlug ),
 		};
 	},
 	{
