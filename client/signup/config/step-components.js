@@ -6,7 +6,9 @@ import { memoize } from 'lodash';
 
 const loadStep = memoize( stepName =>
 	React.lazy( () =>
-		import( /* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[a-z-]+\/index.jsx$/ */ `signup/steps/${ stepName }` )
+		import(
+			/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[a-z-]+\/index.jsx$/ */ `signup/steps/${ stepName }`
+		)
 	)
 );
 
@@ -56,7 +58,7 @@ export default {
 	survey: loadStep( 'survey' ),
 	'survey-user': loadStep( 'survey-user' ),
 	test: loadStep( 'test-step' ),
-	themes: 'theme-selection',
+	themes: loadStep( 'theme-selection' ),
 	'website-themes': loadStep( 'theme-selection' ),
 	'blog-themes': loadStep( 'theme-selection' ),
 	'themes-site-selected': loadStep( 'theme-selection' ),
