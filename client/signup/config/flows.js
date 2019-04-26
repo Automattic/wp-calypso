@@ -16,8 +16,8 @@ import { generateFlows } from './flows-pure';
 
 const user = userFactory();
 
-function getCheckoutUrl( dependencies, destination ) {
-	return '/checkout/' + dependencies.siteSlug + '?redirect_to=' + destination;
+function getCheckoutUrl( dependencies ) {
+	return '/checkout/' + dependencies.siteSlug;
 }
 
 function dependenciesContainCartItem( dependencies ) {

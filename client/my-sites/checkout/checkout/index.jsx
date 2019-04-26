@@ -349,7 +349,6 @@ export class Checkout extends React.Component {
 		let renewalItem, displayModeParam;
 		const {
 			cart,
-			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
 			transaction: {

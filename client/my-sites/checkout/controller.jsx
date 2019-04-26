@@ -45,7 +45,6 @@ export function checkout( context, next ) {
 				selectedFeature={ feature }
 				couponCode={ context.query.code }
 				plan={ plan }
-				redirectTo={ context.query.redirect_to }
 			/>
 		</CheckoutData>
 	);
