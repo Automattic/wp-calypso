@@ -11,8 +11,8 @@ const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 // We implicitly use browserslist configuration in package.json for build targets.
 
 const config = {
-	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),
 	presets: [
+		require( '@automattic/calypso-build/babel.config.js' ),
 		[
 			'@babel/env',
 			{
