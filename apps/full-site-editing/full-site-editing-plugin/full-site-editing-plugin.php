@@ -4,7 +4,7 @@
  */
 
 require_once( 'blocks/content-slot/index.php' );
-require_once( 'blocks/content-renderer/render.php' );
+require_once( 'blocks/content-renderer/index.php' );
 
 class A8C_Full_Site_Editing {
 	static $initialized = false;
