@@ -44,7 +44,7 @@ const ContentSlotEdit = withState( {
 							className={ classNames( 'components-icon-button components-toolbar__control', {
 								'is-active': isEditing,
 							} ) }
-							label={ __( 'Change Preview', 'jetpack' ) }
+							label={ __( 'Change Preview' ) }
 							onClick={ toggleEditing }
 							icon="edit"
 						/>
@@ -59,17 +59,17 @@ const ContentSlotEdit = withState( {
 				{ showPlaceholder && (
 					<Placeholder
 						icon="layout"
-						label={ __( 'Content Slot', 'jetpack' ) }
-						instructions={ __( 'Placeholder for a post or a page.', 'jetpack' ) }
+						label={ __( 'Content Slot' ) }
+						instructions={ __( 'Placeholder for a post or a page.' ) }
 					>
 						<div className="a8c-content-slot-block__selector">
-							<div>{ __( 'Select something to preview:', 'jetpack' ) }</div>
+							<div>{ __( 'Select something to preview:' ) }</div>
 							<PostAutocomplete
 								selectedPostTitle={ get( selectedPost, 'title.rendered' ) }
 								onSelectPost={ onSelectPost }
 							/>
 							{ !! selectedPost && (
-								<a href={ `?post=${ selectedPost.id }&action=edit` }>{ __( 'Edit', 'jetpack' ) }</a>
+								<a href={ `?post=${ selectedPost.id }&action=edit` }>{ __( 'Edit' ) }</a>
 							) }
 						</div>
 					</Placeholder>

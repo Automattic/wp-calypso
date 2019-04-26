@@ -11,8 +11,8 @@ import edit from './edit';
 import './style.scss';
 
 registerBlockType( 'a8c/content-slot', {
-	title: __( 'Content Slot', 'jetpack' ),
-	description: __( 'Placeholder for a post or a page.', 'jetpack' ),
+	title: __( 'Content Slot' ),
+	description: __( 'Placeholder for a post or a page.' ),
 	icon: 'layout',
 	category: 'layout',
 	supports: {
