@@ -65,7 +65,7 @@ export class LabelItem extends Component {
 			this.props.openReprintDialog( orderId, siteId, label.labelId );
 		};
 
-		const text = label.labelCached ? translate( 'Reprint' ) : translate( 'Print' );
+		const text = label.printDate ? translate( 'Reprint' ) : translate( 'Print' );
 
 		return (
 			<PopoverMenuItem onClick={ openDialog } icon="print">
@@ -100,7 +100,7 @@ export class LabelItem extends Component {
 			createdDate,
 			refundableAmount,
 			currency,
-			labelCached,
+			printDate,
 		} = label;
 
 		const statusArgs = {
@@ -108,7 +108,7 @@ export class LabelItem extends Component {
 			labelIndex: label.labelIndex + 1,
 		};
 
-		const statusText = labelCached
+		const statusText = printDate
 			? translate( '%(service)s label (#%(labelIndex)d) printed', { args: statusArgs } )
 			: translate( '%(service)s label (#%(labelIndex)d) not printed', { args: statusArgs } );
 

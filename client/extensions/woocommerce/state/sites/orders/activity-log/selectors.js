@@ -190,7 +190,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 					labelId: label.label_id,
 					serviceName: label.service_name,
 					carrierId: label.carrier_id,
-					labelCached: label.label_cached,
+					printDate: label.print_date,
 				} );
 			}
 
@@ -214,7 +214,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				refundableAmount: label.refundable_amount,
 				currency: label.currency,
 				anonymized: 'ANONYMIZED' === label.status,
-				labelCached: label.label_cached,
+				printDate: label.print_date,
 				// If there's a refund in progress or completed, the Reprint/Refund buttons or the tracking number must *not* be shown
 				showDetails:
 					! label.refund || 'rejected' === label.refund.status || 'unknown' === label.refund.status,
