@@ -66,13 +66,13 @@ function fse_register_wp_template() {
 class A8C_REST_Templates_Controller extends WP_REST_Posts_Controller {
 
 	/**
-	 * Checks if a block can be read.
+	 * Checks if a template can be read.
 	 *
-	 * @param object $post Post object that backs the block.
-	 * @return bool Whether the block can be read.
+	 * @param object $post Post object that backs the template.
+	 * @return bool Whether the template can be read.
 	 */
 	public function check_read_permission( $post ) {
-		// Ensure that the user is logged in and has the read_blocks capability.
+		// Ensure that the user is logged in and has the edit_posts capability.
 		$post_type = get_post_type_object( $post->post_type );
 		if ( ! current_user_can( $post_type->cap->read_post, $post->ID ) ) {
 			return false;
@@ -93,8 +93,8 @@ class A8C_REST_Templates_Controller extends WP_REST_Posts_Controller {
 
 		/*
 		 * Remove `title.rendered` and `content.rendered` from the response. It
-		 * doesn't make sense for a reusable block to have rendered content on its
-		 * own, since rendering a block requires it to be inside a post or a page.
+		 * doesn't make sense for a reusable template to have rendered content on its
+		 * own, since rendering a template requires it to be inside a post or a page.
 		 */
 		unset( $data['title']['rendered'] );
 		unset( $data['content']['rendered'] );
@@ -103,7 +103,7 @@ class A8C_REST_Templates_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
-	 * Retrieves the block's schema, conforming to JSON Schema.
+	 * Retrieves the template's schema, conforming to JSON Schema.
 	 *
 	 * @return array Item schema data.
 	 */
@@ -112,7 +112,7 @@ class A8C_REST_Templates_Controller extends WP_REST_Posts_Controller {
 
 		/*
 		 * Allow all contexts to access `title.raw` and `content.raw`. Clients always
-		 * need the raw markup of a reusable block to do anything useful, e.g. parse
+		 * need the raw markup of a reusable template to do anything useful, e.g. parse
 		 * it or display it in an editor.
 		 */
 		$schema['properties']['title']['properties']['raw']['context']   = array( 'view', 'edit' );
@@ -120,8 +120,8 @@ class A8C_REST_Templates_Controller extends WP_REST_Posts_Controller {
 
 		/*
 		 * Remove `title.rendered` and `content.rendered` from the schema. It doesn’t
-		 * make sense for a reusable block to have rendered content on its own, since
-		 * rendering a block requires it to be inside a post or a page.
+		 * make sense for a reusable template to have rendered content on its own, since
+		 * rendering a template requires it to be inside a post or a page.
 		 */
 		unset( $schema['properties']['title']['properties']['rendered'] );
 		unset( $schema['properties']['content']['properties']['rendered'] );
