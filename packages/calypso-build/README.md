@@ -20,8 +20,8 @@ Then, add a `build` script that invokes the `calypso-build` command:
 
 ```json
 	"devDependencies": {
-        "@automattic/calypso-build": "1.0.0-beta.5"
-    },
+		"@automattic/calypso-build": "1.0.0-beta.5"
+	},
 	"scripts": {
 		"build": "calypso-build ./src/editor.js"
 	}
