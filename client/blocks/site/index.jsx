@@ -16,11 +16,8 @@ import page from 'page';
  */
 import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
-import { getSite, isSitePreviewable } from 'state/sites/selectors';
+import { getSite, getSiteSlug, isSitePreviewable } from 'state/sites/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
 class Site extends React.Component {
 	static defaultProps = {
@@ -74,7 +71,7 @@ class Site extends React.Component {
 	};
 
 	onViewSiteClick = event => {
-		const { isPreviewable, siteSuffix } = this.props;
+		const { isPreviewable, siteSlug } = this.props;
 
 		if ( ! isPreviewable ) {
 			this.trackMenuItemClick( 'view_site_unpreviewable' );
@@ -91,7 +88,7 @@ class Site extends React.Component {
 		event.preventDefault();
 		this.trackMenuItemClick( 'view_site' );
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Calypso' );
-		page( '/view' + siteSuffix );
+		page( '/view/' + siteSlug );
 	};
 
 	trackMenuItemClick = menuItemName => {
@@ -122,9 +119,11 @@ class Site extends React.Component {
 
 		return (
 			<div className={ siteClass }>
-				<button
+				<a
 					className="site__content"
+					href={ this.props.homeLink ? site.URL : this.props.href }
 					data-tip-target={ this.props.tipTarget }
+					target={ this.props.externalLink && '_blank' }
 					title={
 						this.props.homeLink
 							? translate( 'View %(domain)s', {
@@ -178,25 +177,22 @@ class Site extends React.Component {
 							<Gridicon icon="house" size={ 18 } />
 						</span>
 					) }
-				</button>
+				</a>
 				{ this.props.indicator ? <SiteIndicator site={ site } /> : null }
 			</div>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const currentUser = getCurrentUser( state );
-	const selectedSiteId = getSelectedSiteId( state );
-	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
-	const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
-	const site = getSite( state, siteId );
+function mapStateToProps( state, ownProps ) {
+	const siteId = ownProps.siteId || ownProps.site.ID;
+	const site = siteId ? getSite( state, siteId ) : ownProps.site;
 
 	return {
-		isPreviewable: isSitePreviewable( state, siteId ),
 		siteId,
 		site,
-		siteSuffix: site ? '/' + site.slug : '',
+		isPreviewable: isSitePreviewable( state, siteId ),
+		siteSlug: getSiteSlug( state, siteId ),
 	};
 }
 

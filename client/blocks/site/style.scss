@@ -76,15 +76,6 @@
 	}
 }
 
-button.site__content {
-	cursor: pointer;
-	text-align: left;
-
-	&:focus {
-		box-shadow: inset 0 0 0 2px var(--color-primary-light);
-	}
-}
-
 // Adjusts the SiteIcon component for use
 // within a Site item
 .site .site-icon {
@@ -145,7 +136,7 @@ button.site__content {
 	top: 17px;
 
 	.gridicon {
-		margin-top: 7px;
+		margin-top: 5px;
 		vertical-align: middle;
 	}
 
