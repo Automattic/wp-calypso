@@ -462,11 +462,18 @@ export class Checkout extends React.Component {
 			return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
 		}
 
-		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
-			? `/checkout/thank-you/features/${
-					this.props.selectedFeature
-			  }/${ selectedSiteSlug }/${ receiptId }`
-			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
+		let redirect =
+			this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
+				? `/checkout/thank-you/features/${
+						this.props.selectedFeature
+				  }/${ selectedSiteSlug }/${ receiptId }`
+				: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
+
+		if ( cartItems.hasConciergeSession( cart ) ) {
+			redirect += '?d=concierge';
+		}
+
+		return redirect;
 	};
 
 	handleCheckoutExternalRedirect( redirectUrl ) {

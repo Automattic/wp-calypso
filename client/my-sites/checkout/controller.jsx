@@ -4,7 +4,7 @@
  */
 import i18n from 'i18n-calypso';
 import React from 'react';
-import { isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -92,6 +92,7 @@ export function checkoutThankYou( context, next ) {
 
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+	const displayMode = get( context, 'query.d' );
 
 	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
@@ -105,6 +106,7 @@ export function checkoutThankYou( context, next ) {
 			domainOnlySiteFlow={ isEmpty( context.params.site ) }
 			selectedFeature={ context.params.feature }
 			selectedSite={ selectedSite }
+			displayMode={ displayMode }
 		/>
 	);
 
