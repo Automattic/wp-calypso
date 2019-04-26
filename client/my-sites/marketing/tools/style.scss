@@ -23,8 +23,19 @@
 }
 
 .tools__feature-list-item-body {
+	display: flex;
 	// grow this, leave buttons on the bottom of the card
 	flex: 1 0 auto;
+}
+
+.tools__feature-list-item-body-text {
+	flex: 3 3 auto;
+}
+
+.tools__feature-list-item-body-image {
+	flex: 1 1 auto;
+	max-width: 100px;
+	margin: 1em;
 }
 
 .tools__feature-list-item-child-row {

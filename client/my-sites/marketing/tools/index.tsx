@@ -56,6 +56,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 					description={ translate(
 						"Connect to Publicize to make it easy to share your site's posts on several social media networks."
 					) }
+					imagePath="/calypso/images/illustrations/marketing.svg"
 				>
 					<Button onClick={ handleStartSharingClick }>{ translate( 'Start sharing' ) }</Button>
 				</MarketingToolFeature>
@@ -64,6 +65,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 					description={ translate(
 						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts to help build your dream site."
 					) }
+					imagePath="/calypso/images/illustrations/expert.svg"
 				>
 					<Button href={ '/experts/upwork?source=marketingtools' } target="_blank">
 						{ translate( 'Find your expert' ) }
