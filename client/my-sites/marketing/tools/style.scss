@@ -48,14 +48,25 @@
 
 .tools__feature-list-item-child-row {
 	display: flex;
+	flex-direction: column;
 	justify-content: flex-start;
-	> * {
-		margin: 0 1em 0 0;
+	.button {
+		margin: 1em 0 0 0;
+		text-align: center;
+		width: 100%;
+	}
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+		.button {
+			margin: 0 1em 0 0;
+			width: auto;
+		}
 	}
 
 	@include breakpoint( '>1040px' ) {
 		justify-content: flex-end;
-		> * {
+		.button {
 			margin: 0 0 0 1em;
 		}
 	}
