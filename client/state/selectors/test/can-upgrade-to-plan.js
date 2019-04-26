@@ -332,9 +332,20 @@ describe( 'canUpgradeToPlan', () => {
 			} );
 		} );
 
-		test( 'should return false for atomic site when upgrading to eCommerce', () => {
+		test( 'should return false for atomic v1 site when upgrading to eCommerce', () => {
 			[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach( planToPurchase => {
 				expect( canUpgradeToPlan( atomicFreeState, siteId, planToPurchase ) ).toBe( false );
+			} );
+		} );
+
+		test( 'should return true for atomic v2 site when upgrading to eCommerce', () => {
+			const atomicV2State = {
+				...atomicFreeState,
+			};
+			atomicV2State.sites.items[ siteId ].options.is_wpcom_atomic = true;
+
+			[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach( planToPurchase => {
+				expect( canUpgradeToPlan( atomicV2State, siteId, planToPurchase ) ).toBe( true );
 			} );
 		} );
 
