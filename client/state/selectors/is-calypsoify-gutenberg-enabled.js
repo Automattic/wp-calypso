@@ -1,41 +1,35 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
 import isVipSite from 'state/selectors/is-vip-site';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSiteAdminUrl, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import getSiteOptions from 'state/selectors/get-site-options';
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
 import isPluginActive from 'state/selectors/is-plugin-active';
+import { isHttps } from 'lib/url';
 
 export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
 		return false;
 	}
 
-	if ( isEnabled( 'jetpack/gutenframe' ) ) {
+	if ( isJetpackSite( state, siteId ) || isSiteAutomatedTransfer( state, siteId ) ) {
+		// We do want Gutenframe flows for JP/AT sites that have been updated to Jetpack 7.3 or greater since it will
+		// handle the required token verification. But only if the site has a SSL cert since the browser cannot embed
+		// insecure content in a resource loaded over a secure HTTPS connection.
 		if (
-			versionCompare(
-				get( getSiteOptions( state, siteId ), 'jetpack_version', 0 ),
-				'7.3-alpha',
-				'>='
-			)
+			isEnabled( 'jetpack/gutenframe' ) &&
+			isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
+			isHttps( getSiteAdminUrl( state, siteId ) )
 		) {
 			return false;
 		}
-	}
 
-	// We do want Calypsoify flows for Atomic sites
-	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+		// Otherwise, we use Calypsoify flows
 		const wpVersion = getWordPressVersion( state, siteId );
 
 		// But not if they activated Classic editor plugin (effectively opting out of Gutenberg)
@@ -59,7 +53,7 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	}
 
 	// Not ready yet.
-	if ( isJetpackSite( state, siteId ) || isVipSite( state, siteId ) ) {
+	if ( isVipSite( state, siteId ) ) {
 		return false;
 	}
 
