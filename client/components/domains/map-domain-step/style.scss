@@ -63,15 +63,8 @@
 	margin-top: 20px;
 }
 
-.map-domain-step__add-domain .form-text-input-with-affixes {
-	
-	@include breakpoint( '<480px' ) {
-		flex-flow: row;
-	}
-
-	&__prefix {
-		flex: inherit;
-	}
+.map-domain-step__add-domain .form-text-input-with-affixes__prefix {
+	flex: inherit;
 }
 
 input.map-domain-step__external-domain {
