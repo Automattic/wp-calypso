@@ -46,7 +46,7 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 			return false;
 		}
 
-		return true;
+		return isEnabled( 'calypsoify/gutenberg' );
 	}
 
 	return false;
