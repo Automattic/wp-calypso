@@ -1,0 +1,54 @@
+version: '3.3'
+
+services:
+  ## A default mysql image
+  ## We map a local directory (data/mysql) so we can have the mysql data locally
+  ## and reuse it if we need to remove containers and images for rebuilding from scratch.
+  db:
+    container_name: full_site_editing_mysql
+    image: mysql:5.7
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    restart: always
+    ports:
+      - "${PORT_MYSQL:-3306}:3306"
+    env_file:
+      - default.env
+      - .env
+
+  ## - The container wordpress is a very basic but custom container with WordPress and all of the tools we need
+  ##   for development.
+  ## - The container will be named full_site_editing_wordpress for easy reference when running docker/docker-compose commands
+  ##
+  ## Here we map the following:
+  ##  - The local root directory (with Jetpack source code) into the container's directory for WordPress plugins
+  ##  - The docker/mu-plugins directory you can put custom code that gets loaded with WordPress
+  ##  - The docker/wordpress-develop directory where we'll get WordPress source code with unit tests
+  ##  - The docker/wordpress directory so we can have Wordpress source code modifiable from the host file system
+  ##  - The docker/logs/apache2 directory so we can access Apache log files directly from the host file system
+  ##  - The docker/logs/php directory so we can access PHP log files directly from the host file system
+  ##  - The docker/bin directory for provisioning scripts
+  wordpress:
+    container_name: full_site_editing_wordpress
+    depends_on:
+      - db
+    build: .
+    image: full_site_editing_wordpress:localbuild
+    volumes:
+      - ../blank-theme:/var/www/html/wp-content/themes/blank-theme
+      - ../full-site-editing-plugin:/var/www/html/wp-content/plugins/full-site-editing-plugin
+      ## Kludge for not having docker contain recursive stuff
+      ## You will see on your filesystem that this dir gets created
+      - ./wordpress-develop:/tmp/wordpress-develop
+      - ./wordpress:/var/www/html
+      - ./logs/apache2/:/var/log/apache2
+      - ./logs/php:/var/log/php
+      - ./bin:/var/scripts
+    ports:
+      - "${PORT_WORDPRESS:-80}:80"
+    restart: always
+    env_file:
+      - default.env
+      - .env
+    environment:
+      - HOST_PORT=${PORT_WORDPRESS:-80}

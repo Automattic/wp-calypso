@@ -23,7 +23,18 @@
 		"dev:theme": "npm run theme",
 		"build:theme": "NODE_ENV=production npm run theme",
 		"dev": "rimraf dist && npm-run-all --parallel dev:*",
-		"build": "rimraf dist && npm-run-all --parallel build:*"
+		"build": "rimraf dist && npm-run-all --parallel build:*",
+		"docker:install": "npm run docker:compose exec wordpress bash -c \"/var/scripts/install.sh\"",
+		"docker:uninstall": "npm run docker:compose exec wordpress bash -c \"/var/scripts/uninstall.sh\"",
+		"docker:env": "node -e \"require('fs').createWriteStream( 'docker/.env', { flags: 'a' } );\"",
+		"docker:compose": "npm run docker:env && docker-compose -f docker/docker-compose.yml",
+		"docker:up": "npm run docker:compose up",
+		"docker:down": "npm run docker:compose down",
+		"docker:stop": "npm run docker:compose stop",
+		"docker:clean": "npm run docker:compose down --rmi all -v && rm -rf docker/wordpress/* docker/wordpress/.htaccess docker/wordpress-develop/* docker/logs/* docker/data/mysql/*",
+		"docker:sh": "npm run docker:compose exec wordpress bash",
+		"docker:wp": "npm run docker:compose exec wordpress wp --allow-root --path=/var/www/html/",
+		"docker:tail": "npm run docker:compose exec wordpress bash -c \"/var/scripts/tail.sh\""
 	},
 	"dependencies": {
 		"@wordpress/blocks": "^6.2.3",

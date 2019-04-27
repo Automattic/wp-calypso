@@ -1,0 +1,11 @@
+## Things for docker-composer
+/docker/data/mysql/*
+!/docker/data/mysql/.gitkeep
+/docker/logs/*
+!/docker/logs/.gitkeep
+# Custom environment for docker containers
+/docker/.env
+/docker/wordpress-develop/*
+!/docker/wordpress-develop/.gitkeep
+/docker/wordpress/*
+!/docker/wordpress/.gitkeep
