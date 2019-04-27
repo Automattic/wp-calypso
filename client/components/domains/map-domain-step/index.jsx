@@ -114,6 +114,7 @@ class MapDomainStep extends React.Component {
 
 					<div className="map-domain-step__add-domain" role="group">
 						<FormTextInputWithAffixes
+							noWrap
 							prefix="http://"
 							className="map-domain-step__external-domain"
 							type="text"
