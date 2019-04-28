@@ -39,9 +39,13 @@ import {
 jest.mock( 'lib/cart-values', () => ( {
 	isPaymentMethodEnabled: jest.fn( false ),
 	paymentMethodName: jest.fn( false ),
+	paymentMethodClassName: jest.fn( false ),
+	setTaxLocation: jest.fn( () => () => ( {} ) ),
+	fillInAllCartItemAttributes: jest.fn( () => ( {} ) ),
 	cartItems: {
 		hasRenewableSubscription: jest.fn( false ),
 		hasRenewalItem: jest.fn( false ),
+		getAll: jest.fn( false ),
 	},
 } ) );
 
