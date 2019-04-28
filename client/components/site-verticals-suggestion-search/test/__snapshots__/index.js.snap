@@ -7,7 +7,6 @@ exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
     searchTerm=""
   />
   <Connect(QueryVerticals)
-    limit={1}
     searchTerm="business"
   />
   <SuggestionSearch
