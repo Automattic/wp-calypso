@@ -69,11 +69,10 @@ class ChecklistMain extends PureComponent {
 
 	/**
 	 * Get subheader text to be shown for Checklist
-	 * @param {String} displayMode The query parameter that indicates the display mode, e.g. gsuite or concierge.
-	 * @return {String}            The translated string
+	 * @return {String} The translated string
 	 */
-	getSubHeaderText( displayMode ) {
-		const { translate } = this.props;
+	getSubHeaderText() {
+		const { displayMode, translate } = this.props;
 
 		switch ( displayMode ) {
 			case 'gsuite':
@@ -101,7 +100,7 @@ class ChecklistMain extends PureComponent {
 				);
 
 			default:
-				translate(
+				return translate(
 					"Now that your site has been created, it's time to get it ready for you to share. " +
 						"We've prepared a list of things that will help you get there quickly."
 				);
@@ -109,7 +108,7 @@ class ChecklistMain extends PureComponent {
 	}
 
 	renderHeader() {
-		const { displayMode, isNewlyCreatedSite, translate } = this.props;
+		const { isNewlyCreatedSite, translate } = this.props;
 		const { complete } = this.state;
 
 		if ( complete ) {
@@ -147,7 +146,7 @@ class ChecklistMain extends PureComponent {
 								? translate( 'Thank you for your purchase!' )
 								: translate( 'Your site has been created!' )
 						}
-						subHeaderText={ this.getSubHeaderText( displayMode ) }
+						subHeaderText={ this.getSubHeaderText() }
 					/>
 				</>
 			);
