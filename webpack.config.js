@@ -327,6 +327,8 @@ const polyfillsSkippedInEvergreen = [
 	/^lib[/\\]local-storage-polyfill$/,
 	// The SVG external content polyfill (svg4everybody) isn't needed for evergreen browsers.
 	/^svg4everybody$/,
+	// The fetch polyfill isn't needed for evergreen browsers, as they all support it.
+	/^isomorphic-fetch$/,
 ];
 
 if ( browserslistEnv === 'evergreen' ) {
