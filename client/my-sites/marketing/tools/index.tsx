@@ -14,7 +14,7 @@ import ActionCard from 'components/action-card';
 import Button from 'components/button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import MarketingToolFeature from './feature';
-import { marketingToolsSharingButtons, marketingToolsTraffic } from 'my-sites/marketing/paths';
+import { marketingSharingButtons, marketingTraffic } from 'my-sites/marketing/paths';
 /**
  * Style dependencies
  */
@@ -30,11 +30,11 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 	const translate = useTranslate();
 
 	const handleBoostMyTrafficClick = () => {
-		page( marketingToolsTraffic( selectedSiteSlug ) );
+		page( marketingTraffic( selectedSiteSlug ) );
 	};
 
 	const handleStartSharingClick = () => {
-		page( marketingToolsSharingButtons( selectedSiteSlug ) );
+		page( marketingSharingButtons( selectedSiteSlug ) );
 	};
 
 	return (
