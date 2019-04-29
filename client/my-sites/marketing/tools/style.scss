@@ -1,0 +1,121 @@
+.tools__header-body {
+	display: flex;
+	flex-direction: row;
+	padding: 11px 24px; // standard padding
+
+	@include breakpoint( '>1040px' ) {
+		max-height: 300px;
+	}
+}
+
+.tools__header-info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.tools__header-title {
+	font-size: 21px;
+	font-weight: 400;
+	margin: 10px 5px;
+}
+
+.tools__header-description {
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.tools__header-button-row {
+	align-content: center;
+	display: flex;
+	flex-direction: row;
+	margin: 20px 0;
+	.button {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+			text-align: center;
+		}
+	}
+}
+
+.tools__header-image-wrapper {
+	display: none;
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+		min-width: 300px;
+	}
+}
+
+.tools__feature-list {
+	position: relative;
+	left: calc( -0.5em );
+	display: flex;
+	flex-wrap: wrap;
+	// margins of the items will "hang off the side" invisibly
+	width: calc( 100% + 1em );
+}
+
+.tools__feature-list-item {
+	display: flex;
+	flex-direction: column;
+	margin: 0.5em;
+	width: calc( 100% - 1em );
+	@include breakpoint( '>1040px' ) {
+		width: calc( 50% - 1em );
+	}
+}
+
+.tools__feature-list-item-disclaimer {
+	color: var( --color-text-subtle );
+	font-style: italic;
+}
+
+.tools__feature-list-item-body {
+	display: flex;
+	// grow this, leave buttons on the bottom of the card
+	flex: 1 0 auto;
+}
+
+.tools__feature-list-item-body-text {
+	width: 100%;
+	@include breakpoint( '>1040px' ) {
+		width: 75%;
+	}
+}
+
+.tools__feature-list-item-body-image {
+	display: none;
+	margin: 0.5em;
+	max-width: 150px;
+	width: 25%;
+
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+	}
+}
+
+.tools__feature-list-item-child-row {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	.button {
+		margin: 1em 0 0;
+		text-align: center;
+		width: 100%;
+	}
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+		.button {
+			margin: 0 1em 0 0;
+			width: auto;
+		}
+	}
+
+	@include breakpoint( '>1040px' ) {
+		justify-content: flex-end;
+		.button {
+			margin: 0 0 0 1em;
+		}
+	}
+}

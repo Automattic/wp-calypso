@@ -45,8 +45,9 @@ const SiteSettingsTraffic = ( {
 	setFieldValue,
 	translate,
 } ) => (
-	<Main className="settings-traffic site-settings">
-		<PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
+	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+	<Main className="settings-traffic site-settings" wideLayout>
+    <PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		<JetpackDevModeNotice />
 
