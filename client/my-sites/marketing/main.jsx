@@ -45,6 +45,14 @@ export const Sharing = ( {
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 	const filters = [];
 
+	if ( config.isEnabled( 'marketing/tools' ) ) {
+		filters.push( {
+			id: 'marketing-tools',
+			route: '/marketing/tools' + pathSuffix,
+			title: translate( 'Marketing Tools' ),
+		} );
+	}
+
 	// Include SEO link if a site is selected and the
 	// required Jetpack module is active
 	if ( showTraffic ) {
@@ -52,14 +60,6 @@ export const Sharing = ( {
 			id: 'traffic',
 			route: '/marketing/traffic' + pathSuffix,
 			title: translate( 'Traffic' ),
-		} );
-	}
-
-	if ( config.isEnabled( 'marketing/tools' ) ) {
-		filters.push( {
-			id: 'marketing-tools',
-			route: '/marketing/tools' + pathSuffix,
-			title: translate( 'Marketing Tools' ),
 		} );
 	}
 
