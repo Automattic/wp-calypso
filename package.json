@@ -230,7 +230,6 @@
 		"build-client-both": "npm run build-client-fallback && npm run build-client-evergreen",
 		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || cross-env-shell NODE_ARGS=--max_old_space_size=8192 npm run build-client-both",
 		"build-client-if-desktop": "node -e \"process.env.CALYPSO_ENV === 'desktop' && process.exit(1)\" || npm run build-client",
-		"build-notifications": "calypso-build --config='client/notifications/webpack.config.js'",
 		"build-packages": "npx lerna run prepare --stream",
 		"clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public && npm run -s clean:packages",
 		"clean:build": "npx rimraf build server/bundler/*.json .babel-cache",

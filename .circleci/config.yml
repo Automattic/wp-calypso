@@ -98,7 +98,7 @@ references:
     name: Save git cache
     key: v2-git-{{ .Branch }}-{{ .Revision }}
     paths:
-      - ".git"
+      - '.git'
 
   # npm cache
   #
@@ -113,7 +113,7 @@ references:
   #
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
   restore-npm-cache: &restore-npm-cache
-    name: "Restore npm cache"
+    name: 'Restore npm cache'
     keys:
       - v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
       - v3-npm-modules-{{ checksum ".nvmrc" }}
@@ -123,7 +123,7 @@ references:
     command: npm ci
 
   save-npm-cache: &save-npm-cache
-    name: "Save node_modules cache"
+    name: 'Save node_modules cache'
     key: v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
     paths:
       - ~/.npm
@@ -144,7 +144,7 @@ references:
     name: Save Babel Client Cache
     key: v1-babel-client-{{ .Branch }}-{{ .Revision }}
     paths:
-      - "build/.babel-client-cache"
+      - 'build/.babel-client-cache'
 
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
@@ -166,7 +166,7 @@ references:
 
 commands:
   prepare:
-    description: "Prepare Job"
+    description: 'Prepare Job'
     steps:
       # folders to collect results
       - run: *setup-results-and-artifacts
@@ -274,7 +274,7 @@ jobs:
       - run:
           name: Build Notifications Panel
           command: |
-            NODE_ENV=production npm run build-notifications -- --output-path=$CIRCLE_ARTIFACTS/notifications-panel
+            NODE_ENV=production npx lerna run build --scope='@automattic/notifications' -- -- --output-path=$CIRCLE_ARTIFACTS/notifications-panel
       - store-artifacts-and-test-results
 
   build-o2-blocks:
@@ -419,8 +419,8 @@ jobs:
       - run:
           name: Build Stats
           environment:
-            NODE_ENV: "production"
-            BROWSERSLIST_ENV: "defaults"
+            NODE_ENV: 'production'
+            BROWSERSLIST_ENV: 'defaults'
           command: |
             #
             # This block should not cause a test failure and block PRs.
@@ -545,13 +545,13 @@ jobs:
     parameters:
       test-flags:
         type: string
-        default: "-C"
+        default: '-C'
       test-target:
         type: string
-        default: ""
+        default: ''
       jetpack-host:
         type: string
-        default: ""
+        default: ''
       slack-webhook:
         type: string
         default: $SLACK_E2E
@@ -561,39 +561,39 @@ jobs:
       - run:
           name: Skip Jetpack Tests if needed
           command: |
-              # If the skip jetpack env var is set, notify slack channel and skip the rest of the steps
-              if [[ "$SKIP_JETPACK" == "true" && "<< parameters.test-target >>" == "JETPACK" ]]; then
-                curl -X POST -H 'Content-type: application/json' \
-                    --data \
-                    "{ \
-                      \"attachments\": [ \
-                        { \
-                          \"text\": \"Jetpack tests were skipped\", \
-                          \"fields\": [ \
-                            { \
-                              \"title\": \"Project\", \
-                              \"value\": \"$CIRCLE_PROJECT_REPONAME\", \
-                              \"short\": true \
-                            }, \
-                            { \
-                              \"title\": \"Job Number\", \
-                              \"value\": \"$CIRCLE_BUILD_NUM\", \
-                              \"short\": true \
-                            } \
-                          ], \
-                          \"actions\": [ \
-                            { \
-                              \"type\": \"button\", \
-                              \"text\": \"Visit Job\", \
-                              \"url\": \"$CIRCLE_BUILD_URL\" \
-                            } \
-                          ], \
-                          \"color\": \"#FF0000\" \
-                        } \
-                      ] \
-                    }" << parameters.slack-webhook >>
-                circleci-agent step halt
-              fi
+            # If the skip jetpack env var is set, notify slack channel and skip the rest of the steps
+            if [[ "$SKIP_JETPACK" == "true" && "<< parameters.test-target >>" == "JETPACK" ]]; then
+              curl -X POST -H 'Content-type: application/json' \
+                  --data \
+                  "{ \
+                    \"attachments\": [ \
+                      { \
+                        \"text\": \"Jetpack tests were skipped\", \
+                        \"fields\": [ \
+                          { \
+                            \"title\": \"Project\", \
+                            \"value\": \"$CIRCLE_PROJECT_REPONAME\", \
+                            \"short\": true \
+                          }, \
+                          { \
+                            \"title\": \"Job Number\", \
+                            \"value\": \"$CIRCLE_BUILD_NUM\", \
+                            \"short\": true \
+                          } \
+                        ], \
+                        \"actions\": [ \
+                          { \
+                            \"type\": \"button\", \
+                            \"text\": \"Visit Job\", \
+                            \"url\": \"$CIRCLE_BUILD_URL\" \
+                          } \
+                        ], \
+                        \"color\": \"#FF0000\" \
+                      } \
+                    ] \
+                  }" << parameters.slack-webhook >>
+              circleci-agent step halt
+            fi
       - run: npm run decryptconfig
       - run:
           name: Run Canary Tests
@@ -656,26 +656,26 @@ workflows:
       - test-e2e-canary:
           requires:
             - wait-calypso-live
-          test-flags: "-C -S $CIRCLE_SHA1"
+          test-flags: '-C -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
             - wait-calypso-live
-          test-flags: "-z -S $CIRCLE_SHA1"
-          test-target: "IE11"
-          slack-webhook: "$SLACK_IE"
+          test-flags: '-z -S $CIRCLE_SHA1'
+          test-target: 'IE11'
+          slack-webhook: '$SLACK_IE'
       - test-e2e-canary:
           name: test-e2e-canary-safari
           requires:
             - wait-calypso-live
-          test-flags: "-y -S $CIRCLE_SHA1"
+          test-flags: '-y -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-woo
           requires:
             - wait-calypso-live
-          test-flags: "-W -S $CIRCLE_SHA1"
-          test-target: "WOO"
-          slack-webhook: "$SLACK_WOO"
+          test-flags: '-W -S $CIRCLE_SHA1'
+          test-target: 'WOO'
+          slack-webhook: '$SLACK_WOO'
 
   calypso-nightly:
     jobs:
@@ -694,7 +694,7 @@ workflows:
             - setup
     triggers:
       - schedule:
-          cron: "0 4 * * *"
+          cron: '0 4 * * *'
           filters:
             branches:
               only:
@@ -702,16 +702,16 @@ workflows:
 
   e2e-full-suite-scheduled:
     jobs:
-    - setup
-    - test-e2e:
-        requires:
-        - setup
+      - setup
+      - test-e2e:
+          requires:
+            - setup
     triggers:
-    - schedule:
-        cron: "0 3,15 * * *"
-        filters:
-          branches:
-            only: master
+      - schedule:
+          cron: '0 3,15 * * *'
+          filters:
+            branches:
+              only: master
 
   e2e-canary-scheduled:
     jobs:
@@ -720,19 +720,19 @@ workflows:
           name: test-e2e-canary-ie-sched
           requires:
             - setup
-          test-flags: "-w"
-          test-target: "IE11"
-          slack-webhook: "$SLACK_IE"
+          test-flags: '-w'
+          test-target: 'IE11'
+          slack-webhook: '$SLACK_IE'
       - test-e2e-canary:
           name: test-e2e-canary-woo-sched
           requires:
             - setup
-          test-flags: "-W"
-          test-target: "WOO"
-          slack-webhook: "$SLACK_WOO"
+          test-flags: '-W'
+          test-target: 'WOO'
+          slack-webhook: '$SLACK_WOO'
     triggers:
       - schedule:
-          cron: "0 12,20 * * *"
+          cron: '0 12,20 * * *'
           filters:
             branches:
               only: master
@@ -744,35 +744,35 @@ workflows:
           name: test-e2e-jetpack
           requires:
             - setup
-          test-flags: "-j"
-          jetpack-host: "PRESSABLEBLEEDINGEDGE"
-          test-target: "JETPACK"
-          slack-webhook: "$SLACK_JP"
+          test-flags: '-j'
+          jetpack-host: 'PRESSABLEBLEEDINGEDGE'
+          test-target: 'JETPACK'
+          slack-webhook: '$SLACK_JP'
     triggers:
       - schedule:
-          cron: "0 7 * * *"
+          cron: '0 7 * * *'
           filters:
             branches:
               only: master
 
-# Temporarily disabling these scheduled test runs
-#  e2e-jetpack-scheduled:
-#    jobs:
-#    - setup
-#    - test-e2e-canary:
-#        name: test-e2e-jetpack
-#        requires:
-#        - setup
-#        test-flags: "-j"
-#        jetpack-host: "PRESSABLE"
-#        test-target: "JETPACK"
-#        slack-webhook: "$SLACK_JP"
-#    triggers:
-#    - schedule:
-#        cron: "0 1,13 * * *"
-#        filters:
-#          branches:
-#            only: master
+  # Temporarily disabling these scheduled test runs
+  #  e2e-jetpack-scheduled:
+  #    jobs:
+  #    - setup
+  #    - test-e2e-canary:
+  #        name: test-e2e-jetpack
+  #        requires:
+  #        - setup
+  #        test-flags: "-j"
+  #        jetpack-host: "PRESSABLE"
+  #        test-target: "JETPACK"
+  #        slack-webhook: "$SLACK_JP"
+  #    triggers:
+  #    - schedule:
+  #        cron: "0 1,13 * * *"
+  #        filters:
+  #          branches:
+  #            only: master
 
   e2e-canary-i18n-monthly:
     jobs:
@@ -781,14 +781,14 @@ workflows:
           name: test-e2e-i18n-monthly
           requires:
             - setup
-          test-target: "I18N"
-          test-flags: "-i"
+          test-target: 'I18N'
+          test-flags: '-i'
           filters:
             branches:
               only: master
     triggers:
       - schedule:
-          cron: "40 15 19 * *"
+          cron: '40 15 19 * *'
           filters:
             branches:
               only: master
@@ -800,16 +800,15 @@ workflows:
           name: test-e2e-i18n-nightly
           requires:
             - setup
-          test-target: "I18N"
-          test-flags: "-I"
+          test-target: 'I18N'
+          test-flags: '-I'
           filters:
             branches:
               only: master
     triggers:
       - schedule:
-          cron: "46 4 * * *"
+          cron: '46 4 * * *'
           filters:
             branches:
               only: master
-
 # vi: sts=2 ts=2 sw=2 et
