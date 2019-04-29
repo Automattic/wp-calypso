@@ -10,10 +10,10 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActionCard from 'components/action-card';
 import Button from 'components/button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import MarketingToolFeature from './feature';
+import MarketingToolsHeader from './header';
 import { marketingSharingButtons, marketingTraffic } from 'my-sites/marketing/paths';
 
 /**
@@ -40,23 +40,12 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 
 	return (
 		<Fragment>
-			<ActionCard
-				headerText={ translate( 'Drive more traffic to your site with better SEO' ) }
-				mainText={ translate(
-					"Optimize your site for search engines and get more exposure for your business. Let’s make the most of your site’s built-in SEO tools!"
-				) }
-				buttonText={ translate( 'Boost My Traffic' ) }
-				buttonPrimary
-				buttonOnClick={ handleBoostMyTrafficClick }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-				compact={ false }
-			/>
-
+			<MarketingToolsHeader handleButtonClick={ handleBoostMyTrafficClick } />
 			<div className="tools__feature-list">
 				<MarketingToolFeature
 					title={ translate( 'Get social, and share your blog posts where the people are' ) }
 					description={ translate(
-						"Use your site’s Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
+						'Use your site’s Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more.'
 					) }
 					imagePath="/calypso/images/illustrations/marketing.svg"
 				>
@@ -66,7 +55,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 				<MarketingToolFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
 					description={ translate(
-						"We’ve partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site."
+						'We’ve partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site.'
 					) }
 					imagePath="/calypso/images/illustrations/expert.svg"
 				>
