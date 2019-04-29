@@ -44,6 +44,7 @@ class DeleteUser extends React.Component {
 		showDialog: false,
 		radioOption: false,
 		reassignUser: false,
+		authorSelectorToggled: false,
 	};
 
 	getRemoveText = () => {
@@ -79,6 +80,8 @@ class DeleteUser extends React.Component {
 
 		updateObj[ name ] = value;
 
+		this.setState( { authorSelectorToggled: true } );
+
 		this.setState( updateObj );
 		this.props.recordGoogleEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
 	};
@@ -103,6 +106,14 @@ class DeleteUser extends React.Component {
 					this.getAuthorSelectPlaceholder()
 				) }
 			</AuthorSelector>
+		);
+	};
+
+	getAuthorSelectPlaceholder = () => {
+		return (
+			<span className="delete-user__select-placeholder">
+				<User size={ 26 } user={ { name: /* Don't translate yet */ 'Choose an author…' } } />
+			</span>
 		);
 	};
 
@@ -166,14 +177,6 @@ class DeleteUser extends React.Component {
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
 
-	getAuthorSelectPlaceholder = () => {
-		return (
-			<span className="delete-user__select-placeholder">
-				<User size={ 26 } user={ { name: /* Don't translate yet */ 'Choose an author…' } } />
-			</span>
-		);
-	};
-
 	getTranslatedAssignLabel = () => {
 		const { translate } = this.props;
 		return translate( 'Attribute all content to another user' );
@@ -222,7 +225,9 @@ class DeleteUser extends React.Component {
 
 							<span>{ this.getTranslatedAssignLabel() }</span>
 
-							<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
+							{ this.state.authorSelectorToggled ? (
+								<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
+							) : null }
 						</FormLabel>
 
 						<FormLabel>
