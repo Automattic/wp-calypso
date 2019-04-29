@@ -74,7 +74,13 @@ export const connections = ( context, next ) => {
 	next();
 };
 
-export const buttons = ( context, next ) => {
+export const marketingTools = ( context, next ) => {
+	context.contentComponent = createElement( MarketingTools );
+
+	next();
+};
+
+export const sharingButtons = ( context, next ) => {
 	const { store } = context;
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
@@ -132,12 +138,6 @@ export const traffic = ( context, next ) => {
 	}
 
 	context.contentComponent = createElement( Traffic );
-
-	next();
-};
-
-export const marketingTools = ( context, next ) => {
-	context.contentComponent = createElement( MarketingTools );
 
 	next();
 };

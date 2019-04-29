@@ -11,12 +11,12 @@ import page from 'page';
 import config from 'config';
 import { jetpackModuleActive, navigation, siteSelection, sites } from 'my-sites/controller';
 import {
-	buttons,
 	connections,
 	layout,
 	marketingTools,
 	redirectSharingButtons,
 	redirectTraffic,
+	sharingButtons,
 	traffic,
 } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
@@ -62,12 +62,13 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/marketing/sharing-buttons/:domain',
 		siteSelection,
 		navigation,
 		jetpackModuleActive( 'sharedaddy' ),
-		buttons,
+		sharingButtons,
 		layout,
 		makeLayout,
 		clientRender
