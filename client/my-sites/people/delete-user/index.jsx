@@ -263,7 +263,7 @@ class DeleteUser extends React.Component {
 			<CompactCard className="delete-user__multisite">
 				<Button borderless className="delete-user__remove-user" onClick={ this.removeUser }>
 					<Gridicon icon="trash" />
-					{ this.getRemoveText() }
+					<span>{ this.getRemoveText() }</span>
 				</Button>
 			</CompactCard>
 		);
