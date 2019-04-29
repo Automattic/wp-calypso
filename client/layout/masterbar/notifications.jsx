@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -32,6 +32,7 @@ class MasterbarItemNotifications extends Component {
 		isNotificationsOpen: PropTypes.bool,
 	};
 
+	notificationLink = createRef();
 	state = {
 		animationState: 0,
 	};
@@ -82,7 +83,7 @@ class MasterbarItemNotifications extends Component {
 	};
 
 	getNotificationLinkDomNode = () => {
-		return ReactDom.findDOMNode( this.refs.notificationLink );
+		return ReactDom.findDOMNode( this.notificationLink.current );
 	};
 
 	/**
@@ -122,7 +123,7 @@ class MasterbarItemNotifications extends Component {
 		} );
 
 		return (
-			<div className="masterbar__notifications" ref="notificationLink">
+			<div className="masterbar__notifications" ref={ this.notificationLink }>
 				<MasterbarItem
 					url="/notifications"
 					icon="bell"
