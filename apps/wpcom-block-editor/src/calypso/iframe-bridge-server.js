@@ -58,7 +58,7 @@ function handlePostTrash( calypsoPort ) {
 function overrideRevisions( calypsoPort ) {
 	$( '#editor' ).on(
 		'click',
-		'.components-panel .edit-post-last-revision__panel .editor-post-last-revision__title',
+		'.components-panel .edit-post-last-revision__panel .editor-post-last-revision__title, .components-notice.is-warning .components-notice__action.is-link',
 		e => {
 			e.preventDefault();
 
