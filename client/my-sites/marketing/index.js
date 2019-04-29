@@ -27,7 +27,6 @@ export default function() {
 		'/marketing/connections',
 		'/marketing/sharing-buttons',
 		'/marketing/traffic',
-		'/marketing/tools',
 		'/sharing',
 		'/sharing/buttons',
 	];
