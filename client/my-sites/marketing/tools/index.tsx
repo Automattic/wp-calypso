@@ -15,6 +15,7 @@ import Button from 'components/button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import MarketingToolFeature from './feature';
 import { marketingSharingButtons, marketingTraffic } from 'my-sites/marketing/paths';
+
 /**
  * Style dependencies
  */
@@ -40,35 +41,37 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 	return (
 		<Fragment>
 			<ActionCard
-				headerText={ translate( 'Drive more traffic to your site with our SEO tools' ) }
+				headerText={ translate( 'Drive more traffic to your site with better SEO' ) }
 				mainText={ translate(
-					"Optimize your site for search engines and social media by taking advantage of our SEO tools. We'll nail down important SEO strategies to get more exposure for your business."
+					"Optimize your site for search engines and get more exposure for your business. Let’s make the most of your site’s built-in SEO tools!"
 				) }
-				buttonText={ translate( 'Boost my traffic' ) }
+				buttonText={ translate( 'Boost My Traffic' ) }
 				buttonPrimary
 				buttonOnClick={ handleBoostMyTrafficClick }
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 				compact={ false }
 			/>
+
 			<div className="tools__feature-list">
 				<MarketingToolFeature
-					title={ translate( 'Easily share your blog posts to your social media circle' ) }
+					title={ translate( 'Get social, and share your blog posts where the people are' ) }
 					description={ translate(
-						"Connect to Publicize to make it easy to share your site's posts on several social media networks."
+						"Use your site’s Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
 					) }
 					imagePath="/calypso/images/illustrations/marketing.svg"
 				>
-					<Button onClick={ handleStartSharingClick }>{ translate( 'Start sharing' ) }</Button>
+					<Button onClick={ handleStartSharingClick }>{ translate( 'Start Sharing' ) }</Button>
 				</MarketingToolFeature>
+
 				<MarketingToolFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
 					description={ translate(
-						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts to help build your dream site."
+						"We’ve partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site."
 					) }
 					imagePath="/calypso/images/illustrations/expert.svg"
 				>
 					<Button href={ '/experts/upwork?source=marketingtools' } target="_blank">
-						{ translate( 'Find your expert' ) }
+						{ translate( 'Find Your Expert' ) }
 					</Button>
 				</MarketingToolFeature>
 			</div>

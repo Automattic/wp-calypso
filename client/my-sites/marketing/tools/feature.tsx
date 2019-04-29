@@ -32,12 +32,16 @@ const MarketingToolFeature: FunctionComponent< MarketingToolFeatureProps > = ( {
 				{ imagePath && (
 					<img alt={ imageAlt } className="tools__feature-list-item-body-image" src={ imagePath } />
 				) }
+
 				<div className="tools__feature-list-item-body-text">
 					<CardHeading>{ title }</CardHeading>
+
 					<p>{ description }</p>
+
 					{ disclaimer && <p className="tools__feature-list-item-disclaimer">{ disclaimer }</p> }
 				</div>
 			</div>
+
 			<div className="tools__feature-list-item-child-row">{ children }</div>
 		</Card>
 	);
