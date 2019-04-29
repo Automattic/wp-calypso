@@ -243,7 +243,7 @@ const webpackConfig = {
 		],
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx' ],
+			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
 		alias: Object.assign(
 			{
@@ -264,7 +264,6 @@ const webpackConfig = {
 		! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
-			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),

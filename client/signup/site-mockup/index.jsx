@@ -183,7 +183,7 @@ export default connect(
 		const siteStyle = getSiteStyle( state );
 		const siteType = getSiteType( state );
 		const styleOptions = getSiteStyleOptions( siteType );
-		const style = find( styleOptions, { id: siteStyle || 'professional' } );
+		const style = find( styleOptions, { id: siteStyle || 'modern' } );
 		return {
 			title: siteInformation.title || translate( 'Your New Website' ),
 			address: siteInformation.address,

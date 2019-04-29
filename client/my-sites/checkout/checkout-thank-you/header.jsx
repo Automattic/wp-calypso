@@ -34,6 +34,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		isDataLoaded: PropTypes.bool.isRequired,
 		primaryPurchase: PropTypes.object,
 		hasFailedPurchases: PropTypes.bool,
+		primaryCta: PropTypes.func,
 	};
 
 	getHeading() {
@@ -215,11 +216,16 @@ class CheckoutThankYouHeader extends PureComponent {
 	visitSite = event => {
 		event.preventDefault();
 
-		const { primaryPurchase, selectedSite } = this.props;
+		const { primaryPurchase, selectedSite, primaryCta } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_thank_you_view_site', {
 			product: primaryPurchase.productName,
 		} );
+
+		if ( primaryCta ) {
+			return primaryCta();
+		}
+
 		window.location.href = selectedSite.URL;
 	};
 
@@ -233,6 +239,33 @@ class CheckoutThankYouHeader extends PureComponent {
 		page( domainManagementTransferInPrecheck( selectedSite.slug, primaryPurchase.meta ) );
 	};
 
+	getButtonText = () => {
+		const { translate, hasFailedPurchases, primaryPurchase } = this.props;
+		const site = this.props.selectedSite.slug;
+
+		if ( ! site && hasFailedPurchases ) {
+			return translate( 'Register domain' );
+		}
+
+		if ( isPlan( primaryPurchase ) ) {
+			return translate( 'View my plan' );
+		}
+
+		if (
+			isDomainRegistration( primaryPurchase ) ||
+			isDomainTransfer( primaryPurchase ) ||
+			isSiteRedirect( primaryPurchase )
+		) {
+			return translate( 'Manage domain' );
+		}
+
+		if ( isGoogleApps( primaryPurchase ) ) {
+			return translate( 'Manage email' );
+		}
+
+		return translate( 'Go to My Site' );
+	};
+
 	getButton() {
 		const { hasFailedPurchases, translate, primaryPurchase, selectedSite } = this.props;
 		const headerButtonClassName = 'button is-primary';
@@ -241,27 +274,23 @@ class CheckoutThankYouHeader extends PureComponent {
 			return null;
 		}
 
-		if ( isPlan( primaryPurchase ) ) {
-			return (
-				<div className="checkout-thank-you__header-button">
-					<button className={ headerButtonClassName } onClick={ this.visitSite }>
-						{ translate( 'View your site' ) }
-					</button>
-				</div>
-			);
-		}
-
 		if ( isDelayedDomainTransfer( primaryPurchase ) ) {
 			return (
 				<div className="checkout-thank-you__header-button">
 					<button className={ headerButtonClassName } onClick={ this.startTransfer }>
-						{ translate( 'Start the domain transfer' ) }
+						{ translate( 'Start domain transfer' ) }
 					</button>
 				</div>
 			);
 		}
 
-		return null;
+		return (
+			<div className="checkout-thank-you__header-button">
+				<button className={ headerButtonClassName } onClick={ this.visitSite }>
+					{ this.getButtonText() }
+				</button>
+			</div>
+		);
 	}
 
 	render() {

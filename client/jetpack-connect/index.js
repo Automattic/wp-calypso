@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,6 +12,11 @@ import * as controller from './controller';
 import { login } from 'lib/paths';
 import { siteSelection } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default function() {
 	const user = userFactory();

@@ -127,10 +127,10 @@ function getLoginUrlWithTOSRedirect( email, domain ) {
  *
  * @param {Number} cost - cost
  * @param {String} currencyCode - currency code to format with
- * @returns {String} - Formatted Monthly price
+ * @returns {String} - Formatted Monthly price, rounded to the nearest tenth
  */
 function getMonthlyPrice( cost, currencyCode ) {
-	return formatPrice( cost / 12, currencyCode );
+	return formatPrice( cost / 12, currencyCode, { precision: 1 } );
 }
 
 /**

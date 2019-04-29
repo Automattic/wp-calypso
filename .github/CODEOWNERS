@@ -65,6 +65,9 @@
 # Test infrastructure
 /test @Automattic/team-calypso
 
+# Types, TypeScript, and type annotations
+*.ts *.tsx docs/coding-guidelines/typescript* @Automattic/type-review
+
 # G Suite
 /client/blocks/gsuite-stats-nudge @Automattic/amber
 /client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/amber

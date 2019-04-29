@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import AfterTheDeadline from './after-the-deadline';
 import Latex from './latex';
 import Shortcodes from './shortcodes';
 import Card from 'components/card';
@@ -51,13 +50,6 @@ const Composing = ( {
 
 			{ siteIsJetpack && (
 				<Fragment>
-					<AfterTheDeadline
-						fields={ fields }
-						handleToggle={ handleToggle }
-						isRequestingSettings={ isRequestingSettings }
-						isSavingSettings={ isSavingSettings }
-						setFieldValue={ setFieldValue }
-					/>
 					<Latex
 						fields={ fields }
 						handleToggle={ handleToggle }

@@ -35,7 +35,6 @@ import {
 import GoogleAppsDetails from './google-apps-details';
 import GuidedTransferDetails from './guided-transfer-details';
 import HappinessSupport from 'components/happiness-support';
-import HeaderCake from 'components/header-cake';
 import PlanThankYouCard from 'blocks/plan-thank-you-card';
 import JetpackThankYouCard from './jetpack-thank-you-card';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
@@ -272,7 +271,7 @@ export class CheckoutThankYou extends React.Component {
 		}
 	};
 
-	goBack = () => {
+	primaryCta = () => {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
 			const site = this.props.selectedSite.slug;
@@ -448,15 +447,10 @@ export class CheckoutThankYou extends React.Component {
 			return null;
 		}
 
-		const goBackText = this.props.selectedSite
-			? translate( 'Back to my site' )
-			: translate( 'Register Domain' );
-
 		// standard thanks page
 		return (
 			<Main className="checkout-thank-you">
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				<HeaderCake onClick={ this.goBack } isCompact backText={ goBackText } />
 
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
 
@@ -575,6 +569,7 @@ export class CheckoutThankYou extends React.Component {
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ selectedSite }
 					hasFailedPurchases={ hasFailedPurchases }
+					primaryCta={ this.primaryCta }
 				/>
 
 				{ primaryPurchase && (

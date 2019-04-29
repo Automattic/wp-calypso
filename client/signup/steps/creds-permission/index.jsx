@@ -42,14 +42,7 @@ class CredsPermissionStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_pressable_nux_credentials_share', {} );
 
-		SignupActions.submitSignupStep(
-			{
-				processingMessage: this.props.translate( 'Setting up your site' ),
-				stepName: this.props.stepName,
-			},
-			undefined,
-			{ rewindconfig: true }
-		);
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
 
 		this.props.goToStep(
 			'pressable-nux' === this.props.flowName ? 'creds-complete' : 'rewind-were-backing'
@@ -63,7 +56,11 @@ class CredsPermissionStep extends Component {
 			<Card className="creds-permission__card">
 				<QuerySites />
 				<h3 className="creds-permission__title">{ translate( 'Start backing up your site' ) }</h3>
-				<img className="creds-permission__image" src="/calypso/images/illustrations/security.svg" />
+				<img
+					className="creds-permission__image"
+					src="/calypso/images/illustrations/security.svg"
+					alt=""
+				/>
 				<p className="creds-permission__description">
 					{ translate(
 						'Jetpack, a plugin already on your site, can back up and secure your site at no ' +

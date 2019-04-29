@@ -19,7 +19,7 @@ module.exports.loader = ( {
 	exclude,
 	include,
 } ) => ( {
-	test: /\.jsx?$/,
+	test: /\.[jt]sx?$/,
 	include,
 	exclude,
 	use: [

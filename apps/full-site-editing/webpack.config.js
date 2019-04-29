@@ -6,6 +6,7 @@
 /**
  * External dependencies
  */
+// eslint-disable-next-line import/no-extraneous-dependencies
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
 

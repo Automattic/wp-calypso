@@ -91,7 +91,13 @@ class ThemesBanner extends PureComponent {
 				<Button className="themes-banner__cta" compact primary>
 					{ translate( 'See the theme' ) }
 				</Button>
-				<Button className="themes-banner__close" onClick={ this.handleBannerClose }>
+				<Button
+					className="themes-banner__close"
+					onClick={ this.handleBannerClose }
+					aria-label={ translate( 'Close', {
+						comment: 'Aria label to close the Theme banner',
+					} ) }
+				>
 					<Gridicon icon="cross-small" size={ 18 } />
 				</Button>
 				{ image && (

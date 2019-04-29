@@ -14,19 +14,29 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { isPlan } from 'lib/products-values';
 import { addItem } from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 
-class CartPlanAd extends Component {
+export class CartPlanAd extends Component {
 	addToCartAndRedirect = event => {
-		event.preventDefault();
+		if ( event ) {
+			event.preventDefault();
+		}
+
 		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
 		const domainToBundle = get( domainRegistrations, '[0].meta', '' );
+
+		this.props.recordTracksEvent( 'calypso_banner_cta_click', {
+			cta_name: 'cart_domain_to_plan_upsell',
+		} );
+
 		addItem( cartItems.premiumPlan( PLAN_PREMIUM, { domainToBundle } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
@@ -36,9 +46,11 @@ class CartPlanAd extends Component {
 		const domainRegistrations = cartItems.getDomainRegistrations( cart );
 		const isDomainPremium =
 			domainRegistrations.length === 1 && get( domainRegistrations[ 0 ], 'extra.premium', false );
+		const hasRenewalItem = cartItems.hasRenewalItem( cart );
 
 		return (
 			! isDomainOnly &&
+			! hasRenewalItem &&
 			cart.hasLoadedFromServer &&
 			! cart.hasPendingServerUpdates &&
 			! cartItems.hasDomainCredit( cart ) &&
@@ -63,9 +75,9 @@ class CartPlanAd extends Component {
 						components: { strong: <strong /> },
 					}
 				) }{' '}
-				<a href="" onClick={ this.addToCartAndRedirect }>
+				<Button onClick={ this.addToCartAndRedirect } borderless compact>
 					{ this.props.translate( 'Upgrade Now' ) }
-				</a>
+				</Button>
 			</CartAd>
 		);
 	}
@@ -77,10 +89,15 @@ CartPlanAd.propTypes = {
 	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 };
 
-export default connect( state => {
+const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 	};
-} )( localize( CartPlanAd ) );
+};
+
+export default connect(
+	mapStateToProps,
+	{ recordTracksEvent }
+)( localize( CartPlanAd ) );

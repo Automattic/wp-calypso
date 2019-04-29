@@ -456,7 +456,7 @@ export function createAccount(
 				if ( errors ) {
 					callback( errors );
 				} else {
-					analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
+					analytics.recordSocialRegistration();
 					callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 				}
 			}
@@ -580,9 +580,7 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 
 	if ( siteDomains && siteDomains.length > 1 ) {
 		const domainItem = undefined;
-		SignupActions.submitSignupStep( { stepName: stepName, domainItem }, [], {
-			domainItem,
-		} );
+		SignupActions.submitSignupStep( { stepName, domainItem }, { domainItem } );
 		recordExcludeStepEvent( stepName, siteDomains );
 
 		fulfilledDependencies = fulfilledDependencies.concat( [ 'domainItem' ] );
@@ -599,12 +597,12 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 
 	if ( isPaidPlan ) {
 		const cartItem = undefined;
-		SignupActions.submitSignupStep( { stepName: stepName, cartItem }, [], { cartItem } );
+		SignupActions.submitSignupStep( { stepName, cartItem }, { cartItem } );
 		recordExcludeStepEvent( stepName, sitePlanSlug );
 		fulfilledDependencies = fulfilledDependencies.concat( [ 'cartItem' ] );
 	} else if ( defaultDependencies && defaultDependencies.cartItem ) {
 		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
-		SignupActions.submitSignupStep( { stepName, cartItem }, [], { cartItem } );
+		SignupActions.submitSignupStep( { stepName, cartItem }, { cartItem } );
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
 		fulfilledDependencies = fulfilledDependencies.concat( [ 'cartItem' ] );
 	}
@@ -667,10 +665,10 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 			otherText: '',
 		} );
 
-		SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
-			surveySiteType: 'blog',
-			surveyQuestion: vertical,
-		} );
+		SignupActions.submitSignupStep(
+			{ stepName: 'survey' },
+			{ surveySiteType: 'blog', surveyQuestion: vertical }
+		);
 
 		nextProps.submitSiteVertical( { name: vertical }, stepName );
 

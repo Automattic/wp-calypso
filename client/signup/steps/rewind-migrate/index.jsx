@@ -43,14 +43,7 @@ class RewindMigrate extends Component {
 	 */
 	componentWillUpdate( nextProps ) {
 		if ( this.props.rewindIsNowActive !== nextProps.rewindIsNowActive ) {
-			SignupActions.submitSignupStep(
-				{
-					processingMessage: this.props.translate( 'Migrating your credentials' ),
-					stepName: this.props.stepName,
-				},
-				undefined,
-				{ rewindconfig: true }
-			);
+			SignupActions.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
 			this.props.goToNextStep();
 		}
 	}

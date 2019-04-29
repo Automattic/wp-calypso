@@ -58,14 +58,7 @@ class CredsConfirmStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_pressable_nux_credentials_share', {} );
 
-		SignupActions.submitSignupStep(
-			{
-				processingMessage: this.props.translate( 'Setting up your site' ),
-				stepName: this.props.stepName,
-			},
-			undefined,
-			{ rewindconfig: true }
-		);
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
 
 		this.props.goToStep(
 			'pressable-nux' === this.props.flowName ? 'creds-complete' : 'rewind-were-backing'
@@ -78,7 +71,11 @@ class CredsConfirmStep extends Component {
 		return (
 			<Card className="creds-confirm__card">
 				<h3 className="creds-confirm__title">{ translate( 'Are you sure?' ) }</h3>
-				<img className="creds-confirm__image" src="/calypso/images/illustrations/security.svg" />
+				<img
+					className="creds-confirm__image"
+					src="/calypso/images/illustrations/security.svg"
+					alt=""
+				/>
 				<p className="creds-confirm__description">
 					{ translate(
 						"If you don't share credentials with Jetpack, your site won't be backed up. Our " +

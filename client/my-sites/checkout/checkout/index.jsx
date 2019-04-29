@@ -421,7 +421,7 @@ export class Checkout extends React.Component {
 							if ( 'show' === abtest( 'showConciergeSessionUpsell' ) ) {
 								// A user just purchased one of the qualifying plans and is in the "show" ab test variation
 								// Show them the concierge session upsell page
-								return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
+								return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
 							}
 						}
 					}
@@ -446,11 +446,7 @@ export class Checkout extends React.Component {
 		) {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
-			if ( 'variantQuickstartSession' === abtest( 'conciergeQuickstartSession' ) ) {
-				return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
-			}
-
-			return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
+			return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
 		}
 
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {

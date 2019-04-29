@@ -1,7 +1,6 @@
-Sharing
-=======
+# Sharing
 
-A module for managing a user or site's connection data. Connections are usually intended for sharing and consuming content to and from third-party services. Currently, connections can be classified as either Keyring or Publicize connections. For more information about the distinction between types of connections, refer to the [Sharing Connections Glossery of Terms](../../../client/my-sites/sharing/connections/README.md#glossary-of-terms).
+A module for managing a user or site's connection data. Connections are usually intended for sharing and consuming content to and from third-party services. Currently, connections can be classified as either Keyring or Publicize connections. For more information about the distinction between types of connections, refer to the [Sharing Connections Glossery of Terms](../../../client/my-sites/marketing/connections/README.md#glossary-of-terms).
 
 ## Publicize
 

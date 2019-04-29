@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@2.2.0
+  slack: circleci/slack@2.5.0
 
 references:
   shared-environment: &shared-environment
@@ -19,6 +19,7 @@ references:
         "$CIRCLE_ARTIFACTS/notifications-panel" \
         "$CIRCLE_ARTIFACTS/translate"           \
         "$CIRCLE_ARTIFACTS/screenshots"         \
+        "$CIRCLE_ARTIFACTS/full-site-editing"   \
         "$CIRCLE_ARTIFACTS/wpcom-block-editor"  \
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
@@ -219,7 +220,7 @@ jobs:
             FILES_TO_LINT=$(
               git diff --name-only --diff-filter=d origin/master... \
                 | grep -E '^(client/|server/|packages/)'            \
-                | grep -E '\.jsx?$'
+                | grep -E '\.[jt]sx?$'
             ) || exit 0
 
             if [[ ! -z $FILES_TO_LINT ]]; then
@@ -296,6 +297,19 @@ jobs:
           name: Build the block editor in WordPress.com integration utils package
           command: |
             npx lerna run build --scope='@automattic/wpcom-block-editor' -- -- --output-path=$CIRCLE_ARTIFACTS/wpcom-block-editor
+      - store-artifacts-and-test-results
+
+  build-full-site-editing:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: Build the Full Site Editing plugin and theme
+          command: |
+            npx lerna run build --scope='@automattic/full-site-editing'
+            cp -R apps/full-site-editing/blank-theme $CIRCLE_ARTIFACTS/full-site-editing/
+            cp -R apps/full-site-editing/full-site-editing-plugin $CIRCLE_ARTIFACTS/full-site-editing/
       - store-artifacts-and-test-results
 
   test-client:
@@ -601,6 +615,9 @@ workflows:
           filters:
             branches:
               ignore: master
+      - build-full-site-editing:
+          requires:
+            - setup
       - build-notifications:
           requires:
             - setup
@@ -631,7 +648,11 @@ workflows:
             - test-server
           filters:
             branches:
-              ignore: master
+              ignore:
+                # Do not spin up calypso.live for `master`
+                - master
+                # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
+                - /pull\/[0-9]+/
       - test-e2e-canary:
           requires:
             - wait-calypso-live

@@ -108,21 +108,6 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 		},
 
-		'design-type': {
-			stepName: 'design-type',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo' ],
-		},
-
-		'design-type-with-store': {
-			stepName: 'design-type-with-store',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo' ],
-		},
-
-		'design-type-with-store-nux': {
-			stepName: 'design-type-with-store-nux',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo' ],
-		},
-
 		site: {
 			stepName: 'site',
 			apiRequestFunction: createSite,
@@ -311,22 +296,6 @@ export function generateSteps( {
 				displayNameInput: true,
 				displayUsernameInput: false,
 			},
-		},
-
-		'get-dot-blog-plans': {
-			apiRequestFunction: createSiteWithCart,
-			stepName: 'get-dot-blog-plans',
-			dependencies: [ 'cartItem' ],
-			providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem' ],
-		},
-
-		'get-dot-blog-themes': {
-			stepName: 'get-dot-blog-themes',
-			props: {
-				designType: 'blog',
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
 		},
 
 		// Currently, these two steps explicitly submit other steps to skip them, and

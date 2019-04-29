@@ -34,11 +34,9 @@ class SiteTitleStep extends React.Component {
 
 		SignupActions.submitSignupStep(
 			{
-				processingMessage: translate( 'Setting up your site' ),
 				stepName: this.props.stepName,
 				siteTitle,
 			},
-			[],
 			{ siteTitle }
 		);
 

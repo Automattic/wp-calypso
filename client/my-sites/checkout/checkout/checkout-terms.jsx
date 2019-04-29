@@ -10,6 +10,7 @@ import { cartItems } from 'lib/cart-values';
 import TermsOfService from './terms-of-service';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
+import DomainRegistrationHsts from './domain-registration-hsts';
 import { localize } from 'i18n-calypso';
 
 class CheckoutTerms extends React.Component {
@@ -22,6 +23,7 @@ class CheckoutTerms extends React.Component {
 				</div>
 				<TermsOfService hasRenewableSubscription={ cartItems.hasRenewableSubscription( cart ) } />
 				<DomainRegistrationAgreement cart={ cart } />
+				<DomainRegistrationHsts cart={ cart } />
 				<DomainRegistrationRefundPolicy cart={ cart } />
 			</Fragment>
 		);

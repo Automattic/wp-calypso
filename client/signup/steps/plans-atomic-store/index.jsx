@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { isEmpty, filter } from 'lodash';
+import { filter } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -62,7 +62,6 @@ export class PlansAtomicStoreStep extends Component {
 			stepSectionName,
 			stepName,
 			goToNextStep,
-			translate,
 			designType,
 		} = this.props;
 
@@ -91,9 +90,6 @@ export class PlansAtomicStoreStep extends Component {
 		}
 
 		const step = {
-			processingMessage: isEmpty( cartItem )
-				? translate( 'Free plan selected' )
-				: translate( 'Adding your plan' ),
 			stepName,
 			stepSectionName,
 			cartItem,
@@ -102,7 +98,7 @@ export class PlansAtomicStoreStep extends Component {
 
 		const providedDependencies = { cartItem };
 
-		SignupActions.submitSignupStep( step, [], providedDependencies );
+		SignupActions.submitSignupStep( step, providedDependencies );
 
 		goToNextStep();
 	}

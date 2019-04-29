@@ -8,15 +8,6 @@ export default {
 		},
 		defaultVariation: 'main',
 	},
-	streamlinedNavigationDrawer: {
-		datestamp: '20190321',
-		variations: {
-			test: 5,
-			control: 95,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -34,16 +25,6 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-	},
-	signupAtomicStoreVsPressable: {
-		datestamp: '20171101',
-		variations: {
-			atomic: 99,
-			pressable: 1,
-		},
-		defaultVariation: 'atomic',
-		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 	businessPlanDescriptionAT: {
 		datestamp: '20170605',
@@ -192,27 +173,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	conciergeQuickstartSession: {
-		datestamp: '20190409',
-		variations: {
-			controlSupportSession: 50,
-			variantQuickstartSession: 50,
-		},
-		defaultVariation: 'controlSupportSession',
-		allowExistingUsers: true,
-	},
-	gsuitePurchaseCtaOptions: {
-		datestamp: '20190411',
-		variations: {
-			hideBusinessWithAnnualPrices: 25,
-			hideBusinessWithMonthlyPrices: 25,
-			showBusinessWithAnnualPrices: 25,
-			showBusinessWithMonthlyPrices: 25,
-		},
-		defaultVariation: 'hideBusinessWithAnnualPrices',
-		allowExistingUsers: true,
-		countryCodeTargets: [ 'USD' ],
-	},
 	domainSuggestionsEnCheck: {
 		datestamp: '20190415',
 		variations: {
@@ -221,15 +181,5 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-	},
-	gsuiteDomainFlowOptions: {
-		datestamp: '20190415',
-		variations: {
-			hideMonthlyPrice: 50,
-			showMonthlyPrice: 50,
-		},
-		defaultVariation: 'hideMonthlyPrice',
-		allowExistingUsers: true,
-		countryCodeTargets: [ 'USD' ],
 	},
 };

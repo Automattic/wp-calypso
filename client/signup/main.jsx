@@ -6,7 +6,7 @@ import cookie from 'cookie';
 import debugModule from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Suspense } from 'react';
 import {
 	assign,
 	defer,
@@ -53,7 +53,13 @@ import { disableCart } from 'lib/upgrades/actions';
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { currentUserHasFlag, getCurrentUser, isUserLoggedIn } from 'state/current-user/selectors';
+import {
+	isUserLoggedIn,
+	getCurrentUser,
+	currentUserHasFlag,
+	getCurrentUserSiteCount,
+} from 'state/current-user/selectors';
+import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
@@ -315,23 +321,36 @@ class Signup extends React.Component {
 	handleFlowComplete = ( dependencies, destination ) => {
 		debug( 'The flow is completed. Destination: %s', destination );
 
-		const isNewUser = !! ( dependencies && dependencies.username );
+		const { isNewishUser, existingSiteCount } = this.props;
+
+		const isNewUser = !! (
+			( dependencies && dependencies.username ) ||
+			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
+		);
 		const isNewSite = !! ( dependencies && dependencies.siteSlug );
 		const hasCartItems = !! (
 			dependencies &&
 			( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
 		);
-		const isNewUserOnFreePlan = isNewUser && isNewSite && ! hasCartItems;
+
+		const debugProps = {
+			isNewishUser,
+			existingSiteCount,
+			isNewUser,
+			isNewSite,
+			hasCartItems,
+			flow: this.props.flowName,
+		};
+		debug( 'Tracking signup completion.', debugProps );
 
 		analytics.recordSignupComplete( {
 			isNewUser,
 			isNewSite,
 			hasCartItems,
-			isNewUserOnFreePlan,
 			flow: this.props.flowName,
 		} );
 
-		if ( dependencies.cartItem || dependencies.domainItem ) {
+		if ( dependencies && ( dependencies.cartItem || dependencies.domainItem ) ) {
 			this.handleLogin( dependencies, destination );
 		} else {
 			this.setState( {
@@ -545,24 +564,26 @@ class Signup extends React.Component {
 							flowSteps={ flow.steps }
 						/>
 					) : (
-						<CurrentComponent
-							path={ this.props.path }
-							step={ currentStepProgress }
-							initialContext={ this.props.initialContext }
-							steps={ flow.steps }
-							stepName={ this.props.stepName }
-							meta={ flow.meta || {} }
-							goToNextStep={ this.goToNextStep }
-							goToStep={ this.goToStep }
-							previousFlowName={ this.state.previousFlowName }
-							flowName={ this.props.flowName }
-							signupProgress={ this.props.progress }
-							signupDependencies={ this.props.signupDependencies }
-							stepSectionName={ this.props.stepSectionName }
-							positionInFlow={ this.getPositionInFlow() }
-							hideFreePlan={ hideFreePlan }
-							{ ...propsFromConfig }
-						/>
+						<Suspense fallback={ null }>
+							<CurrentComponent
+								path={ this.props.path }
+								step={ currentStepProgress }
+								initialContext={ this.props.initialContext }
+								steps={ flow.steps }
+								stepName={ this.props.stepName }
+								meta={ flow.meta || {} }
+								goToNextStep={ this.goToNextStep }
+								goToStep={ this.goToStep }
+								previousFlowName={ this.state.previousFlowName }
+								flowName={ this.props.flowName }
+								signupProgress={ this.props.progress }
+								signupDependencies={ this.props.signupDependencies }
+								stepSectionName={ this.props.stepSectionName }
+								positionInFlow={ this.getPositionInFlow() }
+								hideFreePlan={ hideFreePlan }
+								{ ...propsFromConfig }
+							/>
+						</Suspense>
 					) }
 				</div>
 			</div>
@@ -628,7 +649,9 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) && <SiteMockups stepName={ this.props.stepName } /> }
+				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) && (
+					<SiteMockups stepName={ this.props.stepName } />
+				) }
 			</div>
 		);
 	}
@@ -646,6 +669,8 @@ export default connect(
 			progress: getSignupProgress( state ),
 			signupDependencies,
 			isLoggedIn: isUserLoggedIn( state ),
+			isNewishUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
+			existingSiteCount: getCurrentUserSiteCount( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,

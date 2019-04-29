@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { each, includes, reduce, trim, size } from 'lodash';
 
 /**
@@ -257,11 +257,9 @@ export default connect(
 				// Create site
 				SignupActions.submitSignupStep(
 					{
-						processingMessage: i18n.translate( 'Populating your contact information.' ),
 						stepName: ownProps.stepName,
 						flowName: ownProps.flowName,
 					},
-					[],
 					submitData
 				);
 				ownProps.goToNextStep( ownProps.flowName );

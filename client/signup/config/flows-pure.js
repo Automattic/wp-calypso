@@ -15,6 +15,7 @@ export function generateFlows( {
 	getSiteDestination = noop,
 	getPostsDestination = noop,
 	getRedirectDestination = noop,
+	getChecklistDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -91,13 +92,6 @@ export function generateFlows( {
 			lastModified: '2016-01-27',
 		},
 
-		subdomain: {
-			steps: [ 'design-type', 'themes', 'site-topic', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'Provide a vertical for subdomains',
-			lastModified: '2016-10-31',
-		},
-
 		main: {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
 			destination: getSiteDestination,
@@ -118,6 +112,7 @@ export function generateFlows( {
 				'site-type',
 				'site-topic-with-preview',
 				'site-information-title-with-preview',
+				'site-style-with-preview',
 				'domains-with-preview',
 				'plans',
 			],
@@ -131,8 +126,8 @@ export function generateFlows( {
 				'user',
 				'site-type',
 				'site-topic-with-preview',
-				'site-style-with-preview',
 				'site-information-title-with-preview',
+				'site-style-with-preview',
 				'domains-with-preview',
 				'plans',
 			],
@@ -313,7 +308,7 @@ export function generateFlows( {
 
 	flows.private = {
 		steps: [ 'user', 'site' ],
-		destination: getSiteDestination,
+		destination: getChecklistDestination,
 		description: 'Test private site signup',
 		lastModified: '2018-10-22',
 	};

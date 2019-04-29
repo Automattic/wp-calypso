@@ -108,15 +108,13 @@ class DomainsStep extends React.Component {
 			const domainItem = cartItems.domainRegistration( { productSlug, domain } );
 
 			SignupActions.submitSignupStep(
-				Object.assign( {
-					processingMessage: props.translate( 'Adding your domain' ),
+				{
 					stepName: props.stepName,
 					domainItem,
 					siteUrl: domain,
 					isPurchasingItem: true,
 					stepSectionName: props.stepSectionName,
-				} ),
-				[],
+				},
 				{ domainItem }
 			);
 
@@ -184,9 +182,7 @@ class DomainsStep extends React.Component {
 
 	handleSkip = () => {
 		const domainItem = undefined;
-		SignupActions.submitSignupStep( { stepName: this.props.stepName, domainItem }, [], {
-			domainItem,
-		} );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName, domainItem }, { domainItem } );
 		this.props.goToNextStep();
 	};
 
@@ -208,7 +204,6 @@ class DomainsStep extends React.Component {
 		SignupActions.submitSignupStep(
 			Object.assign(
 				{
-					processingMessage: this.props.translate( 'Adding your domain' ),
 					stepName: this.props.stepName,
 					domainItem,
 					googleAppsCartItem,
@@ -218,7 +213,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 
@@ -238,7 +232,6 @@ class DomainsStep extends React.Component {
 		SignupActions.submitSignupStep(
 			Object.assign(
 				{
-					processingMessage: this.props.translate( 'Adding your domain mapping' ),
 					stepName: this.props.stepName,
 					[ sectionName ]: state,
 					domainItem,
@@ -248,7 +241,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 
@@ -270,9 +262,8 @@ class DomainsStep extends React.Component {
 		SignupActions.submitSignupStep(
 			Object.assign(
 				{
-					processingMessage: this.props.translate( 'Adding your domain transfer' ),
 					stepName: this.props.stepName,
-					[ 'transfer' ]: {},
+					transfer: {},
 					domainItem,
 					isPurchasingItem,
 					siteUrl: domain,
@@ -280,7 +271,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 
