@@ -6,7 +6,7 @@ import cookie from 'cookie';
 import debugModule from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Suspense } from 'react';
 import {
 	assign,
 	defer,
@@ -564,24 +564,26 @@ class Signup extends React.Component {
 							flowSteps={ flow.steps }
 						/>
 					) : (
-						<CurrentComponent
-							path={ this.props.path }
-							step={ currentStepProgress }
-							initialContext={ this.props.initialContext }
-							steps={ flow.steps }
-							stepName={ this.props.stepName }
-							meta={ flow.meta || {} }
-							goToNextStep={ this.goToNextStep }
-							goToStep={ this.goToStep }
-							previousFlowName={ this.state.previousFlowName }
-							flowName={ this.props.flowName }
-							signupProgress={ this.props.progress }
-							signupDependencies={ this.props.signupDependencies }
-							stepSectionName={ this.props.stepSectionName }
-							positionInFlow={ this.getPositionInFlow() }
-							hideFreePlan={ hideFreePlan }
-							{ ...propsFromConfig }
-						/>
+						<Suspense fallback={ null }>
+							<CurrentComponent
+								path={ this.props.path }
+								step={ currentStepProgress }
+								initialContext={ this.props.initialContext }
+								steps={ flow.steps }
+								stepName={ this.props.stepName }
+								meta={ flow.meta || {} }
+								goToNextStep={ this.goToNextStep }
+								goToStep={ this.goToStep }
+								previousFlowName={ this.state.previousFlowName }
+								flowName={ this.props.flowName }
+								signupProgress={ this.props.progress }
+								signupDependencies={ this.props.signupDependencies }
+								stepSectionName={ this.props.stepSectionName }
+								positionInFlow={ this.getPositionInFlow() }
+								hideFreePlan={ hideFreePlan }
+								{ ...propsFromConfig }
+							/>
+						</Suspense>
 					) }
 				</div>
 			</div>
