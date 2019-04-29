@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React, { Component, createRef } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { partial } from 'lodash';
@@ -55,14 +54,14 @@ class MasterbarItemNotifications extends Component {
 
 		// focus on main window if we just closed the notes panel
 		if ( this.props.isNotificationsOpen && ! isOpen ) {
-			this.getNotificationLinkDomNode().blur();
+			this.notificationLink.current.blur();
 			window.focus();
 		}
 	}
 
 	checkToggleNotes = ( event, forceToggle ) => {
 		const target = event ? event.target : false;
-		const notificationNode = this.getNotificationLinkDomNode();
+		const notificationNode = this.notificationLink.current;
 
 		if ( target && notificationNode.contains( target ) ) {
 			return;
@@ -80,10 +79,6 @@ class MasterbarItemNotifications extends Component {
 		}
 
 		this.props.toggleNotificationsPanel();
-	};
-
-	getNotificationLinkDomNode = () => {
-		return ReactDom.findDOMNode( this.notificationLink.current );
 	};
 
 	/**
