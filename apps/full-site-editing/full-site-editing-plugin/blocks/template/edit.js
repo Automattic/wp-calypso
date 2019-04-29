@@ -21,7 +21,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import PostAutocomplete from '../../components/post-autocomplete';
 import './style.scss';
 
-const TemplatePartEdit = compose(
+const TemplateEdit = compose(
 	withSelect( ( select, { attributes } ) => {
 		const { getEntityRecord } = select( 'core' );
 		const { selectedPostId, selectedPostType } = attributes;
@@ -64,7 +64,7 @@ const TemplatePartEdit = compose(
 				</BlockControls>
 			) }
 			<div
-				className={ classNames( 'a8c-template-part-block', {
+				className={ classNames( 'template-block', {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
@@ -74,7 +74,7 @@ const TemplatePartEdit = compose(
 						label={ __( 'Template Part' ) }
 						instructions={ __( 'Select a template part to display' ) }
 					>
-						<div className="a8c-template-part-block__selector">
+						<div className="template-block__selector">
 							<PostAutocomplete onSelectPost={ onSelectPost } />
 							{ !! selectedPost && (
 								<a href={ `?post=${ selectedPost.id }&action=edit` }>
@@ -85,7 +85,7 @@ const TemplatePartEdit = compose(
 					</Placeholder>
 				) }
 				{ showContent && (
-					<RawHTML className="a8c-template-part-block__content">
+					<RawHTML className="template-block__content">
 						{ get( selectedPost, 'content.rendered' ) }
 					</RawHTML>
 				) }
@@ -94,4 +94,4 @@ const TemplatePartEdit = compose(
 	);
 } );
 
-export default TemplatePartEdit;
+export default TemplateEdit;

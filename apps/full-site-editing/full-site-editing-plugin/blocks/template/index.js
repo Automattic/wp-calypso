@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-registerBlockType( 'a8c/template-part', {
+registerBlockType( 'core/template', {
 	title: __( 'Template Part' ),
 	description: __( 'Display a template part.' ),
 	icon: 'layout',
