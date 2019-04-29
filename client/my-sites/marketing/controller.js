@@ -26,6 +26,10 @@ import {
 } from 'state/sites/selectors';
 import versionCompare from 'lib/version-compare';
 
+export const redirectConnections = context => {
+	page.redirect( '/marketing/connections/' + context.params.domain );
+};
+
 export const redirectMarketingTools = context => {
 	page.redirect( '/marketing/tools/' + context.params.domain );
 };

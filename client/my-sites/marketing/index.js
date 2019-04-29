@@ -14,6 +14,7 @@ import {
 	connections,
 	layout,
 	marketingTools,
+	redirectConnections,
 	redirectMarketingTools,
 	redirectSharingButtons,
 	redirectTraffic,
@@ -38,7 +39,7 @@ export default function() {
 
 	paths.forEach( path => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
 
-	page( '/sharing/:domain', redirectTraffic );
+	page( '/sharing/:domain', redirectConnections );
 	page( '/sharing/buttons/:domain', redirectSharingButtons );
 
 	if ( config.isEnabled( 'marketing/tools' ) ) {
