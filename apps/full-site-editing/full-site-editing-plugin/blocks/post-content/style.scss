@@ -1,8 +1,8 @@
-.a8c-content-slot-block.alignfull {
+.post-content-block.alignfull {
 	padding: 0 12px;
 }
 
-.a8c-content-slot-block__selector {
+.post-content-block__selector {
 	width: 300px;
 	a {
 		font-family: sans-serif;
@@ -11,7 +11,7 @@
 	}
 }
 
-.a8c-content-slot-block__preview {
+.post-content-block__preview {
 	pointer-events: none;
 	&::after {
 		content: '';

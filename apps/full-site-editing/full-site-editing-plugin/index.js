@@ -1,5 +1,5 @@
 /**
  * Internal dependencies
  */
-import './blocks/content-slot';
+import './blocks/post-content';
 import './blocks/template-part';
