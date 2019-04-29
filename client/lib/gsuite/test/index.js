@@ -61,22 +61,29 @@ describe( 'index', () => {
 
 		test( 'returns empty array if domain is invalid', () => {
 			expect(
-				getGSuiteSupportedDomains( [ { name: 'foogoogle.blog', type: 'REGISTERED' } ] )
+				getGSuiteSupportedDomains( [
+					{ name: 'foogoogle.blog', type: 'REGISTERED', googleAppsSubscription: {} },
+				] )
 			).toEqual( [] );
 		} );
 
 		test( 'returns domain object if domain is valid, type of registered, and wpcom nameservers', () => {
-			const registered = { name: 'foo.blog', type: 'REGISTERED', hasWpcomNameservers: true };
+			const registered = {
+				name: 'foo.blog',
+				type: 'REGISTERED',
+				hasWpcomNameservers: true,
+				googleAppsSubscription: {},
+			};
 			expect( getGSuiteSupportedDomains( [ registered ] ) ).toEqual( [ registered ] );
 		} );
 
 		test( 'returns domain object if domain is valid and type of mapped', () => {
-			const mapped = { name: 'foo.blog', type: 'MAPPED' };
+			const mapped = { name: 'foo.blog', type: 'MAPPED', googleAppsSubscription: {} };
 			expect( getGSuiteSupportedDomains( [ mapped ] ) ).toEqual( [ mapped ] );
 		} );
 
 		test( 'returns domain object if domain is valid and type of site redirected', () => {
-			const siteRedirect = { name: 'foo.blog', type: 'SITE_REDIRECT' };
+			const siteRedirect = { name: 'foo.blog', type: 'SITE_REDIRECT', googleAppsSubscription: {} };
 			expect( getGSuiteSupportedDomains( [ siteRedirect ] ) ).toEqual( [] );
 		} );
 	} );
@@ -100,14 +107,18 @@ describe( 'index', () => {
 
 		test( 'returns false if passed an array with invalid domains', () => {
 			expect(
-				hasGSuiteSupportedDomain( [ { name: 'foogoogle.blog', type: 'REGISTERED' } ] )
+				hasGSuiteSupportedDomain( [
+					{ name: 'foogoogle.blog', type: 'REGISTERED', googleAppsSubscription: {} },
+				] )
 			).toEqual( false );
 		} );
 
 		test( 'returns true if passed an array with valid domains', () => {
-			expect( hasGSuiteSupportedDomain( [ { name: 'foo.blog', type: 'MAPPED' } ] ) ).toEqual(
-				true
-			);
+			expect(
+				hasGSuiteSupportedDomain( [
+					{ name: 'foo.blog', type: 'MAPPED', googleAppsSubscription: {} },
+				] )
+			).toEqual( true );
 		} );
 	} );
 
