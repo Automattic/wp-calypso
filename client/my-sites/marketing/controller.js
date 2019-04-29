@@ -32,17 +32,13 @@ export const redirectSharingButtons = context => {
 
 export const redirectTraffic = context => {
 	page.redirect( '/marketing/traffic/' + context.params.domain );
-	return;
-};
-
-export const redirectConnections = context => {
-	page.redirect( '/marketing/connections/' + context.params.domain );
 };
 
 export const layout = ( context, next ) => {
 	const { contentComponent, path } = context;
 
 	context.primary = createElement( Sharing, { contentComponent, path } );
+
 	next();
 };
 
