@@ -25,7 +25,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { isEnabled } from 'config';
-import { abtest } from 'lib/abtest';
 
 class ChecklistMain extends PureComponent {
 	state = { complete: false };
@@ -90,18 +89,13 @@ class ChecklistMain extends PureComponent {
 				);
 
 			case 'concierge':
-				const sessionName =
-					'variantQuickstartSession' === abtest( 'conciergeQuickstartSession' )
-						? 'Quick Start Session'
-						: 'Support Session';
 				return translate(
-					'We emailed %(email)s with instructions to schedule your %(sessionName)s call. ' +
+					'We emailed %(email)s with instructions to schedule your Quick Start Session call with us. ' +
 						'In the mean time, let’s get your new site ready for you to share. ' +
 						'We’ve prepared a list of things that will help you get there quickly.',
 					{
 						args: {
 							email: this.props.user.email,
-							sessionName,
 						},
 					}
 				);

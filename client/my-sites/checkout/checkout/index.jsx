@@ -346,7 +346,7 @@ export class Checkout extends React.Component {
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
 		// Especially around the G Suite / Concierge / Checklist logic.
 
-		let renewalItem;
+		let renewalItem, displayModeParam;
 		const {
 			cart,
 			selectedSite,
@@ -449,31 +449,30 @@ export class Checkout extends React.Component {
 			return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
 		}
 
+		if ( cartItems.hasConciergeSession( cart ) ) {
+			displayModeParam = 'd=concierge';
+		}
+
+		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
+
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
 			if ( this.props.redirectToPageBuilder ) {
 				return getEditHomeUrl( selectedSiteSlug );
 			}
 			const destination = abtest( 'improvedOnboarding' ) === 'main' ? 'checklist' : 'view';
 
-			return `/${ destination }/${ selectedSiteSlug }`;
+			return `/${ destination }/${ selectedSiteSlug }${ queryParam }`;
 		}
 
 		if ( this.props.isJetpackNotAtomic && config.isEnabled( 'jetpack/checklist' ) ) {
 			return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
 		}
 
-		let redirect =
-			this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
-				? `/checkout/thank-you/features/${
-						this.props.selectedFeature
-				  }/${ selectedSiteSlug }/${ receiptId }`
-				: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
-
-		if ( cartItems.hasConciergeSession( cart ) ) {
-			redirect += '?d=concierge';
-		}
-
-		return redirect;
+		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
+			? `/checkout/thank-you/features/${
+					this.props.selectedFeature
+			  }/${ selectedSiteSlug }/${ receiptId }`
+			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }${ queryParam }`;
 	};
 
 	handleCheckoutExternalRedirect( redirectUrl ) {
