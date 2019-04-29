@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -260,10 +261,10 @@ class DeleteUser extends React.Component {
 	renderMultisite = () => {
 		return (
 			<CompactCard className="delete-user__multisite">
-				<a className="delete-user__remove-user" role="presentation" onClick={ this.removeUser }>
+				<Button borderless className="delete-user__remove-user" onClick={ this.removeUser }>
 					<Gridicon icon="trash" />
 					{ this.getRemoveText() }
-				</a>
+				</Button>
 			</CompactCard>
 		);
 	};
