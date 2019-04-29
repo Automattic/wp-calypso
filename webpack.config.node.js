@@ -67,6 +67,8 @@ function getExternals() {
 		externals.redux = 'commonjs redux/dist/redux.min';
 	}
 
+	externals[ 'electron' ] = 'commonjs electron';
+
 	return externals;
 }
 
@@ -86,13 +88,6 @@ const webpackConfig = {
 				test: /extensions[/\\]index/,
 				exclude: path.join( __dirname, 'node_modules' ),
 				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
-			},
-			{
-				include: path.join( __dirname, 'client/sections.js' ),
-				use: {
-					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
-					options: { forceRequire: true, onlyIsomorphic: true },
-				},
 			},
 			TranspileConfig.loader( {
 				workerCount,
@@ -137,6 +132,14 @@ const webpackConfig = {
 			'node_modules',
 		],
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		alias: Object.assign( {
+			'gridicons/example': 'gridicons/dist/example',
+			'react-virtualized': 'react-virtualized/dist/es',
+			'social-logos/example': 'social-logos/build/example',
+			debug: path.resolve( __dirname, 'node_modules/debug' ),
+			store: 'store/dist/store.modern',
+			gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
+		} ),
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,

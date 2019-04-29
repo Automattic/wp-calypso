@@ -638,7 +638,7 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
-module.exports = function() {
+module.exports = async function() {
 	const app = express();
 
 	app.set( 'views', __dirname );
@@ -767,46 +767,48 @@ module.exports = function() {
 		res.send( pageHtml );
 	} );
 
-	sections
-		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
-		.forEach( section => {
-			section.paths.forEach( sectionPath => {
-				const pathRegex = pathToRegExp( sectionPath );
+	await Promise.all(
+		sections
+			.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
+			.map( async section => {
+				section.paths.forEach( sectionPath => {
+					const pathRegex = pathToRegExp( sectionPath );
 
-				app.get( pathRegex, function( req, res, next ) {
-					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
+					app.get( pathRegex, function( req, res, next ) {
+						req.context = Object.assign( {}, req.context, { sectionName: section.name } );
 
-					if ( config.isEnabled( 'code-splitting' ) ) {
-						req.context.chunkFiles = getFilesForChunk( section.name, req );
-					} else {
-						req.context.chunkFiles = EMPTY_ASSETS;
+						if ( config.isEnabled( 'code-splitting' ) ) {
+							req.context.chunkFiles = getFilesForChunk( section.name, req );
+						} else {
+							req.context.chunkFiles = EMPTY_ASSETS;
+						}
+
+						if ( section.secondary && req.context ) {
+							req.context.hasSecondary = true;
+						}
+
+						if ( section.group && req.context ) {
+							req.context.sectionGroup = section.group;
+						}
+
+						next();
+					} );
+
+					if ( ! section.isomorphic ) {
+						app.get( pathRegex, setUpRoute, serverRender );
 					}
-
-					if ( section.secondary && req.context ) {
-						req.context.hasSecondary = true;
-					}
-
-					if ( section.group && req.context ) {
-						req.context.sectionGroup = section.group;
-					}
-
-					next();
 				} );
 
-				if ( ! section.isomorphic ) {
-					app.get( pathRegex, setUpRoute, serverRender );
+				if ( section.isomorphic ) {
+					// section.load() uses require on the server side so we also need to access the
+					// default export of it. See webpack/bundler/sections-loader.js
+					// TODO: section initialization is async function since #28301. At the moment when
+					// some isomorphic section really starts doing something async, we should start
+					// awaiting the result here. Will be solved together with server-side dynamic reducers.
+					( await section.load() ).default( serverRouter( app, setUpRoute, section ) );
 				}
-			} );
-
-			if ( section.isomorphic ) {
-				// section.load() uses require on the server side so we also need to access the
-				// default export of it. See webpack/bundler/sections-loader.js
-				// TODO: section initialization is async function since #28301. At the moment when
-				// some isomorphic section really starts doing something async, we should start
-				// awaiting the result here. Will be solved together with server-side dynamic reducers.
-				section.load().default( serverRouter( app, setUpRoute, section ) );
-			}
-		} );
+			} )
+	);
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

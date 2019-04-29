@@ -21,7 +21,7 @@ const analytics = require( '../lib/analytics' ).default;
  * @returns {object} The express app
  * @api public
  */
-function setup() {
+async function setup() {
 	const app = express();
 
 	// for nginx
@@ -105,7 +105,7 @@ function setup() {
 	app.use( require( 'api' )() );
 
 	// attach the pages module
-	app.use( pages() );
+	app.use( await pages() );
 
 	return app;
 }

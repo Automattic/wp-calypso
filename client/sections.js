@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
-const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
 
 const sections = [
 	{
@@ -11,6 +9,7 @@ const sections = [
 		module: 'my-sites',
 		group: 'sites',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'sites' */ 'my-sites' ),
 	},
 	{
 		name: 'customize',
@@ -18,6 +17,7 @@ const sections = [
 		module: 'my-sites/customize',
 		group: 'sites',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'customize' */ 'my-sites/customize' ),
 	},
 	{
 		name: 'me',
@@ -25,6 +25,7 @@ const sections = [
 		module: 'me',
 		group: 'me',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'me' */ 'me' ),
 	},
 	{
 		name: 'account',
@@ -32,6 +33,7 @@ const sections = [
 		module: 'me/account',
 		group: 'me',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'account' */ 'me/account' ),
 	},
 	{
 		name: 'account-close',
@@ -39,6 +41,7 @@ const sections = [
 		module: 'me/account-close',
 		group: 'me',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'account-close' */ 'me/account-close' ),
 	},
 	{
 		name: 'activity',
@@ -46,6 +49,7 @@ const sections = [
 		module: 'my-sites/activity',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'activity' */ 'my-sites/activity' ),
 	},
 	{
 		name: 'security',
@@ -53,6 +57,7 @@ const sections = [
 		module: 'me/security',
 		group: 'me',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'security' */ 'me/security' ),
 	},
 	{
 		name: 'privacy',
@@ -60,6 +65,7 @@ const sections = [
 		module: 'me/privacy',
 		group: 'me',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'privacy' */ 'me/privacy' ),
 	},
 	{
 		name: 'purchases',
@@ -67,6 +73,7 @@ const sections = [
 		module: 'me/purchases',
 		group: 'me',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'purchases' */ 'me/purchases' ),
 	},
 	{
 		name: 'notification-settings',
@@ -74,6 +81,8 @@ const sections = [
 		module: 'me/notification-settings',
 		group: 'me',
 		secondary: true,
+		load: () =>
+			import( /* webpackChunkName: 'notification-settings' */ 'me/notification-settings' ),
 	},
 	{
 		name: 'site-blocks',
@@ -81,6 +90,7 @@ const sections = [
 		module: 'me/site-blocks',
 		group: 'me',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'site-blocks' */ 'me/site-blocks' ),
 	},
 	{
 		name: 'concierge',
@@ -88,6 +98,7 @@ const sections = [
 		module: 'me/concierge',
 		group: 'me',
 		secondary: false,
+		load: () => import( /* webpackChunkName: 'concierge' */ 'me/concierge' ),
 	},
 	{
 		name: 'media',
@@ -95,6 +106,7 @@ const sections = [
 		module: 'my-sites/media',
 		group: 'sites',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'media' */ 'my-sites/media' ),
 	},
 	{
 		name: 'people',
@@ -102,6 +114,7 @@ const sections = [
 		module: 'my-sites/people',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'people' */ 'my-sites/people' ),
 	},
 	{
 		name: 'plugins',
@@ -109,6 +122,7 @@ const sections = [
 		module: 'my-sites/plugins',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'plugins' */ 'my-sites/plugins' ),
 	},
 	{
 		name: 'posts-pages',
@@ -116,6 +130,7 @@ const sections = [
 		module: 'my-sites/pages',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'posts-pages' */ 'my-sites/pages' ),
 	},
 	{
 		name: 'posts-pages',
@@ -123,6 +138,7 @@ const sections = [
 		module: 'my-sites/posts',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'posts-pages' */ 'my-sites/posts' ),
 	},
 	{
 		name: 'settings-performance',
@@ -130,6 +146,10 @@ const sections = [
 		module: 'my-sites/site-settings/settings-performance',
 		secondary: true,
 		group: 'sites',
+		load: () =>
+			import(
+				/* webpackChunkName: 'settings-performance' */ 'my-sites/site-settings/settings-performance'
+			),
 	},
 	{
 		name: 'settings-writing',
@@ -137,6 +157,10 @@ const sections = [
 		module: 'my-sites/site-settings/settings-writing',
 		secondary: true,
 		group: 'sites',
+		load: () =>
+			import(
+				/* webpackChunkName: 'settings-writing' */ 'my-sites/site-settings/settings-writing'
+			),
 	},
 	{
 		name: 'settings-discussion',
@@ -144,6 +168,10 @@ const sections = [
 		module: 'my-sites/site-settings/settings-discussion',
 		secondary: true,
 		group: 'sites',
+		load: () =>
+			import(
+				/* webpackChunkName: 'settings-discussion' */ 'my-sites/site-settings/settings-discussion'
+			),
 	},
 	{
 		name: 'settings-security',
@@ -151,6 +179,10 @@ const sections = [
 		module: 'my-sites/site-settings/settings-security',
 		secondary: true,
 		group: 'sites',
+		load: () =>
+			import(
+				/* webpackChunkName: 'settings-security' */ 'my-sites/site-settings/settings-security'
+			),
 	},
 	{
 		name: 'settings',
@@ -158,6 +190,7 @@ const sections = [
 		module: 'my-sites/site-settings',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'settings' */ 'my-sites/site-settings' ),
 	},
 	{
 		name: 'marketing',
@@ -165,6 +198,7 @@ const sections = [
 		module: 'my-sites/marketing',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'marketing' */ 'my-sites/marketing' ),
 	},
 	{
 		name: 'jetpack-connect',
@@ -172,6 +206,7 @@ const sections = [
 		module: 'jetpack-connect',
 		secondary: false,
 		enableLoggedOut: true,
+		load: () => import( /* webpackChunkName: 'jetpack-connect' */ 'jetpack-connect' ),
 	},
 	{
 		name: 'jetpack-onboarding',
@@ -179,6 +214,7 @@ const sections = [
 		module: 'jetpack-onboarding',
 		secondary: false,
 		enableLoggedOut: true,
+		load: () => import( /* webpackChunkName: 'jetpack-onboarding' */ 'jetpack-onboarding' ),
 	},
 	{
 		name: 'signup',
@@ -187,6 +223,7 @@ const sections = [
 		secondary: false,
 		enableLoggedOut: true,
 		isomorphic: true,
+		load: () => import( /* webpackChunkName: 'signup' */ 'signup' ),
 	},
 	{
 		name: 'stats',
@@ -194,6 +231,7 @@ const sections = [
 		module: 'my-sites/stats',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'stats' */ 'my-sites/stats' ),
 	},
 	{
 		name: 'checklist',
@@ -201,6 +239,7 @@ const sections = [
 		module: 'my-sites/checklist',
 		secondary: true,
 		group: 'checklist',
+		load: () => import( /* webpackChunkName: 'checklist' */ 'my-sites/checklist' ),
 	},
 	{
 		name: 'google-my-business',
@@ -208,6 +247,8 @@ const sections = [
 		module: 'my-sites/google-my-business',
 		secondary: true,
 		group: 'sites',
+		load: () =>
+			import( /* webpackChunkName: 'google-my-business' */ 'my-sites/google-my-business' ),
 	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
@@ -220,6 +261,7 @@ const sections = [
 		group: 'sites',
 		isomorphic: true,
 		title: 'Themes',
+		load: () => import( /* webpackChunkName: 'themes' */ 'my-sites/themes' ),
 	},
 	{
 		name: 'theme',
@@ -230,6 +272,7 @@ const sections = [
 		group: 'sites',
 		isomorphic: true,
 		title: 'Themes',
+		load: () => import( /* webpackChunkName: 'theme' */ 'my-sites/theme' ),
 	},
 	{
 		name: 'domains',
@@ -237,6 +280,7 @@ const sections = [
 		module: 'my-sites/domains',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'domains' */ 'my-sites/domains' ),
 	},
 	{
 		name: 'email',
@@ -244,6 +288,7 @@ const sections = [
 		module: 'my-sites/email',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'email' */ 'my-sites/email' ),
 	},
 	{
 		name: 'checkout',
@@ -251,6 +296,7 @@ const sections = [
 		module: 'my-sites/checkout',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'checkout' */ 'my-sites/checkout' ),
 	},
 	{
 		name: 'plans',
@@ -258,12 +304,14 @@ const sections = [
 		module: 'my-sites/plans',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'plans' */ 'my-sites/plans' ),
 	},
 	{
 		name: 'accept-invite',
 		paths: [ '/accept-invite' ],
 		module: 'my-sites/invites',
 		enableLoggedOut: true,
+		load: () => import( /* webpackChunkName: 'accept-invite' */ 'my-sites/invites' ),
 	},
 	{
 		name: 'earn',
@@ -271,12 +319,14 @@ const sections = [
 		module: 'my-sites/earn',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'earn' */ 'my-sites/earn' ),
 	},
 	{
 		name: 'mailing-lists',
 		paths: [ '/mailing-lists/unsubscribe' ],
 		module: 'mailing-lists',
 		enableLoggedOut: true,
+		load: () => import( /* webpackChunkName: 'mailing-lists' */ 'mailing-lists' ),
 	},
 	{
 		name: 'feature-upsell',
@@ -284,6 +334,7 @@ const sections = [
 		module: 'my-sites/feature-upsell',
 		group: 'sites',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'feature-upsell' */ 'my-sites/feature-upsell' ),
 	},
 	{
 		name: 'post-editor',
@@ -291,16 +342,16 @@ const sections = [
 		module: 'post-editor',
 		group: 'editor',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'post-editor' */ 'post-editor' ),
 	},
-
 	{
 		name: 'account-recovery',
 		paths: [ '/account-recovery' ],
 		module: 'account-recovery',
 		secondary: false,
 		enableLoggedOut: true,
+		load: () => import( /* webpackChunkName: 'account-recovery' */ 'account-recovery' ),
 	},
-
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	{
 		name: 'reader',
@@ -308,6 +359,7 @@ const sections = [
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
+		load: () => import( /* webpackChunkName: 'reader' */ 'reader' ),
 	},
 	{
 		name: 'reader',
@@ -315,6 +367,7 @@ const sections = [
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
+		load: () => import( /* webpackChunkName: 'reader' */ 'reader' ),
 	},
 	{
 		name: 'reader',
@@ -322,6 +375,7 @@ const sections = [
 		module: 'reader/full-post',
 		secondary: false,
 		group: 'reader',
+		load: () => import( /* webpackChunkName: 'reader' */ 'reader/full-post' ),
 	},
 	{
 		name: 'reader',
@@ -329,6 +383,7 @@ const sections = [
 		module: 'reader/discover',
 		secondary: true,
 		group: 'reader',
+		load: () => import( /* webpackChunkName: 'reader' */ 'reader/discover' ),
 	},
 	{
 		name: 'reader',
@@ -336,6 +391,7 @@ const sections = [
 		module: 'reader/following',
 		secondary: true,
 		group: 'reader',
+		load: () => import( /* webpackChunkName: 'reader' */ 'reader/following' ),
 	},
 	{
 		name: 'reader',
@@ -343,6 +399,7 @@ const sections = [
 		module: 'reader/tag-stream',
 		secondary: true,
 		group: 'reader',
+		load: () => import( /* webpackChunkName: 'reader' */ 'reader/tag-stream' ),
 	},
 	{
 		name: 'reader',
@@ -350,6 +407,7 @@ const sections = [
 		module: 'reader/liked-stream',
 		secondary: true,
 		group: 'reader',
+		load: () => import( /* webpackChunkName: 'reader' */ 'reader/liked-stream' ),
 	},
 	{
 		name: 'reader',
@@ -357,6 +415,7 @@ const sections = [
 		module: 'reader/search',
 		secondary: true,
 		group: 'reader',
+		load: () => import( /* webpackChunkName: 'reader' */ 'reader/search' ),
 	},
 	{
 		name: 'reader',
@@ -364,6 +423,7 @@ const sections = [
 		module: 'reader/list',
 		secondary: true,
 		group: 'reader',
+		load: () => import( /* webpackChunkName: 'reader' */ 'reader/list' ),
 	},
 	{
 		name: 'reader',
@@ -371,6 +431,7 @@ const sections = [
 		module: 'reader/conversations',
 		secondary: true,
 		group: 'reader',
+		load: () => import( /* webpackChunkName: 'reader' */ 'reader/conversations' ),
 	},
 	{
 		name: 'help',
@@ -379,6 +440,7 @@ const sections = [
 		secondary: true,
 		enableLoggedOut: true,
 		group: 'me',
+		load: () => import( /* webpackChunkName: 'help' */ 'me/help' ),
 	},
 	{
 		name: 'login',
@@ -387,6 +449,7 @@ const sections = [
 		enableLoggedOut: true,
 		secondary: false,
 		isomorphic: true,
+		load: () => import( /* webpackChunkName: 'login' */ 'login' ),
 	},
 	{
 		name: 'auth',
@@ -394,6 +457,7 @@ const sections = [
 		module: 'auth',
 		secondary: false,
 		enableLoggedOut: true,
+		load: () => import( /* webpackChunkName: 'auth' */ 'auth' ),
 	},
 	{
 		name: 'posts-custom',
@@ -401,6 +465,7 @@ const sections = [
 		module: 'my-sites/types',
 		secondary: true,
 		group: 'sites',
+		load: () => import( /* webpackChunkName: 'posts-custom' */ 'my-sites/types' ),
 	},
 	{
 		name: 'happychat',
@@ -408,6 +473,7 @@ const sections = [
 		module: 'me/happychat',
 		group: 'me',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'happychat' */ 'me/happychat' ),
 	},
 	{
 		name: 'comments',
@@ -415,6 +481,7 @@ const sections = [
 		module: 'my-sites/comments',
 		group: 'sites',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'comments' */ 'my-sites/comments' ),
 	},
 	{
 		name: 'preview',
@@ -422,12 +489,17 @@ const sections = [
 		module: 'my-sites/preview',
 		group: 'sites',
 		secondary: true,
+		load: () => import( /* webpackChunkName: 'preview' */ 'my-sites/preview' ),
 	},
 	{
 		name: 'domain-connect-authorize',
 		paths: [ '/domain-connect' ],
 		module: 'my-sites/domains/domain-management/domain-connect',
 		secondary: false,
+		load: () =>
+			import(
+				/* webpackChunkName: 'domain-connect-authorize' */ 'my-sites/domains/domain-management/domain-connect'
+			),
 	},
 	{
 		name: 'gutenberg-editor',
@@ -435,6 +507,7 @@ const sections = [
 		module: 'gutenberg/editor',
 		group: 'gutenberg',
 		secondary: false,
+		load: () => import( /* webpackChunkName: 'gutenberg-editor' */ 'gutenberg/editor' ),
 	},
 	{
 		name: 'devdocs',
@@ -442,6 +515,7 @@ const sections = [
 		module: 'devdocs',
 		secondary: true,
 		enableLoggedOut: true,
+		load: () => import( /* webpackChunkName: 'devdocs' */ 'devdocs' ),
 	},
 	{
 		name: 'devdocs',
@@ -449,18 +523,57 @@ const sections = [
 		module: 'devdocs',
 		secondary: false,
 		enableLoggedOut: true,
+		load: () => import( /* webpackChunkName: 'devdocs' */ 'devdocs' ),
+	},
+	// extensions
+	{
+		name: 'hello-dolly',
+		paths: [ '/hello-dolly' ],
+		module: 'hello-dolly',
+		group: 'sites',
+		secondary: true,
+		enableLoggedOut: true,
+		env_id: [ 'development', 'wpcalypso' ],
+		load: () => import( /* webpackChunkName: 'hello-dolly' */ 'hello-dolly' ),
+	},
+	{
+		name: 'sensei',
+		paths: [ '/extensions/sensei' ],
+		module: 'sensei',
+		group: 'sites',
+		secondary: true,
+		env_id: [ 'development', 'wpcalypso' ],
+		load: () => import( /* webpackChunkName: 'sensei' */ 'sensei' ),
+	},
+	{
+		name: 'woocommerce',
+		paths: [ '/store' ],
+		module: 'woocommerce',
+		group: 'sites',
+		secondary: true,
+		env_id: [ 'development', 'desktop', 'wpcalypso', 'stage', 'production' ],
+		load: () => import( /* webpackChunkName: 'woocommerce' */ 'woocommerce' ),
+	},
+	{
+		name: 'wp-super-cache',
+		paths: [ '/extensions/wp-super-cache' ],
+		settings_path: '/extensions/wp-super-cache',
+		module: 'wp-super-cache',
+		group: 'sites',
+		secondary: true,
+		env_id: [ 'development', 'wpcalypso', 'horizon', 'stage', 'production' ],
+		load: () => import( /* webpackChunkName: 'wp-super-cache' */ 'wp-super-cache' ),
+	},
+	{
+		name: 'zoninator',
+		paths: [ '/extensions/zoninator' ],
+		settings_path: '/extensions/zoninator',
+		module: 'zoninator',
+		group: 'sites',
+		secondary: true,
+		env_id: [ 'development', 'wpcalypso', 'stage', 'production' ],
+		load: () => import( /* webpackChunkName: 'zoninator' */ 'zoninator' ),
 	},
 ];
-
-for ( const extension of require( './extensions' ) ) {
-	try {
-		const pkgPath = path.join( __dirname, 'extensions', extension, 'package.json' );
-		const pkg = JSON.parse( fs.readFileSync( pkgPath ) );
-		sections.push( {
-			...pkg.section,
-			envId: pkg.env_id,
-		} );
-	} catch {}
-}
 
 module.exports = sections;

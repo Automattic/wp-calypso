@@ -869,10 +869,9 @@ function mediaButton( editor ) {
 
 	// send contextmenu event up to desktop app
 	if ( config.isEnabled( 'desktop' ) ) {
-		const ipc = require( 'electron' ).ipcRenderer; // From Electron
-		editor.on( 'contextmenu', function() {
-			ipc.send( 'mce-contextmenu', { sender: true } );
-		} );
+		import( 'electron' ).then( ( { ipcRenderer: ipc } ) =>
+			editor.on( 'contextmenu', () => ipc.send( 'mce-contextmenu', { sender: true } ) )
+		);
 	}
 
 	editor.on( 'touchstart touchmove touchend', selectImageOnTap() );

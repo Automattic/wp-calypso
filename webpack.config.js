@@ -221,13 +221,6 @@ const webpackConfig = {
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
 			} ),
 			{
-				include: path.join( __dirname, 'client/sections.js' ),
-				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
-				options: {
-					include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
-				},
-			},
-			{
 				test: /\.html$/,
 				loader: 'html-loader',
 			},
