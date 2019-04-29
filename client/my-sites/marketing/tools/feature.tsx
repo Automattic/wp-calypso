@@ -9,7 +9,7 @@ import React, { ReactNode, FunctionComponent } from 'react';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 
-interface MarketingToolFeatureProps {
+interface MarketingToolsFeatureProps {
 	children: ReactNode;
 	description: string;
 	disclaimer?: string;
@@ -18,7 +18,7 @@ interface MarketingToolFeatureProps {
 	title: string;
 }
 
-const MarketingToolFeature: FunctionComponent< MarketingToolFeatureProps > = ( {
+const MarketingToolsFeature: FunctionComponent< MarketingToolsFeatureProps > = ( {
 	children,
 	description,
 	disclaimer,
@@ -47,4 +47,4 @@ const MarketingToolFeature: FunctionComponent< MarketingToolFeatureProps > = ( {
 	);
 };
 
-export default MarketingToolFeature;
+export default MarketingToolsFeature;

@@ -12,7 +12,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import MarketingToolFeature from './feature';
+import MarketingToolsFeature from './feature';
 import MarketingToolsHeader from './header';
 import { marketingSharingButtons, marketingTraffic } from 'my-sites/marketing/paths';
 
@@ -42,7 +42,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 		<Fragment>
 			<MarketingToolsHeader handleButtonClick={ handleBoostMyTrafficClick } />
 			<div className="tools__feature-list">
-				<MarketingToolFeature
+				<MarketingToolsFeature
 					title={ translate( 'Get social, and share your blog posts where the people are' ) }
 					description={ translate(
 						'Use your site’s Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more.'
@@ -50,9 +50,9 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 					imagePath="/calypso/images/illustrations/marketing.svg"
 				>
 					<Button onClick={ handleStartSharingClick }>{ translate( 'Start Sharing' ) }</Button>
-				</MarketingToolFeature>
+				</MarketingToolsFeature>
 
-				<MarketingToolFeature
+				<MarketingToolsFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
 					description={ translate(
 						'We’ve partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site.'
@@ -62,7 +62,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 					<Button href={ '/experts/upwork?source=marketingtools' } target="_blank">
 						{ translate( 'Find Your Expert' ) }
 					</Button>
-				</MarketingToolFeature>
+				</MarketingToolsFeature>
 			</div>
 		</Fragment>
 	);
