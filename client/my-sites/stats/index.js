@@ -208,11 +208,6 @@ export default function() {
 			clientRender
 		);
 
-		// Reset first view
-		if ( config.isEnabled( 'ui/first-view/reset-route' ) ) {
-			page( '/stats/reset-first-view', statsController.resetFirstView, makeLayout, clientRender );
-		}
-
 		page(
 			`/stats/ads/:period(${ validPeriods.join( '|' ) })/:site`,
 			siteSelection,
