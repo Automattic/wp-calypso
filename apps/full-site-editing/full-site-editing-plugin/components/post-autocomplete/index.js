@@ -103,7 +103,7 @@ const PostAutocomplete = withState( {
 					<Popover focusOnMount={ false } noArrow position="bottom">
 						<div className="a8c-post-autocomplete__suggestions">
 							{ map( suggestions, suggestion => (
-								<Button isLarge isLink onClick={ onClick( suggestion ) }>
+								<Button isLarge isLink key={ suggestion.id } onClick={ onClick( suggestion ) }>
 									{ suggestion.title }
 								</Button>
 							) ) }
