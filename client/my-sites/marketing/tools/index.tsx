@@ -70,7 +70,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 					) }
 					imagePath="/calypso/images/illustrations/branding.svg"
 				>
-					<Button href={ '#' } target="_blank">
+					<Button href={ 'https://looka.com/wordpress-users/' } target="_blank">
 						{ translate( 'Create a logo' ) }
 					</Button>
 				</MarketingToolsFeature>
