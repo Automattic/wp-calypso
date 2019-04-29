@@ -49,7 +49,7 @@
 	@include clear-fix;
 	position: relative;
 	margin: 0;
-	padding: 79px 32px 32px ( $sidebar-width-max + 32px + 1px );
+	padding: 79px 24px 24px ( $sidebar-width-max + 24px );
 	box-sizing: border-box;
 	overflow: hidden;
 

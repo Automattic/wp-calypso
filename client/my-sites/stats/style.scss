@@ -1,31 +1,19 @@
+.stats__module-column {
+	grid-column: span 4;
+}
 
 // Module container
-@include breakpoint( '>960px' ) {
-	.stats__module-column {
-		float: right;
-		width: calc( 50% - 4px );
+// @include breakpoint( '>660px' ) {
+// 	.stats__module-column {
+// 		// grid-column: span 4;
+// 	}
+// }
 
-		&:first-child {
-			float: left;
-		}
-
-		&:last-child {
-			clear: right;
-		}
-	}
-}
-
-@include breakpoint( '>1280px' ) {
-	.stats__module-column {
-		width: calc( 33% - 3px );
-
-		&:last-child {
-			clear: none;
-			left: -10px;
-			position: relative;
-		}
-	}
-}
+// @include breakpoint( '>1040px' ) {
+// 	.stats__module-column {
+// 		grid-column: span 4;
+// 	}
+// }
 
 .old-stats-link .button .gridicon {
 	margin-bottom: -2px;

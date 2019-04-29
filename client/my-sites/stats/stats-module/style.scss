@@ -23,9 +23,23 @@
 	padding: 0;
 	margin-bottom: 10px;
 }
+
 // Site sections
 .stats__module-list {
-	@include clear-fix;
+	// @include clear-fix;
+	display: grid;
+	grid-template-columns: repeat( 4, [col-start] minmax(16px, 1fr) );
+	grid-gap: 16px;
+
+	@include breakpoint( '>660px' ){
+		grid-template-columns: repeat( 8, [col-start] minmax(16px, 1fr) );
+		grid-gap: 24px;
+	}
+
+	@include breakpoint( '>1040px' ){
+		grid-template-columns: repeat( 12, [col-start] minmax(16px, 1fr) );
+		grid-gap: 24px;
+	}
 }
 
 .stats-insights__nonperiodic {
