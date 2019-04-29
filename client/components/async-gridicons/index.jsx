@@ -33,7 +33,7 @@ class AsyncGridicon extends Component {
 		super( props );
 	}
 	checkAndLoad() {
-		if ( ! loadedIcons.has( this.props.icon ) ) {
+		if ( this.props.icon && ! loadedIcons.has( this.props.icon ) ) {
 			loadIcon( this.props.icon ).then( () => this.update() );
 		}
 	}
