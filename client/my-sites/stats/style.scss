@@ -1,5 +1,12 @@
 .stats__module-column {
 	grid-column: span 4;
+	&.grid-align-right {
+		@include breakpoint ( '<1040px' ){
+			@include breakpoint ( '>660px' ){
+				grid-column: 5 / span 4;
+			}
+		}
+	}
 }
 
 // Module container

@@ -243,7 +243,7 @@ class StatsSite extends Component {
 								showSummaryLink
 							/>
 						</div>
-						<div className="stats__module-column">
+						<div className="stats__module-column grid-align-right">
 							<StatsModule
 								path="referrers"
 								moduleStrings={ moduleStrings.referrers }
