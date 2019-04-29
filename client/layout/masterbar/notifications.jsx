@@ -140,7 +140,7 @@ class MasterbarItemNotifications extends Component {
 					/>
 				</MasterbarItem>
 				<AsyncLoad
-					require="notifications"
+					require="../../../apps/notifications/index.jsx"
 					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }
