@@ -14,6 +14,7 @@ import {
 	connections,
 	layout,
 	marketingTools,
+	redirectMarketingTools,
 	redirectSharingButtons,
 	redirectTraffic,
 	sharingButtons,
@@ -39,7 +40,12 @@ export default function() {
 
 	page( '/sharing/:domain', redirectTraffic );
 	page( '/sharing/buttons/:domain', redirectSharingButtons );
-	page( '/marketing/:domain', redirectTraffic );
+
+	if ( config.isEnabled( 'marketing/tools' ) ) {
+		page( '/marketing/:domain', redirectMarketingTools );
+	} else {
+		page( '/marketing/:domain', redirectTraffic );
+	}
 
 	page(
 		'/marketing/connections/:domain',
