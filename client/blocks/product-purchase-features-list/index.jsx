@@ -35,14 +35,11 @@ import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import GoogleMyBusiness from './google-my-business';
 import HappinessSupportCard from './happiness-support-card';
-import JetpackAntiSpam from './jetpack-anti-spam';
 import JetpackPublicize from './jetpack-publicize';
 import JetpackVideo from './jetpack-video';
-import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackSearch from './jetpack-search';
 import JetpackSiteAccelerator from './jetpack-site-accelerator';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
-import JetpackWordPressCom from './jetpack-wordpress-com';
 import MobileApps from './mobile-apps';
 import SellOnlinePaypal from './sell-online-paypal';
 import SiteActivity from './site-activity';
@@ -187,7 +184,6 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				<JetpackWordPressCom selectedSite={ selectedSite } />
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
@@ -216,13 +212,10 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				<JetpackBackupSecurity />
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
-				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackVideo selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<MonetizeSite selectedSite={ selectedSite } />
 				<SiteActivity />
 				<JetpackPublicize selectedSite={ selectedSite } />
@@ -256,12 +249,9 @@ export class ProductPurchaseFeaturesList extends Component {
 
 		return (
 			<Fragment>
-				<JetpackBackupSecurity />
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
-				<JetpackAntiSpam selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps />
 				<JetpackReturnToDashboard
@@ -286,15 +276,12 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				<JetpackBackupSecurity />
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
-				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackSearch selectedSite={ selectedSite } />
 				<SiteActivity />
 				<JetpackVideo selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<MonetizeSite selectedSite={ selectedSite } />
 				<MobileApps />
 				<JetpackPublicize selectedSite={ selectedSite } />
