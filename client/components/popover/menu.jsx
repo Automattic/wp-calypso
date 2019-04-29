@@ -22,7 +22,6 @@ class PopoverMenu extends Component {
 		onClose: PropTypes.func.isRequired,
 		position: PropTypes.string,
 		className: PropTypes.string,
-		rootClassName: PropTypes.string,
 		popoverComponent: PropTypes.func,
 		popoverTitle: PropTypes.string, // used by ReaderPopover
 		customPosition: PropTypes.object,
@@ -51,7 +50,6 @@ class PopoverMenu extends Component {
 			isVisible,
 			popoverTitle,
 			position,
-			rootClassName,
 		} = this.props;
 
 		return (
@@ -65,7 +63,6 @@ class PopoverMenu extends Component {
 				isVisible={ isVisible }
 				popoverTitle={ popoverTitle }
 				position={ position }
-				rootClassName={ rootClassName }
 			>
 				<div
 					ref={ this.menu }
