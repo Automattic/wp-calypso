@@ -24,6 +24,7 @@ import { getSiteStyleOptions, getThemeCssUri } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Style dependencies
@@ -120,8 +121,8 @@ class SiteMockups extends Component {
 			fontUrl,
 			cssUrl: getThemeCssUri( themeSlug, isRtl ),
 			content: {
-				title,
-				tagline: translate( 'You’ll be able to customize this to your needs.' ),
+				title: preventWidows( title ),
+				tagline: preventWidows( translate( 'You’ll be able to customize this to your needs.' ) ),
 				body: this.getContent( verticalPreviewContent ),
 			},
 			langSlug,
