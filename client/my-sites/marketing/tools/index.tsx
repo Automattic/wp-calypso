@@ -63,6 +63,17 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 						{ translate( 'Find Your Expert' ) }
 					</Button>
 				</MarketingToolsFeature>
+				<MarketingToolsFeature
+					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
+					description={ translate(
+						'A custom logo helps you brand stand out and makes your memorable. Our partners Logojoy and Looka are standing by if you’d like some professional help.'
+					) }
+					imagePath="/calypso/images/illustrations/branding.svg"
+				>
+					<Button href={ '#' } target="_blank">
+						{ translate( 'Create a logo' ) }
+					</Button>
+				</MarketingToolsFeature>
 			</div>
 		</Fragment>
 	);
