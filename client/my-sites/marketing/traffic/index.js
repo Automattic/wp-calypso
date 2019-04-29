@@ -13,6 +13,7 @@ import { flowRight, partialRight, pick } from 'lodash';
  * Internal dependencies
  */
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
 import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
@@ -45,6 +46,7 @@ const SiteSettingsTraffic = ( {
 	translate,
 } ) => (
 	<Main className="settings-traffic site-settings">
+		<PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		<JetpackDevModeNotice />
 
