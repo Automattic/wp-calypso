@@ -22,8 +22,6 @@ import { getStepUrl } from 'signup/utils';
  */
 import './style.scss';
 
-const { submitSignupStep } = SignupActions;
-
 export class NavigationLink extends Component {
 	static propTypes = {
 		goToNextStep: PropTypes.func,
@@ -89,7 +87,10 @@ export class NavigationLink extends Component {
 
 	handleClick = () => {
 		if ( this.props.direction === 'forward' ) {
-			submitSignupStep( { stepName: this.props.stepName }, [], this.props.defaultDependencies );
+			SignupActions.submitSignupStep(
+				{ stepName: this.props.stepName },
+				this.props.defaultDependencies
+			);
 
 			this.props.goToNextStep();
 		}

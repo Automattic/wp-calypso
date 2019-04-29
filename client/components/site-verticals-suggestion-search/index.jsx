@@ -172,7 +172,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		return (
 			<>
 				<QueryVerticals searchTerm={ inputValue.trim() } debounceTime={ 300 } />
-				<QueryVerticals searchTerm={ DEFAULT_VERTICAL_KEY } limit={ 1 } />
+				<QueryVerticals searchTerm={ DEFAULT_VERTICAL_KEY } />
 				<SuggestionSearch
 					id="siteTopic"
 					placeholder={ placeholder || translate( 'Enter a keyword or select one from below.' ) }
@@ -193,7 +193,7 @@ export default localize(
 	connect(
 		( state, ownProps ) => ( {
 			verticals: getVerticals( state, ownProps.searchValue ) || [],
-			defaultVertical: get( getVerticals( state, 'business' ), '0', {} ),
+			defaultVertical: get( getVerticals( state, DEFAULT_VERTICAL_KEY ), '0', {} ),
 		} ),
 		null
 	)( SiteVerticalsSuggestionSearch )

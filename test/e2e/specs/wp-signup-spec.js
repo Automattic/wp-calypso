@@ -42,9 +42,8 @@ import CancelDomainPage from '../lib/pages/cancel-domain-page';
 import GSuiteUpsellPage from '../lib/pages/gsuite-upsell-page';
 import ThemesPage from '../lib/pages/themes-page';
 import ThemeDetailPage from '../lib/pages/theme-detail-page';
-import DesignTypePage from '../lib/pages/signup/design-type-page';
-import SettingsPage from '../lib/pages/settings-page';
 import ImportPage from '../lib/pages/import-page';
+import SettingsPage from '../lib/pages/settings-page';
 
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
@@ -923,7 +922,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a business paid plan w/ domain name coming in via /create as business flow in CAD currency @parallel', function() {
+	// Temporarily disable till API response is not solved
+	// While processing signup:
+	// GET https://public-api.wordpress.com/rest/v1.1/me/shopping-cart/e2eflowtesting1556181838164985.wordpress.com?http_envelope=1 500
+	describe.skip( 'Sign up for a site on a business paid plan w/ domain name coming in via /create as business flow in CAD currency @parallel', function() {
 		const siteName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ siteName }.live`;
 		const emailAddress = dataHelper.getEmailAddress( siteName, signupInboxId );
@@ -1293,26 +1295,37 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can enter the subdomains flow and select design type', async function() {
+		step( 'Can enter the onboarding flow with vertical set', async function() {
 			await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( {
 					culture: locale,
-					flow: 'subdomain',
+					flow: 'onboarding',
 					query: 'vertical=art',
 				} )
 			);
-			const designTypePage = await DesignTypePage.Expect( driver );
-			return await designTypePage.selectFirstDesignType();
 		} );
 
-		step(
-			'Can see the choose a theme page as the starting page, and select the first theme',
-			async function() {
-				const chooseAThemePage = await ChooseAThemePage.Expect( driver );
-				return await chooseAThemePage.selectFirstTheme();
-			}
-		);
+		step( 'Can then enter account details and continue', async function() {
+			const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			return await createYourAccountPage.enterAccountDetailsAndSubmit(
+				emailAddress,
+				blogName,
+				passwordForTestAccounts
+			);
+		} );
+
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBlogType();
+		} );
+
+		step( 'Can see the "Site Information" page, and enter the site title', async function() {
+			const siteInfoPage = await SiteInfoPage.Expect( driver );
+			await siteInfoPage.enterSiteTitle( blogName );
+			return await siteInfoPage.submitForm();
+		} );
 
 		step(
 			'Can then see the domains page, and Can search for a blog name, can see and select a free .art.blog address in the results',
@@ -1335,16 +1348,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step( 'Can then see the plans page and pick the free plan', async function() {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlan();
-		} );
-
-		step( 'Can then enter account details and continue', async function() {
-			const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
-			return await createYourAccountPage.enterAccountDetailsAndSubmit(
-				emailAddress,
-				blogName,
-				passwordForTestAccounts
-			);
 		} );
 
 		step(

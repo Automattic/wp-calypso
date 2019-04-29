@@ -14,9 +14,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Button from 'components/button';
-import config, { isEnabled } from 'config';
+import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ManageMenu from './manage-menu';
@@ -560,7 +559,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	marketing() {
-		const { isJetpack, isSharingEnabledOnJetpackSite, path, site } = this.props;
+		const { path, site } = this.props;
 		const marketingLink = '/marketing' + this.props.siteSuffix;
 
 		if ( site && ! this.props.canUserPublishPosts ) {
@@ -568,10 +567,6 @@ export class MySitesSidebar extends Component {
 		}
 
 		if ( ! this.props.siteId ) {
-			return null;
-		}
-
-		if ( isJetpack && ! isSharingEnabledOnJetpackSite ) {
 			return null;
 		}
 
@@ -741,13 +736,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	shouldShowStreamlinedNavDrawer() {
-		if ( ! isEnabled( 'ui/streamlined-nav-drawer' ) ) {
-			return false;
-		}
-
-		return (
-			config( 'env_id' ) !== 'production' || abtest( 'streamlinedNavigationDrawer' ) === 'test'
-		);
+		return isEnabled( 'ui/streamlined-nav-drawer' );
 	}
 
 	renderSidebarMenus() {

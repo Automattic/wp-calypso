@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { Component } from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
 
@@ -162,17 +162,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 				site_style: styleLabel,
 			} )
 		);
-		SignupActions.submitSignupStep(
-			{
-				processingMessage: i18n.translate( 'Collecting your information' ),
-				stepName,
-			},
-			[],
-			{
-				siteStyle,
-				themeSlugWithRepo,
-			}
-		);
+		SignupActions.submitSignupStep( { stepName }, { siteStyle, themeSlugWithRepo } );
 
 		goToNextStep( flowName );
 	},

@@ -5,13 +5,6 @@
 	}
 }
 
-.about__pressable-wrapper {
-	position: absolute;
-	width: 100%;
-	opacity: 1;
-	transition: 0.5s ease-in-out opacity;
-}
-
 .about__form-wrapper {
 	max-width: 420px;
 	margin: 0 auto;
@@ -21,11 +14,6 @@
 		border-radius: 3px;
 		@include elevation ( 2dp );
 	}
-}
-
-.about__wrapper-is-hidden {
-	pointer-events: none;
-	opacity: 0;
 }
 
 .info-popover.about__info-popover {

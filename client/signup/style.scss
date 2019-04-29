@@ -116,18 +116,6 @@ body.is-section-signup .layout:not( .dops ) .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
 
-	// This fixes a bug with .about__pressable-wrapper
-	// that causes a horizontal scrollbar. -shaun
-	.signup__step.is-about & {
-		overflow: hidden;
-	}
-
-	// The "fix" above causes its own issue with card
-	// border (which are really box-shadows) being
-	// cut off on the bottom. 4px to account for
-	// input:focus states. -shaun
-	padding: 1px;
-
 	// Some steps (like plans) need a larger
 	// width column.
 	&.is-wide-layout {

@@ -24,13 +24,12 @@ import './style.scss';
 
 class RebrandCitiesWelcomeStep extends Component {
 	handleSubmit = siteTitle => {
-		const { goToNextStep, stepName, stepSectionName, translate } = this.props;
+		const { goToNextStep, stepName, stepSectionName } = this.props;
 
 		this.props.setSiteTitle( siteTitle );
 
 		SignupActions.submitSignupStep( {
 			isPurchasingItem: false,
-			processingMessage: translate( 'Setting up your site' ),
 			siteUrl: generateUniqueRebrandCitiesSiteUrl(),
 			stepName,
 			stepSectionName,

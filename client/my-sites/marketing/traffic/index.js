@@ -13,6 +13,7 @@ import { flowRight, partialRight, pick } from 'lodash';
  * Internal dependencies
  */
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
 import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
@@ -46,6 +47,7 @@ const SiteSettingsTraffic = ( {
 } ) => (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	<Main className="settings-traffic site-settings" wideLayout>
+    <PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		<JetpackDevModeNotice />
 

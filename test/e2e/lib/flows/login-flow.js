@@ -16,6 +16,7 @@ import NavBarComponent from '../components/nav-bar-component.js';
 import * as dataHelper from '../data-helper';
 import * as driverManager from '../driver-manager';
 import * as loginCookieHelper from '../login-cookie-helper';
+import PagesPage from '../pages/pages-page';
 
 const host = dataHelper.getJetpackHost();
 
@@ -129,7 +130,10 @@ export default class LoginFlow {
 		await this.loginAndSelectMySite( site, { useFreshLogin: useFreshLogin } );
 
 		const sidebarComponent = await SidebarComponent.Expect( this.driver );
-		await sidebarComponent.selectAddNewPage();
+		await sidebarComponent.selectPages();
+
+		const pagesPage = await PagesPage.Expect( this.driver );
+		await pagesPage.selectAddNewPage();
 
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );

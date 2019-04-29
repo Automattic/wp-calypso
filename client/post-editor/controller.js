@@ -31,7 +31,7 @@ import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenber
 import isGutenlypsoEnabled from 'state/selectors/is-gutenlypso-enabled';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import getEditorUrl from 'state/selectors/get-editor-url';
-import { requestSelectedEditor } from 'state/selected-editor/actions';
+import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/actions';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -173,6 +173,21 @@ async function redirectIfBlockEditor( context, next ) {
 
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
+
+	// URLs with a set-editor=<editorName> param are used for indicating that the user wants to use always the given
+	// editor, so we update the selected editor for the current user/site pair.
+	const newEditorChoice = get( context.query, 'set-editor' );
+	const oldEditorChoice = getSelectedEditor( state, siteId );
+	const allowedEditors = [ 'classic', 'gutenberg' ];
+
+	if ( allowedEditors.indexOf( newEditorChoice ) !== -1 && newEditorChoice !== oldEditorChoice ) {
+		context.store.dispatch( setSelectedEditor( siteId, newEditorChoice ) );
+	}
+
+	// If the new editor is classic, we bypass the selected editor check.
+	if ( 'classic' === newEditorChoice ) {
+		return next();
+	}
 
 	if (
 		! isCalypsoifyGutenbergEnabled( state, siteId ) &&
@@ -328,11 +343,6 @@ export default {
 	gutenberg: ( context, next ) => {
 		if ( ! has( window, 'location.replace' ) ) {
 			next();
-		}
-
-		// Bypass the selected editor check if the URL contains a force=true param
-		if ( get( context.query, 'force', false ) ) {
-			return next();
 		}
 
 		redirectIfBlockEditor( context, next );
