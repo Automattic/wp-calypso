@@ -437,6 +437,7 @@ export class Checkout extends React.Component {
 		// This tests the flow that was not eligible for G Suite
 		// There's an additional test above that tests directly aginst the G Suite upsell
 		if (
+			'offer' === abtest( 'conciergeUpsellDial' ) &&
 			config.isEnabled( 'upsell/concierge-session' ) &&
 			! cartItems.hasConciergeSession( cart ) &&
 			! cartItems.hasJetpackPlan( cart ) &&
