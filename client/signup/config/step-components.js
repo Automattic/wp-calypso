@@ -26,7 +26,7 @@ export default {
 	'creds-permission': loadStep( 'creds-permission' ),
 	domains: loadStep( 'domains' ),
 	'domains-store': loadStep( 'domains' ),
-	'domain-only': loadStep( 'domain' ),
+	'domain-only': loadStep( 'domains' ),
 	'domains-theme-preselected': loadStep( 'domains' ),
 	'domains-launch': loadStep( 'domains' ),
 	'from-url': loadStep( 'import-url' ),
