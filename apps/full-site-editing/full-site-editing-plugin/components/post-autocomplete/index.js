@@ -92,7 +92,7 @@ const PostAutocomplete = withState( {
 		return (
 			<div className="a8c-post-autocomplete">
 				<TextControl
-					autocomplete="off"
+					autoComplete="off"
 					onChange={ onChange }
 					placeholder={ __( 'Type to search' ) }
 					type="search"
