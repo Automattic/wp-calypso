@@ -47,6 +47,12 @@ export default function( translate ) {
 			value: 'ocean',
 			thumbnail: {
 				cssClass: 'is-ocean',
+		},
+		{
+			label: translate( 'Sunset' ),
+			value: 'sunset',
+			thumbnail: {
+				cssClass: 'is-sunset',
 			},
 		},
 	] );
