@@ -15,10 +15,8 @@
 	margin: 0 3px 0 8px;
 }
 
-.delete-user__multisite {
-	.button.is-borderless {
-		&.delete-user__remove-user {
-			color: var( --color-primary );
+.delete-user__remove-user.button.is-borderless {
+	color: var( --color-primary );
 			font-weight: 400;
 		
 			&:active,
@@ -32,6 +30,4 @@
 				margin: -2px 4px 0 0;
 				vertical-align: middle;
 			}
-		}
-	}
 }
