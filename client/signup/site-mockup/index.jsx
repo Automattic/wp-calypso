@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, each, find, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -24,6 +25,8 @@ import { getSiteStyleOptions, getThemeCssUri } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+
+const debug = debugFactory( 'calypso:signup:site-mockup' );
 
 /**
  * Style dependencies
@@ -139,6 +142,8 @@ class SiteMockups extends Component {
 			onPreviewClick: this.handleClick,
 			className: siteStyle,
 		};
+
+		debug( 'Rendering SiteMockups component' );
 
 		return (
 			<div className={ siteMockupClasses }>
