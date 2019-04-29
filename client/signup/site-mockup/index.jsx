@@ -76,6 +76,8 @@ class SiteMockups extends Component {
 	debouncedRenderedEvent = debounce( () => {
 		const { siteStyle, siteType, verticalPreviewContent, verticalSlug } = this.props;
 
+		debug( 'Replacing displayed content with (debounced) prop content from the connected prop' );
+
 		this.setState( {
 			displayedVerticalPreviewContent: verticalPreviewContent,
 		} );
