@@ -100,7 +100,8 @@ function getGSuiteSupportedDomains( domains ) {
 			includes( [ domainTypes.REGISTERED ], domain.type ) &&
 			( domain.hasWpcomNameservers || hasGSuite( domain ) );
 		const mapped = includes( [ domainTypes.MAPPED ], domain.type );
-		const notOtherProvidor = domain.googleAppsSubscription.status !== 'other_provider';
+		const notOtherProvidor =
+			domain.googleAppsSubscription && domain.googleAppsSubscription.status !== 'other_provider';
 		return ( wpcomHosted || mapped ) && canDomainAddGSuite( domain.name ) && notOtherProvidor;
 	} );
 }
@@ -156,6 +157,17 @@ function hasGSuite( domain ) {
 }
 
 /**
+ * Given a domain object, does that domain have G Suite with another providor
+ *
+ * @param {Object} domain - domain object
+ * @returns {Boolean} - Does a domain have G Suite with another providor
+ */
+function hasGSuiteOtherProvidor( domain ) {
+	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
+	return 'other_provider' === domainStatus;
+}
+
+/**
  * Given a list of domains does one of them support G Suite
  *
  * @param {Array} domains - list of domain objects
@@ -195,6 +207,7 @@ export {
 	getLoginUrlWithTOSRedirect,
 	getMonthlyPrice,
 	hasGSuite,
+	hasGSuiteOtherProvidor,
 	hasGSuiteSupportedDomain,
 	hasPendingGSuiteUsers,
 	isGSuiteRestricted,
