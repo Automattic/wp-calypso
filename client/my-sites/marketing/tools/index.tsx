@@ -24,6 +24,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import './style.scss';
 
 interface MarketingToolsProps {
+	recordTracksEvent: () => void;
 	selectedSiteSlug: string | null;
 }
 
