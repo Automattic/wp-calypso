@@ -27,10 +27,12 @@ class Task extends PureComponent {
 		completedTitle: PropTypes.node,
 		description: PropTypes.node,
 		duration: PropTypes.string,
+		href: PropTypes.string,
 		inProgress: PropTypes.bool,
 		isWarning: PropTypes.bool,
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
+		target: PropTypes.string,
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
 		trackTaskDisplay: PropTypes.func,
@@ -119,9 +121,11 @@ class Task extends PureComponent {
 			completedTitle,
 			description,
 			duration,
+			href,
 			inProgress,
 			isWarning,
 			onClick,
+			target,
 			title,
 			translate,
 			firstIncomplete,
@@ -142,7 +146,13 @@ class Task extends PureComponent {
 			>
 				<div className="checklist__task-primary">
 					<h3 className="checklist__task-title">
-						<Button borderless className="checklist__task-title-link" onClick={ onClick }>
+						<Button
+							borderless
+							className="checklist__task-title-link"
+							href={ href }
+							onClick={ onClick }
+							target={ target }
+						>
 							{ ( completed && completedTitle ) || title }
 						</Button>
 					</h3>
@@ -157,7 +167,13 @@ class Task extends PureComponent {
 					) }
 				</div>
 				<div className="checklist__task-secondary">
-					<Button className="checklist__task-action" onClick={ onClick } primary={ buttonPrimary }>
+					<Button
+						className="checklist__task-action"
+						href={ href }
+						onClick={ onClick }
+						primary={ buttonPrimary }
+						target={ target }
+					>
 						{ hasActionlink ? completedButtonText : buttonText }
 					</Button>
 					{ duration && (
