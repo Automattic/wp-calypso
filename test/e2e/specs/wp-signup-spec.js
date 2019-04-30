@@ -1321,10 +1321,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await siteTypePage.selectBlogType();
 		} );
 
-		step( 'Can see the "Site Information" page, and enter the site title', async function() {
-			const siteInfoPage = await SiteInfoPage.Expect( driver );
-			await siteInfoPage.enterSiteTitle( blogName );
-			return await siteInfoPage.submitForm();
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(
@@ -1681,7 +1681,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await siteTopicPage.submitForm();
 		} );
 
-		step( 'Can see the "Site Information" page, and enter the site title', async function() {
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
 			const siteTitlePage = await SiteTitlePage.Expect( driver );
 			await siteTitlePage.enterSiteTitle( blogName );
 			return await siteTitlePage.submitForm();
@@ -1792,7 +1792,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await siteTopicPage.submitForm();
 		} );
 
-		step( 'Can see the "Site Information" page, and enter the site title', async function() {
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
 			const siteTitlePage = await SiteTitlePage.Expect( driver );
 			await siteTitlePage.enterSiteTitle( blogName );
 			return await siteTitlePage.submitForm();

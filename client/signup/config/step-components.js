@@ -48,6 +48,7 @@ export default {
 	'site-picker': loadStep( 'site-picker' ),
 	'site-style': loadStep( 'site-style' ),
 	'site-title': loadStep( 'site-title' ),
+	'site-title-without-domains': loadStep( 'site-title' ),
 	'site-topic': loadStep( 'site-topic' ),
 	'site-type': loadStep( 'site-type' ),
 	survey: loadStep( 'survey' ),
