@@ -19,10 +19,10 @@ import SidebarButton from 'layout/sidebar/button';
 import config from 'config';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
+import AsyncLoad from 'components/async-load';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import compareProps from 'lib/compare-props';
-import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
 import {
 	getSite,
 	getSiteAdminUrl,
@@ -263,14 +263,16 @@ class ManageMenu extends PureComponent {
 				forceInternalLink={ menuItem.forceInternalLink }
 			>
 				{ menuItem.name === 'media' && (
-					<MediaLibraryUploadButton
+					<AsyncLoad
+						require="my-sites/media-library/upload-button"
+						placeholder={ null }
 						className="sidebar__button"
 						site={ site }
 						href={ menuItem.buttonLink }
 						onClick={ this.trackSidebarButtonClick( 'media' ) }
 					>
 						{ this.props.translate( 'Add' ) }
-					</MediaLibraryUploadButton>
+					</AsyncLoad>
 				) }
 				{ menuItem.name !== 'media' && (
 					<SidebarButton
