@@ -44,7 +44,7 @@ const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 const isDesktop = calypsoEnv === 'desktop';
 
-const defaultBrowserslistEnv = isCalypsoClient || isDesktop ? 'evergreen' : 'defaults';
+const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'defaults';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 
