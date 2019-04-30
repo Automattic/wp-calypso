@@ -15,7 +15,6 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import ClipboardButtonInput from 'components/clipboard-button-input';
-
 import PurchaseButton from 'components/purchase-detail/purchase-button';
 import TipInfo from 'components/purchase-detail/tip-info';
 import Dialog from 'components/dialog';
@@ -25,6 +24,7 @@ import QuerySiteVouchers from 'components/data/query-site-vouchers';
 import { assignSiteVoucher as assignVoucher } from 'state/sites/vouchers/actions';
 import { GOOGLE_CREDITS } from 'state/sites/vouchers/service-types';
 import { getVouchersBySite, getGoogleAdCredits } from 'state/sites/vouchers/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -226,6 +226,10 @@ class GoogleVoucherDetails extends Component {
 		const { step } = this.state;
 		let body;
 
+		if ( ! selectedSite.ID ) {
+			return null;
+		}
+
 		switch ( step ) {
 			case INITIAL_STEP:
 				body = this.renderInitialStep();
@@ -248,14 +252,16 @@ class GoogleVoucherDetails extends Component {
 }
 
 GoogleVoucherDetails.propTypes = {
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	googleAdCredits: PropTypes.array,
 };
 
 export default connect(
 	( state, props ) => {
-		const site = props.selectedSite;
+		const site = props.selectedSite || getSelectedSite( state ) || {};
+
 		return {
+			selectedSite: site,
 			vouchers: getVouchersBySite( state, site ),
 			googleAdCredits: getGoogleAdCredits( state, site ),
 		};

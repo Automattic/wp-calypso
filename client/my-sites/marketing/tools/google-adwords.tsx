@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -9,10 +10,12 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { addQueryArgs } from 'lib/url';
 import Button from 'components/button';
 import { getSelectedSite } from 'state/ui/selectors';
 import GoogleVoucherDetails from 'my-sites/checkout/checkout-thank-you/google-voucher';
 import { isPremium, isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
+import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import MarketingToolsFeature from './feature';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
@@ -22,31 +25,39 @@ import QuerySiteVouchers from 'components/data/query-site-vouchers';
 import './style.scss';
 
 interface ConnectProps {
+	isAtomic: boolean;
 	isJetpack: boolean;
 	isPremiumOrHigher: boolean;
-	site: { id: string };
+	siteId: number | null;
+	siteSlug: string | null;
 }
 
 export const GoogleAdwordsCard: FunctionComponent< ConnectProps > = ( {
+	isAtomic,
 	isJetpack,
 	isPremiumOrHigher,
-	site,
+	siteId,
+	siteSlug,
 } ) => {
 	const translate = useTranslate();
-	if ( isJetpack ) {
+	if ( ( isJetpack && ! isAtomic ) || ! siteId || ! siteSlug ) {
 		return null;
 	}
 
+	const handleUpgradeClick = () => {
+		page( addQueryArgs( { plan: 'PLAN_PREMIUM' }, `/plans/${ siteSlug }` ) );
+	};
+
 	const renderButton = () => {
 		if ( isPremiumOrHigher ) {
-			return <GoogleVoucherDetails selectedSite={ site } />;
+			return <GoogleVoucherDetails />;
 		}
-		return <Button>{ translate( 'Upgrade To Premium' ) }</Button>;
+		return <Button onClick={ handleUpgradeClick }>{ translate( 'Upgrade To Premium' ) }</Button>;
 	};
 
 	return (
 		<Fragment>
-			<QuerySiteVouchers siteId={ site.id } />
+			<QuerySiteVouchers siteId={ siteId } />
 			<MarketingToolsFeature
 				title={ translate( 'Advertise with your $100 Google Adwords credit' ) }
 				description={ translate(
@@ -61,21 +72,27 @@ export const GoogleAdwordsCard: FunctionComponent< ConnectProps > = ( {
 };
 
 GoogleAdwordsCard.propTypes = {
+	isAtomic: PropTypes.bool.isRequired,
 	isJetpack: PropTypes.bool.isRequired,
 	isPremiumOrHigher: PropTypes.bool.isRequired,
-	site: PropTypes.shape( { id: PropTypes.string.isRequired } ).isRequired,
+	siteId: PropTypes.number,
+	siteSlug: PropTypes.string,
 };
 
 export default connect< ConnectProps >( state => {
 	const site = getSelectedSite( state );
+	const isAtomic = isSiteAtomic( state, site.ID ) || false;
+	console.log( site.plan );
 	const isPremiumOrHigher =
 		isPremium( site.plan ) ||
 		isBusiness( site.plan ) ||
 		isEcommerce( site.plan ) ||
 		isEnterprise( site.plan );
 	return {
+		isAtomic,
 		isJetpack: site && site.jetpack,
 		isPremiumOrHigher,
-		site,
+		siteId: site && site.ID,
+		siteSlug: site && site.slug,
 	};
 } )( GoogleAdwordsCard );
