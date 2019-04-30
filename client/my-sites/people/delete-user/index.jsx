@@ -22,6 +22,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
+import User from 'components/user';
 import AuthorSelector from 'blocks/author-selector';
 import { deleteUser } from 'lib/users/actions';
 import accept from 'lib/accept';
@@ -50,6 +51,7 @@ class DeleteUser extends React.Component {
 		showDialog: false,
 		radioOption: false,
 		reassignUser: false,
+		authorSelectorToggled: false,
 	};
 
 	getRemoveText = () => {
@@ -85,8 +87,41 @@ class DeleteUser extends React.Component {
 
 		updateObj[ name ] = value;
 
+		this.setState( { authorSelectorToggled: true } );
+
 		this.setState( updateObj );
 		this.props.recordGoogleEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
+	};
+
+	getAuthorSelector = () => {
+		return (
+			<AuthorSelector
+				allowSingleUser
+				siteId={ this.props.siteId }
+				onSelect={ this.onSelectAuthor }
+				exclude={ [ this.props.user.ID ] }
+				ignoreContext={ this.reassignLabel }
+			>
+				{ this.state.reassignUser ? (
+					<span>
+						<Gravatar size={ 26 } user={ this.state.reassignUser } />
+						<span className="delete-user__reassign-user-name">
+							{ this.state.reassignUser.name }
+						</span>
+					</span>
+				) : (
+					this.getAuthorSelectPlaceholder()
+				) }
+			</AuthorSelector>
+		);
+	};
+
+	getAuthorSelectPlaceholder = () => {
+		return (
+			<span className="delete-user__select-placeholder">
+				<User size={ 26 } user={ { name: /* Don't translate yet */ 'Choose an author…' } } />
+			</span>
+		);
 	};
 
 	setReassignLabel = label => ( this.reassignLabel = label );
@@ -149,39 +184,9 @@ class DeleteUser extends React.Component {
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
 
-	getAuthorSelectPlaceholder = () => {
-		const { translate } = this.props;
-		return (
-			<span className="delete-user__select-placeholder">{ translate( 'select a user' ) }</span>
-		);
-	};
-
 	getTranslatedAssignLabel = () => {
 		const { translate } = this.props;
-		return translate( 'Attribute all content to {{AuthorSelector/}}', {
-			components: {
-				AuthorSelector: (
-					<AuthorSelector
-						allowSingleUser
-						siteId={ this.props.siteId }
-						onSelect={ this.onSelectAuthor }
-						exclude={ [ this.props.user.ID ] }
-						ignoreContext={ this.reassignLabel }
-					>
-						{ this.state.reassignUser ? (
-							<span>
-								<Gravatar size={ 26 } user={ this.state.reassignUser } />
-								<span className="delete-user__reassign-user-name">
-									{ this.state.reassignUser.name }
-								</span>
-							</span>
-						) : (
-							this.getAuthorSelectPlaceholder()
-						) }
-					</AuthorSelector>
-				),
-			},
-		} );
+		return translate( 'Attribute all content to another user' );
 	};
 
 	isDeleteButtonDisabled = () => {
@@ -226,6 +231,10 @@ class DeleteUser extends React.Component {
 							/>
 
 							<span>{ this.getTranslatedAssignLabel() }</span>
+
+							{ this.state.authorSelectorToggled ? (
+								<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
+							) : null }
 						</FormLabel>
 
 						<FormLabel>
