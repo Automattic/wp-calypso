@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -14,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import canCurrentUser from 'state/selectors/can-current-user';
-
+import config from 'config';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import DocumentHead from 'components/data/document-head';
 import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
@@ -45,6 +44,14 @@ export const Sharing = ( {
 } ) => {
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 	const filters = [];
+
+	if ( config.isEnabled( 'marketing/tools' ) ) {
+		filters.push( {
+			id: 'marketing-tools',
+			route: '/marketing/tools' + pathSuffix,
+			title: translate( 'Marketing Tools' ),
+		} );
+	}
 
 	// Include SEO link if a site is selected and the
 	// required Jetpack module is active
@@ -79,7 +86,8 @@ export const Sharing = ( {
 	const selected = find( filters, { route: path } );
 
 	return (
-		<Main className="sharing">
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+		<Main wideLayout className="sharing">
 			<DocumentHead title={ translate( 'Sharing' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />

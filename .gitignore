@@ -49,5 +49,4 @@ cached-requests.json
 
 # Monorepo output
 /apps/**/dist/
-/client/notifications/dist/
 /packages/*/dist/

@@ -26,6 +26,11 @@ import {
 import { resendInvite } from 'state/invites/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PeopleListItem extends React.PureComponent {
 	static displayName = 'PeopleListItem';
 

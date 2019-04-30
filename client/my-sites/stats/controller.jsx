@@ -13,7 +13,6 @@ import { find, pick, get } from 'lodash';
 import { getSiteFragment, getStatsDefaultSitePage } from 'lib/route';
 import analytics from 'lib/analytics';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
-import { savePreference } from 'state/preferences/actions';
 import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -135,10 +134,6 @@ function getMomentSiteZone( state, siteId ) {
 }
 
 export default {
-	resetFirstView( context ) {
-		context.store.dispatch( savePreference( 'firstViewHistory', [] ) );
-	},
-
 	redirectToDefaultSitePage: function( context ) {
 		const siteFragment = getSiteFragment( context.path );
 

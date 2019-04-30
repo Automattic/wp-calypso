@@ -21,7 +21,7 @@
 	}
 }
 
-.activity-log-item .foldable-card {
+.activity-log-item .foldable-card.card {
 	.foldable-card__expand .gridicon {
 		transform: none;
 	}
@@ -42,7 +42,7 @@
 	}
 
 	// TODO: Remove when foldable cards become "expandable"
-	.is-clickable {
+	&.is-clickable {
 		cursor: default;
 	}
 }

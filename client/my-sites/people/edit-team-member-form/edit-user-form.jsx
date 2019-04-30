@@ -22,6 +22,11 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module Variables
  */
 const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );

@@ -112,6 +112,12 @@ export class CountrySpecificPaymentFields extends Component {
 					} ),
 				} ) }
 
+				{ this.createField( 'pan', Input, {
+					label: translate( 'PAN Number', {
+						comment: 'India PAN number ',
+					} ),
+				} ) }
+
 				{ this.createField( 'phone-number', FormPhoneMediaInput, {
 					onChange: this.handlePhoneFieldChange,
 					countriesList,

@@ -429,60 +429,13 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
-		'site-information': {
-			stepName: 'site-information',
-			providesDependencies: [ 'title', 'address', 'phone' ],
-			props: {
-				headerText: i18n.translate( "Tell us your site's name" ),
-				subHeaderText: i18n.translate(
-					'This will appear at the top of your site and can be changed at anytime.'
-				),
-				informationFields: [ 'title', 'address', 'phone' ],
-			},
-		},
-
-		'site-information-title': {
-			stepName: 'site-information-title',
-			providesDependencies: [ 'title' ],
-			props: {
-				headerText: i18n.translate( "Tell us your site's name" ),
-				subHeaderText: i18n.translate(
-					'This will appear at the top of your site and can be changed at anytime.'
-				),
-				informationFields: [ 'title' ],
-			},
-		},
-
-		'site-information-address': {
-			stepName: 'site-information-address',
-			providesDependencies: [ 'address' ],
-			props: {
-				headerText: i18n.translate( 'Help customers find you' ),
-				informationFields: [ 'address' ],
-			},
-		},
-
-		'site-information-phone': {
-			stepName: 'site-information-phone',
-			providesDependencies: [ 'phone' ],
-			props: {
-				headerText: i18n.translate( 'Let customers get in touch' ),
-				informationFields: [ 'phone' ],
-			},
-		},
-
-		'site-information-without-domains': {
-			stepName: 'site-information-without-domains',
+		'site-title-without-domains': {
+			stepName: 'site-title-without-domains',
 			apiRequestFunction: createSiteWithCart,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'themeSlugWithRepo' ],
-			providesDependencies: [ 'title', 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [ 'siteTitle', 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 			props: {
-				headerText: i18n.translate( "Tell us your site's name" ),
-				subHeaderText: i18n.translate(
-					'This will appear at the top of your site and can be changed at anytime.'
-				),
-				informationFields: [ 'title' ],
 				showSiteMockups: true,
 			},
 		},
@@ -499,49 +452,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTopic' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
 			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'site-information-with-preview': {
-			stepName: 'site-information-with-preview',
-			providesDependencies: [ 'title', 'address', 'phone' ],
-			props: {
-				headerText: i18n.translate( 'Help customers find you' ),
-				informationFields: [ 'title', 'address', 'phone' ],
-				showSiteMockups: true,
-			},
-		},
-
-		'site-information-title-with-preview': {
-			stepName: 'site-information-title-with-preview',
-			providesDependencies: [ 'title' ],
-			props: {
-				headerText: i18n.translate( "Tell us your site's name" ),
-				subHeaderText: i18n.translate(
-					'This will appear at the top of your site and can be changed at anytime.'
-				),
-				informationFields: [ 'title' ],
-				showSiteMockups: true,
-			},
-		},
-
-		'site-information-address-with-preview': {
-			stepName: 'site-information-address-with-preview',
-			providesDependencies: [ 'address' ],
-			props: {
-				headerText: i18n.translate( 'Help customers find you' ),
-				informationFields: [ 'address' ],
-				showSiteMockups: true,
-			},
-		},
-
-		'site-information-phone-with-preview': {
-			stepName: 'site-information-phone-with-preview',
-			providesDependencies: [ 'phone' ],
-			props: {
-				headerText: i18n.translate( 'Let customers get in touch' ),
-				informationFields: [ 'phone' ],
 				showSiteMockups: true,
 			},
 		},
@@ -564,6 +474,14 @@ export function generateSteps( {
 			},
 			dependencies: [ 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
+		},
+
+		'site-title-with-preview': {
+			stepName: 'site-title-with-preview',
+			providesDependencies: [ 'siteTitle' ],
+			props: {
+				showSiteMockups: true,
+			},
 		},
 
 		launch: {

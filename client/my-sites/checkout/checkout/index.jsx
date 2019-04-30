@@ -446,7 +446,9 @@ export class Checkout extends React.Component {
 		) {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
-			return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
+			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+				return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
+			}
 		}
 
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {

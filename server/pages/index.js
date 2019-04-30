@@ -102,11 +102,11 @@ function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
 
 function getBuildTargetFromRequest( request ) {
 	const isDesktop = calypsoEnv === 'desktop';
-	const isEvergreen = isUAInBrowserslist( request.useragent.source, 'evergreen' );
+	const isEvergreen = ! isDesktop && isUAInBrowserslist( request.useragent.source, 'evergreen' );
 	const isForcedFallback = request.query.forceFallback;
 	// Development is always evergreen.
 	const isDevelopment = process.env.NODE_ENV === 'development';
-	return isDesktop || isDevelopment || ( isEvergreen && ! isForcedFallback ) ? 'evergreen' : null;
+	return isDevelopment || ( isEvergreen && ! isForcedFallback ) ? 'evergreen' : null;
 }
 
 const ASSETS_PATH = path.join( __dirname, '../', 'bundler' );
@@ -581,12 +581,11 @@ function render404( request, response ) {
 	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
-/* eslint-disable no-unused-vars */
 /* We don't use `next` but need to add it for express.js to
    recognize this function as an error handler, hence the
-   eslint-disable. */
+	 eslint-disable. */
+// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 function renderServerError( err, req, res, next ) {
-	/* eslint-enable no-unused-vars */
 	if ( process.env.NODE_ENV !== 'production' ) {
 		console.error( err );
 	}
@@ -826,7 +825,7 @@ module.exports = function() {
 
 			res.status( 200 ).send( 'Got it!' );
 		},
-		// eslint-disable-next-line no-unused-vars
+		// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 		function( err, req, res, next ) {
 			res.status( 500 ).send( 'Bad report!' );
 		}

@@ -566,11 +566,11 @@ export default connect(
 		shouldHideSiteGoals:
 			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
 		shouldHideSiteTitle:
-			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-information' ),
+			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-title' ),
 		shouldSkipAboutStep:
 			includes( ownProps.steps, 'site-type' ) &&
 			includes( ownProps.steps, 'site-topic' ) &&
-			includes( ownProps.steps, 'site-information' ),
+			includes( ownProps.steps, 'site-title' ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	{
