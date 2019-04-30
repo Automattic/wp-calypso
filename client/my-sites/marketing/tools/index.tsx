@@ -66,7 +66,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
-						'A custom logo helps you brand stand out and makes your memorable. Our partners Logojoy and Looka are standing by if you’d like some professional help.'
+						'A custom logo helps your brand pop and makes your site memorable. Our partner Looka is standing by if you’d like some professional help.'
 					) }
 					imagePath="/calypso/images/illustrations/branding.svg"
 				>
