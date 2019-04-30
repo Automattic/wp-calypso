@@ -41,12 +41,12 @@
 	grid-template-columns: repeat( 4, [col-start] minmax(16px, 1fr) );
 	grid-gap: 16px;
 
-	@include breakpoint( '>660px' ){
+	@include breakpoint( '>660px' ) {
 		grid-template-columns: repeat( 8, [col-start] minmax(16px, 1fr) );
 		grid-gap: 24px;
 	}
 
-	@include breakpoint( '>1040px' ){
+	@include breakpoint( '>1040px' ) {
 		grid-template-columns: repeat( 12, [col-start] minmax(16px, 1fr) );
 		grid-gap: 24px;
 	}
