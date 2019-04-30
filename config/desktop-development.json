@@ -23,7 +23,7 @@
 		"always_use_logout_url": true,
 		"automated-transfer": true,
 		"blogger-plan": false,
-		"calypsoify/gutenberg": false,
+		"calypsoify/gutenberg": true,
 		"code-splitting": false,
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
