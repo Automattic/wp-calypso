@@ -331,6 +331,8 @@ class WpcomChecklistComponent extends PureComponent {
 			buttonPrimary: firstIncomplete && firstIncomplete.id === task.id,
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
+			isExpandable: true,
+			disableIcon: 'email_verified' === task.id,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {

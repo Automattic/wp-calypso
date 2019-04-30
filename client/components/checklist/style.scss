@@ -159,6 +159,15 @@
 			background: var( --color-accent );
 			border-color: var( --color-accent );
 		}
+
+		&.is-disabled,
+		&.is-disabled:focus,
+		&.is-disabled:hover,
+		&.is-disabled:active {
+			border: 2px solid var( --color-neutral-100 );
+			background: var( --color-white );
+			cursor: default;
+		}
 	}
 
 	.spinner {
