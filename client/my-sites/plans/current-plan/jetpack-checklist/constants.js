@@ -54,7 +54,7 @@ export const JETPACK_CHECKLIST_TASK_AKISMET = {
 	completedButtonText: translate( 'View spam stats' ),
 	completedTitle: translate( "We've automatically turned on spam filtering." ),
 	getUrl: siteSlug =>
-		`${ siteSlug.replace( '::', '/' ) }/wp-admin/admin.php?page=akismet-key-config`,
+		`//${ siteSlug.replace( '::', '/' ) }/wp-admin/admin.php?page=akismet-key-config`,
 };
 
 export const JETPACK_CHECKLIST_TASK_PROTECT = {
