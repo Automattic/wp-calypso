@@ -57,7 +57,7 @@
 	padding: 1px;
 	border-radius: 100%;
 	background-color: var( --color-primary );
-	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+	@include elevation( 4dp );
 	border: 1px solid var( --color-primary-dark );
 	transition: all 0.2s ease-in-out;
 	overflow: visible;
