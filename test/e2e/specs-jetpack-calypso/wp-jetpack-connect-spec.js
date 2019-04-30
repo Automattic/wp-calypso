@@ -33,7 +33,7 @@ import WooWizardPaymentsPage from '../lib/pages/woocommerce/woo-wizard-payments-
 import WooWizardShippingPage from '../lib/pages/woocommerce/woo-wizard-shipping-page';
 import WooWizardExtrasPage from '../lib/pages/woocommerce/woo-wizard-extras-page';
 import WooWizardJetpackPage from '../lib/pages/woocommerce/woo-wizard-jetpack-page';
-import WooWizardReadyPage from '../lib/pages/woocommerce/woo-wizard-ready-page';
+// import WooWizardReadyPage from '../lib/pages/woocommerce/woo-wizard-ready-page';
 
 import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
@@ -439,6 +439,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 
 		step( 'Can wait for Jetpack get connected', async function() {
 			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
+			// HACKY. Connection should be auto-approved, but it fails all the time, so we need to manually click the button
 			return await jetpackAuthorizePage.approveConnection();
 		} );
 
@@ -462,9 +463,10 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			return await pickAPlanPage.selectFreePlanJetpack();
 		} );
 
-		step( 'Can see the Woo wizard ready page', async function() {
-			return await WooWizardReadyPage.Expect( driver );
-		} );
+		// Ignored for now. Discussion (internal ref): p1556635263170900-slack-proton
+		// step( 'Can see the Woo wizard ready page', async function() {
+		// 	return await WooWizardReadyPage.Expect( driver );
+		// } );
 	} );
 
 	describe( 'Remote Installation Connect From Calypso, when Jetpack not installed: @parallel @jetpack', function() {
