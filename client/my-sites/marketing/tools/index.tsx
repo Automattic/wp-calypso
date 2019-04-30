@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import GoogleAdwordsCard from './google-adwords';
 import MarketingToolsFeature from './feature';
 import MarketingToolsGoogleMyBusinessFeature from './google-my-business-feature';
 import MarketingToolsHeader from './header';
@@ -67,7 +68,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 
 			<div className="tools__feature-list">
 				<MarketingToolsFeature
-					title={ translate( 'Get social, and share your blog posts where the people are' ) }
+					title={ translate( 'Advertise with your $100 Google Adwords credit' ) }
 					description={ translate(
 						"Use your site's Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
 					) }
@@ -113,6 +114,8 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				</MarketingToolsFeature>
 
 				<MarketingToolsGoogleMyBusinessFeature />
+
+				<GoogleAdwordsCard />
 			</div>
 		</Fragment>
 	);
