@@ -106,7 +106,7 @@ function filterFlowName( flowName ) {
 
 function filterDestination( destination, dependencies ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies, destination );
+		return getCheckoutUrl( dependencies );
 	}
 
 	return destination;
@@ -232,11 +232,7 @@ const Flows = {
 			'remove' === abtest( 'removeDomainsStepFromOnboarding' )
 		) {
 			flow = Flows.removeStepFromFlow( 'domains-with-preview', flow );
-			flow = replaceStepInFlow(
-				flow,
-				'site-title-with-preview',
-				'site-title-without-domains'
-			);
+			flow = replaceStepInFlow( flow, 'site-title-with-preview', 'site-title-without-domains' );
 
 			return flow;
 		}

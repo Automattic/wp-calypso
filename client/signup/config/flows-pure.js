@@ -95,14 +95,14 @@ export function generateFlows( {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
 			destination: getChecklistDestination,
 			description: 'The current best performing flow in AB tests',
-			lastModified: '2018-10-16',
+			lastModified: '2019-04-30',
 		},
 
 		onboarding: {
 			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
 			destination: getChecklistDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2019-01-24',
+			lastModified: '2019-04-30',
 		},
 
 		'onboarding-for-business': {
@@ -117,7 +117,7 @@ export function generateFlows( {
 			],
 			destination: getChecklistDestination,
 			description: 'The improved onboarding flow for business site types.',
-			lastModified: '2019-01-24',
+			lastModified: '2019-04-30',
 		},
 
 		'onboarding-dev': {
@@ -132,7 +132,7 @@ export function generateFlows( {
 			],
 			destination: getChecklistDestination,
 			description: 'A temporary flow for holding under-development steps',
-			lastModified: '2019-01-10',
+			lastModified: '2019-04-30',
 		},
 
 		'delta-discover': {
@@ -166,7 +166,7 @@ export function generateFlows( {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getChecklistDestination,
 			description: 'Signup flow for desktop app',
-			lastModified: '2018-01-24',
+			lastModified: '2019-04-30',
 		},
 
 		developer: {
