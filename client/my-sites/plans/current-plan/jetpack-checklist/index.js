@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { get, includes, map } from 'lodash';
@@ -44,8 +43,8 @@ class JetpackChecklist extends PureComponent {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
 
-	handleTaskStart = ( { taskId, tourId, url } ) => () => {
-		if ( ! tourId && ! url ) {
+	handleTaskStart = ( { taskId, tourId } ) => () => {
+		if ( ! tourId ) {
 			return;
 		}
 
@@ -57,10 +56,6 @@ class JetpackChecklist extends PureComponent {
 
 		if ( tourId && ! this.isComplete( taskId ) && isDesktop() ) {
 			this.props.requestGuidedTour( tourId );
-		}
-
-		if ( url ) {
-			page.show( url );
 		}
 	};
 
@@ -96,18 +91,16 @@ class JetpackChecklist extends PureComponent {
 					<Task
 						{ ...JETPACK_CHECKLIST_TASK_PROTECT }
 						completed
-						onClick={ this.handleTaskStart( {
-							taskId: 'jetpack_protect',
-							url: JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ),
-						} ) }
+						href={ JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ) }
+						onClick={ this.handleTaskStart( { taskId: 'jetpack_protect' } ) }
 					/>
 					{ isPaidPlan && isRewindAvailable && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_REWIND }
 							completed={ isRewindActive }
+							href={ JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ) }
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_backups',
-								url: JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ),
 								tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',
 							} ) }
 						/>
@@ -116,22 +109,18 @@ class JetpackChecklist extends PureComponent {
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS }
 							completed={ vaultpressFinished }
+							href={ JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ) }
 							inProgress={ ! vaultpressFinished }
-							onClick={ this.handleTaskStart( {
-								taskId: 'jetpack_backups',
-								url: JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ),
-							} ) }
+							onClick={ this.handleTaskStart( { taskId: 'jetpack_backups' } ) }
 						/>
 					) }
 					{ isPaidPlan && productInstallStatus && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_AKISMET }
 							completed={ akismetFinished }
+							href={ JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ) }
 							inProgress={ ! akismetFinished }
-							onClick={ this.handleTaskStart( {
-								taskId: 'jetpack_spam_filtering',
-								url: JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ),
-							} ) }
+							onClick={ this.handleTaskStart( { taskId: 'jetpack_spam_filtering' } ) }
 						/>
 					) }
 					{ map( taskStatuses, ( status, taskId ) => {
@@ -149,9 +138,9 @@ class JetpackChecklist extends PureComponent {
 								completedTitle={ task.completedTitle }
 								description={ task.description }
 								duration={ task.duration }
+								href={ task.getUrl( siteSlug ) }
 								onClick={ this.handleTaskStart( {
 									taskId,
-									url: task.getUrl( siteSlug ),
 									tourId: get( task, 'tourId', null ),
 								} ) }
 								title={ task.title }
