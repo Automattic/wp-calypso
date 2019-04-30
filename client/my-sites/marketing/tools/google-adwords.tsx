@@ -38,14 +38,10 @@ export const GoogleAdwordsCard: FunctionComponent< ConnectProps > = ( {
 	}
 
 	const renderButton = () => {
-		const buttonText = isPremiumOrHigher
-			? translate( 'Generate code' )
-			: translate( 'Upgrade to Premium' );
-
 		if ( isPremiumOrHigher ) {
 			return <GoogleVoucherDetails selectedSite={ site } />;
 		}
-		return <Button>{ buttonText }</Button>;
+		return <Button>{ translate( 'Upgrade To Premium' ) }</Button>;
 	};
 
 	return (
