@@ -227,22 +227,6 @@ class StatsSite extends Component {
 							/>
 							{ videoList }
 						</div>
-						<div className="stats__module-column">
-							<Countries
-								path="countries"
-								period={ this.props.period }
-								query={ query }
-								summary={ false }
-							/>
-							<StatsModule
-								path="clicks"
-								moduleStrings={ moduleStrings.clicks }
-								period={ this.props.period }
-								query={ query }
-								statType="statsClicks"
-								showSummaryLink
-							/>
-						</div>
 						<div className="stats__module-column grid-align-right">
 							<StatsModule
 								path="referrers"
@@ -262,6 +246,22 @@ class StatsSite extends Component {
 								showSummaryLink
 							/>
 							{ podcastList }
+						</div>
+						<div className="stats__module-column">
+							<Countries
+								path="countries"
+								period={ this.props.period }
+								query={ query }
+								summary={ false }
+							/>
+							<StatsModule
+								path="clicks"
+								moduleStrings={ moduleStrings.clicks }
+								period={ this.props.period }
+								query={ query }
+								statType="statsClicks"
+								showSummaryLink
+							/>
 						</div>
 					</div>
 				</div>

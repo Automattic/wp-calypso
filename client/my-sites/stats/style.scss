@@ -1,26 +1,33 @@
 .stats__module-column {
 	grid-column: span 4;
 	@include breakpoint( '>660px' ) {
-		@include breakpoint( '<960px' ){
+		@include breakpoint( '<960px' ) {
 			grid-column: span 8;
 		}
 	}
 
-	@include breakpoint( '>1040px' ){
-		@include breakpoint( '<1280px' ){
+	@include breakpoint( '>1040px' ) {
+		@include breakpoint( '<1280px' ) {
 			grid-column: span 6;
 		}
 	}
 
+	// This class is necessary to keep the reflow position 
+	// of the masonry layout as designed 
 	&.grid-align-right {
+		@include breakpoint( '<960px' ) {
+			grid-row-start: 3;
+		}
 		@include breakpoint( '>960px' ) {
 			@include breakpoint( '<1040px' ) {
 				grid-column: 5 / span 4;
+				grid-row-start: 2;
 			}
 		}
 		@include breakpoint( '>1040px' ) {
 			@include breakpoint( '<1280px' ) {
 				grid-column: 7 / span 6;
+				grid-row-start: 2;
 			}
 		}
 	}
