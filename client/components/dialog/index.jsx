@@ -8,7 +8,6 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
 import DialogBase from './dialog-base';
 
 class Dialog extends Component {
@@ -26,11 +25,7 @@ class Dialog extends Component {
 	};
 
 	render() {
-		return (
-			<RootChild>
-				<DialogBase { ...this.props } onDialogClose={ this.onDialogClose } />
-			</RootChild>
-		);
+		return <DialogBase { ...this.props } onDialogClose={ this.onDialogClose } />;
 	}
 
 	onDialogClose = action => {
