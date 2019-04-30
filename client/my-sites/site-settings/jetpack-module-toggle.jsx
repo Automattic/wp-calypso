@@ -13,7 +13,10 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
+import getCurrentRoute from 'state/selectors/get-current-route';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import getJetpackModule from 'state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
@@ -38,14 +41,36 @@ class JetpackModuleToggle extends Component {
 		isJetpackSite: PropTypes.bool,
 		activateModule: PropTypes.func,
 		deactivateModule: PropTypes.func,
+		path: PropTypes.string,
+		userID: PropTypes.number,
 	};
 
 	handleChange = () => {
 		if ( ! this.props.checked ) {
+			this._recordTracksEvent( 'calypso_jetpack_module_toggle_activated' );
 			this.props.activateModule( this.props.siteId, this.props.moduleSlug );
 		} else {
+			this._recordTracksEvent( 'calypso_jetpack_module_toggle_deactivated' );
 			this.props.deactivateModule( this.props.siteId, this.props.moduleSlug );
 		}
+	};
+
+	_recordTracksEvent = name => {
+		const tracksProps = {
+			path: this.props.path,
+			module: this.props.moduleSlug,
+			userid: this.props.userID,
+		};
+
+		this.props.recordTracksEvent( name, tracksProps );
+	};
+
+	_getTracksProps = () => {
+		return {
+			path: this.props.path,
+			module: this.props.moduleSlug,
+			userID: this.props.userID,
+		};
 	};
 
 	render() {
@@ -86,10 +111,13 @@ export default connect(
 			toggling,
 			toggleDisabled: moduleDetailsNotLoaded || toggling,
 			isJetpackSite: isJetpackSite( state, siteId ),
+			path: getCurrentRoute( state ),
+			userID: getCurrentUserId( state ),
 		};
 	},
 	{
 		activateModule,
 		deactivateModule,
+		recordTracksEvent,
 	}
 )( localize( JetpackModuleToggle ) );
