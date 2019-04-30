@@ -14,14 +14,15 @@ import { localize } from 'i18n-calypso';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
-import { getCurrentUserId } from 'state/current-user/selectors';
 import getJetpackModule from 'state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class JetpackModuleToggle extends Component {
 	static defaultProps = {
@@ -43,6 +44,7 @@ class JetpackModuleToggle extends Component {
 		deactivateModule: PropTypes.func,
 		path: PropTypes.string,
 		userID: PropTypes.number,
+		blogID: PropTypes.number,
 	};
 
 	handleChange = () => {
@@ -60,17 +62,10 @@ class JetpackModuleToggle extends Component {
 			path: this.props.path,
 			module: this.props.moduleSlug,
 			userid: this.props.userID,
+			blogid: this.props.blogID,
 		};
 
 		this.props.recordTracksEvent( name, tracksProps );
-	};
-
-	_getTracksProps = () => {
-		return {
-			path: this.props.path,
-			module: this.props.moduleSlug,
-			userID: this.props.userID,
-		};
 	};
 
 	render() {
@@ -113,6 +108,7 @@ export default connect(
 			isJetpackSite: isJetpackSite( state, siteId ),
 			path: getCurrentRoute( state ),
 			userID: getCurrentUserId( state ),
+			blogID: getSelectedSiteId( state ),
 		};
 	},
 	{
