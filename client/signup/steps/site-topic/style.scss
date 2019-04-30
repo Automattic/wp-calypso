@@ -46,6 +46,10 @@ body.is-section-jetpack-connect .site-topic__content {
 		}
 	}
 
+	&.is-empty input {
+		padding-right: 15px;
+	}
+
 	.suggestions__wrapper {
 		position: relative;
 		top: 0;
