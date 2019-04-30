@@ -48,7 +48,9 @@ export const isGutenbergEnabled = ( state, siteId ) => {
 			return false;
 		}
 
-		return isEnabled( 'jetpack/gutenframe' );
+		return (
+			isEnabled( 'jetpack/gutenframe' ) && isEnabled( 'gutenberg' ) && ! isVipSite( state, siteId )
+		);
 	}
 
 	return (
