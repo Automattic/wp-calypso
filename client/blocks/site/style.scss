@@ -75,9 +75,12 @@
 		outline: none;
 		box-shadow: inset 0 0 0 2px var( --color-primary-light );
 
+		// Temporarily hides fade out effect on right  
+		// which is there for extra long domains and titles
+		// Else the focus box-shadow is only partially shown
 		.site__domain::after,
 		.site__title::after {
-			z-index: -1;
+			display: none;
 		}
 	}
 }
