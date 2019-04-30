@@ -1,26 +1,30 @@
 .stats__module-column {
 	grid-column: span 4;
+	@include breakpoint( '>660px' ) {
+		@include breakpoint( '<960px' ){
+			grid-column: span 8;
+		}
+	}
+
+	@include breakpoint( '>1040px' ){
+		@include breakpoint( '<1280px' ){
+			grid-column: span 6;
+		}
+	}
+
 	&.grid-align-right {
-		@include breakpoint ( '<1040px' ){
-			@include breakpoint ( '>660px' ){
+		@include breakpoint( '>960px' ) {
+			@include breakpoint( '<1040px' ) {
 				grid-column: 5 / span 4;
+			}
+		}
+		@include breakpoint( '>1040px' ) {
+			@include breakpoint( '<1280px' ) {
+				grid-column: 7 / span 6;
 			}
 		}
 	}
 }
-
-// Module container
-// @include breakpoint( '>660px' ) {
-// 	.stats__module-column {
-// 		// grid-column: span 4;
-// 	}
-// }
-
-// @include breakpoint( '>1040px' ) {
-// 	.stats__module-column {
-// 		grid-column: span 4;
-// 	}
-// }
 
 .old-stats-link .button .gridicon {
 	margin-bottom: -2px;

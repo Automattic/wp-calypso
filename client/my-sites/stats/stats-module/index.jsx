@@ -163,7 +163,7 @@ class StatsModule extends Component {
 		} );
 
 		return (
-			<div>
+			<div class="stats__module-card-container">
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }

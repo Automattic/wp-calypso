@@ -21,7 +21,17 @@
 
 .card.stats-module {
 	padding: 0;
-	margin-bottom: 10px;
+	margin-bottom: 0;
+}
+
+.stats__module-card-container {
+	margin-bottom: 16px;
+	@include breakpoint ( '>660px' ) {
+		margin-bottom: 24px;
+	}
+	&:last-child {
+		margin-bottom: 0;
+	}
 }
 
 // Site sections
