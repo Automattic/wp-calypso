@@ -68,7 +68,7 @@ class Task extends PureComponent {
 			);
 		}
 
-		if ( disableIcon && ! completed ) {
+		if ( disableIcon ) {
 			return (
 				<div className="checklist__task-icon is-disabled">
 					<ScreenReaderText>{ translate( 'Waiting to complete' ) }</ScreenReaderText>

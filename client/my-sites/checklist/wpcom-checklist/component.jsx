@@ -332,7 +332,7 @@ class WpcomChecklistComponent extends PureComponent {
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
 			isExpandable: true,
-			disableIcon: 'email_verified' === task.id,
+			disableIcon: ! task.isCompleted && 'email_verified' === task.id,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
