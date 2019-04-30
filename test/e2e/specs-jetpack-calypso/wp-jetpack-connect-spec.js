@@ -424,7 +424,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			return await wooWizardExtrasPage.selectContinue();
 		} );
 
-		step( 'Can activate Jetpack', async function() {
+		step( 'Can continue with Jetpack', async function() {
 			this.timeout( mochaTimeOut * 5 );
 
 			const wooWizardJetpackPage = await WooWizardJetpackPage.Expect( driver );
@@ -439,7 +439,27 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 
 		step( 'Can wait for Jetpack get connected', async function() {
 			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
-			return await jetpackAuthorizePage.waitToDisappear();
+			return await jetpackAuthorizePage.approveConnection();
+		} );
+
+		step( 'Can select a site type', async function() {
+			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
+			return await siteTypePage.selectSiteType( 'blog' );
+		} );
+
+		step( 'Can select a site topic', async function() {
+			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
+			return await siteTopicPage.selectSiteTopic( 'test site' );
+		} );
+
+		step( 'Can select a user type', async function() {
+			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
+			return await userTypePage.selectUserType( 'creator' );
+		} );
+
+		step( 'Can click the free plan button', async function() {
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			return await pickAPlanPage.selectFreePlanJetpack();
 		} );
 
 		step( 'Can see the Woo wizard ready page', async function() {
