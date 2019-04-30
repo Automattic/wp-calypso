@@ -1291,7 +1291,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG ] = state => 
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MARK_AS_PRINTED ] = ( state, { labelId } ) => {
+const markLabelAsPrinted = ( state, { labelId } ) => {
 	return {
 		...state,
 		labels: state.labels.map( label => {
@@ -1306,6 +1306,9 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MARK_AS_PRINTED ] = ( state, { lab
 		} ),
 	};
 };
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MARK_AS_PRINTED ] = markLabelAsPrinted;
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY ] = markLabelAsPrinted;
 
 // Reset the state when the order changes
 reducers[ WOOCOMMERCE_ORDER_UPDATE_SUCCESS ] = () => {
