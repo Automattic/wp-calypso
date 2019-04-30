@@ -48,6 +48,11 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const debug = debugModule( 'calypso:my-sites:people:invite' );

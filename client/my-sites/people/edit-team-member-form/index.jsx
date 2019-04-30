@@ -29,6 +29,11 @@ import EditUserForm from './edit-user-form';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import getPreviousRoute from 'state/selectors/get-previous-route';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class EditTeamMemberForm extends Component {
 	constructor( props ) {
 		super( props );

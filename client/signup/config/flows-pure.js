@@ -92,13 +92,6 @@ export function generateFlows( {
 			lastModified: '2016-01-27',
 		},
 
-		subdomain: {
-			steps: [ 'design-type', 'themes', 'site-topic', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'Provide a vertical for subdomains',
-			lastModified: '2016-10-31',
-		},
-
 		main: {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
 			destination: getSiteDestination,
@@ -107,7 +100,7 @@ export function generateFlows( {
 		},
 
 		onboarding: {
-			steps: [ 'user', 'site-type', 'site-topic', 'site-information-title', 'domains', 'plans' ],
+			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2019-01-24',
@@ -118,7 +111,8 @@ export function generateFlows( {
 				'user',
 				'site-type',
 				'site-topic-with-preview',
-				'site-information-title-with-preview',
+				'site-title-with-preview',
+				'site-style-with-preview',
 				'domains-with-preview',
 				'plans',
 			],
@@ -132,8 +126,8 @@ export function generateFlows( {
 				'user',
 				'site-type',
 				'site-topic-with-preview',
+				'site-title-with-preview',
 				'site-style-with-preview',
-				'site-information-title-with-preview',
 				'domains-with-preview',
 				'plans',
 			],

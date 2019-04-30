@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { createElement } from 'react';
 import page from 'page';
 import { translate } from 'i18n-calypso';
@@ -11,6 +10,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import MarketingTools from './tools';
 import notices from 'notices';
 import Sharing from './main';
 import SharingButtons from './buttons/buttons';
@@ -26,20 +26,27 @@ import {
 } from 'state/sites/selectors';
 import versionCompare from 'lib/version-compare';
 
+export const redirectConnections = context => {
+	page.redirect( '/marketing/connections/' + context.params.domain );
+};
+
+export const redirectMarketingTools = context => {
+	page.redirect( '/marketing/tools/' + context.params.domain );
+};
+
 export const redirectSharingButtons = context => {
 	page.redirect( '/marketing/sharing-buttons/' + context.params.domain );
-	return;
 };
 
 export const redirectTraffic = context => {
 	page.redirect( '/marketing/traffic/' + context.params.domain );
-	return;
 };
 
 export const layout = ( context, next ) => {
 	const { contentComponent, path } = context;
 
 	context.primary = createElement( Sharing, { contentComponent, path } );
+
 	next();
 };
 
@@ -75,7 +82,13 @@ export const connections = ( context, next ) => {
 	next();
 };
 
-export const buttons = ( context, next ) => {
+export const marketingTools = ( context, next ) => {
+	context.contentComponent = createElement( MarketingTools );
+
+	next();
+};
+
+export const sharingButtons = ( context, next ) => {
 	const { store } = context;
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );

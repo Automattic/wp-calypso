@@ -26,16 +26,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	signupAtomicStoreVsPressable: {
-		datestamp: '20171101',
-		variations: {
-			atomic: 99,
-			pressable: 1,
-		},
-		defaultVariation: 'atomic',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	businessPlanDescriptionAT: {
 		datestamp: '20170605',
 		variations: {
@@ -183,15 +173,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	conciergeQuickstartSession: {
-		datestamp: '20190409',
-		variations: {
-			controlSupportSession: 50,
-			variantQuickstartSession: 50,
-		},
-		defaultVariation: 'controlSupportSession',
-		allowExistingUsers: true,
-	},
 	domainSuggestionsEnCheck: {
 		datestamp: '20190415',
 		variations: {
@@ -199,6 +180,16 @@ export default {
 			test: 50,
 		},
 		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	conciergeUpsellDial: {
+		//this test is used to dial down
+		datestamp: '20190429',
+		variations: {
+			offer: 50,
+			noOffer: 50,
+		},
+		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
 };

@@ -23,7 +23,6 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getSeoTitleFormatsForSite, isJetpackSite, isRequestingSite } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,

@@ -15,11 +15,19 @@
 	margin: 0 3px 0 8px;
 }
 
-.delete-user__remove-user .gridicon {
-	margin: -2px 4px 0 0;
-	vertical-align: middle;
-}
-
-.delete-user__remove-user {
-	cursor: pointer;
+.delete-user__remove-user.button.is-borderless {
+	color: var( --color-primary );
+			font-weight: 400;
+		
+			&:active,
+			&:focus,
+			&:hover {
+				color: var( --color-link-dark );
+			}
+		
+			.gridicon {
+				top: 0;
+				margin: -2px 4px 0 0;
+				vertical-align: middle;
+			}
 }

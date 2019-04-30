@@ -169,13 +169,23 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	render() {
 		const { autoFocus, placeholder, translate } = this.props;
 		const { inputValue, railcar } = this.state;
+		const shouldShowPopularTopics = this.shouldShowPopularTopics();
+		const placeholderText = shouldShowPopularTopics
+			? translate( 'Enter a topic or select from below.', {
+					comment:
+						'Text input field placeholder. Should be fewer than 35 chars to fit mobile width.',
+			  } )
+			: translate( 'Enter a topic.', {
+					comment:
+						'Text input field placeholder. Should be fewer than 35 chars to fit mobile width.',
+			  } );
 		return (
 			<>
 				<QueryVerticals searchTerm={ inputValue.trim() } debounceTime={ 300 } />
-				<QueryVerticals searchTerm={ DEFAULT_VERTICAL_KEY } limit={ 1 } />
+				<QueryVerticals searchTerm={ DEFAULT_VERTICAL_KEY } />
 				<SuggestionSearch
 					id="siteTopic"
-					placeholder={ placeholder || translate( 'Enter a keyword or select one from below.' ) }
+					placeholder={ placeholder || placeholderText }
 					onChange={ this.onSiteTopicChange }
 					suggestions={ this.getSuggestions() }
 					value={ inputValue }
@@ -183,7 +193,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 					isSearching={ this.isVerticalSearchPending() }
 					railcar={ railcar }
 				/>
-				{ this.shouldShowPopularTopics() && <PopularTopics onSelect={ this.onSiteTopicChange } /> }
+				{ shouldShowPopularTopics && <PopularTopics onSelect={ this.onSiteTopicChange } /> }
 			</>
 		);
 	}
@@ -193,7 +203,7 @@ export default localize(
 	connect(
 		( state, ownProps ) => ( {
 			verticals: getVerticals( state, ownProps.searchValue ) || [],
-			defaultVertical: get( getVerticals( state, 'business' ), '0', {} ),
+			defaultVertical: get( getVerticals( state, DEFAULT_VERTICAL_KEY ), '0', {} ),
 		} ),
 		null
 	)( SiteVerticalsSuggestionSearch )

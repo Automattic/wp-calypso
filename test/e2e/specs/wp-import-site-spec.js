@@ -55,7 +55,7 @@ describe( 'Verify Import Option: (' + screenSize + ') @parallel', function() {
 
 	step( 'Can see the Medium importer', async function() {
 		const importerPage = await ImporterPage.Expect( driver );
-		assert( await importerPage.importerIsDisplayed( 'medium' ) );
+		assert( await importerPage.importerIsDisplayed( 'medium-logo' ) );
 	} );
 
 	step( 'Can see the Blogger importer', async function() {

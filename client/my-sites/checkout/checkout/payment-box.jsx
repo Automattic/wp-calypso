@@ -62,7 +62,8 @@ export class PaymentBox extends PureComponent {
 			/>
 		);
 
-		let labelAdditionalText = '';
+		let labelAdditionalText = '',
+			webPaymentMethod = '';
 
 		switch ( method ) {
 			case 'credit-card':
@@ -75,8 +76,13 @@ export class PaymentBox extends PureComponent {
 				labelAdditionalText = paymentMethodName( method );
 				break;
 
+			case 'netbanking':
+				labelLogo = <Gridicon icon="institution" className="checkout__institution" />;
+				labelAdditionalText = paymentMethodName( method );
+				break;
+
 			case 'web-payment':
-				const webPaymentMethod = detectWebPaymentMethod();
+				webPaymentMethod = detectWebPaymentMethod();
 
 				switch ( webPaymentMethod ) {
 					case WEB_PAYMENT_BASIC_CARD_METHOD:

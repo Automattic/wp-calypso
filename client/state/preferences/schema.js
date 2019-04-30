@@ -14,18 +14,6 @@ export const remoteValuesSchema = {
 		mediaModalGalleryInstructionsDismissed: {
 			type: 'boolean',
 		},
-		firstViewHistory: {
-			type: 'array',
-			items: {
-				type: 'object',
-				properties: {
-					view: { type: 'string' },
-					timestamp: { type: 'number', minimum: 0 },
-					disabled: { type: 'boolean' },
-				},
-				required: [ 'view', 'timestamp', 'disabled' ],
-			},
-		},
 		'google-my-business-dismissible-nudge': {
 			type: 'object',
 			'^[1-9]+$': {

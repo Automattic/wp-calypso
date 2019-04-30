@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import GridiconExternal from 'gridicons/dist/external';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import {
 	CALYPSO_CONTACT,
@@ -142,12 +143,14 @@ export class HappinessSupport extends Component {
 
 		return (
 			<Button
+				borderless
 				href={ url }
 				target="_blank"
 				rel="noopener noreferrer"
 				className="happiness-support__support-button"
 			>
-				{ this.props.translate( 'Support documentation' ) }
+				<GridiconExternal />
+				<span>{ this.props.translate( 'Support documentation' ) }</span>
 			</Button>
 		);
 	}

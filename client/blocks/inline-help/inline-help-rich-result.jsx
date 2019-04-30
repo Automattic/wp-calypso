@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, isUndefined, omitBy } from 'lodash';
 import Gridicon from 'gridicons';
@@ -61,6 +61,7 @@ class InlineHelpRichResult extends Component {
 		const { type, result } = this.props;
 		const tour = get( result, RESULT_TOUR );
 		const postId = get( result, 'post_id' );
+		const isLocaleEnglish = 'en' === getLocaleSlug();
 		const tracksData = omitBy(
 			{
 				search_query: this.props.searchQuery,
@@ -85,8 +86,9 @@ class InlineHelpRichResult extends Component {
 					videoLink: get( result, RESULT_LINK ),
 				} );
 			}
-		} else if ( type === RESULT_ARTICLE && postId ) {
-			event.preventDefault();
+		} else if ( type === RESULT_ARTICLE && postId && isLocaleEnglish ) {
+			// Until we can deliver localized inline support article content, we send the
+			// the user to the localized support blog, if one exists.
 			this.props.openSupportArticleDialog( { postId, postUrl: href } );
 		} else {
 			if ( ! href ) {

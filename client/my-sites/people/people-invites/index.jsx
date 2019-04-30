@@ -38,6 +38,11 @@ import {
 import { deleteInvites } from 'state/invites/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PeopleInvites extends React.PureComponent {
 	static propTypes = {
 		site: PropTypes.object,

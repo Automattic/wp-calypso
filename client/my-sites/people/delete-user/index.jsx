@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /** @format */
 
 /**
@@ -12,6 +13,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -27,6 +29,11 @@ import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class DeleteUser extends React.Component {
 	static displayName = 'DeleteUser';
@@ -254,10 +261,10 @@ class DeleteUser extends React.Component {
 	renderMultisite = () => {
 		return (
 			<CompactCard className="delete-user__multisite">
-				<a className="delete-user__remove-user" onClick={ this.removeUser }>
+				<Button borderless className="delete-user__remove-user" onClick={ this.removeUser }>
 					<Gridicon icon="trash" />
-					{ this.getRemoveText() }
-				</a>
+					<span>{ this.getRemoveText() }</span>
+				</Button>
 			</CompactCard>
 		);
 	};
