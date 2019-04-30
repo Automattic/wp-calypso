@@ -53,7 +53,6 @@ class DialogBase extends Component {
 				onRequestClose={ this._close }
 				closeTimeoutMS={ this.props.leaveTimeout }
 				contentLabel={ this.props.label }
-				appElement={ document.getElementById( 'wpcom' ) }
 				overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
 				className={ dialogClassName }
 				htmlOpenClassName="ReactModal__Html--open"
