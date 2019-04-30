@@ -68,7 +68,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 
 			<div className="tools__feature-list">
 				<MarketingToolsFeature
-					title={ translate( 'Advertise with your $100 Google Adwords credit' ) }
+					title={ translate( 'Get social, and share your blog posts where the people are' ) }
 					description={ translate(
 						"Use your site's Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
 					) }
