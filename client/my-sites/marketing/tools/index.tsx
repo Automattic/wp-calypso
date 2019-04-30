@@ -15,6 +15,8 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 import MarketingToolsFeature from './feature';
 import MarketingToolsHeader from './header';
 import { marketingSharingButtons, marketingTraffic } from 'my-sites/marketing/paths';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -26,21 +28,37 @@ interface MarketingToolsProps {
 }
 
 export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
+	recordTracksEvent,
 	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
 
 	const handleBoostMyTrafficClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_boost_my_traffic_button_click' );
+
 		page( marketingTraffic( selectedSiteSlug ) );
 	};
 
+	const handleCreateALogoClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
+	};
+
+	const handleFindYourExpertClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_find_your_expert_button_click' );
+	};
+
 	const handleStartSharingClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_start_sharing_button_click' );
+
 		page( marketingSharingButtons( selectedSiteSlug ) );
 	};
 
 	return (
 		<Fragment>
+			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
+
 			<MarketingToolsHeader handleButtonClick={ handleBoostMyTrafficClick } />
+
 			<div className="tools__feature-list">
 				<MarketingToolsFeature
 					title={ translate( 'Get social, and share your blog posts where the people are' ) }
@@ -59,10 +77,11 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 					) }
 					imagePath="/calypso/images/illustrations/expert.svg"
 				>
-					<Button href={ '/experts/upwork?source=marketingtools' } target="_blank">
+					<Button onClick={ handleFindYourExpertClick } href={ '/experts/upwork?source=marketingtools' } target="_blank">
 						{ translate( 'Find Your Expert' ) }
 					</Button>
 				</MarketingToolsFeature>
+
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
@@ -70,7 +89,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 					) }
 					imagePath="/calypso/images/illustrations/branding.svg"
 				>
-					<Button href={ 'http://logojoy.grsm.io/looka' } target="_blank">
+					<Button onClick={ handleCreateALogoClick } href={ 'http://logojoy.grsm.io/looka' } target="_blank">
 						{ translate( 'Create A Logo' ) }
 					</Button>
 				</MarketingToolsFeature>
@@ -80,9 +99,15 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 };
 
 MarketingTools.propTypes = {
+	recordTracksEvent: PropTypes.func.isRequired,
 	selectedSiteSlug: PropTypes.string,
 };
 
-export default connect( state => ( {
-	selectedSiteSlug: getSelectedSiteSlug( state ),
-} ) )( MarketingTools );
+export default connect(
+	state => ( {
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+	} ),
+	{
+		recordTracksEvent,
+	}
+)( MarketingTools );
