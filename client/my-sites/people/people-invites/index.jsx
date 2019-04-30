@@ -129,15 +129,35 @@ class PeopleInvites extends React.PureComponent {
 			return requesting ? this.renderPlaceholder() : this.renderEmptyContent();
 		}
 
+		const pendingLabel = translate(
+			'You have a pending invite for %(numberPeople)d user',
+			'You have pending invites for %(numberPeople)d users',
+			{
+				args: {
+					numberPeople: pendingInviteCount,
+				},
+				count: pendingInviteCount,
+				context: 'A navigation label.',
+			}
+		);
+
+		const acceptedLabel = translate(
+			'%(numberPeople)d user has accepted your invite',
+			'%(numberPeople)d users have accepted your invites',
+			{
+				args: {
+					numberPeople: acceptedInviteCount,
+				},
+				count: acceptedInviteCount,
+				context: 'A navigation label.',
+			}
+		);
+
 		return (
 			<React.Fragment>
 				{ hasPendingInvites ? (
 					<div className="people-invites__pending">
-						<PeopleListSectionHeader
-							label={ translate( 'Pending' ) }
-							count={ pendingInviteCount }
-							site={ site }
-						/>
+						<PeopleListSectionHeader label={ pendingLabel } site={ site } />
 						<Card className="people-invites__invites-list">
 							{ pendingInvites.map( this.renderInvite ) }
 						</Card>
@@ -149,8 +169,7 @@ class PeopleInvites extends React.PureComponent {
 				{ hasAcceptedInvites && (
 					<div className="people-invites__accepted">
 						<PeopleListSectionHeader
-							label={ translate( 'Accepted' ) }
-							count={ acceptedInviteCount }
+							label={ acceptedLabel }
 							// Excluding `site=` hides the "Invite user" link.
 						>
 							{ this.renderClearAll() }
