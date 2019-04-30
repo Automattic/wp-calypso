@@ -197,7 +197,9 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectPlan();
 			const plansPage = await PlansPage.Expect( driver );
-			await plansPage.openPlansTab();
+			if ( host === 'WPCOM' ) {
+				await plansPage.openPlansTab();
+			}
 			return await plansPage.selectBusinessPlan();
 		} );
 
