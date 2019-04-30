@@ -13,7 +13,7 @@ exports[`Head should render custom title 1`] = `
     httpEquiv="X-UA-Compatible"
   />
   <meta
-    content="width=device-width, initial-scale=1
+    content="width=device-width, initial-scale=1"
     name="viewport"
   />
   <meta
@@ -181,7 +181,7 @@ exports[`Head should render default title 1`] = `
     httpEquiv="X-UA-Compatible"
   />
   <meta
-    content="width=device-width, initial-scale=1, maximum-scale=1"
+    content="width=device-width, initial-scale=1"
     name="viewport"
   />
   <meta
