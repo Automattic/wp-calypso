@@ -16,7 +16,7 @@ import MarketingToolsFeature from './feature';
 import MarketingToolsHeader from './header';
 import { marketingSharingButtons, marketingTraffic } from 'my-sites/marketing/paths';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -109,6 +109,6 @@ export default connect(
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
-		recordTracksEvent,
+		recordTracksEvent: recordTracksEventAction,
 	}
 )( MarketingTools );
