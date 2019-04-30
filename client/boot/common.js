@@ -11,6 +11,7 @@ import url from 'url';
 import { get, startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
+import Modal from 'react-modal';
 import store from 'store';
 
 /**
@@ -214,6 +215,9 @@ export const utils = () => {
 
 	// Add accessible-focus listener
 	accessibleFocus();
+
+	// Configure app element that React Modal will aria-hide when modal is open
+	Modal.setAppElement( document.getElementById( 'wpcom' ) );
 };
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {
