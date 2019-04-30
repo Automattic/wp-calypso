@@ -15,7 +15,6 @@ import { get, has, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
 import { addQueryArgs, addSiteFragment } from 'lib/route';
@@ -23,15 +22,13 @@ import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, getSiteAdminUrl, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
-import isGutenlypsoEnabled from 'state/selectors/is-gutenlypso-enabled';
-import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
-import getEditorUrl from 'state/selectors/get-editor-url';
 import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/actions';
+import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -189,11 +186,7 @@ async function redirectIfBlockEditor( context, next ) {
 		return next();
 	}
 
-	if (
-		! isCalypsoifyGutenbergEnabled( state, siteId ) &&
-		! isGutenlypsoEnabled( state, siteId ) &&
-		! isEnabled( 'jetpack/gutenframe' )
-	) {
+	if ( ! isGutenbergEnabled( state, siteId ) ) {
 		return next();
 	}
 
@@ -203,26 +196,9 @@ async function redirectIfBlockEditor( context, next ) {
 
 	const postType = determinePostType( context );
 	const postId = getPostID( context );
-
-	if ( false === isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) ) {
-		const siteAdminUrl = getSiteAdminUrl( state, siteId );
-		let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
-
-		if ( postId ) {
-			url = `${ siteAdminUrl }post.php?post=${ postId }&action=edit`;
-		}
-
-		if ( isSiteAtomic( state, siteId ) ) {
-			url = addQueryArgs( { calypsoify: '1' }, url );
-		}
-
-		return window.location.replace( addQueryArgs( context.query, url ) );
-	}
-
-	let url = getEditorUrl( state, siteId, postId, postType );
+	const url = getGutenbergEditorUrl( state, siteId, postId, postType );
 	// pass along parameters, for example press-this
-	url = addQueryArgs( context.query, url );
-	return window.location.replace( url );
+	return page.redirect( addQueryArgs( context.query, url ) );
 }
 
 export default {
