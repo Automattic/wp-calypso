@@ -122,7 +122,6 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 			);
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
-		// TODO: field rules for dlocal/india
 		case 'netbanking':
 			return countrySpecificFieldRules( 'IN' );
 		case 'token':
