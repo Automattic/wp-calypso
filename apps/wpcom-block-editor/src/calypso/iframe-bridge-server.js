@@ -56,18 +56,14 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
-	$( '#editor' ).on(
-		'click',
-		'.components-panel .edit-post-last-revision__panel .editor-post-last-revision__title',
-		e => {
-			e.preventDefault();
+	$( '#editor' ).on( 'click', '[href*="revision.php"]', e => {
+		e.preventDefault();
 
-			calypsoPort.postMessage( { action: 'openRevisions' } );
+		calypsoPort.postMessage( { action: 'openRevisions' } );
 
-			calypsoPort.addEventListener( 'message', onLoadRevision, false );
-			calypsoPort.start();
-		}
-	);
+		calypsoPort.addEventListener( 'message', onLoadRevision, false );
+		calypsoPort.start();
+	} );
 
 	function onLoadRevision( message ) {
 		const action = get( message, 'data.action', '' );
@@ -492,6 +488,32 @@ function handleGoToAllPosts( calypsoPort ) {
 	} );
 }
 
+/**
+ * Modify links in order to open them in parent window and not in a child iframe.
+ */
+function openLinksInParentFrame() {
+	const viewPostLinkSelectors = [
+		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice
+		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
+		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
+	].join( ',' );
+	$( '#editor' ).on( 'click', viewPostLinkSelectors, e => {
+		e.preventDefault();
+		window.open( e.target.href, '_top' );
+	} );
+
+	if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
+		const manageReusableBlocksLinkSelectors = [
+			'.editor-inserter__manage-reusable-blocks', // Link in the Blocks Inserter
+			'a.components-menu-item__button[href*="post_type=wp_block"]', // Link in the More Menu
+		].join( ',' );
+		$( '#editor' ).on( 'click', manageReusableBlocksLinkSelectors, e => {
+			e.preventDefault();
+			window.open( calypsoifyGutenberg.manageReusableBlocksUrl, '_top' );
+		} );
+	}
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -563,6 +585,8 @@ function initPort( message ) {
 		handlePreview( calypsoPort );
 
 		handleGoToAllPosts( calypsoPort );
+
+		openLinksInParentFrame();
 	}
 
 	window.removeEventListener( 'message', initPort, false );
