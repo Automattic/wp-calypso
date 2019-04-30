@@ -7,11 +7,6 @@ import Modal from 'react-modal';
 import classnames from 'classnames';
 
 /**
- * Internal dependencies
- */
-import RootChild from 'components/root-child';
-
-/**
  * Style dependencies
  */
 import './style.scss';
@@ -118,24 +113,22 @@ class Dialog extends Component {
 		const contentClassName = classnames( baseClassName + '__content', className );
 
 		return (
-			<RootChild>
-				<Modal
-					isOpen={ this.props.isVisible }
-					onRequestClose={ this.close }
-					closeTimeoutMS={ this.props.leaveTimeout }
-					contentLabel={ this.props.label }
-					overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
-					className={ dialogClassName }
-					htmlOpenClassName="ReactModal__Html--open"
-					role="dialog"
-					shouldCloseOnEsc={ shouldCloseOnEsc }
-				>
-					<div className={ contentClassName } tabIndex="-1">
-						{ this.props.children }
-					</div>
-					{ this.renderButtonsBar() }
-				</Modal>
-			</RootChild>
+			<Modal
+				isOpen={ this.props.isVisible }
+				onRequestClose={ this.close }
+				closeTimeoutMS={ this.props.leaveTimeout }
+				contentLabel={ this.props.label }
+				overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
+				className={ dialogClassName }
+				htmlOpenClassName="ReactModal__Html--open"
+				role="dialog"
+				shouldCloseOnEsc={ shouldCloseOnEsc }
+			>
+				<div className={ contentClassName } tabIndex="-1">
+					{ this.props.children }
+				</div>
+				{ this.renderButtonsBar() }
+			</Modal>
 		);
 	}
 }
