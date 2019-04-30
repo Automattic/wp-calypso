@@ -67,7 +67,7 @@ function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, si
 	addTask( 'custom_domain_registered' );
 	addTask( 'mobile_app_installed' );
 
-	if ( get( taskStatuses, 'email_verified.completed' ) && isSiteUnlaunched ) {
+	if ( isSiteUnlaunched ) {
 		addTask( 'site_launched' );
 	}
 

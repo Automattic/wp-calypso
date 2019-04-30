@@ -5,7 +5,7 @@
 import page from 'page';
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { find, get, some, includes, forEach } from 'lodash';
+import { find, get, some, includes, forEach, noop } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
@@ -609,18 +609,22 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
+		const { taskStatuses, translate } = this.props;
+		const isEmailVerified = get( taskStatuses, 'email_verified.completed' );
+		const buttonText = isEmailVerified
+			? translate( 'Launch site' )
+			: translate( 'Launch site (once you have verified your email address)' );
 
 		return (
 			<TaskComponent
 				{ ...baseProps }
 				bannerImageSrc="/calypso/images/stats/tasks/launch.svg"
-				buttonText={ translate( 'Launch site' ) }
+				buttonText={ buttonText }
 				completedTitle={ translate( 'You launched your site' ) }
 				description={ translate(
 					'Your site is private and only visible to you. Launch your site, when you are ready to make it public.'
 				) }
-				onClick={ this.handleLaunchSite( task ) }
+				onClick={ isEmailVerified ? this.handleLaunchSite( task ) : noop }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Launch your site' ) }
 			/>
