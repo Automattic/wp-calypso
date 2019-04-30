@@ -10,9 +10,12 @@ import { get, isInteger } from 'lodash';
  * Internal dependencies
  */
 import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import { EDITOR_START } from 'state/action-types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
+import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import { addQueryArgs } from 'lib/route';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -35,12 +38,22 @@ function getPostID( context ) {
 	return parseInt( context.params.post, 10 );
 }
 
-export const redirect = ( { store: { getState } }, next ) => {
+export const redirect = ( context, next ) => {
+	const {
+		store: { getState },
+	} = context;
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
-	const hasGutenberg = isGutenbergEnabled( state, siteId );
 
-	if ( hasGutenberg ) {
+	if ( isCalypsoifyGutenbergEnabled( state, siteId ) ) {
+		const postType = determinePostType( context );
+		const postId = getPostID( context );
+		const url = getGutenbergEditorUrl( state, siteId, postId, postType );
+		// pass along parameters, for example press-this
+		return window.location.replace( addQueryArgs( context.query, url ) );
+	}
+
+	if ( isGutenbergEnabled( state, siteId ) ) {
 		return next();
 	}
 
