@@ -10,7 +10,7 @@
 	width: 35px;
 
 	$payment-cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
-	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24', 'brazil-tef',
+	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'netbanking', 'paypal', 'p24', 'brazil-tef',
 					'wechat', 'sofort';
 
 	@each $brand in $payment-cc-brands {
@@ -48,6 +48,12 @@
 		height: 20px;
 		background-size: 100px auto;
 		width: 100px;
+	}
+
+	&.is-netbanking {
+		width: 90px;
+		background-size: 84px auto;
+		margin-top: 2px;
 	}
 
 	&.is-p24 {

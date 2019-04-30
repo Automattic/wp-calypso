@@ -90,13 +90,13 @@ export function fullAddressFieldsRules() {
 }
 
 /**
- * Returns ebanx validation rule sets for defined fields. Ebanx required fields may vary according to country
- * See: https://developers.ebanx.com/api-reference/full-api-documentation/ebanx-payment-2/ebanx-payment-guide/guide-create-a-payment/
- * @param {string} country two-letter country code to determine the required ebanx fields
+ * Returns country/processor specific validation rule sets for defined fields.
+ *
+ * @param {string} country two-letter country code to determine the required fields
  * @returns {object} the ruleset
  */
-export function ebanxFieldRules( country ) {
-	const ebanxFields = PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ country ].fields || [];
+export function countrySpecificFieldRules( country ) {
+	const countryFields = PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ country ].fields || [];
 
 	return pick(
 		Object.assign(
@@ -110,7 +110,14 @@ export function ebanxFieldRules( country ) {
 					description: i18n.translate( 'Phone Number' ),
 					rules: [ 'required' ],
 				},
-
+				name: {
+					description: i18n.translate( 'Your Name' ),
+					rules: [ 'required' ],
+				},
+				pan: {
+					description: i18n.translate( 'PAN - Permanent account number' ),
+					rules: [ 'validIndiaPan' ],
+				},
 				'postal-code': {
 					description: i18n.translate( 'Postal Code' ),
 					rules: [ 'required' ],
@@ -118,7 +125,7 @@ export function ebanxFieldRules( country ) {
 			},
 			fullAddressFieldsRules()
 		),
-		ebanxFields
+		countryFields
 	);
 }
 

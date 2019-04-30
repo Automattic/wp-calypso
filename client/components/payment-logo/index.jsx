@@ -25,6 +25,7 @@ const ALT_TEXT = {
 	ideal: 'iDEAL',
 	jcb: 'JCB',
 	mastercard: 'Mastercard',
+	netbanking: 'Net Banking',
 	p24: 'Przelewy24',
 	paypal: 'PayPal',
 	placeholder: '',
