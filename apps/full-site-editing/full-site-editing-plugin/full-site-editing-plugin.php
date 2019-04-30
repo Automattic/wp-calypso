@@ -18,6 +18,7 @@ class A8C_Full_Site_Editing {
 		add_action( 'init', array( $this, 'register_script_and_style' ), 100 );
 		add_action( 'init', array( $this, 'register_blocks' ), 100 );
 		add_action( 'init', array( $this, 'register_wp_template' ) );
+		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 	}
 
 	function register_wp_template() {
@@ -59,6 +60,21 @@ class A8C_Full_Site_Editing {
 		register_block_type( 'a8c/template-part', array(
 			'render_callback' => 'render_template_part_block',
 		) );
+	}
+
+	/**
+	 * This will set the `wp_template` post type to `public` to support
+	 * the core search endpoint, which looks for it.
+	 *
+	 * @return void
+	 */
+	function allow_searching_for_templates() {
+		$post_type = get_post_type_object( 'wp_template' );
+		if ( ! is_a( $post_type, 'WP_Post_Type' ) ) {
+			return;
+		}
+		// setting this to `public` will allow it to be found in the search endpoint
+		$post_type->public = true;
 	}
 }
 
