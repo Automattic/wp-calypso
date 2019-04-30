@@ -198,7 +198,7 @@ async function redirectIfBlockEditor( context, next ) {
 	const postId = getPostID( context );
 	const url = getGutenbergEditorUrl( state, siteId, postId, postType );
 	// pass along parameters, for example press-this
-	return page.redirect( addQueryArgs( context.query, url ) );
+	return window.location.replace( addQueryArgs( context.query, url ) );
 }
 
 export default {
