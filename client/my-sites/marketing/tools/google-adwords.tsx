@@ -52,9 +52,9 @@ export const GoogleAdwordsCard: FunctionComponent< Props > = ( {
 };
 
 GoogleAdwordsCard.propTypes = {
-	isJetpack: PropTypes.bool,
-	isPremiumOrHigher: PropTypes.bool,
-	selectedSiteId: PropTypes.string,
+	isJetpack: PropTypes.bool.isRequired,
+	isPremiumOrHigher: PropTypes.bool.isRequired,
+	selectedSiteId: PropTypes.string.isRequired,
 };
 
 export default connect( state => {
