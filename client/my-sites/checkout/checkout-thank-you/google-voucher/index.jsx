@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import ClipboardButtonInput from 'components/clipboard-button-input';
-import PurchaseDetails from 'components/purchase-detail';
+
 import PurchaseButton from 'components/purchase-detail/purchase-button';
 import TipInfo from 'components/purchase-detail/tip-info';
 import Dialog from 'components/dialog';
@@ -222,7 +222,7 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	render() {
-		const { selectedSite, translate } = this.props;
+		const { selectedSite } = this.props;
 		const { step } = this.state;
 		let body;
 
@@ -241,16 +241,7 @@ class GoogleVoucherDetails extends Component {
 		return (
 			<div>
 				<QuerySiteVouchers siteId={ selectedSite.ID } />
-				<PurchaseDetails
-					alt=""
-					id="google-credits"
-					icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
-					title={ translate( 'Google Ads credit' ) }
-					description={ translate(
-						'Use a $100 credit with Google to bring traffic to your most important Posts and Pages.'
-					) }
-					body={ body }
-				/>
+				{ body }
 			</div>
 		);
 	}

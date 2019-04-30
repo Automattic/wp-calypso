@@ -126,4 +126,30 @@
 		text-align: center;
 		width: auto;
 	}
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+
+		.button {
+			margin: 0 1em 0 0;
+			width: auto;
+		}
+	}
+
+	@include breakpoint( '>1040px' ) {
+		justify-content: flex-end;
+
+		.button {
+			margin: 0 0 0 1em;
+		}
+
+		.purchase-detail__button {
+			float: right;
+		}
+
+		.google-voucher__setup-google-adwords.purchase-detail__button:not( .is-compact ) {
+			margin-top: 27px;
+		}
+	}
 }
+

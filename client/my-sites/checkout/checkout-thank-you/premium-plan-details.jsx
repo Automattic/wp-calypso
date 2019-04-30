@@ -59,9 +59,16 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 			/>
 
 			<QuerySiteVouchers siteId={ selectedSite.ID } />
-			<div>
-				<GoogleVoucherDetails selectedSite={ selectedSite } />
-			</div>
+			<PurchaseDetail
+				alt=""
+				id="google-credits"
+				icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
+				title={ i18n.translate( 'Google Ads credit' ) }
+				description={ i18n.translate(
+					'Use a $100 credit with Google to bring traffic to your most important Posts and Pages.'
+				) }
+				body={ <GoogleVoucherDetails selectedSite={ selectedSite } /> }
+			/>
 
 			{ ! selectedFeature && (
 				<PurchaseDetail
