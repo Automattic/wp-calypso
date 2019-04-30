@@ -517,7 +517,7 @@ export function createAccount(
 				if ( oauth2Signup ) {
 					assign( providedDependencies, {
 						oauth2_client_id: queryArgs.oauth2_client_id,
-						oauth2_redirect: queryArgs.oauth2_redirect,
+						oauth2_redirect: get( response, 'oauth2_redirect', '' ).split( '@' )[ 1 ],
 					} );
 				}
 
