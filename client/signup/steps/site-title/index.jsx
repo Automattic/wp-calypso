@@ -3,23 +3,39 @@
 /**
  * External dependencies
  */
-
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import SignupSiteTitle from 'components/signup-site-title';
-import SiteTitleExample from 'components/site-title-example';
+import Button from 'components/button';
+import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'components/forms/form-label';
+import FormFieldset from 'components/forms/form-fieldset';
+import InfoPopover from 'components/info-popover';
+import QueryVerticals from 'components/data/query-verticals';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
+import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import {
+	getSiteVerticalName,
+	getSiteVerticalPreview,
+} from 'state/signup/steps/site-vertical/selectors';
 
-import { translate } from 'i18n-calypso';
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-class SiteTitleStep extends React.Component {
+class SiteTitleStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
@@ -27,54 +43,120 @@ class SiteTitleStep extends React.Component {
 		setSiteTitle: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+		siteTitle: PropTypes.string,
+		siteVerticalName: PropTypes.string,
+		shouldFetchVerticalData: PropTypes.bool,
+		siteType: PropTypes.string,
 	};
 
-	submitSiteTitleStep = siteTitle => {
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
+	}
+
+	handleInputChange = ( { currentTarget: { value = '' } } ) => this.props.setSiteTitle( value );
+
+	handleSubmit = event => {
+		event.preventDefault();
+
+		const { goToNextStep, flowName, siteTitle, stepName } = this.props;
+
 		this.props.setSiteTitle( siteTitle );
 
 		SignupActions.submitSignupStep(
 			{
-				stepName: this.props.stepName,
-				siteTitle,
+				stepName,
+				flowName,
 			},
 			{ siteTitle }
 		);
 
-		this.props.goToNextStep();
-	};
+		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_title', {
+			value: siteTitle,
+		} );
 
-	skipStep = () => {
-		this.submitSiteTitleStep( '' );
+		goToNextStep();
 	};
 
 	renderSiteTitleStep = () => {
+		const {
+			shouldFetchVerticalData,
+			siteTitle,
+			siteType,
+			siteVerticalName,
+			translate,
+		} = this.props;
+		const fieldLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' ) || '';
+		const fieldPlaceholder =
+			getSiteTypePropertyValue( 'slug', siteType, 'siteTitlePlaceholder' ) || '';
+		const fieldDescription = translate(
+			"We'll use this as your site title. Don't worry, you can change this later."
+		);
 		return (
-			<div>
-				<SignupSiteTitle onSubmit={ this.submitSiteTitleStep } />
-				<SiteTitleExample />
+			<div className="site-title__wrapper">
+				{ shouldFetchVerticalData && <QueryVerticals searchTerm={ siteVerticalName } /> }
+				<form>
+					<div className="site-title__field-control site-title__title">
+						<FormFieldset>
+							<FormLabel htmlFor="title">
+								{ fieldLabel }
+								<InfoPopover className="site-title__info-popover" position="top">
+									{ fieldDescription }
+								</InfoPopover>
+							</FormLabel>
+							<FormTextInput
+								id="title"
+								name="title"
+								placeholder={ fieldPlaceholder }
+								onChange={ this.handleInputChange }
+								value={ siteTitle }
+								maxLength={ 100 }
+								autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+							/>
+							<Button
+								title={ this.props.translate( 'Continue' ) }
+								aria-label={ this.props.translate( 'Continue' ) }
+								primary
+								type="submit"
+								onClick={ this.handleSubmit }
+							>
+								<Gridicon icon="arrow-right" />
+							</Button>{' '}
+						</FormFieldset>
+					</div>
+				</form>
 			</div>
 		);
 	};
 
 	render() {
-		const headerText = translate( 'Give your new site a name.' );
+		const {
+			flowName,
+			positionInFlow,
+			showSiteMockups,
+			signupProgress,
+			stepName,
+			translate,
+		} = this.props;
+		const headerText = translate( "Tell us your site's name" );
 		const subHeaderText = translate(
-			'Enter a Site Title that will be displayed for visitors. You can always change this later.'
+			'This will appear at the top of your site and can be changed at anytime.'
 		);
-
 		return (
 			<div>
 				<StepWrapper
-					flowName={ this.props.flowName }
-					stepName={ this.props.stepName }
-					positionInFlow={ this.props.positionInFlow }
+					flowName={ flowName }
+					stepName={ stepName }
+					positionInFlow={ positionInFlow }
 					headerText={ headerText }
 					fallbackHeaderText={ headerText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
-					signupProgress={ this.props.signupProgress }
+					signupProgress={ signupProgress }
 					stepContent={ this.renderSiteTitleStep() }
-					goToNextStep={ this.skipStep }
+					showSiteMockups={ showSiteMockups }
 				/>
 			</div>
 		);
@@ -82,6 +164,16 @@ class SiteTitleStep extends React.Component {
 }
 
 export default connect(
-	null,
-	{ setSiteTitle }
-)( SiteTitleStep );
+	( state, ownProps ) => {
+		const siteType = getSiteType( state );
+		const shouldFetchVerticalData =
+			ownProps.showSiteMockups && siteType === 'business' && getSiteVerticalPreview( state ) === '';
+		return {
+			siteTitle: getSiteTitle( state ),
+			siteVerticalName: getSiteVerticalName( state ),
+			shouldFetchVerticalData,
+			siteType,
+		};
+	},
+	{ recordTracksEvent, setSiteTitle }
+)( localize( SiteTitleStep ) );

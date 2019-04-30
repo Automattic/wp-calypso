@@ -19,7 +19,6 @@ import SignupActions from 'lib/signup/actions';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
-import { setSiteInformation } from 'state/signup/steps/site-information/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { WPCC } from 'lib/url/support';
 import config from 'config';
@@ -337,7 +336,6 @@ export default connect(
 		suggestedUsername: getSuggestedUsername( state ),
 	} ),
 	{
-		setSiteInformation,
 		recordTracksEvent,
 		fetchOAuth2ClientData,
 	}
