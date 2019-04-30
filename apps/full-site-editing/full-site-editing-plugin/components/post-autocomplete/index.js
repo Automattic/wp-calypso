@@ -59,60 +59,50 @@ const selectSuggestion = async ( suggestion, setState ) => {
 };
 const PostAutocomplete = withState( {
 	loading: false,
-	search: null,
+	search: '',
 	showSuggestions: false,
 	suggestions: [],
-} )(
-	( {
-		loading,
-		onSelectPost,
-		search,
-		selectedPostTitle,
-		setState,
-		showSuggestions,
-		suggestions,
-	} ) => {
-		const onChange = inputValue => {
-			setState( { search: inputValue } );
-			if ( inputValue.length < 2 ) {
-				setState( {
-					loading: false,
-					showSuggestions: false,
-				} );
-				return;
-			}
-			updateSuggestions( inputValue, setState );
-		};
+} )( ( { loading, onSelectPost, search, setState, showSuggestions, suggestions } ) => {
+	const onChange = inputValue => {
+		setState( { search: inputValue } );
+		if ( inputValue.length < 2 ) {
+			setState( {
+				loading: false,
+				showSuggestions: false,
+			} );
+			return;
+		}
+		updateSuggestions( inputValue, setState );
+	};
 
-		const onClick = suggestion => async () => {
-			const selectedPost = await selectSuggestion( suggestion, setState );
-			onSelectPost( selectedPost );
-		};
+	const onClick = suggestion => async () => {
+		const selectedPost = await selectSuggestion( suggestion, setState );
+		onSelectPost( selectedPost );
+	};
 
-		return (
-			<div className="a8c-post-autocomplete">
-				<TextControl
-					autoComplete="off"
-					onChange={ onChange }
-					placeholder={ __( 'Type to search' ) }
-					type="search"
-					value={ search !== null ? search : selectedPostTitle }
-				/>
-				{ loading && <Spinner /> }
-				{ showSuggestions && !! suggestions.length && (
-					<Popover focusOnMount={ false } noArrow position="bottom">
-						<div className="a8c-post-autocomplete__suggestions">
-							{ map( suggestions, suggestion => (
-								<Button isLarge isLink key={ suggestion.id } onClick={ onClick( suggestion ) }>
-									{ suggestion.title }
-								</Button>
-							) ) }
-						</div>
-					</Popover>
-				) }
-			</div>
-		);
-	}
-);
+	return (
+		<div className="a8c-post-autocomplete">
+			<TextControl
+				autoComplete="off"
+				onChange={ onChange }
+				placeholder={ __( 'Type to search' ) }
+				type="search"
+				value={ search }
+			/>
+			{ loading && <Spinner /> }
+			{ showSuggestions && !! suggestions.length && (
+				<Popover focusOnMount={ false } noArrow position="bottom">
+					<div className="a8c-post-autocomplete__suggestions">
+						{ map( suggestions, suggestion => (
+							<Button isLarge isLink key={ suggestion.id } onClick={ onClick( suggestion ) }>
+								{ suggestion.title }
+							</Button>
+						) ) }
+					</div>
+				</Popover>
+			) }
+		</div>
+	);
+} );
 
 export default PostAutocomplete;

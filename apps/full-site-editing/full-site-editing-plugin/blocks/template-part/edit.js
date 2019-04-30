@@ -12,7 +12,7 @@ import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
 import { BlockControls } from '@wordpress/editor';
 import { Fragment, RawHTML } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -81,12 +81,11 @@ const TemplatePartEdit = withState( {
 						instructions={ __( 'Select a template part to display' ) }
 					>
 						<div className="a8c-template-part-block__selector">
-							<PostAutocomplete
-								selectedPostTitle={ get( selectedPost, 'title.rendered' ) }
-								onSelectPost={ onSelectPost }
-							/>
-							{ !! selectedPostId && (
-								<a href={ `?post=${ selectedPostId }&action=edit` }>{ __( 'Edit' ) }</a>
+							<PostAutocomplete onSelectPost={ onSelectPost } />
+							{ !! selectedPost && (
+								<a href={ `?post=${ selectedPost.id }&action=edit` }>
+									{ sprintf( __( 'Edit "%s"' ), get( selectedPost, 'title.rendered', '' ) ) }
+								</a>
 							) }
 						</div>
 					</Placeholder>
