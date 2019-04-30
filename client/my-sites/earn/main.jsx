@@ -25,6 +25,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
+import config from 'config';
 
 class EarningsMain extends Component {
 	static propTypes = {
@@ -56,11 +57,13 @@ class EarningsMain extends Component {
 			path: '/earn/ads-settings' + pathSuffix,
 			id: 'ads-settings',
 		} );
-		tabs.push( {
-			title: translate( 'Memberships' ),
-			path: '/earn/memberships' + pathSuffix,
-			id: 'memberships',
-		} );
+		if ( config.isEnabled( 'memberships' ) ) {
+			tabs.push( {
+				title: translate( 'Memberships' ),
+				path: '/earn/memberships' + pathSuffix,
+				id: 'memberships',
+			} );
+		}
 		return tabs;
 	}
 
