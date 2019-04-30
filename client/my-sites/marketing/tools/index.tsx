@@ -71,7 +71,7 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 					imagePath="/calypso/images/illustrations/branding.svg"
 				>
 					<Button href={ 'http://logojoy.grsm.io/looka' } target="_blank">
-						{ translate( 'Create a Logo' ) }
+						{ translate( 'Create A Logo' ) }
 					</Button>
 				</MarketingToolsFeature>
 			</div>
