@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import classnames from 'classnames';
-import { defer, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +24,6 @@ class Dialog extends Component {
 		label: PropTypes.string,
 		leaveTimeout: PropTypes.number,
 		onClose: PropTypes.func,
-		onClosed: PropTypes.func,
 		shouldCloseOnEsc: PropTypes.bool,
 	};
 
@@ -37,13 +35,6 @@ class Dialog extends Component {
 		isVisible: false,
 		label: '',
 		leaveTimeout: 200,
-		onClosed: noop,
-	};
-
-	checkOnClosed = ref => {
-		if ( null === ref ) {
-			defer( this.props.onClosed );
-		}
 	};
 
 	renderButtonsBar() {
@@ -124,7 +115,6 @@ class Dialog extends Component {
 		return (
 			<RootChild>
 				<Modal
-					ref={ this.checkOnClosed }
 					isOpen={ this.props.isVisible }
 					onRequestClose={ this._close }
 					closeTimeoutMS={ this.props.leaveTimeout }
