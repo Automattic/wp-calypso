@@ -125,7 +125,7 @@ class Site extends React.Component {
 							  } )
 							: site.domain
 					}
-					onClick={ this.onViewSiteClick }
+					onClick={ this.props.homeLink ? this.onViewSiteClick : this.onSelect }
 					onMouseEnter={ this.onMouseEnter }
 					onMouseLeave={ this.onMouseLeave }
 					aria-label={
