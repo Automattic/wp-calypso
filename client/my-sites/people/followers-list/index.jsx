@@ -33,6 +33,12 @@ import Button from 'components/button';
 import ListEnd from 'components/list-end';
 import { preventWidows } from 'lib/formatting';
 
+/**
+ * Stylesheet dependencies
+ */
+
+import './style.scss';
+
 const maxFollowers = 1000;
 
 const Followers = localize(
@@ -167,7 +173,7 @@ const Followers = localize(
 
 			let emptyTitle;
 			if ( this.siteHasNoFollowers() ) {
-				const inviteLink = '/people/new/' + this.props.site.id;
+				const inviteLink = '/people/new/' + this.props.site.domain;
 
 				if ( this.props.fetchOptions && 'email' === this.props.fetchOptions.type ) {
 					emptyTitle = preventWidows(
