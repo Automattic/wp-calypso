@@ -9,7 +9,8 @@ import { get } from 'lodash';
  * WordPress dependencies
  */
 import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
-import { withState } from '@wordpress/compose';
+import { compose, withState } from '@wordpress/compose';
+import { withSelect } from '@wordpress/data';
 import { BlockControls } from '@wordpress/editor';
 import { Fragment, RawHTML } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -19,16 +20,29 @@ import { __, sprintf } from '@wordpress/i18n';
  */
 import PostAutocomplete from '../../components/post-autocomplete';
 
-const ContentSlotEdit = withState( {
-	isEditing: false,
-	selectedPost: null,
-} )( ( { attributes, isEditing, selectedPost, setState } ) => {
+const ContentSlotEdit = compose(
+	withState( {
+		isEditing: false,
+		selectedPostId: undefined,
+		selectedPostType: undefined,
+	} ),
+	withSelect( ( select, { selectedPostId, selectedPostType } ) => {
+		const { getEntityRecord } = select( 'core' );
+		return {
+			selectedPost: getEntityRecord( 'postType', selectedPostType, selectedPostId ),
+		};
+	} )
+)( ( { attributes, isEditing, selectedPost, setState } ) => {
 	const { align } = attributes;
 
 	const toggleEditing = () => setState( { isEditing: ! isEditing } );
 
-	const onSelectPost = post => {
-		setState( { isEditing: false, selectedPost: post } );
+	const onSelectPost = ( { id, type } ) => {
+		setState( {
+			isEditing: false,
+			selectedPostId: id,
+			selectedPostType: type,
+		} );
 	};
 
 	const showToggleButton = ! isEditing || !! selectedPost;
