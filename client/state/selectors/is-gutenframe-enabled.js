@@ -36,9 +36,9 @@ export const isGutenframeEnabled = ( state, siteId ) => {
 			return false;
 		}
 
-		// But only if the site has a SSL cert since the browser cannot embed insecure content in a resource loaded
-		// over a secure HTTPS connection.
-		if ( ! isHttps( getSiteAdminUrl( state, siteId ) ) ) {
+		// But not if we are over a secure HTTPS connection and the site doesn't has a SSL cert since the browser cannot
+		// embed insecure content in a resource loaded over a secure HTTPS connection.
+		if ( 'https:' === window.location.protocol && ! isHttps( getSiteAdminUrl( state, siteId ) ) ) {
 			return false;
 		}
 
