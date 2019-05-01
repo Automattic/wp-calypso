@@ -17,6 +17,7 @@ import GoogleVoucherDetails from 'my-sites/checkout/checkout-thank-you/google-vo
 import { isPremium, isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import MarketingToolsFeature from './feature';
+import { PLAN_PREMIUM } from 'lib/plans/constants';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
 /**
@@ -45,7 +46,7 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 	}
 
 	const handleUpgradeClick = () => {
-		page( addQueryArgs( { plan: 'PLAN_PREMIUM' }, `/plans/${ siteSlug }` ) );
+		page( addQueryArgs( { plan: PLAN_PREMIUM }, `/plans/${ siteSlug }` ) );
 	};
 
 	const renderButton = () => {
@@ -61,7 +62,7 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 			<MarketingToolsFeature
 				title={ translate( 'Advertise with your $100 Google Adwords credit' ) }
 				description={ translate(
-					'Advertise your site where most people are searching: Google. You’ve got a $100 credit with Google Adwords to drive traffic to your most important pages.'
+					"Advertise your site where most people are searching: Google. You've got a $100 credit with Google Adwords to drive traffic to your most important pages."
 				) }
 				imagePath="/calypso/images/illustrations/marketing.svg"
 			>
