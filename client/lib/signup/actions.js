@@ -66,14 +66,12 @@ const SignupActions = {
 		} );
 	},
 
-	processSignupStep( step, errors, providedDependencies ) {
+	processSignupStep( step ) {
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {
 			Dispatcher.handleViewAction( {
 				type: 'PROCESS_SIGNUP_STEP',
 				data: step,
-				errors: undefined === errors ? [] : errors,
-				providedDependencies: providedDependencies,
 			} );
 		} );
 	},
