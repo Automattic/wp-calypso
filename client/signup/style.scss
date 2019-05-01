@@ -3,7 +3,6 @@ body.is-section-signup {
 	// should deal with different color schemes?
 	background: var( --color-primary );
 
-
 	// Adjust the padding as we no longer
 	// show the masterbar.
 	.layout__content {
@@ -36,7 +35,6 @@ body.is-section-signup {
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
 body.is-section-signup .layout:not( .dops ),
 body.is-section-signup .layout.gravatar {
-
 	// Update the logo that appears when loading Calypso
 	// to match the homepage, using primary-dark with opacity.
 	.wpcom-site__logo {
@@ -52,7 +50,7 @@ body.is-section-signup .layout.gravatar {
 			padding-bottom: 16px;
 			margin-bottom: 24px;
 			border-radius: 6px;
-			@include elevation ( 3dp );
+			@include elevation( 3dp );
 		}
 
 		.empty-content__title {
@@ -81,7 +79,7 @@ body.is-section-signup .layout.gravatar {
 		right: 0;
 		max-height: 300px;
 		overflow: auto;
-		@include elevation ( 2dp );
+		@include elevation( 2dp );
 	}
 
 	@include breakpoint( '<660px' ) {
