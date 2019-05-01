@@ -25,35 +25,32 @@ interface ConnectedProps {
 interface ExternalProps {
 	buttonText: string;
 	feature: string;
-	handleButtonClick: () => void;
+	onDefaultButtonClick: () => void;
+	onUpgradeButtonClick: () => void;
 	planSlug: string;
-	upgradeClickEvent?: string;
 }
 
 const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< ExternalProps & ConnectedProps > = ( {
 	buttonText,
-	feature,
-	handleButtonClick,
 	hasPlanFeature,
+	onDefaultButtonClick,
+	onUpgradeButtonClick,
 	planSlug,
 	planTitle,
 	selectedSiteSlug,
-	upgradeClickEvent,
 } ) => {
 	const translate = useTranslate();
 
 	const handleUpgradeClick = () => {
-		if ( upgradeClickEvent ) {
-			recordTracksEvent( upgradeClickEvent, {
-				plan_slug: planSlug,
-				feature,
-			} );
+		if ( onUpgradeButtonClick ) {
+			onUpgradeButtonClick();
 		}
+
 		page( addQueryArgs( { plan: planSlug }, `/plans/${ selectedSiteSlug }` ) );
 	};
 
 	if ( hasPlanFeature ) {
-		return <Button onClick={ handleButtonClick }>{ buttonText }</Button>;
+		return <Button onClick={ onDefaultButtonClick }>{ buttonText }</Button>;
 	}
 
 	return (
@@ -69,6 +66,7 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< ExternalProps 
 
 export default connect< ConnectedProps, {}, ExternalProps >( ( state, { feature, planSlug } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
+
 	return {
 		hasPlanFeature: selectedSiteId ? hasFeature( state, selectedSiteId, feature ) : false,
 		planTitle: getPlan( planSlug ).getTitle(),
