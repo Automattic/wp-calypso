@@ -52,7 +52,7 @@ let _synchronizer = null;
 let _poller = null;
 
 const CartStore = {
-	get: function() {
+	get() {
 		const value = hasLoadedFromServer() ? _synchronizer.getLatestValue() : {};
 
 		return assign( {}, value, {
@@ -227,7 +227,19 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 
 export default CartStore;
 
+function createListener( store, selector, callback ) {
+	let prevValue = selector( store.getState() );
+	return () => {
+		const nextValue = selector( store.getState() );
+		if ( nextValue !== prevValue ) {
+			prevValue = nextValue;
+			callback( nextValue );
+		}
+	};
+}
+
 // Subscribe to the Redux store to get updates about the selected site
-getReduxStore().then( store =>
-	store.subscribe( () => CartStore.setSelectedSiteId( getSelectedSiteId( store.getState() ) ) )
-);
+getReduxStore().then( store => {
+	CartStore.setSelectedSiteId( getSelectedSiteId( store.getState() ) );
+	store.subscribe( createListener( store, getSelectedSiteId, CartStore.setSelectedSiteId ) );
+} );
