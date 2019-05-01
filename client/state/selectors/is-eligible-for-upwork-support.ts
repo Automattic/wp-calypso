@@ -29,5 +29,5 @@ export default function isEligibleForUpworkSupport( state ): boolean {
 	} );
 
 	// Upwork is not available if the customer has a Business or eCommerce plan
-	return hasBusinessOrEcommercePlan ? false : true;
+	return ! hasBusinessOrEcommercePlan;
 }
