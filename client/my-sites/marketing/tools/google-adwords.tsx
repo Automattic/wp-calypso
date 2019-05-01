@@ -24,7 +24,7 @@ import QuerySiteVouchers from 'components/data/query-site-vouchers';
  */
 import './style.scss';
 
-interface ConnectProps {
+interface ConnectedProps {
 	isAtomic: boolean;
 	isJetpack: boolean;
 	isPremiumOrHigher: boolean;
@@ -32,7 +32,7 @@ interface ConnectProps {
 	siteSlug: string | null;
 }
 
-export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectProps > = ( {
+export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedProps > = ( {
 	isAtomic,
 	isJetpack,
 	isPremiumOrHigher,
@@ -79,7 +79,7 @@ MarketingToolsGoogleAdwordsFeature.propTypes = {
 	siteSlug: PropTypes.string,
 };
 
-export default connect< ConnectProps >( state => {
+export default connect< ConnectedProps >( state => {
 	const site = getSelectedSite( state );
 	const isAtomic = isSiteAtomic( state, site.ID ) || false;
 	const isPremiumOrHigher =
