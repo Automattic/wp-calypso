@@ -60,6 +60,7 @@ class WpcomChecklistComponent extends PureComponent {
 		emailSent: false,
 		error: null,
 		gSuiteDialogVisible: false,
+		selectedTaskId: null,
 	};
 
 	constructor() {
@@ -160,6 +161,8 @@ class WpcomChecklistComponent extends PureComponent {
 			location,
 		} );
 	};
+
+	onCollapsedClick = selectedTaskId => this.setState( { selectedTaskId } );
 
 	handleTaskStartThenDismiss = args => () => {
 		const { task } = args;
@@ -321,6 +324,9 @@ class WpcomChecklistComponent extends PureComponent {
 
 		const taskList = getTaskList( this.props );
 		const firstIncomplete = taskList.getFirstIncompleteTask();
+		const isCollapsed = this.state.selectedTaskId
+			? this.state.selectedTaskId !== task.id
+			: undefined;
 
 		const baseProps = {
 			id: task.id,
@@ -328,10 +334,13 @@ class WpcomChecklistComponent extends PureComponent {
 			completed: task.isCompleted,
 			siteSlug,
 			firstIncomplete,
-			buttonPrimary: firstIncomplete && firstIncomplete.id === task.id,
+			buttonPrimary: ! isCollapsed,
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
-			isExpandable: true,
+			onCollapsedClick: this.onCollapsedClick,
+			// Overrides the default collapsed state for the task
+			isCollapsed,
+			// only render an unclickable grey circle
 			disableIcon: ! task.isCompleted && 'email_verified' === task.id,
 		};
 
