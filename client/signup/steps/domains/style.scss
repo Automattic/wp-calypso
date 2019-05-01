@@ -16,7 +16,7 @@
 	.search.is-open.has-focus {
 		border: none;
 		border-radius: 3px;
-		box-shadow: 0 0 0 3px var( --color-accent-light );
+		box-shadow: inset 0 0 0 4px var( --color-accent-light );
 	}
 
 	.search-filters__dropdown-filters {
