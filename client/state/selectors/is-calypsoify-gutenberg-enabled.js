@@ -32,12 +32,13 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 		}
 
 		// We do want Gutenframe flows for JP/AT sites that have been updated to Jetpack 7.3 or greater since it will
-		// provide a way to handle the frame nonces verification. But only if the site has a SSL cert since the browser
-		// cannot embed insecure content in a resource loaded over a secure HTTPS connection.
+		// provide a way to handle the frame nonces verification. But only if we are over a insecure HTTPS connection or
+		// the site has a SSL cert since the browser cannot embed insecure content in a resource loaded over a secure
+		// HTTPS connection.
 		if (
 			isEnabled( 'jetpack/gutenframe' ) &&
 			isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
-			isHttps( getSiteAdminUrl( state, siteId ) )
+			( 'http:' === window.location.protocol || isHttps( getSiteAdminUrl( state, siteId ) ) )
 		) {
 			return false;
 		}
