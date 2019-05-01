@@ -11,7 +11,7 @@
 	.form-fieldset {
 		border-radius: 4px;
 		background: var( --color-white );
-		@include elevation ( 2dp );
+		@include elevation( 2dp );
 	}
 
 	label {
@@ -49,7 +49,7 @@
 	}
 
 	button {
-		@include elevation ( 1dp );
+		@include elevation( 1dp );
 	}
 
 	.card {

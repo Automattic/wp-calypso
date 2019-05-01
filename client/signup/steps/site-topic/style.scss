@@ -13,7 +13,7 @@ body.is-section-jetpack-connect .site-topic__content {
 		z-index: 1000; // I know, I know...
 		border-radius: 4px;
 		background: var( --color-white );
-		@include elevation ( 2dp );
+		@include elevation( 2dp );
 	}
 
 	.suggestion-search .gridicon {
@@ -53,7 +53,7 @@ body.is-section-jetpack-connect .site-topic__content {
 	.suggestions__wrapper {
 		position: relative;
 		top: 0;
-		@include elevation ( 0 );
+		@include elevation( 0 );
 		margin-top: 3px;
 		margin-bottom: 0;
 		border-radius: 0 0 4px 4px;
@@ -71,7 +71,7 @@ body.is-section-jetpack-connect .site-topic__content {
 		top: 3px;
 		right: 3px;
 		padding: 5px 8px;
-		@include elevation ( 1dp );
+		@include elevation( 1dp );
 
 		&[disabled] {
 			opacity: 0;
