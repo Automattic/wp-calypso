@@ -31,6 +31,7 @@ import accept from 'lib/accept';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
 import ListEnd from 'components/list-end';
+import { preventWidows } from 'lib/formatting';
 
 const maxFollowers = 1000;
 
@@ -166,13 +167,29 @@ const Followers = localize(
 
 			let emptyTitle;
 			if ( this.siteHasNoFollowers() ) {
+				const inviteLink = '/people/new/' + this.props.site.id;
+
 				if ( this.props.fetchOptions && 'email' === this.props.fetchOptions.type ) {
-					emptyTitle = this.props.translate(
-						'No one is following you by email yet, but you can invite up to 10 at a time.'
+					emptyTitle = preventWidows(
+						this.props.translate(
+							'No one is following you by email yet, but you can {{a}}invite up to 10 at a time{{/a}}.',
+							{
+								components: {
+									a: <a href={ inviteLink } />,
+								},
+							}
+						)
 					);
 				} else {
-					emptyTitle = this.props.translate(
-						'No WordPress.com followers yet, but you can invite up to 10 at a time.'
+					emptyTitle = preventWidows(
+						this.props.translate(
+							'No WordPress.com followers yet, but you can {{a}}invite up to 10 at a time{{/a}}.',
+							{
+								components: {
+									a: <a href={ inviteLink } />,
+								},
+							}
+						)
 					);
 				}
 				return <EmptyContent title={ emptyTitle } />;
