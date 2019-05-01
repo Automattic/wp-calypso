@@ -19,6 +19,7 @@ import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import MarketingToolsFeature from './feature';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -29,6 +30,7 @@ interface ConnectedProps {
 	isAtomic: boolean;
 	isJetpack: boolean;
 	isPremiumOrHigher: boolean;
+	recordTracksEvent: () => void;
 	siteId: number | null;
 	siteSlug: string | null;
 }
@@ -37,6 +39,7 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 	isAtomic,
 	isJetpack,
 	isPremiumOrHigher,
+	recordTracksEvent,
 	siteId,
 	siteSlug,
 } ) => {
@@ -46,6 +49,7 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 	}
 
 	const handleUpgradeClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_adwords_plan_upgrade_button_click' );
 		page( addQueryArgs( { plan: PLAN_PREMIUM }, `/plans/${ siteSlug }` ) );
 	};
 
@@ -76,23 +80,29 @@ MarketingToolsGoogleAdwordsFeature.propTypes = {
 	isAtomic: PropTypes.bool.isRequired,
 	isJetpack: PropTypes.bool.isRequired,
 	isPremiumOrHigher: PropTypes.bool.isRequired,
+	recordTracksEvent: PropTypes.func.isRequired,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 };
 
-export default connect< ConnectedProps >( state => {
-	const site = getSelectedSite( state );
-	const isAtomic = isSiteAtomic( state, site.ID ) || false;
-	const isPremiumOrHigher =
-		isPremium( site.plan ) ||
-		isBusiness( site.plan ) ||
-		isEcommerce( site.plan ) ||
-		isEnterprise( site.plan );
-	return {
-		isAtomic,
-		isJetpack: site && site.jetpack,
-		isPremiumOrHigher,
-		siteId: site && site.ID,
-		siteSlug: site && site.slug,
-	};
-} )( MarketingToolsGoogleAdwordsFeature );
+export default connect(
+	state => {
+		const site = getSelectedSite( state );
+		const isAtomic = isSiteAtomic( state, site.ID ) || false;
+		const isPremiumOrHigher =
+			isPremium( site.plan ) ||
+			isBusiness( site.plan ) ||
+			isEcommerce( site.plan ) ||
+			isEnterprise( site.plan );
+		return {
+			isAtomic,
+			isJetpack: site && site.jetpack,
+			isPremiumOrHigher,
+			siteId: site && site.ID,
+			siteSlug: site && site.slug,
+		};
+	},
+	{
+		recordTracksEvent: recordTracksEventAction,
+	}
+)( MarketingToolsGoogleAdwordsFeature );

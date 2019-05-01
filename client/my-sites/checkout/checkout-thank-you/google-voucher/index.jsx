@@ -25,6 +25,7 @@ import { assignSiteVoucher as assignVoucher } from 'state/sites/vouchers/actions
 import { GOOGLE_CREDITS } from 'state/sites/vouchers/service-types';
 import { getVouchersBySite, getGoogleAdCredits } from 'state/sites/vouchers/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -81,11 +82,13 @@ class GoogleVoucherDetails extends Component {
 			'calypso_plans_google_voucher_generate_click',
 			'Clicked Generate Code Button'
 		);
+		this.props.recordTracksEvent( 'calypso_google_adwords_voucher_generate_click' );
 
 		this.changeStep();
 	}
 
 	onDialogCancel() {
+		this.props.recordTracksEvent( 'calypso_google_adwords_voucher_tos_dialog_cancel_click' );
 		this.setState( { step: INITIAL_STEP } );
 	}
 
@@ -94,6 +97,7 @@ class GoogleVoucherDetails extends Component {
 			'calypso_plans_google_voucher_toc_accept_click',
 			'Clicked Agree Button'
 		);
+		this.props.recordTracksEvent( 'calypso_google_adwords_voucher_tos_accept_click' );
 
 		this.props.assignVoucher( this.props.selectedSite.ID, GOOGLE_CREDITS );
 		this.setState( { step: CODE_REDEEMED } );
@@ -104,6 +108,7 @@ class GoogleVoucherDetails extends Component {
 			'calypso_plans_google_voucher_setup_click',
 			'Clicked Setup Google Ads Button'
 		);
+		this.props.recordTracksEvent( 'calypso_google_adwords_voucher_setup_click' );
 	}
 
 	changeStep() {
@@ -254,6 +259,7 @@ class GoogleVoucherDetails extends Component {
 GoogleVoucherDetails.propTypes = {
 	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	googleAdCredits: PropTypes.array,
+	recordTracksEvent: PropTypes.func.isRequired,
 };
 
 export default connect(
@@ -266,5 +272,8 @@ export default connect(
 			googleAdCredits: getGoogleAdCredits( state, site ),
 		};
 	},
-	{ assignVoucher }
+	{
+		assignVoucher,
+		recordTracksEvent: recordTracksEventAction,
+	}
 )( localize( GoogleVoucherDetails ) );
