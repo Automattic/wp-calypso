@@ -63,7 +63,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				<MarketingToolsFeature
 					title={ translate( 'Get social, and share your blog posts where the people are' ) }
 					description={ translate(
-						'Use your site’s Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more.'
+						"Use your site's Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
 					) }
 					imagePath="/calypso/images/illustrations/marketing.svg"
 				>
@@ -73,7 +73,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				<MarketingToolsFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
 					description={ translate(
-						'We’ve partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site.'
+						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site."
 					) }
 					imagePath="/calypso/images/illustrations/expert.svg"
 				>
@@ -85,7 +85,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
-						'A custom logo helps your brand pop and makes your site memorable. Our partner Looka is standing by if you’d like some professional help.'
+						"A custom logo helps your brand pop and makes your site memorable. Our partner Looka is standing by if you'd like some professional help."
 					) }
 					imagePath="/calypso/images/illustrations/branding.svg"
 				>

@@ -36,7 +36,7 @@ const MarketingToolsHeader: FunctionComponent< Props > = ( {
 
 				<h2 className="tools__header-description">
 					{ translate(
-						'Optimize your site for search engines and get more exposure for your business. Let’s make the most of your site’s built-in SEO tools!'
+						"Optimize your site for search engines and get more exposure for your business. Let's make the most of your site's built-in SEO tools!"
 					) }
 				</h2>
 
