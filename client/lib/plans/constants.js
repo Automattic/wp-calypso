@@ -50,6 +50,7 @@ export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
 export const FEATURE_BLOG_DOMAIN = 'blog-domain';
 export const FEATURE_CUSTOM_DOMAIN = 'custom-domain';
 export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
+export const FEATURE_JETPACK_ADVANCED = 'jetpack-advanced';
 export const FEATURE_FREE_THEMES = 'free-themes';
 export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
 export const FEATURE_3GB_STORAGE = '3gb-storage';

@@ -161,7 +161,7 @@ const getPlanEcommerceDetails = () => ( {
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
-			constants.FEATURE_JETPACK_ESSENTIAL,
+			constants.FEATURE_JETPACK_ADVANCED,
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
@@ -332,7 +332,7 @@ const getPlanBusinessDetails = () => ( {
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
-			constants.FEATURE_JETPACK_ESSENTIAL,
+			constants.FEATURE_JETPACK_ADVANCED,
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
