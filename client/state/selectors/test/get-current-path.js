@@ -41,6 +41,15 @@ describe( 'getCurrentPath()', () => {
 		expect( getCurrentPath( state, 12345 ) ).to.be.null;
 	} );
 
+	test( 'it replaces the site slug with :site', () => {
+		const state = {
+			ui: ui,
+			sites: sites,
+		};
+
+		expect( getCurrentPath( state, 12345 ) ).to.equal( '/test/url/:site' );
+	} );
+
 	test( 'it replaces the site ID with :sideid', () => {
 		const state = {
 			ui: {
