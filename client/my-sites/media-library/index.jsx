@@ -56,9 +56,11 @@ class MediaLibrary extends Component {
 		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
 		search: PropTypes.string,
 		source: PropTypes.string,
+		categoryFilter: PropTypes.string,
 		onAddMedia: PropTypes.func,
 		onFilterChange: PropTypes.func,
 		onSourceChange: PropTypes.func,
+		onCategoryFilterChange: PropTypes.func,
 		onSearch: PropTypes.func,
 		onScaleChange: PropTypes.func,
 		onEditItem: PropTypes.func,
@@ -171,6 +173,7 @@ class MediaLibrary extends Component {
 				filterRequiresUpgrade={ this.filterRequiresUpgrade() }
 				search={ this.props.search }
 				source={ this.props.source }
+				categoryFilter={ this.props.categoryFilter }
 				isConnected={ this.props.isConnected }
 				containerWidth={ this.props.containerWidth }
 				single={ this.props.single }
@@ -179,6 +182,7 @@ class MediaLibrary extends Component {
 				onAddAndEditImage={ this.props.onAddAndEditImage }
 				onMediaScaleChange={ this.props.onScaleChange }
 				onSourceChange={ this.props.onSourceChange }
+				onCategoryFilterChange={ this.props.onCategoryFilterChange }
 				selectedItems={ this.props.mediaLibrarySelectedItems }
 				onDeleteItem={ this.props.onDeleteItem }
 				onEditItem={ this.props.onEditItem }

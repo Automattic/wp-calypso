@@ -51,6 +51,7 @@ class Media extends Component {
 		editedVideoItem: null,
 		selectedItems: [],
 		source: '',
+		categoryFilter: null,
 	};
 
 	containerRef = React.createRef();
@@ -65,6 +66,11 @@ class Media extends Component {
 	}
 
 	onFilterChange = filter => {
+		this.changeFilterPage( filter );
+		this.setState( { categoryFilter: null } );
+	};
+
+	changeFilterPage = filter => {
 		let redirect = '/media';
 
 		if ( filter ) {
@@ -285,6 +291,12 @@ class Media extends Component {
 
 		MediaActions.sourceChanged( this.props.selectedSite.ID );
 		this.setState( { source }, cb );
+		this.changeFilterPage( '' );
+	};
+
+	handleCategoryFilterChange = categoryFilter => {
+		this.setState( { categoryFilter } );
+		this.changeFilterPage( '' );
 	};
 
 	deleteMediaByItemDetail = () => {
@@ -418,10 +430,12 @@ class Media extends Component {
 							single={ false }
 							filter={ this.props.filter }
 							source={ this.state.source }
+							categoryFilter={ this.state.categoryFilter }
 							onEditItem={ this.openDetailsModalForASingleImage }
 							onViewDetails={ this.openDetailsModalForAllSelected }
 							onDeleteItem={ this.handleDeleteMediaEvent }
 							onSourceChange={ this.handleSourceChange }
+							onCategoryFilterChange={ this.handleCategoryFilterChange }
 							modal={ false }
 							containerWidth={ this.state.containerWidth }
 						/>

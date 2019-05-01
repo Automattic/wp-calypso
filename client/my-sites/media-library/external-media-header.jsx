@@ -19,6 +19,7 @@ import Button from 'components/button';
 import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
+import SelectDropdown from 'components/select-dropdown';
 
 const DEBOUNCE_TIME = 250;
 
@@ -103,6 +104,10 @@ class MediaLibraryExternalHeader extends React.Component {
 		} );
 	};
 
+	onSelectCategory = option => {
+		this.props.onCategoryFilterChange( option.value );
+	};
+
 	renderCopyButton() {
 		const { selectedItems, translate } = this.props;
 
@@ -123,11 +128,92 @@ class MediaLibraryExternalHeader extends React.Component {
 		return <span className="media-library__pexels-attribution">{ attribution }</span>;
 	}
 
+	renderCategoryFilter() {
+		const { translate } = this.props;
+		const categories = [
+			{
+				value: '',
+				label: translate( 'All categories' ),
+			},
+			{
+				value: 'animals',
+				label: translate( 'Animals' ),
+			},
+			{
+				value: 'birthdays',
+				label: translate( 'Birthdays' ),
+			},
+			{
+				value: 'cityscapes',
+				label: translate( 'Cityscapes' ),
+			},
+			{
+				value: 'food',
+				label: translate( 'Food' ),
+			},
+			{
+				value: 'landmarks',
+				label: translate( 'Landmarks' ),
+			},
+			{
+				value: 'landscapes',
+				label: translate( 'Landscapes' ),
+			},
+			{
+				value: 'night',
+				label: translate( 'Night' ),
+			},
+			{
+				value: 'people',
+				label: translate( 'People' ),
+			},
+			{
+				value: 'pets',
+				label: translate( 'Pets' ),
+			},
+			{
+				value: 'selfies',
+				label: translate( 'Selfies' ),
+			},
+			{
+				value: 'sport',
+				label: translate( 'Sport' ),
+			},
+			{
+				value: 'travel',
+				label: translate( 'Travel' ),
+			},
+			{
+				value: 'weddings',
+				label: translate( 'Weddings' ),
+			},
+		];
+
+		return (
+			<SelectDropdown
+				compact
+				options={ categories }
+				onSelect={ this.onSelectCategory }
+				disabled={ this.state.fetching }
+				initialSelected={ this.props.categoryFilter }
+			/>
+		);
+	}
+
 	renderCard() {
-		const { onMediaScaleChange, translate, canCopy, hasRefreshButton, hasAttribution } = this.props;
+		const {
+			onMediaScaleChange,
+			translate,
+			canCopy,
+			hasRefreshButton,
+			hasAttribution,
+			source,
+		} = this.props;
 
 		return (
 			<Card className="media-library__header">
+				{ source === 'google_photos' && this.renderCategoryFilter() }
+
 				{ hasAttribution && this.renderPexelsAttribution() }
 
 				{ hasRefreshButton && (
