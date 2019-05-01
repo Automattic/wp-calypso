@@ -16,27 +16,27 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-interface ConnectProps {
+interface ConnectedProps {
 	hasPlanFeature: boolean;
 	planTitle: string;
 	selectedSiteSlug: string | null;
 }
 
-interface OwnProps {
+interface ExternalProps {
 	buttonText: string;
 	feature: string;
 	handleButtonClick: () => void;
-	minPlanSlug: string;
+	planSlug: string;
 	upgradeClickEvent?: string;
 }
 
-const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< OwnProps & ConnectProps > = ( {
+const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< ExternalProps & ConnectedProps > = ( {
 	buttonText,
 	feature,
 	handleButtonClick,
 	hasPlanFeature,
+	planSlug,
 	planTitle,
-	minPlanSlug,
 	selectedSiteSlug,
 	upgradeClickEvent,
 } ) => {
@@ -45,11 +45,11 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< OwnProps & Con
 	const handleUpgradeClick = () => {
 		if ( upgradeClickEvent ) {
 			recordTracksEvent( upgradeClickEvent, {
-				plan_slug: minPlanSlug,
+				plan_slug: planSlug,
 				feature,
 			} );
 		}
-		page( addQueryArgs( { plan: minPlanSlug }, `/plans/${ selectedSiteSlug }` ) );
+		page( addQueryArgs( { plan: planSlug }, `/plans/${ selectedSiteSlug }` ) );
 	};
 
 	if ( hasPlanFeature ) {
@@ -67,11 +67,11 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< OwnProps & Con
 	);
 };
 
-export default connect< ConnectProps, {}, OwnProps >( ( state, { feature, minPlanSlug } ) => {
+export default connect< ConnectedProps, {}, ExternalProps >( ( state, { feature, planSlug } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		hasPlanFeature: selectedSiteId ? hasFeature( state, selectedSiteId, feature ) : false,
-		planTitle: getPlan( minPlanSlug ).getTitle(),
+		planTitle: getPlan( planSlug ).getTitle(),
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	};
 } )( MarketingToolsFeatureButtonWithPlanGate );
