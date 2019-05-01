@@ -19,7 +19,8 @@
 	}
 }
 
-.media-library__header .button {
+.media-library__header .button,
+.media-library__header .select-dropdown {
 	margin-right: 8px;
 }
 
@@ -213,6 +214,10 @@
 
 .media-library__content .notice {
 	margin-bottom: 0;
+}
+
+.media-library__content {
+	min-height: 600px;
 }
 
 .media-library__list {
