@@ -22,7 +22,6 @@ import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-mod
 import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 class JetpackModuleToggle extends Component {
 	static defaultProps = {
@@ -43,26 +42,25 @@ class JetpackModuleToggle extends Component {
 		activateModule: PropTypes.func,
 		deactivateModule: PropTypes.func,
 		path: PropTypes.string,
-		userID: PropTypes.number,
-		blogID: PropTypes.number,
+		userId: PropTypes.number,
 	};
 
 	handleChange = () => {
 		if ( ! this.props.checked ) {
-			this._recordTracksEvent( 'calypso_jetpack_module_toggle_activated' );
+			this.recordTracksEvent( 'calypso_jetpack_module_toggle_activated' );
 			this.props.activateModule( this.props.siteId, this.props.moduleSlug );
 		} else {
-			this._recordTracksEvent( 'calypso_jetpack_module_toggle_deactivated' );
+			this.recordTracksEvent( 'calypso_jetpack_module_toggle_deactivated' );
 			this.props.deactivateModule( this.props.siteId, this.props.moduleSlug );
 		}
 	};
 
-	_recordTracksEvent = name => {
+	recordTracksEvent = name => {
 		const tracksProps = {
 			path: this.props.path,
 			module: this.props.moduleSlug,
-			userid: this.props.userID,
-			blogid: this.props.blogID,
+			userid: this.props.userId,
+			blogid: this.props.siteId,
 		};
 
 		this.props.recordTracksEvent( name, tracksProps );
@@ -107,8 +105,7 @@ export default connect(
 			toggleDisabled: moduleDetailsNotLoaded || toggling,
 			isJetpackSite: isJetpackSite( state, siteId ),
 			path: getCurrentRoute( state ),
-			userID: getCurrentUserId( state ),
-			blogID: getSelectedSiteId( state ),
+			userId: getCurrentUserId( state ),
 		};
 	},
 	{
