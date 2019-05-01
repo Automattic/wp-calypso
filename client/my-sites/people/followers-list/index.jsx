@@ -78,10 +78,9 @@ const Followers = localize(
 				<div>
 					<p>
 						{ this.props.translate(
-							'If removed, this follower will stop receiving notifications about this site, unless they re-follow.'
+							'Removing this follower will make them stop receiving updates from your site. If they choose to, they can still visit your site, and follow it again.'
 						) }
 					</p>
-					<p>{ this.props.translate( 'Would you still like to remove this follower?' ) }</p>
 				</div>,
 				accepted => {
 					if ( accepted ) {
