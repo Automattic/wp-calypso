@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { assign, flow, flowRight, get, has, partialRight } from 'lodash';
+import { assign, flow, get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -96,10 +96,8 @@ function emitChange() {
 }
 
 function update( changeFunction ) {
-	const wrappedFunction = flowRight(
-		partialRight( fillInAllCartItemAttributes, productsList.get() ),
-		changeFunction
-	);
+	const wrappedFunction = cart =>
+		fillInAllCartItemAttributes( changeFunction( cart ), productsList.get() );
 
 	const previousCart = CartStore.get();
 	const nextCart = wrappedFunction( previousCart );
