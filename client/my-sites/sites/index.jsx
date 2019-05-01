@@ -35,7 +35,7 @@ export class Sites extends Component {
 
 		// No support for Gutenberg on VIP or Jetpack sites yet.
 		if ( /^\/block-editor/.test( path ) ) {
-			return ! site.is_vip && ! site.jetpack;
+			return ! site.is_vip;
 		}
 
 		return site;
