@@ -42,7 +42,7 @@ const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
-const isDesktop = calypsoEnv === 'desktop';
+const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
 const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'defaults';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -143,7 +143,7 @@ let outputChunkFilename = '[name].[chunkhash].min.js'; // ditto
 // also we don't minify so dont name them .min.js
 //
 // Desktop: no chunks or dll here, just one big file for the desktop app
-if ( isDevelopment || calypsoEnv === 'desktop' ) {
+if ( isDevelopment || isDesktop ) {
 	outputFilename = '[name].js';
 	outputChunkFilename = '[name].js';
 }
@@ -186,7 +186,7 @@ const webpackConfig = {
 			parallel: workerCount,
 			sourceMap: Boolean( process.env.SOURCEMAP ),
 			terserOptions: {
-				mangle: calypsoEnv !== 'desktop',
+				mangle: ! isDesktop,
 			},
 		} ),
 	},

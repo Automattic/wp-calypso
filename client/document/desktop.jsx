@@ -58,7 +58,7 @@ class Desktop extends React.Component {
 						rel="stylesheet"
 						type="text/css"
 						data-webpack={ true }
-						href={ `/calypso/build.${ isRTL ? 'rtl.css' : 'css' }` }
+						href={ `/calypso/evergreen/build.${ isRTL ? 'rtl.css' : 'css' }` }
 					/>
 					<link rel="stylesheet" id="desktop-css" href="/desktop/wordpress-desktop.css" />
 				</Head>
@@ -122,7 +122,7 @@ class Desktop extends React.Component {
 						/>
 					) }
 
-					<script src="/calypso/build.js" />
+					<script src="/calypso/evergreen/build.js" />
 					<script src="/desktop/desktop-app.js" />
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					<script type="text/javascript">startApp();</script>
