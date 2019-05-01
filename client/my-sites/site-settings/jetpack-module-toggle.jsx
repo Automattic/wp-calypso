@@ -15,6 +15,7 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
+import getCurrentPath from 'state/selectors/get-current-path';
 import getJetpackModule from 'state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
@@ -39,6 +40,7 @@ class JetpackModuleToggle extends Component {
 		isJetpackSite: PropTypes.bool,
 		activateModule: PropTypes.func,
 		deactivateModule: PropTypes.func,
+		path: PropTypes.string,
 	};
 
 	handleChange = () => {
@@ -54,7 +56,7 @@ class JetpackModuleToggle extends Component {
 	recordTracksEvent = name => {
 		const tracksProps = {
 			module: this.props.moduleSlug,
-			blogid: this.props.siteId,
+			path: this.props.path,
 		};
 
 		this.props.recordTracksEvent( name, tracksProps );
@@ -98,6 +100,7 @@ export default connect(
 			toggling,
 			toggleDisabled: moduleDetailsNotLoaded || toggling,
 			isJetpackSite: isJetpackSite( state, siteId ),
+			path: getCurrentPath( state, siteId ),
 		};
 	},
 	{
