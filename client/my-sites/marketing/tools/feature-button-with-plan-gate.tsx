@@ -14,7 +14,6 @@ import Button from 'components/button';
 import { getPlan } from 'lib/plans';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 interface ConnectedProps {
 	hasPlanFeature: boolean;

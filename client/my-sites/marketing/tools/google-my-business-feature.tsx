@@ -10,9 +10,9 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { FEATURE_GOOGLE_MY_BUSINESS, PLAN_BUSINESS } from 'lib/plans/constants';
 import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { FEATURE_GOOGLE_MY_BUSINESS, PLAN_BUSINESS } from 'lib/plans/constants';
 import MarketingToolsFeature from './feature';
 import MarketingToolsFeatureButtonWithPlanGate from './feature-button-with-plan-gate';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
