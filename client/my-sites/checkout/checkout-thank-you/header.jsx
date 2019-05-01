@@ -68,13 +68,26 @@ class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getText() {
-		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
+		const {
+			translate,
+			isDataLoaded,
+			hasFailedPurchases,
+			primaryPurchase,
+			displayMode,
+		} = this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
 		}
 
 		if ( ! isDataLoaded || ! primaryPurchase ) {
+			if ( 'concierge' === displayMode ) {
+				return translate(
+					'You will receive an email confirmation shortly,' +
+						' along with detailed instructions to schedule your call with us.'
+				);
+			}
+
 			return translate( 'You will receive an email confirmation shortly.' );
 		}
 
@@ -229,6 +242,15 @@ class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = selectedSite.URL;
 	};
 
+	visitScheduler = event => {
+		event.preventDefault();
+		const { selectedSite } = this.props;
+
+		//Maybe record tracks event
+
+		window.location.href = '/me/concierge/' + selectedSite.slug + '/book';
+	};
+
 	startTransfer = event => {
 		event.preventDefault();
 
@@ -240,8 +262,12 @@ class CheckoutThankYouHeader extends PureComponent {
 	};
 
 	getButtonText = () => {
-		const { translate, hasFailedPurchases, primaryPurchase } = this.props;
+		const { translate, hasFailedPurchases, primaryPurchase, displayMode } = this.props;
 		const site = this.props.selectedSite.slug;
+
+		if ( 'concierge' === displayMode ) {
+			return translate( 'Schedule my session' );
+		}
 
 		if ( ! site && hasFailedPurchases ) {
 			return translate( 'Register domain' );
@@ -267,14 +293,24 @@ class CheckoutThankYouHeader extends PureComponent {
 	};
 
 	getButton() {
-		const { hasFailedPurchases, translate, primaryPurchase, selectedSite } = this.props;
+		const {
+			hasFailedPurchases,
+			translate,
+			primaryPurchase,
+			selectedSite,
+			displayMode,
+		} = this.props;
 		const headerButtonClassName = 'button is-primary';
+		const isConciergePurchase = 'concierge' === displayMode;
 
-		if ( hasFailedPurchases || ! primaryPurchase || ! selectedSite || selectedSite.jetpack ) {
+		if (
+			! isConciergePurchase &&
+			( hasFailedPurchases || ! primaryPurchase || ! selectedSite || selectedSite.jetpack )
+		) {
 			return null;
 		}
 
-		if ( isDelayedDomainTransfer( primaryPurchase ) ) {
+		if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
 			return (
 				<div className="checkout-thank-you__header-button">
 					<button className={ headerButtonClassName } onClick={ this.startTransfer }>
@@ -284,9 +320,11 @@ class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
+		const clickHandler = 'concierge' === displayMode ? this.visitScheduler : this.visitSite;
+
 		return (
 			<div className="checkout-thank-you__header-button">
-				<button className={ headerButtonClassName } onClick={ this.visitSite }>
+				<button className={ headerButtonClassName } onClick={ clickHandler }>
 					{ this.getButtonText() }
 				</button>
 			</div>

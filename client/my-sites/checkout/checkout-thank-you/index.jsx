@@ -528,7 +528,7 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, sitePlans } = this.props;
+		const { selectedSite, sitePlans, displayMode } = this.props;
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
@@ -546,7 +546,11 @@ export class CheckoutThankYou extends React.Component {
 		if ( ! this.isDataLoaded() ) {
 			return (
 				<div>
-					<CheckoutThankYouHeader isDataLoaded={ false } selectedSite={ selectedSite } />
+					<CheckoutThankYouHeader
+						isDataLoaded={ false }
+						selectedSite={ selectedSite }
+						displayMode={ displayMode }
+					/>
 
 					<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
 
@@ -570,6 +574,7 @@ export class CheckoutThankYou extends React.Component {
 					selectedSite={ selectedSite }
 					hasFailedPurchases={ hasFailedPurchases }
 					primaryCta={ this.primaryCta }
+					displayMode={ displayMode }
 				/>
 
 				{ primaryPurchase && (
