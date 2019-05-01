@@ -420,10 +420,13 @@ function mapStateToProps( state, { moment } ) {
 
 	const isUsingGutenbergPageTemplates =
 		[
+			'twentynineteen',
+			'calm-business',
+			'elegant-business',
+			'friendly-business',
 			'modern-business',
 			'professional-business',
 			'sophisticated-business',
-			'calm-business',
 		].includes( getActiveTheme( state, siteId ) ) &&
 		moment( getSiteOption( state, siteId, 'created_at' ) ).isAfter( '20190314' );
 
