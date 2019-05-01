@@ -42,10 +42,10 @@ export const isGutenframeEnabled = ( state, siteId ) => {
 			return false;
 		}
 
-		return isEnabled( 'jetpack/gutenframe' ) && isEnabled( 'gutenberg' );
+		return isEnabled( 'jetpack/gutenframe' );
 	}
 
-	return isEnabled( 'gutenberg' ) && ! isVipSite( state, siteId );
+	return ! isVipSite( state, siteId );
 };
 
 export default isGutenframeEnabled;

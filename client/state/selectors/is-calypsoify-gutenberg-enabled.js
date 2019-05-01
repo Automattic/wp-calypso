@@ -4,7 +4,6 @@
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import isVipSite from 'state/selectors/is-vip-site';
 import { getSiteAdminUrl, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
@@ -46,20 +45,7 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 		return isEnabled( 'calypsoify/gutenberg' );
 	}
 
-	// Prevent Calypsoify redirects if Gutenlypso is enabled.
-	// This is intentionally placed after Atomic check - we want to default Atomic sites to
-	// Calypsoify even if Gutenlypso is on for now. This might change in the future if we decide to
-	// move Jetpack and Atomic sites to Gutenlypso too.
-	if ( isEnabled( 'gutenberg' ) ) {
-		return false;
-	}
-
-	// Not ready yet.
-	if ( isVipSite( state, siteId ) ) {
-		return false;
-	}
-
-	return isEnabled( 'calypsoify/gutenberg' );
+	return false;
 };
 
 export default isCalypsoifyGutenbergEnabled;
