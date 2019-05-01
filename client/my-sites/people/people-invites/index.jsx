@@ -137,7 +137,6 @@ class PeopleInvites extends React.PureComponent {
 					numberPeople: pendingInviteCount,
 				},
 				count: pendingInviteCount,
-				context: 'A navigation label.',
 			}
 		);
 
@@ -149,7 +148,6 @@ class PeopleInvites extends React.PureComponent {
 					numberPeople: acceptedInviteCount,
 				},
 				count: acceptedInviteCount,
-				context: 'A navigation label.',
 			}
 		);
 
