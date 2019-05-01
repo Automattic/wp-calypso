@@ -72,16 +72,6 @@ export class CartPlanDiscountAd extends Component {
 						}
 					) }
 				</p>
-				<p className="cart__cart-plan-discount-ad-paragraph">
-					{ translate(
-						'The plan and the domain can be renewed together for %(originalPrice)s / year.',
-						{
-							args: {
-								originalPrice: plan.formattedOriginalPrice,
-							},
-						}
-					) }
-				</p>
 			</CartAd>
 		);
 	}
