@@ -58,7 +58,7 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< OwnProps & Con
 
 	return (
 		<Button onClick={ handleUpgradeClick }>
-			{ translate( 'Upgrade to %(plan)s', {
+			{ translate( 'Upgrade To %(plan)s', {
 				args: {
 					plan: planTitle,
 				},

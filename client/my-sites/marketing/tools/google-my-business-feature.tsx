@@ -62,7 +62,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 					/>
 				) : (
 					<Button onClick={ handleGoToGoogleMyBusinessClick }>
-						{ translate( 'Go to Google My Business' ) }
+						{ translate( 'Go To Google My Business' ) }
 					</Button>
 				) }
 			</MarketingToolsFeature>
