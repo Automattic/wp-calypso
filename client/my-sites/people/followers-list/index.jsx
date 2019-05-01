@@ -167,9 +167,13 @@ const Followers = localize(
 			let emptyTitle;
 			if ( this.siteHasNoFollowers() ) {
 				if ( this.props.fetchOptions && 'email' === this.props.fetchOptions.type ) {
-					emptyTitle = this.props.translate( "You don't have any email followers yet." );
+					emptyTitle = this.props.translate(
+						'No one is following you by email yet, but you can invite up to 10 at a time.'
+					);
 				} else {
-					emptyTitle = this.props.translate( "You don't have any followers yet." );
+					emptyTitle = this.props.translate(
+						'No WordPress.com followers yet, but you can invite up to 10 at a time.'
+					);
 				}
 				return <EmptyContent title={ emptyTitle } />;
 			}
