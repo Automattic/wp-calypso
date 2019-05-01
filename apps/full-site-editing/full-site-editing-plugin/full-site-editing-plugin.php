@@ -27,6 +27,10 @@ class A8C_Full_Site_Editing {
 	}
 
 	function register_script_and_style() {
+		if ( ! $this->is_editor_wp_template() ) {
+			return;
+		}
+
 		$script_dependencies = json_decode( file_get_contents(
 			plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.deps.json'
 		), true );
@@ -75,6 +79,12 @@ class A8C_Full_Site_Editing {
 		}
 		// setting this to `public` will allow it to be found in the search endpoint
 		$post_type->public = true;
+	}
+
+	function is_editor_wp_template() {
+		return
+			( isset( $_GET['post_type'] ) && 'wp_template' === $_GET['post_type'] ) ||
+			( isset( $_GET['post'] ) && 'wp_template' === get_post_type( $_GET['post'] ) );
 	}
 }
 
