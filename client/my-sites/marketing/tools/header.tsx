@@ -10,11 +10,11 @@ import { useTranslate } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 
-interface MarketingToolsHeaderProps {
+interface Props {
 	handleButtonClick: () => void;
 }
 
-const MarketingToolsHeader: FunctionComponent< MarketingToolsHeaderProps > = ( {
+const MarketingToolsHeader: FunctionComponent< Props > = ( {
 	handleButtonClick,
 } ) => {
 	const translate = useTranslate();

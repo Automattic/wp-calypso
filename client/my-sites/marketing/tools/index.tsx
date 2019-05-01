@@ -3,7 +3,6 @@
  */
 import { connect } from 'react-redux';
 import page from 'page';
-import PropTypes from 'prop-types';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
@@ -23,12 +22,12 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
  */
 import './style.scss';
 
-interface MarketingToolsProps {
+interface Props {
 	recordTracksEvent: () => void;
 	selectedSiteSlug: string | null;
 }
 
-export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
+export const MarketingTools: FunctionComponent< Props > = ( {
 	recordTracksEvent,
 	selectedSiteSlug,
 } ) => {
@@ -97,11 +96,6 @@ export const MarketingTools: FunctionComponent< MarketingToolsProps > = ( {
 			</div>
 		</Fragment>
 	);
-};
-
-MarketingTools.propTypes = {
-	recordTracksEvent: PropTypes.func.isRequired,
-	selectedSiteSlug: PropTypes.string,
 };
 
 export default connect(
