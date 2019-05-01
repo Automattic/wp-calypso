@@ -187,8 +187,8 @@ const Followers = localize(
 
 				if ( this.props.type === 'email' ) {
 					headerText = this.props.translate(
-						'You have %(number)d email follower',
-						'You have %(number)d email followers',
+						'You have %(number)d follower receiving updates by email',
+						'You have %(number)d followers receiving updates by email',
 						{
 							args: { number: this.props.totalFollowers },
 							count: this.props.totalFollowers,
