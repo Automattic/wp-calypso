@@ -171,7 +171,7 @@ const webpackConfig = {
 	optimization: {
 		splitChunks: {
 			chunks: codeSplit ? 'all' : 'async',
-			name: isDevelopment || shouldEmitStats,
+			name: !! ( isDevelopment || shouldEmitStats ),
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
@@ -243,7 +243,7 @@ const webpackConfig = {
 		],
 	},
 	resolve: {
-			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
 		alias: Object.assign(
 			{

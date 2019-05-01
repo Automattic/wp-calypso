@@ -128,7 +128,6 @@ class Customize extends React.Component {
 
 		debug( 'returning to previous page', path );
 		page.back( path );
-		this.props.requestSite( this.props.siteId );
 	};
 
 	navigateTo = destination => {
@@ -251,6 +250,10 @@ class Customize extends React.Component {
 						notices.success( message.success, { displayOnNextPage: true } );
 					}
 					this.goBack();
+					break;
+				case 'saved':
+					debug( 'iframe says it saved' );
+					this.props.requestSite( this.props.siteId );
 					break;
 				case 'loading':
 					debug( 'iframe says it is starting loading customizer' );

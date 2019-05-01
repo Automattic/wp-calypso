@@ -25,10 +25,6 @@ function dependenciesContainCartItem( dependencies ) {
 }
 
 function getSiteDestination( dependencies ) {
-	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
-	}
-
 	let protocol = 'https';
 
 	/**
@@ -41,14 +37,6 @@ function getSiteDestination( dependencies ) {
 	}
 
 	return protocol + '://' + dependencies.siteSlug;
-}
-
-function getPostsDestination( dependencies ) {
-	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
-	}
-
-	return '/posts/' + dependencies.siteSlug;
 }
 
 function getRedirectDestination( dependencies ) {
@@ -67,7 +55,6 @@ function getChecklistDestination( dependencies ) {
 }
 
 const flows = generateFlows( {
-	getPostsDestination,
 	getSiteDestination,
 	getRedirectDestination,
 	getChecklistDestination,
@@ -117,7 +104,11 @@ function filterFlowName( flowName ) {
 	return flowName;
 }
 
-function filterDestination( destination ) {
+function filterDestination( destination, dependencies ) {
+	if ( dependenciesContainCartItem( dependencies ) ) {
+		return getCheckoutUrl( dependencies );
+	}
+
 	return destination;
 }
 
@@ -241,11 +232,7 @@ const Flows = {
 			'remove' === abtest( 'removeDomainsStepFromOnboarding' )
 		) {
 			flow = Flows.removeStepFromFlow( 'domains-with-preview', flow );
-			flow = replaceStepInFlow(
-				flow,
-				'site-title-with-preview',
-				'site-title-without-domains'
-			);
+			flow = replaceStepInFlow( flow, 'site-title-with-preview', 'site-title-without-domains' );
 
 			return flow;
 		}

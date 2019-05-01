@@ -1,53 +1,49 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
 import isVipSite from 'state/selectors/is-vip-site';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSiteAdminUrl, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import getSiteOptions from 'state/selectors/get-site-options';
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
 import isPluginActive from 'state/selectors/is-plugin-active';
+import { isHttps } from 'lib/url';
 
 export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
 		return false;
 	}
 
-	if ( isEnabled( 'jetpack/gutenframe' ) ) {
-		if (
-			versionCompare(
-				get( getSiteOptions( state, siteId ), 'jetpack_version', 0 ),
-				'7.3-alpha',
-				'>='
-			)
-		) {
+	// We might want Calypsoify flows for Jetpack and Atomic sites.
+	if ( isJetpackSite( state, siteId ) || isSiteAutomatedTransfer( state, siteId ) ) {
+		// But only once they have been updated to WordPress version 5.0 or greater since it will provide Gutenberg
+		// editor by default.
+		const wpVersion = getWordPressVersion( state, siteId );
+		if ( versionCompare( wpVersion, '5.0', '<' ) ) {
 			return false;
 		}
-	}
 
-	// We do want Calypsoify flows for Atomic sites
-	if ( isSiteAutomatedTransfer( state, siteId ) ) {
-		const wpVersion = getWordPressVersion( state, siteId );
-
-		// But not if they activated Classic editor plugin (effectively opting out of Gutenberg)
+		// But not if they activated the Classic Editor plugin (effectively opting out of Gutenberg).
 		if ( isPluginActive( state, siteId, 'classic-editor' ) ) {
 			return false;
 		}
 
-		// But only once they have been updated to WordPress version 5.0 or greater
-		// Since it will provide Gutenberg editor by default
-		if ( versionCompare( wpVersion, '5.0', '>=' ) ) {
-			return true;
+		// We do want Gutenframe flows for JP/AT sites that have been updated to Jetpack 7.3 or greater since it will
+		// provide a way to handle the frame nonces verification. But only if we are over a insecure HTTPS connection or
+		// the site has a SSL cert since the browser cannot embed insecure content in a resource loaded over a secure
+		// HTTPS connection.
+		if (
+			isEnabled( 'jetpack/gutenframe' ) &&
+			isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
+			( 'http:' === window.location.protocol || isHttps( getSiteAdminUrl( state, siteId ) ) )
+		) {
+			return false;
 		}
+
+		return isEnabled( 'calypsoify/gutenberg' );
 	}
 
 	// Prevent Calypsoify redirects if Gutenlypso is enabled.
@@ -59,7 +55,7 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	}
 
 	// Not ready yet.
-	if ( isJetpackSite( state, siteId ) || isVipSite( state, siteId ) ) {
+	if ( isVipSite( state, siteId ) ) {
 		return false;
 	}
 

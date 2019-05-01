@@ -244,7 +244,7 @@
 		"postinstall": "npm run build-packages",
 		"lint": "run-s -s lint:*",
 		"lint:config-defaults": "node server/config/validate-config-keys.js",
-		"lint:css": "stylelint \"client/**/*.scss\" --syntax scss",
+		"lint:css": "stylelint \"**/*.scss\" --syntax scss",
 		"lint:js": "npm run -s install-if-deps-outdated && eslint --ext .js --ext .jsx --ext .ts --ext .tsx --cache .",
 		"lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"**/*.js\" \"**/*.jsx\" \"**/*.tsx\" \"**/*.tsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/config/index.js\"",
 		"prestart": "npx check-node-version --package && npm run -s install-if-deps-outdated && node bin/welcome.js",

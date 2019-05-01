@@ -154,6 +154,7 @@ class SignupForm extends Component {
 			debounceWait: VALIDATION_DELAY_AFTER_FIELD_CHANGES,
 			hideFieldErrorsOnChange: true,
 			initialState: this.props.step ? this.props.step.form : undefined,
+			skipSanitizeAndValidateOnFieldChange: true,
 		} );
 
 		const initialState = this.formStateController.getInitialState();
