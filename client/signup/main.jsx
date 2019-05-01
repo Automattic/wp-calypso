@@ -549,43 +549,41 @@ class Signup extends React.Component {
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
-			<div className="signup__step" key={ stepKey }>
-				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
-					{ shouldRenderLocaleSuggestions && (
-						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-					) }
-					{ this.state.shouldShowLoadingScreen ? (
-						<SignupProcessingScreen
-							hasCartItems={ this.state.hasCartItems }
-							steps={ this.props.progress }
-							loginHandler={ this.state.loginHandler }
-							signupDependencies={ this.props.signupDependencies }
+			<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` } key={ stepKey }>
+				{ shouldRenderLocaleSuggestions && (
+					<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+				) }
+				{ this.state.shouldShowLoadingScreen ? (
+					<SignupProcessingScreen
+						hasCartItems={ this.state.hasCartItems }
+						steps={ this.props.progress }
+						loginHandler={ this.state.loginHandler }
+						signupDependencies={ this.props.signupDependencies }
+						flowName={ this.props.flowName }
+						flowSteps={ flow.steps }
+					/>
+				) : (
+					<Suspense fallback={ null }>
+						<CurrentComponent
+							path={ this.props.path }
+							step={ currentStepProgress }
+							initialContext={ this.props.initialContext }
+							steps={ flow.steps }
+							stepName={ this.props.stepName }
+							meta={ flow.meta || {} }
+							goToNextStep={ this.goToNextStep }
+							goToStep={ this.goToStep }
+							previousFlowName={ this.state.previousFlowName }
 							flowName={ this.props.flowName }
-							flowSteps={ flow.steps }
+							signupProgress={ this.props.progress }
+							signupDependencies={ this.props.signupDependencies }
+							stepSectionName={ this.props.stepSectionName }
+							positionInFlow={ this.getPositionInFlow() }
+							hideFreePlan={ hideFreePlan }
+							{ ...propsFromConfig }
 						/>
-					) : (
-						<Suspense fallback={ null }>
-							<CurrentComponent
-								path={ this.props.path }
-								step={ currentStepProgress }
-								initialContext={ this.props.initialContext }
-								steps={ flow.steps }
-								stepName={ this.props.stepName }
-								meta={ flow.meta || {} }
-								goToNextStep={ this.goToNextStep }
-								goToStep={ this.goToStep }
-								previousFlowName={ this.state.previousFlowName }
-								flowName={ this.props.flowName }
-								signupProgress={ this.props.progress }
-								signupDependencies={ this.props.signupDependencies }
-								stepSectionName={ this.props.stepSectionName }
-								positionInFlow={ this.getPositionInFlow() }
-								hideFreePlan={ hideFreePlan }
-								{ ...propsFromConfig }
-							/>
-						</Suspense>
-					) }
-				</div>
+					</Suspense>
+				) }
 			</div>
 		);
 	}

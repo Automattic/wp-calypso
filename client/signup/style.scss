@@ -163,3 +163,12 @@ body.is-section-signup .layout.gravatar .formatted-header {
 .is-section-signup .layout__primary {
 	overflow: visible;
 }
+
+// Room to breathe on mobile
+.signup .signup__step:not( .is-plans ):not( .is-site-type ) {
+	margin: auto;
+
+	@include breakpoint( '<660px' ) {
+		margin: auto 6px;
+	}
+}
