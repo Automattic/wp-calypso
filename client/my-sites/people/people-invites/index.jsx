@@ -120,10 +120,10 @@ class PeopleInvites extends React.PureComponent {
 		}
 
 		const hasAcceptedInvites = acceptedInvites && acceptedInvites.length > 0;
-		const acceptedInviteCount = hasAcceptedInvites ? acceptedInvites.length : null;
+		const acceptedInviteCount = hasAcceptedInvites ? acceptedInvites.length : 0;
 
 		const hasPendingInvites = pendingInvites && pendingInvites.length > 0;
-		const pendingInviteCount = hasPendingInvites ? pendingInvites.length : null;
+		const pendingInviteCount = hasPendingInvites ? pendingInvites.length : 0;
 
 		if ( ! hasPendingInvites && ! hasAcceptedInvites ) {
 			return requesting ? this.renderPlaceholder() : this.renderEmptyContent();
