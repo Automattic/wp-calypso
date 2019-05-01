@@ -47,13 +47,13 @@ before( async function() {
 describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Purchase Premium Plan:', function() {
+	describe( 'Purchase Business Plan:', function() {
 		before( async function() {
 			return await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 		} );
 
 		step( 'Can log into WordPress.com', async function() {
-			this.loginFlow = new LoginFlow( driver, 'jetpackUser' + host );
+			this.loginFlow = new LoginFlow( driver );
 			return await this.loginFlow.login();
 		} );
 
@@ -74,10 +74,10 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 			return await jetpackDashboard.clickUpgradeNudge();
 		} );
 
-		step( 'Can click the Proceed button', async function() {
-			const jetpackPlanSalesPage = await JetpackPlanSalesPage.Expect( driver );
-			return await jetpackPlanSalesPage.clickPurchaseButton();
-		} );
+		// step( 'Can click the Proceed button', async function() {
+		// 	const jetpackPlanSalesPage = await JetpackPlanSalesPage.Expect( driver );
+		// 	return await jetpackPlanSalesPage.clickPurchaseButton();
+		// } );
 
 		step( 'Can then see secure payment component', async function() {
 			return await SecurePaymentComponent.Expect( driver );
