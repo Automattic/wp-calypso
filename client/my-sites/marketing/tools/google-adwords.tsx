@@ -32,7 +32,7 @@ interface ConnectProps {
 	siteSlug: string | null;
 }
 
-export const GoogleAdwordsCard: FunctionComponent< ConnectProps > = ( {
+export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectProps > = ( {
 	isAtomic,
 	isJetpack,
 	isPremiumOrHigher,
@@ -71,7 +71,7 @@ export const GoogleAdwordsCard: FunctionComponent< ConnectProps > = ( {
 	);
 };
 
-GoogleAdwordsCard.propTypes = {
+MarketingToolsGoogleAdwordsFeature.propTypes = {
 	isAtomic: PropTypes.bool.isRequired,
 	isJetpack: PropTypes.bool.isRequired,
 	isPremiumOrHigher: PropTypes.bool.isRequired,
@@ -82,7 +82,6 @@ GoogleAdwordsCard.propTypes = {
 export default connect< ConnectProps >( state => {
 	const site = getSelectedSite( state );
 	const isAtomic = isSiteAtomic( state, site.ID ) || false;
-	console.log( site.plan );
 	const isPremiumOrHigher =
 		isPremium( site.plan ) ||
 		isBusiness( site.plan ) ||
@@ -95,4 +94,4 @@ export default connect< ConnectProps >( state => {
 		siteId: site && site.ID,
 		siteSlug: site && site.slug,
 	};
-} )( GoogleAdwordsCard );
+} )( MarketingToolsGoogleAdwordsFeature );
