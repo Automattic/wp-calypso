@@ -79,6 +79,7 @@
 		right: 0;
 		top: 0;
 		width: 1.7em;
+		z-index: z-index( 'root', '.themes-banner__close' );
 
 		&:hover {
 			cursor: pointer;
