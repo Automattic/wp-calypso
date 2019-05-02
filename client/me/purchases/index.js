@@ -34,6 +34,14 @@ export default function( router ) {
 		clientRender
 	);
 
+	router(
+		paths.upcomingCharges,
+		sidebar,
+		billingController.upcomingCharges,
+		makeLayout,
+		clientRender
+	);
+
 	if ( config.isEnabled( 'async-payments' ) ) {
 		router(
 			paths.purchasesRoot + '/pending',
