@@ -34,7 +34,6 @@ import {
 	isRemovable,
 	isRefundable,
 	maybeWithinRefundPeriod,
-	purchaseType,
 } from 'lib/purchases';
 import { isDataLoading } from '../utils';
 import { isDomainRegistration, isGoogleApps, isJetpackPlan, isPlan } from 'lib/products-values';
@@ -410,9 +409,12 @@ class RemovePurchase extends Component {
 		return (
 			<div>
 				<p>
-					{ translate( 'Are you sure you want to remove %(productName)s from {{siteName/}}?', {
+					{ translate( 'Are you sure you want to remove %(productName)s from {{domain/}}?', {
 						args: { productName },
-						components: { siteName: <em>{ purchaseType( purchase ) }</em> },
+						components: { domain: <em>{ purchase.domain }</em> },
+						// ^ is the internal WPcom domain i.e. example.wordpress.com
+						// if we want to use the purchased domain we can swap with the below line
+						//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
 					} ) }{' '}
 					{ isGoogleApps( purchase )
 						? translate(
