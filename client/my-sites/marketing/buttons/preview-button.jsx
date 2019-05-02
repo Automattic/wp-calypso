@@ -57,10 +57,10 @@ export default class SharingButtonsPreviewButton extends React.Component {
 	}
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
-	onClick() {
+	onClick = () => {
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Share Button', this.props.button.ID );
 		this.props.onClick();
-	}
+	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
