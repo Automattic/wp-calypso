@@ -113,9 +113,9 @@ To extend the default behavior provided by `@automattic/calypso-build`, you can 
 ```js
 module.exports = {
 	presets: [
-		require( '@automattic/calypso-build/babel/wordpress-element' ),
-		require( '@automattic/calypso-build/babel/default' ),
+		'@automattic/calypso-build/babel/wordpress-element',
+		'@automattic/calypso-build/babel/default',
 	],
-	plugins: [ require( 'my-custom-babel-plugin' ) ],
+	plugins: [ 'my-custom-babel-plugin' ],
 };
 ```
