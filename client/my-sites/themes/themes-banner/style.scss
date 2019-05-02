@@ -2,7 +2,7 @@
 	background: no-repeat var( --color-accent );
 	display: none;
 	overflow: hidden;
-	padding: 0.8em 325px 0.8em 0.8em;
+	padding: 0.8em 30vw 0.8em 0.8em;
 	position: relative;
 	user-select: none;
 	$image_max_width: 410px;
@@ -33,6 +33,7 @@
 	.button.themes-banner__cta {
 		color: inherit;
 		position: relative;
+		z-index: 1;
 	}
 
 	h1 {
@@ -51,7 +52,6 @@
 	p {
 		margin: 0;
 		text-shadow: 0 1px 1px rgba( black, 0.4 );
-		z-index: 1;
 	}
 
 	img {
@@ -62,11 +62,8 @@
 		top: 0;
 		right: 0;
 		user-select: none;
+		width: 35vw;
 		z-index: 0;
-
-		@include breakpoint( '<1400px' ) {
-			opacity: 0.5;
-		}
 	}
 
 	.button.themes-banner__cta {
