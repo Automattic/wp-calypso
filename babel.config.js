@@ -12,7 +12,6 @@ const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 
 const config = {
 	presets: [
-		require( '@automattic/calypso-build/babel/default' ),
 		[
 			'@babel/env',
 			{
@@ -23,6 +22,7 @@ const config = {
 				exclude: [ 'transform-typeof-symbol' ],
 			},
 		],
+		'@automattic/calypso-build/babel/default',
 	],
 	plugins: _.compact( [
 		[ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ],
