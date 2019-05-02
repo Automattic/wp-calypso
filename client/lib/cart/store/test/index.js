@@ -7,7 +7,6 @@
  * Internal dependencies
  */
 import { transactionPaymentSetActions, paymentActionLocations } from './fixtures/actions';
-import CartStore from 'lib/cart/store';
 import { recordUnrecognizedPaymentMethod } from '../cart-analytics';
 import { setTaxLocation } from 'lib/cart-values';
 
@@ -30,6 +29,7 @@ jest.mock( 'lib/cart-values', () => {
 	return {
 		setTaxLocation: jest.fn( () => () => ( {} ) ),
 		fillInAllCartItemAttributes: jest.fn( () => ( {} ) ),
+		removeCoupon: jest.fn( () => i => i ),
 	};
 } );
 jest.mock( 'lib/data-poller', () => ( {
@@ -45,10 +45,14 @@ jest.mock( 'lib/wp', () => ( {
 } ) );
 
 describe( 'Cart Store', () => {
-	let Dispatcher;
+	let CartStore, Dispatcher;
 
 	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
+		jest.isolateModules( () => {
+			CartStore = require( 'lib/cart/store' );
+			Dispatcher = require( 'dispatcher' );
+		} );
+
 		CartStore.setSelectedSiteId();
 		jest.clearAllMocks();
 	} );
@@ -63,6 +67,18 @@ describe( 'Cart Store', () => {
 
 	test( 'Store should have method get', () => {
 		expect( typeof CartStore.get ).toBe( 'function' );
+	} );
+
+	test( 'Store should ignore update actions that arrive after disable', () => {
+		let disableCart, removeCoupon;
+		jest.isolateModules( () => {
+			const cartActions = jest.requireActual( 'lib/upgrades/actions/cart' );
+			disableCart = cartActions.disableCart;
+			removeCoupon = cartActions.removeCoupon;
+		} );
+
+		disableCart();
+		expect( () => removeCoupon() ).not.toThrow();
 	} );
 
 	describe( 'Transaction Payment Set', () => {

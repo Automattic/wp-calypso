@@ -9,6 +9,7 @@ import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
 import ReaderPage from '../pages/reader-page.js';
 import StatsPage from '../pages/stats-page.js';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
+import PluginsBrowserPage from '../pages/plugins-browser-page';
 
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
@@ -157,13 +158,6 @@ export default class LoginFlow {
 		return await sideBarComponent.selectPeople();
 	}
 
-	async loginAndSelectAddPersonFromSidebar() {
-		await this.loginAndSelectMySite();
-
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		return await sideBarComponent.selectAddPerson();
-	}
-
 	async checkForDevDocsAndRedirectToReader() {
 		const urlDisplayed = await this.driver.getCurrentUrl();
 		//make sure we navigate to root, in development environments we open devdocs
@@ -210,7 +204,10 @@ export default class LoginFlow {
 		await this.loginAndSelectMySite();
 
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		return await sideBarComponent.selectManagePlugins();
+		await sideBarComponent.selectPlugins();
+
+		const pluginsBrowserPage = await PluginsBrowserPage.Expect( this.driver );
+		return await pluginsBrowserPage.selectManagePlugins();
 	}
 
 	async loginAndSelectPlugins() {

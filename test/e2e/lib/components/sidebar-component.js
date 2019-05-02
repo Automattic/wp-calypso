@@ -46,15 +46,6 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await this._scrollToAndClickMenuItem( 'people' );
 	}
 
-	async selectAddPerson() {
-		return await this._scrollToAndClickMenuItem( 'people', { clickButton: true } );
-	}
-
-	async selectManagePlugins() {
-		await this.expandDrawerItem( 'Tools' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-plugins', { clickButton: true } );
-	}
-
 	async selectThemes() {
 		await this.expandDrawerItem( 'Design' );
 		return await driverHelper.clickWhenClickable(
@@ -71,10 +62,6 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await this._scrollToAndClickMenuItem( 'plan' );
 	}
 
-	async selectAddNewPage() {
-		return await this._scrollToAndClickMenuItem( 'side-menu-page', { clickButton: true } );
-	}
-
 	async selectStats() {
 		return await this._scrollToAndClickMenuItem( 'menus' );
 	}
@@ -89,6 +76,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPlugins() {
+		await this.expandDrawerItem( 'Tools' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-plugins' );
 	}
 

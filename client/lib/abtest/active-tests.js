@@ -26,14 +26,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	businessPlanDescriptionAT: {
-		datestamp: '20170605',
-		variations: {
-			original: 50,
-			pluginsAndThemes: 50,
-		},
-		defaultVariation: 'original',
-	},
 	ATPromptOnCancel: {
 		datestamp: '20170515',
 		variations: {

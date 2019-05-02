@@ -19,7 +19,6 @@ import store from 'store';
 import config from 'config';
 import { ReduxWrappedLayout } from 'controller';
 import notices from 'notices';
-import setupMySitesRoute from 'my-sites';
 import authController from 'auth/controller';
 import emailVerification from 'components/email-verification';
 import { getSavedVariations } from 'lib/abtest'; // used by error logger
@@ -353,8 +352,6 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 			next();
 		} );
 	}
-
-	setupMySitesRoute();
 
 	const state = reduxStore.getState();
 	if ( config.isEnabled( 'happychat' ) ) {

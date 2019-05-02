@@ -12,7 +12,7 @@ import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
 import { BlockControls } from '@wordpress/editor';
 import { Fragment, RawHTML } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -64,12 +64,11 @@ const ContentSlotEdit = withState( {
 					>
 						<div className="a8c-content-slot-block__selector">
 							<div>{ __( 'Select something to preview:' ) }</div>
-							<PostAutocomplete
-								selectedPostTitle={ get( selectedPost, 'title.rendered' ) }
-								onSelectPost={ onSelectPost }
-							/>
+							<PostAutocomplete onSelectPost={ onSelectPost } />
 							{ !! selectedPost && (
-								<a href={ `?post=${ selectedPost.id }&action=edit` }>{ __( 'Edit' ) }</a>
+								<a href={ `?post=${ selectedPost.id }&action=edit` }>
+									{ sprintf( __( 'Edit "%s"' ), get( selectedPost, 'title.rendered', '' ) ) }
+								</a>
 							) }
 						</div>
 					</Placeholder>

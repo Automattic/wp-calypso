@@ -50,20 +50,10 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 			return await sideBarComponent.selectPlan();
 		} );
 
-		step( 'Can See Plans', async function() {
-			return await PlansPage.Expect( driver );
-		} );
-
 		step( 'Can Compare Plans', async function() {
 			const plansPage = await PlansPage.Expect( driver );
-			if ( host === 'WPCOM' ) {
-				await plansPage.openPlansTab();
-				return await plansPage.waitForComparison();
-			}
-
-			// Jetpack
-			const displayed = await plansPage.planTypesShown( 'jetpack' );
-			return assert( displayed, 'The Jetpack plans are NOT displayed' );
+			await plansPage.openPlansTab();
+			return await plansPage.waitForComparison();
 		} );
 
 		if ( host === 'WPCOM' ) {
@@ -72,6 +62,13 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 				const plansPage = await PlansPage.Expect( driver );
 				const present = await plansPage.confirmCurrentPlan( planName );
 				return assert( present, `Failed to detect correct plan (${ planName })` );
+			} );
+		} else {
+			step( 'Can Verify Current Plan', async function() {
+				// Jetpack
+				const plansPage = await PlansPage.Expect( driver );
+				const displayed = await plansPage.planTypesShown( 'jetpack' );
+				return assert( displayed, 'The Jetpack plans are NOT displayed' );
 			} );
 		}
 	} );
@@ -97,14 +94,8 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 
 		step( 'Can Select Plans tab', async function() {
 			const plansPage = await PlansPage.Expect( driver );
-			if ( host === 'WPCOM' ) {
-				await plansPage.openPlansTab();
-				return await plansPage.waitForComparison();
-			}
-
-			// Jetpack
-			const displayed = await plansPage.planTypesShown( 'jetpack' );
-			return assert( displayed, 'The Jetpack plans are NOT displayed' );
+			await plansPage.openPlansTab();
+			return await plansPage.waitForComparison();
 		} );
 
 		step( 'Select Business Plan', async function() {

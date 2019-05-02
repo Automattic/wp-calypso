@@ -12,6 +12,7 @@ import config from 'config';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import { currentScreenSize } from '../driver-manager';
+import { getJetpackHost } from "../data-helper";
 
 export default class SecurePaymentComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -24,9 +25,9 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		this.paymentButtonSelector = By.css(
 			'.credit-card-payment-box button.is-primary:not([disabled])'
 		);
-		this.personalPlanSlug = 'personal-bundle';
-		this.premiumPlanSlug = 'value_bundle';
-		this.businessPlanSlug = 'business-bundle';
+		this.personalPlanSlug = getJetpackHost() === 'WPCOM' ? 'personal-bundle' : 'jetpack_personal';
+		this.premiumPlanSlug = getJetpackHost() === 'WPCOM' ? 'value_bundle' : 'jetpack_premium';
+		this.businessPlanSlug = getJetpackHost() === 'WPCOM' ? 'business-bundle' : 'jetpack_business';
 		this.dotLiveDomainSlug = 'dotlive_domain';
 		this.cartTotalSelector = By.css( '.cart__total-amount,.cart-total-amount' );
 	}

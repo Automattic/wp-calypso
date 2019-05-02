@@ -18,10 +18,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 	}
 
 	async connectWordPressCom() {
-		// TODO: remove `a.jp-jetpack-connect__button,` after Jetpack 6.9 release
-		const selector = By.css(
-			"a.jp-jetpack-connect__button,.jp-connect-full__button-container a[href*='register']"
-		);
+		const selector = By.css( ".jp-connect-full__button-container a[href*='register']" );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		await this.driver.sleep( 1000 );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
@@ -41,7 +38,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 	}
 
 	async clickUpgradeNudge() {
-		const selector = By.css( '.dops-notice a[href*="upgrade"]' );
+		const selector = By.css( '.dops-notice a[href*="plans-business"]' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}

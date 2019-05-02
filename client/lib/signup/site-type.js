@@ -31,6 +31,7 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  * Returns a current list of site types that are displayed in the signup site-type step
  * Some (or all) of these site types will also have landing pages.
  * A user who comes in via a landing page will not see the Site Topic dropdown.
+ * Do note that id's per site type should not be changed as we add/remove site-types.
  *
  * @return {array} current list of site types
  */
@@ -72,18 +73,6 @@ export function getAllSiteTypes() {
 			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed' ),
 			siteTopicHeader: i18n.translate( 'What type of work do you do?' ),
 			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
-		},
-		{
-			id: 4,
-			slug: 'education',
-			label: i18n.translate( 'Education' ),
-			description: i18n.translate( 'Share school projects and class info.' ),
-			theme: 'pub/twentyfifteen',
-			designType: 'blog',
-			siteTitleLabel: i18n.translate( 'What is the name of your site?' ),
-			siteTitlePlaceholder: i18n.translate( 'E.g., My class' ),
-			siteTopicHeader: i18n.translate( 'What is your website about?' ),
-			siteTopicLabel: i18n.translate( 'What will your site be about?' ),
 		},
 		{
 			id: 5,
