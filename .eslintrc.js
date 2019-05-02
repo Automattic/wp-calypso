@@ -1,5 +1,5 @@
 /** @format */
-
+const { merge } = require( 'lodash' );
 const reactVersion = require( './package.json' ).dependencies.react;
 
 module.exports = {
@@ -10,7 +10,6 @@ module.exports = {
 		'plugin:jest/recommended',
 		'prettier',
 		'prettier/react',
-		'prettier/@typescript-eslint',
 	],
 	overrides: [
 		{
@@ -36,11 +35,31 @@ module.exports = {
 				step: false,
 			},
 		},
+		merge(
+			{},
+			require( '@typescript-eslint/eslint-plugin' ).configs.recommended,
+			require( 'eslint-config-prettier/@typescript-eslint' ),
+			{
+				files: [ '**/*.ts', '**/*.tsx' ],
+				rules: {
+					'@typescript-eslint/explicit-function-return-type': 'off',
+					'@typescript-eslint/explicit-member-accessibility': 'off',
+					'@typescript-eslint/no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
+					'@typescript-eslint/no-use-before-define': [
+						'error',
+						{ functions: false, typedefs: false },
+					],
+					'no-use-before-define': 'off',
+					'@typescript-eslint/no-var-requires': 'off',
+					// REST API objects include underscores
+					'@typescript-eslint/camelcase': 'off',
+				},
+			}
+		),
 	],
-	parser: '@typescript-eslint/parser',
 	env: {
 		browser: true,
-		'jest/globals': true,
+		jest: true,
 		// mocha is only still on because we have not finished porting all of our tests to jest's syntax
 		mocha: true,
 		node: true,
@@ -60,15 +79,8 @@ module.exports = {
 		},
 	},
 	rules: {
-		'@typescript-eslint/explicit-function-return-type': 0,
-		'@typescript-eslint/explicit-member-accessibility': 0,
-		'@typescript-eslint/no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
-		'@typescript-eslint/no-use-before-define': [ 'error', { functions: false, typedefs: false } ],
-		'@typescript-eslint/no-var-requires': 0,
-
 		// REST API objects include underscores
 		camelcase: 0,
-		'@typescript-eslint/camelcase': 0,
 
 		// TODO: why did we turn this off?
 		'jest/valid-expect': 0,

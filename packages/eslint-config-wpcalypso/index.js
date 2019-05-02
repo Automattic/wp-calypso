@@ -4,12 +4,15 @@ module.exports = {
 	env: {
 		es6: true,
 	},
-	parser: '@typescript-eslint/parser',
-	extends: 'plugin:@typescript-eslint/recommended',
+	parser: 'babel-eslint',
 	parserOptions: {
-		ecmaVersion: 7,
+		ecmaVersion: 2018,
 		sourceType: 'module',
+		ecmaFeatures: {
+			jsx: true,
+		},
 	},
+	extends: 'eslint:recommended',
 	plugins: [ 'wpcalypso' ],
 	rules: {
 		'array-bracket-spacing': [ 2, 'always' ],
