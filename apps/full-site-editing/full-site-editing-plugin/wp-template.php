@@ -46,10 +46,12 @@ function fse_register_wp_template() {
 				// You need to be able to customize, in order to create templates.
 				'create_posts'           => 'edit_theme_options',
 				'edit_posts'             => 'edit_theme_options',
+				'delete_posts'           => 'edit_theme_options',
 				'edit_published_posts'   => 'edit_theme_options',
 				'delete_published_posts' => 'edit_theme_options',
 				'edit_others_posts'      => 'edit_theme_options',
 				'delete_others_posts'    => 'edit_theme_options',
+				'publish_posts'          => 'edit_theme_options'
 			),
 			'map_meta_cap'          => true,
 			'supports'              => array(
