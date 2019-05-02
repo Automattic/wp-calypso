@@ -228,10 +228,12 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<MobileApps />
 				<SellOnlinePaypal isJetpack />
-				<BusinessOnboarding
-					onClick={ this.props.recordBusinessOnboardingClick }
-					link="https://calendly.com/jetpack/concierge"
-				/>
+				{ isEnabled( 'jetpack/concierge-sessions' ) && (
+					<BusinessOnboarding
+						onClick={ this.props.recordBusinessOnboardingClick }
+						link="https://calendly.com/jetpack/concierge"
+					/>
+				) }
 
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
@@ -303,10 +305,12 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<FindNewTheme selectedSite={ selectedSite } />
 
-				<BusinessOnboarding
-					onClick={ this.props.recordBusinessOnboardingClick }
-					link="https://calendly.com/jetpack/concierge"
-				/>
+				{ isEnabled( 'jetpack/concierge-sessions' ) && (
+					<BusinessOnboarding
+						onClick={ this.props.recordBusinessOnboardingClick }
+						link="https://calendly.com/jetpack/concierge"
+					/>
+				) }
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
 					selectedSite={ selectedSite }

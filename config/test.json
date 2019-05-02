@@ -46,6 +46,7 @@
 		"gutenberg/opt-in": true,
 		"help": true,
 		"jetpack/checklist": true,
+		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
 		"jitms": true,

@@ -39,6 +39,7 @@
 		"gutenberg/opt-in": true,
 		"help": true,
 		"help/courses": true,
+		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/personalPlan": true,
 		"jitms": false,
