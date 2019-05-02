@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, each, find, isEmpty } from 'lodash';
+import { debounce, find, get, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 import debugFactory from 'debug';
 
@@ -18,9 +18,12 @@ import SignupSitePreview from 'components/signup-site-preview';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import {
 	getSiteVerticalPreview,
+	getSiteVerticalPreviewIframeContent,
+	getSiteVerticalPreviewLastShown,
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
+import { updateSiteMockupDisplayAction } from 'state/signup/steps/site-style/actions';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getSiteStyleOptions, getThemeCssUri } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -55,7 +58,8 @@ class SiteMockups extends Component {
 		stepName: PropTypes.string,
 		title: PropTypes.string,
 		vertical: PropTypes.string,
-		verticalPreviewContent: PropTypes.string,
+		verticalPreview: PropTypes.string,
+		verticalPreviewContent: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -66,83 +70,41 @@ class SiteMockups extends Component {
 		stepName: '',
 		title: '',
 		vertical: '',
-		verticalPreviewContent: '',
+		verticalPreview: '',
+		verticalPreviewContent: {},
 	};
 
-	state = {
-		displayedVerticalPreviewContent: this.props.verticalPreviewContent,
-	};
+	debouncedUpdateSiteMockupDisplayAction = debounce(
+		this.props.updateSiteMockupDisplayAction,
+		300
+	);
 
-	debouncedRenderedEvent = debounce( () => {
-		const { siteStyle, siteType, verticalPreviewContent, verticalSlug } = this.props;
-
-		debug( 'Replacing displayed content with (debounced) prop content from the connected prop' );
-
-		this.setState( {
-			displayedVerticalPreviewContent: verticalPreviewContent,
-		} );
-
-		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
-			site_type: siteType,
-			vertical_slug: verticalSlug,
-			site_style: siteStyle || 'default',
-		} );
-	}, 777 );
+	componentDidMount() {
+		this.props.updateSiteMockupDisplayAction();
+	}
 
 	componentDidUpdate( prevProps ) {
-		const { verticalPreviewContent } = this.props;
+		const {
+			siteStyle,
+			siteType,
+			verticalPreview,
+			verticalSlug,
+			verticalPreviewContent,
+		} = this.props;
 
-		if ( verticalPreviewContent && prevProps.verticalPreviewContent !== verticalPreviewContent ) {
-			this.debouncedRenderedEvent();
-		}
-	}
-
-	/**
-	 * Returns an interpolated site preview content block with template markers
-	 *
-	 * @param {string} content Content to format
-	 * @return {string} Formatted content
-	 */
-	getContent( content = '' ) {
-		const { title: CompanyName, address, phone } = this.props;
-		if ( 'string' === typeof content ) {
-			each(
-				{
-					CompanyName,
-					Address: this.formatAddress( address ) || translate( 'Your Address' ),
-					Phone: phone || translate( 'Your Phone Number' ),
-				},
-				( value, key ) =>
-					( content = content.replace( new RegExp( '{{' + key + '}}', 'gi' ), value ) )
-			);
-		}
-		return content;
-	}
-
-	getTagline() {
-		const { address, phone } = this.props;
-		const hasAddress = ! isEmpty( address );
-		const hasPhone = ! isEmpty( phone );
-
-		if ( ! hasAddress && ! hasPhone ) {
-			return translate( 'You’ll be able to customize this to your needs.' );
+		if ( prevProps.verticalPreview !== verticalPreview ) {
+			this.debouncedUpdateSiteMockupDisplayAction();
+			return;
 		}
 
-		return [
-			hasAddress ? this.formatAddress( address ) : '',
-			hasAddress && hasPhone ? ' &middot; ' : '',
-			hasPhone ? phone : '',
-		].join( '' );
-	}
-
-	/**
-	 *
-	 * @param {string} address An address formatted onto separate lines
-	 * @return {string} Get rid of the last line of the address.
-	 */
-	formatAddress( address ) {
-		const parts = address.split( '\n' );
-		return parts.slice( 0, 2 ).join( ', ' );
+		const body = get( verticalPreviewContent, 'body' );
+		if ( body && body !== get( prevProps, 'verticalPreviewContent.body' ) ) {
+			this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
+				site_type: siteType,
+				vertical_slug: verticalSlug,
+				site_style: siteStyle || 'default',
+			} );
+		}
 	}
 
 	handleClick = size => {
@@ -154,12 +116,17 @@ class SiteMockups extends Component {
 	};
 
 	render() {
-		const { fontUrl, shouldShowHelpTip, siteStyle, title, themeSlug } = this.props;
-
-		const { displayedVerticalPreviewContent } = this.state;
+		const {
+			fontUrl,
+			lastShown,
+			shouldShowHelpTip,
+			siteStyle,
+			themeSlug,
+			verticalPreviewContent,
+		} = this.props;
 
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
-			'is-empty': isEmpty( displayedVerticalPreviewContent ),
+			'is-empty': isEmpty( verticalPreviewContent ),
 		} );
 		const langSlug = getLocaleSlug();
 		const language = getLanguage( langSlug );
@@ -167,11 +134,7 @@ class SiteMockups extends Component {
 		const otherProps = {
 			fontUrl,
 			cssUrl: getThemeCssUri( themeSlug, isRtl ),
-			content: {
-				title,
-				tagline: this.getTagline(),
-				body: this.getContent( displayedVerticalPreviewContent ),
-			},
+			content: verticalPreviewContent,
 			langSlug,
 			isRtl,
 			onPreviewClick: this.handleClick,
@@ -181,7 +144,7 @@ class SiteMockups extends Component {
 		debug( 'Rendering SiteMockups component' );
 
 		return (
-			<div className={ siteMockupClasses }>
+			<div className={ siteMockupClasses } key={ lastShown }>
 				{ shouldShowHelpTip && <SiteMockupHelpTip /> }
 				<div className="site-mockup__devices">
 					<SignupSitePreview
@@ -207,10 +170,12 @@ export default connect(
 		return {
 			title: siteInformation.title || translate( 'Your New Website' ),
 			address: siteInformation.address,
+			lastShown: getSiteVerticalPreviewLastShown( state ), // updates memoized selectors
 			phone: siteInformation.phone,
 			siteStyle,
 			siteType,
-			verticalPreviewContent: getSiteVerticalPreview( state ),
+			verticalPreview: getSiteVerticalPreview( state ),
+			verticalPreviewContent: getSiteVerticalPreviewIframeContent( state ),
 			verticalSlug: getSiteVerticalSlug( state ),
 			shouldShowHelpTip:
 				'site-topic-with-preview' === ownProps.stepName ||
@@ -221,5 +186,6 @@ export default connect(
 	},
 	{
 		recordTracksEvent,
+		updateSiteMockupDisplayAction,
 	}
 )( SiteMockups );

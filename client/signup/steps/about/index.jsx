@@ -38,6 +38,7 @@ import {
 } from 'state/signup/steps/site-vertical/selectors';
 import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import { updateSiteMockupDisplayAction } from 'state/signup/steps/site-style/actions';
 
 //Form components
 import Card from 'components/card';
@@ -113,6 +114,7 @@ class AboutStep extends Component {
 
 	onSiteTopicChange = ( { parent, verticalId, verticalName, verticalSlug } ) => {
 		const verticalParentId = parent || verticalId;
+
 		this.setState( {
 			verticalId: verticalId,
 			siteTopicValue: verticalName,
@@ -627,5 +629,6 @@ export default connect(
 		setUserExperience,
 		recordTracksEvent,
 		setSiteVertical,
+		updateSiteMockupDisplayAction,
 	}
 )( localize( AboutStep ) );
