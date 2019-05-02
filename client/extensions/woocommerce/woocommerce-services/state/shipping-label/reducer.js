@@ -1218,6 +1218,24 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE ] = (
 	return newState;
 };
 
+const markLabelAsPrinted = ( state, { labelId } ) => {
+	return {
+		...state,
+		labels: state.labels.map( label => {
+			if ( label.label_id !== labelId ) {
+				return label;
+			}
+
+			return {
+				...label,
+				print_date: Date.now(),
+			};
+		} ),
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MARK_AS_PRINTED ] = markLabelAsPrinted;
+
 reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG ] = ( state, { labelId } ) => {
 	return {
 		...state,
@@ -1235,6 +1253,10 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY ] = (
 	if ( get( state, 'reprintDialog.labelId' ) !== labelId ) {
 		return state;
 	}
+
+	// Ensure that the label is "printed" before modifying the state.
+	state = markLabelAsPrinted( state, { labelId } );
+
 	return {
 		...state,
 		reprintDialog: {
@@ -1290,25 +1312,6 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG ] = state => 
 		detailsDialog: null,
 	};
 };
-
-const markLabelAsPrinted = ( state, { labelId } ) => {
-	return {
-		...state,
-		labels: state.labels.map( label => {
-			if ( label.label_id !== labelId ) {
-				return label;
-			}
-
-			return {
-				...label,
-				print_date: Date.now(),
-			};
-		} ),
-	};
-};
-
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MARK_AS_PRINTED ] = markLabelAsPrinted;
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY ] = markLabelAsPrinted;
 
 // Reset the state when the order changes
 reducers[ WOOCOMMERCE_ORDER_UPDATE_SUCCESS ] = () => {
