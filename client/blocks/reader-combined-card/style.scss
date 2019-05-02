@@ -53,12 +53,9 @@
 	display: block;
 	font-size: 17px;
 	font-weight: 700;
-	line-height: 1.2;
-	max-height: 16px * 1.6;
+	line-height: 1.4;
 	padding-left: 1px;
 	position: relative;
-	white-space: nowrap;
-	word-wrap: break-word;
 }
 
 .reader-combined-card__post-title-link,
@@ -69,11 +66,6 @@
 	&:hover,
 	&:focus {
 		color: var( --color-neutral-700 );
-	}
-
-	&::after {
-		@include long-content-fade( $size: 35px );
-		height: 16px * 1.4;
 	}
 }
 
