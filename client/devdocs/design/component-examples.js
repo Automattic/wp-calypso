@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -71,7 +70,7 @@ export SegmentedControl from 'components/segmented-control/docs/example';
 export SelectDropdown from 'components/select-dropdown/docs/example';
 export ShareButton from 'components/share-button/docs/example';
 export SiteTitleControl from 'components/site-title/docs/example';
-export SocialLogos from 'social-logos/example';
+export SocialLogos from 'components/social-logo/docs/example';
 export Spinner from 'components/spinner/docs/example';
 export SpinnerButton from 'components/spinner-button/docs/example';
 export SpinnerLine from 'components/spinner-line/docs/example';

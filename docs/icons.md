@@ -73,6 +73,9 @@ The icon grid is based on Gridicons and adheres to the same rules (see above). [
 
 ### Usage
 
+There is a Calypso component for Social Logos, which is implemented differently from the legacy version in the `social-logos` package.
+Please be sure to use the Calypso component, as it provides better loading performance.
+
 Import the iconset and decide at run-time which icon to use:
 
 ```

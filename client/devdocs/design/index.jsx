@@ -101,7 +101,7 @@ import SegmentedControl from 'components/segmented-control/docs/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
 import ShareButton from 'components/share-button/docs/example';
 import SiteTitleControl from 'components/site-title/docs/example';
-import SocialLogos from 'social-logos/example';
+import SocialLogos from 'components/social-logo/docs/example';
 import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
