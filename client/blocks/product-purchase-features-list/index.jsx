@@ -220,7 +220,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
-				<JetpackAntiSpam selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackAntiSpam selectedSite={ selectedSite } /> }
 				<JetpackVideo selectedSite={ selectedSite } />
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<MonetizeSite selectedSite={ selectedSite } />
@@ -260,7 +260,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
-				<JetpackAntiSpam selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackAntiSpam selectedSite={ selectedSite } /> }
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps />
@@ -290,7 +290,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
-				<JetpackAntiSpam selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackAntiSpam selectedSite={ selectedSite } /> }
 				<JetpackSearch selectedSite={ selectedSite } />
 				<SiteActivity />
 				<JetpackVideo selectedSite={ selectedSite } />
