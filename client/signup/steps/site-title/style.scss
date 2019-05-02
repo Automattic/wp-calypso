@@ -24,11 +24,18 @@
 		// Extra padding to account for the button
 		padding: 10px 100px 12px 16px;
 
-		// Match the radious of the fieldset
-		border-radius: 4px;
+		// Slightly smaller than the radius of the
+		// fieldset to avoid any white bleeding through
+		// around the corners.
+		border-radius: 3px;
 
-		// No need for a border here
-		border: none;
+		// Removing the standard box-shadow affect in
+		// favor of a simple border.
+		box-shadow: none;
+
+		// Lets use a bigger border. It gets a color
+		// when the input is active.
+		border: 3px solid transparent;
 
 		// On smaller screens the buttons get bigger,
 		// so this input needs to get bigger, too.
@@ -44,12 +51,9 @@
 		&:focus,
 		&:focus:hover, // This is weird...without it, the highlight goes away on mouseover
 		&:active {
-			box-shadow: inset 0 0 0 4px var( --color-accent-light );
+			border-color: var( --color-accent-light );
+			box-shadow: none;
 		}
-	}
-
-	button {
-		@include elevation( 1dp );
 	}
 
 	.card {
@@ -86,8 +90,8 @@
 
 	.button {
 		position: absolute;
-		top: 3px;
-		right: 3px;
+		top: 6px;
+		right: 6px;
 		width: auto;
 		padding: 5px 8px;
 		transition: none;

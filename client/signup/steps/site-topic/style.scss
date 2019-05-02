@@ -25,11 +25,18 @@ body.is-section-jetpack-connect .site-topic__content {
 		// the search icon.
 		padding: 10px 64px 12px 42px;
 
-		// Trying out a rounded input
-		border-radius: 4px;
+		// Slightly smaller than the radius of the
+		// container to avoid any white bleeding
+		// through around the corners.
+		border-radius: 3px;
 
-		// No need for a border here
-		border: none;
+		// Removing the standard box-shadow affect in
+		// favor of a simple border.
+		box-shadow: none;
+
+		// Lets use a bigger border. It gets a color
+		// when the input is active.
+		border: 3px solid transparent;
 
 		@include breakpoint( '<660px' ) {
 			// On smaller screens the buttons get bigger,
@@ -41,8 +48,11 @@ body.is-section-jetpack-connect .site-topic__content {
 			border-radius: 0;
 		}
 
-		&:focus {
-			box-shadow: inset 0 0 0 4px var( --color-accent-light );
+		&:focus,
+		&:focus:hover,
+		&:active {
+			border-color: var( --color-accent-light );
+			box-shadow: none;
 		}
 	}
 
@@ -68,8 +78,8 @@ body.is-section-jetpack-connect .site-topic__content {
 
 	.button {
 		position: absolute;
-		top: 3px;
-		right: 3px;
+		top: 6px;
+		right: 6px;
 		padding: 5px 8px;
 		@include elevation( 1dp );
 
