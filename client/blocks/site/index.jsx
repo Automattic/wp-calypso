@@ -9,13 +9,15 @@ import classnames from 'classnames';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
-import { getSite } from 'state/sites/selectors';
+import { getSite, getSiteSlug, isSitePreviewable } from 'state/sites/selectors';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 class Site extends React.Component {
 	static defaultProps = {
@@ -68,6 +70,27 @@ class Site extends React.Component {
 		this.props.onMouseLeave( event, this.props.site.ID );
 	};
 
+	onViewSiteClick = event => {
+		const { isPreviewable, siteSlug } = this.props;
+
+		if ( ! isPreviewable ) {
+			this.props.recordTracksEvent( 'calypso_mysites_sidebar_view_site_unpreviewable_clicked' );
+			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Unpreviewable' );
+			return;
+		}
+
+		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
+			this.props.recordTracksEvent( 'calypso_mysites_sidebar_view_site_modifier_clicked' );
+			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Modifier Key' );
+			return;
+		}
+
+		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_mysites_sidebar_view_site_clicked' );
+		this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Calypso' );
+		page( '/view/' + siteSlug );
+	};
+
 	render() {
 		const { site, translate } = this.props;
 
@@ -102,7 +125,7 @@ class Site extends React.Component {
 							  } )
 							: site.domain
 					}
-					onClick={ this.onSelect }
+					onClick={ this.props.homeLink ? this.onViewSiteClick : this.onSelect }
 					onMouseEnter={ this.onMouseEnter }
 					onMouseLeave={ this.onMouseLeave }
 					aria-label={
@@ -155,6 +178,22 @@ class Site extends React.Component {
 	}
 }
 
-export default connect( ( state, { siteId, site } ) => ( {
-	site: siteId ? getSite( state, siteId ) : site,
-} ) )( localize( Site ) );
+function mapStateToProps( state, ownProps ) {
+	const siteId = ownProps.siteId || ownProps.site.ID;
+	const site = siteId ? getSite( state, siteId ) : ownProps.site;
+
+	return {
+		siteId,
+		site,
+		isPreviewable: isSitePreviewable( state, siteId ),
+		siteSlug: getSiteSlug( state, siteId ),
+	};
+}
+
+export default connect(
+	mapStateToProps,
+	{
+		recordGoogleEvent,
+		recordTracksEvent,
+	}
+)( localize( Site ) );
