@@ -216,7 +216,7 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				<JetpackBackupSecurity />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackBackupSecurity /> }
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
@@ -256,7 +256,7 @@ export class ProductPurchaseFeaturesList extends Component {
 
 		return (
 			<Fragment>
-				<JetpackBackupSecurity />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackBackupSecurity /> }
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
@@ -286,7 +286,7 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				<JetpackBackupSecurity />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackBackupSecurity /> }
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
