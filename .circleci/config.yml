@@ -677,12 +677,6 @@ workflows:
           test-flags: '-W -S $CIRCLE_SHA1'
           test-target: 'WOO'
           slack-webhook: '$SLACK_WOO'
-      - test-e2e-canary:
-          name: test-e2e-i18n-monthly
-          requires:
-            - wait-calypso-live
-          test-target: 'I18N'
-          test-flags: '-i'
 
   calypso-nightly:
     jobs:
