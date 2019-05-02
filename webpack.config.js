@@ -251,7 +251,7 @@ const webpackConfig = {
 				'react-virtualized': 'react-virtualized/dist/es',
 				debug: path.resolve( __dirname, 'node_modules/debug' ),
 				store: 'store/dist/store.modern',
-				gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
+				gridicons$: path.resolve( __dirname, 'client/components/gridicon' ),
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.join( __dirname, 'client', 'extensions' ),
