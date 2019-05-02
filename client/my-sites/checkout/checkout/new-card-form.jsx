@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CreditCardFormFields from 'components/credit-card-form-fields';
+import CreditCardFormFields from 'components/credit-card-form-fields-ux';
 import { setNewCreditCardDetails } from 'lib/upgrades/actions';
 import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
 
