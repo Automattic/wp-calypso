@@ -17,7 +17,6 @@ import LoginFlow from '../lib/flows/login-flow';
 import PlansPage from '../lib/pages/plans-page';
 import StatsPage from '../lib/pages/stats-page';
 import WPAdminJetpackPage from '../lib/pages/wp-admin/wp-admin-jetpack-page';
-import JetpackPlanSalesPage from '../lib/pages/jetpack-plans-sales-page';
 
 import ReaderPage from '../lib/pages/reader-page.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
@@ -73,11 +72,6 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 			const jetpackDashboard = await WPAdminJetpackPage.Expect( driver );
 			return await jetpackDashboard.clickUpgradeNudge();
 		} );
-
-		// step( 'Can click the Proceed button', async function() {
-		// 	const jetpackPlanSalesPage = await JetpackPlanSalesPage.Expect( driver );
-		// 	return await jetpackPlanSalesPage.clickPurchaseButton();
-		// } );
 
 		step( 'Can then see secure payment component', async function() {
 			return await SecurePaymentComponent.Expect( driver );
