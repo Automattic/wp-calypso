@@ -70,7 +70,7 @@ class A8C_Full_Site_Editing {
 	 */
 	function allow_searching_for_templates() {
 		$post_type = get_post_type_object( 'wp_template' );
-		if ( ! is_a( $post_type, 'WP_Post_Type' ) ) {
+		if ( ! ( $post_type instanceof WP_Post_Type ) ) {
 			return;
 		}
 		// setting this to `public` will allow it to be found in the search endpoint
