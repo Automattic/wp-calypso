@@ -70,7 +70,7 @@ export class CartPlanAd extends Component {
 		return (
 			<CartAd>
 				{ this.props.translate(
-					'Get this domain for free when you upgrade to {{strong}}WordPress.com Premium{{/strong}}!',
+					'Get this domain free for one year when you upgrade to {{strong}}WordPress.com Premium{{/strong}}!',
 					{
 						components: { strong: <strong /> },
 					}
