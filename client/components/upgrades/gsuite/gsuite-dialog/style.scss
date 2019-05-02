@@ -102,7 +102,6 @@
 .gsuite-dialog__users {
 	border-bottom: 1px solid var( --color-neutral-50 );
 	display: block;
-	padding: 0 30px;
 
 	h4 {
 		color: var( --color-text-subtle );
@@ -113,6 +112,11 @@
 	.gsuite-dialog__user-fields {
 		animation: gsuite-user-show 0.3s ease-in-out;
 		margin-bottom: 20px;
+	}
+
+	.gsuite-dialog__user-email {
+		// override browser defaults so input can shrink
+		min-width: 0;
 	}
 
 	.gsuite-dialog__user-first-name {
