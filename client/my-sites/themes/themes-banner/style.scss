@@ -1,18 +1,11 @@
 .themes-banner {
 	background: no-repeat var( --color-accent );
-	color: white !important;
 	display: none;
 	overflow: hidden;
 	padding: 0.8em;
 	position: relative;
 	user-select: none;
 	$image_max_width: 410px;
-
-	&:hover,
-	&:focus,
-	&:visited {
-		color: white !important;
-	}
 
 	&::before {
 		background: rgba( black, 0.13 );
@@ -23,6 +16,16 @@
 			top: 0;
 			left: 0;
 		width: 100%;
+	}
+
+	a {
+		color: white !important;
+
+		&:hover,
+		&:focus,
+		&:visited {
+			color: white !important;
+		}
 	}
 
 	h1,
@@ -79,8 +82,10 @@
 		right: 0;
 		top: 0;
 		width: 1.7em;
+		z-index: 1;
 
 		&:hover {
+			background: rgba( white, 0.8 );
 			cursor: pointer;
 		}
 
