@@ -14,6 +14,7 @@ import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-produc
 import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
 import ProgressBar from 'components/progress-bar';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 
 export class CurrentPlanThankYouCard extends Component {
 	getMyPlanRoute() {
@@ -23,7 +24,7 @@ export class CurrentPlanThankYouCard extends Component {
 	}
 
 	render() {
-		const { progressComplete, translate } = this.props;
+		const { isFreePlan, progressComplete, translate } = this.props;
 
 		return (
 			<Fragment>
@@ -41,10 +42,16 @@ export class CurrentPlanThankYouCard extends Component {
 										src="/calypso/images/illustrations/security.svg"
 									/>
 									<h1 className="current-plan-thank-you-card__title">
-										{ translate( 'So long spam, hello backups!' ) }
+										{ isFreePlan
+											? translate( 'Welcome to Jetpack Free!' )
+											: translate( 'So long spam, hello backups!' ) }
 									</h1>
 									<p>
-										{ translate( 'We’ve finished setting up spam filtering and backups for you.' ) }
+										{ isFreePlan
+											? translate( 'We’ve automatically begun to protect your site from attacks.' )
+											: translate(
+													'We’ve finished setting up spam filtering and backups for you.'
+											  ) }
 										<br />
 										{ translate( "You're now ready to finish the rest of the checklist." ) }
 									</p>
@@ -61,13 +68,21 @@ export class CurrentPlanThankYouCard extends Component {
 										src="/calypso/images/illustrations/fireworks.svg"
 									/>
 									<h1 className="current-plan-thank-you-card__title">
-										{ translate( 'Thank you for your purchase!' ) }
+										{ isFreePlan
+											? translate( 'Welcome to Jetpack Free!' )
+											: translate( 'Thank you for your purchase!' ) }
 									</h1>
-									<p>{ translate( "Now let's make sure your site is protected." ) }</p>
+									{ ! isFreePlan && (
+										<p>{ translate( "Now let's make sure your site is protected." ) }</p>
+									) }
 									<p>
-										{ translate(
-											"We're setting up spam filters and site backups for you first. Once that's done, our security checklist will guide you through the next steps."
-										) }
+										{ isFreePlan
+											? translate(
+													"We're setting up protecting your site. Once that's done, our security checklist will guide you through the next steps."
+											  )
+											: translate(
+													"We're setting up spam filters and site backups for you first. Once that's done, our security checklist will guide you through the next steps."
+											  ) }
 									</p>
 
 									<ProgressBar isPulsing total={ 100 } value={ progressComplete || 0 } />
@@ -89,6 +104,7 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
+		isFreePlan: isSiteOnFreePlan( state, siteId ),
 		progressComplete: getJetpackProductInstallProgress( state, siteId ),
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
