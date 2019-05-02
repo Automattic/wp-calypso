@@ -73,6 +73,7 @@ function overrideRevisions( calypsoPort ) {
 			const blocks = parse( payload.content );
 			dispatch( 'core/editor' ).editPost( payload );
 			dispatch( 'core/editor' ).resetBlocks( blocks );
+			dispatch( 'core/notices' ).removeNotice( 'autosave-exists' );
 
 			calypsoPort.removeEventListener( 'message', onLoadRevision, false );
 		}
