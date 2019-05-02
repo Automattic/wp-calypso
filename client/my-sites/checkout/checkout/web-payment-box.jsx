@@ -350,6 +350,7 @@ export class WebPaymentBox extends React.Component {
 									country: getTaxCountryCode( this.props.cart ),
 									'postal-code': getTaxPostalCode( this.props.cart ),
 									card_brand: token.paymentMethod.network,
+									card_display_name: token.paymentMethod.displayName,
 								};
 
 								setPayment( newCardPayment( cardRawDetails ) );

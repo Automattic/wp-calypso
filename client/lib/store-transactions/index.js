@@ -304,6 +304,7 @@ function getPaygateParameters( cardDetails ) {
 				name: cardDetails.name,
 				zip: cardDetails[ 'postal-code' ],
 				country: cardDetails.country,
+				card_display_name: cardDetails.card_display_name,
 				...cardDetails.tokenized_payment_data,
 			},
 		};
