@@ -30,6 +30,7 @@ import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
 import VideoAudioPosts from './video-audio-posts';
 import MonetizeSite from './monetize-site';
+import BusinessOnboarding from './business-onboarding';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import GoogleMyBusiness from './google-my-business';
@@ -96,6 +97,11 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_business' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<BusinessOnboarding
+					isWpcomPlan
+					onClick={ this.props.recordBusinessOnboardingClick }
+					link={ `/me/concierge/${ selectedSite.slug }/book` }
+				/>
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
@@ -215,6 +221,10 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<MobileApps />
 				<SellOnlinePaypal isJetpack />
+				<BusinessOnboarding
+					onClick={ this.props.recordBusinessOnboardingClick }
+					link="https://calendly.com/jetpack/concierge"
+				/>
 
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
@@ -280,6 +290,10 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<FindNewTheme selectedSite={ selectedSite } />
 
+				<BusinessOnboarding
+					onClick={ this.props.recordBusinessOnboardingClick }
+					link="https://calendly.com/jetpack/concierge"
+				/>
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
 					selectedSite={ selectedSite }
@@ -344,6 +358,11 @@ export default connect(
 		};
 	},
 	{
+		recordBusinessOnboardingClick: partial(
+			recordTracksEvent,
+			'calypso_plan_features_onboarding_click',
+			{}
+		),
 		recordReturnToDashboardClick: partial(
 			recordTracksEvent,
 			'calypso_plan_features_returntodashboard_click',
