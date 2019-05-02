@@ -16,6 +16,7 @@ import { stringify } from 'qs';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
+import HeaderBack from 'reader/header-back';
 import ReaderMain from 'reader/components/reader-main';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
 import getDismissedSites from 'state/selectors/get-dismissed-sites';
@@ -211,6 +212,9 @@ class FollowingManage extends Component {
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Streams' ) }</h1>
 				</MobileBackToSidebar>
+				<div class="following-manage__back">
+					<HeaderBack/>
+				</div>
 				{ ! searchResults && sitesQuery && (
 					<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
 				) }
