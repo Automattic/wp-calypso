@@ -67,7 +67,7 @@ The tricky part is that not all icons need this `offset-adjust` hack, only some 
 
 ## Social Logos
 
-We have a `SocialLogos` component available for use in Calypso. Each logo was pulled from the official branding resource of each service. Branding guidelines were adhered to as much as possible.
+We have a `SocialLogo` component available for use in Calypso. Each logo was pulled from the official branding resource of each service. Branding guidelines were adhered to as much as possible.
 
 The icon grid is based on Gridicons and adheres to the same rules (see above). [View the repository on GitHub](https://github.com/Automattic/social-logos) for more information.
 
@@ -76,7 +76,7 @@ The icon grid is based on Gridicons and adheres to the same rules (see above). [
 Import the iconset and decide at run-time which icon to use:
 
 ```
-import SocialLogo from 'social-logos';
+import SocialLogo from 'components/social-logo';
 //...
 render() {
     return <SocialLogo icon="twitter" size={ 48 } />;

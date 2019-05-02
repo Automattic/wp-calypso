@@ -10,7 +10,6 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { identity, isEqual, find, replace, some, isFunction, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
@@ -48,6 +47,7 @@ import requestExternalAccess from 'lib/sharing';
 import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
 import config from 'config';
 import PicasaMigration from './picasa-migration';
+import SocialLogo from 'components/social-logo';
 
 /**
  * Check if the connection is broken or requires reauth.
