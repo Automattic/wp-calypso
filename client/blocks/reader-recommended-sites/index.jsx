@@ -73,15 +73,6 @@ export class RecommendedSites extends React.PureComponent {
 								className="reader-recommended-sites__site-list-item"
 								key={ `site-rec-${ index }` }
 							>
-								<div className="reader-recommended-sites__recommended-site-dismiss">
-									<Button
-										borderless
-										title={ this.props.translate( 'Dismiss this recommendation' ) }
-										onClick={ partial( this.handleSiteDismiss, siteId, index ) }
-									>
-										<Gridicon icon="cross" size={ 18 } />
-									</Button>
-								</div>
 								<ConnectedSubscriptionListItem
 									siteId={ siteId }
 									railcar={ site.railcar }
@@ -90,6 +81,16 @@ export class RecommendedSites extends React.PureComponent {
 									followSource={ followSource }
 									onComponentMountWithNewRailcar={ recordRecommendationRender( index ) }
 								/>
+								<div className="reader-recommended-sites__recommended-site-dismiss">
+									<Button
+										compact
+										title={ this.props.translate( 'Dismiss this recommendation' ) }
+										onClick={ partial( this.handleSiteDismiss, siteId, index ) }
+									>
+										<Gridicon icon="cross" size={ 18 } />
+										<span>{ this.props.translate( 'Dismiss' ) }</span>
+									</Button>
+								</div>
 							</li>
 						);
 					} ) }

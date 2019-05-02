@@ -9,12 +9,12 @@
 	font-size: 14px;
 	font-weight: 600;
 	letter-spacing: 0.01em;
-	margin: 13px 0 10px;
+	margin: 15px 0 10px;
 	position: relative;
 	text-transform: uppercase;
 
 	@include breakpoint( '>660px' ) {
-		margin: 13px 0 17px;
+		margin: 20px 0 15px;
 	}
 
 	.gridicon {
@@ -26,11 +26,12 @@
 .reader-recommended-sites__list {
 	display: flex;
 	flex-direction: column;
-	margin: 0 0 20px;
+	margin: 0;
 	padding: 0;
 
 	@include breakpoint( '>960px' ) {
 		flex-direction: row;
+		margin: 0 0 20px;
 	}
 }
 
@@ -38,13 +39,13 @@
 	display: flex;
 	flex: 1 1 0%;
 	flex-direction: row;
+	flex-wrap: wrap;
 	list-style-type: none;
+	margin-bottom: 20px;
 	width: 100%;
 
 	@include breakpoint( '>960px' ) {
-		align-items: flex-end;
-		flex-direction: column;
-		margin-top: -40px;
+		margin-bottom: 0;
 	}
 
 	> :last-child {
@@ -52,22 +53,11 @@
 	}
 
 	.reader-recommended-sites__recommended-site-dismiss {
-		width: 30px;
+
+		margin-left: 44px; 
 
 		@include breakpoint( '>960px' ) {
-			display: flex;
-			justify-content: flex-end;
-		}
-
-		.button {
-			padding: 0;
-
-			&.is-borderless .gridicon {
-				fill: var( --color-neutral-200 );
-				width: 14px;
-				height: 14px;
-				top: 0;
-			}
+			align-self: flex-end; 		
 		}
 
 		z-index: z-index( 'root', '.reader-recommended-sites__recommended-site-dismiss' );
@@ -75,9 +65,11 @@
 
 	.reader-subscription-list-item {
 		margin: 0;
+		padding: 0 0 15px;
 
 		@include breakpoint( '<960px' ) {
-			padding: 0 0 20px;
+			padding: 0 0 10px;
+			width: 100%;
 		}
 
 		.follow-button .follow-button__label {
