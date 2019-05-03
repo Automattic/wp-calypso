@@ -898,21 +898,21 @@ class WpcomChecklistComponent extends PureComponent {
 
 	renderStaffInfoAddedTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, taskUrls, siteVerticals } = this.props;
-		let staff = translate( 'staff' );
+		let title = translate( 'Add info about your staff' );
 
 		if ( includes( siteVerticals, 'Health & Medical' ) ) {
-			staff = translate( 'doctors', { context: 'Health & Medical' } );
+			title = translate( 'Add info about your doctors' );
 		} else if ( includes( siteVerticals, 'Educations' ) ) {
-			staff = translate( 'educators', { context: 'Educations' } );
+			title = translate( 'Add info about your educators' );
 		} else if ( includes( siteVerticals, 'Fitness & Exercise' ) ) {
-			staff = translate( 'professionals', { context: 'Fitness & Exercise' } );
+			title = translate( 'Add info about your professionals' );
 		}
 
 		return (
 			<TaskComponent
 				{ ...baseProps }
 				preset="update-homepage"
-				title={ translate( 'Add info about your %(staff)s', { args: { staff } } ) }
+				title={ title }
 				description={ translate(
 					'Customers love to learn about who they’re going to interact with if they contact you.'
 				) }
