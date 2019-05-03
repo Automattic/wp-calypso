@@ -660,14 +660,15 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const adminUrl = this.props.isAtomicSite
-			? site.options.admin_url
-			: formatUrl(
-					Object.assign( parseUrl( site.options.admin_url ), {
-						query: { page: 'jetpack' },
-						hash: '/my-plan',
-					} )
-			  );
+		const adminUrl =
+			this.props.isJetpack && ! this.props.isAtomicSite
+				? formatUrl(
+						Object.assign( parseUrl( site.options.admin_url ), {
+							query: { page: 'jetpack' },
+							hash: '/my-plan',
+						} )
+				  )
+				: site.options.admin_url;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		return (
