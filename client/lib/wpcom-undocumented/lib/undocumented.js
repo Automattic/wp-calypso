@@ -299,13 +299,21 @@ Undocumented.prototype.acceptInvite = function( invite, fn ) {
 	);
 };
 
-Undocumented.prototype.sendInvites = function( siteId, usernamesOrEmails, role, message, fn ) {
+Undocumented.prototype.sendInvites = function(
+	siteId,
+	usernamesOrEmails,
+	role,
+	message,
+	isExternal,
+	fn
+) {
 	debug( '/sites/:site_id:/invites/new query' );
 	return this.wpcom.req.post(
 		'/sites/' + siteId + '/invites/new',
 		{},
 		{
 			invitees: usernamesOrEmails,
+			isExternal,
 			role: role,
 			message: message,
 			source: 'calypso',
