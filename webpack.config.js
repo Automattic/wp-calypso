@@ -322,11 +322,21 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 	);
 }
 
-// The SVG external content polyfill (svg4everybody) isn't needed for evergreen browsers, so don't bundle it.
+// List of polyfills that we skip including in the evergreen bundle.
+// CoreJS polyfills are automatically dropped using the browserslist definitions; no need to include them here.
+const polyfillsSkippedInEvergreen = [
+	// Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
+	/^lib[/\\]local-storage-polyfill$/,
+	// The SVG external content polyfill (svg4everybody) isn't needed for evergreen browsers.
+	/^svg4everybody$/,
+];
+
 if ( browserslistEnv === 'evergreen' ) {
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^svg4everybody$/, 'lodash/noop' )
-	);
+	for ( const polyfill of polyfillsSkippedInEvergreen ) {
+		webpackConfig.plugins.push(
+			new webpack.NormalModuleReplacementPlugin( polyfill, 'lodash/noop' )
+		);
+	}
 }
 
 module.exports = webpackConfig;
