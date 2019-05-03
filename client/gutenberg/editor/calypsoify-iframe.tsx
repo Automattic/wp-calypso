@@ -16,7 +16,7 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteAdminUrl, isRequestingSites, isRequestingSite } from 'state/sites/selectors';
+import { getSiteAdminUrl } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
@@ -32,7 +32,7 @@ import WebPreview from 'components/web-preview';
 import { trashPost } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
-import { getFrameNonce } from './utils';
+import { requestFrameNonce } from 'state/data-getters';
 
 /**
  * Style dependencies
@@ -403,7 +403,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
-	const frameNonce = getFrameNonce( siteId ) || '';
+	const frameNonce = get( requestFrameNonce( siteId ), 'data', '' );
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -426,7 +426,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
 	// Prevents the iframe from loading using a cached frame nonce.
-	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
+	const shouldLoadIframe = !! frameNonce;
 
 	return {
 		allPostsUrl: getPostTypeAllPostsUrl( state, postType ),
