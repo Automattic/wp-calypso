@@ -13,12 +13,14 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import getJetpackModule from 'state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 
 class JetpackModuleToggle extends Component {
 	static defaultProps = {
@@ -38,14 +40,26 @@ class JetpackModuleToggle extends Component {
 		isJetpackSite: PropTypes.bool,
 		activateModule: PropTypes.func,
 		deactivateModule: PropTypes.func,
+		path: PropTypes.string,
 	};
 
 	handleChange = () => {
 		if ( ! this.props.checked ) {
+			this.recordTracksEvent( 'calypso_jetpack_module_toggle_activated' );
 			this.props.activateModule( this.props.siteId, this.props.moduleSlug );
 		} else {
+			this.recordTracksEvent( 'calypso_jetpack_module_toggle_deactivated' );
 			this.props.deactivateModule( this.props.siteId, this.props.moduleSlug );
 		}
+	};
+
+	recordTracksEvent = name => {
+		const tracksProps = {
+			module: this.props.moduleSlug,
+			path: this.props.path,
+		};
+
+		this.props.recordTracksEvent( name, tracksProps );
 	};
 
 	render() {
@@ -86,10 +100,14 @@ export default connect(
 			toggling,
 			toggleDisabled: moduleDetailsNotLoaded || toggling,
 			isJetpackSite: isJetpackSite( state, siteId ),
+			path: getCurrentRoute( state )
+				.replace( getSiteSlug( state, siteId ), ':site' )
+				.replace( siteId, ':siteid' ),
 		};
 	},
 	{
 		activateModule,
 		deactivateModule,
+		recordTracksEvent,
 	}
 )( localize( JetpackModuleToggle ) );
