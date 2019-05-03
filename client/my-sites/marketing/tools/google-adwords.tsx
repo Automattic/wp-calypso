@@ -3,7 +3,6 @@
  */
 import { connect } from 'react-redux';
 import page from 'page';
-import PropTypes from 'prop-types';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
@@ -74,15 +73,6 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 			</MarketingToolsFeature>
 		</Fragment>
 	);
-};
-
-MarketingToolsGoogleAdwordsFeature.propTypes = {
-	isAtomic: PropTypes.bool.isRequired,
-	isJetpack: PropTypes.bool.isRequired,
-	isPremiumOrHigher: PropTypes.bool.isRequired,
-	recordTracksEvent: PropTypes.func.isRequired,
-	siteId: PropTypes.number,
-	siteSlug: PropTypes.string,
 };
 
 export default connect(
