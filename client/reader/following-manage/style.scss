@@ -1,16 +1,6 @@
-.following-manage__header {
-	font-weight: 600;
-	margin: 0 0 14px 14px;
-
-	@include breakpoint( '>660px' ) {
-		margin: 0 0 26px;
-	}
-}
-
-.following-manage__back .card {
+.following-manage__header .card {
 		border: none;
 		box-shadow: none;
-		padding-left: 2px;
 		margin: 0;
 }
 
