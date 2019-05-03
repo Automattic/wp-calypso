@@ -21,6 +21,7 @@ import {
 	getSiteAdminUrl,
 	isRequestingSites,
 	isRequestingSite,
+	isJetpackSite,
 } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
@@ -407,7 +408,8 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
-	const frameNonce = getSiteOption( state, siteId, 'jetpack_frame_nonce' ) || '';
+	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
+	const frameNonce = getSiteOption( state, siteId, siteOption ) || '';
 
 	let queryArgs = pickBy( {
 		post: postId,
