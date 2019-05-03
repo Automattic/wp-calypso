@@ -565,7 +565,7 @@ export const getPreviewURL = function( site, post, autosavePreviewUrl ) {
 		}
 		if ( site.options.frame_nonce ) {
 			parsed = url.parse( previewUrl, true );
-			parsed.query[ 'frame-nonce' ] = site.options.frame_nonce_site_only;
+			parsed.query[ 'frame-nonce' ] = site.options.frame_nonce;
 			delete parsed.search;
 			previewUrl = url.format( parsed );
 		}
