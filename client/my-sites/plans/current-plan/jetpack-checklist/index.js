@@ -44,15 +44,13 @@ class JetpackChecklist extends PureComponent {
 	}
 
 	handleTaskStart = ( { taskId, tourId } ) => () => {
-		if ( ! tourId ) {
-			return;
+		if ( taskId ) {
+			this.props.recordTracksEvent( 'calypso_checklist_task_start', {
+				checklist_name: 'jetpack',
+				location: 'JetpackChecklist',
+				step_name: taskId,
+			} );
 		}
-
-		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
-			checklist_name: 'jetpack',
-			location: 'JetpackChecklist',
-			step_name: taskId,
-		} );
 
 		if ( tourId && ! this.isComplete( taskId ) && isDesktop() ) {
 			this.props.requestGuidedTour( tourId );
