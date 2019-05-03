@@ -32,6 +32,7 @@ import {
 	isEcommerce,
 } from 'lib/products-values';
 import { isJetpackSite } from 'state/sites/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -101,12 +102,14 @@ export class GoogleAnalyticsForm extends Component {
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
+			path,
 			showUpgradeNudge,
 			site,
 			sitePlugins,
 			siteId,
 			siteIsJetpack,
 			translate,
+			trackTracksEvent,
 			uniqueEventTracker,
 		} = this.props;
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
@@ -180,8 +183,14 @@ export class GoogleAnalyticsForm extends Component {
 								onChange={ this.handleCodeChange }
 								placeholder={ placeholderText }
 								disabled={ isRequestingSettings || ! enableForm }
-								onClick={ eventTracker( 'Clicked Analytics Key Field' ) }
-								onKeyPress={ uniqueEventTracker( 'Typed In Analytics Key Field' ) }
+								onFocus={ () => {
+									trackTracksEvent( 'calypso_google_analytics_key_field_focused', { path } );
+									eventTracker( 'Focused Analytics Key Field' )();
+								} }
+								onKeyPress={ () => {
+									trackTracksEvent( 'calypso_google_analytics_key_field_modified', { path } );
+									uniqueEventTracker( 'Typed In Analytics Key Field' )();
+								} }
 								isError={ ! this.state.isCodeValid }
 							/>
 							{ ! this.state.isCodeValid && (
@@ -279,13 +288,15 @@ const mapStateToProps = state => {
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
 	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
+	const path = getCurrentRouteParameterized( state, siteId );
 
 	return {
+		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
+		path,
+		showUpgradeNudge: ! isGoogleAnalyticsEligible,
 		site,
 		siteId,
 		siteIsJetpack,
-		showUpgradeNudge: ! isGoogleAnalyticsEligible,
-		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
 		sitePlugins,
 	};
 };
