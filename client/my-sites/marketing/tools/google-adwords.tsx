@@ -67,7 +67,7 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 				description={ translate(
 					"Advertise your site where most people are searching: Google. You've got a $100 credit with Google Adwords to drive traffic to your most important pages."
 				) }
-				imagePath="/calypso/images/illustrations/marketing.svg"
+				imagePath="/calypso/images/illustrations/google-adwords-stats.svg"
 			>
 				{ renderButton() }
 			</MarketingToolsFeature>
