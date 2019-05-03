@@ -26,6 +26,7 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
 import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
+import { parseTwoDigitYear } from 'moment';
 
 const wpcom = wp.undocumented();
 
@@ -116,19 +117,13 @@ export class MapDomain extends Component {
 
 	componentWillMount() {
 		this.checkSiteIsUpgradeable( this.props );
-		//this.checkIfDomainIsMappable(  );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.checkSiteIsUpgradeable( nextProps );
+		this.checkIfDomainIsTransferrable( nextProps );
 	}
-	/*
-	checkIfDomainIsMappable( props ) {
-		if  ( this.handleMapDomain === true ){
 
-		}
-	}
-*/
 	checkSiteIsUpgradeable( props ) {
 		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add/mapping' );
@@ -160,6 +155,12 @@ export class MapDomain extends Component {
 			/>
 		);
 	};
+
+	checkIfDomainIsTransferrable( props ) {
+		if ( props.lastDomainStatus === 'transferrable' ) {
+			//page.redirect( '/checkout' );
+		}
+	}
 
 	render() {
 		if ( this.state.showTrademarkClaimsNotice ) {

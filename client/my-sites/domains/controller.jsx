@@ -106,7 +106,10 @@ const mapDomain = ( context, next ) => {
 			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
 			<DocumentHead title={ translate( 'Map a Domain' ) } />
 			<CartData>
-				<MapDomain initialQuery={ context.query.initialQuery } />
+				<MapDomain
+					initialQuery={ context.query.initialQuery }
+					lastDomainStatus={ context.query.lastDomainStatus }
+				/>
 			</CartData>
 		</Main>
 	);
