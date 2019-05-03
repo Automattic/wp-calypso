@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import page from 'page';
+import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -659,12 +660,21 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const adminUrl = this.props.isAtomicSite
+			? site.options.admin_url
+			: formatUrl(
+					Object.assign( parseUrl( site.options.admin_url ), {
+						query: { page: 'jetpack' },
+						hash: '/my-plan',
+					} )
+			  );
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		return (
 			<li className="wp-admin">
 				<a
 					onClick={ this.trackWpadminClick }
-					href={ site.options.admin_url }
+					href={ adminUrl }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
