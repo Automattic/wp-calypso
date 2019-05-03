@@ -9522,9 +9522,9 @@
 			}
 		},
 		"filesize": {
-			"version": "3.6.1",
-			"resolved": "https://registry.npmjs.org/filesize/-/filesize-3.6.1.tgz",
-			"integrity": "sha512-7KjR1vv6qnicaPMi1iiTcI85CyYwRO/PSFCu6SvqL8jN2Wjt/NIYQTFtFs7fSDCYOstUkEWIQGFUg5YZQfjlcg=="
+			"version": "4.1.2",
+			"resolved": "https://registry.npmjs.org/filesize/-/filesize-4.1.2.tgz",
+			"integrity": "sha512-iSWteWtfNcrWQTkQw8ble2bnonSl7YJImsn9OZKpE2E4IHhXI78eASpDYUljXZZdYj36QsEKjOs/CsiDqmKMJw=="
 		},
 		"fill-range": {
 			"version": "4.0.0",
@@ -21322,6 +21322,13 @@
 				"mkdirp": "^0.5.1",
 				"opener": "^1.5.1",
 				"ws": "^6.0.0"
+			},
+			"dependencies": {
+				"filesize": {
+					"version": "3.6.1",
+					"resolved": "https://registry.npmjs.org/filesize/-/filesize-3.6.1.tgz",
+					"integrity": "sha512-7KjR1vv6qnicaPMi1iiTcI85CyYwRO/PSFCu6SvqL8jN2Wjt/NIYQTFtFs7fSDCYOstUkEWIQGFUg5YZQfjlcg=="
+				}
 			}
 		},
 		"webpack-cli": {
