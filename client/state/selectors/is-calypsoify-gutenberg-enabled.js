@@ -10,6 +10,8 @@ import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
 import isPluginActive from 'state/selectors/is-plugin-active';
 import { isHttps } from 'lib/url';
+import { waitForData } from '../data-layer/http-data';
+import { getFrameNonce } from '../../gutenberg/editor/utils';
 
 export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -39,6 +41,7 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 			isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
 			( 'http:' === window.location.protocol || isHttps( getSiteAdminUrl( state, siteId ) ) )
 		) {
+			waitForData( getFrameNonce( siteId ) );
 			return false;
 		}
 
