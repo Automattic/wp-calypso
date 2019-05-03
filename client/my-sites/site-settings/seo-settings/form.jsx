@@ -23,12 +23,18 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
-import { getSeoTitleFormatsForSite, isJetpackSite, isRequestingSite } from 'state/sites/selectors';
+import {
+	getSeoTitleFormatsForSite,
+	getSiteSlug,
+	isJetpackSite,
+	isRequestingSite,
+} from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
 } from 'state/site-settings/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import isHiddenSite from 'state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -235,16 +241,21 @@ export class SeoForm extends React.Component {
 
 	trackSubmission = () => {
 		const { dirtyFields } = this.state;
-		const { trackFormSubmitted, trackTitleFormatsUpdated, trackFrontPageMetaUpdated } = this.props;
+		const {
+			path,
+			trackFormSubmitted,
+			trackTitleFormatsUpdated,
+			trackFrontPageMetaUpdated,
+		} = this.props;
 
-		trackFormSubmitted();
+		trackFormSubmitted( { path } );
 
 		if ( dirtyFields.has( 'seoTitleFormats' ) ) {
-			trackTitleFormatsUpdated();
+			trackTitleFormatsUpdated( { path } );
 		}
 
 		if ( dirtyFields.has( 'frontPageMetaDescription' ) ) {
-			trackFrontPageMetaUpdated();
+			trackFrontPageMetaUpdated( { path } );
 		}
 	};
 
@@ -483,6 +494,9 @@ const mapStateToProps = state => {
 		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
+		path: getCurrentRoute( state )
+			.replace( getSiteSlug( state, siteId ), ':site' )
+			.replace( siteId, ':siteid' ),
 	};
 };
 
