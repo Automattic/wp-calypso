@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { includes } from 'lodash';
-import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
@@ -13,6 +12,7 @@ import SocialLogo from 'social-logos';
 import GoDaddyGoCentralLogo from './logos/godaddy-gocentral';
 import WixLogo from './logos/wix';
 import MediumLogo from './logos/medium';
+import SocialLogo from 'components/social-logo';
 
 const ImporterLogo = ( { icon } ) => {
 	if ( includes( [ 'wordpress', 'blogger-alt', 'squarespace' ], icon ) ) {

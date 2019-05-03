@@ -101,7 +101,7 @@ import SegmentedControl from 'components/segmented-control/docs/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
 import ShareButton from 'components/share-button/docs/example';
 import SiteTitleControl from 'components/site-title/docs/example';
-import SocialLogos from 'social-logos/example';
+import SocialLogos from 'components/social-logo/docs/example';
 import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
@@ -287,6 +287,8 @@ class DesignAssets extends React.Component {
 	}
 }
 
+let DesignAssetsExport = DesignAssets;
+
 if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 	const mapStateToProps = state => {
 		const { componentsUsageStats } = state;
@@ -309,10 +311,10 @@ if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 		dispatchFetchComponentsUsageStats: PropTypes.func,
 	};
 
-	DesignAssets = connect(
+	DesignAssetsExport = connect(
 		mapStateToProps,
 		mapDispatchToProps
 	)( DesignAssets );
 }
 
-export default DesignAssets;
+export default DesignAssetsExport;

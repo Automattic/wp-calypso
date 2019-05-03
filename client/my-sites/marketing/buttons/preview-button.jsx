@@ -1,41 +1,35 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import classNames from 'classnames';
 import photon from 'photon';
-import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import SocialLogo from 'components/social-logo';
 
-export default createReactClass( {
-	displayName: 'SharingButtonsPreviewButton',
-
-	propsTypes: {
+export default class SharingButtonsPreviewButton extends React.Component {
+	static propTypes = {
 		button: PropTypes.object.isRequired,
 		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
 		enabled: PropTypes.bool,
 		onMouseOver: PropTypes.func,
 		onClick: PropTypes.func,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			style: 'icon',
-			enabled: true,
-			onClick: function() {},
-		};
-	},
+	static defaultProps = {
+		style: 'icon',
+		enabled: true,
+		onClick: function() {},
+	};
 
-	getIcon: function() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	getIcon() {
 		const shortnameToSocialLogo = {
 			email: 'mail',
 			'google-plus-1': 'google-plus-alt',
@@ -60,14 +54,16 @@ export default createReactClass( {
 				/>
 			);
 		}
-	},
+	}
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
-	onClick: function() {
+	onClick = () => {
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Share Button', this.props.button.ID );
 		this.props.onClick();
-	},
+	};
 
-	render: function() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	render() {
 		const classes = classNames(
 			'sharing-buttons-preview-button',
 			'style-' + this.props.style,
@@ -79,10 +75,17 @@ export default createReactClass( {
 		);
 
 		return (
-			<div className={ classes } onClick={ this.onClick } onMouseOver={ this.props.onMouseOver }>
+			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+			<div
+				className={ classes }
+				onClick={ this.onClick }
+				onMouseOver={ this.props.onMouseOver }
+				role="presentation"
+			>
 				{ this.getIcon() }
 				<span className="sharing-buttons-preview-button__service">{ this.props.button.name }</span>
 			</div>
 		);
-	},
-} );
+	}
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}

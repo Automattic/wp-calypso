@@ -12,7 +12,7 @@ import cssSafeUrl from 'lib/css-safe-url';
  */
 import FormToggle from 'components/forms/form-toggle/compact';
 import classNames from 'classnames';
-import SocialLogo from 'social-logos';
+import SocialLogo from 'components/social-logo';
 
 const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 	const {
@@ -41,7 +41,7 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 	}
 
 	return (
-		<div onClick={ toggle } className={ classes }>
+		<div onClick={ toggle } className={ classes } role="presentation">
 			<div className="post-share__service-account-image" style={ accountImageStyle }>
 				&nbsp;
 			</div>

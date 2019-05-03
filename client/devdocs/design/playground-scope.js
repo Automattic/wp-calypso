@@ -4,7 +4,6 @@
  * External dependencies
  */
 export Gridicon from 'gridicons';
-export SocialLogo from 'social-logos';
 
 /**
  * Docs examples
@@ -104,6 +103,7 @@ export SegmentedControl from 'components/segmented-control';
 export SelectDropdown from 'components/select-dropdown';
 export ShareButton from 'components/share-button';
 export SiteTitleControl from 'components/site-title';
+export SocialLogo from 'components/social-logo';
 export Spinner from 'components/spinner';
 export SpinnerButton from 'components/spinner-button';
 export SpinnerLine from 'components/spinner-line';
