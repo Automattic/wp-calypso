@@ -27,7 +27,7 @@ class A8C_Full_Site_Editing {
 	}
 
 	function enqueue_script_and_style() {
-		if ( ! $this->is_editor_wp_template() ) {
+		if ( 'wp_template' !== get_current_screen()->post_type ) {
 			return;
 		}
 
@@ -76,11 +76,6 @@ class A8C_Full_Site_Editing {
 		}
 		// setting this to `public` will allow it to be found in the search endpoint
 		$post_type->public = true;
-	}
-
-	function is_editor_wp_template() {
-		$current_screen = get_current_screen();
-		return 'wp_template' === $current_screen->post_type;
 	}
 }
 
