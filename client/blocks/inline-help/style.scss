@@ -80,8 +80,7 @@
 	}
 
 	&:hover:not( .is-active ) {
-		animation: wiggle 0.8s 0.5s ease-in-out infinite;
-		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
+		@include elevation( 6dp );
 		background: var( --color-primary );
 	}
 
@@ -101,21 +100,6 @@
 		position: absolute;
 		top: -2px;
 		left: -3px;
-	}
-}
-
-@keyframes wiggle {
-	0% {
-		transform: rotate( 0 );
-	}
-	40% {
-		transform: rotate( 15deg );
-	}
-	50% {
-		transform: rotate( -15deg );
-	}
-	100% {
-		transform: rotate( 0 );
 	}
 }
 
