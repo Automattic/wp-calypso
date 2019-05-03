@@ -162,7 +162,12 @@ class WpcomChecklistComponent extends PureComponent {
 		} );
 	};
 
-	onCollapsedClick = selectedTaskId => this.setState( { selectedTaskId } );
+	onCollapsedClick = selectedTaskId => {
+		this.setState( { selectedTaskId } );
+		this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
+			step_name: selectedTaskId,
+		} );
+	};
 
 	handleTaskStartThenDismiss = args => () => {
 		const { task } = args;

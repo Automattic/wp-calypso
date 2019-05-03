@@ -7,7 +7,6 @@ import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,7 +16,6 @@ import CompactCard from 'components/card/compact';
 import Focusable from 'components/focusable';
 import ScreenReaderText from 'components/screen-reader-text';
 import Spinner from 'components/spinner';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 class Task extends PureComponent {
 	static propTypes = {
@@ -28,6 +26,7 @@ class Task extends PureComponent {
 		completedDescription: PropTypes.node,
 		completedTitle: PropTypes.node,
 		description: PropTypes.node,
+		disableIcon: PropTypes.bool,
 		duration: PropTypes.string,
 		href: PropTypes.string,
 		isCollapsed: PropTypes.bool,
@@ -115,9 +114,6 @@ class Task extends PureComponent {
 		if ( ! completed && this.isTaskCollapsed() && onCollapsedClick ) {
 			event.preventDefault();
 			onCollapsedClick( id );
-			this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
-				step_name: id,
-			} );
 		} else {
 			// The task-related action
 			onClick();
@@ -212,7 +208,4 @@ class Task extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( Task ) );
+export default localize( Task );
