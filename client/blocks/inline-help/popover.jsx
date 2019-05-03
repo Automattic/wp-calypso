@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { noop } from 'lodash';
+import { flowRight as compose, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -59,6 +59,10 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
+import QueryActiveTheme from 'components/data/query-active-theme';
+import { getActiveTheme } from 'state/themes/selectors';
+import { getSiteOption } from 'state/sites/selectors';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -262,6 +266,7 @@ class InlineHelpPopover extends Component {
 		const {
 			translate,
 			showNotification,
+			siteId,
 			setNotification,
 			setStoredTask,
 			showOptIn,
@@ -271,6 +276,7 @@ class InlineHelpPopover extends Component {
 
 		return (
 			<>
+				<QueryActiveTheme siteId={ siteId } />
 				{ showOptOut && (
 					<Button
 						onClick={ this.switchToClassicEditor }
@@ -398,7 +404,7 @@ const upworkNudgeClicked = () => {
 	);
 };
 
-function mapStateToProps( state ) {
+function mapStateToProps( state, { moment } ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const classicRoute = currentRoute.replace( '/block-editor/', '' );
@@ -412,6 +418,18 @@ function mapStateToProps( state ) {
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
 
+	const isUsingGutenbergPageTemplates =
+		[
+			'twentynineteen',
+			'calm-business',
+			'elegant-business',
+			'friendly-business',
+			'modern-business',
+			'professional-business',
+			'sophisticated-business',
+		].includes( getActiveTheme( state, siteId ) ) &&
+		moment( getSiteOption( state, siteId, 'created_at' ) ).isAfter( '20190314' );
+
 	return {
 		isOnboardingWelcomeVisible: isEligibleForChecklist && isOnboardingWelcomePromptVisible( state ),
 		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
@@ -422,7 +440,7 @@ function mapStateToProps( state ) {
 		selectedEditor: getSelectedEditor( state, siteId ),
 		classicUrl: `/${ classicRoute }`,
 		siteId,
-		showOptOut: optInEnabled && isGutenbergEditor,
+		showOptOut: optInEnabled && isGutenbergEditor && ! isUsingGutenbergPageTemplates,
 		showOptIn: optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
 	};
@@ -440,7 +458,11 @@ const mapDispatchToProps = {
 	upworkNudgeClicked,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( InlineHelpPopover ) );
+export default compose(
+	localize,
+	withLocalizedMoment,
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)
+)( InlineHelpPopover );
