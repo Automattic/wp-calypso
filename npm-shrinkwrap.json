@@ -10351,9 +10351,9 @@
 			"integrity": "sha512-6uHUhOPEBgQ24HM+r6b/QwWfZq+yiFcipKFrOFiBEnWdy5sdzYoi+pJeQaPI5qOLRFqWmAXUPQNsielzdLoecA=="
 		},
 		"gridicons": {
-			"version": "3.2.0",
-			"resolved": "https://registry.npmjs.org/gridicons/-/gridicons-3.2.0.tgz",
-			"integrity": "sha512-82bdTGEV12d9Ig5gTYw0uR2gf/Q/PNytAfLQdmBdZyj/iqCTw2jOipLq/GpG+VgiRQEXjc5TujBj7Jg/R2aP6Q==",
+			"version": "3.3.1",
+			"resolved": "https://registry.npmjs.org/gridicons/-/gridicons-3.3.1.tgz",
+			"integrity": "sha512-eQsmujjLptLtyhGuu31US3mXkcptYHkgEE/s277HWv+j6c3Z2gYyjoHcBKwSFbQwxbfhToRd5uzYimR2ExWJdQ==",
 			"requires": {
 				"prop-types": "^15.5.7"
 			}
