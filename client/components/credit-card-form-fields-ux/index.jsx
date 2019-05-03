@@ -92,10 +92,6 @@ export class CreditCardFormFields extends React.Component {
 		this.updateFieldValues( event.target.name, event.target.value );
 	};
 
-	addExplainer = explainerText => {
-		return <span className="credit-card-form-fields__explainer">{ explainerText }</span>;
-	};
-
 	getCvvPopover = () => {
 		const { translate, card } = this.props;
 		const brand = getCreditCardType( card.number );
@@ -120,7 +116,7 @@ export class CreditCardFormFields extends React.Component {
 					src={ popoverImage }
 					width="42"
 					height="30"
-					alt={ translate( 'Credit card Security Code illustration' ) }
+					alt={ translate( 'Credit card CVV illustration' ) }
 				/>
 				{ popoverText }
 			</InfoPopover>
@@ -149,13 +145,9 @@ export class CreditCardFormFields extends React.Component {
 			<div className="credit-card-form-fields">
 				{ this.createField( 'name', Input, {
 					autoFocus,
-					label: translate( 'Cardholder Name {{nameExplainer/}}', {
+					label: translate( 'Cardholder Name', {
 						comment: 'Cardholder name label on credit card form',
-						components: {
-							nameExplainer: this.addExplainer( translate( '(as written on card)' ) ),
-						},
 					} ),
-					placeholder: ' ',
 				} ) }
 
 				{ this.createField( 'number', CreditCardNumberInput, {
@@ -163,34 +155,30 @@ export class CreditCardFormFields extends React.Component {
 					label: translate( 'Card Number', {
 						comment: 'Card number label on credit card form',
 					} ),
-					placeholder: '•••• •••• •••• ••••',
 				} ) }
 
 				<div className={ creditCardFormFieldsExtrasClassNames }>
 					{ this.createField( 'expiration-date', Input, {
 						inputMode: 'numeric',
-						label: translate( 'Expiry Date', {
+						label: translate( 'Expiry: MM/YY', {
 							comment: 'Expiry label on credit card form',
-						} ),
-						placeholder: translate( 'MM/YY', {
-							comment: 'Expiry placeholder for Expiry date on credit card form',
 						} ),
 					} ) }
 
 					{ this.createField( 'cvv', Input, {
 						inputMode: 'numeric',
-						placeholder: ' ',
-						label: translate( 'Security Code {{explainerText/}} {{infoPopover/}}', {
+						placeholder: translate( 'CVV', {
+							comment: '3 digit security number on credit card form',
+						} ),
+						label: translate( 'CVV {{infoPopover/}}', {
 							components: {
 								infoPopover: this.getCvvPopover(),
-								explainerText: this.addExplainer( translate( '(or "CVC" or "CVV")' ) ),
 							},
 						} ),
 					} ) }
 
 					{ this.createField( 'country', PaymentCountrySelect, {
 						label: translate( 'Country' ),
-						placeholder: ' ',
 						countriesList,
 						onChange: noop,
 						onCountrySelected: this.updateFieldValues,
@@ -209,7 +197,6 @@ export class CreditCardFormFields extends React.Component {
 							label: translate( 'Postal Code', {
 								comment: 'Postal code on credit card form',
 							} ),
-							placeholder: ' ',
 						} )
 					) }
 				</div>
