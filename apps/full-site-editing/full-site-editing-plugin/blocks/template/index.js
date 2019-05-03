@@ -10,16 +10,19 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-registerBlockType( 'a8c/content-slot', {
-	title: __( 'Content Slot' ),
-	description: __( 'Placeholder for a post or a page.' ),
+registerBlockType( 'a8c/template', {
+	title: __( 'Template Part' ),
+	description: __( 'Display a template part.' ),
 	icon: 'layout',
 	category: 'layout',
+	attributes: {
+		selectedPostId: { type: 'number' },
+		selectedPostType: { type: 'string' },
+	},
 	supports: {
 		align: [ 'wide', 'full' ],
 		anchor: true,
 		html: false,
-		multiple: false,
 		reusable: false,
 	},
 	edit,

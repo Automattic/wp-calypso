@@ -20,7 +20,7 @@ import { __, sprintf } from '@wordpress/i18n';
  */
 import PostAutocomplete from '../../components/post-autocomplete';
 
-const ContentSlotEdit = compose(
+const PostContentEdit = compose(
 	withState( {
 		isEditing: false,
 		selectedPostId: undefined,
@@ -66,7 +66,7 @@ const ContentSlotEdit = compose(
 				</BlockControls>
 			) }
 			<div
-				className={ classNames( 'a8c-content-slot-block', {
+				className={ classNames( 'post-content-block', {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
@@ -76,7 +76,7 @@ const ContentSlotEdit = compose(
 						label={ __( 'Content Slot' ) }
 						instructions={ __( 'Placeholder for a post or a page.' ) }
 					>
-						<div className="a8c-content-slot-block__selector">
+						<div className="post-content-block__selector">
 							<div>{ __( 'Select something to preview:' ) }</div>
 							<PostAutocomplete onSelectPost={ onSelectPost } />
 							{ !! selectedPost && (
@@ -88,7 +88,7 @@ const ContentSlotEdit = compose(
 					</Placeholder>
 				) }
 				{ showPreview && (
-					<RawHTML className="a8c-content-slot-block__preview">
+					<RawHTML className="post-content-block__preview">
 						{ get( selectedPost, 'content.rendered' ) }
 					</RawHTML>
 				) }
@@ -97,4 +97,4 @@ const ContentSlotEdit = compose(
 	);
 } );
 
-export default ContentSlotEdit;
+export default PostContentEdit;
