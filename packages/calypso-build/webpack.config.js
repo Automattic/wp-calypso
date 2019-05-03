@@ -61,8 +61,14 @@ function getWebpackConfig(
 	const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
 	let babelConfig = path.join( process.cwd(), 'babel.config.js' );
+	let presets = [];
 	if ( ! fs.existsSync( babelConfig ) ) {
-		babelConfig = path.join( __dirname, 'babel.config.js' ); // Default to this package's Babel config
+		// Default to this package's Babel presets
+		presets = [
+			path.join( __dirname, 'babel', 'default' ),
+			env.WP && path.join( __dirname, 'babel', 'wordpress-element' ),
+		].filter( Boolean );
+		babelConfig = undefined;
 	}
 
 	const webpackConfig = {
@@ -97,6 +103,7 @@ function getWebpackConfig(
 					cacheDirectory: true,
 					configFile: babelConfig,
 					exclude: /node_modules\//,
+					presets,
 					workerCount,
 				} ),
 				SassConfig.loader( {
