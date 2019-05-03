@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CreditCardFormFields from 'components/credit-card-form-fields';
-import CreditCardFormFieldsUx from 'components/credit-card-form-fields-ux';
+import CreditCardFormFieldsUX from 'components/credit-card-form-fields-ux';
 import { setNewCreditCardDetails } from 'lib/upgrades/actions';
 import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
 import { abtest } from 'lib/abtest';
@@ -50,7 +50,7 @@ class NewCardForm extends Component {
 
 					{ ( selected || ! hasStoredCards ) &&
 						( 'variantUXImprovements' === abtest( 'checkoutUXImprovements' ) ? (
-							<CreditCardFormFieldsUx
+							<CreditCardFormFieldsUX
 								card={ transaction.newCardFormFields }
 								countriesList={ countriesList }
 								isNewTransaction={ !! transaction }

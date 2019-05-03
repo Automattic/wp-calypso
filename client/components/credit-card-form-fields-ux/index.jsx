@@ -21,7 +21,7 @@ import InfoPopover from 'components/info-popover';
 import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 
-export class CreditCardFormFields extends React.Component {
+export class CreditCardFormFieldsUX extends React.Component {
 	static propTypes = {
 		card: PropTypes.object.isRequired,
 		countriesList: PropTypes.array.isRequired,
@@ -218,4 +218,4 @@ export class CreditCardFormFields extends React.Component {
 	}
 }
 
-export default localize( CreditCardFormFields );
+export default localize( CreditCardFormFieldsUX );
