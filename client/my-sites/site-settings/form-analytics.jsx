@@ -57,6 +57,7 @@ const hasBusinessPlan = overSome(
 export class GoogleAnalyticsForm extends Component {
 	state = {
 		isCodeValid: true,
+		loggedGoogleAnalyticsModified: false,
 	};
 
 	handleFieldChange = ( key, value ) => {
@@ -188,7 +189,10 @@ export class GoogleAnalyticsForm extends Component {
 									eventTracker( 'Focused Analytics Key Field' )();
 								} }
 								onKeyPress={ () => {
-									trackTracksEvent( 'calypso_google_analytics_key_field_modified', { path } );
+									if ( ! this.state.loggedGoogleAnalyticsModified ) {
+										trackTracksEvent( 'calypso_google_analytics_key_field_modified', { path } );
+										this.setState( { loggedGoogleAnalyticsModified: true } );
+									}
 									uniqueEventTracker( 'Typed In Analytics Key Field' )();
 								} }
 								isError={ ! this.state.isCodeValid }
