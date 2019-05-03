@@ -52,7 +52,7 @@
 		"acorn": "6.1.1",
 		"autosize": "4.0.2",
 		"babel-plugin-add-module-exports": "1.0.2",
-		"body-parser": "1.18.3",
+		"body-parser": "1.19.0",
 		"bounding-client-rect": "1.0.5",
 		"browser-filesaver": "1.1.1",
 		"browserslist-useragent": "3.0.2",
