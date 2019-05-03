@@ -16,7 +16,13 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteAdminUrl } from 'state/sites/selectors';
+import {
+	getSiteOption,
+	getSiteAdminUrl,
+	isRequestingSites,
+	isRequestingSite,
+	isJetpackSite,
+} from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
@@ -32,7 +38,6 @@ import WebPreview from 'components/web-preview';
 import { trashPost } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
-import { requestFrameNonce } from 'state/data-getters';
 
 /**
  * Style dependencies
@@ -403,7 +408,8 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
-	const frameNonce = requestFrameNonce( siteId ).data || '';
+	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
+	const frameNonce = getSiteOption( state, siteId, siteOption ) || '';
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -425,6 +431,9 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
+	// Prevents the iframe from loading using a cached frame nonce.
+	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
+
 	return {
 		allPostsUrl: getPostTypeAllPostsUrl( state, postType ),
 		currentRoute,
@@ -432,7 +441,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 		frameNonce,
 		iframeUrl,
 		postTypeTrashUrl,
-		shouldLoadIframe: !! frameNonce,
+		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
 	};
