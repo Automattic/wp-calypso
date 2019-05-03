@@ -586,16 +586,16 @@
 		border-top: 1px solid #e6e6e6;
 		margin: 10px -16px 0;
 		padding-top: 30px;
-		width: calc( 100% + ( $woo-form-whitespace * 2 ) );
+		width: calc( 100% + ( #{ $woo-form-whitespace } * 2 ) );
 
 		@include breakpoint( '>480px' ) {
 			margin: 10px -24px 0;
-			width: calc( 100% + ( $woo-form-whitespace-480 * 2 ) );
+			width: calc( 100% + ( #{ $woo-form-whitespace-480 } * 2 ) );
 		}
 
 		@include breakpoint( '>660px' ) {
 			margin: 20px -100px 0;
-			width: calc( 100% + ( $woo-form-whitespace-660 * 2 ) );
+			width: calc( 100% + ( #{ $woo-form-whitespace-660 } * 2 ) );
 		}
 	}
 
