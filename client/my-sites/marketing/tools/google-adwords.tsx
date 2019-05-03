@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { addQueryArgs } from 'lib/url';
 import Button from 'components/button';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GoogleVoucherDetails from 'my-sites/checkout/checkout-thank-you/google-voucher';
 import { isPremium, isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
@@ -30,6 +31,7 @@ interface ConnectedProps {
 	isJetpack: boolean;
 	isPremiumOrHigher: boolean;
 	recordTracksEvent: () => void;
+	showCard: boolean;
 	siteId: number | null;
 	siteSlug: string | null;
 }
@@ -39,11 +41,12 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 	isJetpack,
 	isPremiumOrHigher,
 	recordTracksEvent,
+	showCard,
 	siteId,
 	siteSlug,
 } ) => {
 	const translate = useTranslate();
-	if ( ( isJetpack && ! isAtomic ) || ! siteId || ! siteSlug ) {
+	if ( ! showCard || ( isJetpack && ! isAtomic ) || ! siteId || ! siteSlug ) {
 		return null;
 	}
 
@@ -77,6 +80,8 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 
 export default connect(
 	state => {
+		const userInUsa = getCurrentUserCountryCode( state ) === 'US';
+		const userInCa = getCurrentUserCountryCode( state ) === 'CA';
 		const site = getSelectedSite( state );
 		const isAtomic = isSiteAtomic( state, site.ID ) || false;
 		const isPremiumOrHigher =
@@ -88,6 +93,7 @@ export default connect(
 			isAtomic,
 			isJetpack: site && site.jetpack,
 			isPremiumOrHigher,
+			showCard: userInUsa || userInCa,
 			siteId: site && site.ID,
 			siteSlug: site && site.slug,
 		};
