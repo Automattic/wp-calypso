@@ -159,7 +159,7 @@
 		"react-dom": "16.8.6",
 		"react-element-to-jsx-string": "14.0.2",
 		"react-lazily-render": "1.1.0",
-		"react-live": "1.12.0",
+		"react-live": "2.0.1",
 		"react-modal": "3.8.1",
 		"react-pure-render": "1.0.2",
 		"react-redux": "5.1.1",
