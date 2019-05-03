@@ -183,13 +183,22 @@ export default {
 		allowExistingUsers: true,
 	},
 	conciergeUpsellDial: {
-		//this test is used to dial down
+		//this test is used to dial down the upsell offer
 		datestamp: '20190429',
 		variations: {
 			offer: 50,
 			noOffer: 50,
 		},
 		defaultVariation: 'noOffer',
+		allowExistingUsers: true,
+	},
+	checkoutUXImprovements: {
+		datestamp: '20190501',
+		variations: {
+			control: 50,
+			variantUXImprovements: 50,
+		},
+		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
 };
