@@ -1254,11 +1254,11 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY ] = (
 		return state;
 	}
 
-	// Ensure that the label is "printed" before modifying the state.
-	state = markLabelAsPrinted( state, { labelId } );
+	// Ensure that the label is "printed" before closing the dialog.
+	const stateWithPrintedLabel = markLabelAsPrinted( state, { labelId } );
 
 	return {
-		...state,
+		...stateWithPrintedLabel,
 		reprintDialog: {
 			labelId,
 			fileData,
