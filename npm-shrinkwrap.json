@@ -19268,9 +19268,12 @@
 			}
 		},
 		"social-logos": {
-			"version": "2.0.0",
-			"resolved": "https://registry.npmjs.org/social-logos/-/social-logos-2.0.0.tgz",
-			"integrity": "sha1-5x71006P0BSpRaI+VdBu+k4Ctr0="
+			"version": "2.1.0",
+			"resolved": "https://registry.npmjs.org/social-logos/-/social-logos-2.1.0.tgz",
+			"integrity": "sha512-MhDx8Rz9fZAegVd5t6836K8u5R4U5loqAo9Dc52ckjnA0FQhl7cJeNYV/EHC/wGIU5oqTOo75eBl6VC7yjKBNA==",
+			"requires": {
+				"prop-types": "^15.5.7"
+			}
 		},
 		"socket.io": {
 			"version": "2.2.0",
