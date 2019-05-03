@@ -24,7 +24,7 @@ import getPastBillingTransactions from 'state/selectors/get-past-billing-transac
  */
 import './style.scss';
 
-const BillingHistory = ( { pastTransactions, translate } ) => (
+const UpcomingCharges = ( { pastTransactions, translate } ) => (
 	<Main>
 		<DocumentHead title={ translate( 'Upcoming Charges' ) } />
 		<PageViewTracker path="/me/purchases/upcoming" title="Me > Upcoming Charges" />
@@ -43,4 +43,4 @@ const BillingHistory = ( { pastTransactions, translate } ) => (
 
 export default connect( state => ( {
 	pastTransactions: getPastBillingTransactions( state ),
-} ) )( localize( BillingHistory ) );
+} ) )( localize( UpcomingCharges ) );
