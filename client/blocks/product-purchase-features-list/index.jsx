@@ -187,7 +187,9 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				<JetpackWordPressCom selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackWordPressCom selectedSite={ selectedSite } />
+				) }
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
@@ -216,13 +218,15 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				<JetpackBackupSecurity />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackBackupSecurity /> }
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
-				<JetpackAntiSpam selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackAntiSpam selectedSite={ selectedSite } /> }
 				<JetpackVideo selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackWordPressCom selectedSite={ selectedSite } />
+				) }
 				<MonetizeSite selectedSite={ selectedSite } />
 				<SiteActivity />
 				<JetpackPublicize selectedSite={ selectedSite } />
@@ -256,12 +260,14 @@ export class ProductPurchaseFeaturesList extends Component {
 
 		return (
 			<Fragment>
-				<JetpackBackupSecurity />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackBackupSecurity /> }
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
-				<JetpackAntiSpam selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackAntiSpam selectedSite={ selectedSite } /> }
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackWordPressCom selectedSite={ selectedSite } />
+				) }
 				<SiteActivity />
 				<MobileApps />
 				<JetpackReturnToDashboard
@@ -286,15 +292,17 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				<JetpackBackupSecurity />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackBackupSecurity /> }
 				{ supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
-				<JetpackAntiSpam selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackAntiSpam selectedSite={ selectedSite } /> }
 				<JetpackSearch selectedSite={ selectedSite } />
 				<SiteActivity />
 				<JetpackVideo selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackWordPressCom selectedSite={ selectedSite } />
+				) }
 				<MonetizeSite selectedSite={ selectedSite } />
 				<MobileApps />
 				<JetpackPublicize selectedSite={ selectedSite } />
