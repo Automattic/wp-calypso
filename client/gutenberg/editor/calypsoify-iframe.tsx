@@ -407,7 +407,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
-	const frameNonce = getSiteOption( state, siteId, 'frame_nonce' ) || '';
+	const frameNonce = getSiteOption( state, siteId, 'jetpack_frame_nonce' ) || '';
 
 	let queryArgs = pickBy( {
 		post: postId,
