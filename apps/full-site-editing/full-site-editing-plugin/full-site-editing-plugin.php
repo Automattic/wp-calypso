@@ -54,11 +54,11 @@ class A8C_Full_Site_Editing {
 	}
 
 	function register_blocks() {
-		register_block_type( 'core/post-content', array(
+		register_block_type( 'a8c/post-content', array(
 			'render_callback' => 'render_content_slot_block',
 		 ) );
 
-		register_block_type( 'core/template', array(
+		register_block_type( 'a8c/template', array(
 			'render_callback' => 'render_template_block',
 		) );
 	}

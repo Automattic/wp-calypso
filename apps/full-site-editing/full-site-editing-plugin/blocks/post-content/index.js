@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-registerBlockType( 'core/post-content', {
+registerBlockType( 'a8c/post-content', {
 	title: __( 'Content Slot' ),
 	description: __( 'Placeholder for a post or a page.' ),
 	icon: 'layout',
