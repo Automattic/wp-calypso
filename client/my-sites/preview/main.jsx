@@ -12,7 +12,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isSitePreviewable } from 'state/sites/selectors';
+import { getSiteOption, isSitePreviewable } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isWithinBreakpoint, isMobile, isDesktop } from 'lib/viewport';
@@ -95,12 +95,13 @@ class PreviewMain extends React.Component {
 			return;
 		}
 
+		const { selectedSiteNonce } = this.props;
 		const baseUrl = this.getBasePreviewUrl();
 		const newUrl = addQueryArgs(
 			{
 				theme_preview: true,
 				iframe: true,
-				'frame-nonce': this.props.site.options.frame_nonce,
+				'frame-nonce': selectedSiteNonce,
 			},
 			baseUrl
 		);
@@ -191,6 +192,7 @@ const mapState = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
+		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
 		site: getSelectedSite( state ),
 		siteId: selectedSiteId,
 	};
