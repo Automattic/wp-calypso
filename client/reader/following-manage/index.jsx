@@ -212,7 +212,7 @@ class FollowingManage extends Component {
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Streams' ) }</h1>
 				</MobileBackToSidebar>
-				<div className="following-manage__back">
+				<div className="following-manage__header">
 					<HeaderCake backHref={ '/' }>
 						<h1>{ translate( 'Follow Something New' ) }</h1>
 					</HeaderCake>
