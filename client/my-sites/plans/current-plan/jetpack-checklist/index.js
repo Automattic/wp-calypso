@@ -76,6 +76,7 @@ class JetpackChecklist extends PureComponent {
 			translate,
 			vaultpressFinished,
 		} = this.props;
+
 		const isRewindActive = rewindState === 'active' || rewindState === 'provisioning';
 		const isRewindAvailable = rewindState !== 'uninitialized' && rewindState !== 'unavailable';
 		const isRewindUnAvailable = rewindState === 'unavailable';
@@ -92,7 +93,14 @@ class JetpackChecklist extends PureComponent {
 					isPlaceholder={ ! taskStatuses }
 					progressText={ translate( 'Your Jetpack setup progress' ) }
 				>
-					<Task completed { ...JETPACK_CHECKLIST_TASK_PROTECT } />
+					<Task
+						completed
+						{ ...JETPACK_CHECKLIST_TASK_PROTECT }
+						onClick={ this.handleTaskStart( {
+							taskId: 'jetpack_protect',
+							url: JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ),
+						} ) }
+					/>
 					{ isPaidPlan && isRewindAvailable && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_REWIND }
@@ -107,6 +115,10 @@ class JetpackChecklist extends PureComponent {
 					{ isPaidPlan && isRewindUnAvailable && productInstallStatus && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS }
+							onClick={ this.handleTaskStart( {
+								taskId: 'jetpack_backups',
+								url: JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ),
+							} ) }
 							completed={ vaultpressFinished }
 							inProgress={ ! vaultpressFinished }
 						/>
@@ -114,6 +126,10 @@ class JetpackChecklist extends PureComponent {
 					{ isPaidPlan && productInstallStatus && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_AKISMET }
+							onClick={ this.handleTaskStart( {
+								taskId: 'jetpack_spam_filtering',
+								url: JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ),
+							} ) }
 							completed={ akismetFinished }
 							inProgress={ ! akismetFinished }
 						/>
