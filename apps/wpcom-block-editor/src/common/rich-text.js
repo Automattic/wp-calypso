@@ -4,37 +4,54 @@
  * External dependencies
  */
 import { compose, ifCondition } from '@wordpress/compose';
-import { withSelect, withDispatch } from '@wordpress/data';
+import { withSelect, withDispatch, select as baseSelect } from '@wordpress/data';
 import { RichTextToolbarButton } from '@wordpress/editor';
-import { toggleFormat, registerFormatType } from '@wordpress/rich-text';
-import { get } from 'lodash';
+import { toggleFormat, registerFormatType, unregisterFormatType } from '@wordpress/rich-text';
+import { get, find } from 'lodash';
 
-registerFormatType( 'wpcom/underline', {
-	title: wpcomGutenberg.richTextToolbar.underline,
-	tagName: 'span',
-	className: null,
-	attributes: { style: 'style' },
-	edit( { isActive, value, onChange } ) {
-		const onToggle = () =>
-			onChange(
-				toggleFormat( value, {
-					type: 'wpcom/underline',
-					attributes: {
-						style: 'text-decoration: underline;',
-					},
-				} )
+// trying to wait until core registers their keyboard-only underline,
+// then unregistering it and registering our own so they don't collide
+let times = 0;
+const maxTimes = 10;
+const { getFormatTypes } = baseSelect( 'core/rich-text' );
+const interval = setInterval( () => {
+	times = times + 1;
+	if ( times > maxTimes ) {
+		clearInterval( interval );
+		return;
+	}
+	if ( ! find( getFormatTypes(), { name: 'core/underline' } ) ) {
+		return;
+	}
+
+	unregisterFormatType( 'core/underline' );
+	registerFormatType( 'wpcom/underline', {
+		title: wpcomGutenberg.richTextToolbar.underline,
+		tagName: 'span',
+		className: null,
+		attributes: { style: 'style' },
+		edit( { isActive, value, onChange } ) {
+			const onToggle = () =>
+				onChange(
+					toggleFormat( value, {
+						type: 'wpcom/underline',
+						attributes: {
+							style: 'text-decoration: underline;',
+						},
+					} )
+				);
+
+			return (
+				<RichTextToolbarButton
+					icon="editor-underline"
+					title={ wpcomGutenberg.richTextToolbar.underline }
+					onClick={ onToggle }
+					isActive={ isActive }
+				/>
 			);
-
-		return (
-			<RichTextToolbarButton
-				icon="editor-underline"
-				title={ wpcomGutenberg.richTextToolbar.underline }
-				onClick={ onToggle }
-				isActive={ isActive }
-			/>
-		);
-	},
-} );
+		},
+	} );
+}, 500 );
 
 const RichTextJustifyButton = ( { blockId, isBlockJustified, updateBlockAttributes } ) => {
 	const onToggle = () =>
