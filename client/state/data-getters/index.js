@@ -174,7 +174,7 @@ export const requestFrameNonce = siteId => {
 		id,
 		http(
 			{
-				apiNamespace: 'rest/v1.3',
+				apiVersion: '1.3',
 				method: 'GET',
 				path: `/sites/${ siteId }`,
 			},

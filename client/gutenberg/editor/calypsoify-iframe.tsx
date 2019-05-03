@@ -403,7 +403,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
-	const frameNonce = get( requestFrameNonce( siteId ), 'data', '' );
+	const frameNonce = requestFrameNonce( siteId ).data || '';
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -425,9 +425,6 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
-	// Prevents the iframe from loading using a cached frame nonce.
-	const shouldLoadIframe = !! frameNonce;
-
 	return {
 		allPostsUrl: getPostTypeAllPostsUrl( state, postType ),
 		currentRoute,
@@ -435,7 +432,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 		frameNonce,
 		iframeUrl,
 		postTypeTrashUrl,
-		shouldLoadIframe,
+		shouldLoadIframe: !! frameNonce,
 		siteAdminUrl,
 		siteId,
 	};
