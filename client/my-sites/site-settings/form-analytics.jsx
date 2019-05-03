@@ -31,6 +31,7 @@ import {
 	isVipPlan,
 	isEcommerce,
 } from 'lib/products-values';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
@@ -76,8 +77,11 @@ export class GoogleAnalyticsForm extends Component {
 	};
 
 	handleToggleChange = key => {
-		const { fields } = this.props;
+		const { fields, path } = this.props;
 		const value = fields.wga ? ! fields.wga[ key ] : false;
+
+		this.props.recordTracksEvent( 'calypso_google_analytics_setting_changed', { key, path } );
+
 		this.handleFieldChange( key, value );
 	};
 
@@ -305,9 +309,13 @@ const mapStateToProps = state => {
 	};
 };
 
+const mapDispatchToProps = {
+	recordTracksEvent,
+};
+
 const connectComponent = connect(
 	mapStateToProps,
-	null,
+	mapDispatchToProps,
 	null,
 	{ pure: false }
 );
