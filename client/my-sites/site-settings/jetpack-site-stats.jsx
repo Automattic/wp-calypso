@@ -26,11 +26,10 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 import { getStatsPathForTab } from 'lib/route';
 import { recordTracksEvent } from 'state/analytics/actions';
-import getCurrentRoute from 'state/selectors/get-current-route';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import { getSiteSlug } from 'state/sites/selectors';
 
 class JetpackSiteStats extends Component {
 	static defaultProps = {
@@ -199,9 +198,7 @@ export default connect(
 			siteId,
 			'stats'
 		);
-		const path = getCurrentRoute( state )
-			.replace( getSiteSlug( state, siteId ), ':site' )
-			.replace( siteId, ':siteid' );
+		const path = getCurrentRouteParameterized( state, siteId );
 
 		return {
 			siteId,
