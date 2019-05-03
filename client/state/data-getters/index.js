@@ -160,3 +160,29 @@ export const requestSiteAlerts = siteId => {
 		}
 	);
 };
+
+/**
+ * Request a site's frame nonce from the v1.3 sites endpoint.
+ *
+ * @param {number} siteId  Site Id.
+ * @return {*} Stored data container for request.
+ */
+export const requestFrameNonce = siteId => {
+	const id = `frame-nonce-${ siteId }`;
+
+	return requestHttpData(
+		id,
+		http(
+			{
+				apiVersion: '1.3',
+				method: 'GET',
+				path: `/sites/${ siteId }`,
+			},
+			{}
+		),
+		{
+			freshness: 5 * 60 * 1000, // TODO this should match iframe nonce expiry
+			fromApi: () => ( { options: { frame_nonce } } ) => [ [ id, frame_nonce ] ],
+		}
+	);
+};
