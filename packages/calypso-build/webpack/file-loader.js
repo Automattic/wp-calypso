@@ -7,7 +7,7 @@ module.exports.loader = () => ( {
 	test: /\.(?:gif|jpg|jpeg|png|svg)$/i,
 	use: [
 		{
-			loader: 'file-loader',
+			loader: require.resolve( 'file-loader' ),
 			options: {
 				name: '[name]-[hash].[ext]',
 				outputPath: 'images/',
