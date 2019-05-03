@@ -48,7 +48,8 @@ class UploadingPane extends React.PureComponent {
 		const { importerStatus: prevImporterStatus } = prevProps;
 
 		if (
-			prevImporterStatus.importerState === appStates.UPLOADING &&
+			( prevImporterStatus.importerState === appStates.UPLOADING ||
+				prevImporterStatus.importerState === appStates.UPLOAD_PROCESSING ) &&
 			importerState === appStates.UPLOAD_SUCCESS
 		) {
 			defer( () => startMappingAuthors( importerId ) );
