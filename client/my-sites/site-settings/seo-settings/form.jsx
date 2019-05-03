@@ -25,9 +25,9 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
 import {
 	getSeoTitleFormatsForSite,
+	getSiteSlug,
 	isJetpackSite,
 	isRequestingSite,
-	getSiteSlug,
 } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
@@ -229,16 +229,21 @@ export class SeoForm extends React.Component {
 
 	trackSubmission = () => {
 		const { dirtyFields } = this.state;
-		const { trackFormSubmitted, trackTitleFormatsUpdated, trackFrontPageMetaUpdated } = this.props;
+		const {
+			path,
+			trackFormSubmitted,
+			trackTitleFormatsUpdated,
+			trackFrontPageMetaUpdated,
+		} = this.props;
 
-		trackFormSubmitted( { path: this.props.path } );
+		trackFormSubmitted( { path } );
 
 		if ( dirtyFields.has( 'seoTitleFormats' ) ) {
-			trackTitleFormatsUpdated( { path: this.props.path } );
+			trackTitleFormatsUpdated( { path } );
 		}
 
 		if ( dirtyFields.has( 'frontPageMetaDescription' ) ) {
-			trackFrontPageMetaUpdated( { path: this.props.path } );
+			trackFrontPageMetaUpdated( { path } );
 		}
 	};
 
