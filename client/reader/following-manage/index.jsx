@@ -16,7 +16,7 @@ import { stringify } from 'qs';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
-import HeaderBack from 'reader/header-back';
+import HeaderCake from 'components/header-cake';
 import ReaderMain from 'reader/components/reader-main';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
 import getDismissedSites from 'state/selectors/get-dismissed-sites';
@@ -212,8 +212,10 @@ class FollowingManage extends Component {
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Streams' ) }</h1>
 				</MobileBackToSidebar>
-				<div class="following-manage__back">
-					<HeaderBack/>
+				<div className="following-manage__back">
+					<HeaderCake backHref={ '/' }>
+						<h1>{ translate( 'Follow Something New' ) }</h1>
+					</HeaderCake>
 				</div>
 				{ ! searchResults && sitesQuery && (
 					<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
@@ -224,7 +226,6 @@ class FollowingManage extends Component {
 						offset={ recommendedSitesPagingOffset + PAGE_SIZE || 0 }
 					/>
 				) }
-				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="following-manage__input-card">
