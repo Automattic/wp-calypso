@@ -125,6 +125,7 @@ const transferDomain = ( context, next ) => {
 				<TransferDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+					lastDomainStatus={ context.query.lastDomainStatus }
 				/>
 			</CartData>
 		</Main>
@@ -152,6 +153,7 @@ const useYourDomain = ( context, next ) => {
 				<UseYourDomainStep
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+					lastDomainStatus={ context.query.lastDomainStatus }
 					goBack={ handleGoBack }
 				/>
 			</CartData>
@@ -168,6 +170,7 @@ const transferDomainPrecheck = ( context, next ) => {
 	const handleGoBack = () => {
 		page( domainManagementTransferIn( siteSlug, domain ) );
 	};
+
 	context.primary = (
 		<Main>
 			<PageViewTracker

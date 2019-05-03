@@ -116,12 +116,19 @@ export class MapDomain extends Component {
 
 	componentWillMount() {
 		this.checkSiteIsUpgradeable( this.props );
+		//this.checkIfDomainIsMappable(  );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.checkSiteIsUpgradeable( nextProps );
 	}
+	/*
+	checkIfDomainIsMappable( props ) {
+		if  ( this.handleMapDomain === true ){
 
+		}
+	}
+*/
 	checkSiteIsUpgradeable( props ) {
 		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add/mapping' );
