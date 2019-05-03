@@ -16,7 +16,6 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import fetchPost from '../../lib/fetch-post';
 import './style.scss';
 
 const updateSuggestions = debounce( async ( search, setState ) => {
@@ -41,21 +40,18 @@ const updateSuggestions = debounce( async ( search, setState ) => {
 	} );
 }, 200 );
 
-const selectSuggestion = async ( suggestion, setState ) => {
+const selectSuggestion = ( suggestion, setState ) => {
 	setState( {
-		loading: true,
+		loading: false,
 		search: suggestion.title,
 		showSuggestions: false,
 		suggestions: [],
 	} );
 
-	const selectedPost = await fetchPost( suggestion.id, suggestion.subtype );
-
-	setState( {
-		loading: false,
-	} );
-
-	return selectedPost;
+	return {
+		id: suggestion.id,
+		type: suggestion.subtype,
+	};
 };
 const PostAutocomplete = withState( {
 	loading: false,
@@ -75,8 +71,8 @@ const PostAutocomplete = withState( {
 		updateSuggestions( inputValue, setState );
 	};
 
-	const onClick = suggestion => async () => {
-		const selectedPost = await selectSuggestion( suggestion, setState );
+	const onClick = suggestion => () => {
+		const selectedPost = selectSuggestion( suggestion, setState );
 		onSelectPost( selectedPost );
 	};
 

@@ -9,7 +9,8 @@ import { get } from 'lodash';
  * WordPress dependencies
  */
 import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
-import { withState } from '@wordpress/compose';
+import { compose, withState } from '@wordpress/compose';
+import { withSelect } from '@wordpress/data';
 import { BlockControls } from '@wordpress/editor';
 import { Fragment, RawHTML } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -18,34 +19,27 @@ import { __, sprintf } from '@wordpress/i18n';
  * Internal dependencies
  */
 import PostAutocomplete from '../../components/post-autocomplete';
-import fetchPost from '../../lib/fetch-post';
 import './style.scss';
 
-const setSelectedPost = async ( attributes, setState ) => {
-	const { selectedPostId, selectedPostType } = attributes;
-	const selectedPost = await fetchPost( selectedPostId, selectedPostType );
-	setState( {
-		selectedPost,
-	} );
-};
-
-const TemplatePartEdit = withState( {
-	isEditing: false,
-	selectedPost: null,
-} )( ( { attributes, isEditing, selectedPost, setAttributes, setState } ) => {
+const TemplatePartEdit = compose(
+	withSelect( ( select, { attributes } ) => {
+		const { getEntityRecord } = select( 'core' );
+		const { selectedPostId, selectedPostType } = attributes;
+		return {
+			selectedPost: getEntityRecord( 'postType', selectedPostType, selectedPostId ),
+		};
+	} ),
+	withState( { isEditing: false } )
+)( ( { attributes, isEditing, selectedPost, setAttributes, setState } ) => {
 	const { align, selectedPostId } = attributes;
-
-	if ( !! selectedPostId && ! selectedPost ) {
-		setSelectedPost( attributes, setState );
-	}
 
 	const toggleEditing = () => setState( { isEditing: ! isEditing } );
 
-	const onSelectPost = post => {
-		setState( { isEditing: false, selectedPost: post } );
+	const onSelectPost = ( { id, type } ) => {
+		setState( { isEditing: false } );
 		setAttributes( {
-			selectedPostId: get( post, 'id' ),
-			selectedPostType: get( post, 'type' ),
+			selectedPostId: id,
+			selectedPostType: type,
 		} );
 	};
 
