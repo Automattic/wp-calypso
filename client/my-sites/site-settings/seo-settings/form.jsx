@@ -35,7 +35,13 @@ import isPrivateSite from 'state/selectors/is-private-site';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
-import { isBusiness, isEnterprise, isJetpackBusiness, isJetpackPremium } from 'lib/products-values';
+import {
+	isBusiness,
+	isEnterprise,
+	isJetpackBusiness,
+	isJetpackPremium,
+	isEcommerce,
+} from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import {
@@ -62,7 +68,13 @@ import './style.scss';
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
 
-const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness, isJetpackPremium );
+const hasSupportingPlan = overSome(
+	isBusiness,
+	isEnterprise,
+	isJetpackBusiness,
+	isJetpackPremium,
+	isEcommerce
+);
 
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
@@ -291,7 +303,6 @@ export class SeoForm extends React.Component {
 		const nudgeTitle = siteIsJetpack
 			? translate( 'Enable SEO Tools by upgrading to Jetpack Premium' )
 			: translate( 'Enable SEO Tools by upgrading to the Business plan' );
-
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
@@ -456,7 +467,6 @@ const mapStateToProps = state => {
 	const conflictedSeoPlugin = siteIsJetpack
 		? getFirstConflictingPlugin( activePlugins ) // Pick first one to keep the notice short.
 		: null;
-
 	return {
 		conflictedSeoPlugin,
 		isFetchingSite: isRequestingSite( state, siteId ),
