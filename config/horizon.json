@@ -43,6 +43,7 @@
 		"help": true,
 		"help/courses": true,
 		"jetpack/api-cache": true,
+		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
 		"jetpack/gutenframe": true,
