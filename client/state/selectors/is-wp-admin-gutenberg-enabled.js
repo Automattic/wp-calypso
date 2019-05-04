@@ -11,12 +11,12 @@ import versionCompare from 'lib/version-compare';
 import isPluginActive from 'state/selectors/is-plugin-active';
 import { isHttps } from 'lib/url';
 
-export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
+export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
 		return false;
 	}
 
-	// We might want Calypsoify flows for Jetpack and Atomic sites.
+	// We might want WP Admin flows for Jetpack and Atomic sites.
 	if ( isJetpackSite( state, siteId ) || isSiteAutomatedTransfer( state, siteId ) ) {
 		// But only once they have been updated to WordPress version 5.0 or greater since it will provide Gutenberg
 		// editor by default.
@@ -42,10 +42,10 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 			return false;
 		}
 
-		return isEnabled( 'calypsoify/gutenberg' );
+		return true;
 	}
 
 	return false;
 };
 
-export default isCalypsoifyGutenbergEnabled;
+export default isWpAdminGutenbergEnabled;

@@ -10,7 +10,7 @@ import { get, isInteger } from 'lodash';
  * Internal dependencies
  */
 import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
-import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import isWpAdminGutenbergEnabled from 'state/selectors/is-wp-admin-gutenberg-enabled';
 import { EDITOR_START } from 'state/action-types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
@@ -45,7 +45,7 @@ export const redirect = ( context, next ) => {
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
 
-	if ( isCalypsoifyGutenbergEnabled( state, siteId ) ) {
+	if ( isWpAdminGutenbergEnabled( state, siteId ) ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 		const url = getGutenbergEditorUrl( state, siteId, postId, postType );

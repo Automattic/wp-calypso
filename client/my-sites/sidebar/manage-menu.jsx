@@ -35,7 +35,7 @@ import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/c
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import isWpAdminGutenbergEnabled from 'state/selectors/is-wp-admin-gutenberg-enabled';
 import { getEditorUrl as getEditorUrlStateSelector } from 'state/selectors/get-editor-url';
 import isVipSite from 'state/selectors/is-vip-site';
 
@@ -54,7 +54,7 @@ class ManageMenu extends PureComponent {
 		siteAdminUrl: PropTypes.string,
 		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
-		calypsoifyGutenberg: PropTypes.bool,
+		wpAdminGutenberg: PropTypes.bool,
 	};
 
 	// We default to `/my` posts when appropriate
@@ -76,7 +76,7 @@ class ManageMenu extends PureComponent {
 	}
 
 	getDefaultMenuItems() {
-		const { calypsoifyGutenberg, getEditorUrl, siteSlug, translate } = this.props;
+		const { wpAdminGutenberg, getEditorUrl, siteSlug, translate } = this.props;
 
 		return [
 			{
@@ -87,7 +87,7 @@ class ManageMenu extends PureComponent {
 				config: 'manage/pages',
 				link: '/pages',
 				buttonLink: getEditorUrl( 'page' ),
-				forceButtonTargetInternal: calypsoifyGutenberg,
+				forceButtonTargetInternal: wpAdminGutenberg,
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
 			},
@@ -100,7 +100,7 @@ class ManageMenu extends PureComponent {
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
 				buttonLink: getEditorUrl( 'post' ),
-				forceButtonTargetInternal: calypsoifyGutenberg,
+				forceButtonTargetInternal: wpAdminGutenberg,
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
 			},
@@ -355,7 +355,7 @@ class ManageMenu extends PureComponent {
 					wpAdminLink: 'edit.php?post_type=' + postType.name,
 					showOnAllMySites: false,
 					buttonLink,
-					forceButtonTargetInternal: this.props.calypsoifyGutenberg,
+					forceButtonTargetInternal: this.props.wpAdminGutenberg,
 				} );
 			},
 			[]
@@ -396,8 +396,8 @@ export default connect(
 		site: getSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isVip: isVipSite( state, siteId ),
-		calypsoifyGutenberg:
-			isCalypsoifyGutenbergEnabled( state, siteId ) &&
+		wpAdminGutenberg:
+			isWpAdminGutenbergEnabled( state, siteId ) &&
 			'gutenberg' === getSelectedEditor( state, siteId ),
 	} ),
 	{ recordTracksEvent },

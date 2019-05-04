@@ -2,21 +2,28 @@
 /**
  * Internal dependencies
  */
-import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import isWpAdminGutenbergEnabled from 'state/selectors/is-wp-admin-gutenberg-enabled';
 import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
+import { isEnabled } from 'config';
+import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
+import { addQueryArgs } from 'lib/route';
 
 export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if ( isCalypsoifyGutenbergEnabled( state, siteId ) ) {
+	if ( isWpAdminGutenbergEnabled( state, siteId ) ) {
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
+		let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
 
 		if ( postId ) {
-			return `${ siteAdminUrl }post.php?post=${ postId }&action=edit&calypsoify=1`;
+			url = `${ siteAdminUrl }post.php?post=${ postId }&action=edit`;
 		}
-		if ( 'post' === postType ) {
-			return `${ siteAdminUrl }post-new.php?calypsoify=1`;
+
+		// We want Calypsoify flows on Atomic sites
+		if ( isSiteAtomic( state, siteId ) && isEnabled( 'calypsoify/gutenberg' ) ) {
+			url = addQueryArgs( { calypsoify: '1' }, url );
 		}
-		return `${ siteAdminUrl }post-new.php?post_type=${ postType }&calypsoify=1`;
+
+		return url;
 	}
 
 	if ( postId ) {

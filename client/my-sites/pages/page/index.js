@@ -38,7 +38,7 @@ import { savePost, deletePost, trashPost, restorePost } from 'state/posts/action
 import { withoutNotice } from 'state/notices/actions';
 import { isEnabled } from 'config';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import isWpAdminGutenbergEnabled from 'state/selectors/is-wp-admin-gutenberg-enabled';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 
@@ -201,7 +201,7 @@ class Page extends Component {
 			return null;
 		}
 
-		if ( this.props.calypsoifyGutenberg ) {
+		if ( this.props.wpAdminGutenberg ) {
 			return (
 				<PopoverMenuItem onClick={ this.props.recordEditPage } href={ this.props.editorUrl }>
 					<Gridicon icon="pencil" size={ 18 } />
@@ -277,11 +277,11 @@ class Page extends Component {
 	}
 
 	getCopyItem() {
-		const { calypsoifyGutenberg, page: post, duplicateUrl } = this.props;
+		const { wpAdminGutenberg, page: post, duplicateUrl } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
 			! utils.userCan( 'edit_post', post ) ||
-			calypsoifyGutenberg
+			wpAdminGutenberg
 		) {
 			return null;
 		}
@@ -647,8 +647,8 @@ const mapState = ( state, props ) => {
 		siteSlugOrId,
 		editorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.ID' ), 'page' ),
 		parentEditorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.parent.ID' ), 'page' ),
-		calypsoifyGutenberg:
-			isCalypsoifyGutenbergEnabled( state, pageSiteId ) &&
+		wpAdminGutenberg:
+			isWpAdminGutenbergEnabled( state, pageSiteId ) &&
 			'gutenberg' === getSelectedEditor( state, pageSiteId ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 	};
