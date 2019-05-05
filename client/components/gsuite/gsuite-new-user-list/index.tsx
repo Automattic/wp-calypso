@@ -4,7 +4,7 @@
  * External dependencies
  */
 import Gridicon from 'gridicons';
-import React, { Fragment, FunctionComponent } from 'react';
+import React, { Fragment, FunctionComponent, ReactNode } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -20,6 +20,7 @@ import { newUser, GSuiteNewUser as NewUser, validateUser } from 'lib/gsuite/new-
 import './style.scss';
 
 interface Props {
+	children?: ReactNode;
 	domains: any[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
@@ -28,6 +29,7 @@ interface Props {
 }
 
 const GSuiteNewUserList: FunctionComponent< Props > = ( {
+	children,
 	domains,
 	extraValidation,
 	selectedDomainName,
@@ -51,7 +53,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	};
 
 	const onUserRemove = ( index: number ) => () => {
-		const newUserList = users.filter( ( user, userIndex ) => userIndex !== index );
+		const newUserList = users.filter( ( _user, userIndex ) => userIndex !== index );
 		onUsersChange( 0 < newUserList.length ? newUserList : [ newUser( selectedDomainName ) ] );
 	};
 
@@ -65,13 +67,16 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 						onUserValueChange={ onUserValueChange( index ) }
 						onUserRemove={ onUserRemove( index ) }
 					/>
-					<hr />
+					<hr className="gsuite-new-user-list__user-divider" />
 				</Fragment>
 			) ) }
-			<Button className="gsuite-new-user-list__add-another-user-button" onClick={ onUserAdd }>
-				<Gridicon icon="plus" />
-				<span>{ translate( 'Add Another User' ) }</span>
-			</Button>
+			<div>
+				<Button className="gsuite-new-user-list__add-another-user-button" onClick={ onUserAdd }>
+					<Gridicon icon="plus" />
+					<span>{ translate( 'Add Another User' ) }</span>
+				</Button>
+				{ children }
+			</div>
 		</div>
 	);
 };

@@ -151,23 +151,20 @@ class GSuiteAddUsers extends React.Component {
 				} ) }
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
 				{ gsuiteUsers && gSuiteSupportedDomains && ! isRequestingDomains ? (
-					<Fragment>
-						<Card>
-							<GSuiteNewUserList
-								extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
-								domains={ gSuiteSupportedDomains }
-								onUsersChange={ this.onUsersChange }
-								selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
-								users={ users }
-							/>
-						</Card>
-						<Card>
+					<Card>
+						<GSuiteNewUserList
+							extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
+							domains={ gSuiteSupportedDomains }
+							onUsersChange={ this.onUsersChange }
+							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
+							users={ users }
+						>
 							<Button disabled={ ! canContinue } onClick={ this.handleContinue }>
 								{ translate( 'Continue' ) }
 							</Button>
 							<Button>{ translate( 'Cancel' ) }</Button>
-						</Card>
-					</Fragment>
+						</GSuiteNewUserList>
+					</Card>
 				) : (
 					<AddEmailAddressesCardPlaceholder />
 				) }

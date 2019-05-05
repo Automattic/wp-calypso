@@ -57,63 +57,67 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 
 	return (
 		<div>
-			<FormFieldset className="gsuite-new-user-list__form">
-				<FormTextInput
-					placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
-					value={ mailBox }
-					isError={ hasMailBoxError }
-					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-						onUserValueChange( 'mailBox', event.target.value );
-					} }
-					onBlur={ () => {
-						setMailBoxFieldTouched( wasValidated );
-					} }
-				/>
-				{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
-				<DomainsSelect
-					domains={ domains }
-					onChange={ event => {
-						onUserValueChange( 'domain', event.target.value );
-					} }
-					value={ domain }
-				/>
+			<FormFieldset className="gsuite-new-user-list__new-user-email-fieldset">
+				<div className="gsuite-new-user-list__new-user-email">
+					<FormTextInput
+						placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+						value={ mailBox }
+						isError={ hasMailBoxError }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							onUserValueChange( 'mailBox', event.target.value );
+						} }
+						onBlur={ () => {
+							setMailBoxFieldTouched( wasValidated );
+						} }
+					/>
+					{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
+					<DomainsSelect
+						domains={ domains }
+						onChange={ event => {
+							onUserValueChange( 'domain', event.target.value );
+						} }
+						value={ domain }
+					/>
+				</div>
 			</FormFieldset>
 
-			<FormFieldset className="gsuite-new-user-list__form">
-				<FormTextInput
-					placeholder={ translate( 'First Name' ) }
-					value={ firstName }
-					maxLength={ 60 }
-					isError={ hasFirstNameError }
-					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-						onUserValueChange( 'firstName', event.target.value );
-					} }
-					onBlur={ () => {
-						setFirstNameFieldTouched( wasValidated );
-					} }
-				/>
-				{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
-				<FormTextInput
-					placeholder={ translate( 'Last Name' ) }
-					value={ lastName }
-					maxLength={ 60 }
-					isError={ hasLastNameError }
-					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-						onUserValueChange( 'lastName', event.target.value );
-					} }
-					onBlur={ () => {
-						setLastNameFieldTouched( wasValidated );
-					} }
-				/>
-				{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
+			<FormFieldset className="gsuite-new-user-list__new-user-name-fieldset">
+				<div className="gsuite-new-user-list__new-user-name">
+					<FormTextInput
+						placeholder={ translate( 'First Name' ) }
+						value={ firstName }
+						maxLength={ 60 }
+						isError={ hasFirstNameError }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							onUserValueChange( 'firstName', event.target.value );
+						} }
+						onBlur={ () => {
+							setFirstNameFieldTouched( wasValidated );
+						} }
+					/>
+					{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
+					<FormTextInput
+						placeholder={ translate( 'Last Name' ) }
+						value={ lastName }
+						maxLength={ 60 }
+						isError={ hasLastNameError }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							onUserValueChange( 'lastName', event.target.value );
+						} }
+						onBlur={ () => {
+							setLastNameFieldTouched( wasValidated );
+						} }
+					/>
+					{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
+					<Button
+						className="gsuite-new-user-list__new-user-remove-user-button"
+						onClick={ onUserRemove }
+					>
+						<Gridicon icon="trash" />
+						<span>{ translate( 'Remove User' ) }</span>
+					</Button>
+				</div>
 			</FormFieldset>
-			<Button
-				className="gsuite-new-user-list__new-user-remove-user-button"
-				onClick={ onUserRemove }
-			>
-				<Gridicon icon="trash" />
-				<span>{ translate( 'Remove User' ) }</span>
-			</Button>
 		</div>
 	);
 };

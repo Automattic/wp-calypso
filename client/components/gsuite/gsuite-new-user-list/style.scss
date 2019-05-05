@@ -3,6 +3,12 @@
 	@include breakpoint( '>480px' ) {
 		width: auto;
 	}
+
+	@include breakpoint( '>660px' ) {
+		span {
+			display: none;
+		}
+	}
 }
 
 .gsuite-new-user-list__add-another-user-button {
@@ -16,5 +22,34 @@
 	width: 100%;
 	@include breakpoint( '>660px' ) {
 		width: auto;
+	}
+}
+
+.gsuite-new-user-list__user-divider {
+	width: 100%;
+	margin: 1.5em 0;
+}
+
+.gsuite-new-user-list__new-user-name {
+	@include breakpoint( '>660px' ) {
+		display: flex;
+		justify-content: space-between;
+	}
+}
+
+.gsuite-new-user-list__new-user-email {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+
+	@include breakpoint( '>960px' ) {
+		flex-direction: row;
+	}
+
+	input {
+		width: auto;
+	}
+	select {
+		width: 100%;
 	}
 }
