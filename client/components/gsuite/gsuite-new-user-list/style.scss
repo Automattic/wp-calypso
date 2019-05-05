@@ -1,0 +1,20 @@
+.gsuite-new-user-list__new-user-remove-user-button {
+	width: 100%;
+	@include breakpoint( '>480px' ) {
+		width: auto;
+	}
+}
+
+.gsuite-new-user-list__add-another-user-button {
+	width: 100%;
+	@include breakpoint( '>480px' ) {
+		width: auto;
+	}
+}
+
+.gsuite-new-user-list__new-user-domain-select {
+	width: 100%;
+	@include breakpoint( '>660px' ) {
+		width: auto;
+	}
+}

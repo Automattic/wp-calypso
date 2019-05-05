@@ -107,7 +107,10 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				/>
 				{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 			</FormFieldset>
-			<Button onClick={ onUserRemove }>
+			<Button
+				className="gsuite-new-user-list__new-user-remove-user-button"
+				onClick={ onUserRemove }
+			>
 				<Gridicon icon="trash" />
 				<span>{ translate( 'Remove User' ) }</span>
 			</Button>

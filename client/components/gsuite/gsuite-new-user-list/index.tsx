@@ -14,6 +14,11 @@ import Button from 'components/button';
 import GSuiteNewUser from './new-user';
 import { newUser, GSuiteNewUser as NewUser, validateUser } from 'lib/gsuite/new-users';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 interface Props {
 	domains: any[];
 	extraValidation: ( user: NewUser ) => NewUser;
@@ -63,7 +68,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 					<hr />
 				</Fragment>
 			) ) }
-			<Button onClick={ onUserAdd }>
+			<Button className="gsuite-new-user-list__add-another-user-button" onClick={ onUserAdd }>
 				<Gridicon icon="plus" />
 				<span>{ translate( 'Add Another User' ) }</span>
 			</Button>

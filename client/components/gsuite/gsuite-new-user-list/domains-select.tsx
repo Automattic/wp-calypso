@@ -18,7 +18,11 @@ interface Props {
 
 const DomainsSelect = ( { domains, onChange, value }: Props ) => {
 	return (
-		<FormSelect value={ value } onChange={ onChange }>
+		<FormSelect
+			className="gsuite-new-user-list__new-user-domain-select"
+			onChange={ onChange }
+			value={ value }
+		>
 			{ domains.map( domain => {
 				return (
 					<option value={ domain } key={ domain }>
