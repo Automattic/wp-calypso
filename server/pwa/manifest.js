@@ -33,7 +33,7 @@ const buildManifest = ( { branchName } ) => {
 		start_url: '/' + environmentUrlSuffix,
 		display: 'standalone',
 		gcm_sender_id: '87234302238',
-		background_color: '#0078be',
+		background_color: '#016087',
 		theme_color: '#0078be',
 		icons: [
 			{
