@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "Shared Calypso build configuration files",
 	"keywords": [
+		"babel",
 		"config",
 		"webpack",
 		"wordpress"
