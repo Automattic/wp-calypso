@@ -4,8 +4,7 @@
  * External dependencies
  */
 import Gridicon from 'gridicons';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { ChangeEvent, FunctionComponent, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -16,9 +15,16 @@ import DomainsSelect from './domains-select';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
-import { userShape } from 'lib/gsuite/new-users';
+import { GSuiteNewUser as NewUser } from 'lib/gsuite/new-users';
 
-const GSuiteNewUser = ( {
+interface Props {
+	domains: any[];
+	onUserRemove: () => void;
+	onUserValueChange: ( field: string, value: string ) => void;
+	user: NewUser;
+}
+
+const GSuiteNewUser: FunctionComponent< Props > = ( {
 	domains,
 	onUserRemove,
 	onUserValueChange,
@@ -51,12 +57,12 @@ const GSuiteNewUser = ( {
 
 	return (
 		<div>
-			<FormFieldset>
+			<FormFieldset className="gsuite-new-user-list__form">
 				<FormTextInput
 					placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
 					value={ mailBox }
 					isError={ hasMailBoxError }
-					onChange={ event => {
+					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
 						onUserValueChange( 'mailBox', event.target.value );
 					} }
 					onBlur={ () => {
@@ -73,13 +79,13 @@ const GSuiteNewUser = ( {
 				/>
 			</FormFieldset>
 
-			<FormFieldset>
+			<FormFieldset className="gsuite-new-user-list__form">
 				<FormTextInput
 					placeholder={ translate( 'First Name' ) }
 					value={ firstName }
 					maxLength={ 60 }
 					isError={ hasFirstNameError }
-					onChange={ event => {
+					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
 						onUserValueChange( 'firstName', event.target.value );
 					} }
 					onBlur={ () => {
@@ -92,7 +98,7 @@ const GSuiteNewUser = ( {
 					value={ lastName }
 					maxLength={ 60 }
 					isError={ hasLastNameError }
-					onChange={ event => {
+					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
 						onUserValueChange( 'lastName', event.target.value );
 					} }
 					onBlur={ () => {
@@ -107,13 +113,6 @@ const GSuiteNewUser = ( {
 			</Button>
 		</div>
 	);
-};
-
-GSuiteNewUser.propTypes = {
-	domains: PropTypes.arrayOf( PropTypes.string ).isRequired,
-	onUserRemove: PropTypes.func.isRequired,
-	onUserValueChange: PropTypes.func.isRequired,
-	user: userShape.isRequired,
 };
 
 export default GSuiteNewUser;

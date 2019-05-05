@@ -4,17 +4,25 @@
  * External dependencies
  */
 import Gridicon from 'gridicons';
-import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import GSuiteNewUser from './new-user';
-import { newUser, userShape, validateUser } from 'lib/gsuite/new-users';
+import { newUser, GSuiteNewUser as NewUser, validateUser } from 'lib/gsuite/new-users';
 
-const GSuiteNewUserList = ( {
+interface Props {
+	domains: any[];
+	extraValidation: ( user: NewUser ) => NewUser;
+	selectedDomainName: string;
+	onUsersChange: ( users: NewUser[] ) => NewUser[];
+	users: NewUser[];
+}
+
+const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	domains,
 	extraValidation,
 	selectedDomainName,
@@ -23,7 +31,7 @@ const GSuiteNewUserList = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const onUserValueChange = index => ( field, value ) => {
+	const onUserValueChange = ( index: number ) => ( field: string, value: string ) => {
 		const modifiedUser = extraValidation(
 			validateUser( { ...users[ index ], [ field ]: { value, error: null } } )
 		);
@@ -37,48 +45,30 @@ const GSuiteNewUserList = ( {
 		onUsersChange( [ ...users, newUser( selectedDomainName ) ] );
 	};
 
-	const onUserRemove = index => () => {
+	const onUserRemove = ( index: number ) => () => {
 		const newUserList = users.filter( ( user, userIndex ) => userIndex !== index );
 		onUsersChange( 0 < newUserList.length ? newUserList : [ newUser( selectedDomainName ) ] );
 	};
 
 	return (
 		<div>
-			{ users
-				.map( ( user, index ) => (
+			{ users.map( ( user, index ) => (
+				<Fragment key={ index }>
 					<GSuiteNewUser
-						key={ `${ index }-body` }
 						domains={ domains ? domains.map( domain => domain.name ) : [ selectedDomainName ] }
 						user={ user }
 						onUserValueChange={ onUserValueChange( index ) }
 						onUserRemove={ onUserRemove( index ) }
 					/>
-				) )
-				.reduce(
-					( accumulator, current, index ) =>
-						0 === accumulator.length
-							? [ current ]
-							: [ ...accumulator, <hr key={ `${ index }-hr` } />, current ],
-					[]
-				) }
-			<button onClick={ onUserAdd }>
+					<hr />
+				</Fragment>
+			) ) }
+			<Button onClick={ onUserAdd }>
 				<Gridicon icon="plus" />
-				{ translate( 'Add Another User' ) }
-			</button>
+				<span>{ translate( 'Add Another User' ) }</span>
+			</Button>
 		</div>
 	);
-};
-
-GSuiteNewUserList.propTypes = {
-	domains: PropTypes.array,
-	extraValidation: PropTypes.func.isRequired,
-	selectedDomainName: PropTypes.string.isRequired,
-	onUsersChange: PropTypes.func,
-	users: PropTypes.arrayOf( userShape ).isRequired,
-};
-
-GSuiteNewUserList.defaultProps = {
-	extraValidation: user => user,
 };
 
 export default GSuiteNewUserList;

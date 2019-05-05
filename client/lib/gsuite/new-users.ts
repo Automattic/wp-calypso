@@ -4,23 +4,23 @@
 import { cartItems } from 'lib/cart-values';
 import emailValidator from 'email-validator';
 import i18n from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { find, includes, groupBy, map, mapValues } from 'lodash';
 import { hasGSuite } from '.';
 
-interface GSuiteNewUserField {
+// exporting these in the big export below causes trouble
+export interface GSuiteNewUserField {
 	value: string;
-	error?: string;
+	error: string | null;
 }
 
-interface GSuiteNewUser {
+export interface GSuiteNewUser {
 	domain: GSuiteNewUserField;
 	mailBox: GSuiteNewUserField;
 	firstName: GSuiteNewUserField;
 	lastName: GSuiteNewUserField;
 }
 
-interface GSuiteProductUser {
+export interface GSuiteProductUser {
 	firstname: string;
 	lastname: string;
 	email: string;
@@ -28,6 +28,7 @@ interface GSuiteProductUser {
 
 const removePreviousErrors = ( { value }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
+	error: null,
 } );
 
 const requiredField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
@@ -102,20 +103,17 @@ const validateAgainstExistingUsers = (
 	mailBox: validateOverallEmailAgainstExistingEmails( mailBox, domain, existingGSuiteUsers ),
 } );
 
+const newField = ( value: string = '' ): GSuiteNewUserField => ( {
+	value,
+	error: null,
+} );
+
 const newUser = ( domain: string = '' ): GSuiteNewUser => {
 	return {
-		firstName: {
-			value: '',
-		},
-		lastName: {
-			value: '',
-		},
-		mailBox: {
-			value: '',
-		},
-		domain: {
-			value: domain,
-		},
+		firstName: newField(),
+		lastName: newField(),
+		mailBox: newField(),
+		domain: newField( domain ),
 	};
 };
 
@@ -163,18 +161,6 @@ const getItemsForCart = (
 	} );
 };
 
-const valueShape = PropTypes.shape( {
-	value: PropTypes.string.isRequired,
-	error: PropTypes.string,
-} );
-
-const userShape = PropTypes.shape( {
-	firstName: valueShape,
-	lastName: valueShape,
-	mailBox: valueShape,
-	domain: valueShape,
-} );
-
 export {
 	doesUserHaveError,
 	getItemsForCart,
@@ -182,7 +168,6 @@ export {
 	newUser,
 	newUsers,
 	userIsReady,
-	userShape,
 	validateAgainstExistingUsers,
 	validateUser,
 };

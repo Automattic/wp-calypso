@@ -3,29 +3,22 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React, { FunctionComponentElement } from 'react';
+import React, { ChangeEvent } from 'react';
 
 /**
  * Internal dependencies
  */
 import FormSelect from 'components/forms/form-select';
 
-interface DomainsSelectProps {
+interface Props {
 	domains: string[];
-	isError: boolean;
-	onChange: ( event: any ) => void;
+	onChange: ( event: ChangeEvent< HTMLInputElement > ) => void;
 	value: string;
 }
 
-const DomainsSelect = ( {
-	domains,
-	isError,
-	onChange,
-	value,
-}: DomainsSelectProps ): FunctionComponentElement< DomainsSelectProps > => {
+const DomainsSelect = ( { domains, onChange, value }: Props ) => {
 	return (
-		<FormSelect value={ value } onChange={ onChange } isError={ isError }>
+		<FormSelect value={ value } onChange={ onChange }>
 			{ domains.map( domain => {
 				return (
 					<option value={ domain } key={ domain }>
@@ -35,17 +28,6 @@ const DomainsSelect = ( {
 			} ) }
 		</FormSelect>
 	);
-};
-
-DomainsSelect.propTypes = {
-	domains: PropTypes.arrayOf( PropTypes.string ).isRequired,
-	isError: PropTypes.bool,
-	onChange: PropTypes.func.isRequired,
-	value: PropTypes.string.isRequired,
-};
-
-DomainsSelect.defaultProps = {
-	isError: false,
 };
 
 export default DomainsSelect;
