@@ -8,36 +8,35 @@ import PropTypes from 'prop-types';
 import { find, includes, groupBy, map, mapValues } from 'lodash';
 import { hasGSuite } from '.';
 
-interface userField {
+interface GSuiteNewUserField {
 	value: string;
-	error: string | null;
+	error?: string;
 }
 
-interface user {
-	domain: userField;
-	mailBox: userField;
-	firstName: userField;
-	lastName: userField;
+interface GSuiteNewUser {
+	domain: GSuiteNewUserField;
+	mailBox: GSuiteNewUserField;
+	firstName: GSuiteNewUserField;
+	lastName: GSuiteNewUserField;
 }
 
-interface googleAppsProductUser {
+interface GSuiteProductUser {
 	firstname: string;
 	lastname: string;
 	email: string;
 }
 
-const removePreviousErrors = ( { value }: userField ): userField => ( {
+const removePreviousErrors = ( { value }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
-	error: null,
 } );
 
-const requiredField = ( { value, error }: userField ): userField => ( {
+const requiredField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
 	error:
 		! error && ( ! value || '' === value ) ? i18n.translate( 'This field is required.' ) : error,
 } );
 
-const sixtyCharacterField = ( { value, error }: userField ): userField => ( {
+const sixtyCharacterField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
 	error:
 		! error && 60 < value.length
@@ -45,7 +44,7 @@ const sixtyCharacterField = ( { value, error }: userField ): userField => ( {
 			: error,
 } );
 
-const validEmailCharacterField = ( { value, error }: userField ): userField => ( {
+const validEmailCharacterField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
 	error:
 		! error && ! /^[0-9a-z_'-](\.?[0-9a-z_'-])*$/i.test( value )
@@ -56,9 +55,9 @@ const validEmailCharacterField = ( { value, error }: userField ): userField => (
 } );
 
 const validateOverallEmail = (
-	{ value: mailBox, error: mailBoxError }: userField,
-	{ value: domain }: userField
-): userField => ( {
+	{ value: mailBox, error: mailBoxError }: GSuiteNewUserField,
+	{ value: domain }: GSuiteNewUserField
+): GSuiteNewUserField => ( {
 	value: mailBox,
 	error:
 		! mailBoxError && ! emailValidator.validate( `${ mailBox }@${ domain }` )
@@ -67,10 +66,10 @@ const validateOverallEmail = (
 } );
 
 const validateOverallEmailAgainstExistingEmails = (
-	{ value: mailBox, error: mailBoxError }: userField,
-	{ value: domain }: userField,
+	{ value: mailBox, error: mailBoxError }: GSuiteNewUserField,
+	{ value: domain }: GSuiteNewUserField,
 	existingGSuiteUsers: any[]
-): userField => ( {
+): GSuiteNewUserField => ( {
 	value: mailBox,
 	error:
 		! mailBoxError &&
@@ -79,7 +78,7 @@ const validateOverallEmailAgainstExistingEmails = (
 			: mailBoxError,
 } );
 
-const validateUser = ( user: user ): user => {
+const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 	// every field is required. Also scrubs previous errors.
 	const { domain, mailBox, firstName, lastName } = mapValues( user, field =>
 		requiredField( removePreviousErrors( field ) )
@@ -94,7 +93,7 @@ const validateUser = ( user: user ): user => {
 };
 
 const validateAgainstExistingUsers = (
-	{ domain, mailBox, firstName, lastName }: user,
+	{ domain, mailBox, firstName, lastName }: GSuiteNewUser,
 	existingGSuiteUsers: any[]
 ) => ( {
 	firstName,
@@ -103,40 +102,36 @@ const validateAgainstExistingUsers = (
 	mailBox: validateOverallEmailAgainstExistingEmails( mailBox, domain, existingGSuiteUsers ),
 } );
 
-const newUser = ( domain: string = '' ): user => {
+const newUser = ( domain: string = '' ): GSuiteNewUser => {
 	return {
 		firstName: {
 			value: '',
-			error: null,
 		},
 		lastName: {
 			value: '',
-			error: null,
 		},
 		mailBox: {
 			value: '',
-			error: null,
 		},
 		domain: {
 			value: domain,
-			error: null,
 		},
 	};
 };
 
-const newUsers = ( domain: string ): user[] => {
+const newUsers = ( domain: string ): GSuiteNewUser[] => {
 	return [ newUser( domain ) ];
 };
 
-const isUserComplete = ( user: user ): boolean => {
+const isUserComplete = ( user: GSuiteNewUser ): boolean => {
 	return Object.values( user ).every( ( { value } ) => '' !== value );
 };
 
-const doesUserHaveError = ( user: user ): boolean => {
+const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
 	return Object.values( user ).some( ( { error } ) => null !== error );
 };
 
-const userIsReady = ( user: user ): boolean =>
+const userIsReady = ( user: GSuiteNewUser ): boolean =>
 	isUserComplete( user ) && ! doesUserHaveError( user );
 
 const transformUser = ( {
@@ -144,19 +139,23 @@ const transformUser = ( {
 	lastName: { value: lastname },
 	domain: { value: domain },
 	mailBox: { value: mailBox },
-}: user ): googleAppsProductUser => ( {
+}: GSuiteNewUser ): GSuiteProductUser => ( {
 	email: `${ mailBox }@${ domain }`.toLowerCase(),
 	firstname,
 	lastname,
 } );
 
-const getItemsForCart = ( domains: any[], productSlug: string, users: user[] ) => {
+const getItemsForCart = (
+	domains: { name: string },
+	productSlug: string,
+	users: GSuiteNewUser[]
+) => {
 	const groups = mapValues( groupBy( users, 'domain.value' ), groupedUsers =>
 		groupedUsers.map( transformUser )
 	);
 
 	return map( groups, ( groupedUsers, domain ) => {
-		const domainInfo = find( domains, { name: domain } );
+		const domainInfo = find( domains, [ 'name', domain ] );
 
 		return hasGSuite( domainInfo )
 			? cartItems.gsuiteExtraLicenses( domain, groupedUsers )
