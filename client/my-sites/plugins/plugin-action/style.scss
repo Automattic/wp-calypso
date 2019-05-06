@@ -75,7 +75,8 @@
 		display: block;
 	}
 
-	.gridicons-info-outline > :first-child {
+	.gridicons-info-outline > use:first-child,
+	.gridicons-info-outline > g:first-child {
 		// revert the translate(1px,1px) done by needs-offset
 		transform: none;
 	}

@@ -74,7 +74,8 @@
 		height: 36px;
 		width: 36px;
 
-		> :first-child {
+		> use:first-child,
+		> g:first-child {
 			transform: none;
 		}
 	}
