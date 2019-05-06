@@ -115,14 +115,8 @@ class Signup extends React.Component {
 
 		this.state = {
 			controllerHasReset: false,
-			login: false,
-			dependencies: props.signupDependencies,
-			siteDomains: props.siteDomains,
-			isPaidPlan: props.isPaidPlan,
 			shouldShowLoadingScreen: false,
 			resumingStep: undefined,
-			loginHandler: null,
-			hasCartItems: false,
 			plans: false,
 			previousFlowName: null,
 		};
@@ -300,19 +294,6 @@ class Signup extends React.Component {
 		}
 	};
 
-	checkForCartItems = signupDependencies => {
-		const dependenciesContainCartItem = dependencies => {
-			return (
-				dependencies &&
-				( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
-			);
-		};
-
-		if ( dependenciesContainCartItem( signupDependencies ) ) {
-			this.setState( { hasCartItems: true } );
-		}
-	};
-
 	recordStep = ( stepName = this.props.stepName, flowName = this.props.flowName ) => {
 		analytics.tracks.recordEvent( 'calypso_signup_step_start', {
 			flow: flowName,
@@ -352,21 +333,11 @@ class Signup extends React.Component {
 			flow: this.props.flowName,
 		} );
 
-		if ( dependencies && ( dependencies.cartItem || dependencies.domainItem ) ) {
-			this.handleLogin( dependencies, destination );
-		} else {
-			this.setState( {
-				loginHandler: this.handleLogin.bind( this, dependencies, destination ),
-			} );
-		}
+		this.handleLogin( dependencies, destination );
 	};
 
-	handleLogin = ( dependencies, destination, event ) => {
+	handleLogin( dependencies, destination ) {
 		const userIsLoggedIn = this.props.isLoggedIn;
-
-		if ( event && event.redirectTo ) {
-			destination = event.redirectTo;
-		}
 
 		debug( `Logging you in to "${ destination }"` );
 
@@ -409,7 +380,7 @@ class Signup extends React.Component {
 				} );
 			}
 		}
-	};
+	}
 
 	loginRedirectTo = path => {
 		let redirectTo;
@@ -557,14 +528,7 @@ class Signup extends React.Component {
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
 					{ this.state.shouldShowLoadingScreen ? (
-						<SignupProcessingScreen
-							hasCartItems={ this.state.hasCartItems }
-							steps={ this.props.progress }
-							loginHandler={ this.state.loginHandler }
-							signupDependencies={ this.props.signupDependencies }
-							flowName={ this.props.flowName }
-							flowSteps={ flow.steps }
-						/>
+						<SignupProcessingScreen steps={ this.props.progress } />
 					) : (
 						<CurrentComponent
 							path={ this.props.path }
