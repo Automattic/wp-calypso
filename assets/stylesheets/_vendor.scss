@@ -5,15 +5,15 @@
 .gridicon {
 	fill: currentColor;
 
-	&.needs-offset :first-child {
+	&.needs-offset > :first-child {
 		transform: translate( 1px, 1px ); /* translates to .5px because it's in a child element */
 	}
 
-	&.needs-offset-x :first-child {
+	&.needs-offset-x > :first-child {
 		transform: translate( 1px, 0 ); /* only nudges horizontally */
 	}
 
-	&.needs-offset-y :first-child {
+	&.needs-offset-y > :first-child {
 		transform: translate( 0, 1px ); /* only nudges vertically */
 	}
 }

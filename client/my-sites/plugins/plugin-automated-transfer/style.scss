@@ -1,10 +1,10 @@
 .plugin-automated-transfer__notice {
-	.gridicons-sync :first-child {
+	.gridicons-sync > :first-child {
 		animation: spinning-sync-icon linear 2s infinite;
 		transform-origin: center;
 	}
-	.gridicons-checkmark :first-child,
-	.gridicons-notice :first-child {
+	.gridicons-checkmark > :first-child,
+	.gridicons-notice > :first-child {
 		transform: rotate( 0deg );
 	}
 }
