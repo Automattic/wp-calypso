@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -37,6 +35,11 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { isJetpackSite } from 'state/sites/selectors';
 import { isPremium } from '../../../lib/products-values';
 import { canAccessEarnSection } from '../../../lib/ads/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class AdsWrapper extends Component {
 	static propTypes = {
