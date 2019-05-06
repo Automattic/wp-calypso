@@ -663,12 +663,11 @@ export class MySitesSidebar extends Component {
 
 		const adminUrl =
 			this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip
-				? formatUrl(
-						Object.assign( parseUrl( site.options.admin_url ), {
-							query: { page: 'jetpack' },
-							hash: '/my-plan',
-						} )
-				  )
+				? formatUrl( {
+						...parseUrl( site.options.admin_url ),
+						query: { page: 'jetpack' },
+						hash: '/my-plan',
+				  } )
 				: site.options.admin_url;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
