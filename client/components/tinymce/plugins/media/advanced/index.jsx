@@ -70,8 +70,7 @@ export default function( editor ) {
 		onPostRender() {
 			this.innerHtml(
 				ReactDomServer.renderToStaticMarkup(
-					// eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
-					<button type="button" role="presentation" tabIndex="-1">
+					<button type="button" tabIndex="-1">
 						<Gridicon icon="pencil" size={ 18 } />
 					</button>
 				)
