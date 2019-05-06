@@ -183,7 +183,7 @@ export class CreditCardFormFieldsUX extends React.Component {
 						label: translate( 'Security Code {{explainerText/}} {{infoPopover/}}', {
 							components: {
 								infoPopover: this.getCvvPopover(),
-								explainerText: this.addExplainer( translate( '(or "CVC" or "CVV")' ) ),
+								explainerText: this.addExplainer( translate( '("CVC" or "CVV")' ) ),
 							},
 						} ),
 					} ) }
