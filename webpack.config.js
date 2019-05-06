@@ -247,11 +247,10 @@ const webpackConfig = {
 		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
 		alias: Object.assign(
 			{
-				'gridicons/example': 'gridicons/dist/example',
 				'react-virtualized': 'react-virtualized/dist/es',
 				debug: path.resolve( __dirname, 'node_modules/debug' ),
 				store: 'store/dist/store.modern',
-				gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
+				gridicons$: path.resolve( __dirname, 'client/components/gridicon' ),
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.join( __dirname, 'client', 'extensions' ),
