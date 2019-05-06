@@ -18,6 +18,10 @@
 	.upgrade-nudge-expanded__plan-card {
 		.plan-compare-card {
 			width: 100%;
+			
+			strong {
+				margin-right: 5px;
+			}
 		}
 
 		@include breakpoint( '>960px' ) {
