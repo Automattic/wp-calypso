@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import SidebarRegion from './region';
+import { abtest } from 'lib/abtest';
 
 export default class extends React.Component {
 	static displayName = 'Sidebar';
@@ -22,9 +23,13 @@ export default class extends React.Component {
 			el => el.type === SidebarRegion
 		);
 
+		const sidebarClass = 'right' === abtest( 'showCheckoutCartRight' ) ? '' : 'sidebar';
+
 		return (
 			<ul
-				className={ classNames( 'sidebar', this.props.className, { 'has-regions': hasRegions } ) }
+				className={ classNames( sidebarClass, this.props.className, {
+					'has-regions': hasRegions,
+				} ) }
 				onClick={ this.props.onClick }
 				data-tip-target="sidebar"
 			>

@@ -70,9 +70,12 @@ class StoreConnection extends React.Component {
 			return React.createElement( this.props.component, this.state );
 		}
 
-		const child = React.Children.only( this.props.children );
+		// const child = React.Children.only( this.props.children );
 
-		return React.cloneElement( child, this.state );
+		// return React.cloneElement( child, this.state );
+		return React.Children.map( this.props.children, child => {
+			return React.cloneElement( child, this.state );
+		} );
 	}
 }
 
