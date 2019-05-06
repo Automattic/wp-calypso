@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, orderBy } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
+import { saveAs } from 'browser-filesaver';
 
 /**
  * Internal dependencies
@@ -21,8 +22,13 @@ import QueryMembershipsEarnings from 'components/data/query-memberships-earnings
 import { requestSubscribers } from 'state/memberships/subscribers/actions';
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
+import Button from 'components/button';
 
 class MembershipsSection extends Component {
+	constructor( props ) {
+		super( props );
+		this.downloadSubscriberList = this.downloadSubscriberList.bind( this );
+	}
 	componentDidMount() {
 		this.fetchNextSubscriberPage( false, true );
 	}
@@ -77,6 +83,49 @@ class MembershipsSection extends Component {
 		}
 	}
 
+	downloadSubscriberList( event ) {
+		event.preventDefault();
+		const fileName = [ this.props.siteSlug, 'memberships', 'subscribers' ].join( '_' ) + '.csv';
+
+		const csvData = [
+			[
+				'ID',
+				'status',
+				'start_date',
+				'end_date',
+				'user_name',
+				'user_email',
+				'plan_id',
+				'plan_title',
+				'renewal_price',
+				'currency',
+				'renew_interval',
+			].join( ',' ),
+		]
+			.concat(
+				Object.values( this.props.subscribers ).map( row =>
+					[
+						row.id,
+						row.status,
+						row.start_date,
+						row.end_date,
+						row.user.name,
+						row.user.user_email,
+						row.plan.connected_account_product_id,
+						row.plan.title,
+						row.plan.renewal_price,
+						row.plan.currency,
+						row.renew_interval,
+					].join( ',' )
+				)
+			)
+			.join( '\n' );
+
+		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
+
+		saveAs( blob, fileName );
+	}
+
 	renderSubscriberList() {
 		return (
 			<Card>
@@ -96,6 +145,11 @@ class MembershipsSection extends Component {
 							this.fetchNextSubscriberPage( triggeredByInteraction, false )
 						}
 					/>
+				</div>
+				<div className="memberships__module-footer">
+					<Button onClick={ this.downloadSubscriberList }>
+						{ this.props.translate( 'Download list as CSV' ) }
+					</Button>
 				</div>
 			</Card>
 		);
