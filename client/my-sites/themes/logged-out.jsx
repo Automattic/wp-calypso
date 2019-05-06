@@ -16,7 +16,6 @@ import { connectOptions } from './theme-options';
 const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
 
 export default props => (
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	<Main className="themes">
 		<ConnectedThemeShowcase
 			{ ...props }
@@ -29,5 +28,4 @@ export default props => (
 			showUploadButton={ false }
 		/>
 	</Main>
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 );
