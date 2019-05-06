@@ -46,6 +46,9 @@ class ReaderSiteNotificationSettings extends Component {
 		selected: this.props.emailDeliveryFrequency,
 	};
 
+	iconRef = React.createRef();
+	spanRef = React.createRef();
+
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.emailDeliveryFrequency !== this.props.emailDeliveryFrequency ) {
 			this.setState( { selected: nextProps.emailDeliveryFrequency } );
@@ -59,9 +62,6 @@ class ReaderSiteNotificationSettings extends Component {
 	closePopover = () => {
 		this.setState( { showPopover: false } );
 	};
-
-	saveIconRef = ref => ( this.iconRef = ref );
-	saveSpanRef = ref => ( this.spanRef = ref );
 
 	setSelected = text => () => {
 		const { siteId } = this.props;
@@ -136,9 +136,9 @@ class ReaderSiteNotificationSettings extends Component {
 				<button
 					className="reader-site-notification-settings__button"
 					onClick={ this.togglePopoverVisibility }
-					ref={ this.saveSpanRef }
+					ref={ this.spanRef }
 				>
-					<Gridicon icon="cog" size={ 24 } ref={ this.saveIconRef } />
+					<Gridicon icon="cog" size={ 24 } ref={ this.iconRef } />
 					<span
 						className="reader-site-notification-settings__button-label"
 						title={ translate( 'Notification settings' ) }
@@ -150,8 +150,8 @@ class ReaderSiteNotificationSettings extends Component {
 				<ReaderPopover
 					onClose={ this.closePopover }
 					isVisible={ this.state.showPopover }
-					context={ this.iconRef }
-					ignoreContext={ this.spanRef }
+					context={ this.iconRef.current }
+					ignoreContext={ this.spanRef.current }
 					position={ 'bottom left' }
 					className="reader-site-notification-settings__popout"
 				>

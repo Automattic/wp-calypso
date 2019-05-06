@@ -15,7 +15,7 @@ function needsOffset( name, icons ) {
 	return icons.indexOf( name ) >= 0;
 }
 
-function Gridicon( props ) {
+const Gridicon = React.forwardRef( ( props, ref ) => {
 	const { size = 24, icon, onClick, className, ...otherProps } = props;
 	const isModulo18 = size % 18 === 0;
 
@@ -30,7 +30,6 @@ function Gridicon( props ) {
 		  ]
 		: [];
 	const iconClass = classnames( 'gridicon', iconName, className, ...offsetClasses );
-
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -39,12 +38,13 @@ function Gridicon( props ) {
 			height={ size }
 			width={ size }
 			onClick={ onClick }
+			ref={ ref }
 			{ ...otherProps }
 		>
 			<use xlinkHref={ `${ spritePath }#${ iconName }` } />
 		</svg>
 	);
-}
+} );
 
 Gridicon.propTypes = {
 	icon: PropTypes.string.isRequired,
