@@ -157,8 +157,8 @@ export class SignupProcessingScreen extends Component {
 			<div>
 				{ this.renderFloaties() }
 
-				<div className="signup-processing__content">
-					<p className="signup-process-screen__title">{ this.getTitle() }</p>
+				<div className="signup-processing-screen__content">
+					<p className="signup-processing-screen__title">{ this.getTitle() }</p>
 				</div>
 				<div className="signup-processing-screen__loader">
 					{ this.props.translate( 'Loading…' ) }
