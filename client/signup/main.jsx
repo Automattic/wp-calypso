@@ -6,7 +6,7 @@ import cookie from 'cookie';
 import debugModule from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Suspense } from 'react';
+import React from 'react';
 import {
 	assign,
 	defer,
@@ -73,7 +73,6 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 // Current directory dependencies
 import steps from './config/steps';
 import flows from './config/flows';
-import stepComponents from './config/step-components';
 import {
 	canResumeFlow,
 	getCompletedSteps,
@@ -534,18 +533,18 @@ class Signup extends React.Component {
 
 	renderCurrentStep() {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
-		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } ),
-			CurrentComponent = stepComponents[ this.props.stepName ],
-			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
-			stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName,
-			flow = flows.getFlow( this.props.flowName ),
-			hideFreePlan = !! (
-				this.state.plans ||
-				( ( isDomainRegistration( domainItem ) ||
-					isDomainTransfer( domainItem ) ||
-					isDomainMapping( domainItem ) ) &&
-					this.props.domainsWithPlansOnly )
-			);
+		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
+		const CurrentComponent = this.props.stepComponent;
+		const propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props );
+		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
+		const flow = flows.getFlow( this.props.flowName );
+		const hideFreePlan = !! (
+			this.state.plans ||
+			( ( isDomainRegistration( domainItem ) ||
+				isDomainTransfer( domainItem ) ||
+				isDomainMapping( domainItem ) ) &&
+				this.props.domainsWithPlansOnly )
+		);
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
@@ -564,26 +563,24 @@ class Signup extends React.Component {
 							flowSteps={ flow.steps }
 						/>
 					) : (
-						<Suspense fallback={ null }>
-							<CurrentComponent
-								path={ this.props.path }
-								step={ currentStepProgress }
-								initialContext={ this.props.initialContext }
-								steps={ flow.steps }
-								stepName={ this.props.stepName }
-								meta={ flow.meta || {} }
-								goToNextStep={ this.goToNextStep }
-								goToStep={ this.goToStep }
-								previousFlowName={ this.state.previousFlowName }
-								flowName={ this.props.flowName }
-								signupProgress={ this.props.progress }
-								signupDependencies={ this.props.signupDependencies }
-								stepSectionName={ this.props.stepSectionName }
-								positionInFlow={ this.getPositionInFlow() }
-								hideFreePlan={ hideFreePlan }
-								{ ...propsFromConfig }
-							/>
-						</Suspense>
+						<CurrentComponent
+							path={ this.props.path }
+							step={ currentStepProgress }
+							initialContext={ this.props.initialContext }
+							steps={ flow.steps }
+							stepName={ this.props.stepName }
+							meta={ flow.meta || {} }
+							goToNextStep={ this.goToNextStep }
+							goToStep={ this.goToStep }
+							previousFlowName={ this.state.previousFlowName }
+							flowName={ this.props.flowName }
+							signupProgress={ this.props.progress }
+							signupDependencies={ this.props.signupDependencies }
+							stepSectionName={ this.props.stepSectionName }
+							positionInFlow={ this.getPositionInFlow() }
+							hideFreePlan={ hideFreePlan }
+							{ ...propsFromConfig }
+						/>
 					) }
 				</div>
 			</div>
@@ -683,7 +680,5 @@ export default connect(
 		submitSiteVertical,
 		loadTrackingTool,
 		trackAffiliateReferral: affiliateReferral,
-	},
-	undefined,
-	{ pure: false }
+	}
 )( Signup );

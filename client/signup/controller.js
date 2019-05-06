@@ -13,6 +13,7 @@ import config from 'config';
 import { sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
 import SignupComponent from './main';
+import { getStepComponent } from './config/step-components';
 import {
 	getStepUrl,
 	canResumeFlow,
@@ -112,13 +113,16 @@ export default {
 		next();
 	},
 
-	start( context, next ) {
-		const basePath = sectionify( context.path ),
-			flowName = getFlowName( context.params ),
-			stepName = getStepName( context.params ),
-			stepSectionName = getStepSectionName( context.params );
+	async start( context, next ) {
+		const basePath = sectionify( context.path );
+		const flowName = getFlowName( context.params );
+		const stepName = getStepName( context.params );
+		const stepSectionName = getStepSectionName( context.params );
 
 		const { query } = initialContext;
+
+		// wait for the step component module to load
+		const stepComponent = await getStepComponent( stepName );
 
 		analytics.pageView.record(
 			basePath,
@@ -135,9 +139,11 @@ export default {
 			flowName: flowName,
 			queryObject: query,
 			refParameter: query && query.ref,
-			stepName: stepName,
-			stepSectionName: stepSectionName,
+			stepName,
+			stepSectionName,
+			stepComponent,
 		} );
+
 		next();
 	},
 };
