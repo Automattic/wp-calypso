@@ -78,7 +78,7 @@ const TemplateEdit = compose(
 							<PostAutocomplete postType="wp_template" onSelectPost={ onSelectPost } />
 							{ !! selectedPost && (
 								<a href={ `?post=${ selectedPost.id }&action=edit` }>
-									{ sprintf( __( 'Edit "%s"' ), get( selectedPost, 'title.rendered', '' ) ) }
+									{ sprintf( __( 'Edit "%s"' ), get( selectedPost, 'title.raw', '' ) ) }
 								</a>
 							) }
 						</div>
@@ -86,7 +86,7 @@ const TemplateEdit = compose(
 				) }
 				{ showContent && (
 					<RawHTML className="template-block__content">
-						{ get( selectedPost, 'content.rendered' ) }
+						{ get( selectedPost, 'content.raw' ) }
 					</RawHTML>
 				) }
 			</div>
