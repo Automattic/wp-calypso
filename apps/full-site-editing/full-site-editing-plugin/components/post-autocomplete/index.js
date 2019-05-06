@@ -18,7 +18,7 @@ import { addQueryArgs } from '@wordpress/url';
  */
 import './style.scss';
 
-const updateSuggestions = debounce( async ( search, setState ) => {
+const updateSuggestions = debounce( async ( search, postType, setState ) => {
 	setState( {
 		loading: true,
 		showSuggestions: true,
@@ -30,6 +30,7 @@ const updateSuggestions = debounce( async ( search, setState ) => {
 			context: 'embed',
 			per_page: 20,
 			search,
+			...( !! postType && { subtype: postType } ),
 		} ),
 	} );
 
@@ -53,12 +54,18 @@ const selectSuggestion = ( suggestion, setState ) => {
 		type: suggestion.subtype,
 	};
 };
+
+/**
+ * External props:
+ * @param {Function} onSelectPost Callback invoked when a post is selected, returning its object.
+ * @param {?string|Array} postType If set, limits the search to the given post type, or array of post types.
+ */
 const PostAutocomplete = withState( {
 	loading: false,
 	search: '',
 	showSuggestions: false,
 	suggestions: [],
-} )( ( { loading, onSelectPost, search, setState, showSuggestions, suggestions } ) => {
+} )( ( { loading, onSelectPost, postType, search, setState, showSuggestions, suggestions } ) => {
 	const onChange = inputValue => {
 		setState( { search: inputValue } );
 		if ( inputValue.length < 2 ) {
@@ -68,7 +75,7 @@ const PostAutocomplete = withState( {
 			} );
 			return;
 		}
-		updateSuggestions( inputValue, setState );
+		updateSuggestions( inputValue, postType, setState );
 	};
 
 	const onClick = suggestion => () => {

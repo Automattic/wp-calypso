@@ -75,7 +75,7 @@ const TemplateEdit = compose(
 						instructions={ __( 'Select a template part to display' ) }
 					>
 						<div className="template-block__selector">
-							<PostAutocomplete onSelectPost={ onSelectPost } />
+							<PostAutocomplete postType="wp_template" onSelectPost={ onSelectPost } />
 							{ !! selectedPost && (
 								<a href={ `?post=${ selectedPost.id }&action=edit` }>
 									{ sprintf( __( 'Edit "%s"' ), get( selectedPost, 'title.rendered', '' ) ) }

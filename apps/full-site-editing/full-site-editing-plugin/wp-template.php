@@ -84,27 +84,6 @@ class A8C_REST_Templates_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
-	 * Filters a response based on the context defined in the schema.
-	 *
-	 * @param array  $data    Response data to fiter.
-	 * @param string $context Context defined in the schema.
-	 * @return array Filtered response.
-	 */
-	public function filter_response_by_context( $data, $context ) {
-		$data = parent::filter_response_by_context( $data, $context );
-
-		/*
-		 * Remove `title.rendered` and `content.rendered` from the response. It
-		 * doesn't make sense for a reusable template to have rendered content on its
-		 * own, since rendering a template requires it to be inside a post or a page.
-		 */
-		unset( $data['title']['rendered'] );
-		unset( $data['content']['rendered'] );
-
-		return $data;
-	}
-
-	/**
 	 * Retrieves the template's schema, conforming to JSON Schema.
 	 *
 	 * @return array Item schema data.
@@ -119,14 +98,6 @@ class A8C_REST_Templates_Controller extends WP_REST_Posts_Controller {
 		 */
 		$schema['properties']['title']['properties']['raw']['context']   = array( 'view', 'edit' );
 		$schema['properties']['content']['properties']['raw']['context'] = array( 'view', 'edit' );
-
-		/*
-		 * Remove `title.rendered` and `content.rendered` from the schema. It doesn’t
-		 * make sense for a reusable template to have rendered content on its own, since
-		 * rendering a template requires it to be inside a post or a page.
-		 */
-		unset( $schema['properties']['title']['properties']['rendered'] );
-		unset( $schema['properties']['content']['properties']['rendered'] );
 
 		return $schema;
 	}
