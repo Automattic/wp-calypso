@@ -379,7 +379,8 @@ form.sidebar__button input {
 	}
 
 	.gridicon,
-	.jetpack-logo {
+	.jetpack-logo,
+	.material-icon	{
 		fill: var( --sidebar-menu-selected-a-color );
 	}
 
@@ -482,7 +483,8 @@ form.sidebar__button input {
 		}
 
 		.gridicon,
-		.jetpack-logo {
+		.jetpack-logo,
+		.material-icon	{
 			fill: var( --sidebar-menu-hover-color );
 		}
 	}
