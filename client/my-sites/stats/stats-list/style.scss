@@ -415,6 +415,7 @@ ul.module-content-list-item-actions {
 // 1: ### Showing/hiding should not be handled by CSS
 
 .module-content-list-item-actions-toggle {
+	cursor: pointer;
 	display: none;
 	min-width: 24px;
 	padding: 0 12px;
