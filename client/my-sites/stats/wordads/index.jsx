@@ -35,6 +35,7 @@ import StickyPanel from 'components/sticky-panel';
  * Style dependencies
  */
 import './style.scss';
+import 'my-sites/earn/ads/style.scss';
 
 function updateQueryString( query = {} ) {
 	return {
