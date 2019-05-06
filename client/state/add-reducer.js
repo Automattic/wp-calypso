@@ -7,6 +7,7 @@ import { APPLY_STORED_STATE } from 'state/action-types';
 import { getStateFromLocalStorage } from 'state/initial-state';
 
 const initializations = {};
+const reducers = {};
 
 function normalizeKey( key ) {
 	return Array.isArray( key ) ? key.join( '.' ) : key;
@@ -27,6 +28,12 @@ export const addReducerToStore = store => ( key, reducer ) => {
 	const normalizedKey = normalizeKey( key );
 	let init = initializations[ normalizedKey ];
 
+	if ( init && reducer !== reducers[ normalizedKey ] ) {
+		throw new Error(
+			`Different reducers on multiple calls to \`addReducerToStore\` for key: ${ normalizedKey }`
+		);
+	}
+
 	if ( ! init ) {
 		store.addReducer( key, reducer );
 
@@ -37,6 +44,7 @@ export const addReducerToStore = store => ( key, reducer ) => {
 		}
 
 		initializations[ normalizedKey ] = init;
+		reducers[ normalizedKey ] = reducer;
 	}
 
 	return init;

@@ -710,4 +710,33 @@ describe( 'loading stored state with dynamic reducers', () => {
 			},
 		} );
 	} );
+
+	test( 'throws an error when adding two different reducers to the same key', async () => {
+		// initial reducer. includes only the `currentUser` subreducer.
+		const reducer = combineReducers( {
+			currentUser: currentUserReducer,
+		} );
+
+		// load initial state and create Redux store with it
+		const state = await getInitialState( reducer );
+		const store = createReduxStore( state, reducer );
+
+		// verify that the initial Redux store loaded state only for `currentUser`
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+		} );
+
+		// load a reducer dynamically
+		const bReducer = withStorageKey( 'B', withKeyPrefix( 'B' ) );
+		const cReducer = withStorageKey( 'C', withKeyPrefix( 'C' ) );
+
+		expect( () => {
+			Promise.all( [
+				addReducerToStore( store )( 'b', bReducer ),
+				addReducerToStore( store )( 'b', cReducer ),
+			] );
+		} ).toThrow();
+	} );
 } );
