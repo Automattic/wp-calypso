@@ -11,8 +11,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isWordadsInstantActivationEligible, canUpgradeToUseWordAds } from 'lib/ads/utils';
-import { isBusiness } from 'lib/products-values';
+import { isWordadsInstantActivationEligible, 
+		canUpgradeToUseWordAds, 
+		canAccessEarnSection 
+} from 'lib/ads/utils';
+import { isPremium, isBusiness } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
 import Card from 'components/card';
@@ -33,13 +36,12 @@ import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isPremium } from 'lib/products-values';
-import { canAccessEarnSection } from 'lib/ads/utils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import 'my-sites/stats/stats-module/style.scss';
 
 class AdsWrapper extends Component {
 	static propTypes = {
