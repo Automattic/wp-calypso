@@ -33,6 +33,7 @@ import {
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import isImportDataHydrated from 'state/selectors/is-import-data-hydrated';
+import getImporterItems from 'state/selectors/get-importer-items';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
@@ -79,9 +80,8 @@ const importers = [
 	},
 ];
 
-const filterImportsForSite = ( siteID, imports ) => {
-	return filter( imports, importItem => importItem.site.ID === siteID );
-};
+const filterImportsForSite = ( siteID, imports ) =>
+	filter( imports, importItem => get( importItem, 'site.ID', null ) === siteID );
 
 const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
 const getImporterForEngine = memoize( engine =>
@@ -272,7 +272,7 @@ export default flow(
 			isHydrated: isImportDataHydrated( state ),
 			site: getSelectedSite( state ),
 			siteSlug: getSelectedSiteSlug( state ),
-			importItems: get( state, 'imports.items' ),
+			importItems: getImporterItems( state ),
 		} ),
 		{ fetchState, startImport }
 	),

@@ -22,20 +22,20 @@ import UploadingPane from './uploading-pane';
 /**
  * Module variables
  */
-const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],
-	importingStates = [
-		appStates.IMPORT_FAILURE,
-		appStates.IMPORT_SUCCESS,
-		appStates.IMPORTING,
-		appStates.MAP_AUTHORS,
-	],
-	uploadingStates = [
-		appStates.UPLOAD_PROCESSING,
-		appStates.READY_FOR_UPLOAD,
-		appStates.UPLOAD_FAILURE,
-		appStates.UPLOAD_SUCCESS,
-		appStates.UPLOADING,
-	];
+const compactStates = [ appStates.DISABLED, appStates.INACTIVE ];
+const importingStates = [
+	appStates.IMPORT_FAILURE,
+	appStates.IMPORT_SUCCESS,
+	appStates.IMPORTING,
+	appStates.MAP_AUTHORS,
+	appStates.UPLOAD_SUCCESS,
+];
+const uploadingStates = [
+	appStates.UPLOAD_PROCESSING,
+	appStates.READY_FOR_UPLOAD,
+	appStates.UPLOAD_FAILURE,
+	appStates.UPLOADING,
+];
 
 export default class extends React.PureComponent {
 	static displayName = 'FileImporter';

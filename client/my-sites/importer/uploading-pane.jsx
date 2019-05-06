@@ -9,13 +9,13 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { defer, flow, get, includes, noop, truncate } from 'lodash';
+import { flow, get, includes, noop, truncate } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { startMappingAuthors, startUpload } from 'state/imports/actions';
+import { startUpload } from 'state/imports/actions';
 import { appStates } from 'state/imports/constants';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
@@ -41,20 +41,6 @@ class UploadingPane extends React.PureComponent {
 	static defaultProps = { description: null };
 
 	fileSelectorRef = React.createRef();
-
-	componentDidUpdate( prevProps ) {
-		const { importerStatus } = this.props;
-		const { importerState, importerId } = importerStatus;
-		const { importerStatus: prevImporterStatus } = prevProps;
-
-		if (
-			( prevImporterStatus.importerState === appStates.UPLOADING ||
-				prevImporterStatus.importerState === appStates.UPLOAD_PROCESSING ) &&
-			importerState === appStates.UPLOAD_SUCCESS
-		) {
-			defer( () => startMappingAuthors( importerId ) );
-		}
-	}
 
 	getMessage = () => {
 		const { importerState } = this.props.importerStatus;
@@ -126,11 +112,6 @@ class UploadingPane extends React.PureComponent {
 		this.props.startUpload( this.props.importerStatus, file );
 	};
 
-	startMappingAuthors = () => {
-		const importerId = get( this.props, 'importerStatus.importerId' );
-		importerId && this.props.startMappingAuthors( importerId );
-	};
-
 	render() {
 		const { importerStatus, site, isEnabled } = this.props;
 		const isReadyForImport = this.isReadyForImport();
@@ -177,7 +158,7 @@ export default flow(
 			filename: get( state, 'imports.uploads.filename' ),
 			percentComplete: get( state, 'imports.uploads.percentComplete' ),
 		} ),
-		{ startMappingAuthors, startUpload }
+		{ startUpload }
 	),
 	localize
 )( UploadingPane );

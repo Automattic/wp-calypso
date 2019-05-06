@@ -203,9 +203,10 @@ class ImportingPane extends React.PureComponent {
 		return state === this.props.importerStatus.importerState;
 	};
 
-	isMapping = () => {
-		return this.isInState( appStates.MAP_AUTHORS );
-	};
+	isMapping = () =>
+		// If the upload is done, the next step is to map authors,
+		// so treat both states the same.
+		this.isInState( appStates.UPLOAD_SUCCESS ) || this.isInState( appStates.MAP_AUTHORS );
 
 	maybeLoadHotJar = () => {
 		if ( this.hjLoaded || ! this.isImporting() ) {
@@ -253,6 +254,8 @@ class ImportingPane extends React.PureComponent {
 		);
 	};
 
+	startImporting = () => this.props.startImporting( this.props.importerStatus );
+
 	render() {
 		const {
 			importerStatus,
@@ -296,7 +299,7 @@ class ImportingPane extends React.PureComponent {
 					<AuthorMappingPane
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ this.handleOnMap }
-						onStartImport={ () => this.props.startImporting( this.props.importerStatus ) }
+						onStartImport={ this.startImporting }
 						siteId={ siteId }
 						sourceType={ sourceType }
 						sourceAuthors={ customData.sourceAuthors }

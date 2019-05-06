@@ -103,12 +103,20 @@ export const startMappingAuthors = importerId => dispatch => {
 	} );
 };
 
-export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => ( {
-	type: IMPORTS_AUTHORS_SET_MAPPING,
-	importerId,
-	sourceAuthor,
-	targetAuthor,
-} );
+export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => dispatch => {
+	// Here, We lock the import session as soon as we start interacting with mapped authors
+	// We do this because the server is unaware of our mappings and will otherwise clobber them.
+	// This should be something we can avoid having to do in the future, by either holding these
+	// selections in app state (imports.mappedAuthors[ importId ][ sourceAuthor ] = targetAuthor)
+	// component state, or some other way.
+	dispatch( lockImportSession( importerId ) );
+	dispatch( {
+		type: IMPORTS_AUTHORS_SET_MAPPING,
+		importerId,
+		sourceAuthor,
+		targetAuthor,
+	} );
+};
 
 export const fetchState = siteId => dispatch => {
 	dispatch( { type: IMPORTS_FETCH } );
