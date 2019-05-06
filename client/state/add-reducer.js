@@ -22,7 +22,7 @@ async function initializeState( store, reducer, storageKey ) {
 
 // For a given store, creates a function that adds a new reducer to the store,
 // and loads (asynchronously) and applies the persisted state for it.
-export const addReducerToStore = store => async ( key, reducer ) => {
+export const addReducerToStore = store => ( key, reducer ) => {
 	const { storageKey } = reducer;
 	const normalizedKey = normalizeKey( key );
 	let init = initializations[ normalizedKey ];
@@ -39,5 +39,5 @@ export const addReducerToStore = store => async ( key, reducer ) => {
 		initializations[ normalizedKey ] = init;
 	}
 
-	await init;
+	return init;
 };
