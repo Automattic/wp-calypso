@@ -10,7 +10,7 @@ const initializations = {};
 const reducers = {};
 
 function normalizeKey( key ) {
-	return Array.isArray( key ) ? key.join( '.' ) : key;
+	return key.join( '.' );
 }
 
 async function initializeState( store, reducer, storageKey ) {
