@@ -123,7 +123,7 @@ class MeSidebar extends React.Component {
 									config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
 								}
 								label={ translate( 'My Profile' ) }
-								icon="user"
+								materialIcon="person"
 								onNavigate={ this.onNavigate }
 							/>
 
@@ -133,7 +133,7 @@ class MeSidebar extends React.Component {
 									config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
 								}
 								label={ translate( 'Account Settings' ) }
-								icon="cog"
+								materialIcon="settings"
 								onNavigate={ this.onNavigate }
 								preloadSectionName="account"
 							/>
@@ -142,7 +142,7 @@ class MeSidebar extends React.Component {
 								selected={ selected === 'purchases' }
 								link={ purchasesRoot }
 								label={ translate( 'Manage Purchases' ) }
-								icon="credit-card"
+								materialIcon="credit_card"
 								onNavigate={ this.onNavigate }
 								preloadSectionName="purchases"
 							/>
@@ -151,7 +151,7 @@ class MeSidebar extends React.Component {
 								selected={ selected === 'security' }
 								link={ '/me/security' }
 								label={ translate( 'Security' ) }
-								icon="lock"
+								materialIcon="lock"
 								onNavigate={ this.onNavigate }
 								preloadSectionName="security"
 							/>
@@ -160,7 +160,7 @@ class MeSidebar extends React.Component {
 								selected={ selected === 'privacy' }
 								link={ '/me/privacy' }
 								label={ translate( 'Privacy' ) }
-								icon="visible"
+								materialIcon="visibility"
 								onNavigate={ this.onNavigate }
 								preloadSectionName="privacy"
 							/>
@@ -173,7 +173,7 @@ class MeSidebar extends React.Component {
 										: '//wordpress.com/me/notifications'
 								}
 								label={ translate( 'Notification Settings' ) }
-								icon="bell"
+								materialIcon="notifications"
 								onNavigate={ this.onNavigate }
 								preloadSectionName="notification-settings"
 							/>
@@ -182,7 +182,7 @@ class MeSidebar extends React.Component {
 								selected={ selected === 'site-blocks' }
 								link={ '/me/site-blocks' }
 								label={ translate( 'Blocked Sites' ) }
-								icon="block"
+								materialIcon="block"
 								onNavigate={ this.onNavigate }
 								preloadSectionName="site-blocks"
 							/>

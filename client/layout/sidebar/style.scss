@@ -153,11 +153,6 @@
 		}
 	}
 
-	// Currently hiding non-gridicon SVGs while testing new nav drawer design (PR #31742)
-	svg {
-		display: none;
-	}
-
 	.gridicon,
 	.jetpack-logo {
 		display: inline;
