@@ -4,6 +4,9 @@
 	"description": "Shared Calypso build configuration files",
 	"keywords": [
 		"babel",
+		"build",
+		"bundle",
+		"compile",
 		"config",
 		"webpack",
 		"wordpress"
