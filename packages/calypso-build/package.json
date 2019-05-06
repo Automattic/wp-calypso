@@ -1,8 +1,12 @@
 {
 	"name": "@automattic/calypso-build",
-	"version": "1.0.0-rc.3",
+	"version": "1.0.0",
 	"description": "Shared Calypso build configuration files",
 	"keywords": [
+		"babel",
+		"build",
+		"bundle",
+		"compile",
 		"config",
 		"webpack",
 		"wordpress"
