@@ -626,7 +626,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const aReducer = withStorageKey( 'A', withKeyPrefix( 'A' ) );
-		await addReducerToStore( store )( 'a', aReducer );
+		await addReducerToStore( store )( [ 'a' ], aReducer );
 
 		// verify that the Redux store contains the stored state for `A` now
 		expect( store.getState() ).toEqual( {
@@ -695,8 +695,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 		// load a reducer dynamically
 		const eReducer = withStorageKey( 'E', withKeyPrefix( 'E' ) );
 		await Promise.all( [
-			addReducerToStore( store )( 'e', eReducer ),
-			addReducerToStore( store )( 'e', eReducer ),
+			addReducerToStore( store )( [ 'e' ], eReducer ),
+			addReducerToStore( store )( [ 'e' ], eReducer ),
 		] );
 
 		// verify that the Redux store contains the stored state for `E` now
@@ -734,8 +734,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		expect( () => {
 			Promise.all( [
-				addReducerToStore( store )( 'b', bReducer ),
-				addReducerToStore( store )( 'b', cReducer ),
+				addReducerToStore( store )( [ 'b' ], bReducer ),
+				addReducerToStore( store )( [ 'b' ], cReducer ),
 			] );
 		} ).toThrow();
 	} );
