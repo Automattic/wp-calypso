@@ -121,7 +121,7 @@ export class MapDomain extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		this.checkSiteIsUpgradeable( nextProps );
-		this.checkIfDomainIsTransferrable( nextProps );
+		this.checkIfDomainIsMappable( nextProps );
 	}
 
 	checkSiteIsUpgradeable( props ) {
@@ -156,9 +156,9 @@ export class MapDomain extends Component {
 		);
 	};
 
-	checkIfDomainIsTransferrable( props ) {
+	checkIfDomainIsMappable( props ) {
 		if ( props.lastDomainStatus === 'transferrable' ) {
-			//page.redirect( '/checkout' );
+			this.handleMapDomain( this.props.initialQuery );
 		}
 	}
 
