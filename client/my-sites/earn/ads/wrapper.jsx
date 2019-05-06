@@ -33,8 +33,8 @@ import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isPremium } from '../../../lib/products-values';
-import { canAccessEarnSection } from '../../../lib/ads/utils';
+import { isPremium } from 'lib/products-values';
+import { canAccessEarnSection } from 'lib/ads/utils';
 
 /**
  * Style dependencies
