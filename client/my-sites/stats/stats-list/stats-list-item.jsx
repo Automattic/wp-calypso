@@ -18,7 +18,6 @@ const debug = debugFactory( 'calypso:stats:list-item' );
 import analytics from 'lib/analytics';
 import Emojify from 'components/emojify';
 import Follow from './action-follow';
-import OpenLink from './action-link';
 import Page from './action-page';
 import Spam from './action-spam';
 import titlecase from 'to-title-case';
@@ -83,8 +82,8 @@ class StatsListItem extends React.Component {
 	};
 
 	onClick = event => {
-		let gaEvent,
-			moduleName = titlecase( this.props.moduleName );
+		let gaEvent;
+		const moduleName = titlecase( this.props.moduleName );
 
 		debug( 'props', this.props );
 		if ( ! this.state.disabled ) {
@@ -128,13 +127,13 @@ class StatsListItem extends React.Component {
 	};
 
 	buildActions = () => {
-		let data = this.props.data,
+		let actionList;
+		const data = this.props.data,
 			moduleName = titlecase( this.props.moduleName ),
 			actionMenu = data.actionMenu,
 			actionClassSet = classNames( 'module-content-list-item-actions', {
 				collapsed: actionMenu && ! this.state.disabled,
-			} ),
-			actionList;
+			} );
 
 		// If we have more than a default action build out actions ul
 		if ( data.actions ) {
@@ -167,11 +166,6 @@ class StatsListItem extends React.Component {
 							/>
 						);
 						break;
-					case 'link':
-						actionItem = (
-							<OpenLink href={ action.data } key={ action.type } moduleName={ moduleName } />
-						);
-						break;
 				}
 
 				if ( actionItem ) {
@@ -188,24 +182,20 @@ class StatsListItem extends React.Component {
 	};
 
 	buildLabel = () => {
-		let data = this.props.data,
-			labelData = data.label,
-			wrapperClassSet,
-			label;
+		const data = this.props.data;
+		let labelData = data.label;
 
 		if ( false === labelData instanceof Array ) {
 			labelData = [ data ];
 		}
 
-		wrapperClassSet = classNames( {
+		const wrapperClassSet = classNames( {
 			'module-content-list-item-label-section': labelData.length > 1,
 		} );
 
-		label = labelData.map( function( labelItem, i ) {
-			let iconClassSetOptions = { avatar: true },
-				icon,
-				gridiconSpan,
-				itemLabel;
+		const label = labelData.map( function( labelItem, i ) {
+			const iconClassSetOptions = { avatar: true };
+			let icon, gridiconSpan, itemLabel;
 
 			if ( labelItem.labelIcon ) {
 				gridiconSpan = <Gridicon icon={ labelItem.labelIcon } />;
@@ -217,7 +207,7 @@ class StatsListItem extends React.Component {
 				}
 
 				icon = (
-					<span className="icon">
+					<span className="stats-list__icon">
 						<img alt="" src={ labelItem.icon } className={ classNames( iconClassSetOptions ) } />
 					</span>
 				);
@@ -278,8 +268,8 @@ class StatsListItem extends React.Component {
 	};
 
 	buildValue = () => {
-		let data = this.props.data,
-			valueData = data.value,
+		const data = this.props.data;
+		let valueData = data.value,
 			value;
 
 		if ( 'object' !== typeof valueData || ! valueData.type ) {
@@ -303,7 +293,7 @@ class StatsListItem extends React.Component {
 	};
 
 	render() {
-		let data = this.props.data,
+		const data = this.props.data,
 			rightClassOptions = {
 				'module-content-list-item-right': true,
 			},
@@ -313,12 +303,10 @@ class StatsListItem extends React.Component {
 			},
 			actions = this.buildActions(),
 			toggleGridicon = <Gridicon icon="chevron-down" />,
-			toggleIcon = this.props.children ? toggleGridicon : null,
-			mobileActionToggle,
-			groupClassOptions,
-			groupClassName;
+			toggleIcon = this.props.children ? toggleGridicon : null;
+		let mobileActionToggle;
 
-		groupClassOptions = {
+		const groupClassOptions = {
 			'module-content-list-item': true,
 			disabled: this.state.disabled,
 			'module-content-list-item-link': this.props.children || data.link || data.page,
@@ -332,8 +320,7 @@ class StatsListItem extends React.Component {
 
 		if ( actions ) {
 			mobileActionToggle = (
-				<a
-					href="#"
+				<button
 					onClick={ this.actionMenuClick }
 					className={ classNames( toggleOptions ) }
 					title={ this.props.translate( 'Show Actions', {
@@ -341,24 +328,30 @@ class StatsListItem extends React.Component {
 					} ) }
 				>
 					<Gridicon icon="ellipsis" />
-				</a>
+				</button>
 			);
 			rightClassOptions[ 'is-expanded' ] = this.state.actionMenuOpen;
 		}
 
-		groupClassName = classNames( groupClassOptions );
+		const groupClassName = classNames( groupClassOptions );
 
 		return (
 			<li key={ this.key } data-group={ this.key } className={ groupClassName }>
-				<span className="module-content-list-item-wrapper" onClick={ this.onClick } tabIndex="0">
+				{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */ }
+				<span
+					className="stats-list__module-content-list-item-wrapper"
+					onClick={ this.onClick }
+					tabIndex="0"
+					role="button"
+				>
 					<span className={ classNames( rightClassOptions ) }>
 						{ mobileActionToggle }
 						{ actions }
-						<span className="module-content-list-item-value">
+						<span className="stats-list__module-content-list-item-value">
 							{ data.value ? this.buildValue() : null }
 						</span>
 					</span>
-					<span className="module-content-list-item-label">
+					<span className="stats-list__module-content-list-item-label">
 						{ toggleIcon }
 						{ this.buildLabel() }
 					</span>
