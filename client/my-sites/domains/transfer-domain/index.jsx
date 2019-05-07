@@ -26,6 +26,7 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
 import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
+import { domainAvailability } from 'lib/domains/constants';
 
 export class TransferDomain extends Component {
 	static propTypes = {
@@ -154,7 +155,7 @@ export class TransferDomain extends Component {
 
 		const { errorMessage } = this.state;
 
-		const forcePrecheck = this.props.lastDomainStatus === 'transferrable';
+		const forcePrecheck = this.props.lastDomainStatus === domainAvailability.TRANSFERRABLE;
 
 		return (
 			<span>
