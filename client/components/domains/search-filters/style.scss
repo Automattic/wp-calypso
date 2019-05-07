@@ -83,14 +83,14 @@
 
 .search-filters__buttons {
 	display: flex;
-	flex-flow: row wrap;
+	flex-flow: row-reverse;
 	justify-content: space-between;
 
 	.button {
 		flex: 1 0 auto;
-		margin-right: 1em;
+		margin-left: 1em;
 		&:last-child {
-			margin-right: 0;
+			margin-left: 0;
 		}
 
 		&.search-filters__button--is-placeholder {
