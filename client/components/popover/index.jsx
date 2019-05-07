@@ -209,6 +209,11 @@ class Popover extends Component {
 			return null;
 		}
 
+		if ( this.domContext ) {
+			this.debug( 'Refocusing the previous active DOM node' );
+			this.domContext.focus();
+		}
+
 		this.close( true );
 	}
 
@@ -471,11 +476,6 @@ class Popover extends Component {
 		if ( ! this.props.isVisible ) {
 			this.debug( 'popover should be already closed' );
 			return null;
-		}
-
-		if ( this.domContext ) {
-			this.debug( 'Refocusing the previous active DOM node' );
-			this.domContext.focus();
 		}
 
 		this.props.onClose( wasCanceled );
