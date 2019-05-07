@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { isEnabled } from 'config';
 import DocumentHead from 'components/data/document-head';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -97,7 +97,7 @@ class Plans extends Component {
 	redirectToCalypso() {
 		const { canPurchasePlans, selectedSiteSlug } = this.props;
 
-		if ( selectedSiteSlug && canPurchasePlans && config.isEnabled( 'jetpack/checklist' ) ) {
+		if ( selectedSiteSlug && canPurchasePlans && isEnabled( 'jetpack/checklist' ) ) {
 			return this.redirect( CALYPSO_MY_PLAN_PAGE );
 		}
 
@@ -148,7 +148,7 @@ class Plans extends Component {
 		} );
 		mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
 
-		if ( this.props.calypsoStartedConnection || config.isEnabled( 'jetpack/checklist' ) ) {
+		if ( this.props.calypsoStartedConnection || isEnabled( 'jetpack/checklist' ) ) {
 			this.redirectToCalypso();
 		} else {
 			this.redirectToWpAdmin();
