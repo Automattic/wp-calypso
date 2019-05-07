@@ -1,21 +1,22 @@
 /**
+ * External Dependencies
+ */
+import { Reducer } from 'redux';
+
+/**
  * Internal Dependencies
  */
 import { APPLY_STORED_STATE } from 'state/action-types';
 import { getStateFromLocalStorage } from 'state/initial-state';
 
 const initializations = new Map< string, Promise< void > >();
-const reducers = new Map< string, ( state: object, action: object ) => object >();
+const reducers = new Map< string, Reducer >();
 
 function normalizeKey( key: string[] ): string {
 	return key.join( '.' );
 }
 
-async function initializeState(
-	store: object,
-	storageKey: string,
-	reducer: ( state: object, action: object ) => object
-) {
+async function initializeState( store: object, storageKey: string, reducer: Reducer ) {
 	const storedState = await getStateFromLocalStorage( reducer, storageKey );
 
 	if ( storedState ) {
@@ -25,9 +26,9 @@ async function initializeState(
 
 // For a given store, creates a function that adds a new reducer to the store,
 // and loads (asynchronously) and applies the persisted state for it.
-export const addReducerToStore = ( store: object ) => (
+export const addReducerToStore = < T extends Reducer >( store: object ) => (
 	key: string[],
-	reducer: ( state: object, action: object ) => object
+	reducer: T
 ): Promise< void > => {
 	const storageKey: string = reducer.storageKey;
 	const normalizedKey = normalizeKey( key );
