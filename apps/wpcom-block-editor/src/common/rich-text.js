@@ -4,32 +4,21 @@
  * External dependencies
  */
 import { compose, ifCondition } from '@wordpress/compose';
-import { withSelect, withDispatch, select as baseSelect } from '@wordpress/data';
+import { withSelect, withDispatch, select, subscribe } from '@wordpress/data';
 import { RichTextToolbarButton } from '@wordpress/editor';
 import { toggleFormat, registerFormatType, unregisterFormatType } from '@wordpress/rich-text';
-import { get, find } from 'lodash';
+import { get } from 'lodash';
 
-// trying to wait until core registers their keyboard-only underline,
-// then unregistering it and registering our own so they don't collide
-let times = 0;
-const maxTimes = 10;
-const { getFormatTypes } = baseSelect( 'core/rich-text' );
-const interval = setInterval( () => {
-	times = times + 1;
-	if ( times > maxTimes ) {
-		clearInterval( interval );
+const unsubscribe = subscribe( () => {
+	const underlineFormat = select( 'core/rich-text' ).getFormatType( 'core/underline' );
+	if ( ! underlineFormat ) {
 		return;
 	}
-	if ( ! find( getFormatTypes(), { name: 'core/underline' } ) ) {
-		return;
-	}
-
-	unregisterFormatType( 'core/underline' );
+	unsubscribe();
+	const settings = unregisterFormatType( 'core/underline' );
 	registerFormatType( 'wpcom/underline', {
-		title: wpcomGutenberg.richTextToolbar.underline,
-		tagName: 'span',
-		className: null,
-		attributes: { style: 'style' },
+		...settings,
+		name: 'wpcom/underline',
 		edit( { isActive, value, onChange } ) {
 			const onToggle = () =>
 				onChange(
@@ -44,14 +33,14 @@ const interval = setInterval( () => {
 			return (
 				<RichTextToolbarButton
 					icon="editor-underline"
-					title={ wpcomGutenberg.richTextToolbar.underline }
+					title={ settings.title }
 					onClick={ onToggle }
 					isActive={ isActive }
 				/>
 			);
 		},
 	} );
-}, 500 );
+} );
 
 const RichTextJustifyButton = ( { blockId, isBlockJustified, updateBlockAttributes } ) => {
 	const onToggle = () =>
@@ -68,8 +57,8 @@ const RichTextJustifyButton = ( { blockId, isBlockJustified, updateBlockAttribut
 };
 
 const ConnectedRichTextJustifyButton = compose(
-	withSelect( select => {
-		const selectedBlock = select( 'core/editor' ).getSelectedBlock();
+	withSelect( wpSelect => {
+		const selectedBlock = wpSelect( 'core/editor' ).getSelectedBlock();
 		if ( ! selectedBlock ) {
 			return {};
 		}
