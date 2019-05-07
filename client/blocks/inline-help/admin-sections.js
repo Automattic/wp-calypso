@@ -31,7 +31,7 @@ const adminSections = memoize( siteSlug => [
 	{
 		title: 'Change my site address',
 		description: '',
-		link: `/domains/manage/${ siteSlug }`,
+		link: `/domains/manage/${ siteSlug }/edit/${ siteSlug }`,
 		synonyms: [ 'domain' ],
 		icon: 'domains',
 	},
@@ -53,7 +53,14 @@ const adminSections = memoize( siteSlug => [
 		title: "Change my site's theme",
 		description: '',
 		link: `/themes/${ siteSlug }`,
-		synonyms: [ 'switch' ],
+		synonyms: [ 'switch', 'design' ],
+		icon: 'customize',
+	},
+	{
+		title: "Customize my site's theme",
+		description: '',
+		link: `/customize/${ siteSlug }`,
+		synonyms: [ 'color', 'font', 'design', 'css', 'widgets' ],
 		icon: 'customize',
 	},
 	{
@@ -97,6 +104,13 @@ const adminSections = memoize( siteSlug => [
 		link: `/earn/${ siteSlug }`,
 		synonyms: [ 'monetize', 'wordads', 'premium' ],
 		icon: 'money',
+	},
+	{
+		title: 'Learn how to market my site',
+		description: '',
+		link: `/marketing/tools/${ siteSlug }`,
+		synonyms: [ 'marketing', 'brand', 'logo', 'seo', 'tools', 'traffic' ],
+		icon: 'speaker',
 	},
 	{
 		title: "Manage my site's users",
