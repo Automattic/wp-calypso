@@ -17,12 +17,18 @@ import tinymce from 'tinymce/tinymce';
  */
 import { inIframe, sendMessage } from './utils';
 
+
+/**
+ * Types
+ */
+import { EditorActions, MediaModalData, PortToCalypso, PreviewChannel, WindowActions } from 'gutenberg/editor/types';
+
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
  *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ * @param calypsoPort Port used for communication with parent frame.
  */
-function transmitDraftId( calypsoPort ) {
+function transmitDraftId( calypsoPort: PortToCalypso ) {
 	// Bail if we are not writing a new post.
 	if ( ! /wp-admin\/post-new.php/.test( location.href ) ) {
 		return;
@@ -33,7 +39,7 @@ function transmitDraftId( calypsoPort ) {
 
 		if ( currentPost && currentPost.id && currentPost.status !== 'auto-draft' ) {
 			calypsoPort.postMessage( {
-				action: 'draftIdSet',
+				action: EditorActions.SetDraftId,
 				payload: { postId: currentPost.id },
 			} );
 
@@ -45,27 +51,27 @@ function transmitDraftId( calypsoPort ) {
 /**
  * Sends a message to the parent frame when the "Move to trash" button is clicked.
  *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ * @param calypsoPort Port used for communication with parent frame.
  */
-function handlePostTrash( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.editor-post-trash', e => {
+function handlePostTrash( calypsoPort: PortToCalypso ) {
+	$( '#editor' ).on( 'click', '.editor-post-trash', ( e: Event ) => {
 		e.preventDefault();
 
-		calypsoPort.postMessage( { action: 'trashPost' } );
+		calypsoPort.postMessage( { action: EditorActions.TrashPost } );
 	} );
 }
 
-function overrideRevisions( calypsoPort ) {
-	$( '#editor' ).on( 'click', '[href*="revision.php"]', e => {
+function overrideRevisions( calypsoPort: PortToCalypso ) {
+	$( '#editor' ).on( 'click', '[href*="revision.php"]', ( e: Event ) => {
 		e.preventDefault();
 
-		calypsoPort.postMessage( { action: 'openRevisions' } );
+		calypsoPort.postMessage( { action: EditorActions.OpenRevisions } );
 
 		calypsoPort.addEventListener( 'message', onLoadRevision, false );
 		calypsoPort.start();
 	} );
 
-	function onLoadRevision( message ) {
+	function onLoadRevision( message: MessageEvent ) {
 		const action = get( message, 'data.action', '' );
 		const payload = get( message, 'data.payload', null );
 
@@ -83,13 +89,13 @@ function overrideRevisions( calypsoPort ) {
 /**
  * Adds support for Press This/Reblog.
  *
- * @param {MessagePort} calypsoPort port used for communication with parent frame.
+ * @param calypsoPort port used for communication with parent frame.
  */
-function handlePressThis( calypsoPort ) {
+function handlePressThis( calypsoPort: PortToCalypso ) {
 	calypsoPort.addEventListener( 'message', onPressThis, false );
 	calypsoPort.start();
 
-	function onPressThis( message ) {
+	function onPressThis( message: MessageEvent ) {
 		const action = get( message, 'data.action' );
 		const payload = get( message, 'data.payload' );
 		if ( action !== 'pressThis' || ! payload ) {
@@ -153,9 +159,9 @@ function handlePressThis( calypsoPort ) {
  * actions, addind an event handler for the All Posts button, and changing the
  * Take Over Url to work inside the iframe.
  *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ * @param calypsoPort Port used for communication with parent frame.
  */
-function handlePostLocked( calypsoPort ) {
+function handlePostLocked( calypsoPort: PortToCalypso ) {
 	const unsubscribe = subscribe( () => {
 		const isLocked = select( 'core/editor' ).isPostLocked();
 		const isLockTakeover = select( 'core/editor' ).isPostLockTakeover();
@@ -171,7 +177,7 @@ function handlePostLocked( calypsoPort ) {
 				'click',
 				event => {
 					event.preventDefault();
-					calypsoPort.postMessage( { action: 'goToAllPosts' } );
+					calypsoPort.postMessage( { action: EditorActions.GoToAllPosts } );
 				},
 				false
 			);
@@ -200,9 +206,9 @@ function handlePostLocked( calypsoPort ) {
  * Listens for post lock status changing to locked, and for the post to have been taken over
  * by another user, adding an event handler for the All Posts button.
  *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ * @param calypsoPort Port used for communication with parent frame.
  */
-function handlePostLockTakeover( calypsoPort ) {
+function handlePostLockTakeover( calypsoPort: PortToCalypso ) {
 	const unsubscribe = subscribe( () => {
 		const isLocked = select( 'core/editor' ).isPostLocked();
 		const isLockTakeover = select( 'core/editor' ).isPostLockTakeover();
@@ -210,13 +216,13 @@ function handlePostLockTakeover( calypsoPort ) {
 
 		const isPostTakeoverDialog = isLocked && isLockTakeover && allPostsButton;
 
-		if ( isPostTakeoverDialog ) {
+		if ( isPostTakeoverDialog && allPostsButton ) {
 			//handle All Posts button click event
 			allPostsButton.addEventListener(
 				'click',
-				event => {
+				( event: Event ) => {
 					event.preventDefault();
-					calypsoPort.postMessage( { action: 'goToAllPosts' } );
+					calypsoPort.postMessage( { action: EditorActions.GoToAllPosts } );
 				},
 				false
 			);
@@ -236,9 +242,9 @@ function handlePostLockTakeover( calypsoPort ) {
  * Listens for image changes or removals happening in the Media Modal,
  * and updates accordingly all blocks containing them.
  *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ * @param calypsoPort Port used for communication with parent frame.
  */
-function handleUpdateImageBlocks( calypsoPort ) {
+function handleUpdateImageBlocks( calypsoPort: PortToCalypso ) {
 	calypsoPort.addEventListener( 'message', onUpdateImageBlocks, false );
 	calypsoPort.start();
 
@@ -377,19 +383,19 @@ function handleUpdateImageBlocks( calypsoPort ) {
  * Prevents the default preview flow and sends a message to the parent frame
  * so we preview a post from there.
  *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ * @param calypsoPort Port used for communication with parent frame.
  */
-function handlePreview( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.editor-post-preview', e => {
+function handlePreview( calypsoPort: PortToCalypso ) {
+	$( '#editor' ).on( 'click', '.editor-post-preview', ( e: JQueryMouseEventObject ) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const postUrl = select( 'core/editor' ).getCurrentPostAttribute( 'link' );
-		const previewChannel = new MessageChannel();
+		const previewChannel: PreviewChannel = new MessageChannel();
 
 		calypsoPort.postMessage(
 			{
-				action: 'previewPost',
+				action: EditorActions.PreviewPost,
 				payload: {
 					postUrl: postUrl,
 				},
@@ -454,13 +460,13 @@ function handlePreview( calypsoPort ) {
  * Listens for insert media events happening in a Media Modal opened in a Classic Block,
  * and inserts the media into the appropriate block.
  *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ * @param calypsoPort Port used for communication with parent frame.
  */
-function handleInsertClassicBlockMedia( calypsoPort ) {
+function handleInsertClassicBlockMedia( calypsoPort: PortToCalypso ) {
 	calypsoPort.addEventListener( 'message', onInsertClassicBlockMedia, false );
 	calypsoPort.start();
 
-	function onInsertClassicBlockMedia( message ) {
+	function onInsertClassicBlockMedia( message: MessageEvent ) {
 		const action = get( message, 'data.action' );
 		if ( action !== 'insertClassicBlockMedia' ) {
 			return;
@@ -475,13 +481,13 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
  * Prevents the default closing flow and sends a message to the parent frame to
  * perform the navigation on the client side.
  *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ * @param calypsoPort Port used for communication with parent frame.
  */
-function handleGoToAllPosts( calypsoPort ) {
+function handleGoToAllPosts( calypsoPort: PortToCalypso ) {
 	$( '#editor' ).on( 'click', '.edit-post-fullscreen-mode-close__toolbar a', e => {
 		e.preventDefault();
 		calypsoPort.postMessage( {
-			action: 'goToAllPosts',
+			action: EditorActions.GoToAllPosts,
 			payload: {
 				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
 			},
@@ -498,7 +504,7 @@ function openLinksInParentFrame() {
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 	].join( ',' );
-	$( '#editor' ).on( 'click', viewPostLinkSelectors, e => {
+	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e: JQueryMouseEventObject ) => {
 		e.preventDefault();
 		window.open( e.target.href, '_top' );
 	} );
@@ -515,20 +521,20 @@ function openLinksInParentFrame() {
 	}
 }
 
-function initPort( message ) {
+function initPort( message: MessageEvent ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
 	}
 
-	const calypsoPort = message.ports[ 0 ];
+	const calypsoPort: PortToCalypso = message.ports[ 0 ];
 
-	class MediaUpload extends Component {
+	class MediaUpload extends Component<MediaModalData & {onSelect: Function, render: Function}> {
 		openModal = () => {
 			const mediaChannel = new MessageChannel();
 
 			calypsoPort.postMessage(
 				{
-					action: 'openMediaModal',
+					action: EditorActions.OpenMediaModal,
 					payload: {
 						allowedTypes: this.props.allowedTypes,
 						gallery: this.props.gallery,
@@ -539,7 +545,7 @@ function initPort( message ) {
 				[ mediaChannel.port2 ]
 			);
 
-			mediaChannel.port1.onmessage = ( { data } ) => {
+			mediaChannel.port1.onmessage = ( { data }: MessageEvent ) => {
 				this.props.onSelect( data );
 
 				// this is a once-only port
@@ -597,5 +603,5 @@ $( () => {
 	window.addEventListener( 'message', initPort, false );
 
 	//signal module loaded
-	sendMessage( { action: 'loaded' } );
+	sendMessage( { action: WindowActions.Loaded } );
 } );

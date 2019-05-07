@@ -45,6 +45,8 @@
 		"@babel/polyfill": "7.4.4",
 		"@babel/preset-env": "7.4.4",
 		"@babel/runtime": "7.4.4",
+		"@types/jquery": "3.3.29",
+		"@types/tinymce": "4.5.20",
 		"@wordpress/blocks": "6.0.7",
 		"@wordpress/browserslist-config": "2.3.0",
 		"@wordpress/components": "7.0.8",

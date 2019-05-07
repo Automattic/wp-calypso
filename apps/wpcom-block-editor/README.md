@@ -10,11 +10,11 @@ There are two environments the block editor integration supports:
 
 - **WP Admin block editor**. The block editor loaded by the WP Admin interface on `https://<SITE_SLUG>/wp-admin/post-new.php`.
 - **Calypso block editor**. This is the block editor loaded by Calypso on `https://wordpress.com/block-editor/post/<SITE_SLUG>`. It is actually the WP Admin block editor embed on an iframe. We also refer to this implementation as _Gutenframe_.
- 
+
 ## File architecture
 
 - `/common`: Logic than runs on both environments (WP Admin and Calypso).
-- `/calypso`: Logic than runs only on the Calypso iframed block editor.  
+- `/calypso`: Logic than runs only on the Calypso iframed block editor.
 
 ### Common utilities
 
@@ -23,7 +23,7 @@ There are two environments the block editor integration supports:
 
 ### Calypso utilities
 
-- `iframe-bridge-server.js`: Server-side handlers of the different communication channels we establish with the client-side when Calypso loads the iframed block editor. See [`calypsoify-iframe.jsx`](https://github.com/Automattic/wp-calypso/blob/master/client/gutenberg/editor/calypsoify-iframe.jsx).
+- `iframe-bridge-server.ts`: Server-side handlers of the different communication channels we establish with the client-side when Calypso loads the iframed block editor. See [`calypsoify-iframe.jsx`](https://github.com/Automattic/wp-calypso/blob/master/client/gutenberg/editor/calypsoify-iframe.jsx).
 - `tinymce.js`: Tiny MCE plugin that overrides the core media modal used on classic blocks with the Calypso media modal.
 
 ## Build

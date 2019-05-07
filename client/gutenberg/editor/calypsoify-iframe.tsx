@@ -43,6 +43,7 @@ import { protectForm, ProtectedFormProps } from 'lib/protect-form';
  * Types
  */
 import * as T from 'types';
+import { EditorActions, PreviewPort, WindowActions } from './types';
 
 /**
  * Style dependencies
@@ -68,20 +69,6 @@ interface State {
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
-}
-
-enum WindowActions {
-	Loaded = 'loaded',
-	ClassicBlockOpenMediaModel = 'classicBlockOpenMediaModal',
-}
-
-enum EditorActions {
-	GoToAllPosts = 'goToAllPosts',
-	OpenMediaModal = 'openMediaModal',
-	OpenRevisions = 'openRevisions',
-	PreviewPost = 'previewPost',
-	SetDraftId = 'draftIdSet',
-	TrashPost = 'trashPost',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -225,7 +212,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.PreviewPost === action ) {
 			const { postUrl } = payload;
-			this.openPreviewModal( postUrl, ports[ 0 ] );
+			this.openPreviewModal( postUrl, ports[ 0 ] as PreviewPort );
 		}
 	};
 
@@ -325,7 +312,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};
 
-	openPreviewModal = ( postUrl: string, previewPort: MessagePort ) => {
+	openPreviewModal = ( postUrl: string, previewPort: PreviewPort ) => {
 		this.setState( {
 			isPreviewVisible: true,
 			previewUrl: 'about:blank',

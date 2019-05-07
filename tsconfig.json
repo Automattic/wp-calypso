@@ -17,12 +17,12 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"module": "es2015",
-		"baseUrl": ".",
+		"baseUrl": "./",
 		"paths": {
-			"*": [ "*", "client/*", "server/*" ]
+			"*": [ "*", "client/*", "server/*", "../client/*" ]
 		}
 	},
-	"include": [ "client", "server" ],
+	"include": [ "client", "server", "apps" ],
 	"exclude": [
 		"public",
 		"node_modules",

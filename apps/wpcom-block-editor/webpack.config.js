@@ -40,7 +40,7 @@ function getWebpackConfig(
 				__dirname,
 				'src',
 				'calypso',
-				'iframe-bridge-server.js'
+				'iframe-bridge-server.ts'
 			),
 			'calypso-tinymce': path.join( __dirname, 'src', 'calypso', 'tinymce.js' ),
 		},
