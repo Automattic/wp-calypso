@@ -138,7 +138,7 @@
 		"moment": "2.24.0",
 		"moment-timezone": "0.5.25",
 		"morgan": "1.9.1",
-		"node-sass": "4.11.0",
+		"node-sass": "4.12.0",
 		"node-sass-package-importer": "5.3.1",
 		"npm-run-all": "4.1.5",
 		"objectpath": "1.2.2",
