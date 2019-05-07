@@ -172,11 +172,11 @@ class JetpackSyncPanel extends React.Component {
 					{ translate(
 						'Jetpack Sync keeps your WordPress.com dashboard up to date. ' +
 							'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience.'
-					) }
+					) + ' ' }
 
 					{ ! this.shouldDisableSync() &&
 						translate(
-							' If you suspect some data is missing, you can {{link}}initiate a sync manually{{/link}}.',
+							'If you suspect some data is missing, you can {{link}}initiate a sync manually{{/link}}.',
 							{
 								components: {
 									link: <a href="" onClick={ this.onSyncRequestButtonClick } />,
