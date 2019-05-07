@@ -84,7 +84,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 						planSlug={ PLAN_BUSINESS }
 					/>
 				) : (
-					<Button onClick={ handleGoToGoogleMyBusinessClick }>
+					<Button compact onClick={ handleGoToGoogleMyBusinessClick }>
 						{ translate( 'Go To Google My Business' ) }
 					</Button>
 				) }

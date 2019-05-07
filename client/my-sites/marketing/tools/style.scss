@@ -45,7 +45,12 @@
 
 	@include breakpoint( '>1040px' ) {
 		display: flex;
-		min-width: 300px;
+		min-width: 400px;
+	}
+
+	.tools__header-image {
+		position: relative;
+			left: -20px;
 	}
 }
 
@@ -75,8 +80,8 @@
 }
 
 .tools__feature-list-item-body {
-	display: flex;
-	// grow this, leave buttons on the bottom of the card
+	align-items: flex-start;
+	display: flex; // grow this, leave buttons on the bottom of the card
 	flex: 1 0 auto;
 }
 

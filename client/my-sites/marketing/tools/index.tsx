@@ -73,7 +73,9 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					) }
 					imagePath="/calypso/images/illustrations/marketing.svg"
 				>
-					<Button onClick={ handleStartSharingClick }>{ translate( 'Start Sharing' ) }</Button>
+					<Button compact onClick={ handleStartSharingClick }>
+						{ translate( 'Start Sharing' ) }
+					</Button>
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
@@ -84,6 +86,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					imagePath="/calypso/images/illustrations/expert.svg"
 				>
 					<Button
+						compact
 						onClick={ handleFindYourExpertClick }
 						href={ '/experts/upwork?source=marketingtools' }
 						target="_blank"
@@ -100,6 +103,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					imagePath="/calypso/images/illustrations/branding.svg"
 				>
 					<Button
+						compact
 						onClick={ handleCreateALogoClick }
 						href={ 'http://logojoy.grsm.io/looka' }
 						target="_blank"
