@@ -39,15 +39,14 @@ class A8C_WP_Template_Id_Meta_Box {
 
 	function render_wp_template_id_meta_box( $post ) {
 		wp_nonce_field( basename( __FILE__ ), 'wp_template_id_nonce' );
-		$meta = get_post_meta( $post->ID );
-		$template_id = isset( $meta['wp_template_id'] ) ? $meta['wp_template_id'] : null;
+		$template_id = get_post_meta( $post->ID, 'wp_template_id', true );
 		$posts = get_posts( array(
 			'posts_per_page' => -1,
 			'post_type' => 'wp_template',
 		) );
 		?>
 			<p>
-				<label for="wp_template_id"><?php _e( 'Select a template' ) ?></label>
+				<label for="wp_template_id"><?php _e( 'Select a template' ); ?></label>
 				<select id="wp_template_id" name="wp_template_id">
 					<option value=""></option>
 					<?php foreach( $posts as $post ) { ?>
