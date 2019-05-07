@@ -97,7 +97,7 @@ class DomainProductPrice extends React.Component {
 		const { price, salePrice, translate } = this.props;
 
 		return (
-			<div className={ classnames( 'domain-product-price', 'is-free-domain' ) }>
+			<div className="domain-product-price is-free-domain">
 				<div className="domain-product-price__sale-price">{ salePrice }</div>
 				<div className="domain-product-price__renewal-price">
 					{ translate( 'Renews at: %(cost)s {{small}}/year{{/small}}', {
@@ -115,7 +115,7 @@ class DomainProductPrice extends React.Component {
 		}
 
 		return (
-			<div className={ classnames( 'domain-product-price' ) }>
+			<div className="domain-product-price">
 				<span className="domain-product-price__price">
 					{ this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
 						args: { cost: this.props.price },

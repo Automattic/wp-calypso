@@ -66,7 +66,6 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 		}
 	}
 	return (
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<Main className="themes">
 			<SidebarNavigation />
 			<CurrentTheme siteId={ siteId } />
@@ -83,7 +82,6 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 				<ThanksModal source={ 'list' } />
 			</ThemeShowcase>
 		</Main>
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
 } );
 
