@@ -70,6 +70,7 @@ The site's timezone value, in the format of 'America/Araguaina (see https://en.w
 * `ignoreContext`
 * `isVisible`
 * `position`
+* `rootClassName`
 * `showDelay`
 * `onClose`
 * `onShow`
@@ -81,3 +82,4 @@ The site's timezone value, in the format of 'America/Araguaina (see https://en.w
  * `siteId`
  * `onDateChange`
  * `onMonthChange`
+

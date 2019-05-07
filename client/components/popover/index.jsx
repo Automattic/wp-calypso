@@ -52,6 +52,7 @@ class Popover extends Component {
 			'left',
 			'top left',
 		] ),
+		rootClassName: PropTypes.string,
 		showDelay: PropTypes.number,
 		onClose: PropTypes.func,
 		onShow: PropTypes.func,
@@ -477,7 +478,7 @@ class Popover extends Component {
 		this.debug( 'rendering ...' );
 
 		return (
-			<RootChild>
+			<RootChild className={ this.props.rootClassName }>
 				<div style={ this.getStylePosition() } className={ classes }>
 					<div className="popover__arrow" />
 
