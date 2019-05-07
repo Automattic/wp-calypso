@@ -40,6 +40,7 @@ class Popover extends Component {
 		closeOnEsc: PropTypes.bool,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
+		isFocusOnShow: PropTypes.bool,
 		isRtl: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		position: PropTypes.oneOf( [
@@ -70,6 +71,7 @@ class Popover extends Component {
 		autoRtl: true,
 		className: '',
 		closeOnEsc: true,
+		isFocusOnShow: false,
 		isRtl: false,
 		isVisible: false,
 		position: 'top',
@@ -271,6 +273,15 @@ class Popover extends Component {
 		this.willReposition = window.requestAnimationFrame( this.setPosition );
 	}
 
+	focusPopover() {
+		if ( ! this.props.isFocusOnShow || ! this.popoverNode ) {
+			return null;
+		}
+
+		this.debug( 'focusing the Popover' );
+		this.popoverNode.focus();
+	}
+
 	setDOMBehavior( domContainer ) {
 		if ( ! domContainer ) {
 			this.unbindClickoutHandler();
@@ -283,11 +294,14 @@ class Popover extends Component {
 
 		// store DOM element referencies
 		this.domContainer = domContainer;
+		this.popoverNode = document.getElementById( this.id );
 
 		// store context (target) reference into a property
 		this.domContext = ReactDom.findDOMNode( this.props.context );
 
 		this.setPosition();
+
+		this.focusPopover();
 	}
 
 	getPositionClass( position = this.props.position ) {
@@ -459,6 +473,11 @@ class Popover extends Component {
 			return null;
 		}
 
+		if ( this.domContext ) {
+			this.debug( 'Refocusing the previous active DOM node' );
+			this.domContext.focus();
+		}
+
 		this.props.onClose( wasCanceled );
 	}
 
@@ -478,10 +497,15 @@ class Popover extends Component {
 		this.debug( 'rendering ...' );
 
 		return (
-			<RootChild className={ this.props.rootClassName }>
+			<RootChild
+				aria-label={ this.props[ 'aria-label' ] }
+				className={ this.props.rootClassName }
+				id={ this.id }
+				role="tooltip"
+				tabIndex={ this.props.isFocusOnShow ? 0 : null }
+			>
 				<div style={ this.getStylePosition() } className={ classes }>
 					<div className="popover__arrow" />
-
 					<div ref={ this.setDOMBehavior } className="popover__inner">
 						{ this.props.children }
 					</div>

@@ -36,10 +36,14 @@ export class DropdownFilters extends Component {
 			maxCharacters: PropTypes.string,
 			exactSldMatchesOnly: PropTypes.bool,
 		} ).isRequired,
-
+		popoverId: PropTypes.string,
 		onChange: PropTypes.func.isRequired,
 		onReset: PropTypes.func.isRequired,
 		onSubmit: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		popoverId: 'search-filters-dropdown-filters',
 	};
 
 	state = {
@@ -144,7 +148,14 @@ export class DropdownFilters extends Component {
 					'search-filters__dropdown-filters--is-open': this.state.showPopover,
 				} ) }
 			>
-				<Button borderless ref={ this.button } onClick={ this.togglePopover }>
+				<Button
+					aria-describedby={ this.props.popoverId }
+					aria-expanded={ this.state.showPopover }
+					aria-haspopup="true"
+					borderless
+					ref={ this.button }
+					onClick={ this.togglePopover }
+				>
 					<Gridicon icon="cog" size={ 12 } />
 					<span className="search-filters__dropdown-filters-button-text">
 						{ this.props.translate( 'Filters' ) }
@@ -159,6 +170,7 @@ export class DropdownFilters extends Component {
 	renderPopover() {
 		const {
 			filters: { includeDashes, maxCharacters, exactSldMatchesOnly },
+			popoverId,
 			translate,
 		} = this.props;
 
@@ -168,9 +180,12 @@ export class DropdownFilters extends Component {
 
 		return (
 			<Popover
+				aria-label="Domain Search Filters"
 				autoPosition={ false }
 				className="search-filters__popover"
 				context={ this.button.current }
+				id={ popoverId }
+				isFocusOnShow
 				isVisible={ this.state.showPopover }
 				onClose={ this.handleFiltersSubmit }
 				position="bottom left"

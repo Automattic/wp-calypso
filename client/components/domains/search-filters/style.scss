@@ -1,8 +1,7 @@
-
 .search-filters__dropdown-filters {
 	align-items: center;
 	border-left: 1px solid var( --color-neutral-100 );
-	height: 51px;// same as .search
+	height: 51px; // same as .search
 	z-index: z-index( 'root', '.search' );
 
 	// Move the filter so its "inside" the
@@ -15,6 +14,9 @@
 
 	.button {
 		align-items: center;
+		border-radius: 3px;
+		border-bottom-left-radius: 0;
+		border-top-left-radius: 0;
 		display: flex;
 		flex-direction: column;
 		font-weight: normal;
@@ -23,6 +25,14 @@
 		padding: 0 1em;
 		transition: 0.1s all linear;
 		width: 100%;
+
+		&.is-borderless {
+			&:hover,
+			&:focus {
+				border-color: transparent;
+				box-shadow: 0 0 0 3px var( --color-accent-light ), -1px 0 0 3px var( --color-accent-light );
+			}
+		}
 
 		.gridicon {
 			top: 0;
