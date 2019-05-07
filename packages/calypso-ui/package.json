@@ -26,6 +26,13 @@
 		"dist",
 		"src"
 	],
+	"dependencies": {
+		"react": "^16.8.3",
+		"react-dom": "^16.8.3",
+		"react-redux": "^5.1.1",
+		"prop-types": "^15.7.2",
+		"lodash": "^4.17.11"
+	},
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
