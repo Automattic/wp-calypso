@@ -55,7 +55,6 @@
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/connection-rebranding": true,
-		"jetpack/gutenframe": true,
 		"jetpack/happychat": true,
 		"jetpack/onboarding": true,
 		"jetpack_core_inline_update": true,
