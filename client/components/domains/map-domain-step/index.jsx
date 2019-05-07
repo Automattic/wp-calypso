@@ -31,6 +31,11 @@ import {
 } from 'state/domains/actions';
 import Notice from 'components/notice';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class MapDomainStep extends React.Component {
 	static propTypes = {
 		products: PropTypes.object,
