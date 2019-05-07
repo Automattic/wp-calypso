@@ -435,7 +435,11 @@ export class EditorMediaModal extends Component {
 
 	onSourceChange = source => {
 		MediaActions.sourceChanged( this.props.site.ID );
-		this.setState( { source, search: undefined } );
+		this.setState( {
+			source,
+			search: undefined,
+			filter: '',
+		} );
 	};
 
 	onClose = () => {
