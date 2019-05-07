@@ -512,6 +512,29 @@ export function createAccount(
 
 				// Fire after a new user registers.
 				analytics.recordRegistration();
+				/**
+				 * Auto login the user when it has been created.
+				 */
+				user.clear();
+				user.fetching = false;
+
+				user.on( 'change', () => {
+					const newLoggedUser = user.get();
+
+					if ( newLoggedUser && newLoggedUser.ID ) {
+						analytics.identifyUser( newLoggedUser.ID, newLoggedUser.username );
+					} else {
+						/**
+						 * The user fetching is a bit fragile and sometimes it requires to do a double-fetch.
+						 */
+						user.clear();
+						user.fetching = false;
+						user.fetch();
+					}
+				} );
+
+				// Force fetch the user details
+				user.fetch();
 
 				const username =
 					( response && response.signup_sandbox_username ) ||
