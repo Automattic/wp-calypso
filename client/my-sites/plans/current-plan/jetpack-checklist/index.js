@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,7 @@ import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import getRewindState from 'state/selectors/get-rewind-state';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import JetpackChecklistFooter from './footer';
 import JetpackChecklistHeader from './header';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -148,6 +147,8 @@ class JetpackChecklist extends PureComponent {
 						);
 					} ) }
 				</Checklist>
+
+				<JetpackChecklistFooter />
 			</Fragment>
 		);
 	}
