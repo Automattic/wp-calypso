@@ -654,6 +654,9 @@ workflows:
       - test-server:
           requires:
             - setup
+      - typecheck:
+          requires:
+            - setup
       - wait-calypso-live:
           requires:
             - test-client
