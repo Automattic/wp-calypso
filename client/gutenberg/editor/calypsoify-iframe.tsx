@@ -40,16 +40,21 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 
 /**
+ * Types
+ */
+import * as T from 'types';
+
+/**
  * Style dependencies
  */
 import './style.scss';
 
 interface Props {
-	duplicatePostId: number;
-	postId: number;
-	postType: string;
+	duplicatePostId: T.PostId;
+	postId: T.PostId;
+	postType: T.PostType;
 	pressThis: any;
-	siteAdminUrl: string | null;
+	siteAdminUrl: T.URL | null;
 }
 
 interface State {
@@ -61,8 +66,8 @@ interface State {
 	isMediaModalVisible: boolean;
 	isPreviewVisible: boolean;
 	multiple?: any;
-	postUrl?: string;
-	previewUrl: string;
+	postUrl?: T.URL;
+	previewUrl: T.URL;
 }
 
 enum WindowActions {

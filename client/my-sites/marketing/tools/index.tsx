@@ -19,13 +19,18 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 /**
+ * Types
+ */
+import * as T from 'types';
+
+/**
  * Style dependencies
  */
 import './style.scss';
 
 interface Props {
-	recordTracksEvent: () => void;
-	selectedSiteSlug: string | null;
+	recordTracksEvent: typeof recordTracksEventAction;
+	selectedSiteSlug: T.SiteSlug | null;
 }
 
 export const MarketingTools: FunctionComponent< Props > = ( {
@@ -78,7 +83,11 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					) }
 					imagePath="/calypso/images/illustrations/expert.svg"
 				>
-					<Button onClick={ handleFindYourExpertClick } href={ '/experts/upwork?source=marketingtools' } target="_blank">
+					<Button
+						onClick={ handleFindYourExpertClick }
+						href={ '/experts/upwork?source=marketingtools' }
+						target="_blank"
+					>
 						{ translate( 'Find Your Expert' ) }
 					</Button>
 				</MarketingToolsFeature>
@@ -90,7 +99,11 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					) }
 					imagePath="/calypso/images/illustrations/branding.svg"
 				>
-					<Button onClick={ handleCreateALogoClick } href={ 'http://logojoy.grsm.io/looka' } target="_blank">
+					<Button
+						onClick={ handleCreateALogoClick }
+						href={ 'http://logojoy.grsm.io/looka' }
+						target="_blank"
+					>
 						{ translate( 'Create A Logo' ) }
 					</Button>
 				</MarketingToolsFeature>
