@@ -135,8 +135,8 @@ references:
   # between CI and local
   update-chrome-for-e2e: &update-chrome-for-e2e
     name: Update Chrome to latest stable
-    command: sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&
-      dpkg -i google-chrome-stable_current_amd64.deb
+    command: wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&
+      sudo dpkg -i google-chrome-stable_current_amd64.deb
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
