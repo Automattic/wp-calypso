@@ -119,6 +119,7 @@ class JetpackChecklist extends PureComponent {
 							href={ JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ) }
 							inProgress={ ! akismetFinished }
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_spam_filtering' } ) }
+							target="_blank"
 						/>
 					) }
 					{ map( taskStatuses, ( status, taskId ) => {
