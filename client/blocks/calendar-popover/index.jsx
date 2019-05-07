@@ -35,6 +35,7 @@ class CalendarPopover extends Component {
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isVisible: PropTypes.bool,
 		position: PropTypes.string,
+		rootClassName: PropTypes.string,
 		showDelay: PropTypes.number,
 		onClose: PropTypes.func,
 		onShow: PropTypes.func,
@@ -99,17 +100,21 @@ class CalendarPopover extends Component {
 	}
 
 	render() {
-		const popoverProps = pick( this.props, [
-			'autoPosition',
-			'closeOnEsc',
-			'context',
-			'ignoreContext',
-			'isVisible',
-			'position',
-			'showDelay',
-			'onClose',
-			'onShow',
-		] );
+		const popoverProps = Object.assign(
+			{},
+			pick( this.props, [
+				'autoPosition',
+				'closeOnEsc',
+				'context',
+				'ignoreContext',
+				'isVisible',
+				'position',
+				'rootClassName',
+				'showDelay',
+				'onClose',
+				'onShow',
+			] )
+		);
 
 		return (
 			<div className="calendar-popover">
