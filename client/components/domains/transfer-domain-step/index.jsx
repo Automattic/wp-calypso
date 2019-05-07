@@ -36,7 +36,7 @@ import Banner from 'components/banner';
 import Notice from 'components/notice';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormTextInput from 'components/forms/form-text-input';
 import TransferDomainPrecheck from './transfer-domain-precheck';
 import { INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
@@ -244,10 +244,9 @@ class TransferDomainStep extends React.Component {
 					</div>
 
 					<div className="transfer-domain-step__add-domain" role="group">
-						<FormTextInputWithAffixes
+						<FormTextInput
 							// eslint-disable-next-line jsx-a11y/no-autofocus
 							autoFocus={ true }
-							prefix="http://"
 							type="text"
 							value={ searchQuery }
 							placeholder={ translate( 'example.com' ) }
