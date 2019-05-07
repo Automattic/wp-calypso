@@ -531,6 +531,20 @@ class Signup extends React.Component {
 		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 
+	getPageTitle() {
+		const { flowName } = this.props;
+
+		if ( flowName === 'account' ) {
+			return translate( 'Create an account' );
+		}
+
+		if ( flowName === 'launch-site' ) {
+			return translate( 'Launch your site' );
+		}
+
+		return translate( 'Create a site' );
+	}
+
 	renderCurrentStep() {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
@@ -622,15 +636,11 @@ class Signup extends React.Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const pageTitle =
-			this.props.flowName === 'account'
-				? translate( 'Create an account' )
-				: translate( 'Create a site' );
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-				<DocumentHead title={ pageTitle } />
+				<DocumentHead title={ this.getPageTitle() } />
 				<SignupHeader
 					positionInFlow={ this.getPositionInFlow() }
 					flowLength={ this.getFlowLength() }
