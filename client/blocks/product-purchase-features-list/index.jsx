@@ -195,10 +195,12 @@ export class ProductPurchaseFeaturesList extends Component {
 				) }
 				<SiteActivity />
 				<MobileApps />
-				<JetpackReturnToDashboard
-					onClick={ recordReturnToDashboardClick }
-					selectedSite={ selectedSite }
-				/>
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackReturnToDashboard
+						onClick={ recordReturnToDashboardClick }
+						selectedSite={ selectedSite }
+					/>
+				) }
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isJetpackFreePlan
@@ -238,11 +240,12 @@ export class ProductPurchaseFeaturesList extends Component {
 						link="https://calendly.com/jetpack/concierge"
 					/>
 				) }
-
-				<JetpackReturnToDashboard
-					onClick={ recordReturnToDashboardClick }
-					selectedSite={ selectedSite }
-				/>
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackReturnToDashboard
+						onClick={ recordReturnToDashboardClick }
+						selectedSite={ selectedSite }
+					/>
+				) }
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
@@ -272,10 +275,12 @@ export class ProductPurchaseFeaturesList extends Component {
 				) }
 				<SiteActivity />
 				<MobileApps />
-				<JetpackReturnToDashboard
-					onClick={ recordReturnToDashboardClick }
-					selectedSite={ selectedSite }
-				/>
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackReturnToDashboard
+						onClick={ recordReturnToDashboardClick }
+						selectedSite={ selectedSite }
+					/>
+				) }
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
@@ -319,10 +324,12 @@ export class ProductPurchaseFeaturesList extends Component {
 						link="https://calendly.com/jetpack/concierge"
 					/>
 				) }
-				<JetpackReturnToDashboard
-					onClick={ recordReturnToDashboardClick }
-					selectedSite={ selectedSite }
-				/>
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackReturnToDashboard
+						onClick={ recordReturnToDashboardClick }
+						selectedSite={ selectedSite }
+					/>
+				) }
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
