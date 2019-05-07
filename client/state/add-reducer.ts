@@ -4,7 +4,7 @@
 import { APPLY_STORED_STATE } from 'state/action-types';
 import { getStateFromLocalStorage } from 'state/initial-state';
 
-const initializations = new Map< string, Promise >();
+const initializations = new Map< string, Promise< void > >();
 const reducers = new Map< string, ( state: object, action: object ) => object >();
 
 function normalizeKey( key: string[] ): string {
@@ -26,9 +26,9 @@ async function initializeState(
 // For a given store, creates a function that adds a new reducer to the store,
 // and loads (asynchronously) and applies the persisted state for it.
 export const addReducerToStore = ( store: object ) => (
-	key: string,
+	key: string[],
 	reducer: ( state: object, action: object ) => object
-): Promise => {
+): Promise< void > => {
 	const storageKey: string = reducer.storageKey;
 	const normalizedKey = normalizeKey( key );
 
