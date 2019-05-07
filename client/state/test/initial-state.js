@@ -556,6 +556,16 @@ describe( 'loading stored state with dynamic reducers', () => {
 				'B:country': 'France',
 				_timestamp,
 			},
+			'redux-state-123456789:CD': {
+				'CD:city': 'Lisbon',
+				'CD:country': 'Portugal',
+				_timestamp,
+			},
+			'redux-state-123456789:E': {
+				'E:city': 'Madrid',
+				'E:country': 'Spain',
+				_timestamp,
+			},
 		};
 
 		// localforage mock to return mock IndexedDB state
@@ -616,7 +626,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const aReducer = withStorageKey( 'A', withKeyPrefix( 'A' ) );
-		await addReducerToStore( store )( 'a', aReducer );
+		await addReducerToStore( store )( [ 'a' ], aReducer );
 
 		// verify that the Redux store contains the stored state for `A` now
 		expect( store.getState() ).toEqual( {
@@ -628,5 +638,105 @@ describe( 'loading stored state with dynamic reducers', () => {
 				country: 'UK',
 			},
 		} );
+	} );
+
+	test( 'loads state after adding a nested reducer', async () => {
+		// initial reducer. includes only the `currentUser` subreducer.
+		const reducer = combineReducers( {
+			currentUser: currentUserReducer,
+		} );
+
+		// load initial state and create Redux store with it
+		const state = await getInitialState( reducer );
+		const store = createReduxStore( state, reducer );
+
+		// verify that the initial Redux store loaded state only for `currentUser`
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+		} );
+
+		// load a reducer dynamically
+		const cdReducer = withStorageKey( 'CD', withKeyPrefix( 'CD' ) );
+		await addReducerToStore( store )( [ 'c', 'd' ], cdReducer );
+
+		// verify that the Redux store contains the stored state for `A` now
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+			c: {
+				d: {
+					city: 'Lisbon',
+					country: 'Portugal',
+				},
+			},
+		} );
+	} );
+
+	test( 'loads state a single time after adding a reducer twice', async () => {
+		// initial reducer. includes only the `currentUser` subreducer.
+		const reducer = combineReducers( {
+			currentUser: currentUserReducer,
+		} );
+
+		// load initial state and create Redux store with it
+		const state = await getInitialState( reducer );
+		const store = createReduxStore( state, reducer );
+
+		// verify that the initial Redux store loaded state only for `currentUser`
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+		} );
+
+		// load a reducer dynamically
+		const eReducer = withStorageKey( 'E', withKeyPrefix( 'E' ) );
+		await Promise.all( [
+			addReducerToStore( store )( [ 'e' ], eReducer ),
+			addReducerToStore( store )( [ 'e' ], eReducer ),
+		] );
+
+		// verify that the Redux store contains the stored state for `E` now
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+			e: {
+				city: 'Madrid',
+				country: 'Spain',
+			},
+		} );
+	} );
+
+	test( 'throws an error when adding two different reducers to the same key', async () => {
+		// initial reducer. includes only the `currentUser` subreducer.
+		const reducer = combineReducers( {
+			currentUser: currentUserReducer,
+		} );
+
+		// load initial state and create Redux store with it
+		const state = await getInitialState( reducer );
+		const store = createReduxStore( state, reducer );
+
+		// verify that the initial Redux store loaded state only for `currentUser`
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+		} );
+
+		// load a reducer dynamically
+		const bReducer = withStorageKey( 'B', withKeyPrefix( 'B' ) );
+		const cReducer = withStorageKey( 'C', withKeyPrefix( 'C' ) );
+
+		expect( () => {
+			Promise.all( [
+				addReducerToStore( store )( [ 'b' ], bReducer ),
+				addReducerToStore( store )( [ 'b' ], cReducer ),
+			] );
+		} ).toThrow();
 	} );
 } );
