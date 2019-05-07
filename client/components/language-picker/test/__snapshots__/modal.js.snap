@@ -20,7 +20,6 @@ exports[`LanguagePickerModal should render 1`] = `
   isVisible={true}
   leaveTimeout={200}
   onClose={[Function]}
-  onClosed={[Function]}
 >
   <SectionNav
     allowDropdown={true}

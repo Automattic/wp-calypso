@@ -34,7 +34,7 @@ const BlogStickers = ( { blogId, teams, stickers } ) => {
 		<div className="blog-stickers">
 			<QueryBlogStickers blogId={ blogId } />
 			{ isTeamMember && stickers && stickers.length > 0 && (
-				<InfoPopover rootClassName="blog-stickers__popover">
+				<InfoPopover>
 					<BlogStickersList stickers={ stickers } />
 				</InfoPopover>
 			) }

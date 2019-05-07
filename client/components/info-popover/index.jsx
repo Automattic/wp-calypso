@@ -36,7 +36,6 @@ export default class InfoPopover extends Component {
 			'left',
 			'top left',
 		] ),
-		rootClassName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -87,7 +86,6 @@ export default class InfoPopover extends Component {
 					position={ this.props.position }
 					onClose={ this.handleClose }
 					className={ classNames( 'popover', 'info-popover__tooltip', this.props.className ) }
-					rootClassName={ this.props.rootClassName }
 				>
 					{ this.props.children }
 				</Popover>

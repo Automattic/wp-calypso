@@ -28,7 +28,6 @@ class CalendarButton extends Component {
 		events: PropTypes.array,
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isVisible: PropTypes.bool,
-		rootClassName: PropTypes.string,
 		selectedDay: PropTypes.object,
 		showDelay: PropTypes.number,
 		siteId: PropTypes.number,
@@ -80,29 +79,25 @@ class CalendarButton extends Component {
 			return null;
 		}
 
-		const calendarProperties = Object.assign(
-			{},
-			pick( this.props, [
-				'autoPosition',
-				'closeOnEsc',
-				'disabledDays',
-				'events',
-				'showOutsideDays',
-				'ignoreContext',
-				'isVisible',
-				'modifiers',
-				'rootClassName',
-				'selectedDay',
-				'showDelay',
-				'siteId',
-				'onDateChange',
-				'onMonthChange',
-				'onDayMouseEnter',
-				'onDayMouseLeave',
-				'onShow',
-				'onClose',
-			] )
-		);
+		const calendarProperties = pick( this.props, [
+			'autoPosition',
+			'closeOnEsc',
+			'disabledDays',
+			'events',
+			'showOutsideDays',
+			'ignoreContext',
+			'isVisible',
+			'modifiers',
+			'selectedDay',
+			'showDelay',
+			'siteId',
+			'onDateChange',
+			'onMonthChange',
+			'onDayMouseEnter',
+			'onDayMouseLeave',
+			'onShow',
+			'onClose',
+		] );
 
 		return (
 			<AsyncLoad
