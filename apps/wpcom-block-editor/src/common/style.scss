@@ -5,9 +5,9 @@
 	}
 }
 
-@media screen and ( max-width: 600px ) {
+@media ( max-width: 600px ) {
 	// stylelint-disable-next-line selector-max-id
-	#wpbody {
+	.is-iframed #wpbody {
 		padding-top: 0;
 	}
 }
