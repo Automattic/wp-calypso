@@ -131,6 +131,13 @@ references:
     name: Install e2e npm dependencies
     command: cd test/e2e && npm ci
 
+  # Update Chrome since chromedriver now only supports a single version and we can get mismatches
+  # between CI and local
+  update-chrome-for-e2e: &update-chrome-for-e2e
+    name: Update Chrome to latest stable
+    command: sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&
+      dpkg -i google-chrome-stable_current_amd64.deb
+
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
   restore-babel-client-cache: &restore-babel-client-cache
@@ -531,6 +538,7 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
+      - run: *update-chrome-for-e2e
       - run: npm run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
@@ -558,6 +566,7 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
+      - run: *update-chrome-for-e2e
       - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
       - run:
           name: Skip Jetpack Tests if needed
