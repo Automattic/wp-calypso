@@ -5,6 +5,7 @@
 
 require_once( 'blocks/post-content/index.php' );
 require_once( 'blocks/template/index.php' );
+require_once( 'wp-template-id-meta-box.php' );
 
 class A8C_Full_Site_Editing {
 	static $initialized = false;
@@ -19,6 +20,8 @@ class A8C_Full_Site_Editing {
 		add_action( 'init', array( $this, 'register_wp_template' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
+
+		new A8C_WP_Template_Id_Meta_Box();
 	}
 
 	function register_wp_template() {
@@ -55,7 +58,7 @@ class A8C_Full_Site_Editing {
 
 	function register_blocks() {
 		register_block_type( 'a8c/post-content', array(
-			'render_callback' => 'render_content_slot_block',
+			'render_callback' => 'render_post_content_block',
 		 ) );
 
 		register_block_type( 'a8c/template', array(
