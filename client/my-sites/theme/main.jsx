@@ -594,13 +594,13 @@ class ThemeSheet extends React.Component {
 		const {
 			id,
 			siteId,
+			siteSlug,
 			retired,
 			isPremium,
 			isJetpack,
 			translate,
 			hasUnlimitedPremiumThemes,
 			previousRoute,
-			siteSlug
 		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
