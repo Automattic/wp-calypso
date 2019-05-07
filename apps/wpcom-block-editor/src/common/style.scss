@@ -11,3 +11,7 @@
 		padding-top: 0;
 	}
 }
+
+.components-notice-list {
+	z-index: 29; // Ensure notices are placed behind the editor header (z-index: 30).
+}
