@@ -600,6 +600,7 @@ class ThemeSheet extends React.Component {
 			translate,
 			hasUnlimitedPremiumThemes,
 			previousRoute,
+			siteSlug
 		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
@@ -653,6 +654,7 @@ class ThemeSheet extends React.Component {
 					event="themes_plan_particular_free_with_plan"
 					callToAction={ translate( 'View Plans' ) }
 					forceHref={ true }
+					href={ `/plans/${ siteSlug }/?plan=value_bundle` }
 				/>
 			);
 			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
