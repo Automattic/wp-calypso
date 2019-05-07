@@ -12,8 +12,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CreditCardFormFields from 'components/credit-card-form-fields';
+import CreditCardFormFieldsUX from 'components/credit-card-form-fields-ux';
 import { setNewCreditCardDetails } from 'lib/upgrades/actions';
 import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
+import { abtest } from 'lib/abtest';
 
 class NewCardForm extends Component {
 	static displayName = 'NewCardForm';
@@ -46,16 +48,26 @@ class NewCardForm extends Component {
 						</h6>
 					) : null }
 
-					{ ( selected || ! hasStoredCards ) && (
-						<CreditCardFormFields
-							card={ transaction.newCardFormFields }
-							countriesList={ countriesList }
-							isNewTransaction={ !! transaction }
-							eventFormName="Checkout Form"
-							onFieldChange={ this.handleFieldChange }
-							getErrorMessage={ this.getErrorMessage }
-						/>
-					) }
+					{ ( selected || ! hasStoredCards ) &&
+						( 'variantUXImprovements' === abtest( 'checkoutUXImprovements' ) ? (
+							<CreditCardFormFieldsUX
+								card={ transaction.newCardFormFields }
+								countriesList={ countriesList }
+								isNewTransaction={ !! transaction }
+								eventFormName="Checkout Form"
+								onFieldChange={ this.handleFieldChange }
+								getErrorMessage={ this.getErrorMessage }
+							/>
+						) : (
+							<CreditCardFormFields
+								card={ transaction.newCardFormFields }
+								countriesList={ countriesList }
+								isNewTransaction={ !! transaction }
+								eventFormName="Checkout Form"
+								onFieldChange={ this.handleFieldChange }
+								getErrorMessage={ this.getErrorMessage }
+							/>
+						) ) }
 				</div>
 			</div>
 		);
