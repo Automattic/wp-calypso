@@ -27,7 +27,8 @@
 	},
 	"bin": {
 		"transpile": "./bin/transpile.js",
-		"calypso-build": "./bin/calypso-build.js"
+		"calypso-build": "./bin/calypso-build.js",
+		"copy-styles": "./bin/copy-styles.js"
 	},
 	"browserslist": [
 		"extends @wordpress/browserslist-config"
@@ -56,6 +57,7 @@
 		"node-sass": "4.11.0",
 		"postcss-custom-properties": "8.0.9",
 		"postcss-loader": "3.0.0",
+		"recursive-copy": "2.0.10",
 		"sass-loader": "7.1.0",
 		"terser-webpack-plugin": "1.2.3",
 		"thread-loader": "2.1.2",
