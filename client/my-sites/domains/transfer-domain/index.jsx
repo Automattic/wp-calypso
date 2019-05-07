@@ -6,6 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,8 +21,7 @@ import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
-import { get, isEmpty } from 'lodash';
-import TrademarkClaimsNotice from '../../../components/domains/trademark-claims-notice';
+import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
 
 export class TransferDomain extends Component {
 	static propTypes = {
