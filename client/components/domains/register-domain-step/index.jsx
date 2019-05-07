@@ -91,12 +91,12 @@ import {
 import Spinner from 'components/spinner';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
+import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import TrademarkClaimsNotice from '../trademark-claims-notice';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
@@ -481,10 +481,14 @@ class RegisterDomainStep extends React.Component {
 	renderTrademarkClaimsNotice() {
 		const { isSignupStep } = this.props;
 		const { selectedSuggestion, trademarkClaimsNoticeInfo } = this.state;
+		const domain = get( selectedSuggestion, 'domain_name' );
+
 		return (
 			<TrademarkClaimsNotice
+				domain={ domain }
 				isSignupStep={ isSignupStep }
 				onAccept={ this.acceptTrademarkClaim }
+				onGoBack={ this.rejectTrademarkClaim }
 				onReject={ this.rejectTrademarkClaim }
 				suggestion={ selectedSuggestion }
 				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
