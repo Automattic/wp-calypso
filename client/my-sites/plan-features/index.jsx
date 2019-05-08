@@ -8,7 +8,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, get, findIndex, last, map, noop, reduce } from 'lodash';
+import { compact, get, last, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
@@ -54,7 +54,6 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
 import {
 	isBestValue,
 	isMonthly,
@@ -67,11 +66,10 @@ import {
 	GROUP_WPCOM,
 } from 'lib/plans/constants';
 import { getPlanFeaturesObject } from 'lib/plans/features-list';
-import PlanFeaturesScroller from './scroller';
 
 export class PlanFeatures extends Component {
 	render() {
-		const { isInSignup, planProperties, plans, selectedPlan, withScroll } = this.props;
+		const { isInSignup, planProperties } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -80,48 +78,32 @@ export class PlanFeatures extends Component {
 			'plan-features--signup': isInSignup,
 		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
-		const mobileView = ! withScroll && (
-			<div className="plan-features__mobile">{ this.renderMobileView() }</div>
-		);
+		const mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
 		let planDescriptions;
 		let bottomButtons = null;
 
-		if ( withScroll || ! isInSignup ) {
+		if ( ! isInSignup ) {
 			planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
 
 			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
 		}
-
-		const initialSelectedIndex = selectedPlan
-			? plans.indexOf( selectedPlan )
-			: findIndex( planProperties, { popular: true } );
 
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
-					<div ref={ this.contentRef } className="plan-features__content">
+					<div className="plan-features__content">
 						{ mobileView }
-						{ ! this.props.isRequestingActivePromotions && (
-							<PlanFeaturesScroller
-								withScroll={ withScroll }
-								planCount={ planProperties.length }
-								cellSelector=".plan-features__table-item"
-								initialSelectedIndex={ initialSelectedIndex }
-							>
-								<table className={ tableClasses }>
-									<tbody>
-										<tr>{ this.renderPlanHeaders() }</tr>
-										{ ! withScroll && planDescriptions }
-										<tr>{ this.renderTopButtons() }</tr>
-										{ withScroll && planDescriptions }
-										{ this.renderPlanFeatureRows() }
-										{ ! withScroll && ! isInSignup && bottomButtons }
-									</tbody>
-								</table>
-							</PlanFeaturesScroller>
-						) }
+						<table className={ tableClasses }>
+							<tbody>
+								<tr>{ this.renderPlanHeaders() }</tr>
+								{ planDescriptions }
+								<tr>{ this.renderTopButtons() }</tr>
+								{ this.renderPlanFeatureRows() }
+								{ bottomButtons }
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>
@@ -367,7 +349,6 @@ export class PlanFeatures extends Component {
 			siteType,
 			showPlanCreditsApplied,
 			countryCode,
-			withScroll,
 		} = this.props;
 
 		return map( planProperties, properties => {
@@ -440,7 +421,6 @@ export class PlanFeatures extends Component {
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
 						countryCode={ countryCode }
-						plansWithScroll={ withScroll }
 					/>
 				</td>
 			);
@@ -448,22 +428,14 @@ export class PlanFeatures extends Component {
 	}
 
 	renderPlanDescriptions() {
-		const { planProperties, withScroll } = this.props;
+		const { planProperties } = this.props;
 
 		return map( planProperties, properties => {
 			const { planName, planConstantObj, isPlaceholder } = properties;
-
+			const description = planConstantObj.getDescription( abtest );
 			const classes = classNames( 'plan-features__table-item', {
 				'is-placeholder': isPlaceholder,
-				'is-description': withScroll,
 			} );
-
-			let description = null;
-			if ( withScroll ) {
-				description = planConstantObj.getShortDescription( abtest );
-			} else {
-				description = planConstantObj.getDescription( abtest );
-			}
 
 			return (
 				<td key={ planName } className={ classes }>
@@ -577,7 +549,6 @@ export class PlanFeatures extends Component {
 				key={ index }
 				description={ description }
 				hideInfoPopover={ feature.hideInfoPopover }
-				hideGridicon={ this.props.withScroll }
 			>
 				<span className="plan-features__item-info">
 					<span className="plan-features__item-title">{ feature.getTitle() }</span>
@@ -587,7 +558,7 @@ export class PlanFeatures extends Component {
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties, selectedFeature, withScroll } = this.props;
+		const { planProperties, selectedFeature } = this.props;
 
 		return map( planProperties, properties => {
 			const { features, planName } = properties;
@@ -597,8 +568,7 @@ export class PlanFeatures extends Component {
 				currentFeature = features[ key ];
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
-				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
-				'is-last-feature': rowIndex + 1 === featureKeys.length,
+				'has-partial-border': rowIndex + 1 < featureKeys.length,
 				'is-highlighted':
 					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
 			} );
@@ -897,7 +867,6 @@ export default connect(
 			sitePlan,
 			siteType,
 			planCredits,
-			isRequestingActivePromotions: isRequestingActivePromotions( state ),
 			hasPlaceholders: hasPlaceholders( planProperties ),
 			showPlanCreditsApplied:
 				sitePlan &&
