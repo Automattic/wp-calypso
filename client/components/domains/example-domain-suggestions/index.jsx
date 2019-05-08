@@ -16,6 +16,11 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import ExampleDomainBrowser from '../example-domain-browser';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DomainSuggestionsExample extends React.Component {
 	static propTypes = {
 		offerUnavailableOption: PropTypes.bool,

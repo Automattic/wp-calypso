@@ -53,9 +53,11 @@ import DomainSkipSuggestion from 'components/domains/domain-skip-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
-import DropdownFilters from 'components/domains/search-filters/dropdown-filters';
-import FilterResetNotice from 'components/domains/search-filters/filter-reset-notice';
-import TldFilterBar from 'components/domains/search-filters/tld-filter-bar';
+import {
+	DropdownFilters,
+	FilterResetNotice,
+	TldFilterBar,
+} from 'components/domains/search-filters';
 import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
