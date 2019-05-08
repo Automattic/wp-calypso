@@ -39,6 +39,11 @@ import {
 import { isPlan } from 'lib/products-values';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class UseYourDomainStep extends React.Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,

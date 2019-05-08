@@ -37,8 +37,6 @@
 		"@automattic/wordpress-external-dependencies-plugin": "file:../wordpress-external-dependencies-plugin",
 		"@babel/core": "7.4.0",
 		"@babel/plugin-proposal-class-properties": "7.4.0",
-		"@babel/plugin-proposal-export-default-from": "7.2.0",
-		"@babel/plugin-proposal-export-namespace-from": "7.2.0",
 		"@babel/plugin-syntax-dynamic-import": "7.2.0",
 		"@babel/plugin-transform-react-jsx": "7.3.0",
 		"@babel/plugin-transform-runtime": "7.4.0",
