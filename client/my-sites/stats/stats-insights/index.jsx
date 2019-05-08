@@ -23,7 +23,7 @@ import StatsModule from '../stats-module';
 import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
-import DomainTip from 'my-sites/domain-tip';
+import DomainTip from 'blocks/domain-tip';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SectionHeader from 'components/section-header';
