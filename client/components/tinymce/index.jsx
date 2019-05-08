@@ -203,6 +203,7 @@ export default class extends React.Component {
 		onUndo: PropTypes.func,
 		onTextEditorChange: PropTypes.func,
 		isGutenbergClassicBlock: PropTypes.bool,
+		isVipSite: PropTypes.bool,
 	};
 
 	static contextTypes = {
@@ -239,7 +240,7 @@ export default class extends React.Component {
 	}
 
 	componentDidMount() {
-		const { isGutenbergClassicBlock } = this.props;
+		const { isGutenbergClassicBlock, isVipSite } = this.props;
 		this.mounted = true;
 
 		const setup = function( editor ) {
@@ -275,6 +276,7 @@ export default class extends React.Component {
 
 		const ltrButton = isRtl ? 'ltr,' : '';
 		const gutenbergClassName = isGutenbergClassicBlock ? ' is-gutenberg' : '';
+		const spellchecker = isVipSite ? ',spellchecker' : '';
 
 		tinymce.init( {
 			selector: '#' + this._id,
@@ -351,7 +353,7 @@ export default class extends React.Component {
 				: Math.max( document.documentElement.clientHeight - 300, 300 ),
 			autoresize_bottom_margin: isGutenbergClassicBlock || isMobile() ? 10 : 50,
 
-			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,${ ltrButton }wpcom_advanced`,
+			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright${ spellchecker },wp_more,${ ltrButton }wpcom_advanced`,
 			toolbar2:
 				'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
