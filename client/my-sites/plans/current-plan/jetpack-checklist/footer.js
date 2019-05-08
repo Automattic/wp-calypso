@@ -25,7 +25,7 @@ class JetpackChecklistFooter extends PureComponent {
 		return (
 			<Card compact className="jetpack-checklist__footer">
 				<p>{ translate( 'Return to your self-hosted WordPress dashboard.' ) }</p>
-				<Button compact href={ wpAdminUrl } onClick={ this.handleWPAdminLink() }>
+				<Button compact href={ wpAdminUrl } onClick={ this.handleWPAdminLink }>
 					{ translate( 'Return to WP Admin' ) }
 				</Button>
 			</Card>
