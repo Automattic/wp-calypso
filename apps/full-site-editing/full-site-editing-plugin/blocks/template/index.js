@@ -1,3 +1,4 @@
+/* global fullSiteEditing */
 /**
  * WordPress dependencies
  */
@@ -10,21 +11,23 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-registerBlockType( 'a8c/template', {
-	title: __( 'Template Part' ),
-	description: __( 'Display a template part.' ),
-	icon: 'layout',
-	category: 'layout',
-	attributes: {
-		selectedPostId: { type: 'number' },
-		selectedPostType: { type: 'string' },
-	},
-	supports: {
-		align: [ 'wide', 'full' ],
-		anchor: true,
-		html: false,
-		reusable: false,
-	},
-	edit,
-	save: () => null,
-} );
+if ( 'wp_template' === fullSiteEditing.editorPostType ) {
+	registerBlockType( 'a8c/template', {
+		title: __( 'Template Part' ),
+		description: __( 'Display a template part.' ),
+		icon: 'layout',
+		category: 'layout',
+		attributes: {
+			selectedPostId: { type: 'number' },
+			selectedPostType: { type: 'string' },
+		},
+		supports: {
+			align: [ 'wide', 'full' ],
+			anchor: true,
+			html: false,
+			reusable: false,
+		},
+		edit,
+		save: () => null,
+	} );
+}

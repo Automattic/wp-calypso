@@ -5,10 +5,10 @@
 
 require_once( 'blocks/post-content/index.php' );
 require_once( 'blocks/template/index.php' );
-require_once( 'wp-template-id-meta-box.php' );
 
 class A8C_Full_Site_Editing {
 	static $initialized = false;
+	private $post_types_using_templates = array( 'page', 'post' );
 
 	function __construct() {
 		if ( self::$initialized ) {
@@ -18,10 +18,9 @@ class A8C_Full_Site_Editing {
 
 		add_action( 'init', array( $this, 'register_blocks' ), 100 );
 		add_action( 'init', array( $this, 'register_wp_template' ) );
+		add_action( 'init', array( $this, 'register_meta_template_id' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
-
-		new A8C_WP_Template_Id_Meta_Box();
 	}
 
 	function register_wp_template() {
@@ -29,11 +28,17 @@ class A8C_Full_Site_Editing {
 		fse_register_wp_template();
 	}
 
-	function enqueue_script_and_style() {
-		if ( 'wp_template' !== get_current_screen()->post_type ) {
-			return;
+	function register_meta_template_id() {
+		foreach( $this->post_types_using_templates as $post_type ) {
+			register_meta( $post_type, 'wp_template_id', array(
+				'show_in_rest' => true,
+				'single' => true,
+				'type' => 'integer',
+			) );
 		}
+	}
 
+	function enqueue_script_and_style() {
 		$script_dependencies = json_decode( file_get_contents(
 			plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.deps.json'
 		), true );
@@ -45,6 +50,10 @@ class A8C_Full_Site_Editing {
 			true
 		);
 
+		wp_localize_script( 'a8c-full-site-editing-script', 'fullSiteEditing', array(
+			'editorPostType' => get_current_screen()->post_type
+		) );
+
 		$style_file = is_rtl()
 			? 'full-site-editing-plugin.rtl.css'
 			: 'full-site-editing-plugin.css';
@@ -54,6 +63,7 @@ class A8C_Full_Site_Editing {
 			array(),
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 		);
+
 	}
 
 	function register_blocks() {
