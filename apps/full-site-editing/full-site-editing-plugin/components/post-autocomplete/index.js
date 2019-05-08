@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import { debounce, map } from 'lodash';
 
 /**
@@ -9,7 +10,7 @@ import { debounce, map } from 'lodash';
  */
 import apiFetch from '@wordpress/api-fetch';
 import { Button, Popover, Spinner, TextControl } from '@wordpress/components';
-import { withState } from '@wordpress/compose';
+import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -18,94 +19,110 @@ import { addQueryArgs } from '@wordpress/url';
  */
 import './style.scss';
 
-const updateSuggestions = debounce( async ( search, postType, setState ) => {
-	setState( {
-		loading: true,
-		showSuggestions: true,
-		suggestions: [],
-	} );
+class PostAutocomplete extends Component {
+	static propTypes = {
+		defaultValue: PropTypes.string,
+		onSelectPost: PropTypes.func.isRequired,
+		postType: PropTypes.string.isRequired,
+	};
 
-	const suggestions = await apiFetch( {
-		path: addQueryArgs( '/wp/v2/search', {
-			context: 'embed',
-			per_page: 20,
-			search,
-			...( !! postType && { subtype: postType } ),
-		} ),
-	} );
-
-	setState( {
+	state = {
 		loading: false,
-		showSuggestions: true,
-		suggestions,
-	} );
-}, 200 );
-
-const selectSuggestion = ( suggestion, setState ) => {
-	setState( {
-		loading: false,
-		search: suggestion.title,
+		search: '',
 		showSuggestions: false,
 		suggestions: [],
-	} );
-
-	return {
-		id: suggestion.id,
-		type: suggestion.subtype,
 	};
-};
 
-/**
- * External props:
- * @param {Function} onSelectPost Callback invoked when a post is selected, returning its object.
- * @param {?string|Array} postType If set, limits the search to the given post type, or array of post types.
- */
-const PostAutocomplete = withState( {
-	loading: false,
-	search: '',
-	showSuggestions: false,
-	suggestions: [],
-} )( ( { loading, onSelectPost, postType, search, setState, showSuggestions, suggestions } ) => {
-	const onChange = inputValue => {
-		setState( { search: inputValue } );
+	componentDidMount() {
+		if ( this.props.defaultValue ) {
+			// eslint-disable-next-line react/no-did-mount-set-state
+			this.setState( { search: this.props.defaultValue } );
+		}
+	}
+
+	updateSuggestions = debounce( async search => {
+		const { postType } = this.props;
+
+		this.setState( {
+			loading: true,
+			showSuggestions: true,
+			suggestions: [],
+		} );
+
+		const suggestions = await apiFetch( {
+			path: addQueryArgs( '/wp/v2/search', {
+				context: 'embed',
+				per_page: 20,
+				search,
+				...( !! postType && { subtype: postType } ),
+			} ),
+		} );
+
+		this.setState( {
+			loading: false,
+			showSuggestions: true,
+			suggestions,
+		} );
+	}, 200 );
+
+	selectSuggestion = suggestion => {
+		this.setState( {
+			loading: false,
+			search: suggestion.title,
+			showSuggestions: false,
+			suggestions: [],
+		} );
+
+		return {
+			id: suggestion.id,
+			type: suggestion.subtype,
+		};
+	};
+
+	onChange = inputValue => {
+		this.setState( { search: inputValue } );
 		if ( inputValue.length < 2 ) {
-			setState( {
+			this.setState( {
 				loading: false,
 				showSuggestions: false,
 			} );
 			return;
 		}
-		updateSuggestions( inputValue, postType, setState );
+		this.updateSuggestions( inputValue );
 	};
 
-	const onClick = suggestion => () => {
-		const selectedPost = selectSuggestion( suggestion, setState );
-		onSelectPost( selectedPost );
+	onClick = suggestion => () => {
+		const selectedPost = this.selectSuggestion( suggestion );
+		this.props.onSelectPost( selectedPost );
 	};
 
-	return (
-		<div className="a8c-post-autocomplete">
-			<TextControl
-				autoComplete="off"
-				onChange={ onChange }
-				placeholder={ __( 'Type to search' ) }
-				type="search"
-				value={ search }
-			/>
-			{ loading && <Spinner /> }
-			{ showSuggestions && !! suggestions.length && (
-				<Popover focusOnMount={ false } noArrow position="bottom">
-					<div className="a8c-post-autocomplete__suggestions">
-						{ map( suggestions, suggestion => (
-							<Button isLarge isLink key={ suggestion.id } onClick={ onClick( suggestion ) }>
-								{ suggestion.title }
-							</Button>
-						) ) }
-					</div>
-				</Popover>
-			) }
-		</div>
-	);
-} );
+	render() {
+		const { loading, search, showSuggestions, suggestions } = this.state;
+
+		return (
+			<div className="a8c-post-autocomplete">
+				<TextControl
+					autoComplete="off"
+					onChange={ this.onChange }
+					placeholder={ __( 'Type to search' ) }
+					type="search"
+					value={ search }
+				/>
+				{ loading && <Spinner /> }
+				{ showSuggestions && !! suggestions.length && (
+					<Popover focusOnMount={ false } noArrow position="bottom">
+						<div className="a8c-post-autocomplete__suggestions">
+							{ map( suggestions, suggestion => (
+								<Button isLarge isLink key={ suggestion.id } onClick={ this.onClick( suggestion ) }>
+									{ suggestion.title }
+								</Button>
+							) ) }
+						</div>
+					</Popover>
+				) }
+			</div>
+		);
+	}
+}
 
 export default PostAutocomplete;

@@ -78,7 +78,11 @@ const PostContentEdit = compose(
 					>
 						<div className="post-content-block__selector">
 							<div>{ __( 'Select something to preview:' ) }</div>
-							<PostAutocomplete postType={ [ 'page', 'post' ] } onSelectPost={ onSelectPost } />
+							<PostAutocomplete
+								defaultValue={ get( selectedPost, 'title.rendered' ) }
+								onSelectPost={ onSelectPost }
+								postType={ [ 'page', 'post' ] }
+							/>
 							{ !! selectedPost && (
 								<a href={ `?post=${ selectedPost.id }&action=edit` }>
 									{ sprintf( __( 'Edit "%s"' ), get( selectedPost, 'title.rendered', '' ) ) }
