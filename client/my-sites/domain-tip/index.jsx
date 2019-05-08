@@ -3,11 +3,10 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 /**
  * Internal dependencies
@@ -23,6 +22,11 @@ import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/products-values';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function getQueryObject( site, siteSlug, vendor ) {
 	if ( ! site || ! siteSlug ) {
 		return null;
@@ -37,7 +41,6 @@ function getQueryObject( site, siteSlug, vendor ) {
 
 class DomainTip extends React.Component {
 	static propTypes = {
-		className: PropTypes.string,
 		event: PropTypes.string.isRequired,
 		hasDomainCredit: PropTypes.bool,
 		isIneligible: PropTypes.bool,
@@ -54,15 +57,13 @@ class DomainTip extends React.Component {
 
 	renderPlanUpgradeNudge() {
 		return (
-			<div className={ classNames( 'domain-tip', this.props.className ) }>
-				<UpgradeNudge
-					event={ `domain_tip_${ this.props.event }` }
-					feature={ FEATURE_CUSTOM_DOMAIN }
-					shouldDisplay
-					message={ this.props.translate( 'Upgrade your plan to register a custom domain.' ) }
-					title={ this.props.translate( 'Get a custom domain' ) }
-				/>
-			</div>
+			<UpgradeNudge
+				event={ `domain_tip_${ this.props.event }` }
+				feature={ FEATURE_CUSTOM_DOMAIN }
+				shouldDisplay
+				message={ this.props.translate( 'Upgrade your plan to register a custom domain.' ) }
+				title={ this.props.translate( 'Get a custom domain' ) }
+			/>
 		);
 	}
 
@@ -71,9 +72,9 @@ class DomainTip extends React.Component {
 			return null;
 		}
 
-		if ( this.props.shouldNudgePlanUpgrade ) {
-			return this.renderPlanUpgradeNudge();
-		}
+		// if ( this.props.shouldNudgePlanUpgrade ) {
+		// 	return this.renderPlanUpgradeNudge();
+		// }
 
 		const suggestion = Array.isArray( this.props.suggestions ) ? this.props.suggestions[ 0 ] : null;
 		let title = this.props.translate( 'Get a custom domain' );
@@ -85,7 +86,7 @@ class DomainTip extends React.Component {
 		}
 
 		return (
-			<div className={ classNames( 'domain-tip', this.props.className ) }>
+			<Fragment>
 				<QueryDomainsSuggestions { ...this.props.queryObject } />
 				<UpgradeNudge
 					event={ `domain_tip_${ this.props.event }` }
@@ -101,7 +102,7 @@ class DomainTip extends React.Component {
 					shouldDisplay
 					title={ title }
 				/>
-			</div>
+			</Fragment>
 		);
 	}
 }
