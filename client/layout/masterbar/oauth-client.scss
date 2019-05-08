@@ -403,6 +403,7 @@
 
 		.wp-login__main.main {
 			max-width: 550px;
+			margin-bottom: 80px;
 		}
 	}
 }
@@ -462,7 +463,7 @@
 		text-decoration: none;
 		text-transform: capitalize;
 		width: auto;
-		
+
 		@include breakpoint( '>480px' ) {
 			width: 100%;
 		}
@@ -643,7 +644,7 @@
 		font-family: $sans;
 		margin: 0 0 8px;
 		padding: 0;
-		
+
 		@include breakpoint( '>480px' ) {
 			font-size: 2em;
 			margin: 2em 0 0;
