@@ -3,6 +3,7 @@
  * Exernal dependencies
  */
 import { filter, find, includes, indexOf, isEmpty, merge, pick } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -110,6 +111,11 @@ export function getNextStepName( flowName, currentStepName ) {
 export function getFlowSteps( flowName ) {
 	const flow = flows.getFlow( flowName );
 	return flow.steps;
+}
+
+export function getFlowPageTitle( flowName ) {
+	const flow = flows.getFlow( flowName );
+	return flow.pageTitle || translate( 'Create a site' );
 }
 
 export function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {

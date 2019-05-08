@@ -21,7 +21,6 @@ import {
 	pick,
 	startsWith,
 } from 'lodash';
-import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -105,6 +104,10 @@ class Signup extends React.Component {
 		siteDomains: PropTypes.array,
 		isPaidPlan: PropTypes.bool,
 		trackAffiliateReferral: PropTypes.func.isRequired,
+		flowName: PropTypes.string,
+		stepName: PropTypes.string,
+		pageTitle: PropTypes.string,
+		stepSectionName: PropTypes.string,
 	};
 
 	constructor( props, context ) {
@@ -531,20 +534,6 @@ class Signup extends React.Component {
 		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 
-	getPageTitle() {
-		const { flowName } = this.props;
-
-		if ( flowName === 'account' ) {
-			return translate( 'Create an account' );
-		}
-
-		if ( flowName === 'launch-site' ) {
-			return translate( 'Launch your site' );
-		}
-
-		return translate( 'Create a site' );
-	}
-
 	renderCurrentStep() {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
@@ -640,7 +629,7 @@ class Signup extends React.Component {
 
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-				<DocumentHead title={ this.getPageTitle() } />
+				<DocumentHead title={ this.props.pageTitle } />
 				<SignupHeader
 					positionInFlow={ this.getPositionInFlow() }
 					flowLength={ this.getFlowLength() }
