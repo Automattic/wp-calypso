@@ -180,7 +180,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					<Grid container spacing={ 8 } className="stats__module-list">
+					<Grid container spacing={ 16 } justify="flex-end" className="stats__module-list">
 						<Grid item xs={ 12 }>
 							<StatsBanners siteId={ siteId } slug={ slug } />
 							<ChartTabs
@@ -211,7 +211,7 @@ class StatsSite extends Component {
 								</StatsPeriodNavigation>
 							</StickyPanel>
 						</Grid>
-						<Grid item sm={ 12 } md={ 6 } lg={ 4 } className="stats__module-column">
+						<Grid item xs={ 12 } md={ 6 } lg={ 4 } className="stats__module-column">
 							<StatsModule
 								path="posts"
 								moduleStrings={ moduleStrings.posts }
@@ -230,7 +230,7 @@ class StatsSite extends Component {
 							/>
 							{ videoList }
 						</Grid>
-						<Grid item sm={ 12 } md={ 6 } lg={ 4 } className="stats__module-column">
+						<Grid item xs={ 12 } md={ 6 } lg={ 4 } className="stats__module-column">
 							<StatsModule
 								path="referrers"
 								moduleStrings={ moduleStrings.referrers }
@@ -252,7 +252,7 @@ class StatsSite extends Component {
 						</Grid>
 						<Grid
 							item
-							sm={ 12 }
+							xs={ 12 }
 							md={ 6 }
 							lg={ 4 }
 							className="stats__module-column stat__module-countries"
