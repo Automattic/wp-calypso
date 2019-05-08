@@ -59,6 +59,7 @@ export class MediaLibraryContent extends React.Component {
 		scrollable: PropTypes.bool,
 		onAddMedia: PropTypes.func,
 		onMediaScaleChange: PropTypes.func,
+		onCategoryFilterChange: PropTypes.func,
 		onEditItem: PropTypes.func,
 		postId: PropTypes.number,
 		isConnected: PropTypes.bool,
@@ -68,6 +69,7 @@ export class MediaLibraryContent extends React.Component {
 		mediaValidationErrors: Object.freeze( {} ),
 		onAddMedia: noop,
 		source: '',
+		onCategoryFilterChange: noop,
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -346,6 +348,7 @@ export class MediaLibraryContent extends React.Component {
 				filter={ this.props.filter }
 				search={ this.props.search }
 				source={ this.props.source }
+				categoryFilter={ this.props.categoryFilter }
 			>
 				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 					<MediaLibraryList
@@ -378,7 +381,9 @@ export class MediaLibraryContent extends React.Component {
 					visible={ ! this.props.isRequesting }
 					canCopy={ this.props.postId === undefined }
 					source={ this.props.source }
+					categoryFilter={ this.props.categoryFilter }
 					onSourceChange={ this.props.onSourceChange }
+					onCategoryFilterChange={ this.props.onCategoryFilterChange }
 					selectedItems={ this.props.selectedItems }
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }

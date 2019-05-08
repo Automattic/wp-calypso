@@ -161,6 +161,7 @@ export class EditorMediaModal extends Component {
 			detailSelectedIndex: 0,
 			source: props.source ? props.source : '',
 			gallerySettings: props.initialGallerySettings,
+			categoryFilter: null,
 		};
 	}
 
@@ -412,7 +413,7 @@ export class EditorMediaModal extends Component {
 			analytics.mc.bumpStat( 'editor_media_actions', 'filter_' + ( filter || 'all' ) );
 		}
 
-		this.setState( { filter } );
+		this.setState( { filter, categoryFilter: null } );
 	};
 
 	onScaleChange = () => {
@@ -440,6 +441,10 @@ export class EditorMediaModal extends Component {
 			search: undefined,
 			filter: '',
 		} );
+	};
+
+	onCategoryFilterChange = categoryFilter => {
+		this.setState( { categoryFilter, filter: '' } );
 	};
 
 	onClose = () => {
@@ -619,11 +624,13 @@ export class EditorMediaModal extends Component {
 						enabledFilters={ this.props.enabledFilters }
 						search={ this.state.search }
 						source={ this.state.source }
+						categoryFilter={ this.state.categoryFilter }
 						onAddMedia={ this.onAddMedia }
 						onAddAndEditImage={ this.onAddAndEditImage }
 						onFilterChange={ this.onFilterChange }
 						onScaleChange={ this.onScaleChange }
 						onSourceChange={ this.onSourceChange }
+						onCategoryFilterChange={ this.onCategoryFilterChange }
 						onSearch={ this.onSearch }
 						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }
