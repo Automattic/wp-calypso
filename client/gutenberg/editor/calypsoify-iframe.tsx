@@ -342,6 +342,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			if ( frameNonce ) {
 				parsedPreviewUrl.query[ 'frame-nonce' ] = frameNonce;
 			}
+			parsedPreviewUrl.query.iframe = 'true';
 			delete parsedPreviewUrl.search;
 
 			this.setState( {
