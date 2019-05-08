@@ -8,6 +8,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { isEqual } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+
+import { abtest } from 'lib/abtest';
+
 class StoreConnection extends React.Component {
 	static propTypes = {
 		component: PropTypes.func,
@@ -70,9 +76,15 @@ class StoreConnection extends React.Component {
 			return React.createElement( this.props.component, this.state );
 		}
 
-		return React.Children.map( this.props.children, child => {
-			return React.cloneElement( child, this.state );
-		} );
+		if ( 'right' === abtest( 'showCheckoutCartRight' ) ) {
+			return React.Children.map( this.props.children, child => {
+				return React.cloneElement( child, this.state );
+			} );
+		}
+
+		const child = React.Children.only( this.props.children );
+
+		return React.cloneElement( child, this.state );
 	}
 }
 
