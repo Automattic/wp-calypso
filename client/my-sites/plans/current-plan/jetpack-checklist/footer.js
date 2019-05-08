@@ -9,9 +9,9 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
+import { format as formatUrl, parse as parseUrl } from 'url';
 import { getSelectedSite } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { untrailingslashit } from 'lib/route';
 import Button from 'components/button';
 import Card from 'components/card';
 
@@ -44,10 +44,19 @@ class JetpackChecklistFooter extends PureComponent {
 export default connect(
 	state => {
 		const site = getSelectedSite( state );
-		const wpAdminUrl = get( site, 'options.admin_url', '' );
+
+		// Link to "My Plan" page in Jetpack
+		let wpAdminUrl = get( site, 'options.admin_url', '' );
+		wpAdminUrl = wpAdminUrl
+			? formatUrl( {
+					...parseUrl( wpAdminUrl ),
+					query: { page: 'jetpack' },
+					hash: '/my-plan',
+			  } )
+			: '';
 
 		return {
-			wpAdminUrl: wpAdminUrl ? untrailingslashit( wpAdminUrl ) + '/admin.php?page=jetpack' : '',
+			wpAdminUrl,
 		};
 	},
 	{
