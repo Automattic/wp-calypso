@@ -57,10 +57,6 @@ function getWebpackConfig(
 	return {
 		...webpackConfig,
 		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
-		resolve: {
-			...webpackConfig.resolve,
-			modules: [ path.join( __dirname, '../../client' ), 'node_modules' ],
-		},
 	};
 }
 

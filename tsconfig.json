@@ -19,7 +19,7 @@
 		"module": "es2015",
 		"baseUrl": "./",
 		"paths": {
-			"*": [ "*", "client/*", "server/*", "../client/*" ]
+			"*": [ "*", "client/*", "server/*" ]
 		}
 	},
 	"include": [ "client", "server", "apps" ],
