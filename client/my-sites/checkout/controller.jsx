@@ -82,7 +82,6 @@ export function checkout( context, next ) {
 			<SecondaryCart selectedSite={ selectedSite } />
 		</CartData>
 	);
-
 	next();
 }
 
