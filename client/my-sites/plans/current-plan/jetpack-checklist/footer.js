@@ -17,7 +17,10 @@ import Card from 'components/card';
 
 class JetpackChecklistFooter extends PureComponent {
 	handleWPAdminLink = () => {
-		this.props.recordTracksEvent( 'calypso_checklist_wpadmin' );
+		this.props.recordTracksEvent( 'calypso_checklist_wpadmin_click', {
+			checklist_name: 'jetpack',
+			location: 'JetpackChecklist',
+		} );
 	};
 
 	render() {
