@@ -25,6 +25,11 @@ class JetpackChecklistFooter extends PureComponent {
 
 	render() {
 		const { translate, wpAdminUrl } = this.props;
+
+		if ( ! wpAdminUrl ) {
+			return null;
+		}
+
 		return (
 			<Card compact className="jetpack-checklist__footer">
 				<p>{ translate( 'Return to your self-hosted WordPress dashboard.' ) }</p>
@@ -39,9 +44,10 @@ class JetpackChecklistFooter extends PureComponent {
 export default connect(
 	state => {
 		const site = getSelectedSite( state );
+		const wpAdminUrl = get( site, 'options.admin_url', '' );
 
 		return {
-			wpAdminUrl: untrailingslashit( get( site, 'options.admin_url' ) ) + '/admin.php?page=jetpack',
+			wpAdminUrl: wpAdminUrl ? untrailingslashit( wpAdminUrl ) + '/admin.php?page=jetpack' : '',
 		};
 	},
 	{
