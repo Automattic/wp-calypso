@@ -453,7 +453,7 @@ form.sidebar__button input {
 	}
 }
 
-.notouch li.sidebar__menu:hover {
+.is-group-sites .notouch li.sidebar__menu:hover {
 	&:not( .selected ) {
 		& > h2 {
 			color: var( --sidebar-menu-hover-color );
