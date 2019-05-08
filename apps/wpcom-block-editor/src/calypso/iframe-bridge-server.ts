@@ -17,11 +17,16 @@ import tinymce from 'tinymce/tinymce';
  */
 import { inIframe, sendMessage } from './utils';
 
-
 /**
  * Types
  */
-import { EditorActions, MediaModalData, PortToCalypso, PreviewChannel, WindowActions } from 'gutenberg/editor/types';
+import {
+	EditorActions,
+	MediaModalData,
+	PortToCalypso,
+	PreviewChannel,
+	WindowActions,
+} from '../../../../client/gutenberg/editor/types';
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
@@ -528,7 +533,7 @@ function initPort( message: MessageEvent ) {
 
 	const calypsoPort: PortToCalypso = message.ports[ 0 ];
 
-	class MediaUpload extends Component<MediaModalData & {onSelect: Function, render: Function}> {
+	class MediaUpload extends Component< MediaModalData & { onSelect: Function; render: Function } > {
 		openModal = () => {
 			const mediaChannel = new MessageChannel();
 
