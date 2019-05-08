@@ -464,7 +464,7 @@ export async function ensurePopupsClosed( driver ) {
 		await switchToWindowByIndex( driver, windowIndex );
 		await closeCurrentWindow( driver );
 	}
-	return switchToWindowByIndex( driver, 0 );
+	return await switchToWindowByIndex( driver, 0 );
 }
 
 export async function refreshIfJNError( driver, timeout = 2000 ) {
