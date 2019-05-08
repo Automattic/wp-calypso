@@ -72,9 +72,9 @@ class DomainTip extends React.Component {
 			return null;
 		}
 
-		// if ( this.props.shouldNudgePlanUpgrade ) {
-		// 	return this.renderPlanUpgradeNudge();
-		// }
+		if ( this.props.shouldNudgePlanUpgrade ) {
+			return this.renderPlanUpgradeNudge();
+		}
 
 		const suggestion = Array.isArray( this.props.suggestions ) ? this.props.suggestions[ 0 ] : null;
 		let title = this.props.translate( 'Get a custom domain' );
