@@ -8,8 +8,10 @@ import { getSiteAdminUrl, isJetpackMinimumVersion, isJetpackSite } from 'state/s
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
-import isPluginActive from 'state/selectors/is-plugin-active';
+import isAnyPluginActive from 'state/selectors/is-any-plugin-active';
 import { isHttps } from 'lib/url';
+
+export const pluginBlacklist = [ 'classic-editor', 'elementor' ];
 
 export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -26,7 +28,7 @@ export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 		}
 
 		// But not if they activated the Classic Editor plugin (effectively opting out of Gutenberg).
-		if ( isPluginActive( state, siteId, 'classic-editor' ) ) {
+		if ( isAnyPluginActive( state, siteId, pluginBlacklist ) ) {
 			return false;
 		}
 
