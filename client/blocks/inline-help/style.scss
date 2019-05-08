@@ -82,6 +82,7 @@
 	&:hover:not( .is-active ) {
 		@include elevation( 6dp );
 		background: var( --color-primary );
+		transform: scale( 1.15 );
 	}
 
 	&.is-active {
