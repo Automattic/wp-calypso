@@ -6,6 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -55,38 +56,28 @@ class TrademarkClaim extends React.Component {
 	};
 
 	renderGoodsAndServices = claim => {
-		let { goodsAndServices } = claim;
+		const goodsAndServices = get( claim, 'goodsAndServices' );
 
-		if ( ! goodsAndServices ) {
-			return;
-		}
-
-		if ( ! Array.isArray( goodsAndServices ) ) {
-			goodsAndServices = [ goodsAndServices ];
-		}
-
-		return this.renderItem(
-			'goods-and-services',
-			'Goods and Services',
-			this.renderList( goodsAndServices )
+		return (
+			goodsAndServices &&
+			this.renderItem(
+				'goods-and-services',
+				'Goods and Services',
+				this.renderList( goodsAndServices )
+			)
 		);
 	};
 
 	renderInternationalClassification = claim => {
-		let { classDesc } = claim;
+		const classDesc = get( claim, 'classDesc' );
 
-		if ( ! classDesc ) {
-			return;
-		}
-
-		if ( ! Array.isArray( classDesc ) ) {
-			classDesc = [ classDesc ];
-		}
-
-		return this.renderItem(
-			'international-classification',
-			'International Class of Goods and Services or Equivalent if applicable',
-			this.renderList( classDesc )
+		return (
+			classDesc &&
+			this.renderItem(
+				'international-classification',
+				'International Class of Goods and Services or Equivalent if applicable',
+				this.renderList( classDesc )
+			)
 		);
 	};
 
@@ -95,10 +86,7 @@ class TrademarkClaim extends React.Component {
 			return;
 		}
 
-		const { addr } = contact;
-		if ( addr.street && ! Array.isArray( addr.street ) ) {
-			addr.street = [ addr.street ];
-		}
+		const addr = get( contact, 'addr' );
 
 		const contactData = [];
 		contact.name && contactData.push( this.renderItem( 'name', 'Name', contact.name ) );
@@ -120,7 +108,7 @@ class TrademarkClaim extends React.Component {
 	};
 
 	renderRegistrant = claim => {
-		const { holder } = claim;
+		const holder = get( claim, 'holder' );
 		return (
 			holder &&
 			this.renderItem( 'holder', 'Trademark Registrant', this.renderContactInfo( holder ) )
@@ -128,7 +116,7 @@ class TrademarkClaim extends React.Component {
 	};
 
 	renderContact = claim => {
-		const { contact } = claim;
+		const contact = get( claim, 'contact' );
 		return contact && this.renderItem( 'contact', 'Contact', this.renderContactInfo( contact ) );
 	};
 
@@ -160,19 +148,14 @@ class TrademarkClaim extends React.Component {
 	};
 
 	renderCases = claim => {
-		const { notExactMatch } = claim;
+		const notExactMatch = get( claim, 'notExactMatch' );
 
 		if ( ! notExactMatch ) {
 			return;
 		}
 
-		let { court: courtCases, udrp: udrpCases } = notExactMatch;
-		if ( courtCases && ! Array.isArray( courtCases ) ) {
-			courtCases = [ courtCases ];
-		}
-		if ( udrpCases && ! Array.isArray( udrpCases ) ) {
-			udrpCases = [ udrpCases ];
-		}
+		const courtCases = get( notExactMatch, 'court' );
+		const udrpCases = get( notExactMatch, 'udrp' );
 
 		return (
 			<div className="trademark-claims-notice__claim-item" key="claim-cases">
