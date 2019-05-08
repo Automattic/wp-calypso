@@ -7,14 +7,19 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
+
 import SidebarRegion from './region';
-import { abtest } from 'lib/abtest';
 
 export default class extends React.Component {
 	static displayName = 'Sidebar';
 
 	static propTypes = {
 		className: PropTypes.string,
+		hasSidebar: PropTypes.bool,
 		onClick: PropTypes.func,
 	};
 
@@ -23,7 +28,8 @@ export default class extends React.Component {
 			el => el.type === SidebarRegion
 		);
 
-		const sidebarClass = 'right' === abtest( 'showCheckoutCartRight' ) ? '' : 'sidebar';
+		const sidebarClass =
+			'undefined' === typeof this.props.hasSidebar || this.props.hasSidebar ? 'sidebar' : '';
 
 		return (
 			<ul

@@ -24,7 +24,7 @@ import Sidebar from 'layout/sidebar';
 import CartBodyLoadingPlaceholder from 'my-sites/checkout/cart/cart-body/loading-placeholder';
 import { CART_ON_MOBILE_SHOW } from 'lib/upgrades/action-types';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, hasSidebar } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import JetpackLogo from 'components/jetpack-logo';
@@ -87,7 +87,7 @@ class SecondaryCart extends Component {
 		}
 
 		return (
-			<Sidebar className={ cartClasses }>
+			<Sidebar className={ cartClasses } hasSidebar={ this.props.hasSidebar }>
 				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<CartSummaryBar additionalClasses="cart-header" />
 				<CartPlanAd selectedSite={ selectedSite } cart={ cart } />
@@ -112,5 +112,6 @@ export default connect( state => {
 	return {
 		isJetpackNotAtomic:
 			isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
+		hasSidebar: hasSidebar( state ),
 	};
 } )( localize( SecondaryCart ) );
