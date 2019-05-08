@@ -38,6 +38,7 @@ import WebPreview from 'components/web-preview';
 import { trashPost } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /**
  * Types
@@ -354,7 +355,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
 
 	render() {
-		const { iframeUrl, siteId, shouldLoadIframe } = this.props;
+		const { iframeUrl, siteId, shouldLoadIframe, statsPath, statsProps } = this.props;
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
@@ -369,6 +370,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		return (
 			<Fragment>
+				<PageViewTracker path={ statsPath } title="Block Editor" properties={ statsProps } />
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
@@ -410,6 +412,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 }
 
 const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) => {
+	const statsPath = postId
+		? '/block-editor/:post_type/:site/:post_id'
+		: '/block-editor/:post_type/:site';
+	const statsProps = postId ? { post_type: postType, post_id: postId } : { post_type: postType };
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
@@ -449,6 +455,8 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
+		statsPath,
+		statsProps,
 	};
 };
 
