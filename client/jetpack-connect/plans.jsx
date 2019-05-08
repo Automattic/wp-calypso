@@ -38,7 +38,6 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
-import { requestGeoLocation } from 'state/data-getters';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -179,8 +178,7 @@ class Plans extends Component {
 			false !== this.props.notJetpack ||
 			! this.props.canPurchasePlans ||
 			false !== this.props.hasPlan ||
-			false !== this.props.isAutomatedTransfer ||
-			! this.props.countryCode
+			false !== this.props.isAutomatedTransfer
 		);
 	}
 
@@ -191,7 +189,7 @@ class Plans extends Component {
 	};
 
 	render() {
-		const { interval, selectedSite, translate, countryCode } = this.props;
+		const { interval, selectedSite, translate } = this.props;
 
 		if ( this.shouldShowPlaceholder() ) {
 			return (
@@ -216,7 +214,6 @@ class Plans extends Component {
 					isLanding={ false }
 					interval={ interval }
 					selectedSite={ selectedSite }
-					countryCode={ countryCode }
 				>
 					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
@@ -236,16 +233,11 @@ class Plans extends Component {
 export { Plans as PlansTestComponent };
 
 const connectComponent = connect(
-	( state, props ) => {
+	state => {
 		const user = getCurrentUser( state );
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteSlug = selectedSite ? selectedSite.slug : '';
-		const geo = requestGeoLocation();
-		let countryCode = geo.data;
-		if ( ! countryCode && geo.state === 'failure' ) {
-			// if our geo requests are being blocked, we default to US
-			countryCode = 'US';
-		}
+
 		const selectedPlanSlug = retrievePlan();
 		const selectedPlan = getPlanBySlug( state, selectedPlanSlug );
 		return {
@@ -262,7 +254,6 @@ const connectComponent = connect(
 			selectedSite,
 			selectedSiteSlug,
 			userId: user ? user.ID : null,
-			countryCode: props.countryCode || countryCode,
 		};
 	},
 	{

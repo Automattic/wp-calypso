@@ -188,7 +188,6 @@ describe( 'PlanIntervalDiscount', () => {
 		rawPrice: 22,
 		relatedMonthlyPlan: { raw_price: 2 },
 		translate: identity,
-		countryCode: 'US',
 	};
 	test( 'should show interval discount for Jetpack during signup', () => {
 		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isInSignup isJetpack /> );
