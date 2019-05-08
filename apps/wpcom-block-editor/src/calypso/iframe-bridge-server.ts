@@ -26,7 +26,7 @@ import {
 	PortToCalypso,
 	PreviewChannel,
 	WindowActions,
-} from '../../../../client/gutenberg/editor/types';
+} from 'gutenberg/editor/types';
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
