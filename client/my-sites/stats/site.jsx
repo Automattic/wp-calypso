@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { find } from 'lodash';
+import Grid from '@material-ui/core/Grid';
 
 /**
  * Internal dependencies
@@ -179,36 +180,38 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					<StatsBanners siteId={ siteId } slug={ slug } />
-					<ChartTabs
-						activeTab={ getActiveTab( this.props.chartTab ) }
-						activeLegend={ this.state.activeLegend }
-						availableLegend={ this.getAvailableLegend() }
-						onChangeLegend={ this.onChangeLegend }
-						barClick={ this.barClick }
-						switchTab={ this.switchChart }
-						charts={ CHARTS }
-						queryDate={ queryDate }
-						period={ this.props.period }
-						chartTab={ this.props.chartTab }
-					/>
-					<StickyPanel className="stats__sticky-navigation">
-						<StatsPeriodNavigation
-							date={ date }
-							period={ period }
-							url={ `/stats/${ period }/${ slug }` }
-						>
-							<DatePicker
-								period={ period }
-								date={ date }
-								query={ query }
-								statsType="statsTopPosts"
-								showQueryDate
+					<Grid container spacing={ 8 } className="stats__module-list">
+						<Grid item xs={ 12 }>
+							<StatsBanners siteId={ siteId } slug={ slug } />
+							<ChartTabs
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								availableLegend={ this.getAvailableLegend() }
+								onChangeLegend={ this.onChangeLegend }
+								barClick={ this.barClick }
+								switchTab={ this.switchChart }
+								charts={ CHARTS }
+								queryDate={ queryDate }
+								period={ this.props.period }
+								chartTab={ this.props.chartTab }
 							/>
-						</StatsPeriodNavigation>
-					</StickyPanel>
-					<div className="stats__module-list is-events">
-						<div className="stats__module-column">
+							<StickyPanel className="stats__sticky-navigation">
+								<StatsPeriodNavigation
+									date={ date }
+									period={ period }
+									url={ `/stats/${ period }/${ slug }` }
+								>
+									<DatePicker
+										period={ period }
+										date={ date }
+										query={ query }
+										statsType="statsTopPosts"
+										showQueryDate
+									/>
+								</StatsPeriodNavigation>
+							</StickyPanel>
+						</Grid>
+						<Grid item sm={ 12 } md={ 6 } lg={ 4 } className="stats__module-column">
 							<StatsModule
 								path="posts"
 								moduleStrings={ moduleStrings.posts }
@@ -226,24 +229,8 @@ class StatsSite extends Component {
 								showSummaryLink
 							/>
 							{ videoList }
-						</div>
-						<div className="stats__module-column">
-							<Countries
-								path="countries"
-								period={ this.props.period }
-								query={ query }
-								summary={ false }
-							/>
-							<StatsModule
-								path="clicks"
-								moduleStrings={ moduleStrings.clicks }
-								period={ this.props.period }
-								query={ query }
-								statType="statsClicks"
-								showSummaryLink
-							/>
-						</div>
-						<div className="stats__module-column">
+						</Grid>
+						<Grid item sm={ 12 } md={ 6 } lg={ 4 } className="stats__module-column">
 							<StatsModule
 								path="referrers"
 								moduleStrings={ moduleStrings.referrers }
@@ -262,7 +249,32 @@ class StatsSite extends Component {
 								showSummaryLink
 							/>
 							{ podcastList }
-						</div>
+						</Grid>
+						<Grid
+							item
+							sm={ 12 }
+							md={ 6 }
+							lg={ 4 }
+							className="stats__module-column stat__module-countries"
+						>
+							<Countries
+								path="countries"
+								period={ this.props.period }
+								query={ query }
+								summary={ false }
+							/>
+							<StatsModule
+								path="clicks"
+								moduleStrings={ moduleStrings.clicks }
+								period={ this.props.period }
+								query={ query }
+								statType="statsClicks"
+								showSummaryLink
+							/>
+						</Grid>
+					</Grid>
+					<div className="stats__module-list is-events">
+						<div className="stats__module-column" />
 					</div>
 				</div>
 				<JetpackColophon />

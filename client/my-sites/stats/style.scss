@@ -1,32 +1,3 @@
-
-// Module container
-@include breakpoint( '>960px' ) {
-	.stats__module-column {
-		float: right;
-		width: calc( 50% - 4px );
-
-		&:first-child {
-			float: left;
-		}
-
-		&:last-child {
-			clear: right;
-		}
-	}
-}
-
-@include breakpoint( '>1280px' ) {
-	.stats__module-column {
-		width: calc( 33% - 3px );
-
-		&:last-child {
-			clear: none;
-			left: -10px;
-			position: relative;
-		}
-	}
-}
-
 .old-stats-link .button .gridicon {
 	margin-bottom: -2px;
 	margin-left: 4px;
