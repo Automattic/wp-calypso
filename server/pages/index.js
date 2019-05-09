@@ -770,6 +770,23 @@ module.exports = function() {
 		res.send( pageHtml );
 	} );
 
+	// Landing pages for signup
+	app.get( pathToRegExp( '/start' ), function( req, res ) {
+		const ctx = getDefaultContext( req );
+		attachBuildTimestamp( ctx );
+		attachHead( ctx );
+		attachI18n( ctx );
+
+		ctx.clientData = config.clientData;
+
+		const target = getBuildTargetFromRequest( req );
+
+		ctx.entrypoint = getFilesForEntrypoint( target, 'signup' );
+
+		const pageHtml = renderJsx( 'signup', ctx );
+		res.send( pageHtml );
+	} );
+
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {

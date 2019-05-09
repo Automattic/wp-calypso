@@ -181,14 +181,6 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
-		name: 'signup',
-		paths: [ '/start' ],
-		module: 'signup',
-		secondary: false,
-		enableLoggedOut: true,
-		isomorphic: true,
-	},
-	{
 		name: 'stats',
 		paths: [ '/stats' ],
 		module: 'my-sites/stats',

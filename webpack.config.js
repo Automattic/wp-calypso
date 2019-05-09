@@ -158,6 +158,7 @@ const webpackConfig = {
 	context: __dirname,
 	entry: {
 		build: [ path.join( __dirname, 'client', 'boot', 'app' ) ],
+		signup: [ path.join( __dirname, 'client', 'landing', 'signup' ) ],
 		domainsLanding: [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
 	},
 	mode: isDevelopment ? 'development' : 'production',
