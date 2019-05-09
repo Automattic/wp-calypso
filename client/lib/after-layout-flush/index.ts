@@ -1,3 +1,5 @@
+/* eslint-disable valid-jsdoc */
+
 interface Cancelable {
 	cancel: () => void;
 }
@@ -13,8 +15,8 @@ interface Cancelable {
  * Inspired by the Firefox performance best practices MDN article at:
  * https://developer.mozilla.org/en-US/Firefox/Performance_best_practices_for_Firefox_fe_engineers
  *
- * @param {Function} func The function to be invoked after the layout flush
- * @returns {Function} The new delayed function
+ * @param func - The function to be invoked after the layout flush
+ * @returns The new delayed function
  */
 export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 	func: T
@@ -100,3 +102,5 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 
 	return wrappedWithCancel;
 }
+
+/* eslint-enable valid-jsdoc */
