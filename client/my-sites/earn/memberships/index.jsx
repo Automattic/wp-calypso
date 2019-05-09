@@ -32,6 +32,9 @@ import { FEATURE_MEMBERSHIPS, PLAN_PERSONAL, PLAN_JETPACK_PERSONAL } from 'lib/p
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SectionHeader from 'components/section-header';
+import QueryMembershipProducts from 'components/data/query-memberships';
+import CompactCard from 'components/card/compact';
+import Gridicon from 'components/gridicon';
 
 class MembershipsSection extends Component {
 	constructor( props ) {
@@ -164,6 +167,26 @@ class MembershipsSection extends Component {
 		);
 	}
 
+	renderProducts() {
+		return (
+			<div>
+				<SectionHeader label={ this.props.translate( 'Active Membership plans' ) } />
+				<CompactCard href={ '/me/purchases/memberships/' }>
+					<QueryMembershipProducts siteId={ this.props.siteId } />
+					<div className="memberships__module-products-title">
+						{ this.props.translate( 'Membership Amounts' ) }
+					</div>
+					<div className="memberships__module-products-list">
+						<Gridicon icon="tag" size={ 12 } className="memberships__module-products-list-icon" />
+						{ this.props.products
+							.map( product => formatCurrency( product.price, product.currency ) )
+							.join( ', ' ) }
+					</div>
+				</CompactCard>
+			</div>
+		);
+	}
+
 	renderSubscriberSubscriptionSummary( subscriber ) {
 		if ( subscriber.plan.renew_interval === 'one-time' ) {
 			return this.props.translate( 'Paid %(amount)s once on %(formattedDate)s', {
@@ -215,6 +238,7 @@ class MembershipsSection extends Component {
 			<div>
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
+				{ this.renderProducts() }
 			</div>
 		);
 	}
@@ -300,6 +324,7 @@ const mapStateToProps = state => {
 		paidPlan: isSiteOnPaidPlan( state, siteId ),
 		isJetpackTooOld: isJetpack && isJetpackMinimumVersion( state, siteId, '7.3' ) === false,
 		isJetpack: isJetpack,
+		products: get( state, [ 'memberships', 'productList', 'items', siteId ], [] ),
 	};
 };
 

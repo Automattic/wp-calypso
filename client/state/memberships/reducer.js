@@ -3,7 +3,6 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { combineReducers } from 'state/utils';
 import connectedAccounts from './connected-accounts/reducer';
 import productList from './product-list/reducer';
@@ -17,11 +16,8 @@ const reducers = {
 	earnings,
 	subscribers,
 	settings,
+	connectedAccounts,
+	productList,
 };
-
-if ( config.isEnabled( 'memberships' ) ) {
-	reducers.connectedAccounts = connectedAccounts;
-	reducers.productList = productList;
-}
 
 export default combineReducers( reducers );
