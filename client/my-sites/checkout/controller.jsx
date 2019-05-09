@@ -40,7 +40,7 @@ export function checkout( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
 	if ( 'right' === abtest( 'showCheckoutCartRight' ) ) {
-		context.store.dispatch( setSection( { name: 'show-cart-right' }, { hasSidebar: false } ) );
+		context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
 		context.primary = (
 			<>

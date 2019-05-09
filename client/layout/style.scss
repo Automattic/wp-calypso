@@ -337,31 +337,35 @@
 	}
 }
 
-.is-section-show-cart-right {
 
-	@include breakpoint( '>660px' ) {
-	
-		& .layout__primary div.checkout__container {
-			display: flex;
-		}
-
-		& .layout__primary .main {
-			margin: 0 auto;
-			margin-right: 0;
-			width: 100%;
-		}
-
-		& .layout__primary .secondary-cart {
-			margin: 0 auto;
-			margin-left: 20px;
-			margin-bottom: 16px;
-			width: 272px;
-		}
+// The following is for moving cart contents to the right.
+// As implemented in the showCheckoutCartRight ab test.
+@include breakpoint( '>660px' ) {
+	div.checkout__container {
+		display: flex;
 	}
 
-	@media ( max-width: 660px ) {
-    	& .layout__primary .secondary-cart {
-			margin-left: 0;
-		}
+	div.checkout__container .main {
+		margin-right: 0;
+		width: 100%;
+	}
+
+	div.checkout__container .secondary-cart {
+		margin: 0 auto;
+		margin-left: 20px;
+		margin-bottom: 16px;
+		width: 272px;
 	}
 }
+
+@media ( max-width: 660px ) {
+   	.layout__primary .secondary-cart {
+		margin-left: 0;
+	}
+}
+
+div.checkout__container .jetpack-logo {
+	width: 100%;
+}
+// end of showCheckoutCartRight ab test related CSS changes
+
