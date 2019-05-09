@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { intersectionWith } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
@@ -9,8 +14,10 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
 import isPluginActive from 'state/selectors/is-plugin-active';
-import hasWpAdminEditorConflictingPlugin from 'state/selectors/has-wp-admin-editor-conflicting-plugin';
+import { getPlugins } from 'state/plugins/installed/selectors';
 import { isHttps } from 'lib/url';
+
+export const blacklistedPlugins = [ 'elementor' ];
 
 export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -36,11 +43,12 @@ export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 		// - We are over a insecure HTTPS connection or the site has a SSL cert since the browser cannot embed insecure
 		//   content in a resource loaded over a secure HTTPS connection.
 		// - Not using any plugin that replaces the block editor.
+		const activePlugins = getPlugins( state, siteId, 'active' );
 		if (
 			isEnabled( 'jetpack/gutenframe' ) &&
 			isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
 			( 'http:' === window.location.protocol || isHttps( getSiteAdminUrl( state, siteId ) ) ) &&
-			! hasWpAdminEditorConflictingPlugin( state, siteId )
+			!! intersectionWith( activePlugins, blacklistedPlugins, ( ap, bp ) => ap.slug === bp )
 		) {
 			return false;
 		}
