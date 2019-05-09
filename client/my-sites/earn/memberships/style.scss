@@ -180,3 +180,19 @@
 .memberships__module-products-list-icon {
 	margin-right: 6px;
 }
+
+.memberships__products-product-card {
+	display: flex;
+}
+.memberships__products-product-details {
+	flex-grow: 1;
+}
+.memberships__products-product-price {
+	color: var( --color-neutral-700 );
+	font-size: 16px;
+	line-height: 1.5;
+}
+.memberships__products-product-title {
+	color: var( --color-text-subtle );
+	font-size: 14px;
+}
