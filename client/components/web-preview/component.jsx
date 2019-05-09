@@ -20,6 +20,11 @@ import RootChild from 'components/root-child';
 import { setPreviewShowing } from 'state/ui/actions';
 import WebPreviewContent from './content';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class WebPreviewModal extends Component {
 	static propTypes = {
 		// Display the preview
