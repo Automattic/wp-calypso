@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { find } from 'lodash';
-import Grid from '@material-ui/core/Grid';
 
 /**
  * Internal dependencies
@@ -37,6 +36,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import Grid from 'components/grid';
 
 import memoizeLast from 'lib/memoize-last';
 

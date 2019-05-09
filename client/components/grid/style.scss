@@ -1,0 +1,203 @@
+$gutters: 8 16 24 32 40;
+$columns: 1 2 3 4 5 6 7 8 9 10 11 12;
+$sizes: 'xs' 'sm' 'md' 'lg' 'xl';
+
+.muriel-grid-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    width: calc(100% + 8px);
+    margin: -4px;
+}
+
+.muriel-grid-item {
+    margin: 0;
+    padding: 4px;
+    box-sizing: border-box;
+}
+.muriel-grid-zeroMinWidth {
+    min-width: 0;
+}
+.muriel-grid-direction-xs-column {
+    flex-direction: column;
+}
+.muriel-grid-direction-xs-column-reverse {
+    flex-direction: column-reverse;
+}
+.muriel-grid-direction-xs-row-reverse {
+    flex-direction: row-reverse;
+}
+.muriel-grid-wrap-xs-nowrap {
+    flex-wrap: nowrap;
+}
+.muriel-grid-wrap-xs-wrap-reverse {
+    flex-wrap: wrap-reverse;
+}
+.muriel-grid-align-items-xs-center {
+    align-items: center;
+}
+.muriel-grid-align-items-xs-flex-start {
+    align-items: flex-start;
+}
+.muriel-grid-align-items-xs-flex-end {
+    align-items: flex-end;
+}
+.muriel-grid-align-items-xs-baseline {
+    align-items: baseline;
+}
+.muriel-grid-align-content-xs-center {
+    align-content: center;
+}
+.muriel-grid-align-content-xs-flex-start {
+    align-content: flex-start;
+}
+.muriel-grid-align-content-xs-flex-end {
+    align-content: flex-end;
+}
+.muriel-grid-align-content-xs-space-between {
+    align-content: space-between;
+}
+.muriel-grid-align-content-xs-space-around {
+    align-content: space-around;
+}
+.muriel-grid-justify-xs-center {
+    justify-content: center;
+}
+.muriel-grid-justify-xs-flex-end {
+    justify-content: flex-end;
+}
+.muriel-grid-justify-xs-space-between {
+    justify-content: space-between;
+}
+.muriel-grid-justify-xs-space-around {
+    justify-content: space-around;
+}
+.muriel-grid-justify-xs-space-evenly {
+    justify-content: space-evenly;
+}
+
+@each $gutter in $gutters {
+    @each $size in $sizes {
+        .muriel-grid-spacing-#{$size}-#{$gutter} {
+            width: calc(100% + #{$gutter}px);
+            margin: -#{$gutter / 2}px;
+        }
+        .muriel-grid-spacing-#{$size}-#{$gutter} > .muriel-grid-item {
+            padding: #{$gutter / 2}px;
+        }
+    }
+}
+
+.muriel-grid-xs-auto {
+    flex-grow: 0;
+    max-width: none;
+    flex-basis: auto;
+}
+.muriel-grid-xs-true {
+    flex-grow: 1;
+    max-width: 100%;
+    flex-basis: 0;
+}
+
+@each $column in $columns {
+    .muriel-grid-xs-#{$column} {
+        flex-grow: 0;
+        max-width: #{$column / 12 * 100 + '%'};
+        flex-basis: #{$column / 12 * 100 + '%'};
+    }
+}
+
+@media (min-width:660px) {
+    .muriel-grid-container {
+        width: calc(100% + 16px);
+        margin: -4px;
+    }
+    .muriel-grid-container > .muriel-grid-item {
+        padding: 8px;
+    }
+    .muriel-grid-sm-auto {
+        flex-grow: 0;
+        max-width: none;
+        flex-basis: auto;
+    }
+    .muriel-grid-sm-true {
+        flex-grow: 1;
+        max-width: 100%;
+        flex-basis: 0;
+    }
+    @each $size in $columns {
+        .muriel-grid-sm-#{$size} {
+            flex-grow: 0;
+            max-width: #{$size / 12 * 100 + '%'};
+            flex-basis: #{$size / 12 * 100 + '%'};
+        }
+    }
+}
+
+@media (min-width:1040px) {
+    .muriel-grid-container {
+        width: calc(100% + 24px);
+        margin: -12px;
+    }
+    .muriel-grid-container > .muriel-grid-item {
+        padding: 12px;
+    }
+    .muriel-grid-md-auto {
+        flex-grow: 0;
+        max-width: none;
+        flex-basis: auto;
+    }
+    .muriel-grid-md-true {
+        flex-grow: 1;
+        max-width: 100%;
+        flex-basis: 0;
+    }
+    @each $size in $columns {
+        .muriel-grid-md-#{$size} {
+            flex-grow: 0;
+            max-width: #{$size / 12 * 100 + '%'};
+            flex-basis: #{$size / 12 * 100 + '%'};
+        }
+    }
+}
+
+@media (min-width:1280px) {
+    .muriel-grid-lg-auto {
+        flex-grow: 0;
+        max-width: none;
+        flex-basis: auto;
+    }
+    .muriel-grid-lg-true {
+        flex-grow: 1;
+        max-width: 100%;
+        flex-basis: 0;
+    }
+    @each $size in $columns {
+        .muriel-grid-lg-#{$size} {
+            flex-grow: 0;
+            max-width: #{$size / 12 * 100 + '%'};
+            flex-basis: #{$size / 12 * 100 + '%'};
+        }
+    }
+}
+
+@media (min-width:1440px) {
+    .muriel-grid-xl-auto {
+        flex-grow: 0;
+        max-width: none;
+        flex-basis: auto;
+    }
+    .muriel-grid-xl-true {
+        flex-grow: 1;
+        max-width: 100%;
+        flex-basis: 0;
+    }
+    @each $size in $columns {
+        .muriel-grid-xl-#{$size} {
+            flex-grow: 0;
+            max-width: #{$size / 12 * 100 + '%'};
+            flex-basis: #{$size / 12 * 100 + '%'};
+        }
+	}
+}
