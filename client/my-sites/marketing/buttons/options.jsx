@@ -207,7 +207,7 @@ class SharingButtonsOptions extends Component {
 		return (
 			<fieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
-					{ translate( 'Show sharing buttons on', {
+					{ translate( 'Show like and sharing buttons on', {
 						context: 'Sharing options: Header',
 						comment:
 							'Possible values are: "Front page, Archive Pages, and Search Results", "Posts", "Pages", "Media"',
