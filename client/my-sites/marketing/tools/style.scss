@@ -69,6 +69,11 @@
 	margin: 0.5em;
 	width: calc( 100% - 1em );
 
+	// Reduce top margin of Looka logo
+	&:nth-child(3) .tools__feature-list-item-body-image {
+		margin-top: 5px;
+	}
+
 	@include breakpoint( '>1040px' ) {
 		width: calc( 50% - 1em );
 	}
@@ -98,9 +103,9 @@
 }
 
 .tools__feature-list-item-body-image {
-	margin-right: 0.5em;
+	margin: 20px 20px 0 0;
 	max-width: 150px;
-	width: 25%;
+	width: 15%;
 
 	@include breakpoint( '>1040px' ) {
 		display: flex;

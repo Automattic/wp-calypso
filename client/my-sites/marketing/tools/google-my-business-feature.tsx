@@ -72,7 +72,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 				description={ translate(
 					'Get ahead of your competition. Be there when customers search businesses like yours on Google Search and Maps by connecting to Google My Business.'
 				) }
-				imagePath="/calypso/images/illustrations/business.svg"
+				imagePath="/calypso/images/marketing/google-my-business-logo.svg"
 				title={ translate( 'Let your customers find you on Google' ) }
 			>
 				{ ! connectedGoogleMyBusinessLocation ? (

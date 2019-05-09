@@ -71,7 +71,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					description={ translate(
 						"Use your site's Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
 					) }
-					imagePath="/calypso/images/illustrations/marketing.svg"
+					imagePath="/calypso/images/marketing/mailchimp-logo.svg"
 				>
 					<Button compact onClick={ handleStartSharingClick }>
 						{ translate( 'Start Sharing' ) }
@@ -83,7 +83,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					description={ translate(
 						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site."
 					) }
-					imagePath="/calypso/images/illustrations/expert.svg"
+					imagePath="/calypso/images/marketing/upwork-logo.png"
 				>
 					<Button
 						compact
@@ -100,7 +100,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					description={ translate(
 						"A custom logo helps your brand pop and makes your site memorable. Our partner Looka is standing by if you'd like some professional help."
 					) }
-					imagePath="/calypso/images/illustrations/branding.svg"
+					imagePath="/calypso/images/marketing/looka-logo.svg"
 				>
 					<Button
 						compact
