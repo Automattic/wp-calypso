@@ -22,12 +22,21 @@ import QueryMembershipProducts from 'components/data/query-memberships';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
+import Dialog from 'components/dialog';
 
 class MembershipsProductsSection extends Component {
-	renderEllipsisMenu() {
+	constructor() {
+		super();
+		this.onCloseDialog = this.onCloseDialog.bind( this );
+	}
+	state = {
+		showDialog: false,
+		editedProductId: null,
+	};
+	renderEllipsisMenu( productId ) {
 		return (
 			<EllipsisMenu position="bottom left">
-				<PopoverMenuItem>
+				<PopoverMenuItem onClick={ () => this.openProductDialog( productId ) }>
 					<Gridicon size={ 18 } icon={ 'pencil' } />
 					{ this.props.translate( 'Edit' ) }
 				</PopoverMenuItem>
@@ -38,6 +47,48 @@ class MembershipsProductsSection extends Component {
 			</EllipsisMenu>
 		);
 	}
+
+	onCloseDialog = () => {
+		this.setState( { showDialog: false, editedProductId: null } );
+	};
+
+	openProductDialog = editedProductId => {
+		this.setState( { showDialog: true, editedProductId } );
+	};
+
+	renderEditDialog() {
+		return (
+			<Dialog
+				isVisible={ this.state.showDialog }
+				onClose={ this.onCloseDialog }
+				buttons={ [
+					{
+						label: this.props.translate( 'Cancel' ),
+						action: 'cancel',
+						onCLick: this.onCloseDialog,
+					},
+					{
+						label: this.state.editedProductId
+							? this.props.translate( 'Edit' )
+							: this.props.translate( 'Add' ),
+						action: 'submit',
+						onCLick: () => {},
+					},
+				] }
+			>
+				<h2>
+					{ this.state.editedProductId && this.props.translate( 'Edit' ) }
+					{ ! this.state.editedProductId && this.props.translate( 'Add New Membership Amount' ) }
+				</h2>
+				<p>
+					{ this.props.translate(
+						'You can add multiple membership amounts, each of which will allow you to generate a membership button.'
+					) }
+				</p>
+			</Dialog>
+		);
+	}
+
 	render() {
 		return (
 			<div>
@@ -45,9 +96,10 @@ class MembershipsProductsSection extends Component {
 				<HeaderCake backHref={ '/earn/memberships/' + this.props.siteSlug }>
 					{ this.props.translate( 'Membership Amounts' ) }
 				</HeaderCake>
+				{ this.renderEditDialog() }
 
 				<SectionHeader>
-					<Button primary compact>
+					<Button primary compact onClick={ () => this.openProductDialog( null ) }>
 						{ this.props.translate( 'Add new amount' ) }
 					</Button>
 				</SectionHeader>
