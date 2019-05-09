@@ -75,13 +75,7 @@ export class PlansStep extends Component {
 	}
 
 	onSelectPlan = cartItem => {
-		const {
-			additionalStepData,
-			stepSectionName,
-			stepName,
-			flowName,
-			goToNextStep,
-		} = this.props;
+		const { additionalStepData, stepSectionName, stepName, flowName, goToNextStep } = this.props;
 
 		if ( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
@@ -173,6 +167,7 @@ export class PlansStep extends Component {
 					domainName={ this.getDomainName() }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					plansWithScroll={ true }
 				/>
 				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
 				 * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
