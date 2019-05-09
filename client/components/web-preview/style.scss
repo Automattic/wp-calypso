@@ -223,6 +223,14 @@ a.web-preview__external.button {
 	.is-seo & {
 		max-width: 865px;
 	}
+
+	// This is a fix to ensure iframes are responsive in iOs
+	// In order for it to work, the iframe must have the `scrolling="no"` attribute
+	// which is deprecated in HTML5, but there you go...
+	.is-ios & {
+		min-width: 100%;
+		width: 1px;
+	}
 }
 
 .web-preview__frame-wrapper {
