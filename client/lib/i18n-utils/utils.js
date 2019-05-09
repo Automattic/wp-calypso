@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, isArray, isString, isObject, map, pickBy, push, includes, endsWith } from 'lodash';
+import { find, isString, map, pickBy, push, includes, endsWith } from 'lodash';
 import url from 'url';
 import { getLocaleSlug, registerTranslateHook } from 'i18n-calypso';
 
@@ -255,11 +255,8 @@ class I18nScanner {
 	}
 
 	filter( ...args ) {
-		console.log( 'args:', args );
-		console.log( 'this:', this );
+		const [ translation, options ] = args;
 		if ( this.active ) {
-			const [ translation, options ] = args;
-			console.log( 'translation:', translation );
 			push( this.loggedTranslations, [ translation, options ] );
 		}
 
@@ -289,13 +286,11 @@ class I18nScanner {
 
 	stop() {
 		this.active = false;
-		console.log( 'start this:', this );
 		return this.loggedTranslations;
 	}
 
 	clear() {
 		this.loggedTranslations = [];
-		console.log( 'start this:', this );
 		return this.loggedTranslations;
 	}
 }
