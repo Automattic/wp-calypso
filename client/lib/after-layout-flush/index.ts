@@ -1,4 +1,6 @@
-/** @format */
+interface Cancelable {
+	cancel: () => void;
+}
 
 /**
  * Creates a delayed function that invokes `func` as soon as possible after the next layout
@@ -12,18 +14,23 @@
  * https://developer.mozilla.org/en-US/Firefox/Performance_best_practices_for_Firefox_fe_engineers
  *
  * @param {Function} func The function to be invoked after the layout flush
- * @returns {Function} Returns the new delayed function
+ * @returns {Function} The new delayed function
  */
-export default function afterLayoutFlush( func ) {
-	let rafHandle = undefined;
-	let timeoutHandle = undefined;
+export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
+	func: T
+): T & Cancelable {
+	// NodeJS and the browser have different types for timeouts (NodeJS.Timeout vs number), so
+	// we can't type this variable, or it will cause typing errors with `clearTimeout` later.
+	let timeoutHandle: any = undefined;
+	let rafHandle: number | undefined = undefined;
 
 	const hasRAF = typeof requestAnimationFrame === 'function';
 
-	let lastThis, lastArgs;
+	let lastThis: any;
+	let lastArgs: any[] | undefined;
 
-	const scheduleRAF = function( rafFunc ) {
-		return function( ...args ) {
+	const scheduleRAF = function( rafFunc: T ) {
+		return function( this: any, ...args: any[] ) {
 			lastThis = this;
 			lastArgs = args;
 
@@ -37,11 +44,11 @@ export default function afterLayoutFlush( func ) {
 				rafHandle = undefined;
 				rafFunc();
 			} );
-		};
+		} as T;
 	};
 
-	const scheduleTimeout = function( timeoutFunc ) {
-		return function( ...args ) {
+	const scheduleTimeout = function( timeoutFunc: T ) {
+		return function( this: any, ...args: any[] ) {
 			if ( ! hasRAF ) {
 				lastThis = this;
 				lastArgs = args;
@@ -55,7 +62,7 @@ export default function afterLayoutFlush( func ) {
 			}
 
 			timeoutHandle = setTimeout( () => {
-				const callArgs = lastArgs;
+				const callArgs = lastArgs !== undefined ? lastArgs : [];
 				const callThis = lastThis;
 
 				lastArgs = undefined;
@@ -65,17 +72,18 @@ export default function afterLayoutFlush( func ) {
 				timeoutHandle = undefined;
 				timeoutFunc.apply( callThis, callArgs );
 			}, 0 );
-		};
+		} as T;
 	};
 
 	// if RAF is not supported (in Node.js test environment), the wrapped function
 	// will only set a timeout.
-	let wrappedFunc = scheduleTimeout( func );
+	let wrappedFunc: T = scheduleTimeout( func );
 	if ( hasRAF ) {
 		wrappedFunc = scheduleRAF( wrappedFunc );
 	}
 
-	wrappedFunc.cancel = () => {
+	const wrappedWithCancel = wrappedFunc as T & Cancelable;
+	wrappedWithCancel.cancel = () => {
 		lastThis = undefined;
 		lastArgs = undefined;
 
@@ -90,5 +98,5 @@ export default function afterLayoutFlush( func ) {
 		}
 	};
 
-	return wrappedFunc;
+	return wrappedWithCancel;
 }
