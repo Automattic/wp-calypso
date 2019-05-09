@@ -78,7 +78,7 @@ class SecondaryCart extends Component {
 
 		if ( ! cart.hasLoadedFromServer ) {
 			return (
-				<Sidebar className={ cartClasses }>
+				<Sidebar className={ cartClasses } hasSidebar={ this.props.hasSidebar }>
 					<CartMessages cart={ cart } selectedSite={ selectedSite } />
 					<CartSummaryBar additionalClasses="cart-header" />
 					<CartBodyLoadingPlaceholder />
