@@ -88,47 +88,37 @@
 .tools__feature-list-item-body-text {
 	width: 100%;
 
+	> p {
+		margin-bottom: 0;
+	}
+
 	@include breakpoint( '>1040px' ) {
 		width: 75%;
 	}
 }
 
 .tools__feature-list-item-body-image {
-	display: none;
-	margin: 0.5em;
+	margin-right: 0.5em;
 	max-width: 150px;
 	width: 25%;
 
 	@include breakpoint( '>1040px' ) {
 		display: flex;
 	}
+
+	@include breakpoint( '<480px' ) {
+		display: none;
+	}
 }
 
 .tools__feature-list-item-child-row {
 	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
+	flex-direction: row;
+	justify-content: flex-end;
 
 	.button {
 		margin: 1em 0 0;
 		text-align: center;
-		width: 100%;
-	}
-
-	@include breakpoint( '>480px' ) {
-		flex-direction: row;
-
-		.button {
-			margin: 0 1em 0 0;
-			width: auto;
-		}
-	}
-
-	@include breakpoint( '>1040px' ) {
-		justify-content: flex-end;
-
-		.button {
-			margin: 0 0 0 1em;
-		}
+		width: auto;
 	}
 }
