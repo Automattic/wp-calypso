@@ -2,9 +2,9 @@
 /**
  * External dependencies
  */
-import { find, isString, map, pickBy, includes, endsWith } from 'lodash';
+import { find, isArray, isString, isObject, map, pickBy, push, includes, endsWith } from 'lodash';
 import url from 'url';
-import { getLocaleSlug } from 'i18n-calypso';
+import { getLocaleSlug, registerTranslateHook } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -244,3 +244,62 @@ export function filterLanguageRevisions( languageRevisions ) {
 		return true;
 	} );
 }
+
+class I18nScanner {
+	constructor() {
+		Object.assign( this, {
+			installed: false,
+			active: false,
+			loggedTranslations: [],
+		} );
+	}
+
+	filter( ...args ) {
+		console.log( 'args:', args );
+		console.log( 'this:', this );
+		if ( this.active ) {
+			const [ translation, options ] = args;
+			console.log( 'translation:', translation );
+			push( this.loggedTranslations, [ translation, options ] );
+		}
+
+		return translation;
+	}
+
+	install() {
+		if ( ! config.isEnabled( 'i18n/translation-scanner' ) ) {
+			return;
+		}
+
+		registerTranslateHook( this.filter );
+		this.installed = true;
+	}
+
+	start() {
+		if ( ! config.isEnabled( 'i18n/translation-scanner' ) ) {
+			return;
+		}
+
+		if ( ! this.installed ) {
+			this.install();
+		}
+		this.clear();
+		this.active = true;
+	}
+
+	stop() {
+		this.active = false;
+		console.log( 'start this:', this );
+		return this.loggedTranslations;
+	}
+
+	clear() {
+		this.loggedTranslations = [];
+		console.log( 'start this:', this );
+		return this.loggedTranslations;
+	}
+}
+
+console.log('Installing i18nScanner at global.i18nScanner')
+export const i18nScanner = new I18nScanner();
+global.i18nScanner = i18nScanner;
