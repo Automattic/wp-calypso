@@ -44,7 +44,7 @@ function doGoogleAdSearch( search_params ) {
 		' from ' +
 		search_params.comment_location;
 
-	describe( description + ' @i18n (' + locale + ')', function() {
+	describe.skip( description + ' @i18n (' + locale + ')', function() {
 		this.timeout( mochaTimeOut );
 		before( function() {
 			if ( locale === 'tr' || locale === 'ar' || locale === 'zh-tw' ) {
