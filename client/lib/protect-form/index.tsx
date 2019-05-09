@@ -12,7 +12,10 @@ import { Subtract } from 'utility-types';
  * Module variables
  */
 const debug = debugModule( 'calypso:protect-form' );
-let formsChanged: any[] = [];
+
+type ProtectableForm = ReturnType< typeof protectForm > | ProtectFormGuard;
+
+let formsChanged: ProtectableForm[] = [];
 let listenerCount = 0;
 
 function warnIfChanged( event: BeforeUnloadEvent ) {
@@ -39,13 +42,13 @@ function removeBeforeUnloadListener() {
 	}
 }
 
-function markChanged( form: any ) {
+function markChanged( form: ProtectableForm ) {
 	if ( ! includes( formsChanged, form ) ) {
 		formsChanged.push( form );
 	}
 }
 
-function markSaved( form: any ) {
+function markSaved( form: ProtectableForm ) {
 	formsChanged = without( formsChanged, form );
 }
 
