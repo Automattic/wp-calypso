@@ -79,7 +79,7 @@ const PostContentEdit = compose(
 						<div className="post-content-block__selector">
 							<div>{ __( 'Select something to preview:' ) }</div>
 							<PostAutocomplete
-								defaultValue={ get( selectedPost, 'title.rendered' ) }
+								initialValue={ get( selectedPost, 'title.rendered' ) }
 								onSelectPost={ onSelectPost }
 								postType={ [ 'page', 'post' ] }
 							/>

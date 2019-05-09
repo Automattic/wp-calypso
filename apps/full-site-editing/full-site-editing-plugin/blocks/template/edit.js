@@ -76,7 +76,7 @@ const TemplateEdit = compose(
 					>
 						<div className="template-block__selector">
 							<PostAutocomplete
-								defaultValue={ get( selectedPost, 'title.rendered' ) }
+								initialValue={ get( selectedPost, 'title.rendered' ) }
 								onSelectPost={ onSelectPost }
 								postType="wp_template"
 							/>
