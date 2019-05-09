@@ -1,6 +1,10 @@
 <?php
 
 function render_post_content_block( $attributes, $content ) {
+	if ( is_admin() ) {
+		return $content;
+	}
+
 	$post_id = get_the_ID();
 	$post_type = get_post_type();
 	$template_id = get_post_meta( $post_id, 'wp_template_id', true );

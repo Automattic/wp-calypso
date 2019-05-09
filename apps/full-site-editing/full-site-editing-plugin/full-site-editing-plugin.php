@@ -30,7 +30,8 @@ class A8C_Full_Site_Editing {
 
 	function register_meta_template_id() {
 		foreach( $this->post_types_using_templates as $post_type ) {
-			register_meta( $post_type, 'wp_template_id', array(
+			register_meta( 'post', 'wp_template_id', array(
+				'object_subtype' => $post_type,
 				'show_in_rest' => true,
 				'single' => true,
 				'type' => 'integer',
