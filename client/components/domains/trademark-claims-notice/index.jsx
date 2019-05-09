@@ -125,7 +125,7 @@ class TrademarkClaimsNotice extends React.Component {
 				<h2>{ translate( '%(domain)s matches a trademark.', { args: { domain } } ) }</h2>
 				<p>
 					{ translate(
-						"To continue, you must agree not to infringe on the trademark holders's rights. Please review and acknowledge the following notice."
+						"To continue, you must agree not to infringe on the trademark holders' rights. Please review and acknowledge the following notice."
 					) }
 				</p>
 			</CompactCard>
