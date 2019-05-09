@@ -341,7 +341,7 @@
 
 	@include breakpoint( '>660px' ) {
 	
-		& .layout__primary div.checkoutContainer {
+		& .layout__primary div.checkout__container {
 			display: flex;
 		}
 
@@ -354,6 +354,7 @@
 			margin: 0 auto;
 			margin-left: 20px;
 			margin-bottom: 16px;
+			width: 272px;
 		}
 	}
 
