@@ -45,7 +45,7 @@ export function checkout( context, next ) {
 		context.primary = (
 			<>
 				<FormattedHeader />
-				<div class="checkoutContainer">
+				<div className="checkout__container">
 					<CheckoutData>
 						<Checkout
 							product={ product }
