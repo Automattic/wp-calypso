@@ -16,7 +16,19 @@ function normalizeKey( key: string[] ): string {
 	return key.join( '.' );
 }
 
-async function initializeState( store: Store, storageKey: string, reducer: Reducer ) {
+interface OptionalStorageKey {
+	storageKey?: string;
+}
+
+interface WithAddReducer {
+	addReducer: ( keys: string[], subReducer: Reducer & OptionalStorageKey ) => void;
+}
+
+async function initializeState(
+	store: Store & WithAddReducer,
+	storageKey: string,
+	reducer: Reducer & OptionalStorageKey
+) {
 	const storedState = await getStateFromLocalStorage( reducer, storageKey );
 
 	if ( storedState ) {
@@ -26,11 +38,10 @@ async function initializeState( store: Store, storageKey: string, reducer: Reduc
 
 // For a given store, creates a function that adds a new reducer to the store,
 // and loads (asynchronously) and applies the persisted state for it.
-export const addReducerToStore = < T extends Reducer >( store: Store ) => (
-	key: string[],
-	reducer: T
-): Promise< void > => {
-	const storageKey: string = reducer.storageKey;
+export const addReducerToStore = < T extends Reducer & OptionalStorageKey >(
+	store: Store & WithAddReducer
+) => ( key: string[], reducer: T ): Promise< void > => {
+	const storageKey: string | undefined = reducer.storageKey;
 	const normalizedKey = normalizeKey( key );
 
 	const previousReducer = reducers.get( normalizedKey );
