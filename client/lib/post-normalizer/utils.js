@@ -179,6 +179,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'embed.radiopublic.com',
 		'gfycat.com',
 		'scribd.com',
+		'megaphone.fm',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
