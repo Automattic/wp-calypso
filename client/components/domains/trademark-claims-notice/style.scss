@@ -1,0 +1,118 @@
+.trademark-claims-notice {
+	h2 {
+		color: var( --color-text );
+		font-size: 1.25rem;
+		font-weight: 400;
+		margin: 0 0 10px;
+	}
+
+	h3 {
+		font-size: 1.1rem;
+		font-weight: 400;
+		margin: 0 0 10px;
+	}
+
+	.trademark-claims-notice__content {
+		margin-bottom: 113px;
+
+		body.is-section-signup & {
+			margin-bottom: 150px;
+		}
+
+		@include breakpoint('>800px') {
+			margin-bottom: 53px;
+
+			body.is-section-signup & {
+				margin-bottom: 104px;
+			}
+		}
+
+		.trademark-claims-notice__claim + .trademark-claims-notice__claim {
+			margin-top: 1.5em;
+		}
+
+		.trademark-claims-notice__claim {
+			.trademark-claims-notice__claim-item + .trademark-claims-notice__claim-item {
+				margin-top: 0.8em;
+			}
+
+			.trademark-claims-notice__claim-item-label {
+				font-weight: 500;
+			}
+
+			.trademark-claims-notice__claim-item-data {
+				word-break: break-word;
+			}
+
+			ul {
+				list-style: none;
+			}
+		}
+	}
+
+	.trademark-claims-notice__layout {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		margin: 0;
+		padding: 1px 31px 0 ($sidebar-width-max + 32px);
+		box-sizing: border-box;
+		overflow: hidden;
+
+		@include breakpoint('<960px') {
+			padding: 1px 23px 0 ($sidebar-width-min + 24px);
+		}
+
+		body.is-section-signup & {
+			margin: 0 auto;
+			max-width: 962px;
+			padding: 0;
+		}
+
+		.trademark-claims-notice__actions-background {
+			background: var( --color-surface-backdrop );
+			padding: 0 1px 32px;
+
+			@include breakpoint('<960px') {
+				padding: 0 1px 24px;
+			}
+
+			@include breakpoint('<660px') {
+				padding: 0 1px;
+			}
+
+			body.is-section-signup & {
+				background: var( --color-primary );
+				padding: 0;
+
+				@include breakpoint('>800px') {
+					padding: 0 0 32px;
+				}
+			}
+		}
+
+		@include breakpoint('<660px') {
+			margin-left: 0;
+			padding: 0;
+			padding-top: 47px;
+		}
+
+		.trademark-claims-notice__actions {
+			text-align: right;
+			max-width: 1040px;
+			margin: 1px auto 0;
+			padding-top: 16px;
+
+			.button {
+				width: 100%;
+				margin: 0 0 10px;
+
+				@include breakpoint('>800px') {
+					width: auto;
+					margin: 0 0 0 14px;
+				}
+			}
+		}
+	}
+}
