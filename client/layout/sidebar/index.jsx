@@ -28,17 +28,20 @@ export default class extends React.Component {
 			el => el.type === SidebarRegion
 		);
 
-		const sidebarClass =
-			'undefined' === typeof this.props.hasSidebar || this.props.hasSidebar ? 'sidebar' : '';
+		const clickHandler =
+			'undefined' === typeof this.props.onClick ? {} : { onClick: this.props.onClick };
+		const className = classNames(
+			this.props.className,
+			{
+				'has-regions': hasRegions,
+			},
+			{
+				sidebar: 'undefined' === typeof this.props.hasSidebar || this.props.hasSidebar,
+			}
+		);
 
 		return (
-			<ul
-				className={ classNames( sidebarClass, this.props.className, {
-					'has-regions': hasRegions,
-				} ) }
-				onClick={ this.props.onClick }
-				data-tip-target="sidebar"
-			>
+			<ul className={ className } { ...clickHandler } data-tip-target="sidebar">
 				{ this.props.children }
 			</ul>
 		);
