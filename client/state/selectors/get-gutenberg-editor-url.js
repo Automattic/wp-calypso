@@ -8,6 +8,7 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import { isEnabled } from 'config';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import { addQueryArgs } from 'lib/route';
+import isPluginReplacingWpAdminEditor from 'state/selectors/is-plugin-replacing-wp-admin-editor';
 
 export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
 	if ( isWpAdminGutenbergEnabled( state, siteId ) ) {
@@ -18,8 +19,12 @@ export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 
 			url = `${ siteAdminUrl }post.php?post=${ postId }&action=edit`;
 		}
 
-		// We want Calypsoify flows on Atomic sites
-		if ( isSiteAtomic( state, siteId ) && isEnabled( 'calypsoify/gutenberg' ) ) {
+		// We want Calypsoify flows on Atomic sites not using a plugin that replaces the block editor
+		if (
+			isEnabled( 'calypsoify/gutenberg' ) &&
+			isSiteAtomic( state, siteId ) &&
+			! isPluginReplacingWpAdminEditor( state, siteId )
+		) {
 			url = addQueryArgs( { calypsoify: '1' }, url );
 		}
 

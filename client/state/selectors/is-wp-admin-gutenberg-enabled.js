@@ -8,10 +8,9 @@ import { getSiteAdminUrl, isJetpackMinimumVersion, isJetpackSite } from 'state/s
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
-import isAnyPluginActive from 'state/selectors/is-any-plugin-active';
+import isPluginActive from 'state/selectors/is-plugin-active';
+import isPluginReplacingWpAdminEditor from 'state/selectors/is-plugin-replacing-wp-admin-editor';
 import { isHttps } from 'lib/url';
-
-export const pluginBlacklist = [ 'classic-editor', 'elementor' ];
 
 export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -28,18 +27,20 @@ export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 		}
 
 		// But not if they activated the Classic Editor plugin (effectively opting out of Gutenberg).
-		if ( isAnyPluginActive( state, siteId, pluginBlacklist ) ) {
+		if ( isPluginActive( state, siteId, 'classic-editor' ) ) {
 			return false;
 		}
 
-		// We do want Gutenframe flows for JP/AT sites that have been updated to Jetpack 7.3 or greater since it will
-		// provide a way to handle the frame nonces verification. But only if we are over a insecure HTTPS connection or
-		// the site has a SSL cert since the browser cannot embed insecure content in a resource loaded over a secure
-		// HTTPS connection.
+		// And not if the site is eligible for Gutenframe:
+		// - Updated to Jetpack 7.3 or greater in order to handle the frame nonces verification.
+		// - We are over a insecure HTTPS connection or the site has a SSL cert since the browser cannot embed insecure
+		//   content in a resource loaded over a secure HTTPS connection.
+		// - Not using any plugin that replaces the block editor.
 		if (
 			isEnabled( 'jetpack/gutenframe' ) &&
 			isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
-			( 'http:' === window.location.protocol || isHttps( getSiteAdminUrl( state, siteId ) ) )
+			( 'http:' === window.location.protocol || isHttps( getSiteAdminUrl( state, siteId ) ) ) &&
+			! isPluginReplacingWpAdminEditor( state, siteId )
 		) {
 			return false;
 		}
