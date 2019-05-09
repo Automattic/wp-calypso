@@ -4,6 +4,9 @@ interface Cancelable {
 	cancel: () => void;
 }
 
+// NodeJS and the browser have different return types for `setTimeout`.
+type TimeoutHandle = ReturnType< typeof setTimeout >;
+
 /**
  * Creates a delayed function that invokes `func` as soon as possible after the next layout
  * flush. At that time, it is very unlikely that the DOM has been written to since the last
@@ -19,9 +22,7 @@ interface Cancelable {
  * @returns The new delayed function
  */
 export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >( func: T ) {
-	// NodeJS and the browser have different types for timeouts (NodeJS.Timeout vs number), so
-	// we can't type this variable, or it will cause typing errors with `clearTimeout` later.
-	let timeoutHandle: any = undefined;
+	let timeoutHandle: TimeoutHandle | undefined = undefined;
 	let rafHandle: number | undefined = undefined;
 
 	const hasRAF = typeof requestAnimationFrame === 'function';
