@@ -13,9 +13,9 @@ import { Subtract } from 'utility-types';
  */
 const debug = debugModule( 'calypso:protect-form' );
 
-type ProtectableForm = ReturnType< typeof protectForm > | ProtectFormGuard;
+type ComponentMarkedWithFormChanges = Component;
 
-let formsChanged: ProtectableForm[] = [];
+let formsChanged: ComponentMarkedWithFormChanges[] = [];
 let listenerCount = 0;
 
 function warnIfChanged( event: BeforeUnloadEvent ) {
@@ -42,13 +42,13 @@ function removeBeforeUnloadListener() {
 	}
 }
 
-function markChanged( form: ProtectableForm ) {
+function markChanged( form: ComponentMarkedWithFormChanges ) {
 	if ( ! includes( formsChanged, form ) ) {
 		formsChanged.push( form );
 	}
 }
 
-function markSaved( form: ProtectableForm ) {
+function markSaved( form: ComponentMarkedWithFormChanges ) {
 	formsChanged = without( formsChanged, form );
 }
 
