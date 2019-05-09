@@ -18,9 +18,7 @@ interface Cancelable {
  * @param func - The function to be invoked after the layout flush
  * @returns The new delayed function
  */
-export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
-	func: T
-): T & Cancelable {
+export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >( func: T ) {
 	// NodeJS and the browser have different types for timeouts (NodeJS.Timeout vs number), so
 	// we can't type this variable, or it will cause typing errors with `clearTimeout` later.
 	let timeoutHandle: any = undefined;
