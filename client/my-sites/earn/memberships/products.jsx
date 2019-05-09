@@ -21,12 +21,20 @@ import CompactCard from 'components/card/compact';
 import QueryMembershipProducts from 'components/data/query-memberships';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import Gridicon from 'components/gridicon';
 
 class MembershipsProductsSection extends Component {
 	renderEllipsisMenu() {
 		return (
 			<EllipsisMenu position="bottom left">
-				<PopoverMenuItem>{ this.props.translate( 'Delete' ) }</PopoverMenuItem>
+				<PopoverMenuItem>
+					<Gridicon size={ 18 } icon={ 'pencil' } />
+					{ this.props.translate( 'Edit' ) }
+				</PopoverMenuItem>
+				<PopoverMenuItem>
+					<Gridicon size={ 18 } icon={ 'trash' } />
+					{ this.props.translate( 'Delete' ) }
+				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
 	}
