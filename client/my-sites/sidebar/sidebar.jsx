@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,6 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import page from 'page';
+import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -70,6 +70,7 @@ import {
 } from 'state/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import { canAccessEarnSection } from 'lib/ads/utils';
+import isVipSite from 'state/selectors/is-vip-site';
 
 /**
  * Module variables
@@ -660,12 +661,21 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const adminUrl =
+			this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip
+				? formatUrl( {
+						...parseUrl( site.options.admin_url ),
+						query: { page: 'jetpack' },
+						hash: '/my-plan',
+				  } )
+				: site.options.admin_url;
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		return (
 			<li className="wp-admin">
 				<a
 					onClick={ this.trackWpadminClick }
-					href={ site.options.admin_url }
+					href={ adminUrl }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
@@ -680,13 +690,18 @@ export class MySitesSidebar extends Component {
 
 	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
 	useWPAdminFlows() {
-		const { site } = this.props;
+		const { isAtomicSite, isJetpack, isVip } = this.props;
 		const currentUser = this.props.currentUser;
 		const userRegisteredDate = new Date( currentUser.date );
 		const cutOffDate = new Date( '2015-09-07' );
 
 		// VIP sites should always show a WP Admin link regardless of the current user.
-		if ( site && site.is_vip ) {
+		if ( isVip ) {
+			return true;
+		}
+
+		// Jetpack (not Atomic) sites should always show a WP Admin
+		if ( isJetpack && ! isAtomicSite ) {
 			return true;
 		}
 
@@ -946,6 +961,7 @@ function mapStateToProps( state ) {
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		isSharingEnabledOnJetpackSite,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+		isVip: isVipSite( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
