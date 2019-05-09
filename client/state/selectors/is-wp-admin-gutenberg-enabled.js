@@ -9,7 +9,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
 import isPluginActive from 'state/selectors/is-plugin-active';
-import isPluginReplacingWpAdminEditor from 'state/selectors/is-plugin-replacing-wp-admin-editor';
+import hasWpAdminEditorConflictingPlugin from 'state/selectors/has-wp-admin-editor-conflicting-plugin';
 import { isHttps } from 'lib/url';
 
 export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
@@ -40,7 +40,7 @@ export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 			isEnabled( 'jetpack/gutenframe' ) &&
 			isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
 			( 'http:' === window.location.protocol || isHttps( getSiteAdminUrl( state, siteId ) ) ) &&
-			! isPluginReplacingWpAdminEditor( state, siteId )
+			! hasWpAdminEditorConflictingPlugin( state, siteId )
 		) {
 			return false;
 		}

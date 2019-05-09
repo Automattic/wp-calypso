@@ -10,7 +10,7 @@ import versionCompare from 'lib/version-compare';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import isPluginActive from 'state/selectors/is-plugin-active';
-import isPluginReplacingWpAdminEditor from 'state/selectors/is-plugin-replacing-wp-admin-editor';
+import hasWpAdminEditorConflictingPlugin from 'state/selectors/has-wp-admin-editor-conflicting-plugin';
 
 export const isGutenframeEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -44,7 +44,7 @@ export const isGutenframeEnabled = ( state, siteId ) => {
 		}
 
 		// And it is not using any plugin that replaces the block editor.
-		if ( isPluginReplacingWpAdminEditor( state, siteId ) ) {
+		if ( hasWpAdminEditorConflictingPlugin( state, siteId ) ) {
 			return false;
 		}
 
