@@ -1,10 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React, { Component, ComponentType } from 'react';
 import debugModule from 'debug';
 import page from 'page';
@@ -16,10 +12,10 @@ import { Subtract } from 'utility-types';
  * Module variables
  */
 const debug = debugModule( 'calypso:protect-form' );
-let formsChanged = [];
+let formsChanged: any[] = [];
 let listenerCount = 0;
 
-function warnIfChanged( event ) {
+function warnIfChanged( event: BeforeUnloadEvent ) {
 	if ( ! formsChanged.length ) {
 		return;
 	}
@@ -43,13 +39,13 @@ function removeBeforeUnloadListener() {
 	}
 }
 
-function markChanged( form ) {
+function markChanged( form: any ) {
 	if ( ! includes( formsChanged, form ) ) {
 		formsChanged.push( form );
 	}
 }
 
-function markSaved( form ) {
+function markSaved( form: any ) {
 	formsChanged = without( formsChanged, form );
 }
 
@@ -88,14 +84,13 @@ export const protectForm = < P extends ProtectedFormProps >(
 		}
 	};
 
+interface ProtectFormGuardProps {
+	isChanged: boolean;
+}
 /*
  * Declarative variant that takes a 'isChanged' prop.
  */
-export class ProtectFormGuard extends Component {
-	static propTypes = {
-		isChanged: PropTypes.bool.isRequired,
-	};
-
+export class ProtectFormGuard extends Component< ProtectFormGuardProps > {
 	componentDidMount() {
 		addBeforeUnloadListener();
 		if ( this.props.isChanged ) {
@@ -108,7 +103,7 @@ export class ProtectFormGuard extends Component {
 		markSaved( this );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps: ProtectFormGuardProps ) {
 		if ( nextProps.isChanged !== this.props.isChanged ) {
 			nextProps.isChanged ? markChanged( this ) : markSaved( this );
 		}
@@ -129,7 +124,7 @@ function windowConfirm() {
 	return window.confirm( confirmText );
 }
 
-export const checkFormHandler = ( context, next ) => {
+export const checkFormHandler: PageJS.Callback = ( context, next ) => {
 	if ( ! formsChanged.length ) {
 		return next();
 	}
