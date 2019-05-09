@@ -135,7 +135,7 @@ references:
   # between CI and local
   update-chromedriver-for-e2e: &update-chromedriver-for-e2e
     name: Update Chromedriver to compatible version
-    command: npm install chromedriver@73.0.0
+    command: npm install chromedriver@$CHROMEDRIVER_VERSION
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
