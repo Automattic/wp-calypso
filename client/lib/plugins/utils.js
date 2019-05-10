@@ -227,11 +227,13 @@ export function filterNotices( logs, site, pluginSlug ) {
 // being Calypsoified and/or iframed with Gutenframe.
 export const deniedPluginsListForGutenberg = [
 	'beaver-builder-lite-version',
+	'bold-page-builder',
 	'divi-builder',
 	'elementor',
 	'elementor-pro',
 	'fusion-builder',
 	'js_composer',
+	'kadence-blocks',
 	'siteorigin-panels',
 	'thrive-visual-editor',
 	'visualcomposer',
