@@ -45,7 +45,12 @@
 
 	@include breakpoint( '>1040px' ) {
 		display: flex;
-		min-width: 300px;
+		min-width: 400px;
+	}
+
+	.tools__header-image {
+		position: relative;
+			left: -20px;
 	}
 }
 
@@ -64,6 +69,11 @@
 	margin: 0.5em;
 	width: calc( 100% - 1em );
 
+	// Reduce top margin of Looka logo
+	&:nth-child( 3 ) .tools__feature-list-item-body-image {
+		margin-top: 5px;
+	}
+
 	@include breakpoint( '>1040px' ) {
 		width: calc( 50% - 1em );
 	}
@@ -75,13 +85,17 @@
 }
 
 .tools__feature-list-item-body {
-	display: flex;
-	// grow this, leave buttons on the bottom of the card
+	align-items: flex-start;
+	display: flex; // grow this, leave buttons on the bottom of the card
 	flex: 1 0 auto;
 }
 
 .tools__feature-list-item-body-text {
 	width: 100%;
+
+	> p {
+		margin-bottom: 0;
+	}
 
 	@include breakpoint( '>1040px' ) {
 		width: 75%;
@@ -89,41 +103,27 @@
 }
 
 .tools__feature-list-item-body-image {
-	display: none;
-	margin: 0.5em;
+	margin: 20px 20px 0 0;
 	max-width: 150px;
-	width: 25%;
+	width: 15%;
 
 	@include breakpoint( '>1040px' ) {
 		display: flex;
+	}
+
+	@include breakpoint( '<480px' ) {
+		display: none;
 	}
 }
 
 .tools__feature-list-item-child-row {
 	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
+	flex-direction: row;
+	justify-content: flex-end;
 
 	.button {
 		margin: 1em 0 0;
 		text-align: center;
-		width: 100%;
-	}
-
-	@include breakpoint( '>480px' ) {
-		flex-direction: row;
-
-		.button {
-			margin: 0 1em 0 0;
-			width: auto;
-		}
-	}
-
-	@include breakpoint( '>1040px' ) {
-		justify-content: flex-end;
-
-		.button {
-			margin: 0 0 0 1em;
-		}
+		width: auto;
 	}
 }
