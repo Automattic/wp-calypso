@@ -421,9 +421,7 @@ export default connect(
 			// pretty versatile, we could rename it from discounts to flags/features/anything else and make it more
 			// universal.
 			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
-			plansWithScroll:
-				! props.displayJetpackPlans &&
-				isDiscountActive( getDiscountByName( 'plans_no_tabs' ), state ),
+			plansWithScroll: ! props.displayJetpackPlans && props.plansWithScroll,
 			customerType: guessCustomerType( state, props ),
 			domains: getDecoratedSiteDomains( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),

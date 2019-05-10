@@ -107,6 +107,7 @@ class Plans extends React.Component {
 							selectedPlan={ this.props.selectedPlan }
 							withDiscount={ this.props.withDiscount }
 							site={ selectedSite }
+							plansWithScroll={ false }
 						/>
 					</div>
 				</Main>
