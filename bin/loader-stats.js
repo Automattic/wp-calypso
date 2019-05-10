@@ -27,7 +27,7 @@ if ( sectionChunks.length !== sectionsToCheck.length ) {
 const sectionsToLoad = [];
 sectionsToLoad.push( {
 	name: 'boot',
-	chunks: getChunkAndSiblings( 'build' ),
+	chunks: getChunkAndSiblings( 'entry-main' ),
 } );
 sectionChunks.forEach( section => {
 	sectionsToLoad.push( {
