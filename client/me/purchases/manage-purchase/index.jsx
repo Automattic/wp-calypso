@@ -20,11 +20,11 @@ import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import config from 'config';
+import { handleRenewNowClick } from 'lib/purchases/renew-now';
 import {
 	getDomainRegistrationAgreementUrl,
 	getName,
 	getRenewalPrice,
-	handleRenewNowClick,
 	isCancelable,
 	isExpired,
 	isExpiring,
