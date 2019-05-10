@@ -12,7 +12,7 @@ import config from 'config';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import { currentScreenSize } from '../driver-manager';
-import { getJetpackHost } from "../data-helper";
+import { getJetpackHost } from '../data-helper';
 
 export default class SecurePaymentComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -151,7 +151,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		if ( currentScreenSize() !== 'mobile' ) {
 			return await driverHelper.clickWhenClickable(
 				this.driver,
-				By.css( '.cart__coupon button.cart__toggle-link' )
+				By.css( '.cart-body .cart__coupon button.cart__toggle-link' )
 			);
 		}
 
