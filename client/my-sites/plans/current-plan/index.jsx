@@ -88,13 +88,13 @@ class CurrentPlan extends Component {
 
 	render() {
 		const {
-			selectedSite,
-			selectedSiteId,
-			domains,
 			currentPlan,
+			domains,
 			hasDomainsLoaded,
 			isExpiring,
 			path,
+			selectedSite,
+			selectedSiteId,
 			shouldShowDomainWarnings,
 			showJetpackChecklist,
 			translate,
