@@ -1,19 +1,17 @@
-$gutters: 8 16 24 32 40;
 $columns: 1 2 3 4 5 6 7 8 9 10 11 12;
-$sizes: 'xs' 'sm' 'md' 'lg' 'xl';
 
 .muriel-grid-container {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     box-sizing: border-box;
-    width: calc(100% + 8px);
-    margin: -4px;
+    width: calc(100% + 16px);
+    margin: -8px;
 }
 
 .muriel-grid-item {
     margin: 0;
-    padding: 4px;
+    padding: 8px;
     box-sizing: border-box;
 }
 .muriel-grid-zeroMinWidth {
@@ -77,18 +75,6 @@ $sizes: 'xs' 'sm' 'md' 'lg' 'xl';
     justify-content: space-evenly;
 }
 
-@each $gutter in $gutters {
-    @each $size in $sizes {
-        .muriel-grid-spacing-#{$size}-#{$gutter} {
-            width: calc(100% + #{$gutter}px);
-            margin: -#{$gutter / 2}px;
-        }
-        .muriel-grid-spacing-#{$size}-#{$gutter} > .muriel-grid-item {
-            padding: #{$gutter / 2}px;
-        }
-    }
-}
-
 .muriel-grid-xs-auto {
     flex-grow: 0;
     max-width: none;
@@ -108,34 +94,27 @@ $sizes: 'xs' 'sm' 'md' 'lg' 'xl';
     }
 }
 
-@media (min-width:660px) {
-    .muriel-grid-container {
-        width: calc(100% + 16px);
-        margin: -4px;
-    }
-    .muriel-grid-container > .muriel-grid-item {
-        padding: 8px;
-    }
-    .muriel-grid-sm-auto {
-        flex-grow: 0;
-        max-width: none;
-        flex-basis: auto;
-    }
-    .muriel-grid-sm-true {
-        flex-grow: 1;
-        max-width: 100%;
-        flex-basis: 0;
-    }
-    @each $size in $columns {
-        .muriel-grid-sm-#{$size} {
-            flex-grow: 0;
-            max-width: #{$size / 12 * 100 + '%'};
-            flex-basis: #{$size / 12 * 100 + '%'};
-        }
-    }
+@include breakpoint( '>660px' ) {
+	.muriel-grid-sm-auto {
+		flex-grow: 0;
+		max-width: none;
+		flex-basis: auto;
+	}
+	.muriel-grid-sm-true {
+		flex-grow: 1;
+		max-width: 100%;
+		flex-basis: 0;
+	}
+	@each $size in $columns {
+		.muriel-grid-sm-#{$size} {
+			flex-grow: 0;
+			max-width: #{$size / 12 * 100 + '%'};
+			flex-basis: #{$size / 12 * 100 + '%'};
+		}
+	}
 }
 
-@media (min-width:1040px) {
+@include breakpoint( '>1040px' ) {
     .muriel-grid-container {
         width: calc(100% + 24px);
         margin: -12px;
@@ -162,7 +141,7 @@ $sizes: 'xs' 'sm' 'md' 'lg' 'xl';
     }
 }
 
-@media (min-width:1280px) {
+@include breakpoint( '>1280px' ) {
     .muriel-grid-lg-auto {
         flex-grow: 0;
         max-width: none;
@@ -182,7 +161,7 @@ $sizes: 'xs' 'sm' 'md' 'lg' 'xl';
     }
 }
 
-@media (min-width:1440px) {
+@include breakpoint( '>1400px' ) {
     .muriel-grid-xl-auto {
         flex-grow: 0;
         max-width: none;

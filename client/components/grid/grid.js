@@ -14,7 +14,6 @@ import classnames from 'classnames';
  */
 import './style.scss';
 
-const GUTTERS = [ 0, 8, 16, 24, 32, 40 ];
 const GRID_SIZES = [ 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ];
 
 function Grid( props ) {
@@ -29,16 +28,11 @@ function Grid( props ) {
 		item,
 		justify,
 		lg,
-		lgGutter,
 		md,
-		mdGutter,
 		sm,
-		smGutter,
 		wrap,
 		xl,
-		xlGutter,
 		xs,
-		xsGutter,
 		zeroMinWidth,
 		...other
 	} = props;
@@ -61,11 +55,6 @@ function Grid( props ) {
 			[ `muriel-grid-md-${ String( md ) }` ]: md !== false,
 			[ `muriel-grid-lg-${ String( lg ) }` ]: lg !== false,
 			[ `muriel-grid-xl-${ String( xl ) }` ]: xl !== false,
-			[ `muriel-grid-spacing-xs-${ String( xsGutter ) }` ]: container && xsGutter !== 0,
-			[ `muriel-grid-spacing-sm-${ String( smGutter ) }` ]: container && smGutter !== 0,
-			[ `muriel-grid-spacing-md-${ String( mdGutter ) }` ]: container && mdGutter !== 0,
-			[ `muriel-grid-spacing-lg-${ String( lgGutter ) }` ]: container && lgGutter !== 0,
-			[ `muriel-grid-spacing-xl-${ String( xlGutter ) }` ]: container && xlGutter !== 0,
 		},
 		classNameProp
 	);
@@ -152,15 +141,6 @@ Grid.propTypes = {
 	 */
 	sm: PropTypes.oneOf( [ false, ...GRID_SIZES ] ),
 	/**
-	 * Defines the space between the type `item` component.
-	 * It can only be used on a type `container` component.
-	 */
-	xsGutter: PropTypes.oneOf( GUTTERS ),
-	smGutter: PropTypes.oneOf( GUTTERS ),
-	mdGutter: PropTypes.oneOf( GUTTERS ),
-	lgGutter: PropTypes.oneOf( GUTTERS ),
-	xlGutter: PropTypes.oneOf( GUTTERS ),
-	/**
 	 * Defines the `flex-wrap` style property.
 	 * It's applied for all screen sizes.
 	 */
@@ -192,16 +172,11 @@ Grid.defaultProps = {
 	item: false,
 	justify: 'flex-start',
 	lg: false,
-	lgGutter: 0,
 	md: false,
-	mdGutter: 0,
 	sm: false,
-	smGutter: 0,
 	wrap: 'wrap',
 	xl: false,
-	xlGutter: 0,
 	xs: false,
-	xsGutter: 0,
 	zeroMinWidth: false,
 };
 
