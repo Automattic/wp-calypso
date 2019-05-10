@@ -157,9 +157,9 @@ const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
 	entry: {
-		build: [ path.join( __dirname, 'client', 'boot', 'app' ) ],
-		signup: [ path.join( __dirname, 'client', 'landing', 'signup' ) ],
-		domainsLanding: [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
+		'entry-main': [ path.join( __dirname, 'client', 'boot', 'app' ) ],
+		'entry-signup': [ path.join( __dirname, 'client', 'landing', 'signup' ) ],
+		'entry-domains-landing': [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
@@ -307,7 +307,9 @@ const webpackConfig = {
 
 if ( isDevelopment ) {
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-	webpackConfig.entry.build.unshift( 'webpack-hot-middleware/client' );
+	for ( const entrypoint of Object.keys( webpackConfig.entry ) ) {
+		webpackConfig.entry[ entrypoint ].unshift( 'webpack-hot-middleware/client' );
+	}
 }
 
 if ( ! config.isEnabled( 'desktop' ) ) {
