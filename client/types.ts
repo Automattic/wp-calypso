@@ -18,3 +18,6 @@ export type PostType = 'page' | 'post' | string;
 
 // Comment stuff
 export type CommentId = number;
+
+// Language stuff
+export type Lazy< T > = () => T;

@@ -1,13 +1,18 @@
 /**
  * External dependencies
  */
-import { Reducer, StoreEnhancer, AnyAction, Dispatch } from 'redux'
+import { Reducer, AnyAction, Dispatch } from 'redux';
 
 /**
  * Internal dependencies
  */
 import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+
+/**
+ * Types
+ */
+import { Lazy } from 'types';
 
 enum DataState {
 	Failure = 'failure',
@@ -16,25 +21,30 @@ enum DataState {
 	Uninitialized = 'uninitialized',
 }
 
-type Timestamp = ReturnType< typeof Date.now>;
+type Timestamp = ReturnType< typeof Date.now >;
 
-type ResourceData = {
+interface ResourceData {
 	state: DataState;
 	data: any;
 	error: any;
 	lastUpdated: Timestamp;
 	pendingSince: Timestamp | undefined;
-}
+};
 
 type Resource =
-	| ResourceData & { state: DataState.Uninitialized; data: undefined; error: undefined; pendingSince: undefined }
+	| ResourceData & {
+			state: DataState.Uninitialized;
+			data: undefined;
+			error: undefined;
+			pendingSince: undefined;
+	  }
 	| ResourceData & { state: DataState.Pending; error: undefined }
 	| ResourceData & { state: DataState.Failure; pendingSince: undefined }
-	| ResourceData & { state: DataState.Success; error: undefined; pendingSince: undefined }
+	| ResourceData & { state: DataState.Success; error: undefined; pendingSince: undefined };
 
-type DataId = string
+type DataId = string;
 
-export const httpData = new Map<DataId, Resource>();
+export const httpData = new Map< DataId, Resource >();
 export const listeners = new Set();
 
 export const empty: Resource = Object.freeze( {
@@ -45,7 +55,7 @@ export const empty: Resource = Object.freeze( {
 	pendingSince: undefined,
 } );
 
-export const getHttpData = (id: DataId) => httpData.get( id ) || empty;
+export const getHttpData = ( id: DataId ) => httpData.get( id ) || empty;
 
 export const subscribe = f => {
 	listeners.add( f );
@@ -136,11 +146,11 @@ const onError = ( action, error ) => {
  *   --output--
  *   [ [ 'site-names-14', 'foo' ] ]
  *
- * @param {*} data input data from API response
- * @param {function} fromApi transforms API response data
- * @return {Array<boolean, Array<Array<string, *>>>} output data to store
+ * @param data - input data from API response
+ * @param fromApi - transforms API response data
+ * @return output data to store
  */
-const parseResponse = ( data, fromApi ) => {
+const parseResponse = ( data: any, fromApi: ResponseParser ) => {
 	try {
 		return [ undefined, fromApi( data ) ];
 	} catch ( error ) {
@@ -148,8 +158,8 @@ const parseResponse = ( data, fromApi ) => {
 	}
 };
 
-const onSuccess = ( action, apiData ) => {
-	const fromApi = 'function' === typeof action.fromApi && action.fromApi();
+const onSuccess = ( action: AnyAction & { fromApi: Lazy< ResponseParser > }, apiData: any ) => {
+	const fromApi = action.fromApi();
 	const [ error, data ] = fromApi ? parseResponse( apiData, fromApi ) : [ undefined, [] ];
 
 	if ( undefined !== error ) {
@@ -157,7 +167,9 @@ const onSuccess = ( action, apiData ) => {
 	}
 
 	update( action.id, DataState.Success, apiData );
-	data.forEach( ( [ id, resource ] ) => update( id, DataState.Success, resource ) );
+	( data as ResourcePair[] ).forEach( ( [ id, resource ] ) =>
+		update( id, DataState.Success, resource )
+	);
 
 	return { type: HTTP_DATA_TICK };
 };
@@ -172,9 +184,10 @@ export default {
 	],
 };
 
-export const reducer: Reducer<number> = ( state = 0, { type } ) => ( HTTP_DATA_TICK === type ? state + 1 : state );
+export const reducer: Reducer< number > = ( state = 0, { type } ) =>
+	HTTP_DATA_TICK === type ? state + 1 : state;
 
-let dispatch: Dispatch<AnyAction>;
+let dispatch: Dispatch< AnyAction >;
 let dispatchQueue: AnyAction[] = [];
 
 export const enhancer = next => ( ...args ) => {
@@ -194,23 +207,28 @@ export const enhancer = next => ( ...args ) => {
 	return store;
 };
 
-type ResponseParser = () => ( apiData: any ) => ([DataId, any])[];
+type ResourcePair = [DataId, any];
+type ResponseParser = ( apiData: any ) => ResourcePair[];
 
 interface RequestHttpDataOptions {
-	fromApi?: ResponseParser;
+	fromApi?: Lazy< ResponseParser >;
 	freshness: number;
 }
 
 /**
  * Fetches data from a fetchable action
  *
- * @param {string} requestId uniquely identifies the request or request type
- * @param {function|object} fetchAction action that when dispatched will request the data (may be wrapped in a lazy thunk)
- * @param {?function} fromApi when called produces a function that validates and transforms API data into Calypso data
- * @param {?number} freshness indicates how many ms stale data is allowed to be before refetching
- * @return {*} stored data container for request
+ * @param requestId - uniquely identifies the request or request type
+ * @param fetchAction - action that when dispatched will request the data (may be wrapped in a lazy thunk)
+ * @param fromApi - when called produces a function that validates and transforms API data into Calypso data
+ * @param freshness - indicates how many ms stale data is allowed to be before refetching
+ * @return stored data container for request
  */
-export const requestHttpData = ( requestId: DataId, fetchAction: () => AnyAction | AnyAction, { fromApi, freshness = Infinity }: RequestHttpDataOptions ): Resource => {
+export const requestHttpData = (
+	requestId: DataId,
+	fetchAction: Lazy< AnyAction > | AnyAction,
+	{ fromApi, freshness = Infinity }: RequestHttpDataOptions
+): Resource => {
 	const data = getHttpData( requestId );
 	const { state, lastUpdated } = data;
 
@@ -235,13 +253,11 @@ export const requestHttpData = ( requestId: DataId, fetchAction: () => AnyAction
 	return data;
 };
 
-interface Q {
-    [key: string]: () => Resource;
+interface Query {
+	[key: string]: Lazy< Resource >;
 }
 
-interface V<T> {
-    [key: keyof T]: Resource;
-}
+type Results< T extends Query > = { [P in keyof T]: ReturnType< T[P] > };
 
 /**
  * Blocks execution until requested data has been fulfilled
@@ -263,11 +279,14 @@ interface V<T> {
  *         : res.send( renderToStaticMarkup( <UnvailableData /> ) );
  * }
  *
- * @param {object} query key/value pairs of data name and request
- * @param {int} timeout how many ms to wait until giving up on requests
- * @return {Promise<object>} fulfilled data of request (or partial if could not fulfill)
+ * @param query - key/value pairs of data name and request
+ * @param timeout - how many ms to wait until giving up on requests
+ * @return fulfilled data of request (or partial if could not fulfill)
  */
-export const waitForData = <T extends Q>( query: T, { timeout }: { timeout?: number } = {} ): Promise<{ [P in keyof T]: ReturnType<T[P]> }> =>
+export const waitForData = < T extends Query >(
+	query: T,
+	{ timeout }: { timeout?: number } = {}
+): Promise< Results< T > > =>
 	new Promise( ( resolve, reject ) => {
 		let unsubscribe = () => {};
 		let timer = null;
@@ -312,8 +331,8 @@ export const waitForData = <T extends Q>( query: T, { timeout }: { timeout?: num
 
 waitForData( {
 	apple: () => empty,
-	orange: () => empty
-}).then( ( { apple, pear } ) => console.log( apple.data, pear ) );
+	orange: () => empty,
+} ).then( ( { apple, pear } ) => console.log( apple.data, pear ) );
 
 if ( 'object' === typeof window && window.app && window.app.isDebug ) {
 	window.getHttpData = getHttpData;
