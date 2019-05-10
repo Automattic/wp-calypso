@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { identity } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -14,43 +14,39 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AnalyticsMixin from 'lib/mixins/analytics';
+import Button from 'components/button';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-/* eslint-disable react/prefer-es6-class */
-export const CartButtons = createReactClass( {
-	displayName: 'CartButtons',
-	mixins: [ AnalyticsMixin( 'popupCart' ) ],
-
-	propTypes: {
+export class CartButtons extends React.Component {
+	static propTypes = {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		translate: PropTypes.func.isRequired,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			translate: identity,
-		};
-	},
+	static defaultProps = {
+		translate: identity,
+	};
 
 	render() {
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div className="cart-buttons">
-				<button className="cart-checkout-button button is-primary" onClick={ this.goToCheckout }>
+				<Button className="cart-checkout-button" primary onClick={ this.goToCheckout }>
 					{ this.props.translate( 'Checkout', { context: 'Cart button' } ) }
-				</button>
+				</Button>
 			</div>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
-	},
+	}
 
-	goToCheckout( event ) {
+	goToCheckout = event => {
 		event.preventDefault();
-
-		this.recordEvent( 'checkoutButtonClick' );
-
+		this.props.recordGoogleEvent( 'Domain Search', 'Click "Checkout" Button on Popup Cart' );
 		page( '/checkout/' + this.props.selectedSite.slug );
-	},
-} );
+	};
+}
 
-export default localize( CartButtons );
+export default connect(
+	null,
+	{ recordGoogleEvent }
+)( localize( CartButtons ) );
