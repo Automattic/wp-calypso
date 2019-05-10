@@ -176,14 +176,14 @@ export default connect(
 		const rewindState = get( getRewindState( state, siteId ), 'state', 'uninitialized' );
 
 		// Link to "My Plan" page in Jetpack
-		let wpAdminUrl = get( site, 'options.admin_url', '' );
+		let wpAdminUrl = get( site, 'options.admin_url' );
 		wpAdminUrl = wpAdminUrl
 			? formatUrl( {
 					...parseUrl( wpAdminUrl ),
 					query: { page: 'jetpack' },
 					hash: '/my-plan',
 			  } )
-			: '';
+			: undefined;
 
 		return {
 			akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
