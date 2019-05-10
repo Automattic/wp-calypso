@@ -257,7 +257,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		if ( title ) {
 			return (
 				<div className="domain-registration-suggestion__progress-bar">
-					<ProgressBar { ...progressBarProps } />
+					<ProgressBar compact { ...progressBarProps } />
 					<span className="domain-registration-suggestion__progress-bar-text">{ title }</span>
 				</div>
 			);

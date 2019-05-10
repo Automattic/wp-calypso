@@ -23,7 +23,7 @@
 		min-width: 66px;
 		margin-top: 0.5em;
 		text-align: center;
-		padding: 0.25em 3em;
+		padding: 0.5em 3em;
 		float: right;
 		transition: all 0.1s linear;
 		width: 100%;
@@ -67,13 +67,13 @@
     }
 
     .domain-registration-suggestion__title {
-		font-size: 1.6em;
-		font-weight: 600;
+		font-size: 20px;
+		font-weight: 400;
 		line-height: 1.2;
 		margin-bottom: 0.25em;
 
 		@include breakpoint( '>480px' ) {
-			font-size: 2em;
+			font-size: 24px;
 			margin-bottom: 0.125em;
 		}
 	}
@@ -94,12 +94,13 @@
 	.domain-registration-suggestion__progress-bar {
 		align-items: center;
 		display: flex;
+		font-size: 12px;
+		margin-top: 16px;
 		order: 2;
 
 		.progress-bar {
 			width: 25%;
 			margin-right: 1em;
-			height: 10px;
 		}
 	}
 
@@ -109,6 +110,7 @@
 
 	.domain-registration-suggestion__match-reason {
 		color: var( --color-text-subtle );
+		font-size: 12px;
 		padding: 0.125em 0;
 		display: flex;
 		align-items: center;
@@ -129,7 +131,6 @@
 			align-self: flex-start;
 			margin-left: 0;
 			flex-grow: 0;
-			padding: 0.5em 3em;
 		}
 	}
 	&.is-unavailable {

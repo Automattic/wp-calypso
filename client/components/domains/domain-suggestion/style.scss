@@ -1,14 +1,13 @@
 .domain-suggestion {
-	box-sizing: border-box;
-
-	@include clear-fix;
+	display: flex;
+	flex-direction: column;
 
 	@include breakpoint( '>660px' ) {
 		padding: 15px 20px;
 	}
 
 	@include breakpoint( '>480px' ) {
-		display: flex;
+		flex-direction: row;
 		align-items: center;
 	}
 
@@ -140,13 +139,11 @@
 }
 
 .domain-registration-suggestion__title {
-	font-size: 1.3em;
+	font-size: 16px;
 
 	@include breakpoint( '>480px' ) {
 		align-self: center;
 		padding-right: 2em;
-		font-size: 1em;
-		line-height: 1.25;
 	}
 }
 
@@ -155,7 +152,6 @@
 	text-align: center;
 	margin-top: 0.5em;
 	padding: 0.25em 3em;
-	float: right;
 	transition: all 0.1s linear;
 
 	&.is-primary {
@@ -182,7 +178,6 @@
 
 	@include breakpoint( '>480px' ) {
 		flex: 1 0 auto;
-		float: none;
 		margin-left: 1em;
 		margin-top: 0;
 	}

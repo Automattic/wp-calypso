@@ -100,6 +100,12 @@
 		}
 	}
 
+	.search-filters__tld-button {
+		font-size: 14px;
+		padding-top: 0.5em;
+		padding-bottom: 0.5em;
+	}
+
 	&.search-filters__tld-filter-bar--is-domain-management
 		.search-filters__tld-button:nth-child( n + 6 ) {
 		display: none;
