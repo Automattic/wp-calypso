@@ -50,7 +50,7 @@ const TemplateSidebar = compose(
 				<PanelBody>
 					{ __( 'Select a template' ) }
 					<PostAutocomplete
-						defaultValue={ get( selectedTemplate, 'title.rendered' ) }
+						initialValue={ get( selectedTemplate, [ 'title', 'rendered' ] ) }
 						onSelectPost={ onSelectTemplate }
 						postType="wp_template"
 					/>
