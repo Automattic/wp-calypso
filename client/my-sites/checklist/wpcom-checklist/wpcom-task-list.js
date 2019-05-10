@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, memoize, omit, pick, isBoolean } from 'lodash';
+import { get, memoize, omit, orderBy, pick, isBoolean } from 'lodash';
 import debugModule from 'debug';
 import config from 'config';
 
@@ -97,7 +97,7 @@ class WpcomTaskList {
 	}
 
 	getAll() {
-		return this.tasks;
+		return orderBy( this.tasks, [ 'isCompleted' ], [ 'desc' ] );
 	}
 
 	get( taskId ) {

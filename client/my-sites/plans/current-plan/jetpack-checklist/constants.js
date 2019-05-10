@@ -47,8 +47,37 @@ export const JETPACK_CHECKLIST_TASKS = {
 		duration: getJetpackChecklistTaskDuration( 3 ),
 		tourId: 'jetpackSignIn',
 	},
+	jetpack_spam_filtering: {
+		title: translate( "We're automatically turning on spam filtering." ),
+		completedButtonText: translate( 'View spam stats' ),
+		completedTitle: translate( "We've automatically turned on spam filtering." ),
+		getUrl: siteSlug =>
+			`//${ siteSlug.replace( '::', '/' ) }/wp-admin/admin.php?page=akismet-key-config`,
+	},
+	jetpack_protect: {
+		title: translate( "We've automatically protected you from brute force login attacks." ),
+		completedButtonText: translate( 'Configure' ),
+		getUrl: siteSlug => `/settings/security/${ siteSlug }`,
+	},
+	jetpack_backups_rewind: {
+		title: translate( 'Backup and Scan' ),
+		description: translate(
+			"Connect your site's server to Jetpack to perform backups, restores, and security scans."
+		),
+		completedButtonText: translate( 'Change', { context: 'verb' } ),
+		completedTitle: translate( 'You turned on Backup and Scan.' ),
+		getUrl: siteSlug => `/settings/security/${ siteSlug }`,
+		duration: getJetpackChecklistTaskDuration( 3 ),
+	},
+	jetpack_backups_vaultpress: {
+		title: translate( "We're automatically turning on Backup and Scan." ),
+		completedTitle: translate( "We've automatically turned on Backup and Scan." ),
+		completedButtonText: translate( 'View security dashboard' ),
+		getUrl: () => 'https://dashboard.vaultpress.com',
+	},
 };
 
+/*
 export const JETPACK_CHECKLIST_TASK_AKISMET = {
 	title: translate( "We're automatically turning on spam filtering." ),
 	completedButtonText: translate( 'View spam stats' ),
@@ -80,3 +109,4 @@ export const JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS = {
 	completedButtonText: translate( 'View security dashboard' ),
 	getUrl: () => 'https://dashboard.vaultpress.com',
 };
+*/

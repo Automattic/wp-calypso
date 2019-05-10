@@ -5,7 +5,7 @@
  */
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { get, includes, map } from 'lodash';
+import { get, includes, map, orderBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -25,10 +25,6 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
 import {
 	JETPACK_CHECKLIST_TASKS,
-	JETPACK_CHECKLIST_TASK_AKISMET,
-	JETPACK_CHECKLIST_TASK_BACKUPS_REWIND,
-	JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS,
-	JETPACK_CHECKLIST_TASK_PROTECT,
 } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -57,22 +53,71 @@ class JetpackChecklist extends PureComponent {
 		}
 	};
 
-	render() {
+	getTaskDefinitions() {
 		const {
 			akismetFinished,
+			rewindState,
+			vaultpressFinished,
 			isPaidPlan,
 			productInstallStatus,
-			rewindState,
-			siteId,
-			siteSlug,
 			taskStatuses,
-			translate,
-			vaultpressFinished,
 		} = this.props;
 
 		const isRewindActive = rewindState === 'active' || rewindState === 'provisioning';
 		const isRewindAvailable = rewindState !== 'uninitialized' && rewindState !== 'unavailable';
 		const isRewindUnAvailable = rewindState === 'unavailable';
+
+		const taskDefinitions = [
+			{
+				id: 'jetpack_protect',
+				completed: true,
+			},
+		];
+
+		if ( isPaidPlan && productInstallStatus ) {
+			taskDefinitions.push( {
+				id: 'jetpack_spam_filtering',
+				completed: akismetFinished,
+				inProgress: ! akismetFinished,
+				target: '_blank',
+			} );
+		}
+
+		if ( isPaidPlan && isRewindAvailable  ) {
+			taskDefinitions.push( {
+				id: 'jetpack_backups_rewind',
+				completed: isRewindActive,
+				onClick: this.handleTaskStart( {
+					taskId: 'jetpack_backups',
+					tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',
+				} ),
+			} );
+		}
+
+		if ( isPaidPlan && isRewindUnAvailable && productInstallStatus ) {
+			taskDefinitions.push( {
+				id: 'jetpack_backups_vaultpress',
+				completed: vaultpressFinished,
+				inProgress: ! vaultpressFinished,
+				onClick: this.handleTaskStart( { taskId: 'jetpack_backups' } ),
+			} );
+		}
+
+		return orderBy( {
+			...taskDefinitions,
+			...map( taskStatuses, ( value, id ) => ( { id, completed: typeof value.completed === 'boolean' ? value.completed : false } ) ),
+		}, [ 'completed', 'id' ], [ 'desc', 'asc' ] );
+	}
+
+	render() {
+		const {
+			isPaidPlan,
+			siteId,
+			siteSlug,
+			taskStatuses,
+			translate,
+		} = this.props;
+
 
 		return (
 			<Fragment>
@@ -86,7 +131,7 @@ class JetpackChecklist extends PureComponent {
 					isPlaceholder={ ! taskStatuses }
 					progressText={ translate( 'Your Jetpack setup progress' ) }
 				>
-					<Task
+{/*					<Task
 						{ ...JETPACK_CHECKLIST_TASK_PROTECT }
 						completed
 						href={ JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ) }
@@ -121,9 +166,10 @@ class JetpackChecklist extends PureComponent {
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_spam_filtering' } ) }
 							target="_blank"
 						/>
-					) }
-					{ map( taskStatuses, ( status, taskId ) => {
-						const task = JETPACK_CHECKLIST_TASKS[ taskId ];
+					) }*/}
+
+					{ this.getTaskDefinitions().map( taskDefinition => {
+						const task = JETPACK_CHECKLIST_TASKS[ taskDefinition.id ];
 
 						if ( ! task ) {
 							// UI does not support this task.
@@ -132,18 +178,19 @@ class JetpackChecklist extends PureComponent {
 
 						return (
 							<Task
-								completed={ get( status, 'completed', false ) }
+								completed={ taskDefinition.completed }
 								completedButtonText={ task.completedButtonText }
 								completedTitle={ task.completedTitle }
 								description={ task.description }
 								duration={ task.duration }
 								href={ task.getUrl( siteSlug ) }
 								onClick={ this.handleTaskStart( {
-									taskId,
+									taskId: taskDefinition.id,
 									tourId: get( task, 'tourId', null ),
 								} ) }
 								title={ task.title }
-								key={ taskId }
+								key={ taskDefinition.id  }
+								{ ...taskDefinition }
 							/>
 						);
 					} ) }
@@ -169,7 +216,7 @@ export default connect(
 			productInstallStatus,
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ], {} ),
 		};
 	},
 	{
