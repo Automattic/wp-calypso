@@ -46,6 +46,7 @@ import JetpackWordPressCom from './jetpack-wordpress-com';
 import MobileApps from './mobile-apps';
 import SellOnlinePaypal from './sell-online-paypal';
 import SiteActivity from './site-activity';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
@@ -57,6 +58,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 export class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
 		plan: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
+		isVideoPressActive: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 	};
 
@@ -211,11 +213,13 @@ export class ProductPurchaseFeaturesList extends Component {
 	getJetpackPremiumFeatures() {
 		const {
 			isAutomatedTransfer,
+			isVideoPressActive,
 			isPlaceholder,
 			recordReturnToDashboardClick,
 			selectedSite,
 			supportsJetpackSiteAccelerator,
 		} = this.props;
+
 		return (
 			<Fragment>
 				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackBackupSecurity /> }
@@ -223,7 +227,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
 				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackAntiSpam selectedSite={ selectedSite } /> }
-				<JetpackVideo selectedSite={ selectedSite } />
+				<JetpackVideo selectedSite={ selectedSite } isVideoPressActive={ isVideoPressActive } />
 				{ ! isEnabled( 'jetpack/checklist' ) && (
 					<JetpackWordPressCom selectedSite={ selectedSite } />
 				) }
@@ -287,11 +291,13 @@ export class ProductPurchaseFeaturesList extends Component {
 	getJetpackBusinessFeatures() {
 		const {
 			isAutomatedTransfer,
+			isVideoPressActive,
 			isPlaceholder,
 			selectedSite,
 			recordReturnToDashboardClick,
 			supportsJetpackSiteAccelerator,
 		} = this.props;
+
 		return (
 			<Fragment>
 				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackBackupSecurity /> }
@@ -301,7 +307,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ ! isEnabled( 'jetpack/checklist' ) && <JetpackAntiSpam selectedSite={ selectedSite } /> }
 				<JetpackSearch selectedSite={ selectedSite } />
 				<SiteActivity />
-				<JetpackVideo selectedSite={ selectedSite } />
+				<JetpackVideo selectedSite={ selectedSite } isVideoPressActive={ isVideoPressActive } />
 				{ ! isEnabled( 'jetpack/checklist' ) && (
 					<JetpackWordPressCom selectedSite={ selectedSite } />
 				) }
@@ -375,6 +381,7 @@ export default connect(
 
 		return {
 			isAutomatedTransfer,
+			isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 			supportsJetpackSiteAccelerator:
