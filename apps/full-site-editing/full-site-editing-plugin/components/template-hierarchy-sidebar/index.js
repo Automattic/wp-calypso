@@ -21,8 +21,7 @@ const getTemplateHierarchyOption = postTypes => {
 		slug: get( postType, 'slug' ),
 	} ) );
 	return [
-		{ label: __( 'Front Page' ), slug: 'front-page' },
-		{ label: __( 'Default List' ), slug: 'index' },
+		{ label: __( 'Default' ), slug: 'index' },
 		{ label: __( 'Default Singular' ), slug: 'singular' },
 		...options,
 	];
