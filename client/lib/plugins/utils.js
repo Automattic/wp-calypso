@@ -229,6 +229,7 @@ export const deniedPluginsListForGutenberg = [
 	'beaver-builder-lite-version',
 	'divi-builder',
 	'elementor',
+	'elementor-pro',
 	'fusion-builder',
 	'js_composer',
 	'siteorigin-panels',
