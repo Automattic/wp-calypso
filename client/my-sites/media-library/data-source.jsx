@@ -44,15 +44,9 @@ export class MediaLibraryDataSource extends Component {
 		this.setState( { popover: ! this.state.popover } );
 	};
 
-	changeSource = item => {
-		const { target } = item;
-		const action = target.getAttribute( 'action' )
-			? target.getAttribute( 'action' )
-			: target.parentNode.getAttribute( 'action' );
-		const newSource = action ? action : '';
-
-		if ( newSource !== this.props.source ) {
-			this.props.onSourceChange( newSource );
+	changeSource = item => () => {
+		if ( item !== this.props.source ) {
+			this.props.onSourceChange( item );
 		}
 	};
 
@@ -86,7 +80,7 @@ export class MediaLibraryDataSource extends Component {
 
 	renderMenuItems( sources ) {
 		return sources.map( ( { icon, label, value } ) => (
-			<PopoverMenuItem action={ value } key={ value } onClick={ this.changeSource }>
+			<PopoverMenuItem action={ value } key={ value } onClick={ this.changeSource( value ) }>
 				{ icon }
 				{ label }
 			</PopoverMenuItem>
