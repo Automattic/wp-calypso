@@ -225,4 +225,13 @@ export function filterNotices( logs, site, pluginSlug ) {
 
 // List of known plugins that change the WP Admin editor and may result in confusing, broken, or unintended flows by
 // being Calypsoified and/or iframed with Gutenframe.
-export const deniedPluginsListForGutenberg = [ 'elementor' ];
+export const deniedPluginsListForGutenberg = [
+	'beaver-builder-lite-version',
+	'divi-builder',
+	'elementor',
+	'fusion-builder',
+	'js_composer',
+	'siteorigin-panels',
+	'thrive-visual-editor',
+	'visualcomposer',
+];
