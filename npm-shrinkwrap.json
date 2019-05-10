@@ -6610,6 +6610,11 @@
 			"resolved": "https://registry.npmjs.org/code-point-at/-/code-point-at-1.1.0.tgz",
 			"integrity": "sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c="
 		},
+		"codemirror": {
+			"version": "5.46.0",
+			"resolved": "https://registry.npmjs.org/codemirror/-/codemirror-5.46.0.tgz",
+			"integrity": "sha512-3QpMge0vg4QEhHW3hBAtCipJEWjTJrqLLXdIaWptJOblf1vHFeXLNtFhPai/uX2lnFCehWNk4yOdaMR853Z02w=="
+		},
 		"collapse-white-space": {
 			"version": "1.0.5",
 			"resolved": "https://registry.npmjs.org/collapse-white-space/-/collapse-white-space-1.0.5.tgz",
@@ -13338,6 +13343,21 @@
 			"resolved": "https://registry.npmjs.org/kleur/-/kleur-3.0.3.tgz",
 			"integrity": "sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==",
 			"dev": true
+		},
+		"klipse": {
+			"version": "7.7.3",
+			"resolved": "https://registry.npmjs.org/klipse/-/klipse-7.7.3.tgz",
+			"integrity": "sha512-Ch1MVje/zvvMGJwRr+Wtcl1ciJ/nvtMKb85VB7znUF4xXQQiwTanhVDSR8y7FhN5AFaqCvdYybaFqkAD5gmcxw==",
+			"requires": {
+				"codemirror": "5.21.0"
+			},
+			"dependencies": {
+				"codemirror": {
+					"version": "5.21.0",
+					"resolved": "https://registry.npmjs.org/codemirror/-/codemirror-5.21.0.tgz",
+					"integrity": "sha1-nsTK7aUIB1dbIRUia/EkFPhdIkY="
+				}
+			}
 		},
 		"known-css-properties": {
 			"version": "0.11.0",
