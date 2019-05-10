@@ -10,6 +10,8 @@ import versionCompare from 'lib/version-compare';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import isPluginActive from 'state/selectors/is-plugin-active';
+import isAnyPluginActive from 'state/selectors/is-any-plugin-active';
+import { deniedPluginsListForGutenberg } from 'lib/plugins/utils';
 
 export const isGutenframeEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -39,6 +41,11 @@ export const isGutenframeEnabled = ( state, siteId ) => {
 		// But not if we are over a secure HTTPS connection and the site doesn't has a SSL cert since the browser cannot
 		// embed insecure content in a resource loaded over a secure HTTPS connection.
 		if ( 'https:' === window.location.protocol && ! isHttps( getSiteAdminUrl( state, siteId ) ) ) {
+			return false;
+		}
+
+		// And it is not using a plugin that changes the block editor flows.
+		if ( isAnyPluginActive( state, siteId, deniedPluginsListForGutenberg ) ) {
 			return false;
 		}
 

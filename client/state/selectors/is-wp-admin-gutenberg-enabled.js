@@ -10,6 +10,8 @@ import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
 import isPluginActive from 'state/selectors/is-plugin-active';
 import { isHttps } from 'lib/url';
+import isAnyPluginActive from 'state/selectors/is-any-plugin-active';
+import { deniedPluginsListForGutenberg } from 'lib/plugins/utils';
 
 export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -30,14 +32,16 @@ export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 			return false;
 		}
 
-		// We do want Gutenframe flows for JP/AT sites that have been updated to Jetpack 7.3 or greater since it will
-		// provide a way to handle the frame nonces verification. But only if we are over a insecure HTTPS connection or
-		// the site has a SSL cert since the browser cannot embed insecure content in a resource loaded over a secure
-		// HTTPS connection.
+		// And not if the site is eligible for Gutenframe:
+		// - Updated to Jetpack 7.3 or greater in order to handle the frame nonces verification.
+		// - We are over a insecure HTTPS connection or the site has a SSL cert since the browser cannot embed insecure
+		//   content in a resource loaded over a secure HTTPS connection.
+		// - Not using any plugin that changes the block editor flows.
 		if (
 			isEnabled( 'jetpack/gutenframe' ) &&
 			isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
-			( 'http:' === window.location.protocol || isHttps( getSiteAdminUrl( state, siteId ) ) )
+			( 'http:' === window.location.protocol || isHttps( getSiteAdminUrl( state, siteId ) ) ) &&
+			! isAnyPluginActive( state, siteId, deniedPluginsListForGutenberg )
 		) {
 			return false;
 		}
