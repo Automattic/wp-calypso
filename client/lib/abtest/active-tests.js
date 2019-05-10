@@ -103,17 +103,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	jetpackMonthlyPlansOnly: {
-		datestamp: '20190312',
-		variations: {
-			original: 50,
-			monthlyOnly: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-		countryCodeTargets: [ 'ES', 'IT', 'PT', 'FR', 'NL', 'DE', 'BE', 'PL', 'SE' ],
-	},
 	pluginFeaturedTitle: {
 		datestamp: '20190220',
 		variations: {

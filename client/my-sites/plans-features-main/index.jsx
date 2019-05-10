@@ -40,7 +40,6 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import { abtest } from 'lib/abtest';
 import { getDiscountByName } from 'lib/discounts';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
@@ -123,13 +122,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const {
-			displayJetpackPlans,
-			intervalType,
-			selectedPlan,
-			hideFreePlan,
-			countryCode,
-		} = this.props;
+		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
 
@@ -147,14 +140,6 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		const group = displayJetpackPlans ? GROUP_JETPACK : GROUP_WPCOM;
-
-		if (
-			countryCode &&
-			displayJetpackPlans &&
-			abtest( 'jetpackMonthlyPlansOnly', countryCode ) === 'monthlyOnly'
-		) {
-			term = TERM_MONTHLY;
-		}
 
 		// In WPCOM, only the business plan is available in monthly term
 		// For any other plan, switch to annually.
@@ -321,11 +306,8 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	renderToggle() {
-		const { displayJetpackPlans, withWPPlanTabs, countryCode } = this.props;
+		const { displayJetpackPlans, withWPPlanTabs } = this.props;
 		if ( displayJetpackPlans ) {
-			if ( countryCode && abtest( 'jetpackMonthlyPlansOnly', countryCode ) === 'monthlyOnly' ) {
-				return false;
-			}
 			return this.getIntervalTypeToggle();
 		}
 		if ( withWPPlanTabs ) {
