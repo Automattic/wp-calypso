@@ -1,4 +1,9 @@
 /**
+ * Global polyfills
+ */
+import 'boot/polyfills';
+
+/**
  * External dependencies
  */
 import page from 'page';
