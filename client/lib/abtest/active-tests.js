@@ -154,15 +154,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	domainSuggestionsEnCheck: {
-		datestamp: '20190415',
-		variations: {
-			control: 50,
-			test: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
 		datestamp: '20190429',
