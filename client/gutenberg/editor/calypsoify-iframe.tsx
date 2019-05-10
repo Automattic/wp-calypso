@@ -364,6 +364,27 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		return postId ? { post_type: postType, post_id: postId } : { post_type: postType };
 	};
 
+	getStatsTitle = () => {
+		const { postId, postType } = this.props;
+		let postTypeText: string;
+
+		switch ( postType ) {
+			case 'post':
+				postTypeText = 'Post';
+				break;
+			case 'page':
+				postTypeText = 'Page';
+				break;
+			default:
+				postTypeText = 'Custom Post Type';
+				break;
+		}
+
+		return postId
+			? `Block Editor > ${ postTypeText } > Edit`
+			: `Block Editor > ${ postTypeText } > New`;
+	};
+
 	render() {
 		const { iframeUrl, siteId, shouldLoadIframe } = this.props;
 		const {
@@ -382,7 +403,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			<Fragment>
 				<PageViewTracker
 					path={ this.getStatsPath() }
-					title="Block Editor"
+					title={ this.getStatsTitle() }
 					properties={ this.getStatsProps() }
 				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
