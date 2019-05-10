@@ -21,6 +21,7 @@ import {
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
+import FeatureExample from 'components/feature-example';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/plans/navigation';
 import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
@@ -156,7 +157,13 @@ class CurrentPlan extends Component {
 				{ showJetpackChecklist && (
 					<Fragment>
 						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-						<JetpackChecklist />
+						{ showThankYou ? (
+							<FeatureExample role="presentation">
+								<JetpackChecklist />
+							</FeatureExample>
+						) : (
+							<JetpackChecklist />
+						) }
 					</Fragment>
 				) }
 
