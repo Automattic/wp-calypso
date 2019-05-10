@@ -1,22 +1,51 @@
-/** @format */
+/**
+ * External dependencies
+ */
+import { Reducer, StoreEnhancer, AnyAction, Dispatch } from 'redux'
+
 /**
  * Internal dependencies
  */
 import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
-export const httpData = new Map();
+enum DataState {
+	Failure = 'failure',
+	Pending = 'pending',
+	Success = 'success',
+	Uninitialized = 'uninitialized',
+}
+
+type Timestamp = ReturnType< typeof Date.now>;
+
+type ResourceData = {
+	state: DataState;
+	data: any;
+	error: any;
+	lastUpdated: Timestamp;
+	pendingSince: Timestamp | undefined;
+}
+
+type Resource =
+	| ResourceData & { state: DataState.Uninitialized; data: undefined; error: undefined; pendingSince: undefined }
+	| ResourceData & { state: DataState.Pending; error: undefined }
+	| ResourceData & { state: DataState.Failure; pendingSince: undefined }
+	| ResourceData & { state: DataState.Success; error: undefined; pendingSince: undefined }
+
+type DataId = string
+
+export const httpData = new Map<DataId, Resource>();
 export const listeners = new Set();
 
-export const empty = Object.freeze( {
-	state: 'uninitialized',
+export const empty: Resource = Object.freeze( {
+	state: DataState.Uninitialized,
 	data: undefined,
 	error: undefined,
 	lastUpdated: -Infinity,
 	pendingSince: undefined,
 } );
 
-export const getHttpData = id => httpData.get( id ) || empty;
+export const getHttpData = (id: DataId) => httpData.get( id ) || empty;
 
 export const subscribe = f => {
 	listeners.add( f );
@@ -24,8 +53,8 @@ export const subscribe = f => {
 	return () => listeners.delete( f );
 };
 
-export const updateData = ( id, state, data ) => {
-	const lastUpdated = Date.now();
+export const updateData = ( id: DataId, state: DataState, data: any ) => {
+	const lastUpdated: Timestamp = Date.now();
 	const item = httpData.get( id );
 	const hasItem = item !== undefined;
 
@@ -34,7 +63,7 @@ export const updateData = ( id, state, data ) => {
 	// exist but I wanted to make sure we can
 	// get our hidden classes to optimize here.
 	switch ( state ) {
-		case 'failure':
+		case DataState.Failure:
 			return httpData.set( id, {
 				state,
 				data: hasItem ? item.data : undefined,
@@ -43,7 +72,7 @@ export const updateData = ( id, state, data ) => {
 				pendingSince: undefined,
 			} );
 
-		case 'pending':
+		case DataState.Pending:
 			return httpData.set( id, {
 				state,
 				data: hasItem ? item.data : undefined,
@@ -52,7 +81,7 @@ export const updateData = ( id, state, data ) => {
 				pendingSince: lastUpdated,
 			} );
 
-		case 'success':
+		case DataState.Success:
 			return httpData.set( id, {
 				state,
 				data,
@@ -63,7 +92,7 @@ export const updateData = ( id, state, data ) => {
 	}
 };
 
-export const update = ( id, state, data ) => {
+export const update = ( id: DataId, state: DataState, data: any ) => {
 	const updated = updateData( id, state, data );
 
 	listeners.forEach( f => f() );
@@ -72,7 +101,7 @@ export const update = ( id, state, data ) => {
 };
 
 const fetch = action => {
-	update( action.id, 'pending' );
+	update( action.id, DataState.Pending );
 
 	return [
 		{
@@ -86,7 +115,7 @@ const fetch = action => {
 };
 
 const onError = ( action, error ) => {
-	update( action.id, 'failure', error );
+	update( action.id, DataState.Failure, error );
 
 	return { type: HTTP_DATA_TICK };
 };
@@ -127,8 +156,8 @@ const onSuccess = ( action, apiData ) => {
 		return onError( action, error );
 	}
 
-	update( action.id, 'success', apiData );
-	data.forEach( ( [ id, resource ] ) => update( id, 'success', resource ) );
+	update( action.id, DataState.Success, apiData );
+	data.forEach( ( [ id, resource ] ) => update( id, DataState.Success, resource ) );
 
 	return { type: HTTP_DATA_TICK };
 };
@@ -143,10 +172,10 @@ export default {
 	],
 };
 
-export const reducer = ( state = 0, { type } ) => ( HTTP_DATA_TICK === type ? state + 1 : state );
+export const reducer: Reducer<number> = ( state = 0, { type } ) => ( HTTP_DATA_TICK === type ? state + 1 : state );
 
-let dispatch;
-let dispatchQueue = [];
+let dispatch: Dispatch<AnyAction>;
+let dispatchQueue: AnyAction[] = [];
 
 export const enhancer = next => ( ...args ) => {
 	const store = next( ...args );
@@ -165,6 +194,13 @@ export const enhancer = next => ( ...args ) => {
 	return store;
 };
 
+type ResponseParser = () => ( apiData: any ) => ([DataId, any])[];
+
+interface RequestHttpDataOptions {
+	fromApi?: ResponseParser;
+	freshness: number;
+}
+
 /**
  * Fetches data from a fetchable action
  *
@@ -174,13 +210,13 @@ export const enhancer = next => ( ...args ) => {
  * @param {?number} freshness indicates how many ms stale data is allowed to be before refetching
  * @return {*} stored data container for request
  */
-export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = Infinity } ) => {
+export const requestHttpData = ( requestId: DataId, fetchAction: () => AnyAction | AnyAction, { fromApi, freshness = Infinity }: RequestHttpDataOptions ): Resource => {
 	const data = getHttpData( requestId );
 	const { state, lastUpdated } = data;
 
 	if (
-		'uninitialized' === state ||
-		( 'pending' !== state && Date.now() - lastUpdated > freshness )
+		DataState.Uninitialized === state ||
+		( DataState.Pending !== state && Date.now() - lastUpdated > freshness )
 	) {
 		if ( 'development' === process.env.NODE_ENV && 'function' !== typeof dispatch ) {
 			throw new Error( 'Cannot use HTTP data without injecting Redux store enhancer!' );
@@ -190,7 +226,7 @@ export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = 
 			type: HTTP_DATA_REQUEST,
 			id: requestId,
 			fetch: 'function' === typeof fetchAction ? fetchAction() : fetchAction,
-			fromApi: 'function' === typeof fromApi ? fromApi : () => a => a,
+			fromApi: 'function' === typeof fromApi ? fromApi : () => ( a: any ) => a,
 		};
 
 		dispatch ? dispatch( action ) : dispatchQueue.push( action );
@@ -198,6 +234,14 @@ export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = 
 
 	return data;
 };
+
+interface Q {
+    [key: string]: () => Resource;
+}
+
+interface V<T> {
+    [key: keyof T]: Resource;
+}
 
 /**
  * Blocks execution until requested data has been fulfilled
@@ -223,7 +267,7 @@ export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = 
  * @param {int} timeout how many ms to wait until giving up on requests
  * @return {Promise<object>} fulfilled data of request (or partial if could not fulfill)
  */
-export const waitForData = ( query, { timeout } = {} ) =>
+export const waitForData = <T extends Q>( query: T, { timeout }: { timeout?: number } = {} ): Promise<{ [P in keyof T]: ReturnType<T[P]> }> =>
 	new Promise( ( resolve, reject ) => {
 		let unsubscribe = () => {};
 		let timer = null;
@@ -236,8 +280,8 @@ export const waitForData = ( query, { timeout } = {} ) =>
 
 					return [
 						{ ...values, [ name ]: value },
-						allBad && value.state === 'failure',
-						allDone && ( value.state === 'success' || value.state === 'failure' ),
+						allBad && value.state === DataState.Failure,
+						allDone && ( value.state === DataState.Success || value.state === DataState.Failure ),
 					];
 				},
 				[ {}, true, true ]
@@ -265,6 +309,11 @@ export const waitForData = ( query, { timeout } = {} ) =>
 		unsubscribe = subscribe( listener );
 		listener();
 	} );
+
+waitForData( {
+	apple: () => empty,
+	orange: () => empty
+}).then( ( { apple, pear } ) => console.log( apple.data, pear ) );
 
 if ( 'object' === typeof window && window.app && window.app.isDebug ) {
 	window.getHttpData = getHttpData;
