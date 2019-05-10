@@ -36,7 +36,6 @@
 		"@wordpress/i18n": "^3.3.0",
 		"@wordpress/url": "^2.5.0",
 		"classnames": "^2.2.6",
-		"lodash": "^4.17.11",
-		"prop-types": "^15.7.2"
+		"lodash": "^4.17.11"
 	}
 }

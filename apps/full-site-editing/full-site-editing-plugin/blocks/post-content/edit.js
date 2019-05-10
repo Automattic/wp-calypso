@@ -79,13 +79,13 @@ const PostContentEdit = compose(
 						<div className="post-content-block__selector">
 							<div>{ __( 'Select something to preview:' ) }</div>
 							<PostAutocomplete
-								initialValue={ get( selectedPost, 'title.rendered' ) }
+								initialValue={ get( selectedPost, [ 'title', 'rendered' ] ) }
 								onSelectPost={ onSelectPost }
 								postType={ [ 'page', 'post' ] }
 							/>
 							{ !! selectedPost && (
 								<a href={ `?post=${ selectedPost.id }&action=edit` }>
-									{ sprintf( __( 'Edit "%s"' ), get( selectedPost, 'title.rendered', '' ) ) }
+									{ sprintf( __( 'Edit "%s"' ), get( selectedPost, [ 'title', 'rendered' ], '' ) ) }
 								</a>
 							) }
 						</div>
@@ -93,7 +93,7 @@ const PostContentEdit = compose(
 				) }
 				{ showPreview && (
 					<RawHTML className="post-content-block__preview">
-						{ get( selectedPost, 'content.rendered' ) }
+						{ get( selectedPost, [ 'content', 'rendered' ] ) }
 					</RawHTML>
 				) }
 			</div>
