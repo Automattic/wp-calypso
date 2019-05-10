@@ -97,6 +97,7 @@ class CurrentPlan extends Component {
 			selectedSiteId,
 			shouldShowDomainWarnings,
 			showJetpackChecklist,
+			showThankYou,
 			translate,
 		} = this.props;
 
@@ -139,7 +140,7 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				{ this.props.showThankYou ? (
+				{ showThankYou ? (
 					<CurrentPlanThankYouCard />
 				) : (
 					<CurrentPlanHeader
@@ -159,14 +160,18 @@ class CurrentPlan extends Component {
 					</Fragment>
 				) }
 
-				<div
-					className={ classNames( 'current-plan__header-text current-plan__text', {
-						'is-placeholder': { isLoading },
-					} ) }
-				>
-					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
-				</div>
-				<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
+				{ ! showThankYou && (
+					<Fragment>
+						<div
+							className={ classNames( 'current-plan__header-text current-plan__text', {
+								'is-placeholder': { isLoading },
+							} ) }
+						>
+							<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+						</div>
+						<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
+					</Fragment>
+				) }
 
 				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 			</Main>
