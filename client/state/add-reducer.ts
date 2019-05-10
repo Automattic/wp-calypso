@@ -1,20 +1,33 @@
 /**
+ * External Dependencies
+ */
+import { Reducer, Store } from 'redux';
+
+/**
  * Internal Dependencies
  */
 import { APPLY_STORED_STATE } from 'state/action-types';
 import { getStateFromLocalStorage } from 'state/initial-state';
 
-const initializations = new Map< string, Promise >();
-const reducers = new Map< string, ( state: object, action: object ) => object >();
+const initializations = new Map< string, Promise< void > >();
+const reducers = new Map< string, Reducer >();
 
 function normalizeKey( key: string[] ): string {
 	return key.join( '.' );
 }
 
+interface OptionalStorageKey {
+	storageKey?: string;
+}
+
+interface WithAddReducer {
+	addReducer: ( keys: string[], subReducer: Reducer & OptionalStorageKey ) => void;
+}
+
 async function initializeState(
-	store: object,
+	store: Store & WithAddReducer,
 	storageKey: string,
-	reducer: ( state: object, action: object ) => object
+	reducer: Reducer & OptionalStorageKey
 ) {
 	const storedState = await getStateFromLocalStorage( reducer, storageKey );
 
@@ -25,11 +38,10 @@ async function initializeState(
 
 // For a given store, creates a function that adds a new reducer to the store,
 // and loads (asynchronously) and applies the persisted state for it.
-export const addReducerToStore = ( store: object ) => (
-	key: string,
-	reducer: ( state: object, action: object ) => object
-): Promise => {
-	const storageKey: string = reducer.storageKey;
+export const addReducerToStore = < T extends Reducer & OptionalStorageKey >(
+	store: Store & WithAddReducer
+) => ( key: string[], reducer: T ): Promise< void > => {
+	const storageKey: string | undefined = reducer.storageKey;
 	const normalizedKey = normalizeKey( key );
 
 	const previousReducer = reducers.get( normalizedKey );
