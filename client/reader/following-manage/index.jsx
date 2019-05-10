@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { trim, debounce, random, take, reject, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -207,84 +207,86 @@ class FollowingManage extends Component {
 
 		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
-			<ReaderMain className="following-manage">
-				<DocumentHead title={ 'Manage Following' } />
-				<MobileBackToSidebar>
-					<h1>{ translate( 'Streams' ) }</h1>
-				</MobileBackToSidebar>
+			<Fragment>
 				<div className="following-manage__header">
 					<HeaderCake backHref={ '/' }>
 						<h1>{ translate( 'Follow Something New' ) }</h1>
 					</HeaderCake>
 				</div>
-				{ ! searchResults && sitesQuery && (
-					<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
-				) }
-				{ this.shouldRequestMoreRecs() && (
-					<QueryReaderRecommendedSites
-						seed={ recommendationsSeed }
-						offset={ recommendedSitesPagingOffset + PAGE_SIZE || 0 }
-					/>
-				) }
-				<div ref={ this.handleStreamMounted } />
-				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
-					<CompactCard className="following-manage__input-card">
-						<SearchInput
-							onSearch={ this.updateQuery }
-							onSearchClose={ this.handleSearchClosed }
-							autoFocus={ this.props.autoFocusInput }
-							delaySearch={ true }
-							delayTimeout={ 500 }
-							placeholder={ searchPlaceholderText }
-							additionalClasses="following-manage__search-new"
-							initialValue={ sitesQuery }
-							value={ sitesQuery }
-							maxLength={ 500 }
-							disableAutocorrect={ true }
-						/>
-					</CompactCard>
-
-					{ showFollowByUrl && (
-						<div className="following-manage__url-follow">
-							<FollowButton
-								followLabel={ translate( 'Follow %s', {
-									args: sitesQueryWithoutProtocol,
-								} ) }
-								followingLabel={ translate( 'Following %s', {
-									args: sitesQueryWithoutProtocol,
-								} ) }
-								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
-								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
-							/>
-						</div>
+				<ReaderMain className="following-manage">
+					<DocumentHead title={ 'Manage Following' } />
+					<MobileBackToSidebar>
+						<h1>{ translate( 'Streams' ) }</h1>
+					</MobileBackToSidebar>
+					{ ! searchResults && sitesQuery && (
+						<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
 					) }
-				</div>
-				{ ! sitesQuery && (
-					<RecommendedSites
-						sites={ take( filteredRecommendedSites, 2 ) }
-						followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
-					/>
-				) }
-				{ !! sitesQuery && ! isFollowByUrlWithNoSearchResults && (
-					<FollowingManageSearchFeedsResults
-						searchResults={ searchResults }
-						showMoreResults={ showMoreResults }
-						onShowMoreResultsClicked={ this.handleShowMoreClicked }
-						width={ this.state.width }
-						searchResultsCount={ searchResultsCount }
-						query={ sitesQuery }
-					/>
-				) }
-				{ showExistingSubscriptions && (
-					<FollowingManageSubscriptions
-						width={ this.state.width }
-						query={ subsQuery }
-						sortOrder={ subsSortOrder }
-						windowScrollerRef={ this.handleWindowScrollerMounted }
-					/>
-				) }
-				{ ! hasFollows && <FollowingManageEmptyContent /> }
-			</ReaderMain>
+					{ this.shouldRequestMoreRecs() && (
+						<QueryReaderRecommendedSites
+							seed={ recommendationsSeed }
+							offset={ recommendedSitesPagingOffset + PAGE_SIZE || 0 }
+						/>
+					) }
+					<div ref={ this.handleStreamMounted } />
+					<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
+						<CompactCard className="following-manage__input-card">
+							<SearchInput
+								onSearch={ this.updateQuery }
+								onSearchClose={ this.handleSearchClosed }
+								autoFocus={ this.props.autoFocusInput }
+								delaySearch={ true }
+								delayTimeout={ 500 }
+								placeholder={ searchPlaceholderText }
+								additionalClasses="following-manage__search-new"
+								initialValue={ sitesQuery }
+								value={ sitesQuery }
+								maxLength={ 500 }
+								disableAutocorrect={ true }
+							/>
+						</CompactCard>
+
+						{ showFollowByUrl && (
+							<div className="following-manage__url-follow">
+								<FollowButton
+									followLabel={ translate( 'Follow %s', {
+										args: sitesQueryWithoutProtocol,
+									} ) }
+									followingLabel={ translate( 'Following %s', {
+										args: sitesQueryWithoutProtocol,
+									} ) }
+									siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
+									followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
+								/>
+							</div>
+						) }
+					</div>
+					{ ! sitesQuery && (
+						<RecommendedSites
+							sites={ take( filteredRecommendedSites, 2 ) }
+							followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
+						/>
+					) }
+					{ !! sitesQuery && ! isFollowByUrlWithNoSearchResults && (
+						<FollowingManageSearchFeedsResults
+							searchResults={ searchResults }
+							showMoreResults={ showMoreResults }
+							onShowMoreResultsClicked={ this.handleShowMoreClicked }
+							width={ this.state.width }
+							searchResultsCount={ searchResultsCount }
+							query={ sitesQuery }
+						/>
+					) }
+					{ showExistingSubscriptions && (
+						<FollowingManageSubscriptions
+							width={ this.state.width }
+							query={ subsQuery }
+							sortOrder={ subsSortOrder }
+							windowScrollerRef={ this.handleWindowScrollerMounted }
+						/>
+					) }
+					{ ! hasFollows && <FollowingManageEmptyContent /> }
+				</ReaderMain>
+			</Fragment>
 		);
 		/* eslint-enable jsx-a11y/no-autofocus */
 	}
