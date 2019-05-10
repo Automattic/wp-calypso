@@ -15,10 +15,28 @@ class A8C_Full_Site_Editing {
 		}
 		self::$initialized = true;
 
+		if( ! $this->is_full_site_editing_allowed() ) {
+			return;
+		}
+
 		add_action( 'init', array( $this, 'register_blocks' ), 100 );
 		add_action( 'init', array( $this, 'register_wp_template' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
+	}
+
+	/**
+	 * Returns true if the current site is not VIP
+	 * and we are running on a WordPress.com sandbox and proxied.
+	 * Or, if WordPress is in debug mode, for a local development environment.
+	 */
+	function is_full_site_editing_allowed() {
+		return (
+				function_exists( 'wpcom_is_proxied_request' ) && wpcom_is_proxied_request()
+				&& function_exists( 'wpcom_is_vip' ) && ! wpcom_is_vip()
+				&& defined( 'WPCOM_SANDBOXED' ) && WPCOM_SANDBOXED
+				&& function_exists( 'has_blog_sticker' ) && has_blog_sticker( 'full-site-editing' )
+			) || ( defined( 'WP_DEBUG' ) && WP_DEBUG );
 	}
 
 	function register_wp_template() {
