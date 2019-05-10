@@ -20,6 +20,7 @@ class A8C_Full_Site_Editing {
 		add_action( 'init', array( $this, 'register_wp_template' ) );
 		add_action( 'init', array( $this, 'register_meta_template_id' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
+		add_action( 'rest_api_init', array( $this, 'register_template_hierarchy_settings' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
 	}
 
@@ -90,6 +91,19 @@ class A8C_Full_Site_Editing {
 		}
 		// setting this to `public` will allow it to be found in the search endpoint
 		$post_type->public = true;
+	}
+
+	function register_template_hierarchy_settings() {
+		register_setting(
+			'wp_template',
+			'template_hierarchy',
+			array(
+				'default' => '[]',
+				'description' => __( 'Template Hierarchy' ),
+				'show_in_rest' => true,
+				'type' => 'string',
+			)
+		);
 	}
 }
 
