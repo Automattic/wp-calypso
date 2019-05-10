@@ -166,4 +166,21 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
+	checkoutUXImprovements: {
+		datestamp: '20190501',
+		variations: {
+			control: 50,
+			variantUXImprovements: 50,
+		},
+		defaultVariation: 'control',
+	},
+	showCheckoutCartRight: {
+		datestamp: '20190502',
+		variations: {
+			right: 50,
+			original: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
 };
