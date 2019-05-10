@@ -29,7 +29,7 @@ interface ResourceData {
 	error: any;
 	lastUpdated: Timestamp;
 	pendingSince: Timestamp | undefined;
-};
+}
 
 type Resource =
 	| ResourceData & {
@@ -57,7 +57,7 @@ export const empty: Resource = Object.freeze( {
 
 export const getHttpData = ( id: DataId ) => httpData.get( id ) || empty;
 
-export const subscribe = f => {
+export const subscribe = ( f: () => any ): ( () => ReturnType< typeof listeners.delete > ) => {
 	listeners.add( f );
 
 	return () => listeners.delete( f );
@@ -76,18 +76,18 @@ export const updateData = ( id: DataId, state: DataState, data: any ) => {
 		case DataState.Failure:
 			return httpData.set( id, {
 				state,
-				data: hasItem ? item.data : undefined,
+				data: hasItem ? ( item as Resource ).data : undefined,
 				error: data,
-				lastUpdated: hasItem ? item.lastUpdated : -Infinity,
+				lastUpdated: hasItem ? ( item as Resource ).lastUpdated : -Infinity,
 				pendingSince: undefined,
 			} );
 
 		case DataState.Pending:
 			return httpData.set( id, {
 				state,
-				data: hasItem ? item.data : undefined,
+				data: hasItem ? ( item as Resource ).data : undefined,
 				error: undefined,
-				lastUpdated: hasItem ? item.lastUpdated : -Infinity,
+				lastUpdated: hasItem ? ( item as Resource ).lastUpdated : -Infinity,
 				pendingSince: lastUpdated,
 			} );
 
@@ -102,7 +102,7 @@ export const updateData = ( id: DataId, state: DataState, data: any ) => {
 	}
 };
 
-export const update = ( id: DataId, state: DataState, data: any ) => {
+export const update = ( id: DataId, state: DataState, data?: any ) => {
 	const updated = updateData( id, state, data );
 
 	listeners.forEach( f => f() );
@@ -130,6 +130,10 @@ const onError = ( action, error ) => {
 	return { type: HTTP_DATA_TICK };
 };
 
+type SuccessfulParse = [undefined, ReturnType< ResponseParser >];
+type FailedParse = [Error, undefined];
+type ParseResult = SuccessfulParse | FailedParse;
+
 /**
  * Transforms API response data into storable data
  * Returns pairs of data ids and data plus an error indicator
@@ -150,7 +154,7 @@ const onError = ( action, error ) => {
  * @param fromApi - transforms API response data
  * @return output data to store
  */
-const parseResponse = ( data: any, fromApi: ResponseParser ) => {
+const parseResponse = ( data: any, fromApi: ResponseParser ): ParseResult => {
 	try {
 		return [ undefined, fromApi( data ) ];
 	} catch ( error ) {
@@ -208,7 +212,7 @@ export const enhancer = next => ( ...args ) => {
 };
 
 type ResourcePair = [DataId, any];
-type ResponseParser = ( apiData: any ) => ResourcePair[];
+type ResponseParser = ( apiData: any ) => ResourcePair;
 
 interface RequestHttpDataOptions {
 	fromApi?: Lazy< ResponseParser >;
@@ -254,7 +258,7 @@ export const requestHttpData = (
 };
 
 interface Query {
-	[key: string]: Lazy< Resource >;
+	[key: string]: () => Resource;
 }
 
 type Results< T extends Query > = { [P in keyof T]: ReturnType< T[P] > };
@@ -289,7 +293,7 @@ export const waitForData = < T extends Query >(
 ): Promise< Results< T > > =>
 	new Promise( ( resolve, reject ) => {
 		let unsubscribe = () => {};
-		let timer = null;
+		let timer: ReturnType< typeof window.setTimeout >;
 		const names = Object.keys( query );
 
 		const getValues = () =>
@@ -317,7 +321,7 @@ export const waitForData = < T extends Query >(
 		};
 
 		if ( timeout ) {
-			timer = setTimeout( () => {
+			timer = ( setTimeout as typeof window.setTimeout )( () => {
 				const [ values ] = getValues();
 
 				unsubscribe();
@@ -328,11 +332,6 @@ export const waitForData = < T extends Query >(
 		unsubscribe = subscribe( listener );
 		listener();
 	} );
-
-waitForData( {
-	apple: () => empty,
-	orange: () => empty,
-} ).then( ( { apple, pear } ) => console.log( apple.data, pear ) );
 
 if ( 'object' === typeof window && window.app && window.app.isDebug ) {
 	window.getHttpData = getHttpData;
