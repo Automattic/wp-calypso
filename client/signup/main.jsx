@@ -46,7 +46,7 @@ import analytics from 'lib/analytics';
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
 import SignupFlowController from 'lib/signup/flow-controller';
-import { disableCart, saveCouponQueryArgument } from 'lib/upgrades/actions';
+import { saveCouponQueryArgument } from 'lib/upgrades/actions';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -131,11 +131,6 @@ class Signup extends React.Component {
 	}
 
 	UNSAFE_componentWillMount() {
-		// Signup updates the cart through `SignupCart`. To prevent
-		// synchronization issues and unnecessary polling, the cart is disabled
-		// here.
-		disableCart();
-
 		const flow = flows.getFlow( this.props.flowName );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
