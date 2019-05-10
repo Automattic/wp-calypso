@@ -1,8 +1,9 @@
 <?php
 
 function render_post_content_block( $attributes, $content ) {
-	if ( is_admin() ) {
-		return $content;
+	// Early return to avoid infinite loops in the REST API
+	if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+	return $content;
 	}
 
 	$align = isset( $attributes['align'] ) ? ' align' . $attributes['align'] : '';
