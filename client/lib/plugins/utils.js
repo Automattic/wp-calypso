@@ -161,7 +161,7 @@ export function normalizePluginData( plugin, pluginData ) {
 				returnData.author_name = extractAuthorName( item );
 				returnData.author_url = plugin.author_url || extractAuthorUrl( item );
 				break;
-			case 'sections':
+			case 'sections': {
 				const cleanItem = {};
 				for ( const sectionKey of Object.keys( item ) ) {
 					if ( ! item[ sectionKey ] ) {
@@ -174,6 +174,7 @@ export function normalizePluginData( plugin, pluginData ) {
 					? extractScreenshots( cleanItem.screenshots )
 					: null;
 				break;
+			}
 			case 'num_ratings':
 			case 'rating':
 				returnData[ key ] = parseInt( item, 10 );
@@ -221,3 +222,7 @@ export function normalizePluginsList( pluginsList ) {
 export function filterNotices( logs, site, pluginSlug ) {
 	return filter( logs, filterNoticesBy.bind( this, site, pluginSlug ) );
 }
+
+// List of known plugins that change the WP Admin editor and may result in confusing, broken, or unintended flows by
+// being Calypsoified and/or iframed with Gutenframe.
+export const deniedPluginsListForGutenberg = [ 'elementor' ];

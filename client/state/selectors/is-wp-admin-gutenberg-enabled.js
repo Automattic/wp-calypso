@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { intersectionWith } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
@@ -14,10 +9,9 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
 import isPluginActive from 'state/selectors/is-plugin-active';
-import { getPlugins } from 'state/plugins/installed/selectors';
 import { isHttps } from 'lib/url';
-
-export const blacklistedPlugins = [ 'elementor' ];
+import isAnyPluginActive from 'state/selectors/is-any-plugin-active';
+import { deniedPluginsListForGutenberg } from 'lib/plugins/utils';
 
 export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -42,13 +36,12 @@ export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 		// - Updated to Jetpack 7.3 or greater in order to handle the frame nonces verification.
 		// - We are over a insecure HTTPS connection or the site has a SSL cert since the browser cannot embed insecure
 		//   content in a resource loaded over a secure HTTPS connection.
-		// - Not using any plugin that replaces the block editor.
-		const activePlugins = getPlugins( state, siteId, 'active' );
+		// - Not using any plugin that changes the block editor flows.
 		if (
 			isEnabled( 'jetpack/gutenframe' ) &&
 			isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
 			( 'http:' === window.location.protocol || isHttps( getSiteAdminUrl( state, siteId ) ) ) &&
-			!! intersectionWith( activePlugins, blacklistedPlugins, ( ap, bp ) => ap.slug === bp )
+			! isAnyPluginActive( state, siteId, deniedPluginsListForGutenberg )
 		) {
 			return false;
 		}
