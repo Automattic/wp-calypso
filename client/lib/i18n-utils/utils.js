@@ -293,8 +293,21 @@ class I18nScanner {
 		this.loggedTranslations = [];
 		return this.loggedTranslations;
 	}
+
+	format( translation, options ) {
+		const { original, context, plural /*, ...rest*/ } = options;
+		return `translation: ${ translation }, original: ${ original }, context: ${ context }, plural: ${ plural }`;
+	}
+
+	report( translations = this.loggedTranslations ) {
+		translations.map( ( [ translation, options ] ) =>
+			// eslint-disable-next-line no-console
+			console.log( this.format( translation, options ) )
+		);
+	}
 }
 
-console.log('Installing i18nScanner at global.i18nScanner')
+// eslint-disable-next-line no-console
+console.log( 'Installing i18nScanner at global.i18nScanner' );
 export const i18nScanner = new I18nScanner();
 global.i18nScanner = i18nScanner;
