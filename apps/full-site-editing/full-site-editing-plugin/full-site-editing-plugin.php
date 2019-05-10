@@ -98,7 +98,7 @@ class A8C_Full_Site_Editing {
 			'wp_template',
 			'template_hierarchy',
 			array(
-				'default' => '[]',
+				'default' => '{}',
 				'description' => __( 'Template Hierarchy' ),
 				'show_in_rest' => true,
 				'type' => 'string',

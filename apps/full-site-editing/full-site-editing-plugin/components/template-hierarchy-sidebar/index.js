@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { concat, debounce, get, filter, map, without } from 'lodash';
+import { debounce, get, filter, map, omit } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -42,8 +42,9 @@ const TemplateHierarchySidebar = withSelect( select => ( {
 	templateHierarchyOptions: getTemplateHierarchyOption(
 		select( 'core' ).getEntityRecords( 'root', 'postType' )
 	),
-} ) )( ( { templateHierarchyOptions } ) => {
-	const [ hierarchy, setHierarchy ] = useState();
+	templateId: select( 'core/editor' ).getCurrentPostId(),
+} ) )( ( { templateHierarchyOptions, templateId } ) => {
+	const [ hierarchy, setHierarchy ] = useState( {} );
 
 	useEffect( () => {
 		const fetchTemplateHierarchySetting = async () => {
@@ -55,12 +56,14 @@ const TemplateHierarchySidebar = withSelect( select => ( {
 		fetchTemplateHierarchySetting();
 	}, [] );
 
-	const isTemplateAssigned = value => !! hierarchy && -1 !== hierarchy.indexOf( value );
+	const isCurrentTemplateAssignedToScreen = slug => templateId === hierarchy[ slug ];
 
-	const onChange = value => () => {
-		const newHierarchy = isTemplateAssigned( value )
-			? without( hierarchy, value )
-			: concat( hierarchy, value );
+	const hasScreenAnotherTemplate = slug => !! hierarchy[ slug ] && templateId !== hierarchy[ slug ];
+
+	const onChange = slug => () => {
+		const newHierarchy = isCurrentTemplateAssignedToScreen( slug )
+			? omit( hierarchy, slug )
+			: { ...hierarchy, [ slug ]: templateId };
 		setHierarchy( newHierarchy );
 		updateTemplateHierarchyOption( newHierarchy );
 	};
@@ -76,8 +79,19 @@ const TemplateHierarchySidebar = withSelect( select => ( {
 					{ map( templateHierarchyOptions, ( { label, slug } ) => (
 						<div>
 							<CheckboxControl
+								checked={ isCurrentTemplateAssignedToScreen( slug ) }
+								disabled={ hasScreenAnotherTemplate( slug ) }
+								help={
+									hasScreenAnotherTemplate( slug ) && (
+										<Fragment>
+											{ __( 'Another template is assigned to this screen. ' ) }
+											<a href={ `post.php?post=${ hierarchy[ slug ] }&action=edit` }>
+												{ __( 'Edit' ) }
+											</a>
+										</Fragment>
+									)
+								}
 								label={ label }
-								checked={ isTemplateAssigned( slug ) }
 								onChange={ onChange( slug ) }
 							/>
 						</div>
