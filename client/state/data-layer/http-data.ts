@@ -45,7 +45,7 @@ type DataId = string;
 export const httpData = new Map< DataId, Resource >();
 export const listeners = new Set();
 
-export const empty: Resource = Object.freeze( {
+export const empty: Readonly<Resource> = Object.freeze( {
 	state: DataState.Uninitialized,
 	data: undefined,
 	error: undefined,
