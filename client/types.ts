@@ -21,3 +21,5 @@ export type CommentId = number;
 
 // Language stuff
 export type Lazy< T > = () => T;
+export type TimestampMS = ReturnType<typeof Date.now>;
+export type TimerHandle = ReturnType<typeof setTimeout>;

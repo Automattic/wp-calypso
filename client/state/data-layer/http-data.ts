@@ -12,7 +12,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 /**
  * Types
  */
-import { Lazy } from 'types';
+import { Lazy, TimestampMS, TimerHandle } from 'types';
 
 enum DataState {
 	Failure = 'failure',
@@ -21,14 +21,12 @@ enum DataState {
 	Uninitialized = 'uninitialized',
 }
 
-type Timestamp = ReturnType< typeof Date.now >;
-
 interface ResourceData {
 	state: DataState;
 	data: any;
 	error: any;
-	lastUpdated: Timestamp;
-	pendingSince: Timestamp | undefined;
+	lastUpdated: TimestampMS;
+	pendingSince: TimestampMS | undefined;
 }
 
 type Resource =
@@ -64,7 +62,7 @@ export const subscribe = ( f: Function ): ( () => void ) => {
 };
 
 export const updateData = ( id: DataId, state: DataState, data: any ) => {
-	const lastUpdated: Timestamp = Date.now();
+	const lastUpdated: TimestampMS = Date.now();
 	const item = httpData.get( id ) || empty;
 
 	// We could have left out the keys for
@@ -292,7 +290,7 @@ export const waitForData = < T extends Query >(
 ): Promise< Results< T > > =>
 	new Promise( ( resolve, reject ) => {
 		let unsubscribe = () => {};
-		let timer: ReturnType< typeof window.setTimeout >;
+		let timer: TimerHandle;
 		const names = Object.keys( query );
 
 		const getValues = () =>
@@ -320,7 +318,7 @@ export const waitForData = < T extends Query >(
 		};
 
 		if ( timeout ) {
-			timer = ( setTimeout as typeof window.setTimeout )( () => {
+			timer = setTimeout( () => {
 				const [ values ] = getValues();
 
 				unsubscribe();
