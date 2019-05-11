@@ -168,7 +168,7 @@ const onSuccess = ( action: AnyAction & { fromApi: Lazy< ResponseParser > }, api
 	}
 
 	update( action.id, DataState.Success, apiData );
-	( data as ResourcePair[] ).forEach( ( [ id, resource ] ) =>
+	(data as ResourcePair[]).forEach( ( [ id, resource ] ) =>
 		update( id, DataState.Success, resource )
 	);
 
@@ -209,7 +209,7 @@ export const enhancer = next => ( ...args ) => {
 };
 
 type ResourcePair = [DataId, any];
-type ResponseParser = ( apiData: any ) => ResourcePair;
+type ResponseParser = ( apiData: any ) => ResourcePair[];
 
 interface RequestHttpDataOptions {
 	fromApi?: Lazy< ResponseParser >;
@@ -255,7 +255,7 @@ export const requestHttpData = (
 };
 
 interface Query {
-	[key: string]: () => Resource;
+	[key: string]: Lazy<Resource>;
 }
 
 type Results< T extends Query > = { [P in keyof T]: ReturnType< T[P] > };
