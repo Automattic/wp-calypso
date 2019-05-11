@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Inlines Redux action type constants with their string value
  * Babel Transform
@@ -58,13 +56,26 @@ function transformIt( babel ) {
 			if ( t.isImportSpecifier( path.parentPath ) ) {
 				return;
 			}
-
 			const name = path.node.name;
 			if ( ! this.myTypes.hasOwnProperty( name ) ) {
 				return;
 			}
 
-			path.replaceWith( t.stringLiteral( this.myTypes[ name ] ) );
+			const replacement = t.stringLiteral( this.myTypes[ name ] );
+
+			// TypeScript type queries of action types should have the entire type query replaced:
+			//   Action< typoeof INCREMENT >
+			// Replacing the INCREMENT Identifier is an error:
+			//   Action< typoeof "INCREMENT" >
+			//   // TypeError: Property exprName of TSTypeQuery expected node to be of a type ["TSEntityName","TSImportType"] but instead got "StringLiteral"
+			// The entire type query should be replaced with the stringLiteral:
+			//   Action< "Increment" >
+			if ( t.isTSTypeQuery( path.parentPath ) ) {
+				path.parentPath.replaceWith( t.tsLiteralType( replacement ) );
+				return;
+			}
+
+			path.replaceWith( replacement );
 		},
 	};
 
