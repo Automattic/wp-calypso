@@ -54,18 +54,13 @@ class UpgradeNudgeExpanded extends Component {
 	}
 
 	render() {
-		//Display only if upgrade path available
-		if (
-			! this.props.currentPlan ||
-			( this.props.planConstants.availableFor &&
-				! this.props.planConstants.availableFor( this.props.currentPlan.product_slug ) )
-		) {
+		if ( ! this.props.currentPlan ) {
 			return null;
 		}
 
 		const price = formatCurrency( this.props.plan.raw_price / 12, this.props.plan.currency_code );
 		const features = this.props.planConstants
-			.getPromotedFeatures()
+			.getPlanCompareFeatures()
 			.filter( feature => feature !== this.props.highlightedFeature )
 			.slice( 0, 6 );
 
