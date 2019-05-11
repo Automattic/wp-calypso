@@ -17,12 +17,16 @@ import { saveAs } from 'browser-filesaver';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Card from 'components/card';
 import InfiniteScroll from 'components/infinite-scroll';
-import './style.scss';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
 import { requestSubscribers } from 'state/memberships/subscribers/actions';
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
 import Button from 'components/button';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class MembershipsSection extends Component {
 	constructor( props ) {
