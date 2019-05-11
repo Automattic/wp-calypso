@@ -74,7 +74,7 @@
 		"component-file-picker": "0.2.1",
 		"cookie": "0.3.1",
 		"cookie-parser": "1.4.4",
-		"core-js": "2.6.5",
+		"core-js": "3.0.1",
 		"cpf_cnpj": "0.2.0",
 		"create-react-class": "15.6.3",
 		"creditcards": "3.0.1",
