@@ -57,7 +57,7 @@ export const empty: Resource = Object.freeze( {
 
 export const getHttpData = ( id: DataId ) => httpData.get( id ) || empty;
 
-export const subscribe = ( f: () => any ): ( () => ReturnType< typeof listeners.delete > ) => {
+export const subscribe = ( f: Function ): ( () => void ) => {
 	listeners.add( f );
 
 	return () => listeners.delete( f );
@@ -65,8 +65,7 @@ export const subscribe = ( f: () => any ): ( () => ReturnType< typeof listeners.
 
 export const updateData = ( id: DataId, state: DataState, data: any ) => {
 	const lastUpdated: Timestamp = Date.now();
-	const item = httpData.get( id );
-	const hasItem = item !== undefined;
+	const item = httpData.get( id ) || empty;
 
 	// We could have left out the keys for
 	// the previous properties if they didn't
@@ -76,18 +75,18 @@ export const updateData = ( id: DataId, state: DataState, data: any ) => {
 		case DataState.Failure:
 			return httpData.set( id, {
 				state,
-				data: hasItem ? ( item as Resource ).data : undefined,
+				data: item.data,
 				error: data,
-				lastUpdated: hasItem ? ( item as Resource ).lastUpdated : -Infinity,
+				lastUpdated: item.lastUpdated,
 				pendingSince: undefined,
 			} );
 
 		case DataState.Pending:
 			return httpData.set( id, {
 				state,
-				data: hasItem ? ( item as Resource ).data : undefined,
+				data: item.data,
 				error: undefined,
-				lastUpdated: hasItem ? ( item as Resource ).lastUpdated : -Infinity,
+				lastUpdated: item.lastUpdated,
 				pendingSince: lastUpdated,
 			} );
 
