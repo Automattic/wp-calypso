@@ -1,5 +1,7 @@
 ### next (…)
 - Added: [`require-await`](https://eslint.org/docs/rules/require-await) as error
+- Relaxed: [`valid-jsdoc`](https://eslint.org/docs/rules/valid-jsdoc) Param and return type no
+  longer required.
 
 ### v4.0.1 (2018-09-13)
 - Allow usage of eslint v5 (159e240)
