@@ -215,9 +215,6 @@ class FollowingManage extends Component {
 				</div>
 				<ReaderMain className="following-manage">
 					<DocumentHead title={ 'Manage Following' } />
-					<MobileBackToSidebar>
-						<h1>{ translate( 'Streams' ) }</h1>
-					</MobileBackToSidebar>
 					{ ! searchResults && sitesQuery && (
 						<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
 					) }
