@@ -56,7 +56,7 @@
 		"acorn": "6.1.1",
 		"autoprefixer": "9.5.1",
 		"autosize": "4.0.2",
-		"babel-loader": "8.0.5",
+		"babel-loader": "8.0.6",
 		"babel-plugin-add-module-exports": "1.0.2",
 		"body-parser": "1.18.3",
 		"bounding-client-rect": "1.0.5",
