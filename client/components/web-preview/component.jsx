@@ -163,7 +163,9 @@ export class WebPreviewModal extends Component {
 		return (
 			<RootChild>
 				<div className={ className }>
+					{ /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
 					<div className="web-preview__backdrop" onClick={ this.props.onClose } />
+					{ /* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
 					<div className="web-preview__content">
 						<WebPreviewContent
 							{ ...this.props }
