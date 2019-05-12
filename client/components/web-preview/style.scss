@@ -233,6 +233,24 @@ a.web-preview__external.button {
 	}
 }
 
+.web-preview__placeholder {
+	.is-ios & {
+		margin: 0 auto;
+	}
+
+	.is-tablet.is-ios & {
+		max-width: 783px;
+	}
+
+	.is-phone.is-ios & {
+		max-width: 460px;
+	}
+
+	.is-seo.is-ios & {
+		max-width: 865px;
+	}
+}
+
 .web-preview__frame-wrapper {
 	position: absolute;
 		top: 0;

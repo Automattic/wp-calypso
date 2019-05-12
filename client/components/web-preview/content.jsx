@@ -25,6 +25,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
 
 const debug = debugModule( 'calypso:web-preview' );
+const isIOS = /iPad|iPod|iPhone/.test( navigator ? navigator.userAgent : '' );
 
 export class WebPreviewContent extends Component {
 	previewId = uuid();
@@ -35,7 +36,6 @@ export class WebPreviewContent extends Component {
 		device: this.props.defaultViewportDevice || 'computer',
 		loaded: false,
 		isLoadingSubpage: false,
-		isIOS: /iPad|iPod|iPhone/.test( navigator.userAgent ),
 	};
 
 	setIframeInstance = ref => {
@@ -243,7 +243,7 @@ export class WebPreviewContent extends Component {
 			'is-phone': this.state.device === 'phone',
 			'is-seo': this.state.device === 'seo',
 			'is-loaded': this.state.loaded,
-			'is-ios': this.state.isIOS,
+			'is-ios': isIOS,
 		} );
 
 		const showLoadingMessage =
@@ -283,7 +283,7 @@ export class WebPreviewContent extends Component {
 							src="about:blank"
 							onLoad={ this.setLoaded }
 							title={ this.props.iframeTitle || translate( 'Preview' ) }
-							scrolling={ this.state.isIOS ? 'no' : 'auto' }
+							scrolling={ isIOS ? 'no' : 'auto' }
 						/>
 					</div>
 					{ 'seo' === this.state.device && (
