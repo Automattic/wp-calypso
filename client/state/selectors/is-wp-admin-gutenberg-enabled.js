@@ -33,13 +33,13 @@ export const isWpAdminGutenbergEnabled = ( state, siteId ) => {
 		}
 
 		// And not if the site is eligible for Gutenframe:
-		// - Updated to Jetpack 7.3 or greater in order to handle the frame nonces verification.
+		// - Updated to Jetpack 7.3.1 or greater in order to handle the frame nonces verification.
 		// - We are over a insecure HTTPS connection or the site has a SSL cert since the browser cannot embed insecure
 		//   content in a resource loaded over a secure HTTPS connection.
 		// - Not using any plugin that changes the block editor flows.
 		if (
 			isEnabled( 'jetpack/gutenframe' ) &&
-			isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) &&
+			isJetpackMinimumVersion( state, siteId, '7.3.1-alpha' ) &&
 			( 'http:' === window.location.protocol || isHttps( getSiteAdminUrl( state, siteId ) ) ) &&
 			! isAnyPluginActive( state, siteId, deniedPluginsListForGutenberg )
 		) {
