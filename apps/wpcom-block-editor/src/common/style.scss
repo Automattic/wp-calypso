@@ -1,3 +1,16 @@
+@media ( max-width: 600px ) {
+	// stylelint-disable-next-line selector-max-id
+	.is-iframed #wpbody {
+		padding-top: 0;
+	}
+}
+
+@media ( min-width: 600px ) {
+	body.is-fullscreen-mode .edit-post-header {
+		top: 0;
+	}
+}
+
 @media ( min-width: 782px ) {
 	.edit-post-layout__content {
 		position: fixed;
@@ -13,13 +26,6 @@
 	body.is-fullscreen-mode .edit-post-layout__content {
 		top: 56px;
 		position: fixed;
-	}
-}
-
-@media ( max-width: 600px ) {
-	// stylelint-disable-next-line selector-max-id
-	.is-iframed #wpbody {
-		padding-top: 0;
 	}
 }
 
