@@ -15,6 +15,7 @@ import { saveAs } from 'browser-filesaver';
  * Internal dependencies
  */
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import Card from 'components/card';
 import InfiniteScroll from 'components/infinite-scroll';
 import './style.scss';
@@ -25,6 +26,11 @@ import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
 import Button from 'components/button';
 import StripeConnectButton from 'components/stripe-connect-button';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import UpgradeNudge from 'blocks/upgrade-nudge';
+import { FEATURE_MEMBERSHIPS, PLAN_PERSONAL, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 class MembershipsSection extends Component {
 	constructor( props ) {
@@ -235,6 +241,34 @@ class MembershipsSection extends Component {
 	}
 
 	render() {
+		if ( this.props.isJetpackTooOld ) {
+			return (
+				<Notice
+					status="is-warning"
+					text={ this.props.translate(
+						'Please update Jetpack plugin to version 7.3 or higher in order to use the Membership button block'
+					) }
+					showDismiss={ false }
+				>
+					<NoticeAction
+						href={ `https://wordpress.com/plugins/jetpack/${ this.props.siteSlug }` }
+						icon="external"
+					/>
+				</Notice>
+			);
+		}
+
+		if ( ! this.props.paidPlan ) {
+			return (
+				<UpgradeNudge
+					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
+					shouldDisplay={ () => true }
+					feature={ FEATURE_MEMBERSHIPS }
+					title={ this.props.translate( 'Upgrade to the personal plan' ) }
+					message={ this.props.translate( 'To start earning recurring revenue.' ) }
+				/>
+			);
+		}
 		return (
 			<div>
 				<QueryMembershipsSettings siteId={ this.props.siteId } />
@@ -248,6 +282,7 @@ class MembershipsSection extends Component {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
+	const isJetpack = isJetpackSite( state, siteId );
 	return {
 		site,
 		siteId,
@@ -263,6 +298,9 @@ const mapStateToProps = state => {
 			null
 		),
 		connectUrl: get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' ),
+		paidPlan: isSiteOnPaidPlan( state, siteId ),
+		isJetpackTooOld: isJetpack && isJetpackMinimumVersion( state, siteId, '7.3' ) === false,
+		isJetpack: isJetpack,
 	};
 };
 
