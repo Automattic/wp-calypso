@@ -21,7 +21,8 @@ class CheckoutTerms extends React.Component {
 				<div className="checkout__terms">
 					<strong>
 						{ this.props.translate( 'By checking out:', {
-							comment: 'Headline before a list of terms the customer is agreeing to on checkout.',
+							comment:
+								'Headline before a list of terms the customer is agreeing to on checkout. Screenshot: https://user-images.githubusercontent.com/1379730/55166390-66c09080-5145-11e9-9c13-6c1b3b693786.png',
 						} ) }
 					</strong>
 				</div>
