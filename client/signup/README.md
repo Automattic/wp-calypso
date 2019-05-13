@@ -126,15 +126,14 @@ export default class extends React.Component {
 } );
 ```
 
-4 - add the new step to `/client/signup/config/step-components.js`. Include the component:
+4 - add the new step to `/client/signup/config/step-components.js`. Include a reference to the component module:
 ```javascript
-import helloWorldComponent from 'signup/steps/hello-world';
-```
+const stepNameToModuleName = {
+	...
+	'hello-world' : 'hello-world-module-name'; // Referencing signup/steps/hello-world-module-name/index.js
+};
 
-... and then create a new property for it:
-
-```javascript
-'hello-world': helloWorldComponent // This is the component to show for this step
+...
 ```
 
 5 - add the new step to `/client/signup/config/steps-pure.js`. Include the component in the object returned from `generateSteps`:
