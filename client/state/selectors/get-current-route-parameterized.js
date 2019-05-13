@@ -13,7 +13,7 @@ import { getSiteSlug } from 'state/sites/selectors';
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {?String}        path of site if known
+ * @return {?String}        The current route with site parameters
  */
 export default function getCurrentRouteParameterized( state, siteId ) {
 	const route = getCurrentRoute( state );
