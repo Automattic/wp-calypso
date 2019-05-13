@@ -37,7 +37,6 @@ class MembershipsSection extends Component {
 		const { translate } = this.props;
 		return (
 			<Card>
-				<QueryMembershipsSettings siteId={ this.props.siteId } />
 				<QueryMembershipsEarnings siteId={ this.props.siteId } />
 				<div className="memberships__module-header module-header">
 					<h1 className="memberships__module-header-title module-header-title">
@@ -203,11 +202,23 @@ class MembershipsSection extends Component {
 		);
 	}
 
-	render() {
+	renderStripeConnected() {
 		return (
 			<div>
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
+			</div>
+		);
+	}
+
+	render() {
+		return (
+			<div>
+				<QueryMembershipsSettings siteId={ this.props.siteId } />
+				{ this.props.connectedAccountId && this.renderStripeConnected() }
+				{ this.props.connectUrl && ! this.props.connectedAccountId && (
+					<div>Connect Stripe account!</div>
+				) }
 			</div>
 		);
 	}
@@ -225,6 +236,12 @@ const mapStateToProps = state => {
 		forecast: get( state, [ 'memberships', 'earnings', 'summary', siteId, 'forecast' ], 0 ),
 		totalSubscribers: get( state, [ 'memberships', 'subscribers', 'list', siteId, 'total' ], 0 ),
 		subscribers: get( state, [ 'memberships', 'subscribers', 'list', siteId, 'ownerships' ], {} ),
+		connectedAccountId: get(
+			state,
+			[ 'memberships', 'settings', siteId, 'connectedAccountId' ],
+			null
+		),
+		connectUrl: get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' ),
 	};
 };
 
