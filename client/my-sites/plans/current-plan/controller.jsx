@@ -31,11 +31,13 @@ export function currentPlan( context, next ) {
 		return null;
 	}
 
-	context.primary = (
-		<CurrentPlan
-			path={ context.path }
-			requestThankYou={ context.query.hasOwnProperty( 'thank-you' ) }
-		/>
-	);
+	const requestThankYou = context.query.hasOwnProperty( 'thank-you' );
+
+	context.primary = <CurrentPlan path={ context.path } requestThankYou={ requestThankYou } />;
+
+	if ( requestThankYou ) {
+		context.secondary = null;
+	}
+
 	next();
 }
