@@ -784,8 +784,10 @@ class WpcomChecklistComponent extends PureComponent {
 					},
 				] }
 				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
-				targetUrl={ taskUrls[ task.id ] }
-				onClick={ this.handleInlineHelpStart( task ) }
+				onClick={ this.handleTaskStart( {
+					task,
+					url: taskUrls[ task.id ],
+				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
