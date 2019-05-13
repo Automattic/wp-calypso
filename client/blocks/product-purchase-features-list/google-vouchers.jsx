@@ -20,7 +20,6 @@ export default ( { selectedSite } ) => {
 		<div className="product-purchase-features-list__item">
 			<QuerySiteVouchers siteId={ selectedSite.ID } />
 			<PurchaseDetail
-				alt=""
 				id="google-credits"
 				icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
 				title={ translate( 'Google Ads credit' ) }
