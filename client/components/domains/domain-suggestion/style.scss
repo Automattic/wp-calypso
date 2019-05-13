@@ -150,7 +150,7 @@
 .button.domain-suggestion__action {
 	min-width: 66px;
 	text-align: center;
-	margin-top: 0.5em;
+	margin-top: 16px;
 	padding: 0.25em 3em;
 	transition: all 0.1s linear;
 
@@ -173,7 +173,7 @@
 
 	&.is-borderless {
 		color: var( --color-primary );
-		padding: 0.25em;
+		padding: 0;
 	}
 
 	@include breakpoint( '>480px' ) {
@@ -184,6 +184,7 @@
 }
 
 .domain-suggestion__chevron {
+	display: none;
 	margin-left: 10px;
 	flex: 1 0 auto;
 	color: var( --color-neutral-light );
@@ -191,5 +192,9 @@
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		color: var( --color-neutral-0 );
+	}
+
+	@include breakpoint( '>480px' ) {
+		display: block;
 	}
 }
