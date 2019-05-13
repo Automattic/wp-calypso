@@ -132,7 +132,12 @@ class GoogleVoucherDetails extends Component {
 
 				<TipInfo
 					info={ this.props.translate(
-						'Offer valid in US after spending the first $25 on Google Ads.'
+						'Offer valid in US and CA after spending the first %(cost)s on Google Ads.',
+						{
+							args: {
+								cost: '$25',
+							},
+						}
 					) }
 				/>
 			</div>
@@ -219,7 +224,12 @@ class GoogleVoucherDetails extends Component {
 				<TipInfo
 					className="google-voucher__advice"
 					info={ this.props.translate(
-						'Offer valid in US after spending the first $25 on Google Ads.'
+						'Offer valid in US and CA after spending the first %(cost)s on Google Ads.',
+						{
+							args: {
+								cost: '$25',
+							},
+						}
 					) }
 				/>
 			</div>
