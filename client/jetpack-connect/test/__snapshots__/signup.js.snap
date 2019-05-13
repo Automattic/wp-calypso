@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`JetpackSignup should render 1`] = `
-<Connect(Localized(JetpackConnectMainWrapper))>
+<Connect(Localized(JetpackConnectMainWrapper))
+  isWoo={false}
+>
   <div
     className="jetpack-connect__authorize-form"
   >
@@ -53,7 +55,9 @@ exports[`JetpackSignup should render 1`] = `
 `;
 
 exports[`JetpackSignup should render with locale suggestions 1`] = `
-<Connect(Localized(JetpackConnectMainWrapper))>
+<Connect(Localized(JetpackConnectMainWrapper))
+  isWoo={false}
+>
   <div
     className="jetpack-connect__authorize-form"
   >

@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { startsWith } from 'lodash';
+import { startsWith, get } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -40,6 +40,7 @@ import SitePreview from 'blocks/site-preview';
 import SupportArticleDialog from 'blocks/support-article-dialog';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import DocumentHead from 'components/data/document-head';
 import AppBanner from 'blocks/app-banner';
 import GdprBanner from 'blocks/gdpr-banner';
@@ -111,7 +112,12 @@ class Layout extends Component {
 				{ 'has-no-masterbar': this.props.masterbarIsHidden },
 				{ 'is-jetpack-login': this.props.isJetpackLogin },
 				{ 'is-jetpack-site': this.props.isJetpack },
-				{ 'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow }
+				{ 'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow },
+				{
+					'is-jetpack-woocommerce-flow':
+						config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+						this.props.isJetpackWooCommerceFlow,
+				}
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -187,12 +193,16 @@ export default connect( state => {
 	const noMasterbarForRoute = isJetpackLogin || noMasterbarForCheckout;
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
+	const isJetpackWooCommerceFlow =
+		'jetpack-connect' === sectionName &&
+		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
 
 	return {
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
 		isJetpack,
 		isJetpackLogin,
+		isJetpackWooCommerceFlow,
 		isJetpackMobileFlow,
 		isLoading: isSectionLoading( state ),
 		isSupportSession: isSupportSession( state ),

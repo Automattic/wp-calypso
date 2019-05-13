@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`JetpackAuthorize renders as expected 1`] = `
-<Connect(Localized(JetpackConnectMainWrapper))>
+<Connect(Localized(JetpackConnectMainWrapper))
+  isWoo={false}
+>
   <div
     className="jetpack-connect__authorize-form"
   >

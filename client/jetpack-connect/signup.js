@@ -14,7 +14,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, noop } from 'lodash';
+import { includes, flowRight, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -85,10 +85,16 @@ export class JetpackSignup extends Component {
 		} );
 	}
 
+	isWoo( props = this.props ) {
+		const { from } = props.authQuery;
+		return includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from );
+	}
+
 	getLoginRoute() {
 		const emailAddress = this.props.authQuery.userEmail;
 		return login( {
 			emailAddress,
+			isWoo: this.isWoo(),
 			isJetpack: true,
 			isNative: isEnabled( 'login/native-login-links' ),
 			locale: this.props.locale,
@@ -210,7 +216,7 @@ export class JetpackSignup extends Component {
 	render() {
 		const { isCreatingAccount } = this.state;
 		return (
-			<MainWrapper>
+			<MainWrapper isWoo={ this.isWoo() }>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader authQuery={ this.props.authQuery } />

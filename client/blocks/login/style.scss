@@ -1,8 +1,10 @@
-.login {
-	&.is-jetpack {
-		.button.is-primary {
-			background-color: var( --color-jetpack );
-			border-color: var( --color-jetpack-dark );
+.layout:not( .is-jetpack-woocommerce-flow ) {
+	.login {
+		&.is-jetpack {
+			.button.is-primary {
+				background-color: var( --color-jetpack );
+				border-color: var( --color-jetpack-dark );
+			}
 		}
 	}
 }
