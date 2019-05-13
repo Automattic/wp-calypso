@@ -19,6 +19,7 @@ import Card from 'components/card';
 import InfiniteScroll from 'components/infinite-scroll';
 import './style.scss';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
+import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import { requestSubscribers } from 'state/memberships/subscribers/actions';
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
@@ -36,6 +37,7 @@ class MembershipsSection extends Component {
 		const { translate } = this.props;
 		return (
 			<Card>
+				<QueryMembershipsSettings siteId={ this.props.siteId } />
 				<QueryMembershipsEarnings siteId={ this.props.siteId } />
 				<div className="memberships__module-header module-header">
 					<h1 className="memberships__module-header-title module-header-title">
