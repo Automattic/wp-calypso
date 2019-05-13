@@ -181,7 +181,7 @@ class StatsSite extends Component {
 				/>
 				<div id="my-stats-content">
 					<Grid container justify="flex-end" className="stats__module-list">
-						<Grid item xs={ 12 }>
+						<Grid item md={ 8 } lg={ 12 } xl={ 12 }>
 							<StatsBanners siteId={ siteId } slug={ slug } />
 							<ChartTabs
 								activeTab={ getActiveTab( this.props.chartTab ) }
@@ -211,7 +211,7 @@ class StatsSite extends Component {
 								</StatsPeriodNavigation>
 							</StickyPanel>
 						</Grid>
-						<Grid item xs={ 12 } md={ 6 } lg={ 4 } className="stats__module-column">
+						<Grid item md={ 8 } lg={ 6 } className="stats__module-column">
 							<StatsModule
 								path="posts"
 								moduleStrings={ moduleStrings.posts }
@@ -230,7 +230,7 @@ class StatsSite extends Component {
 							/>
 							{ videoList }
 						</Grid>
-						<Grid item xs={ 12 } md={ 6 } lg={ 4 } className="stats__module-column">
+						<Grid item md={ 8 } lg={ 6 } className="stats__module-column">
 							<StatsModule
 								path="referrers"
 								moduleStrings={ moduleStrings.referrers }
@@ -250,13 +250,7 @@ class StatsSite extends Component {
 							/>
 							{ podcastList }
 						</Grid>
-						<Grid
-							item
-							xs={ 12 }
-							md={ 6 }
-							lg={ 4 }
-							className="stats__module-column stat__module-countries"
-						>
+						<Grid item md={ 8 } lg={ 6 } className="stats__module-column stat__module-countries">
 							<Countries
 								path="countries"
 								period={ this.props.period }
