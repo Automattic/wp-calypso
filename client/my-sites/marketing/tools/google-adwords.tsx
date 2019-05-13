@@ -66,9 +66,18 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 		<Fragment>
 			<QuerySiteVouchers siteId={ siteId } />
 			<MarketingToolsFeature
-				title={ translate( 'Advertise with your $100 Google Adwords credit' ) }
+				title={ translate( 'Advertise with your %(cost)s Google Adwords credit', {
+					args: {
+						cost: '$100',
+					},
+				} ) }
 				description={ translate(
-					"Advertise your site where most people are searching: Google. You've got a $100 credit with Google Adwords to drive traffic to your most important pages."
+					"Advertise your site where most people are searching: Google. You've got a %(cost)s credit with Google Adwords to drive traffic to your most important pages.",
+					{
+						args: {
+							cost: '$100',
+						},
+					}
 				) }
 				imagePath="/calypso/images/illustrations/google-adwords-stats.svg"
 			>
