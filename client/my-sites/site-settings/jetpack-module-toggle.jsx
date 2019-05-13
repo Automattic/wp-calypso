@@ -68,6 +68,7 @@ class JetpackModuleToggle extends Component {
 		}
 
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<span className="jetpack-module-toggle">
 				<CompactFormToggle
 					id={ `${ this.props.siteId }-${ this.props.moduleSlug }-toggle` }
