@@ -71,7 +71,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					description={ translate(
 						"Use your site's Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
 					) }
-					imagePath="/calypso/images/marketing/mailchimp-logo.svg"
+					imagePath="/calypso/images/marketing/social-media-logos.svg"
 				>
 					<Button compact onClick={ handleStartSharingClick }>
 						{ translate( 'Start Sharing' ) }
