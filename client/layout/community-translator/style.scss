@@ -2,16 +2,11 @@
 	position: fixed;
 	bottom: 66px;
 	right: 24px;
-	border-radius: 27px;
-	background: var( --color-primary );
-	cursor: pointer;
-	padding: 4px;
-	font-size: 13px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
 	z-index: z-index( 'root', '.community-translator' );
 
-	&.is-active {
-		background: var( --color-accent );
-	}
 }
 
 .community-translator__button {
@@ -20,7 +15,16 @@
 	text-decoration: none;
 	outline: 0;
 	display: flex;
+	border-radius: 27px;
+	background: var( --color-primary );
 	cursor: pointer;
+	padding: 4px;
+	font-size: 13px;
+	margin-bottom: 3px;
+
+	&.is-active {
+		background: var( --color-accent );
+	}
 
 	&:hover {
 		color: var( --color-white );
