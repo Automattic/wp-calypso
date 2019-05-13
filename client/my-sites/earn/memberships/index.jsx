@@ -31,6 +31,7 @@ import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_MEMBERSHIPS, PLAN_PERSONAL, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import SectionHeader from 'components/section-header';
 
 class MembershipsSection extends Component {
 	constructor( props ) {
@@ -220,23 +221,21 @@ class MembershipsSection extends Component {
 
 	renderConnectStripe() {
 		return (
-			<Card>
-				<div className="memberships__module-header module-header">
-					<h1 className="memberships__module-header-title module-header-title">
-						{ this.props.translate( 'Stripe Connection' ) }
-					</h1>
-				</div>
-				<div className="memberships__module-content module-content">
-					<p>
-						{ this.props.translate(
-							'Start collecting subscription payments! Recurring payments are processed through Stripe. Click the button below to create a new account or to connect existing Stripe account.'
-						) }
-					</p>
-					<StripeConnectButton href={ this.props.connectUrl } target="_blank">
-						{ this.props.translate( 'Connect with Stripe' ) }
-					</StripeConnectButton>
-				</div>
-			</Card>
+			<div>
+				<SectionHeader label={ this.props.translate( 'Stripe Connection' ) } />
+				<Card>
+					<div className="memberships__module-content module-content">
+						<p>
+							{ this.props.translate(
+								'Start collecting subscription payments! Recurring payments are processed through Stripe. Click the button below to create a new account or to connect existing Stripe account.'
+							) }
+						</p>
+						<StripeConnectButton href={ this.props.connectUrl } target="_blank">
+							{ this.props.translate( 'Connect with Stripe' ) }
+						</StripeConnectButton>
+					</div>
+				</Card>
+			</div>
 		);
 	}
 
