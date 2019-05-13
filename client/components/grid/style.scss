@@ -1,4 +1,6 @@
-$columns: 1 2 3 4 5 6 7 8 9 10 11 12;
+$sm-columns: 1 2 3 4;
+$md-columns: 1 2 3 4 5 6 7 8;
+$lg-columns: 1 2 3 4 5 6 7 8 9 10 11 12;
 
 .muriel-grid-container {
     width: 100%;
@@ -13,9 +15,9 @@ $columns: 1 2 3 4 5 6 7 8 9 10 11 12;
     margin: 0;
     padding: 8px;
     box-sizing: border-box;
-}
-.muriel-grid-zeroMinWidth {
-    min-width: 0;
+	flex-grow: 0;
+	max-width: 100%;
+	flex-basis: 100%;
 }
 .muriel-grid-direction-xs-column {
     flex-direction: column;
@@ -86,15 +88,15 @@ $columns: 1 2 3 4 5 6 7 8 9 10 11 12;
     flex-basis: 0;
 }
 
-@each $column in $columns {
-    .muriel-grid-xs-#{$column} {
+@each $size in $sm-columns {
+    .muriel-grid-xs-#{$size} {
         flex-grow: 0;
-        max-width: #{$column / 12 * 100 + '%'};
-        flex-basis: #{$column / 12 * 100 + '%'};
+        max-width: #{$size / 4 * 100 + '%'};
+        flex-basis: #{$size / 4 * 100 + '%'};
     }
 }
 
-@include breakpoint( '>660px' ) {
+@include breakpoint( '>480px' ) {
 	.muriel-grid-sm-auto {
 		flex-grow: 0;
 		max-width: none;
@@ -105,22 +107,25 @@ $columns: 1 2 3 4 5 6 7 8 9 10 11 12;
 		max-width: 100%;
 		flex-basis: 0;
 	}
-	@each $size in $columns {
+	@each $size in $sm-columns {
 		.muriel-grid-sm-#{$size} {
 			flex-grow: 0;
-			max-width: #{$size / 12 * 100 + '%'};
-			flex-basis: #{$size / 12 * 100 + '%'};
+			max-width: #{$size / 4 * 100 + '%'};
+			flex-basis: #{$size / 4 * 100 + '%'};
 		}
 	}
 }
 
-@include breakpoint( '>1040px' ) {
+@include breakpoint( '>660px' ) {
     .muriel-grid-container {
         width: calc(100% + 24px);
         margin: -12px;
     }
     .muriel-grid-container > .muriel-grid-item {
         padding: 12px;
+		flex-basis: 0;
+		max-width: 50%;
+		flex-basis: 50%;
     }
     .muriel-grid-md-auto {
         flex-grow: 0;
@@ -132,8 +137,38 @@ $columns: 1 2 3 4 5 6 7 8 9 10 11 12;
         max-width: 100%;
         flex-basis: 0;
     }
-    @each $size in $columns {
-        .muriel-grid-md-#{$size} {
+    @each $size in $md-columns {
+        .muriel-grid-container > .muriel-grid-md-#{$size} {
+            flex-grow: 0;
+            max-width: #{$size / 8 * 100 + '%'};
+            flex-basis: #{$size / 8 * 100 + '%'};
+        }
+    }
+}
+
+@include breakpoint( '>1040px' ) {
+    .muriel-grid-container {
+        width: calc(100% + 24px);
+        margin: -12px;
+    }
+    .muriel-grid-container > .muriel-grid-item {
+        padding: 12px;
+		flex-basis: 0;
+		max-width: 33.33333%;
+		flex-basis: 33.33333%;
+    }
+    .muriel-grid-md-auto {
+        flex-grow: 0;
+        max-width: none;
+        flex-basis: auto;
+    }
+    .muriel-grid-md-true {
+        flex-grow: 1;
+        max-width: 100%;
+        flex-basis: 0;
+    }
+    @each $size in $lg-columns {
+        .muriel-grid-container > .muriel-grid-lg-#{$size} {
             flex-grow: 0;
             max-width: #{$size / 12 * 100 + '%'};
             flex-basis: #{$size / 12 * 100 + '%'};
@@ -142,26 +177,11 @@ $columns: 1 2 3 4 5 6 7 8 9 10 11 12;
 }
 
 @include breakpoint( '>1280px' ) {
-    .muriel-grid-lg-auto {
-        flex-grow: 0;
-        max-width: none;
-        flex-basis: auto;
+    .muriel-grid-container > .muriel-grid-item {
+		flex-basis: 0;
+		max-width: 33.33333%;
+		flex-basis: 33.33333%;
     }
-    .muriel-grid-lg-true {
-        flex-grow: 1;
-        max-width: 100%;
-        flex-basis: 0;
-    }
-    @each $size in $columns {
-        .muriel-grid-lg-#{$size} {
-            flex-grow: 0;
-            max-width: #{$size / 12 * 100 + '%'};
-            flex-basis: #{$size / 12 * 100 + '%'};
-        }
-    }
-}
-
-@include breakpoint( '>1400px' ) {
     .muriel-grid-xl-auto {
         flex-grow: 0;
         max-width: none;
@@ -172,11 +192,11 @@ $columns: 1 2 3 4 5 6 7 8 9 10 11 12;
         max-width: 100%;
         flex-basis: 0;
     }
-    @each $size in $columns {
-        .muriel-grid-xl-#{$size} {
+    @each $size in $lg-columns {
+        .muriel-grid-container > .muriel-grid-xl-#{$size} {
             flex-grow: 0;
             max-width: #{$size / 12 * 100 + '%'};
             flex-basis: #{$size / 12 * 100 + '%'};
         }
-	}
+    }
 }

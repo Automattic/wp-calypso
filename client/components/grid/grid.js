@@ -14,8 +14,6 @@ import classnames from 'classnames';
  */
 import './style.scss';
 
-const GRID_SIZES = [ 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ];
-
 function Grid( props ) {
 	const {
 		alignContent,
@@ -33,7 +31,6 @@ function Grid( props ) {
 		wrap,
 		xl,
 		xs,
-		zeroMinWidth,
 		...other
 	} = props;
 
@@ -41,7 +38,6 @@ function Grid( props ) {
 		{
 			'muriel-grid-container': container,
 			'muriel-grid-item': item,
-			'muriel-grid-zeroMinWidth': zeroMinWidth,
 			[ `muriel-grid-direction-xs-${ String( direction ) }` ]:
 				direction !== Grid.defaultProps.direction,
 			[ `muriel-grid-wrap-${ String( wrap ) }` ]: wrap !== Grid.defaultProps.wrap,
@@ -50,11 +46,11 @@ function Grid( props ) {
 			[ `muriel-grid-align-content-${ String( alignContent ) }` ]:
 				alignContent !== Grid.defaultProps.alignContent,
 			[ `muriel-grid-justify-${ String( justify ) }` ]: justify !== Grid.defaultProps.justify,
-			[ `muriel-grid-xs-${ String( xs ) }` ]: xs !== false,
-			[ `muriel-grid-sm-${ String( sm ) }` ]: sm !== false,
-			[ `muriel-grid-md-${ String( md ) }` ]: md !== false,
-			[ `muriel-grid-lg-${ String( lg ) }` ]: lg !== false,
-			[ `muriel-grid-xl-${ String( xl ) }` ]: xl !== false,
+			[ `muriel-grid-xs-${ String( xs ) }` ]: xs !== false && item,
+			[ `muriel-grid-sm-${ String( sm ) }` ]: sm !== false && item,
+			[ `muriel-grid-md-${ String( md ) }` ]: md !== false && item,
+			[ `muriel-grid-lg-${ String( lg ) }` ]: lg !== false && item,
+			[ `muriel-grid-xl-${ String( xl ) }` ]: xl !== false && item,
 		},
 		classNameProp
 	);
@@ -129,17 +125,17 @@ Grid.propTypes = {
 	 * Defines the number of grids the component is going to use.
 	 * It's applied for the `lg` breakpoint and wider screens if not overridden.
 	 */
-	lg: PropTypes.oneOf( [ false, ...GRID_SIZES ] ),
+	lg: PropTypes.oneOf( [ false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ] ),
 	/**
 	 * Defines the number of grids the component is going to use.
 	 * It's applied for the `md` breakpoint and wider screens if not overridden.
 	 */
-	md: PropTypes.oneOf( [ false, ...GRID_SIZES ] ),
+	md: PropTypes.oneOf( [ false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8 ] ),
 	/**
 	 * Defines the number of grids the component is going to use.
 	 * It's applied for the `sm` breakpoint and wider screens if not overridden.
 	 */
-	sm: PropTypes.oneOf( [ false, ...GRID_SIZES ] ),
+	sm: PropTypes.oneOf( [ false, 'auto', true, 1, 2, 3, 4 ] ),
 	/**
 	 * Defines the `flex-wrap` style property.
 	 * It's applied for all screen sizes.
@@ -149,17 +145,12 @@ Grid.propTypes = {
 	 * Defines the number of grids the component is going to use.
 	 * It's applied for the `xl` breakpoint and wider screens.
 	 */
-	xl: PropTypes.oneOf( [ false, ...GRID_SIZES ] ),
+	xl: PropTypes.oneOf( [ false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ] ),
 	/**
 	 * Defines the number of grids the component is going to use.
 	 * It's applied for all the screen sizes with the lowest priority.
 	 */
-	xs: PropTypes.oneOf( [ false, ...GRID_SIZES ] ),
-	/**
-	 * If `true`, it sets `min-width: 0` on the item.
-	 * Refer to the limitations section of the documentation to better understand the use case.
-	 */
-	zeroMinWidth: PropTypes.bool,
+	xs: PropTypes.oneOf( [ false, 'auto', true, 1, 2, 3, 4 ] ),
 };
 
 Grid.defaultProps = {
@@ -177,7 +168,6 @@ Grid.defaultProps = {
 	wrap: 'wrap',
 	xl: false,
 	xs: false,
-	zeroMinWidth: false,
 };
 
 export default Grid;
