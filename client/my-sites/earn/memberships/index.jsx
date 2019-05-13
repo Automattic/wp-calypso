@@ -24,6 +24,7 @@ import { requestSubscribers } from 'state/memberships/subscribers/actions';
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
 import Button from 'components/button';
+import StripeConnectButton from 'components/stripe-connect-button';
 
 class MembershipsSection extends Component {
 	constructor( props ) {
@@ -211,14 +212,34 @@ class MembershipsSection extends Component {
 		);
 	}
 
+	renderConnectStripe() {
+		return (
+			<Card>
+				<div className="memberships__module-header module-header">
+					<h1 className="memberships__module-header-title module-header-title">
+						{ this.props.translate( 'Stripe Connection' ) }
+					</h1>
+				</div>
+				<div className="memberships__module-content module-content">
+					<p>
+						{ this.props.translate(
+							'Start collecting subscription payments! Recurring payments are processed through Stripe. Click the button below to create a new account or to connect existing Stripe account.'
+						) }
+					</p>
+					<StripeConnectButton href={ this.props.connectUrl } target="_blank">
+						{ this.props.translate( 'Connect with Stripe' ) }
+					</StripeConnectButton>
+				</div>
+			</Card>
+		);
+	}
+
 	render() {
 		return (
 			<div>
 				<QueryMembershipsSettings siteId={ this.props.siteId } />
 				{ this.props.connectedAccountId && this.renderStripeConnected() }
-				{ this.props.connectUrl && ! this.props.connectedAccountId && (
-					<div>Connect Stripe account!</div>
-				) }
+				{ this.props.connectUrl && ! this.props.connectedAccountId && this.renderConnectStripe() }
 			</div>
 		);
 	}
