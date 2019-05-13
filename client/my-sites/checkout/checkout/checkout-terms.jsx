@@ -19,7 +19,11 @@ class CheckoutTerms extends React.Component {
 		return (
 			<Fragment>
 				<div className="checkout__terms">
-					<strong>By checking out:</strong>
+					<strong>
+						{ this.props.translate( 'By checking out:', {
+							comment: 'Headline before a list of terms the customer is agreeing to on checkout.',
+						} ) }
+					</strong>
 				</div>
 				<TermsOfService hasRenewableSubscription={ cartItems.hasRenewableSubscription( cart ) } />
 				<DomainRegistrationAgreement cart={ cart } />
