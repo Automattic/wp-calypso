@@ -43,8 +43,8 @@ describe( 'getCurrentRouteParameterized()', () => {
 
 	test( 'it replaces the site slug with :site', () => {
 		const state = {
-			ui: ui,
-			sites: sites,
+			ui,
+			sites,
 		};
 
 		expect( getCurrentRouteParameterized( state, 12345 ) ).to.equal( '/test/url/:site' );
