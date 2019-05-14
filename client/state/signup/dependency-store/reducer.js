@@ -16,6 +16,8 @@ const EMPTY = {};
 function reducer( state = EMPTY, action ) {
 	switch ( action.type ) {
 		case SIGNUP_DEPENDENCY_STORE_UPDATE:
+			return { ...state, ...action.providedDependencies };
+
 		case SIGNUP_PROGRESS_SUBMIT_STEP:
 		case SIGNUP_PROGRESS_COMPLETE_STEP:
 			return { ...state, ...action.step.providedDependencies };
