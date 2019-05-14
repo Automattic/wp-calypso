@@ -16,6 +16,8 @@ import {
 	MEMBERSHIPS_EARNINGS_RECEIVE,
 	MEMBERSHIPS_SUBSCRIBERS_RECEIVE,
 	MEMBERSHIPS_SUBSCRIBERS_LIST,
+	MEMBERSHIPS_SETTINGS,
+	MEMBERSHIPS_SETTINGS_RECEIVE,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
@@ -94,8 +96,27 @@ export const handleMembershipGetSubscribers = dispatchRequest( {
 	onError: noop,
 } );
 
+export const handleMembershipGetSettings = dispatchRequest( {
+	fetch: action =>
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ action.siteId }/memberships/status`,
+				apiNamespace: 'wpcom/v2',
+			},
+			action
+		),
+	onSuccess: ( { siteId }, data ) => ( {
+		type: MEMBERSHIPS_SETTINGS_RECEIVE,
+		siteId,
+		data,
+	} ),
+	onError: noop,
+} );
+
 registerHandlers( 'state/data-layer/wpcom/sites/memberships/index.js', {
 	[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
 	[ MEMBERSHIPS_EARNINGS_GET ]: [ handleMembershipGetEarnings ],
 	[ MEMBERSHIPS_SUBSCRIBERS_LIST ]: [ handleMembershipGetSubscribers ],
+	[ MEMBERSHIPS_SETTINGS ]: [ handleMembershipGetSettings ],
 } );
