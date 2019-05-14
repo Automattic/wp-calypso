@@ -18,7 +18,6 @@ import {
 	getStepName,
 	getLocale,
 	getFlowName,
-	mergeFormWithValue,
 } from '../utils';
 import mockedFlows from './fixtures/flows';
 import flows from 'signup/config/flows';
@@ -219,27 +218,6 @@ describe( 'utils', () => {
 		test( 'should return null if the field is not present', () => {
 			delete signupProgress[ 1 ].site;
 			assert.equal( getValueFromProgressStore( config ), null );
-		} );
-	} );
-
-	describe( 'mergeFormWithValue', () => {
-		const config = {
-			fieldName: 'username',
-			fieldValue: 'calypso',
-		};
-
-		test( "should return the form with the field added if the field doesn't have a value", () => {
-			const form = { username: {} };
-			config.form = form;
-			assert.deepEqual( mergeFormWithValue( config ), {
-				username: { value: 'calypso' },
-			} );
-		} );
-
-		test( 'should return the form unchanged if there is already a value in the form', () => {
-			const form = { username: { value: 'wordpress' } };
-			config.form = form;
-			assert.equal( mergeFormWithValue( config ), form );
 		} );
 	} );
 } );

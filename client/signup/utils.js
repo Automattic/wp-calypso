@@ -2,7 +2,7 @@
 /**
  * Exernal dependencies
  */
-import { filter, find, includes, indexOf, isEmpty, merge, pick } from 'lodash';
+import { filter, find, includes, indexOf, isEmpty, pick } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -11,7 +11,6 @@ import { translate } from 'i18n-calypso';
 import { getLanguage } from 'lib/i18n-utils';
 import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
-import formState from 'lib/form-state';
 import userFactory from 'lib/user';
 
 const user = userFactory();
@@ -121,15 +120,6 @@ export function getFlowPageTitle( flowName ) {
 export function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
 	const siteStepProgress = find( signupProgress, step => step.stepName === stepName );
 	return siteStepProgress ? siteStepProgress[ fieldName ] : null;
-}
-
-export function mergeFormWithValue( { form, fieldName, fieldValue } ) {
-	if ( ! formState.getFieldValue( form, fieldName ) ) {
-		return merge( form, {
-			[ fieldName ]: { value: fieldValue },
-		} );
-	}
-	return form;
 }
 
 export function getDestination( destination, dependencies, flowName ) {
