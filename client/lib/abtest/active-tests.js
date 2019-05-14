@@ -180,7 +180,7 @@ export default {
 			variantRightColumn: 50,
 			control: 50,
 		},
-		defaultVariation: 'original',
+		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
 };
