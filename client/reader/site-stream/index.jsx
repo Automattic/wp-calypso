@@ -20,10 +20,8 @@ import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
 import isSiteBlocked from 'state/selectors/is-site-blocked';
 import SiteBlocked from 'reader/site-blocked';
-
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
-import FeedFeatured from './featured';
 
 class SiteStream extends React.Component {
 	static propTypes = {
@@ -31,7 +29,6 @@ class SiteStream extends React.Component {
 		className: PropTypes.string,
 		showBack: PropTypes.bool,
 		isDiscoverStream: PropTypes.bool,
-		featuredStreamKey: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -47,7 +44,7 @@ class SiteStream extends React.Component {
 	};
 
 	render() {
-		const { site, feed, featuredStreamKey, isBlocked, siteId } = this.props;
+		const { site, feed, isBlocked, siteId } = this.props;
 		// check for redirect
 		if ( site && site.prefer_feed && site.feed_ID ) {
 			page.replace( '/read/feeds/' + site.feed_ID );
@@ -64,8 +61,6 @@ class SiteStream extends React.Component {
 			return <FeedError sidebarTitle={ title } />;
 		}
 
-		const featuredContent = featuredStreamKey && <FeedFeatured streamKey={ featuredStreamKey } />;
-
 		return (
 			<Stream
 				{ ...this.props }
@@ -78,7 +73,6 @@ class SiteStream extends React.Component {
 			>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				<ReaderFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
-				{ featuredContent }
 				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
 				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }
 			</Stream>
