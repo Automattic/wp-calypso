@@ -32,7 +32,7 @@ import isSavingSharingButtons from 'state/selectors/is-saving-sharing-buttons';
 import isSharingButtonsSaveSuccessful from 'state/selectors/is-sharing-buttons-save-successful';
 import { isJetpackSite } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { protectForm } from 'lib/protect-form';
@@ -64,6 +64,7 @@ class SharingButtons extends Component {
 		if ( this.state.buttonsPendingSave ) {
 			this.props.saveSharingButtons( this.props.siteId, this.state.buttonsPendingSave );
 		}
+		this.props.recordTracksEvent( 'calypso_sharing_buttons_save_changes_click' );
 		this.props.recordGoogleEvent( 'Sharing', 'Clicked Save Changes Button' );
 
 		if ( ! isJetpack || isLikesModuleActive !== false ) {
@@ -188,6 +189,7 @@ const connectComponent = connect(
 		activateModule,
 		errorNotice,
 		recordGoogleEvent,
+		recordTracksEvent,
 		saveSharingButtons,
 		saveSiteSettings,
 		successNotice,
