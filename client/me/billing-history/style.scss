@@ -345,7 +345,8 @@ textarea.billing-history__billing-details-editable {
 	padding: 0;
 }
 
-.billing-history .search-card.card {
+.billing-history .search-card.card,
+.billing-history__upcoming-charges .search-card.card {
 	margin: 0;
 }
 

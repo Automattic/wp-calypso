@@ -19,7 +19,7 @@ import SectionNav from 'components/section-nav';
 import config from 'config';
 import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
 
-const PurchasesHeader = ( { pastTransactions, section, translate } ) => {
+const PurchasesHeader = ( { section, translate } ) => {
 	let text = translate( 'Billing History' );
 
 	if ( section === 'purchases' ) {
@@ -37,11 +37,9 @@ const PurchasesHeader = ( { pastTransactions, section, translate } ) => {
 					{ translate( 'Billing History' ) }
 				</NavItem>
 
-				{ pastTransactions && (
-					<NavItem path={ upcomingCharges } selected={ section === 'upcoming' }>
-						{ translate( 'Upcoming Charges' ) }
-					</NavItem>
-				) }
+				<NavItem path={ upcomingCharges } selected={ section === 'upcoming' }>
+					{ translate( 'Upcoming Charges' ) }
+				</NavItem>
 
 				{ config.isEnabled( 'async-payments' ) && (
 					<NavItem path={ purchasesRoot + '/pending' } selected={ section === 'pending' }>
