@@ -19,7 +19,7 @@ import ScreenReaderText from 'components/screen-reader-text';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import UsersStore from 'lib/users/store';
 
 class SharingConnection extends Component {
@@ -70,15 +70,18 @@ class SharingConnection extends Component {
 
 	toggleSitewideConnection = event => {
 		if ( ! this.state.isSavingSitewide ) {
-			const isNowSitewide = event.target.checked;
+			const isNowSitewide = event.target.checked ? 1 : 0;
 
 			this.setState( { isSavingSitewide: true } );
 			this.props.onToggleSitewideConnection( this.props.connection, isNowSitewide );
+			this.props.recordTracksEvent( 'calypso_connections_connection_sitewide_checkbox_clicked', {
+				is_now_sitewide: isNowSitewide,
+			} );
 			this.props.recordGoogleEvent(
 				'Sharing',
 				'Clicked Connection Available to All Users Checkbox',
 				this.props.service.ID,
-				isNowSitewide ? 1 : 0
+				isNowSitewide
 			);
 		}
 	};
@@ -254,5 +257,5 @@ export default connect(
 			userId: getCurrentUserId( state ),
 		};
 	},
-	{ recordGoogleEvent }
+	{ recordGoogleEvent, recordTracksEvent }
 )( localize( SharingConnection ) );
