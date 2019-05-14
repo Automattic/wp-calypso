@@ -873,7 +873,7 @@ export class MySitesSidebar extends Component {
 					{ this.activity() }
 				</ExpandableSidebarMenu>
 
-				{ configuration ? (
+				{ configuration && this.props.canUserManageOptions ? (
 					<ExpandableSidebarMenu
 						onClick={ this.props.toggleMySitesSidebarManageMenu }
 						expanded={ this.props.isManageOpen }
