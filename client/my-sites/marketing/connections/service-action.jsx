@@ -146,5 +146,5 @@ export default connect(
 			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
-	{ recordTracksEventAction }
+	{ recordTracksEvent: recordTracksEventAction }
 )( localize( SharingServiceAction ) );
