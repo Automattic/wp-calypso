@@ -32,9 +32,9 @@ export const isGutenframeEnabled = ( state, siteId ) => {
 			return false;
 		}
 
-		// And also only if they have been updated to Jetpack 7.3 or greater since it will provide a way to handle the
+		// And also only if they have been updated to Jetpack 7.3.1 or greater since it will provide a way to handle the
 		// frame nonces verification.
-		if ( ! isJetpackMinimumVersion( state, siteId, '7.3-alpha' ) ) {
+		if ( ! isJetpackMinimumVersion( state, siteId, '7.3.1-alpha' ) ) {
 			return false;
 		}
 
