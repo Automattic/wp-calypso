@@ -60,12 +60,16 @@ class SharingButtonsOptions extends Component {
 		const delta = xor( this.props.settings.sharing_show, event.value );
 		this.props.onChange( name, event.value );
 		if ( delta.length ) {
-			const checked = -1 !== event.value.indexOf( delta[ 0 ] );
+			const checked = -1 !== event.value.indexOf( delta[ 0 ] ) ? 1 : 0;
+			this.props.recordTracksEvent( 'calypso_sharing_buttons_show_buttons_on_page_click', {
+				page: delta[ 0 ],
+				checked,
+			} );
 			this.props.recordGoogleEvent(
 				'Sharing',
 				'Clicked Show Sharing Buttons On Page Checkbox',
 				delta[ 0 ],
-				checked ? 1 : 0
+				checked
 			);
 		}
 	};
