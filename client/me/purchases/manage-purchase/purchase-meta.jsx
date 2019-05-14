@@ -13,6 +13,7 @@ import { times } from 'lodash';
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import {
 	getName,
 	creditCardExpiresBeforeSubscription,
@@ -55,6 +56,17 @@ class PurchaseMeta extends Component {
 		hasLoadedUserPurchasesFromServer: false,
 		purchaseId: false,
 	};
+
+	constructor( props ) {
+		super( props );
+
+		if ( config.isEnabled( 'autorenewal-toggle' ) ) {
+			// TODO: remove this once the proper state has been introduced.
+			this.state = {
+				isAutorenewalEnabled: false,
+			};
+		}
+	}
 
 	renderPrice() {
 		const { purchase, translate } = this.props;
@@ -288,9 +300,38 @@ class PurchaseMeta extends Component {
 	}
 
 	renderExpiration() {
-		const { purchase } = this.props;
+		const { purchase, translate, moment } = this.props;
+
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
+		}
+
+		if ( config.isEnabled( 'autorenewal-toggle' ) && isSubscription( purchase ) ) {
+			// TODO: remove this once the proper state has been introduced.
+			const { isAutorenewalEnabled } = this.state;
+
+			const subsRenewText = isAutorenewalEnabled
+				? translate( 'Auto-renew is ON' )
+				: translate( 'Auto-renew is OFF' );
+			const subsBillingText = isAutorenewalEnabled
+				? translate( 'You will be billed on %{renewDate}s', {
+						args: {
+							renewDate: moment( purchase.renewDate ).format( 'LL' ),
+						},
+				  } )
+				: translate( 'Expires on %{expireDate}s', {
+						args: {
+							expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+						},
+				  } );
+
+			return (
+				<li>
+					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
+					<p className="manage-purchase__detail">{ subsRenewText }</p>
+					<p className="manage-purchase__detail">{ subsBillingText }</p>
+				</li>
+			);
 		}
 
 		return (
