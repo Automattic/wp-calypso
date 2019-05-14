@@ -236,10 +236,10 @@
 
 .manage-purchase__detail {
 	@include breakpoint( '<660px' ) {
-		display: block;
-		float: right;
 		text-align: right;
 	}
+
+	display: block;
 
 	.payment-logo {
 		margin-right: 5px;

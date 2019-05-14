@@ -35,6 +35,7 @@ import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchas
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
+import FormToggle from 'components/forms/form-toggle';
 import PaymentLogo from 'components/payment-logo';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
@@ -299,6 +300,13 @@ class PurchaseMeta extends Component {
 		);
 	}
 
+	onToggleAutorenewal = () => {
+		// TODO: send actual autorenewal enabling / disabling action here and show a pop-up notice
+		this.setState( {
+			isAutorenewalEnabled: ! this.state.isAutorenewalEnabled,
+		} );
+	};
+
 	renderExpiration() {
 		const { purchase, translate, moment } = this.props;
 
@@ -314,12 +322,12 @@ class PurchaseMeta extends Component {
 				? translate( 'Auto-renew is ON' )
 				: translate( 'Auto-renew is OFF' );
 			const subsBillingText = isAutorenewalEnabled
-				? translate( 'You will be billed on %{renewDate}s', {
+				? translate( 'You will be billed on %(renewDate)s', {
 						args: {
 							renewDate: moment( purchase.renewDate ).format( 'LL' ),
 						},
 				  } )
-				: translate( 'Expires on %{expireDate}s', {
+				: translate( 'Expires on %(expireDate)s', {
 						args: {
 							expireDate: moment( purchase.expiryDate ).format( 'LL' ),
 						},
@@ -328,8 +336,15 @@ class PurchaseMeta extends Component {
 			return (
 				<li>
 					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
-					<p className="manage-purchase__detail">{ subsRenewText }</p>
-					<p className="manage-purchase__detail">{ subsBillingText }</p>
+					<span className="manage-purchase__detail">
+						{ subsRenewText }
+						<FormToggle
+							className="manage-purchase__detail-auto-renewal-toggle"
+							checked={ isAutorenewalEnabled }
+							onChange={ this.onToggleAutorenewal }
+						/>
+					</span>
+					<span className="manage-purchase__detail">{ subsBillingText }</span>
 				</li>
 			);
 		}
