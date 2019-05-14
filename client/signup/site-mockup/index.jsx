@@ -75,11 +75,13 @@ class SiteMockups extends Component {
 
 	updateDebounced = debounce( () => {
 		this.forceUpdate();
-		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
-			site_type: this.props.siteType,
-			vertical_slug: this.props.verticalSlug,
-			site_style: this.props.siteStyle || 'default',
-		} );
+		if ( this.props.verticalPreviewContent ) {
+			this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
+				site_type: this.props.siteType,
+				vertical_slug: this.props.verticalSlug,
+				site_style: this.props.siteStyle || 'default',
+			} );
+		}
 	}, 777 );
 
 	/**
