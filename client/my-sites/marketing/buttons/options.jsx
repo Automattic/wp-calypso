@@ -21,7 +21,7 @@ import { getSiteSettings } from 'state/site-settings/selectors';
 import getSharingButtons from 'state/selectors/get-sharing-buttons';
 import { isJetpackSite, isJetpackMinimumVersion, getSiteAdminUrl } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -52,6 +52,7 @@ class SharingButtonsOptions extends Component {
 	}
 
 	trackTwitterViaAnalyticsEvent = () => {
+		this.props.recordTracksEvent( 'calypso_sharing_buttons_twitter_username_field_focused' );
 		this.props.recordGoogleEvent( 'Sharing', 'Focussed Twitter Username Field' );
 	};
 
@@ -287,7 +288,7 @@ const connectComponent = connect(
 			siteId,
 		};
 	},
-	{ recordGoogleEvent }
+	{ recordGoogleEvent, recordTracksEvent }
 );
 
 export default flowRight(
