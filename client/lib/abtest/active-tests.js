@@ -164,13 +164,4 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	checkoutUXImprovements: {
-		datestamp: '20190501',
-		variations: {
-			control: 50,
-			variantUXImprovements: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 };
