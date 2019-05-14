@@ -29,6 +29,7 @@ class SharingButtonsStyle extends React.Component {
 
 	onChange = value => {
 		this.props.onChange( value );
+		analytics.tracks.recordEvent( 'calypso_sharing_buttons_style_radio_button_click', { value } );
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Button Style Radio Button', value );
 	};
 
