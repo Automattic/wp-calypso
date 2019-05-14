@@ -6,7 +6,7 @@
 }
 
 @media ( min-width: 600px ) {
-	body.is-fullscreen-mode .edit-post-header {
+	body.is-iframed.is-fullscreen-mode .edit-post-header {
 		top: 0;
 	}
 }
@@ -30,7 +30,7 @@
 }
 
 @media ( min-width: 782px ) and ( max-width: 1079px ) {
-	.edit-post-layout.has-fixed-toolbar .components-notice {
+	.is-fullscreen-mode .edit-post-layout.has-fixed-toolbar .components-notice {
 		top: 37px;
 	}
 }
