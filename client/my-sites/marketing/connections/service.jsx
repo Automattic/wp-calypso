@@ -106,6 +106,7 @@ export class SharingService extends Component {
 	 */
 	performAction = () => {
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
+		const { path } = this.props;
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
@@ -116,18 +117,21 @@ export class SharingService extends Component {
 			this.removeConnection();
 			this.props.recordTracksEvent( 'calypso_connections_disconnect_button_click', {
 				service: this.props.service.ID,
+				path,
 			} );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
 		} else if ( 'reconnect' === connectionStatus ) {
 			this.refresh();
 			this.props.recordTracksEvent( 'calypso_connections_reconnect_button_click', {
 				service: this.props.service.ID,
+				path,
 			} );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.ID );
 		} else {
 			this.addConnection( this.props.service, this.state.newKeyringId );
 			this.props.recordTracksEvent( 'calypso_connections_connect_button_click', {
 				service: this.props.service.ID,
+				path,
 			} );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Button', this.props.service.ID );
 		}
@@ -150,6 +154,8 @@ export class SharingService extends Component {
 	addConnection = ( service, keyringConnectionId, externalUserId = 0 ) => {
 		this.setState( { isConnecting: true } );
 
+		const { path } = this.props;
+
 		if ( service ) {
 			if ( keyringConnectionId ) {
 				// Since we have a Keyring connection to work with, we can immediately
@@ -157,6 +163,7 @@ export class SharingService extends Component {
 				this.createOrUpdateConnection( keyringConnectionId, externalUserId );
 				this.props.recordTracksEvent( 'calypso_connections_connect_button_in_modal_click', {
 					service: this.props.service.ID,
+					path,
 				} );
 				this.props.recordGoogleEvent(
 					'Sharing',
@@ -190,6 +197,7 @@ export class SharingService extends Component {
 			this.setState( { isConnecting: false } );
 			this.props.recordTracksEvent( 'calypso_connections_cancel_button_in_modal_click', {
 				service: this.props.service.ID,
+				path,
 			} );
 			this.props.recordGoogleEvent(
 				'Sharing',
@@ -224,8 +232,11 @@ export class SharingService extends Component {
 	};
 
 	connectAnother = () => {
+		const { path } = this.props;
+
 		this.props.recordTracksEvent( 'calypso_connections_connect_another_button_click', {
 			service: this.props.service.ID,
+			path,
 		} );
 		this.props.recordGoogleEvent(
 			'Sharing',

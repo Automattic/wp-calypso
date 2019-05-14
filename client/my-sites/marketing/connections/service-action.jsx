@@ -29,6 +29,7 @@ const SharingServiceAction = ( {
 	status,
 	translate,
 	recordTracksEvent,
+	path,
 } ) => {
 	let warning = false,
 		label;
@@ -93,7 +94,7 @@ const SharingServiceAction = ( {
 					compact
 					href="https://public-api.wordpress.com/rest/v1.1/sharing/mailchimp/signup"
 					onClick={ () => {
-						recordTracksEvent( 'calypso_connections_signup_click', { service: 'mailchimp' } );
+						recordTracksEvent( 'calypso_connections_signup_click', { service: 'mailchimp', path } );
 						return true;
 					} }
 					target="_blank"
