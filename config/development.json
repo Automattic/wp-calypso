@@ -34,6 +34,7 @@
 	"features": {
 		"async-payments": true,
 		"account-recovery": true,
+		"autorenewal-toggle": true,
 		"ad-tracking": false,
 		"automated-transfer": true,
 		"apple-pay": true,
