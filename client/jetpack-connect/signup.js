@@ -85,9 +85,12 @@ export class JetpackSignup extends Component {
 		} );
 	}
 
-	isWoo( props = this.props ) {
-		const { from } = props.authQuery;
-		return includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from );
+	isWoo() {
+		const { authQuery } = this.props;
+		return includes(
+			[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ],
+			authQuery.from
+		);
 	}
 
 	getLoginRoute() {
