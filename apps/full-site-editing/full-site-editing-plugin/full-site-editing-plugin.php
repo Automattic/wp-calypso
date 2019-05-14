@@ -17,6 +17,7 @@ class A8C_Full_Site_Editing {
 
 		add_action( 'init', array( $this, 'register_blocks' ), 100 );
 		add_action( 'init', array( $this, 'register_template_post_types' ) );
+		add_action( 'init', array( $this, 'register_meta_template_id' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
 	}
@@ -24,6 +25,19 @@ class A8C_Full_Site_Editing {
 	function register_template_post_types() {
 		require_once plugin_dir_path( __FILE__ ) . 'wp-template.php';
 		fse_register_template_post_types();
+	}
+
+	function register_meta_template_id() {
+		register_post_meta( '', '_wp_template_id', array(
+			'auth_callback' => array( $this, 'meta_template_id_auth_callback' ),
+			'show_in_rest'  => true,
+			'single'        => true,
+			'type'          => 'integer',
+		) );
+	}
+
+	function meta_template_id_auth_callback() {
+		return current_user_can( 'edit_theme_options' );
 	}
 
 	function enqueue_script_and_style() {
