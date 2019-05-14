@@ -19,7 +19,9 @@ describe( 'ProgressBar', () => {
 	test( 'should show the title', () => {
 		const progressBar = shallow( <ProgressBar value={ 20 } title="foo" /> );
 
-		expect( progressBar.find( '.progress-bar__progress' ).contains( 'foo' ) ).to.be.true;
+		expect( progressBar.find( '.progress-bar__progress' ).props()[ 'aria-valuetext' ] ).to.be.equal(
+			'foo'
+		);
 	} );
 
 	test( 'should add is-pulsing class when isPulsing property is true', () => {
@@ -52,6 +54,14 @@ describe( 'ProgressBar', () => {
 		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).to.be.equal(
 			'50%'
 		);
+	} );
+
+	test( 'should have correct aria values', () => {
+		const progressBar = shallow( <ProgressBar value={ 20 } total={ 40 } /> );
+		const props = progressBar.find( '.progress-bar__progress' ).props();
+
+		expect( props[ 'aria-valuenow' ] ).to.be.equal( 20 );
+		expect( props[ 'aria-valuemax' ] ).to.be.equal( 40 );
 	} );
 
 	test( 'should have the color provided by the color property', () => {

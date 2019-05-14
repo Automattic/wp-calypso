@@ -64,9 +64,9 @@ export default class ProgressBar extends PureComponent {
 		return (
 			<div
 				aria-valuemax={ total }
-				aria-valuemin="0"
+				aria-valuemin={ 0 }
 				aria-valuenow={ value }
-				aria-valuetext={ title }
+				aria-valuetext={ title || '' }
 				className="progress-bar__progress"
 				role="progressbar"
 				style={ styles }
