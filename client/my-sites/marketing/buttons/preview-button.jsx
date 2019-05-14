@@ -58,6 +58,10 @@ export default class SharingButtonsPreviewButton extends React.Component {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 	onClick = () => {
+		analytics.tracks.recordEvent( 'calypso_sharing_buttons_share_button_click', {
+			service: this.props.button.ID,
+			enabled: ! this.props.enabled, // during onClick enabled is the old state, so negating gives the new state
+		} );
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Share Button', this.props.button.ID );
 		this.props.onClick();
 	};
