@@ -5,8 +5,6 @@
  */
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -16,10 +14,6 @@ import Gridicon from 'gridicons';
 import './style.scss';
 
 export class SignupProcessingScreen extends Component {
-	static propTypes = {
-		steps: PropTypes.array.isRequired,
-	};
-
 	renderFloaties() {
 		// Non standard gridicon sizes are used here because we display giant, floating icons on the page with an animation
 		/* eslint-disable wpcalypso/jsx-gridicon-size, wpcalypso/jsx-classname-namespace */
@@ -59,22 +53,6 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	getTitle() {
-		const stepWithDomainItem = find( this.props.steps, step => step.domainItem );
-
-		if ( stepWithDomainItem ) {
-			const domain = stepWithDomainItem.domainItem.meta;
-
-			return this.props.translate(
-				'{{strong}}Awesome!{{/strong}} Give us one minute and {{br/}}we’ll move right along.',
-				{
-					components: { strong: <strong />, br: <br /> },
-					args: { domain },
-					comment:
-						'The second line after the breaking tag {{br/}} should fit unbroken in 384px and greater and have a max of 30 characters.',
-				}
-			);
-		}
-
 		return this.props.translate(
 			'{{strong}}Awesome!{{/strong}} Give us one minute and {{br/}}we’ll move right along.',
 			{
@@ -90,7 +68,6 @@ export class SignupProcessingScreen extends Component {
 		return (
 			<div>
 				{ this.renderFloaties() }
-
 				<div className="signup-processing-screen__content">
 					<p className="signup-processing-screen__title">{ this.getTitle() }</p>
 				</div>

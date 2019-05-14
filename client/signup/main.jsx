@@ -525,7 +525,7 @@ class Signup extends React.Component {
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
 					{ this.state.shouldShowLoadingScreen ? (
-						<SignupProcessingScreen steps={ this.props.progress } />
+						<SignupProcessingScreen />
 					) : (
 						<CurrentComponent
 							path={ this.props.path }
