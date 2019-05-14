@@ -71,9 +71,6 @@ export class SignupProcessingScreen extends Component {
 				<div className="signup-processing-screen__content">
 					<p className="signup-processing-screen__title">{ this.getTitle() }</p>
 				</div>
-				<div className="signup-processing-screen__loader">
-					{ this.props.translate( 'Loading…' ) }
-				</div>
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
