@@ -27,10 +27,6 @@ class A8C_Full_Site_Editing {
 	}
 
 	function enqueue_script_and_style() {
-		if ( 'wp_template' !== get_current_screen()->post_type ) {
-			return;
-		}
-
 		$script_dependencies = json_decode( file_get_contents(
 			plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.deps.json'
 		), true );
@@ -41,6 +37,10 @@ class A8C_Full_Site_Editing {
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.js' ),
 			true
 		);
+
+		wp_localize_script( 'a8c-full-site-editing-script', 'fullSiteEditing', array(
+			'editorPostType' => get_current_screen()->post_type,
+		) );
 
 		$style_file = is_rtl()
 			? 'full-site-editing-plugin.rtl.css'
@@ -55,7 +55,7 @@ class A8C_Full_Site_Editing {
 
 	function register_blocks() {
 		register_block_type( 'a8c/post-content', array(
-			'render_callback' => 'render_content_slot_block',
+			'render_callback' => 'render_post_content_block',
 		 ) );
 
 		register_block_type( 'a8c/template', array(
