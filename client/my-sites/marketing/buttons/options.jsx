@@ -90,11 +90,15 @@ class SharingButtonsOptions extends Component {
 		}
 
 		if ( 'jetpack_comment_likes_enabled' === event.target.name ) {
+			const checked = event.target.checked ? 1 : 0;
+			this.props.recordTracksEvent( 'calypso_sharing_buttons_likes_on_for_all_posts_click', {
+				checked,
+			} );
 			this.props.recordGoogleEvent(
 				'Sharing',
 				'Clicked Comment Likes On For All Posts Checkbox',
 				'checked',
-				event.target.checked ? 1 : 0
+				checked
 			);
 		}
 
