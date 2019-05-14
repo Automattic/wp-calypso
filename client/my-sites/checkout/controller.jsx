@@ -39,7 +39,7 @@ export function checkout( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-	if ( 'right' === abtest( 'showCheckoutCartRight' ) ) {
+	if ( 'variantRightColumn' === abtest( 'showCheckoutCartRight' ) ) {
 		context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
 		context.primary = (

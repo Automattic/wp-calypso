@@ -76,7 +76,7 @@ class StoreConnection extends React.Component {
 			return React.createElement( this.props.component, this.state );
 		}
 
-		if ( 'right' === abtest( 'showCheckoutCartRight' ) ) {
+		if ( 'variantRightColumn' === abtest( 'showCheckoutCartRight' ) ) {
 			return React.Children.map( this.props.children, child => {
 				return React.cloneElement( child, this.state );
 			} );

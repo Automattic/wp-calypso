@@ -543,7 +543,7 @@ export class SecurePaymentForm extends Component {
 		const { translate } = this.props;
 		const headerText = translate( 'Great choice! How would you like to pay?' );
 
-		if ( 'right' === abtest( 'showCheckoutCartRight' ) ) {
+		if ( 'variantRightColumn' === abtest( 'showCheckoutCartRight' ) ) {
 			const element = document.getElementsByClassName( 'formatted-header__title' )[ 0 ];
 			element.textContent = headerText;
 			return;
