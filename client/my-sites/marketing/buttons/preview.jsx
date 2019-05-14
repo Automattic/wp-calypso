@@ -54,8 +54,10 @@ class SharingButtonsPreview extends React.Component {
 
 		if ( isEditingLabel ) {
 			this.hideButtonsTray();
+			analytics.tracks.recordEvent( 'calypso_sharing_buttons_edit_text_click' );
 			analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Text Link' );
 		} else {
+			analytics.tracks.recordEvent( 'calypso_sharing_buttons_edit_text_close_click' );
 			analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Text Done Button' );
 		}
 	};
@@ -66,6 +68,7 @@ class SharingButtonsPreview extends React.Component {
 			buttonsTrayVisibility: visibility,
 		} );
 
+		analytics.tracks.recordEvent( 'calypso_sharing_buttons_edit_buttons_click' );
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Buttons Links', visibility );
 	};
 
@@ -77,6 +80,7 @@ class SharingButtonsPreview extends React.Component {
 		// Hide button tray by resetting state to default
 		this.setState( { buttonsTrayVisibility: null } );
 
+		analytics.tracks.recordEvent( 'calypso_sharing_buttons_edit_buttons_close_click' );
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Buttons Done Button' );
 	};
 
