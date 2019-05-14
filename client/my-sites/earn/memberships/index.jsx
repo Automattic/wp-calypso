@@ -263,8 +263,8 @@ class MembershipsSection extends Component {
 					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
 					shouldDisplay={ () => true }
 					feature={ FEATURE_MEMBERSHIPS }
-					title={ this.props.translate( 'Upgrade to the personal plan' ) }
-					message={ this.props.translate( 'To start earning recurring revenue.' ) }
+					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
+					message={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
 				/>
 			);
 		}
