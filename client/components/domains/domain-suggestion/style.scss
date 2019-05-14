@@ -1,4 +1,4 @@
-.domain-suggestion {
+.domain-suggestion:not( .featured-domain-suggestion ) {
 	display: flex;
 	flex-direction: column;
 
@@ -6,9 +6,18 @@
 		padding: 15px 20px;
 	}
 
-	@include breakpoint( '>480px' ) {
-		flex-direction: row;
-		align-items: center;
+	.is-section-signup & {
+		@include breakpoint( '>480px' ) {
+			flex-direction: row;
+			align-items: center;
+		}
+	}
+
+	.is-section-domains & {
+		@include breakpoint( '>800px' ) {
+			flex-direction: row;
+			align-items: center;
+		}
 	}
 
 	&.is-clickable {
@@ -177,10 +186,20 @@
 		padding: 0;
 	}
 
-	@include breakpoint( '>480px' ) {
-		flex: 1 0 auto;
-		margin-left: 1em;
-		margin-top: 0;
+	.is-section-signup & {
+		@include breakpoint( '>480px' ) {
+			flex: 1 0 auto;
+			margin-left: 1em;
+			margin-top: 0;
+		}
+	}
+
+	.is-section-domains & {
+		@include breakpoint( '>800px' ) {
+			flex: 1 0 auto;
+			margin-left: 1em;
+			margin-top: 0;
+		}
 	}
 }
 
@@ -195,7 +214,15 @@
 		color: var( --color-neutral-0 );
 	}
 
-	@include breakpoint( '>480px' ) {
-		display: block;
+	.is-section-signup & {
+		@include breakpoint( '>480px' ) {
+			display: block;
+		}
+	}
+
+	.is-section-domains & {
+		@include breakpoint( '>800px' ) {
+			display: block;
+		}
 	}
 }

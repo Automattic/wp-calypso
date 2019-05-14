@@ -10,10 +10,21 @@
 	@include breakpoint( '>660px' ) {
 		align-items: flex-end;
 		font-size: 16px;
-		padding-right: 2em;
 
 		.featured-domain-suggestions & {
 			align-items: flex-start;
+		}
+	}
+
+	.is-section-signup & {
+		@include breakpoint( '>660px' ) {
+			padding-right: 2em;
+		}
+	}
+
+	.is-section-domains & {
+		@include breakpoint( '>800px' ) {
+			padding-right: 2em;
 		}
 	}
 

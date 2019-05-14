@@ -8,9 +8,17 @@
 	  text-align: left;
 	  width: 100%;
 
-	  @include breakpoint( '>480px' ) {
-	  	width: auto;
-	  }
+	  .is-section-signup & {
+		  @include breakpoint( '>480px' ) {
+		  	width: auto;
+		  }
+		}
+
+		.is-section-domains & {
+			@include breakpoint( '>800px' ) {
+		  	width: auto;
+		  }
+		}
 	}
 }
 
