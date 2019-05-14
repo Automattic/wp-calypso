@@ -177,8 +177,8 @@ export default {
 	showCheckoutCartRight: {
 		datestamp: '20190502',
 		variations: {
-			right: 50,
-			original: 50,
+			variantRightColumn: 50,
+			control: 50,
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true,
