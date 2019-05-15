@@ -60,7 +60,6 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 
 			<QuerySiteVouchers siteId={ selectedSite.ID } />
 			<PurchaseDetail
-				alt=""
 				id="google-credits"
 				icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
 				title={ i18n.translate( 'Google Ads credit' ) }
