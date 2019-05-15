@@ -180,7 +180,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					<Grid container justify="flex-end" className="stats__module-list">
+					<Grid container className="stats__module-list">
 						<Grid item md={ 8 } lg={ 12 } xl={ 12 }>
 							<StatsBanners siteId={ siteId } slug={ slug } />
 							<ChartTabs
