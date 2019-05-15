@@ -81,6 +81,9 @@ class PeopleProfile extends React.PureComponent {
 			case 'follower':
 				text = this.props.translate( 'Follower' );
 				break;
+			case 'external contributor':
+				text = this.props.translate( 'External Contributor' );
+				break;
 			default:
 				text = role;
 		}
@@ -181,9 +184,11 @@ class PeopleProfile extends React.PureComponent {
 	};
 
 	renderRole = () => {
-		let superAdminBadge, roleBadge;
+		const { isExternalContributor, user } = this.props;
 
-		if ( this.props.user && this.props.user.is_super_admin ) {
+		let externalContributorBadge, superAdminBadge, roleBadge;
+
+		if ( user && user.is_super_admin ) {
 			superAdminBadge = (
 				<div className="people-profile__role-badge role-super-admin">
 					{ this.getRoleBadgeText( 'super admin' ) }
@@ -199,7 +204,15 @@ class PeopleProfile extends React.PureComponent {
 			);
 		}
 
-		if ( ! roleBadge && ! superAdminBadge ) {
+		if ( isExternalContributor ) {
+			externalContributorBadge = (
+				<div className="people-profile__role-badge role-external-contributor">
+					{ this.getRoleBadgeText( 'external contributor' ) }
+				</div>
+			);
+		}
+
+		if ( ! roleBadge && ! superAdminBadge && ! externalContributorBadge ) {
 			return;
 		}
 
@@ -207,6 +220,7 @@ class PeopleProfile extends React.PureComponent {
 			<div className="people-profile__badges">
 				{ superAdminBadge }
 				{ roleBadge }
+				{ externalContributorBadge }
 			</div>
 		);
 	};
@@ -253,5 +267,9 @@ class PeopleProfile extends React.PureComponent {
 		);
 	}
 }
+
+PeopleProfile.defaultProps = {
+	isExternalContributor: false,
+};
 
 export default localize( PeopleProfile );

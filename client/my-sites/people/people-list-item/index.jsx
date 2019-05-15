@@ -23,6 +23,7 @@ import {
 	didInviteResendSucceed,
 	didInviteDeletionSucceed,
 } from 'state/invites/selectors';
+import { isUserExternalContributor } from 'state/selectors/is-user-external-contributor';
 import { resendInvite } from 'state/invites/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -127,7 +128,16 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	render() {
-		const { className, invite, onRemove, translate, type, user, inviteWasDeleted } = this.props;
+		const {
+			className,
+			invite,
+			isExternalContributor,
+			onRemove,
+			translate,
+			type,
+			user,
+			inviteWasDeleted,
+		} = this.props;
 
 		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
@@ -158,7 +168,12 @@ class PeopleListItem extends React.PureComponent {
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
-					<PeopleProfile invite={ invite } type={ type } user={ user } />
+					<PeopleProfile
+						invite={ invite }
+						type={ type }
+						user={ user }
+						isExternalContributor={ isExternalContributor }
+					/>
 				</div>
 
 				{ isInvite && this.renderInviteStatus() }
@@ -187,13 +202,15 @@ class PeopleListItem extends React.PureComponent {
 
 export default connect(
 	( state, ownProps ) => {
-		const { site, invite } = ownProps;
+		const { site, invite, user } = ownProps;
 
+		const userId = user && user.ID;
 		const siteId = site && site.ID;
 		const inviteKey = invite && invite.key;
 		const inviteWasDeleted = inviteKey && didInviteDeletionSucceed( state, siteId, inviteKey );
 
 		return {
+			isExternalContributor: isUserExternalContributor( state, siteId, userId ),
 			requestingResend: isRequestingInviteResend( state, siteId, inviteKey ),
 			resendSuccess: didInviteResendSucceed( state, siteId, inviteKey ),
 			siteId,
