@@ -14,7 +14,7 @@ import config from 'config';
  */
 import cartItems from './cart-items';
 import { isCredits, isDomainRedemption, whitelistAttributes } from 'lib/products-values';
-import { detectWebPaymentMethod } from 'my-sites/checkout/checkout/web-payment-box';
+import { detectWebPaymentMethod } from 'lib/web-payment';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
 extendImmutabilityHelper( '$auto', function( value, object ) {

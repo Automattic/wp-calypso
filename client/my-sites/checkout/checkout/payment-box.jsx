@@ -25,7 +25,7 @@ import {
 	getWebPaymentMethodName,
 	WEB_PAYMENT_BASIC_CARD_METHOD,
 	WEB_PAYMENT_APPLE_PAY_METHOD,
-} from './web-payment-box';
+} from 'lib/web-payment';
 
 export class PaymentBox extends PureComponent {
 	constructor() {
