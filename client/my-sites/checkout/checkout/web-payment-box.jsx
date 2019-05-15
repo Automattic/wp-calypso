@@ -19,7 +19,7 @@ import Button from 'components/button';
 import PaymentCountrySelect from 'components/payment-country-select';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import Input from 'my-sites/domains/components/form/input';
-import { getTaxCountryCode, getTaxPostalCode } from 'lib/cart-values';
+import { getTaxCountryCode, getTaxPostalCode, shouldShowTax } from 'lib/cart-values';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import {
 	detectWebPaymentMethod,
@@ -225,8 +225,9 @@ export class WebPaymentBox extends React.Component {
 	getPaymentDetails = cart => {
 		const { translate } = this.props;
 
-		return {
-			displayItems: [
+		let displayItems = [];
+		if ( shouldShowTax( cart ) ) {
+			displayItems = [
 				{
 					label: translate( 'Subtotal' ),
 					amount: {
@@ -241,7 +242,11 @@ export class WebPaymentBox extends React.Component {
 						value: cart.total_tax,
 					},
 				},
-			],
+			];
+		}
+
+		return {
+			displayItems: displayItems,
 			total: {
 				label: translate( 'WordPress.com' ),
 				amount: {
