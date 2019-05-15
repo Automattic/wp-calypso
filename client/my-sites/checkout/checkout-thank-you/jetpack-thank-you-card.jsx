@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
 import { difference, filter, map, reduce, some } from 'lodash';
@@ -86,6 +86,7 @@ export class JetpackThankYouCard extends Component {
 	state = {
 		completedJetpackFeatures: {},
 		installInitiatedPlugins: new Set(),
+		delayCounter: 0,
 	};
 
 	trackConfigFinished( eventName, options = null ) {
@@ -111,10 +112,18 @@ export class JetpackThankYouCard extends Component {
 		return plugins.length === filter( plugins, { wporg: true } ).length;
 	}
 
+	tickDelayCounter() {
+		this.setState( state => ( {
+			delayCounter: state.delayCounter + 1,
+		} ) );
+	}
+
 	componentDidMount() {
 		window.addEventListener( 'beforeunload', this.warnIfNotFinished );
 		this.props.requestSites();
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_start' );
+
+		this.delayCounterTimerID = setInterval( () => this.tickDelayCounter(), 1000 );
 
 		page.exit( '/checkout/thank-you/*', ( context, next ) => {
 			const confirmText = this.warnIfNotFinished( {} );
@@ -135,6 +144,7 @@ export class JetpackThankYouCard extends Component {
 	}
 
 	componentWillUnmount() {
+		clearInterval( this.delayCounterTimerID );
 		window.removeEventListener( 'beforeunload', this.warnIfNotFinished );
 	}
 
@@ -480,6 +490,7 @@ export class JetpackThankYouCard extends Component {
 	}
 
 	renderAction( progress = 0 ) {
+		const { delayCounter } = this.state;
 		const { goBackToSiteLink, selectedSite: site, translate } = this.props;
 		const buttonUrl = site && goBackToSiteLink;
 		// We return instructions for setting up manually
@@ -499,24 +510,42 @@ export class JetpackThankYouCard extends Component {
 			);
 		}
 
+		const backToYourSiteButton = (
+			<a
+				className={ classNames( 'button', 'thank-you-card__button', {
+					'is-placeholder': ! buttonUrl,
+				} ) }
+				onClick={ this.onBackToYourSiteClick }
+				href={ buttonUrl }
+			>
+				{ translate( 'Back to your site' ) }
+			</a>
+		);
+
 		if ( 100 === progress ) {
 			return (
 				<div className="checkout-thank-you__jetpack-action-buttons">
-					<a
-						className={ classNames( 'button', 'thank-you-card__button', {
-							'is-placeholder': ! buttonUrl,
-						} ) }
-						onClick={ this.onBackToYourSiteClick }
-						href={ buttonUrl }
-					>
-						{ translate( 'Back to your site' ) }
-					</a>
+					{ backToYourSiteButton }
 					{ this.renderLiveChatButton() }
 				</div>
 			);
 		}
 
-		return <ProgressBar value={ progress } isPulsing />;
+		return (
+			<Fragment>
+				{ delayCounter >= 30 && (
+					<Fragment>
+						<p>
+							{ translate(
+								'We’re loading your security features now. In the meantime, head back to your site'
+							) }
+						</p>
+						<p>{ backToYourSiteButton }</p>
+					</Fragment>
+				) }
+				<ProgressBar value={ progress } isPulsing />
+			</Fragment>
+		);
 	}
 
 	renderDescription( progress = 0 ) {
