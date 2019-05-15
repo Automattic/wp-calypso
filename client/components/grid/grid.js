@@ -38,7 +38,7 @@ function Grid( props ) {
 		{
 			'muriel-grid-container': container,
 			'muriel-grid-item': item,
-			[ `muriel-grid-direction-xs-${ String( direction ) }` ]:
+			[ `muriel-grid-direction-${ String( direction ) }` ]:
 				direction !== Grid.defaultProps.direction,
 			[ `muriel-grid-wrap-${ String( wrap ) }` ]: wrap !== Grid.defaultProps.wrap,
 			[ `muriel-grid-align-items-${ String( alignItems ) }` ]:

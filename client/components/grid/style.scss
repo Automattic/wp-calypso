@@ -19,61 +19,61 @@ $lg-columns: 1 2 3 4 5 6 7 8 9 10 11 12;
 	max-width: 100%;
 	flex-basis: 100%;
 }
-.muriel-grid-direction-xs-column {
+.muriel-grid-direction-column {
     flex-direction: column;
 }
-.muriel-grid-direction-xs-column-reverse {
+.muriel-grid-direction-column-reverse {
     flex-direction: column-reverse;
 }
-.muriel-grid-direction-xs-row-reverse {
+.muriel-grid-direction-row-reverse {
     flex-direction: row-reverse;
 }
-.muriel-grid-wrap-xs-nowrap {
+.muriel-grid-wrap-nowrap {
     flex-wrap: nowrap;
 }
-.muriel-grid-wrap-xs-wrap-reverse {
+.muriel-grid-wrap-wrap-reverse {
     flex-wrap: wrap-reverse;
 }
-.muriel-grid-align-items-xs-center {
+.muriel-grid-align-items-center {
     align-items: center;
 }
-.muriel-grid-align-items-xs-flex-start {
+.muriel-grid-align-items-flex-start {
     align-items: flex-start;
 }
-.muriel-grid-align-items-xs-flex-end {
+.muriel-grid-align-items-flex-end {
     align-items: flex-end;
 }
-.muriel-grid-align-items-xs-baseline {
+.muriel-grid-align-items-baseline {
     align-items: baseline;
 }
-.muriel-grid-align-content-xs-center {
+.muriel-grid-align-content-center {
     align-content: center;
 }
-.muriel-grid-align-content-xs-flex-start {
+.muriel-grid-align-content-flex-start {
     align-content: flex-start;
 }
-.muriel-grid-align-content-xs-flex-end {
+.muriel-grid-align-content-flex-end {
     align-content: flex-end;
 }
-.muriel-grid-align-content-xs-space-between {
+.muriel-grid-align-content-space-between {
     align-content: space-between;
 }
-.muriel-grid-align-content-xs-space-around {
+.muriel-grid-align-content-space-around {
     align-content: space-around;
 }
-.muriel-grid-justify-xs-center {
+.muriel-grid-justify-center {
     justify-content: center;
 }
-.muriel-grid-justify-xs-flex-end {
+.muriel-grid-justify-flex-end {
     justify-content: flex-end;
 }
-.muriel-grid-justify-xs-space-between {
+.muriel-grid-justify-space-between {
     justify-content: space-between;
 }
-.muriel-grid-justify-xs-space-around {
+.muriel-grid-justify-space-around {
     justify-content: space-around;
 }
-.muriel-grid-justify-xs-space-evenly {
+.muriel-grid-justify-space-evenly {
     justify-content: space-evenly;
 }
 
