@@ -308,7 +308,7 @@ class PurchaseMeta extends Component {
 	};
 
 	renderExpiration() {
-		const { purchase, translate, moment } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
@@ -324,12 +324,12 @@ class PurchaseMeta extends Component {
 			const subsBillingText = isAutorenewalEnabled
 				? translate( 'You will be billed on %(renewDate)s', {
 						args: {
-							renewDate: moment( purchase.renewDate ).format( 'LL' ),
+							renewDate: purchase.renewMoment.format( 'LL' ),
 						},
 				  } )
 				: translate( 'Expires on %(expireDate)s', {
 						args: {
-							expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+							expireDate: purchase.expiryMoment.format( 'LL' ),
 						},
 				  } );
 
