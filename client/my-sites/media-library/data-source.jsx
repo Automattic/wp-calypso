@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { find, includes } from 'lodash';
@@ -32,11 +32,7 @@ export class MediaLibraryDataSource extends Component {
 		disabledSources: [],
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = { popover: false };
-	}
+	state = { popover: false };
 
 	storeButtonRef = ref => ( this.buttonRef = ref );
 
@@ -44,13 +40,7 @@ export class MediaLibraryDataSource extends Component {
 		this.setState( { popover: ! this.state.popover } );
 	};
 
-	changeSource = item => {
-		const { target } = item;
-		const action = target.getAttribute( 'action' )
-			? target.getAttribute( 'action' )
-			: target.parentNode.getAttribute( 'action' );
-		const newSource = action ? action : '';
-
+	changeSource = newSource => () => {
 		if ( newSource !== this.props.source ) {
 			this.props.onSourceChange( newSource );
 		}
@@ -86,7 +76,7 @@ export class MediaLibraryDataSource extends Component {
 
 	renderMenuItems( sources ) {
 		return sources.map( ( { icon, label, value } ) => (
-			<PopoverMenuItem action={ value } key={ value } onClick={ this.changeSource }>
+			<PopoverMenuItem key={ value } data-source={ value } onClick={ this.changeSource( value ) }>
 				{ icon }
 				{ label }
 			</PopoverMenuItem>
@@ -119,22 +109,19 @@ export class MediaLibraryDataSource extends Component {
 				>
 					{ currentSelected && currentSelected.icon }
 					{ this.renderScreenReader( currentSelected ) }
-
-					{ sources.length > 1 && (
-						<Fragment>
-							<Gridicon icon="chevron-down" size={ 18 } />
-							<PopoverMenu
-								context={ this.buttonRef }
-								isVisible={ this.state.popover }
-								position="bottom right"
-								onClose={ this.togglePopover }
-								className="is-dialog-visible media-library__header-popover"
-							>
-								{ this.renderMenuItems( sources ) }
-							</PopoverMenu>
-						</Fragment>
-					) }
+					<Gridicon icon="chevron-down" size={ 18 } />
 				</Button>
+				{ sources.length > 1 && (
+					<PopoverMenu
+						context={ this.buttonRef }
+						isVisible={ this.state.popover }
+						position="bottom right"
+						onClose={ this.togglePopover }
+						className="is-dialog-visible media-library__header-popover"
+					>
+						{ this.renderMenuItems( sources ) }
+					</PopoverMenu>
+				) }
 			</div>
 		);
 	}
