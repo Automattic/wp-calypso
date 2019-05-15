@@ -467,6 +467,7 @@ export class SecurePaymentForm extends Component {
 					countriesList={ this.props.countriesList }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					translate={ this.props.translate }
+					presaleChatAvailable={ this.props.presaleChatAvailable }
 				>
 					{ this.props.children }
 				</WebPaymentBox>
