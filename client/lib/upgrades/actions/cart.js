@@ -16,8 +16,6 @@ import {
 	CART_ITEMS_ADD,
 	CART_ITEMS_REPLACE_ALL,
 	CART_ON_MOBILE_SHOW,
-	CART_POPUP_CLOSE,
-	CART_POPUP_OPEN,
 	CART_PRIVACY_PROTECTION_ADD,
 	CART_PRIVACY_PROTECTION_REMOVE,
 	GOOGLE_APPS_REGISTRATION_DATA_ADD,
@@ -33,19 +31,6 @@ import 'lib/cart/store';
 
 export function disableCart() {
 	Dispatcher.handleViewAction( { type: CART_DISABLE } );
-}
-
-export function openCartPopup( options ) {
-	Dispatcher.handleViewAction( {
-		type: CART_POPUP_OPEN,
-		options: options || {},
-	} );
-}
-
-export function closeCartPopup() {
-	Dispatcher.handleViewAction( {
-		type: CART_POPUP_CLOSE,
-	} );
 }
 
 export function showCartOnMobile( show ) {
