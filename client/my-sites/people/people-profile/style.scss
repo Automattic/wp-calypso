@@ -123,9 +123,14 @@
 		color: var( --color-white );
 	}
 
-	&.role-external-contributor {
-		background: var( --color-success );
+	&.role-contractor {
+		background: var( --color-neutral-100 );
 		border: none;
-		color: var( --color-white );
+		color: var( --color-neutral-700 );
 	}
+}
+
+.people-profile__role-badge-info {
+	float: left;
+	margin-left: 4px;
 }

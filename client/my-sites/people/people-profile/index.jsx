@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get } from 'lodash';
@@ -16,6 +16,7 @@ import { decodeEntities } from 'lib/formatting';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
+import InfoPopover from 'components/info-popover';
 
 /**
  * Style dependencies
@@ -80,9 +81,6 @@ class PeopleProfile extends React.PureComponent {
 				break;
 			case 'follower':
 				text = this.props.translate( 'Follower' );
-				break;
-			case 'external contributor':
-				text = this.props.translate( 'External Contributor' );
 				break;
 			default:
 				text = role;
@@ -184,7 +182,7 @@ class PeopleProfile extends React.PureComponent {
 	};
 
 	renderRole = () => {
-		const { isExternalContributor, user } = this.props;
+		const { isExternalContributor, translate, user } = this.props;
 
 		let externalContributorBadge, superAdminBadge, roleBadge;
 
@@ -206,9 +204,18 @@ class PeopleProfile extends React.PureComponent {
 
 		if ( isExternalContributor ) {
 			externalContributorBadge = (
-				<div className="people-profile__role-badge role-external-contributor">
-					{ this.getRoleBadgeText( 'external contributor' ) }
-				</div>
+				<Fragment>
+					<div className="people-profile__role-badge role-contractor">
+						{ translate( 'Contractor', {
+							context: 'Noun: A user role displayed in a badge',
+						} ) }
+					</div>
+					<div className="people-profile__role-badge-info">
+						<InfoPopover position="top left">
+							{ translate( 'This user is a freelancer, consultant, or agency.' ) }
+						</InfoPopover>
+					</div>
+				</Fragment>
 			);
 		}
 
