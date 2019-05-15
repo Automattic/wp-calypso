@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import { connect } from 'react-redux';
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -15,7 +15,9 @@ import { decodeEntities } from 'lib/formatting';
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId } from 'state/ui/selectors';
 import Gravatar from 'components/gravatar';
+import { isUserExternalContributor } from 'state/selectors/is-user-external-contributor';
 import InfoPopover from 'components/info-popover';
 
 /**
@@ -182,9 +184,9 @@ class PeopleProfile extends React.PureComponent {
 	};
 
 	renderRole = () => {
-		const { isExternalContributor, translate, user } = this.props;
+		const { isContractor, translate, user } = this.props;
 
-		let externalContributorBadge, superAdminBadge, roleBadge;
+		let contractorBadge, superAdminBadge, roleBadge;
 
 		if ( user && user.is_super_admin ) {
 			superAdminBadge = (
@@ -202,8 +204,8 @@ class PeopleProfile extends React.PureComponent {
 			);
 		}
 
-		if ( isExternalContributor ) {
-			externalContributorBadge = (
+		if ( isContractor ) {
+			contractorBadge = (
 				<Fragment>
 					<div className="people-profile__role-badge role-contractor">
 						{ translate( 'Contractor', {
@@ -211,7 +213,7 @@ class PeopleProfile extends React.PureComponent {
 						} ) }
 					</div>
 					<div className="people-profile__role-badge-info">
-						<InfoPopover position="top left">
+						<InfoPopover position="top right">
 							{ translate( 'This user is a freelancer, consultant, or agency.' ) }
 						</InfoPopover>
 					</div>
@@ -219,7 +221,7 @@ class PeopleProfile extends React.PureComponent {
 			);
 		}
 
-		if ( ! roleBadge && ! superAdminBadge && ! externalContributorBadge ) {
+		if ( ! roleBadge && ! superAdminBadge && ! contractorBadge ) {
 			return;
 		}
 
@@ -227,7 +229,7 @@ class PeopleProfile extends React.PureComponent {
 			<div className="people-profile__badges">
 				{ superAdminBadge }
 				{ roleBadge }
-				{ externalContributorBadge }
+				{ contractorBadge }
 			</div>
 		);
 	};
@@ -279,4 +281,10 @@ PeopleProfile.defaultProps = {
 	isExternalContributor: false,
 };
 
-export default localize( PeopleProfile );
+export default connect( ( state, ownProps ) => {
+	const siteId = getSelectedSiteId( state );
+	const userId = ownProps.user && ownProps.user.ID;
+	return {
+		isContractor: isUserExternalContributor( state, siteId, userId ),
+	};
+} )( localize( PeopleProfile ) );
