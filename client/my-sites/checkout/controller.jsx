@@ -63,6 +63,7 @@ export function checkout( context, next ) {
 		);
 
 		next();
+		return;
 	}
 
 	context.primary = (
