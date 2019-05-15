@@ -537,7 +537,7 @@ export class JetpackThankYouCard extends Component {
 					<Fragment>
 						<p>
 							{ translate(
-								'We’re loading your security features now. In the meantime, head back to your site'
+								'We’re loading your security features now. In the meantime, head back to your site.'
 							) }
 						</p>
 						<p>{ backToYourSiteButton }</p>
