@@ -35,6 +35,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
             "userEmail": "email@an.example.site",
           }
         }
+        isWoo={false}
       />
       <Card
         className="jetpack-connect__logged-in-card"

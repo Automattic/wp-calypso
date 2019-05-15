@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { includes, capitalize } from 'lodash';
+import { includes, capitalize, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
@@ -14,6 +14,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import {
@@ -26,6 +27,7 @@ import {
 } from 'state/login/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -44,6 +46,7 @@ class Login extends Component {
 		disableAutoFocus: PropTypes.bool,
 		isLinking: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
+		isJetpackWooCommerceFlow: PropTypes.bool.isRequired,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
@@ -59,7 +62,7 @@ class Login extends Component {
 		twoFactorNotificationSent: PropTypes.string,
 	};
 
-	static defaultProps = { isJetpack: false };
+	static defaultProps = { isJetpack: false, isJetpackWooCommerceFlow: false };
 
 	componentDidMount = () => {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
@@ -136,6 +139,7 @@ class Login extends Component {
 	renderHeader() {
 		const {
 			isJetpack,
+			isJetpackWooCommerceFlow,
 			isManualRenewalImmediateLoginAttempt,
 			linkingSocialService,
 			oauth2Client,
@@ -207,6 +211,26 @@ class Login extends Component {
 					},
 				} );
 			}
+		} else if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+			headerText = translate( 'Log in to your WordPress.com account' );
+			preHeader = (
+				<div className="login__jetpack-logo">
+					<AsyncLoad
+						require="components/jetpack-header"
+						placeholder={ null }
+						partnerSlug={ 'woocommerce' }
+						width={ 200 }
+						darkColorScheme
+					/>
+				</div>
+			);
+			postHeader = (
+				<p className="login__header-subtitle">
+					{ translate(
+						'Your account will enable you to start using the features and benefits offered by Jetpack & WooCommerce Services.'
+					) }
+				</p>
+			);
 		} else if ( isJetpack ) {
 			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
 			preHeader = (
@@ -331,6 +355,8 @@ export default connect(
 		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
+		isJetpackWooCommerceFlow:
+			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
 	} ),
 	{
 		recordTracksEvent,

@@ -40,10 +40,13 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 		} );
 
+		const partnerSlug = isWoo ? 'woocommerce' : this.props.partnerSlug;
+		const width = isWoo ? 200 : undefined;
+
 		return (
 			<Main className={ classNames( className, wrapperClassName ) }>
 				<div className="jetpack-connect__main-logo">
-					<JetpackHeader partnerSlug={ this.props.partnerSlug } darkColorScheme />
+					<JetpackHeader partnerSlug={ partnerSlug } width={ width } darkColorScheme />
 				</div>
 				{ children }
 			</Main>

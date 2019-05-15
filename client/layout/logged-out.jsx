@@ -13,6 +13,7 @@ import { includes, get } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import GlobalNotices from 'components/global-notices';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import notices from 'notices';
@@ -57,7 +58,8 @@ const LayoutLoggedOut = ( {
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
-		'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
+		'is-jetpack-woocommerce-flow':
+			config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow,
 	};
 
 	let masterbar = null;

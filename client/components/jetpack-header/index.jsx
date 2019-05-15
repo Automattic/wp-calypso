@@ -30,6 +30,21 @@ export class JetpackHeader extends PureComponent {
 		const { darkColorScheme, partnerSlug, width } = this.props;
 
 		switch ( partnerSlug ) {
+			case 'woocommerce':
+				return (
+					<JetpackPartnerLogoGroup
+						width={ width || 662.5 }
+						viewBox="0 0 1270 170"
+						partnerName="WooCommerce"
+					>
+						<AsyncLoad
+							require="components/jetpack-header/woocommerce"
+							darkColorScheme={ darkColorScheme }
+							placeholder={ null }
+						/>
+					</JetpackPartnerLogoGroup>
+				);
+
 			case 'dreamhost':
 				return (
 					<JetpackPartnerLogoGroup

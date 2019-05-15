@@ -882,6 +882,38 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	/** WooCommerce Onboarding Styles **/
 	&.is-jetpack-woocommerce-flow {
 		background-color: var( --color-woocommerce-onboarding-background );
+
+		.jetpack-connect__main-logo {
+			text-align: center;
+			border-bottom: 1px solid #1f112e;
+			position: absolute;
+			width: 100%;
+			left: 0;
+			top: 0;
+			height: 56px;
+		}
+
+		.jetpack-header {
+			margin: 0;
+			text-align: center;
+			margin-right: auto;
+			margin-left: auto;
+			padding-left: 112px;
+			margin-top: 15px;
+			display: block;
+		}
+
+		.jetpack-connect__authorize-form {
+			margin-top: 32px;
+		}
+
+		.jetpack-logo__icon-circle {
+			fill: var( --color-accent-light );
+		}
+
+		.jetpack-logo__icon-triangle {
+			fill: var( --color-woocommerce-onboarding-background );
+		}
 	}
 }
 

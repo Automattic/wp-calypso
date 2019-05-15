@@ -222,7 +222,7 @@ export class JetpackSignup extends Component {
 			<MainWrapper isWoo={ this.isWoo() }>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
-					<AuthFormHeader authQuery={ this.props.authQuery } />
+					<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
 					<SignupForm
 						disabled={ isCreatingAccount }
 						email={ this.props.authQuery.userEmail }
