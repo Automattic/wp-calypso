@@ -18,6 +18,7 @@ import MultiCheckbox from 'components/forms/multi-checkbox';
 import { getPostTypes } from 'state/post-types/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import getSharingButtons from 'state/selectors/get-sharing-buttons';
 import { isJetpackSite, isJetpackMinimumVersion, getSiteAdminUrl } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
@@ -52,11 +53,15 @@ class SharingButtonsOptions extends Component {
 	}
 
 	trackTwitterViaAnalyticsEvent = () => {
-		this.props.recordTracksEvent( 'calypso_sharing_buttons_twitter_username_field_focused' );
+		const { path } = this.props;
+		this.props.recordTracksEvent( 'calypso_sharing_buttons_twitter_username_field_focused', {
+			path,
+		} );
 		this.props.recordGoogleEvent( 'Sharing', 'Focussed Twitter Username Field' );
 	};
 
 	handleMultiCheckboxChange = ( name, event ) => {
+		const { path } = this.props;
 		const delta = xor( this.props.settings.sharing_show, event.value );
 		this.props.onChange( name, event.value );
 		if ( delta.length ) {
@@ -64,6 +69,7 @@ class SharingButtonsOptions extends Component {
 			this.props.recordTracksEvent( 'calypso_sharing_buttons_show_buttons_on_page_click', {
 				page: delta[ 0 ],
 				checked,
+				path,
 			} );
 			this.props.recordGoogleEvent(
 				'Sharing',
@@ -82,6 +88,8 @@ class SharingButtonsOptions extends Component {
 	};
 
 	handleChange = event => {
+		const { path } = this.props;
+
 		let value;
 		if ( 'checkbox' === event.target.type ) {
 			value = event.target.checked;
@@ -93,6 +101,7 @@ class SharingButtonsOptions extends Component {
 			const checked = event.target.checked ? 1 : 0;
 			this.props.recordTracksEvent( 'calypso_sharing_buttons_likes_on_for_all_posts_click', {
 				checked,
+				path,
 			} );
 			this.props.recordGoogleEvent(
 				'Sharing',
@@ -282,6 +291,7 @@ const connectComponent = connect(
 		const isTwitterButtonAllowed =
 			! isJetpack || isJetpackMinimumVersion( state, siteId, '3.4-dev' );
 		const isSharingShowAllowed = ! isJetpack || isJetpackMinimumVersion( state, siteId, '7.3' );
+		const path = getCurrentRouteParameterized( state, siteId );
 
 		const postTypes = filter( values( getPostTypes( state, siteId ) ), 'public' );
 
@@ -294,6 +304,7 @@ const connectComponent = connect(
 			postTypes,
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			siteId,
+			path,
 		};
 	},
 	{ recordGoogleEvent, recordTracksEvent }
