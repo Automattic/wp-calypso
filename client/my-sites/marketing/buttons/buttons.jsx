@@ -27,6 +27,7 @@ import {
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
 } from 'state/site-settings/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import getSharingButtons from 'state/selectors/get-sharing-buttons';
 import isSavingSharingButtons from 'state/selectors/is-saving-sharing-buttons';
 import isSharingButtonsSaveSuccessful from 'state/selectors/is-sharing-buttons-save-successful';
@@ -56,7 +57,7 @@ class SharingButtons extends Component {
 	};
 
 	saveChanges = event => {
-		const { isJetpack, isLikesModuleActive, siteId } = this.props;
+		const { isJetpack, isLikesModuleActive, siteId, path } = this.props;
 
 		event.preventDefault();
 
@@ -64,7 +65,7 @@ class SharingButtons extends Component {
 		if ( this.state.buttonsPendingSave ) {
 			this.props.saveSharingButtons( this.props.siteId, this.state.buttonsPendingSave );
 		}
-		this.props.recordTracksEvent( 'calypso_sharing_buttons_save_changes_click' );
+		this.props.recordTracksEvent( 'calypso_sharing_buttons_save_changes_click', { path } );
 		this.props.recordGoogleEvent( 'Sharing', 'Clicked Save Changes Button' );
 
 		if ( ! isJetpack || isLikesModuleActive !== false ) {
@@ -173,6 +174,7 @@ const connectComponent = connect(
 		const isSavingButtons = isSavingSharingButtons( state, siteId );
 		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const isSaveButtonsSuccessful = isSharingButtonsSaveSuccessful( state, siteId );
+		const path = getCurrentRouteParameterized( state, siteId );
 
 		return {
 			isJetpack,
@@ -183,6 +185,7 @@ const connectComponent = connect(
 			settings,
 			buttons,
 			siteId,
+			path,
 		};
 	},
 	{
