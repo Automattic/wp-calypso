@@ -113,6 +113,7 @@ class SiteTitleStep extends Component {
 								value={ siteTitle }
 								maxLength={ 100 }
 								autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+								aria-label={ fieldLabel }
 							/>
 							<Button
 								title={ this.props.translate( 'Continue' ) }

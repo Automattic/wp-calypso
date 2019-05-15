@@ -201,6 +201,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 					isSearching={ this.isVerticalSearchPending() }
 					railcar={ railcar }
+					aria-label={ this.props[ 'aria-label' ] }
 				/>
 				{ shouldShowPopularTopics && <PopularTopics onSelect={ this.onSiteTopicChange } /> }
 			</>
