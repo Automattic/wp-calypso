@@ -64,7 +64,12 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 				icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
 				title={ i18n.translate( 'Google Ads credit' ) }
 				description={ i18n.translate(
-					'Use a $100 credit with Google to bring traffic to your most important Posts and Pages.'
+					'Use a %(cost)s credit with Google to bring traffic to your most important Posts and Pages.',
+					{
+						args: {
+							cost: '$100',
+						},
+					}
 				) }
 				body={ <GoogleVoucherDetails selectedSite={ selectedSite } /> }
 			/>
