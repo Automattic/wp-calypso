@@ -35,6 +35,7 @@ class Task extends PureComponent {
 		onClick: PropTypes.func,
 		onCollapsedClick: PropTypes.func,
 		onDismiss: PropTypes.func,
+		selectedTaskId: PropTypes.string,
 		target: PropTypes.string,
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -107,7 +108,6 @@ class Task extends PureComponent {
 	}
 
 	onTaskClick = event => {
-
 		const { completed, id, onClick, onCollapsedClick } = this.props;
 
 		// We presuppose expandability based on the presence of `onCollapsedClick`
@@ -121,9 +121,11 @@ class Task extends PureComponent {
 	};
 
 	isTaskCollapsed = () =>
-		typeof this.props.isCollapsed === 'boolean'
-			? this.props.isCollapsed
-			: this.props.firstIncomplete && this.props.firstIncomplete.id !== this.props.id;
+		this.props.selectedTaskId
+			? // If any task is selected, we only check if this task matches the selected ID...
+			  this.props.selectedTaskId !== this.props.id
+			: // If no task is selected, fall back to checking if this task is the first in line
+			  this.props.firstIncomplete && this.props.firstIncomplete.id !== this.props.id;
 
 	renderGridicon() {
 		if ( this.props.inProgress ) {
@@ -177,7 +179,13 @@ class Task extends PureComponent {
 			>
 				<div className="checklist__task-primary">
 					<h3 className="checklist__task-title">
-						<Button borderless className="checklist__task-title-link" href={ href }  onClick={ this.onTaskClick } target={ target }>
+						<Button
+							borderless
+							className="checklist__task-title-link"
+							href={ href }
+							onClick={ this.onTaskClick }
+							target={ target }
+						>
 							{ ( completed && completedTitle ) || title }
 						</Button>
 					</h3>
@@ -192,7 +200,13 @@ class Task extends PureComponent {
 					) }
 				</div>
 				<div className="checklist__task-secondary">
-					<Button className="checklist__task-action" href={ href } onClick={ onClick } primary={ buttonPrimary } target={ target }>
+					<Button
+						className="checklist__task-action"
+						href={ href }
+						onClick={ onClick }
+						primary={ buttonPrimary }
+						target={ target }
+					>
 						{ taskActionButtonText }
 					</Button>
 					{ duration && (

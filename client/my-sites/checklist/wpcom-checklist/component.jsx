@@ -343,10 +343,9 @@ class WpcomChecklistComponent extends PureComponent {
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
 			onCollapsedClick: this.onCollapsedClick,
-			// Overrides the default collapsed state for the task
-			isCollapsed,
 			// only render an unclickable grey circle
 			disableIcon: ! task.isCompleted && 'email_verified' === task.id,
+			selectedTaskId: this.state.selectedTaskId,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
