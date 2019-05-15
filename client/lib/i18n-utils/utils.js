@@ -5,6 +5,7 @@
 import { find, isString, map, pickBy, includes, endsWith } from 'lodash';
 import url from 'url';
 import { getLocaleSlug, registerTranslateHook } from 'i18n-calypso';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -245,16 +246,22 @@ export function filterLanguageRevisions( languageRevisions ) {
 	} );
 }
 
+
 class I18nScanner {
-	constructor() {
+	constructor( install = true ) {
 		Object.assign( this, {
 			installed: false,
 			active: false,
 			loggedTranslations: [],
+			sessionId: null,
+			cookieWatcherInterval: null,
+			previousCookies: null,
 		} );
+
+		install && this.install();
 	}
 
-	filter( ...args ) {
+	translationFilter( ...args ) {
 		const [ translation, options ] = args;
 		if ( this.active ) {
 			this.loggedTranslations.push( [ translation, options ] );
@@ -268,8 +275,40 @@ class I18nScanner {
 			return;
 		}
 
-		registerTranslateHook( this.filter.bind( this ) );
+		registerTranslateHook( this.translationFilter.bind( this ) );
+
+		// Watch for cookies changed through browser magic
+		this.cookieWatcherInterval = setInterval( this.cookieWatcher.bind( this ), 1000 );
 		this.installed = true;
+		return this;
+	}
+
+	uninstall() {
+		clearInterval( this.cookieWatcherInterval );
+		// TODO:
+		// unregisterTranslateHook( this.translationFilter );
+		// this.installed = false;
+		return this;
+	}
+
+	cookieWatcher() {
+		if ( this.previousCookies === document.cookies ) {
+			return;
+		}
+
+		const newSessionId = cookie.parse( document.cookie )['gp-record'];
+		if( newSessionId !== this.sessionId ) {
+			this.setSessionId( newSessionId );
+		}
+
+	}
+
+	setSessionId( newSessionId ) {
+		this.sessionId = newSessionId;
+
+		newSessionId
+			? this.start()
+			: this.stop();
 	}
 
 	start() {
