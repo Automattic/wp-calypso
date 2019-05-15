@@ -357,6 +357,7 @@ div.checkout__container .section-header.card {
 @include breakpoint( '>660px' ) {
 	div.checkout__container {
 		display: flex;
+		align-items: flex-start;
 	}
 
 	div.checkout__container .main {
