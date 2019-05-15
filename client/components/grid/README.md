@@ -4,7 +4,7 @@ Grid
 A grid component to create predictable layouts and visual consistency across pages. The columns and gutters behave according to the following table:
 
 Breakpoint Range (dp) | Columns | Size | Gutters
---- | --- | ---
+--- | --- | --- | ---
 0 - 480 | 4 | xs | 16
 481 - 660 | 4 | sm | 16
 661 - 1040 | 8 | md | 24 
