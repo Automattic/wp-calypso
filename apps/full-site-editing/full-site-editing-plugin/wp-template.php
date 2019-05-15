@@ -60,6 +60,42 @@ function fse_register_wp_template() {
 			),
 		)
 	);
+
+	register_taxonomy(
+		'wp_template_type',
+		'wp_template',
+		array(
+			'labels'            => array(
+				'name'              => _x( 'Template Types', 'taxonomy general name' ),
+				'singular_name'     => _x( 'Template Type', 'taxonomy singular name' ),
+				'menu_name'         => _x( 'Template Types', 'admin menu' ),
+				'all_items'         => __( 'All Template Types' ),
+				'edit_item'         => __( 'Edit Template Type' ),
+				'view_item'         => __( 'View Template Type' ),
+				'update_item'       => __( 'Update Template Type' ),
+				'add_new_item'      => __( 'Add New Template Type' ),
+				'new_item_name'     => __( 'New Template Type' ),
+				'parent_item'       => __( 'Parent Template Type' ),
+				'parent_item_colon' => __( 'Parent Template Type:' ),
+				'search_items'      => __( 'Search Template Types' ),
+				'not_found'         => __( 'No template types found.' ),
+				'back_to_items'     => __( 'Back to template types' ),
+			),
+			'public'            => true,
+			'show_in_rest'      => true,
+			'rest_base'         => 'template_types',
+			'show_tagcloud'     => false,
+			'show_admin_column' => true,
+			'hierarchical'      => true,
+			'rewrite'           => false,
+			'capabilities'      => array(
+				'manage_terms' => 'edit_theme_options',
+				'edit_terms'   => 'edit_theme_options',
+				'delete_terms' => 'edit_theme_options',
+				'assign_terms' => 'edit_theme_options',
+			),
+		)
+	);
 }
 
 /**
