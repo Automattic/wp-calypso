@@ -1,3 +1,4 @@
+/* global fullSiteEditing */
 /**
  * External dependencies
  */
@@ -25,16 +26,21 @@ const TemplateSelectorSidebar = compose(
 			dispatch( 'core/editor' ).editPost( { meta: { _wp_template_id: templateId } } ),
 	} ) ),
 	withSelect( select => {
-		const { getEntityRecord } = select( 'core' );
+		const { canUser, getEntityRecord } = select( 'core' );
 		const templateId = get(
 			select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
 			'_wp_template_id'
 		);
 		return {
+			canUserUpdateSettings: canUser( 'update', 'settings' ),
 			selectedTemplate: templateId && getEntityRecord( 'postType', 'wp_template', templateId ),
 		};
 	} )
-)( ( { setTemplateId, selectedTemplate } ) => {
+)( ( { canUserUpdateSettings, setTemplateId, selectedTemplate } ) => {
+	if ( ! canUserUpdateSettings ) {
+		return null;
+	}
+
 	const onSelectTemplate = ( { id } ) => {
 		setTemplateId( parseInt( id, 10 ) );
 	};
@@ -58,14 +64,8 @@ const TemplateSelectorSidebar = compose(
 	);
 } );
 
-/*
- * @todo Conditional loading
- * @see #33025
- *
- * Only load this if the editor post type is `wp_template` and the user can `edit_theme_options`.
- *
- * E.g. `if ( 'wp_template' !== fullSiteEditing.editorPostType )`
- */
-registerPlugin( 'fse-template-selector-sidebar', {
-	render: TemplateSelectorSidebar,
-} );
+if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
+	registerPlugin( 'fse-template-selector-sidebar', {
+		render: TemplateSelectorSidebar,
+	} );
+}
