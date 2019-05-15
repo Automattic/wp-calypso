@@ -957,15 +957,14 @@
 
 	.checkout__apple-pay {
 		height: 35px;
-		margin: -5px 0;
 
-		@include breakpoint( '<480px' ) {
-			margin: 0 0;
+		@include breakpoint( '>480px' ) {
+			margin: -5px 0;
 		}
 	}
-	.select-dropdown__container  {
+	.select-dropdown__container {
 		.checkout__apple-pay {
-			margin: 0 0;
+			margin: 0;
 		}
 	}
 
