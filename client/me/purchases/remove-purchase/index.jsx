@@ -55,6 +55,11 @@ import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precanc
 import { getCurrentUserId } from 'state/current-user/selectors';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module dependencies
  */
 import debugFactory from 'debug';
