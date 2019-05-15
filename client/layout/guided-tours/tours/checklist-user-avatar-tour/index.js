@@ -60,7 +60,15 @@ export const ChecklistUserAvatarTour = makeTour(
 			) }
 		</Step>
 
-		<Step name="crop-image" placement="right">
+		<Step
+			name="crop-image"
+			target="image-editor-button-done"
+			placement="below"
+			arrow="top-right"
+			style={ {
+				border: '2px solid white',
+			} }
+		>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
@@ -73,7 +81,7 @@ export const ChecklistUserAvatarTour = makeTour(
 			) }
 		</Step>
 
-		<Step name="finish" placement="right">
+		<Step name="finish" target="edit-gravatar" placement="beside">
 			{ ( { translate } ) => (
 				<Fragment>
 					<h1 className="tours__title">
