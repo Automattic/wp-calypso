@@ -1,11 +1,13 @@
 /* eslint-disable valid-jsdoc */
 
+/**
+ * Internal dependencies
+ */
+import { TimerHandle } from 'types';
+
 interface Cancelable {
 	cancel: () => void;
 }
-
-// NodeJS and the browser have different return types for `setTimeout`.
-type TimeoutHandle = ReturnType< typeof setTimeout >;
 
 /**
  * Creates a delayed function that invokes `func` as soon as possible after the next layout
@@ -22,7 +24,7 @@ type TimeoutHandle = ReturnType< typeof setTimeout >;
  * @returns The new delayed function
  */
 export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >( func: T ) {
-	let timeoutHandle: TimeoutHandle | undefined = undefined;
+	let timeoutHandle: TimerHandle | undefined = undefined;
 	let rafHandle: number | undefined = undefined;
 
 	const hasRAF = typeof requestAnimationFrame === 'function';
