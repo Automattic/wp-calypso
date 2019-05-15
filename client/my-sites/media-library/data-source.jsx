@@ -40,9 +40,9 @@ export class MediaLibraryDataSource extends Component {
 		this.setState( { popover: ! this.state.popover } );
 	};
 
-	changeSource = source => () => {
-		if ( source !== this.props.source ) {
-			this.props.onSourceChange( source );
+	changeSource = newSource => () => {
+		if ( newSource !== this.props.source ) {
+			this.props.onSourceChange( newSource );
 		}
 	};
 
@@ -76,7 +76,7 @@ export class MediaLibraryDataSource extends Component {
 
 	renderMenuItems( sources ) {
 		return sources.map( ( { icon, label, value } ) => (
-			<PopoverMenuItem key={ value } onClick={ this.changeSource( value ) }>
+			<PopoverMenuItem key={ value } data-source={ value } onClick={ this.changeSource( value ) }>
 				{ icon }
 				{ label }
 			</PopoverMenuItem>
@@ -111,10 +111,10 @@ export class MediaLibraryDataSource extends Component {
 					{ this.renderScreenReader( currentSelected ) }
 					<Gridicon icon="chevron-down" size={ 18 } />
 				</Button>
-				{ this.state.popover && (
+				{ sources.length > 1 && (
 					<PopoverMenu
 						context={ this.buttonRef }
-						isVisible
+						isVisible={ this.state.popover }
 						position="bottom right"
 						onClose={ this.togglePopover }
 						className="is-dialog-visible media-library__header-popover"
