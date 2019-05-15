@@ -33,6 +33,10 @@ class AutorenewalDisablingDialog extends Component {
 					siteDomain,
 					expiryDate,
 				},
+				comment:
+					'%(planName)s is the name of a WordPress.com plan, e.g. Personal, Premium, Business. ' +
+					'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com. ' +
+					'%(expiryDate)s is a date string, e.g. May 14, 2020',
 			}
 		);
 
