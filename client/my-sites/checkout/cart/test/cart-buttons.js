@@ -17,7 +17,6 @@ import React from 'react';
 import CartButtons from '../cart-buttons';
 import { recordStub } from 'lib/mixins/analytics';
 import page from 'page';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'lib/mixins/analytics', () => {
 	const recordEventStub = require( 'sinon' ).stub();
@@ -33,34 +32,8 @@ jest.mock( 'lib/mixins/analytics', () => {
 jest.mock( 'page', () => require( 'sinon' ).stub() );
 
 describe( 'cart-buttons', () => {
-	let cartButtonsComponent, onKeepSearchingClickStub;
+	let cartButtonsComponent;
 
-	useSandbox( sandbox => {
-		onKeepSearchingClickStub = sandbox.stub();
-	} );
-
-	describe( 'Click on Keep Searching Button', () => {
-		beforeEach( () => {
-			cartButtonsComponent = mount(
-				<CartButtons
-					selectedSite={ { slug: 'example.com' } }
-					showKeepSearching={ true }
-					onKeepSearchingClick={ onKeepSearchingClickStub }
-					translate={ identity }
-				/>
-			);
-		} );
-
-		test( 'should track "keepSearchButtonClick" event', () => {
-			cartButtonsComponent.find( '.cart-keep-searching-button' ).simulate( 'click' );
-			expect( recordStub ).to.have.been.calledWith( 'keepSearchButtonClick' );
-		} );
-
-		test( 'call props.onKeepSearchingClick', () => {
-			cartButtonsComponent.find( '.cart-keep-searching-button' ).simulate( 'click' );
-			expect( onKeepSearchingClickStub ).to.have.been.called;
-		} );
-	} );
 	describe( 'Click on Checkout Button', () => {
 		beforeEach( () => {
 			cartButtonsComponent = mount(

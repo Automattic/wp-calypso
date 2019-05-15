@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
-import { identity, isFunction } from 'lodash';
+import { identity } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
  */
 import AnalyticsMixin from 'lib/mixins/analytics';
 
+/* eslint-disable react/prefer-es6-class */
 export const CartButtons = createReactClass( {
 	displayName: 'CartButtons',
 	mixins: [ AnalyticsMixin( 'popupCart' ) ],
@@ -27,41 +28,20 @@ export const CartButtons = createReactClass( {
 
 	getDefaultProps() {
 		return {
-			showKeepSearching: false,
 			translate: identity,
 		};
 	},
 
 	render() {
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div className="cart-buttons">
 				<button className="cart-checkout-button button is-primary" onClick={ this.goToCheckout }>
 					{ this.props.translate( 'Checkout', { context: 'Cart button' } ) }
 				</button>
-
-				{ this.optionalKeepSearching() }
 			</div>
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
-	},
-
-	optionalKeepSearching() {
-		if ( ! this.props.showKeepSearching ) {
-			return;
-		}
-
-		return (
-			<button className="cart-keep-searching-button button" onClick={ this.onKeepSearchingClick }>
-				{ this.props.translate( 'Keep Searching' ) }
-			</button>
-		);
-	},
-
-	onKeepSearchingClick( event ) {
-		event.preventDefault();
-		this.recordEvent( 'keepSearchButtonClick' );
-		if ( isFunction( this.props.onKeepSearchingClick ) ) {
-			this.props.onKeepSearchingClick( event );
-		}
 	},
 
 	goToCheckout( event ) {
