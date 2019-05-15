@@ -396,7 +396,7 @@ class PurchaseMeta extends Component {
 	}
 
 	render() {
-		const { translate, purchaseId, purchase } = this.props;
+		const { translate, purchaseId, purchase, site } = this.props;
 
 		if ( isDataLoading( this.props ) || ! purchaseId ) {
 			return this.renderPlaceholder();
@@ -416,8 +416,8 @@ class PurchaseMeta extends Component {
 				{ this.renderContactSupportToRenewMessage() }
 				{ config.isEnabled( 'autorenewal-toggle' ) && this.state.showAutorenewalDisablingDialog && (
 					<AutorenewalDisablingDialog
-						planName={ 'Premium' }
-						siteDomain={ 'xd.blog' }
+						planName={ site.plan.product_name_short }
+						siteDomain={ site.domain }
 						expiryDate={ purchase.expiryMoment.format( 'LL' ) }
 						onClose={ this.onCloseAutorenewalDisablingDialog }
 					/>
