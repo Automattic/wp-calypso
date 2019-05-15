@@ -1,5 +1,3 @@
-/* eslint-disable valid-jsdoc */
-
 /**
  * Internal dependencies
  */
@@ -103,5 +101,3 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 
 	return wrappedWithCancel;
 }
-
-/* eslint-enable valid-jsdoc */
