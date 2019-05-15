@@ -49,7 +49,6 @@
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/connect/remote-install": true,
-		"jetpack/gutenframe": true,
 		"jetpack/happychat": true,
 		"jitms": true,
 		"login/magic-login": true,
