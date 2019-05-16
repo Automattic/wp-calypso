@@ -86,6 +86,10 @@ class StatsListItem extends React.Component {
 		let gaEvent;
 		const moduleName = titlecase( this.props.moduleName );
 
+		if ( event.keyCode && event.keyCode !== 13 ) {
+			return;
+		}
+
 		debug( 'props', this.props );
 		if ( ! this.state.disabled ) {
 			if ( this.props.children ) {
@@ -347,6 +351,7 @@ class StatsListItem extends React.Component {
 				<span
 					className="stats-list__module-content-list-item-wrapper"
 					onClick={ this.onClick }
+					onKeyUp={ this.onClick }
 					tabIndex="0"
 					role="button"
 				>
