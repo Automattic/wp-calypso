@@ -61,7 +61,7 @@
 		"body-parser": "1.18.3",
 		"bounding-client-rect": "1.0.5",
 		"browser-filesaver": "1.1.1",
-		"browserslist": "4.5.4",
+		"browserslist": "4.6.0",
 		"browserslist-useragent": "3.0.0",
 		"chalk": "2.4.2",
 		"chokidar": "2.1.5",
