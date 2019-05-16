@@ -38,6 +38,6 @@ export const getSegments = ( state, segmentDefinitions = siteSegmentDefinitions 
  * @return {Object}     		The segment object
  */
 export const getSegmentBySlug = createSelector(
-	( state, slug ) => find( getSegments( state ), [ 'slug', slug ] ),
+	( state, slug ) => find( getSegments( state ), [ 'slug', slug ] ) || {},
 	[ getSegments ]
 );

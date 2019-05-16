@@ -28,6 +28,7 @@ import {
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { getSegmentBySlug } from 'state/signup/segments/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteVerticalId, getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
@@ -42,7 +43,7 @@ import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux
 // Current directory dependencies
 import SignupActions from './actions';
 import { isValidLandingPageVertical } from './verticals';
-import { getSiteTypePropertyValue } from './site-type';
+import { getSiteSegment } from './site-type';
 import SignupCart from './cart';
 import { promisify } from '../../utils';
 
@@ -151,7 +152,7 @@ export function createSiteWithCart(
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
-	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
+	const siteSegment = getSegmentBySlug( state, siteType );
 
 	const newSiteParams = {
 		blog_title: siteTitle,
@@ -163,7 +164,7 @@ export function createSiteWithCart(
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
-			site_segment: siteSegment || undefined,
+			site_segment: siteSegment.id || undefined,
 			site_vertical: siteVerticalId || undefined,
 		},
 		public: 1,
@@ -620,7 +621,7 @@ export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) 
 		},
 	} = nextProps;
 
-	const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
+	const siteTypeValue = getSiteSegment( siteType );
 	let fulfilledDependencies = [];
 
 	if ( siteTypeValue ) {
