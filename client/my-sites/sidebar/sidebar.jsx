@@ -16,7 +16,6 @@ import Button from 'components/button';
 import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
-import ManageMenu from './manage-menu';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
@@ -83,17 +82,6 @@ export class MySitesSidebar extends Component {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
 	};
-
-	manage() {
-		return (
-			<ManageMenu
-				siteId={ this.props.siteId }
-				path={ this.props.path }
-				isAtomicSite={ this.props.isAtomicSite }
-				onNavigate={ this.onNavigate }
-			/>
-		);
-	}
 
 	site() {
 		return (
@@ -711,7 +699,6 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
-		const manage = !! this.manage();
 		const configuration =
 			!! this.marketing() ||
 			!! this.users() ||
@@ -729,16 +716,14 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 
-				{ manage ? (
-					<ExpandableSidebarMenu
-						onClick={ this.props.toggleMySitesSidebarSiteMenu }
-						expanded={ this.props.isSiteOpen }
-						title={ this.props.translate( 'Site' ) }
-						materialIcon="edit"
-					>
-						{ this.site() }
-					</ExpandableSidebarMenu>
-				) : null }
+				<ExpandableSidebarMenu
+					onClick={ this.props.toggleMySitesSidebarSiteMenu }
+					expanded={ this.props.isSiteOpen }
+					title={ this.props.translate( 'Site' ) }
+					materialIcon="edit"
+				>
+					{ this.site() }
+				</ExpandableSidebarMenu>
 
 				{ this.design() ? (
 					<ExpandableSidebarMenu
@@ -763,7 +748,7 @@ export class MySitesSidebar extends Component {
 					{ this.activity() }
 				</ExpandableSidebarMenu>
 
-				{ configuration && ( this.upgrades() || this.users() || this.siteSettings() ) ? (
+				{ configuration && (
 					<ExpandableSidebarMenu
 						onClick={ this.props.toggleMySitesSidebarManageMenu }
 						expanded={ this.props.isManageOpen }
@@ -776,7 +761,7 @@ export class MySitesSidebar extends Component {
 							{ this.siteSettings() }
 						</ul>
 					</ExpandableSidebarMenu>
-				) : null }
+				) }
 
 				{ this.wpAdmin() ? (
 					<SidebarMenu className="sidebar__wp-admin">
