@@ -30,7 +30,6 @@
 	"features": {
 		"async-payments": true,
 		"ad-tracking": false,
-		"apple-pay": true,
 		"blogger-plan": false,
 		"calypsoify/gutenberg": true,
 		"calypsoify/plugins": true,

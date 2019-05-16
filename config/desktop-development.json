@@ -22,7 +22,6 @@
 		"ad-tracking": true,
 		"always_use_logout_url": true,
 		"automated-transfer": true,
-		"apple-pay": false,
 		"blogger-plan": false,
 		"calypsoify/gutenberg": false,
 		"code-splitting": false,
