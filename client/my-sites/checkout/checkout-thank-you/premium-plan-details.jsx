@@ -44,7 +44,12 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 			/>
 
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/upgrades/advertising-removed.svg" /> }
+				icon={
+					<img
+						alt={ i18n.translate( 'Advertising Removed Illustration' ) }
+						src="/calypso/images/upgrades/advertising-removed.svg"
+					/>
+				}
 				title={ i18n.translate( 'Advertising Removed' ) }
 				description={
 					isPremiumPlan
@@ -59,13 +64,34 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 			/>
 
 			<QuerySiteVouchers siteId={ selectedSite.ID } />
-			<div>
-				<GoogleVoucherDetails selectedSite={ selectedSite } />
-			</div>
+			<PurchaseDetail
+				id="google-credits"
+				icon={
+					<img
+						alt={ i18n.translate( 'Google AdWords Illustration' ) }
+						src="/calypso/images/illustrations/google-adwords.svg"
+					/>
+				}
+				title={ i18n.translate( 'Google Ads credit' ) }
+				description={ i18n.translate(
+					'Use a %(cost)s credit with Google to bring traffic to your most important Posts and Pages.',
+					{
+						args: {
+							cost: '$100',
+						},
+					}
+				) }
+				body={ <GoogleVoucherDetails selectedSite={ selectedSite } /> }
+			/>
 
 			{ ! selectedFeature && (
 				<PurchaseDetail
-					icon={ <img alt="" src="/calypso/images/upgrades/customize-theme.svg" /> }
+					icon={
+						<img
+							alt={ i18n.translate( 'Customize Theme Illustration' ) }
+							src="/calypso/images/upgrades/customize-theme.svg"
+						/>
+					}
 					title={ i18n.translate( 'Customize your theme' ) }
 					description={ i18n.translate(
 						"You now have direct control over your site's fonts and colors in the customizer. " +
@@ -78,7 +104,12 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 			) }
 
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/upgrades/media-post.svg" /> }
+				icon={
+					<img
+						alt={ i18n.translate( 'Add Media to Your Posts Illustration' ) }
+						src="/calypso/images/upgrades/media-post.svg"
+					/>
+				}
 				title={ i18n.translate( 'Video and audio posts' ) }
 				description={ i18n.translate(
 					'Enrich your posts with video and audio, uploaded directly on your site. ' +
@@ -89,7 +120,12 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 			/>
 			{ isWordadsInstantActivationEligible( selectedSite ) && (
 				<PurchaseDetail
-					icon={ <img alt="" src="/calypso/images/upgrades/word-ads.svg" /> }
+					icon={
+						<img
+							alt={ i18n.translate( 'WordAds Illustration' ) }
+							src="/calypso/images/upgrades/word-ads.svg"
+						/>
+					}
 					title={ i18n.translate( 'Easily monetize your site' ) }
 					description={ i18n.translate(
 						'Take advantage of WordAds instant activation on your upgraded site. ' +

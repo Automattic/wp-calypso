@@ -39,6 +39,10 @@
 	}
 }
 
+.google-voucher__dialog .dialog__content {
+	overflow: hidden;
+}
+
 .google-voucher__dialog-header {
 	display: flex;
 	align-items: center;
