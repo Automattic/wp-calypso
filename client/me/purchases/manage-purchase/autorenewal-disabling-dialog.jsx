@@ -24,9 +24,9 @@ class AutorenewalDisablingDialog extends Component {
 		const { planName, siteDomain, expiryDate, translate, onClose } = this.props;
 
 		const description = translate(
-			'By canceling autorenewal, your %(planName)s plan for %(siteDomain)s ' +
-				'will expire on %(expiryDate)s unless you reenable autorenewal or manually renew your plan. ' +
-				'If your plan expires, you will lose access to some awesome features.',
+			'By canceling auto-renewal, your %(planName)s plan for %(siteDomain)s will expire on %(expiryDate)s. ' +
+				"When it does, you'll lose access to key features you may be using on your site. " +
+				'To avoid that, turn auto-renewal back on or manually renew your plan before the expiration date.',
 			{
 				args: {
 					planName,
@@ -46,7 +46,7 @@ class AutorenewalDisablingDialog extends Component {
 				additionalClassNames="autorenewal-disabling-dialog"
 				onClose={ onClose }
 			>
-				<h2 className="autorenewal-disabling-dialog__header">{ translate( 'Before you go …' ) }</h2>
+				<h2 className="autorenewal-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
 				<p>{ description }</p>
 				<Button onClick={ onClose } primary>
 					{ translate( 'OK' ) }
