@@ -276,26 +276,50 @@ $guided-tour-step_border: 2px solid white;
     border-top: $guided-tour-step_border;
 }
 
-.guided-tours__step-dark.guided-tours__step-pointing-top-left::before,
-.guided-tours__step-dark.guided-tours__step-pointing-top-center::before,
+.guided-tours__step-dark.guided-tours__step-pointing-top-left::before {
+    top: -8.5px;
+}
+
+.guided-tours__step-dark.guided-tours__step-pointing-top-center::before {
+	top: -8.5px;
+}
+
 .guided-tours__step-dark.guided-tours__step-pointing-top-right::before {
 	top: -8.5px;
 }
 
-.guided-tours__step-dark.guided-tours__step-pointing-right-top::before,
-.guided-tours__step-dark.guided-tours__step-pointing-right-middle::before,
+.guided-tours__step-dark.guided-tours__step-pointing-right-top::before {
+	right: -8.5px;
+}
+
+.guided-tours__step-dark.guided-tours__step-pointing-right-middle::before {
+	right: -8.5px;
+}
+
 .guided-tours__step-dark.guided-tours__step-pointing-right-bottom::before {
 	right: -8.5px;
 }
 
-.guided-tours__step-dark.guided-tours__step-pointing-bottom-right::before,
-.guided-tours__step-dark.guided-tours__step-pointing-bottom-center::before,
+.guided-tours__step-dark.guided-tours__step-pointing-bottom-right::before {
+	bottom: -8.5px;
+}
+
+.guided-tours__step-dark.guided-tours__step-pointing-bottom-center::before {
+	bottom: -8.5px;
+}
+
 .guided-tours__step-dark.guided-tours__step-pointing-bottom-left::before {
 	bottom: -8.5px;
 }
 
-.guided-tours__step-dark.guided-tours__step-pointing-left-bottom::before,
-.guided-tours__step-dark.guided-tours__step-pointing-left-middle::before,
+.guided-tours__step-dark.guided-tours__step-pointing-left-bottom::before {
+	left: -8.5px;
+}
+
+.guided-tours__step-dark.guided-tours__step-pointing-left-middle::before {
+	left: -8.5px;
+}
+
 .guided-tours__step-dark.guided-tours__step-pointing-left-top::before {
 	left: -8.5px;
 }
