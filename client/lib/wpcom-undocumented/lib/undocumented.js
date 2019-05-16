@@ -1391,6 +1391,48 @@ Undocumented.prototype.validateNewUser = function( data, fn ) {
 };
 
 /**
+ * Sign up for a new passwordless user account
+ *
+ * @param {object} query - an object with the following values: email
+ * @param {Function} fn - Function to invoke when request is complete
+ */
+Undocumented.prototype.usersEmailNew = function( query, fn ) {
+	debug( '/users/email/new' );
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( query );
+
+	// Set the language for the user
+	query.locale = getLocaleSlug();
+	const args = {
+		path: '/users/email/new',
+		body: query,
+	};
+	return this.wpcom.req.post( args, fn );
+};
+
+/**
+ * Verify a new passwordless user account
+ *
+ * @param {object} query - an object with the following values: email, code
+ * @param {Function} fn - Function to invoke when request is complete
+ */
+Undocumented.prototype.usersEmailVerification = function( query, fn ) {
+	debug( '/users/email/verification' );
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( query );
+
+	// Set the language for the user
+	query.locale = getLocaleSlug();
+	const args = {
+		path: '/users/email/verification',
+		body: query,
+	};
+	return this.wpcom.req.post( args, fn );
+};
+
+/**
  * Request a "Magic Login" email be sent to a user so they can use it to log in
  * @param  {object} data - object containing an email address
  * @param  {Function} fn - Function to invoke when request is complete
