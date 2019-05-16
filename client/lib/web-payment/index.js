@@ -31,7 +31,10 @@ export function detectWebPaymentMethod() {
 	if (
 		config.isEnabled( 'my-sites/checkout/web-payment/apple-pay' ) &&
 		window.ApplePaySession &&
-		window.ApplePaySession.canMakePayments()
+		window.ApplePaySession.canMakePayments() &&
+		// Our Apple Pay implementation uses the Payment Request API, so check
+		// that also.
+		window.PaymentRequest
 	) {
 		return WEB_PAYMENT_APPLE_PAY_METHOD;
 	}

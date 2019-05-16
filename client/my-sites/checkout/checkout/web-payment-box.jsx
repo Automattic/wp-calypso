@@ -50,7 +50,7 @@ const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
 /**
  * Supported card types.
  */
-const SUPPORTED_NETWORKS = [ 'visa', 'mastercard', 'discover', 'amex', 'jcb', 'maestro' ];
+const SUPPORTED_NETWORKS = [ 'visa', 'masterCard', 'discover', 'amex', 'jcb', 'chinaUnionPay' ];
 const APPLE_PAY_MERCHANT_IDENTIFIER = config( 'apple_pay_merchant_id' );
 const PAYMENT_REQUEST_OPTIONS = {
 	requestPayerName: true,
@@ -166,7 +166,7 @@ export class WebPaymentBox extends React.Component {
 			{
 				supportedMethods: WEB_PAYMENT_APPLE_PAY_METHOD,
 				data: {
-					version: 3,
+					version: 2,
 					merchantIdentifier: APPLE_PAY_MERCHANT_IDENTIFIER,
 					merchantCapabilities: [ 'supports3DS', 'supportsCredit', 'supportsDebit' ],
 					supportedNetworks: SUPPORTED_NETWORKS,
