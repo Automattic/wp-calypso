@@ -891,6 +891,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			left: 0;
 			top: 0;
 			height: 56px;
+
+			svg > g {
+				transform: translateX( 25% );
+			}
+
+			@media( max-width: 660px ) {
+				margin-top: 45px;
+			}
 		}
 
 		.jetpack-header {
@@ -898,13 +906,24 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			text-align: center;
 			margin-right: auto;
 			margin-left: auto;
-			padding-left: 112px;
+			padding-left: 0px;
 			margin-top: 15px;
 			display: block;
 		}
 
+		.formatted-header__subtitle {
+			margin-top: 1em;
+			font-size: 16px;
+			line-height: 24px;
+			font-weight: 400;
+		}
+
 		.jetpack-connect__authorize-form {
 			margin-top: 32px;
+
+			@media( max-width: 660px ) {
+				margin-top: 92px;
+			}
 		}
 
 		.jetpack-logo__icon-circle {
