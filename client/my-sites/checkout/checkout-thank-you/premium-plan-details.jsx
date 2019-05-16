@@ -44,7 +44,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 			/>
 
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/upgrades/advertising-removed.svg" /> }
+				icon={ <img alt="Advertising Removed" src="/calypso/images/upgrades/advertising-removed.svg" /> }
 				title={ i18n.translate( 'Advertising Removed' ) }
 				description={
 					isPremiumPlan
@@ -61,7 +61,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 			<QuerySiteVouchers siteId={ selectedSite.ID } />
 			<PurchaseDetail
 				id="google-credits"
-				icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
+				icon={ <img alt="Google AdWords" src="/calypso/images/illustrations/google-adwords.svg" /> }
 				title={ i18n.translate( 'Google Ads credit' ) }
 				description={ i18n.translate(
 					'Use a %(cost)s credit with Google to bring traffic to your most important Posts and Pages.',
@@ -76,7 +76,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 
 			{ ! selectedFeature && (
 				<PurchaseDetail
-					icon={ <img alt="" src="/calypso/images/upgrades/customize-theme.svg" /> }
+					icon={ <img alt="Customize Theme" src="/calypso/images/upgrades/customize-theme.svg" /> }
 					title={ i18n.translate( 'Customize your theme' ) }
 					description={ i18n.translate(
 						"You now have direct control over your site's fonts and colors in the customizer. " +
@@ -89,7 +89,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 			) }
 
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/upgrades/media-post.svg" /> }
+				icon={ <img alt="Add Media to Your Posts" src="/calypso/images/upgrades/media-post.svg" /> }
 				title={ i18n.translate( 'Video and audio posts' ) }
 				description={ i18n.translate(
 					'Enrich your posts with video and audio, uploaded directly on your site. ' +
@@ -100,7 +100,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 			/>
 			{ isWordadsInstantActivationEligible( selectedSite ) && (
 				<PurchaseDetail
-					icon={ <img alt="" src="/calypso/images/upgrades/word-ads.svg" /> }
+					icon={ <img alt="WordAds" src="/calypso/images/upgrades/word-ads.svg" /> }
 					title={ i18n.translate( 'Easily monetize your site' ) }
 					description={ i18n.translate(
 						'Take advantage of WordAds instant activation on your upgraded site. ' +
