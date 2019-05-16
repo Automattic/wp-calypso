@@ -301,10 +301,10 @@ const connectComponent = connect(
 			isJetpack,
 			isSharingShowAllowed,
 			isTwitterButtonAllowed,
+			path,
 			postTypes,
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			siteId,
-			path,
 		};
 	},
 	{ recordGoogleEvent, recordTracksEvent }
