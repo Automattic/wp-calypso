@@ -8,7 +8,7 @@ import { requestVerticals, storeVerticals, showVerticalsRequestError } from '../
 import { setVerticals } from 'state/signup/verticals/actions';
 import { NOTICE_CREATE } from 'state/action-types';
 
-describe( 'data-layer/wpcom/signup/verticals', () => {
+describe( 'data-layer/wpcom/signup/segments', () => {
 	test( 'requestVerticals()', () => {
 		const mockAction = {
 			search: 'Foo',

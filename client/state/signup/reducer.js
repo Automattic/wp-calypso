@@ -10,6 +10,7 @@ import optionalDependencies from './optional-dependencies/reducer';
 import steps from './steps/reducer';
 import flow from './flow/reducer';
 import verticals from './verticals/reducer';
+import segments from './segments/reducer';
 
 export default combineReducers( {
 	dependencyStore,
@@ -18,4 +19,5 @@ export default combineReducers( {
 	steps,
 	flow,
 	verticals,
+	segments,
 } );
