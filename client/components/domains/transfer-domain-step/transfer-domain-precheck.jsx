@@ -21,6 +21,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
 import {
 	CALYPSO_CONTACT,
+	INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
 } from 'lib/url/support';
@@ -293,7 +294,24 @@ class TransferDomainPrecheck extends React.Component {
 						isError={ authCodeInvalid }
 					/>
 					{ authCodeInvalid && (
-						<FormInputValidation text={ translate( 'Auth Code invalid' ) } isError />
+						<FormInputValidation
+							text={ translate(
+								'The auth code you entered is invalid. ' +
+									'Please try again, or see {{a}}this support document{{/a}} for more troubleshooting steps.',
+								{
+									components: {
+										a: (
+											<a
+												href={ INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID }
+												rel="noopener noreferrer"
+												target="_blank"
+											/>
+										),
+									},
+								}
+							) }
+							isError
+						/>
 					) }
 				</div>
 			</div>
