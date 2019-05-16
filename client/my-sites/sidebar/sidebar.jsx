@@ -2,13 +2,11 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import page from 'page';
 import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
@@ -22,7 +20,6 @@ import ManageMenu from './manage-menu';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
-import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
@@ -53,7 +50,6 @@ import {
 	isJetpackMinimumVersion,
 	isJetpackModuleActive,
 	isJetpackSite,
-	isSitePreviewable,
 	canCurrentUserUseAds,
 	canCurrentUserUseStore,
 } from 'state/sites/selectors';
@@ -72,11 +68,6 @@ import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import { canAccessEarnSection } from 'lib/ads/utils';
 import isVipSite from 'state/selectors/is-vip-site';
 
-/**
- * Module variables
- */
-const debug = debugFactory( 'calypso:my-sites:sidebar' );
-
 export class MySitesSidebar extends Component {
 	static propTypes = {
 		setNextLayoutFocus: PropTypes.func.isRequired,
@@ -88,34 +79,9 @@ export class MySitesSidebar extends Component {
 		isAtomicSite: PropTypes.bool,
 	};
 
-	componentDidMount() {
-		debug( 'The sidebar React component is mounted.' );
-	}
-
 	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
-	};
-
-	onViewSiteClick = event => {
-		const { isPreviewable, siteSuffix } = this.props;
-
-		if ( ! isPreviewable ) {
-			this.trackMenuItemClick( 'view_site_unpreviewable' );
-			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Unpreviewable' );
-			return;
-		}
-
-		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
-			this.trackMenuItemClick( 'view_site_modifier' );
-			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Modifier Key' );
-			return;
-		}
-
-		event.preventDefault();
-		this.trackMenuItemClick( 'view_site' );
-		this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Calypso' );
-		page( '/view' + siteSuffix );
 	};
 
 	manage() {
@@ -212,29 +178,6 @@ export class MySitesSidebar extends Component {
 				link={ activityLink }
 				onNavigate={ this.trackActivityClick }
 				icon="history"
-			/>
-		);
-	}
-
-	preview() {
-		const { isPreviewable, path, site, siteId, translate } = this.props;
-
-		if ( ! siteId ) {
-			return null;
-		}
-
-		const siteUrl = ( site && site.URL ) || '';
-
-		return (
-			<SidebarItem
-				tipTarget="sitePreview"
-				label={ translate( 'View Site' ) }
-				selected={ itemLinkMatches( [ '/view' ], path ) }
-				link={ siteUrl }
-				onNavigate={ this.onViewSiteClick }
-				icon="computer"
-				preloadSectionName="preview"
-				forceInternalLink={ isPreviewable }
 			/>
 		);
 	}
@@ -750,10 +693,6 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
-	shouldShowStreamlinedNavDrawer() {
-		return isEnabled( 'ui/streamlined-nav-drawer' );
-	}
-
 	renderSidebarMenus() {
 		if ( this.props.isDomainOnly ) {
 			return (
@@ -772,63 +711,14 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
-		const manage = !! this.manage(),
-			configuration =
-				!! this.marketing() ||
-				!! this.users() ||
-				!! this.siteSettings() ||
-				!! this.plugins() ||
-				!! this.upgrades();
+		const manage = !! this.manage();
+		const configuration =
+			!! this.marketing() ||
+			!! this.users() ||
+			!! this.siteSettings() ||
+			!! this.plugins() ||
+			!! this.upgrades();
 
-		if ( this.shouldShowStreamlinedNavDrawer() ) {
-			return this.renderStreamlinedSidebarMenus( manage, configuration );
-		}
-
-		return (
-			<div>
-				<SidebarMenu>
-					<ul>
-						{ this.preview() }
-						{ this.stats() }
-						{ this.activity() }
-						{ this.plan() }
-						{ this.store() }
-					</ul>
-				</SidebarMenu>
-
-				{ manage ? (
-					<SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Manage' ) }</SidebarHeading>
-						{ this.manage() }
-					</SidebarMenu>
-				) : null }
-
-				{ this.themes() ? (
-					<SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Personalize' ) }</SidebarHeading>
-						<ul>{ this.themes() }</ul>
-					</SidebarMenu>
-				) : null }
-
-				{ configuration ? (
-					<SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
-						<ul>
-							{ this.marketing() }
-							{ this.earn() }
-							{ this.users() }
-							{ this.plugins() }
-							{ this.upgrades() }
-							{ this.siteSettings() }
-							{ this.wpAdmin() }
-						</ul>
-					</SidebarMenu>
-				) : null }
-			</div>
-		);
-	}
-
-	renderStreamlinedSidebarMenus( manage, configuration ) {
 		return (
 			<div className="sidebar__menu-wrapper">
 				<SidebarMenu>
@@ -898,14 +788,8 @@ export class MySitesSidebar extends Component {
 	}
 
 	render() {
-		let className;
-
-		if ( this.shouldShowStreamlinedNavDrawer() ) {
-			className = 'sidebar__streamlined-nav-drawer';
-		}
-
 		return (
-			<Sidebar className={ className }>
+			<Sidebar className="sidebar__streamlined-nav-drawer">
 				<SidebarRegion>
 					<CurrentSite />
 					{ this.renderSidebarMenus() }
@@ -958,7 +842,6 @@ function mapStateToProps( state ) {
 		isDesignOpen,
 		isToolsOpen,
 		isManageOpen,
-		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		isSharingEnabledOnJetpackSite,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
