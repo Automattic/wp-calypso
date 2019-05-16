@@ -23,6 +23,34 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
 import Dialog from 'components/dialog';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormTextInput from 'components/forms/form-text-input';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSelect from 'components/forms/form-select';
+import FormCurrencyInput from 'components/forms/form-currency-input';
+import FormLabel from 'components/forms/form-label';
+import FormFieldset from 'components/forms/form-fieldset';
+
+// These are Stripe settlement currencies.
+const CURRENCIES = [
+	'USD',
+	'AUD',
+	'BRL',
+	'CAD',
+	'CHF',
+	'DKK',
+	'EUR',
+	'GBP',
+	'HKD',
+	'JPY',
+	'MXN',
+	'NOK',
+	'NZD',
+	'SEK',
+	'SGD',
+];
+
+const currencyList = CURRENCIES.map( code => ( { code } ) );
 
 class MembershipsProductsSection extends Component {
 	constructor() {
@@ -32,6 +60,9 @@ class MembershipsProductsSection extends Component {
 	state = {
 		showDialog: false,
 		editedProductId: null,
+		editedProductName: '',
+		editedPrice: { currency: 'USD', value: '' },
+		editedSchedule: '1 month',
 	};
 	renderEllipsisMenu( productId ) {
 		return (
@@ -56,6 +87,32 @@ class MembershipsProductsSection extends Component {
 		this.setState( { showDialog: true, editedProductId } );
 	};
 
+	handleCurrencyChange = event => {
+		const { value: currency } = event.currentTarget;
+
+		this.setState( state => ( {
+			editedPrice: { ...state.editedPrice, currency },
+		} ) );
+	};
+	handlePriceChange = event => {
+		const value = parseFloat( event.currentTarget.value );
+
+		this.setState( state => ( {
+			editedPrice: { ...state.editedPrice, value },
+		} ) );
+	};
+	onNameChange = event => this.setState( { editedProductName: event.target.value } );
+	onSelectSchedule = event => this.setState( { editedSchedule: event.target.value } );
+	isFormValid = field => {
+		if ( ( field === 'price' || ! field ) && this.state.editedPrice.value < 5.0 ) {
+			return false;
+		}
+		if ( ( field === 'name' || ! field ) && this.state.editedProductName.length === 0 ) {
+			return false;
+		}
+		return true;
+	};
+
 	renderEditDialog() {
 		return (
 			<Dialog
@@ -65,26 +122,71 @@ class MembershipsProductsSection extends Component {
 					{
 						label: this.props.translate( 'Cancel' ),
 						action: 'cancel',
-						onCLick: this.onCloseDialog,
 					},
 					{
 						label: this.state.editedProductId
 							? this.props.translate( 'Edit' )
 							: this.props.translate( 'Add' ),
 						action: 'submit',
-						onCLick: () => {},
+						disabled: ! this.isFormValid(),
 					},
 				] }
 			>
-				<h2>
+				<FormSectionHeading>
 					{ this.state.editedProductId && this.props.translate( 'Edit' ) }
 					{ ! this.state.editedProductId && this.props.translate( 'Add New Membership Amount' ) }
-				</h2>
+				</FormSectionHeading>
 				<p>
 					{ this.props.translate(
 						'You can add multiple membership amounts, each of which will allow you to generate a membership button.'
 					) }
 				</p>
+				<FormFieldset>
+					<FormLabel htmlFor="currency">{ this.props.translate( 'Select price' ) }</FormLabel>
+					<FormCurrencyInput
+						name="currency"
+						id="currency"
+						min="5.00"
+						value={ this.state.editedPrice.value }
+						onChange={ this.handlePriceChange }
+						currencySymbolPrefix={ this.state.editedPrice.currency }
+						onCurrencyChange={ this.handleCurrencyChange }
+						currencyList={ currencyList }
+						placeholder="0.00"
+					/>
+					{ ! this.isFormValid( 'price' ) && (
+						<FormInputValidation
+							isError
+							text={ this.props.translate( 'Please enter a price higher than 5.00' ) }
+						/>
+					) }
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="renewal_schedule">
+						{ this.props.translate( 'Select renewal schedule' ) }
+					</FormLabel>
+					<FormSelect
+						id="renewal_schedule"
+						value={ this.state.editedSchedule }
+						onChange={ this.onSelectSchedule }
+					>
+						<option value="1 month">{ this.props.translate( 'Monthly' ) }</option>
+						<option value="1 year">{ this.props.translate( 'Yearly' ) }</option>
+					</FormSelect>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="title">
+						{ this.props.translate( 'Please describe your subscription' ) }
+					</FormLabel>
+					<FormTextInput
+						id="title"
+						value={ this.state.editedProductName }
+						onChange={ this.onNameChange }
+					/>
+					{ ! this.isFormValid( 'name' ) && (
+						<FormInputValidation isError text={ this.props.translate( 'Please input a name.' ) } />
+					) }
+				</FormFieldset>
 			</Dialog>
 		);
 	}
