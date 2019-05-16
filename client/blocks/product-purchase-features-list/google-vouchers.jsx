@@ -21,7 +21,7 @@ export default ( { selectedSite } ) => {
 			<QuerySiteVouchers siteId={ selectedSite.ID } />
 			<PurchaseDetail
 				id="google-credits"
-				icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
+				icon={ <img alt="Google AdWords" src="/calypso/images/illustrations/google-adwords.svg" /> }
 				title={ translate( 'Google Ads credit' ) }
 				description={ translate(
 					'Use a %(cost)s credit with Google to bring traffic to your most important Posts and Pages.',
