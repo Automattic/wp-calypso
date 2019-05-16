@@ -15,10 +15,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ContractorSelect from 'my-sites/people/contractor-select';
 import RoleSelect from 'my-sites/people/role-select';
 import TokenField from 'components/token-field';
 import FormButton from 'components/forms/form-button';
-import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -47,7 +47,6 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
-import SupportInfo from 'components/support-info';
 
 /**
  * Style dependencies
@@ -358,22 +357,10 @@ class InvitePeople extends React.Component {
 						/>
 
 						{ 'administrator' === this.state.role && (
-							<FormFieldset>
-								<FormLabel>
-									<FormCheckbox
-										onChange={ this.onExternalChange }
-										checked={ this.state.isExternal }
-									/>
-									<span>
-										{ translate( 'This user is a freelancer, consultant, or agency.' ) }
-										<SupportInfo
-											text={ translate(
-												'Use this checkbox to flag users who are not a part of your organization.'
-											) }
-										/>
-									</span>
-								</FormLabel>
-							</FormFieldset>
+							<ContractorSelect
+								onChange={ this.onExternalChange }
+								checked={ this.state.isExternal }
+							/>
 						) }
 
 						<FormFieldset>
