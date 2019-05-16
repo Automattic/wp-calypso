@@ -84,7 +84,30 @@ class MembershipsProductsSection extends Component {
 	};
 
 	openProductDialog = editedProductId => {
-		this.setState( { showDialog: true, editedProductId } );
+		if ( editedProductId ) {
+			const product = this.props.products.filter( prod => prod.ID === editedProductId ).pop();
+			this.setState( {
+				showDialog: true,
+				editedProductId,
+				editedProductName: product.title,
+				editedPrice: {
+					currency: product.currency,
+					value: product.price,
+				},
+				editedSchedule: product.renewal_schedule,
+			} );
+		} else {
+			this.setState( {
+				showDialog: true,
+				editedProductId,
+				editedProductName: '',
+				editedPrice: {
+					currency: 'USD',
+					value: 0.0,
+				},
+				editedSchedule: '1 month',
+			} );
+		}
 	};
 
 	handleCurrencyChange = event => {
