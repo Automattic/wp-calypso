@@ -17,6 +17,11 @@ import { abtest } from 'lib/abtest';
 import PurchaseButton from './purchase-button';
 import TipInfo from './tip-info';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class PurchaseDetail extends PureComponent {
 	static propTypes = {
 		buttonText: PropTypes.string,
