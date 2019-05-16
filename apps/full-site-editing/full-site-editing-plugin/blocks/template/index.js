@@ -17,10 +17,7 @@ if ( 'wp_template' === fullSiteEditing.editorPostType ) {
 		description: __( 'Display a template part.' ),
 		icon: 'layout',
 		category: 'layout',
-		attributes: {
-			selectedPostId: { type: 'number' },
-			selectedPostType: { type: 'string' },
-		},
+		attributes: { templateId: { type: 'number' } },
 		supports: {
 			align: [ 'wide', 'full' ],
 			anchor: true,

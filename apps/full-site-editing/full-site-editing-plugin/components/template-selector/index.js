@@ -13,27 +13,28 @@ import { useState } from '@wordpress/element';
 
 const TemplateSelector = withSelect( select => {
 	const { getEntityRecords } = select( 'core' );
-	const templates = map(
-		getEntityRecords( 'postType', 'wp_template', { per_page: -1 } ),
-		( { id, title } ) => ( {
-			label: title.rendered,
-			value: id,
-		} )
-	);
 	return {
-		templates,
+		templates: getEntityRecords( 'postType', 'wp_template', { per_page: -1 } ),
 	};
 } )( ( { initialValue, onSelectTemplate, templates } ) => {
 	const [ templateId, setTemplateId ] = useState( initialValue );
 
+	const selectOptions = [
+		{},
+		...map( templates, ( { id, title } ) => ( {
+			label: title.rendered,
+			value: id,
+		} ) ),
+	];
+
 	const onChange = id => {
 		setTemplateId( id );
-		onSelectTemplate( id );
+		onSelectTemplate( parseInt( id, 10 ) );
 	};
 
 	return (
 		<div className="a8c-template-selector">
-			<SelectControl onChange={ onChange } options={ templates } value={ templateId } />
+			<SelectControl onChange={ onChange } options={ selectOptions } value={ templateId } />
 		</div>
 	);
 } );

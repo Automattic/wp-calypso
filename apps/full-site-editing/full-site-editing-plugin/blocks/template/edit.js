@@ -18,34 +18,31 @@ import { __, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import PostAutocomplete from '../../components/post-autocomplete';
+import TemplateSelector from '../../components/template-selector';
 import './style.scss';
 
 const TemplateEdit = compose(
 	withSelect( ( select, { attributes } ) => {
 		const { getEntityRecord } = select( 'core' );
-		const { selectedPostId, selectedPostType } = attributes;
+		const { templateId } = attributes;
 		return {
-			selectedPost: getEntityRecord( 'postType', selectedPostType, selectedPostId ),
+			template: templateId && getEntityRecord( 'postType', 'wp_template', templateId ),
 		};
 	} ),
 	withState( { isEditing: false } )
-)( ( { attributes, isEditing, selectedPost, setAttributes, setState } ) => {
-	const { align, selectedPostId } = attributes;
+)( ( { attributes, isEditing, template, setAttributes, setState } ) => {
+	const { align, templateId } = attributes;
 
 	const toggleEditing = () => setState( { isEditing: ! isEditing } );
 
-	const onSelectPost = ( { id, type } ) => {
+	const onSelectTemplate = id => {
 		setState( { isEditing: false } );
-		setAttributes( {
-			selectedPostId: id,
-			selectedPostType: type,
-		} );
+		setAttributes( { templateId: id } );
 	};
 
-	const showToggleButton = ! isEditing || !! selectedPostId;
-	const showPlaceholder = isEditing || ! selectedPostId;
-	const showContent = ! isEditing && !! selectedPostId;
+	const showToggleButton = ! isEditing || !! templateId;
+	const showPlaceholder = isEditing || ! templateId;
+	const showContent = ! isEditing && !! templateId;
 
 	return (
 		<Fragment>
@@ -75,14 +72,10 @@ const TemplateEdit = compose(
 						instructions={ __( 'Select a template part to display' ) }
 					>
 						<div className="template-block__selector">
-							<PostAutocomplete
-								initialValue={ get( selectedPost, [ 'title', 'rendered' ] ) }
-								onSelectPost={ onSelectPost }
-								postType="wp_template"
-							/>
-							{ !! selectedPost && (
-								<a href={ `?post=${ selectedPost.id }&action=edit` }>
-									{ sprintf( __( 'Edit "%s"' ), get( selectedPost, [ 'title', 'rendered' ], '' ) ) }
+							<TemplateSelector initialValue={ templateId } onSelectTemplate={ onSelectTemplate } />
+							{ !! template && (
+								<a href={ `?post=${ templateId }&action=edit` }>
+									{ sprintf( __( 'Edit "%s"' ), get( template, [ 'title', 'rendered' ], '' ) ) }
 								</a>
 							) }
 						</div>
@@ -90,7 +83,7 @@ const TemplateEdit = compose(
 				) }
 				{ showContent && (
 					<RawHTML className="template-block__content">
-						{ get( selectedPost, [ 'content', 'rendered' ] ) }
+						{ get( template, [ 'content', 'rendered' ] ) }
 					</RawHTML>
 				) }
 			</div>
