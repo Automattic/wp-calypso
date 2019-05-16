@@ -65,7 +65,6 @@ class GoogleApps extends Component {
 					domain={ this.props.domain }
 					productsList={ this.props.productsList }
 					onClickSkip={ this.props.onClickSkip }
-					onGoBack={ this.props.onGoBack }
 					onAddGoogleApps={ this.props.onAddGoogleApps }
 					selectedSite={ this.props.selectedSite }
 					analyticsSection={ this.props.analyticsSection }
