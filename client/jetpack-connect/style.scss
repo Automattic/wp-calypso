@@ -885,7 +885,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.jetpack-connect__main-logo {
 			text-align: center;
-			border-bottom: 1px solid #1f112e;
+			border-bottom: 1px solid var( --color-woocommerce-onboarding-header-border );
 			position: absolute;
 			width: 100%;
 			left: 0;

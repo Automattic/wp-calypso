@@ -218,7 +218,8 @@ class Login extends Component {
 					<AsyncLoad
 						require="components/jetpack-header"
 						placeholder={ null }
-						partnerSlug={ 'woocommerce' }
+						partnerSlug={ this.props.partnerSlug }
+						isWoo
 						width={ 200 }
 						darkColorScheme
 					/>
