@@ -17,7 +17,6 @@ import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import Sidebar from 'layout/sidebar';
-import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
@@ -199,20 +198,10 @@ export class MySitesSidebar extends Component {
 	};
 
 	themes() {
-		const { path, site, translate, canUserEditThemeOptions } = this.props,
-			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
-		let themesLink;
+		const { path, site, translate, canUserEditThemeOptions } = this.props;
 
 		if ( site && ! canUserEditThemeOptions ) {
 			return null;
-		}
-
-		if ( this.props.isJetpack && ! jetpackEnabled && site.options ) {
-			themesLink = site.options.admin_url + 'themes.php';
-		} else if ( this.props.siteId ) {
-			themesLink = '/themes' + this.props.siteSuffix;
-		} else {
-			themesLink = '/themes';
 		}
 
 		return (
@@ -225,16 +214,7 @@ export class MySitesSidebar extends Component {
 				icon="customize"
 				preloadSectionName="customize"
 				forceInternalLink
-			>
-				<SidebarButton
-					onClick={ this.trackSidebarButtonClick( 'themes' ) }
-					href={ themesLink }
-					preloadSectionName="themes"
-					forceTargetInternal
-				>
-					{ this.props.translate( 'Themes' ) }
-				</SidebarButton>
-			</SidebarItem>
+			/>
 		);
 	}
 
@@ -279,62 +259,6 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	trackSidebarButtonClick = name => {
-		return () => {
-			this.props.recordTracksEvent(
-				'calypso_mysites_sidebar_' + name.replace( /-/g, '_' ) + '_sidebar_button_clicked'
-			);
-		};
-	};
-
-	trackPluginsClick = () => {
-		this.trackMenuItemClick( 'plugins' );
-		this.onNavigate();
-	};
-
-	plugins() {
-		if ( isEnabled( 'calypsoify/plugins' ) ) {
-			return null;
-		}
-
-		// checks for manage plugins capability across all sites
-		if ( ! this.props.canManagePlugins ) {
-			return null;
-		}
-
-		// if selectedSite and cannot manage, skip plugins section
-		if ( this.props.siteId && ! this.props.canUserManageOptions ) {
-			return null;
-		}
-
-		const pluginsLink = '/plugins' + this.props.siteSuffix;
-		const managePluginsLink = '/plugins/manage' + this.props.siteSuffix;
-
-		const manageButton =
-			this.props.isJetpack || ( ! this.props.siteId && this.props.hasJetpackSites ) ? (
-				<SidebarButton
-					onClick={ this.trackSidebarButtonClick( 'manage_plugins' ) }
-					href={ managePluginsLink }
-				>
-					{ this.props.translate( 'Manage' ) }
-				</SidebarButton>
-			) : null;
-
-		return (
-			<SidebarItem
-				label={ this.props.translate( 'Plugins' ) }
-				selected={ itemLinkMatches( [ '/extensions', '/plugins' ], this.props.path ) }
-				link={ pluginsLink }
-				onNavigate={ this.trackPluginsClick }
-				icon="plugins"
-				preloadSectionName="plugins"
-				tipTarget="plugins"
-			>
-				{ manageButton }
-			</SidebarItem>
-		);
-	}
-
 	trackDomainsClick = () => {
 		this.trackMenuItemClick( 'domains' );
 		this.onNavigate();
@@ -343,7 +267,6 @@ export class MySitesSidebar extends Component {
 	upgrades() {
 		const { path, translate, canUserManageOptions } = this.props;
 		const domainsLink = '/domains/manage' + this.props.siteSuffix;
-		const addDomainLink = '/domains/add' + this.props.siteSuffix;
 
 		if ( ! this.props.siteId ) {
 			return null;
@@ -366,14 +289,7 @@ export class MySitesSidebar extends Component {
 				icon="domains"
 				preloadSectionName="domains"
 				tipTarget="domains"
-			>
-				<SidebarButton
-					onClick={ this.trackSidebarButtonClick( 'add_domain' ) }
-					href={ addDomainLink }
-				>
-					{ translate( 'Add' ) }
-				</SidebarButton>
-			</SidebarItem>
+			/>
 		);
 	}
 
@@ -536,14 +452,7 @@ export class MySitesSidebar extends Component {
 				icon="user"
 				preloadSectionName="people"
 				tipTarget="people"
-			>
-				<SidebarButton
-					onClick={ this.trackSidebarButtonClick( 'add_people' ) }
-					href={ '/people/new' + this.props.siteSuffix }
-				>
-					{ translate( 'Add' ) }
-				</SidebarButton>
-			</SidebarItem>
+			/>
 		);
 	}
 
@@ -699,12 +608,7 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
-		const configuration =
-			!! this.marketing() ||
-			!! this.users() ||
-			!! this.siteSettings() ||
-			!! this.plugins() ||
-			!! this.upgrades();
+		const manage = !! this.upgrades() || !! this.users() || !! this.siteSettings();
 
 		return (
 			<div className="sidebar__menu-wrapper">
@@ -748,7 +652,7 @@ export class MySitesSidebar extends Component {
 					{ this.activity() }
 				</ExpandableSidebarMenu>
 
-				{ configuration && (
+				{ manage && (
 					<ExpandableSidebarMenu
 						onClick={ this.props.toggleMySitesSidebarManageMenu }
 						expanded={ this.props.isManageOpen }

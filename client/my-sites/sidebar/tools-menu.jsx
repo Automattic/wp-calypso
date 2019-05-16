@@ -35,8 +35,7 @@ class ToolsMenu extends PureComponent {
 	};
 
 	getPluginItem() {
-		const { isAtomicSite, siteSlug, translate } = this.props;
-		const buttonLink = siteSlug ? `/plugins/manage/${ siteSlug }` : '/plugins/manage';
+		const { isAtomicSite, translate } = this.props;
 
 		return {
 			name: 'plugins',
@@ -48,8 +47,6 @@ class ToolsMenu extends PureComponent {
 			paths: [ '/extensions', '/plugins' ],
 			wpAdminLink: 'plugin-install.php?calypsoify=1',
 			showOnAllMySites: true,
-			buttonLink: ! isAtomicSite ? buttonLink : '',
-			buttonText: translate( 'Manage' ),
 			extraIcon: isAtomicSite ? 'chevron-right' : null,
 			customClassName: isAtomicSite ? 'sidebar__plugins-item' : '',
 			forceInternalLink: isAtomicSite,
