@@ -296,8 +296,8 @@ class TransferDomainPrecheck extends React.Component {
 					{ authCodeInvalid && (
 						<FormInputValidation
 							text={ translate(
-								'The auth code you entered is invalid. ' +
-									'Please try again, or see {{a}}this support document{{/a}} for more troubleshooting steps.',
+								'The auth code you entered is invalid. Please verify you’re entering the correct code, ' +
+									'or see {{a}}this support document{{/a}} for more troubleshooting steps.',
 								{
 									components: {
 										a: (
