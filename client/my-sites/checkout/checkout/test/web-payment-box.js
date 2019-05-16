@@ -32,6 +32,7 @@ jest.mock( 'lib/cart-values', () => ( {
 } ) );
 
 window.ApplePaySession = { canMakePayments: () => true };
+window.PaymentRequest = true;
 
 describe( 'WebPaymentBox', () => {
 	const defaultCart = {
