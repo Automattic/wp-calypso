@@ -23,7 +23,7 @@ export default ( { selectedSite } ) => {
 				id="google-credits"
 				icon={
 					<img
-						alt={ translate( 'Google AdWords' ) }
+						alt={ translate( 'Google AdWords Illustration' ) }
 						src="/calypso/images/illustrations/google-adwords.svg"
 					/>
 				}
