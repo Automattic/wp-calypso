@@ -35,7 +35,6 @@
 		"account-recovery": true,
 		"ad-tracking": false,
 		"automated-transfer": true,
-		"apple-pay": true,
 		"blogger-plan": true,
 		"calypsoify/gutenberg": true,
 		"calypsoify/plugins": true,
