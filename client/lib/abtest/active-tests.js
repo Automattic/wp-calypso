@@ -8,7 +8,7 @@ export default {
 		},
 		defaultVariation: 'main',
 		allowExistingUsers: true,
-		localeTargets: 'any',		
+		localeTargets: 'any',
 	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -165,14 +165,6 @@ export default {
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
-	},
-	checkoutUXImprovements: {
-		datestamp: '20190501',
-		variations: {
-			control: 50,
-			variantUXImprovements: 50,
-		},
-		defaultVariation: 'control',
 	},
 	showCheckoutCartRight: {
 		datestamp: '20190502',
