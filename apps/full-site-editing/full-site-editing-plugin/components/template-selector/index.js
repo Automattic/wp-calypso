@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
+import { filter, intersection, isArray, map } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -11,21 +11,36 @@ import { SelectControl } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 
-const TemplateSelector = withSelect( select => {
+const TemplateSelector = withSelect( ( select, { types } ) => {
 	const { getEntityRecords } = select( 'core' );
-	return {
-		templates: getEntityRecords( 'postType', 'wp_template', { per_page: -1 } ),
-	};
-} )( ( { initialValue, onSelectTemplate, templates } ) => {
-	const [ templateId, setTemplateId ] = useState( initialValue );
 
-	const selectOptions = [
+	const allTemplateTypes = getEntityRecords( 'taxonomy', 'wp_template_type' );
+	const filteredTemplateTypes = types
+		? filter( allTemplateTypes, type => {
+				return isArray( types ) ? -1 !== types.indexOf( type.slug ) : types === type.slug;
+		  } )
+		: allTemplateTypes;
+	const templateTypesIds = map( filteredTemplateTypes, ( { id } ) => id );
+
+	const allTemplates = getEntityRecords( 'postType', 'wp_template', { per_page: -1 } );
+	const filteredTemplates = types
+		? filter(
+				allTemplates,
+				( { template_types } ) => intersection( template_types, templateTypesIds ).length
+		  )
+		: allTemplates;
+	const templates = [
 		{},
-		...map( templates, ( { id, title } ) => ( {
+		...map( filteredTemplates, ( { id, title } ) => ( {
 			label: title.rendered,
 			value: id,
 		} ) ),
 	];
+	return {
+		templates,
+	};
+} )( ( { initialValue, onSelectTemplate, templates } ) => {
+	const [ templateId, setTemplateId ] = useState( initialValue );
 
 	const onChange = id => {
 		setTemplateId( id );
@@ -34,7 +49,7 @@ const TemplateSelector = withSelect( select => {
 
 	return (
 		<div className="a8c-template-selector">
-			<SelectControl onChange={ onChange } options={ selectOptions } value={ templateId } />
+			<SelectControl onChange={ onChange } options={ templates } value={ templateId } />
 		</div>
 	);
 } );
