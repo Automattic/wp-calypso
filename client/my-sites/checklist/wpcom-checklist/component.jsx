@@ -60,6 +60,7 @@ class WpcomChecklistComponent extends PureComponent {
 		emailSent: false,
 		error: null,
 		gSuiteDialogVisible: false,
+		selectedTaskId: null,
 	};
 
 	constructor() {
@@ -158,6 +159,13 @@ class WpcomChecklistComponent extends PureComponent {
 			step_name: id,
 			completed: isCompleted,
 			location,
+		} );
+	};
+
+	onCollapsedClick = selectedTaskId => {
+		this.setState( { selectedTaskId } );
+		this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
+			step_name: selectedTaskId,
 		} );
 	};
 
@@ -321,6 +329,7 @@ class WpcomChecklistComponent extends PureComponent {
 
 		const taskList = getTaskList( this.props );
 		const firstIncomplete = taskList.getFirstIncompleteTask();
+		const buttonPrimary = this.state.selectedTaskId ? this.state.selectedTaskId === task.id : true;
 
 		const baseProps = {
 			id: task.id,
@@ -328,9 +337,13 @@ class WpcomChecklistComponent extends PureComponent {
 			completed: task.isCompleted,
 			siteSlug,
 			firstIncomplete,
-			buttonPrimary: firstIncomplete && firstIncomplete.id === task.id,
+			buttonPrimary,
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
+			onCollapsedClick: this.onCollapsedClick,
+			// only render an unclickable grey circle
+			disableIcon: ! task.isCompleted && 'email_verified' === task.id,
+			selectedTaskId: this.state.selectedTaskId,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
