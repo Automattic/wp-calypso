@@ -20,7 +20,7 @@ export default localize( ( { translate } ) => {
 				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
 				title={ translate( 'Download our mobile apps' ) }
 				description={ translate(
-					'Manage all your sites from a single dashboard: publish content, ' +
+					'Manage all of your sites from a single dashboard: publish content, ' +
 						'track stats, moderate comments, and more.'
 				) }
 				buttonText={ translate( 'Get the apps' ) }
