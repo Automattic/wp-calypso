@@ -11,7 +11,7 @@ describe( 'state/signup/segments/selectors', () => {
 			expect( getSegments( {}, 'aaa' ) ).toBeNull();
 		} );
 
-		test( 'should return the stored verticals data.', () => {
+		test( 'should return the stored segments data.', () => {
 			const state = {
 				signup: {
 					segments: [
