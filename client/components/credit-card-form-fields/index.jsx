@@ -92,10 +92,6 @@ export class CreditCardFormFields extends React.Component {
 		this.updateFieldValues( event.target.name, event.target.value );
 	};
 
-	addExplainer = explainerText => {
-		return <span className="credit-card-form-fields__explainer">{ explainerText }</span>;
-	};
-
 	getCvvPopover = () => {
 		const { translate, card } = this.props;
 		const brand = getCreditCardType( card.number );
@@ -149,10 +145,10 @@ export class CreditCardFormFields extends React.Component {
 			<div className="credit-card-form-fields">
 				{ this.createField( 'name', Input, {
 					autoFocus,
-					label: translate( 'Cardholder Name {{nameExplainer/}}', {
+					label: translate( 'Cardholder Name {{span}}(as written on card){{/span}}', {
 						comment: 'Cardholder name label on credit card form',
 						components: {
-							nameExplainer: this.addExplainer( translate( '(as written on card)' ) ),
+							span: <span className="credit-card-form-fields__explainer" />,
 						},
 					} ),
 					placeholder: ' ',
@@ -180,10 +176,10 @@ export class CreditCardFormFields extends React.Component {
 					{ this.createField( 'cvv', Input, {
 						inputMode: 'numeric',
 						placeholder: ' ',
-						label: translate( 'Security Code {{explainerText/}} {{infoPopover/}}', {
+						label: translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}} {{infoPopover/}}', {
 							components: {
 								infoPopover: this.getCvvPopover(),
-								explainerText: this.addExplainer( translate( '("CVC" or "CVV")' ) ),
+								span: <span className="credit-card-form-fields__explainer" />,
 							},
 						} ),
 					} ) }
