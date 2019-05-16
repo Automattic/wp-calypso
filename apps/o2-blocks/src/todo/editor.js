@@ -271,7 +271,7 @@ const save = class extends Component {
 registerBlockType( 'a8c/todo', {
 	title: __( 'Task List' ),
 	icon: 'editor-ul',
-	category: 'common',
+	category: 'a8c',
 	keywords: [ __( 'todo' ) ],
 	attributes: blockAttributes,
 	edit,
