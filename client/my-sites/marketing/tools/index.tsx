@@ -14,7 +14,7 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 import MarketingToolsFeature from './feature';
 import MarketingToolsGoogleMyBusinessFeature from './google-my-business-feature';
 import MarketingToolsHeader from './header';
-import { marketingSharingButtons, marketingTraffic } from 'my-sites/marketing/paths';
+import { marketingConnections, marketingTraffic } from 'my-sites/marketing/paths';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
@@ -56,7 +56,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 	const handleStartSharingClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_start_sharing_button_click' );
 
-		page( marketingSharingButtons( selectedSiteSlug ) );
+		page( marketingConnections( selectedSiteSlug ) );
 	};
 
 	return (
