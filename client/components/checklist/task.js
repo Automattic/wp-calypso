@@ -29,7 +29,6 @@ class Task extends PureComponent {
 		disableIcon: PropTypes.bool,
 		duration: PropTypes.string,
 		href: PropTypes.string,
-		isCollapsed: PropTypes.bool,
 		inProgress: PropTypes.bool,
 		isWarning: PropTypes.bool,
 		onClick: PropTypes.func,
