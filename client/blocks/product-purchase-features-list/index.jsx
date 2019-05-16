@@ -54,6 +54,11 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
 		plan: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
