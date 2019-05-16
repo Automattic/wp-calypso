@@ -16,14 +16,14 @@ class A8C_Full_Site_Editing {
 		self::$initialized = true;
 
 		add_action( 'init', array( $this, 'register_blocks' ), 100 );
-		add_action( 'init', array( $this, 'register_wp_template' ) );
+		add_action( 'init', array( $this, 'register_template_post_types' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
 	}
 
-	function register_wp_template() {
+	function register_template_post_types() {
 		require_once plugin_dir_path( __FILE__ ) . 'wp-template.php';
-		fse_register_wp_template();
+		fse_register_template_post_types();
 	}
 
 	function enqueue_script_and_style() {
@@ -64,13 +64,20 @@ class A8C_Full_Site_Editing {
 	}
 
 	/**
-	 * This will set the `wp_template` post type to `public` to support
+	 * This will set the `wp_template` and `wp_template_part` post types to `public` to support
 	 * the core search endpoint, which looks for it.
 	 *
 	 * @return void
 	 */
 	function allow_searching_for_templates() {
 		$post_type = get_post_type_object( 'wp_template' );
+		if ( ! ( $post_type instanceof WP_Post_Type ) ) {
+			return;
+		}
+		// setting this to `public` will allow it to be found in the search endpoint
+		$post_type->public = true;
+
+		$post_type = get_post_type_object( 'wp_template_part' );
 		if ( ! ( $post_type instanceof WP_Post_Type ) ) {
 			return;
 		}

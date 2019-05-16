@@ -11,7 +11,10 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-if ( 'wp_template' === fullSiteEditing.editorPostType ) {
+if (
+	'wp_template' === fullSiteEditing.editorPostType ||
+	'wp_template_part' === fullSiteEditing.editorPostType
+) {
 	registerBlockType( 'a8c/template', {
 		title: __( 'Template Part' ),
 		description: __( 'Display a template part.' ),

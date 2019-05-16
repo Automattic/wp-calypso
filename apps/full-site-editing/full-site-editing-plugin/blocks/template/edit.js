@@ -18,7 +18,7 @@ import { __, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import TemplateSelector from '../../components/template-selector';
+import PostAutocomplete from '../../components/post-autocomplete';
 import './style.scss';
 
 const TemplateEdit = compose(
@@ -26,7 +26,7 @@ const TemplateEdit = compose(
 		const { getEntityRecord } = select( 'core' );
 		const { templateId } = attributes;
 		return {
-			template: templateId && getEntityRecord( 'postType', 'wp_template', templateId ),
+			template: templateId && getEntityRecord( 'postType', 'wp_template_part', templateId ),
 		};
 	} ),
 	withState( { isEditing: false } )
@@ -35,7 +35,7 @@ const TemplateEdit = compose(
 
 	const toggleEditing = () => setState( { isEditing: ! isEditing } );
 
-	const onSelectTemplate = id => {
+	const onSelectTemplate = ( { id } ) => {
 		setState( { isEditing: false } );
 		setAttributes( { templateId: id } );
 	};
@@ -72,7 +72,11 @@ const TemplateEdit = compose(
 						instructions={ __( 'Select a template part to display' ) }
 					>
 						<div className="template-block__selector">
-							<TemplateSelector initialValue={ templateId } onSelectTemplate={ onSelectTemplate } />
+							<PostAutocomplete
+								initialValue={ templateId }
+								onSelectPost={ onSelectTemplate }
+								postType="wp_template_part"
+							/>
 							{ !! template && (
 								<a href={ `?post=${ templateId }&action=edit` }>
 									{ sprintf( __( 'Edit "%s"' ), get( template, [ 'title', 'rendered' ], '' ) ) }
