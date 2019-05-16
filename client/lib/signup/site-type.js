@@ -28,17 +28,68 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
 }
 
 /**
- * Returns a current list of site types that are displayed in the signup site-type step
- * Some (or all) of these site types will also have landing pages.
- * A user who comes in via a landing page will not see the Site Topic dropdown.
- * Do note that id's per site type should not be changed as we add/remove site-types.
+ * Returns complementary properties for current site segments received from the /segments API
+ * We do this because Calypso requires extra information, different copy and so on
  *
- * @return {array} current list of site types
+ * @return {Object} Object of site type definitions
  */
-export function getAllSiteTypes() {
-	return [
+export function getSiteSegmentDefinitions() {
+	return {
+		blog: {
+			//id: 2,
+			//slug: 'blog',
+			label: i18n.translate( 'Blog' ),
+			description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
+			theme: 'pub/independent-publisher-2',
+			designType: 'blog',
+			siteTitleLabel: i18n.translate( 'What would you like to call your blog?' ),
+			siteTitlePlaceholder: i18n.translate( "E.g., Stevie's blog " ),
+			siteTopicHeader: i18n.translate( 'What is your blog about?' ),
+			siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
+		},
+		business: {
+			//id: 1,
+			//slug: 'business',
+			label: i18n.translate( 'Business' ),
+			description: i18n.translate( 'Promote products and services.' ),
+			theme: 'pub/professional-business',
+			designType: 'page',
+			siteTitleLabel: i18n.translate( 'What is the name of your business?' ),
+			siteTitlePlaceholder: i18n.translate( 'E.g., Vail Renovations' ),
+			siteTopicHeader: i18n.translate( 'What does your business do?' ),
+			siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
+			customerType: 'business',
+		},
+		professional: {
+			//id: 4,
+			//slug: 'professional',
+			label: i18n.translate( 'Professional' ),
+			description: i18n.translate( 'Showcase your portfolio and work.' ),
+			theme: 'pub/altofocus',
+			designType: 'portfolio',
+			siteTitleLabel: i18n.translate( 'What is your name?' ),
+			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed' ),
+			siteTopicHeader: i18n.translate( 'What type of work do you do?' ),
+			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
+		},
+		'online-store': {
+			//id: 3,
+			//slug: 'online-store',
+			label: i18n.translate( 'Online store' ),
+			description: i18n.translate( 'Sell your collection of products online.' ),
+			theme: 'pub/dara',
+			designType: 'store',
+			siteTitleLabel: i18n.translate( 'What is the name of your store?' ),
+			siteTitlePlaceholder: i18n.translate( "E.g., Mel's Diner" ),
+			siteTopicHeader: i18n.translate( 'What type of products do you sell?' ),
+			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
+			customerType: 'business',
+		},
+	};
+
+/*	return [
 		{
-			id: 2,
+			//id: 2,
 			slug: 'blog',
 			label: i18n.translate( 'Blog' ),
 			description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
@@ -50,7 +101,7 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
 		},
 		{
-			id: 1,
+			//id: 1,
 			slug: 'business',
 			label: i18n.translate( 'Business' ),
 			description: i18n.translate( 'Promote products and services.' ),
@@ -63,7 +114,7 @@ export function getAllSiteTypes() {
 			customerType: 'business',
 		},
 		{
-			id: 3,
+			//id: 4,
 			slug: 'professional',
 			label: i18n.translate( 'Professional' ),
 			description: i18n.translate( 'Showcase your portfolio and work.' ),
@@ -75,7 +126,7 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 		},
 		{
-			id: 5,
+			//id: 3,
 			slug: 'online-store',
 			label: i18n.translate( 'Online store' ),
 			description: i18n.translate( 'Sell your collection of products online.' ),
@@ -87,5 +138,5 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
 		},
-	];
+	];*/
 }
