@@ -178,7 +178,9 @@ class Task extends PureComponent {
 			>
 				<div className="checklist__task-primary">
 					<h3 className="checklist__task-title">
-						{ ( completed && completedTitle ) || (
+						{ completed ? (
+							completedTitle || title
+						) : (
 							<Button
 								borderless
 								className="checklist__task-title-link"
