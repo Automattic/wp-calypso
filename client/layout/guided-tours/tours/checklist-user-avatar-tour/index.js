@@ -51,7 +51,7 @@ export const ChecklistUserAvatarTour = makeTour(
 			) }
 		</Step>
 
-		<Step name="image-notice" placement="right">
+		<Step name="image-notice" placement="right" dark={ true }>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>{ translate( "Let's make sure it looks right before we proceed." ) }</p>
@@ -65,9 +65,7 @@ export const ChecklistUserAvatarTour = makeTour(
 			target="image-editor-button-done"
 			placement="below"
 			arrow="top-right"
-			style={ {
-				border: '2px solid white',
-			} }
+			dark={ true }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
