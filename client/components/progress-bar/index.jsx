@@ -9,6 +9,11 @@ import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 /**
+ * Internal dependencies
+ */
+import ScreenReaderText from 'components/screen-reader-text';
+
+/**
  * Style dependencies
  */
 import './style.scss';
@@ -66,11 +71,12 @@ export default class ProgressBar extends PureComponent {
 				aria-valuemax={ total }
 				aria-valuemin={ 0 }
 				aria-valuenow={ value }
-				aria-valuetext={ title || '' }
 				className="progress-bar__progress"
 				role="progressbar"
 				style={ styles }
-			/>
+			>
+				{ title && <ScreenReaderText>{ title }</ScreenReaderText> }
+			</div>
 		);
 	}
 

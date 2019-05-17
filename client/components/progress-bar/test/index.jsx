@@ -19,9 +19,7 @@ describe( 'ProgressBar', () => {
 	test( 'should show the title', () => {
 		const progressBar = shallow( <ProgressBar value={ 20 } title="foo" /> );
 
-		expect( progressBar.find( '.progress-bar__progress' ).props()[ 'aria-valuetext' ] ).to.be.equal(
-			'foo'
-		);
+		expect( progressBar.find( '.progress-bar__progress' ).contains( 'foo' ) ).to.be.true;
 	} );
 
 	test( 'should add is-pulsing class when isPulsing property is true', () => {
