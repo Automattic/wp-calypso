@@ -72,6 +72,7 @@ const props = {
 		domainItem: null,
 	},
 	goToNextStep: function() {},
+	siteSegmentDefinition: {},
 };
 
 describe( 'Plans basic tests', () => {
@@ -267,8 +268,12 @@ describe( 'Plans.getCustomerType', () => {
 			} )
 		);
 	} );
-	test( 'Should return site type property is siteType is provided', () => {
-		const comp = new PlansStep( { ...props, siteGoals: 'share', siteType: 'online-store' } );
+	test( 'Should return site type property when customerType is available from the site segment definition', () => {
+		const comp = new PlansStep( {
+			...props,
+			siteGoals: 'share',
+			siteSegmentDefinition: { customerType: 'business' },
+		} );
 		expect( comp.getCustomerType() ).toEqual( 'business' );
 	} );
 	test( "Should return customerType prop when it's provided", () => {
