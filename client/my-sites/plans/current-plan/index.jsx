@@ -33,6 +33,7 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
@@ -94,6 +95,7 @@ class CurrentPlan extends Component {
 			domains,
 			hasDomainsLoaded,
 			isExpiring,
+			isFreePlan,
 			path,
 			selectedSite,
 			selectedSiteId,
@@ -106,8 +108,11 @@ class CurrentPlan extends Component {
 		const currentPlanSlug = selectedSite.plan.product_slug,
 			isLoading = this.isLoading();
 
-		const currentPlanThankYouCard =
-			currentPlanSlug === 'jetpack_free' ? <FreePlanThankYouCard /> : <PaidPlanThankYouCard />;
+		const currentPlanThankYouCard = isFreePlan ? (
+			<FreePlanThankYouCard />
+		) : (
+			<PaidPlanThankYouCard />
+		);
 
 		const planConstObj = getPlan( currentPlanSlug ),
 			planFeaturesHeader = translate( '%(planName)s plan features', {
@@ -206,6 +211,7 @@ export default connect( ( state, { requestThankYou } ) => {
 		domains,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
+		isFreePlan: isSiteOnFreePlan( state, selectedSiteId ),
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
