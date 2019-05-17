@@ -30,6 +30,7 @@ import FormSelect from 'components/forms/form-select';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormToggle from 'components/forms/form-toggle';
 import { requestAddProduct, requestUpdateProduct } from 'state/memberships/product-list/actions';
 
 // These are Stripe settlement currencies.
@@ -62,6 +63,7 @@ class MembershipsProductsSection extends Component {
 		showDialog: false,
 		editedProductId: null,
 		editedProductName: '',
+		editedPayWhatYouWant: false,
 		editedPrice: { currency: 'USD', value: '' },
 		editedSchedule: '1 month',
 	};
@@ -97,6 +99,7 @@ class MembershipsProductsSection extends Component {
 					price: this.state.editedPrice.value,
 					title: this.state.editedProductName,
 					interval: this.state.editedSchedule,
+					buyer_can_change_amount: this.state.editedPayWhatYouWant,
 				},
 				this.props.translate( 'Updated "%s" product.', { args: this.state.editedProductName } )
 			);
@@ -116,6 +119,7 @@ class MembershipsProductsSection extends Component {
 					value: product.price,
 				},
 				editedSchedule: product.renewal_schedule,
+				editedPayWhatYouWant: product.buyer_can_change_amount,
 			} );
 		} else {
 			this.setState( {
@@ -145,6 +149,8 @@ class MembershipsProductsSection extends Component {
 			editedPrice: { ...state.editedPrice, value },
 		} ) );
 	};
+	handlePayWhatYouWant = newValue => this.setState( { editedPayWhatYouWant: newValue } );
+
 	onNameChange = event => this.setState( { editedProductName: event.target.value } );
 	onSelectSchedule = event => this.setState( { editedSchedule: event.target.value } );
 	isFormValid = field => {
@@ -230,6 +236,16 @@ class MembershipsProductsSection extends Component {
 					{ ! this.isFormValid( 'name' ) && (
 						<FormInputValidation isError text={ this.props.translate( 'Please input a name.' ) } />
 					) }
+				</FormFieldset>
+				<FormFieldset>
+					<FormToggle
+						onChange={ this.handlePayWhatYouWant }
+						checked={ this.state.editedPayWhatYouWant }
+					>
+						{ this.props.translate(
+							'Enable clients to pick their own amount ("Pay what you want").'
+						) }
+					</FormToggle>
 				</FormFieldset>
 			</Dialog>
 		);
