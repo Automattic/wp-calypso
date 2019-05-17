@@ -64,7 +64,10 @@ const TemplateSelectorSidebar = compose(
 	);
 } );
 
-if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
+if (
+	'wp_template' !== fullSiteEditing.editorPostType &&
+	'wp_template_part' !== fullSiteEditing.editorPostType
+) {
 	registerPlugin( 'fse-template-selector-sidebar', {
 		render: TemplateSelectorSidebar,
 	} );
