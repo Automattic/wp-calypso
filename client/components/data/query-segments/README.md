@@ -1,9 +1,9 @@
 Query Site Segments
 ===========================
 
-`<QuerySegments />` is a React component used to fire a network requests for `/segments`, which returns site segment information for signup.
+`<QuerySegments />` is a React component used to fire a network request for the `/segments` endpoint, which returns site segment information for signup.
 
-Because it's static data from the server, it will only fire if segments data isn't found in the state tree.
+Because it's static data from the server, it will only fire if there are no segments data in the state tree.
 
 ## Usage
 
