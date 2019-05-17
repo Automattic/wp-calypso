@@ -59,18 +59,23 @@ export default class ProgressBar extends PureComponent {
 	}
 
 	renderBar() {
-		const title = this.props.title ? (
-			<ScreenReaderText>{ this.props.title }</ScreenReaderText>
-		) : null;
+		const { color, title, total, value } = this.props;
 
 		const styles = { width: this.getCompletionPercentage() + '%' };
-		if ( this.props.color ) {
-			styles.backgroundColor = this.props.color;
+		if ( color ) {
+			styles.backgroundColor = color;
 		}
 
 		return (
-			<div className="progress-bar__progress" style={ styles }>
-				{ title }
+			<div
+				aria-valuemax={ total }
+				aria-valuemin={ 0 }
+				aria-valuenow={ value }
+				className="progress-bar__progress"
+				role="progressbar"
+				style={ styles }
+			>
+				{ title && <ScreenReaderText>{ title }</ScreenReaderText> }
 			</div>
 		);
 	}
