@@ -49,6 +49,7 @@ import {
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { emailManagement } from 'my-sites/email/paths';
 import PendingGSuiteTosNoticeDialog from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice-dialog';
+import { getSegmentById } from 'state/signup/segments/selectors';
 
 const userLib = userFactory();
 
@@ -1050,7 +1051,7 @@ export default connect(
 			designType: getSiteOption( state, siteId, 'design_type' ),
 			siteId,
 			siteSlug,
-			siteSegment: get( siteChecklist, 'segment' ),
+			segmentSlug: getSegmentById( state, get( siteChecklist, 'segment' ) ),
 			siteVerticals: get( siteChecklist, 'verticals' ),
 			taskStatuses: get( siteChecklist, 'tasks' ),
 			taskUrls,

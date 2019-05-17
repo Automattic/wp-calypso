@@ -9,9 +9,9 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getSiteSegmentDefinitions } from 'lib/signup/site-type';
+import { getAllSegmentDefinitions } from 'lib/signup/segments';
 
-const siteSegmentDefinitions = getSiteSegmentDefinitions();
+const siteSegmentDefinitions = getAllSegmentDefinitions();
 
 /**
  * Returns augmented segments collection from state tree
@@ -23,12 +23,13 @@ const siteSegmentDefinitions = getSiteSegmentDefinitions();
 export const getSegments = ( state, segmentDefinitions = siteSegmentDefinitions ) => {
 	const segments = get( state, [ 'signup', 'segments' ], [] );
 
-	return segments.length ? segments.map( item => ( {
-		...item,
-		...get( segmentDefinitions, item.slug, {} ),
-	} ) ) : null;
+	return segments.length
+		? segments.map( item => ( {
+				...item,
+				...get( segmentDefinitions, item.slug, {} ),
+		  } ) )
+		: null;
 };
-
 
 /**
  * Looks up the segments collection by slug name and returns the found object
@@ -39,5 +40,17 @@ export const getSegments = ( state, segmentDefinitions = siteSegmentDefinitions 
  */
 export const getSegmentBySlug = createSelector(
 	( state, slug ) => find( getSegments( state ), [ 'slug', slug ] ) || {},
+	[ getSegments ]
+);
+
+/**
+ * Looks up the segments collection by segment id and returns the found object
+ *
+ * @param  {Object} state       Global state tree
+ * @param  {Number} id          The segment id, e.g., `1`
+ * @return {Object}     		The segment object
+ */
+export const getSegmentById = createSelector(
+	( state, id ) => find( getSegments( state ), [ 'id', id ] ) || {},
 	[ getSegments ]
 );

@@ -609,6 +609,9 @@ class Signup extends React.Component {
 				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) && (
 					<SiteMockups stepName={ this.props.stepName } />
 				) }
+				{
+					// TODO Insert <QuerySegments /> here
+				 }
 			</div>
 		);
 	}

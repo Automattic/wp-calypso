@@ -13,7 +13,6 @@ import SignupActions from 'lib/signup/actions';
 import SiteTypeForm from './form';
 import StepWrapper from 'signup/step-wrapper';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 
 class SiteType extends Component {
@@ -65,10 +64,10 @@ export default connect(
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	( dispatch, { goToNextStep, flowName } ) => ( {
-		submitStep: siteTypeValue => {
-			dispatch( submitSiteType( siteTypeValue ) );
+		submitStep: ( siteTypeValue, themeSlugWithRepo ) => {
+			dispatch( submitSiteType( siteTypeValue, themeSlugWithRepo ) );
 
-			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 5, 'slug' ) ) {
+			if ( 'online-store' === siteTypeValue ) {
 				flowName = 'ecommerce-onboarding';
 			}
 

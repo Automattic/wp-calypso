@@ -28,7 +28,7 @@ import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import { isUserLoggedIn } from 'state/current-user/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getSegmentBySlug } from 'state/signup/segments/selectors';
 import {
 	getSiteVerticalId,
 	getSiteVerticalParentId,
@@ -181,6 +181,7 @@ class AboutStep extends Component {
 			shouldHideSiteTitle,
 			shouldHideSiteGoals,
 			previousFlowName,
+			siteSegmentDefinition,
 			siteType,
 		} = this.props;
 
@@ -232,13 +233,12 @@ class AboutStep extends Component {
 
 		//Site Goals
 		if ( shouldHideSiteGoals ) {
-			themeRepo =
-				getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
+			themeRepo = siteSegmentDefinition.theme || 'pub/independent-publisher-2';
 
 			if ( 'ecommerce' === flowName ) {
 				designType = 'page';
 			} else {
-				designType = getSiteTypePropertyValue( 'slug', siteType, 'designType' ) || 'blog';
+				designType = siteSegmentDefinition.designType || 'blog';
 			}
 
 			eventAttributes.site_type = siteType;
@@ -554,25 +554,29 @@ class AboutStep extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		siteTitle: getSiteTitle( state ),
-		siteGoals: getSiteGoals( state ),
-		siteTopic: getSurveyVertical( state ),
-		userExperience: getUserExperience( state ),
-		siteType: getSiteType( state ),
-		isLoggedIn: isUserLoggedIn( state ),
-		verticalId: getSiteVerticalId( state ),
-		verticalParentId: getSiteVerticalParentId( state ),
-		shouldHideSiteGoals:
-			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
-		shouldHideSiteTitle:
-			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-title' ),
-		shouldSkipAboutStep:
-			includes( ownProps.steps, 'site-type' ) &&
-			includes( ownProps.steps, 'site-topic' ) &&
-			includes( ownProps.steps, 'site-title' ),
-		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-	} ),
+	( state, ownProps ) => {
+		const siteType = getSiteType( state );
+		return {
+			siteTitle: getSiteTitle( state ),
+			siteGoals: getSiteGoals( state ),
+			siteTopic: getSurveyVertical( state ),
+			userExperience: getUserExperience( state ),
+			siteType,
+			isLoggedIn: isUserLoggedIn( state ),
+			verticalId: getSiteVerticalId( state ),
+			verticalParentId: getSiteVerticalParentId( state ),
+			shouldHideSiteGoals:
+				'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
+			shouldHideSiteTitle:
+				'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-title' ),
+			shouldSkipAboutStep:
+				includes( ownProps.steps, 'site-type' ) &&
+				includes( ownProps.steps, 'site-topic' ) &&
+				includes( ownProps.steps, 'site-title' ),
+			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+			siteSegmentDefinition: getSegmentBySlug( state, siteType ),
+		};
+	},
 	{
 		setSiteTitle,
 		setDesignType,

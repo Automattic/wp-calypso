@@ -12,10 +12,10 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/forms/form-button';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
-import { getAllSiteTypes } from 'lib/signup/site-type';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSegments } from 'state/signup/segments/selectors';
 
 /**
  * Style dependencies
@@ -26,7 +26,7 @@ class SiteTypeForm extends Component {
 	static propTypes = {
 		siteType: PropTypes.string,
 		submitForm: PropTypes.func.isRequired,
-
+		segments: PropTypes.array,
 		// from localize() HoC
 		translate: PropTypes.func.isRequired,
 	};
@@ -45,15 +45,15 @@ class SiteTypeForm extends Component {
 		} );
 	};
 
-	handleSubmit = type => {
+	handleSubmit = ( { slug, theme } ) => {
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
-			value: type,
+			value: slug,
 			user_input_site_type: this.state.otherValue || null,
 		} );
 
-		this.setState( { siteType: type } );
+		this.setState( { siteType: slug } );
 
-		this.props.submitForm( type === 'other' ? type + '-' + this.state.otherValue : type );
+		this.props.submitForm( slug === 'other' ? slug + '-' + this.state.otherValue : slug, theme );
 	};
 
 	handleSubmitOther = () => this.handleSubmit( 'other' );
@@ -61,21 +61,22 @@ class SiteTypeForm extends Component {
 	renderBasicCard = () => {
 		return (
 			<Card className="site-type__wrapper">
-				{ getAllSiteTypes().map( siteTypeProperties => (
-					<Card
-						className="site-type__option"
-						key={ siteTypeProperties.id }
-						tagName="button"
-						displayAsLink
-						data-e2e-title={ siteTypeProperties.slug }
-						onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
-					>
-						<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
-						<span className="site-type__option-description">
-							{ siteTypeProperties.description }
-						</span>
-					</Card>
-				) ) }
+				{ this.props.segments &&
+					this.props.segments.map( siteTypeProperties => (
+						<Card
+							className="site-type__option"
+							key={ siteTypeProperties.id }
+							tagName="button"
+							displayAsLink
+							data-e2e-title={ siteTypeProperties.slug }
+							onClick={ this.handleSubmit.bind( this, siteTypeProperties ) }
+						>
+							<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
+							<span className="site-type__option-description">
+								{ siteTypeProperties.description }
+							</span>
+						</Card>
+					) ) }
 			</Card>
 		);
 	};
@@ -104,6 +105,10 @@ class SiteTypeForm extends Component {
 						{ translate( 'Continue' ) }
 					</Button>
 				</div>
+				{
+					// TODO Insert <QuerySegments /> here in case we land on this step
+					// and for any reason the segments haven't been fetched
+				 }
 			</div>
 		);
 	};
@@ -123,6 +128,7 @@ class SiteTypeForm extends Component {
 export default connect(
 	state => ( {
 		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+		segments: getSegments( state ) || [],
 	} ),
 	{
 		recordTracksEvent,

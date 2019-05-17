@@ -19,6 +19,7 @@ import AsyncLoad from 'components/async-load';
 import { getNeverShowBannerStatus } from 'my-sites/checklist/wpcom-checklist/checklist-banner/never-show';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { isBlockEditorSectionInTest } from 'lib/signup/page-builder';
+import { getSegmentById } from 'state/signup/segments/selectors';
 
 class WpcomChecklist extends Component {
 	static propTypes = {
@@ -119,15 +120,16 @@ export default connect( ( state, ownProps ) => {
 	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
 	const isSectionEligible = isSiteSection( state ) && ! isBlockEditorSectionInTest( state );
 	const siteChecklist = getSiteChecklist( state, siteId );
-	const siteSegment = get( siteChecklist, 'segment' );
+	const segmentSlug = getSegmentById( state, get( siteChecklist, 'segment' ) );
 	const siteVerticals = get( siteChecklist, 'vertical' );
 	const taskStatuses = get( siteChecklist, 'tasks' );
 	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
+
 	const taskList = getTaskList( {
 		taskStatuses,
 		designType,
 		isSiteUnlaunched,
-		siteSegment,
+		segmentSlug,
 		siteVerticals,
 	} );
 

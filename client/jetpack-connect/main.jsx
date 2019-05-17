@@ -383,6 +383,9 @@ export class JetpackConnectMain extends Component {
 					{ this.renderSiteInput( status ) }
 					{ this.renderFooter() }
 				</div>
+				{
+					// TODO Insert <QuerySegments /> here ??
+				 }
 			</MainWrapper>
 		);
 	}

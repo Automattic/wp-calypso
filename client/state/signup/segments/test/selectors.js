@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getSegments, getSegmentBySlug } from '../selectors';
+import { getSegments, getSegmentBySlug, getSegmentById } from '../selectors';
 
 describe( 'state/signup/segments/selectors', () => {
 	const state = {
@@ -12,10 +12,12 @@ describe( 'state/signup/segments/selectors', () => {
 				{
 					a: 1,
 					slug: 'aaa',
+					id: 1,
 				},
 				{
 					b: 2,
 					slug: 'bbb',
+					id: 2,
 				},
 			],
 		},
@@ -39,30 +41,33 @@ describe( 'state/signup/segments/selectors', () => {
 				},
 				ccc: {
 					title: 'c_c',
-				}
+				},
 			};
-			expect( getSegments( state, segmentDefinitions ) ).toEqual( [
-				{
-					a: 1,
-					slug: 'aaa',
-					title: 'a_a',
-				},
-				{
-					b: 2,
-					slug: 'bbb',
-					title: 'b_b',
-				},
-			] );
+			const expected = state.signup.segments.map( item => ( {
+				...item,
+				...segmentDefinitions[ item.slug ],
+			} ) );
+			expect( getSegments( state, segmentDefinitions ) ).toEqual( expected );
 		} );
 	} );
 
 	describe( 'getSegmentBySlug()', () => {
-		test( 'should default to undefined.', () => {
-			expect( getSegmentBySlug( state, 'ccc' ) ).not.toBeDefined();
+		test( 'should default to an empty object.', () => {
+			expect( getSegmentBySlug( state, 'ccc' ) ).toEqual( {} );
 		} );
 
-		test( 'should return collection object.', () => {
+		test( 'should return collection object by slug', () => {
 			expect( getSegmentBySlug( state, 'aaa' ) ).toEqual( state.signup.segments[ 0 ] );
+		} );
+	} );
+
+	describe( 'getSegmentById()', () => {
+		test( 'should default to an empty object.', () => {
+			expect( getSegmentById( state, 3 ) ).toEqual( {} );
+		} );
+
+		test( 'should return collection object by id', () => {
+			expect( getSegmentById( state, 1 ) ).toEqual( state.signup.segments[ 0 ] );
 		} );
 	} );
 } );

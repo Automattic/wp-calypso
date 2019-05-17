@@ -43,7 +43,7 @@ import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux
 // Current directory dependencies
 import SignupActions from './actions';
 import { isValidLandingPageVertical } from './verticals';
-import { getSiteSegment } from './site-type';
+import { getSegmentDefinition } from './segments';
 import SignupCart from './cart';
 import { promisify } from '../../utils';
 
@@ -621,17 +621,18 @@ export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) 
 		},
 	} = nextProps;
 
-	const siteTypeValue = getSiteSegment( siteType );
+	// TODO: Ideally we should check against the data in state.signup.segments
+	// via the getSegmentBySlug selector
+	const siteSegment = getSegmentDefinition( siteType );
 	let fulfilledDependencies = [];
 
-	if ( siteTypeValue ) {
+	if ( siteSegment ) {
 		debug( 'From query string: site_type = %s', siteType );
-		debug( 'Site type value = %s', siteTypeValue );
 
-		nextProps.submitSiteType( siteType );
+		nextProps.submitSiteType( siteType, siteSegment.theme );
 		recordExcludeStepEvent( stepName, siteType );
 
-		// nextProps.submitSiteType( siteType ) above provides dependencies
+		// nextProps.submitSiteType( siteType, siteSegment.theme ) above provides dependencies
 		fulfilledDependencies = fulfilledDependencies.concat( [ 'siteType', 'themeSlugWithRepo' ] );
 	}
 

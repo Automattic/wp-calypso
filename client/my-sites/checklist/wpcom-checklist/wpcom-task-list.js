@@ -9,16 +9,13 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { getVerticalTaskList } from './vertical-task-list';
 import { abtest } from 'lib/abtest';
 
 const debug = debugModule( 'calypso:wpcom-task-list' );
 
-function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, siteVerticals } ) {
+function getTasks( { taskStatuses, designType, isSiteUnlaunched, segmentSlug, siteVerticals } ) {
 	const tasks = [];
-	const segmentSlug = getSiteTypePropertyValue( 'id', siteSegment, 'slug' );
-
 	const getTask = taskId => get( taskStatuses, taskId );
 	const hasTask = taskId => getTask( taskId ) !== undefined;
 	const isCompleted = taskId => get( getTask( taskId ), 'completed', false );
@@ -140,7 +137,7 @@ export const getTaskList = memoize(
 			'taskStatuses',
 			'designType',
 			'isSiteUnlaunched',
-			'siteSegment',
+			'segmentSlug',
 			'siteVerticals',
 		] );
 		return JSON.stringify( key );

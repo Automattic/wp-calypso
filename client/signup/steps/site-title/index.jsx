@@ -20,7 +20,6 @@ import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import InfoPopover from 'components/info-popover';
 import QueryVerticals from 'components/data/query-verticals';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
@@ -29,6 +28,7 @@ import {
 	getSiteVerticalName,
 	getSiteVerticalPreview,
 } from 'state/signup/steps/site-vertical/selectors';
+import { getSegmentBySlug } from 'state/signup/segments/selectors';
 
 /**
  * Style dependencies
@@ -47,7 +47,6 @@ class SiteTitleStep extends Component {
 		siteTitle: PropTypes.string,
 		siteVerticalName: PropTypes.string,
 		shouldFetchVerticalData: PropTypes.bool,
-		siteType: PropTypes.string,
 	};
 
 	componentDidMount() {
@@ -83,14 +82,13 @@ class SiteTitleStep extends Component {
 	renderSiteTitleStep = () => {
 		const {
 			shouldFetchVerticalData,
+			siteSegmentDefinition,
 			siteTitle,
-			siteType,
 			siteVerticalName,
 			translate,
 		} = this.props;
-		const fieldLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' ) || '';
-		const fieldPlaceholder =
-			getSiteTypePropertyValue( 'slug', siteType, 'siteTitlePlaceholder' ) || '';
+		const fieldLabel = siteSegmentDefinition.siteTitleLabel || '';
+		const fieldPlaceholder = siteSegmentDefinition.siteTitlePlaceholder || '';
 		const fieldDescription = translate(
 			"We'll use this as your site title. Don't worry, you can change this later."
 		);
@@ -172,7 +170,7 @@ export default connect(
 			siteTitle: getSiteTitle( state ),
 			siteVerticalName: getSiteVerticalName( state ),
 			shouldFetchVerticalData,
-			siteType,
+			siteSegmentDefinition: getSegmentBySlug( state, siteType ),
 		};
 	},
 	{ recordTracksEvent, setSiteTitle }

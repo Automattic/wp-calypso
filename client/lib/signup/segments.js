@@ -10,29 +10,25 @@ import { get } from 'lodash';
  */
 
 /**
- * Looks up site types array for item match and returns a property value
+ * Looks up site segments object array for property match and returns a property value.
  *
- * @example
- * // Find the site type where `id === 2`, and return the value of `slug`
- * const siteTypeValue = getSiteTypePropertyValue( 'id', 2, 'slug' );
- *
- * @param {string} key A property name of a site types item
- * @param {string|number} value The value of `key` with which to filter items
- * @param {string} property The name of the property whose value you wish to return
- * @param {array} siteTypes (optional) A site type collection
- * @return {(string|int)?} value of `property` or `null` if none is found
+ * @param {string} segmentSlug            A property name of a site segment definition
+ * @param {Object} siteSegmentDefinitions Object of site type definitions
+ * @return {Object?}                      value of `property` or `null` if none is found
  */
-export function getSiteSegment( segment, siteSegmentDefitions = getSiteSegmentDefinitions() ) {
-	return get( siteSegmentDefitions, segment, null );
+export function getSegmentDefinition( segmentSlug, siteSegmentDefinitions = getAllSegmentDefinitions() ) {
+	return get( siteSegmentDefinitions, segmentSlug, null );
 }
-//getSiteTypePropertyValue
+
 /**
- * Returns complementary properties for current site segments received from the /segments API
- * We do this because Calypso requires extra information, different copy and so on
+ * Returns complementary properties for current site segments received from the /segments API.
+ * We do this because Calypso requires extra information, different copy and so on.
+ *
+ * The keys should correspond with the slugs in the /segments API collection.
  *
  * @return {Object} Object of site type definitions
  */
-export function getSiteSegmentDefinitions() {
+export function getAllSegmentDefinitions() {
 	return {
 		blog: {
 			label: i18n.translate( 'Blog' ),
