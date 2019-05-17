@@ -92,8 +92,7 @@ class Page extends Component {
 		return ( this.props.site && this.props.site.domain ) || '...';
 	}
 
-	viewPage = event => {
-		event.preventDefault();
+	viewPage = () => {
 		const { isPreviewable, page, previewURL } = this.props;
 
 		if ( page.status && page.status === 'publish' ) {
