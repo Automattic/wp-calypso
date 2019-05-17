@@ -72,6 +72,7 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 // Current directory dependencies
 import steps from './config/steps';
 import flows from './config/flows';
+import { getStepComponent } from './config/step-components';
 import {
 	canResumeFlow,
 	getCompletedSteps,
@@ -203,6 +204,7 @@ class Signup extends React.Component {
 		debug( 'Signup component mounted' );
 		this.startTrackingForBusinessSite();
 		this.recordSignupStart();
+		this.preloadNextStep();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -211,6 +213,10 @@ class Signup extends React.Component {
 			get( prevProps.signupDependencies, 'siteType' )
 		) {
 			this.startTrackingForBusinessSite();
+		}
+
+		if ( this.props.stepName !== prevProps.stepName ) {
+			this.preloadNextStep();
 		}
 	}
 
@@ -290,6 +296,13 @@ class Signup extends React.Component {
 			this.goToNextStep( flowName );
 		}
 	};
+
+	preloadNextStep() {
+		const currentStepName = this.props.stepName;
+		const nextStepName = flows.getNextStepNameInFlow( this.props.flowName, currentStepName );
+
+		nextStepName && getStepComponent( nextStepName );
+	}
 
 	recordStep = ( stepName = this.props.stepName, flowName = this.props.flowName ) => {
 		analytics.tracks.recordEvent( 'calypso_signup_step_start', {

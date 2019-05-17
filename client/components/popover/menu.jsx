@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { over } from 'lodash';
 
 /**
  * Internal dependencies
@@ -85,15 +84,14 @@ class PopoverMenu extends Component {
 			return child;
 		}
 
-		const boundOnClose = this._onClose.bind( this, child.props.action );
-		let onClick = boundOnClose;
-
-		if ( child.props.onClick ) {
-			onClick = over( [ child.props.onClick, boundOnClose ] );
-		}
+		const { action, onClick } = child.props;
 
 		return React.cloneElement( child, {
-			onClick: onClick,
+			action: null,
+			onClick: () => {
+				onClick && onClick();
+				this._onClose( action );
+			},
 		} );
 	};
 

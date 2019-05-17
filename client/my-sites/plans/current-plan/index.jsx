@@ -21,6 +21,7 @@ import {
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
+import FeatureExample from 'components/feature-example';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/plans/navigation';
 import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
@@ -32,6 +33,7 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
@@ -88,15 +90,16 @@ class CurrentPlan extends Component {
 
 	render() {
 		const {
-			selectedSite,
-			selectedSiteId,
-			domains,
 			currentPlan,
+			domains,
 			hasDomainsLoaded,
 			isExpiring,
 			path,
+			selectedSite,
+			selectedSiteId,
 			shouldShowDomainWarnings,
 			showJetpackChecklist,
+			showThankYou,
 			translate,
 		} = this.props;
 
@@ -120,7 +123,7 @@ class CurrentPlan extends Component {
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<PlansNavigation path={ path } />
+				{ showThankYou ? <SectionNav /> : <PlansNavigation path={ path } /> }
 
 				{ showDomainWarnings && (
 					<DomainWarnings
@@ -139,7 +142,7 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				{ this.props.showThankYou ? (
+				{ showThankYou ? (
 					<CurrentPlanThankYouCard />
 				) : (
 					<CurrentPlanHeader
@@ -155,18 +158,28 @@ class CurrentPlan extends Component {
 				{ showJetpackChecklist && (
 					<Fragment>
 						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-						<JetpackChecklist />
+						{ showThankYou ? (
+							<FeatureExample role="presentation">
+								<JetpackChecklist />
+							</FeatureExample>
+						) : (
+							<JetpackChecklist />
+						) }
 					</Fragment>
 				) }
 
-				<div
-					className={ classNames( 'current-plan__header-text current-plan__text', {
-						'is-placeholder': { isLoading },
-					} ) }
-				>
-					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
-				</div>
-				<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
+				{ ! showThankYou && (
+					<Fragment>
+						<div
+							className={ classNames( 'current-plan__header-text current-plan__text', {
+								'is-placeholder': { isLoading },
+							} ) }
+						>
+							<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+						</div>
+						<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
+					</Fragment>
+				) }
 
 				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 			</Main>

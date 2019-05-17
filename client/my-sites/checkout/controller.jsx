@@ -23,6 +23,8 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 import ConciergeSessionNudge from './concierge-session-nudge';
 import ConciergeQuickstartSession from './concierge-quickstart-session';
 import { isGSuiteRestricted } from 'lib/gsuite';
+import FormattedHeader from 'components/formatted-header';
+import { abtest } from 'lib/abtest';
 
 export function checkout( context, next ) {
 	const { feature, plan, product } = context.params;
@@ -36,6 +38,33 @@ export function checkout( context, next ) {
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+
+	if ( 'variantRightColumn' === abtest( 'showCheckoutCartRight' ) ) {
+		context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
+
+		context.primary = (
+			<>
+				<FormattedHeader />
+				<div className="checkout__container">
+					<CheckoutData>
+						<Checkout
+							product={ product }
+							purchaseId={ context.params.purchaseId }
+							selectedFeature={ feature }
+							couponCode={ context.query.code }
+							plan={ plan }
+						/>
+						<CartData>
+							<SecondaryCart selectedSite={ selectedSite } />
+						</CartData>
+					</CheckoutData>
+				</div>
+			</>
+		);
+
+		next();
+		return;
+	}
 
 	context.primary = (
 		<CheckoutData>

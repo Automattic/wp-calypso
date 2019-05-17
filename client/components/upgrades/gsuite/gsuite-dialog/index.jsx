@@ -41,7 +41,6 @@ class GoogleAppsDialog extends React.Component {
 		productsList: PropTypes.object.isRequired,
 		onAddGoogleApps: PropTypes.func.isRequired,
 		onClickSkip: PropTypes.func.isRequired,
-		onGoBack: PropTypes.func,
 		analyticsSection: PropTypes.string,
 		initialGoogleAppsCartItem: PropTypes.object,
 	};
@@ -175,14 +174,6 @@ class GoogleAppsDialog extends React.Component {
 		this.props.onClickSkip();
 	};
 
-	handleFormKeepSearching = event => {
-		event.preventDefault();
-
-		this.props.recordKeepSearching();
-
-		this.props.onGoBack();
-	};
-
 	getFields() {
 		const { translate } = this.props;
 
@@ -229,9 +220,6 @@ class GoogleAppsDialog extends React.Component {
 	}
 }
 
-const recordKeepSearching = () =>
-	recordGoogleEvent( 'Domain Search', 'Click "Keep Searching" Button in G Suite Dialog' );
-
 const recordCancelButtonClick = section =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_gsuite_cancel_button_click', { section } ),
@@ -259,6 +247,5 @@ export default connect(
 		recordAddEmailButtonClick,
 		recordCancelButtonClick,
 		recordFormSubmit,
-		recordKeepSearching,
 	}
 )( localize( GoogleAppsDialog ) );

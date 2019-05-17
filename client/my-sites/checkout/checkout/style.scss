@@ -955,14 +955,22 @@
 		margin-right: 4px;
 	}
 
+	.checkout__apple-pay {
+		height: 35px;
+
+		@include breakpoint( '>480px' ) {
+			margin: -5px 0;
+		}
+	}
+	.select-dropdown__container {
+		.checkout__apple-pay {
+			margin: 0;
+		}
+	}
+
 	.checkout__wechat {
 		height: 24px;
 		margin-right: 5px;
-	}
-
-	.checkout__apple-pay {
-		height: 22px;
-		margin-right: 6px;
 	}
 
 	.checkout__sofort {

@@ -118,6 +118,10 @@
 			background-color: var( --color-neutral-0 );
 		}
 
+		.module-content-list-item-action .module-content-list-item-action-wrapper {
+			opacity: 1;
+		}
+
 		.module-content-list-item-right::before {
 			background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
 		}
@@ -126,6 +130,9 @@
 		.module-content-list-item-action-hidden {
 			display: inline-block;
 		}
+	}
+	.module-content-list-item-link .module-content-list-item-action-wrapper:focus {
+		opacity: 1;
 	}
 
 	// Don't show hover on legend row
@@ -495,7 +502,7 @@ ul.module-content-list-item-action-submenu {
 	// Action wrapper, what's actually selected
 	.module-content-list-item-action-wrapper {
 		@extend %mobile-interface-element;
-		display: inline-block;
+		opacity: 0;
 		text-align: center;
 		margin: 0;
 		line-height: inherit;

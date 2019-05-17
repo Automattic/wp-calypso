@@ -116,14 +116,63 @@
 	}
 }
 
+.tools__upgrade-button {
+	text-transform: capitalize;
+}
+
 .tools__feature-list-item-child-row {
 	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
+	flex-direction: column;
+	justify-content: center;
+	margin-top: 1em;
 
 	.button {
-		margin: 1em 0 0;
+		margin: 0;
 		text-align: center;
 		width: auto;
 	}
+
+	.purchase-detail__info {
+		margin-top: 1em;
+	}
+
+	.google-voucher__initial-step .purchase-detail__button {
+		float: right;
+		font-size: 12px;
+		line-height: 1;
+		padding: 7px;
+	}
+
+	.google-voucher__initial-step {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+		justify-content: flex-end;
+
+		.google-voucher__initial-step {
+			display: block;
+		}
+
+		.button {
+			margin: 0 1em 0 0;
+			width: auto;
+		}
+	}
+
+	@include breakpoint( '>1040px' ) {
+		
+
+		.button {
+			margin: 0 0 0 1em;
+		}
+
+		.purchase-detail__button {
+			float: right;
+		}
+	}
 }
+

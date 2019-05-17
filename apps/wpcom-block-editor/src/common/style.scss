@@ -1,3 +1,16 @@
+@media ( max-width: 600px ) {
+	// stylelint-disable-next-line selector-max-id
+	.is-iframed #wpbody {
+		padding-top: 0;
+	}
+}
+
+@media ( min-width: 600px ) {
+	body.is-iframed.is-fullscreen-mode .edit-post-header {
+		top: 0;
+	}
+}
+
 @media ( min-width: 782px ) {
 	.edit-post-layout__content {
 		position: fixed;
@@ -16,10 +29,9 @@
 	}
 }
 
-@media ( max-width: 600px ) {
-	// stylelint-disable-next-line selector-max-id
-	.is-iframed #wpbody {
-		padding-top: 0;
+@media ( min-width: 782px ) and ( max-width: 1079px ) {
+	.is-fullscreen-mode .edit-post-layout.has-fixed-toolbar .components-notice {
+		top: 37px;
 	}
 }
 

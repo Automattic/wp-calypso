@@ -33,6 +33,13 @@
 
 .credit-card-form-fields {
 	margin-bottom: 15px;
+
+	&__explainer {
+		color: var( --color-text-subtle );
+		font-size: rem( 14px );
+		margin-left: 0.35em;
+		font-weight: normal;
+	}
 }
 
 .credit-card-form-fields__field {

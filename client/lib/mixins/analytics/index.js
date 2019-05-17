@@ -9,14 +9,6 @@ import { getDomainTypeText } from 'lib/domains';
 import { snakeCase } from 'lodash';
 
 const EVENTS = {
-	popupCart: {
-		checkoutButtonClick() {
-			analytics.ga.recordEvent( 'Domain Search', 'Click "Checkout" Button on Popup Cart' );
-		},
-		keepSearchButtonClick() {
-			analytics.ga.recordEvent( 'Domain Search', 'Click "Keep Searching" Button on Popup Cart' );
-		},
-	},
 	domainManagement: {
 		edit: {
 			navigationClick( action, domain ) {

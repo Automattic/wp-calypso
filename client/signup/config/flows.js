@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, includes, reject } from 'lodash';
+import { assign, get, includes, indexOf, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -150,6 +150,20 @@ const Flows = {
 		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 
 		return Flows.filterExcludedSteps( Flows.getABTestFilteredFlow( flowName, flow ) );
+	},
+
+	getNextStepNameInFlow( flowName, currentStepName = '' ) {
+		const flow = Flows.getFlows()[ flowName ];
+
+		if ( ! flow ) {
+			return false;
+		}
+		const flowSteps = flow.steps;
+		const currentStepIndex = indexOf( flowSteps, currentStepName );
+		const nextIndex = currentStepIndex + 1;
+		const nextStepName = get( flowSteps, nextIndex );
+
+		return nextStepName;
 	},
 
 	/**
