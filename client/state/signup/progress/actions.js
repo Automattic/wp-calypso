@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, includes, isEmpty, omit, reduce, snakeCase } from 'lodash';
+import { includes, isEmpty, reduce, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,19 +14,16 @@ import {
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
 	SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
 } from 'state/action-types';
-import steps from 'signup/config/steps-pure';
 import { assertValidDependencies } from 'lib/signup/asserts';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
 import analytics from 'lib/analytics';
 
-function addStorableDependencies( step, providedDependencies ) {
-	const unstorableDependencies = get( steps, [ step.stepName, 'unstorableDependencies' ], [] );
-
+function addProvidedDependencies( step, providedDependencies ) {
 	if ( isEmpty( providedDependencies ) ) {
 		return step;
 	}
 
-	return { ...step, providedDependencies: omit( providedDependencies, unstorableDependencies ) };
+	return { ...step, providedDependencies };
 }
 
 function recordSubmitStep( stepName, providedDependencies ) {
@@ -80,11 +77,11 @@ export function submitSignupStep( step, providedDependencies ) {
 		const lastKnownFlow = getCurrentFlowName( getState() );
 		const lastUpdated = Date.now();
 
-		recordSubmitStep( step.stepName, providedDependencies);
+		recordSubmitStep( step.stepName, providedDependencies );
 
 		return dispatch( {
 			type: SIGNUP_PROGRESS_SUBMIT_STEP,
-			step: addStorableDependencies(
+			step: addProvidedDependencies(
 				{ ...step, lastKnownFlow, lastUpdated },
 				providedDependencies
 			),
@@ -100,7 +97,7 @@ export function completeStep( step, providedDependencies ) {
 
 		return dispatch( {
 			type: SIGNUP_PROGRESS_COMPLETE_STEP,
-			step: addStorableDependencies(
+			step: addProvidedDependencies(
 				{ ...step, lastKnownFlow, lastUpdated },
 				providedDependencies
 			),

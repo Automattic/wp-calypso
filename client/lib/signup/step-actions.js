@@ -462,10 +462,22 @@ export function createAccount(
 
 				if ( errors ) {
 					callback( errors );
-				} else {
-					analytics.recordSocialRegistration();
-					callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
+					return;
 				}
+
+				if ( ! response || ! response.bearer_token ) {
+					// something odd happened...
+					//eslint-disable-next-line no-console
+					console.error(
+						'Expected either an error or a bearer token. got %o, %o.',
+						error,
+						response
+					);
+				}
+
+				analytics.recordSocialRegistration();
+
+				callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 			}
 		);
 	} else {
@@ -497,32 +509,34 @@ export function createAccount(
 			( error, response ) => {
 				const errors =
 					error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
-				// we should either have an error with an error property, or we should have a response with a bearer_token
-				const bearerToken = {};
-				if ( ! errors ) {
-					if ( response && response.bearer_token ) {
-						bearerToken.bearer_token = response.bearer_token;
-					} else {
-						// something odd happened...
-						//eslint-disable-next-line no-console
-						console.error(
-							'Expected either an error or a bearer token. got %o, %o.',
-							error,
-							response
-						);
-					}
+
+				if ( errors ) {
+					callback( errors );
+					return;
 				}
 
-				if ( ! errors ) {
-					// Fire after a new user registers.
-					analytics.recordRegistration();
+				// we should either have an error with an error property, or we should have a response with a bearer_token
+				const bearerToken = {};
+				if ( response && response.bearer_token ) {
+					bearerToken.bearer_token = response.bearer_token;
+				} else {
+					// something odd happened...
+					//eslint-disable-next-line no-console
+					console.error(
+						'Expected either an error or a bearer token. got %o, %o.',
+						error,
+						response
+					);
 				}
+
+				// Fire after a new user registers.
+				analytics.recordRegistration();
 
 				const username =
 					( response && response.signup_sandbox_username ) ||
 					( response && response.username ) ||
 					userData.username;
-				const providedDependencies = assign( {}, { username }, bearerToken );
+				const providedDependencies = assign( { username }, bearerToken );
 
 				if ( oauth2Signup ) {
 					assign( providedDependencies, {
@@ -531,7 +545,7 @@ export function createAccount(
 					} );
 				}
 
-				callback( errors, providedDependencies );
+				callback( undefined, providedDependencies );
 			}
 		);
 	}
