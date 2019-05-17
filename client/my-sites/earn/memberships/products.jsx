@@ -87,6 +87,7 @@ class MembershipsProductsSection extends Component {
 					price: this.state.editedPrice.value,
 					title: this.state.editedProductName,
 					interval: this.state.editedSchedule,
+					buyer_can_change_amount: this.state.editedPayWhatYouWant,
 				},
 				this.props.translate( 'Added "%s" product.', { args: this.state.editedProductName } )
 			);

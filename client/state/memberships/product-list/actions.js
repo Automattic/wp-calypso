@@ -51,12 +51,11 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 				{
 					method: 'POST',
 					path: `/sites/${ siteId }/memberships/product`,
-					apiNamespace: 'wpcom/v2',
 				},
 				product
 			)
 			.then( newProduct => {
-				const membershipProduct = membershipProductFromApi( newProduct );
+				const membershipProduct = membershipProductFromApi( newProduct.product );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
 				dispatch( {
 					type: NOTICE_CREATE,
