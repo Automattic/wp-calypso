@@ -28,7 +28,12 @@ import {
 	isSubscription,
 	paymentLogoType,
 } from 'lib/purchases';
-import { isDomainRegistration, isDomainTransfer, isConciergeSession } from 'lib/products-values';
+import {
+	isPlan,
+	isDomainRegistration,
+	isDomainTransfer,
+	isConciergeSession,
+} from 'lib/products-values';
 import { getPlan } from 'lib/plans';
 
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -314,7 +319,9 @@ class PurchaseMeta extends Component {
 			return null;
 		}
 
-		if ( config.isEnabled( 'autorenewal-toggle' ) && isSubscription( purchase ) ) {
+		// The toggle is only available for the plan subscription for now, and will be gradully rolled out to
+		// domains and G suite.
+		if ( config.isEnabled( 'autorenewal-toggle' ) && isPlan( purchase ) ) {
 			// TODO: remove this once the proper state has been introduced.
 			const { isAutorenewalEnabled } = this.state;
 
