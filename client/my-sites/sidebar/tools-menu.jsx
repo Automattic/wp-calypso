@@ -19,6 +19,7 @@ import analytics from 'lib/analytics';
 import compareProps from 'lib/compare-props';
 import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -35,7 +36,7 @@ class ToolsMenu extends PureComponent {
 	};
 
 	getPluginItem() {
-		const { isAtomicSite, translate } = this.props;
+		const { canManagePlugins, isAtomicSite, translate } = this.props;
 
 		return {
 			name: 'plugins',
@@ -46,7 +47,7 @@ class ToolsMenu extends PureComponent {
 			link: '/plugins',
 			paths: [ '/extensions', '/plugins' ],
 			wpAdminLink: 'plugin-install.php?calypsoify=1',
-			showOnAllMySites: true,
+			showOnAllMySites: canManagePlugins,
 			extraIcon: isAtomicSite ? 'chevron-right' : null,
 			customClassName: isAtomicSite ? 'sidebar__plugins-item' : '',
 			forceInternalLink: isAtomicSite,
@@ -133,6 +134,7 @@ class ToolsMenu extends PureComponent {
 
 export default connect(
 	( state, { siteId } ) => ( {
+		canManagePlugins: canCurrentUserManagePlugins( state ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
