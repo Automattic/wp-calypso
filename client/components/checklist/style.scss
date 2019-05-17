@@ -2,20 +2,38 @@
 	display: flex;
 	flex-direction: row;
 
+	@include breakpoint( '<480px' ) {
+		flex-direction: column;
+		justify-content: flex-end;
+	}
+
+	&.card {
+		padding: 0;
+	}
+
 	&-main {
 		display: flex;
 		flex: 1 1;
 		flex-direction: column;
 		align-items: stretch;
+		padding: 16px 24px;
+		@include breakpoint( '<480px' ) {
+			padding: 16px;
+		}
 	}
 
 	&-secondary {
+		align-items: stretch;
 		display: flex;
-		flex: 2 1;
 		flex-direction: row;
-		align-items: center;
+		flex: 2 1;
 		justify-content: flex-end;
-		padding-right: 36px;
+		padding: 0;
+
+		@include breakpoint( '<480px' ) {
+			justify-content: flex-end;
+			border-top: 1px solid var( --color-border-subtle );
+		}
 	}
 
 	&-progress {
@@ -44,14 +62,14 @@
 		line-height: 24px;
 		color: var( --color-text-subtle );
 		cursor: pointer;
+		padding: 16px;
+		@include breakpoint( '<480px' ) {
+			flex: 1;
+		}
 	}
 
 	&-action {
-		position: absolute;
-		top: 0;
-		right: 0;
 		width: 48px;
-		height: 100%;
 		border-left: 1px solid var( --color-neutral-0 );
 		cursor: pointer;
 
