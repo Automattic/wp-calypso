@@ -25,7 +25,7 @@ export default localize( ( { isJetpack, translate } ) => {
 						? 'https://jetpack.com/support/simple-payment-button/'
 						: 'https://en.support.wordpress.com/simple-payments/'
 				}
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-payments.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/payments.svg" /> }
 				target="_blank"
 				title={ translate( 'Sell online with PayPal' ) }
 			/>

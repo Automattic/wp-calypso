@@ -15,7 +15,7 @@ import PurchaseDetail from 'components/purchase-detail';
 export default localize( ( { selectedSite, translate } ) => (
 	<div className="product-purchase-features-list__item">
 		<PurchaseDetail
-			icon={ <img alt="" src="/calypso/images/illustrations/jetpack-speed.svg" /> }
+			icon={ <img alt="" src="/calypso/images/illustrations/speed.svg" /> }
 			title={ translate( 'Site accelerator' ) }
 			description={ translate(
 				'Load pages faster, and serve your images and ' +

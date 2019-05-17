@@ -16,7 +16,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/updates.svg" /> }
 				title={ translate( 'Add a Plugin' ) }
 				description={ translate(
 					'Search and add plugins right from your dashboard, or upload a plugin ' +
