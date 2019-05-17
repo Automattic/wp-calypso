@@ -39,21 +39,16 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
-import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import {
 	getCustomizerUrl,
 	getSite,
-	isJetpackMinimumVersion,
-	isJetpackModuleActive,
 	isJetpackSite,
 	canCurrentUserUseAds,
 	canCurrentUserUseStore,
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import { transferStates } from 'state/automated-transfer/constants';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import {
@@ -703,14 +698,6 @@ function mapStateToProps( state ) {
 	const isToolsOpen = isToolsMenuOpen( state );
 	const isManageOpen = isManageMenuOpen( state );
 
-	const isSharingEnabledOnJetpackSite =
-		isJetpackModuleActive( state, siteId, 'publicize' ) ||
-		( isJetpackModuleActive( state, siteId, 'sharedaddy' ) &&
-			! isJetpackMinimumVersion( state, siteId, '3.4-dev' ) );
-
-	const transferStatus = getAutomatedTransferStatus( state, siteId );
-	const hasSitePendingAT = hasSitePendingAutomatedTransfer( state, siteId );
-
 	return {
 		canManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
@@ -731,13 +718,11 @@ function mapStateToProps( state ) {
 		isDesignOpen,
 		isToolsOpen,
 		isManageOpen,
-		isSharingEnabledOnJetpackSite,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
-		siteHasBackgroundTransfer: hasSitePendingAT && transferStatus !== transferStates.ERROR,
 	};
 }
 
