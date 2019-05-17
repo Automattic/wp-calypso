@@ -81,7 +81,7 @@
 		right: 0;
 		top: 0;
 		width: 1.7em;
-		z-index: 1;
+		z-index: z-index( 'root', '.themes-banner__close' );
 
 		&:hover {
 			background: rgba( 255, 255, 255, 0.8 );
