@@ -199,6 +199,10 @@
 			&:last-child {
 				padding-right: 0;
 			}
+			&:first-child:nth-last-child(4),
+			&:first-child:nth-last-child(4) ~ li {
+				  max-width: 25%;
+			}
 		}
 
 		+ li {

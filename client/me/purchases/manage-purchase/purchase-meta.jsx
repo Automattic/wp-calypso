@@ -336,15 +336,11 @@ class PurchaseMeta extends Component {
 			return (
 				<li>
 					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
-					<span className="manage-purchase__detail">
-						{ subsRenewText }
-						<FormToggle
-							className="manage-purchase__detail-auto-renewal-toggle"
-							checked={ isAutorenewalEnabled }
-							onChange={ this.onToggleAutorenewal }
-						/>
-					</span>
+					<span className="manage-purchase__detail">{ subsRenewText }</span>
 					<span className="manage-purchase__detail">{ subsBillingText }</span>
+					<span className="manage-purchase__detail">
+						<FormToggle checked={ isAutorenewalEnabled } onChange={ this.onToggleAutorenewal } />
+					</span>
 				</li>
 			);
 		}
