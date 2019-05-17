@@ -48,7 +48,6 @@ class ToolsMenu extends PureComponent {
 			paths: [ '/extensions', '/plugins' ],
 			wpAdminLink: 'plugin-install.php?calypsoify=1',
 			showOnAllMySites: canManagePlugins,
-			customClassName: isAtomicSite ? 'sidebar__plugins-item' : '',
 			forceInternalLink: isAtomicSite,
 		};
 	}
@@ -103,7 +102,6 @@ class ToolsMenu extends PureComponent {
 
 		return (
 			<SidebarItem
-				className={ menuItem.customClassName }
 				key={ menuItem.name }
 				label={ menuItem.label }
 				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
