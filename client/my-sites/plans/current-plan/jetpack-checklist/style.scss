@@ -23,7 +23,7 @@
 		max-width: 80%;
 		display: block;
 		margin: 20px auto;
-		@include breakpoint( '<480px' ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 	}
