@@ -27,7 +27,7 @@ export const requestSegments = action =>
 		action
 	);
 
-export const storeSegments = segments => setSegments( segments );
+export const storeSegments = ( action, data ) => setSegments( data );
 export const showSegmentsRequestError = () =>
 	errorNotice(
 		translate( 'We encountered an error on fetching data from our server. Please try again.' )
