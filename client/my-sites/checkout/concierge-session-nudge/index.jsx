@@ -49,6 +49,13 @@ export class ConciergeSessionNudge extends React.Component {
 		selectedSiteId: PropTypes.number.isRequired,
 	};
 
+	constructor( props ) {
+		super( props );
+
+		// Force a backend test variation for anyone visiting this page. Only while the price test is running
+		document.cookie = 'poc_concierge_session_price_test=original_price_49';
+	}
+
 	render() {
 		const {
 			selectedSiteId,
