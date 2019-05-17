@@ -321,7 +321,11 @@ class PurchaseMeta extends Component {
 
 		// The toggle is only available for the plan subscription for now, and will be gradully rolled out to
 		// domains and G suite.
-		if ( config.isEnabled( 'autorenewal-toggle' ) && isPlan( purchase ) ) {
+		if (
+			config.isEnabled( 'autorenewal-toggle' ) &&
+			isPlan( purchase ) &&
+			! isExpired( purchase )
+		) {
 			// TODO: remove this once the proper state has been introduced.
 			const { isAutorenewalEnabled } = this.state;
 
