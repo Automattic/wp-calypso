@@ -178,15 +178,19 @@ class Task extends PureComponent {
 			>
 				<div className="checklist__task-primary">
 					<h3 className="checklist__task-title">
-						<Button
-							borderless
-							className="checklist__task-title-link"
-							href={ href }
-							onClick={ this.onTaskClick }
-							target={ target }
-						>
-							{ ( completed && completedTitle ) || title }
-						</Button>
+						{ completed ? (
+							completedTitle || title
+						) : (
+							<Button
+								borderless
+								className="checklist__task-title-link"
+								href={ href }
+								onClick={ this.onTaskClick }
+								target={ target }
+							>
+								{ title }
+							</Button>
+						) }
 					</h3>
 					<p className="checklist__task-description">{ description }</p>
 					{ completedDescription && (

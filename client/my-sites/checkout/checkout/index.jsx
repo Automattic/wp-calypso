@@ -62,7 +62,6 @@ import { isValidFeatureKey } from 'lib/plans/features-list';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { GROUP_WPCOM } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
-import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
 import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -102,7 +101,6 @@ export class Checkout extends React.Component {
 	/* eslint-disable-next-line react/no-deprecated */
 	componentWillMount() {
 		resetTransaction();
-		this.props.recordApplePayStatus();
 	}
 
 	componentDidMount() {
@@ -794,7 +792,6 @@ export default connect(
 		clearPurchases,
 		clearSitePlans,
 		fetchReceiptCompleted,
-		recordApplePayStatus,
 		requestSite,
 	}
 )( localize( Checkout ) );

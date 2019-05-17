@@ -54,6 +54,14 @@ describe( 'ProgressBar', () => {
 		);
 	} );
 
+	test( 'should have correct aria values', () => {
+		const progressBar = shallow( <ProgressBar value={ 20 } total={ 40 } /> );
+		const props = progressBar.find( '.progress-bar__progress' ).props();
+
+		expect( props[ 'aria-valuenow' ] ).to.be.equal( 20 );
+		expect( props[ 'aria-valuemax' ] ).to.be.equal( 40 );
+	} );
+
 	test( 'should have the color provided by the color property', () => {
 		const progressBar = shallow( <ProgressBar value={ 20 } color="red" /> );
 

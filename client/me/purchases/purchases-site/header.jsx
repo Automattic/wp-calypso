@@ -18,6 +18,11 @@ import QuerySites from 'components/data/query-sites';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 
+/**
+ * Style dependencies
+ */
+import './header.scss';
+
 class PurchaseSiteHeader extends Component {
 	static propTypes = {
 		isPlaceholder: PropTypes.bool,
