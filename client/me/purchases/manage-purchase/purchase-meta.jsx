@@ -69,7 +69,9 @@ class PurchaseMeta extends Component {
 		if ( config.isEnabled( 'autorenewal-toggle' ) ) {
 			// TODO: remove this once the proper state has been introduced.
 			this.state = {
-				isAutorenewalEnabled: false,
+				...( config.isEnabled( 'autorenewal-toggle' ) && {
+					isAutorenewalEnabled: false,
+				} ),
 			};
 		}
 	}
