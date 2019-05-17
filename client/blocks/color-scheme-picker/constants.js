@@ -63,5 +63,12 @@ export default function( translate ) {
 				cssClass: 'is-midnight',
 			},
 		},
+		{
+			label: translate( 'Contrast' ),
+			value: 'contrast',
+			thumbnail: {
+				cssClass: 'is-contrast',
+			},
+		},
 	] );
 }
