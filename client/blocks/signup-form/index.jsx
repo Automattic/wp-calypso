@@ -84,6 +84,7 @@ class SignupForm extends Component {
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
 		email: PropTypes.string,
+		flowName: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
 		redirectToAfterLoginUrl: PropTypes.string.isRequired,
@@ -108,6 +109,7 @@ class SignupForm extends Component {
 	static defaultProps = {
 		displayNameInput: false,
 		displayUsernameInput: true,
+		flowName: '',
 		isSocialSignupEnabled: false,
 	};
 
@@ -693,6 +695,8 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
+		const { flowName, translate } = this.props;
+
 		if ( this.props.positionInFlow !== 0 ) {
 			return;
 		}
@@ -704,7 +708,9 @@ class SignupForm extends Component {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ logInUrl }>
-					{ this.props.translate( 'Already have a WordPress.com account?' ) }
+					{ [ 'onboarding', 'onboarding-dev' ].includes( flowName )
+						? translate( 'Log in to create a site for your existing account.' )
+						: translate( 'Already have a WordPress.com account?' ) }
 				</LoggedOutFormLinkItem>
 				{ this.props.oauth2Client && (
 					<LoggedOutFormBackLink
