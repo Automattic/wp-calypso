@@ -122,7 +122,6 @@
 		"me/my-profile": true,
 		"me/notifications": true,
 		"me/trophies": false,
-		"my-sites/checkout/web-payment": true,
 		"my-sites/checkout/web-payment/apple-pay": true,
 		"my-sites/checkout/web-payment/basic-card": false,
 		"nps-survey/devdocs": true,

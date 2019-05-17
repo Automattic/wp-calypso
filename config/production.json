@@ -80,7 +80,6 @@
 		"me/my-profile": true,
 		"me/notifications": true,
 		"me/trophies": false,
-		"my-sites/checkout/web-payment": false,
 		"my-sites/checkout/web-payment/apple-pay": false,
 		"my-sites/checkout/web-payment/basic-card": false,
 		"nps-survey/devdocs": false,
