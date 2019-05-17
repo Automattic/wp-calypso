@@ -30,7 +30,7 @@ import FormSelect from 'components/forms/form-select';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
-import { requestAddProduct } from 'state/memberships/product-list/actions';
+import { requestAddProduct, requestUpdateProduct } from 'state/memberships/product-list/actions';
 
 // These are Stripe settlement currencies.
 const CURRENCIES = [
@@ -72,10 +72,6 @@ class MembershipsProductsSection extends Component {
 					<Gridicon size={ 18 } icon={ 'pencil' } />
 					{ this.props.translate( 'Edit' ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem>
-					<Gridicon size={ 18 } icon={ 'trash' } />
-					{ this.props.translate( 'Delete' ) }
-				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
 	}
@@ -91,6 +87,18 @@ class MembershipsProductsSection extends Component {
 					interval: this.state.editedSchedule,
 				},
 				this.props.translate( 'Added "%s" product.', { args: this.state.editedProductName } )
+			);
+		} else if ( reason === 'submit' && this.state.editedProductId ) {
+			this.props.requestUpdateProduct(
+				this.props.siteId,
+				{
+					ID: this.state.editedProductId,
+					currency: this.state.editedPrice.currency,
+					price: this.state.editedPrice.value,
+					title: this.state.editedProductName,
+					interval: this.state.editedSchedule,
+				},
+				this.props.translate( 'Updated "%s" product.', { args: this.state.editedProductName } )
 			);
 		}
 		this.setState( { showDialog: false, editedProductId: null } );
@@ -269,5 +277,5 @@ export default connect(
 			products: get( state, [ 'memberships', 'productList', 'items', siteId ], [] ),
 		};
 	},
-	{ requestAddProduct }
+	{ requestAddProduct, requestUpdateProduct }
 )( localize( MembershipsProductsSection ) );

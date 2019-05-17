@@ -9,6 +9,8 @@ import {
 	MEMBERSHIPS_PRODUCT_RECEIVE,
 	MEMBERSHIPS_PRODUCT_ADD,
 	MEMBERSHIPS_PRODUCT_ADD_FAILURE,
+	MEMBERSHIPS_PRODUCT_UPDATE,
+	MEMBERSHIPS_PRODUCT_UPDATE_FAILURE,
 	NOTICE_CREATE,
 } from 'state/action-types';
 
@@ -69,6 +71,53 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 			.catch( error => {
 				dispatch( {
 					type: MEMBERSHIPS_PRODUCT_ADD_FAILURE,
+					siteId,
+					error,
+				} );
+				dispatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						duration: 10000,
+						text: error.message,
+						status: 'is-error',
+					},
+				} );
+			} );
+	};
+};
+
+export const requestUpdateProduct = ( siteId, product, noticeText ) => {
+	return dispatch => {
+		dispatch( {
+			type: MEMBERSHIPS_PRODUCT_UPDATE,
+			siteId,
+			product,
+		} );
+
+		return wpcom.req
+			.post(
+				{
+					method: 'POST',
+					path: `/sites/${ siteId }/memberships/product/${ product.ID }`,
+				},
+				product
+			)
+			.then( newProduct => {
+				const membershipProduct = membershipProductFromApi( newProduct.product );
+				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
+				dispatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						duration: 5000,
+						text: noticeText,
+						status: 'is-success',
+					},
+				} );
+				return membershipProduct;
+			} )
+			.catch( error => {
+				dispatch( {
+					type: MEMBERSHIPS_PRODUCT_UPDATE_FAILURE,
 					siteId,
 					error,
 				} );
