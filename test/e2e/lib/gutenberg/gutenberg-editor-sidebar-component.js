@@ -200,9 +200,10 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 			this.driver,
 			By.css( '.edit-post-post-visibility__toggle' )
 		);
-		await driverHelper.clickWhenClickable(
+		await driverHelper.selectElementByText(
 			this.driver,
-			By.css( '.editor-post-visibility__dialog-radio[value="password"]' )
+			By.css( '.editor-post-visibility__dialog-label' ),
+			'Password Protected'
 		);
 		return await driverHelper.setWhenSettable(
 			this.driver,
@@ -219,9 +220,10 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 			this.driver,
 			By.css( '.edit-post-post-visibility__toggle' )
 		);
-		await driverHelper.clickWhenClickable(
+		await driverHelper.selectElementByText(
 			this.driver,
-			By.css( '.editor-post-visibility__dialog-radio[value="private"]' )
+			By.css( '.editor-post-visibility__dialog-label' ),
+			'Private'
 		);
 		const publishPrivateAlert = await this.driver.switchTo().alert();
 		return await publishPrivateAlert.accept();

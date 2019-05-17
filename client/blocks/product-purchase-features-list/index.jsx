@@ -54,6 +54,11 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
 		plan: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
@@ -195,10 +200,12 @@ export class ProductPurchaseFeaturesList extends Component {
 				) }
 				<SiteActivity />
 				<MobileApps />
-				<JetpackReturnToDashboard
-					onClick={ recordReturnToDashboardClick }
-					selectedSite={ selectedSite }
-				/>
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackReturnToDashboard
+						onClick={ recordReturnToDashboardClick }
+						selectedSite={ selectedSite }
+					/>
+				) }
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isJetpackFreePlan
@@ -238,11 +245,12 @@ export class ProductPurchaseFeaturesList extends Component {
 						link="https://calendly.com/jetpack/concierge"
 					/>
 				) }
-
-				<JetpackReturnToDashboard
-					onClick={ recordReturnToDashboardClick }
-					selectedSite={ selectedSite }
-				/>
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackReturnToDashboard
+						onClick={ recordReturnToDashboardClick }
+						selectedSite={ selectedSite }
+					/>
+				) }
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
@@ -272,10 +280,12 @@ export class ProductPurchaseFeaturesList extends Component {
 				) }
 				<SiteActivity />
 				<MobileApps />
-				<JetpackReturnToDashboard
-					onClick={ recordReturnToDashboardClick }
-					selectedSite={ selectedSite }
-				/>
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackReturnToDashboard
+						onClick={ recordReturnToDashboardClick }
+						selectedSite={ selectedSite }
+					/>
+				) }
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
@@ -319,10 +329,12 @@ export class ProductPurchaseFeaturesList extends Component {
 						link="https://calendly.com/jetpack/concierge"
 					/>
 				) }
-				<JetpackReturnToDashboard
-					onClick={ recordReturnToDashboardClick }
-					selectedSite={ selectedSite }
-				/>
+				{ ! isEnabled( 'jetpack/checklist' ) && (
+					<JetpackReturnToDashboard
+						onClick={ recordReturnToDashboardClick }
+						selectedSite={ selectedSite }
+					/>
+				) }
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }

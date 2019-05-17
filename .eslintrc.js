@@ -53,6 +53,14 @@ module.exports = {
 					'@typescript-eslint/no-var-requires': 'off',
 					// REST API objects include underscores
 					'@typescript-eslint/camelcase': 'off',
+					'valid-jsdoc': [
+						2,
+						{
+							requireParamType: false,
+							requireReturn: false,
+							requireReturnType: false,
+						},
+					],
 				},
 			}
 		),

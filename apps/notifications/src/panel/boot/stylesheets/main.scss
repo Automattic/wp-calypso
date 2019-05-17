@@ -613,7 +613,7 @@
 		}
 
 		.wpnc__summary {
-			color: var( --color-neutral-light );
+			color: var( --color-text-subtle );
 
 			p {
 				@extend %ellipsy-box;
@@ -659,7 +659,7 @@
 
 	.time-notification {
 		float: right;
-		color: var( --color-neutral-light );
+		color: var( --color-text-subtle );
 		margin-left: 0.25em;
 		line-height: 1em;
 		margin-top: 0.2em;
@@ -728,7 +728,7 @@
 		blockquote {
 			margin: 0 $wpnc__padding-medium $wpnc__padding-medium;
 			font-style: italic;
-			color: var( --color-neutral-light );
+			color: var( --color-text-subtle );
 			background: transparent;
 		}
 	}

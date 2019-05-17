@@ -16,7 +16,6 @@
 	"features": {
 		"async-payments": false,
 		"ad-tracking": true,
-		"apple-pay": true,
 		"automated-transfer": true,
 		"blogger-plan": false,
 		"calypsoify/gutenberg": true,
@@ -46,6 +45,7 @@
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/connect/remote-install": true,
+		"jetpack/gutenframe": true,
 		"jetpack/happychat": true,
 		"jitms": true,
 		"login/magic-login": true,
@@ -80,7 +80,6 @@
 		"me/my-profile": true,
 		"me/notifications": true,
 		"me/trophies": false,
-		"my-sites/checkout/web-payment": false,
 		"my-sites/checkout/web-payment/apple-pay": false,
 		"my-sites/checkout/web-payment/basic-card": false,
 		"nps-survey/devdocs": false,

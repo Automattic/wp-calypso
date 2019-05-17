@@ -7,6 +7,8 @@ export default {
 			onboarding: 100,
 		},
 		defaultVariation: 'main',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -103,17 +105,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	jetpackMonthlyPlansOnly: {
-		datestamp: '20190312',
-		variations: {
-			original: 50,
-			monthlyOnly: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-		countryCodeTargets: [ 'ES', 'IT', 'PT', 'FR', 'NL', 'DE', 'BE', 'PL', 'SE' ],
-	},
 	pluginFeaturedTitle: {
 		datestamp: '20190220',
 		variations: {
@@ -165,30 +156,21 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	domainSuggestionsEnCheck: {
-		datestamp: '20190415',
-		variations: {
-			control: 50,
-			test: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
 		datestamp: '20190429',
 		variations: {
-			offer: 50,
-			noOffer: 50,
+			offer: 100,
+			noOffer: 0,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	checkoutUXImprovements: {
-		datestamp: '20190501',
+	showCheckoutCartRight: {
+		datestamp: '20190502',
 		variations: {
+			variantRightColumn: 50,
 			control: 50,
-			variantUXImprovements: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,

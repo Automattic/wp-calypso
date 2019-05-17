@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { assign, flow, flowRight, get, has, partialRight } from 'lodash';
+import { assign, flow, get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,6 +40,8 @@ import {
 	setTaxLocation,
 } from 'lib/cart-values';
 import wp from 'lib/wp';
+import { getReduxStore } from 'lib/redux-bridge';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 import { extractStoredCardMetaValue } from 'state/ui/payment/reducer';
 
@@ -50,7 +52,7 @@ let _synchronizer = null;
 let _poller = null;
 
 const CartStore = {
-	get: function() {
+	get() {
 		const value = hasLoadedFromServer() ? _synchronizer.getLatestValue() : {};
 
 		return assign( {}, value, {
@@ -59,15 +61,13 @@ const CartStore = {
 		} );
 	},
 	setSelectedSiteId( selectedSiteId ) {
-		if ( selectedSiteId && _cartKey === selectedSiteId ) {
+		const newCartKey = selectedSiteId || 'no-site';
+
+		if ( _cartKey === newCartKey ) {
 			return;
 		}
 
-		if ( ! selectedSiteId ) {
-			_cartKey = 'no-site';
-		} else {
-			_cartKey = selectedSiteId;
-		}
+		_cartKey = newCartKey;
 
 		if ( _synchronizer && _poller ) {
 			PollerPool.remove( _poller );
@@ -96,10 +96,8 @@ function emitChange() {
 }
 
 function update( changeFunction ) {
-	const wrappedFunction = flowRight(
-		partialRight( fillInAllCartItemAttributes, productsList.get() ),
-		changeFunction
-	);
+	const wrappedFunction = cart =>
+		fillInAllCartItemAttributes( changeFunction( cart ), productsList.get() );
 
 	const previousCart = CartStore.get();
 	const nextCart = wrappedFunction( previousCart );
@@ -226,3 +224,20 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 } );
 
 export default CartStore;
+
+function createListener( store, selector, callback ) {
+	let prevValue = selector( store.getState() );
+	return () => {
+		const nextValue = selector( store.getState() );
+		if ( nextValue !== prevValue ) {
+			prevValue = nextValue;
+			callback( nextValue );
+		}
+	};
+}
+
+// Subscribe to the Redux store to get updates about the selected site
+getReduxStore().then( store => {
+	CartStore.setSelectedSiteId( getSelectedSiteId( store.getState() ) );
+	store.subscribe( createListener( store, getSelectedSiteId, CartStore.setSelectedSiteId ) );
+} );

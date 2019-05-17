@@ -54,7 +54,6 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
 import {
 	isBestValue,
 	isMonthly,
@@ -103,25 +102,23 @@ export class PlanFeatures extends Component {
 					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features__content">
 						{ mobileView }
-						{ ! this.props.isRequestingActivePromotions && (
-							<PlanFeaturesScroller
-								withScroll={ withScroll }
-								planCount={ planProperties.length }
-								cellSelector=".plan-features__table-item"
-								initialSelectedIndex={ initialSelectedIndex }
-							>
-								<table className={ tableClasses }>
-									<tbody>
-										<tr>{ this.renderPlanHeaders() }</tr>
-										{ ! withScroll && planDescriptions }
-										<tr>{ this.renderTopButtons() }</tr>
-										{ withScroll && planDescriptions }
-										{ this.renderPlanFeatureRows() }
-										{ ! withScroll && ! isInSignup && bottomButtons }
-									</tbody>
-								</table>
-							</PlanFeaturesScroller>
-						) }
+						<PlanFeaturesScroller
+							withScroll={ withScroll }
+							planCount={ planProperties.length }
+							cellSelector=".plan-features__table-item"
+							initialSelectedIndex={ initialSelectedIndex }
+						>
+							<table className={ tableClasses }>
+								<tbody>
+									<tr>{ this.renderPlanHeaders() }</tr>
+									{ ! withScroll && planDescriptions }
+									<tr>{ this.renderTopButtons() }</tr>
+									{ withScroll && planDescriptions }
+									{ this.renderPlanFeatureRows() }
+									{ ! withScroll && ! isInSignup && bottomButtons }
+								</tbody>
+							</table>
+						</PlanFeaturesScroller>
 					</div>
 				</div>
 			</div>
@@ -296,7 +293,6 @@ export class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
-				countryCode,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			return (
@@ -321,7 +317,6 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
-						countryCode={ countryCode }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
@@ -366,7 +361,6 @@ export class PlanFeatures extends Component {
 			selectedPlan,
 			siteType,
 			showPlanCreditsApplied,
-			countryCode,
 			withScroll,
 		} = this.props;
 
@@ -439,7 +433,6 @@ export class PlanFeatures extends Component {
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
-						countryCode={ countryCode }
 						plansWithScroll={ withScroll }
 					/>
 				</td>
@@ -897,7 +890,6 @@ export default connect(
 			sitePlan,
 			siteType,
 			planCredits,
-			isRequestingActivePromotions: isRequestingActivePromotions( state ),
 			hasPlaceholders: hasPlaceholders( planProperties ),
 			showPlanCreditsApplied:
 				sitePlan &&

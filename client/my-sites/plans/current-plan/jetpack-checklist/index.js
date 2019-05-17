@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,11 +14,13 @@ import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import getRewindState from 'state/selectors/get-rewind-state';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import JetpackChecklistFooter from './footer';
 import JetpackChecklistHeader from './header';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { format as formatUrl, parse as parseUrl } from 'url';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
 import {
@@ -57,6 +57,13 @@ class JetpackChecklist extends PureComponent {
 		}
 	};
 
+	handleWpAdminLink = () => {
+		this.props.recordTracksEvent( 'calypso_checklist_wpadmin_click', {
+			checklist_name: 'jetpack',
+			location: 'JetpackChecklist',
+		} );
+	};
+
 	render() {
 		const {
 			akismetFinished,
@@ -68,6 +75,7 @@ class JetpackChecklist extends PureComponent {
 			taskStatuses,
 			translate,
 			vaultpressFinished,
+			wpAdminUrl,
 		} = this.props;
 
 		const isRewindActive = rewindState === 'active' || rewindState === 'provisioning';
@@ -80,7 +88,7 @@ class JetpackChecklist extends PureComponent {
 				{ isPaidPlan && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
 				{ isPaidPlan && <QueryRewindState siteId={ siteId } /> }
 
-				<JetpackChecklistHeader />
+				<JetpackChecklistHeader isPaidPlan={ isPaidPlan } />
 
 				<Checklist
 					isPlaceholder={ ! taskStatuses }
@@ -148,6 +156,13 @@ class JetpackChecklist extends PureComponent {
 						);
 					} ) }
 				</Checklist>
+
+				{ wpAdminUrl && (
+					<JetpackChecklistFooter
+						wpAdminUrl={ wpAdminUrl }
+						handleWpAdminLink={ this.handleWpAdminLink }
+					/>
+				) }
 			</Fragment>
 		);
 	}
@@ -155,9 +170,20 @@ class JetpackChecklist extends PureComponent {
 
 export default connect(
 	state => {
+		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 		const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
 		const rewindState = get( getRewindState( state, siteId ), 'state', 'uninitialized' );
+
+		// Link to "My Plan" page in Jetpack
+		let wpAdminUrl = get( site, 'options.admin_url' );
+		wpAdminUrl = wpAdminUrl
+			? formatUrl( {
+					...parseUrl( wpAdminUrl ),
+					query: { page: 'jetpack' },
+					hash: '/my-plan',
+			  } )
+			: undefined;
 
 		return {
 			akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
@@ -170,6 +196,7 @@ export default connect(
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+			wpAdminUrl,
 		};
 	},
 	{

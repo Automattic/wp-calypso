@@ -40,8 +40,8 @@ describe( 'MediaLibraryDataSource', () => {
 					<MediaLibraryDataSource source={ '' } onSourceChange={ noop } />
 				</ReduxProvider>
 			);
-			expect( wrapper.find( 'button[action="google_photos"]' ) ).to.have.length( 1 );
-			expect( wrapper.find( 'button[action="pexels"]' ) ).to.have.length( 1 );
+			expect( wrapper.find( 'button[data-source="google_photos"]' ) ).to.have.length( 1 );
+			expect( wrapper.find( 'button[data-source="pexels"]' ) ).to.have.length( 1 );
 		} );
 
 		test( 'excludes data sources listed in disabledSources', () => {
@@ -55,8 +55,8 @@ describe( 'MediaLibraryDataSource', () => {
 					/>
 				</ReduxProvider>
 			);
-			expect( wrapper.find( 'button[action="google_photos"]' ) ).to.have.length( 1 );
-			expect( wrapper.find( 'button[action="pexels"]' ) ).to.have.length( 0 );
+			expect( wrapper.find( 'button[data-source="google_photos"]' ) ).to.have.length( 1 );
+			expect( wrapper.find( 'button[data-source="pexels"]' ) ).to.have.length( 0 );
 		} );
 	} );
 } );

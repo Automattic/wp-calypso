@@ -26,12 +26,15 @@ class Task extends PureComponent {
 		completedDescription: PropTypes.node,
 		completedTitle: PropTypes.node,
 		description: PropTypes.node,
+		disableIcon: PropTypes.bool,
 		duration: PropTypes.string,
 		href: PropTypes.string,
 		inProgress: PropTypes.bool,
 		isWarning: PropTypes.bool,
 		onClick: PropTypes.func,
+		onCollapsedClick: PropTypes.func,
 		onDismiss: PropTypes.func,
+		selectedTaskId: PropTypes.string,
 		target: PropTypes.string,
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -47,7 +50,7 @@ class Task extends PureComponent {
 	}
 
 	renderCheckmarkIcon() {
-		const { completed, inProgress, isWarning, translate } = this.props;
+		const { completed, disableIcon, inProgress, isWarning, translate } = this.props;
 		const onDismiss = ! completed ? this.props.onDismiss : undefined;
 
 		if ( inProgress ) {
@@ -56,6 +59,14 @@ class Task extends PureComponent {
 					<ScreenReaderText>{ translate( 'In progress' ) }</ScreenReaderText>
 					{ this.renderGridicon() }
 				</Fragment>
+			);
+		}
+
+		if ( disableIcon ) {
+			return (
+				<div className="checklist__task-icon is-disabled">
+					<ScreenReaderText>{ translate( 'Waiting to complete' ) }</ScreenReaderText>
+				</div>
 			);
 		}
 
@@ -95,6 +106,26 @@ class Task extends PureComponent {
 		return null;
 	}
 
+	onTaskClick = event => {
+		const { completed, id, onClick, onCollapsedClick } = this.props;
+
+		// We presuppose expandability based on the presence of `onCollapsedClick`
+		if ( ! completed && this.isTaskCollapsed() && onCollapsedClick ) {
+			event.preventDefault();
+			onCollapsedClick( id );
+		} else {
+			// The task-related action
+			onClick();
+		}
+	};
+
+	isTaskCollapsed = () =>
+		this.props.selectedTaskId
+			? // If any task is selected, we only check if this task matches the selected ID...
+			  this.props.selectedTaskId !== this.props.id
+			: // If no task is selected, fall back to checking if this task is the first in line
+			  this.props.firstIncomplete && this.props.firstIncomplete.id !== this.props.id;
+
 	renderGridicon() {
 		if ( this.props.inProgress ) {
 			return <Spinner size={ 20 } />;
@@ -115,6 +146,7 @@ class Task extends PureComponent {
 	render() {
 		const {
 			buttonPrimary,
+			buttonText,
 			completed,
 			completedButtonText,
 			completedDescription,
@@ -128,11 +160,11 @@ class Task extends PureComponent {
 			target,
 			title,
 			translate,
-			firstIncomplete,
 		} = this.props;
-		const { buttonText = translate( 'Do it!' ) } = this.props;
 		const hasActionlink = completed && completedButtonText;
-		const isCollapsed = firstIncomplete && firstIncomplete.id !== this.props.id;
+		const taskActionButtonText = hasActionlink
+			? completedButtonText
+			: buttonText || translate( 'Do it!' );
 
 		return (
 			<CompactCard
@@ -141,20 +173,24 @@ class Task extends PureComponent {
 					'is-completed': completed,
 					'is-in-progress': inProgress,
 					'has-actionlink': hasActionlink,
-					'is-collapsed': isCollapsed,
+					'is-collapsed': this.isTaskCollapsed(),
 				} ) }
 			>
 				<div className="checklist__task-primary">
 					<h3 className="checklist__task-title">
-						<Button
-							borderless
-							className="checklist__task-title-link"
-							href={ href }
-							onClick={ onClick }
-							target={ target }
-						>
-							{ ( completed && completedTitle ) || title }
-						</Button>
+						{ completed ? (
+							completedTitle || title
+						) : (
+							<Button
+								borderless
+								className="checklist__task-title-link"
+								href={ href }
+								onClick={ this.onTaskClick }
+								target={ target }
+							>
+								{ title }
+							</Button>
+						) }
 					</h3>
 					<p className="checklist__task-description">{ description }</p>
 					{ completedDescription && (
@@ -174,7 +210,7 @@ class Task extends PureComponent {
 						primary={ buttonPrimary }
 						target={ target }
 					>
-						{ hasActionlink ? completedButtonText : buttonText }
+						{ taskActionButtonText }
 					</Button>
 					{ duration && (
 						<small className="checklist__task-duration">

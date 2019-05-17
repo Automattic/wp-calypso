@@ -17,7 +17,6 @@
 	"features": {
 		"async-payments": false,
 		"ad-tracking": false,
-		"apple-pay": false,
 		"automated-transfer": true,
 		"blogger-plan": false,
 		"calypsoify/gutenberg": true,
