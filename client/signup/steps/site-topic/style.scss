@@ -8,8 +8,7 @@ body.is-section-jetpack-connect .site-topic__content {
 	.form-fieldset {
 		margin-bottom: 0;
 		position: absolute;
-		left: 0;
-		right: 0;
+		width: 100%;
 		z-index: 1000; // I know, I know...
 		border-radius: 4px;
 		background: var( --color-white );
