@@ -28,7 +28,7 @@ export class FreePlanThankYouCard extends Component {
 						{ translate( 'Welcome to Jetpack Free!' ) }
 					</h1>
 					<p>
-						{ translate( 'We’ve automatically begun to protect your site from attacks.' ) }
+						{ translate( "We've automatically begun to protect your site from attacks." ) }
 						<br />
 						{ translate( "You're now ready to finish the rest of the checklist." ) }
 					</p>
