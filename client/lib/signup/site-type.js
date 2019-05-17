@@ -63,7 +63,7 @@ export function getAllSiteTypes() {
 			customerType: 'business',
 		},
 		{
-			id: 3,
+			id: 4,
 			slug: 'professional',
 			label: i18n.translate( 'Professional' ),
 			description: i18n.translate( 'Showcase your portfolio and work.' ),
@@ -75,7 +75,7 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 		},
 		{
-			id: 5,
+			id: 3,
 			slug: 'online-store',
 			label: i18n.translate( 'Online store' ),
 			description: i18n.translate( 'Sell your collection of products online.' ),
