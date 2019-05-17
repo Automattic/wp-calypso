@@ -48,7 +48,6 @@ class ToolsMenu extends PureComponent {
 			paths: [ '/extensions', '/plugins' ],
 			wpAdminLink: 'plugin-install.php?calypsoify=1',
 			showOnAllMySites: canManagePlugins,
-			extraIcon: isAtomicSite ? 'chevron-right' : null,
 			customClassName: isAtomicSite ? 'sidebar__plugins-item' : '',
 			forceInternalLink: isAtomicSite,
 		};

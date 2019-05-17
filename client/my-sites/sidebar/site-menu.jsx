@@ -9,7 +9,6 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -191,12 +190,6 @@ class SiteMenu extends PureComponent {
 				icon = 'custom-post-type';
 		}
 
-		const extraIcon = menuItem.extraIcon && (
-			<div className={ `manage_menu__${ menuItem.name }-extra-icon` }>
-				<Gridicon icon={ menuItem.extraIcon } />
-			</div>
-		);
-
 		return (
 			<SidebarItem
 				className={ menuItem.customClassName }
@@ -210,9 +203,7 @@ class SiteMenu extends PureComponent {
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }
 				forceInternalLink={ menuItem.forceInternalLink }
-			>
-				{ extraIcon }
-			</SidebarItem>
+			/>
 		);
 	}
 
