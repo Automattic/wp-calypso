@@ -109,10 +109,6 @@
 		@include breakpoint( '<480px' ) {
 			flex-direction: column;
 		}
-
-		&.is-completed {
-			flex-direction: row;
-		}
 	}
 
 	&::before {
@@ -315,6 +311,9 @@
 			font-weight: 400;
 			width: 100%;
 			text-align: right;
+			@include breakpoint( '<480px' ) {
+				text-align: left;
+			}
 		}
 
 		@include breakpoint( '<480px' ) {
