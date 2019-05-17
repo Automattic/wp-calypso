@@ -25,7 +25,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const membershipProductFromApi = product => ( {
-	ID: product.id || product.connected_account_product_id,
+	ID: parseInt( product.id || product.connected_account_product_id ),
 	currency: product.currency,
 	description: product.description,
 	email: '',
