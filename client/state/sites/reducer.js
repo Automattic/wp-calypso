@@ -10,6 +10,7 @@ import { omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from
 import { plans } from './plans/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
+import externalContributors from './external-contributors/reducer';
 import guidedTransfer from './guided-transfer/reducer';
 import monitor from './monitor/reducer';
 import vouchers from './vouchers/reducer';
@@ -297,6 +298,7 @@ export default combineReducers( {
 	connection,
 	deleting,
 	domains,
+	externalContributors,
 	requestingAll,
 	items,
 	mediaStorage,

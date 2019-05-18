@@ -2,6 +2,7 @@
 export type URL = string;
 
 // User stuff
+export type UserId = number;
 
 // Site stuff
 export type SiteId = number;

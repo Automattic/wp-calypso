@@ -283,7 +283,7 @@ PeopleProfile.defaultProps = {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
-	const userId = ownProps.user && ownProps.user.ID;
+	const userId = ownProps.user && ( ownProps.user.linked_user_ID || ownProps.user.ID );
 	return {
 		isContractor: isUserExternalContributor( state, siteId, userId ),
 	};
