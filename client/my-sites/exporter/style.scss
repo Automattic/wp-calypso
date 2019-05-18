@@ -1,15 +1,23 @@
+.exporter__section-export {
+	line-height: 1.7;
+	text-align: center;
+	
+	h2 {
+		font-size: 24px;
+		font-weight: 600;
+	}
+	
+	p {
+		color: var( --color-text-subtle );
+		font-size: 14px;
+	}
+}
+
 .section-export {
 	padding-bottom: 100px;
 }
 
-.export-card__title {
-	font-size: 21px;
-	font-weight: 300;
-	color: var( --color-neutral-700 );
-	margin-bottom: 16px;
-	clear: left;
-}
-
+.export-card__title,
 .export-media-card__title {
 	font-size: 21px;
 	font-weight: 300;
@@ -18,19 +26,12 @@
 	clear: left;
 }
 
-.export-card .foldable-card__header {
-	padding: 24px;
-}
-
+.export-card .foldable-card__header,
 .export-media-card .foldable-card__header {
 	padding: 24px;
 }
 
-.export-card__subtitle {
-	font-size: 14px;
-	color: var( --color-neutral-700 );
-}
-
+.export-card__subtitle,
 .export-media-card__subtitle {
 	font-size: 14px;
 	color: var( --color-neutral-700 );
@@ -88,7 +89,7 @@
 
 .export-card__option-fieldset-description {
 	font-size: 14px;
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	padding-left: 24px;
 	padding-right: 24px;
 }
@@ -150,7 +151,7 @@
 
 .guided-transfer-card__details-text {
 	flex-basis: 60%;
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 }
 
 .guided-transfer-card__feature-list {
@@ -171,7 +172,7 @@
 }
 
 .guided-transfer-card__feature-text {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 }
 
 .guided-transfer-card__in-progress {

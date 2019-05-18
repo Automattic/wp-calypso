@@ -15,12 +15,12 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
-import WordPressImporter from 'my-sites/importer/importer-wordpress';
-import MediumImporter from 'my-sites/importer/importer-medium';
-import BloggerImporter from 'my-sites/importer/importer-blogger';
-import WixImporter from 'my-sites/importer/importer-wix';
-import GoDaddyGoCentralImporter from 'my-sites/importer/importer-godaddy-gocentral';
-import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
+import WordPressImporter from './importer-wordpress';
+import MediumImporter from './importer-medium';
+import BloggerImporter from './importer-blogger';
+import WixImporter from './importer-wix';
+import GoDaddyGoCentralImporter from './importer-godaddy-gocentral';
+import SquarespaceImporter from './importer-squarespace';
 import { fetchState, startImport } from 'lib/importer/actions';
 import {
 	appStates,
@@ -35,9 +35,12 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import DescriptiveHeader from 'my-sites/site-settings/settings-import/descriptive-header';
-import JetpackImporter from 'my-sites/site-settings/settings-import/jetpack-importer';
+import JetpackImporter from './jetpack-importer';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Configuration for each of the importers to be rendered in this section. If
@@ -256,7 +259,6 @@ class SiteSettingsImport extends Component {
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-				<DescriptiveHeader />
 				{ this.renderImporters() }
 			</>
 		);
@@ -269,9 +271,20 @@ class SiteSettingsImport extends Component {
 		return (
 			<Main>
 				<DocumentHead title={ translate( 'Import' ) } />
-				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
-					<h1>{ translate( 'Import Content' ) }</h1>
-				</HeaderCake>
+				<div className="importer__section-import">
+					<h2>{ translate( 'Import your Content' ) }</h2>
+					<p>
+						{ translate(
+							'Import content from another site. '
+							+ 'Learn more about what we currently support in our {{link}}documentation{{/link}}.',
+							{
+								components: {
+									link: <a href="https://support.wordpress.com/import" />,
+								},
+							}
+						) }
+					</p>
+				</div>
 				<EmailVerificationGate allowUnlaunched>
 					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
 				</EmailVerificationGate>

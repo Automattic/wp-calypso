@@ -53,8 +53,6 @@ class SiteTools extends Component {
 		const {
 			translate,
 			siteSlug,
-			importUrl,
-			exportUrl,
 			cloneUrl,
 			showChangeAddress,
 			showClone,
@@ -88,14 +86,6 @@ class SiteTools extends Component {
 			'Sync your site content for a faster experience, change site owner, repair or terminate your connection.'
 		);
 
-		const importTitle = translate( 'Import' );
-		const importText = translate(
-			'Import content from another WordPress site and other platforms.'
-		);
-		const exportTitle = translate( 'Export' );
-		const exportText = translate(
-			'Export content from your site. You own your data — take it anywhere!'
-		);
 		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
 
@@ -116,8 +106,6 @@ class SiteTools extends Component {
 						description={ changeAddressText }
 					/>
 				) }
-				<SiteToolsLink href={ importUrl } title={ importTitle } description={ importText } />
-				<SiteToolsLink href={ exportUrl } title={ exportTitle } description={ exportText } />
 				{ showClone && config.isEnabled( 'rewind/clone-site' ) && (
 					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
 				) }
@@ -195,21 +183,13 @@ export default connect( state => {
 	const isVip = isVipSite( state, siteId );
 	const rewindState = getRewindState( state, siteId );
 	const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
-
-	let importUrl = `/settings/import/${ siteSlug }`;
-	let exportUrl = `/settings/export/${ siteSlug }`;
+	
 	const cloneUrl = `/start/clone-site/${ siteSlug }`;
-	if ( isJetpack ) {
-		importUrl = getSiteAdminUrl( state, siteId, 'import.php' );
-		exportUrl = getSiteAdminUrl( state, siteId, 'export.php' );
-	}
 
 	return {
 		isAtomic,
 		siteSlug,
 		purchasesError: getPurchasesError( state ),
-		importUrl,
-		exportUrl,
 		cloneUrl,
 		showChangeAddress: ! isJetpack && ! isVip,
 		showClone:

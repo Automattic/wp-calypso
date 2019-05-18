@@ -18,9 +18,19 @@
 	margin-bottom: 16px;
 }
 
-.site-settings__importer-section-description {
-	font-size: 14px;
-	color: var( --color-neutral-700 );
+.importer__section-import {
+	line-height: 1.7;
+	text-align: center;
+	
+	h2 {
+		font-size: 24px;
+		font-weight: 600;
+	}
+	
+	p {
+		color: var( --color-text-subtle );
+		font-size: 14px;
+	}
 }
 
 .importer__service-icon {

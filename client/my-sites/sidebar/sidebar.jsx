@@ -639,7 +639,9 @@ export class MySitesSidebar extends Component {
 				selected={
 					itemLinkMatches( '/settings', path ) &&
 					( ! isEnabled( 'manage/import-in-sidebar' ) ||
-						! itemLinkMatches( '/settings/import', path ) )
+					 ! itemLinkMatches( '/settings/export', path ) && 
+					 ! itemLinkMatches( '/settings/import', path )
+					)
 				}
 				link={ siteSettingsLink }
 				onNavigate={ this.trackSettingsClick }
