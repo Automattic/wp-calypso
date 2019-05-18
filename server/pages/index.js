@@ -101,7 +101,7 @@ function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
 }
 
 function getBuildTargetFromRequest( request ) {
-	const isDesktop = calypsoEnv === 'desktop';
+	const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 	const isEvergreen = ! isDesktop && isUAInBrowserslist( request.useragent.source, 'evergreen' );
 	const isForcedFallback = request.query.forceFallback;
 	// Development is always evergreen.

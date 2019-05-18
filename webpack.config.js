@@ -42,7 +42,7 @@ const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
-const isDesktop = calypsoEnv === 'desktop';
+const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
 const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'defaults';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
