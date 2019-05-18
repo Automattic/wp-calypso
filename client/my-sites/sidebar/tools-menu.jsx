@@ -73,6 +73,22 @@ class ToolsMenu extends PureComponent {
 		};
 	};
 
+	getExportItem = () => {
+		const { isJetpack, translate } = this.props;
+
+		return {
+			name: 'export',
+			label: translate( 'Export' ),
+			capability: 'manage_options',
+			queryable: ! isJetpack,
+			link: '/settings/export', // @TODO make it a top level section & add a redirect
+			paths: [ '/settings/export' ],
+			wpAdminLink: 'export.php',
+			showOnAllMySites: false,
+			forceInternalLink: ! isJetpack,
+		};
+	};
+
 	onNavigate = postType => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
 			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
@@ -129,6 +145,8 @@ class ToolsMenu extends PureComponent {
 		if ( config.isEnabled( 'manage/import-in-sidebar' ) ) {
 			menuItems.push( this.getImportItem() );
 		}
+		
+		menuItems.push( this.getExportItem() );
 
 		return <ul>{ menuItems.map( this.renderMenuItem, this ) }</ul>;
 	}
