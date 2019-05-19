@@ -14,7 +14,7 @@ import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
 	isValidCNPJ,
-	ebanxFieldRules,
+	countrySpecificFieldRules,
 } from 'lib/checkout/processor-specific';
 
 /**
@@ -80,7 +80,7 @@ export function tefPaymentFieldRules() {
 				rules: [ 'required' ],
 			},
 		},
-		ebanxFieldRules( 'BR' )
+		countrySpecificFieldRules( 'BR' )
 	);
 }
 
@@ -122,6 +122,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 			);
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
+		case 'netbanking':
+			return countrySpecificFieldRules( 'IN' );
 		case 'token':
 			return tokenFieldRules();
 		default:
@@ -222,6 +224,22 @@ validators.validBrazilTaxId = {
 	},
 };
 
+validators.validIndiaPan = {
+	isValid( value ) {
+		const panRegex = /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/;
+
+		if ( ! value ) {
+			return false;
+		}
+		return panRegex.test( value );
+	},
+	error: function( description ) {
+		return i18n.translate( '%(description)s is invalid', {
+			args: { description: capitalize( description ) },
+		} );
+	},
+};
+
 validators.validPostalCodeUS = {
 	isValid: value => isValidPostalCode( value, 'US' ),
 	error: function( description ) {
@@ -317,7 +335,9 @@ function getErrors( field, value, paymentDetails ) {
 
 function getEbanxCreditCardRules( { country } ) {
 	return (
-		country && isEbanxCreditCardProcessingEnabledForCountry( country ) && ebanxFieldRules( country )
+		country &&
+		isEbanxCreditCardProcessingEnabledForCountry( country ) &&
+		countrySpecificFieldRules( country )
 	);
 }
 

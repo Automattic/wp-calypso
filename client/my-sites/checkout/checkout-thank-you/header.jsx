@@ -34,6 +34,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		isDataLoaded: PropTypes.bool.isRequired,
 		primaryPurchase: PropTypes.object,
 		hasFailedPurchases: PropTypes.bool,
+		primaryCta: PropTypes.func,
 	};
 
 	getHeading() {
@@ -67,13 +68,26 @@ class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getText() {
-		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
+		const {
+			translate,
+			isDataLoaded,
+			hasFailedPurchases,
+			primaryPurchase,
+			displayMode,
+		} = this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
 		}
 
 		if ( ! isDataLoaded || ! primaryPurchase ) {
+			if ( 'concierge' === displayMode ) {
+				return translate(
+					'You will receive an email confirmation shortly,' +
+						' along with detailed instructions to schedule your call with us.'
+				);
+			}
+
 			return translate( 'You will receive an email confirmation shortly.' );
 		}
 
@@ -215,12 +229,26 @@ class CheckoutThankYouHeader extends PureComponent {
 	visitSite = event => {
 		event.preventDefault();
 
-		const { primaryPurchase, selectedSite } = this.props;
+		const { primaryPurchase, selectedSite, primaryCta } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_thank_you_view_site', {
 			product: primaryPurchase.productName,
 		} );
+
+		if ( primaryCta ) {
+			return primaryCta();
+		}
+
 		window.location.href = selectedSite.URL;
+	};
+
+	visitScheduler = event => {
+		event.preventDefault();
+		const { selectedSite } = this.props;
+
+		//Maybe record tracks event
+
+		window.location.href = '/me/concierge/' + selectedSite.slug + '/book';
 	};
 
 	startTransfer = event => {
@@ -233,35 +261,74 @@ class CheckoutThankYouHeader extends PureComponent {
 		page( domainManagementTransferInPrecheck( selectedSite.slug, primaryPurchase.meta ) );
 	};
 
-	getButton() {
-		const { hasFailedPurchases, translate, primaryPurchase, selectedSite } = this.props;
-		const headerButtonClassName = 'button is-primary';
+	getButtonText = () => {
+		const { translate, hasFailedPurchases, primaryPurchase, displayMode } = this.props;
+		const site = this.props.selectedSite.slug;
 
-		if ( hasFailedPurchases || ! primaryPurchase || ! selectedSite || selectedSite.jetpack ) {
-			return null;
+		if ( 'concierge' === displayMode ) {
+			return translate( 'Schedule my session' );
+		}
+
+		if ( ! site && hasFailedPurchases ) {
+			return translate( 'Register domain' );
 		}
 
 		if ( isPlan( primaryPurchase ) ) {
-			return (
-				<div className="checkout-thank-you__header-button">
-					<button className={ headerButtonClassName } onClick={ this.visitSite }>
-						{ translate( 'View your site' ) }
-					</button>
-				</div>
-			);
+			return translate( 'View my plan' );
 		}
 
-		if ( isDelayedDomainTransfer( primaryPurchase ) ) {
+		if (
+			isDomainRegistration( primaryPurchase ) ||
+			isDomainTransfer( primaryPurchase ) ||
+			isSiteRedirect( primaryPurchase )
+		) {
+			return translate( 'Manage domain' );
+		}
+
+		if ( isGoogleApps( primaryPurchase ) ) {
+			return translate( 'Manage email' );
+		}
+
+		return translate( 'Go to My Site' );
+	};
+
+	getButton() {
+		const {
+			hasFailedPurchases,
+			translate,
+			primaryPurchase,
+			selectedSite,
+			displayMode,
+		} = this.props;
+		const headerButtonClassName = 'button is-primary';
+		const isConciergePurchase = 'concierge' === displayMode;
+
+		if (
+			! isConciergePurchase &&
+			( hasFailedPurchases || ! primaryPurchase || ! selectedSite || selectedSite.jetpack )
+		) {
+			return null;
+		}
+
+		if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
 			return (
 				<div className="checkout-thank-you__header-button">
 					<button className={ headerButtonClassName } onClick={ this.startTransfer }>
-						{ translate( 'Start the domain transfer' ) }
+						{ translate( 'Start domain transfer' ) }
 					</button>
 				</div>
 			);
 		}
 
-		return null;
+		const clickHandler = 'concierge' === displayMode ? this.visitScheduler : this.visitSite;
+
+		return (
+			<div className="checkout-thank-you__header-button">
+				<button className={ headerButtonClassName } onClick={ clickHandler }>
+					{ this.getButtonText() }
+				</button>
+			</div>
+		);
 	}
 
 	render() {

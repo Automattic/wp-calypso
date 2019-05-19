@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,15 +17,21 @@ import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { isPlan } from 'lib/products-values';
 import { shouldFetchSitePlans } from 'lib/plans';
 
-class CartPlanDiscountAd extends Component {
+export class CartPlanDiscountAd extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		sitePlans: PropTypes.object,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.trackPlanDiscountAd = once( this.props.trackPlanDiscountAd );
+	}
 
 	componentDidMount() {
 		this.props.fetchSitePlans( this.props.sitePlans, this.props.selectedSite );
@@ -49,6 +56,8 @@ class CartPlanDiscountAd extends Component {
 			return null;
 		}
 
+		this.trackPlanDiscountAd();
+
 		return (
 			<CartAd>
 				<p className="cart__cart-plan-discount-ad-paragraph">
@@ -58,16 +67,6 @@ class CartPlanDiscountAd extends Component {
 						{
 							args: {
 								discount: plan.formattedDiscount,
-								originalPrice: plan.formattedOriginalPrice,
-							},
-						}
-					) }
-				</p>
-				<p className="cart__cart-plan-discount-ad-paragraph">
-					{ translate(
-						'The plan and the domain can be renewed together for %(originalPrice)s / year.',
-						{
-							args: {
 								originalPrice: plan.formattedOriginalPrice,
 							},
 						}
@@ -90,6 +89,9 @@ export default connect(
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {
 					dispatch( fetchSitePlans( site.ID ) );
 				}
+			},
+			trackPlanDiscountAd: () => {
+				dispatch( recordTracksEvent( 'cart_plan_discount_ad' ) );
 			},
 		};
 	}

@@ -68,7 +68,7 @@ const edit = ( { attributes, className, isSelected, setAttributes } ) => {
 registerBlockType( 'a8c/prev-next', {
 	title: __( 'Prev/Next Links' ),
 	icon: 'leftright',
-	category: 'common',
+	category: 'a8c',
 	description: __( 'Link this post to sequential posts in a series of related posts.' ),
 	keywords: [ __( 'links' ) ],
 	attributes: blockAttributes,

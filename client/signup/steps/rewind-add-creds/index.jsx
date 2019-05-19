@@ -35,7 +35,6 @@ class RewindAddCreds extends Component {
 
 	goToCredsForm = () => {
 		SignupActions.submitSignupStep( {
-			processingMessage: this.props.translate( 'Preparing credentials form' ),
 			stepName: this.props.stepName,
 		} );
 

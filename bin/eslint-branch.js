@@ -24,7 +24,7 @@ const files = child_process
 	.toString()
 	.split( '\n' )
 	.map( name => name.trim() )
-	.filter( name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) );
+	.filter( name => /\.[jt]sx?$/.test( name ) );
 
 const lintResult = child_process.spawnSync( eslintBin, [ '--cache', ...files ], {
 	shell: true,

@@ -11,7 +11,6 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import page from 'page';
-import SocialLogo from 'social-logos';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -20,6 +19,7 @@ import { localize } from 'i18n-calypso';
 import ReaderPopoverMenu from 'reader/components/reader-popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'gridicons';
+import SocialLogo from 'components/social-logo';
 import * as stats from 'reader/stats';
 import { preload } from 'sections-helper';
 import SiteSelector from 'components/site-selector';

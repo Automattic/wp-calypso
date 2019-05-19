@@ -13,6 +13,7 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
  * Internal dependencies
  */
 import MapDomainStep from 'components/domains/map-domain-step';
+import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import RegisterDomainStep from 'components/domains/register-domain-step';
@@ -68,6 +69,14 @@ class DomainsStep extends React.Component {
 		store: PropTypes.object,
 	};
 
+	getDefaultState = () => ( {
+		previousStepSectionName: this.props.stepSectionName,
+		suggestion: null,
+		showTrademarkClaimsNotice: false,
+	} );
+
+	state = this.getDefaultState();
+
 	constructor( props ) {
 		super( props );
 
@@ -108,20 +117,31 @@ class DomainsStep extends React.Component {
 			const domainItem = cartItems.domainRegistration( { productSlug, domain } );
 
 			SignupActions.submitSignupStep(
-				Object.assign( {
-					processingMessage: props.translate( 'Adding your domain' ),
+				{
 					stepName: props.stepName,
 					domainItem,
 					siteUrl: domain,
 					isPurchasingItem: true,
 					stepSectionName: props.stepSectionName,
-				} ),
-				[],
+				},
 				{ domainItem }
 			);
 
 			props.goToNextStep();
 		}
+	}
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		let showTrademarkClaimsNotice = prevState.showTrademarkClaimsNotice;
+
+		if ( nextProps.stepSectionName !== prevState.previousStepSectionName ) {
+			showTrademarkClaimsNotice = false;
+		}
+
+		return {
+			previousStepSectionName: nextProps.stepSectionName,
+			showTrademarkClaimsNotice,
+		};
 	}
 
 	getMapDomainUrl = () => {
@@ -148,6 +168,15 @@ class DomainsStep extends React.Component {
 		};
 
 		this.props.recordAddDomainButtonClick( suggestion.domain_name, this.getAnalyticsSection() );
+
+		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
+		if ( ! isEmpty( trademarkClaimsNoticeInfo ) ) {
+			this.setState( {
+				suggestion,
+				showTrademarkClaimsNotice: true,
+			} );
+			return;
+		}
 
 		SignupActions.saveSignupStep( stepData );
 
@@ -184,9 +213,7 @@ class DomainsStep extends React.Component {
 
 	handleSkip = () => {
 		const domainItem = undefined;
-		SignupActions.submitSignupStep( { stepName: this.props.stepName, domainItem }, [], {
-			domainItem,
-		} );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName, domainItem }, { domainItem } );
 		this.props.goToNextStep();
 	};
 
@@ -208,7 +235,6 @@ class DomainsStep extends React.Component {
 		SignupActions.submitSignupStep(
 			Object.assign(
 				{
-					processingMessage: this.props.translate( 'Adding your domain' ),
 					stepName: this.props.stepName,
 					domainItem,
 					googleAppsCartItem,
@@ -218,7 +244,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 
@@ -238,7 +263,6 @@ class DomainsStep extends React.Component {
 		SignupActions.submitSignupStep(
 			Object.assign(
 				{
-					processingMessage: this.props.translate( 'Adding your domain mapping' ),
 					stepName: this.props.stepName,
 					[ sectionName ]: state,
 					domainItem,
@@ -248,7 +272,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 
@@ -270,9 +293,8 @@ class DomainsStep extends React.Component {
 		SignupActions.submitSignupStep(
 			Object.assign(
 				{
-					processingMessage: this.props.translate( 'Adding your domain transfer' ),
 					stepName: this.props.stepName,
-					[ 'transfer' ]: {},
+					transfer: {},
 					domainItem,
 					isPurchasingItem,
 					siteUrl: domain,
@@ -280,7 +302,6 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			[],
 			{ domainItem }
 		);
 
@@ -466,6 +487,34 @@ class DomainsStep extends React.Component {
 		);
 	};
 
+	rejectTrademarkClaim = () => {
+		this.setState( { showTrademarkClaimsNotice: false } );
+	};
+
+	acceptTrademarkClaim = () => {
+		const { suggestion } = this.state;
+
+		suggestion.trademark_claims_notice_info = null;
+		this.handleAddDomain( suggestion );
+	};
+
+	trademarkClaimsNotice = () => {
+		const { suggestion } = this.state;
+		const domain = get( suggestion, 'domain_name' );
+		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
+
+		return (
+			<TrademarkClaimsNotice
+				basePath={ this.props.path }
+				domain={ domain }
+				isSignupStep
+				onAccept={ this.acceptTrademarkClaim }
+				onReject={ this.rejectTrademarkClaim }
+				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
+			/>
+		);
+	};
+
 	getSubHeaderText() {
 		const { translate } = this.props;
 		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
@@ -494,6 +543,10 @@ class DomainsStep extends React.Component {
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
 			content = this.domainForm();
+		}
+
+		if ( this.state.showTrademarkClaimsNotice ) {
+			content = this.trademarkClaimsNotice();
 		}
 
 		if ( this.props.step && 'invalid' === this.props.step.status ) {

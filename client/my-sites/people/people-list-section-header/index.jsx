@@ -20,6 +20,11 @@ import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PeopleListSectionHeader extends Component {
 	static propTypes = {
 		label: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),

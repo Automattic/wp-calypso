@@ -16,19 +16,17 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"plugin": "webpack --source='plugin'",
+		"plugin": "calypso-build --source='plugin'",
 		"dev:plugin": "npm run plugin",
 		"build:plugin": "NODE_ENV=production npm run plugin",
-		"theme": "webpack --source='theme'",
+		"theme": "calypso-build --source='theme'",
 		"dev:theme": "npm run theme",
 		"build:theme": "NODE_ENV=production npm run theme",
-		"dev": "npm-run-all --parallel dev:*",
-		"build": "npm-run-all --parallel build:*"
-	},
-	"devDependencies": {
-		"@automattic/calypso-build": "file:../../packages/calypso-build"
+		"dev": "rimraf dist && npm-run-all --parallel dev:*",
+		"build": "rimraf dist && npm-run-all --parallel build:*"
 	},
 	"dependencies": {
+		"@wordpress/api-fetch": "^3.1.2",
 		"@wordpress/blocks": "^6.2.3",
 		"@wordpress/components": "^7.3.0",
 		"@wordpress/compose": "^3.2.0",
@@ -36,6 +34,7 @@
 		"@wordpress/editor": "^9.2.4",
 		"@wordpress/element": "^2.3.0",
 		"@wordpress/i18n": "^3.3.0",
+		"@wordpress/url": "^2.5.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.11"
 	}

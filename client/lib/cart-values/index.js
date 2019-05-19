@@ -14,6 +14,7 @@ import config from 'config';
  */
 import cartItems from './cart-items';
 import { isCredits, isDomainRedemption, whitelistAttributes } from 'lib/products-values';
+import { detectWebPaymentMethod } from 'lib/web-payment';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
 extendImmutabilityHelper( '$auto', function( value, object ) {
@@ -28,6 +29,7 @@ const PAYMENT_METHODS = {
 	eps: 'WPCOM_Billing_Stripe_Source_Eps',
 	giropay: 'WPCOM_Billing_Stripe_Source_Giropay',
 	ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
+	netbanking: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking',
 	paypal: 'WPCOM_Billing_PayPal_Express',
 	p24: 'WPCOM_Billing_Stripe_Source_P24',
 	'brazil-tef': 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef',
@@ -296,6 +298,12 @@ function getEnabledPaymentMethods( cart ) {
 		return 'WPCOM_Billing_Ebanx' !== method;
 	} );
 
+	// Web payment methods such as Apple Pay are enabled based on client-side
+	// capabilities.
+	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
+		return 'WPCOM_Billing_Web_Payment' !== method || null !== detectWebPaymentMethod();
+	} );
+
 	// Invert so we can search by class name.
 	const paymentMethodsKeys = invert( PAYMENT_METHODS );
 
@@ -328,13 +336,20 @@ function paymentMethodName( method ) {
 		eps: 'EPS',
 		giropay: 'Giropay',
 		ideal: 'iDEAL',
+		netbanking: 'Net Banking',
 		paypal: 'PayPal',
 		p24: 'Przelewy24',
 		'brazil-tef': 'Transferência bancária',
+		// The web-payment method technically supports multiple digital
+		// wallets, but only Apple Pay is used for now. To enable other
+		// wallets, we'd need to split web-payment up into multiple methods
+		// anyway (so that each wallet is a separate payment choice for the
+		// user), so it's fine to just hardcode this to "Apple Pay" in the
+		// meantime.
+		'web-payment': 'Apple Pay',
 		wechat: i18n.translate( 'WeChat Pay', {
 			comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 		} ),
-		'web-payment': i18n.translate( 'Wallet' ),
 		sofort: 'Sofort',
 	};
 
@@ -348,6 +363,7 @@ function isPaymentMethodEnabled( cart, method ) {
 		'eps',
 		'giropay',
 		'ideal',
+		'netbanking',
 		'paypal',
 		'p24',
 		'brazil-tef',
@@ -365,6 +381,10 @@ function isPaymentMethodEnabled( cart, method ) {
 		redirectPaymentMethods.indexOf( method ) >= 0 &&
 		! config.isEnabled( 'upgrades/redirect-payments' )
 	) {
+		return false;
+	}
+
+	if ( 'web-payment' === method && null === detectWebPaymentMethod() ) {
 		return false;
 	}
 

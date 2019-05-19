@@ -25,15 +25,6 @@ export function submitSiteType( siteType ) {
 		const themeSlugWithRepo =
 			getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
 
-		SignupActions.submitSignupStep(
-			{
-				stepName: 'site-type',
-			},
-			[],
-			{
-				siteType,
-				themeSlugWithRepo,
-			}
-		);
+		SignupActions.submitSignupStep( { stepName: 'site-type' }, { siteType, themeSlugWithRepo } );
 	};
 }

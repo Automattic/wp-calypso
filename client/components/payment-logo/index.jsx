@@ -16,6 +16,7 @@ import './style.scss';
 const ALT_TEXT = {
 	alipay: 'Alipay',
 	amex: 'American Express',
+	'apple-pay': 'Apple Pay',
 	bancontact: 'Bancontact',
 	'brazil-tef': 'Transferência bancária',
 	diners: 'Diners Club',
@@ -25,6 +26,7 @@ const ALT_TEXT = {
 	ideal: 'iDEAL',
 	jcb: 'JCB',
 	mastercard: 'Mastercard',
+	netbanking: 'Net Banking',
 	p24: 'Przelewy24',
 	paypal: 'PayPal',
 	placeholder: '',

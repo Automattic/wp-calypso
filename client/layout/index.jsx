@@ -51,6 +51,7 @@ import { isCommunityTranslatorEnabled } from 'components/community-translator/ut
 import { isE2ETest } from 'lib/e2e';
 import BodySectionCssClass from './body-section-css-class';
 import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 
 class Layout extends Component {
 	static displayName = 'Layout';
@@ -108,6 +109,7 @@ class Layout extends Component {
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'has-chat': this.props.chatIsOpen },
 				{ 'has-no-masterbar': this.props.masterbarIsHidden },
+				{ 'is-jetpack-login': this.props.isJetpackLogin },
 				{ 'is-jetpack-site': this.props.isJetpack },
 				{ 'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow }
 			),
@@ -124,6 +126,7 @@ class Layout extends Component {
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
 				<QuerySiteSelectedEditor siteId={ this.props.siteId } />
+				{ this.props.siteId && <QueryJetpackPlugins siteIds={ [ this.props.siteId ] } /> }
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && (
 					<AsyncLoad require="layout/nps-survey-notice" placeholder={ null } />
@@ -178,9 +181,10 @@ export default connect( state => {
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
+	const isJetpackLogin = currentRoute === '/log-in/jetpack';
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 	const noMasterbarForCheckout = isJetpack && startsWith( currentRoute, '/checkout' );
-	const noMasterbarForRoute = currentRoute === '/log-in/jetpack' || noMasterbarForCheckout;
+	const noMasterbarForRoute = isJetpackLogin || noMasterbarForCheckout;
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 
@@ -188,6 +192,7 @@ export default connect( state => {
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
 		isJetpack,
+		isJetpackLogin,
 		isJetpackMobileFlow,
 		isLoading: isSectionLoading( state ),
 		isSupportSession: isSupportSession( state ),

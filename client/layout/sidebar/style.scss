@@ -64,6 +64,10 @@
 		@include breakpoint( '<660px' ) {
 			background-color: var( --sidebar-background );
 
+			&.selected:not(.sidebar__plugins-item) {
+				background-color: var( --sidebar-menu-selected-background-color );
+			}
+
 			&.stats {
 				border-bottom: 1px solid var( --sidebar-border-color );
 			}
@@ -87,7 +91,7 @@
 			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ), 50% );
 
 			@include breakpoint( '<660px' ) {
-				background: linear-gradient( to right, rgba( var( --sidebar-menu-a-first-child-after-background ), 0 ), rgba( var( --sidebar-menu-a-first-child-after-background ), 1 ) 50% );
+				background: none;
 			}
 		}
 	}
@@ -135,7 +139,7 @@
 		fill: var( --sidebar-gridicon-fill );
 		height: 24px;
 		width: 24px;
-		margin-right: 12px;
+		margin-right: 11px;
 		flex-shrink: 0;
 
 		// External indicator for sections that aren't available in Calypso
@@ -147,11 +151,6 @@
 			height: 18px;
 			margin-right: 0;
 		}
-	}
-
-	// Currently hiding non-gridicon SVGs while testing new nav drawer design (PR #31742)
-	svg {
-		display: none;
 	}
 
 	.gridicon,
@@ -351,44 +350,43 @@ form.sidebar__button input {
 }
 
 // Selected Menu
-@include breakpoint( '>660px' ) {
-	.sidebar__menu .selected:not( .sidebar__plugins-item ) {
-		background-color: var( --sidebar-menu-selected-background-color );
+.sidebar__menu .selected:not( .sidebar__plugins-item ) {
+	background-color: var( --sidebar-menu-selected-background-color );
 
-		a {
-			color: var( --sidebar-menu-selected-a-color );
+	a {
+		color: var( --sidebar-menu-selected-a-color );
 
-			.sidebar__menu-link-secondary-text {
-				color: inherit;
-			}
-
-			&:first-child::after {
-				background: overflow-gradient(
-					var( --sidebar-menu-selected-a-first-child-after-background ),
-					50%
-				);
-			}
+		.sidebar__menu-link-secondary-text {
+			color: inherit;
 		}
 
-		.sidebar__button {
+		&:first-child::after {
+			background: overflow-gradient(
+				var( --sidebar-menu-selected-a-first-child-after-background ),
+				50%
+			);
+		}
+	}
+	
+	.sidebar__button {
+		color: var( --sidebar-menu-selected-a-color );
+		border-color: var( --sidebar-menu-selected-a-color );
+
+		&:hover {
 			color: var( --sidebar-menu-selected-a-color );
 			border-color: var( --sidebar-menu-selected-a-color );
-
-			&:hover {
-				color: var( --sidebar-menu-selected-a-color );
-				border-color: var( --sidebar-menu-selected-a-color );
-			}
 		}
+	}
 
-		.gridicon,
-		.jetpack-logo {
-			fill: var( --sidebar-menu-selected-a-color );
-		}
+	.gridicon,
+	.jetpack-logo,
+	.material-icon	{
+		fill: var( --sidebar-menu-selected-a-color );
+	}
 
-		&.is-action-button-selected a {
-			&:first-child::after {
-				background: linear-gradient( to right, rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 0 ), rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 1 ) 50% );
-			}
+	&.is-action-button-selected a {
+		&:first-child::after {
+			background: linear-gradient( to right, rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 0 ), rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 1 ) 50% );
 		}
 	}
 }
@@ -455,6 +453,18 @@ form.sidebar__button input {
 	}
 }
 
+.notouch li.sidebar__menu:hover {
+	&:not( .selected ) {
+		& > h2 {
+			color: var( --sidebar-menu-hover-color );
+
+			& > .material-icon {
+				fill: var( --sidebar-menu-hover-color );
+			}
+		}
+	}
+}
+
 .notouch .sidebar__menu li:not( .selected ) {
 	a,
 	form {
@@ -473,7 +483,8 @@ form.sidebar__button input {
 		}
 
 		.gridicon,
-		.jetpack-logo {
+		.jetpack-logo,
+		.material-icon	{
 			fill: var( --sidebar-menu-hover-color );
 		}
 	}
@@ -620,6 +631,10 @@ form.sidebar__button input {
 		.gridicons-chevron-down,
 		.gridicons-external {
 			display: inline-block;
+		}
+		
+		.selected svg {
+			fill: var( --sidebar-menu-selected-a-color );
 		}
 	
 		&.is-togglable {

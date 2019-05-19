@@ -16,7 +16,7 @@ action immediately.
 
 The ID of the external service this button will attempt to connect the user to.
 The list of available services is given by the `/meta/external-services` API endpoint
-but most service IDs are currently visible in the [ServiceExamples](../../my-sites/sharing/connections/service-examples.jsx)
+but most service IDs are currently visible in the [ServiceExamples](../../my-sites/marketing/connections/service-examples.jsx)
 component.
 
 ## onClick (Function)

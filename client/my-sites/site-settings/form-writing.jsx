@@ -232,7 +232,6 @@ const getFormSettings = settings => {
 		'wp_mobile_featured_images',
 		'wp_mobile_app_promos',
 		'post_by_email_address',
-		'after-the-deadline',
 		'onpublish',
 		'onupdate',
 		'guess_lang',

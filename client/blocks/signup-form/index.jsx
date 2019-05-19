@@ -16,6 +16,7 @@ import {
 	keys,
 	map,
 	mapKeys,
+	merge,
 	pick,
 	snakeCase,
 } from 'lodash';
@@ -49,7 +50,6 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import { mergeFormWithValue } from 'signup/utils';
 import CrowdsignalSignupForm from './crowdsignal';
 import SocialSignupForm from './social';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -132,11 +132,12 @@ class SignupForm extends Component {
 	}
 
 	autoFillUsername( form ) {
-		return mergeFormWithValue( {
-			form,
-			fieldName: 'username',
-			fieldValue: this.props.suggestedUsername || '',
-		} );
+		if ( formState.getFieldValue( form, 'username' ) ) {
+			return form;
+		}
+
+		const value = this.props.suggestedUsername || '';
+		return merge( form, { username: { value } } );
 	}
 
 	recordBackLinkClick = () => {
@@ -154,6 +155,7 @@ class SignupForm extends Component {
 			debounceWait: VALIDATION_DELAY_AFTER_FIELD_CHANGES,
 			hideFieldErrorsOnChange: true,
 			initialState: this.props.step ? this.props.step.form : undefined,
+			skipSanitizeAndValidateOnFieldChange: true,
 		} );
 
 		const initialState = this.formStateController.getInitialState();

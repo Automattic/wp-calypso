@@ -48,6 +48,11 @@ import {
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SecurityAccountRecovery = props => (
 	<Main className="security-account-recovery">
 		<PageViewTracker path="/me/security/account-recovery" title="Me > Account Recovery" />

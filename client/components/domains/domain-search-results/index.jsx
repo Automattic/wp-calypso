@@ -26,6 +26,11 @@ import { domainAvailability } from 'lib/domains/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DomainSearchResults extends React.Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,

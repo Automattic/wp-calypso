@@ -24,7 +24,7 @@ const SignupActions = {
 		} );
 	},
 
-	submitSignupStep( step, errors, providedDependencies ) {
+	submitSignupStep( step, providedDependencies ) {
 		const { stepName } = step;
 
 		// Transform the keys since tracks events only accept snaked prop names.
@@ -62,19 +62,16 @@ const SignupActions = {
 		Dispatcher.handleViewAction( {
 			type: 'SUBMIT_SIGNUP_STEP',
 			data: step,
-			errors: undefined === errors ? [] : errors,
 			providedDependencies: providedDependencies,
 		} );
 	},
 
-	processSignupStep( step, errors, providedDependencies ) {
+	processSignupStep( step ) {
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {
 			Dispatcher.handleViewAction( {
 				type: 'PROCESS_SIGNUP_STEP',
 				data: step,
-				errors: undefined === errors ? [] : errors,
-				providedDependencies: providedDependencies,
 			} );
 		} );
 	},

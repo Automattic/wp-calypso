@@ -19,14 +19,14 @@
 /client/boot @Automattic/team-calypso
 
 # Client blocks
-/client/blocks/inline-help @Automattic/onboarding-dev
+/client/blocks/inline-help @Automattic/zelda
 
 # Client state
 /client/state/jetpack-connect @Automattic/luna
-/client/state/signup @Automattic/onboarding-dev
+/client/state/signup @Automattic/zelda
 
 # Client components
-/client/components/site-verticals-suggestion-search @Automattic/onboarding-dev
+/client/components/site-verticals-suggestion-search @Automattic/zelda
 
 # Client framework parts
 /client/config @Automattic/team-calypso
@@ -35,7 +35,7 @@
 /client/layout @Automattic/team-calypso
 
 # Client sites
-/client/my-sites/checklist @Automattic/onboarding-dev
+/client/my-sites/checklist @Automattic/zelda
 
 # Comments management
 /client/my-sites/comment* @Automattic/lannister
@@ -60,10 +60,13 @@
 /server @Automattic/team-calypso
 
 # Signup
-/client/signup @Automattic/onboarding-dev
+/client/signup @Automattic/zelda
 
 # Test infrastructure
 /test @Automattic/team-calypso
+
+# Types, TypeScript, and type annotations
+*.ts *.tsx docs/coding-guidelines/typescript* @Automattic/type-review
 
 # G Suite
 /client/blocks/gsuite-stats-nudge @Automattic/amber

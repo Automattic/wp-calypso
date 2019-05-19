@@ -22,6 +22,7 @@ import {
 	getSiteSettingsSaveError,
 	getSiteSettings,
 } from 'state/site-settings/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import getJetpackSettings from 'state/selectors/get-jetpack-settings';
 import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
 import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
@@ -189,6 +190,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 		handleAutosavingToggle = name => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
+			this.props.trackTracksEvent( 'calypso_settings_autosaving_toggle_updated', {
+				name,
+				path: this.props.path,
+			} );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
 				this.submitForm();
 			} );
@@ -264,6 +269,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const settingsFields = {
 				site: keys( settings ),
 			};
+			const path = getCurrentRouteParameterized( state, siteId );
 
 			const isJetpack = isJetpackSite( state, siteId );
 
@@ -293,6 +299,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				isSavingSettings,
 				isSaveRequestSuccessful,
 				jetpackFieldsToUpdate,
+				path,
 				siteIsJetpack: isJetpack,
 				siteSettingsSaveError,
 				settings,

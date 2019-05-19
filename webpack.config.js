@@ -44,7 +44,7 @@ const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 const isDesktop = calypsoEnv === 'desktop';
 
-const defaultBrowserslistEnv = isCalypsoClient || isDesktop ? 'evergreen' : 'defaults';
+const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'defaults';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 
@@ -171,7 +171,7 @@ const webpackConfig = {
 	optimization: {
 		splitChunks: {
 			chunks: codeSplit ? 'all' : 'async',
-			name: isDevelopment || shouldEmitStats,
+			name: !! ( isDevelopment || shouldEmitStats ),
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
@@ -243,16 +243,14 @@ const webpackConfig = {
 		],
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx' ],
+		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
 		alias: Object.assign(
 			{
-				'gridicons/example': 'gridicons/dist/example',
 				'react-virtualized': 'react-virtualized/dist/es',
-				'social-logos/example': 'social-logos/build/example',
 				debug: path.resolve( __dirname, 'node_modules/debug' ),
 				store: 'store/dist/store.modern',
-				gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
+				gridicons$: path.resolve( __dirname, 'client/components/gridicon' ),
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.join( __dirname, 'client', 'extensions' ),
@@ -264,7 +262,6 @@ const webpackConfig = {
 		! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
-			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
@@ -323,11 +320,21 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 	);
 }
 
-// The SVG external content polyfill (svg4everybody) isn't needed for evergreen browsers, so don't bundle it.
+// List of polyfills that we skip including in the evergreen bundle.
+// CoreJS polyfills are automatically dropped using the browserslist definitions; no need to include them here.
+const polyfillsSkippedInEvergreen = [
+	// Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
+	/^lib[/\\]local-storage-polyfill$/,
+	// The SVG external content polyfill (svg4everybody) isn't needed for evergreen browsers.
+	/^svg4everybody$/,
+];
+
 if ( browserslistEnv === 'evergreen' ) {
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^svg4everybody$/, 'lodash/noop' )
-	);
+	for ( const polyfill of polyfillsSkippedInEvergreen ) {
+		webpackConfig.plugins.push(
+			new webpack.NormalModuleReplacementPlugin( polyfill, 'lodash/noop' )
+		);
+	}
 }
 
 module.exports = webpackConfig;

@@ -66,10 +66,3 @@ test( 'creates wrapped components only on state change', async () => {
 		expect( renderCount ).toBe( 2 );
 	} );
 } );
-
-export const invalid = async () => {
-	1;
-};
-export const valid = async () => {
-	await Promise.resolve();
-};

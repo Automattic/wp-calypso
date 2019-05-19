@@ -21,31 +21,6 @@
 	}
 }
 
-.purchases-site__header {
-	&.card.is-compact {
-		padding: 0;
-	}
-
-	.site.is-loading {
-		.site-icon,
-		.site__title,
-		.site__domain {
-			@include placeholder( 23% );
-		}
-	}
-
-	.site.is-disconnected .site-icon {
-		height: 32px;
-		width: 32px;
-		line-height: 32px;
-		font-size: 32px;
-	}
-
-	.site .site__content {
-		padding: 11px 24px;
-	}
-}
-
 .purchases-list .action-card__illustration {
 	@include breakpoint( '>960px' ) {
 		margin: -40px 20px 0 -20px;

@@ -2,7 +2,6 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
-const path = require( 'path' );
 
 const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 
@@ -12,7 +11,6 @@ const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 // We implicitly use browserslist configuration in package.json for build targets.
 
 const config = {
-	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),
 	presets: [
 		[
 			'@babel/env',
@@ -24,18 +22,10 @@ const config = {
 				exclude: [ 'transform-typeof-symbol' ],
 			},
 		],
+		'@automattic/calypso-build/babel/default',
 	],
 	plugins: _.compact( [
-		[
-			path.join(
-				__dirname,
-				'server',
-				'bundler',
-				'babel',
-				'babel-plugin-transform-wpcalypso-async'
-			),
-			{ async: isBrowser && codeSplit },
-		],
+		[ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ],
 		isBrowser && './inline-imports.js',
 	] ),
 	env: {

@@ -36,7 +36,7 @@
 }
 
 .reader-combined-card__header-post-count {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	margin-bottom: 0;
 	line-height: 1em;
 	margin-top: 4px;
@@ -53,12 +53,9 @@
 	display: block;
 	font-size: 17px;
 	font-weight: 700;
-	line-height: 1.2;
-	max-height: 16px * 1.6;
+	line-height: 1.4;
 	padding-left: 1px;
 	position: relative;
-	white-space: nowrap;
-	word-wrap: break-word;
 }
 
 .reader-combined-card__post-title-link,
@@ -69,11 +66,6 @@
 	&:hover,
 	&:focus {
 		color: var( --color-neutral-700 );
-	}
-
-	&::after {
-		@include long-content-fade( $size: 35px );
-		height: 16px * 1.4;
 	}
 }
 
@@ -173,7 +165,7 @@
 
 .reader-combined-card__post-author-and-time {
 	font-size: 13px;
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	font-family: $sans;
 	overflow: hidden;
 	max-height: 13px * 1.4 * 1;
@@ -194,13 +186,13 @@
 .reader-combined-card .reader-visit-link,
 .reader-combined-card .reader-author-link,
 .reader-combined-card__timestamp-link {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	cursor: pointer;
 
 	&:focus,
 	&:link,
 	&:visited {
-		color: var( --color-neutral-light );
+		color: var( --color-text-subtle );
 	}
 
 	&:hover,

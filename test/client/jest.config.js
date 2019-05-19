@@ -5,7 +5,7 @@ module.exports = {
 		'^config$': '<rootDir>/server/config/index.js',
 	},
 	transform: {
-		'^.+\\.jsx?$': 'babel-jest',
+		'^.+\\.[jt]sx?$': 'babel-jest',
 		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': '<rootDir>/test/test/helpers/assets/transform.js',
 	},
 	modulePaths: [ '<rootDir>/test/', '<rootDir>/client/', '<rootDir>/client/extensions/' ],
@@ -13,7 +13,7 @@ module.exports = {
 	roots: [ '<rootDir>/client/' ],
 	testEnvironment: 'node',
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!flag-icon-css|redux-form|simple-html-tokenizer|draft-js)',
+		'node_modules[\\/\\\\](?!flag-icon-css|redux-form|simple-html-tokenizer|draft-js|social-logos|gridicons)',
 	],
 	testMatch: [ '<rootDir>/client/**/test/*.js?(x)', '!**/.eslintrc.*' ],
 	testURL: 'https://example.com',

@@ -3,6 +3,7 @@
 	"packageRules": [
 		{
 			"paths": [ "packages/**" ],
+			"packagePatterns": ["*"],
 			"groupName": "calypso-packages",
 			"rangeStrategy": "replace"
 		},

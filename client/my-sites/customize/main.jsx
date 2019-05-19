@@ -23,6 +23,7 @@ import EmptyContent from 'components/empty-content';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Actions from 'my-sites/customize/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { requestSite } from 'state/sites/actions';
 import { themeActivated } from 'state/themes/actions';
 import { getCustomizerFocus } from './panels';
 import getMenusUrl from 'state/selectors/get-menus-url';
@@ -250,6 +251,10 @@ class Customize extends React.Component {
 					}
 					this.goBack();
 					break;
+				case 'saved':
+					debug( 'iframe says it saved' );
+					this.props.requestSite( this.props.siteId );
+					break;
 				case 'loading':
 					debug( 'iframe says it is starting loading customizer' );
 					this.cancelWaitingTimer();
@@ -280,7 +285,7 @@ class Customize extends React.Component {
 
 	renderErrorPage = error => {
 		return (
-			<div className="main main-column customize" role="main">
+			<div className="main main-column customize customize__main-error" role="main">
 				<PageViewTracker path="/customize/:site" title="Customizer" />
 				<SidebarNavigation />
 				<EmptyContent
@@ -315,7 +320,7 @@ class Customize extends React.Component {
 
 		if ( ! this.props.site ) {
 			return (
-				<div className="main main-column customize is-iframe" role="main">
+				<div className="main main-column customize customize__main is-iframe" role="main">
 					<PageViewTracker path="/customize/:site" title="Customizer" />
 					<CustomizerLoadingPanel />
 				</div>
@@ -341,10 +346,10 @@ class Customize extends React.Component {
 			// component. If the loading takes longer than 25 seconds (see
 			// waitForLoading above) then an error will be shown.
 			return (
-				<div className="main main-column customize is-iframe" role="main">
+				<div className="main main-column customize customize__main is-iframe" role="main">
 					<PageViewTracker path="/customize/:site" title="Customizer" />
 					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
-					<iframe className={ iframeClassName } src={ iframeUrl } />
+					<iframe className={ iframeClassName } src={ iframeUrl } title="Customizer" />
 				</div>
 			);
 		}
@@ -368,11 +373,12 @@ export default connect(
 		const siteId = get( site, 'ID' );
 		return {
 			site,
+			siteId,
 			menusUrl: getMenusUrl( state, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
 			// TODO: include panel from props?
 			customizerUrl: getCustomizerUrl( state, siteId ),
 		};
 	},
-	{ themeActivated }
+	{ requestSite, themeActivated }
 )( localize( Customize ) );

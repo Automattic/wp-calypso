@@ -19,7 +19,6 @@ import SignupActions from 'lib/signup/actions';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
-import { setSiteInformation } from 'state/signup/steps/site-information/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { WPCC } from 'lib/url/support';
 import config from 'config';
@@ -113,10 +112,16 @@ export class UserStep extends Component {
 				} );
 			} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				subHeaderText = translate(
-					'By creating an account via any of the options below,{{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
+					'Crowdsignal now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}',
 					{
 						components: {
-							a: <a href="https://wordpress.com/tos" target="_blank" rel="noopener noreferrer" />,
+							a: (
+								<a
+									href="https://crowdsignal.com/2012/12/03/crowdsignal-wordpress-account/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
 							br: <br />,
 						},
 					}
@@ -152,7 +157,7 @@ export class UserStep extends Component {
 	};
 
 	submit = data => {
-		const { flowName, stepName, oauth2Signup, translate } = this.props;
+		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
 		if ( oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
@@ -161,13 +166,11 @@ export class UserStep extends Component {
 
 		SignupActions.submitSignupStep(
 			{
-				processingMessage: translate( 'Creating your account' ),
 				flowName,
 				stepName,
 				oauth2Signup,
 				...data,
 			},
-			null,
 			dependencies
 		);
 
@@ -333,7 +336,6 @@ export default connect(
 		suggestedUsername: getSuggestedUsername( state ),
 	} ),
 	{
-		setSiteInformation,
 		recordTracksEvent,
 		fetchOAuth2ClientData,
 	}

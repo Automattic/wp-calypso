@@ -34,7 +34,6 @@ import {
 	isRemovable,
 	isRefundable,
 	maybeWithinRefundPeriod,
-	purchaseType,
 } from 'lib/purchases';
 import { isDataLoading } from '../utils';
 import { isDomainRegistration, isGoogleApps, isJetpackPlan, isPlan } from 'lib/products-values';
@@ -54,6 +53,11 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import HappychatButton from 'components/happychat/button';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 import { getCurrentUserId } from 'state/current-user/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module dependencies
@@ -410,9 +414,12 @@ class RemovePurchase extends Component {
 		return (
 			<div>
 				<p>
-					{ translate( 'Are you sure you want to remove %(productName)s from {{siteName/}}?', {
+					{ translate( 'Are you sure you want to remove %(productName)s from {{domain/}}?', {
 						args: { productName },
-						components: { siteName: <em>{ purchaseType( purchase ) }</em> },
+						components: { domain: <em>{ purchase.domain }</em> },
+						// ^ is the internal WPcom domain i.e. example.wordpress.com
+						// if we want to use the purchased domain we can swap with the below line
+						//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
 					} ) }{' '}
 					{ isGoogleApps( purchase )
 						? translate(

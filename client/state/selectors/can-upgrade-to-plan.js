@@ -13,6 +13,7 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlan, isWpComBusinessPlan, isWpComEcommercePlan, isFreePlan } from 'lib/plans';
 import { isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 
 /**
  * Whether a given site can be upgraded to a specific plan.
@@ -36,8 +37,10 @@ export default function( state, siteId, planKey ) {
 		? freePlan
 		: get( plan, [ 'productSlug' ], freePlan );
 
-	// Exception for upgrading Atomic sites to eCommerce
-	if ( isWpComEcommercePlan( planKey ) && isSiteAutomatedTransfer( state, siteId ) ) {
+	// Exception for upgrading Atomic v1 sites to eCommerce
+	const isAtomicV1 =
+		isSiteAutomatedTransfer( state, siteId ) && ! isSiteWpcomAtomic( state, siteId );
+	if ( isWpComEcommercePlan( planKey ) && isAtomicV1 ) {
 		return false;
 	}
 

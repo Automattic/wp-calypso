@@ -161,7 +161,7 @@ const getPlanEcommerceDetails = () => ( {
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
-			constants.FEATURE_JETPACK_ESSENTIAL,
+			constants.FEATURE_JETPACK_ADVANCED,
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
@@ -289,25 +289,11 @@ const getPlanBusinessDetails = () => ( {
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
-	getDescription: abtest => {
-		if ( abtest && abtest( 'businessPlanDescriptionAT' ) === 'pluginsAndThemes' ) {
-			return i18n.translate(
-				'{{strong}}Best for Small Businesses:{{/strong}} Power your' +
-					' business website with custom plugins and themes, unlimited premium and business theme templates,' +
-					' Google Analytics support, unlimited' +
-					' storage, and the ability to remove WordPress.com branding.',
-				{
-					components: {
-						strong: (
-							<strong className="plans__features plan-features__targeted-description-heading" />
-						),
-					},
-				}
-			);
-		}
-		return i18n.translate(
+	getDescription: () =>
+		i18n.translate(
 			'{{strong}}Best for Small Businesses:{{/strong}} Power your' +
-				' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
+				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
+				' Google Analytics support, unlimited' +
 				' storage, and the ability to remove WordPress.com branding.',
 			{
 				components: {
@@ -316,8 +302,7 @@ const getPlanBusinessDetails = () => ( {
 					),
 				},
 			}
-		);
-	},
+		),
 	getShortDescription: () =>
 		i18n.translate(
 			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
@@ -332,7 +317,7 @@ const getPlanBusinessDetails = () => ( {
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
-			constants.FEATURE_JETPACK_ESSENTIAL,
+			constants.FEATURE_JETPACK_ADVANCED,
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,

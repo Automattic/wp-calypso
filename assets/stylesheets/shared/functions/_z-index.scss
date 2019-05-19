@@ -71,10 +71,8 @@ $z-layers: (
 		'.chart__bar-section.is-ghost::after': 1,
 		'.module-content-table::after': 1,
 		'.stats-popular__empty': 1,
-		'.people-list-item__label': 1,
 		'.is-actionable .theme__thumbnail-label': 1,
 		'.accessible-focus .current-theme__button:focus': 1,
-		'.signup-processing-screen__processing-step.is-processing:before': 1,
 		'.accessible-focus .theme__more-button button:focus': 1,
 		'.domain-suggestion.is-clickable:hover': 1,
 		'.editor-html-toolbar': 1,
@@ -124,11 +122,11 @@ $z-layers: (
 		'.reader-mobile-sidebar': 23,
 		'.community-translator': 99,
 		'.author-selector__popover.popover': 100,
+		'.feature-example__gradient': 170,
 		'.select-dropdown.is-open .select-dropdown__container': 170,
 		'.accessible-focus .select-dropdown.is-open .select-dropdown__container': 170,
 		'.sites-dropdown.is-open .sites-dropdown__wrapper' : 170,
 		'.editor-publish-date.is-open .editor-publish-date__wrapper': 170,
-		'.first-view': 175,
 		'.floating-help': 176,
 		'.directly-rtm.is-minimized': 176,
 		'.editor-confirmation-sidebar__overlay': 176,
@@ -137,7 +135,6 @@ $z-layers: (
 		'.popover.comment__author-more-info-popover': 178,
 		'.popover.editor-ground-control__post-schedule-popover': 178,
 		'.popover.editor-visibility__popover': 179,
-		'.feature-example__gradient': 179,
 		'.global-notices': 179,
 		'.editor-preview': 179,
 		'.web-preview .editor-notice': 179,
@@ -193,10 +190,6 @@ $z-layers: (
 	'.ribbon': (
 		'.ribbon__title::before': -1,
 		'.ribbon__title::after': -1
-	),
-	'.plan-pill': (
-		'.plan-pill__title::before': -1,
-		'.plan-pill__title::after': -1
 	),
 	'.environment-badge': (
 		'.environment-badge .environment::before': -1,

@@ -18,24 +18,40 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		this.storeSelector = By.css( '.menu-link-text[data-e2e-sidebar="Store"]' );
 	}
 
+	async expandDrawerItem( itemName ) {
+		const selector = await driverHelper.getElementByText(
+			this.driver,
+			By.css( '.sidebar__heading' ),
+			itemName
+		);
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		const itemSelector = await this.driver.findElement( selector );
+		const isExpanded = await itemSelector.getAttribute( 'aria-expanded' );
+		if ( isExpanded === 'false' ) {
+			await driverHelper.selectElementByText(
+				this.driver,
+				By.css( '.sidebar__heading' ),
+				itemName
+			);
+		}
+	}
+
 	async selectDomains() {
+		await this.expandDrawerItem( 'Manage' );
 		return await this._scrollToAndClickMenuItem( 'domains' );
 	}
 
 	async selectPeople() {
+		await this.expandDrawerItem( 'Manage' );
 		return await this._scrollToAndClickMenuItem( 'people' );
 	}
 
-	async selectAddPerson() {
-		return await this._scrollToAndClickMenuItem( 'people', { clickButton: true } );
-	}
-
-	async selectManagePlugins() {
-		return await this._scrollToAndClickMenuItem( 'side-menu-plugins', { clickButton: true } );
-	}
-
 	async selectThemes() {
-		return await this._scrollToAndClickMenuItem( 'themes', { clickButton: true } );
+		await this.expandDrawerItem( 'Design' );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.menu-link-text[data-e2e-sidebar="Themes"]' )
+		); // TODO: data-tip-target target is missing
 	}
 
 	async customizeTheme() {
@@ -46,15 +62,12 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await this._scrollToAndClickMenuItem( 'plan' );
 	}
 
-	async selectAddNewPage() {
-		return await this._scrollToAndClickMenuItem( 'side-menu-page', { clickButton: true } );
-	}
-
 	async selectStats() {
 		return await this._scrollToAndClickMenuItem( 'menus' );
 	}
 
 	async selectActivity() {
+		await this.expandDrawerItem( 'Tools' );
 		return await this._scrollToAndClickMenuItem( 'activity' );
 	}
 
@@ -63,30 +76,37 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPlugins() {
+		await this.expandDrawerItem( 'Tools' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-plugins' );
 	}
 
 	async selectSettings() {
+		await this.expandDrawerItem( 'Manage' );
 		return await this._scrollToAndClickMenuItem( 'settings' );
 	}
 
 	async selectMedia() {
+		await this.expandDrawerItem( 'Site' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-media' );
 	}
 
 	async selectImport() {
+		await this.expandDrawerItem( 'Tools' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-import' );
 	}
 
 	async selectPages() {
+		await this.expandDrawerItem( 'Site' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-page' );
 	}
 
 	async selectPosts() {
+		await this.expandDrawerItem( 'Site' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-post' );
 	}
 
 	async selectComments() {
+		await this.expandDrawerItem( 'Site' );
 		return await this._scrollToAndClickMenuItem( 'side-menu-comments' );
 	}
 

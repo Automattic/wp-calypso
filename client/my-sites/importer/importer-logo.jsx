@@ -5,16 +5,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { includes } from 'lodash';
-import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
  */
 import GoDaddyGoCentralLogo from './logos/godaddy-gocentral';
 import WixLogo from './logos/wix';
+import MediumLogo from './logos/medium';
+import SocialLogo from 'components/social-logo';
 
 const ImporterLogo = ( { icon } ) => {
-	if ( includes( [ 'wordpress', 'medium', 'blogger-alt', 'squarespace' ], icon ) ) {
+	if ( includes( [ 'wordpress', 'blogger-alt', 'squarespace' ], icon ) ) {
 		return <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />;
 	}
 
@@ -25,6 +26,11 @@ const ImporterLogo = ( { icon } ) => {
 	if ( 'godaddy-gocentral' === icon ) {
 		return <GoDaddyGoCentralLogo size={ 48 } />;
 	}
+
+	if ( 'medium' === icon ) {
+		return <MediumLogo />;
+	}
+
 	return (
 		<svg
 			className="importer__service-icon"

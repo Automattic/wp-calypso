@@ -5,23 +5,25 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { flowRight, get, partial, some, values, xor } from 'lodash';
+import React, { Component, Fragment } from 'react';
+import { filter, flowRight, get, partial, some, values, xor } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Banner from 'components/banner';
 import MultiCheckbox from 'components/forms/multi-checkbox';
 import SupportInfo from 'components/support-info';
 import { getPostTypes } from 'state/post-types/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import getSharingButtons from 'state/selectors/get-sharing-buttons';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { isJetpackSite, isJetpackMinimumVersion, getSiteAdminUrl } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -52,19 +54,29 @@ class SharingButtonsOptions extends Component {
 	}
 
 	trackTwitterViaAnalyticsEvent = () => {
+		const { path } = this.props;
+		this.props.recordTracksEvent( 'calypso_sharing_buttons_twitter_username_field_focused', {
+			path,
+		} );
 		this.props.recordGoogleEvent( 'Sharing', 'Focussed Twitter Username Field' );
 	};
 
 	handleMultiCheckboxChange = ( name, event ) => {
+		const { path } = this.props;
 		const delta = xor( this.props.settings.sharing_show, event.value );
-		this.props.onChange( name, event.value.length ? event.value : null );
+		this.props.onChange( name, event.value );
 		if ( delta.length ) {
-			const checked = -1 !== event.value.indexOf( delta[ 0 ] );
+			const checked = -1 !== event.value.indexOf( delta[ 0 ] ) ? 1 : 0;
+			this.props.recordTracksEvent( 'calypso_sharing_buttons_show_buttons_on_page_click', {
+				page: delta[ 0 ],
+				checked,
+				path,
+			} );
 			this.props.recordGoogleEvent(
 				'Sharing',
 				'Clicked Show Sharing Buttons On Page Checkbox',
 				delta[ 0 ],
-				checked ? 1 : 0
+				checked
 			);
 		}
 	};
@@ -77,6 +89,8 @@ class SharingButtonsOptions extends Component {
 	};
 
 	handleChange = event => {
+		const { path } = this.props;
+
 		let value;
 		if ( 'checkbox' === event.target.type ) {
 			value = event.target.checked;
@@ -85,11 +99,16 @@ class SharingButtonsOptions extends Component {
 		}
 
 		if ( 'jetpack_comment_likes_enabled' === event.target.name ) {
+			const checked = event.target.checked ? 1 : 0;
+			this.props.recordTracksEvent( 'calypso_sharing_buttons_likes_on_for_all_posts_click', {
+				checked,
+				path,
+			} );
 			this.props.recordGoogleEvent(
 				'Sharing',
 				'Clicked Comment Likes On For All Posts Checkbox',
 				'checked',
-				event.target.checked ? 1 : 0
+				checked
 			);
 		}
 
@@ -188,7 +207,7 @@ class SharingButtonsOptions extends Component {
 						onChange={ this.handleChange }
 						disabled={ ! initialized }
 					/>
-					<SupportInfo
+          <SupportInfo
 						text={ translate(
 							'When a reader leaves a comment on your content, offer an option to show appreciation for it.'
 						) }
@@ -203,43 +222,72 @@ class SharingButtonsOptions extends Component {
 		);
 	}
 
-	render() {
-		const { initialized, saving, settings, siteId, translate } = this.props;
+	getSharingShowOptionsElement = () => {
+		const { initialized, isSharingShowAllowed, settings, translate } = this.props;
+
+		if ( ! isSharingShowAllowed ) {
+			return;
+		}
+
 		const changeSharingPostTypes = partial( this.handleMultiCheckboxChange, 'sharing_show' );
+		return (
+			<fieldset className="sharing-buttons__fieldset">
+				<legend className="sharing-buttons__fieldset-heading">
+					{ translate( 'Show like and sharing buttons on', {
+						context: 'Sharing options: Header',
+						comment:
+							'Possible values are: "Front page, Archive Pages, and Search Results", "Posts", "Pages", "Media"',
+					} ) }
+				</legend>
+				<MultiCheckbox
+					name="sharing_show"
+					options={ this.getDisplayOptions() }
+					checked={ settings.sharing_show }
+					onChange={ changeSharingPostTypes }
+					disabled={ ! initialized }
+				/>
+			</fieldset>
+		);
+	};
+
+	getWpAdminBanner = () => {
+		const { isSharingShowAllowed, siteAdminUrl, translate } = this.props;
+		if ( isSharingShowAllowed ) {
+			return;
+		}
+		return (
+			<Banner
+				className="sharing-buttons__banner"
+				href={ `${ siteAdminUrl }options-general.php?page=sharing` }
+				title={ translate( 'Visit WP Admin for more sharing buttons options.' ) }
+			/>
+		);
+	};
+
+	render() {
+		const { initialized, saving, siteId, translate } = this.props;
 
 		return (
-			<div className="sharing-buttons__panel">
-				{ siteId && <QueryPostTypes siteId={ siteId } /> }
-				<h4>{ translate( 'Options' ) }</h4>
-				<div className="sharing-buttons__fieldset-group">
-					<fieldset className="sharing-buttons__fieldset">
-						<legend className="sharing-buttons__fieldset-heading">
-							{ translate( 'Show sharing buttons on', {
-								context: 'Sharing options: Header',
-								comment:
-									'Possible values are: "Front page, Archive Pages, and Search Results", "Posts", "Pages", "Media"',
-							} ) }
-						</legend>
-						<MultiCheckbox
-							name="sharing_show"
-							options={ this.getDisplayOptions() }
-							checked={ settings.sharing_show }
-							onChange={ changeSharingPostTypes }
-							disabled={ ! initialized }
-						/>
-					</fieldset>
-					{ this.getCommentLikesOptionElement() }
-					{ this.getTwitterViaOptionElement() }
-				</div>
+			<Fragment>
+				<div className="sharing-buttons__panel">
+					{ siteId && <QueryPostTypes siteId={ siteId } /> }
+					<h4>{ translate( 'Options' ) }</h4>
+					<div className="sharing-buttons__fieldset-group">
+						{ this.getSharingShowOptionsElement() }
+						{ this.getCommentLikesOptionElement() }
+						{ this.getTwitterViaOptionElement() }
+					</div>
 
-				<button
-					type="submit"
-					className="button sharing-buttons__submit"
-					disabled={ saving || ! initialized }
-				>
-					{ saving ? translate( 'Saving…' ) : translate( 'Save Changes' ) }
-				</button>
-			</div>
+					<button
+						type="submit"
+						className="button sharing-buttons__submit"
+						disabled={ saving || ! initialized }
+					>
+						{ saving ? translate( 'Saving…' ) : translate( 'Save Changes' ) }
+					</button>
+				</div>
+				{ this.getWpAdminBanner() }
+			</Fragment>
 		);
 	}
 }
@@ -250,18 +298,24 @@ const connectComponent = connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const isTwitterButtonAllowed =
 			! isJetpack || isJetpackMinimumVersion( state, siteId, '3.4-dev' );
-		const postTypes = values( getPostTypes( state, siteId ) );
+		const isSharingShowAllowed = ! isJetpack || isJetpackMinimumVersion( state, siteId, '7.3' );
+		const path = getCurrentRouteParameterized( state, siteId );
+
+		const postTypes = filter( values( getPostTypes( state, siteId ) ), 'public' );
 
 		return {
 			buttons: getSharingButtons( state, siteId ),
 			initialized: !! postTypes || !! getSiteSettings( state, siteId ),
 			isJetpack,
+			isSharingShowAllowed,
 			isTwitterButtonAllowed,
+			path,
 			postTypes,
+			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			siteId,
 		};
 	},
-	{ recordGoogleEvent }
+	{ recordGoogleEvent, recordTracksEvent }
 );
 
 export default flowRight(

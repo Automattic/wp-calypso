@@ -45,6 +45,7 @@ export default class SidebarItem extends React.Component {
 		const isExternalLink = isExternal( this.props.link );
 		const showAsExternal = isExternalLink && ! this.props.forceInternalLink;
 		const classes = classnames( this.props.className, { selected: this.props.selected } );
+		const { materialIcon, icon } = this.props;
 
 		return (
 			<li
@@ -59,8 +60,8 @@ export default class SidebarItem extends React.Component {
 					rel={ isExternalLink ? 'noopener noreferrer' : null }
 					onMouseEnter={ this.preload }
 				>
-					<Gridicon icon={ this.props.icon } size={ 24 } />
-					{ this.props.materialIcon ? <MaterialIcon icon={ this.props.materialIcon } /> : null }
+					{ icon && ! materialIcon ? <Gridicon icon={ icon } size={ 24 } /> : null }
+					{ materialIcon ? <MaterialIcon icon={ materialIcon } /> : null }
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 					<span
 						className="sidebar__menu-link-text menu-link-text"

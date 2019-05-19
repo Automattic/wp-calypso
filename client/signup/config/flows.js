@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, includes, reject } from 'lodash';
-import i18n from 'i18n-calypso';
+import { assign, get, includes, indexOf, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,10 +25,6 @@ function dependenciesContainCartItem( dependencies ) {
 }
 
 function getSiteDestination( dependencies ) {
-	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
-	}
-
 	let protocol = 'https';
 
 	/**
@@ -44,14 +39,6 @@ function getSiteDestination( dependencies ) {
 	return protocol + '://' + dependencies.siteSlug;
 }
 
-function getPostsDestination( dependencies ) {
-	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
-	}
-
-	return '/posts/' + dependencies.siteSlug;
-}
-
 function getRedirectDestination( dependencies ) {
 	if (
 		dependencies.oauth2_redirect &&
@@ -63,7 +50,15 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-const flows = generateFlows( { getPostsDestination, getSiteDestination, getRedirectDestination } );
+function getChecklistDestination( dependencies ) {
+	return '/checklist/' + dependencies.siteSlug;
+}
+
+const flows = generateFlows( {
+	getSiteDestination,
+	getRedirectDestination,
+	getChecklistDestination,
+} );
 
 function removeUserStepFromFlow( flow ) {
 	if ( ! flow ) {
@@ -84,30 +79,6 @@ function replaceStepInFlow( flow, oldStepName, newStepName ) {
 	return assign( {}, flow, {
 		steps: flow.steps.map( stepName => ( stepName === oldStepName ? newStepName : stepName ) ),
 	} );
-}
-
-function filterDesignTypeInFlow( flowName, flow ) {
-	if ( ! flow ) {
-		return;
-	}
-
-	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
-		// If Atomic Store is enabled, replace 'design-type-with-store' with
-		// 'design-type-with-store-nux' in flows other than 'pressable'.
-		if ( flowName !== 'pressable' && includes( flow.steps, 'design-type-with-store' ) ) {
-			return replaceStepInFlow( flow, 'design-type-with-store', 'design-type-with-store-nux' );
-		}
-
-		// Show store option to everyone if Atomic Store is enabled
-		return replaceStepInFlow( flow, 'design-type', 'design-type-with-store-nux' );
-	}
-
-	// Show design type with store option only to new users with EN locale
-	if ( ! user.get() && 'en' === i18n.getLocaleSlug() ) {
-		return replaceStepInFlow( flow, 'design-type', 'design-type-with-store' );
-	}
-
-	return flow;
 }
 
 /**
@@ -133,7 +104,11 @@ function filterFlowName( flowName ) {
 	return flowName;
 }
 
-function filterDestination( destination ) {
+function filterDestination( destination, dependencies ) {
+	if ( dependenciesContainCartItem( dependencies ) ) {
+		return getCheckoutUrl( dependencies );
+	}
+
 	return destination;
 }
 
@@ -172,12 +147,23 @@ const Flows = {
 			flow = removeUserStepFromFlow( flow );
 		}
 
-		// Maybe modify the design type step to a variant with store
-		flow = filterDesignTypeInFlow( flowName, flow );
-
 		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 
 		return Flows.filterExcludedSteps( Flows.getABTestFilteredFlow( flowName, flow ) );
+	},
+
+	getNextStepNameInFlow( flowName, currentStepName = '' ) {
+		const flow = Flows.getFlows()[ flowName ];
+
+		if ( ! flow ) {
+			return false;
+		}
+		const flowSteps = flow.steps;
+		const currentStepIndex = indexOf( flowSteps, currentStepName );
+		const nextIndex = currentStepIndex + 1;
+		const nextStepName = get( flowSteps, nextIndex );
+
+		return nextStepName;
 	},
 
 	/**
@@ -260,11 +246,7 @@ const Flows = {
 			'remove' === abtest( 'removeDomainsStepFromOnboarding' )
 		) {
 			flow = Flows.removeStepFromFlow( 'domains-with-preview', flow );
-			flow = replaceStepInFlow(
-				flow,
-				'site-information-title-with-preview',
-				'site-information-without-domains'
-			);
+			flow = replaceStepInFlow( flow, 'site-title-with-preview', 'site-title-without-domains' );
 
 			return flow;
 		}

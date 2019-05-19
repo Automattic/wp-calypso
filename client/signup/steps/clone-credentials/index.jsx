@@ -39,10 +39,7 @@ class CloneCredentialsStep extends Component {
 	};
 
 	goToNextStep = () => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			roleName: 'alternate',
-		} );
-
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, { roleName: 'alternate' } );
 		this.props.goToNextStep();
 	};
 

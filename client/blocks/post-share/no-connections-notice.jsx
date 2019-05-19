@@ -19,7 +19,9 @@ const NoConnectionsNotice = ( { siteSlug } ) => {
 			showDismiss={ false }
 			text={ translate( 'Connect an account to get started.' ) }
 		>
-			<NoticeAction href={ `/sharing/${ siteSlug }` }>{ translate( 'Settings' ) }</NoticeAction>
+			<NoticeAction href={ `/marketing/connections/${ siteSlug }` }>
+				{ translate( 'Settings' ) }
+			</NoticeAction>
 		</Notice>
 	);
 };

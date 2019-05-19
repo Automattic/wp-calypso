@@ -13,6 +13,9 @@ import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	page( '/earn', siteSelection, sites, makeLayout, clientRender );
+	page( '/earn/memberships', siteSelection, sites, makeLayout, clientRender );
+	page( '/earn/ads-settings', siteSelection, sites, makeLayout, clientRender );
+	page( '/earn/ads-earnings', siteSelection, sites, makeLayout, clientRender );
 	page( '/earn/:site_id', earnController.redirect, makeLayout, clientRender );
 	// These 2 are legacy URLs to redirect if they are present anywhere on the web.
 	page( '/ads/earnings/:site_id', earnController.redirect, makeLayout, clientRender );

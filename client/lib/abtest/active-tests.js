@@ -7,15 +7,8 @@ export default {
 			onboarding: 100,
 		},
 		defaultVariation: 'main',
-	},
-	streamlinedNavigationDrawer: {
-		datestamp: '20190321',
-		variations: {
-			test: 5,
-			control: 95,
-		},
-		defaultVariation: 'control',
 		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -34,24 +27,6 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-	},
-	signupAtomicStoreVsPressable: {
-		datestamp: '20171101',
-		variations: {
-			atomic: 99,
-			pressable: 1,
-		},
-		defaultVariation: 'atomic',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
-	businessPlanDescriptionAT: {
-		datestamp: '20170605',
-		variations: {
-			original: 50,
-			pluginsAndThemes: 50,
-		},
-		defaultVariation: 'original',
 	},
 	ATPromptOnCancel: {
 		datestamp: '20170515',
@@ -130,17 +105,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	jetpackMonthlyPlansOnly: {
-		datestamp: '20190312',
-		variations: {
-			original: 50,
-			monthlyOnly: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-		countryCodeTargets: [ 'ES', 'IT', 'PT', 'FR', 'NL', 'DE', 'BE', 'PL', 'SE' ],
-	},
 	pluginFeaturedTitle: {
 		datestamp: '20190220',
 		variations: {
@@ -192,44 +156,23 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	conciergeQuickstartSession: {
-		datestamp: '20190409',
+	conciergeUpsellDial: {
+		//this test is used to dial down the upsell offer
+		datestamp: '20190429',
 		variations: {
-			controlSupportSession: 50,
-			variantQuickstartSession: 50,
+			offer: 100,
+			noOffer: 0,
 		},
-		defaultVariation: 'controlSupportSession',
+		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	gsuitePurchaseCtaOptions: {
-		datestamp: '20190411',
+	showCheckoutCartRight: {
+		datestamp: '20190502',
 		variations: {
-			hideBusinessWithAnnualPrices: 25,
-			hideBusinessWithMonthlyPrices: 25,
-			showBusinessWithAnnualPrices: 25,
-			showBusinessWithMonthlyPrices: 25,
-		},
-		defaultVariation: 'hideBusinessWithAnnualPrices',
-		allowExistingUsers: true,
-		countryCodeTargets: [ 'USD' ],
-	},
-	domainSuggestionsEnCheck: {
-		datestamp: '20190415',
-		variations: {
+			variantRightColumn: 50,
 			control: 50,
-			test: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-	},
-	gsuiteDomainFlowOptions: {
-		datestamp: '20190415',
-		variations: {
-			hideMonthlyPrice: 50,
-			showMonthlyPrice: 50,
-		},
-		defaultVariation: 'hideMonthlyPrice',
-		allowExistingUsers: true,
-		countryCodeTargets: [ 'USD' ],
 	},
 };

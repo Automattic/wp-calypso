@@ -43,6 +43,7 @@ module.exports = function i18nCalypso( config ) {
 				'jsx',
 				'objectRestSpread',
 				'trailingFunctionCommas',
+				'typescript',
 			],
 			allowImportExportEverywhere: true,
 		},

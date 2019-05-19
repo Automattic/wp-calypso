@@ -42,14 +42,6 @@ describe( 'Verify Import Option: (' + screenSize + ') @parallel', function() {
 		await navBarComponent.clickMySites();
 	} );
 
-	step( "Can see an 'Import' option", async function() {
-		const sideBarComponent = await SideBarComponent.Expect( driver );
-		return assert(
-			await sideBarComponent.settingsOptionExists(),
-			'The settings menu option does not exist'
-		);
-	} );
-
 	step( "Following 'Import' menu option opens the Import page", async function() {
 		const sideBarComponent = await SideBarComponent.Expect( driver );
 		await sideBarComponent.selectImport();
@@ -63,7 +55,7 @@ describe( 'Verify Import Option: (' + screenSize + ') @parallel', function() {
 
 	step( 'Can see the Medium importer', async function() {
 		const importerPage = await ImporterPage.Expect( driver );
-		assert( await importerPage.importerIsDisplayed( 'medium' ) );
+		assert( await importerPage.importerIsDisplayed( 'medium-logo' ) );
 	} );
 
 	step( 'Can see the Blogger importer', async function() {

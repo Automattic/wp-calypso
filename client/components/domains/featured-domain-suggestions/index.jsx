@@ -15,6 +15,11 @@ import { pick } from 'lodash';
 import FeaturedDomainSuggestionsPlaceholder from './placeholder';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
 		cart: PropTypes.object,

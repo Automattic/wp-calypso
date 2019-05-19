@@ -1,5 +1,5 @@
 /** @format */
-
+const { merge } = require( 'lodash' );
 const reactVersion = require( './package.json' ).dependencies.react;
 
 module.exports = {
@@ -35,11 +35,39 @@ module.exports = {
 				step: false,
 			},
 		},
+		merge(
+			{},
+			require( '@typescript-eslint/eslint-plugin' ).configs.recommended,
+			require( 'eslint-config-prettier/@typescript-eslint' ),
+			{
+				files: [ '**/*.ts', '**/*.tsx' ],
+				rules: {
+					'@typescript-eslint/explicit-function-return-type': 'off',
+					'@typescript-eslint/explicit-member-accessibility': 'off',
+					'@typescript-eslint/no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
+					'@typescript-eslint/no-use-before-define': [
+						'error',
+						{ functions: false, typedefs: false },
+					],
+					'no-use-before-define': 'off',
+					'@typescript-eslint/no-var-requires': 'off',
+					// REST API objects include underscores
+					'@typescript-eslint/camelcase': 'off',
+					'valid-jsdoc': [
+						2,
+						{
+							requireParamType: false,
+							requireReturn: false,
+							requireReturnType: false,
+						},
+					],
+				},
+			}
+		),
 	],
-	parser: 'babel-eslint',
 	env: {
 		browser: true,
-		'jest/globals': true,
+		jest: true,
 		// mocha is only still on because we have not finished porting all of our tests to jest's syntax
 		mocha: true,
 		node: true,
@@ -47,8 +75,6 @@ module.exports = {
 	globals: {
 		// this is our custom function that's transformed by babel into either a dynamic import or a normal require
 		asyncRequire: true,
-		// this is the name of the project from the build config. Injected at boot in a script tag.
-		PROJECT_NAME: true,
 		// this is the SHA of the current commit. Injected at boot in a script tag.
 		COMMIT_SHA: true,
 		// this is when Webpack last built the bundle

@@ -56,7 +56,7 @@
 }
 
 .comments__comment-author {
-	color: var( --color-neutral-600 );
+	color: var( --color-text );
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 14px;
@@ -71,7 +71,7 @@
 }
 
 .comments__comment-username {
-	color: var( --color-neutral-600 );
+	color: var( --color-text );
 	height: 21px;
 	margin-right: 7px;
 }
@@ -120,7 +120,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-respondee {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	margin-right: 12px;
 
 	.gridicon {
@@ -132,7 +132,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-respondee .comments__comment-respondee-link {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	font-weight: normal;
 	margin-left: -2px;
 
@@ -142,7 +142,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-timestamp a {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	font-weight: normal;
 	text-decoration: none;
 
@@ -152,7 +152,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-moderation {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	margin-top: 0.5em;
 	margin-bottom: 0.5em;
 	font-size: 12px;

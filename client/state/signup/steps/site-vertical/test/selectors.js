@@ -10,12 +10,24 @@ import {
 	getSiteVerticalIsUserInput,
 	getSiteVerticalPreview,
 	getSiteVerticalParentId,
+	getSiteVerticalData,
 } from '../selectors';
 
 describe( 'selectors', () => {
 	const verticals = {
 		felice: [
-			{ verticalName: 'felice', preview: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->' },
+			{
+				verticalName: 'felice',
+				verticalSlug: 'felice',
+				preview: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->',
+			},
+		],
+		contento: [
+			{
+				verticalName: 'contento',
+				verticalSlug: 'contento',
+				preview: '<!--gutenberg-loves-you <p>High five!</p>-->',
+			},
 		],
 	};
 
@@ -90,6 +102,24 @@ describe( 'selectors', () => {
 			expect( getSiteVerticalParentId( state ) ).toEqual(
 				state.signup.steps.siteVertical.parentId
 			);
+		} );
+	} );
+	describe( 'getSiteVerticalData', () => {
+		const defaultPreviewData = {
+			isUserInputVertical: true,
+			parent: '',
+			preview: '',
+			verticalId: '',
+			verticalName: '',
+			verticalSlug: '',
+		};
+
+		test( 'should return default vertical object with empty string values', () => {
+			expect( getSiteVerticalData( {} ) ).toEqual( defaultPreviewData );
+		} );
+
+		test( 'should return direct match', () => {
+			expect( getSiteVerticalData( state ) ).toEqual( verticals.felice[ 0 ] );
 		} );
 	} );
 } );

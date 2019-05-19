@@ -1,6 +1,8 @@
-#### next (…)
+#### v4.1.0 (2019-05-07)
 
-- Enhancement: Update `i18n-ellipsis` rule to catch usage in @wordpress/i18n functions
+- Enhancement: `jsx-classname-namespace` doesn't limit classnames without suffix to root elements
+- Enhancement: `jsx-classname-namespace` accepts both file and directory name when validating class name
+- Enhancement: `i18n-ellipsis` rule updated to catch usage in @wordpress/i18n functions
 
 #### v4.0.2 (2018-08-10)
 

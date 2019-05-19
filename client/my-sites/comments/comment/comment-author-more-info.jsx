@@ -174,24 +174,22 @@ export class CommentAuthorMoreInfo extends Component {
 					) }
 
 					{ ! authorEmail && (
-						<div className="comment__author-more-info-element">
-							<div>
-								{ translate(
-									"Anonymous messages can't be blocked individually, " +
-										'but you can update your {{a}}settings{{/a}} to ' +
-										'only allow comments from registered users.',
-									{
-										components: {
-											a: (
-												<a
-													href={ `/settings/discussion/${ siteSlug }` }
-													onClick={ trackAnonymousModeration }
-												/>
-											),
-										},
-									}
-								) }
-							</div>
+						<div>
+							{ translate(
+								"Anonymous messages can't be blocked individually, " +
+									'but you can update your {{a}}settings{{/a}} to ' +
+									'only allow comments from registered users.',
+								{
+									components: {
+										a: (
+											<a
+												href={ `/settings/discussion/${ siteSlug }` }
+												onClick={ trackAnonymousModeration }
+											/>
+										),
+									},
+								}
+							) }
 						</div>
 					) }
 				</Popover>

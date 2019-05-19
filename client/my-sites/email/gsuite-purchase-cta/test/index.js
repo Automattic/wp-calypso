@@ -25,7 +25,6 @@ describe( 'GSuitePurchaseCta', () => {
 					currencyCode={ 'USD' }
 					domainName={ 'test.com' }
 					gsuiteBasicCost={ 72 }
-					gsuiteBusinessCost={ 144 }
 					recordTracksEvent={ noop }
 					selectedSiteSlug={ 'test.wordpress.com' }
 				/>

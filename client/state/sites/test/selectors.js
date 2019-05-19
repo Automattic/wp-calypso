@@ -3090,7 +3090,7 @@ describe( 'selectors', () => {
 			} );
 
 			const modulesActive = verifyJetpackModulesActive( state, siteId, [
-				'after-the-deadline',
+				'contact-form',
 				'manage',
 			] );
 			chaiExpect( modulesActive ).to.equal( false );

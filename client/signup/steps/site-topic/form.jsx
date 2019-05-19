@@ -3,6 +3,8 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -12,7 +14,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'gridicons';
 import FormFieldset from 'components/forms/form-fieldset';
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -73,7 +74,7 @@ class SiteTopicForm extends Component {
 	render() {
 		const { isButtonDisabled, siteTopic } = this.props;
 		return (
-			<div className="site-topic__content">
+			<div className={ classNames( 'site-topic__content', { 'is-empty': ! siteTopic } ) }>
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
 						<SiteVerticalsSuggestionSearch

@@ -18,7 +18,6 @@ exports[`Plans should render plans 1`] = `
   />
   <Connect(Localized(JetpackPlansGrid))
     basePlansPath="/jetpack/connect/plans"
-    countryCode="US"
     hideFreePlan={true}
     isLanding={false}
     onSelect={[Function]}
@@ -65,7 +64,6 @@ exports[`Plans should render plans 1`] = `
         "name": "Test Site",
         "options": Object {
           "active_modules": Array [
-            "after-the-deadline",
             "contact-form",
             "custom-content-types",
             "custom-css",

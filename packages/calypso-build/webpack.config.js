@@ -6,7 +6,9 @@
 /**
  * External dependencies
  */
+const fs = require( 'fs' );
 const path = require( 'path' );
+const process = require( 'process' );
 const webpack = require( 'webpack' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const FileConfig = require( './webpack/file-loader' );
@@ -48,7 +50,7 @@ function getWebpackConfig(
 	{
 		entry,
 		'output-chunk-filename': outputChunkFilename,
-		'output-path': outputPath = path.join( __dirname, 'dist' ),
+		'output-path': outputPath = path.join( process.cwd(), 'dist' ),
 		'output-filename': outputFilename = '[name].js',
 		'output-libary-target': outputLibraryTarget = 'window',
 	}
@@ -57,6 +59,17 @@ function getWebpackConfig(
 
 	const cssFilename = cssNameFromFilename( outputFilename );
 	const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
+
+	let babelConfig = path.join( process.cwd(), 'babel.config.js' );
+	let presets = [];
+	if ( ! fs.existsSync( babelConfig ) ) {
+		// Default to this package's Babel presets
+		presets = [
+			path.join( __dirname, 'babel', 'default' ),
+			env.WP && path.join( __dirname, 'babel', 'wordpress-element' ),
+		].filter( Boolean );
+		babelConfig = undefined;
+	}
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
@@ -87,9 +100,11 @@ function getWebpackConfig(
 		module: {
 			rules: [
 				TranspileConfig.loader( {
-					workerCount,
 					cacheDirectory: true,
+					configFile: babelConfig,
 					exclude: /node_modules\//,
+					presets,
+					workerCount,
 				} ),
 				SassConfig.loader( {
 					preserveCssCustomProperties: false,
@@ -99,7 +114,7 @@ function getWebpackConfig(
 			],
 		},
 		resolve: {
-			extensions: [ '.json', '.js', '.jsx' ],
+			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 			modules: [ 'node_modules' ],
 		},
 		node: false,

@@ -73,9 +73,7 @@ handleSubmit: function( event ) {
 `submitSignupStep` takes the following parameters:
 
 - a `step` object with the property `stepName`, the name of the step you're submitting.
-- (optional) `errors`, an array of errors that will be attached to the step. If provided, the status of the step will be set to `invalid` in the Progress Store.
 - (optional) `providedDependencies`, an object describing the data added by the step to the Dependency Store. Use this only for data that does not come from API requests.
-- (optional) `processingMessage`, a message that is displayed at the end of the flow while the user waits for the apiRequestFunction to process. For example, "Creating your account" or "Setting up your site", depending on what your step does.
 - (optional) `wasSkipped`, a flag indicating that an optional step was skipped when it is set to true.
 
 Some background on `providedDependencies` and the Dependency Store: submitted steps are saved in the Progress Store, where they wait to have their dependencies met. For example, a step that creates a site needs to wait until a user account is created. Once that happens, the step is processed and its result is saved in the Dependency Store, so other steps can use it. You can read more about this [here](https://github.com/Automattic/wp-calypso/tree/master/client/lib/signup).
@@ -128,15 +126,14 @@ export default class extends React.Component {
 } );
 ```
 
-4 - add the new step to `/client/signup/config/step-components.js`. Include the component:
+4 - add the new step to `/client/signup/config/step-components.js`. Include a reference to the component module:
 ```javascript
-import helloWorldComponent from 'signup/steps/hello-world';
-```
+const stepNameToModuleName = {
+	...
+	'hello-world' : 'hello-world-module-name'; // Referencing signup/steps/hello-world-module-name/index.js
+};
 
-... and then create a new property for it:
-
-```javascript
-'hello-world': helloWorldComponent // This is the component to show for this step
+...
 ```
 
 5 - add the new step to `/client/signup/config/steps-pure.js`. Include the component in the object returned from `generateSteps`:

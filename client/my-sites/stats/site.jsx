@@ -27,7 +27,6 @@ import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsBanners from './stats-banners';
-import StatsFirstView from './stats-first-view';
 import StickyPanel from 'components/sticky-panel';
 import JetpackColophon from 'components/jetpack-colophon';
 import config from 'config';
@@ -172,7 +171,6 @@ class StatsSite extends Component {
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
 				<PrivacyPolicyBanner />
-				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
 					selectedItem={ 'traffic' }

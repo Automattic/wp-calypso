@@ -22,7 +22,7 @@ import DomainProductPrice from 'components/domains/domain-product-price';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormTextInput from 'components/forms/form-text-input';
 import {
 	recordAddDomainButtonClickInMapDomain,
 	recordFormSubmitInMapDomain,
@@ -30,6 +30,11 @@ import {
 	recordGoButtonClickInMapDomain,
 } from 'state/domains/actions';
 import Notice from 'components/notice';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class MapDomainStep extends React.Component {
 	static propTypes = {
@@ -49,19 +54,10 @@ class MapDomainStep extends React.Component {
 		initialQuery: '',
 	};
 
-	state = this.getDefaultState();
-
-	getDefaultState() {
-		return {
-			searchQuery: this.props.initialQuery,
-		};
-	}
-
-	UNSAFE_componentWillMount() {
-		if ( this.props.initialState ) {
-			this.setState( Object.assign( {}, this.props.initialState, this.getDefaultState() ) );
-		}
-	}
+	state = {
+		...this.props.initialState,
+		searchQuery: this.props.initialQuery,
+	};
 
 	componentWillUnmount() {
 		this.props.onSave( this.state );
@@ -113,8 +109,7 @@ class MapDomainStep extends React.Component {
 					/>
 
 					<div className="map-domain-step__add-domain" role="group">
-						<FormTextInputWithAffixes
-							prefix="http://"
+						<FormTextInput
 							className="map-domain-step__external-domain"
 							type="text"
 							value={ this.state.searchQuery }

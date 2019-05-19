@@ -143,19 +143,13 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	getSubmitButtonText() {
-		return this.hasAnotherStep()
-			? this.props.translate( 'Continue' )
-			: this.props.translate( 'Continue to Checkout' );
-	}
-
 	renderSubmitButton() {
 		return (
 			<FormButton
 				className="checkout__domain-details-form-submit-button"
 				onClick={ this.handleSubmitButtonClick }
 			>
-				{ this.getSubmitButtonText() }
+				{ this.props.translate( 'Continue' ) }
 			</FormButton>
 		);
 	}
@@ -178,7 +172,7 @@ export class DomainDetailsForm extends PureComponent {
 	renderDomainContactDetailsFields() {
 		const { contactDetails, translate, userCountryCode } = this.props;
 		const labelTexts = {
-			submitButton: this.getSubmitButtonText(),
+			submitButton: translate( 'Continue' ),
 			organization: translate(
 				'Registering this domain for a company? + Add Organization Name',
 				'Registering these domains for a company? + Add Organization Name',

@@ -42,8 +42,6 @@ const PopoverCart = createReactClass( {
 		closeSectionNavMobilePanel: PropTypes.func,
 		visible: PropTypes.bool.isRequired,
 		pinned: PropTypes.bool.isRequired,
-		showKeepSearching: PropTypes.bool.isRequired,
-		onKeepSearchingClick: PropTypes.func.isRequired,
 	},
 
 	toggleButton: React.createRef(),
@@ -154,11 +152,7 @@ const PopoverCart = createReactClass( {
 					selectedSite={ this.props.selectedSite }
 				/>
 
-				<CartButtons
-					selectedSite={ this.props.selectedSite }
-					showKeepSearching={ this.props.showKeepSearching }
-					onKeepSearchingClick={ this.props.onKeepSearchingClick }
-				/>
+				<CartButtons selectedSite={ this.props.selectedSite } />
 			</div>
 		);
 	},

@@ -10,17 +10,25 @@
 	.transfer-domain-step__domain-description {
 		display: flex;
 		justify-content: space-between;
+		flex-direction: column;
 		margin-bottom: 20px;
+
+		@include breakpoint( '>960px' ) {
+			flex-direction: row;
+		}
 	}
 
 	.transfer-domain-step__price {
 		font-weight: 600;
-		text-align: right;
 
 		&.is-free-with-plan,
 		&.is-sale-price {
 			font-weight: 400;
 			font-size: 90%;
+		}
+
+		@include breakpoint( '>960px' ) {
+			text-align: right;
 		}
 	}
 

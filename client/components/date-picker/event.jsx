@@ -6,8 +6,12 @@
 
 import React from 'react';
 import Gridicon from 'gridicons';
-import SocialLogo from 'social-logos';
 import classNames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
+import SocialLogo from 'components/social-logo';
 
 const renderIcon = icon =>
 	icon && (

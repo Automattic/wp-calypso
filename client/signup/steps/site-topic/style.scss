@@ -23,7 +23,7 @@ body.is-section-jetpack-connect .site-topic__content {
 	input {
 		// Extra padding to account for the button and
 		// the search icon.
-		padding: 10px 100px 12px 42px;
+		padding: 10px 64px 12px 42px;
 
 		// Trying out a rounded input
 		border-radius: 4px;
@@ -34,8 +34,7 @@ body.is-section-jetpack-connect .site-topic__content {
 		@include breakpoint( '<660px' ) {
 			// On smaller screens the buttons get bigger,
 			// so this input needs to get bigger, too.
-			padding-top: 15px;
-			padding-bottom: 15px;
+			padding: 15px 64px 15px 42px;
 
 			// The rounded borders look strange on
 			// smaller screens.
@@ -45,6 +44,10 @@ body.is-section-jetpack-connect .site-topic__content {
 		&:focus {
 			box-shadow: 0 0 0 3px var( --color-accent-light );
 		}
+	}
+
+	&.is-empty input {
+		padding-right: 15px;
 	}
 
 	.suggestions__wrapper {

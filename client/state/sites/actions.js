@@ -121,7 +121,9 @@ export function requestSite( siteFragment ) {
 
 		return wpcom
 			.site( siteFragment )
-			.get()
+			.get( {
+				apiVersion: '1.2',
+			} )
 			.then( site => {
 				// If we can't manage the site, don't add it to state.
 				if ( ! ( site && site.capabilities ) ) {

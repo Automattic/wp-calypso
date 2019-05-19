@@ -6,6 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ class SiteTopicStep extends Component {
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		siteType: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -44,7 +46,9 @@ class SiteTopicStep extends Component {
 		// once we have more granular copies per segments, these should only be used for the default case.
 		const headerText =
 			getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicHeader' ) || '';
-		const commonSubHeaderText = 'This information helps us build the best site for your needs.';
+		const commonSubHeaderText = this.props.translate(
+			'This information helps us build the best site for your needs.'
+		);
 
 		return {
 			headerText,
@@ -99,4 +103,4 @@ export default connect(
 		isUserInput: getSiteVerticalIsUserInput( state ),
 	} ),
 	mapDispatchToProps
-)( SiteTopicStep );
+)( localize( SiteTopicStep ) );

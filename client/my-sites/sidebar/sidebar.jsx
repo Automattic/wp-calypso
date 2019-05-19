@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,13 +9,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import page from 'page';
+import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Button from 'components/button';
-import config, { isEnabled } from 'config';
+import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ManageMenu from './manage-menu';
@@ -71,6 +70,7 @@ import {
 } from 'state/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import { canAccessEarnSection } from 'lib/ads/utils';
+import isVipSite from 'state/selectors/is-vip-site';
 
 /**
  * Module variables
@@ -554,14 +554,14 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
-	trackSharingClick = () => {
-		this.trackMenuItemClick( 'sharing' );
+	trackMarketingClick = () => {
+		this.trackMenuItemClick( 'marketing' );
 		this.onNavigate();
 	};
 
-	sharing() {
-		const { isJetpack, isSharingEnabledOnJetpackSite, path, site } = this.props;
-		const sharingLink = '/sharing' + this.props.siteSuffix;
+	marketing() {
+		const { path, site } = this.props;
+		const marketingLink = '/marketing' + this.props.siteSuffix;
 
 		if ( site && ! this.props.canUserPublishPosts ) {
 			return null;
@@ -571,19 +571,15 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( isJetpack && ! isSharingEnabledOnJetpackSite ) {
-			return null;
-		}
-
 		return (
 			<SidebarItem
-				label={ this.props.translate( 'Sharing' ) }
-				selected={ itemLinkMatches( '/sharing', path ) }
-				link={ sharingLink }
-				onNavigate={ this.trackSharingClick }
-				icon="share"
-				preloadSectionName="sharing"
-				tipTarget="sharing"
+				label={ this.props.translate( 'Marketing' ) }
+				selected={ itemLinkMatches( '/marketing', path ) }
+				link={ marketingLink }
+				onNavigate={ this.trackMarketingClick }
+				icon="speaker"
+				preloadSectionName="marketing"
+				tipTarget="marketing"
 			/>
 		);
 	}
@@ -665,12 +661,21 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const adminUrl =
+			this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip
+				? formatUrl( {
+						...parseUrl( site.options.admin_url ),
+						query: { page: 'jetpack' },
+						hash: '/my-plan',
+				  } )
+				: site.options.admin_url;
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		return (
 			<li className="wp-admin">
 				<a
 					onClick={ this.trackWpadminClick }
-					href={ site.options.admin_url }
+					href={ adminUrl }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
@@ -685,13 +690,18 @@ export class MySitesSidebar extends Component {
 
 	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
 	useWPAdminFlows() {
-		const { site } = this.props;
+		const { isAtomicSite, isJetpack, isVip } = this.props;
 		const currentUser = this.props.currentUser;
 		const userRegisteredDate = new Date( currentUser.date );
 		const cutOffDate = new Date( '2015-09-07' );
 
 		// VIP sites should always show a WP Admin link regardless of the current user.
-		if ( site && site.is_vip ) {
+		if ( isVip ) {
+			return true;
+		}
+
+		// Jetpack (not Atomic) sites should always show a WP Admin
+		if ( isJetpack && ! isAtomicSite ) {
 			return true;
 		}
 
@@ -741,13 +751,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	shouldShowStreamlinedNavDrawer() {
-		if ( ! isEnabled( 'ui/streamlined-nav-drawer' ) ) {
-			return false;
-		}
-
-		return (
-			config( 'env_id' ) !== 'production' || abtest( 'streamlinedNavigationDrawer' ) === 'test'
-		);
+		return isEnabled( 'ui/streamlined-nav-drawer' );
 	}
 
 	renderSidebarMenus() {
@@ -770,7 +774,7 @@ export class MySitesSidebar extends Component {
 
 		const manage = !! this.manage(),
 			configuration =
-				!! this.sharing() ||
+				!! this.marketing() ||
 				!! this.users() ||
 				!! this.siteSettings() ||
 				!! this.plugins() ||
@@ -810,8 +814,8 @@ export class MySitesSidebar extends Component {
 					<SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
 						<ul>
+							{ this.marketing() }
 							{ this.earn() }
-							{ this.sharing() }
 							{ this.users() }
 							{ this.plugins() }
 							{ this.upgrades() }
@@ -864,11 +868,12 @@ export class MySitesSidebar extends Component {
 					materialIcon="build"
 				>
 					{ this.tools() }
+					{ this.marketing() }
 					{ this.earn() }
 					{ this.activity() }
 				</ExpandableSidebarMenu>
 
-				{ configuration ? (
+				{ configuration && ( this.upgrades() || this.users() || this.siteSettings() ) ? (
 					<ExpandableSidebarMenu
 						onClick={ this.props.toggleMySitesSidebarManageMenu }
 						expanded={ this.props.isManageOpen }
@@ -878,7 +883,6 @@ export class MySitesSidebar extends Component {
 						<ul>
 							{ this.upgrades() }
 							{ this.users() }
-							{ this.sharing() }
 							{ this.siteSettings() }
 						</ul>
 					</ExpandableSidebarMenu>
@@ -957,6 +961,7 @@ function mapStateToProps( state ) {
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		isSharingEnabledOnJetpackSite,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+		isVip: isVipSite( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',

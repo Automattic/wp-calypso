@@ -3,12 +3,15 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import i18n from 'i18n-calypso';
 import { invoke } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import * as constants from './constants';
+import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
 
 export const FEATURES_LIST = {
 	[ constants.FEATURE_BLANK ]: {
@@ -114,10 +117,23 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_FREE_DOMAIN ]: {
 		getSlug: () => constants.FEATURE_FREE_DOMAIN,
-		getTitle: () => i18n.translate( 'Free domain for one year' ),
+		getTitle: () => i18n.translate( 'Free Domain for One Year' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get a free domain for one year. Premium domains not included. Your domain will renew at its regular price.'
+				'Get a free domain for one year. ' +
+					'Premium domains not included. ' +
+					'Your domain will renew at its {{a}}regular price{{/a}}.',
+				{
+					components: {
+						a: (
+							<a
+								href={ DOMAIN_PRICING_AND_AVAILABLE_TLDS }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
 			),
 	},
 
@@ -306,7 +322,20 @@ export const FEATURES_LIST = {
 			}
 
 			return i18n.translate(
-				'Get a free domain for one year. Premium domains not included. Your domain will renew at its regular price.'
+				'Get a free domain for one year. ' +
+					'Premium domains not included. ' +
+					'Your domain will renew at its {{a}}regular price{{/a}}.',
+				{
+					components: {
+						a: (
+							<a
+								href={ DOMAIN_PRICING_AND_AVAILABLE_TLDS }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
 			);
 		},
 	},
@@ -319,6 +348,18 @@ export const FEATURES_LIST = {
 				'Speed up your site’s performance and protect it from spammers. ' +
 					'Access detailed records of all activity on your site. ' +
 					'While you’re at it, improve your SEO and automate social media sharing.'
+			),
+	},
+
+	[ constants.FEATURE_JETPACK_ADVANCED ]: {
+		getSlug: () => constants.FEATURE_JETPACK_ADVANCED,
+		getTitle: () => i18n.translate( 'Jetpack Advanced Features' ),
+		getDescription: () =>
+			i18n.translate(
+				'Speed up your site’s performance and protect it from spammers. ' +
+					'Access detailed records of all activity on your site and restore your site ' +
+					'to a previous point in time with just a click! While you’re at it, ' +
+					'improve your SEO with our Advanced SEO tools and automate social media sharing.'
 			),
 	},
 

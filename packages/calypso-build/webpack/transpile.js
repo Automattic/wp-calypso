@@ -18,8 +18,9 @@ module.exports.loader = ( {
 	cacheIdentifier,
 	exclude,
 	include,
+	presets,
 } ) => ( {
-	test: /\.jsx?$/,
+	test: /\.[jt]sx?$/,
 	include,
 	exclude,
 	use: [
@@ -36,6 +37,7 @@ module.exports.loader = ( {
 				babelrc: false,
 				cacheDirectory,
 				cacheIdentifier,
+				presets,
 			},
 		},
 	],

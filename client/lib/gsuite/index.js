@@ -100,7 +100,9 @@ function getGSuiteSupportedDomains( domains ) {
 			includes( [ domainTypes.REGISTERED ], domain.type ) &&
 			( domain.hasWpcomNameservers || hasGSuite( domain ) );
 		const mapped = includes( [ domainTypes.MAPPED ], domain.type );
-		return ( wpcomHosted || mapped ) && canDomainAddGSuite( domain.name );
+		const notOtherProvidor =
+			domain.googleAppsSubscription && domain.googleAppsSubscription.status !== 'other_provider';
+		return ( wpcomHosted || mapped ) && canDomainAddGSuite( domain.name ) && notOtherProvidor;
 	} );
 }
 
@@ -127,10 +129,10 @@ function getLoginUrlWithTOSRedirect( email, domain ) {
  *
  * @param {Number} cost - cost
  * @param {String} currencyCode - currency code to format with
- * @returns {String} - Formatted Monthly price
+ * @returns {String} - Formatted Monthly price, rounded to the nearest tenth
  */
 function getMonthlyPrice( cost, currencyCode ) {
-	return formatPrice( cost / 12, currencyCode );
+	return formatPrice( cost / 12, currencyCode, { precision: 1 } );
 }
 
 /**
@@ -150,7 +152,19 @@ function getGSuiteSettingsUrl( domainName ) {
  * @returns {Boolean} - Does a domain have G Suite
  */
 function hasGSuite( domain ) {
-	return 'no_subscription' !== get( domain, 'googleAppsSubscription.status', '' );
+	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
+	return 'no_subscription' !== domainStatus && 'other_provider' !== domainStatus;
+}
+
+/**
+ * Given a domain object, does that domain have G Suite with another providor
+ *
+ * @param {Object} domain - domain object
+ * @returns {Boolean} - Does a domain have G Suite with another providor
+ */
+function hasGSuiteOtherProvidor( domain ) {
+	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
+	return 'other_provider' === domainStatus;
 }
 
 /**
@@ -193,6 +207,7 @@ export {
 	getLoginUrlWithTOSRedirect,
 	getMonthlyPrice,
 	hasGSuite,
+	hasGSuiteOtherProvidor,
 	hasGSuiteSupportedDomain,
 	hasPendingGSuiteUsers,
 	isGSuiteRestricted,

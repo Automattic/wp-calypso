@@ -35,11 +35,10 @@ class CloneStartStep extends Component {
 	goToNextStep = () => {
 		const { originBlogId, originSiteSlug, originSiteName } = this.props;
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			originBlogId,
-			originSiteSlug,
-			originSiteName,
-		} );
+		SignupActions.submitSignupStep(
+			{ stepName: this.props.stepName },
+			{ originBlogId, originSiteSlug, originSiteName }
+		);
 
 		this.props.goToNextStep();
 	};

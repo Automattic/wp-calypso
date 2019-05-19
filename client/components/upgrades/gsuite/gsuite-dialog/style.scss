@@ -102,10 +102,9 @@
 .gsuite-dialog__users {
 	border-bottom: 1px solid var( --color-neutral-50 );
 	display: block;
-	padding: 0 30px;
 
 	h4 {
-		color: #7799ae;
+		color: var( --color-text-subtle );
 		margin-top: 30px;
 		margin-bottom: 4px;
 	}
@@ -113,6 +112,11 @@
 	.gsuite-dialog__user-fields {
 		animation: gsuite-user-show 0.3s ease-in-out;
 		margin-bottom: 20px;
+	}
+
+	.gsuite-dialog__user-email {
+		// override browser defaults so input can shrink
+		min-width: 0;
 	}
 
 	.gsuite-dialog__user-first-name {
@@ -162,26 +166,26 @@
 }
 
 .gsuite-dialog__footer {
+
+	@include breakpoint( '>480px' ) {
+		display: flex;
+		justify-content: flex-end;
+	}
+
 	.gsuite-dialog__continue-button {
 		@include breakpoint( '<480px' ) {
 			width: 100%;
 			margin-top: 10px;
 		}
-
-		@include breakpoint( '>480px' ) {
-			float: right;
-		}
 	}
 
 	.gsuite-dialog__checkout-button {
 		color: var( --color-text-subtle );
+		margin-right: 10px;
 
 		@include breakpoint( '<480px' ) {
 			width: 100%;
-		}
-
-		@include breakpoint( '>480px' ) {
-			float: left;
+			margin-right: 0;
 		}
 	}
 }

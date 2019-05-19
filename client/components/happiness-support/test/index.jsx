@@ -44,9 +44,9 @@ describe( 'HappinessSupport', () => {
 	} );
 
 	test( 'should render a translated support button', () => {
-		expect( wrapper.find( 'Button.happiness-support__support-button' ).props().children ).to.equal(
-			'Translated: Support documentation'
-		);
+		expect(
+			wrapper.find( 'Button.happiness-support__support-button>span' ).props().children
+		).to.equal( 'Translated: Support documentation' );
 	} );
 
 	test( 'should render a support button with link to SUPPORT_ROOT if it is not for JetPack', () => {

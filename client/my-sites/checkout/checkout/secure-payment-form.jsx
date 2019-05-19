@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
-import { get, find, defer, pick, isEqual } from 'lodash';
+import { get, defer, pick, isEqual } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -30,8 +30,6 @@ import cartValues, {
 	cartItems,
 	getLocationOrigin,
 } from 'lib/cart-values';
-import Notice from 'components/notice';
-import { preventWidows } from 'lib/formatting';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import getCountries from 'state/selectors/get-countries';
@@ -41,6 +39,7 @@ import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 import FormattedHeader from 'components/formatted-header';
+import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -469,36 +468,11 @@ export class SecurePaymentForm extends Component {
 					countriesList={ this.props.countriesList }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					translate={ this.props.translate }
+					presaleChatAvailable={ this.props.presaleChatAvailable }
 				>
 					{ this.props.children }
 				</WebPaymentBox>
 			</PaymentBox>
-		);
-	}
-
-	renderGetDotBlogNotice() {
-		const hasProductFromGetDotBlogSignup = find(
-			this.props.cart.products,
-			product => product.extra && product.extra.source === 'get-dot-blog-signup'
-		);
-
-		if (
-			this.getVisiblePaymentBox( this.props ) !== 'credit-card' ||
-			! hasProductFromGetDotBlogSignup
-		) {
-			return;
-		}
-
-		return (
-			<Notice icon="notice" showDismiss={ false }>
-				{ preventWidows(
-					this.props.translate(
-						'You can reuse the payment information you entered on get.blog, ' +
-							'a WordPress.com service. Confirm your order below.'
-					),
-					4
-				) }
-			</Notice>
 		);
 	}
 
@@ -542,6 +516,7 @@ export class SecurePaymentForm extends Component {
 			case 'eps':
 			case 'giropay':
 			case 'ideal':
+			case 'netbanking':
 			case 'p24':
 			case 'brazil-tef':
 			case 'sofort':
@@ -568,6 +543,11 @@ export class SecurePaymentForm extends Component {
 		const { translate } = this.props;
 		const headerText = translate( 'Great choice! How would you like to pay?' );
 
+		if ( 'variantRightColumn' === abtest( 'showCheckoutCartRight' ) ) {
+			const element = document.getElementsByClassName( 'formatted-header__title' )[ 0 ];
+			element.textContent = headerText;
+			return;
+		}
 		return <FormattedHeader headerText={ headerText } />;
 	}
 
@@ -590,7 +570,6 @@ export class SecurePaymentForm extends Component {
 
 		return (
 			<div className="checkout__secure-payment-form">
-				{ this.renderGetDotBlogNotice() }
 				{ this.renderPaymentBox( visiblePaymentBox ) }
 			</div>
 		);

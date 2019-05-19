@@ -1,7 +1,7 @@
 .post-edit-button {
 	align-items: center;
 	box-sizing: border-box;
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	cursor: pointer;
 	display: inline-flex;
 	list-style-type: none;
@@ -27,7 +27,7 @@
 	}
 
 	.post-edit-button__label {
-		color: var( --color-neutral-light );
+		color: var( --color-text-subtle );
 
 		@include breakpoint( '<480px' ) {
 			display: none;
