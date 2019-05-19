@@ -207,7 +207,7 @@ class SharingButtonsOptions extends Component {
 						onChange={ this.handleChange }
 						disabled={ ! initialized }
 					/>
-          <SupportInfo
+          			<SupportInfo
 						text={ translate(
 							'When a reader leaves a comment on your content, offer an option to show appreciation for it.'
 						) }
