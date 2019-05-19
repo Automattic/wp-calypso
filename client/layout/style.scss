@@ -214,13 +214,18 @@
 			border-color: var( --sidebar-border-color );
 		}
 		
+		&__no-results {
+			color: var( --sidebar-heading-color );
+		}
+		
+		&__hidden-sites-message,
+		&__manage-hidden-sites {
+			color: var( --sidebar-text-color );
+		}
+		
 		.all-sites {
 			border-color: var( --sidebar-border-color );
 		}
-	}
-
-	.site-selector__no-results {
-		color: var( --sidebar-heading-color );
 	}
 	
 	.all-sites .count {
