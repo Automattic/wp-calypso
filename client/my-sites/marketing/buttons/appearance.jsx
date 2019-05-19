@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -146,7 +148,7 @@ class SharingButtonsAppearance extends Component {
 						onChange={ this.onReblogsLikesCheckboxClicked }
 						disabled={ ! this.props.initialized }
 					/>
-          <SupportInfo
+          			<SupportInfo
 						text={ translate(
 							'The Like button is an easy way for your readers to show appreciation for your posts.'
 						) }
