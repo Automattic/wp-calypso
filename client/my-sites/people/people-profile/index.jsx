@@ -3,7 +3,8 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get } from 'lodash';
@@ -16,15 +17,15 @@ import { decodeEntities } from 'lib/formatting';
  */
 import Gravatar from 'components/gravatar';
 import InfoPopover from 'components/info-popover';
+import { isUserExternalContributor } from 'state/selectors/is-user-external-contributor';
+import QueryExternalContributors from 'components/data/query-external-contributors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-class PeopleProfile extends React.PureComponent {
-	static displayName = 'PeopleProfile';
-
+class PeopleProfile extends Component {
 	getRole = () => {
 		const { invite, user } = this.props;
 
@@ -253,7 +254,7 @@ class PeopleProfile extends React.PureComponent {
 	};
 
 	render() {
-		const { user } = this.props;
+		const { user, siteId } = this.props;
 
 		const classes = classNames( 'people-profile', {
 			'is-placeholder': ! user,
@@ -261,6 +262,7 @@ class PeopleProfile extends React.PureComponent {
 
 		return (
 			<div className={ classes }>
+				{ siteId && <QueryExternalContributors siteId={ siteId } /> }
 				<div className="people-profile__gravatar">
 					<Gravatar user={ user } size={ 72 } />
 				</div>
@@ -274,8 +276,11 @@ class PeopleProfile extends React.PureComponent {
 	}
 }
 
-PeopleProfile.defaultProps = {
-	isExternalContributor: false,
-};
+export default connect( ( state, { siteId, user } ) => {
+	const userId = user && user.ID;
 
-export default localize( PeopleProfile );
+	return {
+		isExternalContributor:
+			siteId && userId ? isUserExternalContributor( state, siteId, userId ) : false,
+	};
+} )( localize( PeopleProfile ) );

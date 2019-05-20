@@ -18,11 +18,11 @@ interface OwnProps {
 	siteId: SiteId;
 }
 
-interface ConnectProps {
+interface DispatchProps {
 	getExternalContributors: ( siteId: SiteId ) => void;
 }
 
-const QueryExternalContributors: FunctionComponent< OwnProps & ConnectProps > = ( {
+const QueryExternalContributors: FunctionComponent< OwnProps & DispatchProps > = ( {
 	siteId,
 	getExternalContributors: request,
 } ) => {
@@ -33,7 +33,7 @@ const QueryExternalContributors: FunctionComponent< OwnProps & ConnectProps > = 
 	return null;
 };
 
-export default connect(
+export default connect< {}, DispatchProps, OwnProps >(
 	null,
 	{ getExternalContributors }
 )( QueryExternalContributors );
