@@ -1,0 +1,6 @@
+// @see https://github.com/WordPress/twentynineteen/blob/master/sass/blocks/_blocks.scss#L5
+.entry .entry-content {
+	.template-part, .post-content {
+		margin: 0;
+	}
+}
