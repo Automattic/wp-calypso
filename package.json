@@ -34,6 +34,7 @@
 	},
 	"dependencies": {
 		"@automattic/format-currency": "file:./packages/format-currency",
+		"@automattic/load-script": "file:./packages/load-script",
 		"@automattic/material-design-icons": "file:./packages/material-design-icons",
 		"@automattic/muriel-style": "file:./packages/muriel-style",
 		"@automattic/tree-select": "file:./packages/tree-select",

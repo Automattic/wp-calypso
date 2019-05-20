@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { loadScript } from 'lib/load-script';
+import { loadScript } from '@automattic/load-script';
 import config from 'config';
 import { getLocaleSlug } from 'i18n-calypso';
 

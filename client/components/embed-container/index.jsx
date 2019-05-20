@@ -11,7 +11,7 @@ import { assign, filter, forEach, forOwn, noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { loadScript, loadjQueryDependentScript } from 'lib/load-script';
+import { loadScript, loadjQueryDependentScript } from '@automattic/load-script';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:components:embed-container' );

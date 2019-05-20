@@ -13,7 +13,7 @@ import { find, isUndefined } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { loadjQueryDependentScript } from 'lib/load-script';
+import { loadjQueryDependentScript } from '@automattic/load-script';
 import User from 'lib/user';
 import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
