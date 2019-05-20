@@ -27,7 +27,7 @@ export default class AcceptInvitePage extends AsyncBaseContainer {
 	}
 
 	async getHeaderInviteText() {
-		return await this.driver.findElement( By.css( '.invite-header__invited-you-text' ) ).getText();
+		return await this.driver.findElement( By.css( '.invite-form-header__explanation' ) ).getText();
 	}
 
 	async waitUntilNotVisible() {

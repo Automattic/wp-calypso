@@ -7,7 +7,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { isEmpty, intersection } from 'lodash';
+import { intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
@@ -75,14 +75,7 @@ export class PlansStep extends Component {
 	}
 
 	onSelectPlan = cartItem => {
-		const {
-			additionalStepData,
-			stepSectionName,
-			stepName,
-			flowName,
-			goToNextStep,
-			translate,
-		} = this.props;
+		const { additionalStepData, stepSectionName, stepName, flowName, goToNextStep } = this.props;
 
 		if ( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
@@ -109,9 +102,6 @@ export class PlansStep extends Component {
 		}
 
 		const step = {
-			processingMessage: isEmpty( cartItem )
-				? translate( 'Free plan selected' )
-				: translate( 'Adding your plan' ),
 			stepName,
 			stepSectionName,
 			cartItem,
@@ -120,7 +110,7 @@ export class PlansStep extends Component {
 
 		const providedDependencies = { cartItem };
 
-		SignupActions.submitSignupStep( step, [], providedDependencies );
+		SignupActions.submitSignupStep( step, providedDependencies );
 
 		goToNextStep();
 	};
@@ -177,6 +167,7 @@ export class PlansStep extends Component {
 					domainName={ this.getDomainName() }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					plansWithScroll={ true }
 				/>
 				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
 				 * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --

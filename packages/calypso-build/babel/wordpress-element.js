@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = () => ( {
 	plugins: [
 		[
 			'@wordpress/babel-plugin-import-jsx-pragma',
@@ -15,4 +15,4 @@ module.exports = {
 			},
 		],
 	],
-};
+} );

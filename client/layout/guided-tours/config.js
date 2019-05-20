@@ -25,7 +25,6 @@ import jetpackMonitoring from 'layout/guided-tours/tours/jetpack-monitoring-tour
 import jetpackPluginUpdates from 'layout/guided-tours/tours/jetpack-plugin-updates-tour/meta';
 import jetpackSignIn from 'layout/guided-tours/tours/jetpack-sign-in-tour/meta';
 import simplePaymentsEmailTour from 'layout/guided-tours/tours/simple-payments-email-tour/meta';
-import pluginsBasicTour from 'layout/guided-tours/tours/plugins-basic-tour/meta';
 
 export default {
 	activityLogJetpackIntroTour,
@@ -50,5 +49,4 @@ export default {
 	gdocsIntegrationTour,
 	simplePaymentsTour,
 	simplePaymentsEmailTour,
-	pluginsBasicTour,
 };

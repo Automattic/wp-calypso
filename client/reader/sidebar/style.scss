@@ -8,33 +8,7 @@
 
 	.sidebar__menu {
 		margin-bottom: 8px;
-
-		.selected {
-			.menu-link-icon,
-			.sidebar__menu-action .gridicon,
-			.sidebar-dynamic-menu-action-icon {
-				fill: var( --sidebar-gridicon-fill );
-			}
-
-			.sidebar-streams__edit-icon {
-				fill: var( --sidebar-gridicon-fill );
-			}
-
-			.gridicon {
-				@include breakpoint( '<660px' ) {
-					fill: var( --sidebar-gridicon-fill );
-				}
-			}
-
-			li > a,
-			li > a:visited,
-			:not( .sidebar__button ) {
-				@include breakpoint( '<660px' ) {
-					color: var( --sidebar-text-color );
-				}
-			}
-		}
-
+		
 		.sidebar-streams__team {
 			border-top: 0;
 		}

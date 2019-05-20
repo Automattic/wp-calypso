@@ -4,36 +4,42 @@
  * External dependencies
  */
 import { compose, ifCondition } from '@wordpress/compose';
-import { withSelect, withDispatch } from '@wordpress/data';
+import { withSelect, withDispatch, select, subscribe } from '@wordpress/data';
 import { RichTextToolbarButton } from '@wordpress/editor';
-import { toggleFormat, registerFormatType } from '@wordpress/rich-text';
+import { toggleFormat, registerFormatType, unregisterFormatType } from '@wordpress/rich-text';
 import { get } from 'lodash';
 
-registerFormatType( 'wpcom/underline', {
-	title: wpcomGutenberg.richTextToolbar.underline,
-	tagName: 'span',
-	className: null,
-	attributes: { style: 'style' },
-	edit( { isActive, value, onChange } ) {
-		const onToggle = () =>
-			onChange(
-				toggleFormat( value, {
-					type: 'wpcom/underline',
-					attributes: {
-						style: 'text-decoration: underline;',
-					},
-				} )
-			);
+const unsubscribe = subscribe( () => {
+	const underlineFormat = select( 'core/rich-text' ).getFormatType( 'core/underline' );
+	if ( ! underlineFormat ) {
+		return;
+	}
+	unsubscribe();
+	const settings = unregisterFormatType( 'core/underline' );
+	registerFormatType( 'wpcom/underline', {
+		...settings,
+		name: 'wpcom/underline',
+		edit( { isActive, value, onChange } ) {
+			const onToggle = () =>
+				onChange(
+					toggleFormat( value, {
+						type: 'wpcom/underline',
+						attributes: {
+							style: 'text-decoration: underline;',
+						},
+					} )
+				);
 
-		return (
-			<RichTextToolbarButton
-				icon="editor-underline"
-				title={ wpcomGutenberg.richTextToolbar.underline }
-				onClick={ onToggle }
-				isActive={ isActive }
-			/>
-		);
-	},
+			return (
+				<RichTextToolbarButton
+					icon="editor-underline"
+					title={ settings.title }
+					onClick={ onToggle }
+					isActive={ isActive }
+				/>
+			);
+		},
+	} );
 } );
 
 const RichTextJustifyButton = ( { blockId, isBlockJustified, updateBlockAttributes } ) => {
@@ -51,8 +57,8 @@ const RichTextJustifyButton = ( { blockId, isBlockJustified, updateBlockAttribut
 };
 
 const ConnectedRichTextJustifyButton = compose(
-	withSelect( select => {
-		const selectedBlock = select( 'core/editor' ).getSelectedBlock();
+	withSelect( wpSelect => {
+		const selectedBlock = wpSelect( 'core/editor' ).getSelectedBlock();
 		if ( ! selectedBlock ) {
 			return {};
 		}

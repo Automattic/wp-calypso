@@ -16,7 +16,13 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
+import {
+	getSiteOption,
+	getSiteAdminUrl,
+	isRequestingSites,
+	isRequestingSite,
+	isJetpackSite,
+} from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
@@ -32,6 +38,12 @@ import WebPreview from 'components/web-preview';
 import { trashPost } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+
+/**
+ * Types
+ */
+import * as T from 'types';
 
 /**
  * Style dependencies
@@ -39,11 +51,11 @@ import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import './style.scss';
 
 interface Props {
-	duplicatePostId: number;
-	postId: number;
-	postType: string;
+	duplicatePostId: T.PostId;
+	postId: T.PostId;
+	postType: T.PostType;
 	pressThis: any;
-	siteAdminUrl: string | null;
+	siteAdminUrl: T.URL | null;
 }
 
 interface State {
@@ -55,8 +67,8 @@ interface State {
 	isMediaModalVisible: boolean;
 	isPreviewVisible: boolean;
 	multiple?: any;
-	postUrl?: string;
-	previewUrl: string;
+	postUrl?: T.URL;
+	previewUrl: T.URL;
 }
 
 enum WindowActions {
@@ -331,6 +343,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			if ( frameNonce ) {
 				parsedPreviewUrl.query[ 'frame-nonce' ] = frameNonce;
 			}
+			parsedPreviewUrl.query.iframe = 'true';
 			delete parsedPreviewUrl.search;
 
 			this.setState( {
@@ -342,8 +355,39 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
 
+	getStatsPath = () => {
+		const { postId } = this.props;
+		return postId ? '/block-editor/:post_type/:site/:post_id' : '/block-editor/:post_type/:site';
+	};
+
+	getStatsProps = () => {
+		const { postId, postType } = this.props;
+		return postId ? { post_type: postType, post_id: postId } : { post_type: postType };
+	};
+
+	getStatsTitle = () => {
+		const { postId, postType } = this.props;
+		let postTypeText: string;
+
+		switch ( postType ) {
+			case 'post':
+				postTypeText = 'Post';
+				break;
+			case 'page':
+				postTypeText = 'Page';
+				break;
+			default:
+				postTypeText = 'Custom Post Type';
+				break;
+		}
+
+		return postId
+			? `Block Editor > ${ postTypeText } > Edit`
+			: `Block Editor > ${ postTypeText } > New`;
+	};
+
 	render() {
-		const { iframeUrl, siteId } = this.props;
+		const { iframeUrl, siteId, shouldLoadIframe } = this.props;
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
@@ -358,17 +402,24 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		return (
 			<Fragment>
+				<PageViewTracker
+					path={ this.getStatsPath() }
+					title={ this.getStatsTitle() }
+					properties={ this.getStatsProps() }
+				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
-					{ /* eslint-disable-next-line jsx-a11y/iframe-has-title */ }
-					<iframe
-						ref={ this.iframeRef }
-						/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-						className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
-						src={ iframeUrl }
-						onLoad={ () => this.setState( { isIframeLoaded: true } ) }
-					/>
+					{ shouldLoadIframe && (
+						/* eslint-disable-next-line jsx-a11y/iframe-has-title */
+						<iframe
+							ref={ this.iframeRef }
+							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+							className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
+							src={ iframeUrl }
+							onLoad={ () => this.setState( { isIframeLoaded: true } ) }
+						/>
+					) }
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
 					<EditorMediaModal
@@ -400,7 +451,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
-	const frameNonce = getSiteOption( state, siteId, 'frame_nonce' ) || '';
+	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -408,7 +459,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
 		'block-editor': 1,
-		'frame-nonce': frameNonce,
+		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
 		'jetpack-copy': duplicatePostId,
 		origin: window.location.origin,
 	} );
@@ -422,15 +473,19 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
+	// Prevents the iframe from loading using a cached frame nonce.
+	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
+
 	return {
 		allPostsUrl: getPostTypeAllPostsUrl( state, postType ),
-		siteId,
 		currentRoute,
+		editedPostId: getEditorPostId( state ),
+		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		iframeUrl,
 		postTypeTrashUrl,
+		shouldLoadIframe,
 		siteAdminUrl,
-		frameNonce,
-		editedPostId: getEditorPostId( state ),
+		siteId,
 	};
 };
 

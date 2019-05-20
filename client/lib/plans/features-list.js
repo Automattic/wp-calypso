@@ -351,6 +351,18 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	[ constants.FEATURE_JETPACK_ADVANCED ]: {
+		getSlug: () => constants.FEATURE_JETPACK_ADVANCED,
+		getTitle: () => i18n.translate( 'Jetpack Advanced Features' ),
+		getDescription: () =>
+			i18n.translate(
+				'Speed up your site’s performance and protect it from spammers. ' +
+					'Access detailed records of all activity on your site and restore your site ' +
+					'to a previous point in time with just a click! While you’re at it, ' +
+					'improve your SEO with our Advanced SEO tools and automate social media sharing.'
+			),
+	},
+
 	[ constants.FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
 		getSlug: () => constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 		getTitle: () =>

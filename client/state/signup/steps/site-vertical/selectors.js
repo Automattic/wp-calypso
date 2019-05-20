@@ -10,7 +10,6 @@ import { get, find } from 'lodash';
  * Internal dependencies
  */
 import { getVerticals } from 'state/signup/verticals/selectors';
-import { DEFAULT_VERTICAL_KEY } from 'state/signup/verticals/constants';
 
 export function getSiteVerticalName( state ) {
 	return get( state, 'signup.steps.siteVertical.name', '' );
@@ -29,12 +28,10 @@ export function getSiteVerticalData( state ) {
 		return match;
 	}
 
-	const defaultVerticalData = get( verticals, [ DEFAULT_VERTICAL_KEY, 0 ], {} );
-
 	return {
 		isUserInputVertical: true,
 		parent: '',
-		preview: defaultVerticalData.preview || '',
+		preview: '',
 		verticalId: '',
 		verticalName,
 		verticalSlug: verticalName,

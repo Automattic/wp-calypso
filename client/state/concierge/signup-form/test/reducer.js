@@ -13,6 +13,7 @@ import signupForm, {
 	lastname,
 	timezone,
 	message,
+	phoneNumber,
 	status,
 	isRebrandCitiesSite,
 } from '../reducer';
@@ -24,6 +25,7 @@ describe( 'concierge/signupForm/reducer', () => {
 		lastname: 'Bar',
 		timezone: 'UTC',
 		message: 'hello',
+		phoneNumber: '0123456789',
 		status: 'booking',
 		isRebrandCitiesSite: true,
 	};
@@ -79,6 +81,16 @@ describe( 'concierge/signupForm/reducer', () => {
 		} );
 	} );
 
+	describe( 'phoneNumber', () => {
+		test( 'should be defaulted as empty string.', () => {
+			expect( phoneNumber( undefined, {} ) ).toEqual( '' );
+		} );
+
+		test( 'should return the phone number of the update action', () => {
+			expect( phoneNumber( {}, updateForm ) ).toEqual( mockSignupForm.phoneNumber );
+		} );
+	} );
+
 	describe( 'status', () => {
 		test( 'should be defaulted as null', () => {
 			expect( status( undefined, {} ) ).toBeNull();
@@ -108,6 +120,7 @@ describe( 'concierge/signupForm/reducer', () => {
 				lastname: '',
 				timezone: moment.tz.guess(),
 				message: '',
+				phoneNumber: '',
 				status: null,
 				isRebrandCitiesSite: false,
 			} );

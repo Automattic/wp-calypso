@@ -51,11 +51,16 @@ export const JETPACK_CHECKLIST_TASKS = {
 
 export const JETPACK_CHECKLIST_TASK_AKISMET = {
 	title: translate( "We're automatically turning on spam filtering." ),
+	completedButtonText: translate( 'View spam stats' ),
 	completedTitle: translate( "We've automatically turned on spam filtering." ),
+	getUrl: siteSlug =>
+		`//${ siteSlug.replace( '::', '/' ) }/wp-admin/admin.php?page=akismet-key-config`,
 };
 
 export const JETPACK_CHECKLIST_TASK_PROTECT = {
 	title: translate( "We've automatically protected you from brute force login attacks." ),
+	completedButtonText: translate( 'Configure' ),
+	getUrl: siteSlug => `/settings/security/${ siteSlug }`,
 };
 
 export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND = {
@@ -72,4 +77,6 @@ export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND = {
 export const JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS = {
 	title: translate( "We're automatically turning on Backup and Scan." ),
 	completedTitle: translate( "We've automatically turned on Backup and Scan." ),
+	completedButtonText: translate( 'View security dashboard' ),
+	getUrl: () => 'https://dashboard.vaultpress.com',
 };

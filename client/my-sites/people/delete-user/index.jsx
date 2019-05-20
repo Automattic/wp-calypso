@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /** @format */
 
 /**
@@ -12,6 +13,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -20,6 +22,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
+import User from 'components/user';
 import AuthorSelector from 'blocks/author-selector';
 import { deleteUser } from 'lib/users/actions';
 import accept from 'lib/accept';
@@ -27,6 +30,11 @@ import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class DeleteUser extends React.Component {
 	static displayName = 'DeleteUser';
@@ -43,6 +51,7 @@ class DeleteUser extends React.Component {
 		showDialog: false,
 		radioOption: false,
 		reassignUser: false,
+		authorSelectorToggled: false,
 	};
 
 	getRemoveText = () => {
@@ -78,8 +87,45 @@ class DeleteUser extends React.Component {
 
 		updateObj[ name ] = value;
 
+		if ( event.currentTarget.value === 'reassign' ) {
+			this.setState( { authorSelectorToggled: true } );
+		} else {
+			this.setState( { authorSelectorToggled: false } );
+		}
+
 		this.setState( updateObj );
 		this.props.recordGoogleEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
+	};
+
+	getAuthorSelector = () => {
+		return (
+			<AuthorSelector
+				allowSingleUser
+				siteId={ this.props.siteId }
+				onSelect={ this.onSelectAuthor }
+				exclude={ [ this.props.user.ID ] }
+				ignoreContext={ this.reassignLabel }
+			>
+				{ this.state.reassignUser ? (
+					<span>
+						<Gravatar size={ 26 } user={ this.state.reassignUser } />
+						<span className="delete-user__reassign-user-name">
+							{ this.state.reassignUser.name }
+						</span>
+					</span>
+				) : (
+					this.getAuthorSelectPlaceholder()
+				) }
+			</AuthorSelector>
+		);
+	};
+
+	getAuthorSelectPlaceholder = () => {
+		return (
+			<span className="delete-user__select-placeholder">
+				<User size={ 26 } user={ { name: /* Don't translate yet */ 'Choose an author…' } } />
+			</span>
+		);
 	};
 
 	setReassignLabel = label => ( this.reassignLabel = label );
@@ -142,39 +188,9 @@ class DeleteUser extends React.Component {
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
 
-	getAuthorSelectPlaceholder = () => {
-		const { translate } = this.props;
-		return (
-			<span className="delete-user__select-placeholder">{ translate( 'select a user' ) }</span>
-		);
-	};
-
 	getTranslatedAssignLabel = () => {
 		const { translate } = this.props;
-		return translate( 'Attribute all content to {{AuthorSelector/}}', {
-			components: {
-				AuthorSelector: (
-					<AuthorSelector
-						allowSingleUser
-						siteId={ this.props.siteId }
-						onSelect={ this.onSelectAuthor }
-						exclude={ [ this.props.user.ID ] }
-						ignoreContext={ this.reassignLabel }
-					>
-						{ this.state.reassignUser ? (
-							<span>
-								<Gravatar size={ 26 } user={ this.state.reassignUser } />
-								<span className="delete-user__reassign-user-name">
-									{ this.state.reassignUser.name }
-								</span>
-							</span>
-						) : (
-							this.getAuthorSelectPlaceholder()
-						) }
-					</AuthorSelector>
-				),
-			},
-		} );
+		return translate( 'Attribute all content to another user' );
 	};
 
 	isDeleteButtonDisabled = () => {
@@ -219,6 +235,10 @@ class DeleteUser extends React.Component {
 							/>
 
 							<span>{ this.getTranslatedAssignLabel() }</span>
+
+							{ this.state.authorSelectorToggled ? (
+								<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
+							) : null }
 						</FormLabel>
 
 						<FormLabel>
@@ -254,10 +274,10 @@ class DeleteUser extends React.Component {
 	renderMultisite = () => {
 		return (
 			<CompactCard className="delete-user__multisite">
-				<a className="delete-user__remove-user" onClick={ this.removeUser }>
+				<Button borderless className="delete-user__remove-user" onClick={ this.removeUser }>
 					<Gridicon icon="trash" />
-					{ this.getRemoveText() }
-				</a>
+					<span>{ this.getRemoveText() }</span>
+				</Button>
 			</CompactCard>
 		);
 	};

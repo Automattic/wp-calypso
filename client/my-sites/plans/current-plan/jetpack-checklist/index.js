@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import page from 'page';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { get, includes, map } from 'lodash';
@@ -17,11 +14,13 @@ import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import getRewindState from 'state/selectors/get-rewind-state';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import JetpackChecklistFooter from './footer';
 import JetpackChecklistHeader from './header';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { format as formatUrl, parse as parseUrl } from 'url';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
 import {
@@ -44,24 +43,25 @@ class JetpackChecklist extends PureComponent {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
 
-	handleTaskStart = ( { taskId, tourId, url } ) => () => {
-		if ( ! tourId && ! url ) {
-			return;
+	handleTaskStart = ( { taskId, tourId } ) => () => {
+		if ( taskId ) {
+			this.props.recordTracksEvent( 'calypso_checklist_task_start', {
+				checklist_name: 'jetpack',
+				location: 'JetpackChecklist',
+				step_name: taskId,
+			} );
 		}
-
-		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
-			checklist_name: 'jetpack',
-			location: 'JetpackChecklist',
-			step_name: taskId,
-		} );
 
 		if ( tourId && ! this.isComplete( taskId ) && isDesktop() ) {
 			this.props.requestGuidedTour( tourId );
 		}
+	};
 
-		if ( url ) {
-			page.show( url );
-		}
+	handleWpAdminLink = () => {
+		this.props.recordTracksEvent( 'calypso_checklist_wpadmin_click', {
+			checklist_name: 'jetpack',
+			location: 'JetpackChecklist',
+		} );
 	};
 
 	render() {
@@ -75,7 +75,9 @@ class JetpackChecklist extends PureComponent {
 			taskStatuses,
 			translate,
 			vaultpressFinished,
+			wpAdminUrl,
 		} = this.props;
+
 		const isRewindActive = rewindState === 'active' || rewindState === 'provisioning';
 		const isRewindAvailable = rewindState !== 'uninitialized' && rewindState !== 'unavailable';
 		const isRewindUnAvailable = rewindState === 'unavailable';
@@ -86,36 +88,46 @@ class JetpackChecklist extends PureComponent {
 				{ isPaidPlan && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
 				{ isPaidPlan && <QueryRewindState siteId={ siteId } /> }
 
-				<JetpackChecklistHeader />
+				<JetpackChecklistHeader isPaidPlan={ isPaidPlan } />
 
 				<Checklist
 					isPlaceholder={ ! taskStatuses }
 					progressText={ translate( 'Your Jetpack setup progress' ) }
 				>
-					<Task completed { ...JETPACK_CHECKLIST_TASK_PROTECT } />
+					<Task
+						{ ...JETPACK_CHECKLIST_TASK_PROTECT }
+						completed
+						href={ JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ) }
+						onClick={ this.handleTaskStart( { taskId: 'jetpack_protect' } ) }
+					/>
 					{ isPaidPlan && isRewindAvailable && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_REWIND }
+							completed={ isRewindActive }
+							href={ JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ) }
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_backups',
-								url: JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ),
 								tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',
 							} ) }
-							completed={ isRewindActive }
 						/>
 					) }
 					{ isPaidPlan && isRewindUnAvailable && productInstallStatus && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS }
 							completed={ vaultpressFinished }
+							href={ JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ) }
 							inProgress={ ! vaultpressFinished }
+							onClick={ this.handleTaskStart( { taskId: 'jetpack_backups' } ) }
 						/>
 					) }
 					{ isPaidPlan && productInstallStatus && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_AKISMET }
 							completed={ akismetFinished }
+							href={ JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ) }
 							inProgress={ ! akismetFinished }
+							onClick={ this.handleTaskStart( { taskId: 'jetpack_spam_filtering' } ) }
+							target="_blank"
 						/>
 					) }
 					{ map( taskStatuses, ( status, taskId ) => {
@@ -133,9 +145,9 @@ class JetpackChecklist extends PureComponent {
 								completedTitle={ task.completedTitle }
 								description={ task.description }
 								duration={ task.duration }
+								href={ task.getUrl( siteSlug ) }
 								onClick={ this.handleTaskStart( {
 									taskId,
-									url: task.getUrl( siteSlug ),
 									tourId: get( task, 'tourId', null ),
 								} ) }
 								title={ task.title }
@@ -144,6 +156,13 @@ class JetpackChecklist extends PureComponent {
 						);
 					} ) }
 				</Checklist>
+
+				{ wpAdminUrl && (
+					<JetpackChecklistFooter
+						wpAdminUrl={ wpAdminUrl }
+						handleWpAdminLink={ this.handleWpAdminLink }
+					/>
+				) }
 			</Fragment>
 		);
 	}
@@ -151,9 +170,20 @@ class JetpackChecklist extends PureComponent {
 
 export default connect(
 	state => {
+		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 		const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
 		const rewindState = get( getRewindState( state, siteId ), 'state', 'uninitialized' );
+
+		// Link to "My Plan" page in Jetpack
+		let wpAdminUrl = get( site, 'options.admin_url' );
+		wpAdminUrl = wpAdminUrl
+			? formatUrl( {
+					...parseUrl( wpAdminUrl ),
+					query: { page: 'jetpack' },
+					hash: '/my-plan',
+			  } )
+			: undefined;
 
 		return {
 			akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
@@ -166,6 +196,7 @@ export default connect(
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+			wpAdminUrl,
 		};
 	},
 	{

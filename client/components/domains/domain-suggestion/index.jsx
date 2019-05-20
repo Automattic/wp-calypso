@@ -15,6 +15,11 @@ import Gridicon from 'gridicons';
 import DomainProductPrice from 'components/domains/domain-product-price';
 import Button from 'components/button';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DomainSuggestion extends React.Component {
 	static propTypes = {
 		buttonContent: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )

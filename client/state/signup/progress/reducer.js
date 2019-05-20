@@ -102,12 +102,10 @@ function updateStep( state, newStep ) {
 			if ( status === 'pending' || status === 'completed' ) {
 				// This can only happen when submitting a step
 				//
-				// Steps that are resubmitted may decide to omit the
-				// `processingMessage` or `wasSkipped` status of a step if e.g.
-				// the user goes back and chooses to not skip a step. If a step
-				// is submitted without these, we explicitly remove them from
-				// the step data.
-				const { processingMessage, wasSkipped, ...commonStepArgs } = step;
+				// Steps that are resubmitted may decide to omit the `wasSkipped` status of a step if e.g.
+				// the user goes back and chooses to not skip a step. If a step is submitted without it,
+				// we explicitly remove it from the step data.
+				const { wasSkipped, ...commonStepArgs } = step;
 				return { ...commonStepArgs, ...newStep };
 			}
 

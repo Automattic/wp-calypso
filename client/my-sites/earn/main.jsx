@@ -24,6 +24,8 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import AdsWrapper from './ads/wrapper';
+import MembershipsSection from './memberships';
+import config from 'config';
 
 class EarningsMain extends Component {
 	static propTypes = {
@@ -55,7 +57,13 @@ class EarningsMain extends Component {
 			path: '/earn/ads-settings' + pathSuffix,
 			id: 'ads-settings',
 		} );
-
+		if ( config.isEnabled( 'memberships' ) ) {
+			tabs.push( {
+				title: translate( 'Memberships' ),
+				path: '/earn/memberships' + pathSuffix,
+				id: 'memberships',
+			} );
+		}
 		return tabs;
 	}
 
@@ -73,6 +81,8 @@ class EarningsMain extends Component {
 						<AdsSettings />
 					</AdsWrapper>
 				);
+			case 'memberships':
+				return <MembershipsSection section={ this.props.section } />;
 			default:
 				return null;
 		}
@@ -90,6 +100,7 @@ class EarningsMain extends Component {
 		const layoutTitles = {
 			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
+			memberships: translate( 'Memberships' ),
 		};
 
 		return (

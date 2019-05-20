@@ -6,13 +6,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import config from 'config';
 import { localize } from 'i18n-calypso';
-import SocialLogo from 'social-logos';
 import url from 'url';
 
 /**
  * Internal dependencies
  */
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
+import SocialLogo from 'components/social-logo';
 
 class ShareWidget extends Component {
 	static propTypes = {

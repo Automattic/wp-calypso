@@ -8,7 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
-import { get, has, omit } from 'lodash';
+import { defer, get, has, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -226,7 +226,7 @@ class ImportingPane extends React.PureComponent {
 	}
 
 	handleOnMap = ( source, target ) =>
-		mapAuthor( get( this.props, 'importerStatus.importerId' ), source, target );
+		defer( () => mapAuthor( get( this.props, 'importerStatus.importerId' ), source, target ) );
 
 	renderActionButtons = () => {
 		if ( this.isProcessing() || this.isMapping() ) {

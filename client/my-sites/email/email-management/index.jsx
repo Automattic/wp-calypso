@@ -18,6 +18,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import {
 	hasGSuite,
 	isGSuiteRestricted,
+	hasGSuiteOtherProvidor,
 	hasGSuiteSupportedDomain,
 	getEligibleGSuiteDomain,
 } from 'lib/gsuite';
@@ -107,6 +108,7 @@ class EmailManagement extends React.Component {
 	emptyContent() {
 		const { selectedDomainName, selectedSiteSlug, translate } = this.props;
 		let emptyContentProps;
+		const selectedDomain = getSelectedDomain( this.props );
 
 		if ( isGSuiteRestricted() && ! selectedDomainName ) {
 			emptyContentProps = {
@@ -115,6 +117,13 @@ class EmailManagement extends React.Component {
 					'To set up email forwarding, and other email ' +
 						'services for your site, upgrade your site’s web address ' +
 						'to a professional custom domain.'
+				),
+			};
+		} else if ( selectedDomain && hasGSuiteOtherProvidor( selectedDomain ) ) {
+			emptyContentProps = {
+				title: translate( 'G Suite is not supported on this domain' ),
+				line: translate(
+					"You're using G Suite with this domain, so you'll use that to create custom email addresses. Visit your G Suite provider to manage your settings."
 				),
 			};
 		} else if ( selectedDomainName ) {

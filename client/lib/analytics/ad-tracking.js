@@ -201,10 +201,9 @@ if ( typeof window !== 'undefined' ) {
  */
 function maybeRefreshCountryCodeCookieGdpr( callback ) {
 	const cookieMaxAgeSeconds = 6 * 60 * 60;
-
 	const cookies = cookie.parse( document.cookie );
 
-	if ( ! cookies.country_code || 'unknown ' === cookies.country_code ) {
+	if ( ! cookies.country_code ) {
 		// cache buster
 		const v = new Date().getTime();
 		request

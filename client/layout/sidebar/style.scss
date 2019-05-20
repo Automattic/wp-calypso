@@ -64,6 +64,10 @@
 		@include breakpoint( '<660px' ) {
 			background-color: var( --sidebar-background );
 
+			&.selected {
+				background-color: var( --sidebar-menu-selected-background-color );
+			}
+
 			&.stats {
 				border-bottom: 1px solid var( --sidebar-border-color );
 			}
@@ -87,7 +91,7 @@
 			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ), 50% );
 
 			@include breakpoint( '<660px' ) {
-				background: linear-gradient( to right, rgba( var( --sidebar-menu-a-first-child-after-background ), 0 ), rgba( var( --sidebar-menu-a-first-child-after-background ), 1 ) 50% );
+				background: none;
 			}
 		}
 	}
@@ -135,7 +139,7 @@
 		fill: var( --sidebar-gridicon-fill );
 		height: 24px;
 		width: 24px;
-		margin-right: 12px;
+		margin-right: 11px;
 		flex-shrink: 0;
 
 		// External indicator for sections that aren't available in Calypso
@@ -149,16 +153,11 @@
 		}
 	}
 
-	// Currently hiding non-gridicon SVGs while testing new nav drawer design (PR #31742)
-	svg {
-		display: none;
-	}
-
 	.gridicon,
 	.jetpack-logo {
 		display: inline;
 	}
-	
+
 	&.is-togglable {
 		@include breakpoint( '<660px' ) {
 			margin-top: 0;
@@ -188,15 +187,6 @@
 				margin-left: 8px;
 			}
 
-			&:hover {
-				color: var( --sidebar-menu-hover-color );
-				background-color: var( --sidebar-menu-hover-background );
-
-				.gridicon {
-					fill: var( --sidebar-gridicon-fill );
-				}
-			}
-
 			.accessible-focus &:focus {
 				outline: none;
 				box-shadow: inset 0 0 0 2px var( --color-primary-light );
@@ -209,6 +199,18 @@
 			}
 		}
 
+		&.is-togglable:not( .is-toggle-open ) {
+			.sidebar__heading:hover {
+				color: var( --sidebar-menu-hover-color );
+				background-color: var( --sidebar-menu-hover-background );
+
+				.gridicon,
+				.material-icon {
+					fill: var( --sidebar-menu-hover-color );
+				}
+			}
+		}
+
 		.sidebar__menu-list,
 		.sidebar__menu-empty {
 			height: 0;
@@ -216,10 +218,10 @@
 		}
 
 		.sidebar__menu-list svg {
-            display: none;
-        }
+			display: none;
+		}
 
-        .sidebar__menu-list .gridicons-external {
+		.sidebar__menu-list .gridicons-external {
 			display: inline;
 		}
 
@@ -305,7 +307,6 @@
 			}
 		}
 	}
-
 }
 
 a.sidebar__button,
@@ -351,51 +352,53 @@ form.sidebar__button input {
 }
 
 // Selected Menu
-@include breakpoint( '>660px' ) {
-	.sidebar__menu .selected:not( .sidebar__plugins-item ) {
-		background-color: var( --sidebar-menu-selected-background-color );
+.sidebar__menu .selected {
+	background-color: var( --sidebar-menu-selected-background-color );
 
-		a {
-			color: var( --sidebar-menu-selected-a-color );
+	a {
+		color: var( --sidebar-menu-selected-a-color );
 
-			.sidebar__menu-link-secondary-text {
-				color: inherit;
-			}
-
-			&:first-child::after {
-				background: overflow-gradient(
-					var( --sidebar-menu-selected-a-first-child-after-background ),
-					50%
-				);
-			}
+		.sidebar__menu-link-secondary-text {
+			color: inherit;
 		}
 
-		.sidebar__button {
+		&:first-child::after {
+			background: overflow-gradient(
+				var( --sidebar-menu-selected-a-first-child-after-background ),
+				50%
+			);
+		}
+	}
+
+	.sidebar__button {
+		color: var( --sidebar-menu-selected-a-color );
+		border-color: var( --sidebar-menu-selected-a-color );
+
+		&:hover {
 			color: var( --sidebar-menu-selected-a-color );
 			border-color: var( --sidebar-menu-selected-a-color );
-
-			&:hover {
-				color: var( --sidebar-menu-selected-a-color );
-				border-color: var( --sidebar-menu-selected-a-color );
-			}
 		}
+	}
 
-		.gridicon,
-		.jetpack-logo {
-			fill: var( --sidebar-menu-selected-a-color );
-		}
+	.gridicon,
+	.jetpack-logo,
+	.material-icon {
+		fill: var( --sidebar-menu-selected-a-color );
+	}
 
-		&.is-action-button-selected a {
-			&:first-child::after {
-				background: linear-gradient( to right, rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 0 ), rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 1 ) 50% );
-			}
+	&.is-action-button-selected a {
+		&:first-child::after {
+			background: linear-gradient(
+				to right,
+				rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 0 ),
+				rgba( var( --sidebar-menu-selected-a-first-child-after-background ), 1 ) 50%
+			);
 		}
 	}
 }
 
 // Menu Hover
 .notouch .sidebar__menu li:hover {
-
 	&:not( .selected ) {
 		background-color: var( --sidebar-menu-hover-background );
 
@@ -435,7 +438,11 @@ form.sidebar__button input {
 			color: var( --sidebar-text-color );
 
 			&:first-child::after {
-				background: linear-gradient( to right, rgba( var( --sidebar-menu-hover-background-gradient ), 0 ), rgba( var( --sidebar-menu-hover-background-gradient ), 1 ) 50% );
+				background: linear-gradient(
+					to right,
+					rgba( var( --sidebar-menu-hover-background-gradient ), 0 ),
+					rgba( var( --sidebar-menu-hover-background-gradient ), 1 ) 50%
+				);
 			}
 
 			&.sidebar__button {
@@ -451,6 +458,18 @@ form.sidebar__button input {
 
 		.gridicon {
 			fill: var( --sidebar-gridicon-fill );
+		}
+	}
+}
+
+.is-group-sites .notouch li.sidebar__menu:hover {
+	&:not( .selected ) {
+		& > h2 {
+			color: var( --sidebar-menu-hover-color );
+
+			& > .material-icon {
+				fill: var( --sidebar-menu-hover-color );
+			}
 		}
 	}
 }
@@ -473,7 +492,8 @@ form.sidebar__button input {
 		}
 
 		.gridicon,
-		.jetpack-logo {
+		.jetpack-logo,
+		.material-icon {
 			fill: var( --sidebar-menu-hover-color );
 		}
 	}
@@ -605,7 +625,7 @@ form.sidebar__button input {
 		flex-direction: column;
 		height: 100%;
 
-		>li:last-child {
+		> li:last-child {
 			margin-bottom: 20px;
 		}
 	}
@@ -621,18 +641,18 @@ form.sidebar__button input {
 		.gridicons-external {
 			display: inline-block;
 		}
-		
+
 		.selected svg {
 			fill: var( --sidebar-menu-selected-a-color );
 		}
-	
+
 		&.is-togglable {
 			.sidebar__menu-list {
 				padding-bottom: 0;
 				padding-top: 0;
 			}
 		}
-		
+
 		&.is-toggle-open {
 			.sidebar__heading {
 				background-color: transparent;
@@ -643,9 +663,9 @@ form.sidebar__button input {
 	.sidebar__button {
 		display: none;
 	}
-			
+
 	.sidebar__menu-list a {
-		padding: 10px 16px 10px 55px; 
+		padding: 10px 16px 10px 55px;
 	}
 
 	.is-togglable .sidebar__heading {
@@ -679,7 +699,7 @@ form.sidebar__button input {
 
 	.sidebar__heading .gridicons-chevron-down {
 		align-self: flex-end;
-		order: 99; 
+		order: 99;
 	}
 
 	.is-togglable.is-toggle-open .sidebar__heading .gridicon:not( .gridicons-chevron-down ) {
@@ -706,4 +726,3 @@ form.sidebar__button input {
 		}
 	}
 }
-

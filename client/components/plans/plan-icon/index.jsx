@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,6 +20,11 @@ import {
 	isEcommercePlan,
 	getPlanClass,
 } from 'lib/plans';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class PlanIcon extends Component {
 	getIcon( planName ) {

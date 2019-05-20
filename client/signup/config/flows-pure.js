@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { noop } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,8 +14,8 @@ import { addQueryArgs } from 'lib/route';
 
 export function generateFlows( {
 	getSiteDestination = noop,
-	getPostsDestination = noop,
 	getRedirectDestination = noop,
+	getChecklistDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -22,6 +23,7 @@ export function generateFlows( {
 			destination: '/',
 			description: 'Create an account without a blog.',
 			lastModified: '2015-07-07',
+			pageTitle: translate( 'Create an account' ),
 		},
 
 		business: {
@@ -91,25 +93,18 @@ export function generateFlows( {
 			lastModified: '2016-01-27',
 		},
 
-		subdomain: {
-			steps: [ 'design-type', 'themes', 'site-topic', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'Provide a vertical for subdomains',
-			lastModified: '2016-10-31',
-		},
-
 		main: {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
-			destination: getSiteDestination,
+			destination: getChecklistDestination,
 			description: 'The current best performing flow in AB tests',
-			lastModified: '2018-10-16',
+			lastModified: '2019-04-30',
 		},
 
 		onboarding: {
-			steps: [ 'user', 'site-type', 'site-topic', 'site-information-title', 'domains', 'plans' ],
-			destination: getSiteDestination,
+			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
+			destination: getChecklistDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2019-01-24',
+			lastModified: '2019-04-30',
 		},
 
 		'onboarding-for-business': {
@@ -117,13 +112,14 @@ export function generateFlows( {
 				'user',
 				'site-type',
 				'site-topic-with-preview',
-				'site-information-title-with-preview',
+				'site-title-with-preview',
+				'site-style-with-preview',
 				'domains-with-preview',
 				'plans',
 			],
-			destination: getSiteDestination,
+			destination: getChecklistDestination,
 			description: 'The improved onboarding flow for business site types.',
-			lastModified: '2019-01-24',
+			lastModified: '2019-04-30',
 		},
 
 		'onboarding-dev': {
@@ -131,14 +127,14 @@ export function generateFlows( {
 				'user',
 				'site-type',
 				'site-topic-with-preview',
+				'site-title-with-preview',
 				'site-style-with-preview',
-				'site-information-title-with-preview',
 				'domains-with-preview',
 				'plans',
 			],
-			destination: getSiteDestination,
+			destination: getChecklistDestination,
 			description: 'A temporary flow for holding under-development steps',
-			lastModified: '2019-01-10',
+			lastModified: '2019-04-30',
 		},
 
 		'delta-discover': {
@@ -170,9 +166,9 @@ export function generateFlows( {
 
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
-			destination: getPostsDestination,
+			destination: getChecklistDestination,
 			description: 'Signup flow for desktop app',
-			lastModified: '2018-01-24',
+			lastModified: '2019-04-30',
 		},
 
 		developer: {
@@ -184,9 +180,7 @@ export function generateFlows( {
 
 		'pressable-nux': {
 			steps: [ 'creds-permission', 'creds-confirm', 'creds-complete' ],
-			destination: () => {
-				return '/stats';
-			},
+			destination: '/stats',
 			description: 'Allow new Pressable users to grant permission to server credentials',
 			lastModified: '2017-11-20',
 			disallowResume: true,
@@ -196,9 +190,7 @@ export function generateFlows( {
 
 		'rewind-switch': {
 			steps: [ 'rewind-migrate', 'rewind-were-backing' ],
-			destination: () => {
-				return '/activity-log';
-			},
+			destination: '/activity-log',
 			description:
 				'Allows users with Jetpack plan with VaultPress credentials to migrate credentials',
 			lastModified: '2018-01-27',
@@ -209,9 +201,7 @@ export function generateFlows( {
 
 		'rewind-setup': {
 			steps: [ 'rewind-add-creds', 'rewind-form-creds', 'rewind-were-backing' ],
-			destination: () => {
-				return '/activity-log';
-			},
+			destination: '/activity-log',
 			description: 'Allows users with Jetpack plan to setup credentials',
 			lastModified: '2018-01-27',
 			disallowResume: true,
@@ -221,9 +211,7 @@ export function generateFlows( {
 
 		'rewind-auto-config': {
 			steps: [ 'creds-permission', 'creds-confirm', 'rewind-were-backing' ],
-			destination: () => {
-				return '/activity-log';
-			},
+			destination: '/activity-log',
 			description:
 				'Allow users of sites that can auto-config to grant permission to server credentials',
 			lastModified: '2018-02-13',
@@ -243,9 +231,7 @@ export function generateFlows( {
 				'clone-ready',
 				'clone-cloning',
 			],
-			destination: () => {
-				return '/activity-log';
-			},
+			destination: '/activity-log',
 			description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
 			lastModified: '2018-05-28',
 			disallowResume: true,
@@ -313,7 +299,7 @@ export function generateFlows( {
 
 	flows.private = {
 		steps: [ 'user', 'site' ],
-		destination: getSiteDestination,
+		destination: getChecklistDestination,
 		description: 'Test private site signup',
 		lastModified: '2018-10-22',
 	};
@@ -324,6 +310,7 @@ export function generateFlows( {
 		description: 'A flow to launch a private site.',
 		providesDependenciesInQuery: [ 'siteSlug' ],
 		lastModified: '2019-01-16',
+		pageTitle: translate( 'Launch your site' ),
 	};
 
 	flows.import = {

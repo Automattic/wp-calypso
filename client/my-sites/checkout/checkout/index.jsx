@@ -62,13 +62,12 @@ import { isValidFeatureKey } from 'lib/plans/features-list';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { GROUP_WPCOM } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
-import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
 import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canDomainAddGSuite } from 'lib/gsuite';
-import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
+import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
@@ -102,7 +101,6 @@ export class Checkout extends React.Component {
 	/* eslint-disable-next-line react/no-deprecated */
 	componentWillMount() {
 		resetTransaction();
-		this.props.recordApplePayStatus();
 	}
 
 	componentDidMount() {
@@ -346,7 +344,7 @@ export class Checkout extends React.Component {
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
 		// Especially around the G Suite / Concierge / Checklist logic.
 
-		let renewalItem;
+		let renewalItem, displayModeParam;
 		const {
 			cart,
 			selectedSite,
@@ -421,7 +419,7 @@ export class Checkout extends React.Component {
 							if ( 'show' === abtest( 'showConciergeSessionUpsell' ) ) {
 								// A user just purchased one of the qualifying plans and is in the "show" ab test variation
 								// Show them the concierge session upsell page
-								return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
+								return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
 							}
 						}
 					}
@@ -446,12 +444,16 @@ export class Checkout extends React.Component {
 		) {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
-			if ( 'variantQuickstartSession' === abtest( 'conciergeQuickstartSession' ) ) {
+			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
 				return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
 			}
-
-			return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
 		}
+
+		if ( cartItems.hasConciergeSession( cart ) ) {
+			displayModeParam = 'd=concierge';
+		}
+
+		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
 
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
 			if ( this.props.redirectToPageBuilder ) {
@@ -459,7 +461,7 @@ export class Checkout extends React.Component {
 			}
 			const destination = abtest( 'improvedOnboarding' ) === 'main' ? 'checklist' : 'view';
 
-			return `/${ destination }/${ selectedSiteSlug }`;
+			return `/${ destination }/${ selectedSiteSlug }${ queryParam }`;
 		}
 
 		if ( this.props.isJetpackNotAtomic && config.isEnabled( 'jetpack/checklist' ) ) {
@@ -470,7 +472,7 @@ export class Checkout extends React.Component {
 			? `/checkout/thank-you/features/${
 					this.props.selectedFeature
 			  }/${ selectedSiteSlug }/${ receiptId }`
-			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
+			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }${ queryParam }`;
 	};
 
 	handleCheckoutExternalRedirect( redirectUrl ) {
@@ -790,7 +792,6 @@ export default connect(
 		clearPurchases,
 		clearSitePlans,
 		fetchReceiptCompleted,
-		recordApplePayStatus,
 		requestSite,
 	}
 )( localize( Checkout ) );

@@ -9,6 +9,7 @@ import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
 import ReaderPage from '../pages/reader-page.js';
 import StatsPage from '../pages/stats-page.js';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
+import PluginsBrowserPage from '../pages/plugins-browser-page';
 
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
@@ -16,6 +17,7 @@ import NavBarComponent from '../components/nav-bar-component.js';
 import * as dataHelper from '../data-helper';
 import * as driverManager from '../driver-manager';
 import * as loginCookieHelper from '../login-cookie-helper';
+import PagesPage from '../pages/pages-page';
 
 const host = dataHelper.getJetpackHost();
 
@@ -129,7 +131,10 @@ export default class LoginFlow {
 		await this.loginAndSelectMySite( site, { useFreshLogin: useFreshLogin } );
 
 		const sidebarComponent = await SidebarComponent.Expect( this.driver );
-		await sidebarComponent.selectAddNewPage();
+		await sidebarComponent.selectPages();
+
+		const pagesPage = await PagesPage.Expect( this.driver );
+		await pagesPage.selectAddNewPage();
 
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );
@@ -151,13 +156,6 @@ export default class LoginFlow {
 
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectPeople();
-	}
-
-	async loginAndSelectAddPersonFromSidebar() {
-		await this.loginAndSelectMySite();
-
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		return await sideBarComponent.selectAddPerson();
 	}
 
 	async checkForDevDocsAndRedirectToReader() {
@@ -206,7 +204,10 @@ export default class LoginFlow {
 		await this.loginAndSelectMySite();
 
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		return await sideBarComponent.selectManagePlugins();
+		await sideBarComponent.selectPlugins();
+
+		const pluginsBrowserPage = await PluginsBrowserPage.Expect( this.driver );
+		return await pluginsBrowserPage.selectManagePlugins();
 	}
 
 	async loginAndSelectPlugins() {

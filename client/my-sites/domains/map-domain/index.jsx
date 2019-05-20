@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
+import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
 
 const wpcom = wp.undocumented();
 
@@ -43,6 +45,8 @@ export class MapDomain extends Component {
 
 	state = {
 		errorMessage: null,
+		suggestion: null,
+		showTrademarkClaimsNotice: false,
 	};
 
 	goBack = () => {
@@ -61,7 +65,7 @@ export class MapDomain extends Component {
 		page( '/domains/add/' + selectedSiteSlug );
 	};
 
-	handleRegisterDomain = suggestion => {
+	addDomainToCart = suggestion => {
 		const { selectedSiteSlug } = this.props;
 
 		addItem(
@@ -72,6 +76,19 @@ export class MapDomain extends Component {
 		);
 
 		page( '/checkout/' + selectedSiteSlug );
+	};
+
+	handleRegisterDomain = suggestion => {
+		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
+		if ( ! isEmpty( trademarkClaimsNoticeInfo ) ) {
+			this.setState( {
+				suggestion,
+				showTrademarkClaimsNotice: true,
+			} );
+			return;
+		}
+
+		this.addDomainToCart( suggestion );
 	};
 
 	handleMapDomain = domain => {
@@ -111,7 +128,37 @@ export class MapDomain extends Component {
 		}
 	}
 
+	rejectTrademarkClaim = () => {
+		this.setState( { showTrademarkClaimsNotice: false } );
+	};
+
+	acceptTrademarkClaim = () => {
+		const { suggestion } = this.state;
+		this.addDomainToCart( suggestion );
+	};
+
+	trademarkClaimsNotice = () => {
+		const { suggestion } = this.state;
+		const domain = get( suggestion, 'domain_name' );
+		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
+
+		return (
+			<TrademarkClaimsNotice
+				basePath={ this.props.path }
+				domain={ domain }
+				onGoBack={ this.rejectTrademarkClaim }
+				onAccept={ this.acceptTrademarkClaim }
+				onReject={ this.rejectTrademarkClaim }
+				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
+			/>
+		);
+	};
+
 	render() {
+		if ( this.state.showTrademarkClaimsNotice ) {
+			return this.trademarkClaimsNotice();
+		}
+
 		const {
 			cart,
 			domainsWithPlansOnly,

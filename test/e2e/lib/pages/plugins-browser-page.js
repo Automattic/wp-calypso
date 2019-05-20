@@ -53,4 +53,9 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 		await this.searchForPlugin( searchTerm );
 		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
 	}
+
+	async selectManagePlugins() {
+		const manageButtonSelector = by.css( ".plugins-browser__main-header a[href*='manage']" );
+		return await driverHelper.clickWhenClickable( this.driver, manageButtonSelector );
+	}
 }

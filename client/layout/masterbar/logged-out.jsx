@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import Masterbar from './masterbar';
 import { connect } from 'react-redux';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import { get, includes, startsWith } from 'lodash';
@@ -15,6 +14,7 @@ import { get, includes, startsWith } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import Masterbar from './masterbar';
 import Item from './item';
 import WordPressLogo from 'components/wordpress-logo';
 import WordPressWordmark from 'components/wordpress-wordmark';

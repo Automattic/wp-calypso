@@ -31,7 +31,6 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteVerticalId, getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
-import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
@@ -152,7 +151,6 @@ export function createSiteWithCart(
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
-	const siteInformation = getSiteInformation( state );
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 
 	const newSiteParams = {
@@ -165,11 +163,10 @@ export function createSiteWithCart(
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
-			site_information: siteInformation || undefined,
 			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
 		},
-		public: -1,
+		public: 1,
 		validate: false,
 	};
 
@@ -456,7 +453,7 @@ export function createAccount(
 				if ( errors ) {
 					callback( errors );
 				} else {
-					analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
+					analytics.recordSocialRegistration();
 					callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 				}
 			}
@@ -520,7 +517,7 @@ export function createAccount(
 				if ( oauth2Signup ) {
 					assign( providedDependencies, {
 						oauth2_client_id: queryArgs.oauth2_client_id,
-						oauth2_redirect: queryArgs.oauth2_redirect,
+						oauth2_redirect: get( response, 'oauth2_redirect', '' ).split( '@' )[ 1 ],
 					} );
 				}
 
@@ -580,9 +577,7 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 
 	if ( siteDomains && siteDomains.length > 1 ) {
 		const domainItem = undefined;
-		SignupActions.submitSignupStep( { stepName: stepName, domainItem }, [], {
-			domainItem,
-		} );
+		SignupActions.submitSignupStep( { stepName, domainItem }, { domainItem } );
 		recordExcludeStepEvent( stepName, siteDomains );
 
 		fulfilledDependencies = fulfilledDependencies.concat( [ 'domainItem' ] );
@@ -599,12 +594,12 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 
 	if ( isPaidPlan ) {
 		const cartItem = undefined;
-		SignupActions.submitSignupStep( { stepName: stepName, cartItem }, [], { cartItem } );
+		SignupActions.submitSignupStep( { stepName, cartItem }, { cartItem } );
 		recordExcludeStepEvent( stepName, sitePlanSlug );
 		fulfilledDependencies = fulfilledDependencies.concat( [ 'cartItem' ] );
 	} else if ( defaultDependencies && defaultDependencies.cartItem ) {
 		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
-		SignupActions.submitSignupStep( { stepName, cartItem }, [], { cartItem } );
+		SignupActions.submitSignupStep( { stepName, cartItem }, { cartItem } );
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
 		fulfilledDependencies = fulfilledDependencies.concat( [ 'cartItem' ] );
 	}
@@ -667,10 +662,10 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 			otherText: '',
 		} );
 
-		SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
-			surveySiteType: 'blog',
-			surveyQuestion: vertical,
-		} );
+		SignupActions.submitSignupStep(
+			{ stepName: 'survey' },
+			{ surveySiteType: 'blog', surveyQuestion: vertical }
+		);
 
 		nextProps.submitSiteVertical( { name: vertical }, stepName );
 

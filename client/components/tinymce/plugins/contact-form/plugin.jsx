@@ -9,7 +9,6 @@ import i18n from 'i18n-calypso';
 import React, { createElement } from 'react';
 import { unmountComponentAtNode } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
-import GridiconMention from 'gridicons/dist/mention';
 
 /**
  * Internal Dependencies
@@ -25,6 +24,7 @@ import {
 } from 'state/ui/editor/contact-form/actions';
 import { serialize, deserialize } from './shortcode-utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import Gridicon from 'components/gridicon';
 
 function wpcomContactForm( editor ) {
 	let node;
@@ -102,7 +102,7 @@ function wpcomContactForm( editor ) {
 				renderToStaticMarkup(
 					// eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
 					<button type="button" role="presentation">
-						<GridiconMention />
+						<Gridicon icon="mention" />
 					</button>
 				)
 			);

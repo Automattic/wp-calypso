@@ -42,6 +42,11 @@ import titles from 'me/purchases/titles';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CancelPurchase extends React.Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,

@@ -11,7 +11,6 @@ const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 // We implicitly use browserslist configuration in package.json for build targets.
 
 const config = {
-	extends: require.resolve( '@automattic/calypso-build/babel.config.js' ),
 	presets: [
 		[
 			'@babel/env',
@@ -23,6 +22,7 @@ const config = {
 				exclude: [ 'transform-typeof-symbol' ],
 			},
 		],
+		'@automattic/calypso-build/babel/default',
 	],
 	plugins: _.compact( [
 		[ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ],

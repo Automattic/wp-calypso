@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,6 +19,11 @@ import { dismissNudge } from './actions';
 import { enhanceWithDismissCount } from 'my-sites/google-my-business/utils';
 import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {

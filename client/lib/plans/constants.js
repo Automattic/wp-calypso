@@ -50,6 +50,7 @@ export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
 export const FEATURE_BLOG_DOMAIN = 'blog-domain';
 export const FEATURE_CUSTOM_DOMAIN = 'custom-domain';
 export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
+export const FEATURE_JETPACK_ADVANCED = 'jetpack-advanced';
 export const FEATURE_FREE_THEMES = 'free-themes';
 export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
 export const FEATURE_3GB_STORAGE = '3gb-storage';
@@ -99,6 +100,7 @@ export const FEATURE_WP_SUBDOMAIN_SIGNUP = 'wordpress-subdomain-signup';
 export const FEATURE_ADVANCED_SEO_TOOLS = 'advanced-seo-tools';
 export const FEATURE_FREE_THEMES_SIGNUP = 'free-themes-signup';
 export const FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP = 'unlimited-backup';
+export const FEATURE_MEMBERSHIPS = 'memberships';
 
 // jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';

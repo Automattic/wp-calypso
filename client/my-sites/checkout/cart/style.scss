@@ -210,6 +210,11 @@
 	@include breakpoint( '<660px' ) {
 		display: none;
 	}
+
+	.button.is-borderless {
+		color: var( --color-link );
+		font-weight: initial;
+	}
 }
 
 .cart__cart-plan-discount-ad-paragraph:last-child {
@@ -242,6 +247,10 @@
 		position: absolute;
 		top: 12px;
 		right: 12px;
+		
+		&:hover {
+			color: var( --color-primary );
+		}
 	}
 
 	&:focus {

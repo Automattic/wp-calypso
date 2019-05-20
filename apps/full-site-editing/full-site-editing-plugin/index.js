@@ -1,4 +1,6 @@
 /**
  * Internal dependencies
  */
-import './blocks/page-content';
+import './blocks/post-content';
+import './blocks/template';
+import './plugins/template-selector-sidebar';

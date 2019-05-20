@@ -17,6 +17,11 @@ import { decodeEntities } from 'lib/formatting';
  */
 import Gravatar from 'components/gravatar';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PeopleProfile extends React.PureComponent {
 	static displayName = 'PeopleProfile';
 

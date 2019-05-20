@@ -28,7 +28,6 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import GuidedToursConfig from 'layout/guided-tours/config';
 import createSelector from 'lib/create-selector';
 import findOngoingTour from './find-ongoing-tour';
@@ -164,12 +163,9 @@ export const hasTourJustBeenVisible = createSelector(
 	[ getActionLog ]
 );
 
-const isConflictingWithOtherHelp = state =>
-	hasTourJustBeenVisible( state ) || shouldViewBeVisible( state );
-
 const shouldBailAllTours = state => isSectionBlacklisted( state );
 
-const shouldBailNewTours = state => isConflictingWithOtherHelp( state );
+const shouldBailNewTours = state => hasTourJustBeenVisible( state );
 
 export const findEligibleTour = createSelector(
 	state => {

@@ -31,7 +31,9 @@ import {
 	isVipPlan,
 	isEcommerce,
 } from 'lib/products-values';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -56,6 +58,7 @@ const hasBusinessPlan = overSome(
 export class GoogleAnalyticsForm extends Component {
 	state = {
 		isCodeValid: true,
+		loggedGoogleAnalyticsModified: false,
 	};
 
 	handleFieldChange = ( key, value ) => {
@@ -74,8 +77,11 @@ export class GoogleAnalyticsForm extends Component {
 	};
 
 	handleToggleChange = key => {
-		const { fields } = this.props;
+		const { fields, path } = this.props;
 		const value = fields.wga ? ! fields.wga[ key ] : false;
+
+		this.props.recordTracksEvent( 'calypso_google_analytics_setting_changed', { key, path } );
+
 		this.handleFieldChange( key, value );
 	};
 
@@ -101,12 +107,14 @@ export class GoogleAnalyticsForm extends Component {
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
+			path,
 			showUpgradeNudge,
 			site,
 			sitePlugins,
 			siteId,
 			siteIsJetpack,
 			translate,
+			trackTracksEvent,
 			uniqueEventTracker,
 		} = this.props;
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
@@ -180,8 +188,17 @@ export class GoogleAnalyticsForm extends Component {
 								onChange={ this.handleCodeChange }
 								placeholder={ placeholderText }
 								disabled={ isRequestingSettings || ! enableForm }
-								onClick={ eventTracker( 'Clicked Analytics Key Field' ) }
-								onKeyPress={ uniqueEventTracker( 'Typed In Analytics Key Field' ) }
+								onFocus={ () => {
+									trackTracksEvent( 'calypso_google_analytics_key_field_focused', { path } );
+									eventTracker( 'Focused Analytics Key Field' )();
+								} }
+								onKeyPress={ () => {
+									if ( ! this.state.loggedGoogleAnalyticsModified ) {
+										trackTracksEvent( 'calypso_google_analytics_key_field_modified', { path } );
+										this.setState( { loggedGoogleAnalyticsModified: true } );
+									}
+									uniqueEventTracker( 'Typed In Analytics Key Field' )();
+								} }
 								isError={ ! this.state.isCodeValid }
 							/>
 							{ ! this.state.isCodeValid && (
@@ -279,20 +296,26 @@ const mapStateToProps = state => {
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
 	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
+	const path = getCurrentRouteParameterized( state, siteId );
 
 	return {
+		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
+		path,
+		showUpgradeNudge: ! isGoogleAnalyticsEligible,
 		site,
 		siteId,
 		siteIsJetpack,
-		showUpgradeNudge: ! isGoogleAnalyticsEligible,
-		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
 		sitePlugins,
 	};
 };
 
+const mapDispatchToProps = {
+	recordTracksEvent,
+};
+
 const connectComponent = connect(
 	mapStateToProps,
-	null,
+	mapDispatchToProps,
 	null,
 	{ pure: false }
 );

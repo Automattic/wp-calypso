@@ -47,15 +47,6 @@ const POPULAR_TOPICS = {
 		translate( 'Fashion' ),
 		translate( 'Portfolio' ),
 	],
-	education: [
-		translate( 'Higher Education & Academy' ),
-		translate( 'Fashion' ),
-		translate( 'School' ),
-		translate( 'Website Designer' ),
-		translate( 'Travel' ),
-		translate( 'Design' ),
-		translate( 'Adult Education School' ),
-	],
 };
 
 class PopularTopics extends PureComponent {

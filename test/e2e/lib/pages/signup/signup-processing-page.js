@@ -16,10 +16,7 @@ import LoginPage from '../../pages/login-page';
 
 export default class SignupProcessingPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.signup-processing__content' ) );
-		this.continueButtonSelector = By.css(
-			'button.email-confirmation__button:not([disabled]),button.processing-screen__continue-button:not([disabled])'
-		);
+		super( driver, By.css( '.signup-processing-screen__content' ) );
 	}
 
 	async waitForPage() {

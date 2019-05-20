@@ -4,7 +4,6 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'components/banner', () => 'Banner' );
 jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
@@ -60,11 +59,6 @@ describe( 'SeoForm basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		const comp = shallow( <SeoForm { ...props } /> );
 		expect( comp.find( '.seo-settings__seo-form' ) ).toHaveLength( 1 );
-	} );
-
-	test( 'should contain PageViewTracker', () => {
-		const comp = shallow( <SeoForm { ...props } /> );
-		expect( comp.find( 'PageViewTracker' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render conflicted SEO notice when conflictedSeoPlugin is set', () => {

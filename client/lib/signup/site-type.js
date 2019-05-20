@@ -31,13 +31,16 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  * Returns a current list of site types that are displayed in the signup site-type step
  * Some (or all) of these site types will also have landing pages.
  * A user who comes in via a landing page will not see the Site Topic dropdown.
+ * Do note that id's per site type should not be changed as we add/remove site-types.
+ *
+ * Please don't modify the IDs for now until we can integrate the /segments API into Calypso.
  *
  * @return {array} current list of site types
  */
 export function getAllSiteTypes() {
 	return [
 		{
-			id: 2,
+			id: 2, // This value must correspond with its sibling in the /segments API results
 			slug: 'blog',
 			label: i18n.translate( 'Blog' ),
 			description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
@@ -49,7 +52,7 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
 		},
 		{
-			id: 1,
+			id: 1, // This value must correspond with its sibling in the /segments API results
 			slug: 'business',
 			label: i18n.translate( 'Business' ),
 			description: i18n.translate( 'Promote products and services.' ),
@@ -62,7 +65,7 @@ export function getAllSiteTypes() {
 			customerType: 'business',
 		},
 		{
-			id: 3,
+			id: 4, // This value must correspond with its sibling in the /segments API results
 			slug: 'professional',
 			label: i18n.translate( 'Professional' ),
 			description: i18n.translate( 'Showcase your portfolio and work.' ),
@@ -74,19 +77,7 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 		},
 		{
-			id: 4,
-			slug: 'education',
-			label: i18n.translate( 'Education' ),
-			description: i18n.translate( 'Share school projects and class info.' ),
-			theme: 'pub/twentyfifteen',
-			designType: 'blog',
-			siteTitleLabel: i18n.translate( 'What is the name of your site?' ),
-			siteTitlePlaceholder: i18n.translate( 'E.g., My class' ),
-			siteTopicHeader: i18n.translate( 'What is your website about?' ),
-			siteTopicLabel: i18n.translate( 'What will your site be about?' ),
-		},
-		{
-			id: 5,
+			id: 3, // This value must correspond with its sibling in the /segments API results
 			slug: 'online-store',
 			label: i18n.translate( 'Online store' ),
 			description: i18n.translate( 'Sell your collection of products online.' ),

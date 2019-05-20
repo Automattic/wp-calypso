@@ -10,6 +10,11 @@ import { filter, tap } from 'lodash';
  */
 import WordPressLogo from 'components/wordpress-logo';
 
+/**
+ * Style dependencies
+ */
+import './crowdsignal.scss';
+
 class CrowdsignalOauthMasterbar extends Component {
 	componentDidMount() {
 		// Crowdsignal's OAuth2 pages should load and use the 'Muli' font to match the marketing page

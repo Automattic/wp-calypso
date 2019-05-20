@@ -180,7 +180,6 @@ class SurveyStep extends React.Component {
 				stepSectionName: this.props.stepSectionName,
 				otherWriteIn: otherWriteIn,
 			},
-			[],
 			{ surveySiteType: this.props.surveySiteType, surveyQuestion: value }
 		);
 

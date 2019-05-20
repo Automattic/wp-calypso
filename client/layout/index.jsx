@@ -51,6 +51,7 @@ import { isCommunityTranslatorEnabled } from 'components/community-translator/ut
 import { isE2ETest } from 'lib/e2e';
 import BodySectionCssClass from './body-section-css-class';
 import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 
 class Layout extends Component {
 	static displayName = 'Layout';
@@ -125,6 +126,7 @@ class Layout extends Component {
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
 				<QuerySiteSelectedEditor siteId={ this.props.siteId } />
+				{ this.props.siteId && <QueryJetpackPlugins siteIds={ [ this.props.siteId ] } /> }
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && (
 					<AsyncLoad require="layout/nps-survey-notice" placeholder={ null } />

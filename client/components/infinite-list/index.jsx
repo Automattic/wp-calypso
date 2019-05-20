@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,6 +17,11 @@ import ScrollStore from './scroll-store';
 import ScrollHelper from './scroll-helper';
 import scrollTo from 'lib/scroll-to';
 import smartSetState from 'lib/react-smart-set-state';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const debug = debugFactory( 'calypso:infinite-list' );
 

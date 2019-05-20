@@ -37,6 +37,11 @@ import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { getPlanTermLabel } from 'lib/plans';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const eventProperties = warning => ( { warning, position: 'purchase-list' } );
 
 class PurchaseItem extends Component {

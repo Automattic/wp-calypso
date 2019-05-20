@@ -13,7 +13,6 @@ import SignupActions from 'lib/signup/actions';
 import SiteTypeForm from './form';
 import StepWrapper from 'signup/step-wrapper';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 
 class SiteType extends Component {
@@ -35,9 +34,9 @@ class SiteType extends Component {
 			hasInitializedSitesBackUrl,
 		} = this.props;
 
-		const headerText = translate( 'What are we building today?' );
+		const headerText = translate( 'What kind of site are you building?' );
 		const subHeaderText = translate(
-			'Choose the best starting point for your site. You can add or change features later on.'
+			'This is just a starting point. You can add or change features later.'
 		);
 
 		return (
@@ -68,7 +67,7 @@ export default connect(
 		submitStep: siteTypeValue => {
 			dispatch( submitSiteType( siteTypeValue ) );
 
-			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 5, 'slug' ) ) {
+			if ( 'online-store' === siteTypeValue ) {
 				flowName = 'ecommerce-onboarding';
 			}
 

@@ -401,7 +401,7 @@
 @include breakpoint( '>1040px' ) {
 
 	// be more specific in scope to override the panel mode
-	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ) .happychat__container.is-open {
+	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ):not( .has-no-sidebar ) .happychat__container.is-open {
 		position: fixed;
 		height: calc( 100% - 47px );
 		bottom: 0;
@@ -445,7 +445,7 @@
 
 
 	// add space in the main column for the docked sidebar
-	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ) .layout__content {
+	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ):not( .has-no-sidebar ) .layout__content {
 		padding: 79px 304px 32px;
 	}
 

@@ -84,7 +84,7 @@ const FollowingStream = props => {
 				/>
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
-			<SectionHeader label={ translate( 'Following' ) }>
+			<SectionHeader label={ translate( 'Followed Sites' ) }>
 				<Button primary compact className="following__manage" href="/following/manage">
 					{ translate( 'Manage' ) }
 				</Button>

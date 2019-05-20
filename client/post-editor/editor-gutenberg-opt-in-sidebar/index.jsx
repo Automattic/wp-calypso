@@ -16,7 +16,7 @@ import { isEnabled } from 'config';
 import Button from 'components/button';
 import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
-import { getSelectedSiteId } from 'state/ui/selectors/';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Style dependencies

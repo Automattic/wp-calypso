@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -33,6 +32,11 @@ import {
 	getChecklistPromptTaskId,
 	isInlineHelpChecklistPromptVisible,
 } from 'state/inline-help/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module variables

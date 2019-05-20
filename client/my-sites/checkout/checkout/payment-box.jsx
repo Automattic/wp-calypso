@@ -25,7 +25,7 @@ import {
 	getWebPaymentMethodName,
 	WEB_PAYMENT_BASIC_CARD_METHOD,
 	WEB_PAYMENT_APPLE_PAY_METHOD,
-} from './web-payment-box';
+} from 'lib/web-payment';
 
 export class PaymentBox extends PureComponent {
 	constructor() {
@@ -62,7 +62,8 @@ export class PaymentBox extends PureComponent {
 			/>
 		);
 
-		let labelAdditionalText = '';
+		let labelAdditionalText = '',
+			webPaymentMethod = '';
 
 		switch ( method ) {
 			case 'credit-card':
@@ -75,26 +76,31 @@ export class PaymentBox extends PureComponent {
 				labelAdditionalText = paymentMethodName( method );
 				break;
 
+			case 'netbanking':
+				labelLogo = <Gridicon icon="institution" className="checkout__institution" />;
+				labelAdditionalText = paymentMethodName( method );
+				break;
+
 			case 'web-payment':
-				const webPaymentMethod = detectWebPaymentMethod();
+				webPaymentMethod = detectWebPaymentMethod();
 
 				switch ( webPaymentMethod ) {
 					case WEB_PAYMENT_BASIC_CARD_METHOD:
 						labelLogo = <Gridicon icon="folder" />;
+						labelAdditionalText = getWebPaymentMethodName( webPaymentMethod, this.props.translate );
 						break;
 
 					case WEB_PAYMENT_APPLE_PAY_METHOD:
 						labelLogo = (
 							<img
-								src={ `/calypso/images/upgrades/apple.svg` }
-								alt="🍎"
+								src={ `/calypso/images/upgrades/apple-pay.svg` }
+								alt={ getWebPaymentMethodName( webPaymentMethod, this.props.translate ) }
 								className="checkout__apple-pay"
 							/>
 						);
 						break;
 				}
 
-				labelAdditionalText = getWebPaymentMethodName( webPaymentMethod, this.props.translate );
 				break;
 		}
 
@@ -108,10 +114,6 @@ export class PaymentBox extends PureComponent {
 
 	paymentMethod( method ) {
 		if ( ! cartValues.isPaymentMethodEnabled( this.props.cart, method ) ) {
-			return null;
-		}
-
-		if ( 'web-payment' === method && null === detectWebPaymentMethod() ) {
 			return null;
 		}
 
