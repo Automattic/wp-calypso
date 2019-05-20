@@ -1,0 +1,27 @@
+{
+	"name": "gutenberge2e",
+	"devDependencies": {
+		"@babel/core": "7.4.4",
+		"@babel/plugin-syntax-jsx": "7.2.0",
+		"@babel/runtime-corejs2": "7.4.4",
+		"@babel/traverse": "7.4.4",
+		"@wordpress/babel-preset-default": "*",
+		"@wordpress/babel-plugin-makepot": "*",
+		"@wordpress/e2e-test-utils": "*",
+		"@wordpress/e2e-tests": "*",
+		"@wordpress/jest-preset-default": "*",
+		"@wordpress/scripts": "*",
+		"babel-plugin-inline-json-import": "0.3.2",
+		"core-js": "2.6.5"
+	},
+	"scripts": {
+		"test-e2e": "wp-scripts test-e2e",
+		"test-e2e:watch": "npm run test-e2e -- --watch"
+	},
+	"config": {
+		"GUTENBERG_PHASE": 2
+	},
+	"dependencies": {
+		"puppeteer": "^1.16.0"
+	}
+}
