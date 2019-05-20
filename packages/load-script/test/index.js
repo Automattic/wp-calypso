@@ -6,18 +6,17 @@
 /**
  * Internal dependencies
  */
-import { JQUERY_URL, loadjQueryDependentScript, loadScript } from '../';
-import { executeCallbacks, getCallbacksMap, removeAllScriptCallbacks } from '../callback-handler';
-import { attachToHead, createScriptElement } from '../dom-operations';
-import config from 'config';
+import { JQUERY_URL, loadjQueryDependentScript, loadScript } from '../src';
+import {
+	executeCallbacks,
+	getCallbacksMap,
+	removeAllScriptCallbacks,
+} from '../src/callback-handler';
+import { attachToHead, createScriptElement } from '../src/dom-operations';
 
-jest.mock( '../dom-operations', () => ( {
+jest.mock( '../src/dom-operations', () => ( {
 	attachToHead: jest.fn(),
 	createScriptElement: jest.fn(),
-} ) );
-
-jest.mock( 'config', () => ( {
-	isEnabled: jest.fn(),
 } ) );
 
 describe( 'loadScript', () => {
@@ -62,24 +61,10 @@ describe( 'loadScript', () => {
 			createScriptElement.mockReset();
 		} );
 
-		test( 'should require jQuery on the desktop', () => {
-			const callback = jest.fn();
-			config.isEnabled.mockReturnValueOnce( { isEnabled: input => input === 'desktop' } );
-			loadjQueryDependentScript( url, callback );
-
-			expect( callback ).not.toHaveBeenCalled();
-			expect( createScriptElement ).toHaveBeenCalledTimes( 1 );
-			expect( createScriptElement ).toHaveBeenLastCalledWith( url );
-
-			executeCallbacks( url );
-			expect( callback ).toHaveBeenCalledTimes( 1 );
-		} );
-
 		test( 'should use window.jQuery if available', () => {
 			window.jQuery = {};
 
 			const callback = jest.fn();
-			config.isEnabled.mockReturnValueOnce( { isEnabled: () => false } );
 			loadjQueryDependentScript( url, callback );
 
 			expect( createScriptElement ).toHaveBeenCalledTimes( 1 );

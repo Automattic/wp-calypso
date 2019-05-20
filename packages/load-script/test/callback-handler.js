@@ -15,7 +15,7 @@ import {
 	removeAllScriptCallbacks,
 	removeScriptCallback,
 	removeScriptCallbacks,
-} from '../callback-handler';
+} from '../src/callback-handler';
 
 describe( 'loadScript/callback-handler', () => {
 	describe( 'getCallbacksMap()', () => {

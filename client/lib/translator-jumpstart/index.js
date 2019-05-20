@@ -13,7 +13,7 @@ import { find, isUndefined } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { loadjQueryDependentScript } from '@automattic/load-script';
+import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
 import User from 'lib/user';
 import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
@@ -255,7 +255,7 @@ const communityTranslatorJumpstart = {
 				return false;
 			}
 			debug( 'loading community translator' );
-			loadjQueryDependentScript( injectUrl, function( error ) {
+			loadjQueryDependentScriptDesktopWrapper( injectUrl, function( error ) {
 				if ( error ) {
 					debug( 'Script ' + error.src + ' failed to load.' );
 					return;

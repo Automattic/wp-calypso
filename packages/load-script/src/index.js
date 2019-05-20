@@ -9,12 +9,11 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-const debug = debugFactory( 'lib/load-script' );
+const debug = debugFactory( 'package/load-script' );
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { addScriptCallback, isLoading } from './callback-handler';
 import { createScriptElement, attachToHead } from './dom-operations';
 
@@ -43,17 +42,6 @@ export function loadScript( url, callback ) {
 
 export function loadjQueryDependentScript( url, callback ) {
 	debug( `Loading a jQuery dependent script from "${ url }"` );
-
-	// It is not possible to expose jQuery globally in Electron App: https://github.com/atom/electron/issues/254.
-	// It needs to be loaded using require and npm package.
-	if ( config.isEnabled( 'desktop' ) ) {
-		debug( `Attaching jQuery from node_modules to window for "${ url }"` );
-		asyncRequire( 'jquery', $ => {
-			window.$ = window.jQuery = $;
-			loadScript( url, callback );
-		} );
-		return;
-	}
 
 	if ( window.jQuery ) {
 		debug( `jQuery found on window, skipping jQuery script loading for "${ url }"` );
