@@ -38,6 +38,8 @@ import { getUserExperience } from 'state/signup/steps/user-experience/selectors'
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
+import { getCurrentUserName } from 'state/current-user/selectors';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 
 // Current directory dependencies
 import SignupActions from './actions';
@@ -182,7 +184,16 @@ export function createSiteWithCart(
 		flowName === 'onboarding-for-business' &&
 		'remove' === getABTestVariation( 'removeDomainsStepFromOnboarding' )
 	) {
-		newSiteParams.blog_name = get( user.get(), 'username', siteTitle ) || siteType || siteVertical;
+		/*
+		 * When logged in, the username is in state.currentUser. When the user was just created
+		 * as part of the signup, in the `user` step, the user is not fully logged-in to WP.com yet.
+		 * We only have a `bearer_token` that can be used to make authenticated REST request.
+		 * The username is only in the dependency store, been put there by the `user` step.
+		 */
+		const userName = getCurrentUserName( state ) || getSignupDependencyStore( state ).username;
+		const blogName = userName || siteTitle || siteType || siteVertical;
+
+		newSiteParams.blog_name = blogName;
 		newSiteParams.find_available_url = true;
 	} else {
 		newSiteParams.blog_name = siteUrl;
