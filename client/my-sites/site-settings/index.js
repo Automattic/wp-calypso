@@ -3,6 +3,7 @@
  * External dependencies
  */
 import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import {
 	exportSite,
 	general,
 	guidedTransfer,
-	importSite,
 	legacyRedirects,
 	manageConnection,
 	redirectIfCantDeleteSite,
@@ -41,14 +41,14 @@ export default function() {
 		clientRender
 	);
 
-	page(
-		'/settings/import/:site_id',
-		siteSelection,
-		navigation,
-		importSite,
-		makeLayout,
-		clientRender
-	);
+	page( '/settings/import/:site_id', ( context, next ) => {
+		const site_id = get( context, 'params.site_id' );
+		if ( site_id ) {
+			return page.redirect( `/import/${ site_id }` );
+		}
+
+		next();
+	} );
 
 	if ( config.isEnabled( 'manage/export/guided-transfer' ) ) {
 		page(

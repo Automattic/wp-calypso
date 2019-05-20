@@ -60,8 +60,8 @@ class ToolsMenu extends PureComponent {
 			label: translate( 'Import' ),
 			capability: 'manage_options',
 			queryable: ! isJetpack,
-			link: '/settings/import', // @TODO make it a top level section & add a redirect
-			paths: [ '/settings/import' ],
+			link: '/import',
+			paths: [ '/import' ],
 			wpAdminLink: 'import.php',
 			showOnAllMySites: false,
 			forceInternalLink: ! isJetpack,

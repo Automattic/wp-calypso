@@ -473,9 +473,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Settings' ) }
-				selected={
-					itemLinkMatches( '/settings', path ) && ! itemLinkMatches( '/settings/import', path )
-				}
+				selected={ itemLinkMatches( '/settings', path ) }
 				link={ siteSettingsLink }
 				onNavigate={ this.trackSettingsClick }
 				icon="cog"
