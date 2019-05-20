@@ -15,7 +15,7 @@ import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-i
 import ProgressBar from 'components/progress-bar';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-export class CurrentPlanThankYouCard extends Component {
+export class PaidPlanThankYouCard extends Component {
 	getMyPlanRoute() {
 		const { siteSlug } = this.props;
 
@@ -44,7 +44,9 @@ export class CurrentPlanThankYouCard extends Component {
 										{ translate( 'So long spam, hello backups!' ) }
 									</h1>
 									<p>
-										{ translate( 'We’ve finished setting up spam filtering and backups for you.' ) }
+										{ translate(
+											'We’ve finished setting up spam filtering and backups for you.'
+										) }
 										<br />
 										{ translate( "You're now ready to finish the rest of the checklist." ) }
 									</p>
@@ -66,7 +68,7 @@ export class CurrentPlanThankYouCard extends Component {
 									<p>{ translate( "Now let's make sure your site is protected." ) }</p>
 									<p>
 										{ translate(
-											"We're setting up spam filters and site backups for you first. Once that's done, our security checklist will guide you through the next steps."
+												"We're setting up spam filters and site backups for you first. Once that's done, our security checklist will guide you through the next steps."
 										) }
 									</p>
 
@@ -90,7 +92,6 @@ export default connect( state => {
 
 	return {
 		progressComplete: getJetpackProductInstallProgress( state, siteId ),
-		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 	};
-} )( localize( CurrentPlanThankYouCard ) );
+} )( localize( PaidPlanThankYouCard ) );

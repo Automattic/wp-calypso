@@ -33,12 +33,14 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  * A user who comes in via a landing page will not see the Site Topic dropdown.
  * Do note that id's per site type should not be changed as we add/remove site-types.
  *
+ * Please don't modify the IDs for now until we can integrate the /segments API into Calypso.
+ *
  * @return {array} current list of site types
  */
 export function getAllSiteTypes() {
 	return [
 		{
-			id: 2,
+			id: 2, // This value must correspond with its sibling in the /segments API results
 			slug: 'blog',
 			label: i18n.translate( 'Blog' ),
 			description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
@@ -50,7 +52,7 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
 		},
 		{
-			id: 1,
+			id: 1, // This value must correspond with its sibling in the /segments API results
 			slug: 'business',
 			label: i18n.translate( 'Business' ),
 			description: i18n.translate( 'Promote products and services.' ),
@@ -63,7 +65,7 @@ export function getAllSiteTypes() {
 			customerType: 'business',
 		},
 		{
-			id: 3,
+			id: 4, // This value must correspond with its sibling in the /segments API results
 			slug: 'professional',
 			label: i18n.translate( 'Professional' ),
 			description: i18n.translate( 'Showcase your portfolio and work.' ),
@@ -75,7 +77,7 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 		},
 		{
-			id: 5,
+			id: 3, // This value must correspond with its sibling in the /segments API results
 			slug: 'online-store',
 			label: i18n.translate( 'Online store' ),
 			description: i18n.translate( 'Sell your collection of products online.' ),

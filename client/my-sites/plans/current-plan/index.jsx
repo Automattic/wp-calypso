@@ -33,11 +33,13 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import CurrentPlanThankYouCard from './current-plan-thank-you-card';
+import PaidPlanThankYouCard from './current-plan-thank-you-card/paid-plan-thank-you-card';
+import FreePlanThankYouCard from './current-plan-thank-you-card/free-plan-thank-you-card';
 
 /**
  * Style dependencies
@@ -93,6 +95,7 @@ class CurrentPlan extends Component {
 			domains,
 			hasDomainsLoaded,
 			isExpiring,
+			isFreePlan,
 			path,
 			selectedSite,
 			selectedSiteId,
@@ -104,6 +107,12 @@ class CurrentPlan extends Component {
 
 		const currentPlanSlug = selectedSite.plan.product_slug,
 			isLoading = this.isLoading();
+
+		const currentPlanThankYouCard = isFreePlan ? (
+			<FreePlanThankYouCard />
+		) : (
+			<PaidPlanThankYouCard />
+		);
 
 		const planConstObj = getPlan( currentPlanSlug ),
 			planFeaturesHeader = translate( '%(planName)s plan features', {
@@ -142,7 +151,7 @@ class CurrentPlan extends Component {
 				) }
 
 				{ showThankYou ? (
-					<CurrentPlanThankYouCard />
+					currentPlanThankYouCard
 				) : (
 					<CurrentPlanHeader
 						isPlaceholder={ isLoading }
@@ -202,6 +211,7 @@ export default connect( ( state, { requestThankYou } ) => {
 		domains,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
+		isFreePlan: isSiteOnFreePlan( state, selectedSiteId ),
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
