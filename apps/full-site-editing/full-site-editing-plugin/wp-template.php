@@ -122,7 +122,7 @@ function fse_register_template_post_types() {
 		'wp_template_part_type',
 		'wp_template_part',
 		array(
-			'labels'            => array(
+			'labels'             => array(
 				'name'              => _x( 'Template Part Types', 'taxonomy general name' ),
 				'singular_name'     => _x( 'Template Part Type', 'taxonomy singular name' ),
 				'menu_name'         => _x( 'Template Part Types', 'admin menu' ),
@@ -138,14 +138,18 @@ function fse_register_template_post_types() {
 				'not_found'         => __( 'No template part types found.' ),
 				'back_to_items'     => __( 'Back to template part types' ),
 			),
-			'public'            => true,
-			'show_in_rest'      => true,
-			'rest_base'         => 'template_part_types',
-			'show_tagcloud'     => false,
-			'show_admin_column' => true,
-			'hierarchical'      => true,
-			'rewrite'           => false,
-			'capabilities'      => array(
+			'public'             => false,
+			'publicly_queryable' => true,
+			'show_ui'            => true,
+			'show_in_menu'       => false,
+			'show_in_nav_menu'   => false,
+			'show_in_rest'       => true,
+			'rest_base'          => 'template_part_types',
+			'show_tagcloud'      => false,
+			'show_admin_column'  => true,
+			'hierarchical'       => true,
+			'rewrite'            => false,
+			'capabilities'       => array(
 				'manage_terms' => 'edit_theme_options',
 				'edit_terms'   => 'edit_theme_options',
 				'delete_terms' => 'edit_theme_options',
