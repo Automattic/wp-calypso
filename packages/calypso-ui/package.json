@@ -26,6 +26,11 @@
 		"dist",
 		"src"
 	],
+	"dependencies": {
+		"classnames": "2.2.6",
+		"react": "^16.8.3",
+		"prop-types": "^15.7.2"
+	},
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
