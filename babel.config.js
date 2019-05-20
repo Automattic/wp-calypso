@@ -26,7 +26,6 @@ const config = {
 	],
 	plugins: _.compact( [
 		[ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ],
-		isBrowser && './inline-imports.js',
 	] ),
 	env: {
 		build_pot: {
