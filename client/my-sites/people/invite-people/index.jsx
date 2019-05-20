@@ -231,7 +231,9 @@ class InvitePeople extends React.Component {
 			has_custom_message: 'string' === typeof message && !! message.length,
 		} );
 
-		page( `/people/new/${ this.props.site.slug }/sent` );
+		if ( includes( [ 'administrator', 'editor', 'author', 'contributor' ], role ) ) {
+			page( `/people/new/${ this.props.site.slug }/sent` );
+		}
 	};
 
 	isSubmitDisabled = () => {
