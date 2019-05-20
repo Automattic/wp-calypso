@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import ExporterContainer from 'my-sites/exporter';
+import ExporterContainer from 'my-sites/exporter/container';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';

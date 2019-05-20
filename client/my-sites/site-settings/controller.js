@@ -4,7 +4,6 @@
  */
 import page from 'page';
 import React from 'react';
-// import { get, isEmpty, omit, pick } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -59,11 +58,6 @@ export function redirectIfCantDeleteSite( context, next ) {
 
 export function general( context, next ) {
 	context.primary = <SiteSettingsMain />;
-	next();
-}
-
-export function exportSite( context, next ) {
-	context.primary = <AsyncLoad require="my-sites/site-settings/section-export" />;
 	next();
 }
 

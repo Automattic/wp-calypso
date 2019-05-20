@@ -13,7 +13,6 @@ import {
 	deleteSite,
 	disconnectSite,
 	disconnectSiteConfirm,
-	exportSite,
 	general,
 	guidedTransfer,
 	legacyRedirects,
@@ -50,6 +49,15 @@ export default function() {
 		next();
 	} );
 
+	page( '/settings/export/:site_id', ( context, next ) => {
+		const site_id = get( context, 'params.site_id' );
+		if ( site_id ) {
+			return page.redirect( `/export/${ site_id }` );
+		}
+
+		next();
+	} );
+
 	if ( config.isEnabled( 'manage/export/guided-transfer' ) ) {
 		page(
 			'/settings/export/guided/:host_slug?/:site_id',
@@ -60,15 +68,6 @@ export default function() {
 			clientRender
 		);
 	}
-
-	page(
-		'/settings/export/:site_id',
-		siteSelection,
-		navigation,
-		exportSite,
-		makeLayout,
-		clientRender
-	);
 
 	page(
 		'/settings/delete-site/:site_id',
