@@ -3,11 +3,6 @@
 	border-top: 1px solid var( --color-neutral-100 );
 }
 
-// Removes top border from first card in Discover Stream
-.is-reader-page .is-discover-stream.is-site-stream .reader-post-card.card:nth-child( 2 ) {
-	border-top: 0;
-}
-
 .reader-post-card.card {
 	border-bottom: 1px solid var( --color-neutral-100 );
 	box-shadow: none;
