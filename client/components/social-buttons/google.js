@@ -196,7 +196,9 @@ class GoogleLoginButton extends Component {
 				className: classNames( { disabled: isDisabled } ),
 				onClick: this.handleClick,
 				onMouseOver: this.showError,
+				onFocus: this.showError,
 				onMouseOut: this.hideError,
+				onBlur: this.hideError,
 			};
 
 			customButton = React.cloneElement( children, childProps );
@@ -210,7 +212,9 @@ class GoogleLoginButton extends Component {
 					<button
 						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
 						onMouseOver={ this.showError }
+						onFocus={ this.showError }
 						onMouseOut={ this.hideError }
+						onBlur={ this.hideError }
 						onClick={ this.handleClick }
 					>
 						<GoogleIcon isDisabled={ isDisabled } />
