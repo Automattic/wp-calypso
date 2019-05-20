@@ -184,7 +184,7 @@ class TranslatorLauncher extends React.PureComponent {
 						<button
 							className={ classNames( {
 								'community-translator__button': true,
-								'is-active': translatorActive,
+								'is-active': this.state.isActive,
 							} ) }
 							onClick={ this.toggle }
 							title={ translate( 'Community Translator' ) }
