@@ -325,6 +325,7 @@ class PurchaseMeta extends Component {
 		// domains and G suite.
 		if (
 			config.isEnabled( 'autorenewal-toggle' ) &&
+			purchase.renewMoment &&
 			isPlan( purchase ) &&
 			! isExpired( purchase )
 		) {
