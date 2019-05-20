@@ -18,8 +18,8 @@ import { preventWidows } from 'lib/formatting';
  */
 import './style.scss';
 
-function FormattedHeader( { id, headerText, subHeaderText } ) {
-	const classes = classNames( 'formatted-header', {
+function FormattedHeader( { id, headerText, subHeaderText, className } ) {
+	const classes = classNames( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
 	} );
 

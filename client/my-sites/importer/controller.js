@@ -43,6 +43,6 @@ export function importSite( context, next ) {
 		context.store.dispatch( setImportingFromSignupFlow() );
 	}
 
-	context.primary = <AsyncLoad require="my-sites/site-settings/section-import" />;
+	context.primary = <AsyncLoad require="my-sites/importer/section-import" />;
 	next();
 }

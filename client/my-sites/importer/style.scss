@@ -10,17 +10,9 @@
 	}
 }
 
-.importer__section-title {
-	font-size: 21px;
-	font-weight: 300;
-	line-height: 24px;
-	color: var( --color-neutral-700 );
-	margin-bottom: 16px;
-}
-
-.site-settings__importer-section-description {
-	font-size: 14px;
-	color: var( --color-neutral-700 );
+.importer__section-header.formatted-header {
+	margin: 0 auto;
+	max-width: 500px;
 }
 
 .importer__service-icon {
