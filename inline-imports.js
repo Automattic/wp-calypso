@@ -54,9 +54,8 @@ function transformIt( babel ) {
 	return {
 		name: 'action-type-inliner',
 		visitor: {
-			ImportDeclaration( path ) {
-				// we haven't deleted the `import` statement yet
-				// so if we don't skip it then we'll enter a cycle
+			Identifier( path ) {
+				// skip the import statement - we only want to replace uses of the constant
 				if ( t.isImportSpecifier( path.parentPath ) ) {
 					return;
 				}
