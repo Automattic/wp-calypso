@@ -69,9 +69,14 @@
 	margin: 0.5em;
 	width: calc( 100% - 1em );
 
-	// Reduce top margin of Looka logo
+	// Reduce top margin of GMB logo
 	&:nth-child( 3 ) .tools__feature-list-item-body-image {
-		margin-top: 5px;
+		margin-top: 18px;
+	}
+
+	// Reduce top margin of Upwork logo
+	&:nth-child( 5 ) .tools__feature-list-item-body-image {
+		margin-top: 20px;
 	}
 
 	@include breakpoint( '>1040px' ) {
@@ -103,7 +108,7 @@
 }
 
 .tools__feature-list-item-body-image {
-	margin: 20px 20px 0 0;
+	margin: 10px 20px 0 0;
 	max-width: 150px;
 	width: 15%;
 
@@ -164,7 +169,7 @@
 	}
 
 	@include breakpoint( '>1040px' ) {
-		
+
 
 		.button {
 			margin: 0 0 0 1em;
