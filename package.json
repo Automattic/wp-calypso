@@ -274,13 +274,19 @@
 		"update-deps": "npx rimraf npm-shrinkwrap.json && npm run -s distclean && npm i && npm shrinkwrap && replace --silent 'http://' 'https://' . --recursive --include='npm-shrinkwrap.json,package-lock.json'",
 		"postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
 		"prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",
-		"whybundled": "whybundled stats.json"
+		"whybundled": "whybundled stats.json",
+		"storybook": "start-storybook -p 6006",
+		"build-storybook": "build-storybook"
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "file:./packages/babel-plugin-i18n-calypso",
 		"@automattic/babel-plugin-transform-wpcalypso-async": "file:./packages/babel-plugin-transform-wpcalypso-async",
 		"@automattic/calypso-build": "file:./packages/calypso-build",
 		"@automattic/calypso-color-schemes": "file:./packages/calypso-color-schemes",
+		"@storybook/addon-actions": "5.0.11",
+		"@storybook/addon-links": "5.0.11",
+		"@storybook/addons": "5.0.11",
+		"@storybook/react": "5.0.11",
 		"@types/debug": "4.1.4",
 		"@types/lodash": "4.14.123",
 		"@types/page": "1.8.0",
