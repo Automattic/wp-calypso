@@ -22,7 +22,6 @@ import CartButtons from './cart-buttons';
 import Count from 'components/count';
 import Popover from 'components/popover';
 import CartEmpty from './cart-empty';
-import CartPlanAd from './cart-plan-ad';
 import { isCredits } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -144,8 +143,6 @@ const PopoverCart = createReactClass( {
 
 		return (
 			<div>
-				<CartPlanAd cart={ this.props.cart } selectedSite={ this.props.selectedSite } />
-
 				<CartBody
 					collapse={ true }
 					cart={ this.props.cart }
