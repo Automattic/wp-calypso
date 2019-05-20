@@ -13,9 +13,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import Button from 'components/button';
 import { getStepUrl } from 'signup/utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
@@ -106,11 +106,11 @@ export class NavigationLink extends Component {
 		};
 
 		if ( this.props.direction === 'back' ) {
-			analytics.tracks.recordEvent( 'calypso_signup_previous_step_button_click', tracksProps );
+			this.props.recordTracksEvent( 'calypso_signup_previous_step_button_click', tracksProps );
 		}
 
 		if ( this.props.direction === 'forward' ) {
-			analytics.tracks.recordEvent( 'calypso_signup_skip_step', tracksProps );
+			this.props.recordTracksEvent( 'calypso_signup_skip_step', tracksProps );
 		}
 	}
 
@@ -157,5 +157,5 @@ export class NavigationLink extends Component {
 
 export default connect(
 	null,
-	{ submitSignupStep }
+	{ recordTracksEvent, submitSignupStep }
 )( localize( NavigationLink ) );

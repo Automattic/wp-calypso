@@ -4,6 +4,7 @@
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,14 +12,7 @@ import React from 'react';
 import { NavigationLink } from '../';
 import EMPTY_COMPONENT from 'components/empty-component';
 
-jest.mock( 'lib/analytics', () => ( {
-	tracks: {
-		recordEvent: () => {},
-	},
-} ) );
-jest.mock( 'signup/utils', () => ( {
-	getStepUrl: jest.fn(),
-} ) );
+jest.mock( 'signup/utils', () => ( { getStepUrl: jest.fn() } ) );
 jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
 
 const signupUtils = require( 'signup/utils' );
@@ -26,7 +20,7 @@ const { getStepUrl } = signupUtils;
 
 describe( 'NavigationLink', () => {
 	const Gridicon = EMPTY_COMPONENT;
-	const defaultProps = {
+	const props = {
 		flowName: 'test:flow',
 		stepName: 'test:step2',
 		positionInFlow: 1,
@@ -36,18 +30,15 @@ describe( 'NavigationLink', () => {
 			{ stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
 			{ stepName: 'test:step3', stepSectionName: 'test:section3', wasSkipped: false },
 		],
+		recordTracksEvent: noop,
+		submitSignupStep: noop,
 		goToNextStep: jest.fn(),
 		translate: str => `translated:${ str }`,
 	};
-	let props;
-
-	beforeEach( () => {
-		props = Object.assign( {}, defaultProps );
-		props.goToNextStep = jest.fn();
-	} );
 
 	afterEach( () => {
 		getStepUrl.mockReset();
+		props.goToNextStep.mockReset();
 	} );
 
 	test( 'should render Button element', () => {

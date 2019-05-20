@@ -15,7 +15,6 @@ import { parse as parseQs } from 'qs';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import { getTld, isSubdomain } from 'lib/domains';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { getSiteBySlug } from 'state/sites/selectors';
@@ -30,6 +29,7 @@ import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -73,10 +73,10 @@ export class PlansStep extends Component {
 	}
 
 	onSelectPlan = cartItem => {
-		const { additionalStepData, stepSectionName, stepName, flowName, goToNextStep } = this.props;
+		const { additionalStepData, stepSectionName, stepName, flowName } = this.props;
 
 		if ( cartItem ) {
-			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
+			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
 				product_slug: cartItem.product_slug,
 				free_trial: cartItem.free_trial,
 				from_section: stepSectionName ? stepSectionName : 'default',
@@ -94,7 +94,7 @@ export class PlansStep extends Component {
 				} );
 			}
 		} else {
-			analytics.tracks.recordEvent( 'calypso_signup_free_plan_select', {
+			this.props.recordTracksEvent( 'calypso_signup_free_plan_select', {
 				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
 		}
@@ -106,11 +106,8 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		const providedDependencies = { cartItem };
-
-		this.props.submitSignupStep( step, providedDependencies );
-
-		goToNextStep();
+		this.props.submitSignupStep( step, { cartItem } );
+		this.props.goToNextStep();
 	};
 
 	getDomainName() {
@@ -276,5 +273,5 @@ export default connect(
 		siteType: getSiteType( state ),
 		siteSlug,
 	} ),
-	{ saveSignupStep, submitSignupStep }
+	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

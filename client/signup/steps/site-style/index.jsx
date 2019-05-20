@@ -54,21 +54,20 @@ export class SiteStyleStep extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const { flowName, stepName } = this.props;
 		const selectedStyleData = this.getSelectedStyleDataById() || this.props.styleOptions[ 0 ];
+		this.submitSiteStyle( selectedStyleData.id, selectedStyleData.theme, selectedStyleData.label );
+	};
 
-		this.props.setSiteStyle( selectedStyleData.id );
+	submitSiteStyle( siteStyle, themeSlugWithRepo, styleLabel ) {
+		const { flowName, stepName } = this.props;
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_style', {
 			// The untranslated 'product' name of the variation/theme
-			site_style: selectedStyleData.label,
+			site_style: styleLabel,
 		} );
-		this.props.submitSignupStep(
-			{ stepName },
-			{ siteStyle: selectedStyleData.id, themeSlugWithRepo: selectedStyleData.theme }
-		);
-
+		this.props.setSiteStyle( siteStyle );
+		this.props.submitSignupStep( { stepName }, { siteStyle, themeSlugWithRepo } );
 		this.props.goToNextStep( flowName );
-	};
+	}
 
 	getSelectedStyleDataById( id ) {
 		return find( this.props.styleOptions, [ 'id', id || this.props.siteStyle ] );

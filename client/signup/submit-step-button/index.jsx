@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import Button from 'components/button';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
-class SubmitStepButton extends Component {
+export class SubmitStepButton extends Component {
 	handleSubmit = () => {
 		this.props.submitSignupStep( { stepName: this.props.stepName } );
 		this.props.goToNextStep();

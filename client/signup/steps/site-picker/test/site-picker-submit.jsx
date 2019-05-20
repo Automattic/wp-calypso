@@ -10,23 +10,16 @@ jest.mock( 'lib/user', () => ( {} ) );
 jest.mock( 'components/main', () => 'MainComponent' );
 jest.mock( 'components/popover', () => 'Popover' );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-} ) );
-
 /**
  * External dependencies
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+import { noop } from 'lodash';
+
+jest.mock( 'i18n-calypso', () => ( {
+	translate: str => str,
+} ) );
 
 /**
  * Internal dependencies
@@ -56,6 +49,7 @@ import {
 
 const props = {
 	goToStep: jest.fn(),
+	submitSignupStep: noop,
 	selectedSite: {
 		ID: 1,
 	},

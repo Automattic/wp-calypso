@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import getSiteId from 'state/selectors/get-site-id';
 import StepWrapper from 'signup/step-wrapper';
 import QueryPlans from 'components/data/query-plans';
@@ -22,6 +21,7 @@ import { isEnabled } from 'config';
 import PlanFeatures from 'my-sites/plan-features';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import { submitSignupStep } from 'state/signup/progress/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 import { planHasFeature } from 'lib/plans';
 import {
@@ -53,7 +53,7 @@ export class PlansAtomicStoreStep extends Component {
 		const { additionalStepData, stepSectionName, stepName, goToNextStep, designType } = this.props;
 
 		if ( cartItem ) {
-			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
+			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
 				product_slug: cartItem.product_slug,
 				free_trial: cartItem.free_trial,
 				from_section: stepSectionName ? stepSectionName : 'default',
@@ -71,7 +71,7 @@ export class PlansAtomicStoreStep extends Component {
 				} );
 			}
 		} else {
-			analytics.tracks.recordEvent( 'calypso_signup_free_plan_select', {
+			this.props.recordTracksEvent( 'calypso_signup_free_plan_select', {
 				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
 		}
@@ -181,5 +181,5 @@ export default connect(
 		siteId: getSiteId( state, siteSlug ),
 		designType: getDesignType( state ),
 	} ),
-	{ submitSignupStep }
+	{ recordTracksEvent, submitSignupStep }
 )( localize( PlansAtomicStoreStep ) );
