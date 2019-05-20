@@ -201,13 +201,12 @@
 }
 
 .site-selector__hidden-sites-message {
-	color: var( --sidebar-text-color );
+	color: var( --color-text-subtle );
 	display: block;
 	font-size: 12px;
 	padding: 16px 16px 24px;
 
 	.site-selector__manage-hidden-sites {
-		color: var( --sidebar-text-color );
 		text-decoration: underline;
 	}
 }
