@@ -332,18 +332,25 @@ class PurchaseMeta extends Component {
 			// TODO: remove this once the proper state has been introduced.
 			const { isAutorenewalEnabled } = this.state;
 
+			const dateSpan = <span className="manage-purchase__detail-date-span" />;
 			const subsRenewText = isAutorenewalEnabled
 				? translate( 'Auto-renew is ON' )
 				: translate( 'Auto-renew is OFF' );
 			const subsBillingText = isAutorenewalEnabled
-				? translate( 'You will be billed on %(renewDate)s', {
+				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
 						args: {
 							renewDate: purchase.renewMoment.format( 'LL' ),
 						},
+						components: {
+							dateSpan,
+						},
 				  } )
-				: translate( 'Expires on %(expireDate)s', {
+				: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
 						args: {
 							expireDate: purchase.expiryMoment.format( 'LL' ),
+						},
+						components: {
+							dateSpan,
 						},
 				  } );
 
