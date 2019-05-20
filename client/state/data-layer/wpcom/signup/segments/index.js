@@ -33,7 +33,7 @@ export const showSegmentsRequestError = () =>
 		translate( 'We encountered an error on fetching data from our server. Please try again.' )
 	);
 
-registerHandlers( 'state/data-layer/wpcom/signup/verticals', {
+registerHandlers( 'state/data-layer/wpcom/signup/segments', {
 	[ SIGNUP_SEGMENTS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestSegments,
