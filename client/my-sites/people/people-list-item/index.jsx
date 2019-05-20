@@ -23,8 +23,10 @@ import {
 	didInviteResendSucceed,
 	didInviteDeletionSucceed,
 } from 'state/invites/selectors';
+import { isUserExternalContributor } from 'state/selectors/is-user-external-contributor';
 import { resendInvite } from 'state/invites/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import QueryExternalContributors from 'components/data/query-external-contributors';
 
 /**
  * Style dependencies
@@ -127,7 +129,17 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	render() {
-		const { className, invite, onRemove, translate, type, user, inviteWasDeleted } = this.props;
+		const {
+			className,
+			invite,
+			onRemove,
+			siteId,
+			translate,
+			type,
+			user,
+			inviteWasDeleted,
+			isExternalContributor,
+		} = this.props;
 
 		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
@@ -157,8 +169,14 @@ class PeopleListItem extends React.PureComponent {
 				href={ this.maybeGetCardLink() }
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
+				{ siteId && <QueryExternalContributors siteId={ siteId } /> }
 				<div className="people-list-item__profile-container">
-					<PeopleProfile invite={ invite } type={ type } user={ user } />
+					<PeopleProfile
+						invite={ invite }
+						isExternalContributor={ isExternalContributor }
+						type={ type }
+						user={ user }
+					/>
 				</div>
 
 				{ isInvite && this.renderInviteStatus() }
@@ -187,9 +205,10 @@ class PeopleListItem extends React.PureComponent {
 
 export default connect(
 	( state, ownProps ) => {
-		const { site, invite } = ownProps;
+		const { site, invite, user } = ownProps;
 
 		const siteId = site && site.ID;
+		const userId = user && user.ID;
 		const inviteKey = invite && invite.key;
 		const inviteWasDeleted = inviteKey && didInviteDeletionSucceed( state, siteId, inviteKey );
 
@@ -199,6 +218,8 @@ export default connect(
 			siteId,
 			inviteKey,
 			inviteWasDeleted,
+			isExternalContributor:
+				siteId && userId ? isUserExternalContributor( state, siteId, userId ) : false,
 		};
 	},
 	{ resendInvite, recordGoogleEvent }

@@ -27,16 +27,16 @@ export const requestErrorReducer = createReducer( false, {
 		message || true,
 } );
 
-const externalContributorsReducer = createReducer( null, {
+const itemsReducer = createReducer( null, {
 	[ EXTERNAL_CONTRIBUTORS_GET_REQUEST ]: () => null,
-	[ EXTERNAL_CONTRIBUTORS_GET_REQUEST_SUCCESS ]: () => false,
-	[ EXTERNAL_CONTRIBUTORS_GET_REQUEST_FAILURE ]: ( state, contributors ) => contributors || [],
+	[ EXTERNAL_CONTRIBUTORS_GET_REQUEST_SUCCESS ]: ( state, { contributors } ) => contributors || [],
+	[ EXTERNAL_CONTRIBUTORS_GET_REQUEST_FAILURE ]: () => null,
 } );
 
 export default keyedReducer(
 	'siteId',
 	combineReducers( {
-		externalContributors: externalContributorsReducer,
+		items: itemsReducer,
 		requesting: requestingReducer,
 		requestError: requestErrorReducer,
 	} )

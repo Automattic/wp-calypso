@@ -1,17 +1,17 @@
 /**
  * Internal dependencies
  */
-// import { EDITOR_TYPE_REQUEST, EDITOR_TYPE_SET } from 'state/action-types';
-// TODO: move to action types
-const EXTERNAL_CONTRIBUTORS_GET_REQUEST = 'GET_EXTERNAL_CONTRIBUTORS_REQUEST';
-// const GET_EXTERNAL_CONTRIBUTORS_REQUEST_SUCCESS = 'GET_EXTERNAL_CONTRIBUTORS_REQUEST_SUCCESS';
-// const GET_EXTERNAL_CONTRIBUTORS_REQUEST_FAILURE = 'GET_EXTERNAL_CONTRIBUTORS_REQUEST_FAILURE';
+import {
+	EXTERNAL_CONTRIBUTORS_GET_REQUEST,
+	// EMAIL_FORWARDING_ADD_REQUEST,
+	// EMAIL_FORWARDING_REMOVE_REQUEST,
+} from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	receiveGetExternalContributorsSuccess,
 	receiveGetExternalContributorsFailure,
-} from 'state/external-contributors/actions';
+} from 'state/sites/external-contributors/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
@@ -23,6 +23,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/external-contributors/index.js',
 					{
 						method: 'GET',
 						path: `/sites/${ action.siteId }/external-contributors`,
+						apiNamespace: 'wpcom/v2',
 					},
 					action
 				),

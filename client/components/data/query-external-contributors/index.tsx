@@ -12,31 +12,28 @@ import { getExternalContributors } from 'state/sites/external-contributors/actio
 /**
  * Types
  */
-import { SiteId, UserId } from 'types';
+import { SiteId } from 'types';
 
 interface OwnProps {
 	siteId: SiteId;
 }
 
 interface ConnectProps {
-	getExternalContributors: ( siteId: SiteId ) => [UserId];
+	getExternalContributors: ( siteId: SiteId ) => void;
 }
 
 const QueryExternalContributors: FunctionComponent< OwnProps & ConnectProps > = ( {
 	siteId,
-	getExternalContributors,
+	getExternalContributors: request,
 } ) => {
 	useEffect( () => {
-		getExternalContributors( siteId );
-	}, [ siteId, getExternalContributors ] );
+		request( siteId );
+	}, [ siteId, request ] );
 
 	return null;
 };
 
 export default connect(
-	// ( state, { siteId }}  ) => ( {
-	// 	requestingEmailForwards: isRequestingEmailForwards( state, siteId ),
-	// } ),
 	null,
 	{ getExternalContributors }
 )( QueryExternalContributors );

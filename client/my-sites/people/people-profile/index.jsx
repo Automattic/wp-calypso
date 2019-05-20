@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -15,9 +14,7 @@ import { decodeEntities } from 'lib/formatting';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
 import Gravatar from 'components/gravatar';
-import { isUserExternalContributor } from 'state/selectors/is-user-external-contributor';
 import InfoPopover from 'components/info-popover';
 
 /**
@@ -184,7 +181,7 @@ class PeopleProfile extends React.PureComponent {
 	};
 
 	renderRole = () => {
-		const { isContractor, translate, user } = this.props;
+		const { isExternalContributor, translate, user } = this.props;
 
 		let contractorBadge, superAdminBadge, roleBadge;
 
@@ -204,7 +201,7 @@ class PeopleProfile extends React.PureComponent {
 			);
 		}
 
-		if ( isContractor ) {
+		if ( isExternalContributor ) {
 			contractorBadge = (
 				<Fragment>
 					<div className="people-profile__role-badge role-contractor">
@@ -281,10 +278,4 @@ PeopleProfile.defaultProps = {
 	isExternalContributor: false,
 };
 
-export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
-	const userId = ownProps.user && ( ownProps.user.linked_user_ID || ownProps.user.ID );
-	return {
-		isContractor: isUserExternalContributor( state, siteId, userId ),
-	};
-} )( localize( PeopleProfile ) );
+export default localize( PeopleProfile );
