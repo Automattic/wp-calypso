@@ -8,7 +8,8 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 	function transform( code, async = true ) {
 		return babel.transformSync( code, {
 			configFile: false,
-			plugins: [ '@babel/plugin-syntax-jsx', [ require( '..' ), { async } ] ],
+			parserOpts: { plugins: [ 'jsx' ] },
+			plugins: [ [ require( '..' ), { async } ] ],
 		} ).code;
 	}
 
