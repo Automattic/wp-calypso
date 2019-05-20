@@ -51,50 +51,27 @@
 function transformIt( babel ) {
 	const { types: t } = babel;
 
-	const replacer = {
-		Identifier( path ) {
-			// we haven't deleted the `import` statement yet
-			// so if we don't skip it then we'll enter a cycle
-			if ( t.isImportSpecifier( path.parentPath ) ) {
-				return;
-			}
-
-			const name = path.node.name;
-			if ( ! this.myTypes.hasOwnProperty( name ) ) {
-				return;
-			}
-
-			path.replaceWith( t.stringLiteral( this.myTypes[ name ] ) );
-		},
-	};
-
-	const mergeImports = ( o, n ) => {
-		o[ n.local.name ] = n.imported.name;
-		return o;
-	};
-
 	return {
 		name: 'action-type-inliner',
 		visitor: {
 			ImportDeclaration( path ) {
-				// import … from '{ path.node.source.value }'
-				const name = path.node.source.value;
-
-				// this is a very-specific transform because
-				// we don't want to mess up other imports
-				if ( name !== 'state/action-types' ) {
+				// we haven't deleted the `import` statement yet
+				// so if we don't skip it then we'll enter a cycle
+				if ( t.isImportSpecifier( path.parentPath ) ) {
 					return;
 				}
 
-				const myTypes = path.node.specifiers
-					.filter( t.isImportSpecifier )
-					.reduce( mergeImports, {} );
+				const binding = path.scope.bindings[ path.node.name ];
+				if ( ! binding || ! binding.path.isImportSpecifier() ) {
+					return;
+				}
 
-				path.parentPath.traverse( replacer, { myTypes } );
+				const declaration = binding.path.parentPath.node;
+				if ( 'state/action-types' !== declaration.source.value ) {
+					return;
+				}
 
-				// and remove the `import` statement after we have
-				// made our replacements in the module
-				path.remove();
+				path.replaceWith( t.stringLiteral( binding.path.node.imported.name ) );
 			},
 		},
 	};
