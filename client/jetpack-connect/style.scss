@@ -885,7 +885,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.jetpack-connect__main-logo {
 			text-align: center;
-			border-bottom: 1px solid var( --color-woocommerce-onboarding-header-border );
+			border-bottom: 1px solid var( --color-gray-50 );
 			position: absolute;
 			width: 100%;
 			left: 0;
@@ -894,10 +894,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 			svg > g {
 				transform: translateX( 25% );
-			}
-
-			@media( max-width: 660px ) {
-				margin-top: 45px;
 			}
 		}
 
@@ -920,18 +916,27 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.jetpack-connect__authorize-form {
 			margin-top: 32px;
-
-			@media( max-width: 660px ) {
-				margin-top: 92px;
-			}
 		}
 
 		.jetpack-logo__icon-circle {
-			fill: var( --color-accent-light );
+			fill: var( --color-gray-800 );
 		}
 
 		.jetpack-logo__icon-triangle {
-			fill: var( --color-woocommerce-onboarding-background );
+			fill: var( --color-gray-0 );
+		}
+
+		.signup-form__social p {
+			color: var( --color-gray-600 );
+		}
+
+		.formatted-header__title {
+			color: var( --color-gray-800 );
+		}
+
+		.signup-form__submit {
+			border: 0;
+			box-shadow: none;
 		}
 	}
 }

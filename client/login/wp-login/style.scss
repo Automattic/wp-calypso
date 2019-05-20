@@ -194,4 +194,8 @@ $image-height: 47px;
 		border-bottom: none;
 		line-height: 3.4em;
 	}
+
+	.login__form-header {
+		color: var( --color-gray-800 );
+	}
 }

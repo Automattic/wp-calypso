@@ -12,7 +12,7 @@
 .layout.is-jetpack-woocommerce-flow {
 	.login__jetpack-logo {
 		text-align: center;
-		border-bottom: 1px solid var( --color-woocommerce-onboarding-header-border );
+		border-bottom: 1px solid $muriel-gray-50;
 		position: absolute;
 		width: 100%;
 		left: 0;
@@ -21,10 +21,6 @@
 
 		svg > g {
 			transform: translateX( 25% );
-		}
-
-		@media( max-width: 660px ) {
-			margin-top: 45px;
 		}
 	}
 
@@ -40,10 +36,6 @@
 
 	.login__form-header {
 		margin-top: 32px;
-
-		@media( max-width: 660px ) {
-			margin-top: 92px;
-		}
 	}
 
 	.login__header-subtitle {
@@ -55,11 +47,16 @@
 	}
 
 	.jetpack-logo__icon-circle {
-		fill: var( --color-accent-light );
+		fill: var( --color-gray-800 );
 	}
 
 	.jetpack-logo__icon-triangle {
-		fill: var( --color-woocommerce-onboarding-background );
+		fill: var( --color-gray-0 );
+	}
+
+	.login__form-action .form-button {
+		border: 0;
+		box-shadow: none;
 	}
 }
 

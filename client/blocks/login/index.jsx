@@ -221,7 +221,7 @@ class Login extends Component {
 						partnerSlug={ this.props.partnerSlug }
 						isWoo
 						width={ 200 }
-						darkColorScheme
+						lightColorScheme
 					/>
 				</div>
 			);
