@@ -11,7 +11,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import ScreenReaderText from 'components/screen-reader-text';
+import ScreenReaderText from '../screen-reader-text';
 
 /**
  * Style dependencies
