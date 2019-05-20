@@ -18,4 +18,3 @@ function fse_blank_theme_enqueue_script_and_style() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'fse_blank_theme_enqueue_script_and_style' );
-
