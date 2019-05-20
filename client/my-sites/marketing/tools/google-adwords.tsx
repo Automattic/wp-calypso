@@ -83,7 +83,7 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 						},
 					}
 				) }
-				imagePath="/calypso/images/illustrations/google-adwords-stats.svg"
+				imagePath="/calypso/images/marketing/google-ads-logo.png"
 			>
 				{ renderButton() }
 			</MarketingToolsFeature>

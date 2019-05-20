@@ -68,6 +68,23 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 
 			<div className="tools__feature-list">
 				<MarketingToolsFeature
+					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
+					description={ translate(
+						"A custom logo helps your brand pop and makes your site memorable. Our partner Looka is standing by if you'd like some professional help."
+					) }
+					imagePath="/calypso/images/marketing/looka-logo.svg"
+				>
+					<Button
+						compact
+						onClick={ handleCreateALogoClick }
+						href={ 'http://logojoy.grsm.io/looka' }
+						target="_blank"
+					>
+						{ translate( 'Create A Logo' ) }
+					</Button>
+				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
 					title={ translate( 'Get social, and share your blog posts where the people are' ) }
 					description={ translate(
 						"Use your site's Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
@@ -78,6 +95,10 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 						{ translate( 'Start Sharing' ) }
 					</Button>
 				</MarketingToolsFeature>
+
+				<MarketingToolsGoogleMyBusinessFeature />
+
+				<MarketingToolsGoogleAdwordsFeature />
 
 				<MarketingToolsFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
@@ -95,27 +116,6 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 						{ translate( 'Find Your Expert' ) }
 					</Button>
 				</MarketingToolsFeature>
-
-				<MarketingToolsFeature
-					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
-					description={ translate(
-						"A custom logo helps your brand pop and makes your site memorable. Our partner Looka is standing by if you'd like some professional help."
-					) }
-					imagePath="/calypso/images/marketing/looka-logo.svg"
-				>
-					<Button
-						compact
-						onClick={ handleCreateALogoClick }
-						href={ 'http://logojoy.grsm.io/looka' }
-						target="_blank"
-					>
-						{ translate( 'Create A Logo' ) }
-					</Button>
-				</MarketingToolsFeature>
-
-				<MarketingToolsGoogleMyBusinessFeature />
-
-				<MarketingToolsGoogleAdwordsFeature />
 			</div>
 		</Fragment>
 	);
