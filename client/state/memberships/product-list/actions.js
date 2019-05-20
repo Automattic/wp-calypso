@@ -12,6 +12,8 @@ import {
 	MEMBERSHIPS_PRODUCT_UPDATE,
 	MEMBERSHIPS_PRODUCT_UPDATE_FAILURE,
 	NOTICE_CREATE,
+	MEMBERSHIPS_PRODUCT_DELETE,
+	MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
 } from 'state/action-types';
 
 import wpcom from 'lib/wp';
@@ -119,6 +121,49 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 					type: MEMBERSHIPS_PRODUCT_UPDATE_FAILURE,
 					siteId,
 					error,
+				} );
+				dispatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						duration: 10000,
+						text: error.message,
+						status: 'is-error',
+					},
+				} );
+			} );
+	};
+};
+
+export const requestDeleteProduct = ( siteId, product, noticeText ) => {
+	return dispatch => {
+		dispatch( {
+			type: MEMBERSHIPS_PRODUCT_DELETE,
+			siteId,
+			product,
+		} );
+
+		return wpcom.req
+			.post( {
+				method: 'POST',
+				path: `/sites/${ siteId }/memberships/product/${ product.ID }/delete`,
+			} )
+			.then( () => {
+				dispatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						duration: 5000,
+						text: noticeText,
+						status: 'is-success',
+					},
+				} );
+				return product.ID;
+			} )
+			.catch( error => {
+				dispatch( {
+					type: MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
+					siteId,
+					error,
+					product,
 				} );
 				dispatch( {
 					type: NOTICE_CREATE,

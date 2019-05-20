@@ -31,7 +31,11 @@ import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
-import { requestAddProduct, requestUpdateProduct } from 'state/memberships/product-list/actions';
+import {
+	requestAddProduct,
+	requestUpdateProduct,
+	requestDeleteProduct,
+} from 'state/memberships/product-list/actions';
 
 // These are Stripe settlement currencies.
 const CURRENCIES = [
@@ -62,6 +66,7 @@ class MembershipsProductsSection extends Component {
 	state = {
 		showDialog: false,
 		editedProductId: null,
+		deletedProductId: null,
 		editedProductName: '',
 		editedPayWhatYouWant: false,
 		editedPrice: { currency: 'USD', value: '' },
@@ -73,6 +78,10 @@ class MembershipsProductsSection extends Component {
 				<PopoverMenuItem onClick={ () => this.openProductDialog( productId ) }>
 					<Gridicon size={ 18 } icon={ 'pencil' } />
 					{ this.props.translate( 'Edit' ) }
+				</PopoverMenuItem>
+				<PopoverMenuItem onClick={ () => this.setState( { deletedProductId: productId } ) }>
+					<Gridicon size={ 18 } icon={ 'trash' } />
+					{ this.props.translate( 'Delete' ) }
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
@@ -135,7 +144,17 @@ class MembershipsProductsSection extends Component {
 			} );
 		}
 	};
-
+	onCloseDeleteProduct = reason => {
+		if ( reason === 'delete' ) {
+			const product = this.props.products.filter( p => p.ID === this.state.deletedProductId ).pop();
+			this.props.requestDeleteProduct(
+				this.props.siteId,
+				product,
+				this.props.translate( '"%s" was deleted.', { args: product.title } )
+			);
+		}
+		this.setState( { deletedProductId: null } );
+	};
 	handleCurrencyChange = event => {
 		const { value: currency } = event.currentTarget;
 
@@ -278,6 +297,32 @@ class MembershipsProductsSection extends Component {
 						{ this.renderEllipsisMenu( product.ID ) }
 					</CompactCard>
 				) ) }
+				<Dialog
+					isVisible={ !! this.state.deletedProductId }
+					buttons={ [
+						{
+							label: this.props.translate( 'Cancel' ),
+							action: 'cancel',
+						},
+						{
+							label: this.props.translate( 'Delete' ),
+							isPrimary: true,
+							action: 'delete',
+						},
+					] }
+					onClose={ this.onCloseDeleteProduct }
+				>
+					<h1>{ this.props.translate( 'Confirmation' ) }</h1>
+					<p>
+						{ this.props.translate( 'Do you want to delete "%s"?', {
+							args: get(
+								this.props.products.filter( p => p.ID === this.state.deletedProductId ),
+								[ 0, 'title' ],
+								''
+							),
+						} ) }
+					</p>
+				</Dialog>
 			</div>
 		);
 	}
@@ -294,5 +339,5 @@ export default connect(
 			products: get( state, [ 'memberships', 'productList', 'items', siteId ], [] ),
 		};
 	},
-	{ requestAddProduct, requestUpdateProduct }
+	{ requestAddProduct, requestUpdateProduct, requestDeleteProduct }
 )( localize( MembershipsProductsSection ) );
