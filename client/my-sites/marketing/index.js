@@ -26,12 +26,11 @@ export default function() {
 		'/marketing',
 		'/marketing/connections',
 		'/marketing/sharing-buttons',
+		'/marketing/tools',
 		'/marketing/traffic',
 		'/sharing',
 		'/sharing/buttons',
 	];
-
-	paths.push( '/marketing/tools' );
 
 	paths.forEach( path => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
 
