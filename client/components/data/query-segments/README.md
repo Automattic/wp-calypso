@@ -7,9 +7,9 @@ Because it's static data from the server, it will only fire if there are no segm
 
 ## Usage
 
-Render the component It does not accept any props or children, nor does it render any elements to the page.
+Render the component. It accepts neither props or children, nor does it render any elements to the page.
 
-```es6
+```js
 import QuerySegments from 'components/data/query-segments';
 import { getSegments } from 'state/signup/segments/selectors';
 
@@ -22,7 +22,7 @@ class MyComponent extends React.Component {
 				<QuerySegments />
 				<ul>
 				{
-					segments && segments.map( segments => {
+					segments.length && segments.map( segments => {
 						return ( <li>{ segments.id }</li> );
 					} )
 				}
