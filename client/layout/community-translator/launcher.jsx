@@ -22,6 +22,10 @@ import { i18nScanner } from 'lib/i18n-utils/utils';
 import getUserSettings from 'state/selectors/get-user-settings';
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
 import QueryUserSettings from 'components/data/query-user-settings';
+import {
+	startRecordingTranslations,
+	stopRecordingTranslations,
+} from 'components/community-translator/utils';
 
 class TranslatorLauncher extends React.PureComponent {
 	static displayName = 'TranslatorLauncher';
@@ -98,9 +102,11 @@ class TranslatorLauncher extends React.PureComponent {
 		if ( ! this.state.isScanning ) {
 			// analytics.mc.bumpStat( 'calypso_translator_scan_translations' );
 			i18nScanner.start();
+			startRecordingTranslations();
 			this.setState( { isScanning: true, showScannedTranslations: false } );
 		} else {
 			i18nScanner.stop();
+			stopRecordingTranslations();
 			this.setState( { isScanning: false, showScannedTranslations: true } );
 		}
 	};
