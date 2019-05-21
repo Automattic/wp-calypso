@@ -88,7 +88,7 @@ export const ChecklistUserAvatarTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'Crop image as needed then press {{b}}Change My Photo{{/b}} button to save your changes.',
+							'Crop your image, then press {{b}}Change My Photo{{/b}} to save your changes.',
 							{
 								components: { b: <strong /> },
 							}
