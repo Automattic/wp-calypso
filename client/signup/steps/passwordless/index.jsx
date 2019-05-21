@@ -4,7 +4,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
 
@@ -13,7 +12,6 @@ import { identity } from 'lodash';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -161,7 +159,9 @@ export class PasswordlessStep extends Component {
 	renderNotice() {
 		return (
 			this.state.noticeMessage && (
-				<Notice status={ this.state.noticeStatus }>{ this.state.noticeMessage }</Notice>
+				<Notice showDismiss={ false } status={ this.state.noticeStatus }>
+					{ this.state.noticeMessage }
+				</Notice>
 			)
 		);
 	}
@@ -253,9 +253,4 @@ export class PasswordlessStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( PasswordlessStep ) );
+export default localize( PasswordlessStep );
