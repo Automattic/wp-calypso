@@ -33,6 +33,7 @@
 		]
 	},
 	"dependencies": {
+		"@automattic/calypso-ui": "file:./packages/calypso-ui",
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/material-design-icons": "file:./packages/material-design-icons",
 		"@automattic/muriel-style": "file:./packages/muriel-style",
