@@ -95,6 +95,19 @@ export class PlanFeatures extends Component {
 			? plans.indexOf( selectedPlan )
 			: findIndex( planProperties, { popular: true } );
 
+		const plansTable = (
+			<table className={ tableClasses }>
+				<tbody>
+					<tr>{ this.renderPlanHeaders() }</tr>
+					{ ! withScroll && planDescriptions }
+					<tr>{ this.renderTopButtons() }</tr>
+					{ withScroll && planDescriptions }
+					{ this.renderPlanFeatureRows() }
+					{ ! withScroll && ! isInSignup && bottomButtons }
+				</tbody>
+			</table>
+		);
+
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
@@ -102,23 +115,18 @@ export class PlanFeatures extends Component {
 					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features__content">
 						{ mobileView }
-						<PlanFeaturesScroller
-							withScroll={ withScroll }
-							planCount={ planProperties.length }
-							cellSelector=".plan-features__table-item"
-							initialSelectedIndex={ initialSelectedIndex }
-						>
-							<table className={ tableClasses }>
-								<tbody>
-									<tr>{ this.renderPlanHeaders() }</tr>
-									{ ! withScroll && planDescriptions }
-									<tr>{ this.renderTopButtons() }</tr>
-									{ withScroll && planDescriptions }
-									{ this.renderPlanFeatureRows() }
-									{ ! withScroll && ! isInSignup && bottomButtons }
-								</tbody>
-							</table>
-						</PlanFeaturesScroller>
+						{ withScroll ? (
+							<PlanFeaturesScroller
+								withScroll={ withScroll }
+								planCount={ planProperties.length }
+								cellSelector=".plan-features__table-item"
+								initialSelectedIndex={ initialSelectedIndex }
+							>
+								{ plansTable }
+							</PlanFeaturesScroller>
+						) : (
+							plansTable
+						) }
 					</div>
 				</div>
 			</div>

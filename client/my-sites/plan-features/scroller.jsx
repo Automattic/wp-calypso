@@ -19,49 +19,41 @@ const NO_SCROLL_PADDING = 20; // will appear when plans show up without scrollin
 
 export default class PlanFeaturesScroller extends PureComponent {
 	static propTypes = {
-		withScroll: PropTypes.bool.isRequired,
 		planCount: PropTypes.number.isRequired,
 		initialSelectedIndex: PropTypes.number.isRequired,
 	};
 
 	static defaultProps = {
-		withScroll: false,
 		planCount: 0,
 		initialSelectedIndex: 0,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.scrollWrapperDOM = null;
-		this.initialized = false;
-		this.state = {
-			viewportWidth: 0,
-			scrollPos: 0,
-			scrollSnapDisabled: false,
-		};
-	}
+	scrollWrapperDOM = null;
+	initialized = false;
+
+	state = {
+		viewportWidth: 0,
+		scrollPos: 0,
+		scrollSnapDisabled: false,
+	};
 
 	componentDidMount() {
 		if ( typeof window !== 'undefined' ) {
 			window.addEventListener( 'resize', this.handleWindowResize );
 		}
+		this.scrollWrapperDOM.addEventListener( 'scroll', this.handleScroll );
+		this.updateViewportWidth();
 	}
 
 	componentWillUnmount() {
 		if ( typeof window !== 'undefined' ) {
 			window.removeEventListener( 'resize', this.handleWindowResize );
 		}
-		if ( this.scrollWrapperDOM ) {
-			this.scrollWrapperDOM.removeEventListener( 'scroll', this.handleScroll );
-		}
+		this.scrollWrapperDOM.removeEventListener( 'scroll', this.handleScroll );
 	}
 
 	setWrapperRef = element => {
 		this.scrollWrapperDOM = element;
-		if ( element ) {
-			element.addEventListener( 'scroll', this.handleScroll );
-			this.updateViewportWidth();
-		}
 	};
 
 	scrollLeft = event => {
@@ -82,19 +74,17 @@ export default class PlanFeaturesScroller extends PureComponent {
 		}
 
 		const { cellWidth, borderSpacing, visibleIndex } = this.computeStyleVars();
-		if ( this.scrollWrapperDOM ) {
-			const from = this.scrollWrapperDOM.scrollLeft;
-			const to = round( ( visibleIndex + direction ) * ( cellWidth + borderSpacing ) );
+		const from = this.scrollWrapperDOM.scrollLeft;
+		const to = round( ( visibleIndex + direction ) * ( cellWidth + borderSpacing ) );
 
-			// Workaround: Chrome has a bug to not set the exact scrollLeft value
-			// when scroll-snap is turned on.
-			this.setState( { scrollSnapDisabled: true }, async () => {
-				await this.animateScroll( from, to );
-				this.setState( { scrollSnapDisabled: false }, () => {
-					this.scrollWrapperDOM.scrollLeft = to;
-				} );
+		// Workaround: Chrome has a bug to not set the exact scrollLeft value
+		// when scroll-snap is turned on.
+		this.setState( { scrollSnapDisabled: true }, async () => {
+			await this.animateScroll( from, to );
+			this.setState( { scrollSnapDisabled: false }, () => {
+				this.scrollWrapperDOM.scrollLeft = to;
 			} );
-		}
+		} );
 	}
 
 	animateScroll( from, to ) {
@@ -134,43 +124,53 @@ export default class PlanFeaturesScroller extends PureComponent {
 
 	updateViewportWidth = () => {
 		this.updateViewportWidthRaf = null;
-		if ( this.scrollWrapperDOM ) {
-			this.setState( { viewportWidth: this.scrollWrapperDOM.offsetWidth }, () => {
-				if ( this.initialized ) {
-					this.scrollBy( 0 );
-					return;
-				}
+		this.setState( { viewportWidth: this.scrollWrapperDOM.offsetWidth }, () => {
+			if ( this.initialized ) {
+				this.scrollBy( 0 );
+				return;
+			}
 
-				const { initialSelectedIndex, planCount } = this.props;
-				const { visibleCount } = this.computeStyleVars();
-				const [ minIndex, maxIndex ] = [ 0, planCount - visibleCount ];
-				let index = 0;
+			const { initialSelectedIndex, planCount } = this.props;
+			const { visibleCount } = this.computeStyleVars();
+			const [ minIndex, maxIndex ] = [ 0, planCount - visibleCount ];
+			let index = 0;
 
-				if ( planCount > visibleCount ) {
-					index = clamp( round( initialSelectedIndex - visibleCount / 2 ), minIndex, maxIndex );
-				}
+			if ( planCount > visibleCount ) {
+				index = clamp( round( initialSelectedIndex - visibleCount / 2 ), minIndex, maxIndex );
+			}
 
-				this.scrollBy( index );
-				this.initialized = true;
-			} );
-		}
+			this.scrollBy( index );
+			this.initialized = true;
+		} );
 	};
 
 	updateScrollPosition = () => {
 		this.updateScrollPositionRaf = null;
-		if ( this.scrollWrapperDOM ) {
-			this.setState( { scrollPos: this.scrollWrapperDOM.scrollLeft } );
-		}
+		this.setState( { scrollPos: this.scrollWrapperDOM.scrollLeft } );
 	};
+
+	getTableBorderSpacing() {
+		if ( ! this.scrollWrapperDOM ) {
+			return 0;
+		}
+
+		const table = this.scrollWrapperDOM.querySelector( '.plan-features__table' );
+		if ( ! table ) {
+			return 0;
+		}
+
+		const compStyles = window.getComputedStyle( table );
+		if ( ! compStyles ) {
+			return 0;
+		}
+
+		return parseInt( compStyles.getPropertyValue( 'border-spacing' ) ) || 0;
+	}
 
 	computeStyleVars() {
 		const { viewportWidth: vpw, scrollPos } = this.state;
 		const { planCount } = this.props;
-		const table =
-			this.scrollWrapperDOM && this.scrollWrapperDOM.querySelector( '.plan-features__table' );
-		const compStyles = table && window.getComputedStyle( table );
-		const borderSpacing =
-			parseInt( compStyles && compStyles.getPropertyValue( 'border-spacing' ) ) || 0;
+		const borderSpacing = this.getTableBorderSpacing();
 		let styleWeights = null;
 		let paneWidth = '0';
 		let visibleCount = planCount;
@@ -277,11 +277,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 	}
 
 	render() {
-		const { children, withScroll, planCount } = this.props;
-
-		if ( ! withScroll ) {
-			return <>{ children }</>;
-		}
+		const { children, planCount } = this.props;
 
 		const vars = this.computeStyleVars();
 		const disabledLeft = 0 === vars.visibleIndex;
