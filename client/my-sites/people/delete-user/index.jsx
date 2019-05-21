@@ -30,6 +30,8 @@ import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { removeExternalContributor } from 'state/sites/external-contributors/actions';
+import { isUserExternalContributor } from 'state/selectors/is-user-external-contributor';
 
 /**
  * Style dependencies
@@ -161,6 +163,9 @@ class DeleteUser extends React.Component {
 						'Clicked Confirm Remove User on Edit User Network Site'
 					);
 					deleteUser( this.props.siteId, this.props.user.ID );
+					if ( this.props.isExternalContributor ) {
+						this.props.removeExternalContributor( this.props.siteId, this.props.user.ID );
+					}
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -185,6 +190,9 @@ class DeleteUser extends React.Component {
 		}
 
 		deleteUser( this.props.siteId, this.props.user.ID, reassignUserId );
+		if ( this.props.isExternalContributor ) {
+			this.props.removeExternalContributor( this.props.siteId, this.props.user.ID );
+		}
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
 
@@ -297,9 +305,10 @@ class DeleteUser extends React.Component {
 
 export default localize(
 	connect(
-		state => ( {
+		( state, { siteId, user: { ID } } ) => ( {
 			currentUser: getCurrentUser( state ),
+			isExternalContributor: siteId && ID ? isUserExternalContributor( state, siteId, ID ) : false,
 		} ),
-		{ recordGoogleEvent }
+		{ recordGoogleEvent, removeExternalContributor }
 	)( DeleteUser )
 );

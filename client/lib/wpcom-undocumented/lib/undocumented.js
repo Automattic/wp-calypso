@@ -313,7 +313,7 @@ Undocumented.prototype.sendInvites = function(
 		{},
 		{
 			invitees: usernamesOrEmails,
-			flags: isExternal ? [ 'external' ] : [],
+			is_external: isExternal,
 			role: role,
 			message: message,
 			source: 'calypso',

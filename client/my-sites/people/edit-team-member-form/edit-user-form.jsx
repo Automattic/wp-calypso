@@ -151,11 +151,10 @@ class EditUserForm extends Component {
 		switch ( fieldId ) {
 			case 'roles':
 				returnField = (
-					<Fragment>
+					<Fragment key="roles">
 						<RoleSelect
 							id="roles"
 							name="roles"
-							key="roles"
 							siteId={ this.props.siteId }
 							value={ this.state.roles }
 							onChange={ this.handleChange }

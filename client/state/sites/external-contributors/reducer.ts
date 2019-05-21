@@ -61,7 +61,7 @@ const itemsReducer = createReducer( null, {
 	[ EXTERNAL_CONTRIBUTORS_GET_REQUEST ]: () => null,
 	[ EXTERNAL_CONTRIBUTORS_GET_REQUEST_SUCCESS ]: (
 		_items: ExternalContributor,
-		contributors: ExternalContributor
+		{ contributors }
 	) => contributors || [],
 	[ EXTERNAL_CONTRIBUTORS_GET_REQUEST_FAILURE ]: () => null,
 	[ EXTERNAL_CONTRIBUTORS_ADD_REQUEST ]: addExternalContributorToItems,
