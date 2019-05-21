@@ -51,26 +51,37 @@
 function transformIt( babel ) {
 	const { types: t } = babel;
 
+	const findTopImports = path =>
+		path.parent.type !== 'Program'
+			? findTopImports( path.parentPath )
+			: path.parent.body.filter(
+					node => node.type === 'ImportDeclaration' && node.source.value === 'state/action-types'
+			  );
+
 	return {
 		name: 'action-type-inliner',
 		visitor: {
 			Identifier( path ) {
-				// skip the import statement - we only want to replace uses of the constant
+				// we haven't deleted the `import` statement yet
+				// so if we don't skip it then we'll enter a cycle
 				if ( t.isImportSpecifier( path.parentPath ) ) {
 					return;
 				}
 
-				const binding = path.scope.bindings[ path.node.name ];
-				if ( ! binding || ! binding.path.isImportSpecifier() ) {
+				const imports = findTopImports( path );
+				const replacements = new Map();
+
+				if ( imports.length ) {
+					imports
+						.reduce( ( specifiers, next ) => [ ...specifiers, ...next.specifiers ], [] )
+						.forEach( ( { local, imported } ) => replacements.set( imported.name, local.name ) );
+				}
+
+				if ( ! replacements.has( path.node.name ) ) {
 					return;
 				}
 
-				const declaration = binding.path.parentPath.node;
-				if ( 'state/action-types' !== declaration.source.value ) {
-					return;
-				}
-
-				path.replaceWith( t.stringLiteral( binding.path.node.imported.name ) );
+				path.replaceWith( t.stringLiteral( replacements.get( path.node.name ) ) );
 			},
 		},
 	};
