@@ -15,20 +15,22 @@ import {
 
 describe( 'selectors', () => {
 	const verticals = {
-		felice: [
-			{
-				verticalName: 'felice',
-				verticalSlug: 'felice',
-				preview: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->',
-			},
-		],
-		contento: [
-			{
-				verticalName: 'contento',
-				verticalSlug: 'contento',
-				preview: '<!--gutenberg-loves-you <p>High five!</p>-->',
-			},
-		],
+		'': {
+			felice: [
+				{
+					verticalName: 'felice',
+					verticalSlug: 'felice',
+					preview: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->',
+				},
+			],
+			contento: [
+				{
+					verticalName: 'contento',
+					verticalSlug: 'contento',
+					preview: '<!--gutenberg-loves-you <p>High five!</p>-->',
+				},
+			],
+		},
 	};
 
 	const state = {
@@ -81,7 +83,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return site vertical from the state', () => {
-			expect( getSiteVerticalPreview( state ) ).toEqual( verticals.felice[ 0 ].preview );
+			expect( getSiteVerticalPreview( state ) ).toEqual( verticals[ '' ].felice[ 0 ].preview );
 		} );
 	} );
 	describe( '', () => {
@@ -109,6 +111,7 @@ describe( 'selectors', () => {
 			isUserInputVertical: true,
 			parent: '',
 			preview: '',
+			siteType: '',
 			verticalId: '',
 			verticalName: '',
 			verticalSlug: '',
@@ -119,7 +122,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return direct match', () => {
-			expect( getSiteVerticalData( state ) ).toEqual( verticals.felice[ 0 ] );
+			expect( getSiteVerticalData( state ) ).toEqual( verticals[ '' ].felice[ 0 ] );
 		} );
 	} );
 } );

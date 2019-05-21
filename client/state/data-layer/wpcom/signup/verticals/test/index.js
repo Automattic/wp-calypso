@@ -12,6 +12,7 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 	test( 'requestVerticals()', () => {
 		const mockAction = {
 			search: 'Foo',
+			siteType: 'business',
 			limit: 7,
 		};
 
@@ -23,6 +24,7 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 					path: '/verticals',
 					query: {
 						search: mockAction.search,
+						site_type: mockAction.siteType,
 						limit: mockAction.limit,
 						include_preview: true,
 					},
@@ -34,12 +36,18 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 
 	test( 'storeVerticals()', () => {
 		const search = 'Profit!';
+		const siteType = 'business';
 		const verticals = [
 			{ id: 0, verticalName: 'More Profit!' },
 			{ id: 1, verticalName: 'Superfluous Profit!' },
 		];
 
-		expect( storeVerticals( { search }, verticals ) ).toEqual( setVerticals( search, verticals ) );
+		expect( storeVerticals( { search }, verticals ) ).toEqual(
+			setVerticals( search, '', verticals )
+		);
+		expect( storeVerticals( { search, siteType }, verticals ) ).toEqual(
+			setVerticals( search, siteType, verticals )
+		);
 	} );
 
 	test( 'showVerticalsRequestError()', () => {
