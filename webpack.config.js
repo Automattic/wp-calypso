@@ -169,6 +169,7 @@ const webpackConfig = {
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	optimization: {
+		sideEffects: true,
 		splitChunks: {
 			chunks: codeSplit ? 'all' : 'async',
 			name: !! ( isDevelopment || shouldEmitStats ),
