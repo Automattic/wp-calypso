@@ -52,15 +52,24 @@ function transformIt( babel ) {
 	const { types: t } = babel;
 
 	const findTopImports = path =>
-		path.parent.type !== 'Program'
-			? findTopImports( path.parentPath )
-			: path.parent.body.filter(
-					node => node.type === 'ImportDeclaration' && node.source.value === 'state/action-types'
-			  );
+		path
+			.getAncestry()
+			.slice( -1 )[ 0 ]
+			.node.body.filter(
+				node => node.type === 'ImportDeclaration' && node.source.value === 'state/action-types'
+			);
+
+	let replacements = null;
+	const removals = [];
 
 	return {
 		name: 'action-type-inliner',
 		visitor: {
+			ImportDeclaration( path ) {
+				if ( 'state/action-types' === path.node.source.value ) {
+					removals.push( path );
+				}
+			},
 			Identifier( path ) {
 				// we haven't deleted the `import` statement yet
 				// so if we don't skip it then we'll enter a cycle
@@ -68,13 +77,15 @@ function transformIt( babel ) {
 					return;
 				}
 
-				const imports = findTopImports( path );
-				const replacements = new Map();
+				if ( null === replacements ) {
+					const imports = findTopImports( path );
+					replacements = new Map();
 
-				if ( imports.length ) {
-					imports
-						.reduce( ( specifiers, next ) => [ ...specifiers, ...next.specifiers ], [] )
-						.forEach( ( { local, imported } ) => replacements.set( imported.name, local.name ) );
+					if ( imports.length ) {
+						imports
+							.reduce( ( specifiers, next ) => [ ...specifiers, ...next.specifiers ], [] )
+							.forEach( ( { local, imported } ) => replacements.set( imported.name, local.name ) );
+					}
 				}
 
 				if ( ! replacements.has( path.node.name ) ) {
@@ -83,6 +94,9 @@ function transformIt( babel ) {
 
 				path.replaceWith( t.stringLiteral( replacements.get( path.node.name ) ) );
 			},
+		},
+		post() {
+			removals.forEach( path => path.remove() );
 		},
 	};
 }
