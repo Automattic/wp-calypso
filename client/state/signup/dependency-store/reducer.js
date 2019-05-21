@@ -19,8 +19,13 @@ function reducer( state = EMPTY, action ) {
 			return { ...state, ...action.dependencies };
 
 		case SIGNUP_PROGRESS_SUBMIT_STEP:
-		case SIGNUP_PROGRESS_COMPLETE_STEP:
-			return { ...state, ...action.step.providedDependencies };
+		case SIGNUP_PROGRESS_COMPLETE_STEP: {
+			const { providedDependencies } = action.step;
+			if ( ! providedDependencies ) {
+				return state;
+			}
+			return { ...state, ...providedDependencies };
+		}
 
 		case SIGNUP_COMPLETE_RESET:
 			return EMPTY;

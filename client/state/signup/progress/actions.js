@@ -16,7 +16,7 @@ import {
 } from 'state/action-types';
 import { assertValidDependencies } from 'lib/signup/asserts';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 function addProvidedDependencies( step, providedDependencies ) {
 	if ( isEmpty( providedDependencies ) ) {
@@ -58,7 +58,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 		{}
 	);
 
-	analytics.tracks.recordEvent( 'calypso_signup_actions_submit_step', {
+	return recordTracksEvent( 'calypso_signup_actions_submit_step', {
 		step: stepName,
 		...inputs,
 	} );
@@ -77,9 +77,9 @@ export function submitSignupStep( step, providedDependencies ) {
 		const lastKnownFlow = getCurrentFlowName( getState() );
 		const lastUpdated = Date.now();
 
-		recordSubmitStep( step.stepName, providedDependencies );
+		dispatch( recordSubmitStep( step.stepName, providedDependencies ) );
 
-		return dispatch( {
+		dispatch( {
 			type: SIGNUP_PROGRESS_SUBMIT_STEP,
 			step: addProvidedDependencies(
 				{ ...step, lastKnownFlow, lastUpdated },
@@ -89,7 +89,7 @@ export function submitSignupStep( step, providedDependencies ) {
 	};
 }
 
-export function completeStep( step, providedDependencies ) {
+export function completeSignupStep( step, providedDependencies ) {
 	assertValidDependencies( step.stepName, providedDependencies );
 	return ( dispatch, getState ) => {
 		const lastKnownFlow = getCurrentFlowName( getState() );

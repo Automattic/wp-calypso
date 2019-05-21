@@ -32,7 +32,7 @@ import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { resetSignup, updateDependencies } from 'state/signup/actions';
 import {
-	completeStep,
+	completeSignupStep,
 	invalidateStep,
 	processStep,
 	removeUnneededSteps,
@@ -268,7 +268,7 @@ assign( SignupFlowController.prototype, {
 				if ( errors ) {
 					this._reduxStore.dispatch( invalidateStep( step, errors ) );
 				} else {
-					this._reduxStore.dispatch( completeStep( step, providedDependencies ) );
+					this._reduxStore.dispatch( completeSignupStep( step, providedDependencies ) );
 				}
 			},
 			dependenciesFound,
