@@ -327,14 +327,14 @@
 		width: 175px;
 		position: relative;
 
-		@media ( min-width: 1400px ) {
+		@include breakpoint( '>1400px' ) {
 			position: absolute;
 			left: inherit;
 			right: -( 175px + 32px );
 			margin-left: 0;
 		}
 
-		@media ( max-width: 1400px ) {
+		@include breakpoint( '<1400px' ) {
 			background: var( --color-neutral-0 );
 			margin: 0 0 24px;
 			padding: 16px;
