@@ -57,13 +57,7 @@ export class PlansAtomicStoreStep extends Component {
 	}
 
 	onSelectPlan( cartItem ) {
-		const {
-			additionalStepData,
-			stepSectionName,
-			stepName,
-			goToNextStep,
-			designType,
-		} = this.props;
+		const { additionalStepData, stepSectionName, stepName, goToNextStep, designType } = this.props;
 
 		if ( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {

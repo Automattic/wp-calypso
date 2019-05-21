@@ -130,13 +130,6 @@ export default class PeoplePage extends AsyncBaseContainer {
 		return await DriverHelper.clickWhenClickable( this.driver, this.peopleListItemSelector );
 	}
 
-	async successNoticeDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			this.successNoticeSelector
-		);
-	}
-
 	async inviteUser() {
 		return await DriverHelper.clickWhenClickable(
 			this.driver,

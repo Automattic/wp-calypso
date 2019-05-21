@@ -223,17 +223,6 @@ export async function isElementPresent( driver, selector ) {
 	return !! elements.length;
 }
 
-export function getErrorMessageIfPresent( driver ) {
-	const errorNoticeTextSelector = by.css( '.notice.is-error .notice__text' );
-
-	return driver.findElement( errorNoticeTextSelector ).then(
-		el => {
-			return el.getText();
-		},
-		() => {}
-	);
-}
-
 export function elementIsNotPresent( driver, cssSelector ) {
 	return this.isElementPresent( driver, by.css( cssSelector ) ).then( function( isPresent ) {
 		return ! isPresent;
