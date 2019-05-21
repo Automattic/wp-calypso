@@ -202,7 +202,7 @@ const webpackConfig = {
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
-				configFile: path.resolve( __dirname, 'babel.dependencies.config.js' ),
+				configFile: path.join( __dirname, 'babel.config.js' ),
 				cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache', extraPath ),
 				cacheIdentifier,
 				include: shouldTranspileDependency,

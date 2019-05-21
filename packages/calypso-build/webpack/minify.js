@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const TerserPlugin = require( 'terser-webpack-plugin' );
+const ClosurePlugin = require( 'closure-webpack-plugin' );
 const browserslist = require( 'browserslist' );
 const caniuse = require( 'caniuse-api' );
 
@@ -15,15 +15,15 @@ const supportedBrowsers = browserslist( null, { env: process.env.BROWSERSLIST_EN
  *
  * @returns {Number} The maximum supported ECMAScript version.
  */
-function chooseTerserEcmaVersion( browsers ) {
+function chooseEcmaVersion( browsers ) {
 	if ( ! caniuse.isSupported( 'arrow-functions', browsers ) ) {
-		return 5;
+		return 'ECMASCRIPT5';
 	}
 	if ( ! caniuse.isSupported( 'es6-class', browsers ) ) {
-		return 5;
+		return 'ECMASCRIPT5';
 	}
 
-	return 6;
+	return 'ECMASCRIPT_2015';
 }
 
 /**
@@ -35,15 +35,14 @@ function chooseTerserEcmaVersion( browsers ) {
  * @returns {Object[]}     Terser plugin object to be used in Webpack minification.
  */
 module.exports = options => {
-	let terserOptions = options.terserOptions || {};
-	terserOptions = {
-		ecma: chooseTerserEcmaVersion( supportedBrowsers ),
-		ie8: false,
-		safari10: supportedBrowsers.some(
-			browser => browser.includes( 'safari 10' ) || browser.includes( 'ios_saf 10' )
+	return [
+		new ClosurePlugin(
+			{
+				mode: 'AGGRESSIVE_BUNDLE',
+			},
+			{
+				languageOut: chooseEcmaVersion( supportedBrowsers ),
+			}
 		),
-		...terserOptions,
-	};
-
-	return [ new TerserPlugin( { ...options, terserOptions } ) ];
+	];
 };
