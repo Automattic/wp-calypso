@@ -34,7 +34,7 @@ import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
-import { plansLink, planMatches, findPlansKeys, getPlan } from 'lib/plans';
+import { plansLink, planMatches, findPlansKeys, getPlan, isBloggerPlan } from 'lib/plans';
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
@@ -123,10 +123,19 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
+		const {
+			displayJetpackPlans,
+			intervalType,
+			selectedPlan,
+			hideFreePlan,
+			sitePlanSlug,
+		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
-		const hideBloggerPlan = abtest( 'hideBloggerPlan' ) === 'hide';
+		const hideBloggerPlan =
+			! isBloggerPlan( selectedPlan ) &&
+			! isBloggerPlan( sitePlanSlug ) &&
+			abtest( 'hideBloggerPlan' ) === 'hide';
 
 		let term;
 		if ( intervalType === 'monthly' ) {
@@ -416,6 +425,7 @@ const guessCustomerType = ( state, props ) => {
 export default connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
+		const sitePlan = getSitePlan( state, siteId );
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
@@ -429,6 +439,7 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
+			sitePlanSlug: sitePlan && sitePlan.product_slug,
 		};
 	},
 	{
