@@ -15,7 +15,7 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class NoticesComponent extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.notice' ), null, config.get( 'explicitWaitMS' ) * 3 );
+		super( driver, By.css( '.wpcom-site' ), null, config.get( 'explicitWaitMS' ) * 3 );
 	}
 
 	async successNoticeDisplayed() {
