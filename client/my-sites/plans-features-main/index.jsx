@@ -298,7 +298,7 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__banner-content">
 					{ translate( 'Don’t need a plan yet?' ) }
 					<Button className={ className } onClick={ this.handleFreePlanButtonClick } borderless>
-						{ translate( 'Start for Free' ) }
+						{ translate( 'Start with free' ) }
 					</Button>
 				</div>
 			</div>
