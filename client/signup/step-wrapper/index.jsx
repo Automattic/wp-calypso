@@ -75,7 +75,7 @@ class StepWrapper extends Component {
 				return this.props.headerText;
 			}
 
-			return this.props.translate( "Let's get started." );
+			return this.props.translate( "Let's get started" );
 		}
 
 		if ( this.props.fallbackHeaderText !== undefined ) {
