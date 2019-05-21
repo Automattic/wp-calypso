@@ -25,18 +25,14 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const membershipProductFromApi = product => ( {
-	ID: product.id || product.connected_account_product_id,
+	ID: parseInt( product.id || product.connected_account_product_id ),
 	currency: product.currency,
-	description: product.description,
-	email: '',
-	featuredImageId: null,
 	formatted_price: product.price,
-	multiple: false,
 	price: product.price,
 	title: product.title,
-	recurring: true,
 	stripe_account: product.connected_destination_account_id,
 	renewal_schedule: product.interval,
+	buyer_can_change_amount: product.buyer_can_change_amount,
 } );
 
 export const handleMembershipProductsList = dispatchRequest( {
