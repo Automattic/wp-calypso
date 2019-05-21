@@ -176,7 +176,7 @@ class WPCOMNotifications extends React.Component {
 	};
 
 	renderPlaceholder = () => {
-		return <p className="notification-settings-wpcom-settings__placeholder">&nbsp;</p>;
+		return <p className="wpcom-settings__notification-settings-placeholder">&nbsp;</p>;
 	};
 
 	render() {
