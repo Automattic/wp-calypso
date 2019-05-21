@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -125,6 +126,7 @@ export class PlansFeaturesMain extends Component {
 		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
+		const hideBloggerPlan = abtest( 'hideBloggerPlan' ) === 'hide';
 
 		let term;
 		if ( intervalType === 'monthly' ) {
@@ -159,12 +161,12 @@ export class PlansFeaturesMain extends Component {
 		} else {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-				findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
+				hideBloggerPlan ? null : findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term: businessPlanTerm, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
-			];
+			].filter( el => el !== null );
 		}
 
 		if ( hideFreePlan ) {
