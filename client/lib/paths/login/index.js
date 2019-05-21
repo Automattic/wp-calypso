@@ -10,6 +10,7 @@ import config, { isEnabled } from 'config';
 
 export function login( {
 	isJetpack,
+	isWoo,
 	isNative,
 	locale,
 	redirectTo,
@@ -53,6 +54,10 @@ export function login( {
 
 	if ( oauth2ClientId && ! isNaN( oauth2ClientId ) ) {
 		url = addQueryArgs( { client_id: oauth2ClientId }, url );
+	}
+
+	if ( isWoo ) {
+		url = addQueryArgs( { from: 'woocommerce-setup-wizard' }, url );
 	}
 
 	return url;

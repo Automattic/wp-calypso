@@ -61,6 +61,7 @@
 		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
 		"jetpack/gutenframe": true,
+		"jetpack/connect/woocommerce": false,
 		"jitms": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,

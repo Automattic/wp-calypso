@@ -122,8 +122,12 @@ $image-height: 47px;
 	width: 100%;
 }
 
-.layout.is-jetpack-login {
+.layout.is-jetpack-login:not( .is-jetpack-woocommerce-flow ) {
 	@include jetpack-connect-colors();
+}
+
+.layout.is-jetpack-woocommerce-flow {
+	@include woocommerce-colors();
 }
 
 .layout.is-jetpack-login {
@@ -176,5 +180,22 @@ $image-height: 47px;
 
 	.wp-login__site-return-link::after {
 		background: linear-gradient( to right, rgba( var( --color-jetpack-onboarding-background ), 0 ), rgba( var( --color-jetpack-onboarding-background ), 1 ) 90% );
+	}
+}
+
+.layout.is-jetpack-woocommerce-flow {
+	background-color: var( --color-woocommerce-onboarding-background );
+
+	.wp-login__links {
+		margin-top: 1em;
+	}
+
+	.wp-login__links a {
+		border-bottom: none;
+		line-height: 3.4em;
+	}
+
+	.login__form-header {
+		color: var( --color-gray-800 );
 	}
 }
