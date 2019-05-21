@@ -9,7 +9,7 @@ import { expect } from 'chai';
  */
 import { geocode, reverseGeocode } from '../';
 
-jest.mock( 'lib/load-script', () => require( './mocks/load-script' ) );
+jest.mock( '@automattic/load-script', () => require( './mocks/load-script' ) );
 /**
  * Module variables
  */
