@@ -207,9 +207,12 @@ class MembershipsProductsSection extends Component {
 					{ ! this.state.editedProductId && this.props.translate( 'Add New Membership Amount' ) }
 				</FormSectionHeading>
 				<p>
-					{ this.props.translate(
-						'You can add multiple membership amounts, each of which will allow you to generate a membership button.'
-					) }
+					{ this.state.editedProductId &&
+						this.props.translate( 'Edit your existing membership button.' ) }
+					{ ! this.state.editedProductId &&
+						this.props.translate(
+							'Each amount you add will create a separate membership button. You can create multiple buttons.'
+						) }
 				</p>
 				<FormFieldset>
 					<FormLabel htmlFor="currency">{ this.props.translate( 'Select price' ) }</FormLabel>
