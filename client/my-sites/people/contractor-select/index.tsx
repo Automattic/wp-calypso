@@ -14,7 +14,7 @@ import SupportInfo from 'components/support-info';
 
 interface Props {
 	checked: boolean;
-	onChange: ( event: any ) => void;
+	onChange: ( event ) => void;
 }
 
 /**

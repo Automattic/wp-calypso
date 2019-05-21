@@ -38,7 +38,7 @@ export const receiveGetExternalContributorsSuccess = (
 	contributors,
 } );
 
-export const receiveGetExternalContributorsFailure = ( siteId: SiteId, error: any ) => ( {
+export const receiveGetExternalContributorsFailure = ( siteId: SiteId, error ) => ( {
 	type: EXTERNAL_CONTRIBUTORS_GET_REQUEST_FAILURE,
 	siteId,
 	error,
@@ -56,11 +56,7 @@ export const receiveAddExternalContributorSuccess = ( siteId: SiteId, userId: Us
 	userId,
 } );
 
-export const receiveAddExternalContributorFailure = (
-	siteId: SiteId,
-	userId: UserId,
-	error: any
-) => ( {
+export const receiveAddExternalContributorFailure = ( siteId: SiteId, userId: UserId, error ) => ( {
 	type: EXTERNAL_CONTRIBUTORS_ADD_REQUEST_FAILURE,
 	siteId,
 	userId,
@@ -82,7 +78,7 @@ export const receiveRemoveExternalContributorSuccess = ( siteId: SiteId, userId:
 export const receiveRemoveExternalContributorFailure = (
 	siteId: SiteId,
 	userId: UserId,
-	error: any
+	error
 ) => ( {
 	type: EXTERNAL_CONTRIBUTORS_REMOVE_REQUEST_FAILURE,
 	siteId,
