@@ -14,7 +14,9 @@ module.exports = {
 	testEnvironment: 'node',
 	transform: {
 		'^.+\\.[jt]sx?$': 'babel-jest',
-		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': '<rootDir>/test/test/helpers/assets/transform.js',
+		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': require.resolve(
+			'@automattic/calypso-build/jest/util/assets/transform.js'
+		),
 	},
 	transformIgnorePatterns: [ 'node_modules[\\/\\\\](?!redux-form|draft-js)' ],
 	testMatch: [ '<rootDir>/server/**/test/*.js?(x)', '!**/.eslintrc.*' ],
