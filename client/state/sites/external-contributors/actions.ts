@@ -17,7 +17,7 @@ import {
  * Types
  */
 import { SiteId, UserId } from 'types';
-import { ExternalContributor } from './types';
+import { ExternalContributors } from './types';
 
 /**
  * Data Layer
@@ -31,7 +31,7 @@ export const getExternalContributors = ( siteId: SiteId ) => ( {
 
 export const receiveGetExternalContributorsSuccess = (
 	siteId: SiteId,
-	contributors: ExternalContributor
+	contributors: ExternalContributors
 ) => ( {
 	type: EXTERNAL_CONTRIBUTORS_GET_REQUEST_SUCCESS,
 	siteId,

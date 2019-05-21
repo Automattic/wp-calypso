@@ -18,7 +18,7 @@ import {
  * Types
  */
 import { SiteId, UserId } from 'types';
-import { ExternalContributor } from './types';
+import { ExternalContributors } from './types';
 
 interface ModifyAction {
 	userId: UserId;
@@ -47,13 +47,13 @@ export const requestErrorReducer = createReducer( false, {
 } );
 
 const removeExternalContributorFromItems = (
-	items: ExternalContributor,
+	items: ExternalContributors,
 	{ userId }: ModifyAction
 ) => {
 	return items.filter( item => item !== userId );
 };
 
-const addExternalContributorToItems = ( items: ExternalContributor, { userId }: ModifyAction ) => {
+const addExternalContributorToItems = ( items: ExternalContributors, { userId }: ModifyAction ) => {
 	return [ ...items, userId ];
 };
 

@@ -1,6 +1,6 @@
 /**
- * Types
+ * Internal dependencies
  */
 import { UserId } from 'types';
 
-export type ExternalContributor = [UserId];
+export type ExternalContributors = [UserId];

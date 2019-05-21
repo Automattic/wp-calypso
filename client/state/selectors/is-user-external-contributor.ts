@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Types
  */
 import { SiteId, UserId } from 'types';
-import { ExternalContributor } from 'state/sites/external-contributors/types';
+import { ExternalContributors } from 'state/sites/external-contributors/types';
 
 /**
  * @param  {Object}  state       global state
@@ -16,7 +16,7 @@ import { ExternalContributor } from 'state/sites/external-contributors/types';
  * @returns {Boolean} if a user is a external contributor for a site
  */
 export const isUserExternalContributor = ( state, siteId: SiteId, userId: UserId ): boolean => {
-	const externalContributors: ExternalContributor | null = get(
+	const externalContributors: ExternalContributors | null = get(
 		state,
 		[ 'sites', 'externalContributors', siteId, 'items' ],
 		[]
