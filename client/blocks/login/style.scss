@@ -9,6 +9,65 @@
 	}
 }
 
+.layout.is-jetpack-woocommerce-flow {
+	.login__jetpack-logo {
+		text-align: center;
+		border-bottom: 1px solid var( --color-gray-50 );
+		position: absolute;
+		width: 100%;
+		left: 0;
+		top: 0;
+		height: 56px;
+
+		svg > g {
+			transform: translateX( 25% );
+		}
+	}
+
+	.jetpack-header {
+		margin: 0;
+		text-align: center;
+		margin-right: auto;
+		margin-left: auto;
+		padding-left: 0;
+		margin-top: 15px;
+		display: block;
+	}
+
+	.login__form-header {
+		margin-top: 32px;
+	}
+
+	.login__header-subtitle {
+		color: var( --color-primary-100 );
+		margin-top: 1em;
+		font-size: 16px;
+		line-height: 24px;
+		font-weight: 400;
+	}
+
+	.jetpack-logo__icon-circle {
+		fill: var( --color-gray-800 );
+	}
+
+	.jetpack-logo__icon-triangle {
+		fill: var( --color-gray-0 );
+	}
+
+	.login__form-action .form-button {
+		border: 0;
+		box-shadow: none;
+	}
+
+	.jetpack-header__partner-logo-plus svg {
+		stroke: var( --color-gray-800 );
+	}
+
+	.jetpack-header__partner-logo-plus .gridicon {
+		color: var( --color-gray-800 );
+	}
+}
+
 .card.login__form,
 .login__form-social .card {
 	margin-bottom: 0;

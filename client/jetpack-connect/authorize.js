@@ -683,7 +683,7 @@ export class JetpackAuthorize extends Component {
 							siteId={ this.props.authQuery.clientId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						<AuthFormHeader authQuery={ this.props.authQuery } />
+						<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
 						<Card className="jetpack-connect__logged-in-card">
 							<Gravatar user={ this.props.user } size={ 64 } />
 							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>

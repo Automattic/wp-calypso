@@ -186,7 +186,16 @@ $image-height: 47px;
 .layout.is-jetpack-woocommerce-flow {
 	background-color: var( --color-woocommerce-onboarding-background );
 
+	.wp-login__links {
+		margin-top: 1em;
+	}
+
 	.wp-login__links a {
 		border-bottom: none;
+		line-height: 3.4em;
+	}
+
+	.login__form-header {
+		color: var( --color-gray-800 );
 	}
 }

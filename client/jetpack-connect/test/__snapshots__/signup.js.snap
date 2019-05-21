@@ -28,6 +28,7 @@ exports[`JetpackSignup should render 1`] = `
           "userEmail": "email@an.example.site",
         }
       }
+      isWoo={false}
     />
     <Connect(Localized(SignupForm))
       disabled={false}
@@ -86,6 +87,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
           "userEmail": "email@an.example.site",
         }
       }
+      isWoo={false}
     />
     <Connect(Localized(SignupForm))
       disabled={false}
