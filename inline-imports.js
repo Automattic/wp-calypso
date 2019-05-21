@@ -52,7 +52,7 @@ function transformIt( babel ) {
 	const { types: t } = babel;
 
 	let replacements = null;
-	const removals = [];
+	const removals = new Set();
 
 	const storeActionTypes = path =>
 		path
@@ -69,7 +69,7 @@ function transformIt( babel ) {
 		visitor: {
 			ImportDeclaration( path ) {
 				if ( 'state/action-types' === path.node.source.value ) {
-					removals.push( path );
+					removals.add( path );
 				}
 			},
 			Identifier( path ) {
@@ -92,7 +92,7 @@ function transformIt( babel ) {
 			},
 		},
 		post() {
-			removals.forEach( path => path.remove() );
+			removals.forEach( path => path.removed || path.remove() );
 		},
 	};
 }
