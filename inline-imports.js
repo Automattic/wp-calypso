@@ -51,16 +51,18 @@
 function transformIt( babel ) {
 	const { types: t } = babel;
 
-	const findTopImports = path =>
+	let replacements = null;
+	const removals = [];
+
+	const storeActionTypes = path =>
 		path
 			.getAncestry()
 			.slice( -1 )[ 0 ]
 			.node.body.filter(
 				node => node.type === 'ImportDeclaration' && node.source.value === 'state/action-types'
-			);
-
-	let replacements = null;
-	const removals = [];
+			)
+			.reduce( ( specifiers, next ) => [ ...specifiers, ...next.specifiers ], [] )
+			.forEach( ( { local, imported } ) => replacements.set( imported.name, local.name ) );
 
 	return {
 		name: 'action-type-inliner',
@@ -78,14 +80,8 @@ function transformIt( babel ) {
 				}
 
 				if ( null === replacements ) {
-					const imports = findTopImports( path );
 					replacements = new Map();
-
-					if ( imports.length ) {
-						imports
-							.reduce( ( specifiers, next ) => [ ...specifiers, ...next.specifiers ], [] )
-							.forEach( ( { local, imported } ) => replacements.set( imported.name, local.name ) );
-					}
+					storeActionTypes( path );
 				}
 
 				if ( ! replacements.has( path.node.name ) ) {
