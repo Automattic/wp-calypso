@@ -1,4 +1,5 @@
 module.exports = {
+	setupFilesAfterEnv: [ __dirname + '/jest/setup.js' ],
 	testEnvironment: 'node',
 	testMatch: [ '<rootDir>/**/test/*.js?(x)', '!**/.eslintrc.*' ],
 	transform: {
