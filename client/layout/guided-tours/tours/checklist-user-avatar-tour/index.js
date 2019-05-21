@@ -21,6 +21,14 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
+function handleTargetDisappear( { quit, next } ) {
+	if ( document.querySelector( '.image-editor' ) ) {
+		next();
+	} else {
+		quit();
+	}
+}
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const ChecklistUserAvatarTour = makeTour(
 	<Tour { ...meta }>
@@ -51,7 +59,15 @@ export const ChecklistUserAvatarTour = makeTour(
 			) }
 		</Step>
 
-		<Step name="image-notice" placement="right" dark={ true }>
+		<Step
+			name="image-notice"
+			target=".image-editor__crop"
+			placement="right"
+			// HACK: this line hide the step then moves on the next step to workaround a bug.
+			onTargetDisappear={ handleTargetDisappear }
+			style={ { visibility: 'hidden' } }
+			dark={ true }
+		>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>{ translate( "Let's make sure it looks right before we proceed." ) }</p>
@@ -63,16 +79,20 @@ export const ChecklistUserAvatarTour = makeTour(
 		<Step
 			name="crop-image"
 			target="image-editor-button-done"
-			placement="below"
-			arrow="top-right"
+			placement="above"
+			arrow="bottom-right"
+			onTargetDisappear={ handleTargetDisappear }
 			dark={ true }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
-						{ translate( 'Alright! Press {{b}}Change My Photo{{/b}} to save your changes.', {
-							components: { b: <strong /> },
-						} ) }
+						{ translate(
+							'Crop image as needed then press {{b}}Change My Photo{{/b}} button to save your changes.',
+							{
+								components: { b: <strong /> },
+							}
+						) }
 					</p>
 					<Continue target="image-editor-button-done" step="finish" click hidden />
 				</Fragment>
