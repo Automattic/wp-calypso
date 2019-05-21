@@ -1402,8 +1402,6 @@ Undocumented.prototype.usersEmailNew = function( query, fn ) {
 	// This API call is restricted to these OAuth keys
 	restrictByOauthKeys( query );
 
-	// Set the language for the user
-	query.locale = getLocaleSlug();
 	const args = {
 		path: '/users/email/new',
 		body: query,
@@ -1423,8 +1421,6 @@ Undocumented.prototype.usersEmailVerification = function( query, fn ) {
 	// This API call is restricted to these OAuth keys
 	restrictByOauthKeys( query );
 
-	// Set the language for the user
-	query.locale = getLocaleSlug();
 	const args = {
 		path: '/users/email/verification',
 		body: query,
