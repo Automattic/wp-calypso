@@ -6,13 +6,4 @@
 import { get } from 'lodash';
 
 export const getVerticals = ( state, searchTerm = '', siteType = '' ) =>
-	get(
-		state,
-		[
-			'signup',
-			'verticals',
-			( siteType || '' ).trim().toLowerCase(),
-			searchTerm.trim().toLowerCase(),
-		],
-		null
-	);
+	get( state, [ 'signup', 'verticals', siteType, searchTerm.trim().toLowerCase() ], null );

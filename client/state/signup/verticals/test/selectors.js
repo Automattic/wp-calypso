@@ -38,7 +38,7 @@ describe( 'state/signup/verticals/selectors', () => {
 		} );
 
 		test( 'should return correct results from mixed case and untrimmed value', () => {
-			expect( getVerticals( state, ' COOL ', ' BUSINESS ' ) ).toEqual(
+			expect( getVerticals( state, ' COOL ', 'business' ) ).toEqual(
 				state.signup.verticals.business[ searchTerm ]
 			);
 		} );
