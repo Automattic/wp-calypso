@@ -34,7 +34,7 @@ export default {
 		providesDependencies: [ 'siteSlug' ],
 		apiRequestFunction: function( callback, dependencies, stepData ) {
 			defer( function() {
-				callback( [], { siteSlug: 'testsite.wordpress.com' } );
+				callback( null, { siteSlug: 'testsite.wordpress.com' } );
 				stepData.stepCallback( dependencies );
 			} );
 		},
@@ -46,7 +46,7 @@ export default {
 		providesDependencies: [ 'bearer_token' ],
 		apiRequestFunction: function( callback ) {
 			defer( function() {
-				callback( [], { bearer_token: 'TOKEN' } );
+				callback( null, { bearer_token: 'TOKEN' } );
 			} );
 		},
 	},
@@ -56,7 +56,7 @@ export default {
 		providesToken: true,
 		providesDependencies: [ 'bearer_token' ],
 		apiRequestFunction: function( callback ) {
-			callback();
+			defer( callback );
 		},
 	},
 
