@@ -83,12 +83,14 @@ class GoogleAppsDialog extends React.Component {
 						plan={ productSlug }
 					/>
 					<GSuiteNewUserList
+						extraValidation={ user => user }
 						selectedDomainName={ domain }
 						onUsersChange={ this.onUsersChange }
 						users={ users }
-					/>
+					>
+						{ this.footer() }
+					</GSuiteNewUserList>
 				</CompactCard>
-				<CompactCard>{ this.footer() }</CompactCard>
 			</div>
 		);
 	}

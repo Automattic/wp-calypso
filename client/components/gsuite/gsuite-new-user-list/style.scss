@@ -1,13 +1,23 @@
 .gsuite-new-user-list__new-user-remove-user-button {
 	width: 100%;
-	@include breakpoint( '>480px' ) {
-		width: auto;
+	@include breakpoint( '>660px' ) {
+		width: 75px;
 	}
 
 	@include breakpoint( '>660px' ) {
 		span {
 			display: none;
 		}
+	}
+}
+
+.gsuite-new-user-list__actions {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
 	}
 }
 
@@ -31,9 +41,17 @@
 }
 
 .gsuite-new-user-list__new-user-name {
+	input {
+		margin: 0 0 15px 0;
+	}
+
 	@include breakpoint( '>660px' ) {
 		display: flex;
 		justify-content: space-between;
+
+		input {
+			margin: 0 15px 0 0;
+		}
 	}
 }
 
@@ -42,14 +60,27 @@
 	flex-direction: column;
 	flex: 1;
 
-	@include breakpoint( '>960px' ) {
-		flex-direction: row;
-	}
-
 	input {
+		margin: 0 0 15px 0;
 		width: auto;
 	}
+
 	select {
 		width: 100%;
+	}
+
+	@include breakpoint( '>660px' ) {
+		flex-direction: row;
+
+		input {
+			margin: 0;
+		}
+
+		select {
+			border-bottom-left-radius: 0;
+			border-bottom-width: 1px;
+			border-top-left-radius: 0;
+			margin-left: -2px;
+		}
 	}
 }

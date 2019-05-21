@@ -38,6 +38,11 @@ import QueryEmailForwards from 'components/data/query-email-forwards';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 //TODO: hacked together for dev
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import Card from 'components/card';
@@ -159,10 +164,12 @@ class GSuiteAddUsers extends React.Component {
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
 							users={ users }
 						>
-							<Button disabled={ ! canContinue } onClick={ this.handleContinue }>
-								{ translate( 'Continue' ) }
-							</Button>
-							<Button>{ translate( 'Cancel' ) }</Button>
+							<div className="gsuite-add-users__buttons">
+								<Button disabled={ ! canContinue } onClick={ this.handleContinue }>
+									{ translate( 'Continue' ) }
+								</Button>
+								<Button>{ translate( 'Cancel' ) }</Button>
+							</div>
 						</GSuiteNewUserList>
 					</Card>
 				) : (

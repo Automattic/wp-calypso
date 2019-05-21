@@ -166,26 +166,20 @@
 }
 
 .gsuite-dialog__footer {
-	.gsuite-dialog__continue-button {
-		@include breakpoint( '<480px' ) {
-			width: 100%;
-			margin-top: 10px;
-		}
+	display: flex;
+	flex-direction: column;
 
-		@include breakpoint( '>480px' ) {
-			float: right;
-		}
+	button {
+		margin: 5px 0 0;
+		width: 100%;
 	}
 
-	.gsuite-dialog__checkout-button {
-		color: var( --color-text-subtle );
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
 
-		@include breakpoint( '<480px' ) {
-			width: 100%;
-		}
-
-		@include breakpoint( '>480px' ) {
-			float: left;
+		button {
+			margin: 0 0 0 5px;
+			width: auto;
 		}
 	}
 }
