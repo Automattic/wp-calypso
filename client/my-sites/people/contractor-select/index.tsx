@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -10,9 +10,14 @@ import { useTranslate } from 'i18n-calypso';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import SupportInfo from 'components/support-info';
+import InfoPopover from 'components/info-popover';
 
-const ContractorSelect = ( { checked, onChange } ) => {
+interface Props {
+	checked: boolean;
+	onChange: ( event ) => void; 
+}
+
+const ContractorSelect: FunctionComponent<Props> = ( { checked, onChange } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -21,11 +26,11 @@ const ContractorSelect = ( { checked, onChange } ) => {
 				<FormCheckbox onChange={ onChange } checked={ checked } />
 				<span>
 					{ translate( 'This user is a freelancer, consultant, or agency.' ) }
-					<SupportInfo
-						text={ translate(
+					<InfoPopover position="top right">
+						{ translate(
 							'Use this checkbox to flag users who are not a part of your organization.'
 						) }
-					/>
+					</InfoPopover>
 				</span>
 			</FormLabel>
 		</FormFieldset>

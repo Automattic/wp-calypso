@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { assign, filter, omit, pick } from 'lodash';
@@ -11,11 +10,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import {
+	addExternalContributor,
+	removeExternalContributor,
+} from 'state/sites/external-contributors/actions';
+import ContractorSelect from 'my-sites/people/contractor-select';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
+import { isUserExternalContributor } from 'state/selectors/is-user-external-contributor';
 import { updateUser } from 'lib/users/actions';
 import RoleSelect from 'my-sites/people/role-select';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -31,9 +36,7 @@ import './style.scss';
  */
 const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
 
-class EditUserForm extends React.Component {
-	displayName = 'EditUserForm';
-
+class EditUserForm extends Component {
 	state = this.getStateObject( this.props );
 
 	componentWillReceiveProps( nextProps ) {
@@ -44,13 +47,17 @@ class EditUserForm extends React.Component {
 		return roles && roles[ 0 ] ? roles[ 0 ] : null;
 	}
 
-	getStateObject( props = this.props ) {
+	getStateObject( props ) {
 		const role = this.getRole( props.roles );
-		return assign( omit( props, 'site' ), { roles: role } );
+		return assign( omit( props, 'site' ), {
+			roles: role,
+			isExternalContributor: props.isExternalContributor,
+		} );
 	}
 
 	getChangedSettings() {
-		const originalUser = this.getStateObject( this.props.user );
+		const originalUser = this.getStateObject( this.props );
+
 		const changedKeys = filter( this.getAllowedSettingsToChange(), setting => {
 			return (
 				'undefined' !== typeof originalUser[ setting ] &&
@@ -58,7 +65,6 @@ class EditUserForm extends React.Component {
 				originalUser[ setting ] !== this.state[ setting ]
 			);
 		} );
-
 		return pick( this.state, changedKeys );
 	}
 
@@ -74,13 +80,11 @@ class EditUserForm extends React.Component {
 		// A user should not be able to update own role.
 		if ( this.props.isJetpack ) {
 			if ( ! this.state.linked_user_ID || this.state.linked_user_ID !== currentUser.ID ) {
-				allowedSettings.push( 'roles' );
+				allowedSettings.push( 'roles', 'isExternalContributor' );
 			}
-			allowedSettings.push( 'first_name' );
-			allowedSettings.push( 'last_name' );
-			allowedSettings.push( 'name' );
+			allowedSettings.push( 'first_name', 'last_name', 'name' );
 		} else if ( this.state.ID !== currentUser.ID ) {
-			allowedSettings.push( 'roles' );
+			allowedSettings.push( 'roles', 'isExternalContributor' );
 		}
 
 		return allowedSettings;
@@ -108,28 +112,62 @@ class EditUserForm extends React.Component {
 				? Object.assign( changedSettings, { roles: [ changedSettings.roles ] } )
 				: changedSettings
 		);
+
+		if ( true === changedSettings.isExternalContributor ) {
+			this.props.addExternalContributor( this.props.siteId, this.state.ID );
+		} else if ( false === changedSettings.isExternalContributor ) {
+			this.props.removeExternalContributor( this.props.siteId, this.state.ID );
+		}
+
 		this.props.recordGoogleEvent( 'People', 'Clicked Save Changes Button on User Edit' );
 	};
 
 	recordFieldFocus = fieldId => () =>
 		this.props.recordGoogleEvent( 'People', 'Focused on field on User Edit', 'Field', fieldId );
 
-	handleChange = event => this.setState( { [ event.target.name ]: event.target.value } );
+	handleChange = event => {
+		const stateChange = { [ event.target.name ]: event.target.value };
+		if (
+			'roles' === event.target.name &&
+			'administrator' !== event.target.value &&
+			true === this.state.isExternalContributor
+		) {
+			stateChange.isExternalContributor = false;
+		} else if (
+			'roles' === event.target.name &&
+			'administrator' === event.target.value &&
+			true === this.props.isExternalContributor
+		) {
+			// restore external contributor if other role is clicked then changed back
+			stateChange.isExternalContributor = true;
+		}
+		this.setState( stateChange );
+	};
+
+	handleExternalChange = event => this.setState( { isExternalContributor: event.target.checked } );
 
 	renderField( fieldId ) {
 		let returnField = null;
 		switch ( fieldId ) {
 			case 'roles':
 				returnField = (
-					<RoleSelect
-						id="roles"
-						name="roles"
-						key="roles"
-						siteId={ this.props.siteId }
-						value={ this.state.roles }
-						onChange={ this.handleChange }
-						onFocus={ this.recordFieldFocus( 'roles' ) }
-					/>
+					<Fragment>
+						<RoleSelect
+							id="roles"
+							name="roles"
+							key="roles"
+							siteId={ this.props.siteId }
+							value={ this.state.roles }
+							onChange={ this.handleChange }
+							onFocus={ this.recordFieldFocus( 'roles' ) }
+						/>
+						{ 'administrator' === this.state.roles && (
+							<ContractorSelect
+								onChange={ this.handleExternalChange }
+								checked={ this.state.isExternalContributor }
+							/>
+						) }
+					</Fragment>
 				);
 				break;
 			case 'first_name':
@@ -229,9 +267,16 @@ class EditUserForm extends React.Component {
 
 export default localize(
 	connect(
-		state => ( {
+		( state, { siteId, ID } ) => ( {
 			currentUser: getCurrentUser( state ),
+			// We are assuming here this component will always be used in conjunction with the PersonProfile
+			// which will have the QueryExternalContributors
+			isExternalContributor: siteId && ID ? isUserExternalContributor( state, siteId, ID ) : false,
 		} ),
-		{ recordGoogleEvent }
+		{
+			addExternalContributor,
+			removeExternalContributor,
+			recordGoogleEvent,
+		}
 	)( EditUserForm )
 );

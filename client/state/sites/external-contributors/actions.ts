@@ -5,18 +5,18 @@ import {
 	EXTERNAL_CONTRIBUTORS_GET_REQUEST,
 	EXTERNAL_CONTRIBUTORS_GET_REQUEST_SUCCESS,
 	EXTERNAL_CONTRIBUTORS_GET_REQUEST_FAILURE,
-	// EMAIL_FORWARDING_ADD_REQUEST,
-	// EMAIL_FORWARDING_ADD_REQUEST_SUCCESS,
-	// EMAIL_FORWARDING_ADD_REQUEST_FAILURE,
-	// EMAIL_FORWARDING_REMOVE_REQUEST,
-	// EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
-	// EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
+	EXTERNAL_CONTRIBUTORS_ADD_REQUEST,
+	EXTERNAL_CONTRIBUTORS_ADD_REQUEST_SUCCESS,
+	EXTERNAL_CONTRIBUTORS_ADD_REQUEST_FAILURE,
+	EXTERNAL_CONTRIBUTORS_REMOVE_REQUEST,
+	EXTERNAL_CONTRIBUTORS_REMOVE_REQUEST_SUCCESS,
+	EXTERNAL_CONTRIBUTORS_REMOVE_REQUEST_FAILURE,
 } from 'state/action-types';
 
 /**
  * Types
  */
-import { SiteId } from 'types';
+import { SiteId, UserId } from 'types';
 import { ExternalContributor } from './types';
 
 /**
@@ -24,80 +24,68 @@ import { ExternalContributor } from './types';
  */
 import 'state/data-layer/wpcom/sites/external-contributors';
 
-export const getExternalContributors = ( siteId: SiteId ) => {
-	return {
-		type: EXTERNAL_CONTRIBUTORS_GET_REQUEST,
-		siteId,
-	};
-};
+export const getExternalContributors = ( siteId: SiteId ) => ( {
+	type: EXTERNAL_CONTRIBUTORS_GET_REQUEST,
+	siteId,
+} );
 
 export const receiveGetExternalContributorsSuccess = (
 	siteId: SiteId,
 	contributors: ExternalContributor
-) => {
-	return {
-		type: EXTERNAL_CONTRIBUTORS_GET_REQUEST_SUCCESS,
-		siteId,
-		contributors,
-	};
-};
+) => ( {
+	type: EXTERNAL_CONTRIBUTORS_GET_REQUEST_SUCCESS,
+	siteId,
+	contributors,
+} );
 
-export const receiveGetExternalContributorsFailure = ( siteId: SiteId ) => {
-	return {
-		type: EXTERNAL_CONTRIBUTORS_GET_REQUEST_FAILURE,
-		siteId,
-	};
-};
+export const receiveGetExternalContributorsFailure = ( siteId: SiteId, error: any ) => ( {
+	type: EXTERNAL_CONTRIBUTORS_GET_REQUEST_FAILURE,
+	siteId,
+	error,
+} );
 
-// export const addEmailForward = ( domainName, mailbox, destination ) => {
-// 	return {
-// 		type: EMAIL_FORWARDING_ADD_REQUEST,
-// 		domainName,
-// 		mailbox,
-// 		destination,
-// 	};
-// };
+export const addExternalContributor = ( siteId: SiteId, userId: UserId ) => ( {
+	type: EXTERNAL_CONTRIBUTORS_ADD_REQUEST,
+	siteId,
+	userId,
+} );
 
-// export const receiveAddEmailForwardSuccess = ( domainName, mailbox, verified ) => {
-// 	return {
-// 		type: EMAIL_FORWARDING_ADD_REQUEST_SUCCESS,
-// 		domainName,
-// 		mailbox,
-// 		verified,
-// 	};
-// };
+export const receiveAddExternalContributorSuccess = ( siteId: SiteId, userId: UserId ) => ( {
+	type: EXTERNAL_CONTRIBUTORS_ADD_REQUEST_SUCCESS,
+	siteId,
+	userId,
+} );
 
-// export const receiveAddEmailForwardFailure = ( domainName, mailbox, destination, error ) => {
-// 	return {
-// 		type: EMAIL_FORWARDING_ADD_REQUEST_FAILURE,
-// 		domainName,
-// 		mailbox,
-// 		destination,
-// 		error,
-// 	};
-// };
+export const receiveAddExternalContributorFailure = (
+	siteId: SiteId,
+	userId: UserId,
+	error: any
+) => ( {
+	type: EXTERNAL_CONTRIBUTORS_ADD_REQUEST_FAILURE,
+	siteId,
+	userId,
+	error,
+} );
 
-// export const removeEmailForward = ( domainName, mailbox ) => {
-// 	return {
-// 		type: EMAIL_FORWARDING_REMOVE_REQUEST,
-// 		domainName,
-// 		mailbox,
-// 	};
-// };
+export const removeExternalContributor = ( siteId: SiteId, userId: UserId ) => ( {
+	type: EXTERNAL_CONTRIBUTORS_REMOVE_REQUEST,
+	siteId,
+	userId,
+} );
 
-// export const receiveRemoveEmailForwardSuccess = ( domainName, mailbox ) => {
-// 	return {
-// 		type: EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
-// 		domainName,
-// 		mailbox,
-// 	};
-// };
+export const receiveRemoveExternalContributorSuccess = ( siteId: SiteId, userId: UserId ) => ( {
+	type: EXTERNAL_CONTRIBUTORS_REMOVE_REQUEST_SUCCESS,
+	siteId,
+	userId,
+} );
 
-// export const receiveRemoveEmailForwardFailure = ( domainName, mailbox, error ) => {
-// 	return {
-// 		type: EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
-// 		domainName,
-// 		mailbox,
-// 		error,
-// 	};
-// };
+export const receiveRemoveExternalContributorFailure = (
+	siteId: SiteId,
+	userId: UserId,
+	error: any
+) => ( {
+	type: EXTERNAL_CONTRIBUTORS_REMOVE_REQUEST_FAILURE,
+	siteId,
+	userId,
+	error,
+} );
