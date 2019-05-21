@@ -65,9 +65,14 @@ function recordSubmitStep( stepName, providedDependencies ) {
 }
 
 export function saveSignupStep( step ) {
-	return {
-		type: SIGNUP_PROGRESS_SAVE_STEP,
-		step,
+	return ( dispatch, getState ) => {
+		const lastKnownFlow = getCurrentFlowName( getState() );
+		const lastUpdated = Date.now();
+
+		dispatch( {
+			type: SIGNUP_PROGRESS_SAVE_STEP,
+			step: { ...step, lastKnownFlow, lastUpdated },
+		} );
 	};
 }
 
@@ -91,31 +96,26 @@ export function submitSignupStep( step, providedDependencies ) {
 
 export function completeSignupStep( step, providedDependencies ) {
 	assertValidDependencies( step.stepName, providedDependencies );
-	return ( dispatch, getState ) => {
-		const lastKnownFlow = getCurrentFlowName( getState() );
-		const lastUpdated = Date.now();
-
-		return dispatch( {
-			type: SIGNUP_PROGRESS_COMPLETE_STEP,
-			step: addProvidedDependencies(
-				{ ...step, lastKnownFlow, lastUpdated },
-				providedDependencies
-			),
-		} );
+	const lastUpdated = Date.now();
+	return {
+		type: SIGNUP_PROGRESS_COMPLETE_STEP,
+		step: addProvidedDependencies( { ...step, lastUpdated }, providedDependencies ),
 	};
 }
 
 export function processStep( step ) {
+	const lastUpdated = Date.now();
 	return {
 		type: SIGNUP_PROGRESS_PROCESS_STEP,
-		step,
+		step: { ...step, lastUpdated },
 	};
 }
 
 export function invalidateStep( step, errors ) {
+	const lastUpdated = Date.now();
 	return {
 		type: SIGNUP_PROGRESS_INVALIDATE_STEP,
-		step,
+		step: { ...step, lastUpdated },
 		errors,
 	};
 }
