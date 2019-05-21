@@ -20,22 +20,22 @@
 
 .empty-content__title {
 	color: var( --color-neutral-700 );
-	font-size: 34px;
+	font-size: 24px;
 	font-weight: 300;
 
-	@include breakpoint( '<660px' ) {
-		font-size: 24px;
+	@include breakpoint( '>660px' ) {
+		font-size: 34px;
 	}
 }
 
 .empty-content__line {
 	color: var( --color-neutral-500 );
-	font-size: 22px;
+	font-size: 16px;
 	font-weight: 300;
 	margin-bottom: 40px;
 
-	@include breakpoint( '<660px' ) {
-		font-size: 16px;
+	@include breakpoint( '>660px' ) {
+		font-size: 22px;
 	}
 }
 
@@ -49,18 +49,18 @@
 	padding-bottom: 20px;
 
 	.empty-content__illustration {
-		margin-top: -130px;
+		margin-top: -80px;
 
-		@include breakpoint( '<660px' ) {
-			margin-top: -80px;
+		@include breakpoint( '>660px' ) {
+			margin-top: -130px;
 		}
 	}
 
 	.empty-content__title {
-		font-size: 30px;
+		font-size: 24px;
 
-		@include breakpoint( '<660px' ) {
-			font-size: 24px;
+		@include breakpoint( '>660px' ) {
+			font-size: 30px;
 		}
 	}
 }
