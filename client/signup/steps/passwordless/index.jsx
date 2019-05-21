@@ -140,7 +140,7 @@ export class PasswordlessStep extends Component {
 		const { translate } = this.props;
 
 		if ( this.state.submitting ) {
-			return translate( 'Creating Your account…' );
+			return translate( 'Creating your account…' );
 		}
 
 		return translate( 'Create your account' );
