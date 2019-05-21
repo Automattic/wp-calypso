@@ -41,6 +41,8 @@ import {
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
+/* eslint-disable no-case-declarations */
+
 /**
  * Tracks all known site objects, indexed by site ID.
  *
@@ -220,6 +222,8 @@ export function items( state = null, action ) {
 	return state;
 }
 items.schema = sitesSchema;
+
+/* eslint-enable no-case-declarations */
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
