@@ -21,7 +21,7 @@ import { useWindowResizeRect } from 'lib/track-element-size';
 
 function SampleComponent() {
   // Get ref, rect and subscribe to changes.
-  const [ ref, rect ] = useWindowResizeCallback( ref, resizeCallback );
+  const [ ref, rect ] = useWindowResizeRect();
 
   // Render component, making sure to use the ref.
   // Initial renders will use 'unknown' and wait for updates.
