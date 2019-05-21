@@ -206,9 +206,7 @@ class PeopleProfile extends Component {
 			contractorBadge = (
 				<Fragment>
 					<div className="people-profile__role-badge role-contractor">
-						{ translate( 'Contractor', {
-							context: 'Noun: A user role displayed in a badge',
-						} ) }
+						{ translate( 'Contractor' ) }
 					</div>
 					<div className="people-profile__role-badge-info">
 						<InfoPopover position="top right">
