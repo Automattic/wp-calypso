@@ -107,7 +107,7 @@
 		margin: 35px 200px 0 0;
 		max-width: initial;
 
-		@media( max-width: 660px ) {
+		@include breakpoint( '<660px' ) {
 			margin: 0;
 		}
 	}
