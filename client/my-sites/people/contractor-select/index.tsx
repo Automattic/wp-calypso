@@ -34,7 +34,7 @@ const ContractorSelect: FunctionComponent< Props > = ( { checked, onChange } ) =
 					checked={ checked }
 				/>
 				<span>
-					{ translate( 'This user is a freelancer, consultant, or agency.' ) }
+					{ translate( 'This user is a contractor, freelancer, consultant, or agency.' ) }
 					<SupportInfo
 						position="top right"
 						text={ translate(
