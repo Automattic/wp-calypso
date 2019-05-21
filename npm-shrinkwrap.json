@@ -416,6 +416,14 @@
 			"version": "file:packages/calypso-color-schemes",
 			"dev": true
 		},
+		"@automattic/calypso-ui": {
+			"version": "file:packages/calypso-ui",
+			"requires": {
+				"classnames": "2.2.6",
+				"prop-types": "^15.7.2",
+				"react": "^16.8.3"
+			}
+		},
 		"@automattic/format-currency": {
 			"version": "file:packages/format-currency",
 			"requires": {
