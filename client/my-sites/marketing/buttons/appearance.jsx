@@ -150,7 +150,7 @@ class SharingButtonsAppearance extends Component {
 					/>
           			<SupportInfo
 						text={ translate(
-							'The Like button is an easy way for your readers to show appreciation for your posts.'
+							'Give your readers the ability to show appreciation for your posts.'
 						) }
 						link="https://support.wordpress.com/likes/"
 						privacyLink={ false }
