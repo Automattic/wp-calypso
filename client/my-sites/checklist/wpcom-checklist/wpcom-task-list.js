@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, memoize, omit, pick, isBoolean } from 'lodash';
+import { get, isBoolean, memoize, omit, pick } from 'lodash';
 import debugModule from 'debug';
 import config from 'config';
 
@@ -134,7 +134,10 @@ class WpcomTaskList {
 }
 
 export const getTaskList = memoize(
-	params => new WpcomTaskList( getTasks( params ) ),
+	params =>
+		params && params.phase2 && params.taskStatuses && params.taskStatuses.length
+			? new WpcomTaskList( params.taskStatuses ) // Use the server response, Luke
+			: new WpcomTaskList( getTasks( params ) ),
 	params => {
 		const key = pick( params, [
 			'taskStatuses',
