@@ -32,6 +32,10 @@
 			"current node"
 		]
 	},
+	"sideEffects": [
+		"**/*",
+		"!./client/state/action-types.js"
+	],
 	"dependencies": {
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/material-design-icons": "file:./packages/material-design-icons",
