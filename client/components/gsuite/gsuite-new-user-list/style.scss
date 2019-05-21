@@ -42,7 +42,7 @@
 
 .gsuite-new-user-list__new-user-name {
 	input {
-		margin: 0 0 15px 0;
+		margin: 0 0 15px;
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -61,7 +61,7 @@
 	flex: 1;
 
 	input {
-		margin: 0 0 15px 0;
+		margin: 0 0 15px;
 		width: auto;
 	}
 
