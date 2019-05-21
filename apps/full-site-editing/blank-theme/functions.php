@@ -1,5 +1,13 @@
 <?php
 
+function fse_blank_theme_setup() {
+	$style_file = is_rtl()
+		? 'blank-theme.rtl.css'
+		: 'blank-theme.css';
+	add_editor_style( '/dist/' . $style_file );
+}
+add_action( 'after_setup_theme', 'fse_blank_theme_setup' );
+
 function fse_blank_theme_enqueue_script_and_style() {
 	wp_enqueue_style(
 		'twentynineteen-style',
