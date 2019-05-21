@@ -10,7 +10,7 @@ import React, { Fragment } from 'react';
  * Internal dependencies
  */
 import meta from './meta';
-import { makeTour, Step, Tour } from 'layout/guided-tours/config-elements';
+import { ButtonRow, makeTour, SiteLink, Step, Tour } from 'layout/guided-tours/config-elements';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const ChecklistUserEmailTour = makeTour(
@@ -28,10 +28,17 @@ export const ChecklistUserEmailTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'Make sure your email address is correct. ' +
-								'If not, change it here then click on Save Account Settings button below.'
+							'Correct typos in your email address, then press {{b}}Save Account Settings{{/b}} to save your changes.',
+							{
+								components: { b: <strong /> },
+							}
 						) }
 					</p>
+					<ButtonRow>
+						<SiteLink isButton={ true } href="/checklist/:site">
+							{ translate( 'Return to the checklist' ) }
+						</SiteLink>
+					</ButtonRow>
 				</Fragment>
 			) }
 		</Step>
