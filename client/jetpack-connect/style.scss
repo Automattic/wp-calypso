@@ -938,6 +938,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			border: 0;
 			box-shadow: none;
 		}
+
+		.jetpack-header__partner-logo-plus svg {
+			stroke: var( --color-gray-800 );
+		}
+
+		.jetpack-header__partner-logo-plus .gridicon {
+			color: var( --color-gray-800 );
+		}
 	}
 }
 

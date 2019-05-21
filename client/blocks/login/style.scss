@@ -12,7 +12,7 @@
 .layout.is-jetpack-woocommerce-flow {
 	.login__jetpack-logo {
 		text-align: center;
-		border-bottom: 1px solid $muriel-gray-50;
+		border-bottom: 1px solid var( --color-gray-50 );
 		position: absolute;
 		width: 100%;
 		left: 0;
@@ -57,6 +57,14 @@
 	.login__form-action .form-button {
 		border: 0;
 		box-shadow: none;
+	}
+
+	.jetpack-header__partner-logo-plus svg {
+		stroke: var( --color-gray-800 );
+	}
+
+	.jetpack-header__partner-logo-plus .gridicon {
+		color: var( --color-gray-800 );
 	}
 }
 
