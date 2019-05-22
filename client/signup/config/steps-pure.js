@@ -489,6 +489,13 @@ export function generateSteps( {
 			apiRequestFunction: launchSiteApi,
 			dependencies: [ 'siteSlug' ],
 		},
+
+		passwordless: {
+			stepName: 'passwordless',
+			providesToken: true,
+			providesDependencies: [ 'bearer_token', 'email', 'username' ],
+			unstorableDependencies: [ 'bearer_token' ],
+		},
 	};
 }
 
