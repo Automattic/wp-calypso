@@ -74,8 +74,8 @@ export class PaidPlanThankYouCard extends Component {
 			);
 		}
 
-		// We cannot install anything for this site
-		if ( ! site.canUpdateFiles ) {
+		// Non-main site at multisite, cannot install anything
+		if ( site.isSecondaryNetworkSite ) {
 			return (
 				<ThankYouCard
 					illustration={ fireworksIllustration }
@@ -85,7 +85,7 @@ export class PaidPlanThankYouCard extends Component {
 					<p>
 						{ preventWidows(
 							translate(
-								"Unfortunately, we can't modify files on your site, so you'll need to set up your plan features manually."
+								"Unfortunately, your site is part of a multi-site network, but is not the main network site. You'll need to set up your plan features manually."
 							)
 						) }
 					</p>
@@ -103,8 +103,8 @@ export class PaidPlanThankYouCard extends Component {
 			);
 		}
 
-		// Non-main site at multisite, cannot install anything
-		if ( site.isSecondaryNetworkSite ) {
+		// We cannot install anything for this site
+		if ( ! site.canUpdateFiles ) {
 			return (
 				<ThankYouCard
 					illustration={ fireworksIllustration }
@@ -114,7 +114,7 @@ export class PaidPlanThankYouCard extends Component {
 					<p>
 						{ preventWidows(
 							translate(
-								"Unfortunately, your site is part of a multi-site network, but is not the main network site. You'll need to set up your plan features manually."
+								"Unfortunately, we can't modify files on your site, so you'll need to set up your plan features manually."
 							)
 						) }
 					</p>
@@ -176,23 +176,26 @@ export class PaidPlanThankYouCard extends Component {
 	}
 }
 
-export default connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	state => {
+		const site = getSelectedSite( state );
+		const siteId = getSelectedSiteId( state );
 
-	const installProgress = getJetpackProductInstallProgress( state, siteId );
+		const installProgress = getJetpackProductInstallProgress( state, siteId );
 
-	let installState;
-	// @TODO we'll need a way to detect generic error states here and add `INSTALL_STATE_ERRORED`
-	if ( installProgress === 100 ) {
-		installState = INSTALL_STATE_COMPLETE;
-	} else {
-		installState = INSTALL_STATE_INCOMPLETE;
-	}
+		let installState;
+		// @TODO we'll need a way to detect generic error states here and add `INSTALL_STATE_ERRORED`
+		if ( installProgress === 100 ) {
+			installState = INSTALL_STATE_COMPLETE;
+		} else {
+			installState = INSTALL_STATE_INCOMPLETE;
+		}
 
-	return {
-		installProgress,
-		installState,
-		site,
-	};
-}, { recordTracksEvent } )( localize( PaidPlanThankYouCard ) );
+		return {
+			installProgress,
+			installState,
+			site,
+		};
+	},
+	{ recordTracksEvent }
+)( localize( PaidPlanThankYouCard ) );
