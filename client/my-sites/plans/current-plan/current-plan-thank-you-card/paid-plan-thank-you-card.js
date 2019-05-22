@@ -24,7 +24,7 @@ export class PaidPlanThankYouCard extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.progressComplete === 100 ) {
+		if ( prevProps.progressComplete < 100 && this.props.progressComplete >= 100 ) {
 			this.props.recordTracksEvent( 'calypso_plans_autoconfig_success', {
 				checklist_name: 'jetpack',
 				location: 'JetpackChecklist',
