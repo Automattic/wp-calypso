@@ -25,7 +25,7 @@ import ProgressBar from 'components/progress-bar';
 import ThankYouCard from './thank-you-card';
 
 const INSTALL_STATE_COMPLETE = 1;
-const INSTALL_STATE_UNCOMPLETE = 2;
+const INSTALL_STATE_INCOMPLETE = 2;
 
 export class PaidPlanThankYouCard extends Component {
 	componentDidUpdate( prevProps ) {
@@ -153,7 +153,7 @@ export class PaidPlanThankYouCard extends Component {
 			<Fragment>
 				<JetpackProductInstall />
 
-				{ installState === INSTALL_STATE_UNCOMPLETE && (
+				{ installState === INSTALL_STATE_INCOMPLETE && (
 					<ThankYouCard
 						illustration={ fireworksIllustration }
 						showHideMessage
@@ -204,7 +204,7 @@ export default connect( state => {
 	if ( installProgress === 100 ) {
 		installState = INSTALL_STATE_COMPLETE;
 	} else {
-		installState = INSTALL_STATE_UNCOMPLETE;
+		installState = INSTALL_STATE_INCOMPLETE;
 	}
 
 	return {
