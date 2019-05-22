@@ -38,10 +38,6 @@ export const redirectSharingButtons = context => {
 	page.redirect( '/marketing/sharing-buttons/' + context.params.domain );
 };
 
-export const redirectTraffic = context => {
-	page.redirect( '/marketing/traffic/' + context.params.domain );
-};
-
 export const layout = ( context, next ) => {
 	const { contentComponent, path } = context;
 
