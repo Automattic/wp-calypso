@@ -176,7 +176,7 @@ export class PaidPlanThankYouCard extends Component {
 					>
 						<p>
 							{ preventWidows(
-								translate( 'We’ve finished setting up spam filtering and backups for you.' )
+								translate( "We've finished setting up spam filtering and backups for you." )
 							) }
 							<br />
 							{ preventWidows(
