@@ -14,7 +14,15 @@ import Card from 'components/card';
 
 export class ThankYouCard extends Component {
 	render() {
-		const { children, illustration, siteSlug, showContinueButton, title, translate } = this.props;
+		const {
+			children,
+			illustration,
+			siteSlug,
+			showContinueButton,
+			showHideMessage,
+			title,
+			translate,
+		} = this.props;
 
 		return (
 			<Card className="current-plan-thank-you-card__main">
@@ -33,6 +41,11 @@ export class ThankYouCard extends Component {
 						<Button primary href={ `/plans/my-plan/${ siteSlug }` }>
 							{ translate( 'Continue' ) }
 						</Button>
+					) }
+					{ showHideMessage && (
+						<p>
+							<a href={ `/plans/my-plan/${ siteSlug }` }>{ translate( 'Hide message' ) }</a>
+						</p>
 					) }
 				</div>
 			</Card>

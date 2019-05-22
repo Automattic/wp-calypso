@@ -5,16 +5,19 @@ import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { parse as parseUrl } from 'url';
+import Gridicon from 'gridicons';
 import React, { Component, Fragment } from 'react';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteFileModDisableReason } from 'lib/site/utils';
 import { isJetpackSiteMainNetworkSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
+import { preventWidows } from 'lib/formatting';
 import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
+import { untrailingslashit } from 'lib/route';
 import Button from 'components/button';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
@@ -42,25 +45,43 @@ export class PaidPlanThankYouCard extends Component {
 			installState,
 			isSiteMainNetworkSite,
 			isSiteMultiSite,
-			siteSlug,
+			site,
 			translate,
 		} = this.props;
 
 		const securityIllustration = '/calypso/images/illustrations/security.svg';
 		const fireworksIllustration = '/calypso/images/illustrations/fireworks.svg';
 
+		// Jetpack is too old
 		if ( ! hasMinimumJetpackVersion ) {
+			// Link to "Plugins" page in wp-admin
+			let wpAdminPluginsUrl = get( site, 'options.admin_url' );
+			wpAdminPluginsUrl = wpAdminPluginsUrl
+				? untrailingslashit( parseUrl( wpAdminPluginsUrl ).pathname ) + '/plugins.php'
+				: undefined;
+
 			return (
 				<ThankYouCard
 					illustration={ fireworksIllustration }
-					showContinueButton
+					showContinueButton={ ! wpAdminPluginsUrl }
+					showHideMessage={ wpAdminPluginsUrl }
 					title={ translate( 'Thank you for your purchase!' ) }
 				>
 					<p>
-						{ translate(
-							'We are unable to set up your plan because your site has an older version of Jetpack. Please upgrade Jetpack.'
+						{ preventWidows(
+							translate(
+								'Unfortunately, we are unable to set up your plan because your site has an older version of Jetpack. Please upgrade Jetpack.'
+							)
 						) }
 					</p>
+					{ wpAdminPluginsUrl && (
+						<p>
+							<Button primary href={ wpAdminPluginsUrl } target="_blank">
+								<span>{ translate( 'Upgrade Jetpack' ) }</span>
+								<Gridicon icon="external" />
+							</Button>
+						</p>
+					) }
 				</ThankYouCard>
 			);
 		}
@@ -70,30 +91,55 @@ export class PaidPlanThankYouCard extends Component {
 			return (
 				<ThankYouCard
 					illustration={ fireworksIllustration }
+					showHideMessage
 					title={ translate( 'Thank you for your purchase!' ) }
 				>
-					<p>{ translate( "Unfortunately, we can't modify files on your site, so you'll need to set up your plan features manually." ) }</p>
-					<p>{ translate( "Don't worry. We'll quickly guide you through the setup process." ) }</p>
+					<p>
+						{ preventWidows(
+							translate(
+								"Unfortunately, we can't modify files on your site, so you'll need to set up your plan features manually."
+							)
+						) }
+					</p>
+					<p>
+						{ preventWidows(
+							translate( "Don't worry. We'll quickly guide you through the setup process." )
+						) }
+					</p>
 					<p>
 						<Button primary href={ SETTING_UP_PREMIUM_SERVICES } target="_blank">
-							{ translate( 'Set up features' ) }
+							<span>{ translate( 'Set up features' ) }</span>
+							<Gridicon icon="external" />
 						</Button>
 					</p>
 				</ThankYouCard>
 			);
 		}
 
+		// Non-main site at multisite, cannot install anything
 		if ( isSiteMultiSite && ! isSiteMainNetworkSite ) {
 			return (
 				<ThankYouCard
 					illustration={ fireworksIllustration }
+					showHideMessage
 					title={ translate( 'Thank you for your purchase!' ) }
 				>
-					<p>{ translate( "Unfortunately, your site is part of a multi-site network, but is not the main network site. You'll need to set up your plan features manually." ) }</p>
-					<p>{ translate( "Don't worry. We'll quickly guide you through the setup process." ) }</p>
+					<p>
+						{ preventWidows(
+							translate(
+								"Unfortunately, your site is part of a multi-site network, but is not the main network site. You'll need to set up your plan features manually."
+							)
+						) }
+					</p>
+					<p>
+						{ preventWidows(
+							translate( "Don't worry. We'll quickly guide you through the setup process." )
+						) }
+					</p>
 					<p>
 						<Button primary href={ SETTING_UP_PREMIUM_SERVICES } target="_blank">
-							{ translate( 'Set up features' ) }
+							<span>{ translate( 'Set up features' ) }</span>
+							<Gridicon icon="external" />
 						</Button>
 					</p>
 				</ThankYouCard>
@@ -107,20 +153,19 @@ export class PaidPlanThankYouCard extends Component {
 				{ installState === INSTALL_STATE_UNCOMPLETE && (
 					<ThankYouCard
 						illustration={ fireworksIllustration }
+						showHideMessage
 						title={ translate( 'Thank you for your purchase!' ) }
 					>
 						<p>{ translate( "Now let's make sure your site is protected." ) }</p>
 						<p>
-							{ translate(
-								"We're setting up spam filters and site backups for you first. Once that's done, our security checklist will guide you through the next steps."
+							{ preventWidows(
+								translate(
+									"We're setting up spam filters and site backups for you first. Once that's done, our security checklist will guide you through the next steps."
+								)
 							) }
 						</p>
 
 						<ProgressBar isPulsing total={ 100 } value={ installProgress || 0 } />
-
-						<p>
-							<a href={ `/plans/my-plan/${ siteSlug }` }>{ translate( 'Hide message' ) }</a>
-						</p>
 					</ThankYouCard>
 				) }
 				{ installState === INSTALL_STATE_COMPLETE && (
@@ -130,9 +175,13 @@ export class PaidPlanThankYouCard extends Component {
 						title={ translate( 'So long spam, hello backups!' ) }
 					>
 						<p>
-							{ translate( 'We’ve finished setting up spam filtering and backups for you.' ) }
+							{ preventWidows(
+								translate( 'We’ve finished setting up spam filtering and backups for you.' )
+							) }
 							<br />
-							{ translate( "You're now ready to finish the rest of the checklist." ) }
+							{ preventWidows(
+								translate( "You're now ready to finish the rest of the checklist." )
+							) }
 						</p>
 					</ThankYouCard>
 				) }
@@ -162,6 +211,6 @@ export default connect( state => {
 		installState,
 		isSiteMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
 		isSiteMultiSite: isJetpackSiteMultiSite( state, siteId ),
-		siteSlug: getSelectedSiteSlug( state ),
+		site,
 	};
 }, { recordTracksEvent } )( localize( PaidPlanThankYouCard ) );
