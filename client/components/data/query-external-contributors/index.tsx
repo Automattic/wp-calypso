@@ -14,15 +14,13 @@ import { getExternalContributors } from 'state/sites/external-contributors/actio
  */
 import { SiteId } from 'types';
 
-interface OwnProps {
+interface Props {
 	siteId: SiteId;
 }
 
-interface DispatchProps {
-	getExternalContributors: ( siteId: SiteId ) => void;
-}
+const mapDispatchToProps = { getExternalContributors };
 
-const QueryExternalContributors: FunctionComponent< OwnProps & DispatchProps > = ( {
+const QueryExternalContributors: FunctionComponent< Props & typeof mapDispatchToProps > = ( {
 	siteId,
 	getExternalContributors: request,
 } ) => {
@@ -33,7 +31,7 @@ const QueryExternalContributors: FunctionComponent< OwnProps & DispatchProps > =
 	return null;
 };
 
-export default connect< {}, DispatchProps, OwnProps >(
+export default connect(
 	null,
-	{ getExternalContributors }
+	mapDispatchToProps
 )( QueryExternalContributors );
