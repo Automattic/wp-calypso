@@ -23,6 +23,7 @@ import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -205,7 +206,7 @@ class SiteVerification extends Component {
 	}
 
 	handleFormSubmit = event => {
-		const { siteId, translate, trackSiteVerificationUpdated } = this.props;
+		const { path, siteId, translate, trackSiteVerificationUpdated } = this.props;
 		const { dirtyFields } = this.state;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
@@ -241,22 +242,22 @@ class SiteVerification extends Component {
 		};
 
 		this.props.saveSiteSettings( siteId, updatedOptions );
-		this.props.trackFormSubmitted();
+		this.props.trackFormSubmitted( { path } );
 
 		if ( dirtyFields.has( 'googleCode' ) ) {
-			trackSiteVerificationUpdated( 'google' );
+			trackSiteVerificationUpdated( 'google', path );
 		}
 
 		if ( dirtyFields.has( 'bingCode' ) ) {
-			trackSiteVerificationUpdated( 'bing' );
+			trackSiteVerificationUpdated( 'bing', path );
 		}
 
 		if ( dirtyFields.has( 'pinterestCode' ) ) {
-			trackSiteVerificationUpdated( 'pinterest' );
+			trackSiteVerificationUpdated( 'pinterest', path );
 		}
 
 		if ( dirtyFields.has( 'yandexCode' ) ) {
-			trackSiteVerificationUpdated( 'yandex' );
+			trackSiteVerificationUpdated( 'yandex', path );
 		}
 	};
 
@@ -441,15 +442,17 @@ export default connect(
 			site,
 			siteId,
 			siteIsJetpack: isJetpackSite( state, siteId ),
+			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
 	{
 		requestSite,
 		requestSiteSettings,
 		saveSiteSettings,
-		trackSiteVerificationUpdated: service =>
+		trackSiteVerificationUpdated: ( service, path ) =>
 			recordTracksEvent( 'calypso_seo_tools_site_verification_updated', {
 				service,
+				path,
 			} ),
 		trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
 	},
