@@ -1,7 +1,5 @@
-/** @format */
-
 /**
- * External dependencies
+ * Internal dependencies
  */
 import isSurveyFilledIn from '../is-survey-filled-in';
 

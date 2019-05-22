@@ -1,6 +1,5 @@
-/** @format */
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { wrapPre, unwrapPre } from '../plugin';
 

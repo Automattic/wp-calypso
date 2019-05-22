@@ -1,6 +1,5 @@
-/** @format */
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { sanitizeVat } from '../fr-form';
 

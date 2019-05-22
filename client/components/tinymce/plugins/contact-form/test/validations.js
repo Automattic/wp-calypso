@@ -1,7 +1,5 @@
-/** @format */
-
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { validateFormFields, validateSettingsToEmail } from '../dialog/validations';
 

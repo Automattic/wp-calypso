@@ -1,6 +1,5 @@
-/** @format */
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { nativeToRaw, rawToNative, fromApi, toApi } from '../mappings';
 

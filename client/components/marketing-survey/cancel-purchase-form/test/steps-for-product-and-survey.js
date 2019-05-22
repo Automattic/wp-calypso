@@ -1,6 +1,5 @@
-/** @format */
 /**
- * External dependencies
+ * Internal dependencies
  */
 import * as steps from '../steps';
 import stepsForProductAndSurvey from '../steps-for-product-and-survey';

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
- * External dependencies
+ * Internal dependencies
  */
-
 import utils from '../utils';
 
 describe( 'utils', () => {
