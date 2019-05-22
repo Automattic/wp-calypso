@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import PurchaseButton from 'components/purchase-detail/purchase-button';
+import Button from 'components/button';
 import TipInfo from 'components/purchase-detail/tip-info';
 
 export default class Feature extends PureComponent {
@@ -53,15 +53,16 @@ export default class Feature extends PureComponent {
 		}
 
 		return (
-			<PurchaseButton
+			<Button
 				disabled={ isSubmitting }
 				href={ href }
 				onClick={ onClick }
 				primary={ primaryButton }
 				target={ target }
 				rel={ rel }
-				text={ buttonText }
-			/>
+			>
+				{ buttonText }
+			</Button>
 		);
 	}
 

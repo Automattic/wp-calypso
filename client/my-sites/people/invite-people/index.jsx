@@ -231,7 +231,9 @@ class InvitePeople extends React.Component {
 			has_custom_message: 'string' === typeof message && !! message.length,
 		} );
 
-		page( `/people/new/${ this.props.site.slug }/sent` );
+		if ( includes( [ 'administrator', 'editor', 'author', 'contributor' ], role ) ) {
+			page( `/people/new/${ this.props.site.slug }/sent` );
+		}
 	};
 
 	isSubmitDisabled = () => {
@@ -322,9 +324,7 @@ class InvitePeople extends React.Component {
 							/>
 							<FormSettingExplanation>
 								{ translate(
-									'Want to invite new users to your site? The more the merrier! ' +
-										'Invite as many as you want, up to 10 at a time, by adding ' +
-										'their email addresses or WordPress.com usernames.'
+									'Enter up to 10 WordPress.com usernames or email addresses at a time.'
 								) }
 							</FormSettingExplanation>
 						</div>
@@ -356,8 +356,7 @@ class InvitePeople extends React.Component {
 							/>
 							<FormSettingExplanation>
 								{ translate(
-									'(Optional) You can enter a custom message of up to 500 characters ' +
-										'that will be included in the invitation to the user(s).'
+									'(Optional) Enter a custom message to be sent with your invitation.'
 								) }
 							</FormSettingExplanation>
 						</FormFieldset>

@@ -105,7 +105,9 @@ class FeaturesComponent extends Component {
 						description={ 'Attract new (and more!) traffic immediately with Google Ads.' }
 						body={
 							<div className="google-voucher__initial-step">
-								<TipInfo info={ 'Offer valid in US after spending the first $25 on Google Ads.' } />
+								<TipInfo
+									info={ 'Offer valid in US and CA after spending the first $25 on Google Ads.' }
+								/>
 							</div>
 						}
 					/>

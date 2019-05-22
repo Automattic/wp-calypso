@@ -1,11 +1,11 @@
 <?php
 
 function render_template_block( $attributes ) {
-	if ( ! isset( $attributes['selectedPostId'] ) || ! is_int( $attributes['selectedPostId'] ) ) {
+	if ( ! isset( $attributes['templateId'] ) || ! is_int( $attributes['templateId'] ) ) {
 		return;
 	}
 	$align = isset( $attributes['align'] ) ? ' align' . $attributes['align'] : '';
-	$post = get_post( $attributes['selectedPostId'] );
+	$post = get_post( $attributes['templateId'] );
 	setup_postdata( $post );
 
 	$content = '<div class="template'. $align . '">'

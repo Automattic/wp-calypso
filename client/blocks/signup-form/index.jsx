@@ -16,6 +16,7 @@ import {
 	keys,
 	map,
 	mapKeys,
+	merge,
 	pick,
 	snakeCase,
 } from 'lodash';
@@ -49,7 +50,6 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import { mergeFormWithValue } from 'signup/utils';
 import CrowdsignalSignupForm from './crowdsignal';
 import SocialSignupForm from './social';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -84,6 +84,7 @@ class SignupForm extends Component {
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
 		email: PropTypes.string,
+		flowName: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
 		redirectToAfterLoginUrl: PropTypes.string.isRequired,
@@ -108,6 +109,7 @@ class SignupForm extends Component {
 	static defaultProps = {
 		displayNameInput: false,
 		displayUsernameInput: true,
+		flowName: '',
 		isSocialSignupEnabled: false,
 	};
 
@@ -132,11 +134,12 @@ class SignupForm extends Component {
 	}
 
 	autoFillUsername( form ) {
-		return mergeFormWithValue( {
-			form,
-			fieldName: 'username',
-			fieldValue: this.props.suggestedUsername || '',
-		} );
+		if ( formState.getFieldValue( form, 'username' ) ) {
+			return form;
+		}
+
+		const value = this.props.suggestedUsername || '';
+		return merge( form, { username: { value } } );
 	}
 
 	recordBackLinkClick = () => {
@@ -692,6 +695,8 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
+		const { flowName, translate } = this.props;
+
 		if ( this.props.positionInFlow !== 0 ) {
 			return;
 		}
@@ -703,7 +708,9 @@ class SignupForm extends Component {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ logInUrl }>
-					{ this.props.translate( 'Already have a WordPress.com account?' ) }
+					{ [ 'onboarding', 'onboarding-dev' ].includes( flowName )
+						? translate( 'Log in to create a site for your existing account.' )
+						: translate( 'Already have a WordPress.com account?' ) }
 				</LoggedOutFormLinkItem>
 				{ this.props.oauth2Client && (
 					<LoggedOutFormBackLink

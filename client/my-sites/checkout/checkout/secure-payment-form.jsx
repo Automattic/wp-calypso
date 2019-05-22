@@ -39,6 +39,7 @@ import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 import FormattedHeader from 'components/formatted-header';
+import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -467,6 +468,7 @@ export class SecurePaymentForm extends Component {
 					countriesList={ this.props.countriesList }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					translate={ this.props.translate }
+					presaleChatAvailable={ this.props.presaleChatAvailable }
 				>
 					{ this.props.children }
 				</WebPaymentBox>
@@ -541,6 +543,11 @@ export class SecurePaymentForm extends Component {
 		const { translate } = this.props;
 		const headerText = translate( 'Great choice! How would you like to pay?' );
 
+		if ( 'variantRightColumn' === abtest( 'showCheckoutCartRight' ) ) {
+			const element = document.getElementsByClassName( 'formatted-header__title' )[ 0 ];
+			element.textContent = headerText;
+			return;
+		}
 		return <FormattedHeader headerText={ headerText } />;
 	}
 

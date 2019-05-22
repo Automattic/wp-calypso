@@ -9,20 +9,17 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import SidebarItem from 'layout/sidebar/item';
-import SidebarButton from 'layout/sidebar/button';
 import config from 'config';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import compareProps from 'lib/compare-props';
-import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
 import {
 	getSite,
 	getSiteAdminUrl,
@@ -34,9 +31,6 @@ import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import isWpAdminGutenbergEnabled from 'state/selectors/is-wp-admin-gutenberg-enabled';
-import { getEditorUrl as getEditorUrlStateSelector } from 'state/selectors/get-editor-url';
 import isVipSite from 'state/selectors/is-vip-site';
 
 class SiteMenu extends PureComponent {
@@ -50,11 +44,9 @@ class SiteMenu extends PureComponent {
 		isJetpack: PropTypes.bool,
 		isSingleUser: PropTypes.bool,
 		postTypes: PropTypes.object,
-		getEditorUrl: PropTypes.func,
 		siteAdminUrl: PropTypes.string,
 		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
-		wpAdminGutenberg: PropTypes.bool,
 	};
 
 	// We default to `/my` posts when appropriate
@@ -76,7 +68,7 @@ class SiteMenu extends PureComponent {
 	}
 
 	getDefaultMenuItems() {
-		const { wpAdminGutenberg, getEditorUrl, siteSlug, translate } = this.props;
+		const { translate } = this.props;
 
 		return [
 			{
@@ -86,8 +78,6 @@ class SiteMenu extends PureComponent {
 				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
-				buttonLink: getEditorUrl( 'page' ),
-				forceButtonTargetInternal: wpAdminGutenberg,
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
 			},
@@ -99,8 +89,6 @@ class SiteMenu extends PureComponent {
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
-				buttonLink: getEditorUrl( 'post' ),
-				forceButtonTargetInternal: wpAdminGutenberg,
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
 			},
@@ -110,7 +98,6 @@ class SiteMenu extends PureComponent {
 				capability: 'upload_files',
 				queryable: true,
 				link: '/media',
-				buttonLink: '/media/' + siteSlug,
 				wpAdminLink: 'upload.php',
 				showOnAllMySites: false,
 			},
@@ -139,7 +126,7 @@ class SiteMenu extends PureComponent {
 	};
 
 	renderMenuItem( menuItem ) {
-		const { canCurrentUser, site, siteId, siteAdminUrl } = this.props;
+		const { canCurrentUser, siteId, siteAdminUrl } = this.props;
 
 		if ( siteId && ! canCurrentUser( menuItem.capability ) ) {
 			return null;
@@ -203,15 +190,8 @@ class SiteMenu extends PureComponent {
 				icon = 'custom-post-type';
 		}
 
-		const extraIcon = menuItem.extraIcon && (
-			<div className={ `manage_menu__${ menuItem.name }-extra-icon` }>
-				<Gridicon icon={ menuItem.extraIcon } />
-			</div>
-		);
-
 		return (
 			<SidebarItem
-				className={ menuItem.customClassName }
 				key={ menuItem.name }
 				label={ menuItem.label }
 				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
@@ -222,39 +202,9 @@ class SiteMenu extends PureComponent {
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }
 				forceInternalLink={ menuItem.forceInternalLink }
-			>
-				{ menuItem.name === 'media' && (
-					<MediaLibraryUploadButton
-						className="sidebar__button"
-						site={ site }
-						href={ menuItem.buttonLink }
-						onClick={ this.trackSidebarButtonClick( 'media' ) }
-					>
-						{ this.props.translate( 'Add' ) }
-					</MediaLibraryUploadButton>
-				) }
-				{ menuItem.name !== 'media' && (
-					<SidebarButton
-						onClick={ this.trackSidebarButtonClick( menuItem.name ) }
-						href={ menuItem.buttonLink }
-						preloadSectionName="post-editor"
-						forceTargetInternal={ menuItem.forceButtonTargetInternal }
-					>
-						{ menuItem.buttonText || this.props.translate( 'Add' ) }
-					</SidebarButton>
-				) }
-				{ extraIcon }
-			</SidebarItem>
+			/>
 		);
 	}
-
-	trackSidebarButtonClick = name => {
-		return () => {
-			this.props.recordTracksEvent( 'calypso_mysites_manage_sidebar_button_clicked', {
-				menu_item: name,
-			} );
-		};
-	};
 
 	getCustomMenuItems() {
 		const { isVip } = this.props;
@@ -291,14 +241,8 @@ class SiteMenu extends PureComponent {
 							? 'edit.php?post_type=feedback'
 							: 'edit.php?post_type=feedback&calypsoify=1',
 						showOnAllMySites: false,
-						forceButtonTargetInternal: true,
 					} );
 				}
-
-				const buttonLink =
-					config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable
-						? this.props.getEditorUrl( postTypeSlug )
-						: undefined;
 
 				return memo.concat( {
 					name: postType.name,
@@ -315,8 +259,6 @@ class SiteMenu extends PureComponent {
 					link: '/types/' + postType.name,
 					wpAdminLink: 'edit.php?post_type=' + postType.name,
 					showOnAllMySites: false,
-					buttonLink,
-					forceButtonTargetInternal: this.props.wpAdminGutenberg,
 				} );
 			},
 			[]
@@ -343,17 +285,12 @@ export default connect(
 		isJetpack: isJetpackSite( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
 		postTypes: getPostTypes( state, siteId ),
-		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		getEditorUrl: partial( getEditorUrlStateSelector, state, siteId, null ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		site: getSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isVip: isVipSite( state, siteId ),
-		wpAdminGutenberg:
-			isWpAdminGutenbergEnabled( state, siteId ) &&
-			'gutenberg' === getSelectedEditor( state, siteId ),
 	} ),
 	{ recordTracksEvent },
 	null,
-	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser', 'getEditorUrl' ] } ) }
+	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser' ] } ) }
 )( localize( SiteMenu ) );

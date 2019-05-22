@@ -10,16 +10,22 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import Gridicon from 'gridicons';
 import debugFactory from 'debug';
-import { concat, rearg } from 'lodash';
+import { overSome, rearg, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import PaymentCountrySelect from 'components/payment-country-select';
+import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import Input from 'my-sites/domains/components/form/input';
-import { getTaxCountryCode, getTaxPostalCode } from 'lib/cart-values';
+import { getTaxCountryCode, getTaxPostalCode, shouldShowTax } from 'lib/cart-values';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
+import {
+	detectWebPaymentMethod,
+	WEB_PAYMENT_BASIC_CARD_METHOD,
+	WEB_PAYMENT_APPLE_PAY_METHOD,
+} from 'lib/web-payment';
 import wpcom from 'lib/wp';
 import { newCardPayment } from 'lib/store-transactions';
 import { setPayment } from 'lib/upgrades/actions';
@@ -31,22 +37,20 @@ import {
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
-import RecentRenewals from './recent-renewals';
+import notices from 'notices';
+import CartToggle from './cart-toggle';
 import CheckoutTerms from './checkout-terms';
+import PaymentChatButton from './payment-chat-button';
+import RecentRenewals from './recent-renewals';
+import SubscriptionText from './subscription-text';
 import { setTaxCountryCode, setTaxPostalCode } from 'lib/upgrades/actions/cart';
 
 const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
 
 /**
- * Web Payment method identifier.
- */
-export const WEB_PAYMENT_BASIC_CARD_METHOD = 'basic-card';
-export const WEB_PAYMENT_APPLE_PAY_METHOD = 'https://apple.com/apple-pay';
-
-/**
  * Supported card types.
  */
-const SUPPORTED_NETWORKS = [ 'visa', 'mastercard', 'discover', 'amex', 'jcb', 'maestro' ];
+const SUPPORTED_NETWORKS = [ 'visa', 'masterCard', 'discover', 'amex', 'jcb', 'chinaUnionPay' ];
 const APPLE_PAY_MERCHANT_IDENTIFIER = config( 'apple_pay_merchant_id' );
 const PAYMENT_REQUEST_OPTIONS = {
 	requestPayerName: true,
@@ -54,63 +58,6 @@ const PAYMENT_REQUEST_OPTIONS = {
 	requestPayerEmail: false,
 	requestShipping: false,
 };
-
-/**
- * Returns an available Web Payment method.
- *
- * Web Payments (`PaymentRequest` API) are available only if the
- * document is served through HTTPS.
- *
- * The configuration features `my-sites/checkout/web-payment/*` must
- * also be enabled.
- *
- * @returns {string|null}  One of the `WEB_PAYMENT_*_METHOD` or `null`
- *                         if none can be detected.
- */
-export function detectWebPaymentMethod() {
-	if ( ! config.isEnabled( 'my-sites/checkout/web-payment' ) ) {
-		return null;
-	}
-
-	if (
-		config.isEnabled( 'my-sites/checkout/web-payment/apple-pay' ) &&
-		window.ApplePaySession &&
-		window.ApplePaySession.canMakePayments()
-	) {
-		return WEB_PAYMENT_APPLE_PAY_METHOD;
-	}
-
-	if ( config.isEnabled( 'my-sites/checkout/web-payment/basic-card' ) && window.PaymentRequest ) {
-		return WEB_PAYMENT_BASIC_CARD_METHOD;
-	}
-
-	return null;
-}
-
-/**
- * Returns a user-friendly Web Payment method name.
- *
- * @param {string|null} webPaymentMethod  The payment method identifier
- *                                        (expecting one of the
- *                                        `WEB_PAYMENT_*_METHOD`
- *                                        constant).
- * @param {function} translate            Localization function to translate the label.
- * @returns {string|null}                 A user-friendly payment name
- *                                        or the given payment method
- *                                        if none matches.
- */
-export function getWebPaymentMethodName( webPaymentMethod, translate ) {
-	switch ( webPaymentMethod ) {
-		case WEB_PAYMENT_BASIC_CARD_METHOD:
-			return translate( 'Browser wallet' );
-
-		case WEB_PAYMENT_APPLE_PAY_METHOD:
-			return 'Apple Pay';
-
-		default:
-			return webPaymentMethod;
-	}
-}
 
 /**
  * The `<WebPaymentBox />` component.
@@ -140,7 +87,7 @@ export class WebPaymentBox extends React.Component {
 	}
 
 	/**
-	 * @return {object} A dictionnary containing `default`, `disabled` and `text` keys.
+	 * @return {object} A dictionary containing `default`, `disabled` and `text` keys.
 	 */
 	getButtonState = () => {
 		const { transactionStep, translate } = this.props;
@@ -213,14 +160,13 @@ export class WebPaymentBox extends React.Component {
 	 * @return {PaymentRequest} A configured payment request object.
 	 */
 	getPaymentRequestForApplePay = () => {
-		const { cart, translate } = this.props;
-		const { currency, total_tax } = cart;
+		const { cart } = this.props;
 
 		const supportedPaymentMethods = [
 			{
 				supportedMethods: WEB_PAYMENT_APPLE_PAY_METHOD,
 				data: {
-					version: 3,
+					version: 2,
 					merchantIdentifier: APPLE_PAY_MERCHANT_IDENTIFIER,
 					merchantCapabilities: [ 'supports3DS', 'supportsCredit', 'supportsDebit' ],
 					supportedNetworks: SUPPORTED_NETWORKS,
@@ -228,33 +174,8 @@ export class WebPaymentBox extends React.Component {
 				},
 			},
 		];
-		let displayItems = cart.products.map( product => {
-			return {
-				label: product.product_name,
-				amount: {
-					currency: product.currency,
-					value: product.cost,
-				},
-			};
-		} );
 
-		if ( total_tax ) {
-			displayItems = concat( displayItems, {
-				label: translate( 'Tax', { comment: 'The tax amount line-item in payment request' } ),
-				amount: { currency: currency, value: total_tax },
-			} );
-		}
-
-		const paymentDetails = {
-			total: {
-				label: translate( 'Total' ),
-				amount: {
-					currency: cart.currency,
-					value: cart.total_cost.toString(),
-				},
-			},
-			displayItems,
-		};
+		const paymentDetails = this.getPaymentDetails( cart );
 
 		const paymentRequest = new PaymentRequest(
 			supportedPaymentMethods,
@@ -279,8 +200,7 @@ export class WebPaymentBox extends React.Component {
 	 * @return {PaymentRequest} A configured payment request object.
 	 */
 	getPaymentRequestForBasicCard = () => {
-		const { cart, translate } = this.props;
-		const { currency, total_tax } = cart;
+		const { cart } = this.props;
 
 		const supportedPaymentMethods = [
 			{
@@ -290,39 +210,56 @@ export class WebPaymentBox extends React.Component {
 				},
 			},
 		];
-		let displayItems = cart.products.map( product => {
-			return {
-				label: product.product_name,
-				amount: {
-					currency: product.currency,
-					value: product.cost,
-				},
-			};
-		} );
-		if ( total_tax ) {
-			displayItems = concat( displayItems, {
-				label: translate( 'Tax', { comment: 'The tax amount line-item in payment request' } ),
-				amount: { currency, value: total_tax },
-			} );
-		}
 
-		const paymentDetails = {
-			total: {
-				label: translate( 'Total' ),
-				amount: {
-					currency: cart.currency,
-					value: cart.total_cost,
-				},
-			},
-			displayItems,
-		};
+		const paymentDetails = this.getPaymentDetails( cart );
 
 		return new PaymentRequest( supportedPaymentMethods, paymentDetails, PAYMENT_REQUEST_OPTIONS );
 	};
 
 	/**
+	 * Returns line items to display on the payment sheet during purchase authorization.
+	 *
+	 * @param {object} cart The cart object.
+	 * @return {object} A dictionary containing `displayItems` and `total` keys.
+	 */
+	getPaymentDetails = cart => {
+		const { translate } = this.props;
+
+		let displayItems = [];
+		if ( shouldShowTax( cart ) ) {
+			displayItems = [
+				{
+					label: translate( 'Subtotal' ),
+					amount: {
+						currency: cart.currency,
+						value: cart.sub_total,
+					},
+				},
+				{
+					label: translate( 'Tax', { comment: 'The tax amount line-item in payment request' } ),
+					amount: {
+						currency: cart.currency,
+						value: cart.total_tax,
+					},
+				},
+			];
+		}
+
+		return {
+			displayItems: displayItems,
+			total: {
+				label: translate( 'WordPress.com' ),
+				amount: {
+					currency: cart.currency,
+					value: cart.total_cost,
+				},
+			},
+		};
+	};
+
+	/**
 	 * @param {string} paymentMethod  Payment method.
-	 * @param {DOMEvent} event        Button even.
+	 * @param {DOMEvent} event        Button event.
 	 */
 	submit = ( paymentMethod, event ) => {
 		event.persist();
@@ -405,6 +342,15 @@ export class WebPaymentBox extends React.Component {
 	};
 
 	/**
+	 * @param {string} errorMessage  Error message.
+	 * @param {DOMEvent} event       Button event.
+	 */
+	displaySubmissionError = ( errorMessage, event ) => {
+		event.preventDefault();
+		notices.error( errorMessage );
+	};
+
+	/**
 	 * @param {object} event  Event object.
 	 */
 	updateSelectedPostalCode = event => {
@@ -418,7 +364,7 @@ export class WebPaymentBox extends React.Component {
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const paymentMethod = this.detectedPaymentMethod;
-		const { cart, translate, countriesList } = this.props;
+		const { cart, countriesList, presaleChatAvailable, translate } = this.props;
 		const countryCode = getTaxCountryCode( cart );
 		const postalCode = getTaxPostalCode( cart );
 
@@ -426,9 +372,15 @@ export class WebPaymentBox extends React.Component {
 			return null;
 		}
 
+		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
+			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
+		);
+		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
+
 		const buttonState = this.getButtonState();
-		const buttonDisabled = buttonState.disabled || ! countryCode || ! postalCode;
+		const buttonDisabled = buttonState.disabled;
 		let button;
+		let paymentType;
 
 		switch ( paymentMethod ) {
 			case WEB_PAYMENT_APPLE_PAY_METHOD:
@@ -436,7 +388,14 @@ export class WebPaymentBox extends React.Component {
 					button = (
 						<button
 							type="submit"
-							onClick={ event => this.submit( paymentMethod, event ) }
+							onClick={ event =>
+								! countryCode || ! postalCode
+									? this.displaySubmissionError(
+											translate( 'Please specify a country and postal code.' ),
+											event
+									  )
+									: this.submit( paymentMethod, event )
+							}
 							disabled={ buttonDisabled }
 							className="web-payment-box__apple-pay-button"
 						/>
@@ -453,6 +412,7 @@ export class WebPaymentBox extends React.Component {
 						</Button>
 					);
 				}
+				paymentType = 'apple-pay';
 				break;
 
 			case WEB_PAYMENT_BASIC_CARD_METHOD:
@@ -467,6 +427,7 @@ export class WebPaymentBox extends React.Component {
 						{ buttonState.text }
 					</Button>
 				);
+				paymentType = 'web-payment';
 				break;
 
 			default:
@@ -474,48 +435,56 @@ export class WebPaymentBox extends React.Component {
 		}
 
 		return (
-			<form autoComplete="off">
-				<div className="checkout__payment-box-sections">
-					<div className="checkout__payment-box-section">
-						<PaymentCountrySelect
-							additionalClasses="checkout-field"
-							name="country"
-							label={ translate( 'Country', { textOnly: true } ) }
-							countriesList={ countriesList }
-							onCountrySelected={ rearg( setTaxCountryCode, [ 1 ] ) }
-							value={ countryCode }
-							eventFormName="Checkout Form"
-						/>
-						<Input
-							additionalClasses="checkout-field"
-							name="postal-code"
-							label={ translate( 'Postal Code', { textOnly: true } ) }
-							onChange={ this.updateSelectedPostalCode }
-							value={ postalCode }
-							eventFormName="Checkout Form"
-						/>
-					</div>
-				</div>
-
-				{ this.props.children }
-
-				<RecentRenewals cart={ cart } />
-
-				<CheckoutTerms cart={ cart } />
-
-				<span className="payment-box__payment-buttons">
-					<span className="pay-button">
-						<span className="payment-request-button">{ button }</span>
-						<SubscriptionText cart={ cart } />
-					</span>
-					<div className="checkout__secure-payment">
-						<div className="checkout__secure-payment-content">
-							<Gridicon icon="lock" />
-							{ translate( 'Secure Payment' ) }
+			<React.Fragment>
+				<form>
+					<div className="checkout__payment-box-sections">
+						<div className="checkout__payment-box-section">
+							<PaymentCountrySelect
+								additionalClasses="checkout-field"
+								name="country"
+								label={ translate( 'Country', { textOnly: true } ) }
+								countriesList={ countriesList }
+								onCountrySelected={ rearg( setTaxCountryCode, [ 1 ] ) }
+								value={ countryCode }
+								eventFormName="Checkout Form"
+							/>
+							<Input
+								additionalClasses="checkout-field"
+								name="postal-code"
+								label={ translate( 'Postal Code', { textOnly: true } ) }
+								onChange={ this.updateSelectedPostalCode }
+								value={ postalCode }
+								eventFormName="Checkout Form"
+							/>
 						</div>
 					</div>
-				</span>
-			</form>
+
+					{ this.props.children }
+
+					<RecentRenewals cart={ cart } />
+
+					<CheckoutTerms cart={ cart } />
+
+					<span className="payment-box__payment-buttons">
+						<span className="pay-button">
+							<span className="payment-request-button">{ button }</span>
+							<SubscriptionText cart={ cart } />
+						</span>
+						<div className="checkout__secure-payment">
+							<div className="checkout__secure-payment-content">
+								<Gridicon icon="lock" />
+								{ translate( 'Secure Payment' ) }
+							</div>
+						</div>
+
+						{ showPaymentChatButton && (
+							<PaymentChatButton paymentType={ paymentType } cart={ cart } />
+						) }
+					</span>
+				</form>
+				<CartCoupon cart={ cart } />
+				<CartToggle />
+			</React.Fragment>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}

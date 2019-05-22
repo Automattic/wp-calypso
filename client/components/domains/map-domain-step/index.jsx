@@ -31,6 +31,11 @@ import {
 } from 'state/domains/actions';
 import Notice from 'components/notice';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class MapDomainStep extends React.Component {
 	static propTypes = {
 		products: PropTypes.object,
@@ -49,19 +54,10 @@ class MapDomainStep extends React.Component {
 		initialQuery: '',
 	};
 
-	state = this.getDefaultState();
-
-	getDefaultState() {
-		return {
-			searchQuery: this.props.initialQuery,
-		};
-	}
-
-	UNSAFE_componentWillMount() {
-		if ( this.props.initialState ) {
-			this.setState( Object.assign( {}, this.props.initialState, this.getDefaultState() ) );
-		}
-	}
+	state = {
+		...this.props.initialState,
+		searchQuery: this.props.initialQuery,
+	};
 
 	componentWillUnmount() {
 		this.props.onSave( this.state );

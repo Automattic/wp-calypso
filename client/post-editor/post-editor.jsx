@@ -59,6 +59,7 @@ import {
 import { getCurrentUserId } from 'state/current-user/selectors';
 import editedPostHasContent from 'state/selectors/edited-post-has-content';
 import hasBrokenSiteUserConnection from 'state/selectors/has-broken-site-user-connection';
+import isVipSite from 'state/selectors/is-vip-site';
 import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
@@ -356,6 +357,7 @@ export class PostEditor extends React.Component {
 									ref={ this.storeEditor }
 									mode={ mode }
 									isNew={ this.props.isNew }
+									isVipSite={ this.props.isVipSite }
 									onSetContent={ this.debouncedSaveRawContent }
 									onInit={ this.onEditorInitialized }
 									onChange={ this.onEditorContentChange }
@@ -1150,6 +1152,7 @@ const enhance = flow(
 				layoutFocus: getCurrentLayoutFocus( state ),
 				hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 				isSitePreviewable: isSitePreviewable( state, siteId ),
+				isVipSite: isVipSite( state, siteId ),
 				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 				isSaveBlocked: isEditorSaveBlocked( state ),
 				previewUrl: getEditorPostPreviewUrl( state ),

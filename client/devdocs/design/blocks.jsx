@@ -44,7 +44,7 @@ import PlanStorage from 'blocks/plan-storage/docs/example';
 import UpgradeNudge from 'blocks/upgrade-nudge/docs/example';
 import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import FeatureComparison from 'my-sites/feature-comparison/docs/example';
-import DomainTip from 'my-sites/domain-tip/docs/example';
+import DomainTip from 'blocks/domain-tip/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
 import PostStatus from 'blocks/post-status/docs/example';
 import PostTime from 'blocks/post-time/docs/example';

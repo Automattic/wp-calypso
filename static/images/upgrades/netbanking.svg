@@ -1,9 +1,1 @@
-<?xml version="1.0"?>
-<svg viewBox="0 0 224 48" width="224" height="48" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
- <g class="layer">
-  <g class="layer" id="svg_1">
-   <rect fill="#ffffff" height="43" id="svg_4" stroke="#016087" stroke-width="2" width="218" x="3" y="2.5"/>
-   <text fill="#016087" font-family="Helvetica, Arial, sans-serif" font-size="32" font-weight="bold" id="svg_3" stroke="#23354b" stroke-width="0" text-anchor="middle" x="112.00781" xml:space="preserve" y="34.25">Net Banking</text>
-  </g>
- </g>
-</svg>
+<svg height="48" preserveAspectRatio="xMidYMid meet" viewBox="0 0 224 48" width="224" xmlns="http://www.w3.org/2000/svg"><path d="m3 2.5h218v43h-218z" fill="#fff" stroke="#016087" stroke-width="2"/><text style="fill:#016087;font-family:Helvetica, Arial, sans-serif;font-size:32;font-weight:bold;stroke:#23354b;stroke-width:0;text-anchor:middle" x="112.00781" y="34.25">Net Banking</text></svg>

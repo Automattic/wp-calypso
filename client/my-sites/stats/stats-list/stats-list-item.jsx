@@ -20,6 +20,7 @@ import Emojify from 'components/emojify';
 import Follow from './action-follow';
 import Page from './action-page';
 import Spam from './action-spam';
+import OpenLink from './action-link';
 import titlecase from 'to-title-case';
 import { flagUrl } from 'lib/flags';
 import { recordTrack } from 'reader/stats';
@@ -84,6 +85,10 @@ class StatsListItem extends React.Component {
 	onClick = event => {
 		let gaEvent;
 		const moduleName = titlecase( this.props.moduleName );
+
+		if ( event.keyCode && event.keyCode !== 13 ) {
+			return;
+		}
 
 		debug( 'props', this.props );
 		if ( ! this.state.disabled ) {
@@ -164,6 +169,11 @@ class StatsListItem extends React.Component {
 								afterChange={ this.spamHandler }
 								moduleName={ moduleName }
 							/>
+						);
+						break;
+					case 'link':
+						actionItem = (
+							<OpenLink href={ action.data } key={ action.type } moduleName={ moduleName } />
 						);
 						break;
 				}
@@ -341,6 +351,7 @@ class StatsListItem extends React.Component {
 				<span
 					className="stats-list__module-content-list-item-wrapper"
 					onClick={ this.onClick }
+					onKeyUp={ this.onClick }
 					tabIndex="0"
 					role="button"
 				>

@@ -15,7 +15,6 @@
 		"async-payments": false,
 		"ad-tracking": true,
 		"always_use_logout_url": true,
-		"apple-pay": false,
 		"blogger-plan": false,
 		"calypsoify/gutenberg": false,
 		"catch-js-errors": false,

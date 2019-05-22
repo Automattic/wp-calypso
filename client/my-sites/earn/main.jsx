@@ -25,6 +25,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
+import MembershipsProductsSection from './memberships/products';
 import config from 'config';
 
 class EarningsMain extends Component {
@@ -83,6 +84,8 @@ class EarningsMain extends Component {
 				);
 			case 'memberships':
 				return <MembershipsSection section={ this.props.section } />;
+			case 'memberships-products':
+				return <MembershipsProductsSection section={ this.props.section } />;
 			default:
 				return null;
 		}
@@ -101,6 +104,7 @@ class EarningsMain extends Component {
 			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 			memberships: translate( 'Memberships' ),
+			'memberships-products': translate( 'Memberships' ),
 		};
 
 		return (

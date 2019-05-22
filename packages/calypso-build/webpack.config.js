@@ -114,7 +114,7 @@ function getWebpackConfig(
 			],
 		},
 		resolve: {
-			extensions: [ '.json', '.js', '.jsx' ],
+			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 			modules: [ 'node_modules' ],
 		},
 		node: false,

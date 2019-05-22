@@ -23,18 +23,13 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
-import {
-	getSeoTitleFormatsForSite,
-	getSiteSlug,
-	isJetpackSite,
-	isRequestingSite,
-} from 'state/sites/selectors';
+import { getSeoTitleFormatsForSite, isJetpackSite, isRequestingSite } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
 } from 'state/site-settings/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import getCurrentRoute from 'state/selectors/get-current-route';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isHiddenSite from 'state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -494,9 +489,7 @@ const mapStateToProps = state => {
 		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
-		path: getCurrentRoute( state )
-			.replace( getSiteSlug( state, siteId ), ':site' )
-			.replace( siteId, ':siteid' ),
+		path: getCurrentRouteParameterized( state, siteId ),
 	};
 };
 

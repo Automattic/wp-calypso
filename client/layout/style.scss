@@ -214,13 +214,18 @@
 			border-color: var( --sidebar-border-color );
 		}
 		
+		&__no-results {
+			color: var( --sidebar-heading-color );
+		}
+		
+		&__hidden-sites-message,
+		&__manage-hidden-sites {
+			color: var( --sidebar-text-color );
+		}
+		
 		.all-sites {
 			border-color: var( --sidebar-border-color );
 		}
-	}
-
-	.site-selector__no-results {
-		color: var( --sidebar-heading-color );
 	}
 	
 	.all-sites .count {
@@ -336,3 +341,52 @@
 		}
 	}
 }
+
+
+// The following is for moving cart contents to the right.
+// As implemented in the showCheckoutCartRight ab test.
+div.checkout__container .cart__header {
+	border-top: none;
+	border-bottom: 1px solid var( --color-border-subtle );
+}
+
+div.checkout__container .secondary-cart .card {
+	box-shadow: none;
+}
+
+div.checkout__container .section-header.card {
+	padding-top: 14px;
+	padding-bottom: 13px;
+}
+
+@include breakpoint( '>660px' ) {
+	div.checkout__container {
+		display: flex;
+		align-items: flex-start;
+	}
+
+	div.checkout__container .main {
+		margin-right: 0;
+		width: 100%;
+	}
+
+	div.checkout__container .secondary-cart {
+		margin: 0 auto;
+		margin-left: 20px;
+		margin-bottom: 16px;
+		width: 272px;
+		box-shadow: 0 1px 0 var( --color-border-subtle );
+	}
+}
+
+@media ( max-width: 660px ) {
+   	.layout__primary .secondary-cart {
+		margin-left: 0;
+	}
+}
+
+div.checkout__container .jetpack-logo {
+	width: 100%;
+}
+// end of showCheckoutCartRight ab test related CSS changes
+

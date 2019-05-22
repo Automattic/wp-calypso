@@ -87,7 +87,11 @@ class DeleteUser extends React.Component {
 
 		updateObj[ name ] = value;
 
-		this.setState( { authorSelectorToggled: true } );
+		if ( event.currentTarget.value === 'reassign' ) {
+			this.setState( { authorSelectorToggled: true } );
+		} else {
+			this.setState( { authorSelectorToggled: false } );
+		}
 
 		this.setState( updateObj );
 		this.props.recordGoogleEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );

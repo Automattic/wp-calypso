@@ -53,9 +53,11 @@ import DomainSkipSuggestion from 'components/domains/domain-skip-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
-import DropdownFilters from 'components/domains/search-filters/dropdown-filters';
-import FilterResetNotice from 'components/domains/search-filters/filter-reset-notice';
-import TldFilterBar from 'components/domains/search-filters/tld-filter-bar';
+import {
+	DropdownFilters,
+	FilterResetNotice,
+	TldFilterBar,
+} from 'components/domains/search-filters';
 import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
@@ -90,6 +92,7 @@ import {
 import Button from 'components/button';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
+import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
 
 /**
  * Style dependencies
@@ -236,6 +239,8 @@ class RegisterDomainStep extends React.Component {
 			suggestionErrorData: null,
 			pendingCheckSuggestion: null,
 			unavailableDomains: [],
+			trademarkClaimsNoticeInfo: null,
+			selectedSuggestion: null,
 		};
 	}
 
@@ -379,7 +384,12 @@ class RegisterDomainStep extends React.Component {
 			showSuggestionNotice,
 			suggestionError,
 			suggestionErrorData,
+			trademarkClaimsNoticeInfo,
 		} = this.state;
+
+		if ( trademarkClaimsNoticeInfo ) {
+			return this.renderTrademarkClaimsNotice();
+		}
 
 		const { message: suggestionMessage, severity: suggestionSeverity } = showSuggestionNotice
 			? getAvailabilityNotice( lastDomainSearched, suggestionError, suggestionErrorData )
@@ -455,6 +465,35 @@ class RegisterDomainStep extends React.Component {
 					onSubmit={ this.onFiltersSubmit }
 				/>
 			)
+		);
+	}
+
+	rejectTrademarkClaim = () => {
+		this.setState( {
+			selectedSuggestion: null,
+			trademarkClaimsNoticeInfo: null,
+		} );
+	};
+
+	acceptTrademarkClaim = () => {
+		this.props.onAddDomain( this.state.selectedSuggestion );
+	};
+
+	renderTrademarkClaimsNotice() {
+		const { isSignupStep } = this.props;
+		const { selectedSuggestion, trademarkClaimsNoticeInfo } = this.state;
+		const domain = get( selectedSuggestion, 'domain_name' );
+
+		return (
+			<TrademarkClaimsNotice
+				domain={ domain }
+				isSignupStep={ isSignupStep }
+				onAccept={ this.acceptTrademarkClaim }
+				onGoBack={ this.rejectTrademarkClaim }
+				onReject={ this.rejectTrademarkClaim }
+				suggestion={ selectedSuggestion }
+				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
+			/>
 		);
 	}
 
@@ -660,7 +699,10 @@ class RegisterDomainStep extends React.Component {
 				},
 				( error, result ) => {
 					const status = get( result, 'status', error );
-					resolve( status !== domainAvailability.AVAILABLE ? status : null );
+					resolve( {
+						status: status !== domainAvailability.AVAILABLE ? status : null,
+						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
+					} );
 				}
 			);
 		} );
@@ -1052,7 +1094,7 @@ class RegisterDomainStep extends React.Component {
 
 			this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
-				.then( status => {
+				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
 					this.setState( { pendingCheckSuggestion: null } );
 					this.props.recordDomainAddAvailabilityPreCheck(
 						domain,
@@ -1063,6 +1105,13 @@ class RegisterDomainStep extends React.Component {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
+						} );
+					}
+
+					if ( trademarkClaimsNoticeInfo ) {
+						this.setState( {
+							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
+							selectedSuggestion: suggestion,
 						} );
 					} else {
 						this.props.onAddDomain( suggestion );

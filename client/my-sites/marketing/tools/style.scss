@@ -45,7 +45,12 @@
 
 	@include breakpoint( '>1040px' ) {
 		display: flex;
-		min-width: 300px;
+		min-width: 400px;
+	}
+
+	.tools__header-image {
+		position: relative;
+			left: -20px;
 	}
 }
 
@@ -64,6 +69,16 @@
 	margin: 0.5em;
 	width: calc( 100% - 1em );
 
+	// Reduce top margin of GMB logo
+	&:nth-child( 3 ) .tools__feature-list-item-body-image {
+		margin-top: 18px;
+	}
+
+	// Reduce top margin of Upwork logo
+	&:nth-child( 5 ) .tools__feature-list-item-body-image {
+		margin-top: 20px;
+	}
+
 	@include breakpoint( '>1040px' ) {
 		width: calc( 50% - 1em );
 	}
@@ -75,13 +90,17 @@
 }
 
 .tools__feature-list-item-body {
-	display: flex;
-	// grow this, leave buttons on the bottom of the card
+	align-items: flex-start;
+	display: flex; // grow this, leave buttons on the bottom of the card
 	flex: 1 0 auto;
 }
 
 .tools__feature-list-item-body-text {
 	width: 100%;
+
+	> p {
+		margin-bottom: 0;
+	}
 
 	@include breakpoint( '>1040px' ) {
 		width: 75%;
@@ -89,29 +108,59 @@
 }
 
 .tools__feature-list-item-body-image {
-	display: none;
-	margin: 0.5em;
+	margin: 10px 20px 0 0;
 	max-width: 150px;
-	width: 25%;
+	width: 15%;
 
 	@include breakpoint( '>1040px' ) {
 		display: flex;
 	}
+
+	@include breakpoint( '<480px' ) {
+		display: none;
+	}
+}
+
+.tools__upgrade-button {
+	text-transform: capitalize;
 }
 
 .tools__feature-list-item-child-row {
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-start;
+	justify-content: center;
+	margin-top: 1em;
 
 	.button {
-		margin: 1em 0 0;
+		margin: 0;
 		text-align: center;
-		width: 100%;
+		width: auto;
+	}
+
+	.purchase-detail__info {
+		margin-top: 1em;
+	}
+
+	.google-voucher__initial-step .purchase-detail__button {
+		float: right;
+		font-size: 12px;
+		line-height: 1;
+		padding: 7px;
+	}
+
+	.google-voucher__initial-step {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	}
 
 	@include breakpoint( '>480px' ) {
 		flex-direction: row;
+		justify-content: flex-end;
+
+		.google-voucher__initial-step {
+			display: block;
+		}
 
 		.button {
 			margin: 0 1em 0 0;
@@ -120,10 +169,13 @@
 	}
 
 	@include breakpoint( '>1040px' ) {
-		justify-content: flex-end;
 
 		.button {
 			margin: 0 0 0 1em;
+		}
+
+		.purchase-detail__button {
+			float: right;
 		}
 	}
 }

@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { noop } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ export function generateFlows( {
 			destination: '/',
 			description: 'Create an account without a blog.',
 			lastModified: '2015-07-07',
+			pageTitle: translate( 'Create an account' ),
 		},
 
 		business: {
@@ -308,6 +310,7 @@ export function generateFlows( {
 		description: 'A flow to launch a private site.',
 		providesDependenciesInQuery: [ 'siteSlug' ],
 		lastModified: '2019-01-16',
+		pageTitle: translate( 'Launch your site' ),
 	};
 
 	flows.import = {

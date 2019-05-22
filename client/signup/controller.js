@@ -22,6 +22,7 @@ import {
 	getStepName,
 	getStepSectionName,
 	getValidPath,
+	getFlowPageTitle,
 } from './utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import store from 'store';
@@ -142,6 +143,7 @@ export default {
 			stepName,
 			stepSectionName,
 			stepComponent,
+			pageTitle: getFlowPageTitle( flowName ),
 		} );
 
 		next();

@@ -21,7 +21,6 @@ import {
 	pick,
 	startsWith,
 } from 'lodash';
-import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -73,6 +72,7 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 // Current directory dependencies
 import steps from './config/steps';
 import flows from './config/flows';
+import { getStepComponent } from './config/step-components';
 import {
 	canResumeFlow,
 	getCompletedSteps,
@@ -105,6 +105,10 @@ class Signup extends React.Component {
 		siteDomains: PropTypes.array,
 		isPaidPlan: PropTypes.bool,
 		trackAffiliateReferral: PropTypes.func.isRequired,
+		flowName: PropTypes.string,
+		stepName: PropTypes.string,
+		pageTitle: PropTypes.string,
+		stepSectionName: PropTypes.string,
 	};
 
 	constructor( props, context ) {
@@ -112,14 +116,8 @@ class Signup extends React.Component {
 
 		this.state = {
 			controllerHasReset: false,
-			login: false,
-			dependencies: props.signupDependencies,
-			siteDomains: props.siteDomains,
-			isPaidPlan: props.isPaidPlan,
 			shouldShowLoadingScreen: false,
 			resumingStep: undefined,
-			loginHandler: null,
-			hasCartItems: false,
 			plans: false,
 			previousFlowName: null,
 		};
@@ -169,12 +167,11 @@ class Signup extends React.Component {
 			);
 		}
 
-		this.checkForCartItems( this.props.signupDependencies );
 		this.recordStep();
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { signupDependencies, stepName, flowName, progress } = nextProps;
+		const { stepName, flowName, progress } = nextProps;
 
 		this.removeFulfilledSteps( nextProps );
 
@@ -197,8 +194,6 @@ class Signup extends React.Component {
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
 			this.updateShouldShowLoadingScreen( progress );
 		}
-
-		this.checkForCartItems( signupDependencies );
 	}
 
 	componentWillUnmount() {
@@ -209,6 +204,7 @@ class Signup extends React.Component {
 		debug( 'Signup component mounted' );
 		this.startTrackingForBusinessSite();
 		this.recordSignupStart();
+		this.preloadNextStep();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -217,6 +213,10 @@ class Signup extends React.Component {
 			get( prevProps.signupDependencies, 'siteType' )
 		) {
 			this.startTrackingForBusinessSite();
+		}
+
+		if ( this.props.stepName !== prevProps.stepName ) {
+			this.preloadNextStep();
 		}
 	}
 
@@ -297,18 +297,12 @@ class Signup extends React.Component {
 		}
 	};
 
-	checkForCartItems = signupDependencies => {
-		const dependenciesContainCartItem = dependencies => {
-			return (
-				dependencies &&
-				( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
-			);
-		};
+	preloadNextStep() {
+		const currentStepName = this.props.stepName;
+		const nextStepName = flows.getNextStepNameInFlow( this.props.flowName, currentStepName );
 
-		if ( dependenciesContainCartItem( signupDependencies ) ) {
-			this.setState( { hasCartItems: true } );
-		}
-	};
+		nextStepName && getStepComponent( nextStepName );
+	}
 
 	recordStep = ( stepName = this.props.stepName, flowName = this.props.flowName ) => {
 		analytics.tracks.recordEvent( 'calypso_signup_step_start', {
@@ -349,21 +343,11 @@ class Signup extends React.Component {
 			flow: this.props.flowName,
 		} );
 
-		if ( dependencies && ( dependencies.cartItem || dependencies.domainItem ) ) {
-			this.handleLogin( dependencies, destination );
-		} else {
-			this.setState( {
-				loginHandler: this.handleLogin.bind( this, dependencies, destination ),
-			} );
-		}
+		this.handleLogin( dependencies, destination );
 	};
 
-	handleLogin = ( dependencies, destination, event ) => {
+	handleLogin( dependencies, destination ) {
 		const userIsLoggedIn = this.props.isLoggedIn;
-
-		if ( event && event.redirectTo ) {
-			destination = event.redirectTo;
-		}
 
 		debug( `Logging you in to "${ destination }"` );
 
@@ -406,7 +390,7 @@ class Signup extends React.Component {
 				} );
 			}
 		}
-	};
+	}
 
 	loginRedirectTo = path => {
 		let redirectTo;
@@ -554,14 +538,7 @@ class Signup extends React.Component {
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
 					{ this.state.shouldShowLoadingScreen ? (
-						<SignupProcessingScreen
-							hasCartItems={ this.state.hasCartItems }
-							steps={ this.props.progress }
-							loginHandler={ this.state.loginHandler }
-							signupDependencies={ this.props.signupDependencies }
-							flowName={ this.props.flowName }
-							flowSteps={ flow.steps }
-						/>
+						<SignupProcessingScreen />
 					) : (
 						<CurrentComponent
 							path={ this.props.path }
@@ -622,15 +599,11 @@ class Signup extends React.Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const pageTitle =
-			this.props.flowName === 'account'
-				? translate( 'Create an account' )
-				: translate( 'Create a site' );
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-				<DocumentHead title={ pageTitle } />
+				<DocumentHead title={ this.props.pageTitle } />
 				<SignupHeader
 					positionInFlow={ this.getPositionInFlow() }
 					flowLength={ this.getFlowLength() }

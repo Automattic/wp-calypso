@@ -423,7 +423,7 @@ function handlePreview( calypsoPort ) {
 		} );
 
 		function sendPreviewData() {
-			const previewUrl = e.target.href;
+			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
 
 			const featuredImageId = select( 'core/editor' ).getEditedPostAttribute( 'featured_media' );
 			const featuredImage = featuredImageId

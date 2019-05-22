@@ -91,7 +91,7 @@ export class UserStep extends Component {
 	}
 
 	setSubHeaderText( props ) {
-		const { flowName, oauth2Client, translate } = props;
+		const { flowName, oauth2Client, positionInFlow, translate } = props;
 
 		let subHeaderText = props.subHeaderText;
 
@@ -144,6 +144,10 @@ export class UserStep extends Component {
 		} else if ( 'onboarding-dev' === flowName ) {
 			// Displays no sub header for onboarding-dev flow
 			subHeaderText = '';
+		}
+
+		if ( positionInFlow === 0 && [ 'onboarding', 'onboarding-dev' ].includes( flowName ) ) {
+			subHeaderText = translate( 'First, create your WordPress.com account.' );
 		}
 
 		this.setState( { subHeaderText } );

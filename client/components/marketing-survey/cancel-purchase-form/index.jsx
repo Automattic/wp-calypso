@@ -31,6 +31,11 @@ import {
 	nextAdventureOptionsForPurchase,
 } from './options-for-product';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CancelPurchaseForm extends React.Component {
 	static propTypes = {
 		chatInitiated: PropTypes.func.isRequired,

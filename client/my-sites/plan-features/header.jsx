@@ -28,8 +28,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
-import { requestGeoLocation } from 'state/data-getters';
-import { abtest } from 'lib/abtest';
 
 export class PlanFeaturesHeader extends Component {
 	render() {
@@ -106,16 +104,7 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderSignupHeader() {
-		const {
-			planType,
-			popular,
-			newPlan,
-			bestValue,
-			title,
-			audience,
-			translate,
-			countryCode,
-		} = this.props;
+		const { planType, popular, newPlan, bestValue, title, audience, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
@@ -135,9 +124,7 @@ export class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
-					{ countryCode && abtest( 'jetpackMonthlyPlansOnly', countryCode ) !== 'monthlyOnly'
-						? this.getIntervalDiscount()
-						: null }
+					{ this.getIntervalDiscount() }
 				</div>
 			</div>
 		);
@@ -410,6 +397,5 @@ export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) 
 		isYearly,
 		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
-		countryCode: requestGeoLocation().data || 'US',
 	};
 } )( localize( PlanFeaturesHeader ) );

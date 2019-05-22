@@ -21,6 +21,7 @@ import {
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
+import FeatureExample from 'components/feature-example';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/plans/navigation';
 import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
@@ -32,11 +33,13 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import CurrentPlanThankYouCard from './current-plan-thank-you-card';
+import PaidPlanThankYouCard from './current-plan-thank-you-card/paid-plan-thank-you-card';
+import FreePlanThankYouCard from './current-plan-thank-you-card/free-plan-thank-you-card';
 
 /**
  * Style dependencies
@@ -88,20 +91,28 @@ class CurrentPlan extends Component {
 
 	render() {
 		const {
-			selectedSite,
-			selectedSiteId,
-			domains,
 			currentPlan,
+			domains,
 			hasDomainsLoaded,
 			isExpiring,
+			isFreePlan,
 			path,
+			selectedSite,
+			selectedSiteId,
 			shouldShowDomainWarnings,
 			showJetpackChecklist,
+			showThankYou,
 			translate,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug,
 			isLoading = this.isLoading();
+
+		const currentPlanThankYouCard = isFreePlan ? (
+			<FreePlanThankYouCard />
+		) : (
+			<PaidPlanThankYouCard />
+		);
 
 		const planConstObj = getPlan( currentPlanSlug ),
 			planFeaturesHeader = translate( '%(planName)s plan features', {
@@ -120,7 +131,7 @@ class CurrentPlan extends Component {
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<PlansNavigation path={ path } />
+				{ ! showThankYou && <PlansNavigation path={ path } /> }
 
 				{ showDomainWarnings && (
 					<DomainWarnings
@@ -139,8 +150,8 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				{ this.props.showThankYou ? (
-					<CurrentPlanThankYouCard />
+				{ showThankYou ? (
+					currentPlanThankYouCard
 				) : (
 					<CurrentPlanHeader
 						isPlaceholder={ isLoading }
@@ -155,18 +166,28 @@ class CurrentPlan extends Component {
 				{ showJetpackChecklist && (
 					<Fragment>
 						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-						<JetpackChecklist />
+						{ showThankYou ? (
+							<FeatureExample role="presentation">
+								<JetpackChecklist />
+							</FeatureExample>
+						) : (
+							<JetpackChecklist />
+						) }
 					</Fragment>
 				) }
 
-				<div
-					className={ classNames( 'current-plan__header-text current-plan__text', {
-						'is-placeholder': { isLoading },
-					} ) }
-				>
-					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
-				</div>
-				<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
+				{ ! showThankYou && (
+					<Fragment>
+						<div
+							className={ classNames( 'current-plan__header-text current-plan__text', {
+								'is-placeholder': { isLoading },
+							} ) }
+						>
+							<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+						</div>
+						<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
+					</Fragment>
+				) }
 
 				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 			</Main>
@@ -190,6 +211,7 @@ export default connect( ( state, { requestThankYou } ) => {
 		domains,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
+		isFreePlan: isSiteOnFreePlan( state, selectedSiteId ),
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),

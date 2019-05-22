@@ -123,7 +123,7 @@ class StoreUpsellComponent extends Component {
 							body={
 								<div className="google-voucher__initial-step">
 									<TipInfo
-										info={ 'Offer valid in US after spending the first $25 on Google Ads.' }
+										info={ 'Offer valid in US and CA after spending the first $25 on Google Ads.' }
 									/>
 								</div>
 							}

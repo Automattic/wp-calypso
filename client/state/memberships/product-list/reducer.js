@@ -6,7 +6,11 @@
 
 import productListSchema from './schema';
 import { combineReducers, createReducer } from 'state/utils';
-import { MEMBERSHIPS_PRODUCTS_RECEIVE, MEMBERSHIPS_PRODUCT_RECEIVE } from 'state/action-types';
+import {
+	MEMBERSHIPS_PRODUCTS_RECEIVE,
+	MEMBERSHIPS_PRODUCT_RECEIVE,
+	MEMBERSHIPS_PRODUCT_DELETE,
+} from 'state/action-types';
 
 /**
  * Edits existing product if one with matching ID found.
@@ -47,6 +51,10 @@ export const items = createReducer(
 		[ MEMBERSHIPS_PRODUCT_RECEIVE ]: ( state, { siteId, product } ) => ( {
 			...state,
 			[ siteId ]: addOrEditProduct( state[ siteId ], product ),
+		} ),
+		[ MEMBERSHIPS_PRODUCT_DELETE ]: ( state, { siteId, product } ) => ( {
+			...state,
+			[ siteId ]: state[ siteId ].filter( existingProduct => existingProduct.ID !== product.ID ),
 		} ),
 	},
 	productListSchema
