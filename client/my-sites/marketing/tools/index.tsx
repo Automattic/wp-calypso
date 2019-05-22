@@ -12,9 +12,9 @@ import { useTranslate } from 'i18n-calypso';
 import Button from 'components/button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import MarketingToolsGoogleAdwordsFeature from './google-adwords';
-import MarketingToolsFeature from './feature';
+import MarketingPageFeature from 'components/marketing-page-feature';
 import MarketingToolsGoogleMyBusinessFeature from './google-my-business-feature';
-import MarketingToolsHeader from './header';
+import MarketingPageHeader from 'components/marketing-page-header';
 import { marketingConnections, marketingTraffic } from 'my-sites/marketing/paths';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -64,10 +64,10 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		<Fragment>
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
-			<MarketingToolsHeader handleButtonClick={ handleBoostMyTrafficClick } />
+			<MarketingPageHeader handleButtonClick={ handleBoostMyTrafficClick } />
 
 			<div className="tools__feature-list">
-				<MarketingToolsFeature
+				<MarketingPageFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
 						"A custom logo helps your brand pop and makes your site memorable. Our partner Looka is standing by if you'd like some professional help."
@@ -82,9 +82,9 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					>
 						{ translate( 'Create A Logo' ) }
 					</Button>
-				</MarketingToolsFeature>
+				</MarketingPageFeature>
 
-				<MarketingToolsFeature
+				<MarketingPageFeature
 					title={ translate( 'Get social, and share your blog posts where the people are' ) }
 					description={ translate(
 						"Use your site's Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
@@ -94,13 +94,13 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					<Button compact onClick={ handleStartSharingClick }>
 						{ translate( 'Start Sharing' ) }
 					</Button>
-				</MarketingToolsFeature>
+				</MarketingPageFeature>
 
 				<MarketingToolsGoogleMyBusinessFeature />
 
 				<MarketingToolsGoogleAdwordsFeature />
 
-				<MarketingToolsFeature
+				<MarketingPageFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
 					description={ translate(
 						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site."
@@ -115,7 +115,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					>
 						{ translate( 'Find Your Expert' ) }
 					</Button>
-				</MarketingToolsFeature>
+				</MarketingPageFeature>
 			</div>
 		</Fragment>
 	);

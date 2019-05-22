@@ -13,7 +13,7 @@ import Button from 'components/button';
 import { FEATURE_GOOGLE_MY_BUSINESS, PLAN_BUSINESS } from 'lib/plans/constants';
 import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import MarketingToolsFeature from './feature';
+import MarketingPageFeature from 'components/marketing-page-feature';
 import MarketingToolsFeatureButtonWithPlanGate from './feature-button-with-plan-gate';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QueryKeyringServices from 'components/data/query-keyring-services';
@@ -68,7 +68,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 			<QueryKeyringConnections forceRefresh />
 			<QueryKeyringServices />
 
-			<MarketingToolsFeature
+			<MarketingPageFeature
 				description={ translate(
 					'Get ahead of your competition. Be there when customers search businesses like yours on Google Search and Maps by connecting to Google My Business.'
 				) }
@@ -88,7 +88,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 						{ translate( 'Go To Google My Business' ) }
 					</Button>
 				) }
-			</MarketingToolsFeature>
+			</MarketingPageFeature>
 		</Fragment>
 	);
 };

@@ -11,8 +11,8 @@ import { useTranslate } from 'i18n-calypso';
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
-import MarketingFeature from './feature';
-import MarketingHeader from './header';
+import MarketingPageFeature from 'components/marketing-page-feature';
+import MarketingPageHeader from 'components/marketing-page-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
@@ -53,9 +53,9 @@ export const HireAProPage: FunctionComponent< Props > = ( { recordTracksEvent } 
 			<PageViewTracker path="/hire-a-pro/:site" title="Hire a Pro" />
 			<DocumentHead title={ translate( 'Sharing' ) } />
 			<Fragment>
-				<MarketingHeader handleButtonClick={ handleHeaderBannerClick } />
+				<MarketingPageHeader handleButtonClick={ handleHeaderBannerClick } />
 				<div className="hire-a-pro__feature-list">
-					<MarketingFeature
+					<MarketingPageFeature
 						title={ translate( 'General Frelancer' ) }
 						description={ translate( 'Lorem Ipsum' ) }
 						imagePath="/calypso/images/marketing/looka-logo.svg"
@@ -63,9 +63,9 @@ export const HireAProPage: FunctionComponent< Props > = ( { recordTracksEvent } 
 						<Button compact onClick={ handleGeneralClick } href={ '#' } target="_blank">
 							{ translate( 'Hire A Freelancer' ) }
 						</Button>
-					</MarketingFeature>
+					</MarketingPageFeature>
 
-					<MarketingFeature
+					<MarketingPageFeature
 						title={ translate( 'General Frelancer' ) }
 						description={ translate( 'Lorem Ipsum' ) }
 						imagePath="/calypso/images/marketing/looka-logo.svg"
@@ -73,9 +73,9 @@ export const HireAProPage: FunctionComponent< Props > = ( { recordTracksEvent } 
 						<Button compact onClick={ handleDesignClick } href={ '#' } target="_blank">
 							{ translate( 'Hire A Designer' ) }
 						</Button>
-					</MarketingFeature>
+					</MarketingPageFeature>
 
-					<MarketingFeature
+					<MarketingPageFeature
 						title={ translate( 'General Frelancer' ) }
 						description={ translate( 'Lorem Ipsum' ) }
 						imagePath="/calypso/images/marketing/looka-logo.svg"
@@ -83,9 +83,9 @@ export const HireAProPage: FunctionComponent< Props > = ( { recordTracksEvent } 
 						<Button compact onClick={ handleSeoClick } href={ '#' } target="_blank">
 							{ translate( 'Hire A SEO Exper' ) }
 						</Button>
-					</MarketingFeature>
+					</MarketingPageFeature>
 
-					<MarketingFeature
+					<MarketingPageFeature
 						title={ translate( 'General Frelancer' ) }
 						description={ translate( 'Lorem Ipsum' ) }
 						imagePath="/calypso/images/marketing/looka-logo.svg"
@@ -93,7 +93,7 @@ export const HireAProPage: FunctionComponent< Props > = ( { recordTracksEvent } 
 						<Button compact onClick={ handleCopyWriterClick } href={ '#' } target="_blank">
 							{ translate( 'Hire A Writer' ) }
 						</Button>
-					</MarketingFeature>
+					</MarketingPageFeature>
 				</div>
 			</Fragment>
 		</Main>

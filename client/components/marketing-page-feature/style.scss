@@ -1,0 +1,95 @@
+.marketing-page-feature__item {
+	display: flex;
+	flex-direction: column;
+	margin: 0.5em;
+	width: calc( 100% - 1em );
+
+	// Reduce top margin of GMB logo
+	&:nth-child( 3 ) .marketing-page-feature__item-body-image {
+		margin-top: 18px;
+	}
+
+	// Reduce top margin of Upwork logo
+	&:nth-child( 5 ) .marketing-page-feature__item-body-image {
+		margin-top: 20px;
+	}
+
+	@include breakpoint( '>1040px' ) {
+		width: calc( 50% - 1em );
+	}
+}
+
+.marketing-page-feature__item-disclaimer {
+	color: var( --color-text-subtle );
+	font-style: italic;
+}
+
+.marketing-page-feature__item-body {
+	align-items: flex-start;
+	display: flex; // grow this, leave buttons on the bottom of the card
+	flex: 1 0 auto;
+}
+
+.marketing-page-feature__item-body-text {
+	width: 100%;
+
+	> p {
+		margin-bottom: 0;
+	}
+
+	@include breakpoint( '>1040px' ) {
+		width: 75%;
+	}
+}
+
+.marketing-page-feature__item-body-image {
+	margin: 10px 20px 0 0;
+	max-width: 150px;
+	width: 15%;
+
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+	}
+
+	@include breakpoint( '<480px' ) {
+		display: none;
+	}
+}
+
+.marketing-page-feature__item-child-row {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	margin-top: 1em;
+
+	.button {
+		margin: 0;
+		text-align: center;
+		width: auto;
+	}
+
+	.purchase-detail__info {
+		margin-top: 1em;
+	}
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+		justify-content: flex-end;
+
+		.button {
+			margin: 0 1em 0 0;
+			width: auto;
+		}
+	}
+
+	@include breakpoint( '>1040px' ) {
+
+		.button {
+			margin: 0 0 0 1em;
+		}
+
+		.purchase-detail__button {
+			float: right;
+		}
+	}
+}

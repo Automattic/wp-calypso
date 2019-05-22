@@ -9,6 +9,11 @@ import React, { ReactNode, FunctionComponent } from 'react';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 interface Props {
 	children: ReactNode;
 	description: string;
@@ -27,28 +32,28 @@ const MarketingFeature: FunctionComponent< Props > = ( {
 	title,
 } ) => {
 	return (
-		<Card className="hire-a-pro__feature-list-item">
-			<div className="hire-a-pro__feature-list-item-body">
+		<Card className="marketing-page-feature__item">
+			<div className="marketing-page-feature__item-body">
 				{ imagePath && (
 					<img
 						alt={ imageAlt }
-						className="hire-a-pro__feature-list-item-body-image"
+						className="marketing-page-feature__item-body-image"
 						src={ imagePath }
 					/>
 				) }
 
-				<div className="hire-a-pro__feature-list-item-body-text">
+				<div className="marketing-page-feature__item-body-text">
 					<CardHeading>{ title }</CardHeading>
 
 					<p>{ description }</p>
 
 					{ disclaimer && (
-						<p className="hire-a-pro__feature-list-item-disclaimer">{ disclaimer }</p>
+						<p className="marketing-page-feature__item-disclaimer">{ disclaimer }</p>
 					) }
 				</div>
 			</div>
 
-			<div className="hire-a-pro__feature-list-item-child-row">{ children }</div>
+			<div className="marketing-page-feature__item-child-row">{ children }</div>
 		</Card>
 	);
 };

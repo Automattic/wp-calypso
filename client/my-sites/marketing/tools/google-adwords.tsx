@@ -16,7 +16,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import GoogleVoucherDetails from 'my-sites/checkout/checkout-thank-you/google-voucher';
 import { isPremium, isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
-import MarketingToolsFeature from './feature';
+import MarketingPageFeature from 'components/marketing-page-feature';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -69,7 +69,7 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 	return (
 		<Fragment>
 			<QuerySiteVouchers siteId={ siteId } />
-			<MarketingToolsFeature
+			<MarketingPageFeature
 				title={ translate( 'Advertise with your %(cost)s Google Adwords credit', {
 					args: {
 						cost: '$100',
@@ -86,7 +86,7 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 				imagePath="/calypso/images/marketing/google-ads-logo.png"
 			>
 				{ renderButton() }
-			</MarketingToolsFeature>
+			</MarketingPageFeature>
 		</Fragment>
 	);
 };

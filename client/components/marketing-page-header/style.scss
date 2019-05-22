@@ -1,0 +1,55 @@
+.marketing-page-header__body {
+	display: flex;
+	flex-direction: row;
+	padding: 11px 24px; // standard padding
+
+	@include breakpoint( '>1040px' ) {
+		max-height: 300px;
+	}
+}
+
+.marketing-page-header__info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.marketing-page-header__title {
+	font-size: 21px;
+	font-weight: 400;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+.marketing-page-header__description {
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.marketing-page-header__button-row {
+	align-content: center;
+	display: flex;
+	flex-direction: row;
+	margin: 20px 0;
+
+	.button {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+			text-align: center;
+		}
+	}
+}
+
+.marketing-page-header__image-wrapper {
+	display: none;
+
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+		min-width: 400px;
+	}
+
+	.marketing-page-header__image {
+		position: relative;
+			left: -20px;
+	}
+}
