@@ -32,12 +32,28 @@ export const JQUERY_URL = 'https://s0.wp.com/wp-includes/js/jquery/jquery.js';
 export function loadScript( url, callback ) {
 	// If this script is not currently being loaded, create a script element and attach to document head.
 	const shouldLoadScript = ! isLoading( url );
-
-	addScriptCallback( url, callback );
-
 	if ( shouldLoadScript ) {
+		// the onload/onerror callbacks are guaranteed to be called asynchronously, so it's ok to first
+		// add the element and only then attach callbacks, as long as it happens in one event loop tick.
 		attachToHead( createScriptElement( url ) );
 	}
+
+	// if callback is provided, behave traditionally
+	if ( typeof callback === 'function' ) {
+		addScriptCallback( url, callback );
+		return;
+	}
+
+	// but if not, return a Promise
+	return new Promise( ( resolve, reject ) => {
+		addScriptCallback( url, error => {
+			if ( error === null ) {
+				resolve();
+			} else {
+				reject( error );
+			}
+		} );
+	} );
 }
 
 export function loadjQueryDependentScript( url, callback ) {
@@ -45,14 +61,17 @@ export function loadjQueryDependentScript( url, callback ) {
 
 	if ( window.jQuery ) {
 		debug( `jQuery found on window, skipping jQuery script loading for "${ url }"` );
-		loadScript( url, callback );
+		return loadScript( url, callback );
+	}
+
+	const loadPromise = loadScript( JQUERY_URL ).then( () => loadScript( url ) );
+
+	// if callback is provided, call it on resolution
+	if ( typeof callback === 'function' ) {
+		loadPromise.then( () => callback( null ), error => callback( error ) );
 		return;
 	}
 
-	loadScript( JQUERY_URL, function( error ) {
-		if ( error ) {
-			callback( error );
-		}
-		loadScript( url, callback );
-	} );
+	// if not, return the Promise
+	return loadPromise;
 }

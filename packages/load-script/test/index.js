@@ -76,27 +76,35 @@ describe( 'loadScript', () => {
 			delete window.jQuery;
 		} );
 
-		test( 'should sequentially load the jQuery script and the script from the URL (in that order)', () => {
+		test( 'should sequentially load the jQuery script and the script from the URL (in that order)', done => {
 			// NOTE: jsdom has jQuery attached to the window. We temporarily replace this
 			// jQuery instance fir this test.
 			const jQueryBackup = global.window.jQuery;
 			global.window.jQuery = false;
 
 			const callback = jest.fn();
-			loadjQueryDependentScript( url, callback, true );
+			loadjQueryDependentScript( url ).then( callback );
 
-			expect( callback ).not.toHaveBeenCalled();
 			expect( createScriptElement ).toHaveBeenCalledTimes( 1 );
 			expect( createScriptElement ).toHaveBeenLastCalledWith( JQUERY_URL );
 
 			executeCallbacks( JQUERY_URL );
-			expect( createScriptElement ).toHaveBeenCalledTimes( 2 );
-			expect( createScriptElement ).toHaveBeenLastCalledWith( url );
 
-			executeCallbacks( url );
-			expect( callback ).toHaveBeenCalledTimes( 1 );
+			// enforce an event loop tick to make sure all internal Promises got resolved
+			setTimeout( () => {
+				expect( createScriptElement ).toHaveBeenCalledTimes( 2 );
+				expect( createScriptElement ).toHaveBeenLastCalledWith( url );
 
-			global.window.jQuery = jQueryBackup;
+				executeCallbacks( url );
+
+				// enforce an event loop tick to make sure all internal Promises got resolved
+				setTimeout( () => {
+					expect( callback ).toHaveBeenCalledTimes( 1 );
+
+					global.window.jQuery = jQueryBackup;
+					done();
+				}, 0 );
+			}, 0 );
 		} );
 	} );
 } );
