@@ -386,7 +386,7 @@ export const withoutPersistence = reducer => {
  *
  * @param  {*}        initialState   Initial state
  * @param  {Object}   handlers       Object mapping action types to state action handlers
- * @param  {Object=}  schema         JSON schema object for deserialization validation
+ * @param  {?Object}  schema         JSON schema object for deserialization validation
  * @return {Function}                Reducer function
  */
 export function createReducer( initialState, handlers, schema ) {

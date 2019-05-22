@@ -54,7 +54,6 @@ describe( 'reducer', () => {
 			'connection',
 			'deleting',
 			'domains',
-			'externalContributors',
 			'requestingAll',
 			'items',
 			'mediaStorage',
