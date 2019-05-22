@@ -31,6 +31,7 @@ import ProgressBar from 'components/progress-bar';
 import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/domains';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
+import { hasDomainCredit } from 'state/sites/plans/selectors';
 import Badge from 'components/badge';
 import InfoPopover from 'components/info-popover';
 import { HTTPS_SSL } from 'lib/url/support';
@@ -126,6 +127,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion,
 			translate,
 			pendingCheckSuggestion,
+			siteHasDomainCredit,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
@@ -144,7 +146,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			} );
 
 			buttonStyles = { ...buttonStyles, primary: false };
-		} else if ( isSignupStep ) {
+		} else if ( isSignupStep || siteHasDomainCredit ) {
 			buttonContent = translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		} else {
 			buttonContent = shouldBundleDomainWithPlan(
@@ -337,11 +339,13 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
+	const siteId = get( props, 'selectedSite.ID' );
 
 	return {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
 		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode ),
 		productSaleCost: getDomainSalePrice( productSlug, productsList, currentUserCurrencyCode ),
+		siteHasDomainCredit: hasDomainCredit( state, siteId ),
 	};
 };
 
