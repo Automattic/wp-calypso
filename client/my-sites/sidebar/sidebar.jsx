@@ -186,6 +186,32 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackHireABuilderClick = () => {
+		this.trackMenuItemClick( 'hire-a-pro' );
+		this.onNavigate();
+	};
+
+	hireABuilder() {
+		const { path } = this.props;
+		const hireABuilderLink = '/hire-a-pro' + this.props.siteSuffix;
+
+		if ( ! this.props.siteId ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				label={ this.props.translate( 'Hire a Pro' ) }
+				selected={ itemLinkMatches( '/hire-a-pro', path ) }
+				link={ hireABuilderLink }
+				onNavigate={ this.trackHireABuilderClick }
+				icon="speaker"
+				preloadSectionName="hire-a-builder"
+				tipTarget="hire-a-builder"
+			/>
+		);
+	}
+
 	trackCustomizeClick = () => {
 		this.trackMenuItemClick( 'customize' );
 		this.onNavigate();
@@ -643,6 +669,7 @@ export class MySitesSidebar extends Component {
 					{ this.tools() }
 					{ this.marketing() }
 					{ this.earn() }
+					{ this.hireABuilder() }
 					{ this.activity() }
 				</ExpandableSidebarMenu>
 

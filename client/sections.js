@@ -167,6 +167,13 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'hire-a-pro',
+		paths: [ '/hire-a-pro' ],
+		module: 'my-sites/hire-a-pro',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'jetpack-connect',
 		paths: [ '/jetpack' ],
 		module: 'jetpack-connect',
