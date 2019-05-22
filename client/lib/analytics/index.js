@@ -45,9 +45,7 @@ import {
 	recordAddToCart,
 	recordOrder,
 } from 'lib/analytics/ad-tracking';
-
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
-
 import { statsdTimingUrl } from 'lib/analytics/statsd';
 
 /**
