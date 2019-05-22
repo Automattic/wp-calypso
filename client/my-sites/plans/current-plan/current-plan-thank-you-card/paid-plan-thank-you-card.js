@@ -2,17 +2,20 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { parse as parseUrl } from 'url';
 import React, { Component, Fragment } from 'react';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteFileModDisableReason } from 'lib/site/utils';
 import { isJetpackSiteMainNetworkSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
+import Button from 'components/button';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
 import ProgressBar from 'components/progress-bar';
@@ -36,10 +39,11 @@ export class PaidPlanThankYouCard extends Component {
 			fileModDisableReason,
 			hasMinimumJetpackVersion,
 			installProgress,
+			installState,
 			isSiteMainNetworkSite,
 			isSiteMultiSite,
+			siteSlug,
 			translate,
-			installState,
 		} = this.props;
 
 		const securityIllustration = '/calypso/images/illustrations/security.svg';
@@ -67,16 +71,13 @@ export class PaidPlanThankYouCard extends Component {
 				<ThankYouCard
 					illustration={ fireworksIllustration }
 					title={ translate( 'Thank you for your purchase!' ) }
-					showContinueButton
 				>
+					<p>{ translate( "Unfortunately, we can't modify files on your site, so you'll need to set up your plan features manually." ) }</p>
+					<p>{ translate( "Don't worry. We'll quickly guide you through the setup process." ) }</p>
 					<p>
-						{ translate( "We can't modify files on your site." ) }
-						<br />
-						{ translate( 'You will have to {{link}}set up your plan manually{{/link}}.', {
-							components: {
-								link: <a href={ SETTING_UP_PREMIUM_SERVICES } />,
-							},
-						} ) }
+						<Button primary href={ SETTING_UP_PREMIUM_SERVICES } target="_blank">
+							{ translate( 'Set up features' ) }
+						</Button>
 					</p>
 				</ThankYouCard>
 			);
@@ -86,15 +87,14 @@ export class PaidPlanThankYouCard extends Component {
 			return (
 				<ThankYouCard
 					illustration={ fireworksIllustration }
-					showContinueButton
 					title={ translate( 'Thank you for your purchase!' ) }
 				>
+					<p>{ translate( "Unfortunately, your site is part of a multi-site network, but is not the main network site. You'll need to set up your plan features manually." ) }</p>
+					<p>{ translate( "Don't worry. We'll quickly guide you through the setup process." ) }</p>
 					<p>
-						{ translate(
-							"We can't modify files on your site. You will have to set up your plan manually."
-						) }
-						<br />
-						{ translate( "We'll guide you through it." ) }
+						<Button primary href={ SETTING_UP_PREMIUM_SERVICES } target="_blank">
+							{ translate( 'Set up features' ) }
+						</Button>
 					</p>
 				</ThankYouCard>
 			);
@@ -119,7 +119,7 @@ export class PaidPlanThankYouCard extends Component {
 						<ProgressBar isPulsing total={ 100 } value={ installProgress || 0 } />
 
 						<p>
-							<a href={ this.getMyPlanRoute() }>{ translate( 'Hide message' ) }</a>
+							<a href={ `/plans/my-plan/${ siteSlug }` }>{ translate( 'Hide message' ) }</a>
 						</p>
 					</ThankYouCard>
 				) }
@@ -162,5 +162,6 @@ export default connect( state => {
 		installState,
 		isSiteMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
 		isSiteMultiSite: isJetpackSiteMultiSite( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
 	};
 }, { recordTracksEvent } )( localize( PaidPlanThankYouCard ) );
