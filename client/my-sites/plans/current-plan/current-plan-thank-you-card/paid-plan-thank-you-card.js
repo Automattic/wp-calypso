@@ -54,7 +54,7 @@ export class PaidPlanThankYouCard extends Component {
 										{ translate( 'So long spam, hello backups!' ) }
 									</h1>
 									<p>
-										{ translate( 'We’ve finished setting up spam filtering and backups for you.' ) }
+										{ translate( "We've finished setting up spam filtering and backups for you." ) }
 										<br />
 										{ translate( "You're now ready to finish the rest of the checklist." ) }
 									</p>
