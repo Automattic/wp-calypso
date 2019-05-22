@@ -10,21 +10,21 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import {
-	addExternalContributor,
-	removeExternalContributor,
-} from 'state/sites/external-contributors/actions';
 import ContractorSelect from 'my-sites/people/contractor-select';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import { isUserExternalContributor } from 'state/selectors/is-user-external-contributor';
 import { updateUser } from 'lib/users/actions';
 import RoleSelect from 'my-sites/people/role-select';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import {
+	requestExternalContributors,
+	requestExternalContributorsAddition,
+	requestExternalContributorsRemoval,
+} from 'state/data-getters';
 
 /**
  * Style dependencies
@@ -114,9 +114,9 @@ class EditUserForm extends Component {
 		);
 
 		if ( true === changedSettings.isExternalContributor ) {
-			this.props.addExternalContributor( this.props.siteId, this.state.ID );
+			requestExternalContributorsAddition( this.props.siteId, this.state.ID );
 		} else if ( false === changedSettings.isExternalContributor ) {
-			this.props.removeExternalContributor( this.props.siteId, this.state.ID );
+			requestExternalContributorsRemoval( this.props.siteId, this.state.ID );
 		}
 
 		this.props.recordGoogleEvent( 'People', 'Clicked Save Changes Button on User Edit' );
@@ -266,15 +266,14 @@ class EditUserForm extends Component {
 
 export default localize(
 	connect(
-		( state, { siteId, ID } ) => ( {
-			currentUser: getCurrentUser( state ),
-			// We are assuming here this component will always be used in conjunction with the PersonProfile
-			// which will have the QueryExternalContributors
-			isExternalContributor: siteId && ID ? isUserExternalContributor( state, siteId, ID ) : false,
-		} ),
+		( state, { siteId, ID: userId } ) => {
+			const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
+			return {
+				currentUser: getCurrentUser( state ),
+				isExternalContributor: externalContributors.includes( userId ),
+			};
+		},
 		{
-			addExternalContributor,
-			removeExternalContributor,
 			recordGoogleEvent,
 		}
 	)( EditUserForm )

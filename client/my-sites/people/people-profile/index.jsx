@@ -17,9 +17,7 @@ import { decodeEntities } from 'lib/formatting';
  */
 import Gravatar from 'components/gravatar';
 import InfoPopover from 'components/info-popover';
-import { isUserExternalContributor } from 'state/selectors/is-user-external-contributor';
-import QueryExternalContributors from 'components/data/query-external-contributors';
-
+import { requestExternalContributors } from 'state/data-getters';
 /**
  * Style dependencies
  */
@@ -252,7 +250,7 @@ class PeopleProfile extends Component {
 	};
 
 	render() {
-		const { user, siteId } = this.props;
+		const { user } = this.props;
 
 		const classes = classNames( 'people-profile', {
 			'is-placeholder': ! user,
@@ -260,7 +258,6 @@ class PeopleProfile extends Component {
 
 		return (
 			<div className={ classes }>
-				{ siteId && <QueryExternalContributors siteId={ siteId } /> }
 				<div className="people-profile__gravatar">
 					<Gravatar user={ user } size={ 72 } />
 				</div>
@@ -274,11 +271,10 @@ class PeopleProfile extends Component {
 	}
 }
 
-export default connect( ( state, { siteId, user } ) => {
+export default connect( ( _state, { siteId, user } ) => {
 	const userId = user && user.ID;
-
+	const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
 	return {
-		isExternalContributor:
-			siteId && userId ? isUserExternalContributor( state, siteId, userId ) : false,
+		isExternalContributor: externalContributors.includes( userId ),
 	};
 } )( localize( PeopleProfile ) );

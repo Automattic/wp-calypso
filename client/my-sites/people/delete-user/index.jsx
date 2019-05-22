@@ -30,8 +30,10 @@ import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { removeExternalContributor } from 'state/sites/external-contributors/actions';
-import { isUserExternalContributor } from 'state/selectors/is-user-external-contributor';
+import {
+	requestExternalContributors,
+	requestExternalContributorsRemoval,
+} from 'state/data-getters';
 
 /**
  * Style dependencies
@@ -162,10 +164,10 @@ class DeleteUser extends React.Component {
 						'People',
 						'Clicked Confirm Remove User on Edit User Network Site'
 					);
-					deleteUser( this.props.siteId, this.props.user.ID );
 					if ( this.props.isExternalContributor ) {
-						this.props.removeExternalContributor( this.props.siteId, this.props.user.ID );
+						requestExternalContributorsRemoval( this.props.siteId, this.props.user.ID );
 					}
+					deleteUser( this.props.siteId, this.props.user.ID );
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -188,11 +190,11 @@ class DeleteUser extends React.Component {
 		if ( this.state.reassignUser && 'reassign' === this.state.radioOption ) {
 			reassignUserId = this.state.reassignUser.ID;
 		}
-
-		deleteUser( this.props.siteId, this.props.user.ID, reassignUserId );
 		if ( this.props.isExternalContributor ) {
-			this.props.removeExternalContributor( this.props.siteId, this.props.user.ID );
+			requestExternalContributorsRemoval( this.props.siteId, this.props.user.ID );
 		}
+		deleteUser( this.props.siteId, this.props.user.ID, reassignUserId );
+
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
 
@@ -305,10 +307,13 @@ class DeleteUser extends React.Component {
 
 export default localize(
 	connect(
-		( state, { siteId, user: { ID } } ) => ( {
-			currentUser: getCurrentUser( state ),
-			isExternalContributor: siteId && ID ? isUserExternalContributor( state, siteId, ID ) : false,
-		} ),
-		{ recordGoogleEvent, removeExternalContributor }
+		( state, { siteId, user: { ID: userId } } ) => {
+			const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
+			return {
+				currentUser: getCurrentUser( state ),
+				isExternalContributor: externalContributors.includes( userId ),
+			};
+		},
+		{ recordGoogleEvent }
 	)( DeleteUser )
 );

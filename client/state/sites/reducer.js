@@ -10,7 +10,6 @@ import { omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from
 import { plans } from './plans/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
-import externalContributors from './external-contributors/reducer';
 import guidedTransfer from './guided-transfer/reducer';
 import monitor from './monitor/reducer';
 import vouchers from './vouchers/reducer';
@@ -40,8 +39,6 @@ import {
 } from 'state/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
-
-/* eslint-disable no-case-declarations */
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -223,8 +220,6 @@ export function items( state = null, action ) {
 }
 items.schema = sitesSchema;
 
-/* eslint-enable no-case-declarations */
-
 /**
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for all
@@ -302,7 +297,6 @@ export default combineReducers( {
 	connection,
 	deleting,
 	domains,
-	externalContributors,
 	requestingAll,
 	items,
 	mediaStorage,
