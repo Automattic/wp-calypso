@@ -308,6 +308,7 @@ function getDefaultContext( request ) {
 		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
 		isDebug,
+		requestFrom: request.query.from,
 		badge: false,
 		lang,
 		entrypoint: getFilesForEntrypoint( target, 'build' ),

@@ -64,18 +64,18 @@
 	@import 'woocommerce-services/style';
 
 	.main {
-		padding-top: 35px;
+		padding-top: 72px;
 
-		@include breakpoint( '<660px' ) {
-			padding-top: 72px;
+		@include breakpoint( '>660px' ) {
+			padding-top: 35px;
 		}
 	}
 
 	.woocommerce__placeholder {
-		padding-top: 32px;
+		padding-top: 16px;
 
-		@include breakpoint( '<660px' ) {
-			padding-top: 16px;
+		@include breakpoint( '>660px' ) {
+			padding-top: 32px;
 		}
 	}
 
@@ -107,7 +107,7 @@
 		margin: 35px 200px 0 0;
 		max-width: initial;
 
-		@media( max-width: 660px ) {
+		@include breakpoint( '<660px' ) {
 			margin: 0;
 		}
 	}

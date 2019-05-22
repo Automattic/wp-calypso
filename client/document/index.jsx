@@ -63,6 +63,7 @@ class Document extends React.Component {
 			inlineScriptNonce,
 			isSupportSession,
 			addEvergreenCheck,
+			requestFrom,
 		} = this.props;
 
 		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
@@ -80,6 +81,11 @@ class Document extends React.Component {
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' );
+
+		const isJetpackWooCommerceFlow =
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'jetpack-connect' === sectionName &&
+			'woocommerce-setup-wizard' === requestFrom;
 
 		return (
 			<html
@@ -138,6 +144,7 @@ class Document extends React.Component {
 								className={ classNames( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
+									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 								} ) }
 							>
 								<div className="masterbar" />

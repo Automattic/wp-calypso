@@ -75,5 +75,11 @@ describe( 'index', () => {
 
 			expect( url ).to.equal( '/log-in/jetpack' );
 		} );
+
+		test( 'should return the login url with WooCommerce from handler', () => {
+			const url = login( { isNative: true, isJetpack: true, isWoo: true } );
+
+			expect( url ).to.equal( '/log-in/jetpack?from=woocommerce-setup-wizard' );
+		} );
 	} );
 } );

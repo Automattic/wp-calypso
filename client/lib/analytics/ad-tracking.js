@@ -14,7 +14,7 @@ import { v4 as uuid } from 'uuid';
 import config from 'config';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
-import { loadScript as loadScriptCallback } from 'lib/load-script';
+import { loadScript as loadScriptCallback } from '@automattic/load-script';
 import {
 	isAdTrackingAllowed,
 	hashPii,

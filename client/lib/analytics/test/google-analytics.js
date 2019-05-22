@@ -30,7 +30,7 @@ jest.mock( 'config', () => {
 jest.mock( 'lib/analytics/utils', () => ( {
 	isGoogleAnalyticsAllowed: () => true,
 } ) );
-jest.mock( 'lib/load-script', () => require( './mocks/lib/load-script' ) );
+jest.mock( '@automattic/load-script', () => require( './mocks/lib/load-script' ) );
 
 describe( 'analytics.ga', () => {
 	describe( 'makeGoogleAnalyticsTrackingFunction', () => {

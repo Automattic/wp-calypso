@@ -219,6 +219,13 @@ export function generateFlows( {
 			allowContinue: false,
 			hideFlowProgress: true,
 		},
+
+		simple: {
+			steps: [ 'passwordless' ],
+			destination: '/',
+			description: 'A very simple signup flow',
+			lastModified: '2019-05-09',
+		},
 	};
 
 	if ( config.isEnabled( 'rewind/clone-site' ) ) {

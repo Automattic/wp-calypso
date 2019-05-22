@@ -15,3 +15,26 @@
 		background: var( --color-accent );
 	}
 }
+
+@mixin woocommerce-colors() {
+	// Override accent variables with Jetpack colors
+	--color-accent:       #96588a;
+	--color-accent-light: #beabce;
+	--color-accent-dark:  #6d3e64;
+
+	--color-woocommerce-onboarding-background:  #f6f6f6;
+
+	// Override global colors with accent variables
+	--color-primary:                         var( --color-accent-dark );
+	--color-primary-100:					 var( --color-gray-600 );
+	--color-neutral-200:				  	 var( --color-gray-600 );
+	--color-primary-200:					 var( --color-gray-600 );
+	--color-primary-light:                   var( --color-accent-light );
+	--color-button-primary-background-hover: #7c4471;
+	--color-accent-600:                      var( --color-accent-dark );
+
+	::selection {
+		color: var( --color-white );
+		background: var( --color-accent );
+	}
+}

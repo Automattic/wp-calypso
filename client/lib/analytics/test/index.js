@@ -18,7 +18,7 @@ jest.mock( 'config', () => require( './mocks/config' ) );
 jest.mock( 'lib/analytics/ad-tracking', () => ( {
 	retarget: () => {},
 } ) );
-jest.mock( 'lib/load-script', () => require( './mocks/lib/load-script' ) );
+jest.mock( '@automattic/load-script', () => require( './mocks/lib/load-script' ) );
 
 function logImageLoads() {
 	const imagesLoaded = [];

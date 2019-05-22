@@ -309,7 +309,7 @@
 
 // Display sidebar as a panel under a main payment component in mobile checkout
 .layout.is-section-checkout {
-	@media ( max-width: 660px ) {
+	@include breakpoint( '<660px' ) {
 		.layout__content {
 			display: flex;
 			flex-flow: column;
@@ -379,7 +379,7 @@ div.checkout__container .section-header.card {
 	}
 }
 
-@media ( max-width: 660px ) {
+@include breakpoint( '<660px' ) {
    	.layout__primary .secondary-cart {
 		margin-left: 0;
 	}

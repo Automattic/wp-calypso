@@ -8,18 +8,28 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import Card from 'components/card';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
 import ProgressBar from 'components/progress-bar';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class PaidPlanThankYouCard extends Component {
 	getMyPlanRoute() {
 		const { siteSlug } = this.props;
 
 		return `/plans/my-plan/${ siteSlug }`;
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.progressComplete < 100 && this.props.progressComplete >= 100 ) {
+			this.props.recordTracksEvent( 'calypso_plans_autoconfig_success', {
+				checklist_name: 'jetpack',
+				location: 'JetpackChecklist',
+			} );
+		}
 	}
 
 	render() {
@@ -44,9 +54,7 @@ export class PaidPlanThankYouCard extends Component {
 										{ translate( 'So long spam, hello backups!' ) }
 									</h1>
 									<p>
-										{ translate(
-											'We’ve finished setting up spam filtering and backups for you.'
-										) }
+										{ translate( "We've finished setting up spam filtering and backups for you." ) }
 										<br />
 										{ translate( "You're now ready to finish the rest of the checklist." ) }
 									</p>
@@ -68,7 +76,7 @@ export class PaidPlanThankYouCard extends Component {
 									<p>{ translate( "Now let's make sure your site is protected." ) }</p>
 									<p>
 										{ translate(
-												"We're setting up spam filters and site backups for you first. Once that's done, our security checklist will guide you through the next steps."
+											"We're setting up spam filters and site backups for you first. Once that's done, our security checklist will guide you through the next steps."
 										) }
 									</p>
 
@@ -87,11 +95,14 @@ export class PaidPlanThankYouCard extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
 
-	return {
-		progressComplete: getJetpackProductInstallProgress( state, siteId ),
-		siteSlug: getSelectedSiteSlug( state ),
-	};
-} )( localize( PaidPlanThankYouCard ) );
+		return {
+			progressComplete: getJetpackProductInstallProgress( state, siteId ),
+			siteSlug: getSelectedSiteSlug( state ),
+		};
+	},
+	{ recordTracksEvent }
+)( localize( PaidPlanThankYouCard ) );

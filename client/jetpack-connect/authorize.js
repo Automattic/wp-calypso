@@ -168,7 +168,7 @@ export class JetpackAuthorize extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return retryAuth( site, attempts + 1 );
+			return retryAuth( site, attempts + 1, nextProps.authQuery.from );
 		}
 	}
 
@@ -676,14 +676,14 @@ export class JetpackAuthorize extends Component {
 
 	render() {
 		return (
-			<MainWrapper>
+			<MainWrapper isWoo={ this.isWoo() }>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QueryUserConnection
 							siteId={ this.props.authQuery.clientId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						<AuthFormHeader authQuery={ this.props.authQuery } />
+						<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
 						<Card className="jetpack-connect__logged-in-card">
 							<Gravatar user={ this.props.user } size={ 64 } />
 							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>

@@ -69,10 +69,6 @@
 }
 
 .purchase-detail__button {
-	&:not( .clipboard-button ) {
-		width: 80%;
-	}
-
 	@include breakpoint( '<660px' ) {
 		display: block;
 	}

@@ -199,6 +199,10 @@
 			&:last-child {
 				padding-right: 0;
 			}
+			&:first-child:nth-last-child( 4 ),
+			&:first-child:nth-last-child( 4 ) ~ li {
+				  max-width: 25%;
+			}
 		}
 
 		+ li {
@@ -236,10 +240,10 @@
 
 .manage-purchase__detail {
 	@include breakpoint( '<660px' ) {
-		display: block;
-		float: right;
 		text-align: right;
 	}
+
+	display: block;
 
 	.payment-logo {
 		margin-right: 5px;
@@ -287,4 +291,8 @@
 	@include breakpoint( '>480px' ) {
 		padding: 16px 24px;
 	}
+}
+
+.manage-purchase__detail-date-span {
+	white-space: nowrap;
 }

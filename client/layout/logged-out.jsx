@@ -13,6 +13,7 @@ import { includes, get } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import GlobalNotices from 'components/global-notices';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import notices from 'notices';
@@ -20,6 +21,7 @@ import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 
@@ -36,6 +38,7 @@ const hasSidebar = section => {
 const LayoutLoggedOut = ( {
 	currentRoute,
 	isJetpackLogin,
+	isJetpackWooCommerceFlow,
 	masterbarIsHidden,
 	oauth2Client,
 	primary,
@@ -55,6 +58,8 @@ const LayoutLoggedOut = ( {
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
+		'is-jetpack-woocommerce-flow':
+			config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow,
 	};
 
 	let masterbar = null;
@@ -115,10 +120,13 @@ export default connect( state => {
 	const isJetpackLogin = currentRoute === '/log-in/jetpack';
 	const noMasterbarForRoute = currentRoute === '/log-in/jetpack';
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
+	const isJetpackWooCommerceFlow =
+		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
 
 	return {
 		currentRoute,
 		isJetpackLogin,
+		isJetpackWooCommerceFlow,
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
 		section,

@@ -13,6 +13,7 @@ import { times } from 'lodash';
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import {
 	getName,
 	creditCardExpiresBeforeSubscription,
@@ -27,13 +28,19 @@ import {
 	isSubscription,
 	paymentLogoType,
 } from 'lib/purchases';
-import { isDomainRegistration, isDomainTransfer, isConciergeSession } from 'lib/products-values';
+import {
+	isPlan,
+	isDomainRegistration,
+	isDomainTransfer,
+	isConciergeSession,
+} from 'lib/products-values';
 import { getPlan } from 'lib/plans';
 
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
+import FormToggle from 'components/forms/form-toggle';
 import PaymentLogo from 'components/payment-logo';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
@@ -54,6 +61,12 @@ class PurchaseMeta extends Component {
 		hasLoadedSites: false,
 		hasLoadedUserPurchasesFromServer: false,
 		purchaseId: false,
+	};
+
+	state = {
+		...( config.isEnabled( 'autorenewal-toggle' ) && {
+			isAutorenewalEnabled: false,
+		} ),
 	};
 
 	renderPrice() {
@@ -287,10 +300,63 @@ class PurchaseMeta extends Component {
 		);
 	}
 
+	onToggleAutorenewal = () => {
+		// TODO: send actual autorenewal enabling / disabling action here and show a pop-up notice
+		this.setState( {
+			isAutorenewalEnabled: ! this.state.isAutorenewalEnabled,
+		} );
+	};
+
 	renderExpiration() {
-		const { purchase } = this.props;
+		const { purchase, translate } = this.props;
+
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
+		}
+
+		// The toggle is only available for the plan subscription for now, and will be gradully rolled out to
+		// domains and G suite.
+		if (
+			config.isEnabled( 'autorenewal-toggle' ) &&
+			purchase.renewMoment &&
+			isPlan( purchase ) &&
+			! isExpired( purchase )
+		) {
+			// TODO: remove this once the proper state has been introduced.
+			const { isAutorenewalEnabled } = this.state;
+
+			const dateSpan = <span className="manage-purchase__detail-date-span" />;
+			const subsRenewText = isAutorenewalEnabled
+				? translate( 'Auto-renew is ON' )
+				: translate( 'Auto-renew is OFF' );
+			const subsBillingText = isAutorenewalEnabled
+				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
+						args: {
+							renewDate: purchase.renewMoment.format( 'LL' ),
+						},
+						components: {
+							dateSpan,
+						},
+				  } )
+				: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
+						args: {
+							expireDate: purchase.expiryMoment.format( 'LL' ),
+						},
+						components: {
+							dateSpan,
+						},
+				  } );
+
+			return (
+				<li>
+					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
+					<span className="manage-purchase__detail">{ subsRenewText }</span>
+					<span className="manage-purchase__detail">{ subsBillingText }</span>
+					<span className="manage-purchase__detail">
+						<FormToggle checked={ isAutorenewalEnabled } onChange={ this.onToggleAutorenewal } />
+					</span>
+				</li>
+			);
 		}
 
 		return (

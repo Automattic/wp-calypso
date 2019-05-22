@@ -691,3 +691,33 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 		flows.excludeStep( stepName );
 	}
 }
+
+export function createPasswordlessUser( callback, dependencies, data ) {
+	const { email } = data;
+
+	wpcom.undocumented().usersEmailNew( { email }, function( error, response ) {
+		if ( error ) {
+			callback( error );
+
+			return;
+		}
+		callback( error, response );
+	} );
+}
+
+export function verifyPasswordlessUser( callback, dependencies, data ) {
+	const { email, code } = data;
+
+	wpcom.undocumented().usersEmailVerification( { email, code }, function( error, response ) {
+		if ( error ) {
+			callback( error );
+
+			return;
+		}
+		const providedDependencies = assign(
+			{},
+			{ email, username: email, bearer_token: response.token.access_token }
+		);
+		callback( error, providedDependencies );
+	} );
+}

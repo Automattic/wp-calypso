@@ -33,6 +33,7 @@
 	"features": {
 		"async-payments": true,
 		"account-recovery": true,
+		"autorenewal-toggle": true,
 		"ad-tracking": false,
 		"automated-transfer": true,
 		"blogger-plan": true,
@@ -79,6 +80,7 @@
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/remote-install": true,
 		"jetpack/connect/mobile-app-flow": true,
+		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
 		"jetpack/gutenframe": true,
 		"jitms": true,
@@ -114,7 +116,6 @@
 		"manage/themes/details": true,
 		"manage/themes/details/jetpack": true,
 		"manage/themes/logged-out": true,
-		"marketing/tools": true,
 		"me/account": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,

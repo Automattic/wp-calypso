@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import canCurrentUser from 'state/selectors/can-current-user';
-import config from 'config';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import DocumentHead from 'components/data/document-head';
 import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
@@ -45,13 +44,11 @@ export const Sharing = ( {
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 	const filters = [];
 
-	if ( config.isEnabled( 'marketing/tools' ) ) {
-		filters.push( {
-			id: 'marketing-tools',
-			route: '/marketing/tools' + pathSuffix,
-			title: translate( 'Marketing Tools' ),
-		} );
-	}
+	filters.push( {
+		id: 'marketing-tools',
+		route: '/marketing/tools' + pathSuffix,
+		title: translate( 'Marketing Tools' ),
+	} );
 
 	// Include SEO link if a site is selected and the
 	// required Jetpack module is active
