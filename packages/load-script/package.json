@@ -21,6 +21,10 @@
 	"publishConfig": {
 		"access": "public"
 	},
+	"dependencies": {
+		"@babel/runtime": "7.4.4",
+		"debug": "3.2.6"
+	},
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
