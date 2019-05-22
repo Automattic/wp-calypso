@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { compact, omit, pickBy } from 'lodash';
+import { compact, pickBy } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -35,9 +35,6 @@ import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { recordTracksEvent } from 'state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
-import PhotoBlogBanner from './themes-banner/photo-blog';
-import SmallBusinessBanner from './themes-banner/small-business';
-import RandomThemesBanner from './themes-banner/random-themes-banner';
 import { getActiveTheme } from 'state/themes/selectors';
 import UpworkBanner from 'blocks/upwork-banner';
 
@@ -214,15 +211,6 @@ class ThemeShowcase extends React.Component {
 
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
-		// We don't want to advertise the theme that's already active.
-		const themeBanners = omit(
-			{
-				'photo-blog': PhotoBlogBanner,
-				'small-business': SmallBusinessBanner,
-			},
-			currentThemeId
-		);
-
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -240,9 +228,6 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'original' && (
-						<RandomThemesBanner banners={ themeBanners } />
-					) }
 					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
 						<UpworkBanner location={ 'theme-banner' } />
 					) }
