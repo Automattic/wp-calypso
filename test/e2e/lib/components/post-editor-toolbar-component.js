@@ -106,13 +106,6 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 		return await driver.get( url );
 	}
 
-	async previewPublishedPostOrPage() {
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.editor-notice a.notice__action' )
-		);
-	}
-
 	async waitForPublishButtonToBeEnabled() {
 		const self = this;
 
