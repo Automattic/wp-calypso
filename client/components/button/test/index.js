@@ -15,19 +15,19 @@ describe( 'Button', () => {
 	describe( 'renders', () => {
 		test( 'with modifiers', () => {
 			const button = shallow( <Button scary primary borderless compact /> );
-			expect( button ).to.have.className( 'is-compact' );
-			expect( button ).to.have.className( 'is-primary' );
-			expect( button ).to.have.className( 'is-scary' );
-			expect( button ).to.have.className( 'is-borderless' );
+			expect( button.hasClass( 'is-compact' ) ).toBe( true );
+			expect( button.hasClass( 'is-primary' ) ).toBe( true );
+			expect( button.hasClass( 'is-scary' ) ).toBe( true );
+			expect( button.hasClass( 'is-borderless' ) ).toBe( true );
 		} );
 
 		test( 'without modifiers', () => {
 			const button = shallow( <Button /> );
-			expect( button ).to.have.className( 'button' );
-			expect( button ).to.not.have.className( 'is-compact' );
-			expect( button ).to.not.have.className( 'is-primary' );
-			expect( button ).to.not.have.className( 'is-scary' );
-			expect( button ).to.not.have.className( 'is-borderless' );
+			expect( button.hasClass( 'button' ) ).toBe( true );
+			expect( button.hasClass( 'is-compact' ) ).toBe( false );
+			expect( button.hasClass( 'is-primary' ) ).toBe( false );
+			expect( button.hasClass( 'is-scary' ) ).toBe( false );
+			expect( button.hasClass( 'is-borderless' ) ).toBe( false );
 		} );
 
 		test( 'disabled', () => {
