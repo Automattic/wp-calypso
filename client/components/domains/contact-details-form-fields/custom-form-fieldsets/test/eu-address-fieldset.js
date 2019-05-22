@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 
@@ -30,17 +29,17 @@ describe( 'EU Address Fieldset', () => {
 
 	test( 'should render correctly with default props', () => {
 		const wrapper = shallow( <EuAddressFieldset { ...defaultProps } /> );
-		expect( wrapper.find( '.eu-address-fieldset' ) ).to.have.length( 1 );
+		expect( wrapper.find( '.eu-address-fieldset' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render expected input components', () => {
 		const wrapper = shallow( <EuAddressFieldset { ...defaultProps } /> );
-		expect( wrapper.find( '[name="city"]' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="postal-code"]' ) ).to.have.length( 1 );
+		expect( wrapper.find( '[name="city"]' ) ).toHaveLength( 1 );
+		expect( wrapper.find( '[name="postal-code"]' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should not render a state select components', () => {
 		const wrapper = shallow( <EuAddressFieldset { ...defaultProps } /> );
-		expect( wrapper.find( '[name="state"]' ) ).to.have.length( 0 );
+		expect( wrapper.find( '[name="state"]' ) ).toHaveLength( 0 );
 	} );
 } );

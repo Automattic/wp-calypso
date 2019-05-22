@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import Gridicon from 'gridicons';
 import { identity, noop } from 'lodash';
@@ -25,7 +24,7 @@ describe( 'Remove Button', () => {
 	test( 'should render the icon', () => {
 		const wrapper = shallow( <RemoveButton onRemove={ noop } translate={ identity } /> );
 
-		expect( wrapper.find( Gridicon ) ).to.have.length( 1 );
+		expect( wrapper.find( Gridicon ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should call the provided callback when the button is clicked', () => {
@@ -33,6 +32,6 @@ describe( 'Remove Button', () => {
 		const wrapper = shallow( <RemoveButton onRemove={ onRemove } translate={ identity } /> );
 
 		wrapper.find( Button ).simulate( 'click' );
-		expect( onRemove.calledOnce ).to.equal( true );
+		expect( onRemove.calledOnce ).toBe( true );
 	} );
 } );

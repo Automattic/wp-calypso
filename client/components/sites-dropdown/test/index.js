@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { noop } from 'lodash';
 import React from 'react';
@@ -23,8 +22,8 @@ describe( 'index', () => {
 	describe( 'component rendering', () => {
 		test( 'should render a dropdown component initially closed', () => {
 			const sitesDropdown = shallow( <SitesDropdown /> );
-			expect( sitesDropdown.hasClass( 'sites-dropdown' ) ).to.equal( true );
-			expect( sitesDropdown.hasClass( 'is-open' ) ).to.equal( false );
+			expect( sitesDropdown.hasClass( 'sites-dropdown' ) ).toBe( true );
+			expect( sitesDropdown.hasClass( 'is-open' ) ).toBe( false );
 		} );
 
 		test( 'with multiple sites, should toggle the dropdown when it is clicked', () => {
@@ -33,8 +32,8 @@ describe( 'index', () => {
 
 			sitesDropdown.find( '.sites-dropdown__selected' ).simulate( 'click' );
 			sinon.assert.calledOnce( toggleOpenSpy );
-			expect( sitesDropdown.hasClass( 'has-multiple-sites' ) ).to.equal( true );
-			expect( sitesDropdown.hasClass( 'is-open' ) ).to.equal( true );
+			expect( sitesDropdown.hasClass( 'has-multiple-sites' ) ).toBe( true );
+			expect( sitesDropdown.hasClass( 'is-open' ) ).toBe( true );
 
 			toggleOpenSpy.restore();
 		} );
@@ -45,8 +44,8 @@ describe( 'index', () => {
 
 			sitesDropdown.find( '.sites-dropdown__selected' ).simulate( 'click' );
 			sinon.assert.calledOnce( toggleOpenSpy );
-			expect( sitesDropdown.hasClass( 'has-multiple-sites' ) ).to.equal( false );
-			expect( sitesDropdown.hasClass( 'is-open' ) ).to.equal( false );
+			expect( sitesDropdown.hasClass( 'has-multiple-sites' ) ).toBe( false );
+			expect( sitesDropdown.hasClass( 'is-open' ) ).toBe( false );
 
 			toggleOpenSpy.restore();
 		} );
@@ -55,7 +54,7 @@ describe( 'index', () => {
 	describe( 'component state', () => {
 		test( 'should initially consider as selected the selectedOrPrimarySiteId prop', () => {
 			const sitesDropdown = shallow( <SitesDropdown selectedSiteId={ 1234567 } /> );
-			expect( sitesDropdown.instance().state.selectedSiteId ).to.be.equal( 1234567 );
+			expect( sitesDropdown.instance().state.selectedSiteId ).toBe( 1234567 );
 		} );
 	} );
 
@@ -116,7 +115,7 @@ describe( 'index', () => {
 				selectedSiteId: 42,
 			};
 			const selectedSite = SitesDropdown.prototype.getSelectedSite.call( { state: fakeState } );
-			expect( selectedSite ).to.be.eql( {
+			expect( selectedSite ).toEqual( {
 				ID: 42,
 				slug: 'foo.wordpress.com',
 			} );

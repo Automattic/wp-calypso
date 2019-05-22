@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
@@ -20,25 +19,25 @@ describe( 'index', () => {
 	describe( 'component rendering', () => {
 		test( 'should render a list with the provided options', () => {
 			const dropdown = mountDropdown();
-			expect(
-				dropdown.find( '.select-dropdown__options li.select-dropdown__label' ).text()
-			).to.eql( 'Statuses' );
+			expect( dropdown.find( '.select-dropdown__options li.select-dropdown__label' ).text() ).toBe(
+				'Statuses'
+			);
 			expect(
 				dropdown.find( '.select-dropdown__options li.select-dropdown__option' )
-			).to.have.lengthOf( 4 );
+			).toHaveLength( 4 );
 		} );
 
 		test( 'should render a separator in place of any falsy option', () => {
 			const dropdown = mountDropdown();
 			expect(
 				dropdown.find( '.select-dropdown__options li.select-dropdown__separator' )
-			).to.have.lengthOf( 1 );
+			).toHaveLength( 1 );
 		} );
 
 		test( 'should be initially closed', () => {
 			const dropdown = shallowRenderDropdown();
-			expect( dropdown.find( '.select-dropdown' ) ).to.have.lengthOf( 1 );
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.be.empty;
+			expect( dropdown.find( '.select-dropdown' ) ).toHaveLength( 1 );
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should execute toggleDropdown when clicked', () => {
@@ -58,20 +57,20 @@ describe( 'index', () => {
 				disabled: true,
 			} );
 
-			expect( dropdown.find( '.select-dropdown.is-disabled' ) ).to.have.lengthOf( 1 );
+			expect( dropdown.find( '.select-dropdown.is-disabled' ) ).toHaveLength( 1 );
 
 			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
 
 			sinon.assert.called( toggleDropdownSpy );
 
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.be.empty;
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 0 );
 
 			// Repeat to be sure
 			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
 
 			sinon.assert.called( toggleDropdownSpy );
 
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.be.empty;
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 0 );
 
 			toggleDropdownSpy.restore();
 		} );
@@ -91,18 +90,18 @@ describe( 'index', () => {
 		test( 'should return the initially selected value (if any)', () => {
 			const dropdown = shallowRenderDropdown( { initialSelected: 'drafts' } );
 			const initialSelectedValue = dropdown.instance().getInitialSelectedItem();
-			expect( initialSelectedValue ).to.equal( 'drafts' );
+			expect( initialSelectedValue ).toBe( 'drafts' );
 		} );
 
 		test( "should return `undefined`, when there aren't options", () => {
 			const dropdown = shallow( <SelectDropdown /> );
-			expect( dropdown.instance().getInitialSelectedItem() ).to.be.undefined;
+			expect( dropdown.instance().getInitialSelectedItem() ).toBeUndefined();
 		} );
 
 		test( "should return the first not-label option, when there isn't a preselected value", () => {
 			const dropdown = shallowRenderDropdown();
 			const initialSelectedValue = dropdown.instance().getInitialSelectedItem();
-			expect( initialSelectedValue ).to.equal( 'published' );
+			expect( initialSelectedValue ).toBe( 'published' );
 		} );
 	} );
 
@@ -110,13 +109,13 @@ describe( 'index', () => {
 		test( 'should return the initially selected text (if any)', () => {
 			const dropdown = shallowRenderDropdown( { selectedText: 'Drafts' } );
 			const initialSelectedText = dropdown.instance().getSelectedText();
-			expect( initialSelectedText ).to.equal( 'Drafts' );
+			expect( initialSelectedText ).toBe( 'Drafts' );
 		} );
 
 		test( 'should return the `label` associated to the selected option', () => {
 			const dropdown = shallowRenderDropdown();
 			const initialSelectedText = dropdown.instance().getSelectedText();
-			expect( initialSelectedText ).to.equal( 'Published' );
+			expect( initialSelectedText ).toBe( 'Published' );
 		} );
 
 		test( "should return the `label` associated to the initial selected option, when there isn't any selected option", () => {
@@ -133,7 +132,7 @@ describe( 'index', () => {
 			const initialSelectedText = dropdown.instance().getSelectedText();
 
 			sinon.assert.calledOnce( getInitialSelectedItemStub );
-			expect( initialSelectedText ).to.equal( 'Scheduled' );
+			expect( initialSelectedText ).toBe( 'Scheduled' );
 
 			getInitialSelectedItemStub.restore();
 		} );
@@ -252,7 +251,7 @@ describe( 'index', () => {
 			sinon.assert.calledOnce( setStateSpy );
 			sinon.assert.calledWith( setStateSpy, { isOpen: false } );
 
-			expect( fakeContext.focused ).to.be.undefined;
+			expect( fakeContext.focused ).toBeUndefined();
 		} );
 	} );
 

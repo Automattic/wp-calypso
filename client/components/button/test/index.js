@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import Gridicon from 'gridicons';
 import React from 'react';
@@ -40,10 +39,10 @@ describe( 'Button', () => {
 			const iconType = 'arrow-left';
 			const icon = <Gridicon size={ 18 } icon={ iconType } />;
 			const button = shallow( <Button>{ icon }</Button> );
-			expect( button ).to.contain( icon );
+			expect( button ).toEqual( expect.arrayContaining( [ icon ] ) );
 			expect( button.find( Gridicon ) )
 				.to.have.prop( 'icon' )
-				.equal( iconType );
+				.toBe( iconType );
 		} );
 	} );
 
@@ -51,10 +50,10 @@ describe( 'Button', () => {
 		test( 'renders as a link', () => {
 			const button = shallow( <Button href="https://wordpress.com/" /> );
 
-			expect( button ).to.match( 'a' );
+			expect( button ).toMatch( 'a' );
 			expect( button )
 				.to.have.prop( 'href' )
-				.equal( 'https://wordpress.com/' );
+				.toBe( 'https://wordpress.com/' );
 		} );
 
 		test( 'ignores type prop and renders a link without type attribute', () => {
@@ -70,13 +69,13 @@ describe( 'Button', () => {
 
 			expect( button )
 				.to.have.prop( 'target' )
-				.equal( '_blank' );
+				.toBe( '_blank' );
 			expect( button )
 				.to.have.prop( 'rel' )
-				.match( /\bnoopener\b/ );
+				.toMatch( /\bnoopener\b/ );
 			expect( button )
 				.to.have.prop( 'rel' )
-				.match( /\bnoreferrer\b/ );
+				.toMatch( /\bnoreferrer\b/ );
 		} );
 
 		test( 'adds noopener noreferrer rel if target is specified', () => {
@@ -84,13 +83,13 @@ describe( 'Button', () => {
 
 			expect( button )
 				.to.have.prop( 'target' )
-				.equal( '_blank' );
+				.toBe( '_blank' );
 			expect( button )
 				.to.have.prop( 'rel' )
-				.match( /\bnoopener\b/ );
+				.toMatch( /\bnoopener\b/ );
 			expect( button )
 				.to.have.prop( 'rel' )
-				.match( /\bnoreferrer\b/ );
+				.toMatch( /\bnoreferrer\b/ );
 		} );
 	} );
 
@@ -98,14 +97,14 @@ describe( 'Button', () => {
 		const button = shallow( <Button target="_blank" rel="noopener noreferrer" /> );
 
 		test( 'renders as a button', () => {
-			expect( button ).to.match( 'button' );
+			expect( button ).toMatch( 'button' );
 			expect( button ).to.not.have.prop( 'href' );
 		} );
 
 		test( 'renders button with type attribute set to "button" by default', () => {
 			expect( button )
 				.to.have.prop( 'type' )
-				.equal( 'button' );
+				.toBe( 'button' );
 		} );
 
 		test( 'renders button with type attribute set to type prop if specified', () => {
@@ -116,7 +115,7 @@ describe( 'Button', () => {
 
 			expect( submitButton )
 				.to.have.prop( 'type' )
-				.equal( typeProp );
+				.toBe( typeProp );
 		} );
 
 		test( 'renders button without rel and target attributes', () => {

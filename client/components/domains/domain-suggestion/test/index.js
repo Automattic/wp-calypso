@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { noop } from 'lodash';
 import React from 'react';
@@ -29,7 +28,7 @@ describe( 'Domain Suggestion', () => {
 				/>
 			);
 
-			expect( domainSuggestion.props()[ 'data-e2e-domain' ] ).to.equal( 'example.com' );
+			expect( domainSuggestion.props()[ 'data-e2e-domain' ] ).toBe( 'example.com' );
 		} );
 	} );
 } );

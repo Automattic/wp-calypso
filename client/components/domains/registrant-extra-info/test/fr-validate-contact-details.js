@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { omit, repeat } from 'lodash';
 
 /**
@@ -49,13 +48,13 @@ describe( 'validateContactDetails', () => {
 	}
 
 	test( 'should accept valid example data (sanity check)', () => {
-		expect( validateContactDetails( contactDetails ) ).to.eql( {} );
+		expect( validateContactDetails( contactDetails ) ).toEqual( {} );
 	} );
 
 	test( 'should handle missing extra', () => {
 		const testDetails = omit( contactDetails, 'extra' );
 
-		expect( validateContactDetails( testDetails ) ).to.have.property( 'extra' );
+		expect( validateContactDetails( testDetails ) ).toHaveProperty( 'extra' );
 	} );
 
 	test( 'should handle null extra', () => {
@@ -63,7 +62,7 @@ describe( 'validateContactDetails', () => {
 			extra: null,
 		} );
 
-		expect( validateContactDetails( testDetails ) ).to.have.property( 'extra' );
+		expect( validateContactDetails( testDetails ) ).toHaveProperty( 'extra' );
 	} );
 
 	// validateContactDetails data
@@ -87,21 +86,21 @@ describe( 'validateContactDetails', () => {
 			} );
 
 			test( 'should accept an organization', () => {
-				expect( validateContactDetails( organizationDetails ) ).to.eql( {} );
+				expect( validateContactDetails( organizationDetails ) ).toEqual( {} );
 			} );
 
 			test( 'should not be missing', () => {
 				const testDetails = omit( organizationDetails, 'organization' );
 
 				const result = validateContactDetails( testDetails );
-				expect( result ).to.have.property( 'organization' );
+				expect( result ).toHaveProperty( 'organization' );
 			} );
 
 			test( 'should not be empty', () => {
 				const testDetails = Object.assign( {}, organizationDetails, { organization: '' } );
 
 				const result = validateContactDetails( testDetails );
-				expect( result ).to.have.property( 'organization' );
+				expect( result ).toHaveProperty( 'organization' );
 			} );
 
 			test( 'should reject long strings', () => {
@@ -110,7 +109,7 @@ describe( 'validateContactDetails', () => {
 				} );
 
 				const result = validateContactDetails( testDetails );
-				expect( result ).to.have.property( 'organization' );
+				expect( result ).toHaveProperty( 'organization' );
 			} );
 
 			test( 'should reject invalid characters', () => {
@@ -119,7 +118,7 @@ describe( 'validateContactDetails', () => {
 				} );
 
 				const result = validateContactDetails( testDetails );
-				expect( result ).to.have.property( 'organization' );
+				expect( result ).toHaveProperty( 'organization' );
 			} );
 		} );
 
@@ -132,21 +131,21 @@ describe( 'validateContactDetails', () => {
 				const testDetails = omit( individualDetails, 'organization' );
 
 				const result = validateContactDetails( testDetails );
-				expect( result ).to.eql( {} );
+				expect( result ).toEqual( {} );
 			} );
 
 			test( 'should accept null organization', () => {
 				const testDetails = Object.assign( {}, individualDetails, { organization: '' } );
 
 				const result = validateContactDetails( testDetails );
-				expect( result ).to.eql( {} );
+				expect( result ).toEqual( {} );
 			} );
 
 			test( 'should accept empty organization', () => {
 				const testDetails = Object.assign( {}, individualDetails, { organization: '' } );
 
 				const result = validateContactDetails( testDetails );
-				expect( result ).to.eql( {} );
+				expect( result ).toEqual( {} );
 			} );
 		} );
 	} );
@@ -157,7 +156,8 @@ describe( 'validateContactDetails', () => {
 				const testDetails = contactWithExtraProperty( 'sirenSiret', sirenSiret );
 
 				const result = validateContactDetails( testDetails );
-				expect( result, `expected to accept '${ sirenSiret }'` ).to.eql( {} );
+				// expected to accept '${ sirenSiret }'
+				expect( result ).toEqual( {} );
 			} );
 		} );
 
@@ -173,10 +173,11 @@ describe( 'validateContactDetails', () => {
 				const testDetails = Object.assign( {}, contactDetails, { extra: { fr: { sirenSiret } } } );
 
 				const result = validateContactDetails( testDetails );
-				expect( result, `expected to reject '${ sirenSiret }'` )
-					.to.have.property( 'extra' )
+				// expected to reject '${ sirenSiret }'
+				expect( result )
+					.toHaveProperty( 'extra' )
 					.with.property( 'fr' )
-					.with.property( 'sirenSiret' );
+					.toHaveProperty( 'sirenSiret' );
 			} );
 		} );
 
@@ -184,7 +185,7 @@ describe( 'validateContactDetails', () => {
 			const testDetails = contactWithExtraProperty( 'sirenSiret', '' );
 
 			const result = validateContactDetails( testDetails );
-			expect( result ).to.eql( {} );
+			expect( result ).toEqual( {} );
 		} );
 
 		test( 'should accept a missing value', () => {
@@ -193,7 +194,7 @@ describe( 'validateContactDetails', () => {
 				extra: { fr: omit( contactDetails.extra.fr, 'sirenSiret' ) },
 			};
 
-			expect( validateContactDetails( testDetails ) ).to.eql( {} );
+			expect( validateContactDetails( testDetails ) ).toEqual( {} );
 		} );
 	} );
 
@@ -248,7 +249,8 @@ describe( 'validateContactDetails', () => {
 				const testDetails = contactWithExtraProperty( 'registrantVatId', registrantVatId );
 
 				const result = validateContactDetails( testDetails );
-				expect( result, `expected to accept '${ registrantVatId }'` ).to.eql( {} );
+				// expected to accept '${ registrantVatId }'
+				expect( result ).toEqual( {} );
 			} );
 		} );
 
@@ -259,10 +261,11 @@ describe( 'validateContactDetails', () => {
 				} );
 
 				const result = validateContactDetails( testDetails );
-				expect( result, `expected to reject '${ registrantVatId }'` )
-					.to.have.property( 'extra' )
+				// expected to reject '${ registrantVatId }'
+				expect( result )
+					.toHaveProperty( 'extra' )
 					.with.property( 'fr' )
-					.with.property( 'registrantVatId' );
+					.toHaveProperty( 'registrantVatId' );
 			} );
 		} );
 
@@ -270,7 +273,7 @@ describe( 'validateContactDetails', () => {
 			const testDetails = contactWithExtraProperty( 'registrantVatId', '' );
 
 			const result = validateContactDetails( testDetails );
-			expect( result ).to.eql( {} );
+			expect( result ).toEqual( {} );
 		} );
 
 		test( 'should accept a missing value', () => {
@@ -279,7 +282,7 @@ describe( 'validateContactDetails', () => {
 				extra: { fr: omit( contactDetails.extra.fr, 'registrantVatId' ) },
 			};
 
-			expect( validateContactDetails( testDetails ) ).to.eql( {} );
+			expect( validateContactDetails( testDetails ) ).toEqual( {} );
 		} );
 	} );
 
@@ -293,7 +296,8 @@ describe( 'validateContactDetails', () => {
 				const testDetails = contactWithExtraProperty( 'trademarkNumber', trademarkNumber );
 
 				const result = validateContactDetails( testDetails );
-				expect( result, `expected to accept '${ trademarkNumber }'` ).to.eql( {} );
+				// expected to accept '${ trademarkNumber }'
+				expect( result ).toEqual( {} );
 			} );
 		} );
 
@@ -305,10 +309,11 @@ describe( 'validateContactDetails', () => {
 
 				const result = validateContactDetails( testDetails );
 
-				expect( result, `expected to reject '${ trademarkNumber }'` )
-					.to.have.property( 'extra' )
+				// expected to reject '${ trademarkNumber }'
+				expect( result )
+					.toHaveProperty( 'extra' )
 					.with.property( 'fr' )
-					.with.property( 'trademarkNumber' );
+					.toHaveProperty( 'trademarkNumber' );
 			} );
 		} );
 
@@ -316,7 +321,7 @@ describe( 'validateContactDetails', () => {
 			const testDetails = contactWithExtraProperty( 'trademarkNumber', '' );
 
 			const result = validateContactDetails( testDetails );
-			expect( result ).to.eql( {} );
+			expect( result ).toEqual( {} );
 		} );
 
 		test( 'should accept a missing value', () => {
@@ -325,7 +330,7 @@ describe( 'validateContactDetails', () => {
 				extra: omit( contactDetails.extra, 'trademarkNumber' ),
 			};
 
-			expect( validateContactDetails( testDetails ) ).to.eql( {} );
+			expect( validateContactDetails( testDetails ) ).toEqual( {} );
 		} );
 	} );
 } );

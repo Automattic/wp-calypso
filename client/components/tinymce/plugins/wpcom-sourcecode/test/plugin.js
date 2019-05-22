@@ -2,11 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { wrapPre, unwrapPre } from '../plugin';
 
 jest.mock( 'tinymce/tinymce', () => ( {} ) );
@@ -18,7 +13,7 @@ describe( 'wpcom-sourcecode', () => {
 				content: '[code lang="javascript"]const noop = () => {};[/code]',
 			} );
 
-			expect( wrapped ).to.equal(
+			expect( wrapped ).toBe(
 				'<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>'
 			);
 		} );
@@ -29,7 +24,7 @@ describe( 'wpcom-sourcecode', () => {
 				initial: true,
 			} );
 
-			expect( wrapped ).to.equal(
+			expect( wrapped ).toBe(
 				'<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>'
 			);
 		} );
@@ -41,7 +36,7 @@ describe( 'wpcom-sourcecode', () => {
 				load: true,
 			} );
 
-			expect( wrapped ).to.equal(
+			expect( wrapped ).toBe(
 				'<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>'
 			);
 		} );
@@ -51,7 +46,7 @@ describe( 'wpcom-sourcecode', () => {
 				content: '[sourcecode lang="javascript"]const noop = () => {};[/sourcecode]',
 			} );
 
-			expect( wrapped ).to.equal(
+			expect( wrapped ).toBe(
 				'<pre>[sourcecode lang="javascript"]const noop = () =&gt; {};[/sourcecode]</pre>'
 			);
 		} );
@@ -63,9 +58,7 @@ describe( 'wpcom-sourcecode', () => {
 				content: '<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>',
 			} );
 
-			expect( unwrapped ).to.equal(
-				'<p>[code lang="javascript"]const noop = () => {};[/code]</p>'
-			);
+			expect( unwrapped ).toBe( '<p>[code lang="javascript"]const noop = () => {};[/code]</p>' );
 		} );
 
 		test( 'should unwrap a sourcecode shortcode', () => {
@@ -73,7 +66,7 @@ describe( 'wpcom-sourcecode', () => {
 				content: '<pre>[sourcecode lang="javascript"]const noop = () =&gt; {};[/sourcecode]</pre>',
 			} );
 
-			expect( unwrapped ).to.equal(
+			expect( unwrapped ).toBe(
 				'<p>[sourcecode lang="javascript"]const noop = () => {};[/sourcecode]</p>'
 			);
 		} );
@@ -84,7 +77,7 @@ describe( 'wpcom-sourcecode', () => {
 					'<p>foo</p><p><pre>[sourcecode lang="javascript"]const noop = () =&gt; {};[/sourcecode]</pre></p><p>bar</p>',
 			} );
 
-			expect( unwrapped ).to.equal(
+			expect( unwrapped ).toBe(
 				'<p>foo</p><p>[sourcecode lang="javascript"]const noop = () => {};[/sourcecode]</p><p>bar</p>'
 			);
 		} );

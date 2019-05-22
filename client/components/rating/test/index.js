@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { each } from 'lodash';
 import React from 'react';
@@ -18,7 +17,7 @@ describe( '<Rating />', () => {
 			const wrapper = shallow( <Rating /> );
 
 			const component = wrapper.find( 'div.rating' );
-			expect( component.props().style.width ).to.equal( '120px' ); // 24 * 5 = 120;
+			expect( component.props().style.width ).toBe( '120px' ); // 24 * 5 = 120;
 		} );
 
 		test( 'should use size if passed', () => {
@@ -26,7 +25,7 @@ describe( '<Rating />', () => {
 				wrapper = shallow( <Rating size={ size } /> );
 
 			const component = wrapper.find( 'div.rating' );
-			expect( component.props().style.width ).to.equal( size * 5 + 'px' );
+			expect( component.props().style.width ).toBe( size * 5 + 'px' );
 		} );
 
 		test( 'should use size in each star', () => {
@@ -35,7 +34,7 @@ describe( '<Rating />', () => {
 				wrapper = shallow( <Rating rating={ rating } size={ size } /> );
 
 			wrapper.find( 'svg' ).forEach( node => {
-				expect( node.props().style.width ).to.equal( size + 'px' );
+				expect( node.props().style.width ).toBe( size + 'px' );
 			} );
 		} );
 	} );
@@ -46,8 +45,8 @@ describe( '<Rating />', () => {
 				wrapper = shallow( <Rating size={ size } /> );
 
 			const component = wrapper.find( 'div.rating__overlay' );
-			expect( component.props().style.clipPath ).to.equal( 'inset(0 ' + size * 5 + 'px 0 0 )' );
-			expect( component.props().style.clip ).to.equal( 'rect(0, 0px, ' + size + 'px, 0)' );
+			expect( component.props().style.clipPath ).toBe( 'inset(0 ' + size * 5 + 'px 0 0 )' );
+			expect( component.props().style.clip ).toBe( 'rect(0, 0px, ' + size + 'px, 0)' );
 		} );
 
 		test( 'should render rating clipping mask properly', () => {
@@ -60,10 +59,10 @@ describe( '<Rating />', () => {
 				const maskPosition = ( roundRating / 100 ) * ratingWidth;
 				const clipPathMaskPosition = ratingWidth - ( roundRating / 100 ) * ratingWidth;
 				const component = wrapper.find( 'div.rating__overlay' );
-				expect( component.props().style.clipPath ).to.equal(
+				expect( component.props().style.clipPath ).toBe(
 					'inset(0 ' + clipPathMaskPosition + 'px 0 0 )'
 				);
-				expect( component.props().style.clip ).to.equal(
+				expect( component.props().style.clip ).toBe(
 					'rect(0, ' + maskPosition + 'px, ' + size + 'px, 0)'
 				);
 			} );

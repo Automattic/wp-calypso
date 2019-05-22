@@ -6,8 +6,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-
 describe( 'restrictSize', () => {
 	let getMaxWidth, resetImages, setImages;
 
@@ -33,19 +31,19 @@ describe( 'restrictSize', () => {
 		test( 'should return the multiple of the root device ratio if available', () => {
 			window.devicePixelRatio = 1.5;
 
-			expect( getMaxWidth() ).to.equal( 1020 );
+			expect( getMaxWidth() ).toBe( 1020 );
 		} );
 
 		test( 'should return twice the base if the device resolution matches the retina media query', () => {
 			window.devicePixelRatio = undefined;
 			window.matchMedia = () => ( { matches: true } );
 
-			expect( getMaxWidth() ).to.equal( 1360 );
+			expect( getMaxWidth() ).toBe( 1360 );
 		} );
 
 		test( 'should return the base max width if the device is not retina-capable', () => {
 			window.devicePixelRatio = undefined;
-			expect( getMaxWidth() ).to.equal( 680 );
+			expect( getMaxWidth() ).toBe( 680 );
 		} );
 	} );
 
@@ -54,7 +52,7 @@ describe( 'restrictSize', () => {
 			const value = resetImages(
 				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
 			);
-			expect( value ).to.equal(
+			expect( value ).toBe(
 				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
 			);
 		} );
@@ -63,7 +61,7 @@ describe( 'restrictSize', () => {
 			const value = resetImages(
 				'<p><img src="https://example.com/bird.jpg?w=680" data-wpmedia-src="https://example.com/bird.jpg"><img src="https://example.com/forest.jpg?w=680" data-wpmedia-src="https://example.com/forest.jpg"></p>'
 			);
-			expect( value ).to.equal(
+			expect( value ).toBe(
 				'<p><img src="https://example.com/bird.jpg"><img src="https://example.com/forest.jpg"></p>'
 			);
 		} );
@@ -72,7 +70,7 @@ describe( 'restrictSize', () => {
 			const value = resetImages(
 				'<p><img src="https://example.com/bird.jpg?w=300"><img src="https://example.com/forest.jpg?w=680" data-wpmedia-src="https://example.com/forest.jpg"></p>'
 			);
-			expect( value ).to.equal(
+			expect( value ).toBe(
 				'<p><img src="https://example.com/bird.jpg?w=300"><img src="https://example.com/forest.jpg"></p>'
 			);
 		} );
@@ -83,7 +81,7 @@ describe( 'restrictSize', () => {
 			const value = setImages(
 				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
 			);
-			expect( value ).to.equal(
+			expect( value ).toBe(
 				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
 			);
 		} );
@@ -92,7 +90,7 @@ describe( 'restrictSize', () => {
 			const value = setImages(
 				'<p><img class="alignnone size-large wp-image-5823" src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
 			);
-			expect( value ).to.equal(
+			expect( value ).toBe(
 				'<p><img class="alignnone size-large wp-image-5823" src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
 			);
 		} );
@@ -101,7 +99,7 @@ describe( 'restrictSize', () => {
 			const value = setImages(
 				'<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>'
 			);
-			expect( value ).to.equal(
+			expect( value ).toBe(
 				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>'
 			);
 		} );
@@ -111,7 +109,7 @@ describe( 'restrictSize', () => {
 				'<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail"></p>';
 
 			const value = setImages( markup );
-			expect( value ).to.equal( markup );
+			expect( value ).toBe( markup );
 		} );
 	} );
 } );

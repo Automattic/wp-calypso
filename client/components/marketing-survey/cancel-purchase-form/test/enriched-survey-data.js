@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { moment } from 'i18n-calypso';
 
 /**
@@ -14,7 +13,7 @@ jest.mock( 'lib/analytics', () => ( {} ) );
 
 describe( 'enrichedSurveyData', () => {
 	test( 'should duplicate survey data if no site or purchase are provided', () => {
-		expect( enrichedSurveyData( { key: 'value' }, moment() ) ).to.deep.equal( {
+		expect( enrichedSurveyData( { key: 'value' }, moment() ) ).toEqual( {
 			key: 'value',
 			purchase: null,
 			purchaseId: null,
@@ -24,7 +23,7 @@ describe( 'enrichedSurveyData', () => {
 	test( 'should add purchase id and slug to survey data if purchase is provided', () => {
 		const site = null;
 		const purchase = { id: 'purchase id', productSlug: 'product slug' };
-		expect( enrichedSurveyData( { key: 'value' }, moment(), site, purchase ).purchase ).to.equal(
+		expect( enrichedSurveyData( { key: 'value' }, moment(), site, purchase ).purchase ).toBe(
 			'product slug'
 		);
 	} );
@@ -35,7 +34,7 @@ describe( 'enrichedSurveyData', () => {
 		expect(
 			enrichedSurveyData( {}, moment( '2017-01-19T03:00:00+00:00' ), site, purchase )
 				.daysSincePurchase
-		).to.equal( 10 );
+		).toBe( 10 );
 	} );
 
 	test( 'should add daysSinceSiteCreation to survey data when site.options.created_at is provided', () => {
@@ -46,6 +45,6 @@ describe( 'enrichedSurveyData', () => {
 		expect(
 			enrichedSurveyData( {}, moment( '2017-01-19T03:00:00+00:00' ), site, purchase )
 				.daysSinceSiteCreation
-		).to.equal( 10 );
+		).toBe( 10 );
 	} );
 } );

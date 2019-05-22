@@ -7,7 +7,6 @@
  * External dependencies
  */
 import React from 'react';
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 
 /**
@@ -25,12 +24,10 @@ describe( 'SupportInfo', () => {
 	const wrapper = shallow( <SupportInfo { ...testProps } /> ).dive();
 
 	it( 'should have a proper "Learn more" link', () => {
-		expect( wrapper.find( 'ExternalLink' ).get( 0 ).props.href ).to.be.equal( 'https://foo.com/' );
+		expect( wrapper.find( 'ExternalLink' ).get( 0 ).props.href ).toBe( 'https://foo.com/' );
 	} );
 
 	it( 'should have a proper "Privacy Information" link', () => {
-		expect( wrapper.find( 'ExternalLink' ).get( 1 ).props.href ).to.be.equal(
-			'https://foo.com/privacy/'
-		);
+		expect( wrapper.find( 'ExternalLink' ).get( 1 ).props.href ).toBe( 'https://foo.com/privacy/' );
 	} );
 } );
