@@ -55,20 +55,22 @@ export function removeAllScriptCallbacks() {
 	getCallbacksMap().clear();
 }
 
-export function executeCallbacks( url, callbackArguments = null ) {
+export function executeCallbacks( url, error = null ) {
 	const callbacksMap = getCallbacksMap();
+	const callbacksForUrl = callbacksMap.get( url );
 
-	if ( callbacksMap.has( url ) ) {
-		const debugMessage = `Executing callbacks for "${ url }"`;
-		debug(
-			callbackArguments === null
-				? debugMessage
-				: debugMessage + ` with args "${ callbackArguments }"`
-		);
+	if ( callbacksForUrl ) {
+		const debugMessage =
+			`Executing callbacks for "${ url }"` +
+			( error === null ? ' with success' : ` with error "${ error }"` );
+		debug( debugMessage );
 
-		[ ...callbacksMap.get( url ) ]
-			.filter( cb => typeof cb === 'function' )
-			.forEach( cb => cb( callbackArguments ) );
+		callbacksForUrl.forEach( cb => {
+			if ( typeof cb === 'function' ) {
+				cb( error );
+			}
+		} );
+
 		callbacksMap.delete( url );
 	}
 }
