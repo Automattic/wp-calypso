@@ -104,13 +104,13 @@ export class MySitesSidebar extends Component {
 	};
 
 	stats() {
-		const { siteId, canUserViewStats, path, translate } = this.props;
+		const { site, siteId, canUserViewStats, path, translate } = this.props;
 
 		if ( siteId && ! canUserViewStats ) {
 			return null;
 		}
 
-		const statsLink = getStatsPathForTab( 'day', siteId );
+		const statsLink = getStatsPathForTab( 'day', site ? site.slug : siteId );
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<SidebarItem
