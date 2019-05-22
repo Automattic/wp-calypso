@@ -8,6 +8,9 @@ import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
 import { map, includes } from 'lodash';
 
+//TMP
+import { parse as parseUrl } from 'url';
+
 /**
  * Internal dependencies
  */
@@ -107,8 +110,40 @@ export default function switchLocale( localeSlug ) {
 			i18n.setLocale( response.body );
 
 			setLocaleInDOM( domLocaleSlug, !! language.rtl );
+
+			patchLocale( targetLocaleSlug );
 		} );
 	}
+}
+
+function patchLocale( currentLocaleSlug ) {
+	// Check for username query param
+	// TODO: Use page middleware instead of location
+	const parsedURL = parseUrl( location.search, true );
+	// TODO: improve the names of these params
+	const {
+		'load-user-translations': username,
+		project = 'wpcom',
+		translationSet = 'default',
+		locale = currentLocaleSlug,
+	} = parsedURL.query;
+
+	const format = 'json';
+
+	if ( ! username ) {
+		return;
+	}
+
+	request
+		.get(
+			`https://translate.wordpress.com/api/projects/${ project }/${ locale }/${ translationSet }/export-translations?filters%5Bstatus%5D=waiting&filters%5Buser_login%5D=${ username }&format=${ format }`
+		)
+		.set( 'Accept', 'application/json' )
+		.withCredentials()
+		.then( res => {
+			const translations = JSON.parse( res.text );
+			i18n.addTranslations( translations );
+		} );
 }
 
 const bundles = {};
