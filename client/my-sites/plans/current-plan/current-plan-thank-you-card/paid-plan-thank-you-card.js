@@ -78,6 +78,7 @@ export class PaidPlanThankYouCard extends Component {
 						<p>
 							<Button primary href={ wpAdminPluginsUrl } target="_blank">
 								<span>{ translate( 'Upgrade Jetpack' ) }</span>
+								{ ' ' }
 								<Gridicon icon="external" />
 							</Button>
 						</p>
@@ -109,6 +110,7 @@ export class PaidPlanThankYouCard extends Component {
 					<p>
 						<Button primary href={ SETTING_UP_PREMIUM_SERVICES } target="_blank">
 							<span>{ translate( 'Set up features' ) }</span>
+							{ ' ' }
 							<Gridicon icon="external" />
 						</Button>
 					</p>
@@ -139,6 +141,7 @@ export class PaidPlanThankYouCard extends Component {
 					<p>
 						<Button primary href={ SETTING_UP_PREMIUM_SERVICES } target="_blank">
 							<span>{ translate( 'Set up features' ) }</span>
+							{ ' ' }
 							<Gridicon icon="external" />
 						</Button>
 					</p>
