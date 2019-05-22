@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { By } from 'selenium-webdriver';
 import config from 'config';
 
 /**
@@ -25,6 +24,7 @@ import JetpackConnectPage from '../pages/jetpack/jetpack-connect-page';
 import JetpackConnectSiteTypePage from '../pages/jetpack/jetpack-connect-site-type-page';
 import JetpackConnectSiteTopicPage from '../pages/jetpack/jetpack-connect-site-topic-page';
 import JetpackConnectUserTypePage from '../pages/jetpack/jetpack-connect-user-type-page';
+import NoticesComponent from '../components/notices-component';
 
 export default class JetpackConnectFlow {
 	constructor( driver, account, template ) {
@@ -118,15 +118,8 @@ export default class JetpackConnectFlow {
 				return;
 			}
 			// seems like it is not waiting for this
-			await driverHelper.waitTillPresentAndDisplayed(
-				this.driver,
-				By.css( '.notice.is-success.is-dismissable' ),
-				config.get( 'explicitWaitMS' ) * 2
-			);
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.notice.is-dismissable .notice__dismiss' )
-			);
+			const noticesComponent = await NoticesComponent.Expect( this.driver );
+			await noticesComponent.dismissNotice();
 			return await removeSites();
 		};
 
