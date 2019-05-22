@@ -68,7 +68,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'editor',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.successNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -168,7 +169,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'editor',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.successNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -179,7 +181,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 			const revokePage = await RevokePage.Expect( driver );
 			await revokePage.revokeUser();
-			const sent = await revokePage.revokeSent();
+			const sent = await noticesComponent.successNoticeDisplayed();
 			return assert( sent, 'The sent confirmation message was not displayed' );
 		} );
 
@@ -232,7 +234,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'viewer',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.successNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -348,7 +351,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'contributor',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.successNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -482,7 +486,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'follower',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.successNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
