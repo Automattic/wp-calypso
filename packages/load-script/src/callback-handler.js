@@ -55,35 +55,35 @@ export function removeAllScriptCallbacks() {
 	getCallbacksMap().clear();
 }
 
-export function executeCallbacks( url, callbackArguments = null ) {
+export function executeCallbacks( url, error = null ) {
 	const callbacksMap = getCallbacksMap();
+	const callbacksForUrl = callbacksMap.get( url );
 
-	if ( callbacksMap.has( url ) ) {
-		const debugMessage = `Executing callbacks for "${ url }"`;
-		debug(
-			callbackArguments === null
-				? debugMessage
-				: debugMessage + ` with args "${ callbackArguments }"`
-		);
+	if ( callbacksForUrl ) {
+		const debugMessage =
+			`Executing callbacks for "${ url }"` +
+			( error === null ? ' with success' : ` with error "${ error }"` );
+		debug( debugMessage );
 
-		[ ...callbacksMap.get( url ) ]
-			.filter( cb => typeof cb === 'function' )
-			.forEach( cb => cb( callbackArguments ) );
+		callbacksForUrl.forEach( cb => {
+			if ( typeof cb === 'function' ) {
+				cb( error );
+			}
+		} );
+
 		callbacksMap.delete( url );
 	}
 }
 
-export function handleRequestSuccess( event ) {
-	const { target } = event;
-	const url = target.getAttribute( 'src' );
+export function handleRequestSuccess() {
+	const url = this.getAttribute( 'src' );
 	debug( `Handling successful request for "${ url }"` );
 	executeCallbacks( url );
 	this.onload = null;
 }
 
-export function handleRequestError( event ) {
-	const { target } = event;
-	const url = target.getAttribute( 'src' );
+export function handleRequestError() {
+	const url = this.getAttribute( 'src' );
 	debug( `Handling failed request for "${ url }"` );
 	executeCallbacks( url, new Error( `Failed to load script "${ url }"` ) );
 	this.onerror = null;

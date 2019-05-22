@@ -15,7 +15,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import { loadScript } from 'lib/load-script';
+import { loadScript } from '@automattic/load-script';
 import wpcom from 'lib/wp';
 
 const DIRECTLY_RTM_SCRIPT_URL = 'https://widgets.wp.com/directly/embed.js';

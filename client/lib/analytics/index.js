@@ -18,6 +18,7 @@ import {
 	startsWith,
 	times,
 } from 'lodash';
+import { loadScript } from '@automattic/load-script';
 
 /**
  * Internal dependencies
@@ -34,7 +35,6 @@ import {
 	hashPii,
 	costToUSD,
 } from 'lib/analytics/utils';
-import { loadScript } from 'lib/load-script';
 import {
 	retarget,
 	recordAliasInFloodlight,

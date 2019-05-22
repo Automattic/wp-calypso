@@ -6,18 +6,17 @@
 /**
  * Internal dependencies
  */
-import { JQUERY_URL, loadjQueryDependentScript, loadScript } from '../';
-import { executeCallbacks, getCallbacksMap, removeAllScriptCallbacks } from '../callback-handler';
-import { attachToHead, createScriptElement } from '../dom-operations';
-import config from 'config';
+import { JQUERY_URL, loadjQueryDependentScript, loadScript } from '../src';
+import {
+	executeCallbacks,
+	getCallbacksMap,
+	removeAllScriptCallbacks,
+} from '../src/callback-handler';
+import { attachToHead, createScriptElement } from '../src/dom-operations';
 
-jest.mock( '../dom-operations', () => ( {
+jest.mock( '../src/dom-operations', () => ( {
 	attachToHead: jest.fn(),
 	createScriptElement: jest.fn(),
-} ) );
-
-jest.mock( 'config', () => ( {
-	isEnabled: jest.fn(),
 } ) );
 
 describe( 'loadScript', () => {
@@ -62,24 +61,10 @@ describe( 'loadScript', () => {
 			createScriptElement.mockReset();
 		} );
 
-		test( 'should require jQuery on the desktop', () => {
-			const callback = jest.fn();
-			config.isEnabled.mockReturnValueOnce( { isEnabled: input => input === 'desktop' } );
-			loadjQueryDependentScript( url, callback );
-
-			expect( callback ).not.toHaveBeenCalled();
-			expect( createScriptElement ).toHaveBeenCalledTimes( 1 );
-			expect( createScriptElement ).toHaveBeenLastCalledWith( url );
-
-			executeCallbacks( url );
-			expect( callback ).toHaveBeenCalledTimes( 1 );
-		} );
-
 		test( 'should use window.jQuery if available', () => {
 			window.jQuery = {};
 
 			const callback = jest.fn();
-			config.isEnabled.mockReturnValueOnce( { isEnabled: () => false } );
 			loadjQueryDependentScript( url, callback );
 
 			expect( createScriptElement ).toHaveBeenCalledTimes( 1 );
@@ -91,27 +76,35 @@ describe( 'loadScript', () => {
 			delete window.jQuery;
 		} );
 
-		test( 'should sequentially load the jQuery script and the script from the URL (in that order)', () => {
+		test( 'should sequentially load the jQuery script and the script from the URL (in that order)', done => {
 			// NOTE: jsdom has jQuery attached to the window. We temporarily replace this
 			// jQuery instance fir this test.
 			const jQueryBackup = global.window.jQuery;
 			global.window.jQuery = false;
 
 			const callback = jest.fn();
-			loadjQueryDependentScript( url, callback, true );
+			loadjQueryDependentScript( url ).then( callback );
 
-			expect( callback ).not.toHaveBeenCalled();
 			expect( createScriptElement ).toHaveBeenCalledTimes( 1 );
 			expect( createScriptElement ).toHaveBeenLastCalledWith( JQUERY_URL );
 
 			executeCallbacks( JQUERY_URL );
-			expect( createScriptElement ).toHaveBeenCalledTimes( 2 );
-			expect( createScriptElement ).toHaveBeenLastCalledWith( url );
 
-			executeCallbacks( url );
-			expect( callback ).toHaveBeenCalledTimes( 1 );
+			// enforce an event loop tick to make sure all internal Promises got resolved
+			setTimeout( () => {
+				expect( createScriptElement ).toHaveBeenCalledTimes( 2 );
+				expect( createScriptElement ).toHaveBeenLastCalledWith( url );
 
-			global.window.jQuery = jQueryBackup;
+				executeCallbacks( url );
+
+				// enforce an event loop tick to make sure all internal Promises got resolved
+				setTimeout( () => {
+					expect( callback ).toHaveBeenCalledTimes( 1 );
+
+					global.window.jQuery = jQueryBackup;
+					done();
+				}, 0 );
+			}, 0 );
 		} );
 	} );
 } );

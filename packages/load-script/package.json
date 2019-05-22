@@ -1,0 +1,29 @@
+{
+	"name": "@automattic/load-script",
+	"version": "1.0.0",
+	"description": "Async Script Loader.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"keywords": [
+		"wordpress"
+	],
+	"author": "Automattic",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/load-script"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepublish": "npm run clean",
+		"prepare": "transpile"
+	}
+}

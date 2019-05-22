@@ -12,6 +12,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { throttle, map, uniq } from 'lodash';
 import { connect } from 'react-redux';
+import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,7 +20,6 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import config from 'config';
-import { loadScript } from 'lib/load-script';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';

@@ -75,6 +75,9 @@
 				"i18n-calypso": "file:packages/i18n-calypso"
 			}
 		},
+		"@automattic/load-script": {
+			"version": "file:packages/load-script"
+		},
 		"@automattic/material-design-icons": {
 			"version": "file:packages/material-design-icons"
 		},
