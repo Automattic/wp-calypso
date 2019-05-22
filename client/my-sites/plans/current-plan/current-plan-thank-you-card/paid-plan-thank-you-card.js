@@ -13,8 +13,6 @@ import React, { Component, Fragment } from 'react';
  */
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteFileModDisableReason } from 'lib/site/utils';
-import { isJetpackSiteMainNetworkSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import { preventWidows } from 'lib/formatting';
 import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
 import { untrailingslashit } from 'lib/route';
@@ -38,22 +36,13 @@ export class PaidPlanThankYouCard extends Component {
 	}
 
 	render() {
-		const {
-			fileModDisableReason,
-			hasMinimumJetpackVersion,
-			installProgress,
-			installState,
-			isSiteMainNetworkSite,
-			isSiteMultiSite,
-			site,
-			translate,
-		} = this.props;
+		const { installProgress, installState, site, translate } = this.props;
 
 		const securityIllustration = '/calypso/images/illustrations/security.svg';
 		const fireworksIllustration = '/calypso/images/illustrations/fireworks.svg';
 
 		// Jetpack is too old
-		if ( ! hasMinimumJetpackVersion ) {
+		if ( ! site.hasMinimumJetpackVersion ) {
 			// Link to "Plugins" page in wp-admin
 			let wpAdminPluginsUrl = get( site, 'options.admin_url' );
 			wpAdminPluginsUrl = wpAdminPluginsUrl
@@ -77,9 +66,7 @@ export class PaidPlanThankYouCard extends Component {
 					{ wpAdminPluginsUrl && (
 						<p>
 							<Button primary href={ wpAdminPluginsUrl } target="_blank">
-								<span>{ translate( 'Upgrade Jetpack' ) }</span>
-								{ ' ' }
-								<Gridicon icon="external" />
+								<span>{ translate( 'Upgrade Jetpack' ) }</span> <Gridicon icon="external" />
 							</Button>
 						</p>
 					) }
@@ -88,7 +75,7 @@ export class PaidPlanThankYouCard extends Component {
 		}
 
 		// We cannot install anything for this site
-		if ( fileModDisableReason && fileModDisableReason.length > 0 ) {
+		if ( ! site.canUpdateFiles ) {
 			return (
 				<ThankYouCard
 					illustration={ fireworksIllustration }
@@ -109,9 +96,7 @@ export class PaidPlanThankYouCard extends Component {
 					</p>
 					<p>
 						<Button primary href={ SETTING_UP_PREMIUM_SERVICES } target="_blank">
-							<span>{ translate( 'Set up features' ) }</span>
-							{ ' ' }
-							<Gridicon icon="external" />
+							<span>{ translate( 'Set up features' ) }</span> <Gridicon icon="external" />
 						</Button>
 					</p>
 				</ThankYouCard>
@@ -119,7 +104,7 @@ export class PaidPlanThankYouCard extends Component {
 		}
 
 		// Non-main site at multisite, cannot install anything
-		if ( isSiteMultiSite && ! isSiteMainNetworkSite ) {
+		if ( site.isSecondaryNetworkSite ) {
 			return (
 				<ThankYouCard
 					illustration={ fireworksIllustration }
@@ -140,9 +125,7 @@ export class PaidPlanThankYouCard extends Component {
 					</p>
 					<p>
 						<Button primary href={ SETTING_UP_PREMIUM_SERVICES } target="_blank">
-							<span>{ translate( 'Set up features' ) }</span>
-							{ ' ' }
-							<Gridicon icon="external" />
+							<span>{ translate( 'Set up features' ) }</span> <Gridicon icon="external" />
 						</Button>
 					</p>
 				</ThankYouCard>
@@ -208,12 +191,8 @@ export default connect( state => {
 	}
 
 	return {
-		fileModDisableReason: getSiteFileModDisableReason( site, 'modifyFiles' ),
-		hasMinimumJetpackVersion: site.hasMinimumJetpackVersion,
 		installProgress,
 		installState,
-		isSiteMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
-		isSiteMultiSite: isJetpackSiteMultiSite( state, siteId ),
 		site,
 	};
 }, { recordTracksEvent } )( localize( PaidPlanThankYouCard ) );
