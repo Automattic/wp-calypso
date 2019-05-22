@@ -69,7 +69,7 @@ describe( 'fr-form', () => {
 				[ 'GBHA9997' ],
 			];
 
-			validVatPatterns.forEach( ( [ pattern, description ] ) =>
+			validVatPatterns.forEach( ( [ pattern ] ) =>
 				expect( sanitizeVat( pattern ) ).toEqual( pattern.toUpperCase() )
 			);
 		} );
