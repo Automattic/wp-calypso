@@ -42,6 +42,7 @@ class AutorenewalDisablingDialog extends Component {
 				additionalClassNames="autorenewal-disabling-dialog"
 				onClose={ onClose }
 			>
+				<h2 className="autorenewal-disabling-dialog__header">{ translate( 'Before you go …' ) }</h2>
 				<p>{ description }</p>
 				<Button onClick={ onClose } primary>
 					{ translate( 'OK' ) }

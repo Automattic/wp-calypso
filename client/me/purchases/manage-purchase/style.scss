@@ -296,3 +296,12 @@
 .manage-purchase__detail-date-span {
 	white-space: nowrap;
 }
+
+.dialog.autorenewal-disabling-dialog {
+	max-width: 440px;
+}
+
+.autorenewal-disabling-dialog__header {
+	font-size: 24px;
+	margin-bottom: 14px;
+}
