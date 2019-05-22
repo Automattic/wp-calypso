@@ -75,17 +75,15 @@ export function executeCallbacks( url, error = null ) {
 	}
 }
 
-export function handleRequestSuccess( event ) {
-	const { target } = event;
-	const url = target.getAttribute( 'src' );
+export function handleRequestSuccess() {
+	const url = this.getAttribute( 'src' );
 	debug( `Handling successful request for "${ url }"` );
 	executeCallbacks( url );
 	this.onload = null;
 }
 
-export function handleRequestError( event ) {
-	const { target } = event;
-	const url = target.getAttribute( 'src' );
+export function handleRequestError() {
+	const url = this.getAttribute( 'src' );
 	debug( `Handling failed request for "${ url }"` );
 	executeCallbacks( url, new Error( `Failed to load script "${ url }"` ) );
 	this.onerror = null;
