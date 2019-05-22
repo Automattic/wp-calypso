@@ -58,14 +58,12 @@ class FacebookLoginButton extends Component {
 		this.initialize();
 	}
 
-	loadDependency() {
-		if ( window.FB ) {
-			return Promise.resolve( window.FB );
+	async loadDependency() {
+		if ( ! window.FB ) {
+			await loadScript( '//connect.facebook.net/en_US/sdk.js' );
 		}
 
-		return new Promise( resolve => {
-			loadScript( '//connect.facebook.net/en_US/sdk.js', () => resolve( window.FB ) );
-		} );
+		return window.FB;
 	}
 
 	initialize() {

@@ -66,14 +66,12 @@ class GoogleLoginButton extends Component {
 		this.initialize();
 	}
 
-	loadDependency() {
-		if ( window.gapi ) {
-			return Promise.resolve( window.gapi );
+	async loadDependency() {
+		if ( ! window.gapi ) {
+			await loadScript( 'https://apis.google.com/js/api.js' );
 		}
 
-		return new Promise( resolve => {
-			loadScript( 'https://apis.google.com/js/api.js', () => resolve( window.gapi ) );
-		} );
+		return window.gapi;
 	}
 
 	initialize() {
