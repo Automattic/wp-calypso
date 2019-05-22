@@ -23,7 +23,7 @@ export class PaidPlanThankYouCard extends Component {
 		return `/plans/my-plan/${ siteSlug }`;
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps ) {
 		if ( this.props.progressComplete === 100 ) {
 			this.props.recordTracksEvent( 'calypso_plans_autoconfig_success', {
 				checklist_name: 'jetpack',
