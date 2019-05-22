@@ -257,6 +257,7 @@ class WpcomChecklistComponent extends PureComponent {
 
 	render() {
 		const {
+			phase2,
 			siteId,
 			taskStatuses,
 			taskUrls,
@@ -307,6 +308,7 @@ class WpcomChecklistComponent extends PureComponent {
 					setStoredTask={ setStoredTask }
 					storedTask={ storedTask }
 					taskList={ taskList }
+					phase2={ phase2 }
 				>
 					{ taskList.getAll().map( task => this.renderTask( task ) ) }
 				</ChecklistComponent>
