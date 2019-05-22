@@ -21,7 +21,7 @@ export const fetchSelectedEditor = action =>
 		{
 			method: 'GET',
 			path: `/sites/${ action.siteId }/gutenberg`,
-			apiNamespace: 'wpcom/v2',
+			apiNamespace: 'wpcom/v3',
 		},
 		action
 	);
@@ -41,7 +41,7 @@ export const setType = action =>
 		{
 			path: `/sites/${ action.siteId }/gutenberg`,
 			method: 'POST',
-			apiNamespace: 'wpcom/v2',
+			apiNamespace: 'wpcom/v3',
 			query: {
 				editor: action.editor,
 				platform: 'web',
@@ -51,7 +51,12 @@ export const setType = action =>
 		action
 	);
 
-const redirectToEditor = ( { redirectUrl } ) => dispatch => {
+const updateSelectedEditorAndRedirect = (
+	{ siteId, redirectUrl },
+	{ editor_web: editor }
+) => dispatch => {
+	dispatch( bypassDataLayer( { type: EDITOR_TYPE_SET, siteId, editor } ) );
+
 	if ( ! redirectUrl ) {
 		return;
 	}
@@ -63,8 +68,8 @@ const redirectToEditor = ( { redirectUrl } ) => dispatch => {
 
 const dispatchEditorTypeSetRequest = dispatchRequest( {
 	fetch: setType,
-	onSuccess: redirectToEditor,
-	onError: redirectToEditor,
+	onSuccess: updateSelectedEditorAndRedirect,
+	onError: noop,
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/gutenberg/index.js', {
