@@ -206,8 +206,8 @@ export class MySitesSidebar extends Component {
 				link={ hireABuilderLink }
 				onNavigate={ this.trackHireABuilderClick }
 				icon="speaker"
-				preloadSectionName="hire-a-builder"
-				tipTarget="hire-a-builder"
+				preloadSectionName="hire-a-pro"
+				tipTarget="hire-a-pro"
 			/>
 		);
 	}
