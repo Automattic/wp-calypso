@@ -22,7 +22,7 @@ import { isEnabled } from 'config';
 export const getSelectedEditor = ( state, siteId ) => {
 	const selectedEditor = get( state, [ 'selectedEditor', siteId ], null );
 
-	if ( isJetpackSite( state, siteId ) ) {
+	if ( selectedEditor && isJetpackSite( state, siteId ) ) {
 		if ( 'gutenberg-iframe' === selectedEditor && ! isEnabled( 'jetpack/gutenframe' ) ) {
 			// Redirect to Calypsoified WP Admin block editor for Atomic sites when the feature flag is disabled.
 			if ( isSiteAutomatedTransfer( state, siteId ) ) {

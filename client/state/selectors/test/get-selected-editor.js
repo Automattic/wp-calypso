@@ -19,6 +19,13 @@ describe( 'getSelectedEditor()', () => {
 			selectedEditor: {
 				123: 'gutenberg',
 			},
+			sites: {
+				items: {
+					123: {
+						jetpack: false,
+					},
+				},
+			},
 		} );
 		expect( getSelectedEditor( state, 123 ) ).toEqual( 'gutenberg' );
 	} );
