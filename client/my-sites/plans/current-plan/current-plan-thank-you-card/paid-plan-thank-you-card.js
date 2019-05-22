@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component, Fragment } from 'react';
 
@@ -15,14 +14,12 @@ import { getSiteFileModDisableReason } from 'lib/site/utils';
 import { isJetpackSiteMainNetworkSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
-import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
 import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
 import ProgressBar from 'components/progress-bar';
 import ThankYouCard from './thank-you-card';
 
 const INSTALL_STATE_COMPLETE = 1;
 const INSTALL_STATE_UNCOMPLETE = 2;
-const INSTALL_STATE_ERRORED = 3;
 
 export class PaidPlanThankYouCard extends Component {
 	componentDidUpdate( prevProps ) {
@@ -139,19 +136,6 @@ export class PaidPlanThankYouCard extends Component {
 						</p>
 					</ThankYouCard>
 				) }
-				{ installState === INSTALL_STATE_ERRORED && (
-					<ThankYouCard
-						illustration={ securityIllustration }
-						showContinueButton
-						title={ translate( 'So long spam, hello backups!' ) }
-					>
-						<p>
-							{ translate( 'Error' ) }
-							<br />
-							{ translate( 'Error' ) }
-						</p>
-					</ThankYouCard>
-				) }
 			</Fragment>
 		);
 	}
@@ -162,17 +146,10 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	const installProgress = getJetpackProductInstallProgress( state, siteId );
-	const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
 
 	let installState;
-	// @TODO we'll need a way to detect actual error states here
-	if (
-		productInstallStatus &&
-		! includes( [ 'installed', 'skipped' ], productInstallStatus.akismet_status ) &&
-		! includes( [ 'installed', 'skipped' ], productInstallStatus.vaultpress_status )
-	) {
-		installState = INSTALL_STATE_ERRORED;
-	} else if ( installProgress === 100 ) {
+	// @TODO we'll need a way to detect generic error states here and add `INSTALL_STATE_ERRORED`
+	if ( installProgress === 100 ) {
 		installState = INSTALL_STATE_COMPLETE;
 	} else {
 		installState = INSTALL_STATE_UNCOMPLETE;
