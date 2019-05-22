@@ -63,18 +63,11 @@ class PurchaseMeta extends Component {
 		purchaseId: false,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		if ( config.isEnabled( 'autorenewal-toggle' ) ) {
-			// TODO: remove this once the proper state has been introduced.
-			this.state = {
-				...( config.isEnabled( 'autorenewal-toggle' ) && {
-					isAutorenewalEnabled: false,
-				} ),
-			};
-		}
-	}
+	state = {
+		...( config.isEnabled( 'autorenewal-toggle' ) && {
+			isAutorenewalEnabled: false,
+		} ),
+	};
 
 	renderPrice() {
 		const { purchase, translate } = this.props;
