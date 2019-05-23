@@ -132,6 +132,7 @@
 		"oauth": false,
 		"onboarding-checklist": true,
 		"onboarding-checklist/email-setup": true,
+		"onboarding-checklist/phase2": true,
 		"perfmon": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,
