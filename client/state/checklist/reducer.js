@@ -31,9 +31,8 @@ export const items = createReducer(
 			...state,
 			[ siteId ]: checklist,
 		} ),
-		[ SITE_CHECKLIST_TASK_UPDATE ]: ( state, { siteId, taskId } ) => {
-			return markChecklistTaskComplete( state, { siteId, taskId } );
-		},
+		[ SITE_CHECKLIST_TASK_UPDATE ]: ( state, { siteId, taskId } ) =>
+			markChecklistTaskComplete( state, { siteId, taskId } ),
 		[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: ( state, { moduleSlug, siteId } ) => {
 			if ( moduleSlug === 'monitor' ) {
 				return markChecklistTaskComplete( state, { siteId, taskId: 'jetpack_monitor' } );
