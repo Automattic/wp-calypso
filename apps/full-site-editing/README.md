@@ -66,15 +66,17 @@ Both these scripts will also move all source and PHP files into `/dist` in their
 
 The entry points are:
 
-- `/blank-theme/index.js`
-- `/full-site-editing-plugin/{{plugin-directory}}/index.js`
+- __Theme__: `/blank-theme/index.js`
+- __Plugin__: `/full-site-editing-plugin/{{plugin-directory}}/index.js`
 
 The outputs are:
 
-- `/blank-theme/dist`
-- `/full-site-editing-plugin/{{plugin-directory}}/dist`
+- __Theme__: `/blank-theme/dist`
+- __Plugin__: `/full-site-editing-plugin/{{plugin-directory}}/dist`
 
-You can also build one of the Plugins individually by appending the plugin slug onto the `build` comment. eg: 
+### Building Individual _Plugins_
+
+You can also build one of the Plugins separately by appending the plugin slug onto the `build` portion of the command. eg: 
 
 ```
 // Builds the `posts-list-block` Plugin only
@@ -94,3 +96,5 @@ ln -s ~/Dev/wp-calypso/apps/full-site-editing/full-site-editing-plugin/ ~/Dev/wo
 
 ln -s ~/Dev/wp-calypso/apps/full-site-editing/blank-theme/ ~/Dev/wordpress/wp-content/themes/blank-theme
 ```
+
+Note that if you are using Docker symlinks will not work. Instead you will need to mount the Plugin as a volume.
