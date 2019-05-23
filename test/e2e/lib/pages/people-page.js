@@ -19,7 +19,6 @@ export default class PeoplePage extends AsyncBaseContainer {
 		this.searchInputSelector = By.css( '.section-nav__panel input.search__input' );
 		this.searchResultsLoadingSelector = By.css( '.people-profile.is-placeholder' );
 		this.peopleListItemSelector = By.css( '.people-list-item' );
-		this.successNoticeSelector = By.css( '.people-notices__notice.notice.is-success' );
 	}
 
 	async selectTeam() {
