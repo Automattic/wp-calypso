@@ -51,4 +51,17 @@ export default class NoticesComponent extends AsyncBaseContainer {
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();
 	}
+
+	async isNoticeDisplayed( click = false ) {
+		const noticeSelector = By.css( '.notice' );
+		const actionSelector = By.css( '.notice a' );
+		const isDisplayed = await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			noticeSelector
+		);
+		if ( click === true ) {
+			await driverHelper.clickWhenClickable( this.driver, actionSelector );
+		}
+		return isDisplayed;
+	}
 }
