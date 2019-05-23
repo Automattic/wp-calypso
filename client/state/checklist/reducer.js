@@ -10,10 +10,15 @@ import {
 } from 'state/action-types';
 import { items as itemSchemas } from './schema';
 
-export const isLoading = createReducer( false, {
-	[ SITE_CHECKLIST_REQUEST ]: () => true,
-	[ SITE_CHECKLIST_RECEIVE ]: () => false,
-} );
+function isLoading( state = false, { type } ) {
+	switch ( type ) {
+		case SITE_CHECKLIST_REQUEST:
+			return true;
+		case SITE_CHECKLIST_RECEIVE:
+			return false;
+	}
+	return state;
+}
 
 const markChecklistTaskComplete = ( state, { taskId } ) => ( {
 	...state,
