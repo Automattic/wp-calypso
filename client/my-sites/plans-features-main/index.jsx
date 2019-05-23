@@ -34,7 +34,14 @@ import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
-import { plansLink, planMatches, findPlansKeys, getPlan, isFreePlan } from 'lib/plans';
+import {
+	plansLink,
+	planMatches,
+	findPlansKeys,
+	getPlan,
+	getPopularPlanType,
+	isFreePlan,
+} from 'lib/plans';
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
@@ -44,6 +51,7 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import { getDiscountByName } from 'lib/discounts';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
@@ -85,6 +93,7 @@ export class PlansFeaturesMain extends Component {
 			withDiscount,
 			discountEndDate,
 			siteId,
+			siteType,
 			plansWithScroll,
 		} = this.props;
 
@@ -120,7 +129,7 @@ export class PlansFeaturesMain extends Component {
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
 					popularPlanSpec={ {
-						type: customerType === 'personal' ? TYPE_PREMIUM : TYPE_BUSINESS,
+						type: getPopularPlanType( siteType ),
 						group: GROUP_WPCOM,
 					} }
 					siteId={ siteId }
@@ -461,6 +470,7 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
+			siteType: getSiteType( state ),
 		};
 	},
 	{
