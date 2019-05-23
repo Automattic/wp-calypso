@@ -11,14 +11,7 @@ import ThankYouCard from './thank-you-card';
 
 const FreePlanThankYouCard = ( { translate } ) => (
 	<ThankYouCard
-		illustration={
-			<img
-				alt=""
-				aria-hidden="true"
-				className="current-plan-thank-you-card__illustration"
-				src="/calypso/images/illustrations/security.svg"
-			/>
-		}
+		illustration="/calypso/images/illustrations/security.svg"
 		showContinueButton
 		title={ translate( 'Welcome to Jetpack Free!' ) }
 	>
