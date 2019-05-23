@@ -22,8 +22,7 @@ import { isFetchingPreferences } from 'state/preferences/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
-import { isGutenbergEnabled } from 'state/selectors/is-gutenberg-enabled';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 
 class PublishConfirmation extends Component {
 	constructor( props ) {
@@ -105,8 +104,7 @@ export default connect(
 			siteId,
 			fetchingPreferences: isFetchingPreferences( state ),
 			publishConfirmationEnabled: isConfirmationSidebarEnabled( state, siteId ),
-			showPublishFlow:
-				isGutenbergEnabled( state, siteId ) && getSelectedEditor( state, siteId ) === 'gutenberg',
+			showPublishFlow: shouldLoadGutenberg( state, siteId ),
 		};
 	},
 	dispatch => {
