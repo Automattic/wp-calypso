@@ -33,20 +33,34 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 function getWebpackConfig( env = {}, argv = {} ) {
 	env.WP = true;
 
-	if ( 'theme' === argv.source ) {
-		argv.entry = path.join( __dirname, 'blank-theme' );
-		argv[ 'output-path' ] = path.join( __dirname, 'blank-theme', 'dist' );
-		argv[ 'output-filename' ] = 'blank-theme.js';
+	const source = argv.source;
+
+	let entry;
+	let outputPath;
+
+	if ( 'theme' === source ) {
+		entry = path.join( __dirname, 'blank-theme' );
+		outputPath = path.join( __dirname, 'blank-theme', 'dist' );
 	} else {
-		argv.entry = path.join( __dirname, 'full-site-editing-plugin', argv.source );
-		argv[ 'output-path' ] = path.join( __dirname, 'full-site-editing-plugin', argv.source, 'dist' );
-		argv[ 'output-filename' ] = argv.source + '.js';
+		// object provides ability to name the entry point
+		// which enables dynamic file names
+		entry = {
+			[ source ]: path.join( __dirname, 'full-site-editing-plugin', source ),
+		};
+
+		outputPath = path.join( __dirname, 'full-site-editing-plugin', source, 'dist' );
 	}
 
 	const webpackConfig = getBaseWebpackConfig( env, argv );
 
 	return {
 		...webpackConfig,
+		entry,
+		output: {
+			...webpackConfig.output,
+			path: outputPath,
+			filename: '[name].js', // dynamic filename
+		},
 		watch: isDevelopment,
 		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
 	};
