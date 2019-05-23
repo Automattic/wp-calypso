@@ -465,3 +465,14 @@ export function getPlanTermLabel( planName, translate ) {
 			return translate( 'Two year subscription' );
 	}
 }
+
+export const getPopularPlanType = siteType => {
+	switch ( siteType ) {
+		case 'blog':
+			return TYPE_PERSONAL;
+		case 'professional':
+			return TYPE_PREMIUM;
+		default:
+			return TYPE_BUSINESS;
+	}
+};
