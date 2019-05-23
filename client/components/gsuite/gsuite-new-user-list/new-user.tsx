@@ -68,7 +68,6 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							setMailBoxFieldTouched( wasValidated );
 						} }
 					/>
-					{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
 					<DomainsSelect
 						domains={ domains }
 						onChange={ event => {
@@ -77,43 +76,50 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						value={ domain }
 					/>
 				</div>
+				{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
 			</FormFieldset>
 
 			<FormFieldset className="gsuite-new-user-list__new-user-name-fieldset">
 				<div className="gsuite-new-user-list__new-user-name">
-					<FormTextInput
-						placeholder={ translate( 'First Name' ) }
-						value={ firstName }
-						maxLength={ 60 }
-						isError={ hasFirstNameError }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-							onUserValueChange( 'firstName', event.target.value );
-						} }
-						onBlur={ () => {
-							setFirstNameFieldTouched( wasValidated );
-						} }
-					/>
-					{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
-					<FormTextInput
-						placeholder={ translate( 'Last Name' ) }
-						value={ lastName }
-						maxLength={ 60 }
-						isError={ hasLastNameError }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-							onUserValueChange( 'lastName', event.target.value );
-						} }
-						onBlur={ () => {
-							setLastNameFieldTouched( wasValidated );
-						} }
-					/>
-					{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
-					<Button
-						className="gsuite-new-user-list__new-user-remove-user-button"
-						onClick={ onUserRemove }
-					>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Remove User' ) }</span>
-					</Button>
+					<div className="gsuite-new-user-list__new-user-name-conatiner">
+						<FormTextInput
+							placeholder={ translate( 'First Name' ) }
+							value={ firstName }
+							maxLength={ 60 }
+							isError={ hasFirstNameError }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								onUserValueChange( 'firstName', event.target.value );
+							} }
+							onBlur={ () => {
+								setFirstNameFieldTouched( wasValidated );
+							} }
+						/>
+						{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
+					</div>
+					<div className="gsuite-new-user-list__new-user-name-conatiner">
+						<FormTextInput
+							placeholder={ translate( 'Last Name' ) }
+							value={ lastName }
+							maxLength={ 60 }
+							isError={ hasLastNameError }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								onUserValueChange( 'lastName', event.target.value );
+							} }
+							onBlur={ () => {
+								setLastNameFieldTouched( wasValidated );
+							} }
+						/>
+						{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
+					</div>
+					<div className="gsuite-new-user-list__new-user-remove-user-button-conatiner">
+						<Button
+							className="gsuite-new-user-list__new-user-remove-user-button"
+							onClick={ onUserRemove }
+						>
+							<Gridicon icon="trash" />
+							<span>{ translate( 'Remove User' ) }</span>
+						</Button>
+					</div>
 				</div>
 			</FormFieldset>
 		</div>
