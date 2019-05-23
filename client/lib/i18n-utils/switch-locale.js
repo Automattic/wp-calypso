@@ -7,8 +7,6 @@ import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
 import { map, includes } from 'lodash';
-
-//TMP
 import { parse as parseUrl, format as formatUrl } from 'url';
 
 /**
@@ -117,10 +115,8 @@ export default function switchLocale( localeSlug ) {
 }
 
 function applyUserWaitingTranslations( currentLocaleSlug ) {
-	// Check for username query param
-	// TODO: Use page middleware instead of location
 	const parsedURL = parseUrl( location.search, true );
-	// TODO: improve the names of these params
+
 	const {
 		'load-user-translations': username,
 		project = 'wpcom',
