@@ -26,14 +26,34 @@ const INSTALL_STATE_COMPLETE = 1;
 const INSTALL_STATE_INCOMPLETE = 2;
 
 export class PaidPlanThankYouCard extends Component {
+	recordAutoconfigTracksEvent( eventName, options = {} ) {
+		this.props.recordTracksEvent( eventName, {
+			checklist_name: 'jetpack',
+			location: 'JetpackChecklist',
+			...options,
+		} );
+	}
+
 	componentDidUpdate( prevProps ) {
+		const { installState, site } = this.props;
+
 		if (
 			prevProps.installState !== INSTALL_STATE_COMPLETE &&
-			this.props.installState === INSTALL_STATE_COMPLETE
+			installState === INSTALL_STATE_COMPLETE
 		) {
-			this.props.recordTracksEvent( 'calypso_plans_autoconfig_success', {
-				checklist_name: 'jetpack',
-				location: 'JetpackChecklist',
+			this.recordAutoconfigTracksEvent( 'calypso_plans_autoconfig_success' );
+		} else if ( site && ! site.hasMinimumJetpackVersion ) {
+			this.recordAutoconfigTracksEvent( 'calypso_plans_autoconfig_error', {
+				error: 'jetpack_version_too_old',
+				jetpack_version: get( site, [ 'options', 'jetpack_version' ] ),
+			} );
+		} else if ( site && site.isSecondaryNetworkSite ) {
+			this.recordAutoconfigTracksEvent( 'calypso_plans_autoconfig_error', {
+				error: 'secondary_network_site',
+			} );
+		} else if ( site && ! site.canUpdateFiles ) {
+			this.recordAutoconfigTracksEvent( 'calypso_plans_autoconfig_error', {
+				error: 'cannot_update_files',
 			} );
 		}
 	}

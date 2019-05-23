@@ -194,11 +194,22 @@ export class JetpackProductInstall extends Component {
 		 */
 		const period = this.shouldRefetchInstallationStatus() ? EVERY_FIVE_SECONDS : EVERY_SECOND;
 
+		const hasErrorInstalling =
+			! this.shouldRefetchInstallationStatus() && this.installationHasRecoverableErrors();
+
+		if ( hasErrorInstalling ) {
+			this.recordAutoconfigTracksEvent( 'calypso_plans_autoconfig_error', {
+				checklist_name: 'jetpack',
+				error: 'installation_error',
+				location: 'JetpackChecklist',
+			} );
+		}
+
 		return (
 			<Fragment>
 				<QueryPluginKeys siteId={ siteId } />
 
-				{ ! this.shouldRefetchInstallationStatus() && this.installationHasRecoverableErrors() && (
+				{ hasErrorInstalling && (
 					<Notice
 						status="is-error"
 						text={ translate( 'Oops! An error has occurred while setting up your plan.' ) }
