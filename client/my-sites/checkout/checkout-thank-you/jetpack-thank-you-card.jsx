@@ -295,8 +295,7 @@ export class JetpackThankYouCard extends Component {
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
 		} else if ( selectedSite.hasMinimumJetpackVersion === false ) {
 			reason = translate(
-				'We are unable to set up your plan because your site has an older version of Jetpack. ' +
-					'Please upgrade Jetpack.'
+				'Unfortunately, we are unable to set up your plan because your site has an older version of Jetpack. Please upgrade Jetpack.'
 			);
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', {
 				jetpack_version: selectedSite.options.jetpack_version,
