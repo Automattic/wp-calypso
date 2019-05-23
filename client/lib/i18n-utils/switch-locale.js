@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 import { map, includes } from 'lodash';
 
 //TMP
-import { parse as parseUrl } from 'url';
+import { parse as parseUrl, format as formatUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -128,16 +128,34 @@ function applyUserWaitingTranslations( currentLocaleSlug ) {
 		locale = currentLocaleSlug,
 	} = parsedURL.query;
 
-	const format = 'json';
-
 	if ( ! username ) {
 		return;
 	}
 
+	const pathname = [
+		'api',
+		'projects',
+		project,
+		locale,
+		translationSet,
+		'export-translations',
+	].join( '/' );
+
+	const query = {
+		'filters[user_login]': username,
+		'filters[status]': 'waiting',
+		format: 'json',
+	};
+
+	const requestUrl = formatUrl( {
+		protocol: 'https:',
+		host: 'translate.wordpress.com',
+		pathname,
+		query,
+	} );
+
 	request
-		.get(
-			`https://translate.wordpress.com/api/projects/${ project }/${ locale }/${ translationSet }/export-translations?filters%5Bstatus%5D=waiting&filters%5Buser_login%5D=${ username }&format=${ format }`
-		)
+		.get( requestUrl )
 		.set( 'Accept', 'application/json' )
 		.withCredentials()
 		.then( res => {
