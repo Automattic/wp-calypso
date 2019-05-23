@@ -175,4 +175,12 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	hideBloggerPlan: {
+		datestamp: '20190521',
+		variations: {
+			hide: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+	},
 };
