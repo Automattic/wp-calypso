@@ -15,6 +15,15 @@ export const isLoading = createReducer( false, {
 	[ SITE_CHECKLIST_RECEIVE ]: () => false,
 } );
 
+function markChecklistTaskComplete( state, { siteId, taskId } ) {
+	const siteState = state[ siteId ] || {};
+	const tasks = { ...siteState.tasks, [ taskId ]: true };
+	return {
+		...state,
+		[ siteId ]: { ...siteState, tasks },
+	};
+}
+
 export const items = createReducer(
 	{},
 	{
@@ -22,22 +31,11 @@ export const items = createReducer(
 			...state,
 			[ siteId ]: checklist,
 		} ),
-		[ SITE_CHECKLIST_TASK_UPDATE ]: ( state, { siteId, taskId } ) => {
-			const siteState = state[ siteId ];
-			const tasks = { ...siteState.tasks, [ taskId ]: true };
-			return {
-				...state,
-				[ siteId ]: { ...siteState, tasks },
-			};
-		},
+		[ SITE_CHECKLIST_TASK_UPDATE ]: ( state, { siteId, taskId } ) =>
+			markChecklistTaskComplete( state, { siteId, taskId } ),
 		[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: ( state, { moduleSlug, siteId } ) => {
 			if ( moduleSlug === 'monitor' ) {
-				const siteState = state[ siteId ];
-				const tasks = { ...siteState.tasks, jetpack_monitor: true };
-				return {
-					...state,
-					[ siteId ]: { ...siteState, tasks },
-				};
+				return markChecklistTaskComplete( state, { siteId, taskId: 'jetpack_monitor' } );
 			}
 			return state;
 		},
