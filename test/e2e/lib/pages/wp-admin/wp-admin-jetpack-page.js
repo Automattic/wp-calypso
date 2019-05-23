@@ -10,6 +10,7 @@ import { By } from 'selenium-webdriver';
  */
 import * as driverHelper from '../../driver-helper';
 import AsyncBaseContainer from '../../async-base-container';
+import NoticesComponent from '../../components/notices-component';
 
 export default class WPAdminJetpackPage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -46,7 +47,8 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 	async activateRecommendedFeatures() {
 		const selector = By.css( '.jp-jumpstart button.is-primary' );
 		await driverHelper.clickWhenClickable( this.driver, selector );
-		return await driverHelper.isElementPresent( this.driver, By.css( '.notice.is-success' ) );
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
+		return await noticesComponent.isSuccessNoticeDisplayed();
 	}
 
 	async disconnectSite() {
