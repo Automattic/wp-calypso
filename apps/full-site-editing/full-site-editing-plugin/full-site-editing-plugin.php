@@ -19,6 +19,7 @@ function a8c_load_full_site_editing() {
 	require_once __DIR__ . '/full-site-editing/blocks/template/index.php';
 	require_once __DIR__ . '/full-site-editing/class-a8c-rest-templates-controller.php';
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
+	require_once __DIR__ . '/lib/feature-flag/feature-flag.php';
 
 	Full_Site_Editing::get_instance();
 }

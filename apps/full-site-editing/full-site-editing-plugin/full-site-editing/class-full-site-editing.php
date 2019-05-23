@@ -226,6 +226,8 @@ class Full_Site_Editing {
 	 * Enqueue assets.
 	 */
 	public function enqueue_script_and_style() {
+		global $feature_flags;
+
 		$script_dependencies = json_decode(
 			file_get_contents(
 				plugin_dir_path( __FILE__ ) . 'dist/full-site-editing.deps.json'
@@ -245,6 +247,7 @@ class Full_Site_Editing {
 			'fullSiteEditing',
 			array(
 				'editorPostType' => get_current_screen()->post_type,
+				'featureFlags'  => $feature_flags->get_flags(),
 			)
 		);
 
