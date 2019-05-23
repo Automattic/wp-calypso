@@ -104,9 +104,11 @@ function getBuildTargetFromRequest( request ) {
 	const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 	const isEvergreen = ! isDesktop && isUAInBrowserslist( request.useragent.source, 'evergreen' );
 	const isForcedFallback = request.query.forceFallback;
-	// Development is always evergreen.
+	// Development is always evergreen, except desktop
 	const isDevelopment = process.env.NODE_ENV === 'development';
-	return isDevelopment || ( isEvergreen && ! isForcedFallback ) ? 'evergreen' : null;
+	return ( isDevelopment && ! isDesktop ) || ( isEvergreen && ! isForcedFallback )
+		? 'evergreen'
+		: null;
 }
 
 const ASSETS_PATH = path.join( __dirname, '../', 'bundler' );
