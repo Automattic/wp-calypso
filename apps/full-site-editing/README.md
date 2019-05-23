@@ -22,9 +22,29 @@ This app contains both the `full-site-editing-plugin` and the required `blank-th
     full-site-editing-plugin.deps.json
     full-site-editing-plugin.js
     full-site-editing-plugin.rtl.css
-  full-site-editing-plugin.php
+  class-a8c-rest-template-controller.php
+  class-full-site-editing.php
   index.js
   index.scss
+
+/posts-list-block
+  /blocks
+    /posts-list
+      block.json
+      index.js
+      style.scss
+  /dist
+    a8c-posts-list.css
+    a8c-posts-list.deps.json
+    a8c-posts-list.js
+    a8c-posts-list.rtl.css
+  /templates
+    no-posts.php
+    post-item.php
+    posts-list.php
+  class-posts-list-block.php
+  index.js
+  utils.php
 ```
 
 ## Build System
