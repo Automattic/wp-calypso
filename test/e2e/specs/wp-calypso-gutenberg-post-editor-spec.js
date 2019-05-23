@@ -1084,7 +1084,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				await gHeaderComponent.enterTitle( originalBlogPostTitle );
 				await gHeaderComponent.enterText( blogPostQuote );
 
-				const errorShown = await gHeaderComponent.isErrorDisplayed();
+				const errorShown = await gHeaderComponent.errorDisplayed();
 				return assert.strictEqual(
 					errorShown,
 					false,

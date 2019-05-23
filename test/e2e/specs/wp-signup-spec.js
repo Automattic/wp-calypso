@@ -1543,15 +1543,15 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 			// Invalid URL.
 			await importFromURLPage.submitURL( 'foo' );
-			await importFromURLPage.isErrorDisplayed();
+			await importFromURLPage.errorDisplayed();
 
 			// Wix admin URL.
 			await importFromURLPage.submitURL( 'www.wix.com/website/builder' );
-			await importFromURLPage.isErrorDisplayed();
+			await importFromURLPage.errorDisplayed();
 
 			// Wix URL missing site name.
 			await importFromURLPage.submitURL( 'me.wixsite.com' );
-			await importFromURLPage.isErrorDisplayed();
+			await importFromURLPage.errorDisplayed();
 
 			// Retry checking site importability if there's an error.
 			// Cancel test if endpoint still isn't working--can't continue testing this flow.

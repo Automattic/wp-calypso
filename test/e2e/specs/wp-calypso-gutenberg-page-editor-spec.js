@@ -272,7 +272,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				let gHeaderComponent = await GutenbergEditorComponent.Expect( driver );
 				await gHeaderComponent.enterTitle( pageTitle );
 
-				const errorShown = await gHeaderComponent.isErrorDisplayed();
+				const errorShown = await gHeaderComponent.errorDisplayed();
 				assert.strictEqual(
 					errorShown,
 					false,
