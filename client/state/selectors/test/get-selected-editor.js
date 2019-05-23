@@ -17,16 +17,9 @@ describe( 'getSelectedEditor()', () => {
 	test( 'should return editor value for a valid site with an editor set', () => {
 		const state = deepFreeze( {
 			selectedEditor: {
-				123: 'gutenberg-iframe',
-			},
-			sites: {
-				items: {
-					123: {
-						jetpack: false,
-					},
-				},
+				123: 'gutenberg',
 			},
 		} );
-		expect( getSelectedEditor( state, 123 ) ).toEqual( 'gutenberg-iframe' );
+		expect( getSelectedEditor( state, 123 ) ).toEqual( 'gutenberg' );
 	} );
 } );

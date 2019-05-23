@@ -44,6 +44,7 @@ import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSelectedSiteId, getSection } from 'state/ui/selectors';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
@@ -57,11 +58,11 @@ import { isEnabled } from 'config';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import { getActiveTheme } from 'state/themes/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
-import isVipSite from 'state/selectors/is-vip-site';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -410,7 +411,8 @@ function mapStateToProps( state, { moment } ) {
 	const section = getSection( state );
 	const isCalypsoClassic = section.group && section.group === 'editor';
 	const isGutenbergEditor = section.group && section.group === 'gutenberg';
-	const optInEnabled = isEnabled( 'gutenberg/opt-in' ) && ! isVipSite( state, siteId );
+	const optInEnabled =
+		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
@@ -435,6 +437,7 @@ function mapStateToProps( state, { moment } ) {
 		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
+		selectedEditor: getSelectedEditor( state, siteId ),
 		classicUrl: `/${ classicRoute }`,
 		siteId,
 		showOptOut: optInEnabled && isGutenbergEditor && ! isUsingGutenbergPageTemplates,

@@ -9,38 +9,39 @@ import { has, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { EDITOR_TYPE_FETCH, EDITOR_TYPE_RECEIVE, EDITOR_TYPE_UPDATE } from 'state/action-types';
+import { EDITOR_TYPE_REQUEST, EDITOR_TYPE_SET } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import { replaceHistory } from 'state/ui/actions';
 
-const fetchSelectedEditor = action =>
+export const fetchSelectedEditor = action =>
 	http(
 		{
 			method: 'GET',
 			path: `/sites/${ action.siteId }/gutenberg`,
-			apiNamespace: 'wpcom/v3',
+			apiNamespace: 'wpcom/v2',
 		},
 		action
 	);
 
-const setSelectedEditor = ( { siteId }, { editor_web: editor } ) => dispatch => {
-	dispatch( { type: EDITOR_TYPE_RECEIVE, siteId, editor } );
+export const setSelectedEditor = ( { siteId }, { editor_web: editor } ) => dispatch => {
+	dispatch( bypassDataLayer( { type: EDITOR_TYPE_SET, siteId, editor } ) );
 };
 
-const dispatchFetchSelectedEditor = dispatchRequest( {
+const dispatchSelectedEditorRequest = dispatchRequest( {
 	fetch: fetchSelectedEditor,
 	onSuccess: setSelectedEditor,
 	onError: noop,
 } );
 
-const updateSelectedEditor = action =>
+export const setType = action =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/gutenberg`,
 			method: 'POST',
-			apiNamespace: 'wpcom/v3',
+			apiNamespace: 'wpcom/v2',
 			query: {
 				editor: action.editor,
 				platform: 'web',
@@ -50,12 +51,7 @@ const updateSelectedEditor = action =>
 		action
 	);
 
-const setSelectedEditorAndRedirect = (
-	{ siteId, redirectUrl },
-	{ editor_web: editor }
-) => dispatch => {
-	dispatch( { type: EDITOR_TYPE_RECEIVE, siteId, editor } );
-
+const redirectToEditor = ( { redirectUrl } ) => dispatch => {
 	if ( ! redirectUrl ) {
 		return;
 	}
@@ -65,13 +61,13 @@ const setSelectedEditorAndRedirect = (
 	dispatch( replaceHistory( redirectUrl ) );
 };
 
-const dispatchUpdateSelectedEditor = dispatchRequest( {
-	fetch: updateSelectedEditor,
-	onSuccess: setSelectedEditorAndRedirect,
-	onError: noop,
+const dispatchEditorTypeSetRequest = dispatchRequest( {
+	fetch: setType,
+	onSuccess: redirectToEditor,
+	onError: redirectToEditor,
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/gutenberg/index.js', {
-	[ EDITOR_TYPE_FETCH ]: [ dispatchFetchSelectedEditor ],
-	[ EDITOR_TYPE_UPDATE ]: [ dispatchUpdateSelectedEditor ],
+	[ EDITOR_TYPE_REQUEST ]: [ dispatchSelectedEditorRequest ],
+	[ EDITOR_TYPE_SET ]: [ dispatchEditorTypeSetRequest ],
 } );

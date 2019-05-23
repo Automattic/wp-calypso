@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import { isEnabled } from 'config';
 import Button from 'components/button';
-import isVipSite from 'state/selectors/is-vip-site';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -62,7 +62,8 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 }
 
 const mapStateToProps = state => ( {
-	optInEnabled: isEnabled( 'gutenberg/opt-in' ) && ! isVipSite( state, getSelectedSiteId( state ) ),
+	optInEnabled:
+		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) ),
 } );
 
 const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };

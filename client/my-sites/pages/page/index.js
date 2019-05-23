@@ -37,7 +37,8 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
 import { withoutNotice } from 'state/notices/actions';
 import { isEnabled } from 'config';
-import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import isWpAdminGutenbergEnabled from 'state/selectors/is-wp-admin-gutenberg-enabled';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 
@@ -645,7 +646,9 @@ const mapState = ( state, props ) => {
 		siteSlugOrId,
 		editorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.ID' ), 'page' ),
 		parentEditorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.parent.ID' ), 'page' ),
-		wpAdminGutenberg: shouldRedirectGutenberg( state, pageSiteId ),
+		wpAdminGutenberg:
+			isWpAdminGutenbergEnabled( state, pageSiteId ) &&
+			'gutenberg' === getSelectedEditor( state, pageSiteId ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 	};
 };

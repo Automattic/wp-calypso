@@ -3,12 +3,13 @@
  * Internal dependencies
  */
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if ( shouldLoadGutenberg( state, siteId ) ) {
+	if ( isGutenbergEnabled( state, siteId ) && 'gutenberg' === getSelectedEditor( state, siteId ) ) {
 		return getGutenbergEditorUrl( state, siteId, postId, postType );
 	}
 
