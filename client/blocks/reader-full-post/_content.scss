@@ -256,17 +256,10 @@
 
 		&:first-child::first-letter {
 			float: left;
-			margin: 18px 12px 0 0;
+			margin: 10px 12px 0 0;
 			font-size: 66px;
 			font-weight: 400;
-			line-height: 0.5;
-		}
-
-		// Firefox-only position fix
-		@-moz-document url-prefix('') {
-			&:first-child::first-letter {
-				margin-top: 9px;
-			}
+			line-height: 0.7;
 		}
 	}
 
