@@ -14,12 +14,15 @@ import React, { Fragment } from 'react';
  */
 import { addItem } from 'lib/upgrades/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
+
+import Button from 'components/button';
+import Card from 'components/card';
+import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import {
 	emailManagementAddGSuiteUsers,
 	emailManagementNewGSuiteAccount,
 	emailManagement,
 } from 'my-sites/email/paths';
-import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
@@ -28,7 +31,14 @@ import {
 	getGSuiteSupportedDomains,
 	hasGSuiteSupportedDomain,
 } from 'lib/gsuite';
+import {
+	getItemsForCart,
+	newUsers,
+	userIsReady,
+	validateAgainstExistingUsers,
+} from 'lib/gsuite/new-users';
 import { getSelectedSite } from 'state/ui/selectors';
+import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -42,17 +52,6 @@ import getGSuiteUsers from 'state/selectors/get-gsuite-users';
  * Style dependencies
  */
 import './style.scss';
-
-//TODO: hacked together for dev
-import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
-import Card from 'components/card';
-import Button from 'components/button';
-import {
-	getItemsForCart,
-	newUsers,
-	userIsReady,
-	validateAgainstExistingUsers,
-} from 'lib/gsuite/new-users';
 
 class GSuiteAddUsers extends React.Component {
 	state = {
@@ -165,10 +164,10 @@ class GSuiteAddUsers extends React.Component {
 							users={ users }
 						>
 							<div className="gsuite-add-users__buttons">
-								<Button disabled={ ! canContinue } onClick={ this.handleContinue }>
+								<Button>{ translate( 'Cancel' ) }</Button>
+								<Button primary disabled={ ! canContinue } onClick={ this.handleContinue }>
 									{ translate( 'Continue' ) }
 								</Button>
-								<Button>{ translate( 'Cancel' ) }</Button>
 							</div>
 						</GSuiteNewUserList>
 					</Card>

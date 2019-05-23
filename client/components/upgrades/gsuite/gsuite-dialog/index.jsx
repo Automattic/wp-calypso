@@ -16,20 +16,18 @@ import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import GoogleAppsProductDetails from './product-details';
+import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { getProductCost } from 'state/products-list/selectors';
+import { newUsers } from 'lib/gsuite/new-users';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-//TODO: Dev Hacks
-import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
-import { newUsers } from 'lib/gsuite/new-users';
 
 class GoogleAppsDialog extends React.Component {
 	static propTypes = {

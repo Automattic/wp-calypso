@@ -85,13 +85,9 @@
 	}
 }
 
-.gsuite-new-user-list__new-user-name-conatiner,
-.gsuite-new-user-list__new-user-remove-user-button-conatiner {
+.gsuite-new-user-list__new-user-name-conatiner {
 	display: flex;
 	flex-direction: column;
-}
-
-.gsuite-new-user-list__new-user-name-conatiner {
 	margin: 0 0 15px;
 
 	@include breakpoint( '>800px' ) {

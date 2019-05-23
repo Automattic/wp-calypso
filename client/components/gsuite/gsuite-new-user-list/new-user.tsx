@@ -111,7 +111,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						/>
 						{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 					</div>
-					<div className="gsuite-new-user-list__new-user-remove-user-button-conatiner">
+					<div>
 						<Button
 							className="gsuite-new-user-list__new-user-remove-user-button"
 							onClick={ onUserRemove }
