@@ -71,7 +71,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			await gEditorSidebarComponent.enterImageAltText( fileDetails );
 			await gEditorComponent.closeSidebar();
 
-			const errorShown = await gEditorComponent.isErrorDisplayed();
+			const errorShown = await gEditorComponent.errorDisplayed();
 			return assert.strictEqual(
 				errorShown,
 				false,
@@ -542,7 +542,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			const gPaymentComponent = await SimplePaymentsBlockComponent.Expect( driver, blockId );
 			await gPaymentComponent.insertPaymentButtonDetails( paymentButtonDetails );
 
-			const errorShown = await gEditorComponent.isErrorDisplayed();
+			const errorShown = await gEditorComponent.errorDisplayed();
 			assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 
 			await gEditorComponent.enterTitle( pageTitle );
