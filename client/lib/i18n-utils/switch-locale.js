@@ -111,12 +111,12 @@ export default function switchLocale( localeSlug ) {
 
 			setLocaleInDOM( domLocaleSlug, !! language.rtl );
 
-			patchLocale( targetLocaleSlug );
+			applyUserWaitingTranslations( targetLocaleSlug );
 		} );
 	}
 }
 
-function patchLocale( currentLocaleSlug ) {
+function applyUserWaitingTranslations( currentLocaleSlug ) {
 	// Check for username query param
 	// TODO: Use page middleware instead of location
 	const parsedURL = parseUrl( location.search, true );
