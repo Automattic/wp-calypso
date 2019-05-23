@@ -15,7 +15,7 @@ import {
 
 describe( 'selectors', () => {
 	const verticals = {
-		'': {
+		1: {
 			felice: [
 				{
 					verticalName: 'felice',
@@ -36,6 +36,7 @@ describe( 'selectors', () => {
 	const state = {
 		signup: {
 			steps: {
+				siteType: 'business',
 				siteVertical: {
 					id: 'p4u',
 					name: 'felice',
@@ -83,7 +84,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return site vertical from the state', () => {
-			expect( getSiteVerticalPreview( state ) ).toEqual( verticals[ '' ].felice[ 0 ].preview );
+			expect( getSiteVerticalPreview( state ) ).toEqual( verticals[ 1 ].felice[ 0 ].preview );
 		} );
 	} );
 	describe( '', () => {
@@ -111,7 +112,7 @@ describe( 'selectors', () => {
 			isUserInputVertical: true,
 			parent: '',
 			preview: '',
-			siteType: '',
+			siteTypeId: null,
 			verticalId: '',
 			verticalName: '',
 			verticalSlug: '',
@@ -122,7 +123,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return direct match', () => {
-			expect( getSiteVerticalData( state ) ).toEqual( verticals[ '' ].felice[ 0 ] );
+			expect( getSiteVerticalData( state ) ).toEqual( verticals[ 1 ].felice[ 0 ] );
 		} );
 	} );
 } );

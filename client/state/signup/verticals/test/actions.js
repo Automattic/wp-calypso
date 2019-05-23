@@ -9,29 +9,29 @@ import { requestVerticals, setVerticals } from '../actions';
 describe( 'state/signup/verticals/actions', () => {
 	test( 'requestVerticals', () => {
 		const search = 'Foo',
-			siteType = 'Business',
+			siteTypeId = 2,
 			limit = 7;
 
-		expect( requestVerticals( search, siteType, limit ) ).toEqual( {
+		expect( requestVerticals( search, siteTypeId, limit ) ).toEqual( {
 			type: SIGNUP_VERTICALS_REQUEST,
 			search,
-			siteType,
+			siteTypeId,
 			limit,
 		} );
 	} );
 
 	test( 'setVerticals', () => {
 		const search = 'Foo';
-		const siteType = 'Business';
+		const siteTypeId = 3;
 		const verticals = [
 			{ id: 0, verticalName: 'vertical 1' },
 			{ id: 1, verticalName: 'vertical 2' },
 		];
 
-		expect( setVerticals( search, siteType, verticals ) ).toEqual( {
+		expect( setVerticals( search, siteTypeId, verticals ) ).toEqual( {
 			type: SIGNUP_VERTICALS_SET,
 			search,
-			siteType,
+			siteTypeId,
 			verticals,
 		} );
 	} );

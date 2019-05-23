@@ -5,5 +5,5 @@
  */
 import { get } from 'lodash';
 
-export const getVerticals = ( state, searchTerm = '', siteType = '' ) =>
-	get( state, [ 'signup', 'verticals', siteType, searchTerm.trim().toLowerCase() ], null );
+export const getVerticals = ( state, searchTerm = '', siteTypeId ) =>
+	get( state, [ 'signup', 'verticals', siteTypeId, searchTerm.trim().toLowerCase() ], null );

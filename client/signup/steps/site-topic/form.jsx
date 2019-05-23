@@ -25,7 +25,7 @@ import {
 	getSiteVerticalParentId,
 } from 'state/signup/steps/site-vertical/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { getSiteTypeId } from 'state/signup/steps/site-type/selectors';
 import { getVerticals } from 'state/signup/verticals/selectors';
 
 /**
@@ -73,7 +73,7 @@ class SiteTopicForm extends Component {
 	};
 
 	render() {
-		const { isButtonDisabled, siteTopic, siteType } = this.props;
+		const { isButtonDisabled, siteTopic, siteTypeId } = this.props;
 		return (
 			<div className={ classNames( 'site-topic__content', { 'is-empty': ! siteTopic } ) }>
 				<form onSubmit={ this.onSubmit }>
@@ -83,7 +83,7 @@ class SiteTopicForm extends Component {
 							showPopular={ true }
 							searchValue={ siteTopic }
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-							siteType={ siteType }
+							siteTypeId={ siteTypeId }
 						/>
 						<Button
 							title={ this.props.translate( 'Continue' ) }
@@ -103,13 +103,13 @@ class SiteTopicForm extends Component {
 
 export default connect(
 	state => {
-		const siteType = getSiteType( state );
+		const siteTypeId = getSiteTypeId( state );
 		const siteTopic = getSiteVerticalName( state );
-		const isButtonDisabled = ! siteTopic || null == getVerticals( state, siteTopic, siteType );
+		const isButtonDisabled = ! siteTopic || null == getVerticals( state, siteTopic, siteTypeId );
 
 		return {
 			siteTopic,
-			siteType,
+			siteTypeId,
 			siteSlug: getSiteVerticalSlug( state ),
 			isUserInput: getSiteVerticalIsUserInput( state ),
 			isButtonDisabled,

@@ -25,7 +25,7 @@ export const requestVerticals = action =>
 			path: '/verticals',
 			query: {
 				search: action.search.trim(),
-				site_type: action.siteType,
+				site_type: action.siteTypeId,
 				limit: action.limit,
 				include_preview: true,
 			},
@@ -33,8 +33,8 @@ export const requestVerticals = action =>
 		action
 	);
 
-export const storeVerticals = ( { search, siteType = '' }, verticals ) =>
-	setVerticals( search, siteType, verticals );
+export const storeVerticals = ( { search, siteTypeId }, verticals ) =>
+	setVerticals( search, siteTypeId, verticals );
 export const showVerticalsRequestError = () =>
 	errorNotice(
 		translate( 'We encountered an error on fetching data from our server. Please try again.' )

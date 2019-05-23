@@ -8,11 +8,11 @@ import { SIGNUP_VERTICALS_SET } from 'state/action-types';
 
 export default createReducer( null, {
 	[ SIGNUP_VERTICALS_SET ]: ( state, action ) => {
-		const siteType = action.siteType;
-		const previousData = state ? state[ siteType ] : {};
+		const siteTypeId = action.siteTypeId;
+		const previousData = state ? state[ siteTypeId ] : {};
 		return {
 			...state,
-			[ siteType ]: {
+			[ siteTypeId ]: {
 				...previousData,
 				[ action.search.trim().toLowerCase() ]: action.verticals,
 			},
