@@ -78,7 +78,7 @@ const Followers = localize(
 				<div>
 					<p>
 						{ this.props.translate(
-							'Removing this follower will make them stop receiving updates from your site. If they choose to, they can still visit your site, and follow it again.'
+							'Removing followers makes them stop receiving updates from your site. If they choose to, they can still visit your site, and follow it again.'
 						) }
 					</p>
 				</div>,
