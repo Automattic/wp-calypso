@@ -28,11 +28,11 @@ import PlansPage from '../lib/pages/plans-page';
 import LoginPage from '../lib/pages/login-page';
 import JetpackComPage from '../lib/pages/external/jetpackcom-page';
 import JetpackComFeaturesDesignPage from '../lib/pages/external/jetpackcom-features-design-page';
-import WooWizardSetupPage from '../lib/pages/woocommerce/woo-wizard-setup-page';
-import WooWizardPaymentsPage from '../lib/pages/woocommerce/woo-wizard-payments-page';
-import WooWizardShippingPage from '../lib/pages/woocommerce/woo-wizard-shipping-page';
-import WooWizardExtrasPage from '../lib/pages/woocommerce/woo-wizard-extras-page';
-import WooWizardJetpackPage from '../lib/pages/woocommerce/woo-wizard-jetpack-page';
+// import WooWizardSetupPage from '../lib/pages/woocommerce/woo-wizard-setup-page';
+// import WooWizardPaymentsPage from '../lib/pages/woocommerce/woo-wizard-payments-page';
+// import WooWizardShippingPage from '../lib/pages/woocommerce/woo-wizard-shipping-page';
+// import WooWizardExtrasPage from '../lib/pages/woocommerce/woo-wizard-extras-page';
+// import WooWizardJetpackPage from '../lib/pages/woocommerce/woo-wizard-jetpack-page';
 // import WooWizardReadyPage from '../lib/pages/woocommerce/woo-wizard-ready-page';
 
 import * as driverManager from '../lib/driver-manager';
@@ -367,6 +367,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		} );
 	} );
 
+	/*
 	describe( 'Connect From WooCommerce plugin when Jetpack is not installed: @parallel @jetpack', function() {
 		const countryCode = 'US';
 		const stateCode = 'CO';
@@ -468,6 +469,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		// 	return await WooWizardReadyPage.Expect( driver );
 		// } );
 	} );
+	*/
 
 	describe( 'Remote Installation Connect From Calypso, when Jetpack not installed: @parallel @jetpack', function() {
 		let jnFlow;
