@@ -4,52 +4,33 @@
 import replacePlaceholders from './utils/replace-placeholders';
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
+import { keyBy } from 'lodash';
 
-( function( wp ) {
+( function( wp, config = {} ) {
 	const registerPlugin = wp.plugins.registerPlugin;
 	const { Modal, Button } = wp.components;
 	const { withState } = wp.compose;
 
+	const { siteInformation = {}, templates = [] } = config;
+
 	const insertTemplate = template => {
 		// set title
-		wp.data.dispatch( 'core/editor' ).editPost( { title: replacePlaceholders( template.title ) } );
+		wp.data
+			.dispatch( 'core/editor' )
+			.editPost( { title: replacePlaceholders( template.title, siteInformation ) } );
 
 		// load content
-		fetch( template.contentUrl )
-			.then( res => res.json() )
-			.then( data => {
-				const content = replacePlaceholders( data.body.content );
-				const blocks = wp.blocks.parse( content );
-				wp.data.dispatch( 'core/editor' ).insertBlocks( blocks );
-			} );
-		//	.catch( err => console.log( err ) );
+		const templateString = replacePlaceholders( template.content, siteInformation );
+		const blocks = wp.blocks.parse( templateString );
+		wp.data.dispatch( 'core/editor' ).insertBlocks( blocks );
 	};
 
 	const PageTemplateModal = withState( {
 		isOpen: true,
 		isLoading: false,
 		selectedTemplate: 'home',
-		templates: {
-			home: {
-				title: 'Home',
-				slug: 'home',
-				contentUrl: 'https://www.mocky.io/v2/5ce525112e00006900f83afe',
-				imgSrc: 'https://via.placeholder.com/200x180',
-			},
-			menu: {
-				title: 'Menu',
-				slug: 'menu',
-				contentUrl: 'https://www.mocky.io/v2/5ce525112e00006900f83afe',
-				imgSrc: 'https://via.placeholder.com/200x180',
-			},
-			contact: {
-				title: 'Contact Us',
-				slug: 'contact',
-				contentUrl: 'https://www.mocky.io/v2/5ce525112e00006900f83afe',
-				imgSrc: 'https://via.placeholder.com/200x180',
-			},
-		},
-	} )( ( { isOpen, selectedTemplate, templates, setState } ) => (
+		verticalTemplates: keyBy( templates, 'slug' ),
+	} )( ( { isOpen, selectedTemplate, verticalTemplates, setState } ) => (
 		<div>
 			{ isOpen && (
 				<Modal
@@ -67,10 +48,10 @@ import TemplateSelectorControl from './components/template-selector-control';
 								<TemplateSelectorControl
 									label="Template"
 									selected={ selectedTemplate }
-									templates={ Object.values( templates ).map( template => ( {
+									templates={ Object.values( verticalTemplates ).map( template => ( {
 										label: template.title,
 										value: template.slug,
-										preview: template.imgSrc,
+										preview: template.preview,
 									} ) ) }
 									onChange={ newTemplate => {
 										setState( { selectedTemplate: newTemplate } );
@@ -84,7 +65,7 @@ import TemplateSelectorControl from './components/template-selector-control';
 									isLarge
 									onClick={ () => {
 										setState( { isOpen: false } );
-										insertTemplate( templates[ selectedTemplate ] );
+										insertTemplate( verticalTemplates[ selectedTemplate ] );
 									} }
 								>
 									Use Template
@@ -110,4 +91,4 @@ import TemplateSelectorControl from './components/template-selector-control';
 			return <PageTemplateModal />;
 		},
 	} );
-} )( window.wp );
+} )( window.wp, window.starterPageTemplatesConfig );

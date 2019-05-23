@@ -64,6 +64,35 @@ class Starter_Page_Templates {
 		}
 
 		wp_enqueue_script( 'starter-page-templates' );
+
+		$default_info = array(
+			'title' => get_bloginfo( 'name' ),
+		);
+		$site_info    = get_site_option( 'site_contact_info', array() );
+		$config       = array(
+			'siteInformation' => array_merge( $default_info, $site_info ),
+			'templates'       => array(
+				array(
+					'title'   => 'Home',
+					'slug'    => 'home',
+					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce680d73300009801731614' )['body'] )->body->content,
+					'preview' => 'https://via.placeholder.com/200x180',
+				),
+				array(
+					'title'   => 'Menu',
+					'slug'    => 'menu',
+					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681173300006600731617' )['body'] )->body->content,
+					'preview' => 'https://via.placeholder.com/200x180',
+				),
+				array(
+					'title'   => 'Contact Us',
+					'slug'    => 'contact',
+					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681763300004b3573161a' )['body'] )->body->content,
+					'preview' => 'https://via.placeholder.com/200x180',
+				),
+			),
+		);
+		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
 	}
 
 	/**
