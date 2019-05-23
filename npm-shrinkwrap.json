@@ -92,6 +92,10 @@
 		"@automattic/tree-select": {
 			"version": "file:packages/tree-select"
 		},
+		"@automattic/webpack-inline-constant-exports-plugin": {
+			"version": "file:packages/webpack-inline-constant-exports-plugin",
+			"dev": true
+		},
 		"@automattic/wordpress-external-dependencies-plugin": {
 			"version": "file:packages/wordpress-external-dependencies-plugin",
 			"dev": true,
