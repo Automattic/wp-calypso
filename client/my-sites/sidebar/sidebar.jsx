@@ -602,6 +602,7 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
+		const tools = !! this.tools() || !! this.marketing() || !! this.earn() || !! this.activity();
 		const manage = !! this.upgrades() || !! this.users() || !! this.siteSettings();
 
 		return (
@@ -634,17 +635,19 @@ export class MySitesSidebar extends Component {
 					</ExpandableSidebarMenu>
 				) : null }
 
-				<ExpandableSidebarMenu
-					onClick={ this.props.toggleMySitesSidebarToolsMenu }
-					expanded={ this.props.isToolsOpen }
-					title={ this.props.translate( 'Tools' ) }
-					materialIcon="build"
-				>
-					{ this.tools() }
-					{ this.marketing() }
-					{ this.earn() }
-					{ this.activity() }
-				</ExpandableSidebarMenu>
+				{ tools && (
+					<ExpandableSidebarMenu
+						onClick={ this.props.toggleMySitesSidebarToolsMenu }
+						expanded={ this.props.isToolsOpen }
+						title={ this.props.translate( 'Tools' ) }
+						materialIcon="build"
+					>
+						{ this.tools() }
+						{ this.marketing() }
+						{ this.earn() }
+						{ this.activity() }
+					</ExpandableSidebarMenu>
+				) }
 
 				{ manage && (
 					<ExpandableSidebarMenu
