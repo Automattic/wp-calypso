@@ -45,9 +45,9 @@ class Starter_Page_Templates {
 	public function register_scripts() {
 		wp_register_script(
 			'starter-page-templates',
-			plugins_url( 'dist/index.js', __FILE__ ),
+			plugins_url( 'dist/starter-page-templates.js', __FILE__ ),
 			array( 'wp-plugins', 'wp-edit-post', 'wp-element' ),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/index.js' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/starter-page-templates.js' ),
 			true
 		);
 	}
@@ -71,8 +71,8 @@ class Starter_Page_Templates {
 	 */
 	public function enqueue_styles() {
 		$style_file = is_rtl()
-			? 'index.rtl.css'
-			: 'index.css';
+			? 'starter-page-templates.rtl.css'
+			: 'starter-page-templates.css';
 
 		wp_enqueue_style(
 			'starter-page-templates',

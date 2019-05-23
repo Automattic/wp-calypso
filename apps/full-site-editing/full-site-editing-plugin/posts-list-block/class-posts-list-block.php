@@ -46,15 +46,15 @@ class Posts_List_Block {
 		// phpcs:ignore WordPress
 		$script_dependencies = json_decode(
 			file_get_contents(
-				plugin_dir_path( __FILE__ ) . 'dist/a8c-posts-list.deps.json'
+				plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.deps.json'
 			),
 			true
 		);
 		wp_enqueue_script(
 			'a8c-posts-list-script',
-			plugins_url( 'dist/a8c-posts-list.js', __FILE__ ),
+			plugins_url( 'dist/posts-list-block.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/a8c-posts-list.js' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.js' ),
 			true
 		);
 		wp_set_script_translations( 'a8c-posts-list-script', 'full-site-editing' );
@@ -65,10 +65,10 @@ class Posts_List_Block {
 	 */
 	public function enqueue_styles() {
 		$style_file = is_rtl()
-			? 'a8c-posts-list.rtl.css'
-			: 'a8c-posts-list.css';
+			? 'posts-list-block.rtl.css'
+			: 'posts-list-block.css';
 		wp_enqueue_style(
-			'a8c-posts-list-style',
+			'posts-list-block-style',
 			plugins_url( 'dist/' . $style_file, __FILE__ ),
 			array(),
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
