@@ -115,6 +115,10 @@ export default function switchLocale( localeSlug ) {
 }
 
 function applyUserWaitingTranslations( currentLocaleSlug ) {
+	if ( ! location || ! location.search ) {
+		return;
+	}
+
 	const parsedURL = parseUrl( location.search, true );
 
 	const {
