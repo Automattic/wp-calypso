@@ -73,7 +73,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 			await editorPage.enterContent( blogPostQuote + '\n' );
 			await editorPage.enterPostImage( fileDetails );
 			await editorPage.waitUntilImageInserted( fileDetails );
-			const errorShown = await editorPage.errorDisplayed();
+			const errorShown = await editorPage.isErrorDisplayed();
 			assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 		} );
 
@@ -315,7 +315,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 				await this.editorPage.enterTitle( blogPostTitle );
 				await this.editorPage.enterContent( blogPostQuote + '\n' );
 
-				const errorShown = await this.editorPage.errorDisplayed();
+				const errorShown = await this.editorPage.isErrorDisplayed();
 				return assert.strictEqual(
 					errorShown,
 					false,
@@ -356,7 +356,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 			await editorPage.enterTitle( blogPostTitle );
 			await editorPage.enterContent( blogPostQuote + '\n' );
 
-			const errorShown = await editorPage.errorDisplayed();
+			const errorShown = await editorPage.isErrorDisplayed();
 			return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 		} );
 
@@ -405,7 +405,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 				await this.editorPage.enterTitle( blogPostTitle );
 				await this.editorPage.enterContent( blogPostQuote + '\n' );
 
-				const errorShown = await this.editorPage.errorDisplayed();
+				const errorShown = await this.editorPage.isErrorDisplayed();
 				return assert.strictEqual(
 					errorShown,
 					false,
@@ -1047,7 +1047,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 				this.editorPage = await EditorPage.Expect( driver );
 				await this.editorPage.enterTitle( originalBlogPostTitle );
 				await this.editorPage.enterContent( blogPostQuote );
-				const errorShown = await this.editorPage.errorDisplayed();
+				const errorShown = await this.editorPage.isErrorDisplayed();
 				return assert.strictEqual(
 					errorShown,
 					false,
@@ -1102,7 +1102,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 					'Can set the new title and update it, and link to the updated post',
 					async function() {
 						await this.editorPage.enterTitle( updatedBlogPostTitle );
-						const errorShown = await this.editorPage.errorDisplayed();
+						const errorShown = await this.editorPage.isErrorDisplayed();
 						assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 						this.postEditorToolbarComponent = await PostEditorToolbarComponent.Expect( driver );
 						await this.postEditorToolbarComponent.publishThePost();
@@ -1142,7 +1142,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 				await this.editorPage.enterTitle( originalBlogPostTitle );
 				await this.editorPage.insertContactForm();
 
-				const errorShown = await this.editorPage.errorDisplayed();
+				const errorShown = await this.editorPage.isErrorDisplayed();
 				return assert.strictEqual(
 					errorShown,
 					false,
@@ -1199,7 +1199,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 			await editorPage.enterTitle( blogPostTitle );
 			await editorPage.insertPaymentButton( paymentButtonDetails );
 
-			const errorShown = await editorPage.errorDisplayed();
+			const errorShown = await editorPage.isErrorDisplayed();
 			return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 		} );
 
@@ -1274,7 +1274,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 				await this.editorPage.enterTitle( originalBlogPostTitle );
 				await this.editorPage.enterContent( blogPostQuote );
 
-				const errorShown = await this.editorPage.errorDisplayed();
+				const errorShown = await this.editorPage.isErrorDisplayed();
 				return assert.strictEqual(
 					errorShown,
 					false,

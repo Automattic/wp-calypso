@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import assert from 'assert';
 import webdriver from 'selenium-webdriver';
 
 /**
@@ -91,7 +92,8 @@ export default class EditorPage extends AsyncBaseContainer {
 		const fileNameInput = await driver.findElement( fileNameInputSelector );
 		await fileNameInput.sendKeys( file );
 		await driverHelper.elementIsNotPresent( driver, '.media-library__list-item.is-transient' );
-		await driverHelper.elementIsNotPresent( driver, '.media-library .notice.is-error' );
+		const errorShown = await this.isErrorDisplayed();
+		assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 		return await driverHelper.waitTillPresentAndDisplayed(
 			driver,
 			by.css( '.media-library__list-item.is-selected' )
@@ -279,10 +281,8 @@ export default class EditorPage extends AsyncBaseContainer {
 		return await driver.switchTo().defaultContent();
 	}
 
-	async errorDisplayed() {
-		// await this.driver.sleep( 1000 );
-		// return await driverHelper.isElementPresent( this.driver, by.css( '.notice.is-error' ) );
-		const noticesComponent = await NoticesComponent.Expect( this.driver ); // TODO: Remove comment and import
+	async isErrorDisplayed() {
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
 		return await noticesComponent.isErrorNoticeDisplayed();
 	}
 
