@@ -18,9 +18,14 @@ export default class NoticesComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.wpcom-site' ), null, config.get( 'explicitWaitMS' ) * 3 );
 	}
 
-	async isSuccessNoticeDisplayed() {
+	async isSuccessNoticeDisplayed( click = false ) {
 		const selector = By.css( '.notice.is-success' );
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		const actionSelector = By.css( '.notice.is-success a' );
+		const isDisplayed = await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		if ( click === true ) {
+			await driverHelper.clickWhenClickable( this.driver, actionSelector );
+		}
+		return isDisplayed;
 	}
 
 	async isErrorNoticeDisplayed() {
@@ -36,12 +41,6 @@ export default class NoticesComponent extends AsyncBaseContainer {
 
 	async dismissNotice() {
 		const selector = By.css( '.notice.is-dismissable .notice__dismiss' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
-	}
-
-	async clickSuccessNotice() {
-		const selector = By.css( '.notice.is-success a' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}

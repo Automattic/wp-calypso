@@ -145,7 +145,7 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 
 	async waitForSuccessAndViewPost() {
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
-		return await noticesComponent.clickSuccessNotice();
+		return await noticesComponent.isSuccessNoticeDisplayed( true );
 	}
 
 	async closeEditor() {
