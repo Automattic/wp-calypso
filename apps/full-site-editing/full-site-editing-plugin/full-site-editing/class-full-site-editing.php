@@ -228,15 +228,15 @@ class Full_Site_Editing {
 	public function enqueue_script_and_style() {
 		$script_dependencies = json_decode(
 			file_get_contents(
-				plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.deps.json'
+				plugin_dir_path( __FILE__ ) . 'dist/full-site-editing.deps.json'
 			),
 			true
 		);
 		wp_enqueue_script(
 			'a8c-full-site-editing-script',
-			plugins_url( 'dist/full-site-editing-plugin.js', __FILE__ ),
+			plugins_url( 'dist/full-site-editing.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.js' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/full-site-editing.js' ),
 			true
 		);
 
@@ -249,8 +249,8 @@ class Full_Site_Editing {
 		);
 
 		$style_file = is_rtl()
-			? 'full-site-editing-plugin.rtl.css'
-			: 'full-site-editing-plugin.css';
+			? 'full-site-editing.rtl.css'
+			: 'full-site-editing.css';
 		wp_enqueue_style(
 			'a8c-full-site-editing-style',
 			plugins_url( 'dist/' . $style_file, __FILE__ ),
