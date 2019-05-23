@@ -19,6 +19,7 @@ const FreePlanThankYouCard = ( { translate } ) => (
 				src="/calypso/images/illustrations/security.svg"
 			/>
 		}
+		showContinueButton
 		title={ translate( 'Welcome to Jetpack Free!' ) }
 	>
 		<p>
