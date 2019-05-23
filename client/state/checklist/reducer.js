@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	SITE_CHECKLIST_RECEIVE,
@@ -15,27 +15,20 @@ export const isLoading = createReducer( false, {
 	[ SITE_CHECKLIST_RECEIVE ]: () => false,
 } );
 
-function markChecklistTaskComplete( state, { siteId, taskId } ) {
-	const siteState = state[ siteId ] || {};
-	const tasks = { ...siteState.tasks, [ taskId ]: true };
-	return {
-		...state,
-		[ siteId ]: { ...siteState, tasks },
-	};
-}
+const markChecklistTaskComplete = ( state, { taskId } ) => ( {
+	...state,
+	tasks: { ...state.tasks, [ taskId ]: true },
+} );
 
 export const items = createReducer(
 	{},
 	{
-		[ SITE_CHECKLIST_RECEIVE ]: ( state, { siteId, checklist } ) => ( {
-			...state,
-			[ siteId ]: checklist,
-		} ),
-		[ SITE_CHECKLIST_TASK_UPDATE ]: ( state, { siteId, taskId } ) =>
-			markChecklistTaskComplete( state, { siteId, taskId } ),
-		[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: ( state, { moduleSlug, siteId } ) => {
+		[ SITE_CHECKLIST_RECEIVE ]: ( state, { checklist } ) => checklist,
+		[ SITE_CHECKLIST_TASK_UPDATE ]: ( state, { taskId } ) =>
+			markChecklistTaskComplete( state, { taskId } ),
+		[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: ( state, { moduleSlug } ) => {
 			if ( moduleSlug === 'monitor' ) {
-				return markChecklistTaskComplete( state, { siteId, taskId: 'jetpack_monitor' } );
+				return markChecklistTaskComplete( state, { taskId: 'jetpack_monitor' } );
 			}
 			return state;
 		},
@@ -43,7 +36,9 @@ export const items = createReducer(
 	itemSchemas
 );
 
-export default combineReducers( {
+const reducer = combineReducers( {
 	items,
 	isLoading,
 } );
+
+export default keyedReducer( 'siteId', reducer );
