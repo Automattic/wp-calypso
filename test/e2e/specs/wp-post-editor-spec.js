@@ -443,7 +443,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 				);
 				await editorConfirmationSidebarComponent.confirmAndPublish();
 				const noticesComponent = await NoticesComponent.Expect( driver );
-				await noticesComponent.successNoticeDisplayed();
+				await noticesComponent.isSuccessNoticeDisplayed();
 				const postEditorPage = await EditorPage.Expect( driver );
 				return assert(
 					await postEditorPage.postIsScheduled(),
@@ -1021,7 +1021,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 
 			step( 'Can then see the Posts page with a confirmation message', async function() {
 				const noticesComponent = await NoticesComponent.Expect( driver );
-				const displayed = await noticesComponent.successNoticeDisplayed();
+				const displayed = await noticesComponent.isSuccessNoticeDisplayed();
 				return assert.strictEqual(
 					displayed,
 					true,

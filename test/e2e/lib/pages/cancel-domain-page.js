@@ -35,7 +35,7 @@ export default class CancelDomainPage extends AsyncBaseContainer {
 		);
 		await driverHelper.clickWhenClickable( this.driver, this.confirmButtonSelector );
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
-		return await noticesComponent.successNoticeDisplayed(); // TODO: Check when signup test is enabled again
+		return await noticesComponent.isSuccessNoticeDisplayed(); // TODO: Check when signup test is enabled again
 	}
 
 	async waitToDisappear() {

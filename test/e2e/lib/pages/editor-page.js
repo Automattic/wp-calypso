@@ -283,7 +283,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		// await this.driver.sleep( 1000 );
 		// return await driverHelper.isElementPresent( this.driver, by.css( '.notice.is-error' ) );
 		const noticesComponent = await NoticesComponent.Expect( this.driver ); // TODO: Remove comment and import
-		return await noticesComponent.waitForErrorNoticeDisplayed();
+		return await noticesComponent.isErrorNoticeDisplayed();
 	}
 
 	async ensureContactFormDisplayedInPost() {

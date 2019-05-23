@@ -18,12 +18,12 @@ export default class NoticesComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.wpcom-site' ), null, config.get( 'explicitWaitMS' ) * 3 );
 	}
 
-	async successNoticeDisplayed() {
+	async isSuccessNoticeDisplayed() {
 		const selector = By.css( '.notice.is-success' );
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 	}
 
-	async waitForErrorNoticeDisplayed() {
+	async isErrorNoticeDisplayed() {
 		const selector = By.css( '.notice.is-error' );
 		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
 	}
@@ -46,7 +46,7 @@ export default class NoticesComponent extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
-	async inviteNoticeContent() {
+	async getInviteNoticeContent() {
 		const selector = By.css( '.notice .invites__title' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();

@@ -69,7 +69,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'Automated e2e testing'
 			);
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			await noticesComponent.successNoticeDisplayed();
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -108,7 +108,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await PostsPage.Expect( driver );
 
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const invitesMessageTitleDisplayed = await noticesComponent.inviteNoticeContent();
+			const invitesMessageTitleDisplayed = await noticesComponent.getInviteNoticeContent();
 			return assert(
 				invitesMessageTitleDisplayed.includes( 'Editor' ),
 				`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Editor'`
@@ -132,7 +132,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			const editTeamMemberPage = await EditTeamMemberPage.Expect( driver );
 			await editTeamMemberPage.removeUserAndDeleteContent();
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const displayed = await noticesComponent.successNoticeDisplayed();
+			const displayed = await noticesComponent.isSuccessNoticeDisplayed();
 			return assert.strictEqual(
 				displayed,
 				true,
@@ -170,7 +170,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'Automated e2e testing'
 			);
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			await noticesComponent.successNoticeDisplayed();
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -181,7 +181,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 			const revokePage = await RevokePage.Expect( driver );
 			await revokePage.revokeUser();
-			const sent = await noticesComponent.successNoticeDisplayed();
+			const sent = await noticesComponent.isSuccessNoticeDisplayed();
 			return assert( sent, 'The sent confirmation message was not displayed' );
 		} );
 
@@ -235,7 +235,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'Automated e2e testing'
 			);
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			await noticesComponent.successNoticeDisplayed();
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -352,7 +352,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'Automated e2e testing'
 			);
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			await noticesComponent.successNoticeDisplayed();
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -390,7 +390,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		step( 'Can see a notice welcoming the new user as an contributor', async function() {
 			await PostsPage.Expect( driver );
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const invitesMessageTitleDisplayed = await noticesComponent.inviteNoticeContent();
+			const invitesMessageTitleDisplayed = await noticesComponent.getInviteNoticeContent();
 			return assert(
 				invitesMessageTitleDisplayed.includes( 'Contributor' ),
 				`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Contributor'`
@@ -445,7 +445,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				const editTeamMemberPage = await EditTeamMemberPage.Expect( driver );
 				await editTeamMemberPage.changeToNewRole( 'author' );
 				const noticesComponent = await NoticesComponent.Expect( driver );
-				const displayed = await noticesComponent.successNoticeDisplayed();
+				const displayed = await noticesComponent.isSuccessNoticeDisplayed();
 				return assert(
 					displayed,
 					'The update successful notice was not shown on the edit team member page.'
@@ -487,7 +487,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'Automated e2e testing'
 			);
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			await noticesComponent.successNoticeDisplayed();
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );

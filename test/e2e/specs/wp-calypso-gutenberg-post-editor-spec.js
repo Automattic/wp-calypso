@@ -377,7 +377,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			step( 'Can then see the Posts page with a confirmation message', async function() {
 				const noticesComponent = await NoticesComponent.Expect( driver );
-				const displayed = await noticesComponent.successNoticeDisplayed();
+				const displayed = await noticesComponent.isSuccessNoticeDisplayed();
 				return assert.strictEqual(
 					displayed,
 					true,
@@ -802,7 +802,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			step( 'Can then see the Posts page with a confirmation message', async function() {
 				const noticesComponent = await NoticesComponent.Expect( driver );
-				const displayed = await noticesComponent.successNoticeDisplayed();
+				const displayed = await noticesComponent.isSuccessNoticeDisplayed();
 				return assert.strictEqual(
 					displayed,
 					true,

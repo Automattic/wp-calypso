@@ -61,7 +61,7 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 	step( 'Can see a success message contains Hello Dolly', async function() {
 		const expectedPartialText = 'Successfully activated Hello Dolly';
 		const noticesComponent = await NoticesComponent.Expect( driver );
-		await noticesComponent.successNoticeDisplayed();
+		await noticesComponent.isSuccessNoticeDisplayed();
 		const successMessageText = await noticesComponent.getNoticeContent();
 		return assert.strictEqual(
 			successMessageText.indexOf( expectedPartialText ) > -1,
