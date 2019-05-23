@@ -2,7 +2,7 @@
 /**
  * Posts list block file.
  *
- * @package posts-list-block
+ * @package full-site-editing
  */
 
 /**
@@ -57,7 +57,7 @@ class Posts_List_Block {
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/a8c-posts-list.js' ),
 			true
 		);
-		wp_set_script_translations( 'a8c-posts-list-script', 'posts-list-block' );
+		wp_set_script_translations( 'a8c-posts-list-script', 'full-site-editing' );
 	}
 
 	/**
@@ -138,10 +138,10 @@ class Posts_List_Block {
 			esc_url( get_the_permalink() ),
 			sprintf(
 				/* translators: %s: Name of current post */
-				esc_attr__( 'Continue reading %s', 'posts-list-block' ),
+				esc_attr__( 'Continue reading %s', 'full-site-editing' ),
 				the_title_attribute( array( 'echo' => false ) )
 			),
-			esc_html__( 'Read more', 'posts-list-block' )
+			esc_html__( 'Read more', 'full-site-editing' )
 		);
 	}
 }

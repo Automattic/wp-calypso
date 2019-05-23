@@ -21,8 +21,8 @@ const icon = (
 );
 
 registerBlockType( metadata.name, {
-	title: __( 'Blog Posts Listing', 'posts-list-block' ),
-	description: __( 'Displays your latest Blog Posts.', 'posts-list-block' ),
+	title: __( 'Blog Posts Listing', 'full-site-editing' ),
+	description: __( 'Displays your latest Blog Posts.', 'full-site-editing' ),
 	icon: icon,
 	category: 'layout',
 	supports: {
@@ -35,11 +35,11 @@ registerBlockType( metadata.name, {
 		<Fragment>
 			<Placeholder
 				icon={ icon }
-				label={ __( 'Your recent blog posts will be displayed here.', 'posts-list-block' ) }
+				label={ __( 'Your recent blog posts will be displayed here.', 'full-site-editing' ) }
 			>
 				{ isSelected ? (
 					<RangeControl
-						label={ __( 'Number of posts to show', 'posts-list-block' ) }
+						label={ __( 'Number of posts to show', 'full-site-editing' ) }
 						value={ attributes.postsPerPage }
 						onChange={ val => setAttributes( { postsPerPage: val } ) }
 						min={ 1 }
@@ -50,7 +50,7 @@ registerBlockType( metadata.name, {
 			<InspectorControls>
 				<PanelBody>
 					<RangeControl
-						label={ __( 'Number of posts', 'posts-list-block' ) }
+						label={ __( 'Number of posts', 'full-site-editing' ) }
 						value={ attributes.postsPerPage }
 						onChange={ val => setAttributes( { postsPerPage: val } ) }
 						min={ 1 }

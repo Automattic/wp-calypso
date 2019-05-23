@@ -2,7 +2,7 @@
 /**
  * Posts List
  *
- * @package posts-list-block
+ * @package full-site-editing
  */
 
 /**
@@ -27,7 +27,7 @@ if ( $posts_list instanceof WP_Query && $posts_list->have_posts() ) :
 		</ul>
 
 		<a href="<?php echo esc_url( get_post_type_archive_link( 'post' ) ); ?>" class="a8c-posts-list__view-all">
-			<?php esc_html_e( 'View all posts', 'posts-list-block' ); ?>
+			<?php esc_html_e( 'View all posts', 'full-site-editing' ); ?>
 		</a>
 	</div>
 	<?php

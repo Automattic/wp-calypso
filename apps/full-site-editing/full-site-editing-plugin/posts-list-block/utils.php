@@ -2,7 +2,7 @@
 /**
  * Template functions.
  *
- * @package posts-list-block
+ * @package full-site-editing
  */
 
 if ( ! function_exists( 'a8c_pl_render_template' ) ) {

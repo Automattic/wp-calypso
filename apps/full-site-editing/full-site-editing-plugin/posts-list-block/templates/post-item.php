@@ -2,7 +2,7 @@
 /**
  * Post Item.
  *
- * @package posts-list-block
+ * @package full-site-editing
  *
  * phpcs:disable WordPress.XSS.EscapeOutput.OutputNotEscaped
  */
@@ -20,7 +20,7 @@
 
 	<?php if ( is_sticky() ) : ?>
 	<div class="a8c-posts-list-item__featured">
-		<span><?php esc_html_e( 'Featured', 'posts-list-block' ); ?></span>
+		<span><?php esc_html_e( 'Featured', 'full-site-editing' ); ?></span>
 	</div>
 	<?php endif; // is_sticky. ?>
 
@@ -28,11 +28,11 @@
 
 	<div class="a8c-posts-list-item__meta">
 		<span class="a8c-posts-list-item__datetime"><?php echo esc_html( get_the_time( get_option( 'date_format' ) ) ); ?></span>
-		<span class="a8c-posts-list-item__author"><?php echo esc_html_x( 'by', 'designating the post author (eg: by John Doe', 'posts-list-block' ); ?>
+		<span class="a8c-posts-list-item__author"><?php echo esc_html_x( 'by', 'designating the post author (eg: by John Doe', 'full-site-editing' ); ?>
 			<?php the_author_posts_link(); ?>
 		</span>
 		<span class="a8c-posts-list-item__edit-link">
-			<a href="<?php echo esc_attr( get_edit_post_link() ); ?>"><?php esc_html_e( 'Edit', 'posts-list-block' ); ?></a>
+			<a href="<?php echo esc_attr( get_edit_post_link() ); ?>"><?php esc_html_e( 'Edit', 'full-site-editing' ); ?></a>
 		</span>
 	</div>
 
