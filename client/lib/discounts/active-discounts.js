@@ -57,8 +57,8 @@ export default [
 	},
 	{
 		name: 'sale_wpsave20',
-		startsAt: new Date( 2019, 3, 27, 0, 0, 0 ),
-		endsAt: new Date( 2099, 1, 31, 0, 0, 0 ), //evergreen
+		startsAt: new Date( 2019, 1, 1, 0, 0, 0 ),
+		endsAt: new Date( 2099, 1, 1, 0, 0, 0 ), //evergreen
 		plansPageNoticeText: 'Enter coupon code “WPSAVE20” at checkout to claim your 20% discount',
 		targetPlans: [
 			{ type: TYPE_FREE, group: GROUP_WPCOM },
@@ -69,8 +69,8 @@ export default [
 	},
 	{
 		name: 'sale_wpsave20_jp',
-		startsAt: new Date( 2019, 4, 27, 0, 0, 0 ),
-		endsAt: new Date( 2099, 4, 31, 0, 0, 0 ), //evergreen
+		startsAt: new Date( 2019, 1, 1, 0, 0, 0 ),
+		endsAt: new Date( 2099, 1, 1, 0, 0, 0 ), //evergreen
 		plansPageNoticeText: 'Enter coupon code “JPSALE20” at checkout to claim your 20% discount',
 		targetPlans: [
 			{ type: TYPE_FREE, group: GROUP_JETPACK },
