@@ -27,6 +27,7 @@ export default {
 					selectedFeature={ context.query.feature }
 					selectedPlan={ context.query.plan }
 					withDiscount={ context.query.discount }
+					discountEndDate={ context.query.ts }
 				/>
 			</CheckoutData>
 		);

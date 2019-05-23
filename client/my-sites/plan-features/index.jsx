@@ -140,7 +140,7 @@ export class PlanFeatures extends Component {
 		if ( ! bannerContainer ) {
 			return false;
 		}
-		const activeDiscount = getDiscountByName( this.props.withDiscount );
+		const activeDiscount = getDiscountByName( this.props.withDiscount, this.props.discountEndDate );
 		return ReactDOM.createPortal(
 			<Notice
 				className="plan-features__notice-credits"
@@ -161,13 +161,13 @@ export class PlanFeatures extends Component {
 	}
 
 	hasDiscountNotice() {
-		const { canPurchase, hasPlaceholders, withDiscount } = this.props;
+		const { canPurchase, hasPlaceholders, withDiscount, discountEndDate } = this.props;
 		const bannerContainer = this.getBannerContainer();
 		if ( ! bannerContainer ) {
 			return false;
 		}
 
-		const activeDiscount = getDiscountByName( withDiscount );
+		const activeDiscount = getDiscountByName( withDiscount, discountEndDate );
 		if ( ! activeDiscount || hasPlaceholders || ! canPurchase ) {
 			return false;
 		}

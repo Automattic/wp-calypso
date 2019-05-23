@@ -78,6 +78,7 @@ export class PlansFeaturesMain extends Component {
 			selectedFeature,
 			selectedPlan,
 			withDiscount,
+			discountEndDate,
 			siteId,
 			plansWithScroll,
 		} = this.props;
@@ -111,6 +112,7 @@ export class PlansFeaturesMain extends Component {
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
+					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
 					popularPlanSpec={ {
 						type: customerType === 'personal' ? TYPE_PREMIUM : TYPE_BUSINESS,
