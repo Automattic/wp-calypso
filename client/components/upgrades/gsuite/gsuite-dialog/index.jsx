@@ -3,18 +3,21 @@
 /**
  * External dependencies
  */
-
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import { addItem } from 'lib/upgrades/actions';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
+import { getItemsForCart, newUsers, userIsReady } from 'lib/gsuite/new-users';
+import { getSelectedSite } from 'state/ui/selectors';
 import GoogleAppsProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import { isGSuiteRestricted } from 'lib/gsuite';
@@ -22,7 +25,6 @@ import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/an
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { getProductCost } from 'state/products-list/selectors';
-import { newUsers } from 'lib/gsuite/new-users';
 
 /**
  * Style dependencies
@@ -38,6 +40,10 @@ class GoogleAppsDialog extends React.Component {
 		onGoBack: PropTypes.func,
 		analyticsSection: PropTypes.string,
 		initialGoogleAppsCartItem: PropTypes.object,
+		planType: PropTypes.string.isRequired,
+		selectedSite: PropTypes.shape( {
+			slug: PropTypes.string.isRequired,
+		} ).isRequired,
 	};
 
 	constructor( props ) {
@@ -122,6 +128,8 @@ class GoogleAppsDialog extends React.Component {
 
 	footer() {
 		const { translate } = this.props;
+		const { users } = this.state;
+		const canContinue = 0 < users.length && users.every( userIsReady );
 
 		return (
 			<footer className="gsuite-dialog__footer">
@@ -129,7 +137,12 @@ class GoogleAppsDialog extends React.Component {
 					{ translate( 'Skip' ) }
 				</Button>
 
-				<Button primary className="gsuite-dialog__continue-button">
+				<Button
+					primary
+					className="gsuite-dialog__continue-button"
+					disabled={ ! canContinue }
+					onClick={ this.handleAddEmail }
+				>
 					{ this.renderButtonCopy() }
 				</Button>
 			</footer>
@@ -142,6 +155,21 @@ class GoogleAppsDialog extends React.Component {
 		this.props.recordCancelButtonClick( this.props.analyticsSection );
 
 		this.props.onClickSkip();
+	};
+
+	handleAddEmail = () => {
+		const { domain, planType, selectedSite } = this.props;
+		const { users } = this.state;
+		const canContinue = 0 < users.length && users.every( userIsReady );
+
+		if ( canContinue ) {
+			getItemsForCart(
+				[ domain ],
+				'business' === planType ? 'gapps_unlimited' : 'gapps',
+				users
+			).forEach( addItem );
+			page( '/checkout/' + selectedSite.slug );
+		}
 	};
 }
 
@@ -164,10 +192,15 @@ const recordFormSubmit = section =>
 	);
 
 export default connect(
-	state => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		gsuiteBasicCost: getProductCost( state, 'gapps' ),
-	} ),
+	( state, ownProps ) => {
+		const selectedSite = getSelectedSite( state );
+		return {
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			gsuiteBasicCost: getProductCost( state, 'gapps' ),
+			planType: ownProps.planType || 'basic',
+			selectedSite,
+		};
+	},
 	{
 		recordAddEmailButtonClick,
 		recordCancelButtonClick,

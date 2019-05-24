@@ -154,8 +154,7 @@ const getItemsForCart = (
 
 	return map( groups, ( groupedUsers, domain ) => {
 		const domainInfo = find( domains, [ 'name', domain ] );
-
-		return hasGSuite( domainInfo )
+		return domainInfo && hasGSuite( domainInfo )
 			? cartItems.gsuiteExtraLicenses( domain, groupedUsers )
 			: cartItems.gsuite( domain, groupedUsers, productSlug );
 	} );

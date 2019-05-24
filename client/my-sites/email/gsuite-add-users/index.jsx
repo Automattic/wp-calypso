@@ -14,7 +14,6 @@ import React, { Fragment } from 'react';
  */
 import { addItem } from 'lib/upgrades/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
-
 import Button from 'components/button';
 import Card from 'components/card';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
