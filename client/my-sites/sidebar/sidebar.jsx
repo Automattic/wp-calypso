@@ -88,6 +88,12 @@ export class MySitesSidebar extends Component {
 	}
 
 	tools() {
+		const { canUserManageOptions } = this.props;
+
+		if ( ! canUserManageOptions ) {
+			return null;
+		}
+
 		return (
 			<ToolsMenu
 				siteId={ this.props.siteId }
