@@ -226,8 +226,6 @@ class Full_Site_Editing {
 	 * Enqueue assets.
 	 */
 	public function enqueue_script_and_style() {
-		global $feature_flags;
-
 		$script_dependencies = json_decode(
 			file_get_contents(
 				plugin_dir_path( __FILE__ ) . 'dist/full-site-editing.deps.json'
@@ -241,6 +239,8 @@ class Full_Site_Editing {
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/full-site-editing.js' ),
 			true
 		);
+
+		$feature_flags = A8C_Full_Site_Editing_Feature_Flags::get_instance();
 
 		wp_localize_script(
 			'a8c-full-site-editing-script',
