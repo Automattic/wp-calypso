@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 import { trim } from 'lodash';
+import Gridicons from 'gridicons/example';
 
 /**
  * Internal dependencies
@@ -67,7 +68,7 @@ import Gauge from 'components/gauge/docs/example';
 import GlobalNotices from 'components/global-notices/docs/example';
 import Gravatar from 'components/gravatar/docs/example';
 import GravatarCaterpillar from 'components/gravatar-caterpillar/docs/example';
-import Gridicon from 'components/gridicon/docs/example';
+import GSuiteExamples from 'components/gsuite/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
 import Headers from 'components/header-cake/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
@@ -226,7 +227,8 @@ class DesignAssets extends React.Component {
 					<GlobalNotices readmeFilePath="global-notices" />
 					<Gravatar readmeFilePath="gravatar" />
 					<GravatarCaterpillar readmeFilePath="gravatar-caterpillar" />
-					<Gridicon />
+					<Gridicons />
+					<GSuiteExamples readmeFilePath="gsuite" />
 					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />
