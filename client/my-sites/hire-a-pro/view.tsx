@@ -56,12 +56,12 @@ export const HireAProPage: FunctionComponent< Props > = ( { recordTracksEvent } 
 				<MarketingPageHeader
 					buttonCopy={ translate( 'Boost My Traffic' ) }
 					description={ translate(
-						"Optimize your site for search engines and get more exposure for your business. Let's make the most of your site's built-in SEO tools!"
+						'Site setup, graphic design, SEO, social media — whatever you need help with, there’s a pro for you. And every partner we recommend offers great service and support.'
 					) }
 					handleButtonClick={ handleHeaderBannerClick }
-					illustrationAlt={ translate( 'Your site with Marketing Tools' ) }
-					illustrationUrl={ '/calypso/images/illustrations/illustration-404.svg' }
-					title={ translate( 'Drive more traffic to your site with better SEO' ) }
+					illustrationAlt={ translate( 'Hire a WordPress.com pro' ) }
+					illustrationUrl={ '/calypso/images/illustrations/pro.svg' }
+					title={ translate( 'Hire the perfect pro from our trusted partners' ) }
 				/>
 				<div className="hire-a-pro__feature-list">
 					<MarketingPageFeature
