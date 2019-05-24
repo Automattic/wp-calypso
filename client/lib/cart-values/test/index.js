@@ -23,9 +23,9 @@ describe( 'index', () => {
 		PREMIUM_PRODUCT,
 		THEME_PRODUCT;
 
-	beforeAll( () => {
-		cartValues = require( 'lib/cart-values' );
-		cartItems = cartValues.cartItems;
+	beforeAll( async () => {
+		cartValues = await import( 'lib/cart-values' );
+		cartItems = await import( 'lib/cart-values/cart-items' );
 		DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( {
 			productSlug: 'dotcom_domain',
 			domain: 'testdomain.com',

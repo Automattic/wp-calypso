@@ -6,7 +6,7 @@
  * External dependencies
  */
 import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
+import { getAll } from 'lib/cart-values/cart-items';
 
 /**
  * Internal dependencies
@@ -22,7 +22,7 @@ jest.mock( 'lib/analytics', () => ( {
 		recordAddToCart: jest.fn(),
 	},
 } ) );
-jest.mock( 'lib/cart-values', () => ( { cartItems: { getAll: jest.fn() } } ) );
+jest.mock( 'lib/cart-values/cart-items', () => ( { getAll: jest.fn() } ) );
 // jest.mock( 'lib/analytics/ad-tracking', () => ( { recordAddToCart: jest.fn() } ) );
 
 const previousCart = {};
@@ -62,7 +62,7 @@ describe( 'recordEvents', () => {
 	} );
 
 	it( 'does not record events when no items are added or removed', () => {
-		cartItems.getAll.mockImplementation( getMockCartItems( [ domainReg ], [ domainReg ] ) );
+		getAll.mockImplementation( getMockCartItems( [ domainReg ], [ domainReg ] ) );
 
 		recordEvents( previousCart, nextCart );
 
@@ -71,7 +71,7 @@ describe( 'recordEvents', () => {
 	} );
 
 	it( 'records an add event when an item is added', () => {
-		cartItems.getAll.mockImplementation( getMockCartItems( [], [ domainReg ] ) );
+		getAll.mockImplementation( getMockCartItems( [], [ domainReg ] ) );
 
 		recordEvents( previousCart, nextCart );
 
@@ -85,7 +85,7 @@ describe( 'recordEvents', () => {
 	} );
 
 	it( 'records a remove event when an item is removed', () => {
-		cartItems.getAll.mockImplementation( getMockCartItems( [ domainReg ], [] ) );
+		getAll.mockImplementation( getMockCartItems( [ domainReg ], [] ) );
 
 		recordEvents( previousCart, nextCart );
 
@@ -98,7 +98,7 @@ describe( 'recordEvents', () => {
 	} );
 
 	it( 'records an add and a remove event when items are added and removed', () => {
-		cartItems.getAll.mockImplementation( getMockCartItems( [ domainReg ], [ privateReg ] ) );
+		getAll.mockImplementation( getMockCartItems( [ domainReg ], [ privateReg ] ) );
 
 		recordEvents( previousCart, nextCart );
 

@@ -13,21 +13,33 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import {
-	cartItems,
-	getEnabledPaymentMethods,
-	hasPendingPayment,
-	shouldShowTax,
-} from 'lib/cart-values';
-import PendingPaymentBlocker from './pending-payment-blocker';
-import { clearSitePlans } from 'state/sites/plans/actions';
-import { clearPurchases } from 'state/purchases/actions';
-import DomainDetailsForm from './domain-details-form';
+import { shouldShowTax, hasPendingPayment, getEnabledPaymentMethods } from 'lib/cart-values';
 import {
 	domainMapping,
 	planItem as getCartItemForPlan,
 	themeItem,
+	hasGoogleApps,
+	getGoogleApps,
+	hasRenewalItem,
+	getRenewalItemFromCartItem,
+	getAll as getAllCartItems,
+	getDomainRegistrations,
+	getRenewalItems,
+	hasFreeTrial,
+	hasConciergeSession,
+	hasDomainRegistration,
+	hasJetpackPlan,
+	hasBloggerPlan,
+	hasPersonalPlan,
+	hasPremiumPlan,
+	hasPlan,
+	hasOnlyRenewalItems,
+	hasTransferProduct,
 } from 'lib/cart-values/cart-items';
+import PendingPaymentBlocker from './pending-payment-blocker';
+import { clearSitePlans } from 'state/sites/plans/actions';
+import { clearPurchases } from 'state/purchases/actions';
+import DomainDetailsForm from './domain-details-form';
 import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
 import { hasDomainDetails } from 'lib/store-transactions';
@@ -155,7 +167,7 @@ export class Checkout extends React.Component {
 		if (
 			this.props.isNewlyCreatedSite &&
 			this.props.contactDetails &&
-			cartItems.hasGoogleApps( this.props.cart ) &&
+			hasGoogleApps( this.props.cart ) &&
 			this.needsDomainDetails()
 		) {
 			this.setDomainDetailsForGSuiteCart();
@@ -164,11 +176,7 @@ export class Checkout extends React.Component {
 
 	setDomainDetailsForGSuiteCart() {
 		const { contactDetails, cart } = this.props;
-		const domainReceiptId = get(
-			cartItems.getGoogleApps( cart ),
-			'[0].extra.receipt_for_domain',
-			0
-		);
+		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
 
 		if ( domainReceiptId ) {
 			setDomainDetails( contactDetails );
@@ -180,7 +188,7 @@ export class Checkout extends React.Component {
 
 		analytics.tracks.recordEvent( 'calypso_checkout_page_view', {
 			saved_cards: props.cards.length,
-			is_renewal: cartItems.hasRenewalItem( props.cart ),
+			is_renewal: hasRenewalItem( props.cart ),
 		} );
 
 		recordViewCheckout( props.cart );
@@ -244,7 +252,7 @@ export class Checkout extends React.Component {
 			return;
 		}
 
-		const cartItem = cartItems.getRenewalItemFromCartItem(
+		const cartItem = getRenewalItemFromCartItem(
 			{
 				meta,
 				product_slug: productSlug,
@@ -293,7 +301,7 @@ export class Checkout extends React.Component {
 
 		if (
 			! this.props.cart.hasLoadedFromServer ||
-			! isEmpty( cartItems.getAll( this.props.cart ) )
+			! isEmpty( getAllCartItems( this.props.cart ) )
 		) {
 			return false;
 		}
@@ -330,7 +338,7 @@ export class Checkout extends React.Component {
 	}
 
 	getEligibleDomainFromCart() {
-		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
+		const domainRegistrations = getDomainRegistrations( this.props.cart );
 		const domainsInSignupContext = filter( domainRegistrations, { extra: { context: 'signup' } } );
 		const domainsForGSuite = filter( domainsInSignupContext, ( { meta } ) =>
 			canDomainAddGSuite( meta )
@@ -353,23 +361,19 @@ export class Checkout extends React.Component {
 				step: { data: receipt },
 			},
 		} = this.props;
-		const domainReceiptId = get(
-			cartItems.getGoogleApps( cart ),
-			'[0].extra.receipt_for_domain',
-			0
-		);
+		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
 
 		// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
 		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
 
-		if ( cartItems.hasRenewalItem( cart ) ) {
-			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
+		if ( hasRenewalItem( cart ) ) {
+			renewalItem = getRenewalItems( cart )[ 0 ];
 
 			return managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
 		}
 
-		if ( cartItems.hasFreeTrial( cart ) ) {
+		if ( hasFreeTrial( cart ) ) {
 			return selectedSiteSlug
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
@@ -385,7 +389,7 @@ export class Checkout extends React.Component {
 
 		if ( this.props.isNewlyCreatedSite && receipt && isEmpty( receipt.failed_purchases ) ) {
 			const siteDesignType = get( selectedSite, 'options.design_type' );
-			const hasGoogleAppsInCart = cartItems.hasGoogleApps( cart );
+			const hasGoogleAppsInCart = hasGoogleApps( cart );
 
 			// Handle the redirect path after a purchase of GSuite
 			// The onboarding checklist currently supports the blog type only.
@@ -403,8 +407,8 @@ export class Checkout extends React.Component {
 			// Maybe show either the G Suite or Concierge Session upsell pages
 			if (
 				! hasGoogleAppsInCart &&
-				! cartItems.hasConciergeSession( cart ) &&
-				cartItems.hasDomainRegistration( cart )
+				! hasConciergeSession( cart ) &&
+				hasDomainRegistration( cart )
 			) {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
 				if ( domainsForGSuite.length ) {
@@ -420,11 +424,9 @@ export class Checkout extends React.Component {
 		// There's an additional test above that tests directly aginst the G Suite upsell
 		if (
 			config.isEnabled( 'upsell/concierge-session' ) &&
-			! cartItems.hasConciergeSession( cart ) &&
-			! cartItems.hasJetpackPlan( cart ) &&
-			( cartItems.hasBloggerPlan( cart ) ||
-				cartItems.hasPersonalPlan( cart ) ||
-				cartItems.hasPremiumPlan( cart ) )
+			! hasConciergeSession( cart ) &&
+			! hasJetpackPlan( cart ) &&
+			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) )
 		) {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
@@ -433,7 +435,7 @@ export class Checkout extends React.Component {
 			}
 		}
 
-		if ( cartItems.hasConciergeSession( cart ) ) {
+		if ( hasConciergeSession( cart ) ) {
 			displayModeParam = 'd=concierge';
 		}
 
@@ -480,10 +482,10 @@ export class Checkout extends React.Component {
 
 		this.props.clearPurchases();
 
-		if ( cartItems.hasRenewalItem( cart ) ) {
+		if ( hasRenewalItem( cart ) ) {
 			// checkouts for renewals redirect back to `/purchases` with a notice
 
-			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
+			renewalItem = getRenewalItems( cart )[ 0 ];
 			// group all purchases into an array
 			purchasedProducts = reduce(
 				( receipt && receipt.purchases ) || {},
@@ -530,7 +532,7 @@ export class Checkout extends React.Component {
 					{ persistent: true }
 				);
 			}
-		} else if ( cartItems.hasFreeTrial( cart ) ) {
+		} else if ( hasFreeTrial( cart ) ) {
 			this.props.clearSitePlans( selectedSiteId );
 		}
 
@@ -550,7 +552,7 @@ export class Checkout extends React.Component {
 
 		if (
 			( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) ||
-			( isDomainOnly && cartItems.hasPlan( cart ) && ! selectedSiteId )
+			( isDomainOnly && hasPlan( cart ) && ! selectedSiteId )
 		) {
 			notices.info( translate( 'Almost done…' ) );
 
@@ -688,16 +690,14 @@ export class Checkout extends React.Component {
 		const cart = this.props.cart;
 		const transaction = this.props.transaction;
 
-		if ( cart && cartItems.hasOnlyRenewalItems( cart ) ) {
+		if ( cart && hasOnlyRenewalItems( cart ) ) {
 			return false;
 		}
 
 		return (
 			cart &&
 			! hasDomainDetails( transaction ) &&
-			( cartItems.hasDomainRegistration( cart ) ||
-				cartItems.hasGoogleApps( cart ) ||
-				cartItems.hasTransferProduct( cart ) )
+			( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
 		);
 	}
 

@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { hasDomainInCart } from 'lib/cart-values/cart-items';
 import GoogleAppsDialog from './gsuite-dialog';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -48,7 +48,7 @@ class GoogleApps extends Component {
 			return;
 		}
 
-		if ( ! cartItems.hasDomainInCart( this.props.cart, this.props.domain ) ) {
+		if ( ! hasDomainInCart( this.props.cart, this.props.domain ) ) {
 			// Should we handle this more gracefully?
 			this.props.onGoBack();
 		}

@@ -22,7 +22,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 import { addItem } from 'lib/upgrades/actions';
-import { cartItems } from 'lib/cart-values';
+import { conciergeSessionItem } from 'lib/cart-values/cart-items';
 import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -337,7 +337,7 @@ export class ConciergeSessionNudge extends React.Component {
 
 		trackUpsellButtonClick( 'accept' );
 
-		addItem( cartItems.conciergeSessionItem() );
+		addItem( conciergeSessionItem() );
 
 		page( `/checkout/${ siteSlug }` );
 	};

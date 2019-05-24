@@ -19,7 +19,7 @@ import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
-import cartValues, { paymentMethodName } from 'lib/cart-values';
+import { paymentMethodName, isPaymentMethodEnabled } from 'lib/cart-values';
 import {
 	detectWebPaymentMethod,
 	getWebPaymentMethodName,
@@ -113,7 +113,7 @@ export class PaymentBox extends PureComponent {
 	}
 
 	paymentMethod( method ) {
-		if ( ! cartValues.isPaymentMethodEnabled( this.props.cart, method ) ) {
+		if ( ! isPaymentMethodEnabled( this.props.cart, method ) ) {
 			return null;
 		}
 

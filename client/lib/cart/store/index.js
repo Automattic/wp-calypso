@@ -33,12 +33,21 @@ import Dispatcher from 'dispatcher';
 import {
 	applyCoupon,
 	removeCoupon,
-	cartItems,
 	fillInAllCartItemAttributes,
 	setTaxCountryCode,
 	setTaxPostalCode,
 	setTaxLocation,
 } from 'lib/cart-values';
+import {
+	addPrivacyToAllDomains,
+	removePrivacyFromAllDomains,
+	fillGoogleAppsRegistrationData,
+	add as addCartItem,
+	addWithoutReplace as addCartItemWithoutReplace,
+	removeItemAndDependencies,
+	clearCart,
+	replaceItem as replaceCartItem,
+} from 'lib/cart-values/cart-items';
 import wp from 'lib/wp';
 import { getReduxStore } from 'lib/redux-bridge';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -126,28 +135,26 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 			break;
 
 		case CART_PRIVACY_PROTECTION_ADD:
-			update( cartItems.addPrivacyToAllDomains( CartStore.get() ) );
+			update( addPrivacyToAllDomains( CartStore.get() ) );
 			break;
 
 		case CART_PRIVACY_PROTECTION_REMOVE:
-			update( cartItems.removePrivacyFromAllDomains( CartStore.get() ) );
+			update( removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
 		case GOOGLE_APPS_REGISTRATION_DATA_ADD:
-			update(
-				cartItems.fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData )
-			);
+			update( fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData ) );
 			break;
 
 		case CART_ITEMS_ADD:
-			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ) );
+			update( flow( ...action.cartItems.map( cartItem => addCartItem( cartItem ) ) ) );
 			break;
 
 		case CART_ITEMS_REPLACE_ALL:
 			update(
 				flow(
-					cartItems.clearCart(),
-					...action.cartItems.map( cartItem => cartItems.addWithoutReplace( cartItem ) )
+					clearCart(),
+					...action.cartItems.map( cartItem => addCartItemWithoutReplace( cartItem ) )
 				)
 			);
 			break;
@@ -162,16 +169,12 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 
 		case CART_ITEM_REMOVE:
 			update(
-				cartItems.removeItemAndDependencies(
-					action.cartItem,
-					CartStore.get(),
-					action.domainsWithPlansOnly
-				)
+				removeItemAndDependencies( action.cartItem, CartStore.get(), action.domainsWithPlansOnly )
 			);
 			break;
 
 		case CART_ITEM_REPLACE:
-			update( cartItems.replaceItem( action.oldItem, action.newItem ) );
+			update( replaceCartItem( action.oldItem, action.newItem ) );
 			break;
 
 		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:

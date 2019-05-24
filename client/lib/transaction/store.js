@@ -18,7 +18,7 @@ import {
 	TRANSACTION_RESET,
 	TRANSACTION_STEP_SET,
 } from 'lib/upgrades/action-types';
-import { cartItems } from 'lib/cart-values';
+import { hasDomainRegistration } from 'lib/cart-values/cart-items';
 import CartStore from 'lib/cart/store';
 import Emitter from 'lib/mixins/emitter';
 import Dispatcher from 'dispatcher';
@@ -125,7 +125,7 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 			Dispatcher.waitFor( [ CartStore.dispatchToken ] );
 
 			if (
-				! cartItems.hasDomainRegistration( CartStore.get() ) &&
+				! hasDomainRegistration( CartStore.get() ) &&
 				hasDomainDetails( TransactionStore.get() )
 			) {
 				setDomainDetails( null );

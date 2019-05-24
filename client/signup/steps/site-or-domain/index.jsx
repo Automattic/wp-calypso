@@ -11,7 +11,7 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { domainRegistration } from 'lib/cart-values/cart-items';
 import StepWrapper from 'signup/step-wrapper';
 import { submitSignupStep } from 'state/signup/progress/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -108,7 +108,7 @@ class SiteOrDomain extends Component {
 
 		const domain = this.getDomainName();
 		const productSlug = getDomainProductSlug( domain );
-		const domainItem = cartItems.domainRegistration( { productSlug, domain } );
+		const domainItem = domainRegistration( { productSlug, domain } );
 		const siteUrl = domain;
 
 		this.props.submitSignupStep(

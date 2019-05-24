@@ -13,7 +13,7 @@ import { includes, noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { getDomainPriceRule } from 'lib/cart-values/cart-items';
 import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
@@ -97,7 +97,7 @@ class MapDomainStep extends React.Component {
 					</div>
 
 					<DomainProductPrice
-						rule={ cartItems.getDomainPriceRule(
+						rule={ getDomainPriceRule(
 							this.props.domainsWithPlansOnly,
 							this.props.selectedSite,
 							this.props.cart,

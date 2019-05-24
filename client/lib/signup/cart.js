@@ -11,14 +11,15 @@ import { forEach } from 'lodash';
 import wpcom from 'lib/wp';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
-import { cartItems, preprocessCartForServer, fillInAllCartItemAttributes } from 'lib/cart-values';
+import { preprocessCartForServer, fillInAllCartItemAttributes } from 'lib/cart-values';
+import { add as addCartItem } from 'lib/cart-values/cart-items';
 
 function addProductsToCart( cart, newCartItems ) {
 	forEach( newCartItems, function( cartItem ) {
 		cartItem.extra = Object.assign( cartItem.extra || {}, {
 			context: 'signup',
 		} );
-		const addFunction = cartItems.add( cartItem );
+		const addFunction = addCartItem( cartItem );
 
 		cart = fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
 	} );

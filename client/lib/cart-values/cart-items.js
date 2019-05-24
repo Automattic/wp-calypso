@@ -652,11 +652,11 @@ export function domainTransfer( properties ) {
  * @param {Object} cart - cart as `CartValue` object
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
-function getGoogleApps( cart ) {
+export function getGoogleApps( cart ) {
 	return filter( getAll( cart ), isGoogleApps );
 }
 
-function googleApps( properties ) {
+export function googleApps( properties ) {
 	const productSlug = properties.product_slug || 'gapps',
 		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
 
@@ -1167,81 +1167,3 @@ export function hasStaleItem( cart ) {
 		);
 	} );
 }
-
-export default {
-	add,
-	addPrivacyToAllDomains,
-	addWithoutReplace,
-	businessPlan,
-	clearCart,
-	customDesignItem,
-	domainMapping,
-	domainRegistration,
-	domainTransfer,
-	fillGoogleAppsRegistrationData,
-	findFreeTrial,
-	getAll,
-	getAllSorted,
-	getDomainMappings,
-	getDomainPriceRule,
-	getDomainRegistrations,
-	getDomainRegistrationsWithoutPrivacy,
-	getDomainTransfers,
-	getDomainTransfersWithoutPrivacy,
-	getGoogleApps,
-	getIncludedDomain,
-	getItemForPlan,
-	getRenewalItemFromCartItem,
-	getRenewalItemFromProduct,
-	getRenewalItems,
-	getSiteRedirects,
-	getTlds,
-	googleApps,
-	googleAppsExtraLicenses,
-	guidedTransferItem,
-	isDomainBeingUsedForPlan,
-	isNextDomainFree,
-	hasDomainBeingUsedForPlan,
-	hasDomainCredit,
-	hasDomainInCart,
-	hasDomainMapping,
-	hasDomainRegistration,
-	hasEcommercePlan,
-	hasOnlyDomainProductsWithPrivacySupport,
-	hasFreeTrial,
-	hasGoogleApps,
-	hasOnlyFreeTrial,
-	hasOnlyProductsOf,
-	hasOnlyRenewalItems,
-	hasPlan,
-	hasJetpackPlan,
-	hasOnlyBundledDomainProducts,
-	hasBloggerPlan,
-	hasPersonalPlan,
-	hasPremiumPlan,
-	hasProduct,
-	hasRenewableSubscription,
-	hasRenewalItem,
-	hasTld,
-	hasConciergeSession,
-	isPaidDomain,
-	noAdsItem,
-	planItem,
-	premiumPlan,
-	remove,
-	removeItemAndDependencies,
-	removePrivacyFromAllDomains,
-	replaceItem,
-	siteRedirect,
-	shouldBundleDomainWithPlan,
-	spaceUpgradeItem,
-	supportsPrivacyProtectionPurchase,
-	themeItem,
-	unlimitedSpaceItem,
-	unlimitedThemesItem,
-	updatePrivacyForDomain,
-	videoPressItem,
-	hasStaleItem,
-	hasTransferProduct,
-	conciergeSessionItem,
-};

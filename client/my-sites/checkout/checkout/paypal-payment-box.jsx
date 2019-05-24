@@ -13,7 +13,8 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import cartValues, { getLocationOrigin, getTaxPostalCode } from 'lib/cart-values';
+import { getLocationOrigin, getTaxPostalCode } from 'lib/cart-values';
+import { hasRenewalItem } from 'lib/cart-values/cart-items';
 import { setTaxPostalCode } from 'lib/upgrades/actions/cart';
 import Input from 'my-sites/domains/components/form/input';
 import notices from 'notices';
@@ -122,7 +123,7 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	renderButtonText = () => {
-		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
+		if ( hasRenewalItem( this.props.cart ) ) {
 			return this.props.translate( 'Purchase %(price)s subscription with PayPal', {
 				args: { price: this.props.cart.total_cost_display },
 				context: 'Pay button on /checkout',

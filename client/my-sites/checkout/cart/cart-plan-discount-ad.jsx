@@ -14,7 +14,7 @@ import { once } from 'lodash';
  * Internal dependencies
  */
 import CartAd from './cart-ad';
-import { cartItems } from 'lib/cart-values';
+import { hasPlan, getAll as getAllCartItems } from 'lib/cart-values/cart-items';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -39,15 +39,11 @@ export class CartPlanDiscountAd extends Component {
 
 	render() {
 		const { cart, translate, sitePlans } = this.props;
-		if (
-			! sitePlans.hasLoadedFromServer ||
-			! cart.hasLoadedFromServer ||
-			! cartItems.hasPlan( cart )
-		) {
+		if ( ! sitePlans.hasLoadedFromServer || ! cart.hasLoadedFromServer || ! hasPlan( cart ) ) {
 			return null;
 		}
 
-		const cartPlan = cartItems.getAll( cart ).find( isPlan );
+		const cartPlan = getAllCartItems( cart ).find( isPlan );
 		const plan = sitePlans.data.filter( function( sitePlan ) {
 			return sitePlan.productSlug === this.product_slug;
 		}, cartPlan )[ 0 ];

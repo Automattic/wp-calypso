@@ -14,7 +14,7 @@ import { get } from 'lodash';
  */
 
 import Button from 'components/button';
-import { cartItems } from 'lib/cart-values';
+import { hasProduct, siteRedirect } from 'lib/cart-values/cart-items';
 import { errorNotice } from 'state/notices/actions';
 import { canRedirect } from 'lib/domains';
 import DomainProductPrice from 'components/domains/domain-product-price';
@@ -100,7 +100,7 @@ class SiteRedirectStep extends React.Component {
 
 		this.props.recordFormSubmit( domain );
 
-		if ( cartItems.hasProduct( this.props.cart, 'offsite_redirect' ) ) {
+		if ( hasProduct( this.props.cart, 'offsite_redirect' ) ) {
 			this.props.errorNotice(
 				this.getValidationErrorMessage( domain, { code: 'already_in_cart' } )
 			);
@@ -122,7 +122,7 @@ class SiteRedirectStep extends React.Component {
 	};
 
 	addSiteRedirectToCart = domain => {
-		addItem( cartItems.siteRedirect( { domain: domain } ) );
+		addItem( siteRedirect( { domain: domain } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 

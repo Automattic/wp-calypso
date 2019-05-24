@@ -2,7 +2,8 @@
 /**
  * Internal dependencies
  */
-import { cartItems, emptyCart, fillInAllCartItemAttributes } from 'lib/cart-values';
+import { emptyCart, fillInAllCartItemAttributes } from 'lib/cart-values';
+import { getItemForPlan, add as addCartItem } from 'lib/cart-values/cart-items';
 import productsListFactory from 'lib/products-list';
 import { fullCreditsPayment } from 'lib/store-transactions';
 import { submitTransaction } from './checkout';
@@ -40,9 +41,9 @@ function submitFreeTransaction( partialCart, onComplete ) {
  */
 export function startFreeTrial( siteId, plan, onComplete ) {
 	let cart = emptyCart( siteId, { temporary: true } );
-	const planItem = cartItems.getItemForPlan( plan, { isFreeTrial: true } );
+	const planItem = getItemForPlan( plan, { isFreeTrial: true } );
 
-	cart = cartItems.add( planItem )( cart );
+	cart = addCartItem( planItem )( cart );
 
 	submitFreeTransaction( cart, onComplete );
 }

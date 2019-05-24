@@ -21,7 +21,7 @@ import FormFooter from 'my-sites/domains/domain-management/components/form-foote
 import FormLabel from 'components/forms/form-label';
 import { getEligibleGSuiteDomain, hasGSuite } from 'lib/gsuite';
 import getUserSetting from 'state/selectors/get-user-setting';
-import { cartItems } from 'lib/cart-values';
+import { googleAppsExtraLicenses, googleApps } from 'lib/cart-values/cart-items';
 import { emailManagement } from 'my-sites/email/paths';
 import { addItem } from 'lib/upgrades/actions';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
@@ -52,9 +52,9 @@ function getGoogleAppsCartItems( { domains, fieldsets, product_slug } ) {
 		const domainInfo = find( domains, { name: domain } );
 		let item;
 		if ( hasGSuite( domainInfo ) ) {
-			item = cartItems.googleAppsExtraLicenses( { domain, users } );
+			item = googleAppsExtraLicenses( { domain, users } );
 		} else {
-			item = cartItems.googleApps( { domain, product_slug, users } );
+			item = googleApps( { domain, product_slug, users } );
 		}
 
 		return item;

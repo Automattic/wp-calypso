@@ -12,7 +12,7 @@ import { isEmpty, join, merge, reduce } from 'lodash';
  * Internal dependencies
  */
 import Gridicon from 'gridicons';
-import { cartItems } from 'lib/cart-values';
+import { getDomainRegistrations, getDomainTransfers } from 'lib/cart-values/cart-items';
 import { HTTPS_SSL } from 'lib/url/support';
 import { getProductsList } from 'state/products-list/selectors';
 import { getTld, isHstsRequired } from 'lib/domains';
@@ -20,10 +20,7 @@ import { getTld, isHstsRequired } from 'lib/domains';
 class DomainRegistrationHsts extends React.PureComponent {
 	getHstsTlds = () => {
 		const { cart, productsList } = this.props;
-		const domains = merge(
-			cartItems.getDomainRegistrations( cart ),
-			cartItems.getDomainTransfers( cart )
-		);
+		const domains = merge( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
 
 		if ( isEmpty( domains ) ) {
 			return null;

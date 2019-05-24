@@ -17,11 +17,8 @@ import PaymentChatButton from './payment-chat-button';
 import CartToggle from './cart-toggle';
 import TermsOfService from './terms-of-service';
 import { Input, Select } from 'my-sites/domains/components/form';
-import cartValues, {
-	paymentMethodName,
-	paymentMethodClassName,
-	getLocationOrigin,
-} from 'lib/cart-values';
+import { paymentMethodName, paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
+import { hasRenewalItem, hasRenewableSubscription } from 'lib/cart-values/cart-items';
 import SubscriptionText from './subscription-text';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
@@ -200,7 +197,7 @@ export class RedirectPaymentBox extends PureComponent {
 	};
 
 	renderButtonText() {
-		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
+		if ( hasRenewalItem( this.props.cart ) ) {
 			return translate( 'Purchase %(price)s subscription with %(paymentProvider)s', {
 				args: {
 					price: this.props.cart.total_cost_display,
@@ -308,9 +305,7 @@ export class RedirectPaymentBox extends PureComponent {
 					{ this.props.children }
 
 					<TermsOfService
-						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(
-							this.props.cart
-						) }
+						hasRenewableSubscription={ hasRenewableSubscription( this.props.cart ) }
 					/>
 					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
 					<DomainRegistrationAgreement cart={ this.props.cart } />
