@@ -6,11 +6,13 @@
 
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { translate } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import NpsSurvey from '../';
+import { NpsSurvey } from '../';
 import {
 	isNpsSurveySubmitted,
 	isNpsSurveySubmitFailure,
@@ -20,12 +22,18 @@ import {
 	getNpsSurveyScore,
 	getNpsSurveyFeedback,
 } from 'state/nps-survey/selectors';
+import {
+	submitNpsSurvey,
+	submitNpsSurveyWithNoScore,
+	sendNpsSurveyFeedback,
+} from 'state/nps-survey/actions';
+import { successNotice } from 'state/notices/actions';
 
 class NpsSurveyExample extends PureComponent {
-	static displayName = 'NpsSurvey';
-
 	state = {
 		isClosed: false,
+		canRequestConciergeSession: false,
+		isBusinessUser: false,
 	};
 
 	handleClose = afterClose => {
@@ -35,12 +43,48 @@ class NpsSurveyExample extends PureComponent {
 		afterClose();
 	};
 
+	toggleBusinessUser = event => {
+		this.setState( { isBusinessUser: event.target.checked } );
+	};
+
+	toggleConciergeSessionAvailability = event => {
+		this.setState( { canRequestConciergeSession: event.target.checked } );
+	};
+
+	renderOptions() {
+		return (
+			<div style={ { marginTop: '10px' } }>
+				<label style={ { display: 'block' } }>
+					<input type="checkbox" onClick={ this.toggleBusinessUser } />
+					The user subscribes the Business plan.
+				</label>
+				<label style={ { display: 'block' } }>
+					<input type="checkbox" onClick={ this.toggleConciergeSessionAvailability } />
+					The user can request a concierge session.
+				</label>
+			</div>
+		);
+	}
+
 	render() {
 		return (
 			<div>
 				{ ! this.state.isClosed && (
-					<NpsSurvey name="api-valid-test-survey" onClose={ this.handleClose } />
+					<NpsSurvey
+						name="api-valid-test-survey"
+						onClose={ this.handleClose }
+						translate={ translate }
+						hasAnswered={ this.props.hasAnswered }
+						submitNpsSurvey={ this.props.submitNpsSurvey }
+						submitNpsSurveyWithNoScore={ this.props.submitNpsSurveyWithNoScore }
+						sendNpsSurveyFeedback={ this.props.sendNpsSurveyFeedback }
+						successNotice={ this.props.successNotice }
+						isBusinessUser={ this.state.isBusinessUser }
+						canRequestConciergeSession={ this.state.canRequestConciergeSession }
+						recordTracksEvent={ noop }
+					/>
 				) }
+				{ ! this.state.isClosed && this.renderOptions() }
 				{ this.state.isClosed && this.props.hasAnswered && (
 					<div>
 						User closed survey after submitting:
@@ -72,8 +116,18 @@ const mapStateToProps = state => {
 	};
 };
 
-const ConnectedNpsSurveyExample = connect( mapStateToProps )( NpsSurveyExample );
+const mapDispatchToProp = {
+	submitNpsSurvey,
+	submitNpsSurveyWithNoScore,
+	sendNpsSurveyFeedback,
+	successNotice,
+};
 
-ConnectedNpsSurveyExample.displayName = NpsSurveyExample.displayName;
+const ConnectedNpsSurveyExample = connect(
+	mapStateToProps,
+	mapDispatchToProp
+)( NpsSurveyExample );
+
+ConnectedNpsSurveyExample.displayName = 'NpsSurvey';
 
 export default ConnectedNpsSurveyExample;

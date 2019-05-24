@@ -115,3 +115,15 @@
 .nps-survey__close-button.button.is-borderless {
 	color: var( --color-text-subtle );
 }
+
+.nps-survey__promotion {
+	padding: 24px 48px 24px 24px;
+
+	p {
+		margin: 10px 0 0;
+	}
+
+	p:first-child {
+		margin-top: 0;
+	}
+}
