@@ -67,20 +67,20 @@ const EditorInEditor = compose(
 	const parsedTemplate = parseTemplate( template );
 
 	const beforeContent = createBlock(
-		'core/group',
+		'a8c/template-wrapper',
 		{
 			align: 'full',
-			customBackgroundColor: '#eeeeee',
+			position: 'before',
 		},
 		map( parsedTemplate.beforeContent, ( { name, attributes } ) => createBlock( name, attributes ) )
 	);
 	insertBlock( beforeContent, 0 );
 
 	const afterContent = createBlock(
-		'core/group',
+		'a8c/template-wrapper',
 		{
 			align: 'full',
-			customBackgroundColor: '#eeeeee',
+			position: 'after',
 		},
 		map( parsedTemplate.afterContent, ( { name, attributes } ) => createBlock( name, attributes ) )
 	);
