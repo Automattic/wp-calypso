@@ -14,6 +14,7 @@ import DocumentHead from 'components/data/document-head';
 import { sectionify } from 'lib/route';
 import Main from 'components/main';
 import { addItem } from 'lib/upgrades/actions';
+import { cartItems } from 'lib/cart-values';
 import productsFactory from 'lib/products-list';
 import getSites from 'state/selectors/get-sites';
 import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -27,6 +28,7 @@ import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import GoogleApps from 'components/upgrades/gsuite';
 import {
+	domainManagementList,
 	domainManagementTransferIn,
 	domainManagementTransferInPrecheck,
 	domainMapping,
@@ -38,11 +40,13 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { isGSuiteRestricted } from 'lib/gsuite';
+import wp from 'lib/wp';
 
 /**
  * Module variables
  */
 const productsList = productsFactory();
+const wpcom = wp.undocumented();
 
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
@@ -108,7 +112,7 @@ const mapDomain = ( context, next ) => {
 			<CartData>
 				<MapDomain
 					initialQuery={ context.query.initialQuery }
-					lastDomainStatus={ context.query.lastDomainStatus }
+					isDomainMappable={ context.query.isDomainMappable === 'true' }
 				/>
 			</CartData>
 		</Main>
@@ -128,7 +132,7 @@ const transferDomain = ( context, next ) => {
 				<TransferDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
-					lastDomainStatus={ context.query.lastDomainStatus }
+					isDomainTransferrable={ context.query.isDomainTransferrable === 'true' }
 				/>
 			</CartData>
 		</Main>
@@ -156,7 +160,8 @@ const useYourDomain = ( context, next ) => {
 				<UseYourDomainStep
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
-					lastDomainStatus={ context.query.lastDomainStatus }
+					isDomainMappable={ context.query.isDomainMappable === 'true' }
+					isDomainTransferrable={ context.query.isDomainTransferrable === 'true' }
 					goBack={ handleGoBack }
 				/>
 			</CartData>
@@ -258,19 +263,44 @@ const redirectIfNoSite = redirectTo => {
 	};
 };
 
-const redirectToUseYourDomainIfVipSite = () => {
-	return ( context, next ) => {
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
-
-		if ( selectedSite && selectedSite.is_vip ) {
-			return page.redirect(
-				domainUseYourDomain( selectedSite.slug, get( context, 'params.suggestion', '' ) )
-			);
-		}
-
+const redirectIfDomainIsMappable = ( context, next ) => {
+	if ( get( context, 'query.isDomainMappable', false ) !== 'true' ) {
 		next();
-	};
+	}
+
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+	const domain = get( context, 'query.initialQuery', '' );
+
+	// For VIP sites we handle domain mappings differently
+	// We don't go through the usual checkout process
+	// Instead, we add the mapping directly
+	if ( selectedSite.is_vip ) {
+		wpcom
+			.addVipDomainMapping( selectedSite.ID, domain )
+			.then(
+				() => page( domainManagementList( selectedSite.slug ) ),
+				error => this.setState( { errorMessage: error.message } )
+			);
+		return;
+	}
+
+	addItem( cartItems.domainMapping( { domain } ) );
+
+	page.redirect( '/checkout/' + selectedSite.slug );
+};
+
+const redirectToUseYourDomainIfVipSite = ( context, next ) => {
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( selectedSite && selectedSite.is_vip ) {
+		return page.redirect(
+			domainUseYourDomain( selectedSite.slug, get( context, 'params.suggestion', '' ) )
+		);
+	}
+
+	next();
 };
 
 const jetpackNoDomainsWarning = ( context, next ) => {
@@ -304,6 +334,7 @@ export default {
 	mapDomain,
 	googleAppsWithRegistration,
 	redirectToDomainSearchSuggestion,
+	redirectIfDomainIsMappable,
 	redirectIfNoSite,
 	redirectToUseYourDomainIfVipSite,
 	transferDomain,

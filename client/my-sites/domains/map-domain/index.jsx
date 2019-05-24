@@ -26,8 +26,6 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
 import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
-import { parseTwoDigitYear } from 'moment';
-import { domainAvailability } from 'lib/domains/constants';
 
 const wpcom = wp.undocumented();
 
@@ -122,7 +120,6 @@ export class MapDomain extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		this.checkSiteIsUpgradeable( nextProps );
-		this.checkIfDomainIsMappable( nextProps );
 	}
 
 	checkSiteIsUpgradeable( props ) {
@@ -156,12 +153,6 @@ export class MapDomain extends Component {
 			/>
 		);
 	};
-
-	checkIfDomainIsMappable( props ) {
-		if ( props.lastDomainStatus === domainAvailability.TRANSFERRABLE ) {
-			this.handleMapDomain( this.props.initialQuery );
-		}
-	}
 
 	render() {
 		if ( this.state.showTrademarkClaimsNotice ) {

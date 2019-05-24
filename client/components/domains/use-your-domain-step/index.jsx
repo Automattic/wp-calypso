@@ -52,7 +52,8 @@ class UseYourDomainStep extends React.Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		goBack: PropTypes.func,
 		initialQuery: PropTypes.string,
-		lastDomainStatus: PropTypes.string,
+		isDomainMappable: PropTypes.bool,
+		isDomainTransferrable: PropTypes.bool,
 		isSignupStep: PropTypes.bool,
 		mapDomainUrl: PropTypes.string,
 		transferDomainUrl: PropTypes.string,
@@ -100,7 +101,7 @@ class UseYourDomainStep extends React.Component {
 		if ( selectedSite ) {
 			const query = stringify( {
 				initialQuery: this.state.searchQuery.trim(),
-				lastDomainStatus: this.props.lastDomainStatus,
+				isDomainMappable: this.props.isDomainMappable,
 			} );
 			buildMapDomainUrl += `/${ selectedSite.slug }?${ query }`;
 		}
@@ -133,7 +134,7 @@ class UseYourDomainStep extends React.Component {
 		if ( selectedSite ) {
 			const query = stringify( {
 				initialQuery: this.state.searchQuery.trim(),
-				lastDomainStatus: this.props.lastDomainStatus,
+				isDomainTransferrable: this.props.isDomainTransferrable,
 			} );
 			buildTransferDomainUrl += `/${ selectedSite.slug }?${ query }`;
 		}
