@@ -507,8 +507,13 @@ class ThemeSheet extends React.Component {
 	getDefaultOptionLabel = () => {
 		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
 		if ( isActive ) {
-			// Customize size
-			return i18n.translate( 'Customize site' );
+			// Customize site
+			return (
+				<span className="theme__sheet-customize-button">
+					<Gridicon icon="external" />
+					{ i18n.translate( 'Customize site' ) }
+				</span>
+			);
 		} else if ( isLoggedIn ) {
 			if ( isPremium && ! isPurchased ) {
 				// purchase
