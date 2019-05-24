@@ -125,10 +125,20 @@ function applyUserWaitingTranslations( currentLocaleSlug ) {
 		'load-user-translations': username,
 		project = 'wpcom',
 		translationSet = 'default',
+		translationStatus = 'current',
 		locale = currentLocaleSlug,
 	} = parsedURL.query;
 
 	if ( ! username ) {
+		return;
+	}
+
+	if ( ! includes( [ 'current', 'waiting' ], translationStatus ) ) {
+		return;
+	}
+
+	if ( 'waiting' === translationStatus ) {
+		// TODO only allow loading your own waiting translations. Disallow loading them for now.
 		return;
 	}
 
@@ -143,7 +153,7 @@ function applyUserWaitingTranslations( currentLocaleSlug ) {
 
 	const query = {
 		'filters[user_login]': username,
-		'filters[status]': 'waiting',
+		'filters[status]': translationStatus,
 		format: 'json',
 	};
 
