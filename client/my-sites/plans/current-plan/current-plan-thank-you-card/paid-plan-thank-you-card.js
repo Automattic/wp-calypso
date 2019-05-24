@@ -157,6 +157,7 @@ export class PaidPlanThankYouCard extends Component {
 				{ installState === INSTALL_STATE_COMPLETE && (
 					<ThankYouCard
 						illustration={ securityIllustration }
+						showCalypsoIntro
 						showContinueButton
 						title={ translate( 'So long spam, hello backups!' ) }
 					>

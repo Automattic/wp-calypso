@@ -16,7 +16,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-themes.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/themes.svg" /> }
 				title={ translate( 'Try a premium theme' ) }
 				description={ translate(
 					'Access hundreds of beautifully designed premium themes at no extra cost.'

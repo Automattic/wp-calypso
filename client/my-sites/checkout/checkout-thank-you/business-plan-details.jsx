@@ -53,7 +53,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 
 			{ ! selectedFeature && (
 				<PurchaseDetail
-					icon={ <img alt="" src="/calypso/images/illustrations/jetpack-themes.svg" /> }
+					icon={ <img alt="" src="/calypso/images/illustrations/themes.svg" /> }
 					title={ i18n.translate( 'Try a New Theme' ) }
 					description={ i18n.translate(
 						"You've now got access to every premium theme, at no extra cost - that's hundreds of new options. " +
@@ -66,7 +66,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 
 			{ ! selectedFeature && isEnabled( 'manage/plugins/upload' ) && (
 				<PurchaseDetail
-					icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
+					icon={ <img alt="" src="/calypso/images/illustrations/updates.svg" /> }
 					title={ i18n.translate( 'Add a Plugin' ) }
 					description={ i18n.translate(
 						'Search and add plugins right from your dashboard, or upload a plugin ' +
@@ -78,7 +78,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 			) }
 
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-google-analytics.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/google-analytics.svg" /> }
 				title={ i18n.translate( 'Connect to Google Analytics' ) }
 				description={ i18n.translate(
 					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."

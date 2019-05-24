@@ -104,13 +104,13 @@ export class MySitesSidebar extends Component {
 	};
 
 	stats() {
-		const { siteId, canUserViewStats, path, translate } = this.props;
+		const { site, siteId, canUserViewStats, path, translate } = this.props;
 
 		if ( siteId && ! canUserViewStats ) {
 			return null;
 		}
 
-		const statsLink = getStatsPathForTab( 'day', siteId );
+		const statsLink = getStatsPathForTab( 'day', site ? site.slug : siteId );
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<SidebarItem
@@ -498,7 +498,7 @@ export class MySitesSidebar extends Component {
 		const adminUrl =
 			this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip
 				? formatUrl( {
-						...parseUrl( site.options.admin_url ),
+						...parseUrl( site.options.admin_url + 'admin.php' ),
 						query: { page: 'jetpack' },
 						hash: '/my-plan',
 				  } )

@@ -78,6 +78,11 @@ export default class extends React.Component {
 		if ( props.source ) {
 			query.source = props.source;
 			query.path = 'recent';
+
+			if ( props.source === 'google_photos' ) {
+				// Add any query params specific to Google Photos
+				return utils.getGoogleQuery( query, props );
+			}
 		}
 
 		return query;

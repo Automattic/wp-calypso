@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@2.5.0
+  slack: circleci/slack@2.5.1
 
 references:
   shared-environment: &shared-environment

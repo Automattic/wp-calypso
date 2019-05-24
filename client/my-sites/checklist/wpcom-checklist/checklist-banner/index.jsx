@@ -127,7 +127,7 @@ const mapStateToProps = state => {
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		isLoading: getSiteChecklistIsLoading( state ),
+		isLoading: getSiteChecklistIsLoading( state, siteId ),
 	};
 };
 

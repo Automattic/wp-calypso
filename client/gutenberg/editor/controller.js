@@ -9,13 +9,15 @@ import { get, isInteger } from 'lodash';
 /**
  * Internal dependencies
  */
-import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
-import isWpAdminGutenbergEnabled from 'state/selectors/is-wp-admin-gutenberg-enabled';
+import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
+import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import { EDITOR_START } from 'state/action-types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/route';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import { requestSelectedEditor } from 'state/selected-editor/actions';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -38,14 +40,42 @@ function getPostID( context ) {
 	return parseInt( context.params.post, 10 );
 }
 
-export const redirect = ( context, next ) => {
+function waitForSiteIdAndSelectedEditor( context ) {
+	return new Promise( resolve => {
+		const unsubscribe = context.store.subscribe( () => {
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
+			if ( ! siteId ) {
+				return;
+			}
+			const selectedEditor = getSelectedEditor( state, siteId );
+			if ( ! selectedEditor ) {
+				return;
+			}
+			unsubscribe();
+			resolve();
+		} );
+		// Trigger a `store.subscribe()` callback
+		context.store.dispatch(
+			requestSelectedEditor( getSelectedSiteId( context.store.getState() ) )
+		);
+	} );
+}
+
+export const redirect = async ( context, next ) => {
 	const {
 		store: { getState },
 	} = context;
+	const tmpState = getState();
+	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
+	if ( ! selectedEditor ) {
+		await waitForSiteIdAndSelectedEditor( context );
+	}
+
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
 
-	if ( isWpAdminGutenbergEnabled( state, siteId ) ) {
+	if ( shouldRedirectGutenberg( state, siteId ) ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 		const url = getGutenbergEditorUrl( state, siteId, postId, postType );
@@ -53,7 +83,7 @@ export const redirect = ( context, next ) => {
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}
 
-	if ( isGutenbergEnabled( state, siteId ) ) {
+	if ( shouldLoadGutenberg( state, siteId ) ) {
 		return next();
 	}
 

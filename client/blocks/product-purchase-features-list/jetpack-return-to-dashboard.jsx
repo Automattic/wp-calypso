@@ -23,7 +23,7 @@ export default localize( ( { selectedSite, translate, onClick = noop } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-dashboard.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/dashboard.svg" /> }
 				title={ translate( 'Return to your Jetpack Dashboard' ) }
 				description={ translate(
 					'Go back to your self-hosted WordPress site’s wp-admin Jetpack Dashboard.'

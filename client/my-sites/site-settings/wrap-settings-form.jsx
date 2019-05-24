@@ -114,7 +114,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 		// Some Utils
 		handleSubmitForm = event => {
-			const { dirtyFields, fields, trackTracksEvent } = this.props;
+			const { dirtyFields, fields, trackTracksEvent, path } = this.props;
 
 			if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 				event.preventDefault();
@@ -123,18 +123,19 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			dirtyFields.map( function( value ) {
 				switch ( value ) {
 					case 'blogdescription':
-						trackTracksEvent( 'calypso_settings_site_tagline_updated' );
+						trackTracksEvent( 'calypso_settings_site_tagline_updated', { path } );
 						break;
 					case 'blogname':
-						trackTracksEvent( 'calypso_settings_site_title_updated' );
+						trackTracksEvent( 'calypso_settings_site_title_updated', { path } );
 						break;
 					case 'blog_public':
 						trackTracksEvent( 'calypso_settings_site_privacy_updated', {
 							privacy: fields.blog_public,
+							path,
 						} );
 						break;
 					case 'wga':
-						trackTracksEvent( 'calypso_seo_settings_google_analytics_updated' );
+						trackTracksEvent( 'calypso_seo_settings_google_analytics_updated', { path } );
 						break;
 				}
 			} );
