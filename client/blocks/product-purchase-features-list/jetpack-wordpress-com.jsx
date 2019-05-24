@@ -16,7 +16,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/updates.svg" /> }
 				title={ translate( 'Automatic Updates' ) }
 				description={ translate( 'Keep your plugins up-to-date, hassle-free.' ) }
 				buttonText={ translate( 'Configure auto updates' ) }

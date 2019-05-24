@@ -97,7 +97,7 @@ class IntroBanner extends Component {
 			>
 				<img
 					className="activity-log-banner__intro-image"
-					src="/calypso/images/illustrations/jetpack-site-activity.svg"
+					src="/calypso/images/illustrations/site-activity.svg"
 					alt={ translate( 'Activity' ) }
 				/>
 				<div className="activity-log-banner__intro-description">

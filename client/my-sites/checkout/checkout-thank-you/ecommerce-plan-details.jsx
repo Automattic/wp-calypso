@@ -53,7 +53,7 @@ const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purch
 
 			{ ! selectedFeature && isEnabled( 'manage/plugins/upload' ) && (
 				<PurchaseDetail
-					icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
+					icon={ <img alt="" src="/calypso/images/illustrations/updates.svg" /> }
 					title={ i18n.translate( 'Add a Plugin' ) }
 					description={ i18n.translate(
 						'Search and add plugins right from your dashboard, or upload a plugin ' +
@@ -65,7 +65,7 @@ const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purch
 			) }
 
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-google-analytics.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/google-analytics.svg" /> }
 				title={ i18n.translate( 'Connect to Google Analytics' ) }
 				description={ i18n.translate(
 					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."

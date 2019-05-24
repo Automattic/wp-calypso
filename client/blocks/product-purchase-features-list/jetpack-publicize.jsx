@@ -16,7 +16,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-marketing.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/marketing.svg" /> }
 				title={ translate( 'Marketing Automation' ) }
 				description={ translate(
 					'Schedule unlimited tweets, Facebook posts, and other social posts in advance.'

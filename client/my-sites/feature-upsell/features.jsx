@@ -65,7 +65,7 @@ class FeaturesComponent extends Component {
 			<>
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
-						icon={ <img alt="" src="/calypso/images/illustrations/jetpack-support.svg" /> }
+						icon={ <img alt="" src="/calypso/images/illustrations/dotcom-support.svg" /> }
 						title={ 'Priority support' }
 						description={
 							'Unlimited access to our world-class live chat and email support. No question is too big or too small!'
@@ -74,7 +74,7 @@ class FeaturesComponent extends Component {
 				</div>
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
-						icon={ <img alt="" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
+						icon={ <img alt="" src="/calypso/images/illustrations/apps.svg" /> }
 						title={ 'Custom site address' }
 						description={
 							'Make your site memorable and professional - choose a .com, .shop, or any other dot.'
@@ -114,7 +114,7 @@ class FeaturesComponent extends Component {
 				</div>
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
-						icon={ <img alt="" src="/calypso/images/illustrations/jetpack-themes.svg" /> }
+						icon={ <img alt="" src="/calypso/images/illustrations/themes.svg" /> }
 						title={ 'Access to premium themes' }
 						description={
 							'You don’t have to be a designer to make a beautiful site. Choose from a range of business-focused layouts created by pros.'
@@ -125,7 +125,7 @@ class FeaturesComponent extends Component {
 				</div>
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
-						icon={ <img alt="" src="/calypso/images/illustrations/jetpack-dashboard.svg" /> }
+						icon={ <img alt="" src="/calypso/images/illustrations/dashboard.svg" /> }
 						title={ 'Advanced design customizations' }
 						description={
 							'Take creative control with additional customization features - like color schemes and, background designs, or add completely ' +
@@ -135,7 +135,7 @@ class FeaturesComponent extends Component {
 				</div>
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
-						icon={ <img alt="" src="/calypso/images/illustrations/jetpack-wordads.svg" /> }
+						icon={ <img alt="" src="/calypso/images/illustrations/dotcom-wordads.svg" /> }
 						title={ 'Simple payments' }
 						description={
 							'Accept credit card payments on your site with the click of a button! Sell products, take donations, ' +
@@ -145,7 +145,7 @@ class FeaturesComponent extends Component {
 				</div>
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
-						icon={ <img alt="" src="/calypso/images/illustrations/jetpack-video-hosting.svg" /> }
+						icon={ <img alt="" src="/calypso/images/illustrations/video-hosting.svg" /> }
 						title={ translate( 'Video and audio posts' ) }
 						description={
 							'Enrich your posts and pages with video or audio. Upload as media ' +
@@ -174,7 +174,7 @@ class FeaturesComponent extends Component {
 				</div>
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
-						icon={ <img alt="" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
+						icon={ <img alt="" src="/calypso/images/illustrations/apps.svg" /> }
 						title={ 'Install Plugins' }
 						description={
 							'Plugins are like smartphone apps for WordPress. They provide features like: ' +
@@ -184,7 +184,7 @@ class FeaturesComponent extends Component {
 				</div>
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
-						icon={ <img alt="" src="/calypso/images/illustrations/jetpack-google-analytics.svg" /> }
+						icon={ <img alt="" src="/calypso/images/illustrations/google-analytics.svg" /> }
 						title={ translate( 'Google Analytics' ) }
 						description={ translate(
 							"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."
