@@ -39,6 +39,7 @@ import { trashPost } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import ConvertToBlocksDialog from 'components/convert-to-blocks';
 
 /**
  * Types
@@ -66,6 +67,7 @@ interface State {
 	isIframeLoaded: boolean;
 	isMediaModalVisible: boolean;
 	isPreviewVisible: boolean;
+	isConversionPromptVisible: boolean;
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
@@ -83,6 +85,8 @@ enum EditorActions {
 	PreviewPost = 'previewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
+	OpenConversions = 'openConversions',
+	ConversionResponse = 'conversionResponse',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -90,6 +94,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
 		isPreviewVisible: false,
+		isConversionPromptVisible: false,
 		previewUrl: 'about:blank',
 	};
 
@@ -182,6 +187,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
+		}
+
+		if ( EditorActions.OpenConversions === action ) {
+			this.setState( { isConversionPromptVisible: true } );
 		}
 
 		if ( EditorActions.SetDraftId === action && ! this.props.postId ) {
@@ -355,6 +364,19 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
 
+	handleConversionResponse = ( confirmed: boolean ) => () => {
+		if ( ! ( this.state.isConversionPromptVisible && this.iframePort ) ) {
+			return;
+		}
+
+		this.iframePort.postMessage( {
+			action: 'conversionResponse',
+			payload: { confirmed },
+		} );
+
+		this.setState( { isConversionPromptVisible: false } );
+	};
+
 	getStatsPath = () => {
 		const { postId } = this.props;
 		return postId ? '/block-editor/:post_type/:site/:post_id' : '/block-editor/:post_type/:site';
@@ -395,6 +417,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			multiple,
 			isIframeLoaded,
 			isPreviewVisible,
+			isConversionPromptVisible,
 			previewUrl,
 			postUrl,
 			editedPost,
@@ -408,6 +431,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					properties={ this.getStatsProps() }
 				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+				<ConvertToBlocksDialog
+					showDialog={ isConversionPromptVisible }
+					close={ this.handleConversionResponse( false ) }
+					confirmConversion={ this.handleConversionResponse( true ) }
+				/>
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ shouldLoadIframe && (
