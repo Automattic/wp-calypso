@@ -83,7 +83,12 @@ export const HireAProPage: FunctionComponent< Props > = ( { recordTracksEvent } 
 						) }
 						imagePath="/calypso/images/illustrations/logo-designers.svg"
 					>
-						<Button compact onClick={ handleLogoDesignerClick } href={ '#' } target="_blank">
+						<Button
+							compact
+							onClick={ handleLogoDesignerClick }
+							href={ 'http://logojoy.grsm.io/looka' }
+							target="_blank"
+						>
 							{ translate( 'Hire an logo designer' ) }
 						</Button>
 					</MarketingPageFeature>
