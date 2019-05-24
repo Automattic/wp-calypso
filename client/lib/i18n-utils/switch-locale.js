@@ -164,7 +164,7 @@ function applyUserWaitingTranslations( currentLocaleSlug ) {
 		query,
 	} );
 
-	request
+	return request
 		.get( requestUrl )
 		.set( 'Accept', 'application/json' )
 		.withCredentials()
