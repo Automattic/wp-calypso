@@ -609,7 +609,7 @@ class ThemeSheet extends React.Component {
 		const analyticsPageTitle = `Themes > Details Sheet${
 			section ? ' > ' + titlecase( section ) : ''
 		}${ siteId ? ' > Site' : '' }`;
-
+		
 		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
 		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
