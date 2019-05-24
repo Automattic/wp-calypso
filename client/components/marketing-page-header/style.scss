@@ -45,11 +45,17 @@
 
 	@include breakpoint( '>1040px' ) {
 		display: flex;
+		flex-direction: column;
+		justify-content: center;
 		min-width: 400px;
 	}
 
 	.marketing-page-header__image {
+		max-width: max-content;
+		align-self: center;
+		height: max-content;
 		position: relative;
 			left: -20px;
+		max-width: max-content;
 	}
 }
