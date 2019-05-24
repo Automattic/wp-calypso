@@ -7,6 +7,7 @@ import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
 import { map, includes } from 'lodash';
+import { parse as parseUrl, format as formatUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -107,8 +108,70 @@ export default function switchLocale( localeSlug ) {
 			i18n.setLocale( response.body );
 
 			setLocaleInDOM( domLocaleSlug, !! language.rtl );
+
+			applyUserWaitingTranslations( targetLocaleSlug );
 		} );
 	}
+}
+
+function applyUserWaitingTranslations( currentLocaleSlug ) {
+	if ( ! location || ! location.search ) {
+		return;
+	}
+
+	const parsedURL = parseUrl( location.search, true );
+
+	const {
+		'load-user-translations': username,
+		project = 'wpcom',
+		translationSet = 'default',
+		translationStatus = 'current',
+		locale = currentLocaleSlug,
+	} = parsedURL.query;
+
+	if ( ! username ) {
+		return;
+	}
+
+	if ( ! includes( [ 'current', 'waiting' ], translationStatus ) ) {
+		return;
+	}
+
+	if ( 'waiting' === translationStatus ) {
+		// TODO only allow loading your own waiting translations. Disallow loading them for now.
+		return;
+	}
+
+	const pathname = [
+		'api',
+		'projects',
+		project,
+		locale,
+		translationSet,
+		'export-translations',
+	].join( '/' );
+
+	const query = {
+		'filters[user_login]': username,
+		'filters[status]': translationStatus,
+		format: 'json',
+	};
+
+	const requestUrl = formatUrl( {
+		protocol: 'https:',
+		host: 'translate.wordpress.com',
+		pathname,
+		query,
+	} );
+
+	return request
+		.get( requestUrl )
+		.set( 'Accept', 'application/json' )
+		.withCredentials()
+		.then( res => {
+			const translations = JSON.parse( res.text );
+			i18n.addTranslations( translations );
+		} );
 }
 
 const bundles = {};
