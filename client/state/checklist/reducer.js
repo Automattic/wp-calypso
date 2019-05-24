@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'state/utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	SITE_CHECKLIST_RECEIVE,
@@ -10,40 +10,40 @@ import {
 } from 'state/action-types';
 import { items as itemSchemas } from './schema';
 
-export const isLoading = createReducer( false, {
-	[ SITE_CHECKLIST_REQUEST ]: () => true,
-	[ SITE_CHECKLIST_RECEIVE ]: () => false,
-} );
-
-function markChecklistTaskComplete( state, { siteId, taskId } ) {
-	const siteState = state[ siteId ] || {};
-	const tasks = { ...siteState.tasks, [ taskId ]: true };
-	return {
-		...state,
-		[ siteId ]: { ...siteState, tasks },
-	};
+function isLoading( state = false, { type } ) {
+	switch ( type ) {
+		case SITE_CHECKLIST_REQUEST:
+			return true;
+		case SITE_CHECKLIST_RECEIVE:
+			return false;
+	}
+	return state;
 }
 
-export const items = createReducer(
-	{},
-	{
-		[ SITE_CHECKLIST_RECEIVE ]: ( state, { siteId, checklist } ) => ( {
-			...state,
-			[ siteId ]: checklist,
-		} ),
-		[ SITE_CHECKLIST_TASK_UPDATE ]: ( state, { siteId, taskId } ) =>
-			markChecklistTaskComplete( state, { siteId, taskId } ),
-		[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: ( state, { moduleSlug, siteId } ) => {
-			if ( moduleSlug === 'monitor' ) {
-				return markChecklistTaskComplete( state, { siteId, taskId: 'jetpack_monitor' } );
-			}
-			return state;
-		},
-	},
-	itemSchemas
-);
+const markChecklistTaskComplete = ( state, taskId ) => ( {
+	...state,
+	tasks: { ...state.tasks, [ taskId ]: true },
+} );
 
-export default combineReducers( {
+function items( state = {}, action ) {
+	switch ( action.type ) {
+		case SITE_CHECKLIST_RECEIVE:
+			return action.checklist;
+		case SITE_CHECKLIST_TASK_UPDATE:
+			return markChecklistTaskComplete( state, action.taskId );
+		case JETPACK_MODULE_ACTIVATE_SUCCESS:
+			if ( action.moduleSlug === 'monitor' ) {
+				return markChecklistTaskComplete( state, 'jetpack_monitor' );
+			}
+			break;
+	}
+	return state;
+}
+items.schema = itemSchemas;
+
+const reducer = combineReducers( {
 	items,
 	isLoading,
 } );
+
+export default keyedReducer( 'siteId', reducer );
