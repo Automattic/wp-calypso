@@ -54,7 +54,7 @@ export const HireAProPage: FunctionComponent< Props > = ( { recordTracksEvent } 
 			<DocumentHead title={ translate( 'Sharing' ) } />
 			<Fragment>
 				<MarketingPageHeader
-					buttonCopy={ translate( 'Boost My Traffic' ) }
+					buttonCopy={ translate( 'Find your pro' ) }
 					description={ translate(
 						'Site setup, graphic design, SEO, social media — whatever you need help with, there’s a pro for you. And every partner we recommend offers great service and support.'
 					) }
