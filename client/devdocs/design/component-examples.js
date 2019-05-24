@@ -40,6 +40,7 @@ export FormFields from 'components/forms/docs/example';
 export Gauge from 'components/gauge/docs/example';
 export GlobalNotices from 'components/global-notices/docs/example';
 export Gravatar from 'components/gravatar/docs/example';
+export GSuiteExamples from 'components/gsuite/docs/example';
 export HeaderButton from 'components/header-button/docs/example';
 export Headers from 'components/header-cake/docs/example';
 export ImagePreloader from 'components/image-preloader/docs/example';
