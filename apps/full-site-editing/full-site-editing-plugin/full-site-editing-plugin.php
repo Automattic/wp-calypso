@@ -1,103 +1,58 @@
 <?php
 /**
  * Plugin Name: Full Site Editing
+ * Description: Edit all parts of your site with the Block Editor.
+ * Version: 1.0
+ * Author: Automattic
+ * Author URI: https://automattic.com/wordpress-plugins/
+ * License: GPLv2 or later
+ * Text Domain: full-site-editing
+ *
+ * @package full-site-editing
  */
 
-require_once( 'blocks/post-content/index.php' );
-require_once( 'blocks/template/index.php' );
+/**
+ * Load Full Site Editing.
+ */
+function a8c_load_full_site_editing() {
+	require_once __DIR__ . '/full-site-editing/blocks/post-content/index.php';
+	require_once __DIR__ . '/full-site-editing/blocks/template/index.php';
+	require_once __DIR__ . '/full-site-editing/class-a8c-rest-templates-controller.php';
+	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
 
-class A8C_Full_Site_Editing {
-	static $initialized = false;
-
-	function __construct() {
-		if ( self::$initialized ) {
-			return;
-		}
-		self::$initialized = true;
-
-		add_action( 'init', array( $this, 'register_blocks' ), 100 );
-		add_action( 'init', array( $this, 'register_template_post_types' ) );
-		add_action( 'init', array( $this, 'register_meta_template_id' ) );
-		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
-	}
-
-	function register_template_post_types() {
-		require_once plugin_dir_path( __FILE__ ) . 'wp-template.php';
-		fse_register_template_post_types();
-	}
-
-	function register_meta_template_id() {
-		register_post_meta( '', '_wp_template_id', array(
-			'auth_callback' => array( $this, 'meta_template_id_auth_callback' ),
-			'show_in_rest'  => true,
-			'single'        => true,
-			'type'          => 'integer',
-		) );
-	}
-
-	function meta_template_id_auth_callback() {
-		return current_user_can( 'edit_theme_options' );
-	}
-
-	function enqueue_script_and_style() {
-		$script_dependencies = json_decode( file_get_contents(
-			plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.deps.json'
-		), true );
-		wp_enqueue_script(
-			'a8c-full-site-editing-script',
-			plugins_url( 'dist/full-site-editing-plugin.js', __FILE__ ),
-			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/full-site-editing-plugin.js' ),
-			true
-		);
-
-		wp_localize_script( 'a8c-full-site-editing-script', 'fullSiteEditing', array(
-			'editorPostType' => get_current_screen()->post_type,
-		) );
-
-		$style_file = is_rtl()
-			? 'full-site-editing-plugin.rtl.css'
-			: 'full-site-editing-plugin.css';
-		wp_enqueue_style(
-			'a8c-full-site-editing-style',
-			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
-		);
-	}
-
-	function register_blocks() {
-		register_block_type( 'a8c/post-content', array(
-			'render_callback' => 'render_post_content_block',
-		 ) );
-
-		register_block_type( 'a8c/template', array(
-			'render_callback' => 'render_template_block',
-		) );
-	}
-
-	/**
-	 * This will set the `wp_template` and `wp_template_part` post types to `public` to support
-	 * the core search endpoint, which looks for it.
-	 *
-	 * @return void
-	 */
-	function allow_searching_for_templates() {
-		$post_type = get_post_type_object( 'wp_template' );
-		if ( ! ( $post_type instanceof WP_Post_Type ) ) {
-			return;
-		}
-		// setting this to `public` will allow it to be found in the search endpoint
-		$post_type->public = true;
-
-		$post_type = get_post_type_object( 'wp_template_part' );
-		if ( ! ( $post_type instanceof WP_Post_Type ) ) {
-			return;
-		}
-		// setting this to `public` will allow it to be found in the search endpoint
-		$post_type->public = true;
-	}
+	Full_Site_Editing::get_instance();
 }
+add_action( 'plugins_loaded', 'a8c_load_full_site_editing' );
 
-new A8C_Full_Site_Editing();
+/**
+ * Load Posts List Block.
+ */
+function a8c_load_posts_list_block() {
+	if ( function_exists( 'is_automattician' ) && ! is_automattician() ) {
+		return;
+	}
+
+	if ( class_exists( 'Posts_List_Block' ) ) {
+		return;
+	}
+
+	require_once __DIR__ . '/posts-list-block/utils.php';
+	require_once __DIR__ . '/posts-list-block/class-posts-list-block.php';
+
+	Posts_List_Block::get_instance();
+}
+add_action( 'plugins_loaded', 'a8c_load_posts_list_block' );
+
+/**
+ * Load Starter_Page_Templates.
+ */
+function a8c_load_starter_page_templates() {
+	if ( function_exists( 'is_automattician' ) && ! is_automattician() ) {
+		return;
+	}
+
+	require_once __DIR__ . '/starter-page-templates/class-starter-page-templates.php';
+
+	Starter_Page_Templates::get_instance();
+}
+add_action( 'plugins_loaded', 'a8c_load_starter_page_templates' );
