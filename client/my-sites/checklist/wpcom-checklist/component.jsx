@@ -1051,7 +1051,7 @@ export default connect(
 
 		return {
 			designType: getSiteOption( state, siteId, 'design_type' ),
-			phase2: !! ( isEnabled( 'onboarding-checklist/phase2' ) && siteChecklist.phase2 ),
+			phase2: !! ( isEnabled( 'onboarding-checklist/phase2' ) && get( siteChecklist, 'phase2' ) ),
 			siteId,
 			siteSlug,
 			siteSegment: get( siteChecklist, 'segment' ),
