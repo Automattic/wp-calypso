@@ -9,7 +9,7 @@ import { get, find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteTypeId } from 'state/signup/steps/site-type/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getVerticals } from 'state/signup/verticals/selectors';
 
 export function getSiteVerticalName( state ) {
@@ -17,9 +17,9 @@ export function getSiteVerticalName( state ) {
 }
 
 export function getSiteVerticalData( state ) {
-	const siteTypeId = getSiteTypeId( state );
+	const siteType = getSiteType( state );
 	const verticalName = getSiteVerticalName( state );
-	const verticals = getVerticals( state, verticalName, siteTypeId );
+	const verticals = getVerticals( state, verticalName, siteType );
 
 	const match = find(
 		verticals,
@@ -34,7 +34,7 @@ export function getSiteVerticalData( state ) {
 		isUserInputVertical: true,
 		parent: '',
 		preview: '',
-		siteTypeId,
+		siteType,
 		verticalId: '',
 		verticalName,
 		verticalSlug: verticalName,

@@ -40,7 +40,7 @@ describe( 'QueryVerticals', () => {
 		const wrapped = shallow( <QueryVerticals requestVerticals={ requestVerticals } /> );
 
 		const updatedProps = {
-			siteTypeId: 1,
+			siteType: '',
 			searchTerm: 'Foo',
 			limit: 7,
 			isFetched: false,
@@ -50,7 +50,7 @@ describe( 'QueryVerticals', () => {
 
 		expect( requestVerticals ).toHaveBeenCalledWith(
 			updatedProps.searchTerm,
-			updatedProps.siteTypeId,
+			updatedProps.siteType,
 			updatedProps.limit
 		);
 	} );

@@ -42,7 +42,6 @@ const defaultProps = {
 	},
 	translate: str => str,
 	searchValue: '',
-	siteTypeId: 1,
 };
 
 describe( '<SiteVerticalsSuggestionSearch />', () => {

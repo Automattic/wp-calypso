@@ -13,18 +13,18 @@ describe( 'state/signup/verticals/reducer', () => {
 
 	test( 'should associate a trimmed and lowercase search string to the verticals array.', () => {
 		const search = 'Foo';
-		const siteTypeId = 1;
+		const siteType = 'business';
 		const verticals = [ { id: 0, verticalName: 'Coffee' }, { id: 1, verticalName: 'Tea' } ];
 
 		expect(
 			reducer( undefined, {
 				type: SIGNUP_VERTICALS_SET,
 				search,
-				siteTypeId,
+				siteType,
 				verticals,
 			} )
 		).toEqual( {
-			1: {
+			business: {
 				foo: verticals,
 			},
 		} );

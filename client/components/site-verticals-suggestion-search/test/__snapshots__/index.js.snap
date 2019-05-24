@@ -5,11 +5,11 @@ exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
   <Connect(QueryVerticals)
     debounceTime={300}
     searchTerm=""
-    siteTypeId={1}
+    siteType=""
   />
   <Connect(QueryVerticals)
     searchTerm="business"
-    siteTypeId={1}
+    siteType=""
   />
   <SuggestionSearch
     autoFocus={false}
