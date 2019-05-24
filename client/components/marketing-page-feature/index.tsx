@@ -23,7 +23,7 @@ interface Props {
 	title: string;
 }
 
-const MarketingFeature: FunctionComponent< Props > = ( {
+const MarketingPageFeature: FunctionComponent< Props > = ( {
 	children,
 	description,
 	disclaimer,
@@ -58,4 +58,4 @@ const MarketingFeature: FunctionComponent< Props > = ( {
 	);
 };
 
-export default MarketingFeature;
+export default MarketingPageFeature;

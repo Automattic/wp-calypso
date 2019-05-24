@@ -64,7 +64,16 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		<Fragment>
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
-			<MarketingPageHeader handleButtonClick={ handleBoostMyTrafficClick } />
+			<MarketingPageHeader
+				buttonCopy={ translate( 'Boost My Traffic' ) }
+				description={ translate(
+					"Optimize your site for search engines and get more exposure for your business. Let's make the most of your site's built-in SEO tools!"
+				) }
+				handleButtonClick={ handleBoostMyTrafficClick }
+				illustrationAlt={ translate( 'Your site with Marketing Tools' ) }
+				illustrationUrl={ '/calypso/images/illustrations/illustration-404.svg' }
+				title={ translate( 'Drive more traffic to your site with better SEO' ) }
+			/>
 
 			<div className="tools__feature-list">
 				<MarketingPageFeature

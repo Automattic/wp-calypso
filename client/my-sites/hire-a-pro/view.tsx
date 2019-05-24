@@ -53,7 +53,16 @@ export const HireAProPage: FunctionComponent< Props > = ( { recordTracksEvent } 
 			<PageViewTracker path="/hire-a-pro/:site" title="Hire a Pro" />
 			<DocumentHead title={ translate( 'Sharing' ) } />
 			<Fragment>
-				<MarketingPageHeader handleButtonClick={ handleHeaderBannerClick } />
+				<MarketingPageHeader
+					buttonCopy={ translate( 'Boost My Traffic' ) }
+					description={ translate(
+						"Optimize your site for search engines and get more exposure for your business. Let's make the most of your site's built-in SEO tools!"
+					) }
+					handleButtonClick={ handleHeaderBannerClick }
+					illustrationAlt={ translate( 'Your site with Marketing Tools' ) }
+					illustrationUrl={ '/calypso/images/illustrations/illustration-404.svg' }
+					title={ translate( 'Drive more traffic to your site with better SEO' ) }
+				/>
 				<div className="hire-a-pro__feature-list">
 					<MarketingPageFeature
 						title={ translate( 'Website Designers' ) }

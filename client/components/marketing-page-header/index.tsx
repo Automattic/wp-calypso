@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,36 +15,40 @@ import Card from 'components/card';
 import './style.scss';
 
 interface Props {
+	buttonCopy: string;
+	description: string;
 	handleButtonClick: () => void;
+	illustrationAlt: string;
+	illustrationUrl: string;
+	title: string;
 }
 
-const MarketingHeader: FunctionComponent< Props > = ( { handleButtonClick } ) => {
-	const translate = useTranslate();
-
+const MarketingPageHeader: FunctionComponent< Props > = ( {
+	buttonCopy,
+	description,
+	handleButtonClick,
+	illustrationAlt,
+	illustrationUrl,
+	title,
+} ) => {
 	return (
 		<Card className="marketing-page-header__body">
 			<div className="marketing-page-header__image-wrapper">
 				<img
 					className="marketing-page-header__image"
-					src="/calypso/images/illustrations/illustration-404.svg"
-					alt={ translate( 'Your site with Marketing Tools' ) }
+					src={ illustrationUrl }
+					alt={ illustrationAlt }
 				/>
 			</div>
 
 			<div className="marketing-page-header__info">
-				<h1 className="marketing-page-header__title">
-					{ translate( 'Drive more traffic to your site with better SEO' ) }
-				</h1>
+				<h1 className="marketing-page-header__title">{ title }</h1>
 
-				<h2 className="marketing-page-header__description">
-					{ translate(
-						"Optimize your site for search engines and get more exposure for your business. Let's make the most of your site's built-in SEO tools!"
-					) }
-				</h2>
+				<h2 className="marketing-page-header__description">{ description }</h2>
 
 				<div className="marketing-page-header__button-row">
 					<Button onClick={ handleButtonClick } primary>
-						{ translate( 'Boost My Traffic' ) }
+						{ buttonCopy }
 					</Button>
 				</div>
 			</div>
@@ -53,4 +56,4 @@ const MarketingHeader: FunctionComponent< Props > = ( { handleButtonClick } ) =>
 	);
 };
 
-export default MarketingHeader;
+export default MarketingPageHeader;
