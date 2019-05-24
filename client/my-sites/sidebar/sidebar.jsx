@@ -498,7 +498,7 @@ export class MySitesSidebar extends Component {
 		const adminUrl =
 			this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip
 				? formatUrl( {
-						...parseUrl( site.options.admin_url ),
+						...parseUrl( site.options.admin_url + 'admin.php' ),
 						query: { page: 'jetpack' },
 						hash: '/my-plan',
 				  } )

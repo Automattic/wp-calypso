@@ -179,7 +179,7 @@ export default connect(
 		let wpAdminUrl = get( site, 'options.admin_url' );
 		wpAdminUrl = wpAdminUrl
 			? formatUrl( {
-					...parseUrl( wpAdminUrl ),
+					...parseUrl( wpAdminUrl + 'admin.php' ),
 					query: { page: 'jetpack' },
 					hash: '/my-plan',
 			  } )
