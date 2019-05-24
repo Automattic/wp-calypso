@@ -2,7 +2,7 @@
  * External dependencies
  */
 import Gridicon from 'gridicons';
-import React, { ChangeEvent, FunctionComponent, useState } from 'react';
+import React, { ChangeEvent, Fragment, FunctionComponent, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -12,6 +12,7 @@ import Button from 'components/button';
 import DomainsSelect from './domains-select';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
 import { GSuiteNewUser as NewUser } from 'lib/gsuite/new-users';
 
@@ -39,7 +40,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		comment: 'As it would be part of an e-mail address contact@example.com',
 	} );
 
-	// use this to control setting the "touched" states below. That way the user will not possibly see a bunch of
+	// use this to control setting the "touched" states below. That way the user will not see a bunch of
 	// "This field is required" errors pop at once
 	const wasValidated =
 		[ firstName, lastName, mailBox ].some( value => '' !== value ) ||
@@ -53,28 +54,53 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	const hasFirstNameError = firstNameFieldTouched && null !== firstNameError;
 	const hasLastNameError = lastNameFieldTouched && null !== lastNameError;
 
+	const renderSingleDomain = () => {
+		return (
+			<FormTextInputWithAffixes
+				placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+				value={ mailBox }
+				isError={ hasMailBoxError }
+				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+					onUserValueChange( 'mailBox', event.target.value );
+				} }
+				onBlur={ () => {
+					setMailBoxFieldTouched( wasValidated );
+				} }
+				suffix={ `@${ domain }` }
+			/>
+		);
+	};
+
+	const renderMultiDomain = () => {
+		return (
+			<Fragment>
+				<FormTextInput
+					placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+					value={ mailBox }
+					isError={ hasMailBoxError }
+					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+						onUserValueChange( 'mailBox', event.target.value );
+					} }
+					onBlur={ () => {
+						setMailBoxFieldTouched( wasValidated );
+					} }
+				/>
+				<DomainsSelect
+					domains={ domains }
+					onChange={ event => {
+						onUserValueChange( 'domain', event.target.value );
+					} }
+					value={ domain }
+				/>
+			</Fragment>
+		);
+	};
+
 	return (
 		<div>
 			<FormFieldset className="gsuite-new-user-list__new-user-email-fieldset">
 				<div className="gsuite-new-user-list__new-user-email">
-					<FormTextInput
-						placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
-						value={ mailBox }
-						isError={ hasMailBoxError }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-							onUserValueChange( 'mailBox', event.target.value );
-						} }
-						onBlur={ () => {
-							setMailBoxFieldTouched( wasValidated );
-						} }
-					/>
-					<DomainsSelect
-						domains={ domains }
-						onChange={ event => {
-							onUserValueChange( 'domain', event.target.value );
-						} }
-						value={ domain }
-					/>
+					{ domains.length > 1 ? renderMultiDomain() : renderSingleDomain() }
 				</div>
 				{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
 			</FormFieldset>
