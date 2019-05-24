@@ -100,7 +100,7 @@ class ThanksModal extends Component {
 	goToCustomizer = () => {
 		this.trackClick( 'thanks modal customize' );
 		this.onCloseModal();
-		page( this.props.customizeUrl );
+		page( window.open ( this.props.customizeUrl ) );
 	};
 
 	renderThemeInfo = () => {
