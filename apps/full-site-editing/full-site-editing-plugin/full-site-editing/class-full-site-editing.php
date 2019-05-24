@@ -25,6 +25,8 @@ class Full_Site_Editing {
 		add_action( 'init', array( $this, 'register_meta_template_id' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
+
+		add_filter( 'wp_insert_post_data', [ $this, 'remove_template_components' ], 10, 2 );
 	}
 
 	/**
@@ -298,5 +300,57 @@ class Full_Site_Editing {
 
 		// Setting this to `public` will allow it to be found in the search endpoint.
 		$post_type->public = true;
+	}
+
+	public function remove_template_components( $data, $postarr ) {
+		if ( 'page' !== $postarr['post_type'] ) {
+			return $data;
+		}
+
+		$template_id = get_post_meta( $postarr['ID'], '_wp_template_id', true );
+		if ( isset( $template_id ) && ! empty( $template_id ) ) {
+			$post_content = wp_unslash( $data['post_content'] );
+			$blocks = parse_blocks( $post_content );
+
+			$before_content = 'core/group' === $blocks[0]['blockName']
+				? $blocks[0]['innerBlocks']
+				: array();
+			$after_content = 'core/group' === $blocks[ count( $blocks ) - 1 ]['blockName']
+				? $blocks[ count( $blocks ) - 1 ]['innerBlocks']
+				: array();
+
+			$updated_template_content = '';
+			foreach( $before_content as $block ) {
+				$updated_template_content .= render_block( $block );
+			}
+			$updated_template_content .= "\n\n<!-- wp:a8c/post-content /-->\n\n";
+			foreach( $after_content as $block ) {
+				$updated_template_content .= render_block( $block );
+			}
+
+			error_log( print_r( $updated_template_content, true ) );
+
+			// This implies that there are only two parts of the template, one before and one after the Post Content.
+			preg_match_all( '/<!-- wp:group[\s\S]+?wp:group -->/', $post_content, $template_parts );
+
+			$before_content = preg_replace( '/<!-- wp:group[\s\S]+?-->/', '', $template_parts[0][0] );
+			$before_content = str_replace( '<!-- /wp:group -->', '', $before_content );
+			$after_content = preg_replace( '/<!-- wp:group[\s\S]+?-->/', '', $template_parts[0][1] );
+			$after_content = str_replace( '<!-- /wp:group -->', '', $after_content );
+
+			$updated_template_content = $before_content . "\n\n<!-- wp:a8c/post-content /-->\n\n" . $after_content;
+
+			//error_log( print_r( $updated_template_content, true ) );
+
+			/*wp_update_post( array(
+				'ID'           => $template_id,
+				'post_content' => $updated_template_content,
+			) );*/
+		}
+
+		$stripped_post_content = preg_replace( '/<!-- wp:group[\s\S]+?wp:group -->/', '', $data['post_content'] );
+		$data['post_content'] = $stripped_post_content;
+
+		return $data;
 	}
 }
