@@ -169,6 +169,15 @@ export class PaidPlanThankYouCard extends Component {
 								translate( "You're now ready to finish the rest of the checklist." )
 							) }
 						</p>
+						<p>
+							{ preventWidows(
+								translate(
+									'This is your new WordPress.com dashboard. You can manage your site ' +
+										'here, or return to your self-hosted WordPress dashboard using the ' +
+										'link at the bottom of your checklist.'
+								)
+							) }
+						</p>
 					</ThankYouCard>
 				) }
 			</Fragment>
