@@ -3,8 +3,13 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import getRequest from 'state/selectors/get-request';
+import { requestSiteChecklist } from 'state/checklist/actions';
 
 /**
  * Returns the loading state for the checklist API call
@@ -14,5 +19,14 @@ import { get } from 'lodash';
  * @return {Bool}    Whether the checklist is loading
  */
 export default function getSiteChecklistIsLoading( state, siteId ) {
-	return get( state.checklist, [ siteId, 'isLoading' ], false );
+	const isLoading = get( state.checklist, [ siteId, 'isLoading' ], false );
+	const isLoadingDerived = getRequest( state, requestSiteChecklist( siteId ) ).isLoading;
+	console.log(
+		'isLoading',
+		isLoading,
+		isLoadingDerived,
+		requestSiteChecklist( siteId ),
+		getRequest( state, requestSiteChecklist( siteId ) )
+	);
+	return isLoading;
 }
