@@ -10,7 +10,7 @@ import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle';
 import Card from 'components/card/compact';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
-import { newUsers, GSuiteNewUser, GSuiteNewUserField } from 'lib/gsuite/new-users';
+import { GSuiteNewUser, GSuiteNewUserField, newUsers, userIsReady } from 'lib/gsuite/new-users';
 
 const domainOne = { name: 'example.blog' };
 const domainTwo = { name: 'test.blog' };
@@ -54,18 +54,24 @@ const GSuiteNewUserListExample = () => {
 				onUsersChange={ changedUsers => setUsers( changedUsers ) }
 				users={ users }
 			>
-				<FormLabel key="mulitple-domains">
-					<FormToggle checked={ useMultipleDomains } onChange={ toggleUseMultipleDomains } />{' '}
-					<span>{ 'Use multiple domains' }</span>
-				</FormLabel>
-				<FormLabel key="extraValidation">
-					<FormToggle
-						checked={ useExtraValidation }
-						onChange={ () => setUseExtraValidation( ! useExtraValidation ) }
-					/>{' '}
-					<span>{ "Use extra validation ( no a's in name )" }</span>
-				</FormLabel>
+				{ 0 < users.length && users.every( userIsReady ) ? (
+					<span>{ '✅ - All Users Ready' }</span>
+				) : (
+					<span>{ '❌ - Verification Errors' }</span>
+				) }
 			</GSuiteNewUserList>
+			<hr />
+			<FormLabel key="mulitple-domains">
+				<FormToggle checked={ useMultipleDomains } onChange={ toggleUseMultipleDomains } />{' '}
+				<span>{ 'Use multiple domains' }</span>
+			</FormLabel>
+			<FormLabel key="extra-validation">
+				<FormToggle
+					checked={ useExtraValidation }
+					onChange={ () => setUseExtraValidation( ! useExtraValidation ) }
+				/>{' '}
+				<span>{ "Use extra validation ( no a's in name )" }</span>
+			</FormLabel>
 		</Card>
 	);
 };

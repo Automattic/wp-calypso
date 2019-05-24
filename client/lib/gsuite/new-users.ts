@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-import { cartItems } from 'lib/cart-values';
 import emailValidator from 'email-validator';
 import i18n from 'i18n-calypso';
-import { find, includes, groupBy, map, mapValues } from 'lodash';
-import { hasGSuite } from '.';
+import { includes, mapValues } from 'lodash';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -132,37 +130,8 @@ const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
 const userIsReady = ( user: GSuiteNewUser ): boolean =>
 	isUserComplete( user ) && ! doesUserHaveError( user );
 
-const transformUser = ( {
-	firstName: { value: firstname },
-	lastName: { value: lastname },
-	domain: { value: domain },
-	mailBox: { value: mailBox },
-}: GSuiteNewUser ): GSuiteProductUser => ( {
-	email: `${ mailBox }@${ domain }`.toLowerCase(),
-	firstname,
-	lastname,
-} );
-
-const getItemsForCart = (
-	domains: { name: string },
-	productSlug: string,
-	users: GSuiteNewUser[]
-) => {
-	const groups = mapValues( groupBy( users, 'domain.value' ), groupedUsers =>
-		groupedUsers.map( transformUser )
-	);
-
-	return map( groups, ( groupedUsers, domain ) => {
-		const domainInfo = find( domains, [ 'name', domain ] );
-		return domainInfo && hasGSuite( domainInfo )
-			? cartItems.gsuiteExtraLicenses( domain, groupedUsers )
-			: cartItems.gsuite( domain, groupedUsers, productSlug );
-	} );
-};
-
 export {
 	doesUserHaveError,
-	getItemsForCart,
 	isUserComplete,
 	newUser,
 	newUsers,
