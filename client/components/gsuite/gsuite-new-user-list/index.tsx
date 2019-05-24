@@ -22,7 +22,7 @@ interface Props {
 	domains: any[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
-	onUsersChange: ( users: NewUser[] ) => NewUser[];
+	onUsersChange: ( users: NewUser[] ) => void;
 	users: NewUser[];
 }
 

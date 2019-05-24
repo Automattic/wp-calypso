@@ -7,12 +7,12 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
+import GSuiteNewUserListExample from './new-user-list'
+
 
 const GSuiteExamples = () => {
 	return (
-		<Card>
-			<h2>G Suite</h2>
-		</Card>
+		<GSuiteNewUserListExample />
 	);
 };
 
