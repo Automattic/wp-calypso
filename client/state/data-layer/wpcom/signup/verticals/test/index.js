@@ -12,7 +12,7 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 	test( 'requestVerticals()', () => {
 		const mockAction = {
 			search: 'Foo',
-			siteType: 'business',
+			siteTypeId: 1,
 			limit: 7,
 		};
 
@@ -24,7 +24,7 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 					path: '/verticals',
 					query: {
 						search: mockAction.search,
-						site_type: mockAction.siteType,
+						site_type: mockAction.siteTypeId,
 						limit: mockAction.limit,
 						include_preview: true,
 					},
