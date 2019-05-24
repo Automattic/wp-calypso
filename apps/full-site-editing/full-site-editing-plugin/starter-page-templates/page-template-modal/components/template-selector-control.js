@@ -41,21 +41,27 @@ function TemplateSelectorControl( {
 			help={ help }
 			className={ classnames( className, 'template-selector-control' ) }
 		>
-			{ templates.map( ( option, index ) => (
-				<div key={ `${ id }-${ index }` } className="template-selector-control__option">
-					<button
-						type="button"
-						id={ `${ id }-${ index }` }
-						className="template-selector-control__label"
-						value={ option.value }
-						onClick={ handleButtonClick }
-						aria-describedby={ help ? `${ id }__help` : undefined }
-					>
-						<img className="template-selector-control__media" src={ option.preview } alt="" />
-						{ option.label }
-					</button>
-				</div>
-			) ) }
+			{ templates.map( ( option, index ) => {
+				const buttonClass = classnames( 'template-selector-control__label', {
+					'is-blank': option.value === '',
+				} );
+
+				return (
+					<div key={ `${ id }-${ index }` } className="template-selector-control__option">
+						<button
+							type="button"
+							id={ `${ id }-${ index }` }
+							className={ buttonClass }
+							value={ option.value }
+							onClick={ handleButtonClick }
+							aria-describedby={ help ? `${ id }__help` : undefined }
+						>
+							<img className="template-selector-control__media" src={ option.preview } alt="" />
+							{ option.label }
+						</button>
+					</div>
+				);
+			} ) }
 		</BaseControl>
 	);
 }
