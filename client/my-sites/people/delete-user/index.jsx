@@ -34,6 +34,7 @@ import {
 	requestExternalContributors,
 	requestExternalContributorsRemoval,
 } from 'state/data-getters';
+import { httpData } from 'state/data-layer/http-data';
 
 /**
  * Style dependencies
@@ -164,7 +165,7 @@ class DeleteUser extends React.Component {
 						'People',
 						'Clicked Confirm Remove User on Edit User Network Site'
 					);
-					if ( this.props.isExternalContributor ) {
+					if ( 'external' === this.props.contributorType ) {
 						requestExternalContributorsRemoval( this.props.siteId, this.props.user.ID );
 					}
 					deleteUser( this.props.siteId, this.props.user.ID );
@@ -190,7 +191,7 @@ class DeleteUser extends React.Component {
 		if ( this.state.reassignUser && 'reassign' === this.state.radioOption ) {
 			reassignUserId = this.state.reassignUser.ID;
 		}
-		if ( this.props.isExternalContributor ) {
+		if ( 'external' === this.props.contributorType ) {
 			requestExternalContributorsRemoval( this.props.siteId, this.props.user.ID );
 		}
 		deleteUser( this.props.siteId, this.props.user.ID, reassignUserId );
@@ -204,11 +205,22 @@ class DeleteUser extends React.Component {
 	};
 
 	isDeleteButtonDisabled = () => {
-		if ( 'reassign' === this.state.radioOption ) {
-			return false === this.state.reassignUser || this.state.reassignUser.ID === this.props.user.ID;
+		const {
+			contributorType,
+			user: { ID: userId },
+		} = this.props;
+
+		const { radioOption, reassignUser } = this.state;
+
+		if ( 'pending' === contributorType ) {
+			return true;
 		}
 
-		return false === this.state.radioOption;
+		if ( 'reassign' === radioOption ) {
+			return false === reassignUser || reassignUser.ID === userId;
+		}
+
+		return false === radioOption;
 	};
 
 	renderSingleSite = () => {
@@ -305,13 +317,20 @@ class DeleteUser extends React.Component {
 	}
 }
 
+const getContributorType = ( externalContributors, userId ) => {
+	if ( externalContributors.data ) {
+		return externalContributors.data.includes( userId ) ? 'external' : 'standard,';
+	}
+	return 'pending';
+};
+
 export default localize(
 	connect(
 		( state, { siteId, user: { ID: userId } } ) => {
-			const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
+			const externalContributors = siteId ? requestExternalContributors( siteId ) : httpData.empty;
 			return {
 				currentUser: getCurrentUser( state ),
-				isExternalContributor: externalContributors.includes( userId ),
+				contributorType: getContributorType( externalContributors, userId ),
 			};
 		},
 		{ recordGoogleEvent }
