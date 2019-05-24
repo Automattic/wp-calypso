@@ -5,13 +5,13 @@
  */
 import activeDiscounts from './active-discounts';
 
-function getDiscountByName( discountName, endsAt ) {
+function getDiscountByName( discountName, endsAt = null ) {
 	const activeDiscount = activeDiscounts.find( function( discount ) {
 		if ( discountName !== discount.name ) {
 			return false;
 		}
 
-		if ( typeof endsAt !== 'undefined' ) discount.endsAt = endsAt;
+		discount.endsAt = endsAt || discount.endsAt;
 
 		const now = new Date();
 		if (
