@@ -11,6 +11,6 @@ import { requestSiteChecklist } from 'state/checklist/actions';
  * @param  {Number}  siteId Site ID
  * @return {Bool}    Whether the checklist is loading
  */
-export default function getSiteChecklistIsLoading( state, siteId ) {
+export default function isSiteChecklistLoading( state, siteId ) {
 	return getRequest( state, requestSiteChecklist( siteId ) ).isLoading;
 }

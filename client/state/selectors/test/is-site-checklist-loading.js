@@ -3,11 +3,11 @@
 /**
  * Internal dependencies
  */
-import getSiteChecklistIsLoading from 'state/selectors/get-site-checklist-is-loading';
+import isSiteChecklistLoading from 'state/selectors/is-site-checklist-loading';
 
-describe( 'getSiteChecklistIsLoading()', () => {
+describe( 'isSiteChecklistLoading()', () => {
 	test( 'should return `false` by default', () => {
-		const isLoading = getSiteChecklistIsLoading( {}, 1234567 );
+		const isLoading = isSiteChecklistLoading( {}, 1234567 );
 		expect( isLoading ).toEqual( false );
 	} );
 
@@ -19,7 +19,7 @@ describe( 'getSiteChecklistIsLoading()', () => {
 				},
 			},
 		};
-		const isLoading = getSiteChecklistIsLoading( state, 1234567 );
+		const isLoading = isSiteChecklistLoading( state, 1234567 );
 		expect( isLoading ).toEqual( true );
 	} );
 } );
