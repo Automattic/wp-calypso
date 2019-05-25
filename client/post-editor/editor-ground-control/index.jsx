@@ -74,6 +74,11 @@ export class EditorGroundControl extends React.Component {
 		return this.props.translate( 'Preview' );
 	}
 
+	getToggleSidebarLabel() {
+		const { translate, isSidebarOpened } = this.props;
+		return isSidebarOpened ? translate( 'Close post settings' ) : translate( 'Open post settings' );
+	}
+
 	getVerificationNoticeLabel() {
 		const { translate, publishButtonStatus } = this.props;
 
@@ -116,6 +121,7 @@ export class EditorGroundControl extends React.Component {
 					borderless
 					className="editor-ground-control__toggle-sidebar"
 					onClick={ this.props.toggleSidebar }
+					aria-label={ this.getToggleSidebarLabel() }
 				>
 					<Gridicon icon="cog" />
 				</Button>
@@ -143,7 +149,7 @@ export class EditorGroundControl extends React.Component {
 	}
 
 	getCloseButtonPath() {
-		const editorPathRegex = /^(\/block-editor)?\/(post|page|(edit\/[^\/]+))(\/|$)/i;
+		const editorPathRegex = /^(\/block-editor)?\/(post|page|(edit\/[^/]+))(\/|$)/i;
 		// find the last non-editor path in routeHistory, default to "all posts"
 		const lastNonEditorPath = findLast(
 			this.props.routeHistory,
