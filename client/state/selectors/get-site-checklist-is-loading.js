@@ -21,12 +21,6 @@ import { requestSiteChecklist } from 'state/checklist/actions';
 export default function getSiteChecklistIsLoading( state, siteId ) {
 	const isLoading = get( state.checklist, [ siteId, 'isLoading' ], false );
 	const isLoadingDerived = getRequest( state, requestSiteChecklist( siteId ) ).isLoading;
-	console.log(
-		'isLoading',
-		isLoading,
-		isLoadingDerived,
-		requestSiteChecklist( siteId ),
-		getRequest( state, requestSiteChecklist( siteId ) )
-	);
+	console.log( 'isLoading', isLoading, isLoadingDerived );
 	return isLoading;
 }
