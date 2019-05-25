@@ -25,11 +25,6 @@ export const fetchChecklist = action =>
 			query: {
 				http_envelope: 1,
 			},
-			meta: {
-				dataLayer: {
-					trackRequest: true,
-				},
-			},
 		},
 		action
 	);
