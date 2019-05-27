@@ -578,7 +578,7 @@ class ThemeSheet extends React.Component {
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }
 				primary={ isActive }
-				target={ this.props.isActive ? '_blank' : null }
+				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
 				{ this.props.isWpcomTheme && this.renderPrice() }
