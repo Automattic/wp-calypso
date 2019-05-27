@@ -43,7 +43,6 @@ import ThemesListExample from 'components/themes-list/docs/example';
 import PlanStorage from 'blocks/plan-storage/docs/example';
 import UpgradeNudge from 'blocks/upgrade-nudge/docs/example';
 import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
-import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 import DomainTip from 'blocks/domain-tip/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
 import PostStatus from 'blocks/post-status/docs/example';
@@ -163,7 +162,6 @@ export default class AppComponents extends React.Component {
 					<ThemesListExample />
 					<UpgradeNudge readmeFilePath="upgrade-nudge-expanded" />
 					<PlanCompareCard />
-					<FeatureComparison />
 					<DomainTip />
 					<RelatedPostCard />
 					<PostItem readmeFilePath="post-item" />
