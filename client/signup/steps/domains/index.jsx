@@ -206,7 +206,7 @@ class DomainsStep extends React.Component {
 			themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug ),
 			theme = this.isPurchasingTheme() ? themeItem( themeSlug, 'signup-with-theme' ) : undefined;
 
-		return { themeSlug, themeSlugWithRepo, theme };
+		return { themeSlug, themeSlugWithRepo, themeItem: theme };
 	};
 
 	getThemeSlugWithRepo = themeSlug => {
