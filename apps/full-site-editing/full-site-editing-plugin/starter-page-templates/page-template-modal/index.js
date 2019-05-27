@@ -14,6 +14,11 @@ import { keyBy } from 'lodash';
 	const { siteInformation = {}, templates = [] } = config;
 
 	const insertTemplate = template => {
+		// Skip inserting if there's nothing to insert.
+		if ( ! template.title && ! template.content ) {
+			return;
+		}
+
 		// set title
 		wp.data
 			.dispatch( 'core/editor' )
