@@ -106,6 +106,7 @@
 		"nps-survey/notice": true,
 		"onboarding-checklist": true,
 		"onboarding-checklist/email-setup": true,
+		"onboarding-checklist/phase2": true,
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,
