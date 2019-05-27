@@ -56,6 +56,7 @@ const MAX_RETRIES = 3;
 export class JetpackProductInstall extends Component {
 	state = {
 		startedInstallation: false,
+		tracksEventSent: false,
 	};
 
 	retries = 0;
@@ -198,11 +199,13 @@ export class JetpackProductInstall extends Component {
 		const hasErrorInstalling =
 			! this.shouldRefetchInstallationStatus() && this.installationHasRecoverableErrors();
 
-		if ( hasErrorInstalling ) {
-			this.props.recordTracksEvent( 'calypso_plans_autoconfig_error', {
-				checklist_name: 'jetpack',
-				error: 'installation_error',
-				location: 'JetpackChecklist',
+		if ( hasErrorInstalling && ! this.state.tracksEventSent ) {
+			this.setState( { tracksEventSent: true }, () => {
+				this.props.recordTracksEvent( 'calypso_plans_autoconfig_error', {
+					checklist_name: 'jetpack',
+					error: 'installation_error',
+					location: 'JetpackChecklist',
+				} );
 			} );
 		}
 
