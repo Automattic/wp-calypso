@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -75,6 +73,8 @@ export default class Step extends Component {
 
 	state = { initialized: false };
 
+	waitPromise = null;
+
 	/**
 	 * A mutation observer to watch whether the target exists
 	 * @type {object}
@@ -111,6 +111,9 @@ export default class Step extends Component {
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
+		if ( this.props.wait !== nextProps.wait ) {
+			this.waitPromise = null;
+		}
 		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 		this.wait( nextProps, nextContext ).then( () => {
 			this.setStepSection( nextContext );
@@ -152,14 +155,17 @@ export default class Step extends Component {
 	}
 
 	wait( props, context ) {
-		if ( isFunction( props.wait ) ) {
-			const ret = props.wait( { reduxStore: context.store } );
-			if ( isFunction( get( ret, 'then' ) ) ) {
-				return ret;
+		if ( ! this.waitPromise ) {
+			if ( isFunction( props.wait ) ) {
+				const ret = props.wait( { reduxStore: context.store } );
+				if ( isFunction( get( ret, 'then' ) ) ) {
+					this.waitPromise = ret;
+				} else {
+					this.waitPromise = Promise.resolve();
+				}
 			}
 		}
-
-		return Promise.resolve();
+		return this.waitPromise;
 	}
 
 	safeSetState( state ) {
