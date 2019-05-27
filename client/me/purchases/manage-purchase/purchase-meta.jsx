@@ -37,7 +37,11 @@ import {
 } from 'lib/products-values';
 import { getPlan } from 'lib/plans';
 
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+	isFetchingSitePurchases,
+} from 'state/purchases/selectors';
 import { fetchSitePurchases } from 'state/purchases/actions';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { getUser } from 'state/users/selectors';
@@ -316,19 +320,39 @@ class PurchaseMeta extends Component {
 		} = this.props;
 
 		if ( isAutorenewalEnabled ) {
-			disableAutoRenew( purchaseId, success => {
-				if ( success ) {
-					this.props.fetchSitePurchases( siteId );
-				}
-			} );
-		} else {
-			enableAutoRenew( purchaseId, success => {
-				if ( success ) {
-					this.props.fetchSitePurchases( siteId );
-				}
+			this.setState( {
+				showAutorenewalDisablingDialog: true,
 			} );
 		}
+
+		const updateAutoRenew = isAutorenewalEnabled ? disableAutoRenew : enableAutoRenew;
+
+		this.setState( {
+			isTogglingToward: ! isAutorenewalEnabled,
+			isRequestingAutoRenew: true,
+		} );
+
+		updateAutoRenew( purchaseId, success => {
+			this.setState( {
+				isRequestingAutoRenew: false,
+			} );
+			if ( success ) {
+				this.props.fetchSitePurchases( siteId );
+			}
+		} );
 	};
+
+	isUpdatingAutoRenew = () => {
+		return this.state.isRequestingAutoRenew || this.props.fetchingSitePurchases;
+	};
+
+	getToggleUiStatus() {
+		if ( this.isUpdatingAutoRenew() ) {
+			return this.state.isTogglingToward;
+		}
+
+		return this.props.isAutorenewalEnabled;
+	}
 
 	renderExpiration() {
 		const { purchase, translate, isAutorenewalEnabled } = this.props;
@@ -373,7 +397,11 @@ class PurchaseMeta extends Component {
 					<span className="manage-purchase__detail">{ subsRenewText }</span>
 					<span className="manage-purchase__detail">{ subsBillingText }</span>
 					<span className="manage-purchase__detail">
-						<FormToggle checked={ isAutorenewalEnabled } onChange={ this.onToggleAutorenewal } />
+						<FormToggle
+							checked={ this.getToggleUiStatus() }
+							disabled={ this.isUpdatingAutoRenew() }
+							onChange={ this.onToggleAutorenewal }
+						/>
 					</span>
 				</li>
 			);
@@ -439,6 +467,7 @@ export default connect(
 		return {
 			hasLoadedSites: ! isRequestingSites( state ),
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+			fetchingSitePurchases: isFetchingSitePurchases( state ),
 			purchase,
 			site: purchase ? getSite( state, purchase.siteId ) : null,
 			owner: purchase ? getUser( state, purchase.userId ) : null,
