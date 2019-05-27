@@ -5,7 +5,6 @@
 	"keywords": [
 		"Webpack"
 	],
-	"author": "Jarda Snajdr <jsnajdr@gmail.com>",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/webpack-inline-constant-exports-plugin",
 	"license": "GPL-2.0-or-later",
 	"publishConfig": {
