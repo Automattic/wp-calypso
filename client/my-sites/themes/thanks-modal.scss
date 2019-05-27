@@ -13,6 +13,12 @@
 			margin-left: 0;
 		}
 
+		.thanks-modal__button-customize {
+			.gridicon {
+				margin-right: 4px;
+			}
+		}
+
 		@include breakpoint( '<480px' ) {
 			.button,
 			.button:first-child {

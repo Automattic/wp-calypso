@@ -507,8 +507,13 @@ class ThemeSheet extends React.Component {
 	getDefaultOptionLabel = () => {
 		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
 		if ( isActive ) {
-			// Customize size
-			return i18n.translate( 'Customize site' );
+			// Customize site
+			return (
+				<span className="theme__sheet-customize-button">
+					<Gridicon icon="external" />
+					{ i18n.translate( 'Customize site' ) }
+				</span>
+			);
 		} else if ( isLoggedIn ) {
 			if ( isPremium && ! isPurchased ) {
 				// purchase
@@ -573,6 +578,7 @@ class ThemeSheet extends React.Component {
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }
 				primary={ isActive }
+				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
 				{ this.props.isWpcomTheme && this.renderPrice() }
@@ -609,7 +615,7 @@ class ThemeSheet extends React.Component {
 		const analyticsPageTitle = `Themes > Details Sheet${
 			section ? ' > ' + titlecase( section ) : ''
 		}${ siteId ? ' > Site' : '' }`;
-		
+
 		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
 		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
