@@ -150,3 +150,23 @@ export function upsellNudge( context, next ) {
 
 	next();
 }
+
+export function planUpgradeNudge( context, next ) {
+	const { receiptId } = context.params;
+	context.store.dispatch( setSection( { name: 'plan-upgrade-nudge' }, { hasSidebar: false } ) );
+
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( ! selectedSite ) {
+		return null;
+	}
+
+	context.primary = (
+		<CartData>
+			<PlanUpgradenNudge receiptId={ Number( receiptId ) } selectedSiteId={ selectedSite.ID } />
+		</CartData>
+	);
+
+	next();
+}
