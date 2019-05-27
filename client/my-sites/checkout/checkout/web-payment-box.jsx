@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import Gridicon from 'gridicons';
 import debugFactory from 'debug';
-import { overSome, rearg, some } from 'lodash';
+import { overSome, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -81,6 +81,8 @@ export class WebPaymentBox extends React.Component {
 		onSubmit: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
+
+	state = { processorCountry: 'US' };
 
 	constructor() {
 		super();
@@ -172,7 +174,7 @@ export class WebPaymentBox extends React.Component {
 					merchantIdentifier: APPLE_PAY_MERCHANT_IDENTIFIER,
 					merchantCapabilities: [ 'supports3DS', 'supportsCredit', 'supportsDebit' ],
 					supportedNetworks: SUPPORTED_NETWORKS,
-					countryCode: 'US',
+					countryCode: this.state.processorCountry,
 				},
 			},
 		];
@@ -353,6 +355,47 @@ export class WebPaymentBox extends React.Component {
 	};
 
 	/**
+	 * @param {string} fieldName The name of the country select field.
+	 * @param {string} selectedCountryCode The selected country.
+	 */
+	updateSelectedCountry = ( fieldName, selectedCountryCode ) => {
+		setTaxCountryCode( selectedCountryCode );
+
+		// Apple Pay needs the country where the payment will be processed
+		// (https://developer.apple.com/documentation/apple_pay_on_the_web/applepayrequest/2951833-countrycode),
+		// so call the Paygate configuration API endpoint to get that. This
+		// information is only needed when the user clicks the button to buy
+		// something and opens the Apple Pay payment sheet, so it is somewhat
+		// wasteful to call it here (every time a new country is selected);
+		// however, it is necessary because browsers will only open a payment
+		// sheet in direct response to user input (see
+		// https://developer.mozilla.org/en-US/docs/Web/API/PaymentRequest/show),
+		// so we can't delay the opening of the payment sheet on waiting for
+		// the response to this API call.
+		wpcom.undocumented().paygateConfiguration(
+			{
+				request_type: 'new_purchase',
+				country: selectedCountryCode,
+				// The endpoint also accepts an optional credit card brand in
+				// cases where the processor country might depend on the card
+				// brand used, but unfortunately we can't send that because we
+				// don't know it yet (it's a chicken and egg problem; the user
+				// only selects a credit card once the Apple Pay payment sheet
+				// is open, but we need to send Apple Pay the processor country
+				// in order to open the payment sheet). Fortunately, in most
+				// cases this won't have a practical effect.
+			},
+			function( configError, configuration ) {
+				let processorCountry = 'US';
+				if ( ! configError && configuration.processor === 'stripe_ie' ) {
+					processorCountry = 'IE';
+				}
+				this.setState( { processorCountry } );
+			}.bind( this )
+		);
+	};
+
+	/**
 	 * @param {object} event  Event object.
 	 */
 	updateSelectedPostalCode = event => {
@@ -446,7 +489,7 @@ export class WebPaymentBox extends React.Component {
 								name="country"
 								label={ translate( 'Country', { textOnly: true } ) }
 								countriesList={ countriesList }
-								onCountrySelected={ rearg( setTaxCountryCode, [ 1 ] ) }
+								onCountrySelected={ this.updateSelectedCountry }
 								value={ countryCode }
 								eventFormName="Checkout Form"
 							/>
