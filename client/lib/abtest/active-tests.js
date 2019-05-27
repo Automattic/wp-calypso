@@ -56,15 +56,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	showConciergeSessionUpsell: {
-		datestamp: '20181214',
-		variations: {
-			skip: 100,
-			show: 0,
-		},
-		defaultVariation: 'skip',
-		allowExistingUsers: true,
-	},
 	builderReferralStatsNudge: {
 		datestamp: '20181218',
 		variations: {

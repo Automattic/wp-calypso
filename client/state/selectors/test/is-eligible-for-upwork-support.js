@@ -79,4 +79,18 @@ describe( 'isEligibleForUpworkSupport()', () => {
 		};
 		expect( isEligibleForUpworkSupport( state ) ).to.be.true;
 	} );
+
+	test( 'returns true for Portugese language users without Business and E-Commerce plans', () => {
+		const state = {
+			currentUser: { id: 1 },
+			sites: {
+				items: {
+					111: { plan: { product_slug: PLAN_FREE } },
+					222: { plan: { product_slug: PLAN_PREMIUM } },
+				},
+			},
+			users: { items: { 1: { localeSlug: 'pt' } } },
+		};
+		expect( isEligibleForUpworkSupport( state ) ).to.be.true;
+	} );
 } );
