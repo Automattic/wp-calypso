@@ -91,22 +91,24 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should mark only new saved steps as in-progress', () => {
-		let state = [];
+		const actions = [
+			{
+				type: SIGNUP_PROGRESS_SUBMIT_STEP,
+				step: { stepName: 'site-selection' },
+			},
 
-		state = reducer( state, {
-			type: SIGNUP_PROGRESS_SUBMIT_STEP,
-			step: { stepName: 'site-selection' },
-		} );
+			{
+				type: SIGNUP_PROGRESS_SAVE_STEP,
+				step: { stepName: 'site-selection' },
+			},
 
-		state = reducer( state, {
-			type: SIGNUP_PROGRESS_SAVE_STEP,
-			step: { stepName: 'site-selection' },
-		} );
+			{
+				type: SIGNUP_PROGRESS_SAVE_STEP,
+				step: { stepName: 'last-step' },
+			},
+		];
 
-		state = reducer( state, {
-			type: SIGNUP_PROGRESS_SAVE_STEP,
-			step: { stepName: 'last-step' },
-		} );
+		const state = actions.reduce( reducer, [] );
 
 		expect( state[ 0 ].status ).not.toBe( 'in-progress' );
 		expect( state[ 1 ].status ).toBe( 'in-progress' );
