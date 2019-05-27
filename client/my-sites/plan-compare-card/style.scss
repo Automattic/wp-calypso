@@ -62,6 +62,10 @@
 .plan-compare-card-item {
 	display: flex;
 	list-style-type: none;
+	
+	strong:first-of-type {
+		margin-right: 5px;
+	}
 }
 
 .plan-compare-card-item.is-highlight {

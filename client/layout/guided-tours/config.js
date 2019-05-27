@@ -19,6 +19,7 @@ import checklistSiteIcon from 'layout/guided-tours/tours/checklist-site-icon-tou
 import checklistSiteTagline from 'layout/guided-tours/tours/checklist-site-tagline-tour/meta';
 import checklistSiteTitle from 'layout/guided-tours/tours/checklist-site-title-tour/meta';
 import checklistUserAvatar from 'layout/guided-tours/tours/checklist-user-avatar-tour/meta';
+import checklistUserEmail from 'layout/guided-tours/tours/checklist-user-email-tour/meta';
 import jetpack from 'layout/guided-tours/tours/jetpack-basic-tour/meta';
 import jetpackBackupsRewind from 'layout/guided-tours/tours/jetpack-backups-rewind-tour/meta';
 import jetpackMonitoring from 'layout/guided-tours/tours/jetpack-monitoring-tour/meta';
@@ -37,6 +38,7 @@ export default {
 	checklistSiteTagline,
 	checklistSiteTitle,
 	checklistUserAvatar,
+	checklistUserEmail,
 	jetpack,
 	jetpackBackupsRewind,
 	jetpackMonitoring,

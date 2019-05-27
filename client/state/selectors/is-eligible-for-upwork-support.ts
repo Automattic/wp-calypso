@@ -10,7 +10,18 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 import getSitesItems from 'state/selectors/get-sites-items';
 import { isBusinessPlan, isEcommercePlan } from 'lib/plans';
 
-const UPWORK_LOCALES = [ 'es', 'es-cl', 'es-mx', 'fr', 'fr-ca', 'fr-be', 'fr-ch' ];
+const UPWORK_LOCALES = [
+	'es',
+	'es-cl',
+	'es-mx',
+	'fr',
+	'fr-ca',
+	'fr-be',
+	'fr-ch',
+	'pt',
+	'pt-pt',
+	'pt-br',
+];
 
 /**
  * @param state Global state tree
