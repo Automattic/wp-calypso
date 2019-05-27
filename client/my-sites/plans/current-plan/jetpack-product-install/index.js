@@ -9,6 +9,7 @@ import { includes, some } from 'lodash';
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'state/analytics/actions';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
 import Interval, { EVERY_SECOND, EVERY_FIVE_SECONDS } from 'lib/interval';
@@ -198,7 +199,7 @@ export class JetpackProductInstall extends Component {
 			! this.shouldRefetchInstallationStatus() && this.installationHasRecoverableErrors();
 
 		if ( hasErrorInstalling ) {
-			this.recordAutoconfigTracksEvent( 'calypso_plans_autoconfig_error', {
+			this.props.recordTracksEvent( 'calypso_plans_autoconfig_error', {
 				checklist_name: 'jetpack',
 				error: 'installation_error',
 				location: 'JetpackChecklist',
@@ -242,6 +243,7 @@ export default connect(
 		};
 	},
 	{
+		recordTracksEvent,
 		requestJetpackProductInstallStatus,
 		startJetpackProductInstall,
 	}
