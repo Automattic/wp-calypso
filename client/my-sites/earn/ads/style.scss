@@ -86,7 +86,7 @@
 	}
 
 	tbody tr:hover {
-		background-color: #f3f6f8;
+		background-color: var( --color-neutral-50 );
 	}
 }
 
@@ -157,6 +157,6 @@
 }
 
 .ads__activate-description {
-	border-top: 1px solid #e9eff3;
+	border-top: 1px solid var( --color-border-subtle );
 	padding: 24px;
 }
