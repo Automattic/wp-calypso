@@ -4,14 +4,18 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
+
+/**
+ * Internal dependencies
+ */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -20,9 +24,10 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import Button from 'components/button';
 import { createPasswordlessUser, verifyPasswordlessUser } from 'lib/signup/step-actions';
 import Notice from 'components/notice';
-
 import FormStateStore from 'lib/form-state';
 import createFormStore from 'lib/form-state/store';
+import { submitSignupStep } from 'state/signup/progress/actions';
+
 const { getFieldValue } = FormStateStore;
 
 export class PasswordlessStep extends Component {
@@ -125,7 +130,7 @@ export class PasswordlessStep extends Component {
 	submitStep = providedDependencies => {
 		const { flowName, stepName } = this.props;
 
-		SignupActions.submitSignupStep(
+		this.props.submitSignupStep(
 			{
 				flowName,
 				stepName,
@@ -253,4 +258,7 @@ export class PasswordlessStep extends Component {
 	}
 }
 
-export default localize( PasswordlessStep );
+export default connect(
+	null,
+	{ submitSignupStep }
+)( localize( PasswordlessStep ) );
