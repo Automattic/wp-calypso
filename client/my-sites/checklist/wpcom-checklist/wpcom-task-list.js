@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, isBoolean, memoize, omit, pick } from 'lodash';
+import { get, isBoolean, memoize, omit, pick, size } from 'lodash';
 import debugModule from 'debug';
 import config from 'config';
 
@@ -15,7 +15,20 @@ import { abtest } from 'lib/abtest';
 
 const debug = debugModule( 'calypso:wpcom-task-list' );
 
-function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, siteVerticals } ) {
+function getTasks( {
+	designType,
+	isSiteUnlaunched,
+	phase2,
+	siteSegment,
+	siteVerticals,
+	taskStatuses,
+} ) {
+	// The getTasks function can be removed when we make a full switch to "phase 2"
+	if ( phase2 && size( taskStatuses ) ) {
+		// Use the server response, Luke
+		return taskStatuses;
+	}
+
 	const tasks = [];
 	const segmentSlug = getSiteTypePropertyValue( 'id', siteSegment, 'slug' );
 
@@ -134,10 +147,7 @@ class WpcomTaskList {
 }
 
 export const getTaskList = memoize(
-	params =>
-		params && params.phase2 && params.taskStatuses && params.taskStatuses.length
-			? new WpcomTaskList( params.taskStatuses ) // Use the server response, Luke
-			: new WpcomTaskList( getTasks( params ) ),
+	params => new WpcomTaskList( getTasks( params ) ),
 	params => {
 		const key = pick( params, [
 			'taskStatuses',
