@@ -48,7 +48,7 @@ describe( 'Button', () => {
 		test( 'renders as a link', () => {
 			const button = shallow( <Button href="https://wordpress.com/" /> );
 
-			expect( button ).toMatch( 'a' );
+			expect( button.type() ).toBe( 'a' );
 			expect( button.prop( 'href' ) ).toBe( 'https://wordpress.com/' );
 		} );
 
@@ -81,7 +81,7 @@ describe( 'Button', () => {
 		const button = shallow( <Button target="_blank" rel="noopener noreferrer" /> );
 
 		test( 'renders as a button', () => {
-			expect( button ).toMatch( 'button' );
+			expect( button.type() ).toBe( 'button' );
 			expect( button.prop( 'href' ) ).toBeUndefined();
 		} );
 
