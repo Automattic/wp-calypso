@@ -34,6 +34,7 @@ import {
 	INPUT_VALIDATION,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
+	REDIRECTING_FOR_AUTHORIZATION,
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
@@ -142,6 +143,7 @@ export class WebPaymentBox extends React.Component {
 				return ongoingState();
 
 			case SUBMITTING_WPCOM_REQUEST:
+			case REDIRECTING_FOR_AUTHORIZATION:
 				return completingState();
 
 			case RECEIVED_WPCOM_RESPONSE:
