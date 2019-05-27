@@ -90,6 +90,36 @@ class Starter_Page_Templates {
 					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681763300004b3573161a' )['body'] )->body->content,
 					'preview' => 'https://via.placeholder.com/200x180',
 				),
+				array(
+					'title'   => 'Home 2',
+					'slug'    => 'home-2',
+					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce680d73300009801731614' )['body'] )->body->content,
+					'preview' => 'https://via.placeholder.com/200x180',
+				),
+				array(
+					'title'   => 'Menu 2',
+					'slug'    => 'menu-2',
+					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681173300006600731617' )['body'] )->body->content,
+					'preview' => 'https://via.placeholder.com/200x180',
+				),
+				array(
+					'title'   => 'Contact Us 2',
+					'slug'    => 'contact-2',
+					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681763300004b3573161a' )['body'] )->body->content,
+					'preview' => 'https://via.placeholder.com/200x180',
+				),
+				array(
+					'title'   => 'Menu 3',
+					'slug'    => 'menu-3',
+					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681173300006600731617' )['body'] )->body->content,
+					'preview' => 'https://via.placeholder.com/200x180',
+				),
+				array(
+					'title'   => 'Contact Us 3',
+					'slug'    => 'contact-3',
+					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681763300004b3573161a' )['body'] )->body->content,
+					'preview' => 'https://via.placeholder.com/200x180',
+				),
 			),
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
