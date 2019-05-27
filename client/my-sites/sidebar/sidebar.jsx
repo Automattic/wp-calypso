@@ -12,10 +12,12 @@ import { format as formatUrl, parse as parseUrl } from 'url';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import { isEnabled } from 'config';
+import Button from 'components/button';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import ExternalLink from 'components/external-link';
+import JetpackLogo from 'components/jetpack-logo';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
@@ -24,7 +26,6 @@ import SidebarRegion from 'layout/sidebar/region';
 import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
 import ToolsMenu from './tools-menu';
-import JetpackLogo from 'components/jetpack-logo';
 import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -510,22 +511,16 @@ export class MySitesSidebar extends Component {
 				  } )
 				: site.options.admin_url;
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace*/
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className="wp-admin">
-				<a
-					onClick={ this.trackWpadminClick }
-					href={ adminUrl }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
+				<ExternalLink href={ adminUrl } icon onClick={ this.trackWpadminClick }>
 					<Gridicon icon="my-sites" size={ 24 } />
 					<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
-					<Gridicon icon="external" size={ 24 } />
-				</a>
+				</ExternalLink>
 			</li>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace*/
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
