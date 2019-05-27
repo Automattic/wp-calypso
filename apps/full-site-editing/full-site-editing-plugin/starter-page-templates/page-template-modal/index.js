@@ -28,7 +28,6 @@ import { keyBy } from 'lodash';
 	const PageTemplateModal = withState( {
 		isOpen: true,
 		isLoading: false,
-		selectedTemplate: 'blank',
 		verticalTemplates: keyBy( templates, 'slug' ),
 	} )( ( { isOpen, verticalTemplates, setState } ) => (
 		<div>
