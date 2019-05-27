@@ -63,23 +63,24 @@ export const httpHandler = async ( { dispatch }, action ) => {
 		)
 		.join( '&' );
 
+	let response, json;
 	try {
-		const response = await fetch( queryString.length ? `${ url }?${ queryString }` : url, {
+		response = await fetch( queryString.length ? `${ url }?${ queryString }` : url, {
 			method,
 			headers: fetchHeaders,
 			body,
 			credentials: withCredentials ? 'include' : 'same-origin',
 		} );
-
-		if ( response.ok ) {
-			dispatch( extendAction( onSuccess, successMeta( { body: await response.json() } ) ) );
-		} else {
-			dispatch(
-				extendAction( onFailure, failureMeta( { response: { body: await response.json() } } ) )
-			);
-		}
+		json = await response.json();
 	} catch ( error ) {
 		dispatch( extendAction( onFailure, failureMeta( error ) ) );
+		return;
+	}
+
+	if ( response.ok ) {
+		dispatch( extendAction( onSuccess, successMeta( { body: json } ) ) );
+	} else {
+		dispatch( extendAction( onFailure, failureMeta( { response: { body: json } } ) ) );
 	}
 };
 
