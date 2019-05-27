@@ -32,7 +32,7 @@ describe( 'Button', () => {
 
 		test( 'disabled', () => {
 			const button = shallow( <Button disabled /> );
-			expect( button ).to.be.disabled;
+			expect( button.prop( 'disabled' ) ).toBe( true );
 		} );
 
 		test( 'with child', () => {
