@@ -55,7 +55,7 @@ describe( 'Button', () => {
 		test( 'ignores type prop and renders a link without type attribute', () => {
 			const button = shallow( <Button href="https://wordpress.com/" type="submit" /> );
 
-			expect( button ).to.not.have.prop( 'type' );
+			expect( button.prop( 'type' ) ).toBeUndefined();
 		} );
 
 		test( 'including target and rel props renders a link with target and rel attributes', () => {
@@ -82,7 +82,7 @@ describe( 'Button', () => {
 
 		test( 'renders as a button', () => {
 			expect( button ).toMatch( 'button' );
-			expect( button ).to.not.have.prop( 'href' );
+			expect( button.prop( 'href' ) ).toBeUndefined();
 		} );
 
 		test( 'renders button with type attribute set to "button" by default', () => {
@@ -99,8 +99,8 @@ describe( 'Button', () => {
 		} );
 
 		test( 'renders button without rel and target attributes', () => {
-			expect( button ).to.not.have.prop( 'target' );
-			expect( button ).to.not.have.prop( 'rel' );
+			expect( button.prop( 'target' ) ).toBeUndefined();
+			expect( button.prop( 'rel' ) ).toBeUndefined();
 		} );
 	} );
 } );
