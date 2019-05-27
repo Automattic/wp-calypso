@@ -13,7 +13,6 @@ import { BaseControl } from '@wordpress/components';
 function TemplateSelectorControl( {
 	label,
 	className,
-	useBlank,
 	help,
 	instanceId,
 	onClick,
@@ -26,14 +25,6 @@ function TemplateSelectorControl( {
 		return null;
 	}
 
-	if ( useBlank ) {
-		templates.unshift( {
-			label: 'Blank',
-			preview: 'https://via.placeholder.com/200x180',
-			value: '',
-		} );
-	}
-
 	return (
 		<BaseControl
 			label={ label }
@@ -43,7 +34,7 @@ function TemplateSelectorControl( {
 		>
 			{ templates.map( ( option, index ) => {
 				const buttonClass = classnames( 'template-selector-control__label', {
-					'is-blank': option.value === '',
+					'is-blank': option.value === 'blank',
 				} );
 
 				return (

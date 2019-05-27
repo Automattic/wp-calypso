@@ -28,6 +28,7 @@ import { keyBy } from 'lodash';
 	const PageTemplateModal = withState( {
 		isOpen: true,
 		isLoading: false,
+		selectedTemplate: 'blank',
 		verticalTemplates: keyBy( templates, 'slug' ),
 	} )( ( { isOpen, verticalTemplates, setState } ) => (
 		<div>
@@ -47,17 +48,14 @@ import { keyBy } from 'lodash';
 								<TemplateSelectorControl
 									label="Template"
 									templates={ Object.values( verticalTemplates ).map( template => ( {
-										label: template.title,
+										label: template.label || template.title,
 										value: template.slug,
 										preview: template.preview,
 									} ) ) }
 									onClick={ newTemplate => {
-										if ( newTemplate !== '' && verticalTemplates[ newTemplate ] ) {
-											insertTemplate( verticalTemplates[ newTemplate ] );
-										}
 										setState( { isOpen: false } );
+										insertTemplate( verticalTemplates[ newTemplate ] );
 									} }
-									useBlank={ true }
 								/>
 							</fieldset>
 						</form>

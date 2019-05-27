@@ -73,6 +73,13 @@ class Starter_Page_Templates {
 			'siteInformation' => array_merge( $default_info, $site_info ),
 			'templates'       => array(
 				array(
+					'title'   => '',
+					'slug'    => 'blank',
+					'label'   => 'Blank',
+					'content' => '',
+					'preview' => 'https://via.placeholder.com/200x180',
+				),
+				array(
 					'title'   => 'Home',
 					'slug'    => 'home',
 					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce680d73300009801731614' )['body'] )->body->content,
