@@ -58,14 +58,10 @@
 			border-color: #333;
 			box-shadow: 0 3px 3px #999;
 		}
-
-		&.is-blank {
-			border-style: dashed;
-		}
 	}
 
 	.template-selector-control__media {
-		pointer-events:none; 
+		pointer-events: none;
 		max-width: 100%;
 		display: block;
 		margin: 0 auto 2em;
