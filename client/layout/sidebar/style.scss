@@ -144,12 +144,13 @@
 
 		// External indicator for sections that aren't available in Calypso
 		&.gridicons-external {
+			height: 18px;
+			left: auto;
+			margin: 0;
 			position: absolute;
 			right: 15px;
-			left: auto;
+			top: auto;
 			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
-			height: 18px;
-			margin-right: 0;
 		}
 	}
 
