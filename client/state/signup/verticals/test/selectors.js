@@ -15,24 +15,32 @@ describe( 'state/signup/verticals/selectors', () => {
 		const state = {
 			signup: {
 				verticals: {
-					[ searchTerm ]: [
-						{ id: 0, verticalName: 'Ah!' },
-						{ id: 1, verticalName: 'I am selected!' },
-					],
+					business: {
+						[ searchTerm ]: [
+							{ id: 0, verticalName: 'Ah!' },
+							{ id: 1, verticalName: 'I am selected!' },
+						],
+					},
 				},
 			},
 		};
 
 		test( 'should return the stored verticals data.', () => {
-			expect( getVerticals( state, searchTerm ) ).toEqual( state.signup.verticals[ searchTerm ] );
+			expect( getVerticals( state, searchTerm, 'business' ) ).toEqual(
+				state.signup.verticals.business[ searchTerm ]
+			);
 		} );
 
 		test( 'should return null if it does not exist', () => {
-			expect( getVerticals( state, 'Aaa' ) ).toBeNull();
+			expect( getVerticals( state, 'Aaa', 'business' ) ).toBeNull();
+			expect( getVerticals( state, searchTerm, '' ) ).toBeNull();
+			expect( getVerticals( state, searchTerm ) ).toBeNull();
 		} );
 
 		test( 'should return correct results from mixed case and untrimmed value', () => {
-			expect( getVerticals( state, ' COOL ' ) ).toEqual( state.signup.verticals[ searchTerm ] );
+			expect( getVerticals( state, ' COOL ', 'business' ) ).toEqual(
+				state.signup.verticals.business[ searchTerm ]
+			);
 		} );
 	} );
 } );
