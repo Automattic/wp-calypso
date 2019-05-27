@@ -60,11 +60,13 @@ export { default as PaginationExample } from 'components/pagination/docs/example
 export { default as PaymentLogo } from 'components/payment-logo/docs/example';
 export { default as PieChart } from 'components/pie-chart/docs/example';
 export { default as Popovers } from 'components/popover/docs/example';
-export { default as ProgressBar } from 'components/progress-bar/docs/example';
+export { default as ProgressBar } from '@automattic/calypso-ui/src/progress-bar/docs/example';
 export { default as Ranges } from 'components/forms/range/docs/example';
 export { default as Rating } from 'components/rating/docs/example';
 export { default as Ribbon } from 'components/ribbon/docs/example';
-export { default as ScreenReaderTextExample } from 'components/screen-reader-text/docs/example';
+export {
+	default as ScreenReaderTextExample,
+} from '@automattic/calypso-ui/src/screen-reader-text/docs/example';
 export { default as SearchDemo } from 'components/search/docs/example';
 export { default as SectionHeader } from 'components/section-header/docs/example';
 export { default as SectionNav } from 'components/section-nav/docs/example';
