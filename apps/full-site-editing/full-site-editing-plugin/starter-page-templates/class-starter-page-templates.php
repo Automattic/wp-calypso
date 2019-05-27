@@ -77,7 +77,7 @@ class Starter_Page_Templates {
 					'slug'    => 'blank',
 					'label'   => 'Blank',
 					'content' => '',
-					'preview' => 'https://via.placeholder.com/200x180',
+					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-blank.png',
 				),
 				array(
 					'title'   => 'Home',
