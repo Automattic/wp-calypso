@@ -94,19 +94,19 @@ class Starter_Page_Templates {
 					'title'   => 'Home 2',
 					'slug'    => 'home-2',
 					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce680d73300009801731614' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-home.png',
+					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-home-2.png',
 				),
 				array(
 					'title'   => 'Menu 2',
 					'slug'    => 'menu-2',
 					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681173300006600731617' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu.png',
+					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu-2.png',
 				),
 				array(
 					'title'   => 'Contact Us 2',
 					'slug'    => 'contact-2',
 					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681763300004b3573161a' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus.png',
+					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus-2.png',
 				),
 				array(
 					'title'   => 'Menu 3',
