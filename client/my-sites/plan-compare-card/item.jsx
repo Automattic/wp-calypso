@@ -9,9 +9,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 
-export default class extends React.Component {
-	static displayName = 'PlanCompareCardItem';
-
+export default class PlanCompareCardItem extends React.Component {
 	static propTypes = {
 		highlight: PropTypes.bool,
 		unavailable: PropTypes.bool,
