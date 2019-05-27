@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,6 +20,8 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
+const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .form-toggle__switch';
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackPluginUpdatesTour = makeTour(
 	<Tour
@@ -34,9 +35,43 @@ export const JetpackPluginUpdatesTour = makeTour(
 	>
 		<Step
 			name="init"
-			target=".plugin-item-jetpack .form-toggle__switch"
+			target={ JETPACK_TOGGLE_SELECTOR }
 			arrow="top-left"
 			placement="below"
+			wait={ () =>
+				new Promise( resolve => {
+					if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
+						return resolve();
+					}
+
+					const primaryContainer = document.querySelector( '#primary' );
+					if ( typeof MutationObserver === 'undefined' || ! primaryContainer ) {
+						return setTimeout( resolve, 2000 );
+					}
+
+					new MutationObserver( ( mutationRecords, observer ) => {
+						mutationRecords.some( mutationRecord => {
+							if ( mutationRecord.type === 'childList' && mutationRecord.addedNodes.length ) {
+								if (
+									Array.from( mutationRecord.addedNodes ).some(
+										node =>
+											node.nodeType === Node.ELEMENT_NODE &&
+											( node as Element ).classList.contains( 'plugin-item-jetpack' )
+									)
+								) {
+									resolve();
+									observer.disconnect();
+									return true;
+								}
+							}
+							return false;
+						} );
+					} ).observe( primaryContainer, {
+						childList: true,
+						subtree: true,
+					} );
+				} )
+			}
 			style={ {
 				animationDelay: '0.7s',
 				zIndex: 1,
