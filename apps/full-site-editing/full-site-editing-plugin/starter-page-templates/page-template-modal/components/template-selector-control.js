@@ -13,43 +13,41 @@ import { BaseControl } from '@wordpress/components';
 function TemplateSelectorControl( {
 	label,
 	className,
-	selected,
 	help,
 	instanceId,
-	onChange,
+	onClick,
 	templates = [],
 } ) {
 	const id = `inspector-radio-control-${ instanceId }`;
-	const onChangeValue = event => onChange( event.target.value );
+	const handleButtonClick = event => onClick( event.target.value );
+
+	if ( isEmpty( templates ) ) {
+		return null;
+	}
 
 	return (
-		! isEmpty( templates ) && (
-			<BaseControl
-				label={ label }
-				id={ id }
-				help={ help }
-				className={ classnames( className, 'template-selector-control' ) }
-			>
-				{ templates.map( ( option, index ) => (
-					<div key={ `${ id }-${ index }` } className="template-selector-control__option">
-						<input
-							id={ `${ id }-${ index }` }
-							className="template-selector-control__input"
-							type="radio"
-							name={ id }
-							value={ option.value }
-							onChange={ onChangeValue }
-							checked={ option.value === selected }
-							aria-describedby={ help ? `${ id }__help` : undefined }
-						/>
-						<label className="template-selector-control__label" htmlFor={ `${ id }-${ index }` }>
-							<img className="template-selector-control__media" src={ option.preview } alt="" />
-							{ option.label }
-						</label>
-					</div>
-				) ) }
-			</BaseControl>
-		)
+		<BaseControl
+			label={ label }
+			id={ id }
+			help={ help }
+			className={ classnames( className, 'template-selector-control' ) }
+		>
+			{ templates.map( ( option, index ) => (
+				<div key={ `${ id }-${ index }` } className="template-selector-control__option">
+					<button
+						type="button"
+						id={ `${ id }-${ index }` }
+						className="template-selector-control__label"
+						value={ option.value }
+						onClick={ handleButtonClick }
+						aria-describedby={ help ? `${ id }__help` : undefined }
+					>
+						<img className="template-selector-control__media" src={ option.preview } alt="" />
+						{ option.label }
+					</button>
+				</div>
+			) ) }
+		</BaseControl>
 	);
 }
 

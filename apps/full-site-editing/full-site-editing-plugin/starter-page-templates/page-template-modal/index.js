@@ -8,12 +8,17 @@ import { keyBy } from 'lodash';
 
 ( function( wp, config = {} ) {
 	const registerPlugin = wp.plugins.registerPlugin;
-	const { Modal, Button } = wp.components;
+	const { Modal } = wp.components;
 	const { withState } = wp.compose;
 
 	const { siteInformation = {}, templates = [] } = config;
 
 	const insertTemplate = template => {
+		// Skip inserting if there's nothing to insert.
+		if ( ! template.title && ! template.content ) {
+			return;
+		}
+
 		// set title
 		wp.data
 			.dispatch( 'core/editor' )
@@ -28,9 +33,8 @@ import { keyBy } from 'lodash';
 	const PageTemplateModal = withState( {
 		isOpen: true,
 		isLoading: false,
-		selectedTemplate: 'home',
 		verticalTemplates: keyBy( templates, 'slug' ),
-	} )( ( { isOpen, selectedTemplate, verticalTemplates, setState } ) => (
+	} )( ( { isOpen, verticalTemplates, setState } ) => (
 		<div>
 			{ isOpen && (
 				<Modal
@@ -47,39 +51,17 @@ import { keyBy } from 'lodash';
 							<fieldset className="page-template-modal__list">
 								<TemplateSelectorControl
 									label="Template"
-									selected={ selectedTemplate }
 									templates={ Object.values( verticalTemplates ).map( template => ( {
-										label: template.title,
+										label: template.label || template.title,
 										value: template.slug,
 										preview: template.preview,
 									} ) ) }
-									onChange={ newTemplate => {
-										setState( { selectedTemplate: newTemplate } );
+									onClick={ newTemplate => {
+										setState( { isOpen: false } );
+										insertTemplate( verticalTemplates[ newTemplate ] );
 									} }
 								/>
 							</fieldset>
-							<div class="page-template-modal__actions">
-								<Button
-									className="page-template-modal__action page-template-modal__action-use"
-									isPrimary
-									isLarge
-									onClick={ () => {
-										setState( { isOpen: false } );
-										insertTemplate( verticalTemplates[ selectedTemplate ] );
-									} }
-								>
-									Use Template
-								</Button>
-								or
-								<Button
-									className="page-template-modal__action"
-									isLink
-									isLarge
-									onClick={ () => setState( { isOpen: false } ) }
-								>
-									Start with blank page
-								</Button>
-							</div>
 						</form>
 					</div>
 				</Modal>
