@@ -95,6 +95,7 @@
 		"manage/custom-post-types": true,
 		"manage/edit-user": true,
 		"manage/export/guided-transfer": true,
+		"manage/hire-a-builder": true,
 		"manage/import-in-sidebar": true,
 		"manage/import-to-jetpack": true,
 		"manage/import/site-importer-endpoints": true,

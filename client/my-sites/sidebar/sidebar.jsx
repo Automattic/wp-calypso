@@ -669,7 +669,7 @@ export class MySitesSidebar extends Component {
 					{ this.tools() }
 					{ this.marketing() }
 					{ this.earn() }
-					{ this.hireABuilder() }
+					{ isEnabled( 'manage/hire-a-builder' ) && this.hireABuilder() }
 					{ this.activity() }
 				</ExpandableSidebarMenu>
 
