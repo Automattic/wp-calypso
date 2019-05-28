@@ -116,7 +116,7 @@ class Starter_Page_Templates {
 	}
 
 	/**
-	 * Enqueue block editor assets.
+	 * Fetch vertical data from the API or return cached version if available.
 	 */
 	public function fetch_vertical_data() {
 		$vertical_templates = get_transient( self::$transient_key );
