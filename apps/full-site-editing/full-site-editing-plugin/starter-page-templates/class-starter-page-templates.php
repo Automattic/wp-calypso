@@ -62,72 +62,43 @@ class Starter_Page_Templates {
 		if ( 'page' !== $screen->id || 'add' !== $screen->action ) {
 			return;
 		}
+		
+		// Load templates for this site
+		$vertical_name = null;
+		$vertical_templates = array();
+		
+		$vertical_id = get_site_option( 'site_vertical', 'default' );
+		$request_url = 'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates';
+		$response = wp_remote_get( esc_url_raw( $request_url ) );
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
+			$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
+			$vertical_name = $api_response['vertical'];
+			$vertical_templates = $api_response['templates'];
+		}
+		
+		// Bail early if we have no templates to offer
+		if ( count($vertical_templates) === 0 ) {
+			return;
+		}
 
 		wp_enqueue_script( 'starter-page-templates' );
 
 		$default_info = array(
 			'title' => get_bloginfo( 'name' ),
+			'vertical' => $vertical_name,
+		);
+		$default_templates = array(
+			array(
+				'title'   => 'Blank',
+				'slug'    => 'blank',
+				'content' => '',
+			),
+			
 		);
 		$site_info    = get_site_option( 'site_contact_info', array() );
 		$config       = array(
 			'siteInformation' => array_merge( $default_info, $site_info ),
-			'templates'       => array(
-				array(
-					'title'   => '',
-					'slug'    => 'blank',
-					'label'   => 'Blank',
-					'content' => '',
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-blank.png',
-				),
-				array(
-					'title'   => 'Home',
-					'slug'    => 'home',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce680d73300009801731614' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-home.jpg',
-				),
-				array(
-					'title'   => 'Menu',
-					'slug'    => 'menu',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681173300006600731617' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu.jpg',
-				),
-				array(
-					'title'   => 'Contact Us',
-					'slug'    => 'contact',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681763300004b3573161a' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus.jpg',
-				),
-				array(
-					'title'   => 'Home 2',
-					'slug'    => 'home-2',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce680d73300009801731614' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-home-2.png',
-				),
-				array(
-					'title'   => 'Menu 2',
-					'slug'    => 'menu-2',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681173300006600731617' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu-2.png',
-				),
-				array(
-					'title'   => 'Contact Us 2',
-					'slug'    => 'contact-2',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681763300004b3573161a' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus-2.png',
-				),
-				array(
-					'title'   => 'Menu 3',
-					'slug'    => 'menu-3',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681173300006600731617' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu.jpg',
-				),
-				array(
-					'title'   => 'Contact Us 3',
-					'slug'    => 'contact-3',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681763300004b3573161a' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus.jpg',
-				),
-			),
+			'templates'       => array_merge( $default_templates, $vertical_templates ),
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
 	}
