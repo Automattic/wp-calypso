@@ -88,7 +88,7 @@ class Starter_Page_Templates {
 			),
 
 		);
-		$site_info = get_site_option( 'site_contact_info', array() );
+		$site_info = get_option( 'site_contact_info', array() );
 		$config    = array(
 			'siteInformation' => array_merge( $default_info, $site_info ),
 			'templates'       => array_merge( $default_templates, $vertical_templates ),
@@ -114,7 +114,7 @@ class Starter_Page_Templates {
 	 * @return array Containing vertical name and template list or nothing if an error occurred.
 	 */
 	public function fetch_vertical_data() {
-		$vertical_id        = get_site_option( 'site_vertical', 'default' );
+		$vertical_id        = get_option( 'site_vertical', 'default' );
 		$transient_key      = 'starter_page_templates_' . $vertical_id;
 		$vertical_templates = get_transient( $transient_key );
 
