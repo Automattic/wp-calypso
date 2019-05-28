@@ -9,7 +9,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { isDesktop } from 'lib/viewport';
 import { preventWidows } from 'lib/formatting';
+import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import Button from 'components/button';
 
 import './style.scss';
@@ -24,6 +26,13 @@ export function ThankYouCard( {
 	title,
 	translate,
 } ) {
+
+	const startChecklistTour = () => {
+		if ( isDesktop() ) {
+			this.props.requestGuidedTour( 'jetpackChecklistTour' );
+		}
+	};
+
 	return (
 		<div className="current-plan-thank-you">
 			{ illustration && (
@@ -48,21 +57,28 @@ export function ThankYouCard( {
 				</p>
 			) }
 			{ showContinueButton && (
-				<Button primary href={ `/plans/my-plan/${ siteSlug }` }>
+				<Button
+					href={ `/plans/my-plan/${ siteSlug }` }
+					onClick={ startChecklistTour }
+					primary
+				>
 					{ translate( 'Continue' ) }
 				</Button>
 			) }
 			{ showHideMessage && (
 				<p>
-					<a href={ `/plans/my-plan/${ siteSlug }` }>{ translate( 'Hide message' ) }</a>
+					<a href={ `/plans/my-plan/${ siteSlug }` } onClick={ startChecklistTour }>
+						{ translate( 'Hide message' ) }
+					</a>
 				</p>
 			) }
 		</div>
 	);
 }
 
-export default connect( state => {
-	return {
+export default connect(
+	state => ( {
 		siteSlug: getSelectedSiteSlug( state ),
-	};
-} )( localize( ThankYouCard ) );
+	} ),
+	{ requestGuidedTour }
+)( localize( ThankYouCard ) );
