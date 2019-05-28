@@ -96,23 +96,18 @@ export default class Step extends Component< Props, State > {
 	 */
 	isUpdatingPosition: boolean = false;
 
-	componentWillMount() {
+	componentDidMount() {
+		this.mounted = true;
 		this.wait( this.props, this.context ).then( () => {
 			this.start();
 			this.setStepSection( this.context, { init: true } );
-			debug( 'Step#componentWillMount: stepSection:', this.stepSection );
+			debug( 'Step#componentDidMount: stepSection:', this.stepSection );
 			this.skipIfInvalidContext( this.props, this.context );
 			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
 			this.setStepPosition( this.props );
 			if ( this.mounted ) {
 				this.setState( { initialized: true } );
 			}
-		} );
-	}
-
-	componentDidMount() {
-		this.mounted = true;
-		this.wait( this.props, this.context ).then( () => {
 			window.addEventListener( 'resize', this.onScrollOrResize );
 			this.watchTarget();
 		} );
