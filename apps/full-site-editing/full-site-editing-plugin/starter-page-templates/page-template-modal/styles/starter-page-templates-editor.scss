@@ -85,10 +85,10 @@
 		padding-bottom: 90%;
 		box-sizing: content-box;
 		position: relative;
+		pointer-events: none;
 	}
 
 	.template-selector-control__media {
-		pointer-events: none;
 		width: 100%;
 		display: block;
 		position: absolute;
