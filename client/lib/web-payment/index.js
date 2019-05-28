@@ -6,6 +6,11 @@
 import config from 'config';
 
 /**
+ * Internal dependencies
+ */
+import { abtest } from 'lib/abtest';
+
+/**
  * Web Payment method identifiers.
  */
 export const WEB_PAYMENT_BASIC_CARD_METHOD = 'basic-card';
@@ -54,7 +59,7 @@ export function isApplePayAvailable() {
  *                         if none can be detected.
  */
 export function detectWebPaymentMethod() {
-	if ( isApplePayAvailable() ) {
+	if ( isApplePayAvailable() && abtest( 'showApplePay' ) === 'show' ) {
 		return WEB_PAYMENT_APPLE_PAY_METHOD;
 	}
 
