@@ -15,7 +15,7 @@ import { keyBy } from 'lodash';
 
 	const insertTemplate = template => {
 		// Skip inserting if there's nothing to insert.
-		if ( ! template.title && ! template.content ) {
+		if ( ! template.content ) {
 			return;
 		}
 
@@ -52,7 +52,7 @@ import { keyBy } from 'lodash';
 								<TemplateSelectorControl
 									label="Template"
 									templates={ Object.values( verticalTemplates ).map( template => ( {
-										label: template.label || template.title,
+										label: template.title,
 										value: template.slug,
 										preview: template.preview,
 									} ) ) }
