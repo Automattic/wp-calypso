@@ -104,7 +104,9 @@ export default class Step extends Component< Props, State > {
 			this.skipIfInvalidContext( this.props, this.context );
 			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
 			this.setStepPosition( this.props );
-			this.safeSetState( { initialized: true } );
+			if ( this.mounted ) {
+				this.setState( { initialized: true } );
+			}
 		} );
 	}
 
@@ -142,7 +144,6 @@ export default class Step extends Component< Props, State > {
 
 	componentWillUnmount() {
 		this.mounted = false;
-		this.safeSetState( { initialized: false } );
 
 		window.removeEventListener( 'resize', this.onScrollOrResize );
 		if ( this.scrollContainer ) {
@@ -169,12 +170,6 @@ export default class Step extends Component< Props, State > {
 		}
 
 		return Promise.resolve();
-	}
-
-	safeSetState( state: State ) {
-		if ( this.mounted ) {
-			this.setState( state );
-		}
 	}
 
 	watchTarget() {
