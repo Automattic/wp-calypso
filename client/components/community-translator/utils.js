@@ -151,6 +151,19 @@ export function stopRecordingTranslations( apiBaseUrl = GP_BASE_URL + '/api', po
 }
 
 /**
+ * Causes translate.wordpress.com to start recording queried translations
+ * @param {String} apiBaseUrl Base API url to get translations
+ * @param {Function} post see postRequest()
+ * @returns {Object} request object
+ */
+export function recordTranslations( original, context = '' ) {
+	const glotPressUrl = `${ apiBaseUrl }/translations/-record-translations`;
+	const postFormData = [ `originals[]=${ context }\u0004${ original }` ];
+
+	return post( glotPressUrl, postFormData );
+}
+
+/**
  * Prepares and triggers a request to get GP string
  * @param {String} originalId GP original string id
  * @param {Object} translationObject GP string information { singular, context, plural }
