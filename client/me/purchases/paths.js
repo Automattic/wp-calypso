@@ -8,6 +8,10 @@ export const billingHistory = purchasesRoot + '/billing';
 
 export const upcomingCharges = purchasesRoot + '/upcoming';
 
+export const pendingPayments = purchasesRoot + '/pending';
+
+export const myMemberships = purchasesRoot + '/memberships';
+
 export function billingHistoryReceipt( receiptId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof receiptId ) {
