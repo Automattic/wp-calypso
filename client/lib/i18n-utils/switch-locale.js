@@ -109,12 +109,12 @@ export default function switchLocale( localeSlug ) {
 
 			setLocaleInDOM( domLocaleSlug, !! language.rtl );
 
-			applyUserWaitingTranslations( targetLocaleSlug );
+			loadUserUndeployedTranslations( targetLocaleSlug );
 		} );
 	}
 }
 
-function applyUserWaitingTranslations( currentLocaleSlug ) {
+export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 	if ( ! location || ! location.search ) {
 		return;
 	}
