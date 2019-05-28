@@ -50,6 +50,7 @@ export class PaidPlanThankYouCard extends Component {
 		} else if ( site && ! site.hasMinimumJetpackVersion ) {
 			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_error', {
 				error: 'jetpack_version_too_old',
+				jetpack_version: get( site, [ 'options', 'jetpack_version' ], 'unknown' ),
 			} );
 		} else if ( site && site.isSecondaryNetworkSite ) {
 			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_error', {
