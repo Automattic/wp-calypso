@@ -71,7 +71,7 @@ class Starter_Page_Templates {
 		$vertical_templates = $vertical_data['templates'];
 
 		// Bail early if we have no templates to offer.
-		if ( count( $vertical_templates ) === 0 ) {
+		if ( empty( $vertical_templates ) ) {
 			return;
 		}
 
