@@ -4,7 +4,24 @@
 import replacePlaceholders from './utils/replace-placeholders';
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
-import { keyBy } from 'lodash';
+import { keyBy, map, has } from 'lodash';
+
+// TODO: remove once we have proper previews from API
+if ( window.starterPageTemplatesConfig ) {
+	const PREVIEWS_BY_SLUG = {
+		home: 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-home-2.png',
+		menu: 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu-2.png',
+		'contact-us':
+			'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus-2.png',
+	};
+	window.starterPageTemplatesConfig.templates = map(
+		window.starterPageTemplatesConfig.templates,
+		template => {
+			template.preview = PREVIEWS_BY_SLUG[ template.slug ];
+			return template;
+		}
+	);
+}
 
 ( function( wp, config = {} ) {
 	const registerPlugin = wp.plugins.registerPlugin;
@@ -15,7 +32,7 @@ import { keyBy } from 'lodash';
 
 	const insertTemplate = template => {
 		// Skip inserting if there's nothing to insert.
-		if ( ! template.title && ! template.content ) {
+		if ( ! has( template, 'content' ) ) {
 			return;
 		}
 
@@ -52,7 +69,7 @@ import { keyBy } from 'lodash';
 								<TemplateSelectorControl
 									label="Template"
 									templates={ Object.values( verticalTemplates ).map( template => ( {
-										label: template.label || template.title,
+										label: template.title,
 										value: template.slug,
 										preview: template.preview,
 									} ) ) }

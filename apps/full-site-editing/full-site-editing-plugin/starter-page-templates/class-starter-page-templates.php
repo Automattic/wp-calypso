@@ -22,8 +22,7 @@ class Starter_Page_Templates {
 	 */
 	private function __construct() {
 		add_action( 'init', array( $this, 'register_scripts' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_scripts' ) );
-		add_action( 'enqueue_block_assets', array( $this, 'enqueue_styles' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
 	}
 
 	/**
@@ -53,9 +52,9 @@ class Starter_Page_Templates {
 	}
 
 	/**
-	 * Enqueue block editor scripts.
+	 * Enqueue block editor assets.
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_assets() {
 		$screen = get_current_screen();
 
 		// Return early if we don't meet conditions to show templates.
@@ -63,79 +62,40 @@ class Starter_Page_Templates {
 			return;
 		}
 
+		// Load templates for this site.
+		$vertical_data = $this->fetch_vertical_data();
+		if ( empty( $vertical_data ) ) {
+			return;
+		}
+		$vertical_name      = $vertical_data['vertical'];
+		$vertical_templates = $vertical_data['templates'];
+
+		// Bail early if we have no templates to offer.
+		if ( empty( $vertical_templates ) ) {
+			return;
+		}
+
 		wp_enqueue_script( 'starter-page-templates' );
 
-		$default_info = array(
-			'title' => get_bloginfo( 'name' ),
+		$default_info      = array(
+			'title'    => get_bloginfo( 'name' ),
+			'vertical' => $vertical_name,
 		);
-		$site_info    = get_site_option( 'site_contact_info', array() );
-		$config       = array(
-			'siteInformation' => array_merge( $default_info, $site_info ),
-			'templates'       => array(
-				array(
-					'title'   => '',
-					'slug'    => 'blank',
-					'label'   => 'Blank',
-					'content' => '',
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-blank.png',
-				),
-				array(
-					'title'   => 'Home',
-					'slug'    => 'home',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce680d73300009801731614' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-home.jpg',
-				),
-				array(
-					'title'   => 'Menu',
-					'slug'    => 'menu',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681173300006600731617' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu.jpg',
-				),
-				array(
-					'title'   => 'Contact Us',
-					'slug'    => 'contact',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681763300004b3573161a' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus.jpg',
-				),
-				array(
-					'title'   => 'Home 2',
-					'slug'    => 'home-2',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce680d73300009801731614' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-home-2.png',
-				),
-				array(
-					'title'   => 'Menu 2',
-					'slug'    => 'menu-2',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681173300006600731617' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu-2.png',
-				),
-				array(
-					'title'   => 'Contact Us 2',
-					'slug'    => 'contact-2',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681763300004b3573161a' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus-2.png',
-				),
-				array(
-					'title'   => 'Menu 3',
-					'slug'    => 'menu-3',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681173300006600731617' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu.jpg',
-				),
-				array(
-					'title'   => 'Contact Us 3',
-					'slug'    => 'contact-3',
-					'content' => json_decode( wp_remote_get( 'http://www.mocky.io/v2/5ce681763300004b3573161a' )['body'] )->body->content,
-					'preview' => 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus.jpg',
-				),
+		$default_templates = array(
+			array(
+				'title' => 'Blank',
+				'slug'  => 'blank',
 			),
+
+		);
+		$site_info = get_option( 'site_contact_info', array() );
+		$config    = array(
+			'siteInformation' => array_merge( $default_info, $site_info ),
+			'templates'       => array_merge( $default_templates, $vertical_templates ),
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
-	}
 
-	/**
-	 * Enqueue styles.
-	 */
-	public function enqueue_styles() {
+		// Enqueue styles.
 		$style_file = is_rtl()
 			? 'starter-page-templates.rtl.css'
 			: 'starter-page-templates.css';
@@ -146,5 +106,29 @@ class Starter_Page_Templates {
 			array(),
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 		);
+	}
+
+	/**
+	 * Fetch vertical data from the API or return cached version if available.
+	 *
+	 * @return array Containing vertical name and template list or nothing if an error occurred.
+	 */
+	public function fetch_vertical_data() {
+		$vertical_id        = get_option( 'site_vertical', 'default' );
+		$transient_key      = 'starter_page_templates_' . $vertical_id;
+		$vertical_templates = get_transient( $transient_key );
+
+		// Load fresh data if we don't have any or vertical_id doesn't match.
+		if ( false === $vertical_templates ) {
+			$request_url = 'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates';
+			$response    = wp_remote_get( esc_url_raw( $request_url ) );
+			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+				return array();
+			}
+			$vertical_templates = json_decode( wp_remote_retrieve_body( $response ), true );
+			set_transient( $transient_key, $vertical_templates, DAY_IN_SECONDS );
+		}
+
+		return $vertical_templates;
 	}
 }

@@ -42,7 +42,15 @@ function TemplateSelectorControl( {
 						onClick={ handleButtonClick }
 						aria-describedby={ help ? `${ id }__help` : undefined }
 					>
-						<img className="template-selector-control__media" src={ option.preview } alt="" />
+						<div className="template-selector-control__media-wrap">
+							{ option.preview && (
+								<img
+									className="template-selector-control__media"
+									src={ option.preview }
+									alt={ 'Preview of ' + option.label }
+								/>
+							) }
+						</div>
 						{ option.label }
 					</button>
 				</div>
