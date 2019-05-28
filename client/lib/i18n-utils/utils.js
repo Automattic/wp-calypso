@@ -11,6 +11,7 @@ import cookie from 'cookie';
  * Internal dependencies
  */
 import config from 'config';
+import { recordTranslations } from 'components/community-translator/utils';
 
 /**
  * a locale can consist of three component
@@ -264,7 +265,7 @@ class I18nScanner {
 	translationFilter( ...args ) {
 		const [ translation, options ] = args;
 		if ( this.active ) {
-			this.loggedTranslations.push( [ translation, options ] );
+			recordTranslations( options.singular, options.context )
 		}
 
 		return translation;
