@@ -293,6 +293,11 @@ class I18nScanner {
 	}
 
 	cookieWatcher() {
+		// client-side rendering only
+		if ( typeof( document ) === 'undefined' ) {
+			return;
+		}
+
 		if ( this.previousCookies === document.cookies ) {
 			return;
 		}
