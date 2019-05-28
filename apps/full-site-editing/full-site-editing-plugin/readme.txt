@@ -3,7 +3,7 @@ Contributors: automattic, get_dave, marekhrabe, mppfeiffer, obenland
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.2
-Stable tag: 1.0
+Stable tag: 0.1
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -28,14 +28,17 @@ to give you a head start on creating new pages for your site.
 
 = Can I use this plugin in production? =
 
-We'll be making frequent updates to the plugin as we flesh out its feature set. You're welcome to try it, just be aware that it could break after an update.
+We'll be making frequent updates to the plugin as we flesh out its feature set. You're welcome to try it, just be aware that it is only designed to work on the WordPress.com environment and could break after an update.
 
 = How is the Blog Posts Listing block different from the Latest Posts block in Core? =
 
 It adds an excerpt! And meta information! It really is much more useful, especially if your looking for a block that gives readers a better idea about your latest posts than just the title.
 
+= Do you provide support for this plugin? =
+
+This plugin is experimental, so we don't provide any support for it outside of websites hosted on WordPress.com at this time.
 
 == Changelog ==
 
-= 1.0 =
+= 0.1 =
 * Initial Release
