@@ -70,10 +70,6 @@ $plan-features-sidebar-width: 272px;
 	margin-right: auto;
 }
 
-.plan-features__table.has-2-cols {
-	max-width: 720px;
-}
-
 .plan-features__table.has-1-cols {
 	max-width: 337px;
 }
@@ -845,21 +841,10 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		&.is-ecommerce-plan {
 			border-color: var( --color-plan-ecommerce );
 		}
-	}
 
-	/* scroll stops */
-	.plan-features__header::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		height: 0;
-		width: 0;
-		scroll-snap-align: start;
-		scroll-snap-coordinate: 0% 0%;
-
-		.scroll-snap-disabled & {
-			content: none;
-			overflow: hidden;
+		/* scroll stops */
+		.scroll-snap-enabled & {
+			scroll-snap-align: start;
 		}
 	}
 

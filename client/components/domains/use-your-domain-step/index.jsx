@@ -367,7 +367,7 @@ class UseYourDomainStep extends React.Component {
 
 	renderSelectMapping = () => {
 		const { translate } = this.props;
-		const image = '/calypso/images/illustrations/jetpack-themes.svg';
+		const image = '/calypso/images/illustrations/themes.svg';
 		const title = translate( 'Map your domain without moving it from your current registrar.' );
 		const reasons = [
 			translate( 'Domain registration and billing will remain at your current provider' ),

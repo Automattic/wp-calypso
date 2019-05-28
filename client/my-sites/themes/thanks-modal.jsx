@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -100,7 +101,7 @@ class ThanksModal extends Component {
 	goToCustomizer = () => {
 		this.trackClick( 'thanks modal customize' );
 		this.onCloseModal();
-		page( this.props.customizeUrl );
+		window.open( this.props.customizeUrl, '_blank' );
 	};
 
 	renderThemeInfo = () => {
@@ -173,9 +174,14 @@ class ThanksModal extends Component {
 
 	render() {
 		const { currentTheme, hasActivated, isActivating } = this.props;
-		const customizeSiteText = hasActivated
-			? translate( 'Customize site' )
-			: translate( 'Activating theme…' );
+		const customizeSiteText = hasActivated ? (
+			<span className="thanks-modal__button-customize">
+				<Gridicon icon="external" />
+				{ translate( 'Customize site' ) }
+			</span>
+		) : (
+			translate( 'Activating theme…' )
+		);
 		const buttons = [
 			{
 				action: 'learn',

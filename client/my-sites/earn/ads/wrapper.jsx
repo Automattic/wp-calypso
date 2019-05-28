@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isWordadsInstantActivationEligible, canUpgradeToUseWordAds } from 'lib/ads/utils';
-import { isBusiness } from 'lib/products-values';
+import { isWordadsInstantActivationEligible, 
+		canUpgradeToUseWordAds, 
+		canAccessEarnSection 
+} from 'lib/ads/utils';
+import { isPremium, isBusiness } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
 import Card from 'components/card';
@@ -28,15 +29,19 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
-import { PLAN_PREMIUM, FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
+import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteFragment } from 'lib/route';
 import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isPremium } from '../../../lib/products-values';
-import { canAccessEarnSection } from '../../../lib/ads/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+import 'my-sites/stats/stats-module/style.scss';
 
 class AdsWrapper extends Component {
 	static propTypes = {
@@ -193,6 +198,25 @@ class AdsWrapper extends Component {
 		);
 	}
 
+
+	renderjetpackUpsell() {
+		const { translate } = this.props;
+		return (
+			<UpgradeNudgeExpanded
+				plan={ PLAN_JETPACK_PREMIUM }
+				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
+				subtitle={ translate(
+					"By upgrading to the Premium plan, you'll be able to monetize your site through the Jetpack Ads program."
+				) }
+				highlightedFeature={ FEATURE_WORDADS_INSTANT }
+				benefits={ [
+					translate( 'Instantly enroll into the Jetpack Ads network.' ),
+					translate( 'Earn money from your content and traffic.' ),
+				] }
+			/>
+		);
+	}
+
 	render() {
 		const { site, translate } = this.props;
 		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
@@ -212,6 +236,8 @@ class AdsWrapper extends Component {
 			);
 		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
 			component = this.renderInstantActivationToggle( component );
+		} else if ( canUpgradeToUseWordAds( site ) && site.jetpack  && ! jetpackPremium ) {
+			component = this.renderjetpackUpsell();
 		} else if ( canUpgradeToUseWordAds( site ) ) {
 			component = this.renderUpsell();
 		} else if ( ! ( site.options.wordads || jetpackPremium ) ) {

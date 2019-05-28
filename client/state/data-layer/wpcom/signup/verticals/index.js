@@ -16,6 +16,7 @@ import { convertToCamelCase } from 'state/data-layer/utils';
 import { errorNotice } from 'state/notices/actions';
 import { setVerticals } from 'state/signup/verticals/actions';
 import { SIGNUP_VERTICALS_REQUEST } from 'state/action-types';
+import { getSiteTypeId } from 'state/signup/steps/site-type/selectors';
 
 export const requestVerticals = action =>
 	http(
@@ -25,6 +26,7 @@ export const requestVerticals = action =>
 			path: '/verticals',
 			query: {
 				search: action.search.trim(),
+				site_type: action.siteTypeId,
 				limit: action.limit,
 				include_preview: true,
 			},
@@ -32,19 +34,29 @@ export const requestVerticals = action =>
 		action
 	);
 
-export const storeVerticals = ( { search }, verticals ) => setVerticals( search, verticals );
+export const storeVerticals = ( { search, siteType = '' }, verticals ) =>
+	setVerticals( search, siteType, verticals );
 export const showVerticalsRequestError = () =>
 	errorNotice(
 		translate( 'We encountered an error on fetching data from our server. Please try again.' )
 	);
 
+const verticalsHandlers = dispatchRequest( {
+	fetch: requestVerticals,
+	onSuccess: storeVerticals,
+	onError: showVerticalsRequestError,
+	fromApi: convertToCamelCase,
+} );
+
 registerHandlers( 'state/data-layer/wpcom/signup/verticals', {
+	// The action provides just siteType, but to call requestVerticals we need
+	// a numeric siteTypeId. Since passing around both would be inconvenient,
+	// we retrieve it here based on the siteType slug just to provide it to requestVerticals.
 	[ SIGNUP_VERTICALS_REQUEST ]: [
-		dispatchRequest( {
-			fetch: requestVerticals,
-			onSuccess: storeVerticals,
-			onError: showVerticalsRequestError,
-			fromApi: convertToCamelCase,
-		} ),
+		( store, action ) =>
+			verticalsHandlers( store, {
+				...action,
+				siteTypeId: getSiteTypeId( store.getState(), action.siteType ),
+			} ),
 	],
 } );

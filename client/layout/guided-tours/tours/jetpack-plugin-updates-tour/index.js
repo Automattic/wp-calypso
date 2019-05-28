@@ -23,15 +23,17 @@ import {
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackPluginUpdatesTour = makeTour(
-	<Tour { ...meta }>
+	<Tour
+		{ ...meta }
+		when={ state => {
+			const site = getSelectedSite( state );
+			const res =
+				! PluginsStore.isFetchingSite( site ) && !! PluginsStore.getSitePlugin( site, 'jetpack' );
+			return res;
+		} }
+	>
 		<Step
 			name="init"
-			when={ state => {
-				const site = getSelectedSite( state );
-				const res =
-					! PluginsStore.isFetchingSite( site ) && !! PluginsStore.getSitePlugin( site, 'jetpack' );
-				return res;
-			} }
 			target=".plugin-item-jetpack .form-toggle__switch"
 			arrow="top-left"
 			placement="below"

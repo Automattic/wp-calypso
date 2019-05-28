@@ -128,8 +128,10 @@ export class HappinessSupport extends Component {
 
 	renderIllustration() {
 		return (
-			<div className="happiness-support__illustration">
-				<img alt="" src="/calypso/images/illustrations/jetpack-support.svg" />
+			<div className="happiness-support__image">
+				<div className="happiness-support__icon">
+					<img alt="" src="/calypso/images/illustrations/dotcom-support.svg" />
+				</div>
 			</div>
 		);
 	}
@@ -164,11 +166,11 @@ export class HappinessSupport extends Component {
 			<div className={ classNames( 'happiness-support', classes ) }>
 				{ this.renderIllustration() }
 
-				<h3 className="happiness-support__heading">{ this.getHeadingText() }</h3>
-
-				<p className="happiness-support__text">{ this.getSupportText() }</p>
-
-				{ this.getSupportButtons() }
+				<div className="happiness-support__text">
+					<h3 className="happiness-support__heading">{ this.getHeadingText() }</h3>
+					<p className="happiness-support__description">{ this.getSupportText() }</p>
+					{ this.getSupportButtons() }
+				</div>
 			</div>
 		);
 	}

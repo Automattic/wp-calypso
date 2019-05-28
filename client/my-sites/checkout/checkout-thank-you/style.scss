@@ -192,12 +192,12 @@
 
 // Footer Subcomponent styles
 .checkout-thank-you__footer {
-	font-size: 16px;
 	padding: 32px 20px;
-	text-align: left;
 
 	@include breakpoint( '>660px' ) {
+		font-size: 16px;
 		padding: 60px 24px;
+		text-align: left;
 	}
 
 	.happiness-support {

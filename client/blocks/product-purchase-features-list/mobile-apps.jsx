@@ -17,7 +17,7 @@ export default localize( ( { translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/apps.svg" /> }
 				title={ translate( 'Download our mobile apps' ) }
 				description={ translate(
 					'Manage all your sites from a single dashboard: publish content, ' +

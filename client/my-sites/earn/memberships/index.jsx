@@ -18,7 +18,6 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import Card from 'components/card';
 import InfiniteScroll from 'components/infinite-scroll';
-import './style.scss';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import { requestSubscribers } from 'state/memberships/subscribers/actions';
@@ -35,6 +34,11 @@ import SectionHeader from 'components/section-header';
 import QueryMembershipProducts from 'components/data/query-memberships';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class MembershipsSection extends Component {
 	constructor( props ) {

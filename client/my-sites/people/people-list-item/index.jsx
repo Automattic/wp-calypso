@@ -167,16 +167,16 @@ class PeopleListItem extends React.PureComponent {
 					<div className="people-list-item__actions">
 						<Button
 							compact
-							scary
-							borderless
 							className="people-list-item__remove-button"
 							onClick={ onRemove }
 							data-e2e-remove-login={ get( user, 'login', '' ) }
 						>
-							<Gridicon icon="trash" />
-							{ translate( 'Remove', {
-								context: 'Verb: Remove a user or follower from the blog.',
-							} ) }
+							<Gridicon icon="cross" />
+							<span>
+								{ translate( 'Remove', {
+									context: 'Verb: Remove a user or follower from the blog.',
+								} ) }
+							</span>
 						</Button>
 					</div>
 				) }

@@ -50,7 +50,7 @@ class RedirectWhenLoggedIn extends React.Component {
 		return true;
 	}
 
-	storageEventHandler( e ) {
+	storageEventHandler = e => {
 		if ( e.key !== 'wpcom_user' ) {
 			return;
 		}
@@ -59,10 +59,10 @@ class RedirectWhenLoggedIn extends React.Component {
 			if ( this.isUserLoggedIn( newUser ) ) {
 				this.doTheRedirect();
 			}
-		} catch ( ex ) {}
-	}
+		} catch {}
+	};
 
-	componentWillMount() {
+	componentDidMount() {
 		const { currentUser, delayAtMount } = this.props;
 
 		if ( this.isUserLoggedIn( currentUser ) ) {
@@ -76,12 +76,12 @@ class RedirectWhenLoggedIn extends React.Component {
 			return;
 		}
 		debug( 'adding storage event listener' );
-		window.addEventListener( 'storage', this.storageEventHandler.bind( this ) );
+		window.addEventListener( 'storage', this.storageEventHandler );
 	}
 
 	componentWillUnmount() {
 		debug( 'removing storage event listener' );
-		window.removeEventListener( 'storage', this.storageEventHandler.bind( this ) );
+		window.removeEventListener( 'storage', this.storageEventHandler );
 	}
 
 	render() {

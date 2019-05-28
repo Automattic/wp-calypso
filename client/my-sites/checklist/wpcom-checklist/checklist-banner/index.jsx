@@ -21,7 +21,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { setNeverShowBannerStatus } from './never-show';
 import { recordTracksEvent } from 'state/analytics/actions';
-import getSiteChecklistIsLoading from 'state/selectors/get-site-checklist-is-loading';
+import isSiteChecklistLoading from 'state/selectors/is-site-checklist-loading';
 
 /**
  * Style dependencies
@@ -127,7 +127,7 @@ const mapStateToProps = state => {
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		isLoading: getSiteChecklistIsLoading( state ),
+		isLoading: isSiteChecklistLoading( state, siteId ),
 	};
 };
 

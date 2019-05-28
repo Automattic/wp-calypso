@@ -375,7 +375,7 @@ class WpcomChecklistComponent extends PureComponent {
 						},
 						components: {
 							br: <br />,
-							changeButton: <a href="/me/account" />,
+							changeButton: <a href="/me/account?tour=checklistUserEmail" />,
 						},
 					}
 				) }
