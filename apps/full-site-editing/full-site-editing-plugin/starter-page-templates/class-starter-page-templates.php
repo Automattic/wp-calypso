@@ -64,7 +64,7 @@ class Starter_Page_Templates {
 
 		// Load templates for this site.
 		$vertical_data = $this->fetch_vertical_data();
-		if ( ! $vertical_data ) {
+		if ( empty( $vertical_data ) ) {
 			return;
 		}
 		$vertical_name      = $vertical_data['vertical'];
@@ -110,10 +110,12 @@ class Starter_Page_Templates {
 
 	/**
 	 * Fetch vertical data from the API or return cached version if available.
+	 *
+	 * @return array Containing vertical name and template list or nothing if an error occurred.
 	 */
 	public function fetch_vertical_data() {
 		$vertical_id        = get_site_option( 'site_vertical', 'default' );
-		$transient_key		= 'starter_page_templates_' . $vertical_id;
+		$transient_key      = 'starter_page_templates_' . $vertical_id;
 		$vertical_templates = get_transient( $transient_key );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
@@ -121,7 +123,7 @@ class Starter_Page_Templates {
 			$request_url = 'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates';
 			$response    = wp_remote_get( esc_url_raw( $request_url ) );
 			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-				return false;
+				return array();
 			}
 			$vertical_templates = json_decode( wp_remote_retrieve_body( $response ), true );
 			set_transient( $transient_key, $vertical_templates, DAY_IN_SECONDS );
