@@ -9,6 +9,7 @@ import { includes, some } from 'lodash';
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'state/analytics/actions';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
 import Interval, { EVERY_SECOND, EVERY_FIVE_SECONDS } from 'lib/interval';
@@ -58,6 +59,7 @@ export class JetpackProductInstall extends Component {
 	};
 
 	retries = 0;
+	tracksEventSent = false;
 
 	componentDidMount() {
 		this.requestInstallationStatus();
@@ -194,11 +196,23 @@ export class JetpackProductInstall extends Component {
 		 */
 		const period = this.shouldRefetchInstallationStatus() ? EVERY_FIVE_SECONDS : EVERY_SECOND;
 
+		const hasErrorInstalling =
+			! this.shouldRefetchInstallationStatus() && this.installationHasRecoverableErrors();
+
+		if ( hasErrorInstalling && ! this.tracksEventSent ) {
+			this.tracksEventSent = true;
+			this.props.recordTracksEvent( 'calypso_plans_autoconfig_error', {
+				checklist_name: 'jetpack',
+				error: 'installation_error',
+				location: 'JetpackChecklist',
+			} );
+		}
+
 		return (
 			<Fragment>
 				<QueryPluginKeys siteId={ siteId } />
 
-				{ ! this.shouldRefetchInstallationStatus() && this.installationHasRecoverableErrors() && (
+				{ hasErrorInstalling && (
 					<Notice
 						status="is-error"
 						text={ translate( 'Oops! An error has occurred while setting up your plan.' ) }
@@ -231,6 +245,7 @@ export default connect(
 		};
 	},
 	{
+		recordTracksEvent,
 		requestJetpackProductInstallStatus,
 		startJetpackProductInstall,
 	}
