@@ -22,8 +22,7 @@ class Starter_Page_Templates {
 	 */
 	private function __construct() {
 		add_action( 'init', array( $this, 'register_scripts' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_scripts' ) );
-		add_action( 'enqueue_block_assets', array( $this, 'enqueue_styles' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
 	}
 
 	/**
@@ -53,9 +52,9 @@ class Starter_Page_Templates {
 	}
 
 	/**
-	 * Enqueue block editor scripts.
+	 * Enqueue block editor assets.
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_assets() {
 		$screen = get_current_screen();
 
 		// Return early if we don't meet conditions to show templates.
@@ -63,7 +62,7 @@ class Starter_Page_Templates {
 			return;
 		}
 		
-		// Load templates for this site
+		// Load templates for this site.
 		$vertical_name = null;
 		$vertical_templates = array();
 		
@@ -76,7 +75,7 @@ class Starter_Page_Templates {
 			$vertical_templates = $api_response['templates'];
 		}
 		
-		// Bail early if we have no templates to offer
+		// Bail early if we have no templates to offer.
 		if ( count($vertical_templates) === 0 ) {
 			return;
 		}
@@ -100,12 +99,8 @@ class Starter_Page_Templates {
 			'templates'       => array_merge( $default_templates, $vertical_templates ),
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
-	}
-
-	/**
-	 * Enqueue styles.
-	 */
-	public function enqueue_styles() {
+		
+		// Enqueue styles.
 		$style_file = is_rtl()
 			? 'starter-page-templates.rtl.css'
 			: 'starter-page-templates.css';
