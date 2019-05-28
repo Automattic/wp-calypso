@@ -319,7 +319,7 @@ class DeleteUser extends React.Component {
 
 const getContributorType = ( externalContributors, userId ) => {
 	if ( externalContributors.data ) {
-		return externalContributors.data.includes( userId ) ? 'external' : 'standard,';
+		return externalContributors.data.includes( userId ) ? 'external' : 'standard';
 	}
 	return 'pending';
 };
