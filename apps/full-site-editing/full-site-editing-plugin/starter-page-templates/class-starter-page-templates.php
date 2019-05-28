@@ -18,6 +18,13 @@ class Starter_Page_Templates {
 	private static $instance = null;
 
 	/**
+	 * Transient key.
+	 *
+	 * @var string
+	 */
+	private static $transient_key = 'starter_page_templates';
+
+	/**
 	 * Starter_Page_Templates constructor.
 	 */
 	private function __construct() {
@@ -61,45 +68,40 @@ class Starter_Page_Templates {
 		if ( 'page' !== $screen->id || 'add' !== $screen->action ) {
 			return;
 		}
-		
+
 		// Load templates for this site.
-		$vertical_name = null;
-		$vertical_templates = array();
-		
-		$vertical_id = get_site_option( 'site_vertical', 'default' );
-		$request_url = 'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates';
-		$response = wp_remote_get( esc_url_raw( $request_url ) );
-		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
-			$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
-			$vertical_name = $api_response['vertical'];
-			$vertical_templates = $api_response['templates'];
+		$vertical_data = $this->fetch_vertical_data();
+		if ( ! $vertical_data ) {
+			return;
 		}
-		
+		$vertical_name      = $vertical_data['vertical'];
+		$vertical_templates = $vertical_data['templates'];
+
 		// Bail early if we have no templates to offer.
-		if ( count($vertical_templates) === 0 ) {
+		if ( count( $vertical_templates ) === 0 ) {
 			return;
 		}
 
 		wp_enqueue_script( 'starter-page-templates' );
 
-		$default_info = array(
-			'title' => get_bloginfo( 'name' ),
+		$default_info      = array(
+			'title'    => get_bloginfo( 'name' ),
 			'vertical' => $vertical_name,
 		);
 		$default_templates = array(
 			array(
-				'title'   => 'Blank',
-				'slug'    => 'blank',
+				'title' => 'Blank',
+				'slug'  => 'blank',
 			),
-			
+
 		);
-		$site_info    = get_site_option( 'site_contact_info', array() );
-		$config       = array(
+		$site_info = get_site_option( 'site_contact_info', array() );
+		$config    = array(
 			'siteInformation' => array_merge( $default_info, $site_info ),
 			'templates'       => array_merge( $default_templates, $vertical_templates ),
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
-		
+
 		// Enqueue styles.
 		$style_file = is_rtl()
 			? 'starter-page-templates.rtl.css'
@@ -111,5 +113,27 @@ class Starter_Page_Templates {
 			array(),
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 		);
+	}
+
+	/**
+	 * Enqueue block editor assets.
+	 */
+	public function fetch_vertical_data() {
+		$vertical_templates = get_transient( self::$transient_key );
+		$vertical_id        = get_site_option( 'site_vertical', 'default' );
+
+		// Load fresh data if we don't have any or vertical_id doesn't match.
+		if ( false === $vertical_templates || $vertical_id !== $vertical_templates['vertical_id'] ) {
+			$request_url = 'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates';
+			$response    = wp_remote_get( esc_url_raw( $request_url ) );
+			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+				return false;
+			}
+			$vertical_templates                = json_decode( wp_remote_retrieve_body( $response ), true );
+			$vertical_templates['vertical_id'] = $vertical_id; // Add vertical_id so we can later compare it.
+			set_transient( self::$transient_key, $vertical_templates, 60 * 60 * 3 );
+		}
+
+		return $vertical_templates;
 	}
 }
