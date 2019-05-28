@@ -44,32 +44,15 @@ export const JetpackPluginUpdatesTour = makeTour(
 						return resolve();
 					}
 
-					const primaryContainer = document.querySelector( '#primary' );
-					if ( typeof MutationObserver === 'undefined' || ! primaryContainer ) {
-						return setTimeout( resolve, 2000 );
-					}
-
-					new MutationObserver( ( mutationRecords, observer ) => {
-						mutationRecords.some( mutationRecord => {
-							if ( mutationRecord.type === 'childList' && mutationRecord.addedNodes.length ) {
-								if (
-									Array.from( mutationRecord.addedNodes ).some(
-										node =>
-											node.nodeType === Node.ELEMENT_NODE &&
-											( node as Element ).classList.contains( 'plugin-item-jetpack' )
-									)
-								) {
-									resolve();
-									observer.disconnect();
-									return true;
-								}
+					const waitForElement = () =>
+						setTimeout( () => {
+							if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
+								return resolve();
 							}
-							return false;
-						} );
-					} ).observe( primaryContainer, {
-						childList: true,
-						subtree: true,
-					} );
+							waitForElement();
+						}, 125 );
+
+					waitForElement();
 				} )
 			}
 			style={ {
