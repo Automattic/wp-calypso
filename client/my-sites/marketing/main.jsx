@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import DocumentHead from 'components/data/document-head';
+import EmptyContent from 'components/empty-content';
 import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
@@ -32,6 +33,7 @@ import { FEATURE_NO_ADS } from 'lib/plans/constants';
 import './style.scss';
 
 export const Sharing = ( {
+	canManageOptions,
 	contentComponent,
 	path,
 	showButtons,
@@ -82,6 +84,20 @@ export const Sharing = ( {
 
 	const selected = find( filters, { route: path } );
 
+	if ( ! canManageOptions ) {
+		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+			<Main wideLayout className="sharing">
+				<DocumentHead title={ translate( 'Sharing' ) } />
+				<SidebarNavigation />
+				<EmptyContent
+					title={ translate( 'You are not authorized to view this page' ) }
+					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+				/>
+			</Main>
+		);
+	}
+
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
@@ -130,6 +146,7 @@ export default connect( state => {
 		isJetpackMinimumVersion( state, siteId, '3.4-dev' );
 
 	return {
+		canManageOptions,
 		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
 		showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
 		showTraffic: !! siteId,
