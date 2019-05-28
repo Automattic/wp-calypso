@@ -28,7 +28,7 @@ const INSTALL_STATE_INCOMPLETE = 2;
 export class PaidPlanThankYouCard extends Component {
 	tracksEventSent = false;
 
-	recordAutoconfigTracksEvent( eventName, options = {} ) {
+	recordAutoconfigTracksEventOnce( eventName, options = {} ) {
 		if ( ! this.tracksEventSent ) {
 			this.tracksEventSent = true;
 			this.props.recordTracksEvent( eventName, {
@@ -46,18 +46,17 @@ export class PaidPlanThankYouCard extends Component {
 			prevProps.installState !== INSTALL_STATE_COMPLETE &&
 			installState === INSTALL_STATE_COMPLETE
 		) {
-			this.recordAutoconfigTracksEvent( 'calypso_plans_autoconfig_success' );
+			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_success' );
 		} else if ( site && ! site.hasMinimumJetpackVersion ) {
-			this.recordAutoconfigTracksEvent( 'calypso_plans_autoconfig_error', {
+			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_error', {
 				error: 'jetpack_version_too_old',
-				jetpack_version: get( site, [ 'options', 'jetpack_version' ] ),
 			} );
 		} else if ( site && site.isSecondaryNetworkSite ) {
-			this.recordAutoconfigTracksEvent( 'calypso_plans_autoconfig_error', {
+			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_error', {
 				error: 'secondary_network_site',
 			} );
 		} else if ( site && ! site.canUpdateFiles ) {
-			this.recordAutoconfigTracksEvent( 'calypso_plans_autoconfig_error', {
+			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_error', {
 				error: 'cannot_update_files',
 			} );
 		}
