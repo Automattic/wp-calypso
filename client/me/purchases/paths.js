@@ -6,6 +6,8 @@ export const addCreditCard = purchasesRoot + '/add-credit-card';
 
 export const billingHistory = purchasesRoot + '/billing';
 
+export const upcomingCharges = purchasesRoot + '/upcoming';
+
 export function billingHistoryReceipt( receiptId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof receiptId ) {

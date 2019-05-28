@@ -35,7 +35,12 @@ const helpers = {
 		return bottom + DIALOG_PADDING;
 	},
 	xAboveBelow: ( left, right ) => {
-		if ( left + DIALOG_WIDTH + DIALOG_PADDING < document.documentElement.clientWidth ) {
+		// Left align to target if target is on the left of body center.
+		// TODO: This hack should be removed because it's unnecessary and potentially problematic.
+		// Unnecessary because, given that placement is determined manually, alignment can also be specified.
+		// Potentially problematic because full document view is used instead of target content area.
+		const leftAlign = left + middle( left, right ) < document.documentElement.clientWidth / 2;
+		if ( leftAlign ) {
 			return left + DIALOG_PADDING;
 		} else if ( right - DIALOG_WIDTH - DIALOG_PADDING > 0 ) {
 			return right - DIALOG_WIDTH;

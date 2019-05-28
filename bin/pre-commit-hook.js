@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,6 +26,16 @@ function parseGitDiffToPathArray( command ) {
 		.split( '\n' )
 		.map( name => name.trim() )
 		.filter( name => /(?:\.json|\.[jt]sx?|\.scss)$/.test( name ) );
+}
+
+function linterFailure() {
+	console.log(
+		chalk.red( 'COMMIT ABORTED:' ),
+		'The linter reported some problems. ' +
+			'If you are aware of them and it is OK, ' +
+			'repeat the commit command with --no-verify to avoid this check.'
+	);
+	process.exit( 1 );
 }
 
 // grab a list of all the files staged to commit
@@ -83,12 +91,7 @@ if ( toStylelint.length ) {
 	} );
 
 	if ( lintResult.status ) {
-		console.log(
-			chalk.yellow( 'STYLELINT:' ),
-			'The linter reported some problems. Please consider fixing them.'
-		);
-		//process.exit( 1 );
-		// do not abort the commit for now. Maybe in the future...
+		linterFailure();
 	}
 }
 
@@ -100,12 +103,6 @@ if ( toEslint.length ) {
 	} );
 
 	if ( lintResult.status ) {
-		console.log(
-			chalk.red( 'COMMIT ABORTED:' ),
-			'The linter reported some problems. ' +
-				'If you are aware of them and it is OK, ' +
-				'repeat the commit command with --no-verify to avoid this check.'
-		);
-		process.exit( 1 );
+		linterFailure();
 	}
 }

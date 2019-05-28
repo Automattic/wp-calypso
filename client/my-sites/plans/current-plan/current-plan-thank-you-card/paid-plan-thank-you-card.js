@@ -27,7 +27,10 @@ const INSTALL_STATE_INCOMPLETE = 2;
 
 export class PaidPlanThankYouCard extends Component {
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.progressComplete < 100 && this.props.progressComplete >= 100 ) {
+		if (
+			prevProps.installState !== INSTALL_STATE_COMPLETE &&
+			this.props.installState === INSTALL_STATE_COMPLETE
+		) {
 			this.props.recordTracksEvent( 'calypso_plans_autoconfig_success', {
 				checklist_name: 'jetpack',
 				location: 'JetpackChecklist',

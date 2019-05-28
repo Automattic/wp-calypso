@@ -408,22 +408,6 @@ export class Checkout extends React.Component {
 			) {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
 				if ( domainsForGSuite.length ) {
-					if ( config.isEnabled( 'upsell/concierge-session' ) ) {
-						if (
-							! cartItems.hasJetpackPlan( cart ) &&
-							( cartItems.hasBloggerPlan( cart ) ||
-								cartItems.hasPersonalPlan( cart ) ||
-								cartItems.hasPremiumPlan( cart ) )
-						) {
-							// Assign a test group as late as possible
-							if ( 'show' === abtest( 'showConciergeSessionUpsell' ) ) {
-								// A user just purchased one of the qualifying plans and is in the "show" ab test variation
-								// Show them the concierge session upsell page
-								return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
-							}
-						}
-					}
-
 					return `/checkout/${ selectedSiteSlug }/with-gsuite/${
 						domainsForGSuite[ 0 ].meta
 					}/${ receiptId }`;

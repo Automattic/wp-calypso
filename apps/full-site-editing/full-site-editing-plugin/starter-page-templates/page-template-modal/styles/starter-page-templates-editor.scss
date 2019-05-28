@@ -11,11 +11,19 @@
 	word-wrap: normal !important;
 }
 .page-template-modal {
-	width: calc( 100% - 200px );
-	right: auto;
-	left: 180px;
-	transform: translateY( -50% );
+	width: 100%;
 	height: 100vh;
+
+	@media screen and ( min-width: 783px ) {
+		width: calc( 100% - 65px );
+		left: 50px;
+		transform: translateY( -50% );
+	}
+
+	@media screen and ( min-width: 960px ) {
+		width: calc( 100% - 200px );
+		left: 180px;
+	}
 }
 
 .page-template-modal .components-modal__header-heading-container {
@@ -37,7 +45,8 @@
 
 	.components-base-control__field {
 		display: grid;
-		grid-template-columns: repeat( auto-fit, minmax( 140px, 1fr ) );
+		// stylelint-disable-next-line unit-whitelist
+		grid-template-columns: repeat( auto-fit, minmax( 200px, 1fr ) );
 		grid-gap: 1.5em;
 	}
 
@@ -45,42 +54,68 @@
 		@include screen-reader-text();
 	}
 
-
 	.template-selector-control__label {
 		display: block;
+		width: 100%;
 		text-align: center;
-		border: 1px solid #999;
+		border: 1px solid transparent;
 		padding: 2em;
 		border-radius: 4px;
+		cursor: pointer;
 
-		&:hover,
+		&:hover {
+			background: #f3f4f5;
+		}
+
 		&:focus {
-			border-color: #333;
+			box-shadow: 0 0 0 2px #00a0d2;
+			outline: 2px solid transparent;
+			outline-offset: -2px;
 		}
 	}
 
-	.template-selector-control__input {
-		@include screen-reader-text();
-	}
-
-	.template-selector-control__input:checked ~ .template-selector-control__label {
-		box-shadow: 0 3px 3px #999;
+	.template-selector-control__media-wrap {
+		width: 100%;
+		display: block;
+		margin: 0 auto 2em;
+		border: 1px solid rgba( 25, 30, 35, 0.2 );
+		background: #f6f6f6;
+		border-radius: 4px;
+		overflow: hidden;
+		padding-bottom: 90%;
+		box-sizing: content-box;
+		position: relative;
+		pointer-events: none;
 	}
 
 	.template-selector-control__media {
-		max-width: 100%;
+		width: 100%;
 		display: block;
-		margin: 0 auto 2em;
+		position: absolute;
+		top: 0;
+		left: 0;
 	}
 }
 
 .page-template-modal__actions {
 	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
+	flex-direction: column;
 	align-items: center;
+
+	@media screen and ( min-width: 960px ) {
+		flex-direction: row;
+		justify-content: flex-end;
+	}
+}
+
+.page-template-modal__action {
+	@media screen and ( max-width: 960px ) {
+		margin-bottom: 1em;
+	}
 }
 
 .page-template-modal__action-use {
-	margin-right: 1em;
+	@media screen and ( min-width: 960px ) {
+		margin-right: 1em;
+	}
 }
