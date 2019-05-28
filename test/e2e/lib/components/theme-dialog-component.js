@@ -34,7 +34,7 @@ export default class ThemeDialogComponent extends AsyncBaseContainer {
 	async customizeSite() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.dialog button[data-e2e-button=“customizeSite”]' )
+			By.css( '.dialog button[data-e2e-button="customizeSite"]' )
 		);
 		return await driverHelper.switchToWindowByIndex( this.driver, 1 );
 	}
