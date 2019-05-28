@@ -28,6 +28,7 @@ import {
 	isSubscription,
 	paymentLogoType,
 } from 'lib/purchases';
+import { disableAutoRenew, enableAutoRenew } from 'lib/upgrades/actions';
 import {
 	isPlan,
 	isDomainRegistration,
@@ -36,7 +37,12 @@ import {
 } from 'lib/products-values';
 import { getPlan } from 'lib/plans';
 
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+	isFetchingSitePurchases,
+} from 'state/purchases/selectors';
+import { fetchSitePurchases } from 'state/purchases/actions';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
@@ -308,8 +314,10 @@ class PurchaseMeta extends Component {
 	};
 
 	onToggleAutorenewal = () => {
-		// TODO: Use the actual autorenewal enabling / disabling state & actions
-		const { isAutorenewalEnabled } = this.state;
+		const {
+			purchase: { id: purchaseId, siteId },
+			isAutorenewalEnabled,
+		} = this.props;
 
 		if ( isAutorenewalEnabled ) {
 			this.setState( {
@@ -317,13 +325,37 @@ class PurchaseMeta extends Component {
 			} );
 		}
 
+		const updateAutoRenew = isAutorenewalEnabled ? disableAutoRenew : enableAutoRenew;
+
 		this.setState( {
-			isAutorenewalEnabled: ! isAutorenewalEnabled,
+			isTogglingToward: ! isAutorenewalEnabled,
+			isRequestingAutoRenew: true,
+		} );
+
+		updateAutoRenew( purchaseId, success => {
+			this.setState( {
+				isRequestingAutoRenew: false,
+			} );
+			if ( success ) {
+				this.props.fetchSitePurchases( siteId );
+			}
 		} );
 	};
 
+	isUpdatingAutoRenew = () => {
+		return this.state.isRequestingAutoRenew || this.props.fetchingSitePurchases;
+	};
+
+	getToggleUiStatus() {
+		if ( this.isUpdatingAutoRenew() ) {
+			return this.state.isTogglingToward;
+		}
+
+		return this.props.isAutorenewalEnabled;
+	}
+
 	renderExpiration() {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, isAutorenewalEnabled } = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
@@ -337,9 +369,6 @@ class PurchaseMeta extends Component {
 			isPlan( purchase ) &&
 			! isExpired( purchase )
 		) {
-			// TODO: remove this once the proper state has been introduced.
-			const { isAutorenewalEnabled } = this.state;
-
 			const dateSpan = <span className="manage-purchase__detail-date-span" />;
 			const subsRenewText = isAutorenewalEnabled
 				? translate( 'Auto-renew is ON' )
@@ -368,7 +397,11 @@ class PurchaseMeta extends Component {
 					<span className="manage-purchase__detail">{ subsRenewText }</span>
 					<span className="manage-purchase__detail">{ subsBillingText }</span>
 					<span className="manage-purchase__detail">
-						<FormToggle checked={ isAutorenewalEnabled } onChange={ this.onToggleAutorenewal } />
+						<FormToggle
+							checked={ this.getToggleUiStatus() }
+							disabled={ this.isUpdatingAutoRenew() }
+							onChange={ this.onToggleAutorenewal }
+						/>
 					</span>
 				</li>
 			);
@@ -427,14 +460,21 @@ class PurchaseMeta extends Component {
 	}
 }
 
-export default connect( ( state, { purchaseId } ) => {
-	const purchase = getByPurchaseId( state, purchaseId );
+export default connect(
+	( state, { purchaseId } ) => {
+		const purchase = getByPurchaseId( state, purchaseId );
 
-	return {
-		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		purchase,
-		site: purchase ? getSite( state, purchase.siteId ) : null,
-		owner: purchase ? getUser( state, purchase.userId ) : null,
-	};
-} )( localize( PurchaseMeta ) );
+		return {
+			hasLoadedSites: ! isRequestingSites( state ),
+			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+			fetchingSitePurchases: isFetchingSitePurchases( state ),
+			purchase,
+			site: purchase ? getSite( state, purchase.siteId ) : null,
+			owner: purchase ? getUser( state, purchase.userId ) : null,
+			isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
+		};
+	},
+	{
+		fetchSitePurchases,
+	}
+)( localize( PurchaseMeta ) );
