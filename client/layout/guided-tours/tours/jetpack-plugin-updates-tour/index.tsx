@@ -58,6 +58,26 @@ export const JetpackPluginUpdatesTour = makeTour(
 				animationDelay: '0.7s',
 				zIndex: 1,
 			} }
+			wait={ () =>
+				// From https://gist.github.com/jwilson8767/db379026efcbd932f64382db4b02853e
+				new Promise( resolve => {
+					if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
+						return resolve;
+					}
+					new MutationObserver( ( mutationRecords, observer ) => {
+						// Query for elements matching the specified selector
+						Array.from( document.querySelectorAll( JETPACK_TOGGLE_SELECTOR ) ).forEach( () => {
+							resolve();
+							//Once we have resolved we don't need the observer anymore.
+							observer.disconnect();
+							return true;
+						} );
+					} ).observe( document.documentElement, {
+						childList: true,
+						subtree: true,
+					} );
+				} )
+			}
 		>
 			{ ( { translate } ) => (
 				<Fragment>
