@@ -174,8 +174,6 @@ export default class Step extends Component< Props, State > {
 	safeSetState( state: State ) {
 		if ( this.mounted ) {
 			this.setState( state );
-		} else {
-			this.state = { ...this.state, ...state };
 		}
 	}
 
