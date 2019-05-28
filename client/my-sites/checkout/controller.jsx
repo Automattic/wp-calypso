@@ -5,7 +5,6 @@
 import i18n from 'i18n-calypso';
 import React from 'react';
 import { get, isEmpty } from 'lodash';
-import debugModule from 'debug';
 
 /**
  * Internal Dependencies
@@ -24,54 +23,9 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 import ConciergeSessionNudge from './concierge-session-nudge';
 import ConciergeQuickstartSession from './concierge-quickstart-session';
 import { isGSuiteRestricted } from 'lib/gsuite';
+import { getRememberedCoupon } from 'lib/upgrades/actions';
 import FormattedHeader from 'components/formatted-header';
 import { abtest } from 'lib/abtest';
-
-/**
- * Constants
- */
-const debug = debugModule( 'calypso:checkout' );
-
-function getRememberedCoupon() {
-	// read coupon list from localStorage, return early if it's not there
-	const couponsJson = localStorage.getItem( 'marketing-coupons' );
-	const coupons = JSON.parse( couponsJson );
-	if ( ! coupons ) {
-		debug( 'No coupons found in localStorage: ', coupons );
-		return null;
-	}
-
-	const COUPON_CODE_WHITELIST = [ 'LEIFTEST', 'PATREON' ];
-	const ONE_WEEK_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
-	const now = Date.now();
-	debug( 'Found coupons in localStorage: ', coupons );
-
-	// delete coupons if they're older than a week; find the most recent one
-	let mostRecentTimestamp = 0;
-	let mostRecentCouponCode = null;
-	Object.keys( coupons ).forEach( key => {
-		if ( now > coupons[ key ] + ONE_WEEK_MILLISECONDS ) {
-			delete coupons[ key ];
-		} else if ( coupons[ key ] > mostRecentTimestamp ) {
-			mostRecentCouponCode = key;
-			mostRecentTimestamp = coupons[ key ];
-		}
-	} );
-
-	// write remembered coupons back to localStorage
-	debug( 'Storing coupons in localStorage: ', coupons );
-	localStorage.setItem( 'marketing-couponlist', JSON.stringify( coupons ) );
-	if (
-		COUPON_CODE_WHITELIST.includes(
-			mostRecentCouponCode.substring( 0, mostRecentCouponCode.indexOf( '_' ) )
-		)
-	) {
-		debug( 'returning coupon code:', mostRecentCouponCode );
-		return mostRecentCouponCode;
-	}
-	debug( 'not returning any coupon code.' );
-	return null;
-}
 
 export function checkout( context, next ) {
 	const { feature, plan, product } = context.params;
