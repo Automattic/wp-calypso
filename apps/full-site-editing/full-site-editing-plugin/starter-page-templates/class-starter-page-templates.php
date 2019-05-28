@@ -91,7 +91,6 @@ class Starter_Page_Templates {
 			array(
 				'title'   => 'Blank',
 				'slug'    => 'blank',
-				'content' => '',
 			),
 			
 		);
