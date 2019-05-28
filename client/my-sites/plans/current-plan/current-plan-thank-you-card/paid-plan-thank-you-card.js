@@ -26,18 +26,15 @@ const INSTALL_STATE_COMPLETE = 1;
 const INSTALL_STATE_INCOMPLETE = 2;
 
 export class PaidPlanThankYouCard extends Component {
-	state = {
-		tracksEventSent: false,
-	};
+	tracksEventSent = false;
 
 	recordAutoconfigTracksEvent( eventName, options = {} ) {
-		if ( ! this.state.tracksEventSent ) {
-			this.setState( { tracksEventSent: true }, () => {
-				this.props.recordTracksEvent( eventName, {
-					checklist_name: 'jetpack',
-					location: 'JetpackChecklist',
-					...options,
-				} );
+		if ( ! this.tracksEventSent ) {
+			this.tracksEventSent = true;
+			this.props.recordTracksEvent( eventName, {
+				checklist_name: 'jetpack',
+				location: 'JetpackChecklist',
+				...options,
 			} );
 		}
 	}
