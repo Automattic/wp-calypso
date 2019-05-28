@@ -4,7 +4,7 @@
 import replacePlaceholders from './utils/replace-placeholders';
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
-import { keyBy, map } from 'lodash';
+import { keyBy, map, has } from 'lodash';
 
 // TODO: remove once we have proper previews from API
 if ( window.starterPageTemplatesConfig ) {
@@ -32,7 +32,7 @@ if ( window.starterPageTemplatesConfig ) {
 
 	const insertTemplate = template => {
 		// Skip inserting if there's nothing to insert.
-		if ( ! template.content ) {
+		if ( ! has( template, 'content' ) ) {
 			return;
 		}
 
