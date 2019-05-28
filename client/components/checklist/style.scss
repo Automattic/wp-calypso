@@ -138,6 +138,11 @@
 		bottom: 0;
 		left: 34px;
 		border-left: 1px solid var( --color-neutral-100 );
+
+		// hide the inside vertical line for "phase2"
+		.checklist-phase2 & {
+			display: none;
+		}
 	}
 
 	&-icon {
@@ -229,6 +234,12 @@
 		font-size: 16px;
 	}
 
+	// Specific link styling for "phase2"
+	.checklist-phase2 &:not( .is-collapsed ) &-title-link.button {
+		color: var( --color-neutral-600 );
+		font-weight: 600;
+	}
+
 	&-description {
 		word-break: break-word;
 		font-size: 14px;
@@ -287,6 +298,12 @@
 			top: 13px;
 			background: var( --color-success );
 			border-color: var( --color-success );
+
+			// Neutral icon for "phase2"
+			.checklist-phase2 & {
+				background: var( --color-neutral );
+				border-color: var( --color-neutral );
+			}
 
 			&:hover {
 				cursor: default;
