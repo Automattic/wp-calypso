@@ -13,7 +13,6 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { themeActivated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
 import WordPressLogo from 'components/wordpress-logo';
@@ -506,10 +505,7 @@ export class CheckoutThankYou extends React.Component {
 					DomainRegistrationDetails,
 					...findPurchaseAndDomain( purchases, isDomainRegistration ),
 				];
-			} else if (
-				purchases.some( isGoogleApps ) &&
-				abtest( 'gSuitePostCheckoutNotice' ) === 'original'
-			) {
+			} else if ( purchases.some( isGoogleApps ) ) {
 				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
 			} else if ( purchases.some( isDomainMapping ) ) {
 				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
@@ -565,9 +561,6 @@ export class CheckoutThankYou extends React.Component {
 
 		return (
 			<div>
-				{ purchases.some( isGoogleApps ) && abtest( 'gSuitePostCheckoutNotice' ) === 'enhanced' && (
-					<GoogleAppsDetails isRequired />
-				) }
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
 					primaryPurchase={ primaryPurchase }
