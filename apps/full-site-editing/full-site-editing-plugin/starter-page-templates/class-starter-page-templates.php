@@ -124,7 +124,7 @@ class Starter_Page_Templates {
 				return false;
 			}
 			$vertical_templates = json_decode( wp_remote_retrieve_body( $response ), true );
-			set_transient( $transient_key, $vertical_templates, 60 * 60 * 3 );
+			set_transient( $transient_key, $vertical_templates, DAY_IN_SECONDS );
 		}
 
 		return $vertical_templates;
