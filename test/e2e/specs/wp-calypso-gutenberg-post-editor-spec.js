@@ -790,7 +790,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			step( 'Can enter post title and content', async function() {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.enterTitle( blogPostTitle );
-				return await gEditorComponent.enterText( blogPostQuote );
+				await gEditorComponent.enterText( blogPostQuote );
+				return gEditorComponent.ensureSaved();
 			} );
 
 			step( 'Can trash the new post', async function() {
