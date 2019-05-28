@@ -76,8 +76,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 		content = (
 			<CompactCard className="memberships__no-content">
 				<EmptyContent
-					title={ translate( 'Memberships' ) }
-					line={ translate( 'No memberships found.' ) }
+					title={ translate( 'No memberships found.' ) }
 					illustration={ '/calypso/images/illustrations/illustration-nomemberships.svg' }
 				/>
 			</CompactCard>
