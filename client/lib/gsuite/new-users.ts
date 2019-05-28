@@ -39,7 +39,9 @@ const sixtyCharacterField = ( { value, error }: GSuiteNewUserField ): GSuiteNewU
 	value,
 	error:
 		! error && 60 < value.length
-			? i18n.translate( "This field can't be longer than 60 characters." )
+			? i18n.translate( "This field can't be longer than %s characters.", {
+					args: '60',
+			  } )
 			: error,
 } );
 

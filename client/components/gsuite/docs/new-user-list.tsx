@@ -55,9 +55,19 @@ const GSuiteNewUserListExample = () => {
 				users={ users }
 			>
 				{ 0 < users.length && users.every( userIsReady ) ? (
-					<span>{ '✅ - All Users Ready' }</span>
+					<span>
+						<span role="img" aria-label="check mark">
+							✅
+						</span>{' '}
+						- All Users Ready
+					</span>
 				) : (
-					<span>{ '❌ - Verification Errors' }</span>
+					<span>
+						<span role="img" aria-label="red error x">
+							❌
+						</span>{' '}
+						- Verification Errors
+					</span>
 				) }
 			</GSuiteNewUserList>
 			<hr />

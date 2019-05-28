@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import DomainsSelect from './domains-select';
+import GSuiteDomainsSelect from './domains-select';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
@@ -85,7 +85,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						setMailBoxFieldTouched( wasValidated );
 					} }
 				/>
-				<DomainsSelect
+				<GSuiteDomainsSelect
 					domains={ domains }
 					onChange={ event => {
 						onUserValueChange( 'domain', event.target.value );
@@ -107,7 +107,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 
 			<FormFieldset className="gsuite-new-user-list__new-user-name-fieldset">
 				<div className="gsuite-new-user-list__new-user-name">
-					<div className="gsuite-new-user-list__new-user-name-conatiner">
+					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
 							placeholder={ translate( 'First Name' ) }
 							value={ firstName }
@@ -122,7 +122,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						/>
 						{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
 					</div>
-					<div className="gsuite-new-user-list__new-user-name-conatiner">
+					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
 							placeholder={ translate( 'Last Name' ) }
 							value={ lastName }

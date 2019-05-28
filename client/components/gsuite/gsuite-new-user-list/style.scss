@@ -36,7 +36,7 @@
 	}
 }
 
-.gsuite-new-user-list__new-user-domain-select {
+.gsuite-new-user-list__domain-select {
 	width: 100%;
 	@include breakpoint( '>800px' ) {
 		width: auto;
@@ -60,11 +60,6 @@
 	flex-direction: column;
 	flex: 1;
 
-	// input {
-	// 	margin: 0 0 15px;
-	// 	width: auto;
-	// }
-
 	select {
 		width: 100%;
 	}
@@ -85,7 +80,7 @@
 	}
 }
 
-.gsuite-new-user-list__new-user-name-conatiner {
+.gsuite-new-user-list__new-user-name-container {
 	display: flex;
 	flex-direction: column;
 	margin: 0 0 15px;

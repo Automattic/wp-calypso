@@ -14,10 +14,10 @@ interface Props {
 	value: string;
 }
 
-const DomainsSelect = ( { domains, onChange, value }: Props ) => {
+const GSuiteDomainsSelect = ( { domains, onChange, value }: Props ) => {
 	return (
 		<FormSelect
-			className="gsuite-new-user-list__new-user-domain-select"
+			className="gsuite-new-user-list__domain-select"
 			onChange={ onChange }
 			value={ value }
 		>
@@ -32,4 +32,4 @@ const DomainsSelect = ( { domains, onChange, value }: Props ) => {
 	);
 };
 
-export default DomainsSelect;
+export default GSuiteDomainsSelect;
