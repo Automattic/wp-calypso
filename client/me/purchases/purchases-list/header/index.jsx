@@ -14,7 +14,13 @@ import { localize } from 'i18n-calypso';
  */
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
-import { billingHistory, upcomingCharges, purchasesRoot } from '../../paths.js';
+import {
+	billingHistory,
+	upcomingCharges,
+	pendingPayments,
+	myMemberships,
+	purchasesRoot,
+} from '../../paths.js';
 import SectionNav from 'components/section-nav';
 import config from 'config';
 import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
@@ -24,6 +30,12 @@ const PurchasesHeader = ( { section, translate } ) => {
 
 	if ( section === 'purchases' ) {
 		text = translate( 'Purchases' );
+	} else if ( section === 'upcoming' ) {
+		text = translate( 'Upcoming Charges' );
+	} else if ( section === 'pending' ) {
+		text = translate( 'Pending Payments' );
+	} else if ( section === 'memberships' ) {
+		text = translate( 'My Memberships' );
 	}
 
 	return (
@@ -42,12 +54,12 @@ const PurchasesHeader = ( { section, translate } ) => {
 				</NavItem>
 
 				{ config.isEnabled( 'async-payments' ) && (
-					<NavItem path={ purchasesRoot + '/pending' } selected={ section === 'pending' }>
+					<NavItem path={ pendingPayments } selected={ section === 'pending' }>
 						{ translate( 'Pending Payments' ) }
 					</NavItem>
 				) }
 
-				<NavItem path={ purchasesRoot + '/memberships' } selected={ section === 'memberships' }>
+				<NavItem path={ myMemberships } selected={ section === 'memberships' }>
 					{ translate( 'My Memberships' ) }
 				</NavItem>
 			</NavTabs>

@@ -13,7 +13,14 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import config from 'config';
 import ProfileGravatar from 'me/profile-gravatar';
-import { addCreditCard, billingHistory, purchasesRoot } from 'me/purchases/paths';
+import {
+	addCreditCard,
+	billingHistory,
+	upcomingCharges,
+	pendingPayments,
+	myMemberships,
+	purchasesRoot,
+} from 'me/purchases/paths';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
@@ -80,6 +87,9 @@ class MeSidebar extends React.Component {
 			[ purchasesRoot ]: 'purchases',
 			[ billingHistory ]: 'purchases',
 			[ addCreditCard ]: 'purchases',
+			[ upcomingCharges ]: 'purchases',
+			[ pendingPayments ]: 'purchases',
+			[ myMemberships ]: 'purchases',
 			'/me/chat': 'happychat',
 			'/me/site-blocks': 'site-blocks',
 		};
