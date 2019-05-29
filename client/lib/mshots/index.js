@@ -1,16 +1,12 @@
-/** @format */
 /**
  * External dependencies
  */
-import request from 'superagent';
-import { get, noop } from 'lodash';
+import { noop } from 'lodash';
 
-const querymShotsEndpoint = options => {
-	const maxRetries = get( options, 'maxRetries', 1 );
-	const retryTimeout = get( options, 'retryTimeout', 1000 );
-	const currentRetries = get( options, 'currentRetries', 0 );
+async function querymShotsEndpoint( options = {} ) {
+	const { maxRetries = 1, retryTimeout = 1000, currentRetries = 0 } = options;
+
 	const url = options.url || '';
-
 	const resolve = options.resolve || noop;
 	const reject = options.reject || noop;
 
@@ -22,41 +18,49 @@ const querymShotsEndpoint = options => {
 		return;
 	}
 
-	request
-		.get( mShotsEndpointUrl )
-		.responseType( 'blob' )
-		.then( res => {
-			if (
-				( res.type === null || res.type === 'image/gif' ) &&
-				maxRetries > 0 &&
-				currentRetries < maxRetries
-			) {
-				// Still generating the preview or something failed in mShots
-				setTimeout(
-					querymShotsEndpoint.bind( this, {
-						...options,
-						currentRetries: currentRetries + 1,
-					} ),
-					retryTimeout
-				);
-			} else if ( res.type === 'image/jpeg' ) {
-				// Successfully generated the preview
-				try {
-					resolve( window.URL.createObjectURL( res.xhr.response ) );
-				} catch ( e ) {
-					resolve( mShotsEndpointUrl );
-				}
-			} else {
-				reject();
-			}
-		} )
-		.catch( reject ); // Pass through the reject notice
-};
+	try {
+		const response = await fetch( mShotsEndpointUrl, { method: 'GET' } );
+		const contentType = response.ok && response.headers.get( 'Content-Type' );
 
-export const loadmShotsPreview = ( options = {} ) => {
+		if (
+			// This confused me until I tried it out, so I figured I'd leave a comment.
+			// The mshots API takes a while to generate an image if it's a cache miss.
+			// In those situations, it returns a 307 redirecting to a default "loading" image.
+			// That image is a GIF, which is what we're checking for here...
+			( ! contentType || contentType === 'image/gif' ) &&
+			maxRetries > 0 &&
+			currentRetries < maxRetries
+		) {
+			// Still generating the preview or something failed in mShots. Retry.
+			setTimeout(
+				querymShotsEndpoint.bind( this, {
+					...options,
+					currentRetries: currentRetries + 1,
+				} ),
+				retryTimeout
+			);
+		} else if ( contentType === 'image/jpeg' ) {
+			// Successfully generated the preview.
+			try {
+				const blob = await response.blob();
+				resolve( window.URL.createObjectURL( blob ) );
+			} catch ( e ) {
+				resolve( mShotsEndpointUrl );
+			}
+		} else {
+			reject();
+		}
+	} catch ( error ) {
+		reject( error ); // Pass through the reject notice.
+	}
+}
+
+export function loadmShotsPreview( options = {} ) {
 	return new Promise( ( resolve, reject ) => {
 		querymShotsEndpoint( { ...options, resolve, reject } );
 	} );
-};
+}
 
-export const prefetchmShotsPreview = url => querymShotsEndpoint( { url, currentRetries: 1 } );
+export function prefetchmShotsPreview( url ) {
+	querymShotsEndpoint( { url, currentRetries: 1 } );
+}
