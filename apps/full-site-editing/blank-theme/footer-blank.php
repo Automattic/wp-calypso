@@ -1,3 +1,11 @@
+<?php
+/**
+ * Footer template.
+ *
+ * @package full-site-editing
+ */
+
+?>
 	</div><!-- #content -->
 
 </div><!-- #page -->

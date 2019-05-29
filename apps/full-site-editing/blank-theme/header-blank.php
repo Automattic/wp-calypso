@@ -1,3 +1,11 @@
+<?php
+/**
+ * Header template.
+ *
+ * @package full-site-editing
+ */
+
+?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
 <head>

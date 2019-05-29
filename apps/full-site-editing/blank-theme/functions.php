@@ -1,5 +1,13 @@
 <?php
+/**
+ * Footer template.
+ *
+ * @package full-site-editing
+ */
 
+/**
+ * Theme setup.
+ */
 function fse_blank_theme_setup() {
 	$style_file = is_rtl()
 		? 'blank-theme.rtl.css'
@@ -8,6 +16,9 @@ function fse_blank_theme_setup() {
 }
 add_action( 'after_setup_theme', 'fse_blank_theme_setup' );
 
+/**
+ * Enqueue scripts and styles.
+ */
 function fse_blank_theme_enqueue_script_and_style() {
 	wp_enqueue_style(
 		'twentynineteen-style',
