@@ -65,7 +65,7 @@ class MembershipsSection extends Component {
 								{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
 							</span>
 							<span className="memberships__earnings-breakdown-value">
-								{ formatCurrency( this.props.total, 'USD' ) /* TODO: make it multi-currency */ }
+								{ formatCurrency( this.props.total, this.props.currency ) }
 							</span>
 						</li>
 						<li className="memberships__earnings-breakdown-item">
@@ -73,7 +73,7 @@ class MembershipsSection extends Component {
 								{ translate( 'Last 30 days', { context: 'Sum of earnings over last 30 days' } ) }
 							</span>
 							<span className="memberships__earnings-breakdown-value">
-								{ formatCurrency( this.props.lastMonth, 'USD' ) /* TODO: make it multi-currency */ }
+								{ formatCurrency( this.props.lastMonth, this.props.currency ) }
 							</span>
 						</li>
 						<li className="memberships__earnings-breakdown-item">
@@ -83,10 +83,22 @@ class MembershipsSection extends Component {
 								} ) }
 							</span>
 							<span className="memberships__earnings-breakdown-value">
-								{ formatCurrency( this.props.forecast, 'USD' ) /* TODO: make it multi-currency */ }
+								{ formatCurrency( this.props.forecast, this.props.currency ) }
 							</span>
 						</li>
 					</ul>
+				</div>
+				<div className="memberships__earnings-breakdown-notes">
+					{ translate(
+						'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Stripe charges are typically %(stripe)s.',
+						{
+							args: {
+								commission: '' + parseFloat( this.props.commission ) * 100 + '%',
+								stripe: '2.9%+30c',
+							},
+							components: { em: <em />, br: <br /> },
+						}
+					) }
 				</div>
 			</Card>
 		);
@@ -317,6 +329,8 @@ const mapStateToProps = state => {
 		total: get( state, [ 'memberships', 'earnings', 'summary', siteId, 'total' ], 0 ),
 		lastMonth: get( state, [ 'memberships', 'earnings', 'summary', siteId, 'last_month' ], 0 ),
 		forecast: get( state, [ 'memberships', 'earnings', 'summary', siteId, 'forecast' ], 0 ),
+		currency: get( state, [ 'memberships', 'earnings', 'summary', siteId, 'currency' ], 'USD' ),
+		commission: get( state, [ 'memberships', 'earnings', 'summary', siteId, 'commission' ], '0.1' ),
 		totalSubscribers: get( state, [ 'memberships', 'subscribers', 'list', siteId, 'total' ], 0 ),
 		subscribers: get( state, [ 'memberships', 'subscribers', 'list', siteId, 'ownerships' ], {} ),
 		connectedAccountId: get(
