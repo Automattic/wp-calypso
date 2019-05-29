@@ -59,4 +59,10 @@ export { goToDomainCheckout } from './domain-search';
 
 export { startFreeTrial } from './free-trials';
 
-export { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from './purchases';
+export {
+	cancelAndRefundPurchase,
+	cancelPurchase,
+	submitSurvey,
+	disableAutoRenew,
+	enableAutoRenew,
+} from './purchases';

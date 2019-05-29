@@ -1,3 +1,8 @@
+# [Unreleased]
+
+- Update Jest config to be able to handle `import`s otherwise handled by Webpack's `file-loader` and `sass-loader`.
+- Update Jest setup to properly initialize Enzyme's adapter.
+
 # 2.0.0
 
 - Breaking change: Remove babel plugins incompatible with TypeScript. If your bundle continues to

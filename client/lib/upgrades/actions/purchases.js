@@ -42,3 +42,23 @@ export function submitSurvey( surveyName, siteID, surveyData ) {
 		} )
 		.catch( err => debug( err ) ); // shouldn't get here
 }
+
+export function disableAutoRenew( purchaseId, onComplete ) {
+	wpcom.disableAutoRenew( purchaseId, ( error, data ) => {
+		debug( error, data );
+
+		const success = ! error && data.success;
+
+		onComplete( success );
+	} );
+}
+
+export function enableAutoRenew( purchaseId, onComplete ) {
+	wpcom.enableAutoRenew( purchaseId, ( error, data ) => {
+		debug( error, data );
+
+		const success = ! error && data.success;
+
+		onComplete( success );
+	} );
+}

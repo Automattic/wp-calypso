@@ -19,7 +19,8 @@ import Button from 'components/button';
 import PaymentCountrySelect from 'components/payment-country-select';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import Input from 'my-sites/domains/components/form/input';
-import { getTaxCountryCode, getTaxPostalCode, shouldShowTax } from 'lib/cart-values';
+import analytics from 'lib/analytics';
+import { cartItems, getTaxCountryCode, getTaxPostalCode, shouldShowTax } from 'lib/cart-values';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import {
 	detectWebPaymentMethod,
@@ -272,12 +273,21 @@ export class WebPaymentBox extends React.Component {
 		switch ( paymentMethod ) {
 			case WEB_PAYMENT_APPLE_PAY_METHOD:
 				{
+					const is_renewal = cartItems.hasRenewalItem( this.props.cart );
+					analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_open_payment_sheet', {
+						is_renewal,
+					} );
+
 					const paymentRequest = this.getPaymentRequestForApplePay();
 
 					try {
 						paymentRequest
 							.show()
 							.then( paymentResponse => {
+								analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_submit_payment_sheet', {
+									is_renewal,
+								} );
+
 								const { payerName, details } = paymentResponse;
 								const { token } = details;
 

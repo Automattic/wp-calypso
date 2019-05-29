@@ -174,4 +174,14 @@ export default {
 		},
 		defaultVariation: 'control',
 	},
+	showApplePay: {
+		datestamp: '20190529',
+		variations: {
+			hide: 50,
+			show: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
 };
