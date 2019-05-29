@@ -88,7 +88,7 @@ class Starter_Page_Templates {
 		// Load templates for this site.
 		$vertical_data = $this->fetch_vertical_data();
 		if ( empty( $vertical_data ) ) {
-			$this->pass_error_to_frontend( __( 'No data received from the vertical API. Skipped showing modal window with template selection.' ) );
+			$this->pass_error_to_frontend( __( 'No data received from the vertical API. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
 		}
 		$vertical_name      = $vertical_data['vertical'];
@@ -96,7 +96,7 @@ class Starter_Page_Templates {
 
 		// Bail early if we have no templates to offer.
 		if ( empty( $vertical_templates ) ) {
-			$this->pass_error_to_frontend( __( 'No templates available. Skipped showing modal window with template selection.' ) );
+			$this->pass_error_to_frontend( __( 'No templates available. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
 		}
 
