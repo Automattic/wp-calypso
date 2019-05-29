@@ -29,11 +29,18 @@ add_action( 'plugins_loaded', 'a8c_load_full_site_editing' );
  * Load Posts List Block.
  */
 function a8c_load_posts_list_block() {
-	if ( function_exists( 'is_automattician' ) && ! is_automattician() ) {
+	if ( class_exists( 'Posts_List_Block' ) ) {
 		return;
 	}
 
-	if ( class_exists( 'Posts_List_Block' ) ) {
+	/**
+	 * Can be used to disable the Post List Block.
+	 *
+	 * @since 0.1
+	 *
+	 * @param bool true if Post List Block should be disabled, false otherwise.
+	 */
+	if ( apply_filters( 'a8c_disable_post_list_block', false ) ) {
 		return;
 	}
 
@@ -48,7 +55,14 @@ add_action( 'plugins_loaded', 'a8c_load_posts_list_block' );
  * Load Starter_Page_Templates.
  */
 function a8c_load_starter_page_templates() {
-	if ( function_exists( 'is_automattician' ) && ! is_automattician() ) {
+	/**
+	 * Can be used to disable the Starter Page Templates.
+	 *
+	 * @since 0.1
+	 *
+	 * @param bool true if Starter Page Templates should be disabled, false otherwise.
+	 */
+	if ( apply_filters( 'a8c_disable_starter_page_templates', false ) ) {
 		return;
 	}
 
