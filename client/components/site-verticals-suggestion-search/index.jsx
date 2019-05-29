@@ -115,7 +115,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	searchForVerticalMatches = ( value = '' ) =>
 		find(
 			this.props.verticals,
-			item => item.verticalName.toLowerCase() === value.toLowerCase().trim() && !! item.preview
+			item => item.verticalName.toLowerCase() === value.toLowerCase().trim()
 		);
 
 	/**
