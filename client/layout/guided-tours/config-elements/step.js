@@ -116,7 +116,9 @@ export default class Step extends Component {
 			this.setStepSection( nextContext );
 			this.quitIfInvalidRoute( nextProps, nextContext );
 			this.skipIfInvalidContext( nextProps, nextContext );
-			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+			if ( this.scrollContainer ) {
+				this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+			}
 			this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || window;
 			this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
 			this.setStepPosition( nextProps, shouldScrollTo );
