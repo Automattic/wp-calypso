@@ -240,11 +240,14 @@ class Full_Site_Editing {
 			true
 		);
 
+		$feature_flags = A8C_Full_Site_Editing_Feature_Flags::get_instance();
+
 		wp_localize_script(
 			'a8c-full-site-editing-script',
 			'fullSiteEditing',
 			array(
 				'editorPostType' => get_current_screen()->post_type,
+				'featureFlags'  => $feature_flags->get_flags(),
 			)
 		);
 
