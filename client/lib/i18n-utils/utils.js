@@ -264,8 +264,8 @@ class I18nScanner {
 
 	translationFilter( ...args ) {
 		const [ translation, options ] = args;
-		if ( this.active ) {
-			recordTranslations( options.singular, options.context )
+		if ( this.active && this.sessionId ) {
+			recordOriginals( this.sessionId, options.original, options.context || '' )
 		}
 
 		return translation;

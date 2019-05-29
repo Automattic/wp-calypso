@@ -37,9 +37,12 @@ export function postRequest( glotPressUrl, postFormData ) {
  * @param {Function} post see postRequest()
  * @returns {Object} request object
  */
-export function recordOriginals( original, context = '',  post = postRequest ) {
-	const glotPressUrl =  + `${ GP_BASE_URL }/api/translations/-record-originals`;
-	const postFormData = [ `originals[]=${ context }\u0004${ original }` ];
+export function recordOriginals( recordId, original, context = '',  post = postRequest ) {
+	const glotPressUrl = `${ GP_BASE_URL }/api/translations/-record-originals`;
+	const originals = [ [ original, context ] ];
+	const postFormData = `record_id=${ encodeURIComponent( recordId ) }` +
+		`&originals=${ encodeURIComponent( JSON.stringify( originals ) ) }`;
+
 	return post( glotPressUrl, postFormData )
 		.catch( ( err ) => console.log( 'recordOriginals failed:', err ) );
 }
