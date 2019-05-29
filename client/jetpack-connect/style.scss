@@ -869,6 +869,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		border-radius: 1px;
 	}
 
+	.payment-logo.is-apple-pay {
+		height: 22px;
+		background-size: 34px auto;
+		width: 34px;
+		margin-top: 0;
+	}
+
 	.jetpack-connect__main-error .empty-content {
 		padding-bottom: 24px;
 		background-color: var( --color-white );
