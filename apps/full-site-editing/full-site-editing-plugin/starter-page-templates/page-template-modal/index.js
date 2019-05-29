@@ -69,7 +69,7 @@ const PageTemplateModal = withState( {
 	<div>
 		{ isOpen && (
 			<Modal
-				title={ __( 'Select Page Template' ) }
+				title={ __( 'Select Page Template', 'full-site-editing' ) }
 				onRequestClose={ () => setState( { isOpen: false } ) }
 				className="page-template-modal"
 			>
@@ -77,11 +77,21 @@ const PageTemplateModal = withState( {
 					<form className="page-template-modal__form">
 						<fieldset className="page-template-modal__list">
 							<legend className="page-template-modal__intro">
-								<p>{ __( 'Pick a Template that matches the purpose of your page.' ) }</p>
-								<p>{ __( 'You can customise each Template to meet your needs.' ) }</p>
+								<p>
+									{ __(
+										'Pick a Template that matches the purpose of your page.',
+										'full-site-editing'
+									) }
+								</p>
+								<p>
+									{ __(
+										'You can customise each Template to meet your needs.',
+										'full-site-editing'
+									) }
+								</p>
 							</legend>
 							<TemplateSelectorControl
-								label={ __( 'Template' ) }
+								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ Object.values( verticalTemplates ).map( template => ( {
 									label: template.title,
 									value: template.slug,
