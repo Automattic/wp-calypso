@@ -2674,6 +2674,12 @@
 				"@babel/types": "^7.3.0"
 			}
 		},
+		"@types/classnames": {
+			"version": "2.2.7",
+			"resolved": "https://registry.npmjs.org/@types/classnames/-/classnames-2.2.7.tgz",
+			"integrity": "sha512-rzOhiQ55WzAiFgXRtitP/ZUT8iVNyllEpylJ5zHzR4vArUvMB39GTk+Zon/uAM0JxEFAWnwsxC2gH8s+tZ3Myg==",
+			"dev": true
+		},
 		"@types/debug": {
 			"version": "4.1.4",
 			"resolved": "https://registry.npmjs.org/@types/debug/-/debug-4.1.4.tgz",

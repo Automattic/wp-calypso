@@ -33,12 +33,10 @@ function yBelow( bottom: number ) {
 	return bottom + DIALOG_PADDING;
 }
 
-/**
- * Left align to target if target is on the left of body center.
- * TODO: This hack should be removed because it's unnecessary and potentially problematic.
- * Unnecessary because, given that placement is determined manually, alignment can also be specified.
- * Potentially problematic because full document view is used instead of target content area.
- */
+// Left align to target if target is on the left of body center.
+// TODO: This hack should be removed because it's unnecessary and potentially problematic.
+// Unnecessary because, given that placement is determined manually, alignment can also be specified.
+// Potentially problematic because full document view is used instead of target content area.
 function xAboveBelow( left: number, right: number ) {
 	const leftAlign = left + middle( left, right ) < document.documentElement.clientWidth / 2;
 	if ( leftAlign ) {
@@ -99,7 +97,7 @@ function hasNonEmptyClientRect( el: Element ) {
 const CSS_SELECTOR_REGEX = /[.# ]/;
 const isCssSelector = ( targetSlug: string ) => CSS_SELECTOR_REGEX.test( targetSlug );
 
-export function targetForSlug( targetSlug: string ) {
+export function targetForSlug( targetSlug?: string ) {
 	if ( ! targetSlug ) {
 		return null;
 	}
@@ -118,7 +116,7 @@ export function getValidatedArrowPosition( {
 	stepPos,
 }: {
 	targetSlug: string;
-	arrow: ArrowPosition;
+	arrow?: ArrowPosition;
 	stepPos: Coordinate;
 } ): ArrowPosition | 'none' {
 	const target = targetForSlug( targetSlug );
@@ -156,10 +154,10 @@ export function getStepPosition( {
 	shouldScrollTo = false,
 	targetSlug,
 }: {
-	placement: DialogPosition;
+	placement?: DialogPosition;
 	scrollContainer: Element | null;
 	shouldScrollTo: boolean;
-	targetSlug: string;
+	targetSlug?: string;
 } ): Coordinate {
 	const target = targetForSlug( targetSlug );
 	const scrollDiff = target && shouldScrollTo ? scrollIntoView( target, scrollContainer ) : 0;

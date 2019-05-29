@@ -271,6 +271,7 @@
 		"@automattic/babel-plugin-transform-wpcalypso-async": "file:./packages/babel-plugin-transform-wpcalypso-async",
 		"@automattic/calypso-build": "file:./packages/calypso-build",
 		"@automattic/calypso-color-schemes": "file:./packages/calypso-color-schemes",
+		"@types/classnames": "2.2.7",
 		"@types/debug": "4.1.4",
 		"@types/lodash": "4.14.123",
 		"@types/page": "1.8.0",

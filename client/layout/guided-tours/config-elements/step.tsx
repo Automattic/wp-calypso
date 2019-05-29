@@ -1,11 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component, CSSProperties, FunctionComponent } from 'react';
 import classNames from 'classnames';
 import { defer, get, isFunction } from 'lodash';
 import debugFactory from 'debug';
@@ -25,6 +21,8 @@ import {
 	targetForSlug,
 } from '../positioning';
 import { contextTypes } from '../context-types';
+import { ArrowPosition, DialogPosition, Coordinate } from '../types';
+import { TimestampMS } from 'client/types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -33,39 +31,41 @@ const anyFrom = obj => {
 	return key && obj[ key ];
 };
 
-export default class Step extends Component {
-	static displayName = 'Step';
+interface RequiredProps {
+	name: string;
+	children: FunctionComponent< { translate: typeof translate } >;
+}
 
-	static propTypes = {
-		name: PropTypes.string.isRequired,
-		placement: PropTypes.oneOf( [ 'below', 'above', 'beside', 'center', 'middle', 'right' ] ),
-		next: PropTypes.string,
-		target: PropTypes.string,
-		arrow: PropTypes.oneOf( [
-			'top-left',
-			'top-center',
-			'top-right',
-			'right-top',
-			'right-middle',
-			'right-bottom',
-			'bottom-left',
-			'bottom-center',
-			'bottom-right',
-			'left-top',
-			'left-middle',
-			'left-bottom',
-		] ),
-		when: PropTypes.func,
-		dark: PropTypes.bool,
-		scrollContainer: PropTypes.string,
-		shouldScrollTo: PropTypes.bool,
-		style: PropTypes.object,
-		canSkip: PropTypes.bool,
-		wait: PropTypes.func,
-		onTargetDisappear: PropTypes.func,
-		keepRepositioning: PropTypes.bool,
-		children: PropTypes.func.isRequired,
-	};
+interface AcceptedProps {
+	arrow?: ArrowPosition;
+	canSkip?: boolean;
+	className?: string;
+	dark?: boolean;
+	keepRepositioning?: boolean;
+	next?: string;
+	onTargetDisappear?: Function;
+	placement?: DialogPosition;
+	scrollContainer?: string;
+	shouldScrollTo?: boolean;
+	style?: CSSProperties;
+	target?: string;
+	wait?: Function;
+	when?: Function;
+}
+
+interface DefaultProps {
+	canSkip: true;
+}
+
+interface State {
+	initialized: boolean;
+	stepPos?: Coordinate;
+}
+
+type Props = RequiredProps & AcceptedProps & DefaultProps;
+
+export default class Step extends Component< Props, State > {
+	static displayName = 'Step';
 
 	static defaultProps = {
 		canSkip: true,
@@ -73,19 +73,28 @@ export default class Step extends Component {
 
 	static contextTypes = contextTypes;
 
-	state = { initialized: false };
+	lastTransitionTimestamp: TimestampMS | null = null;
+
+	stepSection: string = null;
+
+	mounted: boolean = false;
+
+	repositionInterval: ReturnType< typeof setInterval > | null = null;
+
+	scrollContainer: Element | null = null;
+
+	state: State = { initialized: false };
 
 	/**
 	 * A mutation observer to watch whether the target exists
-	 * @type {object}
 	 */
-	observer = null;
+	observer: MutationObserver | null = null;
 
 	/**
 	 * Flag to determine if we're repositioning the Step dialog
-	 * @type {boolean} True if the Step dialog is being repositioned.
+	 * True if the Step dialog is being repositioned.
 	 */
-	isUpdatingPosition = false;
+	isUpdatingPosition: boolean = false;
 
 	componentWillMount() {
 		this.wait( this.props, this.context ).then( () => {
@@ -110,7 +119,7 @@ export default class Step extends Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps, nextContext ) {
+	componentWillReceiveProps( nextProps: Props, nextContext ) {
 		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 		this.wait( nextProps, nextContext ).then( () => {
 			this.setStepSection( nextContext );
@@ -151,7 +160,7 @@ export default class Step extends Component {
 		start( { step, tour, tourVersion } );
 	}
 
-	wait( props, context ) {
+	wait( props: Props, context ) {
 		if ( isFunction( props.wait ) ) {
 			const ret = props.wait( { reduxStore: context.store } );
 			if ( isFunction( get( ret, 'then' ) ) ) {
@@ -162,7 +171,7 @@ export default class Step extends Component {
 		return Promise.resolve();
 	}
 
-	safeSetState( state ) {
+	safeSetState( state: State ) {
 		if ( this.mounted ) {
 			this.setState( state );
 		} else {
@@ -240,7 +249,7 @@ export default class Step extends Component {
 		}
 	}
 
-	quitIfInvalidRoute( nextProps, nextContext ) {
+	quitIfInvalidRoute( nextProps: Props, nextContext ) {
 		if (
 			nextContext.step !== this.context.step ||
 			nextContext.sectionName === this.context.sectionName ||
@@ -295,7 +304,7 @@ export default class Step extends Component {
 		return this.stepSection && path && this.stepSection !== pathToSection( path );
 	}
 
-	skipToNext( props, context ) {
+	skipToNext( props: Props, context ) {
 		const { branching, next, step, tour, tourVersion } = context;
 
 		this.setAnalyticsTimestamp( context );
@@ -305,7 +314,7 @@ export default class Step extends Component {
 		next( { tour, tourVersion, step, nextStepName, skipping } );
 	}
 
-	skipIfInvalidContext( props, context ) {
+	skipIfInvalidContext( props: Props, context ) {
 		const { canSkip, when } = props;
 
 		if ( when && ! context.isValid( when ) && canSkip ) {
@@ -333,7 +342,7 @@ export default class Step extends Component {
 		}
 	};
 
-	setStepPosition( props, shouldScrollTo ) {
+	setStepPosition( props: Props, shouldScrollTo = false ) {
 		const { placement, target } = props;
 		const stepPos = getStepPosition( {
 			placement,
