@@ -6,7 +6,9 @@ module.exports = {
 	},
 	transform: {
 		'^.+\\.[jt]sx?$': 'babel-jest',
-		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': '<rootDir>/test/test/helpers/assets/transform.js',
+		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': require.resolve(
+			'@automattic/calypso-build/jest/util/assets/transform.js'
+		),
 	},
 	modulePaths: [ '<rootDir>/test/', '<rootDir>/client/', '<rootDir>/client/extensions/' ],
 	rootDir: './../../',
