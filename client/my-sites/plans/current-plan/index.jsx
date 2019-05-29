@@ -36,8 +36,8 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import PaidPlanThankYouCard from './current-plan-thank-you/paid-plan-thank-you';
-import FreePlanThankYouCard from './current-plan-thank-you/free-plan-thank-you';
+import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
+import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
 
 /**
  * Style dependencies
@@ -124,7 +124,7 @@ class CurrentPlan extends Component {
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 				<Dialog className="current-plan__thank-you-dialog" isVisible={ showThankYou }>
-					{ isFreePlan ? <FreePlanThankYouCard /> : <PaidPlanThankYouCard /> }{' '}
+					{ isFreePlan ? <FreePlanThankYou /> : <PaidPlanThankYou /> }{' '}
 				</Dialog>
 
 				<PlansNavigation path={ path } />
