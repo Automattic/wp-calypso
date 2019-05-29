@@ -23,16 +23,16 @@ export function ThankYouCard( {
 	translate,
 } ) {
 	return (
-		<>
+		<div className="current-plan-thank-you">
 			{ illustration && (
 				<img
 					alt=""
 					aria-hidden="true"
-					className="current-plan-thank-you-dialog__illustration"
+					className="current-plan-thank-you__illustration"
 					src={ illustration }
 				/>
 			) }
-			{ title && <h1 className="current-plan-thank-you-dialog__title">{ title }</h1> }
+			{ title && <h1 className="current-plan-thank-you__title">{ title }</h1> }
 			{ children }
 			{ showCalypsoIntro && (
 				<p>
@@ -55,7 +55,7 @@ export function ThankYouCard( {
 					<a href={ `/plans/my-plan/${ siteSlug }` }>{ translate( 'Hide message' ) }</a>
 				</p>
 			) }
-		</>
+		</div>
 	);
 }
 

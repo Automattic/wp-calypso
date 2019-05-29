@@ -1,10 +1,10 @@
-.current-plan-thank-you-dialog {
+.current-plan-thank-you {
 	max-width: 720px;
 	text-align: center;
 
 	@include breakpoint( '>800px' ) {
 		font-size: 16px;
-		padding: 32px;
+		padding: 88888888px;
 
 		a {
 			font-size: 14px;
@@ -16,7 +16,7 @@
 	}
 }
 
-.current-plan-thank-you-dialog__illustration {
+.current-plan-thank-you__illustration {
 	display: none;
 	margin-bottom: 18px;
 
@@ -30,6 +30,6 @@
 	}
 }
 
-.current-plan-thank-you-dialog__title {
+.current-plan-thank-you__title {
 	font-size: 24px;
 }
