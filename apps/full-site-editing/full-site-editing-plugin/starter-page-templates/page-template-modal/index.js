@@ -60,12 +60,12 @@ if ( window.starterPageTemplatesConfig ) {
 					className="page-template-modal"
 				>
 					<div className="page-template-modal__inner">
-						<div className="page-template-modal__intro">
-							<p>Pick a Template that matches the purpose of your page.</p>
-							<p>You can customise each Template to meet your needs.</p>
-						</div>
 						<form className="page-template-modal__form">
 							<fieldset className="page-template-modal__list">
+								<legend className="page-template-modal__intro">
+									<p>Pick a Template that matches the purpose of your page.</p>
+									<p>You can customise each Template to meet your needs.</p>
+								</legend>
 								<TemplateSelectorControl
 									label="Template"
 									templates={ Object.values( verticalTemplates ).map( template => ( {
