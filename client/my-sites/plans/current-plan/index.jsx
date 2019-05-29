@@ -123,7 +123,7 @@ class CurrentPlan extends Component {
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<Dialog isVisible={ showThankYou }>
+				<Dialog className="current-plan-thank-you-dialog" isVisible={ showThankYou }>
 					{ isFreePlan ? <FreePlanThankYouCard /> : <PaidPlanThankYouCard /> }{' '}
 				</Dialog>
 
