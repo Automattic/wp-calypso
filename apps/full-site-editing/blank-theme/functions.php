@@ -1,6 +1,6 @@
 <?php
 /**
- * Footer template.
+ * Functions file.
  *
  * @package full-site-editing
  */
