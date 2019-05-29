@@ -44,13 +44,12 @@ export const JetpackPluginUpdatesTour = makeTour(
 						return resolve();
 					}
 
-					const waitForElement = () =>
-						setTimeout( () => {
-							if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
-								return resolve();
-							}
-							waitForElement();
-						}, 125 );
+					const waitForElement = () => {
+						if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
+							return resolve();
+						}
+						setTimeout( waitForElement, 125 );
+					};
 
 					waitForElement();
 				} )
