@@ -2,6 +2,17 @@
 	padding-bottom: 100px;
 }
 
+.exporter__section-header {
+	&.formatted-header {
+		margin: 0 auto;
+		max-width: 500px;
+	}
+
+	.formatted-header__subtitle {
+		color: var( --color-neutral-dark );
+	}
+}
+
 .export-card__title {
 	font-size: 21px;
 	font-weight: 300;

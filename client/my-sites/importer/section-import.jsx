@@ -265,8 +265,8 @@ class SiteSettingsImport extends Component {
 		const { jetpack: isJetpack } = site;
 		const headerText = translate( 'Import Your Content' );
 		const subHeaderText = translate(
-			'Import content from another site. Learn more about ' +
-				'what we currently support in our {{a}}documentation{{/a}}. ',
+			'Bring content hosted elsewhere over to WordPress.com. ' +
+				'{{a}}Find out what we currently support.{{/a}}',
 			{
 				components: {
 					a: <a href="https://support.wordpress.com/import/" />,
