@@ -18,7 +18,7 @@ import PopularTopics from 'components/site-verticals-suggestion-search/popular-t
 import QueryVerticals from 'components/data/query-verticals';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getVerticals } from 'state/signup/verticals/selectors';
-import { DEFAULT_VERTICAL_KEY } from 'state/signup/verticals/constants';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -29,6 +29,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	static propTypes = {
 		autoFocus: PropTypes.bool,
 		defaultVertical: PropTypes.object,
+		defaultVerticalSearchTerm: PropTypes.string,
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
 		searchValue: PropTypes.string,
@@ -40,6 +41,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	static defaultProps = {
 		autoFocus: false,
 		defaultVertical: {},
+		defaultVerticalSearchTerm: '',
 		onChange: () => {},
 		placeholder: '',
 		searchValue: '',
@@ -170,7 +172,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	getSuggestions = () => this.state.candidateVerticals.map( vertical => vertical.verticalName );
 
 	render() {
-		const { autoFocus, placeholder, siteType, translate } = this.props;
+		const { autoFocus, defaultVerticalSearchTerm, placeholder, siteType, translate } = this.props;
 		const { inputValue, railcar } = this.state;
 		const shouldShowPopularTopics = this.shouldShowPopularTopics();
 		const placeholderText = shouldShowPopularTopics
@@ -189,7 +191,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 					siteType={ siteType }
 					debounceTime={ 300 }
 				/>
-				<QueryVerticals searchTerm={ DEFAULT_VERTICAL_KEY } siteType={ siteType } />
+				<QueryVerticals searchTerm={ defaultVerticalSearchTerm } siteType={ siteType } />
 				<SuggestionSearch
 					id="siteTopic"
 					placeholder={ placeholder || placeholderText }
@@ -208,14 +210,17 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 export default localize(
 	connect(
-		( state, ownProps ) => ( {
-			verticals: getVerticals( state, ownProps.searchValue, getSiteType( state ) ) || [],
-			defaultVertical: get(
-				getVerticals( state, DEFAULT_VERTICAL_KEY, getSiteType( state ) ),
-				'0',
-				{}
-			),
-		} ),
+		( state, ownProps ) => {
+			const siteType = getSiteType( state );
+			const defaultVerticalSearchTerm =
+				getSiteTypePropertyValue( 'slug', siteType, 'defaultVertical' ) || '';
+			return {
+				siteType,
+				defaultVerticalSearchTerm,
+				verticals: getVerticals( state, ownProps.searchValue, siteType ) || [],
+				defaultVertical: get( getVerticals( state, defaultVerticalSearchTerm, siteType ), '0', {} ),
+			};
+		},
 		null
 	)( SiteVerticalsSuggestionSearch )
 );

@@ -42,6 +42,7 @@ export function getAllSiteTypes() {
 		{
 			id: 2, // This value must correspond with its sibling in the /segments API results
 			slug: 'blog',
+			defaultVertical: 'blogging', // used to conduct a vertical search and grab a default vertical for the segment
 			label: i18n.translate( 'Blog' ),
 			description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
 			theme: 'pub/independent-publisher-2',
@@ -54,6 +55,7 @@ export function getAllSiteTypes() {
 		{
 			id: 1, // This value must correspond with its sibling in the /segments API results
 			slug: 'business',
+			defaultVertical: 'business',
 			label: i18n.translate( 'Business' ),
 			description: i18n.translate( 'Promote products and services.' ),
 			theme: 'pub/professional-business',
@@ -67,6 +69,7 @@ export function getAllSiteTypes() {
 		{
 			id: 4, // This value must correspond with its sibling in the /segments API results
 			slug: 'professional',
+			defaultVertical: 'designer',
 			label: i18n.translate( 'Professional' ),
 			description: i18n.translate( 'Showcase your portfolio and work.' ),
 			theme: 'pub/altofocus',
@@ -79,6 +82,7 @@ export function getAllSiteTypes() {
 		{
 			id: 3, // This value must correspond with its sibling in the /segments API results
 			slug: 'online-store',
+			defaultVertical: 'business',
 			label: i18n.translate( 'Online store' ),
 			description: i18n.translate( 'Sell your collection of products online.' ),
 			theme: 'pub/dara',
