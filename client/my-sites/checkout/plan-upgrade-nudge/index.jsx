@@ -22,10 +22,10 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 import { addItem } from 'lib/upgrades/actions';
-import { cartItems } from 'lib/cart-values';
-import { PLAN_PREMIUM } from 'lib/plans/constants';
+import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
+import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
@@ -294,11 +294,12 @@ export class PlanUpgradeNudge extends React.Component {
 	};
 
 	handleClickAccept = () => {
-		const { siteSlug, trackUpsellButtonClick } = this.props;
+		const { siteSlug, trackUpsellButtonClick, planSlug } = this.props;
+
+		const cartItem = getCartItemForPlan( planSlug );
+		addItem( cartItem );
 
 		trackUpsellButtonClick( 'accept' );
-
-		addItem( cartItems.premiumPlan( PLAN_PREMIUM, {} ) );
 
 		page( `/checkout/${ siteSlug }` );
 	};
@@ -326,6 +327,7 @@ export default connect(
 			redirectToPageBuilder: siteQualifiesForPageBuilder( state, selectedSiteId ),
 			productCost: getProductCost( state, 'concierge-session' ),
 			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
+			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
 		};
 	},
 	{

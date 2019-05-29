@@ -152,7 +152,7 @@ export function upsellNudge( context, next ) {
 }
 
 export function planUpgradeNudge( context, next ) {
-	const { receiptId } = context.params;
+	const { product } = context.params;
 	context.store.dispatch( setSection( { name: 'plan-upgrade-nudge' }, { hasSidebar: false } ) );
 
 	const state = context.store.getState();
@@ -164,7 +164,7 @@ export function planUpgradeNudge( context, next ) {
 
 	context.primary = (
 		<CartData>
-			<PlanUpgradenNudge receiptId={ Number( receiptId ) } selectedSiteId={ selectedSite.ID } />
+			<PlanUpgradenNudge selectedSiteId={ selectedSite.ID } product={ product } />
 		</CartData>
 	);
 
