@@ -13,7 +13,6 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import PurchaseButton from './purchase-button';
 import TipInfo from './tip-info';
 
@@ -108,17 +107,10 @@ export default class PurchaseDetail extends PureComponent {
 			'is-placeholder': this.props.isPlaceholder,
 		} );
 
-		// When removing the abtest, remove the associated mocks in tests
-		// See https://github.com/Automattic/wp-calypso/pull/30771
-		const requiredClass =
-			'enhanced' === abtest( 'gSuitePostCheckoutNotice' )
-				? 'purchase-detail__required-error'
-				: 'purchase-detail__required-notice';
-
 		return (
 			<div className={ classes } id={ id }>
 				{ requiredText && (
-					<div className={ requiredClass }>
+					<div className="purchase-detail__required-notice">
 						<em>{ requiredText }</em>
 					</div>
 				) }

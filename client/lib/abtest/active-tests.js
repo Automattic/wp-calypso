@@ -88,14 +88,6 @@ export default {
 		},
 		defaultVariation: 'originalFlavor',
 	},
-	gSuitePostCheckoutNotice: {
-		datestamp: '20190211',
-		variations: {
-			original: 50,
-			enhanced: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pluginFeaturedTitle: {
 		datestamp: '20190220',
 		variations: {
