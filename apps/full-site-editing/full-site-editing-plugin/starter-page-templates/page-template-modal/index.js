@@ -85,7 +85,7 @@ const PageTemplateModal = withState( {
 								</p>
 								<p>
 									{ __(
-										'You can customise each Template to meet your needs.',
+										'You can customize each Template to meet your needs.',
 										'full-site-editing'
 									) }
 								</p>
