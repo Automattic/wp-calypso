@@ -135,4 +135,12 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	popularPlanBy: {
+		datestamp: '20190529',
+		variations: {
+			siteType: 50,
+			customerType: 50,
+		},
+		defaultVariation: 'siteType',
+	},
 };
