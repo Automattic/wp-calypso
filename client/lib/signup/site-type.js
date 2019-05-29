@@ -3,29 +3,11 @@
  * Exernal dependencies
  */
 import i18n from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { find, get, once } from 'lodash';
 
 /**
  * Internal dependencies
  */
-
-/**
- * Looks up site types array for item match and returns a property value
- *
- * @example
- * // Find the site type where `id === 2`, and return the value of `slug`
- * const siteTypeValue = getSiteTypePropertyValue( 'id', 2, 'slug' );
- *
- * @param {string} key A property name of a site types item
- * @param {string|number} value The value of `key` with which to filter items
- * @param {string} property The name of the property whose value you wish to return
- * @param {array} siteTypes (optional) A site type collection
- * @return {(string|int)?} value of `property` or `null` if none is found
- */
-export function getSiteTypePropertyValue( key, value, property, siteTypes = getAllSiteTypes() ) {
-	const siteTypeProperties = find( siteTypes, { [ key ]: value } );
-	return get( siteTypeProperties, property, null );
-}
 
 /**
  * Returns a current list of site types that are displayed in the signup site-type step
@@ -37,7 +19,7 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  *
  * @return {array} current list of site types
  */
-export function getAllSiteTypes() {
+export const getAllSiteTypes = once( () => {
 	return [
 		{
 			id: 2, // This value must correspond with its sibling in the /segments API results
@@ -94,4 +76,22 @@ export function getAllSiteTypes() {
 			customerType: 'business',
 		},
 	];
+} );
+
+/**
+ * Looks up site types array for item match and returns a property value
+ *
+ * @example
+ * // Find the site type where `id === 2`, and return the value of `slug`
+ * const siteTypeValue = getSiteTypePropertyValue( 'id', 2, 'slug' );
+ *
+ * @param {string} key A property name of a site types item
+ * @param {string|number} value The value of `key` with which to filter items
+ * @param {string} property The name of the property whose value you wish to return
+ * @param {array} siteTypes (optional) A site type collection
+ * @return {(string|int)?} value of `property` or `null` if none is found
+ */
+export function getSiteTypePropertyValue( key, value, property, siteTypes = getAllSiteTypes() ) {
+	const siteTypeProperties = find( siteTypes, { [ key ]: value } );
+	return get( siteTypeProperties, property, null );
 }
