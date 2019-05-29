@@ -380,6 +380,7 @@ export class Checkout extends React.Component {
 				}
 			}
 		}
+		return;
 	}
 
 	getCheckoutCompleteRedirectPath = () => {
@@ -484,16 +485,20 @@ export class Checkout extends React.Component {
 						}
 					}
 
-					this.maybeShowPlanUpgradeABTest();
-
-					return `/checkout/${ selectedSiteSlug }/with-gsuite/${
-						domainsForGSuite[ 0 ].meta
-					}/${ pendingOrReceiptId }`;
+					return (
+						this.maybeShowPlanUpgradeABTest() ||
+						`/checkout/${ selectedSiteSlug }/with-gsuite/${
+							domainsForGSuite[ 0 ].meta
+						}/${ receiptId }`
+					);
 				}
 			}
 		}
 
-		this.maybeShowPlanUpgradeABTest();
+		const upgradePath = this.maybeShowPlanUpgradeABTest();
+		if ( upgradePath ) {
+			return upgradePath;
+		}
 
 		// Test showing the concierge session upsell page after the user purchases a qualifying plan
 		// This tests the flow that was not eligible for G Suite
