@@ -81,8 +81,8 @@ if ( window.starterPageTemplatesConfig ) {
 									templates={ Object.values( verticalTemplates ).map( template => ( {
 										label: template.title,
 										value: template.slug,
-										preview: template.preview && ( template.preview.src || '' ),
-										previewAlt: template.preview && ( template.preview.alt || '' ),
+										preview: template.preview && template.preview.src,
+										previewAlt: template.preview && template.preview.alt,
 									} ) ) }
 									onClick={ newTemplate => {
 										setState( { isOpen: false } );
