@@ -10,10 +10,16 @@
 	width: 1px;
 	word-wrap: normal !important;
 }
+
+// Full screen modal
 .page-template-modal {
 	width: 100%;
 	height: 100vh;
+}
 
+// When not full screen account for sidebar
+body:not( .is-fullscreen-mode ) .page-template-modal {
+	
 	@media screen and ( min-width: 783px ) {
 		width: calc( 100% - 65px );
 		left: 50px;
@@ -47,7 +53,7 @@
 	.components-base-control__label {
 		@include screen-reader-text();
 	}
-	
+
 	.template-selector-control__options {
 		display: grid;
 		// stylelint-disable-next-line unit-whitelist
