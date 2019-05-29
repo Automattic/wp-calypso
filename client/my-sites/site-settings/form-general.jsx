@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -128,12 +128,12 @@ export class SiteSettingsFormGeneral extends Component {
 		const { translate, selectedSite } = this.props;
 
 		return (
-			<div>
+			<Fragment>
 				<strong> { translate( 'WordPress Version' ) + ': ' } </strong>			
 				<p className="site-settings__wordpress-version">
 					{ get( selectedSite, 'options.software_version' ) }
 				</p>
-			</div>
+			</Fragment>
 		);
 	}
 
