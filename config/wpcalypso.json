@@ -73,7 +73,6 @@
 		"manage/custom-post-types": true,
 		"manage/edit-user": true,
 		"manage/export/guided-transfer": true,
-		"manage/import-in-sidebar": true,
 		"manage/pages": true,
 		"manage/payment-methods": true,
 		"manage/plan-features": true,

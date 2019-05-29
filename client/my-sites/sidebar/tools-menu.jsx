@@ -60,7 +60,6 @@ class ToolsMenu extends PureComponent {
 			label: translate( 'Import' ),
 			capability: 'manage_options',
 			queryable: ! isJetpack,
-			config: 'manage/import-in-sidebar',
 			link: '/settings/import', // @TODO make it a top level section & add a redirect
 			paths: [ '/settings/import' ],
 			wpAdminLink: 'import.php',
@@ -121,9 +120,7 @@ class ToolsMenu extends PureComponent {
 			menuItems.push( this.getPluginItem() );
 		}
 
-		if ( config.isEnabled( 'manage/import-in-sidebar' ) ) {
-			menuItems.push( this.getImportItem() );
-		}
+		menuItems.push( this.getImportItem() );
 
 		return <ul>{ menuItems.map( this.renderMenuItem, this ) }</ul>;
 	}
