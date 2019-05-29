@@ -43,15 +43,16 @@
 .page-template-modal__list {
 	padding: 1.5em 0;
 
-	.components-base-control__field {
+
+	.components-base-control__label {
+		@include screen-reader-text();
+	}
+	
+	.template-selector-control__options {
 		display: grid;
 		// stylelint-disable-next-line unit-whitelist
 		grid-template-columns: repeat( auto-fit, minmax( 200px, 1fr ) );
 		grid-gap: 1.5em;
-	}
-
-	.components-base-control__label {
-		@include screen-reader-text();
 	}
 
 	.template-selector-control__label {
