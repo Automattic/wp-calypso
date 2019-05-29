@@ -10,9 +10,15 @@
 	}
 }
 
-.importer__section-header.formatted-header {
-	margin: 0 auto;
-	max-width: 500px;
+.importer__section-header {
+	&.formatted-header {
+		margin: 0 auto;
+		max-width: 500px;
+	}
+
+	.formatted-header__subtitle {
+		color: var( --color-neutral-dark );
+	}
 }
 
 .importer__service-icon {
