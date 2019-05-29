@@ -135,4 +135,13 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
+	showPlanUpsellNudge: {
+		datestamp: '20190529',
+		variations: {
+			variantShowNudge: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
