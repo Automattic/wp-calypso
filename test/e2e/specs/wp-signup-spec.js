@@ -1274,7 +1274,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for free subdomain site @parallel', function() {
+	/*
+		Since D28758-code, we require a specific site_segment id to return blog-specific verticals. For blogs it's `4`.
+		We now need to supply the verticals endpoint with a `site_type` parameter to return accurate results.
+		Skipping this test until we can get a fix in.
+	 */
+	describe.skip( 'Sign up for free subdomain site @parallel', function() {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ blogName }.art.blog`;
 
