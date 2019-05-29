@@ -14,7 +14,7 @@ import { isExpiring } from 'lib/purchases';
 import { disableAutoRenew, enableAutoRenew } from 'lib/upgrades/actions';
 import { isFetchingSitePurchases } from 'state/purchases/selectors';
 import { fetchSitePurchases } from 'state/purchases/actions';
-import AutorenewalDisablingDialog from '../autorenewal-disabling-dialog';
+import DisablingDialog from './disabling-dialog';
 import FormToggle from 'components/forms/form-toggle';
 
 class AutoRenewToggle extends Component {
@@ -22,7 +22,7 @@ class AutoRenewToggle extends Component {
 		purchase: PropTypes.object.isRequired,
 		siteDomain: PropTypes.string.isRequired,
 		planName: PropTypes.string.isRequired,
-		isAutorenewalEnabled: PropTypes.bool.isRequired,
+		isEnabled: PropTypes.bool.isRequired,
 		fetchingSitePurchases: PropTypes.bool,
 	};
 
@@ -31,39 +31,39 @@ class AutoRenewToggle extends Component {
 	};
 
 	state = {
-		showAutorenewalDisablingDialog: false,
+		showDisablingDialog: false,
 		isTogglingToward: null,
-		isRequestingAutoRenew: false,
+		isRequesting: false,
 	};
 
-	onCloseAutorenewalDisablingDialog = () => {
+	onCloseDisablingDialog = () => {
 		this.setState( {
-			showAutorenewalDisablingDialog: false,
+			showDisablingDialog: false,
 		} );
 	};
 
-	onToggleAutorenewal = () => {
+	onToggleAutoRenew = () => {
 		const {
 			purchase: { id: purchaseId, siteId },
-			isAutorenewalEnabled,
+			isEnabled,
 		} = this.props;
 
-		if ( isAutorenewalEnabled ) {
+		if ( isEnabled ) {
 			this.setState( {
-				showAutorenewalDisablingDialog: true,
+				showDisablingDialog: true,
 			} );
 		}
 
-		const updateAutoRenew = isAutorenewalEnabled ? disableAutoRenew : enableAutoRenew;
+		const updateAutoRenew = isEnabled ? disableAutoRenew : enableAutoRenew;
 
 		this.setState( {
-			isTogglingToward: ! isAutorenewalEnabled,
-			isRequestingAutoRenew: true,
+			isTogglingToward: ! isEnabled,
+			isRequesting: true,
 		} );
 
 		updateAutoRenew( purchaseId, success => {
 			this.setState( {
-				isRequestingAutoRenew: false,
+				isRequesting: false,
 			} );
 			if ( success ) {
 				this.props.fetchSitePurchases( siteId );
@@ -72,7 +72,7 @@ class AutoRenewToggle extends Component {
 	};
 
 	isUpdatingAutoRenew = () => {
-		return this.state.isRequestingAutoRenew || this.props.fetchingSitePurchases;
+		return this.state.isRequesting || this.props.fetchingSitePurchases;
 	};
 
 	getToggleUiStatus() {
@@ -80,7 +80,7 @@ class AutoRenewToggle extends Component {
 			return this.state.isTogglingToward;
 		}
 
-		return this.props.isAutorenewalEnabled;
+		return this.props.isEnabled;
 	}
 
 	render() {
@@ -91,14 +91,14 @@ class AutoRenewToggle extends Component {
 				<FormToggle
 					checked={ this.getToggleUiStatus() }
 					disabled={ this.isUpdatingAutoRenew() }
-					onChange={ this.onToggleAutorenewal }
+					onChange={ this.onToggleAutoRenew }
 				/>
-				{ this.state.showAutorenewalDisablingDialog && (
-					<AutorenewalDisablingDialog
+				{ this.state.showDisablingDialog && (
+					<DisablingDialog
 						planName={ planName }
 						siteDomain={ siteDomain }
 						expiryDate={ purchase.expiryMoment.format( 'LL' ) }
-						onClose={ this.onCloseAutorenewalDisablingDialog }
+						onClose={ this.onCloseDisablingDialog }
 					/>
 				) }
 			</>
@@ -109,7 +109,7 @@ class AutoRenewToggle extends Component {
 export default connect(
 	( state, { purchase } ) => ( {
 		fetchingSitePurchases: isFetchingSitePurchases( state ),
-		isAutorenewalEnabled: ! isExpiring( purchase ),
+		isEnabled: ! isExpiring( purchase ),
 	} ),
 	{
 		fetchSitePurchases,
