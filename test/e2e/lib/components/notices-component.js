@@ -21,7 +21,7 @@ export default class NoticesComponent extends AsyncBaseContainer {
 	async isSuccessNoticeDisplayed( click = false ) {
 		const selector = By.css( '.notice.is-success' );
 		const actionSelector = By.css( '.notice.is-success a' );
-		const isDisplayed = await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		const isDisplayed = await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
 		if ( click === true ) {
 			await driverHelper.clickWhenClickable( this.driver, actionSelector );
 		}
