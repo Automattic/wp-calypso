@@ -30,32 +30,28 @@ const MarketingPageFeature: FunctionComponent< Props > = ( {
 	imageAlt,
 	imagePath,
 	title,
-} ) => {
-	return (
-		<Card className="marketing-page-feature__item">
-			<div className="marketing-page-feature__item-body">
-				{ imagePath && (
-					<img
-						alt={ imageAlt }
-						className="marketing-page-feature__item-body-image"
-						src={ imagePath }
-					/>
-				) }
+} ) => (
+	<Card className="marketing-page-feature__item">
+		<div className="marketing-page-feature__item-body">
+			{ imagePath && (
+				<img
+					alt={ imageAlt }
+					className="marketing-page-feature__item-body-image"
+					src={ imagePath }
+				/>
+			) }
 
-				<div className="marketing-page-feature__item-body-text">
-					<CardHeading>{ title }</CardHeading>
+			<div className="marketing-page-feature__item-body-text">
+				<CardHeading>{ title }</CardHeading>
 
-					<p>{ description }</p>
+				<p>{ description }</p>
 
-					{ disclaimer && (
-						<p className="marketing-page-feature__item-disclaimer">{ disclaimer }</p>
-					) }
-				</div>
+				{ disclaimer && <p className="marketing-page-feature__item-disclaimer">{ disclaimer }</p> }
 			</div>
+		</div>
 
-			<div className="marketing-page-feature__item-child-row">{ children }</div>
-		</Card>
-	);
-};
+		<div className="marketing-page-feature__item-child-row">{ children }</div>
+	</Card>
+);
 
 export default MarketingPageFeature;

@@ -15,7 +15,7 @@ import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	if ( config.isEnabled( 'manage/hire-a-builder' ) ) {
-		page( '/hire-a-pro', ...[ siteSelection, sites, makeLayout, clientRender ] );
+		page( '/hire-a-pro', siteSelection, sites, makeLayout, clientRender );
 
 		page( '/hire-a-pro/:domain', siteSelection, navigation, layout, makeLayout, clientRender );
 	}

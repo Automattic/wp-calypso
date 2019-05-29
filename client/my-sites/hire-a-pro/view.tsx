@@ -21,11 +21,11 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
  */
 import './style.scss';
 
-interface Props {
+interface ConnectedProps {
 	recordTracksEvent: typeof recordTracksEventAction;
 }
 
-export const HireAProPage: FunctionComponent< Props > = ( { recordTracksEvent } ) => {
+export const HireAProPage: FunctionComponent< ConnectedProps > = ( { recordTracksEvent } ) => {
 	const translate = useTranslate();
 
 	const handleHeaderBannerClick = () => {
