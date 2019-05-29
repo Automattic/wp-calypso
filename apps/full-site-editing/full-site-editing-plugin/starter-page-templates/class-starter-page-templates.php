@@ -49,13 +49,6 @@ class Starter_Page_Templates {
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/starter-page-templates.js' ),
 			true
 		);
-		wp_register_script(
-			'starter-page-templates-error',
-			null,
-			array(),
-			'1.O',
-			true
-		);
 	}
 
 	/**
@@ -64,6 +57,13 @@ class Starter_Page_Templates {
 	 * @param string $message Error message.
 	 */
 	public function pass_error_to_frontend( $message ) {
+		wp_register_script(
+			'starter-page-templates-error',
+			null,
+			array(),
+			'1.O',
+			true
+		);
 		wp_add_inline_script(
 			'starter-page-templates-error',
 			sprintf(
