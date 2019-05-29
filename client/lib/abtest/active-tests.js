@@ -135,4 +135,22 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	hideBloggerPlanNonEn: {
+		datestamp: '20190613',
+		variations: {
+			hide: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		localeTargets: 'any',
+		localeExceptions: [ 'en' ],
+	},
+	popularPlanBy: {
+		datestamp: '20190529',
+		variations: {
+			siteType: 50,
+			customerType: 50,
+		},
+		defaultVariation: 'siteType',
+	},
 };
