@@ -34,7 +34,6 @@ function TemplateSelectorControl( {
 		>
 			<ul className="template-selector-control__options">
 				{ templates.map( ( option, index ) => {
-					const altText = option.previewAlt || 'Preview of ' + option.label;
 					return (
 						<li key={ `${ id }-${ index }` } className="template-selector-control__option">
 							<button
@@ -50,7 +49,7 @@ function TemplateSelectorControl( {
 										<img
 											className="template-selector-control__media"
 											src={ option.preview }
-											alt={ altText }
+											alt={ option.previewAlt || '' }
 										/>
 									) }
 								</div>
