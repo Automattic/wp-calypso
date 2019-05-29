@@ -69,7 +69,7 @@ export function getAllSiteTypes() {
 			slug: 'professional',
 			label: i18n.translate( 'Professional' ),
 			description: i18n.translate( 'Showcase your portfolio and work.' ),
-			theme: 'pub/altofocus',
+			theme: 'pub/professional-business',
 			designType: 'portfolio',
 			siteTitleLabel: i18n.translate( 'What is your name?' ),
 			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed' ),
