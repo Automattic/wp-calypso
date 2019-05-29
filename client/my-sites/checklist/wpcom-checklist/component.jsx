@@ -72,7 +72,6 @@ class WpcomChecklistComponent extends PureComponent {
 			address_picked: this.renderAddressPickedTask,
 			blogname_set: this.renderBlogNameSetTask,
 			site_icon_set: this.renderSiteIconSetTask,
-			site_logo_set: this.renderSiteLogoSetTask,
 			blogdescription_set: this.renderBlogDescriptionSetTask,
 			avatar_uploaded: this.renderAvatarUploadedTask,
 			contact_page_updated: this.renderContactPageUpdatedTask,
@@ -454,27 +453,6 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Upload a site icon' ) }
-			/>
-		);
-	};
-
-	renderSiteLogoSetTask = ( TaskComponent, baseProps, task ) => {
-		const { translate, siteSlug } = this.props;
-
-		return (
-			<TaskComponent
-				{ ...baseProps }
-				bannerImageSrc="/calypso/images/stats/tasks/upload-icon.svg"
-				completedButtonText={ translate( 'Change' ) }
-				completedTitle={ translate( 'You uploaded a logo' ) }
-				description={ translate( 'Help people recognize your brand!' ) }
-				duration={ translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ) }
-				onClick={ this.handleTaskStart( {
-					task,
-					url: `/customize/identity/${ siteSlug }`,
-				} ) }
-				onDismiss={ this.handleTaskDismiss( task.id ) }
-				title={ translate( 'Upload your logo' ) }
 			/>
 		);
 	};
