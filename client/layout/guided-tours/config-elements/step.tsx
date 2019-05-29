@@ -168,23 +168,19 @@ export default class Step extends Component< Props, State > {
 			}
 		}
 
-		// From https://gist.github.com/jwilson8767/db379026efcbd932f64382db4b02853e
 		return new Promise( resolve => {
 			if ( document.querySelector( props.target ) ) {
-				return resolve;
+				return resolve();
 			}
-			new MutationObserver( ( mutationRecords, observer ) => {
-				// Query for elements matching the specified selector
-				Array.from( document.querySelectorAll( props.target ) ).forEach( () => {
-					resolve();
-					//Once we have resolved we don't need the observer anymore.
-					observer.disconnect();
-					return true;
-				} );
-			} ).observe( document.documentElement, {
-				childList: true,
-				subtree: true,
-			} );
+
+			const waitForElement = () => {
+				if ( document.querySelector( props.target ) ) {
+					return resolve();
+				}
+				setTimeout( waitForElement, 125 );
+			};
+
+			waitForElement();
 		} );
 	}
 
