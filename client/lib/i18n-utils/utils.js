@@ -11,7 +11,7 @@ import cookie from 'cookie';
  * Internal dependencies
  */
 import config from 'config';
-import { recordTranslations } from 'components/community-translator/utils';
+import { recordOriginals } from './glotpress';
 
 /**
  * a locale can consist of three component

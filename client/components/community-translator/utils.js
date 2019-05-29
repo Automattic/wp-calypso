@@ -16,7 +16,7 @@ import {
 	GP_BASE_URL,
 	GP_PROJECT_TRANSLATION_SET_SLUGS,
 	ENABLE_TRANSLATOR_KEY,
-} from './constants';
+} from 'lib/i18n-utils/constants';
 import { canBeTranslated } from 'lib/i18n-utils';
 
 /**
@@ -128,19 +128,6 @@ export function stopRecordingTranslations( apiBaseUrl = GP_BASE_URL + '/api', po
 	const postFormData = [];
 
 	return post( glotPressUrl, postFormData.join( '' ) );
-}
-
-/**
- * Causes translate.wordpress.com to start recording queried translations
- * @param {String} apiBaseUrl Base API url to get translations
- * @param {Function} post see postRequest()
- * @returns {Object} request object
- */
-export function recordTranslations( original, context = '' ) {
-	const glotPressUrl = `${ apiBaseUrl }/translations/-record-translations`;
-	const postFormData = [ `originals[]=${ context }\u0004${ original }` ];
-
-	return post( glotPressUrl, postFormData );
 }
 
 /**
