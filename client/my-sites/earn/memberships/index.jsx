@@ -90,7 +90,7 @@ class MembershipsSection extends Component {
 				</div>
 				<div className="memberships__earnings-breakdown-notes">
 					{ translate(
-						'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Stripe charges are handled in your agreement, but its typically %(stripe)s.',
+						'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Stripe charges are typically %(stripe)s.',
 						{
 							args: {
 								commission: '' + parseFloat( this.props.commission ) * 100 + '%',
