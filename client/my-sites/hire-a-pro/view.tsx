@@ -67,7 +67,7 @@ export const HireAProPage: FunctionComponent< ConnectedProps > = ( { recordTrack
 					<MarketingPageFeature
 						title={ translate( 'Website Designers' ) }
 						description={ translate(
-							'Ripe Concept’s pool of talented designers can tweak your existing layout or design a new one from scratch.'
+							'Whether you want to move an image a smidge to the right or want a totally original layout, Ripe Concept’s talented designers can make it happen.'
 						) }
 						imagePath="/calypso/images/illustrations/designers.svg"
 					>
@@ -89,7 +89,7 @@ export const HireAProPage: FunctionComponent< ConnectedProps > = ( { recordTrack
 							href={ 'http://logojoy.grsm.io/looka' }
 							target="_blank"
 						>
-							{ translate( 'Hire an logo designer' ) }
+							{ translate( 'Hire a logo designer' ) }
 						</Button>
 					</MarketingPageFeature>
 
