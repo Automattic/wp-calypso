@@ -77,7 +77,12 @@ import { GROUP_WPCOM } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { requestSite } from 'state/sites/actions';
 import { isJetpackSite, isNewSite } from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+	getSectionName,
+} from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canDomainAddGSuite } from 'lib/gsuite';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
@@ -360,6 +365,23 @@ export class Checkout extends React.Component {
 		return domainsForGSuite;
 	}
 
+	maybeShowPlanUpgradeABTest() {
+		const { cart, selectedSite, selectedSiteSlug } = this.props;
+		const isSiteOnFreePlan = get( selectedSite, 'plan.is_free' );
+
+		if ( isSiteOnFreePlan ) {
+			// For Blogger and Personal plan purchase, show an upgrade nudge for the Premium plan.
+			// Show the nudge only if the user is upgrading from a Free plan.
+			if ( cartItems.hasBloggerPlan( cart ) || cartItems.hasPersonalPlan( cart ) ) {
+				if ( 'variantShowNudge' === abtest( 'showPlanUpsellNudge' ) ) {
+					return cartItems.hasBloggerPlan( cart )
+						? `/checkout/${ selectedSiteSlug }/add-plan-upgrade/personal`
+						: `/checkout/${ selectedSiteSlug }/add-plan-upgrade/premium`;
+				}
+			}
+		}
+	}
+
 	getCheckoutCompleteRedirectPath = () => {
 		// TODO: Cleanup and simplify this function.
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
@@ -446,12 +468,32 @@ export class Checkout extends React.Component {
 			) {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
 				if ( domainsForGSuite.length ) {
+					if ( config.isEnabled( 'upsell/concierge-session' ) ) {
+						if (
+							! cartItems.hasJetpackPlan( cart ) &&
+							( cartItems.hasBloggerPlan( cart ) ||
+								cartItems.hasPersonalPlan( cart ) ||
+								cartItems.hasPremiumPlan( cart ) )
+						) {
+							// Assign a test group as late as possible
+							if ( 'show' === abtest( 'showConciergeSessionUpsell' ) ) {
+								// A user just purchased one of the qualifying plans and is in the "show" ab test variation
+								// Show them the concierge session upsell page
+								return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
+							}
+						}
+					}
+
+					this.maybeShowPlanUpgradeABTest();
+
 					return `/checkout/${ selectedSiteSlug }/with-gsuite/${
 						domainsForGSuite[ 0 ].meta
 					}/${ pendingOrReceiptId }`;
 				}
 			}
 		}
+
+		this.maybeShowPlanUpgradeABTest();
 
 		// Test showing the concierge session upsell page after the user purchases a qualifying plan
 		// This tests the flow that was not eligible for G Suite
@@ -798,6 +840,7 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {
+			sectionName: getSectionName( state ),
 			cards: getStoredCards( state ),
 			isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 			selectedSite: getSelectedSite( state ),
