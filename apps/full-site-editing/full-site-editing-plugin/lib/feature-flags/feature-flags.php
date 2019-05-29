@@ -21,7 +21,7 @@ class A8C_Full_Site_Editing_Feature_Flags {
 	 *
 	 * @var array
 	 */
-	private $flags = array();
+	private $flags = [];
 
 	/**
 	 * Parameter and cookie name for storing/retrieving the feature flags.
@@ -62,15 +62,15 @@ class A8C_Full_Site_Editing_Feature_Flags {
 	/**
 	 * Check if a feature flag is enabled.
 	 *
-	 * @param  string $flagName Feature flag.
+	 * @param  string $flag_name Feature flag.
 	 * @return boolean
 	 */
-	public function is_enabled( $flagName ) {
-		if ( ! isset( $flagName, $this->flags[ $flagName ] ) ) {
+	public function is_enabled( $flag_name ) {
+		if ( ! isset( $flag_name, $this->flags[ $flag_name ] ) ) {
 			return false;
 		}
 
-		return (boolean) $this->flags[ $flagName ];
+		return (boolean) $this->flags[ $flag_name ];
 	}
 
 	/**
@@ -85,7 +85,7 @@ class A8C_Full_Site_Editing_Feature_Flags {
 		// Remove all of the flag values when empty parameter is passed.
 		if ( $has_flags_param && empty( $_GET[ self::FEATURE_FLAGS ] ) ) {
 			setcookie( self::FEATURE_FLAGS, '', time() - 3600 );
-			$this->flags = array();
+			$this->flags = [];
 			return;
 		}
 
@@ -97,7 +97,7 @@ class A8C_Full_Site_Editing_Feature_Flags {
 		}
 
 		if ( empty( $flags ) ) {
-			$this->flags = array();
+			$this->flags = [];
 			return;
 		}
 
