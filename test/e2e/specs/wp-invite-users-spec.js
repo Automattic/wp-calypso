@@ -108,7 +108,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await PostsPage.Expect( driver );
 
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const invitesMessageTitleDisplayed = await noticesComponent.getInviteNoticeContent();
+			const invitesMessageTitleDisplayed = await noticesComponent.getNoticeContent();
 			return assert(
 				invitesMessageTitleDisplayed.includes( 'Editor' ),
 				`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Editor'`
@@ -390,7 +390,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		step( 'Can see a notice welcoming the new user as an contributor', async function() {
 			await PostsPage.Expect( driver );
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const invitesMessageTitleDisplayed = await noticesComponent.getInviteNoticeContent();
+			const invitesMessageTitleDisplayed = await noticesComponent.getNoticeContent();
 			return assert(
 				invitesMessageTitleDisplayed.includes( 'Contributor' ),
 				`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Contributor'`
