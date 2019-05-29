@@ -128,15 +128,12 @@ export class SiteSettingsFormGeneral extends Component {
 		const { translate, selectedSite } = this.props;
 
 		return (
-			<FormFieldset>
-				<strong className="site-settings__wordpress-version">
-					{ translate( 'WordPress Version' ) + ': ' }
-				</strong>
-				
+			<div>
+				<strong> { translate( 'WordPress Version' ) + ': ' } </strong>			
 				<p className="site-settings__wordpress-version">
 					{ get( selectedSite, 'options.software_version' ) }
 				</p>
-			</FormFieldset>
+			</div>
 		);
 	}
 
