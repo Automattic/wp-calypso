@@ -32,29 +32,31 @@ function TemplateSelectorControl( {
 			help={ help }
 			className={ classnames( className, 'template-selector-control' ) }
 		>
-			{ templates.map( ( option, index ) => (
-				<div key={ `${ id }-${ index }` } className="template-selector-control__option">
-					<button
-						type="button"
-						id={ `${ id }-${ index }` }
-						className="template-selector-control__label"
-						value={ option.value }
-						onClick={ handleButtonClick }
-						aria-describedby={ help ? `${ id }__help` : undefined }
-					>
-						<div className="template-selector-control__media-wrap">
-							{ option.preview && (
-								<img
-									className="template-selector-control__media"
-									src={ option.preview }
-									alt={ 'Preview of ' + option.label }
-								/>
-							) }
-						</div>
-						{ option.label }
-					</button>
-				</div>
-			) ) }
+			<ul className="template-selector-control__options">
+				{ templates.map( ( option, index ) => (
+					<li key={ `${ id }-${ index }` } className="template-selector-control__option">
+						<button
+							type="button"
+							id={ `${ id }-${ index }` }
+							className="template-selector-control__label"
+							value={ option.value }
+							onClick={ handleButtonClick }
+							aria-describedby={ help ? `${ id }__help` : undefined }
+						>
+							<div className="template-selector-control__media-wrap">
+								{ option.preview && (
+									<img
+										className="template-selector-control__media"
+										src={ option.preview }
+										alt={ option.previewAlt || '' }
+									/>
+								) }
+							</div>
+							{ option.label }
+						</button>
+					</li>
+				) ) }
+			</ul>
 		</BaseControl>
 	);
 }

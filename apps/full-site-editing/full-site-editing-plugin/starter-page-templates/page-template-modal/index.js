@@ -9,10 +9,20 @@ import { keyBy, map, has } from 'lodash';
 // TODO: remove once we have proper previews from API
 if ( window.starterPageTemplatesConfig ) {
 	const PREVIEWS_BY_SLUG = {
-		home: 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-home-2.png',
-		menu: 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu-2.png',
-		'contact-us':
-			'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus-2.png',
+		home: {
+			src: 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-home-2.png',
+			alt:
+				'Full width hero banner, followed by alternating text and image sections, followed by a Get in Touch area',
+		},
+		menu: {
+			src: 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu-2.png',
+			alt: '',
+		},
+		'contact-us': {
+			src:
+				'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus-2.png',
+			alt: '',
+		},
 	};
 	window.starterPageTemplatesConfig.templates = map(
 		window.starterPageTemplatesConfig.templates,
@@ -60,18 +70,19 @@ if ( window.starterPageTemplatesConfig ) {
 					className="page-template-modal"
 				>
 					<div className="page-template-modal__inner">
-						<div className="page-template-modal__intro">
-							<p>Pick a Template that matches the purpose of your page.</p>
-							<p>You can customise each Template to meet your needs.</p>
-						</div>
 						<form className="page-template-modal__form">
 							<fieldset className="page-template-modal__list">
+								<legend className="page-template-modal__intro">
+									<p>Pick a Template that matches the purpose of your page.</p>
+									<p>You can customise each Template to meet your needs.</p>
+								</legend>
 								<TemplateSelectorControl
 									label="Template"
 									templates={ Object.values( verticalTemplates ).map( template => ( {
 										label: template.title,
 										value: template.slug,
-										preview: template.preview,
+										preview: template.preview && template.preview.src,
+										previewAlt: template.preview && template.preview.alt,
 									} ) ) }
 									onClick={ newTemplate => {
 										setState( { isOpen: false } );
