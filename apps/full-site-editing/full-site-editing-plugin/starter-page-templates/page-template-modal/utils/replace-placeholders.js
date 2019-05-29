@@ -1,9 +1,12 @@
-const __ = a => a;
+/**
+ * External dependencies
+ */
+import { _x } from '@wordpress/i18n';
 
 const PLACEHOLDER_DEFAULTS = {
-	Address: '123 Main St',
-	Phone: '555-555-5555',
-	CompanyName: __( 'Your Company Name' ),
+	Address: _x( '123 Main St', 'default address', 'full-site-editing' ),
+	Phone: _x( '555-555-5555', 'default phone number', 'full-site-editing' ),
+	CompanyName: _x( 'Your Company Name', 'default company name', 'full-site-editing' ),
 	Vertical: __( 'Business' ),
 };
 
