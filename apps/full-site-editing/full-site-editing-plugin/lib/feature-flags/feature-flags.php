@@ -24,6 +24,13 @@ class A8C_Full_Site_Editing_Feature_Flags {
 	private $flags = array();
 
 	/**
+	 * Parameter and cookie name for storing/retrieving the feature flags.
+	 *
+	 * @var string
+	 */
+	const FEATURE_FLAGS = 'fse_feature_flags';
+
+	/**
 	 * A8C_Full_Site_Editing_Feature_Flags constructor.
 	 */
 	private function __construct() {
@@ -33,47 +40,14 @@ class A8C_Full_Site_Editing_Feature_Flags {
 	/**
 	 * Creates instance.
 	 *
-	 * @return \A8C_Full_Site_Editing_Feature_Flags
+	 * @return A8C_Full_Site_Editing_Feature_Flags
 	 */
 	public static function get_instance() {
-		if ( null === self::$instance ) {
+		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 		}
 
 		return self::$instance;
-	}
-
-	/**
-	 * Set the feature flags.
-	 */
-	private function set_flags() {
-		$flags = '';
-
-		if ( isset( $_GET[ 'fse_flags' ] ) ) {
-			if ( empty( $_GET[ 'fse_flags' ] ) ) {
-				setcookie( 'fse_flags', '', time() - 3600 );
-				$this->flags = array();
-				return;
-			}
-
-			setcookie( 'fse_flags', $_GET[ 'fse_flags' ] );
-			$flags = $_GET[ 'fse_flags' ];
-		} else if( isset( $_COOKIE[ 'fse_flags' ] ) ) {
-			$flags = $_COOKIE[ 'fse_flags' ];
-		}
-
-		if ( empty( $flags ) ) {
-			return;
-		}
-
-		$flags = explode( ',', $flags );
-		foreach( $flags as $flag ) {
-			if ( 0 === strpos( $flag, '-' ) ) {
-				$this->flags[ substr( $flag, 1 ) ] = false;
-			} else {
-				$this->flags[ $flag ] = true;
-			}
-		}
 	}
 
 	/**
@@ -88,13 +62,55 @@ class A8C_Full_Site_Editing_Feature_Flags {
 	/**
 	 * Check if a feature flag is enabled.
 	 *
-	 * @param  string  $flag Feature flag.
+	 * @param  string $flagName Feature flag.
 	 * @return boolean
 	 */
-	public function is_enabled( $flag ) {
-		if ( ! isset( $flag ) ) {
+	public function is_enabled( $flagName ) {
+		if ( ! isset( $flagName, $this->flags[ $flagName ] ) ) {
 			return false;
 		}
-		return array_key_exists( $flag, $this->flags ) ? $this->flags[ $flag ] : false;
+
+		return (boolean) $this->flags[ $flagName ];
+	}
+
+	/**
+	 * Set the feature flags based on GET parameter or cookie value.
+	 */
+	private function set_flags() {
+		$flags = null;
+
+		$has_flags_param  = isset( $_GET[ self::FEATURE_FLAGS ] );
+		$has_flags_cookie = isset( $_COOKIE[ self::FEATURE_FLAGS ] );
+
+		// Remove all of the flag values when empty parameter is passed.
+		if ( $has_flags_param && empty( $_GET[ self::FEATURE_FLAGS ] ) ) {
+			setcookie( self::FEATURE_FLAGS, '', time() - 3600 );
+			$this->flags = array();
+			return;
+		}
+
+		if ( $has_flags_param ) {
+			setcookie( self::FEATURE_FLAGS, $_GET[ self::FEATURE_FLAGS ] );
+			$flags = $_GET[ self::FEATURE_FLAGS ];
+		} else if ( $has_flags_cookie ) {
+			$flags = $_COOKIE[ self::FEATURE_FLAGS ];
+		}
+
+		if ( empty( $flags ) ) {
+			$this->flags = array();
+			return;
+		}
+
+		// Feature flags are represented as a string of comma-separated feature flag names.
+		// For example: "flag1,flag2,-flag3" (leading "-" denotes that the given flag is disabled).
+		foreach ( explode( ',', $flags ) as $flag ) {
+			$flag = trim( $flag );
+			$is_enabled = '-' !== $flag[0];
+
+			// Strip "-" for disabled flags to obtain the correct name
+			$name = $is_enabled ? $flag : substr( $flag, 1 );
+
+			$this->flags[ $name ] = $is_enabled;
+		}
 	}
 }
