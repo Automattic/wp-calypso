@@ -12,6 +12,8 @@ import React from 'react';
 import { preventWidows } from 'lib/formatting';
 import Button from 'components/button';
 
+import './style.scss';
+
 export function ThankYouCard( {
 	children,
 	illustration,
