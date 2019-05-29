@@ -2,14 +2,14 @@
 
 exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
 <Fragment>
-  <Connect(QueryVerticals)
+  <QueryVerticals
     debounceTime={300}
     searchTerm=""
-    siteType=""
+    siteType="blog"
   />
-  <Connect(QueryVerticals)
-    searchTerm="business"
-    siteType=""
+  <QueryVerticals
+    searchTerm="eeek"
+    siteType="blog"
   />
   <SuggestionSearch
     autoFocus={false}

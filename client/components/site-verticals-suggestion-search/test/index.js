@@ -20,6 +20,8 @@ jest.mock( 'uuid', () => ( {
 	v4: () => 'fake-uuid',
 } ) );
 
+jest.mock( 'components/data/query-verticals', () => 'QueryVerticals' );
+
 const defaultProps = {
 	onChange: jest.fn(),
 	verticals: [
@@ -32,6 +34,7 @@ const defaultProps = {
 			verticalId: 'hoodoo',
 		},
 	],
+	defaultVerticalSearchTerm: 'eeek',
 	defaultVertical: {
 		verticalName: 'eeek',
 		verticalSlug: 'ooofff',
@@ -40,8 +43,9 @@ const defaultProps = {
 		parent: 'whoops',
 		verticalId: 'argh',
 	},
-	translate: str => str,
+	siteType: 'blog',
 	searchValue: '',
+	translate: str => str,
 };
 
 describe( '<SiteVerticalsSuggestionSearch />', () => {
@@ -66,6 +70,17 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 			<SiteVerticalsSuggestionSearch { ...defaultProps } showPopular={ true } />
 		);
 		expect( wrapper.find( PopularTopics ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should pass default vertical search term to <QueryVerticals />', () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } showPopular={ true } />
+		);
+		const queryComponent = wrapper.find( 'QueryVerticals' ).at( 1 );
+
+		expect( queryComponent.length ).toBe( 1 );
+		expect( queryComponent.props().searchTerm ).toBe( defaultProps.defaultVerticalSearchTerm );
+		expect( queryComponent.props().siteType ).toBe( defaultProps.siteType );
 	} );
 
 	describe( 'searchForVerticalMatches()', () => {
