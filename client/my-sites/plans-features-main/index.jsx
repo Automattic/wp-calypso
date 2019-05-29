@@ -55,6 +55,7 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -99,6 +100,20 @@ export class PlansFeaturesMain extends Component {
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+
+		const popularPlanSpec =
+			! siteType || abtest( 'popularPlanBy' ) === 'customerType'
+				? {
+						// Control experience
+						type: customerType === 'personal' ? TYPE_PREMIUM : TYPE_BUSINESS,
+						group: GROUP_WPCOM,
+				  }
+				: {
+						// Testing suggesting plans by siteType
+						type: getPopularPlanType( siteType ),
+						group: GROUP_WPCOM,
+				  };
+
 		return (
 			<div
 				className={ classNames(
@@ -128,10 +143,7 @@ export class PlansFeaturesMain extends Component {
 					withDiscount={ withDiscount }
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
-					popularPlanSpec={ {
-						type: getPopularPlanType( siteType ),
-						group: GROUP_WPCOM,
-					} }
+					popularPlanSpec={ popularPlanSpec }
 					siteId={ siteId }
 				/>
 			</div>

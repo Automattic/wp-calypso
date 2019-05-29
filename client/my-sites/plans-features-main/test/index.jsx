@@ -344,6 +344,37 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 			group: GROUP_WPCOM,
 		} );
 	} );
+
+	test( 'Should highlight proper popular plan for empty site type and personal customer type', () => {
+		const instance = new PlansFeaturesMain( {
+			customerType: 'personal',
+		} );
+		const comp = shallow( instance.render() );
+		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
+			type: TYPE_PREMIUM,
+			group: GROUP_WPCOM,
+		} );
+	} );
+
+	test( 'Should highlight proper popular plan for empty site type and business customer type', () => {
+		const instance = new PlansFeaturesMain( {
+			customerType: 'business',
+		} );
+		const comp = shallow( instance.render() );
+		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
+			type: TYPE_BUSINESS,
+			group: GROUP_WPCOM,
+		} );
+	} );
+
+	test( 'Should highlight proper popular plan for empty site type and empty customer type', () => {
+		const instance = new PlansFeaturesMain( {} );
+		const comp = shallow( instance.render() );
+		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
+			type: TYPE_BUSINESS,
+			group: GROUP_WPCOM,
+		} );
+	} );
 } );
 
 describe( 'PlansFeaturesMain.getPlansFromProps', () => {
