@@ -11,34 +11,57 @@ import afterLayoutFlush from 'lib/after-layout-flush';
 
 const THROTTLE_RATE = 200;
 
+// Indexable version of DOMRect / ClientRect.
+interface UseWindowResizeRect {
+	[index: string]: number | undefined;
+	top: number;
+	right: number;
+	bottom: number;
+	left: number;
+	width: number;
+	height: number;
+	x?: number;
+	y?: number;
+}
+
+// Function type for the expected callback for `useWindowResizeCallback`.
+interface UseWindowResizeCallback {
+	( node: Element | null | undefined ): void;
+}
+
 /**
  * React hook that subscribes a consumer to changes to the bounding client rect of an element, based
  * on window resize events.
  * Does not notify when an element resizes due to reasons other than the window resizing.
  * Uses throttling on the events, to avoid making changes too often.
  *
- * @param {Function} callback The function to call back on changes. Takes a single parameter: `boundingClientRect`.
+ * @param callback The function to call back on changes. Takes a single parameter: `boundingClientRect`.
  *
- * @returns {Function} The ref to be set on the consumer component.
+ * @returns The ref to be set on the consumer component.
  */
-export function useWindowResizeCallback( callback ) {
-	const lastRect = useRef( {} );
-	const [ element, setElement ] = useState( null );
+export function useWindowResizeCallback(
+	callback: ( boundingClientRect: UseWindowResizeRect ) => any
+) {
+	const lastRect = useRef< UseWindowResizeRect | null >( null );
+	const [ element, setElement ] = useState< Element | null >( null );
 
-	const callbackRef = useCallback( node => {
+	const callbackRef: UseWindowResizeCallback = useCallback( node => {
 		if ( node ) {
 			setElement( node );
 		}
 	}, [] );
 
-	useEffect(() => {
+	useEffect( () => {
 		// Notify consumer of bounding client rect change.
-		const handleRectChange = rect => {
+		const handleRectChange = ( rect: DOMRect | ClientRect ) => {
 			if ( rect ) {
-				const jsonRect = rect.toJSON ? rect.toJSON() : rect;
+				const jsonRect = 'toJSON' in rect ? rect.toJSON() : rect;
 				// Avoid notifying consumer if nothing's changed.
 				for ( const property of Object.keys( jsonRect ) ) {
-					if ( lastRect.current[ property ] !== jsonRect[ property ] ) {
+					if (
+						lastRect.current === null ||
+						lastRect.current[ property ] !== jsonRect[ property ]
+					) {
 						lastRect.current = jsonRect;
 						return callback( jsonRect );
 					}
@@ -49,7 +72,7 @@ export function useWindowResizeCallback( callback ) {
 		// Measure the element in the DOM.
 		// Uses `afterLayoutFlush` to avoid causing layout thrashing.
 		const measureElement = afterLayoutFlush( () => {
-			if ( element.getBoundingClientRect ) {
+			if ( element && element.getBoundingClientRect ) {
 				handleRectChange( element.getBoundingClientRect() );
 			}
 		} );
@@ -69,7 +92,7 @@ export function useWindowResizeCallback( callback ) {
 				throttledMeasureElement.cancel();
 			};
 		}
-	}, [ element, callback ]);
+	}, [ element, callback ] );
 
 	return callbackRef;
 }
@@ -82,10 +105,13 @@ export function useWindowResizeCallback( callback ) {
  *
  * @returns {Function} The ref to be set on the consumer component.
  */
-export function useWindowResizeRect() {
-	const [ rect, setRect ] = useState( null );
+export function useWindowResizeRect(): [UseWindowResizeCallback, UseWindowResizeRect | null] {
+	const [ rect, setRect ] = useState< UseWindowResizeRect | null >( null );
 
-	const callback = useCallback( boundingClientRect => setRect( boundingClientRect ), [] );
+	const callback = useCallback(
+		( boundingClientRect: UseWindowResizeRect ) => setRect( boundingClientRect ),
+		[]
+	);
 	const callbackRef = useWindowResizeCallback( callback );
 
 	return [ callbackRef, rect ];
