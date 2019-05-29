@@ -20,8 +20,6 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
-const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .form-toggle__switch';
-
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackPluginUpdatesTour = makeTour(
 	<Tour
@@ -35,25 +33,9 @@ export const JetpackPluginUpdatesTour = makeTour(
 	>
 		<Step
 			name="init"
-			target={ JETPACK_TOGGLE_SELECTOR }
+			target=".plugin-item-jetpack .form-toggle__switch"
 			arrow="top-left"
 			placement="below"
-			wait={ () =>
-				new Promise( resolve => {
-					if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
-						return resolve();
-					}
-
-					const waitForElement = () => {
-						if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
-							return resolve();
-						}
-						setTimeout( waitForElement, 125 );
-					};
-
-					waitForElement();
-				} )
-			}
 			style={ {
 				animationDelay: '0.7s',
 				zIndex: 1,
