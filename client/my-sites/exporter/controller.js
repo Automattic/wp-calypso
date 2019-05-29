@@ -7,9 +7,9 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import AsyncLoad from 'components/async-load';
+import SectionExport from 'my-sites/exporter/section-export';
 
 export function exportSite( context, next ) {
-	context.primary = <AsyncLoad require="my-sites/exporter/section-export" />;
+	context.primary = <SectionExport />;
 	next();
 }

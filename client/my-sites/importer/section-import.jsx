@@ -87,7 +87,7 @@ const getImporterForEngine = memoize( engine =>
 	find( importers, [ 'type', getImporterTypeForEngine( engine ) ] )
 );
 
-class SiteSettingsImport extends Component {
+class SectionImport extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 	};
@@ -298,4 +298,4 @@ export default flow(
 		siteSlug: getSelectedSiteSlug( state ),
 	} ) ),
 	localize
-)( SiteSettingsImport );
+)( SectionImport );

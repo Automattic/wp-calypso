@@ -15,7 +15,7 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { isJetpackSite } from 'state/sites/selectors';
 import FormattedHeader from 'components/formatted-header';
 
-const SiteSettingsExport = ( { isJetpack, site, translate } ) => (
+const SectionExport = ( { isJetpack, site, translate } ) => (
 	<Main>
 		<FormattedHeader
 			className="exporter__section-header"
@@ -44,4 +44,4 @@ export default connect( state => {
 		site,
 		siteSlug: getSelectedSiteSlug( state ),
 	};
-} )( localize( SiteSettingsExport ) );
+} )( localize( SectionExport ) );

@@ -9,7 +9,7 @@ import { get, isEmpty, omit, pick } from 'lodash';
 /**
  * Internal Dependencies
  */
-import AsyncLoad from 'components/async-load';
+import SectionImport from 'my-sites/importer/section-import';
 import { setImportingFromSignupFlow, setImportOriginSiteDetails } from 'state/importer-nux/actions';
 import { decodeURIComponentIfValid } from 'lib/url';
 import { addQueryArgs } from 'lib/route';
@@ -43,6 +43,6 @@ export function importSite( context, next ) {
 		context.store.dispatch( setImportingFromSignupFlow() );
 	}
 
-	context.primary = <AsyncLoad require="my-sites/importer/section-import" />;
+	context.primary = <SectionImport />;
 	next();
 }
