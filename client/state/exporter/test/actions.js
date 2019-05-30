@@ -37,25 +37,21 @@ import useNock from 'test/helpers/use-nock';
 describe( 'actions', () => {
 	const spy = sinon.spy();
 	const getState = () => ( {
-		siteSettings: {
-			exporter: {
-				fetchingAdvancedSettings: {},
-			},
+		exporter: {
+			fetchingAdvancedSettings: {},
 		},
 	} );
 	const getStateCustomSettings = () => ( {
-		siteSettings: {
-			exporter: {
-				fetchingAdvancedSettings: {},
-				selectedPostType: 'post',
-				selectedAdvancedSettings: {
-					2916284: {
-						post: {
-							author: 95752520,
-							category: 1,
-						},
-						page: {},
+		exporter: {
+			fetchingAdvancedSettings: {},
+			selectedPostType: 'post',
+			selectedAdvancedSettings: {
+				2916284: {
+					post: {
+						author: 95752520,
+						category: 1,
 					},
+					page: {},
 				},
 			},
 		},

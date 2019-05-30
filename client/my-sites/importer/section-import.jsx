@@ -270,7 +270,7 @@ class SectionImport extends Component {
 				'{{a}}Find out what we currently support.{{/a}}',
 			{
 				components: {
-					a: <ExternalLink href="https://support.wordpress.com/import/" />,
+					a: <ExternalLink href="https://en.support.wordpress.com/import/" />,
 				},
 			}
 		);
