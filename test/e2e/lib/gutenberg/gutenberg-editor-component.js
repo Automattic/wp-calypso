@@ -239,6 +239,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async ensureSaved() {
+		await this.driver.sleep( 5000 );
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-post-save-draft' ) );
 		const savedSelector = By.css( 'span.is-saved' );
 
