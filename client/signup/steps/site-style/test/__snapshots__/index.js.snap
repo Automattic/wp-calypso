@@ -54,10 +54,7 @@ exports[`<SiteStyleStep /> should render 1`] = `
               title="Continue"
               type="submit"
             >
-              <t
-                icon="arrow-right"
-                size={24}
-              />
+              Continue
             </Button>
           </div>
         </form>
