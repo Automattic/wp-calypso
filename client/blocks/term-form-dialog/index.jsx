@@ -276,6 +276,7 @@ class TermFormDialog extends Component {
 				<FormLabel>
 					<FormToggle checked={ isTopLevel } onChange={ this.onTopLevelChange } />
 					<span>
+						&nbsp;
 						{ translate( 'Top level %(term)s', {
 							args: { term: labels.singular_name },
 							context: 'Terms: New term being created is top level',
