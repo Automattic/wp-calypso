@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-const _ = require( 'lodash' );
-
 const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 
 const modules = isBrowser ? false : 'commonjs'; // Use commonjs for Node
@@ -24,10 +19,7 @@ const config = {
 		],
 		'@automattic/calypso-build/babel/default',
 	],
-	plugins: _.compact( [
-		[ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ],
-		isBrowser && './inline-imports.js',
-	] ),
+	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ] ],
 	env: {
 		build_pot: {
 			plugins: [
