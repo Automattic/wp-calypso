@@ -196,7 +196,7 @@ export default class Step extends Component< Props, State > {
 					return;
 				}
 
-				const targetEl = document.querySelector( `[data-tip-target="${ target }"]` );
+				const targetEl = targetForSlug( this.props.target );
 				if ( ! targetEl ) {
 					onTargetDisappear( {
 						quit: () => this.context.quit( this.context ),
