@@ -32,12 +32,6 @@ const Feature = ( { children } ) => (
 	</li>
 );
 
-const PurchaseButton = localize( ( { siteSlug, translate, disabled } ) => (
-	<Button href={ `/export/guided/${ siteSlug }` } isPrimary={ true } disabled={ disabled }>
-		{ translate( 'Purchase a Guided Transfer' ) }
-	</Button>
-) );
-
 const UnavailableInfo = localize( ( { translate } ) => (
 	<div className="guided-transfer-card__unavailable-notice">
 		<span>{ translate( 'Guided Transfer unavailable' ) }</span>
@@ -58,7 +52,7 @@ const UnavailableInfo = localize( ( { translate } ) => (
 
 class GuidedTransferCard extends Component {
 	render() {
-		const { translate, isAvailable, isRequestingStatus, siteId, cost } = this.props;
+		const { translate, isAvailable, isRequestingStatus, siteId, siteSlug, cost } = this.props;
 
 		return (
 			<div>
@@ -77,7 +71,13 @@ class GuidedTransferCard extends Component {
 						</div>
 						<div className="guided-transfer-card__options-header-button-container">
 							{ isAvailable || isRequestingStatus ? (
-								<PurchaseButton siteSlug={ this.props.siteSlug } disabled={ isRequestingStatus } />
+								<Button
+									href={ `/export/guided/${ siteSlug }` }
+									isPrimary={ false }
+									disabled={ isRequestingStatus }
+								>
+									{ translate( 'Purchase a Guided Transfer' ) }
+								</Button>
 							) : (
 								<UnavailableInfo />
 							) }

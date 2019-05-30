@@ -37,6 +37,7 @@ import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
 import JetpackImporter from 'my-sites/importer/jetpack-importer';
+import ExternalLink from 'components/external-link';
 
 /**
  * Configuration for each of the importers to be rendered in this section. If
@@ -269,7 +270,7 @@ class SectionImport extends Component {
 				'{{a}}Find out what we currently support.{{/a}}',
 			{
 				components: {
-					a: <a href="https://support.wordpress.com/import/" />,
+					a: <ExternalLink href="https://support.wordpress.com/import/" />,
 				},
 			}
 		);

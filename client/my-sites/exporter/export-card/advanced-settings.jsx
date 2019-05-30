@@ -64,7 +64,7 @@ class AdvancedSettings extends React.Component {
 					className="export-card__export-button"
 					disabled={ ! this.props.isValid }
 					loading={ this.props.shouldShowProgress }
-					isPrimary={ true }
+					isPrimary={ false }
 					onClick={ this.props.onClickExport }
 					text={ this.props.translate( 'Export Selected Content' ) }
 					loadingText={ this.props.translate( 'Exporting…' ) }

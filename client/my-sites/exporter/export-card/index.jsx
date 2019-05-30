@@ -43,7 +43,7 @@ class ExportCard extends Component {
 			<SpinnerButton
 				className="export-card__export-button"
 				loading={ this.props.shouldShowProgress }
-				isPrimary={ true }
+				isPrimary={ false }
 				onClick={ this.props.exportAll }
 				text={ translate( 'Export All' ) }
 				loadingText={ translate( 'Exporting…' ) }
