@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -122,7 +121,7 @@ class SiteTitleStep extends Component {
 								type="submit"
 								onClick={ this.handleSubmit }
 							>
-								<Gridicon icon="arrow-right" />
+								{ this.props.translate( 'Continue' ) }
 							</Button>{' '}
 						</FormFieldset>
 					</div>
