@@ -85,7 +85,7 @@ class EarningsMain extends Component {
 				);
 			case 'payments':
 				return <MembershipsSection section={ this.props.section } query={ this.props.query } />;
-			case 'payments-products':
+			case 'payments-plans':
 				return <MembershipsProductsSection section={ this.props.section } />;
 			default:
 				return null;
@@ -105,7 +105,7 @@ class EarningsMain extends Component {
 			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 			payments: translate( 'Recurring Payments' ),
-			'payments-products': translate( 'Recurring Payments plans' ),
+			'payments-plans': translate( 'Recurring Payments plans' ),
 		};
 
 		// Remove any query parameters from the path before using it to

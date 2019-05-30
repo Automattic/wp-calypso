@@ -187,7 +187,7 @@ class MembershipsSection extends Component {
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Settings' ) } />
-				<CompactCard href={ '/earn/payments-products/' + this.props.siteSlug }>
+				<CompactCard href={ '/earn/payments-plans/' + this.props.siteSlug }>
 					<QueryMembershipProducts siteId={ this.props.siteId } />
 					<div className="memberships__module-products-title">
 						{ this.props.translate( 'Recurring Payments plans' ) }
