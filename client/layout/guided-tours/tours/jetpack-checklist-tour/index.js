@@ -49,7 +49,7 @@ export const JetpackChecklistTour = makeTour(
 					<p>
 						{ translate(
 							"After you're done setting everything up, you can return to your WordPress " +
-								'admin here or continue using the WordPress.com dashboard.'
+								'admin here or continue using this dashboard.'
 						) }
 					</p>
 					<ButtonRow>
