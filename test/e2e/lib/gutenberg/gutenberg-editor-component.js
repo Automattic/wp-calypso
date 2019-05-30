@@ -239,12 +239,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async ensureSaved() {
-		const saveDraft = By.css( '.editor-post-save-draft' );
-		// const saveDraft = By.css( '.dashicons-cloud-upload' );
-		await driverHelper.isEventuallyPresentAndDisplayed( this.driver, saveDraft );
-		await driverHelper.clickWhenClickable( this.driver, saveDraft );
-
+		await this.driver.sleep( 1000 );
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-post-save-draft' ) );
 		const savedSelector = By.css( 'span.is-saved' );
+
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, savedSelector );
 	}
 
