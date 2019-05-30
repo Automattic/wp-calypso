@@ -8,7 +8,6 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import AsyncLoad from 'components/async-load';
 import config from 'config';
 import DeleteSite from './delete-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
@@ -58,13 +57,6 @@ export function redirectIfCantDeleteSite( context, next ) {
 
 export function general( context, next ) {
 	context.primary = <SiteSettingsMain />;
-	next();
-}
-
-export function guidedTransfer( context, next ) {
-	context.primary = (
-		<AsyncLoad require="my-sites/guided-transfer" hostSlug={ context.params.host_slug } />
-	);
 	next();
 }
 

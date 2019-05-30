@@ -8,13 +8,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import {
 	deleteSite,
 	disconnectSite,
 	disconnectSiteConfirm,
 	general,
-	guidedTransfer,
 	legacyRedirects,
 	manageConnection,
 	redirectIfCantDeleteSite,
@@ -57,17 +55,6 @@ export default function() {
 
 		next();
 	} );
-
-	if ( config.isEnabled( 'manage/export/guided-transfer' ) ) {
-		page(
-			'/settings/export/guided/:host_slug?/:site_id',
-			siteSelection,
-			navigation,
-			guidedTransfer,
-			makeLayout,
-			clientRender
-		);
-	}
 
 	page(
 		'/settings/delete-site/:site_id',

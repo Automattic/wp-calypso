@@ -33,7 +33,7 @@ const Feature = ( { children } ) => (
 );
 
 const PurchaseButton = localize( ( { siteSlug, translate, disabled } ) => (
-	<Button href={ `/settings/export/guided/${ siteSlug }` } isPrimary={ true } disabled={ disabled }>
+	<Button href={ `/export/guided/${ siteSlug }` } isPrimary={ true } disabled={ disabled }>
 		{ translate( 'Purchase a Guided Transfer' ) }
 	</Button>
 ) );

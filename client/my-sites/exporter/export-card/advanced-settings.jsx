@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
  */
 import PostTypeOptions from './post-type-options';
 import SpinnerButton from 'components/spinner-button';
-import { isDateRangeValid as isExportDateRangeValid } from 'state/site-settings/exporter/selectors';
+import { isDateRangeValid as isExportDateRangeValid } from 'state/exporter/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
