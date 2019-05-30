@@ -47,38 +47,34 @@ function xAboveBelow( left: number, right: number ) {
 	return DIALOG_PADDING;
 }
 
-type DialogPositioners = { [key in DialogPosition]: ( rect: ClientRect ) => Coordinate };
-
-const dialogPositioners: DialogPositioners = {
-	below: rect => {
-		const x = xAboveBelow( rect.left, rect.right );
-		const y = yBelow( rect.bottom );
-
-		return { x, y };
-	},
-	above: rect => {
-		const x = xAboveBelow( rect.left, rect.right );
-		const y = yAbove( rect.top );
-
-		return { x, y };
-	},
-	beside: ( { left, right, top } ) => ( {
-		x: wouldBeOffscreen( right ) ? fitOnScreen( left ) : right + DIALOG_PADDING,
-		y: top + DIALOG_PADDING,
-	} ),
-	center: ( { left, right } ) => ( {
-		x: Math.max( 0, middle( left, right ) - DIALOG_WIDTH / 2 ),
-		y: 0.2 * document.documentElement.clientHeight,
-	} ),
-	middle: ( { left, right } ) => ( {
-		x: Math.max( 0, middle( left, right ) - DIALOG_WIDTH / 2 ),
-		y: MASTERBAR_HEIGHT / 2 + DIALOG_HEIGHT / 2,
-	} ),
-	right: () => ( {
-		x: Math.max( 0, document.documentElement.clientWidth - DIALOG_WIDTH - 3 * DIALOG_PADDING ),
-		y: MASTERBAR_HEIGHT + 16,
-	} ),
-};
+function getDialogPosition( position: DialogPosition, rect: ClientRect ): Coordinate {
+	switch ( position ) {
+		case 'above':
+			return { x: xAboveBelow( rect.left, rect.right ), y: yAbove( rect.top ) };
+		case 'below':
+			return { x: xAboveBelow( rect.left, rect.right ), y: yBelow( rect.bottom ) };
+		case 'beside':
+			return {
+				x: wouldBeOffscreen( rect.right ) ? fitOnScreen( rect.left ) : rect.right + DIALOG_PADDING,
+				y: rect.top + DIALOG_PADDING,
+			};
+		case 'center':
+			return {
+				x: Math.max( 0, middle( rect.left, rect.right ) - DIALOG_WIDTH / 2 ),
+				y: 0.2 * document.documentElement.clientHeight,
+			};
+		case 'middle':
+			return {
+				x: Math.max( 0, middle( rect.left, rect.right ) - DIALOG_WIDTH / 2 ),
+				y: MASTERBAR_HEIGHT / 2 + DIALOG_HEIGHT / 2,
+			};
+		case 'right':
+			return {
+				x: Math.max( 0, document.documentElement.clientWidth - DIALOG_WIDTH - 3 * DIALOG_PADDING ),
+				y: MASTERBAR_HEIGHT + 16,
+			};
+	}
+}
 
 export const query = ( selector: string ) =>
 	Array.from( window.document.querySelectorAll( selector ) );
@@ -166,7 +162,7 @@ export function getStepPosition( {
 			? target.getBoundingClientRect()
 			: window.document.body.getBoundingClientRect();
 	const validatedPlacement = validatePlacement( placement, target );
-	const position = dialogPositioners[ validatedPlacement ]( rect );
+	const position = getDialogPosition( validatedPlacement, rect );
 	return {
 		x: position.x,
 		y: position.y - scrollDiff + ( scrollDiff !== 0 ? DIALOG_PADDING : 0 ),
