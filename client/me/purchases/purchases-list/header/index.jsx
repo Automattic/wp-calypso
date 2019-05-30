@@ -35,7 +35,7 @@ const PurchasesHeader = ( { section, translate } ) => {
 	} else if ( section === 'pending' ) {
 		text = translate( 'Pending Payments' );
 	} else if ( section === 'memberships' ) {
-		text = translate( 'My Memberships' );
+		text = translate( 'Other Sites' );
 	}
 
 	return (
@@ -60,7 +60,7 @@ const PurchasesHeader = ( { section, translate } ) => {
 				) }
 
 				<NavItem path={ myMemberships } selected={ section === 'memberships' }>
-					{ translate( 'My Memberships' ) }
+					{ translate( 'Other Sites' ) }
 				</NavItem>
 			</NavTabs>
 		</SectionNav>

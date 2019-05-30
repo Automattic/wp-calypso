@@ -37,11 +37,11 @@ class Subscription extends React.Component {
 		const { translate, subscription, moment, stoppingStatus } = this.props;
 		return (
 			<Main className="memberships__subscription">
-				<DocumentHead title={ translate( 'My Memberships' ) } />
+				<DocumentHead title={ translate( 'Other Sites' ) } />
 				<MeSidebarNavigation />
 				<QueryMembershipsSubscriptions />
 				<PurchasesHeader section={ 'memberships' } />
-				<HeaderCake backHref={ purchasesRoot + '/memberships' }>
+				<HeaderCake backHref={ purchasesRoot + '/other' }>
 					{ subscription ? subscription.title : translate( 'All subscriptions' ) }
 				</HeaderCake>
 				{ stoppingStatus === 'start' && (
