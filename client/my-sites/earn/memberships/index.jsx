@@ -187,10 +187,10 @@ class MembershipsSection extends Component {
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Settings' ) } />
-				<CompactCard href={ '/earn/memberships-products/' + this.props.siteSlug }>
+				<CompactCard href={ '/earn/payments-products/' + this.props.siteSlug }>
 					<QueryMembershipProducts siteId={ this.props.siteId } />
 					<div className="memberships__module-products-title">
-						{ this.props.translate( 'Membership Amounts' ) }
+						{ this.props.translate( 'Recurring Payments plans' ) }
 					</div>
 					<div className="memberships__module-products-list">
 						<Gridicon icon="tag" size={ 12 } className="memberships__module-products-list-icon" />

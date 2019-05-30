@@ -278,8 +278,8 @@ class MembershipsProductsSection extends Component {
 		return (
 			<div>
 				<QueryMembershipProducts siteId={ this.props.siteId } />
-				<HeaderCake backHref={ '/earn/memberships/' + this.props.siteSlug }>
-					{ this.props.translate( 'Membership Amounts' ) }
+				<HeaderCake backHref={ '/earn/payments/' + this.props.siteSlug }>
+					{ this.props.translate( 'Recurring Payments plans' ) }
 				</HeaderCake>
 				{ this.renderEditDialog() }
 
