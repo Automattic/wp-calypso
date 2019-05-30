@@ -38,7 +38,8 @@ const getSiteTypePropertyDefaults = propertyKey =>
 				'This will help you get started with a theme you might like. You can change it later.'
 			),
 		},
-		propertyKey
+		propertyKey,
+		null
 	);
 
 /**
