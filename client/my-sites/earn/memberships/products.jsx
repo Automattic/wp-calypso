@@ -286,7 +286,7 @@ class MembershipsProductsSection extends Component {
 
 				<SectionHeader>
 					<Button primary compact onClick={ () => this.openProductDialog( null ) }>
-						{ this.props.translate( 'Add new amount' ) }
+						{ this.props.translate( 'Add new plan' ) }
 					</Button>
 				</SectionHeader>
 				{ this.props.products.map( product => (
