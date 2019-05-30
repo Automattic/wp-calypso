@@ -1,10 +1,9 @@
-.current-plan-thank-you-card__main {
-	box-shadow: none;
+.current-plan-thank-you {
+	max-width: 720px;
 	text-align: center;
 
 	@include breakpoint( '>800px' ) {
 		font-size: 16px;
-		margin-bottom: 40px;
 
 		a {
 			font-size: 14px;
@@ -16,15 +15,13 @@
 	}
 }
 
-.current-plan-thank-you-card__content {
-	margin: 30px auto;
-	max-width: 720px;
-}
-
-.current-plan-thank-you-card__illustration {
+.current-plan-thank-you__illustration {
 	display: none;
+	margin-bottom: 18px;
+
 	@include breakpoint( '>480px' ) {
 		display: inline;
+		margin-bottom: 18px;
 		width: 70%;
 	}
 	@include breakpoint( '>800px' ) {
@@ -32,7 +29,6 @@
 	}
 }
 
-.current-plan-thank-you-card__title {
+.current-plan-thank-you__title {
 	font-size: 24px;
-	margin: 18px 0 14px;
 }

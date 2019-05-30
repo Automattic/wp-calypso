@@ -7,10 +7,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ThankYouCard from './thank-you-card';
+import ThankYou from './thank-you';
 
-const FreePlanThankYouCard = ( { translate } ) => (
-	<ThankYouCard
+const FreePlanThankYou = ( { translate } ) => (
+	<ThankYou
 		illustration="/calypso/images/illustrations/security.svg"
 		showCalypsoIntro
 		showContinueButton
@@ -21,7 +21,7 @@ const FreePlanThankYouCard = ( { translate } ) => (
 			<br />
 			{ translate( "You're now ready to finish the rest of the checklist." ) }
 		</p>
-	</ThankYouCard>
+	</ThankYou>
 );
 
-export default localize( FreePlanThankYouCard );
+export default localize( FreePlanThankYou );
