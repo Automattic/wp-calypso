@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith, get, includes, isEmpty } from 'lodash';
+import { defer, endsWith, get, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
@@ -518,11 +518,9 @@ class DomainsStep extends React.Component {
 	};
 
 	getSubHeaderText() {
-		const { flowName, siteType, translate } = this.props;
+		const { siteType, translate } = this.props;
 		const onboardingSubHeaderCopy =
-			siteType &&
-			includes( [ 'onboarding-for-business', 'onboarding' ], flowName ) &&
-			getSiteTypePropertyValue( 'slug', siteType, 'domainsStepSubheader' );
+			siteType && getSiteTypePropertyValue( 'slug', siteType, 'domainsStepSubheader' );
 
 		if ( onboardingSubHeaderCopy ) {
 			return onboardingSubHeaderCopy;
