@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Full Site Editing
- * Description: Edit all parts of your site with the Block Editor.
- * Version: 1.0
+ * Description: Enhances your page creation workflow within the Block Editor.
+ * Version: 0.1.1
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
