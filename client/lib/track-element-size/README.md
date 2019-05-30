@@ -71,7 +71,7 @@ function SampleComponent() {
   );
 
   // Get ref and subscribe to changes.
-  const ref = useWindowResizeCallback( ref, resizeCallback );
+  const ref = useWindowResizeCallback( resizeCallback );
 
   // Render component, making sure to use the ref.
   // First render will use the initial value in state ('unknown'), since there hasn't been
