@@ -27,6 +27,7 @@ import { setScroll, siteSettings } from 'my-sites/site-settings/settings-control
 
 export default function() {
 	page( '/settings', '/settings/general' );
+
 	page(
 		'/settings/general/:site_id',
 		siteSelection,
@@ -38,22 +39,13 @@ export default function() {
 		clientRender
 	);
 
-	page( '/settings/import/:site_id', ( context, next ) => {
-		const site_id = get( context, 'params.site_id' );
-		if ( site_id ) {
-			return page.redirect( `/import/${ site_id }` );
-		}
+	// Redirect settings pages for import and export now that they have their own sections.
+	page( '/settings/:importOrExport(import|export)/:subroute(.*)', context => {
+		const importOrExport = get( context, 'params.importOrExport' );
+		const subroute = get( context, 'params.subroute' );
+		const redirectPath = subroute ? `/${ importOrExport }/${ subroute }` : `/${ importOrExport }`;
 
-		next();
-	} );
-
-	page( '/settings/export/:site_id', ( context, next ) => {
-		const site_id = get( context, 'params.site_id' );
-		if ( site_id ) {
-			return page.redirect( `/export/${ site_id }` );
-		}
-
-		next();
+		return page.redirect( redirectPath );
 	} );
 
 	page(

@@ -3,6 +3,7 @@
  * External dependencies
  */
 import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,4 +28,10 @@ export default function() {
 			clientRender
 		);
 	}
+
+	// Redirect any other child routes to parent `/export`.
+	page( '/export/*/:site_id', context => {
+		const site_id = get( context, 'params.site_id' );
+		return page.redirect( `/export/${ site_id }` );
+	} );
 }
