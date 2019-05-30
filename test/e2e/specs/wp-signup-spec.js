@@ -1641,18 +1641,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Sign up for a free WordPress.com site via the new onboarding flow @parallel', () => {
+	describe( 'Sign up for a free WordPress.com site via the default onboarding flow @parallel', () => {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			return await overrideABTests.setOverriddenABTests(
-				driver,
-				'improvedOnboarding',
-				'onboarding'
-			);
 		} );
 
 		step( 'Can visit the start page', async function() {
@@ -1738,11 +1733,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			return await overrideABTests.setOverriddenABTests(
-				driver,
-				'improvedOnboarding',
-				'onboarding'
-			);
 		} );
 
 		step( 'Can enter the account flow and see the account details page', async function() {

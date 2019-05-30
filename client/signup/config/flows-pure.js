@@ -116,13 +116,6 @@ export function generateFlows( {
 		},
 
 		main: {
-			steps: [ 'user', 'about', 'domains', 'plans' ],
-			destination: getChecklistDestination,
-			description: 'The current best performing flow in AB tests',
-			lastModified: '2019-04-30',
-		},
-
-		onboarding: {
 			steps: [
 				'user',
 				'site-type',
@@ -131,25 +124,9 @@ export function generateFlows( {
 				'site-style-with-preview',
 				'domains-with-preview',
 				'plans',
-			],
-			destination: getChecklistDestination,
-			description: 'The improved onboarding flow.',
-			lastModified: '2019-06-05',
-		},
-
-		'onboarding-dev': {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'site-style-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
-			destination: getChecklistDestination,
-			description: 'A temporary flow for holding under-development steps',
-			lastModified: '2019-04-30',
+			],			destination: getChecklistDestination,
+			description: 'The default onboarding flow',
+			lastModified: '2019-06-18',
 		},
 
 		'delta-discover': {

@@ -8,7 +8,6 @@ import { assign, get, includes, indexOf, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
 import { abtest } from 'lib/abtest';
@@ -105,9 +104,7 @@ const Flows = {
 	filterFlowName,
 	filterDestination,
 
-	defaultFlowName: config.isEnabled( 'signup/onboarding-flow' )
-		? abtest( 'improvedOnboarding' )
-		: 'main',
+	defaultFlowName: 'main',
 	resumingFlow: false,
 	excludedSteps: [],
 

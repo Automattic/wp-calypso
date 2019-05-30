@@ -24,7 +24,6 @@ import { addItem, removeItem } from 'lib/upgrades/actions';
 import { getAllCartItems } from 'lib/cart-values/cart-items';
 import { isDotComPlan } from 'lib/products-values';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -41,11 +40,9 @@ export class GSuiteNudge extends React.Component {
 	handleClickSkip = () => {
 		const { siteSlug, receiptId, isEligibleForChecklist } = this.props;
 
-		const destination = abtest( 'improvedOnboarding' ) === 'onboarding' ? 'view' : 'checklist';
-
 		page(
 			isEligibleForChecklist
-				? `/${ destination }/${ siteSlug }`
+				? `/view/${ siteSlug }`
 				: `/checkout/thank-you/${ siteSlug }/${ receiptId }`
 		);
 	};
