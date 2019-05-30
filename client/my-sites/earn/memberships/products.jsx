@@ -204,14 +204,15 @@ class MembershipsProductsSection extends Component {
 			>
 				<FormSectionHeading>
 					{ this.state.editedProductId && this.props.translate( 'Edit' ) }
-					{ ! this.state.editedProductId && this.props.translate( 'Add New Membership Amount' ) }
+					{ ! this.state.editedProductId &&
+						this.props.translate( 'Add New Recurring Payment plan' ) }
 				</FormSectionHeading>
 				<p>
 					{ this.state.editedProductId &&
-						this.props.translate( 'Edit your existing membership button.' ) }
+						this.props.translate( 'Edit your existing Recurring Payments plan.' ) }
 					{ ! this.state.editedProductId &&
 						this.props.translate(
-							'Each amount you add will create a separate membership button. You can create multiple buttons.'
+							'Each amount you add will create a separate Recurring Payments plan. You can create multiple plans.'
 						) }
 				</p>
 				<FormFieldset>
