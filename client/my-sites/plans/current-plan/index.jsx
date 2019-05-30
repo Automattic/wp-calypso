@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import Dialog from 'components/dialog';
 import Main from 'components/main';
 import {
 	getCurrentPlan,
@@ -21,7 +20,6 @@ import {
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
-import FeatureExample from 'components/feature-example';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/plans/navigation';
 import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
@@ -38,8 +36,8 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import PaidPlanThankYouCard from './current-plan-thank-you-card/paid-plan-thank-you-card';
-import FreePlanThankYouCard from './current-plan-thank-you-card/free-plan-thank-you-card';
+import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
+import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
 
 /**
  * Style dependencies
@@ -108,12 +106,6 @@ class CurrentPlan extends Component {
 		const currentPlanSlug = selectedSite.plan.product_slug,
 			isLoading = this.isLoading();
 
-		const currentPlanThankYouCard = isFreePlan ? (
-			<FreePlanThankYouCard />
-		) : (
-			<PaidPlanThankYouCard />
-		);
-
 		const planConstObj = getPlan( currentPlanSlug ),
 			planFeaturesHeader = translate( '%(planName)s plan features', {
 				args: { planName: planConstObj.getTitle() },
@@ -131,7 +123,11 @@ class CurrentPlan extends Component {
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				{ ! showThankYou && <PlansNavigation path={ path } /> }
+				<Dialog isVisible={ showThankYou }>
+					{ isFreePlan ? <FreePlanThankYou /> : <PaidPlanThankYou /> }
+				</Dialog>
+
+				<PlansNavigation path={ path } />
 
 				{ showDomainWarnings && (
 					<DomainWarnings
@@ -150,44 +146,30 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				{ showThankYou ? (
-					currentPlanThankYouCard
-				) : (
-					<CurrentPlanHeader
-						isPlaceholder={ isLoading }
-						title={ title }
-						tagLine={ tagLine }
-						currentPlan={ currentPlan }
-						isExpiring={ isExpiring }
-						siteSlug={ selectedSite ? selectedSite.slug : null }
-					/>
-				) }
+				<CurrentPlanHeader
+					isPlaceholder={ isLoading }
+					title={ title }
+					tagLine={ tagLine }
+					currentPlan={ currentPlan }
+					isExpiring={ isExpiring }
+					siteSlug={ selectedSite ? selectedSite.slug : null }
+				/>
 
 				{ showJetpackChecklist && (
 					<Fragment>
 						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-						{ showThankYou ? (
-							<FeatureExample role="presentation">
-								<JetpackChecklist />
-							</FeatureExample>
-						) : (
-							<JetpackChecklist />
-						) }
+						<JetpackChecklist />
 					</Fragment>
 				) }
 
-				{ ! showThankYou && (
-					<Fragment>
-						<div
-							className={ classNames( 'current-plan__header-text current-plan__text', {
-								'is-placeholder': { isLoading },
-							} ) }
-						>
-							<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
-						</div>
-						<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
-					</Fragment>
-				) }
+				<div
+					className={ classNames( 'current-plan__header-text current-plan__text', {
+						'is-placeholder': { isLoading },
+					} ) }
+				>
+					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+				</div>
+				<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
 
 				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 			</Main>

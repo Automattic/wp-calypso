@@ -20,12 +20,12 @@ import Button from 'components/button';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
 import ProgressBar from 'components/progress-bar';
-import ThankYouCard from './thank-you-card';
+import ThankYou from './thank-you';
 
 const INSTALL_STATE_COMPLETE = 1;
 const INSTALL_STATE_INCOMPLETE = 2;
 
-export class PaidPlanThankYouCard extends Component {
+export class PaidPlanThankYou extends Component {
 	tracksEventSent = false;
 
 	recordAutoconfigTracksEventOnce( eventName, options = {} ) {
@@ -78,7 +78,7 @@ export class PaidPlanThankYouCard extends Component {
 				: undefined;
 
 			return (
-				<ThankYouCard
+				<ThankYou
 					illustration={ fireworksIllustration }
 					showContinueButton={ ! wpAdminPluginsUrl }
 					showHideMessage={ wpAdminPluginsUrl }
@@ -98,14 +98,14 @@ export class PaidPlanThankYouCard extends Component {
 							</Button>
 						</p>
 					) }
-				</ThankYouCard>
+				</ThankYou>
 			);
 		}
 
 		// Non-main site at multisite, cannot install anything
 		if ( site.isSecondaryNetworkSite ) {
 			return (
-				<ThankYouCard
+				<ThankYou
 					illustration={ fireworksIllustration }
 					showHideMessage
 					title={ translate( 'Thank you for your purchase!' ) }
@@ -127,14 +127,14 @@ export class PaidPlanThankYouCard extends Component {
 							<span>{ translate( 'Set up features' ) }</span> <Gridicon icon="external" />
 						</Button>
 					</p>
-				</ThankYouCard>
+				</ThankYou>
 			);
 		}
 
 		// We cannot install anything for this site
 		if ( ! site.canUpdateFiles ) {
 			return (
-				<ThankYouCard
+				<ThankYou
 					illustration={ fireworksIllustration }
 					showHideMessage
 					title={ translate( 'Thank you for your purchase!' ) }
@@ -156,7 +156,7 @@ export class PaidPlanThankYouCard extends Component {
 							<span>{ translate( 'Set up features' ) }</span> <Gridicon icon="external" />
 						</Button>
 					</p>
-				</ThankYouCard>
+				</ThankYou>
 			);
 		}
 
@@ -165,7 +165,7 @@ export class PaidPlanThankYouCard extends Component {
 				<JetpackProductInstall />
 
 				{ installState === INSTALL_STATE_INCOMPLETE && (
-					<ThankYouCard
+					<ThankYou
 						illustration={ fireworksIllustration }
 						showHideMessage
 						title={ translate( 'Thank you for your purchase!' ) }
@@ -180,10 +180,10 @@ export class PaidPlanThankYouCard extends Component {
 						</p>
 
 						<ProgressBar isPulsing total={ 100 } value={ installProgress || 0 } />
-					</ThankYouCard>
+					</ThankYou>
 				) }
 				{ installState === INSTALL_STATE_COMPLETE && (
-					<ThankYouCard
+					<ThankYou
 						illustration={ securityIllustration }
 						showCalypsoIntro
 						showContinueButton
@@ -198,7 +198,7 @@ export class PaidPlanThankYouCard extends Component {
 								translate( "You're now ready to finish the rest of the checklist." )
 							) }
 						</p>
-					</ThankYouCard>
+					</ThankYou>
 				) }
 			</Fragment>
 		);
@@ -227,4 +227,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent }
-)( localize( PaidPlanThankYouCard ) );
+)( localize( PaidPlanThankYou ) );

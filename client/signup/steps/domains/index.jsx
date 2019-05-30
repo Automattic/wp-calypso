@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith, get, isEmpty } from 'lodash';
+import { defer, endsWith, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
@@ -36,11 +36,13 @@ import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getDomainProductSlug } from 'lib/domains';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { getSite } from 'state/sites/selectors';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -516,10 +518,24 @@ class DomainsStep extends React.Component {
 	};
 
 	getSubHeaderText() {
-		const { translate } = this.props;
+		const { flowName, siteType, translate } = this.props;
+		const onboardingSubHeaderCopy =
+			siteType &&
+			includes( [ 'onboarding-for-business', 'onboarding' ], flowName ) &&
+			getSiteTypePropertyValue( 'slug', siteType, 'domainsStepSubheader' );
+
+		if ( onboardingSubHeaderCopy ) {
+			return onboardingSubHeaderCopy;
+		}
+
 		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
 			? translate( 'Use a domain you already own with your new WordPress.com site.' )
 			: translate( "Enter your site's name or some keywords that describe it to get started." );
+	}
+
+	getHeaderText() {
+		const { headerText, siteType } = this.props;
+		return getSiteTypePropertyValue( 'slug', siteType, 'domainsStepHeader' ) || headerText;
 	}
 
 	getAnalyticsSection() {
@@ -589,6 +605,7 @@ class DomainsStep extends React.Component {
 			backLabelText = translate( 'Back to Site' );
 		}
 
+		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
 		return (
@@ -598,9 +615,9 @@ class DomainsStep extends React.Component {
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
-				headerText={ this.props.headerText }
-				subHeaderText={ this.props.subHeaderText }
-				fallbackHeaderText={ translate( 'Give your site an address.' ) }
+				headerText={ headerText }
+				subHeaderText={ fallbackSubHeaderText }
+				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={
 					<div>
@@ -664,6 +681,7 @@ export default connect(
 			siteGoals: getSiteGoals( state ),
 			surveyVertical: getSurveyVertical( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
+			siteType: getSiteType( state ),
 		};
 	},
 	{

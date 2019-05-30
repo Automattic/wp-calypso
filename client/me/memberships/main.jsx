@@ -27,7 +27,7 @@ import EmptyContent from 'components/empty-content';
 import './main.scss';
 
 const MembershipItem = ( { translate, subscription, moment } ) => (
-	<CompactCard key={ subscription.ID } href={ '/me/purchases/memberships/' + subscription.ID }>
+	<CompactCard key={ subscription.ID } href={ '/me/purchases/other/' + subscription.ID }>
 		<div className="memberships__list-subscription">
 			<div className="memberships__list-date">
 				<div>{ moment( subscription.end_date ).format( 'll' ) }</div>
@@ -58,7 +58,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 	if ( subscriptions && subscriptions.length ) {
 		content = (
 			<>
-				<SectionHeader label={ translate( 'Active Membership plans' ) } />
+				<SectionHeader label={ translate( 'Active Recurring Payments plans' ) } />
 				{ subscriptions.map(
 					subscription => (
 						<MembershipItem
@@ -76,7 +76,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 		content = (
 			<CompactCard className="memberships__no-content">
 				<EmptyContent
-					title={ translate( 'No memberships found.' ) }
+					title={ translate( 'No Recurring Payments found.' ) }
 					illustration={ '/calypso/images/illustrations/illustration-nomemberships.svg' }
 				/>
 			</CompactCard>
@@ -85,8 +85,8 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 
 	return (
 		<Main className="memberships">
-			<DocumentHead title={ translate( 'My Memberships' ) } />
-			<PageViewTracker path="/me/purchases/memberships" title="Me > My Memberships" />
+			<DocumentHead title={ translate( 'Other Sites' ) } />
+			<PageViewTracker path="/me/purchases/other" title="Me > Other Sites" />
 			<MeSidebarNavigation />
 			<QueryMembershipsSubscriptions />
 			<PurchasesHeader section={ 'memberships' } />
