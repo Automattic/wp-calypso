@@ -30,6 +30,7 @@ lerna-debug.log
 /coverage
 
 /build
+/packages/webpack-inline-constant-exports-plugin/test/build
 
 /public/
 
