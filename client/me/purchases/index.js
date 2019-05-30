@@ -66,6 +66,16 @@ export default function( router ) {
 		makeLayout,
 		clientRender
 	);
+	// Legacy:
+	router(
+		paths.purchasesRoot + '/memberships/:subscriptionId',
+		( { params: { subscriptionId } } ) => {
+			page.redirect( paths.purchasesRoot + '/other/' + subscriptionId );
+		}
+	);
+	router( paths.purchasesRoot + '/memberships', () =>
+		page.redirect( paths.purchasesRoot + '/other' )
+	);
 
 	router(
 		paths.billingHistoryReceipt( ':receiptId' ),
