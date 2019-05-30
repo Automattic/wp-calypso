@@ -100,7 +100,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const textSelector = By.css( '.wp-block-paragraph' );
 		await driverHelper.clickWhenClickable( this.driver, appenderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, textSelector );
-		return await this.driver.findElement( textSelector ).sendKeys( text );
+		const textField = await this.driver.findElement( textSelector );
+		return await textField.sendKeys( text );
 	}
 
 	async insertShortcode( shortcode ) {
