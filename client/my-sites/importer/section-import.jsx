@@ -264,7 +264,7 @@ class SectionImport extends Component {
 	render() {
 		const { site, translate } = this.props;
 		const { jetpack: isJetpack } = site;
-		const headerText = translate( 'Import Your Content' );
+		const headerText = translate( 'Import your content' );
 		const subHeaderText = translate(
 			'Bring content hosted elsewhere over to WordPress.com. ' +
 				'{{a}}Find out what we currently support.{{/a}}',

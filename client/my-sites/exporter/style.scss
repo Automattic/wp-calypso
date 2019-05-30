@@ -8,6 +8,10 @@
 		max-width: 500px;
 	}
 
+	.formatted-header__title {
+		text-transform: capitalize;
+	}
+
 	.formatted-header__subtitle {
 		color: var( --color-neutral-dark );
 	}

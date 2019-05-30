@@ -19,7 +19,7 @@ const SectionExport = ( { isJetpack, site, translate } ) => (
 	<Main>
 		<FormattedHeader
 			className="exporter__section-header"
-			headerText={ translate( 'Export Your Content' ) }
+			headerText={ translate( 'Export your content' ) }
 			subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
 		/>
 		{ isJetpack && (
