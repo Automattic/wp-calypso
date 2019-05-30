@@ -33,6 +33,9 @@ const getSiteTypePropertyDefaults = propertyKey =>
 			domainsStepSubheader: i18n.translate(
 				'Enter a keyword that describes your site to get started.'
 			),
+			domainsStepTransferringSubheader: i18n.translate(
+				'Use a domain you already own with your new WordPress.com site.'
+			),
 			// Site styles step
 			siteStyleSubheader: i18n.translate(
 				'This will help you get started with a theme you might like. You can change it later.'
@@ -97,6 +100,9 @@ export function getAllSiteTypes() {
 			domainsStepHeader: i18n.translate( 'Give your blog an address' ),
 			domainsStepSubheader: i18n.translate(
 				"Enter your blog's name or some keywords that describe it to get started."
+			),
+			domainsStepTransferringSubheader: i18n.translate(
+				'Use a domain you already own with your new WordPress.com blog.'
 			),
 		},
 		{
