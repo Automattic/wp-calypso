@@ -15,7 +15,6 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'gridicons';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
@@ -113,7 +112,7 @@ export class SiteStyleStep extends Component {
 						type="submit"
 						primary
 					>
-						<Gridicon icon="arrow-right" />
+						{ this.props.translate( 'Continue' ) }
 					</Button>
 				</div>
 			</form>
