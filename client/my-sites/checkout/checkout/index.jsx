@@ -310,6 +310,8 @@ export class Checkout extends React.Component {
 			return true;
 		}
 
+		let redirectTo = '/plans/';
+
 		if ( ! this.state.previousCart && this.props.product ) {
 			// the plan hasn't been added to the cart yet
 			return false;
