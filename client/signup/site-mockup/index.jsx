@@ -24,20 +24,19 @@ import { getSiteStyleOptions, getThemeCssUri } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function SiteMockupHelpTip() {
+function SiteMockupHelpTip( { siteType } ) {
+	const helpTipCopy = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupHelpTipCopy' ) || '';
+
 	return (
 		<div className="site-mockup__help-tip">
-			<p>
-				{ translate(
-					'Scroll down to see your website. Once you complete setup you’ll be able to customize it further.'
-				) }
-			</p>
+			<p>{ helpTipCopy }</p>
 			<Gridicon icon="chevron-down" />
 		</div>
 	);
@@ -118,6 +117,7 @@ class SiteMockups extends Component {
 			fontUrl,
 			shouldShowHelpTip,
 			siteStyle,
+			siteType,
 			title,
 			themeSlug,
 			verticalPreviewContent,
@@ -145,7 +145,7 @@ class SiteMockups extends Component {
 
 		return (
 			<div className={ siteMockupClasses }>
-				{ shouldShowHelpTip && <SiteMockupHelpTip /> }
+				{ shouldShowHelpTip && <SiteMockupHelpTip siteType={ siteType } /> }
 				<div className="site-mockup__devices">
 					<SignupSitePreview
 						defaultViewportDevice="desktop"
