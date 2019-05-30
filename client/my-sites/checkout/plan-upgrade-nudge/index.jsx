@@ -49,45 +49,23 @@ export class PlanUpgradeNudge extends React.Component {
 		selectedSiteId: PropTypes.number.isRequired,
 	};
 
-	render() {
-		const {
-			selectedSiteId,
-			isLoading,
-			hasProductsList,
-			hasSitePlans,
-			translate,
-			receiptId,
-		} = this.props;
-		const title = translate( 'Checkout ‹ Plan Upgrade', {
-			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
-		} );
+	handleClickDecline = () => {
+		const { trackUpsellButtonClick } = this.props;
 
-		return (
-			<Main className="plan-upgrade-nudge">
-				<PageViewTracker path="/checkout/:site/plan-upgrade-nudge/:receipt_id" title={ title } />
-				<DocumentHead title={ title } />
-				<QuerySites siteId={ selectedSiteId } />
-				{ ! hasProductsList && <QueryProductsList /> }
-				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
+		trackUpsellButtonClick( 'decline' );
+		this.props.handleClickDecline();
+	};
 
-				{ isLoading ? (
-					this.renderPlaceholders()
-				) : (
-					<>
-						{ receiptId ? (
-							<CompactCard className="plan-upgrade-nudge__card-header">
-								{ this.header() }
-							</CompactCard>
-						) : (
-							''
-						) }
-						<CompactCard className="plan-upgrade-nudge__card-body">{ this.body() }</CompactCard>
-						<CompactCard className="plan-upgrade-nudge__card-footer">{ this.footer() }</CompactCard>
-					</>
-				) }
-			</Main>
-		);
-	}
+	handleClickAccept = () => {
+		const { siteSlug, trackUpsellButtonClick, planSlug } = this.props;
+
+		const cartItem = getCartItemForPlan( planSlug );
+		addItem( cartItem );
+
+		trackUpsellButtonClick( 'accept' );
+
+		page( `/checkout/${ siteSlug }` );
+	};
 
 	renderPlaceholders() {
 		const { receiptId } = this.props;
@@ -264,23 +242,45 @@ export class PlanUpgradeNudge extends React.Component {
 		);
 	}
 
-	handleClickDecline = () => {
-		const { trackUpsellButtonClick } = this.props;
+	render() {
+		const {
+			selectedSiteId,
+			isLoading,
+			hasProductsList,
+			hasSitePlans,
+			translate,
+			receiptId,
+		} = this.props;
+		const title = translate( 'Checkout ‹ Plan Upgrade', {
+			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
+		} );
 
-		trackUpsellButtonClick( 'decline' );
-		this.props.handleClickDecline();
-	};
+		return (
+			<Main className="plan-upgrade-nudge">
+				<PageViewTracker path="/checkout/:site/plan-upgrade-nudge/:receipt_id" title={ title } />
+				<DocumentHead title={ title } />
+				<QuerySites siteId={ selectedSiteId } />
+				{ ! hasProductsList && <QueryProductsList /> }
+				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
 
-	handleClickAccept = () => {
-		const { siteSlug, trackUpsellButtonClick, planSlug } = this.props;
-
-		const cartItem = getCartItemForPlan( planSlug );
-		addItem( cartItem );
-
-		trackUpsellButtonClick( 'accept' );
-
-		page( `/checkout/${ siteSlug }` );
-	};
+				{ isLoading ? (
+					this.renderPlaceholders()
+				) : (
+					<>
+						{ receiptId ? (
+							<CompactCard className="plan-upgrade-nudge__card-header">
+								{ this.header() }
+							</CompactCard>
+						) : (
+							''
+						) }
+						<CompactCard className="plan-upgrade-nudge__card-body">{ this.body() }</CompactCard>
+						<CompactCard className="plan-upgrade-nudge__card-footer">{ this.footer() }</CompactCard>
+					</>
+				) }
+			</Main>
+		);
+	}
 }
 
 const trackUpsellButtonClick = buttonAction => {
