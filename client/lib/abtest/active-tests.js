@@ -176,4 +176,14 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	hideDotBlogSubdomains: {
+		datestamp: '20190604',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'show',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
 };

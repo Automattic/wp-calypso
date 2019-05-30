@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, endsWith, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
+import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -331,19 +332,32 @@ class DomainsStep extends React.Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, siteGoals, signupDependencies } = this.props;
+		const { flowName, isDomainOnly, siteGoals, signupDependencies } = this.props;
 		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
 
+		// 'subdomain' flow coming from .blog landing pages
+		if ( flowName === 'subdomain' ) {
+			return true;
+		}
+
+		// 'blog' flow, starting with blog themes
+		if ( flowName === 'blog' ) {
+			return true;
+		}
+
+		// No .blog subdomains for domain only sites
+		if ( isDomainOnly ) {
+			return false;
+		}
+
+		// If we detect a 'blog' site type from Signup data
 		return (
-			// 'subdomain' flow coming from .blog landing pages
-			flowName === 'subdomain' ||
-			// 'blog' flow, starting with blog themes
-			flowName === 'blog' ||
-			( ! this.props.isDomainOnly &&
-				// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
-				( ( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
-					// or users chose `Blog` as their site type
-					'blog' === get( signupDependencies, 'siteType' ) ) )
+			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
+			( ( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
+				// Users choose `Blog` as their site type
+				'blog' === get( signupDependencies, 'siteType' ) ) &&
+			// Assign THE A/B test variation at the last moment, so we have a proper dataset split
+			'show' === abtest( 'hideDotBlogSubdomains' )
 		);
 	}
 
