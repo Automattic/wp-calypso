@@ -18,7 +18,7 @@ function TemplateSelectorControl( {
 	onClick,
 	templates = [],
 } ) {
-	const id = `inspector-radio-control-${ instanceId }`;
+	const id = `template-selector-control-${ instanceId }`;
 	const handleButtonClick = event => onClick( event.target.value );
 
 	if ( isEmpty( templates ) ) {
