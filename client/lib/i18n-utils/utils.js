@@ -2,17 +2,18 @@
 /**
  * External dependencies
  */
-import { find, isString, map, pickBy, includes, endsWith } from 'lodash';
+import { debounce, find, isString, map, pickBy, includes, endsWith } from 'lodash';
 import url from 'url';
 import { getLocaleSlug, registerTranslateHook } from 'i18n-calypso';
 import cookie from 'cookie';
-
+import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { recordOriginals } from './glotpress';
+import { recordOriginals, encodeOriginalKey } from './glotpress';
 
+const debug = debugFactory( 'calypso:i18n-utils' );
 /**
  * a locale can consist of three component
  * aa: language code
@@ -254,6 +255,7 @@ class I18nScanner {
 			installed: false,
 			active: false,
 			loggedTranslations: [],
+			pendingOriginals: {},
 			sessionId: null,
 			cookieWatcherInterval: null,
 			previousCookies: null,
@@ -264,8 +266,9 @@ class I18nScanner {
 
 	translationFilter( ...args ) {
 		const [ translation, options ] = args;
+
+		this.recordOriginal( options.original, options.context || '' )
 		if ( this.active && this.sessionId ) {
-			recordOriginals( this.sessionId, options.original, options.context || '' )
 		}
 
 		return translation;
@@ -304,10 +307,22 @@ class I18nScanner {
 
 		const newSessionId = cookie.parse( document.cookie )['gp-record'];
 		if( newSessionId !== this.sessionId ) {
+			debug( 'new sessionId:', newSessionId );
 			this.setSessionId( newSessionId );
 		}
-
 	}
+
+	recordOriginal( original, context = '' ) {
+		this.pendingOriginals[ encodeOriginalKey( { original, context } ) ] = true;
+		this.sendPendingOriginals();
+	}
+
+	_sendPendingOriginalsImmediately() {
+		recordOriginals( Object.keys( this.pendingOriginals ), this.sessionId );
+		this.pendingOriginals = {};
+	}
+
+	sendPendingOriginals = debounce( this._sendPendingOriginalsImmediately.bind( this ), 500 )
 
 	setSessionId( newSessionId ) {
 		this.sessionId = newSessionId;

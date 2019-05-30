@@ -30,18 +30,21 @@ export function postRequest( glotPressUrl, postFormData ) {
 	);
 }
 
+export function encodeOriginalKey( { original, context } ) {
+	return context + '\u0004' + original;
+}
+
 /**
- * Causes translate.wordpress.com to start recording queried translations
- * @param {String} original to record
+ * Sends originals to translate.wordpress.com to be recorded
+ * @param {[String]} Array of original keys to record
  * @param {String} context to record
  * @param {Function} post see postRequest()
  * @returns {Object} request object
  */
-export function recordOriginals( recordId, original, context = '',  post = postRequest ) {
+export function recordOriginals( originalKeys, recordId, post = postRequest ) {
 	const glotPressUrl = `${ GP_BASE_URL }/api/translations/-record-originals`;
-	const originals = [ [ original, context ] ];
 	const postFormData = `record_id=${ encodeURIComponent( recordId ) }` +
-		`&originals=${ encodeURIComponent( JSON.stringify( originals ) ) }`;
+		`&originals=${ encodeURIComponent( JSON.stringify( originalKeys ) ) }`;
 
 	return post( glotPressUrl, postFormData )
 		.catch( ( err ) => console.log( 'recordOriginals failed:', err ) );
