@@ -12,6 +12,7 @@
 	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 
+	// @TODO apply this styling for the simple free sites as well
 	.is-jetpack-free & {
 		@include breakpoint( '>800px' ) {
 			display: flex;

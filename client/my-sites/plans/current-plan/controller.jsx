@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
+import { isEnabled } from 'config';
 
 /**
  * Internal Dependencies
@@ -23,7 +24,7 @@ export function currentPlan( context, next ) {
 		return null;
 	}
 
-	if ( isFreePlan( selectedSite.plan ) ) {
+	if ( isFreePlan( selectedSite.plan ) && ! isEnabled( 'onboarding-checklist/phase2--my-plan' ) ) {
 		page.redirect( `/plans/${ selectedSite.slug }` );
 
 		return null;

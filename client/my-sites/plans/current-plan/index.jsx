@@ -40,6 +40,8 @@ import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYouCard from './current-plan-thank-you-card/paid-plan-thank-you-card';
 import FreePlanThankYouCard from './current-plan-thank-you-card/free-plan-thank-you-card';
+import QuerySiteChecklist from 'components/data/query-site-checklist';
+import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 
 /**
  * Style dependencies
@@ -89,6 +91,36 @@ class CurrentPlan extends Component {
 		};
 	}
 
+	renderChecklist() {
+		const { isJetpack, selectedSiteId, showJetpackChecklist, showThankYou } = this.props;
+
+		if ( ! isJetpack /* && abtest(..) === ''*/ ) {
+			return (
+				<>
+					{ selectedSiteId && <QuerySiteChecklist siteId={ selectedSiteId } /> }
+					<WpcomChecklist updateCompletion={ () => {} } />
+				</>
+			);
+		}
+
+		if ( showJetpackChecklist ) {
+			return (
+				<Fragment>
+					<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+					{ showThankYou ? (
+						<FeatureExample role="presentation">
+							<JetpackChecklist />
+						</FeatureExample>
+					) : (
+						<JetpackChecklist />
+					) }
+				</Fragment>
+			);
+		}
+
+		return null;
+	}
+
 	render() {
 		const {
 			currentPlan,
@@ -100,7 +132,6 @@ class CurrentPlan extends Component {
 			selectedSite,
 			selectedSiteId,
 			shouldShowDomainWarnings,
-			showJetpackChecklist,
 			showThankYou,
 			translate,
 		} = this.props;
@@ -163,18 +194,7 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				{ showJetpackChecklist && (
-					<Fragment>
-						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-						{ showThankYou ? (
-							<FeatureExample role="presentation">
-								<JetpackChecklist />
-							</FeatureExample>
-						) : (
-							<JetpackChecklist />
-						) }
-					</Fragment>
-				) }
+				{ this.renderChecklist() }
 
 				{ ! showThankYou && (
 					<Fragment>

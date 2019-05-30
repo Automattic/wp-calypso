@@ -14,7 +14,7 @@ import { invoke } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import PlanIcon from 'components/plans/plan-icon';
-import { isFreeJetpackPlan } from 'lib/products-values';
+import { isFreePlan, isFreeJetpackPlan } from 'lib/products-values';
 import { managePurchase } from 'me/purchases/paths';
 
 export class CurrentPlanHeader extends Component {
@@ -31,7 +31,7 @@ export class CurrentPlanHeader extends Component {
 	renderPurchaseInfo() {
 		const { currentPlan, siteSlug, isExpiring, translate } = this.props;
 
-		if ( ! currentPlan || isFreeJetpackPlan( currentPlan ) ) {
+		if ( ! currentPlan || isFreeJetpackPlan( currentPlan ) || isFreePlan( currentPlan ) ) {
 			return null;
 		}
 
@@ -62,8 +62,20 @@ export class CurrentPlanHeader extends Component {
 		);
 	}
 
+	renderUpsell() {
+		const { currentPlan, siteSlug, translate } = this.props;
+
+		if ( currentPlan && ( isFreeJetpackPlan( currentPlan ) || isFreePlan( currentPlan ) ) ) {
+			return (
+				<div className="current-plan__compare-plans">
+					<Button href={ `/plans/${ siteSlug }` }>{ translate( 'Compare Plans' ) }</Button>
+				</div>
+			);
+		}
+	}
+
 	render() {
-		const { currentPlan, isPlaceholder, siteSlug, tagLine, title, translate } = this.props;
+		const { currentPlan, isPlaceholder, tagLine, title } = this.props;
 
 		const currentPlanSlug = currentPlan && currentPlan.productSlug;
 
@@ -97,11 +109,7 @@ export class CurrentPlanHeader extends Component {
 						</div>
 					</div>
 					{ this.renderPurchaseInfo() }
-					{ currentPlan && isFreeJetpackPlan( currentPlan ) && siteSlug && (
-						<div className="current-plan__compare-plans">
-							<Button href={ `/plans/${ siteSlug }` }>{ translate( 'Compare Plans' ) }</Button>
-						</div>
-					) }
+					{ this.renderUpsell() }
 				</div>
 			</div>
 		);
