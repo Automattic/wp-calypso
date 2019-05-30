@@ -43,7 +43,16 @@ export default function() {
 	page( '/settings/:importOrExport(import|export)/:subroute(.*)', context => {
 		const importOrExport = get( context, 'params.importOrExport' );
 		const subroute = get( context, 'params.subroute' );
-		const redirectPath = subroute ? `/${ importOrExport }/${ subroute }` : `/${ importOrExport }`;
+		const queryString = get( context, 'querystring' );
+		let redirectPath = `/${ importOrExport }`;
+
+		if ( subroute ) {
+			redirectPath += `/${ subroute }`;
+		}
+
+		if ( queryString ) {
+			redirectPath += `?${ queryString }`;
+		}
 
 		return page.redirect( redirectPath );
 	} );
