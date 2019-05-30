@@ -14,7 +14,7 @@ import { isExpiring } from 'lib/purchases';
 import { disableAutoRenew, enableAutoRenew } from 'lib/upgrades/actions';
 import { isFetchingSitePurchases } from 'state/purchases/selectors';
 import { fetchSitePurchases } from 'state/purchases/actions';
-import DisablingDialog from './disabling-dialog';
+import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import FormToggle from 'components/forms/form-toggle';
 
 class AutoRenewToggle extends Component {
@@ -31,14 +31,14 @@ class AutoRenewToggle extends Component {
 	};
 
 	state = {
-		showDisablingDialog: false,
+		showAutoRenewDisablingDialog: false,
 		isTogglingToward: null,
 		isRequesting: false,
 	};
 
-	onCloseDisablingDialog = () => {
+	onCloseAutoRenewDisablingDialog = () => {
 		this.setState( {
-			showDisablingDialog: false,
+			showAutoRenewDisablingDialog: false,
 		} );
 	};
 
@@ -50,7 +50,7 @@ class AutoRenewToggle extends Component {
 
 		if ( isEnabled ) {
 			this.setState( {
-				showDisablingDialog: true,
+				showAutoRenewDisablingDialog: true,
 			} );
 		}
 
@@ -93,12 +93,12 @@ class AutoRenewToggle extends Component {
 					disabled={ this.isUpdatingAutoRenew() }
 					onChange={ this.onToggleAutoRenew }
 				/>
-				{ this.state.showDisablingDialog && (
-					<DisablingDialog
+				{ this.state.showAutoRenewDisablingDialog && (
+					<AutoRenewDisablingDialog
 						planName={ planName }
 						siteDomain={ siteDomain }
 						expiryDate={ purchase.expiryMoment.format( 'LL' ) }
-						onClose={ this.onCloseDisablingDialog }
+						onClose={ this.onCloseAutoRenewDisablingDialog }
 					/>
 				) }
 			</>
