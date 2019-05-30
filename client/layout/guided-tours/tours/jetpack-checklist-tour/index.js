@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -21,7 +21,7 @@ export const JetpackChecklistTour = makeTour(
 			target={ '.checklist__header-main' }
 		>
 			{ ( { translate } ) => (
-				<Fragment>
+				<>
 					<p>
 						{ translate(
 							"This is your security checklist that'll help you quickly set up Jetpack. " +
@@ -31,7 +31,7 @@ export const JetpackChecklistTour = makeTour(
 					<ButtonRow>
 						<Next step="finish">{ translate( 'Got it' ) }</Next>
 					</ButtonRow>
-				</Fragment>
+				</>
 			) }
 		</Step>
 
@@ -45,7 +45,7 @@ export const JetpackChecklistTour = makeTour(
 			target="jetpack-checklist-wpadmin-link"
 		>
 			{ ( { translate } ) => (
-				<Fragment>
+				<>
 					<p>
 						{ translate(
 							"After you're done setting everything up, you can return to your WordPress " +
@@ -55,7 +55,7 @@ export const JetpackChecklistTour = makeTour(
 					<ButtonRow>
 						<Quit primary>{ translate( 'Got it' ) }</Quit>
 					</ButtonRow>
-				</Fragment>
+				</>
 			) }
 		</Step>
 	</Tour>
