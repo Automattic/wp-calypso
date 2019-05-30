@@ -69,6 +69,8 @@ body:not( .is-fullscreen-mode ) .page-template-modal {
 		padding: 2em;
 		border-radius: 4px;
 		cursor: pointer;
+		background: none;
+		appearance: none;
 
 		&:hover {
 			background: #f3f4f5;
