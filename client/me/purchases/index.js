@@ -53,14 +53,14 @@ export default function( router ) {
 	}
 
 	router(
-		paths.purchasesRoot + '/memberships',
+		paths.purchasesRoot + '/other',
 		sidebar,
 		membershipsController.myMemberships,
 		makeLayout,
 		clientRender
 	);
 	router(
-		paths.purchasesRoot + '/memberships/:subscriptionId',
+		paths.purchasesRoot + '/other/:subscriptionId',
 		sidebar,
 		membershipsController.subscription,
 		makeLayout,
