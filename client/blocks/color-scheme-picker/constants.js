@@ -56,5 +56,12 @@ export default function( translate ) {
 				cssClass: 'is-sunset',
 			},
 		},
+		{
+			label: translate( 'Midnight' ),
+			value: 'midnight',
+			thumbnail: {
+				cssClass: 'is-midnight',
+			},
+		},
 	] );
 }
