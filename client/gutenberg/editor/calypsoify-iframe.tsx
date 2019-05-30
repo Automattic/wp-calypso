@@ -85,8 +85,7 @@ enum EditorActions {
 	PreviewPost = 'previewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
-	OpenConversions = 'openConversions',
-	ConversionResponse = 'conversionResponse',
+	ConversionRequest = 'triggerConversionRequest',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -100,6 +99,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
 	iframePort: MessagePort | null = null;
+	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 
@@ -189,7 +189,8 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
 		}
 
-		if ( EditorActions.OpenConversions === action ) {
+		if ( EditorActions.ConversionRequest === action ) {
+			this.conversionPort = ports[ 0 ];
 			this.setState( { isConversionPromptVisible: true } );
 		}
 
@@ -364,17 +365,17 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
 
-	handleConversionResponse = ( confirmed: boolean ) => () => {
-		if ( ! ( this.state.isConversionPromptVisible && this.iframePort ) ) {
+	handleConversionResponse = ( confirmed: boolean ) => {
+		this.setState( { isConversionPromptVisible: false } );
+
+		if ( ! this.conversionPort ) {
 			return;
 		}
 
-		this.iframePort.postMessage( {
-			action: 'conversionResponse',
-			payload: { confirmed },
-		} );
+		this.conversionPort.postMessage( confirmed );
 
-		this.setState( { isConversionPromptVisible: false } );
+		this.conversionPort.close();
+		this.conversionPort = null;
 	};
 
 	getStatsPath = () => {
@@ -433,8 +434,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<ConvertToBlocksDialog
 					showDialog={ isConversionPromptVisible }
-					close={ this.handleConversionResponse( false ) }
-					confirmConversion={ this.handleConversionResponse( true ) }
+					handleResponse={ this.handleConversionResponse }
 				/>
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }

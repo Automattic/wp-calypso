@@ -18,59 +18,46 @@ import tinymce from 'tinymce/tinymce';
 import { inIframe, sendMessage } from './utils';
 
 /**
- * Monitors Gutenburg for when an editor is opened with content originally authored in the classic editor.
+ * Monitors Gutenberg for when an editor is opened with content originally authored in the classic editor.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function triggerConversionPrompt( calypsoPort ) {
-	function addConversionListener( classicBlock ) {
-		// Listen for user response
-		calypsoPort.addEventListener( 'message', onConversionResponse, false );
-		calypsoPort.start();
+	const { port1, port2 } = new MessageChannel();
 
-		function onConversionResponse( message ) {
-			const action = get( message, 'data.action' );
-			const payload = get( message, 'data.payload' );
+	const unsubscribe = subscribe( () => {
+		const currentPost = select( 'core/editor' ).getCurrentPost();
+		const initialized = currentPost && currentPost.id;
 
-			if ( action !== 'conversionResponse' ) {
+		if ( ! initialized ) {
+			return;
+		}
+
+		unsubscribe();
+
+		const blocks = select( 'core/editor' ).getBlocks();
+		const eligible = blocks.length === 1 && blocks[ 0 ].name === 'core/freeform';
+
+		if ( ! eligible ) {
+			return;
+		}
+
+		calypsoPort.postMessage( { action: 'triggerConversionRequest' }, [ port2 ] );
+
+		port1.onmessage = ( { data: confirmed } ) => {
+			port1.close();
+
+			if ( confirmed !== true ) {
 				return;
 			}
 
-			// Removing the listener regardless of which action was taken
-			calypsoPort.removeEventListener( 'message', onConversionResponse, false );
-
-			// Converting the block if the user selected the "Convert" button in the prompt
-			if ( payload.confirmed === true ) {
-				const unsubscribe = subscribe( () => {
-					dispatch( 'core/editor' ).replaceBlock(
-						classicBlock.clientId,
-						rawHandler( {
-							HTML: classicBlock.originalContent,
-						} )
-					);
-
-					unsubscribe();
-				} );
-			}
-		}
-	}
-
-	// Check if the prompt should open
-	const unsubscribe = subscribe( () => {
-		const { isEditedPostDirty } = select( 'core/editor' );
-		const blocks = select( 'core/editor' ).getBlocks();
-
-		// Open when: editor is not dirty and there is a single classic block
-		if ( ! isEditedPostDirty() && blocks.length === 1 && blocks[ 0 ].name === 'core/freeform' ) {
-			calypsoPort.postMessage( {
-				action: 'openConversions',
-			} );
-
-			// Setup a listener for user response
-			addConversionListener( blocks[ 0 ] );
-
-			unsubscribe();
-		}
+			dispatch( 'core/editor' ).replaceBlock(
+				blocks[ 0 ].clientId,
+				rawHandler( {
+					HTML: blocks[ 0 ].originalContent,
+				} )
+			);
+		};
 	} );
 }
 
