@@ -18,14 +18,24 @@ export default class NoticesComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.wpcom-site' ), null, config.get( 'explicitWaitMS' ) * 3 );
 	}
 
-	async isSuccessNoticeDisplayed( click = false ) {
-		const selector = By.css( '.notice.is-success' );
-		const actionSelector = By.css( '.notice.is-success a' );
+	async _isNoticeDisplayed( selector, actionSelector, click = false ) {
 		const isDisplayed = await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
 		if ( click === true ) {
 			await driverHelper.clickWhenClickable( this.driver, actionSelector );
 		}
 		return isDisplayed;
+	}
+
+	async isSuccessNoticeDisplayed( click = false ) {
+		const selector = By.css( '.notice.is-success' );
+		const actionSelector = By.css( '.notice.is-success a' );
+		return await this._isNoticeDisplayed( selector, actionSelector, click );
+	}
+
+	async isNoticeDisplayed( click = false ) {
+		const selector = By.css( '.notice' );
+		const actionSelector = By.css( '.notice a' );
+		return await this._isNoticeDisplayed( selector, actionSelector, click );
 	}
 
 	async isErrorNoticeDisplayed() {
@@ -43,18 +53,5 @@ export default class NoticesComponent extends AsyncBaseContainer {
 		const selector = By.css( '.notice.is-dismissable .notice__dismiss' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
-	}
-
-	async isNoticeDisplayed( click = false ) {
-		const noticeSelector = By.css( '.notice' );
-		const actionSelector = By.css( '.notice a' );
-		const isDisplayed = await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			noticeSelector
-		);
-		if ( click === true ) {
-			await driverHelper.clickWhenClickable( this.driver, actionSelector );
-		}
-		return isDisplayed;
 	}
 }
