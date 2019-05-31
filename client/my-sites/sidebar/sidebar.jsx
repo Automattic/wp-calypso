@@ -512,7 +512,7 @@ export class MySitesSidebar extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className="wp-admin">
-				<ExternalLink href={ adminUrl } icon onClick={ this.trackWpadminClick }>
+				<ExternalLink href={ adminUrl } onClick={ this.trackWpadminClick }>
 					<Gridicon icon="my-sites" size={ 24 } />
 					<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
 				</ExternalLink>
