@@ -22,7 +22,6 @@ import { getStepUrl } from 'signup/utils';
 import StepWrapper from 'signup/step-wrapper';
 import { cartItems } from 'lib/cart-values';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { getSurveyVertical } from 'state/signup/steps/survey/selectors.js';
 import { getUsernameSuggestion } from 'lib/signup/step-actions';
 import {
 	recordAddDomainButtonClick,
@@ -42,6 +41,7 @@ import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { getSite } from 'state/sites/selectors';
+import { getVerticalForDomainSuggestions } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
@@ -65,6 +65,7 @@ class DomainsStep extends React.Component {
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
+		vertical: PropTypes.string,
 	};
 
 	static contextTypes = {
@@ -409,13 +410,13 @@ class DomainsStep extends React.Component {
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
-				surveyVertical={ this.props.surveyVertical }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 				selectedSite={ this.props.selectedSite }
 				showSkipButton={ this.props.showSkipButton }
+				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
 			/>
 		);
@@ -679,9 +680,9 @@ export default connect(
 			productsList,
 			productsLoaded,
 			siteGoals: getSiteGoals( state ),
-			surveyVertical: getSurveyVertical( state ),
-			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			siteType: getSiteType( state ),
+			vertical: getVerticalForDomainSuggestions( state ),
+			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 		};
 	},
 	{

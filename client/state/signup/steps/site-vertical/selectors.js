@@ -11,6 +11,7 @@ import { get, find } from 'lodash';
  */
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getVerticals } from 'state/signup/verticals/selectors';
+import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 
 export function getSiteVerticalName( state ) {
 	return get( state, 'signup.steps.siteVertical.name', '' );
@@ -60,4 +61,10 @@ export function getSiteVerticalSlug( state ) {
 
 export function getSiteVerticalIsUserInput( state ) {
 	return get( state, 'signup.steps.siteVertical.isUserInput', true );
+}
+
+// Used to fill `vertical` param to pass to to `/domains/suggestions`
+// client/signup/steps/domains/index.jsx
+export function getVerticalForDomainSuggestions( state ) {
+	return getSiteVerticalId( state ) || getSurveyVertical( state );
 }
