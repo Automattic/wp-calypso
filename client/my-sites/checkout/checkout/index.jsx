@@ -67,6 +67,7 @@ import {
 	setDomainDetails,
 } from 'lib/upgrades/actions';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isEligibleForCheckoutToChecklist from 'state/selectors/is-eligible-for-checkout-to-checklist';
@@ -367,7 +368,7 @@ export class Checkout extends React.Component {
 		return domainsForGSuite;
 	}
 
-	maybeShowPlanUpgradeABTest() {
+	maybeShowPlanUpgradeABTest( receiptId ) {
 		const { cart, selectedSite, selectedSiteSlug } = this.props;
 		const isSiteOnFreePlan = get( selectedSite, 'plan.is_free' );
 
@@ -377,15 +378,32 @@ export class Checkout extends React.Component {
 			if ( cartItems.hasBloggerPlan( cart ) || cartItems.hasPersonalPlan( cart ) ) {
 				if ( 'variantShowNudge' === abtest( 'showPlanUpsellNudge' ) ) {
 					return cartItems.hasBloggerPlan( cart )
-						? `/checkout/${ selectedSiteSlug }/add-plan-upgrade/personal`
-						: `/checkout/${ selectedSiteSlug }/add-plan-upgrade/premium`;
+						? `/checkout/${ selectedSiteSlug }/add-plan-upgrade/personal/${ receiptId }`
+						: `/checkout/${ selectedSiteSlug }/add-plan-upgrade/premium/${ receiptId }`;
 				}
 			}
 		}
 		return;
 	}
 
-	getCheckoutCompleteRedirectPath = () => {
+	isNudgeSkipEligibleForChecklist( isRedirectedFrom, receiptId ) {
+		// If the user is coming from these pages (example: they clicked the `Skip` button on the Concierge upsell nudge),
+		// then verify if they qualify for the Checklist page.
+		const sourcePages = [ 'plan-upgrade-nudge' ];
+
+		if (
+			sourcePages.includes( isRedirectedFrom ) &&
+			this.props.isNewlyCreatedSite &&
+			this.props.isEligibleForDotcomChecklist &&
+			receiptId
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	getCheckoutCompleteRedirectPath = ( isRedirectedFrom, previousReceiptId ) => {
 		// TODO: Cleanup and simplify this function.
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
 		// Especially around the G Suite / Concierge / Checklist logic.
@@ -488,7 +506,7 @@ export class Checkout extends React.Component {
 					}
 
 					return (
-						this.maybeShowPlanUpgradeABTest() ||
+						this.maybeShowPlanUpgradeABTest( receiptId ) ||
 						`/checkout/${ selectedSiteSlug }/with-gsuite/${
 							domainsForGSuite[ 0 ].meta
 						}/${ receiptId }`
@@ -497,7 +515,7 @@ export class Checkout extends React.Component {
 			}
 		}
 
-		const upgradePath = this.maybeShowPlanUpgradeABTest();
+		const upgradePath = this.maybeShowPlanUpgradeABTest( receiptId );
 		if ( upgradePath ) {
 			return upgradePath;
 		}
@@ -507,9 +525,12 @@ export class Checkout extends React.Component {
 		// There's an additional test above that tests directly aginst the G Suite upsell
 		if (
 			config.isEnabled( 'upsell/concierge-session' ) &&
-			! hasConciergeSession( cart ) &&
-			! hasJetpackPlan( cart ) &&
-			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) )
+			! cartItems.hasConciergeSession( cart ) &&
+			! cartItems.hasJetpackPlan( cart ) &&
+			( cartItems.hasBloggerPlan( cart ) ||
+				cartItems.hasPersonalPlan( cart ) ||
+				cartItems.hasPremiumPlan( cart ) ||
+				[ 'plan-upgrade-nudge' ].includes( isRedirectedFrom ) )
 		) {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
@@ -534,6 +555,10 @@ export class Checkout extends React.Component {
 			return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
 		}
 
+		if ( ! receiptId ) {
+			return `/stats/day/${ selectedSiteSlug }`;
+		}
+
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
 			? `/checkout/thank-you/features/${
 					this.props.selectedFeature
@@ -545,7 +570,7 @@ export class Checkout extends React.Component {
 		window.location.href = redirectUrl;
 	}
 
-	handleCheckoutCompleteRedirect = () => {
+	handleCheckoutCompleteRedirect = ( isRedirectedFrom, previousReceiptId ) => {
 		let product, purchasedProducts, renewalItem;
 
 		const {
@@ -556,7 +581,10 @@ export class Checkout extends React.Component {
 			transaction: { step: { data: receipt = null } = {} } = {},
 			translate,
 		} = this.props;
-		const redirectPath = this.getCheckoutCompleteRedirectPath();
+		const redirectPath = this.getCheckoutCompleteRedirectPath(
+			isRedirectedFrom,
+			previousReceiptId
+		);
 
 		this.props.clearPurchases();
 
@@ -861,6 +889,7 @@ export default connect(
 				selectedSiteId,
 				props.cart
 			),
+			isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, selectedSiteId ),
 			productsList: getProductsList( state ),
 			isProductsListFetching: isProductsListFetching( state ),
 			isPlansListFetching: isRequestingPlans( state ),

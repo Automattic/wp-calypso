@@ -23,8 +23,6 @@ import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 import { addItem } from 'lib/upgrades/actions';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
-import { siteQualifiesForPageBuilder } from 'lib/signup/page-builder';
-import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -50,10 +48,12 @@ export class PlanUpgradeNudge extends React.Component {
 	};
 
 	handleClickDecline = () => {
-		const { trackUpsellButtonClick } = this.props;
+		const { trackUpsellButtonClick, receiptId } = this.props;
+		const isRedirectedFrom = 'plan-upgrade-nudge';
 
 		trackUpsellButtonClick( 'decline' );
-		this.props.handleClickDecline();
+
+		this.props.handleClickDecline( isRedirectedFrom, receiptId );
 	};
 
 	handleClickAccept = () => {
@@ -301,8 +301,6 @@ export default connect(
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
 			siteSlug: getSiteSlug( state, selectedSiteId ),
-			isEligibleForChecklist: isEligibleForDotcomChecklist( state, selectedSiteId ),
-			redirectToPageBuilder: siteQualifiesForPageBuilder( state, selectedSiteId ),
 			productCost: getProductCost( state, 'concierge-session' ),
 			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
