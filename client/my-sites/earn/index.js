@@ -13,7 +13,16 @@ import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	page( '/earn', siteSelection, sites, makeLayout, clientRender );
-	page( '/earn/memberships', siteSelection, sites, makeLayout, clientRender );
+	page( '/earn/payments', siteSelection, sites, makeLayout, clientRender );
+	// This is legacy, we are leaving it here because it may have been public
+	page(
+		'/earn/memberships/:site_id',
+		( { params } ) => page.redirect( '/earn/payments/' + params.site_id ),
+		makeLayout,
+		clientRender
+	);
+	page( '/earn/memberships', () => page.redirect( '/earn/payments' ), makeLayout, clientRender );
+
 	page( '/earn/ads-settings', siteSelection, sites, makeLayout, clientRender );
 	page( '/earn/ads-earnings', siteSelection, sites, makeLayout, clientRender );
 	page( '/earn/:site_id', earnController.redirectToAdsEarnings, makeLayout, clientRender );

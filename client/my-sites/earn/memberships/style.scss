@@ -196,3 +196,16 @@
 	color: var( --color-text-subtle );
 	font-size: 14px;
 }
+.memberships__earnings-breakdown-notes {
+	clear: both;
+	color: var( --color-neutral-300 );
+	padding-bottom: 12px;
+	padding-top: 24px;
+	font-size: 12px;
+	line-height: 1.6;
+	font-style: italic;
+	text-align: center;
+}
+.memberships__earnings-breakdown-notes em {
+	font-weight: bold;
+}

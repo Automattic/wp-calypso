@@ -11,6 +11,7 @@ import {
 	getSiteVerticalPreview,
 	getSiteVerticalParentId,
 	getSiteVerticalData,
+	getVerticalForDomainSuggestions,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -43,6 +44,11 @@ describe( 'selectors', () => {
 					slug: 'happy',
 					isUserInput: false,
 					parentId: 'gluecklich',
+				},
+				survey: {
+					vertical: 'test-survey',
+					otherText: 'test-other-text',
+					siteType: 'test-site-type',
 				},
 			},
 			verticals,
@@ -124,6 +130,32 @@ describe( 'selectors', () => {
 
 		test( 'should return direct match', () => {
 			expect( getSiteVerticalData( state ) ).toEqual( verticals.business.felice[ 0 ] );
+		} );
+	} );
+
+	describe( 'getVerticalForDomainSuggestions', () => {
+		test( 'should return empty string as a default state', () => {
+			expect( getVerticalForDomainSuggestions( { signup: undefined } ) ).toEqual( '' );
+		} );
+
+		test( 'should return vertical id first', () => {
+			expect( getVerticalForDomainSuggestions( state ) ).toEqual( 'p4u' );
+		} );
+
+		test( 'should return survey vertical if vertical id not available', () => {
+			expect(
+				getVerticalForDomainSuggestions( {
+					signup: {
+						steps: {
+							survey: {
+								vertical: 'test-survey',
+								otherText: 'test-other-text',
+								siteType: 'test-site-type',
+							},
+						},
+					},
+				} )
+			).toEqual( 'test-survey' );
 		} );
 	} );
 } );

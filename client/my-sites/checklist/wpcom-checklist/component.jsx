@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { find, get, some, includes, forEach } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -72,7 +73,6 @@ class WpcomChecklistComponent extends PureComponent {
 			address_picked: this.renderAddressPickedTask,
 			blogname_set: this.renderBlogNameSetTask,
 			site_icon_set: this.renderSiteIconSetTask,
-			site_logo_set: this.renderSiteLogoSetTask,
 			blogdescription_set: this.renderBlogDescriptionSetTask,
 			avatar_uploaded: this.renderAvatarUploadedTask,
 			contact_page_updated: this.renderContactPageUpdatedTask,
@@ -256,6 +256,7 @@ class WpcomChecklistComponent extends PureComponent {
 
 	render() {
 		const {
+			phase2,
 			siteId,
 			taskStatuses,
 			taskUrls,
@@ -306,6 +307,7 @@ class WpcomChecklistComponent extends PureComponent {
 					setStoredTask={ setStoredTask }
 					storedTask={ storedTask }
 					taskList={ taskList }
+					phase2={ phase2 }
 				>
 					{ taskList.getAll().map( task => this.renderTask( task ) ) }
 				</ChecklistComponent>
@@ -454,27 +456,6 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Upload a site icon' ) }
-			/>
-		);
-	};
-
-	renderSiteLogoSetTask = ( TaskComponent, baseProps, task ) => {
-		const { translate, siteSlug } = this.props;
-
-		return (
-			<TaskComponent
-				{ ...baseProps }
-				bannerImageSrc="/calypso/images/stats/tasks/upload-icon.svg"
-				completedButtonText={ translate( 'Change' ) }
-				completedTitle={ translate( 'You uploaded a logo' ) }
-				description={ translate( 'Help people recognize your brand!' ) }
-				duration={ translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ) }
-				onClick={ this.handleTaskStart( {
-					task,
-					url: `/customize/identity/${ siteSlug }`,
-				} ) }
-				onDismiss={ this.handleTaskDismiss( task.id ) }
-				title={ translate( 'Upload your logo' ) }
 			/>
 		);
 	};
@@ -1048,6 +1029,7 @@ export default connect(
 
 		return {
 			designType: getSiteOption( state, siteId, 'design_type' ),
+			phase2: !! ( isEnabled( 'onboarding-checklist/phase2' ) && get( siteChecklist, 'phase2' ) ),
 			siteId,
 			siteSlug,
 			siteSegment: get( siteChecklist, 'segment' ),

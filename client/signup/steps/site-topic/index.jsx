@@ -42,22 +42,11 @@ class SiteTopicStep extends Component {
 		} );
 	}
 
-	getTextFromSiteType() {
-		// once we have more granular copies per segments, these should only be used for the default case.
+	render() {
 		const headerText =
 			getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicHeader' ) || '';
-		const commonSubHeaderText = this.props.translate(
-			'This information helps us build the best site for your needs.'
-		);
-
-		return {
-			headerText,
-			commonSubHeaderText,
-		};
-	}
-
-	render() {
-		const { headerText, commonSubHeaderText } = this.getTextFromSiteType();
+		const subHeaderText =
+			getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicSubheader' ) || '';
 
 		return (
 			<div>
@@ -67,8 +56,8 @@ class SiteTopicStep extends Component {
 					positionInFlow={ this.props.positionInFlow }
 					headerText={ headerText }
 					fallbackHeaderText={ headerText }
-					subHeaderText={ commonSubHeaderText }
-					fallbackSubHeaderText={ commonSubHeaderText }
+					subHeaderText={ subHeaderText }
+					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
 					stepContent={ <SiteTopicForm submitForm={ this.props.submitSiteTopic } /> }
 					showSiteMockups={ this.props.showSiteMockups }

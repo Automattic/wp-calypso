@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, memoize, omit, pick, isBoolean } from 'lodash';
+import { get, isBoolean, memoize, omit, pick, size } from 'lodash';
 import debugModule from 'debug';
 import config from 'config';
 
@@ -11,11 +11,23 @@ import config from 'config';
  */
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { getVerticalTaskList } from './vertical-task-list';
-import { abtest } from 'lib/abtest';
 
 const debug = debugModule( 'calypso:wpcom-task-list' );
 
-function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, siteVerticals } ) {
+function getTasks( {
+	designType,
+	isSiteUnlaunched,
+	phase2,
+	siteSegment,
+	siteVerticals,
+	taskStatuses,
+} ) {
+	// The getTasks function can be removed when we make a full switch to "phase 2"
+	if ( phase2 && size( taskStatuses ) ) {
+		// Use the server response, Luke
+		return taskStatuses;
+	}
+
 	const tasks = [];
 	const segmentSlug = getSiteTypePropertyValue( 'id', siteSegment, 'slug' );
 
@@ -54,14 +66,7 @@ function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, si
 			addTask( 'post_published' );
 		}
 
-		// If there is a site segment and
-		// the user has already completed the logo task or
-		// if it's the AB variant
-		if ( hasTask( 'site_logo_set' ) && segmentSlug && 'logo' === abtest( 'checklistSiteLogo' ) ) {
-			addTask( 'site_logo_set' );
-		} else {
-			addTask( 'site_icon_set' );
-		}
+		addTask( 'site_icon_set' );
 	}
 
 	addTask( 'custom_domain_registered' );

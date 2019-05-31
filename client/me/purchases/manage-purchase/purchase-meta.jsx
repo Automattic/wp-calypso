@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -28,7 +28,6 @@ import {
 	isSubscription,
 	paymentLogoType,
 } from 'lib/purchases';
-import { disableAutoRenew, enableAutoRenew } from 'lib/upgrades/actions';
 import {
 	isPlan,
 	isDomainRegistration,
@@ -37,17 +36,11 @@ import {
 } from 'lib/products-values';
 import { getPlan } from 'lib/plans';
 
-import {
-	getByPurchaseId,
-	hasLoadedUserPurchasesFromServer,
-	isFetchingSitePurchases,
-} from 'state/purchases/selectors';
-import { fetchSitePurchases } from 'state/purchases/actions';
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
-import AutorenewalDisablingDialog from './autorenewal-disabling-dialog';
-import FormToggle from 'components/forms/form-toggle';
+import AutoRenewToggle from './auto-renew-toggle';
 import PaymentLogo from 'components/payment-logo';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
@@ -68,12 +61,6 @@ class PurchaseMeta extends Component {
 		hasLoadedSites: false,
 		hasLoadedUserPurchasesFromServer: false,
 		purchaseId: false,
-	};
-
-	state = {
-		...( config.isEnabled( 'autorenewal-toggle' ) && {
-			isAutorenewalEnabled: false,
-		} ),
 	};
 
 	renderPrice() {
@@ -224,10 +211,10 @@ class PurchaseMeta extends Component {
 			}
 
 			return (
-				<Fragment>
+				<>
 					<PaymentLogo type={ paymentLogoType( purchase ) } />
 					{ paymentInfo }
-				</Fragment>
+				</>
 			);
 		}
 
@@ -307,55 +294,8 @@ class PurchaseMeta extends Component {
 		);
 	}
 
-	onCloseAutorenewalDisablingDialog = () => {
-		this.setState( {
-			showAutorenewalDisablingDialog: false,
-		} );
-	};
-
-	onToggleAutorenewal = () => {
-		const {
-			purchase: { id: purchaseId, siteId },
-			isAutorenewalEnabled,
-		} = this.props;
-
-		if ( isAutorenewalEnabled ) {
-			this.setState( {
-				showAutorenewalDisablingDialog: true,
-			} );
-		}
-
-		const updateAutoRenew = isAutorenewalEnabled ? disableAutoRenew : enableAutoRenew;
-
-		this.setState( {
-			isTogglingToward: ! isAutorenewalEnabled,
-			isRequestingAutoRenew: true,
-		} );
-
-		updateAutoRenew( purchaseId, success => {
-			this.setState( {
-				isRequestingAutoRenew: false,
-			} );
-			if ( success ) {
-				this.props.fetchSitePurchases( siteId );
-			}
-		} );
-	};
-
-	isUpdatingAutoRenew = () => {
-		return this.state.isRequestingAutoRenew || this.props.fetchingSitePurchases;
-	};
-
-	getToggleUiStatus() {
-		if ( this.isUpdatingAutoRenew() ) {
-			return this.state.isTogglingToward;
-		}
-
-		return this.props.isAutorenewalEnabled;
-	}
-
 	renderExpiration() {
-		const { purchase, translate, isAutorenewalEnabled } = this.props;
+		const { purchase, site, translate, isAutorenewalEnabled } = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
@@ -397,10 +337,10 @@ class PurchaseMeta extends Component {
 					<span className="manage-purchase__detail">{ subsRenewText }</span>
 					<span className="manage-purchase__detail">{ subsBillingText }</span>
 					<span className="manage-purchase__detail">
-						<FormToggle
-							checked={ this.getToggleUiStatus() }
-							disabled={ this.isUpdatingAutoRenew() }
-							onChange={ this.onToggleAutorenewal }
+						<AutoRenewToggle
+							planName={ site.plan.product_name_short }
+							siteDomain={ site.domain }
+							purchase={ purchase }
 						/>
 					</span>
 				</li>
@@ -429,14 +369,14 @@ class PurchaseMeta extends Component {
 	}
 
 	render() {
-		const { translate, purchaseId, purchase, site } = this.props;
+		const { translate, purchaseId } = this.props;
 
 		if ( isDataLoading( this.props ) || ! purchaseId ) {
 			return this.renderPlaceholder();
 		}
 
 		return (
-			<Fragment>
+			<>
 				<ul className="manage-purchase__meta">
 					{ this.renderOwner() }
 					<li>
@@ -447,34 +387,20 @@ class PurchaseMeta extends Component {
 					{ this.renderPaymentDetails() }
 				</ul>
 				{ this.renderContactSupportToRenewMessage() }
-				{ config.isEnabled( 'autorenewal-toggle' ) && this.state.showAutorenewalDisablingDialog && (
-					<AutorenewalDisablingDialog
-						planName={ site.plan.product_name_short }
-						siteDomain={ site.domain }
-						expiryDate={ purchase.expiryMoment.format( 'LL' ) }
-						onClose={ this.onCloseAutorenewalDisablingDialog }
-					/>
-				) }
-			</Fragment>
+			</>
 		);
 	}
 }
 
-export default connect(
-	( state, { purchaseId } ) => {
-		const purchase = getByPurchaseId( state, purchaseId );
+export default connect( ( state, { purchaseId } ) => {
+	const purchase = getByPurchaseId( state, purchaseId );
 
-		return {
-			hasLoadedSites: ! isRequestingSites( state ),
-			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-			fetchingSitePurchases: isFetchingSitePurchases( state ),
-			purchase,
-			site: purchase ? getSite( state, purchase.siteId ) : null,
-			owner: purchase ? getUser( state, purchase.userId ) : null,
-			isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
-		};
-	},
-	{
-		fetchSitePurchases,
-	}
-)( localize( PurchaseMeta ) );
+	return {
+		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		purchase,
+		site: purchase ? getSite( state, purchase.siteId ) : null,
+		owner: purchase ? getUser( state, purchase.userId ) : null,
+		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
+	};
+} )( localize( PurchaseMeta ) );

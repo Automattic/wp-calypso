@@ -88,14 +88,6 @@ export default {
 		},
 		defaultVariation: 'originalFlavor',
 	},
-	gSuitePostCheckoutNotice: {
-		datestamp: '20190211',
-		variations: {
-			original: 50,
-			enhanced: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pluginFeaturedTitle: {
 		datestamp: '20190220',
 		variations: {
@@ -119,16 +111,6 @@ export default {
 			original: 50,
 		},
 		defaultVariation: 'original',
-	},
-	checklistSiteLogo: {
-		datestamp: '20190305',
-		variations: {
-			icon: 50,
-			logo: 50,
-		},
-		defaultVariation: 'icon',
-		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 	builderReferralHelpBanner: {
 		datestamp: '20190304',

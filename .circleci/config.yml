@@ -672,13 +672,13 @@ workflows:
           requires:
             - wait-calypso-live
           test-flags: '-C -S $CIRCLE_SHA1'
-      - test-e2e-canary:
-          name: test-e2e-canary-ie
-          requires:
-            - wait-calypso-live
-          test-flags: '-z -S $CIRCLE_SHA1'
-          test-target: 'IE11'
-          slack-webhook: '$SLACK_IE'
+#      - test-e2e-canary:
+#          name: test-e2e-canary-ie
+#          requires:
+#            - wait-calypso-live
+#          test-flags: '-z -S $CIRCLE_SHA1'
+#          test-target: 'IE11'
+#          slack-webhook: '$SLACK_IE'
       - test-e2e-canary:
           name: test-e2e-canary-safari
           requires:
@@ -747,7 +747,7 @@ workflows:
           slack-webhook: '$SLACK_WOO'
     triggers:
       - schedule:
-          cron: '0 12,20 * * *'
+          cron: '0 12 * * *'
           filters:
             branches:
               only: master

@@ -11,8 +11,9 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Dialog from 'components/dialog';
+import './style.scss';
 
-class AutorenewalDisablingDialog extends Component {
+class AutoRenewDisablingDialog extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 		planName: PropTypes.string.isRequired,
@@ -43,10 +44,10 @@ class AutorenewalDisablingDialog extends Component {
 		return (
 			<Dialog
 				isVisible={ true }
-				additionalClassNames="autorenewal-disabling-dialog"
+				additionalClassNames="auto-renew-disabling-dialog"
 				onClose={ onClose }
 			>
-				<h2 className="autorenewal-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
+				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
 				<p>{ description }</p>
 				<Button onClick={ onClose } primary>
 					{ translate( 'OK' ) }
@@ -56,4 +57,4 @@ class AutorenewalDisablingDialog extends Component {
 	}
 }
 
-export default localize( AutorenewalDisablingDialog );
+export default localize( AutoRenewDisablingDialog );

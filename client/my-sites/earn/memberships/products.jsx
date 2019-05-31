@@ -204,14 +204,15 @@ class MembershipsProductsSection extends Component {
 			>
 				<FormSectionHeading>
 					{ this.state.editedProductId && this.props.translate( 'Edit' ) }
-					{ ! this.state.editedProductId && this.props.translate( 'Add New Membership Amount' ) }
+					{ ! this.state.editedProductId &&
+						this.props.translate( 'Add New Recurring Payment plan' ) }
 				</FormSectionHeading>
 				<p>
 					{ this.state.editedProductId &&
-						this.props.translate( 'Edit your existing membership button.' ) }
+						this.props.translate( 'Edit your existing Recurring Payments plan.' ) }
 					{ ! this.state.editedProductId &&
 						this.props.translate(
-							'Each amount you add will create a separate membership button. You can create multiple buttons.'
+							'Each amount you add will create a separate Recurring Payments plan. You can create multiple plans.'
 						) }
 				</p>
 				<FormFieldset>
@@ -278,14 +279,14 @@ class MembershipsProductsSection extends Component {
 		return (
 			<div>
 				<QueryMembershipProducts siteId={ this.props.siteId } />
-				<HeaderCake backHref={ '/earn/memberships/' + this.props.siteSlug }>
-					{ this.props.translate( 'Membership Amounts' ) }
+				<HeaderCake backHref={ '/earn/payments/' + this.props.siteSlug }>
+					{ this.props.translate( 'Recurring Payments plans' ) }
 				</HeaderCake>
 				{ this.renderEditDialog() }
 
 				<SectionHeader>
 					<Button primary compact onClick={ () => this.openProductDialog( null ) }>
-						{ this.props.translate( 'Add new amount' ) }
+						{ this.props.translate( 'Add new plan' ) }
 					</Button>
 				</SectionHeader>
 				{ this.props.products.map( product => (

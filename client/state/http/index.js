@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import superagent from 'superagent';
+import { fromPairs } from 'lodash';
 
 /***
  * Internal dependencies
@@ -29,14 +26,14 @@ const isAllHeadersValid = headers =>
  * {Array<Array<String>>} headers array of [ 'key', 'value' ] pairs for the request headers
  * {Array<Array<String>>} queryParams array of [ 'key', 'value' ] pairs for the queryParams headers
  * {Object} body data send as body
- * {Boolean} withCredentials allows the remote server to view & set cookies (for it's domain)
+ * {Boolean} withCredentials allows the remote server to view & set cookies (for its domain)
  * {Action} onSuccess action to dispatch on success with data meta
  * {Action} onFailure action to dispatch on failure with error meta
  *
  * @param {Function} dispatch redux store dispatch
  * @param {Object} action dispatched action we need to handle
  */
-export const httpHandler = ( { dispatch }, action ) => {
+export const httpHandler = async ( { dispatch }, action ) => {
 	const {
 		url,
 		method,
@@ -54,11 +51,8 @@ export const httpHandler = ( { dispatch }, action ) => {
 		return;
 	}
 
-	const request = superagent( method, url );
-
-	if ( withCredentials ) {
-		request.withCredentials();
-	}
+	const fetchHeaders = fromPairs( headers );
+	fetchHeaders.Accept = 'application/json';
 
 	const queryString = queryParams
 		.map(
@@ -67,22 +61,25 @@ export const httpHandler = ( { dispatch }, action ) => {
 		)
 		.join( '&' );
 
-	if ( queryString.length > 0 ) {
-		request.query( queryString );
+	let response, json;
+	try {
+		response = await fetch( queryString.length ? `${ url }?${ queryString }` : url, {
+			method,
+			headers: fetchHeaders,
+			body,
+			credentials: withCredentials ? 'include' : 'same-origin',
+		} );
+		json = await response.json();
+	} catch ( error ) {
+		dispatch( extendAction( onFailure, failureMeta( error ) ) );
+		return;
 	}
 
-	headers.forEach( ( [ headerKey, headerValue ] ) => request.set( headerKey, headerValue ) );
-
-	request.accept( 'application/json' );
-
-	if ( body ) {
-		request.send( body );
+	if ( response.ok ) {
+		dispatch( extendAction( onSuccess, successMeta( { body: json } ) ) );
+	} else {
+		dispatch( extendAction( onFailure, failureMeta( { response: { body: json } } ) ) );
 	}
-
-	request.then(
-		data => dispatch( extendAction( onSuccess, successMeta( data ) ) ),
-		error => dispatch( extendAction( onFailure, failureMeta( error ) ) )
-	);
 };
 
 export default {

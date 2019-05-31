@@ -11,11 +11,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isWordadsInstantActivationEligible, 
-		canUpgradeToUseWordAds, 
-		canAccessEarnSection 
+import {
+	isWordadsInstantActivationEligible,
+	canUpgradeToUseWordAds,
+	canAccessEarnSection,
 } from 'lib/ads/utils';
-import { isPremium, isBusiness } from 'lib/products-values';
+import { isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
 import Card from 'components/card';
@@ -198,7 +199,6 @@ class AdsWrapper extends Component {
 		);
 	}
 
-
 	renderjetpackUpsell() {
 		const { translate } = this.props;
 		return (
@@ -219,7 +219,9 @@ class AdsWrapper extends Component {
 
 	render() {
 		const { site, translate } = this.props;
-		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
+		const jetpackPremium =
+			site.jetpack &&
+			( isPremium( site.plan ) || isBusiness( site.plan ) || isEcommerce( site.plan ) );
 
 		if ( ! canAccessEarnSection( site ) ) {
 			return null;
@@ -236,7 +238,7 @@ class AdsWrapper extends Component {
 			);
 		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
 			component = this.renderInstantActivationToggle( component );
-		} else if ( canUpgradeToUseWordAds( site ) && site.jetpack  && ! jetpackPremium ) {
+		} else if ( canUpgradeToUseWordAds( site ) && site.jetpack && ! jetpackPremium ) {
 			component = this.renderjetpackUpsell();
 		} else if ( canUpgradeToUseWordAds( site ) ) {
 			component = this.renderUpsell();

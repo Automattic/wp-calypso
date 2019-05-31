@@ -32,6 +32,7 @@ class EarningsMain extends Component {
 	static propTypes = {
 		section: PropTypes.string.isRequired,
 		site: PropTypes.object,
+		query: PropTypes.object,
 	};
 
 	getSelectedText() {
@@ -60,9 +61,9 @@ class EarningsMain extends Component {
 		} );
 		if ( config.isEnabled( 'memberships' ) ) {
 			tabs.push( {
-				title: translate( 'Memberships' ),
-				path: '/earn/memberships' + pathSuffix,
-				id: 'memberships',
+				title: translate( 'Recurring Payments' ),
+				path: '/earn/payments' + pathSuffix,
+				id: 'payments',
 			} );
 		}
 		return tabs;
@@ -82,9 +83,9 @@ class EarningsMain extends Component {
 						<AdsSettings />
 					</AdsWrapper>
 				);
-			case 'memberships':
-				return <MembershipsSection section={ this.props.section } />;
-			case 'memberships-products':
+			case 'payments':
+				return <MembershipsSection section={ this.props.section } query={ this.props.query } />;
+			case 'payments-plans':
 				return <MembershipsProductsSection section={ this.props.section } />;
 			default:
 				return null;
@@ -103,9 +104,17 @@ class EarningsMain extends Component {
 		const layoutTitles = {
 			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
-			memberships: translate( 'Memberships' ),
-			'memberships-products': translate( 'Memberships' ),
+			payments: translate( 'Recurring Payments' ),
+			'payments-plans': translate( 'Recurring Payments plans' ),
 		};
+
+		// Remove any query parameters from the path before using it to
+		// identify which navigation tab is the active one.
+		let currentPath = this.props.path;
+		const queryStartPosition = currentPath.indexOf( '?' );
+		if ( queryStartPosition > -1 ) {
+			currentPath = currentPath.substring( 0, queryStartPosition );
+		}
 
 		return (
 			<Main className="earn">
@@ -122,7 +131,7 @@ class EarningsMain extends Component {
 								<NavItem
 									key={ filterItem.id }
 									path={ filterItem.path }
-									selected={ filterItem.path === this.props.path }
+									selected={ filterItem.path === currentPath }
 								>
 									{ filterItem.title }
 								</NavItem>

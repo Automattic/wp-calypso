@@ -22,7 +22,6 @@ import { getStepUrl } from 'signup/utils';
 import StepWrapper from 'signup/step-wrapper';
 import { cartItems } from 'lib/cart-values';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { getSurveyVertical } from 'state/signup/steps/survey/selectors.js';
 import { getUsernameSuggestion } from 'lib/signup/step-actions';
 import {
 	recordAddDomainButtonClick,
@@ -36,11 +35,14 @@ import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getDomainProductSlug } from 'lib/domains';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { getSite } from 'state/sites/selectors';
+import { getVerticalForDomainSuggestions } from 'state/signup/steps/site-vertical/selectors';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -63,6 +65,7 @@ class DomainsStep extends React.Component {
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
+		vertical: PropTypes.string,
 	};
 
 	static contextTypes = {
@@ -407,13 +410,13 @@ class DomainsStep extends React.Component {
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
-				surveyVertical={ this.props.surveyVertical }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 				selectedSite={ this.props.selectedSite }
 				showSkipButton={ this.props.showSkipButton }
+				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
 			/>
 		);
@@ -516,10 +519,16 @@ class DomainsStep extends React.Component {
 	};
 
 	getSubHeaderText() {
-		const { translate } = this.props;
-		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
-			? translate( 'Use a domain you already own with your new WordPress.com site.' )
-			: translate( "Enter your site's name or some keywords that describe it to get started." );
+		const { siteType, stepSectionName } = this.props;
+
+		return 'transfer' === stepSectionName || 'mapping' === stepSectionName
+			? getSiteTypePropertyValue( 'slug', siteType, 'domainsStepTransferringSubheader' )
+			: getSiteTypePropertyValue( 'slug', siteType, 'domainsStepSubheader' );
+	}
+
+	getHeaderText() {
+		const { headerText, siteType } = this.props;
+		return getSiteTypePropertyValue( 'slug', siteType, 'domainsStepHeader' ) || headerText;
 	}
 
 	getAnalyticsSection() {
@@ -589,6 +598,7 @@ class DomainsStep extends React.Component {
 			backLabelText = translate( 'Back to Site' );
 		}
 
+		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
 		return (
@@ -598,9 +608,9 @@ class DomainsStep extends React.Component {
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
-				headerText={ this.props.headerText }
-				subHeaderText={ this.props.subHeaderText }
-				fallbackHeaderText={ translate( 'Give your site an address.' ) }
+				headerText={ headerText }
+				subHeaderText={ fallbackSubHeaderText }
+				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={
 					<div>
@@ -662,7 +672,8 @@ export default connect(
 			productsList,
 			productsLoaded,
 			siteGoals: getSiteGoals( state ),
-			surveyVertical: getSurveyVertical( state ),
+			siteType: getSiteType( state ),
+			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 		};
 	},

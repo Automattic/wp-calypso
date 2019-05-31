@@ -10,10 +10,16 @@
 	width: 1px;
 	word-wrap: normal !important;
 }
+
+// Full screen modal
 .page-template-modal {
 	width: 100%;
 	height: 100vh;
+}
 
+// When not full screen account for sidebar
+body:not( .is-fullscreen-mode ) .page-template-modal {
+	
 	@media screen and ( min-width: 783px ) {
 		width: calc( 100% - 65px );
 		left: 50px;
@@ -43,15 +49,16 @@
 .page-template-modal__list {
 	padding: 1.5em 0;
 
-	.components-base-control__field {
+
+	.components-base-control__label {
+		@include screen-reader-text();
+	}
+
+	.template-selector-control__options {
 		display: grid;
 		// stylelint-disable-next-line unit-whitelist
 		grid-template-columns: repeat( auto-fit, minmax( 200px, 1fr ) );
 		grid-gap: 1.5em;
-	}
-
-	.components-base-control__label {
-		@include screen-reader-text();
 	}
 
 	.template-selector-control__label {
@@ -62,12 +69,15 @@
 		padding: 2em;
 		border-radius: 4px;
 		cursor: pointer;
+		background: none;
+		appearance: none;
 
 		&:hover {
 			background: #f3f4f5;
 		}
 
 		&:focus {
+			background: #f3f4f5;
 			box-shadow: 0 0 0 2px #00a0d2;
 			outline: 2px solid transparent;
 			outline-offset: -2px;

@@ -15,6 +15,7 @@ const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
+const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
@@ -305,6 +306,7 @@ const webpackConfig = {
 		new MomentTimezoneDataPlugin( {
 			startYear: 2000,
 		} ),
+		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 	] ),
 	externals: [ 'electron' ],
 };
@@ -327,6 +329,8 @@ const polyfillsSkippedInEvergreen = [
 	/^lib[/\\]local-storage-polyfill$/,
 	// The SVG external content polyfill (svg4everybody) isn't needed for evergreen browsers.
 	/^svg4everybody$/,
+	// The fetch polyfill isn't needed for evergreen browsers, as they all support it.
+	/^isomorphic-fetch$/,
 ];
 
 if ( browserslistEnv === 'evergreen' ) {

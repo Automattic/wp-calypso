@@ -39,6 +39,7 @@ import { trashPost } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import ConvertToBlocksDialog from 'components/convert-to-blocks';
 
 /**
  * Types
@@ -66,6 +67,7 @@ interface State {
 	isIframeLoaded: boolean;
 	isMediaModalVisible: boolean;
 	isPreviewVisible: boolean;
+	isConversionPromptVisible: boolean;
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
@@ -83,6 +85,7 @@ enum EditorActions {
 	PreviewPost = 'previewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
+	ConversionRequest = 'triggerConversionRequest',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -90,11 +93,13 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
 		isPreviewVisible: false,
+		isConversionPromptVisible: false,
 		previewUrl: 'about:blank',
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
 	iframePort: MessagePort | null = null;
+	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 
@@ -182,6 +187,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
+		}
+
+		if ( EditorActions.ConversionRequest === action ) {
+			this.conversionPort = ports[ 0 ];
+			this.setState( { isConversionPromptVisible: true } );
 		}
 
 		if ( EditorActions.SetDraftId === action && ! this.props.postId ) {
@@ -355,6 +365,19 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
 
+	handleConversionResponse = ( confirmed: boolean ) => {
+		this.setState( { isConversionPromptVisible: false } );
+
+		if ( ! this.conversionPort ) {
+			return;
+		}
+
+		this.conversionPort.postMessage( confirmed );
+
+		this.conversionPort.close();
+		this.conversionPort = null;
+	};
+
 	getStatsPath = () => {
 		const { postId } = this.props;
 		return postId ? '/block-editor/:post_type/:site/:post_id' : '/block-editor/:post_type/:site';
@@ -395,6 +418,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			multiple,
 			isIframeLoaded,
 			isPreviewVisible,
+			isConversionPromptVisible,
 			previewUrl,
 			postUrl,
 			editedPost,
@@ -408,6 +432,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					properties={ this.getStatsProps() }
 				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+				<ConvertToBlocksDialog
+					showDialog={ isConversionPromptVisible }
+					handleResponse={ this.handleConversionResponse }
+				/>
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ shouldLoadIframe && (

@@ -15,7 +15,6 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'gridicons';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
@@ -26,6 +25,7 @@ import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteStyleOptions } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -112,7 +112,7 @@ export class SiteStyleStep extends Component {
 						type="submit"
 						primary
 					>
-						<Gridicon icon="arrow-right" />
+						{ this.props.translate( 'Continue' ) }
 					</Button>
 				</div>
 			</form>
@@ -129,9 +129,9 @@ export class SiteStyleStep extends Component {
 			translate,
 		} = this.props;
 		const headerText = translate( 'Choose a style' );
-		const subHeaderText = translate(
-			"Choose a style for your site's theme. Don't worry, you can always change it later."
-		);
+		// for the time being we just want to fall back to the default value.
+		// If we come to add segment specific copy for this item, update the first 2 args.
+		const subHeaderText = getSiteTypePropertyValue( null, null, 'siteStyleSubheader' );
 
 		return (
 			<div>

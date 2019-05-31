@@ -76,6 +76,7 @@ class Starter_Page_Templates {
 		}
 
 		wp_enqueue_script( 'starter-page-templates' );
+		wp_set_script_translations( 'starter-page-templates', 'full-site-editing' );
 
 		$default_info      = array(
 			'title'    => get_bloginfo( 'name' ),
