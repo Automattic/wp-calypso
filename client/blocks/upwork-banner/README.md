@@ -1,5 +1,7 @@
 # Upwork Stats Banner
 
-The stats page is the defatco landing page when you select a site.  In order to increase awareness of Upwork this component adds a banner to the top of that page.
+The [`Stats` page](https://wordpress.com/stats/) is the de facto landing page when you select a site. In order to increase awareness of Upwork, we display this banner to the top of that page:
 
-It is dismissable via /action.js
+<img src="./screenshot.png" />
+
+It is dismissible via the `dismissNudge()` action.
