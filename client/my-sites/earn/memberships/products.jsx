@@ -72,6 +72,7 @@ class MembershipsProductsSection extends Component {
 		editedMultiplePerUser: false,
 		editedPrice: { currency: 'USD', value: '' },
 		editedSchedule: '1 month',
+		focusedName: false,
 	};
 	renderEllipsisMenu( productId ) {
 		return (
@@ -134,6 +135,7 @@ class MembershipsProductsSection extends Component {
 				editedSchedule: product.renewal_schedule,
 				editedPayWhatYouWant: product.buyer_can_change_amount,
 				editedMultiplePerUser: !! product.multiple_per_user,
+				focusedName: false,
 			} );
 		} else {
 			this.setState( {
@@ -142,9 +144,12 @@ class MembershipsProductsSection extends Component {
 				editedProductName: '',
 				editedPrice: {
 					currency: 'USD',
-					value: 0.0,
+					value: 5.0,
 				},
 				editedSchedule: '1 month',
+				editedPayWhatYouWant: false,
+				editedMultiplePerUser: false,
+				focusedName: false,
 			} );
 		}
 	};
@@ -261,8 +266,9 @@ class MembershipsProductsSection extends Component {
 						id="title"
 						value={ this.state.editedProductName }
 						onChange={ this.onNameChange }
+						onBlur={ () => this.setState( { focusedName: true } ) }
 					/>
-					{ ! this.isFormValid( 'name' ) && (
+					{ ! this.isFormValid( 'name' ) && this.state.focusedName && (
 						<FormInputValidation isError text={ this.props.translate( 'Please input a name.' ) } />
 					) }
 				</FormFieldset>
