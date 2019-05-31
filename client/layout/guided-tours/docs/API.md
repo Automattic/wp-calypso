@@ -8,7 +8,7 @@ Tour is a React component that declares the top-level of a tour. It consists of 
 
 There are three ways a tour can get triggered:
 
-1. If the user navigates to a path that matches the tour's `path` property and the tour's `when` property evaluates to true and there is no other tour that is either running or could also be triggered (in the case of multiple tours that could be triggered we just choose the first match). Every tour will be triggered only once for a user when using this mechanism. 
+1. If the user navigates to a path that matches the tour's `path` property and the tour's `when` property evaluates to true and there is no other tour that is either running or could also be triggered (in the case of multiple tours that could be triggered we just choose the first match). Every tour will be triggered only once for a user when using this mechanism.
 2. If the user navigates to a URL that contains the tour's name in the `tour` query argument -- e.g., `?tour=editorBasicsTour`. This will ignore the `path` and `when` props as well as the user's tour history.
 3. We can dispatch the Redux action `requestGuidedTour( tour )` to trigger a tour as well. This will ignore the `path` and `when` props as well as the user's tour history.
 
@@ -52,6 +52,8 @@ Step is a React component that defines a single Step of a tour. It is represente
 * `scrollContainer`: (string, optional) This is a CSS selector for the container that the framework should attempt to scroll in case the target isn't visible. E.g. if the target is a menu item that could be invisible because of a scrolled sidebar, we'd want the framework to scroll the sidebar until the target is visible. The CSS selector to pass would then be `.sidebar__region`. Note: there were some differences for the sidebar between desktop and tablet that don't seem to be a problem anymore, but in any case have been [documented in  this issue](https://github.com/Automattic/wp-calypso/issues/7208).
 * `children`: (component) Content of the step. Unlike most other components' children, this one takes a so called render prop as a single child. It's a component (function or class) to be rendered when the step is actually displayed. The `translate` function is passed as a prop to the child component. The content is usually a paragraph of instructions and some controls for the tour. See below for available options. Note that all text content needs to be wrapped in `<p>` so it gets proper styling.
 * `onTargetDisappear`: (function, optional) In some cases the target that a step points to will disappear after Guided Tours has rendered a step. In those cases we can end up with steps unhelpfully pointing at (0, 0). The `onTargetDisappear` prop takes a function that will be called when the framework can't find the target anymore. The function will be passed an object containing two functions: `quit` and `next`. In your callback you can decide how to handle the disappearing target and then use those functions to either quit the whole tour or proceed to the next step. This is e.g. used in `checklist-site-icon-tour.js`.
+* `keepRepositioning`: (bool, optional) Ensure the step follows the element while scrolling.
+* `shouldScrollTo`: (bool, optional) Scroll `target` element into the view if it's hidden behind the fold. You might want to combine this with `keepRepositioning` and `scrollContainer="html"` to ensure it works as expected.
 
 ### Example
 

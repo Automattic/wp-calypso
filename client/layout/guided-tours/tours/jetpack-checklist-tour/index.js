@@ -37,8 +37,11 @@ export const JetpackChecklistTour = makeTour(
 
 		<Step
 			arrow="bottom-right"
+			keepRepositioning
 			name="finish"
 			placement="above"
+			scrollContainer="html"
+			shouldScrollTo
 			style={ {
 				marginTop: '-25px',
 			} }
