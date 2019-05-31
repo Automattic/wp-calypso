@@ -40,7 +40,7 @@
 		"@automattic/tree-select": "file:./packages/tree-select",
 		"@babel/cli": "7.4.4",
 		"@babel/polyfill": "7.4.4",
-		"@babel/runtime": "7.4.4",
+		"@babel/runtime": "7.4.5",
 		"@wordpress/blocks": "6.0.7",
 		"@wordpress/components": "7.0.8",
 		"@wordpress/compose": "3.0.1",
