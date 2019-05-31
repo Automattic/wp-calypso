@@ -5845,9 +5845,9 @@
 			}
 		},
 		"chokidar": {
-			"version": "2.1.5",
-			"resolved": "https://registry.npmjs.org/chokidar/-/chokidar-2.1.5.tgz",
-			"integrity": "sha512-i0TprVWp+Kj4WRPtInjexJ8Q+BqTE909VpH8xVhXrJkoc5QC8VO9TryGOqTr+2hljzc1sC62t22h5tZePodM/A==",
+			"version": "2.1.6",
+			"resolved": "https://registry.npmjs.org/chokidar/-/chokidar-2.1.6.tgz",
+			"integrity": "sha512-V2jUo67OKkc6ySiRpJrjlpJKl9kDuG+Xb8VgsGzb+aEouhgS1D0weyPU4lEzdAcsCAvrih2J2BqyXqHWvVLw5g==",
 			"requires": {
 				"anymatch": "^2.0.0",
 				"async-each": "^1.0.1",
