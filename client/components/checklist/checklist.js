@@ -15,6 +15,7 @@ import TaskPlaceholder from './task-placeholder';
 
 export default class Checklist extends PureComponent {
 	static propTypes = {
+		phase2: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		progressText: PropTypes.string,
 		updateCompletion: PropTypes.func,
@@ -71,6 +72,7 @@ export default class Checklist extends PureComponent {
 				className={ classNames( 'checklist', {
 					'is-expanded': ! this.state.hideCompleted,
 					'hide-completed': this.state.hideCompleted,
+					'checklist-phase2': this.props.phase2,
 				} ) }
 			>
 				<ChecklistHeader

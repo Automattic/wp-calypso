@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, memoize, omit, pick, isBoolean } from 'lodash';
+import { get, isBoolean, memoize, omit, pick, size } from 'lodash';
 import debugModule from 'debug';
 import config from 'config';
 
@@ -14,7 +14,20 @@ import { getVerticalTaskList } from './vertical-task-list';
 
 const debug = debugModule( 'calypso:wpcom-task-list' );
 
-function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, siteVerticals } ) {
+function getTasks( {
+	designType,
+	isSiteUnlaunched,
+	phase2,
+	siteSegment,
+	siteVerticals,
+	taskStatuses,
+} ) {
+	// The getTasks function can be removed when we make a full switch to "phase 2"
+	if ( phase2 && size( taskStatuses ) ) {
+		// Use the server response, Luke
+		return taskStatuses;
+	}
+
 	const tasks = [];
 	const segmentSlug = getSiteTypePropertyValue( 'id', siteSegment, 'slug' );
 
