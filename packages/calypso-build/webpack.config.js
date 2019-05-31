@@ -20,7 +20,7 @@ const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-exte
 /**
  * Internal dependencies
  */
-const { cssNameFromFilename } = require( './webpack/util' );
+const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/util' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
@@ -104,6 +104,12 @@ function getWebpackConfig(
 					configFile: babelConfig,
 					exclude: /node_modules\//,
 					presets,
+					workerCount,
+				} ),
+				TranspileConfig.loader( {
+					cacheDirectory: true,
+					include: shouldTranspileDependency,
+					presets: [ '@automattic/calypso-build/babel/default' ],
 					workerCount,
 				} ),
 				SassConfig.loader( {
