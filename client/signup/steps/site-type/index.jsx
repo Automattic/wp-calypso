@@ -15,6 +15,12 @@ import StepWrapper from 'signup/step-wrapper';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 
+const siteTypeToFlowname = {
+	'online-store': 'ecommerce-onboarding',
+	business: 'onboarding-for-business',
+	blog: 'onboarding-blog',
+};
+
 class SiteType extends Component {
 	componentDidMount() {
 		SignupActions.saveSignupStep( {
@@ -67,15 +73,8 @@ export default connect(
 		submitStep: siteTypeValue => {
 			dispatch( submitSiteType( siteTypeValue ) );
 
-			if ( 'online-store' === siteTypeValue ) {
-				flowName = 'ecommerce-onboarding';
-			}
-
-			if ( 'business' === siteTypeValue ) {
-				flowName = 'onboarding-for-business';
-			}
-
-			goToNextStep( flowName );
+			// Modify the flowname if the site type matches an override.
+			goToNextStep( siteTypeToFlowname[ siteTypeValue ] || flowName );
 		},
 	} )
 )( localize( SiteType ) );
