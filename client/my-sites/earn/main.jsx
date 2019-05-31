@@ -61,9 +61,9 @@ class EarningsMain extends Component {
 		} );
 		if ( config.isEnabled( 'memberships' ) ) {
 			tabs.push( {
-				title: translate( 'Memberships' ),
-				path: '/earn/memberships' + pathSuffix,
-				id: 'memberships',
+				title: translate( 'Recurring Payments' ),
+				path: '/earn/payments' + pathSuffix,
+				id: 'payments',
 			} );
 		}
 		return tabs;
@@ -83,9 +83,9 @@ class EarningsMain extends Component {
 						<AdsSettings />
 					</AdsWrapper>
 				);
-			case 'memberships':
+			case 'payments':
 				return <MembershipsSection section={ this.props.section } query={ this.props.query } />;
-			case 'memberships-products':
+			case 'payments-plans':
 				return <MembershipsProductsSection section={ this.props.section } />;
 			default:
 				return null;
@@ -104,8 +104,8 @@ class EarningsMain extends Component {
 		const layoutTitles = {
 			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
-			memberships: translate( 'Memberships' ),
-			'memberships-products': translate( 'Memberships' ),
+			payments: translate( 'Recurring Payments' ),
+			'payments-plans': translate( 'Recurring Payments plans' ),
 		};
 
 		// Remove any query parameters from the path before using it to
