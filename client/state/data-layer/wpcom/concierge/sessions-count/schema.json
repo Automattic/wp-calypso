@@ -1,0 +1,11 @@
+{
+	"type": "object",
+	"properties": {
+		"available": {
+			"type": "number"
+		},
+		"used": {
+			"type": "number"
+		}
+	}
+}

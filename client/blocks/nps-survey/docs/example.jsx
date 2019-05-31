@@ -32,7 +32,7 @@ import { successNotice } from 'state/notices/actions';
 class NpsSurveyExample extends PureComponent {
 	state = {
 		isClosed: false,
-		canRequestConciergeSession: false,
+		hasAvailableSessions: false,
 		isBusinessUser: false,
 	};
 
@@ -48,7 +48,7 @@ class NpsSurveyExample extends PureComponent {
 	};
 
 	toggleConciergeSessionAvailability = event => {
-		this.setState( { canRequestConciergeSession: event.target.checked } );
+		this.setState( { hasAvailableSessions: event.target.checked } );
 	};
 
 	renderOptions() {
@@ -80,7 +80,7 @@ class NpsSurveyExample extends PureComponent {
 						sendNpsSurveyFeedback={ this.props.sendNpsSurveyFeedback }
 						successNotice={ this.props.successNotice }
 						isBusinessUser={ this.state.isBusinessUser }
-						canRequestConciergeSession={ this.state.canRequestConciergeSession }
+						hasAvailableSessions={ this.state.hasAvailableSessions }
 						recordTracksEvent={ noop }
 					/>
 				) }

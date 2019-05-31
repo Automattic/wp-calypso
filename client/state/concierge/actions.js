@@ -11,12 +11,15 @@ import {
 	CONCIERGE_APPOINTMENT_RESCHEDULE,
 	CONCIERGE_INITIAL_REQUEST,
 	CONCIERGE_INITIAL_UPDATE,
+	CONCIERGE_SESSIONS_COUNT_REQUEST,
+	CONCIERGE_SESSIONS_COUNT_UPDATE,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/concierge';
 import 'state/data-layer/wpcom/concierge/initial';
+import 'state/data-layer/wpcom/concierge/sessions-count';
 
 export const requestConciergeAppointmentDetails = ( scheduleId, appointmentId ) => ( {
 	type: CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
@@ -82,4 +85,13 @@ export const cancelConciergeAppointment = ( scheduleId, appointmentId ) => ( {
 	type: CONCIERGE_APPOINTMENT_CANCEL,
 	scheduleId,
 	appointmentId,
+} );
+
+export const requestConciergeSessionsCount = () => ( {
+	type: CONCIERGE_SESSIONS_COUNT_REQUEST,
+} );
+
+export const updateConciergeSessionsCount = count => ( {
+	type: CONCIERGE_SESSIONS_COUNT_UPDATE,
+	count,
 } );
