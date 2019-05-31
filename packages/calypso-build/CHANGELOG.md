@@ -1,4 +1,4 @@
-# [Unreleased]
+# 2.1.0
 
 - Update Jest config to be able to handle `import`s otherwise handled by Webpack's `file-loader` and `sass-loader`.
 - Update Jest setup to properly initialize Enzyme's adapter.
