@@ -12,20 +12,32 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-
-import AddEmailAddressesCard from './add-users';
+import { addItem } from 'lib/upgrades/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
+import Button from 'components/button';
+import Card from 'components/card';
+import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import {
 	emailManagementAddGSuiteUsers,
 	emailManagementNewGSuiteAccount,
 	emailManagement,
 } from 'my-sites/email/paths';
-import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
-import { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from 'lib/gsuite';
+import {
+	getEligibleGSuiteDomain,
+	getGSuiteSupportedDomains,
+	hasGSuiteSupportedDomain,
+} from 'lib/gsuite';
+import {
+	getItemsForCart,
+	newUsers,
+	userIsReady,
+	validateAgainstExistingUsers,
+} from 'lib/gsuite/new-users';
 import { getSelectedSite } from 'state/ui/selectors';
+import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -35,7 +47,52 @@ import QueryEmailForwards from 'components/data/query-email-forwards';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class GSuiteAddUsers extends React.Component {
+	state = {
+		users: [],
+	};
+
+	static getDerivedStateFromProps(
+		{ domains, isRequestingDomains, selectedDomainName },
+		{ users }
+	) {
+		if ( ! isRequestingDomains && 0 === users.length ) {
+			const domainName = getEligibleGSuiteDomain( selectedDomainName, domains );
+			if ( 0 < domainName.length ) {
+				return {
+					users: newUsers( domainName ),
+				};
+			}
+		}
+		return null;
+	}
+
+	onUsersChange = users => {
+		this.setState( {
+			users,
+		} );
+	};
+
+	handleContinue = () => {
+		const { domains, planType, selectedSite } = this.props;
+		const { users } = this.state;
+		const canContinue = 0 < users.length && users.every( userIsReady );
+
+		if ( canContinue ) {
+			getItemsForCart(
+				domains,
+				'business' === planType ? 'gapps_unlimited' : 'gapps',
+				users
+			).forEach( addItem );
+			page( '/checkout/' + selectedSite.slug );
+		}
+	};
+
 	componentDidMount() {
 		const { domains, isRequestingDomains } = this.props;
 		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
@@ -66,13 +123,15 @@ class GSuiteAddUsers extends React.Component {
 			domains,
 			domainsWithForwards,
 			gsuiteUsers,
-			planType,
 			isRequestingDomains,
 			selectedDomainName,
-			selectedSite,
 			translate,
 		} = this.props;
+
+		const { users } = this.state;
+
 		const gSuiteSupportedDomains = getGSuiteSupportedDomains( domains );
+		const canContinue = 0 < users.length && users.every( userIsReady );
 
 		return (
 			<Fragment>
@@ -94,15 +153,23 @@ class GSuiteAddUsers extends React.Component {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
-				{ gsuiteUsers ? (
-					<AddEmailAddressesCard
-						domains={ domains }
-						isRequestingSiteDomains={ isRequestingDomains }
-						gsuiteUsers={ gsuiteUsers }
-						planType={ planType }
-						selectedDomainName={ selectedDomainName }
-						selectedSite={ selectedSite }
-					/>
+				{ gsuiteUsers && gSuiteSupportedDomains && ! isRequestingDomains ? (
+					<Card>
+						<GSuiteNewUserList
+							extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
+							domains={ gSuiteSupportedDomains }
+							onUsersChange={ this.onUsersChange }
+							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
+							users={ users }
+						>
+							<div className="gsuite-add-users__buttons">
+								<Button>{ translate( 'Cancel' ) }</Button>
+								<Button primary disabled={ ! canContinue } onClick={ this.handleContinue }>
+									{ translate( 'Continue' ) }
+								</Button>
+							</div>
+						</GSuiteNewUserList>
+					</Card>
 				) : (
 					<AddEmailAddressesCardPlaceholder />
 				) }
