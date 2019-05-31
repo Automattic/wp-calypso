@@ -26,6 +26,7 @@ export default class SidebarItem extends React.Component {
 		onNavigate: PropTypes.func,
 		icon: PropTypes.string,
 		materialIcon: PropTypes.string,
+		sectionIsExpanded: PropTypes.bool,
 		selected: PropTypes.bool,
 		expandSection: PropTypes.func,
 		preloadSectionName: PropTypes.string,

@@ -99,7 +99,7 @@ class ToolsMenu extends PureComponent {
 	expandToolsSection = () => this.props.expandSection( SIDEBAR_SECTION_TOOLS );
 
 	renderMenuItem( menuItem ) {
-		const { canCurrentUser, siteId, siteAdminUrl } = this.props;
+		const { canCurrentUser, isToolsExpanded, siteId, siteAdminUrl } = this.props;
 
 		if ( siteId && ! canCurrentUser( menuItem.capability ) ) {
 			return null;
@@ -155,6 +155,7 @@ export default connect(
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
+		isToolsExpanded: isToolsMenuOpen( state ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
