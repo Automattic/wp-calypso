@@ -204,10 +204,10 @@ const webpackConfig = {
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
-				configFile: path.resolve( __dirname, 'babel.dependencies.config.js' ),
 				cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache', extraPath ),
 				cacheIdentifier,
 				include: shouldTranspileDependency,
+				presets: [ '@automattic/calypso-build/babel/default' ],
 			} ),
 			SassConfig.loader( {
 				preserveCssCustomProperties: true,
