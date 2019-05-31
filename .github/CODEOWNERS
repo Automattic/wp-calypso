@@ -71,11 +71,11 @@
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
 # G Suite
-/client/blocks/gsuite-stats-nudge @Automattic/amber
-/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/amber
-/client/components/upgrades/gsuite @Automattic/amber
-/client/lib/domains/email-forwarding @Automattic/amber
-/client/lib/domains/google-apps-users @Automattic/amber
-/client/lib/gsuite @Automattic/amber
-/client/my-sites/domains/components/domain-warnings @Automattic/amber
-/client/my-sites/email @Automattic/amber
+/client/blocks/gsuite-stats-nudge @Automattic/catalyst
+/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/catalyst
+/client/components/upgrades/gsuite @Automattic/catalyst
+/client/lib/domains/email-forwarding @Automattic/catalyst
+/client/lib/domains/google-apps-users @Automattic/catalyst
+/client/lib/gsuite @Automattic/catalyst
+/client/my-sites/domains/components/domain-warnings @Automattic/catalyst
+/client/my-sites/email @Automattic/catalyst
