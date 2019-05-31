@@ -2,8 +2,15 @@
  * External dependencies
  */
 import emailValidator from 'email-validator';
-import i18n, { TranslateResult } from 'i18n-calypso';
-import { includes, mapValues } from 'lodash';
+import i18n, { TranslateResult }  from 'i18n-calypso';
+import { find, includes, groupBy, map, mapValues } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { cartItems } from 'lib/cart-values';
+import { hasGSuite } from '.';
+
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -132,8 +139,41 @@ const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
 const userIsReady = ( user: GSuiteNewUser ): boolean =>
 	isUserComplete( user ) && ! doesUserHaveError( user );
 
+const transformUserForCart = ( {
+	firstName: { value: firstname },
+	lastName: { value: lastname },
+	domain: { value: domain },
+	mailBox: { value: mailBox },
+}: GSuiteNewUser ): GSuiteProductUser => ( {
+	email: `${ mailBox }@${ domain }`.toLowerCase(),
+	firstname,
+	lastname,
+} );
+
+const getItemsForCart = (
+	domains: { name: string },
+	productSlug: string,
+	users: GSuiteNewUser[]
+) => {
+	const groups = mapValues( groupBy( users, 'domain.value' ), groupedUsers =>
+		groupedUsers.map( transformUserForCart )
+	);
+
+	return map( groups, ( groupedUsers, domain ) => {
+		const domainInfo = find( domains, [ 'name', domain ] );
+		return domainInfo && hasGSuite( domainInfo )
+			? cartItems.googleAppsExtraLicenses( {
+					product_slug: productSlug,
+					users: groupedUsers,
+					domain,
+			  } )
+			: cartItems.googleApps( { users: groupedUsers, domain } );
+	} );
+};
+
 export {
 	doesUserHaveError,
+	getItemsForCart,
 	isUserComplete,
 	newUser,
 	newUsers,
