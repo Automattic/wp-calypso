@@ -22938,13 +22938,13 @@
 			}
 		},
 		"webpack-dev-middleware": {
-			"version": "3.6.2",
-			"resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-3.6.2.tgz",
-			"integrity": "sha512-A47I5SX60IkHrMmZUlB0ZKSWi29TZTcPz7cha1Z75yYOsgWh/1AcPmQEbC8ZIbU3A1ytSv1PMU0PyPz2Lmz2jg==",
+			"version": "3.7.0",
+			"resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-3.7.0.tgz",
+			"integrity": "sha512-qvDesR1QZRIAZHOE3iQ4CXLZZSQ1lAUsSpnQmlB1PBfoN/xdRjmge3Dok0W4IdaVLJOGJy3sGI4sZHwjRU0PCA==",
 			"requires": {
 				"memory-fs": "^0.4.1",
-				"mime": "^2.3.1",
-				"range-parser": "^1.0.3",
+				"mime": "^2.4.2",
+				"range-parser": "^1.2.1",
 				"webpack-log": "^2.0.0"
 			},
 			"dependencies": {
