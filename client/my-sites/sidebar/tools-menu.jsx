@@ -22,6 +22,8 @@ import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/c
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { toggleMySitesSidebarToolsMenu } from 'state/my-sites/sidebar/actions';
+import { isToolsMenuOpen } from 'state/my-sites/sidebar/selectors';
 
 class ToolsMenu extends PureComponent {
 	static propTypes = {
@@ -95,7 +97,7 @@ class ToolsMenu extends PureComponent {
 	};
 
 	renderMenuItem( menuItem ) {
-		const { canCurrentUser, siteId, siteAdminUrl } = this.props;
+		const { canCurrentUser, isToolsExpanded, siteId, siteAdminUrl } = this.props;
 
 		if ( siteId && ! canCurrentUser( menuItem.capability ) ) {
 			return null;
@@ -125,6 +127,8 @@ class ToolsMenu extends PureComponent {
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }
 				forceInternalLink={ menuItem.forceInternalLink }
+				sectionIsExpanded={ isToolsExpanded }
+				toggleSection={ this.props.toggleMySitesSidebarToolsMenu }
 			/>
 		);
 	}
@@ -150,11 +154,12 @@ export default connect(
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
+		isToolsExpanded: isToolsMenuOpen( state ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 	} ),
-	{ recordTracksEvent },
+	{ recordTracksEvent, toggleMySitesSidebarToolsMenu },
 	null,
 	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser' ] } ) }
 )( localize( ToolsMenu ) );

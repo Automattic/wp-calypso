@@ -8,6 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
+import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +26,9 @@ export default class SidebarItem extends React.Component {
 		onNavigate: PropTypes.func,
 		icon: PropTypes.string,
 		materialIcon: PropTypes.string,
+		sectionIsExpanded: PropTypes.bool,
 		selected: PropTypes.bool,
+		toggleSection: PropTypes.func,
 		preloadSectionName: PropTypes.string,
 		forceInternalLink: PropTypes.bool,
 		testTarget: PropTypes.string,
@@ -40,6 +43,19 @@ export default class SidebarItem extends React.Component {
 			preload( this.props.preloadSectionName );
 		}
 	};
+
+	componentDidMount() {
+		const { toggleSection } = this.props;
+
+		// props.sectionIsExpanded is initialized as `null`, which means it's not yet expanded.
+		const sectionIsNotExpanded =
+			this.props.sectionIsExpanded === null || this.props.sectionIsExpanded === false;
+		const selected = this.props.selected === true;
+
+		if ( isFunction( toggleSection ) && selected && sectionIsNotExpanded ) {
+			toggleSection();
+		}
+	}
 
 	render() {
 		const isExternalLink = isExternal( this.props.link );
