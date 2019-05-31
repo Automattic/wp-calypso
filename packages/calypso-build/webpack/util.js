@@ -21,6 +21,7 @@ const nodeModulesToTranspile = [
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
+	'punycode/',
 ];
 
 /**
