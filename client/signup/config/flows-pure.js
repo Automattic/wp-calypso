@@ -106,6 +106,7 @@ export function generateFlows( {
 				'site-type',
 				'site-topic-with-preview',
 				'site-title-with-preview',
+				'site-style-with-preview',
 				'domains-with-preview',
 				'plans',
 			],
@@ -119,21 +120,6 @@ export function generateFlows( {
 			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
 			destination: getChecklistDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2019-04-30',
-		},
-
-		'onboarding-for-business': {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'site-style-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
-			destination: getChecklistDestination,
-			description: 'The improved onboarding flow for business site types.',
 			lastModified: '2019-04-30',
 		},
 

@@ -17,7 +17,6 @@ import { saveSignupStep } from 'state/signup/progress/actions';
 
 const siteTypeToFlowname = {
 	'online-store': 'ecommerce-onboarding',
-	business: 'onboarding-for-business',
 	blog: 'onboarding-blog',
 };
 
