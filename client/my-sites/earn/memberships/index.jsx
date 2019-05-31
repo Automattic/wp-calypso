@@ -275,7 +275,7 @@ class MembershipsSection extends Component {
 					<div className="memberships__module-content module-content">
 						<p>
 							{ this.props.translate(
-								'Start collecting subscription payments! Recurring payments are processed through Stripe. Click the button below to create a new account or to connect existing Stripe account.'
+								'Start collecting subscription payments! Recurring payments are processed through Stripe. Click the button below to create a new account or to connect an existing Stripe account.'
 							) }
 						</p>
 						<StripeConnectButton href={ this.props.connectUrl } target="_blank">
