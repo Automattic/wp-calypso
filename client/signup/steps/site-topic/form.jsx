@@ -76,6 +76,7 @@ class SiteTopicForm extends Component {
 		const { isButtonDisabled, siteTopic, siteType } = this.props;
 		const suggestionSearchInputPlaceholder =
 			getSiteTypePropertyValue( 'slug', siteType, 'siteTopicInputPlaceholder' ) || '';
+		const headerText = getSiteTypePropertyValue( 'slug', siteType, 'siteTopicLabel' ) || '';
 
 		return (
 			<div className={ classNames( 'site-topic__content', { 'is-empty': ! siteTopic } ) }>
@@ -83,7 +84,7 @@ class SiteTopicForm extends Component {
 					<FormFieldset>
 						<SiteVerticalsSuggestionSearch
 							placeholder={ suggestionSearchInputPlaceholder }
-							aria-label={ this.props.translate( 'What does your business do?' ) }
+							labelText={ headerText }
 							onChange={ this.onSiteTopicChange }
 							showPopular={ true }
 							searchValue={ siteTopic }

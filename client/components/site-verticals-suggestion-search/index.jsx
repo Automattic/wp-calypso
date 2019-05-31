@@ -36,6 +36,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		showPopular: PropTypes.bool,
 		siteType: PropTypes.string,
 		verticals: PropTypes.array,
+		labelText: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -201,7 +202,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 					isSearching={ this.isVerticalSearchPending() }
 					railcar={ railcar }
-					aria-label={ this.props[ 'aria-label' ] }
+					aria-label={ this.props.labelText }
 				/>
 				{ shouldShowPopularTopics && <PopularTopics onSelect={ this.onSiteTopicChange } /> }
 			</>
