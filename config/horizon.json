@@ -108,7 +108,7 @@
 		"signup/atomic-store-flow": true,
 		"signup/ecommerce-flow": false,
 		"signup/wpcc": true,
-		"memberships": false,
+		"memberships": true,
 		"support-user": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
