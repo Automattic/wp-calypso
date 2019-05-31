@@ -2,7 +2,7 @@
 
 - Update Jest config to be able to handle `import`s otherwise handled by Webpack's `file-loader` and `sass-loader`.
 - Update Jest setup to properly initialize Enzyme's adapter.
-- Automatically transpile a number of untranspiled npm dependencies (`node_modules/`), based on a whitelit.
+- Automatically transpile a number of untranspiled npm dependencies (`node_modules/`), based on a whitelist.
 
 # 2.0.0
 
