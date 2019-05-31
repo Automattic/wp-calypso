@@ -44,6 +44,9 @@ export const createSiteDomainObject = domain => {
 		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),
 		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		manualTransferRequired: Boolean( domain.manual_transfer_required ),
+		mustRemovePrivacyBeforeContactUpdate: Boolean(
+			domain.must_remove_privacy_before_contact_update
+		),
 		newRegistration: Boolean( domain.new_registration ),
 		name: String( domain.domain ),
 		owner: String( domain.owner ),
