@@ -747,7 +747,7 @@ workflows:
           slack-webhook: '$SLACK_WOO'
     triggers:
       - schedule:
-          cron: '0 12,20 * * *'
+          cron: '0 12 * * *'
           filters:
             branches:
               only: master
