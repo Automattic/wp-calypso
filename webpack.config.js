@@ -131,7 +131,7 @@ function shouldTranspileDependency( filepath ) {
 
 	const checkFrom = lastIndex + marker.length;
 
-	return _.some(
+	return nodeModulesToTranspile.some(
 		nodeModulesToTranspile,
 		modulePart => filepath.substring( checkFrom, checkFrom + modulePart.length ) === modulePart
 	);
