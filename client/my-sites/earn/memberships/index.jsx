@@ -262,6 +262,14 @@ class MembershipsSection extends Component {
 	renderConnectStripe() {
 		return (
 			<div>
+				{ this.props.query.stripe_connect_cancelled && (
+					<Notice
+						showDismiss={ false }
+						text={ this.props.translate(
+							'The attempt to connect to Stripe has been cancelled. You can connect again at any time.'
+						) }
+					/>
+				) }
 				<SectionHeader label={ this.props.translate( 'Stripe Connection' ) } />
 				<Card>
 					<div className="memberships__module-content module-content">

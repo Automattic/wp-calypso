@@ -32,6 +32,7 @@ class EarningsMain extends Component {
 	static propTypes = {
 		section: PropTypes.string.isRequired,
 		site: PropTypes.object,
+		query: PropTypes.object,
 	};
 
 	getSelectedText() {
@@ -83,7 +84,7 @@ class EarningsMain extends Component {
 					</AdsWrapper>
 				);
 			case 'memberships':
-				return <MembershipsSection section={ this.props.section } />;
+				return <MembershipsSection section={ this.props.section } query={ this.props.query } />;
 			case 'memberships-products':
 				return <MembershipsProductsSection section={ this.props.section } />;
 			default:
@@ -107,6 +108,14 @@ class EarningsMain extends Component {
 			'memberships-products': translate( 'Memberships' ),
 		};
 
+		// Remove any query parameters from the path before using it to
+		// identify which navigation tab is the active one.
+		let currentPath = this.props.path;
+		const queryStartPosition = currentPath.indexOf( '?' );
+		if ( queryStartPosition > -1 ) {
+			currentPath = currentPath.substring( 0, queryStartPosition );
+		}
+
 		return (
 			<Main className="earn">
 				<PageViewTracker
@@ -122,7 +131,7 @@ class EarningsMain extends Component {
 								<NavItem
 									key={ filterItem.id }
 									path={ filterItem.path }
-									selected={ filterItem.path === this.props.path }
+									selected={ filterItem.path === currentPath }
 								>
 									{ filterItem.title }
 								</NavItem>

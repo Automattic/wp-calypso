@@ -28,6 +28,7 @@ export default {
 		context.primary = React.createElement( Main, {
 			section: context.params.section,
 			path: context.path,
+			query: context.query,
 		} );
 		next();
 	},
