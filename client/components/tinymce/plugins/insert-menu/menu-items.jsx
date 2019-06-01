@@ -90,17 +90,3 @@ menuItems.push( {
 	),
 	cmd: 'simplePaymentsButton',
 } );
-
-if ( config.isEnabled( 'memberships' ) ) {
-	menuItems.push( {
-		name: 'insert_memberships_button',
-		item: (
-			<GridiconButton
-				icon={ <Gridicon icon="money" /> }
-				label={ i18n.translate( 'Recurring Payment' ) }
-				e2e="memberships"
-			/>
-		),
-		cmd: 'membershipsButton',
-	} );
-}
