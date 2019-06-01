@@ -24,7 +24,6 @@ import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
 import {
-	isGoogleAnalyticsAllowed,
 	mayWeTrackCurrentUserGdpr,
 	doNotTrack,
 	isPiiUrl,
@@ -41,6 +40,11 @@ import {
 	recordSignup,
 	recordAddToCart,
 	recordOrder,
+	setupGoogleAnalyticsGtag,
+	isGoogleAnalyticsAllowed,
+	fireGoogleAnalyticsPageView,
+	fireGoogleAnalyticsEvent,
+	fireGoogleAnalyticsTiming,
 } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { statsdTimingUrl } from 'lib/analytics/statsd';
@@ -68,12 +72,6 @@ const EVENT_NAME_EXCEPTIONS = [ 'a8c_cookie_banner_ok' ];
 // Load tracking scripts
 if ( typeof window !== 'undefined' ) {
 	window._tkq = window._tkq || [];
-	window.ga =
-		window.ga ||
-		function() {
-			( window.ga.q = window.ga.q || [] ).push( arguments );
-		};
-	window.ga.l = +new Date();
 }
 
 function getUrlParameter( name ) {
@@ -379,7 +377,10 @@ const analytics = {
 		recordRegistration();
 	},
 
-	recordSignupComplete: function( { isNewUser, isNewSite, hasCartItems, flow }, now ) {
+	recordSignupComplete: function(
+		{ isNewUser, isNewSite, hasCartItems, flow, isNew7DUserSite },
+		now
+	) {
 		if ( ! now ) {
 			// Delay using the analytics localStorage queue.
 			return analytics.queue.add(
@@ -403,7 +404,18 @@ const analytics = {
 			isNewSite && 'is_new_site',
 			hasCartItems && 'has_cart_items',
 		].filter( flag => false !== flag );
+
 		analytics.ga.recordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
+
+		if ( isNew7DUserSite ) {
+			// Tracks
+			analytics.tracks.recordEvent( 'calypso_new_user_site_creation', {
+				flow: flow,
+			} );
+
+			// Google Analytics
+			analytics.ga.recordEvent( 'Signup', 'calypso_new_user_site_creation' );
+		}
 
 		// Ad Tracking: Deprecated Floodlight pixels.
 		recordSignupCompletionInFloodlight(); // Every signup.
@@ -629,18 +641,21 @@ const analytics = {
 		initialized: false,
 
 		initialize: function() {
-			const parameters = {};
 			if ( ! analytics.ga.initialized ) {
-				if ( _user && _user.get() ) {
-					parameters.userId = hashPii( _user.get().ID );
-				}
-				window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
-				window.ga( function( tracker ) {
-					const clientId = tracker.get( 'clientId' );
-					window.ga( 'set', 'dimension3', clientId );
-				} );
-				window.ga( 'set', 'anonymizeIp', true );
-				window.ga( 'set', 'useAmpClientId', true );
+				const parameters = {
+					anonymize_ip: true,
+					transport_type: 'function' === typeof navigator.sendBeacon ? 'beacon' : 'xhr',
+					use_amp_client_id: true,
+					custom_map: {
+						dimension3: 'clientId',
+					},
+					...( _user && _user.get() && { user_id: hashPii( _user.get().ID ) } ),
+				};
+
+				gaDebug( 'parameters:', parameters );
+
+				setupGoogleAnalyticsGtag( parameters );
+
 				analytics.ga.initialized = true;
 			}
 		},
@@ -651,16 +666,17 @@ const analytics = {
 		) {
 			gaDebug( 'Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']' );
 
-			// Set the current page so all GA events are attached to it.
-			window.ga( 'set', 'page', urlPath );
-
-			window.ga( 'send', {
-				hitType: 'pageview',
-				page: urlPath,
-				title: pageTitle,
-			} );
+			fireGoogleAnalyticsPageView( urlPath, pageTitle );
 		} ),
 
+		/**
+		 * Fires a generic Google Analytics event
+		 *
+		 * {String} category Is the string that will appear as the event category.
+		 * {String} action Is the string that will appear as the event action in Google Analytics Event reports.
+		 * {String} label Is the string that will appear as the event label.
+		 * {String} value Is a non-negative integer that will appear as the event value.
+		 */
 		recordEvent: makeGoogleAnalyticsTrackingFunction( function recordEvent(
 			category,
 			action,
@@ -684,7 +700,7 @@ const analytics = {
 
 			gaDebug( debugText );
 
-			window.ga( 'send', 'event', category, action, label, value );
+			fireGoogleAnalyticsEvent( category, action, label, value );
 		} ),
 
 		recordTiming: makeGoogleAnalyticsTrackingFunction( function recordTiming(
@@ -695,7 +711,7 @@ const analytics = {
 		) {
 			gaDebug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
 
-			window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName );
+			fireGoogleAnalyticsTiming( eventType, duration, urlPath, triggerName );
 		} ),
 	},
 
@@ -751,23 +767,6 @@ const analytics = {
 		window._tkq.push( [ 'clearIdentity' ] );
 	},
 };
-
-/**
- * Loading Google analytics independently from the rest of the tracking scripts.
- *
- * Why? Because ad-tracking and google-analytics have two different switches and we
- * would probably not want one to stop the other.
- *
- * Moreover, analytics gets loaded with the page load, while the tracking is lazy-loaded
- * during actions.
- */
-if ( typeof document !== 'undefined' && isGoogleAnalyticsAllowed() ) {
-	try {
-		loadScript( 'https://www.google-analytics.com/analytics.js' );
-	} catch ( error ) {
-		debug( 'GA script failed to load properly: ', error );
-	}
-}
 
 /**
  * Wrap Google Analytics with debugging, possible analytics supression, and initialization

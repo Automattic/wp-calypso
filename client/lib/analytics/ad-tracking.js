@@ -23,6 +23,7 @@ import {
 } from 'lib/analytics/utils';
 import { promisify } from '../../utils';
 import request from 'superagent';
+import { doNotTrack, isPiiUrl, mayWeTrackCurrentUserGdpr } from './utils';
 
 /**
  * Module variables
@@ -32,21 +33,19 @@ const user = userModule();
 
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments
+const isGoogleAnalyticsEnabled = true;
 const isFloodlightEnabled = true;
-const isAdwordsEnabled = true;
 const isFacebookEnabled = true;
 const isBingEnabled = true;
 const isGeminiEnabled = true;
 const isWpcomGoogleAdsGtagEnabled = true;
-const isJetpackGoogleAdsGtagEnabled = true;
 const isQuantcastEnabled = true;
-const isTwitterEnabled = true;
 const isExperianEnabled = true;
-const isLinkedinEnabled = true;
 const isOutbrainEnabled = true;
 const isIconMediaEnabled = true;
 const isPinterestEnabled = true;
-const isNanigansEnabled = true;
+const isTwitterEnabled = false;
+const isLinkedinEnabled = false;
 const isCriteoEnabled = false;
 const isPandoraEnabled = false;
 const isQuoraEnabled = false;
@@ -61,13 +60,9 @@ let lastRetargetTime = 0;
  * Constants
  */
 const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js',
-	GOOGLE_TRACKING_SCRIPT_URL = 'https://www.googleadservices.com/pagead/conversion_async.js',
 	GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=',
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
 	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
-	ADWORDS_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
-	ADWORDS_CONVERSION_ID_JETPACK = config( 'google_adwords_conversion_id_jetpack' ),
-	ADWORDS_SIGNUP_CONVERSION_ID = config( 'google_adwords_signup_conversion_id' ),
 	YAHOO_GEMINI_CONVERSION_PIXEL_URL =
 		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088&ec=wordpresspurchase',
 	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL =
@@ -87,15 +82,11 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
 	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
 	OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js',
-	NANIGANS_SCRIPT_URL = 'https://cdn.nanigans.com/NaN_tracker.js',
 	PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
 		facebookJetpackInit: '919484458159593',
-		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
-		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
-		googleSignupConversionLabel: 'zKK-CKPG7ocBENbl8_wD',
 		criteo: '31321',
 		quantcast: 'p-3Ma3jHaQMB_bS',
 		twitterPixelId: 'nvzbs',
@@ -103,16 +94,13 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		linkedInPartnerId: '195308',
 		quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 		outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
-		nanigansAppId: '653793',
+		wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
 		wpcomFloodlightGtag: 'DC-6355556',
 		wpcomGoogleAdsGtag: 'AW-946162814',
 		wpcomGoogleAdsGtagRegistration: 'AW-946162814/_6cKCK6miZYBEP6YlcMD', // "WordPress.com Registration"
 		wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 		wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 		wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
-		jetpackGoogleAdsGtag: 'AW-937115306',
-		jetpackGoogleAdsGtagAddToCart: 'AW-937115306/BrwBCIWziZYBEKr97L4D', // "Jetpack AddToCart (Calypso)"
-		jetpackGoogleAdsGtagPurchase: 'AW-937115306/87huCM-P7ZMBEKr97L4D', // "Jetpack Purchase Plan (Calypso)"
 		pinterestInit: '2612678247224',
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
@@ -156,11 +144,6 @@ if ( typeof window !== 'undefined' ) {
 	// Google Ads Gtag for wordpress.com
 	if ( isWpcomGoogleAdsGtagEnabled ) {
 		setupWpcomGoogleAdsGtag();
-	}
-
-	// Google Ads Gtag for Jetpack
-	if ( isJetpackGoogleAdsGtagEnabled ) {
-		setupJetpackGoogleAdsGtag();
 	}
 
 	if ( isFloodlightEnabled ) {
@@ -329,30 +312,6 @@ function setupPinterestGlobal() {
 	}
 }
 
-/**
- * For Nanigans, we delay the configuration until an actual purchase is made.
- *
- * Becomes true when the global configuration has been added to the window.NaN_api
- *
- * @type {boolean}
- */
-let isNanigansConfigured = false;
-
-/**
- * Defines the global variables required by Nanigans
- * (app tracking ID, user's hashed e-mail)
- */
-function setupNanigansGlobal() {
-	const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
-
-	window.NaN_api = [
-		[ TRACKING_IDS.nanigansAppId, normalizedHashedEmail ? normalizedHashedEmail : '' ],
-	];
-
-	isNanigansConfigured = true;
-	debug( 'Nanigans setup: ', window.NaN_api );
-}
-
 const loadScript = promisify( loadScriptCallback );
 
 async function loadTrackingScripts( callback ) {
@@ -376,14 +335,10 @@ async function loadTrackingScripts( callback ) {
 		scripts.push( FACEBOOK_TRACKING_SCRIPT_URL );
 	}
 
-	if ( isAdwordsEnabled ) {
-		scripts.push( GOOGLE_TRACKING_SCRIPT_URL );
-	}
-
 	// The Gtag script needs to be loaded with an ID in the URL so we search for the first available one.
 	const enabledGtags = [
+		isGoogleAnalyticsEnabled && TRACKING_IDS.wpcomGoogleAnalyticsGtag,
 		isWpcomGoogleAdsGtagEnabled && TRACKING_IDS.wpcomGoogleAdsGtag,
-		isJetpackGoogleAdsGtagEnabled && TRACKING_IDS.jetpackGoogleAdsGtag,
 		isFloodlightEnabled && TRACKING_IDS.wpcomFloodlightGtag,
 	].filter( id => false !== id );
 	if ( enabledGtags.length > 0 ) {
@@ -544,25 +499,6 @@ export function retarget( urlPath ) {
 		window.gtag( ...params );
 	}
 
-	// Jetpack Google Ads Gtag
-	if ( isJetpackGoogleAdsGtagEnabled ) {
-		const params = [ 'config', TRACKING_IDS.jetpackGoogleAdsGtag, { page_path: urlPath } ];
-		debug( 'retarget: [Google Ads] Jetpack', params );
-		window.gtag( ...params );
-	}
-
-	// AdWords
-	if ( isAdwordsEnabled ) {
-		const params = {
-			google_conversion_id: ADWORDS_CONVERSION_ID,
-			google_remarketing_only: true,
-		};
-		debug( 'retarget: [AdWords]', params );
-		if ( window.google_trackConversion ) {
-			window.google_trackConversion( params );
-		}
-	}
-
 	// Floodlight
 	recordPageViewInFloodlight( urlPath );
 
@@ -636,12 +572,17 @@ export function trackCustomFacebookConversionEvent( name, properties ) {
  * @returns {void}
  */
 export function trackCustomAdWordsRemarketingEvent( properties ) {
+	debug( 'trackCustomAdWordsRemarketingEvent:', properties );
+	// Not sure this is currently serving any purpose and whether we can convert it to use Gtag.
+	// Refactoring the middleware for analytics is outside the scope of this PR so I'll leave the function stub for now.
+	/*
 	window.google_trackConversion &&
 		window.google_trackConversion( {
 			google_conversion_id: ADWORDS_CONVERSION_ID,
 			google_custom_params: properties,
 			google_remarketing_only: true,
 		} );
+	*/
 }
 
 function splitWpcomJetpackCartInfo( cart ) {
@@ -787,27 +728,6 @@ export function recordSignup( slug ) {
 
 	const usdCost = costToUSD( syntheticCart.total_cost, syntheticCart.currency );
 
-	// AdWords
-
-	if ( isAdwordsEnabled ) {
-		if ( window.google_trackConversion ) {
-			const params = {
-				google_conversion_id: ADWORDS_SIGNUP_CONVERSION_ID,
-				google_conversion_label: TRACKING_IDS.googleSignupConversionLabel,
-				google_conversion_value: syntheticCart.total_cost,
-				google_conversion_currency: syntheticCart.currency,
-				google_custom_params: {
-					product_slug: slug,
-					user_id: userId,
-					order_id: syntheticOrderId,
-				},
-				google_remarketing_only: false,
-			};
-			debug( 'recordSignup: [AdWords]', params );
-			window.google_trackConversion( params );
-		}
-	}
-
 	// Google Ads Gtag
 
 	if ( isWpcomGoogleAdsGtagEnabled ) {
@@ -951,17 +871,11 @@ export function recordAddToCart( cartItem ) {
 		return;
 	}
 
-	const isJetpackPlan = productsValues.isJetpackPlan( cartItem );
-
-	if ( isJetpackPlan ) {
-		debug( 'recordAddToCart: [Jetpack]', cartItem );
-	} else {
-		debug( 'recordAddToCart: [WPCom]', cartItem );
-	}
+	debug( 'recordAddToCart:', cartItem );
 
 	// Google Ads Gtag
 
-	if ( ! isJetpackPlan && isWpcomGoogleAdsGtagEnabled ) {
+	if ( isWpcomGoogleAdsGtagEnabled ) {
 		const params = [
 			'event',
 			'conversion',
@@ -973,24 +887,15 @@ export function recordAddToCart( cartItem ) {
 		window.gtag( ...params );
 	}
 
-	if ( isJetpackPlan && isJetpackGoogleAdsGtagEnabled ) {
-		const params = [
-			'event',
-			'conversion',
-			{
-				send_to: TRACKING_IDS.jetpackGoogleAdsGtagAddToCart,
-			},
-		];
-		debug( 'recordAddToCart: [Google Ads Gtag] Jetpack', params );
-		window.gtag( ...params );
-	}
-
 	// Facebook
 
 	if ( isFacebookEnabled ) {
-		const params = [
+		// Fire both WP and JP pixels.
+
+		// WP
+		let params = [
 			'trackSingle',
-			isJetpackPlan ? TRACKING_IDS.facebookJetpackInit : TRACKING_IDS.facebookInit,
+			TRACKING_IDS.facebookInit,
 			'AddToCart',
 			{
 				product_slug: cartItem.product_slug,
@@ -998,6 +903,19 @@ export function recordAddToCart( cartItem ) {
 			},
 		];
 		debug( 'recordAddToCart: [Facebook]', params );
+		window.fbq( ...params );
+
+		// Jetpack
+		params = [
+			'trackSingle',
+			TRACKING_IDS.facebookJetpackInit,
+			'AddToCart',
+			{
+				product_slug: cartItem.product_slug,
+				free_trial: Boolean( cartItem.free_trial ),
+			},
+		];
+		debug( 'recordAddToCart: [Jetpack]', params );
 		window.fbq( ...params );
 	}
 
@@ -1103,39 +1021,21 @@ export function recordOrder( cart, orderId ) {
 
 	const usdTotalCost = costToUSD( cart.total_cost, cart.currency );
 
-	// load the ecommerce plugin
-	debug( 'recordOrder: ga ecommerce plugin load' );
-	window.ga( 'require', 'ecommerce' );
-
 	// Purchase tracking happens in one of three ways:
 
-	// 1. Fire one tracking event that includes details about the entire order
+	// Fire one tracking event that includes details about the entire order
 
 	const wpcomJetpackCartInfo = splitWpcomJetpackCartInfo( cart );
 	debug( 'recordOrder: wpcomJetpackCartInfo:', wpcomJetpackCartInfo );
 
-	recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInGoogleAds( cart, orderId );
+	recordOrderInFacebook( cart, orderId );
 	recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInNanigans( cart, orderId );
 	recordOrderInCriteo( cart, orderId );
 
-	// This has to come before we add the items to the Google Analytics cart
-	recordOrderInGoogleAnalytics( cart, orderId );
-
-	// 2. Fire a tracking event for each product purchased
-
-	cart.products.forEach( product => {
-		recordProduct( product, orderId );
-	} );
-
-	// Ensure we submit the cart to Google Analytics
-	debug( 'recordOrder: ga ecommerce send' );
-	window.ga( 'ecommerce:send' );
-
-	// 3. Fire a single tracking event without any details about what was purchased
+	// Fire a single tracking event without any details about what was purchased
 
 	// Experian / One 2 One Media
 	if ( isExperianEnabled ) {
@@ -1212,80 +1112,6 @@ export function recordOrder( cart, orderId ) {
 	// event we redirect the user to wordpress.com which causes a domain change preventing the expanding and inspection
 	// of any object in the JS console since they are no longer available.
 	debug( 'recordOrder: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
-}
-
-/**
- * Recorders an individual product purchase conversion
- *
- * @param {Object} product - the product
- * @param {Number} orderId - the order id
- * @returns {void}
- */
-function recordProduct( product, orderId ) {
-	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordProduct: [Skipping] ad tracking is not allowed' );
-		return;
-	}
-
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordProduct.bind( null, product, orderId ) );
-		return;
-	}
-
-	const isJetpackPlan = productsValues.isJetpackPlan( product );
-
-	if ( isJetpackPlan ) {
-		debug( 'Recording Jetpack purchase', product );
-	} else {
-		debug( 'Recording purchase', product );
-	}
-
-	const currentUser = user.get();
-	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
-
-	try {
-		// Google Analytics
-		const item = {
-			currency: product.currency,
-			id: orderId,
-			name: product.product_slug,
-			price: product.cost,
-			sku: product.product_slug,
-			quantity: 1,
-		};
-		debug( 'recordProduct: ga ecommerce add item', item );
-		window.ga( 'ecommerce:addItem', item );
-
-		// Google AdWords
-		if ( isAdwordsEnabled ) {
-			if ( window.google_trackConversion ) {
-				let googleConversionId, googleConversionLabel;
-
-				if ( isJetpackPlan ) {
-					googleConversionId = ADWORDS_CONVERSION_ID_JETPACK;
-					googleConversionLabel = TRACKING_IDS.googleConversionLabelJetpack;
-				} else {
-					googleConversionId = ADWORDS_CONVERSION_ID;
-					googleConversionLabel = TRACKING_IDS.googleConversionLabel;
-				}
-
-				window.google_trackConversion( {
-					google_conversion_id: googleConversionId,
-					google_conversion_label: googleConversionLabel,
-					google_conversion_value: product.cost,
-					google_conversion_currency: product.currency,
-					google_custom_params: {
-						product_slug: product.product_slug,
-						user_id: userId,
-						order_id: orderId,
-					},
-					google_remarketing_only: false,
-				} );
-			}
-		}
-	} catch ( err ) {
-		debug( 'Unable to save purchase tracking data', err );
-	}
 }
 
 /**
@@ -1397,52 +1223,6 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 }
 
 /**
- * Records an order in Nanigans. If nanigans is not already loaded and configured, it configures it now (delayed load
- * until the moment when we actually need this pixel).
- *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
- * @returns {void}
- */
-function recordOrderInNanigans( cart, orderId ) {
-	if ( ! isAdTrackingAllowed() || ! isNanigansEnabled ) {
-		return;
-	}
-
-	const paidProducts = cart.products.filter( product => product.cost >= 0.01 );
-
-	if ( paidProducts.length === 0 ) {
-		debug( 'recordOrderInNanigans: Skip cart because it has ONLY <0.01 products' );
-		return;
-	}
-
-	debug( 'recordOrderInNanigans: Record purchase' );
-
-	const productPrices = paidProducts.map( product => product.cost * 100 ); // VALUE is in cents, [ 0, 9600 ]
-	const eventDetails = {
-		sku: paidProducts.map( product => product.product_slug ), // [ 'blog_domain', 'plan_premium' ]
-		qty: paidProducts.map( () => 1 ), // [ 1, 1 ]
-		currency: cart.currency,
-		unique: orderId, // unique transaction id
-	};
-
-	const eventStruct = [
-		'purchase', // EVENT_TYPE
-		'main', // EVENT_NAME
-		productPrices,
-		eventDetails,
-	];
-
-	if ( ! isNanigansConfigured ) {
-		setupNanigansGlobal();
-		loadScript( NANIGANS_SCRIPT_URL );
-	}
-
-	debug( 'Nanigans push:', eventStruct );
-	window.NaN_api.push( eventStruct ); // NaN api is either an array that supports push, either the real Nanigans API
-}
-
-/**
  * Records an order in Facebook (a single event for the entire order)
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -1450,7 +1230,7 @@ function recordOrderInNanigans( cart, orderId ) {
  * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
-function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInFacebook( cart, orderId ) {
 	if ( ! isAdTrackingAllowed() || ! isFacebookEnabled ) {
 		return;
 	}
@@ -1467,47 +1247,41 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 	const currentUser = user.get();
 	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
 
+	// Fire both WPCom and Jetpack pixels
+
 	// WPCom
 
-	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		const params = [
-			'trackSingle',
-			TRACKING_IDS.facebookInit,
-			'Purchase',
-			{
-				product_slug: wpcomJetpackCartInfo.wpcomProducts
-					.map( product => product.product_slug )
-					.join( ', ' ),
-				value: wpcomJetpackCartInfo.wpcomCost,
-				currency: cart.currency,
-				user_id: userId,
-				order_id: orderId,
-			},
-		];
-		debug( 'recordOrderInFacebook: WPCom', params );
-		window.fbq( ...params );
-	}
+	let params = [
+		'trackSingle',
+		TRACKING_IDS.facebookInit,
+		'Purchase',
+		{
+			product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
+			value: cart.total_cost,
+			currency: cart.currency,
+			user_id: userId,
+			order_id: orderId,
+		},
+	];
+	debug( 'recordOrderInFacebook: WPCom', params );
+	window.fbq( ...params );
 
 	// Jetpack
 
-	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		const params = [
-			'trackSingle',
-			TRACKING_IDS.facebookJetpackInit,
-			'Purchase',
-			{
-				product_slug: wpcomJetpackCartInfo.jetpackProducts
-					.map( product => product.product_slug )
-					.join( ', ' ),
-				value: wpcomJetpackCartInfo.jetpackCost,
-				currency: cart.currency,
-				user_id: userId,
-				order_id: orderId,
-			},
-		];
-		debug( 'recordOrderInFacebook: Jetpack', params );
-		window.fbq( ...params );
-	}
+	params = [
+		'trackSingle',
+		TRACKING_IDS.facebookJetpackInit,
+		'Purchase',
+		{
+			product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
+			value: cart.total_cost,
+			currency: cart.currency,
+			user_id: userId,
+			order_id: orderId,
+		},
+	];
+	debug( 'recordOrderInFacebook: Jetpack', params );
+	window.fbq( ...params );
 }
 
 /**
@@ -1857,76 +1631,31 @@ function criteoSiteType() {
 }
 
 /**
- * Records an order in Google Analytics
- *
- * @see https://developers.google.com/analytics/devguides/collection/analyticsjs/ecommerce
- *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Number} orderId - the order id
- * @returns {void}
- */
-function recordOrderInGoogleAnalytics( cart, orderId ) {
-	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordOrderInGoogleAnalytics: skipping as ad tracking is disallowed' );
-		return;
-	}
-
-	const transaction = {
-		id: orderId,
-		affiliation: 'WordPress.com',
-		revenue: cart.total_cost,
-		currency: cart.currency,
-	};
-	debug( 'recordOrderInGoogleAnalytics: ga ecommerce add transaction', transaction );
-	window.ga( 'ecommerce:addTransaction', transaction );
-}
-
-/**
  * Records an order/sign_up in Google Ads Gtag
  *
  * @param {Object} cart - cart as `CartValue` object
  * @param {Number} orderId - the order id
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
-function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInGoogleAds( cart, orderId ) {
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordOrderInGoogleAds: skipping as ad tracking is disallowed' );
 		return;
 	}
 
-	if ( isJetpackGoogleAdsGtagEnabled ) {
-		if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-			const params = [
-				'event',
-				'conversion',
-				{
-					send_to: TRACKING_IDS.jetpackGoogleAdsGtagPurchase,
-					value: wpcomJetpackCartInfo.jetpackCost,
-					currency: cart.currency,
-					transaction_id: orderId,
-				},
-			];
-			debug( 'recordOrderInGoogleAds: Record Jetpack Purchase', params );
-			window.gtag( ...params );
-		}
-	}
-
 	if ( isWpcomGoogleAdsGtagEnabled ) {
-		if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-			const params = [
-				'event',
-				'conversion',
-				{
-					send_to: TRACKING_IDS.wpcomGoogleAdsGtagPurchase,
-					value: wpcomJetpackCartInfo.wpcomCost,
-					currency: cart.currency,
-					transaction_id: orderId,
-				},
-			];
-			debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
-			window.gtag( ...params );
-		}
+		const params = [
+			'event',
+			'conversion',
+			{
+				send_to: TRACKING_IDS.wpcomGoogleAdsGtagPurchase,
+				value: cart.total_cost,
+				currency: cart.currency,
+				transaction_id: orderId,
+			},
+		];
+		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
+		window.gtag( ...params );
 	}
 }
 
@@ -1955,9 +1684,9 @@ function setupGtag() {
 	window.gtag( 'js', new Date() );
 }
 
-function setupJetpackGoogleAdsGtag() {
+export function setupGoogleAnalyticsGtag( options ) {
 	setupGtag();
-	window.gtag( 'config', TRACKING_IDS.jetpackGoogleAdsGtag );
+	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, options );
 }
 
 function setupWpcomGoogleAdsGtag() {
@@ -1971,41 +1700,98 @@ function setupWpcomFloodlightGtag() {
 }
 
 /**
- * Initializes the Facebook pixel.
+ * Returns whether Google Analytics is allowed.
  *
- * When the user is logged in, additional hashed data is being forwarded.
+ * This function returns false if:
+ *
+ * 1. `isGoogleAnalyticsEnabled` is `true`
+ * 2. `ad-tracking` feature is disabled
+ * 3. `Do Not Track` is enabled
+ * 4. the current user could be in the GDPR zone and hasn't consented to tracking
+ * 5. `document.location.href` may contain personally identifiable information
+ *
+ * Note that doNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
+ *
+ * @returns {Boolean} true if GA is allowed.
  */
-function initFacebook() {
-	if ( user.get() ) {
-		initFacebookAdvancedMatching();
-	} else {
-		window.fbq( 'init', TRACKING_IDS.facebookInit );
-
-		/*
-		 * Also initialize the FB pixel for Jetpack.
-		 * However, disable auto-config for this secondary pixel ID.
-		 * See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
-		 */
-		window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
-		window.fbq( 'init', TRACKING_IDS.facebookJetpackInit );
-	}
+export function isGoogleAnalyticsAllowed() {
+	return (
+		isGoogleAnalyticsEnabled &&
+		config.isEnabled( 'ad-tracking' ) &&
+		! doNotTrack() &&
+		! isPiiUrl() &&
+		mayWeTrackCurrentUserGdpr()
+	);
 }
 
 /**
+ * Fires Google Analytics page view event
+ *
+ * @param {String} urlPath The path of the current page
+ * @param {String} pageTitle The title of the current page
+ */
+export function fireGoogleAnalyticsPageView( urlPath, pageTitle ) {
+	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, {
+		page_path: urlPath,
+		page_title: pageTitle,
+	} );
+}
+
+/**
+ * Fires a generic Google Analytics event
+ *
+ * @param {String} category Is the string that will appear as the event category.
+ * @param {String} action Is the string that will appear as the event action in Google Analytics Event reports.
+ * @param {String} label Is the string that will appear as the event label.
+ * @param {Integer} value Is a non-negative integer that will appear as the event value.
+ */
+export function fireGoogleAnalyticsEvent( category, action, label, value ) {
+	window.gtag( 'event', action, {
+		event_category: category,
+		event_label: label,
+		value: value,
+	} );
+}
+
+/**
+ * Fires a generic Google Analytics timing
+ *
+ * @param {String} name A string to identify the variable being recorded (e.g. 'load').
+ * @param {Integer} value The number of milliseconds in elapsed time to report to Google Analytics (e.g. 20).
+ * @param {String} event_category A string for categorizing all user timing variables into logical groups (e.g. 'JS Dependencies').
+ * @param {String} event_label A string that can be used to add flexibility in visualizing user timings in the reports (e.g. 'Google CDN').
+ */
+export function fireGoogleAnalyticsTiming( name, value, event_category, event_label ) {
+	window.gtag( 'event', 'timing_complete', {
+		name: name,
+		value: value,
+		event_category: event_category,
+		event_label: event_label,
+	} );
+}
+
+/**
+ * Initializes the Facebook pixel.
+ *
+ * When the user is logged in, additional hashed data is being forwarded.
  * See https://developers.facebook.com/docs/facebook-pixel/pixel-with-ads/conversion-tracking#advanced_match
  */
-function initFacebookAdvancedMatching() {
-	const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
-	const advancedMatching = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
+function initFacebook() {
+	let advancedMatching = {};
+	if ( user.get() ) {
+		const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
+		advancedMatching = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
+	}
 
-	debug( 'initFacebookAdvancedMatching:', advancedMatching );
+	debug( 'initFacebook', advancedMatching );
+
+	// WP Facebook pixel
 	window.fbq( 'init', TRACKING_IDS.facebookInit, advancedMatching );
 
-	/*
-	 * Also initialize the FB pixel for Jetpack.
-	 * However, disable auto-config for this secondary pixel ID.
-	 * See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
-	 */
+	// Jetpack Facebook pixel
+	// Also initialize the FB pixel for Jetpack.
+	// However, disable auto-config for this secondary pixel ID.
+	// See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
 	window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
 	window.fbq( 'init', TRACKING_IDS.facebookJetpackInit, advancedMatching );
 }

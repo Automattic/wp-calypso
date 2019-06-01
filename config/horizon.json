@@ -36,7 +36,6 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": true,
 		"google-my-business": false,
-		"google-analytics": true,
 		"gutenberg/opt-in": true,
 		"happychat": false,
 		"help": true,
@@ -128,8 +127,5 @@
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "horizon",
 	"google_analytics_key": "UA-10673494-20",
-	"google_adwords_conversion_id": 1067250390,
-	"google_adwords_conversion_id_jetpack": 937115306,
-	"google_adwords_signup_conversion_id": 1067250390,
 	"hotjar_enabled": true
 }
