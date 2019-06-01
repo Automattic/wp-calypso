@@ -115,7 +115,7 @@
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,
 		"signup/wpcc": true,
-		"memberships": false,
+		"memberships": true,
 		"ssr/sample-log-cache-misses": true,
 		"support-user": true,
 		"upgrades/checkout": true,

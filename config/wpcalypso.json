@@ -97,6 +97,7 @@
 		"me/my-profile": true,
 		"me/notifications": true,
 		"me/trophies": false,
+		"memberships": true,
 		"my-sites/checkout/web-payment/apple-pay": true,
 		"my-sites/checkout/web-payment/basic-card": false,
 		"network-connection": true,

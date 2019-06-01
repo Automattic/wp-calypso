@@ -173,7 +173,7 @@
 		"signup/social": true,
 		"signup/social-management": true,
 		"signup/wpcc": true,
-		"memberships": false,
+		"memberships": true,
 		"support-user": true,
 		"try/preconnect": true,
 		"try/preload": true,
