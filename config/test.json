@@ -75,6 +75,7 @@
 		"me/my-profile": true,
 		"me/notifications": true,
 		"me/trophies": false,
+		"memberships": true,
 		"network-connection": true,
 		"onboarding-checklist": false,
 		"onboarding-checklist/email-setup": true,
