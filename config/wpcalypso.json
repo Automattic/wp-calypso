@@ -45,7 +45,6 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": true,
 		"google-my-business": true,
-		"google-analytics": false,
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
@@ -184,8 +183,5 @@
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "wpcalypso",
 	"google_analytics_key": "UA-10673494-15",
-	"google_adwords_conversion_id": 1067250390,
-	"google_adwords_conversion_id_jetpack": 937115306,
-	"google_adwords_signup_conversion_id": 1067250390,
 	"hotjar_enabled": true
 }
