@@ -323,29 +323,6 @@ export function isUrlBlacklistedForPerformance() {
 }
 
 /**
- * Returns whether Google Analytics is allowed.
- *
- * This function returns false if:
- *
- * 1. `google-analytics` feature is disabled
- * 2. `Do Not Track` is enabled
- * 3. the current user could be in the GDPR zone and hasn't consented to tracking
- * 4. `document.location.href` may contain personally identifiable information
- *
- * Note that doNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
- *
- * @returns {Boolean} true if GA is allowed.
- */
-export function isGoogleAnalyticsAllowed() {
-	return (
-		config.isEnabled( 'google-analytics' ) &&
-		! doNotTrack() &&
-		! isPiiUrl() &&
-		mayWeTrackCurrentUserGdpr()
-	);
-}
-
-/**
  * Returns whether ad tracking is allowed.
  *
  * This function returns false if:
