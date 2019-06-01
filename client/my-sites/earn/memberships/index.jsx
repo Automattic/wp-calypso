@@ -273,7 +273,7 @@ class MembershipsSection extends Component {
 					</div>
 				</Card>
 				<Notice
-					text={ this.props.translate( 'Read more about Recurring Payments feature' ) }
+					text={ this.props.translate( 'Read more about the Recurring Payments feature.' ) }
 					showDismiss={ false }
 				>
 					<NoticeAction
@@ -322,7 +322,7 @@ class MembershipsSection extends Component {
 					<Notice
 						status="is-warning"
 						text={ this.props.translate(
-							'Please update Jetpack plugin to version 7.4 or higher in order to use the Recurring Payments button block'
+							'Please update the Jetpack plugin to version 7.4 or higher in order to use the Recurring Payments button block.'
 						) }
 						showDismiss={ false }
 					>
