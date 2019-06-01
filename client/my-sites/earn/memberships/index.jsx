@@ -259,6 +259,32 @@ class MembershipsSection extends Component {
 		);
 	}
 
+	renderOnboarding() {
+		return (
+			<div>
+				<SectionHeader label={ this.props.translate( 'About Recurring Payments' ) } />
+				<Card>
+					<div className="memberships__module-content module-content">
+						<p>
+							{ this.props.translate(
+								'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
+							) }
+						</p>
+					</div>
+				</Card>
+				<Notice
+					text={ this.props.translate( 'Read more about the Recurring Payments feature.' ) }
+					showDismiss={ false }
+				>
+					<NoticeAction
+						href={ `https://support.wordpress.com/recurring-payments-button/` }
+						icon="external"
+					/>
+				</Notice>
+			</div>
+		);
+	}
+
 	renderConnectStripe() {
 		return (
 			<div>
@@ -270,12 +296,13 @@ class MembershipsSection extends Component {
 						) }
 					/>
 				) }
+				{ this.renderOnboarding() }
 				<SectionHeader label={ this.props.translate( 'Stripe Connection' ) } />
 				<Card>
 					<div className="memberships__module-content module-content">
 						<p>
 							{ this.props.translate(
-								'Start collecting subscription payments! Recurring payments are processed through Stripe. Click the button below to create a new account or to connect an existing Stripe account.'
+								'Recurring payments are processed through Stripe. Click the button below to create a new account or to connect an existing Stripe account.'
 							) }
 						</p>
 						<StripeConnectButton href={ this.props.connectUrl } target="_blank">
@@ -290,30 +317,36 @@ class MembershipsSection extends Component {
 	render() {
 		if ( this.props.isJetpackTooOld ) {
 			return (
-				<Notice
-					status="is-warning"
-					text={ this.props.translate(
-						'Please update Jetpack plugin to version 7.3 or higher in order to use the Membership button block'
-					) }
-					showDismiss={ false }
-				>
-					<NoticeAction
-						href={ `https://wordpress.com/plugins/jetpack/${ this.props.siteSlug }` }
-						icon="external"
-					/>
-				</Notice>
+				<div>
+					{ this.renderOnboarding() }
+					<Notice
+						status="is-warning"
+						text={ this.props.translate(
+							'Please update the Jetpack plugin to version 7.4 or higher in order to use the Recurring Payments button block.'
+						) }
+						showDismiss={ false }
+					>
+						<NoticeAction
+							href={ `https://wordpress.com/plugins/jetpack/${ this.props.siteSlug }` }
+							icon="external"
+						/>
+					</Notice>
+				</div>
 			);
 		}
 
 		if ( ! this.props.paidPlan ) {
 			return (
-				<UpgradeNudge
-					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
-					shouldDisplay={ () => true }
-					feature={ FEATURE_MEMBERSHIPS }
-					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
-					message={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
-				/>
+				<div>
+					{ this.renderOnboarding() }
+					<UpgradeNudge
+						plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
+						shouldDisplay={ () => true }
+						feature={ FEATURE_MEMBERSHIPS }
+						title={ this.props.translate( 'Upgrade to the Personal plan' ) }
+						message={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
+					/>
+				</div>
 			);
 		}
 		return (
@@ -348,7 +381,7 @@ const mapStateToProps = state => {
 		),
 		connectUrl: get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' ),
 		paidPlan: isSiteOnPaidPlan( state, siteId ),
-		isJetpackTooOld: isJetpack && isJetpackMinimumVersion( state, siteId, '7.3' ) === false,
+		isJetpackTooOld: isJetpack && isJetpackMinimumVersion( state, siteId, '7.4' ) === false,
 		isJetpack: isJetpack,
 		products: get( state, [ 'memberships', 'productList', 'items', siteId ], [] ),
 	};
