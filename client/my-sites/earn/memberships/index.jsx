@@ -270,12 +270,31 @@ class MembershipsSection extends Component {
 						) }
 					/>
 				) }
+				<SectionHeader label={ this.props.translate( 'About Recurring Payments' ) } />
+				<Card>
+					<div className="memberships__module-content module-content">
+						<p>
+							{ this.props.translate(
+								'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
+							) }
+						</p>
+					</div>
+				</Card>
+				<Notice
+					text={ this.props.translate( 'Read more about Recurring Payments feature' ) }
+					showDismiss={ false }
+				>
+					<NoticeAction
+						href={ `https://support.wordpress.com/recurring-payments-button/` }
+						icon="external"
+					/>
+				</Notice>
 				<SectionHeader label={ this.props.translate( 'Stripe Connection' ) } />
 				<Card>
 					<div className="memberships__module-content module-content">
 						<p>
 							{ this.props.translate(
-								'Start collecting subscription payments! Recurring payments are processed through Stripe. Click the button below to create a new account or to connect an existing Stripe account.'
+								'Recurring payments are processed through Stripe. Click the button below to create a new account or to connect an existing Stripe account.'
 							) }
 						</p>
 						<StripeConnectButton href={ this.props.connectUrl } target="_blank">
@@ -293,7 +312,7 @@ class MembershipsSection extends Component {
 				<Notice
 					status="is-warning"
 					text={ this.props.translate(
-						'Please update Jetpack plugin to version 7.3 or higher in order to use the Membership button block'
+						'Please update Jetpack plugin to version 7.4 or higher in order to use the Recurring Payments button block'
 					) }
 					showDismiss={ false }
 				>
@@ -348,7 +367,7 @@ const mapStateToProps = state => {
 		),
 		connectUrl: get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' ),
 		paidPlan: isSiteOnPaidPlan( state, siteId ),
-		isJetpackTooOld: isJetpack && isJetpackMinimumVersion( state, siteId, '7.3' ) === false,
+		isJetpackTooOld: isJetpack && isJetpackMinimumVersion( state, siteId, '7.4' ) === false,
 		isJetpack: isJetpack,
 		products: get( state, [ 'memberships', 'productList', 'items', siteId ], [] ),
 	};
