@@ -259,17 +259,9 @@ class MembershipsSection extends Component {
 		);
 	}
 
-	renderConnectStripe() {
+	renderOnboarding() {
 		return (
 			<div>
-				{ this.props.query.stripe_connect_cancelled && (
-					<Notice
-						showDismiss={ false }
-						text={ this.props.translate(
-							'The attempt to connect to Stripe has been cancelled. You can connect again at any time.'
-						) }
-					/>
-				) }
 				<SectionHeader label={ this.props.translate( 'About Recurring Payments' ) } />
 				<Card>
 					<div className="memberships__module-content module-content">
@@ -289,6 +281,22 @@ class MembershipsSection extends Component {
 						icon="external"
 					/>
 				</Notice>
+			</div>
+		);
+	}
+
+	renderConnectStripe() {
+		return (
+			<div>
+				{ this.props.query.stripe_connect_cancelled && (
+					<Notice
+						showDismiss={ false }
+						text={ this.props.translate(
+							'The attempt to connect to Stripe has been cancelled. You can connect again at any time.'
+						) }
+					/>
+				) }
+				{ this.renderOnboarding() }
 				<SectionHeader label={ this.props.translate( 'Stripe Connection' ) } />
 				<Card>
 					<div className="memberships__module-content module-content">
@@ -309,30 +317,36 @@ class MembershipsSection extends Component {
 	render() {
 		if ( this.props.isJetpackTooOld ) {
 			return (
-				<Notice
-					status="is-warning"
-					text={ this.props.translate(
-						'Please update Jetpack plugin to version 7.4 or higher in order to use the Recurring Payments button block'
-					) }
-					showDismiss={ false }
-				>
-					<NoticeAction
-						href={ `https://wordpress.com/plugins/jetpack/${ this.props.siteSlug }` }
-						icon="external"
-					/>
-				</Notice>
+				<div>
+					{ this.renderOnboarding() }
+					<Notice
+						status="is-warning"
+						text={ this.props.translate(
+							'Please update Jetpack plugin to version 7.4 or higher in order to use the Recurring Payments button block'
+						) }
+						showDismiss={ false }
+					>
+						<NoticeAction
+							href={ `https://wordpress.com/plugins/jetpack/${ this.props.siteSlug }` }
+							icon="external"
+						/>
+					</Notice>
+				</div>
 			);
 		}
 
 		if ( ! this.props.paidPlan ) {
 			return (
-				<UpgradeNudge
-					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
-					shouldDisplay={ () => true }
-					feature={ FEATURE_MEMBERSHIPS }
-					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
-					message={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
-				/>
+				<div>
+					{ this.renderOnboarding() }
+					<UpgradeNudge
+						plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
+						shouldDisplay={ () => true }
+						feature={ FEATURE_MEMBERSHIPS }
+						title={ this.props.translate( 'Upgrade to the Personal plan' ) }
+						message={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
+					/>
+				</div>
 			);
 		}
 		return (
