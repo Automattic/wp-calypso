@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import {
 	isWordadsInstantActivationEligible,
 	canUpgradeToUseWordAds,
-	canAccessEarnSection,
+	canAccessAds,
 } from 'lib/ads/utils';
 import { isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
@@ -68,7 +68,7 @@ class AdsWrapper extends Component {
 		const { siteSlug, site } = this.props;
 		const siteFragment = getSiteFragment( page.current );
 
-		if ( siteSlug && site && ! canAccessEarnSection( site ) ) {
+		if ( siteSlug && site && ! canAccessAds( site ) ) {
 			page( '/stats/' + siteSlug );
 		} else if ( ! siteFragment ) {
 			page( '/earn/' );
@@ -223,7 +223,7 @@ class AdsWrapper extends Component {
 			site.jetpack &&
 			( isPremium( site.plan ) || isBusiness( site.plan ) || isEcommerce( site.plan ) );
 
-		if ( ! canAccessEarnSection( site ) ) {
+		if ( ! canAccessAds( site ) ) {
 			return null;
 		}
 

@@ -34,6 +34,7 @@ import SectionHeader from 'components/section-header';
 import QueryMembershipProducts from 'components/data/query-memberships';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
+import { userCan } from 'lib/site/utils';
 
 /**
  * Style dependencies
@@ -349,6 +350,22 @@ class MembershipsSection extends Component {
 				</div>
 			);
 		}
+
+		if ( ! userCan( 'manage_options', this.props.site ) ) {
+			return (
+				<div>
+					{ this.renderOnboarding() }
+					<Notice
+						status="is-warning"
+						text={ this.props.translate(
+							'Only site administrators can edit Recurring Payments settings.'
+						) }
+						showDismiss={ false }
+					/>
+				</div>
+			);
+		}
+
 		return (
 			<div>
 				<QueryMembershipsSettings siteId={ this.props.siteId } />

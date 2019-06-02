@@ -25,7 +25,12 @@ export default function() {
 
 	page( '/earn/ads-settings', siteSelection, sites, makeLayout, clientRender );
 	page( '/earn/ads-earnings', siteSelection, sites, makeLayout, clientRender );
-	page( '/earn/:site_id', earnController.redirectToAdsEarnings, makeLayout, clientRender );
+	page(
+		'/earn/:site_id',
+		( { params } ) => page.redirect( '/earn/payments/' + params.site_id ),
+		makeLayout,
+		clientRender
+	);
 	// These are legacy URLs to redirect if they are present anywhere on the web.
 	page( '/ads/earnings/:site_id', earnController.redirectToAdsEarnings, makeLayout, clientRender );
 	page( '/ads/settings/:site_id', earnController.redirectToAdsSettings, makeLayout, clientRender );

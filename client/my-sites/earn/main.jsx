@@ -27,6 +27,7 @@ import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import config from 'config';
+import { canAccessAds } from 'lib/ads/utils';
 
 class EarningsMain extends Component {
 	static propTypes = {
@@ -48,17 +49,6 @@ class EarningsMain extends Component {
 		const { siteSlug, translate } = this.props;
 		const pathSuffix = siteSlug ? '/' + siteSlug : '';
 		const tabs = [];
-
-		tabs.push( {
-			title: translate( 'Ads Earnings' ),
-			path: '/earn/ads-earnings' + pathSuffix,
-			id: 'ads-earnings',
-		} );
-		tabs.push( {
-			title: translate( 'Ads Settings' ),
-			path: '/earn/ads-settings' + pathSuffix,
-			id: 'ads-settings',
-		} );
 		if ( config.isEnabled( 'memberships' ) ) {
 			tabs.push( {
 				title: translate( 'Recurring Payments' ),
@@ -66,6 +56,20 @@ class EarningsMain extends Component {
 				id: 'payments',
 			} );
 		}
+
+		if ( canAccessAds( this.props.site ) ) {
+			tabs.push( {
+				title: translate( 'Ads Earnings' ),
+				path: '/earn/ads-earnings' + pathSuffix,
+				id: 'ads-earnings',
+			} );
+			tabs.push( {
+				title: translate( 'Ads Settings' ),
+				path: '/earn/ads-settings' + pathSuffix,
+				id: 'ads-settings',
+			} );
+		}
+
 		return tabs;
 	}
 
