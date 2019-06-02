@@ -58,7 +58,6 @@ import {
 	toggleMySitesSidebarManageMenu,
 } from 'state/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
-import { canAccessEarnSection } from 'lib/ads/utils';
 import isVipSite from 'state/selectors/is-vip-site';
 
 export class MySitesSidebar extends Component {
@@ -176,10 +175,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	earn() {
-		const { path, translate, site } = this.props;
-		if ( ! canAccessEarnSection( site ) ) {
-			return null;
-		}
+		const { path, translate } = this.props;
 
 		return (
 			<SidebarItem

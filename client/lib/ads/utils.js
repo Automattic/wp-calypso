@@ -31,7 +31,7 @@ export function canAccessWordads( site ) {
 	return false;
 }
 
-export function canAccessEarnSection( site ) {
+export function canAccessAds( site ) {
 	return canAccessWordads( site ) || canUpgradeToUseWordAds( site );
 }
 
