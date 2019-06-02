@@ -278,7 +278,7 @@ class MembershipsSection extends Component {
 				>
 					<NoticeAction
 						href={ `https://support.wordpress.com/recurring-payments-button/` }
-						icon="external"
+						external
 					/>
 				</Notice>
 			</div>
