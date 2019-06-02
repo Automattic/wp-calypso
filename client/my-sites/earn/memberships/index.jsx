@@ -351,7 +351,7 @@ class MembershipsSection extends Component {
 			);
 		}
 
-		if ( ! userCan( 'switch_themes', this.props.site ) ) {
+		if ( ! userCan( 'manage_options', this.props.site ) ) {
 			return (
 				<div>
 					{ this.renderOnboarding() }
