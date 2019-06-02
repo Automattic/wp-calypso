@@ -49,59 +49,63 @@ class MembershipsSection extends Component {
 	componentDidMount() {
 		this.fetchNextSubscriberPage( false, true );
 	}
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.siteId !== this.props.siteId ) {
+			// Site Id changed
+			this.fetchNextSubscriberPage( false, true );
+		}
+	}
 	renderEarnings() {
 		const { translate } = this.props;
 		return (
-			<Card>
+			<div>
+				<SectionHeader label={ this.props.translate( 'Earnings' ) } />
 				<QueryMembershipsEarnings siteId={ this.props.siteId } />
-				<div className="memberships__module-header module-header">
-					<h1 className="memberships__module-header-title module-header-title">
-						{ translate( 'Earnings' ) }
-					</h1>
-				</div>
-				<div className="memberships__module-content module-content">
-					<ul className="memberships__earnings-breakdown-list">
-						<li className="memberships__earnings-breakdown-item">
-							<span className="memberships__earnings-breakdown-label">
-								{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
-							</span>
-							<span className="memberships__earnings-breakdown-value">
-								{ formatCurrency( this.props.total, this.props.currency ) }
-							</span>
-						</li>
-						<li className="memberships__earnings-breakdown-item">
-							<span className="memberships__earnings-breakdown-label">
-								{ translate( 'Last 30 days', { context: 'Sum of earnings over last 30 days' } ) }
-							</span>
-							<span className="memberships__earnings-breakdown-value">
-								{ formatCurrency( this.props.lastMonth, this.props.currency ) }
-							</span>
-						</li>
-						<li className="memberships__earnings-breakdown-item">
-							<span className="memberships__earnings-breakdown-label">
-								{ translate( 'Next month', {
-									context: 'Forecast for the subscriptions due in the next 30 days',
-								} ) }
-							</span>
-							<span className="memberships__earnings-breakdown-value">
-								{ formatCurrency( this.props.forecast, this.props.currency ) }
-							</span>
-						</li>
-					</ul>
-				</div>
-				<div className="memberships__earnings-breakdown-notes">
-					{ translate(
-						'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Stripe charges are typically %(stripe)s.',
-						{
-							args: {
-								commission: '' + parseFloat( this.props.commission ) * 100 + '%',
-								stripe: '2.9%+30c',
-							},
-							components: { em: <em />, br: <br /> },
-						}
-					) }
-				</div>
-			</Card>
+				<Card>
+					<div className="memberships__module-content module-content">
+						<ul className="memberships__earnings-breakdown-list">
+							<li className="memberships__earnings-breakdown-item">
+								<span className="memberships__earnings-breakdown-label">
+									{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
+								</span>
+								<span className="memberships__earnings-breakdown-value">
+									{ formatCurrency( this.props.total, this.props.currency ) }
+								</span>
+							</li>
+							<li className="memberships__earnings-breakdown-item">
+								<span className="memberships__earnings-breakdown-label">
+									{ translate( 'Last 30 days', { context: 'Sum of earnings over last 30 days' } ) }
+								</span>
+								<span className="memberships__earnings-breakdown-value">
+									{ formatCurrency( this.props.lastMonth, this.props.currency ) }
+								</span>
+							</li>
+							<li className="memberships__earnings-breakdown-item">
+								<span className="memberships__earnings-breakdown-label">
+									{ translate( 'Next month', {
+										context: 'Forecast for the subscriptions due in the next 30 days',
+									} ) }
+								</span>
+								<span className="memberships__earnings-breakdown-value">
+									{ formatCurrency( this.props.forecast, this.props.currency ) }
+								</span>
+							</li>
+						</ul>
+					</div>
+					<div className="memberships__earnings-breakdown-notes">
+						{ translate(
+							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Stripe charges are typically %(stripe)s.',
+							{
+								args: {
+									commission: '' + parseFloat( this.props.commission ) * 100 + '%',
+									stripe: '2.9%+30c',
+								},
+								components: { em: <em />, br: <br /> },
+							}
+						) }
+					</div>
+				</Card>
+			</div>
 		);
 	}
 
@@ -157,30 +161,48 @@ class MembershipsSection extends Component {
 
 	renderSubscriberList() {
 		return (
-			<Card>
-				<div className="memberships__module-header module-header">
-					<h1 className="memberships__module-header-title module-header-title">
-						{ this.props.translate( 'Subscribers' ) }
-					</h1>
-				</div>
-				<div className="memberships__module-content module-content">
-					<div>
-						{ orderBy( Object.values( this.props.subscribers ), [ 'id' ], [ 'desc' ] ).map( sub =>
-							this.renderSubscriber( sub )
+			<div>
+				<SectionHeader label={ this.props.translate( 'Subscribers' ) } />
+				{ Object.values( this.props.subscribers ).length === 0 && (
+					<Card>
+						{ this.props.translate(
+							"You haven't added any subscribers. {{a}}Learn more{{/a}} about recurring payments.",
+							{
+								components: {
+									a: (
+										<a
+											href="https://en.support.wordpress.com/recurring-payments-button/"
+											target="_blank"
+											rel="noreferrer noopener"
+										/>
+									),
+								},
+							}
 						) }
-					</div>
-					<InfiniteScroll
-						nextPageMethod={ triggeredByInteraction =>
-							this.fetchNextSubscriberPage( triggeredByInteraction, false )
-						}
-					/>
-				</div>
-				<div className="memberships__module-footer">
-					<Button onClick={ this.downloadSubscriberList }>
-						{ this.props.translate( 'Download list as CSV' ) }
-					</Button>
-				</div>
-			</Card>
+					</Card>
+				) }
+				{ Object.values( this.props.subscribers ).length > 0 && (
+					<Card>
+						<div className="memberships__module-content module-content">
+							<div>
+								{ orderBy( Object.values( this.props.subscribers ), [ 'id' ], [ 'desc' ] ).map(
+									sub => this.renderSubscriber( sub )
+								) }
+							</div>
+							<InfiniteScroll
+								nextPageMethod={ triggeredByInteraction =>
+									this.fetchNextSubscriberPage( triggeredByInteraction, false )
+								}
+							/>
+						</div>
+						<div className="memberships__module-footer">
+							<Button onClick={ this.downloadSubscriberList }>
+								{ this.props.translate( 'Download list as CSV' ) }
+							</Button>
+						</div>
+					</Card>
+				) }
+			</div>
 		);
 	}
 
