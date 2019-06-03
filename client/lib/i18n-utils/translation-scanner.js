@@ -4,8 +4,8 @@
  */
 import { debounce } from 'lodash';
 import { registerTranslateHook } from 'i18n-calypso';
-import debugFactory from 'debug';
 import cookie from 'cookie';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -20,7 +20,6 @@ export class TranslationScanner {
 		Object.assign( this, {
 			installed: false,
 			active: false,
-			loggedTranslations: [],
 			pendingOriginals: {},
 			sessionId: null,
 			cookieWatcherInterval: null,
@@ -52,6 +51,7 @@ export class TranslationScanner {
 			registerTranslateHook( this.translationFilter.bind( this ) );
 			this.cookieWatcherInterval = setInterval( this.checkCookie.bind( this ), 1000 );
 			this.installed = true;
+			this.checkCookie();
 		}
 
 		return this.installed;
@@ -63,7 +63,7 @@ export class TranslationScanner {
 		this.cookieWatcherInterval = null;
 		// TODO:
 		// unregisterTranslateHook( this.translationFilter );
-		// this.installed = false;
+		this.installed = false;
 		return this;
 	}
 
@@ -117,31 +117,19 @@ export class TranslationScanner {
 		if ( ! this.installed ) {
 			this.install();
 		}
-		this.checkCookie();
 		this.clear();
 		this.active = true;
+		return this;
 	}
 
 	stop() {
 		debug( 'Translation Scanner stopped' );
 		this.active = false;
-		return this.loggedTranslations;
+		return this;
 	}
 
 	clear() {
-		this.loggedTranslations = [];
-		return this.loggedTranslations;
-	}
-
-	format( translation, options ) {
-		const { original, context, plural /*, ...rest*/ } = options;
-		return `translation: ${ translation }, original: ${ original }, context: ${ context }, plural: ${ plural }`;
-	}
-
-	report( translations = this.loggedTranslations ) {
-		translations.map( ( [ translation, options ] ) =>
-			// eslint-disable-next-line no-console
-			console.log( this.format( translation, options ) )
-		);
+		this.pendingOriginals = {};
+		return this;
 	}
 }
