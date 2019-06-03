@@ -25,6 +25,7 @@ import {
 	getName,
 	getRenewalPrice,
 	handleRenewNowClick,
+	hasPaymentMethod,
 	isCancelable,
 	isExpired,
 	isExpiring,
@@ -197,9 +198,22 @@ class ManagePurchase extends Component {
 				return null;
 			}
 
-			const text = renewing ? translate( 'Edit Payment Method' ) : translate( 'Add Credit Card' );
+			const textEdit = translate( 'Edit Payment Method' );
+			const textAdd = translate( 'Add Credit Card' );
 
-			return <CompactCard href={ path }>{ text }</CompactCard>;
+			// With the self-serving auto-renewal toggle enabled, the payment data should be always there.
+			// Thus, to show "edit" or "add" text will depend on whether or not there is a payment method already.
+			if ( config.isEnabled( 'autorenewal-toggle' ) ) {
+				return (
+					<CompactCard href={ path }>
+						{ hasPaymentMethod( purchase ) ? textEdit : textAdd }
+					</CompactCard>
+				);
+			}
+
+			// Before rolling out the auto-renewal toggle, the only way that our users can "re-enable" auto-renewal
+			// is to add a new payment method to a purchase. That's why the text presenting here relating to the renewal status.
+			return <CompactCard href={ path }>{ renewing ? textEdit : textAdd }</CompactCard>;
 		}
 
 		return null;
