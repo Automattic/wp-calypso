@@ -24,6 +24,7 @@ const getSiteTypePropertyDefaults = propertyKey =>
 			siteTitlePlaceholder: i18n.translate( 'default siteTitlePlaceholder' ),
 			// Site topic step
 			siteTopicHeader: i18n.translate( 'What is your site about?' ),
+			siteTopicLabel: i18n.translate( 'What is your site about?' ),
 			siteTopicSubheader: i18n.translate(
 				"We'll add relevant content to your site to help you get started."
 			),
