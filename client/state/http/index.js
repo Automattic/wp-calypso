@@ -69,7 +69,7 @@ export const httpHandler = async ( { dispatch }, action ) => {
 
 	if ( contentType === 'application/x-www-form-urlencoded' ) {
 		serialize = data => encodeQueryParameters( toPairs( data ) );
-	} else if ( contentType === 'application/json' || typeof body !== 'string' ) {
+	} else if ( typeof body !== 'string' ) {
 		serialize = JSON.stringify.bind( JSON );
 	} else {
 		// assume body is already serialized
