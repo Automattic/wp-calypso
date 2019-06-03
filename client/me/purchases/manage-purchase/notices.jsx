@@ -124,7 +124,12 @@ class PurchaseNotice extends Component {
 			);
 		}
 
-		return <NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>;
+		// With the toggle, it doesn't make much sense to have this button.
+		return (
+			! config.isEnabled( 'autorenewal-toggle' ) && (
+				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
+			)
+		);
 	}
 
 	trackImpression( warning ) {
