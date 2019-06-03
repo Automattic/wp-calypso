@@ -22,12 +22,22 @@ class DomainsLandingContentCard extends Component {
 		message: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 		actionTitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 		actionCallback: PropTypes.func,
+		actionPrimary: PropTypes.bool,
+		actionBusy: PropTypes.bool,
+		alternateActionTitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		alternateActionCallback: PropTypes.func,
+		alternateActionPrimary: PropTypes.bool,
+		alternateActionBusy: PropTypes.bool,
 		footer: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 		isLoading: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isLoading: false,
+		actionPrimary: true,
+		actionBusy: false,
+		alternateActionPrimary: false,
+		alternateActionBusy: false,
 	};
 
 	renderPlaceholder = () => {
@@ -44,7 +54,20 @@ class DomainsLandingContentCard extends Component {
 	};
 
 	render() {
-		const { title, message, actionTitle, actionCallback, footer, isLoading } = this.props;
+		const {
+			title,
+			message,
+			actionTitle,
+			actionCallback,
+			actionPrimary,
+			actionBusy,
+			alternateActionTitle,
+			alternateActionCallback,
+			alternateActionPrimary,
+			alternateActionBusy,
+			footer,
+			isLoading,
+		} = this.props;
 
 		if ( isLoading ) {
 			return this.renderPlaceholder();
@@ -55,8 +78,25 @@ class DomainsLandingContentCard extends Component {
 				{ <h2 className="content-card__title">{ title }</h2> }
 				{ message && <h3 className="content-card__message">{ message }</h3> }
 				{ actionTitle && (
-					<Button className="content-card__action-button" primary onClick={ actionCallback }>
+					<Button
+						className="content-card__action-button"
+						busy={ actionBusy }
+						disabled={ actionBusy }
+						primary={ actionPrimary }
+						onClick={ actionCallback }
+					>
 						{ actionTitle }
+					</Button>
+				) }
+				{ alternateActionTitle && (
+					<Button
+						className="content-card__alternate-action-button"
+						busy={ alternateActionBusy }
+						disabled={ alternateActionBusy }
+						primary={ alternateActionPrimary }
+						onClick={ alternateActionCallback }
+					>
+						{ alternateActionTitle }
 					</Button>
 				) }
 				{ footer && <p className="content-card__footer">{ footer }</p> }

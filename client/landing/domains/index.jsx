@@ -10,6 +10,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import RegistrantVerificationPage from './registrant-verification';
+import TransferAwayConfirmationPage from './transfer-away-confirmation';
 import InvalidActionPage from './invalid-action';
 import Main from 'components/main';
 
@@ -30,6 +31,11 @@ class DomainsLandingPage extends Component {
 		return <RegistrantVerificationPage domain={ domain } email={ email } token={ token } />;
 	}
 
+	renderTransferAwayConfirmation() {
+		const { domain, email, token } = this.props.query;
+		return <TransferAwayConfirmationPage domain={ domain } email={ email } token={ token } />;
+	}
+
 	renderUnknownActionContent() {
 		return <InvalidActionPage />;
 	}
@@ -38,6 +44,9 @@ class DomainsLandingPage extends Component {
 		switch ( this.props.action ) {
 			case 'registrant-verification':
 				return this.renderRegistrantVerificationContent();
+
+			case 'transfer-away-confirmation':
+				return this.renderTransferAwayConfirmation();
 
 			case 'unknown-action':
 			default:
