@@ -278,6 +278,11 @@ class Media extends Component {
 			searchUrl( '', this.props.search );
 		}
 
+		if ( this.props.filter ) {
+			// Reset the filter so we don't switch to a source that doesn't support the filter
+			this.onFilterChange( '' );
+		}
+
 		MediaActions.sourceChanged( this.props.selectedSite.ID );
 		this.setState( { source }, cb );
 	};
