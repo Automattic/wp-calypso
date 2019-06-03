@@ -4,6 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,6 +12,8 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Dialog from 'components/dialog';
+import { isDomainRegistration, isPlan } from 'lib/products-values';
+import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import './style.scss';
 
 class AutoRenewDisablingDialog extends Component {
@@ -21,26 +24,68 @@ class AutoRenewDisablingDialog extends Component {
 		expiryDate: PropTypes.string.isRequired,
 	};
 
+	getVariation() {
+		const { purchase, isAtomicSite } = this.props;
+
+		if ( isDomainRegistration( purchase ) ) {
+			return 'domain';
+		}
+
+		if ( isPlan( purchase ) && isAtomicSite ) {
+			return 'atomic';
+		}
+
+		if ( isPlan( purchase ) ) {
+			return 'plan';
+		}
+
+		return null;
+	}
+
+	getCopy( variation ) {
+		const { planName, siteDomain, purchase, translate } = this.props;
+
+		const expiryDate = purchase.expiryMoment.format( 'LL' );
+
+		switch ( variation ) {
+			case 'plan':
+				return translate(
+					'By canceling auto-renewal, your %(planName)s plan for %(siteDomain)s will expire on %(expiryDate)s. ' +
+						"When it does, you'll lose access to key features you may be using on your site. " +
+						'To avoid that, turn auto-renewal back on or manually renew your plan before the expiration date.',
+					{
+						args: {
+							planName,
+							siteDomain,
+							expiryDate,
+						},
+						comment:
+							'%(planName)s is the name of a WordPress.com plan, e.g. Personal, Premium, Business. ' +
+							'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com. ' +
+							'%(expiryDate)s is a date string, e.g. May 14, 2020',
+					}
+				);
+			case 'domain':
+				return translate(
+					'By canceling auto-renewal, your domain %(siteDomain)s will expire on %(expiryDate)s. ' +
+						'Once your domain expires, it could become unavailable, and may be impossible to get back on any domain registrar.',
+					{
+						args: {
+							siteDomain,
+							expiryDate,
+						},
+						comment:
+							'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com. ' +
+							'%(expiryDate)s is a date string, e.g. May 14, 2020',
+					}
+				);
+		}
+	}
+
 	render() {
-		const { planName, siteDomain, expiryDate, translate, onClose } = this.props;
+		const { translate, onClose } = this.props;
 
-		const description = translate(
-			'By canceling auto-renewal, your %(planName)s plan for %(siteDomain)s will expire on %(expiryDate)s. ' +
-				"When it does, you'll lose access to key features you may be using on your site. " +
-				'To avoid that, turn auto-renewal back on or manually renew your plan before the expiration date.',
-			{
-				args: {
-					planName,
-					siteDomain,
-					expiryDate,
-				},
-				comment:
-					'%(planName)s is the name of a WordPress.com plan, e.g. Personal, Premium, Business. ' +
-					'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com. ' +
-					'%(expiryDate)s is a date string, e.g. May 14, 2020',
-			}
-		);
-
+		const description = this.getCopy( this.getVariation() );
 		return (
 			<Dialog
 				isVisible={ true }
@@ -57,4 +102,6 @@ class AutoRenewDisablingDialog extends Component {
 	}
 }
 
-export default localize( AutoRenewDisablingDialog );
+export default connect( state => ( {
+	isAtomicSite: isSiteAtomic( state ),
+} ) )( localize( AutoRenewDisablingDialog ) );
