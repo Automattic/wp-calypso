@@ -248,7 +248,6 @@ export function filterLanguageRevisions( languageRevisions ) {
 	} );
 }
 
-
 class I18nScanner {
 	constructor( install = true ) {
 		Object.assign( this, {
@@ -267,7 +266,7 @@ class I18nScanner {
 	translationFilter( ...args ) {
 		const [ translation, options ] = args;
 		if ( this.active && this.sessionId ) {
-			this.recordOriginal( options.original, options.context || '' )
+			this.recordOriginal( options.original, options.context || '' );
 		}
 
 		return translation;
@@ -281,7 +280,7 @@ class I18nScanner {
 		// Watch for cookies changed through browser magic
 		// We could potentially run the filter server-side by pinging the server
 		// for the cookie instead of asking the browser.
-		if ( typeof( document ) !== 'undefined' ) {
+		if ( typeof document !== 'undefined' ) {
 			debug( 'installing i18nScanner' );
 			registerTranslateHook( this.translationFilter.bind( this ) );
 			this.cookieWatcherInterval = setInterval( this.checkCookie.bind( this ), 1000 );
@@ -303,7 +302,7 @@ class I18nScanner {
 
 	checkCookie() {
 		// client-side rendering only
-		if ( typeof( document ) === 'undefined' ) {
+		if ( typeof document === 'undefined' ) {
 			debug( 'no document in checkCookie' );
 			return;
 		}
@@ -312,7 +311,7 @@ class I18nScanner {
 			return;
 		}
 
-		const newSessionId = cookie.parse( document.cookie )['gp-record'];
+		const newSessionId = cookie.parse( document.cookie )[ 'gp-record' ];
 		if ( newSessionId !== this.sessionId ) {
 			debug( 'New session Id:', newSessionId );
 			this.setSessionId( newSessionId );
@@ -325,22 +324,22 @@ class I18nScanner {
 	}
 
 	_sendPendingOriginalsImmediately() {
-		recordOriginals( Object.keys( this.pendingOriginals ), this.sessionId );
-		this.pendingOriginals = {};
+		const keys = Object.keys( this.pendingOriginals );
+		if ( keys.length ) {
+			debug( `Sending ${ keys.length } originals to GP_Record` );
+			recordOriginals( keys, this.sessionId );
+			this.pendingOriginals = {};
+		}
 	}
 
-	sendPendingOriginals = debounce(
-		this._sendPendingOriginalsImmediately.bind( this ),
-		500,
-		{ maxWait: 500 }
-	)
+	sendPendingOriginals = debounce( this._sendPendingOriginalsImmediately.bind( this ), 500, {
+		maxWait: 500,
+	} );
 
 	setSessionId( newSessionId ) {
 		this.sessionId = newSessionId;
 
-		newSessionId
-			? this.start()
-			: this.stop();
+		newSessionId ? this.start() : this.stop();
 	}
 
 	start() {
