@@ -282,13 +282,17 @@ class I18nScanner {
 		registerTranslateHook( this.translationFilter.bind( this ) );
 
 		// Watch for cookies changed through browser magic
-		this.cookieWatcherInterval = setInterval( this.cookieWatcher.bind( this ), 1000 );
+		if ( typeof( document ) !== 'undefined' ) {
+			debug( 'Starting cookie watcher' );
+			this.cookieWatcherInterval = setInterval( this.cookieWatcher.bind( this ), 1000 );
+		}
 		this.installed = true;
 		return this;
 	}
 
 	uninstall() {
 		clearInterval( this.cookieWatcherInterval );
+		this.cookieWatcherInterval = null;
 		// TODO:
 		// unregisterTranslateHook( this.translationFilter );
 		// this.installed = false;
@@ -298,6 +302,7 @@ class I18nScanner {
 	cookieWatcher() {
 		// client-side rendering only
 		if ( typeof( document ) === 'undefined' ) {
+			debug( 'no document in cookieWatcher' );
 			return;
 		}
 
@@ -306,8 +311,8 @@ class I18nScanner {
 		}
 
 		const newSessionId = cookie.parse( document.cookie )['gp-record'];
-		if( newSessionId !== this.sessionId ) {
-			debug( 'new sessionId:', newSessionId );
+		if ( newSessionId !== this.sessionId ) {
+			debug( 'New session Id:', newSessionId );
 			this.setSessionId( newSessionId );
 		}
 	}
