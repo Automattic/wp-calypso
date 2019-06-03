@@ -15,6 +15,10 @@ Displayed in the checklist header, right on top of the progress bar.
 
 ## `Task` props
 
+### `className { string }`
+
+Provide a className to add to the Task classes.
+
 ### `completed { bool }`
 
 Whether the task is complete.
@@ -60,6 +64,10 @@ Translate as `translate( '%d minutes', '%d minutes', { count: 2, args: [ 2 ] } )
 ### `title { node }`
 
 Task title
+
+### `noCount { boolean }`
+
+Checklists are flat lists of tasks which calculate completion by counting the children. A `<Task noCount />` can be used to insert presentational Tasks that should not be used in when counting tasks.
 
 ## Usage
 

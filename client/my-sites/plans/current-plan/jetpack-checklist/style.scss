@@ -1,3 +1,27 @@
+// Tasks are sorted completed first, incomplete after
+// For as section, it should be section header, completed, incomplete
+// This loop allows us to override the original ordering with our section headers
+// It covers a limited number of tasks, where the upper bound (30) must be at least
+.jetpack-checklist {
+	@for $i from 0 to 30 {
+		$base: ( $i * 10 );
+		.jetpack-checklist__task-section-title:nth-child( #{$i + 1} ) {
+			order: $base;
+			~ .checklist__task.is-completed {
+				order: ( $base + 1 );
+			}
+			~ .checklist__task {
+				order: ( $base + 2 );
+			}
+		}
+	}
+
+	.jetpack-checklist__task-section-title {
+		width: 100%;
+		font-weight: 500;
+	}
+}
+
 .jetpack-checklist__header {
 	display: flex;
 }
