@@ -266,9 +266,8 @@ class I18nScanner {
 
 	translationFilter( ...args ) {
 		const [ translation, options ] = args;
-
-		this.recordOriginal( options.original, options.context || '' )
 		if ( this.active && this.sessionId ) {
+			this.recordOriginal( options.original, options.context || '' )
 		}
 
 		return translation;
@@ -279,18 +278,21 @@ class I18nScanner {
 			return;
 		}
 
-		registerTranslateHook( this.translationFilter.bind( this ) );
-
 		// Watch for cookies changed through browser magic
+		// We could potentially run the filter server-side by pinging the server
+		// for the cookie instead of asking the browser.
 		if ( typeof( document ) !== 'undefined' ) {
-			debug( 'Starting cookie watcher' );
-			this.cookieWatcherInterval = setInterval( this.cookieWatcher.bind( this ), 1000 );
+			debug( 'installing i18nScanner' );
+			registerTranslateHook( this.translationFilter.bind( this ) );
+			this.cookieWatcherInterval = setInterval( this.checkCookie.bind( this ), 1000 );
+			this.installed = true;
 		}
-		this.installed = true;
-		return this;
+
+		return this.installed;
 	}
 
 	uninstall() {
+		debug( 'stopping cookie watcher' );
 		clearInterval( this.cookieWatcherInterval );
 		this.cookieWatcherInterval = null;
 		// TODO:
@@ -299,10 +301,10 @@ class I18nScanner {
 		return this;
 	}
 
-	cookieWatcher() {
+	checkCookie() {
 		// client-side rendering only
 		if ( typeof( document ) === 'undefined' ) {
-			debug( 'no document in cookieWatcher' );
+			debug( 'no document in checkCookie' );
 			return;
 		}
 
@@ -327,7 +329,11 @@ class I18nScanner {
 		this.pendingOriginals = {};
 	}
 
-	sendPendingOriginals = debounce( this._sendPendingOriginalsImmediately.bind( this ), 500 )
+	sendPendingOriginals = debounce(
+		this._sendPendingOriginalsImmediately.bind( this ),
+		500,
+		{ maxWait: 500 }
+	)
 
 	setSessionId( newSessionId ) {
 		this.sessionId = newSessionId;
@@ -341,15 +347,17 @@ class I18nScanner {
 		if ( ! config.isEnabled( 'i18n/translation-scanner' ) ) {
 			return;
 		}
-
+		debug( 'I18nScanner started' );
 		if ( ! this.installed ) {
 			this.install();
 		}
+		this.checkCookie();
 		this.clear();
 		this.active = true;
 	}
 
 	stop() {
+		debug( 'I18nScanner stopped' );
 		this.active = false;
 		return this.loggedTranslations;
 	}
@@ -375,4 +383,5 @@ class I18nScanner {
 // eslint-disable-next-line no-console
 console.log( 'Installing i18nScanner at global.i18nScanner' );
 export const i18nScanner = new I18nScanner();
+i18nScanner.start();
 global.i18nScanner = i18nScanner;

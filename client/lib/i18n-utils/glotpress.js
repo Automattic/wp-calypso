@@ -4,11 +4,14 @@
  * External dependencies
  */
 import request from 'superagent';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import { GP_BASE_URL } from './constants';
+
+const debug = debugFactory( 'calypso:i18n-utils:glotpress' )
 
 /**
  * Sends the POST request
@@ -22,7 +25,6 @@ export function postRequest( glotPressUrl, postFormData ) {
 			.post( glotPressUrl )
 			.withCredentials()
 			.send( postFormData )
-			// .then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
 			.then( response => response.body )
 			.catch( error => {
 				throw error; // pass on the error so the call sites can handle it accordingly.
@@ -43,9 +45,12 @@ export function encodeOriginalKey( { original, context } ) {
  */
 export function recordOriginals( originalKeys, recordId, post = postRequest ) {
 	const glotPressUrl = `${ GP_BASE_URL }/api/translations/-record-originals`;
-	const postFormData = `record_id=${ encodeURIComponent( recordId ) }` +
-		`&originals=${ encodeURIComponent( JSON.stringify( originalKeys ) ) }`;
+	const recordIdQueryFragment = recordId
+		? `record_id=${ encodeURIComponent( recordId ) }&`
+		: '';
+	const postFormData = recordIdQueryFragment +
+		`originals=${ encodeURIComponent( JSON.stringify( originalKeys ) ) }`;
 
 	return post( glotPressUrl, postFormData )
-		.catch( ( err ) => console.log( 'recordOriginals failed:', err ) );
+		.catch( ( err ) => debug( 'recordOriginals failed:', err ) );
 }
