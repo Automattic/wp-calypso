@@ -29,12 +29,7 @@ import {
 	paymentLogoType,
 	hasPaymentMethod,
 } from 'lib/purchases';
-import {
-	isPlan,
-	isDomainRegistration,
-	isDomainTransfer,
-	isConciergeSession,
-} from 'lib/products-values';
+import { isDomainRegistration, isDomainTransfer, isConciergeSession } from 'lib/products-values';
 import { getPlan } from 'lib/plans';
 
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -309,12 +304,10 @@ class PurchaseMeta extends Component {
 			return null;
 		}
 
-		// The toggle is only available for the plan subscription for now, and will be gradully rolled out to
-		// domains and G suite.
 		if (
 			config.isEnabled( 'autorenewal-toggle' ) &&
-			purchase.renewMoment &&
-			isPlan( purchase ) &&
+			( isDomainRegistration( purchase ) || isSubscription( purchase ) ) &&
+			hasPaymentMethod( purchase ) &&
 			! isExpired( purchase )
 		) {
 			const dateSpan = <span className="manage-purchase__detail-date-span" />;
