@@ -98,39 +98,6 @@ export function getSingleTranslationData(
 }
 
 /**
- * Causes translate.wordpress.com to start recording queried translations
- * (can be reviewed at https://translate.wordpress.com/projects/wpcom/de/default/recordings/${recordingId} )
- *
- * @param {Number} recordingId id of recording
- * @param {String} apiBaseUrl Base API url to get translations
- * @param {Function} post see postRequest()
- * @returns {Object} request object
- */
-export function startRecordingTranslations(
-	recordingId = 1,
-	apiBaseUrl = GP_BASE_URL + '/api',
-	post = postRequest
-) {
-	const glotPressUrl = `${ apiBaseUrl }/translations/-record-start`;
-	const postFormData = [ `recording_id=${ recordingId }` ];
-
-	return post( glotPressUrl, postFormData.join( '' ) );
-}
-
-/**
- * Causes translate.wordpress.com to start recording queried translations
- * @param {String} apiBaseUrl Base API url to get translations
- * @param {Function} post see postRequest()
- * @returns {Object} request object
- */
-export function stopRecordingTranslations( apiBaseUrl = GP_BASE_URL + '/api', post = postRequest ) {
-	const glotPressUrl = `${ apiBaseUrl }/translations/-record-stop`;
-	const postFormData = [];
-
-	return post( glotPressUrl, postFormData.join( '' ) );
-}
-
-/**
  * Prepares and triggers a request to get GP string
  * @param {String} originalId GP original string id
  * @param {Object} translationObject GP string information { singular, context, plural }
