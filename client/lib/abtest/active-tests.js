@@ -80,14 +80,6 @@ export default {
 		},
 		defaultVariation: 'keep',
 	},
-	twoYearPlanByDefault: {
-		datestamp: '20190207',
-		variations: {
-			originalFlavor: 100,
-			twoYearFlavor: 0,
-		},
-		defaultVariation: 'originalFlavor',
-	},
 	pluginFeaturedTitle: {
 		datestamp: '20190220',
 		variations: {
