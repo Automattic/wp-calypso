@@ -309,7 +309,7 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__banner-content">
 					{ translate( 'Not sure yet?' ) }
 					<Button className={ className } onClick={ this.handleFreePlanButtonClick } borderless>
-						{ translate( 'Start with the Free plan' ) }
+						{ translate( 'Start with a free site' ) }
 					</Button>
 				</div>
 			</div>
