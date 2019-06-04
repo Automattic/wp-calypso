@@ -57,6 +57,8 @@ export class DropZone extends React.Component {
 		lastVisibleState: false,
 	};
 
+	zoneRef = React.createRef();
+
 	componentDidMount() {
 		this.dragEnterNodes = [];
 		window.addEventListener( 'dragover', this.preventDefault );
@@ -181,11 +183,11 @@ export class DropZone extends React.Component {
 	};
 
 	isWithinZoneBounds = ( x, y ) => {
-		if ( ! this.refs.zone ) {
+		if ( ! this.zoneRef.current ) {
 			return false;
 		}
 
-		const rect = this.refs.zone.getBoundingClientRect();
+		const rect = this.zoneRef.current.getBoundingClientRect();
 
 		/// make sure the rect is a valid rect
 		if ( rect.bottom === rect.top || rect.left === rect.right ) {
@@ -208,7 +210,7 @@ export class DropZone extends React.Component {
 
 		if (
 			! this.props.fullScreen &&
-			! ReactDom.findDOMNode( this.refs.zone ).contains( event.target )
+			! ReactDom.findDOMNode( this.zoneRef.current ).contains( event.target )
 		) {
 			return;
 		}
@@ -254,7 +256,7 @@ export class DropZone extends React.Component {
 		} );
 
 		const element = (
-			<div ref="zone" className={ classes }>
+			<div ref={ this.zoneRef } className={ classes }>
 				{ this.renderContent() }
 			</div>
 		);
