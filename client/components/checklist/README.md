@@ -5,6 +5,10 @@ Checklist
 
 ## `Checklist` props
 
+### `className { string }`
+
+Additional class to add to the Checklist.
+
 ### `isPlaceholder { bool } - default: false`
 
 Render as a placeholder.
@@ -63,6 +67,8 @@ Task title
 
 ## Usage
 
+A Checklist expects its children to be a flat list of Task:
+
 ```jsx
 <Checklist>
 	<Task
@@ -92,3 +98,6 @@ Task title
 	/>
 </Checklist>
 ```
+
+Non-task children are not well supported, but they can include the `excludeFromCount` prop to prevent them
+from being included in the complete/total calculation.

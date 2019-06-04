@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,6 +14,7 @@ import TaskPlaceholder from './task-placeholder';
 
 export default class Checklist extends PureComponent {
 	static propTypes = {
+		className: PropTypes.string,
 		phase2: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		progressText: PropTypes.string,
@@ -38,7 +38,9 @@ export default class Checklist extends PureComponent {
 
 	calculateCompletion() {
 		const { children } = this.props;
-		const childrenArray = Children.toArray( children );
+		const childrenArray = Children.toArray( children ).filter(
+			task => task && task.props && ! task.props.excludeFromCount
+		);
 		const completedCount = childrenArray.reduce(
 			( count, task ) => ( true === task.props.completed ? count + 1 : count ),
 			0
@@ -69,7 +71,7 @@ export default class Checklist extends PureComponent {
 
 		return (
 			<div
-				className={ classNames( 'checklist', {
+				className={ classNames( 'checklist', this.props.className, {
 					'is-expanded': ! this.state.hideCompleted,
 					'hide-completed': this.state.hideCompleted,
 					'checklist-phase2': this.props.phase2,

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { SiteSlug } from 'client/types';
 
 /**
  * Returns the localized duration of a task in given minutes.
@@ -13,7 +14,21 @@ export function getJetpackChecklistTaskDuration( minutes ) {
 	return translate( '%d minute', '%d minutes', { count: minutes, args: [ minutes ] } );
 }
 
-export const JETPACK_CHECKLIST_TASKS = {
+interface TaskUiDescription {
+	readonly title: string;
+	readonly description?: string;
+	readonly completedButtonText: string;
+	readonly completedTitle?: string;
+	readonly getUrl: ( siteSlug: SiteSlug ) => string;
+	readonly duration?: string;
+	readonly tourId?: string;
+}
+
+interface ChecklistTasks {
+	[key: string]: TaskUiDescription;
+}
+
+export const JETPACK_SECURITY_CHECKLIST_TASKS: ChecklistTasks = {
 	jetpack_monitor: {
 		title: translate( 'Downtime Monitoring' ),
 		description: translate(
@@ -49,7 +64,11 @@ export const JETPACK_CHECKLIST_TASKS = {
 	},
 };
 
-export const JETPACK_CHECKLIST_TASK_AKISMET = {
+export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: ChecklistTasks = {
+	// No tasks for this checklist yet…
+};
+
+export const JETPACK_CHECKLIST_TASK_AKISMET: TaskUiDescription = {
 	title: translate( "We're automatically turning on spam filtering." ),
 	completedButtonText: translate( 'View spam stats' ),
 	completedTitle: translate( "We've automatically turned on spam filtering." ),
@@ -57,13 +76,13 @@ export const JETPACK_CHECKLIST_TASK_AKISMET = {
 		`//${ siteSlug.replace( '::', '/' ) }/wp-admin/admin.php?page=akismet-key-config`,
 };
 
-export const JETPACK_CHECKLIST_TASK_PROTECT = {
+export const JETPACK_CHECKLIST_TASK_PROTECT: TaskUiDescription = {
 	title: translate( "We've automatically protected you from brute force login attacks." ),
 	completedButtonText: translate( 'Configure' ),
 	getUrl: siteSlug => `/settings/security/${ siteSlug }`,
 };
 
-export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND = {
+export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND: TaskUiDescription = {
 	title: translate( 'Backup and Scan' ),
 	description: translate(
 		"Connect your site's server to Jetpack to perform backups, restores, and security scans."
@@ -74,7 +93,7 @@ export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND = {
 	duration: getJetpackChecklistTaskDuration( 3 ),
 };
 
-export const JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS = {
+export const JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS: TaskUiDescription = {
 	title: translate( "We're automatically turning on Backup and Scan." ),
 	completedTitle: translate( "We've automatically turned on Backup and Scan." ),
 	completedButtonText: translate( 'View security dashboard' ),
