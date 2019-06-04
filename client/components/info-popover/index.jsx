@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
@@ -46,14 +46,11 @@ export default class InfoPopover extends Component {
 		position: 'bottom',
 	};
 
+	iconRef = React.createRef();
+
 	state = { showPopover: false };
 
-	handleClick = event => {
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.setState( { showPopover: ! this.state.showPopover }, this.recordStats );
-	};
+	handleClick = () => this.setState( { showPopover: ! this.state.showPopover }, this.recordStats );
 
 	handleClose = () => this.setState( { showPopover: false }, this.recordStats );
 
@@ -68,30 +65,37 @@ export default class InfoPopover extends Component {
 
 	render() {
 		return (
-			<span
-				onClick={ this.handleClick }
-				ref="infoPopover"
-				className={ classNames(
-					'info-popover',
-					{ is_active: this.state.showPopover },
-					this.props.className
-				) }
-			>
-				<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
-				<Popover
-					autoRtl={ this.props.autoRtl }
-					id={ this.props.id }
-					isVisible={ this.state.showPopover }
-					context={ this.refs && this.refs.infoPopover }
-					ignoreContext={ this.props.ignoreContext }
-					position={ this.props.position }
-					onClose={ this.handleClose }
-					className={ classNames( 'popover', 'info-popover__tooltip', this.props.className ) }
-					rootClassName={ this.props.rootClassName }
+			<Fragment>
+				<button
+					type="button"
+					aria-haspopup
+					aria-expanded={ this.state.showPopover }
+					onClick={ this.handleClick }
+					ref={ this.iconRef }
+					className={ classNames(
+						'info-popover',
+						{ 'is-active': this.state.showPopover },
+						this.props.className
+					) }
 				>
-					{ this.props.children }
-				</Popover>
-			</span>
+					<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
+				</button>
+				{ this.state.showPopover && (
+					<Popover
+						autoRtl={ this.props.autoRtl }
+						id={ this.props.id }
+						isVisible
+						context={ this.iconRef.current }
+						ignoreContext={ this.props.ignoreContext }
+						position={ this.props.position }
+						onClose={ this.handleClose }
+						className={ classNames( 'info-popover__tooltip', this.props.className ) }
+						rootClassName={ this.props.rootClassName }
+					>
+						{ this.props.children }
+					</Popover>
+				) }
+			</Fragment>
 		);
 	}
 }

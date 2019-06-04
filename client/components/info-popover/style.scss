@@ -1,14 +1,16 @@
-.info-popover .gridicon {
-	cursor: pointer;
-	color: var( --color-neutral-200 );
-
-	&:hover {
-		color: var( --color-neutral-700 );
+.info-popover {
+	.gridicon {
+		cursor: pointer;
+		color: var( --color-neutral-200 );
 	}
-}
 
-.info-popover.is_active .gridicon {
-	color: var( --color-neutral-700 );
+	.accessible-focus &:focus,
+	&:hover,
+	&.is-active {
+		.gridicon {
+			color: var( --color-neutral-700 );
+		}
+	}
 }
 
 .popover.info-popover__tooltip {
