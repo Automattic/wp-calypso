@@ -10,6 +10,11 @@ import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class FollowButton extends React.Component {
 	static propTypes = {
 		following: PropTypes.bool.isRequired,
