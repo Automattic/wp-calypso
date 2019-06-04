@@ -15,7 +15,7 @@ import { getCurrencyObject } from '@automattic/format-currency';
 /**
  * Style Dependencies
  */
-import 'style.scss';
+import './style.scss';
 
 class PlanIntervalDiscount extends Component {
 	static propTypes = {
