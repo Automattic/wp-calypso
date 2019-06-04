@@ -2441,12 +2441,12 @@ Undocumented.prototype.domainsVerifyRegistrantEmail = function( domain, email, t
 	return this.wpcom.req.get( `/domains/${ domain }/verify-email`, { email, token } );
 };
 
-Undocumented.prototype.domainGetOutboundTransferConfirmationState = function(
+Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function(
 	domain,
 	email,
 	token
 ) {
-	return this.wpcom.req.get( `/domains/${ domain }/outbound-transfer-confirmation-state`, {
+	return this.wpcom.req.get( `/domains/${ domain }/outbound-transfer-confirmation-check`, {
 		email,
 		token,
 	} );

@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -20,6 +21,7 @@ class DomainsLandingContentCard extends Component {
 	static propTypes = {
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ).isRequired,
 		message: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		messageAlignCenter: PropTypes.bool,
 		actionTitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 		actionCallback: PropTypes.func,
 		actionPrimary: PropTypes.bool,
@@ -38,6 +40,7 @@ class DomainsLandingContentCard extends Component {
 		actionBusy: false,
 		alternateActionPrimary: false,
 		alternateActionBusy: false,
+		messageAlignCenter: false,
 	};
 
 	renderPlaceholder = () => {
@@ -57,6 +60,7 @@ class DomainsLandingContentCard extends Component {
 		const {
 			title,
 			message,
+			messageAlignCenter,
 			actionTitle,
 			actionCallback,
 			actionPrimary,
@@ -73,10 +77,14 @@ class DomainsLandingContentCard extends Component {
 			return this.renderPlaceholder();
 		}
 
+		const messageClasses = classNames( 'content-card__message', {
+			message_align_center: messageAlignCenter,
+		} );
+
 		return (
 			<CompactCard className="content-card">
 				{ <h2 className="content-card__title">{ title }</h2> }
-				{ message && <h3 className="content-card__message">{ message }</h3> }
+				{ message && <h3 className={ messageClasses }>{ message }</h3> }
 				{ actionTitle && (
 					<Button
 						className="content-card__action-button"

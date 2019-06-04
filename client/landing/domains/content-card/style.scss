@@ -20,6 +20,10 @@
 		margin-bottom: 40px;
 		text-align: left;
 
+		&.message_align_center {
+			text-align: center;
+		}
+
 		@include breakpoint( '<660px' ) {
 			font-size: 16px;
 		}
