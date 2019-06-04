@@ -13,6 +13,11 @@ import classnames from 'classnames';
  */
 import PaginationPage from './pagination-page';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Pagination extends Component {
 	static propTypes = {
 		compact: PropTypes.bool,
