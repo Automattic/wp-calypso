@@ -19,9 +19,12 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Ribbon from 'components/ribbon';
 
-class PlanCompareCard extends React.Component {
-	static displayName = 'PlanCompareCard';
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
+class PlanCompareCard extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
 		onClick: PropTypes.func,
