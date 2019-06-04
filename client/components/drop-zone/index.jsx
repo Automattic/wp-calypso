@@ -20,6 +20,11 @@ import RootChild from 'components/root-child';
 import { hideDropZone, showDropZone } from 'state/ui/drop-zone/actions';
 import TranslatableString from 'components/translatable/proptype';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class DropZone extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
