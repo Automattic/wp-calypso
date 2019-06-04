@@ -15,6 +15,11 @@ import PropTypes from 'prop-types';
 import PaymentLogo, { POSSIBLE_TYPES } from 'components/payment-logo';
 import { getEnabledPaymentMethods } from 'lib/cart-values';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function PaymentMethods( { translate, cart } ) {
 	if ( ! cart.hasLoadedFromServer ) {
 		return false;
