@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { fromPairs } from 'lodash';
+import { fromPairs, identity, toPairs } from 'lodash';
 
 /***
  * Internal dependencies
@@ -9,6 +9,15 @@ import { fromPairs } from 'lodash';
 import { extendAction } from 'state/utils';
 import { HTTP_REQUEST } from 'state/action-types';
 import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
+
+const encodeQueryParameters = queryParams => {
+	return queryParams
+		.map(
+			( [ queryKey, queryValue ] ) =>
+				encodeURIComponent( queryKey ) + '=' + encodeURIComponent( queryValue )
+		)
+		.join( '&' );
+};
 
 const isAllHeadersValid = headers =>
 	headers.every(
@@ -25,7 +34,7 @@ const isAllHeadersValid = headers =>
  * {String} method the method we should use in the request: GET, POST etc.
  * {Array<Array<String>>} headers array of [ 'key', 'value' ] pairs for the request headers
  * {Array<Array<String>>} queryParams array of [ 'key', 'value' ] pairs for the queryParams headers
- * {Object} body data send as body
+ * {Object|String} body data send as body
  * {Boolean} withCredentials allows the remote server to view & set cookies (for its domain)
  * {Action} onSuccess action to dispatch on success with data meta
  * {Action} onFailure action to dispatch on failure with error meta
@@ -54,19 +63,27 @@ export const httpHandler = async ( { dispatch }, action ) => {
 	const fetchHeaders = fromPairs( headers );
 	fetchHeaders.Accept = 'application/json';
 
-	const queryString = queryParams
-		.map(
-			( [ queryKey, queryValue ] ) =>
-				encodeURIComponent( queryKey ) + '=' + encodeURIComponent( queryValue )
-		)
-		.join( '&' );
+	const contentType = ( fetchHeaders[ 'Content-Type' ] || '' ).split( ';' )[ 0 ];
+
+	let serialize;
+
+	if ( contentType === 'application/x-www-form-urlencoded' ) {
+		serialize = data => encodeQueryParameters( toPairs( data ) );
+	} else if ( typeof body !== 'string' ) {
+		serialize = JSON.stringify.bind( JSON );
+	} else {
+		// assume body is already serialized
+		serialize = identity;
+	}
+
+	const queryString = encodeQueryParameters( queryParams );
 
 	let response, json;
 	try {
 		response = await fetch( queryString.length ? `${ url }?${ queryString }` : url, {
 			method,
 			headers: fetchHeaders,
-			body,
+			body: serialize( body ),
 			credentials: withCredentials ? 'include' : 'same-origin',
 		} );
 		json = await response.json();
