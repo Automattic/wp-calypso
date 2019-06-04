@@ -67,6 +67,7 @@ export default class InfoPopover extends Component {
 		return (
 			<Fragment>
 				<button
+					type="button"
 					aria-haspopup
 					aria-expanded={ this.state.showPopover }
 					onClick={ this.handleClick }
