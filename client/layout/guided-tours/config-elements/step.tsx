@@ -176,6 +176,8 @@ export default class Step extends Component< Props, State > {
 				waitForElement();
 			} );
 		}
+
+		return Promise.resolve();
 	}
 
 	safeSetState( state: State ) {
