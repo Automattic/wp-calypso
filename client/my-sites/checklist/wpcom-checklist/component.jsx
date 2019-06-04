@@ -84,6 +84,7 @@ class WpcomChecklistComponent extends PureComponent {
 			email_forwarding_upgraded_to_gsuite: this.renderEmailForwardingUpgradedToGSuiteTask,
 			gsuite_tos_accepted: this.renderGSuiteTOSAcceptedTask,
 			about_text_updated: this.renderAboutTextUpdatedTask,
+			front_page_updated: this.renderFrontPageUpdatedTask,
 			homepage_photo_updated: this.renderHomepagePhotoUpdatedTask,
 			business_hours_added: this.renderBusinessHoursAddedTask,
 			service_list_added: this.renderServiceListAddedTask,
@@ -828,6 +829,30 @@ class WpcomChecklistComponent extends PureComponent {
 		);
 	};
 
+	renderFrontPageUpdatedTask = ( TaskComponent, baseProps, task ) => {
+		const { translate, taskUrls } = this.props;
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				preset="update-homepage"
+				title={ translate( 'Update your homepage' ) }
+				description={ translate(
+					`We've created the basics, now it's time for you to update the images and text.`
+				) }
+				steps={ [] }
+				duration={ translate( '%d minute', '%d minutes', { count: 20, args: [ 20 ] } ) }
+				onClick={ this.handleTaskStart( {
+					task,
+					url: taskUrls[ task.id ],
+				} ) }
+				onDismiss={ this.handleTaskDismiss( task.id ) }
+				backToChecklist={ this.backToChecklist }
+				nextInlineHelp={ this.nextInlineHelp }
+			/>
+		);
+	};
+
 	renderBusinessHoursAddedTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, taskUrls } = this.props;
 
@@ -1009,6 +1034,7 @@ const getTaskUrls = createSelector(
 			post_published: getPageEditorUrl( state, siteId, firstPostID ),
 			contact_page_updated: contactPageUrl,
 			about_text_updated: frontPageUrl,
+			front_page_updated: frontPageUrl,
 			homepage_photo_updated: frontPageUrl,
 			business_hours_added: frontPageUrl,
 			service_list_added: frontPageUrl,
