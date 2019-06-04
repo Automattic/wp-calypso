@@ -50,29 +50,7 @@ export default class InfoPopover extends Component {
 
 	state = { showPopover: false };
 
-	handleClickOrKeyDown = event => {
-		if ( event.type === 'keydown' ) {
-			// ArrowDown only opens the popup
-			if ( event.key === 'ArrowDown' && this.state.showPopover ) {
-				return;
-			}
-
-			// Esc only closes the popup
-			if ( event.key === 'Esc' && ! this.state.showPopover ) {
-				return;
-			}
-
-			// Enter and Space toggle the popup
-			if ( event.key !== 'Enter' && event.key !== ' ' ) {
-				return;
-			}
-		}
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		this.setState( { showPopover: ! this.state.showPopover }, this.recordStats );
-	};
+	handleClick = () => this.setState( { showPopover: ! this.state.showPopover }, this.recordStats );
 
 	handleClose = () => this.setState( { showPopover: false }, this.recordStats );
 
@@ -88,13 +66,10 @@ export default class InfoPopover extends Component {
 	render() {
 		return (
 			<Fragment>
-				<span
-					role="button"
-					tabIndex="0"
+				<button
 					aria-haspopup
 					aria-expanded={ this.state.showPopover }
-					onClick={ this.handleClickOrKeyDown }
-					onKeyDown={ this.handleClickOrKeyDown }
+					onClick={ this.handleClick }
 					ref={ this.iconRef }
 					className={ classNames(
 						'info-popover',
@@ -103,7 +78,7 @@ export default class InfoPopover extends Component {
 					) }
 				>
 					<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
-				</span>
+				</button>
 				{ this.state.showPopover && (
 					<Popover
 						autoRtl={ this.props.autoRtl }
@@ -113,7 +88,7 @@ export default class InfoPopover extends Component {
 						ignoreContext={ this.props.ignoreContext }
 						position={ this.props.position }
 						onClose={ this.handleClose }
-						className={ classNames( 'popover', 'info-popover__tooltip', this.props.className ) }
+						className={ classNames( 'info-popover__tooltip', this.props.className ) }
 						rootClassName={ this.props.rootClassName }
 					>
 						{ this.props.children }
