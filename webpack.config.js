@@ -170,12 +170,12 @@ const webpackConfig = {
 	},
 	optimization: {
 		splitChunks: {
-			chunks: ! isDesktop ? 'all' : 'async',
+			chunks: 'all',
 			name: !! ( isDevelopment || shouldEmitStats ),
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
-		runtimeChunk: ! isDesktop ? { name: 'manifest' } : false,
+		runtimeChunk: isDesktop ? false : { name: 'manifest' },
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
 		minimize: shouldMinify,
