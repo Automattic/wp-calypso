@@ -1,8 +1,17 @@
-// Tasks are sorted completed first, incomplete after
-// For as section, it should be section header, completed, incomplete
-// This loop allows us to override the original ordering with our section headers
-// It covers a limited number of tasks, where the upper bound (30) must be at least
 .jetpack-checklist {
+	// The Checklist component does not support the presentational section titles
+	// inside the current iteration of the Jetpack checklist. This design iteration
+	// is likely to be short lived, so rather than rework the structure of the shared
+	// component to support it, the Jetpack checklist receives some special treatment
+	// to implement the designs.
+	//
+	// Normally, a Checklist shows completed tasks before incomplete tasks.
+	// This loop ensures that section titles and the completed/incomplete tasks for
+	// each section are correctly ordered.
+	//
+	// `to` determines the upper limit for the 0-indexed position where a section-title
+	// may appear as the child of a checklist. Tasks beyond this limit will be
+	// handled correctly.
 	@for $i from 0 to 30 {
 		$base: ( $i * 10 );
 		.jetpack-checklist__task-section-title:nth-child( #{$i + 1} ) {
