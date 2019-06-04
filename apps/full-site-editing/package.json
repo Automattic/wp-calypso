@@ -32,18 +32,18 @@
 		"build": "rimraf dist && npm-run-all --parallel build:*"
 	},
 	"dependencies": {
-		"@wordpress/api-fetch": "^3.1.2",
-		"@wordpress/blocks": "^6.2.3",
-		"@wordpress/components": "^7.3.0",
-		"@wordpress/compose": "^3.2.0",
-		"@wordpress/data": "^4.4.0",
-		"@wordpress/edit-post": "^3.3.4",
-		"@wordpress/editor": "^9.2.4",
-		"@wordpress/element": "^2.3.0",
-		"@wordpress/i18n": "^3.3.0",
-		"@wordpress/plugins": "^2.2.0",
-		"@wordpress/url": "^2.5.0",
-		"classnames": "^2.2.6",
-		"lodash": "^4.17.11"
+		"@wordpress/api-fetch": "2.2.8",
+		"@wordpress/blocks": "6.0.7",
+		"@wordpress/components": "7.0.8",
+		"@wordpress/compose": "3.0.1",
+		"@wordpress/data": "4.5.0",
+		"@wordpress/edit-post": "3.1.11",
+		"@wordpress/editor": "9.3.0",
+		"@wordpress/element": "2.1.9",
+		"@wordpress/i18n": "3.1.1",
+		"@wordpress/plugins": "2.3.0",
+		"@wordpress/url": "2.3.3",
+		"classnames": "2.2.6",
+		"lodash": "4.17.11"
 	}
 }
