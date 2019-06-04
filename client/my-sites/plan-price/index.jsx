@@ -15,6 +15,11 @@ import { getCurrencyObject } from '@automattic/format-currency';
  */
 import Badge from 'components/badge';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class PlanPrice extends Component {
 	render() {
 		const {
