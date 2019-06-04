@@ -184,7 +184,7 @@ export function getRememberedCoupon() {
 		return null;
 	}
 
-	const COUPON_CODE_WHITELIST = [ 'LEIFTEST', 'PATREON' ];
+	const COUPON_CODE_WHITELIST = [ 'PATREON' ];
 	const ONE_WEEK_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 	const now = Date.now();
 	debug( 'Found coupons in localStorage: ', coupons );
