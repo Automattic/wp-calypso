@@ -3,15 +3,14 @@
 /**
  * External dependencies
  */
-
-import React from 'react';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
 import ProgressBar from 'components/progress-bar';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'ProgressBar';
 
 	state = {
