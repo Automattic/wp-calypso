@@ -13,6 +13,11 @@ import React from 'react';
  */
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PostRelativeTime extends React.PureComponent {
 	static displayName = 'PostRelativeTime';
 
@@ -60,8 +65,8 @@ class PostRelativeTime extends React.PureComponent {
 	};
 
 	getStatusText = () => {
-		let status = this.props.post.status,
-			statusClassName = 'post-relative-time-status__status',
+		const status = this.props.post.status;
+		let statusClassName = 'post-relative-time-status__status',
 			statusIcon = 'aside',
 			statusText;
 
@@ -101,16 +106,16 @@ class PostRelativeTime extends React.PureComponent {
 	};
 
 	render() {
-		let timeText = this.getRelativeTimeText(),
+		const timeText = this.getRelativeTimeText(),
 			statusText = this.getStatusText(),
 			relativeTimeClass = timeText ? 'post-relative-time-status' : null,
-			innerText = (
-				<span>
-					{ timeText }
-					{ statusText }
-				</span>
-			),
 			time = this.getTimestamp();
+		let innerText = (
+			<span>
+				{ timeText }
+				{ statusText }
+			</span>
+		);
 
 		if ( this.props.link ) {
 			const rel = this.props.target === '_blank' ? 'noopener noreferrer' : null;
