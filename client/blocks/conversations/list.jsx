@@ -29,6 +29,11 @@ import { getErrorKey } from 'state/comments/utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
 
 /**
+ * Style dependencies
+ */
+import './list.scss';
+
+/**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream
  * Some of it is boilerplate stolen from PostCommentList (all the activeXCommentId bits) but the special
  * convos parts are related to:

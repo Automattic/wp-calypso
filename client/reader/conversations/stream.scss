@@ -74,15 +74,8 @@
 	white-space: nowrap;
 }
 
-.conversations__comment-list-ul {
-	list-style-type: none;
-	margin-left: 0;
-}
-
-.conversations__comment-list-ul .comments__form-closed {
-	border-top: 0;
-	padding-top: 0;
-	text-align: left;
+.conversations__stream .conversation-caterpillar {
+	margin-top: 20px;
 }
 
 .is-group-reader .conversations__stream .like-button__label-status {
@@ -98,3 +91,4 @@
 		margin-top: 70px;
 	}
 }
+
