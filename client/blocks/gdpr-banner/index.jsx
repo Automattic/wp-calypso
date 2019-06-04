@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -20,6 +19,11 @@ import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import { isCurrentUserMaybeInGdprZone } from 'lib/analytics/utils';
 import { isWpMobileApp } from 'lib/mobile-app';
+
+/**
+ * Internal dependencies
+ */
+import './style.scss';
 
 const SIX_MONTHS = 6 * 30 * 24 * 60 * 60;
 
