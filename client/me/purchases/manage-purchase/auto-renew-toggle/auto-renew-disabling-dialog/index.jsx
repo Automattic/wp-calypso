@@ -21,7 +21,7 @@ class AutoRenewDisablingDialog extends Component {
 		translate: PropTypes.func.isRequired,
 		planName: PropTypes.string.isRequired,
 		siteDomain: PropTypes.string.isRequired,
-		expiryDate: PropTypes.string.isRequired,
+		purchase: PropTypes.object.isRequired,
 	};
 
 	getVariation() {
@@ -67,15 +67,16 @@ class AutoRenewDisablingDialog extends Component {
 				);
 			case 'domain':
 				return translate(
-					'By canceling auto-renewal, your domain %(siteDomain)s will expire on %(expiryDate)s. ' +
+					'By canceling auto-renewal, your domain %(domain)s will expire on %(expiryDate)s. ' +
 						'Once your domain expires, it could become unavailable, and may be impossible to get back on any domain registrar.',
 					{
 						args: {
-							siteDomain,
+							// in case of a domain registration, we need the actual domain bound to this purchase instead of the primary domain bound to the site.
+							domain: purchase.meta,
 							expiryDate,
 						},
 						comment:
-							'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com. ' +
+							'%(domain)s is a domain name, e.g. example.com, example.wordpress.com. ' +
 							'%(expiryDate)s is a date string, e.g. May 14, 2020',
 					}
 				);
