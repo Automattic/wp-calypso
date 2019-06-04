@@ -76,6 +76,7 @@
 		"jetpack/api-cache": true,
 		"jetpack/blocks/beta": true,
 		"jetpack/checklist": true,
+		"jetpack/checklist/performance": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/remote-install": true,
