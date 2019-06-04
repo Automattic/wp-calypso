@@ -7,10 +7,10 @@ import { SiteSlug } from 'client/types';
 /**
  * Returns the localized duration of a task in given minutes.
  *
- * @param  {Number} minutes Number of minutes.
- * @return {String} Localized duration.
+ * @param  minutes Number of minutes.
+ * @return Localized duration.
  */
-export function getJetpackChecklistTaskDuration( minutes ) {
+export function getJetpackChecklistTaskDuration( minutes: number ): string {
 	return translate( '%d minute', '%d minutes', { count: minutes, args: [ minutes ] } );
 }
 
