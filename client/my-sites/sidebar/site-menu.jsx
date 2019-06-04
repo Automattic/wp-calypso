@@ -129,7 +129,7 @@ class SiteMenu extends PureComponent {
 	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
 
 	renderMenuItem( menuItem ) {
-		const { canCurrentUser, siteId, siteAdminUrl } = this.props;
+		const { canCurrentUser, expandSiteSection, siteId, siteAdminUrl } = this.props;
 
 		if ( siteId && ! canCurrentUser( menuItem.capability ) ) {
 			return null;

@@ -161,7 +161,14 @@ export class MySitesSidebar extends Component {
 	};
 
 	activity() {
-		const { siteId, canUserViewActivity, path, translate, siteSuffix } = this.props;
+		const {
+			siteId,
+			canUserViewActivity,
+			expandToolsSection,
+			path,
+			translate,
+			siteSuffix,
+		} = this.props;
 
 		if ( ! siteId ) {
 			return null;
@@ -191,7 +198,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	earn() {
-		const { path, translate } = this.props;
+		const { expandToolsSection, path, translate } = this.props;
 
 		return (
 			<SidebarItem
@@ -212,7 +219,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	themes() {
-		const { path, site, translate, canUserEditThemeOptions } = this.props;
+		const { expandDesignSection, path, site, translate, canUserEditThemeOptions } = this.props;
 
 		if ( site && ! canUserEditThemeOptions ) {
 			return null;
@@ -234,7 +241,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	design() {
-		const { path, site, translate, canUserEditThemeOptions } = this.props,
+		const { expandDesignSection, path, site, translate, canUserEditThemeOptions } = this.props,
 			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
@@ -282,7 +289,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	upgrades() {
-		const { path, translate, canUserManageOptions } = this.props;
+		const { expandManageSection, path, translate, canUserManageOptions } = this.props;
 		const domainsLink = '/domains/manage' + this.props.siteSuffix;
 
 		if ( ! this.props.siteId ) {
@@ -425,7 +432,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	marketing() {
-		const { path, site } = this.props;
+		const { expandToolsSection, path, site } = this.props;
 		const marketingLink = '/marketing' + this.props.siteSuffix;
 
 		if ( site && ! this.props.canUserPublishPosts ) {
@@ -456,7 +463,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	users() {
-		const { translate, path, site, canUserListUsers } = this.props;
+		const { expandManageSection, translate, path, site, canUserListUsers } = this.props;
 
 		if ( ! site || ! canUserListUsers ) {
 			return null;
@@ -482,7 +489,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	siteSettings() {
-		const { path, site, canUserManageOptions } = this.props;
+		const { expandManageSection, path, site, canUserManageOptions } = this.props;
 		const siteSettingsLink = '/settings/general' + this.props.siteSuffix;
 
 		if ( site && ! canUserManageOptions ) {
