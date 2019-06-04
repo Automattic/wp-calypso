@@ -30,6 +30,7 @@ class SuggestionSearch extends Component {
 		value: PropTypes.string,
 		autoFocus: PropTypes.bool,
 		railcar: PropTypes.object,
+		'aria-label': PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -145,6 +146,7 @@ class SuggestionSearch extends Component {
 					onKeyDown={ this.handleSuggestionKeyDown }
 					autoComplete="off"
 					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+					aria-label={ this.props[ 'aria-label' ] }
 				/>
 				<Suggestions
 					ref={ this.setSuggestionsRef }

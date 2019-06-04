@@ -15,9 +15,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
-import InfoPopover from 'components/info-popover';
 import QueryVerticals from 'components/data/query-verticals';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -80,31 +78,16 @@ class SiteTitleStep extends Component {
 	};
 
 	renderSiteTitleStep = () => {
-		const {
-			shouldFetchVerticalData,
-			siteTitle,
-			siteType,
-			siteVerticalName,
-			translate,
-		} = this.props;
+		const { shouldFetchVerticalData, siteTitle, siteType, siteVerticalName } = this.props;
 		const fieldLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' ) || '';
 		const fieldPlaceholder =
 			getSiteTypePropertyValue( 'slug', siteType, 'siteTitlePlaceholder' ) || '';
-		const fieldDescription = translate(
-			"We'll use this as your site title. Don't worry, you can change this later."
-		);
 		return (
 			<div className="site-title__wrapper">
 				{ shouldFetchVerticalData && <QueryVerticals searchTerm={ siteVerticalName } /> }
 				<form>
 					<div className="site-title__field-control site-title__title">
 						<FormFieldset>
-							<FormLabel htmlFor="title">
-								{ fieldLabel }
-								<InfoPopover className="site-title__info-popover" position="top">
-									{ fieldDescription }
-								</InfoPopover>
-							</FormLabel>
 							<FormTextInput
 								id="title"
 								name="title"
@@ -113,6 +96,7 @@ class SiteTitleStep extends Component {
 								value={ siteTitle }
 								maxLength={ 100 }
 								autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+								aria-label={ fieldLabel }
 							/>
 							<Button
 								title={ this.props.translate( 'Continue' ) }

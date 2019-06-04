@@ -59,7 +59,12 @@ class SiteTopicStep extends Component {
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
-					stepContent={ <SiteTopicForm submitForm={ this.props.submitSiteTopic } /> }
+					stepContent={
+						<SiteTopicForm
+							submitForm={ this.props.submitSiteTopic }
+							siteType={ this.props.siteType }
+						/>
+					}
 					showSiteMockups={ this.props.showSiteMockups }
 				/>
 			</div>
