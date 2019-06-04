@@ -5,6 +5,10 @@ Checklist
 
 ## `Checklist` props
 
+### `className { string }`
+
+Additional class to add to the Checklist.
+
 ### `isPlaceholder { bool } - default: false`
 
 Render as a placeholder.
@@ -14,10 +18,6 @@ Render as a placeholder.
 Displayed in the checklist header, right on top of the progress bar.
 
 ## `Task` props
-
-### `className { string }`
-
-Provide a className to add to the Task classes.
 
 ### `completed { bool }`
 
@@ -65,11 +65,9 @@ Translate as `translate( '%d minutes', '%d minutes', { count: 2, args: [ 2 ] } )
 
 Task title
 
-### `noCount { boolean }`
-
-Checklists are flat lists of tasks which calculate completion by counting the children. A `<Task noCount />` can be used to insert presentational Tasks that should not be used in when counting tasks.
-
 ## Usage
+
+A Checklist expects its children to be a flat list of Task:
 
 ```jsx
 <Checklist>
@@ -100,3 +98,6 @@ Checklists are flat lists of tasks which calculate completion by counting the ch
 	/>
 </Checklist>
 ```
+
+Non-task children are not well supported, but they can include the `noCount` prop to prevent them
+from being included in the complete/total calculation.
