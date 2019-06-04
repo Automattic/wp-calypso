@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -19,6 +18,11 @@ import isSiteStore from 'state/selectors/is-site-store';
 import { getSiteOption } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 import config from 'config';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class StatsNavigation extends Component {
 	static propTypes = {

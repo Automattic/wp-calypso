@@ -13,6 +13,11 @@ import { intervals } from './constants';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 
+/**
+ * Style dependencies
+ */
+import './intervals.scss';
+
 const Intervals = props => {
 	const { selected, pathTemplate, className, standalone } = props;
 	const classes = classnames( 'stats-navigation__intervals', className, {
