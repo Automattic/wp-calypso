@@ -85,6 +85,36 @@ class JetpackChecklist extends PureComponent {
 		return <ChecklistSectionTitle excludeFromCount title={ title } />;
 	}
 
+	renderTaskSet( checklistTasks ) {
+		return map( this.props.taskStatuses, ( status, taskId ) => {
+			const task = checklistTasks[ taskId ];
+
+			if ( ! task ) {
+				// UI does not support this task.
+				return;
+			}
+
+			const completed = get( status, 'completed', false );
+
+			return (
+				<Task
+					completed={ completed }
+					completedButtonText={ task.completedButtonText }
+					completedTitle={ task.completedTitle }
+					description={ task.description }
+					duration={ task.duration }
+					href={ task.getUrl( this.props.siteSlug, completed ) }
+					onClick={ this.handleTaskStart( {
+						taskId,
+						tourId: get( task, 'tourId', null ),
+					} ) }
+					title={ task.title }
+					key={ taskId }
+				/>
+			);
+		} );
+	}
+
 	render() {
 		const {
 			akismetFinished,
@@ -154,31 +184,7 @@ class JetpackChecklist extends PureComponent {
 							target="_blank"
 						/>
 					) }
-					{ map( taskStatuses, ( status, taskId ) => {
-						const task = JETPACK_SECURITY_CHECKLIST_TASKS[ taskId ];
-
-						if ( ! task ) {
-							// UI does not support this task.
-							return;
-						}
-
-						return (
-							<Task
-								completed={ get( status, 'completed', false ) }
-								completedButtonText={ task.completedButtonText }
-								completedTitle={ task.completedTitle }
-								description={ task.description }
-								duration={ task.duration }
-								href={ task.getUrl( siteSlug ) }
-								onClick={ this.handleTaskStart( {
-									taskId,
-									tourId: get( task, 'tourId', null ),
-								} ) }
-								title={ task.title }
-								key={ taskId }
-							/>
-						);
-					} ) }
+					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS ) }
 					{ /* For Checklist completion calculation to work correctly, children shold be a flat list of tasks */ }
 					{ isEnabled( 'jetpack/checklist/performance' ) &&
 						this.renderSectionTitle( translate( 'Performance Tools' ) ) }
@@ -186,31 +192,7 @@ class JetpackChecklist extends PureComponent {
 						<Task title="Static task for demonstration purposes." completed />
 					) }
 					{ isEnabled( 'jetpack/checklist/performance' ) &&
-						map( taskStatuses, ( status, taskId ) => {
-							const task = JETPACK_PERFORMANCE_CHECKLIST_TASKS[ taskId ];
-
-							if ( ! task ) {
-								// UI does not support this task.
-								return;
-							}
-
-							return (
-								<Task
-									completed={ get( status, 'completed', false ) }
-									completedButtonText={ task.completedButtonText }
-									completedTitle={ task.completedTitle }
-									description={ task.description }
-									duration={ task.duration }
-									href={ task.getUrl( siteSlug ) }
-									onClick={ this.handleTaskStart( {
-										taskId,
-										tourId: get( task, 'tourId', null ),
-									} ) }
-									title={ task.title }
-									key={ taskId }
-								/>
-							);
-						} ) }
+						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS ) }
 				</Checklist>
 
 				{ wpAdminUrl && (

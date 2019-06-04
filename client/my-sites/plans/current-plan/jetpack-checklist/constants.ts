@@ -19,7 +19,7 @@ interface TaskUiDescription {
 	readonly description?: string;
 	readonly completedButtonText: string;
 	readonly completedTitle?: string;
-	readonly getUrl: ( siteSlug: SiteSlug ) => string;
+	readonly getUrl: ( siteSlug: SiteSlug, completed?: boolean ) => string;
 	readonly duration?: string;
 	readonly tourId?: string;
 }
@@ -65,7 +65,17 @@ export const JETPACK_SECURITY_CHECKLIST_TASKS: ChecklistTasks = {
 };
 
 export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: ChecklistTasks = {
-	// No tasks for this checklist yet…
+	jetpack_lazy_images: {
+		title: translate( 'Lazy Load Images' ),
+		description: translate(
+			"Improve your site's speed by only loading images when visible on the screen."
+		),
+		getUrl: ( siteSlug, completed ) =>
+			completed ? `/media/${ siteSlug }` : `/settings/performance/${ siteSlug }`,
+		completedButtonText: translate( 'Upload images' ),
+		completedTitle: translate( 'Lazy load images is improving your site speed.' ),
+		duration: getJetpackChecklistTaskDuration( 1 ),
+	},
 };
 
 export const JETPACK_CHECKLIST_TASK_AKISMET: TaskUiDescription = {
