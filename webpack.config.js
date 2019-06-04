@@ -41,7 +41,6 @@ const shouldMinify =
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
-const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
@@ -171,12 +170,12 @@ const webpackConfig = {
 	},
 	optimization: {
 		splitChunks: {
-			chunks: codeSplit ? 'all' : 'async',
+			chunks: ! isDesktop ? 'all' : 'async',
 			name: !! ( isDevelopment || shouldEmitStats ),
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
-		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
+		runtimeChunk: ! isDesktop ? { name: 'manifest' } : false,
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
 		minimize: shouldMinify,
@@ -260,7 +259,6 @@ const webpackConfig = {
 	},
 	node: false,
 	plugins: _.compact( [
-		! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			global: 'window',
