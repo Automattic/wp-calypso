@@ -6,6 +6,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+/**
+ * Style dependencies
+ */
+import './suggestion.scss';
+
 const UserMentionsSuggestion = ( { avatarUrl, fullName, query, username } ) => {
 	const highlight = ( content, type ) => {
 		const expressions = {
