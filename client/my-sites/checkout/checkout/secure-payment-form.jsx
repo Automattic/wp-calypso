@@ -39,8 +39,6 @@ import { INPUT_VALIDATION, REDIRECTING_FOR_AUTHORIZATION } from 'lib/store-trans
 import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
-import FormattedHeader from 'components/formatted-header';
-import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -542,6 +540,7 @@ export class SecurePaymentForm extends Component {
 	renderGreatChoiceHeader() {
 		const { translate } = this.props;
 		const headerText = translate( 'Great choice! How would you like to pay?' );
+<<<<<<< HEAD
 
 		if ( 'variantRightColumn' === abtest( 'showCheckoutCartRight' ) ) {
 			const element = document.getElementsByClassName( 'formatted-header__title' )[ 0 ];
@@ -551,6 +550,10 @@ export class SecurePaymentForm extends Component {
 			return;
 		}
 		return <FormattedHeader headerText={ headerText } />;
+=======
+		const element = document.getElementsByClassName( 'formatted-header__title' )[ 0 ];
+		element.textContent = headerText;
+>>>>>>> First commit: Removing the showCartRight abtest and making the cart to the right as the control
 	}
 
 	render() {

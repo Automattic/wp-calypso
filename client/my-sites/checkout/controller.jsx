@@ -25,7 +25,6 @@ import ConciergeQuickstartSession from './concierge-quickstart-session';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/upgrades/actions';
 import FormattedHeader from 'components/formatted-header';
-import { abtest } from 'lib/abtest';
 
 export function checkout( context, next ) {
 	const { feature, plan, product } = context.params;
@@ -40,50 +39,28 @@ export function checkout( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-	if ( 'variantRightColumn' === abtest( 'showCheckoutCartRight' ) ) {
-		context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
-
-		context.primary = (
-			<>
-				<FormattedHeader />
-				<div className="checkout__container">
-					<CheckoutData>
-						<Checkout
-							product={ product }
-							purchaseId={ context.params.purchaseId }
-							selectedFeature={ feature }
-							couponCode={ context.query.code || getRememberedCoupon() }
-							plan={ plan }
-						/>
-						<CartData>
-							<SecondaryCart selectedSite={ selectedSite } />
-						</CartData>
-					</CheckoutData>
-				</div>
-			</>
-		);
-
-		next();
-		return;
-	}
+	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
 	context.primary = (
-		<CheckoutData>
-			<Checkout
-				product={ product }
-				purchaseId={ context.params.purchaseId }
-				selectedFeature={ feature }
-				couponCode={ context.query.code || getRememberedCoupon() }
-				plan={ plan }
-			/>
-		</CheckoutData>
+		<>
+			<FormattedHeader />
+			<div className="checkout__container">
+				<CheckoutData>
+					<Checkout
+						product={ product }
+						purchaseId={ context.params.purchaseId }
+						selectedFeature={ feature }
+						couponCode={ context.query.code }
+						plan={ plan }
+					/>
+					<CartData>
+						<SecondaryCart selectedSite={ selectedSite } />
+					</CartData>
+				</CheckoutData>
+			</div>
+		</>
 	);
 
-	context.secondary = (
-		<CartData>
-			<SecondaryCart selectedSite={ selectedSite } />
-		</CartData>
-	);
 	next();
 }
 
