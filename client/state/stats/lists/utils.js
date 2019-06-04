@@ -288,10 +288,11 @@ export function parseChartData( payload, nullAttributes = [] ) {
  * @return {Object} - moment date object
  */
 export function parseUnitPeriods( unit, period ) {
-	const splitYearWeek = period.split( '-W' );
+	let splitYearWeek;
 
 	switch ( unit ) {
 		case 'week':
+			splitYearWeek = period.split( '-W' );
 			return moment()
 				.isoWeekYear( splitYearWeek[ 0 ] )
 				.isoWeek( splitYearWeek[ 1 ] )
