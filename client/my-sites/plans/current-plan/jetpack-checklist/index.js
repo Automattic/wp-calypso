@@ -75,14 +75,14 @@ class JetpackChecklist extends PureComponent {
 	 * and future iterations intend to remove the grouped tasks.
 	 *
 	 * In order to get the desired layout and behavior with the existing Checklist component,
-	 * it's necessary to add an element with the `noCount` prop. That requires the use of a
+	 * it's necessary to add an element with the `excludeFromCount` prop. That requires the use of a
 	 * render method rather than a "true" Component definition.
 	 *
 	 * @param {string} title The checklist title
 	 * @return {JSXElement} Section title element
 	 */
 	renderSectionTitle( title ) {
-		return <ChecklistSectionTitle noCount title={ title } />;
+		return <ChecklistSectionTitle excludeFromCount title={ title } />;
 	}
 
 	render() {

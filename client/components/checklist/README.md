@@ -99,5 +99,5 @@ A Checklist expects its children to be a flat list of Task:
 </Checklist>
 ```
 
-Non-task children are not well supported, but they can include the `noCount` prop to prevent them
+Non-task children are not well supported, but they can include the `excludeFromCount` prop to prevent them
 from being included in the complete/total calculation.

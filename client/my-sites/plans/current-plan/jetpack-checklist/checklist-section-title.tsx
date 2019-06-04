@@ -8,7 +8,7 @@ import React, { FunctionComponent } from 'react';
  */
 import Card from 'components/card';
 
-const ChecklistSectionTitle: FunctionComponent< { noCount: true; title: string } > = ( {
+const ChecklistSectionTitle: FunctionComponent< { excludeFromCount: true; title: string } > = ( {
 	title,
 } ) => (
 	<Card className="jetpack-checklist__task-section-title" compact>
