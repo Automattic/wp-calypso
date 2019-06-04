@@ -517,11 +517,17 @@ class DomainsStep extends React.Component {
 	};
 
 	getSubHeaderText() {
-		const { siteType, stepSectionName } = this.props;
+		const { siteType, translate } = this.props;
+		const onboardingSubHeaderCopy =
+			siteType && getSiteTypePropertyValue( 'slug', siteType, 'domainsStepSubheader' );
 
-		return 'transfer' === stepSectionName || 'mapping' === stepSectionName
-			? getSiteTypePropertyValue( 'slug', siteType, 'domainsStepTransferringSubheader' )
-			: getSiteTypePropertyValue( 'slug', siteType, 'domainsStepSubheader' );
+		if ( onboardingSubHeaderCopy ) {
+			return onboardingSubHeaderCopy;
+		}
+
+		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
+			? translate( 'Use a domain you already own with your new WordPress.com site.' )
+			: translate( "Enter your site's name or some keywords that describe it to get started." );
 	}
 
 	getHeaderText() {
