@@ -16,6 +16,11 @@ import getPostLikeCount from 'state/selectors/get-post-like-count';
 import isLikedPost from 'state/selectors/is-liked-post';
 import QueryPostLikes from 'components/data/query-post-likes';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class LikeButtonContainer extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
