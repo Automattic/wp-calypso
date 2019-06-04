@@ -63,7 +63,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 			await editorPage.enterContent( pageQuote + '\n' );
 			await editorPage.enterPostImage( fileDetails );
 			await editorPage.waitUntilImageInserted( fileDetails );
-			const errorShown = await editorPage.errorDisplayed();
+			const errorShown = await editorPage.isErrorDisplayed();
 			assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 		} );
 
@@ -599,7 +599,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 			await editorPage.enterTitle( pageTitle );
 			await editorPage.insertPaymentButton( paymentButtonDetails );
 
-			const errorShown = await editorPage.errorDisplayed();
+			const errorShown = await editorPage.isErrorDisplayed();
 			return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 		} );
 

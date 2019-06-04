@@ -70,12 +70,4 @@ export default class CancelPurchasePage extends AsyncBaseContainer {
 			by.css( `${ buttonDialogClass } button[data-e2e-button="cancel"]` )
 		);
 	}
-
-	async waitAndDismissSuccessNotice() {
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			by.css( '.notice.is-success.is-dismissable .notice__dismiss' ),
-			this.explicitWaitMS * 3
-		);
-	}
 }

@@ -16,6 +16,7 @@ const by = webdriver.By;
 const until = webdriver.until;
 
 import AsyncBaseContainer from '../async-base-container';
+import NoticesComponent from '../components/notices-component';
 
 export default class EditorPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
@@ -90,7 +91,10 @@ export default class EditorPage extends AsyncBaseContainer {
 		const fileNameInput = await driver.findElement( fileNameInputSelector );
 		await fileNameInput.sendKeys( file );
 		await driverHelper.elementIsNotPresent( driver, '.media-library__list-item.is-transient' );
-		await driverHelper.elementIsNotPresent( driver, '.media-library .notice.is-error' );
+		const errorShown = await this.isErrorDisplayed();
+		if ( errorShown ) {
+			throw new Error( 'There is an error shown on the editor page!' );
+		}
 		return await driverHelper.waitTillPresentAndDisplayed(
 			driver,
 			by.css( '.media-library__list-item.is-selected' )
@@ -278,9 +282,9 @@ export default class EditorPage extends AsyncBaseContainer {
 		return await driver.switchTo().defaultContent();
 	}
 
-	async errorDisplayed() {
-		await this.driver.sleep( 1000 );
-		return await driverHelper.isElementPresent( this.driver, by.css( '.notice.is-error' ) );
+	async isErrorDisplayed() {
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
+		return await noticesComponent.isErrorNoticeDisplayed();
 	}
 
 	async ensureContactFormDisplayedInPost() {

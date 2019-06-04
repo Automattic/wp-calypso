@@ -45,13 +45,6 @@ export default class PostsPage extends AsyncBaseContainer {
 		);
 	}
 
-	async successNoticeDisplayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '.notice.is-success' )
-		);
-	}
-
 	async openSectionNav() {
 		const isOpen = await driverHelper.isElementPresent(
 			this.driver,
