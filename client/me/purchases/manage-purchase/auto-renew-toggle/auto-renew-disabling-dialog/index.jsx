@@ -120,6 +120,6 @@ class AutoRenewDisablingDialog extends Component {
 	}
 }
 
-export default connect( state => ( {
-	isAtomicSite: isSiteAtomic( state ),
+export default connect( ( state, { purchase } ) => ( {
+	isAtomicSite: isSiteAtomic( state, purchase.siteId ),
 } ) )( localize( AutoRenewDisablingDialog ) );
