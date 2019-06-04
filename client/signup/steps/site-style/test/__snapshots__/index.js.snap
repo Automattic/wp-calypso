@@ -49,9 +49,7 @@ exports[`<SiteStyleStep /> should render 1`] = `
             className="site-style__submit-wrapper"
           >
             <Button
-              aria-label="Continue"
               primary={true}
-              title="Continue"
               type="submit"
             >
               Continue
