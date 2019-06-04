@@ -17,10 +17,14 @@ import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 
+const cssChunkLink = asset => (
+	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
+);
 class Desktop extends React.Component {
 	render() {
 		const {
 			app,
+			entrypoint,
 			faviconURL,
 			i18nLocaleScript,
 			isRTL,
@@ -39,6 +43,7 @@ class Desktop extends React.Component {
 			devDocsURL,
 			feedbackURL,
 		} = this.props;
+		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
 		return (
 			<html
 				lang={ lang }
@@ -60,6 +65,7 @@ class Desktop extends React.Component {
 						data-webpack={ true }
 						href={ `/calypso/fallback/build.${ isRTL ? 'rtl.css' : 'css' }` }
 					/>
+					{ entrypoint[ csskey ].map( cssChunkLink ) }
 					<link rel="stylesheet" id="desktop-css" href="/desktop/wordpress-desktop.css" />
 				</Head>
 				<body className={ classNames( { rtl: isRTL } ) }>
@@ -123,6 +129,9 @@ class Desktop extends React.Component {
 					) }
 
 					<script src="/calypso/fallback/build.js" />
+					{ entrypoint.js.map( asset => (
+						<script key={ asset } src={ asset } />
+					) ) }
 					<script src="/desktop/desktop-app.js" />
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					<script type="text/javascript">startApp();</script>
