@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import LikeIcons from './icons';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class LikeButton extends PureComponent {
 	static propTypes = {
