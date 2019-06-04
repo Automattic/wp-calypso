@@ -1,0 +1,39 @@
+<?xml version='1.0'?>
+<ns2:test-suite xmlns:ns2='urn:model.allure.qatools.yandex.ru' start='1554748812809' stop='1554748846420'>
+    <name>[WPCOM] Comments: (desktop) Commenting and replying to newly created post: @parallel @jetpack</name>
+    <title>[WPCOM] Comments: (desktop) Commenting and replying to newly created post: @parallel @jetpack</title>
+    <test-cases>
+        <test-case start='1554748812809' status='passed' stop='1554748820985'>
+            <name>Can login and create a new post</name>
+            <title>Can login and create a new post</title>
+            <labels/>
+            <parameters/>
+            <steps/>
+            <attachments/>
+        </test-case>
+        <test-case start='1554748820985' status='passed' stop='1554748832416'>
+            <name>Can publish and visit site</name>
+            <title>Can publish and visit site</title>
+            <labels/>
+            <parameters/>
+            <steps/>
+            <attachments/>
+        </test-case>
+        <test-case start='1554748832416' status='passed' stop='1554748834137'>
+            <name>Can post a comment</name>
+            <title>Can post a comment</title>
+            <labels/>
+            <parameters/>
+            <steps/>
+            <attachments/>
+        </test-case>
+        <test-case start='1554748834137' status='passed' stop='1554748846420'>
+            <name>Can post a reply</name>
+            <title>Can post a reply</title>
+            <labels/>
+            <parameters/>
+            <steps/>
+            <attachments/>
+        </test-case>
+    </test-cases>
+</ns2:test-suite>

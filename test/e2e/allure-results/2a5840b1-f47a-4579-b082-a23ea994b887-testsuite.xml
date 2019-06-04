@@ -1,0 +1,39 @@
+<?xml version='1.0'?>
+<ns2:test-suite xmlns:ns2='urn:model.allure.qatools.yandex.ru' start='1554753420461' stop='1554753438524'>
+    <name>[WPCOM] Comments: (desktop) Commenting and replying to newly created post in Gutenberg Editor: @parallel</name>
+    <title>[WPCOM] Comments: (desktop) Commenting and replying to newly created post in Gutenberg Editor: @parallel</title>
+    <test-cases>
+        <test-case start='1554753420461' status='passed' stop='1554753428827'>
+            <name>Can login and create a new post</name>
+            <title>Can login and create a new post</title>
+            <labels/>
+            <parameters/>
+            <steps/>
+            <attachments/>
+        </test-case>
+        <test-case start='1554753428827' status='passed' stop='1554753434476'>
+            <name>Can publish and visit site</name>
+            <title>Can publish and visit site</title>
+            <labels/>
+            <parameters/>
+            <steps/>
+            <attachments/>
+        </test-case>
+        <test-case start='1554753434476' status='passed' stop='1554753436182'>
+            <name>Can post a comment</name>
+            <title>Can post a comment</title>
+            <labels/>
+            <parameters/>
+            <steps/>
+            <attachments/>
+        </test-case>
+        <test-case start='1554753436182' status='passed' stop='1554753438523'>
+            <name>Can post a reply</name>
+            <title>Can post a reply</title>
+            <labels/>
+            <parameters/>
+            <steps/>
+            <attachments/>
+        </test-case>
+    </test-cases>
+</ns2:test-suite>

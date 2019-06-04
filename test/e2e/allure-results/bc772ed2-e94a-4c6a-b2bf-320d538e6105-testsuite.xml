@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+<ns2:test-suite xmlns:ns2='urn:model.allure.qatools.yandex.ru' start='1554750477923' stop='1554750530875'>
+    <name></name>
+    <title></title>
+    <test-cases>
+        <test-case start='1554750530875' status='broken' stop='1554750530875'>
+            <name>"after all" hook</name>
+            <title>"after all" hook</title>
+            <labels/>
+            <parameters/>
+            <steps/>
+            <attachments/>
+            <failure>
+                <message>Cannot read property 'addParameter' of undefined</message>
+                <stack-trace>TypeError: Cannot read property 'addParameter' of undefined
+                    at Allure.addArgument (node_modules/allure-js-commons/runtime.js:57:34)
+                    at Context.&lt;anonymous> (lib/mocha-hooks.js:179:16)
+                    at process._tickCallback (internal/process/next_tick.js:68:7)</stack-trace>
+            </failure>
+        </test-case>
+    </test-cases>
+</ns2:test-suite>
