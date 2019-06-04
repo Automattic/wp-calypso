@@ -26,9 +26,8 @@ export default class SidebarItem extends React.Component {
 		onNavigate: PropTypes.func,
 		icon: PropTypes.string,
 		materialIcon: PropTypes.string,
-		sectionIsExpanded: PropTypes.bool,
 		selected: PropTypes.bool,
-		toggleSection: PropTypes.func,
+		expandSection: PropTypes.func,
 		preloadSectionName: PropTypes.string,
 		forceInternalLink: PropTypes.bool,
 		testTarget: PropTypes.string,
@@ -45,15 +44,10 @@ export default class SidebarItem extends React.Component {
 	};
 
 	componentDidMount() {
-		const { toggleSection } = this.props;
+		const { expandSection, selected } = this.props;
 
-		// props.sectionIsExpanded is initialized as `null`, which means it's not yet expanded.
-		const sectionIsNotExpanded =
-			this.props.sectionIsExpanded === null || this.props.sectionIsExpanded === false;
-		const selected = this.props.selected === true;
-
-		if ( isFunction( toggleSection ) && selected && sectionIsNotExpanded ) {
-			toggleSection();
+		if ( isFunction( expandSection ) && selected ) {
+			expandSection();
 		}
 	}
 
