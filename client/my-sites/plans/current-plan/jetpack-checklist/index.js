@@ -34,7 +34,7 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { isEnabled } from 'config';
-import Card from 'components/card';
+import ChecklistSectionTitle from './checklist-section-title';
 
 /**
  * Style dependencies
@@ -82,7 +82,7 @@ class JetpackChecklist extends PureComponent {
 	 * @return {JSXElement} Section title element
 	 */
 	renderSectionTitle( title ) {
-		return <SectionTitle noCount title={ title } />;
+		return <ChecklistSectionTitle noCount title={ title } />;
 	}
 
 	render() {
@@ -260,11 +260,3 @@ export default connect(
 		requestGuidedTour,
 	}
 )( localize( JetpackChecklist ) );
-
-function SectionTitle( { title } ) {
-	return (
-		<Card className="jetpack-checklist__task-section-title" compact>
-			<h2>{ title }</h2>
-		</Card>
-	);
-}
