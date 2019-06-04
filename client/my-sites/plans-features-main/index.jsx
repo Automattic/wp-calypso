@@ -48,6 +48,11 @@ import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class PlansFeaturesMain extends Component {
 	componentDidUpdate( prevProps ) {
 		/**
