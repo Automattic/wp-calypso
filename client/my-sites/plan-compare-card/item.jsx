@@ -29,9 +29,7 @@ export default class PlanCompareCardItem extends React.Component {
 		return (
 			<li className={ classes }>
 				{ showCheckmark && (
-					<span className="plan-compare-card__item-checkmark">
-						<Gridicon size={ 18 } icon="checkmark" />
-					</span>
+					<Gridicon size={ 18 } icon="checkmark" className="plan-compare-card__item-checkmark" />
 				) }
 				{ this.props.children }
 			</li>
