@@ -29,7 +29,12 @@ import {
 	paymentLogoType,
 	hasPaymentMethod,
 } from 'lib/purchases';
-import { isDomainRegistration, isDomainTransfer, isConciergeSession } from 'lib/products-values';
+import {
+	isDomainRegistration,
+	isDomainTransfer,
+	isConciergeSession,
+	isPlan,
+} from 'lib/products-values';
 import { getPlan } from 'lib/plans';
 
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -306,7 +311,7 @@ class PurchaseMeta extends Component {
 
 		if (
 			config.isEnabled( 'autorenewal-toggle' ) &&
-			( isDomainRegistration( purchase ) || isSubscription( purchase ) ) &&
+			( isDomainRegistration( purchase ) || isPlan( purchase ) ) &&
 			hasPaymentMethod( purchase ) &&
 			! isExpired( purchase )
 		) {
