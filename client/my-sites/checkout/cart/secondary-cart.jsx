@@ -17,7 +17,6 @@ import classNames from 'classnames';
 import CartBody from 'my-sites/checkout/cart/cart-body';
 import CartMessages from './cart-messages';
 import CartSummaryBar from 'my-sites/checkout/cart/cart-summary-bar';
-import CartPlanAd from './cart-plan-ad';
 import CartPlanAdTheme from './cart-plan-ad-theme';
 import CartPlanDiscountAd from './cart-plan-discount-ad';
 import Sidebar from 'layout/sidebar';
@@ -90,7 +89,6 @@ class SecondaryCart extends Component {
 			<Sidebar className={ cartClasses } hasSidebar={ this.props.hasSidebar }>
 				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<CartSummaryBar additionalClasses="cart-header" />
-				<CartPlanAd selectedSite={ selectedSite } cart={ cart } />
 				<CartPlanAdTheme selectedSite={ selectedSite } cart={ cart } />
 				<CartBody
 					ref={ this.setCartBodyRef }
