@@ -168,12 +168,14 @@ export default class Step extends Component< Props, State > {
 			}
 		}
 
-		return new Promise( resolve => {
-			const waitForElement = () =>
-				document.querySelector( props.target ) ? resolve() : setTimeout( waitForElement, 125 );
+		if ( props.target ) {
+			return new Promise( resolve => {
+				const waitForElement = () =>
+					document.querySelector( props.target ) ? resolve() : setTimeout( waitForElement, 125 );
 
-			waitForElement();
-		} );
+				waitForElement();
+			} );
+		}
 	}
 
 	safeSetState( state: State ) {
