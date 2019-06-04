@@ -23,6 +23,11 @@ import MediaStore from 'lib/media/store';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ImageSelector extends Component {
 	static propTypes = {
 		className: PropTypes.string,
