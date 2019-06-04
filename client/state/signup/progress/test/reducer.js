@@ -10,7 +10,6 @@ import {
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
-	SIGNUP_PROGRESS_SET,
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 } from 'state/action-types';
@@ -29,21 +28,112 @@ jest.mock( 'signup/config/steps-pure', () => ( {
 } ) );
 
 describe( 'reducer', () => {
-	describe( 'setting and resetting the state', () => {
-		test( 'should handle manually setting the state', () => {
-			const initialState = [];
-			const action = {
-				type: SIGNUP_PROGRESS_SET,
-				steps: [ { test: 123 } ],
-			};
-			const finalState = [ { test: 123 } ];
-			expect( reducer( initialState, action ) ).toEqual( finalState );
+	test( 'should return an empty at first', () => {
+		expect( reducer( undefined, { type: 'init' } ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should store a new step', () => {
+		const initialState = [];
+		const action = {
+			type: SIGNUP_PROGRESS_SUBMIT_STEP,
+			step: {
+				stepName: 'site-selection',
+				formData: { url: 'my-site.wordpress.com' },
+			},
+		};
+		const finalState = reducer( initialState, action );
+		expect( finalState ).toHaveLength( 1 );
+		expect( finalState[ 0 ].stepName ).toBe( 'site-selection' );
+	} );
+
+	test( 'should not store the same step twice', () => {
+		let state = [];
+
+		state = reducer( state, {
+			type: SIGNUP_PROGRESS_SUBMIT_STEP,
+			step: {
+				stepName: 'site-selection',
+				formData: { url: 'my-site.wordpress.com' },
+			},
 		} );
+
+		state = reducer( state, {
+			type: SIGNUP_PROGRESS_SUBMIT_STEP,
+			step: {
+				stepName: 'site-selection',
+			},
+		} );
+
+		expect( state ).toHaveLength( 1 );
+		expect( state[ 0 ] ).toMatchObject( {
+			stepName: 'site-selection',
+			formData: { url: 'my-site.wordpress.com' },
+			status: 'completed',
+		} );
+	} );
+
+	test( 'should store multiple steps in order', () => {
+		let state = [];
+
+		state = reducer( state, {
+			type: SIGNUP_PROGRESS_SUBMIT_STEP,
+			step: { stepName: 'site-selection' },
+		} );
+
+		state = reducer( state, {
+			type: SIGNUP_PROGRESS_SUBMIT_STEP,
+			step: { stepName: 'theme-selection' },
+		} );
+
+		expect( state ).toHaveLength( 2 );
+		expect( state[ 0 ].stepName ).toBe( 'site-selection' );
+		expect( state[ 1 ].stepName ).toBe( 'theme-selection' );
+	} );
+
+	test( 'should mark only new saved steps as in-progress', () => {
+		const actions = [
+			{
+				type: SIGNUP_PROGRESS_SUBMIT_STEP,
+				step: { stepName: 'site-selection' },
+			},
+
+			{
+				type: SIGNUP_PROGRESS_SAVE_STEP,
+				step: { stepName: 'site-selection' },
+			},
+
+			{
+				type: SIGNUP_PROGRESS_SAVE_STEP,
+				step: { stepName: 'last-step' },
+			},
+		];
+
+		const state = actions.reduce( reducer, [] );
+
+		expect( state[ 0 ].status ).not.toBe( 'in-progress' );
+		expect( state[ 1 ].status ).toBe( 'in-progress' );
+	} );
+
+	test( 'should set the status of a signup step', () => {
+		let state = [];
+
+		state = reducer( state, {
+			type: SIGNUP_PROGRESS_SUBMIT_STEP,
+			step: { stepName: 'site-selection' },
+		} );
+		expect( state[ 0 ].status ).toBe( 'completed' );
+
+		state = reducer( state, {
+			type: SIGNUP_PROGRESS_COMPLETE_STEP,
+			step: { stepName: 'site-selection' },
+		} );
+		expect( state[ 0 ].status ).toBe( 'completed' );
+	} );
+
+	describe( 'setting and resetting the state', () => {
 		test( 'should handle resetting the state', () => {
 			const initialState = [ { test: 123 } ];
-			const action = {
-				type: SIGNUP_COMPLETE_RESET,
-			};
+			const action = { type: SIGNUP_COMPLETE_RESET };
 			const finalState = [];
 			expect( reducer( initialState, action ) ).toEqual( finalState );
 		} );
@@ -117,6 +207,7 @@ describe( 'reducer', () => {
 			];
 			expect( reducer( initialState, action ) ).toEqual( finalState );
 		} );
+
 		test( 'should not add a new step if no steps match by name', () => {
 			const initialState = [ { stepName: 'example', status: 'something' } ];
 			const action = {
@@ -128,21 +219,21 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'removing unneded steps', () => {
-		test( 'should remove steps with names not included in the validStepNames array', () => {
+		test( 'should remove steps that are not in the new flow', () => {
 			const initialState = [
 				{ stepName: 'something', value: 'great something' },
 				{ stepName: 'everything', value: 'great everything' },
 				{ stepName: 'nothing', value: 'great nothing' },
 				{ stepName: 'one', value: 'great one' },
 			];
-			const action = {
-				type: SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
-				flowName: 'new-flow',
-			};
+
+			const action = { type: SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS, flowName: 'new-flow' };
+
 			const finalState = [
 				{ stepName: 'something', value: 'great something' },
 				{ stepName: 'everything', value: 'great everything' },
 			];
+
 			expect( reducer( initialState, action ) ).toEqual( finalState );
 		} );
 	} );

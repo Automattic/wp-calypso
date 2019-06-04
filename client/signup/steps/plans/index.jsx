@@ -15,12 +15,10 @@ import { parse as parseQs } from 'qs';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import { getTld, isSubdomain } from 'lib/domains';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlansSkipButton from 'components/plans/plans-skip-button';
@@ -30,6 +28,8 @@ import { planHasFeature } from '../../../lib/plans';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -69,16 +69,14 @@ export class PlansStep extends Component {
 			document.head.appendChild( salesTeamScript );
 		}
 
-		SignupActions.saveSignupStep( {
-			stepName: this.props.stepName,
-		} );
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
 	onSelectPlan = cartItem => {
-		const { additionalStepData, stepSectionName, stepName, flowName, goToNextStep } = this.props;
+		const { additionalStepData, stepSectionName, stepName, flowName } = this.props;
 
 		if ( cartItem ) {
-			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
+			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
 				product_slug: cartItem.product_slug,
 				free_trial: cartItem.free_trial,
 				from_section: stepSectionName ? stepSectionName : 'default',
@@ -96,7 +94,7 @@ export class PlansStep extends Component {
 				} );
 			}
 		} else {
-			analytics.tracks.recordEvent( 'calypso_signup_free_plan_select', {
+			this.props.recordTracksEvent( 'calypso_signup_free_plan_select', {
 				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
 		}
@@ -108,11 +106,8 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		const providedDependencies = { cartItem };
-
-		SignupActions.submitSignupStep( step, providedDependencies );
-
-		goToNextStep();
+		this.props.submitSignupStep( step, { cartItem } );
+		this.props.goToNextStep();
 	};
 
 	getDomainName() {
@@ -180,7 +175,7 @@ export class PlansStep extends Component {
 		);
 	}
 
-	plansFeaturesSelection = () => {
+	plansFeaturesSelection() {
 		const {
 			flowName,
 			stepName,
@@ -223,7 +218,7 @@ export class PlansStep extends Component {
 				backLabelText={ backLabelText }
 			/>
 		);
-	};
+	}
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
@@ -263,17 +258,20 @@ export const isDotBlogDomainRegistration = domainItem => {
 	return is_domain_registration && getTld( meta ) === 'blog';
 };
 
-export default connect( ( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
-	// Blogger plan is only available if user chose either a free domain or a .blog domain registration
-	disableBloggerPlanWithNonBlogDomain:
-		domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
-	// This step could be used to set up an existing site, in which case
-	// some descendants of this component may display discounted prices if
-	// they apply to the given site.
-	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
-	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
-	customerType: parseQs( path.split( '?' ).pop() ).customerType,
-	siteGoals: getSiteGoals( state ) || '',
-	siteType: getSiteType( state ),
-	siteSlug,
-} ) )( localize( PlansStep ) );
+export default connect(
+	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
+		disableBloggerPlanWithNonBlogDomain:
+			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
+		// This step could be used to set up an existing site, in which case
+		// some descendants of this component may display discounted prices if
+		// they apply to the given site.
+		isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
+		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+		customerType: parseQs( path.split( '?' ).pop() ).customerType,
+		siteGoals: getSiteGoals( state ) || '',
+		siteType: getSiteType( state ),
+		siteSlug,
+	} ),
+	{ recordTracksEvent, saveSignupStep, submitSignupStep }
+)( localize( PlansStep ) );

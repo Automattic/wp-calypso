@@ -45,7 +45,6 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import analytics from 'lib/analytics';
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
-import SignupActions from 'lib/signup/actions';
 import SignupFlowController from 'lib/signup/flow-controller';
 import { disableCart } from 'lib/upgrades/actions';
 
@@ -62,6 +61,7 @@ import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registrat
 import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
+import { removeUnneededSteps, submitSignupStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -88,6 +88,13 @@ import SiteMockups from 'signup/site-mockup';
  * Constants
  */
 const debug = debugModule( 'calypso:signup' );
+
+function dependenciesContainCartItem( dependencies ) {
+	return !! (
+		dependencies &&
+		( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
+	);
+}
 
 class Signup extends React.Component {
 	static displayName = 'Signup';
@@ -321,10 +328,7 @@ class Signup extends React.Component {
 			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
 		);
 		const isNewSite = !! ( dependencies && dependencies.siteSlug );
-		const hasCartItems = !! (
-			dependencies &&
-			( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
-		);
+		const hasCartItems = dependenciesContainCartItem( dependencies );
 
 		const debugProps = {
 			isNewishUser,
@@ -473,7 +477,7 @@ class Signup extends React.Component {
 			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
-			SignupActions.changeSignupFlow( nextFlowName );
+			this.props.removeUnneededSteps( nextFlowName );
 			this.setState( { previousFlowName: this.props.flowName } );
 		}
 
@@ -651,7 +655,9 @@ export default connect(
 		setSurvey,
 		submitSiteType,
 		submitSiteVertical,
+		submitSignupStep,
 		loadTrackingTool,
 		trackAffiliateReferral: affiliateReferral,
+		removeUnneededSteps,
 	}
 )( Signup );

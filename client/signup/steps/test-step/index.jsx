@@ -3,10 +3,7 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:steps:test' );
 
 /**
  * Internal dependencies
@@ -14,12 +11,8 @@ const debug = debugFactory( 'calypso:steps:test' );
 import StepWrapper from 'signup/step-wrapper';
 import SubmitStepButton from 'signup/submit-step-button';
 
-export default class extends React.Component {
-	static displayName = 'TestStep';
-
+export default class TestStep extends React.Component {
 	render() {
-		debug( this.props.stepSectionName );
-
 		return (
 			<span>
 				<StepWrapper

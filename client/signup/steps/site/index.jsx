@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
 import debugFactory from 'debug';
@@ -17,7 +18,6 @@ import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
 import { login } from 'lib/paths';
-import SignupActions from 'lib/signup/actions';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
@@ -25,6 +25,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import StepWrapper from 'signup/step-wrapper';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -167,7 +168,7 @@ class Site extends React.Component {
 
 				this.resetAnalyticsData();
 
-				SignupActions.submitSignupStep( {
+				this.props.submitSignupStep( {
 					stepName: this.props.stepName,
 					form: this.state.form,
 					site,
@@ -185,7 +186,7 @@ class Site extends React.Component {
 	};
 
 	save = () => {
-		SignupActions.saveSignupStep( {
+		this.props.saveSignupStep( {
 			stepName: 'site',
 			form: this.state.form,
 		} );
@@ -305,4 +306,7 @@ class Site extends React.Component {
 	}
 }
 
-export default localize( Site );
+export default connect(
+	null,
+	{ saveSignupStep, submitSignupStep }
+)( localize( Site ) );

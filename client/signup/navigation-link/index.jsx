@@ -4,6 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { find, findIndex, get } from 'lodash';
 import Gridicon from 'gridicons';
@@ -12,10 +13,10 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import Button from 'components/button';
-import SignupActions from 'lib/signup/actions';
 import { getStepUrl } from 'signup/utils';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -87,7 +88,7 @@ export class NavigationLink extends Component {
 
 	handleClick = () => {
 		if ( this.props.direction === 'forward' ) {
-			SignupActions.submitSignupStep(
+			this.props.submitSignupStep(
 				{ stepName: this.props.stepName },
 				this.props.defaultDependencies
 			);
@@ -105,11 +106,11 @@ export class NavigationLink extends Component {
 		};
 
 		if ( this.props.direction === 'back' ) {
-			analytics.tracks.recordEvent( 'calypso_signup_previous_step_button_click', tracksProps );
+			this.props.recordTracksEvent( 'calypso_signup_previous_step_button_click', tracksProps );
 		}
 
 		if ( this.props.direction === 'forward' ) {
-			analytics.tracks.recordEvent( 'calypso_signup_skip_step', tracksProps );
+			this.props.recordTracksEvent( 'calypso_signup_skip_step', tracksProps );
 		}
 	}
 
@@ -154,4 +155,7 @@ export class NavigationLink extends Component {
 	}
 }
 
-export default localize( NavigationLink );
+export default connect(
+	null,
+	{ recordTracksEvent, submitSignupStep }
+)( localize( NavigationLink ) );

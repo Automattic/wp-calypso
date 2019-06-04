@@ -14,10 +14,10 @@ import { connect } from 'react-redux';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import SignupActions from 'lib/signup/actions';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -39,11 +39,11 @@ class CloneCredentialsStep extends Component {
 	};
 
 	goToNextStep = () => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, { roleName: 'alternate' } );
+		this.props.submitSignupStep( { stepName: this.props.stepName }, { roleName: 'alternate' } );
 		this.props.goToNextStep();
 	};
 
-	renderStepContent = () => {
+	renderStepContent() {
 		const { destinationSiteName, destinationSiteUrl, originBlogId, translate } = this.props;
 
 		return (
@@ -70,14 +70,14 @@ class CloneCredentialsStep extends Component {
 				</Card>
 			</div>
 		);
-	};
+	}
 
-	componentWillReceiveProps = nextProps => {
+	componentWillReceiveProps( nextProps ) {
 		if ( 'success' === nextProps.updateStatus && ! this.state.gotSuccess ) {
 			this.setState( { gotSuccess: true } );
 			this.goToNextStep();
 		}
-	};
+	}
 
 	render() {
 		const {
@@ -112,18 +112,21 @@ class CloneCredentialsStep extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const originSiteName = get( ownProps, [ 'signupDependencies', 'originSiteName' ], '' );
-	const originBlogId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
-	const destinationSiteName = get( ownProps, [ 'signupDependencies', 'destinationSiteName' ] );
-	const destinationSiteUrl = get( ownProps, [ 'signupDependencies', 'destinationSiteUrl' ] );
+export default connect(
+	( state, ownProps ) => {
+		const originSiteName = get( ownProps, [ 'signupDependencies', 'originSiteName' ], '' );
+		const originBlogId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
+		const destinationSiteName = get( ownProps, [ 'signupDependencies', 'destinationSiteName' ] );
+		const destinationSiteUrl = get( ownProps, [ 'signupDependencies', 'destinationSiteUrl' ] );
 
-	return {
-		originBlogId,
-		originSiteName,
-		destinationSiteName,
-		destinationSiteUrl,
-		rewind: getRewindState( state, originBlogId ),
-		updateStatus: getJetpackCredentialsUpdateStatus( state, originBlogId ),
-	};
-} )( localize( CloneCredentialsStep ) );
+		return {
+			originBlogId,
+			originSiteName,
+			destinationSiteName,
+			destinationSiteUrl,
+			rewind: getRewindState( state, originBlogId ),
+			updateStatus: getJetpackCredentialsUpdateStatus( state, originBlogId ),
+		};
+	},
+	{ submitSignupStep }
+)( localize( CloneCredentialsStep ) );

@@ -4,14 +4,16 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import ReaderLandingStepContent from './content';
+import { submitSignupStep } from 'state/signup/progress/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -20,7 +22,8 @@ import './style.scss';
 
 class ReaderLandingStep extends Component {
 	handleButtonClick = () => {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName } );
+		this.props.recordTracksEvent( 'calypso_signup_reader_landing_cta' );
+		this.props.submitSignupStep( { stepName: this.props.stepName } );
 		this.props.goToNextStep();
 	};
 
@@ -45,4 +48,7 @@ class ReaderLandingStep extends Component {
 	}
 }
 
-export default localize( ReaderLandingStep );
+export default connect(
+	null,
+	{ recordTracksEvent, submitSignupStep }
+)( localize( ReaderLandingStep ) );

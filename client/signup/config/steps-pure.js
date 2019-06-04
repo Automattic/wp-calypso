@@ -134,7 +134,6 @@ export function generateSteps( {
 			apiRequestFunction: createAccount,
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'username' ],
-			unstorableDependencies: [ 'bearer_token' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -290,7 +289,6 @@ export function generateSteps( {
 			apiRequestFunction: createAccount,
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'username' ],
-			unstorableDependencies: [ 'bearer_token' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				displayNameInput: true,

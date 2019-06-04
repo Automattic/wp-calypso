@@ -17,11 +17,9 @@ import {
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
 } from 'state/action-types';
 import { loadmShotsPreview } from 'lib/mshots';
-import wpLib from 'lib/wp';
-import SignupActions from 'lib/signup/actions';
+import wpcom from 'lib/wp';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
-
-const wpcom = wpLib.undocumented();
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 const normalizeUrl = targetUrl => {
 	const siteURL = trim( targetUrl );
@@ -57,6 +55,7 @@ export const fetchIsSiteImportable = site_url => dispatch => {
 	} );
 
 	return wpcom
+		.undocumented()
 		.isSiteImportable( site_url )
 		.then( ( { engine, favicon, site_title: siteTitle, site_url: siteUrl } ) =>
 			dispatch(
@@ -88,16 +87,18 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 				retryTimeout: 1000,
 			} );
 
-			return SignupActions.submitSignupStep(
-				{ stepName },
-				{
-					sitePreviewImageBlob: imageBlob,
-					importEngine: engine,
-					importFavicon: favicon,
-					importSiteUrl,
-					siteTitle,
-					themeSlugWithRepo: 'pub/modern-business',
-				}
+			dispatch(
+				submitSignupStep(
+					{ stepName },
+					{
+						sitePreviewImageBlob: imageBlob,
+						importEngine: engine,
+						importFavicon: favicon,
+						importSiteUrl,
+						siteTitle,
+						themeSlugWithRepo: 'pub/modern-business',
+					}
+				)
 			);
 		} )
 		.catch( error => {

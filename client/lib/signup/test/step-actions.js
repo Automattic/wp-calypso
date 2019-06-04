@@ -7,22 +7,15 @@ import { createSiteWithCart, isSiteTopicFulfilled } from '../step-actions';
 import { useNock } from 'test/helpers/use-nock';
 import flows from 'signup/config/flows';
 
-jest.mock( 'lib/analytics', () => ( {
-	tracks: { recordEvent() {} },
-} ) );
-
 // This is necessary since localforage will throw "no local storage method found" promise rejection without this.
 // See how lib/user-settings/test apply the same trick.
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
+jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
 
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps-pure' ) );
 jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
 jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
-jest.mock( '../actions' );
 
 describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
@@ -98,11 +91,13 @@ describe( 'createSiteWithCart()', () => {
 
 describe( 'isSiteTopicFulfilled()', () => {
 	const setSurvey = jest.fn();
+	const submitSignupStep = jest.fn();
 	const submitSiteVertical = jest.fn();
 
 	beforeEach( () => {
 		flows.excludeStep.mockClear();
 		setSurvey.mockClear();
+		submitSignupStep.mockClear();
 		submitSiteVertical.mockClear();
 	} );
 
@@ -110,7 +105,7 @@ describe( 'isSiteTopicFulfilled()', () => {
 		const flowName = 'flowWithSiteTopic';
 		const stepName = 'site-topic';
 		const initialContext = { query: { vertical: 'verticalSlug' } };
-		const nextProps = { initialContext, flowName, submitSiteVertical, setSurvey };
+		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 
@@ -123,7 +118,7 @@ describe( 'isSiteTopicFulfilled()', () => {
 		const flowName = 'flowWithSiteTopicAndTitle';
 		const stepName = 'site-topic-and-title';
 		const initialContext = { query: { vertical: 'verticalSlug' } };
-		const nextProps = { initialContext, flowName, submitSiteVertical, setSurvey };
+		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 
@@ -136,7 +131,7 @@ describe( 'isSiteTopicFulfilled()', () => {
 		const flowName = 'flowWithSiteTopic';
 		const stepName = 'site-topic';
 		const initialContext = { query: { vertical: 'verticalSlug' } };
-		const nextProps = { initialContext, flowName, submitSiteVertical, setSurvey };
+		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
 
 		expect( setSurvey ).not.toHaveBeenCalled();
 		expect( submitSiteVertical ).not.toHaveBeenCalled();
