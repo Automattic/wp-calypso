@@ -267,6 +267,13 @@ class Full_Site_Editing {
 	 */
 	public function register_blocks() {
 		register_block_type(
+			'a8c/navigation-placeholder',
+			array(
+				'render_callback' => 'render_navigation_placeholder_block',
+			)
+		);
+
+		register_block_type(
 			'a8c/post-content',
 			array(
 				'render_callback' => 'render_post_content_block',
