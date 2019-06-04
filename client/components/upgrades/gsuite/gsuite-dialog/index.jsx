@@ -3,26 +3,24 @@
 /**
  * External dependencies
  */
-
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import { addItem } from 'lib/upgrades/actions';
 import Button from 'components/button';
-import { googleApps } from 'lib/cart-values/cart-items';
 import CompactCard from 'components/card/compact';
-import GoogleAppsUsers from './users';
+import { getItemsForCart, newUsers, userIsReady } from 'lib/gsuite/new-users';
+import { getSelectedSite } from 'state/ui/selectors';
 import GoogleAppsProductDetails from './product-details';
+import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import { isGSuiteRestricted } from 'lib/gsuite';
-import {
-	validate as validateGappsUsers,
-	filter as filterUsers,
-} from 'lib/domains/google-apps-users';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
@@ -33,31 +31,37 @@ import { getProductCost } from 'state/products-list/selectors';
  */
 import './style.scss';
 
-const gsuitePlanSlug = 'gapps'; // or gapps_unlimited - TODO make this dynamic
-
 class GoogleAppsDialog extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
 		productsList: PropTypes.object.isRequired,
 		onAddGoogleApps: PropTypes.func.isRequired,
 		onClickSkip: PropTypes.func.isRequired,
+		onGoBack: PropTypes.func,
 		analyticsSection: PropTypes.string,
 		initialGoogleAppsCartItem: PropTypes.object,
+		planType: PropTypes.string.isRequired,
+		selectedSite: PropTypes.shape( {
+			slug: PropTypes.string.isRequired,
+		} ).isRequired,
 	};
 
-	state = {
-		users: null,
-		validationErrors: null,
+	constructor( props ) {
+		super( props );
+		this.state = {
+			productSlug: 'gapps',
+			users: newUsers( props.domain ),
+		};
+	}
+
+	onUsersChange = users => {
+		this.setState( {
+			users,
+		} );
 	};
 
 	componentDidMount() {
 		this.props.recordAddEmailButtonClick( this.props.analyticsSection );
-	}
-
-	UNSAFE_componentWillMount() {
-		if ( this.props.initialState ) {
-			this.setState( this.props.initialState );
-		}
 	}
 
 	render() {
@@ -69,43 +73,31 @@ class GoogleAppsDialog extends React.Component {
 	}
 
 	renderView() {
+		const { productSlug, users } = this.state;
+		const { currencyCode, domain, gsuiteBasicCost } = this.props;
 		return (
-			<form className="gsuite-dialog__form" onSubmit={ this.handleFormSubmit }>
+			<div className="gsuite-dialog__form">
 				<QueryProducts />
 				<CompactCard>{ this.header() }</CompactCard>
 				<CompactCard>
 					<GoogleAppsProductDetails
-						domain={ this.props.domain }
-						cost={ this.props.gsuiteBasicCost }
-						currencyCode={ this.props.currencyCode }
-						plan={ gsuitePlanSlug }
+						domain={ domain }
+						cost={ gsuiteBasicCost }
+						currencyCode={ currencyCode }
+						plan={ productSlug }
 					/>
-					{ this.renderGoogleAppsUsers() }
+					<GSuiteNewUserList
+						extraValidation={ user => user }
+						selectedDomainName={ domain }
+						onUsersChange={ this.onUsersChange }
+						users={ users }
+					>
+						{ this.footer() }
+					</GSuiteNewUserList>
 				</CompactCard>
-				<CompactCard>{ this.footer() }</CompactCard>
-			</form>
+			</div>
 		);
 	}
-
-	renderGoogleAppsUsers() {
-		return (
-			<GoogleAppsUsers
-				analyticsSection={ this.props.analyticsSection }
-				fields={ this.state.users }
-				domain={ this.props.domain }
-				onChange={ this.setUsers }
-				onBlur={ this.save }
-			/>
-		);
-	}
-
-	setUsers = users => this.setState( { users: users } );
-
-	save = () => {
-		if ( this.props.onSave ) {
-			this.props.onSave( this.state );
-		}
-	};
 
 	header() {
 		const { translate } = this.props;
@@ -136,6 +128,8 @@ class GoogleAppsDialog extends React.Component {
 
 	footer() {
 		const { translate } = this.props;
+		const { users } = this.state;
+		const canContinue = 0 < users.length && users.every( userIsReady );
 
 		return (
 			<footer className="gsuite-dialog__footer">
@@ -146,25 +140,14 @@ class GoogleAppsDialog extends React.Component {
 				<Button
 					primary
 					className="gsuite-dialog__continue-button"
-					onClick={ this.handleFormSubmit }
+					disabled={ ! canContinue }
+					onClick={ this.handleAddEmail }
 				>
 					{ this.renderButtonCopy() }
 				</Button>
 			</footer>
 		);
 	}
-
-	handleFormSubmit = event => {
-		event.preventDefault();
-
-		this.props.recordFormSubmit( this.props.analyticsSection );
-
-		if ( ! this.validateForm() ) {
-			return;
-		}
-
-		this.props.onAddGoogleApps( this.getGoogleAppsCartItem() );
-	};
 
 	handleFormCheckout = event => {
 		event.preventDefault();
@@ -174,50 +157,20 @@ class GoogleAppsDialog extends React.Component {
 		this.props.onClickSkip();
 	};
 
-	getFields() {
-		const { translate } = this.props;
+	handleAddEmail = () => {
+		const { domain, planType, selectedSite } = this.props;
+		const { users } = this.state;
+		const canContinue = 0 < users.length && users.every( userIsReady );
 
-		return {
-			firstName: translate( 'First Name' ),
-			lastName: translate( 'Last Name' ),
-			email: translate( 'Email Address' ),
-		};
-	}
-
-	validateForm() {
-		const validation = validateGappsUsers( {
-			users: this.state.users,
-			fields: this.getFields(),
-		} );
-
-		if ( validation.errors.length > 0 ) {
-			this.setState( { validationErrors: validation.errors } );
-			this.setUsers( validation.users );
-			return false;
+		if ( canContinue ) {
+			getItemsForCart(
+				[ domain ],
+				'business' === planType ? 'gapps_unlimited' : 'gapps',
+				users
+			).forEach( addItem );
+			page( '/checkout/' + selectedSite.slug );
 		}
-		return true;
-	}
-
-	getGoogleAppsCartItem() {
-		let users = filterUsers( {
-			users: this.state.users,
-			fields: this.getFields(),
-		} );
-
-		users = users.map( user => {
-			return {
-				email: `${ user.email.value }@${ this.props.domain }`.toLowerCase(),
-				firstname: user.firstName.value.trim(),
-				lastname: user.lastName.value.trim(),
-			};
-		} );
-
-		return googleApps( {
-			domain: this.props.domain,
-			product_slug: gsuitePlanSlug,
-			users,
-		} );
-	}
+	};
 }
 
 const recordCancelButtonClick = section =>
@@ -239,10 +192,15 @@ const recordFormSubmit = section =>
 	);
 
 export default connect(
-	state => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		gsuiteBasicCost: getProductCost( state, 'gapps' ),
-	} ),
+	( state, ownProps ) => {
+		const selectedSite = getSelectedSite( state );
+		return {
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			gsuiteBasicCost: getProductCost( state, 'gapps' ),
+			planType: ownProps.planType || 'basic',
+			selectedSite,
+		};
+	},
 	{
 		recordAddEmailButtonClick,
 		recordCancelButtonClick,
