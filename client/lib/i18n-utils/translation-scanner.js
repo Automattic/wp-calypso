@@ -94,7 +94,7 @@ export class TranslationScanner {
 		const keys = Object.keys( this.pendingOriginals );
 		if ( keys.length ) {
 			debug( `Sending ${ keys.length } originals to GP_Record` );
-			recordOriginals( keys, this.sessionId );
+			recordOriginals( keys );
 			this.pendingOriginals = {};
 		}
 	}
