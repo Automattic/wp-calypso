@@ -12,6 +12,11 @@ import { getCurrencyObject } from '@automattic/format-currency';
  * Internal Dependencies
  **/
 
+/**
+ * Style Dependencies
+ */
+import './style.scss';
+
 class PlanIntervalDiscount extends Component {
 	static propTypes = {
 		basePlansPath: PropTypes.string.isRequired,
