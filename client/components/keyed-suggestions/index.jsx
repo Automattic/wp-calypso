@@ -31,9 +31,9 @@ function SuggestionsButtonAll( props ) {
 	}
 
 	return (
-		<span className="keyed-suggestions__category-show-all" onClick={ click }>
+		<button className="keyed-suggestions__category-show-all" onClick={ click }>
 			{ props.label }
-		</span>
+		</button>
 	);
 }
 
@@ -125,7 +125,7 @@ class KeyedSuggestions extends React.Component {
 				event.preventDefault();
 				break;
 			case 'Enter':
-				if ( !! this.state.currentSuggestion ) {
+				if ( this.state.currentSuggestion ) {
 					this.props.suggest( this.state.currentSuggestion );
 					return true;
 				}
