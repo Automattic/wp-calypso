@@ -74,8 +74,7 @@ class PagesMain extends React.Component {
 	}
 
 	render() {
-		const { doSearch, search, translate } = this.props;
-		const status = this.props.status || 'published';
+		const { doSearch, siteId, search, status = 'published', translate } = this.props;
 
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
@@ -120,7 +119,7 @@ class PagesMain extends React.Component {
 						delaySearch={ true }
 					/>
 				</SectionNav>
-				<PageList { ...this.props } />
+				<PageList siteId={ siteId } status={ status } search={ search } />
 			</Main>
 		);
 	}
