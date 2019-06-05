@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,6 +18,11 @@ import { Input } from 'my-sites/domains/components/form';
 import InfoPopover from 'components/info-popover';
 import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
