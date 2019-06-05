@@ -114,13 +114,18 @@ class Task extends PureComponent {
 	};
 
 	isTaskCollapsed = () => {
+		// Is this the selected task?
 		if ( this.props.selectedTaskId ) {
 			return this.props.selectedTaskId !== this.props.id;
 		}
 
-		console.log( this.props.firstIncomplete );
+		// Show the first incomplete task when we load
+		if ( this.props.firstIncomplete ) {
+			return this.props.firstIncomplete.id !== this.props.id;
+		}
 
-		//return this.props.firstIncomplete.id !== this.props.id;
+		// If everything fails
+		return true;
 	};
 
 	renderGridicon() {
