@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
 import { isFrontPage, isPostsPage } from 'state/pages/selectors';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { getEditorPath } from 'state/ui/editor/selectors';
+import getEditorUrl from 'state/selectors/get-editor-url';
 
 /**
  * Style dependencies
@@ -27,7 +27,7 @@ const getContentLink = ( state, siteId, page ) => {
 	let contentLinkTarget = '_blank';
 
 	if ( canCurrentUser( state, siteId, 'edit_pages' ) && page.status !== 'trash' ) {
-		contentLinkURL = getEditorPath( state, siteId, page.ID );
+		contentLinkURL = getEditorUrl( state, siteId, page.ID, 'page' );
 		contentLinkTarget = null;
 	} else if ( page.status === 'trash' ) {
 		contentLinkURL = null;
