@@ -103,6 +103,10 @@ export default class Step extends Component< Props, State > {
 		this.skipIfInvalidContext( this.props, this.context );
 		this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
 		this.setStepPosition( this.props );
+		// The following should be legit usage of `setState`, since it's called
+		// asynchronously after `await`ing `this.wait()`.
+		// (We need it since `this.render()` might be called in the meantime.)
+		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { initialized: true } );
 		window.addEventListener( 'resize', this.onScrollOrResize );
 		this.watchTarget();
