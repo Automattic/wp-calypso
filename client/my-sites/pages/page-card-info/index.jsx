@@ -17,11 +17,6 @@ import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 const getContentLink = ( state, siteId, page ) => {
 	let contentLinkURL = page.URL;
 	let contentLinkTarget = '_blank';

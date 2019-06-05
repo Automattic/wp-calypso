@@ -38,3 +38,16 @@
 .page-card-info__site-url {
 	font-style: italic;
 }
+
+p.post-relative-time-status {
+	margin-bottom: 0;
+
+	& .post-relative-time-status__time-text,
+	.post-relative-time-status__status-text {
+		vertical-align: middle;
+	}
+
+	& .gridicon {
+		margin: 0 4px 0 0;
+	}
+}
