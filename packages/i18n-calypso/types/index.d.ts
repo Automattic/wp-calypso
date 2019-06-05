@@ -4,7 +4,7 @@
 /**
  * External dependencies
  */
-import { ComponentType } from 'react';
+import { ComponentClass, ComponentType } from 'react';
 import moment from 'moment';
 
 declare namespace i18nCalypso {
@@ -62,15 +62,23 @@ declare namespace i18nCalypso {
 	export function numberFormat( number: number, numberOfDecimalPlaces: number );
 	export function numberFormat( number: number, options: NumberFormatOptions );
 
-	export interface LocalizedComponentProps {
+	export interface LocalizeProps {
 		translate: typeof translate;
 		numberFormat: typeof numberFormat;
 		moment: typeof moment;
 	}
 
-	export function localize< P >(
-		component: ComponentType< P >
-	): ComponentType< P & LocalizedComponentProps >;
+	// Infers prop type from component C
+	export type GetProps< C > = C extends ComponentType< infer P > ? P : never;
+
+	export type WithoutLocalizedProps< OrigProps > = Pick<
+		OrigProps,
+		Exclude< keyof OrigProps, keyof LocalizeProps >
+	>;
+
+	export type LocalizedComponent< C > = ComponentClass< WithoutLocalizedProps< GetProps< C > > >;
+
+	export function localize< C >( component: C ): LocalizedComponent< C >;
 }
 
 export = i18nCalypso;
