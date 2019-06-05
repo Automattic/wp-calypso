@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import page from 'page';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +23,6 @@ import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
 import { findRegistrantWhois } from 'lib/domains/whois/utils';
 import SectionHeader from 'components/section-header';
-import { registrar as registrarNames } from 'lib/domains/constants';
 
 class EditContactInfo extends React.Component {
 	static propTypes = {
@@ -58,7 +56,6 @@ class EditContactInfo extends React.Component {
 
 	getCard = () => {
 		const domain = getSelectedDomain( this.props );
-		const { OPENHRS, OPENSRS } = registrarNames;
 
 		if ( ! domain.currentUserCanManage ) {
 			return <NonOwnerCard { ...this.props } />;
@@ -68,7 +65,7 @@ class EditContactInfo extends React.Component {
 			return <PendingWhoisUpdateCard />;
 		}
 
-		if ( ! includes( [ OPENHRS, OPENSRS ], domain.registrar ) && domain.privateDomain ) {
+		if ( domain.mustRemovePrivacyBeforeContactUpdate && domain.privateDomain ) {
 			return (
 				<EditContactInfoPrivacyEnabledCard
 					selectedDomainName={ this.props.selectedDomainName }
