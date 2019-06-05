@@ -35,6 +35,11 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const user = userFactory();
