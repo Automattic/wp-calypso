@@ -106,9 +106,6 @@ export class TranslationScanner {
 
 	start() {
 		debug( 'Translation Scanner started' );
-		if ( ! this.installed ) {
-			this.install();
-		}
 		this.clear();
 		this.active = true;
 		return this;
