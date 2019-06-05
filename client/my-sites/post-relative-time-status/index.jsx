@@ -116,6 +116,7 @@ class PostRelativeTime extends React.PureComponent {
 			const rel = this.props.target === '_blank' ? 'noopener noreferrer' : null;
 			innerText = (
 				<a
+					className="post-relative-time-status__link"
 					href={ this.props.link }
 					target={ this.props.target }
 					rel={ rel }

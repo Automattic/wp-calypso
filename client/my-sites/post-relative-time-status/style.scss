@@ -23,6 +23,10 @@
 	}
 }
 
+a.post-relative-time-status__link {
+	color: var( --color-text-subtle );
+}
+
 .post-relative-time-status__time,
 .post-relative-time-status__status {
 	display: inline-block;
