@@ -26,6 +26,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { isEnabled } from 'config';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ChecklistMain extends PureComponent {
 	state = { complete: false };
 
