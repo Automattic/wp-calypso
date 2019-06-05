@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { format as formatUrl, parse as parseUrl } from 'url';
+import { memoize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -578,6 +579,8 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
+	toggleSection = memoize( id => () => this.props.toggleSection( id ) );
+
 	renderSidebarMenus() {
 		if ( this.props.isDomainOnly ) {
 			return (
@@ -610,7 +613,7 @@ export class MySitesSidebar extends Component {
 				</SidebarMenu>
 
 				<ExpandableSidebarMenu
-					onClick={ () => this.props.toggleSection( SIDEBAR_SECTION_SITE ) }
+					onClick={ this.toggleSection( SIDEBAR_SECTION_SITE ) }
 					expanded={ this.props.isSiteSectionOpen }
 					title={ this.props.translate( 'Site' ) }
 					materialIcon="edit"
@@ -620,7 +623,7 @@ export class MySitesSidebar extends Component {
 
 				{ this.design() ? (
 					<ExpandableSidebarMenu
-						onClick={ () => this.props.toggleSection( SIDEBAR_SECTION_DESIGN ) }
+						onClick={ this.toggleSection( SIDEBAR_SECTION_DESIGN ) }
 						expanded={ this.props.isDesignSectionOpen }
 						title={ this.props.translate( 'Design' ) }
 						materialIcon="gesture"
@@ -631,7 +634,7 @@ export class MySitesSidebar extends Component {
 
 				{ tools && (
 					<ExpandableSidebarMenu
-						onClick={ () => this.props.toggleSection( SIDEBAR_SECTION_TOOLS ) }
+						onClick={ this.toggleSection( SIDEBAR_SECTION_TOOLS ) }
 						expanded={ this.props.isToolsSectionOpen }
 						title={ this.props.translate( 'Tools' ) }
 						materialIcon="build"
@@ -645,7 +648,7 @@ export class MySitesSidebar extends Component {
 
 				{ manage && (
 					<ExpandableSidebarMenu
-						onClick={ () => this.props.toggleSection( SIDEBAR_SECTION_MANAGE ) }
+						onClick={ this.toggleSection( SIDEBAR_SECTION_MANAGE ) }
 						expanded={ this.props.isManageSectionOpen }
 						title={ this.props.translate( 'Manage' ) }
 						materialIcon="settings"
