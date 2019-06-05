@@ -102,6 +102,8 @@ class AutoRenewDisablingDialog extends Component {
 		}
 	}
 
+	onClickConfirm = () => this.props.onConfirm() || this.props.onClose();
+
 	render() {
 		const { translate, onClose } = this.props;
 
@@ -117,6 +119,7 @@ class AutoRenewDisablingDialog extends Component {
 				<Button onClick={ onClose } primary>
 					{ translate( 'Confirm cancellation' ) }
 				</Button>
+				<Button onClick={ this.onClickConfirm }>{ translate( 'Yes, please cancel it.' ) }</Button>
 			</Dialog>
 		);
 	}

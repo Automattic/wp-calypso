@@ -1,5 +1,9 @@
 .dialog.auto-renew-disabling-dialog {
 	max-width: 440px;
+
+	.button.is-primary {
+		margin-right: 24px;
+	}
 }
 
 .auto-renew-disabling-dialog__header {
