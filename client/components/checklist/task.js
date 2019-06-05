@@ -147,10 +147,10 @@ class Task extends PureComponent {
 
 	renderChevron = () => {
 		if ( this.isTaskCollapsed() ) {
-			return <Gridicon icon="chevron-down" />;
+			return <Gridicon icon="chevron-down" className="checklist__toggle-affordance" />;
 		}
 
-		return <Gridicon icon="chevron-up" />;
+		return <Gridicon icon="chevron-up" className="checklist__toggle-affordance" />;
 	};
 
 	render() {
@@ -182,6 +182,7 @@ class Task extends PureComponent {
 					'is-completed': completed,
 					'is-in-progress': inProgress,
 					'has-actionlink': hasActionlink,
+					'has-no-actionlink': ! hasActionlink,
 					'is-collapsed': this.isTaskCollapsed(),
 				} ) }
 			>
@@ -190,10 +191,8 @@ class Task extends PureComponent {
 						{ hasActionlink ? (
 							<Button
 								borderless
-								className="checklist__task-title-link"
-								href={ href }
+								className="checklist__task-title-button"
 								onClick={ this.onTaskTitleClick }
-								target={ target }
 							>
 								{ completed ? completedTitle : title }
 								{ this.renderChevron() }
@@ -202,30 +201,37 @@ class Task extends PureComponent {
 							completedTitle
 						) }
 					</h3>
-					<p className="checklist__task-description">{ description }</p>
-					{ completedDescription && (
-						<p className="checklist__task-completed-description">{ completedDescription }</p>
+
+					{ hasActionlink && (
+						<div className="checklist__task-content">
+							<p className="checklist__task-description">{ description }</p>
+							{ completedDescription && (
+								<p className="checklist__task-completed-description">{ completedDescription }</p>
+							) }
+
+							<div className="checklist__task-action-duration-wrapper">
+								{ duration && (
+									<small className="checklist__task-duration">
+										{ translate( 'Estimated time:' ) } { duration }
+									</small>
+								) }
+
+								{ hasActionlink && (
+									<div className="checklist__task-action-wrapper">
+										<Button
+											className="checklist__task-action"
+											href={ href }
+											onClick={ onClick }
+											primary={ ! this.isTaskCollapsed() }
+											target={ target }
+										>
+											{ taskActionButtonText }
+										</Button>
+									</div>
+								) }
+							</div>
+						</div>
 					) }
-
-					<div>
-						{ duration && (
-							<small className="checklist__task-duration">
-								{ translate( 'Estimated time:' ) } { duration }
-							</small>
-						) }
-
-						{ hasActionlink && (
-							<Button
-								className="checklist__task-action"
-								href={ href }
-								onClick={ onClick }
-								primary={ ! this.isTaskCollapsed() }
-								target={ target }
-							>
-								{ taskActionButtonText }
-							</Button>
-						) }
-					</div>
 				</div>
 
 				{ this.renderCheckmarkIcon() }
