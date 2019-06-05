@@ -148,15 +148,14 @@ class VideoEditor extends Component {
 		const { onCancel, translate } = this.props;
 
 		return (
-			<div className="video-editor__notice">
-				<Notice
-					status="is-error"
-					showDismiss={ true }
-					text={ translate( 'We are unable to edit this video.' ) }
-					isCompact={ false }
-					onDismissClick={ onCancel }
-				/>
-			</div>
+			<Notice
+				className="video-editor__notice"
+				status="is-error"
+				showDismiss={ true }
+				text={ translate( 'We are unable to edit this video.' ) }
+				isCompact={ false }
+				onDismissClick={ onCancel }
+			/>
 		);
 	}
 
