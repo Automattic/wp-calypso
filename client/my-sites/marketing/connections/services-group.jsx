@@ -63,10 +63,11 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 
 							if ( service.warnings ) {
 								return (
-									<Fragment>
-										<Component key={ service.ID } service={ service } />
-										{ service.warnings.map( warning => (
+									<Fragment key={ service.ID }>
+										<Component service={ service } />
+										{ service.warnings.map( ( warning, index ) => (
 											<Notice
+												key={ `warning-${ index }` }
 												showDismiss={ false }
 												status={ serviceWarningLevelToNoticeStatus( warning.level ) }
 											>
