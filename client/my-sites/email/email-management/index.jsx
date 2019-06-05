@@ -36,7 +36,6 @@ import EmptyContent from 'components/empty-content';
 import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
 import { emailManagement, emailManagementForwarding } from 'my-sites/email/paths';
 import { getSelectedDomain } from 'lib/domains';
-import { isPlanFeaturesEnabled } from 'lib/plans';
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -59,7 +58,7 @@ class EmailManagement extends React.Component {
 	render() {
 		const { selectedSiteId } = this.props;
 		return (
-			<Main className="email-management" wideLayout={ isPlanFeaturesEnabled() }>
+			<Main className="email-management" wideLayout>
 				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />

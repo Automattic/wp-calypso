@@ -46,7 +46,6 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isPlanFeaturesEnabled } from 'lib/plans';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -168,7 +167,7 @@ export class List extends React.Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main wideLayout={ isPlanFeaturesEnabled() }>
+			<Main wideLayout>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
 				<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />

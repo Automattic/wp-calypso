@@ -55,7 +55,6 @@
 		"mailchimp": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
-		"manage/plan-features": true,
 		"manage/plugins": true,
 		"manage/plugins/compatibility-warning": false,
 		"manage/plugins/setup": true,
