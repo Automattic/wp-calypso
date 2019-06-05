@@ -70,7 +70,7 @@ declare namespace i18nCalypso {
 
 	export function localize< P >(
 		component: ComponentType< P >
-	): React.Component< P & LocalizedComponentProps >;
+	): ComponentType< P & LocalizedComponentProps >;
 }
 
 export = i18nCalypso;
