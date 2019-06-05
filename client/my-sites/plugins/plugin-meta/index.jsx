@@ -267,6 +267,7 @@ export class PluginMeta extends Component {
 			'wp-file-manager',
 			'wp-prefix-changer',
 			'wp-reset',
+			'wp-uninstaller-by-azed',
 			'wpmu-database-reset',
 			'wps-hide-login',
 			'z-inventory-manager',
@@ -283,6 +284,7 @@ export class PluginMeta extends Component {
 			'comet-cache',
 			'hyper-cache',
 			'quick-cache',
+			'sg-cachepress',
 			'w3-total-cache',
 			'wp-cache',
 			'wp-fastest-cache',
@@ -334,7 +336,9 @@ export class PluginMeta extends Component {
 			'event-espresso-decaf',
 			'fast-velocity-minify',
 			'nginx-helper',
+			'p3',
 			'porn-embed',
+			'propellerads-official',
 			'speed-contact-bar',
 			'robo-gallery',
 			'video-importer',
@@ -344,6 +348,7 @@ export class PluginMeta extends Component {
 			'wp-monero-miner-pro',
 			'wp-monero-miner-using-coin-hive',
 			'wpematico',
+			'yuzo-related-post',
 			'zapp-proxy-server',
 		];
 
