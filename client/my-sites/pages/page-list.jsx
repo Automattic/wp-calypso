@@ -35,6 +35,7 @@ import { getSite } from 'state/sites/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -428,5 +429,6 @@ const mapState = ( state, { query, siteId } ) => ( {
 
 const ConnectedPages = flowRight(
 	connect( mapState ),
-	localize
+	localize,
+	withLocalizedMoment
 )( Pages );
