@@ -15,6 +15,11 @@ import SidebarNavigation from 'components/sidebar-navigation';
 import SiteIcon from 'blocks/site-icon';
 import { getSelectedSite } from 'state/ui/selectors';
 
+/**
+ *  Style Dependencies
+ */
+import './style.scss';
+
 const MySitesSidebarNavigation = ( { site, translate } ) => {
 	let currentSiteTitle = translate( 'All Sites' ),
 		allSitesClass = 'all-sites';
