@@ -71,7 +71,6 @@
 		"manage/custom-post-types": true,
 		"manage/edit-user": true,
 		"manage/export/guided-transfer": true,
-		"manage/pages": true,
 		"manage/payment-methods": true,
 		"manage/people": true,
 		"manage/people/invites": true,

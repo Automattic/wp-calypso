@@ -99,7 +99,6 @@
 		"manage/export/guided-transfer": true,
 		"manage/import-to-jetpack": true,
 		"manage/import/site-importer-endpoints": true,
-		"manage/pages": true,
 		"manage/pages/set-front-page": true,
 		"manage/payment-methods": true,
 		"manage/plan-features": true,
