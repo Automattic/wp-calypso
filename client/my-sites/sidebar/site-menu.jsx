@@ -33,7 +33,7 @@ import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isVipSite from 'state/selectors/is-vip-site';
 import { SIDEBAR_SECTION_SITE } from 'my-sites/sidebar/constants';
-import { expandMySitesSidebarSection } from 'state/my-sites/sidebar/actions';
+import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 
 class SiteMenu extends PureComponent {
 	static propTypes = {
@@ -126,8 +126,10 @@ class SiteMenu extends PureComponent {
 		this.props.onNavigate();
 	};
 
+	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
+
 	renderMenuItem( menuItem ) {
-		const { canCurrentUser, expandSiteSection, siteId, siteAdminUrl } = this.props;
+		const { canCurrentUser, siteId, siteAdminUrl } = this.props;
 
 		if ( siteId && ! canCurrentUser( menuItem.capability ) ) {
 			return null;
@@ -203,7 +205,7 @@ class SiteMenu extends PureComponent {
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }
 				forceInternalLink={ menuItem.forceInternalLink }
-				expandSection={ expandSiteSection }
+				expandSection={ this.expandSiteSection }
 			/>
 		);
 	}
@@ -292,10 +294,7 @@ export default connect(
 		siteSlug: getSiteSlug( state, siteId ),
 		isVip: isVipSite( state, siteId ),
 	} ),
-	{
-		recordTracksEvent,
-		expandSiteSection: expandMySitesSidebarSection.bind( SiteMenu, SIDEBAR_SECTION_SITE ),
-	},
+	{ expandSection, recordTracksEvent },
 	null,
 	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser' ] } ) }
 )( localize( SiteMenu ) );
