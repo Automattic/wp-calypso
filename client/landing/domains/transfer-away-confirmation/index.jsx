@@ -18,7 +18,7 @@ const wpcom = wp.undocumented();
 class TransferAwayConfirmationPage extends Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
-		email: PropTypes.string.isRequired,
+		recipientId: PropTypes.string.isRequired,
 		token: PropTypes.string.isRequired,
 	};
 
@@ -35,8 +35,8 @@ class TransferAwayConfirmationPage extends Component {
 	}
 
 	componentWillMount() {
-		const { domain, email, token } = this.props;
-		wpcom.domainsVerifyOutboundTransferConfirmation( domain, email, token ).then(
+		const { domain, recipientId, token } = this.props;
+		wpcom.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token ).then(
 			() => {
 				this.setState( this.getConfirmationSelectState() );
 			},
@@ -108,6 +108,24 @@ class TransferAwayConfirmationPage extends Component {
 			alternateActionTitle: 'Cancel Transfer',
 			alternateActionCallback: this.cancelTransfer,
 			isLoading: false,
+		};
+	};
+
+	getEmailMismatchState = () => {
+		const { domain, translate } = this.props;
+
+		return {
+			message: translate(
+				'This email address is different from the one we have on record for {{strong}}%(domain)s{{/strong}}.',
+				{
+					args: {
+						domain: domain,
+					},
+					components: {
+						strong: <strong />,
+					},
+				}
+			),
 		};
 	};
 

@@ -32,8 +32,14 @@ class DomainsLandingPage extends Component {
 	}
 
 	renderTransferAwayConfirmation() {
-		const { domain, email, token } = this.props.query;
-		return <TransferAwayConfirmationPage domain={ domain } email={ email } token={ token } />;
+		const { domain, recipient_id, token } = this.props.query;
+		return (
+			<TransferAwayConfirmationPage
+				domain={ domain }
+				recipientId={ recipient_id }
+				token={ token }
+			/>
+		);
 	}
 
 	renderUnknownActionContent() {

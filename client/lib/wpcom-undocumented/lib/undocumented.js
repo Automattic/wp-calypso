@@ -2443,11 +2443,11 @@ Undocumented.prototype.domainsVerifyRegistrantEmail = function( domain, email, t
 
 Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function(
 	domain,
-	email,
+	recipientId,
 	token
 ) {
 	return this.wpcom.req.get( `/domains/${ domain }/outbound-transfer-confirmation-check`, {
-		email,
+		recipient_id: recipientId,
 		token,
 	} );
 };
