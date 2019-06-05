@@ -1,7 +1,7 @@
 .post-relative-time-status {
 	.gridicon {
 		display: inline-block;
-		margin: -4px 8px 0 0;
+		margin: 0 4px 0 0;
 		vertical-align: middle;
 	}
 
@@ -33,27 +33,12 @@ a.post-relative-time-status__link {
 	margin-right: ( 11 / 12 ) * 1em;
 }
 
-.post-relative-time-status__time-text {
-	display: inline-block;
+.post-relative-time-status__time-text,
+.post-relative-time-status__status-text {
+	vertical-align: middle;
+	display: inline-block; // makes the ::first-letter apply
 
 	&::first-letter {
 		text-transform: capitalize;
-	}
-}
-
-.post-relative-time-status__status-text {
-	text-transform: capitalize;
-}
-
-p.post-relative-time-status {
-	margin-bottom: 0;
-
-	& .post-relative-time-status__time-text,
-	.post-relative-time-status__status-text {
-		vertical-align: middle;
-	}
-
-	& .gridicon {
-		margin: 0 4px 0 0;
 	}
 }

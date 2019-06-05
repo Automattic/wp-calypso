@@ -129,9 +129,9 @@ class PostRelativeTime extends React.PureComponent {
 		}
 
 		return (
-			<p className={ relativeTimeClass } title={ time }>
+			<div className={ relativeTimeClass } title={ time }>
 				{ innerText }
-			</p>
+			</div>
 		);
 	}
 }
