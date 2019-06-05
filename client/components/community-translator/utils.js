@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import request from 'superagent';
 import { head, find, get } from 'lodash';
 
 /**
@@ -11,12 +10,13 @@ import { head, find, get } from 'lodash';
  */
 import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
+import { postRequest } from 'lib/i18n-utils/glotpress';
 import {
 	GP_PROJECT,
 	GP_BASE_URL,
 	GP_PROJECT_TRANSLATION_SET_SLUGS,
 	ENABLE_TRANSLATOR_KEY,
-} from './constants';
+} from 'lib/i18n-utils/constants';
 import { canBeTranslated } from 'lib/i18n-utils';
 
 /**
@@ -66,26 +66,6 @@ export function isCommunityTranslatorEnabled() {
 	}
 
 	return true;
-}
-
-/**
- * Sends the POST request
- * @param {String} glotPressUrl API url
- * @param {String} postFormData post data url param string
- * @returns {Object} request object
- */
-export function postRequest( glotPressUrl, postFormData ) {
-	return (
-		request
-			.post( glotPressUrl )
-			.withCredentials()
-			.send( postFormData )
-			// .then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
-			.then( response => response.body )
-			.catch( error => {
-				throw error; // pass on the error so the call sites can handle it accordingly.
-			} )
-	);
 }
 
 /**

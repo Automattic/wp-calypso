@@ -13,10 +13,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import translator, { trackTranslatorStatus } from 'lib/translator-jumpstart';
 import localStorageHelper from 'store';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
+import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
 import getUserSettings from 'state/selectors/get-user-settings';
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
 import QueryUserSettings from 'components/data/query-user-settings';
@@ -27,6 +29,9 @@ class TranslatorLauncher extends React.PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 	};
+
+	static translationScanner =
+		config.isEnabled( 'i18n/translation-scanner' ) && new TranslationScanner();
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
 		translator.init( nextProps.isUserSettingsReady );

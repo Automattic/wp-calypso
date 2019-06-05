@@ -50,7 +50,7 @@ import isRequestingMissingSites from 'state/selectors/is-requesting-missing-site
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import _user from 'lib/user';
 import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
-import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
+import { ENABLE_TRANSLATOR_KEY } from 'lib/i18n-utils/constants';
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
