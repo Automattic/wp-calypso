@@ -109,7 +109,8 @@ for ( const s of scored ) {
 		console.log( 'SCORE:', s.scores.score );
 		currentScore = s.scores.score;
 	}
-	console.log( s.component );
+	const stats = fs.statSync( `client/${ s.component }.scss` );
+	console.log( `${ s.component } (${ stats.size } bytes)` );
 	if ( s.scores.summary ) {
 		console.log( '  ', s.scores.summary );
 	}
