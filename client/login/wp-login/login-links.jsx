@@ -36,7 +36,7 @@ export class LoginLinks extends React.Component {
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
-		query: PropTypes.object,
+		query: PropTypes.oneOf( [ PropTypes.object, PropTypes.bool ] ),
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
