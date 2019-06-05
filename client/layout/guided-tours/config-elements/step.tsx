@@ -77,8 +77,6 @@ export default class Step extends Component< Props, State > {
 
 	stepSection: string = null;
 
-	mounted: boolean = false;
-
 	repositionInterval: ReturnType< typeof setInterval > | null = null;
 
 	scrollContainer: Element | null = null;
@@ -97,7 +95,6 @@ export default class Step extends Component< Props, State > {
 	isUpdatingPosition: boolean = false;
 
 	componentDidMount() {
-		this.mounted = true;
 		this.wait( this.props, this.context ).then( () => {
 			this.start();
 			this.setStepSection( this.context, { init: true } );
@@ -105,9 +102,7 @@ export default class Step extends Component< Props, State > {
 			this.skipIfInvalidContext( this.props, this.context );
 			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
 			this.setStepPosition( this.props );
-			if ( this.mounted ) {
-				this.setState( { initialized: true } );
-			}
+			this.setState( { initialized: true } );
 			window.addEventListener( 'resize', this.onScrollOrResize );
 			this.watchTarget();
 		} );
@@ -138,8 +133,6 @@ export default class Step extends Component< Props, State > {
 	}
 
 	componentWillUnmount() {
-		this.mounted = false;
-
 		window.removeEventListener( 'resize', this.onScrollOrResize );
 		if ( this.scrollContainer ) {
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
