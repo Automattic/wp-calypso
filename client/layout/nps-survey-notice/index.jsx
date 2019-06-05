@@ -31,6 +31,11 @@ import {
 import { isSupportSession } from 'state/support/selectors';
 import analytics from 'lib/analytics';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SURVEY_NAME = 'calypso-global-notice-radio-buttons-v1';
 
 class NpsSurveyNotice extends Component {
