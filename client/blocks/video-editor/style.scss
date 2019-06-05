@@ -4,7 +4,7 @@
 	height: 100%;
 }
 
-.video-editor__notice {
+.editor-media-modal .video-editor .notice.video-editor__notice {
 	@include breakpoint( '>660px' ) {
 		margin-top: 0;
 	}
