@@ -68,7 +68,9 @@ class AutoRenewDisablingDialog extends Component {
 			case 'domain':
 				return translate(
 					'By canceling auto-renewal, your domain %(domain)s will expire on %(expiryDate)s. ' +
-						'Once your domain expires, it could become unavailable, and may be impossible to get back on any domain registrar.',
+						"Once your domain expires, there is no guarantee that you'll be able to get it back – " +
+						'it could become unavailable and be impossible to purchase here, or at any other domain registrar. ' +
+						'To avoid that, turn auto-renewal back on or manually renew your domain before the expiration date.',
 					{
 						args: {
 							// in case of a domain registration, we need the actual domain bound to this purchase instead of the primary domain bound to the site.
@@ -113,7 +115,7 @@ class AutoRenewDisablingDialog extends Component {
 				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
 				<p>{ description }</p>
 				<Button onClick={ onClose } primary>
-					{ translate( 'OK' ) }
+					{ translate( 'Confirm cancel auto-renewal' ) }
 				</Button>
 			</Dialog>
 		);
