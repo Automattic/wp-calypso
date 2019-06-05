@@ -329,6 +329,7 @@ class KeyedSuggestions extends React.Component {
 						'has-highlight': hasHighlight,
 					} );
 					return (
+						/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */
 						<span
 							className={ className }
 							onMouseDown={ this.onMouseDown }
@@ -345,6 +346,7 @@ class KeyedSuggestions extends React.Component {
 								</span>
 							) }
 						</span>
+						/* eslint-enable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */
 					);
 				} )
 			);
