@@ -5,7 +5,7 @@
 import page from 'page';
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { find, get, some, includes, forEach } from 'lodash';
+import { find, get, some, includes, isEmpty, isUndefined, forEach } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
@@ -300,7 +300,7 @@ class WpcomChecklistComponent extends PureComponent {
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ siteId && <QueryPosts siteId={ siteId } query={ FIRST_TEN_SITE_POSTS_QUERY } /> }
 				<ChecklistComponent
-					isPlaceholder={ ! taskStatuses }
+					isPlaceholder={ isUndefined( phase2 ) || isEmpty( taskStatuses ) }
 					updateCompletion={ updateCompletion }
 					closePopover={ closePopover }
 					showNotification={ showNotification }

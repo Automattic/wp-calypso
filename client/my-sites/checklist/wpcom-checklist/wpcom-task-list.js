@@ -22,8 +22,12 @@ function getTasks( {
 	siteVerticals,
 	taskStatuses,
 } ) {
+	if ( ! size( taskStatuses ) ) {
+		return [];
+	}
+
 	// The getTasks function can be removed when we make a full switch to "phase 2"
-	if ( phase2 && size( taskStatuses ) ) {
+	if ( phase2 ) {
 		// Use the server response, Luke
 		return taskStatuses;
 	}

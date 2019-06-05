@@ -25,6 +25,9 @@ export class ChecklistHeader extends PureComponent {
 
 	render() {
 		const { completed, hideCompleted, total, translate } = this.props;
+		if ( total < 1 ) {
+			return null;
+		}
 		const buttonText = hideCompleted
 			? translate( 'Show completed' )
 			: translate( 'Hide completed' );

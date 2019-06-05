@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import React, { Children, PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { times } from 'lodash';
+import { get, isEmpty, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +18,7 @@ export default class Checklist extends PureComponent {
 		phase2: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		progressText: PropTypes.string,
+		taskList: PropTypes.object,
 		updateCompletion: PropTypes.func,
 	};
 
@@ -30,6 +31,12 @@ export default class Checklist extends PureComponent {
 	}
 
 	notifyCompletion() {
+		const { taskList } = this.props;
+
+		if ( isEmpty( get( taskList, 'tasks', [] ) ) ) {
+			return;
+		}
+
 		if ( 'function' === typeof this.props.updateCompletion ) {
 			const [ complete, total ] = this.calculateCompletion();
 			this.props.updateCompletion( { complete: complete >= total } );
