@@ -159,10 +159,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const inserterMenuSelector = By.css( '.editor-inserter__menu' );
 		const inserterSearchInputSelector = By.css( 'input.editor-inserter__search' );
 		const inserterBlockItemSelector = By.css(
-			`li.editor-block-types-list__list-item button[aria-label='${ name }']`
+			`li.editor-block-types-list__list-item button.editor-block-list-item-${ name.toLowerCase() }`
 		);
 		const insertedBlockSelector = By.css(
-			`.editor-block-list__block.is-selected[aria-label*='${ name }']`
+			`.block-editor-block-list__block.is-selected[aria-label*='Block: ${ name }']`
 		);
 
 		await driverHelper.scrollIntoView( this.driver, By.css( '.editor-writing-flow' ), 'start' );
