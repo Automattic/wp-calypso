@@ -3,11 +3,11 @@
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
+import { ServerSideRender } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import edit from './edit';
 import './style.scss';
 
 registerBlockType( 'a8c/navigation-placeholder', {
@@ -22,17 +22,8 @@ registerBlockType( 'a8c/navigation-placeholder', {
 		multiple: false,
 		reusable: false,
 	},
-	attributes: {
-		theme_location: {
-			type: 'string',
-		},
-		menu_class: {
-			type: 'string',
-		},
-		items_wrap: {
-			type: 'string',
-		},
+	edit: function() {
+		return <ServerSideRender block="a8c/navigation-placeholder" />;
 	},
-	edit,
 	save: () => null,
 } );
