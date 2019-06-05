@@ -140,11 +140,11 @@ class Pages extends Component {
 	};
 
 	_insertTimeMarkers( pages ) {
-		const markedPages = [],
-			now = this.props.moment();
+		const markedPages = [];
+		const now = this.props.moment();
 		let lastMarker;
 
-		const buildMarker = function( pageDate ) {
+		const buildMarker = pageDate => {
 			pageDate = this.props.moment( pageDate );
 			const days = now.diff( pageDate, 'days' );
 			if ( days <= 0 ) {
@@ -154,11 +154,11 @@ class Pages extends Component {
 				return this.props.translate( 'Yesterday' );
 			}
 			return pageDate.from( now );
-		}.bind( this );
+		};
 
-		pages.forEach( function( page ) {
-			const date = this.props.moment( page.date ),
-				marker = buildMarker( date );
+		pages.forEach( page => {
+			const date = this.props.moment( page.date );
+			const marker = buildMarker( date );
 			if ( lastMarker !== marker ) {
 				markedPages.push(
 					<div key={ 'marker-' + date.unix() } className="pages__page-list-header">
@@ -168,7 +168,7 @@ class Pages extends Component {
 			}
 			lastMarker = marker;
 			markedPages.push( page );
-		}, this );
+		} );
 
 		return markedPages;
 	}
@@ -358,7 +358,7 @@ class Pages extends Component {
 			// we're listing in reverse chrono. use the markers.
 			pages = this._insertTimeMarkers( pages );
 		}
-		const rows = pages.map( function( page ) {
+		const rows = pages.map( page => {
 			if ( ! ( 'site_ID' in page ) ) {
 				return page;
 			}
@@ -373,7 +373,7 @@ class Pages extends Component {
 					multisite={ this.props.siteId === null }
 				/>
 			);
-		}, this );
+		} );
 
 		if ( this.props.loading ) {
 			this.addLoadingRows( rows, 1 );
