@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -25,6 +24,11 @@ import {
 	hasUnsavedNotificationSettingsChanges,
 } from 'state/notification-settings/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class NotificationCommentsSettings extends Component {
 	componentDidMount() {
 		this.props.fetchSettings();
@@ -44,7 +48,7 @@ class NotificationCommentsSettings extends Component {
 			);
 		}
 
-		return <p className="notification-settings-comment-settings__placeholder">&nbsp;</p>;
+		return <p className="comment-settings__notification-settings-placeholder">&nbsp;</p>;
 	};
 
 	render() {
@@ -63,9 +67,7 @@ class NotificationCommentsSettings extends Component {
 				<Navigation path={ path } />
 
 				<Card>
-					<FormSectionHeading className="is-primary">
-						{ translate( 'Comments on other sites' ) }
-					</FormSectionHeading>
+					<FormSectionHeading>{ translate( 'Comments on other sites' ) }</FormSectionHeading>
 					<p>
 						{ translate( 'Control your notification settings when you comment on other blogs.' ) }
 					</p>
