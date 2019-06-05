@@ -12,6 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Gridicon from 'gridicons';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 class PostRelativeTime extends React.PureComponent {
 	static displayName = 'PostRelativeTime';
@@ -135,4 +136,4 @@ class PostRelativeTime extends React.PureComponent {
 	}
 }
 
-export default localize( PostRelativeTime );
+export default localize( withLocalizedMoment( PostRelativeTime ) );
