@@ -25,6 +25,11 @@ import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
 
 class PagesMain extends React.Component {
