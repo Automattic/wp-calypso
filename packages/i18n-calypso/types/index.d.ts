@@ -4,14 +4,14 @@
 /**
  * External dependencies
  */
-import { ComponentClass, ComponentType } from 'react';
+import { ComponentClass, ComponentType, ReactElement } from 'react';
 import moment from 'moment';
 
 declare namespace i18nCalypso {
 	export type Substitutions = string | string[] | { [placeholder: string]: string };
 
 	export interface ComponentInterpolations {
-		[placeholder: string]: React.ReactElement;
+		[placeholder: string]: ReactElement;
 	}
 
 	export interface TranslateOptions {
