@@ -601,6 +601,8 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
+	toggleSection = memoize( id => () => this.props.toggleSection( id ) );
+
 	renderSidebarMenus() {
 		if ( this.props.isDomainOnly ) {
 			return (
