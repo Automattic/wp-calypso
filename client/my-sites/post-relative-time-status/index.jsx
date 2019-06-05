@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -15,8 +12,6 @@ import Gridicon from 'gridicons';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 class PostRelativeTime extends React.PureComponent {
-	static displayName = 'PostRelativeTime';
-
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		includeNonDraftStatuses: PropTypes.bool,
@@ -31,23 +26,22 @@ class PostRelativeTime extends React.PureComponent {
 		target: null,
 	};
 
-	getTimestamp = () => {
-		const status = this.props.post.status;
-
-		let time;
-		if ( status === 'draft' || status === 'pending' ) {
-			time = this.props.post.modified;
-		} else if ( status !== 'new' ) {
-			time = this.props.post.date;
+	getTimestamp() {
+		switch ( this.props.post.status ) {
+			case 'new':
+				return null;
+			case 'draft':
+			case 'pending':
+				return this.props.post.modified;
+			default:
+				return this.props.post.date;
 		}
+	}
 
-		return time;
-	};
-
-	getRelativeTimeText = () => {
+	getRelativeTimeText() {
 		const time = this.getTimestamp();
 		if ( ! time ) {
-			return;
+			return null;
 		}
 
 		return (
@@ -58,13 +52,13 @@ class PostRelativeTime extends React.PureComponent {
 				</time>
 			</span>
 		);
-	};
+	}
 
-	getStatusText = () => {
-		let status = this.props.post.status,
-			statusClassName = 'post-relative-time-status__status',
-			statusIcon = 'aside',
-			statusText;
+	getStatusText() {
+		const status = this.props.post.status;
+		let statusClassName = 'post-relative-time-status__status';
+		let statusIcon = 'aside';
+		let statusText;
 
 		if ( this.props.post.sticky ) {
 			statusText = this.props.translate( 'sticky' );
@@ -99,19 +93,20 @@ class PostRelativeTime extends React.PureComponent {
 				</span>
 			);
 		}
-	};
+	}
 
 	render() {
-		let timeText = this.getRelativeTimeText(),
-			statusText = this.getStatusText(),
-			relativeTimeClass = timeText ? 'post-relative-time-status' : null,
-			innerText = (
-				<span>
-					{ timeText }
-					{ statusText }
-				</span>
-			),
-			time = this.getTimestamp();
+		const timeText = this.getRelativeTimeText();
+		const statusText = this.getStatusText();
+		const relativeTimeClass = timeText ? 'post-relative-time-status' : null;
+		const time = this.getTimestamp();
+
+		let innerText = (
+			<span>
+				{ timeText }
+				{ statusText }
+			</span>
+		);
 
 		if ( this.props.link ) {
 			const rel = this.props.target === '_blank' ? 'noopener noreferrer' : null;
