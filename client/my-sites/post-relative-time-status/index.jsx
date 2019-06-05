@@ -11,6 +11,11 @@ import React from 'react';
 import Gridicon from 'gridicons';
 import { withLocalizedMoment } from 'components/localized-moment';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PostRelativeTime extends React.PureComponent {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
