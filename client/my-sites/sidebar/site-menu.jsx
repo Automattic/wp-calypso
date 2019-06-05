@@ -76,7 +76,6 @@ class SiteMenu extends PureComponent {
 				label: translate( 'Pages' ),
 				capability: 'edit_pages',
 				queryable: true,
-				config: 'manage/pages',
 				link: '/pages',
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,

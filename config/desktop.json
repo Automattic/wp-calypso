@@ -51,7 +51,6 @@
 		"manage/custom-post-types": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
-		"manage/pages": true,
 		"manage/plan-features": false,
 		"manage/plugins": true,
 		"manage/plugins/setup": false,

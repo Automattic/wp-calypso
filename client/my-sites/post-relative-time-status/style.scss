@@ -6,20 +6,17 @@
 	}
 
 	// Apply colors on /posts/* cards
-	.pages__page-list &,
-	.posts__list & {
-		.is-sticky {
-			color: var( --color-primary );
-		}
-		.is-pending {
-			color: var( --color-warning );
-		}
-		.is-scheduled {
-			color: var( --color-accent );
-		}
-		.is-trash {
-			color: var( --color-error );
-		}
+	.is-sticky {
+		color: var( --color-primary );
+	}
+	.is-pending {
+		color: var( --color-warning );
+	}
+	.is-scheduled {
+		color: var( --color-accent );
+	}
+	.is-trash {
+		color: var( --color-error );
 	}
 }
 
