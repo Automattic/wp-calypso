@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import MaterialIcon from 'components/material-icon';
 import ReaderSidebarHelper from './helper';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTags from './reader-sidebar-tags';
@@ -142,6 +143,7 @@ export class ReaderSidebar extends React.Component {
 							>
 								<a href="/" onClick={ this.handleReaderSidebarFollowedSitesClicked }>
 									<Gridicon icon="checkmark-circle" size={ 24 } />
+									<MaterialIcon icon="check_circle" />
 									<span className="menu-link-text">
 										{ this.props.translate( 'Followed Sites' ) }
 									</span>
