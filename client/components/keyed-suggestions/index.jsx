@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -22,6 +19,11 @@ import {
 } from 'lodash';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function SuggestionsButtonAll( props ) {
 	function click() {
