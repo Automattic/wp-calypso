@@ -2,7 +2,11 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { SiteSlug } from 'client/types';
+
+/**
+ * Internal dependencies
+ */
+import { SiteSlug, URL } from 'types';
 
 /**
  * Returns the localized duration of a task in given minutes.
@@ -19,7 +23,7 @@ interface TaskUiDescription {
 	readonly description?: string;
 	readonly completedButtonText: string;
 	readonly completedTitle?: string;
-	readonly getUrl: ( siteSlug: SiteSlug, completed?: boolean ) => string;
+	readonly getUrl: ( siteSlug: SiteSlug, isComplete?: boolean ) => URL;
 	readonly duration?: string;
 	readonly tourId?: string;
 }
@@ -70,8 +74,8 @@ export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: ChecklistTasks = {
 		description: translate(
 			"Improve your site's speed by only loading images when visible on the screen."
 		),
-		getUrl: ( siteSlug, completed ) =>
-			completed ? `/media/${ siteSlug }` : `/settings/performance/${ siteSlug }`,
+		getUrl: ( siteSlug, isComplete ) =>
+			isComplete ? `/media/${ siteSlug }` : `/settings/performance/${ siteSlug }`,
 		completedButtonText: translate( 'Upload images' ),
 		completedTitle: translate( 'Lazy load images is improving your site speed.' ),
 		duration: getJetpackChecklistTaskDuration( 1 ),

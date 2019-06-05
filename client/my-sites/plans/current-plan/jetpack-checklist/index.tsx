@@ -41,8 +41,18 @@ import ChecklistSectionTitle from './checklist-section-title';
  */
 import './style.scss';
 
-class JetpackChecklist extends PureComponent {
-	isComplete( taskId ) {
+type TaskId = string;
+
+interface TaskState {
+	taskId: TaskId;
+}
+
+interface Props {
+	taskStatuses: TaskState[];
+}
+
+class JetpackChecklist extends PureComponent< Props > {
+	isComplete( taskId: TaskId ) {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
 
