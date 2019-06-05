@@ -10,19 +10,28 @@ import { get } from 'lodash';
  */
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { navigation, redirectWithoutSite, siteSelection, sites } from 'my-sites/controller';
 import { exportSite, guidedTransfer } from 'my-sites/exporter/controller';
 
 export default function() {
 	page( '/export', siteSelection, navigation, sites, makeLayout, clientRender );
 
-	page( '/export/:site_id', siteSelection, navigation, exportSite, makeLayout, clientRender );
+	page(
+		'/export/:site_id',
+		siteSelection,
+		navigation,
+		redirectWithoutSite( '/export' ),
+		exportSite,
+		makeLayout,
+		clientRender
+	);
 
 	if ( config.isEnabled( 'manage/export/guided-transfer' ) ) {
 		page(
 			'/export/guided/:host_slug?/:site_id',
 			siteSelection,
 			navigation,
+			redirectWithoutSite( '/export' ),
 			guidedTransfer,
 			makeLayout,
 			clientRender

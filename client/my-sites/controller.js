@@ -458,3 +458,15 @@ export function sites( context, next ) {
 	context.primary = createSitesComponent( context );
 	next();
 }
+
+export function redirectWithoutSite( redirectPath ) {
+	return ( context, next ) => {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		if ( ! siteId ) {
+			return page.redirect( redirectPath );
+		}
+
+		return next();
+	};
+}
