@@ -2,26 +2,33 @@
 /**
  * External dependencies
  */
-// import classNames from 'classnames';
-// import { get } from 'lodash';
 
 /**
  * WordPress dependencies
  */
-// import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
-// import { compose, withState } from '@wordpress/compose';
-// import { withSelect } from '@wordpress/data';
-// import { BlockControls } from '@wordpress/editor';
-// import { Fragment, RawHTML } from '@wordpress/element';
-// import { __, sprintf } from '@wordpress/i18n';
+import { IconButton, ServerSideRender, Toolbar } from '@wordpress/components';
+import { BlockControls } from '@wordpress/editor';
+import { Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-// import PostAutocomplete from '../../components/post-autocomplete';
 
 const NavigationPlaceholderEdit = () => {
-	return <h1>Hi there.</h1>;
+	const redirectToCustomizer = () => {
+		window.location.href = 'https://wordpress.com';
+	};
+	return (
+		<Fragment>
+			<BlockControls>
+				<Toolbar>
+					<IconButton icon="edit" label={ __( 'Edit Menu' ) } onClick={ redirectToCustomizer } />
+				</Toolbar>
+			</BlockControls>
+			<ServerSideRender block="a8c/navigation-placeholder" />
+		</Fragment>
+	);
 };
 
 export default NavigationPlaceholderEdit;
