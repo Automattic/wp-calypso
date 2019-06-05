@@ -3,11 +3,15 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { omit } from 'lodash';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class GoogleIcon extends PureComponent {
 	static propTypes = {
