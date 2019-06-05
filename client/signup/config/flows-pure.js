@@ -112,7 +112,7 @@ export function generateFlows( {
 			],
 			destination: getChecklistDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2019-04-30',
+			lastModified: '2019-06-05',
 		},
 
 		// We don't yet show the previews for the 'blog' segment
