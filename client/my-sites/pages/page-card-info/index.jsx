@@ -36,6 +36,8 @@ const getContentLink = ( state, siteId, page ) => {
 	return { contentLinkURL, contentLinkTarget };
 };
 
+const ICON_SIZE = 12;
+
 function PageCardInfo( {
 	translate,
 	moment,
@@ -46,44 +48,40 @@ function PageCardInfo( {
 	siteUrl,
 	contentLink,
 } ) {
-	const iconSize = 12;
-	const renderFutureTimestamp = function() {
+	const renderTimestamp = function() {
 		if ( page.status === 'future' ) {
 			return (
 				<PostRelativeTimeStatus
 					post={ page }
 					link={ contentLink.contentLinkURL }
 					target={ contentLink.contentLinkTarget }
-					gridiconSize={ iconSize }
+					gridiconSize={ ICON_SIZE }
 				/>
 			);
 		}
 
-		return null;
+		return (
+			<span className="page-card-info__item">
+				<Gridicon icon="time" size={ ICON_SIZE } className="page-card-info__item-icon" />
+				<span className="page-card-info__item-text">{ moment( page.modified ).fromNow() }</span>
+			</span>
+		);
 	};
 
 	return (
 		<div className="page-card-info">
 			{ siteUrl && <div className="page-card-info__site-url">{ siteUrl }</div> }
 			<div>
-				{ showTimestamp &&
-					( renderFutureTimestamp() || (
-						<span className="page-card-info__item">
-							<Gridicon icon="time" size={ iconSize } className="page-card-info__item-icon" />
-							<span className="page-card-info__item-text">
-								{ moment( page.modified ).fromNow() }
-							</span>
-						</span>
-					) ) }
+				{ showTimestamp && renderTimestamp() }
 				{ isFront && (
 					<span className="page-card-info__item">
-						<Gridicon icon="house" size={ iconSize } className="page-card-info__item-icon" />
+						<Gridicon icon="house" size={ ICON_SIZE } className="page-card-info__item-icon" />
 						<span className="page-card-info__item-text">{ translate( 'Front page' ) }</span>
 					</span>
 				) }
 				{ isPosts && (
 					<span className="page-card-info__item">
-						<Gridicon icon="posts" size={ iconSize } className="page-card-info__item-icon" />
+						<Gridicon icon="posts" size={ ICON_SIZE } className="page-card-info__item-icon" />
 						<span className="page-card-info__item-text">{ translate( 'Your latest posts' ) }</span>
 					</span>
 				) }
