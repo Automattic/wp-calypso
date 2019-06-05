@@ -23,6 +23,11 @@ import getPosterUploadProgress from 'state/selectors/get-poster-upload-progress'
 import getPosterUrl from 'state/selectors/get-poster-url';
 import shouldShowVideoEditorError from 'state/selectors/should-show-video-editor-error';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class VideoEditor extends Component {
 	static propTypes = {
 		className: PropTypes.string,
@@ -143,13 +148,15 @@ class VideoEditor extends Component {
 		const { onCancel, translate } = this.props;
 
 		return (
-			<Notice
-				status="is-error"
-				showDismiss={ true }
-				text={ translate( 'We are unable to edit this video.' ) }
-				isCompact={ false }
-				onDismissClick={ onCancel }
-			/>
+			<div className="video-editor__notice">
+				<Notice
+					status="is-error"
+					showDismiss={ true }
+					text={ translate( 'We are unable to edit this video.' ) }
+					isCompact={ false }
+					onDismissClick={ onCancel }
+				/>
+			</div>
 		);
 	}
 
