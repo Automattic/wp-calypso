@@ -15,6 +15,11 @@ import Button from 'components/forms/form-button';
 import { startImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StartButton extends React.PureComponent {
 	static displayName = 'StartButton';
 

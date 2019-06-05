@@ -20,6 +20,11 @@ import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],

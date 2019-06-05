@@ -22,6 +22,11 @@ import ProgressBar from 'components/progress-bar';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
 

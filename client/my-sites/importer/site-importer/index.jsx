@@ -20,6 +20,11 @@ import ImportingPane from '../importing-pane';
 import SiteImporterInputPane from './site-importer-input-pane';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const compactStates = [ appStates.DISABLED, appStates.INACTIVE ];

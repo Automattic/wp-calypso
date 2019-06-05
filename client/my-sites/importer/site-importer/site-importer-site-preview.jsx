@@ -21,6 +21,11 @@ import ImportableContent from 'my-sites/importer/site-importer/site-importer-imp
 import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SiteImporterSitePreview extends React.Component {
 	static propTypes = {
 		siteURL: PropTypes.string.isRequired,

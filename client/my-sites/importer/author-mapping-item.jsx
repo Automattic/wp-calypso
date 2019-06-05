@@ -16,6 +16,11 @@ import AuthorSelector from 'blocks/author-selector';
 import User from 'components/user';
 import { getCurrentUser } from 'state/current-user/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const userShape = nameField =>
 	PropTypes.shape( {
 		ID: PropTypes.number.isRequired,
