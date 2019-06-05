@@ -31,6 +31,11 @@ import { Notices } from 'components/happychat/notices';
 import { Timeline } from 'components/happychat/timeline';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * React component for rendering a happychat client as a full page
  */
 export class HappychatPage extends Component {
