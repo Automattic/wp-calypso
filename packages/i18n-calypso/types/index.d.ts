@@ -79,6 +79,8 @@ declare namespace i18nCalypso {
 	export type LocalizedComponent< C > = ComponentClass< WithoutLocalizedProps< GetProps< C > > >;
 
 	export function localize< C >( component: C ): LocalizedComponent< C >;
+
+	export function useTranslate(): typeof translate;
 }
 
 export = i18nCalypso;
