@@ -308,7 +308,11 @@ $task-right-padding: 50px;
 				cursor: default;
 			}
 		}
-				
+
+		.button .checklist__toggle-affordance {
+			top: 8px;
+		}
+
 		.checklist__task-title,
 		.checklist__task-title-button {
 			color: var( --color-text-subtle );
@@ -367,10 +371,6 @@ $task-right-padding: 50px;
 		.checklist__task-action,
 		.checklist__task-content {
 			display: none;
-		}
-
-		.button .checklist__toggle-affordance {
-			top: 8px;
 		}
 
 		.checklist__task-title-button {
