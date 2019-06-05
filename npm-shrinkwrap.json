@@ -21,7 +21,6 @@
 			"dev": true,
 			"requires": {
 				"@automattic/calypso-color-schemes": "file:packages/calypso-color-schemes",
-				"@automattic/wordpress-external-dependencies-plugin": "file:packages/wordpress-external-dependencies-plugin",
 				"@babel/core": "7.4.0",
 				"@babel/plugin-proposal-class-properties": "7.4.0",
 				"@babel/plugin-syntax-dynamic-import": "7.2.0",
@@ -97,14 +96,6 @@
 		"@automattic/webpack-inline-constant-exports-plugin": {
 			"version": "file:packages/webpack-inline-constant-exports-plugin",
 			"dev": true
-		},
-		"@automattic/wordpress-external-dependencies-plugin": {
-			"version": "file:packages/wordpress-external-dependencies-plugin",
-			"dev": true,
-			"requires": {
-				"webpack": "^4.29.6",
-				"webpack-sources": "^1.3.0"
-			}
 		},
 		"@babel/cli": {
 			"version": "7.4.4",
