@@ -180,7 +180,7 @@ export function createSiteWithCart(
 		newSiteParams.find_available_url = true;
 		newSiteParams.options.nux_import_engine = importEngine;
 	} else if (
-		flowName === 'onboarding-for-business' &&
+		flowName === 'onboarding' &&
 		'remove' === getABTestVariation( 'removeDomainsStepFromOnboarding' )
 	) {
 		/*

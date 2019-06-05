@@ -241,10 +241,7 @@ const Flows = {
 	 * @return {Object} A filtered flow object
 	 */
 	getABTestFilteredFlow( flowName, flow ) {
-		if (
-			'onboarding-for-business' === flowName &&
-			'remove' === abtest( 'removeDomainsStepFromOnboarding' )
-		) {
+		if ( 'onboarding' === flowName && 'remove' === abtest( 'removeDomainsStepFromOnboarding' ) ) {
 			flow = Flows.removeStepFromFlow( 'domains-with-preview', flow );
 			flow = replaceStepInFlow( flow, 'site-title-with-preview', 'site-title-without-domains' );
 
