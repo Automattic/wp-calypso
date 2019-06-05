@@ -16,11 +16,11 @@ import FormRadio from 'components/forms/form-radio';
 import Label from 'components/forms/form-label';
 import Select from './select';
 import Tooltip from 'components/tooltip';
-import { setPostType } from 'state/site-settings/exporter/actions';
+import { setPostType } from 'state/exporter/actions';
 import {
 	getSelectedPostType,
 	isDateRangeValid as isExportDateRangeValid,
-} from 'state/site-settings/exporter/selectors';
+} from 'state/exporter/selectors';
 
 const mapStateToProps = ( state, ownProps ) => {
 	const siteId = state.ui.selectedSiteId;

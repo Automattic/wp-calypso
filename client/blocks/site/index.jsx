@@ -19,6 +19,11 @@ import SiteIndicator from 'my-sites/site-indicator';
 import { getSite, getSiteSlug, isSitePreviewable } from 'state/sites/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Site extends React.Component {
 	static defaultProps = {
 		// onSelect callback

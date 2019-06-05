@@ -35,6 +35,7 @@ import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
 import emailForwarding from './email-forwarding/reducer';
+import exporter from './exporter/reducers';
 import googleMyBusiness from './google-my-business/reducer';
 import gsuiteUsers from './gsuite-users/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
@@ -122,6 +123,7 @@ const reducers = {
 	documentHead,
 	domains,
 	emailForwarding,
+	exporter,
 	form,
 	googleMyBusiness,
 	gsuiteUsers,

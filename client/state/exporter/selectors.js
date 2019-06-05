@@ -8,7 +8,7 @@ import { States } from './constants.js';
 import { get } from 'lodash';
 
 export const getExportingState = ( state, siteId ) => {
-	const exportingState = state.siteSettings.exporter.exportingState;
+	const exportingState = state.exporter.exportingState;
 	if ( ! exportingState[ siteId ] ) {
 		return States.READY;
 	}
@@ -40,7 +40,7 @@ export function isExporting( state, siteId ) {
 }
 
 export function isDateRangeValid( state, siteId, postType ) {
-	const site = state.siteSettings.exporter.selectedAdvancedSettings[ siteId ];
+	const site = state.exporter.selectedAdvancedSettings[ siteId ];
 	if ( ! site ) {
 		return true;
 	}
@@ -58,9 +58,8 @@ export function isDateRangeValid( state, siteId, postType ) {
 	return true;
 }
 
-export const getAdvancedSettings = ( state, siteId ) =>
-	state.siteSettings.exporter.advancedSettings[ siteId ];
-export const getSelectedPostType = state => state.siteSettings.exporter.selectedPostType;
+export const getAdvancedSettings = ( state, siteId ) => state.exporter.advancedSettings[ siteId ];
+export const getSelectedPostType = state => state.exporter.selectedPostType;
 export const getPostTypeFieldOptions = ( state, siteId, postType, fieldName ) => {
 	// Choose which set of options to return for the given field name
 	const optionSet = get(
@@ -87,7 +86,7 @@ export const getPostTypeFieldOptions = ( state, siteId, postType, fieldName ) =>
 };
 
 export const getPostTypeFieldValues = ( state, siteId, postType ) => {
-	const site = state.siteSettings.exporter.selectedAdvancedSettings[ siteId ];
+	const site = state.exporter.selectedAdvancedSettings[ siteId ];
 	if ( ! site ) {
 		return null;
 	}

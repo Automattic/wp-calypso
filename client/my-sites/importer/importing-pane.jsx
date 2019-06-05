@@ -92,7 +92,7 @@ const hasProgressInfo = progress => {
 };
 
 class ImportingPane extends React.PureComponent {
-	static displayName = 'SiteSettingsImportingPane';
+	static displayName = 'ImportingPane';
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {

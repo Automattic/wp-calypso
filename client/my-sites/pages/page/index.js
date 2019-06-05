@@ -473,7 +473,7 @@ class Page extends Component {
 					</a>
 					<PageCardInfo
 						page={ page }
-						showTimestamp={ this.props.hierarchical }
+						showTimestamp
 						siteUrl={ this.props.multisite && this.getSiteDomain() }
 					/>
 				</div>

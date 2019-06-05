@@ -135,7 +135,7 @@ class DeleteSite extends Component {
 
 	render() {
 		const { isAtomic, siteDomain, siteId, siteSlug, translate } = this.props;
-		const exportLink = '/settings/export/' + siteSlug;
+		const exportLink = '/export/' + siteSlug;
 		const deleteDisabled =
 			typeof this.state.confirmDomain !== 'string' ||
 			this.state.confirmDomain.toLowerCase().replace( /\s/g, '' ) !== siteDomain;

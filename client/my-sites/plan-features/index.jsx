@@ -38,7 +38,6 @@ import {
 	getMonthlyPlanByYearly,
 	getPlanPath,
 	isFreePlan,
-	getBiennialPlan,
 	getPlanClass,
 } from 'lib/plans';
 import {
@@ -733,18 +732,6 @@ export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 const hasPlaceholders = planProperties =>
 	planProperties.filter( planProps => planProps.isPlaceholder ).length > 0;
 
-const maybeGetBiennialPlanSlugVersion = planSlug => {
-	// Test defaulting to the 2 year option for wpcom plans
-	if (
-		planMatches( planSlug, { group: GROUP_WPCOM } ) &&
-		'twoYearFlavor' === abtest( 'twoYearPlanByDefault' )
-	) {
-		planSlug = getBiennialPlan( planSlug ) || planSlug;
-	}
-
-	return planSlug;
-};
-
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
@@ -842,9 +829,7 @@ export default connect(
 					isPlaceholder,
 					onUpgradeClick: onUpgradeClick
 						? () => {
-								const planSlug = maybeGetBiennialPlanSlugVersion(
-									getPlanSlug( state, planProductId )
-								);
+								const planSlug = getPlanSlug( state, planProductId );
 
 								onUpgradeClick( getCartItemForPlan( planSlug ) );
 						  }
@@ -853,9 +838,7 @@ export default connect(
 									return;
 								}
 
-								const planSlug = maybeGetBiennialPlanSlugVersion( plan );
-
-								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( planSlug ) || '' }` );
+								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }` );
 						  },
 					planConstantObj,
 					planName: plan,

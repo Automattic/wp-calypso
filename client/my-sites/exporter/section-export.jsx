@@ -9,17 +9,19 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import ExporterContainer from 'my-sites/exporter';
-import HeaderCake from 'components/header-cake';
+import ExporterContainer from 'my-sites/exporter/container';
 import Main from 'components/main';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import FormattedHeader from 'components/formatted-header';
 
-const SiteSettingsExport = ( { isJetpack, site, siteSlug, translate } ) => (
+const SectionExport = ( { isJetpack, site, translate } ) => (
 	<Main>
-		<HeaderCake backHref={ '/settings/general/' + siteSlug }>
-			<h1>{ translate( 'Export' ) }</h1>
-		</HeaderCake>
+		<FormattedHeader
+			className="exporter__section-header"
+			headerText={ translate( 'Export your content' ) }
+			subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
+		/>
 		{ isJetpack && (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
@@ -42,4 +44,4 @@ export default connect( state => {
 		site,
 		siteSlug: getSelectedSiteSlug( state ),
 	};
-} )( localize( SiteSettingsExport ) );
+} )( localize( SectionExport ) );

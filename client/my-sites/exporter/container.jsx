@@ -21,7 +21,7 @@ import ExportMediaCard from './export-media-card';
 import GuidedTransferCard from './guided-transfer-card';
 import InProgressCard from './guided-transfer-card/in-progress';
 
-class Exporter extends Component {
+class ExporterContainer extends Component {
 	render() {
 		const { siteId, isJetpack, isTransferInProgress } = this.props;
 		const showGuidedTransferOptions = config.isEnabled( 'manage/export/guided-transfer' );
@@ -46,4 +46,4 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 	isTransferInProgress: isGuidedTransferInProgress( state, getSelectedSiteId( state ) ),
 } );
 
-export default connect( mapStateToProps )( Exporter );
+export default connect( mapStateToProps )( ExporterContainer );

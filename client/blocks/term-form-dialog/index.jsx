@@ -30,6 +30,11 @@ import { getTerms } from 'state/terms/selectors';
 import { addTerm, updateTerm } from 'state/terms/actions';
 import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class TermFormDialog extends Component {
 	static initialState = {
 		description: '',
@@ -344,7 +349,6 @@ class TermFormDialog extends Component {
 
 		return (
 			<Dialog
-				autoFocus={ false }
 				isVisible={ showDialog }
 				buttons={ buttons }
 				onClose={ this.closeDialog }
@@ -353,9 +357,9 @@ class TermFormDialog extends Component {
 				<FormSectionHeading>{ isNew ? labels.add_new_item : labels.edit_item }</FormSectionHeading>
 				<FormFieldset>
 					<FormTextInput
+						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus={ showDialog && ! isMobile() }
 						placeholder={ labels.new_item_name }
-						ref="termName"
 						isError={ isError }
 						onKeyUp={ this.validateInput }
 						value={ name }
@@ -372,7 +376,6 @@ class TermFormDialog extends Component {
 							} ) }
 						</FormLegend>
 						<FormTextarea
-							ref="termDescription"
 							onKeyUp={ this.validateInput }
 							value={ description }
 							onChange={ this.onDescriptionChange }

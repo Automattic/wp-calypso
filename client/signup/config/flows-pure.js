@@ -330,7 +330,7 @@ export function generateFlows( {
 					'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
 					signup: 1,
 				},
-				`/settings/import/${ siteSlug }`
+				`/import/${ siteSlug }`
 			),
 		description: 'A flow to kick off an import during signup',
 		disallowResume: true,
