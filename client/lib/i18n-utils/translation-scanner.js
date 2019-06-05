@@ -10,7 +10,6 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { recordOriginals, encodeOriginalKey } from './glotpress';
 
 const debug = debugFactory( 'calypso:translation-scanner' );
@@ -39,22 +38,18 @@ export class TranslationScanner {
 	}
 
 	install() {
-		if ( ! config.isEnabled( 'i18n/translation-scanner' ) ) {
-			return;
-		}
-
 		// Watch for cookies changed through browser magic
 		// We could potentially run the filter server-side by pinging the server
 		// for the cookie instead of asking the browser.
-		if ( typeof document !== 'undefined' ) {
-			debug( 'installing Translation Scanner' );
+		if ( ! this.installed && typeof document !== 'undefined' ) {
+			debug( 'Installing Translation Scanner' );
 			registerTranslateHook( this.translationFilter.bind( this ) );
 			this.cookieWatcherInterval = setInterval( this.checkCookie.bind( this ), 1000 );
 			this.installed = true;
 			this.checkCookie();
 		}
 
-		return this.installed;
+		return this;
 	}
 
 	uninstall() {
@@ -110,9 +105,6 @@ export class TranslationScanner {
 	}
 
 	start() {
-		if ( ! config.isEnabled( 'i18n/translation-scanner' ) ) {
-			return;
-		}
 		debug( 'Translation Scanner started' );
 		if ( ! this.installed ) {
 			this.install();
