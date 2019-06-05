@@ -69,8 +69,10 @@ class MembershipsProductsSection extends Component {
 		deletedProductId: null,
 		editedProductName: '',
 		editedPayWhatYouWant: false,
+		editedMultiplePerUser: false,
 		editedPrice: { currency: 'USD', value: '' },
 		editedSchedule: '1 month',
+		focusedName: false,
 	};
 	renderEllipsisMenu( productId ) {
 		return (
@@ -97,6 +99,7 @@ class MembershipsProductsSection extends Component {
 					title: this.state.editedProductName,
 					interval: this.state.editedSchedule,
 					buyer_can_change_amount: this.state.editedPayWhatYouWant,
+					multiple_per_user: this.state.editedMultiplePerUser,
 				},
 				this.props.translate( 'Added "%s" product.', { args: this.state.editedProductName } )
 			);
@@ -110,6 +113,7 @@ class MembershipsProductsSection extends Component {
 					title: this.state.editedProductName,
 					interval: this.state.editedSchedule,
 					buyer_can_change_amount: this.state.editedPayWhatYouWant,
+					multiple_per_user: this.state.editedMultiplePerUser,
 				},
 				this.props.translate( 'Updated "%s" product.', { args: this.state.editedProductName } )
 			);
@@ -130,6 +134,8 @@ class MembershipsProductsSection extends Component {
 				},
 				editedSchedule: product.renewal_schedule,
 				editedPayWhatYouWant: product.buyer_can_change_amount,
+				editedMultiplePerUser: !! product.multiple_per_user,
+				focusedName: false,
 			} );
 		} else {
 			this.setState( {
@@ -138,9 +144,12 @@ class MembershipsProductsSection extends Component {
 				editedProductName: '',
 				editedPrice: {
 					currency: 'USD',
-					value: 0.0,
+					value: 5.0,
 				},
 				editedSchedule: '1 month',
+				editedPayWhatYouWant: false,
+				editedMultiplePerUser: false,
+				focusedName: false,
 			} );
 		}
 	};
@@ -170,6 +179,7 @@ class MembershipsProductsSection extends Component {
 		} ) );
 	};
 	handlePayWhatYouWant = newValue => this.setState( { editedPayWhatYouWant: newValue } );
+	handleMultiplePerUser = newValue => this.setState( { editedMultiplePerUser: newValue } );
 
 	onNameChange = event => this.setState( { editedProductName: event.target.value } );
 	onSelectSchedule = event => this.setState( { editedSchedule: event.target.value } );
@@ -256,8 +266,9 @@ class MembershipsProductsSection extends Component {
 						id="title"
 						value={ this.state.editedProductName }
 						onChange={ this.onNameChange }
+						onBlur={ () => this.setState( { focusedName: true } ) }
 					/>
-					{ ! this.isFormValid( 'name' ) && (
+					{ ! this.isFormValid( 'name' ) && this.state.focusedName && (
 						<FormInputValidation isError text={ this.props.translate( 'Please input a name.' ) } />
 					) }
 				</FormFieldset>
@@ -267,7 +278,17 @@ class MembershipsProductsSection extends Component {
 						checked={ this.state.editedPayWhatYouWant }
 					>
 						{ this.props.translate(
-							'Enable clients to pick their own amount ("Pay what you want").'
+							'Enable customers to pick their own amount ("Pay what you want").'
+						) }
+					</FormToggle>
+				</FormFieldset>
+				<FormFieldset>
+					<FormToggle
+						onChange={ this.handleMultiplePerUser }
+						checked={ this.state.editedMultiplePerUser }
+					>
+						{ this.props.translate(
+							'Allow the same customer to sign up multiple times to the same plan.'
 						) }
 					</FormToggle>
 				</FormFieldset>
