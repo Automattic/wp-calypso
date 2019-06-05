@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,6 +29,11 @@ import {
 import EmailCategory from './email-category';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module variables
