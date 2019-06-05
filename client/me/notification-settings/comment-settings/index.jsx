@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -24,6 +23,11 @@ import {
 	getNotificationSettings,
 	hasUnsavedNotificationSettingsChanges,
 } from 'state/notification-settings/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class NotificationCommentsSettings extends Component {
 	componentDidMount() {
