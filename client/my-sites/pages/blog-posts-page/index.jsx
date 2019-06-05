@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,11 @@ import classNames from 'classnames';
  */
 import Card from 'components/card';
 import { getSiteFrontPageType, getSitePostsPage, getSiteFrontPage } from 'state/sites/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class BlogPostsPage extends React.Component {
 	static propTypes = {
