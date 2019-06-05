@@ -22,10 +22,6 @@
 		.draft__title {
 			margin-right: 88px;
 		}
-
-		.draft__excerpt {
-			right: 88px;
-		}
 	}
 
 	&.is-selected {
@@ -57,29 +53,10 @@
 	color: var( --color-text-subtle );
 }
 
-.draft__excerpt {
-	display: block;
-	font-family: $serif;
-	font-size: 14px;
-	position: absolute;
-		top: 8px;
-		right: 16px;
-		left: 16px;
-	user-select: none;
-	opacity: 0;
-	transform: translateY( 60px );
-	transition: all 0.1s ease-in-out;
-}
-
 .draft__empty-text {
 	color: var( --color-neutral-500 );
 	font-weight: 400;
 	font-style: italic;
-}
-
-// Not ready for primetime
-.draft__actions {
-	display: none;
 }
 
 // Images
