@@ -51,16 +51,16 @@ class Starter_Page_Templates {
 			true
 		);
 	}
-	
+
 	/**
 	 * Register meta field for storing the template identifier.
 	 */
 	public function register_meta_field() {
 		$args = array(
-			'type' => 'string',
-			'description' => 'Selected template',
-			'single' => true,
-			'show_in_rest' => true,
+			'type'           => 'string',
+			'description'    => 'Selected template',
+			'single'         => true,
+			'show_in_rest'   => true,
 			'object_subtype' => 'page',
 		);
 		// TODO: meta field name
