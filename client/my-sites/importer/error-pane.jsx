@@ -14,9 +14,10 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import Notice from 'components/notice';
+import Button from 'components/button';
 
-class SiteSettingsImporterError extends React.PureComponent {
-	static displayName = 'SiteSettingsImporterError';
+class ImporterError extends React.PureComponent {
+	static displayName = 'ImporterError';
 	static defaultProps = {
 		retryImport: noop,
 	};
@@ -41,9 +42,9 @@ class SiteSettingsImporterError extends React.PureComponent {
 					errorDescription: this.props.description,
 				},
 				components: {
-					a: <a href="#" onClick={ this.retryImport } />,
+					a: <Button className="importer__error-pane is-link" onClick={ this.retryImport } />,
 					br: <br />,
-					cs: <a href="#" onClick={ this.contactSupport } />,
+					cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
 				},
 			}
 		);
@@ -61,7 +62,7 @@ class SiteSettingsImporterError extends React.PureComponent {
 				},
 				components: {
 					br: <br />,
-					cs: <a href="#" onClick={ this.contactSupport } />,
+					cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
 				},
 			}
 		);
@@ -104,4 +105,4 @@ class SiteSettingsImporterError extends React.PureComponent {
 	}
 }
 
-export default localize( SiteSettingsImporterError );
+export default localize( ImporterError );

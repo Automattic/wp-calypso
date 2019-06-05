@@ -60,9 +60,25 @@ class ToolsMenu extends PureComponent {
 			label: translate( 'Import' ),
 			capability: 'manage_options',
 			queryable: ! isJetpack,
-			link: '/settings/import', // @TODO make it a top level section & add a redirect
-			paths: [ '/settings/import' ],
+			link: '/import',
+			paths: [ '/import' ],
 			wpAdminLink: 'import.php',
+			showOnAllMySites: false,
+			forceInternalLink: ! isJetpack,
+		};
+	};
+
+	getExportItem = () => {
+		const { isJetpack, translate } = this.props;
+
+		return {
+			name: 'export',
+			label: translate( 'Export' ),
+			capability: 'manage_options',
+			queryable: ! isJetpack,
+			link: '/export',
+			paths: [ '/export' ],
+			wpAdminLink: 'export.php',
 			showOnAllMySites: false,
 			forceInternalLink: ! isJetpack,
 		};
@@ -121,6 +137,8 @@ class ToolsMenu extends PureComponent {
 		}
 
 		menuItems.push( this.getImportItem() );
+
+		menuItems.push( this.getExportItem() );
 
 		return <ul>{ menuItems.map( this.renderMenuItem, this ) }</ul>;
 	}

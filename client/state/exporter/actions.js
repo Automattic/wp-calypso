@@ -59,7 +59,7 @@ export function advancedSettingsFetch( siteId ) {
 			return;
 		}
 
-		if ( getState().siteSettings.exporter.fetchingAdvancedSettings[ siteId ] === true ) {
+		if ( getState().exporter.fetchingAdvancedSettings[ siteId ] === true ) {
 			return;
 		}
 

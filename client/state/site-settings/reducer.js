@@ -10,7 +10,6 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-import exporter from './exporter/reducers';
 import { items as itemSchemas } from './schema';
 import {
 	MEDIA_DELETE,
@@ -108,7 +107,6 @@ export const items = createReducer(
 );
 
 export default combineReducers( {
-	exporter,
 	items,
 	requesting,
 	saveRequests,

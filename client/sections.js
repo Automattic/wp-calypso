@@ -437,6 +437,20 @@ const sections = [
 		secondary: false,
 	},
 	{
+		name: 'import',
+		paths: [ '/import' ],
+		module: 'my-sites/importer',
+		secondary: true,
+		group: 'sites',
+	},
+	{
+		name: 'export',
+		paths: [ '/export' ],
+		module: 'my-sites/exporter',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'devdocs',
 		paths: [ '/devdocs' ],
 		module: 'devdocs',

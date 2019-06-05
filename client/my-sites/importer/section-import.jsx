@@ -35,9 +35,9 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import DescriptiveHeader from 'my-sites/site-settings/settings-import/descriptive-header';
-import JetpackImporter from 'my-sites/site-settings/settings-import/jetpack-importer';
+import FormattedHeader from 'components/formatted-header';
+import JetpackImporter from 'my-sites/importer/jetpack-importer';
+import ExternalLink from 'components/external-link';
 
 /**
  * Configuration for each of the importers to be rendered in this section. If
@@ -88,7 +88,7 @@ const getImporterForEngine = memoize( engine =>
 	find( importers, [ 'type', getImporterTypeForEngine( engine ) ] )
 );
 
-class SiteSettingsImport extends Component {
+class SectionImport extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 	};
@@ -256,22 +256,33 @@ class SiteSettingsImport extends Component {
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-				<DescriptiveHeader />
 				{ this.renderImporters() }
 			</>
 		);
 	}
 
 	render() {
-		const { site, siteSlug, translate } = this.props;
+		const { site, translate } = this.props;
 		const { jetpack: isJetpack } = site;
+		const headerText = translate( 'Import your content' );
+		const subHeaderText = translate(
+			'Bring content hosted elsewhere over to WordPress.com. ' +
+				'{{a}}Find out what we currently support.{{/a}}',
+			{
+				components: {
+					a: <ExternalLink href="https://en.support.wordpress.com/import/" />,
+				},
+			}
+		);
 
 		return (
 			<Main>
 				<DocumentHead title={ translate( 'Import' ) } />
-				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
-					<h1>{ translate( 'Import Content' ) }</h1>
-				</HeaderCake>
+				<FormattedHeader
+					className="importer__section-header"
+					headerText={ headerText }
+					subHeaderText={ subHeaderText }
+				/>
 				<EmailVerificationGate allowUnlaunched>
 					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
 				</EmailVerificationGate>
@@ -288,4 +299,4 @@ export default flow(
 		siteSlug: getSelectedSiteSlug( state ),
 	} ) ),
 	localize
-)( SiteSettingsImport );
+)( SectionImport );
