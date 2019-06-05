@@ -114,7 +114,10 @@ export default class Step extends Component< Props, State > {
 
 	async componentWillReceiveProps( nextProps: Props, nextContext ) {
 		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
-		await this.wait( nextProps, nextContext );
+
+		if ( nextProps.wait !== this.props.wait ) {
+			await this.wait( nextProps, nextContext );
+		}
 
 		this.setStepSection( nextContext );
 		this.quitIfInvalidRoute( nextProps, nextContext );
