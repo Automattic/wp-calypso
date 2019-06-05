@@ -67,6 +67,11 @@ class JetpackChecklist extends PureComponent< Props > {
 		}
 	}
 
+	state = {
+		selectedTaskId: null,
+		firstIncomplete: {},
+	};
+
 	isComplete( taskId: string ): boolean {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
@@ -103,6 +108,10 @@ class JetpackChecklist extends PureComponent< Props > {
 				  Object.keys( JETPACK_PERFORMANCE_CHECKLIST_TASKS )
 				: Object.keys( this.props.taskStatuses ).filter( taskId => taskId in checklistTasks );
 
+		// this.setState( {
+		// 	firstIncomplete: this.getFirstIncompleteTask( this.props.taskStatuses )
+		// } );
+
 		return taskIds.map( taskId => {
 			const task = checklistTasks[ taskId ];
 
@@ -115,6 +124,7 @@ class JetpackChecklist extends PureComponent< Props > {
 					completedTitle={ task.completedTitle }
 					description={ task.description }
 					duration={ task.duration }
+					firstIncomplete={ this.state.firstIncomplete }
 					href={ task.getUrl( this.props.siteSlug, isComplete ) }
 					onClick={ this.handleTaskStart( {
 						taskId,
@@ -126,6 +136,29 @@ class JetpackChecklist extends PureComponent< Props > {
 			);
 		} );
 	}
+
+	onTaskTitleClick = selectedTaskId => {
+		this.setState( { selectedTaskId } );
+		this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
+			step_name: selectedTaskId,
+			product: 'Jetpack',
+		} );
+	};
+
+	getFirstIncompleteTask = taskStatuses => {
+		const taskObject = {};
+
+		Object.values( taskStatuses ).find( function( item, index ) {
+			if ( item.completed === false ) {
+				taskObject.id = Object.keys( taskStatuses )[ index ];
+				taskObject.isCompleted = item.completed;
+			}
+
+			return item.completed === false;
+		} );
+
+		return taskObject;
+	};
 
 	render() {
 		const {
@@ -162,15 +195,23 @@ class JetpackChecklist extends PureComponent< Props > {
 				>
 					<Task
 						{ ...JETPACK_CHECKLIST_TASK_PROTECT }
+						id="jetpack_task_protect"
+						onTaskTitleClick={ this.onTaskTitleClick }
+						selectedTaskId={ this.state.selectedTaskId }
 						completed
 						href={ JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ) }
+						firstIncomplete={ this.state.firstIncomplete }
 						onClick={ this.handleTaskStart( { taskId: 'jetpack_protect' } ) }
 					/>
 					{ isPaidPlan && isRewindAvailable && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_REWIND }
+							id="jetpack_rewind"
+							onTaskTitleClick={ this.onTaskTitleClick }
+							selectedTaskId={ this.state.selectedTaskId }
 							completed={ isRewindActive }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ) }
+							firstIncomplete={ this.state.firstIncomplete }
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_backups',
 								tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',
@@ -180,8 +221,12 @@ class JetpackChecklist extends PureComponent< Props > {
 					{ isPaidPlan && isRewindUnavailable && productInstallStatus && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS }
+							id="jetpack_vaultpress"
+							onTaskTitleClick={ this.onTaskTitleClick }
+							selectedTaskId={ this.state.selectedTaskId }
 							completed={ vaultpressFinished }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ) }
+							firstIncomplete={ this.state.firstIncomplete }
 							inProgress={ ! vaultpressFinished }
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_backups' } ) }
 						/>
@@ -189,13 +234,18 @@ class JetpackChecklist extends PureComponent< Props > {
 					{ isPaidPlan && productInstallStatus && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_AKISMET }
+							id="jetpack_akismet"
+							onTaskTitleClick={ this.onTaskTitleClick }
+							selectedTaskId={ this.state.selectedTaskId }
 							completed={ akismetFinished }
 							href={ JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ) }
+							firstIncomplete={ this.state.firstIncomplete }
 							inProgress={ ! akismetFinished }
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_spam_filtering' } ) }
 							target="_blank"
 						/>
 					) }
+
 					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS ) }
 					{ isEnabled( 'jetpack/checklist/performance' ) &&
 						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS ) }
@@ -216,6 +266,7 @@ class JetpackChecklist extends PureComponent< Props > {
 									? `/media/${ siteSlug }`
 									: `/settings/performance/${ siteSlug }`
 							}
+							id="video-hosting"
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_video_hosting',
 								tourId: 'jetpackVideoHosting',
@@ -239,6 +290,7 @@ class JetpackChecklist extends PureComponent< Props > {
 									? this.props.widgetCustomizerPaneUrl
 									: `/settings/performance/${ siteSlug }`
 							}
+							id="enhanced-search"
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_search',
 								tourId: 'jetpackSearch',

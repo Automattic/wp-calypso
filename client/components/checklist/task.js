@@ -32,7 +32,7 @@ class Task extends PureComponent {
 		inProgress: PropTypes.bool,
 		isWarning: PropTypes.bool,
 		onClick: PropTypes.func,
-		onCollapsedClick: PropTypes.func,
+		onTaskTitleClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		selectedTaskId: PropTypes.string,
 		target: PropTypes.string,
@@ -106,25 +106,22 @@ class Task extends PureComponent {
 		return null;
 	}
 
-	onTaskClick = event => {
-		const { completed, id, onClick, onCollapsedClick } = this.props;
+	onTaskTitleClick = event => {
+		event.preventDefault();
+		const { id, onTaskTitleClick } = this.props;
 
-		// We presuppose expandability based on the presence of `onCollapsedClick`
-		if ( ! completed && this.isTaskCollapsed() && onCollapsedClick ) {
-			event.preventDefault();
-			onCollapsedClick( id );
-		} else {
-			// The task-related action
-			onClick();
-		}
+		this.isTaskCollapsed() ? this.props.onTaskTitleClick( id ) : onTaskTitleClick( 'none' );
 	};
 
-	isTaskCollapsed = () =>
-		this.props.selectedTaskId
-			? // If any task is selected, we only check if this task matches the selected ID...
-			  this.props.selectedTaskId !== this.props.id
-			: // If no task is selected, fall back to checking if this task is the first in line
-			  this.props.firstIncomplete && this.props.firstIncomplete.id !== this.props.id;
+	isTaskCollapsed = () => {
+		if ( this.props.selectedTaskId ) {
+			return this.props.selectedTaskId !== this.props.id;
+		}
+
+		console.log( this.props.firstIncomplete );
+
+		//return this.props.firstIncomplete.id !== this.props.id;
+	};
 
 	renderGridicon() {
 		if ( this.props.inProgress ) {
@@ -143,9 +140,16 @@ class Task extends PureComponent {
 		return <Gridicon icon={ 'checkmark' } size={ 18 } />;
 	}
 
+	renderChevron = () => {
+		if ( this.isTaskCollapsed() ) {
+			return <Gridicon icon="chevron-down" />;
+		}
+
+		return <Gridicon icon="chevron-up" />;
+	};
+
 	render() {
 		const {
-			buttonPrimary,
 			buttonText,
 			completed,
 			completedButtonText,
@@ -161,7 +165,7 @@ class Task extends PureComponent {
 			title,
 			translate,
 		} = this.props;
-		const hasActionlink = completed && completedButtonText;
+		const hasActionlink = completedButtonText;
 		const taskActionButtonText = hasActionlink
 			? completedButtonText
 			: buttonText || translate( 'Do it!' );
@@ -178,45 +182,45 @@ class Task extends PureComponent {
 			>
 				<div className="checklist__task-primary">
 					<h3 className="checklist__task-title">
-						{ completed ? (
-							completedTitle || title
-						) : (
+						{ hasActionlink ? (
 							<Button
 								borderless
 								className="checklist__task-title-link"
 								href={ href }
-								onClick={ this.onTaskClick }
+								onClick={ this.onTaskTitleClick }
 								target={ target }
 							>
-								{ title }
+								{ completed ? completedTitle : title }
+								{ this.renderChevron() }
 							</Button>
+						) : (
+							completedTitle
 						) }
 					</h3>
 					<p className="checklist__task-description">{ description }</p>
 					{ completedDescription && (
 						<p className="checklist__task-completed-description">{ completedDescription }</p>
 					) }
-					{ duration && (
-						<small className="checklist__task-duration">
-							{ translate( 'Estimated time:' ) } { duration }
-						</small>
-					) }
-				</div>
-				<div className="checklist__task-secondary">
-					<Button
-						className="checklist__task-action"
-						href={ href }
-						onClick={ onClick }
-						primary={ buttonPrimary }
-						target={ target }
-					>
-						{ taskActionButtonText }
-					</Button>
-					{ duration && (
-						<small className="checklist__task-duration">
-							{ translate( 'Estimated time:' ) } { duration }
-						</small>
-					) }
+
+					<div>
+						{ duration && (
+							<small className="checklist__task-duration">
+								{ translate( 'Estimated time:' ) } { duration }
+							</small>
+						) }
+
+						{ hasActionlink && (
+							<Button
+								className="checklist__task-action"
+								href={ href }
+								onClick={ onClick }
+								primary={ ! this.isTaskCollapsed() }
+								target={ target }
+							>
+								{ taskActionButtonText }
+							</Button>
+						) }
+					</div>
 				</div>
 
 				{ this.renderCheckmarkIcon() }
