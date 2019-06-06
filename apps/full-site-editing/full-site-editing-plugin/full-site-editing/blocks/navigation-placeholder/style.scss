@@ -1,3 +1,12 @@
+.main-navigation {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-size: 1.125em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    -webkit-font-smoothing: antialiased;
+}
+
 .main-navigation .main-menu {
     display: inline-block;
     margin: 0;
@@ -8,6 +17,67 @@
     color: #0073aa;
     display: inline;
     position: relative;
+}
+
+.main-navigation .main-menu > li > a {
+    font-weight: 700;
+    color: #0073aa;
+    margin-right: 0.5rem;
+}
+
+.main-navigation .main-menu > li:last-child > a, .main-navigation .main-menu > li:last-child.menu-item-has-children .submenu-expand {
+    margin-right: 0;
+}
+
+.main-navigation .main-menu > li.menu-item-has-children > a {
+    margin-right: 0.125rem;
+}
+
+.main-navigation .main-menu > li.menu-item-has-children {
+    display: inline-block;
+    position: inherit;
+}
+
+.main-navigation .main-menu > li.menu-item-has-children .submenu-expand {
+    display: inline-block;
+    margin-right: 0.25rem;
+}
+
+.main-navigation .main-menu > li.menu-item-has-children .submenu-expand svg {
+    position: relative;
+    top: 0.3rem;
+}
+
+.main-navigation .main-menu > li > a:hover, .main-navigation .main-menu > li > a:hover + svg {
+    color: #005177;
+}
+
+.main-navigation svg {
+    transition: fill 120ms ease-in-out;
+    fill: currentColor;
+}
+
+.main-navigation a {
+    text-decoration: none;
+}
+
+.main-navigation button {
+    display: inline-block;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-size: 0.88889em;
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+    vertical-align: bottom;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: background 250ms ease-in-out, transform 150ms ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
 .main-menu-more {
