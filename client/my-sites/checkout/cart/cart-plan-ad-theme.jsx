@@ -15,7 +15,7 @@ import page from 'page';
  */
 import CartAd from './cart-ad';
 import { abtest } from 'lib/abtest';
-import { premiumPlan, getAll as getAllCartItems } from 'lib/cart-values/cart-items';
+import { premiumPlan, getAllCartItems } from 'lib/cart-values/cart-items';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { addItem } from 'lib/upgrades/actions';
 import { PLAN_PREMIUM, FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';

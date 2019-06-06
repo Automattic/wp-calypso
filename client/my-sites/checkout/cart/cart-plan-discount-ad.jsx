@@ -14,7 +14,7 @@ import { once } from 'lodash';
  * Internal dependencies
  */
 import CartAd from './cart-ad';
-import { hasPlan, getAll as getAllCartItems } from 'lib/cart-values/cart-items';
+import { hasPlan, getAllCartItems } from 'lib/cart-values/cart-items';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';

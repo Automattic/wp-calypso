@@ -11,7 +11,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CartItem from './cart-item';
-import { getAll, getAllSorted } from 'lib/cart-values/cart-items';
+import { getAllCartItems, getAllCartItemsSorted } from 'lib/cart-values/cart-items';
 import { localize } from 'i18n-calypso';
 
 const COLLAPSED_ITEMS_COUNT = 2;
@@ -64,11 +64,11 @@ export class CartItems extends React.Component {
 	render() {
 		const { cart } = this.props;
 
-		if ( ! getAll( cart ) ) {
+		if ( ! getAllCartItems( cart ) ) {
 			return;
 		}
 
-		let items = getAllSorted( cart ).map( cartItem => {
+		let items = getAllCartItemsSorted( cart ).map( cartItem => {
 			return (
 				<CartItem
 					cart={ cart }

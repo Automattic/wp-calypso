@@ -10,7 +10,7 @@ import { differenceWith, get, isEqual, each, omit } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { getAll as getAllCartItems } from 'lib/cart-values/cart-items';
+import { getAllCartItems } from 'lib/cart-values/cart-items';
 
 export function recordEvents( previousCart, nextCart ) {
 	const previousItems = getAllCartItems( previousCart ),

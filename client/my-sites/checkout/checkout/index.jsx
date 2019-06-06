@@ -22,7 +22,7 @@ import {
 	getGoogleApps,
 	hasRenewalItem,
 	getRenewalItemFromCartItem,
-	getAll as getAllCartItems,
+	getAllCartItems,
 	getDomainRegistrations,
 	getRenewalItems,
 	hasFreeTrial,

@@ -21,7 +21,7 @@ import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { addItem, removeItem } from 'lib/upgrades/actions';
-import { getAll as getAllCartItems } from 'lib/cart-values/cart-items';
+import { getAllCartItems } from 'lib/cart-values/cart-items';
 import { isDotComPlan } from 'lib/products-values';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { abtest } from 'lib/abtest';
