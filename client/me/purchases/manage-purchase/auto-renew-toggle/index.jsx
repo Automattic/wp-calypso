@@ -15,6 +15,8 @@ import { disableAutoRenew, enableAutoRenew } from 'lib/upgrades/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isFetchingUserPurchases } from 'state/purchases/selectors';
 import { fetchUserPurchases } from 'state/purchases/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
+import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import FormToggle from 'components/forms/form-toggle';
 
@@ -24,7 +26,9 @@ class AutoRenewToggle extends Component {
 		siteDomain: PropTypes.string.isRequired,
 		planName: PropTypes.string.isRequired,
 		isEnabled: PropTypes.bool.isRequired,
+		isAtomicSite: PropTypes.bool.isRequired,
 		fetchingUserPurchases: PropTypes.bool,
+		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -45,15 +49,17 @@ class AutoRenewToggle extends Component {
 
 	toggleAutoRenew = () => {
 		const {
-			purchase: { id: purchaseId },
+			purchase: { id: purchaseId, productSlug },
 			currentUserId,
 			isEnabled,
+			isAtomicSite,
 		} = this.props;
 
 		const updateAutoRenew = isEnabled ? disableAutoRenew : enableAutoRenew;
+		const isTogglingToward = ! isEnabled;
 
 		this.setState( {
-			isTogglingToward: ! isEnabled,
+			isTogglingToward,
 			isRequesting: true,
 		} );
 
@@ -64,6 +70,12 @@ class AutoRenewToggle extends Component {
 			if ( success ) {
 				this.props.fetchUserPurchases( currentUserId );
 			}
+		} );
+
+		this.props.recordTracksEvent( 'calypso_purchases_manage_purchase_toggle_auto_renew', {
+			product_slug: productSlug,
+			is_atomic: isAtomicSite,
+			is_toggling_toward: isTogglingToward,
 		} );
 	};
 
@@ -121,8 +133,10 @@ export default connect(
 		fetchingUserPurchases: isFetchingUserPurchases( state ),
 		isEnabled: ! isExpiring( purchase ),
 		currentUserId: getCurrentUserId( state ),
+		isAtomicSite: isSiteAtomic( state, purchase.siteId ),
 	} ),
 	{
 		fetchUserPurchases,
+		recordTracksEvent,
 	}
 )( AutoRenewToggle );
