@@ -187,7 +187,7 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		if ( hideFreePlan ) {
-			plans = plans.filter( plan => ! isFreePlan( plan ) );
+			plans = plans.filter( planSlug => ! isFreePlan( planSlug ) );
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
