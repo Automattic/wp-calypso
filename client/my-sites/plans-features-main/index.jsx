@@ -138,7 +138,7 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			selectedPlan,
 			hideFreePlan,
-			plans: plansProp,
+			planTypes,
 		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
@@ -166,8 +166,8 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		let plans;
-		if ( plansProp && plansProp.length ) {
-			plans = plansProp.map( type => findPlansKeys( { group, term, type } )[ 0 ] );
+		if ( planTypes && planTypes.length ) {
+			plans = planTypes.map( type => findPlansKeys( { group, term, type } )[ 0 ] );
 		} else if ( group === GROUP_JETPACK ) {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
@@ -390,7 +390,7 @@ PlansFeaturesMain.propTypes = {
 	siteSlug: PropTypes.string,
 	withWPPlanTabs: PropTypes.bool,
 	plansWithScroll: PropTypes.bool,
-	plans: PropTypes.array,
+	planTypes: PropTypes.array,
 };
 
 PlansFeaturesMain.defaultProps = {

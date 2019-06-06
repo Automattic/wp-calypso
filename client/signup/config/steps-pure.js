@@ -171,7 +171,7 @@ export function generateSteps( {
 			props: {
 				allowSkip: false,
 				hideFreePlan: true,
-				plans: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
+				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
 			},
 		},
 

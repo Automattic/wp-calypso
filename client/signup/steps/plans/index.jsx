@@ -142,7 +142,7 @@ export class PlansStep extends Component {
 			hideFreePlan,
 			isLaunchPage,
 			selectedSite,
-			plans,
+			planTypes,
 		} = this.props;
 
 		return (
@@ -161,7 +161,7 @@ export class PlansStep extends Component {
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					plansWithScroll={ true }
-					plans={ plans }
+					planTypes={ planTypes }
 				/>
 				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
 				 * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
@@ -240,6 +240,7 @@ PlansStep.propTypes = {
 	stepSectionName: PropTypes.string,
 	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
+	planTypes: PropTypes.array,
 };
 
 /**
