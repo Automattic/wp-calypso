@@ -96,7 +96,7 @@ class RemoveDomainDialog extends Component {
 			<Fragment>
 				<FormSectionHeading>
 					{ translate(
-						'{{strong}}Delete{{/strong}} this domain by typing "%(domain)s" into the field below:',
+						'{{strong}}Delete{{/strong}} this domain by typing “%(domain)s” into the field below:',
 						{
 							args: { domain: productName },
 							components: { strong: <strong /> },
@@ -104,20 +104,21 @@ class RemoveDomainDialog extends Component {
 					) }
 				</FormSectionHeading>
 				<FormFieldset>
-					<FormLabel>
+					<FormLabel htmlFor="remove-domain-dialog__form-domain">
 						{ translate( 'Type your domain name to proceed', { context: 'Domain name' } ) }
-						<FormTextInput
-							name="domain"
-							isError={ this.state.showErrors && ! this.state.domainValidated }
-							onChange={ this.onDomainChange }
-						/>
-						{ this.state.showErrors && ! this.state.domainValidated && (
-							<FormInputValidation
-								text={ translate( 'The domain name you entered does not match.' ) }
-								isError
-							/>
-						) }
 					</FormLabel>
+					<FormTextInput
+						name="domain"
+						id="remove-domain-dialog__form-domain"
+						isError={ this.state.showErrors && ! this.state.domainValidated }
+						onChange={ this.onDomainChange }
+					/>
+					{ this.state.showErrors && ! this.state.domainValidated && (
+						<FormInputValidation
+							text={ translate( 'The domain name you entered does not match.' ) }
+							isError
+						/>
+					) }
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
@@ -155,6 +156,9 @@ class RemoveDomainDialog extends Component {
 	}
 
 	nextStep = closeDialog => {
+		if ( this.props.isRemoving ) {
+			return;
+		}
 		switch ( this.state.step ) {
 			case 1:
 				this.setState( { step: 2 } );
@@ -170,6 +174,9 @@ class RemoveDomainDialog extends Component {
 	};
 
 	close = () => {
+		if ( this.props.isRemoving ) {
+			return;
+		}
 		this.props.closeDialog();
 		this.setState( { step: 1 } );
 	};
@@ -185,8 +192,8 @@ class RemoveDomainDialog extends Component {
 			},
 			{
 				action: 'remove',
-				disabled: this.props.isRemoving,
 				isPrimary: true,
+				additionalClassNames: this.props.isRemoving ? 'is-busy' : '',
 				label: translate( 'Delete this Domain' ),
 				onClick: this.nextStep,
 			},
