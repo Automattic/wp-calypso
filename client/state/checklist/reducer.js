@@ -4,6 +4,7 @@
 import { combineReducers, keyedReducer } from 'state/utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
+	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	SITE_CHECKLIST_RECEIVE,
 	SITE_CHECKLIST_TASK_UPDATE,
 } from 'state/action-types';
@@ -33,6 +34,17 @@ function items( state = {}, action ) {
 		case JETPACK_MODULE_ACTIVATE_SUCCESS:
 			if ( moduleTaskMap.hasOwnProperty( action.moduleSlug ) ) {
 				return markChecklistTaskComplete( state, moduleTaskMap[ action.moduleSlug ] );
+			}
+			break;
+		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
+			if ( action.moduleSlug === 'photon' || action.moduleSlug === 'photon-cdn' ) {
+				// We can't know if the other module is still active, so we don't change
+				// Site Accelerator task completion state.
+				return;
+			}
+
+			if ( moduleTaskMap.hasOwnProperty( action.moduleSlug ) ) {
+				return toggleChecklistTask( state, moduleTaskMap[ action.moduleSlug ] );
 			}
 			break;
 	}
