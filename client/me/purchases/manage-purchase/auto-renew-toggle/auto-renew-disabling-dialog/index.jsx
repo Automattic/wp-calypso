@@ -123,23 +123,21 @@ class AutoRenewDisablingDialog extends Component {
 			>
 				<p>
 					{ translate(
-						"In order to proceed, we recommend that you download a backup of your site's content to avoid losing content in the future."
+						'Before you continue, we recommend downloading a backup of your site – ' +
+							"that way, you'll have your content to use on any future websites you create."
 					) }
 				</p>
 				<ul>
 					<li>
 						<Button href={ exportPath } primary>
-							{ translate( 'Backup my content' ) }
+							{ translate( 'Download a backup' ) }
 						</Button>
 					</li>
 					<li>
 						<Button onClick={ this.onClickAtomicFollowUpConfirm }>
-							{ translate( "I've already taken a backup, please cancel auto-renewal" ) }
-						</Button>
-					</li>
-					<li>
-						<Button onClick={ this.onClickAtomicFollowUpConfirm }>
-							{ translate( "I'm not interested in taking a backup, please cancel auto-renewal" ) }
+							{ translate(
+								"I don't need a backup OR I already have a backup. Cancel my auto-renewal."
+							) }
 						</Button>
 					</li>
 				</ul>
