@@ -20,7 +20,6 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormToggle from 'components/forms/form-toggle';
-import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
 import { isMobile } from 'lib/viewport';
@@ -273,9 +272,8 @@ class TermFormDialog extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLabel>
-					<FormToggle checked={ isTopLevel } onChange={ this.onTopLevelChange } />
-					<span className="term-form-dialog__label">
+				<FormToggle checked={ isTopLevel } onChange={ this.onTopLevelChange }>
+					<span>
 						{ translate( 'Top level %(term)s', {
 							args: { term: labels.singular_name },
 							context: 'Terms: New term being created is top level',
@@ -292,7 +290,7 @@ class TermFormDialog extends Component {
 							} ) }
 						</span>
 					) }
-				</FormLabel>
+				</FormToggle>
 				{ ! isTopLevel && (
 					<div className="term-form-dialog__parent-tree-selector">
 						<FormLegend>
