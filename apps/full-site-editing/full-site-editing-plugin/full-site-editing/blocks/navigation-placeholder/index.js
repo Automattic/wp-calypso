@@ -23,7 +23,7 @@ registerBlockType( 'a8c/navigation-placeholder', {
 	attributes: {
 		themeLocation: {
 			type: 'string',
-			default: 'footer',
+			default: 'main-1',
 		},
 	},
 	edit,

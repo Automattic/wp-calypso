@@ -5,6 +5,12 @@
  * @package full-site-editing
  */
 
+/**
+ * Determines necessary wp_nav_menu() parameters by given theme location.
+ *
+ * @param string $location Theme location.
+ * @return array
+ */
  function get_menu_params_by_theme_location( $location ) {
 	switch ( $location ) {
 		case 'footer':
@@ -36,6 +42,37 @@
 }
 
 /**
+ * Determines necessary attributes for the wrapping `nav` element.
+ *
+ * @param string $location Theme location.
+ * @return array
+ */
+function get_wrapper_attributes_by_theme_location( $location ) {
+	switch ( $location ) {
+		case 'footer':
+			$attributes = [
+				'class' => 'footer-navigation',
+				'label' => 'Footer Menu',
+			];
+			break;
+		case 'social':
+			$attributes = [
+				'class' => 'social-navigation',
+				'label' => 'Social Links Menu',
+			];
+			break;
+		case 'main-1':
+		default:
+			$attributes = [
+				'class' => 'main-navigation',
+				'label' => 'Top Menu',
+			];
+			break;
+	}
+	return $attributes;
+}
+
+/**
  * Renders post content.
  *
  * @param array  $attributes Block attributes.
@@ -44,9 +81,10 @@
  */
 function render_navigation_placeholder_block( $attributes, $content ) {
 	$location = ! empty( $attributes['themeLocation'] ) ? $attributes['themeLocation'] : null;
+	$wrapper_attr = get_wrapper_attributes_by_theme_location( $location );
 	ob_start();
 	?>
-	<nav id="site-navigation" class="main-navigation" aria-label="<?php esc_attr_e( 'Top Menu', 'twentynineteen' ); ?>">
+	<nav class="<?php echo esc_attr( $wrapper_attr['class'] ); ?>" aria-label="<?php esc_attr_e( $wrapper_attr['label'], 'twentynineteen' ); ?>">
 		<?php
 		wp_nav_menu( get_menu_params_by_theme_location( $location ) );
 		?>
