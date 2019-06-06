@@ -71,7 +71,34 @@ const props = {
 	translate: x => x,
 };
 
+describe( 'PlansFeaturesMain.renderFreePlanBanner()', () => {
+	test( 'Should return null when called with showOnlyEcommercePlans props', () => {
+		const instance = new PlansFeaturesMain( {
+			...props,
+			showOnlyEcommercePlans: true,
+		} );
+		const freePlanBanner = instance.renderFreePlanBanner();
+		expect( freePlanBanner ).toBeNull();
+	} );
+	test( 'Should return null when called with hideFreePlan props', () => {
+		const instance = new PlansFeaturesMain( {
+			...props,
+			hideFreePlan: true,
+		} );
+		const freePlanBanner = instance.renderFreePlanBanner();
+		expect( freePlanBanner ).toBeNull();
+	} );
+} );
+
 describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
+	test( 'Should render <PlanFeatures /> with eCommerce plans when called with showOnlyEcommercePlans props', () => {
+		const instance = new PlansFeaturesMain( {
+			...props,
+			showOnlyEcommercePlans: true,
+		} );
+		const plans = instance.getPlansForPlanFeatures();
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+	} );
 	test( 'Should render <PlanFeatures /> with Jetpack monthly plans when called with jetpack props', () => {
 		const instance = new PlansFeaturesMain( {
 			...props,
