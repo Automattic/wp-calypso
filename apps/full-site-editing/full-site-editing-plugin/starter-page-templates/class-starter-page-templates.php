@@ -141,12 +141,14 @@ class Starter_Page_Templates {
 	 */
 	public function fetch_vertical_data() {
 		$vertical_id        = get_option( 'site_vertical', 'default' );
-		$transient_key      = 'starter_page_templates_' . $vertical_id;
+		$transient_key      = implode( '_', [ 'starter_page_templates', $vertical_id, get_locale() ] );
 		$vertical_templates = get_transient( $transient_key );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
 		if ( false === $vertical_templates ) {
-			$request_url = 'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates';
+			$request_url = add_query_arg( [
+				'_locale' => $this->get_iso_639_locale(),
+			], 'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates' );
 			$response    = wp_remote_get( esc_url_raw( $request_url ) );
 			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
 				return array();
@@ -156,5 +158,22 @@ class Starter_Page_Templates {
 		}
 
 		return $vertical_templates;
+	}
+
+	/**
+	 * Returns ISO 639 conforming locale string.
+	 *
+	 * @return string ISO 639 locale string
+	 */
+	private function get_iso_639_locale() {
+		$language = strtolower( get_locale() );
+
+		if ( in_array( $language, [ 'zh_tw', 'zh_cn' ], true ) ) {
+			$language = str_replace( '_', '-', $language );
+		} else {
+			$language = preg_replace( '/(_.*)$/i', '', $language );
+		}
+
+		return $language;
 	}
 }
