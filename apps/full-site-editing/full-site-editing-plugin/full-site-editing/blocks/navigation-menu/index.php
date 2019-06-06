@@ -81,7 +81,7 @@ function get_wrapper_attributes_by_theme_location( $location ) {
  * @return string
  */
 function render_navigation_menu_block( $attributes, $content ) {
-	$location = 'footer';
+	$location = ! empty( $attributes['themeLocation'] ) ? $attributes['themeLocation'] : null;
 	$wrapper_attr = get_wrapper_attributes_by_theme_location( $location );
 	ob_start();
 	?>
