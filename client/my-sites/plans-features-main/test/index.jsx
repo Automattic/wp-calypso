@@ -72,7 +72,7 @@ const props = {
 };
 
 describe( 'PlansFeaturesMain.renderFreePlanBanner()', () => {
-	test( 'Should return null when called with showOnlyEcommercePlans props', () => {
+	test.skip( 'Should return null when called with showOnlyEcommercePlans props', () => {
 		const instance = new PlansFeaturesMain( {
 			...props,
 			showOnlyEcommercePlans: true,
@@ -91,7 +91,7 @@ describe( 'PlansFeaturesMain.renderFreePlanBanner()', () => {
 } );
 
 describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
-	test( 'Should render <PlanFeatures /> with eCommerce plans when called with showOnlyEcommercePlans props', () => {
+	test.skip( 'Should render <PlanFeatures /> with eCommerce plans when called with showOnlyEcommercePlans props', () => {
 		const instance = new PlansFeaturesMain( {
 			...props,
 			showOnlyEcommercePlans: true,

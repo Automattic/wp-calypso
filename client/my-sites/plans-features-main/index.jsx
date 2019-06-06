@@ -33,7 +33,13 @@ import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
-import { plansLink, planMatches, findPlansKeys, getPlan } from 'lib/plans';
+import {
+	plansLink,
+	planMatches,
+	findPlansKeys,
+	getPlan,
+	isFreePlan,
+} from 'lib/plans';
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
@@ -132,7 +138,7 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			selectedPlan,
 			hideFreePlan,
-			showOnlyEcommercePlans,
+			plans: plansProp,
 		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
@@ -160,11 +166,8 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		let plans;
-		if ( showOnlyEcommercePlans ) {
-			plans = [
-				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
-				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
-			];
+		if ( plansProp && plansProp.length ) {
+			plans = plansProp.map( type => findPlansKeys( { group, term, type } )[ 0 ] );
 		} else if ( group === GROUP_JETPACK ) {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
@@ -184,7 +187,7 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		if ( hideFreePlan ) {
-			plans.shift();
+			plans = plans.filter( plan => ! isFreePlan( plan ) );
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
@@ -303,9 +306,9 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
-		const { hideFreePlan, showOnlyEcommercePlans, translate } = this.props;
+		const { hideFreePlan, translate } = this.props;
 		const className = 'is-free-plan';
-		if ( hideFreePlan || showOnlyEcommercePlans ) {
+		if ( hideFreePlan ) {
 			return null;
 		}
 
@@ -387,7 +390,7 @@ PlansFeaturesMain.propTypes = {
 	siteSlug: PropTypes.string,
 	withWPPlanTabs: PropTypes.bool,
 	plansWithScroll: PropTypes.bool,
-	showOnlyEcommercePlans: PropTypes.bool,
+	plans: PropTypes.array,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -400,7 +403,6 @@ PlansFeaturesMain.defaultProps = {
 	siteSlug: '',
 	withWPPlanTabs: false,
 	plansWithScroll: false,
-	showOnlyEcommercePlans: false,
 };
 
 const guessCustomerType = ( state, props ) => {
