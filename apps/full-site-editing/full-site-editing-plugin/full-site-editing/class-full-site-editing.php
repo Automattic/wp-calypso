@@ -269,6 +269,12 @@ class Full_Site_Editing {
 		register_block_type(
 			'a8c/navigation-placeholder',
 			array(
+				'attributes' => [
+					'themeLocation' => [
+						'default' => 'main-1',
+						'type' => 'string',
+					],
+				],
 				'render_callback' => 'render_navigation_placeholder_block',
 			)
 		);
