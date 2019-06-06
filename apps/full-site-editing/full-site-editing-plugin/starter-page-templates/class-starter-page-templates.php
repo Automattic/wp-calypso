@@ -63,7 +63,6 @@ class Starter_Page_Templates {
 			'show_in_rest'   => true,
 			'object_subtype' => 'page',
 		);
-		// TODO: meta field name
 		register_meta( 'post', '_starter_page_template', $args );
 	}
 
