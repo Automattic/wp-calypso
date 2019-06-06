@@ -52,6 +52,11 @@ export default class InfiniteList extends React.Component {
 	_isMounted = false;
 	smartSetState = smartSetState;
 
+	namedRefs = {
+		topPlaceholder: React.createRef(),
+		bottomPlaceholder: React.createRef(),
+	};
+
 	componentWillMount() {
 		const url = page.current;
 		let newState, scrollTop;
@@ -296,8 +301,9 @@ export default class InfiniteList extends React.Component {
 	}
 
 	boundsForRef = ref => {
-		if ( ref in this.refs ) {
-			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
+		if ( ref in this.namedRefs ) {
+			const node = this.namedRefs[ ref ].current;
+			return node ? node.getBoundingClientRect() : null;
 		}
 		return null;
 	};
@@ -379,14 +385,14 @@ export default class InfiniteList extends React.Component {
 		return (
 			<div { ...propsToTransfer }>
 				<div
-					ref="topPlaceholder"
+					ref={ this.namedRefs.topPlaceholder }
 					className={ spacerClassName }
 					style={ { height: this.state.topPlaceholderHeight } }
 				/>
 				{ itemsToRender }
 				{ this.props.renderTrailingItems() }
 				<div
-					ref="bottomPlaceholder"
+					ref={ this.namedRefs.bottomPlaceholder }
 					className={ spacerClassName }
 					style={ { height: this.state.bottomPlaceholderHeight } }
 				/>
