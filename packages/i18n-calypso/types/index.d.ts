@@ -7,28 +7,14 @@
 import * as React from 'react';
 import moment from 'moment';
 
-interface InterpolateComponentsOptions {
-	mixedString: string;
-	components: i18nCalypso.ComponentInterpolations;
-	throwErrors?: boolean;
-}
-
-declare function interpolateComponents(
-	options: InterpolateComponentsOptions
-): string | React.ReactFragment;
-
 declare namespace i18nCalypso {
-	export interface NormalizedTranslateArgs extends TranslateOptions {
-		original: string;
-		components?: ComponentInterpolations;
-	}
-
-	export type TranslateHook = (
-		translation: string | React.ReactFragment,
-		options:
-			| NormalizedTranslateArgs
-			| ( NormalizedTranslateArgs & { plural: string; count: number } )
-	) => ReturnType< typeof translate >;
+	type NormalizedTranslateArgs =
+		| ( TranslateOptions & { original: string } )
+		| ( TranslateOptions & {
+				original: string;
+				plural: string;
+				count: number;
+		  } );
 
 	export type Substitution = string | number;
 
@@ -53,36 +39,32 @@ declare namespace i18nCalypso {
 		comment?: string;
 
 		/**
+		 * Components to be interpolated in the translated string.
+		 */
+		components?: ComponentInterpolations;
+
+		/**
 		 * Provides the ability for the translator to provide a different translation for the same text in two locations (dependent on context). Usually context should only be used after a string has been discovered to require different translations. If you want to provide help on how to translate (which is highly appreciated!), please use a comment.
 		 */
 		context?: string;
 	}
 
-	export type TranslationWithComponents = ReturnType< typeof interpolateComponents >;
+	// This deprecated signature is still supported
+	export interface DeprecatedTranslateOptions extends TranslateOptions {
+		original: string | { single: string; plural: string; count: number };
+	}
 
-	export function translate( original: string ): string;
+	// Translate hooks force us to open up this type.
+	export type TranslateResult = string | React.ReactFragment;
 
-	export function translate(
-		options: TranslateOptions & { original: string } & { components: ComponentInterpolations }
-	): TranslationWithComponents;
-	export function translate( options: TranslateOptions & { original: string } ): string;
-
-	export function translate(
-		original: string,
-		options: TranslateOptions & { components: ComponentInterpolations }
-	): TranslationWithComponents;
-	export function translate( original: string, options: TranslateOptions ): string;
-
-	export function translate(
-		original: string,
-		plural: string,
-		options: TranslateOptions & { count: number } & { components: ComponentInterpolations }
-	): TranslationWithComponents;
+	export function translate( options: DeprecatedTranslateOptions ): TranslateResult;
+	export function translate( original: string ): TranslateResult;
+	export function translate( original: string, options: TranslateOptions ): TranslateResult;
 	export function translate(
 		original: string,
 		plural: string,
 		options: TranslateOptions & { count: number }
-	): string;
+	): TranslateResult;
 
 	export function hasTranslation( original: string ): boolean;
 
@@ -117,6 +99,11 @@ declare namespace i18nCalypso {
 	export function localize< C >( component: C ): LocalizedComponent< C >;
 
 	export function useTranslate(): typeof translate;
+
+	export type TranslateHook = (
+		translation: TranslateResult,
+		options: NormalizedTranslateArgs
+	) => TranslateResult;
 
 	export function registerTranslateHook( hook: TranslateHook ): void;
 }
