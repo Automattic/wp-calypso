@@ -18,7 +18,7 @@ registerBlockType( 'a8c/site-logo', {
 	category: 'layout',
 	keywords: [ __( 'logo' ), __( 'icon' ), __( 'site' ) ],
 	edit: () => {
-		return <ServerSideRender block="a8c/site-logo" />;
+		return <ServerSideRender block="a8c/site-logo" attributes={ { addSiteLink: false } } />;
 	},
 	save: () => null,
 } );

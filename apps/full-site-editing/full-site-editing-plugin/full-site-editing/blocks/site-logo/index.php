@@ -22,5 +22,18 @@ function render_site_logo( $attributes, $content ) {
 		return '';
 	}
 
-	return get_custom_logo();
+	$add_site_link = $attributes['addSiteLink'];
+
+	//publish view
+	if ( $add_site_link ) {
+		return get_custom_logo();
+	}
+
+	//edit view
+	$custom_logo_id = get_theme_mod( 'custom_logo' );
+	return wp_get_attachment_image( $custom_logo_id , 'full', false, array(
+		'class'    => 'custom-logo',
+	) );
+
+
 }

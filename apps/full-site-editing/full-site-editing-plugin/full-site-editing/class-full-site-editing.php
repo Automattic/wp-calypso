@@ -350,6 +350,12 @@ class Full_Site_Editing {
 		register_block_type(
 			'a8c/site-logo',
 			array(
+				'attributes'      => array(
+					'addSiteLink'    => array(
+						'type'      => 'boolean',
+						'default'   => true,
+					),
+				),
 				'render_callback' => 'render_site_logo',
 			)
 		);
