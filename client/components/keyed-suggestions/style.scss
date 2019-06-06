@@ -9,6 +9,8 @@
 	border-top: 0;
 	padding: 4px 8px;
 	font-size: 13px;
+	display: flex;
+	align-items: center;
 
 	.keyed-suggestions__category-name {
 		text-transform: uppercase;
@@ -19,10 +21,11 @@
 		margin-left: 6px;
 		text-transform: uppercase;
 		color: var( --color-text-subtle );
+		flex: 1;
 	}
 
 	.keyed-suggestions__category-show-all {
-		float: right;
+		font-size: 13px;
 		cursor: pointer;
 	}
 }
