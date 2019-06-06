@@ -59,7 +59,7 @@ const insertTemplate = template => {
 		title: replacePlaceholders( template.title, siteInformation ),
 		meta: {
 			...currentMeta,
-			starter_page_template: template.slug, // TODO: change for the proper identifier
+			_starter_page_template: template.slug, // TODO: change for the proper identifier
 		},
 	} );
 
