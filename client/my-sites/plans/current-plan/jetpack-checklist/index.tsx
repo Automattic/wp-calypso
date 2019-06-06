@@ -223,6 +223,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							description={ translate(
 								'Enable fast, high-definition, ad-free video hosting through our global CDN network.'
 							) }
+							completed={ this.isComplete( 'jetpack_video_hosting' ) }
 							completedButtonText={ translate( 'Upload videos' ) }
 							completedTitle={ translate(
 								'High-speed, high-definition, and ad-free video hosting is enabled.'
