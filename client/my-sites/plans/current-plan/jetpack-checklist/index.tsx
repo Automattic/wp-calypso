@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Fragment, PureComponent } from 'react';
+import React, { Fragment, PureComponent, ReactElement, ReactNode } from 'react';
 import { connect } from 'react-redux';
-import { get, includes, map } from 'lodash';
+import { get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -21,32 +21,51 @@ import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
 import {
+	getJetpackChecklistTaskDuration,
 	JETPACK_SECURITY_CHECKLIST_TASKS,
 	JETPACK_PERFORMANCE_CHECKLIST_TASKS,
 	JETPACK_CHECKLIST_TASK_AKISMET,
 	JETPACK_CHECKLIST_TASK_BACKUPS_REWIND,
 	JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS,
 	JETPACK_CHECKLIST_TASK_PROTECT,
+	ChecklistTasksetUi,
 } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { isEnabled } from 'config';
 import ChecklistSectionTitle from './checklist-section-title';
+import { URL } from 'types';
+import { getSitePlanSlug } from 'state/sites/plans/selectors';
+import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-class JetpackChecklist extends PureComponent {
-	isComplete( taskId ) {
+interface ChecklistTaskState {
+	[taskId: string]: {
+		completed: null | boolean;
+	};
+}
+
+interface Props {
+	isPremium: boolean;
+	isProfessional: boolean;
+	isPaidPlan: boolean;
+	taskStatuses: ChecklistTaskState | undefined;
+	widgetCustomizerPaneUrl: URL | null;
+}
+
+class JetpackChecklist extends PureComponent< Props > {
+	isComplete( taskId: string ): boolean {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
 
-	handleTaskStart = ( { taskId, tourId } ) => () => {
+	handleTaskStart = ( { taskId, tourId }: { taskId: string; tourId?: string } ) => () => {
 		if ( taskId ) {
 			this.props.recordTracksEvent( 'calypso_checklist_task_start', {
 				checklist_name: 'jetpack',
@@ -78,17 +97,55 @@ class JetpackChecklist extends PureComponent {
 	 * it's necessary to add an element with the `excludeFromCount` prop. That requires the use of a
 	 * render method rather than a "true" Component definition.
 	 *
-	 * @param {string} title The checklist title
-	 * @return {JSXElement} Section title element
+	 * @param title The checklist title
+	 *
+	 * @return Section title element
 	 */
-	renderSectionTitle( title ) {
+	renderSectionTitle( title: string ): ReactElement {
 		return <ChecklistSectionTitle excludeFromCount title={ title } />;
+	}
+
+	renderTaskSet( checklistTasks: ChecklistTasksetUi ): ReactNode {
+		if ( ! this.props.taskStatuses ) {
+			return null;
+		}
+		const taskIds =
+			checklistTasks === JETPACK_PERFORMANCE_CHECKLIST_TASKS
+				? // Force render all the tasks from this development-only list
+				  // @todo Remove this branch when API returns performance task statuses
+				  Object.keys( JETPACK_PERFORMANCE_CHECKLIST_TASKS )
+				: Object.keys( this.props.taskStatuses ).filter( taskId => taskId in checklistTasks );
+
+		return taskIds.map( taskId => {
+			const task = checklistTasks[ taskId ];
+
+			const isComplete = this.isComplete( taskId );
+
+			return (
+				<Task
+					completed={ isComplete }
+					completedButtonText={ task.completedButtonText }
+					completedTitle={ task.completedTitle }
+					description={ task.description }
+					duration={ task.duration }
+					href={ task.getUrl( this.props.siteSlug, isComplete ) }
+					onClick={ this.handleTaskStart( {
+						taskId,
+						tourId: get( task, [ 'tourId' ] ),
+					} ) }
+					title={ task.title }
+					key={ taskId }
+				/>
+			);
+		} );
 	}
 
 	render() {
 		const {
 			akismetFinished,
 			isPaidPlan,
+			isPremium,
+			isProfessional,
 			productInstallStatus,
 			rewindState,
 			siteId,
@@ -101,7 +158,7 @@ class JetpackChecklist extends PureComponent {
 
 		const isRewindActive = rewindState === 'active' || rewindState === 'provisioning';
 		const isRewindAvailable = rewindState !== 'uninitialized' && rewindState !== 'unavailable';
-		const isRewindUnAvailable = rewindState === 'unavailable';
+		const isRewindUnavailable = rewindState === 'unavailable';
 
 		return (
 			<Fragment>
@@ -135,7 +192,7 @@ class JetpackChecklist extends PureComponent {
 							} ) }
 						/>
 					) }
-					{ isPaidPlan && isRewindUnAvailable && productInstallStatus && (
+					{ isPaidPlan && isRewindUnavailable && productInstallStatus && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS }
 							completed={ vaultpressFinished }
@@ -154,63 +211,52 @@ class JetpackChecklist extends PureComponent {
 							target="_blank"
 						/>
 					) }
-					{ map( taskStatuses, ( status, taskId ) => {
-						const task = JETPACK_SECURITY_CHECKLIST_TASKS[ taskId ];
-
-						if ( ! task ) {
-							// UI does not support this task.
-							return;
-						}
-
-						return (
-							<Task
-								completed={ get( status, 'completed', false ) }
-								completedButtonText={ task.completedButtonText }
-								completedTitle={ task.completedTitle }
-								description={ task.description }
-								duration={ task.duration }
-								href={ task.getUrl( siteSlug ) }
-								onClick={ this.handleTaskStart( {
-									taskId,
-									tourId: get( task, 'tourId', null ),
-								} ) }
-								title={ task.title }
-								key={ taskId }
-							/>
-						);
-					} ) }
+					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS ) }
 					{ /* For Checklist completion calculation to work correctly, children shold be a flat list of tasks */ }
 					{ isEnabled( 'jetpack/checklist/performance' ) &&
 						this.renderSectionTitle( translate( 'Performance Tools' ) ) }
-					{ isEnabled( 'jetpack/checklist/performance' ) && (
-						<Task title="Static task for demonstration purposes." completed />
-					) }
 					{ isEnabled( 'jetpack/checklist/performance' ) &&
-						map( taskStatuses, ( status, taskId ) => {
-							const task = JETPACK_PERFORMANCE_CHECKLIST_TASKS[ taskId ];
-
-							if ( ! task ) {
-								// UI does not support this task.
-								return;
+						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS ) }
+					{ isEnabled( 'jetpack/checklist/performance' ) && ( isPremium || isProfessional ) && (
+						<Task
+							title={ translate( 'Video Hosting' ) }
+							description={ translate(
+								'Enable fast, high-definition, ad-free video hosting through our global CDN network.'
+							) }
+							completed={ this.isComplete( 'jetpack_video_hosting' ) }
+							completedButtonText={ translate( 'Upload videos' ) }
+							completedTitle={ translate(
+								'High-speed, high-definition, and ad-free video hosting is enabled.'
+							) }
+							duration={ getJetpackChecklistTaskDuration( 3 ) }
+							href={
+								this.isComplete( 'jetpack_video_hosting' )
+									? `/media/${ siteSlug }`
+									: `/settings/performance/${ siteSlug }`
 							}
-
-							return (
-								<Task
-									completed={ get( status, 'completed', false ) }
-									completedButtonText={ task.completedButtonText }
-									completedTitle={ task.completedTitle }
-									description={ task.description }
-									duration={ task.duration }
-									href={ task.getUrl( siteSlug ) }
-									onClick={ this.handleTaskStart( {
-										taskId,
-										tourId: get( task, 'tourId', null ),
-									} ) }
-									title={ task.title }
-									key={ taskId }
-								/>
-							);
-						} ) }
+							onClick={ this.handleTaskStart( { taskId: 'jetpack_video_hosting' } ) }
+						/>
+					) }
+					{ isEnabled( 'jetpack/checklist/performance' ) && isProfessional && (
+						<Task
+							title={ translate( 'Enhanced Search' ) }
+							description={ translate(
+								'Activate an enhanced, customizable search to replace the default WordPress search feature.'
+							) }
+							completedButtonText={ translate( 'Add search widget' ) }
+							completedTitle={ translate(
+								'The default WordPress search has been replaced by Enhanced Search.'
+							) }
+							duration={ getJetpackChecklistTaskDuration( 1 ) }
+							completed={ this.isComplete( 'jetpack_search' ) }
+							href={
+								this.isComplete( 'jetpack_search' )
+									? this.props.widgetCustomizerPaneUrl
+									: `/settings/performance/${ siteSlug }`
+							}
+							onClick={ this.handleTaskStart( { taskId: 'jetpack_search' } ) }
+						/>
+					) }
 				</Checklist>
 
 				{ wpAdminUrl && (
@@ -241,12 +287,20 @@ export default connect(
 			  } )
 			: undefined;
 
+		const planSlug = getSitePlanSlug( state, siteId );
+		const isPremium = !! planSlug && isPremiumPlan( planSlug );
+		const isProfessional = ! isPremium && !! planSlug && isBusinessPlan( planSlug );
+		const isPaidPlan = isPremium || isProfessional || isSiteOnPaidPlan( state, siteId );
+
 		return {
 			akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
 			vaultpressFinished:
 				productInstallStatus &&
 				includes( [ 'installed', 'skipped' ], productInstallStatus.vaultpress_status ),
-			isPaidPlan: isSiteOnPaidPlan( state, siteId ),
+			widgetCustomizerPaneUrl: siteId ? getCustomizerUrl( state, siteId, 'widgets' ) : null,
+			isPremium,
+			isProfessional,
+			isPaidPlan,
 			rewindState,
 			productInstallStatus,
 			siteId,
