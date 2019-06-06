@@ -62,6 +62,7 @@ declare namespace i18nCalypso {
 	export function numberFormat( number: number, options: NumberFormatOptions );
 
 	export interface LocalizeProps {
+		locale: string;
 		translate: typeof translate;
 		numberFormat: typeof numberFormat;
 		moment: typeof moment;
