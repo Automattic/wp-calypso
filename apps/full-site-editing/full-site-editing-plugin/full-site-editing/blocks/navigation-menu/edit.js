@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 
-const NavigationPlaceholderEdit = ( { attributes } ) => {
+const NavigationMenuEdit = ( { attributes } ) => {
 	const redirectToCustomizer = () => {
 		window.location.href = 'https://wordpress.com';
 	};
@@ -26,9 +26,9 @@ const NavigationPlaceholderEdit = ( { attributes } ) => {
 					<IconButton icon="edit" label={ __( 'Edit Menu' ) } onClick={ redirectToCustomizer } />
 				</Toolbar>
 			</BlockControls>
-			<ServerSideRender block="a8c/navigation-placeholder" attributes={ attributes } />
+			<ServerSideRender block="a8c/navigation-menu" attributes={ attributes } />
 		</Fragment>
 	);
 };
 
-export default NavigationPlaceholderEdit;
+export default NavigationMenuEdit;

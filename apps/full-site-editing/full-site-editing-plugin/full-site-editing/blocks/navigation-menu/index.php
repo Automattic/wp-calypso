@@ -1,6 +1,6 @@
 <?php
 /**
- * Render post content block file.
+ * Render navigation menus.
  *
  * @package full-site-editing
  */
@@ -80,8 +80,8 @@ function get_wrapper_attributes_by_theme_location( $location ) {
  * @param string $content    Block content.
  * @return string
  */
-function render_navigation_placeholder_block( $attributes, $content ) {
-	$location = ! empty( $attributes['themeLocation'] ) ? $attributes['themeLocation'] : null;
+function render_navigation_menu_block( $attributes, $content ) {
+	$location = 'footer';
 	$wrapper_attr = get_wrapper_attributes_by_theme_location( $location );
 	ob_start();
 	?>

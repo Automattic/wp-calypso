@@ -267,7 +267,7 @@ class Full_Site_Editing {
 	 */
 	public function register_blocks() {
 		register_block_type(
-			'a8c/navigation-placeholder',
+			'a8c/navigation-menu',
 			array(
 				'attributes' => [
 					'themeLocation' => [
@@ -275,7 +275,7 @@ class Full_Site_Editing {
 						'type' => 'string',
 					],
 				],
-				'render_callback' => 'render_navigation_placeholder_block',
+				'render_callback' => 'render_navigation_menu_block',
 			)
 		);
 

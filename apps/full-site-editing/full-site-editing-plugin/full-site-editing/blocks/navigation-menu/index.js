@@ -10,9 +10,9 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-registerBlockType( 'a8c/navigation-placeholder', {
-	title: __( 'Navigation Placeholder' ),
-	description: __( 'Placeholder for site-wide navigation and menus.' ),
+registerBlockType( 'a8c/navigation-menu', {
+	title: __( 'Navigation Menu' ),
+	description: __( 'Visual placeholder for site-wide navigation and menus.' ),
 	icon: 'layout',
 	category: 'layout',
 	supports: {
@@ -23,7 +23,7 @@ registerBlockType( 'a8c/navigation-placeholder', {
 	attributes: {
 		themeLocation: {
 			type: 'string',
-			default: 'main-1',
+			default: 'footer',
 		},
 	},
 	edit,
