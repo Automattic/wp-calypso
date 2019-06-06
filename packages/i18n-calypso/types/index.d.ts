@@ -8,7 +8,12 @@ import { ComponentClass, ComponentType, ReactElement } from 'react';
 import moment from 'moment';
 
 declare namespace i18nCalypso {
-	export type Substitutions = string | string[] | { [placeholder: string]: string };
+	export type Substitution = string | number;
+
+	export type Substitutions =
+		| Substitution
+		| Substitution[]
+		| { [placeholder: string]: Substitution };
 
 	export interface ComponentInterpolations {
 		[placeholder: string]: ReactElement;
