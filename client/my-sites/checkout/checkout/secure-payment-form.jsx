@@ -24,12 +24,13 @@ import WebPaymentBox from './web-payment-box';
 import { fullCreditsPayment, newCardPayment, storedCardPayment } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import { setPayment, submitTransaction } from 'lib/upgrades/actions';
-import cartValues, {
+import {
 	isPaidForFullyInCredits,
 	isFree,
-	cartItems,
 	getLocationOrigin,
+	isPaymentMethodEnabled,
 } from 'lib/cart-values';
+import { hasFreeTrial, getDomainRegistrations } from 'lib/cart-values/cart-items';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import getCountries from 'state/selectors/get-countries';
@@ -44,7 +45,6 @@ import { abtest } from 'lib/abtest';
 /**
  * Module variables
  */
-const { hasFreeTrial } = cartItems;
 const debug = debugFactory( 'calypso:checkout:payment' );
 
 export class SecurePaymentForm extends Component {
@@ -136,7 +136,7 @@ export class SecurePaymentForm extends Component {
 		}
 
 		for ( i = 0; i < paymentMethods.length; i++ ) {
-			if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
+			if ( isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
 				return paymentMethods[ i ];
 			}
 		}
@@ -278,7 +278,7 @@ export class SecurePaymentForm extends Component {
 		const cart = parameters.cart,
 			success = parameters.success;
 
-		cartItems.getDomainRegistrations( cart ).forEach( function( cartItem ) {
+		getDomainRegistrations( cart ).forEach( function( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_domain_registration', {
 				domain_name: cartItem.meta,
 				domain_tld: getTld( cartItem.meta ),

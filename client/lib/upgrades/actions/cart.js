@@ -23,7 +23,7 @@ import {
 	CART_TAX_POSTAL_CODE_SET,
 } from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
-import { cartItems } from 'lib/cart-values';
+import { domainRegistration } from 'lib/cart-values/cart-items';
 
 // We need to load the CartStore to make sure the store is registered with the
 // dispatcher even though it's not used directly here
@@ -102,7 +102,7 @@ export function replaceItem( oldItem, newItem ) {
 
 export function addDomainToCart( domainSuggestion ) {
 	addItem(
-		cartItems.domainRegistration( {
+		domainRegistration( {
 			domain: domainSuggestion.domain_name,
 			productSlug: domainSuggestion.product_slug,
 		} )
@@ -118,7 +118,7 @@ export function addGoogleAppsRegistrationData( registrationData ) {
 
 export function removeDomainFromCart( domainSuggestion ) {
 	removeItem(
-		cartItems.domainRegistration( {
+		domainRegistration( {
 			domain: domainSuggestion.domain_name,
 			productSlug: domainSuggestion.product_slug,
 		} )

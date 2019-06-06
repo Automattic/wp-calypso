@@ -61,7 +61,7 @@ import {
 import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
-import cartItems from 'lib/cart-values/cart-items';
+import { hasDomainInCart } from 'lib/cart-values/cart-items';
 import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError,
@@ -1086,7 +1086,7 @@ class RegisterDomainStep extends React.Component {
 	onAddDomain = suggestion => {
 		const domain = get( suggestion, 'domain_name' );
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
-		if ( ! cartItems.hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
+		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
 			this.setState( { pendingCheckSuggestion: suggestion } );
 
 			this.preCheckDomainAvailability( domain )

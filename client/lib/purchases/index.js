@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
+import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
@@ -82,7 +82,7 @@ function getSubscriptionEndDate( purchase ) {
  * @param {string} siteSlug - the site slug to renew the purchase for
  */
 function handleRenewNowClick( purchase, siteSlug ) {
-	const renewItem = cartItems.getRenewalItemFromProduct( purchase, {
+	const renewItem = getRenewalItemFromProduct( purchase, {
 		domain: purchase.meta,
 	} );
 	const renewItems = [ renewItem ];

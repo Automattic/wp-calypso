@@ -8,7 +8,7 @@ import { isEmpty, find, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { hasDomainRegistration, getDomainRegistrations } from 'lib/cart-values/cart-items';
 import { isDomainRegistration } from 'lib/products-values';
 
 /**
@@ -27,8 +27,8 @@ export function getDomainNameFromReceiptOrCart( receipt, cart ) {
 		domainRegistration = find( values( receipt.purchases ), isDomainRegistration );
 	}
 
-	if ( cartItems.hasDomainRegistration( cart ) ) {
-		domainRegistration = cartItems.getDomainRegistrations( cart )[ 0 ];
+	if ( hasDomainRegistration( cart ) ) {
+		domainRegistration = getDomainRegistrations( cart )[ 0 ];
 	}
 
 	if ( domainRegistration ) {

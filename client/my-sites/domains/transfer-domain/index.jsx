@@ -13,7 +13,11 @@ import { get, isEmpty } from 'lodash';
  */
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { cartItems } from 'lib/cart-values';
+import {
+	domainRegistration,
+	domainTransfer,
+	updatePrivacyForDomain,
+} from 'lib/cart-values/cart-items';
 import { addItem, addItems } from 'lib/upgrades/actions';
 import Notice from 'components/notice';
 import { currentUserHasFlag } from 'state/current-user/selectors';
@@ -57,7 +61,7 @@ export class TransferDomain extends Component {
 		const { selectedSiteSlug } = this.props;
 
 		addItem(
-			cartItems.domainRegistration( {
+			domainRegistration( {
 				productSlug: suggestion.product_slug,
 				domain: suggestion.domain_name,
 			} )
@@ -84,7 +88,7 @@ export class TransferDomain extends Component {
 
 		this.setState( { errorMessage: null } );
 
-		let domainTransfer = cartItems.domainTransfer( {
+		let transfer = domainTransfer( {
 			domain,
 			extra: {
 				auth_code: authCode,
@@ -93,10 +97,10 @@ export class TransferDomain extends Component {
 		} );
 
 		if ( supportsPrivacy ) {
-			domainTransfer = cartItems.updatePrivacyForDomain( domainTransfer, true );
+			transfer = updatePrivacyForDomain( transfer, true );
 		}
 
-		addItems( [ domainTransfer ] );
+		addItems( [ transfer ] );
 
 		page( '/checkout/' + selectedSiteSlug );
 	};
