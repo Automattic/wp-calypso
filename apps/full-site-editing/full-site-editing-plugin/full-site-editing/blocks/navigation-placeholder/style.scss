@@ -110,3 +110,25 @@
     height: 32px;
     transform: translateZ( 0 );
 }
+
+.footer-navigation .footer-menu {
+    display: inline;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-size: 0.71111em;
+    padding-left: 0;
+}
+
+.footer-navigation .footer-menu li {
+    display: inline;
+    margin-right: 1rem;
+}
+
+.footer-navigation .footer-menu a {
+    text-decoration: none;
+    color: #767676;
+}
+
+.footer-navigation .footer-menu a:hover {
+    text-decoration: none;
+    color: #0073aa;
+}
