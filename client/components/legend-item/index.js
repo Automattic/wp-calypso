@@ -7,6 +7,11 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { noop } from 'lodash';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SVG_SIZE = 30;
 
 class LegendItem extends Component {
