@@ -20,6 +20,12 @@ registerBlockType( 'a8c/navigation-placeholder', {
 		multiple: false,
 		reusable: false,
 	},
+	attributes: {
+		themeLocation: {
+			type: 'string',
+			default: 'footer',
+		},
+	},
 	edit,
 	save: () => null,
 } );
