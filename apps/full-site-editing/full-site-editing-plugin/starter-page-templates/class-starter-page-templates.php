@@ -52,6 +52,29 @@ class Starter_Page_Templates {
 	}
 
 	/**
+	 * Pass error message to frontend JavaScript console.
+	 *
+	 * @param string $message Error message.
+	 */
+	public function pass_error_to_frontend( $message ) {
+		wp_register_script(
+			'starter-page-templates-error',
+			null,
+			array(),
+			'1.O',
+			true
+		);
+		wp_add_inline_script(
+			'starter-page-templates-error',
+			sprintf(
+				'console.warn(%s);',
+				wp_json_encode( $message )
+			)
+		);
+		wp_enqueue_script( 'starter-page-templates-error' );
+	}
+
+	/**
 	 * Enqueue block editor assets.
 	 */
 	public function enqueue_assets() {
@@ -65,6 +88,7 @@ class Starter_Page_Templates {
 		// Load templates for this site.
 		$vertical_data = $this->fetch_vertical_data();
 		if ( empty( $vertical_data ) ) {
+			$this->pass_error_to_frontend( __( 'No data received from the vertical API. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
 		}
 		$vertical_name      = $vertical_data['vertical'];
@@ -72,6 +96,7 @@ class Starter_Page_Templates {
 
 		// Bail early if we have no templates to offer.
 		if ( empty( $vertical_templates ) ) {
+			$this->pass_error_to_frontend( __( 'No templates available. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
 		}
 
