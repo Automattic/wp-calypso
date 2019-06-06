@@ -13,6 +13,11 @@ import Gridicon from 'gridicons';
  */
 import ExternalLink from 'components/external-link';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export function PreferencesHelper() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return <div className="environment is-prefs" />;
