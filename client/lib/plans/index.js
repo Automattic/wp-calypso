@@ -416,10 +416,6 @@ export function getBillingMonthsForTerm( term ) {
 	throw new Error( `Unknown term: ${ term }` );
 }
 
-export const isPlanFeaturesEnabled = () => {
-	return isEnabled( 'manage/plan-features' );
-};
-
 export function plansLink( url, siteSlug, intervalType, forceIntervalType = false ) {
 	const parsedUrl = urlParse( url );
 	if ( 'monthly' === intervalType || forceIntervalType ) {
