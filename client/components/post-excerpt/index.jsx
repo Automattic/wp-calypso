@@ -8,6 +8,11 @@ import classnames from 'classnames';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PostExcerpt extends React.Component {
 	static propTypes = {
 		content: PropTypes.string.isRequired,
