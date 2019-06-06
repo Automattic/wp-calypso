@@ -83,3 +83,30 @@
 .main-menu-more {
 	display: none;
 }
+
+.social-navigation {
+    line-height: 1.25;
+    margin-top: calc( 1rem / 2 );
+    text-align: left;
+}
+
+.social-navigation ul.social-links-menu {
+    content: '';
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.social-navigation ul.social-links-menu li {
+    display: inline-block;
+    vertical-align: bottom;
+    vertical-align: -webkit-baseline-middle;
+    list-style: none;
+}
+
+.social-navigation ul.social-links-menu li a svg {
+    display: block;
+    width: 32px;
+    height: 32px;
+    transform: translateZ( 0 );
+}
