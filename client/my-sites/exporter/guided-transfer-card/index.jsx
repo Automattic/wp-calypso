@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,6 +22,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getProductDisplayCost } from 'state/products-list/selectors';
 import InfoPopover from 'components/info-popover';
 import { GUIDED_TRANSFER } from 'lib/url/support';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const Feature = ( { children } ) => (
 	<li className="guided-transfer-card__feature-list-item">

@@ -67,9 +67,9 @@ class PostTypeOptions extends React.PureComponent {
 
 		return (
 			<div className="export-card__option-fieldset">
-				<Label className="export-card__option-fieldset-legend">
+				<Label>
 					<FormRadio checked={ isEnabled } onChange={ onSelect } />
-					<span className="export-card__option-fieldset-legend-text">{ legend }</span>
+					<span>{ legend }</span>
 				</Label>
 
 				{ description && (
