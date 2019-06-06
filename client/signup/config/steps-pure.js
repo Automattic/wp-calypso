@@ -156,6 +156,17 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
+		'plans-ecommerce': {
+			stepName: 'plans-ecommerce',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				showOnlyEcommercePlans: true,
+			},
+		},
+
 		'plans-personal': {
 			stepName: 'plans-personal',
 			apiRequestFunction: addPlanToCart,

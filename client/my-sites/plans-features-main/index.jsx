@@ -127,7 +127,13 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
+		const {
+			displayJetpackPlans,
+			intervalType,
+			selectedPlan,
+			hideFreePlan,
+			showOnlyEcommercePlans,
+		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
 
@@ -154,7 +160,12 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		let plans;
-		if ( group === GROUP_JETPACK ) {
+		if ( showOnlyEcommercePlans ) {
+			plans = [
+				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
+			];
+		} else if ( group === GROUP_JETPACK ) {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
@@ -292,9 +303,9 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
-		const { translate } = this.props;
+		const { hideFreePlan, showOnlyEcommercePlans, translate } = this.props;
 		const className = 'is-free-plan';
-		if ( this.props.hideFreePlan ) {
+		if ( hideFreePlan || showOnlyEcommercePlans ) {
 			return null;
 		}
 
@@ -376,6 +387,7 @@ PlansFeaturesMain.propTypes = {
 	siteSlug: PropTypes.string,
 	withWPPlanTabs: PropTypes.bool,
 	plansWithScroll: PropTypes.bool,
+	showOnlyEcommercePlans: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -388,6 +400,7 @@ PlansFeaturesMain.defaultProps = {
 	siteSlug: '',
 	withWPPlanTabs: false,
 	plansWithScroll: false,
+	showOnlyEcommercePlans: false,
 };
 
 const guessCustomerType = ( state, props ) => {
