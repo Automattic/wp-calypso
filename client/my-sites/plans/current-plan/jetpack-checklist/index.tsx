@@ -289,7 +289,8 @@ export default connect(
 
 		const planSlug = getSitePlanSlug( state, siteId );
 		const isPremium = !! planSlug && isPremiumPlan( planSlug );
-		const isProfessional = ! isPremiumPlan && !! planSlug && isBusinessPlan( planSlug );
+		const isProfessional = ! isPremium && !! planSlug && isBusinessPlan( planSlug );
+		const isPaidPlan = isPremium || isProfessional || isSiteOnPaidPlan( state, siteId );
 
 		return {
 			akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
@@ -299,7 +300,7 @@ export default connect(
 			widgetCustomizerPaneUrl: siteId ? getCustomizerUrl( state, siteId, 'widgets' ) : null,
 			isPremium,
 			isProfessional,
-			isPaidPlan: isPremium || isProfessional || isSiteOnPaidPlan( state, siteId ),
+			isPaidPlan,
 			rewindState,
 			productInstallStatus,
 			siteId,
