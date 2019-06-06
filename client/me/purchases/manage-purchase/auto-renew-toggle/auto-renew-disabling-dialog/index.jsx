@@ -115,7 +115,7 @@ class AutoRenewDisablingDialog extends Component {
 				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
 				<p>{ description }</p>
 				<Button onClick={ onClose } primary>
-					{ translate( 'Confirm cancel auto-renewal' ) }
+					{ translate( 'Confirm cancellation' ) }
 				</Button>
 			</Dialog>
 		);
