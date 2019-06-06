@@ -8,6 +8,7 @@
  */
 import { IconButton, ServerSideRender, Toolbar } from '@wordpress/components';
 import { BlockControls } from '@wordpress/editor';
+import { addQueryArgs } from '@wordpress/url';
 import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
@@ -17,7 +18,11 @@ import { __ } from '@wordpress/i18n';
 
 const NavigationMenuEdit = ( { attributes } ) => {
 	const redirectToCustomizer = () => {
-		window.location.href = 'https://wordpress.com';
+		const url = addQueryArgs( 'customize.php', {
+			'autofocus[panel]': 'nav_menus',
+			return: window.location.href,
+		} );
+		window.location.href = url;
 	};
 	return (
 		<Fragment>
