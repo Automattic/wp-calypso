@@ -64,7 +64,7 @@ class Starter_Page_Templates {
 			'object_subtype' => 'page',
 		);
 		// TODO: meta field name
-		register_meta( 'post', 'starter_page_template', $args );
+		register_meta( 'post', '_starter_page_template', $args );
 	}
 
 	/**
