@@ -4,10 +4,32 @@
 /**
  * External dependencies
  */
-import { ComponentClass, ComponentType, ReactElement } from 'react';
+import * as React from 'react';
 import moment from 'moment';
 
+interface InterpolateComponentsOptions {
+	mixedString: string;
+	components: i18nCalypso.ComponentInterpolations;
+	throwErrors?: boolean;
+}
+
+declare function interpolateComponents(
+	options: InterpolateComponentsOptions
+): string | React.ReactFragment;
+
 declare namespace i18nCalypso {
+	export interface NormalizedTranslateArgs extends TranslateOptions {
+		original: string;
+		components?: ComponentInterpolations;
+	}
+
+	export type TranslateHook = (
+		translation: string | React.ReactFragment,
+		options:
+			| NormalizedTranslateArgs
+			| ( NormalizedTranslateArgs & { plural: Substitution; count: number } )
+	) => ReturnType< typeof translate >;
+
 	export type Substitution = string | number;
 
 	export type Substitutions =
@@ -16,7 +38,7 @@ declare namespace i18nCalypso {
 		| { [placeholder: string]: Substitution };
 
 	export interface ComponentInterpolations {
-		[placeholder: string]: ReactElement;
+		[placeholder: string]: React.ReactElement;
 	}
 
 	export interface TranslateOptions {
@@ -24,11 +46,6 @@ declare namespace i18nCalypso {
 		 * Arguments you would pass into sprintf to be run against the text for string substitution.
 		 */
 		args?: Substitutions;
-
-		/**
-		 * Components for interpolation in the provided string.
-		 */
-		components?: ComponentInterpolations;
 
 		/**
 		 * Comment that will be shown to the translator for anything that may need to be explained about the translation.
@@ -41,14 +58,31 @@ declare namespace i18nCalypso {
 		context?: string;
 	}
 
+	export type TranslationWithComponents = ReturnType< typeof interpolateComponents >;
+
 	export function translate( original: string ): string;
+
+	export function translate(
+		options: TranslateOptions & { original: string } & { components: ComponentInterpolations }
+	): TranslationWithComponents;
+	export function translate( options: TranslateOptions & { original: string } ): string;
+
+	export function translate(
+		original: string,
+		options: TranslateOptions & { components: ComponentInterpolations }
+	): TranslationWithComponents;
+	export function translate( original: string, options: TranslateOptions ): string;
+
+	export function translate(
+		original: string,
+		plural: string,
+		options: TranslateOptions & { count: number } & { components: ComponentInterpolations }
+	): TranslationWithComponents;
 	export function translate(
 		original: string,
 		plural: string,
 		options: TranslateOptions & { count: number }
 	): string;
-	export function translate( original: string, options: TranslateOptions ): string;
-	export function translate( original: string, plural: string, options: TranslateOptions ): string;
 
 	export function hasTranslation( original: string ): boolean;
 
@@ -69,18 +103,22 @@ declare namespace i18nCalypso {
 	}
 
 	// Infers prop type from component C
-	export type GetProps< C > = C extends ComponentType< infer P > ? P : never;
+	export type GetProps< C > = C extends React.ComponentType< infer P > ? P : never;
 
 	export type WithoutLocalizedProps< OrigProps > = Pick<
 		OrigProps,
 		Exclude< keyof OrigProps, keyof LocalizeProps >
 	>;
 
-	export type LocalizedComponent< C > = ComponentClass< WithoutLocalizedProps< GetProps< C > > >;
+	export type LocalizedComponent< C > = React.ComponentClass<
+		WithoutLocalizedProps< GetProps< C > >
+	>;
 
 	export function localize< C >( component: C ): LocalizedComponent< C >;
 
 	export function useTranslate(): typeof translate;
+
+	export function registerTranslateHook( hook: TranslateHook ): void;
 }
 
 export = i18nCalypso;
