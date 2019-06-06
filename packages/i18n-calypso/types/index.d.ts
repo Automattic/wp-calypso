@@ -41,20 +41,14 @@ declare namespace i18nCalypso {
 		context?: string;
 	}
 
-	export type TranslatedString = string;
-
-	export function translate( original: string ): TranslatedString;
+	export function translate( original: string ): string;
 	export function translate(
 		original: string,
 		plural: string,
 		options: TranslateOptions & { count: number }
-	): TranslatedString;
-	export function translate( original: string, options: TranslateOptions ): TranslatedString;
-	export function translate(
-		original: string,
-		plural: string,
-		options: TranslateOptions
-	): TranslatedString;
+	): string;
+	export function translate( original: string, options: TranslateOptions ): string;
+	export function translate( original: string, plural: string, options: TranslateOptions ): string;
 
 	export function hasTranslation( original: string ): boolean;
 
