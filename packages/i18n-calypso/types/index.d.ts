@@ -27,7 +27,7 @@ declare namespace i18nCalypso {
 		translation: string | React.ReactFragment,
 		options:
 			| NormalizedTranslateArgs
-			| ( NormalizedTranslateArgs & { plural: Substitution; count: number } )
+			| ( NormalizedTranslateArgs & { plural: string; count: number } )
 	) => ReturnType< typeof translate >;
 
 	export type Substitution = string | number;
