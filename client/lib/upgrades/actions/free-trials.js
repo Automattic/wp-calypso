@@ -3,7 +3,7 @@
  * Internal dependencies
  */
 import { emptyCart, fillInAllCartItemAttributes } from 'lib/cart-values';
-import { getItemForPlan, add as addCartItem } from 'lib/cart-values/cart-items';
+import { getItemForPlan, addCartItem } from 'lib/cart-values/cart-items';
 import productsListFactory from 'lib/products-list';
 import { fullCreditsPayment } from 'lib/store-transactions';
 import { submitTransaction } from './checkout';

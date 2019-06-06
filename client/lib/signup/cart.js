@@ -12,7 +12,7 @@ import wpcom from 'lib/wp';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import { preprocessCartForServer, fillInAllCartItemAttributes } from 'lib/cart-values';
-import { add as addCartItem } from 'lib/cart-values/cart-items';
+import { addCartItem } from 'lib/cart-values/cart-items';
 
 function addProductsToCart( cart, newCartItems ) {
 	forEach( newCartItems, function( cartItem ) {

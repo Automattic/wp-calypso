@@ -73,7 +73,7 @@ import { getTermDuration } from 'lib/plans/constants';
  * @param {Object} newCartItem - new item as `CartItemValue` object
  * @returns {Function} the function that adds the item to a shopping cart
  */
-export function add( newCartItem ) {
+export function addCartItem( newCartItem ) {
 	function appendItem( products ) {
 		products = products || [];
 
@@ -105,7 +105,7 @@ export function clearCart() {
  * @param {Object} newCartItem - new item as `CartItemValue` object
  * @returns {Function} the function that adds the item to a shopping cart
  */
-export function addWithoutReplace( newCartItem ) {
+export function addCartItemWithoutReplace( newCartItem ) {
 	function appendItem( products ) {
 		products = products || [];
 
@@ -215,7 +215,7 @@ export function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPl
  */
 export function replaceItem( oldItem, newItem ) {
 	return function( cart ) {
-		return flow( [ remove( oldItem ), add( newItem ) ] )( cart );
+		return flow( [ remove( oldItem ), addCartItem( newItem ) ] )( cart );
 	};
 }
 
@@ -678,7 +678,7 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 		null,
 		googleAppsItems.map( function( item ) {
 			item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
-			return add( item );
+			return addCartItem( item );
 		} )
 	);
 }
