@@ -41,5 +41,12 @@ export default function( translate ) {
 				cssClass: 'is-sakura',
 			},
 		},
+		{
+			label: translate( 'Ocean' ),
+			value: 'ocean',
+			thumbnail: {
+				cssClass: 'is-ocean',
+			},
+		},
 	] );
 }
