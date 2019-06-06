@@ -103,4 +103,37 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			} );
 		} );
 	} );
+
+	describe( 'AsyncLoad with further import transformation', () => {
+		// Babel plugin that transforms import() into patchedImport()
+		const patchImportPlugin = ( { types } ) => ( {
+			visitor: {
+				Import( path ) {
+					path.replaceWith( types.identifier( 'patchedImport' ) );
+				},
+			},
+		} );
+
+		const code = '<AsyncLoad require="foo" />;';
+
+		// Use both the AsyncLoad and patchedImport transform
+		const transformResult = babel.transformSync( code, {
+			configFile: false,
+			parserOpts: { plugins: [ 'jsx', 'dynamicImport' ] },
+			plugins: [ [ require( '..' ), { async: true } ], patchImportPlugin ],
+		} );
+
+		// Check that the transformed code has been further transformed with patchedImport
+		expect( transformResult.code ).toBe(
+			[
+				'<AsyncLoad require={function (callback) {',
+				'  patchedImport(',
+				'  /*webpackChunkName: "async-load-foo"*/',
+				'  "foo").then(function load(mod) {',
+				'    callback(mod.default);',
+				'  });',
+				'}} />;',
+			].join( '\n' )
+		);
+	} );
 } );
