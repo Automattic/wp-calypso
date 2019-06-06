@@ -94,39 +94,37 @@ export default class Step extends Component< Props, State > {
 	 */
 	isUpdatingPosition: boolean = false;
 
-	async componentDidMount() {
-		await this.wait( this.props, this.context );
-
-		this.start();
-		this.setStepSection( this.context, { init: true } );
-		debug( 'Step#componentDidMount: stepSection:', this.stepSection );
-		this.skipIfInvalidContext( this.props, this.context );
-		this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
-		this.setStepPosition( this.props );
-		this.setState( { initialized: true } );
-		window.addEventListener( 'resize', this.onScrollOrResize );
-		this.watchTarget();
-
+	componentDidMount() {
+		this.wait( this.props, this.context ).then( () => {
+			this.start();
+			this.setStepSection( this.context, { init: true } );
+			debug( 'Step#componentDidMount: stepSection:', this.stepSection );
+			this.skipIfInvalidContext( this.props, this.context );
+			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
+			this.setStepPosition( this.props );
+			this.setState( { initialized: true } );
+			window.addEventListener( 'resize', this.onScrollOrResize );
+			this.watchTarget();
+		} );
 		if ( this.props.keepRepositioning ) {
 			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
 		}
 	}
 
-	async componentWillReceiveProps( nextProps: Props, nextContext ) {
+	componentWillReceiveProps( nextProps: Props, nextContext ) {
 		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
-		await this.wait( nextProps, nextContext );
-
-		this.setStepSection( nextContext );
-		this.quitIfInvalidRoute( nextProps, nextContext );
-		this.skipIfInvalidContext( nextProps, nextContext );
-		if ( this.scrollContainer ) {
-			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
-		}
-		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || window;
-		this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
-		this.setStepPosition( nextProps, shouldScrollTo );
-		this.watchTarget();
-
+		this.wait( nextProps, nextContext ).then( () => {
+			this.setStepSection( nextContext );
+			this.quitIfInvalidRoute( nextProps, nextContext );
+			this.skipIfInvalidContext( nextProps, nextContext );
+			if ( this.scrollContainer ) {
+				this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+			}
+			this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || window;
+			this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
+			this.setStepPosition( nextProps, shouldScrollTo );
+			this.watchTarget();
+		} );
 		if ( ! nextProps.keepRepositioning ) {
 			clearInterval( this.repositionInterval );
 		} else if ( ! this.repositionInterval ) {
