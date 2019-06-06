@@ -28,11 +28,11 @@ interface TaskUiDescription {
 	readonly tourId?: string;
 }
 
-interface ChecklistTasks {
-	[key: string]: TaskUiDescription;
+interface ChecklistTasksetUi {
+	[taskId: string]: TaskUiDescription;
 }
 
-export const JETPACK_SECURITY_CHECKLIST_TASKS: ChecklistTasks = {
+export const JETPACK_SECURITY_CHECKLIST_TASKS: Readonly< ChecklistTasksetUi > = {
 	jetpack_monitor: {
 		title: translate( 'Downtime Monitoring' ),
 		description: translate(
@@ -68,7 +68,20 @@ export const JETPACK_SECURITY_CHECKLIST_TASKS: ChecklistTasks = {
 	},
 };
 
-export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: ChecklistTasks = {
+export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: Readonly< ChecklistTasksetUi > = {
+	jetpack_site_accelerator: {
+		title: translate( 'Site Accelerator' ),
+		description: translate(
+			'Serve your images and static files through our global CDN and whatch your page load time drop.'
+		),
+		getUrl: ( siteSlug, isComplete ) =>
+			isComplete ? `/media/${ siteSlug }` : `/settings/performance/${ siteSlug }`,
+		completedButtonText: translate( 'Configure' ),
+		completedTitle: translate(
+			'Site accelerator is serving your images and static files through our global CDN.'
+		),
+		duration: getJetpackChecklistTaskDuration( 1 ),
+	},
 	jetpack_lazy_images: {
 		title: translate( 'Lazy Load Images' ),
 		description: translate(
