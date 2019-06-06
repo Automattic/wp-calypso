@@ -36,8 +36,8 @@ describe( 'index', () => {
 		describe( 'flow( changeFunctions... )', () => {
 			test( 'should combine multiple cart operations into a single step', () => {
 				const addTwo = flow(
-					cartItems.add( PREMIUM_PRODUCT ),
-					cartItems.add( DOMAIN_REGISTRATION_PRODUCT )
+					cartItems.addCartItem( PREMIUM_PRODUCT ),
+					cartItems.addCartItem( DOMAIN_REGISTRATION_PRODUCT )
 				);
 
 				const newCart = addTwo( cartValues.emptyCart( TEST_BLOG_ID ) );
@@ -46,10 +46,10 @@ describe( 'index', () => {
 			} );
 		} );
 
-		describe( 'cartItems.add( cartItem )', () => {
+		describe( 'cartItems.addCartItem( cartItem )', () => {
 			test( 'should add the cartItem to the products array', () => {
 				const initialCart = cartValues.emptyCart( TEST_BLOG_ID ),
-					newCart = cartItems.add( PREMIUM_PRODUCT )( initialCart ),
+					newCart = cartItems.addCartItem( PREMIUM_PRODUCT )( initialCart ),
 					expectedCart = {
 						blog_id: TEST_BLOG_ID,
 						products: [ PREMIUM_PRODUCT ],
