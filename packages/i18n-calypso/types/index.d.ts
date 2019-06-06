@@ -38,15 +38,15 @@ declare namespace i18nCalypso {
 
 	export type TranslatedString = string;
 
-	export function translate( oringinal: string ): TranslatedString;
+	export function translate( original: string ): TranslatedString;
 	export function translate(
-		oringinal: string,
+		original: string,
 		plural: string,
 		options: TranslateOptions & { count: number }
 	): TranslatedString;
-	export function translate( oringinal: string, options: TranslateOptions ): TranslatedString;
+	export function translate( original: string, options: TranslateOptions ): TranslatedString;
 	export function translate(
-		oringinal: string,
+		original: string,
 		plural: string,
 		options: TranslateOptions
 	): TranslatedString;
