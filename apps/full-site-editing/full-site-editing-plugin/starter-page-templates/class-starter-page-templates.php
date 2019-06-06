@@ -62,18 +62,11 @@ class Starter_Page_Templates {
 			'single'         => true,
 			'show_in_rest'   => true,
 			'object_subtype' => 'page',
-			'auth_callback'  => array( $this, 'meta_field_auth_callback' ),
+			'auth_callback'  => function() {
+				return current_user_can( 'edit_posts' );
+			},
 		);
 		register_meta( 'post', '_starter_page_template', $args );
-	}
-
-	/**
-	 * Allow meta field updates for users able to edit posts.
-	 *
-	 * @return boolean
-	 */
-	public function meta_field_auth_callback() {
-		return current_user_can( 'edit_posts' );
 	}
 
 	/**
