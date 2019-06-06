@@ -342,6 +342,13 @@ class Full_Site_Editing {
 		);
 
 		register_block_type(
+			'a8c/site-description',
+			array(
+				'render_callback' => 'render_site_description_block',
+			)
+		);
+
+		register_block_type(
 			'a8c/template',
 			array(
 				'render_callback' => 'render_template_block',
