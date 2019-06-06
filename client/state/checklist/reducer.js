@@ -11,7 +11,7 @@ import { items as itemSchemas } from './schema';
 
 const markChecklistTaskComplete = ( state, taskId ) => ( {
 	...state,
-	tasks: { ...state.tasks, [ taskId ]: true },
+	tasks: { ...state.tasks, [ taskId ]: { completed: true } },
 } );
 
 const moduleTaskMap = {
