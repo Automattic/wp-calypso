@@ -9,23 +9,17 @@ import { flow } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { hasPendingPayment } from '../index';
+import * as cartValues from '../index';
+import * as cartItems from '../cart-items';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
 
 describe( 'index', () => {
 	const TEST_BLOG_ID = 1;
-	let cartItems,
-		cartValues,
-		DOMAIN_REGISTRATION_PRODUCT,
-		FR_DOMAIN_REGISTRATION_PRODUCT,
-		PREMIUM_PRODUCT,
-		THEME_PRODUCT;
+	let DOMAIN_REGISTRATION_PRODUCT, FR_DOMAIN_REGISTRATION_PRODUCT, PREMIUM_PRODUCT, THEME_PRODUCT;
 
-	beforeAll( async () => {
-		cartValues = await import( 'lib/cart-values' );
-		cartItems = await import( 'lib/cart-values/cart-items' );
+	beforeAll( () => {
 		DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( {
 			productSlug: 'dotcom_domain',
 			domain: 'testdomain.com',
@@ -238,15 +232,15 @@ describe( 'index', () => {
 
 describe( 'hasPendingPayment()', () => {
 	test( 'return true if cart shows pending payment', () => {
-		expect( hasPendingPayment( { has_pending_payment: true } ) );
+		expect( cartValues.hasPendingPayment( { has_pending_payment: true } ) );
 	} );
 	test( 'return false if cart shows no pending payments', () => {
-		expect( hasPendingPayment( { has_pending_payment: false } ) ).toBe( false );
+		expect( cartValues.hasPendingPayment( { has_pending_payment: false } ) ).toBe( false );
 	} );
 	test( 'return false if has_pending_payment is not set', () => {
-		expect( hasPendingPayment( { has_pending_payment: null } ) ).toBe( false );
-		expect( hasPendingPayment( {} ) ).toBe( false );
-		expect( hasPendingPayment( null ) ).toBe( false );
-		expect( hasPendingPayment( undefined ) ).toBe( false );
+		expect( cartValues.hasPendingPayment( { has_pending_payment: null } ) ).toBe( false );
+		expect( cartValues.hasPendingPayment( {} ) ).toBe( false );
+		expect( cartValues.hasPendingPayment( null ) ).toBe( false );
+		expect( cartValues.hasPendingPayment( undefined ) ).toBe( false );
 	} );
 } );
