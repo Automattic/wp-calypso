@@ -17,7 +17,7 @@ const markChecklistTaskComplete = ( state, taskId ) => ( {
 const moduleTaskMap = {
 	lazy_images: 'jetpack_lazy_images',
 	monitor: 'jetpack_monitor',
-	// Both photon and photon-cdn mark the Site Accelerator Task as enabled
+	// Both photon and photon-cdn mark the Site Accelerator Task as completed
 	photon: 'jetpack_site_accelerator',
 	'photon-cdn': 'jetpack_site_accelerator',
 	search: 'jetpack_search',
