@@ -59,12 +59,6 @@ class Desktop extends React.Component {
 						}
 						type="text/css"
 					/>
-					<link
-						rel="stylesheet"
-						type="text/css"
-						data-webpack={ true }
-						href={ `/calypso/fallback/build.${ isRTL ? 'rtl.css' : 'css' }` }
-					/>
 					{ entrypoint[ csskey ].map( cssChunkLink ) }
 					<link rel="stylesheet" id="desktop-css" href="/desktop/wordpress-desktop.css" />
 				</Head>
@@ -128,7 +122,6 @@ class Desktop extends React.Component {
 						/>
 					) }
 
-					<script src="/calypso/fallback/build.js" />
 					{ entrypoint.js.map( asset => (
 						<script key={ asset } src={ asset } />
 					) ) }
