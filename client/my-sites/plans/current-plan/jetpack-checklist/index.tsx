@@ -197,8 +197,6 @@ class JetpackChecklist extends PureComponent< Props > {
 						/>
 					) }
 					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS ) }
-					{ /* For Checklist completion calculation to work correctly, children shold be a flat list of tasks */ }
-
 					{ isEnabled( 'jetpack/checklist/performance' ) &&
 						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS ) }
 					{ isEnabled( 'jetpack/checklist/performance' ) && ( isPremium || isProfessional ) && (
