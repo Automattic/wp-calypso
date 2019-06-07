@@ -25,14 +25,6 @@ class Full_Site_Editing {
 		add_action( 'init', array( $this, 'register_meta_template_id' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
-
-		add_action( 'wp_head', function() {
-			ob_start( 'a8c_fse_replace_template_parts' );
-		} );
-
-		add_action( 'wp_footer', function() {
-			ob_end_flush();
-		} );
 	}
 
 	/**
