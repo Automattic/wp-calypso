@@ -372,6 +372,13 @@ class Full_Site_Editing {
 				'render_callback' => 'render_site_logo',
 			)
 		);
+
+		register_block_type(
+			'a8c/site-title',
+			array(
+				'render_callback' => 'render_site_title_block',
+			)
+		);
 	}
 
 	/**
