@@ -257,7 +257,10 @@ class JetpackChecklist extends PureComponent< Props > {
 									? this.props.widgetCustomizerPaneUrl
 									: `/settings/performance/${ siteSlug }`
 							}
-							onClick={ this.handleTaskStart( { taskId: 'jetpack_search' } ) }
+							onClick={ this.handleTaskStart( {
+								taskId: 'jetpack_search',
+								tourId: 'jetpackSearch',
+							} ) }
 						/>
 					) }
 				</Checklist>

@@ -23,6 +23,7 @@ import { JetpackChecklistTour } from 'layout/guided-tours/tours/jetpack-checklis
 import { JetpackLazyImagesTour } from 'layout/guided-tours/tours/jetpack-lazy-images-tour';
 import { JetpackMonitoringTour } from 'layout/guided-tours/tours/jetpack-monitoring-tour';
 import { JetpackPluginUpdatesTour } from 'layout/guided-tours/tours/jetpack-plugin-updates-tour';
+import { JetpackSearchTour } from 'layout/guided-tours/tours/jetpack-search-tour';
 import { JetpackSignInTour } from 'layout/guided-tours/tours/jetpack-sign-in-tour';
 import { JetpackSiteAcceleratorTour } from 'layout/guided-tours/tours/jetpack-site-accelerator-tour';
 import { JetpackVideoHostingTour } from 'layout/guided-tours/tours/jetpack-video-hosting-tour';
@@ -53,6 +54,7 @@ export default combineTours( {
 	jetpackLazyImages: JetpackLazyImagesTour,
 	jetpackMonitoring: JetpackMonitoringTour,
 	jetpackPluginUpdates: JetpackPluginUpdatesTour,
+	jetpackSearch: JetpackSearchTour,
 	jetpackSignIn: JetpackSignInTour,
 	jetpackSiteAccelerator: JetpackSiteAcceleratorTour,
 	jetpackVideoHosting: JetpackVideoHostingTour,

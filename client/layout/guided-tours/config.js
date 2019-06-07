@@ -25,6 +25,7 @@ import jetpackBackupsRewind from 'layout/guided-tours/tours/jetpack-backups-rewi
 import jetpackLazyImages from 'layout/guided-tours/tours/jetpack-lazy-images-tour/meta';
 import jetpackMonitoring from 'layout/guided-tours/tours/jetpack-monitoring-tour/meta';
 import jetpackPluginUpdates from 'layout/guided-tours/tours/jetpack-plugin-updates-tour/meta';
+import jetpackSearch from 'layout/guided-tours/tours/jetpack-search-tour/meta';
 import jetpackSignIn from 'layout/guided-tours/tours/jetpack-sign-in-tour/meta';
 import jetpackSiteAccelerator from 'layout/guided-tours/tours/jetpack-site-accelerator-tour/meta';
 import jetpackVideoHosting from 'layout/guided-tours/tours/jetpack-video-hosting-tour/meta';
@@ -47,6 +48,7 @@ export default {
 	jetpackLazyImages,
 	jetpackMonitoring,
 	jetpackPluginUpdates,
+	jetpackSearch,
 	jetpackSignIn,
 	jetpackSiteAccelerator,
 	jetpackVideoHosting,
