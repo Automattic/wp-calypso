@@ -64,7 +64,7 @@ class SpeedUpSiteSettings extends Component {
 		return (
 			<div className="site-settings__module-settings site-settings__speed-up-site-settings">
 				<Card>
-					<FormFieldset className="site-settings__formfieldset">
+					<FormFieldset className="site-settings__formfieldset jetpack-site-accelerator-settings">
 						<SupportInfo
 							text={ translate(
 								"Jetpack's global Content Delivery Network (CDN) optimizes " +

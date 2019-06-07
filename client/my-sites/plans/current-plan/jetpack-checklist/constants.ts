@@ -80,6 +80,7 @@ export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: Readonly< ChecklistTasksetUi >
 			'Site accelerator is serving your images and static files through our global CDN.'
 		),
 		duration: getJetpackChecklistTaskDuration( 1 ),
+		tourId: 'jetpackSiteAccelerator',
 	},
 	jetpack_lazy_images: {
 		title: translate( 'Lazy Load Images' ),
