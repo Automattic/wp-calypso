@@ -10,7 +10,15 @@ import React, { Fragment } from 'react';
  * Internal dependencies
  */
 import meta from './meta';
-import { makeTour, Tour, Step, ButtonRow, Link, Quit } from 'layout/guided-tours/config-elements';
+import {
+	makeTour,
+	Tour,
+	Step,
+	ButtonRow,
+	SiteLink,
+	Link,
+	Quit,
+} from 'layout/guided-tours/config-elements';
 
 export const SimplePaymentsTour = makeTour(
 	<Tour { ...meta }>
@@ -37,6 +45,13 @@ export const SimplePaymentsTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Quit primary>{ translate( 'Got it, thanks!' ) }</Quit>
+						<SiteLink
+							isButton
+							isPrimaryButton={ false }
+							href={ '/plans/:site?customerType=business' }
+						>
+							{ translate( 'Upgrade' ) }
+						</SiteLink>
 					</ButtonRow>
 					<Link href="https://en.support.wordpress.com/simple-payments">
 						{ translate( 'Learn more about Simple Payments.' ) }
