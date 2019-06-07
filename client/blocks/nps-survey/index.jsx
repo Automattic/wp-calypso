@@ -19,7 +19,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import FormTextArea from 'components/forms/form-textarea';
 import ScreenReaderText from 'components/screen-reader-text';
-import QuerySites from 'components/data/query-sites';
 import QueryConciergeSessionsCount from 'components/data/query-concierge-sessions-count';
 import {
 	submitNpsSurvey,
@@ -29,15 +28,14 @@ import {
 import { successNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { hasAnsweredNpsSurvey } from 'state/nps-survey/selectors';
-import getSites from 'state/selectors/get-sites';
 import getConciergeSessionsCount from 'state/selectors/get-concierge-sessions-count';
-import { isBusinessPlan } from 'lib/plans';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import analytics from 'lib/analytics';
 import RecommendationSelect from './recommendation-select';
 
 export class NpsSurvey extends PureComponent {
 	static propTypes = {
+		onChangeForm: PropTypes.func,
 		onClose: PropTypes.func,
 		name: PropTypes.string,
 		hasAnswered: PropTypes.bool,
@@ -56,6 +54,12 @@ export class NpsSurvey extends PureComponent {
 		feedback: '',
 		currentForm: 'score', // score, feedback or promotion
 	};
+
+	componentDidUpdate( _, prevState ) {
+		if ( prevState.currentForm !== this.state.currentForm ) {
+			this.props.onChangeForm && this.props.onChangeForm( this.state.currentForm );
+		}
+	}
 
 	handleRecommendationSelectChange = score => {
 		this.setState( { score } );
@@ -260,7 +264,6 @@ export class NpsSurvey extends PureComponent {
 
 		return (
 			<Card className={ className }>
-				<QuerySites allSites />
 				{ isBusinessUser && <QueryConciergeSessionsCount /> }
 				<Button
 					borderless
@@ -285,17 +288,11 @@ export class NpsSurvey extends PureComponent {
 	}
 }
 
-function isOwnBusinessSite( site ) {
-	return isBusinessPlan( get( site, 'plan.product_slug' ) ) && get( site, 'plan.user_is_owner' );
-}
-
 const mapStateToProps = state => {
-	const isBusinessUser = getSites( state ).filter( isOwnBusinessSite ).length > 0;
 	const hasAvailableSessions = get( getConciergeSessionsCount( state ), 'available', 0 ) > 0;
 
 	return {
 		hasAnswered: hasAnsweredNpsSurvey( state ),
-		isBusinessUser,
 		hasAvailableSessions,
 	};
 };
