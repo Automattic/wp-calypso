@@ -62,6 +62,12 @@ interface Props {
 }
 
 class JetpackChecklist extends PureComponent< Props > {
+	componentDidMount() {
+		if ( typeof window !== 'undefined' && typeof window.hj === 'function' ) {
+			window.hj( 'trigger', 'plans_myplan_jetpack-checklist' );
+		}
+	}
+
 	isComplete( taskId: string ): boolean {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
