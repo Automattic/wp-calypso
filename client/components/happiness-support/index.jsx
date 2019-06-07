@@ -66,12 +66,18 @@ export class HappinessSupport extends Component {
 		};
 		return isJetpackFreePlan
 			? translate(
-					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
-					{ components }
+					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of\xa0WordPress.',
+					{
+						components,
+						comment: '\xa0 is a non-breaking space character',
+					}
 			  )
 			: translate(
-					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
-					{ components }
+					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your\xa0account.',
+					{
+						components,
+						comment: '\xa0 is a non-breaking space character',
+					}
 			  );
 	}
 
