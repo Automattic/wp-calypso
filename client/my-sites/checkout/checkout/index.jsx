@@ -452,7 +452,7 @@ export class Checkout extends React.Component {
 			return `/${ destination }/${ selectedSiteSlug }${ queryParam }`;
 		}
 
-		if ( this.props.isJetpackNotAtomic && config.isEnabled( 'jetpack/checklist' ) ) {
+		if ( this.props.isJetpackNotAtomic ) {
 			return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
 		}
 
