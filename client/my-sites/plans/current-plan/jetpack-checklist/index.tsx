@@ -69,7 +69,6 @@ class JetpackChecklist extends PureComponent< Props > {
 
 	state = {
 		selectedTaskId: null,
-		firstIncomplete: {},
 	};
 
 	isComplete( taskId: string ): boolean {
@@ -108,10 +107,6 @@ class JetpackChecklist extends PureComponent< Props > {
 				  Object.keys( JETPACK_PERFORMANCE_CHECKLIST_TASKS )
 				: Object.keys( this.props.taskStatuses ).filter( taskId => taskId in checklistTasks );
 
-		// this.setState( {
-		// 	firstIncomplete: this.getFirstIncompleteTask( this.props.taskStatuses )
-		// } );
-
 		return taskIds.map( taskId => {
 			const task = checklistTasks[ taskId ];
 
@@ -124,14 +119,17 @@ class JetpackChecklist extends PureComponent< Props > {
 					completedTitle={ task.completedTitle }
 					description={ task.description }
 					duration={ task.duration }
-					firstIncomplete={ this.state.firstIncomplete }
+					firstIncomplete={ this.getFirstIncompleteTask( taskIds ) }
 					href={ task.getUrl( this.props.siteSlug, isComplete ) }
+					id={ taskId }
+					key={ taskId }
 					onClick={ this.handleTaskStart( {
 						taskId,
 						tourId: get( task, [ 'tourId' ] ),
 					} ) }
+					onTaskTitleClick={ this.onTaskTitleClick }
 					title={ task.title }
-					key={ taskId }
+					selectedTaskId={ this.state.selectedTaskId }
 				/>
 			);
 		} );
@@ -180,6 +178,12 @@ class JetpackChecklist extends PureComponent< Props > {
 		const isRewindAvailable = rewindState !== 'uninitialized' && rewindState !== 'unavailable';
 		const isRewindUnavailable = rewindState === 'unavailable';
 
+		const firstIncomplete = {};
+
+		// if ( taskStatuses ) {
+		// 	firstIncomplete: this.getFirstIncompleteTask( taskStatuses );
+		// }
+
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
@@ -200,7 +204,7 @@ class JetpackChecklist extends PureComponent< Props > {
 						selectedTaskId={ this.state.selectedTaskId }
 						completed
 						href={ JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ) }
-						firstIncomplete={ this.state.firstIncomplete }
+						firstIncomplete={ firstIncomplete }
 						onClick={ this.handleTaskStart( { taskId: 'jetpack_protect' } ) }
 					/>
 					{ isPaidPlan && isRewindAvailable && (
@@ -211,7 +215,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							selectedTaskId={ this.state.selectedTaskId }
 							completed={ isRewindActive }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ) }
-							firstIncomplete={ this.state.firstIncomplete }
+							firstIncomplete={ firstIncomplete }
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_backups',
 								tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',
@@ -226,7 +230,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							selectedTaskId={ this.state.selectedTaskId }
 							completed={ vaultpressFinished }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ) }
-							firstIncomplete={ this.state.firstIncomplete }
+							firstIncomplete={ firstIncomplete }
 							inProgress={ ! vaultpressFinished }
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_backups' } ) }
 						/>
@@ -239,16 +243,16 @@ class JetpackChecklist extends PureComponent< Props > {
 							selectedTaskId={ this.state.selectedTaskId }
 							completed={ akismetFinished }
 							href={ JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ) }
-							firstIncomplete={ this.state.firstIncomplete }
+							firstIncomplete={ firstIncomplete }
 							inProgress={ ! akismetFinished }
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_spam_filtering' } ) }
 							target="_blank"
 						/>
 					) }
 
-					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS ) }
+					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS, firstIncomplete ) }
 					{ isEnabled( 'jetpack/checklist/performance' ) &&
-						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS ) }
+						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS, firstIncomplete ) }
 					{ isEnabled( 'jetpack/checklist/performance' ) && ( isPremium || isProfessional ) && (
 						<Task
 							title={ translate( 'Video Hosting' ) }

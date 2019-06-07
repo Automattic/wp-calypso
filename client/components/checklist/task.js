@@ -23,7 +23,6 @@ class Task extends PureComponent {
 		buttonText: PropTypes.node,
 		completed: PropTypes.bool,
 		completedButtonText: PropTypes.node,
-		completedDescription: PropTypes.node,
 		completedTitle: PropTypes.node,
 		description: PropTypes.node,
 		disableIcon: PropTypes.bool,
@@ -145,20 +144,11 @@ class Task extends PureComponent {
 		return <Gridicon icon={ 'checkmark' } size={ 18 } />;
 	}
 
-	renderChevron = () => {
-		if ( this.isTaskCollapsed() ) {
-			return <Gridicon icon="chevron-down" className="checklist__toggle-affordance" />;
-		}
-
-		return <Gridicon icon="chevron-up" className="checklist__toggle-affordance" />;
-	};
-
 	render() {
 		const {
 			buttonText,
 			completed,
 			completedButtonText,
-			completedDescription,
 			completedTitle,
 			description,
 			duration,
@@ -186,7 +176,7 @@ class Task extends PureComponent {
 					'is-collapsed': this.isTaskCollapsed(),
 				} ) }
 			>
-				<div className="checklist__task-primary">
+				<div className="checklist__task-wrapper">
 					<h3 className="checklist__task-title">
 						{ hasActionlink ? (
 							<Button
@@ -195,7 +185,7 @@ class Task extends PureComponent {
 								onClick={ this.onTaskTitleClick }
 							>
 								{ completed ? completedTitle : title }
-								{ this.renderChevron() }
+								<Gridicon icon="chevron-up" className="checklist__toggle-affordance" />
 							</Button>
 						) : (
 							completedTitle
@@ -205,9 +195,6 @@ class Task extends PureComponent {
 					{ hasActionlink && (
 						<div className="checklist__task-content">
 							<p className="checklist__task-description">{ description }</p>
-							{ completedDescription && (
-								<p className="checklist__task-completed-description">{ completedDescription }</p>
-							) }
 
 							<div className="checklist__task-action-duration-wrapper">
 								{ duration && (

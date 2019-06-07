@@ -661,7 +661,7 @@ class WpcomChecklistComponent extends PureComponent {
 				bannerImageSrc="/calypso/images/stats/tasks/email.svg"
 				title={ translate( 'Get email for your site' ) }
 				completedTitle={ translate( 'You set up email forwarding for your site' ) }
-				completedDescription={ translate(
+				description={ translate(
 					'Want a dedicated inbox, docs, and cloud storage? {{link}}Upgrade to G Suite!{{/link}}',
 					{
 						components: {
