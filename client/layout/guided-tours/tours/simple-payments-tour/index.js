@@ -3,8 +3,8 @@
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -49,8 +49,10 @@ export const SimplePaymentsTour = makeTour(
 							isButton
 							isPrimaryButton={ false }
 							href={ '/plans/:site?customerType=business' }
+							newWindow
 						>
-							{ translate( 'Upgrade' ) }
+							<Gridicon icon="external" />
+							<span>{ translate( 'Upgrade' ) }</span>
 						</SiteLink>
 					</ButtonRow>
 					<Link href="https://en.support.wordpress.com/simple-payments">
