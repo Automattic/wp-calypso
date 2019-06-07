@@ -141,11 +141,7 @@ class Plans extends Component {
 		} );
 		mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
 
-		if ( this.props.calypsoStartedConnection || isEnabled( 'jetpack/checklist' ) ) {
-			this.redirectToCalypso();
-		} else {
-			this.redirectToWpAdmin();
-		}
+		this.redirectToCalypso();
 	}
 
 	selectPlan = cartItem => {
