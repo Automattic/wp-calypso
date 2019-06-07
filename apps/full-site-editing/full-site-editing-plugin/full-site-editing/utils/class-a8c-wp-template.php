@@ -111,3 +111,13 @@ class A8C_WP_Template {
 		return $footer->post_content;
 	}
 }
+
+function fse_get_header() {
+	$template = new A8C_WP_Template();
+	echo $template->get_header_content();
+}
+
+function fse_get_footer() {
+	$template = new A8C_WP_Template();
+	echo $template->get_footer_content();
+}
