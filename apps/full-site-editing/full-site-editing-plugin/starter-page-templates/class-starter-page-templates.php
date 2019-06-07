@@ -22,6 +22,7 @@ class Starter_Page_Templates {
 	 */
 	private function __construct() {
 		add_action( 'init', array( $this, 'register_scripts' ) );
+		add_action( 'init', array( $this, 'register_sidebar_preview_meta_fields' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
 	}
 
@@ -81,7 +82,7 @@ class Starter_Page_Templates {
 		$screen = get_current_screen();
 
 		// Return early if we don't meet conditions to show templates.
-		if ( 'page' !== $screen->id || 'add' !== $screen->action ) {
+		if ( 'page' !== $screen->id  ) {
 			return;
 		}
 
@@ -118,6 +119,7 @@ class Starter_Page_Templates {
 		$config    = array(
 			'siteInformation' => array_merge( $default_info, $site_info ),
 			'templates'       => array_merge( $default_templates, $vertical_templates ),
+			'showMeta'		  => apply_filters('a8c_fse_spt_should_register_sidebar_preview_meta', $should_register_meta ),
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
 
@@ -176,4 +178,39 @@ class Starter_Page_Templates {
 
 		return $language;
 	}
+
+	public function register_sidebar_preview_meta_fields() {
+		$should_register_meta = false;
+
+		if (! apply_filters('a8c_fse_spt_should_register_sidebar_preview_meta', $should_register_meta ) ) {
+			return;
+		}
+
+		register_meta( 'post', 'hs_template_preview', array(
+			'object_subtype' => 'page',
+		    'show_in_rest' => true,
+		    'single' => true,
+		    'type' => 'string',
+		    'description'    => __('URL of a preview image (from a remote source) to associated with this Template', 'full-site-editing' ),
+		    'sanitize_callback' => array( $this, 'sanitize_hs_template_preview')
+		) );
+
+		register_meta( 'post', 'hs_template_description', array(
+			'object_subtype' => 'page',
+		    'show_in_rest' => true,
+		    'single' => true,
+		    'type' => 'string',
+		    'description'    => __('Description of the Template contents for non-sighted users', 'full-site-editing' ),
+		    'sanitize_callback' => array( $this, 'sanitize_hs_template_description')
+		) );
+
+	}
+
+	public function sanitize_hs_template_preview( $url ) {
+		return esc_url_raw($url);
+	} 
+
+	public function sanitize_hs_template_description( $url ) {
+		return sanitize_text_field($url);
+	} 
 }
