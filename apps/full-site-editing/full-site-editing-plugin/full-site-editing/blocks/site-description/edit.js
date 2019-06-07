@@ -6,26 +6,40 @@
 /**
  * WordPress dependencies
  */
-import { IconButton, ServerSideRender, Toolbar } from '@wordpress/components';
-import { BlockControls } from '@wordpress/editor';
-import { Fragment } from '@wordpress/element';
+import { PlainText } from '@wordpress/editor';
+import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
 
-const SiteDescriptionEdit = () => {
-	return (
-		<Fragment>
-			<BlockControls>
-				<Toolbar>
-					<IconButton icon="edit" label={ __( 'Edit Menu' ) } />
-				</Toolbar>
-			</BlockControls>
-			<ServerSideRender block="a8c/site-description" />
-		</Fragment>
-	);
-};
+class SiteDescriptionEdit extends Component {
+	state = {
+		description: null,
+	};
+
+	componentDidMount() {
+		apiFetch( { path: '/wp/v2/settings' } ).then( ( { description } ) => {
+			this.setState( { description: description } );
+		} );
+	}
+
+	render() {
+		const { isSelected } = this.props;
+		if ( isSelected ) {
+			return (
+				<PlainText
+					className="wp-block-a8c-site-description"
+					value={ this.state.description }
+					placeholder={ __( 'Site Title…' ) }
+					aria-label={ __( 'SiteTitle' ) }
+				/>
+			);
+		}
+		return <p className="site-description">{ this.state.title }</p>;
+	}
+}
 
 export default SiteDescriptionEdit;
