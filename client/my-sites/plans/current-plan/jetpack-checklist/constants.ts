@@ -74,8 +74,7 @@ export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: Readonly< ChecklistTasksetUi >
 		description: translate(
 			'Serve your images and static files through our global CDN and whatch your page load time drop.'
 		),
-		getUrl: ( siteSlug, isComplete ) =>
-			isComplete ? `/media/${ siteSlug }` : `/settings/performance/${ siteSlug }`,
+		getUrl: siteSlug => `/settings/performance/${ siteSlug }`,
 		completedButtonText: translate( 'Configure' ),
 		completedTitle: translate(
 			'Site accelerator is serving your images and static files through our global CDN.'
