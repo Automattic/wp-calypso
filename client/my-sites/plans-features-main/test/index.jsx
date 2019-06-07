@@ -64,6 +64,8 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
 } from 'lib/plans/constants';
 
 const props = {
@@ -91,10 +93,10 @@ describe( 'PlansFeaturesMain.renderFreePlanBanner()', () => {
 } );
 
 describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
-	test.skip( 'Should render <PlanFeatures /> with eCommerce plans when called with showOnlyEcommercePlans props', () => {
+	test( 'Should render <PlanFeatures /> with plans matching given planTypes when called with planTypes props', () => {
 		const instance = new PlansFeaturesMain( {
 			...props,
-			showOnlyEcommercePlans: true,
+			planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
 		} );
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
