@@ -46,7 +46,7 @@ export function checkout( context, next ) {
 			product={ product }
 			purchaseId={ purchaseId }
 			selectedFeature={ feature }
-			couponCode={ context.query.code }
+			couponCode={ context.query.code || getRememberedCoupon() }
 			plan={ plan }
 			selectedSite={ selectedSite }
 		/>
