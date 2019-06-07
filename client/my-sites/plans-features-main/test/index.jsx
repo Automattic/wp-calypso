@@ -66,6 +66,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
+	TYPE_FREE,
 } from 'lib/plans/constants';
 
 const props = {
@@ -97,6 +98,15 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		const instance = new PlansFeaturesMain( {
 			...props,
 			planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
+		} );
+		const plans = instance.getPlansForPlanFeatures();
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+	} );
+	test( 'Should render <PlanFeatures /> removing the free plan when hideFreePlan prop is present, regardless of its position', () => {
+		const instance = new PlansFeaturesMain( {
+			...props,
+			planTypes: [ TYPE_BUSINESS, TYPE_FREE, TYPE_ECOMMERCE ],
+			hideFreePlan: true,
 		} );
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
