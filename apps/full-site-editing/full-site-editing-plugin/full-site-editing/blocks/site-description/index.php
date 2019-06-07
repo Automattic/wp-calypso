@@ -16,7 +16,7 @@ function render_site_description_block( $attributes, $content ) {
 	ob_start();
 	?>
 	<p class="site-description">
-		<?php echo get_bloginfo( 'description', 'display' ); ?>
+		<?php bloginfo( 'description' ); ?>
 	</p>
 	<?php
 	return ob_get_clean();
