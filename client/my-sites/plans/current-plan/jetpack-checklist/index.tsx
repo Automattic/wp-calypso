@@ -3,7 +3,7 @@
  */
 import React, { Fragment, PureComponent, ReactElement, ReactNode } from 'react';
 import { connect } from 'react-redux';
-import { get, includes } from 'lodash';
+import { flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -40,6 +40,7 @@ import ChecklistSectionTitle from './checklist-section-title';
 import { URL } from 'types';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 
 /**
  * Style dependencies
@@ -270,7 +271,7 @@ class JetpackChecklist extends PureComponent< Props > {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
@@ -313,4 +314,10 @@ export default connect(
 		recordTracksEvent,
 		requestGuidedTour,
 	}
-)( localize( JetpackChecklist ) );
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( JetpackChecklist );
