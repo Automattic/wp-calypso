@@ -183,8 +183,18 @@ export function getRememberedCoupon() {
 		debug( 'No coupons found in localStorage: ', coupons );
 		return null;
 	}
-
-	const COUPON_CODE_WHITELIST = [ 'PATREON' ];
+	const COUPON_CODE_WHITELIST = [
+		'ALT',
+		'FIVERR',
+		'GENEA',
+		'KITVISA',
+		'LINKEDIN',
+		'PATREON',
+		'ROCKETLAWYER',
+		'SAFE',
+		'SBDC',
+		'TXAM',
+	];
 	const ONE_WEEK_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 	const now = Date.now();
 	debug( 'Found coupons in localStorage: ', coupons );
