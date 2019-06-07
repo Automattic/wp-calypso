@@ -231,7 +231,7 @@ class MembershipsProductsSection extends Component {
 					{ this.state.editedProductId && (
 						<Notice
 							text={ this.props.translate(
-								'New product price will not affect existing subscribers. They will always be charged at an original price.'
+								'Updating the price will not affect existing subscribers, who will pay what they were originally charged.'
 							) }
 							showDismiss={ false }
 						/>
@@ -358,7 +358,8 @@ class MembershipsProductsSection extends Component {
 					</p>
 					<Notice
 						text={ this.props.translate(
-							'Deleting a product does not cancel the subscription for users already subscribed. They will continue to be charged even after you delete it.'
+							'Deleting a product does not cancel the subscription for existing subscribers.{{br/}}They will continue to be charged even after you delete it.',
+							{ components: { br: <br /> } }
 						) }
 						showDismiss={ false }
 					/>
