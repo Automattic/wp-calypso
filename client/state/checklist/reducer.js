@@ -15,11 +15,11 @@ import {
 } from 'state/action-types';
 import { items as itemSchemas } from './schema';
 
-const toggleChecklistTask = ( state, taskId ) => ( {
+const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
 	...state,
 	tasks: {
 		...state.tasks,
-		[ taskId ]: { completed: ! get( state.tasks, [ taskId, 'completed' ], false ) },
+		[ taskId ]: { ...get( state.tasks, [ taskId ] ), completed },
 	},
 } );
 
@@ -38,10 +38,10 @@ function items( state = {}, action ) {
 		case SITE_CHECKLIST_RECEIVE:
 			return action.checklist;
 		case SITE_CHECKLIST_TASK_UPDATE:
-			return toggleChecklistTask( state, action.taskId );
+			return setChecklistTaskCompletion( state, action.taskId, true );
 		case JETPACK_MODULE_ACTIVATE_SUCCESS:
 			if ( moduleTaskMap.hasOwnProperty( action.moduleSlug ) ) {
-				return toggleChecklistTask( state, moduleTaskMap[ action.moduleSlug ] );
+				return setChecklistTaskCompletion( state, moduleTaskMap[ action.moduleSlug ], true );
 			}
 			break;
 		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
@@ -52,7 +52,7 @@ function items( state = {}, action ) {
 			}
 
 			if ( moduleTaskMap.hasOwnProperty( action.moduleSlug ) ) {
-				return toggleChecklistTask( state, moduleTaskMap[ action.moduleSlug ] );
+				return setChecklistTaskCompletion( state, moduleTaskMap[ action.moduleSlug ], false );
 			}
 			break;
 	}
