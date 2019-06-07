@@ -14,6 +14,7 @@ import { setSection } from 'state/ui/actions';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GSuiteNudge from 'my-sites/checkout/gsuite-nudge';
+import CheckoutContainer from './checkout/checkout-container';
 import Checkout from './checkout';
 import CheckoutData from 'components/data/checkout';
 import CartData from 'components/data/cart';
@@ -24,10 +25,9 @@ import ConciergeSessionNudge from './concierge-session-nudge';
 import ConciergeQuickstartSession from './concierge-quickstart-session';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/upgrades/actions';
-import FormattedHeader from 'components/formatted-header';
 
 export function checkout( context, next ) {
-	const { feature, plan, product } = context.params;
+	const { feature, plan, product, purchaseId } = context.params;
 
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
@@ -42,23 +42,14 @@ export function checkout( context, next ) {
 	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
 	context.primary = (
-		<>
-			<FormattedHeader />
-			<div className="checkout__container">
-				<CheckoutData>
-					<Checkout
-						product={ product }
-						purchaseId={ context.params.purchaseId }
-						selectedFeature={ feature }
-						couponCode={ context.query.code }
-						plan={ plan }
-					/>
-					<CartData>
-						<SecondaryCart selectedSite={ selectedSite } />
-					</CartData>
-				</CheckoutData>
-			</div>
-		</>
+		<CheckoutContainer
+			product={ product }
+			purchaseId={ purchaseId }
+			selectedFeature={ feature }
+			couponCode={ context.query.code }
+			plan={ plan }
+			selectedSite={ selectedSite }
+		/>
 	);
 
 	next();

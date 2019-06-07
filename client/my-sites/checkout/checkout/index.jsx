@@ -605,6 +605,7 @@ export class Checkout extends React.Component {
 				paymentMethods={ this.paymentMethodsAbTestFilter() }
 				products={ this.props.productsList }
 				selectedSite={ selectedSite }
+				setHeaderText={ this.props.setHeaderText }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }

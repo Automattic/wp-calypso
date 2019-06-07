@@ -540,20 +540,8 @@ export class SecurePaymentForm extends Component {
 	renderGreatChoiceHeader() {
 		const { translate } = this.props;
 		const headerText = translate( 'Great choice! How would you like to pay?' );
-<<<<<<< HEAD
 
-		if ( 'variantRightColumn' === abtest( 'showCheckoutCartRight' ) ) {
-			const element = document.getElementsByClassName( 'formatted-header__title' )[ 0 ];
-			if ( element ) {
-				element.textContent = headerText;
-			}
-			return;
-		}
-		return <FormattedHeader headerText={ headerText } />;
-=======
-		const element = document.getElementsByClassName( 'formatted-header__title' )[ 0 ];
-		element.textContent = headerText;
->>>>>>> First commit: Removing the showCartRight abtest and making the cart to the right as the control
+		this.props.setHeaderText( headerText );
 	}
 
 	render() {
