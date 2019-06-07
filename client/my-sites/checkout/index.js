@@ -19,9 +19,25 @@ import SiftScience from 'lib/siftscience';
 import { makeLayout, render as clientRender } from 'controller';
 import { noSite, siteSelection } from 'my-sites/controller';
 import config from 'config';
+import userFactory from 'lib/user';
 
 export default function() {
+	console.log( 'in checkout index.js' );
 	SiftScience.recordUser();
+
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
+
+	if ( isLoggedOut ) {
+		console.log( 'in index.js isLoggedOut' );
+		page(
+			'/checkout/:site?/add-random',
+			// siteSelection,
+			conciergeQuickstartSession,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
@@ -102,14 +118,6 @@ export default function() {
 			'/checkout/:site/add-quickstart-session/pending/:orderId',
 			siteSelection,
 			checkoutPending,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/:site/add-quickstart-session/:receiptId?',
-			siteSelection,
-			conciergeQuickstartSession,
 			makeLayout,
 			clientRender
 		);
