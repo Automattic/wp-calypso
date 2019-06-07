@@ -186,7 +186,6 @@ export class ProductPurchaseFeaturesList extends Component {
 		const {
 			isAutomatedTransfer,
 			isPlaceholder,
-			recordReturnToDashboardClick,
 			selectedSite,
 			supportsJetpackSiteAccelerator,
 		} = this.props;
@@ -210,7 +209,6 @@ export class ProductPurchaseFeaturesList extends Component {
 		const {
 			isAutomatedTransfer,
 			isPlaceholder,
-			recordReturnToDashboardClick,
 			selectedSite,
 			supportsJetpackSiteAccelerator,
 		} = this.props;
@@ -243,7 +241,6 @@ export class ProductPurchaseFeaturesList extends Component {
 		const {
 			isAutomatedTransfer,
 			isPlaceholder,
-			recordReturnToDashboardClick,
 			selectedSite,
 			supportsJetpackSiteAccelerator,
 		} = this.props;
@@ -268,7 +265,6 @@ export class ProductPurchaseFeaturesList extends Component {
 			isAutomatedTransfer,
 			isPlaceholder,
 			selectedSite,
-			recordReturnToDashboardClick,
 			supportsJetpackSiteAccelerator,
 		} = this.props;
 		return (
@@ -356,11 +352,6 @@ export default connect(
 		recordBusinessOnboardingClick: partial(
 			recordTracksEvent,
 			'calypso_plan_features_onboarding_click',
-			{}
-		),
-		recordReturnToDashboardClick: partial(
-			recordTracksEvent,
-			'calypso_plan_features_returntodashboard_click',
 			{}
 		),
 	}
