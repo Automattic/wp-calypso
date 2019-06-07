@@ -99,6 +99,11 @@ export function getIframeSource(
 					transition: opacity 1s ease-in;
 				}	
 
+				.wp-block-cover__inner-container h2 {
+					z-index: 2;
+					position: relative;
+				}
+
 				@media only screen and (min-width: 768px) {
 					/*
 						Some of the themes use js to dynamically set the height of the banner
