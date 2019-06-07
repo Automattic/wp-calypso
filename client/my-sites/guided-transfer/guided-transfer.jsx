@@ -18,6 +18,11 @@ import Main from 'components/main';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import TransferUnavailableCard from './transfer-unavailable-card';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const guidedTransferHosts = {
 	bluehost: {
 		label: i18n.translate( 'Bluehost' ),
