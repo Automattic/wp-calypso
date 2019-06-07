@@ -38,3 +38,48 @@
 .components-notice-list {
 	z-index: 29; // Ensure notices are placed behind the editor header (z-index: 30).
 }
+
+.premium-blocks__wrapper {
+	border: 1px solid var( --color-border-subtle );
+}
+
+.premium-blocks__disabled {
+	opacity: 0.5;
+	padding: 10px;
+}
+
+.upgrade-nudge {
+	border-left: 3px solid var( --color-plan-premium );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	display: flex;
+	margin: 0 -1px 1em 0;
+	padding: 12px 16px;
+	text-align: left;
+	width: 100%;
+}
+
+.upgrade-nudge__icon {
+	background: var( --color-plan-premium );
+	border-radius: 50%;
+	box-sizing: content-box;
+	margin-right: 16px;
+	color: var( --color-white );
+	padding: 6px;
+	align-self: center;
+	flex: 0 0 auto;
+	fill: var( --color-white );
+}
+
+.upgrade-nudge__title {
+	font-size: 14px;
+}
+
+.upgrade-nudge__message {
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	display: block;
+}
+
+.upgrade-nudge__button {
+	margin-left: auto;
+}
