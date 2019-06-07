@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
+import Notice from 'components/notice';
 /**
  * Internal dependencies
  */
@@ -227,6 +228,14 @@ class MembershipsProductsSection extends Component {
 				</p>
 				<FormFieldset>
 					<FormLabel htmlFor="currency">{ this.props.translate( 'Select price' ) }</FormLabel>
+					{ this.state.editedProductId && (
+						<Notice
+							text={ this.props.translate(
+								'Updating the price will not affect existing subscribers, who will pay what they were originally charged.'
+							) }
+							showDismiss={ false }
+						/>
+					) }
 					<FormCurrencyInput
 						name="currency"
 						id="currency"
@@ -347,6 +356,13 @@ class MembershipsProductsSection extends Component {
 							),
 						} ) }
 					</p>
+					<Notice
+						text={ this.props.translate(
+							'Deleting a product does not cancel the subscription for existing subscribers.{{br/}}They will continue to be charged even after you delete it.',
+							{ components: { br: <br /> } }
+						) }
+						showDismiss={ false }
+					/>
 				</Dialog>
 			</div>
 		);
