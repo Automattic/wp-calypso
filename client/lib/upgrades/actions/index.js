@@ -13,6 +13,7 @@ export {
 	addItems,
 	addPrivacyToAllDomains,
 	applyCoupon,
+	getRememberedCoupon,
 	removeCoupon,
 	disableCart,
 	removeDomainFromCart,
@@ -20,6 +21,7 @@ export {
 	removePrivacyFromAllDomains,
 	replaceCartWithItems,
 	replaceItem,
+	saveCouponQueryArgument,
 	showCartOnMobile,
 } from './cart';
 

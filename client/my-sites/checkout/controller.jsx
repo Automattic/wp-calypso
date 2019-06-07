@@ -23,6 +23,7 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 import ConciergeSessionNudge from './concierge-session-nudge';
 import ConciergeQuickstartSession from './concierge-quickstart-session';
 import { isGSuiteRestricted } from 'lib/gsuite';
+import { getRememberedCoupon } from 'lib/upgrades/actions';
 import FormattedHeader from 'components/formatted-header';
 import { abtest } from 'lib/abtest';
 
@@ -51,7 +52,7 @@ export function checkout( context, next ) {
 							product={ product }
 							purchaseId={ context.params.purchaseId }
 							selectedFeature={ feature }
-							couponCode={ context.query.code }
+							couponCode={ context.query.code || getRememberedCoupon() }
 							plan={ plan }
 						/>
 						<CartData>
@@ -72,7 +73,7 @@ export function checkout( context, next ) {
 				product={ product }
 				purchaseId={ context.params.purchaseId }
 				selectedFeature={ feature }
-				couponCode={ context.query.code }
+				couponCode={ context.query.code || getRememberedCoupon() }
 				plan={ plan }
 			/>
 		</CheckoutData>
@@ -92,7 +93,10 @@ export function sitelessCheckout( context, next ) {
 
 	context.primary = (
 		<CheckoutData>
-			<Checkout reduxStore={ context.store } />
+			<Checkout
+				reduxStore={ context.store }
+				couponCode={ context.query.code || getRememberedCoupon() }
+			/>
 		</CheckoutData>
 	);
 
