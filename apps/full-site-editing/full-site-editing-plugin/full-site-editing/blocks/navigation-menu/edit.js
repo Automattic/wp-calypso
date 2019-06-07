@@ -31,7 +31,11 @@ const NavigationMenuEdit = ( { attributes } ) => {
 					<IconButton icon="edit" label={ __( 'Edit Menu' ) } onClick={ redirectToCustomizer } />
 				</Toolbar>
 			</BlockControls>
-			<ServerSideRender block="a8c/navigation-menu" attributes={ attributes } />
+			<ServerSideRender
+				attributes={ attributes }
+				block="a8c/navigation-menu"
+				className="wp-block-a8c-navigation-menu"
+			/>
 		</Fragment>
 	);
 };
