@@ -103,7 +103,7 @@ class SpeedUpSiteSettings extends Component {
 					</FormFieldset>
 
 					{ siteIsJetpack && (
-						<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
+						<FormFieldset className="site-settings__formfieldset has-divider is-top-only jetpack-lazy-images-settings">
 							<SupportInfo
 								text={ translate(
 									"Delays the loading of images until they are visible in the visitor's browser."

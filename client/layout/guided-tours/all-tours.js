@@ -20,6 +20,7 @@ import { GDocsIntegrationTour } from 'layout/guided-tours/tours/gdocs-integratio
 import { JetpackBackupsRewindTour } from 'layout/guided-tours/tours/jetpack-backups-rewind-tour';
 import { JetpackBasicTour } from 'layout/guided-tours/tours/jetpack-basic-tour';
 import { JetpackChecklistTour } from 'layout/guided-tours/tours/jetpack-checklist-tour';
+import { JetpackLazyImagesTour } from 'layout/guided-tours/tours/jetpack-lazy-images-tour';
 import { JetpackMonitoringTour } from 'layout/guided-tours/tours/jetpack-monitoring-tour';
 import { JetpackPluginUpdatesTour } from 'layout/guided-tours/tours/jetpack-plugin-updates-tour';
 import { JetpackSignInTour } from 'layout/guided-tours/tours/jetpack-sign-in-tour';
@@ -47,6 +48,7 @@ export default combineTours( {
 	jetpack: JetpackBasicTour,
 	jetpackBackupsRewind: JetpackBackupsRewindTour,
 	jetpackChecklistTour: JetpackChecklistTour,
+	jetpackLazyImages: JetpackLazyImagesTour,
 	jetpackMonitoring: JetpackMonitoringTour,
 	jetpackPluginUpdates: JetpackPluginUpdatesTour,
 	jetpackSignIn: JetpackSignInTour,

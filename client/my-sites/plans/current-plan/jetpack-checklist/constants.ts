@@ -91,6 +91,7 @@ export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: Readonly< ChecklistTasksetUi >
 		completedButtonText: translate( 'Upload images' ),
 		completedTitle: translate( 'Lazy load images is improving your site speed.' ),
 		duration: getJetpackChecklistTaskDuration( 1 ),
+		tourId: 'jetpackLazyImages',
 	},
 };
 
