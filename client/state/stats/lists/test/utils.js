@@ -1800,22 +1800,22 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		describe( 'statsPodcastDownloads()', () => {
+		describe( 'statsFileDownloads()', () => {
 			test( 'should return an empty array if data is null', () => {
-				expect( normalizers.statsPodcastDownloads() ).toEqual( [] );
+				expect( normalizers.statsFileDownloads() ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.period is null', () => {
-				expect( normalizers.statsPodcastDownloads( {}, { date: '2016-12-25' } ) ).toEqual( [] );
+				expect( normalizers.statsFileDownloads( {}, { date: '2016-12-25' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.date is null', () => {
-				expect( normalizers.statsPodcastDownloads( {}, { period: 'day' } ) ).toEqual( [] );
+				expect( normalizers.statsFileDownloads( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
 			test( 'should properly parse day period response', () => {
 				expect(
-					normalizers.statsPodcastDownloads(
+					normalizers.statsFileDownloads(
 						{
 							date: '2017-01-12',
 							days: {
@@ -1849,7 +1849,7 @@ describe( 'utils', () => {
 							},
 						],
 						label: 'My awesome podcast',
-						page: '/stats/day/podcastdownloads/en.blog.wordpress.com?post=10',
+						page: '/stats/day/filedownloads/en.blog.wordpress.com?post=10',
 						value: 3939,
 					},
 				] );
