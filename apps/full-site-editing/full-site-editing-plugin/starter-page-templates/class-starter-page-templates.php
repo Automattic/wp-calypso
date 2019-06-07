@@ -123,7 +123,7 @@ class Starter_Page_Templates {
 			$this->pass_error_to_frontend( __( 'No data received from the vertical API. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
 		}
-		$vertical_name      = $vertical_data['vertical'];
+		$vertical           = $vertical_data['vertical'];
 		$vertical_templates = $vertical_data['templates'];
 
 		// Bail early if we have no templates to offer.
@@ -137,7 +137,7 @@ class Starter_Page_Templates {
 
 		$default_info      = array(
 			'title'    => get_bloginfo( 'name' ),
-			'vertical' => $vertical_name,
+			'vertical' => $vertical['name'],
 		);
 		$default_templates = array(
 			array(
@@ -150,6 +150,7 @@ class Starter_Page_Templates {
 		$config    = array(
 			'siteInformation' => array_merge( $default_info, $site_info ),
 			'templates'       => array_merge( $default_templates, $vertical_templates ),
+			'vertical'        => $vertical,
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
 
@@ -173,7 +174,7 @@ class Starter_Page_Templates {
 	 */
 	public function fetch_vertical_data() {
 		$vertical_id        = get_option( 'site_vertical', 'default' );
-		$transient_key      = implode( '_', [ 'starter_page_templates', $vertical_id, get_locale() ] );
+		$transient_key      = implode( '_', [ 'starter_page_templates', 'v2', $vertical_id, get_locale() ] );
 		$vertical_templates = get_transient( $transient_key );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
