@@ -28,7 +28,7 @@ interface TaskUiDescription {
 	readonly tourId?: string;
 }
 
-interface ChecklistTasksetUi {
+export interface ChecklistTasksetUi {
 	[taskId: string]: TaskUiDescription;
 }
 
