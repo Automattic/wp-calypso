@@ -96,14 +96,8 @@ class Plans extends Component {
 	redirectToCalypso() {
 		const { canPurchasePlans, selectedSiteSlug } = this.props;
 
-		if ( selectedSiteSlug && canPurchasePlans && isEnabled( 'jetpack/checklist' ) ) {
-			return this.redirect( CALYPSO_MY_PLAN_PAGE, { 'thank-you': '' } );
-		}
-
 		if ( selectedSiteSlug && canPurchasePlans ) {
-			// Redirect to "My Plan" page with the "Jetpack Basic Tour" guided tour enabled.
-			// For more details about guided tours, see layout/guided-tours/README.md
-			return this.redirect( CALYPSO_MY_PLAN_PAGE, { tour: 'jetpack' } );
+			return this.redirect( CALYPSO_MY_PLAN_PAGE, { 'thank-you': '' } );
 		}
 
 		return this.redirect( CALYPSO_REDIRECTION_PAGE );
