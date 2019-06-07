@@ -32,7 +32,9 @@
 .site-style__option-label {
 	cursor: pointer;
 	// Get things to line up.
-	display: inline-block;
+	&.form-label {
+		display: inline-block;
+	}
 	margin: 0;
 	text-align: center;
 
