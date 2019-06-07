@@ -26,6 +26,7 @@ import jetpackLazyImages from 'layout/guided-tours/tours/jetpack-lazy-images-tou
 import jetpackMonitoring from 'layout/guided-tours/tours/jetpack-monitoring-tour/meta';
 import jetpackPluginUpdates from 'layout/guided-tours/tours/jetpack-plugin-updates-tour/meta';
 import jetpackSignIn from 'layout/guided-tours/tours/jetpack-sign-in-tour/meta';
+import jetpackVideoHosting from 'layout/guided-tours/tours/jetpack-video-hosting-tour/meta';
 import simplePaymentsEmailTour from 'layout/guided-tours/tours/simple-payments-email-tour/meta';
 
 export default {
@@ -46,6 +47,7 @@ export default {
 	jetpackMonitoring,
 	jetpackPluginUpdates,
 	jetpackSignIn,
+	jetpackVideoHosting,
 	main,
 	editorBasicsTour,
 	mediaBasicsTour,
