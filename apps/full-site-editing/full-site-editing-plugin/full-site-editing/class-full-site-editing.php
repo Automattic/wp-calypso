@@ -351,9 +351,9 @@ class Full_Site_Editing {
 			'a8c/site-logo',
 			array(
 				'attributes'      => array(
-					'addSiteLink'    => array(
+					'editorPreview'    => array(
 						'type'      => 'boolean',
-						'default'   => true,
+						'default'   => false,
 					),
 				),
 				'render_callback' => 'render_site_logo',
