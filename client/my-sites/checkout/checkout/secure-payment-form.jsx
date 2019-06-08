@@ -545,7 +545,9 @@ export class SecurePaymentForm extends Component {
 
 		if ( 'variantRightColumn' === abtest( 'showCheckoutCartRight' ) ) {
 			const element = document.getElementsByClassName( 'formatted-header__title' )[ 0 ];
-			element.textContent = headerText;
+			if ( element ) {
+				element.textContent = headerText;
+			}
 			return;
 		}
 		return <FormattedHeader headerText={ headerText } />;
