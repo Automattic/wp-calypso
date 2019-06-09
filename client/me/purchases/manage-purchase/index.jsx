@@ -205,6 +205,20 @@ class ManagePurchase extends Component {
 		return null;
 	}
 
+	renderRemovePurchase() {
+		if ( isRefundable( this.props.purchase ) ) {
+			return null;
+		}
+		return (
+			<RemovePurchase
+				hasLoadedSites={ this.props.hasLoadedSites }
+				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
+				site={ this.props.site }
+				purchase={ this.props.purchase }
+			/>
+		);
+	}
+
 	renderCancelPurchaseNavItem() {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
@@ -368,7 +382,7 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { purchase, siteId, site } = this.props;
+		const { purchase, siteId } = this.props;
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': isPersonal( purchase ),
@@ -405,12 +419,7 @@ class ManagePurchase extends Component {
 				{ this.renderRenewNowNavItem() }
 				{ this.renderEditPaymentMethodNavItem() }
 				{ this.renderCancelPurchaseNavItem() }
-				<RemovePurchase
-					hasLoadedSites={ this.props.hasLoadedSites }
-					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
-					site={ site }
-					purchase={ purchase }
-				/>
+				{ this.renderRemovePurchase() }
 			</Fragment>
 		);
 	}
