@@ -194,10 +194,6 @@ export class PluginsBrowser extends Component {
 					context: 'Category description for the plugin browser.',
 				} );
 			case 'featured':
-				if ( abtest( 'pluginFeaturedTitle' ) === 'recommended' ) {
-					return recommendedText;
-				}
-
 				return translate( 'Featured', {
 					context: 'Category description for the plugin browser.',
 				} );
