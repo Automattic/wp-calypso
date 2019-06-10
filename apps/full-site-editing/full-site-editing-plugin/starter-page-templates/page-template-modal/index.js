@@ -20,9 +20,13 @@ import { trackDismiss, trackView, trackSelection } from './utils/tracking';
 
 class PageTemplateModal extends Component {
 	state = {
-		isOpen: true,
 		isLoading: false,
 	};
+
+	constructor( props ) {
+		super();
+		this.state.isOpen = props.initiallyOpened;
+	}
 
 	componentDidMount() {
 		if ( this.state.isOpen ) {
@@ -134,6 +138,7 @@ registerPlugin( 'page-templates', {
 	render: function() {
 		return (
 			<PageTemplatesPlugin
+				initiallyOpened={ templates.length > 0 }
 				templates={ keyBy( templates, 'slug' ) }
 				vertical={ vertical }
 				siteInformation={ siteInformation }
