@@ -22,6 +22,7 @@ class Starter_Page_Templates {
 	 */
 	private function __construct() {
 		add_action( 'init', array( $this, 'register_scripts' ) );
+		add_action( 'init', array( $this, 'register_meta_field' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
 	}
 
@@ -49,6 +50,23 @@ class Starter_Page_Templates {
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/starter-page-templates.js' ),
 			true
 		);
+	}
+
+	/**
+	 * Register meta field for storing the template identifier.
+	 */
+	public function register_meta_field() {
+		$args = array(
+			'type'           => 'string',
+			'description'    => 'Selected template',
+			'single'         => true,
+			'show_in_rest'   => true,
+			'object_subtype' => 'page',
+			'auth_callback'  => function() {
+				return current_user_can( 'edit_posts' );
+			},
+		);
+		register_meta( 'post', '_starter_page_template', $args );
 	}
 
 	/**
