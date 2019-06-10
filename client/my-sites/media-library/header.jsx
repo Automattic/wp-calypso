@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { startsWith } from 'lodash';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -24,6 +25,7 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import ScreenReaderText from 'components/screen-reader-text';
 import StickyPanel from 'components/sticky-panel';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 class MediaLibraryHeader extends React.Component {
 	static displayName = 'MediaLibraryHeader';
@@ -73,6 +75,7 @@ class MediaLibraryHeader extends React.Component {
 
 	renderUploadButtons = () => {
 		const { site, filter, onAddMedia } = this.props;
+		const isMediaLibrary = startsWith( getCurrentRoute( state ), '/media' );
 
 		if ( ! userCan( 'upload_files', site ) ) {
 			return;
@@ -93,6 +96,7 @@ class MediaLibraryHeader extends React.Component {
 				</UploadButton>
 				<Button
 					compact
+					primary= { isMediaLibrary }
 					ref={ this.setMoreOptionsContext }
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
 					className="button media-library__upload-more"
