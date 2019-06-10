@@ -136,7 +136,7 @@ const mapStateToProps = state => {
 		isSectionAndSessionEligible: isSectionAndSessionEligibleForNpsSurvey( state ),
 		wasShownThisSession: wasNpsSurveyShownThisSession( state ),
 		npsSurveyScore: getNpsSurveyScore( state ),
-		isBusinessUser: getSites( state ).filter( isOwnBusinessSite ).length > 0,
+		isBusinessUser: getSites( state ).some( isOwnBusinessSite ),
 	};
 };
 

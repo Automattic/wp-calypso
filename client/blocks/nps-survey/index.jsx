@@ -10,7 +10,7 @@ import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, isNumber, noop, trim } from 'lodash';
+import { isNumber, noop, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import FormTextArea from 'components/forms/form-textarea';
 import ScreenReaderText from 'components/screen-reader-text';
-import QueryConciergeSessionsCount from 'components/data/query-concierge-sessions-count';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,
@@ -27,8 +26,7 @@ import {
 } from 'state/nps-survey/actions';
 import { successNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { hasAnsweredNpsSurvey } from 'state/nps-survey/selectors';
-import getConciergeSessionsCount from 'state/selectors/get-concierge-sessions-count';
+import { hasAnsweredNpsSurvey, isAvailableForConciergeSession } from 'state/nps-survey/selectors';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import analytics from 'lib/analytics';
 import RecommendationSelect from './recommendation-select';
@@ -40,13 +38,13 @@ export class NpsSurvey extends PureComponent {
 		name: PropTypes.string,
 		hasAnswered: PropTypes.bool,
 		isBusinessUser: PropTypes.bool,
-		hasAvailableSessions: PropTypes.bool,
+		hasAvailableConciergeSession: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		hasAnswered: false,
 		isBusinessUser: false,
-		hasAvailableSessions: false,
+		hasAvailableConciergeSession: false,
 	};
 
 	state = {
@@ -106,6 +104,7 @@ export class NpsSurvey extends PureComponent {
 		this.props.recordTracksEvent( 'calypso_nps_survey_link_clicked', {
 			url: event.target.href,
 		} );
+		this.onClose( noop );
 	};
 
 	showThanksNotice = () => {
@@ -205,12 +204,12 @@ export class NpsSurvey extends PureComponent {
 	}
 
 	renderPromotion() {
-		const { hasAvailableSessions, translate } = this.props;
+		const { hasAvailableConciergeSession, translate } = this.props;
 
 		return (
 			<div className="nps-survey__promotion">
 				<p>{ translate( 'Thank you for your feedback: We’d like to help!' ) }</p>
-				{ hasAvailableSessions && (
+				{ hasAvailableConciergeSession && (
 					<Fragment>
 						<p>
 							{ translate(
@@ -230,7 +229,7 @@ export class NpsSurvey extends PureComponent {
 						</p>
 					</Fragment>
 				) }
-				{ ! hasAvailableSessions && (
+				{ ! hasAvailableConciergeSession && (
 					<p>
 						{ translate(
 							'Connect with the WordPress.com support team {{contact}}over live chat or email{{/contact}} right now and we’d love to help you as best we can.',
@@ -256,7 +255,7 @@ export class NpsSurvey extends PureComponent {
 	}
 
 	render() {
-		const { isBusinessUser, translate } = this.props;
+		const { translate } = this.props;
 		const className = classNames( 'nps-survey', {
 			'is-recommendation-selected': Number.isInteger( this.state.score ),
 			'is-submitted': this.props.hasAnswered,
@@ -264,7 +263,6 @@ export class NpsSurvey extends PureComponent {
 
 		return (
 			<Card className={ className }>
-				{ isBusinessUser && <QueryConciergeSessionsCount /> }
 				<Button
 					borderless
 					className="nps-survey__close-button"
@@ -289,11 +287,9 @@ export class NpsSurvey extends PureComponent {
 }
 
 const mapStateToProps = state => {
-	const hasAvailableSessions = get( getConciergeSessionsCount( state ), 'available', 0 ) > 0;
-
 	return {
 		hasAnswered: hasAnsweredNpsSurvey( state ),
-		hasAvailableSessions,
+		hasAvailableConciergeSession: isAvailableForConciergeSession( state ),
 	};
 };
 
