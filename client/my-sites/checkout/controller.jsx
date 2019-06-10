@@ -15,10 +15,7 @@ import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GSuiteNudge from 'my-sites/checkout/gsuite-nudge';
 import CheckoutContainer from './checkout/checkout-container';
-import Checkout from './checkout';
-import CheckoutData from 'components/data/checkout';
 import CartData from 'components/data/cart';
-import SecondaryCart from './cart/secondary-cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import ConciergeSessionNudge from './concierge-session-nudge';
@@ -49,30 +46,10 @@ export function checkout( context, next ) {
 			couponCode={ context.query.code || getRememberedCoupon() }
 			plan={ plan }
 			selectedSite={ selectedSite }
+			reduxStore={ context.store }
 		/>
 	);
 
-	next();
-}
-
-export function sitelessCheckout( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
-
-	context.primary = (
-		<CheckoutData>
-			<Checkout
-				reduxStore={ context.store }
-				couponCode={ context.query.code || getRememberedCoupon() }
-			/>
-		</CheckoutData>
-	);
-
-	context.secondary = (
-		<CartData>
-			<SecondaryCart />
-		</CartData>
-	);
 	next();
 }
 
