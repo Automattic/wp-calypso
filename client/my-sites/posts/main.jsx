@@ -77,11 +77,9 @@ class PostsMain extends React.Component {
 			<Main className={ classes }>
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<SidebarNavigation />
-				<div className="posts__primary">
-					<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
-					{ siteId && <PostTypeBulkEditBar /> }
-					<PostTypeList query={ query } scrollContainer={ document.body } />
-				</div>
+				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
+				{ siteId && <PostTypeBulkEditBar /> }
+				<PostTypeList query={ query } scrollContainer={ document.body } />
 			</Main>
 		);
 	}
