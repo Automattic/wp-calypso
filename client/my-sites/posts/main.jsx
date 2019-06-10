@@ -4,7 +4,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -56,10 +55,6 @@ class PostsMain extends React.Component {
 
 	render() {
 		const { author, category, search, siteId, statusSlug, tag } = this.props;
-		const classes = classnames( 'posts', {
-			'is-multisite': ! this.props.siteId,
-			'is-single-site': this.props.siteId,
-		} );
 		const status = mapStatus( statusSlug );
 		const query = {
 			author,
@@ -74,7 +69,7 @@ class PostsMain extends React.Component {
 		};
 
 		return (
-			<Main className={ classes }>
+			<Main className="posts">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<SidebarNavigation />
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
