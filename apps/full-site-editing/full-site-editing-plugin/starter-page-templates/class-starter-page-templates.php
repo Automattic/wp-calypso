@@ -62,20 +62,6 @@ class Starter_Page_Templates {
 			'single'         => true,
 			'show_in_rest'   => true,
 			'object_subtype' => 'page',
-		);
-		register_meta( 'post', '_starter_page_template', $args );
-	}
-
-	/**
-	 * Register meta field for storing the template identifier.
-	 */
-	public function register_meta_field() {
-		$args = array(
-			'type'           => 'string',
-			'description'    => 'Selected template',
-			'single'         => true,
-			'show_in_rest'   => true,
-			'object_subtype' => 'page',
 			'auth_callback'  => function() {
 				return current_user_can( 'edit_posts' );
 			},
