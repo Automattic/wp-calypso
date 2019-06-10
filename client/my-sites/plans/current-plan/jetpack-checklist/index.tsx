@@ -216,7 +216,10 @@ class JetpackChecklist extends PureComponent< Props > {
 									? `/media/${ siteSlug }`
 									: `/settings/performance/${ siteSlug }`
 							}
-							onClick={ this.handleTaskStart( { taskId: 'jetpack_video_hosting' } ) }
+							onClick={ this.handleTaskStart( {
+								taskId: 'jetpack_video_hosting',
+								tourId: 'jetpackVideoHosting',
+							} ) }
 						/>
 					) }
 					{ isEnabled( 'jetpack/checklist/performance' ) && isProfessional && (
@@ -236,7 +239,10 @@ class JetpackChecklist extends PureComponent< Props > {
 									? this.props.widgetCustomizerPaneUrl
 									: `/settings/performance/${ siteSlug }`
 							}
-							onClick={ this.handleTaskStart( { taskId: 'jetpack_search' } ) }
+							onClick={ this.handleTaskStart( {
+								taskId: 'jetpack_search',
+								tourId: 'jetpackSearch',
+							} ) }
 						/>
 					) }
 				</Checklist>
