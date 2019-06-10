@@ -15,6 +15,12 @@ import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
 
+const VerifyConfirmationCommand = {
+	acceptTransfer: 'accept-transfer',
+	denyTransfer: 'deny-transfer',
+	verifyEmail: 'verify-email',
+};
+
 class TransferAwayConfirmationPage extends Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
@@ -36,7 +42,9 @@ class TransferAwayConfirmationPage extends Component {
 
 	componentWillMount() {
 		const { domain, recipientId, token } = this.props;
-		wpcom.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token ).then(
+		const { verifyEmail } = VerifyConfirmationCommand;
+
+		wpcom.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, verifyEmail ).then(
 			() => {
 				this.setState( this.getConfirmationSelectState() );
 			},
@@ -57,30 +65,40 @@ class TransferAwayConfirmationPage extends Component {
 		};
 	};
 
-	onAcceptTransferComplete = error => {
-		if ( error ) {
-			this.setErrorState( { error: 'accept_transfer_failed' } );
-		} else {
-			this.setSuccessState( 'accept_transfer_success' );
-		}
-	};
-
 	acceptTransfer = () => {
-		this.setState( { isProcessingRequest: true } );
-		wpcom.acceptTransfer( this.props.domain, this.onAcceptTransferComplete );
-	};
+		const { domain, recipientId, token } = this.props;
+		const { acceptTransfer } = VerifyConfirmationCommand;
 
-	onCancelTransferComplete = error => {
-		if ( error ) {
-			this.setErrorState( { error: 'cancel_transfer_failed' } );
-		} else {
-			this.setSuccessState( 'cancel_transfer_success' );
-		}
+		this.setState( { isProcessingRequest: true } );
+
+		wpcom
+			.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, acceptTransfer )
+			.then(
+				() => {
+					this.setSuccessState( 'accept_transfer_success' );
+				},
+				() => {
+					this.setErrorState( { error: 'accept_transfer_failed' } );
+				}
+			);
 	};
 
 	cancelTransfer = () => {
+		const { domain, recipientId, token } = this.props;
+		const { denyTransfer } = VerifyConfirmationCommand;
+
 		this.setState( { isProcessingRequest: true } );
-		wpcom.declineTransfer( this.props.domain, this.onCancelTransferComplete );
+
+		wpcom
+			.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, denyTransfer )
+			.then(
+				() => {
+					this.setSuccessState( 'cancel_transfer_success' );
+				},
+				() => {
+					this.setErrorState( { error: 'cancel_transfer_failed' } );
+				}
+			);
 	};
 
 	getConfirmationSelectState = () => {
