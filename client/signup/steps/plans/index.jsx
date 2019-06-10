@@ -243,6 +243,10 @@ PlansStep.propTypes = {
 	planTypes: PropTypes.array,
 };
 
+PlansStep.defaultProps = {
+	allowSkip: true,
+};
+
 /**
  * Checks if the domainItem picked in the domain step is a top level .blog domain -
  * we only want to make Blogger plan available if it is.
