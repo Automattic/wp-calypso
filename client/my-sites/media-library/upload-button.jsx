@@ -81,7 +81,7 @@ export default class extends React.Component {
 	};
 
 	render() {	
-		const classes = classNames(  'media-library__upload-button', 'button', this.props.className, {
+		const classes = classNames( 'media-library__upload-button', 'button', this.props.className, {
 			'is-primary': startsWith( getCurrentRoute( state ), '/media' ),
 		} );
 
