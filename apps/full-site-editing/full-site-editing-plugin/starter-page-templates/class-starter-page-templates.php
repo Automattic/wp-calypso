@@ -113,7 +113,7 @@ class Starter_Page_Templates {
 		$vertical_templates = $vertical_data['templates'];
 
 		// Bail early if we have no templates to offer.
-		if ( empty( $vertical_templates ) ) {
+		if ( empty( $vertical_templates ) || empty( $vertical ) ) {
 			$this->pass_error_to_frontend( __( 'No templates available. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
 		}
