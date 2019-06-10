@@ -34,7 +34,6 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
-import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
@@ -197,7 +196,7 @@ export default connect( ( state, { requestThankYou } ) => {
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
-		showJetpackChecklist: isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ),
-		showThankYou: requestThankYou && isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ),
+		showJetpackChecklist: isJetpackNotAtomic,
+		showThankYou: requestThankYou && isJetpackNotAtomic,
 	};
 } )( localize( CurrentPlan ) );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,6 @@ import { localize } from 'i18n-calypso';
  */
 import ChecklistShowShare from './share';
 import DocumentHead from 'components/data/document-head';
-import EmptyContent from 'components/empty-content';
 import FormattedHeader from 'components/formatted-header';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
@@ -24,7 +22,6 @@ import WpcomChecklist from './wpcom-checklist';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite, isNewSite } from 'state/sites/selectors';
-import { isEnabled } from 'config';
 
 /**
  * Style dependencies
@@ -60,7 +57,6 @@ class ChecklistMain extends PureComponent {
 			 * Only send Jetpack users to plans if a checklist will be presented. Otherwise,
 			 * let the "Not available" view render.
 			 */
-			isEnabled( 'jetpack/checklist' ) &&
 			this.props.siteSlug &&
 			false === this.props.isAtomic &&
 			this.props.isJetpack &&
@@ -168,7 +164,12 @@ class ChecklistMain extends PureComponent {
 	}
 
 	render() {
-		const { checklistAvailable, displayMode, siteId, translate } = this.props;
+		// Jetpack sites (excluding Atomic) should be redirected via this.maybeRedirectJetpack
+		if ( this.props.isJetpack && false === this.props.isAtomic ) {
+			return null;
+		}
+
+		const { displayMode, siteId, translate } = this.props;
 
 		let translatedTitle = translate( 'Site Checklist' );
 		let title = 'Site Checklist';
@@ -184,15 +185,9 @@ class ChecklistMain extends PureComponent {
 				<PageViewTracker path={ path } title={ title } />
 				<SidebarNavigation />
 				<DocumentHead title={ translatedTitle } />
-				{ checklistAvailable ? (
-					<>
-						{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-						{ this.renderHeader() }
-						<WpcomChecklist updateCompletion={ this.handleCompletionUpdate } />
-					</>
-				) : (
-					<EmptyContent title={ translate( 'Checklist not available for this site' ) } />
-				) }
+				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				{ this.renderHeader() }
+				<WpcomChecklist updateCompletion={ this.handleCompletionUpdate } />
 			</Main>
 		);
 	}
@@ -204,7 +199,6 @@ export default connect( state => {
 	const isJetpack = isJetpackSite( state, siteId );
 
 	return {
-		checklistAvailable: isEnabled( 'jetpack/checklist' ) || ! isJetpack || isAtomic,
 		isAtomic,
 		isJetpack,
 		isNewlyCreatedSite: isNewSite( state, siteId ),
