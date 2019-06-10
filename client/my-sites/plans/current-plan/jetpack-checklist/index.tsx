@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment, PureComponent, ReactElement, ReactNode } from 'react';
+import React, { Fragment, PureComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -36,7 +36,6 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { isEnabled } from 'config';
-import ChecklistSectionTitle from './checklist-section-title';
 import { URL } from 'types';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
@@ -92,25 +91,6 @@ class JetpackChecklist extends PureComponent< Props > {
 			location: 'JetpackChecklist',
 		} );
 	};
-
-	/**
-	 * Create a section title task
-	 *
-	 * The Jetpack checklist includes a unique structure at this time which groups tasks
-	 * under a section title. The Checklist component does not support the necessary structure
-	 * and future iterations intend to remove the grouped tasks.
-	 *
-	 * In order to get the desired layout and behavior with the existing Checklist component,
-	 * it's necessary to add an element with the `excludeFromCount` prop. That requires the use of a
-	 * render method rather than a "true" Component definition.
-	 *
-	 * @param title The checklist title
-	 *
-	 * @return Section title element
-	 */
-	renderSectionTitle( title: string ): ReactElement {
-		return <ChecklistSectionTitle excludeFromCount title={ title } />;
-	}
 
 	renderTaskSet( checklistTasks: ChecklistTasksetUi ): ReactNode {
 		if ( ! this.props.taskStatuses ) {
@@ -180,8 +160,6 @@ class JetpackChecklist extends PureComponent< Props > {
 					isPlaceholder={ ! taskStatuses }
 					progressText={ translate( 'Your Jetpack setup progress' ) }
 				>
-					{ isEnabled( 'jetpack/checklist/performance' ) &&
-						this.renderSectionTitle( translate( 'Security Tools' ) ) }
 					<Task
 						{ ...JETPACK_CHECKLIST_TASK_PROTECT }
 						completed
@@ -219,9 +197,6 @@ class JetpackChecklist extends PureComponent< Props > {
 						/>
 					) }
 					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS ) }
-					{ /* For Checklist completion calculation to work correctly, children shold be a flat list of tasks */ }
-					{ isEnabled( 'jetpack/checklist/performance' ) &&
-						this.renderSectionTitle( translate( 'Performance Tools' ) ) }
 					{ isEnabled( 'jetpack/checklist/performance' ) &&
 						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS ) }
 					{ isEnabled( 'jetpack/checklist/performance' ) && ( isPremium || isProfessional ) && (
