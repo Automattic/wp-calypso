@@ -87,8 +87,8 @@ const PageTemplateModal = withState( {
 									templates={ Object.values( verticalTemplates ).map( template => ( {
 										label: template.title,
 										value: template.slug,
-										preview: template.preview && template.preview.src,
-										previewAlt: template.preview && template.preview.alt,
+										preview: template.preview,
+										previewAlt: template.description,
 									} ) ) }
 									onClick={ newTemplate => selectTemplate( newTemplate ) }
 								/>
