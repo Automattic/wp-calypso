@@ -5,7 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, uniq } from 'lodash';
+import { noop, uniq, startsWith } from 'lodash';
 import classNames from 'classnames';
 import page from 'page';
 
@@ -16,6 +16,7 @@ import analytics from 'lib/analytics';
 import MediaActions from 'lib/media/actions';
 import { getAllowedFileTypesForSite, isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -79,8 +80,10 @@ export default class extends React.Component {
 			.join();
 	};
 
-	render() {
-		const classes = classNames( 'media-library__upload-button', 'button', this.props.className );
+	render() {	
+		const classes = classNames(  'media-library__upload-button', 'button', this.props.className, {
+			'is-primary': startsWith( getCurrentRoute( state ), '/media' ),
+		} );
 
 		return (
 			<form ref={ this.formRef } className={ classes }>
