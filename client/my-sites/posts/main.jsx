@@ -16,7 +16,7 @@ import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
 import titlecase from 'to-title-case';
 import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { mapPostStatus as mapStatus } from 'lib/route';
+import { mapPostStatus } from 'lib/route';
 
 /**
  * Style dependencies
@@ -55,7 +55,7 @@ class PostsMain extends React.Component {
 
 	render() {
 		const { author, category, search, siteId, statusSlug, tag } = this.props;
-		const status = mapStatus( statusSlug );
+		const status = mapPostStatus( statusSlug );
 		const query = {
 			author,
 			category,
