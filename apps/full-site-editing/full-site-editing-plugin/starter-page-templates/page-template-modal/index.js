@@ -34,7 +34,7 @@ class PageTemplateModal extends Component {
 		this.setState( { isOpen: false } );
 		trackSelection( this.props.vertical.id, newTemplate );
 
-		const template = this.props.verticalTemplates[ newTemplate ];
+		const template = this.props.templates[ newTemplate ];
 
 		// Skip inserting if there's nothing to insert.
 		if ( ! has( template, 'content' ) ) {
@@ -56,10 +56,7 @@ class PageTemplateModal extends Component {
 	};
 
 	render() {
-		const { isOpen } = this.state;
-		const { verticalTemplates } = this.props;
-
-		if ( ! isOpen ) {
+		if ( ! this.state.isOpen ) {
 			return null;
 		}
 
@@ -88,7 +85,7 @@ class PageTemplateModal extends Component {
 							</legend>
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
-								templates={ Object.values( verticalTemplates ).map( template => ( {
+								templates={ Object.values( this.props.templates ).map( template => ( {
 									label: template.title,
 									value: template.slug,
 									preview: template.preview,
@@ -137,7 +134,7 @@ registerPlugin( 'page-templates', {
 	render: function() {
 		return (
 			<PageTemplatesPlugin
-				verticalTemplates={ keyBy( templates, 'slug' ) }
+				templates={ keyBy( templates, 'slug' ) }
 				vertical={ vertical }
 				siteInformation={ siteInformation }
 			/>
