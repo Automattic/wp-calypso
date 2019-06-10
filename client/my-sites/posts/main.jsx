@@ -5,7 +5,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -90,4 +89,4 @@ class PostsMain extends React.Component {
 
 export default connect( state => ( {
 	siteId: getSelectedSiteId( state ),
-} ) )( localize( PostsMain ) );
+} ) )( PostsMain );
