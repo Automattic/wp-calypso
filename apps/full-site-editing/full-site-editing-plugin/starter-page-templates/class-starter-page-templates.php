@@ -109,11 +109,11 @@ class Starter_Page_Templates {
 			$this->pass_error_to_frontend( __( 'No data received from the vertical API. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
 		}
-		$vertical_name      = $vertical_data['vertical'];
+		$vertical           = $vertical_data['vertical'];
 		$vertical_templates = $vertical_data['templates'];
 
 		// Bail early if we have no templates to offer.
-		if ( empty( $vertical_templates ) ) {
+		if ( empty( $vertical_templates ) || empty( $vertical ) ) {
 			$this->pass_error_to_frontend( __( 'No templates available. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
 		}
@@ -123,7 +123,7 @@ class Starter_Page_Templates {
 
 		$default_info      = array(
 			'title'    => get_bloginfo( 'name' ),
-			'vertical' => $vertical_name,
+			'vertical' => $vertical['name'],
 		);
 		$default_templates = array(
 			array(
@@ -136,6 +136,7 @@ class Starter_Page_Templates {
 		$config    = array(
 			'siteInformation' => array_merge( $default_info, $site_info ),
 			'templates'       => array_merge( $default_templates, $vertical_templates ),
+			'vertical'        => $vertical,
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
 
