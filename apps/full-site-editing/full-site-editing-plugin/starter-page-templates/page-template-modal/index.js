@@ -104,7 +104,7 @@ class PageTemplateModal extends Component {
 	}
 }
 
-const PageTemplateModalPlugin = compose(
+const PageTemplatesPlugin = compose(
 	withSelect( select => ( {
 		getMeta: () => select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
 	} ) ),
@@ -136,7 +136,7 @@ const { siteInformation = {}, templates = [], vertical } = window.starterPageTem
 registerPlugin( 'page-templates', {
 	render: function() {
 		return (
-			<PageTemplateModalPlugin
+			<PageTemplatesPlugin
 				verticalTemplates={ keyBy( templates, 'slug' ) }
 				vertical={ vertical }
 				siteInformation={ siteInformation }
