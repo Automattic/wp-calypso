@@ -18,7 +18,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 /**
  * Style dependencies
  */
-import './style.scss';
+import './start-button.scss';
 
 class StartButton extends React.PureComponent {
 	static displayName = 'StartButton';
