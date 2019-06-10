@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -35,7 +34,6 @@ import GoogleAppsDetails from './google-apps-details';
 import GuidedTransferDetails from './guided-transfer-details';
 import HappinessSupport from 'components/happiness-support';
 import PlanThankYouCard from 'blocks/plan-thank-you-card';
-import JetpackThankYouCard from './jetpack-thank-you-card';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import {
 	isChargeback,
@@ -73,7 +71,6 @@ import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
 import { domainManagementList, domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
-import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import { fetchAtomicTransfer } from 'state/atomic-transfer/actions';
@@ -432,14 +429,9 @@ export class CheckoutThankYou extends React.Component {
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasJetpackPlanPurchased && config.isEnabled( 'plans/jetpack-config-v2' ) ) {
-			return (
-				<Main className="checkout-thank-you">
-					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-					{ this.renderConfirmationNotice() }
-					<JetpackThankYouCard siteId={ this.props.selectedSite.ID } />
-				</Main>
-			);
+		} else if ( wasJetpackPlanPurchased ) {
+			page( `/plans/my-plan/${ this.props.siteId }?thank-you` );
+			return null;
 		}
 
 		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
