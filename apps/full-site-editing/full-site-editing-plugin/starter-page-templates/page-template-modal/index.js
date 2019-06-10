@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { keyBy, has, map } from 'lodash';
+import { has, keyBy, map } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Modal } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { withSelect, withDispatch } from '@wordpress/data';
+import { withDispatch, withSelect } from '@wordpress/data';
 import { parse as parseBlocks } from '@wordpress/blocks';
 import { Component } from '@wordpress/element';
 
@@ -16,7 +16,7 @@ import { Component } from '@wordpress/element';
 import replacePlaceholders from './utils/replace-placeholders';
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
-import { trackDismiss, trackView, trackSelection } from './utils/tracking';
+import { trackDismiss, trackSelection, trackView } from './utils/tracking';
 
 class PageTemplateModal extends Component {
 	state = {
