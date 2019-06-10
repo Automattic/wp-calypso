@@ -36,9 +36,16 @@ module.exports = {
 			},
 		},
 		merge(
+			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
+			// the TypeScript config manually using internal bits from various plugins
 			{},
-			require( '@typescript-eslint/eslint-plugin' ).configs.recommended,
+			// base TypeScript config: parser options, add plugin with rules
+			require( '@typescript-eslint/eslint-plugin' ).configs.base,
+			// basic recommended rules config from the TypeScript plugin
+			{ rules: require( '@typescript-eslint/eslint-plugin' ).configs.recommended.rules },
+			// Prettier rules config
 			require( 'eslint-config-prettier/@typescript-eslint' ),
+			// Our own overrides
 			{
 				files: [ '**/*.ts', '**/*.tsx' ],
 				rules: {
