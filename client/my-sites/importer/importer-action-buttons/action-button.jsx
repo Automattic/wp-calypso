@@ -13,7 +13,7 @@ import Button from 'components/button';
 /**
  * Style dependencies
  */
-import './style.scss';
+import './action-button.scss';
 
 const ImporterActionButton = ( { className, ...props } ) => (
 	<Button
