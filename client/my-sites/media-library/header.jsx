@@ -96,7 +96,7 @@ class MediaLibraryHeader extends React.Component {
 				</UploadButton>
 				<Button
 					compact
-					primary= { isMediaLibrary }
+					primary={ isMediaLibrary }
 					ref={ this.setMoreOptionsContext }
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
 					className="button media-library__upload-more"
