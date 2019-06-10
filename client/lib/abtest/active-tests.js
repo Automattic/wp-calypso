@@ -131,15 +131,6 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	showCheckoutCartRight: {
-		datestamp: '20190502',
-		variations: {
-			variantRightColumn: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	showApplePay: {
 		datestamp: '20190529',
 		variations: {

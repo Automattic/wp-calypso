@@ -12,7 +12,6 @@ import {
 	checkoutPending,
 	checkoutThankYou,
 	gsuiteNudge,
-	sitelessCheckout,
 	conciergeSessionNudge,
 	conciergeQuickstartSession,
 } from './controller';
@@ -72,7 +71,7 @@ export default function() {
 		clientRender
 	);
 
-	page( '/checkout/no-site', noSite, sitelessCheckout, makeLayout, clientRender );
+	page( '/checkout/no-site', noSite, checkout, makeLayout, clientRender );
 
 	page(
 		'/checkout/features/:feature/:domain/:plan_name?',
