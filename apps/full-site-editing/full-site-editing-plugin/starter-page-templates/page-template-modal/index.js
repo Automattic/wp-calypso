@@ -3,11 +3,12 @@
  */
 import { keyBy, has } from 'lodash';
 import { __ } from '@wordpress/i18n';
-import { withState } from '@wordpress/compose';
+import { compose } from '@wordpress/compose';
 import { Modal } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { dispatch, select } from '@wordpress/data';
+import { withSelect, withDispatch } from '@wordpress/data';
 import { parse as parseBlocks } from '@wordpress/blocks';
+import { Component } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -17,94 +18,129 @@ import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
 import { trackDismiss, trackView, trackSelection } from './utils/tracking';
 
-const { siteInformation = {}, templates = [], vertical } = window.starterPageTemplatesConfig;
-const editorDispatcher = dispatch( 'core/editor' );
-const editorSelector = select( 'core/editor' );
+class PageTemplateModal extends Component {
+	state = {
+		isOpen: true,
+		isLoading: false,
+	};
 
-const insertTemplate = template => {
-	// Skip inserting if there's nothing to insert.
-	if ( ! has( template, 'content' ) ) {
-		return;
+	componentDidMount() {
+		if ( this.state.isOpen ) {
+			trackView( this.props.vertical.id );
+		}
 	}
 
-	// Set post title and remember selected template in meta.
-	const currentMeta = editorSelector.getEditedPostAttribute( 'meta' );
-	editorDispatcher.editPost( {
-		title: replacePlaceholders( template.title, siteInformation ),
-		meta: {
-			...currentMeta,
-			_starter_page_template: template.slug,
-		},
-	} );
+	selectTemplate = newTemplate => {
+		this.setState( { isOpen: false } );
+		trackSelection( this.props.vertical.id, newTemplate );
 
-	// Insert blocks.
-	const templateString = replacePlaceholders( template.content, siteInformation );
-	const blocks = parseBlocks( templateString );
-	editorDispatcher.insertBlocks( blocks );
-};
+		const template = this.props.verticalTemplates[ newTemplate ];
 
-const PageTemplateModal = withState( {
-	isOpen: true,
-	isLoading: false,
-	verticalTemplates: keyBy( templates, 'slug' ),
-} )( ( { isOpen, verticalTemplates, setState } ) => {
-	const closeModal = () => {
-		setState( { isOpen: false } );
-		trackDismiss( vertical.id );
+		// Skip inserting if there's nothing to insert.
+		if ( ! has( template, 'content' ) ) {
+			return;
+		}
+
+		const processedTemplate = {
+			...template,
+			title: replacePlaceholders( template.title, this.props.siteInformation ),
+			content: replacePlaceholders( template.content, this.props.siteInformation ),
+		};
+
+		this.props.insertTemplate( processedTemplate );
 	};
-	const selectTemplate = newTemplate => {
-		insertTemplate( verticalTemplates[ newTemplate ] );
-		setState( { isOpen: false } );
-		trackSelection( vertical.id, newTemplate );
+
+	closeModal = () => {
+		this.setState( { isOpen: false } );
+		trackDismiss( this.props.vertical.id );
 	};
-	return (
-		<div>
-			{ isOpen && (
-				<Modal
-					title={ __( 'Select Page Template', 'full-site-editing' ) }
-					onRequestClose={ closeModal }
-					className="page-template-modal"
-				>
-					<div className="page-template-modal__inner">
-						<form className="page-template-modal__form">
-							<fieldset className="page-template-modal__list">
-								<legend className="page-template-modal__intro">
-									<p>
-										{ __(
-											'Pick a Template that matches the purpose of your page.',
-											'full-site-editing'
-										) }
-									</p>
-									<p>
-										{ __(
-											'You can customize each Template to meet your needs.',
-											'full-site-editing'
-										) }
-									</p>
-								</legend>
-								<TemplateSelectorControl
-									label={ __( 'Template', 'full-site-editing' ) }
-									templates={ Object.values( verticalTemplates ).map( template => ( {
-										label: template.title,
-										value: template.slug,
-										preview: template.preview,
-										previewAlt: template.description,
-									} ) ) }
-									onClick={ newTemplate => selectTemplate( newTemplate ) }
-								/>
-							</fieldset>
-						</form>
-					</div>
-				</Modal>
-			) }
-		</div>
-	);
-} );
+
+	render() {
+		const { isOpen } = this.state;
+		const { verticalTemplates } = this.props;
+
+		if ( ! isOpen ) {
+			return null;
+		}
+
+		return (
+			<Modal
+				title={ __( 'Select Page Template', 'full-site-editing' ) }
+				onRequestClose={ this.closeModal }
+				className="page-template-modal"
+			>
+				<div className="page-template-modal__inner">
+					<form className="page-template-modal__form">
+						<fieldset className="page-template-modal__list">
+							<legend className="page-template-modal__intro">
+								<p>
+									{ __(
+										'Pick a Template that matches the purpose of your page.',
+										'full-site-editing'
+									) }
+								</p>
+								<p>
+									{ __(
+										'You can customize each Template to meet your needs.',
+										'full-site-editing'
+									) }
+								</p>
+							</legend>
+							<TemplateSelectorControl
+								label={ __( 'Template', 'full-site-editing' ) }
+								templates={ Object.values( verticalTemplates ).map( template => ( {
+									label: template.title,
+									value: template.slug,
+									preview: template.preview,
+									previewAlt: template.description,
+								} ) ) }
+								onClick={ newTemplate => this.selectTemplate( newTemplate ) }
+							/>
+						</fieldset>
+					</form>
+				</div>
+			</Modal>
+		);
+	}
+}
+
+const PageTemplateModalPlugin = compose(
+	withSelect( select => ( {
+		getMeta: () => select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
+	} ) ),
+	withDispatch( ( dispatch, ownProps ) => {
+		const editorDispatcher = dispatch( 'core/editor' );
+		return {
+			insertTemplate: template => {
+				// Set post title and remember selected template in meta.
+				const currentMeta = ownProps.getMeta();
+				editorDispatcher.editPost( {
+					title: template.title,
+					meta: {
+						...currentMeta,
+						_starter_page_template: template.slug,
+					},
+				} );
+
+				// Insert blocks.
+				const blocks = parseBlocks( template.content );
+				editorDispatcher.insertBlocks( blocks );
+			},
+		};
+	} )
+)( PageTemplateModal );
+
+// Load config passed from backend.
+const { siteInformation = {}, templates = [], vertical } = window.starterPageTemplatesConfig;
 
 registerPlugin( 'page-templates', {
 	render: function() {
-		return <PageTemplateModal />;
+		return (
+			<PageTemplateModalPlugin
+				verticalTemplates={ keyBy( templates, 'slug' ) }
+				vertical={ vertical }
+				siteInformation={ siteInformation }
+			/>
+		);
 	},
 } );
-
-trackView( vertical.id );
