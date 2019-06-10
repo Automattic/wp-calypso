@@ -218,7 +218,6 @@ class RegisterDomainStep extends React.Component {
 			bloggerFilterAdded: false,
 			clickedExampleSuggestion: false,
 			filters: this.getInitialFiltersState(),
-			lastDomainIsMappable: false,
 			lastDomainIsTransferrable: false,
 			lastDomainSearched: null,
 			lastDomainStatus: null,
@@ -337,7 +336,6 @@ class RegisterDomainStep extends React.Component {
 	clearLastDomainState() {
 		this.setState( {
 			lastDomainStatus: null,
-			lastDomainIsMappable: false,
 			lastDomainIsTransferrable: false,
 		} );
 	}
@@ -739,19 +737,16 @@ class RegisterDomainStep extends React.Component {
 
 					const {
 						AVAILABLE,
-						MAPPABLE,
 						MAPPED_SAME_SITE_TRANSFERRABLE,
 						TRANSFERRABLE,
 						UNKNOWN,
 					} = domainAvailability;
 					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
-					const isDomainMappable = get( result, 'mappable', false ) === MAPPABLE;
 					const isDomainTransferrable = TRANSFERRABLE === status;
 
 					this.setState( {
 						exactMatchDomain: domainChecked,
 						lastDomainStatus: status,
-						lastDomainIsMappable: isDomainMappable,
 						lastDomainIsTransferrable: isDomainTransferrable,
 					} );
 					if ( isDomainAvailable ) {
@@ -1251,7 +1246,6 @@ class RegisterDomainStep extends React.Component {
 		} else {
 			const query = stringify( {
 				initialQuery: this.state.lastQuery.trim(),
-				isDomainMappable: this.state.lastDomainIsMappable,
 				isDomainTransferrable: this.state.lastDomainIsTransferrable,
 			} );
 			useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;

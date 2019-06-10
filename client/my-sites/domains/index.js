@@ -266,7 +266,6 @@ export default function() {
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add/mapping' ),
 			domainsController.jetpackNoDomainsWarning,
-			domainsController.redirectIfDomainIsMappable,
 			domainsController.mapDomain,
 			makeLayout,
 			clientRender
