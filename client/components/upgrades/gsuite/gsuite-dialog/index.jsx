@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
  */
 import { abtest } from 'lib/abtest';
 import Button from 'components/button';
-import { cartItems } from 'lib/cart-values';
+import { googleApps } from 'lib/cart-values/cart-items';
 import CompactCard from 'components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
@@ -212,7 +212,7 @@ class GoogleAppsDialog extends React.Component {
 			};
 		} );
 
-		return cartItems.googleApps( {
+		return googleApps( {
 			domain: this.props.domain,
 			product_slug: gsuitePlanSlug,
 			users,

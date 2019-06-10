@@ -24,12 +24,13 @@ import WebPaymentBox from './web-payment-box';
 import { fullCreditsPayment, newCardPayment, storedCardPayment } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import { setPayment, submitTransaction } from 'lib/upgrades/actions';
-import cartValues, {
+import {
 	isPaidForFullyInCredits,
 	isFree,
-	cartItems,
 	getLocationOrigin,
+	isPaymentMethodEnabled,
 } from 'lib/cart-values';
+import { hasFreeTrial, getDomainRegistrations } from 'lib/cart-values/cart-items';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import getCountries from 'state/selectors/get-countries';
@@ -38,13 +39,10 @@ import { INPUT_VALIDATION, REDIRECTING_FOR_AUTHORIZATION } from 'lib/store-trans
 import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
-import FormattedHeader from 'components/formatted-header';
-import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
  */
-const { hasFreeTrial } = cartItems;
 const debug = debugFactory( 'calypso:checkout:payment' );
 
 export class SecurePaymentForm extends Component {
@@ -136,7 +134,7 @@ export class SecurePaymentForm extends Component {
 		}
 
 		for ( i = 0; i < paymentMethods.length; i++ ) {
-			if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
+			if ( isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
 				return paymentMethods[ i ];
 			}
 		}
@@ -278,7 +276,7 @@ export class SecurePaymentForm extends Component {
 		const cart = parameters.cart,
 			success = parameters.success;
 
-		cartItems.getDomainRegistrations( cart ).forEach( function( cartItem ) {
+		getDomainRegistrations( cart ).forEach( function( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_domain_registration', {
 				domain_name: cartItem.meta,
 				domain_tld: getTld( cartItem.meta ),
@@ -543,12 +541,7 @@ export class SecurePaymentForm extends Component {
 		const { translate } = this.props;
 		const headerText = translate( 'Great choice! How would you like to pay?' );
 
-		if ( 'variantRightColumn' === abtest( 'showCheckoutCartRight' ) ) {
-			const element = document.getElementsByClassName( 'formatted-header__title' )[ 0 ];
-			element.textContent = headerText;
-			return;
-		}
-		return <FormattedHeader headerText={ headerText } />;
+		this.props.setHeaderText( headerText );
 	}
 
 	render() {

@@ -303,7 +303,7 @@ export default {
 			'authors',
 			'videoplays',
 			'videodetails',
-			'podcastdownloads',
+			'filedownloads',
 			'searchterms',
 			'annualstats',
 		];

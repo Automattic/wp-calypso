@@ -15,6 +15,11 @@ import { keys, omit, noop } from 'lodash';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class FormTextInputWithAction extends Component {
 	static propTypes = {
 		action: PropTypes.node,

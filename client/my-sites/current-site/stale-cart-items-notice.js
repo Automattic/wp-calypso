@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CartStore from 'lib/cart/store';
-import { cartItems } from 'lib/cart-values';
+import { hasStaleItem } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { infoNotice, removeNotice } from 'state/notices/actions';
 import { getNoticeLastTimeShown } from 'state/notices/selectors';
@@ -31,7 +31,7 @@ class StaleCartItemsNotice extends React.Component {
 		// in the last 10 minutes (cart abandonment)
 		if (
 			this.props.selectedSiteSlug &&
-			cartItems.hasStaleItem( CartStore.get() ) &&
+			hasStaleItem( CartStore.get() ) &&
 			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000
 		) {
 			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );

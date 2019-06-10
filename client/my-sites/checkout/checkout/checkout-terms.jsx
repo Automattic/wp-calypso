@@ -6,7 +6,7 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { hasRenewableSubscription } from 'lib/cart-values/cart-items';
 import TermsOfService from './terms-of-service';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
@@ -26,7 +26,7 @@ class CheckoutTerms extends React.Component {
 						} ) }
 					</strong>
 				</div>
-				<TermsOfService hasRenewableSubscription={ cartItems.hasRenewableSubscription( cart ) } />
+				<TermsOfService hasRenewableSubscription={ hasRenewableSubscription( cart ) } />
 				<DomainRegistrationAgreement cart={ cart } />
 				<DomainRegistrationHsts cart={ cart } />
 				<DomainRegistrationRefundPolicy cart={ cart } />

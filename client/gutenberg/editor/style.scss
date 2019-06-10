@@ -96,6 +96,12 @@ html.is-iframe {
 	top: 0;
 	width: auto;
 
+	@supports (-webkit-overflow-scrolling: touch) {
+		/* iOS devices only */
+		-webkit-overflow-scrolling: touch;
+		overflow: auto;
+	}
+
 	iframe {
 		position: absolute;
 		top: 0;

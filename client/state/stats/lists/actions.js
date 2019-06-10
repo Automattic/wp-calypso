@@ -24,6 +24,7 @@ import { includes } from 'lodash';
  * @param  {String} statType Stat Key
  * @param  {Object} query    Stats query
  * @param  {Array}  data     Stat Data
+ * @param  {Object} date	 Date
  * @return {Object}          Action object
  */
 export function receiveSiteStats( siteId, statType, query, data, date ) {
@@ -56,7 +57,7 @@ export function requestSiteStats( siteId, statType, query ) {
 		} );
 		const isUndocumented = includes(
 			[
-				'statsPodcastDownloads',
+				'statsFileDownloads',
 				'statsAds',
 				'statsOrders',
 				'statsTopSellers',

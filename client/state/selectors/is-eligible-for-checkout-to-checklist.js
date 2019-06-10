@@ -4,7 +4,14 @@
  * Internal dependencies
  */
 import { isNewSite } from 'state/sites/selectors';
-import { cartItems } from 'lib/cart-values';
+import {
+	hasDomainMapping,
+	hasDomainRegistration,
+	hasTransferProduct,
+	hasPlan,
+	hasConciergeSession,
+	hasEcommercePlan,
+} from 'lib/cart-values/cart-items';
 import isEligibleForDotcomChecklist from './is-eligible-for-dotcom-checklist';
 
 /**
@@ -15,11 +22,11 @@ import isEligibleForDotcomChecklist from './is-eligible-for-dotcom-checklist';
  */
 export default function isEligibleForCheckoutToChecklist( state, siteId, cart ) {
 	if (
-		cartItems.hasDomainMapping( cart ) ||
-		cartItems.hasDomainRegistration( cart ) ||
-		cartItems.hasTransferProduct( cart ) ||
-		( ! cartItems.hasPlan( cart ) && ! cartItems.hasConciergeSession( cart ) ) ||
-		cartItems.hasEcommercePlan( cart )
+		hasDomainMapping( cart ) ||
+		hasDomainRegistration( cart ) ||
+		hasTransferProduct( cart ) ||
+		( ! hasPlan( cart ) && ! hasConciergeSession( cart ) ) ||
+		hasEcommercePlan( cart )
 	) {
 		return false;
 	}

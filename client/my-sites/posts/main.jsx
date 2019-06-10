@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,6 +26,11 @@ import {
 	isJetpackSite,
 	siteHasMinimumJetpackVersion,
 } from 'state/sites/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PostsMain extends React.Component {
 	UNSAFE_componentWillMount() {

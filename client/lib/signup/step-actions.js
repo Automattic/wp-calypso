@@ -17,7 +17,6 @@ import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
 import { getABTestVariation, getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
@@ -385,7 +384,7 @@ function processItemCart(
 			const { product_slug: productSlug } = domainItem;
 			const productsList = getProductsList( state );
 			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-				privacyItem = cartItems.updatePrivacyForDomain( domainItem, true );
+				privacyItem = updatePrivacyForDomain( domainItem, true );
 
 				if ( privacyItem ) {
 					newCartItems.push( privacyItem );

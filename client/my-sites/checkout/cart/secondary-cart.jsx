@@ -19,11 +19,10 @@ import CartMessages from './cart-messages';
 import CartSummaryBar from 'my-sites/checkout/cart/cart-summary-bar';
 import CartPlanAdTheme from './cart-plan-ad-theme';
 import CartPlanDiscountAd from './cart-plan-discount-ad';
-import Sidebar from 'layout/sidebar';
 import CartBodyLoadingPlaceholder from 'my-sites/checkout/cart/cart-body/loading-placeholder';
 import { CART_ON_MOBILE_SHOW } from 'lib/upgrades/action-types';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
-import { getSelectedSiteId, hasSidebar } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import JetpackLogo from 'components/jetpack-logo';
@@ -77,16 +76,16 @@ class SecondaryCart extends Component {
 
 		if ( ! cart.hasLoadedFromServer ) {
 			return (
-				<Sidebar className={ cartClasses } hasSidebar={ this.props.hasSidebar }>
+				<ul className={ cartClasses }>
 					<CartMessages cart={ cart } selectedSite={ selectedSite } />
 					<CartSummaryBar additionalClasses="cart-header" />
 					<CartBodyLoadingPlaceholder />
-				</Sidebar>
+				</ul>
 			);
 		}
 
 		return (
-			<Sidebar className={ cartClasses } hasSidebar={ this.props.hasSidebar }>
+			<ul className={ cartClasses }>
 				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<CartSummaryBar additionalClasses="cart-header" />
 				<CartPlanAdTheme selectedSite={ selectedSite } cart={ cart } />
@@ -99,7 +98,7 @@ class SecondaryCart extends Component {
 				<CartPlanDiscountAd cart={ cart } selectedSite={ selectedSite } />
 
 				{ isJetpackNotAtomic && <JetpackLogo full /> }
-			</Sidebar>
+			</ul>
 		);
 	}
 }
@@ -110,6 +109,5 @@ export default connect( state => {
 	return {
 		isJetpackNotAtomic:
 			isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
-		hasSidebar: hasSidebar( state ),
 	};
 } )( localize( SecondaryCart ) );

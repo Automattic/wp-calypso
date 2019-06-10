@@ -13,13 +13,13 @@
  * @return string
  */
 function render_post_content_block( $attributes, $content ) {
-	// Early return to avoid infinite loops in the REST API
+	// Early return to avoid infinite loops in the REST API.
 	if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 		return $content;
 	}
 
-	$post_id = get_the_ID();
-	$post_type = get_post_type();
+	$post_id     = get_the_ID();
+	$post_type   = get_post_type();
 	$template_id = get_post_meta( $post_id, '_wp_template_id', true );
 
 	// Early return to avoid the infinite loop of a template rendering itself.
@@ -32,8 +32,11 @@ function render_post_content_block( $attributes, $content ) {
 	ob_start();
 	?>
 
-		<div class="post-content<?php echo $align; ?>">
-			<?php echo apply_filters( 'the_content', get_the_content() );  ?>
+		<div class="post-content<?php echo esc_attr( $align ); ?>">
+			<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo apply_filters( 'the_content', get_the_content() );
+			?>
 		</div><!-- .post-content -->
 
 	<?php

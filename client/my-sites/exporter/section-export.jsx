@@ -15,6 +15,11 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { isJetpackSite } from 'state/sites/selectors';
 import FormattedHeader from 'components/formatted-header';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SectionExport = ( { isJetpack, site, translate } ) => (
 	<Main>
 		<FormattedHeader

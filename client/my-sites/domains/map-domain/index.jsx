@@ -15,7 +15,7 @@ import { get, isEmpty } from 'lodash';
 import HeaderCake from 'components/header-cake';
 import MapDomainStep from 'components/domains/map-domain-step';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { cartItems } from 'lib/cart-values';
+import { domainRegistration, domainMapping } from 'lib/cart-values/cart-items';
 import { addItem } from 'lib/upgrades/actions';
 import wp from 'lib/wp';
 import { domainManagementList } from 'my-sites/domains/paths';
@@ -69,7 +69,7 @@ export class MapDomain extends Component {
 		const { selectedSiteSlug } = this.props;
 
 		addItem(
-			cartItems.domainRegistration( {
+			domainRegistration( {
 				productSlug: suggestion.product_slug,
 				domain: suggestion.domain_name,
 			} )
@@ -109,7 +109,7 @@ export class MapDomain extends Component {
 			return;
 		}
 
-		addItem( cartItems.domainMapping( { domain } ) );
+		addItem( domainMapping( { domain } ) );
 
 		page( '/checkout/' + selectedSiteSlug );
 	};

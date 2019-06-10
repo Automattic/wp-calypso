@@ -101,9 +101,7 @@ module.exports = ( { types: t } ) => {
 						`webpackChunkName: "${ chunkName }"`,
 						false
 					);
-					const importCall = t.callExpression( t.identifier( 'import' ), [
-						argumentWithMagicComments,
-					] );
+					const importCall = t.callExpression( t.import(), [ argumentWithMagicComments ] );
 
 					let statement;
 					if ( callback ) {

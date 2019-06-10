@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import DocumentHead from 'components/data/document-head';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -96,14 +95,8 @@ class Plans extends Component {
 	redirectToCalypso() {
 		const { canPurchasePlans, selectedSiteSlug } = this.props;
 
-		if ( selectedSiteSlug && canPurchasePlans && isEnabled( 'jetpack/checklist' ) ) {
-			return this.redirect( CALYPSO_MY_PLAN_PAGE, { 'thank-you': '' } );
-		}
-
 		if ( selectedSiteSlug && canPurchasePlans ) {
-			// Redirect to "My Plan" page with the "Jetpack Basic Tour" guided tour enabled.
-			// For more details about guided tours, see layout/guided-tours/README.md
-			return this.redirect( CALYPSO_MY_PLAN_PAGE, { tour: 'jetpack' } );
+			return this.redirect( CALYPSO_MY_PLAN_PAGE, { 'thank-you': '' } );
 		}
 
 		return this.redirect( CALYPSO_REDIRECTION_PAGE );
@@ -147,11 +140,7 @@ class Plans extends Component {
 		} );
 		mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
 
-		if ( this.props.calypsoStartedConnection || isEnabled( 'jetpack/checklist' ) ) {
-			this.redirectToCalypso();
-		} else {
-			this.redirectToWpAdmin();
-		}
+		this.redirectToCalypso();
 	}
 
 	selectPlan = cartItem => {

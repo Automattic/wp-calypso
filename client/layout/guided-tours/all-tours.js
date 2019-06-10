@@ -20,9 +20,13 @@ import { GDocsIntegrationTour } from 'layout/guided-tours/tours/gdocs-integratio
 import { JetpackBackupsRewindTour } from 'layout/guided-tours/tours/jetpack-backups-rewind-tour';
 import { JetpackBasicTour } from 'layout/guided-tours/tours/jetpack-basic-tour';
 import { JetpackChecklistTour } from 'layout/guided-tours/tours/jetpack-checklist-tour';
+import { JetpackLazyImagesTour } from 'layout/guided-tours/tours/jetpack-lazy-images-tour';
 import { JetpackMonitoringTour } from 'layout/guided-tours/tours/jetpack-monitoring-tour';
 import { JetpackPluginUpdatesTour } from 'layout/guided-tours/tours/jetpack-plugin-updates-tour';
+import { JetpackSearchTour } from 'layout/guided-tours/tours/jetpack-search-tour';
 import { JetpackSignInTour } from 'layout/guided-tours/tours/jetpack-sign-in-tour';
+import { JetpackSiteAcceleratorTour } from 'layout/guided-tours/tours/jetpack-site-accelerator-tour';
+import { JetpackVideoHostingTour } from 'layout/guided-tours/tours/jetpack-video-hosting-tour';
 import { MainTour } from 'layout/guided-tours/tours/main-tour';
 import { MediaBasicsTour } from 'layout/guided-tours/tours/media-basics-tour';
 import { SimplePaymentsEmailTour } from 'layout/guided-tours/tours/simple-payments-email-tour';
@@ -47,9 +51,13 @@ export default combineTours( {
 	jetpack: JetpackBasicTour,
 	jetpackBackupsRewind: JetpackBackupsRewindTour,
 	jetpackChecklistTour: JetpackChecklistTour,
+	jetpackLazyImages: JetpackLazyImagesTour,
 	jetpackMonitoring: JetpackMonitoringTour,
 	jetpackPluginUpdates: JetpackPluginUpdatesTour,
+	jetpackSearch: JetpackSearchTour,
 	jetpackSignIn: JetpackSignInTour,
+	jetpackSiteAccelerator: JetpackSiteAcceleratorTour,
+	jetpackVideoHosting: JetpackVideoHostingTour,
 	main: MainTour,
 	mediaBasicsTour: MediaBasicsTour,
 	simplePaymentsEmailTour: SimplePaymentsEmailTour,

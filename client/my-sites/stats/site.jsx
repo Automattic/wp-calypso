@@ -31,12 +31,11 @@ import StickyPanel from 'components/sticky-panel';
 import JetpackColophon from 'components/jetpack-colophon';
 import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteOption, isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
+import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
-
 import memoizeLast from 'lib/memoize-last';
 
 function updateQueryString( query = {} ) {
@@ -125,7 +124,7 @@ class StatsSite extends Component {
 	};
 
 	render() {
-		const { date, hasPodcasts, isJetpack, siteId, slug } = this.props;
+		const { date, isJetpack, siteId, slug } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -148,14 +147,14 @@ class StatsSite extends Component {
 				/>
 			);
 		}
-		if ( config.isEnabled( 'manage/stats/podcasts' ) && hasPodcasts ) {
+		if ( config.isEnabled( 'manage/stats/file-downloads' ) ) {
 			podcastList = (
 				<StatsModule
-					path="podcastdownloads"
-					moduleStrings={ moduleStrings.podcastdownloads }
+					path="filedownloads"
+					moduleStrings={ moduleStrings.filedownloads }
 					period={ this.props.period }
 					query={ query }
-					statType="statsPodcastDownloads"
+					statType="statsFileDownloads"
 					showSummaryLink
 				/>
 			);
@@ -278,12 +277,6 @@ export default connect(
 
 		return {
 			isJetpack,
-			hasPodcasts:
-				// Podcasting category slug
-				// TODO: remove when settings API is updated for new option
-				!! getSiteOption( state, siteId, 'podcasting_archive' ) ||
-				// Podcasting category ID
-				!! getSiteOption( state, siteId, 'podcasting_category_id' ),
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),

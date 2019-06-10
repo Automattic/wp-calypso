@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { keyBy, map, has } from 'lodash';
+import { has, isEmpty, keyBy, map } from 'lodash';
 import { __ } from '@wordpress/i18n';
-import { withState } from '@wordpress/compose';
+import { compose } from '@wordpress/compose';
 import { Modal } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { dispatch } from '@wordpress/data';
+import { withDispatch, withSelect } from '@wordpress/data';
 import { parse as parseBlocks } from '@wordpress/blocks';
+import { Component } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -15,62 +16,58 @@ import { parse as parseBlocks } from '@wordpress/blocks';
 import replacePlaceholders from './utils/replace-placeholders';
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
+import { trackDismiss, trackSelection, trackView } from './utils/tracking';
 
-// TODO: remove once we have proper previews from API
-if ( window.starterPageTemplatesConfig ) {
-	const PREVIEWS_BY_SLUG = {
-		home: {
-			src: 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-home-2.png',
-			alt:
-				'Full width hero banner, followed by alternating text and image sections, followed by a Get in Touch area',
-		},
-		menu: {
-			src: 'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-menu-2.png',
-			alt: '',
-		},
-		'contact-us': {
-			src:
-				'https://starterpagetemplatesprototype.files.wordpress.com/2019/05/starter-contactus-2.png',
-			alt: '',
-		},
+class PageTemplateModal extends Component {
+	state = {
+		isLoading: false,
 	};
-	window.starterPageTemplatesConfig.templates = map(
-		window.starterPageTemplatesConfig.templates,
-		template => {
-			template.preview = PREVIEWS_BY_SLUG[ template.slug ];
-			return template;
-		}
-	);
-}
 
-const { siteInformation = {}, templates = [] } = window.starterPageTemplatesConfig;
-const editorDispatcher = dispatch( 'core/editor' );
-
-const insertTemplate = template => {
-	// Skip inserting if there's nothing to insert.
-	if ( ! has( template, 'content' ) ) {
-		return;
+	constructor( props ) {
+		super();
+		this.state.isOpen = ! isEmpty( props.templates );
 	}
 
-	// set title
-	editorDispatcher.editPost( { title: replacePlaceholders( template.title, siteInformation ) } );
+	componentDidMount() {
+		if ( this.state.isOpen ) {
+			trackView( this.props.vertical.id );
+		}
+	}
 
-	// load content
-	const templateString = replacePlaceholders( template.content, siteInformation );
-	const blocks = parseBlocks( templateString );
-	editorDispatcher.insertBlocks( blocks );
-};
+	selectTemplate = newTemplate => {
+		this.setState( { isOpen: false } );
+		trackSelection( this.props.vertical.id, newTemplate );
 
-const PageTemplateModal = withState( {
-	isOpen: true,
-	isLoading: false,
-	verticalTemplates: keyBy( templates, 'slug' ),
-} )( ( { isOpen, verticalTemplates, setState } ) => (
-	<div>
-		{ isOpen && (
+		const template = this.props.templates[ newTemplate ];
+
+		// Skip inserting if there's nothing to insert.
+		if ( ! has( template, 'content' ) ) {
+			return;
+		}
+
+		const processedTemplate = {
+			...template,
+			title: replacePlaceholders( template.title, this.props.siteInformation ),
+			content: replacePlaceholders( template.content, this.props.siteInformation ),
+		};
+
+		this.props.insertTemplate( processedTemplate );
+	};
+
+	closeModal = () => {
+		this.setState( { isOpen: false } );
+		trackDismiss( this.props.vertical.id );
+	};
+
+	render() {
+		if ( ! this.state.isOpen ) {
+			return null;
+		}
+
+		return (
 			<Modal
 				title={ __( 'Select Page Template', 'full-site-editing' ) }
-				onRequestClose={ () => setState( { isOpen: false } ) }
+				onRequestClose={ this.closeModal }
 				className="page-template-modal"
 			>
 				<div className="page-template-modal__inner">
@@ -92,27 +89,59 @@ const PageTemplateModal = withState( {
 							</legend>
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
-								templates={ Object.values( verticalTemplates ).map( template => ( {
+								templates={ map( this.props.templates, template => ( {
 									label: template.title,
 									value: template.slug,
-									preview: template.preview && template.preview.src,
-									previewAlt: template.preview && template.preview.alt,
+									preview: template.preview,
+									previewAlt: template.description,
 								} ) ) }
-								onClick={ newTemplate => {
-									setState( { isOpen: false } );
-									insertTemplate( verticalTemplates[ newTemplate ] );
-								} }
+								onClick={ newTemplate => this.selectTemplate( newTemplate ) }
 							/>
 						</fieldset>
 					</form>
 				</div>
 			</Modal>
-		) }
-	</div>
-) );
+		);
+	}
+}
+
+const PageTemplatesPlugin = compose(
+	withSelect( select => ( {
+		getMeta: () => select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
+	} ) ),
+	withDispatch( ( dispatch, ownProps ) => {
+		const editorDispatcher = dispatch( 'core/editor' );
+		return {
+			insertTemplate: template => {
+				// Set post title and remember selected template in meta.
+				const currentMeta = ownProps.getMeta();
+				editorDispatcher.editPost( {
+					title: template.title,
+					meta: {
+						...currentMeta,
+						_starter_page_template: template.slug,
+					},
+				} );
+
+				// Insert blocks.
+				const blocks = parseBlocks( template.content );
+				editorDispatcher.insertBlocks( blocks );
+			},
+		};
+	} )
+)( PageTemplateModal );
+
+// Load config passed from backend.
+const { siteInformation = {}, templates = [], vertical } = window.starterPageTemplatesConfig;
 
 registerPlugin( 'page-templates', {
 	render: function() {
-		return <PageTemplateModal />;
+		return (
+			<PageTemplatesPlugin
+				templates={ keyBy( templates, 'slug' ) }
+				vertical={ vertical }
+				siteInformation={ siteInformation }
+			/>
+		);
 	},
 } );
