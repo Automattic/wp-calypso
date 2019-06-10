@@ -17,18 +17,21 @@ import { __ } from '@wordpress/i18n';
  */
 
 const NavigationMenuEdit = ( { attributes } ) => {
-	const redirectToCustomizer = () => {
-		const url = addQueryArgs( 'customize.php', {
-			'autofocus[panel]': 'nav_menus',
-			return: window.location.href,
-		} );
-		window.location.href = url;
-	};
+	const url = addQueryArgs( 'customize.php', {
+		'autofocus[panel]': 'nav_menus',
+		return: window.location.href,
+	} );
+
 	return (
 		<Fragment>
 			<BlockControls>
-				<Toolbar>
-					<IconButton icon="edit" label={ __( 'Edit Menu' ) } onClick={ redirectToCustomizer } />
+				<Toolbar className="wp-block-a8c-navigation-menu-toolbar">
+					<IconButton
+						icon="edit"
+						label={ __( 'Edit Menu' ) }
+						href={ url }
+						className="components-toolbar__control"
+					/>
 				</Toolbar>
 			</BlockControls>
 			<ServerSideRender
