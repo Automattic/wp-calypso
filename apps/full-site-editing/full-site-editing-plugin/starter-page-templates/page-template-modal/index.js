@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy, has } from 'lodash';
+import { keyBy, has, map } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Modal } from '@wordpress/components';
@@ -89,7 +89,7 @@ class PageTemplateModal extends Component {
 							</legend>
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
-								templates={ Object.values( this.props.templates ).map( template => ( {
+								templates={ map( this.props.templates, template => ( {
 									label: template.title,
 									value: template.slug,
 									preview: template.preview,
