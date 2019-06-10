@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { has, keyBy, map } from 'lodash';
+import { has, isEmpty, keyBy, map } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Modal } from '@wordpress/components';
@@ -25,7 +25,7 @@ class PageTemplateModal extends Component {
 
 	constructor( props ) {
 		super();
-		this.state.isOpen = props.initiallyOpened;
+		this.state.isOpen = ! isEmpty( props.templates );
 	}
 
 	componentDidMount() {
@@ -138,7 +138,6 @@ registerPlugin( 'page-templates', {
 	render: function() {
 		return (
 			<PageTemplatesPlugin
-				initiallyOpened={ templates.length > 0 }
 				templates={ keyBy( templates, 'slug' ) }
 				vertical={ vertical }
 				siteInformation={ siteInformation }
