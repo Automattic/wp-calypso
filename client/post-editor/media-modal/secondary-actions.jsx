@@ -93,7 +93,7 @@ class MediaModalSecondaryActions extends Component {
 						className={ classNames( 'editor-media-modal__secondary-action', button.className ) }
 						data-e2e-button={ button.key }
 						compact
-						{ ...pick( button, [ 'key', 'disabled', 'onClick', 'primary' ] ) }
+						{ ...pick( button, [ 'key', 'disabled', 'onClick' ] ) }
 					>
 						{ button.icon && <Gridicon icon={ button.icon } /> }
 						{ button.text && button.text }
