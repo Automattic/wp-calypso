@@ -51,12 +51,14 @@ class PlanBillingPeriod extends Component {
 		if ( isRenewing( purchase ) && purchase.renewMoment ) {
 			return translate( 'Billed yearly, renews on %s', {
 				args: purchase.renewMoment.format( 'LL' ),
+				comment: '%s the renewal date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
 		if ( isExpiring( purchase ) && purchase.expiryMoment ) {
 			return translate( 'Billed yearly, expires on %s', {
 				args: purchase.expiryMoment.format( 'LL' ),
+				comment: '%s the expiration date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
