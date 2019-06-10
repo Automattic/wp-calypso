@@ -38,7 +38,7 @@ import { cancelImport } from 'lib/importer/actions';
 /**
  * Style dependencies
  */
-import './style.scss';
+import './site-importer-input-pane.scss';
 
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';

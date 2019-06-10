@@ -10,7 +10,7 @@ import { isEmpty, map } from 'lodash';
 /**
  * Style dependencies
  */
-import './style.scss';
+import './site-importer-importable-content.scss';
 
 const SiteImporterImportableContent = ( { translate, importData = {} } ) => (
 	<div className="site-importer__site-preview-import-content">

@@ -24,7 +24,7 @@ import ImporterActionButtonContainer from 'my-sites/importer/importer-action-but
 /**
  * Style dependencies
  */
-import './style.scss';
+import './site-importer-site-preview.scss';
 
 class SiteImporterSitePreview extends React.Component {
 	static propTypes = {
