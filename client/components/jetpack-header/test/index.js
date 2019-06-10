@@ -39,7 +39,7 @@ describe( 'JetpackHeader', () => {
 	test( 'should render a co-branded logo when passed a known partner slug', () => {
 		const wrapper = mount( <JetpackHeader partnerSlug="dreamhost" /> );
 		expect( wrapper.find( 'Localized(JetpackPartnerLogoGroup)' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'JetpackDreamhostLogo' ) ).toHaveLength( 1 );
+		expect( wrapper.find( 'AsyncLoad' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should override width on JetpackLogo when width provided but no partner slug', () => {
