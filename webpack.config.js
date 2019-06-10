@@ -109,7 +109,6 @@ const nodeModulesToTranspile = [
 	'd3-scale/',
 	'debug/',
 	'@wordpress/',
-	'react-dates',
 ];
 /**
  * Check to see if we should transpile certain files in node_modules
