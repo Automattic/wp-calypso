@@ -1,4 +1,9 @@
 <?php
+/**
+ * Page template.
+ *
+ * @package full-site-editing
+ */
 
 get_header( 'blank' );
 ?>
@@ -7,30 +12,35 @@ get_header( 'blank' );
 		<main id="main" class="site-main">
 
 			<?php
-			if ( have_posts() ) {
+			if ( have_posts() ) :
 				the_post();
 
-				$post_id = get_the_ID();
-				$template_id = get_post_meta( $post_id, '_wp_template_id', true );
+				$page_id     = get_the_ID();
+				$template_id = get_post_meta( $page_id, '_wp_template_id', true );
 
-				$template = $template_id && $template_id !== $post_id ? get_post( $template_id ) : null;
+				$template = $template_id && $template_id !== $page_id ? get_post( $template_id ) : null;
 
-				if ( isset( $template ) ) { ?>
+				if ( isset( $template ) ) :
+					?>
 
 						<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							<div class="entry-content">
-								<?php echo apply_filters( 'the_content', $template->post_content ); ?>
+								<?php
+									// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									echo apply_filters( 'the_content', $template->post_content );
+								?>
 							</div><!-- .entry-content -->
 						</article><!-- #post-<?php the_ID(); ?> -->
 
-				<?php } else {
+					<?php
+				else :
 					get_template_part( 'template-parts/content/content', 'page' );
 
-					if ( comments_open() || get_comments_number() ) {
+					if ( comments_open() || get_comments_number() ) :
 						comments_template();
-					}
-				}
-			}
+					endif;
+				endif;
+			endif;
 			?>
 
 		</main><!-- #main -->

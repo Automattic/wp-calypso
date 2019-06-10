@@ -16,7 +16,6 @@ function render_template_block( $attributes ) {
 		return;
 	}
 
-	$parent_post_id = get_the_ID();
 	$template = get_post( $attributes['templateId'] );
 
 	$align = isset( $attributes['align'] ) ? ' align' . $attributes['align'] : '';
@@ -25,8 +24,11 @@ function render_template_block( $attributes ) {
 	ob_start();
 	?>
 
-		<div class="template-part<?php echo $align; ?>">
-			<?php echo apply_filters( 'the_content', get_the_content() );  ?>
+		<div class="template-part<?php echo esc_attr( $align ); ?>">
+			<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo apply_filters( 'the_content', get_the_content() );
+			?>
 		</div><!-- .template-part -->
 
 	<?php
