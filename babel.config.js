@@ -1,6 +1,7 @@
 const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 
-const modules = isBrowser ? false : 'commonjs'; // Use commonjs for Node
+// Use commonjs for Node
+const modules = isBrowser ? false : 'commonjs';
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 
 // We implicitly use browserslist configuration in package.json for build targets.
@@ -19,7 +20,20 @@ const config = {
 		],
 		'@automattic/calypso-build/babel/default',
 	],
-	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ] ],
+	plugins: [
+		[ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ],
+		isBrowser
+			? [
+					'module-resolver',
+					{
+						alias: {
+							lodash: 'lodash-es',
+							'lodash/': ( [ , name ] ) => `lodash-es/${ name }`,
+						},
+					},
+			  ]
+			: {},
+	],
 	env: {
 		build_pot: {
 			plugins: [
@@ -40,7 +54,15 @@ const config = {
 			plugins: [
 				'add-module-exports',
 				'babel-plugin-dynamic-import-node',
-				'./server/bundler/babel/babel-lodash-es',
+				[
+					'module-resolver',
+					{
+						alias: {
+							'lodash-es': 'lodash',
+							'lodash-es/': ( [ , name ] ) => `lodash/${ name }`,
+						},
+					},
+				],
 			],
 		},
 	},
