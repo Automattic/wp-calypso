@@ -27,17 +27,9 @@ import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchas
 import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step';
 import previousStep from 'components/marketing-survey/cancel-purchase-form/previous-step';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
-import {
-	getIncludedDomain,
-	getName,
-	hasIncludedDomain,
-	isRemovable,
-	isRefundable,
-	maybeWithinRefundPeriod,
-} from 'lib/purchases';
+import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { isDataLoading } from '../utils';
 import { isDomainRegistration, isGoogleApps, isJetpackPlan, isPlan } from 'lib/products-values';
-import { CALYPSO_CONTACT } from 'lib/url/support';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -53,6 +45,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import HappychatButton from 'components/happychat/button';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import RemoveDomainDialog from './remove-domain-dialog';
 
 /**
  * Style dependencies
@@ -264,69 +257,24 @@ class RemovePurchase extends Component {
 	};
 
 	renderDomainDialog() {
-		const { purchase, translate } = this.props;
-		const productName = getName( purchase );
-		const buttons = [
-			{
-				action: 'cancel',
-				disabled: this.state.isRemoving,
-				label: translate( 'Cancel' ),
-			},
-			{
-				action: 'remove',
-				disabled: this.state.isRemoving,
-				isPrimary: true,
-				label: translate( 'Remove Now' ),
-				onClick: this.removePurchase,
-			},
-		];
+		let chatButton = null;
 
 		if (
 			config.isEnabled( 'upgrades/precancellation-chat' ) &&
 			this.state.surveyStep !== 'happychat_step'
 		) {
-			buttons.unshift( this.getChatButton() );
+			chatButton = this.getChatButton();
 		}
 
 		return (
-			<Dialog
-				buttons={ buttons }
-				className="remove-purchase__dialog"
-				isVisible={ this.state.isDialogVisible }
-				onClose={ this.closeDialog }
-			>
-				<FormSectionHeading>
-					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
-				</FormSectionHeading>
-				<p>
-					{ translate(
-						'This will remove %(domain)s from your account. By removing, ' +
-							'you are canceling the domain registration. This may stop ' +
-							'you from using it again, even with another service.',
-						{ args: { domain: productName } }
-					) }
-				</p>
-				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase ) && (
-					<p>
-						<strong>
-							{ translate(
-								"We're not able to refund this purchase automatically. " +
-									"If you're canceling within %(refundPeriodInDays)s days of " +
-									'purchase, {{contactLink}}contact us{{/contactLink}} to ' +
-									'request a refund.',
-								{
-									args: {
-										refundPeriodInDays: purchase.refundPeriodInDays,
-									},
-									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-							) }
-						</strong>
-					</p>
-				) }
-			</Dialog>
+			<RemoveDomainDialog
+				isRemoving={ this.state.isRemoving }
+				isDialogVisible={ this.state.isDialogVisible }
+				removePurchase={ this.removePurchase }
+				closeDialog={ this.closeDialog }
+				chatButton={ chatButton }
+				purchase={ this.props.purchase }
+			/>
 		);
 	}
 
