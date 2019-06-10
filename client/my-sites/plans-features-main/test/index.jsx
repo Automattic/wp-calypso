@@ -75,14 +75,6 @@ const props = {
 };
 
 describe( 'PlansFeaturesMain.renderFreePlanBanner()', () => {
-	test.skip( 'Should return null when called with showOnlyEcommercePlans props', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			showOnlyEcommercePlans: true,
-		} );
-		const freePlanBanner = instance.renderFreePlanBanner();
-		expect( freePlanBanner ).toBeNull();
-	} );
 	test( 'Should return null when called with hideFreePlan props', () => {
 		const instance = new PlansFeaturesMain( {
 			...props,
