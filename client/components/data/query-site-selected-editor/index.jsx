@@ -4,7 +4,6 @@
  */
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -29,7 +28,7 @@ export class QuerySiteSelectedEditor extends Component {
 	request() {
 		const { siteId } = this.props;
 		if ( siteId ) {
-			this.props.requestSelectedEditor( siteId );
+			requestSelectedEditor( siteId );
 		}
 	}
 
@@ -38,7 +37,4 @@ export class QuerySiteSelectedEditor extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestSelectedEditor }
-)( QuerySiteSelectedEditor );
+export default QuerySiteSelectedEditor;

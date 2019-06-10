@@ -18,6 +18,7 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/route';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
+import { waitForData } from 'state/data-layer/http-data';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -40,36 +41,18 @@ function getPostID( context ) {
 	return parseInt( context.params.post, 10 );
 }
 
-function waitForSiteIdAndSelectedEditor( context ) {
-	return new Promise( resolve => {
-		const unsubscribe = context.store.subscribe( () => {
-			const state = context.store.getState();
-			const siteId = getSelectedSiteId( state );
-			if ( ! siteId ) {
-				return;
-			}
-			const selectedEditor = getSelectedEditor( state, siteId );
-			if ( ! selectedEditor ) {
-				return;
-			}
-			unsubscribe();
-			resolve();
-		} );
-		// Trigger a `store.subscribe()` callback
-		context.store.dispatch(
-			requestSelectedEditor( getSelectedSiteId( context.store.getState() ) )
-		);
-	} );
-}
-
 export const redirect = async ( context, next ) => {
 	const {
 		store: { getState },
 	} = context;
 	const tmpState = getState();
-	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
-	if ( ! selectedEditor ) {
-		await waitForSiteIdAndSelectedEditor( context );
+	const tmpSelectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
+	if ( ! tmpSelectedEditor ) {
+		// await waitForSiteIdAndSelectedEditor( context );
+
+		await waitForData( {
+			selectedEditor: () => requestSelectedEditor( getSelectedSiteId( context.store.getState() ) ),
+		} );
 	}
 
 	const state = getState();
