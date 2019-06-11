@@ -205,7 +205,7 @@ class ManagePurchase extends Component {
 		return null;
 	}
 
-	renderRemovePurchase() {
+	renderRemovePurchaseNavItem() {
 		if ( isRefundable( this.props.purchase ) ) {
 			return null;
 		}
@@ -419,7 +419,7 @@ class ManagePurchase extends Component {
 				{ this.renderRenewNowNavItem() }
 				{ this.renderEditPaymentMethodNavItem() }
 				{ this.renderCancelPurchaseNavItem() }
-				{ this.renderRemovePurchase() }
+				{ this.renderRemovePurchaseNavItem() }
 			</Fragment>
 		);
 	}
