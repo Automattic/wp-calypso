@@ -93,6 +93,10 @@ class GSuiteAddUsers extends React.Component {
 		}
 	};
 
+	handleCancel = () => {
+		this.goToEmail();
+	};
+
 	componentDidMount() {
 		const { domains, isRequestingDomains } = this.props;
 		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
@@ -163,7 +167,7 @@ class GSuiteAddUsers extends React.Component {
 							users={ users }
 						>
 							<div className="gsuite-add-users__buttons">
-								<Button>{ translate( 'Cancel' ) }</Button>
+								<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
 								<Button primary disabled={ ! canContinue } onClick={ this.handleContinue }>
 									{ translate( 'Continue' ) }
 								</Button>
