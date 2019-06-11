@@ -31,14 +31,18 @@ export default function() {
 	if ( isLoggedOut ) {
 		console.log( 'in index.js isLoggedOut' );
 		page(
-			'/checkout/:site?/add-random',
-			// siteSelection,
-			conciergeQuickstartSession,
+			// '/checkout/:site/add-quickstart-session/:orderId',
+			'/checkout/add-random',
+			siteSelection,
+			checkoutPending,
 			makeLayout,
 			clientRender
 		);
+
+		return;
 	}
 
+	// Show these paths only for logged in users
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
 		siteSelection,
