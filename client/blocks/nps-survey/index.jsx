@@ -208,7 +208,7 @@ export class NpsSurvey extends PureComponent {
 
 		return (
 			<div className="nps-survey__promotion">
-				<p>{ translate( 'Thank you for your feedback: We’d like to help!' ) }</p>
+				<p>{ translate( 'Thank you for your feedback. We’d like to help!' ) }</p>
 				{ hasAvailableConciergeSession && (
 					<Fragment>
 						<p>
