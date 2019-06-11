@@ -215,7 +215,7 @@ class ApplicationPasswords extends Component {
 				<Card>
 					{ newAppPassword ? this.renderNewAppPassword() : this.renderNewAppPasswordForm() }
 
-					<p>
+					<p className="application-passwords__nobot">
 						{ translate(
 							'With Two-Step Authentication active, you can generate a custom password for ' +
 								'each third-party application you authorize to use your WordPress.com account. ' +
