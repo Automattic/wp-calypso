@@ -19,7 +19,6 @@ import Spinner from 'components/spinner';
 
 class Task extends PureComponent {
 	static propTypes = {
-		buttonPrimary: PropTypes.bool,
 		buttonText: PropTypes.node,
 		completed: PropTypes.bool,
 		completedButtonText: PropTypes.node,
@@ -145,7 +144,6 @@ class Task extends PureComponent {
 
 	render() {
 		const {
-			buttonPrimary,
 			buttonText,
 			completed,
 			completedButtonText,
@@ -207,7 +205,6 @@ class Task extends PureComponent {
 						className="checklist__task-action"
 						href={ href }
 						onClick={ onClick }
-						primary={ buttonPrimary }
 						target={ target }
 					>
 						{ taskActionButtonText }
