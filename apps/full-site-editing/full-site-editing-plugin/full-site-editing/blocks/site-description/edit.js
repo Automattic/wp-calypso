@@ -6,7 +6,7 @@
 /**
  * WordPress dependencies
  */
-import { TextControl } from '@wordpress/components';
+import { PlainText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
@@ -69,7 +69,7 @@ class SiteDescriptionEdit extends Component {
 		const { isSelected } = this.props;
 		if ( isSelected ) {
 			return (
-				<TextControl
+				<PlainText
 					className="wp-block-a8c-site-description"
 					value={ this.state.value }
 					onChange={ value => this.setState( { value } ) }
