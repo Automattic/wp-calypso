@@ -323,7 +323,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 	} );
 
-	test( 'Should highlight proper popular plan for business site type', () => {
+	test( 'Should highlight proper popular plan for professional site type', () => {
 		const instance = new PlansFeaturesMain( {
 			siteType: 'professional',
 		} );
@@ -334,7 +334,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 	} );
 
-	test( 'Should highlight proper popular plan for professional site type', () => {
+	test( 'Should highlight proper popular plan for business site type', () => {
 		const instance = new PlansFeaturesMain( {
 			siteType: 'business',
 		} );
