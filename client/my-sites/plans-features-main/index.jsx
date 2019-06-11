@@ -188,8 +188,10 @@ export class PlansFeaturesMain extends Component {
 		return plans;
 	}
 
-	getPlansFromProps = ( group, term ) =>
-		this.props.planTypes.reduce( ( accum, type ) => {
+	getPlansFromProps( group, term ) {
+		const planTypes = this.props.planTypes || [];
+
+		return planTypes.reduce( ( accum, type ) => {
 			const plan = findPlansKeys( { group, term, type } )[ 0 ];
 
 			if ( ! plan ) {
@@ -200,6 +202,7 @@ export class PlansFeaturesMain extends Component {
 
 			return plan ? [ ...accum, plan ] : accum;
 		}, [] );
+	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
 		const { displayJetpackPlans, customerType, plansWithScroll, withWPPlanTabs } = this.props;
@@ -407,7 +410,6 @@ PlansFeaturesMain.defaultProps = {
 	siteSlug: '',
 	withWPPlanTabs: false,
 	plansWithScroll: false,
-	planTypes: [],
 };
 
 const guessCustomerType = ( state, props ) => {
