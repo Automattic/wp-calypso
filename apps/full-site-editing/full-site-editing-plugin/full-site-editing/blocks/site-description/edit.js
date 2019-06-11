@@ -10,6 +10,8 @@ import { TextControl } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
+import { withSelect } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -43,4 +45,13 @@ class SiteDescriptionEdit extends Component {
 	}
 }
 
-export default SiteDescriptionEdit;
+export default compose( [
+	withSelect( ( select ) => {
+		const {
+			isSavingPost,
+		} = select( 'core/editor' );
+		return {
+			isSaving: isSavingPost(),
+		};
+	} ),
+] )( SiteDescriptionEdit );
