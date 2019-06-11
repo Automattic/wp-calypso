@@ -42,7 +42,7 @@ import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jet
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import HeaderButton from 'components/header-button';
 import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'lib/products-values';
-import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import Banner from 'components/banner';
 import { isEnabled } from 'config';
@@ -418,7 +418,7 @@ export class PluginsBrowser extends Component {
 
 	handleUpgradeNudgeClick = () => {
 		const { siteSlug } = this.props;
-		let href = `/plans/${ siteSlug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
+		let href = `/checkout/${ siteSlug }/business`;
 		if (
 			isEnabled( 'upsell/nudge-a-palooza' ) &&
 			abtest( 'pluginsUpsellLandingPage' ) === 'test'
