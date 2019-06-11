@@ -11,6 +11,11 @@
 	word-wrap: normal !important;
 }
 
+// Modal Overlay
+.page-template-modal-screen-overlay {
+	background-color: hsla( 0, 0%, 0%, 0.7 );
+}
+
 // Full screen modal
 .page-template-modal {
 	width: 100%;

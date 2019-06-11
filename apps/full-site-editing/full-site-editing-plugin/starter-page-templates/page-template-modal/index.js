@@ -69,6 +69,7 @@ class PageTemplateModal extends Component {
 				title={ __( 'Select Page Template', 'full-site-editing' ) }
 				onRequestClose={ this.closeModal }
 				className="page-template-modal"
+				overlayClassName="page-template-modal-screen-overlay"
 			>
 				<div className="page-template-modal__inner">
 					<form className="page-template-modal__form">
