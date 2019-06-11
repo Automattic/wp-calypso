@@ -11,12 +11,7 @@ import { debounce } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	getIframeSource,
-	getIframePageContent,
-	isIE,
-	revokeObjectURL,
-} from 'components/signup-site-preview/utils';
+import { getIframeSource, isIE, revokeObjectURL } from 'components/signup-site-preview/utils';
 
 export default class SignupSitePreviewIframe extends Component {
 	static propTypes = {
@@ -74,12 +69,7 @@ export default class SignupSitePreviewIframe extends Component {
 		}
 
 		if ( this.props.content.title !== nextProps.content.title ) {
-			this.setIframeElementContent( '.site-builder__title', nextProps.content.title );
-			return false;
-		}
-
-		if ( this.props.content.tagline !== nextProps.content.tagline ) {
-			this.setIframeElementContent( '.site-builder__description', nextProps.content.tagline );
+			this.setIframeElementContent( '.signup-site-preview__title', nextProps.content.title );
 			return false;
 		}
 
@@ -95,10 +85,10 @@ export default class SignupSitePreviewIframe extends Component {
 		if ( ! this.iframe.current ) {
 			return;
 		}
-		const element = this.iframe.current.contentWindow.document.querySelector( '.entry' );
+		const element = this.iframe.current.contentWindow.document.querySelector( '.entry-content' );
 
 		if ( element ) {
-			element.innerHTML = getIframePageContent( content );
+			element.innerHTML = content.body;
 			this.props.resize && this.setContainerHeight();
 		}
 	}
