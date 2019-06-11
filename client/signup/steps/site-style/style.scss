@@ -36,7 +36,6 @@
 		display: inline-block;
 		margin-bottom: 0;
 	}
-	margin: 0;
 	text-align: center;
 
 	// Default to a white background, but
@@ -53,7 +52,9 @@
 
 		// This fixes an annoyance with using
 		// display: inline-block above.
-		margin-bottom: -5px;
+		&.form-label {
+			margin-bottom: -5px;
+		}
 
 		// Make the SVGs a little bigger since
 		// we've got the room.
