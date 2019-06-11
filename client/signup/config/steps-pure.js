@@ -169,7 +169,6 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
-				allowSkip: false,
 				hideFreePlan: true,
 				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
 			},

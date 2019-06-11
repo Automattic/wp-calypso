@@ -137,7 +137,6 @@ export class PlansStep extends Component {
 
 	plansFeaturesList() {
 		const {
-			allowSkip,
 			disableBloggerPlanWithNonBlogDomain,
 			hideFreePlan,
 			isLaunchPage,
@@ -163,13 +162,6 @@ export class PlansStep extends Component {
 					plansWithScroll={ true }
 					planTypes={ planTypes }
 				/>
-				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
-				 * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
-				 * unless we've already selected an option that implies a paid plan.
-				 * This is in particular true for domain names. */
-				hideFreePlan && allowSkip && ! isDomainOnly && ! this.getDomainName() && (
-					<PlansSkipButton onClick={ this.handleFreePlanButtonClick } />
-				) }
 			</div>
 		);
 	}
@@ -231,7 +223,6 @@ export class PlansStep extends Component {
 
 PlansStep.propTypes = {
 	additionalStepData: PropTypes.object,
-	allowSkip: PropTypes.bool,
 	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
 	goToNextStep: PropTypes.func.isRequired,
 	hideFreePlan: PropTypes.bool,
@@ -241,10 +232,6 @@ PlansStep.propTypes = {
 	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	planTypes: PropTypes.array,
-};
-
-PlansStep.defaultProps = {
-	allowSkip: true,
 };
 
 /**
