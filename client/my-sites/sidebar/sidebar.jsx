@@ -60,6 +60,11 @@ import {
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class MySitesSidebar extends Component {
 	static propTypes = {
 		setNextLayoutFocus: PropTypes.func.isRequired,
