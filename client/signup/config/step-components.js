@@ -23,7 +23,7 @@ const stepNameToModuleName = {
 	'plans-premium': 'plans',
 	'plans-business': 'plans',
 	'plans-store-nux': 'plans-atomic-store',
-	'plans-site-selected': 'plans-without-free',
+	'plans-site-selected': 'plans',
 	site: 'site',
 	'rebrand-cities-welcome': 'rebrand-cities-welcome',
 	'rewind-migrate': 'rewind-migrate',
