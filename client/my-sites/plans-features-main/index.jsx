@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import warn from 'lib/warn';
 import PlanFeatures from 'my-sites/plan-features';
 import {
 	TYPE_FREE,
@@ -127,7 +128,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan, planTypes } = this.props;
+		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
 
@@ -153,9 +154,7 @@ export class PlansFeaturesMain extends Component {
 			term = TERM_ANNUALLY;
 		}
 
-		const plansFromProps = planTypes
-			.map( type => findPlansKeys( { group, term, type } )[ 0 ] )
-			.filter( plan => plan );
+		const plansFromProps = this.getPlansFromProps( group, term );
 
 		let plans;
 		if ( plansFromProps.length ) {
@@ -188,6 +187,19 @@ export class PlansFeaturesMain extends Component {
 
 		return plans;
 	}
+
+	getPlansFromProps = ( group, term ) =>
+		this.props.planTypes.reduce( ( accum, type ) => {
+			const plan = findPlansKeys( { group, term, type } )[ 0 ];
+
+			if ( ! plan ) {
+				warn(
+					`Invalid plan type, \`${ type }\`, provided to \`PlansFeaturesMain\` component. See plans constants for valid plan types.`
+				);
+			}
+
+			return plan ? [ ...accum, plan ] : accum;
+		}, [] );
 
 	getVisiblePlansForPlanFeatures( plans ) {
 		const { displayJetpackPlans, customerType, plansWithScroll, withWPPlanTabs } = this.props;
