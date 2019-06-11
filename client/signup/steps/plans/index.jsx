@@ -16,12 +16,9 @@ import { parse as parseQs } from 'qs';
  * Internal dependencies
  */
 import { getTld, isSubdomain } from 'lib/domains';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { getSiteBySlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
-import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
@@ -142,7 +139,6 @@ export class PlansStep extends Component {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
 			hideFreePlan,
-			isDomainOnly,
 			isLaunchPage,
 			selectedSite,
 		} = this.props;
@@ -164,13 +160,6 @@ export class PlansStep extends Component {
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					plansWithScroll={ true }
 				/>
-				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
-				 * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
-				 * unless we've already selected an option that implies a paid plan.
-				 * This is in particular true for domain names. */
-				hideFreePlan && ! isDomainOnly && ! this.getDomainName() && (
-					<PlansSkipButton onClick={ this.handleFreePlanButtonClick } />
-				) }
 			</div>
 		);
 	}
@@ -266,7 +255,6 @@ export default connect(
 		// This step could be used to set up an existing site, in which case
 		// some descendants of this component may display discounted prices if
 		// they apply to the given site.
-		isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		siteGoals: getSiteGoals( state ) || '',
