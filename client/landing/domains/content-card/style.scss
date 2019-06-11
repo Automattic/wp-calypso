@@ -18,6 +18,11 @@
 		font-size: 22px;
 		font-weight: 300;
 		margin-bottom: 40px;
+		text-align: left;
+
+		&.message_align_center {
+			text-align: center;
+		}
 
 		@include breakpoint( '<660px' ) {
 			font-size: 16px;
@@ -35,8 +40,13 @@
 		}
 	}
 
-	.content-card__action-button {
+	.content-card__action-button,
+	content-card__alternate-action-button {
 		margin-bottom: 40px;
+	}
+
+	.content-card__alternate-action-button {
+		margin-left: 16px;
 	}
 
 	&.content-card__loading-placeholder {
