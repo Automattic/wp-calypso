@@ -55,8 +55,8 @@
 	}
 
 	.get-apps__store-subpanel {
-	
-		@include breakpoint('>480px') {
+
+		@include breakpoint('>800px') {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
