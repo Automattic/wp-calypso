@@ -8,7 +8,7 @@ import { find, includes, groupBy, map, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { googleApps, googleAppsExtraLicenses } from 'lib/cart-values/cart-items';
 import { hasGSuite } from '.';
 
 // exporting these in the big export below causes trouble
@@ -154,19 +154,20 @@ const getItemsForCart = (
 	productSlug: string,
 	users: GSuiteNewUser[]
 ) => {
-	const groups = mapValues( groupBy( users, 'domain.value' ), groupedUsers =>
-		groupedUsers.map( transformUserForCart )
+	const usersGroupedByDomain: { [domain: string]: GSuiteProductUser[] } = mapValues(
+		groupBy( users, 'domain.value' ),
+		groupedUsers => groupedUsers.map( transformUserForCart )
 	);
 
-	return map( groups, ( groupedUsers, domain ) => {
+	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domain: string ) => {
 		const domainInfo = find( domains, [ 'name', domain ] );
 		return domainInfo && hasGSuite( domainInfo )
-			? cartItems.googleAppsExtraLicenses( {
+			? googleAppsExtraLicenses( {
 					product_slug: productSlug,
 					users: groupedUsers,
 					domain,
 			  } )
-			: cartItems.googleApps( { users: groupedUsers, domain } );
+			: googleApps( { users: groupedUsers, domain } );
 	} );
 };
 
