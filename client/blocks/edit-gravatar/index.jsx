@@ -225,7 +225,7 @@ export class EditGravatar extends Component {
 								'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
 								'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
 								'{{p}}Your image may also appear on other sites using Gravatar ' +
-								"whenever you're logged in with your email address %(email)s.{{/p}}",
+								"whenever you're logged in with the email %(email)s.{{/p}}",
 							{
 								components: {
 									ExternalLink: (
