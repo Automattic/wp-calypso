@@ -15,6 +15,7 @@ import { stringify } from 'qs';
  */
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
+import FormLabel from 'components/forms/form-label';
 import SearchInput from 'components/search';
 import HeaderCake from 'components/header-cake';
 import ReaderMain from 'reader/components/reader-main';
@@ -207,12 +208,10 @@ class FollowingManage extends Component {
 		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<Fragment>
-				<div className="following-manage__header">
-					<HeaderCake backHref={ '/' }>
-						<h1>{ translate( 'Follow Something New' ) }</h1>
-					</HeaderCake>
-				</div>
 				<ReaderMain className="following-manage">
+					<div className="following-manage__header">
+						<HeaderCake backHref={ '/' } />
+					</div>
 					<DocumentHead title={ 'Manage Following' } />
 					{ ! searchResults && sitesQuery && (
 						<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
@@ -225,6 +224,7 @@ class FollowingManage extends Component {
 					) }
 					<div ref={ this.handleStreamMounted } />
 					<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
+						<FormLabel>{ translate( 'Follow Something New' ) }</FormLabel>
 						<CompactCard className="following-manage__input-card">
 							<SearchInput
 								onSearch={ this.updateQuery }

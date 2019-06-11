@@ -1,10 +1,24 @@
 .following-manage__header .card {
 		box-shadow: none;
-		margin: 0;
+		position: relative;
+				left: -12px;
+
+		@include breakpoint( '>660px' ) {
+			padding: 20px 0 5px;
+			position: relative;
+				left: -5px;
+		}
 }
 
 .following-manage .search {
 	margin: 0;
+}
+
+.following-manage .form-label {
+
+	@include breakpoint ( '<660px' ) {
+		margin-left: 15px;
+	}
 }
 
 .following-manage .following-manage__input-card {
