@@ -10,7 +10,7 @@ import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle';
 import Card from 'components/card/compact';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
-import { GSuiteNewUser, GSuiteNewUserField, newUsers, userIsReady } from 'lib/gsuite/new-users';
+import { allUsersReady, GSuiteNewUser, GSuiteNewUserField, newUsers } from 'lib/gsuite/new-users';
 
 const domainOne = { name: 'example.blog' };
 const domainTwo = { name: 'test.blog' };
@@ -54,7 +54,7 @@ const GSuiteNewUserListExample = () => {
 				onUsersChange={ changedUsers => setUsers( changedUsers ) }
 				users={ users }
 			>
-				{ 0 < users.length && users.every( userIsReady ) ? (
+				{ allUsersReady( users ) ? (
 					<span>
 						<span role="img" aria-label="check mark">
 							✅
