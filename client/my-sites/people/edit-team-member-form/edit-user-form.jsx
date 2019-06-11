@@ -16,6 +16,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
+import isVipSite from 'state/selectors/is-vip-site';
 import { updateUser } from 'lib/users/actions';
 import RoleSelect from 'my-sites/people/role-select';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -160,7 +161,7 @@ class EditUserForm extends Component {
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'roles' ) }
 						/>
-						{ 'administrator' === this.state.roles && (
+						{ ! this.props.isVip && 'administrator' === this.state.roles && (
 							<ContractorSelect
 								onChange={ this.handleExternalChange }
 								checked={ this.state.isExternalContributor }
@@ -271,6 +272,7 @@ export default localize(
 			return {
 				currentUser: getCurrentUser( state ),
 				isExternalContributor: externalContributors.includes( userId ),
+				isVip: isVipSite( state, siteId ),
 			};
 		},
 		{
