@@ -33,13 +33,7 @@ import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
-import {
-	plansLink,
-	planMatches,
-	findPlansKeys,
-	getPlan,
-	isFreePlan,
-} from 'lib/plans';
+import { plansLink, planMatches, findPlansKeys, getPlan, isFreePlan } from 'lib/plans';
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
@@ -133,13 +127,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const {
-			displayJetpackPlans,
-			intervalType,
-			selectedPlan,
-			hideFreePlan,
-			planTypes,
-		} = this.props;
+		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan, planTypes } = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
 
@@ -165,9 +153,13 @@ export class PlansFeaturesMain extends Component {
 			term = TERM_ANNUALLY;
 		}
 
+		const plansFromProps = planTypes
+			.map( type => findPlansKeys( { group, term, type } )[ 0 ] )
+			.filter( plan => plan );
+
 		let plans;
-		if ( planTypes && planTypes.length ) {
-			plans = planTypes.map( type => findPlansKeys( { group, term, type } )[ 0 ] );
+		if ( plansFromProps.length ) {
+			plans = plansFromProps;
 		} else if ( group === GROUP_JETPACK ) {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
@@ -403,6 +395,7 @@ PlansFeaturesMain.defaultProps = {
 	siteSlug: '',
 	withWPPlanTabs: false,
 	plansWithScroll: false,
+	planTypes: [],
 };
 
 const guessCustomerType = ( state, props ) => {
