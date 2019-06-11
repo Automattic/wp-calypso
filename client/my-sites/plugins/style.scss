@@ -48,6 +48,10 @@
 
 		@include breakpoint( '>480px' ) {
 			flex: none;
+
+			&:first-child {
+				margin-top: 4px;
+			}
 		}
 	}
 }
