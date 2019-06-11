@@ -98,7 +98,7 @@ class SetupTasks extends Component {
 						title={ translate( 'Add a product' ) }
 						buttonText={ translate( 'Add a product' ) }
 						completedTitle={ translate( 'You have added a product' ) }
-						completedButtonText={ translate( 'View products' ) }
+						completedButtonText={ translate( 'Add another product' ) }
 						description={ translate( 'Start by adding the first product to your\u00a0store.' ) }
 						duration={ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }
 						completed={ hasProducts }
