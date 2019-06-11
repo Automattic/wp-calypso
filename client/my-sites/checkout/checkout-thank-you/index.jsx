@@ -402,8 +402,6 @@ export class CheckoutThankYou extends React.Component {
 			return (
 				<Main className="checkout-thank-you">
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-					{ this.renderConfirmationNotice() }
-					{ this.renderVerifiedEmailRequired() }
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
