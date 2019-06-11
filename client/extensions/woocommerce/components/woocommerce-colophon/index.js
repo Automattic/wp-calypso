@@ -14,7 +14,7 @@ import WooCommerceLogo from '../woocommerce-logo';
 const WooCommerceColophon = ( { translate } ) => {
 	return (
 		<div className="woocommerce-colophon">
-			<ExternalLink icon={ false } href="https://woocommerce.com">
+			<ExternalLink icon={ false } target="_blank" href="https://woocommerce.com">
 				{ translate( 'Powered by {{WooCommerceLogo /}}', {
 					components: {
 						WooCommerceLogo: <WooCommerceLogo height={ 32 } width={ 120 } />,
