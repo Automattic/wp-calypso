@@ -22,7 +22,7 @@ import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close
 /**
  * Style dependencies
  */
-import './style.scss';
+import './author-mapping-pane.scss';
 
 class AuthorMappingPane extends React.PureComponent {
 	static displayName = 'AuthorMappingPane';

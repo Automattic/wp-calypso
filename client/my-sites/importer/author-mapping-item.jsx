@@ -19,7 +19,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 /**
  * Style dependencies
  */
-import './style.scss';
+import './author-mapping-item.scss';
 
 const userShape = nameField =>
 	PropTypes.shape( {

@@ -1,0 +1,42 @@
+.importer__service-icon {
+	box-sizing: border-box;
+	float: left;
+	width: 40px;
+	height: 40px;
+	padding: 2px;
+	margin-right: 16px;
+
+	background-color: var( --color-neutral-700 );
+	fill: var( --color-white );
+	border-radius: 4px;
+
+	&.wordpress {
+		background-color: var( --color-wpcom );
+	}
+
+	&.medium-logo {
+		background-color: #12100e;
+	}
+
+	&.blogger-alt {
+		background-color: #ff5722;
+	}
+
+	&.godaddy-gocentral {
+		background-color: #5ea95a;
+	}
+
+	&.wix-logo {
+		background-color: #faad4d;
+	}
+
+	&.squarespace {
+		background-color: #222;
+	}
+
+	@include breakpoint( '>960px' ) {
+		width: 56px;
+		height: 56px;
+		padding: 4px;
+	}
+}

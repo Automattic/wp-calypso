@@ -22,7 +22,7 @@ import UploadingPane from './uploading-pane';
 /**
  * Style dependencies
  */
-import './style.scss';
+import './file-importer.scss';
 
 /**
  * Module variables

@@ -25,7 +25,7 @@ import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close
 /**
  * Style dependencies
  */
-import './style.scss';
+import './uploading-pane.scss';
 
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';

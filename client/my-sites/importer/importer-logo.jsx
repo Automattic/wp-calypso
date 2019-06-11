@@ -17,7 +17,7 @@ import SocialLogo from 'components/social-logo';
 /**
  * Style dependencies
  */
-import './style.scss';
+import './importer-logo.scss';
 
 const ImporterLogo = ( { icon } ) => {
 	if ( includes( [ 'wordpress', 'blogger-alt', 'squarespace' ], icon ) ) {

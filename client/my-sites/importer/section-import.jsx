@@ -40,6 +40,11 @@ import JetpackImporter from 'my-sites/importer/jetpack-importer';
 import ExternalLink from 'components/external-link';
 
 /**
+ * Style dependencies
+ */
+import './section-import.scss';
+
+/**
  * Configuration for each of the importers to be rendered in this section. If
  * you're adding a new importer, add it here. Importers will be rendered in the
  * order they are listed in this array.

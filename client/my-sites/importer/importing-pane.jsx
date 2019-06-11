@@ -28,7 +28,7 @@ import ImporterActionButtonContainer from 'my-sites/importer/importer-action-but
 /**
  * Style dependencies
  */
-import './style.scss';
+import './importing-pane.scss';
 
 const sum = ( a, b ) => a + b;
 
