@@ -37,7 +37,7 @@ import { isEnabled } from 'config';
 import {
 	findPlansKeys,
 	getPlan,
-	getPopularPlanType,
+	getPopularPlanSpec,
 	isFreePlan,
 	planMatches,
 	plansLink,
@@ -50,7 +50,7 @@ import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { getDiscountByName } from 'lib/discounts';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
+import { getSitePlan, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
@@ -86,6 +86,7 @@ export class PlansFeaturesMain extends Component {
 			displayJetpackPlans,
 			domainName,
 			isInSignup,
+			isJetpack,
 			isLandingPage,
 			isLaunchPage,
 			onUpgradeClick,
@@ -100,19 +101,6 @@ export class PlansFeaturesMain extends Component {
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
-
-		const popularPlanSpec =
-			! siteType || abtest( 'popularPlanBy' ) === 'customerType'
-				? {
-						// Control experience
-						type: customerType === 'personal' ? TYPE_PREMIUM : TYPE_BUSINESS,
-						group: GROUP_WPCOM,
-				  }
-				: {
-						// Testing suggesting plans by siteType
-						type: getPopularPlanType( siteType ),
-						group: GROUP_WPCOM,
-				  };
 
 		return (
 			<div
@@ -143,7 +131,12 @@ export class PlansFeaturesMain extends Component {
 					withDiscount={ withDiscount }
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
-					popularPlanSpec={ popularPlanSpec }
+					popularPlanSpec={ getPopularPlanSpec( {
+						abtest,
+						customerType,
+						isJetpack,
+						siteType,
+					} ) }
 					siteId={ siteId }
 				/>
 			</div>
@@ -480,6 +473,7 @@ export default connect(
 			customerType: guessCustomerType( state, props ),
 			domains: getDecoratedSiteDomains( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
+			isJetpack: isJetpackSite( state, siteId ),
 			siteId: siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			siteType: getSiteType( state ),

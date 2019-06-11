@@ -476,3 +476,22 @@ export const getPopularPlanType = siteType => {
 			return TYPE_BUSINESS;
 	}
 };
+
+export const getPopularPlanSpec = ( { customerType, isJetpack, siteType, abtest } ) => {
+	const spec = {
+		type: TYPE_BUSINESS,
+		group: isJetpack ? GROUP_JETPACK : GROUP_WPCOM,
+	};
+
+	// Not sure why, but things break if the abtest lib is imported in this file
+	if ( ! siteType || abtest( 'popularPlanBy' ) === 'customerType' ) {
+		if ( customerType === 'personal' ) {
+			spec.type = TYPE_PREMIUM;
+		}
+		return spec;
+	}
+
+	spec.type = getPopularPlanType( siteType );
+
+	return spec;
+};
