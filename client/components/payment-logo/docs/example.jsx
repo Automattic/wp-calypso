@@ -3,44 +3,38 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import { concat, filter, flow, map, sortBy } from 'lodash';
+import { sortBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
-const genVendors = flow(
-	// 'placeholder' is a special case that needs to be demonstrated separately
-	filter( type => type !== 'placeholder' ),
-
-	map( type => ( { type, isCompact: false } ) ),
-	concat( [ { type: 'paypal', isCompact: true } ] ),
-	sortBy( [ 'type', 'isCompact' ] )
-);
-
-const VENDORS = genVendors( POSSIBLE_TYPES );
-
 class PaymentLogoExamples extends React.PureComponent {
 	static displayName = 'PaymentLogo';
 
 	render() {
+		const sortedVendors = sortBy( POSSIBLE_TYPES );
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="payment-logo-example">
-				<p>Empty Placeholder</p>
+				<h3>Empty Placeholder</h3>
 
 				<PaymentLogo type="placeholder" />
 
-				<p>Supported Vendors</p>
+				<h3>Supported Vendors</h3>
 
-				{ VENDORS.map( ( { type, isCompact } ) => (
-					<div key={ [ type, isCompact ].join( '_' ) }>
-						<PaymentLogo type={ type } isCompact={ isCompact } />
-					</div>
-				) ) }
+				{ sortedVendors.map(
+					type =>
+						type !== 'placeholder' && (
+							<div key={ type } className="payment-logo__example">
+								<PaymentLogo type={ type } isCompact={ false } />
+								{ type === 'paypal' && <PaymentLogo type={ type } isCompact={ true } /> }
+							</div>
+						)
+				) }
 			</div>
 		);
 	}
