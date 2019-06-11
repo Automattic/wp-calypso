@@ -209,7 +209,7 @@ class FollowingManage extends Component {
 			<Fragment>
 				<div className="following-manage__header">
 					<HeaderCake backHref={ '/' }>
-						<h1>{ translate( 'Follow Something New' ) }</h1>
+						<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 					</HeaderCake>
 				</div>
 				<ReaderMain className="following-manage">
