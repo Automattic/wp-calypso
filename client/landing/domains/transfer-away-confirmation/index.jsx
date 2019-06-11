@@ -234,7 +234,7 @@ class TransferAwayConfirmationPage extends Component {
 				errorState = this.getExpiredTokenErrorState();
 				break;
 
-			case 'whois_status_error':
+			case 'whois_error':
 				errorState = this.getWhoisErrorState();
 				break;
 
