@@ -14,6 +14,7 @@
 // Modal Overlay
 .page-template-modal-screen-overlay {
 	background-color: hsla( 0, 0%, 0%, 0.7 );
+	animation: none;
 }
 
 // When not in fullscreen mode allow space for WP.org sidebar
@@ -43,6 +44,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	width: 100%;
 	height: 100vh;
 	max-width: 800px;
+	animation: none;
 }
 
 .page-template-modal .components-modal__header-heading-container {
