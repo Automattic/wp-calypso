@@ -6,7 +6,7 @@
 /**
  * WordPress dependencies
  */
-import { PlainText } from '@wordpress/editor';
+import { TextControl } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
@@ -17,12 +17,12 @@ import apiFetch from '@wordpress/api-fetch';
 
 class SiteDescriptionEdit extends Component {
 	state = {
-		description: null,
+		description: __( 'Site description loading…' ),
 	};
 
 	componentDidMount() {
 		apiFetch( { path: '/wp/v2/settings' } ).then( ( { description } ) => {
-			this.setState( { description: description } );
+			this.setState( { description } );
 		} );
 	}
 
@@ -30,15 +30,16 @@ class SiteDescriptionEdit extends Component {
 		const { isSelected } = this.props;
 		if ( isSelected ) {
 			return (
-				<PlainText
+				<TextControl
 					className="wp-block-a8c-site-description"
 					value={ this.state.description }
-					placeholder={ __( 'Site Title…' ) }
-					aria-label={ __( 'SiteTitle' ) }
+					onChange={ description => this.setState( { description } ) }
+					placeholder={ __( 'Site Description' ) }
+					aria-label={ __( 'Site Description' ) }
 				/>
 			);
 		}
-		return <p className="site-description">{ this.state.title }</p>;
+		return <p className="site-description">{ this.state.description }</p>;
 	}
 }
 
