@@ -139,6 +139,9 @@ const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
 const userIsReady = ( user: GSuiteNewUser ): boolean =>
 	isUserComplete( user ) && ! doesUserHaveError( user );
 
+const allUsersReady = ( users: GSuiteNewUser[] ): boolean =>
+	0 < users.length && users.every( userIsReady );
+
 const transformUserForCart = ( {
 	firstName: { value: firstname },
 	lastName: { value: lastname },
@@ -173,6 +176,7 @@ const getItemsForCart = (
 };
 
 export {
+	allUsersReady,
 	doesUserHaveError,
 	getItemsForCart,
 	isUserComplete,

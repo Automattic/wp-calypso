@@ -31,9 +31,9 @@ import {
 	hasGSuiteSupportedDomain,
 } from 'lib/gsuite';
 import {
+	allUsersReady,
 	getItemsForCart,
 	newUsers,
-	userIsReady,
 	validateAgainstExistingUsers,
 } from 'lib/gsuite/new-users';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -81,7 +81,7 @@ class GSuiteAddUsers extends React.Component {
 	handleContinue = () => {
 		const { domains, planType, selectedSite } = this.props;
 		const { users } = this.state;
-		const canContinue = 0 < users.length && users.every( userIsReady );
+		const canContinue = allUsersReady( users );
 
 		if ( canContinue ) {
 			getItemsForCart(
@@ -131,7 +131,7 @@ class GSuiteAddUsers extends React.Component {
 		const { users } = this.state;
 
 		const gSuiteSupportedDomains = getGSuiteSupportedDomains( domains );
-		const canContinue = 0 < users.length && users.every( userIsReady );
+		const canContinue = allUsersReady( users );
 
 		return (
 			<Fragment>
