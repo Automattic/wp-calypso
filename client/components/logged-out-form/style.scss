@@ -6,73 +6,8 @@
 	@include elevation( 2dp );
 }
 
-.logged-out-form__footer {
-	box-shadow: none;
-	background: none;
-	margin: 16px -16px -16px;
-	padding: 16px;
 
-	&.is-blended {
-		background: none;
-		border-top: none;
-		padding-top: 0;
-	}
 
-	.button.is-primary {
-		float: none;
-		margin: 0;
-		width: 100%;
-		@include elevation( 1dp );
-	}
-}
 
-.logged-out-form__links {
-	margin: 0 auto;
-	max-width: 330px;
-	text-align: center;
 
-	&::before {
-		content: '';
-		display: block;
-		width: 80px;
-		background: rgba( var( --color-white-rgb ), 0.3 );
-		height: 2px;
-		margin: 0 auto 8px;
-	}
-}
 
-.logged-out-form__link-item {
-	color: var( --color-neutral-500 );
-	display: block;
-	font-family: $sans;
-	font-size: 13px;
-	padding: 8px 16px;
-	cursor: pointer;
-	text-decoration: underline;
-
-	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout:not( .dops ) &,
-	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout.gravatar & {
-		color: var( --color-white );
-
-		&:hover {
-			color: var( --color-neutral-100 );
-		}
-	}
-
-	&:last-child {
-		border-bottom: none;
-	}
-
-	&:visited {
-		color: var( --color-neutral-500 );
-	}
-
-	&:hover {
-		color: var( --color-accent );
-	}
-
-	.gridicon {
-		position: relative;
-		top: 3px;
-	}
-}

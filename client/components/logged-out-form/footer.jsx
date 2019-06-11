@@ -13,6 +13,11 @@ import classnames from 'classnames';
  */
 import Card from 'components/card';
 
+/**
+ * Style dependencies
+ */
+import './footer.scss';
+
 class LoggedOutFormFooter extends Component {
 	static propTypes = {
 		children: PropTypes.node.isRequired,
