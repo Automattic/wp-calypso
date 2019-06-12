@@ -69,7 +69,7 @@ export default class extends React.PureComponent {
 		const site = this.props.site;
 		const state = this.props.importerStatus;
 		const isEnabled = appStates.DISABLED !== state.importerState;
-		const cardClasses = classNames( 'importer__shell', {
+		const cardClasses = classNames( 'importer__site-importer-card', {
 			'is-compact': includes( compactStates, state.importerState ),
 			'is-disabled': ! isEnabled,
 		} );
