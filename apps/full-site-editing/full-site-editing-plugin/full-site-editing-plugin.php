@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 0.1.1
+ * Version: 0.2
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -18,7 +18,7 @@ function a8c_load_full_site_editing() {
 	/**
 	 * Can be used to disable Full Site Editing functionality.
 	 *
-	 * @since 0.1
+	 * @since 0.2
 	 *
 	 * @param bool true if Full Site Editing should be disabled, false otherwise.
 	 */
@@ -49,7 +49,7 @@ function a8c_load_posts_list_block() {
 	/**
 	 * Can be used to disable the Post List Block.
 	 *
-	 * @since 0.1
+	 * @since 0.2
 	 *
 	 * @param bool true if Post List Block should be disabled, false otherwise.
 	 */
@@ -71,7 +71,7 @@ function a8c_load_starter_page_templates() {
 	/**
 	 * Can be used to disable the Starter Page Templates.
 	 *
-	 * @since 0.1
+	 * @since 0.2
 	 *
 	 * @param bool true if Starter Page Templates should be disabled, false otherwise.
 	 */
