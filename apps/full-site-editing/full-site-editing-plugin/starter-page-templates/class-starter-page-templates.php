@@ -181,9 +181,12 @@ class Starter_Page_Templates {
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
 		if ( false === $vertical_templates ) {
-			$request_url = add_query_arg( [
-				'_locale' => $this->get_iso_639_locale(),
-			], 'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates' );
+			$request_url = add_query_arg(
+				[
+					'_locale' => $this->get_iso_639_locale(),
+				],
+				'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates'
+			);
 			$response    = wp_remote_get( esc_url_raw( $request_url ) );
 			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
 				return array();
