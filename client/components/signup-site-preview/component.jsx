@@ -25,7 +25,7 @@ function MockupChromeMobile() {
 	return (
 		<div className="signup-site-preview__chrome-mobile">
 			<span className="signup-site-preview__chrome-label">
-				{ translate( 'Phone', {
+				{ translate( 'Phone Preview', {
 					comment: 'Label for a phone-sized preview of a website',
 				} ) }
 			</span>
