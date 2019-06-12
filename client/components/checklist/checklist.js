@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import React, { Children, PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { times } from 'lodash';
+import { isFunction, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ export default class Checklist extends PureComponent {
 		className: PropTypes.string,
 		phase2: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
+		onExpandTask: PropTypes.func,
 		progressText: PropTypes.string,
 		updateCompletion: PropTypes.func,
 	};
@@ -56,6 +57,10 @@ export default class Checklist extends PureComponent {
 		void this.setState( ( { expandedTaskId } ) => {
 			if ( newExpandedTaskId === expandedTaskId ) {
 				return { expandedTaskId: null }; // Collapse
+			}
+
+			if ( isFunction( this.props.onExpandTask ) ) {
+				this.props.onExpandTask( newExpandedTaskId );
 			}
 
 			return { expandedTaskId: newExpandedTaskId }; // Expand
