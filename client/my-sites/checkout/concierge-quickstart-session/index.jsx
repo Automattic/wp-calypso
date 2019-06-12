@@ -25,7 +25,7 @@ import { addItem } from 'lib/upgrades/actions';
 import { conciergeSessionItem } from 'lib/cart-values/cart-items';
 import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getProductsList,
@@ -37,6 +37,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
 import analytics from 'lib/analytics';
+import { redirectLoggedOut } from 'controller';
 
 /**
  * Style dependencies
@@ -62,6 +63,14 @@ export class ConciergeQuickstartSession extends React.Component {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
+		// If the param value is 'add', then we will add the concierge session item to cart and proceed to checkout,
+		// without showing any UI. We use this method when a logged out user clicks 'Get Started' on the concierge
+		// offer page.
+		if ( 'add' === receiptId ) {
+			this.renderPlaceholders();
+			this.handleClickAccept();
+			return null;
+		}
 		return (
 			<Main className="concierge-quickstart-session">
 				<PageViewTracker
@@ -308,29 +317,51 @@ export class ConciergeQuickstartSession extends React.Component {
 	}
 
 	footer() {
-		const { translate, productDisplayCost } = this.props;
+		const { translate, productDisplayCost, isLoggedIn } = this.props;
 		return (
 			<footer className="concierge-quickstart-session__footer">
-				<Button
-					className="concierge-quickstart-session__decline-offer-button"
-					onClick={ this.handleClickDecline }
-				>
-					{ translate( "No thanks, I'll do it on my own" ) }
-				</Button>
-				<Button
-					primary
-					className="concierge-quickstart-session__accept-offer-button"
-					onClick={ this.handleClickAccept }
-				>
-					{ translate( 'Yes, I want a WordPress Expert by my side!', {
-						args: {
-							amount: productDisplayCost,
-						},
-					} ) }
-				</Button>
+				{ ! isLoggedIn && (
+					<Button
+						primary
+						className="concierge-quickstart-session__get-started-button"
+						onClick={ this.handleRedirect }
+					>
+						{ translate( 'Get Started!' ) }
+					</Button>
+				) }
+				{ isLoggedIn && (
+					<>
+						<Button
+							className="concierge-quickstart-session__decline-offer-button"
+							onClick={ this.handleClickDecline }
+						>
+							{ translate( "No thanks, I'll do it on my own" ) }
+						</Button>
+						<Button
+							primary
+							className="concierge-quickstart-session__accept-offer-button"
+							onClick={ this.handleClickAccept }
+						>
+							{ translate( 'Yes, I want a WordPress Expert by my side!', {
+								args: {
+									amount: productDisplayCost,
+								},
+							} ) }
+						</Button>
+					</>
+				) }
 			</footer>
 		);
 	}
+
+	/**
+	 * Redirect user to the login page with the appropriate redirect_to param,
+	 * when they click 'Get Started' on the Quickstart session offer page while logged out.
+	 */
+	handleRedirect = () => {
+		const redirectPath = this.props.path + '/add';
+		this.props.redirectLoggedOut( { path: redirectPath, store: this.props.reduxStore } );
+	};
 
 	handleClickDecline = () => {
 		const {
@@ -393,9 +424,11 @@ export default connect(
 			redirectToPageBuilder: siteQualifiesForPageBuilder( state, selectedSiteId ),
 			productCost: getProductCost( state, 'concierge-session' ),
 			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
+			isLoggedIn: isUserLoggedIn( state ),
 		};
 	},
 	{
 		trackUpsellButtonClick,
+		redirectLoggedOut,
 	}
 )( localize( ConciergeQuickstartSession ) );

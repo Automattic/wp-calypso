@@ -143,7 +143,6 @@ export function conciergeSessionNudge( context, next ) {
 }
 
 export function conciergeQuickstartSession( context, next ) {
-	console.log( 'in conciergeQuickstartSession' );
 	const { receiptId } = context.params;
 	context.store.dispatch(
 		setSection( { name: 'concierge-quickstart-session' }, { hasSidebar: false } )
@@ -160,8 +159,10 @@ export function conciergeQuickstartSession( context, next ) {
 	context.primary = (
 		<CartData>
 			<ConciergeQuickstartSession
-				receiptId={ Number( receiptId ) }
+				receiptId={ receiptId }
 				selectedSiteId={ selectedSiteId }
+				path={ context.path }
+				reduxStore={ context.store }
 			/>
 		</CartData>
 	);
