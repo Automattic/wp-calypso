@@ -34,6 +34,7 @@
 	"dependencies": {
 		"@wordpress/api-fetch": "^3.1.2",
 		"@wordpress/blocks": "^6.2.3",
+		"@wordpress/block-editor": "^2.0.3",
 		"@wordpress/components": "^7.3.0",
 		"@wordpress/compose": "^3.2.0",
 		"@wordpress/data": "^4.4.0",
