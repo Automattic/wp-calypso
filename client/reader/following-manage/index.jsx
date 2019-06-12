@@ -69,10 +69,6 @@ class FollowingManage extends Component {
 		width: 800,
 	};
 
-	componentWillUnmount() {
-		recommendationsSeed = random( 0, 1000 );
-	}
-
 	// TODO make this common between our different search pages?
 	updateQuery = newValue => {
 		this.scrollToTop();
@@ -134,6 +130,7 @@ class FollowingManage extends Component {
 	}
 
 	componentWillUnmount() {
+		recommendationsSeed = random( 0, 1000 );
 		window.removeEventListener( 'resize', this.resizeListener );
 		clearInterval( this.windowScrollerRef );
 	}
@@ -209,7 +206,7 @@ class FollowingManage extends Component {
 			<Fragment>
 				<div className="following-manage__header">
 					<HeaderCake backHref={ '/' }>
-						<h1>{ translate( 'Follow Something New' ) }</h1>
+						<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 					</HeaderCake>
 				</div>
 				<ReaderMain className="following-manage">
