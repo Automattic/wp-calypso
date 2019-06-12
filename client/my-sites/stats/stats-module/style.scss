@@ -84,7 +84,7 @@
 
 	a {
 		@extend %mobile-link-element;
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		display: block;
 		font-size: 14px;
 		padding: 0 24px;
@@ -348,7 +348,7 @@ ul.module-header-actions {
 			}
 
 			@include breakpoint( '<480px' ) {
-				border-bottom: 1px solid var( --color-neutral-0 );
+				border-bottom: 1px solid var( --color-border-subtle );
 
 				&:last-child {
 					border: 0;
@@ -398,8 +398,8 @@ ul.module-header-actions {
 	// 2: Make right padding much greater to accommodate for increased gradient
 	td,
 	th {
-		border-bottom: 1px solid var( --color-neutral-0 );
-		border-right: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var( --color-border-subtle );
+		border-right: 1px solid var( --color-border-subtle );
 		font-size: 12px;
 		padding: 8px 12px;
 		white-space: nowrap; // 1
