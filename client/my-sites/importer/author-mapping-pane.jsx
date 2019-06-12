@@ -19,6 +19,11 @@ import ImporterActionButtonContainer from 'my-sites/importer/importer-action-but
 import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 
+/**
+ * Style dependencies
+ */
+import './author-mapping-pane.scss';
+
 class AuthorMappingPane extends React.PureComponent {
 	static displayName = 'AuthorMappingPane';
 

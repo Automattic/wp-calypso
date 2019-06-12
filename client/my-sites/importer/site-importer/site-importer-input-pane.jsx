@@ -35,6 +35,11 @@ import SiteImporterSitePreview from './site-importer-site-preview';
 import { appStates } from 'state/imports/constants';
 import { cancelImport } from 'lib/importer/actions';
 
+/**
+ * Style dependencies
+ */
+import './site-importer-input-pane.scss';
+
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
 

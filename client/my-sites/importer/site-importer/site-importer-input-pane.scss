@@ -1,0 +1,33 @@
+.site-importer__site-importer-example-domain {
+	font-family: monospace;
+	color: var( --color-accent );
+}
+
+.site-importer__site-importer-url-input {
+	display: flex;
+	margin-bottom: 1.5em;
+
+	.form-text-input {
+		flex-grow: 1;
+		flex-shrink: 1;
+	}
+
+	button {
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
+}
+
+.site-importer__site-importer-endpoint-select {
+	width: 100%;
+}
+
+.site-importer__site-importer-pane {
+	position: relative;
+	margin-bottom: 24px;
+
+	& > div {
+		margin-bottom: 10px;
+	}
+}
+

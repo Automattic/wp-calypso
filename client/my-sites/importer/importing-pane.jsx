@@ -25,6 +25,11 @@ import ImporterDoneButton from 'my-sites/importer/importer-action-buttons/done-b
 import BusyImportingButton from 'my-sites/importer/importer-action-buttons/busy-importing-button';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 
+/**
+ * Style dependencies
+ */
+import './importing-pane.scss';
+
 const sum = ( a, b ) => a + b;
 
 /*
