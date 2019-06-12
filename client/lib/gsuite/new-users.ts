@@ -166,11 +166,10 @@ const getItemsForCart = (
 		const domainInfo = find( domains, [ 'name', domain ] );
 		return domainInfo && hasGSuite( domainInfo )
 			? googleAppsExtraLicenses( {
-					product_slug: productSlug,
-					users: groupedUsers,
 					domain,
+					users: groupedUsers,
 			  } )
-			: googleApps( { users: groupedUsers, domain } );
+			: googleApps( { domain, product_slug: productSlug, users: groupedUsers } );
 	} );
 };
 
