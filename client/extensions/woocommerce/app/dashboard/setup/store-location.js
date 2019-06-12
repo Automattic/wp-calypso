@@ -22,9 +22,6 @@ import {
 import { bumpStat } from 'woocommerce/lib/analytics';
 import { errorNotice } from 'state/notices/actions';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-// Commenting out for now because country logic for dumping to wp-admin is being removoed
-// remove this code if it doesn't cause conflicts.
-//import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import {
 	areLocationsLoaded,
 	getAllCountries,
@@ -155,14 +152,8 @@ class StoreLocationSetupView extends Component {
 
 	onNext = event => {
 		const {
-			// Commenting out for now, remove if no conflict with removing logic
-			// elsewhere in file
-			//adminURL,
 			countries,
 			currentUserEmailVerified,
-			// Commenting out for now, remove if no conflict with removing logic
-			// elsewhere in file
-			//onRequestRedirect,
 			pushDefaultsForCountry,
 			siteId,
 			translate,
@@ -192,17 +183,6 @@ class StoreLocationSetupView extends Component {
 			// mc stat 32 char max :P
 			this.props.bumpStat( 'calypso_woo_store_setup_country', this.state.address.country );
 
-			// Original: If we don't support a calypso experience yet for this country, let
-			// them complete setup with the wp-admin WooCommerce wizard
-			// Revised: Removing functionality due to no longer being needed. Commenting out for now
-			// to ensure that the dependencies in the same file are ok to also be commented out.
-			/*
-			if ( ! isStoreManagementSupportedInCalypsoForCountry( this.state.address.country ) ) {
-				const storeSetupURL =
-					adminURL + 'admin.php?page=wc-setup&step=store_setup&activate_error=false&from=calypso';
-				onRequestRedirect( storeSetupURL );
-			}
-			*/
 			return setSetStoreAddressDuringInitialSetup( siteId, true );
 		};
 
