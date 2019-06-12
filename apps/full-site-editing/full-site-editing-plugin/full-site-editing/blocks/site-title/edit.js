@@ -2,98 +2,114 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
+import classNames from 'classnames';
 
 /**
  * WordPress dependencies
  */
-import React, { Component } from 'react';
 import { __ } from '@wordpress/i18n';
-const { withSelect } = wp.data;
-const { apiFetch } = wp;
+import { withNotices, ServerSideRender } from '@wordpress/components';
+import { PlainText } from '@wordpress/block-editor';
+import apiFetch from '@wordpress/api-fetch';
+import { withSelect } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
 
 class SiteTitleEdit extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			title: null,
-			initialTitle: null,
-		};
-	}
+	state = {
+		title: __( 'Site title loading...' ),
+		initialTitle: '',
+	};
 
 	componentDidMount() {
-		if ( this.state.initialTitle ) {
-			return;
-		}
-
-		apiFetch( { path: '/wp/v2/settings' } ).then( ( { title } ) => {
-			this.setState( { initialTitle: title } );
-		} );
+		this.requestSiteTitle();
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { isSaving, isPublished, isPublishing, isAutosaving } = this.props;
+		const { title, initialTitle } = this.state;
+		const {
+			isSaving,
+			isPublished,
+			isPublishing,
+			isAutosaving,
+			noticeOperations,
+			isSelected,
+		} = this.props;
 
-		if ( this.isPure() || prevProps.isSaving === this.props.isSaving ) {
+		const titleUnchanged = title && title.trim() === initialTitle.trim();
+		const titleIsEmpty = ! title || title.trim().length === 0;
+
+		// Reset to initial title if user de-selects the block with an empty value
+		if ( ! isSelected && prevProps.isSelected && titleIsEmpty ) {
+			this.setSiteTitle( initialTitle );
+		}
+
+		// Don't do anything further if the title is unchanged or the saving state is the same as previous update
+		if ( titleUnchanged || prevProps.isSaving === this.props.isSaving ) {
 			return;
 		}
 
-		if ( ( ( isSaving && isPublished ) || isPublishing ) && ! isAutosaving ) {
+		const userInitiatedPublish = ( ( isSaving && isPublished ) || isPublishing ) && ! isAutosaving;
+
+		// Save the title on publish
+		if ( userInitiatedPublish ) {
 			const { title } = this.state;
 
-			apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { title } } ).then( () => {
-				this.setState( { initialTitle: title } );
-			} );
-
-			this.resetTitle();
+			apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { title } } )
+				.then( () => this.resetTitle() )
+				.catch( ( { message } ) => noticeOperations.createErrorNotice( message ) );
 		}
 	}
 
-	setSiteTitle = ( { target: { value } } ) => {
-		this.setState( { title: value } );
+	requestSiteTitle = () => {
+		const { noticeOperations } = this.props;
+
+		return apiFetch( { path: '/wp/v2/settings' } )
+			.then( ( { title } ) => this.setState( { initialTitle: title, title } ) )
+			.catch( ( { message } ) => noticeOperations.createErrorNotice( message ) );
 	};
 
-	resetTitle = () => {
-		const { title } = this.state;
+	setSiteTitle = value => this.setState( { title: value } );
 
-		this.setState( { initalTitle: title } );
-	};
-
-	isPure = () => {
-		const { title, initialTitle } = this.state;
-
-		return title && title.trim() === initialTitle.trim();
-	};
+	resetTitle = () => this.setState( { initalTitle: this.state.title } );
 
 	render() {
-		const { title, initialTitle } = this.state;
+		const { title } = this.state;
+		const { isSelected, className } = this.props;
 
-		return (
-			<div className="full-site-editing__site_title_block">
-				<h1 className="full-site-editing__site_title_field">
-					<textarea
-						placeholder={ initialTitle }
-						onBlur={ this.setSiteTitle }
-						defaultValue={ title }
+		if ( isSelected ) {
+			return (
+				<h1>
+					<PlainText
+						className={ className }
+						value={ title }
+						onChange={ this.setSiteTitle }
+						placeholder={ __( 'Site Title' ) }
+						aria-label={ __( 'Site Title' ) }
 					/>
 				</h1>
-			</div>
-		);
+			);
+		}
+
+		return <h1 className={ classNames( 'site-title', className ) }>{ title }</h1>;
 	}
 }
 
-export default withSelect( select => {
-	const { isSavingPost, isPublishingPost, isAutosavingPost, isCurrentPostPublished } = select(
-		'core/editor'
-	);
-	return {
-		isSaving: isSavingPost(),
-		isPublishing: isPublishingPost(),
-		isAutosaving: isAutosavingPost(),
-		isPublished: isCurrentPostPublished(),
-	};
-} )( SiteTitleEdit );
+export default compose( [
+	withSelect( select => {
+		const { isSavingPost, isPublishingPost, isAutosavingPost, isCurrentPostPublished } = select(
+			'core/editor'
+		);
+		return {
+			isSaving: isSavingPost(),
+			isPublishing: isPublishingPost(),
+			isAutosaving: isAutosavingPost(),
+			isPublished: isCurrentPostPublished(),
+		};
+	} ),
+	withNotices,
+] )( SiteTitleEdit );

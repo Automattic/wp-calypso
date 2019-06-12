@@ -9,12 +9,11 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import edit from './edit';
-import './style.scss';
 
 if ( 'wp_template' === fullSiteEditing.editorPostType ) {
 	registerBlockType( 'a8c/site-title', {
 		title: __( 'Site Title' ),
-		description: __( 'Placeholder for your site title.' ),
+		description: __( 'Your site title.' ),
 		icon: 'layout',
 		category: 'layout',
 		supports: {
