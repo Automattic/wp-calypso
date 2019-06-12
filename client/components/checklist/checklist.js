@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import React, { Children, PureComponent, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction, times } from 'lodash';
+import { get, isFunction, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -51,6 +51,13 @@ export default class Checklist extends PureComponent {
 		);
 		const total = childrenArray.length;
 		return [ completedCount, total ];
+	}
+
+	getFirstIncompleteTaskId() {
+		return get(
+			Children.toArray( this.props.children ).find( task => task && ! task.props.completed ),
+			[ 'props', 'id' ]
+		);
 	}
 
 	setExpandedTask = newExpandedTaskId =>
@@ -104,7 +111,11 @@ export default class Checklist extends PureComponent {
 						if ( ! child ) {
 							return child;
 						}
-						const collapsed = child.props.id !== this.state.expandedTaskId;
+
+						// If the user hasn't expanded any task, expand the
+						// first task that hasn't been completed yet.
+						const expandedTaskId = this.state.expandedTaskId || this.getFirstIncompleteTaskId();
+						const collapsed = child.props.id !== expandedTaskId;
 						return cloneElement( child, {
 							collapsed,
 							onTaskClick: () => this.setExpandedTask( child.props.id ),
