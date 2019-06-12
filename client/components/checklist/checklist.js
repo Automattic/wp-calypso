@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import React, { Children, PureComponent } from 'react';
+import React, { Children, PureComponent, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, times } from 'lodash';
 
@@ -100,12 +100,12 @@ export default class Checklist extends PureComponent {
 					progressText={ this.props.progressText }
 				/>
 				<div className="checklist__tasks">
-					{ React.Children.map( this.props.children, child => {
+					{ Children.map( this.props.children, child => {
 						if ( ! child ) {
 							return child;
 						}
 						const collapsed = child.props.id !== this.state.expandedTaskId;
-						return React.cloneElement( child, {
+						return cloneElement( child, {
 							collapsed,
 							onTaskClick: () => this.setExpandedTask( child.props.id ),
 						} );
