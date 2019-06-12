@@ -399,6 +399,10 @@
 	}
 
 	.search.is-expanded-to-container {
-		height: 50px;
+		height: 46px;
+
+		@include breakpoint ( '>660px' ) {
+			height: 50px;
+		}
 	}
 }
