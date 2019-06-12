@@ -24,12 +24,7 @@ class WooCommerceColophon extends React.Component {
 	render() {
 		return (
 			<div className="woocommerce-colophon">
-				<ExternalLink
-					icon={ false }
-					target="_blank"
-					onClick={ this.onClick }
-					href="https://woocommerce.com"
-				>
+				<ExternalLink icon={ false } onClick={ this.onClick } href="https://woocommerce.com">
 					{ this.props.translate( 'Powered by {{WooCommerceLogo /}}', {
 						components: {
 							WooCommerceLogo: <WooCommerceLogo height={ 32 } width={ 120 } />,
