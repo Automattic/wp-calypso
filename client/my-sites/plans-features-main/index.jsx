@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import warn from 'lib/warn';
 import PlanFeatures from 'my-sites/plan-features';
 import {
 	TYPE_FREE,
@@ -33,7 +34,7 @@ import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
-import { plansLink, planMatches, findPlansKeys, getPlan } from 'lib/plans';
+import { plansLink, planMatches, findPlansKeys, getPlan, isFreePlan } from 'lib/plans';
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
@@ -153,8 +154,12 @@ export class PlansFeaturesMain extends Component {
 			term = TERM_ANNUALLY;
 		}
 
+		const plansFromProps = this.getPlansFromProps( group, term );
+
 		let plans;
-		if ( group === GROUP_JETPACK ) {
+		if ( plansFromProps.length ) {
+			plans = plansFromProps;
+		} else if ( group === GROUP_JETPACK ) {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
@@ -173,7 +178,7 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		if ( hideFreePlan ) {
-			plans.shift();
+			plans = plans.filter( planSlug => ! isFreePlan( planSlug ) );
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
@@ -181,6 +186,22 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		return plans;
+	}
+
+	getPlansFromProps( group, term ) {
+		const planTypes = this.props.planTypes || [];
+
+		return planTypes.reduce( ( accum, type ) => {
+			const plan = findPlansKeys( { group, term, type } )[ 0 ];
+
+			if ( ! plan ) {
+				warn(
+					`Invalid plan type, \`${ type }\`, provided to \`PlansFeaturesMain\` component. See plans constants for valid plan types.`
+				);
+			}
+
+			return plan ? [ ...accum, plan ] : accum;
+		}, [] );
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
@@ -292,9 +313,9 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
-		const { translate } = this.props;
+		const { hideFreePlan, translate } = this.props;
 		const className = 'is-free-plan';
-		if ( this.props.hideFreePlan ) {
+		if ( hideFreePlan ) {
 			return null;
 		}
 
@@ -376,6 +397,7 @@ PlansFeaturesMain.propTypes = {
 	siteSlug: PropTypes.string,
 	withWPPlanTabs: PropTypes.bool,
 	plansWithScroll: PropTypes.bool,
+	planTypes: PropTypes.array,
 };
 
 PlansFeaturesMain.defaultProps = {

@@ -258,7 +258,7 @@ export function generateFlows( {
 		};
 
 		flows[ 'ecommerce-onboarding' ] = {
-			steps: [ 'user', 'site-type', 'domains', 'plans' ],
+			steps: [ 'user', 'site-type', 'domains', 'plans-ecommerce' ],
 			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-11-21',

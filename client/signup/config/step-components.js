@@ -18,6 +18,7 @@ const stepNameToModuleName = {
 	'from-url': 'import-url',
 	launch: 'launch-site',
 	plans: 'plans',
+	'plans-ecommerce': 'plans',
 	'plans-launch': 'plans',
 	'plans-personal': 'plans',
 	'plans-premium': 'plans',
