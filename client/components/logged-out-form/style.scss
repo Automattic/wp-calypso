@@ -1,13 +1,9 @@
 .logged-out-form {
-	margin: 0 auto 16px;
-	max-width: 360px;
-	padding: 16px;
-	border-radius: 3px;
-	@include elevation( 2dp );
+	p {
+		margin-bottom: 1.5em;
+	}
+
+	.form-fieldset {
+		margin: 0;
+	}
 }
-
-
-
-
-
-
