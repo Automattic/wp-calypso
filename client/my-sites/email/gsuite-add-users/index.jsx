@@ -46,6 +46,7 @@ import SectionHeader from 'components/section-header';
 import QueryEmailForwards from 'components/data/query-email-forwards';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -78,10 +79,30 @@ class GSuiteAddUsers extends React.Component {
 		} );
 	};
 
+	recordContinueEvent = () => {
+		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { users } = this.state;
+		recordTracksEvent( 'calypso_email_management_gsuite_add_users_continue_button_click', {
+			domain_name: selectedDomainName,
+			user_count: users.length,
+		} );
+	};
+
+	recordCancelEvent = () => {
+		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { users } = this.state;
+		recordTracksEvent( 'calypso_email_management_gsuite_add_users_cancel_button_click', {
+			domain_name: selectedDomainName,
+			user_count: users.length,
+		} );
+	};
+
 	handleContinue = () => {
 		const { domains, planType, selectedSite } = this.props;
 		const { users } = this.state;
 		const canContinue = allUsersReady( users );
+
+		this.recordContinueEvent();
 
 		if ( canContinue ) {
 			getItemsForCart(
@@ -94,6 +115,7 @@ class GSuiteAddUsers extends React.Component {
 	};
 
 	handleCancel = () => {
+		this.recordCancelEvent();
 		this.goToEmail();
 	};
 
@@ -224,15 +246,18 @@ GSuiteAddUsers.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( state => {
-	const selectedSite = getSelectedSite( state );
-	const siteId = get( selectedSite, 'ID', null );
-	const domains = getDecoratedSiteDomains( state, siteId );
-	return {
-		domains,
-		domainsWithForwards: getDomainsWithForwards( state, domains ),
-		gsuiteUsers: getGSuiteUsers( state, siteId ),
-		isRequestingDomains: isRequestingSiteDomains( state, siteId ),
-		selectedSite,
-	};
-} )( localize( GSuiteAddUsers ) );
+export default connect(
+	state => {
+		const selectedSite = getSelectedSite( state );
+		const siteId = get( selectedSite, 'ID', null );
+		const domains = getDecoratedSiteDomains( state, siteId );
+		return {
+			domains,
+			domainsWithForwards: getDomainsWithForwards( state, domains ),
+			gsuiteUsers: getGSuiteUsers( state, siteId ),
+			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
+			selectedSite,
+		};
+	},
+	{ recordTracksEvent: recordTracksEventAction }
+)( localize( GSuiteAddUsers ) );
