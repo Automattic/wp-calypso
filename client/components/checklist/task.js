@@ -21,6 +21,7 @@ class Task extends PureComponent {
 	static propTypes = {
 		buttonPrimary: PropTypes.bool,
 		buttonText: PropTypes.node,
+		collapsed: PropTypes.bool,
 		completed: PropTypes.bool,
 		completedButtonText: PropTypes.node,
 		completedTitle: PropTypes.node,
@@ -33,7 +34,6 @@ class Task extends PureComponent {
 		onClick: PropTypes.func,
 		onTaskClick: PropTypes.func,
 		onDismiss: PropTypes.func,
-		selectedTaskId: PropTypes.string,
 		target: PropTypes.string,
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -107,24 +107,9 @@ class Task extends PureComponent {
 
 	onTaskClick = event => {
 		event.preventDefault();
-		const { id, onTaskClick } = this.props;
+		const { collapsed, id, onTaskClick } = this.props;
 
-		this.isTaskCollapsed() ? onTaskClick( id ) : onTaskClick( null );
-	};
-
-	isTaskCollapsed = () => {
-		// Is this the selected task?
-		if ( this.props.selectedTaskId ) {
-			return this.props.selectedTaskId !== this.props.id;
-		}
-
-		// Show the first incomplete task when we load
-		if ( this.props.firstIncomplete ) {
-			return this.props.firstIncomplete.id !== this.props.id;
-		}
-
-		// If everything fails
-		return true;
+		collapsed ? onTaskClick( id ) : onTaskClick( null );
 	};
 
 	renderGridicon() {
@@ -147,6 +132,7 @@ class Task extends PureComponent {
 	render() {
 		const {
 			buttonText,
+			collapsed,
 			completed,
 			completedButtonText,
 			completedTitle,
@@ -173,7 +159,7 @@ class Task extends PureComponent {
 					'is-in-progress': inProgress,
 					'has-actionlink': hasActionlink,
 					'has-no-actionlink': ! hasActionlink,
-					'is-collapsed': this.isTaskCollapsed(),
+					'is-collapsed': collapsed,
 				} ) }
 			>
 				<div className="checklist__task-wrapper">
@@ -209,7 +195,7 @@ class Task extends PureComponent {
 											className="checklist__task-action"
 											href={ href }
 											onClick={ onClick }
-											primary={ ! this.isTaskCollapsed() }
+											primary={ ! collapsed }
 											target={ target }
 										>
 											{ taskActionButtonText }

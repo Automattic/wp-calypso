@@ -21,6 +21,11 @@ export default class Checklist extends PureComponent {
 		updateCompletion: PropTypes.func,
 	};
 
+	state = {
+		hideCompleted: false,
+		expandedTaskId: null,
+	};
+
 	componentDidMount() {
 		this.notifyCompletion();
 	}
@@ -47,7 +52,10 @@ export default class Checklist extends PureComponent {
 		return [ completedCount, total ];
 	}
 
-	state = { hideCompleted: false };
+	setExpandedTask = newExpandedTaskId =>
+		void this.setState( ( { expandedTaskId } ) => ( {
+			expandedTaskId: newExpandedTaskId === expandedTaskId ? null : newExpandedTaskId,
+		} ) );
 
 	toggleCompleted = () =>
 		this.setState( ( { hideCompleted } ) => ( { hideCompleted: ! hideCompleted } ) );
@@ -82,7 +90,18 @@ export default class Checklist extends PureComponent {
 					total={ total }
 					progressText={ this.props.progressText }
 				/>
-				<div className="checklist__tasks">{ this.props.children }</div>
+				<div className="checklist__tasks">
+					{ React.Children.map( this.props.children, child => {
+						if ( ! child ) {
+							return child;
+						}
+						const collapsed = child.props.id !== this.state.expandedTaskId;
+						return React.cloneElement( child, {
+							collapsed,
+							onTaskClick: () => this.setExpandedTask( child.props.id ),
+						} );
+					} ) }
+				</div>
 			</div>
 		);
 	}
