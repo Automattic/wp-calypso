@@ -400,5 +400,9 @@
 
 	.search.is-expanded-to-container {
 		height: 50px;
+
+		@include breakpoint( '<480px' ) {
+			height: 46px;
+		}
 	}
 }
