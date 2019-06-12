@@ -214,22 +214,20 @@ class PeopleInvites extends React.PureComponent {
 	}
 
 	renderEmptyContent() {
-		return <EmptyContent title={ null } action={ this.renderInviteUsersAction() } />;
+		const emptyTitle = this.props.translate(
+			'Invite people to follow your site or help you manage it.'
+		);
+		return <EmptyContent title={ emptyTitle } action={ this.renderInviteUsersAction() } />;
 	}
 
 	renderInviteUsersAction( isPrimary = true ) {
 		const { site, translate } = this.props;
 
 		return (
-			<div className="people-invites__invite-users-action">
-				<div className="people-invites__invite-users-message">
-					{ translate( 'Invite people to follow your site or help you manage it.' ) }
-				</div>
-				<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
-					<Gridicon icon="user-add" />
-					{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
-				</Button>
-			</div>
+			<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
+				<Gridicon icon="user-add" />
+				<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
+			</Button>
 		);
 	}
 
