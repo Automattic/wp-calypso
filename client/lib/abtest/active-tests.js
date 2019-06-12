@@ -80,14 +80,6 @@ export default {
 		},
 		defaultVariation: 'keep',
 	},
-	pluginFeaturedTitle: {
-		datestamp: '20190220',
-		variations: {
-			featured: 50,
-			recommended: 50,
-		},
-		defaultVariation: 'featured',
-	},
 	builderReferralHelpPopover: {
 		datestamp: '20190227',
 		variations: {
@@ -138,6 +130,16 @@ export default {
 			show: 50,
 		},
 		defaultVariation: 'hide',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
+	hideDotBlogSubdomains: {
+		datestamp: '20190613',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'show',
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},

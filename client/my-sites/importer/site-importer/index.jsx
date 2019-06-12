@@ -20,6 +20,11 @@ import ImportingPane from '../importing-pane';
 import SiteImporterInputPane from './site-importer-input-pane';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const compactStates = [ appStates.DISABLED, appStates.INACTIVE ];
@@ -64,7 +69,7 @@ export default class extends React.PureComponent {
 		const site = this.props.site;
 		const state = this.props.importerStatus;
 		const isEnabled = appStates.DISABLED !== state.importerState;
-		const cardClasses = classNames( 'importer__shell', {
+		const cardClasses = classNames( 'importer__site-importer-card', {
 			'is-compact': includes( compactStates, state.importerState ),
 			'is-disabled': ! isEnabled,
 		} );
