@@ -17,8 +17,8 @@ const genVendors = flow(
 	filter( type => type !== 'placeholder' ),
 
 	map( type => ( { type, isCompact: false } ) ),
-	concat( [ { type: 'paypal', isCompact: true } ] ),
-	sortBy( [ 'type', 'isCompact' ] )
+	arr => concat( arr, [ { type: 'paypal', isCompact: true } ] ),
+	arr => sortBy( arr, [ 'type', 'isCompact' ] )
 );
 
 const VENDORS = genVendors( POSSIBLE_TYPES );
