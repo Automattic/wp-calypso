@@ -27,8 +27,20 @@
 		margin-bottom: 0;
 	}
 
-	.logged-out-form p {
-		margin-bottom: 20px;
+	.logged-out-form {
+		border-radius: 0;
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+		margin: 0 auto;
+		max-width: 400px;
+		padding: 16px;
+
+		@include breakpoint( '>480px' ) {
+			padding: 24px;
+		}
+
+		p {
+			margin-bottom: 20px;
+		}
 	}
 }
 
@@ -74,6 +86,7 @@
 		font-size: 14px;
 		font-weight: 500;
 		padding: 0 24px;
+		text-align: center;
 		text-decoration: none;
 
 		&:hover {
