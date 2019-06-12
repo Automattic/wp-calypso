@@ -243,9 +243,10 @@ class Dashboard extends Component {
 
 	render() {
 		const { className, finishedInstallOfRequiredPlugins, isSetupComplete, siteId } = this.props;
+		const useWideLayout = isSetupComplete ? true : false;
 
 		return (
-			<Main className={ classNames( 'dashboard', className ) } wideLayout>
+			<Main className={ classNames( 'dashboard', className ) } wideLayout={ useWideLayout }>
 				<ActionHeader breadcrumbs={ this.getBreadcrumb() } />
 				{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
 				{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
