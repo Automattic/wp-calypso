@@ -654,14 +654,13 @@ class PushNotificationSettings extends React.Component {
 						) }
 					/>
 				</div>
-				<span
-					tabIndex="0"
+				<button
 					className="notification-settings-push-notification-settings__instruction-dismiss"
 					onClick={ this.props.toggleUnblockInstructions }
 				>
 					<Gridicon icon="cross" size={ 24 } />
 					<ScreenReaderText>{ this.props.translate( 'Dismiss' ) }</ScreenReaderText>
-				</span>
+				</button>
 			</Dialog>
 		);
 	};
