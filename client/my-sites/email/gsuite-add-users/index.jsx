@@ -63,7 +63,7 @@ class GSuiteAddUsers extends React.Component {
 	) {
 		if ( ! isRequestingDomains && 0 === users.length ) {
 			const domainName = getEligibleGSuiteDomain( selectedDomainName, domains );
-			if ( 0 < domainName.length ) {
+			if ( '' !== domainName ) {
 				return {
 					users: newUsers( domainName ),
 				};
