@@ -16,28 +16,26 @@ import {
 	conciergeQuickstartSession,
 } from './controller';
 import SiftScience from 'lib/siftscience';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 import { noSite, siteSelection } from 'my-sites/controller';
 import config from 'config';
 import userFactory from 'lib/user';
 
 export default function() {
-	console.log( 'in checkout index.js' );
 	SiftScience.recordUser();
 
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
 
 	if ( isLoggedOut ) {
-		console.log( 'in index.js isLoggedOut' );
 		page(
-			// '/checkout/:site/add-quickstart-session/:orderId',
-			'/checkout/add-random',
-			siteSelection,
-			checkoutPending,
+			'/checkout/:site/add-quickstart-session/:receiptId?',
+			conciergeQuickstartSession,
 			makeLayout,
 			clientRender
 		);
+
+		page( '/checkout*', redirectLoggedOut );
 
 		return;
 	}
@@ -122,6 +120,14 @@ export default function() {
 			'/checkout/:site/add-quickstart-session/pending/:orderId',
 			siteSelection,
 			checkoutPending,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/checkout/:site/add-quickstart-session/:receiptId?',
+			siteSelection,
+			conciergeQuickstartSession,
 			makeLayout,
 			clientRender
 		);
