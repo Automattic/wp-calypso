@@ -161,13 +161,16 @@ class Starter_Page_Templates {
 	public function fetch_vertical_data() {
 		$vertical_id        = get_option( 'site_vertical', 'default' );
 		$transient_key      = implode( '_', [ 'starter_page_templates', $vertical_id, get_locale() ] );
-		$vertical_templates = get_transient( $transient_key );
+		$vertical_templates = apply_filters( 'fse_spt_vertical_templates_from_cache', get_transient( $transient_key ) );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
 		if ( false === $vertical_templates ) {
-			$request_url = add_query_arg( [
-				'_locale' => $this->get_iso_639_locale(),
-			], 'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates' );
+			$request_url = add_query_arg(
+				[
+					'_locale' => $this->get_iso_639_locale(),
+				],
+				'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates'
+			);
 			$response    = wp_remote_get( esc_url_raw( $request_url ) );
 			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
 				return array();
