@@ -82,3 +82,6 @@
 
 # FSE (Full Site Editing)
 /apps/full-site-editing @Automattic/serenity @Automattic/cylon @Automattic/ajax
+
+# WPcom Block Editor
+/apps/wpcom-block-editor @Automattic/serenity @Automattic/cylon @Automattic/ajax
