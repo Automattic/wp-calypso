@@ -32,10 +32,6 @@
 		margin: 4px 0;
 	}
 
-	&::before {
-		@include long-content-fade();
-	}
-
 	.count {
 		margin-left: 8px;
 	}
