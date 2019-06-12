@@ -5,11 +5,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import ExternalLink from 'components/external-link';
 
 /**
  * Internal dependencies
  */
+import ExternalLink from 'components/external-link';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 import WooCommerceLogo from '../woocommerce-logo';
