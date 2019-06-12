@@ -224,15 +224,10 @@ class PeopleInvites extends React.PureComponent {
 		const { site, translate } = this.props;
 
 		return (
-			// <div className="people-invites__invite-users-action">
-			// 	<div className="people-invites__invite-users-message">
-			// 		{ translate( 'Invite people to follow your site or help you manage it.' ) }
-			// 	</div>
 			<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
 				<Gridicon icon="user-add" />
 				{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
 			</Button>
-			// </div>
 		);
 	}
 
