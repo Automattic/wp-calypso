@@ -109,7 +109,7 @@ class Task extends PureComponent {
 		event.preventDefault();
 		const { id, onTaskTitleClick } = this.props;
 
-		this.isTaskCollapsed() ? this.props.onTaskTitleClick( id ) : onTaskTitleClick( 'none' );
+		this.isTaskCollapsed() ? onTaskTitleClick( id ) : onTaskTitleClick( 'none' );
 	};
 
 	isTaskCollapsed = () => {
