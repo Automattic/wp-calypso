@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { connect } from 'react-redux';
@@ -14,11 +13,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
 import getSiteStatsQueryDate from 'state/selectors/get-site-stats-query-date';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
+import InfoPopover from 'components/info-popover';
 
 /**
  * Style dependencies
@@ -129,7 +128,6 @@ class StatsDatePicker extends Component {
 				{ translate( 'Last update: %(time)s', {
 					args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
 				} ) }
-				<Gridicon icon="info-outline" size={ 18 } />
 			</span>
 		);
 	}
@@ -179,23 +177,11 @@ class StatsDatePicker extends Component {
 					<div className="stats-section-title">
 						<h3>{ sectionTitle }</h3>
 						{ showQueryDate && isAutoRefreshAllowedForQuery( query ) && (
-							<div
-								className="stats-date-picker__refresh-status"
-								ref={ this.bindStatusIndicator }
-								onMouseEnter={ this.showTooltip }
-								onMouseLeave={ this.hideTooltip }
-							>
-								<span className="stats-date-picker__update-date">
-									{ this.renderQueryDate() }
-									<Tooltip
-										isVisible={ this.state.isTooltipVisible }
-										onClose={ this.hideTooltip }
-										position="bottom"
-										context={ this.statusIndicator }
-									>
-										{ translate( 'Auto-refreshing every 30 minutes' ) }
-									</Tooltip>
-								</span>
+							<div className="stats-date-picker__refresh-status">
+								<span className="stats-date-picker__update-date">{ this.renderQueryDate() }</span>
+								<InfoPopover position="bottom right">
+									{ translate( 'Auto-refreshing every 30 minutes' ) }
+								</InfoPopover>
 							</div>
 						) }
 					</div>
