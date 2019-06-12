@@ -177,7 +177,7 @@ export default {
 		localeTargets: 'any',
 	},
 	hideDotBlogSubdomains: {
-		datestamp: '20190604',
+		datestamp: '20190613',
 		variations: {
 			show: 50,
 			hide: 50,
