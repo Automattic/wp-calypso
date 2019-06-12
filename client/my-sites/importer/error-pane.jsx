@@ -51,11 +51,13 @@ class ImporterError extends React.PureComponent {
 	};
 
 	getUploadError = () => {
-		const defaultError = this.props.translate( 'Unexpected error during the upload' );
+		const defaultError = this.props.translate(
+			'Oops! We ran into an unexpected error while uploading your file.'
+		);
 		const { description = '' } = this.props;
 
 		return this.props.translate(
-			'%(errorDescription)s{{br/}}Try another file or {{cs}}contact support{{/cs}}.',
+			'%(errorDescription)s{{br/}}Make sure you are using a valid WordPress export file in XML or ZIP format. If that does not work, {{cs}}contact Support{{/cs}}.',
 			{
 				args: {
 					errorDescription: description.length ? description : defaultError,
