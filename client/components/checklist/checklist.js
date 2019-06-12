@@ -53,9 +53,13 @@ export default class Checklist extends PureComponent {
 	}
 
 	setExpandedTask = newExpandedTaskId =>
-		void this.setState( ( { expandedTaskId } ) => ( {
-			expandedTaskId: newExpandedTaskId === expandedTaskId ? null : newExpandedTaskId,
-		} ) );
+		void this.setState( ( { expandedTaskId } ) => {
+			if ( newExpandedTaskId === expandedTaskId ) {
+				return { expandedTaskId: null }; // Collapse
+			}
+
+			return { expandedTaskId }; // Expand
+		} );
 
 	toggleCompleted = () =>
 		this.setState( ( { hideCompleted } ) => ( { hideCompleted: ! hideCompleted } ) );
