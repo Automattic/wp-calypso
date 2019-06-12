@@ -27,9 +27,12 @@ import {
 } from 'state/push-notifications/selectors';
 import { toggleEnabled, toggleUnblockInstructions } from 'state/push-notifications/actions';
 
-class PushNotificationSettings extends React.Component {
-	static displayName = 'PushNotificationSettings';
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
+class PushNotificationSettings extends React.Component {
 	static propTypes = {
 		toggleEnabled: PropTypes.func.isRequired,
 		toggleUnblockInstructions: PropTypes.func.isRequired,
@@ -613,6 +616,7 @@ class PushNotificationSettings extends React.Component {
 		);
 
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<Dialog
 				isVisible={ this.props.showDialog }
 				className=".notification-settings-push-notification-settings__instruction-dialog"
@@ -662,6 +666,7 @@ class PushNotificationSettings extends React.Component {
 					<ScreenReaderText>{ this.props.translate( 'Dismiss' ) }</ScreenReaderText>
 				</button>
 			</Dialog>
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
 	};
 
@@ -722,6 +727,7 @@ class PushNotificationSettings extends React.Component {
 				stateText = this.props.translate( 'Disabled' );
 
 				deniedText = (
+					/* eslint-disable wpcalypso/jsx-classname-namespace */
 					<Notice
 						className="notification-settings-push-notification-settings__instruction"
 						showDismiss={ false }
@@ -739,7 +745,7 @@ class PushNotificationSettings extends React.Component {
 											components: {
 												instructionsButton: (
 													<Button
-														className={ 'is-link' }
+														className="is-link"
 														onClick={ this.props.toggleUnblockInstructions }
 													/>
 												),
@@ -751,6 +757,7 @@ class PushNotificationSettings extends React.Component {
 							</div>
 						}
 					/>
+					/* eslint-enable wpcalypso/jsx-classname-namespace */
 				);
 				break;
 
@@ -759,6 +766,7 @@ class PushNotificationSettings extends React.Component {
 		}
 
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<Card className="notification-settings-push-notification-settings__settings">
 				<h2 className="notification-settings-push-notification-settings__settings-heading">
 					<Gridicon
@@ -797,6 +805,7 @@ class PushNotificationSettings extends React.Component {
 
 				{ deniedText }
 			</Card>
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
 	}
 }
