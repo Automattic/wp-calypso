@@ -118,6 +118,21 @@ class Starter_Page_Templates {
 			return;
 		}
 
+		// Load Tracks data if available.
+		$tracks_identity    = null;
+		$is_wpcom           = ( defined( 'IS_WPCOM' ) && IS_WPCOM );
+		$has_active_jetpack = ( class_exists( 'Jetpack' ) && Jetpack::is_active() );
+		if ( $has_active_jetpack && ! $is_wpcom &&  class_exists( 'Jetpack_Tracks_Client' ) ) {
+			$tracks_identity = Jetpack_Tracks_Client::get_connected_user_tracks_identity();
+			wp_enqueue_script(
+				'jp-tracks',
+				'//stats.wp.com/w.js',
+				array(),
+				gmdate( 'YW' ),
+				true
+			);
+		}
+
 		wp_enqueue_script( 'starter-page-templates' );
 		wp_set_script_translations( 'starter-page-templates', 'full-site-editing' );
 
