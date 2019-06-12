@@ -49,7 +49,7 @@
 		@include breakpoint( '>480px' ) {
 			flex: none;
 
-			&:first-child {
+			.gridicon {
 				margin-top: 4px;
 			}
 		}
