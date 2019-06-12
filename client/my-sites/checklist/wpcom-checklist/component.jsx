@@ -163,13 +163,11 @@ class WpcomChecklistComponent extends PureComponent {
 		} );
 	};
 
-	onTaskClick = selectedTaskId => {
-		this.setState( { selectedTaskId } );
-		this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
-			step_name: selectedTaskId,
+	trackExpandTask = taskId =>
+		void this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
+			step_name: taskId,
 			product: 'WordPress.com',
 		} );
-	};
 
 	handleTaskStartThenDismiss = args => () => {
 		const { task } = args;
@@ -310,6 +308,7 @@ class WpcomChecklistComponent extends PureComponent {
 					storedTask={ storedTask }
 					taskList={ taskList }
 					phase2={ phase2 }
+					onExpandTask={ this.trackExpandTask }
 				>
 					{ taskList.getAll().map( task => this.renderTask( task ) ) }
 				</ChecklistComponent>
@@ -344,7 +343,6 @@ class WpcomChecklistComponent extends PureComponent {
 			buttonPrimary,
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
-			onTaskClick: this.onTaskClick,
 			// only render an unclickable grey circle
 			disableIcon: ! task.isCompleted && 'email_verified' === task.id,
 			selectedTaskId: this.state.selectedTaskId,
