@@ -192,7 +192,6 @@ const Followers = localize(
 					emptyTitle = preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );
 				}
 				return <EmptyContent title={ emptyTitle } action={ this.renderInviteFollowersAction() } />;
-				// return <EmptyContent title={ emptyTitle } />;
 			}
 
 			let headerText;
