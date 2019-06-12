@@ -46,7 +46,7 @@ const getRandomPromo = () => {
 		},
 		{
 			promoCode: 'a0006',
-			message: 'WordPress.com in the palm of your hands — download app for mobile.',
+			message: 'WordPress.com in the palm of your hands — download the mobile app.',
 			type: 'mobile',
 		},
 	];
