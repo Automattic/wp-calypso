@@ -470,6 +470,7 @@
 				max-width: 100%;
 				max-height: 150px;
 				margin: 0 auto 10px;
+				display: block;
 
 				img {
 					max-width: 100%;
@@ -479,7 +480,7 @@
 				@include breakpoint( '>960px' ) {
 					float: right;
 					margin-left: 20px;
-					width: calc( 25% - 20px );
+					width: calc( 20% - 20px );
 				}
 			}
 
