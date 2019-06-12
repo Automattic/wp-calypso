@@ -12,7 +12,7 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import { addItem } from 'lib/upgrades/actions';
+import { addItems } from 'lib/upgrades/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -105,11 +105,9 @@ class GSuiteAddUsers extends React.Component {
 		this.recordContinueEvent();
 
 		if ( canContinue ) {
-			getItemsForCart(
-				domains,
-				'business' === planType ? 'gapps_unlimited' : 'gapps',
-				users
-			).forEach( addItem );
+			addItems(
+				getItemsForCart( domains, 'business' === planType ? 'gapps_unlimited' : 'gapps', users )
+			);
 			page( '/checkout/' + selectedSite.slug );
 		}
 	};
