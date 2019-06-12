@@ -127,7 +127,7 @@ class JetpackChecklist extends PureComponent< Props > {
 						taskId,
 						tourId: get( task, [ 'tourId' ] ),
 					} ) }
-					onTaskTitleClick={ this.onTaskTitleClick }
+					onTaskClick={ this.onTaskClick }
 					title={ task.title }
 					selectedTaskId={ this.state.selectedTaskId }
 				/>
@@ -135,7 +135,7 @@ class JetpackChecklist extends PureComponent< Props > {
 		} );
 	}
 
-	onTaskTitleClick = selectedTaskId => {
+	onTaskClick = selectedTaskId => {
 		this.setState( { selectedTaskId } );
 		this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
 			step_name: selectedTaskId,
@@ -200,7 +200,7 @@ class JetpackChecklist extends PureComponent< Props > {
 					<Task
 						{ ...JETPACK_CHECKLIST_TASK_PROTECT }
 						id="jetpack_task_protect"
-						onTaskTitleClick={ this.onTaskTitleClick }
+						onTaskClick={ this.onTaskClick }
 						selectedTaskId={ this.state.selectedTaskId }
 						completed
 						href={ JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ) }
@@ -211,7 +211,7 @@ class JetpackChecklist extends PureComponent< Props > {
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_REWIND }
 							id="jetpack_rewind"
-							onTaskTitleClick={ this.onTaskTitleClick }
+							onTaskClick={ this.onTaskClick }
 							selectedTaskId={ this.state.selectedTaskId }
 							completed={ isRewindActive }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ) }
@@ -226,7 +226,7 @@ class JetpackChecklist extends PureComponent< Props > {
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS }
 							id="jetpack_vaultpress"
-							onTaskTitleClick={ this.onTaskTitleClick }
+							onTaskClick={ this.onTaskClick }
 							selectedTaskId={ this.state.selectedTaskId }
 							completed={ vaultpressFinished }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ) }
@@ -239,7 +239,7 @@ class JetpackChecklist extends PureComponent< Props > {
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_AKISMET }
 							id="jetpack_akismet"
-							onTaskTitleClick={ this.onTaskTitleClick }
+							onTaskClick={ this.onTaskClick }
 							selectedTaskId={ this.state.selectedTaskId }
 							completed={ akismetFinished }
 							href={ JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ) }

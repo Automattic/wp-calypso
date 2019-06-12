@@ -31,7 +31,7 @@ class Task extends PureComponent {
 		inProgress: PropTypes.bool,
 		isWarning: PropTypes.bool,
 		onClick: PropTypes.func,
-		onTaskTitleClick: PropTypes.func,
+		onTaskClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		selectedTaskId: PropTypes.string,
 		target: PropTypes.string,
@@ -105,11 +105,11 @@ class Task extends PureComponent {
 		return null;
 	}
 
-	onTaskTitleClick = event => {
+	onTaskClick = event => {
 		event.preventDefault();
-		const { id, onTaskTitleClick } = this.props;
+		const { id, onTaskClick } = this.props;
 
-		this.isTaskCollapsed() ? onTaskTitleClick( id ) : onTaskTitleClick( null );
+		this.isTaskCollapsed() ? onTaskClick( id ) : onTaskClick( null );
 	};
 
 	isTaskCollapsed = () => {
@@ -182,7 +182,7 @@ class Task extends PureComponent {
 							<Button
 								borderless
 								className="checklist__task-title-button"
-								onClick={ this.onTaskTitleClick }
+								onClick={ this.onTaskClick }
 							>
 								{ completed ? completedTitle : title }
 								<Gridicon icon="chevron-up" className="checklist__toggle-affordance" />
