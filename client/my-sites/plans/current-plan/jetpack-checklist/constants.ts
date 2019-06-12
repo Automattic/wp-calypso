@@ -105,7 +105,7 @@ export const JETPACK_CHECKLIST_TASK_AKISMET: TaskUiDescription = {
 };
 
 export const JETPACK_CHECKLIST_TASK_PROTECT: TaskUiDescription = {
-	title: translate( "We've automatically protected you from brute force login attacks." ),
+	title: translate( "We're automatically protecting you from brute force login attacks." ),
 	completedTitle: translate( "We've automatically protected you from brute force login attacks." ),
 	completedButtonText: translate( 'Configure' ),
 	getUrl: siteSlug => `/settings/security/${ siteSlug }`,
