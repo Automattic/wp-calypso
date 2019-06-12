@@ -31,7 +31,7 @@ class ImporterError extends React.PureComponent {
 	contactSupport = event => {
 		event.preventDefault();
 		event.stopPropagation();
-		Page( '/help' );
+		Page( '/help/contact' );
 	};
 
 	getImportError = () => {
