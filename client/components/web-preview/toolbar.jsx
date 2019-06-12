@@ -159,7 +159,7 @@ class PreviewToolbar extends Component {
 							rel="noopener noreferrer"
 							onClick={ this.handleEditorWebPreviewExternalClick }
 						>
-							{ translate( 'Visit Site' ) }
+							{ translate( 'Visit site' ) }
 						</Button>
 					) }
 					<div className="web-preview__toolbar-tray">{ this.props.children }</div>
