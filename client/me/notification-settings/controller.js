@@ -51,7 +51,7 @@ export function updates( context, next ) {
 	next();
 }
 
-export function notificationSubscriptions( context, next ) {
+export function subscriptions( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
