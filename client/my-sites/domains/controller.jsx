@@ -125,6 +125,7 @@ const transferDomain = ( context, next ) => {
 				<TransferDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+					isDomainTransferrable={ context.query.isDomainTransferrable === 'true' }
 				/>
 			</CartData>
 		</Main>
@@ -152,6 +153,7 @@ const useYourDomain = ( context, next ) => {
 				<UseYourDomainStep
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+					isDomainTransferrable={ context.query.isDomainTransferrable === 'true' }
 					goBack={ handleGoBack }
 				/>
 			</CartData>
@@ -168,6 +170,7 @@ const transferDomainPrecheck = ( context, next ) => {
 	const handleGoBack = () => {
 		page( domainManagementTransferIn( siteSlug, domain ) );
 	};
+
 	context.primary = (
 		<Main>
 			<PageViewTracker
@@ -252,19 +255,17 @@ const redirectIfNoSite = redirectTo => {
 	};
 };
 
-const redirectToUseYourDomainIfVipSite = () => {
-	return ( context, next ) => {
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
+const redirectToUseYourDomainIfVipSite = ( context, next ) => {
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
 
-		if ( selectedSite && selectedSite.is_vip ) {
-			return page.redirect(
-				domainUseYourDomain( selectedSite.slug, get( context, 'params.suggestion', '' ) )
-			);
-		}
+	if ( selectedSite && selectedSite.is_vip ) {
+		return page.redirect(
+			domainUseYourDomain( selectedSite.slug, get( context, 'params.suggestion', '' ) )
+		);
+	}
 
-		next();
-	};
+	next();
 };
 
 const jetpackNoDomainsWarning = ( context, next ) => {
