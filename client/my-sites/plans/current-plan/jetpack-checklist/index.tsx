@@ -115,7 +115,6 @@ class JetpackChecklist extends PureComponent< Props > {
 					completedTitle={ task.completedTitle }
 					description={ task.description }
 					duration={ task.duration }
-					firstIncomplete={ this.getFirstIncompleteTask( taskIds ) }
 					href={ task.getUrl( this.props.siteSlug, isComplete ) }
 					id={ taskId }
 					key={ taskId }
@@ -134,21 +133,6 @@ class JetpackChecklist extends PureComponent< Props > {
 			step_name: taskId,
 			product: 'Jetpack',
 		} );
-
-	getFirstIncompleteTask = taskStatuses => {
-		const taskObject = {};
-
-		Object.values( taskStatuses ).find( function( item, index ) {
-			if ( item.completed === false ) {
-				taskObject.id = Object.keys( taskStatuses )[ index ];
-				taskObject.isCompleted = item.completed;
-			}
-
-			return item.completed === false;
-		} );
-
-		return taskObject;
-	};
 
 	render() {
 		const {
@@ -170,12 +154,6 @@ class JetpackChecklist extends PureComponent< Props > {
 		const isRewindAvailable = rewindState !== 'uninitialized' && rewindState !== 'unavailable';
 		const isRewindUnavailable = rewindState === 'unavailable';
 
-		const firstIncomplete = {};
-
-		// if ( taskStatuses ) {
-		// 	firstIncomplete: this.getFirstIncompleteTask( taskStatuses );
-		// }
-
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
@@ -195,7 +173,6 @@ class JetpackChecklist extends PureComponent< Props > {
 						id="jetpack_task_protect"
 						completed
 						href={ JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ) }
-						firstIncomplete={ firstIncomplete }
 						onClick={ this.handleTaskStart( { taskId: 'jetpack_protect' } ) }
 					/>
 					{ isPaidPlan && isRewindAvailable && (
@@ -204,7 +181,6 @@ class JetpackChecklist extends PureComponent< Props > {
 							id="jetpack_rewind"
 							completed={ isRewindActive }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ) }
-							firstIncomplete={ firstIncomplete }
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_backups',
 								tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',
@@ -217,7 +193,6 @@ class JetpackChecklist extends PureComponent< Props > {
 							id="jetpack_vaultpress"
 							completed={ vaultpressFinished }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ) }
-							firstIncomplete={ firstIncomplete }
 							inProgress={ ! vaultpressFinished }
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_backups' } ) }
 						/>
@@ -228,16 +203,15 @@ class JetpackChecklist extends PureComponent< Props > {
 							id="jetpack_akismet"
 							completed={ akismetFinished }
 							href={ JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ) }
-							firstIncomplete={ firstIncomplete }
 							inProgress={ ! akismetFinished }
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_spam_filtering' } ) }
 							target="_blank"
 						/>
 					) }
 
-					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS, firstIncomplete ) }
+					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS ) }
 					{ isEnabled( 'jetpack/checklist/performance' ) &&
-						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS, firstIncomplete ) }
+						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS ) }
 					{ isEnabled( 'jetpack/checklist/performance' ) && ( isPremium || isProfessional ) && (
 						<Task
 							title={ translate( 'Video Hosting' ) }
