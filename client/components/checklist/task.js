@@ -105,13 +105,6 @@ class Task extends PureComponent {
 		return null;
 	}
 
-	onTaskClick = event => {
-		event.preventDefault();
-		const { collapsed, id, onTaskClick } = this.props;
-
-		collapsed ? onTaskClick( id ) : onTaskClick( null );
-	};
-
 	renderGridicon() {
 		if ( this.props.inProgress ) {
 			return <Spinner size={ 20 } />;
@@ -168,7 +161,7 @@ class Task extends PureComponent {
 							<Button
 								borderless
 								className="checklist__task-title-button"
-								onClick={ this.onTaskClick }
+								onClick={ this.props.onTaskClick }
 							>
 								{ completed ? completedTitle : title }
 								<Gridicon icon="chevron-up" className="checklist__toggle-affordance" />
