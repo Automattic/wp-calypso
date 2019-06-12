@@ -14,9 +14,9 @@ const getSiteTypePropertyDefaults = propertyKey =>
 		{
 			// General copy
 			siteMockupHelpTipCopy: i18n.translate(
-				'Scroll down to see your site. You’ll be able to edit and customize it when setup is complete.'
+				"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."
 			),
-			siteMockupHelpTipCopyBottom: i18n.translate( 'Scroll up to continue.' ),
+			siteMockupHelpTipCopyBottom: i18n.translate( 'Scroll back up to continue.' ),
 			// Site title step
 			siteTitleLabel: i18n.translate( 'Give your site a name' ),
 			siteTitleSubheader: i18n.translate(
