@@ -34,6 +34,15 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 		);
 	} );
 
+	test( 'requestVerticals() with missing siteTypeId', () => {
+		const mockAction = {
+			search: 'Foo',
+			limit: 7,
+		};
+
+		expect( requestVerticals( mockAction ) ).not.toHaveProperty( 'query.site_type' );
+	} );
+
 	test( 'storeVerticals()', () => {
 		const search = 'Profit!';
 		const siteType = 'business';
