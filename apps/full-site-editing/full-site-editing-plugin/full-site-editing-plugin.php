@@ -85,3 +85,31 @@ function a8c_load_starter_page_templates() {
 	Starter_Page_Templates::get_instance();
 }
 add_action( 'plugins_loaded', 'a8c_load_starter_page_templates' );
+
+/**
+ * Set up the required plugin data on activation.
+ *
+ * Creates the default template that all pages use along with
+ * the required template parts like header and footer.
+ */
+function a8c_fse_on_plugin_activation() {
+	/**
+	 * Can be used to disable Full Site Editing functionality.
+	 *
+	 * @since 0.1
+	 *
+	 * @param bool true if Full Site Editing should be disabled, false otherwise.
+	 */
+	if ( apply_filters( 'a8c_disable_full_site_editing', false ) ) {
+		return;
+	}
+
+	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
+	Full_Site_Editing::register_template_post_types();
+
+
+	require_once __DIR__ . '/full-site-editing/utils/class-a8c-template-data-inserter.php';
+	$data_inserter = new A8C_WP_Template_Data_Inserter();
+	$data_inserter->insert_default_template_data();
+}
+register_activation_hook( __FILE__, 'a8c_fse_on_plugin_activation' );
