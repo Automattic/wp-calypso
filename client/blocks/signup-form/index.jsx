@@ -520,6 +520,7 @@ class SignupForm extends Component {
 					autoCapitalize="off"
 					autoCorrect="off"
 					className="signup-form__input"
+					autofocus="true"
 					disabled={
 						this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput
 					}
