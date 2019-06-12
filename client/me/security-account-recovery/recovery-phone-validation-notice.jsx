@@ -52,20 +52,20 @@ class RecoveryPhoneValidationNotice extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmit }>
-				<Notice
-					className="security-account-recovery__validation-notice"
-					status="is-warning"
-					text={ translate(
-						'Please validate your recovery SMS number. Check your phone for a validation code.'
-					) }
-					showDismiss={ false }
-				>
-					{ ! hasSent && (
+				{ ! hasSent && (
+					<Notice
+						className="security-account-recovery__validation-notice"
+						status="is-warning"
+						text={ translate(
+							'Please validate your recovery SMS number. Check your phone for a validation code.'
+						) }
+						showDismiss={ false }
+					>
 						<NoticeAction href="#" onClick={ this.props.onResend }>
 							{ translate( 'Resend' ) }
 						</NoticeAction>
-					) }
-				</Notice>
+					</Notice>
+				) }
 
 				<FormLabel className="security-account-recovery__recovery-phone-validation-label">
 					{ translate( 'Enter the code you receive via SMS:' ) }
