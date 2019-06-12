@@ -127,6 +127,11 @@ button {
 			var( --color-neutral-0 ) 72%
 		);
 	}
+
+	&.is-block {
+		display: block;
+		width: 100%;
+	}
 }
 
 // Primary buttons

@@ -44,7 +44,13 @@ class WaitingTwoFactorNotificationApproval extends Component {
 					</div>
 				</Card>
 
-				<TwoFactorActions twoFactorAuthType="push" />
+				<div className="two-factor-authentication__actions">
+					<div className="two-factor-authentication__actions-divider">
+						<span>{ this.props.translate( 'or' ) }</span>
+					</div>
+
+					<TwoFactorActions twoFactorAuthType="push" />
+				</div>
 			</form>
 		);
 	}

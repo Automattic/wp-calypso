@@ -12,6 +12,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+
+import Button from 'components/button';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import { isTwoFactorAuthTypeSupported } from 'state/login/selectors';
@@ -59,23 +61,17 @@ class TwoFactorActions extends Component {
 		}
 
 		return (
-			<Card className="two-factor-authentication__form-action is-compact">
-				<p>{ translate( 'Or continue to your account using:' ) }</p>
-
+			<Card>
 				{ isSmsAvailable && (
-					<p>
-						<button data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
-							{ translate( 'Code via text message' ) }
-						</button>
-					</p>
+					<Button block data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
+						{ translate( 'Send code via text message' ) }
+					</Button>
 				) }
 
 				{ isAuthenticatorAvailable && (
-					<p>
-						<button data-e2e-link="2fa-otp-link" onClick={ this.recordAuthenticatorLinkClick }>
-							{ translate( 'Your authenticator app' ) }
-						</button>
-					</p>
+					<Button block data-e2e-link="2fa-otp-link" onClick={ this.recordAuthenticatorLinkClick }>
+						{ translate( 'Continue with an authenticator app' ) }
+					</Button>
 				) }
 			</Card>
 		);

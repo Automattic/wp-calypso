@@ -161,7 +161,7 @@ class VerificationCodeForm extends Component {
 					</FormFieldset>
 
 					<FormButton
-						className="two-factor-authentication__form-button"
+						block
 						primary
 						disabled={ this.state.isDisabled }
 					>
