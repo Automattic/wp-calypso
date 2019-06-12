@@ -138,7 +138,7 @@
 
 // When search input is opened
 .search.is-open {
-	width: 100%;
+	width: calc( 100% - 3px );
 
 	.search__open-icon {
 		color: var( --color-neutral-600 );
