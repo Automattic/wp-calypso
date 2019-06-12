@@ -67,10 +67,6 @@ class JetpackChecklist extends PureComponent< Props > {
 		}
 	}
 
-	state = {
-		selectedTaskId: null,
-	};
-
 	isComplete( taskId: string ): boolean {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
@@ -127,9 +123,7 @@ class JetpackChecklist extends PureComponent< Props > {
 						taskId,
 						tourId: get( task, [ 'tourId' ] ),
 					} ) }
-					onTaskClick={ this.onTaskClick }
 					title={ task.title }
-					selectedTaskId={ this.state.selectedTaskId }
 				/>
 			);
 		} );
@@ -140,14 +134,6 @@ class JetpackChecklist extends PureComponent< Props > {
 			step_name: taskId,
 			product: 'Jetpack',
 		} );
-
-	onTaskClick = selectedTaskId => {
-		this.setState( { selectedTaskId } );
-		this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
-			step_name: selectedTaskId,
-			product: 'Jetpack',
-		} );
-	};
 
 	getFirstIncompleteTask = taskStatuses => {
 		const taskObject = {};
@@ -207,8 +193,6 @@ class JetpackChecklist extends PureComponent< Props > {
 					<Task
 						{ ...JETPACK_CHECKLIST_TASK_PROTECT }
 						id="jetpack_task_protect"
-						onTaskClick={ this.onTaskClick }
-						selectedTaskId={ this.state.selectedTaskId }
 						completed
 						href={ JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ) }
 						firstIncomplete={ firstIncomplete }
@@ -218,8 +202,6 @@ class JetpackChecklist extends PureComponent< Props > {
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_REWIND }
 							id="jetpack_rewind"
-							onTaskClick={ this.onTaskClick }
-							selectedTaskId={ this.state.selectedTaskId }
 							completed={ isRewindActive }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ) }
 							firstIncomplete={ firstIncomplete }
@@ -233,8 +215,6 @@ class JetpackChecklist extends PureComponent< Props > {
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS }
 							id="jetpack_vaultpress"
-							onTaskClick={ this.onTaskClick }
-							selectedTaskId={ this.state.selectedTaskId }
 							completed={ vaultpressFinished }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ) }
 							firstIncomplete={ firstIncomplete }
@@ -246,8 +226,6 @@ class JetpackChecklist extends PureComponent< Props > {
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_AKISMET }
 							id="jetpack_akismet"
-							onTaskClick={ this.onTaskClick }
-							selectedTaskId={ this.state.selectedTaskId }
 							completed={ akismetFinished }
 							href={ JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ) }
 							firstIncomplete={ firstIncomplete }
