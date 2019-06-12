@@ -38,7 +38,7 @@
 /client/my-sites/checklist @Automattic/zelda
 
 # Comments management
-/client/my-sites/comment* @Automattic/lannister
+/client/my-sites/comment* @Automattic/serenity
 
 # Developer guides
 /docs/coding-guidelines @Automattic/team-calypso
@@ -46,7 +46,7 @@
 /docs/testing @Automattic/team-calypso
 
 # Gutenberg editor (Gutenframe)
-/client/gutenberg @Automattic/lannister
+/client/gutenberg @Automattic/serenity @Automattic/cylon @Automattic/ajax
 
 # Jetpack Connect
 /client/jetpack-connect @Automattic/luna
@@ -79,3 +79,9 @@
 /client/lib/gsuite @Automattic/catalyst
 /client/my-sites/domains/components/domain-warnings @Automattic/catalyst
 /client/my-sites/email @Automattic/catalyst
+
+# FSE (Full Site Editing)
+/apps/full-site-editing @Automattic/serenity @Automattic/cylon @Automattic/ajax
+
+# WPcom Block Editor
+/apps/wpcom-block-editor @Automattic/serenity @Automattic/cylon @Automattic/ajax

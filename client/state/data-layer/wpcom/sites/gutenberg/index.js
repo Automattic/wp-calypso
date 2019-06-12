@@ -9,7 +9,7 @@ import { has, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { EDITOR_TYPE_FETCH, EDITOR_TYPE_RECEIVE, EDITOR_TYPE_UPDATE } from 'state/action-types';
+import { EDITOR_TYPE_REQUEST, EDITOR_TYPE_SET, EDITOR_TYPE_UPDATE } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -26,7 +26,7 @@ const fetchSelectedEditor = action =>
 	);
 
 const setSelectedEditor = ( { siteId }, { editor_web: editor } ) => dispatch => {
-	dispatch( { type: EDITOR_TYPE_RECEIVE, siteId, editor } );
+	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
 };
 
 const dispatchFetchSelectedEditor = dispatchRequest( {
@@ -54,7 +54,7 @@ const setSelectedEditorAndRedirect = (
 	{ siteId, redirectUrl },
 	{ editor_web: editor }
 ) => dispatch => {
-	dispatch( { type: EDITOR_TYPE_RECEIVE, siteId, editor } );
+	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
 
 	if ( ! redirectUrl ) {
 		return;
@@ -72,6 +72,6 @@ const dispatchUpdateSelectedEditor = dispatchRequest( {
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/gutenberg/index.js', {
-	[ EDITOR_TYPE_FETCH ]: [ dispatchFetchSelectedEditor ],
+	[ EDITOR_TYPE_REQUEST ]: [ dispatchFetchSelectedEditor ],
 	[ EDITOR_TYPE_UPDATE ]: [ dispatchUpdateSelectedEditor ],
 } );

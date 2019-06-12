@@ -11,23 +11,6 @@ export function isIE() {
 }
 
 /**
- * Returns entry content HTML
- *
- * @param  {Object} content Object containing `title`, `tagline` and `body` strings
- * @return {String}         The HTML source.
- */
-export function getIframePageContent( { body, title, tagline } ) {
-	return `
-		<div class="entry-content">
-			<div class="site-builder__header">
-				<h1 class="site-builder__title">${ title }</h1>
-				<h2 class="site-builder__description">${ tagline }</h2>
-			</div>
-			${ body }
-		</div>`;
-}
-
-/**
  * Returns CSS link HTML
  *
  * @param  {String} url 	The css file path
@@ -99,14 +82,9 @@ export function getIframeSource(
 					transition: opacity 1s ease-in;
 				}	
 
-				.wp-block-cover__inner-container h2 {
-					z-index: 2;
-					position: relative;
-				}
-
 				@media only screen and (min-width: 768px) {
 					/*
-						Some of the themes use js to dynamically set the height of the banner
+						Some of the themes (business sophisticated) use js to dynamically set the height of the banner
 						Let's set a fixed max-height.
 					*/
 					.entry .entry-content .wp-block-cover-image, 
@@ -115,6 +93,18 @@ export function getIframeSource(
 					}
 				}
 
+				/*
+					Fixes a weird bug in Safari, despite the markup and CSS
+					being the same, the gallery images for the default Professional site (m4) 
+					are stretched. Issue #33758.
+					This should be a temp fix until we can either locate the problem or
+					we update the theme CSS.
+				*/
+				.wp-block-gallery .blocks-gallery-image figure, 
+				.wp-block-gallery .blocks-gallery-item figure {
+				   flex-direction: column;
+				   height: auto;
+				}
 				
 				.is-loading .wp-block-cover,
 				.is-loading img {
@@ -133,11 +123,20 @@ export function getIframeSource(
 			scrolling ? '' : 'no-scrolling'
 		}">
 			<div id="page" class="site">
+				<header id="masthead" class="site-header">
+					<div class="site-branding-container">
+						<div class="site-branding">
+							<p class="site-title signup-site-preview__title">${ content.title }</p>
+						</div>
+					</div>
+				</header>
 				<div id="content" class="site-content">
 					<section id="primary" class="content-area">
 						<main id="main" class="site-main">
 							<article class="page type-page status-publish hentry entry">
-								${ getIframePageContent( content ) }
+								<div class="entry-content">
+									${ content.body }
+								</div>
 							</article>
 						</div>
 					</section>

@@ -166,6 +166,7 @@ class RegistrantVerificationPage extends Component {
 		return {
 			title: translate( 'Uh oh!' ),
 			message: translate( 'Hmm. Something went wrong.' ),
+			messageAlignCenter: true,
 			actionTitle: null,
 			actionCallback: null,
 			footer: defaultErrorFooter,
@@ -230,6 +231,7 @@ class RegistrantVerificationPage extends Component {
 				<DomainsLandingContentCard
 					title={ this.state.title }
 					message={ this.state.message }
+					messageAlignCenter={ this.state.messageAlignCenter }
 					actionTitle={ this.state.actionTitle }
 					actionCallback={ this.state.actionCallback }
 					footer={ this.state.footer }

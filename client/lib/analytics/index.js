@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import cookie from 'cookie';
 import debug from 'debug';
 import { parse } from 'qs';
@@ -45,10 +42,9 @@ import {
 	recordAddToCart,
 	recordOrder,
 } from 'lib/analytics/ad-tracking';
-
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
-
 import { statsdTimingUrl } from 'lib/analytics/statsd';
+import { isE2ETest } from 'lib/e2e';
 
 /**
  * Module variables
@@ -708,6 +704,7 @@ const analytics = {
 		addHotJarScript: function() {
 			if (
 				! config( 'hotjar_enabled' ) ||
+				isE2ETest() ||
 				doNotTrack() ||
 				isPiiUrl() ||
 				! mayWeTrackCurrentUserGdpr()

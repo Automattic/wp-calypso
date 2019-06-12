@@ -76,7 +76,9 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_ecommerce' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<JetpackSearch selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist/performance' ) && (
+					<JetpackSearch selectedSite={ selectedSite } />
+				) }
 				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
@@ -109,7 +111,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
-				<JetpackSearch selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist/performance' ) && (
+					<JetpackSearch selectedSite={ selectedSite } />
+				) }
 				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
@@ -187,7 +191,7 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				{ supportsJetpackSiteAccelerator && (
+				{ ! isEnabled( 'jetpack/checklist/performance' ) && supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
 				<SiteActivity />
@@ -210,10 +214,12 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				{ supportsJetpackSiteAccelerator && (
+				{ ! isEnabled( 'jetpack/checklist/performance' ) && supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
-				<JetpackVideo selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist/performance' ) && (
+					<JetpackVideo selectedSite={ selectedSite } />
+				) }
 				<MonetizeSite selectedSite={ selectedSite } />
 				<SiteActivity />
 				<JetpackPublicize selectedSite={ selectedSite } />
@@ -243,7 +249,7 @@ export class ProductPurchaseFeaturesList extends Component {
 
 		return (
 			<Fragment>
-				{ supportsJetpackSiteAccelerator && (
+				{ ! isEnabled( 'jetpack/checklist/performance' ) && supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
 				<SiteActivity />
@@ -265,12 +271,16 @@ export class ProductPurchaseFeaturesList extends Component {
 		} = this.props;
 		return (
 			<Fragment>
-				{ supportsJetpackSiteAccelerator && (
+				{ ! isEnabled( 'jetpack/checklist/performance' ) && supportsJetpackSiteAccelerator && (
 					<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				) }
-				<JetpackSearch selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist/performance' ) && (
+					<JetpackSearch selectedSite={ selectedSite } />
+				) }
 				<SiteActivity />
-				<JetpackVideo selectedSite={ selectedSite } />
+				{ ! isEnabled( 'jetpack/checklist/performance' ) && (
+					<JetpackVideo selectedSite={ selectedSite } />
+				) }
 				<MonetizeSite selectedSite={ selectedSite } />
 				<MobileApps />
 				<JetpackPublicize selectedSite={ selectedSite } />

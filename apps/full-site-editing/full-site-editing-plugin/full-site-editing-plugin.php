@@ -15,11 +15,24 @@
  * Load Full Site Editing.
  */
 function a8c_load_full_site_editing() {
+	/**
+	 * Can be used to disable Full Site Editing functionality.
+	 *
+	 * @since 0.1
+	 *
+	 * @param bool true if Full Site Editing should be disabled, false otherwise.
+	 */
+	if ( apply_filters( 'a8c_disable_full_site_editing', false ) ) {
+		return;
+	}
+
 	require_once __DIR__ . '/lib/feature-flags/feature-flags.php';
 	require_once __DIR__ . '/full-site-editing/blocks/post-content/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/template/index.php';
 	require_once __DIR__ . '/full-site-editing/class-a8c-rest-templates-controller.php';
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
+	require_once __DIR__ . '/full-site-editing/utils/class-a8c-wp-template.php';
+	require_once __DIR__ . '/full-site-editing/utils/replace-template-parts.php';
 
 	Full_Site_Editing::get_instance();
 }

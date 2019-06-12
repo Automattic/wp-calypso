@@ -41,7 +41,6 @@ const shouldMinify =
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
-const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
@@ -157,8 +156,8 @@ const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
 	entry: {
-		build: [ path.join( __dirname, 'client', 'boot', 'app' ) ],
-		domainsLanding: [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
+		'entry-main': [ path.join( __dirname, 'client', 'boot', 'app' ) ],
+		'entry-domains-landing': [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
@@ -172,12 +171,12 @@ const webpackConfig = {
 	},
 	optimization: {
 		splitChunks: {
-			chunks: codeSplit ? 'all' : 'async',
+			chunks: 'all',
 			name: !! ( isDevelopment || shouldEmitStats ),
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
-		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
+		runtimeChunk: isDesktop ? false : { name: 'manifest' },
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
 		minimize: shouldMinify,
@@ -253,7 +252,6 @@ const webpackConfig = {
 	},
 	node: false,
 	plugins: _.compact( [
-		! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			global: 'window',
@@ -306,7 +304,9 @@ const webpackConfig = {
 
 if ( isDevelopment ) {
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-	webpackConfig.entry.build.unshift( 'webpack-hot-middleware/client' );
+	for ( const entrypoint of Object.keys( webpackConfig.entry ) ) {
+		webpackConfig.entry[ entrypoint ].unshift( 'webpack-hot-middleware/client' );
+	}
 }
 
 if ( ! config.isEnabled( 'desktop' ) ) {

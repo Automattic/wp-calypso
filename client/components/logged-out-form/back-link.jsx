@@ -15,6 +15,11 @@ import { localizeUrl } from 'lib/i18n-utils';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './link-item.scss';
+
 function LoggedOutFormBackLink( props ) {
 	const { locale, oauth2Client, translate, recordClick } = props;
 

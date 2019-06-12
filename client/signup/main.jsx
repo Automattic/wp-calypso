@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import cookie from 'cookie';
 import debugModule from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -125,7 +124,6 @@ class Signup extends React.Component {
 			controllerHasReset: false,
 			shouldShowLoadingScreen: false,
 			resumingStep: undefined,
-			plans: false,
 			previousFlowName: null,
 		};
 	}
@@ -188,10 +186,6 @@ class Signup extends React.Component {
 
 		if ( stepName === this.state.resumingStep ) {
 			this.setState( { resumingStep: undefined } );
-		}
-
-		if ( cookie.parse( document.cookie )[ 'wp-affiliate-tracker' ] ) {
-			this.setState( { plans: true } );
 		}
 
 		if ( this.props.flowName !== flowName ) {
@@ -528,11 +522,10 @@ class Signup extends React.Component {
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
 		const flow = flows.getFlow( this.props.flowName );
 		const hideFreePlan = !! (
-			this.state.plans ||
-			( ( isDomainRegistration( domainItem ) ||
+			( isDomainRegistration( domainItem ) ||
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) ) &&
-				this.props.domainsWithPlansOnly )
+			this.props.domainsWithPlansOnly
 		);
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 

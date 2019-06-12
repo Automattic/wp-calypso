@@ -25,6 +25,14 @@ class Full_Site_Editing {
 		add_action( 'init', array( $this, 'register_meta_template_id' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
+
+		add_action( 'wp_head', function() {
+			ob_start( 'a8c_fse_replace_template_parts' );
+		} );
+
+		add_action( 'wp_footer', function() {
+			ob_end_flush();
+		} );
 	}
 
 	/**
@@ -157,6 +165,46 @@ class Full_Site_Editing {
 		);
 
 		register_taxonomy(
+			'wp_template_type',
+			'wp_template',
+			array(
+				'labels'             => array(
+					'name'              => _x( 'Template Types', 'taxonomy general name', 'full-site-editing' ),
+					'singular_name'     => _x( 'Template Type', 'taxonomy singular name', 'full-site-editing' ),
+					'menu_name'         => _x( 'Template Types', 'admin menu', 'full-site-editing' ),
+					'all_items'         => __( 'All Template Types', 'full-site-editing' ),
+					'edit_item'         => __( 'Edit Template Type', 'full-site-editing' ),
+					'view_item'         => __( 'View Template Type', 'full-site-editing' ),
+					'update_item'       => __( 'Update Template Type', 'full-site-editing' ),
+					'add_new_item'      => __( 'Add New Template Type', 'full-site-editing' ),
+					'new_item_name'     => __( 'New Template Type', 'full-site-editing' ),
+					'parent_item'       => __( 'Parent Template Type', 'full-site-editing' ),
+					'parent_item_colon' => __( 'Parent Template Type:', 'full-site-editing' ),
+					'search_items'      => __( 'Search Template Types', 'full-site-editing' ),
+					'not_found'         => __( 'No template types found.', 'full-site-editing' ),
+					'back_to_items'     => __( 'Back to template types', 'full-site-editing' ),
+				),
+				'public'             => false,
+				'publicly_queryable' => true,
+				'show_ui'            => true,
+				'show_in_menu'       => false,
+				'show_in_nav_menu'   => false,
+				'show_in_rest'       => true,
+				'rest_base'          => 'template_types',
+				'show_tagcloud'      => false,
+				'show_admin_column'  => true,
+				'hierarchical'       => true,
+				'rewrite'            => false,
+				'capabilities'       => array(
+					'manage_terms' => 'edit_theme_options',
+					'edit_terms'   => 'edit_theme_options',
+					'delete_terms' => 'edit_theme_options',
+					'assign_terms' => 'edit_theme_options',
+				),
+			)
+		);
+
+		register_taxonomy(
 			'wp_template_part_type',
 			'wp_template_part',
 			array(
@@ -196,7 +244,7 @@ class Full_Site_Editing {
 			)
 		);
 	}
-
+	
 	/**
 	 * Register post meta.
 	 */

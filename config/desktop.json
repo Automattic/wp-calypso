@@ -18,7 +18,7 @@
 		"blogger-plan": false,
 		"calypsoify/gutenberg": false,
 		"catch-js-errors": false,
-		"code-splitting": false,
+		"code-splitting": true,
 		"desktop": true,
 		"desktop-promo": false,
 		"domains/cctlds": true,

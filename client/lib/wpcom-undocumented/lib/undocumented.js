@@ -2441,4 +2441,17 @@ Undocumented.prototype.domainsVerifyRegistrantEmail = function( domain, email, t
 	return this.wpcom.req.get( `/domains/${ domain }/verify-email`, { email, token } );
 };
 
+Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function(
+	domain,
+	recipientId,
+	token,
+	command
+) {
+	return this.wpcom.req.get( `/domains/${ domain }/outbound-transfer-confirmation-check`, {
+		recipient_id: recipientId,
+		token,
+		command,
+	} );
+};
+
 export default Undocumented;
