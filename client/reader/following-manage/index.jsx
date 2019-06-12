@@ -69,10 +69,6 @@ class FollowingManage extends Component {
 		width: 800,
 	};
 
-	componentWillUnmount() {
-		recommendationsSeed = random( 0, 1000 );
-	}
-
 	// TODO make this common between our different search pages?
 	updateQuery = newValue => {
 		this.scrollToTop();
@@ -134,6 +130,7 @@ class FollowingManage extends Component {
 	}
 
 	componentWillUnmount() {
+		recommendationsSeed = random( 0, 1000 );
 		window.removeEventListener( 'resize', this.resizeListener );
 		clearInterval( this.windowScrollerRef );
 	}
