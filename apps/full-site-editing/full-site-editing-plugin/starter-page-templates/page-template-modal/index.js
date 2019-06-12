@@ -16,7 +16,7 @@ import { Component } from '@wordpress/element';
 import replacePlaceholders from './utils/replace-placeholders';
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
-import { trackDismiss, trackSelection, trackView } from './utils/tracking';
+import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
 
 class PageTemplateModal extends Component {
 	state = {
@@ -132,7 +132,16 @@ const PageTemplatesPlugin = compose(
 )( PageTemplateModal );
 
 // Load config passed from backend.
-const { siteInformation = {}, templates = [], vertical } = window.starterPageTemplatesConfig;
+const {
+	siteInformation = {},
+	templates = [],
+	vertical,
+	tracksUserData,
+} = window.starterPageTemplatesConfig;
+
+if ( tracksUserData ) {
+	initializeWithIdentity( tracksUserData );
+}
 
 registerPlugin( 'page-templates', {
 	render: function() {
