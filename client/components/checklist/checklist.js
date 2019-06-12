@@ -53,7 +53,13 @@ export default class Checklist extends PureComponent {
 		return [ completedCount, total ];
 	}
 
-	getFirstIncompleteTaskId() {
+	getExpandedTaskId() {
+		if ( this.state.expandedTaskId ) {
+			return this.state.expandedTaskId;
+		}
+
+		// If the user hasn't expanded any task, return the
+		// first task that hasn't been completed yet.
 		return get(
 			Children.toArray( this.props.children ).find( task => task && ! task.props.completed ),
 			[ 'props', 'id' ]
@@ -112,12 +118,8 @@ export default class Checklist extends PureComponent {
 							return child;
 						}
 
-						// If the user hasn't expanded any task, expand the
-						// first task that hasn't been completed yet.
-						const expandedTaskId = this.state.expandedTaskId || this.getFirstIncompleteTaskId();
-						const collapsed = child.props.id !== expandedTaskId;
 						return cloneElement( child, {
-							collapsed,
+							collapsed: child.props.id !== this.getExpandedTaskId(),
 							onTaskClick: () => this.setExpandedTask( child.props.id ),
 						} );
 					} ) }
