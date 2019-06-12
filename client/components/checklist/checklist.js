@@ -58,7 +58,7 @@ export default class Checklist extends PureComponent {
 				return { expandedTaskId: null }; // Collapse
 			}
 
-			return { expandedTaskId }; // Expand
+			return { expandedTaskId: newExpandedTaskId }; // Expand
 		} );
 
 	toggleCompleted = () =>
