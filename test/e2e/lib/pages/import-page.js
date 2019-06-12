@@ -15,7 +15,7 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class ImportPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.importer__shell' ) );
+		super( driver, By.css( '.importer__site-importer-card' ) );
 	}
 
 	async previewSiteToBeImported() {
