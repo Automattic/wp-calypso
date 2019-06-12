@@ -1,26 +1,10 @@
-.section-header.card {
+.people-list-section-header__add-button.is-compact {
 
 	@include breakpoint( '<480px' ) {
-		align-items: flex-start;
-		flex-flow: row wrap;
-	}
+		font-size: 0;
 
-	.section-header__label {
-
-		@include breakpoint( '<480px' ) {
-			line-height: 1.4;
-			margin: 4px 0;
-		}
-	}
-
-	.people-list-section-header__add-button.is-compact {
-
-		@include breakpoint( '<480px' ) {
-			font-size: 0;
-
-			.gridicon {
-				margin-right: 0;
-			}
+		.gridicon {
+			margin-right: 0;
 		}
 	}
 }

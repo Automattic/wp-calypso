@@ -1,4 +1,3 @@
-
 .section-header.card {
 	display: flex;
 	align-items: center;
@@ -6,6 +5,11 @@
 	padding-bottom: 11px;
 	position: relative;
 	line-height: 28px;
+
+	@include breakpoint( '<480px' ) {
+		align-items: flex-start;
+		flex-flow: row wrap;
+	}
 
 	&::after {
 		content: '';
@@ -22,6 +26,11 @@
 	flex-grow: 1;
 	position: relative;
 	overflow: hidden;
+
+	@include breakpoint( '<480px' ) {
+		line-height: 1.4;
+		margin: 4px 0;
+	}
 
 	&::before {
 		@include long-content-fade();
