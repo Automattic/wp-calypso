@@ -122,7 +122,7 @@ class Starter_Page_Templates {
 		$tracks_identity    = null;
 		$is_wpcom           = ( defined( 'IS_WPCOM' ) && IS_WPCOM );
 		$has_active_jetpack = ( class_exists( 'Jetpack' ) && Jetpack::is_active() );
-		if ( $has_active_jetpack && ! $is_wpcom &&  class_exists( 'Jetpack_Tracks_Client' ) ) {
+		if ( $has_active_jetpack && ! $is_wpcom && class_exists( 'Jetpack_Tracks_Client' ) ) {
 			$tracks_identity = Jetpack_Tracks_Client::get_connected_user_tracks_identity();
 			wp_enqueue_script(
 				'jp-tracks',
