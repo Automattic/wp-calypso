@@ -152,6 +152,7 @@ class Starter_Page_Templates {
 			'siteInformation' => array_merge( $default_info, $site_info ),
 			'templates'       => array_merge( $default_templates, $vertical_templates ),
 			'vertical'        => $vertical,
+			'tracksUserData'  => $tracks_identity,
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
 
