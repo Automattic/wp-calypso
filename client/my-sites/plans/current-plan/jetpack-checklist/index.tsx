@@ -29,7 +29,6 @@ import {
 	JETPACK_PERFORMANCE_CHECKLIST_TASKS,
 	JETPACK_CHECKLIST_TASK_BACKUPS_REWIND,
 	JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS,
-	JETPACK_CHECKLIST_TASK_PROTECT,
 	ChecklistTasksetUi,
 } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -171,9 +170,13 @@ class JetpackChecklist extends PureComponent< Props > {
 					progressText={ translate( 'Your Jetpack setup progress' ) }
 				>
 					<Task
-						{ ...JETPACK_CHECKLIST_TASK_PROTECT }
+						id="jetpack_task_protect"
+						title={ translate(
+							"We've automatically protected you from brute force login attacks."
+						) }
+						completedButtonText={ translate( 'Configure' ) }
 						completed
-						href={ JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ) }
+						href={ `/settings/security/${ siteSlug }` }
 						onClick={ this.handleTaskStart( { taskId: 'jetpack_protect' } ) }
 					/>
 					{ isPaidPlan && isRewindAvailable && (

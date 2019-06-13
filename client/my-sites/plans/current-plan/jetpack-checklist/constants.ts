@@ -97,14 +97,6 @@ export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: Readonly< ChecklistTasksetUi >
 	},
 };
 
-export const JETPACK_CHECKLIST_TASK_PROTECT: TaskUiDescription = {
-	id: 'jetpack_task_protect',
-	title: translate( "We're automatically protecting you from brute force login attacks." ),
-	completedTitle: translate( "We've automatically protected you from brute force login attacks." ),
-	completedButtonText: translate( 'Configure' ),
-	getUrl: siteSlug => `/settings/security/${ siteSlug }`,
-};
-
 export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND: TaskUiDescription = {
 	id: 'jetpack_rewind',
 	title: translate( 'Backup and Scan' ),
