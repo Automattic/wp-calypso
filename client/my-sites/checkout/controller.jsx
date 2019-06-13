@@ -152,10 +152,6 @@ export function conciergeQuickstartSession( context, next ) {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = selectedSite && selectedSite.ID;
 
-	// if ( ! selectedSite ) {
-	// 	return null;
-	// }
-
 	context.primary = (
 		<CartData>
 			<ConciergeQuickstartSession
