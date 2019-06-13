@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -8,16 +9,24 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
 function SiteLogoEdit( { className } ) {
-	const siteIdentityUrl = addQueryArgs( 'customize.php', {
-		'autofocus[section]': 'title_tagline',
-		return: window.location.href,
-	} );
+	const navigateToCustomerSiteIdentity = () => {
+		const siteIdenityLink = addQueryArgs( 'customize.php', {
+			'autofocus[section]': 'title_tagline',
+			return: window.location.href,
+		} );
+		window.location.href = siteIdenityLink;
+	};
 
 	return (
 		<Fragment>
 			<BlockControls>
 				<Toolbar>
-					<IconButton icon="edit" label={ __( 'Edit Site Logo' ) } href={ siteIdentityUrl } />
+					<IconButton
+						className={ 'components-toolbar__control' }
+						icon="edit"
+						label={ __( 'Edit Site Logo' ) }
+						onClick={ navigateToCustomerSiteIdentity }
+					/>
 				</Toolbar>
 			</BlockControls>
 			<ServerSideRender
