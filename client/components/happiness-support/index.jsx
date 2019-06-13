@@ -25,6 +25,7 @@ import {
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection-connected';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Style dependencies
@@ -64,21 +65,21 @@ export class HappinessSupport extends Component {
 		const components = {
 			strong: <strong />,
 		};
-		return isJetpackFreePlan
+		const text = isJetpackFreePlan
 			? translate(
-					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of\xa0WordPress.',
-					{
-						components,
-						comment: '\xa0 is a non-breaking space character',
-					}
+					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
+					{ components }
 			  )
 			: translate(
-					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your\xa0account.',
-					{
-						components,
-						comment: '\xa0 is a non-breaking space character',
-					}
+					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
+					{ components }
 			  );
+
+		if ( Array.isArray( text ) && 'string' === typeof text[ text.length - 1 ] ) {
+			text.push( preventWidows( text.pop() ) );
+		}
+
+		return text;
 	}
 
 	getSupportButtons() {
