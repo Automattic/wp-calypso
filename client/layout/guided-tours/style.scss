@@ -132,7 +132,18 @@
 	}
 
 	a.button {
+		border-bottom-width: 2px;
 		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			border-color: rgba( var( --color-white-rgb ), 0.3 );
+		}
+
+		.gridicon {
+			margin-top: -2px;
+			vertical-align: inherit;
+		}
 	}
 }
 
