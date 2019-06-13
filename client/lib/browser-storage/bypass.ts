@@ -11,38 +11,28 @@ const debug = debugModule( 'calypso:support-user' );
 // a user's data while support-user is active, ensuring it does not contaminate
 // the original user, and vice versa.
 
-const memoryStore: { [index: string]: any } = {};
+const memoryStore = new Map< string, any >();
 
-export function getStoredItem< T >( key: string ): Promise< T | null > {
+export function getStoredItem< T >( key: string ): Promise< T | undefined > {
 	debug( 'browser-storage bypass', 'getStoredItem', key );
 
-	if ( key in memoryStore ) {
-		// Match localforage behaviour: unknown keys return null.
-		return Promise.resolve( memoryStore[ key ] !== undefined ? memoryStore[ key ] : null );
+	if ( memoryStore.has( key ) ) {
+		return Promise.resolve( memoryStore.get( key ) );
 	}
 
-	return Promise.resolve( null );
+	return Promise.resolve( undefined );
 }
 
 export function setStoredItem< T >( key: string, value: T ): Promise< void > {
 	debug( 'browser-storage bypass', 'setStoredItem', key );
 
-	return new Promise( resolve => {
-		memoryStore[ key ] = value !== undefined ? value : null;
-		resolve();
-	} );
+	memoryStore.set( key, value );
+	return Promise.resolve();
 }
 
 export function clearStorage(): Promise< void > {
 	debug( 'browser-storage bypass', 'clearStorage' );
 
-	return new Promise( resolve => {
-		for ( const key in memoryStore ) {
-			if ( memoryStore.hasOwnProperty( key ) ) {
-				delete memoryStore[ key ];
-			}
-		}
-
-		resolve();
-	} );
+	memoryStore.clear();
+	return Promise.resolve();
 }
