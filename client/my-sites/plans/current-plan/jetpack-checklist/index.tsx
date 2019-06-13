@@ -23,11 +23,7 @@ import { format as formatUrl, parse as parseUrl } from 'url';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
-import {
-	getJetpackChecklistTaskDuration,
-	JETPACK_PERFORMANCE_CHECKLIST_TASKS,
-	ChecklistTasksetUi,
-} from './constants';
+import { getJetpackChecklistTaskDuration, ChecklistTasksetUi } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { isEnabled } from 'config';
@@ -92,14 +88,9 @@ class JetpackChecklist extends PureComponent< Props > {
 		if ( ! this.props.taskStatuses ) {
 			return null;
 		}
-		const taskIds =
-			checklistTasks === JETPACK_PERFORMANCE_CHECKLIST_TASKS
-				? // Force render all the tasks from this development-only list
-				  // @todo Remove this branch when API returns performance task statuses
-				  Object.keys( JETPACK_PERFORMANCE_CHECKLIST_TASKS )
-				: getTaskList( this.props )
-						.getIds()
-						.filter( taskId => taskId in checklistTasks );
+		const taskIds = Object.keys( this.props.taskStatuses ).filter(
+			taskId => taskId in checklistTasks
+		);
 
 		return taskIds.map( taskId => {
 			const task = checklistTasks[ taskId ];
@@ -274,11 +265,53 @@ class JetpackChecklist extends PureComponent< Props > {
 						title={ translate( 'WordPress.com sign in' ) }
 					/>
 
-					{ isEnabled( 'jetpack/checklist/performance' ) &&
-						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS ) }
+					{ isEnabled( 'jetpack/checklist/performance' ) && (
+						<Task
+							id="jetpack_site_accelerator"
+							completed={ this.isComplete( 'jetpack_site_accelerator' ) }
+							completedButtonText={ translate( 'Configure' ) }
+							completedTitle={ translate(
+								'Site accelerator is serving your images and static files through our global CDN.'
+							) }
+							description={ translate(
+								'Serve your images and static files through our global CDN and whatch your page load time drop.'
+							) }
+							duration={ getJetpackChecklistTaskDuration( 1 ) }
+							href={ `/settings/performance/${ siteSlug }` }
+							onClick={ this.handleTaskStart( {
+								taskId: 'jetpack_site_accelerator',
+								tourId: 'jetpackSiteAccelerator',
+							} ) }
+							title={ translate( 'Site Accelerator' ) }
+						/>
+					) }
+
+					{ isEnabled( 'jetpack/checklist/performance' ) && (
+						<Task
+							id="jetpack_lazy_images"
+							completed={ this.isComplete( 'jetpack_lazy_images' ) }
+							completedButtonText={ translate( 'Upload images' ) }
+							completedTitle={ translate( 'Lazy load images is improving your site speed.' ) }
+							description={ translate(
+								"Improve your site's speed by only loading images when visible on the screen."
+							) }
+							duration={ getJetpackChecklistTaskDuration( 1 ) }
+							href={
+								this.isComplete( 'jetpack_lazy_images' )
+									? `/media/${ siteSlug }`
+									: `/settings/performance/${ siteSlug }`
+							}
+							onClick={ this.handleTaskStart( {
+								taskId: 'jetpack_lazy_images',
+								tourId: 'jetpackLazyImages',
+							} ) }
+							title={ translate( 'Lazy Load Images' ) }
+						/>
+					) }
 
 					{ isEnabled( 'jetpack/checklist/performance' ) && ( isPremium || isProfessional ) && (
 						<Task
+							id="jetpack_video_hosting"
 							title={ translate( 'Video Hosting' ) }
 							description={ translate(
 								'Enable fast, high-definition, ad-free video hosting through our global CDN network.'
@@ -294,7 +327,6 @@ class JetpackChecklist extends PureComponent< Props > {
 									? `/media/videos/${ siteSlug }`
 									: `/settings/performance/${ siteSlug }`
 							}
-							id="video-hosting"
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_video_hosting',
 								tourId: 'jetpackVideoHosting',
