@@ -4,10 +4,6 @@
 	width: 100%;
 }
 
-.card.post-share__sharing-preview-modal {
-	padding: 0;
-}
-
 .dialog.card.post-share__sharing-preview-modal {
 	margin: 0 auto;
 	max-width: 865px;
@@ -26,6 +22,7 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	padding: 0;
 }
 
 .post-share__sharing-preview-modal-header {
