@@ -10,11 +10,11 @@ import { addQueryArgs } from '@wordpress/url';
 
 function SiteLogoEdit( { className } ) {
 	const navigateToCustomerSiteIdentity = () => {
-		const siteIdenityLink = addQueryArgs( 'customize.php', {
+		const siteIdentityLink = addQueryArgs( 'customize.php', {
 			'autofocus[section]': 'title_tagline',
 			return: window.location.href,
 		} );
-		window.location.href = siteIdenityLink;
+		window.location.href = siteIdentityLink;
 	};
 
 	return (
