@@ -16,7 +16,7 @@
 		flex: 1 1;
 		flex-direction: column;
 		align-items: stretch;
-		padding: 16px 24px;
+		padding: 13px 24px 16px;
 		@include breakpoint( '<480px' ) {
 			padding: 16px;
 		}
@@ -24,7 +24,7 @@
 
 	&-secondary {
 		align-items: stretch;
-		display: flex;
+		display: none;
 		flex-direction: row;
 		flex: 2 1;
 		justify-content: flex-end;
@@ -225,7 +225,7 @@
 	&-title-link.button {
 		padding: 0;
 		color: var( --color-primary );
-		font-weight: 400;
+		font-weight: 500;
 		font-size: 16px;
 	}
 
@@ -403,4 +403,8 @@
 
 .checklist__task-title {
 	text-align: left;
+}
+
+.checklist__task-description {
+	margin-bottom: 0.4em;
 }
