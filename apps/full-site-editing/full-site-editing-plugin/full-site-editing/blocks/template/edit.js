@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
+import { Button, IconButton, Placeholder, Toolbar } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { BlockControls } from '@wordpress/editor';
@@ -91,8 +91,19 @@ const TemplateEdit = compose(
 							{ get( template, [ 'content', 'rendered' ] ) }
 						</RawHTML>
 						<div className="template-block__overlay">
-							<a href={ `?post=${ templateId }&action=edit` }>
-								{ sprintf( __( 'Edit "%s"' ), get( template, [ 'title', 'rendered' ], '' ) ) }
+							<p>
+								{ __(
+									'This block is part of your site template and may appear on multiple pages.'
+								) }
+							</p>
+							<Button href={ `?post=${ templateId }&action=edit` } isDefault>
+								{ sprintf( __( 'Edit %s' ), get( template, [ 'title', 'rendered' ], '' ) ) }
+							</Button>
+							<a
+								className="template-block__overlay__edit"
+								href={ `?post=${ templateId }&action=edit` }
+							>
+								{ sprintf( __( 'Edit %s' ), get( template, [ 'title', 'rendered' ], '' ) ) }
 							</a>
 						</div>
 					</Fragment>
