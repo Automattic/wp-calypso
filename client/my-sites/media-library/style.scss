@@ -42,6 +42,11 @@
 	}
 }
 
+// Make sure focus ring on search bar is not hidden
+.editor-media-modal .dialog__content {
+	overflow: inherit;
+}
+
 .media-library__filter-bar {
 	display: flex;
 	flex-flow: row nowrap;
