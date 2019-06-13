@@ -14,7 +14,7 @@
 }
 
 .tag-stream__header .follow-button {
-	z-index: z-index( '.tag-stream__header-follow', 'button.button.follow-button.has-icon..is-following' );
+	z-index: z-index( '.tag-stream__header-follow', '.follow-button' );
 
 	@include breakpoint( '<660px' ) {
 		margin: 12px 20px 0 15px;

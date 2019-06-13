@@ -296,7 +296,7 @@ $z-layers: (
 		'.reader__card.card .follow-button': 1
 	),
 	'.tag-stream__header-follow': (
-		'button.button.follow-button.has-icon..is-following': 1
+		'.follow-button': 1
 	)
 );
 
