@@ -24,7 +24,7 @@ export default class Checklist extends PureComponent {
 
 	state = {
 		hideCompleted: false,
-		expandedTaskId: null,
+		expandedTaskId: undefined,
 	};
 
 	componentDidMount() {
@@ -54,7 +54,7 @@ export default class Checklist extends PureComponent {
 	}
 
 	getExpandedTaskId() {
-		if ( this.state.expandedTaskId ) {
+		if ( this.state.expandedTaskId !== undefined ) {
 			return this.state.expandedTaskId;
 		}
 
