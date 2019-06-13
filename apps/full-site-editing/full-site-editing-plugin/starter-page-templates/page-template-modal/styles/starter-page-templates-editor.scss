@@ -19,7 +19,7 @@
 
 // When not full screen account for sidebar
 body:not( .is-fullscreen-mode ) .page-template-modal {
-	
+
 	@media screen and ( min-width: 783px ) {
 		width: calc( 100% - 65px );
 		left: 50px;
@@ -92,7 +92,7 @@ body:not( .is-fullscreen-mode ) .page-template-modal {
 		background: #f6f6f6;
 		border-radius: 4px;
 		overflow: hidden;
-		padding-bottom: 90%;
+		padding-bottom: 133.33%;
 		box-sizing: content-box;
 		position: relative;
 		pointer-events: none;
