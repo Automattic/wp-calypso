@@ -324,7 +324,7 @@ class ShippingLabels extends Component {
 		return (
 			<FormFieldSet>
 				<FormLabel className="label-settings__cards-label">
-					{ translate( 'Email Receipts' ) }
+					{ translate( 'Email receipts' ) }
 				</FormLabel>
 				<FormLabel>
 					<FormCheckbox

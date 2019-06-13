@@ -74,11 +74,11 @@ class CreateOrderNote extends Component {
 				</FormFieldSet>
 				<div className="order-activity-log__new-note-type">
 					<FormSelect onChange={ this.setType } value={ this.state.type }>
-						<option value={ 'internal' }>{ translate( 'Private Note' ) }</option>
-						<option value={ 'email' }>{ translate( 'Send to Customer' ) }</option>
+						<option value={ 'internal' }>{ translate( 'Private note' ) }</option>
+						<option value={ 'email' }>{ translate( 'Send to customer' ) }</option>
 					</FormSelect>
 					<Button primary onClick={ this.saveNote } busy={ isNoteSaving } disabled={ isNoteSaving }>
-						{ translate( 'Add Note' ) }
+						{ translate( 'Add note' ) }
 					</Button>
 				</div>
 			</div>
