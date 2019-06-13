@@ -144,7 +144,7 @@ export const HoldList = ( { holds, isPlaceholder, siteSlug, translate } ) => {
 										href={ holdMessages[ hold ].supportUrl }
 										rel="noopener noreferrer"
 									>
-										{ translate( 'Learn More' ) }
+										{ translate( 'Help' ) }
 									</Button>
 								</div>
 							) }
