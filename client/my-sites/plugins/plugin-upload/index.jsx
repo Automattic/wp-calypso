@@ -26,7 +26,6 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
 import { initiateAutomatedTransferWithPluginZip } from 'state/automated-transfer/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import getPluginUploadError from 'state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'state/selectors/get-uploaded-plugin-id';
@@ -45,10 +44,6 @@ import {
 } from 'state/automated-transfer/selectors';
 import { successNotice } from 'state/notices/actions';
 import { transferStates } from 'state/automated-transfer/constants';
-import { abtest } from 'lib/abtest';
-import { hasFeature } from 'state/sites/plans/selectors';
-import redirectIf from 'my-sites/feature-upsell/redirect-if';
-import config from 'config';
 
 class PluginUpload extends React.Component {
 	state = {
@@ -216,17 +211,5 @@ const flowRightArgs = [
 	),
 	localize,
 ];
-
-if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
-	flowRightArgs.push(
-		redirectIf(
-			( state, siteId ) =>
-				! isJetpackSite( state, siteId ) &&
-				! hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ) &&
-				abtest( 'pluginsUpsellLandingPage' ) === 'test',
-			'/feature/plugins'
-		)
-	);
-}
 
 export default flowRight( ...flowRightArgs )( PluginUpload );

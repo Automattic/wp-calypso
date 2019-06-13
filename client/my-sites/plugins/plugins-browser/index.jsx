@@ -414,13 +414,7 @@ export class PluginsBrowser extends Component {
 
 	handleUpgradeNudgeClick = () => {
 		const { siteSlug } = this.props;
-		let href = `/checkout/${ siteSlug }/business`;
-		if (
-			isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'pluginsUpsellLandingPage' ) === 'test'
-		) {
-			href = '/feature/plugins/' + siteSlug;
-		}
+		const href = `/checkout/${ siteSlug }/business`;
 		page.redirect( href );
 	};
 
