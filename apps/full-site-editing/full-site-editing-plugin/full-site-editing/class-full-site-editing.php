@@ -26,13 +26,19 @@ class Full_Site_Editing {
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
 
-		add_action( 'wp_head', function() {
-			ob_start( 'a8c_fse_replace_template_parts' );
-		} );
+		add_action(
+			'wp_head',
+			function() {
+				ob_start( 'a8c_fse_replace_template_parts' );
+			}
+		);
 
-		add_action( 'wp_footer', function() {
-			ob_end_flush();
-		} );
+		add_action(
+			'wp_footer',
+			function() {
+				ob_end_flush();
+			}
+		);
 	}
 
 	/**
@@ -244,7 +250,7 @@ class Full_Site_Editing {
 			)
 		);
 	}
-	
+
 	/**
 	 * Register post meta.
 	 */
@@ -295,7 +301,7 @@ class Full_Site_Editing {
 			'fullSiteEditing',
 			array(
 				'editorPostType' => get_current_screen()->post_type,
-				'featureFlags'  => $feature_flags->get_flags(),
+				'featureFlags'   => $feature_flags->get_flags(),
 			)
 		);
 
@@ -317,10 +323,10 @@ class Full_Site_Editing {
 		register_block_type(
 			'a8c/navigation-menu',
 			array(
-				'attributes' => [
+				'attributes'      => [
 					'themeLocation' => [
 						'default' => 'main-1',
-						'type' => 'string',
+						'type'    => 'string',
 					],
 				],
 				'render_callback' => 'render_navigation_menu_block',

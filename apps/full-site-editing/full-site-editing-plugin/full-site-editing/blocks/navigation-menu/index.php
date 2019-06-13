@@ -11,7 +11,7 @@
  * @param string $location Theme location.
  * @return array
  */
- function get_menu_params_by_theme_location( $location ) {
+function get_menu_params_by_theme_location( $location ) {
 	switch ( $location ) {
 		case 'footer':
 			$params = [
@@ -76,14 +76,14 @@ function get_wrapper_attributes_by_theme_location( $location ) {
 /**
  * Renders post content.
  *
- * @param array  $attributes Block attributes.
- * @param string $content    Block content.
+ * @param array $attributes Block attributes.
  * @return string
  */
-function render_navigation_menu_block( $attributes, $content ) {
-	$location = ! empty( $attributes['themeLocation'] ) ? $attributes['themeLocation'] : null;
+function render_navigation_menu_block( $attributes ) {
+	$location     = ! empty( $attributes['themeLocation'] ) ? $attributes['themeLocation'] : null;
 	$wrapper_attr = get_wrapper_attributes_by_theme_location( $location );
 	ob_start();
+	// phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText
 	?>
 	<nav class="<?php echo esc_attr( $wrapper_attr['class'] ); ?>" aria-label="<?php esc_attr_e( $wrapper_attr['label'], 'twentynineteen' ); ?>">
 		<?php

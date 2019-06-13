@@ -1,4 +1,6 @@
 <?php
+// phpcs:ignoreFile
+// This file is not currently used
 /**
  * Feature flags file.
  *
@@ -70,7 +72,7 @@ class A8C_Full_Site_Editing_Feature_Flags {
 			return false;
 		}
 
-		return (boolean) $this->flags[ $flag_name ];
+		return (bool) $this->flags[ $flag_name ];
 	}
 
 	/**
@@ -92,7 +94,7 @@ class A8C_Full_Site_Editing_Feature_Flags {
 		if ( $has_flags_param ) {
 			setcookie( self::FEATURE_FLAGS, $_GET[ self::FEATURE_FLAGS ] );
 			$flags = $_GET[ self::FEATURE_FLAGS ];
-		} else if ( $has_flags_cookie ) {
+		} elseif ( $has_flags_cookie ) {
 			$flags = $_COOKIE[ self::FEATURE_FLAGS ];
 		}
 
@@ -104,7 +106,7 @@ class A8C_Full_Site_Editing_Feature_Flags {
 		// Feature flags are represented as a string of comma-separated feature flag names.
 		// For example: "flag1,flag2,-flag3" (leading "-" denotes that the given flag is disabled).
 		foreach ( explode( ',', $flags ) as $flag ) {
-			$flag = trim( $flag );
+			$flag       = trim( $flag );
 			$is_enabled = '-' !== $flag[0];
 
 			// Strip "-" for disabled flags to obtain the correct name
