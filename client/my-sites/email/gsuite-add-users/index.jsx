@@ -53,11 +53,6 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
  */
 import './style.scss';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class GSuiteAddUsers extends React.Component {
 	state = {
 		users: [],
