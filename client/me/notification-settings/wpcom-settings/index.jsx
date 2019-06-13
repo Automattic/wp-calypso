@@ -119,7 +119,7 @@ class WPCOMNotifications extends React.Component {
 				<EmailCategory
 					name={ options.news }
 					isEnabled={ get( settings, options.news ) }
-					title={ translate( 'The official WordPress.com newsletter' ) }
+					title={ translate( 'Newsletter' ) }
 					description={ translate( 'WordPress.com news, announcements, and product spotlights.' ) }
 				/>
 
@@ -165,7 +165,7 @@ class WPCOMNotifications extends React.Component {
 						<EmailCategory
 							name={ options.jetpack_news }
 							isEnabled={ get( settings, options.jetpack_news ) }
-							title={ translate( 'The official Jetpack newsletter' ) }
+							title={ translate( 'Newsletter' ) }
 							description={ translate( 'Jetpack news, announcements, and product spotlights.' ) }
 						/>
 					</>

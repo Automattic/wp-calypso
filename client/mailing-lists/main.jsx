@@ -113,7 +113,7 @@ class MainComponent extends React.Component {
 		} else if ( 'digest' === category ) {
 			return this.props.translate( 'Digests' );
 		} else if ( 'news' === category ) {
-			return this.props.translate( 'WordPress.com Newsletter' );
+			return this.props.translate( 'Newsletter' );
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Jetpack Suggestions' );
 		} else if ( 'jetpack_research' === category ) {
@@ -144,9 +144,7 @@ class MainComponent extends React.Component {
 				'Popular content from the blogs you follow, and reports on your own site and its performance.'
 			);
 		} else if ( 'news' === category ) {
-			return this.props.translate(
-				'The official WordPress.com newsletter, providing you with the latest news, announcements, and product spotlights.'
-			);
+			return this.props.translate( 'WordPress.com news, announcements, and product spotlights.' );
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of Jetpack.' );
 		} else if ( 'jetpack_research' === category ) {
@@ -156,9 +154,7 @@ class MainComponent extends React.Component {
 		} else if ( 'jetpack_promotion' === category ) {
 			return this.props.translate( 'Promotions and deals on upgrades.' );
 		} else if ( 'jetpack_news' === category ) {
-			return this.props.translate(
-				'The official Jetpack newsletter, providing you with the latest news, announcements, and product spotlights.'
-			);
+			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
 		}
 
 		return null;
