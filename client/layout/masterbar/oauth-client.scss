@@ -201,7 +201,8 @@
 			display: none;
 		}
 
-		.login__form-social-divider {
+		.login__form-social-divider,
+		.two-factor-authentication__actions-divider {
 			margin: 30px auto;
 			text-transform: lowercase;
 
@@ -480,7 +481,8 @@
 
 	.login__form,
 	.login__form-social,
-	.logged-out-form {
+	.logged-out-form,
+	.two-factor-authentication__actions {
 		.button {
 			max-width: 300px;
 		}
@@ -583,7 +585,8 @@
 		font-size: 15px;
 	}
 
-	.login__form-social {
+	.login__form-social,
+	.two-factor-authentication__actions {
 		border-top: 1px solid #e6e6e6;
 		margin: 10px -16px 0;
 		padding-top: 30px;
@@ -600,7 +603,8 @@
 		}
 	}
 
-	.login__form-social-divider {
+	.login__form-social-divider,
+	.two-factor-authentication__actions-divider {
 		margin-bottom: 0;
 		margin-top: -41px;
 	}

@@ -12,6 +12,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
+import PushNotificationIllustration from './push-notification-illustration';
 import TwoFactorActions from './two-factor-actions';
 
 class WaitingTwoFactorNotificationApproval extends Component {
@@ -25,10 +26,9 @@ class WaitingTwoFactorNotificationApproval extends Component {
 		return (
 			<form>
 				<Card className="two-factor-authentication__push-notification-screen is-compact">
-					<p>
+					<p className="two-factor-authentication__info">
 						{ translate(
-							'We sent a push notification to your {{strong}}WordPress mobile app{{/strong}}. ' +
-								'Once you get it and swipe or tap to confirm, this page will update.',
+							'Notification sent! Confirm in your {{strong}}WordPress\u00A0mobile\u00A0app{{/strong}} to\u00A0continue.',
 							{
 								components: {
 									strong: <strong />,
@@ -36,15 +36,17 @@ class WaitingTwoFactorNotificationApproval extends Component {
 							}
 						) }
 					</p>
-					<div>
-						<img
-							className="two-factor-authentication__auth-code-preview"
-							src="/calypso/images/login/pushauth.svg"
-						/>
-					</div>
+
+					<PushNotificationIllustration />
 				</Card>
 
-				<TwoFactorActions twoFactorAuthType="push" />
+				<div className="two-factor-authentication__actions">
+					<div className="two-factor-authentication__actions-divider">
+						<span>{ this.props.translate( 'or' ) }</span>
+					</div>
+
+					<TwoFactorActions twoFactorAuthType="push" />
+				</div>
 			</form>
 		);
 	}
