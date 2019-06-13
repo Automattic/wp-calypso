@@ -330,8 +330,6 @@ class WpcomChecklistComponent extends PureComponent {
 				break;
 		}
 
-		const taskList = getTaskList( this.props );
-		const firstIncomplete = taskList.getFirstIncompleteTask();
 		const buttonPrimary = this.state.selectedTaskId ? this.state.selectedTaskId === task.id : true;
 
 		const baseProps = {
@@ -339,7 +337,6 @@ class WpcomChecklistComponent extends PureComponent {
 			key: task.id,
 			completed: task.isCompleted,
 			siteSlug,
-			firstIncomplete,
 			buttonPrimary,
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
