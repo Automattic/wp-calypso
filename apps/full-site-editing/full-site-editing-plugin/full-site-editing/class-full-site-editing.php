@@ -16,7 +16,7 @@ class Full_Site_Editing {
 	 */
 	private static $instance = null;
 
-	private $template_post_types = [ 'wp_template', 'wp_template_part', 'wp_template_part_type' ];
+	private $template_post_types = array( 'wp_template', 'wp_template_part', 'wp_template_part_type' );
 
 	/**
 	 * Full_Site_Editing constructor.
