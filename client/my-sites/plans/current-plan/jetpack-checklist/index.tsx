@@ -4,7 +4,7 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get, includes } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -51,7 +51,7 @@ interface Props {
 	widgetCustomizerPaneUrl: URL | null;
 }
 
-class JetpackChecklist extends PureComponent< Props > {
+class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 	componentDidMount() {
 		if ( typeof window !== 'undefined' && typeof window.hj === 'function' ) {
 			window.hj( 'trigger', 'plans_myplan_jetpack-checklist' );
