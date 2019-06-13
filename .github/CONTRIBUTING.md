@@ -7,7 +7,7 @@ With over 10,000 PRs we have merged all sorts of different contributions from wi
 
 ## Reporting Bugs, Asking Questions, Sending Suggestions
 
-Just [file a GitHub issue](https://github.com/Automattic/wp-calypso/issues/), that’s all. If you want to prefix the title with a “Question:”, “Bug:”, or the general area of the application, that would be helpful, but by no means mandatory. If you have write access, add the appropriate labels.
+Just [file a GitHub issue](https://github.com/Automattic/wp-calypso/issues/), that’s all. If you want to prefix the title with a “Question:”, “Bug:”, or the general area of the application, that would be helpful, but it is by no means mandatory. If you have write access, add the appropriate labels.
 
 If you’re filing a bug, specific steps to reproduce are helpful. Please include the URL of the page that has the bug, along with what you expected to see and what happened instead.
 
