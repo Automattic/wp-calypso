@@ -27,7 +27,6 @@ import {
 	getJetpackChecklistTaskDuration,
 	JETPACK_SECURITY_CHECKLIST_TASKS,
 	JETPACK_PERFORMANCE_CHECKLIST_TASKS,
-	JETPACK_CHECKLIST_TASK_AKISMET,
 	JETPACK_CHECKLIST_TASK_BACKUPS_REWIND,
 	JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS,
 	JETPACK_CHECKLIST_TASK_PROTECT,
@@ -199,9 +198,15 @@ class JetpackChecklist extends PureComponent< Props > {
 					) }
 					{ isPaidPlan && productInstallStatus && (
 						<Task
-							{ ...JETPACK_CHECKLIST_TASK_AKISMET }
+							id="jetpack_akismet"
+							title={ translate( "We're automatically turning on spam filtering." ) }
+							completedButtonText={ translate( 'View spam stats' ) }
+							completedTitle={ translate( "We've automatically turned on spam filtering." ) }
 							completed={ akismetFinished }
-							href={ JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ) }
+							href={ `//${ siteSlug.replace(
+								'::',
+								'/'
+							) }/wp-admin/admin.php?page=akismet-key-config` }
 							inProgress={ ! akismetFinished }
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_spam_filtering' } ) }
 							target="_blank"
