@@ -31,6 +31,10 @@
 	&:focus {
 		color: var( --color-neutral-700 );
 	}
+
+	.gridicon {
+		display: block;
+	}
 }
 
 .notification-settings-push-notification-settings__instruction-content {

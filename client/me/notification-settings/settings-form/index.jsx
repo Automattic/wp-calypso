@@ -12,6 +12,11 @@ import React, { Component } from 'react';
 import Settings from './settings';
 import Actions from './actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class NotificationSettingsForm extends Component {
 	static propTypes = {
 		sourceId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,

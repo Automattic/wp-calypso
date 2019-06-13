@@ -13,9 +13,12 @@ import React from 'react';
  */
 import FormButton from 'components/forms/form-button';
 
-class NotificationSettingsFormActions extends React.PureComponent {
-	static displayName = 'NotificationSettingsFormActions';
+/**
+ * Style dependencies
+ */
+import './actions.scss';
 
+class NotificationSettingsFormActions extends React.PureComponent {
 	static propTypes = {
 		onSave: PropTypes.func.isRequired,
 		onSaveToAll: PropTypes.func,
@@ -25,6 +28,7 @@ class NotificationSettingsFormActions extends React.PureComponent {
 
 	render() {
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div className="notification-settings-form-actions">
 				{ this.props.isApplyAllVisible && (
 					<FormButton
@@ -40,6 +44,7 @@ class NotificationSettingsFormActions extends React.PureComponent {
 					{ this.props.translate( 'Save Settings' ) }
 				</FormButton>
 			</div>
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
 	}
 }
