@@ -33,42 +33,6 @@ export interface ChecklistTasksetUi {
 	[taskId: string]: TaskUiDescription;
 }
 
-export const JETPACK_SECURITY_CHECKLIST_TASKS: Readonly< ChecklistTasksetUi > = {
-	jetpack_monitor: {
-		title: translate( 'Downtime Monitoring' ),
-		description: translate(
-			"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications."
-		),
-		completedButtonText: translate( 'Change', { context: 'verb' } ),
-		completedTitle: translate( 'You turned on Downtime Monitoring.' ),
-		getUrl: siteSlug => `/settings/security/${ siteSlug }`,
-		duration: getJetpackChecklistTaskDuration( 3 ),
-		tourId: 'jetpackMonitoring',
-	},
-	jetpack_plugin_updates: {
-		title: translate( 'Automatic Plugin Updates' ),
-		description: translate(
-			'Choose which WordPress plugins you want to keep automatically updated.'
-		),
-		completedButtonText: translate( 'Change', { context: 'verb' } ),
-		completedTitle: translate( 'You turned on automatic plugin updates.' ),
-		getUrl: siteSlug => `/plugins/manage/${ siteSlug }`,
-		duration: getJetpackChecklistTaskDuration( 3 ),
-		tourId: 'jetpackPluginUpdates',
-	},
-	jetpack_sign_in: {
-		title: translate( 'WordPress.com sign in' ),
-		description: translate(
-			'Manage your log in preferences and two-factor authentication settings.'
-		),
-		completedButtonText: translate( 'Change', { context: 'verb' } ),
-		completedTitle: translate( 'You completed your sign in preferences.' ),
-		getUrl: siteSlug => `/settings/security/${ siteSlug }`,
-		duration: getJetpackChecklistTaskDuration( 3 ),
-		tourId: 'jetpackSignIn',
-	},
-};
-
 export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: Readonly< ChecklistTasksetUi > = {
 	jetpack_site_accelerator: {
 		title: translate( 'Site Accelerator' ),

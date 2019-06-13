@@ -25,7 +25,6 @@ import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
 import {
 	getJetpackChecklistTaskDuration,
-	JETPACK_SECURITY_CHECKLIST_TASKS,
 	JETPACK_PERFORMANCE_CHECKLIST_TASKS,
 	ChecklistTasksetUi,
 } from './constants';
@@ -224,9 +223,60 @@ class JetpackChecklist extends PureComponent< Props > {
 						/>
 					) }
 
-					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS ) }
+					<Task
+						id="jetpack_monitor"
+						completed={ this.isComplete( 'jetpack_monitor' ) }
+						completedButtonText={ translate( 'Change', { context: 'verb' } ) }
+						completedTitle={ translate( 'You turned on Downtime Monitoring.' ) }
+						description={ translate(
+							"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications."
+						) }
+						duration={ getJetpackChecklistTaskDuration( 3 ) }
+						href={ `/settings/security/${ siteSlug }` }
+						onClick={ this.handleTaskStart( {
+							taskId: 'jetpack_monitor',
+							tourId: 'jetpackMonitoring',
+						} ) }
+						title={ translate( 'Downtime Monitoring' ) }
+					/>
+
+					<Task
+						id="jetpack_plugin_updates"
+						completed={ this.isComplete( 'jetpack_plugin_updates' ) }
+						completedButtonText={ translate( 'Change', { context: 'verb' } ) }
+						completedTitle={ translate( 'You turned on automatic plugin updates.' ) }
+						description={ translate(
+							'Choose which WordPress plugins you want to keep automatically updated.'
+						) }
+						duration={ getJetpackChecklistTaskDuration( 3 ) }
+						href={ `/plugins/manage/${ siteSlug }` }
+						onClick={ this.handleTaskStart( {
+							taskId: 'jetpack_plugin_updates',
+							tourId: 'jetpackPluginUpdates',
+						} ) }
+						title={ translate( 'Automatic Plugin Updates' ) }
+					/>
+
+					<Task
+						id="jetpack_sign_in"
+						completed={ this.isComplete( 'jetpack_sign_in' ) }
+						completedButtonText={ translate( 'Change', { context: 'verb' } ) }
+						completedTitle={ translate( 'You completed your sign in preferences.' ) }
+						description={ translate(
+							'Manage your log in preferences and two-factor authentication settings.'
+						) }
+						duration={ getJetpackChecklistTaskDuration( 3 ) }
+						href={ `/settings/security/${ siteSlug }` }
+						onClick={ this.handleTaskStart( {
+							taskId: 'jetpack_sign_in',
+							tourId: 'jetpackSignIn',
+						} ) }
+						title={ translate( 'WordPress.com sign in' ) }
+					/>
+
 					{ isEnabled( 'jetpack/checklist/performance' ) &&
 						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS ) }
+
 					{ isEnabled( 'jetpack/checklist/performance' ) && ( isPremium || isProfessional ) && (
 						<Task
 							title={ translate( 'Video Hosting' ) }
