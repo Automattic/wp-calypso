@@ -480,7 +480,7 @@ class Full_Site_Editing {
 			return $data;
 		}
 
-		$data['post_content'] = serialize_blocks( $post_content_blocks[ $post_content_key ]['innerBlocks'] );
+		$data['post_content'] = wp_slash( serialize_blocks( $post_content_blocks[ $post_content_key ]['innerBlocks'] ) );
 		return $data;
 	}
 }
