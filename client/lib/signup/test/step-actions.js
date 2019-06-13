@@ -13,9 +13,6 @@ import {
 import { useNock } from 'test/helpers/use-nock';
 import flows from 'signup/config/flows';
 
-// This is necessary since localforage will throw "no local storage method found" promise rejection without this.
-// See how lib/user-settings/test apply the same trick.
-jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
 
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );

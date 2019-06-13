@@ -12,7 +12,7 @@ import { noop } from 'lodash';
  */
 import wpcom from 'lib/wp';
 import config from 'config';
-import localforage from 'lib/localforage';
+import { bypassPersistentStorage, clearStorage } from 'lib/browser-storage';
 import { supportSessionActivate } from 'state/support/actions';
 import localStorageBypass from 'lib/local-storage-bypass';
 
@@ -125,7 +125,8 @@ export const supportUserBoot = () => {
 	onBeforeUnload = storeUserAndToken( user, token );
 	window.addEventListener( 'beforeunload', onBeforeUnload );
 
-	localforage.bypass();
+	bypassPersistentStorage( true );
+	clearStorage();
 
 	// The following keys will not be bypassed as
 	// they are safe to share across user sessions.
@@ -143,7 +144,8 @@ export const supportNextBoot = () => {
 		return;
 	}
 
-	localforage.bypass();
+	bypassPersistentStorage( true );
+	clearStorage();
 
 	// The following keys will not be bypassed as
 	// they are safe to share across user sessions.

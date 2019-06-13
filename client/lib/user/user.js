@@ -25,7 +25,7 @@ import Emitter from 'lib/mixins/emitter';
 import { isE2ETest } from 'lib/e2e';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
 import { getLanguage } from 'lib/i18n-utils/utils';
-import localforage from 'lib/localforage';
+import { clearStorage } from 'lib/browser-storage';
 import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
 
 /**
@@ -260,7 +260,7 @@ User.prototype.clear = function( onClear ) {
 	delete this.settings;
 	store.clearAll();
 	if ( config.isEnabled( 'persist-redux' ) ) {
-		localforage.clear( onClear );
+		clearStorage.then( onClear );
 	} else if ( onClear ) {
 		onClear();
 	}

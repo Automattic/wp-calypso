@@ -192,7 +192,6 @@ const webpackConfig = {
 		} ),
 	},
 	module: {
-		noParse: /[/\\]node_modules[/\\]localforage[/\\]dist[/\\]localforage\.js$/,
 		rules: [
 			TranspileConfig.loader( {
 				workerCount,
