@@ -14,11 +14,15 @@ import classNames from 'classnames';
  */
 import Button from 'components/button';
 import PlanThankYouCard from 'blocks/plan-thank-you-card';
+import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanClass } from 'lib/plans';
 import { getCurrentUserEmail, isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { errorNotice, removeNotice } from 'state/notices/actions';
 import userFactory from 'lib/user';
+
+const VERIFY_EMAIL_ERRROR_NOTICE = 'ecommerce-verify-email-error';
 
 const userLib = userFactory();
 
@@ -26,19 +30,33 @@ class AtomicStoreThankYouCard extends Component {
 	state = {
 		pendingVerificationResend: false,
 		emailSent: false,
-		resendError: null,
+	};
+
+	checkVerification = () => {
+		userLib.fetch();
 	};
 
 	resendEmail = () => {
-		if ( this.state.pendingVerificationResend ) {
+		const { translate } = this.props;
+		const { pendingVerificationResend } = this.state;
+		if ( pendingVerificationResend ) {
 			return;
 		}
 
 		this.setState( { pendingVerificationResend: true } );
 
 		userLib.sendVerificationEmail( ( error, response ) => {
+			this.props.removeNotice( VERIFY_EMAIL_ERRROR_NOTICE );
+			if ( error ) {
+				this.props.errorNotice(
+					translate( "Couldn't resend verification email. Please try again." ),
+					{
+						id: VERIFY_EMAIL_ERRROR_NOTICE,
+					}
+				);
+			}
+
 			this.setState( {
-				resendError: error,
 				emailSent: response && response.success,
 				pendingVerificationResend: false,
 			} );
@@ -47,14 +65,10 @@ class AtomicStoreThankYouCard extends Component {
 
 	resendButtonText = () => {
 		const { translate } = this.props;
-		const { emailSent, pendingVerificationResend, resendError } = this.state;
+		const { emailSent, pendingVerificationResend } = this.state;
 
 		if ( pendingVerificationResend ) {
 			return translate( 'Sending…' );
-		}
-
-		if ( resendError ) {
-			return translate( 'Error' );
 		}
 
 		if ( emailSent ) {
@@ -71,6 +85,7 @@ class AtomicStoreThankYouCard extends Component {
 		if ( ! isEmailVerified ) {
 			return (
 				<div className="checkout-thank-you__atomic-store-action-buttons">
+					<Interval onTick={ this.checkVerification } period={ EVERY_FIVE_SECONDS } />
 					<Button
 						className={ classNames( 'button', 'thank-you-card__button' ) }
 						onClick={ this.resendEmail }
@@ -93,6 +108,12 @@ class AtomicStoreThankYouCard extends Component {
 			</div>
 		);
 	};
+
+	componentDidUpdate( prevProps ) {
+		if ( this.props.isEmailVerified && ! prevProps.isEmailVerified ) {
+			this.props.removeNotice( VERIFY_EMAIL_ERRROR_NOTICE );
+		}
+	}
 
 	renderDescription() {
 		const { emailAddress, isEmailVerified, translate } = this.props;
@@ -137,19 +158,22 @@ class AtomicStoreThankYouCard extends Component {
 	}
 }
 
-export default connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
-	const plan = getCurrentPlan( state, siteId );
-	const planClass = plan && plan.productSlug ? getPlanClass( plan.productSlug ) : '';
-	const emailAddress = getCurrentUserEmail( state );
-	const isEmailVerified = isCurrentUserEmailVerified( state );
+export default connect(
+	state => {
+		const site = getSelectedSite( state );
+		const siteId = getSelectedSiteId( state );
+		const plan = getCurrentPlan( state, siteId );
+		const planClass = plan && plan.productSlug ? getPlanClass( plan.productSlug ) : '';
+		const emailAddress = getCurrentUserEmail( state );
+		const isEmailVerified = isCurrentUserEmailVerified( state );
 
-	return {
-		siteId,
-		site,
-		emailAddress,
-		isEmailVerified,
-		planClass,
-	};
-} )( localize( AtomicStoreThankYouCard ) );
+		return {
+			siteId,
+			site,
+			emailAddress,
+			isEmailVerified,
+			planClass,
+		};
+	},
+	{ errorNotice, removeNotice }
+)( localize( AtomicStoreThankYouCard ) );
