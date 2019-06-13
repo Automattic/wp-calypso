@@ -26,10 +26,9 @@ class WaitingTwoFactorNotificationApproval extends Component {
 		return (
 			<form>
 				<Card className="two-factor-authentication__push-notification-screen is-compact">
-					<p>
+					<p className="two-factor-authentication__info">
 						{ translate(
-							'We sent a push notification to your {{strong}}WordPress mobile app{{/strong}}. ' +
-								'Once you get it and swipe or tap to confirm, this page will update.',
+							'Notification sent! Confirm in your {{strong}}WordPress\u00A0mobile\u00A0app{{/strong}} to\u00A0continue.',
 							{
 								components: {
 									strong: <strong />,
