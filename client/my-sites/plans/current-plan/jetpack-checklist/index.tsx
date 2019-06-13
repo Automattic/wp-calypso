@@ -23,7 +23,6 @@ import { format as formatUrl, parse as parseUrl } from 'url';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
-import { getJetpackChecklistTaskDuration } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { isEnabled } from 'config';
@@ -61,6 +60,16 @@ class JetpackChecklist extends PureComponent< Props > {
 
 	isComplete( taskId: string ): boolean {
 		return getTaskList( this.props ).isCompleted( taskId );
+	}
+
+	/**
+	 * Returns the localized duration of a task in given minutes.
+	 *
+	 * @param  minutes Number of minutes.
+	 * @return Localized duration.
+	 */
+	getDuration( minutes: number ) {
+		return this.props.translate( '%d minute', '%d minutes', { count: minutes, args: [ minutes ] } );
 	}
 
 	handleTaskStart = ( { taskId, tourId }: { taskId: string; tourId?: string } ) => () => {
@@ -144,7 +153,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							) }
 							completedButtonText={ translate( 'Change', { context: 'verb' } ) }
 							completedTitle={ translate( 'You turned on Backup and Scan.' ) }
-							duration={ getJetpackChecklistTaskDuration( 3 ) }
+							duration={ this.getDuration( 3 ) }
 							completed={ isRewindActive }
 							href={ `/settings/security/${ siteSlug }` }
 							onClick={ this.handleTaskStart( {
@@ -192,7 +201,7 @@ class JetpackChecklist extends PureComponent< Props > {
 						description={ translate(
 							"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications."
 						) }
-						duration={ getJetpackChecklistTaskDuration( 3 ) }
+						duration={ this.getDuration( 3 ) }
 						href={ `/settings/security/${ siteSlug }` }
 						onClick={ this.handleTaskStart( {
 							taskId: 'jetpack_monitor',
@@ -209,7 +218,7 @@ class JetpackChecklist extends PureComponent< Props > {
 						description={ translate(
 							'Choose which WordPress plugins you want to keep automatically updated.'
 						) }
-						duration={ getJetpackChecklistTaskDuration( 3 ) }
+						duration={ this.getDuration( 3 ) }
 						href={ `/plugins/manage/${ siteSlug }` }
 						onClick={ this.handleTaskStart( {
 							taskId: 'jetpack_plugin_updates',
@@ -226,7 +235,7 @@ class JetpackChecklist extends PureComponent< Props > {
 						description={ translate(
 							'Manage your log in preferences and two-factor authentication settings.'
 						) }
-						duration={ getJetpackChecklistTaskDuration( 3 ) }
+						duration={ this.getDuration( 3 ) }
 						href={ `/settings/security/${ siteSlug }` }
 						onClick={ this.handleTaskStart( {
 							taskId: 'jetpack_sign_in',
@@ -246,7 +255,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							description={ translate(
 								'Serve your images and static files through our global CDN and whatch your page load time drop.'
 							) }
-							duration={ getJetpackChecklistTaskDuration( 1 ) }
+							duration={ this.getDuration( 1 ) }
 							href={ `/settings/performance/${ siteSlug }` }
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_site_accelerator',
@@ -265,7 +274,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							description={ translate(
 								"Improve your site's speed by only loading images when visible on the screen."
 							) }
-							duration={ getJetpackChecklistTaskDuration( 1 ) }
+							duration={ this.getDuration( 1 ) }
 							href={
 								this.isComplete( 'jetpack_lazy_images' )
 									? `/media/${ siteSlug }`
@@ -291,7 +300,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							completedTitle={ translate(
 								'High-speed, high-definition, and ad-free video hosting is enabled.'
 							) }
-							duration={ getJetpackChecklistTaskDuration( 3 ) }
+							duration={ this.getDuration( 3 ) }
 							href={
 								this.isComplete( 'jetpack_video_hosting' )
 									? `/media/videos/${ siteSlug }`
@@ -314,7 +323,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							completedTitle={ translate(
 								'The default WordPress search has been replaced by Enhanced Search.'
 							) }
-							duration={ getJetpackChecklistTaskDuration( 1 ) }
+							duration={ this.getDuration( 1 ) }
 							completed={ this.isComplete( 'jetpack_search' ) }
 							href={
 								this.isComplete( 'jetpack_search' )
