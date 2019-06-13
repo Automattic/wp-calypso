@@ -42,6 +42,7 @@ $z-layers: (
 		'.reader-search-card': 0,
 		'.reader-featured-image': 0,
 		'.reader-post-card__title': 0,
+		'.tag-stream__header-follow': 0,
 		'.reader-feed-header': 0,
 		'.reader-feed-header__back-and-follow': 0,
 		'.reader-recommended-sites__recommended-site-dismiss': 1,
@@ -293,6 +294,9 @@ $z-layers: (
 	),
 	'reader-card-follow-button-parent': (
 		'.reader__card.card .follow-button': 1
+	),
+	'.tag-stream__header-follow': (
+		'.follow-button': 1
 	)
 );
 
