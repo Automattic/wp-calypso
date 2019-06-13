@@ -1,4 +1,9 @@
 <?php
+/**
+ * A8C WP Template file.
+ *
+ * @package full-site-editing
+ */
 
 /**
  * Class A8C_WP_Template
@@ -6,18 +11,40 @@
 class A8C_WP_Template {
 	const TEMPLATE_META_KEY = '_wp_template_id';
 
+	/**
+	 * ID of the current post that's being rendered.
+	 *
+	 * @var int $current_post_id ID of the current post.
+	 */
 	private $current_post_id;
+
+	/**
+	 * ID of the template associated with the current post.
+	 *
+	 * @var int $template_id ID of the template associated with the current post.
+	 */
 	private $template_id;
 
+
+	/**
+	 * A8C_WP_Template constructor.
+	 *
+	 * @param int|null $post_id Defaults to current post id if not passed.
+	 */
 	public function __construct( $post_id = null ) {
-		if ( $post_id === null ) {
+		if ( null === $post_id ) {
 			$post_id = get_post()->ID;
 		}
 
 		$this->current_post_id = $post_id;
-		$this->template_id = get_post_meta( $this->current_post_id, self::TEMPLATE_META_KEY, true );
+		$this->template_id     = get_post_meta( $this->current_post_id, self::TEMPLATE_META_KEY, true );
 	}
 
+	/**
+	 * Returns template's post content.
+	 *
+	 * @return null|string
+	 */
 	public function get_template_content() {
 		if ( empty( $this->template_id ) ) {
 			return null;
@@ -25,9 +52,14 @@ class A8C_WP_Template {
 
 		$template_post = get_post( $this->template_id );
 
-		return $template_post === null ? null : $template_post->post_content;
+		return null === $template_post ? null : $template_post->post_content;
 	}
 
+	/**
+	 * Returns array of blocks that represent the template.
+	 *
+	 * @return array
+	 */
 	public function get_template_blocks() {
 		$template_content = $this->get_template_content();
 
@@ -51,7 +83,7 @@ class A8C_WP_Template {
 			return null;
 		}
 
-		// TODO: Incorporate wp_template_part taxonomy checks
+		// TODO: Incorporate wp_template_part taxonomy checks.
 		if ( ! isset( $template_blocks[0]['attrs']['templateId'] ) ) {
 			return null;
 		}
@@ -70,7 +102,7 @@ class A8C_WP_Template {
 	public function get_footer_id() {
 		$template_blocks = $this->get_template_blocks();
 
-		// TODO: Incorporate wp_template_part taxonomy checks
+		// TODO: Incorporate wp_template_part taxonomy checks.
 		if ( ! isset( end( $template_blocks )['attrs']['templateId'] ) ) {
 			return null;
 		}
@@ -78,33 +110,42 @@ class A8C_WP_Template {
 		return end( $template_blocks )['attrs']['templateId'];
 	}
 
+	/**
+	 * Returns header template part content of current template.
+	 *
+	 * @return null|string
+	 */
 	public function get_header_content() {
 		$header_id = $this->get_header_id();
 
-		if ( $header_id === null ) {
+		if ( null === $header_id ) {
 			return null;
 		}
 
 		$header = get_post( $header_id );
 
-		if ( $header === null ) {
+		if ( null === $header ) {
 			return null;
 		}
 
 		return $header->post_content;
 	}
 
-
+	/**
+	 * Returns footer template part content of current template.
+	 *
+	 * @return null|string
+	 */
 	public function get_footer_content() {
 		$footer_id = $this->get_footer_id();
 
-		if ( $footer_id === null ) {
+		if ( null === $footer_id ) {
 			return null;
 		}
 
 		$footer = get_post( $footer_id );
 
-		if ( $footer === null ) {
+		if ( null === $footer ) {
 			return null;
 		}
 

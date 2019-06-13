@@ -26,7 +26,7 @@ function a8c_load_full_site_editing() {
 		return;
 	}
 
-	require_once __DIR__ . '/lib/feature-flags/feature-flags.php';
+	require_once __DIR__ . '/lib/feature-flags/class-a8c-full-site-editing-feature-flags.php';
 	require_once __DIR__ . '/full-site-editing/blocks/navigation-menu/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/post-content/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/template/index.php';

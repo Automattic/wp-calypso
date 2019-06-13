@@ -11,25 +11,40 @@
 	word-wrap: normal !important;
 }
 
+// Modal Overlay
+.page-template-modal-screen-overlay {
+	background-color: hsla( 0, 0%, 0%, 0.7 );
+	animation: none;
+}
+
+// When not in fullscreen mode allow space for WP.org sidebar
+body:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
+	
+	@media screen and ( min-width: 783px ) {
+		left: 36px;
+	}
+
+	@media screen and ( min-width: 961px ) {
+		left: 160px;
+	}
+}
+
+// Allow space for admin bar if present and not in full screen mode
+body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
+	top: 46px;
+
+	@media screen and ( min-width: 783px ) {
+		top: 32px;
+	}
+	
+}
+
 // Full screen modal
 .page-template-modal {
 	width: 100%;
 	height: 100vh;
-}
-
-// When not full screen account for sidebar
-body:not( .is-fullscreen-mode ) .page-template-modal {
-
-	@media screen and ( min-width: 783px ) {
-		width: calc( 100% - 65px );
-		left: 50px;
-		transform: translateY( -50% );
-	}
-
-	@media screen and ( min-width: 960px ) {
-		width: calc( 100% - 200px );
-		left: 180px;
-	}
+	max-width: 800px;
+	animation: none;
 }
 
 .page-template-modal .components-modal__header-heading-container {
@@ -44,6 +59,8 @@ body:not( .is-fullscreen-mode ) .page-template-modal {
 
 .page-template-modal__intro {
 	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .page-template-modal__list {
