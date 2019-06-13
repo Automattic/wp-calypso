@@ -260,7 +260,7 @@ User.prototype.clear = function( onClear ) {
 	delete this.settings;
 	store.clearAll();
 	if ( config.isEnabled( 'persist-redux' ) ) {
-		clearStorage.then( onClear );
+		clearStorage().then( onClear );
 	} else if ( onClear ) {
 		onClear();
 	}
