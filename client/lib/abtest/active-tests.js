@@ -151,5 +151,6 @@ export default {
 		},
 		defaultVariation: 'control',
 		localeTargets: 'any',
+		localeExceptions: [ 'en' ],
 	},
 };
