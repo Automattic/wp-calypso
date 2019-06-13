@@ -136,11 +136,11 @@ const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
 	return Object.values( user ).some( ( { error } ) => null !== error );
 };
 
-const userIsReady = ( user: GSuiteNewUser ): boolean =>
+const isUserValid = ( user: GSuiteNewUser ): boolean =>
 	isUserComplete( user ) && ! doesUserHaveError( user );
 
-const allUsersReady = ( users: GSuiteNewUser[] ): boolean =>
-	0 < users.length && users.every( userIsReady );
+const areAllUsersValid = ( users: GSuiteNewUser[] ): boolean =>
+	0 < users.length && users.every( isUserValid );
 
 const transformUserForCart = ( {
 	firstName: { value: firstname },
@@ -175,13 +175,13 @@ const getItemsForCart = (
 };
 
 export {
-	allUsersReady,
+	areAllUsersValid,
 	doesUserHaveError,
 	getItemsForCart,
 	isUserComplete,
+	isUserValid,
 	newUser,
 	newUsers,
-	userIsReady,
 	validateAgainstExistingUsers,
 	validateUser,
 };
