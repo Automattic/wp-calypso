@@ -14,13 +14,14 @@ getStoredItem( 'my-stored-key' ).then( val => doSomethingWithVal( val ) );
 clearStorage().then( () => console.log( 'Storage cleared' ) );
 ```
 
-To match `localforage` behavior, `null` is returned as the value for missing keys.
+`undefined` is returned as the value for missing keys.
 
 
 ## Bypassing persistent storage
 
 In some cases, such as support sessions, it's useful to bypass persistent storage altogether, using
-a volatile memory store instead. The `bypass` method exists to toggle that behavior on and off.
+a volatile memory store instead. The `bypassPersistentStorage` method exists to toggle that behavior
+on and off.
 
 ```js
 import { setStoredItem, bypassPersistentStorage } from 'lib/browser-storage';
