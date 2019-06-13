@@ -11,7 +11,12 @@ import { debounce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getIframeSource, isIE, revokeObjectURL } from 'components/signup-site-preview/utils';
+import {
+	getIframeSource,
+	isIE,
+	revokeObjectURL,
+	replaceTemplatePlaceholders,
+} from 'components/signup-site-preview/utils';
 
 export default class SignupSitePreviewIframe extends Component {
 	static propTypes = {
@@ -73,6 +78,11 @@ export default class SignupSitePreviewIframe extends Component {
 			return false;
 		}
 
+		if ( this.props.content.placeholderData !== nextProps.content.placeholderData ) {
+			this.setIframeBodyContent( nextProps.content );
+			return false;
+		}
+
 		if ( this.props.content.body !== nextProps.content.body ) {
 			this.setIframeBodyContent( nextProps.content );
 			return false;
@@ -88,7 +98,7 @@ export default class SignupSitePreviewIframe extends Component {
 		const element = this.iframe.current.contentWindow.document.querySelector( '.entry-content' );
 
 		if ( element ) {
-			element.innerHTML = content.body;
+			element.innerHTML = replaceTemplatePlaceholders( content.body, content.placeholderData );
 			this.props.resize && this.setContainerHeight();
 		}
 	}

@@ -132,6 +132,7 @@ class SiteMockups extends Component {
 			title,
 			themeSlug,
 			verticalPreviewContent,
+			verticalSlug,
 		} = this.props;
 
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
@@ -145,7 +146,9 @@ class SiteMockups extends Component {
 			cssUrl: getThemeCssUri( themeSlug, isRtl ),
 			content: {
 				title,
-				tagline: translate( 'You’ll be able to customize this to your needs.' ),
+				placeholderData: {
+					Vertical: verticalSlug || '',
+				},
 				body: this.getContent( verticalPreviewContent ),
 			},
 			langSlug,

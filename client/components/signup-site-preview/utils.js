@@ -31,6 +31,31 @@ export function revokeObjectURL( objectUrl ) {
 }
 
 /**
+ * Parses a string and replaces `{{PlaceholderKey}}` with the corresponding values in `placeholderData`.
+ * Usage:
+ *
+ *     replaceTemplatePlaceholders( 'Hi, {{Name}}!', { Name: 'Terry' } ); // returns 'Hi, Terry!
+ *
+ * @param  {String} content         The content containing {{placeholders}}
+ * @param  {Object} placeholderData Placeholder key value pairs
+ * @return {String}                 The parsed content
+ */
+export function replaceTemplatePlaceholders( content, placeholderData ) {
+	if ( 'string' !== typeof content || 'object' !== typeof placeholderData ) {
+		return content;
+	}
+
+	const keys = Object.keys( placeholderData );
+
+	if ( keys.length ) {
+		for ( const key of keys ) {
+			content = content.replace( new RegExp( '{{' + key + '}}', 'gi' ), placeholderData[ key ] );
+		}
+	}
+	return content;
+}
+
+/**
  * Returns a WordPress page shell HTML
  *
  * @param  {Object}  content   Object containing `title`, `tagline` and `body` strings
@@ -135,7 +160,7 @@ export function getIframeSource(
 						<main id="main" class="site-main">
 							<article class="page type-page status-publish hentry entry">
 								<div class="entry-content">
-									${ content.body }
+									${ replaceTemplatePlaceholders( content.body, content.placeholderData ) }
 								</div>
 							</article>
 						</div>
