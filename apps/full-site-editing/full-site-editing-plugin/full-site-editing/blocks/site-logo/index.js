@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import edit from './edit';
+import './style.scss';
 
 registerBlockType( 'a8c/site-logo', {
 	title: __( 'Site Logo' ),
