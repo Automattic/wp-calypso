@@ -23,7 +23,9 @@ function getHoldMessages( siteSlug, translate ) {
 	return {
 		TRANSFER_ALREADY_EXISTS: {
 			title: translate( 'Installation in progress' ),
-			description: translate( 'Please wait for installation to complete and try again.' ),
+			description: translate(
+				'Just a minute! Please wait until the installation is finished, then try again.'
+			),
 		},
 		NO_JETPACK_SITES: {
 			title: translate( 'Not available for Jetpack sites' ),
@@ -36,42 +38,42 @@ function getHoldMessages( siteSlug, translate ) {
 		SITE_PRIVATE: {
 			title: translate( 'Public site needed' ),
 			description: translate(
-				'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private") to clear this issue.'
+				'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private.")'
 			),
 			supportUrl: localizeUrl( 'https://en.support.wordpress.com/settings/privacy-settings/' ),
 		},
 		SITE_GRAYLISTED: {
 			title: translate( 'Ongoing site dispute' ),
 			description: translate(
-				"Contact us to review your site's standing and resolve the dispute to clear this issue."
+				"Contact us to review your site's standing and resolve the dispute."
 			),
 			supportUrl: localizeUrl( 'https://en.support.wordpress.com/suspended-blogs/' ),
 		},
 		NON_ADMIN_USER: {
-			title: translate( 'Site owned by a different user' ),
+			title: translate( 'Site owner only' ),
 			description: translate( 'Only the site owner can use this feature.' ),
 			supportUrl: localizeUrl( 'https://en.support.wordpress.com/user-roles/' ),
 		},
 		NOT_DOMAIN_OWNER: {
-			title: translate( 'Domain owned by a different user' ),
+			title: translate( 'Domain owner only' ),
 			description: translate(
-				'The primary domain is owned by a different user. Change the primary domain, or contact support to transfer the primary domain to yourself to clear this issue.'
+				'The primary domain on this site is owned by a different user. Change the primary domain to one that you own, or contact support to have this domain transferred to you.'
 			),
 			supportUrl: localizeUrl( 'https://en.support.wordpress.com/domains/' ),
 		},
 		NO_WPCOM_NAMESERVERS: {
-			title: translate( 'Domain should use WordPress.com name servers' ),
+			title: translate( 'Domain not using WordPress.com name servers' ),
 			description: translate(
-				'Set your domain to use WordPress.com name servers to clear this issue. Contact your domain provider for more information about changing name servers.'
+				"This domain is not using WordPress.com name servers, so it's not pointing to your site. Change your name servers over at your domain provider's. If you're not sure how to do that, contact them for help."
 			),
 			supportUrl:
 				'https://en.support.wordpress.com/domains/map-existing-domain/' +
 				'#2-ask-your-domain-provider-to-update-your-dns-settings',
 		},
 		NOT_RESOLVING_TO_WPCOM: {
-			title: translate( 'Domain should point to WordPress.com' ),
+			title: translate( 'Domain pointing to a different site' ),
 			description: translate(
-				"Your domain is not pointing to your WordPress.com site. Reset your domain's A records to clear this issue."
+				"Your domain is not properly set up to point to your site. Reset your domain's A records in the Domains section to fix this."
 			),
 			supportUrl: localizeUrl(
 				'https://en.support.wordpress.com/move-domain/setting-custom-a-records/'
@@ -80,19 +82,19 @@ function getHoldMessages( siteSlug, translate ) {
 		NO_SSL_CERTIFICATE: {
 			title: translate( 'Certificate installation in progress' ),
 			description: translate(
-				'We are setting up a digital certificate to allow secure browsing on your site using "HTTPS". Please try again in a few minutes.'
+				'Hold tight! We are setting up a digital certificate to allow secure browsing on your site, using "HTTPS". Please try again in a few minutes.'
 			),
 		},
 		EMAIL_UNVERIFIED: {
 			title: translate( 'Confirm your email address' ),
 			description: translate(
-				'We sent you a link to confirm your email address when you signed up. Check your email and click the link to confirm your address and clear this issue.'
+				"Check your email for a message we sent you when you signed up. Click the link inside to confirm your email address. You may have to check your email client's spam folder."
 			),
 		},
 		EXCESSIVE_DISK_SPACE: {
 			title: translate( 'Upload not available' ),
 			description: translate(
-				'This site is not currently eligible for installing themes and plugins. Please contact support to clear this issue.'
+				'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
 			),
 			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
 		},
