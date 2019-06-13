@@ -245,7 +245,7 @@ class TaxesRates extends Component {
 					</FormToggle>
 				</ExtendedHeader>
 				<Card>
-					{ this.renderCalculationStatus() }
+					{ taxesEnabled && this.renderCalculationStatus() }
 					{ this.renderLocation() }
 					{ this.possiblyRenderRates() }
 					{ this.renderPolicyNotice() }
