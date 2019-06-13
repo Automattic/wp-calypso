@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import memoizeLast from 'lib/memoize-last';
 import {
 	getStoredItem as bypassGet,
 	setStoredItem as bypassSet,
@@ -15,9 +16,7 @@ const STORE_NAME = 'calypso_store';
 
 const supportsIDB = typeof window !== 'undefined' && window.indexedDB;
 
-let cachedDbPromise: Promise< IDBDatabase > | null = null;
-
-function prepareIDB() {
+const getDB = memoizeLast( () => {
 	const request = indexedDB.open( DB_NAME, DB_VERSION );
 	return new Promise< IDBDatabase >( ( resolve, reject ) => {
 		if ( request ) {
@@ -26,12 +25,7 @@ function prepareIDB() {
 			request.onupgradeneeded = () => request.result.createObjectStore( STORE_NAME );
 		}
 	} );
-}
-
-function getDB() {
-	cachedDbPromise = cachedDbPromise || prepareIDB();
-	return cachedDbPromise;
-}
+} ) as () => Promise< IDBDatabase >;
 
 /**
  * Whether persistent storage should be bypassed, using a memory store instead.
@@ -46,16 +40,24 @@ export function bypassPersistentStorage( shouldBypassPersistentStorage: boolean 
  * Get a stored item.
  *
  * @param key The stored item key.
- * @return A promise with the stored value. `null` if missing.
+ * @return A promise with the stored value. `undefined` if missing.
  */
-export function getStoredItem< T >( key: string ): Promise< T | null > {
+export function getStoredItem< T >( key: string ): Promise< T | undefined > {
 	if ( shouldBypass ) {
 		return bypassGet( key );
 	}
 
 	if ( ! supportsIDB ) {
 		const valueString = localStorage.getItem( key );
-		return Promise.resolve( valueString ? JSON.parse( valueString ) : null );
+		try {
+			if ( valueString === undefined || valueString === null ) {
+				return Promise.resolve( undefined );
+			}
+
+			return Promise.resolve( JSON.parse( valueString ) );
+		} catch ( error ) {
+			return Promise.reject( error );
+		}
 	}
 
 	return new Promise( ( resolve, reject ) => {
@@ -63,8 +65,7 @@ export function getStoredItem< T >( key: string ): Promise< T | null > {
 			const transaction = db.transaction( STORE_NAME, 'readonly' );
 			const get = transaction.objectStore( STORE_NAME ).get( key );
 
-			// Match localforage behaviour: unknown keys return null.
-			const success = () => resolve( get.result !== undefined ? get.result : null );
+			const success = () => resolve( get.result );
 			const error = () => reject( transaction.error );
 
 			transaction.oncomplete = success;
