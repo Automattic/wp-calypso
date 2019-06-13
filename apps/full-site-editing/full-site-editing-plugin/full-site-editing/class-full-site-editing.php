@@ -472,7 +472,7 @@ class Full_Site_Editing {
 			return $data;
 		}
 
-		$post_content_blocks = parse_blocks( wp_unslash( $data['post_content'] ) );
+		$post_content_blocks = parse_blocks( $post_content );
 		$post_content_key = array_search( 'a8c/post-content', array_column( $post_content_blocks, 'blockName' ) );
 
 		// bail if no post content block found
