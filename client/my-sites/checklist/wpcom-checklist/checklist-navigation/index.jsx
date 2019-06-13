@@ -17,6 +17,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ChecklistNavigation extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string,
@@ -42,10 +47,10 @@ export class ChecklistNavigation extends Component {
 	render() {
 		const { siteSlug, translate, showNotification, taskList } = this.props;
 
-		const buttonClasses = {
+		const buttonClasses = classNames( 'checklist-navigation__count', {
 			'has-notification': showNotification,
-			'checklist-navigation__count': true,
-		};
+		} );
+
 		const { total, completed } = taskList.getCompletionStatus();
 		const checklistLink = '/checklist/' + siteSlug;
 
@@ -61,7 +66,7 @@ export class ChecklistNavigation extends Component {
 						{ translate( 'Continue Site Setup' ) }
 					</span>
 
-					<span className={ classNames( buttonClasses ) }>
+					<span className={ buttonClasses }>
 						{ translate( '%(complete)d/%(total)d', {
 							comment: 'Numerical progress indicator, like 5/9',
 							args: {
