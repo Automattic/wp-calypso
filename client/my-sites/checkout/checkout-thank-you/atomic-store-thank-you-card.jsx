@@ -12,29 +12,72 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import PlanThankYouCard from 'blocks/plan-thank-you-card';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanClass } from 'lib/plans';
 import { getCurrentUserEmail, isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import userFactory from 'lib/user';
+
+const userLib = userFactory();
 
 class AtomicStoreThankYouCard extends Component {
+	state = {
+		pendingVerificationResend: false,
+		emailSent: false,
+		resendError: null,
+	};
+
 	resendEmail = () => {
-		//@todo: resend email
+		if ( this.state.pendingVerificationResend ) {
+			return;
+		}
+
+		this.setState( { pendingVerificationResend: true } );
+
+		userLib.sendVerificationEmail( ( error, response ) => {
+			this.setState( {
+				resendError: error,
+				emailSent: response && response.success,
+				pendingVerificationResend: false,
+			} );
+		} );
+	};
+
+	resendButtonText = () => {
+		const { translate } = this.props;
+		const { emailSent, pendingVerificationResend, resendError } = this.state;
+
+		if ( pendingVerificationResend ) {
+			return translate( 'Sending…' );
+		}
+
+		if ( resendError ) {
+			return translate( 'Error' );
+		}
+
+		if ( emailSent ) {
+			return translate( 'Email sent' );
+		}
+
+		return translate( 'Resend email' );
 	};
 
 	renderAction = () => {
 		const { isEmailVerified, site, translate } = this.props;
+		const { pendingVerificationResend } = this.state;
 
 		if ( ! isEmailVerified ) {
 			return (
 				<div className="checkout-thank-you__atomic-store-action-buttons">
-					<button
+					<Button
 						className={ classNames( 'button', 'thank-you-card__button' ) }
 						onClick={ this.resendEmail }
+						busy={ pendingVerificationResend }
 					>
-						{ translate( 'Resend Email' ) }
-					</button>
+						{ this.resendButtonText() }
+					</Button>
 				</div>
 			);
 		}
