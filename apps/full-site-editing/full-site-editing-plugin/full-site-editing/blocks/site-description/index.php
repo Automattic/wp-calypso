@@ -8,11 +8,9 @@
 /**
  * Renders the site description (tagline) block.
  *
- * @param array  $attributes Block attributes.
- * @param string $content    Block content.
  * @return string
  */
-function render_site_description_block( $attributes, $content ) {
+function render_site_description_block() {
 	ob_start();
 	?>
 	<p class="site-description">
