@@ -619,7 +619,7 @@ class PushNotificationSettings extends React.Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<Dialog
 				isVisible={ this.props.showDialog }
-				className=".notification-settings-push-notification-settings__instruction-dialog"
+				className="notification-settings-push-notification-settings__instruction-dialog"
 				onClose={ this.props.toggleUnblockInstructions }
 			>
 				<div className="notification-settings-push-notification-settings__instruction-content">
