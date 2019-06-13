@@ -19,7 +19,6 @@ import Spinner from 'components/spinner';
 
 class Task extends PureComponent {
 	static propTypes = {
-		buttonPrimary: PropTypes.bool,
 		buttonText: PropTypes.node,
 		collapsed: PropTypes.bool,
 		completed: PropTypes.bool,
