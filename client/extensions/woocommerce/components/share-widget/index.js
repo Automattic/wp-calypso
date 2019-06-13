@@ -50,17 +50,6 @@ class ShareWidget extends Component {
 				},
 			},
 			{
-				icon: 'google-plus',
-				urlProperties: {
-					scheme: 'https',
-					hostname: 'plus.google.com',
-					pathname: '/share',
-					query: {
-						url: urlToShare,
-					},
-				},
-			},
-			{
 				icon: 'linkedin',
 				urlProperties: {
 					scheme: 'https',
