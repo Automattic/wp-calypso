@@ -116,6 +116,10 @@
 .store-sidebar__sidebar {
 	display: block;
 
+	a {
+		font-weight: 600;
+	}
+
 	.store-sidebar__ground-control {
 		align-items: center;
 		background-color: var( --color-white );
