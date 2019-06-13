@@ -193,14 +193,13 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpackLogin = currentRoute === '/log-in/jetpack';
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	const noMasterbarForCheckout = isJetpack && startsWith( currentRoute, '/checkout' );
+	const noMasterbarForCheckout = startsWith( currentRoute, '/checkout' );
 	const noMasterbarForRoute = isJetpackLogin || noMasterbarForCheckout;
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =
 		'jetpack-connect' === sectionName &&
 		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
-
 	return {
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
