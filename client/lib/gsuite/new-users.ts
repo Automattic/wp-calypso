@@ -136,6 +136,11 @@ const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
 	return Object.values( user ).some( ( { error } ) => null !== error );
 };
 
+/**
+ * Returns if a user is ready to be added as a new email aka valid
+ * @param user user to check
+ * @returns boolean if the user is valid or not
+ */
 const isUserValid = ( user: GSuiteNewUser ): boolean =>
 	isUserComplete( user ) && ! doesUserHaveError( user );
 

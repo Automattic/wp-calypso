@@ -79,19 +79,10 @@ class GSuiteAddUsers extends React.Component {
 		} );
 	};
 
-	recordContinueEvent = () => {
+	recordClickEvent = eventName => {
 		const { recordTracksEvent, selectedDomainName } = this.props;
 		const { users } = this.state;
-		recordTracksEvent( 'calypso_email_management_gsuite_add_users_continue_button_click', {
-			domain_name: selectedDomainName,
-			user_count: users.length,
-		} );
-	};
-
-	recordCancelEvent = () => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
-		const { users } = this.state;
-		recordTracksEvent( 'calypso_email_management_gsuite_add_users_cancel_button_click', {
+		recordTracksEvent( eventName, {
 			domain_name: selectedDomainName,
 			user_count: users.length,
 		} );
@@ -102,7 +93,7 @@ class GSuiteAddUsers extends React.Component {
 		const { users } = this.state;
 		const canContinue = areAllUsersValid( users );
 
-		this.recordContinueEvent();
+		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
 
 		if ( canContinue ) {
 			addItems(
@@ -113,7 +104,7 @@ class GSuiteAddUsers extends React.Component {
 	};
 
 	handleCancel = () => {
-		this.recordCancelEvent();
+		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_cancel_button_click' );
 		this.goToEmail();
 	};
 
