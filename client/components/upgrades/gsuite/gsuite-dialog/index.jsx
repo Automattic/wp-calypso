@@ -13,25 +13,25 @@ import React from 'react';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
-import { addItem } from 'lib/upgrades/actions';
+import { addItems } from 'lib/upgrades/actions';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
-import { getItemsForCart, newUsers, userIsReady } from 'lib/gsuite/new-users';
+import { areAllItemsReady, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
 import { getSelectedSite } from 'state/ui/selectors';
 import GoogleAppsProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import { isGSuiteRestricted } from 'lib/gsuite';
-import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { getProductCost } from 'state/products-list/selectors';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-class GoogleAppsDialog extends React.Component {
+class GSuiteDialog extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
 		productsList: PropTypes.object.isRequired,
@@ -129,7 +129,7 @@ class GoogleAppsDialog extends React.Component {
 	footer() {
 		const { translate } = this.props;
 		const { users } = this.state;
-		const canContinue = 0 < users.length && users.every( userIsReady );
+		const canContinue = areAllItemsReady( users );
 
 		return (
 			<footer className="gsuite-dialog__footer">
@@ -160,36 +160,16 @@ class GoogleAppsDialog extends React.Component {
 	handleAddEmail = () => {
 		const { domain, planType, selectedSite } = this.props;
 		const { users } = this.state;
-		const canContinue = 0 < users.length && users.every( userIsReady );
+		const canContinue = areAllItemsReady( users );
 
 		if ( canContinue ) {
-			getItemsForCart(
-				[ domain ],
-				'business' === planType ? 'gapps_unlimited' : 'gapps',
-				users
-			).forEach( addItem );
+			addItems(
+				getItemsForCart( [ domain ], 'business' === planType ? 'gapps_unlimited' : 'gapps', users )
+			);
 			page( '/checkout/' + selectedSite.slug );
 		}
 	};
 }
-
-const recordCancelButtonClick = section =>
-	composeAnalytics(
-		recordTracksEvent( 'calypso_gsuite_cancel_button_click', { section } ),
-		recordGoogleEvent( 'Domain Search', 'Clicked "Cancel" Button in G Suite Dialog' )
-	);
-
-const recordAddEmailButtonClick = section =>
-	composeAnalytics(
-		recordTracksEvent( 'calypso_gsuite_add_email_button_click', { section } ),
-		recordGoogleEvent( 'Domain Search', 'Clicked "Add Email" Button in G Suite Dialog' )
-	);
-
-const recordFormSubmit = section =>
-	composeAnalytics(
-		recordTracksEvent( 'calypso_gsuite_form_submit', { section } ),
-		recordGoogleEvent( 'Domain Search', 'Submitted Form in G Suite Dialog' )
-	);
 
 export default connect(
 	( state, ownProps ) => {
@@ -202,8 +182,6 @@ export default connect(
 		};
 	},
 	{
-		recordAddEmailButtonClick,
-		recordCancelButtonClick,
-		recordFormSubmit,
+		recordTracksEventAction,
 	}
-)( localize( GoogleAppsDialog ) );
+)( localize( GSuiteDialog ) );
