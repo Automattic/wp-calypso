@@ -134,6 +134,7 @@ class JetpackChecklist extends PureComponent< Props > {
 						href={ `/settings/security/${ siteSlug }` }
 						onClick={ this.handleTaskStart( { taskId: 'jetpack_protect' } ) }
 					/>
+
 					{ isPaidPlan && isRewindAvailable && (
 						<Task
 							id="jetpack_rewind"
@@ -152,6 +153,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							} ) }
 						/>
 					) }
+
 					{ isPaidPlan && isRewindUnavailable && productInstallStatus && (
 						<Task
 							id="jetpack_vaultpress"
@@ -164,6 +166,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_backups' } ) }
 						/>
 					) }
+
 					{ isPaidPlan && productInstallStatus && (
 						<Task
 							id="jetpack_akismet"
@@ -300,6 +303,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							} ) }
 						/>
 					) }
+
 					{ isEnabled( 'jetpack/checklist/performance' ) && isProfessional && (
 						<Task
 							title={ translate( 'Enhanced Search' ) }
