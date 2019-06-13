@@ -12,6 +12,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
+import PushNotificationIllustration from './push-notification-illustration';
 import TwoFactorActions from './two-factor-actions';
 
 class WaitingTwoFactorNotificationApproval extends Component {
@@ -36,12 +37,8 @@ class WaitingTwoFactorNotificationApproval extends Component {
 							}
 						) }
 					</p>
-					<div>
-						<img
-							className="two-factor-authentication__auth-code-preview"
-							src="/calypso/images/login/pushauth.svg"
-						/>
-					</div>
+
+					<PushNotificationIllustration />
 				</Card>
 
 				<div className="two-factor-authentication__actions">
