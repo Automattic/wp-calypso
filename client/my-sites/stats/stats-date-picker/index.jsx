@@ -124,7 +124,7 @@ class StatsDatePicker extends Component {
 		const isToday = today.isSame( date, 'day' );
 		return (
 			<span>
-				{ translate( '{{b}}Last update: %(time)s{{/b}} (Refreshes every 30 minutes)', {
+				{ translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {
 					args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
 					components: {
 						b: <span className="stats-date-picker__last-update" />,
