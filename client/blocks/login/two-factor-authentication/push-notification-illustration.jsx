@@ -15,11 +15,11 @@ class PushNotificationIllustration extends Component {
 	}
 
 	render() {
-		return (
-			// Inlining two stacked SVGs because they’re a part of a animated image.
-			// By not loading them externally, we’re making sure the animation will
-			// get fired right away with all of its elements in place.
+		// Inlining two stacked SVGs because they’re a part of an animated image.
+		// By not loading them externally, we’re making sure the animation will
+		// get fired right away with all of its elements in place.
 
+		return (
 			<div className="two-factor-authentication__illustration" aria-hidden="true">
 				<svg className="two-factor-authentication__illustration-device">
 					<g fill="none" fill-rule="evenodd">
