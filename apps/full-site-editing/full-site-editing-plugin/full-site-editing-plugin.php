@@ -107,8 +107,7 @@ function a8c_fse_on_plugin_activation() {
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
 	Full_Site_Editing::register_template_post_types();
 
-
-	require_once __DIR__ . '/full-site-editing/utils/class-a8c-template-data-inserter.php';
+	require_once __DIR__ . '/full-site-editing/utils/class-a8c-wp-template-data-inserter.php';
 	$data_inserter = new A8C_WP_Template_Data_Inserter();
 	$data_inserter->insert_default_template_data();
 }

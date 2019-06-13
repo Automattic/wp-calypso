@@ -1,6 +1,17 @@
 <?php
+/**
+ * Template data inserter file.
+ *
+ * @package full-site-editing
+ */
 
+/**
+ * Class A8C_WP_Template_Data_Inserter
+ */
 class A8C_WP_Template_Data_Inserter {
+	/**
+	 * This function will be called on plugin activation hook.
+	 */
 	public function insert_default_template_data() {
 		$header_id = wp_insert_post(
 			[
@@ -54,23 +65,41 @@ class A8C_WP_Template_Data_Inserter {
 		wp_set_object_terms( $page_template_id, 'page_template', 'wp_template_type' );
 	}
 
+	/**
+	 * Returns default header template part content.
+	 *
+	 * @return string
+	 */
 	public function get_header_content() {
-		// TODO: replace with header blocks once they are ready
-		return "<!-- wp:heading -->" .
-		       "<h2>Test Header Content</h2>" .
-		       "<!-- /wp:heading -->";
+		// TODO: replace with header blocks once they are ready.
+		return '<!-- wp:heading -->' .
+				'<h2>Test Header Content</h2>' .
+				'<!-- /wp:heading -->';
 	}
 
+	/**
+	 * Returns default footer template part content.
+	 *
+	 * @return string
+	 */
 	public function get_footer_content() {
-		// TODO: replace with footer blocks once they are ready
-		return "<!-- wp:heading -->" .
-		       "<h2>Test Footer Content</h2>" .
-		       "<!-- /wp:heading -->";
+		// TODO: replace with footer blocks once they are ready.
+		return '<!-- wp:heading -->' .
+				'<h2>Test Footer Content</h2>' .
+				'<!-- /wp:heading -->';
 	}
 
+	/**
+	 * Returns default page template content.
+	 *
+	 * @param int $header_id ID of referenced header template part CPT.
+	 * @param int $footer_id ID of referenced footer template part CPT.
+	 *
+	 * @return string
+	 */
 	public function get_template_content( $header_id, $footer_id ) {
 		return "<!-- wp:a8c/template {\"templateId\":$header_id,\"align\":\"full\"} /-->" .
-		       "<!-- wp:a8c/post-content {\"align\":\"full\"} /-->" .
-		       "<!-- wp:a8c/template {\"templateId\":$footer_id,\"align\":\"full\"} /-->";
+				'<!-- wp:a8c/post-content {"align":"full"} /-->' .
+				"<!-- wp:a8c/template {\"templateId\":$footer_id,\"align\":\"full\"} /-->";
 	}
 }

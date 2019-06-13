@@ -37,9 +37,20 @@ class A8C_WP_Template {
 		}
 
 		$this->current_post_id = $post_id;
-		$this->template_id = $this->get_template_id();
+		$this->template_id     = $this->get_template_id();
 	}
 
+	/**
+	 * Returns template ID for current page if it exists.
+	 *
+	 * If template id is set in current post's meta (_wp_template_id) it will be returned.
+	 * Otherwise it falls back to global page template that is marked with page_template term
+	 * in wp_template_type taxonomy. Note that having only one term of this kind is not
+	 * currently enforced, so we'll just pick the latest page template that was created
+	 * (based on its post ID).
+	 *
+	 * @return null|int template ID for current page, or null if it doesn't exist.
+	 */
 	public function get_template_id() {
 		// If the specific template is referenced in post meta, us it.
 		$template_id = get_post_meta( $this->current_post_id, self::TEMPLATE_META_KEY, true );
@@ -114,7 +125,7 @@ class A8C_WP_Template {
 
 		$header_id = $template_blocks[0]['attrs']['templateId'];
 
-		if( ! has_term( 'header', 'wp_template_part_type', $header_id ) ) {
+		if ( ! has_term( 'header', 'wp_template_part_type', $header_id ) ) {
 			return null;
 		}
 
