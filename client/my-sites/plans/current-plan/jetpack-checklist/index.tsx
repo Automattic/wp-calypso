@@ -3,7 +3,7 @@
  */
 import React, { Fragment, PureComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, includes } from 'lodash';
+import { get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -303,8 +303,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackChecklist );
+export default connectComponent( localize( withTrackingTool( 'HotJar' )( JetpackChecklist ) ) );
