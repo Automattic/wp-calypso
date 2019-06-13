@@ -10,8 +10,6 @@ import { PlainText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { withSelect } from '@wordpress/data';
-import { compose } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -36,26 +34,6 @@ class SiteDescriptionEdit extends Component {
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if (
-			prevProps.isSaving === false &&
-			this.props.isSaving === true &&
-			this.state.fromApi !== this.state.value
-		) {
-			try {
-				apiFetch( {
-					path: '/wp/v2/settings',
-					method: 'POST',
-					data: {
-						description: this.state.value,
-					},
-				} );
-			} catch ( error ) {
-				this.handleApiError( true );
-			}
-		}
-	}
-
 	handleApiError( post = false ) {
 		if ( post ) {
 			this.props.setAttributes( {
@@ -66,7 +44,11 @@ class SiteDescriptionEdit extends Component {
 	}
 
 	render() {
-		const { attributes: { description }, isSelected, setAttributes } = this.props;
+		const {
+			attributes: { description },
+			isSelected,
+			setAttributes,
+		} = this.props;
 		if ( isSelected ) {
 			return (
 				<PlainText
@@ -82,11 +64,4 @@ class SiteDescriptionEdit extends Component {
 	}
 }
 
-export default compose( [
-	withSelect( select => {
-		const { isSavingPost } = select( 'core/editor' );
-		return {
-			isSaving: isSavingPost(),
-		};
-	} ),
-] )( SiteDescriptionEdit );
+export default SiteDescriptionEdit;
