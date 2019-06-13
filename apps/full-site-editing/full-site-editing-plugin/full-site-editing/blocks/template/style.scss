@@ -1,3 +1,17 @@
+/**
+ * Colors
+ */
+$dark-gray-500: #555d66;
+$blue-wordpress-700: #00669b;
+
+.template-block {
+	min-height: 150px;
+
+	&:hover .template-block__overlay {
+		display: grid;
+	}
+}
+
 .template-block.alignfull {
 	padding: 0 12px;
 }
@@ -17,5 +31,28 @@
 		content: '';
 		clear: both;
 		display: table;
+	}
+}
+
+.template-block__overlay {
+	display: none;
+	place-items: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba( $dark-gray-500, 0.7 );
+
+	a {
+		display: block;
+		background: white;
+		color: $blue-wordpress-700;
+		padding: 5px 10px;
+		border: solid 1px $blue-wordpress-700;
+
+		&:hover {
+			text-decoration: none;
+		}
 	}
 }

@@ -12,7 +12,7 @@ import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { BlockControls } from '@wordpress/editor';
-import { Fragment, RawHTML, useState, useEffect, useRef } from '@wordpress/element';
+import { Fragment, RawHTML } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
@@ -33,28 +33,12 @@ const TemplateEdit = compose(
 )( ( { attributes, isEditing, template, setAttributes, setState } ) => {
 	const { align, templateId } = attributes;
 
-	const templateBlockRef = useRef( null );
-
 	const toggleEditing = () => setState( { isEditing: ! isEditing } );
 
 	const onSelectTemplate = ( { id } ) => {
 		setState( { isEditing: false } );
 		setAttributes( { templateId: id } );
 	};
-
-	const [ isHovered, setIsHovered ] = useState( false );
-	const handleMouseOver = () => setIsHovered( true );
-	const handleMouseOut = () => setIsHovered( false );
-
-	useEffect( () => {
-		templateBlockRef.current.addEventListener( 'mouseover', handleMouseOver );
-		templateBlockRef.current.addEventListener( 'mouseout', handleMouseOut );
-
-		return () => {
-			templateBlockRef.current.removeEventListener( 'mouseover', handleMouseOver );
-			templateBlockRef.current.removeEventListener( 'mouseout', handleMouseOut );
-		};
-	}, [ templateBlockRef.current ] );
 
 	const showToggleButton = ! isEditing || !! templateId;
 	const showPlaceholder = isEditing || ! templateId;
@@ -77,7 +61,6 @@ const TemplateEdit = compose(
 				</BlockControls>
 			) }
 			<div
-				ref={ templateBlockRef }
 				className={ classNames( 'template-block', {
 					[ `align${ align }` ]: align,
 				} ) }
@@ -107,7 +90,11 @@ const TemplateEdit = compose(
 						<RawHTML className="template-block__content">
 							{ get( template, [ 'content', 'rendered' ] ) }
 						</RawHTML>
-						{ isHovered && <div className="template-block__content_overlay" /> }
+						<div className="template-block__overlay">
+							<a href={ `?post=${ templateId }&action=edit` }>
+								{ sprintf( __( 'Edit "%s"' ), get( template, [ 'title', 'rendered' ], '' ) ) }
+							</a>
+						</div>
 					</Fragment>
 				) }
 			</div>
