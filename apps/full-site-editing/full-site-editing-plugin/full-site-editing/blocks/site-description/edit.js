@@ -20,16 +20,16 @@ import { compose } from '@wordpress/compose';
 class SiteDescriptionEdit extends Component {
 	state = {
 		fromApi: null,
-		value: __( 'Site description loading…' ),
 	};
 
 	componentDidMount() {
+		const { setAttributes } = this.props;
 		try {
 			apiFetch( { path: '/wp/v2/settings' } ).then( ( { description } ) => {
 				this.setState( {
 					fromApi: description,
-					value: description,
 				} );
+				setAttributes( { description } );
 			} );
 		} catch ( error ) {
 			this.handleApiError();
@@ -58,27 +58,27 @@ class SiteDescriptionEdit extends Component {
 
 	handleApiError( post = false ) {
 		if ( post ) {
-			this.setState( {
-				value: this.state.fromApi,
+			this.props.setAttributes( {
+				description: this.state.fromApi,
 			} );
 		}
 		// trigger notice
 	}
 
 	render() {
-		const { isSelected } = this.props;
+		const { attributes: { description }, isSelected, setAttributes } = this.props;
 		if ( isSelected ) {
 			return (
 				<PlainText
 					className="wp-block-a8c-site-description"
-					value={ this.state.value }
-					onChange={ value => this.setState( { value } ) }
+					value={ description }
+					onChange={ value => setAttributes( { description: value } ) }
 					placeholder={ __( 'Site Description' ) }
 					aria-label={ __( 'Site Description' ) }
 				/>
 			);
 		}
-		return <p className="site-description">{ this.state.value }</p>;
+		return <p className="site-description">{ description }</p>;
 	}
 }
 

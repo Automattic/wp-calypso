@@ -20,6 +20,12 @@ registerBlockType( 'a8c/site-description', {
 		multiple: false,
 		reusable: false,
 	},
+	attributes: {
+		description: {
+			default: __( 'Site description loading…' ),
+			type: 'string',
+		},
+	},
 	edit,
 	save: () => null,
 } );
