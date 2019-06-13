@@ -84,13 +84,13 @@ class TransactionsHeader extends React.Component {
 		return (
 			<thead>
 				<tr className="billing-history__header-row">
-					<th className="billing-history__date billing-history__header-column">
+					<th
+						className="billing-history__date billing-history__trans-app billing-history__header-column"
+						colSpan="3"
+					>
 						{ this.renderDatePopover() }
-					</th>
-					<th className="billing-history__trans-app billing-history__header-column">
 						{ this.renderAppsPopover() }
 					</th>
-					<th className="billing-history__search-field billing-history__header-column" />
 				</tr>
 			</thead>
 		);
