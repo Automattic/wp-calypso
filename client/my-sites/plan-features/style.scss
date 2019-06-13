@@ -857,10 +857,10 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__header-billing-info {
-		display: flex;
+		display: block;
 		color: var( --color-text-subtle );
 		align-items: center;
-		text-align: initial;
+		text-align: center;
 	}
 
 	.plan-features__pricing {
