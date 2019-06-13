@@ -492,6 +492,7 @@
 }
 
 .sharing-buttons-tray__buttons {
+	@include clear-fix;
 	@include breakpoint( '<480px' ) {
 		margin-right: -16px;
 	}
@@ -962,6 +963,43 @@
 
 	&.is-bottom {
 		margin: 14px 0 0;
+
+		.sharing-buttons-preview-button {
+			border-width: 1px 1px 2px;
+			font-weight: 500;
+			box-shadow: none;
+			box-sizing: border-box;
+			line-height: 1;
+			border-radius: 4px;
+			padding: 7px;
+			float: left;
+			color: var( --color-neutral-50 );
+			background-color: var( --color-white );
+			border-color: var( --color-neutral-50 );
+			&:hover {
+				border-color: var( --color-neutral-100 );
+				color: var( --color-neutral-100 );
+			}
+			&:active {
+				border-width: 2px 1px 1px;
+			}
+
+			&.is-enabled {
+				color: var( --color-text-subtle );
+				background-color: var( --color-white );
+				border-color: var( --color-neutral-100 );
+				&:hover {
+					border-color: var( --color-neutral-200 );
+					color: var( --color-neutral-700 );
+				}
+			}
+
+			.sharing-buttons-preview-button__service {
+				line-height: inherit;
+				margin: 0;
+			}
+		}
+
 		@include breakpoint( '<480px' ) {
 			margin: 15px -8px 0;
 		}
@@ -1028,45 +1066,9 @@
 .sharing-buttons-preview__panel-content .sharing-buttons-preview-button {
 	margin-top: 8px;
 	cursor: pointer;
-	opacity: 0.6;
 	@include breakpoint( '<480px' ) {
 		margin: 18px 18px 0 0;
 	}
-
-	&:hover {
-		opacity: 0.8;
-	}
-
-	&.style-icon {
-		opacity: 0.4;
-	}
-
-	&.style-icon:hover {
-		border: none;
-		opacity: 0.7;
-	}
-
-	&.is-enabled {
-		opacity: 1;
-	}
-
-	/* These icons have a light background and need special treatment to stay readable. */
-	&.style-icon.share-email,
-	&.style-icon.share-print {
-		opacity: 0.6;
-
-		&:hover {
-			opacity: 0.9;
-		}
-
-		&.is-enabled {
-			opacity: 1;
-		}
-	}
-}
-
-.sharing-buttons-preview__panel.is-reordering .sharing-buttons-preview-button.is-enabled {
-	opacity: 1;
 }
 
 .sharing-buttons-preview__panel.is-reordering
