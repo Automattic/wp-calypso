@@ -81,7 +81,7 @@ export function getAllSiteTypes() {
 			defaultVertical: 'blogging', // used to conduct a vertical search and grab a default vertical for the segment
 			label: i18n.translate( 'Blog' ),
 			description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
-			theme: 'pub/independent-publisher-2',
+			theme: 'pub/modern-business',
 			designType: 'blog',
 			siteTitleLabel: i18n.translate( "Tell us your blog's name" ),
 			siteTitlePlaceholder: i18n.translate( "E.g., Stevie's blog " ),
