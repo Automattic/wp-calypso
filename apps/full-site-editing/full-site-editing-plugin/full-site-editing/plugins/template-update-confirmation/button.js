@@ -101,10 +101,7 @@ class TemplateUpdateConfirmationButton extends Component {
 	}
 
 	onPublish = () => {
-		// the large panel on smaller screens should auto-close so we can see the save notif
-		if ( ! window.matchMedia( '(min-width: 782px)' ).matches ) {
-			this.togglePanel();
-		}
+		this.togglePanel();
 		this.getOriginalButton().click();
 	};
 
