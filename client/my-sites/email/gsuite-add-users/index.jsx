@@ -73,21 +73,6 @@ class GSuiteAddUsers extends React.Component {
 		return null;
 	}
 
-	onUsersChange = users => {
-		this.setState( {
-			users,
-		} );
-	};
-
-	recordClickEvent = eventName => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
-		const { users } = this.state;
-		recordTracksEvent( eventName, {
-			domain_name: selectedDomainName,
-			user_count: users.length,
-		} );
-	};
-
 	handleContinue = () => {
 		const { domains, planType, selectedSite } = this.props;
 		const { users } = this.state;
@@ -106,6 +91,36 @@ class GSuiteAddUsers extends React.Component {
 	handleCancel = () => {
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_cancel_button_click' );
 		this.goToEmail();
+	};
+
+	handleUsersChange = users => {
+		const { previousUsers } = this.state;
+
+		this.recordUsersChangedEvent( previousUsers, users );
+
+		this.setState( {
+			users,
+		} );
+	};
+
+	recordClickEvent = eventName => {
+		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { users } = this.state;
+		recordTracksEvent( eventName, {
+			domain_name: selectedDomainName,
+			user_count: users.length,
+		} );
+	};
+
+	recordUsersChangedEvent = ( previousUsers, nextUsers ) => {
+		const { recordTracksEvent, selectedDomainName } = this.props;
+		if ( previousUsers.length !== nextUsers.length ) {
+			recordTracksEvent( 'calypso_email_management_gsuite_add_users_users_changed', {
+				domain_name: selectedDomainName,
+				next_user_count: nextUsers.length,
+				prev_user_count: previousUsers.length,
+			} );
+		}
 	};
 
 	componentDidMount() {
@@ -173,7 +188,7 @@ class GSuiteAddUsers extends React.Component {
 						<GSuiteNewUserList
 							extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
 							domains={ gSuiteSupportedDomains }
-							onUsersChange={ this.onUsersChange }
+							onUsersChange={ this.handleUsersChange }
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
 							users={ users }
 						>
