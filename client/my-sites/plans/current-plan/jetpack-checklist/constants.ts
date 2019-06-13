@@ -96,15 +96,3 @@ export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: Readonly< ChecklistTasksetUi >
 		tourId: 'jetpackLazyImages',
 	},
 };
-
-export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND: TaskUiDescription = {
-	id: 'jetpack_rewind',
-	title: translate( 'Backup and Scan' ),
-	description: translate(
-		"Connect your site's server to Jetpack to perform backups, restores, and security scans."
-	),
-	completedButtonText: translate( 'Change', { context: 'verb' } ),
-	completedTitle: translate( 'You turned on Backup and Scan.' ),
-	getUrl: siteSlug => `/settings/security/${ siteSlug }`,
-	duration: getJetpackChecklistTaskDuration( 3 ),
-};

@@ -27,7 +27,6 @@ import {
 	getJetpackChecklistTaskDuration,
 	JETPACK_SECURITY_CHECKLIST_TASKS,
 	JETPACK_PERFORMANCE_CHECKLIST_TASKS,
-	JETPACK_CHECKLIST_TASK_BACKUPS_REWIND,
 	ChecklistTasksetUi,
 } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -180,9 +179,16 @@ class JetpackChecklist extends PureComponent< Props > {
 					/>
 					{ isPaidPlan && isRewindAvailable && (
 						<Task
-							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_REWIND }
+							id="jetpack_rewind"
+							title={ translate( 'Backup and Scan' ) }
+							description={ translate(
+								"Connect your site's server to Jetpack to perform backups, restores, and security scans."
+							) }
+							completedButtonText={ translate( 'Change', { context: 'verb' } ) }
+							completedTitle={ translate( 'You turned on Backup and Scan.' ) }
+							duration={ getJetpackChecklistTaskDuration( 3 ) }
 							completed={ isRewindActive }
-							href={ JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ) }
+							href={ `/settings/security/${ siteSlug }` }
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_backups',
 								tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',
