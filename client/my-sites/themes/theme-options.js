@@ -142,7 +142,7 @@ const preview = {
 	action: themePreview,
 };
 
-const signupLabel = i18n.translate( 'Pick this design', {
+const signupLabel = i18n.translate( 'Start with this design', {
 	comment: 'when signing up for a WordPress.com account with a selected theme',
 } );
 
@@ -150,7 +150,7 @@ const signup = {
 	label: signupLabel,
 	extendedLabel: signupLabel,
 	getUrl: getThemeSignupUrl,
-	hideForTheme: state => getCurrentUser( state ),
+	hideForTheme: false,
 };
 
 const separator = {

@@ -289,6 +289,7 @@ class ThemeSheet extends React.Component {
 
 		const { siteSlug, id } = this.props;
 		const sitePart = siteSlug ? `/${ siteSlug }` : '';
+		const themeSignupOptions = this.props.options.signup;
 
 		const nav = (
 			<NavTabs label="Details">
@@ -301,6 +302,13 @@ class ThemeSheet extends React.Component {
 						{ filterStrings[ section ] }
 					</NavItem>
 				) ) }
+				{ this.props.isLoggedIn && this.isLoaded() && (
+					<NavItem
+						path={ themeSignupOptions.getUrl ? themeSignupOptions.getUrl( this.props.id ) : null }
+					>
+						{ themeSignupOptions.label }
+					</NavItem>
+				) }
 				{ this.shouldRenderPreviewButton() ? (
 					<NavItem
 						path={ this.props.demo_uri }
