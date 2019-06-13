@@ -2,13 +2,13 @@
  * External dependencies
  */
 import emailValidator from 'email-validator';
-import i18n from 'i18n-calypso';
+import i18n, { TranslateResult } from 'i18n-calypso';
 import { includes, mapValues } from 'lodash';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
 	value: string;
-	error: string | null;
+	error: TranslateResult | null;
 }
 
 export interface GSuiteNewUser {
