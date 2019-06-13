@@ -345,7 +345,6 @@ class WpcomChecklistComponent extends PureComponent {
 			trackTaskDisplay: this.trackTaskDisplay,
 			// only render an unclickable grey circle
 			disableIcon: ! task.isCompleted && 'email_verified' === task.id,
-			selectedTaskId: this.state.selectedTaskId,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
