@@ -1,4 +1,3 @@
-/* global fullSiteEditing */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import { Button } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
 import { withGlobalEvents, compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
-import { debounce, get } from 'lodash';
+import { debounce, get, isNil } from 'lodash';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -36,10 +35,7 @@ class TemplateUpdateConfirmationButton extends Component {
 	onResize() {
 		const originalButton = this.getOriginalButton();
 		let { buttonStyle } = initialState;
-		if (
-			typeof originalButton === 'undefined' ||
-			! ( 'getBoundingClientRect' in originalButton )
-		) {
+		if ( isNil( originalButton ) || ! ( 'getBoundingClientRect' in originalButton ) ) {
 			// if it's not there, might need a timeout to await it?
 			return this.setState( { buttonStyle } );
 		}
@@ -47,13 +43,22 @@ class TemplateUpdateConfirmationButton extends Component {
 		buttonStyle = {
 			// height doesn't line up perfectly with default styles
 			height: '33px',
-			textTransform: 'uppercase',
 			position: 'fixed',
 			zIndex: '10001',
 			top: rect.top,
 			left: rect.x,
 		};
+		if ( ! window.matchMedia( '(min-width: 600px)' ).matches ) {
+			buttonStyle.paddingLeft = '5px';
+			buttonStyle.paddingRight = '5px';
+		}
 		this.setState( { buttonStyle } );
+	}
+
+	getHidingCss() {
+		return `.edit-post-header .editor-post-publish-button {
+			visibility: hidden !important;
+		}`;
 	}
 
 	render() {
@@ -70,24 +75,36 @@ class TemplateUpdateConfirmationButton extends Component {
 					isLarge
 					style={ this.state.buttonStyle }
 					disabled={ isButtonDisabled }
+					isBusy={ this.isSaving }
 				>
 					{ __( 'Update' ) }
 				</Button>
 				{ this.state.isPanelOpen && (
-					<Panel isBusy={ this.isSaving } onClose={ this.togglePanel } />
+					<Panel
+						isBusy={ this.isSaving }
+						onClose={ this.togglePanel }
+						onSave={ this.onPublish }
+						disabled={ isButtonDisabled }
+					/>
 				) }
+				<style>{ this.getHidingCss() }</style>
 			</Fragment>
 		);
 	}
 
 	shouldRender() {
-		if ( 'wp_template_part' !== fullSiteEditing ) {
+		const { isPublished, isPublishable, isSaveable } = this.props;
+		if ( ! isPublished || ! isPublishable || ! isSaveable ) {
 			return false;
 		}
 		return true;
 	}
 
 	onPublish = () => {
+		// the large panel on smaller screens should auto-close so we can see the save notif
+		if ( ! window.matchMedia( '(min-width: 782px)' ).matches ) {
+			this.togglePanel();
+		}
 		this.getOriginalButton().click();
 	};
 
@@ -105,7 +122,6 @@ export default compose( [
 			isEditedPostPublishable,
 			isPostSavingLocked,
 			getCurrentPost,
-			getCurrentPostType,
 		} = select( 'core/editor' );
 		return {
 			isSaving: isSavingPost(),
@@ -114,7 +130,6 @@ export default compose( [
 			isPublishable: isEditedPostPublishable(),
 			isPublished: isCurrentPostPublished(),
 			hasPublishAction: get( getCurrentPost(), [ '_links', 'wp:action-publish' ], false ),
-			postType: getCurrentPostType(),
 		};
 	} ),
 	withGlobalEvents( {

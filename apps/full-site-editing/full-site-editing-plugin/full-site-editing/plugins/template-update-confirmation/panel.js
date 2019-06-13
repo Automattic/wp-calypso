@@ -8,12 +8,13 @@ import { __ } from '@wordpress/i18n';
 
 export default class Panel extends Component {
 	render() {
+		const { onSave, onClose, isBusy, disabled } = this.props;
 		return (
 			<div className="edit-post-layout">
 				<div className="editor-post-publish-panel">
 					<div className="editor-post-publish-panel__header">
 						<div className="editor-post-publish-panel__header-publish-button">
-							<Button isPrimary isLarge>
+							<Button isPrimary isLarge isBusy={ isBusy } onClick={ onSave } disabled={ disabled }>
 								{ __( 'Publish' ) }
 							</Button>
 							<span className="editor-post-publish-panel__spacer" />
@@ -21,8 +22,7 @@ export default class Panel extends Component {
 
 						<IconButton
 							aria-expanded={ true }
-							// WILL ANYTHING FIRE HERE? CHECK IT
-							onClick={ this.props.onClose }
+							onClick={ onClose }
 							icon="no-alt"
 							label={ __( 'Close panel' ) }
 						/>
