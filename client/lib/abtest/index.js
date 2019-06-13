@@ -120,6 +120,15 @@ ABTest.prototype.init = function( name, geoLocation ) {
 		}
 	}
 
+	this.localeExceptions = false;
+	if (
+		testConfig.localeExceptions &&
+		isArray( testConfig.localeExceptions ) &&
+		every( testConfig.localeExceptions, langSlugIsValid )
+	) {
+		this.localeExceptions = testConfig.localeExceptions;
+	}
+
 	const variationDatestamp = testConfig.datestamp;
 
 	this.name = name;
@@ -220,6 +229,11 @@ ABTest.prototype.isEligibleForAbTest = function() {
 	}
 
 	if ( this.localeTargets && ! isUsingGivenLocales( this.localeTargets, this.experimentId ) ) {
+		return false;
+	} else if (
+		this.localeExceptions &&
+		isUsingGivenLocales( this.localeExceptions, this.experimentId )
+	) {
 		return false;
 	}
 
