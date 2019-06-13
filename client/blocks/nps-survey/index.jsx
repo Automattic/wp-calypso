@@ -9,7 +9,7 @@ import React, { PureComponent, Fragment } from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import { isNumber, noop, trim } from 'lodash';
 
 /**
@@ -126,7 +126,12 @@ export class NpsSurvey extends PureComponent {
 	}
 
 	shouldShowPromotion() {
-		return this.props.isBusinessUser && isNumber( this.state.score ) && this.state.score < 7;
+		return (
+			'en' === getLocaleSlug() &&
+			this.props.isBusinessUser &&
+			isNumber( this.state.score ) &&
+			this.state.score < 7
+		);
 	}
 
 	renderScoreForm() {
@@ -191,13 +196,15 @@ export class NpsSurvey extends PureComponent {
 					>
 						{ translate( 'Submit' ) }
 					</Button>
-					<Button
-						borderless
-						className="nps-survey__not-answer-button"
-						onClick={ this.handleFeedbackFormClose }
-					>
-						{ this.shouldShowPromotion() ? translate( 'Skip' ) : translate( 'Close' ) }
-					</Button>
+					{ ! this.shouldShowPromotion() && (
+						<Button
+							borderless
+							className="nps-survey__not-answer-button"
+							onClick={ this.handleFeedbackFormClose }
+						>
+							{ translate( 'Close' ) }
+						</Button>
+					) }
 				</div>
 			</Fragment>
 		);
@@ -208,7 +215,7 @@ export class NpsSurvey extends PureComponent {
 
 		return (
 			<div className="nps-survey__promotion">
-				<p>{ translate( 'Thank you for your feedback. We’d like to help!' ) }</p>
+				<p>{ translate( 'Thank you for your feedback!' ) }</p>
 				{ hasAvailableConciergeSession && (
 					<Fragment>
 						<p>
@@ -232,7 +239,7 @@ export class NpsSurvey extends PureComponent {
 				{ ! hasAvailableConciergeSession && (
 					<p>
 						{ translate(
-							'Connect with the WordPress.com support team {{contact}}over live chat or email{{/contact}} right now and we’d love to help you as best we can.',
+							'To get help with your site, connect with our WordPress.com support team {{contact}}over live chat or email{{/contact}} now.',
 							{
 								components: {
 									contact: <a href={ CALYPSO_CONTACT } onClick={ this.handleLinkClick } />,
@@ -266,7 +273,6 @@ export class NpsSurvey extends PureComponent {
 				<Button
 					borderless
 					className="nps-survey__close-button"
-					disabled={ this.state.currentForm === 'feedback' && this.shouldShowPromotion() }
 					onClick={
 						this.state.currentForm === 'feedback'
 							? this.handleFeedbackFormClose
