@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment, PureComponent, ReactNode } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -23,7 +23,7 @@ import { format as formatUrl, parse as parseUrl } from 'url';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
-import { getJetpackChecklistTaskDuration, ChecklistTasksetUi } from './constants';
+import { getJetpackChecklistTaskDuration } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { isEnabled } from 'config';
@@ -83,39 +83,6 @@ class JetpackChecklist extends PureComponent< Props > {
 			location: 'JetpackChecklist',
 		} );
 	};
-
-	renderTaskSet( checklistTasks: ChecklistTasksetUi ): ReactNode {
-		if ( ! this.props.taskStatuses ) {
-			return null;
-		}
-		const taskIds = Object.keys( this.props.taskStatuses ).filter(
-			taskId => taskId in checklistTasks
-		);
-
-		return taskIds.map( taskId => {
-			const task = checklistTasks[ taskId ];
-
-			const isComplete = this.isComplete( taskId );
-
-			return (
-				<Task
-					completed={ isComplete }
-					completedButtonText={ task.completedButtonText }
-					completedTitle={ task.completedTitle }
-					description={ task.description }
-					duration={ task.duration }
-					href={ task.getUrl( this.props.siteSlug, isComplete ) }
-					id={ taskId }
-					key={ taskId }
-					onClick={ this.handleTaskStart( {
-						taskId,
-						tourId: get( task, [ 'tourId' ] ),
-					} ) }
-					title={ task.title }
-				/>
-			);
-		} );
-	}
 
 	trackExpandTask = ( { id }: { id: string } ) =>
 		void this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
