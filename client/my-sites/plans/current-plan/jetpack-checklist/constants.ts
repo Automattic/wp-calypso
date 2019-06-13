@@ -108,11 +108,3 @@ export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND: TaskUiDescription = {
 	getUrl: siteSlug => `/settings/security/${ siteSlug }`,
 	duration: getJetpackChecklistTaskDuration( 3 ),
 };
-
-export const JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS: TaskUiDescription = {
-	id: 'jetpack_vaultpress',
-	title: translate( "We're automatically turning on Backup and Scan." ),
-	completedTitle: translate( "We've automatically turned on Backup and Scan." ),
-	completedButtonText: translate( 'View security dashboard' ),
-	getUrl: () => 'https://dashboard.vaultpress.com',
-};

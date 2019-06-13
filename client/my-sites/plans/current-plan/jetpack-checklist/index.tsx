@@ -28,7 +28,6 @@ import {
 	JETPACK_SECURITY_CHECKLIST_TASKS,
 	JETPACK_PERFORMANCE_CHECKLIST_TASKS,
 	JETPACK_CHECKLIST_TASK_BACKUPS_REWIND,
-	JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS,
 	ChecklistTasksetUi,
 } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -192,9 +191,12 @@ class JetpackChecklist extends PureComponent< Props > {
 					) }
 					{ isPaidPlan && isRewindUnavailable && productInstallStatus && (
 						<Task
-							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS }
+							id="jetpack_vaultpress"
+							title={ translate( "We're automatically turning on Backup and Scan." ) }
+							completedTitle={ translate( "We've automatically turned on Backup and Scan." ) }
+							completedButtonText={ translate( 'View security dashboard' ) }
 							completed={ vaultpressFinished }
-							href={ JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ) }
+							href="https://dashboard.vaultpress.com"
 							inProgress={ ! vaultpressFinished }
 							onClick={ this.handleTaskStart( { taskId: 'jetpack_backups' } ) }
 						/>
