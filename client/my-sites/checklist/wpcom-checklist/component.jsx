@@ -330,14 +330,11 @@ class WpcomChecklistComponent extends PureComponent {
 				break;
 		}
 
-		const buttonPrimary = this.state.selectedTaskId ? this.state.selectedTaskId === task.id : true;
-
 		const baseProps = {
 			id: task.id,
 			key: task.id,
 			completed: task.isCompleted,
 			siteSlug,
-			buttonPrimary,
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
 			// only render an unclickable grey circle
