@@ -31,12 +31,12 @@ class ImporterError extends React.PureComponent {
 	contactSupport = event => {
 		event.preventDefault();
 		event.stopPropagation();
-		Page( '/help/contact' );
+		Page( '/help' );
 	};
 
 	getImportError = () => {
 		return this.props.translate(
-			'%(errorDescription)s{{br/}}{{a}}Try again{{/a}} or {{cs}}contact support{{/cs}}.',
+			'%(errorDescription)s{{br/}}{{a}}Try again{{/a}} or {{cs}}get help{{/cs}}.',
 			{
 				args: {
 					errorDescription: this.props.description,
@@ -57,7 +57,7 @@ class ImporterError extends React.PureComponent {
 		const { description = '' } = this.props;
 
 		return this.props.translate(
-			'%(errorDescription)s{{br/}}Make sure you are using a valid WordPress export file in XML or ZIP format. If that does not work, {{cs}}contact Support{{/cs}}.',
+			'%(errorDescription)s{{br/}}Make sure you are using a valid WordPress export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
 			{
 				args: {
 					errorDescription: description.length ? description : defaultError,
