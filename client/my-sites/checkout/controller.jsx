@@ -49,6 +49,7 @@ export function checkout( context, next ) {
 			selectedSite={ selectedSite }
 			reduxStore={ context.store }
 			redirectTo={ context.query.redirect_to }
+			shouldShowSecondary={ true }
 		/>
 	);
 
@@ -129,9 +130,14 @@ export function conciergeSessionNudge( context, next ) {
 	);
 
 	context.primary = (
-		<CartData>
-			<ConciergeSessionNudge receiptId={ Number( receiptId ) } siteSlugParam={ site } />
-		</CartData>
+		<CheckoutContainer shouldShowSecondary={ false } selectedSite={ selectedSite }>
+			<CartData>
+				<ConciergeSessionNudge
+					receiptId={ Number( receiptId ) }
+					siteSlugParam={ site }
+				/>
+			</CartData>
+		</CheckoutContainer>
 	);
 
 	next();
