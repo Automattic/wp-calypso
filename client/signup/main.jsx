@@ -387,7 +387,7 @@ class Signup extends React.Component {
 			} );
 		}
 
-		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || dependencies.oauth2_client_id ) ) {
+		if ( ! userIsLoggedIn && config.isEnabled( 'oauth' ) ) {
 			debug( `Handling oauth login` );
 			oauthToken.setToken( dependencies.bearer_token );
 			this.signupFlowController.reset();

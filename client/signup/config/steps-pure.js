@@ -542,6 +542,22 @@ export function generateSteps( {
 			providesDependencies: [ 'bearer_token', 'email', 'username' ],
 			unstorableDependencies: [ 'bearer_token' ],
 		},
+
+		'oauth2-passwordless': {
+			stepName: 'oauth2-passwordless',
+			props: {
+				oauth2Signup: true,
+			},
+			providesToken: true,
+			providesDependencies: [
+				'bearer_token',
+				'email',
+				'username',
+				'oauth2_client_id',
+				'oauth2_redirect',
+			],
+			unstorableDependencies: [ 'bearer_token' ],
+		},
 	};
 }
 
