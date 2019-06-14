@@ -381,7 +381,10 @@ const analytics = {
 		recordRegistration();
 	},
 
-	recordSignupComplete: function( { isNewUser, isNewSite, hasCartItems, flow }, now ) {
+	recordSignupComplete: function(
+		{ isNewUser, isNewSite, hasCartItems, flow, isNewishUserSite },
+		now
+	) {
 		if ( ! now ) {
 			// Delay using the analytics localStorage queue.
 			return analytics.queue.add(
@@ -400,12 +403,25 @@ const analytics = {
 		} );
 
 		// Google Analytics
-		const flags = [
+		let flags = [
 			isNewUser && 'is_new_user',
 			isNewSite && 'is_new_site',
 			hasCartItems && 'has_cart_items',
 		].filter( flag => false !== flag );
+
 		analytics.ga.recordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
+
+		if ( isNewishUserSite ) {
+			// Tracks
+			analytics.tracks.recordEvent( 'calypso_new_user_site_creation', {
+				flow: flow,
+				has_cart_items: hasCartItems,
+			} );
+
+			// Google Analytics
+			flags = [ hasCartItems && 'has_cart_items' ].filter( flag => false !== flag );
+			analytics.ga.recordEvent( 'Signup', 'calypso_new_user_site_creation:' + flags.join( ',' ) );
+		}
 
 		// Ad Tracking: Deprecated Floodlight pixels.
 		recordSignupCompletionInFloodlight(); // Every signup.
