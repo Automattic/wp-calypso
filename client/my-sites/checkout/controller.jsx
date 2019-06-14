@@ -22,6 +22,8 @@ import ConciergeSessionNudge from './concierge-session-nudge';
 import ConciergeQuickstartSession from './concierge-quickstart-session';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/upgrades/actions';
+import CheckoutData from 'components/data/checkout';
+import Checkout from './checkout';
 
 export function checkout( context, next ) {
 	const { feature, plan, product, purchaseId } = context.params;
@@ -130,14 +132,22 @@ export function conciergeSessionNudge( context, next ) {
 	);
 
 	context.primary = (
-		<CheckoutContainer shouldShowCart={ false } selectedSite={ selectedSite }>
-			<CartData>
+		// <CheckoutContainer shouldShowCart={ false } selectedSite={ selectedSite }>
+		// 	<CartData>
+		// 		<ConciergeSessionNudge
+		// 			receiptId={ Number( receiptId ) }
+		// 			selectedSiteId={ selectedSite.ID }
+		// 		/>
+		// 	</CartData>
+		// </CheckoutContainer>
+		<CartData>
+			<Checkout>
 				<ConciergeSessionNudge
 					receiptId={ Number( receiptId ) }
 					siteSlugParam={ site }
 				/>
-			</CartData>
-		</CheckoutContainer>
+			</Checkout>
+		</CartData>
 	);
 
 	next();

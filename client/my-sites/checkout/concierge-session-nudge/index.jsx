@@ -45,6 +45,7 @@ import './style.scss';
 export class ConciergeSessionNudge extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
+		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
 	};
 
 	render() {
@@ -313,21 +314,24 @@ export class ConciergeSessionNudge extends React.Component {
 
 		trackUpsellButtonClick( `calypso_concierge_session_upsell_decline_button_click` );
 
-		if ( ! receiptId ) {
-			// Send the user to a generic page (not post-purchase related).
-			page( `/stats/day/${ siteSlug }` );
-		} else if ( isEligibleForChecklist ) {
-			if ( redirectToPageBuilder ) {
-				return page( getEditHomeUrl( siteSlug ) );
-			}
-			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-				site: siteSlug,
-				plan: 'paid',
-			} );
-			page( `/checklist/${ siteSlug }` );
-		} else {
-			page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
-		}
+		// if ( ! receiptId ) {
+		// 	// Send the user to a generic page (not post-purchase related).
+		// 	page( `/stats/day/${ siteSlug }` );
+		// } else if ( isEligibleForChecklist ) {
+		// 	if ( redirectToPageBuilder ) {
+		// 		return page( getEditHomeUrl( siteSlug ) );
+		// 	}
+		// 	analytics.tracks.recordEvent( 'calypso_checklist_assign', {
+		// 		site: siteSlug,
+		// 		plan: 'paid',
+		// 	} );
+		// 	page( `/checklist/${ siteSlug }` );
+		// } else {
+		// 	page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
+		// }
+
+		console.log('rand is ' + this.props.rand);
+		this.props.handleCheckoutCompleteRedirect();
 	};
 
 	handleClickAccept = buttonAction => {

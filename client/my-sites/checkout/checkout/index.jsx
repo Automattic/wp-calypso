@@ -302,9 +302,13 @@ export class Checkout extends React.Component {
 	redirectIfEmptyCart() {
 		const { selectedSiteSlug, transaction, shouldShowCart } = this.props;
 
+		if ( ! transaction ) {
+			return true;
+		}
+
 		if ( ! shouldShowCart ) {
 			// If we are not showing the cart, then we are showing an offer page, so not required to redirect
-			return false;
+			// return false;
 		}
 
 		if ( ! this.state.previousCart && this.props.product ) {
@@ -472,6 +476,12 @@ export class Checkout extends React.Component {
 
 		if ( this.props.isJetpackNotAtomic ) {
 			return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
+		}
+
+		console.log('receiptId is ' + receiptId);
+		if ( ':receiptId' === receiptId ) {
+			// Send the user to a generic page (not post-purchase related).
+			return `/stats/day/${ selectedSiteSlug }`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
@@ -717,6 +727,7 @@ export class Checkout extends React.Component {
 
 		return (
 			cart &&
+			transaction &&
 			! hasDomainDetails( transaction ) &&
 			( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
 		);
@@ -748,9 +759,8 @@ export class Checkout extends React.Component {
 		if ( this.props.children ) {
 			return React.Children.map( this.props.children, child => {
 				return (
-					child &&
 					React.cloneElement( child, {
-						handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
+						handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect
 					} )
 				);
 			} );
