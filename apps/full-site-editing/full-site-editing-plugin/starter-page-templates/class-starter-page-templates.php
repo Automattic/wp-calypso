@@ -120,9 +120,9 @@ class Starter_Page_Templates {
 
 		// Load Tracks data if available.
 		$tracks_identity    = null;
-		$is_wpcom           = ( defined( 'IS_WPCOM' ) && IS_WPCOM );
+		$is_atomic          = defined( 'IS_ATOMIC' ) && IS_ATOMIC;
 		$has_active_jetpack = ( class_exists( 'Jetpack' ) && Jetpack::is_active() );
-		if ( $has_active_jetpack && ! $is_wpcom && class_exists( 'Jetpack_Tracks_Client' ) ) {
+		if ( $is_atomic && $has_active_jetpack && class_exists( 'Jetpack_Tracks_Client' ) ) {
 			$tracks_identity = Jetpack_Tracks_Client::get_connected_user_tracks_identity();
 			wp_enqueue_script(
 				'jp-tracks',
