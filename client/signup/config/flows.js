@@ -70,17 +70,6 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
-function replaceStepInFlow( flow, oldStepName, newStepName ) {
-	// no change
-	if ( ! includes( flow.steps, oldStepName ) ) {
-		return flow;
-	}
-
-	return assign( {}, flow, {
-		steps: flow.steps.map( stepName => ( stepName === oldStepName ? newStepName : stepName ) ),
-	} );
-}
-
 /**
  * Properly filter the current flow.
  *
@@ -241,13 +230,6 @@ const Flows = {
 	 * @return {Object} A filtered flow object
 	 */
 	getABTestFilteredFlow( flowName, flow ) {
-		if ( 'onboarding' === flowName && 'remove' === abtest( 'removeDomainsStepFromOnboarding' ) ) {
-			flow = Flows.removeStepFromFlow( 'domains-with-preview', flow );
-			flow = replaceStepInFlow( flow, 'site-title-with-preview', 'site-title-without-domains' );
-
-			return flow;
-		}
-
 		return flow;
 	},
 
