@@ -302,6 +302,11 @@ class InvitePeople extends React.Component {
 
 	enableSSO = () => this.props.activateModule( this.props.siteId, 'sso' );
 
+	isExternalRole = role => {
+		const roles = [ 'administrator', 'editor', 'author', 'contributor' ];
+		return includes( roles, role );
+	};
+
 	renderInviteForm = () => {
 		const {
 			site,
@@ -356,7 +361,7 @@ class InvitePeople extends React.Component {
 							explanation={ this.renderRoleExplanation() }
 						/>
 
-						{ 'administrator' === this.state.role && (
+						{ this.isExternalRole( this.state.role ) && (
 							<ContractorSelect
 								onChange={ this.onExternalChange }
 								checked={ this.state.isExternal }

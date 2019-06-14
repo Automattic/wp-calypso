@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
-import { assign, filter, omit, pick } from 'lodash';
+import { assign, filter, includes, omit, pick } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -131,10 +131,13 @@ class EditUserForm extends Component {
 
 		// we may need to change the external contributor status if the user role changes
 		if ( 'roles' === event.target.name ) {
-			if ( 'administrator' !== event.target.value && true === this.state.isExternalContributor ) {
+			if (
+				this.isExternalRole( event.target.value ) &&
+				true === this.state.isExternalContributor
+			) {
 				stateChange.isExternalContributor = false;
 			} else if (
-				'administrator' === event.target.value &&
+				this.isExternalRole( event.target.value ) &&
 				true === this.props.isExternalContributor
 			) {
 				// restore external contributor if other role is clicked then changed back
@@ -146,6 +149,11 @@ class EditUserForm extends Component {
 	};
 
 	handleExternalChange = event => this.setState( { isExternalContributor: event.target.checked } );
+
+	isExternalRole = role => {
+		const roles = [ 'administrator', 'editor', 'author', 'contributor' ];
+		return includes( roles, role );
+	};
 
 	renderField( fieldId ) {
 		let returnField = null;
@@ -161,7 +169,7 @@ class EditUserForm extends Component {
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'roles' ) }
 						/>
-						{ ! this.props.isVip && 'administrator' === this.state.roles && (
+						{ ! this.props.isVip && this.isExternalRole( this.state.roles ) && (
 							<ContractorSelect
 								onChange={ this.handleExternalChange }
 								checked={ this.state.isExternalContributor }
