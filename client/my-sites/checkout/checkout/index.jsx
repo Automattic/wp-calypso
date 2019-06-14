@@ -300,15 +300,10 @@ export class Checkout extends React.Component {
 	}
 
 	redirectIfEmptyCart() {
-		const { selectedSiteSlug, transaction, shouldShowCart } = this.props;
+		const { selectedSiteSlug, transaction } = this.props;
 
 		if ( ! transaction ) {
 			return true;
-		}
-
-		if ( ! shouldShowCart ) {
-			// If we are not showing the cart, then we are showing an offer page, so not required to redirect
-			// return false;
 		}
 
 		if ( ! this.state.previousCart && this.props.product ) {
@@ -389,7 +384,12 @@ export class Checkout extends React.Component {
 
 		// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
-		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
+		let receiptId;
+		if ( receipt ) {
+			receiptId = receipt.receipt_id;
+		} else {
+			receiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
+		}
 
 		if ( hasRenewalItem( cart ) ) {
 			renewalItem = getRenewalItems( cart )[ 0 ];
@@ -465,7 +465,7 @@ export class Checkout extends React.Component {
 
 		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
 
-		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
+		if ( this.props.isEligibleForCheckoutToChecklist && ( receipt || receiptId ) ) {
 			if ( this.props.redirectToPageBuilder ) {
 				return getEditHomeUrl( selectedSiteSlug );
 			}
@@ -478,7 +478,6 @@ export class Checkout extends React.Component {
 			return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
 		}
 
-		console.log('receiptId is ' + receiptId);
 		if ( ':receiptId' === receiptId ) {
 			// Send the user to a generic page (not post-purchase related).
 			return `/stats/day/${ selectedSiteSlug }`;
@@ -758,11 +757,9 @@ export class Checkout extends React.Component {
 
 		if ( this.props.children ) {
 			return React.Children.map( this.props.children, child => {
-				return (
-					React.cloneElement( child, {
-						handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect
-					} )
-				);
+				return React.cloneElement( child, {
+					handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
+				} );
 			} );
 		}
 

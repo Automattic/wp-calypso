@@ -39,14 +39,16 @@ class CheckoutContainer extends React.Component {
 			selectedSite,
 			reduxStore,
 			redirectTo,
-			shouldShowCart,
+			shouldShowCart = true,
+			clearTransaction,
 		} = this.props;
 
+		const TransactionData = clearTransaction ? CartData : CheckoutData;
 		return (
 			<>
 				{ this.renderCheckoutHeader() }
 				<div className="checkout__container">
-					<CartData>
+					<TransactionData>
 						<Checkout
 							product={ product }
 							purchaseId={ purchaseId }
@@ -59,13 +61,13 @@ class CheckoutContainer extends React.Component {
 						>
 							{ this.props.children }
 						</Checkout>
+					</TransactionData>
 
-						{ shouldShowCart && (
-							<CartData>
-								<SecondaryCart selectedSite={ selectedSite } />
-							</CartData>
-						) }
-					</CartData>
+					{ shouldShowCart && (
+						<CartData>
+							<SecondaryCart selectedSite={ selectedSite } />
+						</CartData>
+					) }
 				</div>
 			</>
 		);
@@ -73,4 +75,3 @@ class CheckoutContainer extends React.Component {
 }
 
 export default localize( CheckoutContainer );
-s
