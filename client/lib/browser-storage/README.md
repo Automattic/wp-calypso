@@ -31,14 +31,13 @@ async function demo() {
   await setStoredItem( 'my-stored-key', 'some value' );
 
   // Use memory storage.
-  bypassPersistentStorage( true );
+  await bypassPersistentStorage( true );
   await setStoredItem( 'my-stored-key', 'another value' );
 
   // Use persistent storage again.
-  bypassPersistentStorage( false );
+  await bypassPersistentStorage( false );
   console.log( await getStoredItem( 'my-stored-key' ) ); // 'some value'
 }
 ```
 
-`bypassPersistentStorage` simply toggles between memory and persistent storage, so it is up to
-consumers to add any semantics they may see fit, such as clearing storage on switch.
+`bypassPersistentStorage` clears the memory store every time it's called with a truthy value.

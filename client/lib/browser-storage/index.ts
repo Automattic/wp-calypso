@@ -31,9 +31,16 @@ const getDB = memoizeLast( () => {
  * Whether persistent storage should be bypassed, using a memory store instead.
  *
  * @param shouldBypassPersistentStorage Whether persistent storage should be bypassed.
+ * @return A promise that gets resolved when all items are successfully cleared.
  */
 export function bypassPersistentStorage( shouldBypassPersistentStorage: boolean ) {
 	shouldBypass = shouldBypassPersistentStorage;
+
+	if ( shouldBypass ) {
+		return clearStorage();
+	}
+
+	return Promise.resolve();
 }
 
 /**
