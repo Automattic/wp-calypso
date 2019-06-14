@@ -29,6 +29,7 @@ export default class Button extends PureComponent {
 			'is-primary': this.props.primary,
 			'is-scary': this.props.scary,
 			'is-busy': this.props.busy,
+			'is-block': this.props.block,
 			'is-borderless': this.props.borderless,
 		} );
 

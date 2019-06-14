@@ -180,7 +180,7 @@ class Starter_Page_Templates {
 		$vertical_templates = get_transient( $transient_key );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
-		if ( false === $vertical_templates ) {
+		if ( false === $vertical_templates || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ) {
 			$request_url = add_query_arg(
 				[
 					'_locale' => $this->get_iso_639_locale(),

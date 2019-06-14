@@ -67,6 +67,11 @@ import {
 import { getPlanFeaturesObject } from 'lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class PlanFeatures extends Component {
 	render() {
 		const { isInSignup, planProperties, plans, selectedPlan, withScroll } = this.props;

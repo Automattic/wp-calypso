@@ -95,6 +95,10 @@
 
 	& + .form-setting-explanation {
 		padding-right: 55px;
+
+		@include breakpoint( '<660px' ) {
+			padding-right: 0;
+		}
 	}
 
 	.table-row {
@@ -184,6 +188,10 @@
 			// Increase width for PriceInput
 			width: 13em;
 			padding-right: 79px;
+
+			@include breakpoint( '<660px' ) {
+				padding-right: 24px;
+			}
 		}
 
 		.form-text-input-with-affixes {

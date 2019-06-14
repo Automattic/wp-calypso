@@ -1,62 +1,53 @@
-/** @format */
 /**
  * External dependencies
  */
-import request from 'superagent';
-import { get, noop } from 'lodash';
+import { noop } from 'lodash';
 
-const querymShotsEndpoint = options => {
-	const maxRetries = get( options, 'maxRetries', 1 );
-	const retryTimeout = get( options, 'retryTimeout', 1000 );
-	const currentRetries = get( options, 'currentRetries', 0 );
+export async function loadmShotsPreview( options = {} ) {
+	const { maxRetries = 1, retryTimeout = 1000 } = options;
 	const url = options.url || '';
-
-	const resolve = options.resolve || noop;
-	const reject = options.reject || noop;
-
-	const mShotsEndpointUrl = `https://s0.wp.com/mshots/v1/${ url }`;
 
 	if ( ! url ) {
 		// TODO translate
-		reject( 'You must specify a site URL to be able to generate a preview of the site' );
-		return;
+		throw new Error( 'You must specify a site URL to be able to generate a preview of the site' );
 	}
 
-	request
-		.get( mShotsEndpointUrl )
-		.responseType( 'blob' )
-		.then( res => {
-			if (
-				( res.type === null || res.type === 'image/gif' ) &&
-				maxRetries > 0 &&
-				currentRetries < maxRetries
-			) {
-				// Still generating the preview or something failed in mShots
-				setTimeout(
-					querymShotsEndpoint.bind( this, {
-						...options,
-						currentRetries: currentRetries + 1,
-					} ),
-					retryTimeout
-				);
-			} else if ( res.type === 'image/jpeg' ) {
-				// Successfully generated the preview
-				try {
-					resolve( window.URL.createObjectURL( res.xhr.response ) );
-				} catch ( e ) {
-					resolve( mShotsEndpointUrl );
-				}
-			} else {
-				reject();
+	const mShotsEndpointUrl = `https://s0.wp.com/mshots/v1/${ url }`;
+
+	for ( let retries = 0; ; retries++ ) {
+		const response = await fetch( mShotsEndpointUrl, { method: 'GET' } );
+		const contentType = response.ok && response.headers.get( 'Content-Type' );
+
+		// Successfully generated the preview.
+		if ( contentType && contentType === 'image/jpeg' ) {
+			try {
+				const blob = await response.blob();
+				return window.URL.createObjectURL( blob );
+			} catch ( e ) {
+				return mShotsEndpointUrl;
 			}
-		} )
-		.catch( reject ); // Pass through the reject notice
-};
+		}
 
-export const loadmShotsPreview = ( options = {} ) => {
-	return new Promise( ( resolve, reject ) => {
-		querymShotsEndpoint( { ...options, resolve, reject } );
-	} );
-};
+		// First attempt, no retries.
+		if ( ! maxRetries || maxRetries < 0 ) {
+			throw new Error( `Preview generation failed (no retries).` );
+		}
 
-export const prefetchmShotsPreview = url => querymShotsEndpoint( { url, currentRetries: 1 } );
+		// Too many attempts.
+		if ( retries >= maxRetries ) {
+			throw new Error( `Preview generation still failing after ${ maxRetries } retries.` );
+		}
+
+		// Unexpected response.
+		if ( contentType && contentType !== 'image/gif' ) {
+			throw new Error( `Unexpected response while generating preview.` );
+		}
+
+		// Wait and retry.
+		await new Promise( resolve => setTimeout( resolve, retryTimeout ) );
+	}
+}
+
+export function prefetchmShotsPreview( url ) {
+	loadmShotsPreview( { url, maxRetries: 0 } ).catch( noop );
+}

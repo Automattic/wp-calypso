@@ -45,7 +45,6 @@ import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-act
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -592,13 +591,7 @@ export class PluginMeta extends Component {
 
 	handleUpgradeNudgeClick = () => {
 		const { slug } = this.props;
-		let href = `/plans/${ slug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
-		if (
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'pluginsUpsellLandingPage' ) === 'test'
-		) {
-			href = '/feature/plugins/' + slug;
-		}
+		const href = `/plans/${ slug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
 		page.redirect( href );
 	};
 

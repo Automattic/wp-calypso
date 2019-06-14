@@ -143,9 +143,9 @@ class VerificationCodeForm extends Component {
 
 					<FormFieldset>
 						<FormLabel htmlFor="twoStepCode">{ labelText }</FormLabel>
-
+						{ /* The use of `autoFocus` is intentional in this step. */ }
 						<FormVerificationCodeInput
-							autoFocus
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							value={ this.state.twoStepCode }
 							onChange={ this.onChangeField }
 							isError={ requestError && requestError.field === 'twoStepCode' }
@@ -154,17 +154,12 @@ class VerificationCodeForm extends Component {
 							ref={ this.saveRef }
 							disabled={ this.state.isDisabled }
 						/>
-
 						{ requestError && requestError.field === 'twoStepCode' && (
 							<FormInputValidation isError text={ requestError.message } />
 						) }
 					</FormFieldset>
 
-					<FormButton
-						className="two-factor-authentication__form-button"
-						primary
-						disabled={ this.state.isDisabled }
-					>
+					<FormButton block primary disabled={ this.state.isDisabled }>
 						{ translate( 'Continue' ) }
 					</FormButton>
 
