@@ -46,7 +46,6 @@ import {
 	getSite,
 	isJetpackSite,
 	canCurrentUserUseAds,
-	canCurrentUserUseStore,
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route';
 import { itemLinkMatches } from './utils';
@@ -354,17 +353,13 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const { translate, site, siteSuffix, canUserUseStore } = this.props;
+		const { translate, site, siteSuffix } = this.props;
 
-		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
+		if ( ! site ) {
 			return null;
 		}
 
-		if ( ! canUserUseStore ) {
-			return null;
-		}
-
-		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
+		if ( ! isBusiness( site.plan ) && ! isEcommerce( site.plan ) ) {
 			return null;
 		}
 
@@ -705,7 +700,6 @@ function mapStateToProps( state ) {
 		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
-		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
 		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
