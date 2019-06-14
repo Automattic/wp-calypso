@@ -126,7 +126,9 @@ export const EligibilityWarnings = ( {
 
 			<Card className="eligibility-warnings__confirm-box">
 				<div className="eligibility-warnings__confirm-text">
-					{ ! isEligible && translate( 'Please clear all issues above to proceed. ' ) }
+					{ ! isEligible && translate( 'Please clear all issues above to proceed. ', {
+						comment: 'Keep an extra space at the end of the sentence after the period.'
+					} ) }
 					{ isEligible &&
 						warnings.length > 0 &&
 						translate( 'If you proceed you will no longer be able to use these features. ' ) }
