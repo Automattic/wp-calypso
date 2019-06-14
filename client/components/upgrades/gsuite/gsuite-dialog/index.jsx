@@ -16,7 +16,7 @@ import { abtest } from 'lib/abtest';
 import { addItems } from 'lib/upgrades/actions';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
-import { areAllUsersReady, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
+import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
 import { getSelectedSite } from 'state/ui/selectors';
 import GoogleAppsProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
@@ -60,9 +60,22 @@ class GSuiteDialog extends React.Component {
 		} );
 	};
 
+	handleSkip = () => {};
+
+	handleAdd = () => {};
+
 	componentDidMount() {
-		this.props.recordAddEmailButtonClick( this.props.analyticsSection );
+		// this.props.recordAddEmailButtonClick( this.props.analyticsSection );
 	}
+
+	// recordClickEvent = eventName => {
+	// 	const { recordTracksEvent, domain } = this.props;
+	// 	const { users } = this.state;
+	// 	recordTracksEvent( eventName, {
+	// 		domain_name: domain,
+	// 		user_count: users.length,
+	// 	} );
+	// };
 
 	render() {
 		if ( isGSuiteRestricted() ) {
@@ -74,7 +87,9 @@ class GSuiteDialog extends React.Component {
 
 	renderView() {
 		const { productSlug, users } = this.state;
-		const { currencyCode, domain, gsuiteBasicCost } = this.props;
+		const { currencyCode, domain, gsuiteBasicCost, translate } = this.props;
+		const canContinue = areAllUsersValid( users );
+
 		return (
 			<div className="gsuite-dialog__form">
 				<QueryProducts />
@@ -92,7 +107,15 @@ class GSuiteDialog extends React.Component {
 						onUsersChange={ this.handleUsersChange }
 						users={ users }
 					>
-						{ this.footer() }
+						<div className="gsuite-dialog__buttons">
+							<Button onClick={ this.handleFormCheckout }>{ translate( 'Skip' ) }</Button>
+
+							<Button primary disabled={ ! canContinue } onClick={ this.handleAddEmail }>
+								{ abtest( 'gSuiteContinueButtonCopy' ) === 'purchase'
+									? translate( 'Purchase G Suite' )
+									: translate( 'Yes, Add Email \u00BB' ) }
+							</Button>
+						</div>
 					</GSuiteNewUserList>
 				</CompactCard>
 			</div>
@@ -118,41 +141,10 @@ class GSuiteDialog extends React.Component {
 		);
 	}
 
-	renderButtonCopy() {
-		const { translate } = this.props;
-		if ( abtest( 'gSuiteContinueButtonCopy' ) === 'purchase' ) {
-			return translate( 'Purchase G Suite' );
-		}
-		return translate( 'Yes, Add Email \u00BB' );
-	}
-
-	footer() {
-		const { translate } = this.props;
-		const { users } = this.state;
-		const canContinue = areAllUsersReady( users );
-
-		return (
-			<footer className="gsuite-dialog__footer">
-				<Button className="gsuite-dialog__checkout-button" onClick={ this.handleFormCheckout }>
-					{ translate( 'Skip' ) }
-				</Button>
-
-				<Button
-					primary
-					className="gsuite-dialog__continue-button"
-					disabled={ ! canContinue }
-					onClick={ this.handleAddEmail }
-				>
-					{ this.renderButtonCopy() }
-				</Button>
-			</footer>
-		);
-	}
-
 	handleFormCheckout = event => {
 		event.preventDefault();
 
-		this.props.recordCancelButtonClick( this.props.analyticsSection );
+		// this.props.recordCancelButtonClick( this.props.analyticsSection );
 
 		this.props.onClickSkip();
 	};
@@ -160,7 +152,7 @@ class GSuiteDialog extends React.Component {
 	handleAddEmail = () => {
 		const { domain, planType, selectedSite } = this.props;
 		const { users } = this.state;
-		const canContinue = areAllUsersReady( users );
+		const canContinue = areAllUsersValid( users );
 
 		if ( canContinue ) {
 			addItems(
