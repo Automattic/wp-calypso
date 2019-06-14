@@ -139,6 +139,10 @@ class Task extends PureComponent {
 			translate,
 		} = this.props;
 
+		// An uncompleted task by definition has a call-to-action, which can only be accessed by
+		// expanding it, so an uncompleted task is always expandable.
+		// A completed task may or may not have a call-to-action, which can be best inferred from
+		// the `completedButtonText` prop.
 		const hasActionlink = ! completed || completedButtonText;
 		const taskActionButtonText = completed
 			? completedButtonText
