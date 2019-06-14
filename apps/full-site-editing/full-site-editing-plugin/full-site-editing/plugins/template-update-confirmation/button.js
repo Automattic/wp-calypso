@@ -28,6 +28,13 @@ class TemplateUpdateConfirmationButton extends Component {
 		this.onResize();
 	}
 
+	componentDidUpdate( props, prevProps ) {
+		if ( props.isFullScreen !== prevProps.isFullScreen ) {
+			// this ensures the button is repositioned properly when toggling fullscreen mode
+			setTimeout( () => this.onResize(), 1 );
+		}
+	}
+
 	getOriginalButton() {
 		return document.querySelector( '.edit-post-header .editor-post-publish-button' );
 	}
@@ -127,6 +134,7 @@ export default compose( [
 			isPublishable: isEditedPostPublishable(),
 			isPublished: isCurrentPostPublished(),
 			hasPublishAction: get( getCurrentPost(), [ '_links', 'wp:action-publish' ], false ),
+			isFullScreen: select( 'core/edit-post' ).isFeatureActive( 'fullscreenMode' ),
 		};
 	} ),
 	withGlobalEvents( {
