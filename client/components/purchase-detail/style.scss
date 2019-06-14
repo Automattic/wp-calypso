@@ -154,23 +154,6 @@
 	hyphens: auto;
 }
 
-.purchase-detail__info {
-	margin-left: 8px;
-	margin-top: 8px;
-
-	@include breakpoint( '>660px' ) {
-		margin-top: 0;
-	}
-}
-
-.purchase-detail__info-icon-container {
-	display: inline-block;
-	margin-top: 2px;
-	margin-right: 4px;
-	float: left;
-	height: 14px;
-}
-
 .purchase-detail__required-notice {
 	background-color: var( --color-warning );
 	color: var( --color-white );

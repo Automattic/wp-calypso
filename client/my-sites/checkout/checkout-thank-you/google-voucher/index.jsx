@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import ClipboardButtonInput from 'components/clipboard-button-input';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import PurchaseButton from 'components/purchase-detail/purchase-button';
 import TipInfo from 'components/purchase-detail/tip-info';
 import Dialog from 'components/dialog';
@@ -192,7 +193,7 @@ class GoogleVoucherDetails extends Component {
 				<ClipboardButtonInput value={ code } disabled={ ! code } />
 
 				<div className="google-voucher__copy-code">
-					<p className="google-voucher__explanation form-setting-explanation">
+					<FormSettingExplanation className="google-voucher__explanation">
 						{ this.props.translate(
 							'Copy this unique, one-time use code to your clipboard and setup your Google Ads account. {{a}}View help guide{{/a}}',
 							{
@@ -208,7 +209,7 @@ class GoogleVoucherDetails extends Component {
 								},
 							}
 						) }
-					</p>
+					</FormSettingExplanation>
 
 					<PurchaseButton
 						className="google-voucher__setup-google-adwords"
