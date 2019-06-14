@@ -1,11 +1,11 @@
-
 .section-header.card {
+	align-items: flex-start;
 	display: flex;
-	align-items: center;
+	flex-flow: row wrap;
+	line-height: 28px;
 	padding-top: 11px;
 	padding-bottom: 11px;
 	position: relative;
-	line-height: 28px;
 
 	&::after {
 		content: '';
@@ -23,8 +23,9 @@
 	position: relative;
 	overflow: hidden;
 
-	&::before {
-		@include long-content-fade();
+	@include breakpoint( '<480px' ) {
+		line-height: 1.4;
+		margin: 4px 0;
 	}
 
 	.count {

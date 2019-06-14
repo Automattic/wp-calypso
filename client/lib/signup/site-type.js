@@ -14,8 +14,9 @@ const getSiteTypePropertyDefaults = propertyKey =>
 		{
 			// General copy
 			siteMockupHelpTipCopy: i18n.translate(
-				'Scroll down to see your site. Once you complete setup you’ll be able to customize it further.'
+				"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."
 			),
+			siteMockupHelpTipCopyBottom: i18n.translate( 'Scroll back up to continue.' ),
 			// Site title step
 			siteTitleLabel: i18n.translate( 'Give your site a name' ),
 			siteTitleSubheader: i18n.translate(
@@ -80,7 +81,7 @@ export function getAllSiteTypes() {
 			defaultVertical: 'blogging', // used to conduct a vertical search and grab a default vertical for the segment
 			label: i18n.translate( 'Blog' ),
 			description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
-			theme: 'pub/independent-publisher-2',
+			theme: 'pub/modern-business',
 			designType: 'blog',
 			siteTitleLabel: i18n.translate( "Tell us your blog's name" ),
 			siteTitlePlaceholder: i18n.translate( "E.g., Stevie's blog " ),

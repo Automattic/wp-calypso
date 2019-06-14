@@ -1,4 +1,9 @@
 <?php
+/**
+ * Replace template parts file.
+ *
+ * @package full-site-editing
+ */
 
 /**
  * Callback function that will be executed before the output buffer is flushed.
@@ -7,7 +12,7 @@
  * page areas with appropriate template parts (wp_template_part CPT) depending on the
  * template (wp_template CPT) that has been assigned to the current page.
  *
- * @param $html HTML code passed by output buffer.
+ * @param string $html HTML code passed by output buffer.
  *
  * @return string HTML code with replaced header node if it exists.
  */
@@ -30,22 +35,24 @@ function a8c_fse_replace_template_parts( $html ) {
 		],
 	];
 
-	$doc = new DOMDocument;
+	$doc = new DOMDocument();
+	// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 	$doc->preserveWhiteSpace = false;
-	@$doc->loadHTML( mb_convert_encoding( $html, 'HTML-ENTITIES', 'UTF-8') );
+	// phpcs:disable WordPress.PHP.NoSilencedErrors.Discouraged
+	@$doc->loadHTML( mb_convert_encoding( $html, 'HTML-ENTITIES', 'UTF-8' ) );
 
-	$temp_doc = new DOMDocument;
+	$temp_doc                     = new DOMDocument();
 	$temp_doc->preserveWhiteSpace = false;
 
-	foreach( $replacements as $replacement ) {
+	foreach ( $replacements as $replacement ) {
 		if ( empty( $replacement['xpath_query'] ) || empty( $replacement['fse_content'] ) ) {
 			continue;
 		}
 
-		$xpath = new DOMXPath( $doc );
+		$xpath           = new DOMXPath( $doc );
 		$candidate_nodes = $xpath->query( $replacement['xpath_query'] );
 
-		if ( $candidate_nodes->length === 0 ) {
+		if ( 0 === $candidate_nodes->length ) {
 			continue;
 		}
 

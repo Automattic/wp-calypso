@@ -502,7 +502,6 @@ ul.module-content-list-item-action-submenu {
 	// Action wrapper, what's actually selected
 	.module-content-list-item-action-wrapper {
 		@extend %mobile-interface-element;
-		opacity: 0;
 		text-align: center;
 		margin: 0;
 		line-height: inherit;

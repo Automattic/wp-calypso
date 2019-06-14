@@ -141,6 +141,7 @@ export class PlansStep extends Component {
 			hideFreePlan,
 			isLaunchPage,
 			selectedSite,
+			planTypes,
 		} = this.props;
 
 		return (
@@ -159,6 +160,7 @@ export class PlansStep extends Component {
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					plansWithScroll={ true }
+					planTypes={ planTypes }
 				/>
 			</div>
 		);
@@ -229,6 +231,7 @@ PlansStep.propTypes = {
 	stepSectionName: PropTypes.string,
 	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
+	planTypes: PropTypes.array,
 };
 
 /**

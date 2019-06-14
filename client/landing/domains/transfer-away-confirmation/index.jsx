@@ -59,7 +59,7 @@ class TransferAwayConfirmationPage extends Component {
 		return {
 			isLoading: true,
 			title: translate( 'Manage your Domain Transfer' ),
-			message: 'Loading…',
+			message: translate( 'Loading…' ),
 			actionTitle: null,
 			actionCallback: null,
 		};
@@ -121,9 +121,9 @@ class TransferAwayConfirmationPage extends Component {
 				}
 			),
 			messageAlignCenter: false,
-			actionTitle: 'Accept Transfer',
+			actionTitle: translate( 'Accept Transfer' ),
 			actionCallback: this.acceptTransfer,
-			alternateActionTitle: 'Cancel Transfer',
+			alternateActionTitle: translate( 'Cancel Transfer' ),
 			alternateActionCallback: this.cancelTransfer,
 			isLoading: false,
 		};

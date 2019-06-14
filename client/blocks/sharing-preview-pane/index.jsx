@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,6 +25,11 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import getSiteIconUrl from 'state/selectors/get-site-icon-url';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const serviceNames = {
 	facebook: 'Facebook',

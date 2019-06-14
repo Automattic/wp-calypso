@@ -33,6 +33,7 @@ export class TransferDomain extends Component {
 		query: PropTypes.string,
 		cart: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		isDomainTransferrable: PropTypes.bool,
 		isSiteUpgradeable: PropTypes.bool,
 		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
@@ -169,6 +170,7 @@ export class TransferDomain extends Component {
 					onRegisterDomain={ this.handleRegisterDomain }
 					onTransferDomain={ this.handleTransferDomain }
 					analyticsSection="domains"
+					forcePrecheck={ this.props.isDomainTransferrable }
 				/>
 			</span>
 		);

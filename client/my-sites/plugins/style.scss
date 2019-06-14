@@ -46,6 +46,10 @@
 			border-right: 1px solid rgba( var( --color-neutral-100-rgb ), 0.5 );
 		}
 
+		.gridicon {
+			margin-top: 4px;
+		}
+
 		@include breakpoint( '>480px' ) {
 			flex: none;
 		}

@@ -19,7 +19,7 @@ export default class ImporterPage extends AsyncBaseContainer {
 	async importerIsDisplayed( importerClass ) {
 		return await DriverHelper.isElementPresent(
 			this.driver,
-			By.css( `.importer__shell .${ importerClass }` )
+			By.css( `.importer__file-importer-card .${ importerClass }` )
 		);
 	}
 }

@@ -171,6 +171,19 @@ class Buttons extends React.PureComponent {
 						<span>Primary scary busy button</span>
 					</Button>
 				</div>
+				<div className="docs__design-button-row">
+					<Button block>Button</Button>
+					<Button block>
+						<Gridicon icon="heart" />
+						<span>Icon button</span>
+					</Button>
+					<Button block>
+						<Gridicon icon="plugins" />
+					</Button>
+					<Button block disabled>
+						Disabled button
+					</Button>
+				</div>
 			</Card>
 		),
 	};

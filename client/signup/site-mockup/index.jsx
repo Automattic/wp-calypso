@@ -42,6 +42,17 @@ function SiteMockupHelpTip( { siteType } ) {
 	);
 }
 
+function SiteMockupHelpTipBottom( { siteType } ) {
+	const helpTipCopy =
+		getSiteTypePropertyValue( 'slug', siteType, 'siteMockupHelpTipCopyBottom' ) || '';
+	return (
+		<div className="site-mockup__help-tip">
+			<Gridicon icon="chevron-up" />
+			<p>{ helpTipCopy }</p>
+		</div>
+	);
+}
+
 class SiteMockups extends Component {
 	static propTypes = {
 		siteStyle: PropTypes.string,
@@ -155,6 +166,7 @@ class SiteMockups extends Component {
 					/>
 					<SignupSitePreview defaultViewportDevice="phone" { ...otherProps } />
 				</div>
+				{ shouldShowHelpTip && <SiteMockupHelpTipBottom siteType={ siteType } /> }
 			</div>
 		);
 	}

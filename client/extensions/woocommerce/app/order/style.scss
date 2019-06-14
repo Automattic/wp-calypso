@@ -148,6 +148,7 @@
 		.order-payment__action,
 		.order-fulfillment__action {
 			width: 100%;
+			justify-content: left;
 		}
 		.order-payment__label + .order-payment__action {
 			margin-top: 8px;

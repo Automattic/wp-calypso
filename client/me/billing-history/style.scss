@@ -95,7 +95,7 @@
 }
 
 .billing-history__transactions tbody .billing-history__date {
-	width: 140px;
+	width: 150px;
 	padding: 12px;
 }
 
@@ -409,11 +409,11 @@ textarea.billing-history__billing-details-editable {
 	}
 }
 
-.billing-history__date {
-	width: 170px;
-}
-
 .billing-history__transactions-header-select-dropdown {
 	padding: 8px 12px;
 	position: absolute;
+
+	&:nth-child( 2 ) {
+		left: 170px;
+	}
 }

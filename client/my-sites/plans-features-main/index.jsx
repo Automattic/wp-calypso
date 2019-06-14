@@ -8,10 +8,12 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
  */
+import warn from 'lib/warn';
 import PlanFeatures from 'my-sites/plan-features';
 import {
 	TYPE_FREE,
@@ -33,7 +35,14 @@ import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
-import { plansLink, planMatches, findPlansKeys, getPlan } from 'lib/plans';
+import {
+	plansLink,
+	planMatches,
+	findPlansKeys,
+	getPlan,
+	isFreePlan,
+	isBloggerPlan,
+} from 'lib/plans';
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
@@ -127,9 +136,20 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
+		const {
+			displayJetpackPlans,
+			intervalType,
+			selectedPlan,
+			hideFreePlan,
+			sitePlanSlug,
+		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
+
+		const hideBloggerPlan =
+			! isBloggerPlan( selectedPlan ) &&
+			! isBloggerPlan( sitePlanSlug ) &&
+			abtest( 'hideBloggerPlanNonEn' ) === 'hide';
 
 		let term;
 		if ( intervalType === 'monthly' ) {
@@ -153,8 +173,12 @@ export class PlansFeaturesMain extends Component {
 			term = TERM_ANNUALLY;
 		}
 
+		const plansFromProps = this.getPlansFromProps( group, term );
+
 		let plans;
-		if ( group === GROUP_JETPACK ) {
+		if ( plansFromProps.length ) {
+			plans = plansFromProps;
+		} else if ( group === GROUP_JETPACK ) {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
@@ -164,16 +188,16 @@ export class PlansFeaturesMain extends Component {
 		} else {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-				findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
+				hideBloggerPlan ? null : findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term: businessPlanTerm, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
-			];
+			].filter( el => el !== null );
 		}
 
 		if ( hideFreePlan ) {
-			plans.shift();
+			plans = plans.filter( planSlug => ! isFreePlan( planSlug ) );
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
@@ -181,6 +205,22 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		return plans;
+	}
+
+	getPlansFromProps( group, term ) {
+		const planTypes = this.props.planTypes || [];
+
+		return planTypes.reduce( ( accum, type ) => {
+			const plan = findPlansKeys( { group, term, type } )[ 0 ];
+
+			if ( ! plan ) {
+				warn(
+					`Invalid plan type, \`${ type }\`, provided to \`PlansFeaturesMain\` component. See plans constants for valid plan types.`
+				);
+			}
+
+			return plan ? [ ...accum, plan ] : accum;
+		}, [] );
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
@@ -292,9 +332,9 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
-		const { translate } = this.props;
+		const { hideFreePlan, translate } = this.props;
 		const className = 'is-free-plan';
-		if ( this.props.hideFreePlan ) {
+		if ( hideFreePlan ) {
 			return null;
 		}
 
@@ -376,6 +416,7 @@ PlansFeaturesMain.propTypes = {
 	siteSlug: PropTypes.string,
 	withWPPlanTabs: PropTypes.bool,
 	plansWithScroll: PropTypes.bool,
+	planTypes: PropTypes.array,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -424,6 +465,7 @@ const guessCustomerType = ( state, props ) => {
 export default connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
+		const sitePlan = getSitePlan( state, siteId );
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
@@ -437,6 +479,7 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
+			sitePlanSlug: sitePlan && sitePlan.product_slug,
 		};
 	},
 	{

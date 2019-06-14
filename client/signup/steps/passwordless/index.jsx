@@ -176,7 +176,7 @@ export class PasswordlessStep extends Component {
 			<LoggedOutForm onSubmit={ this.verifyUser } noValidate>
 				{ this.renderNotice() }
 				<ValidationFieldset errorMessages={ this.state.errorMessages }>
-					<FormLabel htmlFor="code">{ this.props.translate( 'Verifcation code' ) }</FormLabel>
+					<FormLabel htmlFor="code">{ this.props.translate( 'Verification code' ) }</FormLabel>
 					<FormTextInput
 						autoCapitalize={ 'off' }
 						className="passwordless__code"

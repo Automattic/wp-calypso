@@ -68,7 +68,7 @@ class CurrentPlan extends Component {
 	getHeaderWording( planConstObj ) {
 		const { translate } = this.props;
 
-		const title = translate( 'Your site is on a %(planName)s plan', {
+		const title = translate( 'My Plan: %(planName)s', {
 			args: {
 				planName: planConstObj.getTitle(),
 			},

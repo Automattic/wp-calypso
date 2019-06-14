@@ -72,14 +72,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	removeDomainsStepFromOnboarding: {
-		datestamp: '20190412',
-		variations: {
-			keep: 100,
-			remove: 0,
-		},
-		defaultVariation: 'keep',
-	},
 	builderReferralHelpPopover: {
 		datestamp: '20190227',
 		variations: {
@@ -142,5 +134,15 @@ export default {
 		defaultVariation: 'show',
 		allowExistingUsers: true,
 		localeTargets: 'any',
+	},
+	hideBloggerPlanNonEn: {
+		datestamp: '20190613',
+		variations: {
+			hide: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		localeTargets: 'any',
+		localeExceptions: [ 'en' ],
 	},
 };

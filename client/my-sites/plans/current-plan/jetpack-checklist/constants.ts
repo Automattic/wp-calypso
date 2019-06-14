@@ -72,7 +72,7 @@ export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: Readonly< ChecklistTasksetUi >
 	jetpack_site_accelerator: {
 		title: translate( 'Site Accelerator' ),
 		description: translate(
-			'Serve your images and static files through our global CDN and whatch your page load time drop.'
+			'Serve your images and static files through our global CDN and watch your page load time drop.'
 		),
 		getUrl: siteSlug => `/settings/performance/${ siteSlug }`,
 		completedButtonText: translate( 'Configure' ),

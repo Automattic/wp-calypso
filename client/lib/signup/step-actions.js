@@ -15,7 +15,7 @@ import { parse as parseURL } from 'url';
 import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
-import { getABTestVariation, getSavedVariations } from 'lib/abtest';
+import { getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import {
 	updatePrivacyForDomain,
@@ -37,8 +37,6 @@ import { getUserExperience } from 'state/signup/steps/user-experience/selectors'
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import { getCurrentUserName } from 'state/current-user/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
@@ -147,7 +145,6 @@ export function createSiteWithCart(
 	const designType = getDesignType( state ).trim();
 	const siteTitle = getSiteTitle( state ).trim();
 	const siteVerticalId = getSiteVerticalId( state );
-	const siteVertical = getSiteVertical( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
@@ -178,21 +175,6 @@ export function createSiteWithCart(
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
 		newSiteParams.options.nux_import_engine = importEngine;
-	} else if (
-		flowName === 'onboarding' &&
-		'remove' === getABTestVariation( 'removeDomainsStepFromOnboarding' )
-	) {
-		/*
-		 * When logged in, the username is in state.currentUser. When the user was just created
-		 * as part of the signup, in the `user` step, the user is not fully logged-in to WP.com yet.
-		 * We only have a `bearer_token` that can be used to make authenticated REST request.
-		 * The username is only in the dependency store, been put there by the `user` step.
-		 */
-		const userName = getCurrentUserName( state ) || getSignupDependencyStore( state ).username;
-		const blogName = userName || siteTitle || siteType || siteVertical;
-
-		newSiteParams.blog_name = blogName;
-		newSiteParams.find_available_url = true;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;

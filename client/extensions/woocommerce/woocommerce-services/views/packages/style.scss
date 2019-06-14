@@ -222,6 +222,10 @@
 .packages__packages-row-dimensions {
 	width: 30%;
 	font-size: 14px;
+	
+	@include breakpoint( '<660px' ) {
+		font-size: 11px;
+	}
 }
 
 .packages__setting-explanation {

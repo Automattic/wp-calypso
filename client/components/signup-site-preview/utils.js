@@ -57,18 +57,18 @@ export function getIframeSource(
 			<link rel="dns-prefetch" href="//s0.wp.com">
 			<link rel="dns-prefetch" href="//fonts.googleapis.com">
 			<title>${ content.title } – ${ content.tagline }</title>
-			<link type="text/css" media="all" rel="stylesheet" href="https://s0.wp.com/wp-content/plugins/gutenberg-core/build/block-library/style.css" />
+			<link type="text/css" media="all" rel="stylesheet" href="https://s0.wp.com/wp-content/plugins/gutenberg-core/v5.9.0/build/block-library/style.css" />
 			${ getCSSLinkHtml( cssUrl ) }
 			${ getCSSLinkHtml( fontUrl ) }
 			<style type="text/css">
 				body {
 					padding-bottom: 25px;
 				}
-				
+
 				.no-scrolling {
 					overflow: hidden;
 				}
-				
+
 				.is-loading {
 					position: relative;
 					background: white;
@@ -76,18 +76,18 @@ export function getIframeSource(
 				.is-loading .site {
 					opacity: 0;
 				}
-				
+
 				.site {
 					opacity: 1;
 					transition: opacity 1s ease-in;
-				}	
+				}
 
 				@media only screen and (min-width: 768px) {
 					/*
 						Some of the themes (business sophisticated) use js to dynamically set the height of the banner
 						Let's set a fixed max-height.
 					*/
-					.entry .entry-content .wp-block-cover-image, 
+					.entry .entry-content .wp-block-cover-image,
 					.entry .entry-content .wp-block-cover {
 						min-height: 500px !important;
 					}
@@ -95,23 +95,23 @@ export function getIframeSource(
 
 				/*
 					Fixes a weird bug in Safari, despite the markup and CSS
-					being the same, the gallery images for the default Professional site (m4) 
+					being the same, the gallery images for the default Professional site (m4)
 					are stretched. Issue #33758.
 					This should be a temp fix until we can either locate the problem or
 					we update the theme CSS.
 				*/
-				.wp-block-gallery .blocks-gallery-image figure, 
+				.wp-block-gallery .blocks-gallery-image figure,
 				.wp-block-gallery .blocks-gallery-item figure {
 				   flex-direction: column;
 				   height: auto;
 				}
-				
+
 				.is-loading .wp-block-cover,
 				.is-loading img {
 					animation: loading-animation 1.5s infinite;
 					background-color: rgba( 0, 0, 0, 0.1 ) !important;
 				}
-				
+
 				@keyframes loading-animation {
 					0%   { background-color: rgba( 0, 0, 0, 0.7 ); }
 					50%  { background-color: rgba( 0, 0, 0, 1 ); }

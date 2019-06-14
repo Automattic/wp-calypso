@@ -64,6 +64,11 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
+	TYPE_FREE,
+	TERM_ANNUALLY,
+	GROUP_WPCOM,
 } from 'lib/plans/constants';
 
 const props = {
@@ -71,7 +76,35 @@ const props = {
 	translate: x => x,
 };
 
+describe( 'PlansFeaturesMain.renderFreePlanBanner()', () => {
+	test( 'Should return null when called with hideFreePlan props', () => {
+		const instance = new PlansFeaturesMain( {
+			...props,
+			hideFreePlan: true,
+		} );
+		const freePlanBanner = instance.renderFreePlanBanner();
+		expect( freePlanBanner ).toBeNull();
+	} );
+} );
+
 describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
+	test( 'Should render <PlanFeatures /> with plans matching given planTypes when called with planTypes props', () => {
+		const instance = new PlansFeaturesMain( {
+			...props,
+			planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
+		} );
+		const plans = instance.getPlansForPlanFeatures();
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+	} );
+	test( 'Should render <PlanFeatures /> removing the free plan when hideFreePlan prop is present, regardless of its position', () => {
+		const instance = new PlansFeaturesMain( {
+			...props,
+			planTypes: [ TYPE_BUSINESS, TYPE_FREE, TYPE_ECOMMERCE ],
+			hideFreePlan: true,
+		} );
+		const plans = instance.getPlansForPlanFeatures();
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+	} );
 	test( 'Should render <PlanFeatures /> with Jetpack monthly plans when called with jetpack props', () => {
 		const instance = new PlansFeaturesMain( {
 			...props,
@@ -275,5 +308,31 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		expect(
 			comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).props().selected
 		).toBe( false );
+	} );
+} );
+
+describe( 'PlansFeaturesMain.getPlansFromProps', () => {
+	const group = GROUP_WPCOM;
+	const term = TERM_ANNUALLY;
+
+	test( 'Should return an empty array if planTypes are not specified', () => {
+		const instance = new PlansFeaturesMain( { ...props } );
+		const plans = instance.getPlansFromProps( group, term );
+		expect( plans ).toEqual( [] );
+	} );
+
+	test( 'Should filter out invalid plan types and print a warning in the console', () => {
+		global.console.warn = jest.fn();
+		const NOT_A_PLAN = 'not-a-plan';
+		const instance = new PlansFeaturesMain( {
+			...props,
+			planTypes: [ NOT_A_PLAN, TYPE_BUSINESS, TYPE_ECOMMERCE ],
+		} );
+		const plans = instance.getPlansFromProps( group, term );
+
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+		expect( global.console.warn ).toHaveBeenCalledWith(
+			`Invalid plan type, \`${ NOT_A_PLAN }\`, provided to \`PlansFeaturesMain\` component. See plans constants for valid plan types.`
+		);
 	} );
 } );

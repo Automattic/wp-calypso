@@ -333,6 +333,13 @@ class RegisterDomainStep extends React.Component {
 		}
 	}
 
+	clearLastDomainState() {
+		this.setState( {
+			lastDomainStatus: null,
+			lastDomainIsTransferrable: false,
+		} );
+	}
+
 	getNewRailcarId() {
 		return `${ uuid().replace( /-/g, '' ) }-domain-suggestion`;
 	}
@@ -711,11 +718,12 @@ class RegisterDomainStep extends React.Component {
 				/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i
 			)
 		) {
-			this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
+			this.clearLastDomainState();
 			return;
 		}
+
 		if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
-			this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
+			this.clearLastDomainState();
 			return;
 		}
 
@@ -1236,7 +1244,10 @@ class RegisterDomainStep extends React.Component {
 		if ( this.props.useYourDomainUrl ) {
 			useYourDomainUrl = this.props.useYourDomainUrl;
 		} else {
-			const query = stringify( { initialQuery: this.state.lastQuery.trim() } );
+			const query = stringify( {
+				initialQuery: this.state.lastQuery.trim(),
+				isDomainTransferrable: this.state.lastDomainIsTransferrable,
+			} );
 			useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;
 			if ( this.props.selectedSite ) {
 				useYourDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;

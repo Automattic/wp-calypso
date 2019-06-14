@@ -39,7 +39,7 @@
 	margin-top: -20px;
 	text-align: left;
 
-	.current-plan__header-content:not( .is-jetpack-free ) & {
+	.current-plan__header:not( .is-jetpack-free ) & {
 		margin-bottom: 45px;
 	}
 }
