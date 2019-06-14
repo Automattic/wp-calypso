@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import React, { Children, PureComponent, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import { get, isFunction, times } from 'lodash';
+import { isFunction, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -60,9 +60,8 @@ export default class Checklist extends PureComponent {
 
 		// If the user hasn't expanded any task, return the
 		// first task that hasn't been completed yet.
-		return get(
-			Children.toArray( this.props.children ).find( task => task && ! task.props.completed ),
-			[ 'props', 'id' ]
+		return Children.toArray( this.props.children ).findIndex(
+			task => task && ! task.props.completed
 		);
 	}
 
@@ -73,7 +72,9 @@ export default class Checklist extends PureComponent {
 			}
 
 			if ( isFunction( this.props.onExpandTask ) ) {
-				this.props.onExpandTask( newExpandedTaskId );
+				this.props.onExpandTask(
+					Children.toArray( this.props.children )[ newExpandedTaskId ].props
+				);
 			}
 
 			return { expandedTaskId: newExpandedTaskId }; // Expand
@@ -97,6 +98,8 @@ export default class Checklist extends PureComponent {
 			);
 		}
 
+		let skippedChildren = 0;
+
 		return (
 			<div
 				className={ classNames( 'checklist', this.props.className, {
@@ -113,14 +116,17 @@ export default class Checklist extends PureComponent {
 					progressText={ this.props.progressText }
 				/>
 				<div className="checklist__tasks">
-					{ Children.map( this.props.children, child => {
+					{ Children.map( this.props.children, ( child, index ) => {
 						if ( ! child ) {
+							skippedChildren += 1;
 							return child;
 						}
 
+						const realIndex = index - skippedChildren;
+
 						return cloneElement( child, {
-							collapsed: child.props.id !== this.getExpandedTaskId(),
-							onTaskClick: () => this.setExpandedTask( child.props.id ),
+							collapsed: realIndex !== this.getExpandedTaskId(),
+							onTaskClick: () => this.setExpandedTask( realIndex ),
 						} );
 					} ) }
 				</div>

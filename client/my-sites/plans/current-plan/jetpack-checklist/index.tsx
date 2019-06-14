@@ -128,9 +128,9 @@ class JetpackChecklist extends PureComponent< Props > {
 		} );
 	}
 
-	trackExpandTask = ( taskId: string ) =>
+	trackExpandTask = ( { id }: { id: string } ) =>
 		void this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
-			step_name: taskId,
+			step_name: id,
 			product: 'Jetpack',
 		} );
 
