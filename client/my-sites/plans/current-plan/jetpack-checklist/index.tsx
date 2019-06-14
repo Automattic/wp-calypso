@@ -170,7 +170,6 @@ class JetpackChecklist extends PureComponent< Props > {
 				>
 					<Task
 						{ ...JETPACK_CHECKLIST_TASK_PROTECT }
-						id="jetpack_task_protect"
 						completed
 						href={ JETPACK_CHECKLIST_TASK_PROTECT.getUrl( siteSlug ) }
 						onClick={ this.handleTaskStart( { taskId: 'jetpack_protect' } ) }
@@ -178,7 +177,6 @@ class JetpackChecklist extends PureComponent< Props > {
 					{ isPaidPlan && isRewindAvailable && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_REWIND }
-							id="jetpack_rewind"
 							completed={ isRewindActive }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_REWIND.getUrl( siteSlug ) }
 							onClick={ this.handleTaskStart( {
@@ -190,7 +188,6 @@ class JetpackChecklist extends PureComponent< Props > {
 					{ isPaidPlan && isRewindUnavailable && productInstallStatus && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS }
-							id="jetpack_vaultpress"
 							completed={ vaultpressFinished }
 							href={ JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS.getUrl( siteSlug ) }
 							inProgress={ ! vaultpressFinished }
@@ -200,7 +197,6 @@ class JetpackChecklist extends PureComponent< Props > {
 					{ isPaidPlan && productInstallStatus && (
 						<Task
 							{ ...JETPACK_CHECKLIST_TASK_AKISMET }
-							id="jetpack_akismet"
 							completed={ akismetFinished }
 							href={ JETPACK_CHECKLIST_TASK_AKISMET.getUrl( siteSlug ) }
 							inProgress={ ! akismetFinished }
