@@ -241,6 +241,10 @@ function isRefundable( purchase ) {
  * @return {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
+	if ( isRefundable( purchase ) ) {
+		return false;
+	}
+
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
 	}
@@ -253,9 +257,7 @@ function isRemovable( purchase ) {
 		isJetpackPlan( purchase ) ||
 		isExpiring( purchase ) ||
 		isExpired( purchase ) ||
-		( isDomainTransfer( purchase ) &&
-			! isRefundable( purchase ) &&
-			isPurchaseCancelable( purchase ) )
+		( isDomainTransfer( purchase ) && isPurchaseCancelable( purchase ) )
 	);
 }
 
