@@ -300,8 +300,12 @@ export class Checkout extends React.Component {
 	}
 
 	redirectIfEmptyCart() {
-		const { selectedSiteSlug, transaction } = this.props;
-		let redirectTo = '/plans/';
+		const { selectedSiteSlug, transaction, shouldShowCart } = this.props;
+
+		if ( ! shouldShowCart ) {
+			// If we are not showing the cart, then we are showing an offer page, so not required to redirect
+			return false;
+		}
 
 		if ( ! this.state.previousCart && this.props.product ) {
 			// the plan hasn't been added to the cart yet
@@ -325,6 +329,8 @@ export class Checkout extends React.Component {
 			// some post-transaction requests to complete.
 			return false;
 		}
+
+		let redirectTo = '/plans/';
 
 		if ( this.state.previousCart ) {
 			redirectTo = getExitCheckoutUrl( this.state.previousCart, selectedSiteSlug );
@@ -740,7 +746,14 @@ export class Checkout extends React.Component {
 		}
 
 		if ( this.props.children ) {
-			return this.props.children;
+			return React.Children.map( this.props.children, child => {
+				return (
+					child &&
+					React.cloneElement( child, {
+						handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
+					} )
+				);
+			} );
 		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */

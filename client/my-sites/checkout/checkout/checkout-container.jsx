@@ -39,7 +39,7 @@ class CheckoutContainer extends React.Component {
 			selectedSite,
 			reduxStore,
 			redirectTo,
-			shouldShowSecondary,
+			shouldShowCart,
 		} = this.props;
 
 		return (
@@ -60,7 +60,7 @@ class CheckoutContainer extends React.Component {
 							{ this.props.children }
 						</Checkout>
 
-						{ shouldShowSecondary && (
+						{ shouldShowCart && (
 							<CartData>
 								<SecondaryCart selectedSite={ selectedSite } />
 							</CartData>
