@@ -12,6 +12,10 @@ Additional class to add to the Checklist.
 
 Render as a placeholder.
 
+### `onExpandTask { func }`
+
+Function that is called when a task is expanded. The task's props are passed as argument.
+
 ### `progressText { string } - default: "Your setup list"`
 
 Displayed in the checklist header, right on top of the progress bar.
