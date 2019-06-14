@@ -138,8 +138,9 @@ class Task extends PureComponent {
 			title,
 			translate,
 		} = this.props;
-		const hasActionlink = completedButtonText;
-		const taskActionButtonText = hasActionlink
+
+		const hasActionlink = ! completed || completedButtonText;
+		const taskActionButtonText = completed
 			? completedButtonText
 			: buttonText || translate( 'Do it!' );
 
