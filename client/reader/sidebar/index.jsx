@@ -13,7 +13,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MaterialIcon from 'components/material-icon';
 import ReaderSidebarHelper from './helper';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTags from './reader-sidebar-tags';
@@ -142,8 +141,14 @@ export class ReaderSidebar extends React.Component {
 								} ) }
 							>
 								<a href="/" onClick={ this.handleReaderSidebarFollowedSitesClicked }>
-									<Gridicon icon="checkmark-circle" size={ 24 } />
-									<MaterialIcon icon="check_circle" />
+									<svg
+										className="material-icon mi_check_circle"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+									>
+										<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z" />
+									</svg>
 									<span className="menu-link-text">
 										{ this.props.translate( 'Followed Sites' ) }
 									</span>
@@ -162,7 +167,14 @@ export class ReaderSidebar extends React.Component {
 									href="/read/conversations"
 									onClick={ this.handleReaderSidebarConversationsClicked }
 								>
-									<Gridicon icon="chat" size={ 24 } />
+									<svg
+										className="material-icon mi_chat"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+									>
+										<path d="M4 4h16v12H5.17L4 17.17V4m0-2c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2H4zm2 10h8v2H6v-2zm0-3h12v2H6V9zm0-3h12v2H6V6z" />
+									</svg>
 									<span className="menu-link-text">
 										{ this.props.translate( 'Conversations' ) }
 									</span>
@@ -217,7 +229,14 @@ export class ReaderSidebar extends React.Component {
 								} ) }
 							>
 								<a href="/read/search" onClick={ this.handleReaderSidebarSearchClicked }>
-									<Gridicon icon="search" size={ 24 } />
+									<svg
+										className="material-icon mi_search"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+									>
+										<path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+									</svg>
 									<span className="menu-link-text">{ this.props.translate( 'Search' ) }</span>
 								</a>
 							</li>
@@ -230,7 +249,14 @@ export class ReaderSidebar extends React.Component {
 								) }
 							>
 								<a href="/activities/likes" onClick={ this.handleReaderSidebarLikeActivityClicked }>
-									<Gridicon icon="star" size={ 24 } />
+									<svg
+										className="material-icon mi_star_border"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+									>
+										<path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z" />
+									</svg>
 									<span className="menu-link-text">{ this.props.translate( 'My Likes' ) }</span>
 								</a>
 							</li>
