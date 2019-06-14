@@ -127,6 +127,13 @@ class Starter_Page_Templates {
 			$has_active_jetpack = ( class_exists( 'Jetpack' ) && Jetpack::is_active() );
 			if ( $has_active_jetpack && class_exists( 'Jetpack_Tracks_Client' ) ) {
 				$tracks_identity = Jetpack_Tracks_Client::get_connected_user_tracks_identity();
+			} elseif ( $is_wpcom ) {
+				$user_id         = get_current_user_id();
+				$tracks_identity = array(
+					'blogid'   => get_current_blog_id(),
+					'userid'   => $user_id,
+					'username' => get_user_by( 'id', $user_id )->user_login,
+				);
 			}
 			// Enqueue script in environments where missing.
 			if ( $is_atomic ) {
