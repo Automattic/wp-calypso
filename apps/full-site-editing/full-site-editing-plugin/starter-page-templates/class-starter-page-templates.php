@@ -161,10 +161,10 @@ class Starter_Page_Templates {
 	public function fetch_vertical_data() {
 		$vertical_id        = get_option( 'site_vertical', 'default' );
 		$transient_key      = implode( '_', [ 'starter_page_templates', $vertical_id, get_locale() ] );
-		$vertical_templates = ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ? false : get_transient( $transient_key );
+		$vertical_templates = get_transient( $transient_key );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
-		if ( false === $vertical_templates ) {
+		if ( false === $vertical_templates || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ) {
 			$request_url = add_query_arg(
 				[
 					'_locale' => $this->get_iso_639_locale(),
