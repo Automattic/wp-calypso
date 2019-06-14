@@ -154,7 +154,6 @@ class Task extends PureComponent {
 					warning: isWarning,
 					'is-completed': completed,
 					'is-in-progress': inProgress,
-					'has-actionlink': hasActionlink,
 					'has-no-actionlink': ! hasActionlink,
 					'is-collapsed': collapsed,
 				} ) }
