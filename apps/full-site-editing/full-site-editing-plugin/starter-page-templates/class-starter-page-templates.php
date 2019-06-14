@@ -118,23 +118,26 @@ class Starter_Page_Templates {
 			return;
 		}
 
-		// Load Tracks data if available.
-		$tracks_identity    = null;
-		$has_active_jetpack = ( class_exists( 'Jetpack' ) && Jetpack::is_active() );
-		if ( $has_active_jetpack && class_exists( 'Jetpack_Tracks_Client' ) ) {
-			$tracks_identity = Jetpack_Tracks_Client::get_connected_user_tracks_identity();
-		}
-
-		// Only load the tracking library in an Atomic environment.
-		$is_atomic = defined( 'IS_ATOMIC' ) && IS_ATOMIC;
-		if ( $is_atomic ) {
-			wp_enqueue_script(
-				'jp-tracks',
-				'//stats.wp.com/w.js',
-				array(),
-				gmdate( 'YW' ),
-				true
-			);
+		// Enable tracking only on specific platforms.
+		$tracks_identity = null;
+		$is_atomic       = defined( 'IS_ATOMIC' ) && IS_ATOMIC;
+		$is_wpcom        = defined( 'IS_WPCOM' ) && IS_WPCOM;
+		if ( $is_atomic || $is_wpcom ) {
+			// Load identity.
+			$has_active_jetpack = ( class_exists( 'Jetpack' ) && Jetpack::is_active() );
+			if ( $has_active_jetpack && class_exists( 'Jetpack_Tracks_Client' ) ) {
+				$tracks_identity = Jetpack_Tracks_Client::get_connected_user_tracks_identity();
+			}
+			// Enqueue script in environments where missing.
+			if ( $is_atomic ) {
+				wp_enqueue_script(
+					'jp-tracks',
+					'//stats.wp.com/w.js',
+					array(),
+					gmdate( 'YW' ),
+					true
+				);
+			}
 		}
 
 		wp_enqueue_script( 'starter-page-templates' );
