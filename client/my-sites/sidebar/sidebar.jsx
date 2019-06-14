@@ -47,7 +47,10 @@ import {
 import { getStatsPathForTab } from 'lib/route';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { toggleMySitesSidebarSection } from 'state/my-sites/sidebar/actions';
+import {
+	expandMySitesSidebarSection as expandSection,
+	toggleMySitesSidebarSection as toggleSection,
+} from 'state/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import {
@@ -72,6 +75,16 @@ export class MySitesSidebar extends Component {
 		isJetpack: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 	};
+
+	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
+
+	expandDesignSection = () => this.props.expandSection( SIDEBAR_SECTION_DESIGN );
+
+	expandToolsSection = () => this.props.expandSection( SIDEBAR_SECTION_TOOLS );
+
+	expandManageSection = () => this.props.expandSection( SIDEBAR_SECTION_MANAGE );
+
+	toggleSection = memoize( id => () => this.props.toggleSection( id ) );
 
 	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
@@ -167,6 +180,7 @@ export class MySitesSidebar extends Component {
 				link={ activityLink }
 				onNavigate={ this.trackActivityClick }
 				icon="history"
+				expandSection={ this.expandToolsSection }
 			/>
 		);
 	}
@@ -187,6 +201,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackEarnClick }
 				icon="money"
 				tipTarget="earn"
+				expandSection={ this.expandToolsSection }
 			/>
 		);
 	}
@@ -213,6 +228,7 @@ export class MySitesSidebar extends Component {
 				icon="customize"
 				preloadSectionName="customize"
 				forceInternalLink
+				expandSection={ this.expandDesignSection }
 			/>
 		);
 	}
@@ -244,6 +260,7 @@ export class MySitesSidebar extends Component {
 					icon="customize"
 					preloadSectionName="customize"
 					forceInternalLink
+					expandSection={ this.expandDesignSection }
 				/>
 				<SidebarItem
 					label={ translate( 'Themes' ) }
@@ -253,6 +270,7 @@ export class MySitesSidebar extends Component {
 					icon="customize"
 					preloadSectionName="themes"
 					forceInternalLink
+					expandSection={ this.expandDesignSection }
 				/>
 			</ul>
 		);
@@ -288,6 +306,7 @@ export class MySitesSidebar extends Component {
 				icon="domains"
 				preloadSectionName="domains"
 				tipTarget="domains"
+				expandSection={ this.expandManageSection }
 			/>
 		);
 	}
@@ -426,6 +445,7 @@ export class MySitesSidebar extends Component {
 				icon="speaker"
 				preloadSectionName="marketing"
 				tipTarget="marketing"
+				expandSection={ this.expandToolsSection }
 			/>
 		);
 	}
@@ -451,6 +471,7 @@ export class MySitesSidebar extends Component {
 				icon="user"
 				preloadSectionName="people"
 				tipTarget="people"
+				expandSection={ this.expandManageSection }
 			/>
 		);
 	}
@@ -481,6 +502,7 @@ export class MySitesSidebar extends Component {
 				icon="cog"
 				preloadSectionName="settings"
 				tipTarget="settings"
+				expandSection={ this.expandManageSection }
 			/>
 		);
 	}
@@ -578,8 +600,6 @@ export class MySitesSidebar extends Component {
 		this.trackMenuItemClick( 'domain_settings' );
 		this.onNavigate();
 	};
-
-	toggleSection = memoize( id => () => this.props.toggleSection( id ) );
 
 	renderSidebarMenus() {
 		if ( this.props.isDomainOnly ) {
@@ -731,6 +751,7 @@ export default connect(
 		recordTracksEvent,
 		setLayoutFocus,
 		setNextLayoutFocus,
-		toggleSection: toggleMySitesSidebarSection,
+		expandSection,
+		toggleSection,
 	}
 )( localize( MySitesSidebar ) );

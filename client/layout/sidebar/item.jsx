@@ -8,6 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
+import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ export default class SidebarItem extends React.Component {
 		icon: PropTypes.string,
 		materialIcon: PropTypes.string,
 		selected: PropTypes.bool,
+		expandSection: PropTypes.func,
 		preloadSectionName: PropTypes.string,
 		forceInternalLink: PropTypes.bool,
 		testTarget: PropTypes.string,
@@ -40,6 +42,14 @@ export default class SidebarItem extends React.Component {
 			preload( this.props.preloadSectionName );
 		}
 	};
+
+	componentDidMount() {
+		const { expandSection, selected } = this.props;
+
+		if ( isFunction( expandSection ) && selected ) {
+			expandSection();
+		}
+	}
 
 	render() {
 		const isExternalLink = isExternal( this.props.link );
