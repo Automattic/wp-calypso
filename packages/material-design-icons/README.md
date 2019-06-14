@@ -27,3 +27,7 @@ https://material.io/tools/icons/
 
 Store the SVG files in the sub-folder matching the category used on
 material.io.
+
+Rebuild `material-icons.svg`
+
+	lerna run build --scope @automattic/material-design-icons
