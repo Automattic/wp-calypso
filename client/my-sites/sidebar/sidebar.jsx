@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { format as formatUrl, parse as parseUrl } from 'url';
+import { memoize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,12 +30,7 @@ import ToolsMenu from './tools-menu';
 import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isSiteMenuOpen,
-	isDesignMenuOpen,
-	isToolsMenuOpen,
-	isManageMenuOpen,
-} from 'state/my-sites/sidebar/selectors';
+import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
@@ -51,14 +47,15 @@ import {
 import { getStatsPathForTab } from 'lib/route';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import {
-	toggleMySitesSidebarSiteMenu,
-	toggleMySitesSidebarDesignMenu,
-	toggleMySitesSidebarToolsMenu,
-	toggleMySitesSidebarManageMenu,
-} from 'state/my-sites/sidebar/actions';
+import { toggleMySitesSidebarSection } from 'state/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
+import {
+	SIDEBAR_SECTION_SITE,
+	SIDEBAR_SECTION_DESIGN,
+	SIDEBAR_SECTION_TOOLS,
+	SIDEBAR_SECTION_MANAGE,
+} from './constants';
 
 /**
  * Style dependencies
@@ -582,6 +579,8 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
+	toggleSection = memoize( id => () => this.props.toggleSection( id ) );
+
 	renderSidebarMenus() {
 		if ( this.props.isDomainOnly ) {
 			return (
@@ -614,8 +613,8 @@ export class MySitesSidebar extends Component {
 				</SidebarMenu>
 
 				<ExpandableSidebarMenu
-					onClick={ this.props.toggleMySitesSidebarSiteMenu }
-					expanded={ this.props.isSiteOpen }
+					onClick={ this.toggleSection( SIDEBAR_SECTION_SITE ) }
+					expanded={ this.props.isSiteSectionOpen }
 					title={ this.props.translate( 'Site' ) }
 					materialIcon="edit"
 				>
@@ -624,8 +623,8 @@ export class MySitesSidebar extends Component {
 
 				{ this.design() ? (
 					<ExpandableSidebarMenu
-						onClick={ this.props.toggleMySitesSidebarDesignMenu }
-						expanded={ this.props.isDesignOpen }
+						onClick={ this.toggleSection( SIDEBAR_SECTION_DESIGN ) }
+						expanded={ this.props.isDesignSectionOpen }
 						title={ this.props.translate( 'Design' ) }
 						materialIcon="gesture"
 					>
@@ -635,8 +634,8 @@ export class MySitesSidebar extends Component {
 
 				{ tools && (
 					<ExpandableSidebarMenu
-						onClick={ this.props.toggleMySitesSidebarToolsMenu }
-						expanded={ this.props.isToolsOpen }
+						onClick={ this.toggleSection( SIDEBAR_SECTION_TOOLS ) }
+						expanded={ this.props.isToolsSectionOpen }
 						title={ this.props.translate( 'Tools' ) }
 						materialIcon="build"
 					>
@@ -649,8 +648,8 @@ export class MySitesSidebar extends Component {
 
 				{ manage && (
 					<ExpandableSidebarMenu
-						onClick={ this.props.toggleMySitesSidebarManageMenu }
-						expanded={ this.props.isManageOpen }
+						onClick={ this.toggleSection( SIDEBAR_SECTION_MANAGE ) }
+						expanded={ this.props.isManageSectionOpen }
 						title={ this.props.translate( 'Manage' ) }
 						materialIcon="settings"
 					>
@@ -693,10 +692,10 @@ function mapStateToProps( state ) {
 
 	const isJetpack = isJetpackSite( state, siteId );
 
-	const isSiteOpen = isSiteMenuOpen( state );
-	const isDesignOpen = isDesignMenuOpen( state );
-	const isToolsOpen = isToolsMenuOpen( state );
-	const isManageOpen = isManageMenuOpen( state );
+	const isSiteSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SITE );
+	const isDesignSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_DESIGN );
+	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
+	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
 
 	return {
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
@@ -713,10 +712,10 @@ function mapStateToProps( state ) {
 		hasJetpackSites: hasJetpackSites( state ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
-		isSiteOpen,
-		isDesignOpen,
-		isToolsOpen,
-		isManageOpen,
+		isSiteSectionOpen,
+		isDesignSectionOpen,
+		isToolsSectionOpen,
+		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
 		siteId,
@@ -732,9 +731,6 @@ export default connect(
 		recordTracksEvent,
 		setLayoutFocus,
 		setNextLayoutFocus,
-		toggleMySitesSidebarSiteMenu,
-		toggleMySitesSidebarDesignMenu,
-		toggleMySitesSidebarToolsMenu,
-		toggleMySitesSidebarManageMenu,
+		toggleSection: toggleMySitesSidebarSection,
 	}
 )( localize( MySitesSidebar ) );
