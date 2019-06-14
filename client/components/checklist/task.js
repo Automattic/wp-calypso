@@ -143,7 +143,7 @@ class Task extends PureComponent {
 		// expanding it, so an uncompleted task is always expandable.
 		// A completed task may or may not have a call-to-action, which can be best inferred from
 		// the `completedButtonText` prop.
-		const hasActionlink = ! completed || completedButtonText;
+		const isExpandable = ! completed || completedButtonText;
 		const taskActionButtonText = completed
 			? completedButtonText
 			: buttonText || translate( 'Do it!' );
@@ -154,13 +154,13 @@ class Task extends PureComponent {
 					warning: isWarning,
 					'is-completed': completed,
 					'is-in-progress': inProgress,
-					'has-no-actionlink': ! hasActionlink,
+					'has-no-actionlink': ! isExpandable,
 					'is-collapsed': collapsed,
 				} ) }
 			>
 				<div className="checklist__task-wrapper">
 					<h3 className="checklist__task-title">
-						{ hasActionlink ? (
+						{ isExpandable ? (
 							<Button
 								borderless
 								className="checklist__task-title-button"
@@ -174,7 +174,7 @@ class Task extends PureComponent {
 						) }
 					</h3>
 
-					{ hasActionlink && (
+					{ isExpandable && (
 						<div className="checklist__task-content">
 							<p className="checklist__task-description">{ description }</p>
 
@@ -185,7 +185,7 @@ class Task extends PureComponent {
 									</small>
 								) }
 
-								{ hasActionlink && (
+								{ isExpandable && (
 									<div className="checklist__task-action-wrapper">
 										<Button
 											className="checklist__task-action"
