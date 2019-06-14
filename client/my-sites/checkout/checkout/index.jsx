@@ -739,6 +739,10 @@ export class Checkout extends React.Component {
 			analyticsPath = '/checkout/no-site';
 		}
 
+		if ( this.props.children ) {
+			return this.props.children;
+		}
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="main main-column" role="main">
