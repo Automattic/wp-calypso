@@ -37,6 +37,7 @@
 		"@wordpress/components": "^7.3.0",
 		"@wordpress/compose": "^3.2.0",
 		"@wordpress/data": "^4.4.0",
+		"@wordpress/dom-ready": "^2.4.0",
 		"@wordpress/edit-post": "^3.3.4",
 		"@wordpress/editor": "^9.2.4",
 		"@wordpress/element": "^2.3.0",
