@@ -14,6 +14,11 @@ import SidebarNavigation from 'components/sidebar-navigation';
 import Gravatar from 'components/gravatar';
 import userFactory from 'lib/user';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const user = userFactory();
 
 const MeSidebarNavigation = ( { translate } ) => (
