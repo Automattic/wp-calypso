@@ -67,7 +67,6 @@ import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import getSiteId from 'state/selectors/get-site-id';
 import { isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -115,7 +114,6 @@ class Signup extends React.Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
-		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
 	};
 
@@ -619,8 +617,9 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) &&
-					'blog' !== this.props.siteType && <SiteMockups stepName={ this.props.stepName } /> }
+				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) && (
+					<SiteMockups stepName={ this.props.stepName } />
+				) }
 			</div>
 		);
 	}
@@ -644,7 +643,6 @@ export default connect(
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
 			siteId,
-			siteType: getSiteType( state ),
 		};
 	},
 	{
