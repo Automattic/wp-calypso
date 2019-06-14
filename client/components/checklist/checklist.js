@@ -24,7 +24,7 @@ export default class Checklist extends PureComponent {
 
 	state = {
 		hideCompleted: false,
-		expandedTaskId: undefined,
+		expandedTaskIndex: undefined,
 	};
 
 	componentDidMount() {
@@ -53,9 +53,9 @@ export default class Checklist extends PureComponent {
 		return [ completedCount, total ];
 	}
 
-	getExpandedTaskId() {
-		if ( this.state.expandedTaskId !== undefined ) {
-			return this.state.expandedTaskId;
+	getExpandedTaskIndex() {
+		if ( this.state.expandedTaskIndex !== undefined ) {
+			return this.state.expandedTaskIndex;
 		}
 
 		// If the user hasn't expanded any task, return the
@@ -65,19 +65,19 @@ export default class Checklist extends PureComponent {
 		);
 	}
 
-	setExpandedTask = newExpandedTaskId =>
-		void this.setState( ( { expandedTaskId } ) => {
-			if ( newExpandedTaskId === expandedTaskId ) {
-				return { expandedTaskId: null }; // Collapse
+	setExpandedTask = newExpandedTaskIndex =>
+		void this.setState( ( { expandedTaskIndex } ) => {
+			if ( newExpandedTaskIndex === expandedTaskIndex ) {
+				return { expandedTaskIndex: null }; // Collapse
 			}
 
 			if ( isFunction( this.props.onExpandTask ) ) {
 				this.props.onExpandTask(
-					Children.toArray( this.props.children )[ newExpandedTaskId ].props
+					Children.toArray( this.props.children )[ newExpandedTaskIndex ].props
 				);
 			}
 
-			return { expandedTaskId: newExpandedTaskId }; // Expand
+			return { expandedTaskIndex: newExpandedTaskIndex }; // Expand
 		} );
 
 	toggleCompleted = () =>
@@ -125,7 +125,7 @@ export default class Checklist extends PureComponent {
 						const realIndex = index - skippedChildren;
 
 						return cloneElement( child, {
-							collapsed: realIndex !== this.getExpandedTaskId(),
+							collapsed: realIndex !== this.getExpandedTaskIndex(),
 							onTaskClick: () => this.setExpandedTask( realIndex ),
 						} );
 					} ) }
