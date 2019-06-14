@@ -1,5 +1,3 @@
-/** @format */
-/* eslint-disable */
 /**
  * External dependendies
  */
@@ -27,6 +25,11 @@ import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/
 import { getSiteSlug } from 'state/sites/selectors';
 import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
 import getRewindState from 'state/selectors/get-rewind-state';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class RewindCredentialsForm extends Component {
 	static propTypes = {
