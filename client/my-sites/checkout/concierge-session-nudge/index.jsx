@@ -21,7 +21,13 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
+<<<<<<< HEAD
 import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
+=======
+import { addItem } from 'lib/upgrades/actions';
+import { conciergeSessionItem } from 'lib/cart-values/cart-items';
+import { siteQualifiesForPageBuilder } from 'lib/signup/page-builder';
+>>>>>>> Remove Skip button redirect duplicate code
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -35,7 +41,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
-import analytics from 'lib/analytics';
 
 /**
  * Style dependencies
@@ -304,34 +309,10 @@ export class ConciergeSessionNudge extends React.Component {
 	}
 
 	handleClickDecline = () => {
-		const {
-			siteSlug,
-			receiptId,
-			isEligibleForChecklist,
-			trackUpsellButtonClick,
-			redirectToPageBuilder,
-		} = this.props;
+		const { trackUpsellButtonClick, handleCheckoutCompleteRedirect } = this.props;
 
-		trackUpsellButtonClick( `calypso_concierge_session_upsell_decline_button_click` );
-
-		// if ( ! receiptId ) {
-		// 	// Send the user to a generic page (not post-purchase related).
-		// 	page( `/stats/day/${ siteSlug }` );
-		// } else if ( isEligibleForChecklist ) {
-		// 	if ( redirectToPageBuilder ) {
-		// 		return page( getEditHomeUrl( siteSlug ) );
-		// 	}
-		// 	analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-		// 		site: siteSlug,
-		// 		plan: 'paid',
-		// 	} );
-		// 	page( `/checklist/${ siteSlug }` );
-		// } else {
-		// 	page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
-		// }
-
-		console.log('rand is ' + this.props.rand);
-		this.props.handleCheckoutCompleteRedirect();
+		trackUpsellButtonClick( 'decline' );
+		handleCheckoutCompleteRedirect();
 	};
 
 	handleClickAccept = buttonAction => {
