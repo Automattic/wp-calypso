@@ -22,7 +22,6 @@ function getStateFromStores() {
 
 class CartData extends React.Component {
 	render() {
-		console.log(this.props.children);
 		return (
 			<StoreConnection stores={ stores } getStateFromStores={ getStateFromStores }>
 				{ this.props.children }
