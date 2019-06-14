@@ -16,7 +16,7 @@ import { abtest } from 'lib/abtest';
 import { addItems } from 'lib/upgrades/actions';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
-import { areAllItemsReady, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
+import { areAllUsersReady, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
 import { getSelectedSite } from 'state/ui/selectors';
 import GoogleAppsProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
@@ -54,7 +54,7 @@ class GSuiteDialog extends React.Component {
 		};
 	}
 
-	onUsersChange = users => {
+	handleUsersChange = users => {
 		this.setState( {
 			users,
 		} );
@@ -89,7 +89,7 @@ class GSuiteDialog extends React.Component {
 					<GSuiteNewUserList
 						extraValidation={ user => user }
 						selectedDomainName={ domain }
-						onUsersChange={ this.onUsersChange }
+						onUsersChange={ this.handleUsersChange }
 						users={ users }
 					>
 						{ this.footer() }
@@ -129,7 +129,7 @@ class GSuiteDialog extends React.Component {
 	footer() {
 		const { translate } = this.props;
 		const { users } = this.state;
-		const canContinue = areAllItemsReady( users );
+		const canContinue = areAllUsersReady( users );
 
 		return (
 			<footer className="gsuite-dialog__footer">
@@ -160,7 +160,7 @@ class GSuiteDialog extends React.Component {
 	handleAddEmail = () => {
 		const { domain, planType, selectedSite } = this.props;
 		const { users } = this.state;
-		const canContinue = areAllItemsReady( users );
+		const canContinue = areAllUsersReady( users );
 
 		if ( canContinue ) {
 			addItems(
