@@ -174,7 +174,7 @@ class Task extends PureComponent {
 						) }
 					</h3>
 
-					{ isExpandable && (
+					{ ! collapsed && (
 						<div className="checklist__task-content">
 							<p className="checklist__task-description">{ description }</p>
 
@@ -185,19 +185,17 @@ class Task extends PureComponent {
 									</small>
 								) }
 
-								{ isExpandable && (
-									<div className="checklist__task-action-wrapper">
-										<Button
-											className="checklist__task-action"
-											href={ href }
-											onClick={ onClick }
-											primary={ ! collapsed }
-											target={ target }
-										>
-											{ taskActionButtonText }
-										</Button>
-									</div>
-								) }
+								<div className="checklist__task-action-wrapper">
+									<Button
+										className="checklist__task-action"
+										href={ href }
+										onClick={ onClick }
+										primary={ ! collapsed }
+										target={ target }
+									>
+										{ taskActionButtonText }
+									</Button>
+								</div>
 							</div>
 						</div>
 					) }
