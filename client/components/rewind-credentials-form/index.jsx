@@ -41,15 +41,15 @@ export class RewindCredentialsForm extends Component {
 		onComplete: PropTypes.func,
 		siteUrl: PropTypes.string,
 		labels: PropTypes.object,
+		requirePath: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		labels: {},
-		requirePath: PropTypes.bool,
+		requirePath: false,
 	};
 
 	state = {
-		showPrivateKeyField: false,
 		form: {
 			protocol: 'ssh',
 			host: '',
