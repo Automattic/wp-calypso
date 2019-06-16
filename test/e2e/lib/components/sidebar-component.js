@@ -25,15 +25,20 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			itemName
 		);
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
-		const itemSelector = await this.driver.findElement( selector );
-		const isExpanded = await itemSelector.getAttribute( 'aria-expanded' );
-		if ( isExpanded === 'false' ) {
-			await driverHelper.selectElementByText(
-				this.driver,
-				By.css( '.sidebar__heading' ),
-				itemName
-			);
-		}
+		// const itemSelector = await this.driver.findElement( selector );
+		// const isExpanded = await itemSelector.getAttribute( 'aria-expanded' );
+		// await this.driver.sleep( 150000 );
+		// if ( isExpanded === 'false' ) {
+		// 	await driverHelper.selectElementByText(
+		// 		this.driver,
+		// 		By.css( '.sidebar__heading' ),
+		// 		itemName
+		// 	);
+		// }
+		await driverHelper.selectElementByText( this.driver, By.css( '.sidebar__heading' ), itemName );
+
+		// const itemSelector = await this.driver.findElement( selector );
+		// const x = await driverHelper.isEventuallyPresentAndDisplayed( this.driver, itemSelector );
 	}
 
 	async selectDomains() {
