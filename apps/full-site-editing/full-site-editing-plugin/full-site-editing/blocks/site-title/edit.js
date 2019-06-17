@@ -9,7 +9,7 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { withNotices, ServerSideRender } from '@wordpress/components';
+import { withNotices } from '@wordpress/components';
 import { PlainText } from '@wordpress/block-editor';
 import apiFetch from '@wordpress/api-fetch';
 import { withSelect } from '@wordpress/data';
@@ -21,7 +21,7 @@ import { compose } from '@wordpress/compose';
 
 class SiteTitleEdit extends Component {
 	state = {
-		title: __( 'Site title loading...' ),
+		title: __( 'Site title loading…' ),
 		initialTitle: '',
 	};
 
@@ -57,8 +57,6 @@ class SiteTitleEdit extends Component {
 
 		// Save the title on publish
 		if ( userInitiatedPublish ) {
-			const { title } = this.state;
-
 			apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { title } } )
 				.then( () => this.resetTitle() )
 				.catch( ( { message } ) => noticeOperations.createErrorNotice( message ) );
