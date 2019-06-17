@@ -57,7 +57,7 @@ class Full_Site_Editing {
 	/**
 	 * Register post types.
 	 */
-	public static function register_template_post_types() {
+	public function register_template_post_types() {
 		register_post_type(
 			'wp_template',
 			array(
