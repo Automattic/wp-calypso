@@ -14676,24 +14676,98 @@
 			}
 		},
 		"moment-timezone-data-webpack-plugin": {
-			"version": "1.0.3",
-			"resolved": "https://registry.npmjs.org/moment-timezone-data-webpack-plugin/-/moment-timezone-data-webpack-plugin-1.0.3.tgz",
-			"integrity": "sha512-dO8Kwz+KU+v1PCw5xGhIoIhuZg48vO67PW5JKb7s8+fNHBOojI7rxfiq88KH1J/We+0pCPEOkUIsTSrcuaz4xg==",
+			"version": "1.1.0",
+			"resolved": "https://registry.npmjs.org/moment-timezone-data-webpack-plugin/-/moment-timezone-data-webpack-plugin-1.1.0.tgz",
+			"integrity": "sha512-szKf9rbRoY9u3WNcwK6D0tdCREk/OZkcF1k163Xc5m7GcqBh28LgNVWisb4sje6/qdG3WUkFD5hJ7/lmKOkBAA==",
 			"dev": true,
 			"requires": {
-				"find-cache-dir": "^2.0.0",
-				"make-dir": "^2.0.0"
+				"find-cache-dir": "^3.0.0",
+				"make-dir": "^3.0.0"
 			},
 			"dependencies": {
-				"make-dir": {
-					"version": "2.1.0",
-					"resolved": "https://registry.npmjs.org/make-dir/-/make-dir-2.1.0.tgz",
-					"integrity": "sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA==",
+				"find-cache-dir": {
+					"version": "3.0.0",
+					"resolved": "https://registry.npmjs.org/find-cache-dir/-/find-cache-dir-3.0.0.tgz",
+					"integrity": "sha512-t7ulV1fmbxh5G9l/492O1p5+EBbr3uwpt6odhFTMc+nWyhmbloe+ja9BZ8pIBtqFWhOmCWVjx+pTW4zDkFoclw==",
 					"dev": true,
 					"requires": {
-						"pify": "^4.0.1",
-						"semver": "^5.6.0"
+						"commondir": "^1.0.1",
+						"make-dir": "^3.0.0",
+						"pkg-dir": "^4.1.0"
 					}
+				},
+				"find-up": {
+					"version": "4.1.0",
+					"resolved": "https://registry.npmjs.org/find-up/-/find-up-4.1.0.tgz",
+					"integrity": "sha512-PpOwAdQ/YlXQ2vj8a3h8IipDuYRi3wceVQQGYWxNINccq40Anw7BlsEXCMbt1Zt+OLA6Fq9suIpIWD0OsnISlw==",
+					"dev": true,
+					"requires": {
+						"locate-path": "^5.0.0",
+						"path-exists": "^4.0.0"
+					}
+				},
+				"locate-path": {
+					"version": "5.0.0",
+					"resolved": "https://registry.npmjs.org/locate-path/-/locate-path-5.0.0.tgz",
+					"integrity": "sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==",
+					"dev": true,
+					"requires": {
+						"p-locate": "^4.1.0"
+					}
+				},
+				"make-dir": {
+					"version": "3.0.0",
+					"resolved": "https://registry.npmjs.org/make-dir/-/make-dir-3.0.0.tgz",
+					"integrity": "sha512-grNJDhb8b1Jm1qeqW5R/O63wUo4UXo2v2HMic6YT9i/HBlF93S8jkMgH7yugvY9ABDShH4VZMn8I+U8+fCNegw==",
+					"dev": true,
+					"requires": {
+						"semver": "^6.0.0"
+					}
+				},
+				"p-limit": {
+					"version": "2.2.0",
+					"resolved": "https://registry.npmjs.org/p-limit/-/p-limit-2.2.0.tgz",
+					"integrity": "sha512-pZbTJpoUsCzV48Mc9Nh51VbwO0X9cuPFE8gYwx9BTCt9SF8/b7Zljd2fVgOxhIF/HDTKgpVzs+GPhyKfjLLFRQ==",
+					"dev": true,
+					"requires": {
+						"p-try": "^2.0.0"
+					}
+				},
+				"p-locate": {
+					"version": "4.1.0",
+					"resolved": "https://registry.npmjs.org/p-locate/-/p-locate-4.1.0.tgz",
+					"integrity": "sha512-R79ZZ/0wAxKGu3oYMlz8jy/kbhsNrS7SKZ7PxEHBgJ5+F2mtFW2fK2cOtBh1cHYkQsbzFV7I+EoRKe6Yt0oK7A==",
+					"dev": true,
+					"requires": {
+						"p-limit": "^2.2.0"
+					}
+				},
+				"p-try": {
+					"version": "2.2.0",
+					"resolved": "https://registry.npmjs.org/p-try/-/p-try-2.2.0.tgz",
+					"integrity": "sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==",
+					"dev": true
+				},
+				"path-exists": {
+					"version": "4.0.0",
+					"resolved": "https://registry.npmjs.org/path-exists/-/path-exists-4.0.0.tgz",
+					"integrity": "sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==",
+					"dev": true
+				},
+				"pkg-dir": {
+					"version": "4.2.0",
+					"resolved": "https://registry.npmjs.org/pkg-dir/-/pkg-dir-4.2.0.tgz",
+					"integrity": "sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==",
+					"dev": true,
+					"requires": {
+						"find-up": "^4.0.0"
+					}
+				},
+				"semver": {
+					"version": "6.1.1",
+					"resolved": "https://registry.npmjs.org/semver/-/semver-6.1.1.tgz",
+					"integrity": "sha512-rWYq2e5iYW+fFe/oPPtYJxYgjBm8sC4rmoGdUOgBB7VnwKt6HrL793l2voH1UlsyYZpJ4g0wfjnTEO1s1NP2eQ==",
+					"dev": true
 				}
 			}
 		},
