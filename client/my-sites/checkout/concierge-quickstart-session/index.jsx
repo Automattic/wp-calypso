@@ -46,9 +46,18 @@ import './style.scss';
 
 export class ConciergeQuickstartSession extends React.Component {
 	static propTypes = {
-		receiptId: PropTypes.number,
-		selectedSiteId: PropTypes.number.isRequired,
+		receiptId: PropTypes.string,
+		selectedSiteId: PropTypes.number,
 	};
+
+	componentDidMount() {
+		// If the param value is 'add', then we will add the concierge session item to cart and proceed to checkout,
+		// without rendering the UI. We use this method when a logged out user clicks 'Get Started' on the concierge
+		// offer page.
+		if ( 'add' === this.props.receiptId ) {
+			this.handleClickAccept();
+		}
+	}
 
 	render() {
 		const {
@@ -63,14 +72,6 @@ export class ConciergeQuickstartSession extends React.Component {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
-		// If the param value is 'add', then we will add the concierge session item to cart and proceed to checkout,
-		// without showing any UI. We use this method when a logged out user clicks 'Get Started' on the concierge
-		// offer page.
-		if ( 'add' === receiptId ) {
-			this.renderPlaceholders();
-			this.handleClickAccept();
-			return null;
-		}
 		return (
 			<Main className="concierge-quickstart-session">
 				<PageViewTracker
@@ -425,10 +426,10 @@ export default connect(
 			productCost: getProductCost( state, 'concierge-session' ),
 			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
 			isLoggedIn: isUserLoggedIn( state ),
+			redirectLoggedOut,
 		};
 	},
 	{
 		trackUpsellButtonClick,
-		redirectLoggedOut,
 	}
 )( localize( ConciergeQuickstartSession ) );
