@@ -68,7 +68,7 @@ export class ConciergeQuickstartSession extends React.Component {
 			translate,
 			receiptId,
 		} = this.props;
-		const title = translate( 'Checkout ‹ Support Session', {
+		const title = translate( 'Checkout ‹ Quick Start Session', {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
