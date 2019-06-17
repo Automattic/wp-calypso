@@ -30,6 +30,11 @@ import getSiteAddressValidationError from 'state/selectors/get-site-address-vali
 import isRequestingSiteAddressChange from 'state/selectors/is-requesting-site-address-change';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
 const ADDRESS_CHANGE_SUPPORT_URL = 'https://support.wordpress.com/changing-blog-address/';
