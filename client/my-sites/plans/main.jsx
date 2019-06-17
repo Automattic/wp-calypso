@@ -106,6 +106,7 @@ class Plans extends React.Component {
 							selectedFeature={ this.props.selectedFeature }
 							selectedPlan={ this.props.selectedPlan }
 							withDiscount={ this.props.withDiscount }
+							discountEndDate={ this.props.discountEndDate }
 							site={ selectedSite }
 							plansWithScroll={ false }
 						/>
