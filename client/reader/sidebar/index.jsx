@@ -161,7 +161,7 @@ export class ReaderSidebar extends React.Component {
 									href="/read/conversations"
 									onClick={ this.handleReaderSidebarConversationsClicked }
 								>
-									<MaterialIcon icon="chat" />
+									<MaterialIcon icon="question_answer" />
 									<span className="menu-link-text">
 										{ this.props.translate( 'Conversations' ) }
 									</span>
