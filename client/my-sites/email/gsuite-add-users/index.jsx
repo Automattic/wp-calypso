@@ -93,13 +93,13 @@ class GSuiteAddUsers extends React.Component {
 		this.goToEmail();
 	};
 
-	handleUsersChange = users => {
-		const { previousUsers } = this.state;
+	handleUsersChange = changedUsers => {
+		const { users: previousUsers } = this.state;
 
-		this.recordUsersChangedEvent( previousUsers, users );
+		this.recordUsersChangedEvent( previousUsers, changedUsers );
 
 		this.setState( {
-			users,
+			users: changedUsers,
 		} );
 	};
 
@@ -114,6 +114,7 @@ class GSuiteAddUsers extends React.Component {
 
 	recordUsersChangedEvent = ( previousUsers, nextUsers ) => {
 		const { recordTracksEvent, selectedDomainName } = this.props;
+
 		if ( previousUsers.length !== nextUsers.length ) {
 			recordTracksEvent( 'calypso_email_management_gsuite_add_users_users_changed', {
 				domain_name: selectedDomainName,
