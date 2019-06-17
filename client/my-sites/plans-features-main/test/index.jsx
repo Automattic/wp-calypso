@@ -312,7 +312,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		).toBe( false );
 	} );
 
-	test( 'Should highlight proper popular plan for blog site type', () => {
+	test( 'Highlights TYPE_PERSONAL as popular plan for blog site type', () => {
 		const instance = new PlansFeaturesMain( {
 			siteType: 'blog',
 		} );
@@ -323,7 +323,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 	} );
 
-	test( 'Should highlight proper popular plan for professional site type', () => {
+	test( 'Highlights TYPE_PREMIUM as popular plan for professional site type', () => {
 		const instance = new PlansFeaturesMain( {
 			siteType: 'professional',
 		} );
@@ -334,7 +334,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 	} );
 
-	test( 'Should highlight proper popular plan for business site type', () => {
+	test( 'Highlights TYPE_BUSINESS as popular plan for business site type', () => {
 		const instance = new PlansFeaturesMain( {
 			siteType: 'business',
 		} );
@@ -345,7 +345,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 	} );
 
-	test( 'Should highlight proper popular plan for empty site type and personal customer type', () => {
+	test( 'Highlights TYPE_PREMIUM as popular plan for empty site type and personal customer type', () => {
 		const instance = new PlansFeaturesMain( {
 			customerType: 'personal',
 		} );
@@ -356,7 +356,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 	} );
 
-	test( 'Should highlight proper popular plan for empty site type and business customer type', () => {
+	test( 'Highlights TYPE_BUSINESS as popular plan for empty site type and business customer type', () => {
 		const instance = new PlansFeaturesMain( {
 			customerType: 'business',
 		} );
@@ -367,7 +367,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 	} );
 
-	test( 'Should highlight proper popular plan for empty site type and empty customer type', () => {
+	test( 'Highlights TYPE_BUSINESS as popular plan for empty site type and empty customer type', () => {
 		const instance = new PlansFeaturesMain( {} );
 		const comp = shallow( instance.render() );
 		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
