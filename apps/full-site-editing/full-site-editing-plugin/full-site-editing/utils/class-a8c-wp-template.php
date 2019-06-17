@@ -52,7 +52,7 @@ class A8C_WP_Template {
 	 * @return null|int template ID for current page, or null if it doesn't exist.
 	 */
 	public function get_template_id() {
-		// If the specific template is referenced in post meta, us it.
+		// If the specific template is referenced in post meta, use it.
 		$template_id = get_post_meta( $this->current_post_id, self::TEMPLATE_META_KEY, true );
 
 		if ( ! empty( $template_id ) ) {
