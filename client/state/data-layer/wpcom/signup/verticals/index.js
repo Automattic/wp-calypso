@@ -28,7 +28,7 @@ export const requestVerticals = action =>
 			path: '/verticals',
 			query: {
 				search: action.search.trim(),
-				...( action.siteTypeId ? { site_type: action.siteTypeId } : {} ),
+				...( action.siteTypeId && { site_type: action.siteTypeId } ),
 				limit: action.limit,
 				include_preview: true,
 			},
