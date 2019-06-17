@@ -250,7 +250,16 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			step( 'Can log in', async function() {
 				this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
-				return await this.loginFlow.loginAndStartNewPost( null, true );
+				return await this.loginFlow.login( { useFreshLogin: true } );
+			} );
+
+			step( 'Start new post', async function() {
+				const navBarComponent = await NavBarComponent.Expect( driver );
+				await navBarComponent.clickMySites();
+				const sidebarComponent = await SidebarComponent.Expect( driver );
+				await sidebarComponent.selectPosts();
+				const postsPage = await PostsPage.Expect( driver );
+				return await postsPage.addNewPost();
 			} );
 
 			step( 'Can enter post title and text content', async function() {
