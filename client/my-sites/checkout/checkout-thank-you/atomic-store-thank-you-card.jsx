@@ -22,9 +22,9 @@ import { getCurrentUserEmail, isCurrentUserEmailVerified } from 'state/current-u
 import { errorNotice, removeNotice } from 'state/notices/actions';
 import userFactory from 'lib/user';
 
-const VERIFY_EMAIL_ERRROR_NOTICE = 'ecommerce-verify-email-error';
+const VERIFY_EMAIL_ERROR_NOTICE = 'ecommerce-verify-email-error';
 
-const userLib = userFactory();
+const user = userFactory();
 
 class AtomicStoreThankYouCard extends Component {
 	state = {
@@ -32,8 +32,14 @@ class AtomicStoreThankYouCard extends Component {
 		emailSent: false,
 	};
 
+	componentDidUpdate( prevProps ) {
+		if ( this.props.isEmailVerified && ! prevProps.isEmailVerified ) {
+			this.props.removeNotice( VERIFY_EMAIL_ERROR_NOTICE );
+		}
+	}
+
 	checkVerification = () => {
-		userLib.fetch();
+		user.fetch();
 	};
 
 	resendEmail = () => {
@@ -43,15 +49,18 @@ class AtomicStoreThankYouCard extends Component {
 			return;
 		}
 
-		this.setState( { pendingVerificationResend: true } );
+		this.setState( {
+			emailSent: false,
+			pendingVerificationResend: true,
+		} );
 
-		userLib.sendVerificationEmail( ( error, response ) => {
-			this.props.removeNotice( VERIFY_EMAIL_ERRROR_NOTICE );
+		user.sendVerificationEmail( ( error, response ) => {
+			this.props.removeNotice( VERIFY_EMAIL_ERROR_NOTICE );
 			if ( error ) {
 				this.props.errorNotice(
 					translate( "Couldn't resend verification email. Please try again." ),
 					{
-						id: VERIFY_EMAIL_ERRROR_NOTICE,
+						id: VERIFY_EMAIL_ERROR_NOTICE,
 					}
 				);
 			}
@@ -108,12 +117,6 @@ class AtomicStoreThankYouCard extends Component {
 			</div>
 		);
 	};
-
-	componentDidUpdate( prevProps ) {
-		if ( this.props.isEmailVerified && ! prevProps.isEmailVerified ) {
-			this.props.removeNotice( VERIFY_EMAIL_ERRROR_NOTICE );
-		}
-	}
 
 	renderDescription() {
 		const { emailAddress, isEmailVerified, translate } = this.props;
