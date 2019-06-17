@@ -31,8 +31,7 @@ function getTasks( {
 	const tasks = [];
 	const segmentSlug = getSiteTypePropertyValue( 'id', siteSegment, 'slug' );
 
-	const getTask = taskId =>
-		taskStatuses ? taskStatuses.filter( task => task.id === taskId )[ 0 ] : undefined;
+	const getTask = taskId => get( taskStatuses, taskId );
 	const hasTask = taskId => getTask( taskId ) !== undefined;
 	const isCompleted = taskId => get( getTask( taskId ), 'completed', false );
 	const addTask = ( taskId, completed ) => {
