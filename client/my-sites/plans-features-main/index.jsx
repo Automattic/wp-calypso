@@ -454,13 +454,13 @@ export default connect(
 			// universal.
 			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			plansWithScroll: ! props.displayJetpackPlans && props.plansWithScroll,
-			customerType: customerType,
+			customerType,
 			domains: getDecoratedSiteDomains( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
-			siteId: siteId,
+			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
-			siteType: siteType,
+			siteType,
 		};
 	},
 	{
