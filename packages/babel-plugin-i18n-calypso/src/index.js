@@ -156,7 +156,7 @@ module.exports = function() {
 					}
 				}
 
-				if ( process.env.NODE_ENV !== 'build_pot' ) {
+				if ( ! state.opts.writePot ) {
 					return;
 				}
 

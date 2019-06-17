@@ -30,6 +30,7 @@ const config = {
 					'content-type': 'text/plain; charset=UTF-8',
 					'x-generator': 'calypso',
 				},
+				writePot: process.env.NODE_ENV === 'build_pot',
 			},
 		],
 		isBrowser
