@@ -47,6 +47,7 @@ class UpdateNotice extends React.PureComponent {
 				{ translate( '%s new post', '%s new posts', {
 					args: [ cappedUnreadCount ],
 					count,
+					comment: '%s is the number of new posts. For example: "1" or "40+"',
 				} ) }
 			</button>
 		);
