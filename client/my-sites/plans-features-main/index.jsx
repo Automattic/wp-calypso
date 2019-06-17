@@ -443,6 +443,8 @@ export default connect(
 			currentCustomerType: props.customerType,
 			selectedPlan: props.selectedPlan,
 			currentPlan,
+			siteType,
+			abtest,
 		} );
 
 		return {
