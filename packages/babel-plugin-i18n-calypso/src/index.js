@@ -114,37 +114,6 @@ module.exports = function() {
 					return;
 				}
 
-				// At this point we assume we'll save data, so initialize if
-				// we haven't already
-				if ( ! baseData ) {
-					baseData = {
-						charset: 'utf-8',
-						headers: state.opts.headers || DEFAULT_HEADERS,
-						translations: {
-							'': {
-								'': {
-									msgid: '',
-									msgstr: [],
-								},
-							},
-						},
-					};
-
-					for ( const key in baseData.headers ) {
-						baseData.translations[ '' ][ '' ].msgstr.push(
-							`${ key }: ${ baseData.headers[ key ] };\n`
-						);
-					}
-
-					// Attempt to exract nplurals from header
-					const pluralsMatch = ( baseData.headers[ 'plural-forms' ] || '' ).match(
-						/nplurals\s*=\s*(\d+);/
-					);
-					if ( pluralsMatch ) {
-						nplurals = pluralsMatch[ 1 ];
-					}
-				}
-
 				if ( path.node.arguments.length > i ) {
 					const msgid_plural = getNodeAsString( path.node.arguments[ i ] );
 					if ( msgid_plural.length ) {
@@ -174,9 +143,46 @@ module.exports = function() {
 								case 'comment':
 									translation.comments.extracted =
 										path.node.arguments[ i ].properties[ j ].value.value;
+									// Remove the comment from the transpiled code.
+									delete path.node.arguments[ i ].properties[ j ];
 									break;
 							}
 						}
+					}
+				}
+
+				if ( process.env.NODE_ENV !== 'build_pot' ) {
+					return;
+				}
+
+				// At this point we assume we'll save data, so initialize if
+				// we haven't already
+				if ( ! baseData ) {
+					baseData = {
+						charset: 'utf-8',
+						headers: state.opts.headers || DEFAULT_HEADERS,
+						translations: {
+							'': {
+								'': {
+									msgid: '',
+									msgstr: [],
+								},
+							},
+						},
+					};
+
+					for ( const key in baseData.headers ) {
+						baseData.translations[ '' ][ '' ].msgstr.push(
+							`${ key }: ${ baseData.headers[ key ] };\n`
+						);
+					}
+
+					// Attempt to exract nplurals from header
+					const pluralsMatch = ( baseData.headers[ 'plural-forms' ] || '' ).match(
+						/nplurals\s*=\s*(\d+);/
+					);
+					if ( pluralsMatch ) {
+						nplurals = pluralsMatch[ 1 ];
 					}
 				}
 
