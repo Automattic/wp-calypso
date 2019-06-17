@@ -35,10 +35,6 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	},
 } ) => {
 	const translate = useTranslate();
-	const contactText = translate( 'contact', {
-		context: 'part of e-mail address',
-		comment: 'As it would be part of an e-mail address contact@example.com',
-	} );
 
 	// use this to control setting the "touched" states below. That way the user will not see a bunch of
 	// "This field is required" errors pop at once
@@ -54,10 +50,15 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	const hasFirstNameError = firstNameFieldTouched && null !== firstNameError;
 	const hasLastNameError = lastNameFieldTouched && null !== lastNameError;
 
+	const emailAddressPlaceholder = translate( 'e.g. contact', {
+		comment:
+			'An example of the local-part of an email address: "contact" in "contact@example.com".',
+	} );
+
 	const renderSingleDomain = () => {
 		return (
 			<FormTextInputWithAffixes
-				placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+				placeholder={ emailAddressPlaceholder }
 				value={ mailBox }
 				isError={ hasMailBoxError }
 				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
@@ -75,7 +76,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		return (
 			<Fragment>
 				<FormTextInput
-					placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+					placeholder={ emailAddressPlaceholder }
 					value={ mailBox }
 					isError={ hasMailBoxError }
 					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
