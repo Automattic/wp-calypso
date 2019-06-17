@@ -307,7 +307,8 @@ export class RewindCredentialsForm extends Component {
 					) }
 					{ this.props.allowDelete && (
 						<Button
-							borderless={ true }
+							borderless
+							scary
 							disabled={ formIsSubmitting }
 							onClick={ this.handleDelete }
 							className="rewind-credentials-form__delete-button"
