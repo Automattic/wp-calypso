@@ -302,6 +302,7 @@ class Full_Site_Editing {
 			array(
 				'editorPostType' => get_current_screen()->post_type,
 				'featureFlags'   => $feature_flags->get_flags(),
+				'closeButtonUrl' => $this->get_close_button_url(),
 			)
 		);
 
@@ -381,5 +382,41 @@ class Full_Site_Editing {
 
 		// Setting this to `public` will allow it to be found in the search endpoint.
 		$post_type->public = true;
+	}
+
+	/**
+	 * Returns the URL for the Gutenberg close button.
+	 *
+	 * In some cases we want to override the default value which would take us to post listing
+	 * for a given post type. For example, when navigating back from Header, we want to show the
+	 * parent page editing view, and not the Template Part CPT list.
+	 *
+	 * @return null|string Override URL string if it should be inserted, or null otherwise.
+	 */
+	public function get_close_button_url() {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['fse_parent_post'] ) ) {
+			return null;
+		}
+
+		$parent_post_id = absint( $_GET['fse_parent_post'] );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		if ( empty( $parent_post_id ) ) {
+			return null;
+		}
+
+		$close_button_url = get_edit_post_link( $parent_post_id );
+
+		/**
+		 * Filter the Gutenberg's close button URL when editing Template Part CPTs.
+		 *
+		 * @since 0.1
+		 *
+		 * @param string Current close button URL.
+		 */
+		$close_button_url = apply_filters( 'a8c_fse_close_button_link', $close_button_url );
+
+		return $close_button_url;
 	}
 }
