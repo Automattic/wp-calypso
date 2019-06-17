@@ -121,6 +121,7 @@ class SearchStream extends React.Component {
 
 		const documentTitle = translate( '%s ‹ Reader', {
 			args: this.getTitle(),
+			comment: '%s is the section name. For example: "My Likes"',
 		} );
 
 		const TEXT_RELEVANCE_SORT = translate( 'Relevance', {
@@ -189,9 +190,11 @@ class SearchStream extends React.Component {
 							<FollowButton
 								followLabel={ translate( 'Follow %s', {
 									args: queryWithoutProtocol,
+									comment: '%s is the site name being followed. For example: "Discover"',
 								} ) }
 								followingLabel={ translate( 'Following %s', {
 									args: queryWithoutProtocol,
+									comment: '%s is the site name being followed. For example: "Discover"',
 								} ) }
 								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ SEARCH_RESULTS_URL_INPUT }

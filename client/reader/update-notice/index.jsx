@@ -44,9 +44,10 @@ class UpdateNotice extends React.PureComponent {
 			<button className={ counterClasses } onClick={ this.handleClick }>
 				<DocumentHead unreadCount={ count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
-				{ translate( '%s new post', '%s new posts', {
-					args: [ cappedUnreadCount ],
+				{ translate( '%d new post', '%d new posts', {
+					args: [ +cappedUnreadCount ],
 					count,
+					comment: '%d is the number of new posts. For example: "1"',
 				} ) }
 			</button>
 		);
