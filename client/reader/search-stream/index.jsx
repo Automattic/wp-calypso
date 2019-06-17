@@ -190,11 +190,11 @@ class SearchStream extends React.Component {
 							<FollowButton
 								followLabel={ translate( 'Follow %s', {
 									args: queryWithoutProtocol,
-									comment: '%s is the site name being followed. For example: "Discover"',
+									comment: '%s is the name of the site being followed. For example: "Discover"',
 								} ) }
 								followingLabel={ translate( 'Following %s', {
 									args: queryWithoutProtocol,
-									comment: '%s is the site name being followed. For example: "Discover"',
+									comment: '%s is the name of the site being followed. For example: "Discover"',
 								} ) }
 								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ SEARCH_RESULTS_URL_INPUT }
