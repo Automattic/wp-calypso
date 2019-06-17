@@ -144,6 +144,7 @@ class AtomicStoreThankYouCard extends Component {
 		const { translate, siteId, planClass } = this.props;
 
 		const classes = classNames( 'checkout-thank-you__atomic-store', planClass );
+		const description = this.renderDescription();
 
 		return (
 			<div className={ classes }>
@@ -151,7 +152,8 @@ class AtomicStoreThankYouCard extends Component {
 					siteId={ siteId }
 					action={ this.renderAction() }
 					heading={ translate( 'Thank you for your purchase!' ) }
-					description={ this.renderDescription() }
+					description={ 'string' === typeof description ? description : null }
+					descriptionWithHTML={ 'object' === typeof description ? description : null }
 				/>
 			</div>
 		);
