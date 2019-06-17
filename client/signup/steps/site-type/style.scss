@@ -50,6 +50,13 @@
 		color: var( --color-text-subtle );
 	}
 
+	.site-type__option-badge {
+		font-size: 12px;
+		margin-top: 6px;
+		// Offset .badge padding-left
+		margin-left: -11px;
+	}
+
 	.card__link-indicator {
 		@include breakpoint( '>660px' ) {
 			opacity: 0.5;
