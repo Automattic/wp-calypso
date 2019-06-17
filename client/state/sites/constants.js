@@ -53,6 +53,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'show_on_front',
 	'signup_is_store',
 	'site_goals',
+	'site_segment',
 	'software_version',
 	'timezone',
 	'upgraded_filetypes_enabled',
