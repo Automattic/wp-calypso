@@ -495,3 +495,30 @@ export const getPopularPlanSpec = ( { customerType, isJetpack, siteType, abtest 
 
 	return spec;
 };
+
+export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, currentPlan } ) => {
+	if ( currentCustomerType ) {
+		return currentCustomerType;
+	}
+
+	const group = GROUP_WPCOM;
+	const businessPlanSlugs = [
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+	]
+		.map( planKey => getPlan( planKey ) )
+		.map( plan => plan.getStoreSlug() );
+
+	if ( selectedPlan ) {
+		return businessPlanSlugs.includes( selectedPlan ) ? 'business' : 'personal';
+	} else if ( currentPlan ) {
+		const isPlanInBusinessGroup = businessPlanSlugs.indexOf( currentPlan.product_slug ) !== -1;
+		return isPlanInBusinessGroup ? 'business' : 'personal';
+	}
+
+	return 'personal';
+};
