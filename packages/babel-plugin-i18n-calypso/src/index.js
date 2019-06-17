@@ -144,7 +144,7 @@ module.exports = function() {
 									translation.comments.extracted =
 										path.node.arguments[ i ].properties[ j ].value.value;
 									// Remove the comment from the transpiled code.
-									delete path.node.arguments[ i ].properties[ j ];
+									path.node.arguments[ i ].properties.splice( j, 1 );
 									break;
 							}
 						}
