@@ -9,6 +9,9 @@ import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import { countBy, map, omit, values, flatten } from 'lodash';
 import Gridicon from 'gridicons';
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /**
  * Internal dependencies
@@ -65,14 +68,14 @@ class BlogSettingsHeader extends PureComponent {
 		);
 
 		if ( ! onCount ) {
-			return this.props.translate( 'no notifications' );
+			return this.props.translate( 'No notifications' );
 		}
 
 		if ( ! offCount ) {
-			return this.props.translate( 'all notifications' );
+			return this.props.translate( 'All notifications' );
 		}
 
-		return this.props.translate( 'some notifications' );
+		return this.props.translate( 'Some notifications' );
 	};
 
 	render() {
