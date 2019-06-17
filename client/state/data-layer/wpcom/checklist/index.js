@@ -43,7 +43,7 @@ export const updateChecklistTask = action =>
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'POST',
-			apiNamespace: 'rest/v1',
+			apiNamespace: isEnabled( 'onboarding-checklist/phase2' ) ? 'rest/v1.1' : 'rest/v1',
 			query: {
 				http_envelope: 1,
 			},
