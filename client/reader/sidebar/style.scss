@@ -1,78 +1,13 @@
 // Reader Sidebar
 .is-group-reader .sidebar {
-	overflow-x: hidden;
 
-	@include breakpoint( '<660px' ) {
-		z-index: z-index( 'root', '.reader-mobile-sidebar' );
-	}
-
-	.sidebar__menu {
-		margin-bottom: 8px;
-		
-		.sidebar-streams__team {
-			border-top: 0;
-		}
-	}
-
-	.sidebar__menu-empty,
-	.sidebar__menu-empty:hover {
-		background-color: transparent !important; // needs to be more specific
-		color: var( --sidebar-text-color );
-		font-size: 13px;
-		max-width: 60%;
-		padding-right: 32px;
-		padding-left: 55px;
-	}
-
-	.sidebar__menu-item {
-		a.sidebar__button {
-			margin-top: 10px;
-
-			@include breakpoint( '>660px' ) {
-				margin-top: 5px;
-			}
-		}
-	}
-
+	// Push the List labels with some padding
+	// to align them with other sidebar labels.
 	.sidebar__menu-item-label {
 		padding: 8px 16px 8px 55px;
-
-		&::after {
-			@include long-content-fade( $color: var( --sidebar-background-gradient ), $size: 20px );
-			padding-right: 50px;
-		}
-
-		.sidebar__menu-item-tagname {
-			&::after {
-				@include long-content-fade( $color: var( --sidebar-background-gradient ), $size: 20px );
-				right: 60px;
-			}
-		}
-
-		.sidebar__menu-item-tagname {
-			&::after {
-				right: 20px;
-			}
-		}
 	}
 
-	.sidebar__menu-add-button {
-		border: 1px solid var( --color-neutral-100 );
-		border-radius: 3px;
-		padding: 6px 7px;
-		position: absolute;
-		right: 8px;
-		top: 7px;
-		text-transform: none;
-
-		// Disabled by default
-		opacity: 0;
-		transform: translateX( -20px );
-		pointer-events: none;
-		transition: all 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
-		transition-delay: 0.05s;
-	}
-
+	// The form to add tags is hidden by default.
 	.sidebar__menu-add {
 		opacity: 0;
 		pointer-events: none;
@@ -98,33 +33,24 @@
 		}
 	}
 
-	.selected .sidebar__menu-action .gridicon {
-		fill: var( --color-white ) !important;
-
-		@include breakpoint( '<660px' ) {
-			fill: var( --color-neutral-light ) !important;
-		}
-	}
-
-	.sidebar__menu-action {
+	// The button to add a new tag, which
+	// toggles the visibilty of the form.
+	// This button is only visible if the
+	// tags menu is open.
+	.sidebar__menu-add-button {
+		border: 1px solid var( --color-neutral-100 );
+		border-radius: 3px;
+		padding: 6px 7px;
 		position: absolute;
-		top: 3px;
 		right: 8px;
-		line-height: 15px;
-		padding: 3px 4px 2px;
-		cursor: pointer;
+		top: 7px;
+		text-transform: none;
 
-		.gridicon {
-			position: relative;
-			top: -2px;
-			left: auto;
-			fill: var( --color-neutral-light ) !important; // this needs to be more specific
-			margin-right: 0;
-		}
-	}
-
-	.sidebar__menu-action-label,
-	.sidebar-dynamic-menu-action_label {
-		display: none;
+		// Disabled by default
+		opacity: 0;
+		transform: translateX( -20px );
+		pointer-events: none;
+		transition: all 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+		transition-delay: 0.05s;
 	}
 }
