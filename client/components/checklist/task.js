@@ -139,11 +139,12 @@ class Task extends PureComponent {
 			translate,
 		} = this.props;
 
+		// A task that's being automatically completed ("in progress") cannot be expanded.
 		// An uncompleted task by definition has a call-to-action, which can only be accessed by
 		// expanding it, so an uncompleted task is always expandable.
 		// A completed task may or may not have a call-to-action, which can be best inferred from
 		// the `completedButtonText` prop.
-		const isExpandable = ! completed || completedButtonText;
+		const isExpandable = ! inProgress && ( ! completed || completedButtonText );
 		const taskActionButtonText = completed
 			? completedButtonText
 			: buttonText || translate( 'Do it!' );
