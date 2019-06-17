@@ -134,6 +134,7 @@ module.exports = function() {
 					path.node.arguments.length > i &&
 					'ObjectExpression' === path.node.arguments[ i ].type
 				) {
+					let removeProperty = false;
 					for ( const j in path.node.arguments[ i ].properties ) {
 						if ( 'ObjectProperty' === path.node.arguments[ i ].properties[ j ].type ) {
 							switch ( path.node.arguments[ i ].properties[ j ].key.name ) {
@@ -143,11 +144,15 @@ module.exports = function() {
 								case 'comment':
 									translation.comments.extracted =
 										path.node.arguments[ i ].properties[ j ].value.value;
-									// Remove the comment from the transpiled code.
-									path.node.arguments[ i ].properties.splice( j, 1 );
+									removeProperty = j;
 									break;
 							}
 						}
+					}
+
+					// Remove the comment from the transpiled code.
+					if ( false !== removeProperty ) {
+						path.node.arguments[ i ].properties.splice( removeProperty, 1 );
 					}
 				}
 
