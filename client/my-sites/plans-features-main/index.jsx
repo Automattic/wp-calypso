@@ -51,12 +51,13 @@ import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { getDiscountByName } from 'lib/discounts';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import { getSitePlan, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { getSiteOption, getSitePlan, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getSiteType as getSignupSiteType } from 'state/signup/steps/site-type/selectors';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 import { abtest } from 'lib/abtest';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -464,6 +465,10 @@ export default connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
 
+		const siteType = props.isInSignup
+			? getSignupSiteType( state )
+			: getSiteTypePropertyValue( 'id', getSiteOption( state, siteId, 'site_segment' ), 'slug' );
+
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
@@ -478,7 +483,7 @@ export default connect(
 			siteId: siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: sitePlan && sitePlan.product_slug,
-			siteType: getSiteType( state ),
+			siteType: siteType,
 		};
 	},
 	{
