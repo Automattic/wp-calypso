@@ -77,6 +77,7 @@ export class ReaderSidebarTags extends Component {
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
+					materialIcon={ 'chat' }
 					count={ tagCount }
 					addLabel={ translate( 'New tag name' ) }
 					addPlaceholder={ translate( 'Add any tag' ) }

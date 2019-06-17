@@ -32,9 +32,9 @@ const ExpandableSidebarHeading = ( {
 		>
 			{ icon ? <Gridicon icon={ icon } /> : null }
 			{ materialIcon ? <MaterialIcon icon={ materialIcon } /> : null }
-			<Gridicon icon="chevron-down" />
 			<span>{ title }</span>
 			{ undefined !== count ? <Count count={ count } /> : null }
+			<MaterialIcon icon={ 'keyboard_arrow_down' } className="expandable-heading__chevron" />
 		</SidebarHeading>
 	);
 };
