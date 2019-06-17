@@ -42,7 +42,7 @@ export class SiteAddressChanger extends Component {
 
 		// `connect`ed
 		isSiteAddressChangeRequesting: PropTypes.bool,
-		selectedSiteId: PropTypes.number,
+		siteId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -62,12 +62,12 @@ export class SiteAddressChanger extends Component {
 
 	onConfirm = () => {
 		const { domainFieldValue, newDomainSuffix } = this.state;
-		const { currentDomain, currentDomainSuffix, selectedSiteId } = this.props;
+		const { currentDomain, currentDomainSuffix, siteId } = this.props;
 		const oldDomain = get( currentDomain, 'name', null );
 		const type = '.wordpress.com' === currentDomainSuffix ? 'blog' : 'dotblog';
 
 		this.props.requestSiteAddressChange(
-			selectedSiteId,
+			siteId,
 			domainFieldValue,
 			newDomainSuffix.substr( 1 ),
 			oldDomain,
@@ -365,7 +365,6 @@ export default flow(
 
 			return {
 				siteId,
-				selectedSiteId: siteId,
 				isAvailable,
 				isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
 				isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
