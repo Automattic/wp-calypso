@@ -19,6 +19,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextArea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gridicon from 'gridicons';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
@@ -281,9 +282,9 @@ export class RewindCredentialsForm extends Component {
 									disabled={ formIsSubmitting }
 									className="rewind-credentials-form__private-key"
 								/>
-								<p className="form-setting-explanation">
+								<FormSettingExplanation>
 									{ translate( 'Only non-encrypted private keys are supported.' ) }
-								</p>
+								</FormSettingExplanation>
 							</FormFieldset>
 						</div>
 					) }
