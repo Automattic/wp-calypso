@@ -40,6 +40,8 @@ import { URL } from 'types';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 
 /**
  * Style dependencies
@@ -68,6 +70,9 @@ class JetpackChecklist extends PureComponent< Props > {
 	}
 
 	isComplete( taskId: string ): boolean {
+		if ( taskId === 'jetpack_monitor' ) {
+			return this.props.monitorActive;
+		}
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
 
@@ -150,6 +155,7 @@ class JetpackChecklist extends PureComponent< Props > {
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 				{ isPaidPlan && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
 				{ isPaidPlan && <QueryRewindState siteId={ siteId } /> }
 
@@ -295,6 +301,7 @@ const connectComponent = connect(
 			siteSlug: getSiteSlug( state, siteId ),
 			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 			wpAdminUrl,
+			monitorActive: isJetpackModuleActive( state, siteId, 'monitor' ),
 		};
 	},
 	{
