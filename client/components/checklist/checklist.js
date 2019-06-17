@@ -61,7 +61,7 @@ export default class Checklist extends PureComponent {
 		// If the user hasn't expanded any task, return the
 		// first task that hasn't been completed yet.
 		return Children.toArray( this.props.children ).findIndex(
-			task => task && ! task.props.completed
+			task => task && ! task.props.completed && ! task.props.inProgress
 		);
 	}
 
