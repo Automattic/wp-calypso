@@ -86,7 +86,7 @@ export class RewindCredentialsForm extends Component {
 	};
 
 	handleSubmit = () => {
-		const { requirePath, role, siteId, siteUrl, translate, updateCredentials } = this.props;
+		const { requirePath, role, siteId, siteUrl, translate } = this.props;
 
 		const payload = {
 			role,
@@ -116,7 +116,7 @@ export class RewindCredentialsForm extends Component {
 		);
 
 		return isEmpty( errors )
-			? updateCredentials( siteId, payload )
+			? this.props.updateCredentials( siteId, payload )
 			: this.setState( { formErrors: errors } );
 	};
 
