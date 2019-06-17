@@ -496,9 +496,27 @@ export const getPopularPlanSpec = ( { customerType, isJetpack, siteType, abtest 
 	return spec;
 };
 
-export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, currentPlan } ) => {
+export const chooseDefaultCustomerType = ( {
+	currentCustomerType,
+	selectedPlan,
+	currentPlan,
+	siteType,
+	abtest,
+} ) => {
 	if ( currentCustomerType ) {
 		return currentCustomerType;
+	}
+
+	if ( abtest( 'popularPlanBy' ) === 'siteType' ) {
+		// Choose the tab that will make the "POPULAR" label visible when the
+		// page is first loaded.
+		switch ( siteType ) {
+			case 'blog':
+			case 'professional':
+				return 'personal';
+			default:
+				return 'business';
+		}
 	}
 
 	const group = GROUP_WPCOM;
