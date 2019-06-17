@@ -13,8 +13,6 @@ get_header( 'blank' );
 
 			<?php
 			if ( have_posts() ) :
-				the_post();
-
 				$page_id     = get_the_ID();
 				$template_id = get_post_meta( $page_id, '_wp_template_id', true );
 
@@ -34,6 +32,8 @@ get_header( 'blank' );
 
 					<?php
 				else :
+					the_post();
+
 					get_template_part( 'template-parts/content/content', 'page' );
 
 					if ( comments_open() || get_comments_number() ) :
