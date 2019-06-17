@@ -35,6 +35,7 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
 import {
+	chooseDefaultCustomerType,
 	findPlansKeys,
 	getPlan,
 	getPopularPlanSpec,
@@ -430,37 +431,6 @@ PlansFeaturesMain.defaultProps = {
 	plansWithScroll: false,
 };
 
-const guessCustomerType = ( state, props ) => {
-	if ( props.customerType ) {
-		return props.customerType;
-	}
-
-	const site = props.site;
-	const currentPlan = getSitePlan( state, get( site, [ 'ID' ] ) );
-	const selectedPlan = props.selectedPlan;
-
-	const group = GROUP_WPCOM;
-	const businessPlanSlugs = [
-		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
-		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
-		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
-		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
-		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
-		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
-	]
-		.map( planKey => getPlan( planKey ) )
-		.map( plan => plan.getStoreSlug() );
-
-	if ( selectedPlan ) {
-		return businessPlanSlugs.includes( selectedPlan ) ? 'business' : 'personal';
-	} else if ( currentPlan ) {
-		const isPlanInBusinessGroup = businessPlanSlugs.indexOf( currentPlan.product_slug ) !== -1;
-		return isPlanInBusinessGroup ? 'business' : 'personal';
-	}
-
-	return 'personal';
-};
-
 export default connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
@@ -469,6 +439,12 @@ export default connect(
 			? getSignupSiteType( state )
 			: getSiteTypePropertyValue( 'id', getSiteOption( state, siteId, 'site_segment' ), 'slug' );
 
+		const customerType = chooseDefaultCustomerType( {
+			currentCustomerType: props.customerType,
+			selectedPlan: props.selectedPlan,
+			sitePlan,
+		} );
+
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
@@ -476,7 +452,7 @@ export default connect(
 			// universal.
 			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			plansWithScroll: ! props.displayJetpackPlans && props.plansWithScroll,
-			customerType: guessCustomerType( state, props ),
+			customerType: customerType,
 			domains: getDecoratedSiteDomains( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
