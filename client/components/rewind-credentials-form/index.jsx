@@ -237,12 +237,14 @@ export class RewindCredentialsForm extends Component {
 				<FormFieldset>
 					{ ! requirePath && (
 						<Button
+							borderless
 							disabled={ formIsSubmitting }
 							onClick={ this.toggleAdvancedSettings }
-							borderless={ true }
-							primary={ true }
-							className="rewind-credentials-form__advanced-button"
+							className={ classNames( 'rewind-credentials-form__advanced-button', {
+								'is-expanded': showAdvancedSettings,
+							} ) }
 						>
+							<Gridicon icon="chevron-down" />
 							{ translate( 'Advanced settings' ) }
 						</Button>
 					) }
