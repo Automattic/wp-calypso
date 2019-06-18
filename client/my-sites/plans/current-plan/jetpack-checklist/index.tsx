@@ -45,7 +45,7 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
  * Style dependencies
  */
 import './style.scss';
-import { getTaskList } from '../../../checklist/wpcom-checklist/wpcom-task-list';
+import { getTaskList } from 'my-sites/checklist/wpcom-checklist/wpcom-task-list';
 
 interface ChecklistTaskState {
 	[taskId: string]: {
