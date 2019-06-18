@@ -133,7 +133,7 @@ class Starter_Page_Templates {
 
 		);
 		$site_info = get_option( 'site_contact_info', array() );
-		$config    = apply_filters( 'full_site_editing_starter_page_templates_config', array(
+		$config    = apply_filters( 'fse_starter_page_templates_config', array(
 			'siteInformation' => array_merge( $default_info, $site_info ),
 			'templates'       => array_merge( $default_templates, $vertical_templates ),
 			'vertical'        => $vertical,
