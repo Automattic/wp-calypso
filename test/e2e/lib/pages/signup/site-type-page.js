@@ -26,6 +26,10 @@ export default class SiteTypePage extends AsyncBaseContainer {
 		return await this._selectType( 'blog' );
 	}
 
+	async selectBusinessType() {
+		return await this._selectType( 'business' );
+	}
+
 	async submitForm() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
