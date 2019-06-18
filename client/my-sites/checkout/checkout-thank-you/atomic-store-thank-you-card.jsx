@@ -23,14 +23,15 @@ import { errorNotice, removeNotice } from 'state/notices/actions';
 import userFactory from 'lib/user';
 
 const VERIFY_EMAIL_ERROR_NOTICE = 'ecommerce-verify-email-error';
+const RESEND_ERROR = 'RESEND_ERROR';
+const RESEND_NOT_SENT = 'RESEND_NOT_SENT';
+const RESEND_PENDING = 'RESEND_PENDING';
+const RESEND_SUCCESS = 'RESEND_SUCCESS';
 
 const user = userFactory();
 
 class AtomicStoreThankYouCard extends Component {
-	state = {
-		pendingVerificationResend: false,
-		emailSent: false,
-	};
+	state = { resendStatus: RESEND_NOT_SENT };
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.isEmailVerified && ! prevProps.isEmailVerified ) {
@@ -42,17 +43,14 @@ class AtomicStoreThankYouCard extends Component {
 
 	resendEmail = () => {
 		const { translate } = this.props;
-		const { pendingVerificationResend } = this.state;
-		if ( pendingVerificationResend ) {
+		const { resendStatus } = this.state;
+		if ( RESEND_PENDING === resendStatus ) {
 			return;
 		}
 
-		this.setState( {
-			emailSent: false,
-			pendingVerificationResend: true,
-		} );
+		this.setState( { resendStatus: RESEND_PENDING } );
 
-		user.sendVerificationEmail( ( error, response ) => {
+		user.sendVerificationEmail( error => {
 			this.props.removeNotice( VERIFY_EMAIL_ERROR_NOTICE );
 			if ( error ) {
 				this.props.errorNotice(
@@ -61,33 +59,34 @@ class AtomicStoreThankYouCard extends Component {
 						id: VERIFY_EMAIL_ERROR_NOTICE,
 					}
 				);
+
+				this.setState( { resendStatus: RESEND_ERROR } );
+				return;
 			}
 
-			this.setState( {
-				emailSent: response && response.success,
-				pendingVerificationResend: false,
-			} );
+			this.setState( { resendStatus: RESEND_SUCCESS } );
 		} );
 	};
 
 	resendButtonText = () => {
 		const { translate } = this.props;
-		const { emailSent, pendingVerificationResend } = this.state;
+		const { resendStatus } = this.state;
 
-		if ( pendingVerificationResend ) {
-			return translate( 'Sending…' );
+		switch ( resendStatus ) {
+			case RESEND_PENDING:
+				return translate( 'Sending…' );
+			case RESEND_SUCCESS:
+				return translate( 'Email sent' );
+			case RESEND_NOT_SENT:
+			case RESEND_ERROR:
+			default:
+				return translate( 'Resend email' );
 		}
-
-		if ( emailSent ) {
-			return translate( 'Email sent' );
-		}
-
-		return translate( 'Resend email' );
 	};
 
 	renderAction = () => {
 		const { isEmailVerified, site, translate } = this.props;
-		const { pendingVerificationResend } = this.state;
+		const { resendStatus } = this.state;
 
 		if ( ! isEmailVerified ) {
 			return (
@@ -96,7 +95,7 @@ class AtomicStoreThankYouCard extends Component {
 					<Button
 						className={ classNames( 'button', 'thank-you-card__button' ) }
 						onClick={ this.resendEmail }
-						busy={ pendingVerificationResend }
+						busy={ RESEND_PENDING === resendStatus }
 					>
 						{ this.resendButtonText() }
 					</Button>
