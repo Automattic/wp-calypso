@@ -118,35 +118,6 @@ class Starter_Page_Templates {
 			return;
 		}
 
-		// Enable tracking only on specific platforms.
-		$tracks_identity = null;
-		$is_atomic       = defined( 'IS_ATOMIC' ) && IS_ATOMIC;
-		$is_wpcom        = defined( 'IS_WPCOM' ) && IS_WPCOM;
-		if ( $is_atomic || $is_wpcom ) {
-			// Load identity.
-			$has_active_jetpack = ( class_exists( 'Jetpack' ) && Jetpack::is_active() );
-			if ( $has_active_jetpack && class_exists( 'Jetpack_Tracks_Client' ) ) {
-				$tracks_identity = Jetpack_Tracks_Client::get_connected_user_tracks_identity();
-			} elseif ( $is_wpcom ) {
-				$user_id         = get_current_user_id();
-				$tracks_identity = array(
-					'blogid'   => get_current_blog_id(),
-					'userid'   => $user_id,
-					'username' => get_user_by( 'id', $user_id )->user_login,
-				);
-			}
-			// Enqueue script in environments where missing.
-			if ( $is_atomic ) {
-				wp_enqueue_script(
-					'jp-tracks',
-					'//stats.wp.com/w.js',
-					array(),
-					gmdate( 'YW' ),
-					true
-				);
-			}
-		}
-
 		wp_enqueue_script( 'starter-page-templates' );
 		wp_set_script_translations( 'starter-page-templates', 'full-site-editing' );
 
@@ -162,12 +133,11 @@ class Starter_Page_Templates {
 
 		);
 		$site_info = get_option( 'site_contact_info', array() );
-		$config    = array(
+		$config    = apply_filters( 'full_site_editing_starter_page_templates_config', array(
 			'siteInformation' => array_merge( $default_info, $site_info ),
 			'templates'       => array_merge( $default_templates, $vertical_templates ),
 			'vertical'        => $vertical,
-			'tracksUserData'  => $tracks_identity,
-		);
+		) );
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
 
 		// Enqueue styles.
