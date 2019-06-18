@@ -23,6 +23,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isRenewable,
+	hasPaymentMethod,
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	subscribedWithinPastWeek,
@@ -52,6 +53,19 @@ class PurchaseNotice extends Component {
 				return translate(
 					'You purchased %(purchaseName)s with credits. Please add a credit card before your ' +
 						"plan expires %(expiry)s so that you don't lose out on your paid features!",
+					{
+						args: {
+							purchaseName: getName( purchase ),
+							expiry: moment( purchase.expiryMoment ).fromNow(),
+						},
+					}
+				);
+			}
+
+			if ( config.isEnabled( 'autorenewal-toggle' ) && hasPaymentMethod( purchase ) ) {
+				return translate(
+					'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+						"Please enable auto-renewal so you don't lose out on your paid features!",
 					{
 						args: {
 							purchaseName: getName( purchase ),
@@ -110,7 +124,12 @@ class PurchaseNotice extends Component {
 			);
 		}
 
-		return <NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>;
+		// With the toggle, it doesn't make much sense to have this button.
+		return (
+			! config.isEnabled( 'autorenewal-toggle' ) && (
+				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
+			)
+		);
 	}
 
 	trackImpression( warning ) {

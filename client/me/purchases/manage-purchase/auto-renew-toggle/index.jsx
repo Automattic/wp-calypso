@@ -12,8 +12,9 @@ import { connect } from 'react-redux';
  */
 import { isExpiring } from 'lib/purchases';
 import { disableAutoRenew, enableAutoRenew } from 'lib/upgrades/actions';
-import { isFetchingSitePurchases } from 'state/purchases/selectors';
-import { fetchSitePurchases } from 'state/purchases/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { isFetchingUserPurchases } from 'state/purchases/selectors';
+import { fetchUserPurchases } from 'state/purchases/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import FormToggle from 'components/forms/form-toggle';
 
@@ -23,11 +24,11 @@ class AutoRenewToggle extends Component {
 		siteDomain: PropTypes.string.isRequired,
 		planName: PropTypes.string.isRequired,
 		isEnabled: PropTypes.bool.isRequired,
-		fetchingSitePurchases: PropTypes.bool,
+		fetchingUserPurchases: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		fetchingSitePurchases: false,
+		fetchingUserPurchases: false,
 	};
 
 	state = {
@@ -44,7 +45,8 @@ class AutoRenewToggle extends Component {
 
 	onToggleAutoRenew = () => {
 		const {
-			purchase: { id: purchaseId, siteId },
+			purchase: { id: purchaseId },
+			currentUserId,
 			isEnabled,
 		} = this.props;
 
@@ -66,13 +68,13 @@ class AutoRenewToggle extends Component {
 				isRequesting: false,
 			} );
 			if ( success ) {
-				this.props.fetchSitePurchases( siteId );
+				this.props.fetchUserPurchases( currentUserId );
 			}
 		} );
 	};
 
 	isUpdatingAutoRenew = () => {
-		return this.state.isRequesting || this.props.fetchingSitePurchases;
+		return this.state.isRequesting || this.props.fetchingUserPurchases;
 	};
 
 	getToggleUiStatus() {
@@ -108,10 +110,11 @@ class AutoRenewToggle extends Component {
 
 export default connect(
 	( state, { purchase } ) => ( {
-		fetchingSitePurchases: isFetchingSitePurchases( state ),
+		fetchingUserPurchases: isFetchingUserPurchases( state ),
 		isEnabled: ! isExpiring( purchase ),
+		currentUserId: getCurrentUserId( state ),
 	} ),
 	{
-		fetchSitePurchases,
+		fetchUserPurchases,
 	}
 )( AutoRenewToggle );
