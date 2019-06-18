@@ -35,7 +35,13 @@ export const JetpackVideoHostingTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'Activate this toggle to use our fast WordPress.com servers to host your videos, ad-free.'
+							'Flip this toggle to use our WordPress.com servers to host your videos — ' +
+								"they'll be fast {{em}}and{{/em}} ad-free.",
+							{
+								components: {
+									em: <em />,
+								},
+							}
 						) }
 					</p>
 					<ButtonRow>
@@ -64,7 +70,7 @@ export const JetpackVideoHostingTour = makeTour(
 					</h1>
 					<p>
 						{ translate(
-							'Video hosting has been enabled. Would you like to continue setting up performance features for your site?'
+							'Video hosting is active on your site. Ready to move to the next feature?'
 						) }
 					</p>
 					<ButtonRow>
