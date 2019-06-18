@@ -24,6 +24,10 @@ class AutoRenewDisablingDialog extends Component {
 		purchase: PropTypes.object.isRequired,
 	};
 
+	state = {
+		showAtomicFollowUpDialog: false,
+	};
+
 	getVariation() {
 		const { purchase, isAtomicSite } = this.props;
 
@@ -102,12 +106,54 @@ class AutoRenewDisablingDialog extends Component {
 		}
 	}
 
-	onClickConfirm = () => this.props.onConfirm() || this.props.onClose();
+	onClickAtomicFollowUpConfirm = () => {
+		this.props.onConfirm() || this.props.onClose();
+	};
 
-	render() {
-		const { translate, onClose } = this.props;
+	renderAtomicFollowUpDialog = () => {
+		const { siteDomain, onClose, translate } = this.props;
 
+		const exportPath = '//' + siteDomain + '/wp-admin/export.php';
+
+		return (
+			<Dialog
+				isVisible={ true }
+				additionalClassNames="auto-renew-disabling-dialog atomic-follow-up"
+				onClose={ onClose }
+			>
+				<p>
+					{ translate(
+						"In order to proceed, we recommend that you download a backup of your site's content to avoid losing content in the future."
+					) }
+				</p>
+				<Button href={ exportPath } primary>
+					{ translate( 'Backup my content' ) }
+				</Button>
+				<Button onClick={ this.onClickAtomicFollowUpConfirm }>
+					{ translate( "I've already taken a backup, please cancel auto-renewal" ) }
+				</Button>
+				<Button onClick={ this.onClickAtomicFollowUpConfirm }>
+					{ translate( "I'm not interested in taking a backup, please cancel auto-renewal" ) }
+				</Button>
+			</Dialog>
+		);
+	};
+
+	onClickGeneralConfirm = () => {
+		if ( 'atomic' === this.getVariation() ) {
+			this.setState( {
+				showAtomicFollowUpDialog: true,
+			} );
+			return;
+		}
+
+		this.props.onConfirm() || this.props.onClose();
+	};
+
+	renderGeneralDialog = () => {
+		const { onClose, translate } = this.props;
 		const description = this.getCopy( this.getVariation() );
+
 		return (
 			<Dialog
 				isVisible={ true }
@@ -119,9 +165,14 @@ class AutoRenewDisablingDialog extends Component {
 				<Button onClick={ onClose } primary>
 					{ translate( 'Confirm cancellation' ) }
 				</Button>
-				<Button onClick={ this.onClickConfirm }>{ translate( 'Yes, please cancel it.' ) }</Button>
 			</Dialog>
 		);
+	};
+
+	render() {
+		return this.state.showAtomicFollowUpDialog
+			? this.renderAtomicFollowUpDialog()
+			: this.renderGeneralDialog();
 	}
 }
 
