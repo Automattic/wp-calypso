@@ -139,7 +139,7 @@ describe( 'selectors', () => {
 			getPlanRawPrice.mockImplementation( () => 150 );
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0 ) ).toEqual( {
+			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, {} ) ).toEqual( {
 				priceFullBeforeDiscount: 150,
 				priceFull: 120,
 				priceFinal: 120,
@@ -188,7 +188,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
@@ -220,7 +220,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
@@ -242,7 +242,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
@@ -276,7 +276,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
