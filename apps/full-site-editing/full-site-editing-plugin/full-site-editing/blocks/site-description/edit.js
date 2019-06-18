@@ -2,7 +2,7 @@
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { PlainText } from '@wordpress/block-editor';
+import { PlainText } from '@wordpress/editor';
 import { withNotices, Button } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
