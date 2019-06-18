@@ -16,7 +16,6 @@ const copyOptions = {
 	overwrite: true,
 	filter: '**/*.scss',
 	concurrency: 127,
-	debug: true,
 };
 
 rcopy( inputDir, outputDirEsm, copyOptions );
