@@ -14,7 +14,7 @@ import page from 'page';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import GoogleAppsDialog from 'components/upgrades/gsuite/gsuite-dialog';
+import GSuiteDialog from 'components/upgrades/gsuite/gsuite-dialog';
 import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
@@ -92,7 +92,7 @@ export class GSuiteNudge extends React.Component {
 					} ) }
 				/>
 				<QuerySites siteId={ selectedSiteId } />
-				<GoogleAppsDialog
+				<GSuiteDialog
 					domain={ this.props.domain }
 					onClickSkip={ this.handleClickSkip }
 					onAddGoogleApps={ this.handleAddGoogleApps }

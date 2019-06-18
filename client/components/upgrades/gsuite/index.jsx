@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { hasDomainInCart } from 'lib/cart-values/cart-items';
-import GoogleAppsDialog from './gsuite-dialog';
+import GSuiteDialog from './gsuite-dialog';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSite } from 'state/ui/selectors';
 
@@ -61,7 +61,7 @@ class GoogleApps extends Component {
 					{ this.props.translate( 'Register %(domain)s', { args: { domain: this.props.domain } } ) }
 				</HeaderCake>
 
-				<GoogleAppsDialog
+				<GSuiteDialog
 					domain={ this.props.domain }
 					productsList={ this.props.productsList }
 					onClickSkip={ this.props.onClickSkip }
