@@ -84,7 +84,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( visit ) {
 			return await driverHelper.clickWhenClickable(
 				this.driver,
-				By.css( '.components-notice.is-success a' )
+				By.css( '.components-snackbar a' )
 			);
 		}
 	}
@@ -264,7 +264,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async waitForSuccessViewPostNotice() {
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
-			By.css( '.components-notice.is-success' )
+			By.css( '.components-snackbar' )
 		);
 	}
 
