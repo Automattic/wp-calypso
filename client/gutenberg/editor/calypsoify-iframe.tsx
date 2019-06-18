@@ -40,6 +40,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ConvertToBlocksDialog from 'components/convert-to-blocks';
+import config from 'config';
 
 /**
  * Types
@@ -490,6 +491,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
 		'jetpack-copy': duplicatePostId,
 		origin: window.location.origin,
+		environment_id: config( 'env_id' ),
 	} );
 
 	// needed for loading the editor in SU sessions
