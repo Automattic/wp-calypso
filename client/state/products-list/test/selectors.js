@@ -142,7 +142,7 @@ describe( 'selectors', () => {
 			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0 ) ).toEqual( {
 				priceFullBeforeDiscount: 150,
 				priceFull: 120,
-				priceMinusCredits: 120,
+				priceFinal: 120,
 				priceMonthly: 10,
 			} );
 		} );
@@ -195,7 +195,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
-					priceMinusCredits: 120,
+					priceFinal: 120,
 					priceMonthly: 10,
 				},
 				{
@@ -204,7 +204,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan2,
 					priceFullBeforeDiscount: 150,
 					priceFull: 240,
-					priceMinusCredits: 240,
+					priceFinal: 240,
 					priceMonthly: 20,
 				},
 			] );
@@ -226,7 +226,7 @@ describe( 'selectors', () => {
 					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
-					priceMinusCredits: 120,
+					priceFinal: 120,
 					priceFull: 120,
 					priceMonthly: 10,
 				},
@@ -249,7 +249,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
-					priceMinusCredits: 120,
+					priceFinal: 120,
 					priceMonthly: 10,
 				},
 			] );
@@ -283,7 +283,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
-					priceMinusCredits: 120,
+					priceFinal: 120,
 					priceMonthly: 10,
 				},
 			] );
