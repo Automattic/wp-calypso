@@ -317,7 +317,7 @@ class Full_Site_Editing {
 		wp_enqueue_style(
 			'a8c-full-site-editing-style',
 			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			array(),
+			'wp-edit-post',
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 		);
 	}
@@ -343,6 +343,13 @@ class Full_Site_Editing {
 			'a8c/post-content',
 			array(
 				'render_callback' => 'render_post_content_block',
+			)
+		);
+
+		register_block_type(
+			'a8c/site-description',
+			array(
+				'render_callback' => 'render_site_description_block',
 			)
 		);
 
