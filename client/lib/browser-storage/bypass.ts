@@ -13,26 +13,22 @@ const debug = debugModule( 'calypso:support-user' );
 
 const memoryStore = new Map< string, any >();
 
-export function getStoredItem< T >( key: string ): Promise< T | undefined > {
+export async function getStoredItem< T >( key: string ): Promise< T | undefined > {
 	debug( 'browser-storage bypass', 'getStoredItem', key );
 
 	if ( memoryStore.has( key ) ) {
-		return Promise.resolve( memoryStore.get( key ) );
+		return memoryStore.get( key );
 	}
 
-	return Promise.resolve( undefined );
+	return undefined;
 }
 
-export function setStoredItem< T >( key: string, value: T ): Promise< void > {
+export async function setStoredItem< T >( key: string, value: T ) {
 	debug( 'browser-storage bypass', 'setStoredItem', key );
-
 	memoryStore.set( key, value );
-	return Promise.resolve();
 }
 
-export function clearStorage(): Promise< void > {
+export async function clearStorage() {
 	debug( 'browser-storage bypass', 'clearStorage' );
-
 	memoryStore.clear();
-	return Promise.resolve();
 }
