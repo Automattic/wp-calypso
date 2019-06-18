@@ -30,6 +30,11 @@ import getSiteAddressValidationError from 'state/selectors/get-site-address-vali
 import isRequestingSiteAddressChange from 'state/selectors/is-requesting-site-address-change';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
 const ADDRESS_CHANGE_SUPPORT_URL = 'https://support.wordpress.com/changing-blog-address/';
@@ -42,7 +47,7 @@ export class SiteAddressChanger extends Component {
 
 		// `connect`ed
 		isSiteAddressChangeRequesting: PropTypes.bool,
-		selectedSiteId: PropTypes.number,
+		siteId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -62,12 +67,12 @@ export class SiteAddressChanger extends Component {
 
 	onConfirm = () => {
 		const { domainFieldValue, newDomainSuffix } = this.state;
-		const { currentDomain, currentDomainSuffix, selectedSiteId } = this.props;
+		const { currentDomain, currentDomainSuffix, siteId } = this.props;
 		const oldDomain = get( currentDomain, 'name', null );
 		const type = '.wordpress.com' === currentDomainSuffix ? 'blog' : 'dotblog';
 
 		this.props.requestSiteAddressChange(
-			selectedSiteId,
+			siteId,
 			domainFieldValue,
 			newDomainSuffix.substr( 1 ),
 			oldDomain,
@@ -365,7 +370,6 @@ export default flow(
 
 			return {
 				siteId,
-				selectedSiteId: siteId,
 				isAvailable,
 				isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
 				isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
