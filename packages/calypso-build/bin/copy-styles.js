@@ -12,8 +12,6 @@ const inputDir = path.join( dir, 'src' );
 const outputDirEsm = path.join( dir, 'dist', 'esm' );
 const outputDirCommon = path.join( dir, 'dist', 'cjs' );
 
-console.log( 'Copying styles %s', dir );
-
 const copyOptions = {
 	overwrite: true,
 	filter: '**/*.scss',
@@ -21,17 +19,5 @@ const copyOptions = {
 	debug: true,
 };
 
-rcopy( inputDir, outputDirEsm, copyOptions )
-	.then( results => {
-		console.log( 'copied %d files', results.length );
-	} )
-	.catch( err => {
-		console.error( err );
-	} );
-rcopy( inputDir, outputDirCommon, copyOptions )
-	.then( results => {
-		console.log( 'copied %d files', results.length );
-	} )
-	.catch( err => {
-		console.error( err );
-	} );
+rcopy( inputDir, outputDirEsm, copyOptions );
+rcopy( inputDir, outputDirCommon, copyOptions );
