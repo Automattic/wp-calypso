@@ -14,8 +14,8 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Dialog from 'components/dialog';
-import SupportArticleHeader from 'blocks/support-article-dialog/header';
-import Placeholders from 'blocks/support-article-dialog/placeholders';
+import SupportArticleHeader from './header';
+import Placeholders from './placeholders';
 import EmbedContainer from 'components/embed-container';
 import Emojify from 'components/emojify';
 import QueryReaderPost from 'components/data/query-reader-post';
@@ -40,17 +40,15 @@ export class SupportArticleDialog extends Component {
 	getDialogButtons() {
 		const { postUrl, translate } = this.props;
 		return [
-			postUrl ? (
+			postUrl && (
 				<Button href={ postUrl } target="_blank" primary>
 					{ translate( 'Visit Article' ) } <Gridicon icon="external" size={ 12 } />
 				</Button>
-			) : (
-				<React.Fragment />
 			),
 			<Button onClick={ this.props.closeSupportArticleDialog }>
 				{ translate( 'Close', { textOnly: true } ) }
 			</Button>,
-		];
+		].filter(Boolean);
 	}
 
 	render() {
