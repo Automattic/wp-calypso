@@ -374,9 +374,12 @@ class Signup extends React.Component {
 			const { bearer_token: bearerToken, username } = dependencies;
 
 			if ( this.state.bearerToken !== bearerToken && this.state.username !== username ) {
+				this.signupFlowController.reset();
+				// This setState will trigger a render if WpcomLoginForm that submits the login
+				// form on mount and navigates away from signup.
 				this.setState( {
-					bearerToken: dependencies.bearer_token,
-					username: dependencies.username,
+					bearerToken,
+					username,
 					redirectTo: this.loginRedirectTo( destination ),
 				} );
 			}
