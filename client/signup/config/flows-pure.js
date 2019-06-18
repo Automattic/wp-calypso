@@ -124,9 +124,27 @@ export function generateFlows( {
 				'site-style-with-preview',
 				'domains-with-preview',
 				'plans',
-			],			destination: getChecklistDestination,
+			],
+			destination: getChecklistDestination,
 			description: 'The default onboarding flow',
 			lastModified: '2019-06-18',
+		},
+
+		// We are keeping this flow for now while we
+		// ensure that there are no direct links to /start/onboarding
+		onboarding: {
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'site-style-with-preview',
+				'domains-with-preview',
+				'plans',
+			],
+			destination: getChecklistDestination,
+			description: 'The improved onboarding flow.',
+			lastModified: '2019-06-05',
 		},
 
 		'delta-discover': {
