@@ -1,10 +1,10 @@
-.editor-styles-wrapper .wp-block-a8c-site-description,
-.editor-styles-wrapper .wp-block-a8c-site-description:focus,
-.editor-styles-wrapper .site-description {
-    display: inline;
-	color: #767676;
-	font-size: 1.125em;
-	font-weight: normal;
-	letter-spacing: -0.01em;
-    margin: 0;
+.block-editor .wp-block-a8c-site-description {
+	&, &:focus {
+		display: inline;
+		color: #767676;
+		font-size: 1.125em;
+		font-weight: normal;
+		letter-spacing: -0.01em;
+		margin: 0;
+	}
 }

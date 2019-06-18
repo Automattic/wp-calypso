@@ -312,7 +312,7 @@ class Full_Site_Editing {
 		wp_enqueue_style(
 			'a8c-full-site-editing-style',
 			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			array(),
+			'wp-edit-post',
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 		);
 	}

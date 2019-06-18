@@ -1,74 +1,92 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
-import { PlainText } from '@wordpress/editor';
-import { Component } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { withSelect } from '@wordpress/data';
+import { PlainText } from '@wordpress/block-editor';
+import { withNotices } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
+import { withSelect } from '@wordpress/data';
+import { Component, Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 class SiteDescriptionEdit extends Component {
 	state = {
-		fromApi: null,
 		description: __( 'Site description loading…' ),
+		initialDescription: '',
 	};
 
 	componentDidMount() {
-		apiFetch( { path: '/wp/v2/settings' } )
-			.then( ( { description } ) => {
-				this.setState( {
-					fromApi: description,
-					description,
-				} );
-			} )
-			.catch( this.handleApiError );
+		const { noticeOperations } = this.props;
+
+		return apiFetch( { path: '/wp/v2/settings' } )
+			.then( ( { description } ) =>
+				this.setState( { initialDescription: description, description } )
+			)
+			.catch( ( { message } ) => {
+				noticeOperations.createErrorNotice( message );
+			} );
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { description, fromApi } = this.state;
-		if ( ! prevProps.isSaving && this.props.isSaving && fromApi !== description ) {
-			apiFetch( {
-				path: '/wp/v2/settings',
-				method: 'POST',
-				data: { description },
-			} ).catch( () => this.handleApiError( true ) );
+		const { description, initialDescription } = this.state;
+		const { shouldUpdateSiteOption, noticeOperations, isSelected } = this.props;
+
+		const descriptionUnchanged = description && description.trim() === initialDescription.trim();
+		const descriptionIsEmpty = ! description || description.trim().length === 0;
+
+		// Reset to initial value if user de-selects the block with an empty value.
+		if ( ! isSelected && prevProps.isSelected && descriptionIsEmpty ) {
+			this.revertDescription();
+		}
+
+		// Don't do anything further if we shouldn't update the site option or the value is unchanged.
+		if ( ! shouldUpdateSiteOption || descriptionUnchanged ) {
+			return;
+		}
+
+		if ( ! prevProps.shouldUpdateSiteOption && shouldUpdateSiteOption ) {
+			apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { description } } )
+				.then( () => this.updateInitialDescription() )
+				.catch( ( { message } ) => {
+					noticeOperations.createErrorNotice( message );
+					this.revertDescription();
+				} );
 		}
 	}
 
-	handleApiError( post = false ) {
-		if ( post ) {
-			this.setState( {
-				description: this.state.fromApi,
-			} );
-		}
-		// trigger notice
-	}
+	revertDescription = () => this.setState( { description: this.state.initialDescription } );
+
+	updateInitialDescription = () => this.setState( { initialDescription: this.state.description } );
 
 	render() {
-		const { isSelected } = this.props;
+		const { className, noticeUI } = this.props;
 		const { description } = this.state;
-		if ( isSelected ) {
-			return (
+
+		return (
+			<Fragment>
+				{ noticeUI }
 				<PlainText
-					className="wp-block-a8c-site-description"
+					className={ className }
 					value={ description }
 					onChange={ value => this.setState( { description: value } ) }
 					placeholder={ __( 'Site Description' ) }
 					aria-label={ __( 'Site Description' ) }
 				/>
-			);
-		}
-		return <p className="site-description">{ description }</p>;
+			</Fragment>
+		);
 	}
 }
 
 export default compose( [
 	withSelect( select => {
-		const { isSavingPost } = select( 'core/editor' );
+		const { isSavingPost, isPublishingPost, isAutosavingPost, isCurrentPostPublished } = select(
+			'core/editor'
+		);
 		return {
-			isSaving: isSavingPost(),
+			shouldUpdateSiteOption:
+				( ( isSavingPost() && isCurrentPostPublished() ) || isPublishingPost() ) &&
+				! isAutosavingPost(),
 		};
 	} ),
+	withNotices,
 ] )( SiteDescriptionEdit );
