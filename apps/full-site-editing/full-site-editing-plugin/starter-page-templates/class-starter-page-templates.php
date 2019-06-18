@@ -110,10 +110,11 @@ class Starter_Page_Templates {
 			return;
 		}
 		$vertical           = $vertical_data['vertical'];
+		$segment            = $vertical_data['segment'];
 		$vertical_templates = $vertical_data['templates'];
 
 		// Bail early if we have no templates to offer.
-		if ( empty( $vertical_templates ) || empty( $vertical ) ) {
+		if ( empty( $vertical_templates ) || empty( $vertical ) || empty( $segment ) ) {
 			$this->pass_error_to_frontend( __( 'No templates available. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
 		}
@@ -143,6 +144,7 @@ class Starter_Page_Templates {
 				'siteInformation' => array_merge( $default_info, $site_info ),
 				'templates'       => array_merge( $default_templates, $vertical_templates ),
 				'vertical'        => $vertical,
+				'segment'         => $segment,
 			]
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
@@ -167,7 +169,7 @@ class Starter_Page_Templates {
 	 */
 	public function fetch_vertical_data() {
 		$vertical_id        = get_option( 'site_vertical', 'default' );
-		$transient_key      = implode( '_', [ 'starter_page_templates', $vertical_id, get_locale() ] );
+		$transient_key      = implode( '_', [ 'starter_page_templates', 'v2', $vertical_id, get_locale() ] );
 		$vertical_templates = get_transient( $transient_key );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
