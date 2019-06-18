@@ -296,6 +296,12 @@ const webpackConfig = {
 		shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
 		new MomentTimezoneDataPlugin( {
 			startYear: 2000,
+			cacheDir: path.join(
+				__dirname,
+				'build',
+				'.moment-timezone-data-webpack-plugin-cache',
+				extraPath
+			),
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 	] ),
