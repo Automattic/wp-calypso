@@ -235,6 +235,14 @@
 		list-style-type: none;
 		margin-left: 0;
 		margin-bottom: 1em;
+
+		&.columns-3 .blocks-gallery-item {
+			column-count: 3;
+			column-gap: 8px;
+			// max-width: 32%;
+			// float: left;
+			// margin-right: 8px;
+		}
 	}
 
 	.wp-block-embed .embed-vimeo {
