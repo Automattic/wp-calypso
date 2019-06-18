@@ -304,7 +304,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async viewPublishedPostOrPage() {
-		const viewPostSelector = By.css( '.components-notice__content a' );
+		const viewPostSelector = By.css( '.components-snackbar__content a' );
 		await driverHelper.clickWhenClickable( this.driver, viewPostSelector );
 	}
 
