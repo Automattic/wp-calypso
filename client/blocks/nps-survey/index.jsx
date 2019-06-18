@@ -220,12 +220,12 @@ export class NpsSurvey extends PureComponent {
 					<Fragment>
 						<p>
 							{ translate(
-								'You have a free, 45-minute one-on-one call with a website expert as part of your WordPress.com Business plan benefits.'
+								'You have a free, 30-minute one-on-one call with a website expert as part of your WordPress.com Business plan benefits.'
 							) }
 						</p>
 						<p>
 							{ translate(
-								'{{booking}}Reserve a 1:1 Support Session{{/booking}} now or connect with the support team {{contact}}over live chat or email{{/contact}}.',
+								'{{booking}}Reserve a 1:1 Support Session{{/booking}} now or connect with a Happiness Engineer {{contact}}over live chat or email{{/contact}}.',
 								{
 									components: {
 										booking: <a href="/me/concierge" onClick={ this.handleLinkClick } />,
@@ -239,7 +239,7 @@ export class NpsSurvey extends PureComponent {
 				{ ! hasAvailableConciergeSession && (
 					<p>
 						{ translate(
-							'To get help with your site, connect with our WordPress.com support team {{contact}}over live chat or email{{/contact}} now.',
+							'If you would like help with your site, our WordPress.com Happiness Engineers are ready {{contact}}over live chat or email{{/contact}} now.',
 							{
 								components: {
 									contact: <a href={ CALYPSO_CONTACT } onClick={ this.handleLinkClick } />,
