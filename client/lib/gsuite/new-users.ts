@@ -2,8 +2,15 @@
  * External dependencies
  */
 import emailValidator from 'email-validator';
-import i18n, { TranslateResult } from 'i18n-calypso';
-import { includes, mapValues } from 'lodash';
+import i18n, { TranslateResult }  from 'i18n-calypso';
+import { find, includes, groupBy, map, mapValues } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { googleApps, googleAppsExtraLicenses } from 'lib/cart-values/cart-items';
+import { hasGSuite } from '.';
+
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -129,15 +136,57 @@ const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
 	return Object.values( user ).some( ( { error } ) => null !== error );
 };
 
-const userIsReady = ( user: GSuiteNewUser ): boolean =>
+/**
+ * Returns if a user is ready to be added as a new email aka valid
+ * @param user user to check
+ * @returns boolean if the user is valid or not
+ */
+const isUserValid = ( user: GSuiteNewUser ): boolean =>
 	isUserComplete( user ) && ! doesUserHaveError( user );
 
+const areAllUsersValid = ( users: GSuiteNewUser[] ): boolean =>
+	0 < users.length && users.every( isUserValid );
+
+const transformUserForCart = ( {
+	firstName: { value: firstname },
+	lastName: { value: lastname },
+	domain: { value: domain },
+	mailBox: { value: mailBox },
+}: GSuiteNewUser ): GSuiteProductUser => ( {
+	email: `${ mailBox }@${ domain }`.toLowerCase(),
+	firstname,
+	lastname,
+} );
+
+const getItemsForCart = (
+	domains: { name: string },
+	productSlug: string,
+	users: GSuiteNewUser[]
+) => {
+	const usersGroupedByDomain: { [domain: string]: GSuiteProductUser[] } = mapValues(
+		groupBy( users, 'domain.value' ),
+		groupedUsers => groupedUsers.map( transformUserForCart )
+	);
+
+	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domain: string ) => {
+		const domainInfo = find( domains, [ 'name', domain ] );
+		return domainInfo && hasGSuite( domainInfo )
+			? googleAppsExtraLicenses( {
+					domain,
+					users: groupedUsers,
+			  } )
+			: googleApps( { domain, product_slug: productSlug, users: groupedUsers } );
+	} );
+};
+
 export {
+	areAllUsersValid,
 	doesUserHaveError,
+	getItemsForCart,
 	isUserComplete,
+	isUserValid,
 	newUser,
 	newUsers,
-	userIsReady,
 	validateAgainstExistingUsers,
 	validateUser,
 };
