@@ -54,7 +54,7 @@
 		font-size: 12px;
 		margin-top: 6px;
 		// Offset .badge padding-left
-		margin-left: -11px;
+		margin-left: -( $badge-padding-x );
 	}
 
 	.card__link-indicator {
