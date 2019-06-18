@@ -38,9 +38,7 @@ class AtomicStoreThankYouCard extends Component {
 		}
 	}
 
-	checkVerification = () => {
-		user.fetch();
-	};
+	checkVerification = () => user.fetch();
 
 	resendEmail = () => {
 		const { translate } = this.props;
