@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -35,14 +34,7 @@ import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
-import {
-	plansLink,
-	planMatches,
-	findPlansKeys,
-	getPlan,
-	isFreePlan,
-	isBloggerPlan,
-} from 'lib/plans';
+import { plansLink, planMatches, findPlansKeys, getPlan, isFreePlan } from 'lib/plans';
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
@@ -138,20 +130,9 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const {
-			displayJetpackPlans,
-			intervalType,
-			selectedPlan,
-			hideFreePlan,
-			sitePlanSlug,
-		} = this.props;
+		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
-
-		const hideBloggerPlan =
-			! isBloggerPlan( selectedPlan ) &&
-			! isBloggerPlan( sitePlanSlug ) &&
-			abtest( 'hideBloggerPlanNonEn' ) === 'hide';
 
 		let term;
 		if ( intervalType === 'monthly' ) {
@@ -190,12 +171,12 @@ export class PlansFeaturesMain extends Component {
 		} else {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-				hideBloggerPlan ? null : findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term: businessPlanTerm, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
-			].filter( el => el !== null );
+			];
 		}
 
 		if ( hideFreePlan ) {
@@ -467,7 +448,6 @@ const guessCustomerType = ( state, props ) => {
 export default connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
-		const sitePlan = getSitePlan( state, siteId );
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
@@ -481,7 +461,6 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
-			sitePlanSlug: sitePlan && sitePlan.product_slug,
 		};
 	},
 	{
