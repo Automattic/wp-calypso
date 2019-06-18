@@ -16,6 +16,7 @@ import Card from 'components/card';
 import PlanIcon from 'components/plans/plan-icon';
 import { isFreeJetpackPlan } from 'lib/products-values';
 import { managePurchase } from 'me/purchases/paths';
+import { shouldAddPaymentSourceInsteadOfRenewingNow } from 'lib/purchases';
 
 export class CurrentPlanHeader extends Component {
 	static propTypes = {
@@ -54,7 +55,15 @@ export class CurrentPlanHeader extends Component {
 					</span>
 					{ currentPlan.userIsOwner && Boolean( currentPlan.id ) && siteSlug && (
 						<Button compact href={ managePurchase( siteSlug, currentPlan.id ) }>
-							{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
+							{ hasAutoRenew && translate( 'Manage Payment' ) }
+							{ ! hasAutoRenew &&
+								! shouldAddPaymentSourceInsteadOfRenewingNow(
+									currentPlan.userFacingExpiryMoment
+								) &&
+								translate( 'Renew Now' ) }
+							{ ! hasAutoRenew &&
+								shouldAddPaymentSourceInsteadOfRenewingNow( currentPlan.userFacingExpiryMoment ) &&
+								translate( 'Enable Auto Renew' ) }
 						</Button>
 					) }
 				</div>

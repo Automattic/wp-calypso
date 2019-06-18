@@ -314,8 +314,8 @@ function hasCreditCardData( purchase ) {
 	return Boolean( purchase.payment.creditCard.expiryMoment );
 }
 
-function shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) {
-	return isPaidWithCredits( purchase ) && purchase.expiryMoment > moment().add( 90, 'days' );
+function shouldAddPaymentSourceInsteadOfRenewingNow( expiryMoment ) {
+	return expiryMoment > moment().add( 90, 'days' );
 }
 
 /**
