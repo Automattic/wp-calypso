@@ -67,6 +67,7 @@ import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import getSiteId from 'state/selectors/get-site-id';
 import { isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -521,12 +522,12 @@ class Signup extends React.Component {
 		const propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props );
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
 		const flow = flows.getFlow( this.props.flowName );
-		const hideFreePlan = !! (
+		const planWithDomain =
+			this.props.domainsWithPlansOnly &&
 			( isDomainRegistration( domainItem ) ||
 				isDomainTransfer( domainItem ) ||
-				isDomainMapping( domainItem ) ) &&
-			this.props.domainsWithPlansOnly
-		);
+				isDomainMapping( domainItem ) );
+		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
@@ -634,6 +635,7 @@ export default connect(
 			domainsWithPlansOnly: getCurrentUser( state )
 				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 				: true,
+			isDomainOnlySite: isDomainOnlySite( state, siteId ),
 			progress: getSignupProgress( state ),
 			signupDependencies,
 			isLoggedIn: isUserLoggedIn( state ),
