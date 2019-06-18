@@ -448,15 +448,15 @@ class Full_Site_Editing {
 			return;
 		}
 
-		$template_id = get_post_meta( $post->ID, '_wp_template_id', true );
+		$template = new A8C_WP_Template( $post->ID );
+
 		//bail if the post has no tempalte id assigned
-		if ( ! $template_id ) {
+		if ( ! $template->get_template_id() ) {
 			return;
 		}
 
-		$template = get_post( $template_id );
 		$wrapped_post_content = sprintf( '<!-- wp:a8c/post-content -->%s<!-- /wp:a8c/post-content -->', $post->post_content );
-		$post->post_content = str_replace( '<!-- wp:a8c/post-content /-->', $wrapped_post_content, $template->post_content );
+		$post->post_content = str_replace( '<!-- wp:a8c/post-content /-->', $wrapped_post_content, $template->get_template_content() );
 	}
 
 	/**
