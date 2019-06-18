@@ -75,26 +75,12 @@ class PlanThankYouCard extends Component {
 	}
 
 	renderDescription() {
-		const { description, descriptionWithHTML, translate } = this.props;
+		const { description, translate } = this.props;
 		if ( description ) {
 			return description;
 		}
 
-		if ( descriptionWithHTML ) {
-			// If there is a descriptionWithHTML, we shouldn't render a default description
-			return null;
-		}
-
 		return translate( "Now that we've taken care of the plan, it's time to see your new site." );
-	}
-
-	renderDescriptionWithHTML() {
-		const { descriptionWithHTML } = this.props;
-		if ( descriptionWithHTML ) {
-			return descriptionWithHTML;
-		}
-
-		return null;
 	}
 
 	renderHeading() {
@@ -126,6 +112,8 @@ class PlanThankYouCard extends Component {
 
 	render() {
 		const { siteId } = this.props;
+		const description = this.renderDescription();
+
 		return (
 			<div className={ classnames( 'plan-thank-you-card', this.getPlanClass() ) }>
 				<QuerySites siteId={ siteId } />
@@ -135,8 +123,8 @@ class PlanThankYouCard extends Component {
 					name={ this.renderPlanName() }
 					price={ this.renderPlanPrice() }
 					heading={ this.renderHeading() }
-					description={ this.renderDescription() }
-					descriptionWithHTML={ this.renderDescriptionWithHTML() }
+					description={ 'string' === typeof description ? description : null }
+					descriptionWithHTML={ 'object' === typeof description ? description : null }
 					buttonUrl={ this.getButtonUrl() }
 					buttonText={ this.renderButtonText() }
 					icon={ this.renderPlanIcon() }
@@ -151,8 +139,7 @@ PlanThankYouCard.propTypes = {
 	action: PropTypes.node,
 	buttonText: PropTypes.string,
 	buttonUrl: PropTypes.string,
-	description: PropTypes.string,
-	descriptionWithHTML: PropTypes.object,
+	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	heading: PropTypes.string,
 	plan: PropTypes.object,
 	siteId: PropTypes.number.isRequired,
