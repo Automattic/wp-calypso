@@ -52,6 +52,10 @@ class ExternalLink extends Component {
 			}
 		);
 
+		if ( this.props.icon ) {
+			props.target = '_blank';
+		}
+
 		if ( props.target ) {
 			props.rel = props.rel.concat( ' noopener noreferrer' );
 		}
