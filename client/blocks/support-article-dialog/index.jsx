@@ -27,6 +27,12 @@ import getInlineSupportArticlePostUrl from 'state/selectors/get-inline-support-a
 import isInlineSupportArticleVisible from 'state/selectors/is-inline-support-article-visible';
 import { closeSupportArticleDialog } from 'state/inline-support-article/actions';
 
+/**
+ * Style Dependencies
+ */
+import './style.scss';
+import './content.scss';
+
 export class SupportArticleDialog extends Component {
 	static propTypes = {
 		closeSupportArticleDialog: PropTypes.func.isRequired,
@@ -48,7 +54,7 @@ export class SupportArticleDialog extends Component {
 			<Button onClick={ this.props.closeSupportArticleDialog }>
 				{ translate( 'Close', { textOnly: true } ) }
 			</Button>,
-		].filter(Boolean);
+		].filter( Boolean );
 	}
 
 	render() {
