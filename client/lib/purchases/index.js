@@ -314,6 +314,10 @@ function hasCreditCardData( purchase ) {
 	return Boolean( purchase.payment.creditCard.expiryMoment );
 }
 
+function shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) {
+	return isPaidWithCredits( purchase ) && purchase.expiryMoment > moment().add( 90, 'days' );
+}
+
 /**
  * Checks whether the purchase is capable of being renewed by intentional
  * action (eg, a button press by user). Some purchases (eg, .fr domains)
@@ -438,4 +442,5 @@ export {
 	cardProcessorSupportsUpdates,
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
+	shouldAddPaymentSourceInsteadOfRenewingNow,
 };
