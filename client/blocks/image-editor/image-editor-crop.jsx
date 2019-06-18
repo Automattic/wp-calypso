@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEqual, noop } from 'lodash';
 import classNames from 'classnames';
+// import {Draggable} from '@wordpress/components';
 
 /**
  * Internal dependencies
