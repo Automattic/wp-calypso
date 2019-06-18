@@ -15,8 +15,7 @@
 	}
 
 	.rewind-credentials-form {
-		text-align: left;
-		width: 90%;
+		padding: 0 24px;
 
 		.rewind-credentials-form__user-pass {
 			display: block;
@@ -27,11 +26,6 @@
 		float: right;
 		padding-left: 32px;
 		padding-right: 32px;
-	}
-
-	.button.is-primary.rewind-credentials-form__advanced-button {
-		float: none;
-		padding: 8px 0;
 	}
 
 	.credentials-setup-flow__footer {
