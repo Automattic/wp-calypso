@@ -173,14 +173,6 @@
 
 	@include breakpoint( '>660px' ) {
 		display: flex;
-
-		.upload-image {
-			margin-right: 25px;
-		}
-	}
-
-	.upload-image {
-		margin-bottom: 20px;
 	}
 
 	.dialog__editor-simple-payments-modal-image {
