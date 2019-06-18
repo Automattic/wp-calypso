@@ -21,9 +21,9 @@ class Starter_Page_Templates {
 	 * Starter_Page_Templates constructor.
 	 */
 	private function __construct() {
-		add_action( 'init', array( $this, 'register_scripts' ) );
-		add_action( 'init', array( $this, 'register_meta_field' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
+		add_action( 'init', [ $this, 'register_scripts' ] );
+		add_action( 'init', [ $this, 'register_meta_field' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
 	}
 
 	/**
@@ -46,7 +46,7 @@ class Starter_Page_Templates {
 		wp_register_script(
 			'starter-page-templates',
 			plugins_url( 'dist/starter-page-templates.js', __FILE__ ),
-			array( 'wp-plugins', 'wp-edit-post', 'wp-element' ),
+			[ 'wp-plugins', 'wp-edit-post', 'wp-element' ],
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/starter-page-templates.js' ),
 			true
 		);
@@ -56,7 +56,7 @@ class Starter_Page_Templates {
 	 * Register meta field for storing the template identifier.
 	 */
 	public function register_meta_field() {
-		$args = array(
+		$args = [
 			'type'           => 'string',
 			'description'    => 'Selected template',
 			'single'         => true,
@@ -65,7 +65,7 @@ class Starter_Page_Templates {
 			'auth_callback'  => function() {
 				return current_user_can( 'edit_posts' );
 			},
-		);
+		];
 		register_meta( 'post', '_starter_page_template', $args );
 	}
 
@@ -78,7 +78,7 @@ class Starter_Page_Templates {
 		wp_register_script(
 			'starter-page-templates-error',
 			null,
-			array(),
+			[],
 			'1.O',
 			true
 		);
@@ -118,41 +118,32 @@ class Starter_Page_Templates {
 			return;
 		}
 
-		// Load Tracks data if available.
-		$tracks_identity    = null;
-		$is_wpcom           = ( defined( 'IS_WPCOM' ) && IS_WPCOM );
-		$has_active_jetpack = ( class_exists( 'Jetpack' ) && Jetpack::is_active() );
-		if ( $has_active_jetpack && ! $is_wpcom && class_exists( 'Jetpack_Tracks_Client' ) ) {
-			$tracks_identity = Jetpack_Tracks_Client::get_connected_user_tracks_identity();
-			wp_enqueue_script(
-				'jp-tracks',
-				'//stats.wp.com/w.js',
-				array(),
-				gmdate( 'YW' ),
-				true
-			);
-		}
-
 		wp_enqueue_script( 'starter-page-templates' );
 		wp_set_script_translations( 'starter-page-templates', 'full-site-editing' );
 
-		$default_info      = array(
+		$default_info      = [
 			'title'    => get_bloginfo( 'name' ),
 			'vertical' => $vertical['name'],
-		);
-		$default_templates = array(
-			array(
+		];
+		$default_templates = [
+			[
 				'title' => 'Blank',
 				'slug'  => 'blank',
-			),
-
-		);
-		$site_info = get_option( 'site_contact_info', array() );
-		$config    = array(
-			'siteInformation' => array_merge( $default_info, $site_info ),
-			'templates'       => array_merge( $default_templates, $vertical_templates ),
-			'vertical'        => $vertical,
-			'tracksUserData'  => $tracks_identity,
+			],
+		];
+		$site_info = get_option( 'site_contact_info', [] );
+		/**
+		 * Filters the config before it's passed to the frontend.
+		 *
+		 * @param array $config The config.
+		 */
+		$config = apply_filters(
+			'fse_starter_page_templates_config',
+			[
+				'siteInformation' => array_merge( $default_info, $site_info ),
+				'templates'       => array_merge( $default_templates, $vertical_templates ),
+				'vertical'        => $vertical,
+			]
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
 
@@ -164,7 +155,7 @@ class Starter_Page_Templates {
 		wp_enqueue_style(
 			'starter-page-templates',
 			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			array(),
+			[],
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 		);
 	}
@@ -189,7 +180,7 @@ class Starter_Page_Templates {
 			);
 			$response    = wp_remote_get( esc_url_raw( $request_url ) );
 			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-				return array();
+				return [];
 			}
 			$vertical_templates = json_decode( wp_remote_retrieve_body( $response ), true );
 			set_transient( $transient_key, $vertical_templates, DAY_IN_SECONDS );
