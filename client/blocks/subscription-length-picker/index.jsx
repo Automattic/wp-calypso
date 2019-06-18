@@ -122,10 +122,15 @@ export function myFormatCurrency( price, code, options = {} ) {
 
 export const mapStateToProps = ( state, { plans, cart } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
-	const credits = cart.credits;
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans, credits ),
+		productsWithPrices: computeProductsWithPrices(
+			state,
+			selectedSiteId,
+			plans,
+			cart.credits || 0,
+			cart.coupon_discounts || {}
+		),
 	};
 };
 
