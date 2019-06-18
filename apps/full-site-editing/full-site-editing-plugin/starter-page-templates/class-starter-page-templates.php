@@ -133,11 +133,19 @@ class Starter_Page_Templates {
 
 		);
 		$site_info = get_option( 'site_contact_info', array() );
-		$config    = apply_filters( 'fse_starter_page_templates_config', array(
-			'siteInformation' => array_merge( $default_info, $site_info ),
-			'templates'       => array_merge( $default_templates, $vertical_templates ),
-			'vertical'        => $vertical,
-		) );
+		/**
+		 * Filters the config before it's passed to the frontend.
+		 *
+		 * @param array $config The config.
+		 */
+		$config = apply_filters(
+			'fse_starter_page_templates_config',
+			array(
+				'siteInformation' => array_merge( $default_info, $site_info ),
+				'templates'       => array_merge( $default_templates, $vertical_templates ),
+				'vertical'        => $vertical,
+			)
+		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
 
 		// Enqueue styles.
