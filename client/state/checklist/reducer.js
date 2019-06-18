@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,18 +34,6 @@ const moduleTaskMap = {
 function items( state = {}, action ) {
 	switch ( action.type ) {
 		case SITE_CHECKLIST_RECEIVE:
-			// Legacy, object-based response format
-			if ( ! Array.isArray( action.checklist.tasks ) ) {
-				return {
-					...action.checklist,
-					tasks: map( action.checklist.tasks, ( value, id ) => ( {
-						id,
-						...value,
-					} ) ),
-				};
-			}
-
-			// Phase 2 data format
 			return action.checklist;
 		case SITE_CHECKLIST_TASK_UPDATE:
 			return setChecklistTaskCompletion( state, action.taskId, true );

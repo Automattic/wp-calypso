@@ -110,6 +110,15 @@ class WpcomTaskList {
 		return this.tasks.find( task => task.id === taskId );
 	}
 
+	getIds() {
+		return this.getAll().map( ( { id } ) => id );
+	}
+
+	isCompleted( taskId ) {
+		const task = this.get( taskId );
+		return task ? task.isCompleted : false;
+	}
+
 	has( taskId ) {
 		return !! this.get( taskId );
 	}
