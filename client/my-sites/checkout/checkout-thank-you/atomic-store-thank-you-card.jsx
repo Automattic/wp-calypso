@@ -34,6 +34,10 @@ class AtomicStoreThankYouCard extends Component {
 	state = { resendStatus: RESEND_NOT_SENT };
 
 	componentDidUpdate( prevProps ) {
+		/**
+		 * This clears the  error in the event the email is verified in another tab
+		 * or another browser and the isEmailVerified props is updated via polling.
+		 */
 		if ( this.props.isEmailVerified && ! prevProps.isEmailVerified ) {
 			this.props.removeNotice( VERIFY_EMAIL_ERROR_NOTICE );
 		}
@@ -44,6 +48,9 @@ class AtomicStoreThankYouCard extends Component {
 	resendEmail = () => {
 		const { translate } = this.props;
 		const { resendStatus } = this.state;
+
+		this.props.removeNotice( VERIFY_EMAIL_ERROR_NOTICE );
+
 		if ( RESEND_PENDING === resendStatus ) {
 			return;
 		}
@@ -51,7 +58,6 @@ class AtomicStoreThankYouCard extends Component {
 		this.setState( { resendStatus: RESEND_PENDING } );
 
 		user.sendVerificationEmail( error => {
-			this.props.removeNotice( VERIFY_EMAIL_ERROR_NOTICE );
 			if ( error ) {
 				this.props.errorNotice(
 					translate( "Couldn't resend verification email. Please try again." ),
