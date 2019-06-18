@@ -17,7 +17,7 @@ import {
 } from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
-import { noSite, siteSelection } from 'my-sites/controller';
+import { noSite, siteSelection, sites } from 'my-sites/controller';
 import config from 'config';
 import userFactory from 'lib/user';
 
@@ -125,7 +125,7 @@ export default function() {
 		);
 
 		page(
-			'/checkout/:site/add-quickstart-session/:receiptId?',
+			'/checkout/add-quickstart-session/:receiptId?/:site?',
 			siteSelection,
 			conciergeQuickstartSession,
 			makeLayout,

@@ -360,8 +360,9 @@ export class ConciergeQuickstartSession extends React.Component {
 	 * when they click 'Get Started' on the Quickstart session offer page while logged out.
 	 */
 	handleRedirect = () => {
-		const redirectPath = this.props.path + '/add';
-		this.props.redirectLoggedOut( { path: redirectPath, store: this.props.reduxStore } );
+		const { path, reduxStore } = this.props;
+		const redirectPath = `${ path }/add`;
+		this.props.redirectLoggedOut( { path: redirectPath, store: reduxStore } );
 	};
 
 	handleClickDecline = () => {
@@ -393,13 +394,20 @@ export class ConciergeQuickstartSession extends React.Component {
 	};
 
 	handleClickAccept = () => {
-		const { siteSlug, trackUpsellButtonClick } = this.props;
+		const { siteSlug, trackUpsellButtonClick, path } = this.props;
 
 		trackUpsellButtonClick( 'accept' );
 
-		addItem( conciergeSessionItem() );
+		// addItem( conciergeSessionItem() );
 
-		page( `/checkout/${ siteSlug }` );
+		// page( `/checkout/${ siteSlug }` );
+
+		if ( siteSlug ) {
+			addItem( conciergeSessionItem() );
+			page( `/checkout/${ siteSlug }` );
+		} else {
+			page( `${ path }/add` );
+		}
 	};
 }
 
