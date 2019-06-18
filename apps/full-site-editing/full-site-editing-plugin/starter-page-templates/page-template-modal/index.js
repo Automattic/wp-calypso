@@ -30,13 +30,13 @@ class PageTemplateModal extends Component {
 
 	componentDidMount() {
 		if ( this.state.isOpen ) {
-			trackView( this.props.vertical.id );
+			trackView( this.props.segment.id, this.props.vertical.id );
 		}
 	}
 
 	selectTemplate = newTemplate => {
 		this.setState( { isOpen: false } );
-		trackSelection( this.props.vertical.id, newTemplate );
+		trackSelection( this.props.segment.id, this.props.vertical.id, newTemplate );
 
 		const template = this.props.templates[ newTemplate ];
 
@@ -56,7 +56,7 @@ class PageTemplateModal extends Component {
 
 	closeModal = () => {
 		this.setState( { isOpen: false } );
-		trackDismiss( this.props.vertical.id );
+		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
 	render() {
@@ -137,6 +137,7 @@ const {
 	siteInformation = {},
 	templates = [],
 	vertical,
+	segment,
 	tracksUserData,
 } = window.starterPageTemplatesConfig;
 
@@ -150,6 +151,7 @@ registerPlugin( 'page-templates', {
 			<PageTemplatesPlugin
 				templates={ keyBy( templates, 'slug' ) }
 				vertical={ vertical }
+				segment={ segment }
 				siteInformation={ siteInformation }
 			/>
 		);

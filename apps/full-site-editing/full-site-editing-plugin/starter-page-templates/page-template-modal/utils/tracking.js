@@ -8,7 +8,7 @@ export const initializeWithIdentity = identity => {
 	window._tkq.push( [ 'identifyUser', identity.userid, identity.username ] );
 };
 
-export const trackView = vertical_id => {
+export const trackView = ( segment_id, vertical_id ) => {
 	if ( ! tracksIdentity ) {
 		return;
 	}
@@ -17,12 +17,13 @@ export const trackView = vertical_id => {
 		'a8c_test_full_site_editing_template_selector_view',
 		{
 			blog_id: tracksIdentity.blogid,
+			segment_id,
 			vertical_id,
 		},
 	] );
 };
 
-export const trackDismiss = vertical_id => {
+export const trackDismiss = ( segment_id, vertical_id ) => {
 	if ( ! tracksIdentity ) {
 		return;
 	}
@@ -31,12 +32,13 @@ export const trackDismiss = vertical_id => {
 		'a8c_test_full_site_editing_template_selector_dismiss',
 		{
 			blog_id: tracksIdentity.blogid,
+			segment_id,
 			vertical_id,
 		},
 	] );
 };
 
-export const trackSelection = ( vertical_id, template ) => {
+export const trackSelection = ( segment_id, vertical_id, template ) => {
 	if ( ! tracksIdentity ) {
 		return;
 	}
@@ -45,6 +47,7 @@ export const trackSelection = ( vertical_id, template ) => {
 		'a8c_test_full_site_editing_template_selector_template_selected',
 		{
 			blog_id: tracksIdentity.blogid,
+			segment_id,
 			vertical_id,
 			template,
 		},
