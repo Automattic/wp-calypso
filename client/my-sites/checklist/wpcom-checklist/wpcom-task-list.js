@@ -34,9 +34,9 @@ function getTasks( {
 	const getTask = taskId =>
 		taskStatuses ? taskStatuses.filter( task => task.id === taskId )[ 0 ] : undefined;
 	const hasTask = taskId => getTask( taskId ) !== undefined;
-	const isCompleted = taskId => get( getTask( taskId ), 'completed', false );
+	const isCompleted = taskId => get( getTask( taskId ), 'isCompleted', false );
 	const addTask = ( taskId, completed ) => {
-		const task = Object.assign( omit( getTask( taskId ), [ 'completed' ] ), {
+		const task = Object.assign( omit( getTask( taskId ), [ 'isCompleted' ] ), {
 			id: taskId,
 			isCompleted: isBoolean( completed ) ? completed : isCompleted( taskId ),
 		} );
