@@ -12,7 +12,7 @@ export default {
 	confirmCancelDomain: i18n.translate( 'Cancel Domain' ),
 	editCardDetails: i18n.translate( 'Edit Card Details', { comment: 'Credit card' } ),
 	addCardDetails: i18n.translate( 'Add Card Details', { comment: 'Credit card' } ),
-	editPaymentMethod: i18n.translate( 'Edit Payment Method' ),
+	editPaymentMethod: i18n.translate( 'Change Payment Method' ),
 	managePurchase: i18n.translate( 'Manage Purchase' ),
 	purchases: i18n.translate( 'Purchases' ),
 };
