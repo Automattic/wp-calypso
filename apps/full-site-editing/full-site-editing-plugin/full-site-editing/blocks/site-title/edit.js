@@ -1,8 +1,6 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -10,14 +8,11 @@ import classNames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 import { withNotices } from '@wordpress/components';
-import { PlainText } from '@wordpress/block-editor';
+import { PlainText } from '@wordpress/editor';
 import apiFetch from '@wordpress/api-fetch';
 import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
+import { Component, Fragment } from '@wordpress/element';
 
 class SiteTitleEdit extends Component {
 	state = {
@@ -77,23 +72,22 @@ class SiteTitleEdit extends Component {
 
 	render() {
 		const { title } = this.state;
-		const { isSelected, className } = this.props;
+		const { className, noticeUI } = this.props;
 
-		if ( isSelected ) {
-			return (
+		return (
+			<Fragment>
+				{ noticeUI }
 				<h1>
 					<PlainText
-						className={ className }
+						className={ classNames( 'site-title', className ) }
 						value={ title }
 						onChange={ this.setSiteTitle }
 						placeholder={ __( 'Site Title' ) }
 						aria-label={ __( 'Site Title' ) }
 					/>
 				</h1>
-			);
-		}
-
-		return <h1 className={ classNames( 'site-title', className ) }>{ title }</h1>;
+			</Fragment>
+		);
 	}
 }
 
