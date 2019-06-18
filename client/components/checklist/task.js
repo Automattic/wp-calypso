@@ -168,7 +168,7 @@ class Task extends PureComponent {
 								onClick={ this.props.onTaskClick }
 							>
 								{ completed ? completedTitle : title }
-								<Gridicon icon="chevron-up" className="checklist__toggle-affordance" />
+								<Gridicon icon="chevron-up" className="checklist__toggle-icon" />
 							</Button>
 						) : (
 							completedTitle

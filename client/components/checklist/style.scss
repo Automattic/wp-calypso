@@ -213,7 +213,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		font-size: 16px;
 		border-radius: 0;
 
-		.checklist__toggle-affordance {
+		.checklist__toggle-icon {
 			position: absolute;
 			right: 12px;
 			top: 16px;
@@ -224,7 +224,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		&:hover {
 			cursor: pointer;
 
-			.checklist__toggle-affordance {
+			.checklist__toggle-icon {
 				fill: var( --color-primary );
 			}
 		}
@@ -287,7 +287,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			font-size: 14px;
 			padding-top: 8px;
 
-			.checklist__toggle-affordance {
+			.checklist__toggle-icon {
 				top: 8px;
 			}
 		}
@@ -347,7 +347,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			padding-bottom: 8px;
 		}
 
-		.checklist__toggle-affordance {
+		.checklist__toggle-icon {
 			transform: rotate( 180deg );
 		}
 	}
