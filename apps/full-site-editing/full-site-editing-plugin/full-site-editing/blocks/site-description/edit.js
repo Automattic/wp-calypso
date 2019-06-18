@@ -16,30 +16,24 @@ class SiteDescriptionEdit extends Component {
 	};
 
 	componentDidMount() {
-		try {
-			apiFetch( { path: '/wp/v2/settings' } ).then( ( { description } ) => {
+		apiFetch( { path: '/wp/v2/settings' } )
+			.then( ( { description } ) => {
 				this.setState( {
 					fromApi: description,
 					description,
 				} );
-			} );
-		} catch ( error ) {
-			this.handleApiError();
-		}
+			} )
+			.catch( this.handleApiError );
 	}
 
 	componentDidUpdate( prevProps ) {
 		const { description, fromApi } = this.state;
 		if ( ! prevProps.isSaving && this.props.isSaving && fromApi !== description ) {
-			try {
-				apiFetch( {
-					path: '/wp/v2/settings',
-					method: 'POST',
-					data: { description },
-				} );
-			} catch ( error ) {
-				this.handleApiError( true );
-			}
+			apiFetch( {
+				path: '/wp/v2/settings',
+				method: 'POST',
+				data: { description },
+			} ).catch( () => this.handleApiError( true ) );
 		}
 	}
 
