@@ -35,7 +35,7 @@ export const JetpackLazyImagesTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							"Let's speed up your page load times with lazy-loading images -- " +
+							"Let's speed up your page load times with lazy-loading images — " +
 								'images that only load when a visitor scrolls down to see them.'
 						) }
 					</p>

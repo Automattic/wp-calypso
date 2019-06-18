@@ -35,7 +35,7 @@ export const JetpackVideoHostingTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'Flip this toggle to use our WordPress.com servers to host your videos -- ' +
+							'Flip this toggle to use our WordPress.com servers to host your videos — ' +
 								"they'll be fast {{em}}and{{/em}} ad-free.",
 							{
 								components: {

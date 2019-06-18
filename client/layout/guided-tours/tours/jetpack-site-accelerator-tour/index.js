@@ -35,7 +35,7 @@ export const JetpackSiteAcceleratorTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'Flip this toggle to enable Site Accelerator -- it optimizes your images ' +
+							'Flip this toggle to enable Site Accelerator — it optimizes your images ' +
 								'and loads them from our super-powerful servers, taking the load off yours.'
 						) }
 					</p>
