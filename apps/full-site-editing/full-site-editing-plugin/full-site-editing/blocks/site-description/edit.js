@@ -10,6 +10,8 @@ import { PlainText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
+import { withSelect } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -18,25 +20,40 @@ import apiFetch from '@wordpress/api-fetch';
 class SiteDescriptionEdit extends Component {
 	state = {
 		fromApi: null,
+		description: __( 'Site description loading…' ),
 	};
 
 	componentDidMount() {
-		const { setAttributes } = this.props;
 		try {
 			apiFetch( { path: '/wp/v2/settings' } ).then( ( { description } ) => {
 				this.setState( {
 					fromApi: description,
+					description,
 				} );
-				setAttributes( { description } );
 			} );
 		} catch ( error ) {
 			this.handleApiError();
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		const { description, fromApi } = this.state;
+		if ( ! prevProps.isSaving && this.props.isSaving && fromApi !== description ) {
+			try {
+				apiFetch( {
+					path: '/wp/v2/settings',
+					method: 'POST',
+					data: { description },
+				} );
+			} catch ( error ) {
+				this.handleApiError( true );
+			}
+		}
+	}
+
 	handleApiError( post = false ) {
 		if ( post ) {
-			this.props.setAttributes( {
+			this.setState( {
 				description: this.state.fromApi,
 			} );
 		}
@@ -44,17 +61,14 @@ class SiteDescriptionEdit extends Component {
 	}
 
 	render() {
-		const {
-			attributes: { description },
-			isSelected,
-			setAttributes,
-		} = this.props;
+		const { isSelected } = this.props;
+		const { description } = this.state;
 		if ( isSelected ) {
 			return (
 				<PlainText
 					className="wp-block-a8c-site-description"
 					value={ description }
-					onChange={ value => setAttributes( { description: value } ) }
+					onChange={ value => this.setState( { description: value } ) }
 					placeholder={ __( 'Site Description' ) }
 					aria-label={ __( 'Site Description' ) }
 				/>
@@ -64,4 +78,11 @@ class SiteDescriptionEdit extends Component {
 	}
 }
 
-export default SiteDescriptionEdit;
+export default compose( [
+	withSelect( select => {
+		const { isSavingPost } = select( 'core/editor' );
+		return {
+			isSaving: isSavingPost(),
+		};
+	} ),
+] )( SiteDescriptionEdit );
