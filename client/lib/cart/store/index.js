@@ -241,6 +241,7 @@ function createListener( store, selector, callback ) {
 
 // Subscribe to the Redux store to get updates about the selected site
 getReduxStore().then( store => {
-	CartStore.setSelectedSiteId( getSelectedSiteId( store.getState() ) );
+	const selectedSiteId = getSelectedSiteId( store.getState() );
+	selectedSiteId && CartStore.setSelectedSiteId( selectedSiteId );
 	store.subscribe( createListener( store, getSelectedSiteId, CartStore.setSelectedSiteId ) );
 } );
