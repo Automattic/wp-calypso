@@ -39,6 +39,7 @@ class PageTemplateModal extends Component {
 		trackSelection( this.props.segment.id, this.props.vertical.id, newTemplate );
 
 		const template = this.props.templates[ newTemplate ];
+		this.props.saveTemplateChoice( template );
 
 		// Skip inserting if there's nothing to insert.
 		if ( ! has( template, 'content' ) ) {
@@ -113,15 +114,20 @@ const PageTemplatesPlugin = compose(
 	withDispatch( ( dispatch, ownProps ) => {
 		const editorDispatcher = dispatch( 'core/editor' );
 		return {
-			insertTemplate: template => {
-				// Set post title and remember selected template in meta.
+			saveTemplateChoice: template => {
+				// Save selected template slug in meta.
 				const currentMeta = ownProps.getMeta();
 				editorDispatcher.editPost( {
-					title: template.title,
 					meta: {
 						...currentMeta,
 						_starter_page_template: template.slug,
 					},
+				} );
+			},
+			insertTemplate: template => {
+				// Set post title.
+				editorDispatcher.editPost( {
+					title: template.title,
 				} );
 
 				// Insert blocks.
