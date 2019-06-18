@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import {
 	constant,
 	difference,
@@ -39,7 +36,7 @@ const BLACKLISTED_SECTIONS = [
 	'checkout-thank-you', // thank you page
 ];
 
-const debug = debugFactory( 'calypso:guided-tours' );
+const debug = debugFactory( 'calypso:guided-tours:selectors' );
 
 const mappable = x => ( ! Array.isArray( x ) ? [ x ] : x );
 

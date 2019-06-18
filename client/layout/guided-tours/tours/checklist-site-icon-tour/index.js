@@ -22,6 +22,7 @@ import {
 import { ChangeButton, ContinueButton, DoneButton } from 'layout/guided-tours/button-labels';
 
 function handleTargetDisappear( { quit, next } ) {
+	console.log( 'Handling disappear!' );
 	const dialog = document.querySelector( '.editor-media-modal' );
 	if ( dialog ) {
 		next();

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get, has, includes, isFunction, overSome, takeRight } from 'lodash';
 
 /**

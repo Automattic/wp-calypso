@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { findLast, last } from 'lodash';
 
 /**

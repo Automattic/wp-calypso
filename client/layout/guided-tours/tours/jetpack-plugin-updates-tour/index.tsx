@@ -22,6 +22,11 @@ import {
 
 const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .form-toggle__switch';
 
+function handleTargetDisappear( { quit }: { quit: () => void } ) {
+	console.log( 'Quitting step with %o', quit );
+	quit();
+}
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackPluginUpdatesTour = makeTour(
 	<Tour
@@ -38,6 +43,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 			target={ JETPACK_TOGGLE_SELECTOR }
 			arrow="top-left"
 			placement="below"
+			onTargetDisappear={ handleTargetDisappear }
 			wait={ () =>
 				new Promise( resolve => {
 					if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {

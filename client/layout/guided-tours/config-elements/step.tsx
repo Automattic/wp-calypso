@@ -23,6 +23,7 @@ import {
 import { contextTypes } from '../context-types';
 import { ArrowPosition, DialogPosition, Coordinate } from '../types';
 import { TimestampMS } from 'client/types';
+import { NonUndefined } from 'utility-types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -30,6 +31,11 @@ const anyFrom = obj => {
 	const key = Object.keys( obj )[ 0 ];
 	return key && obj[ key ];
 };
+
+interface TargetDisappearHandler {
+	next: () => void;
+	quit: () => void;
+}
 
 interface RequiredProps {
 	name: string;
@@ -43,7 +49,7 @@ interface AcceptedProps {
 	dark?: boolean;
 	keepRepositioning?: boolean;
 	next?: string;
-	onTargetDisappear?: Function;
+	onTargetDisappear?: ( handler: TargetDisappearHandler ) => void;
 	placement?: DialogPosition;
 	scrollContainer?: string;
 	shouldScrollTo?: boolean;
@@ -75,7 +81,7 @@ export default class Step extends Component< Props, State > {
 
 	lastTransitionTimestamp: TimestampMS | null = null;
 
-	stepSection: string = null;
+	stepSection: string | null = null;
 
 	mounted: boolean = false;
 
@@ -160,7 +166,7 @@ export default class Step extends Component< Props, State > {
 		start( { step, tour, tourVersion } );
 	}
 
-	wait( props: Props, context ) {
+	wait( props: Props, context ): Promise< unknown > {
 		if ( isFunction( props.wait ) ) {
 			const ret = props.wait( { reduxStore: context.store } );
 			if ( isFunction( get( ret, 'then' ) ) ) {
@@ -180,7 +186,15 @@ export default class Step extends Component< Props, State > {
 	}
 
 	watchTarget() {
+		/**
+		 * Don't do anyhting if:
+		 *   - We already set an observer
+		 *   - We don't have a target
+		 *   - We don't have a onTargetDisappear callback
+		 *   - MutationObserver is unsupported
+		 */
 		if (
+			this.observer ||
 			! this.props.target ||
 			! this.props.onTargetDisappear ||
 			typeof MutationObserver === 'undefined'
@@ -188,29 +202,27 @@ export default class Step extends Component< Props, State > {
 			return;
 		}
 
-		if ( ! this.observer ) {
-			this.observer = new MutationObserver( () => {
-				const { target, onTargetDisappear } = this.props;
+		console.log( 'setting up observer' );
+		this.observer = new MutationObserver( () => {
+			const { target, onTargetDisappear } = this.props;
 
-				if ( ! target || ! onTargetDisappear ) {
-					return;
-				}
-
-				const targetEl = targetForSlug( this.props.target );
-				if ( ! targetEl ) {
-					onTargetDisappear( {
-						quit: () => this.context.quit( this.context ),
-						next: () => this.skipToNext( this.props, this.context ),
-					} );
-				}
-			} );
-			this.observer.observe( document.body, { childList: true, subtree: true } );
-		}
+			const targetEl = targetForSlug( target );
+			if ( ! targetEl && onTargetDisappear ) {
+				console.log( "Couldn't find %o // %o", target, targetEl );
+				console.log( 'Invoking onTD %o', onTargetDisappear );
+				onTargetDisappear( {
+					quit: () => this.context.quit( this.context ),
+					next: () => this.skipToNext( this.props, this.context ),
+				} );
+			}
+		} );
+		this.observer.observe( document.body, { childList: true, subtree: true } );
 	}
 
 	unwatchTarget() {
 		if ( this.observer ) {
 			this.observer.disconnect();
+			this.observer = null;
 		}
 	}
 

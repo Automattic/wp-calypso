@@ -18,18 +18,16 @@ const MASTERBAR_HEIGHT = 47;
 
 const middle = ( a: number, b: number ) => Math.abs( b - a ) / 2;
 
-const wouldBeOffscreen = ( pos: number ) => {
-	return pos < 0 || pos + DIALOG_PADDING + DIALOG_WIDTH > document.documentElement.clientWidth;
-};
+const wouldBeOffscreen = ( pos: number ): boolean =>
+	pos < 0 || pos + DIALOG_PADDING + DIALOG_WIDTH > document.documentElement.clientWidth;
 
-const fitOnScreen = ( pos: number ) => {
-	return Math.max( 0, pos - DIALOG_PADDING - DIALOG_WIDTH );
-};
+const fitOnScreen = ( pos: number ): number => Math.max( 0, pos - DIALOG_PADDING - DIALOG_WIDTH );
 
-function yAbove( top: number ) {
+function yAbove( top: number ): number {
 	return top - DIALOG_HEIGHT;
 }
-function yBelow( bottom: number ) {
+
+function yBelow( bottom: number ): number {
 	return bottom + DIALOG_PADDING;
 }
 
@@ -37,7 +35,7 @@ function yBelow( bottom: number ) {
 // TODO: This hack should be removed because it's unnecessary and potentially problematic.
 // Unnecessary because, given that placement is determined manually, alignment can also be specified.
 // Potentially problematic because full document view is used instead of target content area.
-function xAboveBelow( left: number, right: number ) {
+function xAboveBelow( left: number, right: number ): number {
 	const leftAlign = left + middle( left, right ) < document.documentElement.clientWidth / 2;
 	if ( leftAlign ) {
 		return left + DIALOG_PADDING;
@@ -76,7 +74,7 @@ function getDialogPosition( position: DialogPosition, rect: ClientRect ): Coordi
 	}
 }
 
-export const query = ( selector: string ) =>
+export const query = ( selector: string ): Element[] =>
 	Array.from( window.document.querySelectorAll( selector ) );
 
 export const posToCss = ( { x, y }: Coordinate ): Pick< CSSProperties, 'top' | 'left' > => ( {
@@ -84,16 +82,16 @@ export const posToCss = ( { x, y }: Coordinate ): Pick< CSSProperties, 'top' | '
 	left: x ? x + 'px' : undefined,
 } );
 
-function hasNonEmptyClientRect( el: Element ) {
+function hasNonEmptyClientRect( el: Element ): boolean {
 	const rect = el.getBoundingClientRect();
 	return ! ( rect.left === 0 && rect.top === 0 && rect.width === 0 && rect.height === 0 );
 }
 
 // discern between tip targets and regular CSS by grepping for CSS-only characters
 const CSS_SELECTOR_REGEX = /[.# ]/;
-const isCssSelector = ( targetSlug: string ) => CSS_SELECTOR_REGEX.test( targetSlug );
+const isCssSelector = ( targetSlug: string ): boolean => CSS_SELECTOR_REGEX.test( targetSlug );
 
-export function targetForSlug( targetSlug?: string ) {
+export function targetForSlug( targetSlug?: string ): Element | null {
 	if ( ! targetSlug ) {
 		return null;
 	}
@@ -187,7 +185,7 @@ function validatePlacement( placement: DialogPosition, target: Element | null ):
 	return target && placement !== 'center' && isMobile() ? 'below' : placement;
 }
 
-function scrollIntoView( target: Element, scrollContainer: Element | null ) {
+function scrollIntoView( target: Element, scrollContainer: Element | null ): number {
 	// TODO(lsinger): consider replacing with http://yiminghe.me/dom-scroll-into-view/
 	const container = scrollContainer || getScrollableSidebar();
 	const { top, bottom } = target.getBoundingClientRect();
