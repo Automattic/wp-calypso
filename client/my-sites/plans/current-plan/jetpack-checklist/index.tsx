@@ -37,17 +37,16 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import './style.scss';
 import { getTaskList } from 'my-sites/checklist/wpcom-checklist/wpcom-task-list';
 
-interface ChecklistTaskState {
-	[taskId: string]: {
-		completed: null | boolean;
-	};
-}
-
 interface Props {
 	isPremium: boolean;
 	isProfessional: boolean;
 	isPaidPlan: boolean;
-	taskStatuses: ChecklistTaskState | undefined;
+	taskStatuses:
+		| {
+				id: string;
+				isCompleted: boolean;
+		  }[]
+		| undefined;
 	widgetCustomizerPaneUrl: URL | null;
 }
 
