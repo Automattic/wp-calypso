@@ -17,7 +17,7 @@ export const siteStyleOptions = {
 			id: 'modern',
 			label: 'Modern',
 			theme: 'pub/modern-business',
-			fontUrl: 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,700',
+			fontUrl: 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,500,700',
 			buttonSvg: (
 				<svg width="62" height="32" xmlns="http://www.w3.org/2000/svg">
 					<g fill="none" fillRule="evenodd">
@@ -37,7 +37,7 @@ export const siteStyleOptions = {
 			id: 'professional',
 			label: 'Professional',
 			theme: 'pub/professional-business',
-			fontUrl: 'https://fonts.googleapis.com/css?family=Crimson+Text:400,700',
+			fontUrl: 'https://fonts.googleapis.com/css?family=Crimson+Text:400,600,700',
 			buttonSvg: (
 				<svg xmlns="http://www.w3.org/2000/svg" width="130" height="32">
 					<g fill="none" fillRule="evenodd">
@@ -57,7 +57,7 @@ export const siteStyleOptions = {
 			id: 'sophisticated',
 			label: 'Sophisticated',
 			theme: 'pub/sophisticated-business',
-			fontUrl: 'https://fonts.googleapis.com/css?family=Poppins:400,700',
+			fontUrl: 'https://fonts.googleapis.com/css?family=Poppins:400,600,700',
 			buttonSvg: (
 				<svg width="93" height="32" xmlns="http://www.w3.org/2000/svg">
 					<g fill="#FFF" fillRule="evenodd">
