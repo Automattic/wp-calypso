@@ -19,6 +19,7 @@ export function getJetpackChecklistTaskDuration( minutes: number ): string {
 }
 
 interface TaskUiDescription {
+	readonly id?: string;
 	readonly title: string;
 	readonly description?: string;
 	readonly completedButtonText: string;
@@ -97,6 +98,7 @@ export const JETPACK_PERFORMANCE_CHECKLIST_TASKS: Readonly< ChecklistTasksetUi >
 };
 
 export const JETPACK_CHECKLIST_TASK_AKISMET: TaskUiDescription = {
+	id: 'jetpack_akismet',
 	title: translate( "We're automatically turning on spam filtering." ),
 	completedButtonText: translate( 'View spam stats' ),
 	completedTitle: translate( "We've automatically turned on spam filtering." ),
@@ -105,12 +107,15 @@ export const JETPACK_CHECKLIST_TASK_AKISMET: TaskUiDescription = {
 };
 
 export const JETPACK_CHECKLIST_TASK_PROTECT: TaskUiDescription = {
-	title: translate( "We've automatically protected you from brute force login attacks." ),
+	id: 'jetpack_task_protect',
+	title: translate( "We're automatically protecting you from brute force login attacks." ),
+	completedTitle: translate( "We've automatically protected you from brute force login attacks." ),
 	completedButtonText: translate( 'Configure' ),
 	getUrl: siteSlug => `/settings/security/${ siteSlug }`,
 };
 
 export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND: TaskUiDescription = {
+	id: 'jetpack_rewind',
 	title: translate( 'Backup and Scan' ),
 	description: translate(
 		"Connect your site's server to Jetpack to perform backups, restores, and security scans."
@@ -122,6 +127,7 @@ export const JETPACK_CHECKLIST_TASK_BACKUPS_REWIND: TaskUiDescription = {
 };
 
 export const JETPACK_CHECKLIST_TASK_BACKUPS_VAULTPRESS: TaskUiDescription = {
+	id: 'jetpack_vaultpress',
 	title: translate( "We're automatically turning on Backup and Scan." ),
 	completedTitle: translate( "We've automatically turned on Backup and Scan." ),
 	completedButtonText: translate( 'View security dashboard' ),

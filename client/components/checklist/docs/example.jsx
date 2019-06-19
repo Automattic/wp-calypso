@@ -43,7 +43,6 @@ export default class ChecklistExample extends PureComponent {
 						onDismiss={ this.getToggleHandler( 'reticulateSplines' ) }
 						title="Reticulate splines"
 						buttonText="Reticulate!"
-						buttonPrimary
 						completedTitle="Splines are reticulated 👍"
 						description="Make sure that all the splines are reticulated."
 						duration="1 minute"
@@ -54,7 +53,6 @@ export default class ChecklistExample extends PureComponent {
 						onDismiss={ this.getToggleHandler( 'shaveYak' ) }
 						title="Shave yaks!"
 						buttonText="Buzzzz"
-						buttonPrimary
 						completedTitle="Yaks shaved."
 						description="Make sure you shave the yaks so you can get on with your life."
 						duration="10,000 minutes"

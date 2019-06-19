@@ -119,16 +119,23 @@ class JetpackChecklist extends PureComponent< Props > {
 					description={ task.description }
 					duration={ task.duration }
 					href={ task.getUrl( this.props.siteSlug, isComplete ) }
+					id={ taskId }
+					key={ taskId }
 					onClick={ this.handleTaskStart( {
 						taskId,
 						tourId: get( task, [ 'tourId' ] ),
 					} ) }
 					title={ task.title }
-					key={ taskId }
 				/>
 			);
 		} );
 	}
+
+	trackExpandTask = ( { id }: { id: string } ) =>
+		void this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
+			step_name: id,
+			product: 'Jetpack',
+		} );
 
 	render() {
 		const {
@@ -161,6 +168,7 @@ class JetpackChecklist extends PureComponent< Props > {
 				<Checklist
 					className="jetpack-checklist"
 					isPlaceholder={ ! taskStatuses }
+					onExpandTask={ this.trackExpandTask }
 					progressText={ translate( 'Your Jetpack setup progress' ) }
 				>
 					<Task
@@ -199,6 +207,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							target="_blank"
 						/>
 					) }
+
 					{ this.renderTaskSet( JETPACK_SECURITY_CHECKLIST_TASKS ) }
 					{ isEnabled( 'jetpack/checklist/performance' ) &&
 						this.renderTaskSet( JETPACK_PERFORMANCE_CHECKLIST_TASKS ) }
@@ -219,6 +228,7 @@ class JetpackChecklist extends PureComponent< Props > {
 									? `/media/videos/${ siteSlug }`
 									: `/settings/performance/${ siteSlug }`
 							}
+							id="video-hosting"
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_video_hosting',
 								tourId: 'jetpackVideoHosting',
@@ -242,6 +252,7 @@ class JetpackChecklist extends PureComponent< Props > {
 									? this.props.widgetCustomizerPaneUrl
 									: `/settings/performance/${ siteSlug }`
 							}
+							id="enhanced-search"
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_search',
 								tourId: 'jetpackSearch',
