@@ -21,54 +21,43 @@ class SiteTitleEdit extends Component {
 	};
 
 	componentDidMount() {
-		this.requestSiteTitle();
-	}
-
-	componentDidUpdate( prevProps ) {
-		const { title, initialTitle } = this.state;
-		const {
-			isSaving,
-			isPublished,
-			isPublishing,
-			isAutosaving,
-			noticeOperations,
-			isSelected,
-		} = this.props;
-
-		const titleUnchanged = title && title.trim() === initialTitle.trim();
-		const titleIsEmpty = ! title || title.trim().length === 0;
-
-		// Reset to initial title if user de-selects the block with an empty value
-		if ( ! isSelected && prevProps.isSelected && titleIsEmpty ) {
-			this.setSiteTitle( initialTitle );
-		}
-
-		// Don't do anything further if the title is unchanged or the saving state is the same as previous update
-		if ( titleUnchanged || prevProps.isSaving === this.props.isSaving ) {
-			return;
-		}
-
-		const userInitiatedPublish = ( ( isSaving && isPublished ) || isPublishing ) && ! isAutosaving;
-
-		// Save the title on publish
-		if ( userInitiatedPublish ) {
-			apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { title } } )
-				.then( () => this.resetTitle() )
-				.catch( ( { message } ) => noticeOperations.createErrorNotice( message ) );
-		}
-	}
-
-	requestSiteTitle = () => {
 		const { noticeOperations } = this.props;
 
 		return apiFetch( { path: '/wp/v2/settings' } )
 			.then( ( { title } ) => this.setState( { initialTitle: title, title } ) )
 			.catch( ( { message } ) => noticeOperations.createErrorNotice( message ) );
-	};
+	}
 
-	setSiteTitle = value => this.setState( { title: value } );
+	componentDidUpdate( prevProps ) {
+		const { title, initialTitle } = this.state;
+		const { shouldUpdateSiteOption, noticeOperations, isSelected } = this.props;
 
-	resetTitle = () => this.setState( { initalTitle: this.state.title } );
+		const titleUnchanged = title && title.trim() === initialTitle.trim();
+		const titleIsEmpty = ! title || title.trim().length === 0;
+
+		// Reset to initial value if user de-selects the block with an empty value.
+		if ( ! isSelected && prevProps.isSelected && titleIsEmpty ) {
+			this.revertTitle();
+		}
+
+		// Don't do anything further if we shouldn't update the site option or the value is unchanged.
+		if ( ! shouldUpdateSiteOption || titleUnchanged ) {
+			return;
+		}
+
+		if ( ! prevProps.shouldUpdateSiteOption && shouldUpdateSiteOption ) {
+			apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { title } } )
+				.then( () => this.updateInitialTitle() )
+				.catch( ( { message } ) => {
+					noticeOperations.createErrorNotice( message );
+					this.revertTitle();
+				} );
+		}
+	}
+
+	revertTitle = () => this.setState( { title: this.state.initialTitle } );
+
+	updateInitialTitle = () => this.setState( { initialTitle: this.state.title } );
 
 	render() {
 		const { title } = this.state;
@@ -77,15 +66,13 @@ class SiteTitleEdit extends Component {
 		return (
 			<Fragment>
 				{ noticeUI }
-				<h1>
-					<PlainText
-						className={ classNames( 'site-title', className ) }
-						value={ title }
-						onChange={ this.setSiteTitle }
-						placeholder={ __( 'Site Title' ) }
-						aria-label={ __( 'Site Title' ) }
-					/>
-				</h1>
+				<PlainText
+					className={ classNames( 'site-title', className ) }
+					value={ title }
+					onChange={ value => this.setState( { title: value } ) }
+					placeholder={ __( 'Site Title' ) }
+					aria-label={ __( 'Site Title' ) }
+				/>
 			</Fragment>
 		);
 	}
@@ -97,10 +84,9 @@ export default compose( [
 			'core/editor'
 		);
 		return {
-			isSaving: isSavingPost(),
-			isPublishing: isPublishingPost(),
-			isAutosaving: isAutosavingPost(),
-			isPublished: isCurrentPostPublished(),
+			shouldUpdateSiteOption:
+				( ( isSavingPost() && isCurrentPostPublished() ) || isPublishingPost() ) &&
+				! isAutosavingPost(),
 		};
 	} ),
 	withNotices,
