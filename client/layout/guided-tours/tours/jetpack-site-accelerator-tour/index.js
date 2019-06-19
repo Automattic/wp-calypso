@@ -33,7 +33,12 @@ export const JetpackSiteAcceleratorTour = makeTour(
 		>
 			{ ( { translate } ) => (
 				<Fragment>
-					<p>{ translate( 'Activate this toggle to enable Site Accelerator' ) }</p>
+					<p>
+						{ translate(
+							'Flip this toggle to enable Site Accelerator — it optimizes your images ' +
+								'and loads them from our super-powerful servers, taking the load off yours.'
+						) }
+					</p>
 					<ButtonRow>
 						<Continue
 							target=".jetpack-site-accelerator-settings .form-toggle__switch"
@@ -60,7 +65,8 @@ export const JetpackSiteAcceleratorTour = makeTour(
 					</h1>
 					<p>
 						{ translate(
-							'Site Accelerator has been enabled. Would you like to continue setting up performance features for your site?'
+							'Site Accelerator is active on your site. ' +
+								'Next up: faster video loading. Ready to move on?'
 						) }
 					</p>
 					<ButtonRow>

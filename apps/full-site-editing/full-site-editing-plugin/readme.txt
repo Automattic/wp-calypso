@@ -1,9 +1,9 @@
 === Full Site Editing ===
-Contributors: automattic, get_dave, marekhrabe, mppfeiffer, obenland
+Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.2
-Stable tag: 0.1
+Stable tag: 0.2
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,12 @@ It adds an excerpt! And meta information! It really is much more useful, especia
 This plugin is experimental, so we don't provide any support for it outside of websites hosted on WordPress.com at this time.
 
 == Changelog ==
+
+= 0.2 =
+* Bug fixes and performance improvements.
+
+= 0.1.1 =
+* Latest round of updates
 
 = 0.1 =
 * Initial Release

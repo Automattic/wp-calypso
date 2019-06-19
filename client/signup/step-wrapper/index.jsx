@@ -106,6 +106,8 @@ class StepWrapper extends Component {
 		return (
 			<>
 				<div className={ classes }>
+					{ ! hideBack && this.renderBack() }
+
 					{ ! hideFormattedHeader && (
 						<FormattedHeader
 							id={ 'step-header' }
@@ -118,10 +120,7 @@ class StepWrapper extends Component {
 
 					<div className="step-wrapper__content">{ stepContent }</div>
 
-					<div className="step-wrapper__buttons">
-						{ ! hideBack && this.renderBack() }
-						{ ! hideSkip && this.renderSkip() }
-					</div>
+					{ ! hideSkip && <div className="step-wrapper__buttons">{ this.renderSkip() }</div> }
 				</div>
 			</>
 		);

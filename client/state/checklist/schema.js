@@ -4,7 +4,7 @@ export const items = {
 	properties: {
 		designType: { type: 'string' },
 		segment: { type: 'integer' },
-		tasks: { type: 'array' },
+		tasks: { type: 'object' },
 		verticals: { type: 'array' },
 	},
 };

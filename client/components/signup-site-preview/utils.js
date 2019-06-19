@@ -57,12 +57,16 @@ export function getIframeSource(
 			<link rel="dns-prefetch" href="//s0.wp.com">
 			<link rel="dns-prefetch" href="//fonts.googleapis.com">
 			<title>${ content.title } – ${ content.tagline }</title>
-			<link type="text/css" media="all" rel="stylesheet" href="https://s0.wp.com/wp-content/plugins/gutenberg-core/v5.9.0/build/block-library/style.css" />
+			<link type="text/css" media="all" rel="stylesheet" href="https://s0.wp.com/wp-content/plugins/gutenberg-core/v5.9.2/build/block-library/style.css" />
 			${ getCSSLinkHtml( cssUrl ) }
 			${ getCSSLinkHtml( fontUrl ) }
 			<style type="text/css">
 				body {
 					padding-bottom: 25px;
+				}
+
+				* {
+					cursor: default;
 				}
 
 				.no-scrolling {

@@ -213,7 +213,7 @@ class JetpackChecklist extends PureComponent< Props > {
 							duration={ getJetpackChecklistTaskDuration( 3 ) }
 							href={
 								this.isComplete( 'jetpack_video_hosting' )
-									? `/media/${ siteSlug }`
+									? `/media/videos/${ siteSlug }`
 									: `/settings/performance/${ siteSlug }`
 							}
 							onClick={ this.handleTaskStart( {

@@ -9,6 +9,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { parse as parseBlocks } from '@wordpress/blocks';
 import { Component } from '@wordpress/element';
+import '@wordpress/nux';
 
 /**
  * Internal dependencies
@@ -30,15 +31,16 @@ class PageTemplateModal extends Component {
 
 	componentDidMount() {
 		if ( this.state.isOpen ) {
-			trackView( this.props.vertical.id );
+			trackView( this.props.segment.id, this.props.vertical.id );
 		}
 	}
 
 	selectTemplate = newTemplate => {
 		this.setState( { isOpen: false } );
-		trackSelection( this.props.vertical.id, newTemplate );
+		trackSelection( this.props.segment.id, this.props.vertical.id, newTemplate );
 
 		const template = this.props.templates[ newTemplate ];
+		this.props.saveTemplateChoice( template );
 
 		// Skip inserting if there's nothing to insert.
 		if ( ! has( template, 'content' ) ) {
@@ -56,7 +58,7 @@ class PageTemplateModal extends Component {
 
 	closeModal = () => {
 		this.setState( { isOpen: false } );
-		trackDismiss( this.props.vertical.id );
+		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
 	render() {
@@ -111,17 +113,25 @@ const PageTemplatesPlugin = compose(
 		getMeta: () => select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => {
+		// Disable tips right away as the collide with the modal window.
+		dispatch( 'core/nux' ).disableTips();
+
 		const editorDispatcher = dispatch( 'core/editor' );
 		return {
-			insertTemplate: template => {
-				// Set post title and remember selected template in meta.
+			saveTemplateChoice: template => {
+				// Save selected template slug in meta.
 				const currentMeta = ownProps.getMeta();
 				editorDispatcher.editPost( {
-					title: template.title,
 					meta: {
 						...currentMeta,
 						_starter_page_template: template.slug,
 					},
+				} );
+			},
+			insertTemplate: template => {
+				// Set post title.
+				editorDispatcher.editPost( {
+					title: template.title,
 				} );
 
 				// Insert blocks.
@@ -137,6 +147,7 @@ const {
 	siteInformation = {},
 	templates = [],
 	vertical,
+	segment,
 	tracksUserData,
 } = window.starterPageTemplatesConfig;
 
@@ -150,6 +161,7 @@ registerPlugin( 'page-templates', {
 			<PageTemplatesPlugin
 				templates={ keyBy( templates, 'slug' ) }
 				vertical={ vertical }
+				segment={ segment }
 				siteInformation={ siteInformation }
 			/>
 		);

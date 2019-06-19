@@ -18,6 +18,8 @@ import { setVerticals } from 'state/signup/verticals/actions';
 import { SIGNUP_VERTICALS_REQUEST } from 'state/action-types';
 import { getSiteTypeId } from 'state/signup/steps/site-type/selectors';
 
+// Some flows do not choose a site type before requesting verticals. In this
+// case don't send a site_type param to the API.
 export const requestVerticals = action =>
 	http(
 		{
@@ -26,7 +28,7 @@ export const requestVerticals = action =>
 			path: '/verticals',
 			query: {
 				search: action.search.trim(),
-				site_type: action.siteTypeId,
+				...( action.siteTypeId && { site_type: action.siteTypeId } ),
 				limit: action.limit,
 				include_preview: true,
 			},

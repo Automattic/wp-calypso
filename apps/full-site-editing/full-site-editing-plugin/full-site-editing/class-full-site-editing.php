@@ -16,6 +16,8 @@ class Full_Site_Editing {
 	 */
 	private static $instance = null;
 
+	private $template_post_types = array( 'wp_template', 'wp_template_part' );
+
 	/**
 	 * Full_Site_Editing constructor.
 	 */
@@ -39,6 +41,9 @@ class Full_Site_Editing {
 				ob_end_flush();
 			}
 		);
+
+		add_action( 'the_post', array( $this, 'merge_template_and_post' ) );
+		add_filter( 'wp_insert_post_data', array( $this, 'remove_template_components' ), 10, 2 );
 	}
 
 	/**
@@ -312,7 +317,7 @@ class Full_Site_Editing {
 		wp_enqueue_style(
 			'a8c-full-site-editing-style',
 			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			array(),
+			'wp-edit-post',
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 		);
 	}
@@ -338,6 +343,13 @@ class Full_Site_Editing {
 			'a8c/post-content',
 			array(
 				'render_callback' => 'render_post_content_block',
+			)
+		);
+
+		register_block_type(
+			'a8c/site-description',
+			array(
+				'render_callback' => 'render_site_description_block',
 			)
 		);
 
@@ -418,5 +430,128 @@ class Full_Site_Editing {
 		$close_button_url = apply_filters( 'a8c_fse_close_button_link', $close_button_url );
 
 		return $close_button_url;
+	}
+
+	/** This will merge the post content with the post template, modifiying the
+	 * $post parameter.
+	 *
+	 * @param WP_Post $post
+	 */
+	public function merge_template_and_post( $post ) {
+		//bail if not a REST API Request
+		if ( defined( 'REST_REQUEST' ) && ! REST_REQUEST ) {
+			return;
+		}
+
+		// bail if the post type is one of the template post types
+		if ( in_array( get_post_type( $post->ID ), $this->template_post_types ) ) {
+			return;
+		}
+
+		$template_id = get_post_meta( $post->ID, '_wp_template_id', true );
+		//bail if the post has no tempalte id assigned
+		if ( ! $template_id ) {
+			return;
+		}
+
+		$template = get_post( $template_id );
+		$wrapped_post_content = sprintf( '<!-- wp:a8c/post-content -->%s<!-- /wp:a8c/post-content -->', $post->post_content );
+		$post->post_content = str_replace( '<!-- wp:a8c/post-content /-->', $wrapped_post_content, $template->post_content );
+	}
+
+	/**
+	 * This will extract the inner blocks of the post content and
+	 * serialize them back to HTML for saving.
+	 *
+     * @param array $data    An array of slashed post data.
+	 * @param array $postarr An array of sanitized, but otherwise unmodified post data.
+	 */
+	public function remove_template_components( $data, $postarr ) {
+		// bail if the post type is one of the template post types
+		if ( in_array( $postarr['post_type'], $this->template_post_types ) ) {
+			return $data;
+		}
+
+		$post_content = wp_unslash( $data['post_content'] );
+
+		//bail if post content has no blocks
+		if( ! has_blocks( $post_content ) ) {
+			return $data;
+		}
+
+		$post_content_blocks = parse_blocks( $post_content );
+		$post_content_key = array_search( 'a8c/post-content', array_column( $post_content_blocks, 'blockName' ) );
+
+		// bail if no post content block found
+		if( ! $post_content_key ) {
+			return $data;
+		}
+
+		$data['post_content'] = wp_slash( serialize_blocks( $post_content_blocks[ $post_content_key ]['innerBlocks'] ) );
+		return $data;
+	}
+}
+
+if ( ! function_exists( 'serialize_block' ) ) {
+	/**
+	 * Renders an HTML-serialized form of a block object
+	 * from https://core.trac.wordpress.org/ticket/47375
+	 *
+	 * should be available since WordPress 5.3.0
+	 *
+	 * @param array $block The block being rendered.
+	 * @return string The HTML-serialized form of the block
+	 */
+	function serialize_block( $block ) {
+		// Non-block content has no block name.
+		if ( null === $block['blockName'] ) {
+			return $block['innerHTML'];
+		}
+
+		$unwanted  = array( '--', '<', '>', '&', '\"' );
+		$wanted    = array( '\u002d\u002d', '\u003c', '\u003e', '\u0026', '\u0022' );
+
+		$name      = 0 === strpos( $block['blockName'], 'core/' ) ? substr( $block['blockName'], 5 ) : $block['blockName'];
+		$has_attrs = ! empty( $block['attrs'] );
+		$attrs     = $has_attrs ? str_replace( $unwanted, $wanted, wp_json_encode( $block['attrs'] ) ) : '';
+
+		// Early abort for void blocks holding no content.
+		if ( empty( $block['innerContent'] ) ) {
+			return $has_attrs
+				? "<!-- wp:{$name} {$attrs} /-->"
+				: "<!-- wp:{$name} /-->";
+		}
+
+		$output = $has_attrs
+			? "<!-- wp:{$name} {$attrs} -->\n"
+			: "<!-- wp:{$name} -->\n";
+
+		$inner_block_index = 0;
+		foreach ( $block['innerContent'] as $chunk ) {
+			$output .= null === $chunk
+				? serialize_block( $block['innerBlocks'][ $inner_block_index++ ] )
+				: $chunk;
+
+			$output .= "\n";
+		}
+
+		$output .= "<!-- /wp:{$name} -->";
+
+		return $output;
+	}
+}
+
+if ( ! function_exists( 'serialize_blocks' ) ) {
+	/**
+	 * Renders an HTML-serialized form of a list of block objects
+	 * from https://core.trac.wordpress.org/ticket/47375
+	 *
+	 * should be available since WordPress 5.3.0
+	 *
+	 * @param  array  $blocks The list of parsed block objects
+	 * @return string         The HTML-serialized form of the list of blocks
+	 */
+	function serialize_blocks( $blocks ) {
+		return implode( "\n\n", array_map( 'serialize_block', $blocks ) );
 	}
 }

@@ -16,7 +16,6 @@ import * as dataHelper from '../lib/data-helper.js';
 import * as overrideABTests from '../lib/override-abtest';
 
 import WPHomePage from '../lib/pages/wp-home-page.js';
-import ChooseAThemePage from '../lib/pages/signup/choose-a-theme-page.js';
 import StartPage from '../lib/pages/signup/start-page.js';
 import JetpackAddNewSitePage from '../lib/pages/signup/jetpack-add-new-site-page';
 
@@ -524,18 +523,27 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can see the about page and accept defaults', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			return await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBlogType();
 		} );
 
-		step(
-			'Can see the choose a theme page as the starting page, and select the first theme',
-			async function() {
-				const chooseAThemePage = await ChooseAThemePage.Expect( driver );
-				return await chooseAThemePage.selectFirstTheme();
-			}
-		);
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
+		} );
+
+		step( 'Can see the "Site style" page, and continue with the default style', async function() {
+			const siteTitlePage = await SiteStylePage.Expect( driver );
+			return await siteTitlePage.submitForm();
+		} );
 
 		step(
 			'Can then see the domains page and can search for a blog name, can see and select a free WordPress.com blog address in results',
@@ -642,14 +650,26 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can see the about page and accept defaults', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			return await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBlogType();
 		} );
 
-		step( 'Can see the choose a theme page, and select the first theme', async function() {
-			const chooseAThemePage = await ChooseAThemePage.Expect( driver );
-			return await chooseAThemePage.selectFirstTheme();
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
+		} );
+
+		step( 'Can see the "Site style" page, and continue with the default style', async function() {
+			const siteTitlePage = await SiteStylePage.Expect( driver );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(
@@ -968,18 +988,27 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can see the about page and accept defaults', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			return await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBusinessType();
 		} );
 
-		step(
-			'Can see the choose a theme page as the starting page, and select the first theme',
-			async function() {
-				const chooseAThemePage = await ChooseAThemePage.Expect( driver );
-				return await chooseAThemePage.selectFirstTheme();
-			}
-		);
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( siteName );
+			return await siteTitlePage.submitForm();
+		} );
+
+		step( 'Can see the "Site style" page, and continue with the default style', async function() {
+			const siteTitlePage = await SiteStylePage.Expect( driver );
+			return await siteTitlePage.submitForm();
+		} );
 
 		step(
 			'Can then see the domains page, and can search for a blog name, can see and select a paid .live address in results ',
@@ -1513,8 +1542,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe.skip( 'Import a site while signing up @parallel', function() {
-		// Temporarily skip https://github.com/Automattic/wp-calypso/pull/34021#issuecomment-502487953
+	describe( 'Import a site while signing up @parallel', function() {
 		// Currently must use a Wix site to be importable through this flow.
 		const siteURL = 'https://hi6822.wixsite.com/eat-here-its-good';
 		const userName = dataHelper.getNewBlogName();

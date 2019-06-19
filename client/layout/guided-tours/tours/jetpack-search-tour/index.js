@@ -35,8 +35,8 @@ export const JetpackSearchTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							"Let's enable Jetpack Search " +
-								'to replace WordPress built-in search with a faster, filterable search.'
+							'Jetpack Search replaces the built-in WordPress search tool ' +
+								"with one that's faster and filterable."
 						) }
 					</p>
 					<ButtonRow>
@@ -65,7 +65,7 @@ export const JetpackSearchTour = makeTour(
 					</h1>
 					<p>
 						{ translate(
-							'Jetpack Search has been enabled. Would you like to continue setting up performance features for your site?'
+							'Jetpack Search is active on your site. Ready for the next performance feature?'
 						) }
 					</p>
 					<ButtonRow>

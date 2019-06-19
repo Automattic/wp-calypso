@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+/* global fullSiteEditing */
 /**
  * External dependencies
  */
@@ -8,7 +9,7 @@ import { get } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
+import { Button, IconButton, Placeholder, Toolbar } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { BlockControls } from '@wordpress/editor';
@@ -24,13 +25,16 @@ import './style.scss';
 const TemplateEdit = compose(
 	withSelect( ( select, { attributes } ) => {
 		const { getEntityRecord } = select( 'core' );
+		const { getCurrentPostId } = select( 'core/editor' );
+
 		const { templateId } = attributes;
 		return {
+			currentPostId: getCurrentPostId(),
 			template: templateId && getEntityRecord( 'postType', 'wp_template_part', templateId ),
 		};
 	} ),
 	withState( { isEditing: false } )
-)( ( { attributes, isEditing, template, setAttributes, setState } ) => {
+)( ( { attributes, currentPostId, isEditing, template, setAttributes, setState } ) => {
 	const { align, templateId } = attributes;
 
 	const toggleEditing = () => setState( { isEditing: ! isEditing } );
@@ -43,10 +47,11 @@ const TemplateEdit = compose(
 	const showToggleButton = ! isEditing || !! templateId;
 	const showPlaceholder = isEditing || ! templateId;
 	const showContent = ! isEditing && !! templateId;
+	const isTemplate = 'wp_template' === fullSiteEditing.editorPostType;
 
 	return (
 		<Fragment>
-			{ showToggleButton && (
+			{ showToggleButton && isTemplate && (
 				<BlockControls>
 					<Toolbar>
 						<IconButton
@@ -78,7 +83,7 @@ const TemplateEdit = compose(
 								postType="wp_template_part"
 							/>
 							{ !! template && (
-								<a href={ `?post=${ templateId }&action=edit` }>
+								<a href={ `?post=${ templateId }&action=edit&fse_parent_post=${ currentPostId }` }>
 									{ sprintf( __( 'Edit "%s"' ), get( template, [ 'title', 'rendered' ], '' ) ) }
 								</a>
 							) }
@@ -86,9 +91,26 @@ const TemplateEdit = compose(
 					</Placeholder>
 				) }
 				{ showContent && (
-					<RawHTML className="template-block__content">
-						{ get( template, [ 'content', 'rendered' ] ) }
-					</RawHTML>
+					<Fragment>
+						<RawHTML className="template-block__content">
+							{ get( template, [ 'content', 'rendered' ] ) }
+						</RawHTML>
+						{ ! isTemplate && (
+							<Placeholder
+								className="template-block__overlay"
+								instructions={ __(
+									'This block is part of your site template and may appear on multiple pages.'
+								) }
+							>
+								<Button
+									href={ `?post=${ templateId }&action=edit&fse_parent_post=${ currentPostId }` }
+									isDefault
+								>
+									{ sprintf( __( 'Edit %s' ), get( template, [ 'title', 'rendered' ], '' ) ) }
+								</Button>
+							</Placeholder>
+						) }
+					</Fragment>
 				) }
 			</div>
 		</Fragment>

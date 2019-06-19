@@ -22,8 +22,13 @@
 	color: var( --color-primary );
 	font-family: $sans;
 
-	&:hover {
-		color: var( --color-primary-light );
+	&:hover,
+	&:active {
+		color: var( --color-accent );
+	}
+
+	&:focus {
+		color: var( --color-text-subtle );
 	}
 }
 

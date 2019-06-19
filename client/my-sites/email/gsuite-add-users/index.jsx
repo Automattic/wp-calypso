@@ -12,20 +12,32 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-
-import AddEmailAddressesCard from './add-users';
+import { addItems } from 'lib/upgrades/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
+import Button from 'components/button';
+import Card from 'components/card';
+import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import {
 	emailManagementAddGSuiteUsers,
 	emailManagementNewGSuiteAccount,
 	emailManagement,
 } from 'my-sites/email/paths';
-import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
-import { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from 'lib/gsuite';
+import {
+	getEligibleGSuiteDomain,
+	getGSuiteSupportedDomains,
+	hasGSuiteSupportedDomain,
+} from 'lib/gsuite';
+import {
+	areAllUsersValid,
+	getItemsForCart,
+	newUsers,
+	validateAgainstExistingUsers,
+} from 'lib/gsuite/new-users';
 import { getSelectedSite } from 'state/ui/selectors';
+import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -34,8 +46,84 @@ import SectionHeader from 'components/section-header';
 import QueryEmailForwards from 'components/data/query-email-forwards';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class GSuiteAddUsers extends React.Component {
+	state = {
+		users: [],
+	};
+
+	static getDerivedStateFromProps(
+		{ domains, isRequestingDomains, selectedDomainName },
+		{ users }
+	) {
+		if ( ! isRequestingDomains && 0 === users.length ) {
+			const domainName = getEligibleGSuiteDomain( selectedDomainName, domains );
+			if ( '' !== domainName ) {
+				return {
+					users: newUsers( domainName ),
+				};
+			}
+		}
+		return null;
+	}
+
+	handleContinue = () => {
+		const { domains, planType, selectedSite } = this.props;
+		const { users } = this.state;
+		const canContinue = areAllUsersValid( users );
+
+		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
+
+		if ( canContinue ) {
+			addItems(
+				getItemsForCart( domains, 'business' === planType ? 'gapps_unlimited' : 'gapps', users )
+			);
+			page( '/checkout/' + selectedSite.slug );
+		}
+	};
+
+	handleCancel = () => {
+		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_cancel_button_click' );
+		this.goToEmail();
+	};
+
+	handleUsersChange = changedUsers => {
+		const { users: previousUsers } = this.state;
+
+		this.recordUsersChangedEvent( previousUsers, changedUsers );
+
+		this.setState( {
+			users: changedUsers,
+		} );
+	};
+
+	recordClickEvent = eventName => {
+		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { users } = this.state;
+		recordTracksEvent( eventName, {
+			domain_name: selectedDomainName,
+			user_count: users.length,
+		} );
+	};
+
+	recordUsersChangedEvent = ( previousUsers, nextUsers ) => {
+		const { recordTracksEvent, selectedDomainName } = this.props;
+
+		if ( previousUsers.length !== nextUsers.length ) {
+			recordTracksEvent( 'calypso_email_management_gsuite_add_users_users_changed', {
+				domain_name: selectedDomainName,
+				next_user_count: nextUsers.length,
+				prev_user_count: previousUsers.length,
+			} );
+		}
+	};
+
 	componentDidMount() {
 		const { domains, isRequestingDomains } = this.props;
 		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
@@ -66,13 +154,15 @@ class GSuiteAddUsers extends React.Component {
 			domains,
 			domainsWithForwards,
 			gsuiteUsers,
-			planType,
 			isRequestingDomains,
 			selectedDomainName,
-			selectedSite,
 			translate,
 		} = this.props;
+
+		const { users } = this.state;
+
 		const gSuiteSupportedDomains = getGSuiteSupportedDomains( domains );
+		const canContinue = areAllUsersValid( users );
 
 		return (
 			<Fragment>
@@ -94,15 +184,23 @@ class GSuiteAddUsers extends React.Component {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
-				{ gsuiteUsers ? (
-					<AddEmailAddressesCard
-						domains={ domains }
-						isRequestingSiteDomains={ isRequestingDomains }
-						gsuiteUsers={ gsuiteUsers }
-						planType={ planType }
-						selectedDomainName={ selectedDomainName }
-						selectedSite={ selectedSite }
-					/>
+				{ gsuiteUsers && gSuiteSupportedDomains && ! isRequestingDomains ? (
+					<Card>
+						<GSuiteNewUserList
+							extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
+							domains={ gSuiteSupportedDomains }
+							onUsersChange={ this.handleUsersChange }
+							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
+							users={ users }
+						>
+							<div className="gsuite-add-users__buttons">
+								<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
+								<Button primary disabled={ ! canContinue } onClick={ this.handleContinue }>
+									{ translate( 'Continue' ) }
+								</Button>
+							</div>
+						</GSuiteNewUserList>
+					</Card>
 				) : (
 					<AddEmailAddressesCardPlaceholder />
 				) }
@@ -153,15 +251,18 @@ GSuiteAddUsers.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( state => {
-	const selectedSite = getSelectedSite( state );
-	const siteId = get( selectedSite, 'ID', null );
-	const domains = getDecoratedSiteDomains( state, siteId );
-	return {
-		domains,
-		domainsWithForwards: getDomainsWithForwards( state, domains ),
-		gsuiteUsers: getGSuiteUsers( state, siteId ),
-		isRequestingDomains: isRequestingSiteDomains( state, siteId ),
-		selectedSite,
-	};
-} )( localize( GSuiteAddUsers ) );
+export default connect(
+	state => {
+		const selectedSite = getSelectedSite( state );
+		const siteId = get( selectedSite, 'ID', null );
+		const domains = getDecoratedSiteDomains( state, siteId );
+		return {
+			domains,
+			domainsWithForwards: getDomainsWithForwards( state, domains ),
+			gsuiteUsers: getGSuiteUsers( state, siteId ),
+			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
+			selectedSite,
+		};
+	},
+	{ recordTracksEvent: recordTracksEventAction }
+)( localize( GSuiteAddUsers ) );

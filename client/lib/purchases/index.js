@@ -157,6 +157,10 @@ function isPaidWithCredits( purchase ) {
 	return 'undefined' !== typeof purchase.payment && 'credits' === purchase.payment.type;
 }
 
+function hasPaymentMethod( purchase ) {
+	return 'undefined' !== typeof purchase.payment && null != purchase.payment.type;
+}
+
 function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
 }
@@ -415,6 +419,7 @@ export {
 	isPaidWithPayPalDirect,
 	isPaidWithPaypal,
 	isPaidWithCredits,
+	hasPaymentMethod,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
