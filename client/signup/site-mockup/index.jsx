@@ -178,8 +178,9 @@ export default connect(
 		const siteType = getSiteType( state );
 		const styleOptions = getSiteStyleOptions( siteType );
 		const style = find( styleOptions, { id: siteStyle || 'modern' } );
+		const titleFallback = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupTitleFallback' );
 		return {
-			title: getSiteTitle( state ) || translate( 'Your New Website' ),
+			title: getSiteTitle( state ) || titleFallback,
 			siteStyle,
 			siteType,
 			verticalPreviewContent: getSiteVerticalPreview( state ),
