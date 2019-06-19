@@ -3,7 +3,7 @@
  * WordPress dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 
 /**
