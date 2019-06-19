@@ -29,8 +29,26 @@ export const fetchChecklist = action =>
 		action
 	);
 
-export const receiveChecklistSuccess = ( action, checklist ) =>
-	receiveSiteChecklist( action.siteId, checklist );
+export const receiveChecklistSuccess = ( action, receivedChecklist ) => {
+	let checklist = receivedChecklist;
+
+	// Legacy object-based data format, let's convert it to the new array-based format and ultimately remove it.
+	if ( ! Array.isArray( receivedChecklist.tasks ) ) {
+		checklist = {
+			...receivedChecklist,
+			tasks: Object.keys( receivedChecklist.tasks ).map( taskId => {
+				const { completed, ...rest } = receivedChecklist.tasks[ taskId ];
+				return {
+					id: taskId,
+					isCompleted: completed,
+					...rest,
+				};
+			} ),
+		};
+	}
+
+	return receiveSiteChecklist( action.siteId, checklist );
+};
 
 const dispatchChecklistRequest = dispatchRequest( {
 	fetch: fetchChecklist,
@@ -43,7 +61,7 @@ export const updateChecklistTask = action =>
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'POST',
-			apiNamespace: 'rest/v1',
+			apiNamespace: isEnabled( 'onboarding-checklist/phase2' ) ? 'rest/v1.1' : 'rest/v1',
 			query: {
 				http_envelope: 1,
 			},

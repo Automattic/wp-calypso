@@ -45,6 +45,7 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
  * Style dependencies
  */
 import './style.scss';
+import { getTaskList } from 'my-sites/checklist/wpcom-checklist/wpcom-task-list';
 
 interface ChecklistTaskState {
 	[taskId: string]: {
@@ -68,7 +69,7 @@ class JetpackChecklist extends PureComponent< Props > {
 	}
 
 	isComplete( taskId: string ): boolean {
-		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
+		return getTaskList( this.props ).isCompleted( taskId );
 	}
 
 	handleTaskStart = ( { taskId, tourId }: { taskId: string; tourId?: string } ) => () => {
@@ -101,7 +102,9 @@ class JetpackChecklist extends PureComponent< Props > {
 				? // Force render all the tasks from this development-only list
 				  // @todo Remove this branch when API returns performance task statuses
 				  Object.keys( JETPACK_PERFORMANCE_CHECKLIST_TASKS )
-				: Object.keys( this.props.taskStatuses ).filter( taskId => taskId in checklistTasks );
+				: getTaskList( this.props )
+						.getIds()
+						.filter( taskId => taskId in checklistTasks );
 
 		return taskIds.map( taskId => {
 			const task = checklistTasks[ taskId ];
@@ -290,10 +293,13 @@ const connectComponent = connect(
 			isProfessional,
 			isPaidPlan,
 			rewindState,
+			// `phase2: true` is passed to `getTaskList()` in the component and makes it possible to use
+			// the array-based checklist data format
+			phase2: true,
 			productInstallStatus,
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+			taskStatuses: get( getSiteChecklist( state, siteId ), 'tasks' ),
 			wpAdminUrl,
 		};
 	},
