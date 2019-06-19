@@ -90,7 +90,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async enterTitle( title ) {
-		const titleFieldSelector = By.css( '#post-title-0' );
+		const titleFieldSelector = By.css( '.editor-post-title__input' );
 		await driverHelper.clearTextArea( this.driver, titleFieldSelector );
 		return await this.driver.findElement( titleFieldSelector ).sendKeys( title );
 	}
@@ -192,7 +192,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async titleShown() {
-		const titleSelector = By.css( '#post-title-0' );
+		const titleSelector = By.css( '.editor-post-title__input' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, titleSelector );
 		const element = await this.driver.findElement( titleSelector );
 		return await element.getAttribute( 'value' );
