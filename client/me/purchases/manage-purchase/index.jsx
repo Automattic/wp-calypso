@@ -220,9 +220,6 @@ class ManagePurchase extends Component {
 	}
 
 	renderRemovePurchaseNavItem() {
-		if ( isRefundable( this.props.purchase ) ) {
-			return null;
-		}
 		return (
 			<RemovePurchase
 				hasLoadedSites={ this.props.hasLoadedSites }
