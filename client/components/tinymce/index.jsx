@@ -167,7 +167,7 @@ const CONTENT_CSS = [
 	window.app.staticUrls[ 'tinymce/skins/wordpress/wp-content.css' ],
 	'//s1.wp.com/wp-includes/css/dashicons.css?v=20150727',
 	window.app.staticUrls[ 'editor.css' ],
-	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese',
+	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap',
 ];
 
 export default class extends React.Component {
