@@ -75,9 +75,207 @@
 		"@automattic/calypso-ui": {
 			"version": "file:packages/calypso-ui",
 			"requires": {
+				"@wordpress/components": "^8.0.0",
 				"classnames": "2.2.6",
 				"prop-types": "^15.7.2",
 				"react": "^16.8.3"
+			},
+			"dependencies": {
+				"@wordpress/components": {
+					"version": "8.0.0",
+					"bundled": true,
+					"requires": {
+						"@babel/runtime": "^7.4.4",
+						"@wordpress/a11y": "^2.4.0",
+						"@wordpress/compose": "^3.4.0",
+						"@wordpress/dom": "^2.3.0",
+						"@wordpress/element": "^2.5.0",
+						"@wordpress/hooks": "^2.4.0",
+						"@wordpress/i18n": "^3.5.0",
+						"@wordpress/is-shallow-equal": "^1.4.0",
+						"@wordpress/keycodes": "^2.4.0",
+						"@wordpress/rich-text": "^3.4.0",
+						"@wordpress/url": "^2.6.0",
+						"classnames": "^2.2.5",
+						"clipboard": "^2.0.1",
+						"diff": "^3.5.0",
+						"dom-scroll-into-view": "^1.2.1",
+						"lodash": "^4.17.11",
+						"memize": "^1.0.5",
+						"moment": "^2.22.1",
+						"mousetrap": "^1.6.2",
+						"re-resizable": "^4.7.1",
+						"react-click-outside": "^3.0.0",
+						"react-dates": "^17.1.1",
+						"react-spring": "^8.0.20",
+						"rememo": "^3.0.0",
+						"tinycolor2": "^1.4.1",
+						"uuid": "^3.3.2"
+					},
+					"dependencies": {
+						"@wordpress/a11y": {
+							"version": "2.4.0",
+							"bundled": true,
+							"requires": {
+								"@babel/runtime": "^7.4.4",
+								"@wordpress/dom-ready": "^2.4.0"
+							}
+						},
+						"@wordpress/hooks": {
+							"version": "2.4.0",
+							"bundled": true,
+							"requires": {
+								"@babel/runtime": "^7.4.4"
+							}
+						},
+						"@wordpress/is-shallow-equal": {
+							"version": "1.4.0",
+							"bundled": true,
+							"requires": {
+								"@babel/runtime": "^7.4.4"
+							}
+						},
+						"@wordpress/keycodes": {
+							"version": "2.4.0",
+							"bundled": true,
+							"requires": {
+								"@babel/runtime": "^7.4.4",
+								"@wordpress/i18n": "^3.5.0",
+								"lodash": "^4.17.11"
+							}
+						},
+						"@wordpress/rich-text": {
+							"version": "3.4.0",
+							"bundled": true,
+							"requires": {
+								"@babel/runtime": "^7.4.4",
+								"@wordpress/compose": "^3.4.0",
+								"@wordpress/data": "^4.6.0",
+								"@wordpress/escape-html": "^1.4.0",
+								"@wordpress/hooks": "^2.4.0",
+								"lodash": "^4.17.11",
+								"rememo": "^3.0.0"
+							}
+						}
+					}
+				},
+				"@wordpress/compose": {
+					"version": "3.4.0",
+					"bundled": true,
+					"requires": {
+						"@babel/runtime": "^7.4.4",
+						"@wordpress/element": "^2.5.0",
+						"@wordpress/is-shallow-equal": "^1.4.0",
+						"lodash": "^4.17.11"
+					},
+					"dependencies": {
+						"@wordpress/is-shallow-equal": {
+							"version": "1.4.0",
+							"bundled": true,
+							"requires": {
+								"@babel/runtime": "^7.4.4"
+							}
+						}
+					}
+				},
+				"@wordpress/data": {
+					"version": "4.6.0",
+					"bundled": true,
+					"requires": {
+						"@babel/runtime": "^7.4.4",
+						"@wordpress/compose": "^3.4.0",
+						"@wordpress/deprecated": "^2.4.0",
+						"@wordpress/element": "^2.5.0",
+						"@wordpress/is-shallow-equal": "^1.4.0",
+						"@wordpress/priority-queue": "^1.2.0",
+						"@wordpress/redux-routine": "^3.4.0",
+						"equivalent-key-map": "^0.2.2",
+						"is-promise": "^2.1.0",
+						"lodash": "^4.17.11",
+						"redux": "^4.0.0",
+						"turbo-combine-reducers": "^1.0.2"
+					},
+					"dependencies": {
+						"@wordpress/is-shallow-equal": {
+							"version": "1.4.0",
+							"bundled": true,
+							"requires": {
+								"@babel/runtime": "^7.4.4"
+							}
+						}
+					}
+				},
+				"@wordpress/deprecated": {
+					"version": "2.4.0",
+					"bundled": true,
+					"requires": {
+						"@babel/runtime": "^7.4.4",
+						"@wordpress/hooks": "^2.4.0"
+					},
+					"dependencies": {
+						"@wordpress/hooks": {
+							"version": "2.4.0",
+							"bundled": true,
+							"requires": {
+								"@babel/runtime": "^7.4.4"
+							}
+						}
+					}
+				},
+				"@wordpress/dom-ready": {
+					"version": "2.4.0",
+					"bundled": true,
+					"requires": {
+						"@babel/runtime": "^7.4.4"
+					}
+				},
+				"@wordpress/element": {
+					"version": "2.5.0",
+					"bundled": true,
+					"requires": {
+						"@babel/runtime": "^7.4.4",
+						"@wordpress/escape-html": "^1.4.0",
+						"lodash": "^4.17.11",
+						"react": "^16.8.4",
+						"react-dom": "^16.8.4"
+					}
+				},
+				"@wordpress/escape-html": {
+					"version": "1.4.0",
+					"bundled": true,
+					"requires": {
+						"@babel/runtime": "^7.4.4"
+					}
+				},
+				"@wordpress/i18n": {
+					"version": "3.5.0",
+					"bundled": true,
+					"requires": {
+						"@babel/runtime": "^7.4.4",
+						"gettext-parser": "^1.3.1",
+						"lodash": "^4.17.11",
+						"memize": "^1.0.5",
+						"sprintf-js": "^1.1.1",
+						"tannin": "^1.0.1"
+					}
+				},
+				"@wordpress/redux-routine": {
+					"version": "3.4.0",
+					"bundled": true,
+					"requires": {
+						"@babel/runtime": "^7.4.4",
+						"is-promise": "^2.1.0",
+						"rungen": "^0.3.2"
+					}
+				},
+				"@wordpress/url": {
+					"version": "2.6.0",
+					"bundled": true,
+					"requires": {
+						"@babel/runtime": "^7.4.4",
+						"qs": "^6.5.2"
+					}
+				}
 			}
 		},
 		"@automattic/format-currency": {
@@ -19146,6 +19344,15 @@
 						"react-is": "^16.7.0"
 					}
 				}
+			}
+		},
+		"react-spring": {
+			"version": "8.0.25",
+			"resolved": "https://registry.npmjs.org/react-spring/-/react-spring-8.0.25.tgz",
+			"integrity": "sha512-KLSLI9ccpoxvxzCbtTqSOHNHhndxAeEcHsgFZoyybP3GpGh0axmtauUAH8c3XkozIW8r9gScvrCWw3F1EPIcBw==",
+			"requires": {
+				"@babel/runtime": "^7.3.1",
+				"prop-types": "^15.5.8"
 			}
 		},
 		"react-test-renderer": {

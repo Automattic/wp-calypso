@@ -111,6 +111,7 @@ import Suggestions from 'components/suggestions/docs/example';
 import SuggestionSearchExample from 'components/suggestion-search/docs/example';
 import SupportInfoExample from 'components/support-info/docs/example';
 import TextareaAutosize from 'components/textarea-autosize/docs/example';
+import TextControl from '@automattic/calypso-ui/src/text-control/docs/example';
 import TextDiff from 'components/text-diff/docs/example';
 import TileGrid from 'components/tile-grid/docs/example';
 import TimeSince from 'components/time-since/docs/example';
@@ -270,6 +271,7 @@ class DesignAssets extends React.Component {
 					<SuggestionSearchExample />
 					<SupportInfoExample />
 					<TextareaAutosize readmeFilePath="textarea-autosize" />
+					<TextControl readmeFilePath="text-control" />
 					<TextDiff readmeFilePath="text-diff" />
 					<TileGrid readmeFilePath="tile-grid" />
 					<TimeSince readmeFilePath="time-since" />

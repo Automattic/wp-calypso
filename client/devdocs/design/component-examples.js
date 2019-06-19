@@ -81,6 +81,7 @@ export { default as SpinnerLine } from 'components/spinner-line/docs/example';
 export { default as SplitButton } from 'components/split-button/docs/example';
 export { default as Suggestions } from 'components/suggestions/docs/example';
 export { default as TextareaAutosize } from 'components/textarea-autosize/docs/example';
+export { default as TextControl } from '@automattic/calypso-ui/src/text-control/docs/example';
 export { default as TextDiff } from 'components/text-diff/docs/example';
 export { default as TileGrid } from 'components/tile-grid/docs/example';
 export { default as TimeSince } from 'components/time-since/docs/example';
