@@ -223,7 +223,8 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 		&:hover {
 			cursor: pointer;
-
+			color: var( --color-primary );
+			
 			.checklist__toggle-icon {
 				fill: var( --color-primary );
 			}
@@ -336,11 +337,6 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		.checklist__task-title-button {
 			font-weight: 400;
 			padding-bottom: 16px;
-
-			&:hover {
-				color: var( --color-primary );
-				background: var( --color-primary-50 );
-			}
 		}
 
 		&.is-completed .checklist__task-title-button {
