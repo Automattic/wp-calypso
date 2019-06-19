@@ -132,7 +132,6 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		bottom: 0;
 		left: 34px;
 		border-left: 1px solid var( --color-neutral-100 );
-		z-index: 1;
 	}
 
 	.checklist__task-icon {
@@ -146,7 +145,6 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		border-radius: 16px;
 		background: var( --color-white );
 		cursor: pointer;
-		z-index: 2;
 
 		.gridicons-checkmark {
 			display: none;
@@ -214,7 +212,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		font-weight: 600;
 		font-size: 16px;
 		border-radius: 0;
-		z-index: 0;
+		border-left: 4px solid transparent;
 
 		.checklist__toggle-icon {
 			position: absolute;
@@ -342,7 +340,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			padding-bottom: 16px;
 
 			&:hover {
-				background: var( --color-neutral-0 );
+				border-left: 4px solid var( --color-primary );
 			}
 		}
 
