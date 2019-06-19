@@ -29,7 +29,7 @@ export default function() {
 
 	if ( isLoggedOut ) {
 		page(
-			'/checkout/:site/add-quickstart-session/:receiptId?',
+			'/checkout/:site/add-quickstart-session',
 			conciergeQuickstartSession,
 			makeLayout,
 			clientRender

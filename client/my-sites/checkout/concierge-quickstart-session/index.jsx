@@ -37,7 +37,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
 import analytics from 'lib/analytics';
-import { redirectLoggedOut } from 'controller';
 
 /**
  * Style dependencies
@@ -356,12 +355,11 @@ export class ConciergeQuickstartSession extends React.Component {
 	}
 
 	/**
-	 * Redirect user to the login page with the appropriate redirect_to param,
-	 * when they click 'Get Started' on the Quickstart session offer page while logged out.
+	 * Redirect user to the login page when they click 'Get Started' on
+	 * the Quickstart session offer page while logged out.
 	 */
 	handleRedirect = () => {
-		const redirectPath = this.props.path + '/add';
-		this.props.redirectLoggedOut( { path: redirectPath, store: this.props.reduxStore } );
+		page( `${ this.props.path }/add` );
 	};
 
 	handleClickDecline = () => {
@@ -426,7 +424,6 @@ export default connect(
 			productCost: getProductCost( state, 'concierge-session' ),
 			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
 			isLoggedIn: isUserLoggedIn( state ),
-			redirectLoggedOut,
 		};
 	},
 	{
