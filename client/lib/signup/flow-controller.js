@@ -77,7 +77,6 @@ function SignupFlowController( options ) {
 	);
 
 	this._resetStoresIfProcessing(); // reset the stores if the cached progress contained a processing step
-	this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
 
 	if ( this._flow.providesDependenciesInQuery ) {
 		this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
@@ -94,15 +93,6 @@ function SignupFlowController( options ) {
 assign( SignupFlowController.prototype, {
 	_resetStoresIfProcessing: function() {
 		if ( find( getSignupProgress( this._reduxStore.getState() ), { status: 'processing' } ) ) {
-			this.reset();
-		}
-	},
-
-	_resetStoresIfUserHasLoggedIn: function() {
-		if (
-			isUserLoggedIn( this._reduxStore.getState() ) &&
-			find( getSignupProgress( this._reduxStore.getState() ), { stepName: 'user' } )
-		) {
 			this.reset();
 		}
 	},
