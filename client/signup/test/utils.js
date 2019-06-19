@@ -39,10 +39,6 @@ debug( 'start utils test' );
 describe( 'utils', () => {
 	beforeAll( () => {
 		sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
-		sinon.stub( flows, 'preloadABTestVariationsForStep' ).callsFake( () => {} );
-		sinon.stub( flows, 'getABTestFilteredFlow' ).callsFake( ( flowName, flow ) => {
-			return flow;
-		} );
 	} );
 
 	describe( 'getLocale', () => {

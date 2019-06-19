@@ -108,7 +108,6 @@ const Flows = {
 	defaultFlowName: config.isEnabled( 'signup/onboarding-flow' )
 		? abtest( 'improvedOnboarding' )
 		: 'main',
-	resumingFlow: false,
 	excludedSteps: [],
 
 	/**
@@ -124,7 +123,7 @@ const Flows = {
 	 * @param {String} currentStepName The current step. See description above
 	 * @returns {Object} A flow object
 	 */
-	getFlow( flowName, currentStepName = '' ) {
+	getFlow( flowName ) {
 		let flow = Flows.getFlows()[ flowName ];
 
 		// if the flow couldn't be found, return early
@@ -136,9 +135,7 @@ const Flows = {
 			flow = removeUserStepFromFlow( flow );
 		}
 
-		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
-
-		return Flows.filterExcludedSteps( Flows.getABTestFilteredFlow( flowName, flow ) );
+		return Flows.filterExcludedSteps( flow );
 	},
 
 	getNextStepNameInFlow( flowName, currentStepName = '' ) {
@@ -182,87 +179,6 @@ const Flows = {
 
 	isValidFlow( flowName ) {
 		return Boolean( Flows.getFlows()[ flowName ] );
-	},
-
-	/**
-	 * Preload AB Test variations after a certain step has been completed.
-	 *
-	 * This gives the option to set the AB variation as late as possible in the
-	 * signup flow.
-	 *
-	 * Currently only the default flow is whitelisted.
-	 *
-	 * @param {String} flowName The current flow
-	 * @param {String} stepName The step that is being completed right now
-	 */
-	preloadABTestVariationsForStep() {
-		/**
-		 * In cases where the flow is being resumed, the flow must not be changed from what the user
-		 * has seen before.
-		 *
-		 * E.g. A user is resuming signup from before the test was added. There is no need
-		 * to add a step somewhere back in the line.
-		 */
-		if ( Flows.resumingFlow ) {
-			return;
-		}
-
-		/**
-		 * If there is need to test the first step in a flow,
-		 * the best way to do it is to check for:
-		 *
-		 * 	if ( Flow.defaultFlowName === flowName && '' === stepName ) { ... }
-		 *
-		 * This will be fired at the beginning of the signup flow.
-		 */
-	},
-
-	/**
-	 * Return a flow that is modified according to the ABTest rules.
-	 *
-	 * Useful when testing new steps in the signup flows.
-	 *
-	 * Example usage: Inject or remove a step in the flow if a user is part of an ABTest.
-	 *
-	 * @param {String} flowName The current flow name
-	 * @param {Object} flow The flow object
-	 *
-	 * @return {Object} A filtered flow object
-	 */
-	getABTestFilteredFlow( flowName, flow ) {
-		return flow;
-	},
-
-	/**
-	 * Insert a step into the flow.
-	 *
-	 * @param {String} stepName The step to insert into the flow
-	 * @param {Object} flow The flow that the step will be inserted into
-	 * @param {String} afterStep After which step to insert the new step.
-	 * 							 If left blank, the step will be added in the beginning.
-	 *
-	 * @returns {Object} A flow object with inserted step
-	 */
-	insertStepIntoFlow( stepName, flow, afterStep = '' ) {
-		if ( -1 === flow.steps.indexOf( stepName ) ) {
-			const steps = flow.steps.slice();
-			const afterStepIndex = steps.indexOf( afterStep );
-
-			/**
-			 * Only insert the step if
-			 * `afterStep` is empty ( insert at start )
-			 * or if `afterStep` is found in the flow. ( insert after `afterStep` )
-			 */
-			if ( afterStepIndex > -1 || '' === afterStep ) {
-				steps.splice( afterStepIndex + 1, 0, stepName );
-				return {
-					...flow,
-					steps,
-				};
-			}
-		}
-
-		return flow;
 	},
 
 	removeStepFromFlow( stepName, flow ) {

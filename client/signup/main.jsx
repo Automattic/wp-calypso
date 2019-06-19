@@ -417,12 +417,9 @@ class Signup extends React.Component {
 		return firstInProgressStepName || nextStepName || last( currentSteps );
 	};
 
-	resumeProgress = () => {
-		// Update the Flows object to know that the signup flow is being resumed.
-		flows.resumingFlow = true;
-
-		const firstUnsubmittedStep = this.firstUnsubmittedStepName(),
-			stepSectionName = firstUnsubmittedStep.stepSectionName;
+	resumeProgress() {
+		const firstUnsubmittedStep = this.firstUnsubmittedStepName();
+		const stepSectionName = firstUnsubmittedStep.stepSectionName;
 
 		// set `resumingStep` so we don't render/animate anything until we have mounted this step
 		this.setState( { firstUnsubmittedStep } );
@@ -430,7 +427,7 @@ class Signup extends React.Component {
 		return page.redirect(
 			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
 		);
-	};
+	}
 
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
@@ -466,7 +463,7 @@ class Signup extends React.Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName, this.props.stepName ).steps,
+		const flowSteps = flows.getFlow( nextFlowName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
