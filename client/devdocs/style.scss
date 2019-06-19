@@ -342,10 +342,14 @@ $devdocs-max-width: 720px;
 // Documentation — Copy-heavy things like Contributing and Typography
 .devdocs__doc-content {
 	max-width: $devdocs-max-width;
-	margin: 32px auto;
+	margin: 32px 20px;
 	font-size: 16px;
 	font-family: $serif;
-
+	
+	@include breakpoint( '>660px' ) {
+		margin: 32px auto;
+	}
+	
 	a {
 		text-decoration: underline;
 	}
@@ -474,10 +478,13 @@ $devdocs-max-width: 720px;
 	max-width: 150px;
 }
 
-// At the end of documentation and reademe's
+// At the top of documentation and readme's
 a.devdocs__doc-edit-link {
 	text-align: center;
 	text-decoration: underline;
 	float: right;
-	position: relative;
+	
+	@include breakpoint( '<660px' ) {
+		margin-right: 12px;
+	}
 }
