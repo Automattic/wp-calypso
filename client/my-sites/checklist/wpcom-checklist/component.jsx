@@ -829,6 +829,8 @@ class WpcomChecklistComponent extends PureComponent {
 				{ ...baseProps }
 				preset="update-homepage"
 				title={ translate( 'Update your homepage' ) }
+				completedTitle={ translate( 'You updated your homepage' ) }
+				completedButtonText={ translate( 'Change' ) }
 				description={ translate(
 					`We've created the basics, now it's time for you to update the images and text.`
 				) }
