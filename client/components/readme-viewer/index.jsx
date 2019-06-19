@@ -44,6 +44,12 @@ export default class ReadmeViewer extends Component {
 		this.makeRequest();
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.readmeFilePath !== this.props.readmeFilePath ) {
+			this.makeRequest();
+		}
+	}
+
 	render() {
 		const { readmeFilePath, showEditLink } = this.props;
 		const editLink = (
