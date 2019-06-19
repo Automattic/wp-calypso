@@ -138,6 +138,9 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						title={ translate(
 							"We've automatically protected you from brute force login attacks."
 						) }
+						completedTitle={ translate(
+							"We've automatically protected you from brute force login attacks."
+						) }
 						completedButtonText={ translate( 'Configure' ) }
 						completed
 						href={ `/settings/security/${ siteSlug }` }
