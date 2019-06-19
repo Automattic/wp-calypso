@@ -437,6 +437,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					showDialog={ isConversionPromptVisible }
 					handleResponse={ this.handleConversionResponse }
 				/>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ shouldLoadIframe && (
@@ -491,7 +492,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
 		'jetpack-copy': duplicatePostId,
 		origin: window.location.origin,
-		environment_id: config( 'env_id' ),
+		'environment-id': config( 'env_id' ),
 	} );
 
 	// needed for loading the editor in SU sessions
