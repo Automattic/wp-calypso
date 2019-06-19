@@ -65,6 +65,10 @@ export function getIframeSource(
 					padding-bottom: 25px;
 				}
 
+				* {
+					cursor: default;
+				}
+
 				.no-scrolling {
 					overflow: hidden;
 				}
