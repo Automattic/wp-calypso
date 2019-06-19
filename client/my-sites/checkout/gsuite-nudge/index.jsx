@@ -93,7 +93,7 @@ export class GSuiteNudge extends React.Component {
 				/>
 				<QuerySites siteId={ selectedSiteId } />
 				<GSuiteDialog
-					domain={ this.props.domain }
+					domainName={ this.props.domain }
 					onSkipClick={ this.handleSkipClick }
 					onAddEmailClick={ this.handleAddEmailClick }
 				/>

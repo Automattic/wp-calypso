@@ -4,16 +4,28 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import GSuitePrice from 'components/gsuite/gsuite-price';
 import GSuiteCompactFeatures from 'components/gsuite/gsuite-features/compact';
+import GSuitePrice from 'components/gsuite/gsuite-price';
 
-function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
+interface Props {
+	currencyCode: string | null;
+	cost: number | null;
+	domain: string;
+	plan: string;
+}
+
+const GoogleAppsProductDetails: FunctionComponent< Props > = ( {
+	currencyCode,
+	cost,
+	domain,
+	plan,
+} ) => {
 	const translate = useTranslate();
 
 	return (
@@ -37,13 +49,6 @@ function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 			<GSuiteCompactFeatures domainName={ domain } productSlug={ plan } type={ 'list' } />
 		</div>
 	);
-}
-
-GoogleAppsProductDetails.propTypes = {
-	currencyCode: PropTypes.string,
-	cost: PropTypes.number,
-	domain: PropTypes.string.isRequired,
-	plan: PropTypes.string.isRequired,
 };
 
 export default GoogleAppsProductDetails;

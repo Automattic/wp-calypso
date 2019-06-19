@@ -2,7 +2,7 @@
  * External dependencies
  */
 import emailValidator from 'email-validator';
-import i18n, { TranslateResult }  from 'i18n-calypso';
+import i18n, { TranslateResult } from 'i18n-calypso';
 import { find, includes, groupBy, map, mapValues } from 'lodash';
 
 /**
@@ -10,7 +10,6 @@ import { find, includes, groupBy, map, mapValues } from 'lodash';
  */
 import { googleApps, googleAppsExtraLicenses } from 'lib/cart-values/cart-items';
 import { hasGSuite } from '.';
-
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -159,7 +158,7 @@ const transformUserForCart = ( {
 } );
 
 const getItemsForCart = (
-	domains: { name: string },
+	domains: { name: string }[],
 	productSlug: string,
 	users: GSuiteNewUser[]
 ) => {
