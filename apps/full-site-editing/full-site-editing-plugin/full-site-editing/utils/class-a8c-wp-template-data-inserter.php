@@ -72,9 +72,9 @@ class A8C_WP_Template_Data_Inserter {
 	 */
 	public function get_header_content() {
 		// TODO: replace with header blocks once they are ready.
-		return '<!-- wp:heading -->' .
-				'<h2>Test Header Content</h2>' .
-				'<!-- /wp:heading -->';
+		return '<!-- wp:a8c/site-title /-->' .
+				'<!-- wp:a8c/site-description /-->' .
+				'<!-- wp:a8c/navigation-menu /-->';
 	}
 
 	/**
