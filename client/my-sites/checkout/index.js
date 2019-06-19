@@ -29,7 +29,7 @@ export default function() {
 
 	if ( isLoggedOut ) {
 		page(
-			'/checkout/:site/add-quickstart-session',
+			'/checkout/:site/offer-quickstart-session',
 			conciergeQuickstartSession,
 			makeLayout,
 			clientRender
@@ -117,7 +117,7 @@ export default function() {
 		);
 
 		page(
-			'/checkout/:site/add-quickstart-session/pending/:orderId',
+			'/checkout/:site/offer-quickstart-session/pending/:orderId',
 			siteSelection,
 			checkoutPending,
 			makeLayout,
@@ -125,7 +125,7 @@ export default function() {
 		);
 
 		page(
-			'/checkout/:site/add-quickstart-session/:receiptId?',
+			'/checkout/:site/offer-quickstart-session/:receiptId?',
 			siteSelection,
 			conciergeQuickstartSession,
 			makeLayout,
