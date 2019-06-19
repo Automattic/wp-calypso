@@ -122,7 +122,7 @@ class PurchaseNotice extends Component {
 			shouldAddPaymentSourceInsteadOfRenewingNow( purchase.expiryMoment )
 		) {
 			return (
-				<NoticeAction href={ editCardDetailsPath }>{ translate( 'Manage Payment' ) }</NoticeAction>
+				<NoticeAction href={ editCardDetailsPath }>{ translate( 'Add Credit Card' ) }</NoticeAction>
 			);
 		}
 

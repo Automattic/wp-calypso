@@ -63,7 +63,7 @@ export class CurrentPlanHeader extends Component {
 								translate( 'Renew Now' ) }
 							{ ! hasAutoRenew &&
 								shouldAddPaymentSourceInsteadOfRenewingNow( currentPlan.userFacingExpiryMoment ) &&
-								translate( 'Enable Auto Renew' ) }
+								translate( 'Manage Payment' ) }
 						</Button>
 					) }
 				</div>
