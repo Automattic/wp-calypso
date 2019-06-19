@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import { startsWith } from 'lodash';
 import page from 'page';
 
 /**
@@ -13,7 +12,7 @@ import page from 'page';
  */
 import OAuthLogin from './login';
 import ConnectComponent from './connect';
-import * as OAuthToken from 'lib/oauth-token';
+import { getToken } from 'lib/oauth-token';
 import wpcom from 'lib/wp';
 import config from 'config';
 import store from 'store';
@@ -25,7 +24,7 @@ import PulsingDot from 'components/pulsing-dot';
 export default {
 	oauthLogin: function( context, next ) {
 		if ( config.isEnabled( 'oauth' ) ) {
-			if ( OAuthToken.getToken() ) {
+			if ( getToken() ) {
 				page( '/' );
 			} else {
 				context.primary = <OAuthLogin />;
@@ -33,28 +32,6 @@ export default {
 		} else {
 			page( '/' );
 		}
-		next();
-	},
-
-	checkToken: function( context, next ) {
-		const loggedOutRoutes = [
-				'/oauth-login',
-				'/oauth',
-				'/start',
-				'/authorize',
-				'/api/oauth/token',
-			],
-			isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
-
-		// Check we have an OAuth token, otherwise redirect to auth/login page
-		if ( OAuthToken.getToken() === false && ! isValidSection ) {
-			if ( config( 'env_id' ) === 'desktop' || config( 'env_id' ) === 'desktop-development' ) {
-				return page( config( 'login_url' ) );
-			}
-
-			return page( '/authorize' );
-		}
-
 		next();
 	},
 
