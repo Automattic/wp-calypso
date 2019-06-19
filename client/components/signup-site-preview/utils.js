@@ -65,7 +65,7 @@ export function getIframeSource(
 					padding-bottom: 25px;
 				}
 
-				*, *:hover {
+				* {
 					cursor: default;
 				}
 
