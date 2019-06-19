@@ -10,7 +10,7 @@ import { makeGoogleAnalyticsTrackingFunction } from '../';
 jest.mock( 'config', () => {
 	const isEnabled = feature => {
 		const features = {
-			'google-analytics': true,
+			'ad-tracking': true,
 		};
 
 		return features[ feature ] || false;
@@ -29,6 +29,9 @@ jest.mock( 'config', () => {
 
 jest.mock( 'lib/analytics/utils', () => ( {
 	isGoogleAnalyticsAllowed: () => true,
+	doNotTrack: () => false,
+	isPiiUrl: () => false,
+	mayWeTrackCurrentUserGdpr: () => true,
 } ) );
 jest.mock( '@automattic/load-script', () => require( './mocks/lib/load-script' ) );
 

@@ -382,7 +382,7 @@ const analytics = {
 	},
 
 	recordSignupComplete: function(
-		{ isNewUser, isNewSite, hasCartItems, flow, isNewishUserSite },
+		{ isNewUser, isNewSite, hasCartItems, flow, isNew7DUserSite },
 		now
 	) {
 		if ( ! now ) {
@@ -403,7 +403,7 @@ const analytics = {
 		} );
 
 		// Google Analytics
-		let flags = [
+		const flags = [
 			isNewUser && 'is_new_user',
 			isNewSite && 'is_new_site',
 			hasCartItems && 'has_cart_items',
@@ -411,16 +411,14 @@ const analytics = {
 
 		analytics.ga.recordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
 
-		if ( isNewishUserSite ) {
+		if ( isNew7DUserSite ) {
 			// Tracks
 			analytics.tracks.recordEvent( 'calypso_new_user_site_creation', {
 				flow: flow,
-				has_cart_items: hasCartItems,
 			} );
 
 			// Google Analytics
-			flags = [ hasCartItems && 'has_cart_items' ].filter( flag => false !== flag );
-			analytics.ga.recordEvent( 'Signup', 'calypso_new_user_site_creation:' + flags.join( ',' ) );
+			analytics.ga.recordEvent( 'Signup', 'calypso_new_user_site_creation' );
 		}
 
 		// Ad Tracking: Deprecated Floodlight pixels.
