@@ -255,7 +255,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 								'Site accelerator is serving your images and static files through our global CDN.'
 							) }
 							description={ translate(
-								'Serve your images and static files through our global CDN and whatch your page load time drop.'
+								'Serve your images and static files through our global CDN and watch your page load time drop.'
 							) }
 							duration={ this.getDuration( 1 ) }
 							href={ `/settings/performance/${ siteSlug }` }
