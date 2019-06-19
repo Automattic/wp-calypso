@@ -3,6 +3,10 @@ window._tkq = window._tkq || [];
 
 let tracksIdentity = null;
 
+/**
+ * Populate `identity` on WPCOM and ATOMIC to enable tracking.
+ * Always disabled for regular self-hosted installations.
+ */
 export const initializeWithIdentity = identity => {
 	tracksIdentity = identity;
 	window._tkq.push( [ 'identifyUser', identity.userid, identity.username ] );
