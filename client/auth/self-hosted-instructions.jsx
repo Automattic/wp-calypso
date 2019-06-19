@@ -10,9 +10,9 @@ import Gridicon from 'gridicons';
 
 const SelfHostedInstructions = ( { onClickClose, translate } ) => (
 	<div className="auth__self-hosted-instructions">
-		<a href="#" onClick={ onClickClose } className="auth__self-hosted-instructions-close">
+		<button onClick={ onClickClose } className="auth__self-hosted-instructions-close">
 			<Gridicon icon="cross" size={ 24 } />
-		</a>
+		</button>
 
 		<h2>{ translate( 'Add self-hosted site' ) }</h2>
 		<p>

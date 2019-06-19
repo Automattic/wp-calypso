@@ -65,7 +65,7 @@
 	width: 320px;
 	margin: 0 auto;
 
-		.form-fieldset input {
+	.form-fieldset input {
 		position: relative;
 		z-index: z-index( 'root', '.auth__form .form-fieldset input' );
 	}
@@ -156,18 +156,21 @@
 	bottom: 40px;
 	left: 0;
 	right: 0;
-}
 
-.auth__links a {
-	text-decoration: none;
-	color: var( --color-white );
-	margin: 0 16px;
-	padding: 10px 0;
-}
+	a,
+	button {
+		text-decoration: none;
+		color: var( --color-white );
+		margin: 0 16px;
+		padding: 10px 0;
+		cursor: pointer;
+		font-size: inherit;
 
-.auth__links a:hover,
-.auth__links a:focus {
-	color: var( --color-neutral-0 );
+		&:hover,
+		&:focus {
+			color: var( --color-neutral-0 );
+		}
+	}
 }
 
 .auth__self-hosted-instructions {
@@ -244,13 +247,13 @@
 		right: 10px;
 		top: 10px;
 		text-decoration: none;
+		cursor: pointer;
 		color: var( --color-white );
 	}
 
 	.auth__self-hosted-instructions-close:hover {
 		color: var( --color-primary-light );
 	}
-
 }
 
 .auth__welcome {
