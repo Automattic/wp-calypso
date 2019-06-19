@@ -110,6 +110,7 @@
 		"reader/user-mention-suggestions": true,
 		"resume-editing": true,
 		"republicize": true,
+		"rewind-alerts": true,
 		"rewind/clone-site": true,
 		"rewind/partial-restores": true,
 		"rubberband-scroll-disable": false,
