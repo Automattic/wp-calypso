@@ -136,10 +136,11 @@ export default {
 		localeTargets: 'any',
 	},
 	popularPlanBy: {
+		// Disabled for now: p8Eqe3-Cr-p2#comment-1645
 		datestamp: '20190529',
 		variations: {
-			siteType: 50,
-			customerType: 50,
+			siteType: 0,
+			customerType: 100,
 		},
 		defaultVariation: 'siteType',
 	},
