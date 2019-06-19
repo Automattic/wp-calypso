@@ -3,7 +3,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { PlainText } from '@wordpress/block-editor';
-import { withNotices } from '@wordpress/components';
+import { withNotices, Button } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
@@ -13,6 +13,8 @@ class SiteDescriptionEdit extends Component {
 	state = {
 		description: __( 'Site description loading…' ),
 		initialDescription: '',
+		isDirty: false,
+		isSaving: false,
 	};
 
 	componentDidMount() {
@@ -29,7 +31,7 @@ class SiteDescriptionEdit extends Component {
 
 	componentDidUpdate( prevProps ) {
 		const { description, initialDescription } = this.state;
-		const { shouldUpdateSiteOption, noticeOperations, isSelected } = this.props;
+		const { shouldUpdateSiteOption, isSelected } = this.props;
 
 		const descriptionUnchanged = description && description.trim() === initialDescription.trim();
 		const descriptionIsEmpty = ! description || description.trim().length === 0;
@@ -45,22 +47,49 @@ class SiteDescriptionEdit extends Component {
 		}
 
 		if ( ! prevProps.shouldUpdateSiteOption && shouldUpdateSiteOption ) {
-			apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { description } } )
-				.then( () => this.updateInitialDescription() )
-				.catch( ( { message } ) => {
-					noticeOperations.createErrorNotice( message );
-					this.revertDescription();
-				} );
+			this.saveSiteDescription( description );
 		}
 	}
 
-	revertDescription = () => this.setState( { description: this.state.initialDescription } );
+	onSave = () => {
+		const { description, initialDescription } = this.state;
+		const descriptionUnchanged = description && description.trim() === initialDescription.trim();
 
-	updateInitialDescription = () => this.setState( { initialDescription: this.state.description } );
+		if ( descriptionUnchanged ) {
+			this.setState( { isDirty: false } );
+			return;
+		}
+		this.saveSiteDescription( description );
+	};
+
+	saveSiteDescription( description ) {
+		const { noticeOperations } = this.props;
+		this.setState( { isSaving: true } );
+		apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { description } } )
+			.then( () => this.updateInitialDescription() )
+			.catch( ( { message } ) => {
+				noticeOperations.createErrorNotice( message );
+				this.revertDescription();
+			} );
+	}
+
+	revertDescription = () =>
+		this.setState( {
+			description: this.state.initialDescription,
+			isSaving: false,
+		} );
+
+	updateInitialDescription = () => {
+		this.setState( {
+			initialDescription: this.state.description,
+			isDirty: false,
+			isSaving: false,
+		} );
+	};
 
 	render() {
 		const { className, noticeUI } = this.props;
-		const { description } = this.state;
+		const { description, isDirty, isSaving } = this.state;
 
 		return (
 			<Fragment>
@@ -68,10 +97,22 @@ class SiteDescriptionEdit extends Component {
 				<PlainText
 					className={ className }
 					value={ description }
-					onChange={ value => this.setState( { description: value } ) }
+					onChange={ value => this.setState( { description: value, isDirty: true } ) }
 					placeholder={ __( 'Site Description' ) }
 					aria-label={ __( 'Site Description' ) }
 				/>
+				{ isDirty && (
+					<Button
+						ref={ this.editButton }
+						isLarge
+						className="site-description__save-button"
+						disabled={ isSaving }
+						isBusy={ isSaving }
+						onClick={ this.onSave }
+					>
+						{ __( 'Save' ) }
+					</Button>
+				) }
 			</Fragment>
 		);
 	}
