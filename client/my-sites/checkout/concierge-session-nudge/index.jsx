@@ -21,8 +21,6 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
-import { addItem } from 'lib/upgrades/actions';
-import { conciergeSessionItem } from 'lib/cart-values/cart-items';
 import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -34,6 +32,7 @@ import {
 	isProductsListFetching,
 } from 'state/products-list/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
 import analytics from 'lib/analytics';
@@ -46,7 +45,6 @@ import './style.scss';
 export class ConciergeSessionNudge extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
-		selectedSiteId: PropTypes.number.isRequired,
 	};
 
 	render() {
@@ -333,18 +331,12 @@ export class ConciergeSessionNudge extends React.Component {
 	};
 
 	handleClickAccept = () => {
-		const { siteSlug, trackUpsellButtonClick } = this.props;
-
-		trackUpsellButtonClick( 'accept' );
-
-		addItem( conciergeSessionItem() );
-
-		page( `/checkout/${ siteSlug }` );
+		page( `/checkout/${ this.props.siteSlug }/quickstart-session` );
 	};
 }
 
 const trackUpsellButtonClick = buttonAction => {
-	// Track calypso_concierge_session_upsell_decline_button_click and calypso_concierge_session_upsell_accept_button_click events
+	// Track calypso_concierge_session_upsell_decline_button_click  event
 	return recordTracksEvent( `calypso_concierge_session_upsell_${ buttonAction }_button_click`, {
 		section: 'checkout',
 	} );
@@ -352,19 +344,22 @@ const trackUpsellButtonClick = buttonAction => {
 
 export default connect(
 	( state, props ) => {
-		const { selectedSiteId } = props;
+		const { siteSlugParam } = props;
+		const selectedSiteId = getSelectedSiteId( state );
 		const productsList = getProductsList( state );
 		const sitePlans = getPlansBySiteId( state ).data;
+		const siteSlug = selectedSiteId ? getSiteSlug( state, selectedSiteId ) : siteSlugParam;
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
-			siteSlug: getSiteSlug( state, selectedSiteId ),
 			isEligibleForChecklist: isEligibleForDotcomChecklist( state, selectedSiteId ),
 			redirectToPageBuilder: siteQualifiesForPageBuilder( state, selectedSiteId ),
 			productCost: getProductCost( state, 'concierge-session' ),
 			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
+			siteSlug,
+			selectedSiteId,
 		};
 	},
 	{

@@ -12,7 +12,7 @@ import { get, isEmpty } from 'lodash';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import { getSiteBySlug } from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import GSuiteNudge from 'my-sites/checkout/gsuite-nudge';
 import CheckoutContainer from './checkout/checkout-container';
 import CartData from 'components/data/cart';
@@ -121,21 +121,14 @@ export function gsuiteNudge( context, next ) {
 }
 
 export function conciergeSessionNudge( context, next ) {
-	const { receiptId } = context.params;
+	const { receiptId, site } = context.params;
 	context.store.dispatch(
 		setSection( { name: 'concierge-session-nudge' }, { hasSidebar: false } )
 	);
 
-	const state = context.store.getState();
-	const selectedSiteId = getSelectedSiteId( state );
-
-	if ( ! selectedSiteId ) {
-		return null;
-	}
-
 	context.primary = (
 		<CartData>
-			<ConciergeSessionNudge receiptId={ Number( receiptId ) } selectedSiteId={ selectedSiteId } />
+			<ConciergeSessionNudge receiptId={ Number( receiptId ) } siteSlugParam={ site } />
 		</CartData>
 	);
 
@@ -143,21 +136,18 @@ export function conciergeSessionNudge( context, next ) {
 }
 
 export function conciergeQuickstartSession( context, next ) {
-	const { receiptId } = context.params;
+	const { receiptId, site } = context.params;
+
 	context.store.dispatch(
 		setSection( { name: 'concierge-quickstart-session' }, { hasSidebar: false } )
 	);
 
-	const state = context.store.getState();
-	const selectedSiteId = getSelectedSiteId( state );
-
 	context.primary = (
 		<CartData>
 			<ConciergeQuickstartSession
-				receiptId={ receiptId }
-				selectedSiteId={ selectedSiteId }
+				receiptId={ Number( receiptId ) }
+				siteSlugParam={ site }
 				path={ context.path }
-				reduxStore={ context.store }
 			/>
 		</CartData>
 	);
