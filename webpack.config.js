@@ -8,10 +8,12 @@
  */
 const _ = require( 'lodash' );
 const path = require( 'path' );
+// eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
+// eslint-disable-next-line import/no-extraneous-dependencies
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
@@ -107,7 +109,6 @@ const nodeModulesToTranspile = [
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
-	'@wordpress/',
 ];
 /**
  * Check to see if we should transpile certain files in node_modules
@@ -318,6 +319,38 @@ if ( isDevelopment ) {
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' )
+	);
+}
+
+// Replace `lodash` with `lodash-es`.
+if ( isCalypsoClient ) {
+	webpackConfig.plugins.push(
+		// Replace plain 'lodash' with 'lodash-es'.
+		new webpack.NormalModuleReplacementPlugin( /^lodash$/, 'lodash-es' ),
+		// Replace 'lodash/foo' with 'lodash-es/foo'.
+		new webpack.NormalModuleReplacementPlugin( /^lodash\/(.*)$/, resource => {
+			resource.request = resource.request.replace( 'lodash/', 'lodash-es/' );
+		} ),
+		// Replace 'lodash.foo' with 'lodash-es/foo'.
+		new webpack.NormalModuleReplacementPlugin( /^lodash\.(.*)$/, resource => {
+			const request = resource.request;
+			const match = /^lodash\.(.*)$/.exec( request );
+			let subModule = match[ 1 ];
+
+			// Fix module casing, ensuring `lodash.foobar` becomes `lodash-es/fooBar`.
+			// `lodash.foobar` modules get published in lowercase, but `lodash-es` submodules use camelcase.
+			// Ensuring the right case avoids code duplication and other potential problems in case-sensitive filesystems.
+			// If you come across any `There are multiple modules with names that only differ in casing` warnings on build,
+			// be sure to add the offending module to the list below.
+			const casedModules = [ 'camelCase', 'isEqual' ];
+			casedModules.forEach( casedModule => {
+				if ( subModule === casedModule.toLowerCase() ) {
+					subModule = casedModule;
+				}
+			} );
+
+			resource.request = `lodash-es/${ subModule }`;
+		} )
 	);
 }
 

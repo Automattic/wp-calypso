@@ -5268,19 +5268,6 @@
 				"@types/babel__traverse": "^7.0.6"
 			}
 		},
-		"babel-plugin-module-resolver": {
-			"version": "3.2.0",
-			"resolved": "https://registry.npmjs.org/babel-plugin-module-resolver/-/babel-plugin-module-resolver-3.2.0.tgz",
-			"integrity": "sha512-tjR0GvSndzPew/Iayf4uICWZqjBwnlMWjSx6brryfQ81F9rxBVqwDJtFCV8oOs0+vJeefK9TmdZtkIFdFe1UnA==",
-			"dev": true,
-			"requires": {
-				"find-babel-config": "^1.1.0",
-				"glob": "^7.1.2",
-				"pkg-up": "^2.0.0",
-				"reselect": "^3.0.1",
-				"resolve": "^1.4.0"
-			}
-		},
 		"babel-preset-jest": {
 			"version": "24.6.0",
 			"resolved": "https://registry.npmjs.org/babel-preset-jest/-/babel-preset-jest-24.6.0.tgz",
@@ -9852,24 +9839,6 @@
 					"version": "1.4.0",
 					"resolved": "https://registry.npmjs.org/statuses/-/statuses-1.4.0.tgz",
 					"integrity": "sha512-zhSCtt8v2NDrRlPQpCNtw/heZLtfUDqxBM1udqikb/Hbk52LK4nQSwr10u77iopCW5LsyHpuXS0GnEc48mLeew=="
-				}
-			}
-		},
-		"find-babel-config": {
-			"version": "1.2.0",
-			"resolved": "https://registry.npmjs.org/find-babel-config/-/find-babel-config-1.2.0.tgz",
-			"integrity": "sha512-jB2CHJeqy6a820ssiqwrKMeyC6nNdmrcgkKWJWmpoxpE8RKciYJXCcXRq1h2AzCo5I5BJeN2tkGEO3hLTuePRA==",
-			"dev": true,
-			"requires": {
-				"json5": "^0.5.1",
-				"path-exists": "^3.0.0"
-			},
-			"dependencies": {
-				"json5": {
-					"version": "0.5.1",
-					"resolved": "https://registry.npmjs.org/json5/-/json5-0.5.1.tgz",
-					"integrity": "sha1-Hq3nrMASA0rYTiOWdn6tn6VJWCE=",
-					"dev": true
 				}
 			}
 		},
@@ -16765,15 +16734,6 @@
 				"find-up": "^2.1.0"
 			}
 		},
-		"pkg-up": {
-			"version": "2.0.0",
-			"resolved": "https://registry.npmjs.org/pkg-up/-/pkg-up-2.0.0.tgz",
-			"integrity": "sha1-yBmscoBZpGHKscOImivjxJoATX8=",
-			"dev": true,
-			"requires": {
-				"find-up": "^2.1.0"
-			}
-		},
 		"please-upgrade-node": {
 			"version": "3.1.1",
 			"resolved": "https://registry.npmjs.org/please-upgrade-node/-/please-upgrade-node-3.1.1.tgz",
@@ -19952,12 +19912,6 @@
 			"version": "1.0.1",
 			"resolved": "https://registry.npmjs.org/require-main-filename/-/require-main-filename-1.0.1.tgz",
 			"integrity": "sha1-l/cXtp1IeE9fUmpsWqj/3aBVpNE="
-		},
-		"reselect": {
-			"version": "3.0.1",
-			"resolved": "https://registry.npmjs.org/reselect/-/reselect-3.0.1.tgz",
-			"integrity": "sha1-79qpjqdFEyTQkrKyFjpqHXqaIUc=",
-			"dev": true
 		},
 		"resize-observer-polyfill": {
 			"version": "1.5.1",

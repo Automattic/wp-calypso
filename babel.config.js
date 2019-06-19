@@ -20,20 +20,7 @@ const config = {
 		],
 		'@automattic/calypso-build/babel/default',
 	],
-	plugins: [
-		[ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ],
-		isBrowser
-			? [
-					'module-resolver',
-					{
-						alias: {
-							lodash: 'lodash-es',
-							'lodash/': ( [ , name ] ) => `lodash-es/${ name }`,
-						},
-					},
-			  ]
-			: {},
-	],
+	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ] ],
 	env: {
 		build_pot: {
 			plugins: [
@@ -51,19 +38,7 @@ const config = {
 		},
 		test: {
 			presets: [ [ '@babel/env', { targets: { node: 'current' } } ] ],
-			plugins: [
-				'add-module-exports',
-				'babel-plugin-dynamic-import-node',
-				[
-					'module-resolver',
-					{
-						alias: {
-							'lodash-es': 'lodash',
-							'lodash-es/': ( [ , name ] ) => `lodash/${ name }`,
-						},
-					},
-				],
-			],
+			plugins: [ 'add-module-exports', 'babel-plugin-dynamic-import-node' ],
 		},
 	},
 };
