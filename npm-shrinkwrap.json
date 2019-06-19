@@ -10413,9 +10413,9 @@
 			"integrity": "sha1-3BXKHGcjh8p2vTesCjlbogQqLCg="
 		},
 		"get-video-id": {
-			"version": "3.1.3",
-			"resolved": "https://registry.npmjs.org/get-video-id/-/get-video-id-3.1.3.tgz",
-			"integrity": "sha512-22ktjKAn2Toz8JXvqn16PFGF3aV72l2uUFSaIe6ebtMrf6x6DxgH9Ks7a+HZN5a5QYgfR1E/C2HDwcsh12M8OQ==",
+			"version": "3.1.2",
+			"resolved": "https://registry.npmjs.org/get-video-id/-/get-video-id-3.1.2.tgz",
+			"integrity": "sha512-cz8/LJ6HHRkxUdOCDgdGoJCTGbaCEq0GsGFkxkabL6oy5OWfdsn3TizQtaOerbeX4JhiRmPQlCM/XZ9SSbed5Q==",
 			"requires": {
 				"get-src": "^1.0.1"
 			}
