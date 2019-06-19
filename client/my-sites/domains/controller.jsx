@@ -198,7 +198,7 @@ const googleAppsWithRegistration = ( context, next ) => {
 					} ) }
 				/>
 				<CartData>
-					<GSuiteUpgrade domainName={ context.params.registerDomain } />
+					<GSuiteUpgrade domain={ context.params.registerDomain } />
 				</CartData>
 			</Main>
 		);

@@ -6,7 +6,7 @@
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { FunctionComponent, useState } from 'react';
+import React, { useState } from 'react';
 
 /**
  * Internal dependencies
@@ -14,7 +14,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
-import { areAllUsersValid, getItemsForCart, newUsers, GSuiteNewUser } from 'lib/gsuite/new-users';
+import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
 import GoogleAppsProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -27,46 +27,32 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
  */
 import './style.scss';
 
-interface Props {
-	currencyCode: string | null;
-	domainName: string;
-	gsuiteBasicCost: number | null;
-	onAddEmailClick: ( cartItems: any[] ) => void;
-	onSkipClick: () => void;
-	recordTracksEvent: ( name: string, properties: any ) => void;
-}
-
-const GSuiteDialog: FunctionComponent< Props > = ( {
+const GSuiteDialog = ( {
 	currencyCode,
-	domainName,
+	domain,
 	gsuiteBasicCost,
 	onAddEmailClick,
 	onSkipClick,
 	recordTracksEvent,
 } ) => {
-	const [ users, setUsers ] = useState( newUsers( domainName ) );
+	const [ users, setUsers ] = useState( newUsers( domain ) );
 
 	const canContinue = areAllUsersValid( users );
 	// leave this as a variable for future g suite business support
 	const productSlug = 'gapps';
 	const translate = useTranslate();
 
-	const domains = [ { name: domainName } ];
-
-	const recordClickEvent = ( eventName: string ) => {
+	const recordClickEvent = eventName => {
 		recordTracksEvent( eventName, {
-			domain_name: domainName,
+			domain_name: domain,
 			user_count: users.length,
 		} );
 	};
 
-	const recordUsersChangedEvent = (
-		previousUsers: GSuiteNewUser[],
-		nextUsers: GSuiteNewUser[]
-	) => {
+	const recordUsersChangedEvent = ( previousUsers, nextUsers ) => {
 		if ( previousUsers.length !== nextUsers.length ) {
 			recordTracksEvent( 'calypso_checkout_gsuite_upgrade_users_changed', {
-				domain_name: domainName,
+				domain_name: domain,
 				next_user_count: nextUsers.length,
 				prev_user_count: previousUsers.length,
 			} );
@@ -77,7 +63,7 @@ const GSuiteDialog: FunctionComponent< Props > = ( {
 		recordClickEvent( `calypso_checkout_gsuite_upgrade_add_email_button_click` );
 
 		if ( canContinue ) {
-			onAddEmailClick( getItemsForCart( domains, productSlug, users ) );
+			onAddEmailClick( getItemsForCart( [ domain ], productSlug, users ) );
 		}
 	};
 
@@ -86,7 +72,7 @@ const GSuiteDialog: FunctionComponent< Props > = ( {
 		onSkipClick();
 	};
 
-	const handleUsersChange = ( changedUsers: GSuiteNewUser[] ) => {
+	const handleUsersChange = changedUsers => {
 		recordUsersChangedEvent( users, changedUsers );
 		setUsers( changedUsers );
 	};
@@ -104,7 +90,7 @@ const GSuiteDialog: FunctionComponent< Props > = ( {
 					<h2 className="gsuite-dialog__title">
 						{ translate( 'Add Professional email from G Suite by Google Cloud to %(domain)s', {
 							args: {
-								domainName,
+								domain,
 							},
 						} ) }
 					</h2>
@@ -115,15 +101,14 @@ const GSuiteDialog: FunctionComponent< Props > = ( {
 			</CompactCard>
 			<CompactCard>
 				<GoogleAppsProductDetails
-					domain={ domainName }
+					domain={ domain }
 					cost={ gsuiteBasicCost }
 					currencyCode={ currencyCode }
 					plan={ productSlug }
 				/>
 				<GSuiteNewUserList
-					domains={ domains }
 					extraValidation={ user => user }
-					selectedDomainName={ domainName }
+					selectedDomainName={ domain }
 					onUsersChange={ handleUsersChange }
 					users={ users }
 				>
@@ -138,6 +123,14 @@ const GSuiteDialog: FunctionComponent< Props > = ( {
 			</CompactCard>
 		</div>
 	);
+};
+
+GSuiteDialog.propTypes = {
+	currencyCode: PropTypes.string,
+	domain: PropTypes.string.isRequired,
+	gsuiteBasicCost: PropTypes.number,
+	onAddEmailClick: PropTypes.func.isRequired,
+	onSkipClick: PropTypes.func.isRequired,
 };
 
 export default connect(

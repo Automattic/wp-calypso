@@ -17,7 +17,7 @@ import GSuiteDialog from './gsuite-dialog';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
-const GSuiteUpgrade = ( { cart, domainName, selectedSiteSlug } ) => {
+const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 	const handleAddEmailClick = cartItems => {
 		addItems( cartItems );
 		page( `/checkout/${ selectedSiteSlug }` );
@@ -36,22 +36,22 @@ const GSuiteUpgrade = ( { cart, domainName, selectedSiteSlug } ) => {
 			return;
 		}
 
-		if ( ! hasDomainInCart( cart, domainName ) ) {
+		if ( ! hasDomainInCart( cart, domain ) ) {
 			// Should we handle this more gracefully?
 			page( `/domains/add/${ selectedSiteSlug }` );
 		}
-	}, [ cart, domainName, selectedSiteSlug ] );
+	}, [ cart, domain, selectedSiteSlug ] );
 
 	const translate = useTranslate();
 
 	return (
 		<div>
 			<HeaderCake onClick={ handleGoBack }>
-				{ translate( 'Register %(domain)s', { args: { domain: domainName } } ) }
+				{ translate( 'Register %(domain)s', { args: { domain } } ) }
 			</HeaderCake>
 
 			<GSuiteDialog
-				domainName={ domainName }
+				domain={ domain }
 				onSkipClick={ handleSkipClick }
 				onAddEmailClick={ handleAddEmailClick }
 			/>
