@@ -32,11 +32,7 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 	};
 
 	useEffect( () => {
-		if ( ! cart || ! cart.hasLoadedFromServer ) {
-			return;
-		}
-
-		if ( ! hasDomainInCart( cart, domain ) ) {
+		if ( cart && cart.hasLoadedFromServer && ! hasDomainInCart( cart, domain ) ) {
 			// Should we handle this more gracefully?
 			page( `/domains/add/${ selectedSiteSlug }` );
 		}
