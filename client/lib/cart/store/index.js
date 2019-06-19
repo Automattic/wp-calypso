@@ -51,7 +51,7 @@ import {
 import wp from 'lib/wp';
 import { getReduxStore } from 'lib/redux-bridge';
 import { getSelectedSiteId } from 'state/ui/selectors';
-
+import { isUserLoggedIn } from 'state/current-user/selectors';
 import { extractStoredCardMetaValue } from 'state/ui/payment/reducer';
 
 const wpcom = wp.undocumented();
@@ -69,7 +69,11 @@ const CartStore = {
 			hasPendingServerUpdates: hasPendingServerUpdates(),
 		} );
 	},
-	setSelectedSiteId( selectedSiteId ) {
+	setSelectedSiteId( selectedSiteId, userLoggedIn = true ) {
+		if ( ! userLoggedIn ) {
+			return;
+		}
+
 		const newCartKey = selectedSiteId || 'no-site';
 
 		if ( _cartKey === newCartKey ) {
@@ -232,6 +236,7 @@ function createListener( store, selector, callback ) {
 	let prevValue = selector( store.getState() );
 	return () => {
 		const nextValue = selector( store.getState() );
+
 		if ( nextValue !== prevValue ) {
 			prevValue = nextValue;
 			callback( nextValue );
@@ -241,7 +246,8 @@ function createListener( store, selector, callback ) {
 
 // Subscribe to the Redux store to get updates about the selected site
 getReduxStore().then( store => {
+	const userLoggedIn = isUserLoggedIn( store.getState() );
 	const selectedSiteId = getSelectedSiteId( store.getState() );
-	selectedSiteId && CartStore.setSelectedSiteId( selectedSiteId );
+	CartStore.setSelectedSiteId( selectedSiteId, userLoggedIn );
 	store.subscribe( createListener( store, getSelectedSiteId, CartStore.setSelectedSiteId ) );
 } );
