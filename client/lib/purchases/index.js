@@ -315,7 +315,7 @@ function hasCreditCardData( purchase ) {
 }
 
 function shouldAddPaymentSourceInsteadOfRenewingNow( expiryMoment ) {
-	return expiryMoment > moment().add( 90, 'days' );
+	return expiryMoment > moment().add( 3, 'months' );
 }
 
 /**

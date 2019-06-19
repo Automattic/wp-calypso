@@ -119,13 +119,10 @@ class PurchaseNotice extends Component {
 
 		if (
 			! canExplicitRenew( purchase ) ||
-			( isPaidWithCredits( purchase ) &&
-				shouldAddPaymentSourceInsteadOfRenewingNow( purchase.expiryMoment ) )
+			shouldAddPaymentSourceInsteadOfRenewingNow( purchase.expiryMoment )
 		) {
 			return (
-				<NoticeAction href={ editCardDetailsPath }>
-					{ translate( 'Enable Auto Renew' ) }
-				</NoticeAction>
+				<NoticeAction href={ editCardDetailsPath }>{ translate( 'Manage Payment' ) }</NoticeAction>
 			);
 		}
 
