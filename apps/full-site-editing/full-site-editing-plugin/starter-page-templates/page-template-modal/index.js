@@ -9,6 +9,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { parse as parseBlocks } from '@wordpress/blocks';
 import { Component } from '@wordpress/element';
+import '@wordpress/nux';
 
 /**
  * Internal dependencies
@@ -112,6 +113,9 @@ const PageTemplatesPlugin = compose(
 		getMeta: () => select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => {
+		// Disable tips right away as the collide with the modal window.
+		dispatch( 'core/nux' ).disableTips();
+
 		const editorDispatcher = dispatch( 'core/editor' );
 		return {
 			saveTemplateChoice: template => {
