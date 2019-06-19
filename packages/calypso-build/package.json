@@ -35,7 +35,6 @@
 	],
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "file:../calypso-color-schemes",
-		"@automattic/wordpress-external-dependencies-plugin": "file:../wordpress-external-dependencies-plugin",
 		"@babel/core": "7.5.5",
 		"@babel/plugin-proposal-class-properties": "7.5.5",
 		"@babel/plugin-syntax-dynamic-import": "7.2.0",
@@ -46,6 +45,7 @@
 		"@babel/preset-typescript": "7.3.3",
 		"@wordpress/babel-plugin-import-jsx-pragma": "2.3.0",
 		"@wordpress/browserslist-config": "2.3.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^1.0.1",
 		"autoprefixer": "9.4.4",
 		"babel-loader": "8.0.5",
 		"browserslist": "4.6.6",
