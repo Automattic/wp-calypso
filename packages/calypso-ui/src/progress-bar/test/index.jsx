@@ -1,12 +1,11 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
 /**
  * External dependencies
  */
-import { shallow } from 'enzyme';
+import { shallow } from 'enzyme'; // eslint-disable-line import/no-extraneous-dependencies
 import React from 'react';
 
 /**

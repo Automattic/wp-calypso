@@ -33,6 +33,7 @@
 		]
 	},
 	"dependencies": {
+		"@automattic/calypso-ui": "file:./packages/calypso-ui",
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/load-script": "file:./packages/load-script",
 		"@automattic/material-design-icons": "file:./packages/material-design-icons",
@@ -261,7 +262,7 @@
 		"test-server": "jest -c=test/server/jest.config.js",
 		"test-server:coverage": "npm run -s test-server -- --coverage",
 		"test-server:watch": "npm run -s test-server -- --watch",
-		"translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date '**/*.js' '**/*.jsx' '**/*.ts' '**/*.tsx' '!build/**' '!public/**' '!**/test/**' '!node_modules/**' '!**/node_modules/**'",
+		"translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date '**/*.js' '**/*.jsx' '**/*.ts' '**/*.tsx' '!build/**' '!packages/**/dist/**' '!public/**' '!**/test/**' '!node_modules/**' '!**/node_modules/**'",
 		"update-deps": "npx rimraf npm-shrinkwrap.json && npm run -s distclean && npm i && npm shrinkwrap && replace --silent 'http://' 'https://' . --recursive --include='npm-shrinkwrap.json,package-lock.json'",
 		"postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
 		"prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",

@@ -3,15 +3,14 @@
 /**
  * External dependencies
  */
-
-import React from 'react';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
 import ProgressBar from 'components/progress-bar';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'ProgressBar';
 
 	state = {
@@ -27,9 +26,9 @@ export default class extends React.PureComponent {
 
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.toggleCompact }>
+				<button className="docs__design-toggle button" onClick={ this.toggleCompact }>
 					{ toggleText }
-				</a>
+				</button>
 
 				<ProgressBar value={ 0 } title="0% complete" compact={ this.state.compact } />
 				<ProgressBar value={ 55 } total={ 100 } compact={ this.state.compact } />
