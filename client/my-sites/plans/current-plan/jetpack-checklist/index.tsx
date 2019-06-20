@@ -135,7 +135,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					<Task
 						id="jetpack_task_protect"
 						title={ translate(
-							"We've automatically protected you from brute force login attacks."
+							"We're automatically protecting you from brute force login attacks."
 						) }
 						completedTitle={ translate(
 							"We've automatically protected you from brute force login attacks."
