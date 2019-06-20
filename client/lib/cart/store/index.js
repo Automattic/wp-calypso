@@ -104,14 +104,14 @@ function emitChange() {
 	CartStore.emit( 'change' );
 }
 
-function update( changeFunction ) {
+function update( changeFunction, errorHandler ) {
 	const wrappedFunction = cart =>
 		fillInAllCartItemAttributes( changeFunction( cart ), productsList.get() );
 
 	const previousCart = CartStore.get();
 	const nextCart = wrappedFunction( previousCart );
 
-	_synchronizer && _synchronizer.update( wrappedFunction );
+	_synchronizer && _synchronizer.update( wrappedFunction, errorHandler );
 	recordEvents( previousCart, nextCart );
 }
 
@@ -212,7 +212,7 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 						postalCode = null;
 						countryCode = null;
 				}
-				update( setTaxLocation( { postalCode, countryCode } ) );
+				update( setTaxLocation( { postalCode, countryCode } ), action.errorHandler );
 			}
 			break;
 

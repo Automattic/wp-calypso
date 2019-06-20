@@ -24,10 +24,11 @@ export function setDomainDetails( domainDetails ) {
 	} );
 }
 
-export function setPayment( payment ) {
+export function setPayment( payment, errorHandler ) {
 	Dispatcher.handleViewAction( {
 		type: TRANSACTION_PAYMENT_SET,
 		payment,
+		errorHandler,
 	} );
 }
 

@@ -93,7 +93,7 @@ CartSynchronizer.prototype.handleDispatch = function( payload ) {
 	}
 };
 
-CartSynchronizer.prototype.update = function( changeFunction ) {
+CartSynchronizer.prototype.update = function( changeFunction, errorHandler ) {
 	if ( ! this._hasLoadedFromServer ) {
 		// If we haven't loaded any data from the server yet, it's possible that
 		// the local data could completely overwrite the existing data. This would
@@ -114,7 +114,7 @@ CartSynchronizer.prototype.update = function( changeFunction ) {
 	}
 
 	this._latestValue = changeFunction( this._latestValue );
-	this._performRequest( 'update', this._postToServer.bind( this ) );
+	this._performRequest( 'update', this._postToServer.bind( this ), errorHandler );
 	this.emit( 'change' );
 };
 
@@ -187,7 +187,7 @@ CartSynchronizer.prototype._getFromServer = function( callback ) {
 
 let requestCounter = 0;
 
-CartSynchronizer.prototype._performRequest = function( type, requestFunction ) {
+CartSynchronizer.prototype._performRequest = function( type, requestFunction, errorHandler ) {
 	if ( type === 'poll' && this._paused ) {
 		return;
 	}
@@ -214,7 +214,9 @@ CartSynchronizer.prototype._performRequest = function( type, requestFunction ) {
 			}
 
 			if ( error ) {
-				throw error;
+				debug( request.id + ': error ' + request.type, error );
+				errorHandler && errorHandler( error );
+				return;
 			}
 			debug( request.id + ': finishing ' + request.type );
 
