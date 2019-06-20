@@ -198,7 +198,7 @@ class ManagePurchase extends Component {
 				return null;
 			}
 
-			const textEdit = translate( 'Edit Payment Method' );
+			const textEdit = translate( 'Change Payment Method' );
 			const textAdd = translate( 'Add Credit Card' );
 
 			// With the self-serving auto-renewal toggle enabled, the payment data should be always there.
