@@ -137,6 +137,14 @@ export function generateFlows( {
 			lastModified: '2019-06-05',
 		},
 
+		// We don't yet show the previews for the 'blog' segment
+		'onboarding-blog': {
+			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
+			destination: getChecklistDestination,
+			description: 'The improved onboarding flow.',
+			lastModified: '2019-04-30',
+		},
+
 		'onboarding-dev': {
 			steps: [
 				'user',
