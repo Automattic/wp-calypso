@@ -1,4 +1,4 @@
-/* global calypsoifyGutenberg, wpcomGutenberg */
+/* global calypsoifyGutenberg */
 
 /**
  * External dependencies
@@ -8,7 +8,7 @@ import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { createBlock, parse, rawHandler } from '@wordpress/blocks';
 import { addFilter } from '@wordpress/hooks';
-import { addQueryArgs, getQueryArg, removeQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
 
@@ -558,18 +558,26 @@ function openLinksInParentFrame() {
 			window.open( calypsoifyGutenberg.manageReusableBlocksUrl, '_top' );
 		} );
 	}
+}
 
-	if ( wpcomGutenberg.blockEditorUrl ) {
-		const customizerLinkSelector = 'a.components-button[href*="customize.php"]'; // Link in the FSE blocks edit buttons
-		$( '#editor' ).on( 'click', customizerLinkSelector, e => {
-			e.preventDefault();
-			let url = removeQueryArgs( e.currentTarget.href, 'return' );
-			url = addQueryArgs( url, {
-				return: wpcomGutenberg.blockEditorUrl,
-			} );
-			window.open( url, '_top' );
+/**
+ * Ensures the Calypso Customizer is opened when clicking on the the FSE blocks' edit buttons.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function openCustomizer( calypsoPort ) {
+	const customizerLinkSelector = 'a.components-button[href*="customize.php"]';
+	$( '#editor' ).on( 'click', customizerLinkSelector, e => {
+		e.preventDefault();
+
+		calypsoPort.postMessage( {
+			action: 'openCustomizer',
+			payload: {
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+				autofocus: getQueryArg( e.currentTarget.href, 'autofocus' ),
+			},
 		} );
-	}
+	} );
 }
 
 function initPort( message ) {
@@ -648,6 +656,8 @@ function initPort( message ) {
 		handleGoToAllPosts( calypsoPort );
 
 		openLinksInParentFrame();
+
+		openCustomizer( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

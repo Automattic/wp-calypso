@@ -17,6 +17,7 @@ import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
+	getCustomizerUrl,
 	getSiteOption,
 	getSiteAdminUrl,
 	isRequestingSites,
@@ -87,6 +88,7 @@ enum EditorActions {
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
 	ConversionRequest = 'triggerConversionRequest',
+	OpenCustomizer = 'openCustomizer',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -239,6 +241,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			const { postUrl } = payload;
 			this.openPreviewModal( postUrl, ports[ 0 ] );
 		}
+
+		if ( EditorActions.OpenCustomizer === action ) {
+			const { autofocus = null, unsavedChanges = false } = payload;
+			this.openCustomizer( autofocus, unsavedChanges );
+		}
 	};
 
 	loadRevision = ( {
@@ -365,6 +372,25 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	};
 
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
+
+	openCustomizer = ( autofocus: object, unsavedChanges: boolean ) => {
+		let { customizerUrl } = this.props;
+		if ( autofocus ) {
+			const [ key, value ] = Object.entries( autofocus )[ 0 ];
+			customizerUrl = addQueryArgs(
+				{
+					[ `autofocus[${ key }]` ]: value,
+				},
+				customizerUrl
+			);
+		}
+		if ( unsavedChanges ) {
+			this.props.markChanged();
+		} else {
+			this.props.markSaved();
+		}
+		this.props.navigate( customizerUrl );
+	};
 
 	handleConversionResponse = ( confirmed: boolean ) => {
 		this.setState( { isConversionPromptVisible: false } );
@@ -517,6 +543,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
+		customizerUrl: getCustomizerUrl( state, siteId ),
 	};
 };
 
