@@ -830,6 +830,7 @@ class WpcomChecklistComponent extends PureComponent {
 				preset="update-homepage"
 				title={ translate( 'Update your homepage' ) }
 				completedTitle={ translate( 'You updated your homepage' ) }
+				bannerImageSrc="/calypso/images/stats/tasks/personalize-your-site.svg"
 				completedButtonText={ translate( 'Change' ) }
 				description={ translate(
 					`We've created the basics, now it's time for you to update the images and text.`
