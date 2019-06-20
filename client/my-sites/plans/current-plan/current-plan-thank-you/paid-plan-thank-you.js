@@ -18,7 +18,6 @@ import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
 import { untrailingslashit } from 'lib/route';
 import Button from 'components/button';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
-import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
 import ProgressBar from 'components/progress-bar';
 import ThankYou from './thank-you';
 
@@ -162,8 +161,6 @@ export class PaidPlanThankYou extends Component {
 
 		return (
 			<Fragment>
-				<JetpackProductInstall />
-
 				{ installState === INSTALL_STATE_INCOMPLETE && (
 					<ThankYou
 						illustration={ fireworksIllustration }
