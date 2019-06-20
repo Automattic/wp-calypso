@@ -1,4 +1,4 @@
-/* global calypsoifyGutenberg */
+/* global calypsoifyGutenberg, wpcomGutenberg */
 
 /**
  * External dependencies
@@ -8,7 +8,7 @@ import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { createBlock, parse, rawHandler } from '@wordpress/blocks';
 import { addFilter } from '@wordpress/hooks';
-import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { addQueryArgs, getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
 
@@ -556,6 +556,18 @@ function openLinksInParentFrame() {
 		$( '#editor' ).on( 'click', manageReusableBlocksLinkSelectors, e => {
 			e.preventDefault();
 			window.open( calypsoifyGutenberg.manageReusableBlocksUrl, '_top' );
+		} );
+	}
+
+	if ( wpcomGutenberg.blockEditorUrl ) {
+		const customizerLinkSelector = 'a.components-button[href*="customize.php"]'; // Link in the FSE blocks edit buttons
+		$( '#editor' ).on( 'click', customizerLinkSelector, e => {
+			e.preventDefault();
+			let url = removeQueryArgs( e.currentTarget.href, 'return' );
+			url = addQueryArgs( url, {
+				return: wpcomGutenberg.blockEditorUrl,
+			} );
+			window.open( url, '_top' );
 		} );
 	}
 }
