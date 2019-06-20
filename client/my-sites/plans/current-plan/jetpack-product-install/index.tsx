@@ -44,16 +44,24 @@ const NON_ERROR_STATES = [
  * We attempt to recover from these errors by retrying status requests.
  */
 const RECOVERABLE_ERROR_STATES = [ 'vaultpress_error' ];
+
 /**
  * The plugins this product installer installs, activates and configures.
  */
 const PLUGINS = [ 'akismet', 'vaultpress' ];
+
 /**
  * Maximum number of attempts to refetch installation status in the event of a recoverable error.
  */
 const MAX_RETRIES = 3;
 
-export class JetpackProductInstall extends Component {
+type Props = ReturnType< typeof mapStateToProps > & ConnectedDispatchProps;
+
+interface State {
+	startedInstallation: boolean;
+}
+
+export class JetpackProductInstall extends Component< Props, State > {
 	state = {
 		startedInstallation: false,
 	};
@@ -233,20 +241,30 @@ export class JetpackProductInstall extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteId,
-			pluginKeys: getPluginKeys( state, siteId ),
-			progressComplete: getJetpackProductInstallProgress( state, siteId ),
-			status: getJetpackProductInstallStatus( state, siteId ),
-		};
-	},
-	{
-		recordTracksEvent,
-		requestJetpackProductInstallStatus,
-		startJetpackProductInstall,
-	}
+	return {
+		siteId,
+		pluginKeys: getPluginKeys( state, siteId ),
+		progressComplete: getJetpackProductInstallProgress( state, siteId ),
+		status: getJetpackProductInstallStatus( state, siteId ),
+	};
+};
+
+interface ConnectedDispatchProps {
+	recordTracksEvent: typeof recordTracksEvent;
+	requestJetpackProductInstallStatus: typeof requestJetpackProductInstallStatus;
+	startJetpackProductInstall: typeof startJetpackProductInstall;
+}
+
+const mapDispatchToProps: ConnectedDispatchProps = {
+	recordTracksEvent,
+	requestJetpackProductInstallStatus,
+	startJetpackProductInstall,
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
 )( localize( JetpackProductInstall ) );
