@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { mapValues, reduce, reduceRight } from 'lodash';
-import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
+import { combineReducers as combine, ReducersMapObject } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 
 /**
  * Internal dependencies
@@ -135,10 +135,10 @@ export function addReducer( origReducer, reducers ) {
  * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: SERIALIZE } ); // { date: 6, height: 150 };
  * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: GROW } ); // { date: new Date( 7 ), height: 124 };
  *
- * @param {object} reducers - object containing the reducers to merge
- * @returns {function} - Returns the combined reducer function
+ * @param  reducers object containing the reducers to merge
+ * @return          Combined reducer function
  */
-export function combineReducers( reducers ) {
+export function combineReducers< S >( reducers: ReducersMapObject< S > ): Reducer< S > {
 	// set up persistence of reducers passed from app and then create a combined one
 	return createCombinedReducer( mapValues( reducers, setupReducerPersistence ) );
 }
