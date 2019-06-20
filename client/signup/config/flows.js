@@ -50,14 +50,16 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getChecklistDestination( dependencies ) {
-	return '/checklist/' + dependencies.siteSlug;
+function getSignupDestination( dependencies ) {
+	return abtest( 'improvedOnboarding' ) === 'main'
+		? `/checklist/${ dependencies.siteSlug }`
+		: `/view/${ dependencies.siteSlug }`;
 }
 
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
-	getChecklistDestination,
+	getSignupDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

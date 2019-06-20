@@ -218,7 +218,8 @@ export function canResumeFlow( flowName, progress ) {
 }
 
 export const persistSignupDestination = url => {
-	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', url );
+	const options = { path: '/' };
+	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', url, options );
 };
 
 export const retrieveSignupDestination = () => {

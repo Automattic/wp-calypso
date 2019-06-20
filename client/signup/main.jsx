@@ -58,7 +58,10 @@ import {
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { removeUnneededSteps } from 'state/signup/progress/actions';
+import { removeUnneededSteps, submitSignupStep } from 'state/signup/progress/actions';
+import { setSurvey } from 'state/signup/steps/survey/actions';
+import { submitSiteType } from 'state/signup/steps/site-type/actions';
+import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import getSiteId from 'state/selectors/get-site-id';
 import { isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
@@ -104,6 +107,7 @@ class Signup extends React.Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		isLoggedIn: PropTypes.bool,
 		loadTrackingTool: PropTypes.func.isRequired,
+		setSurvey: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
 		isPaidPlan: PropTypes.bool,
@@ -226,6 +230,7 @@ class Signup extends React.Component {
 		if ( destination !== filteredDestination ) {
 			persistSignupDestination( destination );
 		}
+
 		return this.handleFlowComplete( dependencies, filteredDestination );
 	};
 
@@ -632,6 +637,10 @@ export default connect(
 		};
 	},
 	{
+		setSurvey,
+		submitSiteType,
+		submitSiteVertical,
+		submitSignupStep,
 		loadTrackingTool,
 		removeUnneededSteps,
 	}
