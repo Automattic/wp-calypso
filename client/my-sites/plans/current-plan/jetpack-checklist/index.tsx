@@ -317,6 +317,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 
 					{ isEnabled( 'jetpack/checklist/performance' ) && isProfessional && (
 						<Task
+							id="jetpack_search"
 							title={ translate( 'Enhanced Search' ) }
 							description={ translate(
 								'Activate an enhanced, customizable search to replace the default WordPress search feature.'
@@ -332,7 +333,6 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 									? this.props.widgetCustomizerPaneUrl
 									: `/settings/performance/${ siteSlug }`
 							}
-							id="enhanced-search"
 							onClick={ this.handleTaskStart( {
 								taskId: 'jetpack_search',
 								tourId: 'jetpackSearch',
