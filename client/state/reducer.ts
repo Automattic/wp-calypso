@@ -194,4 +194,4 @@ if ( config.isEnabled( 'mailchimp' ) ) {
 	reducers.mailchimp = mailchimp;
 }
 
-export default combineReducers( reducers );
+export default ( combineReducers as typeof import('redux').combineReducers )( reducers );
