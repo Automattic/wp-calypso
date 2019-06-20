@@ -59,9 +59,9 @@ export function preventWidows( text, wordsToKeep = 2 ) {
 			// Handle strings with interpolated components by only acting on the last element.
 			if ( typeof text[ text.length - 1 ] === 'string' ) {
 				const endingText = text.pop();
-				const startingWhitespace = endingText.replace( /^(\s+)?.*$/, '$1' );
+				const startingWhitespace = endingText.match( /^\s+/ );
 				// The whitespace between component and text would be stripped by preventWidows.
-				text.push( startingWhitespace );
+				startingWhitespace && text.push( startingWhitespace[ 0 ] );
 				text.push( preventWidows( endingText, wordsToKeep ) );
 			}
 		}
