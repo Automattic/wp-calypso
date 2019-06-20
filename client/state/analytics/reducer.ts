@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import { ANALYTICS_TRACKING_ON } from 'state/action-types';
 
 export const analyticsTracking = ( state = {}, { type, meta } ) => {
