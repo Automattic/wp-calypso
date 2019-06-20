@@ -11,9 +11,11 @@ import { get } from 'lodash';
  */
 import { Button, IconButton, Placeholder, Toolbar } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
-import { withSelect } from '@wordpress/data';
+import { parse, createBlock } from '@wordpress/blocks';
+import { BlockEdit } from '@wordpress/block-editor';
+import { withSelect, withDispatch } from '@wordpress/data';
 import { BlockControls } from '@wordpress/editor';
-import { Fragment, RawHTML } from '@wordpress/element';
+import { Fragment, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 /**
@@ -28,26 +30,56 @@ const TemplateEdit = compose(
 		const { getCurrentPostId } = select( 'core/editor' );
 
 		const { templateId } = attributes;
+
+		const template = templateId && getEntityRecord( 'postType', 'wp_template_part', templateId );
+		const parsedBlocks = parse( get( template, [ 'content', 'raw' ] ) );
+		const parsedBlock =
+			parsedBlocks.length === 1
+				? parsedBlocks[ 0 ]
+				: createBlock( 'core/template', {}, parsedBlocks );
+
 		return {
 			currentPostId: getCurrentPostId(),
-			template: templateId && getEntityRecord( 'postType', 'wp_template_part', templateId ),
+			template,
+			parsedBlock,
 		};
 	} ),
+	withDispatch( dispatch => ( {
+		receiveBlocks: dispatch( 'core/block-editor' ).receiveBlocks,
+	} ) ),
 	withState( { isEditing: false } )
-)( ( { attributes, currentPostId, isEditing, template, setAttributes, setState } ) => {
-	const { align, templateId } = attributes;
+)(
+	( {
+		attributes,
+		currentPostId,
+		isEditing,
+		parsedBlock,
+		receiveBlocks,
+		setAttributes,
+		setState,
+		template,
+	} ) => {
+		const { align, templateId } = attributes;
 
-	const toggleEditing = () => setState( { isEditing: ! isEditing } );
+		const toggleEditing = () => setState( { isEditing: ! isEditing } );
 
-	const onSelectTemplate = ( { id } ) => {
-		setState( { isEditing: false } );
-		setAttributes( { templateId: id } );
-	};
+		const onSelectTemplate = ( { id } ) => {
+			setState( { isEditing: false } );
+			setAttributes( { templateId: id } );
+		};
 
-	const showToggleButton = ! isEditing || !! templateId;
-	const showPlaceholder = isEditing || ! templateId;
-	const showContent = ! isEditing && !! templateId;
-	const isTemplate = 'wp_template' === fullSiteEditing.editorPostType;
+		const showToggleButton = ! isEditing || !! templateId;
+		const showPlaceholder = isEditing || ! templateId;
+		const showContent = ! isEditing && !! templateId;
+		const isTemplate = 'wp_template' === fullSiteEditing.editorPostType;
+
+		useEffect( () => {
+			if ( ! parsedBlock ) {
+				return;
+			}
+
+			receiveBlocks( [ parsedBlock ] );
+		} );
 
 	const editTemplatePartUrl = addQueryArgs( fullSiteEditing.editTemplatePartBaseUrl, {
 		post: templateId,
@@ -95,16 +127,29 @@ const TemplateEdit = compose(
 						</div>
 					</Placeholder>
 				) }
-				{ showContent && (
-					<Fragment>
-						<RawHTML className="template-block__content">
-							{ get( template, [ 'content', 'rendered' ] ) }
-						</RawHTML>
-						{ ! isTemplate && (
-							<Placeholder
-								className="template-block__overlay"
-								instructions={ __(
-									'This block is part of your site template and may appear on multiple pages.'
+				<div
+					className={ classNames( 'template-block', {
+						[ `align${ align }` ]: align,
+					} ) }
+				>
+					{ showPlaceholder && (
+						<Placeholder
+							icon="layout"
+							label={ __( 'Template Part' ) }
+							instructions={ __( 'Select a template part to display' ) }
+						>
+							<div className="template-block__selector">
+								<PostAutocomplete
+									initialValue={ get( template, [ 'title', 'rendered' ] ) }
+									onSelectPost={ onSelectTemplate }
+									postType="wp_template_part"
+								/>
+								{ !! template && (
+									<a
+										href={ `?post=${ templateId }&action=edit&fse_parent_post=${ currentPostId }` }
+									>
+										{ sprintf( __( 'Edit "%s"' ), get( template, [ 'title', 'rendered' ], '' ) ) }
+									</a>
 								) }
 							>
 								<Button href={ editTemplatePartUrl } isDefault>
