@@ -1,20 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import React from 'react';
-
 import { get } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import { isValidFeatureKey } from 'lib/plans/features-list';
-import Plans from './plans';
 import CheckoutData from 'components/data/checkout';
+import Plans from './plans';
+import { isValidFeatureKey } from 'lib/plans/features-list';
 
 export default {
 	plans( context, next ) {
