@@ -82,20 +82,12 @@
 	background: var( --color-text-subtle );
 	color: var( --color-white );
 	display: flex;
-	align-items: baseline;
+	align-items: center;
 	width: 47px;
 	justify-content: center;
 	border-radius: 3px 0 0 3px;
 	flex-shrink: 0;
 	align-self: stretch;
-
-	.gridicon {
-		margin-top: 10px;
-
-		@include breakpoint( '>480px' ) {
-			margin-top: 12px;
-		}
-	}
 }
 
 .notice__content {
