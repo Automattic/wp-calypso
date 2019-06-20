@@ -11,7 +11,7 @@ import edit from './edit';
 import './style.scss';
 
 registerBlockType( 'a8c/site-description', {
-	title: __( 'Site Description2' ),
+	title: __( 'Site Description' ),
 	description: __( 'Site description, also known as the tagline.' ),
 	icon: 'layout',
 	category: 'layout',
