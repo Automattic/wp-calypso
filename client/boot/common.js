@@ -19,7 +19,7 @@ import store from 'store';
 import config from 'config';
 import { ReduxWrappedLayout } from 'controller';
 import notices from 'notices';
-import authController from 'auth/controller';
+import { getToken } from 'lib/oauth-token';
 import emailVerification from 'components/email-verification';
 import { getSavedVariations } from 'lib/abtest'; // used by error logger
 import accessibleFocus from 'lib/accessible-focus';
@@ -131,8 +131,28 @@ const loggedOutMiddleware = currentUser => {
 
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
+		const loggedOutRoutes = [
+			'/oauth-login',
+			'/oauth',
+			'/start',
+			'/authorize',
+			'/api/oauth/token',
+		];
+
 		// Forces OAuth users to the /login page if no token is present
-		page( '*', authController.checkToken );
+		page( '*', function( context, next ) {
+			const isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
+
+			// Check we have an OAuth token, otherwise redirect to auth/login page
+			if ( getToken() === false && ! isValidSection ) {
+				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
+				const redirectPath = isDesktop ? config( 'login_url' ) : '/authorize';
+				page( redirectPath );
+				return;
+			}
+
+			next();
+		} );
 	}
 };
 
