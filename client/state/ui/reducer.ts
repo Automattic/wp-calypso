@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	MASTERBAR_TOGGLE_VISIBILITY,
 	SELECTED_SITE_SET,
