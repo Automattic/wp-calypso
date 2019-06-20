@@ -23,10 +23,8 @@ import {
 	requestJetpackProductInstallStatus,
 	startJetpackProductInstall,
 } from 'state/jetpack-product-install/actions';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 
-/**
- * Module variables
- */
 /**
  * These are plugin states in the installation lifecycle we consider "non-error" states.
  */
@@ -37,6 +35,7 @@ const NON_ERROR_STATES = [
 	'installed', // Plugin is installed, activated and configured
 	'skipped', // Plugin installation is skipped as unnecessary
 ];
+
 /**
  * Those errors are any of the following:
  * - Temporary, occurring if we request installation status while plugin is being set up.
@@ -243,11 +242,24 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
+	const queryArgs = getCurrentQueryArguments( state );
+
+	const installQuery: string[] =
+		'install' in queryArgs
+			? Array.isArray( queryArgs.install )
+				? queryArgs.install
+				: [ queryArgs.install ]
+			: [];
+
+	const requestedInstalls = installQuery.includes( 'all' )
+		? /* If we want 'all', clone our known plugins */ [ ...PLUGINS ]
+		: installQuery;
 
 	return {
 		siteId,
 		pluginKeys: getPluginKeys( state, siteId ),
 		progressComplete: getJetpackProductInstallProgress( state, siteId ),
+		requestedInstalls,
 		status: getJetpackProductInstallStatus( state, siteId ),
 	};
 };
