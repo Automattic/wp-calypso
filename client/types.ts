@@ -1,3 +1,9 @@
+/**
+ * Internal dependencies
+ */
+import reducer from 'state/reducer';
+import { createReduxStore } from 'state';
+
 // Web stuff
 export type URL = string;
 
@@ -23,6 +29,10 @@ export type CommentId = number;
 export type Lazy< T > = () => T;
 export type TimestampMS = ReturnType< typeof Date.now >;
 export type TimerHandle = ReturnType< typeof setTimeout >;
+
+// Application State
+export type CalypsoState = ReturnType< typeof reducer >;
+export type CalypsoStore = ReturnType< typeof createReduxStore >;
 
 /**
  * This is an `any` type alias.

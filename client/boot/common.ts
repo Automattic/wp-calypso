@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import page from 'page';
 import { parse } from 'qs';
@@ -47,6 +44,8 @@ import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { loadUserUndeployedTranslations } from 'lib/i18n-utils/switch-locale';
+import { CalypsoStore } from 'client/types';
+import { ParsedUrlQuery } from 'querystring';
 
 const debug = debugFactory( 'calypso' );
 
@@ -57,6 +56,11 @@ const switchUserLocale = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocale( localeSlug, localeVariant ) );
 	}
 };
+
+export interface EnhancedContext extends PageJS.Context {
+	query: ParsedUrlQuery;
+	store: CalypsoStore;
+}
 
 const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
@@ -157,11 +161,11 @@ const oauthTokenMiddleware = () => {
 };
 
 const setRouteMiddleware = () => {
-	page( '*', ( context, next ) => {
+	page( '*', ( ( context: EnhancedContext, next ) => {
 		context.store.dispatch( setRouteAction( context.pathname, context.query ) );
 
 		next();
-	} );
+	} ) as PageJS.Callback );
 };
 
 const clearNoticesMiddleware = () => {

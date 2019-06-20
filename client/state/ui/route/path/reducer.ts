@@ -1,13 +1,14 @@
-/** @format */
-
-/**
- * External dependencies
- */
-
 /**
  * Internal dependencies
  */
+import { RouteSetAction } from 'state/ui/actions';
 import { ROUTE_SET } from 'state/action-types';
+
+interface State {
+	initial: string;
+	current: string;
+	previous: string;
+}
 
 const initialState = {
 	initial: '',
@@ -15,7 +16,7 @@ const initialState = {
 	previous: '',
 };
 
-export const pathReducer = ( state = initialState, action ) => {
+export const pathReducer = ( state: State = initialState, action: RouteSetAction ) => {
 	const { path, type } = action;
 	switch ( type ) {
 		case ROUTE_SET:

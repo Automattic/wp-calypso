@@ -1,20 +1,13 @@
-/** @format */
-
-/**
- * External dependencies
- */
-
-import { get } from 'lodash';
-
 /**
  * Internal dependencies
  */
+import { CalypsoState } from 'types';
 
 /**
  * Gets the last query parameters set by a ROUTE_SET action
- * @param {Object} state - global redux state
- * @return {Object} current state value
+ * @param  state global redux state
+ * @return       current state value
  */
-export const getCurrentQueryArguments = state => get( state, 'ui.route.query.current', null );
+export const getCurrentQueryArguments = ( state: CalypsoState ) => state.ui.route.query.current;
 
 export default getCurrentQueryArguments;

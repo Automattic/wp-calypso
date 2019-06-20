@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	MASTERBAR_TOGGLE_VISIBILITY,
 	SELECTED_SITE_SET,
@@ -14,8 +11,9 @@ import {
 	NAVIGATE,
 	HISTORY_REPLACE,
 } from 'state/action-types';
-
 import 'state/data-layer/wpcom/sites/jitm';
+import { Action } from 'redux';
+import { EnhancedContext } from 'boot/common';
 
 /**
  * Returns an action object to be used in signalling that a site has been set
@@ -44,14 +42,19 @@ export function setAllSitesSelected() {
 	};
 }
 
+export interface RouteSetAction extends Action< typeof ROUTE_SET > {
+	path: string;
+	query: EnhancedContext['query'];
+}
+
 /**
  * Returns an action object signalling that the current route is to be changed
  *
- * @param  {String} path    Route path
- * @param  {Object} [query] Query arguments
- * @return {Object}         Action object
+ * @param  path  Route path
+ * @param  query Query arguments
+ * @return       Action object
  */
-export function setRoute( path, query = {} ) {
+export function setRoute( path: string, query = {} ): RouteSetAction {
 	return {
 		type: ROUTE_SET,
 		path,

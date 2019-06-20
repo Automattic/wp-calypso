@@ -1,14 +1,15 @@
-/** @format */
 /**
  * External dependencies
  */
 import thunkMiddleware from 'redux-thunk';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, compose, Store, Action } from 'redux';
 
 /**
  * Internal dependencies
  */
+import * as ActionTypes from 'state/action-types';
 import initialReducer from './reducer';
+import { CalypsoState } from 'types';
 
 /**
  * Store enhancers
@@ -40,15 +41,10 @@ const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
 	return Object.assign( {}, nextStore, { addReducer, getCurrentReducer } );
 };
 
-/**
- * @typedef {Object} ReduxStore
- * @property {!Function} dispatch dispatches actions
- * @property {!Function} getState returns the current state tree
- * @property {Function} replaceReducers replaces the state reducers
- * @property {Function} subscribe attaches an event listener to state changes
- */
-
-export function createReduxStore( initialState, reducer = initialReducer ) {
+export function createReduxStore(
+	initialState: CalypsoState,
+	reducer = initialReducer
+): Store< CalypsoState, Action< keyof typeof ActionTypes > > {
 	const isBrowser = typeof window === 'object';
 	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
