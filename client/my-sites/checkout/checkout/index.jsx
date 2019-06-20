@@ -92,6 +92,7 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
 import { abtest } from 'lib/abtest';
+import { retrieveSignupDestination } from 'signup/utils';
 
 /**
  * Style dependencies
@@ -496,9 +497,9 @@ export class Checkout extends React.Component {
 		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
 
 		if ( this.props.isEligibleForCheckoutToChecklist & ( ':receiptId' !== pendingOrReceiptId ) ) {
-			const destination = abtest( 'improvedOnboarding' ) === 'main' ? 'checklist' : 'view';
+			const destination = retrieveSignupDestination();
 
-			return `/${ destination }/${ selectedSiteSlug }${ queryParam }`;
+			return `${ destination }${ queryParam }`;
 		}
 
 		if ( this.props.isJetpackNotAtomic ) {

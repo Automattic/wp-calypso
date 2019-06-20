@@ -2,6 +2,7 @@
 /**
  * Exernal dependencies
  */
+import cookie from 'cookie';
 import { filter, find, includes, indexOf, isEmpty, pick } from 'lodash';
 import { translate } from 'i18n-calypso';
 
@@ -215,3 +216,12 @@ export function canResumeFlow( flowName, progress ) {
 	} );
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }
+
+export const persistSignupDestination = url => {
+	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', url );
+};
+
+export const retrieveSignupDestination = () => {
+	const cookies = cookie.parse( document.cookie );
+	return cookies.wpcom_signup_complete_destination;
+};
