@@ -65,21 +65,17 @@ export class HappinessSupport extends Component {
 		const components = {
 			strong: <strong />,
 		};
-		const text = isJetpackFreePlan
-			? translate(
-					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
-					{ components }
-			  )
-			: translate(
-					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
-					{ components }
-			  );
-
-		if ( Array.isArray( text ) && 'string' === typeof text[ text.length - 1 ] ) {
-			text.push( preventWidows( text.pop() ) );
-		}
-
-		return text;
+		return preventWidows(
+			isJetpackFreePlan
+				? translate(
+						'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
+						{ components }
+				  )
+				: translate(
+						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
+						{ components }
+				  )
+		);
 	}
 
 	getSupportButtons() {
