@@ -100,7 +100,7 @@ export default class SignupSitePreviewIframe extends Component {
 		const element = this.iframe.current.contentWindow.document.querySelector( selector );
 
 		if ( element ) {
-			element.innerHTML = content;
+			element.textContent = content;
 		}
 	}
 
