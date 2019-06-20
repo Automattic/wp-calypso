@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import { trim } from 'lodash';
+import { trimEnd } from 'lodash';
 import stripTags from 'striptags';
 
 /**
@@ -54,7 +54,7 @@ export function stripHTML( string ) {
  * @return {string}             the widow-prevented string
  */
 export function preventWidows( text, wordsToKeep = 2 ) {
-	if ( typeof text !== 'string' ) {
+	if ( typeof text === 'string' ) {
 		if ( Array.isArray( text ) ) {
 			// Handle strings with interpolated components by only acting on the last element.
 			text.push( preventWidows( text.pop(), wordsToKeep ) );
@@ -62,7 +62,7 @@ export function preventWidows( text, wordsToKeep = 2 ) {
 		return text;
 	}
 
-	text = text && trim( text );
+	text = text && trimEnd( text );
 	if ( ! text ) {
 		return text;
 	}
