@@ -10,7 +10,7 @@ jest.mock( 'components/popover', () => 'Popover' );
 jest.mock( 'my-sites/checkout/cart/cart-item', () => 'CartItem' );
 jest.mock( 'my-sites/checkout/cart/cart-coupon', () => 'CartCoupon' );
 jest.mock( 'my-sites/checkout/checkout-thank-you/google-voucher', () => 'GoogleVoucher' );
-jest.mock( 'lib/user', () => ( {} ) );
+jest.mock( 'lib/user', () => () => ( {} ) );
 jest.mock( 'lib/cart/store/cart-analytics', () => ( {} ) );
 jest.mock( 'lib/mixins/analytics', () => () => {} );
 

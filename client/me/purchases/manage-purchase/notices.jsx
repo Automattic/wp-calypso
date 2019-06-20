@@ -27,6 +27,7 @@ import {
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	subscribedWithinPastWeek,
+	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'lib/purchases';
 import { isDomainTransfer, isConciergeSession } from 'lib/products-values';
 import Notice from 'components/notice';
@@ -116,11 +117,12 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( ! canExplicitRenew( purchase ) ) {
+		if (
+			! canExplicitRenew( purchase ) ||
+			shouldAddPaymentSourceInsteadOfRenewingNow( purchase.expiryMoment )
+		) {
 			return (
-				<NoticeAction href={ editCardDetailsPath }>
-					{ translate( 'Enable Auto Renew' ) }
-				</NoticeAction>
+				<NoticeAction href={ editCardDetailsPath }>{ translate( 'Add Credit Card' ) }</NoticeAction>
 			);
 		}
 
