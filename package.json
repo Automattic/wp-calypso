@@ -273,6 +273,7 @@
 		"@automattic/babel-plugin-transform-wpcalypso-async": "file:./packages/babel-plugin-transform-wpcalypso-async",
 		"@automattic/calypso-build": "file:./packages/calypso-build",
 		"@automattic/calypso-color-schemes": "file:./packages/calypso-color-schemes",
+		"@automattic/webpack-extensive-lodash-replacement-plugin": "file:./packages/webpack-extensive-lodash-replacement-plugin",
 		"@automattic/webpack-inline-constant-exports-plugin": "file:./packages/webpack-inline-constant-exports-plugin",
 		"@types/classnames": "2.2.7",
 		"@types/debug": "4.1.4",
