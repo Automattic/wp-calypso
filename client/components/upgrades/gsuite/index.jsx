@@ -28,7 +28,7 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 	};
 
 	const handleSkipClick = () => {
-		page( ` /checkout/${ selectedSiteSlug }` );
+		page( `/checkout/${ selectedSiteSlug }` );
 	};
 
 	useEffect( () => {
